@@ -88,6 +88,9 @@ class AutoReplyModule extends WeModule {
 					}
 				}else {
 					$replies = explode(',', $this->replies[$val]);
+					foreach ($replies as  &$v) {
+						$v = json_decode($v);
+					}
 				}
 			}
 			switch ($val) {
