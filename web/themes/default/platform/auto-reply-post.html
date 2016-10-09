@@ -146,9 +146,7 @@ require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angula
 			if($.isFunction(window.validateReplyForm)) {
 				return window.validateReplyForm(this, $, _, util, $scope, $http);
 			}
-			console.log(345);
-			return false;
-			// return true;
+			return true;
 		});
 		$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 			$scope.trigger.active = e.target.hash.replace(/#/, '');

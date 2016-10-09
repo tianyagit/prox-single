@@ -58,6 +58,22 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				});
 				return false;
 			}
+			if(type == 'music') {
+				var Dialog = type + 'Dialog';
+				$this.modalobj.find('#btn-select').show();
+				$content.html(_.template($this.buildHtml()[Dialog]));
+				$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
+					var attachment = [];
+					attachment.title = $(':text[name="musicTitle"]').val();
+					attachment.url = $(':text[name="musicUrl"]').val();
+					attachment.HQUrl = $(':text[name="musicHQUrl"]').val();
+					attachment.description = $(':text[name="musicDescription"]').val();
+					$this.options.callback(attachment);
+					$this.modalobj.modal('hide');
+				});
+				return false;
+			}
+
 			var url = './index.php?c=utility&a=material&do=list&type=' + type;
 			if(type == 'wxcard') {
 				url = './index.php?c=utility&a=coupon&do=wechat';
@@ -221,9 +237,6 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
 				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=image" target="_blank">上传图片</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.music ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=music" target="_blank">上传音乐</a>'+
-				'					</button>'+
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '">'+
 				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
 				'					</button>'+
@@ -284,34 +297,39 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'<%});%>\n' +
 				'</ul>';
 
-			dialog['musicDialog'] = '<ul class="img-list clearfix">\n' +
-				'<%var items = _.sortBy(items, function(item) {return -item.id;});%>' +
-				'<%_.each(items, function(item) {%> \n' +
-				'<div class="checkMedia" data-media="<%=item.media_id%>" data-type="image" data-attachid="<%=item.id%>">' +
-				'	<li class="img-item" style="padding:5px">\n' +
-				'		<div class="img-container" style="background-image: url(\'<%=item.attach%>\');">\n' +
-				'			<div class="select-status"><span></span></div>\n' +
-				'		</div>\n' +
-				'	</li>\n' +
-				'</div>\n' +
-				'<%});%>\n' +
-				'</ul>'+
-				'<div class="input-group">'+
-				'<input type="text" value="" name="" class="form-control audio-player-media" autocomplete="off")>'+
-				'<span class="input-group-btn">'+
-				'<button class="btn btn-default audio-player-play" type="button" style="display:none;"><i class="fa fa-play"></i></button>'+
-				'<button class="btn btn-default" type="button" onclick="showAudioDialog(this, ,);">选择媒体文件</button>'+
-				'</span>'+
+			dialog['musicDialog'] = '<div class="form-group">'+
+				'	<div class="col-xs-2">音乐标题</div>'+
+				'	<div class="col-xs-10 input-group">'+
+				'		<input type="text" value="" name="musicTitle" class="form-control" placeholder="添加音乐消息的标题">'+
+				'	</div>'+
 				'</div>'+
-				'<div class="input-group audio-player"></div>';
+				'<div class="form-group">'+
+				'	<div class="col-xs-2">选择音乐</div>'+
+				'	<div class="col-xs-10 input-group">'+
+				'		<input type="text" value="" name="musicUrl" class="form-control audio-player-media" autocomplete="off">'+
+				'		<span class="help-block">选择上传的音频文件或直接输入URL地址，常用格式：mp3</span>'+
+				'		<span class="input-group-btn" style="vertical-align: top;">'+
+				'			<button class="btn btn-default audio-player-play" type="button" style="display:none;"><i class="fa fa-play"></i></button>'+
+				'			<button class="btn btn-default" type="button" onclick="showAudioDialog(this);">选择媒体文件</button>'+
+				'		</span>'+
+				'	</div>'+
+				'	<div class="input-group audio-player"></div>'+
+				'</div>'+
+				'<div class="form-group">'+
+				'	<div class="col-xs-2">高品质链接</div>'+
+				'	<div class="col-xs-10 input-group">'+
+				'		<input type="text" value="" name="musicHQUrl" class="form-control">'+
+				'		<span class="help-block">没有高品质音乐链接，请留空。高质量音乐链接，WIFI环境优先使用该链接播放音乐</span>'+
+				'	</div>'+
+				'</div>'+
+				'<div class="form-group">'+
+				'	<div class="col-xs-2">描述</div>'+
+				'	<div class="col-xs-10 input-group">'+
+				'		<input type="text" value="" name="musicDescription" class="form-control">'+
+				'		<span class="help-block">描述内容将出现在音乐名称下方，建议控制在20个汉字以内最佳</span>'+
+				'	</div>'+
+				'</div>';
 
-		
-		
-			
-			
-		
-	
-	
 			dialog['voiceDialog'] ='<table class="table table-hover table-bordered" style="margin-bottom:0">'+
 				'						<thead class="navbar-inner">'+
 				'							<tr>'+
@@ -464,55 +482,51 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 		});
 	};
 	showAudioDialog = function(elm, base64options, options) {
-		// require(["util"], function(util){
-			var btn = $(elm);
-			var ipt = btn.parent().prev();
-			var val = ipt.val();
-			util.audio(val, function(url){
-				if(url && url.attachment && url.url){
-					btn.prev().show();
-					ipt.val(url.attachment);
-					ipt.attr("filename",url.filename);
-					ipt.attr("url",url.url);
-					setAudioPlayer();
-				}
-				if(url && url.media_id){
-					ipt.val(url.media_id);
-				}
-			}, "" , "");
-		// });
+		var btn = $(elm);
+		var ipt = btn.parent().prev().prev();
+		var val = ipt.val();
+		util.audio(val, function(url){
+			if(url && url.attachment && url.url){
+				btn.prev().show();
+				ipt.val(url.attachment);
+				ipt.attr("filename",url.filename);
+				ipt.attr("url",url.url);
+				setAudioPlayer();
+			}
+			if(url && url.media_id){
+				ipt.val(url.media_id);
+			}
+		}, "" , {"direct": true, "multiple": false});
 	};
 	setAudioPlayer = function(){
-		// require(["jquery", "util", "jquery.jplayer"], function($, u){
-			$(function(){
-				$(".audio-player").each(function(){
-					$(this).prev().find("button").eq(0).click(function(){
-						var src = $(this).parent().prev().val();
-						if($(this).find("i").hasClass("fa-stop")) {
-							$(this).parent().parent().next().jPlayer("stop");
-						} else {
-							if(src) {
-								$(this).parent().parent().next().jPlayer("setMedia", {mp3: util.tomedia(src)}).jPlayer("play");
-							}
+		$(function(){
+			$(".audio-player").each(function(){
+				$(this).prev().find("button").eq(0).click(function(){
+					var src = $(this).parent().prev().prev().val();
+					if($(this).find("i").hasClass("fa-stop")) {
+						$(this).parent().parent().next().jPlayer("stop");
+					} else {
+						if(src) {
+							$(this).parent().parent().next().jPlayer("setMedia", {mp3: util.tomedia(src)}).jPlayer("play");
 						}
-					});
-				});
-
-				$(".audio-player").jPlayer({
-					playing: function() {
-						$(this).prev().find("i").removeClass("fa-play").addClass("fa-stop");
-					},
-					pause: function (event) {
-						$(this).prev().find("i").removeClass("fa-stop").addClass("fa-play");
-					},
-					swfPath: "resource/components/jplayer",
-					supplied: "mp3"
-				});
-				$(".audio-player-media").each(function(){
-					$(this).next().find(".audio-player-play").css("display", $(this).val() == "" ? "none" : "");
+					}
 				});
 			});
-		// });
+
+			$(".audio-player").jPlayer({
+				playing: function() {
+					$(this).prev().find("i").removeClass("fa-play").addClass("fa-stop");
+				},
+				pause: function (event) {
+					$(this).prev().find("i").removeClass("fa-stop").addClass("fa-play");
+				},
+				swfPath: "resource/components/jplayer",
+				supplied: "mp3"
+			});
+			$(".audio-player-media").each(function(){
+				$(this).next().find(".audio-player-play").css("display", $(this).val() == "" ? "none" : "");
+			});
+		});
 	};
 	return material;
 });
