@@ -94,7 +94,7 @@ $ms = array(
 				) ,
 				array(
 					'title' => '自动回复',
-					'url' => './index.php?c=platform&a=autoreply&m=autoreply',
+					'url' => './index.php?c=platform&a=autoreply',
 					'append' => array(
 						'title' => '',
 						'url' => '',

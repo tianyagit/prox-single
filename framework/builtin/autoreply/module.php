@@ -58,13 +58,8 @@ class AutoReplyModule extends WeModule {
 				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply_'.$value]);
 			}
 		}
-		echo "<pre>";
-		print_r($this->replies);
-		echo "</pre>";
-		echo "1541345<hr>";
-
 		if($ifEmpty) {
-			return '必须填写有效的回复内容.';
+			return error(1, '必须填写有效的回复内容.');
 		}
 		return '';
 	}
@@ -77,7 +72,6 @@ class AutoReplyModule extends WeModule {
 			$delsql .= 'DELETE FROM '. tablename($tablename) . ' WHERE `rid`='.$rid.';';
 		}
 		pdo_run($delsql);
-
 		foreach ($this->modules as $val) {
 			$replies = array();
 			$tablename = $this->tablename[$val];
