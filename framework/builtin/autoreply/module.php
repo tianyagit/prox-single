@@ -58,10 +58,6 @@ class AutoReplyModule extends WeModule {
 				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply_'.$value]);
 			}
 		}
-		// echo "<pre>";
-		// print_r($this->replies);
-		// echo "</pre>";
-		// echo "1541345<hr>";
 
 		if($ifEmpty) {
 			return '必须填写有效的回复内容.';
@@ -113,7 +109,11 @@ class AutoReplyModule extends WeModule {
 					}
 					break;
 				case 'music':
-					
+					if(!empty($replies)) {
+						foreach ($replies as $reply) {
+							pdo_insert($tablename, array('rid' => $rid, 'title' => $reply['title'], 'url' => $reply['url'], 'hqurl' => $reply['hqurl'], 'description' => $reply['description']));
+						}
+					}
 					break;
 				case 'voice':
 					if(!empty($replies)) {
