@@ -58,6 +58,14 @@ class AutoReplyModule extends WeModule {
 				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply_'.$value]);
 			}
 		}
+<<<<<<< HEAD
+=======
+		// echo "<pre>";
+		// print_r($this->replies);
+		// echo "</pre>";
+		// echo "1541345<hr>";
+
+>>>>>>> 67bca7418935f0a0b324810c082b63129623c7a3
 		if($ifEmpty) {
 			return error(1, '必须填写有效的回复内容.');
 		}
@@ -72,7 +80,6 @@ class AutoReplyModule extends WeModule {
 			$delsql .= 'DELETE FROM '. tablename($tablename) . ' WHERE `rid`='.$rid.';';
 		}
 		pdo_run($delsql);
-
 		foreach ($this->modules as $val) {
 			$replies = array();
 			$tablename = $this->tablename[$val];
@@ -108,11 +115,7 @@ class AutoReplyModule extends WeModule {
 					}
 					break;
 				case 'music':
-					if(!empty($replies)) {
-						foreach ($replies as $reply) {
-							pdo_insert($tablename, array('rid' => $rid, 'title' => $reply['title'], 'url' => $reply['url'], 'hqurl' => $reply['hqurl'], 'description' => $reply['description']));
-						}
-					}
+					
 					break;
 				case 'voice':
 					if(!empty($replies)) {
