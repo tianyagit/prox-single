@@ -73,10 +73,17 @@
 				// $(':hidden[name="reply_'+type+'"]').val(oldVal);
 				break;
 			case 'music':
-				// oldVal = oldVal.split(',');
-				// index = _.indexOf(oldVal, media);
-				// oldVal.splice(index, 1);
-				// $(':hidden[name="reply_'+type+'"]').val(oldVal);
+				var middleVal = oldVal.slice(1, -1).split('},{');
+				newVal = angular.copy(middleVal);
+				angular.forEach(middleVal, function(val, key){
+					if(val.match(media)) {
+						newVal = _.without(newVal, middleVal[key]);
+					}
+				});
+				angular.forEach(newVal, function(val, key) {
+					newVal[key] = '{'+val+'}';
+				});
+				$(':hidden[name="reply_'+type+'"]').val(newVal);
 				break;
 			case 'voice':
 				var middleVal = oldVal.split(',');
@@ -169,7 +176,7 @@
 					'</div>'
 				);
 			}else {
-				if($.trim(material.media_id).length == 0) {
+				if(type != 'music' && $.trim(material.media_id).length == 0) {
 					return false;
 				};
 				switch(type) {
@@ -219,13 +226,18 @@
 						);
 						break;
 					case 'music':
-						replyVal.push(angular.toJson(material.media_id));
+						replyVal.push(angular.toJson({
+							title: material.title,
+							url: material.url,
+							hqurl: material.HQUrl,
+							description: material.description,
+						}));
 						$('#trigger_'+type).append(
 							'<div class="del-'+type+'-media">'+
 							// '	<span>&nbsp;标题：</span>'+material.tag.title+
 							// '	<span>&nbsp;描述：</span>'+(material.tag.description ? material.tag.description : '--')+
-							'	<span>&nbsp;mediaid：</span>'+material.media_id+
-							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	<span>&nbsp;音乐url：</span>'+material.url+
+							'	<a href="javascript:;" data-media="'+material.url+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'</div>'
 						);
 						break;

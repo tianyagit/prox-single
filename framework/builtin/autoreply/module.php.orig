@@ -58,6 +58,14 @@ class AutoReplyModule extends WeModule {
 				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply_'.$value]);
 			}
 		}
+<<<<<<< HEAD
+=======
+		// echo "<pre>";
+		// print_r($this->replies);
+		// echo "</pre>";
+		// echo "1541345<hr>";
+
+>>>>>>> 67bca7418935f0a0b324810c082b63129623c7a3
 		if($ifEmpty) {
 			return error(1, '必须填写有效的回复内容.');
 		}
