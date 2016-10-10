@@ -167,22 +167,6 @@ if($do == 'post') {
 				$pars[':rid'] = $rid;
 				$pars[':uniacid'] = $_W['uniacid'];
 				pdo_query($sql, $pars);
-			if(is_string($msg) && trim($msg) != '') {
-				message($msg);
-			}
-			if (!empty($rid)) {
-				$result = pdo_update('rule', $rule, array('id' => $rid));
-			} else {
-				$result = pdo_insert('rule', $rule);
-				$rid = pdo_insertid();
-			}
-			if (!empty($rid)) {
-				//更新，添加，删除关键字
-				$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `uniacid`=:uniacid';
-				$pars = array();
-				$pars[':rid'] = $rid;
-				$pars[':uniacid'] = $_W['uniacid'];
-				pdo_query($sql, $pars);
 
 				$rowtpl = array(
 					'rid' => $rid,
