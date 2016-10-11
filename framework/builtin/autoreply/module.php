@@ -72,6 +72,7 @@ class AutoReplyModule extends WeModule {
 			$delsql .= 'DELETE FROM '. tablename($tablename) . ' WHERE `rid`='.$rid.';';
 		}
 		pdo_run($delsql);
+
 		foreach ($this->modules as $val) {
 			$replies = array();
 			$tablename = $this->tablename[$val];
@@ -107,7 +108,11 @@ class AutoReplyModule extends WeModule {
 					}
 					break;
 				case 'music':
-					
+					if(!empty($replies)) {
+						foreach ($replies as $reply) {
+							pdo_insert($tablename, array('rid' => $rid, 'title' => $reply['title'], 'url' => $reply['url'], 'hqurl' => $reply['hqurl'], 'description' => $reply['description']));
+						}
+					}
 					break;
 				case 'voice':
 					if(!empty($replies)) {
