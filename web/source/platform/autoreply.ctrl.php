@@ -9,6 +9,7 @@ load()->model('module');
 $dos = array('display', 'post', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
+$_W['account']['modules'] = uni_modules();
 if(empty($m)) {
 	message('错误访问.');
 }
@@ -92,6 +93,25 @@ if($do == 'display') {
 	if ($m == 'special') {
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'];
+		$ds = array();
+	}
+	if ($m == 'system') {
+		if (checksubmit('submit')) {
+			$settings = array(
+				'default' => trim($_GPC['default']),
+				'welcome' => trim($_GPC['welcome']),
+			);
+			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
+			if(!empty($item)){
+				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
+			}else{
+				$settings['uniacid'] = $_W['uniacid'];
+				pdo_insert('uni_settings', $settings);
+			}
+			cache_delete("unisetting:{$_W['uniacid']}");
+			message('系统回复更新成功！', url('platform/autoreply/dispaly', array('m' => 'system')));
+		}
+		$setting = uni_setting($_W['uniacid'], array('default', 'welcome'));
 	}
 	template('platform/auto-reply');
 }
@@ -167,7 +187,6 @@ if($do == 'post') {
 				$pars[':rid'] = $rid;
 				$pars[':uniacid'] = $_W['uniacid'];
 				pdo_query($sql, $pars);
-
 				$rowtpl = array(
 					'rid' => $rid,
 					'uniacid' => $_W['uniacid'],
@@ -195,26 +214,37 @@ if($do == 'post') {
 		$setting = $setting['default_message'];
 		$rule = pdo_get('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $mtypes[$type].'特殊消息回复'));
 		if (checksubmit('submit')) {
-			if (empty($_GPC['status'])) {
-				$setting[$type] = array('type' => 'keyword', 'keyword' => '');
+			$status = intval($_GPC['status']);
+			if (empty($status)) {
+				$setting[$type] = array('type' => '');
 				uni_setting_save('default_message', $setting);
 				message('关闭成功', url('platform/autoreply', array('m' => 'special')));
 			}
-			if (empty($rule)) {
-				pdo_insert('rule', array('uniacid' => $_W['uniacid'], 'name' => '特殊消息回复', 'module' => 'auto', 'status' => 1));
-				$rule_id = pdo_insertid();
-				pdo_insert('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $rule_id, 'content' => $mtypes[$type].'特殊消息回复', 'module' => 'auto', 'type' => 1, 'status' => 1));
+			if ($status == 1) {
+				if (empty($rule)) {
+					pdo_insert('rule', array('uniacid' => $_W['uniacid'], 'name' => '特殊消息回复', 'module' => 'auto', 'status' => 1));
+					$rule_id = pdo_insertid();
+					pdo_insert('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $rule_id, 'content' => $mtypes[$type].'特殊消息回复', 'module' => 'auto', 'type' => 1, 'status' => 1));
+				}
+				$rule_id = !$rule_id ? $rule['rid'] : $rule_id;
+				$autoreply_module = WeUtility::createModule('autoreply');
+				$result = $autoreply_module->fieldsFormValidate();
+				if (is_error($result)) {
+					message($result['message'], '', 'info');
+				}
+				$result = $autoreply_module->fieldsFormSubmit($rule_id);
+				$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
 			}
-			$rule_id = !$rule_id ? $rule['rid'] : $rule_id;
-			$autoreply_module = WeUtility::createModule('autoreply');
-			$result = $autoreply_module->fieldsFormValidate();
-			if (is_error($result)) {
-				message($result['message'], '', 'info');
+			if ($status == '2') {
+				$setting[$type] = array('type' => 'module', 'module' => $_GPC['module']);
 			}
-			$result = $autoreply_module->fieldsFormSubmit($rule_id);
-			$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
 			uni_setting_save('default_message', $setting);
 			message('发布成功', url('platform/autoreply', array('m' => 'special')));
+		}
+		foreach($_W['account']['modules'] as $module) {
+			if(is_array($_W['account']['modules'][$module['name']]['handles']) && in_array($type, $_W['account']['modules'][$module['name']]['handles'])) {
+				$handles[] = array('name' => $module['name'], 'title' => $_W['account']['modules'][$module['name']]['title']);
+			}
 		}
 		template('platform/auto-specialreply-post');
 	}
