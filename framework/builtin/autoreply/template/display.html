@@ -379,10 +379,15 @@
 					break;
 				case 'music':
 					angular.forEach(val, function(musicVal, musicKey) {
-						replyVal.push(angular.toJson(musicVal.rid));
+						replyVal.push(angular.toJson({
+							title: musicVal.title,
+							url: musicVal.url,
+							hqurl: musicVal.hqurl,
+							description: musicVal.description,
+						}));
 						$('#trigger_'+type).append(
-							'<div class="del-'+type+'-media">'+musicVal.id+
-							'	<a href="javascript:;" data-media="'+musicVal.id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'<div class="del-'+type+'-media"><span>&nbsp;音乐url：</span>'+musicVal.url+
+							'	<a href="javascript:;" data-media="'+musicVal.url+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'</div>'
 						);
 					});
