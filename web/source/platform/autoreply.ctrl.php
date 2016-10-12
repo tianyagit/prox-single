@@ -212,40 +212,26 @@ if($do == 'post') {
 		$type = trim($_GPC['type']);
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'];
-		$rule = pdo_get('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $mtypes[$type].'特殊消息回复'));
 		if (checksubmit('submit')) {
+			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply_keyword']), "\""));
 			$status = intval($_GPC['status']);
 			if (empty($status)) {
 				$setting[$type] = array('type' => '');
 				uni_setting_save('default_message', $setting);
 				message('关闭成功', url('platform/autoreply', array('m' => 'special')));
 			}
-			if ($status == 1) {
-				if (empty($rule)) {
-					pdo_insert('rule', array('uniacid' => $_W['uniacid'], 'name' => '特殊消息回复', 'module' => 'auto', 'status' => 1));
-					$rule_id = pdo_insertid();
-					pdo_insert('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $rule_id, 'content' => $mtypes[$type].'特殊消息回复', 'module' => 'auto', 'type' => 1, 'status' => 1));
-				}
-				$rule_id = !$rule_id ? $rule['rid'] : $rule_id;
-				$autoreply_module = WeUtility::createModule('autoreply');
-				$result = $autoreply_module->fieldsFormValidate();
-				if (is_error($result)) {
-					message($result['message'], '', 'info');
-				}
-				$result = $autoreply_module->fieldsFormSubmit($rule_id);
-				$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
+			$autoreply_module = WeUtility::createModule('autoreply');
+			$result = $autoreply_module->fieldsFormValidate();
+			if (is_error($result)) {
+				message($result['message'], '', 'info');
 			}
-			if ($status == '2') {
-				$setting[$type] = array('type' => 'module', 'module' => $_GPC['module']);
-			}
+			$result = $autoreply_module->fieldsFormSubmit($rule_id);
+			$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
+			$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
 			uni_setting_save('default_message', $setting);
 			message('发布成功', url('platform/autoreply', array('m' => 'special')));
 		}
-		foreach($_W['account']['modules'] as $module) {
-			if(is_array($_W['account']['modules'][$module['name']]['handles']) && in_array($type, $_W['account']['modules'][$module['name']]['handles'])) {
-				$handles[] = array('name' => $module['name'], 'title' => $_W['account']['modules'][$module['name']]['title']);
-			}
-		}
+		$rule_id = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting[$type]['keyword']), 'rid');
 		template('platform/auto-specialreply-post');
 	}
 }

@@ -102,6 +102,7 @@ class WeEngine {
 		$this->modules = array_keys($_W['modules']);
 		$this->modules[] = 'cover';
 		$this->modules[] = 'default';
+		$this->modules[] = 'autoreply';
 		$this->modules = array_unique($this->modules);
 	}
 
@@ -560,7 +561,6 @@ class WeEngine {
 		} else {
 			$params += $this->handler($message['type']);
 		}
-
 		return $params;
 	}
 	
@@ -905,7 +905,6 @@ EOF;
 		if(empty($param['module']) || !in_array($param['module'], $this->modules)) {
 			return false;
 		}
-		
 		$processor = WeUtility::createModuleProcessor($param['module']);
 		$processor->message = $param['message'];
 		$processor->rule = $param['rule'];
