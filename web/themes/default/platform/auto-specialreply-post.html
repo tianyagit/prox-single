@@ -1,60 +1,55 @@
-{template 'common/header'}
-<ul class="nav nav-tabs">
-	{if empty($rid)}<li class="active"><a href="{url 'platform/autoreply' array('m' => $m)}">{$module['title']}管理</a> / <a href="{url 'platform/autoreply/post' array('m' => $m)}">新建{$module['title']}</a></li>{/if}
-	{if !empty($rid)}<li class="active"><a href="{url 'platform/autoreply' array('m' => $m)}">{$module['title']}管理</a> / <a href="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}"><i class="fa fa-edit"></i> 编辑{$module['title']}</a></li>{/if}
-</ul>
-<div class="clearfix" ng-controller="MainCtrl">
-	<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
-		<input type="hidden" name="rid" value="{$rid}" />
-		<div class="form-group">
-			<div class="col-sm-12">
-				<div class="panel panel-default">
-					<ul class="list-group">
-					</ul>
+{template 'common/header-base-new'}
+<div class="right-contnt">
+	<div class="new-keyword">
+		<ol class="breadcrumb we7-breadcrumb">
+			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
+			<li>
+				非文字自动回复
+			</li>
+			<li>
+				编辑
+			</li>
+		</ol>
+		<div class="we7-form" ng-controller="MainCtrl">
+			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
+			<div class="form-group">
+				<label class="control-label">是否开启</label>
+				<div class="form-controls">
+					<label>
+						<input name="status" type="hidden" class="form-control" type="checkbox" value="{if !empty($setting[$type])}1{/if}">
+						<div id="switch" class="switch{if !empty($setting[$type])} switchOn{/if}"></div>
+					</label>
 				</div>
 			</div>
-		</div>
-		<div class="form-group">
-			是否开启
-			<div>
-				<label class="radio-inline">
-					<input type="radio" name="status" value="1" {if $setting[$type]['type'] == 'keyword'} checked="checked"{/if} /> 关键字
-				</label>
-				<label class="radio-inline">
-					<input type="radio" name="status" value="2" {if $setting[$type]['type'] == 'module'} checked="checked"{/if} /> 模块
-				</label>
-				<label class="radio-inline">
-					<input type="radio" name="status" value="0" {if $setting[$type]['type'] == ''} checked="checked"{/if} /> 禁用
-				</label>
-				<span class="help-block">您可以选择临时禁用这条回复.</span>
+			<div id="key" {if empty($setting[$type])}style="display : none"{/if} >
+			{php echo module_build_form('autoreply', $rule_id)}
 			</div>
+			<input type="submit" name="submit"  value="保存" class="btn btn-primary" style="padding: 6px 50px;"/>
+			<input type="hidden" name="token" value="{$_W['token']}">
+			<input type="hidden" name="m" value="{$m}">
+			<input type="hidden" name="type" value="{$type}">
+		</form>
 		</div>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-3 col-md-2 control-label">选择模块</label>
-			<div class="col-xs-12 col-sm-9 col-md-10">
-				<select name="module">
-					{loop $handles $handle}
-					<option value="{$handle['name']}" {if $setting[$type]['module'] == $handle['name']}selected{/if}>{$handle['title']}</option>
-					{/loop}
-				</select>
-			</div>
-		</div>
-		{php echo module_build_form('autoreply', $rule['rid'])}
-		<div class="form-group">
-			<div class="col-sm-12">
-				<input name="submit" type="submit" value="发布" class="btn btn-primary col-lg-1" />
-				<input type="hidden" name="token" value="{$_W['token']}" />
-				<input type="hidden" name="type" value="{$_GPC['type']}" />
-			</div>
-		</div>
-	</form>
+	</div>
 </div>
 <script>
 	require(['underscore', 'util'], function( _, util){
-	angular.module('app', []).controller('MainCtrl', function($scope){
-		window.initReplyController($scope);
-	});
-	angular.bootstrap(document, ['app']);
+		angular.module('app', []).controller('MainCtrl', function($scope){
+			window.initReplyController($scope);
+		});
+		angular.bootstrap(document, ['app']);
+		$('#switch').click(function() {
+			var status = $('[name="status"]').val();
+			status = status == 1 ? 0: 1;
+			$('[name="status"]').val(status);
+			var clas = status == 1? 'switch switchOn' : 'switch';
+			if (status == 1) {
+				$('#key').show();
+			} else {
+				$('#key').hide();
+			}
+			$('#switch').attr('class', clas);
+		});
 	});
 </script>
-{template 'common/footer'}
+
