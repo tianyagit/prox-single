@@ -1,13 +1,14 @@
-{template 'common/header-base'}
+{template 'common/header-base-new'}
 	{if $_W['role'] != 'clerk'}
-		<div class="navbar navbar-inverse navbar-static-top" role="navigation" style="position:static;">
-			<div class="container-fluid">
-				<ul class="nav navbar-nav">
+		<!-- <div class="navbar navbar-inverse navbar-static-top" role="navigation" style="position:static;"> -->
+			<!-- <div class="container-fluid"> -->
+				<!-- <ul class="nav navbar-nav">
 					<li><a href="./?refresh"><i class="fa fa-reply-all"></i>返回系统</a></li>
 					{php global $top_nav;}
 					{loop $top_nav $nav}
 						{if !empty($_W['isfounder']) || empty($_W['setting']['permurls']['sections']) || in_array($nav['name'], $_W['setting']['permurls']['sections'])}<li{if FRAME == $nav['name']} class="active"{/if}><a href="{php echo url('home/welcome/' . $nav['name']);}"><i class="{$nav['append_title']}"></i>{$nav['title']}</a></li>{/if}
 					{/loop}
+
 					<li {if $action == 'emulator'}class="active"{/if}>
 						<a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i> 模拟测试</a>
 					</li>
@@ -59,9 +60,76 @@
 							<li><a href="{url 'user/logout'}"><i class="fa fa-sign-out fa-fw"></i> 退出系统</a></li>
 						</ul>
 					</li>
-				</ul>
-			</div>
+				</ul> -->
+		<div class="head">
+			<nav class="navbar navbar-default" role="navigation">
+				<div class="container">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="#"><span class="color-default">微</span>擎 <span class="label label-versions">标准版</span></a>
+					</div>
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav navbar-left">
+							<li class="active">
+								<a href="#">公众号</a>
+							</li>
+							<li>
+								<a href="#">应用市场</a>
+							</li>
+							<li>
+								<a href="#">系统管理</a>
+							</li>
+							<li>
+								<a href="#">功能帮助</a>
+							</li>
+						</ul>
+
+						<ul class="nav navbar-nav navbar-right">
+							<li>
+								<a href="#">提醒</a>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">皮肤 <span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+									<li>
+										<a href="#">Action</a>
+									</li>
+									<li>
+										<a href="#">Another action</a>
+									</li>
+									<li>
+										<a href="#">Something else here</a>
+									</li>
+									<li class="divider"></li>
+									<li>
+										<a href="#">Separated link</a>
+									</li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">马德坤 <span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+									<li>
+										<a href="#">Action</a>
+									</li>
+									<li>
+										<a href="#">Another action</a>
+									</li>
+									<li>
+										<a href="#">Something else here</a>
+									</li>
+									<li class="divider"></li>
+									<li>
+										<a href="#">Separated link</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</nav>
 		</div>
+			<!-- </div> -->
+		<!-- </div> -->
 		{if empty($_COOKIE['check_setmeal']) && !empty($_W['account']['endtime']) && ($_W['account']['endtime'] - TIMESTAMP < (6*86400))}
 			<div class="upgrade-tips" id="setmeal-tips">
 				<a href="{php echo url('user/edit', array('uid' => $_W['account']['uid']));}" target="_blank">
@@ -100,9 +168,9 @@
 			</div>
 		</div>
 	{/if}
-	<div class="container-fluid">
+	<!-- <div class="container-fluid"> -->
 		{if defined('IN_MESSAGE')}
-		<div class="jumbotron clearfix alert alert-{$label}">
+		<div class="jumbotron clearfix alert alert-{$label} hidden">
 			<div class="row">
 				<div class="col-xs-12 col-sm-3 col-lg-2">
 					<i class="fa fa-5x fa-{if $label=='success'}check-circle{/if}{if $label=='danger'}times-circle{/if}{if $label=='info'}info-circle{/if}{if $label=='warning'}exclamation-triangle{/if}"></i>
@@ -127,93 +195,207 @@
 						<p>[<a href="javascript:history.go(-1);">点击这里返回上一页</a>] &nbsp; [<a href="./?refresh">首页</a>]</p>
 					{/if}
 				</div>
+			</div>    <!-- 新增断层 -->
+		</div>    <!-- 新增断层 -->
 		{else}
-		<div class="row">
-			{php $frames = empty($frames) ? $GLOBALS['frames'] : $frames; _calc_current_frames($frames);}
-			{if !empty($frames)}
-				<div class="col-xs-12 col-sm-3 col-lg-2 big-menu">
-					<div id="search-menu">
-						<input class="form-control input-lg" style="border-radius:0; font-size:14px; height:43px;" type="text" placeholder="输入菜单名称可快速查找">
+		<div class="main">
+			<div class="container">
+				<div class="panel panel-content">
+					<div class="content-head panel-heading">
+						<img src="./resource/images/9.png" alt="公众号头像" class="">
+						<span class="font-max">龙巅文玩</span>
+						<span><i class="label label-primary">订阅号</i> <i class="label label-primary">已认证</i></span>
+						<span class="color-red"><i class="fa fa-warning"></i>未接入微信公众号 </span>
+						<span class="color-default"><a href="">立即接入</a></span>
+						<span class="pull-right"><a href=""><i class="fa fa-refresh color-default"></i>切换公众号</a></span>
+						<span class="pull-right"><a href=""><i class="fa fa-cog"></i>公众号设置</a></span>
 					</div>
-					{if $GLOBALS['ext_type'] > 0}
-						<div class="btn-group">
-							<button class="btn {if $GLOBALS['ext_type'] == 1}btn-primary{else}btn-default{/if} ext-type" data-id="1">默认</button>
-							<button class="btn {if $GLOBALS['ext_type'] == 2}btn-primary{else}btn-default{/if} ext-type" data-id="2">系统</button>
-							<button class="btn {if $GLOBALS['ext_type'] == 3}btn-primary{else}btn-default{/if} ext-type" data-id="3">复合</button>
+					<div class="panel-body">
+						<div class="left-menu">
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									增强功能<span class="fa fa-cog pull-right"></span>
+								</div>
+								<ul class="list-group">
+									<li class="list-group-item active">
+										<a href="./index.php?c=platform&a=autoreply"><i class="fa fa-adjust"></i>自动回复</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>自定义菜单</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>二维码/转化链接</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>定时群发</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>素材/编辑器</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>微官网</a>
+									</li>
+								</ul>
+							</div>
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									应用模块
+								</div>
+								<ul class="list-group">
+									<li class="list-group-item">
+										<a href=""><img src="./resource/images/11.png" alt="">自动回复</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><img src="./resource/images/11.png" alt="">自定义菜单</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><img src="./resource/images/11.png" alt="">二维码/转化链接</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><img src="./resource/images/11.png" alt="">定时群发</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><img src="./resource/images/11.png" alt="">素材/编辑器</a>
+									</li>
+									<li class="list-group-item list-group-more">
+										<a href=""> <span class="label label-more">更多应用</span></a>
+									</li>
+								</ul>
+							</div>
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									粉丝
+								</div>
+								<ul class="list-group">
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>粉丝管理</a>
+									</li>
+								</ul>
+							</div>
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									统计
+								</div>
+								<ul class="list-group">
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>用户统计</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>应用使用统计</a>
+									</li>
+								</ul>
+							</div>
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									广告联盟
+								</div>
+								<ul class="list-group">
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>流量主</a>
+									</li>
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>广告主</a>
+									</li>
+								</ul>
+							</div>
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									账户
+								</div>
+								<ul class="list-group">
+									<li class="list-group-item">
+										<a href=""><i class="fa fa-adjust"></i>参数设置</a>
+									</li>
+								</ul>
+							</div>
 						</div>
-					{/if}
-					{loop $frames $k $frame}
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">{$frame['title']}</h4>
-							<a class="panel-collapse collapsed" data-toggle="collapse" href="#frame-{$k}">
-								<i class="fa fa-chevron-circle-down"></i>
-							</a>
-						</div>
-						<ul class="list-group collapse in" id="frame-{$k}">
-							{loop $frame['items'] $link}
-							{if empty($link['is_permission'])}
-								{if !empty($link['append'])}
-								<li class="list-group-item{$link['active']}" onclick="window.location.href = '{$link['url']}';" style="cursor:pointer; overflow:hidden;" kw="{$link['title']}">
-									<a class="pull-right" href="{$link['append']['url']}">{$link['append']['title']}</a>
-									{$link['title']}
-								</li>
-								{else}
-								<a class="list-group-item{$link['active']}" href="{$link['url']}" kw="{$link['title']}">{$link['title']}</a>
+						<!-- <div class="row"> -->
+						{php $frames = empty($frames) ? $GLOBALS['frames'] : $frames; _calc_current_frames($frames);}
+						{if !empty($frames)}
+							<div class="col-xs-12 col-sm-3 col-lg-2 big-menu hidden">
+								<!-- <div id="search-menu">
+									<input class="form-control input-lg" style="border-radius:0; font-size:14px; height:43px;" type="text" placeholder="输入菜单名称可快速查找">
+								</div> -->
+								{if $GLOBALS['ext_type'] > 0}
+									<div class="btn-group">
+										<button class="btn {if $GLOBALS['ext_type'] == 1}btn-primary{else}btn-default{/if} ext-type" data-id="1">默认</button>
+										<button class="btn {if $GLOBALS['ext_type'] == 2}btn-primary{else}btn-default{/if} ext-type" data-id="2">系统</button>
+										<button class="btn {if $GLOBALS['ext_type'] == 3}btn-primary{else}btn-default{/if} ext-type" data-id="3">复合</button>
+									</div>
 								{/if}
-							{/if}
-							{/loop}
-						</ul>
-					</div>
-					{/loop}
-					<script type="text/javascript">
-						require(['bootstrap'], function(){
-							$('.ext-type').click(function(){
-								var id = $(this).data('id');
-								util.cookie.del('ext_type');
-								util.cookie.set('ext_type', id, 8640000);
-								location.reload();
-								return false;
-							});
-
-							$('#search-menu input').keyup(function() {
-								var a = $(this).val();
-								$('.big-menu .list-group-item, .big-menu .panel-heading').hide();
-								$('.big-menu .list-group-item').each(function() {
-									$(this).css('border-left', '0');
-									if(a.length > 0 && $(this).attr('kw').indexOf(a) >= 0) {
-										$(this).parents(".panel").find('.panel-heading').show();
-										$(this).show().css('border-left', '3px #428bca double');
-									}
-								});
-								if(a.length == 0) {
-									$('.big-menu .list-group-item, .big-menu .panel-heading').show();
-								}
-							});
-						});
-					</script>
-				</div>
-				<div class="col-xs-12 col-sm-9 col-lg-10">
-					{if CRUMBS_NAV == 1}
-						{php global $module_types;global $module;global $ptr_title;}
-						<ol class="breadcrumb" style="padding:5px 0;">
-							<li><a href="{url 'home/welcome/ext'}"><i class="fa fa-cogs"></i> &nbsp; 扩展功能</a></li>
-							<li><a href="{url 'home/welcome/ext' array('m' => $module['name'])}">{$module_types[$module['type']]['title']}模块 - {$module['title']}</a></li>
-							<li class="active">{$ptr_title}</li>
-						</ol>
-					{elseif CRUMBS_NAV == 2}
-						{php global $module_types;global $module;global $ptr_title; global $site_urls; $m = $_GPC['m'];}
-						<ul class="nav nav-tabs">
-							<li><a href="{url 'platform/reply' array('m' => $m)}">管理{$module['title']}</a></li>
-							<li><a href="{url 'platform/reply/post' array('m' => $m)}"><i class="fa fa-plus"></i> 添加{$module['title']}</a></li>
-							{if !empty($site_urls)}
-								{loop $site_urls $site_url}
-									<li {if $_GPC['do'] == $site_url['do']} class="active"{/if}><a href="{$site_url['url']}"> {$site_url['title']}</a></li>
+								{loop $frames $k $frame}
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">{$frame['title']}</h4>
+										<a class="panel-collapse collapsed" data-toggle="collapse" href="#frame-{$k}">
+											<i class="fa fa-chevron-circle-down"></i>
+										</a>
+									</div>
+									<ul class="list-group collapse in" id="frame-{$k}">
+										{loop $frame['items'] $link}
+										{if empty($link['is_permission'])}
+											{if !empty($link['append'])}
+											<li class="list-group-item{$link['active']}" onclick="window.location.href = '{$link['url']}';" style="cursor:pointer; overflow:hidden;" kw="{$link['title']}">
+												<a class="pull-right" href="{$link['append']['url']}">{$link['append']['title']}</a>
+												{$link['title']}
+											</li>
+											{else}
+											<a class="list-group-item{$link['active']}" href="{$link['url']}" kw="{$link['title']}">{$link['title']}</a>
+											{/if}
+										{/if}
+										{/loop}
+									</ul>
+								</div>
 								{/loop}
-							{/if}
-						</ul>
-					{/if}
-			{else}
-				<div class="col-xs-12 col-sm-12 col-lg-12">
-			{/if}
+								<script type="text/javascript">
+									require(['bootstrap'], function(){
+										$('.ext-type').click(function(){
+											var id = $(this).data('id');
+											util.cookie.del('ext_type');
+											util.cookie.set('ext_type', id, 8640000);
+											location.reload();
+											return false;
+										});
+
+										$('#search-menu input').keyup(function() {
+											var a = $(this).val();
+											$('.big-menu .list-group-item, .big-menu .panel-heading').hide();
+											$('.big-menu .list-group-item').each(function() {
+												$(this).css('border-left', '0');
+												if(a.length > 0 && $(this).attr('kw').indexOf(a) >= 0) {
+													$(this).parents(".panel").find('.panel-heading').show();
+													$(this).show().css('border-left', '3px #428bca double');
+												}
+											});
+											if(a.length == 0) {
+												$('.big-menu .list-group-item, .big-menu .panel-heading').show();
+											}
+										});
+									});
+								</script>
+							</div>
+							<div class="col-xs-12 col-sm-9 col-lg-10 hidden">
+								{if CRUMBS_NAV == 1}
+									{php global $module_types;global $module;global $ptr_title;}
+									<ol class="breadcrumb" style="padding:5px 0;">
+										<li><a href="{url 'home/welcome/ext'}"><i class="fa fa-cogs"></i> &nbsp; 扩展功能</a></li>
+										<li><a href="{url 'home/welcome/ext' array('m' => $module['name'])}">{$module_types[$module['type']]['title']}模块 - {$module['title']}</a></li>
+										<li class="active">{$ptr_title}</li>
+									</ol>
+								{elseif CRUMBS_NAV == 2}
+									{php global $module_types;global $module;global $ptr_title; global $site_urls; $m = $_GPC['m'];}
+									<ul class="nav nav-tabs">
+										<li><a href="{url 'platform/reply' array('m' => $m)}">管理{$module['title']}</a></li>
+										<li><a href="{url 'platform/reply/post' array('m' => $m)}"><i class="fa fa-plus"></i> 添加{$module['title']}</a></li>
+										{if !empty($site_urls)}
+											{loop $site_urls $site_url}
+												<li {if $_GPC['do'] == $site_url['do']} class="active"{/if}><a href="{$site_url['url']}"> {$site_url['title']}</a></li>
+											{/loop}
+										{/if}
+									</ul>
+								{/if}
+							</div>    <!-- 新增断层 -->
+						{else}
+							<div class="col-xs-12 col-sm-12 col-lg-12 hidden">
+						{/if}
 		{/if}
