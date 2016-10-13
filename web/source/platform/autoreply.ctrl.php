@@ -6,12 +6,20 @@
 
 load()->model('reply');
 load()->model('module');
-$dos = array('display', 'post', 'delete');
+$dos = array('display', 'post', 'delete', 'change_status');
 $do = in_array($do, $dos) ? $do : 'display';
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
 $_W['account']['modules'] = uni_modules();
 if(empty($m)) {
 	message('错误访问.');
+}
+if ($do == 'change_status') {
+	$status = $_GPC['__input']['status'];
+	$type = $_GPC['__input']['type'];
+	$setting = uni_setting_load('default_message', $_W['uniacid']);
+	$setting = $setting['default_message'];
+	$setting[$type]['type'] = $status;
+	$result = uni_setting_save('default_message', $setting);
 }
 if ($m == 'special') {
 	$mtypes = array();
@@ -93,7 +101,6 @@ if($do == 'display') {
 	if ($m == 'special') {
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'];
-		$ds = array();
 	}
 	if ($m == 'system') {
 		if (checksubmit('submit')) {
