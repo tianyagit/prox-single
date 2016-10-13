@@ -105,7 +105,6 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 					$this.modalobj.find('#material-list-pager').html(data.pager);
 					$this.modalobj.find('#material-list-pager .pagination a').click(function(){
 						$this.localPage(type, $(this).attr('page'));
-						return false;
 					});
 				} else {
 					$content.html('<div class="info text-center"><i class="fa fa-info-circle fa-lg"></i> 暂无数据</div>');
