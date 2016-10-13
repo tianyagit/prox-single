@@ -16,7 +16,7 @@
 				<label class="control-label">是否开启</label>
 				<div class="form-controls">
 					<label>
-						<input name="status" type="hidden" class="form-control" type="checkbox" value="{if !empty($setting[$type])}1{/if}">
+						<input name="status" type="text" style="display:none" class="form-control"  ng-model="status">
 						<div id="switch" ng-click="change('{$type}', status)" ng-class="switch_class"></div>
 					</label>
 				</div>

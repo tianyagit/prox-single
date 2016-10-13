@@ -221,7 +221,7 @@ if($do == 'post') {
 		$setting = $setting['default_message'];
 		if (checksubmit('submit')) {
 			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply_keyword']), "\""));
-			$status = intval($_GPC['status']);
+			$status = $_GPC['status'];
 			if (empty($status)) {
 				$setting[$type] = array('type' => '');
 				uni_setting_save('default_message', $setting);
