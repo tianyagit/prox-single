@@ -51,11 +51,11 @@ class AutoReplyModule extends WeModule {
 		$ifEmpty = 1;
 		$reply = '';
 		foreach ($this->modules as $key => $value) {
-			if(trim($_GPC['reply_'.$value]) != '') {
+			if(trim($_GPC['reply']['reply_'.$value]) != '') {
 				$ifEmpty = 0;
 			}
-			if( ($value == 'video' || $value == 'wxcard') && !empty($_GPC['reply_'.$value])) {
-				$reply = ltrim($_GPC['reply_'.$value], '{');
+			if( ($value == 'video' || $value == 'wxcard') && !empty($_GPC['reply']['reply_'.$value])) {
+				$reply = ltrim($_GPC['reply']['reply_'.$value], '{');
 				$reply = rtrim($reply, '}');
 				$reply = explode('},{', $reply);
 				foreach ($reply as &$val) {
@@ -63,7 +63,7 @@ class AutoReplyModule extends WeModule {
 				}
 				$this->replies[$value] = $reply;
 			}else {
-				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply_'.$value]);
+				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply']['reply_'.$value]);
 			}
 		}
 		if($ifEmpty) {

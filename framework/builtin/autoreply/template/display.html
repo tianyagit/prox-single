@@ -1,4 +1,51 @@
-<div class="form-group">
+<div class="panel we7-panel">
+	<div class="panel-heading">触发后回复内容</div>
+	<div class="panel-body we7-padding">
+	<input type="hidden" name="reply[reply_basic]" value="">
+	<input type="hidden" name="reply[reply_news]" value="">
+	<input type="hidden" name="reply[reply_image]" value="">
+	<input type="hidden" name="reply[reply_music]" value="">
+	<input type="hidden" name="reply[reply_voice]" value="">
+	<input type="hidden" name="reply[reply_video]" value="">
+	<input type="hidden" name="reply[reply_wxcard]" value="">
+	<input type="hidden" name="reply[reply_keyword]" value="">
+		<ul class="keywords-list">
+		</ul>
+		<div class="we7-select-msg we7-padding-vertical-max">
+			<ul class="tab-navs">
+				<li>继续添加：</li>
+				<li class="tab-nav tab-appmsg active">
+					<a href="javascript:void(0);" onclick="select_mediaid('news');">&nbsp;<i class="icon-msg-sender"></i><span class="msg-tab-title">图文</span></a>
+				</li>
+
+				<li class="tab-nav tab-text">
+					<a href="javascript:void(0);" onclick="select_mediaid('basic');">&nbsp;<i class="icon-msg-sender"></i><span class="msg-tab-title">文字</span></a>
+				</li>
+
+				<li class="tab-nav tab-img ">
+					<a href="javascript:void(0);" onclick="select_mediaid('image');">&nbsp;<i class="icon-msg-sender"></i><span class="msg-tab-title">图片</span></a>
+				</li>
+				<li class="tab-nav tab-audio">
+					<a href="javascript:void(0);" onclick="select_mediaid('music');">&nbsp;<i class="icon-msg-sender"></i><span class="msg-tab-title">音乐</span></a>
+				</li>
+				<li class="tab-nav tab-audio">
+					<a href="javascript:void(0);" onclick="select_mediaid('voice');">&nbsp;<i class="icon-msg-sender"></i><span class="msg-tab-title">语音</span></a>
+				</li>
+				<li class="tab-nav tab-video">
+					<a href="javascript:void(0);" onclick="select_mediaid('video');">&nbsp;<i class="icon-msg-sender "></i><span class="msg-tab-title">视频</span></a>
+				</li>
+				<li class="tab-nav tab-cardmsg">
+					<a href="javascript:void(0);" onclick="select_mediaid('wxcard');">&nbsp;<i class="icon-msg-sender "></i><span class="msg-tab-title">卡劵</span></a>
+				</li>
+				<li class="tab-nav tab-cardmsg">
+					<a href="javascript:void(0);" onclick="select_mediaid('keyword');">&nbsp;<i class="icon-msg-sender "></i><span class="msg-tab-title">触发关键字</span></a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<!-- <div class="form-group">
 	<p>触发后回复内容</p>
 	<div class="reply-content">
 		<div style="width:100%;" class="tab-pane" id="trigger_basic">
@@ -38,11 +85,11 @@
 			<li data-type="keyword"><a href="javascript:;" onclick="select_mediaid('keyword');">触发关键字</a></li>
 		</ul>
 	</div>
-</div>
+</div> -->
 <script>
 	//删除已选素材
 	var delmedia = function(type, ele) {
-		var oldVal = $(':hidden[name="reply_'+type+'"]').val();
+		var oldVal = $(':hidden[name="reply[reply_'+type+']"]').val();
 		var newVal;
 		var media = $(ele).attr('data-media');
 		switch(type) {
@@ -54,7 +101,7 @@
 						newVal = _.without(newVal, middleVal[key]);
 					}
 				});
-				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(newVal);
 				break;
 			case 'image':
 				var middleVal = oldVal.split(',');
@@ -64,13 +111,20 @@
 						newVal = _.without(newVal, middleVal[key]);
 					}
 				});
-				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(newVal);
 				break;
 			case 'news':
-				// oldVal = oldVal.split(',');
-				// index = _.indexOf(oldVal, media);
-				// oldVal.splice(index, 1);
-				// $(':hidden[name="reply_'+type+'"]').val(oldVal);
+				var middleVal = oldVal.slice(1, -1).split('},{');
+				newVal = angular.copy(middleVal);
+				angular.forEach(middleVal, function(val, key){
+					if(val.match('"mediaid":"'+media)) {
+						newVal = _.without(newVal, middleVal[key]);
+					}
+				});
+				angular.forEach(newVal, function(val, key) {
+					newVal[key] = '{'+val+'}';
+				});
+				$(':hidden[name="reply[reply_'+type+']"]').val(newVal);
 				break;
 			case 'music':
 				var middleVal = oldVal.slice(1, -1).split('},{');
@@ -83,7 +137,7 @@
 				angular.forEach(newVal, function(val, key) {
 					newVal[key] = '{'+val+'}';
 				});
-				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(newVal);
 				break;
 			case 'voice':
 				var middleVal = oldVal.split(',');
@@ -93,7 +147,7 @@
 						newVal = _.without(newVal, middleVal[key]);
 					}
 				});
-				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(newVal);
 				break;
 			case 'video':
 				var middleVal = oldVal.slice(1, -1).split('},{');
@@ -106,7 +160,7 @@
 				angular.forEach(newVal, function(val, key) {
 					newVal[key] = '{'+val+'}';
 				});
-				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(newVal);
 				break;
 			case 'wxcard':
 				var middleVal = oldVal.slice(1, -1).split('},{');
@@ -119,7 +173,7 @@
 				angular.forEach(newVal, function(val, key) {
 					newVal[key] = '{'+val+'}';
 				});
-				$(':hidden[name="reply_'+type+'"]').val(newVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(newVal);
 				break;
 			case 'keyword':
 				oldVal = oldVal.split(',');
@@ -128,7 +182,7 @@
 				$(':hidden[name="reply_'+type+'"]').val(oldVal);
 				break;
 		}
-		$(ele).parent('.del-'+type+'-media').remove();
+		$(ele).parent().parent('.del-'+type+'-media').parent('li').remove();
 	};
 
 	window.select_mediaid = function(type){
@@ -147,33 +201,51 @@
 		};
 		util.material(function(material){
 			var replyVal = [];
-			$(':hidden[name="reply_'+type+'"]').val() == '' ? '' : replyVal.push($(':hidden[name="reply_'+type+'"]').val());
+			$(':hidden[name="reply[reply_'+type+']"]').val() == '' ? '' : replyVal.push($(':hidden[name="reply[reply_'+type+']"]').val());
 			if(type == 'basic') {
 				if($.trim(material.content).length == 0) {
 					return false;
 				}
 				replyVal.push(angular.toJson(material.content));
-				$(':hidden[name="reply_'+type+'"]').val(replyVal);
-				$('#trigger_'+type).append(
-					'<div class="del-'+type+'-media">'+material.content+
-					'	<a href="javascript:;" data-media="'+material.content+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-					'</div>'
+				$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
+				$('.keywords-list').append(
+					'<li>'+
+					'<div class="del-'+type+'-media">'+
+					'	<div class="desc">'+
+					'		<div class="media-content">'+material.content+'</div>'+
+					'	</div>'+
+					'	<div class="opr">'+
+					'		<a href="javascript:;" data-media="'+material.content+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+					'	</div>'+
+					'</div>'+
+					'</li>'
 				);
 			}else if(type == 'keyword') {
 				if($.trim(material.id).length == 0) {
 					return false;
 				}
 				replyVal.push(angular.toJson(material.id));
-				$(':hidden[name="reply_'+type+'"]').val(replyVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 				var keywords = [];
 				for(var i = 0; i < material.child_items.length; i++) {
 					keywords += '&nbsp;&nbsp;' + material.child_items[i].content;
 				}
-				$('#trigger_'+type).append(
-					'<div class="del-'+type+'-media">'+material.name+
-					'	<span>'+keywords+'</span>'+
-					'	<a href="javascript:;" data-media="'+material.name+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-					'</div>'
+				$('.keywords-list').append(
+					'<li>'+
+					'<div class="del-'+type+'-media">'+
+					'	<div class="desc">'+
+					'		<div class="media-content">'+
+					'				<a class="title-wrp" href="javascript:;">'+
+					'					<span class="title">[关键字]'+material.name+'</span>'+
+					'				</a>'+
+					'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+keywords+'</a></p>'+
+					'		</div>'+
+					'	</div>'+
+					'	<div class="opr">'+
+					'		<a href="javascript:;" data-media="'+material.name+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+					'	</div>'+
+					'</div>'+
+					'</li>'
 				);
 			}else {
 				if(type != 'music' && $.trim(material.media_id).length == 0) {
@@ -182,31 +254,86 @@
 				switch(type) {
 					case 'image':
 						replyVal.push(angular.toJson(material.media_id));
-						$('#trigger_'+type).append(
+
+						$('.keywords-list').append(
+							'<li>'+
 							'<div class="del-'+type+'-media">'+
-							'	<span>&nbsp;mediaid：</span>'+material.media_id+
-							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" style="background-image:'+material.url+';"></span>'+
+							'					<span class="title">[图片]</span>'+
+							'				</a>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+material.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 						break;
 					case 'news':
-						replyVal.push(angular.toJson(material.media_id));
-						$('#trigger_'+type).append(
+						angular.forEach(material.items, function(newsV, newsK){
+							replyVal.push(angular.toJson({
+								title: newsV.title,
+								author: newsV.author,
+								description: newsV.digest,
+								thumb: newsV.thumb_url,
+								content: newsV.content,
+								url: newsV.content_source_url,
+								createtime: material.createtime,
+								displayorder: 0,
+								incontent: 0,
+								parent_id: 0,
+								mediaid: material.media_id,
+							}));	
+						});
+						$('.keywords-list').append(
+							'<li>'+
 							'<div class="del-'+type+'-media">'+
-							// '	<span>&nbsp;标题：</span>'+material.tag.title+
-							// '	<span>&nbsp;描述：</span>'+(material.tag.description ? material.tag.description : '--')+
-							'	<span>&nbsp;mediaid：</span>'+material.media_id+
-							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					<span class="icon cover" style="background-image:url('+material.items[0].thumb_url+');"></span>'+
+							'					<span class="title">[图文消息]'+material.items[0].title+'</span>'+
+							'				</a>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+material.items[0].digest+'</a></p>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+material.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 						break;
 					case 'voice':
 						replyVal.push(angular.toJson(material.media_id));
-						$('#trigger_'+type).append(
+						$('.keywords-list').append(
+							'<li>'+
 							'<div class="del-'+type+'-media">'+
-							'	<span>&nbsp;mediaid：</span>'+material.media_id+
-							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="audio-msg">'+
+							'				<div class="icon-audio-wrp">'+
+							'					<span class="icon-audio-msg"></span>'+
+							'				</div>'+
+							'				<div class="audio-content">'+
+							'					<div class="audio-title">[语音]'+material.filename+'</div>'+
+							'				</div>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+material.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 						break;
 					case 'video':
@@ -216,13 +343,25 @@
 							description: material.tag.description
 						}));
 
-						$('#trigger_'+type).append(
+						$('.keywords-list').append(
+							'<li>'+
 							'<div class="del-'+type+'-media">'+
-							'	<span>&nbsp;标题：</span>'+material.tag.title+
-							'	<span>&nbsp;描述：</span>'+(material.tag.description ? material.tag.description : '--')+
-							'	<span>&nbsp;mediaid：</span>'+material.media_id+
-							'	<a href="javascript:;" data-media="'+material.media_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" data-contenturl="'+material.tag.down_url+'"></span>'+
+							'					<span class="title">[视频]'+material.tag.title+'</span>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(material.tag.description ? material.tag.description : '--')+'</a></p>'+
+							'				</a>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+material.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 						break;
 					case 'music':
@@ -232,13 +371,25 @@
 							hqurl: material.HQUrl,
 							description: material.description,
 						}));
-						$('#trigger_'+type).append(
+						$('.keywords-list').append(
+							'<li>'+
 							'<div class="del-'+type+'-media">'+
-							// '	<span>&nbsp;标题：</span>'+material.tag.title+
-							// '	<span>&nbsp;描述：</span>'+(material.tag.description ? material.tag.description : '--')+
-							'	<span>&nbsp;音乐url：</span>'+material.url+
-							'	<a href="javascript:;" data-media="'+material.url+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" style="background-image:'+material.url+';"></span>'+
+							'					<span class="title">[音乐]'+material.title+'</span>'+
+							'				</a>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+material.description+'</a></p>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+material.url+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 						break;
 					case 'wxcard':
@@ -251,18 +402,29 @@
 							success: '成功',
 							error: '失败'
 						}));
-						$('#trigger_'+type).append(
+						$('.keywords-list').append(
+							'<li>'+
 							'<div class="del-'+type+'-media">'+
-							'	<span>&nbsp;标题：</span>'+material.title+
-							'	<span>&nbsp;描述：</span>'+(material.brand_name ? material.brand_name : '--')+
-							'	<span>&nbsp;mediaid：</span>'+material.card_id+
-							'	<span>&nbsp;cid：</span>'+material.id+
-							'	<a href="javascript:;" data-media="'+material.card_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" style="background-image:url('+material.logo_url+');"></span>'+
+							'					<span class="title">[卡券]'+material.title+'</span>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(material.brand_name ? material.brand_name : '--')+'</a></p>'+
+							'				</a>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+material.card_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 						break;
 				}
-				$(':hidden[name="reply_'+type+'"]').val(replyVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 			}
 		}, option);
 	};
@@ -277,47 +439,110 @@
 				case 'basic':
 					angular.forEach(val, function(basicVal, basicKey) {
 						replyVal.push(angular.toJson(basicVal.content));
-						$('#trigger_'+type).append(
-							'<div class="del-'+type+'-media">'+basicVal.content+
-							'	<a href="javascript:;" data-media="'+basicVal.content+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+						$('.keywords-list').append(
+							'<li>'+
+							'<div class="del-'+type+'-media">'+
+							'	<div class="desc">'+
+							'		<div class="media-content">'+basicVal.content+'</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+basicVal.content+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 					});
-					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;
 				case 'news':
 					angular.forEach(val, function(newsVal, newsKey) {
-						replyVal.push(angular.toJson(newsVal.rid));
-						$('#trigger_'+type).append(
-							'<div class="del-'+type+'-media">'+newsVal.id+
-							// '	<img src="'+val.thumb+'">'+
-							'	<a href="javascript:;" data-media="'+newsVal.id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+						replyVal.push(angular.toJson({
+							title: newsVal.title,
+							author: newsVal.author,
+							description: newsVal.digest,
+							thumb: newsVal.thumb,
+							content: newsVal.content,
+							url: newsVal.url,
+							createtime: newsVal.createtime,
+							displayorder: newsVal.displayorder ? newsVal.displayorder : 0,
+							incontent: newsVal.incontent ? newsVal.incontent : 0,
+							parent_id: newsVal.parent_id ? newsVal.parent_id : 0,
+							mediaid: newsVal.id,
+						}));
+						$('.keywords-list').append(
+							'<li>'+
+							'<div class="del-'+type+'-media">'+
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					<span class="icon cover" style="background-image:url(../attachment/'+newsVal.thumb+');"></span>'+
+							'					<span class="title">[图文消息]'+newsVal.title+'</span>'+
+							'				</a>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+newsVal.description+'</a></p>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+newsVal.id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 					});
-					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;
 				case 'image':
 					angular.forEach(val, function(imageVal, imageKey) {
 						replyVal.push(angular.toJson(imageVal.mediaid));
-						$('#trigger_'+type).append(
-							'<div class="del-'+type+'-media">'+imageVal.mediaid+
-							'	<a href="javascript:;" data-media="'+imageVal.mediaid+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+						$('.keywords-list').append(
+							'<li>'+
+							'<div class="del-'+type+'-media">'+
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" style="background-image:'+imageVal.url+';"></span>'+
+							'					<span class="title">[图片]</span>'+
+							'				</a>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+imageVal.mediaid+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 					});
-					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;
 				case 'voice':
 					angular.forEach(val, function(voiceVal, voiceKey) {
 						replyVal.push(angular.toJson(voiceVal.mediaid));
-						$('#trigger_'+type).append(
-							'<div class="del-'+type+'-media">'+voiceVal.mediaid+
-							'	<a href="javascript:;" data-media="'+voiceVal.mediaid+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+						$('.keywords-list').append(
+							'<li>'+
+							'<div class="del-'+type+'-media">'+
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="audio-msg">'+
+							'				<div class="icon-audio-wrp">'+
+							'					<span class="icon-audio-msg"></span>'+
+							'				</div>'+
+							'				<div class="audio-content">'+
+							'					<div class="audio-title">[语音]'+voiceVal.title+'</div>'+
+							'				</div>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+voiceVal.mediaid+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 					});
-					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;	
 				case 'video':
 					angular.forEach(val, function(videoVal, videoKey) {
@@ -326,16 +551,28 @@
 							title: videoVal.title,
 							description: videoVal.description
 						}));
-						$('#trigger_'+type).append(
+						$('.keywords-list').append(
+							'<li>'+
 							'<div class="del-'+type+'-media">'+
-							'	<span>&nbsp;标题：</span>'+ (videoVal.title ? videoVal.title : '--') +
-							'	<span>&nbsp;描述：</span>'+ (videoVal.description ? videoVal.description : '--')+
-							'	<span>&nbsp;mediaid：</span>'+videoVal.mediaid+
-							'	<a href="javascript:;" data-media="'+videoVal.mediaid+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" data-contenturl="'+material.tag.down_url+'"></span>'+
+							'					<span class="title">[视频]'+(videoVal.title ? videoVal.title : '--')+'</span>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(videoVal.description ? videoVal.description : '--')+'</a></p>'+
+							'				</a>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+videoVal.mediaid+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 					});
-					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;
 				case 'wxcard':
 					angular.forEach(val, function(wxcardVal, wxcardKey) {
@@ -348,17 +585,28 @@
 							success: wxcardVal.success,
 							error: wxcardVal.error
 						}));
-						$('#trigger_'+type).append(
+						$('.keywords-list').append(
+							'<li>'+
 							'<div class="del-'+type+'-media">'+
-							'	<span>&nbsp;标题：</span>'+ (wxcardVal.title ? wxcardVal.title : '--') +
-							'	<span>&nbsp;描述：</span>'+ (wxcardVal.brand_name ? wxcardVal.brand_name : '--')+
-							'	<span>&nbsp;mediaid：</span>'+wxcardVal.card_id+
-							'	<span>&nbsp;cid：</span>'+wxcardVal.cid+
-							'	<a href="javascript:;" data-media="'+wxcardVal.card_id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" style="background-image:url('+wxcardVal.logo_url+');"></span>'+
+							'					<span class="title">[卡券]'+(wxcardVal.title ? wxcardVal.title : '--')+'</span>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(wxcardVal.brand_name ? wxcardVal.brand_name : '--')+'</a></p>'+
+							'				</a>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+wxcardVal.card_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 					});
-					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;
 				case 'keyword':
 					angular.forEach(val, function(keywordVal, keywordKey) {
@@ -381,13 +629,28 @@
 							hqurl: musicVal.hqurl,
 							description: musicVal.description,
 						}));
-						$('#trigger_'+type).append(
-							'<div class="del-'+type+'-media"><span>&nbsp;音乐url：</span>'+musicVal.url+
-							'	<a href="javascript:;" data-media="'+musicVal.url+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+						$('.keywords-list').append(
+							'<li>'+
+							'<div class="del-'+type+'-media">'+
+							'	<div class="desc">'+
+							'		<div class="media-content">'+
+							'			<div class="appmsgSendedItem">'+
+							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" style="background-image:'+musicVal.url+';"></span>'+
+							'					<span class="title">[音乐]'+musicVal.title+'</span>'+
+							'				</a>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+musicVal.description+'</a></p>'+
+							'			</div>'+
+							'		</div>'+
+							'	</div>'+
+							'	<div class="opr">'+
+							'		<a href="javascript:;" data-media="'+musicVal.url+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'	</div>'+
+							'</div>'+
+							'</li>'
 						);
 					});
-					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;
 			}
 		});
@@ -398,12 +661,12 @@
 		var modules = ['basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword'];
 		if($scope.reply.entry.module == 'auto') {
 			angular.forEach(modules, function(val, key){
-				if($(':hidden[name="reply_'+val+'"]').val().trim() != '') {
+				if($(':hidden[name="reply[reply_'+val+']"]').val().trim() != '') {
 					allEmpty = false;
 				};
 			});
 		}else {
-			if($(':hidden[name="reply_'+$scope.reply.entry.module+'"]').val().trim() != ''){
+			if($(':hidden[name="reply[reply_'+$scope.reply.entry.module+']"]').val().trim() != ''){
 				allEmpty = false;
 			};
 		}
