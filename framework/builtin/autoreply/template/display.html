@@ -122,10 +122,10 @@
 				$(':hidden[name="reply_'+type+'"]').val(newVal);
 				break;
 			case 'keyword':
-				// oldVal = oldVal.split(',');
-				// index = _.indexOf(oldVal, media);
-				// oldVal.splice(index, 1);
-				// $(':hidden[name="reply_'+type+'"]').val(oldVal);
+				oldVal = oldVal.split(',');
+				index = _.indexOf(oldVal, media);
+				oldVal.splice(index, 1);
+				$(':hidden[name="reply_'+type+'"]').val(oldVal);
 				break;
 		}
 		$(ele).parent('.del-'+type+'-media').remove();
@@ -361,28 +361,29 @@
 					$(':hidden[name="reply_'+type+'"]').val(replyVal);
 					break;
 				case 'keyword':
-					//现无场景，暂屏蔽，有用武之地再开放，逻辑如下，格式有待调整。
-					// angular.forEach(val, function(keywordVal, keywordKey) {
-					// 	replyVal.push(angular.toJson(keywordVal.id));
-					// 	var keywords = [];
-					// 	for(var i = 0; i < keywordVal.child_items.length; i++) {
-					// 		keywords += '&nbsp;&nbsp;' + keywordVal.child_items[i].content;
-					// 	}
-					// 	$('#trigger_'+type).append(
-					// 		'<div class="del-'+type+'-media">'+keywordVal.name+
-					// 		'	<span>'+keywords+'</span>'+
-					// 		'	<a href="javascript:;" data-media="'+keywordVal.name+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-					// 		'</div>'
-					// 	);
-					// });
-					// $(':hidden[name="reply_'+type+'"]').val(replyVal);
+					angular.forEach(val, function(keywordVal, keywordKey) {
+						replyVal.push(angular.toJson(keywordVal.rid));
+						var keywords = '&nbsp;&nbsp;' + keywordVal.content;
+						$('#trigger_'+type).append(
+							'<div class="del-'+type+'-media">'+keywordVal.name+
+							'	<span>'+keywords+'</span>'+
+							'	<a href="javascript:;" data-media="'+keywordVal.name+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'</div>'
+						);
+					});
+					$(':hidden[name="reply_'+type+'"]').val(replyVal);
 					break;
 				case 'music':
 					angular.forEach(val, function(musicVal, musicKey) {
-						replyVal.push(angular.toJson(musicVal.rid));
+						replyVal.push(angular.toJson({
+							title: musicVal.title,
+							url: musicVal.url,
+							hqurl: musicVal.hqurl,
+							description: musicVal.description,
+						}));
 						$('#trigger_'+type).append(
-							'<div class="del-'+type+'-media">'+musicVal.id+
-							'	<a href="javascript:;" data-media="'+musicVal.id+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'<div class="del-'+type+'-media"><span>&nbsp;音乐url：</span>'+musicVal.url+
+							'	<a href="javascript:;" data-media="'+musicVal.url+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'</div>'
 						);
 					});

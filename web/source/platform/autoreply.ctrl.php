@@ -8,9 +8,24 @@ load()->model('reply');
 load()->model('module');
 $dos = array('display', 'post', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
-$m = $_GPC['m'];
+$m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
+$_W['account']['modules'] = uni_modules();
 if(empty($m)) {
 	message('错误访问.');
+}
+if ($m == 'special') {
+	$mtypes = array();
+	$mtypes['image'] = '图片消息';
+	$mtypes['voice'] = '语音消息';
+	$mtypes['video'] = '视频消息';
+	$mtypes['shortvideo'] = '小视频消息';
+	$mtypes['location'] = '位置消息';
+	$mtypes['trace'] = '上报地理位置';
+	$mtypes['link'] = '链接消息';
+	$mtypes['merchant_order'] = '微小店消息';
+	$mtypes['ShakearoundUserShake'] = '摇一摇:开始摇一摇消息';
+	$mtypes['ShakearoundLotteryBind'] = '摇一摇:摇到了红包消息';
+	$mtypes['WifiConnected'] = 'Wifi连接成功消息';
 }
 // uni_user_permission_check('platform_reply_' . $m, true, 'reply');
 // $module = module_fetch($m);
@@ -36,49 +51,73 @@ $_W['page']['title'] = $module['title'];
 // }
 
 if(in_array($m, array('custom'))) {
-	$site = WeUtility::createModuleSite($m);
+	$site = WeUtility::createModuleSite('autoreply');
 	$site_urls = $site->getTabUrls();
 }
 
 if($do == 'display') {
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 20;
-	$cids = $parentcates = $list =  array();
-
-	$condition = 'uniacid = :uniacid AND module in ("basic", "news", "music", "images", "voice", "video", "wxcard", "auto")';
-	$params = array();
-	$params[':uniacid'] = $_W['uniacid'];
-	$status = isset($_GPC['status']) ? intval($_GPC['status']) : -1;
-	if(isset($_GPC['module']) && !empty($_GPC['module'])) {
-		$condition .= " AND `module` = :module";
-		$params[':module'] = $_GPC['module'];
-	}
-	if ($status != -1){
-		$condition .= " AND status = '{$status}'";
-	}
-	if(isset($_GPC['keyword'])) {
-		$condition .= ' AND `name` LIKE :keyword';
-		$params[':keyword'] = "%{$_GPC['keyword']}%";
-	}
-	$replies = reply_search($condition, $params, $pindex, $psize, $total);
-	$pager = pagination($total, $pindex, $psize);
-	if (!empty($replies)) {
-		foreach($replies as &$item) {
-			$condition = '`rid`=:rid';
-			$params = array();
-			$params[':rid'] = $item['id'];
-			$item['keywords'] = reply_keywords_search($condition, $params);
-			$entries = module_entries($item['module'], array('rule'),$item['id']);
-			if(!empty($entries)) {
-				$item['options'] = $entries['rule'];
+	if ($m == 'keyword') {
+		$pindex = max(1, intval($_GPC['page']));
+		$psize = 20;
+		$cids = $parentcates = $list =  array();
+		$condition = 'uniacid = :uniacid AND module in ("basic", "news", "music", "images", "voice", "video", "wxcard", "auto")';
+		$params = array();
+		$params[':uniacid'] = $_W['uniacid'];
+		$status = isset($_GPC['status']) ? intval($_GPC['status']) : -1;
+		if(isset($_GPC['module']) && !empty($_GPC['module'])) {
+			$condition .= " AND `module` = :module";
+			$params[':module'] = $_GPC['module'];
+		}
+		if ($status != -1){
+			$condition .= " AND status = '{$status}'";
+		}
+		if(isset($_GPC['keyword'])) {
+			$condition .= ' AND `name` LIKE :keyword';
+			$params[':keyword'] = "%{$_GPC['keyword']}%";
+		}
+		$replies = reply_search($condition, $params, $pindex, $psize, $total);
+		$pager = pagination($total, $pindex, $psize);
+		if (!empty($replies)) {
+			foreach($replies as &$item) {
+				$condition = '`rid`=:rid';
+				$params = array();
+				$params[':rid'] = $item['id'];
+				$item['keywords'] = reply_keywords_search($condition, $params);
+				$entries = module_entries($item['module'], array('rule'),$item['id']);
+				if(!empty($entries)) {
+					$item['options'] = $entries['rule'];
+				}
 			}
 		}
+	}
+	if ($m == 'special') {
+		$setting = uni_setting_load('default_message', $_W['uniacid']);
+		$setting = $setting['default_message'];
+		$ds = array();
+	}
+	if ($m == 'system') {
+		if (checksubmit('submit')) {
+			$settings = array(
+				'default' => trim($_GPC['default']),
+				'welcome' => trim($_GPC['welcome']),
+			);
+			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
+			if(!empty($item)){
+				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
+			}else{
+				$settings['uniacid'] = $_W['uniacid'];
+				pdo_insert('uni_settings', $settings);
+			}
+			cache_delete("unisetting:{$_W['uniacid']}");
+			message('系统回复更新成功！', url('platform/autoreply/dispaly', array('m' => 'system')));
+		}
+		$setting = uni_setting($_W['uniacid'], array('default', 'welcome'));
 	}
 	template('platform/auto-reply');
 }
 
 if($do == 'post') {
-	if($m == 'keyword') {
+	if ($m == 'keyword') {
 		$module['title'] = '关键字';
 		if ($_W['isajax'] && $_W['ispost']) {
 			/*检测规则是否已经存在*/
@@ -111,7 +150,6 @@ if($do == 'post') {
 				message('必须填写回复规则名称.');
 			}
 			$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
-
 			if(empty($keywords)) {
 				message('必须填写有效的触发关键字.');
 			}
@@ -122,7 +160,7 @@ if($do == 'post') {
 				'status' => intval($_GPC['status']),
 				'displayorder' => intval($_GPC['displayorder_rule']),
 			);
-			
+
 			if($_GPC['istop'] == 1) {
 				$rule['displayorder'] = 255;
 			} else {
@@ -133,7 +171,6 @@ if($do == 'post') {
 				message('抱歉，模块不存在请重新选择其它模块！');
 			}
 			$msg = $module->fieldsFormValidate();
-
 			if(is_string($msg) && trim($msg) != '') {
 				message($msg);
 			}
@@ -150,7 +187,6 @@ if($do == 'post') {
 				$pars[':rid'] = $rid;
 				$pars[':uniacid'] = $_W['uniacid'];
 				pdo_query($sql, $pars);
-		
 				$rowtpl = array(
 					'rid' => $rid,
 					'uniacid' => $_W['uniacid'],
@@ -172,6 +208,31 @@ if($do == 'post') {
 			}
 		}
 		template('platform/auto-reply-post');
+	} elseif ($m == 'special') {
+		$type = trim($_GPC['type']);
+		$setting = uni_setting_load('default_message', $_W['uniacid']);
+		$setting = $setting['default_message'];
+		if (checksubmit('submit')) {
+			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply_keyword']), "\""));
+			$status = intval($_GPC['status']);
+			if (empty($status)) {
+				$setting[$type] = array('type' => '');
+				uni_setting_save('default_message', $setting);
+				message('关闭成功', url('platform/autoreply', array('m' => 'special')));
+			}
+			$autoreply_module = WeUtility::createModule('autoreply');
+			$result = $autoreply_module->fieldsFormValidate();
+			if (is_error($result)) {
+				message($result['message'], '', 'info');
+			}
+			$result = $autoreply_module->fieldsFormSubmit($rule_id);
+			$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
+			$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
+			uni_setting_save('default_message', $setting);
+			message('发布成功', url('platform/autoreply', array('m' => 'special')));
+		}
+		$rule_id = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting[$type]['keyword']), 'rid');
+		template('platform/auto-specialreply-post');
 	}
 }
 

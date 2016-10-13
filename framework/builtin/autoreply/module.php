@@ -15,7 +15,8 @@ class AutoReplyModule extends WeModule {
 			'music' => 'music_reply',
 			'voice' => 'voice_reply',
 			'video' => 'video_reply',
-			'wxcard' => 'wxcard_reply'
+			'wxcard' => 'wxcard_reply',
+			'keyword' => 'basic_reply',
 		);
 	private $replies = array();
 	
@@ -27,11 +28,18 @@ class AutoReplyModule extends WeModule {
 		if(!empty($isexists)) {
 			$module = $isexists['module'];
 			$module = $module == 'images' ? 'image' : $module;
-			if(empty($module) || !in_array($module, array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword', 'auto'))) {
-				return '模块错误，请联系管理员。';
-			}
+//			if(empty($module) || !in_array($module, array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword', 'auto'))) {
+//				return '模块错误，请联系管理员。';
+//			}
 			foreach ($this->tablename as $key => $tablename) {
-				$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename($tablename)." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
+				if ($key == 'keyword') {
+					$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
+					foreach ($replies[$key] as &$keyword) {
+						$keyword['name'] = pdo_getcolumn('rule', array('id' => $keyword['rid']), 'name');
+					}
+				} else {
+					$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename($tablename)." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
+				}
 			}
 		}
 		include $this->template('display');
@@ -58,13 +66,8 @@ class AutoReplyModule extends WeModule {
 				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply_'.$value]);
 			}
 		}
-		// echo "<pre>";
-		// print_r($this->replies);
-		// echo "</pre>";
-		// echo "1541345<hr>";
-
 		if($ifEmpty) {
-			return '必须填写有效的回复内容.';
+			return error(1, '必须填写有效的回复内容.');
 		}
 		return '';
 	}
@@ -113,7 +116,11 @@ class AutoReplyModule extends WeModule {
 					}
 					break;
 				case 'music':
-					
+					if(!empty($replies)) {
+						foreach ($replies as $reply) {
+							pdo_insert($tablename, array('rid' => $rid, 'title' => $reply['title'], 'url' => $reply['url'], 'hqurl' => $reply['hqurl'], 'description' => $reply['description']));
+						}
+					}
 					break;
 				case 'voice':
 					if(!empty($replies)) {

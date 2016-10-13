@@ -39,13 +39,15 @@ if($do == 'sign_display') {
 	}
 	if (!empty($sign_rules[$total + 1])) {
 		$tomorrow_sign_credit = $sign_rules[$total + 1];
+		$sign_credit = $sign_rules[$total + 1];
 	} else {
 		$tomorrow_sign_credit = $sign_set['everydaynum'];
+		$sign_credit = $sign_set['everydaynum'];
 	}
 	$data = array(
 		'uniacid' => $_W['uniacid'],
 		'uid' => $_W['member']['uid'],
-		'credit' => $today_sign_credit,
+		'credit' => $sign_credit,
 		'is_grant' => 0,
 		'addtime' => TIMESTAMP,
 	);
@@ -361,7 +363,7 @@ if ($do == 'activity_description') {
 	$recharge_info = $params_new['cardRecharge'];
 	$nums_info = $params_new['cardNums'];
 	$times_info = $params_new['cardTimes'];
-	if ($activity_info['params']['discount_type'] == 0 || $recharge_info['params']['recharge_type'] == 0 || $nums_info['params']['nums_status'] == 0 || $times_info['params']['times_status'] == 0) {
+	if ($activity_info['params']['discount_type'] == 0 && $recharge_info['params']['recharge_type'] == 0 && $nums_info['params']['nums_status'] == 0 && $times_info['params']['times_status'] == 0) {
 		message('暂无优惠信息', referer(), 'error');
 	}
 	if ($activity_info['params']['discount_type'] != 0) {
