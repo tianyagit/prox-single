@@ -885,7 +885,7 @@ EOF;
 			} else {
 				$params[] = array(
 					'message' => $this->message,
-					'module' => $df[$type]['module'],
+					'module' => is_array($df[$type]) ? $df[$type]['module'] : $df[$type],
 					'rule' => '-1',
 				);
 				return $params;
