@@ -93,6 +93,46 @@
 		</div>
 	</div>
 </div>
+<div class="we7-page-title">
+	自定义菜单	
+</div>
+<hr class="we7-page-hr" />
+<div class="we7-padding-bottom clearfix">
+	<div class="input-group pull-left" style="width: 400px;">
+		<input type="text" name="" id="" value="" class="form-control" placeholder="搜索关键字"/>
+		<span class="input-group-addon"><i class="fa fa-search"></i></span>
+	</div>
+	<div class="pull-right">
+		<a href="{php echo url('platform/menu/add', array('type' => 1));}" class="btn btn-primary we7-padding-horizontal">+添加菜单</a>
+	</div>
+</div>
+<table class="table we7-table">
+	<col width="200px"/>
+	<col />
+	<col width="120px"/>
+	<col width="220px"/>
+	<tr>
+		<th class="text-left">菜单组名</th>
+		<th class="text-left">显示对象</th>
+		<th>是否开启</th>
+		<th class="text-left">操作</th>
+	</tr>
+	<tr>
+		<td class="text-left">应用1</td>
+		<td class="text-left">全部显示</td>
+		<td>
+			<label>
+				<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
+				<div class="switch switchOn"></div>
+			</label>
+		</td>
+		<td class="text-left">
+			<a href="" class="color-default we7-margin-right">编辑</a>
+			<a href="" class="color-default we7-margin-right">复制</a>
+			<a href="" class="color-default">删除</a>
+		</td>
+	</tr>
+</table>
 {/if}
 <script>
 	// $(function(){
