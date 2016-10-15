@@ -126,25 +126,25 @@
 								<div class="form-defalut">
 									<div class="form-group">
 										<label for="" class="control-label">小程序名称</label>
-										<div class="form_controls">
+										<div class="form-controls">
 											<input type="text" name="name" value="" class="form-control wxapp-name" id="" placeholder="小程序名称">
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label">版本号</label>
-										<div class="form_controls">
+										<div class="form-controls">
 											<input type="number" name="version0" min="0" max="100" value="" class="form-control wxapp-version version0">
 										</div>
-										<div class="form_controls">
+										<div class="form-controls">
 											<p class="form-control-static wxapp-version">.</p>
 										</div>
-										<div class="form_controls">
+										<div class="form-controls">
 											<input type="number" name="version1" min="0" max="100" value="" class="form-control wxapp-version version1">
 										</div>
-										<div class="form_controls">
+										<div class="form-controls">
 											<p class="form-control-static wxapp-version">.</p>
 										</div>
-										<div class="form_controls">
+										<div class="form-controls">
 											<input type="number" name="version2" min="0" max="100" value="" class="form-control wxapp-version version2">
 										</div>
 
@@ -305,7 +305,7 @@
 									<div class="creat-buttom-select form-defalut">
 										<div class="form-group">
 											<label for="" class="control-label">是否显示</label>
-											<div class="form_controls">
+											<div class="form-controls">
 												<label><input name="" id="" class="form-control" type="checkbox"  style="display: none;">
 												<div class="switch" ng-class="{'switchOn': ifShowMenu}" ng-click="showMenu()"></div>
 												</label>
@@ -313,25 +313,25 @@
 										</div>
 										<div class="form-group buttom-bg-color">
 											<label for="" class="control-label">背景颜色</label>
-											<div class="form_controls" style="width:100px">
+											<div class="form-controls" style="width:100px">
 												<div we7-colorpicker we7-my-color="bottom.bgcolor" we7-my-default-color="bottom.bgcolor"></div>
 											</div>
 										</div>
 										<div class="form-group buttom-boundary-color">
 											<label for="" class="control-label">交界线颜色</label>
-											<div class="form_controls" style="width:100px">
+											<div class="form-controls" style="width:100px">
 												<div we7-colorpicker we7-my-color="bottom.boundary" we7-my-default-color="bottom.boundary"></div>
 											</div>
 										</div>
 										<div class="form-group buttom-bg-color">
 											<label for="" class="control-label">文字默认颜色</label>
-											<div class="form_controls" style="width:100px">
+											<div class="form-controls" style="width:100px">
 												<div we7-colorpicker we7-my-color="bottom.color" we7-my-default-color="bottom.color"></div>
 											</div>
 										</div>
 										<div class="form-group buttom-bg-color">
 											<label for="" class="control-label">文字选中颜色</label>
-											<div class="form_controls" style="width:100px">
+											<div class="form-controls" style="width:100px">
 												<div we7-colorpicker we7-my-color="bottom.selectedColor" we7-my-default-color="bottom.selectedColor"></div>
 											</div>
 										</div>
@@ -400,13 +400,13 @@
 								<div class="form-defalut wxapp-finish">
 									<div class="form-group">
 										<label for="" class="control-label">小程序名称</label>
-										<div class="form_controls">
+										<div class="form-controls">
 											<p class="form-control-static" ng-bind="submit.name"></p>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label">版本号</label>
-										<div class="form_controls">
+										<div class="form-controls">
 											<p class="form-control-static">V {{submit.version0}}.{{submit.version1}}.{{submit.version2}}</p>
 										</div>
 									</div>
@@ -423,19 +423,19 @@
 									</div>
 									<div class="form-group" ng-if="type == 2">
 										<label class="control-label">首页模板</label>
-										<div class="form_controls">
+										<div class="form-controls">
 											<p class="form-control-static" ng-bind="submit.template"></p>
 										</div>
 									</div>
 									<div class="form-group" ng-if="type == 3">
 										<label class="control-label">首页跳转应用</label>
-										<div class="form_controls">
+										<div class="form-controls">
 											<p class="form-control-static" ng-bind="submit.tomodule.title"></p>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label">底部菜单</label>
-										<div class="form_controls">	
+										<div class="form-controls">	
 											<table class="table-finish-buttom">
 												<col width="75px"/>
 												<col width="105"/>
