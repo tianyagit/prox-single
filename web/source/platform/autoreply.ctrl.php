@@ -189,6 +189,7 @@ if($do == 'post') {
 					$containtype .= substr($replykey, 6).',';
 				}
 			}
+			
 			$rule = array(
 				'uniacid' => $_W['uniacid'],
 				'name' => $_GPC['rulename'],
@@ -197,6 +198,7 @@ if($do == 'post') {
 				'status' => intval($_GPC['status']),
 				'displayorder' => intval($_GPC['displayorder_rule']),
 			);
+			
 			if($_GPC['istop'] == 1) {
 				$rule['displayorder'] = 255;
 			} else {
@@ -206,6 +208,7 @@ if($do == 'post') {
 			if(empty($module)) {
 				message('抱歉，模块不存在请重新选择其它模块！');
 			}
+			
 			$msg = $module->fieldsFormValidate();
 			if(is_string($msg) && trim($msg) != '') {
 				message($msg);
@@ -216,6 +219,7 @@ if($do == 'post') {
 				$result = pdo_insert('rule', $rule);
 				$rid = pdo_insertid();
 			}
+
 			if (!empty($rid)) {
 				//更新，添加，删除关键字
 				$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `uniacid`=:uniacid';
@@ -236,6 +240,7 @@ if($do == 'post') {
 					$krow['content'] = $kw['content'];
 					pdo_insert('rule_keyword', $krow);
 				}
+				$kid = pdo_insertid();
 				// $rowtpl['incontent'] = $_GPC['incontent'];//无用
 				$module->fieldsFormSubmit($rid);
 				message('回复规则保存成功！', url('platform/autoreply/post', array('m' => $m, 'rid' => $rid)));
