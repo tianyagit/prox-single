@@ -39,30 +39,29 @@
 				</span>
 				</div>
 			</div>
-			<div class="form-group">
+			<!-- <div class="form-group">
 				<label for="" class="control-label"></label>
 				<div class="form-controls color-default">
 					<a href="javascript:;">展开高级设置<i class="fa fa-chevron-down"></i></a>
 				</div>
-			</div>
+			</div> -->
 			<div class="form-group">
 				<input type="hidden" name="keywords">
 				<label for="" class="control-label">触发关键字</label>
 				<div class="form-controls">
 					<div class="form-inline">
 						<select name="trigger_type" class="we7-select">
-							<option value="">精准触发</option>
-							<option value="">模糊触发</option>
+							<option value="exact">精准触发</option>
+							<option value="indistinct" ng-selected="reply.advanceTrigger">模糊触发</option>
 						</select>
 						<input type="text" class="keyword-input form-control" max="30" id="keywordinput" ng-model="trigger.items.default" onblur="checkKeyWord($(this));">
 						<span><a href="javascript:;" id="keyword-emoji"><i class="fa fa-github-alt"></i> 表情</a></span>
 						<span class="help-block"></span>
 					</div>
-					
 					<span class="help-block">多个关键字请使用逗号隔开，如天气，今日天气</span>
 				</div>
-				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label"><!-- 高级触发列表 --></label>
+				<div class="form-group advance-setting" ng-show="reply.advanceTrigger">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label"></label>
 					<div class="col-sm-9">
 						<div class="panel panel-default tab-content">
 							<div class="panel-heading">
@@ -141,7 +140,7 @@ require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angula
 	angular.module('replyFormApp', ['ngSanitize']);
 	angular.module('replyFormApp').controller('replyForm',['$scope', '$http', function($scope, $http){
 		$scope.reply = {
-			advTrigger: false,
+			advanceTrigger: false,
 			status: false,
 			entry: {php echo json_encode($reply)},
 		};
@@ -185,7 +184,7 @@ require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angula
 					$scope.trigger.items.default = $scope.trigger.items.default.slice(0, $scope.trigger.items.default.length - 1);
 				}
 				if($scope.trigger.items.contains.length > 0 || $scope.trigger.items.regexp.length > 0 || $scope.trigger.items.trustee.length > 0) {
-					$scope.reply.advTrigger = true;
+					$scope.reply.advanceTrigger = true;
 				}
 				if($scope.trigger.items.contains.length > 0) {
 					$('a[data-toggle="tab"]').eq(0).tab('show');
@@ -209,7 +208,7 @@ require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angula
 				status: 1,
 				uniacid: {php echo json_encode($_W['uniacid'])}
 			};
-		}
+		};
 		$scope.trigger.addItem = function(){
 			var type = $scope.trigger.active;
 			if(type != 'trustee') {
@@ -269,10 +268,10 @@ require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angula
 				}
 			}, val);
 			//待完善
-			// if(val.length == 0 && $scope.trigger.active != 'trustee') {
-			// 	util.message('请输入有效的触发关键字.');
-			// 	return false;
-			// }
+			if(val.length == 0 && $scope.trigger.active != 'trustee') {
+				util.message('请输入有效的触发关键字.');
+				return false;
+			}
 			val = angular.toJson(val);
 			$(':hidden[name="keywords"]').val(val);
 			if($.isFunction(window.validateReplyForm)) {
@@ -287,7 +286,17 @@ require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angula
 		util.emotion($("#keyword-emoji"), $('#keywordinput'), function(txt, elm, target){
 			$scope.trigger.items.default = $(target).val();
 		});
-
+		$('.we7-select').change(function(){
+			var type = $('.we7-select').val();
+			if(type == 'exact'){
+				$scope.reply.advanceTrigger = false;
+				$scope.$apply();
+			};
+			if(type == 'indistinct') {
+				$scope.reply.advanceTrigger = true;
+				$scope.$apply();
+			};
+		})
 	}]).filter('nl2br', function($sce){
 		return function(text) {
 			return text ? $sce.trustAsHtml(text.replace(/\n/g, '<br/>')) : '';
