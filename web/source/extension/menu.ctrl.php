@@ -167,7 +167,7 @@ if($do == 'ajax') {
 //模块权限开始
 if($do == 'module') {
 	load()->model('module');
-	if(checksubmit('submit')) {
+	if($_W['ispost']) {
 		if(!empty($_GPC['eid'])) {
 			foreach($_GPC['eid'] as $k => $v) {
 				$update = array();
