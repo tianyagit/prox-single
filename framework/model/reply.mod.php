@@ -65,4 +65,25 @@ function reply_keywords_search($condition = '', $params = array(), $pindex = 0, 
 	}
 	return pdo_fetchall($sql, $params);
 }
-
+/**
+ * 查询某一关键字回复中所有回复内容
+ * @param int $rid  要查询的rule规则ID
+ * @param array $params  查询参数
+ * @return array
+ */
+function reply_contnet_search($rid = 0) {
+	$result = array();
+	$result['sum'] = 0;
+	$rid = intval($rid);
+	if(empty($rid)){
+		return $result;
+	}
+	$modules = array('basic', 'images', 'news', 'music', 'voice', 'video', 'wxcard');
+	$params = array(':rid' => $rid);
+	foreach($modules as $key => $module){
+		$sql = 'SELECT COUNT(*) FROM ' . tablename($module.'_reply') . ' WHERE `rid` = :rid';
+		$result[$module] = pdo_fetchcolumn($sql, $params);
+		$result['sum'] += $result[$module];
+	}
+	return $result;
+}

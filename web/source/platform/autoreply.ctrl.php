@@ -6,12 +6,20 @@
 
 load()->model('reply');
 load()->model('module');
-$dos = array('display', 'post', 'delete');
+$dos = array('display', 'post', 'delete', 'change_status');
 $do = in_array($do, $dos) ? $do : 'display';
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
 $_W['account']['modules'] = uni_modules();
 if(empty($m)) {
 	message('错误访问.');
+}
+if ($do == 'change_status') {
+	$status = $_GPC['__input']['status'];
+	$type = $_GPC['__input']['type'];
+	$setting = uni_setting_load('default_message', $_W['uniacid']);
+	$setting = $setting['default_message'];
+	$setting[$type]['type'] = $status;
+	$result = uni_setting_save('default_message', $setting);
 }
 if ($m == 'special') {
 	$mtypes = array();
@@ -57,16 +65,38 @@ if(in_array($m, array('custom'))) {
 
 if($do == 'display') {
 	if ($m == 'keyword') {
+		if ($_W['isajax'] && $_W['ispost']) {
+			/*改变状态：是否开启该关键字*/
+			$id = $_GPC['__input']['id'];
+			$result = pdo_get('rule', array('id' => $id), array('status'));
+			if (!empty($result)) {
+				$rule = $rule_keyword = false;
+				if($result['status'] == 1) {
+					$rule = pdo_update('rule', array('status' => 0), array('id' => $id));
+					$rule_keyword = pdo_update('rule_keyword', array('status' => 0), array('uniacid' => $_W['uniacid'], 'rid' => $id));
+				}else {
+					$rule = pdo_update('rule', array('status' => 1), array('id' => $id));
+					$rule_keyword = pdo_update('rule_keyword', array('status' => 1), array('uniacid' => $_W['uniacid'], 'rid' => $id));
+				}
+				if($rule && $rule_keyword) {
+					message('0', 'ajax', 'info');
+				}else {
+					message('-1', 'ajax', 'info');
+				}
+				
+			}
+			message('-1', 'ajax', 'info');
+		}		
 		$pindex = max(1, intval($_GPC['page']));
-		$psize = 20;
+		$psize = 8;
 		$cids = $parentcates = $list =  array();
-		$condition = 'uniacid = :uniacid AND module in ("basic", "news", "music", "images", "voice", "video", "wxcard", "auto")';
+		$condition = 'uniacid = :uniacid AND module in ("basic", "news", "music", "images", "voice", "video", "wxcard", "autoreply", "auto")';
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		$status = isset($_GPC['status']) ? intval($_GPC['status']) : -1;
-		if(isset($_GPC['module']) && !empty($_GPC['module'])) {
-			$condition .= " AND `module` = :module";
-			$params[':module'] = $_GPC['module'];
+		if(isset($_GPC['type']) && !empty($_GPC['type'])) {
+			$condition .= " AND FIND_IN_SET(:type, `containtype`) OR module = :type";
+			$params[':type'] = $_GPC['type'];
 		}
 		if ($status != -1){
 			$condition .= " AND status = '{$status}'";
@@ -83,6 +113,7 @@ if($do == 'display') {
 				$params = array();
 				$params[':rid'] = $item['id'];
 				$item['keywords'] = reply_keywords_search($condition, $params);
+				$item['allreply'] = reply_contnet_search($item['id']);
 				$entries = module_entries($item['module'], array('rule'),$item['id']);
 				if(!empty($entries)) {
 					$item['options'] = $entries['rule'];
@@ -93,7 +124,6 @@ if($do == 'display') {
 	if ($m == 'special') {
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'];
-		$ds = array();
 	}
 	if ($m == 'system') {
 		if (checksubmit('submit')) {
@@ -146,21 +176,27 @@ if($do == 'post') {
 			}
 		}
 		if(checksubmit('submit')) {
-			if(empty($_GPC['name'])) {
+			if(empty($_GPC['rulename'])) {
 				message('必须填写回复规则名称.');
 			}
 			$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
 			if(empty($keywords)) {
 				message('必须填写有效的触发关键字.');
 			}
+			$containtype = '';
+			foreach ($_GPC['reply'] as $replykey => $replyval) {
+				if(!empty($replyval)) {
+					$containtype .= substr($replykey, 6).',';
+				}
+			}
 			$rule = array(
 				'uniacid' => $_W['uniacid'],
-				'name' => $_GPC['name'],
-				'module' => 'auto',
-				'status' => intval($_GPC['status']),
+				'name' => $_GPC['rulename'],
+				'module' => 'autoreply',
+				'containtype' => $containtype,
+				'status' => $_GPC['status'] == 'true' ? 1 : 0,
 				'displayorder' => intval($_GPC['displayorder_rule']),
 			);
-
 			if($_GPC['istop'] == 1) {
 				$rule['displayorder'] = 255;
 			} else {
@@ -180,6 +216,7 @@ if($do == 'post') {
 				$result = pdo_insert('rule', $rule);
 				$rid = pdo_insertid();
 			}
+
 			if (!empty($rid)) {
 				//更新，添加，删除关键字
 				$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `uniacid`=:uniacid';
@@ -190,7 +227,7 @@ if($do == 'post') {
 				$rowtpl = array(
 					'rid' => $rid,
 					'uniacid' => $_W['uniacid'],
-					'module' => 'auto',
+					'module' => 'autoreply',
 					'status' => $rule['status'],
 					'displayorder' => $rule['displayorder'],
 				);
@@ -200,6 +237,7 @@ if($do == 'post') {
 					$krow['content'] = $kw['content'];
 					pdo_insert('rule_keyword', $krow);
 				}
+				$kid = pdo_insertid();
 				// $rowtpl['incontent'] = $_GPC['incontent'];//无用
 				$module->fieldsFormSubmit($rid);
 				message('回复规则保存成功！', url('platform/autoreply/post', array('m' => $m, 'rid' => $rid)));
@@ -214,7 +252,7 @@ if($do == 'post') {
 		$setting = $setting['default_message'];
 		if (checksubmit('submit')) {
 			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply_keyword']), "\""));
-			$status = intval($_GPC['status']);
+			$status = $_GPC['status'];
 			if (empty($status)) {
 				$setting[$type] = array('type' => '');
 				uni_setting_save('default_message', $setting);
