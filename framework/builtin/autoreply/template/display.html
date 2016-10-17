@@ -503,7 +503,6 @@
 					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;	
 				case 'video':
-				console.log(val);
 					angular.forEach(val, function(videoVal, videoKey) {
 						replyVal.push(angular.toJson({
 							mediaid: videoVal.mediaid,
