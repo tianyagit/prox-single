@@ -51,11 +51,11 @@ class AutoReplyModule extends WeModule {
 		$ifEmpty = 1;
 		$reply = '';
 		foreach ($this->modules as $key => $value) {
-			if(trim($_GPC['reply_'.$value]) != '') {
+			if(trim($_GPC['reply']['reply_'.$value]) != '') {
 				$ifEmpty = 0;
 			}
-			if( ($value == 'video' || $value == 'wxcard') && !empty($_GPC['reply_'.$value])) {
-				$reply = ltrim($_GPC['reply_'.$value], '{');
+			if( ($value == 'music' || $value == 'video' || $value == 'wxcard' || $value == 'news') && !empty($_GPC['reply']['reply_'.$value])) {
+				$reply = ltrim($_GPC['reply']['reply_'.$value], '{');
 				$reply = rtrim($reply, '}');
 				$reply = explode('},{', $reply);
 				foreach ($reply as &$val) {
@@ -63,7 +63,7 @@ class AutoReplyModule extends WeModule {
 				}
 				$this->replies[$value] = $reply;
 			}else {
-				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply_'.$value]);
+				$this->replies[$value] = htmlspecialchars_decode($_GPC['reply']['reply_'.$value]);
 			}
 		}
 		if($ifEmpty) {
@@ -106,7 +106,11 @@ class AutoReplyModule extends WeModule {
 					}
 					break;
 				case 'news':
-					
+						if(!empty($replies)) {
+							foreach ($replies as $reply) {
+								pdo_insert($tablename, array('rid' => $rid, 'parent_id' => $reply['parent_id'], 'title' => $reply['title'], 'author' => $reply['author'], 'description' => $reply['description'], 'thumb' => $reply['thumb'], 'content' => $reply['content'], 'url' => $reply['url'], 'displayorder' => $reply['displayorder'], 'incontent' => $reply['incontent'], 'createtime' => $reply['createtime']));
+							}
+						}
 					break;
 				case 'image':
 					if(!empty($replies)) {

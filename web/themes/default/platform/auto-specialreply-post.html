@@ -10,18 +10,18 @@
 				编辑
 			</li>
 		</ol>
-		<div class="we7-form" ng-controller="MainCtrl">
+		<div class="we7-form" ng-controller="PostCtrl">
 			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 			<div class="form-group">
 				<label class="control-label">是否开启</label>
 				<div class="form-controls">
 					<label>
-						<input name="status" type="hidden" class="form-control" type="checkbox" value="{if !empty($setting[$type])}1{/if}">
-						<div id="switch" class="switch{if !empty($setting[$type])} switchOn{/if}"></div>
+						<input name="status" type="text" style="display:none" class="form-control"  ng-model="status">
+						<div id="switch" ng-click="change('{$type}', status)" ng-class="switch_class"></div>
 					</label>
 				</div>
 			</div>
-			<div id="key" {if empty($setting[$type])}style="display : none"{/if} >
+			<div id="key" ng-hide="status == ''" >
 			{php echo module_build_form('autoreply', $rule_id)}
 			</div>
 			<input type="submit" name="submit"  value="保存" class="btn btn-primary" style="padding: 6px 50px;"/>
@@ -33,23 +33,7 @@
 	</div>
 </div>
 <script>
-	require(['underscore', 'util'], function( _, util){
-		angular.module('app', []).controller('MainCtrl', function($scope){
-			window.initReplyController($scope);
-		});
-		angular.bootstrap(document, ['app']);
-		$('#switch').click(function() {
-			var status = $('[name="status"]').val();
-			status = status == 1 ? 0: 1;
-			$('[name="status"]').val(status);
-			var clas = status == 1? 'switch switchOn' : 'switch';
-			if (status == 1) {
-				$('#key').show();
-			} else {
-				$('#key').hide();
-			}
-			$('#switch').attr('class', clas);
-		});
-	});
+	angular.module('specialReply').value('config', {'class' : {if !empty($setting[$type]['type'])}'switch switchOn'{else}'switch'{/if}, 'url' : '{php echo url('platform/autoreply/change_status')}', 'status' : '{$setting[$type]['type']}'});
+	angular.bootstrap(document, ['specialReply']);
 </script>
 
