@@ -11,7 +11,7 @@
 		</ul>
 
 		{if $m == 'keyword'}
-		<div ng-controller="MainCtrl">
+		<div ng-controller="KeywordDisplay">
 			<div class="keyword-list-head">
 				<form action="./index.php" method="get" class="form-horizontal" role="form">
 					<input type="hidden" name="c" value="platform">
@@ -40,19 +40,19 @@
 				</form>
 			</div>		
 			<div class="pull-right">
-				<a href="{url 'platform/autoreply' array('do' => 'post', 'm' => $m)}" class="btn btn-primary">+添加关键字回复</a>
-				<a href="{url 'platform/autoreply' array('do' => 'post', 'm' => 'apply')}" class="btn btn-danger">+添加应用关键字</a>
+				<a href="{url 'platform/autoreply/post' array('m' => $m)}" class="btn btn-primary">+添加关键字回复</a>
+				<a href="{url 'platform/autoreply/post' array('m' => 'apply')}" class="btn btn-danger">+添加应用关键字</a>
 			</div>
 			<div class="btn-group we7-btn-group we7-padding-vertical">
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword')}" class="btn {if !$_GPC[type]}active{/if}">全部</a>
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword', 'type' => 'news')}" class="btn {if $_GPC[type] == 'news'}active{/if}">回复图文</a>
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword', 'type' => 'apply')}" class="btn {if $_GPC[type] == 'apply'}active{/if}">回复模块</a>
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword', 'type' => 'voice')}" class="btn {if $_GPC[type] == 'voice'}active{/if}">回复语音</a>
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword', 'type' => 'basic')}" class="btn {if $_GPC[type] == 'basic'}active{/if}">回复文字</a>
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword', 'type' => 'music')}" class="btn {if $_GPC[type] == 'music'}active{/if}">回复音乐</a>
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword', 'type' => 'images')}" class="btn {if $_GPC[type] == 'images'}active{/if}">回复图片</a>
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword', 'type' => 'video')}" class="btn {if $_GPC[type] == 'video'}active{/if}">回复视频</a>
-				<a href="{url 'platform/autoreply' array('do' => 'display', 'm' => 'keyword', 'type' => 'wxcard')}" class="btn {if $_GPC[type] == 'wxcard'}active{/if}">回复卡券</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword')}" class="btn {if !$_GPC[type]}active{/if}">全部</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'news')}" class="btn {if $_GPC[type] == 'news'}active{/if}">回复图文</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'apply')}" class="btn {if $_GPC[type] == 'apply'}active{/if}">回复模块</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'voice')}" class="btn {if $_GPC[type] == 'voice'}active{/if}">回复语音</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'basic')}" class="btn {if $_GPC[type] == 'basic'}active{/if}">回复文字</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'music')}" class="btn {if $_GPC[type] == 'music'}active{/if}">回复音乐</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'images')}" class="btn {if $_GPC[type] == 'images'}active{/if}">回复图片</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'video')}" class="btn {if $_GPC[type] == 'video'}active{/if}">回复视频</a>
+				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'wxcard')}" class="btn {if $_GPC[type] == 'wxcard'}active{/if}">回复卡券</a>
 			</div>
 			<div class="we7-tables">
 				<form action="{php echo url('platform/reply/delete');}" method="post" role="form" id="form1">
@@ -172,7 +172,7 @@ require(['bootstrap', 'angular'], function($){
 </script>
 
 {elseif $m == 'special'}
-<div class="right-contnt" ng-controller="specialDisplay">
+<div class="right-contnt" ng-controller="SpecialDisplay">
 	<div class="NoKeyword-list">
 		<div class="we7-tables">
 			<table class="we7-table">
@@ -221,7 +221,7 @@ require(['bootstrap', 'angular'], function($){
 	});
 </script>
 {elseif $m == 'system'}
-<form class="form form-horizontal" action="" method="post" ng-controller="systemDisplay">
+<form class="form form-horizontal" action="" method="post" ng-controller="SystemDisplay">
 	<input type="hidden" name="id" value="{$rule['rule'][id]}">
 	<div class="panel panel-default">
 		<div class="panel-heading">
