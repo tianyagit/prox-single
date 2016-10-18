@@ -65,7 +65,6 @@ if ($type == 'coupon') {
 			}
 		}
 		$id = intval($_GPC['id']);
-
 		if (!empty($id)) {
 			$data = pdo_get('activity_exchange', array('id' => $id, 'uniacid' => $_W['uniacid']));
 			$data['coupon'] = pdo_get('coupon', array('uniacid' => $_W['uniacid'], 'id' => $data['extra']));
@@ -120,13 +119,29 @@ if ($type == 'goods') {
 	uni_user_permission_check('activity_goods_display');
 	$dos = array('display', 'post', 'del', 'record', 'deliver', 'receiver', 'record-del');
 	$do = in_array($do, $dos) ? $do : 'display';
-
 	/*获取积分类型*/
 	$creditnames = array();
 	$unisettings = uni_setting($uniacid, array('creditnames'));
 	foreach ($unisettings['creditnames'] as $key=>$credit) {
 		if (!empty($credit['enabled'])) {
 			$creditnames[$key] = $credit['title'];
+		}
+	}
+	if ($do == 'record') {
+		if ($_GPC['operate'] == 'delete') {
+			$tid = intval($_GPC['id']);
+			pdo_delete('activity_exchange_trades', array('uniacid' => $_W['uniacid'], 'tid' => $tid));
+			message('删除兑换记录成功', referer(), 'success');
+		}
+		$pageindex = max(1, $_GPC['page']);
+		$exchangeid = intval($_GPC['exid']);
+		$record_list = pdo_getslice('activity_exchange_trades', array('uniacid' => $_W['uniacid'], 'exid' => $exchangeid), array($pageindex, 20), $total);
+		$pager = pagination($total, $pageindex, 20);
+		if (!empty($record_list)) {
+			foreach ($record_list as &$record) {
+				$record['user'] = mc_fetch($record['uid']);
+				$record['user'] = $record['user']['realname'];
+			}
 		}
 	}
 	if($do == 'post') {
@@ -183,7 +198,6 @@ if ($type == 'goods') {
 		if (!empty($title)) {
 			$where .= " AND title LIKE '%{$title}%'";
 		}
-
 		$list = pdo_fetchall('SELECT * FROM '.tablename('activity_exchange')." $where ORDER BY id DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('activity_exchange'). $where , $params);
 		$pager = pagination($total, $pindex, $psize);
