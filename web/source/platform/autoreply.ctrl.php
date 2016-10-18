@@ -148,7 +148,7 @@ if($do == 'display') {
 
 if($do == 'post') {
 	if ($m == 'keyword') {
-		$module['title'] = '关键字';
+		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
 			/*检测规则是否已经存在*/
 			$sql = 'SELECT `rid` FROM ' . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
@@ -246,7 +246,8 @@ if($do == 'post') {
 			}
 		}
 		template('platform/auto-reply-post');
-	} elseif ($m == 'special') {
+	}
+	if ($m == 'special') {
 		$type = trim($_GPC['type']);
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'];
@@ -271,6 +272,44 @@ if($do == 'post') {
 		}
 		$rule_id = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting[$type]['keyword']), 'rid');
 		template('platform/auto-specialreply-post');
+	}
+	if ($m == 'apply') {
+		$module['title'] = '应用关键字';
+		$installedmodulelist = $_W['account']['modules'];
+		foreach ($installedmodulelist as $k => &$value) {
+			$value['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
+		}
+		foreach($installedmodulelist as $name => $module) {
+			if ((empty($_W['setting']['permurls']['modules']) && !in_array($name, $_W['setting']['permurls']['modules'])) || empty($module['isdisplay'])) {
+				continue;
+			}
+			$module['title_first_pinyin'] = get_first_char($module['title']);
+			if($module['issystem']) {
+				$path = '../framework/builtin/' . $module['name'];
+			} else {
+				$path = '../addons/' . $module['name'];
+			}
+			$cion = $path . '/icon-custom.jpg';
+			if(!file_exists($cion)) {
+				$cion = $path . '/icon.jpg';
+				if(!file_exists($cion)) {
+					$cion = './resource/images/nopic-small.jpg';
+				}
+			}
+			$module['icon'] = $cion;
+
+			if($module['enabled'] == 1) {
+				$enable_modules[$name] = $module;
+			} else {
+				$unenable_modules[$name] = $module;
+			}
+		}
+		$current_user_permissions = pdo_getall('users_permission', array('uid' => $_W['user']['uid'], 'uniacid' => $_W['uniacid']), array(), 'type');
+		if (!empty($current_user_permissions)) {
+			$current_user_permission_types = array_keys($current_user_permissions);
+		}
+		$moudles = true;
+		template('platform/auto-reply-post');
 	}
 }
 
