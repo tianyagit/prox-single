@@ -54,7 +54,7 @@ class AutoReplyModule extends WeModule {
 			if(trim($_GPC['reply']['reply_'.$value]) != '') {
 				$ifEmpty = 0;
 			}
-			if( ($value == 'video' || $value == 'wxcard' || $value == 'news') && !empty($_GPC['reply']['reply_'.$value])) {
+			if( ($value == 'music' || $value == 'video' || $value == 'wxcard' || $value == 'news') && !empty($_GPC['reply']['reply_'.$value])) {
 				$reply = ltrim($_GPC['reply']['reply_'.$value], '{');
 				$reply = rtrim($reply, '}');
 				$reply = explode('},{', $reply);

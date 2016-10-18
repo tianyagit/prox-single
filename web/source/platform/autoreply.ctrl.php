@@ -189,16 +189,14 @@ if($do == 'post') {
 					$containtype .= substr($replykey, 6).',';
 				}
 			}
-			
 			$rule = array(
 				'uniacid' => $_W['uniacid'],
 				'name' => $_GPC['rulename'],
 				'module' => 'autoreply',
 				'containtype' => $containtype,
-				'status' => intval($_GPC['status']),
+				'status' => $_GPC['status'] == 'true' ? 1 : 0,
 				'displayorder' => intval($_GPC['displayorder_rule']),
 			);
-			
 			if($_GPC['istop'] == 1) {
 				$rule['displayorder'] = 255;
 			} else {
@@ -208,7 +206,6 @@ if($do == 'post') {
 			if(empty($module)) {
 				message('抱歉，模块不存在请重新选择其它模块！');
 			}
-			
 			$msg = $module->fieldsFormValidate();
 			if(is_string($msg) && trim($msg) != '') {
 				message($msg);
