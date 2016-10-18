@@ -194,7 +194,7 @@ if($do == 'post') {
 				'name' => $_GPC['rulename'],
 				'module' => 'autoreply',
 				'containtype' => $containtype,
-				'status' => intval($_GPC['status']),
+				'status' => $_GPC['status'] == 'true' ? 1 : 0,
 				'displayorder' => intval($_GPC['displayorder_rule']),
 			);
 			if($_GPC['istop'] == 1) {
@@ -216,6 +216,7 @@ if($do == 'post') {
 				$result = pdo_insert('rule', $rule);
 				$rid = pdo_insertid();
 			}
+
 			if (!empty($rid)) {
 				//更新，添加，删除关键字
 				$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `uniacid`=:uniacid';
@@ -236,6 +237,7 @@ if($do == 'post') {
 					$krow['content'] = $kw['content'];
 					pdo_insert('rule_keyword', $krow);
 				}
+				$kid = pdo_insertid();
 				// $rowtpl['incontent'] = $_GPC['incontent'];//无用
 				$module->fieldsFormSubmit($rid);
 				message('回复规则保存成功！', url('platform/autoreply/post', array('m' => $m, 'rid' => $rid)));
