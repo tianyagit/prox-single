@@ -569,7 +569,7 @@
 					angular.forEach(val, function(keywordVal, keywordKey) {
 						replyVal.push(angular.toJson(keywordVal.rid));
 						var keywords = '&nbsp;&nbsp;' + keywordVal.content;
-						$('#trigger_'+type).append(
+						$('.keywords-list').append(
 							'<div class="del-'+type+'-media">'+keywordVal.name+
 							'	<span>'+keywords+'</span>'+
 							'	<a href="javascript:;" data-media="'+keywordVal.name+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
