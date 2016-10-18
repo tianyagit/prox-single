@@ -252,7 +252,7 @@ if($do == 'post') {
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'];
 		if (checksubmit('submit')) {
-			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply_keyword']), "\""));
+			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
 			$status = $_GPC['status'];
 			if (empty($status)) {
 				$setting[$type] = array('type' => '');
