@@ -137,7 +137,7 @@
 				oldVal = oldVal.split(',');
 				index = _.indexOf(oldVal, media);
 				oldVal.splice(index, 1);
-				$(':hidden[name="reply_'+type+'"]').val(oldVal);
+				$(':hidden[name="reply[reply_'+type+']"]').val(oldVal);
 				break;
 		}
 		$(ele).parent().parent('.del-'+type+'-media').parent('li').remove();
@@ -570,13 +570,25 @@
 						replyVal.push(angular.toJson(keywordVal.rid));
 						var keywords = '&nbsp;&nbsp;' + keywordVal.content;
 						$('.keywords-list').append(
-							'<div class="del-'+type+'-media">'+keywordVal.name+
-							'	<span>'+keywords+'</span>'+
-							'	<a href="javascript:;" data-media="'+keywordVal.name+'" class="btn btn-link" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'</div>'
+
+								'<li>'+
+								'<div class="del-'+type+'-media">'+
+								'	<div class="desc">'+
+								'		<div class="media-content">'+
+								'				<a class="title-wrp" href="javascript:;">'+
+								'					<span class="title">[关键字]'+keywordVal.name+'</span>'+
+								'				</a>'+
+								'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+keywords+'</a></p>'+
+								'		</div>'+
+								'	</div>'+
+								'	<div class="opr">'+
+								'		<a href="javascript:;" data-media="'+keywordVal.name+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+								'	</div>'+
+								'</div>'+
+								'</li>'
 						);
 					});
-					$(':hidden[name="reply_'+type+'"]').val(replyVal);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal[0]);
 					break;
 				case 'music':
 					angular.forEach(val, function(musicVal, musicKey) {
