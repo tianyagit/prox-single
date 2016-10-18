@@ -516,7 +516,6 @@
 							'		<div class="media-content">'+
 							'			<div class="appmsgSendedItem">'+
 							'				<a class="title-wrp" href="javascript:;">'+
-							'					 <span class="icon cover" data-contenturl="'+material.tag.down_url+'"></span>'+
 							'					<span class="title">[视频]'+(videoVal.title ? videoVal.title : '--')+'</span>'+
 							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(videoVal.description ? videoVal.description : '--')+'</a></p>'+
 							'				</a>'+
@@ -619,12 +618,12 @@
 		var modules = ['basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword'];
 		if($scope.reply.entry.module == 'auto') {
 			angular.forEach(modules, function(val, key){
-				if($(':hidden[name="reply[reply_'+val+']"]').val().trim() != '') {
+				if($(':hidden[name="reply[reply_'+val+']"]').val() != '') {
 					allEmpty = false;
 				};
 			});
 		}else {
-			if($(':hidden[name="reply[reply_'+$scope.reply.entry.module+']"]').val().trim() != ''){
+			if($(':hidden[name="reply[reply_'+$scope.reply.entry.module+']"]').val() != ''){
 				allEmpty = false;
 			};
 		}
