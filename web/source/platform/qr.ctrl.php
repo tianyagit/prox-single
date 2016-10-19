@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('platform_qr');
-$dos = array('display', 'post', 'list', 'del', 'delsata', 'extend', 'SubDisplay', 'check_scene_str');
+$dos = array('display', 'post', 'list', 'del', 'delsata', 'extend', 'SubDisplay', 'check_scene_str', 'downqr');
 $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'list';
 load()->model('account');
 
@@ -21,7 +21,7 @@ if($do == 'check_scene_str') {
 }
 
 if($do == 'list') {
-	$_W['page']['title'] = '管理二维码 - 二维码管理 - 高级功能';
+	$_W['page']['title'] = '二维码管理 - 高级功能';
 	$wheresql = " WHERE uniacid = :uniacid AND acid = :acid AND type = 'scene'";
 	$param = array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']);
 	$keyword = trim($_GPC['keyword']);
@@ -210,4 +210,15 @@ if($do == 'delsata') {
 	}else{
 		message('删除失败',url('platform/qr/display'),'error');
 	}
+}
+
+if($do == 'downqr') {
+	$id = intval($_GPC['id']);
+	$down = pdo_get('qrcode', array('id' => $id));
+	$pic = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' . urlencode($down['ticket']);
+	header("Cache-control:private");
+	header('content-type:image/jpeg');
+	header('content-disposition: attachment;filename="'.$down['name'].'.jpg"');
+	readfile($pic);
+	exit();
 }
