@@ -43,6 +43,8 @@
 	</div>
 </div>
 <script>
+	var action = "{php echo $_GPC['a']}";
+
 	//删除已选素材
 	var delmedia = function(type, ele) {
 		var oldVal = $(':hidden[name="reply[reply_'+type+']"]').val();
@@ -136,6 +138,11 @@
 				index = _.indexOf(oldVal, media);
 				oldVal.splice(index, 1);
 				$(':hidden[name="reply[reply_'+type+']"]').val(oldVal);
+				//二维码显示隐藏-start
+				if(action == 'qr' && $(':hidden[name="reply[reply_'+type+']"]').val().length == 0) {
+					$('.we7-select-msg').removeClass('hide');
+				}
+				//二维码-end
 				break;
 		}
 		$(ele).parent().parent('.del-'+type+'-media').parent('li').remove();
@@ -177,6 +184,7 @@
 					'</li>'
 				);
 			}else if(type == 'keyword') {
+				
 				if($.trim(material.id).length == 0) {
 					return false;
 				}
@@ -203,6 +211,11 @@
 					'</div>'+
 					'</li>'
 				);
+				//二维码显示隐藏-start
+				if(action == 'qr' && replyVal.length > 0) {
+					$('.we7-select-msg').addClass('hide');
+				}
+				//二维码-end
 			}else {
 				if(type != 'music' && $.trim(material.media_id).length == 0) {
 					return false;
@@ -587,6 +600,11 @@
 						);
 					});
 					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal[0]);
+					//二维码显示隐藏-start
+					if(action == 'qr' && replyVal.length > 0) {
+						$('.we7-select-msg').addClass('hide');
+					}
+					//二维码-end
 					break;
 				case 'music':
 					angular.forEach(val, function(musicVal, musicKey) {
