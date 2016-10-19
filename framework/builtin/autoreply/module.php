@@ -16,11 +16,24 @@ class AutoReplyModule extends WeModule {
 			'voice' => 'voice_reply',
 			'video' => 'video_reply',
 			'wxcard' => 'wxcard_reply',
-			'keyword' => 'basic_reply',
+			'keyword' => 'basic_reply'
+		);
+	//对$modules,显示哪些,隐藏哪些,默认都隐藏
+	private $options = array(
+			'basic' => true,
+			'news' => true,
+			'image' => true,
+			'music' => true,
+			'voice' => true,
+			'video' => true,
+			'wxcard' => true,
+			'keyword' => true
 		);
 	private $replies = array();
-	
-	public function fieldsFormDisplay($rid = 0) {
+
+	public function fieldsFormDisplay($rid = 0, $option = array()) {
+		global $_GPC;
+
 		$replies = array();
 		if(!empty($rid) && $rid > 0) {
 			$isexists = pdo_fetch("SELECT id, module FROM ".tablename('rule')." WHERE id = :id", array(':id' => $rid));
@@ -42,6 +55,11 @@ class AutoReplyModule extends WeModule {
 				}
 			}
 		}
+
+		if(!is_array($option)) {
+			$option = array();
+		}
+		$options = array_merge($this->options, $option);
 		include $this->template('display');
 	}
 	
