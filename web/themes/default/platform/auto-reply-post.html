@@ -124,7 +124,7 @@
 					<span class="help-block">您可以选择临时禁用这条回复.</span>
 				</div>
 			</div>
-			{php echo module_build_form('autoreply', $rid)}
+			{php echo module_build_form('autoreply', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false,'wxcard'=> false))}
 			<input type="hidden" name="token" value="{$_W['token']}" />
 			<input type="submit" name="submit" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary we7-padding-horizontal" style="padding: 6px 50px;"/>
 		</div>
