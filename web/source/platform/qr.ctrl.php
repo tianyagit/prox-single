@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('platform_qr');
-$dos = array('display', 'post', 'list', 'del', 'delsata', 'extend', 'SubDisplay', 'check_scene_str', 'downqr');
+$dos = array('display', 'post', 'list', 'del', 'delsata', 'extend', 'SubDisplay', 'check_scene_str', 'down_qr');
 $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'list';
 load()->model('account');
 
@@ -212,7 +212,7 @@ if($do == 'delsata') {
 	}
 }
 
-if($do == 'downqr') {
+if($do == 'down_qr') {
 	$id = intval($_GPC['id']);
 	$down = pdo_get('qrcode', array('id' => $id));
 	$pic = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' . urlencode($down['ticket']);
