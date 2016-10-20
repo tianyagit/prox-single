@@ -1,10 +1,11 @@
 {php $newUI = true;}
-{template 'common/header-new'}
+{template 'common/header'}
 <!-- <link href="./resource/css/app.css" rel="stylesheet"> -->
 <!-- <ul class="nav nav-tabs">
 	<li class="{if $_GPC['status'] == 'normal' || $_GPC['status'] == ''}active{/if}"><a href="{php echo url('platform/menu/display', array('status' => 'normal'));}">自定义菜单</a></li>
 	<li class="{if $_GPC['status'] == 'history'}active{/if}"><a href="{php echo url('platform/menu/display', array('status' => 'history'));}">历史菜单</a></li>
 </ul> -->
+<div class="right-contnt">
 {if $do == 'display'}
 {if empty($data) && $_GPC['status'] == 'history'}
 <div class="alert alert-info">没有历史菜单</div>
@@ -711,7 +712,7 @@
 	</div>
 </div>
 {/if}
-
+</div>
 <script type="text/javascript">
 $(function(){
 	var push_url = "{php echo url('platform/menu/push')}";
