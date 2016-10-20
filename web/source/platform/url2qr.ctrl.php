@@ -6,9 +6,10 @@
 
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('platform_url2qr');
-$dos = array('display', 'change', 'qr', 'chat');
+$dos = array('display', 'change', 'qr', 'chat', 'down_qr');
 $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'display';
 load()->model('account');
+
 if($do == 'display') {
 	template('platform/url2qr');
 }
@@ -48,4 +49,14 @@ if($do == 'qr') {
 	$matrixPointSize = "5";
 	QRcode::png($url, false, $errorCorrectionLevel, $matrixPointSize);
 	exit();
+}
+
+if($do == 'down_qr') {
+	$qr_pic = $_GPC['qr'];
+	$name = random(8);
+	header('cache-control:private');
+	header('content-type:image/jpeg');
+	header('content-disposition: attachment;filename="'.$name.'.jpg"');
+	readfile($qr_pic);	
+	exit;
 }
