@@ -6,13 +6,13 @@
 
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('platform_qr');
-$dos = array('display', 'post', 'list', 'del', 'delsata', 'extend', 'SubDisplay', 'check_scene_str');
+$dos = array('display', 'post', 'list', 'del', 'delsata', 'extend', 'SubDisplay', 'check_scene_str', 'down_qr');
 $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'list';
 load()->model('account');
 
 //检测场景字符串是否重复
 if($do == 'check_scene_str') {
-	$scene_str = trim($_GPC['scene_str']);
+	$scene_str = trim($_GPC['__input']['scene_str']);
 	$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
 	if(!empty($is_exist)) {
 		exit('repeat');
@@ -21,7 +21,7 @@ if($do == 'check_scene_str') {
 }
 
 if($do == 'list') {
-	$_W['page']['title'] = '管理二维码 - 二维码管理 - 高级功能';
+	$_W['page']['title'] = '二维码管理 - 高级功能';
 	$wheresql = " WHERE uniacid = :uniacid AND acid = :acid AND type = 'scene'";
 	$param = array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']);
 	$keyword = trim($_GPC['keyword']);
@@ -88,9 +88,11 @@ if($do == 'post') {
 		$acid = intval($_W['acid']);
 		$uniacccount = WeAccount::create($acid);
 		$id = intval($_GPC['id']);
+		$keyword_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));;
+		$keyword = pdo_get('rule_keyword', array('rid' => $keyword_id, 'type' => 1), array('content'));
 		if (!empty($id)) {
 			$update = array(
-				'keyword' => trim($_GPC['keyword']),
+				'keyword' => $keyword['content'],
 				'name' => trim($_GPC['scene-name'])
 			);
 			pdo_update('qrcode', $update, array('uniacid' => $_W['uniacid'], 'id' => $id));
@@ -122,7 +124,7 @@ if($do == 'post') {
 				'acid' => $acid,
 				'qrcid' => $barcode['action_info']['scene']['scene_id'],
 				'scene_str' => $barcode['action_info']['scene']['scene_str'],
-				'keyword' => $_GPC['keyword'],
+				'keyword' => $keyword['content'],
 				'name' => $_GPC['scene-name'],
 				'model' => $_GPC['qrc-model'],
 				'ticket' => $result['ticket'],
@@ -141,6 +143,8 @@ if($do == 'post') {
 
 	$id = intval($_GPC['id']);
 	$row = pdo_fetch("SELECT * FROM ".tablename('qrcode')." WHERE uniacid = {$_W['uniacid']} AND id = '{$id}'");
+	$rid = pdo_get('rule_keyword', array('content' => $row['keyword']), array('rid'));
+	$rid = $rid['rid'];
 	template('platform/qr-post');
 }
 
@@ -210,4 +214,15 @@ if($do == 'delsata') {
 	}else{
 		message('删除失败',url('platform/qr/display'),'error');
 	}
+}
+
+if($do == 'down_qr') {
+	$id = intval($_GPC['id']);
+	$down = pdo_get('qrcode', array('id' => $id));
+	$pic = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' . urlencode($down['ticket']);
+	header("Cache-control:private");
+	header('content-type:image/jpeg');
+	header('content-disposition: attachment;filename="'.$down['name'].'.jpg"');
+	readfile($pic);
+	exit();
 }

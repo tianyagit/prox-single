@@ -217,12 +217,13 @@ function module_entry($eid) {
  * 
  * @param string $name
  * @param number $rid
+ * @param array $option 模块显示隐藏设置
  * @return string
  */
-function module_build_form($name, $rid) {
+function module_build_form($name, $rid, $option = array()) {
 	$rid = intval($rid);
 	$m = WeUtility::createModule($name);
-	return $m->fieldsFormDisplay($rid);
+	return $m->fieldsFormDisplay($rid, $option);
 }
 
 /**
