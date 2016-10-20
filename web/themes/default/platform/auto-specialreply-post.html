@@ -1,4 +1,4 @@
-{template 'common/header-base-new'}
+{template 'common/header'}
 <div class="right-contnt">
 	<div class="new-keyword">
 		<ol class="breadcrumb we7-breadcrumb">
@@ -22,7 +22,7 @@
 				</div>
 			</div>
 			<div id="key" ng-hide="status == ''" >
-			{php echo module_build_form('autoreply', $rule_id)}
+			{php echo module_build_form('autoreply', $rule_id, array('keyword' => false))}
 			</div>
 			<input type="submit" name="submit"  value="保存" class="btn btn-primary" style="padding: 6px 50px;"/>
 			<input type="hidden" name="token" value="{$_W['token']}">
@@ -33,7 +33,7 @@
 	</div>
 </div>
 <script>
-	angular.module('specialReply').value('config', {'class' : {if !empty($setting[$type]['type'])}'switch switchOn'{else}'switch'{/if}, 'url' : '{php echo url('platform/autoreply/change_status')}', 'status' : '{$setting[$type]['type']}'});
-	angular.bootstrap(document, ['specialReply']);
+	angular.module('replyFormApp').value('config', {'class' : {if !empty($setting[$type]['type'])}'switch switchOn'{else}'switch'{/if}, 'url' : '{php echo url('platform/autoreply/change_status')}', 'status' : '{$setting[$type]['type']}'});
+	angular.bootstrap(document, ['replyFormApp']);
 </script>
 

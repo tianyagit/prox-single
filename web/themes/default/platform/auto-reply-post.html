@@ -1,17 +1,18 @@
 {template 'common/header'}
-<div class="right-contnt">
+<div class="right-contnt" ng-cloak>
 	<div class="new-keyword">
 		<ol class="breadcrumb we7-breadcrumb">
 			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
 			<li>
-				<a href="{url 'platform/autoreply' array('m' => $m)}">{$module['title']}管理</a>
+				<a href="{url 'platform/autoreply'}">自动回复管理</a>
 			</li>
 			<li>
 				{if empty($rid)}<a href="{url 'platform/autoreply/post' array('m' => $m)}">新建{$module['title']}</a></li>{/if}
 				{if !empty($rid)}<a href="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}">编辑{$module['title']}</a></li>{/if}
 			</li>
 		</ol>
-		<div class="we7-form" id="js-reply-form" ng-controller="replyForm" ng-cloak>
+		{if $m == 'keyword'}
+		<div class="we7-form" id="js-reply-form" ng-controller="replyForm">
 			<form id="reply-form" action="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="rid" value="{$rid}" />
 			<div class="form-group">
@@ -39,12 +40,6 @@
 				</span>
 				</div>
 			</div>
-			<!-- <div class="form-group">
-				<label for="" class="control-label"></label>
-				<div class="form-controls color-default">
-					<a href="javascript:;">展开高级设置<i class="fa fa-chevron-down"></i></a>
-				</div>
-			</div> -->
 			<div class="form-group">
 				<input type="hidden" name="keywords">
 				<label for="" class="control-label">触发关键字</label>
@@ -129,219 +124,79 @@
 					<span class="help-block">您可以选择临时禁用这条回复.</span>
 				</div>
 			</div>
-			{php echo module_build_form('autoreply', $rid)}
+			{php echo module_build_form('autoreply', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false,'wxcard'=> false))}
 			<input type="hidden" name="token" value="{$_W['token']}" />
 			<input type="submit" name="submit" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary we7-padding-horizontal" style="padding: 6px 50px;"/>
 		</div>
+		{/if}
+		{if $m == 'apply'}
+		<div ng-controller="applyReply">
+			<div class="we7-step">
+				<ul>
+					<li class="active">
+						1 选择应用 
+					</li>
+					<li>
+						2 添加应用关键字
+					</li>
+				</ul>
+			</div>
+			<ul class="letters-list">
+				<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
+					<a href="javascript:;" ng-bind="letter"></a>
+				</li>
+			</ul>
+			{if $moudles}
+			<div class="keyword-app">
+				<ul class="we7-list-group">
+				{if $enable_modules}
+					{loop $enable_modules $key $row}
+					{if empty($current_user_permission_types) || in_array($key, $current_user_permission_types) || $row['issystem'] == 1}
+					<li data-pinyin="{$row['title_first_pinyin']}" ng-show="activeLetter ? activeLetter == '{$row[title_first_pinyin]}' : '1'">
+						<div class="we7-list-item">
+							<span class="keyword-status" title="已启用"><i class="fa fa-2x fa-check-circle text-success"></i></span>
+							<div class="keyword-app-info">
+								<img src="{$row['icon']}" alt="{$row['title']}"/>
+								<p>{$row['title']}</p>
+								<a href="{if $row['type'] != 'system'}./index.php?c=home&a=welcome&do=ext&m={$row['name']}{else}./index.php?c=platform&a=autoreply{/if}" class="cover-dark">
+									<span class="cover-circle">进入</span>
+								</a>
+							</div>
+						</div>
+					</li>
+					{/if}
+					{/loop}
+				{/if}
+				{if $unenable_modules}
+					{loop $unenable_modules $key $row}
+					<li data-pinyin="{$row['title_first_pinyin']}" ng-show="activeLetter == {$row['title_first_pinyin']}">
+						<div class="we7-list-item">
+							<span class="keyword-status" title="未启用"><i class="fa fa-2x fa-times-circle text-warning"></i></span>
+							<div class="keyword-app-info">
+								<img src="{$row['icon']}" alt="{$row['title']}"/>
+								<p>{$row['title']}</p>
+								<a href="{if $row['type'] != 'system'}./index.php?c=home&a=welcome&do=ext&m={$row['name']}{else}./index.php?c=platform&a=autoreply{/if}" class="cover-dark">
+									<span class="cover-circle">进入</span>
+								</a>
+							</div>
+						</div>
+					</li>
+					{/loop}
+				{/if}
+				</ul>
+			</div>
+			{/if}
+		</div>
+		{/if}
 	</div>
 </div>
 <script>
 require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angular, $, _, util){
-	angular.module('replyFormApp', ['ngSanitize']);
-	angular.module('replyFormApp').controller('replyForm',['$scope', '$http', function($scope, $http){
-		$scope.reply = {
-			advanceTrigger: false,
-			status: false,
-			entry: {php echo json_encode($reply)},
-		};
-		$scope.trigger = {
-			descriptions: {
-				contains: '用户进行交谈时，对话中包含上述关键字就执行这条规则。',
-				regexp: '用户进行交谈时，对话内容符合述关键字中定义的模式才会执行这条规则。<br/><strong>注意：如果你不明白正则表达式的工作方式，请不要使用正则匹配</strong> <br/><strong>注意：正则匹配使用MySQL的匹配引擎，请使用MySQL的正则语法</strong> <br /><strong>示例: </strong><br/><em>^微信</em>匹配以“微信”开头的语句<br /><em>微信$</em>匹配以“微信”结尾的语句<br /><em>^微信$</em>匹配等同“微信”的语句<br /><em>微信</em>匹配包含“微信”的语句<br /><em>[0-9\.\-]</em>匹配所有的数字，句号和减号<br /><em>^[a-zA-Z_]$</em>所有的字母和下划线<br /><em>^[[:alpha:]]{3}$</em>所有的3个字母的单词<br /><em>^a{4}$</em>aaaa<br /><em>^a{2,4}$</em>aa，aaa或aaaa<br /><em>^a{2,}$</em>匹配多于两个a的字符串',
-				trustee: '如果没有比这条回复优先级更高的回复被触发，那么直接使用这条回复。<br/><strong>注意：如果你不明白这个机制的工作方式，请不要使用直接接管</strong>',
-			},
-			labels: {
-				contains: '包含关键字',
-				regexp: '正则表达式模式',
-				trustee: '直接接管操作',
-			},
-			active: 'contains',
-			items: {
-				default: '',
-				contains: [],
-				regexp: [],
-				trustee: [],
-			}
-		};
-		if($scope.reply.entry) {
-			$scope.reply.entry.istop = $scope.reply.entry.displayorder >= 255 ? 1 : 0;
-			if($scope.reply.entry.status == 1) $scope.reply.status = true;
-			if($scope.reply.entry.keywords) {
-				angular.forEach($scope.reply.entry.keywords, function(v, k){
-					if(v.type == '1') {
-						this.default += (v.content + ',');
-					}
-					if(v.type == '2') {
-						this.contains.push({content: v.content, label: '请输入' + $scope.trigger.labels.contains, saved: true});
-					}
-					if(v.type == '3') {
-						this.regexp.push({content: v.content, label: '请输入' + $scope.trigger.labels.regexp, saved: true});
-					}
-					if(v.type == '4') {
-						this.trustee.push({});
-					}
-				}, $scope.trigger.items);
-				if($scope.trigger.items.default.length > 1) {
-					$scope.trigger.items.default = $scope.trigger.items.default.slice(0, $scope.trigger.items.default.length - 1);
-				}
-				if($scope.trigger.items.contains.length > 0 || $scope.trigger.items.regexp.length > 0 || $scope.trigger.items.trustee.length > 0) {
-					$scope.reply.advanceTrigger = true;
-				}
-				if($scope.trigger.items.contains.length > 0) {
-					$('a[data-toggle="tab"]').eq(0).tab('show');
-					$scope.trigger.active = 'contains';
-				} else if($scope.trigger.items.regexp.length > 0) {
-					$('a[data-toggle="tab"]').eq(1).tab('show');
-					$scope.trigger.active = 'regexp';
-				} else if($scope.trigger.items.trustee.length > 0) {
-					$('a[data-toggle="tab"]').eq(2).tab('show');
-					$scope.trigger.active = 'trustee';
-				}
-			}
-		}else {
-			$scope.reply.entry = {
-				istop: 0,
-				displayorder: '',
-				id: '',
-				keywords: [],
-				module: '',
-				name: '',
-				status: 1,
-				uniacid: {php echo json_encode($_W['uniacid'])}
-			};
-		};
-		$scope.trigger.addItem = function(){
-			var type = $scope.trigger.active;
-			if(type != 'trustee') {
-				$scope.trigger.items[type].push({content: '', label: '请输入' + $scope.trigger.labels[type], saved: false});
-			} else {
-				if($scope.trigger.items.trustee.length == 0) {
-					$scope.trigger.items.trustee.push({type:4, content:''});
-				}
-			}
-		};
-		$scope.trigger.changeStatus = function(){
-			$scope.reply.status = !$scope.reply.status;
-		};
-		$scope.trigger.saveItem = function(item){
-			item.saved = !item.saved;
-		};
-		$scope.trigger.removeItem = function(item) {
-			var type = $scope.trigger.active;
-			$scope.trigger.items[type] = _.without($scope.trigger.items[type], item);
-		};
-		if($.isFunction(window.initReplyController)) {
-			window.initReplyController($scope, $http);
-		};
-		$('#reply-form').submit(function(){
-			if($.trim($(':text[name="rulename"]').val()) == '') {
-				util.message('必须输入回复规则名称');
-				return false;
-			}
-			var val = [];
-			if($scope.trigger.items.default != '') {
-				var kws = $scope.trigger.items.default.replace('，', ',').split(',');
-				kws = _.union(kws);
-				angular.forEach(kws, function(v){
-					if(v != '') {
-						val.push({type: 1, content: v});
-					}
-				}, val);
-			}
-			angular.forEach($scope.trigger.items, function(v, name){
-				var flag = true;
-				if(name != 'default' && v.length > 0) {
-					if(name == 'contains' || name == 'regexp'){
-						angular.forEach(v, function(value){
-							if(value.content.trim() != '') {
-								this.push({
-									content: value.content,
-									type: name == 'contains' ? 2 : 3
-								});
-							}
-						}, val);
-					}
-					if(name == 'trustee'){
-						angular.forEach(v, function(value){
-							this.push({type:4, content:''});
-						}, val);
-					}
-				}
-			}, val);
-			//待完善
-			if(val.length == 0 && $scope.trigger.active != 'trustee') {
-				util.message('请输入有效的触发关键字.');
-				return false;
-			}
-			val = angular.toJson(val);
-			$(':hidden[name="keywords"]').val(val);
-			if($.isFunction(window.validateReplyForm)) {
-				return window.validateReplyForm(this, $, _, util, $scope, $http);
-			}
-			return true;
-		});
-		$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-			$scope.trigger.active = e.target.hash.replace(/#/, '');
-			$scope.$digest();
-		});
-		util.emotion($("#keyword-emoji"), $('#keywordinput'), function(txt, elm, target){
-			$scope.trigger.items.default = $(target).val();
-		});
-		$('.we7-select').change(function(){
-			var type = $('.we7-select').val();
-			if(type == 'exact'){
-				$scope.reply.advanceTrigger = false;
-				$scope.$apply();
-			};
-			if(type == 'indistinct') {
-				$scope.reply.advanceTrigger = true;
-				$scope.$apply();
-			};
-		})
-	}]).filter('nl2br', function($sce){
-		return function(text) {
-			return text ? $sce.trustAsHtml(text.replace(/\n/g, '<br/>')) : '';
-		};
-	}).directive('ngInvoker', function($parse){
-		return function (scope, element, attr) {
-			scope.$eval(attr.ngInvoker);
-		};
-	}).directive('ngMyEditor', function(){
-		var editor = {
-			'scope' : {
-				'value' : '=ngMyValue'
-			},
-			'template' : '<textarea id="editor" style="height:600px;width:100%;"></textarea>',
-			'link' : function ($scope, element, attr) {
-				if(!element.data('editor')) {
-					editor = UE.getEditor('editor', ueditoroption);
-					element.data('editor', editor);
-					editor.addListener('contentChange', function() {
-						$scope.value = editor.getContent().replace(/\&quot\;/g, '"');
-						$scope.$root.$$phase || $scope.$apply('value');
-					});
-					$(element).parents('form').submit(function() {
-						if (editor.queryCommandState('source')) {
-							editor.execCommand('source');
-						}
-					});
-					editor.addListener('ready', function(){
-						if (editor && editor.getContent() != $scope.value) {
-							editor.setContent($scope.value);
-						}
-						$scope.$watch('value', function (value) {
-							if (editor && editor.getContent() != value) {
-								editor.setContent(value ? value : '');
-							}
-						});
-					});
-				}
-			}
-		};
-		return editor;
+	angular.module('replyFormApp').value('config', {
+		replydata: {php echo json_encode($reply)},
+		uniacid: {php echo json_encode($_W['uniacid'])},
 	});
-	angular.bootstrap($('#js-reply-form'), ['replyFormApp']);
-
+	angular.bootstrap(document, ['replyFormApp']);
 
 	// 检测规则是否已经存在
 	window.checkKeyWord = function(key) {
@@ -385,7 +240,6 @@ require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angula
 			}
 		});
 	}
-
 	$('.keyword-input').each(function() {
 		$(this).attr('data-type', 'keyword');
 	});
