@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('platform_menu');
 load()->model('mc');
 load()->model('platform');
-$dos = array('display', 'save', 'remove', 'refresh', 'search_key', 'add', 'push', 'copy');
+$dos = array('display', 'save', 'remove', 'refresh', 'search_key', 'add', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if($_W['isajax']) {
@@ -76,9 +76,8 @@ if($do == 'display') {
 			}
 		}
 	}
-	$isdeleted = $_GPC['status'] == 'history' ? 1 : 0;
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid AND isdeleted = :isdeleted', array(':uniacid' => $_W['uniacid'], ':isdeleted' => $isdeleted));
-	$data = pdo_fetchall('SELECT * FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid AND isdeleted = :isdeleted ORDER BY type ASC, id DESC', array(':uniacid' => $_W['uniacid'], ':isdeleted' => $isdeleted));
+	$data = pdo_fetchall('SELECT * FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid ORDER BY type ASC, id DESC', array(':uniacid' => $_W['uniacid']));
 	$names = array(
 		'sex' => array(
 			0 => '不限',
@@ -235,6 +234,9 @@ if($do == 'add') {
 		if(!empty($menu)) {
 			$menu['data'] = iunserializer(base64_decode($menu['data']));
 			if(!empty($menu['data'])) {
+				foreach ($menu['data'] as $key => $menu_list) {
+
+				}
 				if(!empty($menu['data']['matchrule']['province'])) {
 					$menu['data']['matchrule']['province'] .= '省';
 				}
@@ -431,3 +433,29 @@ if($do == 'save') {
 	}
 }
 
+if ($do == 'current_menu') {
+	$current_menu = $_GPC['__input']['current_menu'];
+	if ($current_menu['type'] == 'media_id') {
+		$wechat_attachment = pdo_get('wechat_attachment', array('media_id' => $current_menu['media_id']));
+	}
+	if ($wechat_attachment['type'] == 'news') {
+		$material = pdo_get('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $wechat_attachment['id']));
+		$material['items'][0]['thumb_url'] =  url('utility/wxcode/image', array('attach' => $material['thumb_url']));
+		$material['items'][0]['title'] = $material['title'];
+		$material['items'][0]['digest'] = $material['digest'];
+		$material['type'] = 'news';
+	} elseif ($wechat_attachment['type'] == 'video') {
+		$material['tag'] = iunserializer($wechat_attachment['tag']);
+		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+		$material['type'] = 'video';
+	} elseif ($wechat_attachment['type'] == 'voice') {
+		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+		$material['type'] = 'voice';
+		$material['filename'] = $wechat_attachment['filename'];
+	} elseif ($wechat_attachment['type'] == 'image') {
+		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+		$material['url'] = "url({$material['attach']})";
+		$material['type'] = 'image';
+	}
+	message(error(0, $material), '', 'ajax');
+}
