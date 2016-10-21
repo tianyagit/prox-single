@@ -4,11 +4,15 @@
  * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
-uni_user_permission_check('platform_menu');
+
 load()->model('mc');
 load()->model('platform');
+
 $dos = array('display', 'save', 'remove', 'refresh', 'search_key', 'add', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
+
+$_W['page']['title'] = '公众号 - 自定义菜单';
+uni_user_permission_check('platform_menu');
 
 if($_W['isajax']) {
 	if($do == 'search_key') {
@@ -33,7 +37,6 @@ if($_W['isajax']) {
 }
 
 if($do == 'display') {
-	$_W['page']['title'] = '菜单设计器 - 自定义菜单 - 高级功能';
 	set_time_limit(0);
 	$account = WeAccount::create($_W['acid']);
 	$result = $account->menuQuery();
@@ -231,7 +234,6 @@ if($do == 'copy') {
 }
 
 if($do == 'add') {
-	$_W['page']['title'] = '菜单设计器 - 自定义菜单 - 高级功能';
 	$type = intval($_GPC['type']);
 	$id = intval($_GPC['id']);
 	$params = array();
