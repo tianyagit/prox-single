@@ -1,5 +1,8 @@
 <div class="panel we7-panel">
-	<div class="panel-heading">{if $_GPC['a'] == 'qr'}二维码触发的关键字{else}触发后回复内容{/if}</div>
+	<div class="panel-heading">
+		{if $_GPC['a'] == 'qr'}二维码触发的关键字{else}触发后回复内容{/if}
+		<span class="pull-right color-gray">添加多条回复内容时, 随机回复其中一条</span>
+	</div>
 	<div class="panel-body we7-padding">
 	<input type="hidden" name="reply[reply_basic]" value="">
 	<input type="hidden" name="reply[reply_news]" value="">
@@ -400,7 +403,7 @@
 
 	window.initReplyController = function($scope) {
 		$scope.context = {};
-		$scope.context.items = {php echo !empty($replies) ? json_encode($replies) : []};
+		$scope.context.items = {php echo json_encode($replies)};
 		angular.forEach($scope.context.items, function(val, key){
 			var replyVal = [];
 			var type = key;
@@ -471,7 +474,7 @@
 							'		<div class="media-content">'+
 							'			<div class="appmsgSendedItem">'+
 							'				<a class="title-wrp" href="javascript:;">'+
-							'					 <span class="icon cover" style="background-image:'+imageVal.url+';"></span>'+
+							'					 <span class="icon cover" style="background-image:url('+imageVal.img_url+');"></span>'+
 							'					<span class="title">[图片]</span>'+
 							'				</a>'+
 							'			</div>'+
