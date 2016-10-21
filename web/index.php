@@ -47,8 +47,9 @@ if(!empty($handle)) {
 	}
 }
 if(!in_array($controller, $controllers)) {
-	$controller = 'account';
+	$controller = 'home';
 }
+
 $init = IA_ROOT . "/web/source/{$controller}/__init.php";
 if(is_file($init)) {
 	require $init;
