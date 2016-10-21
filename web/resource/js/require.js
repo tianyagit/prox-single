@@ -46,6 +46,16 @@ require.config({
 		'fileUploader' : '../../components/fileuploader/fileuploader.min',
 		'clockpicker': '../../components/clockpicker/clockpicker.min',
 		'district' : '../lib/district',
+
+		'jquery': '../lib/jquery-1.11.1.min',
+		'jquery.ui': '../lib/jquery-ui-1.10.3.min',
+		'jquery.caret': '../lib/jquery.caret',
+		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
+		'jquery.zclip': '../../components/zclip/jquery.zclip.min',
+		'jquery.wookmark': '../lib/jquery.wookmark.min',
+		'jquery.qrcode': '../lib/jquery.qrcode.min',
+
+		'underscore': '../lib/underscore-min',
 	},
 	shim:{
 		'daterangepicker': {
@@ -73,6 +83,27 @@ require.config({
 		'district' : {
 			exports : "$",
 			deps : ['jquery']
-		}
+		},
+		
+		'jquery.ui': {
+			exports: "$",
+			deps: ['jquery']
+		},
+		'jquery.caret': {
+			exports: "$",
+			deps: ['jquery']
+		},
+		'jquery.jplayer': {
+			exports: "$",
+			deps: ['jquery']
+		},
+		'jquery.wookmark': {
+			exports: "$",
+			deps: ['jquery']
+		},
+		'jquery.qrcode': {
+			exports: "$",
+			deps: ['jquery']
+		},
 	}
 });
