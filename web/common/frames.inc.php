@@ -6,6 +6,45 @@
 defined('IN_IA') or exit('Access Denied');
 
 $ms = array();
+$ms['account'] = array(
+	'title' => '公众号',
+	'section' => array(
+		'platform_plus' => array(
+			'title' => '增强功能',
+			'menu' => array(
+				'platform_reply' => array(
+					'title' => '自动回复',
+					'url' => url('platform/reply'),
+					'append' => array(
+						'title' => '<i class="fa fa-plus"></i>',
+						'url' => url('platform/reply/post')
+					),
+					'permission_name' => 'platform_reply',
+				),
+				'platform_menu' => array(
+					'title' => '自定义菜单',
+					'url' => url('platform/menu'),
+					'permission_name' => 'platform_menu',
+				),
+			)
+		)
+	),
+);
+
+$ms['wxapp'] = array(
+	'title' => '小程序',
+	'section' => array(
+	),
+);
+
+$ms['system'] = array(
+	'title' => '系统管理',
+	'section' => array(
+	),
+);
+
+return $ms;
+
 $ms['platform'][] =  array(
 	'title' => '基本功能',
 	'items' => array(
