@@ -13,9 +13,7 @@ $do = in_array($do, $dos) ? $do : 'display';
 
 $_W['page']['title'] = '公众号 - 自定义菜单';
 uni_user_permission_check('platform_menu');
-echo "<pre>";
-print_r($id);
-echo "</pre>";
+
 if($_W['isajax']) {
 	if($do == 'search_key') {
 		$condition = '';
@@ -81,14 +79,17 @@ if($do == 'display') {
 			}
 		}
 	}
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 15;
 	$condition = " WHERE uniacid = :uniacid";
 	$params[':uniacid'] = $_W['uniacid'];
 	if (isset($_GPC['keyword'])) {
 		$condition .= " AND title LIKE :keyword";
 		$params[':keyword'] = "%{$_GPC['keyword']}%";
 	}
-	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('uni_account_menus') . $condition, $params);
-	$data = pdo_fetchall('SELECT * FROM ' . tablename('uni_account_menus') . $condition . ' ORDER BY type ASC, status DESC,id DESC', $params);
+	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('uni_account_menus') . $condition, $params);
+	$data = pdo_fetchall("SELECT * FROM " . tablename('uni_account_menus') . $condition . " ORDER BY type ASC, status DESC,id DESC LIMIT " . ($pindex - 1) * $psize . "," . $psize, $params);
+	$pager = pagination($total, $pindex, $psize);
 	$names = array(
 		'sex' => array(
 			0 => '不限',
