@@ -38,7 +38,7 @@ if($_W['isajax']) {
 
 if($do == 'display') {
 	set_time_limit(0);
-	$account = WeAccount::create($_W['acid']);
+	$account = WeAccount::create();
 	$result = $account->menuQuery();
 	if(is_error($result)) {
 		message($result['message'], '', 'error');
