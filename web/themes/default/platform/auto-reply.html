@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="right-contnt" ng-cloak>
+<div class="right-contnt">
 	<div class="keyword-list">
 		<div class="we7-page-title">
 			自动回复
@@ -11,7 +11,7 @@
 		</ul>
 
 		{if $m == 'keyword'}
-		<div ng-controller="KeywordDisplay">
+		<div ng-controller="KeywordDisplay" ng-cloak>
 			<div class="keyword-list-head">
 				<form action="./index.php" method="get" class="form-horizontal" role="form">
 					<input type="hidden" name="c" value="platform">
@@ -172,7 +172,7 @@ require(['bootstrap', 'angular'], function($){
 </script>
 
 {elseif $m == 'special'}
-<div class="right-contnt" ng-controller="SpecialDisplay">
+<div class="right-contnt" ng-controller="SpecialDisplay" ng-cloak>
 	<div class="NoKeyword-list">
 		<div class="we7-tables">
 			<table class="we7-table">
@@ -221,7 +221,7 @@ require(['bootstrap', 'angular'], function($){
 	});
 </script>
 {elseif $m == 'system'}
-<form class="form form-horizontal" action="" method="post" ng-controller="SystemDisplay">
+<form class="form form-horizontal" action="" method="post" ng-controller="SystemDisplay" ng-cloak>
 	<input type="hidden" name="id" value="{$rule['rule'][id]}">
 	<div class="panel panel-default">
 		<div class="panel-heading">
