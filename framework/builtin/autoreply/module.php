@@ -46,12 +46,22 @@ class AutoReplyModule extends WeModule {
 //			}
 			foreach ($this->tablename as $key => $tablename) {
 				if ($key == 'keyword') {
-					$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
-					foreach ($replies[$key] as &$keyword) {
-						$keyword['name'] = pdo_getcolumn('rule', array('id' => $keyword['rid']), 'name');
+					if($_GPC['m'] != 'keyword') {
+						$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
+						foreach ($replies[$key] as &$keyword) {
+							$keyword['name'] = pdo_getcolumn('rule', array('id' => $keyword['rid']), 'name');
+						}
 					}
 				} else {
 					$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename($tablename)." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
+					switch ($key) {
+						case 'image':
+							foreach ($replies[$key] as &$img_value) {
+								$img = pdo_get('wechat_attachment', array('media_id' => $img_value['mediaid']), array('attachment'));
+								$img_value['img_url'] = tomedia($img['attachment'], true);
+							}
+							break;
+					}
 				}
 			}
 		}
