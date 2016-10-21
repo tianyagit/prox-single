@@ -92,14 +92,10 @@ if($do == 'display') {
 		$condition = 'uniacid = :uniacid AND module in ("basic", "news", "music", "images", "voice", "video", "wxcard", "autoreply", "auto")';
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
-		// $status = isset($_GPC['status']) ? intval($_GPC['status']) : -1;
 		if(isset($_GPC['type']) && !empty($_GPC['type'])) {
 			$condition .= " AND FIND_IN_SET(:type, `containtype`) OR module = :type";
 			$params[':type'] = $_GPC['type'];
 		}
-		// if ($status != -1){
-			// $condition .= " AND status = '{$status}'";
-		// }
 		if(isset($_GPC['keyword'])) {
 			$condition .= ' AND `name` LIKE :keyword';
 			$params[':keyword'] = "%{$_GPC['keyword']}%";
