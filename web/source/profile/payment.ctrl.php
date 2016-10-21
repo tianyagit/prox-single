@@ -69,11 +69,12 @@ if($_W['ispost']) {
 	$wechat['signkey'] = $wechat['version'] == 2 ? trim($wechat['apikey']) : trim($wechat['signkey']);
 	$wechat['partner'] = trim($wechat['partner']);
 	$wechat['key'] = trim($wechat['key']);
+	$wechat['mchid'] = intval(trim($wechat['mchid']));
 	$wechat['sub_mch_id'] = trim($wechat['sub_mch_id']);
 	if($wechat['switch'] && empty($wechat['account'])) {
 		message('请输入完整的微信支付接口信息.');
 	}
-	$wechat_facilitator['mchid'] = intval($_GPC['wechat_facilitator']['mchid']);
+	$wechat_facilitator['mchid'] = intval(trim($_GPC['wechat_facilitator']['mchid']));
 	$wechat_facilitator['signkey'] = trim($_GPC['wechat_facilitator']['signkey']);
 	$wechat_facilitator['switch'] = trim($_GPC['wechat_facilitator']['switch']) == 'true' ? true : false;
 	if (!empty($wechat_facilitator['switch']) && empty($wechat_facilitator['mchid'])) {
