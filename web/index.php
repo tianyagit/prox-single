@@ -8,107 +8,16 @@ require '../framework/bootstrap.inc.php';
 require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 load()->web('common');
 load()->web('template');
+
 if (empty($_W['isfounder']) && !empty($_W['user']) && $_W['user']['status'] == 1) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
 }
+
 $acl = array(
-	'account' => array(
-		'default' => 'welcome',
-		'direct' => array(
-			'welcome',
-			'auth'
-		),
-		'founder' => array(
-			'groups'
-		)
-	),
 	'home' => array(
 		'default' => 'welcome',
-		'founder' => array()
-	),
-	'cloud' => array(
-		'default' => 'touch',
-		'direct' => array(
-			'touch',
-			'dock',
-			'download'
-		),
-		'founder' => array(
-			'diagnose',
-			'redirect',
-			'upgrade',
-			'process',
-			'device'
-		)
-	),
-	'extension' => array(
-		'direct' => array(),
-		'founder' => array(
-			'module',
-			'service',
-			'theme',
-			'subscribe',
-		)
-	),
-	'site' => array(
-		'direct' => array(
-			'entry'
-		)
-	),
-	'system' => array(
-		'founder' => array(
-			'common',
-			'attachment',
-			'copyright',
-			'database',
-			'tools',
-			'updatecache',
-			'sysinfo',
-			'site',
-			'content_provider',
-		)
-	),
-	'user' => array(
-		'default' => 'display',
-		'direct' => array(
-			'login',
-			'register',
-			'logout'
-		),
-		'founder' => array(
-			'display',
-			'edit',
-			'create',
-			'fields',
-			'group',
-			'registerset',
-		)
-	),
-	'utility' => array(
-		'direct' => array(
-			'verifycode',
-			'code',
-			'file',
-			'emoji',
-			'bindcall',
-			'subscribe',
-			'wxcode',
-		)
-	),
-	'article' => array(
-		'direct' => array(
-			'notice-show',
-			'news-show'
-		),
-		'founder' => array(
-			'news',
-			'notice'
-		)
-	),
-	'cron' => array(
-		'direct' => array(
-			'entry',
-		)
+		'founder' => array(),
+		'direct' => array()
 	)
 );
 if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $controller != 'cloud' && $controller != 'utility' && $controller != 'account') {
