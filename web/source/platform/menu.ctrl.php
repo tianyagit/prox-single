@@ -76,8 +76,14 @@ if($do == 'display') {
 			}
 		}
 	}
-	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid AND isdeleted = :isdeleted', array(':uniacid' => $_W['uniacid'], ':isdeleted' => $isdeleted));
-	$data = pdo_fetchall('SELECT * FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid ORDER BY type ASC, id DESC', array(':uniacid' => $_W['uniacid']));
+	$condition = " WHERE uniacid = :uniacid";
+	$params[':uniacid'] = $_W['uniacid'];
+	if (isset($_GPC['keyword'])) {
+		$condition .= " AND title LIKE :keyword";
+		$params[':keyword'] = "%{$_GPC['keyword']}%";
+	}
+	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('uni_account_menus') . $condition, $params);
+	$data = pdo_fetchall('SELECT * FROM ' . tablename('uni_account_menus') . $condition . ' ORDER BY type ASC, status DESC,id DESC', $params);
 	$names = array(
 		'sex' => array(
 			0 => '不限',
