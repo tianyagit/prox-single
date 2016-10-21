@@ -23,7 +23,6 @@
 		<col width="85px"/>
 		<col width="180px" />
 		<col width="120px" />
-		<col width="80px" />
 		<col width="120px" />
 		<col width="120px"/>
 		<col width="220px">
@@ -31,7 +30,6 @@
 			<th></th>
 			<th>二维码名称</th>
 			<th>对应关键字</th>
-			<th>类型</th>
 			<th class="text-left">生成时间</th>
 			<th>到期时间</th>
 			<th class="text-left">操作</th>
@@ -41,14 +39,13 @@
 			<td><a href="{$row['showurl']}" target="_blank"><img src="{$row['showurl']}" alt="12312"  width="50px" height="50px"/></a></td>
 			<td title="{$row['name']}">{php echo cutstr($row['name'], 8)}</td>
 			<td title="{$row['keyword']}">{php echo cutstr($row['keyword'], 8)}</td>
-			<td><span class="color-green">{$row['modellabel']}</span></td>
 			<td class="text-left">{php echo date('Y-m-d <br /> H:i:s', $row[createtime]);}</td>
 			<td>{$row[endtime]}</td>
 			<td class="text-left">
 				<a href="{php echo url('platform/qr/down_qr', array('id' => $row['id']))}" class="color-default we7-margin-right">下载</a>
 				<a href="{php echo url('platform/qr/post', array('id'=> $row['id']))}" class="color-default we7-margin-right">编辑</a>
 				{if $row['model'] == 2}
-					<a href="{php echo url('platform/qr/del', array('id'=> $row['id']))}" class="color-default" onclick="return confirm('您确定要删除该二维码以及其统计数据吗？')">强制删除</a>
+					<a href="{php echo url('platform/qr/del', array('id'=> $row['id']))}" class="color-default" onclick="return confirm('您确定要删除该二维码以及其统计数据吗？')">删除</a>
 				{/if}
 				{if $row['model'] == 1}<a href="{php echo url('platform/qr/extend', array('id'=> $row['id']))}" class="color-default">延时</a>{/if}
 			</td>
@@ -57,7 +54,7 @@
 	</table>
 	<div class="help-block">
 		<a href="{php echo url('platform/qr/del', array('scgq'=> '1'))}" onclick="javascript:return confirm('您确定要删除吗？\n将删除所有过期二维码以及其统计数据！！！')" class="btn btn-primary" style="margin-bottom:15px">删除全部已过期二维码</a>
-		<span style="vertical-align:super">注意：永久二维码无法在微信平台删除，但是您可以点击<a href="javascript:;" style="color:#428bca">【强制删除】</a>来删除本地数据。</span>
+		<span style="vertical-align:super">注意：永久二维码无法在微信平台删除，但是您可以点击<a href="javascript:;" style="color:#428bca">【删除】</a>来删除本地数据。</span>
 	</div>
 	<div class="text-center">
 		{$pager}
