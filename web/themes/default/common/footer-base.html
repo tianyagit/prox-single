@@ -20,8 +20,8 @@
 			});
 		}
 		$(function(){
-			subscribe();
-			sync();
+			//subscribe();
+			//sync();
 		});
 		{if $_W['uid']}
 			function checknotice() {
@@ -37,7 +37,7 @@
 					setTimeout(checknotice, 60000);
 				});
 			}
-			checknotice();
+			//checknotice();
 		{/if}
 
 		{if defined('IN_MODULE')}
