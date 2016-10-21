@@ -365,7 +365,7 @@
 				</div>
 			</div>
 			<div class="menu-submit">
-				<input type="submit" name="" id="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{$_GPC['type']} == 1 || !{$_GPC['id']}" ng-click="context.submit();"/>
+				<input type="submit" name="" id="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{php echo ($type == 1 || empty($id))}" ng-click="context.submit();"/>
 				<input type="button" name="" id="" value="预&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;览" class="btn btn-primary" style="padding: 6px 50px;" data-toggle="modal" data-target="#mobileDiv"/>
 			</div>
 			<div class=" modal fade" id="mobileDiv" role="dialog" aria-hidden="true">
