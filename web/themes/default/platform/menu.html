@@ -64,7 +64,7 @@
 			<td>
 				<label>
 					{if $da['type'] == 1}
-					<div class="switch switchOn"></div>
+					
 					{else}
 					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
 					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
@@ -90,6 +90,7 @@
 		</tr>
 		{/loop}
 	</table>
+	{$pager}
 </div>
 
 {/if}
@@ -99,9 +100,9 @@
 <div class="conditionMenu" ng-controller="conditionMenuDesigner" id="conditionMenuDesigner" ng-cloak>
 	<div class="new">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
+			<a href="{php echo url('platform/menu')}"><i class="fa fa-chevron-circle-left"></i></a>
 			<li>
-				自定义菜单
+				<a href="{php echo url('platform/menu')}">自定义菜单</a>
 			</li>
 			<li>
 				新建菜单
