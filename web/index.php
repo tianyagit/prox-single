@@ -123,11 +123,11 @@ function _forward($c, $a) {
 
 function _calc_current_frames(&$frames) {
 	global $controller, $action;
-	if(!empty($frames) && is_array($frames)) {
-		foreach($frames as &$frame) {
-			if(empty($frame['items'])) continue;
-			foreach($frame['items'] as &$fr) {
-				$query = parse_url($fr['url'], PHP_URL_QUERY);
+	if(!empty($frames['section']) && is_array($frames['section'])) {
+		foreach($frames['section'] as &$frame) {
+			if(empty($frame['menu'])) continue;
+			foreach($frame['menu'] as &$menu) {
+				$query = parse_url($menu['url'], PHP_URL_QUERY);
 				parse_str($query, $urls);
 				if(empty($urls)) continue;
 				if(defined('ACTIVE_FRAME_URL')) {
@@ -144,7 +144,7 @@ function _calc_current_frames(&$frames) {
 
 				$diff = array_diff_assoc($urls, $get);
 				if(empty($diff)) {
-					$fr['active'] = ' active';
+					$menu['active'] = ' active';
 				}
 			}
 		}
