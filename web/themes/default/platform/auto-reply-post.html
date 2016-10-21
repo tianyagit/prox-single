@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="right-contnt" ng-cloak>
+<div class="right-contnt">
 	<div class="new-keyword">
 		<ol class="breadcrumb we7-breadcrumb">
 			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
@@ -12,7 +12,7 @@
 			</li>
 		</ol>
 		{if $m == 'keyword'}
-		<div class="we7-form" id="js-reply-form" ng-controller="replyForm">
+		<div class="we7-form" id="js-reply-form" ng-controller="KeywordReply" ng-cloak>
 			<form id="reply-form" action="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="rid" value="{$rid}" />
 			<div class="form-group">
@@ -130,7 +130,7 @@
 		</div>
 		{/if}
 		{if $m == 'apply'}
-		<div ng-controller="applyReply">
+		<div ng-controller="ApplyReply" ng-cloak>
 			<div class="we7-step">
 				<ul>
 					<li class="active">
