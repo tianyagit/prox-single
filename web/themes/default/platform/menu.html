@@ -1,5 +1,5 @@
 {php $newUI = true;}
-{template 'common/header-new'}
+{template 'common/header'}
 <div class="right-contnt">
 {if $do == 'display'}
 {if empty($data) && $_GPC['status'] == 'history'}
@@ -51,6 +51,7 @@
 				{/if}
 			</td>
 			<td class="text-left">
+
 				{if $da['type'] == 3}
 					{if $da['sex'] > 0}性别:{$names['sex'][$da['sex']]} ;{/if}
 					{if $da['group_id'] != -1}粉丝分组:{if $da['group_id'] == -1}不限{else}{$groups[$da['group_id']]['name']}{/if} ;{/if}
@@ -363,7 +364,7 @@
 				</div>
 			</div>
 			<div class="menu-submit">
-				<input type="submit" name="" id="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="!{$id}" ng-click="context.submit();"/>
+				<input type="submit" name="" id="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{$_GPC['type']} == 1 || !{$_GPC['id']}" ng-click="context.submit();"/>
 				<input type="button" name="" id="" value="预&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;览" class="btn btn-primary" style="padding: 6px 50px;" data-toggle="modal" data-target="#mobileDiv"/>
 			</div>
 			<div class=" modal fade" id="mobileDiv" role="dialog" aria-hidden="true">

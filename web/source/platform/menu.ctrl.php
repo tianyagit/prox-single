@@ -13,7 +13,9 @@ $do = in_array($do, $dos) ? $do : 'display';
 
 $_W['page']['title'] = '公众号 - 自定义菜单';
 uni_user_permission_check('platform_menu');
-
+echo "<pre>";
+print_r($id);
+echo "</pre>";
 if($_W['isajax']) {
 	if($do == 'search_key') {
 		$condition = '';
