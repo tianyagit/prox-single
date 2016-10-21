@@ -39,7 +39,6 @@
 				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'music')}" class="btn {if $_GPC[type] == 'music'}active{/if}">回复音乐</a>
 				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'images')}" class="btn {if $_GPC[type] == 'images'}active{/if}">回复图片</a>
 				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'video')}" class="btn {if $_GPC[type] == 'video'}active{/if}">回复视频</a>
-				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'wxcard')}" class="btn {if $_GPC[type] == 'wxcard'}active{/if}">回复卡券</a>
 			</div>
 			<div class="we7-tables">
 				<form action="{php echo url('platform/reply/delete');}" method="post" role="form" id="form1">
