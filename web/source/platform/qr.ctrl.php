@@ -6,10 +6,9 @@
 
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('platform_qr');
-$dos = array('display', 'post', 'list', 'del', 'delsata', 'extend', 'SubDisplay', 'check_scene_str', 'down_qr');
+$dos = array('display', 'post', 'list', 'del', 'extend', 'SubDisplay', 'check_scene_str', 'down_qr');
 $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'list';
 load()->model('account');
-
 //检测场景字符串是否重复
 if($do == 'check_scene_str') {
 	$scene_str = trim($_GPC['__input']['scene_str']);
@@ -174,6 +173,9 @@ if($do == 'extend') {
 }
 
 if($do == 'display') {
+	echo "<pre>";
+	print_r(time());
+	echo "</pre>";
 	$_W['page']['title'] = '扫描统计 - 二维码管理 - 高级功能';
 	$starttime = empty($_GPC['time']['start']) ? TIMESTAMP -  86399 * 30 : strtotime($_GPC['time']['start']);
 	$endtime = empty($_GPC['time']['end']) ? TIMESTAMP + 6*86400: strtotime($_GPC['time']['end']) + 86399;
@@ -204,16 +206,6 @@ if($do == 'display') {
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('qrcode_stat') . $where, $param);
 	$pager = pagination($total, $pindex, $psize);
 	template('platform/qr-display');
-}
-
-if($do == 'delsata') {
-	$id = $_GPC['id'];
-	$b = pdo_delete('qrcode_stat',array('id' =>$id, 'uniacid' => $_W['uniacid']));
-	if ($b){
-		message('删除成功',url('platform/qr/display'),'success');
-	}else{
-		message('删除失败',url('platform/qr/display'),'error');
-	}
 }
 
 if($do == 'down_qr') {
