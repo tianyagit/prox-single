@@ -1,0 +1,112 @@
+{template 'common/header-base'}
+<div class="head">
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#"><span class="color-default">微</span>擎 <span class="label label-versions">标准版</span></a>
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav navbar-left">
+					{php global $top_nav;}
+					{loop $top_nav $nav}
+						<li{if FRAME == $nav['name']} class="active"{/if}><a href="{php echo url('home/welcome/' . $nav['name']);}">{$nav['title']}</a></li>
+					{/loop}
+					<li {if $action == 'emulator'}class="active"{/if}>
+						<a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i> 模拟测试</a>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+						<a href="#">提醒</a>
+					</li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">皮肤 <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li>
+								<a href="#">Action</a>
+							</li>
+							<li>
+								<a href="#">Another action</a>
+							</li>
+							<li>
+								<a href="#">Something else here</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="#">Separated link</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">马德坤 <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li>
+								<a href="#">Action</a>
+							</li>
+							<li>
+								<a href="#">Another action</a>
+							</li>
+							<li>
+								<a href="#">Something else here</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="#">Separated link</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+</div>
+{if empty($_COOKIE['check_setmeal']) && !empty($_W['account']['endtime']) && ($_W['account']['endtime'] - TIMESTAMP < (6*86400))}
+	<div class="upgrade-tips" id="setmeal-tips">
+		<a href="{php echo url('user/edit', array('uid' => $_W['account']['uid']));}" target="_blank">
+			您的服务有效期限：{php echo date('Y-m-d', $_W['account']['starttime']);} ~ {php echo date('Y-m-d', $_W['account']['endtime']);}.
+			{if $_W['account']['endtime'] < TIMESTAMP}
+			目前已到期，请联系管理员续费
+			{else}
+			将在{php echo floor(($_W['account']['endtime'] - strtotime(date('Y-m-d')))/86400);}天后到期，请及时付费
+			{/if}
+		</a><span class="tips-close" style="background:#d03e14;" onclick="check_setmeal_hide();"><i class="fa fa-times-circle"></i></span>
+	</div>
+	<script>
+		function check_setmeal_hide() {
+			util.cookie.set('check_setmeal', 1, 1800);
+			$('#setmeal-tips').hide();
+			return false;
+		}
+	</script>
+{/if}
+<div class="main">
+	<div class="container">
+		<div class="panel panel-content">
+			<div class="content-head panel-heading">
+				<img src="../../pros/web/resource/images/9.png" alt="公众号头像" class="">
+				<span class="font-max">龙巅文玩</span>
+				<span><i class="label label-primary">订阅号</i> <i class="label label-primary">已认证</i></span>
+				<span class="color-red"><i class="fa fa-warning"></i>未接入微信公众号 </span>
+				<span class="color-default"><a href="">立即接入</a></span>
+				<span class="pull-right"><a href=""><i class="fa fa-refresh color-default"></i>切换公众号</a></span>
+				<span class="pull-right"><a href=""><i class="fa fa-cog"></i>公众号设置</a></span>
+			</div>
+			<div class="panel-body">
+				{php $frames = buildframes(FRAME);_calc_current_frames($frames);}
+				<div class="left-menu">
+					{loop $frames['section'] $sectionid $section}
+					<div class="panel panel-menu">
+						<div class="panel-heading">
+							{$section['title']}<span class="fa fa-cog pull-right"></span>
+						</div>
+						<ul class="list-group">
+							{loop $section['menu'] $menuid $menu}
+							<li class="list-group-item {if $menu['active']}active{/if}">
+								<a href="{$menu['url']}"><i class="fa fa-adjust"></i> {$menu['title']}</a>
+							</li>
+							{/loop}
+						</ul>
+					</div>
+					{/loop}
+				</div>
+				<div class="right-contnt">
