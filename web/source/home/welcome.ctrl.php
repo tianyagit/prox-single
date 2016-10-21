@@ -9,7 +9,6 @@ $dos = array('platform');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 define('FRAME', 'account');
-$frames = buildframes();
 $_W['page']['title'] = '公众号';
 
 if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
