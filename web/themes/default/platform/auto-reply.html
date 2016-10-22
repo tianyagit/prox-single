@@ -18,31 +18,18 @@
 					<input type="hidden" name="a" value="autoreply">
 					<input type="hidden" name="m" value="{$_GPC['m']}" />
 					<input type="hidden" name="status" value="{$status}" />
-					<div class="form-group">
-						<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">状态</label>
-						<div class="col-sm-8 col-lg-9 col-xs-12">
-							<div class="btn-group">
-								<a href="{php echo filter_url('status:-1');}"  class="btn {if $_GPC['status'] == '-1'|| $_GPC['status'] == ''}btn-primary{else}btn-default{/if}">所有</a>
-								<a href="{php echo filter_url('status:1');}"  class="btn {if $_GPC['status']== '1'}btn-primary{else}btn-default{/if}">启用</a>
-								<a href="{php echo filter_url('status:0');}"  class="btn {if $_GPC['status'] == '0'}btn-primary{else}btn-default{/if}">禁用</a>
-							</div>
+					<div class="keyword-list-head">
+						<div class="input-group pull-left" style="width: 400px;">
+							<input class="form-control" name="keyword" type="text" value="{$_GPC['keyword']}">
+							<button class="btn btn-default"><i class="fa fa-search"></i></button>
 						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">规则名</label>
-						<div class="col-sm-8 col-xs-12">
-								<input class="form-control" name="keyword" id="" type="text" value="{$_GPC['keyword']}">
+						<div class="pull-right">
+							<a href="{url 'platform/autoreply/post' array('m' => $m)}" class="btn btn-primary">+添加关键字回复</a>
+							<a href="{url 'platform/autoreply/post' array('m' => 'apply')}" class="btn btn-danger">+添加应用关键字</a>
 						</div>
-						<div class="col-xs-12 col-sm-2 col-lg-1 text-right">
-							<button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
-						</div>
-					</div>
+					</div> 
 				</form>
 			</div>		
-			<div class="pull-right">
-				<a href="{url 'platform/autoreply/post' array('m' => $m)}" class="btn btn-primary">+添加关键字回复</a>
-				<a href="{url 'platform/autoreply/post' array('m' => 'apply')}" class="btn btn-danger">+添加应用关键字</a>
-			</div>
 			<div class="btn-group we7-btn-group we7-padding-vertical">
 				<a href="{url 'platform/autoreply/display' array('m' => 'keyword')}" class="btn {if !$_GPC[type]}active{/if}">全部</a>
 				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'news')}" class="btn {if $_GPC[type] == 'news'}active{/if}">回复图文</a>
@@ -52,7 +39,6 @@
 				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'music')}" class="btn {if $_GPC[type] == 'music'}active{/if}">回复音乐</a>
 				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'images')}" class="btn {if $_GPC[type] == 'images'}active{/if}">回复图片</a>
 				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'video')}" class="btn {if $_GPC[type] == 'video'}active{/if}">回复视频</a>
-				<a href="{url 'platform/autoreply/display' array('m' => 'keyword', 'type' => 'wxcard')}" class="btn {if $_GPC[type] == 'wxcard'}active{/if}">回复卡券</a>
 			</div>
 			<div class="we7-tables">
 				<form action="{php echo url('platform/reply/delete');}" method="post" role="form" id="form1">

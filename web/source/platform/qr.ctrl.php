@@ -173,9 +173,6 @@ if($do == 'extend') {
 }
 
 if($do == 'display') {
-	echo "<pre>";
-	print_r(time());
-	echo "</pre>";
 	$_W['page']['title'] = '扫描统计 - 二维码管理 - 高级功能';
 	$starttime = empty($_GPC['time']['start']) ? TIMESTAMP -  86399 * 30 : strtotime($_GPC['time']['start']);
 	$endtime = empty($_GPC['time']['end']) ? TIMESTAMP + 6*86400: strtotime($_GPC['time']['end']) + 86399;
