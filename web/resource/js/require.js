@@ -46,8 +46,10 @@ require.config({
 		'fileUploader' : '../../components/fileuploader/fileuploader.min',
 		'clockpicker': '../../components/clockpicker/clockpicker.min',
 		'district' : '../lib/district',
+		'emoji' : '../../components/emoji/emoji',
 
-		'jquery': '../lib/jquery-1.11.1.min',
+		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
+		'jquery': '../lib/jquery-1.11.1.min', //兼容之前amd调用
 		'jquery.ui': '../lib/jquery-ui-1.10.3.min',
 		'jquery.caret': '../lib/jquery.caret',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
@@ -56,54 +58,51 @@ require.config({
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
 
 		'underscore': '../lib/underscore-min',
+		'loadcss': '../lib/css.min', //加载CSS
 	},
 	shim:{
 		'daterangepicker': {
 			exports: '$',
-			deps: ['bootstrap', 'moment', 'css!../../components/daterangepicker/daterangepicker.css']
+			deps: ['moment', 'loadcss!../../components/daterangepicker/daterangepicker.css']
 		},
 		'datetimepicker' : {
 			exports : '$',
-			deps: ['jquery', 'css!../../components/datetimepicker/jquery.datetimepicker.css']
+			deps: ['loadcss!../../components/datetimepicker/jquery.datetimepicker.css']
 		},
 		'colorpicker': {
 			exports: '$',
-			deps: ['css!../../components/colorpicker/spectrum.css']
+			deps: ['loadcss!../../components/colorpicker/spectrum.css']
 		},
 		'map': {
 			exports: 'BMap'
 		},
 		'fileUploader': {
-			deps: ['webuploader', 'css!../../components/webuploader/webuploader.css', 'css!../../components/webuploader/style.css']
+			deps: ['webuploader', 'loadcss!../../components/webuploader/webuploader.css', 'loadcss!../../components/webuploader/style.css']
 		},
 		'clockpicker': {
-			exports: "$",
-			deps: ['css!../../components/clockpicker/clockpicker.min.css', 'bootstrap']
+			exports: '$',
+			deps: ['loadcss!../../components/clockpicker/clockpicker.min.css']
 		},
 		'district' : {
-			exports : "$",
-			deps : ['jquery']
+			exports : '$'
 		},
-		
 		'jquery.ui': {
-			exports: "$",
-			deps: ['jquery']
+			exports: '$'
 		},
 		'jquery.caret': {
-			exports: "$",
-			deps: ['jquery']
+			exports: '$'
 		},
 		'jquery.jplayer': {
-			exports: "$",
-			deps: ['jquery']
+			exports: '$'
 		},
 		'jquery.wookmark': {
-			exports: "$",
-			deps: ['jquery']
+			exports: '$'
 		},
 		'jquery.qrcode': {
-			exports: "$",
-			deps: ['jquery']
+			exports: '$'
 		},
+		'emoji': {
+			deps: ['loadcss!../../components/emoji/emotions.css']
+		}
 	}
 });
