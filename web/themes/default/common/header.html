@@ -1,4 +1,5 @@
 {template 'common/header-base'}
+{php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container">
@@ -92,7 +93,6 @@
 				<span class="pull-right"><a href=""><i class="fa fa-cog"></i>公众号设置</a></span>
 			</div>
 			<div class="panel-body">
-				{php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 				<div class="left-menu">
 					{loop $frames['section'] $sectionid $section}
 					<div class="panel panel-menu">
