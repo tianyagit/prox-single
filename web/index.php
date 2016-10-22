@@ -18,7 +18,15 @@ $acl = array(
 		'default' => 'welcome',
 		'founder' => array(),
 		'direct' => array()
-	)
+	),
+	'user' => array(
+		'default' => 'display',
+		'direct' => array(
+			'login',
+			'register',
+			'logout'
+		)
+	),
 );
 if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $controller != 'cloud' && $controller != 'utility' && $controller != 'account') {
 	$_W['siteclose'] = true;
@@ -93,13 +101,6 @@ if(is_array($acl[$controller]['founder']) && in_array($action, $acl[$controller]
 }
 checklogin();
 //用户权限判断
-
-if(!defined('IN_GW')) {
-	checkaccount();
-	if(!in_array($_W['role'], array('manager', 'operator', 'founder', 'clerk'))) {
-		message('您的账号没有访问此公众号的权限.');
-	}
-}
 require _forward($controller, $action);
 
 define('ENDTIME', microtime());
