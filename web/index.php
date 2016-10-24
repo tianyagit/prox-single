@@ -13,6 +13,8 @@ if (empty($_W['isfounder']) && !empty($_W['user']) && $_W['user']['status'] == 1
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
 }
 
+isetcookie('__uniacid', 281, 7 * 86400);
+
 $acl = array(
 	'home' => array(
 		'default' => 'welcome',
