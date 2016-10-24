@@ -410,7 +410,7 @@ if($do == 'delete') {
 		message('恢复菜单成功，是否推送到微信？<a href="'.url('platform/menu/push', array('id' => $id)).'" class="btn btn-primary">是</a> <a href="'.url('platform/menu/display').'" class="btn btn-default">取消</a>', url('platform/menu/display'), 'success');
 	}
 	$status =  $_GPC['status'];
-	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0) && $status != 'history') {
+	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0)) {
 		$account = WeAccount::create($_W['acid']);
 		$ret = $account->menuDelete($data['menuid']);
 		if(is_error($ret) && empty($_GPC['f'])) {
