@@ -6,7 +6,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-class AutoReplyModule extends WeModule {
+class ReplyModule extends WeModule {
 	public $modules = array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword');
 	public $tablename = array(
 			'basic' => 'basic_reply',
