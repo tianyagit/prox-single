@@ -15,11 +15,11 @@
 				<input type="hidden" name="a" value="menu">
 				<input type="hidden" name="token" value="{$_W['token']}"/>
 				<input type="text" name="keyword" id="" value="" class="form-control" placeholder="搜索关键字"/>
-				<button class="input-group-addon"><i class="fa fa-search"></i></button>
+				<span  class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
 			</div>
 		</form>
 		<div class="pull-right">
-			<a href="{php echo url('platform/menu/add', array('type' => 3));}" class="btn btn-primary we7-padding-horizontal">+添加菜单</a>
+			<a href="{php echo url('platform/menu/post', array('type' => 3));}" class="btn btn-primary we7-padding-horizontal">+添加菜单</a>
 		</div>
 	</div>
 	<table class="table we7-table">
@@ -71,9 +71,9 @@
 			</td>
 			<td class="text-left">
 				{if $da['type'] == 1}
-					<a href="{php echo url('platform/menu/add', array('id' => $da['id'], 'type'=> 1));}" class="color-default we7-margin-right">编辑</a>
+					<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> 1));}" class="color-default we7-margin-right">编辑</a>
 				{else}
-					<a href="{php echo url('platform/menu/add', array('id' => $da['id'], 'type'=> $da['type']));}" class="color-default we7-margin-right">查看</a>
+					<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> $da['type']));}" class="color-default we7-margin-right">查看</a>
 				{/if}
 				{if $da['type'] == 3}
 					{if $_GPC['status'] != 'history'}
@@ -81,8 +81,7 @@
 					{/if}
 				{/if}
 				{if $da['type'] != 1}
-
-				<a href="{php echo url('platform/menu/remove', array('id' => $da['id'], 'status' => $_GPC['status']));}" class="color-default" onclick="if(!confirm('{if $da['type'] == 1}删除默认菜单会清空所有菜单记录，确定吗？{else}确定删除菜单?{/if}')) return false;">删除</a>
+				<a href="{php echo url('platform/menu/delete', array('id' => $da['id'], 'status' => 'history'));}" class="color-default" onclick="if(!confirm('{if $da['type'] == 1}删除默认菜单会清空所有菜单记录，确定吗？{else}确定删除菜单?{/if}')) return false;">删除</a>
 				{/if}
 			</td>
 		</tr>
@@ -94,7 +93,7 @@
 {/if}
 {/if}
 
-{if $do == 'add'}
+{if $do == 'post'}
 <div class="conditionMenu" ng-controller="conditionMenuDesigner" id="conditionMenuDesigner" ng-cloak>
 	<div class="new">
 		<ol class="breadcrumb we7-breadcrumb">
@@ -114,26 +113,37 @@
 					<span class="help-block">给自定义菜单起个名字便于查找</span>
 				</div>
 			</div>
-
+			{if $type != 1}
 			<div class="form-group">
 				<label for="" class="control-label">菜单显示对象</label>
-				<div class="form-controls ">
-					<select class="we7-select" ng-model="context.group.matchrule.sex" ng-disabled="context.group.disabled">
+				<div class="form-controls">
+					<select class="we7-select" ng-model="context.group.matchrule.sex" ng-disabled="context.group.disabled" {if $params['matchrule']['sex'] == 0}ng-init="context.group.matchrule.sex = '0'"{/if}>
 						<option value="0" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 0">性别不限</option>
 						<option value="1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 1">男</option>
 						<option value="2" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 2">女</option>
 					</select>
-					<select class="we7-select" ng-model="context.group.matchrule.group_id" ng-disabled="context.group.disabled">
+					<select class="we7-select" ng-model="context.group.matchrule.group_id" ng-disabled="context.group.disabled" {if $params['matchrule']['group_id'] == -1}ng-init="context.group.matchrule.group_id = '-1'"{/if}>
 						<option value="-1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.group_id == -1">粉丝分组不限</option>
 						{loop $groups $group}
 						<option value="{$group['id']}" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.group_id == {$group['id']}">{$group['name']}</option>
 						{/loop}
 					</select>
-					<select class="we7-select" ng-model="context.group.matchrule.client_platform_type" ng-disabled="context.group.disabled">
-						<option value="0" ng-selected="context.group.matchrule.client_platform_type == 0">手机系统不限</option>
+					<select class="we7-select" ng-model="context.group.matchrule.client_platform_type" ng-disabled="context.group.disabled" {if $params['matchrule']['client_platform_type'] == 0}ng-init="context.group.matchrule.client_platform_type = '0'"{/if}>
+						<option value="0" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.client_platform_type == 0" >手机系统不限</option>
 						<option value="1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.client_platform_type == 1">IOS(苹果)</option>
 						<option value="2" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.client_platform_type == 2">Android(安卓)</option>
 						<option value="3" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.client_platform_type == 3">Others(其他)</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="" class="control-label"></label>
+				<div class="form-controls">
+					<select class="we7-select" ng-model="context.group.matchrule.language" ng-disabled="context.group.disabled">
+						<option value="" ng-selected="context.group.matchrule.language == ''">语言不限</option>
+						{loop $languages $language}
+						<option value="{$language['en']}" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.language == '{$language['en']}'">{$language['ch']}</option>
+						{/loop}
 					</select>
 					<span class="tpl-district-container">
 						<select data-value="{$menu['data']['matchrule']['province']}" ng-model="context.group.matchrule.province" ng-disabled="context.group.disabled" class="tpl-province we7-select">
@@ -144,6 +154,7 @@
 					<span class="help-block"> 根据条件对显示对象进行筛选</span>
 				</div>
 			</div>
+			{/if}
 			<div class="menu-setting-area">
 				<div class="menu-preview-area">
 					<div class="mobile-menu-preview">
@@ -407,20 +418,19 @@ $(function(){
 	group = {php echo !empty($params) ? json_encode($params) : "null"};
 	id = "{$id}";
 	status = "{$params['status']}";
-	remove_url = "{php echo url('platform/menu/remove', array('id' => $id));}";
+	delete_url = "{php echo url('platform/menu/delete', array('id' => $id));}";
 	success_url = "{php echo url('platform/menu/display');}";
 	site_url = "{$_W['siteroot']}";
-	search_key_url = "{php echo url('platform/menu/search_key')}";
 	current_menu_url = "{php echo url('platform/menu/current_menu')}";
+	console.dir(group)
 	angular.module('menuApp').value('config', {
 		'id' : id,
 		'status' : status,
 		'group' : group,
 		'type' : type,
-		'remove_url' : remove_url,
+		'delete_url' : delete_url,
 		'success_url' : success_url,
 		'site_url' : site_url,
-		'search_key_url' : search_key_url,
 		'push_url' : push_url,
 		'current_menu_url' : current_menu_url
 	});

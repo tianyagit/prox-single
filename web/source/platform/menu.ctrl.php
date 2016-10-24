@@ -8,28 +8,13 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('mc');
 load()->model('platform');
 
-$dos = array('display', 'save', 'remove', 'refresh', 'search_key', 'add', 'push', 'copy', 'current_menu');
+$dos = array('display', 'delete', 'refresh', 'post', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $_W['page']['title'] = '公众号 - 自定义菜单';
 uni_user_permission_check('platform_menu');
 
 if($_W['isajax']) {
-	if($do == 'search_key') {
-		$condition = '';
-		$key_word = trim($_GPC['key_word']);
-		if(!empty($key_word)) {
-			$condition = " AND content LIKE '%{$key_word}%' ";
-		}
-		$data = pdo_fetchall('SELECT content FROM ' . tablename('rule_keyword') . " WHERE (uniacid = 0 OR uniacid = :uniacid) AND status != 0 " . $condition . ' ORDER BY uniacid DESC,displayorder DESC LIMIT 15', array(':uniacid' => $_W['uniacid']));
-		$exit_da = array();
-		if(!empty($data)) {
-			foreach($data as $da) {
-				$exit_da[] = $da['content'];
-			}
-		}
-		exit(json_encode($exit_da));
-	}
 	$post = $_GPC['__input'];
 	if(!empty($post['method'])) {
 		$do = $post['method'];
@@ -206,7 +191,7 @@ if($do == 'push') {
 			$account = WeAccount::create($_W['acid']);
 			$ret = $account->menuDelete($data['menuid']);
 			if(is_error($ret) && empty($_GPC['f'])) {
-				$url = url('platform/menu/remove', array('id' => $id, 'f' => 1));
+				$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 				$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
 				$message = "调用微信接口删除失败:{$ret['message']}<br>";
 				//$message .= "强制删除本地数据? <a href='{$url}' class='btn btn-primary'>是</a> <a href='{$url_display}' class='btn btn-default'>取消</a>";
@@ -232,11 +217,11 @@ if($do == 'copy') {
 	$menu['title'] = $menu['title'] . '- 复本';
 	pdo_insert('uni_account_menus', $menu);
 	$id = pdo_insertid();
-	header('Location:' . url('platform/menu/add', array('id' => $id)));
+	header('Location:' . url('platform/menu/post', array('id' => $id)));
 	die;
 }
 
-if($do == 'add') {
+if($do == 'post') {
 	$type = intval($_GPC['type']);
 	$id = intval($_GPC['id']);
 	$params = array();
@@ -245,14 +230,23 @@ if($do == 'add') {
 		if(!empty($menu)) {
 			$menu['data'] = iunserializer(base64_decode($menu['data']));
 			if(!empty($menu['data'])) {
-				foreach ($menu['data'] as $key => $menu_list) {
-
-				}
 				if(!empty($menu['data']['matchrule']['province'])) {
 					$menu['data']['matchrule']['province'] .= '省';
 				}
 				if(!empty($menu['data']['matchrule']['city'])) {
 					$menu['data']['matchrule']['city'] .= '市';
+				}
+				if (empty($menu['data']['matchrule']['sex'])) {
+					$menu['data']['matchrule']['sex'] = 0;
+				}
+				if (empty($menu['data']['matchrule']['group_id'])) {
+					$menu['data']['matchrule']['group_id'] = -1;
+				}
+				if (empty($menu['data']['matchrule']['client_platform_type'])) {
+					$menu['data']['matchrule']['client_platform_type'] = 0;
+				}
+				if (empty($menu['data']['matchrule']['language'])) {
+					$menu['data']['matchrule']['language'] = '';
 				}
 				$params = $menu['data'];
 				$params['title'] = $menu['title'];
@@ -263,12 +257,145 @@ if($do == 'add') {
 			$type = $menu['type'];
 		}
 	}
+	$status = $params['status'];
 	$groups = mc_fans_groups();
 	$languages = platform_menu_languages();
+	if($_W['isajax']) {	
+		set_time_limit(0);
+		$post = $post['group'];
+		$menu = array();
+		if(!empty($post['button'])) {
+			foreach($post['button'] as &$button) {
+				$temp = array();
+				$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
+				$temp['name'] = urlencode($temp['name']);
+				if (empty($button['sub_button'])) {
+					$temp['type'] = $button['type'];
+					if($button['type'] == 'view') {
+						$temp['url'] = urlencode($button['url']);
+					} elseif ($button['type'] == 'media_id' || $button['type'] == 'view_limited') {
+						if (!empty($button['media_id']) && empty($button['key'])) {
+							$temp['media_id'] = urlencode($button['media_id']);
+						} elseif (empty($button['media_id']) && !empty($button['key'])) {
+							$temp['type'] = 'click';
+							$temp['key'] = urlencode($button['key']);
+						}
+					} else {
+						$temp['key'] = urlencode($button['key']);
+					}
+				} else {
+					foreach($button['sub_button'] as &$subbutton) {
+						$sub_temp = array();
+						$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
+						$sub_temp['name'] = urlencode($sub_temp['name']);
+						$sub_temp['type'] = $subbutton['type'];
+						if($subbutton['type'] == 'view') {
+							$sub_temp['url'] = urlencode($subbutton['url']);
+						} elseif ($subbutton['type'] == 'media_id' || $subbutton['type'] == 'view_limited') {
+							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
+								$sub_temp['media_id'] = urlencode($subbutton['media_id']);
+							} elseif (empty($subbutton['media_id']) && !empty($subbutton['key'])) {
+								$sub_temp['type'] = 'click';
+								$sub_temp['key'] = urlencode($subbutton['key']);
+							}
+						} else {
+							$sub_temp['key'] = urlencode($subbutton['key']);
+						}
+						$temp['sub_button'][] = $sub_temp;
+					}
+				}
+				$menu['button'][] = $temp;
+			}
+		}
+
+		if($post['type'] == 3 && !empty($post['matchrule'])) {
+			if($post['matchrule']['sex'] > 0) {
+				$menu['matchrule']['sex'] = $post['matchrule']['sex'];
+			}
+			if($post['matchrule']['group_id'] != -1) {
+				$menu['matchrule']['tag_id'] = $post['matchrule']['group_id'];		// 微信用户组id，变为用户标签id
+			}
+			if($post['matchrule']['client_platform_type'] > 0) {
+				$menu['matchrule']['client_platform_type'] = $post['matchrule']['client_platform_type'];
+			}
+
+			if(!empty($post['matchrule']['province'])) {
+				$menu['matchrule']['country'] = urlencode('中国');
+				$menu['matchrule']['province'] = urlencode(str_replace('省', '', $post['matchrule']['province']));
+				if(!empty($post['matchrule']['city'])) {
+					$menu['matchrule']['city'] = urlencode(str_replace('市', '', $post['matchrule']['city']));
+				}
+			}
+			if(!empty($post['matchrule']['language'])) {
+				$inarray = 0;
+				$languages = platform_menu_languages();
+				foreach ($languages as $key => $value) {
+					if(in_array($post['matchrule']['language'], $value, true)) $inarray = 1;
+				}
+				if($inarray === 1) $menu['matchrule']['language'] = $post['matchrule']['language'];
+			}
+		}
+		$account = WeAccount::create($_W['acid']);
+		$ret = $account->menuCreate($menu);
+		if(is_error($ret)) {
+			message($ret, '', 'ajax');
+		} else {
+			// 将$menu中 tag_id 再转为 group_id
+			if($post['matchrule']['group_id'] != -1) {
+				$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
+				unset($menu['matchrule']['tag_id']);
+			}
+			$menu = json_decode(urldecode(json_encode($menu)), true);
+			if(!isset($menu['matchrule'])) {
+				$menu['matchrule'] = array();
+			}
+			$insert = array(
+				'uniacid' => $_W['uniacid'],
+				'menuid' => $ret,
+				'title' => $post['title'],
+				'type' => $post['type'],
+				'sex' => intval($menu['matchrule']['sex']),
+				'group_id' => isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : -1,
+				'client_platform_type' => intval($menu['matchrule']['client_platform_type']),
+				'area' => trim($menus['matchrule']['country']) . trim($menu['matchrule']['province']) . trim($menu['matchrule']['city']),
+				'data' => base64_encode(iserializer($menu)),
+				'status' => 1,
+				'createtime' => TIMESTAMP,
+			);
+			if($post['type'] == 1) {
+				$history = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 2));
+				if(empty($history)) {
+					$data = $insert;
+					$data['type'] = 2;
+					$data['status'] = 0;
+					pdo_insert('uni_account_menus', $data);
+				} else {
+					$data = $insert;
+					$data['type'] = 2;
+					$data['status'] = 0;
+					pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'type' => 2));
+				}
+				$default = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1));
+				if(!empty($default)) {
+					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 1));
+				} else {
+					pdo_insert('uni_account_menus', $insert);
+				}
+				message(error(0, ''), '', 'ajax');
+			} elseif($post['type'] == 3) {
+				if($post['status'] == 0 && $post['id'] > 0) {
+					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 3, 'id' => $post['id']));
+				} else {
+					pdo_insert('uni_account_menus', $insert);
+				}
+				message(error(0, ''), '', 'ajax');
+			}
+		}
+	}
 	template('platform/menu');
 }
 
-if($do == 'remove') {
+if($do == 'delete') {
 	$id = intval($_GPC['id']);
 	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if(empty($data)) {
@@ -283,11 +410,11 @@ if($do == 'remove') {
 		message('恢复菜单成功，是否推送到微信？<a href="'.url('platform/menu/push', array('id' => $id)).'" class="btn btn-primary">是</a> <a href="'.url('platform/menu/display').'" class="btn btn-default">取消</a>', url('platform/menu/display'), 'success');
 	}
 	$status =  $_GPC['status'];
-	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0) && $status != 'history') {
+	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0)) {
 		$account = WeAccount::create($_W['acid']);
 		$ret = $account->menuDelete($data['menuid']);
 		if(is_error($ret) && empty($_GPC['f'])) {
-			$url = url('platform/menu/remove', array('id' => $id, 'f' => 1));
+			$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 			$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
 			$message = "调用微信接口删除失败:{$ret['message']}<br>";
 			//$message .= "强制删除本地数据? <a href='{$url}' class='btn btn-primary'>是</a> <a href='{$url_display}' class='btn btn-default'>取消</a>";
@@ -309,139 +436,6 @@ if($do == 'remove') {
 	}
 
 	message('删除菜单成功', url('platform/menu/display'), 'success');
-}
-
-if($do == 'save') {
-	set_time_limit(0);
-	$post = $post['group'];
-	$menu = array();
-	if(!empty($post['button'])) {
-		foreach($post['button'] as &$button) {
-			$temp = array();
-			$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
-			$temp['name'] = urlencode($temp['name']);
-			if (empty($button['sub_button'])) {
-				$temp['type'] = $button['type'];
-				if($button['type'] == 'view') {
-					$temp['url'] = urlencode($button['url']);
-				} elseif ($button['type'] == 'media_id' || $button['type'] == 'view_limited') {
-					if (!empty($button['media_id']) && empty($button['key'])) {
-						$temp['media_id'] = urlencode($button['media_id']);
-					} elseif (empty($button['media_id']) && !empty($button['key'])) {
-						$temp['type'] = 'click';
-						$temp['key'] = urlencode($button['key']);
-					}
-				} else {
-					$temp['key'] = urlencode($button['key']);
-				}
-			} else {
-				foreach($button['sub_button'] as &$subbutton) {
-					$sub_temp = array();
-					$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
-					$sub_temp['name'] = urlencode($sub_temp['name']);
-					$sub_temp['type'] = $subbutton['type'];
-					if($subbutton['type'] == 'view') {
-						$sub_temp['url'] = urlencode($subbutton['url']);
-					} elseif ($subbutton['type'] == 'media_id' || $subbutton['type'] == 'view_limited') {
-						if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
-							$sub_temp['media_id'] = urlencode($subbutton['media_id']);
-						} elseif (empty($subbutton['media_id']) && !empty($subbutton['key'])) {
-							$sub_temp['type'] = 'click';
-							$sub_temp['key'] = urlencode($subbutton['key']);
-						}
-					} else {
-						$sub_temp['key'] = urlencode($subbutton['key']);
-					}
-					$temp['sub_button'][] = $sub_temp;
-				}
-			}
-			$menu['button'][] = $temp;
-		}
-	}
-
-	if($post['type'] == 3 && !empty($post['matchrule'])) {
-		if($post['matchrule']['sex'] > 0) {
-			$menu['matchrule']['sex'] = $post['matchrule']['sex'];
-		}
-		if($post['matchrule']['group_id'] != -1) {
-			$menu['matchrule']['tag_id'] = $post['matchrule']['group_id'];		// 微信用户组id，变为用户标签id
-		}
-		if($post['matchrule']['client_platform_type'] > 0) {
-			$menu['matchrule']['client_platform_type'] = $post['matchrule']['client_platform_type'];
-		}
-
-		if(!empty($post['matchrule']['province'])) {
-			$menu['matchrule']['country'] = urlencode('中国');
-			$menu['matchrule']['province'] = urlencode(str_replace('省', '', $post['matchrule']['province']));
-			if(!empty($post['matchrule']['city'])) {
-				$menu['matchrule']['city'] = urlencode(str_replace('市', '', $post['matchrule']['city']));
-			}
-		}
-		if(!empty($post['matchrule']['language'])) {
-			$inarray = 0;
-			$languages = platform_menu_languages();
-			foreach ($languages as $key => $value) {
-				if(in_array($post['matchrule']['language'], $value, true)) $inarray = 1;
-			}
-			if($inarray === 1) $menu['matchrule']['language'] = $post['matchrule']['language'];
-		}
-	}
-	$account = WeAccount::create($_W['acid']);
-	$ret = $account->menuCreate($menu);
-	if(is_error($ret)) {
-		message($ret, '', 'ajax');
-	} else {
-		// 将$menu中 tag_id 再转为 group_id
-		if($post['matchrule']['group_id'] != -1) {
-			$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
-			unset($menu['matchrule']['tag_id']);
-		}
-		$menu = json_decode(urldecode(json_encode($menu)), true);
-		if(!isset($menu['matchrule'])) {
-			$menu['matchrule'] = array();
-		}
-		$insert = array(
-			'uniacid' => $_W['uniacid'],
-			'menuid' => $ret,
-			'title' => $post['title'],
-			'type' => $post['type'],
-			'sex' => intval($menu['matchrule']['sex']),
-			'group_id' => isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : -1,
-			'client_platform_type' => intval($menu['matchrule']['client_platform_type']),
-			'area' => trim($menus['matchrule']['country']) . trim($menu['matchrule']['province']) . trim($menu['matchrule']['city']),
-			'data' => base64_encode(iserializer($menu)),
-			'status' => 1,
-			'createtime' => TIMESTAMP,
-		);
-		if($post['type'] == 1) {
-			$history = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 2));
-			if(empty($history)) {
-				$data = $insert;
-				$data['type'] = 2;
-				$data['status'] = 0;
-				pdo_insert('uni_account_menus', $data);
-			} else {
-				$data = $insert;
-				$data['type'] = 2;
-				$data['status'] = 0;
-				pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'type' => 2));
-			}
-			$default = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1));
-			if(!empty($default)) {
-				pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 1));
-			} else {
-				pdo_insert('uni_account_menus', $insert);
-			}
-			message(error(0, ''), '', 'ajax');
-		} elseif($post['type'] == 3) {
-			if($post['status'] == 0 && $post['id'] > 0) {
-				pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 3, 'id' => $post['id']));
-			} else {
-				pdo_insert('uni_account_menus', $insert);
-			}
-			message(error(0, ''), '', 'ajax');
-		}
-	}
 }
 
 if ($do == 'current_menu') {
