@@ -114,15 +114,17 @@
 					</table>
 					{/loop}
 					<div>
-						<label class="checkbox-inline" style="margin-top:-30px;margin-left:17px"><input type="checkbox" name="select_all" id="select_all" value="1"/></label>
+						<label class="checkbox-inline" style="margin-top:-20px;margin-left:17px"><input type="checkbox" name="select_all" id="select_all" value="1"/></label>
 						<input type="submit" class="btn btn-danger" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
 						<input type="hidden" name="token" value="{$_W['token']}"/>
+						<div class="pull-right">
+							{$pager}
+						</div>
 					</div>
 				{else}
 					<p class="text-center">暂无数据</p>
 				{/if}
 			</form>
-			{$pager}
 		</div>
 	</div>
 </div>
