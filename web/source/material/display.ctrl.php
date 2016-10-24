@@ -1,7 +1,7 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
+ * 素材管理
  */
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('material_mass');
@@ -165,36 +165,37 @@ if($do == 'down') {
 
 if($do == 'list') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'image';
-	$condition = " WHERE uniacid = :uniacid AND type = :type AND model = :model AND media_id != ''";
+	$condition = " as a LEFT JOIN ". tablename('wechat_news')." as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND a.model = :model AND a.media_id != ''";
 	$params = array(':uniacid' => $_W['uniacid'], ':type' => $type, ':model' => 'perm');
-	$id = intval($_GPC['id']);
-	if($id > 0) {
-		$condition .= ' AND id = :id';
-		$params[':id'] = $id;
+	$title = addslashes($_GPC['title']);
+	if(!empty($title)) {
+		$condition .= ' AND (b.title LIKE :title OR b.author LIKE :title OR b.digest LIKE :title)';
+		$params[':title'] = '%'.$title. "%";
 	}
-
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 20;
-	$limit = " ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ", {$psize}";
-
-	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('wechat_attachment') . $condition, $params);
-	$lists = pdo_fetchall('SELECT * FROM ' . tablename('wechat_attachment') . $condition . $limit, $params);
-	if(!empty($lists)) {
-		foreach($lists as &$row) {
+	$pageindex = max(1, intval($_GPC['page']));
+	$pagesize = 21;
+	$limit = " ORDER BY a.id DESC, b.id ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
+	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('wechat_attachment') .$condition, $params);
+	$material_list = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') .$condition . $limit, $params);
+	if(!empty($material_list)) {
+		foreach($material_list as &$material) {
 			if($type == 'video') {
-				$row['tag'] = iunserializer($row['tag']);
+				$material['tag'] = iunserializer($row['tag']);
 			} elseif($type == 'news') {
-				$row['items'] = pdo_fetchall("SELECT * FROM " . tablename('wechat_news') . " WHERE uniacid = :uniacid AND attach_id = :attach_id ORDER BY id ASC", array(':uniacid' => $_W['uniacid'], ':attach_id' => $row['id']));
+				$material['items'] = pdo_fetchall("SELECT * FROM " . tablename('wechat_news') . " WHERE uniacid = :uniacid AND attach_id = :attach_id ORDER BY id ASC", array(':uniacid' => $_W['uniacid'], ':attach_id' => $material['id']));
+				if (!empty($material['items'])) {
+					$material['prompt_msg'] = false;
+					foreach($material['items'] as $material_row) {
+						if (empty($material_row['title']) || empty($material_row['thumb_url']) || empty($material_row['content'])) {
+							$material['prompt_msg'] = true;
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
-	$pager = pagination($total, $pindex, $psize);
-
-	//粉丝分组
-	$groups = pdo_fetch('SELECT * FROM ' . tablename('mc_fans_groups') . ' WHERE uniacid = :uniacid AND acid = :acid', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
-	if(!empty($groups)) {
-		$groups = iunserializer($groups['groups']);
-	}
+	$pager = pagination($total, $pageindex, $pagesize);
 }
 
 if($do == 'purview') {
