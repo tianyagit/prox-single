@@ -26,6 +26,11 @@ $ms['account'] = array(
 					'url' => url('platform/menu'),
 					'permission_name' => 'platform_menu',
 				),
+				'platform_qr' => array(
+					'title' => '二维码/转化链接',
+					'url' => url('platform/qr'),
+					'permission_name' => 'platform_qr',
+				),
 			)
 		)
 	),
@@ -39,7 +44,158 @@ $ms['wxapp'] = array(
 
 $ms['system'] = array(
 	'title' => '系统管理',
+	'url' => url('system/account'),
 	'section' => array(
+		'wxplatform' => array(
+			'title' => '微信',
+			'menu' => array(
+				'system_account' => array(
+					'title' => '微信公众号管理',
+					'url' => url('system/account'),
+					'permission_name' => 'system_account',
+				),
+				'system_platform' => array(
+					'title' => '微信开放平台设置',
+					'url' => url('system/platform'),
+					'permission_name' => 'system_platform',
+				),
+			)
+		),
+		'module' => array(
+			'title' => '应用模块',
+			'menu' => array(
+				'system_module' => array(
+					'title' => '我的应用管理',
+					'url' => url('system/module'),
+					'permission_name' => 'system_module',
+				),
+				'system_module_group' => array(
+					'title' => '应用权限套餐',
+					'url' => url('system/platform'),
+					'permission_name' => 'system_module_group',
+				),
+			)
+		),
+		'user' => array(
+			'title' => '帐户/用户',
+			'menu' => array(
+				'system_profile' => array(
+					'title' => '我的帐户',
+					'url' => url('system/profile'),
+					'permission_name' => 'system_module',
+				),
+				'system_user' => array(
+					'title' => '用户管理',
+					'url' => url('system/user'),
+					'permission_name' => 'system_module_group',
+				),
+				'system_user_group' => array(
+					'title' => '用户权限组',
+					'url' => url('system/user/group'),
+					'permission_name' => 'system_module_group',
+				),
+			)
+		),
+		'cloud' => array(
+			'title' => '云服务',
+			'menu' => array(
+				'system_profile' => array(
+					'title' => '系统更新',
+					'url' => url('system/profile'),
+					'permission_name' => 'system_module',
+				),
+				'system_user' => array(
+					'title' => '注册站点',
+					'url' => url('system/user'),
+					'permission_name' => 'system_module_group',
+				),
+				'system_user_group' => array(
+					'title' => '短信管理',
+					'url' => url('system/user/group'),
+					'permission_name' => 'system_module_group',
+				),
+			)
+		),
+		'acticle' => array(
+			'title' => '文章',
+			'menu' => array(
+				'system_profile' => array(
+					'title' => '文章管理',
+					'url' => url('system/profile'),
+					'permission_name' => 'system_module',
+				),
+				'system_user' => array(
+					'title' => '公告管理',
+					'url' => url('system/user'),
+					'permission_name' => 'system_module_group',
+				)
+			)
+		),
+		'setting' => array(
+			'title' => '设置',
+			'menu' => array(
+				'system_setting_attachment' => array(
+					'title' => '附件设置',
+					'url' => url('system/profile'),
+					'permission_name' => 'system_setting_attachment',
+				),
+				'system_setting_updatecache' => array(
+					'title' => '更新缓存',
+					'url' => url('system/user'),
+					'permission_name' => 'system_setting_updatecache',
+				),
+				'system_setting_performance' => array(
+					'title' => '性能优化',
+					'url' => url('system/user'),
+					'permission_name' => 'system_setting_performance',
+				),
+				'system_setting_menu' => array(
+					'title' => '系统菜单',
+					'url' => url('system/profile'),
+					'permission_name' => 'system_setting_menu',
+				),
+				'system_setting_sytle' => array(
+					'title' => '后台皮肤',
+					'url' => url('system/user'),
+					'permission_name' => 'system_setting_sytle',
+				),
+				'system_setting_homepage' => array(
+					'title' => '首页样式',
+					'url' => url('system/user'),
+					'permission_name' => 'system_setting_homepage',
+				),
+			)
+		),
+		'utility' => array(
+			'title' => '常用系统工具',
+			'menu' => array(
+				'system_setting_attachment' => array(
+					'title' => '文件校验',
+					'url' => url('system/profile'),
+					'permission_name' => 'system_setting_attachment',
+				),
+				'system_setting_updatecache' => array(
+					'title' => '系统日志',
+					'url' => url('system/user'),
+					'permission_name' => 'system_setting_updatecache',
+				),
+				'system_setting_menu' => array(
+					'title' => '数据库',
+					'url' => url('system/profile'),
+					'permission_name' => 'system_setting_menu',
+				),
+				'system_setting_sytle' => array(
+					'title' => '木马查杀',
+					'url' => url('system/user'),
+					'permission_name' => 'system_setting_sytle',
+				),
+				'system_setting_homepage' => array(
+					'title' => '检测文件BOM',
+					'url' => url('system/user'),
+					'permission_name' => 'system_setting_homepage',
+				),
+			)
+		),
 	),
 );
 
