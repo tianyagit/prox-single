@@ -96,4 +96,3 @@ function _login($forward = '') {
 		message('登录失败，请检查您输入的用户名和密码！');
 	}
 }
-
