@@ -695,6 +695,214 @@ function account_fetch($acid) {
 	return $account;
 }
 
+/**
+ * 登录微信公众号
+ * @param string $username 微信公众号用户名
+ * @param string $password 微信公众号密码
+ * @param string $imgcode 登录验证码
+ * @return boolean|array 登录成功或错误信息
+ */
+function account_weixin_login($username = '', $password = '', $imgcode = '') {
+	global $_W, $_GPC;
+	if (empty($username) || empty($password)) {
+		$username = $_W['account']['username'];
+		$password = $_W['account']['password'];
+	}
+	$auth['token'] = cache_load('wxauth:' . $username . ':token');
+	load()->func('communication');
+	$loginurl = WEIXIN_ROOT . '/cgi-bin/login?lang=zh_CN';
+	$post = array(
+		'username' => $username,
+		'pwd' => $password,
+		'imgcode' => $imgcode,
+		'f' => 'json',
+	);
+	//获取验证码cookie
+	$code_cookie = $_GPC['code_cookie'];
+	$response = ihttp_request($loginurl, $post, array('CURLOPT_REFERER' => 'https://mp.weixin.qq.com/', 'CURLOPT_COOKIE' => $code_cookie));
+	if (is_error($response)) {
+		return false;
+	}
+
+	$data = json_decode($response['content'], true);
+	if ($data['base_resp']['ret'] == 0) {
+		preg_match('/token=([0-9]+)/', $data['redirect_url'], $match);
+		cache_write('wxauth:' . $username . ':token', $match[1]);
+		cache_write('wxauth:' . $username . ':cookie', implode('; ', $response['headers']['Set-Cookie']));
+		isetcookie('code_cookie', '', -1000);
+	} else {
+		return error(-1, $data['base_resp']['err_msg']);
+	}
+	return true;
+}
+
+/**
+ * 获取微信公众号的基本信息
+ * @param string $username 微信公众号用户名
+ * @return array 公众号的基本信息或错误信息
+ */
+function account_weixin_basic($username) {
+	$response = account_weixin_http($username, WEIXIN_ROOT . '/cgi-bin/settingpage?t=setting/index&action=index&lang=zh_CN&f=json');
+	if(is_error($response)) {
+		return $response;
+	}
+	$result =  json_decode($response['content'], true);
+	if ($result['base_resp']['ret'] != 0) {
+		return error(-1, $result['base_resp']['err_msg']);
+	}
+
+	$fakeid = $result['user_info']['fake_id'];
+	$image = account_weixin_http($username, WEIXIN_ROOT . '/misc/getheadimg?fakeid=' . $fakeid);
+	if (!is_error($image) && !empty($image['content'])) {
+		$info['headimg'] = $image['content'];
+	}
+	$image = account_weixin_http($username, WEIXIN_ROOT . '/misc/getqrcode?fakeid=' . $fakeid . '&style=1&action=download');
+	if (!is_error($image) && !empty($image['content'])) {
+		$info['qrcode'] = $image['content'];
+	}
+	$info['original'] = $result['setting_info']['original_username'];
+	$info['name'] = $result['user_info']['nick_name'];
+	$info['account'] = $result['user_info']['user_name'];
+	$info['signature'] = $result['setting_info']['intro']['signature'];
+	$info['level'] = 1;
+	if($result['user_info']['service_type'] == 1) {
+		$info['level'] = 1;
+		if($result['user_info']['is_wx_verify'] == 1) {
+			$info['level'] = 3;
+		}
+	} elseif($result['user_info']['service_type'] == 2) {
+		$info['level'] = 2;
+		if($result['user_info']['is_wx_verify'] == 1) {
+			$info['level'] = 4;
+		}
+	}
+	$response = account_weixin_http($username, WEIXIN_ROOT . '/advanced/advanced?action=dev&t=advanced/dev&lang=zh_CN&f=json');
+	if(!is_error($response)) {
+		$result =  json_decode($response['content'], true);
+		$info['key'] = $result['advanced_info']['dev_info']['app_id'];
+		$info['secret'] = '';
+	}
+	return $info;
+}
+
+function account_weixin_interface($username, $account) {
+	global $_W;
+	$response = account_weixin_http($username, WEIXIN_ROOT . '/advanced/callbackprofile?t=ajax-response&lang=zh_CN',
+		array(
+			'url' => $_W['siteroot'].'api.php?id='.$account['id'],
+			'callback_token' => $account['token'],
+			'encoding_aeskey' => $account['encodingaeskey'],
+			'callback_encrypt_mode' => '0',
+			'operation_seq' => '203038881',
+	));
+	if (is_error($response)) {
+		return $response;
+	}
+	$response = json_decode($response['content'], true);
+	if (!empty($response['base_resp']['ret'])) {
+		return error($response['ret'], $response['msg']);
+	}
+	$response = account_weixin_http($username, WEIXIN_ROOT . '/misc/skeyform?form=advancedswitchform', array('f' => 'json', 'lang' => 'zh_CN', 'flag' => '1', 'type' => '2', 'ajax' => '1', 'random' => random(5, 1)));
+	if (is_error($response)) {
+		return $response;
+	}
+	return true;
+}
+
+function account_weixin_http($username, $url, $post = '') {
+	global $_W;
+	if (empty($_W['cache']['wxauth:'.$username.':token']) || empty($_W['cache']['wxauth:'.$username.':cookie'])) {
+		cache_load('wxauth:'.$username.':token');
+		cache_load('wxauth:'.$username.':cookie');
+	}
+	$auth = $_W['cache'];
+	return ihttp_request($url . '&token=' . $auth['wxauth:'.$username.':token'], $post, array('CURLOPT_COOKIE' => $auth['wxauth:'.$username.':cookie'], 'CURLOPT_REFERER' => WEIXIN_ROOT . '/advanced/advanced?action=edit&t=advanced/edit&token='.$auth['wxauth:'.$username.':token']));
+}
+
+function account_weixin_userlist($pindex = 0, $psize = 1, &$total = 0) {
+	global $_W;
+	$url = WEIXIN_ROOT . '/cgi-bin/contactmanagepage?t=wxm-friend&lang=zh_CN&type=0&keyword=&groupid=0&pagesize='.$psize.'&pageidx='.$pindex;
+	$response = account_weixin_http($_W['account']['username'], $url);
+	$html = $response['content'];
+	preg_match('/PageCount \: \'(\d+)\'/', $html, $match);
+	$total = $match[1];
+	preg_match_all('/"fakeId" : "([0-9]+?)"/', $html, $match);
+	return $match[1];
+}
+
+function account_weixin_send($uid, $message = '') {
+	global $_W;
+	$username = $_W['account']['username'];
+	if (empty($_W['cache']['wxauth'][$username])) {
+		cache_load('wxauth:'.$username.':');
+	}
+	$auth = $_W['cache']['wxauth'][$username];
+	$url = WEIXIN_ROOT . '/cgi-bin/singlesend?t=ajax-response&lang=zh_CN';
+	$post = array(
+		'ajax' => 1,
+		'content' => $message,
+		'error' => false,
+		'tofakeid' => $uid,
+		'token' => $auth['token'],
+		'type' => 1,
+	);
+	$response = ihttp_request($url, $post, array(
+		'CURLOPT_COOKIE' => $auth['cookie'],
+		'CURLOPT_REFERER' => WEIXIN_ROOT . '/cgi-bin/singlemsgpage?token='.$auth['token'].'&fromfakeid='.$uid.'&msgid=&source=&count=20&t=wxm-singlechat&lang=zh_CN',
+	));
+}
+
+function account_txweibo_login($username, $password, $verify = '') {
+	$cookie = cache_load("txwall:$username");
+	if (!empty($cookie)) {
+		$response = ihttp_request('http://t.qq.com', '', array(
+			'CURLOPT_COOKIE' => $cookie,
+			'CURLOPT_REFERER' => 'http://t.qq.com/',
+			"User-Agent" => "Mozilla/5.0 (Windows NT 5.1; rv:13.0) Gecko/20100101 Firefox/13.0",
+		));
+		if (!strexists($response['content'], '登录框')) {
+			return $cookie;
+		}
+	}
+	$loginsign = '';
+
+	$loginui = 'http://ui.ptlogin2.qq.com/cgi-bin/login?appid=46000101&s_url=http%3A%2F%2Ft.qq.com';
+	$response = ihttp_request($loginui);
+	preg_match('/login_sig:"(.*?)"/', $response['content'], $match);
+	$loginsign = $match[1];
+	
+	$checkloginurl = 'http://check.ptlogin2.qq.com/check?uin='.$username.'&appid=46000101&r='.TIMESTAMP;
+	$response = ihttp_request($checkloginurl);
+	$cookie = implode('; ', $response['headers']['Set-Cookie']);
+	preg_match_all("/'(.*?)'/", $response['content'], $match);
+	list($needVerify, $verify1, $verify2) = $match[1];
+	if (!empty($needVerify)) {
+		if (empty($verify)) {
+			return error(1, '请输入验证码！');
+		}
+		$verify1 = $verify;
+		$cookie .= '; ' . cache_load('txwall:verify');
+	}
+	$verify2 = pack('H*', str_replace('\x', '', $verify2));
+	$temp = md5($password, true);
+	$temp = strtoupper(md5($temp . $verify2));
+	$password = strtoupper(md5($temp . strtoupper($verify1)));
+	$loginurl = "http://ptlogin2.qq.com/login?u={$username}&p={$password}&verifycode={$verify1}&login_sig={$loginsign}&low_login_enable=1&low_login_hour=720&aid=46000101&u1=http%3A%2F%2Ft.qq.com&ptredirect=1&h=1&from_ui=1&dumy=&fp=loginerroralert&g=1&t=1&dummy=&daid=6&";
+	$response = ihttp_request($loginurl, '', array(
+		'CURLOPT_COOKIE' => $cookie,
+		'CURLOPT_REFERER' => 'http://t.qq.com/',
+		"User-Agent" => "Mozilla/5.0 (Windows NT 5.1; rv:13.0) Gecko/20100101 Firefox/13.0",
+	));
+	$info = explode("'", $response['content']);
+	if ($info[1] != 0) {
+		return error('1', $info[9]);
+	}
+	$response = ihttp_request($info[5]);
+	$cookie = implode('; ', $response['headers']['Set-Cookie']);
+	cache_write("txwall:$username", $cookie);
+	return $cookie;
+}
+
 /*
  * 获取某个公众号的所有人和套餐有效期限（如果没有所有人，默认属于创始人，服务创始人）
  * */
@@ -881,3 +1089,4 @@ function account_delete($acid) {
 	}
 	return true;
 }
+
