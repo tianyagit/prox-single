@@ -1,0 +1,62 @@
+{template 'common/header'}
+<div class="right-contnt">
+	<div class="">
+		<ol class="breadcrumb we7-breadcrumb">
+			<a href="{php echo url('platform/qr/list');}"><i class="fa fa-chevron-circle-left"></i> </a>
+			<li><a href="{php echo url('platform/qr/list');}">二维码列表</a></li>
+			<li><a href="{php echo url('platform/qr/post');}">{if empty($id)}新建{else}编辑{/if}二维码</a></li>
+		</ol>
+		<div class="we7-form" ng-controller="QrPost" ng-cloak>
+			<form action="{php echo url('platform/qr/post')}" method="post" id="form1">
+				<input type="hidden" name="id" value="{$row['id']}" />
+				<input type="hidden" name="acid" value="{$row['acid']}" />
+				<div class="form-group">
+					<label for="" class="control-label">二维码名称</label>
+					<div class="form-controls">
+						<input type="text" id="scene-name" class="form-control" name="scene-name" value="{$row['name']}" />
+					</div>
+				</div>
+				{if empty($id)}
+				<div class="form-group">
+					<label for="" class="control-label">二维码类型</label>
+					<div class="form-controls">
+						<div class="form-inline clearfix">
+							<select name="qrc-model" class="we7-select pull-left">
+								<option value="1">临时</option>
+								<option value="2">永久</option>
+							</select>
+							<div class="pull-left we7-margin-left" ng-show="type == 1">
+								<label for="" class="control-label">过期时间</label>
+								<input type="text" id="expire-seconds" class="form-control" name="expire-seconds" value="2592000" />
+								<span class="form-control-static color-gray">&nbsp;&nbsp;临时二维码过期时间, 最大为30天（2592000秒）.</span>
+							</div>
+							<div class="pull-left we7-margin-left" ng-show="type == 2">
+								<label for="" class="control-label">场景值</label>
+								<input type="text" class="form-control" placeholder="场景值" id="scene_str" name="scene_str"/>
+								<span class="form-control-static color-gray">&nbsp;&nbsp;场景值不能为空,并且只能为字符串.</span>
+							</div>
+						</div>
+						<span class="help-block clearfix">
+							目前有2种类型的二维码, 分别是临时二维码和永久二维码, 前者有过期时间, 最大为30天（2592000秒）, 但能够生成较多数
+							量, 后者无过期时间, 数量较少(目前参数只支持1--100000).
+						</span>
+					</div>
+				</div>
+				{/if}
+				{php echo module_build_form('autoreply', $rid, array('keyword' => false))}
+				<input type="hidden" name="token" value="{$_W['token']}" />
+				<input type="hidden" name="submit" value="submit">
+				<button class="btn btn-primary col-lg-1 submit">提交</button>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+require(['angular', 'util', 'underscore'], function(angular){
+	angular.module('qrApp').value('config', {
+		id: {php echo json_encode($id)},
+	});
+	angular.bootstrap(document, ['qrApp']);
+})
+</script>
+{template 'common/footer'}
