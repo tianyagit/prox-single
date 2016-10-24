@@ -44,7 +44,6 @@
 	</div>
 </div>
 <script type="text/javascript">
-require(['angular', 'util'], function(){
 	angular.module('qrApp').value('config', {
 		site_url: "{php echo $_W['siteroot']}",
 		img_url: "{php echo  url('platform/url2qr/qr')}",
@@ -52,6 +51,5 @@ require(['angular', 'util'], function(){
 		down_url: "{php echo url('platform/url2qr/down_qr')}",
 	});
 	angular.bootstrap(document, ['qrApp']);
-});
 </script>
 {template 'common/footer'}
