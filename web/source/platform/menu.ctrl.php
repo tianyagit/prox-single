@@ -245,9 +245,6 @@ if($do == 'add') {
 		if(!empty($menu)) {
 			$menu['data'] = iunserializer(base64_decode($menu['data']));
 			if(!empty($menu['data'])) {
-				foreach ($menu['data'] as $key => $menu_list) {
-
-				}
 				if(!empty($menu['data']['matchrule']['province'])) {
 					$menu['data']['matchrule']['province'] .= '省';
 				}
@@ -264,6 +261,9 @@ if($do == 'add') {
 		}
 	}
 	$groups = mc_fans_groups();
+	echo "<pre>";
+	print_r($groups);
+	echo "</pre>";
 	$languages = platform_menu_languages();
 	template('platform/menu');
 }

@@ -120,16 +120,16 @@
 			<div class="form-group">
 				<label for="" class="control-label">菜单显示对象</label>
 				<div class="form-controls ">
-					<select class="we7-select" ng-model="context.group.matchrule.sex" ng-disabled="context.group.disabled">
-						<option value="0" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 0">性别不限</option>
-						<option value="1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 1">男</option>
-						<option value="2" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 2">女</option>
+					<select class="we7-select" ng-model="context.group.matchrule.sex" ng-disabled="context.group.disabled" ng-options="sex.name for sex in context.group_sex">
+						<option value="" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 0">性别不限</option>
+						<!-- <option value="1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 1">男</option>
+						<option value="2" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 2">女</option> -->
 					</select>
-					<select class="we7-select" ng-model="context.group.matchrule.group_id" ng-disabled="context.group.disabled">
-						<option value="-1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.group_id == -1">粉丝分组不限</option>
-						{loop $groups $group}
+					<select class="we7-select" ng-model="context.group.matchrule.group_id" ng-disabled="context.group.disabled" ng-options="follow.name for follow in follow_groups">
+						<option value="" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.group_id == -1">粉丝分组不限</option>
+						<!-- {loop $groups $group}
 						<option value="{$group['id']}" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.group_id == {$group['id']}">{$group['name']}</option>
-						{/loop}
+						{/loop} -->
 					</select>
 					<select class="we7-select" ng-model="context.group.matchrule.client_platform_type" ng-disabled="context.group.disabled">
 						<option value="0" ng-selected="context.group.matchrule.client_platform_type == 0">手机系统不限</option>
@@ -415,6 +415,8 @@ $(function(){
 	site_url = "{$_W['siteroot']}";
 	search_key_url = "{php echo url('platform/menu/search_key')}";
 	current_menu_url = "{php echo url('platform/menu/current_menu')}";
+	follow_groups = {$groups};
+	console.dir(follow_groups)
 	angular.module('menuApp').value('config', {
 		'id' : id,
 		'status' : status,
