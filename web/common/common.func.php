@@ -134,8 +134,8 @@ function system_modules() {
 }
 
 /**
- * 在当前URL上拼接查询参数，生成url
- *  @param string $params 需要拼接的参数。例如："time:1,group:2"，会在当前URL上加上&time=1&group=2
+ * 在当前URL上附加查询参数，生成url，主要用作GET表单查询
+ * @param string $params 需要拼接的参数。例如："time:1,group:2"，会在当前URL上加上&time=1&group=2
  * */
 function filter_url($params) {
 	global $_W;
@@ -182,4 +182,48 @@ EOF;
 		}
 	}
 	return '';
+}
+
+/**
+ * 计算当前选中链接item，如果
+ * @param unknown $frames
+ */
+function calc_current_frames(&$frames) {
+	global $controller, $action;
+	if(!empty($frames['section']) && is_array($frames['section'])) {
+		foreach($frames['section'] as &$frame) {
+			if(empty($frame['menu'])) continue;
+			foreach($frame['menu'] as &$menu) {
+				$query = parse_url($menu['url'], PHP_URL_QUERY);
+				parse_str($query, $urls);
+				if(empty($urls)) continue;
+				if(defined('ACTIVE_FRAME_URL')) {
+					$query = parse_url(ACTIVE_FRAME_URL, PHP_URL_QUERY);
+					parse_str($query, $get);
+				} else {
+					$get = $_GET;
+					$get['c'] = $controller;
+					$get['a'] = $action;
+				}
+				if(!empty($do)) {
+					$get['do'] = $do;
+				}
+
+				$diff = array_diff_assoc($urls, $get);
+				if(empty($diff)) {
+					$menu['active'] = ' active';
+				}
+			}
+		}
+	}
+}
+
+/**
+ * 生成控制器及方法文件路径
+ * @param string $controller
+ * @param string $action
+ */
+function _forward($controller, $action) {
+	$file = IA_ROOT . '/web/source/' . $controller . '/' . $action . '.ctrl.php';
+	return $file;
 }
