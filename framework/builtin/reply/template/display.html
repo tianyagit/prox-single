@@ -647,7 +647,7 @@
 	window.validateReplyForm = function(form, $, _, util, $scope) {
 		var allEmpty = true;
 		var modules = ['basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword'];
-		if($scope.reply.entry.module == 'auto') {
+		if($scope.reply.entry.module == 'reply') {
 			angular.forEach(modules, function(val, key){
 				if($(':hidden[name="reply[reply_'+val+']"]').val() != '') {
 					allEmpty = false;
