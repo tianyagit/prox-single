@@ -10,7 +10,7 @@
 				<ul class="nav navbar-nav navbar-left">
 					{php global $top_nav;}
 					{loop $top_nav $nav}
-						<li{if FRAME == $nav['name']} class="active"{/if}><a href="{php echo url('home/welcome/' . $nav['name']);}">{$nav['title']}</a></li>
+						<li{if FRAME == $nav['name']} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}">{$nav['title']}</a></li>
 					{/loop}
 					<li {if $action == 'emulator'}class="active"{/if}>
 						<a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i> 模拟测试</a>
