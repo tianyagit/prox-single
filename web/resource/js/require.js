@@ -56,6 +56,7 @@ require.config({
 		'jquery.zclip': '../../components/zclip/jquery.zclip.min',
 		'jquery.wookmark': '../lib/jquery.wookmark.min',
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
+		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
 
 		'underscore': '../lib/underscore-min',
 		'loadcss': '../lib/css.min', //加载CSS
@@ -100,6 +101,9 @@ require.config({
 		},
 		'jquery.qrcode': {
 			exports: '$'
+		},
+		'jquery.jplayer': {
+			exports: "$"
 		},
 		'emoji': {
 			deps: ['loadcss!../../components/emoji/emotions.css']
