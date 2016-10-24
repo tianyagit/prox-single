@@ -462,22 +462,27 @@ function uni_account_default($uniacid = 0) {
 	return $account;
 }
 
+/**
+ * 判断某个用户在某个公众号是否配置过权限清单
+ * @param number $uid
+ * @param number $uniacid
+ * @return boolean
+ */
 function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	if($_W['role'] == 'founder' || $_W['role'] == 'manager') {
+	if ($_W['role'] == 'founder' || $_W['role'] == 'manager') {
+		//return false;
+	}
+	if ($_W['role'] == 'clerk') {
 		return true;
 	}
-	$is_exist = pdo_fetch('SELECT id FROM ' . tablename('users_permission') . ' WHERE `uid`=:uid AND `uniacid`=:uniacid', array(':uid' => $uid, ':uniacid' => $uniacid));
+	$is_exist = pdo_get('users_permission', array('uid' => $uid, 'uniacid' => $uniacid), array('id'));
 	if(empty($is_exist)) {
-		if($_W['role'] != 'clerk') {
-			return true;
-		} else {
-			return error(-1, '');
-		}
+		return false;
 	} else {
-		return error(-1, '');
+		return true;
 	}
 }
 /*
