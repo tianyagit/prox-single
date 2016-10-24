@@ -1,18 +1,18 @@
 {template 'common/header'}
 <div class="new-keyword">
 	<ol class="breadcrumb we7-breadcrumb">
-		<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
+		<a href="{url 'platform/reply' array('m' => 'keyword')}"><i class="fa fa-chevron-circle-left"></i> </a>
 		<li>
-			<a href="{url 'platform/autoreply'}">自动回复管理</a>
+			<a href="{url 'platform/reply'}">自动回复管理</a>
 		</li>
 		<li>
-			{if empty($rid)}<a href="{url 'platform/autoreply/post' array('m' => $m)}">新建{$module['title']}</a></li>{/if}
-			{if !empty($rid)}<a href="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}">编辑{$module['title']}</a></li>{/if}
+			{if empty($rid)}<a href="{url 'platform/reply/post' array('m' => $m)}">新建{$module['title']}</a></li>{/if}
+			{if !empty($rid)}<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}">编辑{$module['title']}</a></li>{/if}
 		</li>
 	</ol>
 	{if $m == 'keyword'}
 	<div class="we7-form" id="js-reply-form" ng-controller="KeywordReply" ng-cloak>
-		<form id="reply-form" action="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
+		<form id="reply-form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="rid" value="{$rid}" />
 		<div class="form-group">
 			<label for="" class="control-label">规则名称</label>
@@ -123,7 +123,7 @@
 				<span class="help-block">您可以选择临时禁用这条回复.</span>
 			</div>
 		</div>
-		{php echo module_build_form('autoreply', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
+		{php echo module_build_form('reply', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
 		<input type="hidden" name="token" value="{$_W['token']}" />
 		<input type="submit" name="submit" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary we7-padding-horizontal" style="padding: 6px 50px;"/>
 	</div>
@@ -157,7 +157,7 @@
 						<div class="keyword-app-info">
 							<img src="{$row['icon']}" alt="{$row['title']}"/>
 							<p>{$row['title']}</p>
-							<a href="{if $row['type'] != 'system'}./index.php?c=home&a=welcome&do=ext&m={$row['name']}{else}./index.php?c=platform&a=autoreply{/if}" class="cover-dark">
+							<a href="{if $row['type'] != 'system'}./index.php?c=home&a=welcome&do=ext&m={$row['name']}{else}./index.php?c=platform&a=reply{/if}" class="cover-dark">
 								<span class="cover-circle">进入</span>
 							</a>
 						</div>
@@ -174,7 +174,7 @@
 						<div class="keyword-app-info">
 							<img src="{$row['icon']}" alt="{$row['title']}"/>
 							<p>{$row['title']}</p>
-							<a href="{if $row['type'] != 'system'}./index.php?c=home&a=welcome&do=ext&m={$row['name']}{else}./index.php?c=platform&a=autoreply{/if}" class="cover-dark">
+							<a href="{if $row['type'] != 'system'}./index.php?c=home&a=welcome&do=ext&m={$row['name']}{else}./index.php?c=platform&a=reply{/if}" class="cover-dark">
 								<span class="cover-circle">进入</span>
 							</a>
 						</div>
@@ -222,7 +222,7 @@
 			if(resp != 'success') {
 				var rid = $('input[name="rid"]').val();
 				var rules = JSON.parse(resp);
-				var url = "{php echo url('platform/autoreply/post', array('m' => $_GPC['m']));}";
+				var url = "{php echo url('platform/reply/post', array('m' => $_GPC['m']));}";
 				var ruleurl = '';
 				for (rule in rules) {
 					if (rid != rules[rule].id) {

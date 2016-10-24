@@ -1,16 +1,12 @@
 {template 'common/header'}
 	<div class="new-keyword">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
-			<li>
-				非文字自动回复
-			</li>
-			<li>
-				编辑
-			</li>
+			<a href="{url 'platform/reply' array('m' => 'special')}"><i class="fa fa-chevron-circle-left"></i> </a>
+			<li><a href="{url 'platform/reply' array('m' => 'special')}">非文字自动回复</a></li>
+			<li>编辑</li>
 		</ol>
 		<div class="we7-form" ng-controller="PostCtrl">
-			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/autoreply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
+			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 			<div class="form-group">
 				<label class="control-label">是否开启</label>
 				<div class="form-controls">
@@ -21,7 +17,7 @@
 				</div>
 			</div>
 			<div id="key" ng-hide="status == ''" >
-			{php echo module_build_form('autoreply', $rule_id, array('keyword' => false))}
+			{php echo module_build_form('reply', $rule_id, array('keyword' => false))}
 			</div>
 			<input type="submit" name="submit"  value="保存" class="btn btn-primary" style="padding: 6px 50px;"/>
 			<input type="hidden" name="token" value="{$_W['token']}">
@@ -31,7 +27,7 @@
 		</div>
 	</div>
 <script>
-	angular.module('replyFormApp').value('config', {'class' : {if !empty($setting[$type]['type'])}'switch switchOn'{else}'switch'{/if}, 'url' : '{php echo url('platform/autoreply/change_status')}', 'status' : '{$setting[$type]['type']}'});
+	angular.module('replyFormApp').value('config', {'class' : {if !empty($setting[$type]['type'])}'switch switchOn'{else}'switch'{/if}, 'url' : '{php echo url('platform/reply/change_status')}', 'status' : '{$setting[$type]['type']}'});
 	angular.bootstrap(document, ['replyFormApp']);
 </script>
 
