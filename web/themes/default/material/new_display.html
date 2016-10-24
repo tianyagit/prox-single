@@ -1,0 +1,119 @@
+{template 'common/header'}
+<div class="right-contnt">
+	<div class="material">
+		<div class="we7-page-title">
+			素材管理
+		</div>
+		<ul class="we7-page-tab">
+			<li class="active">
+				<a href="图文管理.html">图文消息</a>
+			</li>
+			<li>
+				<a href="图片管理.html">图片</a>
+			</li>
+			<li>
+				<a href="语音管理.html">语音</a>
+			</li>
+			<li>
+				<a href="视频管理.html">视频</a>
+			</li>
+		</ul>
+		<div class="material-appmsg">
+
+			<div class="material-list-head clearfix">
+				<div class="info">
+					<div class="we7-form">
+						<div class="form-controls">
+							<form action="{php echo url('material//setiing', array('type' => 'news'))}" method="post">
+								<input type="text" id="" name="title" class="form-control" size="40" value="{$_GPC['title']}" placeholder="标题/作者/摘要">
+								<input type="submit" value="搜索">
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="action">
+					<a href="" class="btn btn-default">同步微信</a>
+					<div class="btn-group we7-btn-group we7-padding-left">
+						<a href="" class="btn btn-primary">新建图文消息</a>
+						<a href="" class="btn btn-danger">超级编辑器</a>
+					</div>
+				</div>
+			</div>
+			<div class="material-appmsg-list">
+				{loop $material_list $material}
+				<div class="material-appmsg-item{if !empty($material['items']['1'])} multi{/if}">
+					<div class="appmsg-content">
+						<div class="appmsg-info">
+							<em class="appmsg-date">{php echo date('Y年m月d', $material['createtime'])}</em>
+							{if $material['prompt_msg']}
+							<div class="undone-tips">
+								图文内容不完整
+								<br> 请补全每一篇图文的封面图、标题和正文
+							</div>
+							{/if}
+						</div>
+						<div class="{if !empty($material['items']['1'])}cover-{/if}appmsg-item">
+							<h4 class="appmsg-title">
+								<a href="" target="-blank">{$material_row['title']}</a>
+							</h4>
+							<div class="appmsg-thumb" style="background-image:url('{php echo tomedia($material_row['thumb_url'])}')">
+							</div>
+							<p class="appmsg-desc">{$material_row['digest']}</p>
+							<a href="" class="cover-dark">
+								<div class="edit-mask-content">
+									预览文章
+								</div>
+								<span class="vm-box"></span>
+							</a>
+						</div>
+						{loop $material['items'] $key $material_row}
+						{if !empty($key)}
+						<div class="appmsg-item has-cover">
+							{if !empty($material_row['thumb_url'])}
+							<div class="appmsg-thumb" style="background-image:url('{php echo tomedia($material_row['thumb_url'])}">
+							</div>
+							{/if}
+							<h4 class="appmsg-title">
+								<a href="" target="-blank" >{$material_row['title']}</a>
+							</h4>
+							{if !empty($material_row['thumb_url'])}
+							<a href="" class="cover-dark">
+								<div class="edit-mask-content">
+									<p class="">
+										预览文章 </p>
+								</div>
+								<span class="vm-box"></span>
+							</a>
+							{/if}
+						</div>
+						{/if}
+						{/loop}
+					</div>
+					<div class="appmsg-opr">
+						<ul>
+							<li class="appmsg-opr-item">
+								<a target="-blank" class="" href="#">&nbsp;<i class="">编辑</i></a>
+							</li>
+							<li class="appmsg-opr-item">
+								<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				{/loop}
+			</div>
+		</div>
+	</div>
+	{$pager}
+</div>
+
+<script>
+	$('.material-appmsg-list .material-appmsg-item').wookmark({
+		align: 'center',
+		autoResize: false,
+		container: $('.material-appmsg-list'),
+		itemWidth: 289,
+		offset: 30
+	});
+</script>
+{template 'common/footer'}

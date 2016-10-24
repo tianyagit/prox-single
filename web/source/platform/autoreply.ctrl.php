@@ -120,23 +120,13 @@ if($do == 'display') {
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'];
 	}
-	if ($m == 'system') {
-		if (checksubmit('submit')) {
-			$settings = array(
-				'default' => trim($_GPC['default']),
-				'welcome' => trim($_GPC['welcome']),
-			);
-			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
-			if(!empty($item)){
-				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
-			}else{
-				$settings['uniacid'] = $_W['uniacid'];
-				pdo_insert('uni_settings', $settings);
-			}
-			cache_delete("unisetting:{$_W['uniacid']}");
-			message('系统回复更新成功！', url('platform/autoreply/dispaly', array('m' => 'system')));
-		}
-		$setting = uni_setting($_W['uniacid'], array('default', 'welcome'));
+	if ($m == 'welcome') {
+		$setting = uni_setting($_W['uniacid'], array('welcome'));
+		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['welcome']), 'rid');
+	}
+	if ($m == 'default') {
+		$setting = uni_setting($_W['uniacid'], array('default'));
+		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['welcome']), 'rid');
 	}
 	template('platform/auto-reply');
 }
@@ -267,6 +257,40 @@ if($do == 'post') {
 		}
 		$rule_id = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting[$type]['keyword']), 'rid');
 		template('platform/auto-specialreply-post');
+	}
+	if ($m == 'welcome') {
+		if (checksubmit('submit')) {
+			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
+			$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
+			$settings = array(
+				'welcome' => $rule['content']
+			);
+			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
+			if(!empty($item)){
+				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
+			}else{
+				$settings['uniacid'] = $_W['uniacid'];
+				pdo_insert('uni_settings', $settings);
+			}
+			cache_delete("unisetting:{$_W['uniacid']}");
+			message('系统回复更新成功！', url('platform/autoreply/dispaly', array('m' => 'welcome')));
+		}
+	}
+	if ($m == 'default') {
+		if (checksubmit('submit')) {
+			$settings = array(
+				'default' => trim($_GPC['default'])
+			);
+			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
+			if(!empty($item)){
+				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
+			}else{
+				$settings['uniacid'] = $_W['uniacid'];
+				pdo_insert('uni_settings', $settings);
+			}
+			cache_delete("unisetting:{$_W['uniacid']}");
+			message('系统回复更新成功！', url('platform/autoreply/dispaly', array('m' => 'system')));
+		}
 	}
 	if ($m == 'apply') {
 		$module['title'] = '应用关键字';
