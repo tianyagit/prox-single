@@ -30,6 +30,11 @@ $acl = array(
 			'logout'
 		)
 	),
+	'platform' => array(
+		'default' => 'reply',
+		'founder' => array(),
+		'direct' => array(),
+	),
 );
 if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $controller != 'cloud' && $controller != 'utility' && $controller != 'account') {
 	$_W['siteclose'] = true;

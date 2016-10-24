@@ -26,6 +26,11 @@ $ms['account'] = array(
 					'url' => url('platform/menu'),
 					'permission_name' => 'platform_menu',
 				),
+				'platform_qr' => array(
+					'title' => '二维码/转化链接',
+					'url' => url('platform/qr'),
+					'permission_name' => 'platform_qr',
+				),
 			)
 		)
 	),
