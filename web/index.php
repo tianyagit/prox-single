@@ -120,3 +120,38 @@ if ((ENDTIME - STARTTIME) > $_W['config']['setting']['maxtimeurl']) {
 	);
 	pdo_insert('core_performance', $data);
 }
+
+function _forward($c, $a) {
+	$file = IA_ROOT . '/web/source/' . $c . '/' . $a . '.ctrl.php';
+	return $file;
+}
+
+function _calc_current_frames(&$frames) {
+	global $controller, $action;
+	if(!empty($frames['section']) && is_array($frames['section'])) {
+		foreach($frames['section'] as &$frame) {
+			if(empty($frame['menu'])) continue;
+			foreach($frame['menu'] as &$menu) {
+				$query = parse_url($menu['url'], PHP_URL_QUERY);
+				parse_str($query, $urls);
+				if(empty($urls)) continue;
+				if(defined('ACTIVE_FRAME_URL')) {
+					$query = parse_url(ACTIVE_FRAME_URL, PHP_URL_QUERY);
+					parse_str($query, $get);
+				} else {
+					$get = $_GET;
+					$get['c'] = $controller;
+					$get['a'] = $action;
+				}
+				if(!empty($do)) {
+					$get['do'] = $do;
+				}
+
+				$diff = array_diff_assoc($urls, $get);
+				if(empty($diff)) {
+					$menu['active'] = ' active';
+				}
+			}
+		}
+	}
+}
