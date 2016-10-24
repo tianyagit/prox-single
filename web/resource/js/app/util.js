@@ -772,7 +772,7 @@ util.material = function(callback, options) {
 		ignore : {}
 	};
 	opts = $.extend({}, opts, options);
-	require(['material'], function($, material){
+	require(['material'], function(material){
 		material.init(function(material){
 			if(material){
 				if($.isFunction(callback)){

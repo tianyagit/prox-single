@@ -5,6 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+$callback = $_GPC['callback'];
 load()->model('module');
 load()->model('site');
 
@@ -22,6 +23,7 @@ if ($do == 'entry') {
 			'modules' => array()
 		);
 		$has_permission['system'] = uni_user_permission('system');
+		//获取用户的模块权限
 		$temp_module = pdo_fetchall('SELECT * FROM ' . tablename('users_permission') . ' WHERE uniacid = :uniacid AND uid = :uid AND type != :type', array(':uniacid' => $_W['uniacid'], ':uid' => $_W['uid'], ':type' => 'system'), 'type');
 		if(!empty($temp_module)) {
 			$has_permission['modules'] = array_keys($temp_module);
@@ -34,7 +36,7 @@ if ($do == 'entry') {
 			}
 		}
 	}
-	
+
 	$modulemenus = array();
 	$modules = uni_modules_app_binding();
 	foreach($modules as $module) {
@@ -59,7 +61,7 @@ if ($do == 'entry') {
 					}
 				}
 			}
-	
+
 			$module['cover'] = $entries['cover'];
 			$module['home'] = $entries['home'];
 			$module['profile'] = $entries['profile'];
@@ -69,12 +71,13 @@ if ($do == 'entry') {
 		}
 	}
 	$modtypes = module_types();
-	
+
 	$sysmenus = array(
 		array('title'=>'微站首页','url'=> murl('home')),
 		array('title'=>'个人中心','url'=> murl('mc')),
 	);
-	
+
+//会员卡链接
 	if(empty($has_permission) || (!empty($has_permission) && in_array('mc_card', $has_permission['system']))) {
 		$cardmenus = array(
 			array('title'=>'我的会员卡','url'=> murl('mc/card/mycard')),
@@ -85,6 +88,7 @@ if ($do == 'entry') {
 			array('title'=>'完善会员资料','url'=> murl('mc/profile')),
 		);
 	}
+//多微站链接处理
 	if(empty($has_permission) || (!empty($has_permission) && in_array('site_multi_display', $has_permission['system']))) {
 		$multi_list = pdo_getall('site_multi', array('uniacid' => $_W['uniacid'], 'status !=' => 0), array('id', 'title'));
 		if(!empty($multi_list)) {
