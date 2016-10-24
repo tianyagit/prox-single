@@ -1,7 +1,7 @@
 <?php
 /**
+ * 公众号欢迎页，统计等信息
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn: pro/web/source/home/welcome.ctrl.php : v 1c30921a7da3 : 2015/07/29 07:39:37 : yanghf $
  */
 defined('IN_IA') or exit('Access Denied');
 
