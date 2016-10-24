@@ -299,9 +299,9 @@ if($do == 'post') {
 			$value['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 		}
 		foreach($installedmodulelist as $name => $module) {
-			if ((empty($_W['setting']['permurls']['modules']) && !in_array($name, $_W['setting']['permurls']['modules'])) || empty($module['isdisplay'])) {
-				continue;
-			}
+			// if ((empty($_W['setting']['permurls']['modules']) && !in_array($name, $_W['setting']['permurls']['modules'])) || empty($module['isdisplay'])) {
+			// 	continue;
+			// }
 			$module['title_first_pinyin'] = get_first_char($module['title']);
 			if($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];

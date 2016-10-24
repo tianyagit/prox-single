@@ -189,7 +189,6 @@
 	{/if}
 </div>
 <script>
-require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angular, $, _, util){
 	angular.module('replyFormApp').value('config', {
 		replydata: {php echo json_encode($reply)},
 		uniacid: {php echo json_encode($_W['uniacid'])},
@@ -241,6 +240,5 @@ require(['angular.sanitize', 'bootstrap', 'underscore', 'util'], function(angula
 	$('.keyword-input').each(function() {
 		$(this).attr('data-type', 'keyword');
 	});
-});
 </script>
 {template 'common/footer'}
