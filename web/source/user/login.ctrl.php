@@ -1,6 +1,7 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2013 WE7.CC
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
@@ -65,14 +66,13 @@ function _login($forward = '') {
 		$status['lastvisit'] = TIMESTAMP;
 		$status['lastip'] = CLIENT_IP;
 		user_update($status);
-		//把店员信息合并到user里面
-		if($record['type'] == ACCOUNT_OPERATE_CLERK) {
+				if($record['type'] == ACCOUNT_OPERATE_CLERK) {
 			$role = uni_permission($record['uid'], $record['uniacid']);
 			isetcookie('__uniacid', $record['uniacid'], 7 * 86400);
 			isetcookie('__uid', $record['uid'], 7 * 86400);
 			
 			if($_W['role'] == 'clerk' || $role == 'clerk') {
-				message('登陆成功', url('paycenter/desk', array('uniacid' => $record['uniacid'])), 'success');
+				message('登陆成功', url('activity/desk', array('uniacid' => $record['uniacid'])), 'success');
 			}
 		}
 		if(empty($forward)) {

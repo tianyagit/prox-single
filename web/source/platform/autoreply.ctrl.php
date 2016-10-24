@@ -51,8 +51,7 @@ if ($m == 'special') {
 // 	$frames = $frames[FRAME];
 // 	//nav end
 // }
-$module['title'] = '自动回复';
-$_W['page']['title'] = $module['title'];
+$_W['page']['title'] = '自动回复';
 // load()->model('extension');
 // if (ext_module_checkupdate($module['name'])) {
 // 	message('系统检测到该模块有更新，请点击“<a href="'.url('extension/module/upgrade', array('m' => $m)).'">更新模块</a>”后继续使用！', '', 'error');
@@ -93,13 +92,9 @@ if($do == 'display') {
 		$condition = 'uniacid = :uniacid AND module in ("basic", "news", "music", "images", "voice", "video", "wxcard", "autoreply", "auto")';
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
-		$status = isset($_GPC['status']) ? intval($_GPC['status']) : -1;
 		if(isset($_GPC['type']) && !empty($_GPC['type'])) {
 			$condition .= " AND FIND_IN_SET(:type, `containtype`) OR module = :type";
 			$params[':type'] = $_GPC['type'];
-		}
-		if ($status != -1){
-			$condition .= " AND status = '{$status}'";
 		}
 		if(isset($_GPC['keyword'])) {
 			$condition .= ' AND `name` LIKE :keyword';

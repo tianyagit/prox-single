@@ -4,11 +4,15 @@
  * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
-uni_user_permission_check('platform_menu');
+
 load()->model('mc');
 load()->model('platform');
+
 $dos = array('display', 'save', 'remove', 'refresh', 'search_key', 'add', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
+
+$_W['page']['title'] = '公众号 - 自定义菜单';
+uni_user_permission_check('platform_menu');
 
 if($_W['isajax']) {
 	if($do == 'search_key') {
@@ -33,9 +37,8 @@ if($_W['isajax']) {
 }
 
 if($do == 'display') {
-	$_W['page']['title'] = '菜单设计器 - 自定义菜单 - 高级功能';
 	set_time_limit(0);
-	$account = WeAccount::create($_W['acid']);
+	$account = WeAccount::create();
 	$result = $account->menuQuery();
 	if(is_error($result)) {
 		message($result['message'], '', 'error');
@@ -76,8 +79,17 @@ if($do == 'display') {
 			}
 		}
 	}
-	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid AND isdeleted = :isdeleted', array(':uniacid' => $_W['uniacid'], ':isdeleted' => $isdeleted));
-	$data = pdo_fetchall('SELECT * FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid ORDER BY type ASC, id DESC', array(':uniacid' => $_W['uniacid']));
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 15;
+	$condition = " WHERE uniacid = :uniacid";
+	$params[':uniacid'] = $_W['uniacid'];
+	if (isset($_GPC['keyword'])) {
+		$condition .= " AND title LIKE :keyword";
+		$params[':keyword'] = "%{$_GPC['keyword']}%";
+	}
+	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('uni_account_menus') . $condition, $params);
+	$data = pdo_fetchall("SELECT * FROM " . tablename('uni_account_menus') . $condition . " ORDER BY type ASC, status DESC,id DESC LIMIT " . ($pindex - 1) * $psize . "," . $psize, $params);
+	$pager = pagination($total, $pindex, $psize);
 	$names = array(
 		'sex' => array(
 			0 => '不限',
@@ -225,7 +237,6 @@ if($do == 'copy') {
 }
 
 if($do == 'add') {
-	$_W['page']['title'] = '菜单设计器 - 自定义菜单 - 高级功能';
 	$type = intval($_GPC['type']);
 	$id = intval($_GPC['id']);
 	$params = array();
