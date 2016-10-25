@@ -47,7 +47,6 @@ require.config({
 		'clockpicker': '../../components/clockpicker/clockpicker.min',
 		'district' : '../lib/district',
 		'emoji' : '../../components/emoji/emoji',
-		'material' : '../../components/material/material',
 
 		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
 		'jquery': '../lib/jquery-1.11.1.min', //兼容之前amd调用
@@ -108,9 +107,6 @@ require.config({
 		},
 		'emoji': {
 			deps: ['loadcss!../../components/emoji/emotions.css']
-		},
-		'material': {
-			deps: ['jquery']
 		}
 	}
 });
