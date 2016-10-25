@@ -20,7 +20,7 @@
 				<div class="keyword-list-head">
 					<div class="input-group pull-left" style="width: 400px;">
 						<input class="form-control" name="keyword" type="text" value="{$_GPC['keyword']}">
-						<button class="btn btn-default"><i class="fa fa-search"></i></button>
+						<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
 					</div>
 					<div class="pull-right">
 						<a href="{url 'platform/reply/post' array('m' => $m)}" class="btn btn-primary">+添加关键字回复</a>
@@ -114,15 +114,17 @@
 					</table>
 					{/loop}
 					<div>
-						<label class="checkbox-inline" style="margin-top:-30px;margin-left:17px"><input type="checkbox" name="select_all" id="select_all" value="1"/></label>
+						<label class="checkbox-inline" style="margin-top:-20px;margin-left:17px"><input type="checkbox" name="select_all" id="select_all" value="1"/></label>
 						<input type="submit" class="btn btn-danger" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
 						<input type="hidden" name="token" value="{$_W['token']}"/>
+						<div class="pull-right">
+							{$pager}
+						</div>
 					</div>
 				{else}
 					<p class="text-center">暂无数据</p>
 				{/if}
 			</form>
-			{$pager}
 		</div>
 	</div>
 </div>
