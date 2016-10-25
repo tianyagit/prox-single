@@ -15,7 +15,7 @@
 				<input type="hidden" name="a" value="menu">
 				<input type="hidden" name="token" value="{$_W['token']}"/>
 				<input type="text" name="keyword" id="" value="" class="form-control" placeholder="搜索关键字"/>
-				<span  class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+				<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
 			</div>
 		</form>
 		<div class="pull-right">
@@ -49,7 +49,6 @@
 				{/if}
 			</td>
 			<td class="text-left">
-
 				{if $da['type'] == 3}
 					{if $da['sex'] > 0}性别:{$names['sex'][$da['sex']]} ;{/if}
 					{if $da['group_id'] != -1}粉丝分组:{if $da['group_id'] == -1}不限{else}{$groups[$da['group_id']]['name']}{/if} ;{/if}
@@ -122,7 +121,7 @@
 						<option value="1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 1">男</option>
 						<option value="2" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 2">女</option>
 					</select>
-					<select class="we7-select" ng-model="context.group.matchrule.group_id" ng-disabled="context.group.disabled" {if $params['matchrule']['group_id'] == -1}ng-init="context.group.matchrule.group_id = '-1'"{/if}>
+					<select class="we7-select" ng-model="context.group.matchrule.group_id" ng-disabled="context.group.disabled" {if $params['matchrule']['group_id'] == -1 || empty($params)}ng-init="context.group.matchrule.group_id = '-1'"{/if}>
 						<option value="-1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.group_id == -1">粉丝分组不限</option>
 						{loop $groups $group}
 						<option value="{$group['id']}" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.group_id == {$group['id']}">{$group['name']}</option>
@@ -252,12 +251,11 @@
 										<p class="color-gray"  ng-show="context.activeItem.type == 'pic_sysphoto' || context.activeItem.type == 'pic_photo_or_album'">菜单内容为系统拍照发图/拍照或者相册发图，那么点击这个菜单是，系统拍照</p>
 										<p class="color-gray" ng-show="context.activeItem.type == 'pic_weixin'">菜单内容为微信相册发图，那么点击这个菜单是，选择图片发送</p>
 										<p class="color-gray" ng-show="context.activeItem.type == 'scancode_push' || context.activeItem.type == 'scancode_waitmsg'">菜单内容为扫码，那么点击这个菜单是，手机扫描二维码</p>
-										<label for="" class="control-label">关键字</label>
+										<label for="" class="control-label">选择模块</label>
 										<div class="form-controls">
 											<input class="form-control" id="ipt-forward" type="text" ng-model="context.activeItem.key" ng-disabled="context.group.disabled" width="300px"/>
-											<span ng-if="!context.group.disabled" class="form-control-addon color-default" id="search" ng-click="context.select_mediaid('keyword', '2')">搜索</span>
-											<span class="help-block">指定点击此菜单时要执行的操作, 你可以在这里输入关键字, 那么点击这个菜单时就就相当于发送这个内容至微擎系统</span>
-											<span class="help-block"><strong>这个过程是程序模拟的, 比如这里添加关键字: 优惠券, 那么点击这个菜单是, 微擎系统相当于接受了粉丝用户的消息, 内容为"优惠券"</strong></span>
+											<span ng-if="!context.group.disabled" class="form-control-addon color-default" id="search" ng-click="context.select_mediaid('module')">搜索</span>
+											<span class="help-block">指定点击此菜单时要执行的操作, 你可以在这里选择模块, 那么点击这个菜单时就就相当于发送这个内容至微擎系统</span>
 										</div>
 									</div>
 								</div>
@@ -377,7 +375,7 @@
 				<input type="submit" name="" id="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{php echo ($type == 1 || empty($id))}" ng-click="context.submit();"/>
 				<input type="button" name="" id="" value="预&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;览" class="btn btn-primary" style="padding: 6px 50px;" data-toggle="modal" data-target="#mobileDiv"/>
 			</div>
-			<div class=" modal fade" id="mobileDiv" role="dialog" aria-hidden="true">
+			<div class="modal fade" id="mobileDiv" role="dialog" aria-hidden="true">
 				<div class="mobile-preview" >
 					<div class="mobile-preview-hd">
 						<strong class="nickname">{{context.group.type == 3 ? "个性化菜单" : "默认菜单"}}</strong>

@@ -12,7 +12,8 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'news' : false,
 				'video' : false,
 				'voice' : false,
-				'keyword' : false
+				'keyword' : false,
+				'module' : false
 			}
 		},
 		'init' : function(callback, options) {
@@ -21,7 +22,6 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 			$this.options.callback = callback;
 			$('#material-Modal').remove();
 			$(document.body).append($this.buildHtml().mainDialog);
-
 			$this.modalobj = $('#material-Modal');
 			$this.modalobj.find('.modal-header .nav li a').click(function(){
 				var type = $(this).data('type');
@@ -81,6 +81,9 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 			if(type == 'keyword') {
 				url = './index.php?c=utility&a=keyword&do=keyword&type=all';
 			}
+			if(type == 'module') {
+				url = './index.php?c=utility&a=modules&do=list';
+			}
 			$.getJSON(url, {'page': page}, function(data){
 				data = data.message;
 				$this.modalobj.find('#material-list-pager').html('');
@@ -111,11 +114,14 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 					$content.html('<div class="info text-center"><i class="fa fa-info-circle fa-lg"></i> 暂无数据</div>');
 				}
 			});				
-
 			$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
 				var attachment = [];
 				$content.find('.checkedMedia').each(function(){
-					attachment.push($content.data('attachment')[$(this).data('attachid')]);
+					if (type == 'module') {
+						attachment.push($content.data('attachment')[$(this).data('name')]);
+					} else {
+						attachment.push($content.data('attachment')[$(this).data('attachid')]);
+					}
 				});
 				$this.finish(attachment);
 			});
@@ -231,6 +237,9 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						<li role="presentation" class="keyword ' + (this.options.ignore.keyword ? 'hide' : 'show') + '">'+
 				'							<a data-toggle="tab" data-type="keyword" role="tab" aria-controls="keyword" href="#keyword">关键字</a>'+
 				'						</li>'+
+				'						<li role="presentation" class="module ' + (this.options.ignore.module ? 'hide' : 'show') + '">'+
+				'							<a data-toggle="tab" data-type="module" role="tab" aria-controls="module" href="#module">模块</a>'+
+				'						</li>'+
 				'					</ul>'+
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '">'+
 				'						<a style="color:white;" href="./index.php?c=material&a=post&do=news" target="_blank">新建图文</a>'+
@@ -262,6 +271,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'					<div id="video" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="wxcard" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="keyword" class="tab-pane" role="tabpanel"></div>'+
+				'					<div id="module" class="tab-pane history" role="tabpanel"></div>'+
 				'				</div>' +
 				'			</div>\n' +
 				'			<div class="modal-footer">\n' +
@@ -465,6 +475,20 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'							<%});%>' +
 				'						</tbody>'+
 				'					</table>';
+			dialog['moduleDialog'] = '<ul class="img-list clearfix">\n' +
+				'<%var items = _.sortBy(items, function(item) {return -item.id;});%>' +
+				'<%_.each(items, function(item) {%> \n' +
+				'<div class="checkMedia" data-name="<%=item.name%>" data-type="module">' +
+				'	<li class="img-item" style="padding:5px">\n' +
+				'		<div class="img-container">\n' +
+				'           <img src="<%=item.icon%>">\n' + 
+				'			<div class="text-over"><%=item.title%></div>\n' +
+				'			<div class="select-status"><span></span></div>\n' +
+				'		</div>\n' +
+				'	</li>\n' +
+				'</div>\n' +
+				'<%});%>\n' +
+				'</ul>';
 
 			return dialog;
 		}
