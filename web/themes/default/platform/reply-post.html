@@ -41,84 +41,57 @@
 		</div>
 		<div class="form-group">
 			<input type="hidden" name="keywords">
-			<label for="" class="control-label">触发关键字</label>
-			<div class="form-controls">
+			<input type="hidden" name="reply_type">
+			<label class="control-label">触发关键字</label>
+			<label class="radio-inline">
+				<input type="radio" name="reply_type" ng-model="reply.entry.reply_type" style="display:block" ng-value="2" value="2" {if intval($reply['reply_type'] == 2)} checked="checked"{/if}>单一
+			</label>
+			<label class="radio-inline">
+				<input type="radio" name="reply_type" ng-model="reply.entry.reply_type" style="display:block" ng-value="1" value="1" {if intval($reply['reply_type'] == 1)} checked="checked"{/if}>混合
+			</label>
+
+			<div class="form-controls" ng-if="reply.entry.reply_type == 2">
 				<div class="form-inline">
-					<select name="trigger_type" class="we7-select">
-						<option value="exact">精准触发</option>
+					<select name="trigger_type" class="we7-select" ng-model="reply.advanceTrigger" ng-change="changeTriggerType()">
+						<option value="exact" ng-selected="!reply.advanceTrigger">精准触发</option>
 						<option value="indistinct" ng-selected="reply.advanceTrigger">模糊触发</option>
 					</select>
-					<input type="text" class="keyword-input form-control" max="30" id="keywordinput" ng-model="trigger.items.default" onblur="checkKeyWord($(this));">
+					<input type="text" class="keyword-input form-control" style="width:350px" max="100" id="keyword-input-exact" ng-model="reply.keyword.exact" onblur="checkKeyWord($(this));">
 					<span><a href="javascript:;" id="keyword-emoji"><i class="fa fa-github-alt"></i> 表情</a></span>
 					<span class="help-block"></span>
 				</div>
 				<span class="help-block">多个关键字请使用逗号隔开，如天气，今日天气</span>
 			</div>
-			<div class="form-group advance-setting" ng-show="reply.advanceTrigger">
-				<label class="col-xs-12 col-sm-3 col-md-2 control-label"></label>
-				<div class="col-sm-9">
-					<div class="panel panel-default tab-content">
-						<div class="panel-heading">
-							<ul class="nav nav-pills">
-								<li class="active"><a href="#contains" role="tab" data-toggle="tab">包含关键字</a></li>
-								<li><a href="#regexp" role="tab" data-toggle="tab">正则表达式模式匹配</a></li>
-								<li><a href="#trustee" role="tab" data-toggle="tab">直接接管</a></li>
-							</ul>
-						</div>
-						<ul class="tab-pane list-group active" id="contains">
-							<li class="list-group-item row" ng-repeat="entry in trigger.items.contains">
-								<div class="col-xs-12 col-sm-8">
-									<input type="text" class="form-control keyword-input" ng-hide="entry.saved" placeholder="{{entry.label}}" ng-model="entry.content" onblur="checkKeyWord($(this));" />
-									<span class="help-block"></span>
-									<p class="form-control-static" ng-show="entry.saved" ng-bind="entry.content"></p>
-								</div>
-								<div class="col-sm-4">
-									<div class="btn-group">
-										<a href="javascript:;" class="btn btn-default" ng-click="trigger.saveItem(entry);">{{entry.saved ? '编辑' : '保存'}}</a>
-										<a href="javascript:;" class="btn btn-default" ng-click="trigger.removeItem(entry);">删除</a>
-									</div>
-								</div>
-							</li>
-						</ul>
-						<ul class="tab-pane list-group" id="regexp">
-							<li class="list-group-item row" ng-repeat="entry in trigger.items.regexp">
-								<div class="col-xs-12 col-sm-8">
-									<input type="text" class="form-control keyword-input" ng-hide="entry.saved" placeholder="{{entry.label}}" ng-model="entry.content" onblur="checkKeyWord($(this));" />
-									<span class="help-block"></span>
-									<p class="form-control-static" ng-show="entry.saved" ng-bind="entry.content"></p>
-								</div>
-								<div class="col-sm-4">
-									<div class="btn-group">
-										<a href="javascript:;" class="btn btn-default" ng-click="trigger.saveItem(entry);">{{entry.saved ? '编辑' : '保存'}}</a>
-										<a href="javascript:;" class="btn btn-default" ng-click="trigger.removeItem(entry);">删除</a>
-									</div>
-								</div>
-							</li>
-						</ul>
-						<ul class="tab-pane list-group" id="trustee">
-							<li class="list-group-item row" ng-repeat="entry in trigger.items.trustee">
-								<div class="col-xs-12 col-sm-8">
-									<p class="form-control-static">符合优先级条件时, 这条回复将直接生效</p>
-								</div>
-								<div class="col-sm-4">
-									<a href="javascript:;" class="btn btn-default" ng-click="trigger.removeItem(entry);">取消接管</a>
-								</div>
-							</li>
-						</ul>
-						<div class="panel-footer">
-							<a href="javascript:;" class="btn btn-default" ng-click="trigger.addItem();" ng-bind="'添加' + trigger.labels[trigger.active]"></a>
-							<span class="help-block" ng-bind-html="trigger.descriptions[trigger.active]"></span>
-						</div>
+
+			<div class="form-controls" ng-if="reply.entry.reply_type == 1">
+				<div class="form-inline">
+					<div class="form-group">
+						<span>精准触发</span>
+						<input type="text" class="keyword-input form-control" max="30" id="keyword-exact" ng-model="reply.keyword.exact" onblur="checkKeyWord($(this));">
+						<span><a href="javascript:;" id="emoji-exact"><i class="fa fa-github-alt"></i> 表情</a></span>
 					</div>
+					<div class="form-group">
+						<span>包含关键字触发</span>
+						<input type="text" class="keyword-input form-control" max="30" id="keyword-indistinct" ng-model="reply.keyword.contain" onblur="checkKeyWord($(this));">
+						<span><a href="javascript:;" id="emoji-indistinct"><i class="fa fa-github-alt"></i> 表情</a></span>
+					</div>
+					<div class="form-group">
+						<span>正则匹配关键字触发</span>
+						<input type="text" class="keyword-input form-control" max="30" id="keyword-regexp" ng-model="reply.keyword.regexp" onblur="checkKeyWord($(this));">
+						<span><a href="javascript:;" id="emoji-regexp"><i class="fa fa-github-alt"></i> 表情</a></span>
+					</div>
+					<span class="help-block"></span>
 				</div>
-			</div>
+				<span class="help-block">多个关键字请使用逗号隔开，如天气，今日天气</span>
+			</div>				
+
 		</div>
 		<div class="form-group">
 			<label for="" class="control-label">是否开启</label>
 			<div class="form-controls">
 				<label>
 					<input name="status" class="form-control" ng-model="reply.status" ng-hide="1">
-					<div class="switch" ng-class="{'switchOn': reply.status}" ng-click="trigger.changeStatus()"></div>
+					<div class="switch" ng-class="{'switchOn': reply.status}" ng-click="changeStatus()"></div>
 				</label>
 				<span class="help-block">您可以选择临时禁用这条回复.</span>
 			</div>
@@ -189,6 +162,7 @@
 	{/if}
 </div>
 <script>
+require(['underscore'], function() {
 	angular.module('replyFormApp').value('config', {
 		replydata: {php echo json_encode($reply)},
 		uniacid: {php echo json_encode($_W['uniacid'])},
@@ -240,5 +214,7 @@
 	$('.keyword-input').each(function() {
 		$(this).attr('data-type', 'keyword');
 	});
+});
+
 </script>
 {template 'common/footer'}
