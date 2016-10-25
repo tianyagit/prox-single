@@ -179,6 +179,7 @@ if($do == 'post') {
 				'name' => $_GPC['rulename'],
 				'module' => 'reply',
 				'containtype' => $containtype,
+				'reply_type' => intval($_GPC['reply_type']) == 2 ? 2 : 1,
 				'status' => $_GPC['status'] == 'true' ? 1 : 0,
 				'displayorder' => intval($_GPC['displayorder_rule']),
 			);

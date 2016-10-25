@@ -102,7 +102,7 @@ class WeEngine {
 		$this->modules = array_keys($_W['modules']);
 		$this->modules[] = 'cover';
 		$this->modules[] = 'default';
-		$this->modules[] = 'autoreply';
+		$this->modules[] = 'reply';
 		$this->modules = array_unique($this->modules);
 	}
 
