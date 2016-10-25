@@ -481,7 +481,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'<div class="checkMedia" data-name="<%=item.name%>" data-type="module">' +
 				'	<li class="img-item" style="padding:5px">\n' +
 				'		<div class="img-container">\n' +
-				'           <img src="<%=item.icon%>">\n' + 
+				'           <img src="<%=item.icon%>" width="48px" height="48px">\n' + 
 				'			<div class="text-over"><%=item.title%></div>\n' +
 				'			<div class="select-status"><span></span></div>\n' +
 				'		</div>\n' +
