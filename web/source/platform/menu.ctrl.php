@@ -414,10 +414,14 @@ if($do == 'delete') {
 		$account = WeAccount::create($_W['acid']);
 		$ret = $account->menuDelete($data['menuid']);
 		if(is_error($ret) && empty($_GPC['f'])) {
+			if ($ret['errno'] == '65301') {
+				pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+				message('删除菜单成功', referer(), 'success');
+			}
 			$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 			$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
 			$message = "调用微信接口删除失败:{$ret['message']}<br>";
-			//$message .= "强制删除本地数据? <a href='{$url}' class='btn btn-primary'>是</a> <a href='{$url_display}' class='btn btn-default'>取消</a>";
+			// $message .= "强制删除本地数据? <a href='{$url}' class='btn btn-primary'>是</a> <a href='{$url_display}' class='btn btn-default'>取消</a>";
 			message($message, '', 'error');
 		}
 	}
