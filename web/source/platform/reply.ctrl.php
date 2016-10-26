@@ -82,7 +82,6 @@ if($do == 'display') {
 				}else {
 					message('-1', 'ajax', 'info');
 				}
-				
 			}
 			message('-1', 'ajax', 'info');
 		}		
@@ -126,7 +125,7 @@ if($do == 'display') {
 	}
 	if ($m == 'default') {
 		$setting = uni_setting($_W['uniacid'], array('default'));
-		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['welcome']), 'rid');
+		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
 	}
 	template('platform/reply');
 }
@@ -274,13 +273,15 @@ if($do == 'post') {
 				pdo_insert('uni_settings', $settings);
 			}
 			cache_delete("unisetting:{$_W['uniacid']}");
-			message('系统回复更新成功！', url('platform/reply/dispaly', array('m' => 'welcome')));
+			message('系统回复更新成功！', url('platform/reply', array('m' => 'welcome')));
 		}
 	}
 	if ($m == 'default') {
 		if (checksubmit('submit')) {
+			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
+			$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
 			$settings = array(
-				'default' => trim($_GPC['default'])
+				'default' => $rule['content']
 			);
 			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
 			if(!empty($item)){
@@ -290,7 +291,7 @@ if($do == 'post') {
 				pdo_insert('uni_settings', $settings);
 			}
 			cache_delete("unisetting:{$_W['uniacid']}");
-			message('系统回复更新成功！', url('platform/reply/dispaly', array('m' => 'system')));
+			message('系统回复更新成功！', url('platform/reply', array('m' => 'default')));
 		}
 	}
 	if ($m == 'apply') {
