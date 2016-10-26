@@ -41,10 +41,10 @@ if($do == 'list') {
 		}
 	}
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 10;
-	$arr = array_slice($enable_modules, $pindex * $psize, $psize);
+	$psize = 30;
+	$current_module_list = array_slice($enable_modules, $pindex * $psize, $psize);
 	$result = array(
-		'items' => $arr,
+		'items' => $current_module_list,
 		'pager' => pagination(count($enable_modules), $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
 	);
 	message($result, '', 'ajax');

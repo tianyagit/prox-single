@@ -380,19 +380,12 @@ class WeiXinAccount extends WeAccount {
 			$data = array(
 				'menuid' => $menuid
 			);
-			$response = ihttp_post($url, json_encode($data));
+			$response = $this->requestApi($url, json_encode($data));
 		} else {
 			$url = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token={$token}";
-			$response = ihttp_get($url);
+			$response = $this->requestApi($url);
 		}
-		if(is_error($response)) {
-			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
-		}
-		$result = @json_decode($response['content'], true);
-		if(!empty($result['errcode'])) {
-			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
-		}
-		return true;
+		return $response;	
 	}
 
 	public function menuModify($menu) {
