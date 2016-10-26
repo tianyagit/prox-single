@@ -5,7 +5,7 @@
 			<li><a href="{url 'platform/reply' array('m' => 'special')}">非文字自动回复</a></li>
 			<li>编辑</li>
 		</ol>
-		<div class="we7-form" ng-controller="PostCtrl">
+		<div class="we7-form" id="special-reply" ng-controller="PostCtrl">
 			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 			<div class="form-group">
 				<label class="control-label">是否开启</label>
@@ -28,6 +28,6 @@
 	</div>
 <script>
 	angular.module('replyFormApp').value('config', {'class' : {if !empty($setting[$type]['type'])}'switch switchOn'{else}'switch'{/if}, 'url' : '{php echo url('platform/reply/change_status')}', 'status' : '{$setting[$type]['type']}'});
-	angular.bootstrap(document, ['replyFormApp']);
+	angular.bootstrap($('#special-reply'), ['replyFormApp']);
 </script>
-
+{template 'common/footer'}

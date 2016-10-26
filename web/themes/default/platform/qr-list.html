@@ -18,7 +18,7 @@
 			<a href="{php echo url('platform/qr/post');}" class="btn btn-primary">+生成关键二维码</a>
 		</div>
 	</div>
-	<table class="table we7-table" ng-controller="QrDisplay" ng-cloak>
+	<table class="table we7-table" id="js-qr-list" ng-controller="QrDisplay" ng-cloak>
 		<col width="85px"/>
 		<col width="180px" />
 		<col width="120px" />
@@ -60,6 +60,6 @@
 	</div>
 </div>
 <script>
-	angular.bootstrap(document, ['qrApp']);
+	angular.bootstrap($('#js-qr-list'), ['qrApp']);
 </script>
 {template 'common/footer'}

@@ -10,7 +10,7 @@
 			<li {if $m == 'default'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'default')}">默认回复</a></li>
 	</ul>
 	{if $m == 'keyword'}
-	<div ng-controller="KeywordDisplay" ng-cloak>
+	<div id="js-keyword-display" ng-controller="KeywordDisplay" ng-cloak>
 		<div class="keyword-list-head">
 			<form action="./index.php" method="get" class="form-horizontal" role="form">
 				<input type="hidden" name="c" value="platform">
@@ -96,7 +96,7 @@
 								<a href="{php echo url('platform/reply/delete', array('m' => $m, 'rid' => $row['id']))}" onclick="return confirm('删除规则将同时删除关键字与回复，确认吗？');return false;" class="color-default keyword-link">删除</a>
 								<!-- <a class="color-default keyword-link" href="{php echo url('platform/stat/trend', array('id' => $row['id'], 'm' => $row['module']))}"><i class="fa fa-bar-chart-o"></i> 使用率走势</a> -->
 								{if $row['options']}
-								<div class="btn-group">
+								<!-- <div class="btn-group">
 									<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
 										功能选项
 										<span class="caret"></span>
@@ -106,7 +106,7 @@
 											<li><a href="{$opt['url']}">{$opt['title']}</a></li>
 										{/loop}
 									</ul>
-								</div>
+								</div> -->
 								{/if}
 							</td>
 						</tr>
@@ -151,10 +151,10 @@
 			}
 		});
 	});
-	angular.bootstrap(document, ['replyFormApp']);
+	angular.bootstrap($('#js-keyword-display'), ['replyFormApp']);
 </script>
 {elseif $m == 'special'}
-<div class="NoKeyword-list" ng-controller="SpecialDisplay" ng-cloak>
+<div class="NoKeyword-list" id="js-special-display" ng-controller="SpecialDisplay" ng-cloak>
 	<div class="we7-tables">
 		<table class="we7-table">
 			<col width="160px"/>
@@ -197,7 +197,7 @@
 			{/loop}
 			'url' : '{php echo url('platform/reply/change_status')}'
 		});
-		angular.bootstrap(document, ['replyFormApp']);
+		angular.bootstrap($('#js-special-display'), ['replyFormApp']);
 	});
 </script>
 {elseif $m == 'welcome'}
