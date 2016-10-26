@@ -164,7 +164,7 @@ if($do == 'down') {
 
 
 if($do == 'list') {
-	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'image';
+	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
 	$condition = " WHERE uniacid = :uniacid AND type = :type AND model = :model AND media_id != ''";
 	$condition = " as a LEFT JOIN ". tablename('wechat_news')." as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND a.model = :model AND a.media_id != ''";
 	$params = array(':uniacid' => $_W['uniacid'], ':type' => $type, ':model' => 'perm');
@@ -273,4 +273,4 @@ if($do == 'del') {
 		exit('success');
 	}
 }
-template('material/display');
+template('platform/material');

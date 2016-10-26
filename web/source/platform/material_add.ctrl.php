@@ -10,7 +10,7 @@ $dos = array('edit', 'thumb', 'details', 'image', 'submit');
 $do = in_array($do, $dos) ? $do : 'edit';
 
 if($do == 'edit') {
-	template('material/post');
+	template('platform/material_add');
 }
 
 if($do == 'thumb') {
