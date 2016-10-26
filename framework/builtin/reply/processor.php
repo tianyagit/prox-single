@@ -6,7 +6,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-class AutoReplyModuleProcessor extends WeModuleProcessor {
+class ReplyModuleProcessor extends WeModuleProcessor {
 	
 	public function respond() {
 		$sql = "SELECT * FROM " . tablename('basic_reply') . " WHERE `rid` IN ({$this->rule})  ORDER BY RAND() LIMIT 1";
