@@ -111,11 +111,14 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 					$content.html('<div class="info text-center"><i class="fa fa-info-circle fa-lg"></i> 暂无数据</div>');
 				}
 			});				
-
 			$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
 				var attachment = [];
 				$content.find('.checkedMedia').each(function(){
-					attachment.push($content.data('attachment')[$(this).data('attachid')]);
+					if (type == 'module') {
+						attachment.push($content.data('attachment')[$(this).data('name')]);
+					} else {
+						attachment.push($content.data('attachment')[$(this).data('attachid')]);
+					}
 				});
 				$this.finish(attachment);
 			});
@@ -262,6 +265,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'					<div id="video" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="wxcard" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="keyword" class="tab-pane" role="tabpanel"></div>'+
+				'					<div id="module" class="tab-pane history" role="tabpanel"></div>'+
 				'				</div>' +
 				'			</div>\n' +
 				'			<div class="modal-footer">\n' +
@@ -465,6 +469,9 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'							<%});%>' +
 				'						</tbody>'+
 				'					</table>';
+				'<div class="checkMedia" data-name="<%=item.name%>" data-type="module">' +
+				'           <img src="<%=item.icon%>" width="48px" height="48px">\n' + 
+				'			<div class="text-over"><%=item.title%></div>\n' +
 
 			return dialog;
 		}
