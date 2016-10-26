@@ -5,7 +5,7 @@
 			<li><a href="{php echo url('platform/qr/list');}">二维码列表</a></li>
 			<li><a href="{php echo url('platform/qr/post');}">{if empty($id)}新建{else}编辑{/if}二维码</a></li>
 		</ol>
-		<div class="we7-form" ng-controller="QrPost" ng-cloak>
+		<div class="we7-form" id="js-qr-post" ng-controller="QrPost" ng-cloak>
 			<form action="{php echo url('platform/qr/post')}" method="post" id="form1">
 				<input type="hidden" name="id" value="{$row['id']}" />
 				<input type="hidden" name="acid" value="{$row['acid']}" />
@@ -54,6 +54,6 @@
 	angular.module('qrApp').value('config', {
 		id: {php echo json_encode($id)},
 	});
-	angular.bootstrap(document, ['qrApp']);
+	angular.bootstrap($('#js-qr-post'), ['qrApp']);
 </script>
 {template 'common/footer'}
