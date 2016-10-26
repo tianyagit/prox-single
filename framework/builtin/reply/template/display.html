@@ -47,7 +47,7 @@
 </div>
 <script>
 	var action = "{php echo $_GPC['a']}";
-
+	var m = "{php echo $_GPC['m']}";
 	//删除已选素材
 	var delmedia = function(type, ele) {
 		var oldVal = $(':hidden[name="reply[reply_'+type+']"]').val();
@@ -142,7 +142,7 @@
 				oldVal.splice(index, 1);
 				$(':hidden[name="reply[reply_'+type+']"]').val(oldVal);
 				//二维码显示隐藏-start
-				if(action == 'qr' && $(':hidden[name="reply[reply_'+type+']"]').val().length == 0) {
+				if((action == 'qr' || m == 'special' || m == 'welcome' || m == 'default') && $(':hidden[name="reply[reply_'+type+']"]').val().length == 0) {
 					$('.we7-select-msg').removeClass('hide');
 				}
 				//二维码-end
@@ -215,7 +215,7 @@
 					'</li>'
 				);
 				//二维码显示隐藏-start
-				if(action == 'qr' && replyVal.length > 0) {
+				if((action == 'qr' || m == 'special' || m == 'welcome' || m == 'default') && replyVal.length > 0) {
 					$('.we7-select-msg').addClass('hide');
 				}
 				//二维码-end
@@ -604,7 +604,7 @@
 					});
 					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal[0]);
 					//二维码显示隐藏-start
-					if(action == 'qr' && replyVal.length > 0) {
+					if((action == 'qr' || m == 'special' || m == 'welcome' || m == 'default') && replyVal.length > 0) {
 						$('.we7-select-msg').addClass('hide');
 					}
 					//二维码-end
