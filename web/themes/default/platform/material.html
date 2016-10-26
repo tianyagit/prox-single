@@ -6,16 +6,16 @@
 		</div>
 		<ul class="we7-page-tab">
 			<li class="active">
-				<a href="图文管理.html">图文消息</a>
+				<a href="{php echo url('platform/material', array('type' => 'news'))}">图文消息</a>
 			</li>
 			<li>
-				<a href="图片管理.html">图片</a>
+				<a href="{php echo url('platform/material', array('type' => 'image'))}">图片</a>
 			</li>
 			<li>
-				<a href="语音管理.html">语音</a>
+				<a href="{php echo url('platform/material', array('type' => 'voice'))}">语音</a>
 			</li>
 			<li>
-				<a href="视频管理.html">视频</a>
+				<a href="{php echo url('platform/material', array('type' => 'video'))}">视频</a>
 			</li>
 		</ul>
 		<div class="material-appmsg">
@@ -34,7 +34,7 @@
 				<div class="action">
 					<a href="" class="btn btn-default">同步微信</a>
 					<div class="btn-group we7-btn-group we7-padding-left">
-						<a href="{php echo url('material/post')}" class="btn btn-primary">新建图文消息</a>
+						<a href="{php echo url('platform/material_add')}" class="btn btn-primary">新建图文消息</a>
 						<a href="" class="btn btn-danger">超级编辑器</a>
 					</div>
 				</div>
