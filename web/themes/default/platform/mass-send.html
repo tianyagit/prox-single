@@ -58,37 +58,6 @@
 	</div>
 </div>
 <script>
-	angular.module(['massApp']).controller('MassSend', ['$scope', '$http', function($scope, $http){
-		$scope.showLog = function(id){
-			var tid = parseInt(id);
-			var obj = $('#'+tid);
-			$http.post("{php echo url('utility/cron/log');}", {tid: tid, type: 'mass', module: 'task'})
-				.success(function(data) {
-					data = angular.toJson(data);
-					var html = '';
-					if(!data.message || data.message.items.length == 0) {
-						html = '<tr><td class="text-center"><i class="fa fa-info-circle"></i> 暂无数据</td></tr>';
-					} else{
-						$.each(data.message.items, function(k, v){
-							html += '<tr><td>' + v.createtime + ' ' + v.note + '</td></tr>';
-						});
-					}
-					obj.popover({
-						'html':true,
-						'placement':'left',
-						'trigger':'manual',
-						'title':'触发日志',
-						'content':'<table class="table-cron table">' + html + '</table>'
-					});
-					obj.popover('toggle');
-				});
-		};
-		$scope.hideLog = function(id){
-			var tid = parseInt(id);
-			var obj = $('#'+tid);
-			obj.popover('toggle');
-		}
-	}]);
 	angular.bootstrap($('#js-mass-send'), ['massApp']);
 </script>
 {template 'common/footer'}
