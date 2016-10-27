@@ -33,11 +33,6 @@ $acl = array(
 	'platform' => array(
 		'default' => 'reply',
 		'founder' => array(),
-		'direct' => array(),
-	),
-	'platform' => array(
-		'default' => '',
-		'founder' => array(),
 		'direct' => array(
 			'link',
 		),

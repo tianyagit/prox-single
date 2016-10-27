@@ -31,6 +31,16 @@ $ms['account'] = array(
 					'url' => url('platform/qr'),
 					'permission_name' => 'platform_qr',
 				),
+				'platform_mass' => array(
+					'title' => '定时群发',
+					'url' => url('platform/mass'),
+					'permission_name' => 'platform_mass',
+				),
+				'platform_material' => array(
+					'title' => '素材/编辑器',
+					'url' => url('platform/material'),
+					'permission_name' => 'platform_material',
+				),
 			)
 		)
 	),

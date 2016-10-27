@@ -102,7 +102,7 @@
 	</div>
 	{/if}
 	{if $m == 'apply'}
-	<div ng-controller="ApplyReply" ng-cloak>
+	<div id="js-apply" ng-controller="ApplyReply" ng-cloak>
 		<div class="we7-step">
 			<ul>
 				<li class="active">
@@ -162,12 +162,13 @@
 	{/if}
 </div>
 <script>
+{if $m == 'keyword'}
 require(['underscore'], function() {
 	angular.module('replyFormApp').value('config', {
 		replydata: {php echo json_encode($reply)},
 		uniacid: {php echo json_encode($_W['uniacid'])},
 	});
-	angular.bootstrap(document, ['replyFormApp']);
+	angular.bootstrap($('#js-reply-form'), ['replyFormApp']);
 
 	// 检测规则是否已经存在
 	window.checkKeyWord = function(key) {
@@ -215,6 +216,9 @@ require(['underscore'], function() {
 		$(this).attr('data-type', 'keyword');
 	});
 });
-
+{/if}
+{if $m == 'apply'}
+	angular.bootstrap($('#js-apply'), ['replyFormApp']);
+{/if}
 </script>
 {template 'common/footer'}
