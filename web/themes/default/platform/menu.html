@@ -71,6 +71,8 @@
 					{if $da['status'] == 0}
 					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
 					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
+					{else}
+					<span>开启中</span>
 					{/if}
 					{else}
 					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
