@@ -1,0 +1,47 @@
+{template 'common/header'}
+<div class="">
+	<ol class="breadcrumb we7-breadcrumb">
+		<a href="{php echo url('platform/mass/')}"><i class="fa fa-chevron-circle-left"></i> </a>
+		<li><a href="{php echo url('platform/mass/')}">素材定时群发</a></li>
+		<li><a href="{php echo url('platform/mass/post', array('day' => $_GPC['day']))}">编辑</a></li>
+	</ol>
+	<div class="we7-form" id="js-mass-post" ng-controller="MassPost" ng-cloak>
+		<form action="" method="post" ng-submit="checkSubmit($event)">
+			<input type="hidden" name="day" value="{$_GPC['day']}">
+			<input type="hidden" name="token" value="{$_W['token']}">
+			<div class="form-group">
+				<label class="control-label">群发对象</label>
+				<div class="form-controls">
+					<input type="hidden" name="group" value="">
+					<select class="we7-select mass-group">
+						<option ng-repeat="group in groups" ng-selected="group.name == massdata.groupname" ng-bind="group.name" ng-value="group.id"></option>
+					</select>
+					<span class="help-block"> 根据条件对群发对象进行筛选</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">发送时间</label>
+				<div class="form-controls">
+					<div class="input-group clockpicker">
+						<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+						<input type="text" readonly name="clock" ng-model="clock" class="form-control">
+					</div>
+					<span class="help-block text-danger">特别注意:发送时间不能小于当前时间.不要超过晚上11点</span>
+				</div>
+			</div>
+			{php echo module_build_form('reply', $massdata['id'], array('news'=> false, 'image'=> false,'voice'=> false,'video'=> false))}
+			<input type="submit" name="submit" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;"/>
+		</form>
+	</div>
+</div>
+<script>
+require(['underscore', 'clockpicker'], function() {
+	angular.module('massApp').value('config', {
+		massdata: {php echo json_encode($massdata)},
+		groups: {php echo json_encode($groups)},
+		day: {php echo json_encode($_GPC['day'])}
+	});
+	angular.bootstrap($('#js-mass-post'), ['massApp']);
+});
+</script>
+{template 'common/footer'}
