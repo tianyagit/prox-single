@@ -1,7 +1,11 @@
 <div class="panel we7-panel">
 	<div class="panel-heading">
-		{if $_GPC['a'] == 'qr'}二维码触发的关键字{else}触发后回复内容{/if}
-		<span class="pull-right color-gray">添加多条回复内容时, 随机回复其中一条</span>
+		{if $_GPC['a'] == 'qr'}二维码触发的关键字
+		{elseif $_GPC['a'] == 'mass'}群发内容
+		{else}
+			触发后回复内容
+			<span class="pull-right color-gray">添加多条回复内容时, 随机回复其中一条</span>
+		{/if}
 	</div>
 	<div class="panel-body we7-padding">
 	<input type="hidden" name="reply[reply_basic]" value="">
@@ -141,13 +145,13 @@
 				index = _.indexOf(oldVal, media);
 				oldVal.splice(index, 1);
 				$(':hidden[name="reply[reply_'+type+']"]').val(oldVal);
-				//二维码显示隐藏-start
-				if((action == 'qr' || m == 'special' || m == 'welcome' || m == 'default') && $(':hidden[name="reply[reply_'+type+']"]').val().length == 0) {
-					$('.we7-select-msg').removeClass('hide');
-				}
-				//二维码-end
 				break;
 		}
+		//显示隐藏-start
+		if((action == 'qr' || action == 'mass' || m == 'special' || m == 'welcome' || m == 'default') && $(':hidden[name="reply[reply_'+type+']"]').val().length == 0) {
+			$('.we7-select-msg').removeClass('hide');
+		}
+		//显示隐藏-end
 		$(ele).parent().parent('.del-'+type+'-media').parent('li').remove();
 	};
 
@@ -163,6 +167,7 @@
 				video: type === 'video' ? false : true,
 				voice: type === 'voice' ? false : true,
 				keyword: type === 'keyword' ? false : true,
+				module: type === 'module' ? false : true
 			}
 		};
 		util.material(function(material){
@@ -187,7 +192,6 @@
 					'</li>'
 				);
 			}else if(type == 'keyword') {
-				
 				if($.trim(material.id).length == 0) {
 					return false;
 				}
@@ -214,11 +218,7 @@
 					'</div>'+
 					'</li>'
 				);
-				//二维码显示隐藏-start
-				if((action == 'qr' || m == 'special' || m == 'welcome' || m == 'default') && replyVal.length > 0) {
-					$('.we7-select-msg').addClass('hide');
-				}
-				//二维码-end
+
 			}else {
 				if(type != 'music' && $.trim(material.media_id).length == 0) {
 					return false;
@@ -261,7 +261,7 @@
 								incontent: 0,
 								parent_id: 0,
 								mediaid: material.media_id,
-							}));	
+							}));
 						});
 						$('.keywords-list').append(
 							'<li>'+
@@ -398,6 +398,11 @@
 				}
 				$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 			}
+			//显示隐藏-start
+			if((action == 'qr' || action == 'mass' || m == 'special' || m == 'welcome' || m == 'default') && replyVal.length > 0) {
+				$('.we7-select-msg').addClass('hide');
+			}
+			//显示隐藏-end
 		}, option);
 	};
 
@@ -431,8 +436,8 @@
 						replyVal.push(angular.toJson({
 							title: newsVal.title,
 							author: newsVal.author,
-							description: newsVal.digest,
-							thumb: newsVal.thumb,
+							description: newsVal.description ? newsVal.description : newsVal.digest,
+							thumb: newsVal.thumb ? newsVal.thumb : newsVal.thumb_url,
 							content: newsVal.content,
 							url: newsVal.url,
 							createtime: newsVal.createtime,
@@ -448,10 +453,10 @@
 							'		<div class="media-content">'+
 							'			<div class="appmsgSendedItem">'+
 							'				<a class="title-wrp" href="javascript:;">'+
-							'					<span class="icon cover" style="background-image:url(../attachment/'+newsVal.thumb+');"></span>'+
+							'					<span class="icon cover" style="background-image:url('+(newsVal.thumb ? newsVal.thumb : newsVal.thumb_url)+');"></span>'+
 							'					<span class="title">[图文消息]'+newsVal.title+'</span>'+
 							'				</a>'+
-							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+newsVal.description+'</a></p>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(newsVal.description ? newsVal.description : newsVal.digest)+'</a></p>'+
 							'			</div>'+
 							'		</div>'+
 							'	</div>'+
@@ -530,6 +535,7 @@
 							'		<div class="media-content">'+
 							'			<div class="appmsgSendedItem">'+
 							'				<a class="title-wrp" href="javascript:;">'+
+							'					 <span class="icon cover" data-contenturl="'+videoVal.down_url+'"></span>'+
 							'					<span class="title">[视频]'+(videoVal.title ? videoVal.title : '--')+'</span>'+
 							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(videoVal.description ? videoVal.description : '--')+'</a></p>'+
 							'				</a>'+
@@ -603,11 +609,7 @@
 						);
 					});
 					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal[0]);
-					//二维码显示隐藏-start
-					if((action == 'qr' || m == 'special' || m == 'welcome' || m == 'default') && replyVal.length > 0) {
-						$('.we7-select-msg').addClass('hide');
-					}
-					//二维码-end
+
 					break;
 				case 'music':
 					angular.forEach(val, function(musicVal, musicKey) {
@@ -641,6 +643,11 @@
 					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;
 			}
+			//显示隐藏-start
+			if((action == 'qr' || action == 'mass' || m == 'special' || m == 'welcome' || m == 'default') && replyVal.length > 0) {
+				$('.we7-select-msg').addClass('hide');
+			}
+			//显示隐藏-end
 		});
 	};
 
