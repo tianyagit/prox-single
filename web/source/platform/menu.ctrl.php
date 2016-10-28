@@ -328,9 +328,10 @@ if($do == 'post') {
 					$temp['type'] = $button['type'];
 					if($button['type'] == 'view') {
 						$temp['url'] = urlencode($button['url']);
-					} elseif ($button['type'] == 'media_id' || $button['type'] == 'view_limited') {
+					} elseif ($button['type'] == 'click') {
 						if (!empty($button['media_id']) && empty($button['key'])) {
 							$temp['media_id'] = urlencode($button['media_id']);
+							$temp['type'] = 'media_id';
 						} elseif (empty($button['media_id']) && !empty($button['key'])) {
 							$temp['type'] = 'click';
 							$temp['key'] = urlencode($button['key']);
@@ -346,9 +347,10 @@ if($do == 'post') {
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
-						} elseif ($subbutton['type'] == 'media_id' || $subbutton['type'] == 'view_limited') {
+						} elseif ($subbutton['type'] == 'click') {
 							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
 								$sub_temp['media_id'] = urlencode($subbutton['media_id']);
+								$sub_temp['type'] = 'media_id';
 							} elseif (empty($subbutton['media_id']) && !empty($subbutton['key'])) {
 								$sub_temp['type'] = 'click';
 								$sub_temp['key'] = urlencode($subbutton['key']);
@@ -476,7 +478,6 @@ if($do == 'delete') {
 			pdo_update('uni_account_menus', array('isdeleted' => 1), array('uniacid' => $_W['uniacid'], 'id' => $id));
 		}
 	}
-
 	message('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
 }
 
