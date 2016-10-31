@@ -87,105 +87,117 @@ if($do == 'del') {
 }
 
 if($do == 'post') {
-	load()->func('cron');
-	load()->model('cloud');
-	$cloud = cloud_prepare();
-	if(is_error($cloud)) {
-		message($cloud, '', 'ajax');
-	}
-	set_time_limit(0);
-	$records = pdo_fetchall('SELECT id, cron_id FROM ' . tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime >= :time AND status = 1 ORDER BY sendtime ASC LIMIT 8', array(':uniacid' => $_W['uniacid'], ':time' => strtotime(date('Y-m-d'))), 'id');
-	if(!empty($records)) {
-		foreach($records as $re) {
-			if(!$re['cron_id']) {
-				continue;
-			}
-			$corn_ids[] = $re['cron_id'];
-		}
-		if(!empty($corn_ids)) {
-			$status = cron_delete($corn_ids);
-			if(is_error($status)) {
-				message(error(-1, '删除群发错误,请重新提交'), '', 'ajax');
-			}
-		}
-		$ids = implode(',', array_keys($records));
-		pdo_query('DELETE FROM ' . tablename('mc_mass_record') . " WHERE uniacid = :uniacid AND id IN ({$ids})", array(':uniacid' => $_W['uniacid']));
-	}
+	load()->model('module');
 
 	$groups = pdo_fetch('SELECT * FROM ' . tablename('mc_fans_groups') . ' WHERE uniacid = :uniacid AND acid = :acid', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
 	$groups = iunserializer($groups['groups']);
-	$groups['-1'] = array('name' => '全部粉丝', 'count' => '');
+	array_unshift($groups, array('id' => -1, 'name' => '全部粉丝', 'count' => ''));
 
-	$post = $_GPC['__input'];
-	$mass = $post['data'];
-	$message = '';
-	$sended = array();
-	foreach($mass as $key => $row) {
-		if($row['media_id']) {
-			if($row['id'] && (!$row['status'] || $row['sendtime'] < TIMESTAMP)) {
-				$sended[] = $row['id'];
-			} else {
-				$row['sendtime'] = strtotime("{$row['time']} {$row['clock']}");
-				if($row['sendtime'] <= TIMESTAMP) {
-					$message .= "{$row['time']}的群发时间不合法,必须大于当前时间<br>";
+	$time = strtotime(date('Y-m-d'));
+	$starttime = strtotime("+{$_GPC['day']} days", $time);
+	$endtime = $_GPC['day']+1;
+	$endtime = strtotime("+{$endtime} days", $time);
+	$massdata = pdo_fetch('SELECT id, `groupname`, `group`, `attach_id`, `media_id`, `sendtime` FROM '. tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime));
+	$massdata['clock'] = date('H:m', $massdata['sendtime']);		
+
+	if(checksubmit('submit')) {
+		load()->func('cron');
+		load()->model('cloud');
+		$cloud = cloud_prepare();
+		if(is_error($cloud)) {
+			message($cloud, '', 'ajax');
+		}
+
+		//删除提交日的群发任务
+		$starttime = strtotime("+{$_GPC['day']} days", $time);
+		$endtime = $_GPC['day']+1;
+		$endtime = strtotime("+{$endtime} days", $time);
+		set_time_limit(0);
+		$records = pdo_fetchall('SELECT id, cron_id FROM ' . tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1 ORDER BY sendtime ASC LIMIT 8', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime), 'id');
+		if(!empty($records)) {
+			foreach($records as $record) {
+				if(!$record['cron_id']) {
+					continue;
+				}
+				$corn_ids[] = $record['cron_id'];
+			}
+			if(!empty($corn_ids)) {
+				$status = cron_delete($corn_ids);
+				if(is_error($status)) {
+					message('删除群发错误,请重新提交', referer());
 				}
 			}
-		} else {
-			unset($mass[$key]);
+			$ids = implode(',', array_keys($records));
+			pdo_query('DELETE FROM ' . tablename('mc_mass_record') . " WHERE uniacid = :uniacid AND id IN ({$ids})", array(':uniacid' => $_W['uniacid']));
 		}
-	}
-	if(empty($mass)) {
-		message(error(-1, '没有设置群发'), '', 'ajax');
-	}
-	if(!empty($message)) {
-		message(error(-1, $message), '', 'ajax');
-	}
 
-	$cron_status = 0;
-	$message = '';
-	foreach($mass as $row) {
-		if(!empty($sended) && in_array($row['id'], $sended)) {
-			continue;
+		//提交数据
+		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
+		$mass = array();
+		foreach ($_GPC['reply'] as $reply_k => $reply_val) {
+			if($reply_val) {
+				$msgtype = substr($reply_k, 6);
+				switch($msgtype) {
+					case 'news':
+					case 'video':
+						$mass = json_decode(htmlspecialchars_decode($reply_val), true);
+						break;
+					case 'image':
+					case 'voice':
+						$mass['mediaid'] = json_decode(htmlspecialchars_decode($reply_val), true);
+						break;
+				}
+				$attachment = pdo_get('wechat_attachment', array('media_id' => $mass['mediaid']), array('id'));
+				$mass['id'] = $attachment['id'];
+				$mass['msgtype'] = $msgtype;
+				break;
+			}
 		}
-		$data = array(
+		$time_key = date('Y-m-d', strtotime("+{$_GPC['day']} days", $time));
+		$mass['sendtime'] = strtotime($time_key . " {$_GPC['clock']}");
+		$cron_status = 0;
+		$mass_record_data = array(
 			'uniacid' => $_W['uniacid'],
 			'acid' => $_W['acid'],
-			'groupname' => $groups[$row['group']]['name'],
-			'group' => $row['group'],
-			'attach_id' => $row['attach_id'],
-			'media_id' => $row['media_id'],
-			'fansnum' => $groups[$row['group']]['count'],
-			'msgtype' => $row['msgtype'],
-			'sendtime' => strtotime($row['time'] . " {$row['clock']}"),
+			'groupname' => $group['name'],
+			'group' => $group['id'],
+			'attach_id' => $mass['id'],
+			'media_id' => $mass['mediaid'],
+			'fansnum' => $group['count'],
+			'msgtype' => $mass['msgtype'],
+			'sendtime' => $mass['sendtime'],
 			'createtime' => TIMESTAMP,
 			'type' => 1,
 			'status' => 1,
 			'cron_id' => 0,
 		);
-		pdo_insert('mc_mass_record', $data);
+		pdo_insert('mc_mass_record', $mass_record_data);
 		$insert_id = pdo_insertid();
-		$cron = array(
+		$cron_data = array(
 			'uniacid' => $_W['uniacid'],
-			'name' => $row['time'] . "微信群发任务",
+			'name' => $time_key . "微信群发任务",
 			'filename' => 'mass',
 			'type' => 1,
-			'lastruntime' => $row['sendtime'],
+			'lastruntime' => $mass['sendtime'],
 			'extra' => $insert_id,
 			'module' => 'task',
 			'status' => 1,
 		);
-		$status = cron_add($cron);
+		$status = cron_add($cron_data);
 		if(is_error($status)) {
-			$message .= "{$row['time']}的群发任务同步到云服务失败,请手动同步<br>";
+			$message = "{$time_key}的群发任务同步到云服务失败,请手动同步<br>";
 			$cron_status = 1;
 		} else {
 			pdo_update('mc_mass_record', array('cron_id' => $status), array('id' => $insert_id));
 		}
+		if($cron_status) {
+			message($message, url('platform/mass/send'));
+		}
+		message('群发设置成功', url('platform/mass'));
+		exit;
 	}
-	if($cron_status) {
-		message(error(-1000, $message), '', 'ajax');
-	}
-	message(error(0, 'success'), '', 'ajax');
+
+	template('platform/mass-post');
 }
 
 if($do == 'cron') {

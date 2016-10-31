@@ -20,12 +20,12 @@
 			<th>实际发送时间</th>
 			<th>发送人数</th>
 			<th>状态</th>
-			<th class="hidden">操作</th>
+			<th>操作</th>
 		</tr>
 		{loop $lists $list}
 		<tr>
 			<td>
-				<a href="{php echo url('material/display/list', array('type' => $li['msgtype'], 'id' => $li['attach_id']));}" target="_blank">
+				<a href="{php echo url('platform/material/list', array('type' => $list['msgtype'], 'id' => $list['attach_id']));}" target="_blank">
 					{$types[$list['msgtype']]}
 				</a>
 			</td>
@@ -42,10 +42,10 @@
 					<span class="label label-danger">发送失败</span>
 				{/if}
 			</td>
-			<td class="hidden">
-				{if $list['type'] != 1}
+			<td>
+				{if $list['type'] == 1}
 					{if !$list['cron_id'] && $list['sendtime'] > TIMESTAMP}
-					<a href="{php echo url('material/mass/cron', array('id' => $list['id']));}" class="btn btn-danger btn-sm">同步到云服务</a>
+					<a href="{php echo url('platform/mass/cron', array('id' => $list['id']));}" class="btn btn-danger btn-sm">同步到云服务</a>
 					{/if}
 					<a href="javascript:;" id="{$list['id']}" class="btn btn-default mass-log" ng-mouseover="showLog({$list['id']})" ng-mouseleave="hideLog({$list['id']})">日志</a>
 				{/if}
@@ -58,6 +58,9 @@
 	</div>
 </div>
 <script>
+	angular.module('massApp').value('config', {
+		logUrl: "{php echo url('utility/cron/log');}"
+	});
 	angular.bootstrap($('#js-mass-send'), ['massApp']);
 </script>
 {template 'common/footer'}
