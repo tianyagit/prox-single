@@ -10,64 +10,48 @@ $dos = array('list', 'post', 'cron', 'send', 'del');
 $do = in_array($do, $dos) ? $do : 'list';
 
 if($do == 'list') {
-	set_time_limit(0);
-	load()->model('cloud');
-	$cloud = cloud_prepare();
-	$cloud_error = 0;
-	if(is_error($cloud)) {
-		$cloud_error = 1;
-	}
-	$groups = pdo_fetch('SELECT * FROM ' . tablename('mc_fans_groups') . ' WHERE uniacid = :uniacid AND acid = :acid', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
-	$groups = iunserializer($groups['groups']);
+
 	$time = strtotime(date('Y-m-d'));
 	$record = pdo_fetchall('SELECT * FROM ' . tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime >= :time ORDER BY sendtime ASC LIMIT 7', array(':uniacid' => $_W['uniacid'], ':time' => $time), 'sendtime');
-	for($i = 0; $i < 7; $i++) {
-		$time_key = date('Y-m-d', strtotime("+{$i} days", $time));
-		$mass_old[$time_key] = array(
-			'msgtype' => 'news',
-			'group' => -1,
-			'time' => $time_key,
-			'status' => 1,
-			'clock' => '20:00',
-			'media' => array(
-				'items' => array(
-					array(
-						'title' => '请选择素材'
-					)
-				)
-			),
-		);
-	}
+	$days = array();
+	for($i = 0; $i < 8; $i++) {
+		$day_info = array();
+		$day_info['day'] = date('Y-m-d', strtotime("+{$i} days", $time));
 
-	$mass_new = array();
-	if(!empty($record)) {
-		foreach($record as &$li) {
-			$time_key = date('Y-m-d', $li['sendtime']);
-			$li['time'] = $time_key;
-			$li['clock'] = date('H:i', $li['sendtime']);
-			$li['media'] = pdo_get('wechat_attachment', array('id' => $li['attach_id']));
-			$li['media']['attach'] = tomedia($li['media']['attachment']);
-			if($li['msgtype'] == 'video') {
-				$li['media']['attach']['tag'] = iunserializer($li['media']['tag']);
-			} elseif($li['msgtype'] == 'news') {
-				$li['media']['items'] = pdo_getall('wechat_news', array('attach_id' => $li['attach_id']));
-				foreach($li['media']['items'] as &$row) {
-					$row['thumb_url'] = url('utility/wxcode/image', array('attach' => $row['thumb_url']));
-				}
-			} elseif($li['msgtype'] == 'wxcard') {
-				$li['media'] = pdo_get('coupon', array('id' => $li['attach_id']));
-				$li['media']['media_id'] = $li['media']['card_id'];
-				$li['media']['logo_url'] = url('utility/wxcode/image', array('attach' => $li['media']['logo_url']));
-				$li['media']['type'] = 'wxcard';
+		$starttime = strtotime("+{$i} days", $time);
+		$endtime = $i+1;
+		$endtime = strtotime("+{$endtime} days", $time);
+		$massdata = pdo_fetch('SELECT id, `groupname`, `msgtype`, `group`, `attach_id`, `media_id`, `sendtime` FROM '. tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime));
+
+		if(!empty($massdata)) {
+			$massdata['media'] = pdo_get('wechat_attachment', array('id' => $massdata['attach_id']));
+			$massdata['media']['attach'] = tomedia($massdata['media']['attachment']);
+			$massdata['media']['createtime_cn'] = date('Y-m-d H:i', $massdata['media']['createtime']);
+			switch ($massdata['msgtype']) {
+				case 'news':
+					$massdata['msgtype_zh'] = '图文';
+					$massdata['media']['items'] = pdo_getall('wechat_news', array('attach_id' => $massdata['attach_id']));
+					foreach ($massdata['media']['items'] as  &$news_val) {
+						$news_val['thumb_url'] = url('utility/wxcode/image', array('attach' => $news_val['thumb_url']));
+					}
+					break;
+				case 'image':
+					$massdata['msgtype_zh'] = '图片';
+					break;
+				case 'voice':
+					$massdata['msgtype_zh'] = '语音';
+					break;
+				case 'video':
+					$massdata['msgtype_zh'] = '视频';
+					$massdata['media']['attach']['tag'] = iunserializer($massdata['media']['tag']);
+					break;
 			}
-
-			$li['media']['createtime_cn'] = date('Y-m-d H:i', $li['media']['createtime']);
-			$li['media_id'] = $li['media']['media_id'];
-			$mass_new[$time_key] = $li;
+			$massdata['clock'] = date('H:m', $massdata['sendtime']);
 		}
-		unset($record);
+		$day_info['info'] = $massdata;
+		$days[] = $day_info;
 	}
-	$mass = array_values((array_merge($mass_old, $mass_new)));
+
 	template('platform/mass-display');
 }
 
@@ -98,7 +82,11 @@ if($do == 'post') {
 	$endtime = $_GPC['day']+1;
 	$endtime = strtotime("+{$endtime} days", $time);
 	$massdata = pdo_fetch('SELECT id, `groupname`, `group`, `attach_id`, `media_id`, `sendtime` FROM '. tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime));
-	$massdata['clock'] = date('H:m', $massdata['sendtime']);		
+	if(!empty($massdata)) {
+		$massdata['clock'] = date('H:m', $massdata['sendtime']);
+	}else {
+		$massdata['clock'] = '08:00';		
+	}
 
 	if(checksubmit('submit')) {
 		load()->func('cron');
