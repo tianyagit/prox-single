@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('material_mass');
 $_W['page']['title'] = '永久素材-微信素材';
-$dos = array('image', 'del', 'export', 'news', 'down', 'list', 'purview', 'modal', 'send');
+$dos = array('image', 'del', 'export', 'news', 'down', 'list', 'preview', 'modal', 'send');
 $do = in_array($do, $dos) ? $do : 'list';
 if($do == 'down') {
 	set_time_limit(0);
@@ -200,13 +200,13 @@ if($do == 'list') {
 	$pager = pagination($total, $pageindex, $pagesize);
 }
 
-if($do == 'purview') {
-	$wxname = trim($_GPC['wxname']);
+if($do == 'preview') {
+	$wxname = trim($_GPC['__input']['wxname']);
 	if(empty($wxname)) {
 		exit('微信号不能为空');
 	}
-	$type = trim($_GPC['type']);
-	$media_id = trim($_GPC['media_id']);
+	$type = trim($_GPC['__input']['type']);
+	$media_id = trim($_GPC['__input']['media_id']);
 	$acc = WeAccount::create();
 	$data = $acc->fansSendPreview($wxname, $media_id, $type);
 	if(is_error($data)) {
