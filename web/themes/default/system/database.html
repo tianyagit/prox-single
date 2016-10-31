@@ -50,7 +50,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				{loop $ds $row}
+				{loop $tablesinfo $row}
 				<tr>
 					<td>{$row['bakdir']}</td>
 					<td>{php echo date('Y-m-d H:i:s', $row['time']);}</td>
@@ -69,7 +69,7 @@
 		<div class="alert alert-success table-info" style="display:none;">
 			<p><strong>恭喜,您的数据表中已无冗余信息。</strong></p>
 		</div>
-		{if !empty($diff)}
+		{if !empty($different)}
 		<div class="panel panel-default">
 		<div class="panel-body table-responsive">
 		<table class="table table-hover trim-container">
@@ -81,7 +81,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			{loop $diff $row}
+			{loop $different $row}
 			<tr>
 				<td class="tablename">{$row['name']}</td>
 				<td>
@@ -143,7 +143,7 @@
 		<br>
 		<div class="panel panel-default">
 		<div class="table-responsive panel-body">
-		{if !empty($ds)}
+		{if !empty($tablesinfo)}
 		<table class="table table-hover">
 			<thead>
 				<tr>
@@ -157,7 +157,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			{loop $ds $row}
+			{loop $tablesinfo $row}
 			<tr>
 				<td><input type="checkbox" name="select[]" checked="checked" value="{$row['title']}"></td>
 				<td>{$row['title']}</td>
