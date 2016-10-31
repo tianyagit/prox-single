@@ -32,44 +32,86 @@ class ReplyModule extends WeModule {
 	private $replies = array();
 
 	public function fieldsFormDisplay($rid = 0, $option = array()) {
-		global $_GPC;
+		global $_GPC, $_W;
 
 		$replies = array();
-		if(!empty($rid) && $rid > 0) {
-			$isexists = pdo_fetch("SELECT id, module FROM ".tablename('rule')." WHERE id = :id", array(':id' => $rid));
-		}
-		if(!empty($isexists)) {
-			$module = $isexists['module'];
-			$module = $module == 'images' ? 'image' : $module;
-//			if(empty($module) || !in_array($module, array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword', 'auto'))) {
-//				return '模块错误，请联系管理员。';
-//			}
-			foreach ($this->tablename as $key => $tablename) {
-				if ($key == 'keyword') {
-					if($_GPC['m'] != 'keyword') {
-						$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
-						foreach ($replies[$key] as &$keyword) {
-							$keyword['name'] = pdo_getcolumn('rule', array('id' => $keyword['rid']), 'name');
-						}
-					}
-				} else {
-					$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename($tablename)." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
-					switch ($key) {
-						case 'image':
-							foreach ($replies[$key] as &$img_value) {
-								$img = pdo_get('wechat_attachment', array('media_id' => $img_value['mediaid']), array('attachment'));
-								$img_value['img_url'] = tomedia($img['attachment'], true);
+		switch($_GPC['a']) {
+			case 'mass':
+				if(!empty($rid) && $rid > 0) {
+					$isexists = pdo_get('mc_mass_record', array('id' => $rid), array('media_id', 'msgtype'));
+				}
+				// echo "<pre>";
+				// print_r($isexists);
+				// echo "</pre>";
+				if(!empty($isexists)) {
+					switch($isexists['msgtype']) {
+						case 'news':
+							$news = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('id'));
+							$news_items = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $news['id']));
+							if(!empty($news_items)) {
+								foreach($news_items as &$item) {
+									$item['thumb_url'] =  url('utility/wxcode/image', array('attach' => $item['thumb_url']));
+									$item['id'] = $isexists['media_id'];
+								}
 							}
+							$replies['news'] = $news_items;
+							break;
+						case 'image':
+							$img = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('attachment'));
+							$replies['image'][0]['img_url'] = tomedia($img['attachment'], true);
+							$replies['image'][0]['mediaid'] = $isexists['media_id'];
+							break;
+						case 'voice':
+							$voice = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('filename'));
+							$replies['voice'][0]['title'] = $voice['filename'];
+							$replies['voice'][0]['mediaid'] = $isexists['media_id'];
+							break;
+						case 'video':
+							$video = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('tag'));
+							$video = iunserializer($video['tag']);
+							$replies['video'][0] = $video;
+							$replies['video'][0]['mediaid'] = $isexists['media_id'];
 							break;
 					}
 				}
-			}
+				break;
+			//默认为自动回复
+			default:
+				if(!empty($rid) && $rid > 0) {
+					$isexists = pdo_fetch("SELECT id, module FROM ".tablename('rule')." WHERE id = :id", array(':id' => $rid));
+				}
+				if(!empty($isexists)) {
+					$module = $isexists['module'];
+					$module = $module == 'images' ? 'image' : $module;
+
+					foreach ($this->tablename as $key => $tablename) {
+						if ($key == 'keyword') {
+							if($_GPC['m'] != 'keyword') {
+								$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
+								foreach ($replies[$key] as &$keyword) {
+									$keyword['name'] = pdo_getcolumn('rule', array('id' => $keyword['rid']), 'name');
+								}
+							}
+						} else {
+							$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename($tablename)." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
+							switch ($key) {
+								case 'image':
+									foreach ($replies[$key] as &$img_value) {
+										$img = pdo_get('wechat_attachment', array('media_id' => $img_value['mediaid']), array('attachment'));
+										$img_value['img_url'] = tomedia($img['attachment'], true);
+									}
+									break;
+							}
+						}
+					}
+				}
+				break;
 		}
 
 		if(!is_array($option)) {
 			$option = array();
 		}
-		$options = array_merge($this->options, $option);
+		$options = array_merge($this->options, $option);			
 		include $this->template('display');
 	}
 	

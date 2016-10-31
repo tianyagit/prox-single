@@ -30,10 +30,12 @@ if($do == 'display') {
 	$default_menu['type'] = 1;
 	$default_menu['matchrule'] = array();
 	if (!empty($default_menu['button'])) {
-		foreach ($default_menu['button'] as $key=>$button) {
+		foreach ($default_menu['button'] as $key=>&$button) {
 			$default_sub_button[$key] = $button['sub_button'];
+			ksort($button);
 		}
 	}
+	ksort($default_menu);
 	$wechat_menu_data = base64_encode(iserializer($default_menu));
 	$all_default_menus = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => '1'), array('data', 'id'), 'id');
 	foreach ($all_default_menus as $k=>$menu_data) {
@@ -46,7 +48,9 @@ if($do == 'display') {
 			} else {
 				unset($single_button['sub_button']);
 			}
+			ksort($single_button);
 		}
+		ksort($single_menu_info);
 		$local_menu_data = base64_encode(iserializer($single_menu_info));
 		if ($wechat_menu_data == $local_menu_data) {
 			$default_menu_id = $k;
@@ -68,6 +72,8 @@ if($do == 'display') {
 			'status' => 1
 		);
 		pdo_insert('uni_account_menus', $insert_data);
+		$insert_id = pdo_insertid();
+		pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '1', 'id !=' => $insert_id));
 	}
 
 	//拉取个性化菜单
@@ -200,7 +206,6 @@ if($do == 'push') {
 		if ($data['type'] == 1) {
 			unset($menu['matchrule']);
 		}
-		$abc = urldecode($menu['button']['0']['name']);
 		$account = WeAccount::create($_W['acid']);
 		$ret = $account->menuCreate($menu);
 		if(is_error($ret)) {
@@ -265,6 +270,21 @@ if($do == 'post') {
 		if(!empty($menu)) {
 			$menu['data'] = iunserializer(base64_decode($menu['data']));
 			if(!empty($menu['data'])) {
+				if (!empty($menu['data']['button'])) {
+					foreach ($menu['data']['button'] as &$button) {
+						if (empty($button['sub_button'])) {
+							if ($button['type'] == 'media_id') {
+								$button['type'] = 'click';
+							}
+						} else {
+							foreach($button['sub_button'] as &$subbutton) {
+								if ($subbutton['type'] == 'media_id') {
+									$subbutton['type'] = 'click';
+								}
+							}
+						}
+					}
+				}
 				if(!empty($menu['data']['matchrule']['province'])) {
 					$menu['data']['matchrule']['province'] .= '省';
 				}
@@ -308,15 +328,16 @@ if($do == 'post') {
 					$temp['type'] = $button['type'];
 					if($button['type'] == 'view') {
 						$temp['url'] = urlencode($button['url']);
-					} elseif ($button['type'] == 'media_id' || $button['type'] == 'view_limited') {
+					} elseif ($button['type'] == 'click') {
 						if (!empty($button['media_id']) && empty($button['key'])) {
 							$temp['media_id'] = urlencode($button['media_id']);
+							$temp['type'] = 'media_id';
 						} elseif (empty($button['media_id']) && !empty($button['key'])) {
 							$temp['type'] = 'click';
 							$temp['key'] = urlencode($button['key']);
 						}
 					} else {
-						$temp['key'] = urlencode($button['material'][0]['name']);
+						$temp['key'] = urlencode($button['key']);
 					}
 				} else {
 					foreach($button['sub_button'] as &$subbutton) {
@@ -326,15 +347,16 @@ if($do == 'post') {
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
-						} elseif ($subbutton['type'] == 'media_id' || $subbutton['type'] == 'view_limited') {
+						} elseif ($subbutton['type'] == 'click') {
 							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
 								$sub_temp['media_id'] = urlencode($subbutton['media_id']);
+								$sub_temp['type'] = 'media_id';
 							} elseif (empty($subbutton['media_id']) && !empty($subbutton['key'])) {
 								$sub_temp['type'] = 'click';
 								$sub_temp['key'] = urlencode($subbutton['key']);
 							}
 						} else {
-							$sub_temp['key'] = urlencode($subbutton['material'][0]['name']);
+							$sub_temp['key'] = urlencode($subbutton['key']);
 						}
 						$temp['sub_button'][] = $sub_temp;
 					}
@@ -373,7 +395,7 @@ if($do == 'post') {
 		$account = WeAccount::create();
 		$ret = $account->menuCreate($menu);
 		if(is_error($ret)) {
-			message(error(-1, $ret), '', 'ajax');
+			message($ret, '', 'ajax');
 		} else {
 			// 将$menu中 tag_id 再转为 group_id
 			if($post['matchrule']['group_id'] != -1) {
@@ -402,7 +424,6 @@ if($do == 'post') {
 					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 1, 'id' => intval($_GPC['id'])));
 				} else {
 					$default_menu_ids = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1, 'status' => 1), array('id'));
-								// message(error(-66, $default_menu_ids), '', 'ajax');
 					foreach ($default_menu_ids as $id) {
 						pdo_update('uni_account_menus', array('status' => '0'), array('id' => $id));
 					}
@@ -457,33 +478,74 @@ if($do == 'delete') {
 			pdo_update('uni_account_menus', array('isdeleted' => 1), array('uniacid' => $_W['uniacid'], 'id' => $id));
 		}
 	}
-
 	message('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
 }
 
 if ($do == 'current_menu') {
 	$current_menu = $_GPC['__input']['current_menu'];
-	if ($current_menu['type'] == 'media_id') {
-		$wechat_attachment = pdo_get('wechat_attachment', array('media_id' => $current_menu['media_id']));
+	if ($current_menu['type'] == 'click') {
+		if (!empty($current_menu['media_id']) && empty($current_menu['key'])) {
+			$wechat_attachment = pdo_get('wechat_attachment', array('media_id' => $current_menu['media_id']));
+			if ($wechat_attachment['type'] == 'news') {
+				$material = pdo_get('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $wechat_attachment['id']));
+				$material['items'][0]['thumb_url'] =  url('utility/wxcode/image', array('attach' => $material['thumb_url']));
+				$material['items'][0]['title'] = $material['title'];
+				$material['items'][0]['digest'] = $material['digest'];
+				$material['type'] = 'news';
+			} elseif ($wechat_attachment['type'] == 'video') {
+				$material['tag'] = iunserializer($wechat_attachment['tag']);
+				$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+				$material['type'] = 'video';
+			} elseif ($wechat_attachment['type'] == 'voice') {
+				$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+				$material['type'] = 'voice';
+				$material['filename'] = $wechat_attachment['filename'];
+			} elseif ($wechat_attachment['type'] == 'image') {
+				$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+				$material['url'] = "url({$material['attach']})";
+				$material['type'] = 'image';
+			}
+		} else {
+			$keyword_info = explode(':', $current_menu['key']);
+			if ($keyword_info[0] == 'keyword') {
+				$rule_info = pdo_get('rule', array('name' => $keyword_info[1]), array('id'));
+				$material['child_items'][0] = pdo_get('rule_keyword', array('rid' => $rule_info['id']), array('content'));
+				$material['name'] = $keyword_info[1];
+				$material['type'] = 'keyword';
+			}
+		}
 	}
-	if ($wechat_attachment['type'] == 'news') {
-		$material = pdo_get('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $wechat_attachment['id']));
-		$material['items'][0]['thumb_url'] =  url('utility/wxcode/image', array('attach' => $material['thumb_url']));
-		$material['items'][0]['title'] = $material['title'];
-		$material['items'][0]['digest'] = $material['digest'];
-		$material['type'] = 'news';
-	} elseif ($wechat_attachment['type'] == 'video') {
-		$material['tag'] = iunserializer($wechat_attachment['tag']);
-		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
-		$material['type'] = 'video';
-	} elseif ($wechat_attachment['type'] == 'voice') {
-		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
-		$material['type'] = 'voice';
-		$material['filename'] = $wechat_attachment['filename'];
-	} elseif ($wechat_attachment['type'] == 'image') {
-		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
-		$material['url'] = "url({$material['attach']})";
-		$material['type'] = 'image';
+	if ($current_menu['type'] != 'click' && $current_menu['type'] != 'view') {
+		$material = array();
+		if ($current_menu['etype'] == 'module') {
+			$module_name = explode(':', $current_menu['key']);
+			load()->model('module');
+			$material = module_fetch($module_name[1]);
+			if($material['issystem']) {
+				$path = '/framework/builtin/' . $material['name'];
+			} else {
+				$path = '../addons/' . $material['name'];
+			}
+			$cion = $path . '/icon-custom.jpg';
+			if(!file_exists($cion)) {
+				$cion = $path . '/icon.jpg';
+				if(!file_exists($cion)) {
+					$cion = './resource/images/nopic-small.jpg';
+				}
+			}
+			$material['icon'] = $cion;
+			$material['type'] = $current_menu['type'];
+			$material['etype'] = 'module';
+		} elseif ($current_menu['etype'] == 'click') {
+			$keyword_info = explode(':', $current_menu['key']);
+			if ($keyword_info[0] == 'keyword') {
+				$rule_info = pdo_get('rule', array('name' => $keyword_info[1]), array('id'));
+				$material['child_items'][0] = pdo_get('rule_keyword', array('rid' => $rule_info['id']), array('content'));
+				$material['name'] = $keyword_info[1];
+				$material['type'] = $current_menu['type'];
+				$material['etype'] = 'click';
+			}
+		}
 	}
 	message(error(0, $material), '', 'ajax');
 }

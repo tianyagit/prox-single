@@ -13,6 +13,12 @@ if (is_error($r)) {
 $dos = array('upgrade');
 $do = in_array($do, $dos) ? $do : 'upgrade';
 
+<<<<<<< HEAD
+=======
+if (empty($_W['setting']['site']['profile_perfect'])) {
+	message('请先完善云服务的站点注册信息!', url('cloud/profile'), 'warning');
+}
+>>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 
 if ($do == 'upgrade') {
 	$_W['page']['title'] = '一键更新 - 云服务';
