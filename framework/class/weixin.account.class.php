@@ -1368,6 +1368,48 @@ class WeiXinAccount extends WeAccount {
 		return $result['media_id'];
 	}
 
+	//修改永久图文素材
+	public function editMaterialNews($data) {
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://api.weixin.qq.com/cgi-bin/material/update_news?access_token={$token}";
+		$response = ihttp_request($url, urldecode(json_encode($data)));
+		if(is_error($response)) {
+			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
+		}
+		$result = @json_decode($response['content'], true);
+		if(empty($result)) {
+			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
+		} elseif(!empty($result['errcode'])) {
+			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
+		}
+		return true;
+	}
+
+	//上传图文素材的图片附件
+	public function uploadNewsThumb($data) {
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$token}";
+		$response = $this->requestApi($url, json_encode($data));
+		return $response;
+	}
+
+	//上传素材
+	public function uploadMaterial($type, $data) {
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$token}&type={$type}";
+		$response = $this->requestApi($url, json_encode($data));
+		return $response;
+	}
+
 
 	/*根据分组群发微信消息*/
 	public function fansSendAll($group, $msgtype, $media_id) {
