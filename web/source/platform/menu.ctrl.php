@@ -22,45 +22,87 @@ if($_W['isajax']) {
 }
 
 if($do == 'display') {
+	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : '1';
 	set_time_limit(0);
 	$account = WeAccount::create();
-	$result = $account->menuQuery();
-	if(is_error($result)) {
-		message($result['message'], '', 'error');
+	$default_menu_info = $account->getCurrentSelfmenuInfo();
+	$default_menu = $default_menu_info['selfmenu_info'];
+	$default_menu['type'] = 1;
+	$default_menu['matchrule'] = array();
+	if (!empty($default_menu['button'])) {
+		foreach ($default_menu['button'] as $key=>&$button) {
+			$default_sub_button[$key] = $button['sub_button'];
+			ksort($button);
+		}
 	}
-	pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid']));
-	$default_menu = $result['menu'];
-	if(!empty($default_menu)) {
-		$condition_menu = $result['conditionalmenu'];
-		$condition_menu[] = array(
-			'button' => $default_menu['button'],
+	ksort($default_menu);
+	$wechat_menu_data = base64_encode(iserializer($default_menu));
+	$all_default_menus = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => '1'), array('data', 'id'), 'id');
+	foreach ($all_default_menus as $k=>$menu_data) {
+		$single_menu_info = iunserializer(base64_decode($menu_data['data']));
+		$single_menu_info['type'] = 1;
+		$single_menu_info['matchrule'] = array();
+		foreach ($single_menu_info['button'] as $key=>&$single_button) {
+			if (!empty($default_sub_button[$key])) {
+				$single_button['sub_button'] = $default_sub_button[$key];
+			} else {
+				unset($single_button['sub_button']);
+			}
+			ksort($single_button);
+		}
+		ksort($single_menu_info);
+		$local_menu_data = base64_encode(iserializer($single_menu_info));
+		if ($wechat_menu_data == $local_menu_data) {
+			$default_menu_id = $k;
+		}
+	}
+	if (!empty($default_menu_id)) {
+		pdo_update('uni_account_menus', array('status' => '1'), array('id' => $default_menu_id));
+		pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '1', 'id !=' => $default_menu_id));
+	} else {
+		$insert_data = array(
+			'uniacid' => $_W['uniacid'],
 			'type' => 1,
-			'matchrule' => array(),
+			'group_id' => -1,
+			'sex' => 0,
+			'data' => $wechat_menu_data,
+			'client_platform_type' => 0,
+			'area' => '',
+			'menuid' => 0,
+			'status' => 1
 		);
-		if(!empty($condition_menu)) {
-			foreach($condition_menu as $menu) {
-				$data = array(
-					'uniacid' => $_W['uniacid'],
-					'type' => empty($menu['matchrule']) ? 1 : 3,
-					'group_id' => isset($menu['matchrule']['tag_id']) ? $menu['matchrule']['tag_id'] : (isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : '-1'),
-					'sex' => $menu['matchrule']['sex'],
-					'client_platform_type' => $menu['matchrule']['client_platform_type'],
-					'area' => trim($menu['matchrule']['country']) . trim($menu['matchrule']['province']) . trim($menu['matchrule']['city']),
-					'data' => base64_encode(iserializer($menu)),
-					'menuid' => $menu['menuid'],
-					'status' => 1,
-				);
+		pdo_insert('uni_account_menus', $insert_data);
+		$insert_id = pdo_insertid();
+		pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '1', 'id !=' => $insert_id));
+	}
 
-				if(empty($menu['matchrule'])) {
-					$id = pdo_fetchcolumn('SELECT id FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid AND type = 1', array(':uniacid' => $_W['uniacid']));
-				} else {
-					$id = pdo_fetchcolumn('SELECT id FROM ' . tablename('uni_account_menus') . ' WHERE uniacid = :uniacid AND menuid = :menuid', array(':uniacid' => $_W['uniacid'], ':menuid' => $menu['menuid']));
-				}
-				if(!empty($id)) {
-					pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'id' => $id));
-				} else {
-					pdo_insert('uni_account_menus', $data);
-				}
+	//拉取个性化菜单
+	$get_menu_info = $account->menuQuery();
+	if(is_error($get_menu_info)) {
+		message($get_menu_info['message'], '', 'error');
+	}
+	$condition_menus = $get_menu_info['conditionalmenu'];
+	pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '3'));
+	if (!empty($condition_menus)) {
+		foreach($condition_menus as $menu) {
+			$data = array(
+				'uniacid' => $_W['uniacid'],
+				'type' => '3',
+				'group_id' => isset($menu['matchrule']['tag_id']) ? $menu['matchrule']['tag_id'] : (isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : '-1'),
+				'sex' => $menu['matchrule']['sex'],
+				'client_platform_type' => $menu['matchrule']['client_platform_type'],
+				'area' => trim($menu['matchrule']['country']) . trim($menu['matchrule']['province']) . trim($menu['matchrule']['city']),
+				'data' => base64_encode(iserializer($menu)),
+				'menuid' => $menu['menuid'],
+				'status' => 1,
+			);
+			if (!empty($menu['matchrule'])) {
+				$menu_id = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'menuid' => $menu['menuid'], 'type' => '3'), array('id'));
+			}
+			if(!empty($menu_id['id'])) {
+				pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'id' => $menu_id['id']));
+			} else {
+				pdo_insert('uni_account_menus', $data);
 			}
 		}
 	}
@@ -71,6 +113,10 @@ if($do == 'display') {
 	if (isset($_GPC['keyword'])) {
 		$condition .= " AND title LIKE :keyword";
 		$params[':keyword'] = "%{$_GPC['keyword']}%";
+	}
+	if (!empty($type)) {
+		$condition .= " AND type = :type";
+		$params[':type'] = $type;
 	}
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('uni_account_menus') . $condition, $params);
 	$data = pdo_fetchall("SELECT * FROM " . tablename('uni_account_menus') . $condition . " ORDER BY type ASC, status DESC,id DESC LIMIT " . ($pindex - 1) * $psize . "," . $psize, $params);
@@ -157,7 +203,7 @@ if($do == 'push') {
 				}
 			}
 		}
-		if ($data['type'] == '2') {
+		if ($data['type'] == 1) {
 			unset($menu['matchrule']);
 		}
 		$account = WeAccount::create($_W['acid']);
@@ -165,27 +211,20 @@ if($do == 'push') {
 		if(is_error($ret)) {
 			message(error(-1, $ret['message']), '', 'ajax');
 		} else {
-			if($data['type'] = 2) {
-				pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1));
-				pdo_update('uni_account_menus', array('status' => 1, 'type' => 1), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
+			if($data['type'] == 1) {
+				pdo_update('uni_account_menus', array('status' => '1'), array('id' => $data['id']));
+				pdo_update('uni_account_menus', array('status' => '0'), array('id !=' => $data['id'], 'uniacid' => $_W['uniacid'], 'type' => '1'));
+			} elseif ($data['type'] == 3) {
+				// 将$menu中 tag_id 再转为 group_id
+				if($post['matchrule']['group_id'] != -1) {
+					$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
+					unset($menu['matchrule']['tag_id']);
+				}
+				$status = pdo_update('uni_account_menus', array('status' => 1, 'menuid' => $ret), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
 			}
-			// 将$menu中 tag_id 再转为 group_id
-			if($post['matchrule']['group_id'] != -1) {
-				$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
-				unset($menu['matchrule']['tag_id']);
-			}
-			pdo_update('uni_account_menus', array('status' => 1, 'menuid' => $ret, 'data' => base64_encode(iserializer($menu))), array('uniacid' => $_W['uniacid'], 'id' => $id));
-			message(error(0, '推送成功'), url('platform/menu/display'), 'ajax');
+			message(error(0, '推送成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax');
 		}
 	} elseif ($post_data['status'] == 2) {
-		if ($_GPC['op'] == 'recover') {
-			if($data['type'] == 1) {
-				pdo_update('uni_account_menus', array('isdeleted' => 0), array('uniacid' => $_W['uniacid']));
-			} else {
-				pdo_update('uni_account_menus', array('isdeleted' => 0), array('uniacid' => $_W['uniacid'], 'id' => $id));
-			}
-			message('恢复菜单成功，是否推送到微信？<a href="'.url('platform/menu/push', array('id' => $id)).'" class="btn btn-primary">是</a> <a href="'.url('platform/menu/display').'" class="btn btn-default">取消</a>', url('platform/menu/display'), 'ajax');
-		}
 		$status =  $_GPC['status'];
 		if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0) && $status != 'history') {
 			$account = WeAccount::create($_W['acid']);
@@ -194,10 +233,10 @@ if($do == 'push') {
 				$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 				$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
 				$message = "调用微信接口删除失败:{$ret['message']}<br>";
-				//$message .= "强制删除本地数据? <a href='{$url}' class='btn btn-primary'>是</a> <a href='{$url_display}' class='btn btn-default'>取消</a>";
 				message($message, '', 'error');
 			} else {
-				message(error(0, '关闭成功'), referer(), 'ajax');
+				pdo_update('uni_account_menus', array('status' => '0'), array('id' => $data['id']));
+				message(error(0, '关闭成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax');
 			}
 		}
 	}
@@ -217,19 +256,35 @@ if($do == 'copy') {
 	$menu['title'] = $menu['title'] . '- 复本';
 	pdo_insert('uni_account_menus', $menu);
 	$id = pdo_insertid();
-	header('Location:' . url('platform/menu/post', array('id' => $id)));
+	header('Location:' . url('platform/menu/post', array('id' => $id, 'copy' => 1)));
 	die;
 }
 
 if($do == 'post') {
 	$type = intval($_GPC['type']);
 	$id = intval($_GPC['id']);
+	$copy = intval($_GPC['copy']);
 	$params = array();
 	if($id > 0) {
 		$menu = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 		if(!empty($menu)) {
 			$menu['data'] = iunserializer(base64_decode($menu['data']));
 			if(!empty($menu['data'])) {
+				if (!empty($menu['data']['button'])) {
+					foreach ($menu['data']['button'] as &$button) {
+						if (empty($button['sub_button'])) {
+							if ($button['type'] == 'media_id') {
+								$button['type'] = 'click';
+							}
+						} else {
+							foreach($button['sub_button'] as &$subbutton) {
+								if ($subbutton['type'] == 'media_id') {
+									$subbutton['type'] = 'click';
+								}
+							}
+						}
+					}
+				}
 				if(!empty($menu['data']['matchrule']['province'])) {
 					$menu['data']['matchrule']['province'] .= '省';
 				}
@@ -265,7 +320,7 @@ if($do == 'post') {
 		$post = $post['group'];
 		$menu = array();
 		if(!empty($post['button'])) {
-			foreach($post['button'] as &$button) {
+			foreach($post['button'] as $key => &$button) {
 				$temp = array();
 				$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
 				$temp['name'] = urlencode($temp['name']);
@@ -273,9 +328,10 @@ if($do == 'post') {
 					$temp['type'] = $button['type'];
 					if($button['type'] == 'view') {
 						$temp['url'] = urlencode($button['url']);
-					} elseif ($button['type'] == 'media_id' || $button['type'] == 'view_limited') {
+					} elseif ($button['type'] == 'click') {
 						if (!empty($button['media_id']) && empty($button['key'])) {
 							$temp['media_id'] = urlencode($button['media_id']);
+							$temp['type'] = 'media_id';
 						} elseif (empty($button['media_id']) && !empty($button['key'])) {
 							$temp['type'] = 'click';
 							$temp['key'] = urlencode($button['key']);
@@ -291,9 +347,10 @@ if($do == 'post') {
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
-						} elseif ($subbutton['type'] == 'media_id' || $subbutton['type'] == 'view_limited') {
+						} elseif ($subbutton['type'] == 'click') {
 							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
 								$sub_temp['media_id'] = urlencode($subbutton['media_id']);
+								$sub_temp['type'] = 'media_id';
 							} elseif (empty($subbutton['media_id']) && !empty($subbutton['key'])) {
 								$sub_temp['type'] = 'click';
 								$sub_temp['key'] = urlencode($subbutton['key']);
@@ -335,7 +392,7 @@ if($do == 'post') {
 				if($inarray === 1) $menu['matchrule']['language'] = $post['matchrule']['language'];
 			}
 		}
-		$account = WeAccount::create($_W['acid']);
+		$account = WeAccount::create();
 		$ret = $account->menuCreate($menu);
 		if(is_error($ret)) {
 			message($ret, '', 'ajax');
@@ -359,26 +416,17 @@ if($do == 'post') {
 				'client_platform_type' => intval($menu['matchrule']['client_platform_type']),
 				'area' => trim($menus['matchrule']['country']) . trim($menu['matchrule']['province']) . trim($menu['matchrule']['city']),
 				'data' => base64_encode(iserializer($menu)),
-				'status' => 1,
+				'status' => '1',
 				'createtime' => TIMESTAMP,
 			);
 			if($post['type'] == 1) {
-				$history = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 2));
-				if(empty($history)) {
-					$data = $insert;
-					$data['type'] = 2;
-					$data['status'] = 0;
-					pdo_insert('uni_account_menus', $data);
+				if (!empty($_GPC['id'])) {
+					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 1, 'id' => intval($_GPC['id'])));
 				} else {
-					$data = $insert;
-					$data['type'] = 2;
-					$data['status'] = 0;
-					pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'type' => 2));
-				}
-				$default = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1));
-				if(!empty($default)) {
-					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 1));
-				} else {
+					$default_menu_ids = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1, 'status' => 1), array('id'));
+					foreach ($default_menu_ids as $id) {
+						pdo_update('uni_account_menus', array('status' => '0'), array('id' => $id));
+					}
 					pdo_insert('uni_account_menus', $insert);
 				}
 				message(error(0, ''), '', 'ajax');
@@ -401,14 +449,6 @@ if($do == 'delete') {
 	if(empty($data)) {
 		message('菜单不存在或已经删除', referer(), 'error');
 	}
-	if ($_GPC['op'] == 'recover') {
-		if($data['type'] == 1) {
-			pdo_update('uni_account_menus', array('isdeleted' => 0), array('uniacid' => $_W['uniacid']));
-		} else {
-			pdo_update('uni_account_menus', array('isdeleted' => 0), array('uniacid' => $_W['uniacid'], 'id' => $id));
-		}
-		message('恢复菜单成功，是否推送到微信？<a href="'.url('platform/menu/push', array('id' => $id)).'" class="btn btn-primary">是</a> <a href="'.url('platform/menu/display').'" class="btn btn-default">取消</a>', url('platform/menu/display'), 'success');
-	}
 	$status =  $_GPC['status'];
 	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0)) {
 		$account = WeAccount::create($_W['acid']);
@@ -427,7 +467,7 @@ if($do == 'delete') {
 	}
 	if ($status == 'history') {
 		if($data['type'] == 1) {
-			pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid']));
+			pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id, 'status' => '0'));
 		} else {
 			pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 		}
@@ -438,33 +478,74 @@ if($do == 'delete') {
 			pdo_update('uni_account_menus', array('isdeleted' => 1), array('uniacid' => $_W['uniacid'], 'id' => $id));
 		}
 	}
-
-	message('删除菜单成功', url('platform/menu/display'), 'success');
+	message('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
 }
 
 if ($do == 'current_menu') {
 	$current_menu = $_GPC['__input']['current_menu'];
-	if ($current_menu['type'] == 'media_id') {
-		$wechat_attachment = pdo_get('wechat_attachment', array('media_id' => $current_menu['media_id']));
+	if ($current_menu['type'] == 'click') {
+		if (!empty($current_menu['media_id']) && empty($current_menu['key'])) {
+			$wechat_attachment = pdo_get('wechat_attachment', array('media_id' => $current_menu['media_id']));
+			if ($wechat_attachment['type'] == 'news') {
+				$material = pdo_get('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $wechat_attachment['id']));
+				$material['items'][0]['thumb_url'] =  url('utility/wxcode/image', array('attach' => $material['thumb_url']));
+				$material['items'][0]['title'] = $material['title'];
+				$material['items'][0]['digest'] = $material['digest'];
+				$material['type'] = 'news';
+			} elseif ($wechat_attachment['type'] == 'video') {
+				$material['tag'] = iunserializer($wechat_attachment['tag']);
+				$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+				$material['type'] = 'video';
+			} elseif ($wechat_attachment['type'] == 'voice') {
+				$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+				$material['type'] = 'voice';
+				$material['filename'] = $wechat_attachment['filename'];
+			} elseif ($wechat_attachment['type'] == 'image') {
+				$material['attach'] = tomedia($wechat_attachment['attachment'], true);
+				$material['url'] = "url({$material['attach']})";
+				$material['type'] = 'image';
+			}
+		} else {
+			$keyword_info = explode(':', $current_menu['key']);
+			if ($keyword_info[0] == 'keyword') {
+				$rule_info = pdo_get('rule', array('name' => $keyword_info[1]), array('id'));
+				$material['child_items'][0] = pdo_get('rule_keyword', array('rid' => $rule_info['id']), array('content'));
+				$material['name'] = $keyword_info[1];
+				$material['type'] = 'keyword';
+			}
+		}
 	}
-	if ($wechat_attachment['type'] == 'news') {
-		$material = pdo_get('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $wechat_attachment['id']));
-		$material['items'][0]['thumb_url'] =  url('utility/wxcode/image', array('attach' => $material['thumb_url']));
-		$material['items'][0]['title'] = $material['title'];
-		$material['items'][0]['digest'] = $material['digest'];
-		$material['type'] = 'news';
-	} elseif ($wechat_attachment['type'] == 'video') {
-		$material['tag'] = iunserializer($wechat_attachment['tag']);
-		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
-		$material['type'] = 'video';
-	} elseif ($wechat_attachment['type'] == 'voice') {
-		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
-		$material['type'] = 'voice';
-		$material['filename'] = $wechat_attachment['filename'];
-	} elseif ($wechat_attachment['type'] == 'image') {
-		$material['attach'] = tomedia($wechat_attachment['attachment'], true);
-		$material['url'] = "url({$material['attach']})";
-		$material['type'] = 'image';
+	if ($current_menu['type'] != 'click' && $current_menu['type'] != 'view') {
+		$material = array();
+		if ($current_menu['etype'] == 'module') {
+			$module_name = explode(':', $current_menu['key']);
+			load()->model('module');
+			$material = module_fetch($module_name[1]);
+			if($material['issystem']) {
+				$path = '/framework/builtin/' . $material['name'];
+			} else {
+				$path = '../addons/' . $material['name'];
+			}
+			$cion = $path . '/icon-custom.jpg';
+			if(!file_exists($cion)) {
+				$cion = $path . '/icon.jpg';
+				if(!file_exists($cion)) {
+					$cion = './resource/images/nopic-small.jpg';
+				}
+			}
+			$material['icon'] = $cion;
+			$material['type'] = $current_menu['type'];
+			$material['etype'] = 'module';
+		} elseif ($current_menu['etype'] == 'click') {
+			$keyword_info = explode(':', $current_menu['key']);
+			if ($keyword_info[0] == 'keyword') {
+				$rule_info = pdo_get('rule', array('name' => $keyword_info[1]), array('id'));
+				$material['child_items'][0] = pdo_get('rule_keyword', array('rid' => $rule_info['id']), array('content'));
+				$material['name'] = $keyword_info[1];
+				$material['type'] = $current_menu['type'];
+				$material['etype'] = 'click';
+			}
+		}
 	}
 	message(error(0, $material), '', 'ajax');
 }

@@ -410,6 +410,24 @@ class WeiXinAccount extends WeAccount {
 		return $result;
 	}
 
+	public function getCurrentSelfmenuInfo() {
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://api.weixin.qq.com/cgi-bin/get_current_selfmenu_info?access_token={$token}";
+		$response = ihttp_get($url);
+		if(is_error($response)) {
+			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
+		}
+		$result = @json_decode($response['content'], true);
+		//46003代表没有设置自定义菜单
+		if(!empty($result['errcode']) && $result['errcode'] != '46003') {
+			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
+		}
+		return $result;
+	}
+
 	public function fansQueryInfo($uniid, $isOpen = true) {
 		if($isOpen) {
 			$openid = $uniid;
