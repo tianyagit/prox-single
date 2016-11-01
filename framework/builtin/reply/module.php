@@ -40,9 +40,7 @@ class ReplyModule extends WeModule {
 				if(!empty($rid) && $rid > 0) {
 					$isexists = pdo_get('mc_mass_record', array('id' => $rid), array('media_id', 'msgtype'));
 				}
-				// echo "<pre>";
-				// print_r($isexists);
-				// echo "</pre>";
+
 				if(!empty($isexists)) {
 					switch($isexists['msgtype']) {
 						case 'news':
@@ -78,30 +76,39 @@ class ReplyModule extends WeModule {
 			//默认为自动回复
 			default:
 				if(!empty($rid) && $rid > 0) {
-					$isexists = pdo_fetch("SELECT id, module FROM ".tablename('rule')." WHERE id = :id", array(':id' => $rid));
+					$isexists = pdo_fetch("SELECT id, name, module FROM ".tablename('rule')." WHERE id = :id", array(':id' => $rid));
 				}
 				if(!empty($isexists)) {
 					$module = $isexists['module'];
 					$module = $module == 'images' ? 'image' : $module;
 
-					foreach ($this->tablename as $key => $tablename) {
-						if ($key == 'keyword') {
-							if($_GPC['m'] != 'keyword') {
-								$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
-								foreach ($replies[$key] as &$keyword) {
-									$keyword['name'] = pdo_getcolumn('rule', array('id' => $keyword['rid']), 'name');
+					//选择多种素材
+					if($_GPC['a'] == 'reply' && (!empty($_GPC['m']) && $_GPC['m'] == 'keyword')) {
+						foreach ($this->tablename as $key => $tablename) {
+							if ($key == 'keyword') {
+								$replies['keyword'][0]['name'] = $isexists['name'];
+								$keyword = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE uniacid = :uniacid AND rid = :rid ORDER BY `id`", array(':uniacid' => $_W['uniacid'], ':rid' => $rid));
+								foreach ($keyword as $val) {
+									$replies['keyword'][0]['content'] .= $val['content'].'&nbsp;&nbsp;';
+								}
+							} else {
+								$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename($tablename)." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
+								switch ($key) {
+									case 'image':
+										foreach ($replies[$key] as &$img_value) {
+											$img = pdo_get('wechat_attachment', array('media_id' => $img_value['mediaid']), array('attachment'));
+											$img_value['img_url'] = tomedia($img['attachment'], true);
+										}
+										break;
 								}
 							}
-						} else {
-							$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename($tablename)." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
-							switch ($key) {
-								case 'image':
-									foreach ($replies[$key] as &$img_value) {
-										$img = pdo_get('wechat_attachment', array('media_id' => $img_value['mediaid']), array('attachment'));
-										$img_value['img_url'] = tomedia($img['attachment'], true);
-									}
-									break;
-							}
+						}
+					//只选择关键字
+					}else {
+						$replies['keyword'][0]['name'] = $isexists['name'];
+						$keyword = pdo_fetchall("SELECT content FROM ". tablename('rule_keyword') ." WHERE uniacid = :uniacid AND rid = :rid", array(':uniacid' => $_W['uniacid'], ':rid' => $rid));
+						foreach ($keyword as $val) {
+							$replies['keyword'][0]['content'] .= $val['content'].'&nbsp;&nbsp;';
 						}
 					}
 				}
