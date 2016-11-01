@@ -108,6 +108,27 @@ function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
 	$frames = require_once IA_ROOT . '/web/common/frames.inc.php';
 	//@@todo 还需要进行数据库权限和菜单的组合
+	
+	//模块权限，创始人有所有模块权限
+	load()->model('module');
+	$modules = uni_modules();
+	$sysmodules = system_modules();
+
+	$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'enabled' => STATUS_ON, 'display' => STATUS_ON), array('module'));
+	if (!empty($account_module)) {
+		foreach ($account_module as $module) {
+			if (!in_array($module['module'], $sysmodules)) {
+				$module = module_fetch($module['module']);
+				if (!empty($module)) {
+					$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
+						'title' => $module['title'],
+						'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
+						'url' => url('home/module', array('modulename' => $module['name'])),
+					);
+				}
+			}
+		}
+	}
 	//@@todo 进入模块界面后权限
 	if (!empty($_GPC['m'])) {
 		
