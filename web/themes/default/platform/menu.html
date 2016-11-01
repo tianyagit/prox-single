@@ -7,7 +7,10 @@
 	<div class="we7-page-title">
 		自定义菜单
 	</div>
-	<hr class="we7-page-hr" />
+	<ul class="we7-page-tab">
+		<li {if $type == '1'}class="active" {/if}><a href="{url 'platform/menu' array('type' => '1')}">默认菜单</a></li>
+		<li {if $type == '3'}class="active"{/if}><a href="{url 'platform/menu' array('type' => '3')}">自定义菜单</a></li>
+	</ul>
 	<div class="we7-padding-bottom clearfix">
 		<form action="./index.php" method="get" class="form-horizontal" role="form">
 			<div class="input-group pull-left" style="width: 400px;">
@@ -19,7 +22,11 @@
 			</div>
 		</form>
 		<div class="pull-right">
-			<a href="{php echo url('platform/menu/post', array('type' => 3));}" class="btn btn-primary we7-padding-horizontal">+添加菜单</a>
+			{if $type == '1'}
+			<a href="{php echo url('platform/menu/post', array('type' => 1));}" class="btn btn-primary we7-padding-horizontal">+添加默认菜单</a>
+			{elseif $type == '3'}
+			<a href="{php echo url('platform/menu/post', array('type' => 3));}" class="btn btn-primary we7-padding-horizontal">+添加自定义菜单</a>
+			{/if}
 		</div>
 	</div>
 	<table class="table we7-table">
@@ -61,7 +68,12 @@
 			<td>
 				<label>
 					{if $da['type'] == 1}
-					
+					{if $da['status'] == 0}
+					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
+					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
+					{else}
+					<span>开启中</span>
+					{/if}
 					{else}
 					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
 					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
@@ -79,7 +91,7 @@
 					<a href="{php echo url('platform/menu/copy', array('id' => $da['id']));}" class="color-default we7-margin-right" onclick="if(!confirm('确定复制吗')) return false;">复制</a>
 					{/if}
 				{/if}
-				{if $da['type'] != 1}
+				{if $da['type'] != 1 || ($da['type'] == 1 && $da['status'] == '0')}
 				<a href="{php echo url('platform/menu/delete', array('id' => $da['id'], 'status' => 'history'));}" class="color-default" onclick="if(!confirm('{if $da['type'] == 1}删除默认菜单会清空所有菜单记录，确定吗？{else}确定删除菜单?{/if}')) return false;">删除</a>
 				{/if}
 			</td>
@@ -101,7 +113,11 @@
 				<a href="{php echo url('platform/menu')}">自定义菜单</a>
 			</li>
 			<li>
+				{if !empty($id)}
+				编辑菜单
+				{else}
 				新建菜单
+				{/if}
 			</li>
 		</ol>
 		<div class="we7-form">
@@ -214,7 +230,7 @@
 								<div class="form-group">
 									<label for="" class="control-label">菜单内容</label>
 									<div class="form-controls">
-										<input id="radio-1" type="radio" name="ipt" ng-checked="context.activeItem.type == 'media_id' || context.activeItem.type == 'click'" ng-model="context.activeItem.type" value="media_id" ng-disabled="context.group.disabled">
+										<input id="radio-1" type="radio" name="ipt" ng-checked="context.activeItem.type == 'media_id' || context.activeItem.type == 'click'" ng-model="context.activeItem.type" value="click" ng-disabled="context.group.disabled">
 										<label for="radio-1">发送消息 </label>
 										<input id="radio-2" type="radio" name="ipt" ng-model="context.activeItem.type" value="view" ng-disabled="context.group.disabled">
 										<label for="radio-2">跳转网页 </label>
@@ -245,21 +261,59 @@
 									</div>
 								</div>
 								<div>
-								<div class="menu-content" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'media_id' && context.activeItem.type != 'view_limited'" style="position:relative;">
-									<div class="form-group">
-										<p class="color-gray" ng-show="context.activeItem.type == 'location_select'">菜单内容为地理位置，那么点击这个菜单是，系统发送当前地理位置</p>
-										<p class="color-gray"  ng-show="context.activeItem.type == 'pic_sysphoto' || context.activeItem.type == 'pic_photo_or_album'">菜单内容为系统拍照发图/拍照或者相册发图，那么点击这个菜单是，系统拍照</p>
-										<p class="color-gray" ng-show="context.activeItem.type == 'pic_weixin'">菜单内容为微信相册发图，那么点击这个菜单是，选择图片发送</p>
-										<p class="color-gray" ng-show="context.activeItem.type == 'scancode_push' || context.activeItem.type == 'scancode_waitmsg'">菜单内容为扫码，那么点击这个菜单是，手机扫描二维码</p>
-										<label for="" class="control-label">选择模块</label>
-										<div class="form-controls">
-											<input class="form-control" id="ipt-forward" type="text" ng-model="context.activeItem.key" ng-disabled="context.group.disabled" width="300px"/>
-											<span ng-if="!context.group.disabled" class="form-control-addon color-default" id="search" ng-click="context.select_mediaid('module')">搜索</span>
-											<span class="help-block">指定点击此菜单时要执行的操作, 你可以在这里选择模块, 那么点击这个菜单时就就相当于发送这个内容至微擎系统</span>
+								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'" style="width:540px;">
+									<div class="panel-heading">
+										回复内容
+									</div>
+									<p class="color-gray" ng-show="context.activeItem.type == 'location_select'">菜单内容为地理位置，那么点击这个菜单是，系统发送当前地理位置</p>
+									<p class="color-gray"  ng-show="context.activeItem.type == 'pic_sysphoto' || context.activeItem.type == 'pic_photo_or_album'">菜单内容为系统拍照发图/拍照或者相册发图，那么点击这个菜单是，系统拍照</p>
+									<p class="color-gray" ng-show="context.activeItem.type == 'pic_weixin'">菜单内容为微信相册发图，那么点击这个菜单是，选择图片发送</p>
+									<p class="color-gray" ng-show="context.activeItem.type == 'scancode_push' || context.activeItem.type == 'scancode_waitmsg'">菜单内容为扫码，那么点击这个菜单是，手机扫描二维码</p>
+									<label for="" class="control-label">选择</label>
+									<div class="panel-body we7-padding">
+										<ul class="keywords-list">
+											<li ng-if="context.activeItem.material[0].etype == 'click'">
+												<div>
+													<div class="desc">
+														<div class="media-content">
+															<a class="title-wrp" href="javascript:;">
+																<span class="title">[关键字]{{context.activeItem.material[0].name}}</span>
+															</a>
+															<p class="desc"><a href="javascript:;" class="appmsg-desc">{{context.activeItem.material[0].child_items[0].content}}</a></p>
+														</div>
+													</div>
+												</div>
+											</li>
+											<li ng-if="context.activeItem.material[0].etype == 'module'">
+												<div class="">
+													<div class="desc">
+														<div class="media-content">
+															<div class="appmsgSendedItem">
+																<a class="title-wrp" href="javascript:;">
+																	<span class="icon cover" style="background-image:url({{context.activeItem.material[0].icon}});"></span>
+																	<span class="title">[模块]{{context.activeItem.material[0].title}}</span>
+																</a>
+																<p class="desc"><a href="javascript:;" class="appmsg-desc">{{context.activeItem.material[0].name}}</a></p>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+										</ul>
+										<div class="we7-select-msg we7-padding-vertical-max">
+											<ul class="tab-navs">
+												<li>继续添加：</li>
+												<li class="tab-nav tab-video" ng-click="context.select_mediaid('module');">
+													<a href="javascript:void(0);">&nbsp;<i class="icon-msg-sender "></i><span class="msg-tab-title">模块</span></a>
+												</li>
+												<li class="tab-nav tab-cardmsg" ng-click="context.select_mediaid('keyword', '1');">
+													<a href="javascript:void(0);">&nbsp;<i class="icon-msg-sender "></i><span class="msg-tab-title">触发关键字</span></a>
+												</li>
+											</ul>
 										</div>
 									</div>
 								</div>
-								<div class="panel we7-panel" style="width: 540px;" ng-show="context.activeItem.type == 'media_id'">
+								<div class="panel we7-panel" style="width: 540px;" ng-show="context.activeItem.type == 'click'">
 									<div class="panel-heading">
 										回复内容
 									</div>
@@ -372,7 +426,7 @@
 				</div>
 			</div>
 			<div class="menu-submit">
-				<input type="submit" name="" id="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{php echo ($type == 1 || empty($id))}" ng-click="context.submit();"/>
+				<input type="submit" name="" id="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{php echo ($type == 1 || empty($id) || $copy == 1)}" ng-click="context.submit();"/>
 				<input type="button" name="" id="" value="预&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;览" class="btn btn-primary" style="padding: 6px 50px;" data-toggle="modal" data-target="#mobileDiv"/>
 			</div>
 			<div class="modal fade" id="mobileDiv" role="dialog" aria-hidden="true">
@@ -420,7 +474,6 @@ $(function(){
 	success_url = "{php echo url('platform/menu/display');}";
 	site_url = "{$_W['siteroot']}";
 	current_menu_url = "{php echo url('platform/menu/current_menu')}";
-	console.dir(group)
 	angular.module('menuApp').value('config', {
 		'id' : id,
 		'status' : status,

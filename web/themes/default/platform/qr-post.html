@@ -51,9 +51,11 @@
 	</div>
 </div>
 <script type="text/javascript">
+require(['underscore'], function(){
 	angular.module('qrApp').value('config', {
 		id: {php echo json_encode($id)},
 	});
 	angular.bootstrap($('#js-qr-post'), ['qrApp']);
+});
 </script>
 {template 'common/footer'}

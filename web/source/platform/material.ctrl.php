@@ -7,7 +7,7 @@
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('material_mass');
 $_W['page']['title'] = '永久素材-微信素材';
-$dos = array('image', 'del', 'export', 'news', 'list', 'purview', 'modal');
+$dos = array('image', 'del', 'export', 'news', 'down', 'list', 'preview', 'modal', 'send');
 $do = in_array($do, $dos) ? $do : 'list';
 
 if($do == 'list') {
@@ -47,5 +47,9 @@ if($do == 'list') {
 	$pager = pagination($total, $pageindex, $pagesize);
 }
 
+if($do == 'preview') {
+	$wxname = trim($_GPC['__input']['wxname']);
+	$type = trim($_GPC['__input']['type']);
+	$media_id = trim($_GPC['__input']['media_id']);
 
 template('platform/material');

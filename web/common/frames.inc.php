@@ -31,6 +31,16 @@ $ms['account'] = array(
 					'url' => url('platform/qr'),
 					'permission_name' => 'platform_qr',
 				),
+				'platform_mass' => array(
+					'title' => '定时群发',
+					'url' => url('platform/mass'),
+					'permission_name' => 'platform_mass',
+				),
+				'platform_material' => array(
+					'title' => '素材/编辑器',
+					'url' => url('platform/material'),
+					'permission_name' => 'platform_material',
+				),
 			)
 		)
 	),
@@ -170,28 +180,28 @@ $ms['system'] = array(
 			'title' => '常用系统工具',
 			'menu' => array(
 				'system_setting_attachment' => array(
-					'title' => '文件校验',
-					'url' => url('system/profile'),
+					'title' => '系统文件校验',
+					'url' => url('system/filecheck'),
 					'permission_name' => 'system_setting_attachment',
 				),
 				'system_setting_updatecache' => array(
-					'title' => '系统日志',
-					'url' => url('system/user'),
+					'title' => '性能优化',
+					'url' => url('system/optimize'),
 					'permission_name' => 'system_setting_updatecache',
 				),
 				'system_setting_menu' => array(
 					'title' => '数据库',
-					'url' => url('system/profile'),
+					'url' => url('system/database'),
 					'permission_name' => 'system_setting_menu',
 				),
 				'system_setting_sytle' => array(
 					'title' => '木马查杀',
-					'url' => url('system/user'),
+					'url' => url('system/tools/scan'),
 					'permission_name' => 'system_setting_sytle',
 				),
 				'system_setting_homepage' => array(
 					'title' => '检测文件BOM',
-					'url' => url('system/user'),
+					'url' => url('system/tools/bom'),
 					'permission_name' => 'system_setting_homepage',
 				),
 			)
