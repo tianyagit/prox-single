@@ -54,11 +54,11 @@
 						</div>
 						<div class="{if !empty($material['items']['1'])}cover-{/if}appmsg-item">
 							<h4 class="appmsg-title">
-								<a href="" target="-blank">{$material_row['title']}</a>
+								<a href="" target="-blank">{$material['items']['0']['title']}</a>
 							</h4>
-							<div class="appmsg-thumb" style="background-image:url('{php echo tomedia($material_row['thumb_url'])}')">
+							<div class="appmsg-thumb" style="background-image:url('{php echo tomedia($material['items']['0']['thumb_url'])}')">
 							</div>
-							<p class="appmsg-desc">{$material_row['digest']}</p>
+							<p class="appmsg-desc">{$material['items']['0']['digest']}</p>
 							<a href="" class="cover-dark">
 								<div class="edit-mask-content">
 									预览文章
@@ -92,7 +92,7 @@
 					<div class="appmsg-opr">
 						<ul>
 							<li class="appmsg-opr-item">
-								<a target="-blank" class="" href="#">&nbsp;<i class="">编辑</i></a>
+								<a href="{php echo url('platform/material_add/news', array('newsid' => $material['id']))}" class="">&nbsp;<i class="">编辑</i></a>
 							</li>
 							<li class="appmsg-opr-item">
 								<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>
