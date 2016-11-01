@@ -145,7 +145,7 @@ if($do == 'post') {
 	if(!empty($_GPC['id'])) {
 		$id = intval($_GPC['id']);
 		$row = pdo_fetch("SELECT * FROM ".tablename('qrcode')." WHERE uniacid = {$_W['uniacid']} AND id = '{$id}'");
-		$rid = pdo_get('rule_keyword', array('content' => $row['keyword']), array('rid'));
+		$rid = pdo_get('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $row['keyword']), array('rid'));
 		$rid = $rid['rid'];
 	}
 	template('platform/qr-post');

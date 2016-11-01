@@ -76,20 +76,21 @@ class ReplyModule extends WeModule {
 			//默认为自动回复
 			default:
 				if(!empty($rid) && $rid > 0) {
-					$isexists = pdo_fetch("SELECT id, module FROM ".tablename('rule')." WHERE id = :id", array(':id' => $rid));
+					$isexists = pdo_fetch("SELECT id, name, module FROM ".tablename('rule')." WHERE id = :id", array(':id' => $rid));
 				}
 				if(!empty($isexists)) {
 					$module = $isexists['module'];
 					$module = $module == 'images' ? 'image' : $module;
 
 					//选择多种素材
-					if($_GPC['a'] == 'reply' || $_GPC['a'] == 'mass') {
+					if($_GPC['a'] == 'reply') {
 						foreach ($this->tablename as $key => $tablename) {
 							if ($key == 'keyword') {
 								if($_GPC['m'] != 'keyword') {
-									$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
-									foreach ($replies[$key] as &$keyword) {
-										$keyword['name'] = pdo_getcolumn('rule', array('id' => $keyword['rid']), 'name');
+									$replies['keyword'][0]['name'] = $isexists['name'];
+									$keyword = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE uniacid = :uniacid AND rid = :rid ORDER BY `id`", array(':uniacid' => $_W['uniacid'], ':rid' => $rid));
+									foreach ($keyword as $val) {
+										$replies['keyword'][0]['content'] .= $val['content'].'&nbsp;&nbsp;';
 									}
 								}
 							} else {
@@ -106,13 +107,18 @@ class ReplyModule extends WeModule {
 						}
 					//只选择关键字
 					}else {
-						$replies['keyword'][0] = pdo_fetch("SELECT * FROM ". tablename('rule_keyword') ." WHERE rid = :rid", array(':rid' => $rid));
 						$replies['keyword'][0]['name'] = $isexists['name'];
+						$keyword = pdo_fetchall("SELECT content FROM ". tablename('rule_keyword') ." WHERE uniacid = :uniacid AND rid = :rid", array(':uniacid' => $_W['uniacid'], ':rid' => $rid));
+						foreach ($keyword as $val) {
+							$replies['keyword'][0]['content'] .= $val['content'].'&nbsp;&nbsp;';
+						}
 					}
 				}
 				break;
 		}
-
+		echo "<pre>";
+		print_r($replies);
+		echo "</pre>";
 		if(!is_array($option)) {
 			$option = array();
 		}
