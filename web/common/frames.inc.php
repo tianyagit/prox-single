@@ -41,8 +41,12 @@ $ms['account'] = array(
 					'url' => url('platform/material'),
 					'permission_name' => 'platform_material',
 				),
-			)
-		)
+			),
+		),
+		'platform_module' => array(
+			'title' => '应用模块',
+			'menu' => array(),
+		),
 	),
 );
 
