@@ -83,7 +83,7 @@ class ReplyModule extends WeModule {
 					$module = $module == 'images' ? 'image' : $module;
 
 					//选择多种素材
-					if($_GPC['a'] == 'reply') {
+					if($_GPC['a'] == 'reply' && (!empty($_GPC['m']) && $_GPC['m'] == 'keyword')) {
 						foreach ($this->tablename as $key => $tablename) {
 							if ($key == 'keyword') {
 								if($_GPC['m'] != 'keyword') {
@@ -116,9 +116,7 @@ class ReplyModule extends WeModule {
 				}
 				break;
 		}
-		echo "<pre>";
-		print_r($replies);
-		echo "</pre>";
+
 		if(!is_array($option)) {
 			$option = array();
 		}
