@@ -17,7 +17,7 @@ function reply_search($condition = '', $params = array(), $pindex = 0, $psize = 
 	if (!empty($condition)) {
 		$where = "WHERE {$condition}";
 	}
-	$sql = 'SELECT * FROM ' . tablename('rule') . $where . " ORDER BY status DESC, displayorder DESC, id ASC";
+	$sql = 'SELECT * FROM ' . tablename('rule') . $where . " ORDER BY status DESC, displayorder DESC, id DESC";
 	if ($pindex > 0) {
 		// 需要分页
 		$start = ($pindex - 1) * $psize;
