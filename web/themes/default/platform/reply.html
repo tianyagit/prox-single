@@ -96,7 +96,9 @@
 								</label>
 							</td>
 							<td class="vertical-middle text-left">
+								{if $row['module'] == 'basic' || $row['module'] == 'news' || $row['module'] == 'music' || $row['module'] == 'images' || $row['module'] == 'voice' || $row['module'] == 'video' || $row['module'] == 'wxcard' || $row['module'] == 'reply'}
 								<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $row['id']))}" class="color-default keyword-link">编辑</a>
+								{/if}
 								<a href="{php echo url('platform/reply/delete', array('m' => $m, 'rid' => $row['id']))}" onclick="return confirm('删除规则将同时删除关键字与回复，确认吗？');return false;" class="color-default keyword-link">删除</a>
 								<!-- <a class="color-default keyword-link" href="{php echo url('platform/stat/trend', array('id' => $row['id'], 'm' => $row['module']))}"><i class="fa fa-bar-chart-o"></i> 使用率走势</a> -->
 								{if $row['options']}
