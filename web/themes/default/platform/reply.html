@@ -80,7 +80,11 @@
 										<label for="" class="control-label">回复内容</label>
 										<div class="form-controls">
 											<p class="form-control-static">
+											{if $row['module'] == 'basic' || $row['module'] == 'news' || $row['module'] == 'music' || $row['module'] == 'images' || $row['module'] == 'voice' || $row['module'] == 'video' || $row['module'] == 'wxcard' || $row['module'] == 'reply'}
 												共{$row['allreply']['sum']}条（{if $row['allreply']['basic'] > 0}{$row['allreply']['basic']}条文字 {/if}{if $row['allreply']['images'] > 0}{$row['allreply']['images']}条图片 {/if}{if $row['allreply']['news'] > 0}{$row['allreply']['news']}条图文 {/if}{if $row['allreply']['music'] > 0}{$row['allreply']['music']}条音乐 {/if}{if $row['allreply']['voice'] > 0}{$row['allreply']['voice']}条语音 {/if}{if $row['allreply']['video'] > 0}{$row['allreply']['video']}条视频 {/if}{if $row['allreply']['wxcard'] > 0}{$row['allreply']['wxcard']}条卡券{/if}）
+											{else}
+												模块
+											{/if}
 											</p>
 										</div>
 									</div>
