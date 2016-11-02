@@ -50,7 +50,7 @@ require.config({
 		'material' : '../../components/material/material',
 
 		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
-		'jquery': '../lib/jquery-1.11.1.min', //兼容之前amd调用
+		'jquery': '../lib/bootstrap.min', //兼容之前amd调用
 		'jquery.ui': '../lib/jquery-ui-1.10.3.min',
 		'jquery.caret': '../lib/jquery.caret',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
@@ -63,6 +63,10 @@ require.config({
 		'loadcss': '../lib/css.min', //加载CSS
 	},
 	shim:{
+		'jquery' : {
+			exports: '$',
+			deps: ['../lib/jquery-1.11.1.min']
+		},
 		'daterangepicker': {
 			exports: '$',
 			deps: ['moment', 'loadcss!../../components/daterangepicker/daterangepicker.css']
@@ -79,7 +83,7 @@ require.config({
 			exports: 'BMap'
 		},
 		'fileUploader': {
-			deps: ['webuploader', 'loadcss!../../components/webuploader/webuploader.css', 'loadcss!../../components/webuploader/style.css']
+			deps: ['webuploader', 'jquery.jplayer', 'loadcss!../../components/webuploader/webuploader.css', 'loadcss!../../components/webuploader/style.css']
 		},
 		'clockpicker': {
 			exports: '$',
@@ -108,9 +112,6 @@ require.config({
 		},
 		'emoji': {
 			deps: ['loadcss!../../components/emoji/emotions.css']
-		},
-		'material': {
-			deps: ['jquery']
 		}
 	}
 });
