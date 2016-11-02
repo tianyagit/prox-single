@@ -3,150 +3,148 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * $sn$
  */
+
 defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('material_mass');
+load()->func('file');
 $_W['page']['title'] = '新增素材-微信素材';
-$dos = array('edit', 'thumb', 'details', 'image', 'submit');
-$do = in_array($do, $dos) ? $do : 'edit';
+$dos = array('news', 'tomedia', 'addnews', 'thumb_upload', 'image_upload');
+$do = in_array($do, $dos) ? $do : 'news';
 
-if($do == 'edit') {
+if ($do == 'tomedia') {
+	$url = $_GPC['url'];
+	message(error('0', tomedia($url)), '', 'ajax');
+}
+
+if ($do == 'image_upload') {
+	$image = $_GPC['__input']['image'];
+	$data = array(
+		'media' => '@'.$thumb
+	);
+	$wechat_api = WeAccount::create($_W['acid']);
+	$result = $wechat_api->uploadMaterial('image', $data);
+	print_r($result);die;
+}
+
+if  ($do == 'thumb_upload') {
+	$thumb = $_GPC['__input']['thumb'];
+//	$thumb = file_fetch(tomedia($thumb), 1024, 'material/images');
+//	if(is_error($thumb)) {
+//		message($thumb, '', 'ajax');
+//	}
+//	$fullname = ATTACHMENT_ROOT . $thumb;
+	print_r($thumb);die;
+	$data = array(
+		'media' => '@'.$thumb
+	);
+	$wechat_api = WeAccount::create($_W['acid']);
+	$result = $wechat_api->uploadNewsThumb($data);
+	print_r($result);die;
+}
+
+if($do == 'news') {
+	$newsid = intval($_GPC['newsid']);
+	$news_list = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $newsid), array(), '',  'displayorder ASC');
 	template('platform/material_add');
 }
 
-if($do == 'thumb') {
+if($do == 'addnews') {
+	$wechat_api = WeAccount::create($_W['acid']);
 	$post = $_GPC['__input'];
-	$thumb = $post['val'];
-	load()->func('file');
-	$thumb = file_fetch(tomedia($thumb), 2048, 'material/images');
-	if(is_error($thumb)) {
-		message($thumb, '', 'ajax');
+	$operate = $post['operate'];
+	$articles = array();
+	$post_news = array();
+	//获取所有的图片素材，构造一个已media_id为键的数组(为了获取图片的url)
+	$image_list = $wechat_api->batchGetMaterial('image');
+	$image_list = $image_list['data'];
+	$image_data = array();
+	foreach ($image_list as $image) {
+		$image_data[$image['media_id']] = $image;
 	}
-	// 上传到微信服务器
-	load()->model('account');
-	$acc = WeAccount::create($_W['acid']);
-	$token = $acc->getAccessToken();
-	if (is_error($token)) {
-		message(error(-1, $token['message']), '', 'ajax');
+	foreach($post['news'] as $key => $news) {
+		if ($operate == 'add') {
+			$row = array(
+				'title' => urlencode($news['title']),
+				'author' => urlencode($news['author']),
+				'digest' => urlencode($news['description']),
+				'content' => urlencode(addslashes(htmlspecialchars_decode('ppp'))),
+				'show_cover_pic' => 1,
+				'content_source_url' => urlencode($news['content_source_url']),
+				'thumb_media_id' => $news['media_id'],
+			);
+			$articles['articles'][] = $row;
+			$post_news[] = array(
+				'uniacid' => $_W['uniacid'],
+				'thumb_media_id' => $news['media_id'],
+				'thumb_url' => $image_data[$news['media_id']]['url'],
+				'title' => $news['title'],
+				'author' => $news['author'],
+				'digest' => $news['digest'],
+				'content' => htmlspecialchars_decode('ppp'),
+				'content_source_url' => $news['content_source_url'],
+				'show_cover_pic' => 1,
+				'url' => '',
+				'displayorder' => $key
+			);
+		} else {
+			$attach_mediaid =  pdo_getcolumn('wechat_attachment', array('id' => $post['attach_id'], 'uniacid' => $_W['uniacid']), 'media_id');
+			$wechat_news[] = array(
+				'media_id' => $attach_mediaid,
+				'index' => $key,
+				'articles' => array(
+					'title' => urlencode($news['title']),
+					'thumb_media_id' =>  urlencode($news['media_id']),
+					'author' => urlencode($news['author']),
+					'digest' => urlencode($news['digest']),
+					'show_cover_pic' => 1,
+					'content' => urlencode(addslashes(htmlspecialchars_decode('<p>shenmedoukeyi</p>'))),
+					'content_source_url' => urlencode('www.baidu.com')
+				)
+			);
+			$news['url'] = $image_data[$news['media_id']]['url'];
+			$post_news[$news['id']] = array(
+				'title' => $news['title'],
+				'thumb_media_id' => $news['media_id'],
+				'thumb_url' => $news['url'],
+				'author' => $news['author'],
+				'digest' => $news['digest'],
+				'show_cover_pic' => 1,
+				'content' => htmlspecialchars_decode('编辑过的内容'),
+				'content_source_url' => 'www.baidu.com',
+				'displayorder' => $key,
+			);
+		}
 	}
-	$fullname = ATTACHMENT_ROOT . $thumb;
-	$sendapi = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$token}&type=thumb";
-	$data = array(
-		'media' => '@'.$fullname
-	);
-	load()->func('communication');
-	$resp = @ihttp_request($sendapi, $data);
-	if(is_error($resp)) {
-		message($resp, '', 'ajax');
-	}
-	$content = @json_decode($resp['content'], true);
-	if(empty($content)) {
-		message(error(-1, "接口调用失败, 元数据: {$resp['meta']}"), '', 'ajax');
-	}
-	if(!empty($content['errcode'])) {
-		$message = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']}";
-		message(error(-1, $message), '', 'ajax');
-	}
-	message(error(0, $content), '', 'ajax');
-}
-
-if($do == 'details') {
-	$post = $_GPC['__input'];
-	$images = array();
-	foreach($post as $key => $val) {
-		$match = array();
-		preg_match_all('/<img.*src=[\'"](.*\.(?:png|jpg|jpeg|jpe|gif))[\'"].*\/?>/iU', $val['val'], $match);	
-		if(!empty($match[1])) {
-			foreach($match[1] as $val) {
-				if((strexists($val, 'http://') || strexists($val, 'https://')) && !strexists($val, 'mmbiz.qlogo.cn') && !strexists($val, 'mmbiz.qpic.cn')) {
-					$images[] = $val;
-				} else {
-					if(strexists($val, './attachment/images/')) {
-						$images[] = tomedia($val);
-					}
-				}
+	if ($operate == 'add') {
+		$result = $wechat_api->addMatrialNews($articles);
+		if(is_error($result)) {
+			message($result, '', 'ajax');
+		}
+		$wechat_attachment = array(
+			'uniacid' => $_W['uniacid'],
+			'acid' => $_W['acid'],
+			'media_id' => $result,
+			'type' => 'news',
+			'model' => 'perm',
+			'createtime' => time()
+		);
+		pdo_insert('wechat_attachment', $wechat_attachment);
+		$attach_id = pdo_insertid();
+		foreach ($post_news as $news) {
+			$news['attach_id'] = $attach_id;
+			pdo_insert('wechat_news', $news);
+		}
+		message(error(0, '创建图文素材成功'), '', 'ajax');
+	} else {
+		foreach ($wechat_news as $edit_news) {
+			$result = $wechat_api->editMaterialNews($edit_news);
+			if (is_error($result)) {
+				message($result, '', 'ajax');
 			}
 		}
-	}
-	message(error(0, $images), '', 'ajax');
-}
-
-if($do == 'image') {
-	$post = $_GPC['__input'];
-	$thumb = $post['image'];
-	$hasimgs = $post['hasimgs'];
-	$wximgs = $post['wximgs'];
-	if($index = in_array($thumb, $hasimgs)) {
-		message(error(0, $wximgs[$index]), '', 'ajax');
-	}
-	if(empty($thumb)) {
-		message(error(0, ''), '', 'ajax');
-	}
-	load()->func('file');
-	$thumb = file_fetch(tomedia($thumb), 1024, 'material/images');
-	if(is_error($thumb)) {
-		message($thumb, '', 'ajax');
-	}
-	// 上传到微信服务器
-	load()->model('account');
-	$acc = WeAccount::create($_W['acid']);
-	$token = $acc->getAccessToken();
-	if (is_error($token)) {
-		message(error(-1, $token['message']), '', 'ajax');
-	}
-	$fullname = ATTACHMENT_ROOT . $thumb;
-	$sendapi = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$token}";
-	$data = array(
-		'media' => '@'.$fullname
-	);
-	load()->func('communication');
-	$resp = @ihttp_request($sendapi, $data);
-	if(is_error($resp)) {
-		message($resp, '', 'ajax');
-	}
-	$content = @json_decode($resp['content'], true);
-	if(empty($content)) {
-		message(error(-1, "接口调用失败, 元数据: {$resp['meta']}"), '', 'ajax');
-	}
-	if(!empty($content['errcode'])) {
-		$message = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']}";
-		message(error(-1, $message), '', 'ajax');
-	}
-	message(error(0, $content['url']), '', 'ajax');
-}
-
-if($do == 'submit') {
-	$post = $_GPC['__input'];
-	$hasimgs = $post['hasimgs'];
-	$wximgs = $post['wximgs'];
-	$need_sort = false;
-	foreach($post['items'] as $key => $val) {
-		if ($val['displayorder'] != '0') {
-			$need_sort = true;
+		foreach ($post_news as $id => $news) {
+			pdo_update('wechat_news', $news, array('uniacid' => $_W['uniacid'], 'id' => $id));
 		}
-		$displayorder[$key] = $val['displayorder'];
+		message(error(0, '更新图文素材成功'), '', 'ajax');
 	}
-	if (!empty($need_sort)) {
-		array_multisort($displayorder, SORT_DESC, SORT_NUMERIC, $post['items']);
-	}
-	foreach($post['items'] as &$reply) {
-		if(!empty($hasimgs)) {
-			$reply['content'] =  str_replace($hasimgs, $wximgs, $reply['content']);
-		}
-		$row = array(
-			'title' => urlencode($reply['title']),
-			'author' => urlencode($reply['author']),
-			'digest' => urlencode($reply['description']),
-			'content' => urlencode(addslashes(htmlspecialchars_decode($reply['content']))),
-			'show_cover_pic' => intval($reply['incontent']),
-			'content_source_url' => urlencode($reply['url']),
-			'thumb_media_id' => $reply['media_id'],
-		);
-		$articles['articles'][] = $row;
-	}
-	$acc = WeAccount::create($_W['acid']);
-	$result = $acc->addMatrialNews($articles);
-	if(is_error($result)) {
-		message($result, '', 'ajax');
-	}
-	message(error(0, ''), '', 'ajax');
 }
