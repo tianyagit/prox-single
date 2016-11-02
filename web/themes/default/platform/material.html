@@ -5,21 +5,21 @@
 			素材管理
 		</div>
 		<ul class="we7-page-tab">
-			<li class="active">
+			<li{if $type == 'news'} class="active"{/if}>
 				<a href="{php echo url('platform/material', array('type' => 'news'))}">图文消息</a>
 			</li>
-			<li>
+			<li{if $type == 'image'} class="active"{/if}>
 				<a href="{php echo url('platform/material', array('type' => 'image'))}">图片</a>
 			</li>
-			<li>
+			<li{if $type == 'voice'} class="active"{/if}>
 				<a href="{php echo url('platform/material', array('type' => 'voice'))}">语音</a>
 			</li>
-			<li>
+			<li{if $type == 'video'} class="active"{/if}>
 				<a href="{php echo url('platform/material', array('type' => 'video'))}">视频</a>
 			</li>
 		</ul>
+		{if $type == 'news'}
 		<div class="material-appmsg">
-
 			<div class="material-list-head clearfix">
 				<div class="info">
 					<div class="we7-form">
@@ -103,10 +103,131 @@
 				{/loop}
 			</div>
 		</div>
-	</div>
-	{$pager}
-</div>
+		{elseif $type == 'image'}
+		<div class="material-appmsg">
+			<div class="material-list-head clearfix">
+				<div class="action">
+					<a href="" class="btn btn-default">同步微信</a>
+					<a href="" class="btn btn-primary">上传新图片</a>
+				</div>
+			</div>
+			<ul class="material-img-list">
+				{loop $image_list $image}
+				<li class="material-img-item">
+					<div class="img-item">
+						<h4 class="img-title">
+							<a href="" target="-blank">{$image['filename']}</a>
+						</h4>
+						<img class="img-thumb" src="{php echo tomedia($image['attachment'], true);}">
+					</div>
+					<div class="img-opr">
+						<ul>
+							<li class="img-opr-item">
+								<a target="-blank" class="-" href="#">&nbsp;<i class="">编辑</i></a>
+							</li>
+							<li class="img-opr-item">
+								<a class="-" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				{/loop}
+			</ul>
+		</div>
+		{elseif $type == 'voice'}
+		<div class="material-appmsg">
 
+			<div class="material-list-head clearfix">
+				<div class="info">
+					<div class="we7-form">
+						<div class="form-controls">
+							<input type="text" id="" name="" class="form-control" size="40" placeholder="标题/作者/摘要">
+							<span class="form-control-feedback"><i class="fa fa-search"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="action">
+					<a href="" class="btn btn-default">同步微信</a>
+
+					<a href="" class="btn btn-primary">上传语音</a>
+
+				</div>
+			</div>
+			<ul class="material-audio-list">
+				{loop $voice_list $voice}
+				<li class="material-audio-item">
+					<div class="audio-item AudioPlaying">
+						<div class="icon-audio-wrp">
+							<span class="icon-audio-msg"></span>
+						</div>
+						<div class="audio-content">
+							<div class="audio-title">{$voice['attachment']}</div>
+							<div class="audio-time">{php echo date('m月d日', $voice['createtime'])}</div>
+							<div class="audio-length">{php echo date('h:i', $voice['createtime'])}</div>
+						</div>
+					</div>
+					<div class="audio-opr">
+						<ul>
+							<li class="audio-opr-item">
+								<a target="-blank" class="" href="#">&nbsp;<i class="">编辑</i></a>
+							</li>
+							<li class="audio-opr-item">
+								<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				{/loop}
+			</ul>
+		</div>
+		{elseif $type == 'video'}
+		<div class="material-appmsg">
+
+			<div class="material-list-head clearfix">
+				<div class="info">
+					<div class="we7-form">
+						<div class="form-controls">
+							<input type="text" id="" name="" class="form-control" size="40" placeholder="标题/作者/摘要">
+							<span class="form-control-feedback"><i class="fa fa-search"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="action">
+					<a href="" class="btn btn-default">同步微信</a>
+
+					<a href="" class="btn btn-primary">上传视频</a>
+
+				</div>
+			</div>
+			<ul class="material-img-list">
+				{loop $video_list $video}
+				<li class="material-img-item">
+					<div class="img-item">
+						<h4 class="img-title">
+							<a href="" target="-blank">{$video['tag']['title']}</a>
+						</h4>
+						<div class="img-thumb" style="background-image:url('{php echo tomedia($video['attachment'])}')">
+
+						</div>
+					</div>
+					<div class="img-opr">
+						<ul>
+							<li class="img-opr-item">
+								<a target="-blank" class="-" href="#">&nbsp;<i class="">编辑</i></a>
+							</li>
+							<li class="img-opr-item">
+								<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				{/loop}
+			</ul>
+		</div>
+		{/if}
+	</div>
+</div>
+{$pager}
 <script>
 	require(['jquery.wookmark'], function() {
 		//同步素材
