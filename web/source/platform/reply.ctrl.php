@@ -22,18 +22,19 @@ if ($do == 'change_status') {
 	$result = uni_setting_save('default_message', $setting);
 }
 if ($m == 'special') {
-	$mtypes = array();
-	$mtypes['image'] = '图片消息';
-	$mtypes['voice'] = '语音消息';
-	$mtypes['video'] = '视频消息';
-	$mtypes['shortvideo'] = '小视频消息';
-	$mtypes['location'] = '位置消息';
-	$mtypes['trace'] = '上报地理位置';
-	$mtypes['link'] = '链接消息';
-	$mtypes['merchant_order'] = '微小店消息';
-	$mtypes['ShakearoundUserShake'] = '摇一摇:开始摇一摇消息';
-	$mtypes['ShakearoundLotteryBind'] = '摇一摇:摇到了红包消息';
-	$mtypes['WifiConnected'] = 'Wifi连接成功消息';
+	$mtypes = array(
+		'image' => '图片消息',
+		'voice' => '语音消息',
+		'video' => '视频消息',
+		'shortvideo' => '小视频消息',
+		'location' => '位置消息',
+		'trace' => '上报地理位置',
+		'link' => '链接消息',
+		'merchant_order' => '微小店消息',
+		'ShakearoundUserShake' => '摇一摇:开始摇一摇消息',
+		'ShakearoundLotteryBind' => '摇一摇:摇到了红包消息',
+		'WifiConnected' => 'Wifi连接成功消息'
+	);
 }
 // uni_user_permission_check('platform_reply_' . $m, true, 'reply');
 // $module = module_fetch($m);
@@ -88,12 +89,16 @@ if($do == 'display') {
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 8;
 		$cids = $parentcates = $list =  array();
-		$condition = 'uniacid = :uniacid AND module in ("basic", "news", "music", "images", "voice", "video", "wxcard", "reply")';
+		$condition = 'uniacid = :uniacid';
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		if(isset($_GPC['type']) && !empty($_GPC['type'])) {
-			$condition .= " AND FIND_IN_SET(:type, `containtype`) OR module = :type";
-			$params[':type'] = $_GPC['type'];
+			if($_GPC['type'] == 'apply') {
+				$condition .= ' AND module NOT IN ("basic", "news", "images", "voice", "video", "music", "wxcard", "reply")';
+			}else {
+				$condition .= " AND FIND_IN_SET(:type, `containtype`) OR module = :type";
+				$params[':type'] = $_GPC['type'];	
+			}
 		}
 		if(isset($_GPC['keyword'])) {
 			$condition .= ' AND `name` LIKE :keyword';
