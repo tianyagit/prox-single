@@ -112,6 +112,9 @@ require.config({
 		},
 		'emoji': {
 			deps: ['loadcss!../../components/emoji/emotions.css']
+		},
+		'material': {
+			deps: ['../lib/jquery-1.11.1.min']
 		}
 	}
 });

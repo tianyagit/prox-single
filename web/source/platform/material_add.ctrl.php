@@ -16,32 +16,6 @@ if ($do == 'tomedia') {
 	message(error('0', tomedia($url)), '', 'ajax');
 }
 
-if ($do == 'image_upload') {
-	$image = $_GPC['__input']['image'];
-	$data = array(
-		'media' => '@'.$thumb
-	);
-	$wechat_api = WeAccount::create($_W['acid']);
-	$result = $wechat_api->uploadMaterial('image', $data);
-	print_r($result);die;
-}
-
-if  ($do == 'thumb_upload') {
-	$thumb = $_GPC['__input']['thumb'];
-//	$thumb = file_fetch(tomedia($thumb), 1024, 'material/images');
-//	if(is_error($thumb)) {
-//		message($thumb, '', 'ajax');
-//	}
-//	$fullname = ATTACHMENT_ROOT . $thumb;
-	print_r($thumb);die;
-	$data = array(
-		'media' => '@'.$thumb
-	);
-	$wechat_api = WeAccount::create($_W['acid']);
-	$result = $wechat_api->uploadNewsThumb($data);
-	print_r($result);die;
-}
-
 if($do == 'news') {
 	$newsid = intval($_GPC['newsid']);
 	$news_list = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $newsid), array(), '',  'displayorder ASC');
@@ -50,7 +24,7 @@ if($do == 'news') {
 
 if($do == 'addnews') {
 	$wechat_api = WeAccount::create($_W['acid']);
-	$post = $_GPC['__input'];
+	$post = $_GPC['__input'];print_r($post);die;
 	$operate = $post['operate'];
 	$articles = array();
 	$post_news = array();
