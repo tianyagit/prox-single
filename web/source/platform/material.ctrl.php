@@ -8,9 +8,8 @@ defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('material_mass');
 
 $_W['page']['title'] = '永久素材-微信素材';
-$dos = array('list', 'sync');
+$dos = array('list', 'preview', 'sync', 'del_material');
 $do = in_array($do, $dos) ? $do : 'list';
-
 //同步素材时重复用到
 //从微信接口拉取到的素材数据 $material
 //本地存在的素材id集合 $material
@@ -51,6 +50,21 @@ function syncMaterial($material, $wechat_existid) {
 		}
 	}
 	return $wechat_existid;
+}
+
+if ($do == 'del_material') {
+	$wechat_api = WeAccount::create($_W['acid']);
+	$media_id = $_GPC['__input']['media_id'];
+	$material = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $media_id));
+	$result = $wechat_api->delMaterial($media_id);
+	if ($result['errcode'] == 0) {
+		$result = error(0, $material['type']);
+		if ($material['type'] == 'news') {
+			pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $material['id']));
+		}
+		pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $media_id));
+	}
+	message($result, '', 'ajax');
 }
 
 
@@ -110,7 +124,7 @@ if($do == 'list') {
 		$pageindex = max(1, intval($_GPC['page']));
 		$pagesize = 21;
 		$limit = " ORDER BY a.id DESC, b.id ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
-		$total = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition, $params, 'id');
+		$total = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition, $params);
 		$total = count($total);
 		$material_list = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition . $limit, $params, 'id');
 		if (!empty($material_list)) {
