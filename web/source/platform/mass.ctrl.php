@@ -4,9 +4,9 @@
  * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
-uni_user_permission_exist('material_mass');
+uni_user_permission_exist('platform_mass');
 $_W['page']['title'] = '定时群发-微信素材';
-$dos = array('list', 'post', 'cron', 'send', 'del');
+$dos = array('list', 'post', 'cron', 'send', 'del', 'preview');
 $do = in_array($do, $dos) ? $do : 'list';
 
 if($do == 'list') {
@@ -211,6 +211,21 @@ if($do == 'cron') {
 	}
 	pdo_update('mc_mass_record', array('cron_id' => $status), array('uniacid' => $_W['uniacid'], 'id' => $id));
 	message('同步到云服务成功', referer(), 'success');
+}
+
+if($do == 'preview') {
+	$wxname = trim($_GPC['__input']['wxname']);
+	if(empty($wxname)) {
+		exit('微信号不能为空');
+	}
+	$type = trim($_GPC['__input']['type']);
+	$media_id = trim($_GPC['__input']['media_id']);
+	$acc = WeAccount::create();
+	$data = $acc->fansSendPreview($wxname, $media_id, $type);
+	if(is_error($data)) {
+		exit($data['message']);
+	}
+	exit('success');
 }
 
 if($do == 'send') {
