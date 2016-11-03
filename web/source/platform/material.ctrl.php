@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 uni_user_permission_check('material_mass');
 
 $_W['page']['title'] = '永久素材-微信素材';
-$dos = array('list', 'preview', 'sync', 'del_material');
+$dos = array('list', 'sync', 'del_material');
 $do = in_array($do, $dos) ? $do : 'list';
 //同步素材时重复用到
 //从微信接口拉取到的素材数据 $material
@@ -169,6 +169,5 @@ if($do == 'list') {
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
 }
-
 
 template('platform/material');
