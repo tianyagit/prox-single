@@ -24,7 +24,7 @@ if($do == 'news') {
 
 if($do == 'addnews') {
 	$wechat_api = WeAccount::create($_W['acid']);
-	$post = $_GPC['__input'];print_r($post);die;
+	$post = $_GPC['__input'];
 	$operate = $post['operate'];
 	$articles = array();
 	$post_news = array();
