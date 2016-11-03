@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="right-contnt">
+<div class="right-contnt" id="main" ng-controller="materialDisplay">
 	<div class="material">
 		<div class="we7-page-title">
 			素材管理
@@ -94,7 +94,7 @@
 								<a href="{php echo url('platform/material_add/news', array('newsid' => $material['id']))}" class="">&nbsp;<i class="">编辑</i></a>
 							</li>
 							<li class="appmsg-opr-item">
-								<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['media_id']}')">&nbsp;<i class="">删除</i></a>
 							</li>
 						</ul>
 					</div>
@@ -216,6 +216,10 @@
 <script>
 	require(['jquery.wookmark'], function() {
 		//同步素材
+		angular.module('materialApp').value('config', {
+			'del_url' : "{php echo url('platform/material/del_material')}"
+		});
+		angular.bootstrap($('#main'), ['materialApp']);
 		sync = function(type, pageindex, total, wechat_existid) {
 			if (pageindex == undefined) {
 				util.message('正在同步素材，请勿关闭浏览器...');
