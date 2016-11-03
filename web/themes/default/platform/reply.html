@@ -208,15 +208,6 @@
 </script>
 {elseif $m == 'welcome'}
 	<div class="new-keyword" id="welcome" ng-cloak>
-		<ol class="breadcrumb we7-breadcrumb">
-			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
-			<li>
-				首次访问自动回复
-			</li>
-			<li>
-				编辑
-			</li>
-		</ol>
 		<div class="we7-form" ng-controller="WelcomeDisplay">
 			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 				<div>
@@ -236,15 +227,6 @@
 </script>
 {elseif $m == 'default'}
 	<div class="new-keyword" id="default">
-		<ol class="breadcrumb we7-breadcrumb">
-			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
-			<li>
-				默认回复
-			</li>
-			<li>
-				编辑
-			</li>
-		</ol>
 		<div id="a" class="we7-form" ng-controller="DefaultDisplay">
 			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 				<div>
