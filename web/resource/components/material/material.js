@@ -114,7 +114,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 					$content.html('<div class="info text-center"><i class="fa fa-info-circle fa-lg"></i> 暂无数据</div>');
 				}
 			});				
-			$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
+			$this.modalobj.find('#btn-select .btn-primary').unbind('click').click(function(){
 				var attachment = [];
 				$content.find('.checkedMedia').each(function(){
 					if (type == 'module') {
@@ -130,7 +130,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 
 		'selectMedia' : function(){
 			var $this = this;
-			$this.modalobj.on('click', '.checkMedia', function(){
+			$this.modalobj.find('.checkMedia').unbind('click').click(function(){
 				if(!$this.options.multiple) {
 					$('.checkMedia').removeClass('checkedMedia');
 				}
@@ -153,7 +153,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 					$(this).addClass('btn-primary');
 				}
 				if(!$this.options.multiple) {
-					$this.modalobj.find('.modal-footer .btn-primary').trigger('click');
+					$this.modalobj.find('#btn-select .btn-primary').trigger('click');
 				}
 			});
 		},
@@ -280,8 +280,8 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'					</nav>\n' +
 				'				</div>\n' +
 				'				<div id="btn-select" style="float: right; display: none">\n' +
-				'					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>\n' +
-				'					<button type="button" class="btn btn-primary">确认</button>\n' +
+				'					<span class="btn btn-default" data-dismiss="modal">取消</span>\n' +
+				'					<span class="btn btn-primary">确认</span>\n' +
 				'				</div>\n' +
 				'			</div>\n'+
 				'		</div>\n' +
