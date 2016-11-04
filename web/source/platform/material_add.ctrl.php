@@ -3,13 +3,14 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * $sn$
  */
-
 defined('IN_IA') or exit('Access Denied');
-uni_user_permission_check('material_mass');
-load()->func('file');
-$_W['page']['title'] = '新增素材-微信素材';
 $dos = array('news', 'tomedia', 'addnews', 'thumb_upload', 'image_upload');
 $do = in_array($do, $dos) ? $do : 'news';
+
+$_W['page']['title'] = '新增素材-微信素材';
+load()->func('file');
+load()->model('material');
+uni_user_permission_check('material_mass');
 
 if ($do == 'tomedia') {
 	$url = $_GPC['url'];
