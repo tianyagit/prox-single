@@ -114,7 +114,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 					$content.html('<div class="info text-center"><i class="fa fa-info-circle fa-lg"></i> 暂无数据</div>');
 				}
 			});				
-			$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
+			$this.modalobj.find('#btn-select .btn-primary').unbind('click').click(function(){
 				var attachment = [];
 				$content.find('.checkedMedia').each(function(){
 					if (type == 'module') {
@@ -130,7 +130,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 
 		'selectMedia' : function(){
 			var $this = this;
-			$this.modalobj.on('click', '.checkMedia', function(){
+			$this.modalobj.find('.checkMedia').unbind('click').click(function(){
 				if(!$this.options.multiple) {
 					$('.checkMedia').removeClass('checkedMedia');
 				}
@@ -153,7 +153,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 					$(this).addClass('btn-primary');
 				}
 				if(!$this.options.multiple) {
-					$this.modalobj.find('.modal-footer .btn-primary').trigger('click');
+					$this.modalobj.find('#btn-select .btn-primary').trigger('click');
 				}
 			});
 		},
@@ -242,22 +242,22 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						</li>'+
 				'					</ul>'+
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=post&do=news" target="_blank">新建图文</a>'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=material_add" target="_blank">新建图文</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=image" target="_blank">上传图片</a>'+
+				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=image" target="_blank">上传图片</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
+				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '">'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=video" target="_blank">新建视频</a>'+
+				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '">'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=video" target="_blank">新建视频</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '">'+
+				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '">'+
 				'						<a style="color:white;" href="./index.php?c=activity&a=coupon&do=display" target="_blank">新建卡券</a>'+
 				'					</button>'+
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.keyword ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=autoreply&do=post&m=autoreply" target="_blank">新建关键字</a>'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=reply&do=post&m=keyword" target="_blank">新建关键字</a>'+
 				'					</button>'+
 				'				</h3>'+
 				'			</div>\n' +
@@ -280,8 +280,8 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'					</nav>\n' +
 				'				</div>\n' +
 				'				<div id="btn-select" style="float: right; display: none">\n' +
-				'					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>\n' +
-				'					<button type="button" class="btn btn-primary">确认</button>\n' +
+				'					<span class="btn btn-default" data-dismiss="modal">取消</span>\n' +
+				'					<span class="btn btn-primary">确认</span>\n' +
 				'				</div>\n' +
 				'			</div>\n'+
 				'		</div>\n' +

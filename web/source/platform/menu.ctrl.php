@@ -42,15 +42,17 @@ if($do == 'display') {
 		$single_menu_info = iunserializer(base64_decode($menu_data['data']));
 		$single_menu_info['type'] = 1;
 		$single_menu_info['matchrule'] = array();
-		foreach ($single_menu_info['button'] as $key=>&$single_button) {
-			if (!empty($default_sub_button[$key])) {
-				$single_button['sub_button'] = $default_sub_button[$key];
-			} else {
-				unset($single_button['sub_button']);
+		if (!empty($single_menu_info['button'])) {
+			foreach ($single_menu_info['button'] as $key=>&$single_button) {
+				if (!empty($default_sub_button[$key])) {
+					$single_button['sub_button'] = $default_sub_button[$key];
+				} else {
+					unset($single_button['sub_button']);
+				}
+				ksort($single_button);
 			}
-			ksort($single_button);
+			ksort($single_menu_info);
 		}
-		ksort($single_menu_info);
 		$local_menu_data = base64_encode(iserializer($single_menu_info));
 		if ($wechat_menu_data == $local_menu_data) {
 			$default_menu_id = $k;
