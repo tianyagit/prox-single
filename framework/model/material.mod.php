@@ -1,9 +1,11 @@
 <?php
+defined('IN_IA') or exit('Access Denied');
+
 /**
  * 同步微信素材
  * @param array $material 从微信接口拉取到的素材数据
  * @param array $exist_material 微信与本地同时存在的素材id集合（用于删除微信端不存在，本地存在的素材）
- * @return mixed
+ * @return array() 本地与微信端都存在的素材id集合
  */
 function syncMaterial($material, $exist_material) {
 	global $_W;
