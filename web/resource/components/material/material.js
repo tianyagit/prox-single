@@ -242,22 +242,22 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						</li>'+
 				'					</ul>'+
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=post&do=news" target="_blank">新建图文</a>'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=material_add" target="_blank">新建图文</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=image" target="_blank">上传图片</a>'+
+				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=image" target="_blank">上传图片</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
+				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '">'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=material&a=display&do=list&type=video" target="_blank">新建视频</a>'+
+				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '">'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=video" target="_blank">新建视频</a>'+
 				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '">'+
+				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '">'+
 				'						<a style="color:white;" href="./index.php?c=activity&a=coupon&do=display" target="_blank">新建卡券</a>'+
 				'					</button>'+
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.keyword ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=autoreply&do=post&m=autoreply" target="_blank">新建关键字</a>'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=reply&do=post&m=keyword" target="_blank">新建关键字</a>'+
 				'					</button>'+
 				'				</h3>'+
 				'			</div>\n' +
