@@ -24,10 +24,9 @@ if($do == 'list') {
 		}
 		$pageindex = max(1, intval($_GPC['page']));
 		$pagesize = 21;
-		$limit = " ORDER BY a.id DESC, b.id ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
+		$limit = " ORDER BY createtime DESC, b.id ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
 		$total = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition, $params);
 		$total = count($total);
-
 		$material_list = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition . $limit, $params, 'id');
 		if (!empty($material_list)) {
 			foreach ($material_list as &$material) {
@@ -51,22 +50,22 @@ if($do == 'list') {
 	}
 	if ($type == 'image') {
 		$pageindex = max(1, intval($_GPC['page']));
-		$pagesize = 24;
-		$image_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'image', 'model' => 'perm'), array($pageindex, $pagesize), $total, array(),'', 'id DESC');
+		$pagesize = 12;
+		$image_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'image', 'model' => 'perm'), array($pageindex, $pagesize), $total, array(),'', 'createtime DESC');
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
 	if ($type == 'voice') {
 		$pageindex = max(1, intval($_GPC['page']));
-		$pagesize = 24;
-		$voice_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'voice', 'model' => 'perm'), array($pageindex, $pagesize), $total, array(),'', 'id DESC');
+		$pagesize = 12;
+		$voice_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'voice', 'model' => 'perm'), array($pageindex, $pagesize), $total, array(),'', 'createtime DESC');
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
 	if ($type == 'video') {
 		$pageindex = max(1, intval($_GPC['page']));
-		$pagesize = 24;
-		$video_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'video', 'model' => 'perm'), array($pageindex, $pagesize), $total, array(),'', 'id DESC');
+		$pagesize = 12;
+		$video_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'video', 'model' => 'perm'), array($pageindex, $pagesize), $total, array(),'', 'createtime DESC');
 		foreach($video_list as &$row) {
-			$row['tag'] = iunserializer($row['tag']);
+			$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
 		}
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
@@ -88,45 +87,35 @@ if ($do == 'del_material') {
 }
 
 if ($do == 'sync') {
+	$post = $_GPC['__input'];
 	$wechat_api = WeAccount::create($_W['acid']);
-	$pageindex = max(1, $_GPC['pageindex']);
-	$news_list = $wechat_api->batchGetMaterial('news', ($pageindex-1)*20);
-	$wechat_existid = empty($_GPC['wechat_existid']) ? array() : $_GPC['wechat_existid'];
+	$pageindex = max(1, $post['pageindex']);
+	$type = $post['type'];
+	$news_list = $wechat_api->batchGetMaterial($type, ($pageindex-1)*20);
+	$wechat_existid = empty($post['wechat_existid']) ? array() : $post['wechat_existid'];
+	$wechat_existid = syncMaterial($news_list['data'], $wechat_existid, $type);
 	if ($pageindex == 1) {
-		$wechat_existid = syncMaterial($news_list['data'], array());
+		$original_newsid = pdo_getall('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => $type, 'model' => 'perm'), array('id'), 'id');
+		$original_newsid = array_keys($original_newsid);
 		if ($news_list['total_count'] > 20) {
 			$total = ceil($news_list['total_count']/20);
-			message(error('1', array('total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid)), '', 'ajax');
-		} else {
-			$news_allid = pdo_getall('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'news'), array('id'), 'id');
-			$news_allid = array_keys($news_allid);
-			$delete_id = array_diff($news_allid, $wechat_existid);
-			if (!empty($delete_id)) {
-				foreach ($delete_id as $id) {
-					pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
-					pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $id));
-				}
-			}
-			message(error(0), '', 'ajax');
+			message(error('1', array('type' => $type,'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
 		}
 	} else {
-		$total = intval($_GPC['total']);
-		$wechat_existid = syncMaterial($news_list['data'], $wechat_existid);
-		if ($total == $pageindex) {
-			$news_allid = pdo_getall('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'news'), array('id'), 'id');
-			$news_allid = array_keys($news_allid);
-			$delete_id = array_diff($news_allid, $wechat_existid);
-			if (!empty($delete_id)) {
-				foreach ($delete_id as $id) {
-					pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
-					pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $id));
-				}
-			}
-			message(error(0), '', 'ajax');
-		} else {
-			message(error('1', array('total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid)), '', 'ajax');
+		$total = intval($post['total']);
+		$original_newsid = $post['original_newsid'];
+		if ($total != $pageindex) {
+			message(error('1', array('type' => $type, 'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
 		}
 	}
+	$delete_id = array_diff($original_newsid, $wechat_existid);
+	if (!empty($delete_id)) {
+		foreach ($delete_id as $id) {
+			pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
+			pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $id));
+		}
+	}
+	message(error(0), '', 'ajax');
 }
 
 template('platform/material');
