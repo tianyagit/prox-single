@@ -9,6 +9,7 @@ $do = in_array($do, $dos) ? $do : 'list';
 
 $_W['page']['title'] = '永久素材-微信素材';
 uni_user_permission_check('material_mass');
+load()->model('material');
 
 if($do == 'list') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
@@ -26,6 +27,7 @@ if($do == 'list') {
 		$limit = " ORDER BY a.id DESC, b.id ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
 		$total = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition, $params);
 		$total = count($total);
+
 		$material_list = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition . $limit, $params, 'id');
 		if (!empty($material_list)) {
 			foreach ($material_list as &$material) {
@@ -126,7 +128,5 @@ if ($do == 'sync') {
 		}
 	}
 }
-
-
 
 template('platform/material');
