@@ -16,32 +16,6 @@ if ($do == 'tomedia') {
 	message(error('0', tomedia($url)), '', 'ajax');
 }
 
-if ($do == 'image_upload') {
-	$image = $_GPC['__input']['image'];
-	$data = array(
-		'media' => '@'.$thumb
-	);
-	$wechat_api = WeAccount::create($_W['acid']);
-	$result = $wechat_api->uploadMaterial('image', $data);
-	print_r($result);die;
-}
-
-if  ($do == 'thumb_upload') {
-	$thumb = $_GPC['__input']['thumb'];
-//	$thumb = file_fetch(tomedia($thumb), 1024, 'material/images');
-//	if(is_error($thumb)) {
-//		message($thumb, '', 'ajax');
-//	}
-//	$fullname = ATTACHMENT_ROOT . $thumb;
-	print_r($thumb);die;
-	$data = array(
-		'media' => '@'.$thumb
-	);
-	$wechat_api = WeAccount::create($_W['acid']);
-	$result = $wechat_api->uploadNewsThumb($data);
-	print_r($result);die;
-}
-
 if($do == 'news') {
 	$newsid = intval($_GPC['newsid']);
 	$news_list = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $newsid), array(), '',  'displayorder ASC');
@@ -67,7 +41,7 @@ if($do == 'addnews') {
 				'title' => urlencode($news['title']),
 				'author' => urlencode($news['author']),
 				'digest' => urlencode($news['description']),
-				'content' => urlencode(addslashes(htmlspecialchars_decode('ppp'))),
+				'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
 				'show_cover_pic' => 1,
 				'content_source_url' => urlencode($news['content_source_url']),
 				'thumb_media_id' => $news['media_id'],
@@ -80,7 +54,7 @@ if($do == 'addnews') {
 				'title' => $news['title'],
 				'author' => $news['author'],
 				'digest' => $news['digest'],
-				'content' => htmlspecialchars_decode('ppp'),
+				'content' => htmlspecialchars_decode($news['content']),
 				'content_source_url' => $news['content_source_url'],
 				'show_cover_pic' => 1,
 				'url' => '',
@@ -97,7 +71,7 @@ if($do == 'addnews') {
 					'author' => urlencode($news['author']),
 					'digest' => urlencode($news['digest']),
 					'show_cover_pic' => 1,
-					'content' => urlencode(addslashes(htmlspecialchars_decode('<p>shenmedoukeyi</p>'))),
+					'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
 					'content_source_url' => urlencode('www.baidu.com')
 				)
 			);
@@ -109,7 +83,7 @@ if($do == 'addnews') {
 				'author' => $news['author'],
 				'digest' => $news['digest'],
 				'show_cover_pic' => 1,
-				'content' => htmlspecialchars_decode('编辑过的内容'),
+				'content' => htmlspecialchars_decode($news['content']),
 				'content_source_url' => 'www.baidu.com',
 				'displayorder' => $key,
 			);
