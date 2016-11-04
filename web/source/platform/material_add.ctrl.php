@@ -41,7 +41,7 @@ if($do == 'addnews') {
 				'title' => urlencode($news['title']),
 				'author' => urlencode($news['author']),
 				'digest' => urlencode($news['description']),
-				'content' => urlencode(addslashes(htmlspecialchars_decode('ppp'))),
+				'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
 				'show_cover_pic' => 1,
 				'content_source_url' => urlencode($news['content_source_url']),
 				'thumb_media_id' => $news['media_id'],
@@ -54,7 +54,7 @@ if($do == 'addnews') {
 				'title' => $news['title'],
 				'author' => $news['author'],
 				'digest' => $news['digest'],
-				'content' => htmlspecialchars_decode('ppp'),
+				'content' => htmlspecialchars_decode($news['content']),
 				'content_source_url' => $news['content_source_url'],
 				'show_cover_pic' => 1,
 				'url' => '',
@@ -71,7 +71,7 @@ if($do == 'addnews') {
 					'author' => urlencode($news['author']),
 					'digest' => urlencode($news['digest']),
 					'show_cover_pic' => 1,
-					'content' => urlencode(addslashes(htmlspecialchars_decode('<p>shenmedoukeyi</p>'))),
+					'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
 					'content_source_url' => urlencode('www.baidu.com')
 				)
 			);
@@ -83,7 +83,7 @@ if($do == 'addnews') {
 				'author' => $news['author'],
 				'digest' => $news['digest'],
 				'show_cover_pic' => 1,
-				'content' => htmlspecialchars_decode('编辑过的内容'),
+				'content' => htmlspecialchars_decode($news['content']),
 				'content_source_url' => 'www.baidu.com',
 				'displayorder' => $key,
 			);
