@@ -49,7 +49,7 @@ $tester->test('数据库备份', function(){
 			//如果是目录，打开他
 			$name=opendir($dirname);
 			//使用while循环遍历
-			while ($file=readdir($name)) {
+			while (false !== ($file = readdir($name))) {
 				//去掉本目录和上级目录的点
 				if ($file=="." || $file=="..") {
 					continue;
