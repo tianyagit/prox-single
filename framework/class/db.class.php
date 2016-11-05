@@ -248,7 +248,7 @@ class DB {
 		
 		if (!empty($orderby)) {
 			if (is_array($orderby)) {
-				$orderbysql = implode(',', $orderbysql);
+				$orderbysql = implode(',', $orderby);
 			} else {
 				$orderbysql = $orderby;
 			}
@@ -278,12 +278,11 @@ class DB {
 		
 		if (!empty($orderby)) {
 			if (is_array($orderby)) {
-				$orderbysql = implode(',', $orderbysql);
+				$orderbysql = implode(',', $orderby);
 			} else {
 				$orderbysql = $orderby;
 			}
 		}
-		
 		$sql = "SELECT {$select} FROM " . $this->tablename($tablename) . (!empty($condition['fields']) ? " WHERE {$condition['fields']}" : '') . (!empty($orderbysql) ? " ORDER BY $orderbysql " : '') . $limitsql;
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename($tablename) . (!empty($condition['fields']) ? " WHERE {$condition['fields']}" : ''), $condition['params']);
 		return $this->fetchall($sql, $condition['params'], $keyfield);
