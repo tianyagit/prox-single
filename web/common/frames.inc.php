@@ -41,6 +41,11 @@ $ms['account'] = array(
 					'url' => url('platform/material'),
 					'permission_name' => 'platform_material',
 				),
+				'platform_site' => array(
+					'title' => '微官网',
+					'url' => url('platform/site'),
+					'promisson_name' => 'platform_site',
+				),
 			),
 		),
 		'platform_module' => array(
