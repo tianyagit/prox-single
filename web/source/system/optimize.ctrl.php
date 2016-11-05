@@ -1,11 +1,15 @@
 <?php
-/**
+/** 性能优化相关操作
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * $sn$
  */
-$_W['page']['title'] = '性能优化 - 系统管理';
+
 $dos = array('opcache');
 $do = in_array($do, $dos) ? $do : 'index';
+
+$_W['page']['title'] = '性能优化 - 常用系统工具 - 系统管理';
+
+
 if ($do == 'opcache') {
 	opcache_reset();
 	message('清空缓存成功', url('system/optimize'), 'success');
