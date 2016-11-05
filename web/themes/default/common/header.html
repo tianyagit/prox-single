@@ -85,7 +85,7 @@
 	<div class="container">
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
-				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" alt="公众号头像" class="">
+				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" onerror="this.src='./resource/images/gw-wx.gif'">
 				<span class="font-max">{$_W['account']['name']}</span>
 				{if $_W['account']['level'] == 1 || $_W['account']['level'] == 3}
 				<span><i class="label label-primary">订阅号</i> {if $_W['account']['level'] == 3}<i class="label label-primary">已认证</i>{/if}</span>
