@@ -9,7 +9,6 @@ set_time_limit(0);
 
 load()->func('file');
 load()->model('cloud');
-load()->model('system');
 load()->func('db');
 
 $dos = array('backup', 'restore', 'trim', 'optimize', 'run');
@@ -62,7 +61,6 @@ if ($do == 'backup') {
 			$last_table = $_GPC['last_table'];
 			$catch = false;
 		}
-		
 		foreach ($tables as $table) {
 			//抛出表名
 			$table = array_shift($table);
@@ -91,7 +89,7 @@ if ($do == 'backup') {
 			//枚举所有表的INSERT语句
 			while (true) {
 				$start = $index * $size;
-				$result = system_table_insert($table, $start, $size);
+				$result = db_table_insert_sql($table, $start, $size);
 				if (!empty($result)) {
 					$dump .= $result['data'];
 					if (strlen($dump) > $volumn) {
@@ -138,43 +136,44 @@ if($do == 'restore') {
 	if (is_dir($path)) {
 		if ($handle = opendir($path)) {
 			while (false !== ($bakdir = readdir($handle))) {
-				if($bakdir == '.' || $bakdir == '..') {
+				if ($bakdir == '.' || $bakdir == '..') {
 					continue;
 				}
-				if(preg_match('/^(?P<time>\d{10})_[a-z\d]{8}$/i', $bakdir, $match)) {
+				if (preg_match('/^(?P<time>\d{10})_[a-z\d]{8}$/i', $bakdir, $match)) {
 					$time = $match['time'];
 					//获取随机字符串
-					if($handle1= opendir($path . $bakdir)) {
-						while(false !== ($filename = readdir($handle1))) {
-							if($filename == '.' || $filename == '..') {
+					if ($handle1= opendir($path . $bakdir)) {
+						while (false !== ($filename = readdir($handle1))) {
+							if ($filename == '.' || $filename == '..') {
 								continue;
 							}
-							if(preg_match('/^volume-(?P<prefix>[a-z\d]{10})-\d{1,}\.sql$/i', $filename, $match1)) {
-								$prefix = $match1['prefix'];
-								if(!empty($prefix)) {
+							if (preg_match('/^volume-(?P<prefix>[a-z\d]{10})-\d{1,}\.sql$/i', $filename, $match1)) {
+								$volume_prefix = $match1['prefix'];
+								if (!empty($volume_prefix)) {
 									break;
 								}
 							}
 						}
 					}
-					for($i = 1;;) {
-						$last = $path . $bakdir . "/volume-{$prefix}-{$i}.sql";
+					for ($i = 1;;) {
+						$last = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
 						$i++;
-						$next = $path . $bakdir . "/volume-{$prefix}-{$i}.sql";
+						$next = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
 						if(!is_file($next)) {
 							break;
 						}
 					}
-					if(is_file($last)) {
+					if (is_file($last)) {
 						$fp = fopen($last, 'r');
 						fseek($fp, -27, SEEK_END);
 						$end = fgets($fp);
 						fclose($fp);
-						if($end == '----WeEngine MySQL Dump End') {
-							$row = array();
-							$row['bakdir'] = $bakdir;
-							$row['time'] = $time;
-							$row['volume'] = $i - 1;
+						if ($end == '----WeEngine MySQL Dump End') {
+							$row = array(
+										'bakdir'=> $bakdir,
+										'time'=> $time,
+										'volume'=> $i - 1
+									);
 							$ds[$bakdir] = $row;
 							continue;
 						}
@@ -184,51 +183,69 @@ if($do == 'restore') {
 			}
 		}
 	}
-	
 //还原备份
-	if($_GPC['r']) {
+	if ($_GPC['r']) {
 		$r = $_GPC['r'];
-		if($ds[$r]) {
+		if ($ds[$r]) {
 			$row = $ds[$r];
 			$dir = $path . $row['bakdir'];
 			//获取随机字符串
-			if($handle1= opendir($dir)) {
-				while(false !== ($filename = readdir($handle1))) {
-					if($filename == '.' || $filename == '..') {
+			if ($handle1= opendir($dir)) {
+				while (false !== ($filename = readdir($handle1))) {
+					if ($filename == '.' || $filename == '..') {
 						continue;
 					}
-					if(preg_match('/^volume-(?P<prefix>[a-z\d]{10})-\d{1,}\.sql$/i', $filename, $match1)) {
-						$prefix = $match1['prefix'];
+					if (preg_match('/^volume-(?P<prefix>[a-z\d]{10})-\d{1,}\.sql$/i', $filename, $match1)) {
+						$volume_prefix = $match1['prefix'];
 						break;
 					}
 				}
 			}
-			$restore = json_decode(base64_decode($_GPC['__restore']), true) ? $restore = json_decode(base64_decode($_GPC['__restore']), true) : array();
-			$restore['restore_name'] = $restore['restore_name'] ? $restore['restore_name'] : $row['bakdir'];
-			$restore['restore_volume'] = $restore['restore_volume'] ? $restore['restore_volume'] : 1;
-			$restore['restore_prefix'] = $restore['restore_prefix'] ? $restore['restore_prefix']: $prefix;
-			if($ds[$restore['restore_name']]) {
-				if($ds[$restore['restore_name']]['volume'] < $restore['restore_volume']) {
+			
+			if (!empty($_GPC['__restore'])) {
+				$restore = json_decode(base64_decode($_GPC['__restore']), true);
+			}
+			//还原备份的文件夹名
+			if (empty($restore['restore_name'])) {
+				$restore_name = $row['bakdir'];
+			} else {
+				$restore_name = $restore['restore_name'];
+			}
+			//还原备份文件的前缀
+			if (empty($restore['restore_volume_prefix'])) {
+				$restore_volume_prefix = $volume_prefix;
+			} else {
+				$restore_volume_prefix = $restore['restore_volume_prefix'];
+			}
+			//当前还原备份文件的卷数
+			$restore_volume_sizes = max(1, intval($restore['restore_volume_sizes']));
+			if ($ds[$restore['restore_name']]) {
+				if ($ds[$restore_name]['volume'] < $restore_volume_sizes) {
 					isetcookie('__restore', '', -1000);
 					message('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'));
 				} else {
-					$sql = file_get_contents($path .$restore['restore_name'] . "/volume-{$restore['restore_prefix']}-{$restore['restore_volume']}.sql");
+					$sql = file_get_contents($path .$restore_name . "/volume-{$restore_volume_prefix}-{$restore_volume_sizes}.sql");
 					pdo_run($sql);
-					$volume = $restore['restore_volume'];
-					$restore['restore_volume'] ++;
+					$volume_sizes = $restore_volume_sizes;
+					$restore_volume_sizes ++;
+					$restore = array (
+									'restore_name' => $restore_name,
+									'restore_volume_prefix' =>$restore_volume_prefix,
+									'restore_volume_sizes' => $restore_volume_sizes,
+								);
 					isetcookie('__restore', base64_encode(json_encode($restore)));
-					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume . ' 卷.', url('system/database/restore',array('r'=>$r)));
+					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',array('r'=>$r)));
 				}
 			} else {
 				message('非法访问', 'error');
 			}
 		}
-	}				
+	}
 
 //删除备份	
-	if($_GPC['d']) {
+	if ($_GPC['d']) {
 		$d = $_GPC['d'];
-		if($ds[$d]) {
+		if ($ds[$d]) {
 			rmdirs($path . $d);
 			message('删除备份成功.', url('system/database/restore'));
 		}
@@ -237,7 +254,7 @@ if($do == 'restore') {
 }
 
 //数据库结构整理
-if($do == 'trim') {
+if ($do == 'trim') {
 	if ($_W['ispost']) {
 		$type = $_GPC['type'];
 		$data = $_GPC['data'];
@@ -293,17 +310,17 @@ if($do == 'trim') {
 	}
 }
 //优化
-if($do == 'optimize') {
+if ($do == 'optimize') {
 	$_W['page']['title'] = '优化 - 数据库 - 常用系统工具 - 系统管理';
 	$sql = "SHOW TABLE STATUS LIKE '{$_W['config']['db']['tablepre']}%'";
 	$tables = pdo_fetchall($sql);
 	$totalsize = 0;
 	$optimize_table = array();
-	foreach($tables as $table) {
+	foreach ($tables as $table) {
 		if ($table['Engine'] == 'InnoDB') {
 			continue;
 		}
-		if(!empty($table) && !empty($table['Data_free'])) {
+		if (!empty($table) && !empty($table['Data_free'])) {
 			$row = array();
 			$row['title'] = $table['Name'];
 			$row['type'] = $table['Engine'];
@@ -315,9 +332,9 @@ if($do == 'optimize') {
 		}
 	}
 
-	if(checksubmit()) {
-		foreach($_GPC['select'] as $tablename) {
-			if(!empty($optimize_table[$tablename])) {
+	if (checksubmit()) {
+		foreach ($_GPC['select'] as $tablename) {
+			if (!empty($optimize_table[$tablename])) {
 				$sql = "OPTIMIZE TABLE {$tablename}";
 				pdo_fetch($sql);
 			}
@@ -326,12 +343,12 @@ if($do == 'optimize') {
 	}
 }
 //运行SQL
-if($do == 'run') {
+if ($do == 'run') {
 	$_W['page']['title'] = '运行SQL - 数据库 - 常用系统工具 - 系统管理';
 	if (!DEVELOPMENT) {
 		message('请先开启开发模式后再使用此功能', referer(), 'info');
 	}
-	if(checksubmit()) {
+	if (checksubmit()) {
 		$sql = $_POST['sql'];
 		pdo_run($sql);
 		message('查询执行成功.', 'refresh');

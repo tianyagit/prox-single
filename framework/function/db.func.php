@@ -360,5 +360,32 @@ function db_table_schemas($table) {
 	$row = pdo_fetch($sql);
 	$dump .= $row['Create Table'];
 	$dump .= ";\n\n";
-	return $dump;	
+	return $dump;
+}
+
+function db_table_insert_sql($tablename, $start, $size) {
+	$data = '';
+	$tmp = '';
+	$sql = "SELECT * FROM {$tablename} LIMIT {$start}, {$size}";
+	$result = pdo_fetchall($sql);
+	if (!empty($result)) {
+		foreach($result as $row) {
+			$tmp .= '(';
+			foreach($row as $k => $v) {
+				$value = str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $v);
+				$tmp .= "'" . $value . "',";
+			}
+			$tmp = rtrim($tmp, ',');
+			$tmp .= "),\n";
+		}
+		$tmp = rtrim($tmp, ",\n");
+		$data .= "INSERT INTO {$tablename} VALUES \n{$tmp};\n";
+		$datas = array (
+				'data' => $data,
+				'result' => $result
+		);
+		return $datas;
+	} else {
+		return false ;
+	}
 }
