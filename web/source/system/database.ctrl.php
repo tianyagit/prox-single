@@ -3,23 +3,22 @@
  * 数据库相关操作
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
+defined('IN_IA') or exit('Access Denied');
 //防止30秒运行超时的错误（Maximum execution time of 30 seconds exceeded).
 set_time_limit(0);
 
 load()->func('file');
 load()->model('cloud');
+load()->model('system');
 load()->func('db');
 
 $dos = array('backup', 'restore', 'trim', 'optimize', 'run');
 $do = in_array($do, $dos) ? $do : 'backup';
 
-global $_W;
 //备份
-if($do == 'backup') {
+if ($do == 'backup') {
 	$_W['page']['title'] = '备份 - 数据库 - 常用系统工具 - 系统管理';
-	
-	if($_GPC['status']) {
-		
+	if ($_GPC['status']) {
 		if (empty($_W['setting']['copyright']['status'])) {
 			message('为了保证备份数据完整请关闭站点后再进行此操作', url('system/site'), 'error');
 		}
@@ -27,117 +26,106 @@ if($do == 'backup') {
 		//获取系统数据库中所有表
 		$sql = "SHOW TABLE STATUS LIKE '{$_W['config']['db']['tablepre']}%'";
 		$tables = pdo_fetchall($sql);
-		if(empty($tables)) {
-			message('数据已经备份完成', url('system/database/backup/'), 'success');
+		if (empty($tables)) {
+			message('数据已经备份完成', url('system/database/'), 'success');
 		}
 		
-		//设置备份文件的卷数和文件名中随机数。
-		$series = $_GPC['series'] ? $_GPC['series'] : 1;
-		$prefix = $_GPC['prefix'] ? $_GPC['prefix'] : random(10);
-		//设置上卷结束时的表名
-		$start_table = $_GPC['table'] ? $_GPC['table'] : '';
-	
-		//备份目录
-		if($_GPC['start']) {
-			$suffix =  TIMESTAMP . '_' . random(8);
-			$bakdir = IA_ROOT .'/data/backup/'.$suffix;
-			$result = mkdirs($bakdir);		
+		//设置备份文件的卷数。
+		 $series = max(1, intval($_GPC['series']));
+		//设置备份文件名中随机数。
+		if (!empty($_GPC['volume_suffix'])) {
+			$volume_suffix =  $_GPC['volume_suffix'];
 		} else {
-			$suffix = $_GPC['suffix'];
-			$bakdir = IA_ROOT .'/data/backup/'.$suffix;
+			$volume_suffix = random(10);
+		}	
+		//设置备份目录中随机数
+		if (!empty($_GPC['folder_suffix'])) {
+			$folder_suffix = $_GPC['folder_suffix'];
+		} else {
+			$folder_suffix = TIMESTAMP . '_' . random(8);
 		}
-				
+		//设置备份目录
+		$bakdir = IA_ROOT . '/data/backup/' . $folder_suffix;
+		if (trim($_GPC['start'])) {
+			$result = mkdirs($bakdir);		
+		}
 		//一次让查询300条记录
 		$size = 300;
 		//设置备份文件的大小
 		$volumn = 1024 * 1024 * 2;
-		//设置判断上卷结束时表名的标识
-		$catch = empty($start_table) ? true : false;
 		$dump = '';
+		//设置上卷结束时的表名
+		if (empty($_GPC['last_table'])) {
+			$last_table ='';
+			$catch = true;
+		} else {
+			$last_table = $_GPC['last_table'];
+			$catch = false;
+		}
 		
-		foreach($tables as $table) {
+		foreach ($tables as $table) {
 			//抛出表名
 			$table = array_shift($table);
 			//如果开始有表，且表名相同	
-			if(!empty($start_table) && $table == $start_table) {
+			if (!empty($last_table) && $table == $last_table) {
 				$catch = true;
 			}
 			//查询上卷结束时的表名，没找到则跳出本次循环，进入下次循环
-			if(!$catch) {
+			if (!$catch) { 
 				continue;
 			}
-			if(!empty($dump)) {
+			if (!empty($dump)) {
 				$dump .= "\n\n";
 			}
 			// 枚举所有表的创建语句
-			if($table != $start_table) {
-				$dump .= "DROP TABLE IF EXISTS {$table};\n";
-				$sql = "SHOW CREATE TABLE {$table}";
-				$row = pdo_fetch($sql);
-				$dump .= $row['Create Table'];
-				$dump .= ";\n\n";
-			}
-			//枚举所有表列名的详细信息
-			$fields = pdo_fetchall("SHOW FULL COLUMNS FROM {$table}", array(), 'Field');
-			if(empty($fields)) {
-				continue;
+			if ($table != $last_table) {
+				$row = db_table_schemas($table);
+				$dump .= $row;
 			}
 			//设置查询表中记录的开始标识
 			$index = 0;
-			if(!empty($_GPC['index'])) {
+			if (!empty($_GPC['index'])) {
 				$index = $_GPC['index'];
 				$_GPC['index'] = 0;
 			}
 			//枚举所有表的INSERT语句
-			while(true) {
+			while (true) {
 				$start = $index * $size;
-				$sql = "SELECT * FROM {$table} LIMIT {$start}, {$size}";
-				$result = pdo_fetchall($sql);
-				if(!empty($result)) {
-					$tmp = '';
-					foreach($result as $row) {
-						$tmp .= '(';
-						foreach($row as $k => $v) {
-							$value = str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $v); 
-							$tmp .= "'" . $value . "',";
-						}
-						$tmp = rtrim($tmp, ',');
-						$tmp .= "),\n";
-					}
-					$tmp = rtrim($tmp, ",\n");
-					$dump .= "INSERT INTO {$table} VALUES \n{$tmp};\n";
-					
-					if(strlen($dump) > $volumn) {
-						$bakfile = $bakdir . "/volume-{$prefix}-{$series}.sql";
+				$result = system_table_insert($table, $start, $size);
+				if (!empty($result)) {
+					$dump .= $result['data'];
+					if (strlen($dump) > $volumn) {
+						$bakfile = $bakdir . "/volume-{$volume_suffix}-{$series}.sql";
 						$dump .= "\n\n";
 						file_put_contents($bakfile, $dump);
-						$current = array();
 						$series++;
-						$current['table'] = $table;
-						$current['index'] = $index + 1;
-						$current['series'] = $series;
-						$current['prefix'] = $prefix;
-						$current['suffix'] = $suffix;
-						$current['status'] = 1;
-						$current['start'] = 0;
+						$index++;
+						$current = array(
+							'last_table' => $table,
+							'index' => $index,
+							'series' => $series,
+							'volume_suffix'=>$volume_suffix,
+							'folder_suffix'=>$folder_suffix,
+							'status'=>1
+						);
 						$current_series = $series-1;
 						message('正在导出数据, 请不要关闭浏览器, 当前第 ' . $current_series . ' 卷.', url('system/database/backup/',$current));
 					}
 					
 				}
 				
-				if(empty($result) || count($result) < $size) {
+				if (empty($result) || count($result['result']) < $size) {
 					break;
-				}	
+				}
 				$index++;
-			}		
+			}
 		}
-			
+	
 		//结束标识	
-		$bakfile = $bakdir . "/volume-{$prefix}-{$series}.sql";
+		$bakfile = $bakdir . "/volume-{$volume_suffix}-{$series}.sql";
 		$dump .= "\n\n----WeEngine MySQL Dump End";
 		file_put_contents($bakfile, $dump);
-		message('数据已经备份完成', url('system/database/backup/'), 'success');		
+		message('数据已经备份完成', url('system/database/'), 'success');	
 	}
 }
 
