@@ -32,7 +32,7 @@
 					</div>
 				</div>
 				<div class="action">
-					<a href="javascript:;" onclick="sync('news')" class="btn btn-default">同步微信</a>
+					<a href="javascript:;" ng-click="sync('{$type}')" class="btn btn-default">同步微信</a>
 					<div class="btn-group we7-btn-group we7-padding-left">
 						<a href="{php echo url('platform/material_add')}" class="btn btn-primary">新建图文消息</a>
 					</div>
@@ -106,7 +106,7 @@
 		<div class="material-appmsg">
 			<div class="material-list-head clearfix">
 				<div class="action">
-					<a href="javascript:;" class="btn btn-default">同步微信</a>
+					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
 					<!--<a href="javascript:;" class="btn btn-primary" ng-click="">上传新图片</a>-->
 				</div>
 			</div>
@@ -136,18 +136,10 @@
 		{elseif $type == 'voice'}
 		<div class="material-appmsg">
 			<div class="material-list-head clearfix">
-				<div class="info">
-					<div class="we7-form">
-						<div class="form-controls">
-							<input type="text" id="" name="" class="form-control" size="40" placeholder="标题/作者/摘要">
-							<span class="form-control-feedback"><i class="fa fa-search"></i></span>
-						</div>
-					</div>
-				</div>
-				<!--<div class="action">-->
-					<!--<a href="" class="btn btn-default">同步微信</a>-->
+				<div class="action">
+					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
 					<!--<a href="" class="btn btn-primary">上传语音</a>-->
-				<!--</div>-->
+				</div>
 			</div>
 			<ul class="material-audio-list">
 				{loop $voice_list $voice}
@@ -178,12 +170,12 @@
 		</div>
 		{elseif $type == 'video'}
 		<div class="material-appmsg">
-			<!--<div class="material-list-head clearfix">-->
-				<!--<div class="action">-->
-					<!--<a href="" class="btn btn-default">同步微信</a>-->
+			<div class="material-list-head clearfix">
+				<div class="action">
+					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
 					<!--<a href="" class="btn btn-primary">上传视频</a>-->
-				<!--</div>-->
-			<!--</div>-->
+				</div>
+			</div>
 			<ul class="material-img-list">
 				{loop $video_list $video}
 				<li class="material-img-item">
@@ -217,27 +209,11 @@
 	require(['jquery.wookmark'], function() {
 		//同步素材
 		angular.module('materialApp').value('config', {
-			'del_url' : "{php echo url('platform/material/del_material')}"
+			'del_url' : "{php echo url('platform/material/del_material')}",
+			'sync_url' : "{php echo url('platform/material/sync')}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
-		sync = function(type, pageindex, total, wechat_existid) {
-			if (pageindex == undefined) {
-				util.message('正在同步素材，请勿关闭浏览器...');
-			} else {
-				util.message('已同步'+(parseInt(((pageindex-1)/total)*100))+'%，请勿关闭浏览器...');
-			}
-			$.post('{php echo url('platform/material/sync')}', {'type' : type, 'pageindex' : pageindex, 'total' : total, 'wechat_existid' : wechat_existid}, function(data) {
-				data = $.parseJSON(data);
-				if (data.message.errno == 0) {
-					util.message('同步素材成功', '', 'success');
-					location.reload();
-				} else {
-					sync_info = data.message.message;
-					sync(type, sync_info.pageindex, sync_info.total, sync_info.wechat_existid);
-				}
 
-			});
-		}
 		$('.material-appmsg-list .material-appmsg-item').wookmark({
 			align: 'center',
 			autoResize: false,

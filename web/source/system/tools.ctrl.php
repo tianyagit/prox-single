@@ -1,9 +1,10 @@
 <?php 
 /**
- * 数据库相关操作
+ * 木马查杀，检测系统BOM相关操作
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
-$_W['page']['title'] = '工具 - 系统管理';
+$_W['page']['title'] = '常用系统工具 - 系统管理';
+
 $dos = array('bom', 'scan');
 $do = in_array($do, $dos) ? $do : 'bom';
 
