@@ -130,7 +130,7 @@ if ($do == 'backup') {
 //还原
 if($do == 'restore') {
 	$_W['page']['title'] = '还原 - 数据库 - 常用系统工具 - 系统管理';
-	$ds = array();
+	$reduction = array();
 	$path = IA_ROOT . '/data/backup/';
 //获取备份数据
 	if (is_dir($path)) {
@@ -159,7 +159,7 @@ if($do == 'restore') {
 						$last = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
 						$i++;
 						$next = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
-						if(!is_file($next)) {
+						if (!is_file($next)) {
 							break;
 						}
 					}
@@ -170,11 +170,11 @@ if($do == 'restore') {
 						fclose($fp);
 						if ($end == '----WeEngine MySQL Dump End') {
 							$row = array(
-										'bakdir'=> $bakdir,
-										'time'=> $time,
-										'volume'=> $i - 1
-									);
-							$ds[$bakdir] = $row;
+								'bakdir'=> $bakdir,
+								'time'=> $time,
+								'volume'=> $i - 1
+							);
+							$reduction[$bakdir] = $row;
 							continue;
 						}
 					}
@@ -184,10 +184,10 @@ if($do == 'restore') {
 		}
 	}
 //还原备份
-	if ($_GPC['r']) {
-		$r = $_GPC['r'];
-		if ($ds[$r]) {
-			$row = $ds[$r];
+	if (!empty($_GPC['restore_dirname'])) {
+		$restore_dirname = $_GPC['restore_dirname'];
+		if ($reduction[$restore_dirname]) {
+			$row = $reduction[$restore_dirname];
 			$dir = $path . $row['bakdir'];
 			//获取随机字符串
 			if ($handle1= opendir($dir)) {
@@ -201,40 +201,28 @@ if($do == 'restore') {
 					}
 				}
 			}
-			
-			if (!empty($_GPC['__restore'])) {
-				$restore = json_decode(base64_decode($_GPC['__restore']), true);
-			}
-			//还原备份的文件夹名
-			if (empty($restore['restore_name'])) {
-				$restore_name = $row['bakdir'];
-			} else {
-				$restore_name = $restore['restore_name'];
-			}
 			//还原备份文件的前缀
-			if (empty($restore['restore_volume_prefix'])) {
+			if (empty($_GPC['restore_volume_prefix'])) {
 				$restore_volume_prefix = $volume_prefix;
 			} else {
-				$restore_volume_prefix = $restore['restore_volume_prefix'];
+				$restore_volume_prefix = $_GPC['restore_volume_prefix'];
 			}
 			//当前还原备份文件的卷数
-			$restore_volume_sizes = max(1, intval($restore['restore_volume_sizes']));
-			if ($ds[$restore['restore_name']]) {
-				if ($ds[$restore_name]['volume'] < $restore_volume_sizes) {
-					isetcookie('__restore', '', -1000);
+			$restore_volume_sizes = max(1, intval($_GPC['restore_volume_sizes']));
+			if ($reduction[$restore_dirname]) {
+				if ($reduction[$restore_dirname]['volume'] < $restore_volume_sizes) {
 					message('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'));
 				} else {
-					$sql = file_get_contents($path .$restore_name . "/volume-{$restore_volume_prefix}-{$restore_volume_sizes}.sql");
+					$sql = file_get_contents($path .$restore_dirname . "/volume-{$restore_volume_prefix}-{$restore_volume_sizes}.sql");
 					pdo_run($sql);
 					$volume_sizes = $restore_volume_sizes;
 					$restore_volume_sizes ++;
 					$restore = array (
-									'restore_name' => $restore_name,
-									'restore_volume_prefix' =>$restore_volume_prefix,
-									'restore_volume_sizes' => $restore_volume_sizes,
-								);
-					isetcookie('__restore', base64_encode(json_encode($restore)));
-					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',array('r'=>$r)));
+						'restore_dirname' => $restore_dirname,
+						'restore_volume_prefix' => $restore_volume_prefix,
+						'restore_volume_sizes' => $restore_volume_sizes,
+					);
+					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore));
 				}
 			} else {
 				message('非法访问', 'error');
@@ -243,10 +231,10 @@ if($do == 'restore') {
 	}
 
 //删除备份	
-	if ($_GPC['d']) {
-		$d = $_GPC['d'];
-		if ($ds[$d]) {
-			rmdirs($path . $d);
+	if ($_GPC['delete_dirname']) {
+		$delete_dirname = $_GPC['delete_dirname'];
+		if ($reduction[$delete_dirname]) {
+			rmdirs($path . $delete_dirname);
 			message('删除备份成功.', url('system/database/restore'));
 		}
 	}
@@ -314,24 +302,23 @@ if ($do == 'optimize') {
 	$_W['page']['title'] = '优化 - 数据库 - 常用系统工具 - 系统管理';
 	$sql = "SHOW TABLE STATUS LIKE '{$_W['config']['db']['tablepre']}%'";
 	$tables = pdo_fetchall($sql);
-	$totalsize = 0;
-	$optimize_table = array();
-	foreach ($tables as $table) {
-		if ($table['Engine'] == 'InnoDB') {
+	foreach ($tables as $tableinfo) {
+		if ($tableinfo['Engine'] == 'InnoDB') {
 			continue;
 		}
-		if (!empty($table) && !empty($table['Data_free'])) {
-			$row = array();
-			$row['title'] = $table['Name'];
-			$row['type'] = $table['Engine'];
-			$row['rows'] = $table['Rows'];
-			$row['data'] = sizecount($table['Data_length']);
-			$row['index'] = sizecount($table['Index_length']);
-			$row['free'] = sizecount($table['Data_free']);
-			$optimize_table[$row['title']] = $row;
+		if (!empty($tableinfo) && !empty($tableinfo['Data_free'])) {
+			$optimize_table = array(
+				$tableinfo['Name'] = array(
+					'title' => $tableinfo['Name'],
+					'type' => $tableinfo['Engine'],
+					'rows' => $tableinfo['Rows'],
+					'data' => sizecount($tableinfo['Data_length']),
+					'index' => sizecount($tableinfo['Index_length']),
+					'free' => sizecount($tableinfo['Data_free'])
+				)
+			);
 		}
 	}
-
 	if (checksubmit()) {
 		foreach ($_GPC['select'] as $tablename) {
 			if (!empty($optimize_table[$tablename])) {
