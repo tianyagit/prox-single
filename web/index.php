@@ -14,7 +14,7 @@ if (empty($_W['isfounder']) && !empty($_W['user']) && $_W['user']['status'] == 1
 }
 
 // @@todo 测试代码，还未完善切换公众号
-isetcookie('__uniacid', 281, 7 * 86400);
+// isetcookie('__uniacid', 281, 7 * 86400);
 
 $acl = array(
 	'home' => array(
