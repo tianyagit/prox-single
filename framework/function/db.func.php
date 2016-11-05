@@ -353,3 +353,12 @@ function _db_build_field_sql($field) {
 	}
 	return "{$field['type']}{$length}{$signed}{$null}{$default}{$increment}";
 }
+
+function db_table_schemas($table) {
+	$dump = "DROP TABLE IF EXISTS {$table};\n";
+	$sql = "SHOW CREATE TABLE {$table}";
+	$row = pdo_fetch($sql);
+	$dump .= $row['Create Table'];
+	$dump .= ";\n\n";
+	return $dump;	
+}
