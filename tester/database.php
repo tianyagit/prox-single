@@ -6,7 +6,7 @@ require IA_ROOT . '/framework/library/testify/Testify.php';
 
 load()->func('communication');
 
-$tester = new Testify('测试数据库备份');
+$tester = new Testify('测试数据库');
 
 $tester->test('数据库备份', function(){
 	global $tester;
