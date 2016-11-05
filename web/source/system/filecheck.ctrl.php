@@ -1,11 +1,17 @@
 <?php
 /**
- * 数据库相关操作
+ * 系统文件检测
  * 'WeEngine System' Copyright (c) 2013 WE7.CC
  */
 load()->func('file');
 load()->model('cloud');
 load()->func('communication');
+
+$dos = array('check');
+$do = in_array($do, $dos) ? $do : '';
+
+$_W['page']['title'] = '系统文件检测 - 常用系统工具 - 系统管理';
+
 if ($do == 'check') {
 	$filetree = file_tree(IA_ROOT);
 	$modify = array();
