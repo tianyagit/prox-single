@@ -12,7 +12,6 @@ uni_user_permission_check('material_mass');
 load()->func('file');
 load()->model('material');
 
-
 if ($do == 'tomedia') {
 	$url = $_GPC['url'];
 	message(error('0', tomedia($url)), '', 'ajax');
