@@ -1,7 +1,7 @@
 {template 'common/header'}
 <ol class="breadcrumb">
 	<li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
-	<li><a href="{url 'system/welcome'}">系统</a></li>
+	<li><a href="{url 'system/welcome'}">系统管理</a></li>
 	<li><a href="{url 'system/database'}">数据库</a></li>
 	<li class="active">{if $do == 'backup'}备份{elseif $do == 'restore'}还原{elseif $do == 'optimize'}优化{elseif $do == 'run'}运行SQL{/if}</li>
 </ol>
@@ -14,7 +14,6 @@
 </ul>
 <div class="clearfix">
 	{if $do == 'backup'}
-	<form action="" method="post" class="form-horizontal" role="form">
 		<h5 class="page-header">备份数据库</h5>
 		<div class="form-group">
 			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">备份操作说明</label>
@@ -25,11 +24,9 @@
 		</div>
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-xs-12 col-sm-10 col-md-10 col-lg-10">
-				<input name="submit" type="submit" value="开始备份" class="btn btn-primary span3" />
-				<input type="hidden" name="token" value="{$_W['token']}" />
+				<a  class="btn btn-primary span3" href="{php echo url('system/database/backup', array('status'=>1,'start'=>2));}">开始备份</a>
 			</div>
 		</div>
-	</form>
  	{/if}
 	{if $do == 'restore'}
 	<form action="" method="post" class="form-horizontal form">
@@ -50,12 +47,12 @@
 				</tr>
 				</thead>
 				<tbody>
-				{loop $tablesinfo $row}
+				{loop $reduction $row}
 				<tr>
 					<td>{$row['bakdir']}</td>
 					<td>{php echo date('Y-m-d H:i:s', $row['time']);}</td>
 					<td>{$row['volume']}</td>
-					<td><a href="{php echo url('system/database/restore', array('r' => $row['bakdir']));}" onclick="return confirm('确认要恢复这条备份记录吗? 当前数据库的数据将会被覆盖.');">还原此备份</a> &nbsp; <a href="{php echo url('system/database/restore', array('d' => $row['bakdir']));}" onclick="return confirm('确认要删除这条备份记录吗? ');">删除</a></td>
+					<td><a href="{php echo url('system/database/restore', array('restore_dirname' => $row['bakdir']));}" onclick="return confirm('确认要恢复这条备份记录吗? 当前数据库的数据将会被覆盖.');">还原此备份</a> &nbsp; <a href="{php echo url('system/database/restore', array('delete_dirname' => $row['bakdir']));}" onclick="return confirm('确认要删除这条备份记录吗? ');">删除</a></td>
 				</tr>
 				{/loop}
 				</tbody>
@@ -69,7 +66,7 @@
 		<div class="alert alert-success table-info" style="display:none;">
 			<p><strong>恭喜,您的数据表中已无冗余信息。</strong></p>
 		</div>
-		{if !empty($different)}
+		{if !empty($diff)}
 		<div class="panel panel-default">
 		<div class="panel-body table-responsive">
 		<table class="table table-hover trim-container">
@@ -81,7 +78,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			{loop $different $row}
+			{loop $diff $row}
 			<tr>
 				<td class="tablename">{$row['name']}</td>
 				<td>
@@ -143,7 +140,7 @@
 		<br>
 		<div class="panel panel-default">
 		<div class="table-responsive panel-body">
-		{if !empty($tablesinfo)}
+		{if !empty($optimize_table)}
 		<table class="table table-hover">
 			<thead>
 				<tr>
@@ -157,7 +154,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			{loop $tablesinfo $row}
+			{loop $optimize_table $row}
 			<tr>
 				<td><input type="checkbox" name="select[]" checked="checked" value="{$row['title']}"></td>
 				<td>{$row['title']}</td>
