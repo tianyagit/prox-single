@@ -107,7 +107,7 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
-					<!--<a href="javascript:;" class="btn btn-primary" ng-click="">上传新图片</a>-->
+					<a href="javascript:;" class="btn btn-primary" ng-click="upload('image')">上传新图片</a>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -138,7 +138,7 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
-					<!--<a href="" class="btn btn-primary">上传语音</a>-->
+					<a href="javascript:;" class="btn btn-primary" ng-click="upload('voice')">上传语音</a>
 				</div>
 			</div>
 			<ul class="material-audio-list">
@@ -173,7 +173,7 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
-					<!--<a href="" class="btn btn-primary">上传视频</a>-->
+					<a href="javascript:;" class="btn btn-primary" ng-click="upload('video')">上传视频</a>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -206,7 +206,7 @@
 </div>
 {$pager}
 <script>
-	require(['jquery.wookmark'], function() {
+	require(['jquery.wookmark', 'fileUploader'], function() {
 		//同步素材
 		angular.module('materialApp').value('config', {
 			'del_url' : "{php echo url('platform/material/del_material')}",
