@@ -119,16 +119,13 @@
 						</h4>
 						<img class="img-thumb" src="{php echo tomedia($image['attachment'], true);}">
 					</div>
-					<!--<div class="img-opr">-->
-						<!--<ul>-->
-							<!--<li class="img-opr-item">-->
-								<!--<a target="-blank" class="-" href="#">&nbsp;<i class="">编辑</i></a>-->
-							<!--</li>-->
-							<!--<li class="img-opr-item">-->
-								<!--<a class="-" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>-->
-							<!--</li>-->
-						<!--</ul>-->
-					<!--</div>-->
+					<div class="img-opr">
+						<ul>
+							<li class="img-opr-item">
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['media_id']}')">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
 				</li>
 				{/loop}
 			</ul>
@@ -154,16 +151,13 @@
 							<div class="audio-length">{php echo date('h:i', $voice['createtime'])}</div>
 						</div>
 					</div>
-					<!--<div class="audio-opr">-->
-						<!--<ul>-->
-							<!--<li class="audio-opr-item">-->
-								<!--<a target="-blank" class="" href="#">&nbsp;<i class="">编辑</i></a>-->
-							<!--</li>-->
-							<!--<li class="audio-opr-item">-->
-								<!--<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>-->
-							<!--</li>-->
-						<!--</ul>-->
-					<!--</div>-->
+					<div class="audio-opr">
+						<ul>
+							<li class="audio-opr-item">
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['media_id']}')">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
 				</li>
 				{/loop}
 			</ul>
@@ -187,16 +181,13 @@
 
 						</div>
 					</div>
-					<!--<div class="img-opr">-->
-						<!--<ul>-->
-							<!--<li class="img-opr-item">-->
-								<!--<a target="-blank" class="-" href="#">&nbsp;<i class="">编辑</i></a>-->
-							<!--</li>-->
-							<!--<li class="img-opr-item">-->
-								<!--<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>-->
-							<!--</li>-->
-						<!--</ul>-->
-					<!--</div>-->
+					<div class="img-opr">
+						<ul>
+							<li class="img-opr-item">
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['media_id']}')">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
 				</li>
 				{/loop}
 			</ul>
