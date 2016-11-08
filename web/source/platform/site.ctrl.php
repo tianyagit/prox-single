@@ -50,13 +50,42 @@ if($do == 'article') {
 			}
 			break;
 		case 'edit_category':
-
+			echo 'edit_category';
 			break;
 		case 'del_category':
-
+			load()->func('file');
+			$id = intval($_GPC['id']);
+			$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
+			if (empty($category)) {
+				message('抱歉，分类不存在或是已经被删除！', referer(), 'error');
+			}
+			$navs = pdo_fetchall("SELECT icon, id FROM ".tablename('site_nav')." WHERE id IN (SELECT nid FROM ".tablename('site_category')." WHERE id = {$id} OR parentid = '$id')", array(), 'id');
+			if (!empty($navs)) {
+				foreach ($navs as $row) {
+					file_delete($row['icon']);
+				}
+				pdo_query("DELETE FROM ".tablename('site_nav')." WHERE id IN (".implode(',', array_keys($navs)).")");
+			}
+			pdo_delete('site_category', array('id' => $id, 'parentid' => $id), 'OR');
+			message('分类删除成功！', referer(), 'success');
 			break;
 		case 'display_category':
-			echo 'display_category';
+			if (!empty($_GPC['displayorder'])) {
+				foreach ($_GPC['displayorder'] as $id => $displayorder) {
+					$update = array('displayorder' => intval($displayorder['displayorder']));
+					pdo_update('site_category', $update, array('id' => $id));
+				}
+				message('分类排序更新成功！', 'refresh', 'success');
+			}
+			$children = array();
+			$category = pdo_fetchall("SELECT * FROM ".tablename('site_category')." WHERE uniacid = '{$_W['uniacid']}' ORDER BY parentid, displayorder DESC, id");
+			foreach ($category as $index => $row) {
+				if (!empty($row['parentid'])){
+					$children[$row['parentid']][] = $row;
+					unset($category[$index]);
+				}
+			}
+			template('platform/wesite-category-display');
 			break;
 		default:
 			$category = pdo_fetchall("SELECT id,parentid,name FROM ".tablename('site_category')." WHERE uniacid = '{$_W['uniacid']}' ORDER BY parentid ASC, displayorder ASC, id ASC ", array(), 'id');

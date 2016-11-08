@@ -1,0 +1,140 @@
+{template 'common/header'}
+<div class="we7-page-title">微官网</div>
+<ul class="we7-page-tab">
+	<li class="active"><a href="{php echo url('platform/site/wesite')}" >微官网列表</a></li>
+	<li><a href="{php echo url('platform/site/wesite_tpl')}">微官网模板</a></li>
+	<li><a href="{php echo url('platform/site/article')}">文章管理</a></li>
+</ul>
+<div id="js-wesite-display" ng-controller="WesiteDisplay" ng-cloak>
+	<div class="we7-page-search we7-padding-bottom clearfix">
+		<form action="./index.php" method="get" class="form-horizontal ng-pristine ng-valid" role="form">
+			<div class="input-group pull-left" style="width: 400px;">
+				<input name="keyword" id="" value="" class="form-control" placeholder="搜索关键字" type="text">
+				<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+			</div>
+		</form>
+		<div class="pull-right">
+			<a href="新建菜单.html" class="btn btn-primary we7-padding-horizontal">+新建微官网</a>
+		</div>
+	</div>
+	<table class="tabel we7-table site-list">
+		<col width="120px"/>
+		<col width=""/>
+		<col width="160px"/>
+		<col width="140px"/>
+		<col width="285px"/>
+		<tr>
+			<th colspan="2" class="text-left">名称/模板</th>
+			<th class="text-left">入口</th>
+			<th>是否启用</th>
+			<th class="text-left">操作</th>
+		</tr>
+		<tr>
+			<td class="text-left">
+				<div class="site-item-img">
+					<img src="./resource/images/test/weizhan.png"/>
+					<div class="cover-dark">
+						<a href="" class=""></a>
+					</div>
+				</div>
+			</td>
+			<td class="text-left"> 
+				<div class="we7-margin-vertical">
+					<p class="color-gray">名称</p> 
+					<span class="color-dark">微站1</span>
+				</div>
+				<div class="we7-margin-bottom">
+					<p class="color-gray">模板</p>				   
+					<a href="" class="color-dark">复制链接地址</a>
+				</div>
+			</td>
+			<td class="text-left">
+				<div class="we7-margin-vertical">
+					<p class="color-gray">触发关键字</p> 
+					<span class="color-dark">微站1</span>
+				</div>
+				<div class="we7-margin-bottom">
+					<p class="color-gray">链接地址</p>				   
+					<a href="" class="color-default">复制链接地址</a>
+				</div>
+			</td>
+			<td>
+				<label>
+					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
+					<div class="switch switchOn"></div>
+				</label>
+			</td>
+			<td class="text-left">
+				<div class="we7-margin-vertical">
+					<p class="color-gray">基础操作</p>				
+					<a href="" class="color-default we7-margin-right">编辑/魔板</a>
+					<a href="" class="color-default we7-margin-right">复制站点</a>
+					<a href="" class="color-default">删除</a>
+				</div>
+				<div class="we7-margin-bottom">
+					<p class="color-gray">内容设置</p>				   
+					<a href="" class="color-default we7-margin-right">幻灯片</a>
+					<a href="" class="color-default we7-margin-right">导航菜单</a>
+					<a href="" class="color-default">快捷菜单</a>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="text-left">
+				<div class="site-item-img">
+					<img src="./resource/images/test/weizhan.png"/>
+					<div class="cover-dark">
+						<a href="" class=""></a>
+					</div>
+				</div>
+			</td>
+			<td class="text-left"> 
+				<div class="we7-margin-vertical">
+					<p class="color-gray">名称</p> 
+					<span class="color-dark">微站1</span>
+				</div>
+				<div class="we7-margin-bottom">
+					<p class="color-gray">模板</p>				   
+					<a href="" class="color-dark">复制链接地址</a>
+				</div>
+			</td>
+			<td class="text-left">
+				<div class="we7-margin-vertical">
+					<p class="color-gray">触发关键字</p> 
+					<span class="color-dark">微站1</span>
+				</div>
+				<div class="we7-margin-bottom">
+					<p class="color-gray">链接地址</p>				   
+					<a href="" class="color-default">复制链接地址</a>
+				</div>
+			</td>
+			<td>
+				<label>
+					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
+					<div class="switch switchOn"></div>
+				</label>
+			</td>
+			<td class="text-left">
+				<div class="we7-margin-vertical">
+					<p class="color-gray">基础操作</p>				
+					<a href="" class="color-default we7-margin-right">编辑/魔板</a>
+					<a href="" class="color-default we7-margin-right">复制站点</a>
+					<a href="" class="color-default">删除</a>
+				</div>
+				<div class="we7-margin-bottom">
+					<p class="color-gray">内容设置</p>				   
+					<a href="" class="color-default we7-margin-right">幻灯片</a>
+					<a href="" class="color-default we7-margin-right">导航菜单</a>
+					<a href="" class="color-default">快捷菜单</a>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+<script>
+	angular.module('wesiteApp').controller('WesiteDisplay', ['$scope', function($scope) {
+		console.log(111);
+	}]);
+	angular.bootstrap($('#js-wesite-display'), ['wesiteApp']);
+</script>
+{template 'common/footer'}
