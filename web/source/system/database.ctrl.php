@@ -238,7 +238,6 @@ if($do == 'restore') {
 			message('删除备份成功.', url('system/database/restore'));
 		}
 	}
-	
 }
 
 //数据库结构整理
@@ -300,6 +299,7 @@ if ($do == 'trim') {
 //优化
 if ($do == 'optimize') {
 	$_W['page']['title'] = '优化 - 数据库 - 常用系统工具 - 系统管理';
+	$optimize_table = array();
 	$sql = "SHOW TABLE STATUS LIKE '{$_W['config']['db']['tablepre']}%'";
 	$tables = pdo_fetchall($sql);
 	foreach ($tables as $tableinfo) {
@@ -307,18 +307,18 @@ if ($do == 'optimize') {
 			continue;
 		}
 		if (!empty($tableinfo) && !empty($tableinfo['Data_free'])) {
-			$optimize_table = array(
-				$tableinfo['Name'] = array(
-					'title' => $tableinfo['Name'],
-					'type' => $tableinfo['Engine'],
-					'rows' => $tableinfo['Rows'],
-					'data' => sizecount($tableinfo['Data_length']),
-					'index' => sizecount($tableinfo['Index_length']),
-					'free' => sizecount($tableinfo['Data_free'])
-				)
+			$row = array(
+				'title' => $tableinfo['Name'],
+				'type' => $tableinfo['Engine'],
+				'rows' => $tableinfo['Rows'],
+				'data' => sizecount($tableinfo['Data_length']),
+				'index' => sizecount($tableinfo['Index_length']),
+				'free' => sizecount($tableinfo['Data_free'])
 			);
+			$optimize_table[$row['title']] = $row;
 		}
 	}
+
 	if (checksubmit()) {
 		foreach ($_GPC['select'] as $tablename) {
 			if (!empty($optimize_table[$tablename])) {
