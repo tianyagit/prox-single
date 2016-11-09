@@ -60,7 +60,7 @@ if ($do == 'tomedia') {
 if($do == 'news') {
 	$newsid = intval($_GPC['newsid']);
 	$news_list = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $newsid), array(), '',  'displayorder ASC');
-	template('platform/material_add');
+	template('platform/material_post');
 }
 
 if($do == 'addnews') {
