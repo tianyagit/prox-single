@@ -127,12 +127,12 @@
 		angular.module('materialApp').value('material', {
 			'materialList' : {php echo json_encode($news_list)},
 			'operate' : {if !empty($_GPC['newsid'])}'edit'{else}'add'{/if},
-			'url' : '{php echo url('platform/material_add/tomedia')}',
-			'newsUpload_url' : '{php echo url('platform/material_add/addnews')}',
+			'url' : '{php echo url('platform/material_post/tomedia')}',
+			'newsUpload_url' : '{php echo url('platform/material_post/addnews')}',
 			'msg_url' : '{php echo url('platform/material/display')}',
-			'upload_thumb_url' : '{php echo url('platform/material_add/thumb_upload')}',
-			'upload_iamge_url' : '{php echo url('platform/material_add/image_upload')}',
-			'replace_url' : "{php echo url('platform/material_add/replace_content')}"
+			'upload_thumb_url' : '{php echo url('platform/material_post/thumb_upload')}',
+			'upload_iamge_url' : '{php echo url('platform/material_post/image_upload')}',
+			'replace_url' : "{php echo url('platform/material_post/replace_content')}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
 	});

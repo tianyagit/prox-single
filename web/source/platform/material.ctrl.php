@@ -4,14 +4,14 @@
  * 素材管理列表页
  */
 defined('IN_IA') or exit('Access Denied');
-$dos = array('list', 'sync', 'del_material');
-$do = in_array($do, $dos) ? $do : 'list';
+$dos = array('display', 'sync', 'del_material');
+$do = in_array($do, $dos) ? $do : 'display';
 
 $_W['page']['title'] = '永久素材-微信素材';
 uni_user_permission_check('material_mass');
 load()->model('material');
 
-if($do == 'list') {
+if($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
 	if ($type == 'news') {
 		$condition = " as a RIGHT JOIN " . tablename('wechat_news') . " as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND a.model = :model AND a.media_id != ''";
