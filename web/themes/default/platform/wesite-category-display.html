@@ -29,7 +29,7 @@
 			<td class="text-left">
 				<span>{$row['name']}</span>
 				{if empty($row['parentid'])}
-					<a href="{php echo url('platform/site/article', array('operation' => 'edit_category'))}" class="color-default we7-margin-right-sm">&nbsp;+添加子分类</a>
+					<a href="{php echo url('platform/site/article', array('operation' => 'edit_category', 'parentid' => $row['id']))}" class="color-default we7-margin-right-sm">&nbsp;+添加子分类</a>
 				{/if}
 			</td>
 			<td><span>{php echo $row['nid'] ? '是' : '否'}</span></td>
