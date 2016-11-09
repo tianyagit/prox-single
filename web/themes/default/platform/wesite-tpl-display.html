@@ -1,0 +1,17 @@
+{template 'common/header'}
+<div class="we7-page-title">微官网</div>
+<ul class="we7-page-tab">
+	<li><a href="{php echo url('platform/site/wesite')}" >微官网列表</a></li>
+	<li class="active"><a href="{php echo url('platform/site/wesite_tpl')}">微官网模板</a></li>
+	<li><a href="{php echo url('platform/site/article')}">文章管理</a></li>
+</ul>
+<div id="js-wesite-tpl-display" ng-controller="WesiteTplDidplay" ng-cloak>
+	
+</div>
+<script>
+	angular.module('wesiteApp').controller('WesiteTplDidplay', ['$scope', function($scope) {
+		console.log(222);
+	}]);
+	angular.bootstrap($('#js-wesite-tpl-display'), ['wesiteApp']);
+</script>
+{template 'common/footer'}

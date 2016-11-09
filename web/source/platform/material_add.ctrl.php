@@ -1,10 +1,10 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
+ *
  */
 defined('IN_IA') or exit('Access Denied');
-$dos = array('news', 'tomedia', 'addnews', 'thumb_upload', 'image_upload');
+$dos = array('news', 'tomedia', 'addnews', 'thumb_upload', 'image_upload', 'replace_content');
 $do = in_array($do, $dos) ? $do : 'news';
 
 $_W['page']['title'] = '新增素材-微信素材';
@@ -12,6 +12,45 @@ uni_user_permission_check('material_mass');
 load()->func('file');
 load()->model('material');
 
+if ($do == 'replace_content') {
+	$content = htmlspecialchars_decode($_GPC['content']);
+	$match = array();
+	preg_match_all('/<img.*src=[\'"](.*\.(?:png|jpg|jpeg|jpe|gif))[\'"].*\/?>/iU', $content, $match);
+	if(!empty($match[1])) {
+		foreach($match[1] as $val) {
+			if((strexists($val, 'http://') || strexists($val, 'https://')) && !strexists($val, 'mmbiz.qlogo.cn') && !strexists($val, 'mmbiz.qpic.cn')) {
+				$images[] = $val;
+			} else {
+				if(strexists($val, './attachment/images/')) {
+					$images[] = tomedia($val);
+				}
+			}
+		}
+	}
+	if (!empty($images)) {
+		foreach ($images as $image) {
+			load()->func('file');
+			$thumb = file_fetch(tomedia($image), 1024, 'material/images');
+			if(is_error($thumb)) {
+				message($thumb, '', 'ajax');
+			}
+			$thumb = ATTACHMENT_ROOT . $thumb;
+			//uploadNewsThumb
+			load()->model('account');
+			$weixin_api = WeAccount::create($_W['acid']);
+			$data = array(
+				'media' => '@'. $thumb,
+			);
+			$result = $weixin_api->uploadNewsThumb($data);
+			if (is_error($result)) {
+				message($result, '', 'ajax');
+			} else {
+				$content = str_replace($image, $result['message'], $content);
+			}
+		}
+	}
+	return message(error(0, $content), '', 'ajax');
+}
 
 if ($do == 'tomedia') {
 	$url = $_GPC['url'];
@@ -49,6 +88,7 @@ if($do == 'addnews') {
 				'thumb_media_id' => $news['media_id'],
 			);
 			$articles['articles'][] = $row;
+			$image_info =
 			$post_news[] = array(
 				'uniacid' => $_W['uniacid'],
 				'thumb_media_id' => $news['media_id'],
@@ -106,8 +146,10 @@ if($do == 'addnews') {
 		);
 		pdo_insert('wechat_attachment', $wechat_attachment);
 		$attach_id = pdo_insertid();
-		foreach ($post_news as $news) {
+		$wechat_new = $wechat_api->getMaterial($result, $news);
+		foreach ($post_news as $key => $news) {
 			$news['attach_id'] = $attach_id;
+			$news['url'] = $wechat_new['news_item'][$key]['url'];
 			pdo_insert('wechat_news', $news);
 		}
 		message(error(0, '创建图文素材成功'), '', 'ajax');
