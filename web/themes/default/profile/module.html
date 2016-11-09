@@ -1,64 +1,89 @@
 {template 'common/header'}
-	<div class="module">
-			<ul class="thumbnails">
-			{loop $modulelist $row}
-			<li style="width:262px;" class="list-unstyled">
-				<div class="thumbnail">
-					<div class="module-pic">
-						<img src="{$row['preview']}" onerror="this.src='../web/resource/images/nopic.jpg'" {if !$row['enabled']}class="gray"{/if}>
-						<div class="module-detail">
-							<h5 class="module-title">{$row['title']}</h5>
-							<p class="module-brief">{$row['ability']}</p>
-						</div>
-						{if $row['official']}
-						<span class="official"><img src="resource/images/module/official.png"/></span>
-						{/if}
-					</div>
-					<div class="module-button">
-						{if $row['issystem']}
-							<a href="javascript:;" class="pull-right"><span>此模块为系统模块</span></a>
-						{else}
-						{if $row['enabled']}
-							<a id="enabled_{$row['mid']}_0" href="{php echo url('profile/module/enable', array('modulename' => $row['name'], 'enabled' => STATUS_OFF))}" onclick="return ajaxopen(this.href)" class="btn btn-primary module-button-switch">禁用</a>
-						{else}
-							<a id="enabled_{$row['mid']}_1" href="{php echo url('profile/module/enable', array('modulename' => $row['name'], 'enabled' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="btn btn-danger module-button-switch">启用</a>
-						{/if}
-						{/if}
-						{if $row['enabled'] && !$row['issystem']}
-							{if $row['shortcut']}
-							<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="btn btn-danger">移出快捷操作</a>
-							{else}
-							<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="btn btn-default">加入快捷操作</a>
-							{/if}
-						{/if}
-					</div>
-				</div>
-			</li>
-			{/loop}
-		</ul>
-		<div>
-			{$pager}
+
+<div class="we7-page-title">
+	应用 
+	<a href="//s.we7.cc" target="_blank" class="pull-right color-default"><i class="wi wi-market"></i>更多应用</a>
+</div>
+
+<ul class="we7-page-tab">
+</ul>
+<div class="we7-page-search">
+	<form action="" method="post">
+		<div class="input-group we7-margin-bottom">
+			<input class="form-control " name="keyword" value="" type="text" placeholder="名称" >
+			<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+		</div>
+	</form>
+</div>
+<ul class="letters-list">
+	<li class="active"><a href=""> A</a></li>	
+	<li><a href="">B</a></li>
+	<li><a href="">C</a></li>
+	<li><a href="">D</a></li>
+	<li><a href="">E</a></li>
+	<li><a href="">F</a></li>
+	<li><a href="">G</a></li>
+	<li><a href="">H</a></li>
+	<li><a href="">I</a></li>
+	<li><a href="">J</a></li>
+	<li><a href="">K</a></li>
+	<li><a href="">L</a></li>
+	<li><a href="">M</a></li>
+	<li><a href="">N</a></li>
+	<li><a href="">O</a></li>
+	<li><a href="">P</a></li>
+	<li><a href="">Q</a></li>
+	<li><a href="">R</a></li>
+	<li><a href="">S</a></li>
+	<li><a href="">T</a></li>
+	<li><a href="">U</a></li>
+	<li><a href="">V</a></li>
+	<li><a href="">W</a></li>
+	<li><a href="">X</a></li>
+	<li><a href="">Y</a></li>
+	<li><a href="">Z</a></li>
+</ul>
+<div class="ext-apply-list">
+	{loop $modulelist $row}
+	<div class="ext-apply-item">
+		<img src="{$row['preview']}" onerror="this.src='http://pro.we7.cc/web/resource/images/nopic.jpg'" class="apply-img {if !$row['enabled']}gray{/if}" />
+		<h2 class="apply-title">{$row['title']}</h2>
+		<span class="color-green">
+			{if $row['issystem']}
+				<a href="javascript:;"><span>系统模块</span></a>
+			{else}
+				{if $row['enabled']}
+					<a id="enabled_{$row['mid']}_0" href="{php echo url('profile/module/enable', array('modulename' => $row['name'], 'enabled' => STATUS_OFF))}" onclick="return ajaxopen(this.href)">禁用</a>
+				{else}
+					<a id="enabled_{$row['mid']}_1" href="{php echo url('profile/module/enable', array('modulename' => $row['name'], 'enabled' => STATUS_ON))}" onclick="return ajaxopen(this.href);">启用</a>
+				{/if}
+			{/if}
+		</span>
+		<div class="cover-dark">
+			<a href="" class="mange-goto"><i class="fa fa-angle-right"></i>进入应用</a>
+			{if !$row['issystem']}
+				{if $row['shortcut']}
+				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="fa fa-angle-right"></i> <span>移出菜单</span></a>
+				{else}
+				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="fa fa-angle-right"></i> <span>显示到菜单</span></a>
+				{/if}
+			{/if}
+			<a href="" class="manage-stick"><i class="wi wi-stick"></i><span>置顶</span></a>
 		</div>
 	</div>
-	<script type="text/javascript">
-		function toggle_description(id) {
-			var container = $('#'+id).parent().parent().parent();
-			var status = $('#'+id).attr("status");
-			if(status == 1) {
-				$('#'+id).attr("status", "0")
-				container.find(".module_description").show();
-			} else {
-				$('#'+id).attr("status", "1")
-				container.find(".module_description").hide();
-			}
+	{/loop}
+	<div class="ext-apply-item more">
+		<a href="">+</a>
+	</div>
+</div>
+<script type="text/javascript">
+	$('.module .thumbnails').delegate('li .module-button-switch', 'click', function(){ //控制模块开关
+		if($(this).hasClass('btn-primary')) { //禁用模块
+			$(this).removeClass('btn-primary').addClass('btn-danger').html('开启');
+		} else if($(this).hasClass('btn-danger')) { //开启模块
+			$(this).removeClass('btn-danger').addClass('btn-primary').html('禁用');
 		}
-		$('.module .thumbnails').delegate('li .module-button-switch', 'click', function(){ //控制模块开关
-			if($(this).hasClass('btn-primary')) { //禁用模块
-				$(this).removeClass('btn-primary').addClass('btn-danger').html('开启');
-			} else if($(this).hasClass('btn-danger')) { //开启模块
-				$(this).removeClass('btn-danger').addClass('btn-primary').html('禁用');
-			}
-			$(this).parent().parent().find('.module-pic img').toggleClass('gray');
-		});
-	</script>
+		$(this).parent().parent().find('.module-pic img').toggleClass('gray');
+	});
+</script>
 {template 'common/footer'}
