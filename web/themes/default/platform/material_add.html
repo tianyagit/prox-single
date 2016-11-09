@@ -47,11 +47,6 @@
 					</div>
 
 					<div class="appmsg-input-area">
-						<!--编辑头部-->
-						<div class="input-area-head">
-							头部占位
-						</div>
-						<!--end编辑头部-->
 						<!--标题-->
 						<div class="appmsg-edit-item title">
 						<label for="title" class="" style="display:none">请在这里输入标题</label>
@@ -65,11 +60,8 @@
 							<em class="form-control-append">0/8</em>
 						</div>
 						<!--正文-->
-
-						<div class="editor-area">
-							<div class="editor-area" ng-my-editor ng-my-value="materialList[activeIndex].content">
+						<div class="editor-area" ng-my-editor ng-my-value="materialList[activeIndex].content">
 							<textarea></textarea>
-							</div>
 						</div>
 						<div class="appmsg-edit-function-area ">
 							<!-- BEGIN 原文链接 -->
@@ -139,7 +131,8 @@
 			'newsUpload_url' : '{php echo url('platform/material_add/addnews')}',
 			'msg_url' : '{php echo url('platform/material/display')}',
 			'upload_thumb_url' : '{php echo url('platform/material_add/thumb_upload')}',
-			'upload_iamge_url' : '{php echo url('platform/material_add/image_upload')}'
+			'upload_iamge_url' : '{php echo url('platform/material_add/image_upload')}',
+			'replace_url' : "{php echo url('platform/material_add/replace_content')}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
 	});

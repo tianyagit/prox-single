@@ -19,7 +19,7 @@ if($do == 'list') {
 		$id = intval($_GPC['id']);
 		$title = addslashes($_GPC['title']);
 		if (!empty($title)) {
-			$condition .= ' AND (b.title LIKE :title OR b.author LIKE :title OR b.digest LIKE :title)';
+			$condition .= ' AND (b.title LIKE :title OR b.author = :title OR b.digest LIKE :title)';
 			$params[':title'] = '%' . $title . "%";
 		}
 		$pageindex = max(1, intval($_GPC['page']));
@@ -109,7 +109,7 @@ if ($do == 'sync') {
 		}
 	}
 	$delete_id = array_diff($original_newsid, $wechat_existid);
-	if (!empty($delete_id)) {
+	if (!empty($delete_id) && is_array($delete_id)) {
 		foreach ($delete_id as $id) {
 			pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
 			pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $id));
