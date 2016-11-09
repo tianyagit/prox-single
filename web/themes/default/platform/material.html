@@ -34,7 +34,7 @@
 				<div class="action">
 					<a href="javascript:;" ng-click="sync('{$type}')" class="btn btn-default">同步微信</a>
 					<div class="btn-group we7-btn-group we7-padding-left">
-						<a href="{php echo url('platform/material_add')}" class="btn btn-primary">新建图文消息</a>
+						<a href="{php echo url('platform/material_post')}" class="btn btn-primary">新建图文消息</a>
 					</div>
 				</div>
 			</div>
@@ -58,7 +58,7 @@
 							<div class="appmsg-thumb" style="background-image:url('{php echo tomedia($material['items']['0']['thumb_url'])}')">
 							</div>
 							<p class="appmsg-desc">{$material['items']['0']['digest']}</p>
-							<a href="" class="cover-dark">
+							<a href="{$material['items']['0']['url']}" target="_blank" class="cover-dark">
 								<div class="edit-mask-content">
 									预览文章
 								</div>
@@ -76,7 +76,7 @@
 								<a href="" target="-blank" >{$material_row['title']}</a>
 							</h4>
 							{if !empty($material_row['thumb_url'])}
-							<a href="" class="cover-dark">
+							<a href="{$material_row['url']}" target="_blank" class="cover-dark">
 								<div class="edit-mask-content">
 									<p class="">
 										预览文章 </p>
@@ -91,7 +91,7 @@
 					<div class="appmsg-opr">
 						<ul>
 							<li class="appmsg-opr-item">
-								<a href="{php echo url('platform/material_add/news', array('newsid' => $material['id']))}" class="">&nbsp;<i class="">编辑</i></a>
+								<a href="{php echo url('platform/material_post/news', array('newsid' => $material['id']))}" class="">&nbsp;<i class="">编辑</i></a>
 							</li>
 							<li class="appmsg-opr-item">
 								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['media_id']}')">&nbsp;<i class="">删除</i></a>
@@ -107,7 +107,7 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
-					<!--<a href="javascript:;" class="btn btn-primary" ng-click="">上传新图片</a>-->
+					<a href="javascript:;" class="btn btn-primary" ng-click="upload('image')">上传新图片</a>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -119,16 +119,13 @@
 						</h4>
 						<img class="img-thumb" src="{php echo tomedia($image['attachment'], true);}">
 					</div>
-					<!--<div class="img-opr">-->
-						<!--<ul>-->
-							<!--<li class="img-opr-item">-->
-								<!--<a target="-blank" class="-" href="#">&nbsp;<i class="">编辑</i></a>-->
-							<!--</li>-->
-							<!--<li class="img-opr-item">-->
-								<!--<a class="-" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>-->
-							<!--</li>-->
-						<!--</ul>-->
-					<!--</div>-->
+					<div class="img-opr">
+						<ul>
+							<li class="img-opr-item">
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['media_id']}')">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
 				</li>
 				{/loop}
 			</ul>
@@ -138,7 +135,7 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
-					<!--<a href="" class="btn btn-primary">上传语音</a>-->
+					<a href="javascript:;" class="btn btn-primary" ng-click="upload('voice')">上传语音</a>
 				</div>
 			</div>
 			<ul class="material-audio-list">
@@ -154,16 +151,13 @@
 							<div class="audio-length">{php echo date('h:i', $voice['createtime'])}</div>
 						</div>
 					</div>
-					<!--<div class="audio-opr">-->
-						<!--<ul>-->
-							<!--<li class="audio-opr-item">-->
-								<!--<a target="-blank" class="" href="#">&nbsp;<i class="">编辑</i></a>-->
-							<!--</li>-->
-							<!--<li class="audio-opr-item">-->
-								<!--<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>-->
-							<!--</li>-->
-						<!--</ul>-->
-					<!--</div>-->
+					<div class="audio-opr">
+						<ul>
+							<li class="audio-opr-item">
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['media_id']}')">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
 				</li>
 				{/loop}
 			</ul>
@@ -173,7 +167,7 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
-					<!--<a href="" class="btn btn-primary">上传视频</a>-->
+					<a href="javascript:;" class="btn btn-primary" ng-click="upload('video')">上传视频</a>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -187,16 +181,13 @@
 
 						</div>
 					</div>
-					<!--<div class="img-opr">-->
-						<!--<ul>-->
-							<!--<li class="img-opr-item">-->
-								<!--<a target="-blank" class="-" href="#">&nbsp;<i class="">编辑</i></a>-->
-							<!--</li>-->
-							<!--<li class="img-opr-item">-->
-								<!--<a class="" href="javascript:void(0);">&nbsp;<i class="">删除</i></a>-->
-							<!--</li>-->
-						<!--</ul>-->
-					<!--</div>-->
+					<div class="img-opr">
+						<ul>
+							<li class="img-opr-item">
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['media_id']}')">&nbsp;<i class="">删除</i></a>
+							</li>
+						</ul>
+					</div>
 				</li>
 				{/loop}
 			</ul>
@@ -206,7 +197,7 @@
 </div>
 {$pager}
 <script>
-	require(['jquery.wookmark'], function() {
+	require(['jquery.wookmark', 'fileUploader'], function() {
 		//同步素材
 		angular.module('materialApp').value('config', {
 			'del_url' : "{php echo url('platform/material/del_material')}",

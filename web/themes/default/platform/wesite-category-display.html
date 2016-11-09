@@ -1,0 +1,72 @@
+{template 'common/header'}
+<ol class="breadcrumb we7-breadcrumb">
+	<a href="{php echo url('platform/site/article')}"><i class="fa fa-chevron-circle-left"></i> </a>
+	<li><a href="{php echo url('platform/site/article')}">文章管理</a></li>
+	<li><a href="{php echo url('platform/site/article', array('operation' => 'display_category'))}">文章分类管理</a></li>
+</ol>
+<div class="we7-page-search we7-padding-bottom clearfix">
+	<div class="pull-right">
+		<a href="{php echo url('platform/site/article', array('operation' => 'edit_category'))}" class="btn btn-primary we7-padding-horizontal">+新建文章分类</a>
+	</div>
+</div>
+<table class="tabel we7-table article-list" id="js-wesite-category-display">
+	<col width="90px"/>
+	<col>
+	<col width="90px"/>
+	<col width="300px"/>
+	<tr>
+		<th>显示顺序</th>
+		<th class="text-left">分类名称</th>
+		<th>设为栏目</th>
+		<th>操作</th>
+	</tr>
+	<form action="" method="post">
+	{loop $category $row}
+		<tr>
+			<td class="text-center">
+				<input type="number" class="form-control" name="displayorder[{$row['id']}][displayorder]}]" value="{$row['displayorder']}">
+			</td>
+			<td class="text-left">
+				<span>{$row['name']}</span>
+				{if empty($row['parentid'])}
+					<a href="{php echo url('platform/site/article', array('operation' => 'edit_category'))}" class="color-default we7-margin-right-sm">&nbsp;+添加子分类</a>
+				{/if}
+			</td>
+			<td><span>{php echo $row['nid'] ? '是' : '否'}</span></td>
+			<td style="position:relative;">
+				<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}" class="js-clip color-default we7-margin-right-sm">复制链接</a>
+				<a href="{php echo url('platform/site/article', array('operation' => 'edit_article', 'pcate' => $row['id']));}" class="color-default we7-margin-right-sm">添加文章</a>
+				<a href="{php echo url('platform/site/article', array('operation' => 'edit_category', 'id' => $row['id']));}" class="color-default we7-margin-right-sm">编辑</a>
+				<a href="{php echo url('platform/site/article', array('operation' => 'del_category', 'id' => $row['id']));}" class="color-default" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
+			</td>
+		</tr>
+		{loop $children[$row['id']] $row}
+		<tr>
+			<td class="text-center">
+				<input type="number" class="form-control" name="displayorder[{$row['id']}][displayorder]" value="{$row['displayorder']}">
+			</td>
+			<td class="text-left"><span class="color-gray">---&nbsp;&nbsp;</span>{$row['name']}</td>
+			<td><span>{php echo $row['enabled'] ? '是' : '否'}</span></td>
+			<td style="position:relative;">
+				<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}" class="color-default we7-margin-right-sm js-clip">复制链接</a>
+				<a href="{php echo url('platform/site/article', array('operation' => 'edit_article', 'pcate' => $row['parentid'], 'ccate' => $row['id']));}" class="color-default we7-margin-right-sm">添加文章</a>
+				<a href="{php echo url('platform/site/article', array('operation' => 'edit_category', 'id' => $row['id'], 'parentid' => $row['parentid']));}" class="color-default we7-margin-right-sm">编辑</a>
+				<a href="{php echo url('platform/site/article', array('operation' => 'del_category', 'id' => $row['id']));}" class="color-default" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
+			</td>
+		</tr>
+		{/loop}
+	{/loop}
+		<tr>
+			<td colspan="4">
+				<input name="submit" type="submit" class="btn btn-primary col-lg-1" value="提交">
+				<input type="hidden" name="token" value="{$_W['token']}" />			
+			</td>
+		</tr>
+	</form>
+</table>
+<script>
+$('.js-clip').each(function(){
+	util.clip(this, $(this).attr('data-url'));
+});
+</script>
+{template 'common/footer'}
