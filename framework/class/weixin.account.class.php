@@ -1413,8 +1413,20 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$token}";
-		$response = $this->requestApi($url, json_encode($data));
-		return $response;
+		load()->func('communication');
+		$response = @ihttp_request($url, $data);
+		if(is_error($response)) {
+			return $response;
+		}
+		$content = @json_decode($response['content'], true);
+		if(empty($content)) {
+			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
+		}
+		if(!empty($content['errcode'])) {
+			$message = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']}";
+			return error(-1, $message);
+		}
+		return error(0, $content['url']);
 	}
 
 	//上传素材

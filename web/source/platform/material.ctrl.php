@@ -4,14 +4,14 @@
  * 素材管理列表页
  */
 defined('IN_IA') or exit('Access Denied');
-$dos = array('list', 'sync', 'del_material');
-$do = in_array($do, $dos) ? $do : 'list';
+$dos = array('display', 'sync', 'del_material');
+$do = in_array($do, $dos) ? $do : 'display';
 
 $_W['page']['title'] = '永久素材-微信素材';
 uni_user_permission_check('material_mass');
 load()->model('material');
 
-if($do == 'list') {
+if($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
 	if ($type == 'news') {
 		$condition = " as a RIGHT JOIN " . tablename('wechat_news') . " as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND a.model = :model AND a.media_id != ''";
@@ -19,7 +19,7 @@ if($do == 'list') {
 		$id = intval($_GPC['id']);
 		$title = addslashes($_GPC['title']);
 		if (!empty($title)) {
-			$condition .= ' AND (b.title LIKE :title OR b.author LIKE :title OR b.digest LIKE :title)';
+			$condition .= ' AND (b.title LIKE :title OR b.author = :title OR b.digest LIKE :title)';
 			$params[':title'] = '%' . $title . "%";
 		}
 		$pageindex = max(1, intval($_GPC['page']));
@@ -109,7 +109,7 @@ if ($do == 'sync') {
 		}
 	}
 	$delete_id = array_diff($original_newsid, $wechat_existid);
-	if (!empty($delete_id)) {
+	if (!empty($delete_id) && is_array($delete_id)) {
 		foreach ($delete_id as $id) {
 			pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
 			pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $id));
