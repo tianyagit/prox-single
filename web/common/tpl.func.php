@@ -58,88 +58,76 @@ function tpl_form_field_link($name, $value = '', $options = array()) {
 		$s = '
 		<script type="text/javascript">
 			function showLinkDialog(elm) {
-				require(["util","jquery"], function(u, $){
-					var ipt = $(elm).parent().parent().parent().prev();
-					u.linkBrowser(function(href){
-						var multiid = "'. $_GPC['multiid'] .'";
-						if (multiid) {
-							href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
-						}
-						ipt.val(href);
-					});
+				var ipt = $(elm).parent().parent().parent().prev();
+				util.linkBrowser(function(href){
+					var multiid = "'. $_GPC['multiid'] .'";
+					if (multiid) {
+						href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
+					}
+					ipt.val(href);
 				});
 			}
 			function newsLinkDialog(elm, page) {
-				require(["util","jquery"], function(u, $){
-					var ipt = $(elm).parent().parent().parent().prev();
-					u.newsBrowser(function(href, page){
-						if (page != "" && page != undefined) {
-							newsLinkDialog(elm, page);
-							return false;
-						}
-						var multiid = "'. $_GPC['multiid'] .'";
-						if (multiid) {
-							href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
-						}
-						ipt.val(href);
-					}, page);
-				});
+				var ipt = $(elm).parent().parent().parent().prev();
+				util.newsBrowser(function(href, page){
+					if (page != "" && page != undefined) {
+						newsLinkDialog(elm, page);
+						return false;
+					}
+					var multiid = "'. $_GPC['multiid'] .'";
+					if (multiid) {
+						href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
+					}
+					ipt.val(href);
+				}, page);
 			}
 			function pageLinkDialog(elm, page) {
-				require(["util","jquery"], function(u, $){
-					var ipt = $(elm).parent().parent().parent().prev();
-					u.pageBrowser(function(href, page){
-						if (page != "" && page != undefined) {
-							pageLinkDialog(elm, page);
-							return false;
-						}
-						var multiid = "'. $_GPC['multiid'] .'";
-						if (multiid) {
-							href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
-						}
-						ipt.val(href);
-					}, page);
-				});
+				var ipt = $(elm).parent().parent().parent().prev();
+				util.pageBrowser(function(href, page){
+					if (page != "" && page != undefined) {
+						pageLinkDialog(elm, page);
+						return false;
+					}
+					var multiid = "'. $_GPC['multiid'] .'";
+					if (multiid) {
+						href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
+					}
+					ipt.val(href);
+				}, page);
 			}
 			function articleLinkDialog(elm, page) {
-				require(["util","jquery"], function(u, $){
-					var ipt = $(elm).parent().parent().parent().prev();
-					u.articleBrowser(function(href, page){
-						if (page != "" && page != undefined) {
-							articleLinkDialog(elm, page);
-							return false;
-						}
-						var multiid = "'. $_GPC['multiid'] .'";
-						if (multiid) {
-							href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
-						}
-						ipt.val(href);
-					}, page);
-				});
+				var ipt = $(elm).parent().parent().parent().prev();
+				util.articleBrowser(function(href, page){
+					if (page != "" && page != undefined) {
+						articleLinkDialog(elm, page);
+						return false;
+					}
+					var multiid = "'. $_GPC['multiid'] .'";
+					if (multiid) {
+						href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
+					}
+					ipt.val(href);
+				}, page);
 			}
 			function phoneLinkDialog(elm, page) {
-				require(["util","jquery"], function(u, $){
-					var ipt = $(elm).parent().parent().parent().prev();
-					u.phoneBrowser(function(href, page){
-						if (page != "" && page != undefined) {
-							phoneLinkDialog(elm, page);
-							return false;
-						}
-						ipt.val(href);
-					}, page);
-				});
+				var ipt = $(elm).parent().parent().parent().prev();
+				util.phoneBrowser(function(href, page){
+					if (page != "" && page != undefined) {
+						phoneLinkDialog(elm, page);
+						return false;
+					}
+					ipt.val(href);
+				}, page);
 			}
 			function mapLinkDialog(elm) {
-				require(["util","jquery"], function(u, $){
-					var ipt = $(elm).parent().parent().parent().prev();
-					u.map(elm, function(val){
-						var href = \'http://api.map.baidu.com/marker?location=\'+val.lat+\',\'+val.lng+\'&output=html&src=we7\';
-						var multiid = "'. $_GPC['multiid'] .'";
-						if (multiid) {
-							href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
-						}
-						ipt.val(href);
-					});
+				var ipt = $(elm).parent().parent().parent().prev();
+				util.map(elm, function(val){
+					var href = \'http://api.map.baidu.com/marker?location=\'+val.lat+\',\'+val.lng+\'&output=html&src=we7\';
+					var multiid = "'. $_GPC['multiid'] .'";
+					if (multiid) {
+						href = /(&)?t=/.test(href) ? href : href + "&t=" + multiid;
+					}
+					ipt.val(href);
 				});
 			}
 		</script>';
@@ -147,7 +135,7 @@ function tpl_form_field_link($name, $value = '', $options = array()) {
 	}
 	$s .= '
 	<div class="input-group">
-		<input type="text" value="'.$value.'" name="'.$name.'" class="form-control" autocomplete="off">
+		<input type="text" value="'.$value.'" name="'.$name.'" class="form-control" autocomplete="off" style="width:500px">
 		<span class="input-group-btn">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">选择链接 <span class="caret"></span></button>
 			<ul class="dropdown-menu">
