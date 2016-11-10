@@ -14,5 +14,4 @@ $do = in_array($do, $dos) ? $do : 'mail';
 uni_user_permission_check('profile_notify');
 if ($do == 'mail') {
 	$_W['page']['title'] = '邮件通知 - 通知参数 - 通知中心';
-
 }

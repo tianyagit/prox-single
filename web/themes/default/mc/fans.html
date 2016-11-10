@@ -1,0 +1,183 @@
+{template 'common/header'}
+
+<div class="we7-page-title">
+	粉丝管理
+</div>
+<ul class="we7-page-tab">
+	<li class="active">
+		<a href="粉丝列表.html" >全部粉丝</a>
+	</li>
+</ul>
+<div class="we7-page-search we7-padding-bottom clearfix">
+	<form action="./index.php" method="get" class="form-inline pull-left" role="form">
+		<div class="form-group">
+			<div class="form-controls">
+				<select name="" class="we7-select">
+					<option value="">已关注</option>
+					<option value="">取消关注</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			{php echo tpl_form_field_daterange('time', array())}
+		</div>
+		<div class="input-group  we7-margin-left-sm" style="width: 300px;">
+			<input name="keyword" id="" value="" class="form-control" placeholder="" type="text">
+			<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+		</div>
+	</form>
+	<div class="pull-right">
+		<button class="btn btn-primary we7-padding-horizontal add-group">+添加分组</button>
+
+	</div>
+	<script>
+		$(function(){
+			$(".add-group,.fans-group-edit").popover({
+				placement : 'bottom',
+				html : true,
+				template : '<div class="popover we7-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
+				content : $('.popover-add-group').html(),
+			});
+			$(".fans-group-del").popover({
+				placement : 'bottom',
+				html : true,
+				template : '<div class="popover we7-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
+				content : $('.popover-del-group').html(),
+			});
+			$(".put-group").popover({
+				placement : 'bottom',
+				html : true,
+				template : '<div class="popover we7-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
+				content : $('.popover-group-list').html(),
+			});
+			$('.popover-hide').click(function(){
+				console.log($(this));
+				$(".add-group").popover('hide');
+			});
+		});
+	</script>
+</div>
+<div class="popover-add-group" style="display: none;">
+	<div class="input-group" style="width: 250px;">
+		<p>标签名称</p>
+		<input name="keyword" id="" value="" class="form-control" placeholder="分组名称" type="text">
+	</div>
+	<div class="popover-btn we7-margin-top-sm">
+		<a href="javascript:;" class="btn btn-primary we7-margin-right-sm">确定</a>
+		<a href="javascript:;"  class="btn btn-default popover-hide">取消</a>
+	</div>
+</div>
+<div class="popover-del-group" style="display: none;">
+	<div class="input-group" style="width: 250px;">
+		<p>删除标签后，该标签下的所有用户将失去该标签属性。是否确定删除？</p>
+	</div>
+	<div class="popover-btn we7-margin-top-sm">
+		<a href="javascript:;" class="btn btn-primary we7-margin-right-sm">确定</a>
+		<a href="javascript:;"  class="btn btn-default popover-hide">取消</a>
+	</div>
+</div>
+<div class="popover-group-list" style="display: none;">
+	<div class="we7-form">
+		<div class="form-group">
+			<input id='option1' type="checkbox" name='2' checked='checked' />
+			<label for="option1">星标用户 </label>
+			<input id='option2' type="checkbox" name='2' />
+			<label for="option2">1 22312</label>
+			<input id='option3' type="checkbox" name='2'  />
+			<label for="option3">21421 </label>
+			<input id='option4' type="checkbox" name='2'  />
+			<label for="option4">21421 </label>
+			<input id='option5' type="checkbox" name='2'  />
+			<label for="option5">是否确定删除 </label>
+		</div>
+	</div>
+	<div class="popover-btn we7-margin-top-sm">
+		<a href="javascript:;" class="btn btn-primary we7-margin-right-sm">确定</a>
+		<a href="javascript:;"  class="btn btn-default popover-hide">取消</a>
+	</div>
+</div>
+<div class="fans-content">
+	<div class="fans-list">
+		<div class="panel we7-panel">
+			<div class="panel-heading">
+				全部
+				<a href="javascript:;" class="color-default fans-group-edit we7-margin-left-sm">重命名</a>
+				<a href="javascript:;" class="color-default fans-group-del we7-margin-left-sm">删除</a>
+				<div class="pull-right we7-form">
+					<input id='credit1' type="radio" name='1' checked='checked' />
+					<label for="credit1">全部</label>
+					<input id='credit2' type="radio" name='1' />
+					<label for="credit2">有电话</label>
+					<input id='credit3' type="radio" name='1' />
+					<label for="credit3">会员</label>
+				</div>
+			</div>
+			<div class="panel-body">
+				<table class="table we7-table fans-info">
+					<col width="20px" />
+					<col width="48px"/>
+					<col />
+					<col />
+					<tr>
+						<th class="text-left" colspan="4">
+							<div class="we7-form">
+								<input id='option[hot]' type="checkbox" name='option[hot]' />
+								<label for="option[hot]">全选 </label>
+								<a href="javascript:;" class="btn btn-primary put-group we7-margin-left-sm">打标签</a>
+								<a href="javascript:;" class="btn btn-default put-group we7-margin-left-sm">同步选中粉丝信息</a>
+								<a href="javascript:;" class="btn btn-default put-group we7-margin-left-sm">同步全部粉丝信息</a>
+							</div>
+						</th>
+					</tr>
+					{loop $fans_list $fan}
+					<tr>
+						<td>
+							<div class="we7-form">
+								<input id='option[2]' type="checkbox" name='1' />
+								<label for="option[2]"> </label>
+							</div>
+						</td>
+						<td>
+							<a href="" class="avatar">
+								<img src="{php echo tomedia($fan['tag']['headimgurl'])}" width="48" />
+							</a>
+						</td>
+						<td>
+							<p><a href="" class="nick-name">{$fan['nickname']}</a></p>
+							<p><a href="" class="remark-name">会员名</a> <i class="fa fa-align-justify fans-tel"></i></p>
+							<div class="fans-tag-area">
+								<span class="tag-list">
+									{if $fan['tag_show'] == '无标签'}
+									{$fan['tag_show']}
+									{else}
+									<a href="javascript:;" class="label label-primary">{$fan['tag_show']}</a>
+									{/if}
+								</span>
+								<span class="tag-btn">
+									<i class="caret"></i>
+								</span>
+							</div>
+						</td>
+						<td>
+							<p>关注：2016-10-25 15:31:00</p>
+							{if !empty($fan['unfollowtime'])}
+							<p>{php echo date('Y-m-d', $fan['unfollowtime'])}</p>
+							{/if}
+						</td>
+					</tr>
+					{/loop}
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="fans-group-list">
+		<dl>
+			<dt class="fans-group-item"><a href="">全部用户（454）</a></dt>
+			<dd class="fans-group-item active"><a href="">星标用户（44）</a></dd>
+			<dd class="fans-group-item"><a href="">标签（44）</a></dd>
+			<dd class="fans-group-item"><a href="">标签（44）</a></dd>
+		</dl>
+	</div>
+</div>
+{$pager}
+{template 'common/footer'}
