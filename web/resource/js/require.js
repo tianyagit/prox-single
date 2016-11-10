@@ -46,6 +46,7 @@ require.config({
 		'fileUploader' : '../../components/fileuploader/fileuploader.min',
 		'clockpicker': '../../components/clockpicker/clockpicker.min',
 		'district' : '../lib/district',
+		'moment': '../lib/moment',
 		'emoji' : '../../components/emoji/emoji',
 		'material' : '../../components/material/material',
 
