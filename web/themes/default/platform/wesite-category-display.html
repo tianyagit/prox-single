@@ -12,22 +12,23 @@
 	</div>
 </div>
 <table class="tabel we7-table article-list" id="js-wesite-category-display">
-	<col width="90px"/>
+	<col width="5px">
+	<col width="70px"/>
 	<col>
 	<col width="90px"/>
 	<col width="300px"/>
 	<tr>
-		<th>显示顺序</th>
+		<th></th>
+		<th>排序</th>
 		<th class="text-left">分类名称</th>
 		<th>设为栏目</th>
 		<th>操作</th>
 	</tr>
-	<form action="" method="post">
+	<form action="./index.php?c=platform&a=site&do=article&operation=del_category" method="post">
 	{loop $category $row}
 		<tr>
-			<td class="text-center">
-				<input type="number" class="form-control" name="displayorder[{$row['id']}][displayorder]}]" value="{$row['displayorder']}">
-			</td>
+			<td><input type="checkbox" name="rid[]" value="{$row['id']}"></td>
+			<td class="text-center">{$row['displayorder']}</td>
 			<td class="text-left">
 				<span>{$row['name']}</span>
 				{if empty($row['parentid'])}
@@ -44,9 +45,8 @@
 		</tr>
 		{loop $children[$row['id']] $row}
 		<tr>
-			<td class="text-center">
-				<input type="number" class="form-control" name="displayorder[{$row['id']}][displayorder]" value="{$row['displayorder']}">
-			</td>
+			<td><input type="checkbox" name="rid[]" value="{$row['id']}"></td>
+			<td class="text-center">{$row['displayorder']}</td>
 			<td class="text-left"><span class="color-gray">---&nbsp;&nbsp;</span>{$row['name']}</td>
 			<td><span>{php echo $row['enabled'] ? '是' : '否'}</span></td>
 			<td style="position:relative;">
@@ -59,14 +59,18 @@
 		{/loop}
 	{/loop}
 		<tr>
-			<td colspan="4">
-				<input name="submit" type="submit" class="btn btn-primary col-lg-1" value="提交">
+			<td colspan="2">
+				<input type="checkbox" name="select_all" id="select_all" value="1" style="margin-left:-10px">
+				<input type="submit" class="btn btn-danger" name="submit" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
 				<input type="hidden" name="token" value="{$_W['token']}" />			
 			</td>
 		</tr>
 	</form>
 </table>
 <script>
+$('#select_all').click(function(){
+	$('.article-list :checkbox').prop('checked', $(this).prop('checked'));
+});
 $('.js-clip').each(function(){
 	util.clip(this, $(this).attr('data-url'));
 });
