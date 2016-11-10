@@ -41,6 +41,9 @@ if ($do == 'rank' && $_W['isajax']) {
 }
 
 if ($do == 'display') {
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 12;
+	$start = ($pindex - 1) * $psize;
 	$condition = '';
 	$pars = array();
 	$keyword = trim($_GPC['keyword']);
@@ -60,7 +63,7 @@ if ($do == 'display') {
 
 	$tsql = "SELECT COUNT(*) FROM " . tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
 	$total = pdo_fetchcolumn($tsql, $pars);
-	$sql = "SELECT * FROM ". tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC";
+	$sql = "SELECT * FROM ". tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$pager = pagination($total, $pindex, $psize);
 	$list = pdo_fetchall($sql, $pars);
 	if(!empty($list)) {
