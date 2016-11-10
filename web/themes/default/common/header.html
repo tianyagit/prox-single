@@ -109,9 +109,14 @@
 						<ul class="list-group">
 							{loop $section['menu'] $menuid $menu}
 							<li class="list-group-item {if $menu['active']}active{/if}">
-								<a href="{$menu['url']}"><i class="fa fa-adjust"></i> {$menu['title']}</a>
+								<a href="{$menu['url']}">{if $menu['icon']}<img src="{$menu['icon']}" />{/if} {$menu['title']}</a>
 							</li>
 							{/loop}
+							{if $sectionid == 'platform_module'}
+							<li class="list-group-item list-group-more">
+								<a href="{url 'profile/module'}"><span class="label label-more">更多应用</span></a>
+							</li>
+							{/if}
 						</ul>
 					</div>
 					{/loop}
