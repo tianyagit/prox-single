@@ -1,9 +1,11 @@
 {template 'common/header'}
-<ol class="breadcrumb we7-breadcrumb">
-	<a href="{php echo url('platform/site/article')}"><i class="fa fa-chevron-circle-left"></i> </a>
+<div class="we7-page-title">微官网</div>
+<ul class="we7-page-tab">
+	<li><a href="{php echo url('platform/site/wesite')}">微官网列表</a></li>
+	<li><a href="{php echo url('platform/site/wesite_tpl')}">微官网模板</a></li>
 	<li><a href="{php echo url('platform/site/article')}">文章管理</a></li>
-	<li><a href="{php echo url('platform/site/article', array('operation' => 'display_category'))}">文章分类管理</a></li>
-</ol>
+	<li class="active"><a href="{php echo url('platform/site/article', array('operation' => 'display_category'))}">文章分类管理</a></li>
+</ul>
 <div class="we7-page-search we7-padding-bottom clearfix">
 	<div class="pull-right">
 		<a href="{php echo url('platform/site/article', array('operation' => 'edit_category'))}" class="btn btn-primary we7-padding-horizontal">+新建文章分类</a>

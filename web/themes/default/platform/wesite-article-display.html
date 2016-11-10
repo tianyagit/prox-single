@@ -4,6 +4,7 @@
 	<li><a href="{php echo url('platform/site/wesite')}">微官网列表</a></li>
 	<li><a href="{php echo url('platform/site/wesite_tpl')}">微官网模板</a></li>
 	<li class="active"><a href="{php echo url('platform/site/article')}">文章管理</a></li>
+	<li><a href="{php echo url('platform/site/article', array('operation' => 'display_category'))}">文章分类管理</a></li>
 </ul>
 <div id="js-wesite-article-display" ng-controller="wesiteArticleDisplay" ng-cloak>
 	<div class="we7-page-search we7-padding-bottom clearfix">
@@ -21,7 +22,6 @@
 		</form>
 		<div class="pull-right">
 			<a href="{php echo url('platform/site/article', array('operation' => 'edit_article'))}" class="btn btn-primary we7-padding-horizontal">+新建文章</a>
-			<a href="{php echo url('platform/site/article', array('operation' => 'display_category'))}" class="btn btn-danger we7-padding-horizontal">文章分类管理</a>
 		</div>
 	</div>
 	<table class="tabel we7-table article-list">
