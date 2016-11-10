@@ -188,24 +188,45 @@ if($do == 'article') {
 			break;
 		case 'del_article':
 			load()->func('file');
-			$id = intval($_GPC['id']);
-			$row = pdo_fetch("SELECT id,rid,kid,thumb FROM ".tablename('site_article')." WHERE id = :id", array(':id' => $id));
-			
-			if (empty($row)) {
-				message('抱歉，文章不存在或是已经被删除！');
-			}
-			if (!empty($row['thumb'])) {
-				file_delete($row['thumb']);
-			}
-			if(!empty($row['rid'])) {
-				pdo_delete('rule', array('id' => $row['rid'], 'uniacid' => $_W['uniacid']));
-				pdo_delete('rule_keyword', array('rid' => $row['rid'], 'uniacid' => $_W['uniacid']));
-				pdo_delete('news_reply', array('rid' => $row['rid']));
-			}
-			if(pdo_delete('site_article', array('id' => $id))){
-				message('删除成功！', referer(), 'success');
+			if (checksubmit('submit')) {
+				foreach ($_GPC['rid'] as $key => $id) {
+					$id = intval($id);
+					$row = pdo_fetch("SELECT id,rid,kid,thumb FROM ".tablename('site_article')." WHERE id = :id", array(':id' => $id));
+					
+					if (empty($row)) {
+						message('抱歉，文章不存在或是已经被删除！');
+					}
+					if (!empty($row['thumb'])) {
+						file_delete($row['thumb']);
+					}
+					if(!empty($row['rid'])) {
+						pdo_delete('rule', array('id' => $row['rid'], 'uniacid' => $_W['uniacid']));
+						pdo_delete('rule_keyword', array('rid' => $row['rid'], 'uniacid' => $_W['uniacid']));
+						pdo_delete('news_reply', array('rid' => $row['rid']));
+					}
+					pdo_delete('site_article', array('id' => $id));
+				}
+				message('批量删除成功！', referer(), 'success');
 			}else {
-				message('删除失败！', referer(), 'error');
+				$id = intval($_GPC['id']);
+				$row = pdo_fetch("SELECT id,rid,kid,thumb FROM ".tablename('site_article')." WHERE id = :id", array(':id' => $id));
+				
+				if (empty($row)) {
+					message('抱歉，文章不存在或是已经被删除！');
+				}
+				if (!empty($row['thumb'])) {
+					file_delete($row['thumb']);
+				}
+				if(!empty($row['rid'])) {
+					pdo_delete('rule', array('id' => $row['rid'], 'uniacid' => $_W['uniacid']));
+					pdo_delete('rule_keyword', array('rid' => $row['rid'], 'uniacid' => $_W['uniacid']));
+					pdo_delete('news_reply', array('rid' => $row['rid']));
+				}
+				if(pdo_delete('site_article', array('id' => $id))){
+					message('删除成功！', referer(), 'success');
+				}else {
+					message('删除失败！', referer(), 'error');
+				}				
 			}
 			break;
 		case 'edit_category':
@@ -347,29 +368,41 @@ if($do == 'article') {
 			break;
 		case 'del_category':
 			load()->func('file');
-			$id = intval($_GPC['id']);
-			$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
-			if (empty($category)) {
-				message('抱歉，分类不存在或是已经被删除！', referer(), 'error');
-			}
-			$navs = pdo_fetchall("SELECT icon, id FROM ".tablename('site_nav')." WHERE id IN (SELECT nid FROM ".tablename('site_category')." WHERE id = {$id} OR parentid = '$id')", array(), 'id');
-			if (!empty($navs)) {
-				foreach ($navs as $row) {
-					file_delete($row['icon']);
+			if(checksubmit('submit')) {
+				foreach ($_GPC['rid'] as $key => $id) {
+					$id = intval($id);
+					$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
+					if (empty($category)) {
+						message('抱歉，分类不存在或是已经被删除！', referer(), 'error');
+					}
+					$navs = pdo_fetchall("SELECT icon, id FROM ".tablename('site_nav')." WHERE id IN (SELECT nid FROM ".tablename('site_category')." WHERE id = {$id} OR parentid = '$id')", array(), 'id');
+					if (!empty($navs)) {
+						foreach ($navs as $row) {
+							file_delete($row['icon']);
+						}
+						pdo_query("DELETE FROM ".tablename('site_nav')." WHERE id IN (".implode(',', array_keys($navs)).")");
+					}
+					pdo_delete('site_category', array('id' => $id));
 				}
-				pdo_query("DELETE FROM ".tablename('site_nav')." WHERE id IN (".implode(',', array_keys($navs)).")");
+				message('分类批量删除成功！', referer(), 'success');
+			}else {
+				$id = intval($_GPC['id']);
+				$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
+				if (empty($category)) {
+					message('抱歉，分类不存在或是已经被删除！', referer(), 'error');
+				}
+				$navs = pdo_fetchall("SELECT icon, id FROM ".tablename('site_nav')." WHERE id IN (SELECT nid FROM ".tablename('site_category')." WHERE id = {$id} OR parentid = '$id')", array(), 'id');
+				if (!empty($navs)) {
+					foreach ($navs as $row) {
+						file_delete($row['icon']);
+					}
+					pdo_query("DELETE FROM ".tablename('site_nav')." WHERE id IN (".implode(',', array_keys($navs)).")");
+				}
+				pdo_delete('site_category', array('id' => $id, 'parentid' => $id), 'OR');
+				message('分类删除成功！', referer(), 'success');
 			}
-			pdo_delete('site_category', array('id' => $id, 'parentid' => $id), 'OR');
-			message('分类删除成功！', referer(), 'success');
 			break;
 		case 'display_category':
-			if (!empty($_GPC['displayorder'])) {
-				foreach ($_GPC['displayorder'] as $id => $displayorder) {
-					$update = array('displayorder' => intval($displayorder['displayorder']));
-					pdo_update('site_category', $update, array('id' => $id));
-				}
-				message('分类排序更新成功！', 'refresh', 'success');
-			}
 			$children = array();
 			$category = pdo_fetchall("SELECT * FROM ".tablename('site_category')." WHERE uniacid = '{$_W['uniacid']}' ORDER BY parentid, displayorder DESC, id");
 			foreach ($category as $index => $row) {
@@ -380,7 +413,7 @@ if($do == 'article') {
 			}
 			template('platform/wesite-category-display');
 			break;
-		default:
+		default://display_article
 			$category = pdo_fetchall("SELECT id,parentid,name FROM ".tablename('site_category')." WHERE uniacid = '{$_W['uniacid']}' ORDER BY parentid ASC, displayorder ASC, id ASC ", array(), 'id');
 			$parent = array();
 			$children = array();
