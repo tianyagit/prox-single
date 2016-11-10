@@ -304,18 +304,21 @@ function tpl_form_field_category_2level($name, $parents, $children, $parentid, $
 			$html .=
 				'<div class="row row-fix tpl-category-container">
 			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-				<select class="form-control tpl-category-parent" id="' . $name . '_parent" name="' . $name . '[parentid]" onchange="renderCategory(this,\'' . $name . '\')">
+				<select class="form-control tpl-category-parent we7-select" id="' . $name . '_parent" name="' . $name . '[parentid]" onchange="renderCategory(this,\'' . $name . '\')">
 					<option value="0">请选择一级分类</option>';
 			$ops = '';
-			foreach ($parents as $row) {
-				$html .= '
-					<option value="' . $row['id'] . '" ' . (($row['id'] == $parentid) ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
+			if(!empty($parents)) {
+				foreach ($parents as $row) {
+					$html .= '
+						<option value="' . $row['id'] . '" ' . (($row['id'] == $parentid) ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
+				}
 			}
+			
 			$html .= '
 				</select>
 			</div>
 			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-				<select class="form-control tpl-category-child" id="' . $name . '_child" name="' . $name . '[childid]">
+				<select class="form-control tpl-category-child we7-select" id="' . $name . '_child" name="' . $name . '[childid]">
 					<option value="0">请选择二级分类</option>';
 			if (!empty($parentid) && !empty($children[$parentid])) {
 				foreach ($children[$parentid] as $row) {

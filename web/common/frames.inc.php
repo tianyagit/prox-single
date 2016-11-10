@@ -46,6 +46,11 @@ $ms['account'] = array(
 					'url' => url('platform/site'),
 					'promisson_name' => 'platform_site',
 				),
+				'mc_fans' => array(
+					'title' => '粉丝列表',
+					'url' => url('mc/fans'),
+					'promisson_name' => 'mc_fans',
+				),
 			)
 		)
 	),
