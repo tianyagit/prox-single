@@ -307,10 +307,13 @@ function tpl_form_field_category_2level($name, $parents, $children, $parentid, $
 				<select class="form-control tpl-category-parent" id="' . $name . '_parent" name="' . $name . '[parentid]" onchange="renderCategory(this,\'' . $name . '\')">
 					<option value="0">请选择一级分类</option>';
 			$ops = '';
-			foreach ($parents as $row) {
-				$html .= '
-					<option value="' . $row['id'] . '" ' . (($row['id'] == $parentid) ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
+			if(!empty($parents)) {
+				foreach ($parents as $row) {
+					$html .= '
+						<option value="' . $row['id'] . '" ' . (($row['id'] == $parentid) ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
+				}
 			}
+			
 			$html .= '
 				</select>
 			</div>
