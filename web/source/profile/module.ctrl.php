@@ -23,18 +23,13 @@ if($do == 'display') {
 	$shortcuts = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'display' => STATUS_ON), array('module'), 'module');
 	if(!empty($modulelist)) {
 		foreach($modulelist as $i => &$module) {
-			if (!empty($_W['setting']['permurls']['modules']) && !in_array($module['name'], $_W['setting']['permurls']['modules'])) {
+			if (!empty($_W['setting']['permurls']['modules']) && !in_array($module['name'], $_W['setting']['permurls']['modules']) || $module['issystem']) {
 				unset($modulelist[$i]);
 				continue;
 			}
 			$module['shortcut'] = !empty($shortcuts[$module['name']]);
 			$module['official'] = empty($module['issystem']) && (strexists($module['author'], 'WeEngine Team') || strexists($module['author'], '微擎团队'));
-			if($module['issystem']) {
-				$path = '../framework/builtin/' . $module['name'];
-			} else {
-				$path = '../addons/' . $module['name'];
-			}
-			$preview = $path . '/preview-custom.jpg';
+			$preview = '../addons/' . $module['name'] . '/preview-custom.jpg';
 			if(!file_exists($preview)) {
 				$preview = $path . '/preview.jpg';
 			}
