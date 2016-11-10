@@ -50,9 +50,13 @@ $ms['account'] = array(
 					'title' => '粉丝列表',
 					'url' => url('mc/fans'),
 					'promisson_name' => 'mc_fans',
-				),
-			)
-		)
+				)
+			),
+		),
+		'platform_module' => array(
+			'title' => '应用模块',
+			'menu' => array(),
+		),
 	),
 );
 
@@ -206,12 +210,12 @@ $ms['system'] = array(
 				),
 				'system_setting_sytle' => array(
 					'title' => '木马查杀',
-					'url' => url('system/tools/scan'),
+					'url' => url('system/scan'),
 					'permission_name' => 'system_setting_sytle',
 				),
 				'system_setting_homepage' => array(
 					'title' => '检测文件BOM',
-					'url' => url('system/tools/bom'),
+					'url' => url('system/bom'),
 					'permission_name' => 'system_setting_homepage',
 				),
 			)

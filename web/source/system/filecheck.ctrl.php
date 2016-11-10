@@ -3,6 +3,8 @@
  * 系统文件检测
  * 'WeEngine System' Copyright (c) 2013 WE7.CC
  */
+defined('IN_IA') or exit('Access Denied');
+
 load()->func('file');
 load()->model('cloud');
 load()->func('communication');
@@ -10,7 +12,7 @@ load()->func('communication');
 $dos = array('check');
 $do = in_array($do, $dos) ? $do : '';
 
-$_W['page']['title'] = '系统文件检测 - 常用系统工具 - 系统管理';
+$_W['page']['title'] = '系统文件校验 - 常用系统工具 - 系统管理';
 
 if ($do == 'check') {
 	$filetree = file_tree(IA_ROOT);
@@ -22,12 +24,11 @@ if ($do == 'check') {
 	$data = cloud_request('http://v2.addons.we7.cc/gateway.php', $params);
 	$file = IA_ROOT . '/data/application.build';
 	$ret = _cloud_shipping_parse($data, $file);
-	is_array($ret['files'])?null:$ret['files'] = array();
-		foreach ($ret['files'] as $value) {
-			$clouds[$value['path']]['path'] = $value['path'];
-			$clouds[$value['path']]['checksum'] = $value['checksum'];
-		}
-
+	is_array($ret['files']) ? null : $ret['files'] = array();
+	foreach ($ret['files'] as $value) {
+		$clouds[$value['path']]['path'] = $value['path'];
+		$clouds[$value['path']]['checksum'] = $value['checksum'];
+	}
 	foreach ($filetree as $filename) {
 		$file = str_replace(IA_ROOT, '', $filename);
 		$ignore_list = array(strpos($file, '/data/tpl/') === 0, substr($file, -8) == 'map.json',strpos($file, '/data/logs') === 0, strpos($file, '/attachment') === 0, $file == '/data/config.php', strpos($file, '/data') === 0 && substr($file, -4) == 'lock', strpos($file, '/app/themes/default') === 0, $file == '/framework/version.inc.php');
@@ -90,7 +91,7 @@ if ($do == 'check') {
 			$unknown[] = $file;
 		}
 	}
-	is_array($clouds)?null:$clouds = array();
+	is_array($clouds) ? null : $clouds = array();
 	foreach ($clouds as $value) {
 		$cloud = IA_ROOT.$value['path'];
 		if (!in_array($cloud, $filetree)) {
@@ -103,4 +104,5 @@ if ($do == 'check') {
 	$count_lose = count($lose);
 	$count_modify = count($modify);
 }
+
 template('system/filecheck');
