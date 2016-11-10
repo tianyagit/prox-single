@@ -43,16 +43,16 @@ if ($do == 'display') {
 		$param[':nickname'] = "%".$nickname."%";
 		$param[':openid'] = $nickname;
 	}
-	if (!empty($_GPC['uid'])) {
-		$condition .= " AND f.uid = :uid ";
-		$param[':uid'] = intval($_GPC['uid']);
-	}
-	if (!empty($_GPC['time']['start'])) {
-		$starttime = strtotime($_GPC['time']['start']);
-		$endtime = strtotime($_GPC['time']['end']) + 86399;
-		$param[':starttime'] = $starttime;
-		$param[':endtime'] = $endtime;
-	}
+//	if (!empty($_GPC['time']['start'])) {
+//		$starttime = strtotime($_GPC['time']['start']);
+//		$endtime = strtotime($_GPC['time']['end']) + 86399;
+//	} else {
+//		$starttime = strtotime('-3 month', time());
+//		$endtime = time();
+//	}
+//	$param[':starttime'] = $starttime;
+//	$param[':endtime'] = $endtime;
+
 	$follow = intval($_GPC['follow']) ? intval($_GPC['follow']) : 1;
 	if ($follow == 1) {
 		$orderby = " ORDER BY f.`followtime` DESC";
@@ -67,7 +67,7 @@ if ($do == 'display') {
 			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
 		}
 	}
-	$fans_list = pdo_fetchall("SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize, $param);
+	$fans_list = pdo_fetchall("SELECT a.* FROM (SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize. " ) as a RIGHT JOIN ". tablename('mc_members') ." AS b ON a.uid = b.uid WHERE b.mobile <> ''", $param);
 	if (!empty($fans_list)) {
 		foreach ($fans_list as &$v) {
 			$v['tag_show'] = mc_show_tag($v['groupid']);
