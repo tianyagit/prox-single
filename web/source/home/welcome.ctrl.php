@@ -7,13 +7,12 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('platform', 'ext');
 $do = in_array($do, $dos) ? $do : 'platform';
+define('FRAME', 'account');
 
 if ($do == 'platform') {
-	define('FRAME', 'account');
 	
 	template('home/welcome');
 } elseif ($do == 'ext') {
-	define('FRAME', 'module');
 	
 	template('home/welcome-ext');
 }

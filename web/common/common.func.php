@@ -130,9 +130,61 @@ function buildframes($framename = ''){
 		}
 	}
 	//@@todo 进入模块界面后权限
-	if (!empty($_GPC['m'])) {
+	$modulename = trim($_GPC['m']);
+	$eid = intval($_GPC['eid']);
+	if (!empty($modulename) || !empty($eid)) {
+		if(empty($modulename) && !empty($eid)) {
+			$modulename = pdo_getcolumn('modules_bindings', array('eid' => $eid), 'module');
+		}
+		$module = module_fetch($modulename);
+		$entries = module_entries($modulename);
 		
+		$frames['account']['section'] = array();
+		if($module['settings']) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_settings'] = array(
+				'title' => "<i class='fa fa-cog'></i> &nbsp;&nbsp;参数设置",
+				'url' => url('profile/module/setting', array('m' => $m)),
+			);
+		}
+		if($entries['home']) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_home'] = array(
+				'title' => "<i class='fa fa-home'></i> &nbsp;&nbsp;微站首页导航",
+				'url' => url('site/nav/home', array('m' => $m)),
+			);
+		}
+		if($entries['profile']) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_profile'] = array(
+				'title' => "<i class='fa fa-user'></i> &nbsp;&nbsp;个人中心导航",
+				'url' => url('site/nav/profile', array('m' => $m)),
+			);
+		}
+		if($entries['shortcut']) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_shortcut'] = array(
+				'title' => "<i class='fa fa-plane'></i> &nbsp;&nbsp;快捷菜单",
+				'url' => url('site/nav/shortcut', array('m' => $m)),
+			);
+		}
+		
+		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_entry'] = array(
+				'title' => "<i class='fa fa-plane'></i> 应用入口",
+				'url' => url('site/nav/shortcut', array('m' => $m)),
+			);
+		}
+		if (!empty($entries['menu'])) {
+			$frames['account']['section']['platform_module_menu']['title'] = '业务菜单';
+			foreach($entries['menu'] as $key => $row) {
+				if(empty($row)) continue;
+				foreach($row as $li) {
+					$frames['account']['section']['platform_module_menu']['menu']['platform_module_menu'.$row['eid']] = array(
+						'title' => "<i class='fa fa-plane'></i> {$row['title']}",
+						'url' => url('site/nav/shortcut', array('m' => $m)),
+					);
+				}
+			}
+		}
 	}
+
 	//@@todo 操作员界面菜单
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
 		

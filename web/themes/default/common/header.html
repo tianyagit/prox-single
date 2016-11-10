@@ -103,9 +103,11 @@
 				<div class="left-menu">
 					{loop $frames['section'] $sectionid $section}
 					<div class="panel panel-menu">
-						<div class="panel-heading">
-							{$section['title']}<span class="wi wi-appsetting pull-right"></span>
-						</div>
+						{if $section['title']}
+							<div class="panel-heading">
+								{$section['title']}<span class="wi wi-appsetting pull-right"></span>
+							</div>
+						{/if}
 						<ul class="list-group">
 							{loop $section['menu'] $menuid $menu}
 							<li class="list-group-item {if $menu['active']}active{/if}">
