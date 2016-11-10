@@ -4,11 +4,12 @@
  * $sn$
  */
 
+defined('IN_IA') or exit('Access Denied');
+
 $dos = array('opcache');
 $do = in_array($do, $dos) ? $do : 'index';
 
 $_W['page']['title'] = '性能优化 - 常用系统工具 - 系统管理';
-
 
 if ($do == 'opcache') {
 	opcache_reset();
