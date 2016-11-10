@@ -80,9 +80,9 @@
 		}
 	</script>
 {/if}
-{if $_GPC['c'] != 'account'}
 <div class="main">
 	<div class="container">
+		{if FRAME == 'account'}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" onerror="this.src='./resource/images/gw-wx.gif'">
@@ -122,4 +122,4 @@
 					{/loop}
 				</div>
 				<div class="right-contnt">
-{/if}
+		{/if}
