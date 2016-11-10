@@ -1,12 +1,5 @@
 {template 'common/header'}
-<ol class="breadcrumb">
-	<li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
-	<li><a href="{url 'system/welcome'}">系统管理</a></li>
-	<li class="active"><a href="{url 'system/optimize'}">性能优化</a></li>
-</ol>
-<ul class="nav nav-tabs">
-	<li class="active"><a href="{php echo url('system/optimize');}">性能优化</a></li>
-</ul>
+<div class="we7-page-title">性能优化</div>
 <div class="clearfix">
 	<div class="alert alert-info">
 		<i class="fa fa-info-circle"></i> 启用内存优化功能将会大幅度提升程序性能和服务器的负载能力，内存优化功能需要服务器系统以及PHP扩展模块支持<br>
@@ -16,17 +9,17 @@
 	</div>
 	<div class="panel panel-info">
 		<div class="panel-heading">当前内存工作状态</div>
-		<div class="panel-body table-responsive">
-			<table class="table table-hover">
-				<thead>
+			<table class="tabel we7-table site-list">
+				<col width="120px"/>
+				<col width="120px"/>
+				<col width="120px"/>
+				<col width=""/>
 				<tr>
 					<th>内存接口</th>
 					<th>PHP 扩展环境</th>
 					<th>Config 设置</th>
 					<th></th>
 				</tr>
-				</thead>
-				<tbody>
 				{loop $extensions $key $extension}
 				<tr>
 					<td><span class="label label-success">{$key}</span></td>
@@ -55,18 +48,14 @@
 					</td>
 				</tr>
 				{/loop}
-				</tbody>
 			</table>
-		</div>
 	</div>
 	<div class="panel panel-info">
 		<div class="panel-heading">数据库读写分离工作状态</div>
-		<div class="panel-body table-responsive">
-			<table class="table table-hover">
-				<tbody>
+			<table class="tabel we7-table site-list">
 				<tr>
 					<th width="200">读写分离状态</th>
-					<td>
+					<td class="text-left">
 						{if $slave['slave_status']}
 						<span class="label label-success">已开启</span>
 						{else}
@@ -75,7 +64,7 @@
 					</td>
 				<tr>
 					<th>session存储方式</th>
-					<td>
+					<td class="text-left">
 						{if $extensions['memcache']['status'] && $setting['memcache']['session'] == 1}
 						<span class="label label-danger">memcache</span>
 						{else}
@@ -85,7 +74,7 @@
 				</tr>
 				<tr>
 					<th>禁用从数据库的数据表</th>
-					<td>
+					<td class="text-left">
 						{if !empty($slave['common']['slave_except_table'])}
 							{loop $slave['common']['slave_except_table'] $row}
 								{$row}
@@ -95,18 +84,14 @@
 						{/if}
 					</td>
 				</tr>
-				</tbody>
 			</table>
-		</div>
 	</div>
 	<div class="panel panel-info">
 		<div class="panel-heading">远程访问代理设置</div>
-		<div class="panel-body table-responsive">
-			<table class="table">
-				<tbody>
+			<table class="tabel we7-table site-list">
 				<tr>
 					<th width="200">状态</th>
-					<td>
+					<td class="text-left">
 						{if !empty($setting['proxy']['host'])}
 							<span class="label label-success">已开启</span>
 						{else}
@@ -117,12 +102,10 @@
 				{if !empty($setting['proxy']['host'])}
 				<tr>
 					<th>远程地址</th>
-					<td>{$setting['proxy']['host']} 因安全原因，密码不予显示</td>
+					<td class="text-left">{$setting['proxy']['host']} 因安全原因，密码不予显示</td>
 				</tr>
 				{/if}
-				</tbody>
 			</table>
-		</div>
 	</div>
 </div>
 {template 'common/footer'}
