@@ -1,56 +1,52 @@
 {template 'common/header'}
-<div class="main">
-	<div class="container">
-		<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" ng-cloak>
-			<div class="panel-heading">
-				选择公众号
-			</div>
-			<div class="panel-body">
-				<div class="cut-header">
-					<form action="./index.php" method="get">
-						<input type="hidden" name="c" value="account">
-						<input type="hidden" name="a" value="display">
-						<div class="cut-search" style="margin-left: 60px;">
-							<div class="input-group pull-left">
-								<input class="form-control" name="keyword" value="{$_GPC['keyword']}" type="text" placeholder="请输入微信公众号名称" >
-								<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
-							</div>
-						</div>	
-					</form>
-					<div class="cut-manage pull-right">
-						<a href="javascript:;" class="color-default"><i class="fa fa-plus"></i>新增公众号</a>
-						<a href="javascript:;" class="color-default"><i class="wi wi-wechatstatistics"></i>公众号管理</a>
+<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" ng-cloak>
+	<div class="panel-heading">
+		选择公众号
+	</div>
+	<div class="panel-body">
+		<div class="cut-header">
+			<form action="./index.php" method="get">
+				<input type="hidden" name="c" value="account">
+				<input type="hidden" name="a" value="display">
+				<div class="cut-search" style="margin-left: 60px;">
+					<div class="input-group pull-left">
+						<input class="form-control" name="keyword" value="{$_GPC['keyword']}" type="text" placeholder="请输入微信公众号名称" >
+						<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
 					</div>
 				</div>
-				<div class="clearfix"></div>
-				<ul class="letters-list cut-wechat-letters">
-					<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
-						<a href="javascript:;" ng-bind="letter"></a>
-					</li>
-				</ul>
-				<ul class="cut-wechat-list">
-					<span ng-repeat="account in accountList">
-						<li ng-repeat="detail in account.details" ng-show="activeLetter ? activeLetter == detail.title_first_pinyin : '1'">
-							<div class="cut-wechat-item">
-								<i class="fa fa-2x fa-check-circle text-success hide" ng-style="{'position':'absolute', 'top':'15px', 'right':'15px'}" ng-if="detail.isconnect == 1"></i>
-								<i class="fa fa-2x fa-times-circle text-warning hide" ng-style="{'position':'absolute', 'top':'15px', 'right':'15px'}" ng-if="detail.isconnect == 0"></i>
-								<img ng-src="{{detail.thumb}}" onerror="this.src='./resource/images/gw-wx.gif'"/>
-								<p class="wechat-name" ng-bind="detail.name"></p>
-								<span class="wechat-versions" ng-if="detail.level == 1">类型：普通订阅号</span>
-								<span class="wechat-versions" ng-if="detail.level == 2">类型：普通服务号</span>
-								<span class="wechat-versions" ng-if="detail.level == 3">类型：认证订阅号</span>
-								<span class="wechat-versions" ng-if="detail.level == 4">类型：认证服务号</span>
-								<div class="cover-dark">
-									<a ng-href="{{account.url}}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
-									<a ng-href="{{account.url}}" class="manage">进入公众号</a>
-									<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)">置顶</a>
-								</div>
-							</div>
-						</li>	
-					</span>
-				</ul>
+			</form>
+			<div class="cut-manage pull-right">
+				<a href="javascript:;" class="color-default"><i class="fa fa-plus"></i>新增公众号</a>
+				<a href="javascript:;" class="color-default"><i class="wi wi-wechatstatistics"></i>公众号管理</a>
 			</div>
 		</div>
+		<div class="clearfix"></div>
+		<ul class="letters-list cut-wechat-letters">
+			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
+				<a href="javascript:;" ng-bind="letter"></a>
+			</li>
+		</ul>
+		<ul class="cut-wechat-list">
+			<span ng-repeat="account in accountList">
+				<li ng-repeat="detail in account.details" ng-show="activeLetter ? activeLetter == detail.title_first_pinyin : '1'">
+					<div class="cut-wechat-item">
+						<i class="fa fa-2x fa-check-circle text-success hide" ng-style="{'position':'absolute', 'top':'15px', 'right':'15px'}" ng-if="detail.isconnect == 1"></i>
+						<i class="fa fa-2x fa-times-circle text-warning hide" ng-style="{'position':'absolute', 'top':'15px', 'right':'15px'}" ng-if="detail.isconnect == 0"></i>
+						<img ng-src="{{detail.thumb}}" onerror="this.src='./resource/images/gw-wx.gif'"/>
+						<p class="wechat-name" ng-bind="detail.name"></p>
+						<span class="wechat-versions" ng-if="detail.level == 1">类型：普通订阅号</span>
+						<span class="wechat-versions" ng-if="detail.level == 2">类型：普通服务号</span>
+						<span class="wechat-versions" ng-if="detail.level == 3">类型：认证订阅号</span>
+						<span class="wechat-versions" ng-if="detail.level == 4">类型：认证服务号</span>
+						<div class="cover-dark">
+							<a ng-href="{{account.url}}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
+							<a ng-href="{{account.url}}" class="manage">进入公众号</a>
+							<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)">置顶</a>
+						</div>
+					</div>
+				</li>	
+			</span>
+		</ul>
 	</div>
 </div>
 <script>
