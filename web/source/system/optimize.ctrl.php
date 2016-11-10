@@ -42,6 +42,7 @@ if ($do == 'opcache') {
 	if ($extensions['memcache']['status']) {
 		$memobj = cache_memcache();
 		if (!empty($memobj) && method_exists($memobj, 'getExtendedStats')) {
+			//缓存服务器池中所有服务器统计信息
 			$status = $memobj->getExtendedStats();
 			if (!empty($status)) {
 				foreach ($status as $server => $row) {
