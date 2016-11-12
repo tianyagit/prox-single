@@ -80,9 +80,9 @@
 		}
 	</script>
 {/if}
-{if $_GPC['c'] != 'account'}
 <div class="main">
 	<div class="container">
+		{if FRAME == 'account'}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" onerror="this.src='./resource/images/gw-wx.gif'">
@@ -103,18 +103,25 @@
 				<div class="left-menu">
 					{loop $frames['section'] $sectionid $section}
 					<div class="panel panel-menu">
-						<div class="panel-heading">
-							{$section['title']}<span class="wi wi-appsetting pull-right"></span>
-						</div>
+						{if $section['title']}
+							<div class="panel-heading">
+								{$section['title']}<span class="wi wi-appsetting pull-right"></span>
+							</div>
+						{/if}
 						<ul class="list-group">
 							{loop $section['menu'] $menuid $menu}
 							<li class="list-group-item {if $menu['active']}active{/if}">
-								<a href="{$menu['url']}"><i class="fa fa-adjust"></i> {$menu['title']}</a>
+								<a href="{$menu['url']}">{if $menu['icon']}<img src="{$menu['icon']}" />{/if} {$menu['title']}</a>
 							</li>
 							{/loop}
+							{if $sectionid == 'platform_module'}
+							<li class="list-group-item list-group-more">
+								<a href="{url 'profile/module'}"><span class="label label-more">更多应用</span></a>
+							</li>
+							{/if}
 						</ul>
 					</div>
 					{/loop}
 				</div>
 				<div class="right-contnt">
-{/if}
+		{/if}
