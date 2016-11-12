@@ -233,6 +233,7 @@ function module_build_form($name, $rid, $option = array()) {
  * @return array 模块信息
  */
 function module_fetch($name) {
+	load()->model('account');
 	$modules = uni_modules();
 	return $modules[$name];
 }

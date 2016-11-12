@@ -50,9 +50,13 @@ $ms['account'] = array(
 					'title' => '粉丝列表',
 					'url' => url('mc/fans'),
 					'promisson_name' => 'mc_fans',
-				),
-			)
-		)
+				)
+			),
+		),
+		'platform_module' => array(
+			'title' => '应用模块',
+			'menu' => array(),
+		),
 	),
 );
 

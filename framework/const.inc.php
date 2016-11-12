@@ -70,3 +70,6 @@ define('ATTACH_FTP', 1);//远程附件类型：ftp
 define('ATTACH_OSS', 2);//远程附件类型：阿里云
 define('ATTACH_QINIU', 3);//远程附件类型：七牛
 define('ATTACH_COS', 4);//远程附件类型：腾讯云对象存储
+
+define('STATUS_OFF', 0); //关闭状态
+define('STATUS_ON', 1); //开启状态
