@@ -155,33 +155,33 @@ $ms['system'] = array(
 			'title' => '设置',
 			'menu' => array(
 				'system_setting_attachment' => array(
-					'title' => '附件设置',
-					'url' => url('system/profile'),
+					'title' => '更新缓存',
+					'url' => url('system/updatecache'),
 					'permission_name' => 'system_setting_attachment',
 				),
 				'system_setting_updatecache' => array(
-					'title' => '更新缓存',
-					'url' => url('system/user'),
+					'title' => '站点设置',
+					'url' => url('system/site'),
 					'permission_name' => 'system_setting_updatecache',
 				),
 				'system_setting_performance' => array(
-					'title' => '性能优化',
-					'url' => url('system/user'),
+					'title' => '附件设置',
+					'url' => url('system/attachment'),
 					'permission_name' => 'system_setting_performance',
 				),
 				'system_setting_menu' => array(
-					'title' => '系统菜单',
-					'url' => url('system/profile'),
+					'title' => '其他设置',
+					'url' => url('system/common'),
 					'permission_name' => 'system_setting_menu',
 				),
 				'system_setting_sytle' => array(
-					'title' => '后台皮肤',
-					'url' => url('system/user'),
+					'title' => '系统信息',
+					'url' => url('system/systeminfo'),
 					'permission_name' => 'system_setting_sytle',
 				),
 				'system_setting_homepage' => array(
-					'title' => '首页样式',
-					'url' => url('system/user'),
+					'title' => '查看日志',
+					'url' => url('system/logs'),
 					'permission_name' => 'system_setting_homepage',
 				),
 			)
