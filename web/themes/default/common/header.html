@@ -82,7 +82,7 @@
 {/if}
 <div class="main">
 	<div class="container">
-		{if FRAME == 'account'}
+		{if in_array(FRAME, array('account', 'system'))}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" onerror="this.src='./resource/images/gw-wx.gif'">
