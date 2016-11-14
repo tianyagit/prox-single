@@ -80,9 +80,9 @@
 		}
 	</script>
 {/if}
-{if $_GPC['c'] != 'account'}
 <div class="main">
 	<div class="container">
+		{if in_array(FRAME, array('account', 'system'))}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" onerror="this.src='./resource/images/gw-wx.gif'">
@@ -103,9 +103,11 @@
 				<div class="left-menu">
 					{loop $frames['section'] $sectionid $section}
 					<div class="panel panel-menu">
-						<div class="panel-heading">
-							{$section['title']}<span class="wi wi-appsetting pull-right"></span>
-						</div>
+						{if $section['title']}
+							<div class="panel-heading">
+								{$section['title']}<span class="wi wi-appsetting pull-right"></span>
+							</div>
+						{/if}
 						<ul class="list-group">
 							{loop $section['menu'] $menuid $menu}
 							<li class="list-group-item {if $menu['active']}active{/if}">
@@ -122,4 +124,4 @@
 					{/loop}
 				</div>
 				<div class="right-contnt">
-{/if}
+		{/if}

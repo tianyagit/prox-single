@@ -60,7 +60,7 @@
 			{/if}
 		</span>
 		<div class="cover-dark">
-			<a href="" class="mange-goto"><i class="fa fa-angle-right"></i>进入应用</a>
+			<a href="{url 'home/welcome/ext'  array('m' => $row['name'])}" class="mange-goto"><i class="fa fa-angle-right"></i>进入应用</a>
 			{if !$row['issystem']}
 				{if $row['shortcut']}
 				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="fa fa-angle-right"></i> <span>移出菜单</span></a>
