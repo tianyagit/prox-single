@@ -9,7 +9,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display');
+$dos = array('display', 'addTag', 'delTag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag');
 $do = in_array($do, $dos) ? $do : 'display';
 
 load()->model('mc');
@@ -33,9 +33,9 @@ if ($do == 'display') {
 	if ($_GPC['type'] == 'bind') {
 		$condition .= " AND f.`uid` > 0";
 		$type = 'bind';
-	} elseif($_GPC['type'] == 'unbind') {
+	} elseif($_GPC['type'] == '') {
 		$condition .= " AND f.`uid` = 0";
-		$type = 'unbind';
+		$type = '';
 	}
 	$nickname = $_GPC['nickname'] ? addslashes(trim($_GPC['nickname'])) : '';
 	if (!empty($nickname)) {
@@ -43,16 +43,15 @@ if ($do == 'display') {
 		$param[':nickname'] = "%".$nickname."%";
 		$param[':openid'] = $nickname;
 	}
-//	if (!empty($_GPC['time']['start'])) {
-//		$starttime = strtotime($_GPC['time']['start']);
-//		$endtime = strtotime($_GPC['time']['end']) + 86399;
-//	} else {
-//		$starttime = strtotime('-3 month', time());
-//		$endtime = time();
-//	}
-//	$param[':starttime'] = $starttime;
-//	$param[':endtime'] = $endtime;
-
+	if (!empty($_GPC['time']['start'])) {
+		$starttime = strtotime($_GPC['time']['start']);
+		$endtime = strtotime($_GPC['time']['end']) + 86399;
+	} else {
+		$starttime = strtotime('-3 month', time());
+		$endtime = time();
+	}
+	$param[':starttime'] = $starttime;
+	$param[':endtime'] = $endtime;
 	$follow = intval($_GPC['follow']) ? intval($_GPC['follow']) : 1;
 	if ($follow == 1) {
 		$orderby = " ORDER BY f.`followtime` DESC";
@@ -67,7 +66,7 @@ if ($do == 'display') {
 			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
 		}
 	}
-	$fans_list = pdo_fetchall("SELECT a.* FROM (SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize. " ) as a RIGHT JOIN ". tablename('mc_members') ." AS b ON a.uid = b.uid WHERE b.mobile <> ''", $param);
+	$fans_list = pdo_fetchall("SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize, $param);
 	if (!empty($fans_list)) {
 		foreach ($fans_list as &$v) {
 			$v['tag_show'] = mc_show_tag($v['groupid']);
@@ -121,6 +120,97 @@ if ($do == 'display') {
 	$total = pdo_fetchcolumn("SELECT COUNT(DISTINCT f.`fanid`) FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping').' AS m ON m.`fanid` = f.`fanid`'.$condition, $param);
 	$pager = pagination($total, $pageindex, $pagesize);
 	$fans['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_mapping_fans') . ' WHERE uniacid = :uniacid AND acid = :acid AND follow = 1', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
+}
+
+if ($do == 'addTag') {
+	$tag = $_GPC['tag'];
+	$wechat_api = WeAccount::create($_W['acid']);
+	$result = $wechat_api->fansTagAdd($tag);
+	if (is_error($result)) {
+		message($result, '', 'ajajx');
+	} else {
+		message(error(0), '', 'ajax');
+	}
+}
+
+if ($do == 'delTag') {
+	$tagid = intval($_GPC['tag']);
+	$wechat_api = WeAccount::create($_W['acid']);
+	$tags = $wechat_api->fansTagDelete($tagid);
+	if (!is_error($tags)) {
+		$fans_list = pdo_getall('mc_mapping_fans', array('groupid LIKE' => "%,{$tagid},%"));
+		$count = count($fans_list);
+		if (!empty($count)) {
+			$buffSize = ceil($count / 500);
+			for ($i = 0; $i < $buffSize; $i++) {
+				$sql = '';
+				$buffer = array_slice($fans_list, $i * 500, 500);
+				foreach ($buffer as $fans) {
+					$tagids = trim(str_replace(','.$tagid.',', ',', $fans['groupid']), ',');
+					if ($tagids == ',') {
+						$tagids = '';
+					}
+					$sql .= 'UPDATE ' . tablename('mc_mapping_fans') . " SET `groupid`='" . $tagids . "' WHERE `fanid`={$fans['fanid']};";
+				}
+				pdo_query($sql); 		// 500条更新，执行一次sql请求
+			}
+		}
+		pdo_delete('mc_fans_tag_mapping', array('tagid' => $tagid));
+		message(error(0, 'success'), '', 'ajax');
+	} else {
+		message(error(-1, $tags['message']), '', 'ajax');
+	}
+}
+
+if ($do == 'edit_tagname') {
+	$tag = intval($_GPC['tag']);
+	$tag_name = $_GPC['tag_name'];
+	$wechat_api = WeAccount::create($_W['acid']);
+	$result = $wechat_api->fansTagEdit($tag, $tag_name);
+	if (is_error($result)) {
+		message($result, '', 'ajax');
+	} else {
+		message(error('0'), '', 'ajax');
+	}
+}
+
+if ($do == 'edit_fans_tag') {
+	$fanid = intval($_GPC['fanid']);
+	$tags = $_GPC['tags'];
+	$openid = pdo_getcolumn('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'fanid' => $fanid), 'openid');
+	$wechat_api = WeAccount::create($_W['acid']);
+	$result = $wechat_api->fansTagTagging($openid, $tags);
+	if (!is_error($result)) {
+		pdo_delete('mc_fans_tag_mapping', array('fanid' => $fanid));
+		if (!empty($tags)) {
+			foreach ($tags as $tag) {
+				pdo_insert('mc_fans_tag_mapping', array('fanid' => $fanid, 'tagid' => $tag));
+			}
+			$tags = implode(',', $tags);
+			pdo_update('mc_mapping_fans', array('groupid' => $tags), array('fanid' => $fanid));
+		}
+	}
+	message($result, '', 'ajax');
+}
+
+if ($do == 'batch_edit_fans_tag') {
+	$openid_list = $_GPC['openid'];
+	$tags = $_GPC['tag'];
+	$wechat_api = WeAccount::create($_W['acid']);
+	foreach ($tags as $tag) {
+		$result = $wechat_api->fansTagBatchTagging($openid_list, $tags[0]);
+		if (!is_error($result)) {
+			foreach ($openid_list as $openid) {
+				$fan_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'openid' => $openid));
+				pdo_insert('mc_fans_tag_mapping', array('fanid' => $fan_info['fanid'], 'tagid' => $tag));
+				$groupid = $fan_info['group'].",".$tag;
+				pdo_update('mc_mapping_fans', array('groupid' => $groupid), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
+			}
+		} else {
+			message($result, '', 'ajax');
+		}
+	}
+	message(error(0), '', 'ajax');
 }
 template('mc/fans');
 
