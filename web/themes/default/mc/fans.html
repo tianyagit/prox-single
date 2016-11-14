@@ -122,12 +122,7 @@
 									{/loop}
 								</span>
 								<span class="tag-btn get-fans-tag" data-id="{$fan['fanid']}">
-									<i class="caret test put-group" data-toggle='popover' onclick="removePopover()"></i>
-									<script>
-										removePopover = function() {
-											$("[data-toggle='popover']").popover('hide');
-										}
-									</script>
+									<i class="put-group caret js-group" data-toggle='popover'></i>
 								</span>
 							</div>
 						</td>
@@ -182,6 +177,13 @@
 	</div>
 {$pager}
 <script>
+	$("[data-toggle='popover']").on('show.bs.popover', function () {
+		$(this).addClass('popovershow');
+		$("[data-toggle='popover']:not('.popovershow')").popover('hide');
+	});
+	$("[data-toggle='popover']").on('shown.bs.popover', function () {
+		$(this).removeClass('popovershow');
+	});
 	$(function(){
 		var uid = '';
 		$(".add-group").popover({
@@ -202,9 +204,7 @@
 			template : '<div class="popover we7-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
 			content : $('.popover-del-group').html(),
 		});
-		$('.popover-hide').click(function(){
-			$(".fans-group-del").popover('hide');
-		});
+
 		$(".put-group").popover({
 			placement : 'bottom',
 			html : true,
@@ -277,7 +277,7 @@
 			}
 		}
 		if (checktags.length > 3) {
-			util.message('最多只能打3个标签', '', 'info');
+			util.message('每个粉丝最多打3个标签', '', 'info');
 			return false;
 		}
 		if (openid.length < 1) {
