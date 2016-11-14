@@ -123,7 +123,7 @@ function buildframes($framename = ''){
 					$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 						'title' => $module['title'],
 						'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
-						'url' => url('home/module', array('modulename' => $module['name'])),
+						'url' => url('home/welcome/ext', array('m' => $module['name'])),
 					);
 				}
 			}

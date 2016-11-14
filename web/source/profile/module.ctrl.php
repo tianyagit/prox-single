@@ -19,14 +19,15 @@ $modulelist = uni_modules(false);
 
 if($do == 'display') {
 	$_W['page']['title'] = '公众号 - 应用模块 - 更多应用';
-
-	$shortcuts = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'display' => STATUS_ON), array('module'), 'module');
+	$pinyinlist = array();
+	$shortcuts = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'display' => STATUS_ON), array('module'), 'module', 'displayorder DESC');
 	if(!empty($modulelist)) {
 		foreach($modulelist as $i => &$module) {
 			if (!empty($_W['setting']['permurls']['modules']) && !in_array($module['name'], $_W['setting']['permurls']['modules']) || $module['issystem']) {
 				unset($modulelist[$i]);
 				continue;
 			}
+			$module['first_pinyin'] = get_first_char($module['title']);
 			$module['shortcut'] = !empty($shortcuts[$module['name']]);
 			$module['official'] = empty($module['issystem']) && (strexists($module['author'], 'WeEngine Team') || strexists($module['author'], '微擎团队'));
 			$preview = '../addons/' . $module['name'] . '/preview-custom.jpg';
@@ -34,9 +35,11 @@ if($do == 'display') {
 				$preview = $path . '/preview.jpg';
 			}
 			$module['preview'] = $preview;
+			$pinyinlist[$module['first_pinyin']] = $module['first_pinyin'];
 		}
 		unset($module);
 	}
+	sort($pinyinlist);
 	template('profile/module');
 } elseif ($do == 'shortcut') {
 	$status = intval($_GPC['shortcut']);
@@ -80,6 +83,15 @@ if($do == 'display') {
 	));
 	cache_build_account_modules();
 	message('模块操作成功！', referer(), 'success');
+} elseif ($do == 'top') {
+	$modulename = $_GPC['modulename'];
+	$module = $modulelist[$modulename];
+	if(empty($module)) {
+		message('抱歉，你操作的模块不能被访问！');
+	}
+	
+	$max_displayorder = pdo_getcolumn('uni_account_modules', array(), 'MAX(displayorder) as displayorder');
+	print_r($max_displayorder);exit;
 } elseif ($do == 'setting') {
 	//@@todo 模块设置处还未优化
 	$modulename = $_GPC['modulename'];
