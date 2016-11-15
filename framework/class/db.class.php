@@ -289,9 +289,13 @@ class DB {
 	}
 	
 	public function getcolumn($tablename, $params = array(), $field) {
-		$result = $this->get($tablename, $params, array($field));
+		$result = $this->get($tablename, $params, $field);
 		if (!empty($result)) {
-			return $result[$field];
+			if (strexists($field, '(')) {
+				return array_shift($result);
+			} else {
+				return $result[$field];
+			}
 		} else {
 			return false;
 		}
