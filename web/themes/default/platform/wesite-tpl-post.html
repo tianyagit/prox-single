@@ -6,7 +6,7 @@
 </ol>
 <form action="" method="post" class="article-post">
 	<input type="hidden" name="styleid" value="{$styleid}">
-	<div class="we7-form" id="js-wesite-tpl-display" ng-controller="WesiteTplPost" ng-cloak>
+	<div class="we7-form" id="js-wesite-tpl-post" ng-controller="WesiteTplPost" ng-cloak>
 		<div class="form-group">
 			<label for="" class="control-label">风格名称</label>
 			<div class="form-controls">
@@ -163,7 +163,7 @@ require(['underscore'], function() {
 		styles: {php echo !empty($styles) ? json_encode($styles) : 'null'},
 		template: {php echo !empty($template) ? json_encode($template) : 'null'},
 	});
-	angular.bootstrap($('#js-wesite-tpl-display'), ['wesiteApp']);	
+	angular.bootstrap($('#js-wesite-tpl-post'), ['wesiteApp']);	
 });
 
 </script>
