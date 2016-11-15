@@ -15,13 +15,12 @@ if($do == 'wesite') {
 }
 
 if($do == 'wesite_tpl') {
-
 	$operations = array('template', 'build', 'copy', 'del', 'designer', 'default');
 	$operation = !empty($_GPC['operation']) && in_array($_GPC['operation'], $operations) ? $_GPC['operation'] : 'template';
 	switch ($operation) {
 		case 'designer':
 			$styleid = intval($_GPC['styleid']);
-			$style = pdo_fetch("SELECT * FROM ".tablename('site_styles')." WHERE id = :id AND uniacid = '{$_W['uniacid']}'", array(':id' => $styleid));
+			$style = pdo_fetch("SELECT * FROM ".tablename('site_styles')." WHERE id = :id AND uniacid = :unacid", array(':id' => $styleid, ':unacid' => $_W['uniacid']));
 			if(empty($style)) {
 				message('抱歉，风格不存在或是已经被删除！', '', 'error');
 			}
@@ -30,7 +29,7 @@ if($do == 'wesite_tpl') {
 			if(empty($template)) {
 				message('抱歉，模板不存在或是已经被删除！', '', 'error');
 			}
-			$styles = pdo_fetchall("SELECT variable, content, description FROM " . tablename('site_styles_vars') . " WHERE styleid = :styleid AND uniacid = '{$_W['uniacid']}'", array(':styleid' => $styleid), 'variable');
+			$styles = pdo_fetchall("SELECT variable, content, description FROM " . tablename('site_styles_vars') . " WHERE styleid = :styleid AND uniacid = :uniacid", array(':styleid' => $styleid, ':uniacid' => $_W['uniacid']), 'variable');
 			if(checksubmit('submit')) {
 				if(!empty($_GPC['style'])) {
 					foreach($_GPC['style'] as $variable => $value) {
