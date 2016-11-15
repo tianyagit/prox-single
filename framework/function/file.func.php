@@ -654,24 +654,26 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
 	$flags = $isdir ? GLOB_ONLYDIR : 0;
 	$list = glob($filepath . '*' . (!empty($ex) && empty($subdir) ? '.' . $ex : ''), $flags);
 	if (!empty($ex)) $ex_num = strlen($ex);
-	foreach ($list as $k => $v) {
-		$v = str_replace('\\', '/', $v);
-		$v1 = str_replace(IA_ROOT . '/', '', $v);
-		if ($subdir && is_dir($v)) {
-			file_lists($v . '/', $subdir, $ex, $isdir, $md5);
-			continue;
-		}
-		if (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) == $ex) {
-
-			if ($md5) {
-				$file_list[$v1] = md5_file($v);
-			} else {
-				$file_list[] = $v1;
+	if (is_array($list)) {
+		foreach ($list as $k => $v) {
+			$v = str_replace('\\', '/', $v);
+			$v1 = str_replace(IA_ROOT . '/', '', $v);
+			if ($subdir && is_dir($v)) {
+				file_lists($v . '/', $subdir, $ex, $isdir, $md5);
+				continue;
 			}
-			continue;
-		} elseif (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) != $ex) {
-			unset($list[$k]);
-			continue;
+			if (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) == $ex) {
+	
+				if ($md5) {
+					$file_list[$v1] = md5_file($v);
+				} else {
+					$file_list[] = $v1;
+				}
+				continue;
+			} elseif (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) != $ex) {
+				unset($list[$k]);
+				continue;
+			}
 		}
 	}
 	return $file_list;

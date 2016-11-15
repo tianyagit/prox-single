@@ -1781,11 +1781,10 @@ function mc_show_tag($groupid){
 		$fans_tag = mc_fans_groups();
 		$tagid_arr = explode(',', trim($groupid, ','));
 		foreach ($tagid_arr as $tagid) {
-			$tag_show .= $fans_tag[$tagid]['name'] . ', ';
+			$tag_show[]= $fans_tag[$tagid]['name'];
 		}
-		$tag_show = rtrim($tag_show, ', ');
 	} else {
-		$tag_show = '无标签';
+		$tag_show = array('无标签');
 	}
 	return $tag_show;
 }
