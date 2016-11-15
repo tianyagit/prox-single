@@ -114,7 +114,7 @@ function buildframes($framename = ''){
 	$modules = uni_modules();
 	$sysmodules = system_modules();
 
-	$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'enabled' => STATUS_ON, 'display' => STATUS_ON), array('module'));
+	$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'shortcut' => STATUS_ON), array('module'), '', 'displayorder DESC');
 	if (!empty($account_module)) {
 		foreach ($account_module as $module) {
 			if (!in_array($module['module'], $sysmodules)) {
