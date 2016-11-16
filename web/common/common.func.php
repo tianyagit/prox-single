@@ -114,7 +114,7 @@ function buildframes($framename = ''){
 	$modules = uni_modules();
 	$sysmodules = system_modules();
 
-	$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'enabled' => STATUS_ON, 'display' => STATUS_ON), array('module'));
+	$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'shortcut' => STATUS_ON), array('module'), '', 'displayorder DESC');
 	if (!empty($account_module)) {
 		foreach ($account_module as $module) {
 			if (!in_array($module['module'], $sysmodules)) {
@@ -123,7 +123,7 @@ function buildframes($framename = ''){
 					$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 						'title' => $module['title'],
 						'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
-						'url' => url('home/module', array('modulename' => $module['name'])),
+						'url' => url('home/welcome/ext', array('m' => $module['name'])),
 					);
 				}
 			}
