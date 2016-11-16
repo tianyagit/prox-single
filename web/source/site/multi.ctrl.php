@@ -69,7 +69,7 @@ if($do == 'post') {
 			message('更新站点信息成功！', url('site/multi/display'), 'success');
 		}
 	}
-	template('site/wesite-post');
+	template('site/post');
 }
 
 if($do == 'display') {
@@ -95,7 +95,7 @@ if($do == 'display') {
 
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_multi') . " WHERE uniacid = :uniacid".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
-	template('site/wesite-display');
+	template('site/display');
 }
 
 if($do == 'del') {
