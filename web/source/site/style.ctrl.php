@@ -7,62 +7,76 @@
 defined('IN_IA') or exit('Access Denied');
 $templateid = intval($_GPC['templateid']);
 $dos = array('default', 'designer', 'module', 'createtemplate', 'template', 'copy', 'build', 'del');
-$do = in_array($do, $dos) ? $do : 'display';
+$do = in_array($do, $dos) ? $do : 'template';
 
 if ($do == 'template') {
-	load()->model('extension');
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
-	$multi = pdo_fetch('SELECT id,styleid FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $setting['default_site']));
-	if(empty($multi)) {
-		message('您的默认微站找不到,请联系网站管理员', '', 'error');
+	$setting['styleid'] = pdo_fetchcolumn('SELECT styleid FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $setting['default_site']));
+	$_W['page']['title'] = '风格管理 - 网站风格设置 - 微站功能';
+	$params = array();
+	$params[':uniacid'] = $_W['uniacid'];
+	$condition = '';
+	if (!empty($_GPC['keyword'])) {
+		$condition .= " AND a.name LIKE :keyword";
+		$params[':keyword'] = "%{$_GPC['keyword']}%";
 	}
-
-	$styleid = intval($_GPC['styleid']);
-	$style = pdo_fetch("SELECT * FROM ".tablename('site_styles')." WHERE id = :styleid AND uniacid = :uniacid", array(':styleid' => $styleid, ':uniacid' => $_W['uniacid']));
-	if(empty($style)) {
-		message('抱歉，风格不存在或是您无权限使用！', '', 'error');
-	}
-	$templateid = $style['templateid'];
-	$template = array();
+	$styles = pdo_fetchall("SELECT a.* FROM ".tablename('site_styles')." AS a LEFT JOIN ".tablename('site_templates')." AS b ON a.templateid = b.id WHERE uniacid = :uniacid ".(!empty($condition) ? " $condition" : ''), $params);
 	$templates = uni_templates();
-	if(!empty($templates)) {
-		foreach($templates as $row) {
-			if($row['id'] == $templateid) {
-				$template = $row;
-				break;
+
+	//模板激活
+	$stylesResult = array();
+	foreach($templates as $k => $v) {
+		if(!empty($_GPC['keyword'])) {
+			if(strpos($v['title'], $_GPC['keyword']) !== false) {
+				$stylesResult[$k] = array(
+					'templateid' => $v['id'],
+					'name' => $v['name'],
+					'title' => $v['title'],
+					'type' => $v['type']
+				);	
 			}
-		}
-	}
-	if(empty($template)) {
-		message('抱歉，模板不存在或是您无权限使用！', '', 'error');
-	}
-	pdo_update('site_multi', array('styleid' => $styleid), array('uniacid' => $_W['uniacid'], 'id' => $setting['default_site']));
-	$styles = pdo_fetchall("SELECT variable, content FROM " . tablename('site_styles_vars') . " WHERE styleid = :styleid  AND uniacid = '{$_W['uniacid']}'", array(':styleid' => $styleid), 'variable');
-	$styles_tmp = array_keys($styles);
-	$templatedata = ext_template_manifest($template['name']);
-	if(empty($styles)) {
-		if(!empty($templatedata['settings'])) {
-			foreach($templatedata['settings'] as $list) {
-				pdo_insert('site_styles_vars', array('variable' => $list['key'], 'content' => $list['value'], 'description' => $list['desc'], 'templateid' => $templateid, 'styleid' => $styleid, 'uniacid' => $_W['uniacid']));
-			}
-		}
-	} else {
-		if(!empty($templatedata['settings'])) {
-			foreach($templatedata['settings'] as $list) {
-				if(!in_array($list['key'], $styles_tmp)) {
-					pdo_insert('site_styles_vars', array(
-						'content' => $list['value'],
-						'templateid' => $templateid,
-						'styleid' => $styleid,
-						'variable' => $list['key'],
-						'description' => $list['desc'],
-						'uniacid' => $_W['uniacid']
-					));
+		}else {
+			$stylesResult[$k] = array(
+				'templateid' => $v['id'],
+				'name' => $v['name'],
+				'title' => $v['title'],
+				'type' => $v['type']
+			);
+			foreach($styles as $style_val) {
+				if($v['id'] == $style_val['templateid']) {
+					unset($stylesResult[$k]);
 				}
 			}
 		}
+
 	}
-	message('默认模板更新成功！', referer(), 'success');
+	$templates_id = array_keys($templates);
+	foreach($styles as $v) {
+		//如果某个风格没有对应模板的使用权限，跳过
+		if(!in_array($v['templateid'], $templates_id)) {
+			continue;
+		}
+		$stylesResult[] =  array(
+			'styleid' => $v['id'], 
+			'templateid' => $v['templateid'], 
+			'name' => $templates[$v['templateid']]['name'], 
+			'title' => $v['name'], 
+			'type' => $templates[$v['templateid']]['type']
+		);
+	}				
+	if (!empty($_GPC['type']) && $_GPC['type'] != 'all') {
+		$tmp = array();
+		foreach($stylesResult as $k => $v) {
+			if($v['type'] == $_GPC['type']) {
+				$tmp[] = $v;
+			}
+		}
+		$stylesResult = $tmp;
+	}
+	array_multisort($stylesResult, SORT_DESC);
+	load()->model('extension');
+	$temtypes = ext_template_type();
+	template('site/wesite-tpl-display');
 }
 
 if($do == 'default') {
