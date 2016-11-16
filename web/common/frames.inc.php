@@ -103,20 +103,30 @@ $ms['system'] = array(
 		'user' => array(
 			'title' => '帐户/用户',
 			'menu' => array(
-				'system_profile' => array(
+				'system_user_profile' => array(
 					'title' => '我的帐户',
-					'url' => url('system/profile'),
-					'permission_name' => 'system_module',
+					'url' => url('user/profile'),
+					'permission_name' => 'system_user_profile',
 				),
-				'system_user' => array(
+				'system_user_display' => array(
 					'title' => '用户管理',
-					'url' => url('system/user'),
-					'permission_name' => 'system_module_group',
+					'url' => url('user/display'),
+					'permission_name' => 'system_user_display',
 				),
 				'system_user_group' => array(
-					'title' => '用户权限组',
+					'title' => '用户组管理',
 					'url' => url('system/user/group'),
-					'permission_name' => 'system_module_group',
+					'permission_name' => 'system_user_group',
+				),
+				'system_user_registerset' => array(
+						'title' => '注册选项',
+						'url' => url('system/user/group'),
+						'permission_name' => 'system_user_registerset',
+				),
+				'system_user_fields' => array(
+						'title' => '资料字段管理',
+						'url' => url('system/user/fields'),
+						'permission_name' => 'system_user_fields',
 				),
 			)
 		),
@@ -141,82 +151,82 @@ $ms['system'] = array(
 			)
 		),
 		'acticle' => array(
-			'title' => '文章',
+			'title' => '文章/公告',
 			'menu' => array(
-				'system_profile' => array(
+				'system_article_news' => array(
 					'title' => '文章管理',
-					'url' => url('system/profile'),
-					'permission_name' => 'system_module',
+					'url' => url('article/news'),
+					'permission_name' => 'system_article_news',
 				),
-				'system_user' => array(
+				'system_article_notice' => array(
 					'title' => '公告管理',
-					'url' => url('system/user'),
-					'permission_name' => 'system_module_group',
+					'url' => url('article/notice'),
+					'permission_name' => 'system_article_notice',
 				)
 			)
 		),
 		'setting' => array(
 			'title' => '设置',
 			'menu' => array(
-				'system_setting_attachment' => array(
+				'system_setting_updatecache' => array(
 					'title' => '更新缓存',
 					'url' => url('system/updatecache'),
-					'permission_name' => 'system_setting_attachment',
-				),
-				'system_setting_updatecache' => array(
-					'title' => '站点设置',
-					'url' => url('system/site'),
 					'permission_name' => 'system_setting_updatecache',
 				),
-				'system_setting_performance' => array(
+				'system_setting_site' => array(
+					'title' => '站点设置',
+					'url' => url('system/site'),
+					'permission_name' => 'system_setting_site',
+				),
+				'system_setting_attachment' => array(
 					'title' => '附件设置',
 					'url' => url('system/attachment'),
-					'permission_name' => 'system_setting_performance',
+					'permission_name' => 'system_setting_attachment',
 				),
-				'system_setting_menu' => array(
+				'system_setting_common' => array(
 					'title' => '其他设置',
 					'url' => url('system/common'),
-					'permission_name' => 'system_setting_menu',
+					'permission_name' => 'system_setting_common',
 				),
-				'system_setting_sytle' => array(
+				'system_setting_systeminfo' => array(
 					'title' => '系统信息',
 					'url' => url('system/systeminfo'),
-					'permission_name' => 'system_setting_sytle',
+					'permission_name' => 'system_setting_systeminfo',
 				),
-				'system_setting_homepage' => array(
+				'system_setting_logs' => array(
 					'title' => '查看日志',
 					'url' => url('system/logs'),
-					'permission_name' => 'system_setting_homepage',
+					'permission_name' => 'system_setting_logs',
 				),
 			)
 		),
 		'utility' => array(
 			'title' => '常用系统工具',
 			'menu' => array(
-				'system_setting_attachment' => array(
+				'system_setting_filecheck' => array(
 					'title' => '系统文件校验',
 					'url' => url('system/filecheck'),
-					'permission_name' => 'system_setting_attachment',
+					'permission_name' => 'system_setting_filecheck',
 				),
-				'system_setting_updatecache' => array(
+				'system_setting_optimize' => array(
 					'title' => '性能优化',
 					'url' => url('system/optimize'),
-					'permission_name' => 'system_setting_updatecache',
+					'permission_name' => 'system_setting_optimize',
 				),
-				'system_setting_menu' => array(
+				'system_setting_database' => array(
 					'title' => '数据库',
 					'url' => url('system/database'),
-					'permission_name' => 'system_setting_menu',
+					'permission_name' => 'system_setting_database',
 				),
-				'system_setting_sytle' => array(
+				'system_setting_scan' => array(
 					'title' => '木马查杀',
 					'url' => url('system/scan'),
-					'permission_name' => 'system_setting_sytle',
+					'permission_name' => 'system_setting_scan',
 				),
-				'system_setting_homepage' => array(
+				'system_setting_bom' => array(
 					'title' => '检测文件BOM',
 					'url' => url('system/bom'),
-					'permission_name' => 'system_setting_homepage',
+					'permission_name' => 'system_setting_bom',
 				),
 			)
 		),
