@@ -37,6 +37,13 @@ $acl = array(
 			'link',
 		),
 	),
+	'site' => array(
+		'default' => '',
+		'founder' => array(),
+		'direct' => array(
+			'entry'
+		)
+	),
 );
 if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $controller != 'cloud' && $controller != 'utility' && $controller != 'account') {
 	$_W['siteclose'] = true;
