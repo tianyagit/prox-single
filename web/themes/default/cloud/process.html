@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-{template 'common/header'}
-=======
 {template 'common/header-gw'}
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 <ol class="breadcrumb">
 	<li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
 	<li class=""><a href="{url 'system/welcome'}">系统</a></li>
@@ -18,11 +14,6 @@
 	{if empty($packet['files'])}
 		<script type="text/javascript">
 			{if $type == 'module'}
-<<<<<<< HEAD
-			location.href = '{url "cloud/process" array("step" => "schemas", "m" => $m, "is_upgrade" => $is_upgrade, "type" => $type)}';
-			{else}
-			location.href = '{url "cloud/process" array("step" => "schemas", "t" => $m, "is_upgrade" => $is_upgrade, "type" => $type)}';
-=======
 				{if $_GPC['batch']}
 					location.href = '{url "cloud/process" array("step" => "schemas", "m" => $m, "is_upgrade" => $is_upgrade, "type" => $type, "batch" => 1)}';
 				{else}
@@ -32,7 +23,6 @@
 			location.href = '{url "cloud/process" array("step" => "schemas", "t" => $m, "is_upgrade" => $is_upgrade, "type" => $type)}';
 			{else}
 			location.href = '{url "cloud/process" array("step" => "schemas", "w" => $m, "is_upgrade" => $is_upgrade, "type" => $type)}';
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 			{/if}
 		</script>
 	{/if}
@@ -70,11 +60,6 @@
 						if($scope.fails.length == 0 || confirm('有部分文件未成功更新, 错误信息：' + errormsg + ', 是否继续下一步？')) {
 							setTimeout(function(){
 								{if $packet['type'] == 'theme'}
-<<<<<<< HEAD
-								location.href = '{url "cloud/process/" array("step" => "schemas", "t" => $m, "is_upgrade" => $is_upgrade)}';
-								{else}
-								location.href = '{url "cloud/process/" array("step" => "schemas", "m" => $m, "is_upgrade" => $is_upgrade)}';
-=======
 	 							location.href = '{url "cloud/process/" array("step" => "schemas", "t" => $m, "is_upgrade" => $is_upgrade)}';
 								{elseif $packet['type'] == 'webtheme'}
 	 							location.href = '{url "cloud/process/" array("step" => "schemas", "w" => $m, "is_upgrade" => $is_upgrade)}';
@@ -84,7 +69,6 @@
 									{else}
 										location.href = '{url "cloud/process" array("step" => "schemas", "m" => $m, "is_upgrade" => $is_upgrade)}';
 									{/if}
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 								{/if}
 								
 							}, 2000);
@@ -116,41 +100,27 @@
 	{if $step == 'schemas'}
 		{if empty($packet['schemas'])}
 			<!-- 如果是安装模块,数据库操作完成后,不处理script,直接跳转到extension/module/install -->
-<<<<<<< HEAD
-=======
 			<!-- 安装 -->
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 			{if !empty($packet['install'])}
 				{if $packet['type'] == 'theme'}
 				<script>
 					location.href = '{url "extension/theme/install" array("templateid" => $m, "flag" => 1)}';
 				</script>
-<<<<<<< HEAD
-=======
 				{elseif $packet['type'] == 'webtheme'}
 				<script>
 					location.href = '{url "extension/webtheme/install" array("webtheme" => $m, "flag" => 1)}';
 				</script>
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 				{else}
 				<script>
 					location.href = '{url "extension/module/install" array("m" => $m, "flag" => 1)}';
 				</script>
 				{/if}
 			{/if}
-<<<<<<< HEAD
-=======
 			<!-- 升级 -->
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 			{if $packet['type'] == 'theme'}
 			<script>
 				location.href = '{url "cloud/process" array("step" => "scripts", "t" => $m, "is_upgrade" => $is_upgrade)}';
 			</script>
-<<<<<<< HEAD
-			{else}
-			<script>
-				location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade)}';
-=======
 			{elseif $packet['type'] == 'webtheme'}
 			<script>
 				location.href = '{url "cloud/process" array("step" => "scripts", "w" => $m, "is_upgrade" => $is_upgrade)}';
@@ -162,7 +132,6 @@
 				{else}
 					location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade)}';
 				{/if}
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 			</script>
 			{/if}
 			
@@ -208,15 +177,11 @@
 									if(is_m_install == 1) {
 										location.href = '{url "extension/module/install" array("m" => $m, "flag" => 1)}';
 									} else {
-<<<<<<< HEAD
-										location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade, "is_confirm" => 1)}';
-=======
 										{if $_GPC['batch']}
 											location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade, "is_confirm" => 1, "batch" => 1)}';
 										{else}
 											location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade, "is_confirm" => 1)}';
 										{/if}
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 									}
 								}, 2000);
 								return;
@@ -255,11 +220,6 @@
 				<script>
 					location.href = '{url "extension/theme/upgrade" array("templateid" => $m, "flag" => 1)}';
 				</script>
-<<<<<<< HEAD
-				{else}
-				<script>
-					location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1)}';
-=======
 				{elseif $packet['type'] == 'webtheme'}
 				<script>
 					location.href = '{url "extension/webtheme/upgrade" array("webthemeid" => $m, "flag" => 1)}';
@@ -271,7 +231,6 @@
 					{else}
 						location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1)}';
 					{/if}
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 				</script>
 				{/if}
 				
@@ -329,25 +288,17 @@
 								error();
 							} else {
 								if(is_upgrade == 1) {
-<<<<<<< HEAD
-									location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1)}';
-=======
 									{if $_GPC['batch']}
 										location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1, "batch_from_cloud" => 1)}';
 									{else}
 										location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1)}';
 									{/if}
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 									return;
 								}
 								
 								var is_confirm = "{php echo $_GPC['is_confirm']}";
 								if(is_confirm == 1) {
-<<<<<<< HEAD
-										if(confirm('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除')) {
-=======
 									if(confirm('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除')) {
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
 										location.href = '{url "system/database/trim"}';
 									} else {
 										location.href = '{url "cloud/upgrade"}';
@@ -385,8 +336,4 @@
 		</script>
 	{/if}
 </div>
-<<<<<<< HEAD
-{template 'common/footer'}
-=======
 {template 'common/footer-gw'}
->>>>>>> dd63935c9b84e2421227ca8b29a62168c42ed152
