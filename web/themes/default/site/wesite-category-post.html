@@ -1,13 +1,13 @@
 {template 'common/header'}
 <ol class="breadcrumb we7-breadcrumb">
-	<a href="{php echo url('platform/site/article' , array('operation' => 'display_category'))}"><i class="fa fa-chevron-circle-left"></i> </a>
-	<li><a href="{php echo url('platform/site/article' , array('operation' => 'display_category'))}">文章分类管理</a></li>
+	<a href="{php echo url('site/category')}"><i class="fa fa-chevron-circle-left"></i> </a>
+	<li><a href="{php echo url('site/category')}">文章分类管理</a></li>
 	<li>
-		{if empty($id)}<a href="{php echo url('platform/site/article', array('operation' => 'display_category'))}">文章添加</a>{/if}
-		{if !empty($id)}<a href="{php echo url('platform/site/article', array('operation' => 'display_category', 'id' => $id))}">文章编辑</a>{/if}
+		{if empty($id)}<a href="{php echo url('site/category/post')}">分类添加</a>{/if}
+		{if !empty($id)}<a href="{php echo url('site/category/post', array('id' => $id))}">分类编辑</a>{/if}
 	</li>
 </ol>
-<form action="./index.php?c=platform&a=site&do=article&operation=edit_category" method="post" class="article-post">
+<form action="./index.php?c=site&a=category&do=post" method="post" class="article-post">
 	<input type="hidden" name="parentid" value="{$parent['id']}" />
 	<input type="hidden" name="id" value="{$id}" />
 	<div class="we7-form" id="js-wesite-category-post" ng-controller="WesiteCategoryPost" ng-cloak>

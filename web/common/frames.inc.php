@@ -43,8 +43,8 @@ $ms['account'] = array(
 				),
 				'platform_site' => array(
 					'title' => '微官网',
-					'url' => url('platform/site'),
-					'promisson_name' => 'platform_site',
+					'url' => url('site/multi/display'),
+					'permission_name' => 'platform_site'
 				),
 				'mc_fans' => array(
 					'title' => '粉丝列表',
