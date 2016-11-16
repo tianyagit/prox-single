@@ -3,4 +3,6 @@
  * 
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
-define('FRAME', 'account');
+if ($action != 'material_post') {
+	define('FRAME', 'account');
+}
