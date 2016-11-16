@@ -6,13 +6,14 @@
  */
 defined('IN_IA') or exit('Access Denied');
 $_W['page']['title'] = '微官网';
-uni_user_permission_check('site_multi_display');
+uni_user_permission_check('platform_site');
 load()->model('site');
-$dos = array('display', 'post', 'del', 'default', 'copy');
+$dos = array('display', 'post', 'del', 'default', 'copy', 'switch');
 $do = in_array($do, $dos) ? $do : 'display';
 //获取默认微站
 $setting = uni_setting($_W['uniacid'], 'default_site');
 $default_site = intval($setting['default_site']);
+
 if($do == 'post') {
 	uni_user_permission_check('site_multi_post');
 	$id = intval($_GPC['multiid']);
@@ -72,13 +73,28 @@ if($do == 'post') {
 }
 
 if($do == 'display') {
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 10;
+	$condition = '';
+	$params = array();
+
+	if (!empty($_GPC['keyword'])) {
+		$condition .= " AND `title` LIKE :keyword";
+		$params[':keyword'] = "%{$_GPC['keyword']}%";
+	}
+
 	$templates = uni_templates();
-	$multis = pdo_fetchall('SELECT * FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
+	$params[':uniacid'] = $_W['uniacid'];
+	$multis = pdo_fetchall('SELECT * FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid'.$condition.' LIMIT '.($pindex -1)* $psize.','.$psize, $params);
 	foreach($multis as &$li) {
 		$li['style'] = pdo_fetch('SELECT * FROM ' .tablename('site_styles') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $li['styleid']));
 		$li['template'] = pdo_fetch("SELECT * FROM ".tablename('site_templates')." WHERE id = :id", array(':id' => $li['style']['templateid']));
 		$li['site_info'] = (array)iunserializer($li['site_info']);
+		$li['site_info']['thumb'] = tomedia($li['site_info']['thumb']);
 	}
+
+	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_multi') . " WHERE uniacid = :uniacid".$condition, $params);
+	$pager = pagination($total, $pindex, $psize);
 	template('site/wesite-display');
 }
 
@@ -149,5 +165,20 @@ if($do == 'copy') {
 			}			
 		}
 		message('复制微站成功', url('site/multi/post', array('multiid' => $multi_id)), 'success');
+	}
+}
+
+if($do == 'switch') {
+	$id = intval($_GPC['__input']['id']);
+	$multi_info = pdo_get('site_multi', array('id' => $id, 'uniacid' => $_W['uniacid']));
+	if(empty($multi_info)) {
+		message('微站不存在或已删除', referer(), 'error');
+	}
+	$data = array('status' => $multi_info['status'] == 1 ? 0 : 1);
+	$result = pdo_update('site_multi', $data, array('id' => $id));
+	if(!empty($result)) {
+		message('0', '', 'ajax');
+	}else {
+		message('-1', '', 'ajax');
 	}
 }
