@@ -17,7 +17,7 @@ if ($do == 'display') {
 			unset($category[$index]);
 		}
 	}
-	template('site/wesite-category-display');
+	template('site/category-display');
 } elseif ($do == 'post') {
 	$parentid = intval($_GPC['parentid']);
 	$id = intval($_GPC['id']);
@@ -153,7 +153,7 @@ if ($do == 'display') {
 		}
 		message('更新分类成功！', url('site/category'), 'success');
 	}
-	template('site/wesite-category-post');
+	template('site/category-post');
 } elseif ($do == 'delete') {
 	load()->func('file');
 	if(checksubmit('submit')) {
