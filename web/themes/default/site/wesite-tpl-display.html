@@ -1,10 +1,10 @@
 {template 'common/header'}
 <div class="we7-page-title">微官网</div>
 <ul class="we7-page-tab">
-	<li><a href="{php echo url('platform/site/wesite')}" >微官网列表</a></li>
-	<li class="active"><a href="{php echo url('platform/site/wesite_tpl')}">微官网模板</a></li>
-	<li><a href="{php echo url('platform/site/article')}">文章管理</a></li>
-	<li><a href="{php echo url('platform/site/article', array('operation' => 'display_category'))}">文章分类管理</a></li>
+	<li><a href="{php echo url('site/multi')}" >微官网列表</a></li>
+	<li class="active"><a href="{php echo url('site/style')}">微官网模板</a></li>
+	<li><a href="{php echo url('site/article')}">文章管理</a></li>
+	<li><a href="{php echo url('site/category')}">文章分类管理</a></li>
 </ul>
 
 <div class="we7-page-search we7-padding-bottom clearfix">
@@ -77,12 +77,12 @@
 		type: {php echo !empty($_GPC['type']) ? json_encode($_GPC['type']) : 'null'},
 		setting: {php echo !empty($setting) ? json_encode($setting) : 'null'},
 		links: {
-			template: "{php echo url('platform/site/wesite_tpl', array('operation' => 'template'))}",
-			default: "{php echo url('platform/site/wesite_tpl', array('operation' => 'default'))}",
-			designer: "{php echo url('platform/site/wesite_tpl', array('operation' => 'designer'))}",
-			copy: "{php echo url('platform/site/wesite_tpl', array('operation' => 'copy'))}",
-			build: "{php echo url('platform/site/wesite_tpl', array('operation' => 'build'))}",
-			del: "{php echo url('platform/site/wesite_tpl', array('operation' => 'del'))}",
+			template: "{php echo url('site/style/template', array('operation' => 'template'))}",
+			default: "{php echo url('site/style/default', array('operation' => 'default'))}",
+			designer: "{php echo url('site/style/designer', array('operation' => 'designer'))}",
+			copy: "{php echo url('site/style/copy', array('operation' => 'copy'))}",
+			build: "{php echo url('site/style/build', array('operation' => 'build'))}",
+			del: "{php echo url('site/style/del', array('operation' => 'del'))}",
 			home: "{php echo murl('home', array(), true, true)}",
 		},
 	});
