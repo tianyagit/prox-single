@@ -53,12 +53,11 @@ function attachment_alioss_buctkets($key, $secret) {
 	return $bucketlist;
 }
 
-function attachment_qiniu_auth($key, $secret,$bucket, $district ) {
+function attachment_qiniu_auth($key, $secret,$bucket) {
 	require_once(IA_ROOT . '/framework/library/qiniu/autoload.php');
 	$auth = new Qiniu\Auth($key, $secret);
 	$token = $auth->uploadToken($bucket);
-	$zone = $district == 1 ?  Qiniu\Zone::zone0() : Qiniu\Zone::zone1();
-	$config = new Qiniu\Config($zone);
+	$config = new Qiniu\Config();
 	$uploadmgr = new Qiniu\Storage\UploadManager($config);
 	list($ret, $err) = $uploadmgr->putFile($token, 'MicroEngine.ico', ATTACHMENT_ROOT.'images/global/MicroEngine.ico');
 	if ($err !== null) {
