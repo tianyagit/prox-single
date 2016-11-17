@@ -8,8 +8,9 @@
  */
 
 defined('IN_IA') or exit('Access Denied');
+set_time_limit(60);
 
-$dos = array('display', 'addTag', 'delTag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag');
+$dos = array('display', 'addTag', 'delTag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'upload_fans', 'sync');
 $do = in_array($do, $dos) ? $do : 'display';
 
 load()->model('mc');
@@ -19,7 +20,7 @@ if ($do == 'display') {
 	$_W['page']['title'] = '粉丝列表';
 	$fans_tag = mc_fans_groups(true);
 	$pageindex = max(1, intval($_GPC['page']));
-	$pagesize = 50;
+	$pagesize = 10;
 	$param = array(
 		':uniacid' => $_W['uniacid'],
 		':acid' => $_W['acid']
@@ -211,6 +212,71 @@ if ($do == 'batch_edit_fans_tag') {
 		}
 	}
 	message(error(0), '', 'ajax');
+}
+
+if ($do == 'upload_fans') {
+	$next_openid = $_GPC['__input']['next_openid'];
+	if (empty($next_openid)) {
+		pdo_update('mc_mapping_fans', array('follow' => 0), array('uniacid' => $_W['uniacid']));
+	}
+	$wechat_api = WeAccount::create($_W['acid']);
+	$wechat_fans = $wechat_api->fansAll();
+	if (!is_error($wechat_fans)) {
+		$wechat_count = count($wechat_fans['fans']);
+		$buffer_size = ceil($wechat_count / 500);
+		for ($i = 0; $i < $buffer_size; $i++) {
+			$buffer_fans = array_slice($wechat_fans['fans'], $i * 500, 500);
+			$buffer_openids = implode("','", $buffer_fans);
+			$buffer_openids = "'{$buffer_openids}'";
+			$sql = 'SELECT `openid`, `uniacid`, `acid` FROM ' . tablename('mc_mapping_fans') . " WHERE `openid` IN ({$buffer_openids})";
+			$system_fans = pdo_fetchall($sql, array(), 'openid');
+
+			foreach($buffer_fans as $openid) {
+				if (empty($system_fans) || empty($system_fans[$openid])) {
+					$salt = random(8);
+					$add_fans_sql .= "('{$_W['acid']}', '{$_W['uniacid']}', 0, '{$openid}', '{$salt}', 1, 0, ''),";
+				}
+			}
+			if (!empty($add_fans_sql)) {
+				$add_fans_sql = rtrim($add_fans_sql, ',');
+				$add_fans_sql = 'INSERT INTO ' . tablename('mc_mapping_fans') . ' (`acid`, `uniacid`, `uid`, `openid`, `salt`, `follow`, `followtime`, `tag`) VALUES ' . $add_fans_sql;
+				$result = pdo_query($add_fans_sql);
+			}
+			pdo_query("UPDATE " . tablename('mc_mapping_fans') . " SET follow = '1' WHERE `openid` IN ({$buffer_openids})");
+		}
+		$return['total'] = $wechat_fans['total'];
+		$return['count'] = !empty($wechat_fans['fans']) ? $wechat_count : 0;
+		$return['next'] = $wechat_fans['next'];
+		message(error(0, $return), '', 'ajax');
+	} else {
+		message($fans, '', 'ajax');
+	}
+}
+
+if ($do == 'sync') {
+	$type = $_GPC['__input']['type'];
+	if ($type == 'all') {
+		$pageindex = $_GPC['__input']['pageindex'];
+		$pageindex++;
+		$sync_fans = pdo_getslice('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => '1'), array($pageindex, 1), $total, array(), '', 'fanid DESC');
+		$total = ceil($total/1);
+		if (!empty($sync_fans)) {
+			foreach ($sync_fans as $fans) {
+				mc_init_fans_info($fans);
+			}
+		}
+		message(error(0, array('pageindex' => $pageindex, 'total' => $total)), '', 'ajax');
+	}
+	if ($type == 'check') {
+		$openids = $_GPC['__input']['openids'];
+		$sync_fans = pdo_getall('mc_mapping_fans', array('openid' => $openids));
+		if (!empty($sync_fans)) {
+			foreach ($sync_fans as $fans) {
+				mc_init_fans_info($fans);
+			}
+		}
+		message(error(0, 'success'), '', 'ajax');
+	}
 }
 template('mc/fans');
 
