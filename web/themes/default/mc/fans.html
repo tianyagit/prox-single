@@ -104,12 +104,12 @@
 							</div>
 						</td>
 						<td>
-							<a href="" class="avatar">
+							<a href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="avatar">
 								<img src="{php echo tomedia($fan['tag']['headimgurl'])}" width="48" />
 							</a>
 						</td>
 						<td>
-							<p><a href="" class="nick-name" data-fanid="{$fan['fanid']}" data-group="{$fan['groupid']}">{$fan['nickname']}</a></p>
+							<p><a href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="nick-name" data-fanid="{$fan['fanid']}" data-group="{$fan['groupid']}">{$fan['nickname']}</a></p>
 							<p><a href="" class="remark-name">会员名</a> <i class="fa fa-align-justify fans-tel"></i></p>
 							<div class="fans-tag-area">
 								<span class="tag-list">
@@ -178,11 +178,7 @@
 {$pager}
 <script>
 	$("[data-toggle='popover']").on('show.bs.popover', function () {
-		$(this).addClass('popovershow');
-		$("[data-toggle='popover']:not('.popovershow')").popover('hide');
-	});
-	$("[data-toggle='popover']").on('shown.bs.popover', function () {
-		$(this).removeClass('popovershow');
+		$("[aria-describedby]").popover('hide');
 	});
 	$(function(){
 		var uid = '';

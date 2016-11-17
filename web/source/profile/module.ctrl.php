@@ -179,8 +179,7 @@ if($do == 'display') {
 	}
 	message('模块置顶成功', referer(), 'success');
 } elseif ($do == 'setting') {
-	//@@todo 模块设置处还未优化
-	$modulename = $_GPC['modulename'];
+	$modulename = $_GPC['m'];
 	$module = $modulelist[$modulename];
 	if(empty($module)) {
 		message('抱歉，你操作的模块不能被访问！');
@@ -189,9 +188,6 @@ if($do == 'display') {
 	if(!uni_user_module_permission_check($modulename.'_settings', $modulename)) {
 		message('您没有权限进行该操作');
 	}
-	define('CRUMBS_NAV', 1);
-	$ptr_title = '参数设置';
-	$module_types = module_types();
 	
 	$config = $module['config'];
 	if (($module['settings'] == 2) && !is_file(IA_ROOT."/addons/{$module['name']}/developer.cer")) {

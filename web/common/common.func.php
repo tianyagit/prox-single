@@ -142,33 +142,36 @@ function buildframes($framename = ''){
 		$frames['account']['section'] = array();
 		if($module['settings']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_settings'] = array(
-				'title' => "<i class='fa fa-cog'></i> &nbsp;&nbsp;参数设置",
-				'url' => url('profile/module/setting', array('m' => $m)),
+				'title' => "<i class='fa fa-cog'></i> 参数设置",
+				'url' => url('profile/module/setting', array('m' => $modulename)),
 			);
 		}
 		if($entries['home']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_home'] = array(
-				'title' => "<i class='fa fa-home'></i> &nbsp;&nbsp;微站首页导航",
-				'url' => url('site/nav/home', array('m' => $m)),
+				'title' => "<i class='fa fa-home'></i> 微站首页导航",
+				'url' => url('site/nav/home', array('m' => $modulename)),
 			);
 		}
 		if($entries['profile']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_profile'] = array(
-				'title' => "<i class='fa fa-user'></i> &nbsp;&nbsp;个人中心导航",
-				'url' => url('site/nav/profile', array('m' => $m)),
+				'title' => "<i class='fa fa-user'></i> 个人中心导航",
+				'url' => url('site/nav/profile', array('m' => $modulename)),
 			);
 		}
 		if($entries['shortcut']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_shortcut'] = array(
-				'title' => "<i class='fa fa-plane'></i> &nbsp;&nbsp;快捷菜单",
-				'url' => url('site/nav/shortcut', array('m' => $m)),
+				'title' => "<i class='fa fa-plane'></i> 快捷菜单",
+				'url' => url('site/nav/shortcut', array('m' => $modulename)),
 			);
 		}
 		
 		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
+			if (!empty($module['isrulefields'])) {
+				$url = url('platform/reply', array('m' => $modulename));
+			}
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_entry'] = array(
 				'title' => "<i class='fa fa-plane'></i> 应用入口",
-				'url' => url('site/nav/shortcut', array('m' => $m)),
+				'url' => $url,
 			);
 		}
 		if (!empty($entries['menu'])) {
@@ -178,7 +181,7 @@ function buildframes($framename = ''){
 				foreach($row as $li) {
 					$frames['account']['section']['platform_module_menu']['menu']['platform_module_menu'.$row['eid']] = array(
 						'title' => "<i class='fa fa-plane'></i> {$row['title']}",
-						'url' => url('site/nav/shortcut', array('m' => $m)),
+						'url' => url('site/nav/shortcut', array('m' => $modulename)),
 					);
 				}
 			}

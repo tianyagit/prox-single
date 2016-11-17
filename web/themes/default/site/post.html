@@ -1,0 +1,19 @@
+{template 'common/header'}
+<div class="we7-page-title">微官网</div>
+<ul class="we7-page-tab">
+	<li class="active"><a href="{php echo url('site/multi')}" >微官网列表</a></li>
+	<li><a href="{php echo url('site/style')}">微官网模板</a></li>
+	<li><a href="{php echo url('site/article')}">文章管理</a></li>
+	<li><a href="{php echo url('site/category')}">文章分类管理</a></li>
+</ul>
+<div id="js-wesite-post" ng-controller="WesitePost" ng-cloak>
+	<div class="we7-page-search we7-padding-bottom clearfix">
+	</div>
+</div>
+<script>
+	angular.module('wesiteApp').controller('WesitePost', ['$scope', function($scope) {
+		console.log(222);
+	}]);
+	angular.bootstrap($('#js-wesite-post'), ['wesiteApp']);
+</script>
+{template 'common/footer'}
