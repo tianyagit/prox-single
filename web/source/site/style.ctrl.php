@@ -76,7 +76,7 @@ if ($do == 'template') {
 	array_multisort($stylesResult, SORT_DESC);
 	load()->model('extension');
 	$temtypes = ext_template_type();
-	template('site/wesite-tpl-display');
+	template('site/tpl-display');
 }
 
 if($do == 'default') {
@@ -215,7 +215,7 @@ if($do == 'designer') {
 		'linkcolor',
 		'css'
 	);
-	template('site/wesite-tpl-post');
+	template('site/tpl-post');
 }
 
 if($do == 'module') {
