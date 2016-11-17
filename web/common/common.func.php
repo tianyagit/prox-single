@@ -132,7 +132,7 @@ function buildframes($framename = ''){
 	//@@todo 进入模块界面后权限
 	$modulename = trim($_GPC['m']);
 	$eid = intval($_GPC['eid']);
-	if (!empty($modulename) || !empty($eid)) {
+	if ((!empty($modulename) || !empty($eid)) && !in_array($modulename, system_modules())) {
 		if(empty($modulename) && !empty($eid)) {
 			$modulename = pdo_getcolumn('modules_bindings', array('eid' => $eid), 'module');
 		}
