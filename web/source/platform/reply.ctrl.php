@@ -187,7 +187,7 @@ if($do == 'post') {
 			$rule = array(
 				'uniacid' => $_W['uniacid'],
 				'name' => $_GPC['rulename'],
-				'module' => 'reply',
+				'module' => $m == 'keyword' ? 'reply' : $m,
 				'containtype' => $containtype,
 				'reply_type' => intval($_GPC['reply_type']) == 2 ? 2 : 1,
 				'status' => $_GPC['status'] == 'true' ? 1 : 0,
@@ -223,7 +223,7 @@ if($do == 'post') {
 				$rowtpl = array(
 					'rid' => $rid,
 					'uniacid' => $_W['uniacid'],
-					'module' => 'reply',
+					'module' => $m == 'keyword' ? 'reply' : $m,
 					'status' => $rule['status'],
 					'displayorder' => $rule['displayorder'],
 				);
