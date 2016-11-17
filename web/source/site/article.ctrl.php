@@ -42,7 +42,7 @@ if($do == 'display') {
 	$list = pdo_fetchall("SELECT * FROM ".tablename('site_article')." WHERE uniacid = '{$_W['uniacid']}' $condition ORDER BY displayorder DESC, id DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_article') . " WHERE uniacid = '{$_W['uniacid']}'".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
-	template('site/wesite-article-display');
+	template('site/article-display');
 } elseif($do == 'post') {
 	$id = intval($_GPC['id']);
 	//微站风格模板
@@ -190,7 +190,7 @@ if($do == 'display') {
 		}
 		message('文章更新成功！', url('site/article/display'), 'success');
 	} else {
-		template('site/wesite-article-post');
+		template('site/article-post');
 	}
 } elseif($do == 'del') {
 	if (checksubmit('submit')) {
