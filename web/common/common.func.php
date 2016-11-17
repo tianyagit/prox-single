@@ -204,8 +204,8 @@ function buildframes($framename = ''){
 
 function system_modules() {
 	return array(
-		'basic', 'news', 'music', 'userapi', 'recharge', 
-		'custom', 'images', 'video', 'voice', 'chats', 'wxcard', 'paycenter'
+		'basic', 'news', 'music', 'userapi', 'recharge', 'images', 'video', 'voice', 'wxcard',
+		'custom', 'chats', 'paycenter', 'keyword', 'special', 'welcome', 'default', 'apply'
 	);
 }
 

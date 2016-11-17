@@ -43,6 +43,7 @@ if ($m == 'special') {
 // 	message('访问无权限.');
 // }
 //功能模块用
+$sysmods = system_modules();
 // if(!in_array($m, $sysmods)) {
 // 	//nav
 // 	define('FRAME', 'ext');
@@ -132,6 +133,7 @@ if($do == 'display') {
 		$setting = uni_setting($_W['uniacid'], array('default'));
 		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
 	}
+
 	template('platform/reply');
 }
 
