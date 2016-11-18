@@ -1,16 +1,16 @@
 {template 'common/header'}
 <div class="new-keyword">
 	<ol class="breadcrumb we7-breadcrumb">
-		<a href="{url 'platform/reply' array('m' => 'keyword')}"><i class="fa fa-chevron-circle-left"></i> </a>
+		<a href="{url 'platform/reply' array('m' => $m)}"><i class="fa fa-chevron-circle-left"></i> </a>
 		<li>
-			<a href="{url 'platform/reply'}">自动回复管理</a>
+			<a href="{url 'platform/reply' array('m' => $m)}">自动回复管理</a>
 		</li>
 		<li>
 			{if empty($rid)}<a href="{url 'platform/reply/post' array('m' => $m)}">新建{$module['title']}</a></li>{/if}
 			{if !empty($rid)}<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}">编辑{$module['title']}</a></li>{/if}
 		</li>
 	</ol>
-	{if $m == 'keyword'}
+	{if $m == 'keyword' || !in_array($m, $sysmods)}
 	<div class="we7-form" id="js-reply-form" ng-controller="KeywordReply" ng-cloak>
 		<form id="reply-form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="rid" value="{$rid}" />
@@ -96,7 +96,11 @@
 				<span class="help-block">您可以选择临时禁用这条回复.</span>
 			</div>
 		</div>
-		{php echo module_build_form('reply', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
+		{if in_array($m, $sysmods)}
+			{php echo module_build_form('reply', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
+		{else}
+			{php echo module_build_form($m, $rid)}
+		{/if}
 		<input type="hidden" name="token" value="{$_W['token']}" />
 		<input type="submit" name="submit" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary we7-padding-horizontal" style="padding: 6px 50px;"/>
 	</div>
@@ -162,7 +166,7 @@
 	{/if}
 </div>
 <script>
-{if $m == 'keyword'}
+{if $m == 'keyword' || !in_array($m, $sysmods)}
 require(['underscore'], function() {
 	angular.module('replyFormApp').value('config', {
 		replydata: {php echo json_encode($reply)},

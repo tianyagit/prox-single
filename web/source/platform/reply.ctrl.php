@@ -65,7 +65,7 @@ if(in_array($m, array('custom'))) {
 }
 
 if($do == 'display') {
-	if ($m == 'keyword') {
+	if ($m == 'keyword' || !in_array($m, $sysmods)) {
 		if ($_W['isajax'] && $_W['ispost']) {
 			/*改变状态：是否开启该关键字*/
 			$id = $_GPC['__input']['id'];
@@ -100,6 +100,10 @@ if($do == 'display') {
 				$condition .= " AND FIND_IN_SET(:type, `containtype`) OR module = :type";
 				$params[':type'] = $_GPC['type'];	
 			}
+		}
+		if(!in_array($m, $sysmods)) {
+			$condition .= " AND `module` = :type";
+			$params[':type'] = $m;
 		}
 		if(isset($_GPC['keyword'])) {
 			$condition .= ' AND `name` LIKE :keyword';
@@ -139,7 +143,7 @@ if($do == 'display') {
 }
 
 if($do == 'post') {
-	if ($m == 'keyword') {
+	if ($m == 'keyword' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
 			/*检测规则是否已经存在*/
@@ -184,7 +188,7 @@ if($do == 'post') {
 			$rule = array(
 				'uniacid' => $_W['uniacid'],
 				'name' => $_GPC['rulename'],
-				'module' => 'reply',
+				'module' => $m == 'keyword' ? 'reply' : $m,
 				'containtype' => $containtype,
 				'reply_type' => intval($_GPC['reply_type']) == 2 ? 2 : 1,
 				'status' => $_GPC['status'] == 'true' ? 1 : 0,
@@ -220,7 +224,7 @@ if($do == 'post') {
 				$rowtpl = array(
 					'rid' => $rid,
 					'uniacid' => $_W['uniacid'],
-					'module' => 'reply',
+					'module' => $m == 'keyword' ? 'reply' : $m,
 					'status' => $rule['status'],
 					'displayorder' => $rule['displayorder'],
 				);

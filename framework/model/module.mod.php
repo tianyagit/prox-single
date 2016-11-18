@@ -223,7 +223,12 @@ function module_entry($eid) {
 function module_build_form($name, $rid, $option = array()) {
 	$rid = intval($rid);
 	$m = WeUtility::createModule($name);
-	return $m->fieldsFormDisplay($rid, $option);
+	if(!empty($m)) {
+		return $m->fieldsFormDisplay($rid, $option);		
+	}else {
+		return null;
+	}
+
 }
 
 /**
