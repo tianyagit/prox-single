@@ -1,0 +1,137 @@
+{template 'common/header'}
+<div class="we7-page-title">
+	参数设置
+</div>
+<ul class="we7-page-tab">
+	<li>
+		<a href="">支付参数</a>
+	</li>
+	<li class="active">
+		<a href="借用权限.html">借用权限</a>
+	</li>
+	<li>
+		<a href="微信通知.html">微信通知设置</a>
+	</li>
+	<li>
+		<a href="邮件通知.html">邮件通知参数</a>
+	</li>
+</ul>
+<table class="table we7-table table-form">
+	<col width="140px " />
+	<col />
+	<col width="100px" />
+	<tr>
+		<th class="text-left" colspan="3">公众平台oAuth设置</th>
+	</tr>
+	<tr>
+		<td class="text-left">
+			选择公众号
+		</td>
+		<td class="text-left">
+			开发者中心
+		</td>
+		<td class="text-left ">
+			<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#oauth">修改</a>
+		</td>
+	</tr>
+	<tr>
+		<td class="text-left">
+			oAuth独立域名
+		</td>
+		<td class="text-left">
+			1231
+		</td>
+		<td class="text-left">
+			<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#host">修改</a>
+		</td>
+	</tr>
+</table>
+<div class="modal fade" id="oauth" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="we7-modal-dialog modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<div class="modal-title">选择公众号</div>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<select name="oauth" class="we7-select">
+						<option value="">.we7-select</option>
+						<option value="">1</option>
+						<option value="">1</option>
+					</select>
+					<span class="help-block">在微信公众号请求用户网页授权之前，开发者需要先到公众平台网站的【开发者中心】<b>网页服务</b>中配置授权回调域名。<a href="http://www.we7.cc/manual/dev:v0.6:qa:mobile_redirect_url_error" target="_black" class="color-default">查看详情</a></span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary">确定</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="host" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="we7-modal-dialog modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<div class="modal-title">oAuth独立域名</div>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<input type="text" id="" name="host" class="form-control" placeholder="oAuth独立域名">
+					<span class="help-block">适用于您的微站或是活动有多个域名的情况下，由此域名做统一的oauth授权用。例如：http://www.baidu.com 注意：结尾没有 / </span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary">确定</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+<table class="table we7-table table-form">
+	<col width="140px " />
+	<col />
+	<col width="100px" />
+	<tr>
+		<th class="text-left" colspan="3">借用 JS 分享设置</th>
+	</tr>
+	<tr>
+		<td class="text-left">
+			选择公众号
+		</td>
+		<td class="text-left">
+			开发者中心
+		</td>
+		<td class="text-left ">
+			<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#jsauth_acid">修改</a>
+		</td>
+	</tr>
+</table>
+<div class="modal fade" id="jsauth_acid" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="we7-modal-dialog modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<div class="modal-title">选择公众号</div>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<select name="jsauth_acid" class="we7-select">
+						<option value="">.we7-select</option>
+						<option value="">1</option>
+						<option value="">1</option>
+					</select>
+					<span class="help-block">在系统中使用微信分享接口前，开发者需要先到公众平台网站的【公众号设置】 / 【功能设置】中配置 【JS 接口安全域名】。<a href="http://www.we7.cc/manual/dev:v0.6:qa:jsauth" target="_black">查看详情</a></span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary">确定</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+{template 'common/footer'}
+
