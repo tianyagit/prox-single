@@ -201,7 +201,7 @@ if($do == 'designer') {
 			pdo_query("DELETE FROM " . tablename('site_styles_vars') . " WHERE variable IN ('" . implode("','", array_keys($styles)) . "') AND styleid = :styleid AND uniacid = '{$_W['uniacid']}'", array(':styleid' => $styleid));
 		}
 		pdo_update('site_styles', array('name' => $_GPC['name']), array('id' => $styleid));
-		message('更新风格成功！', url('platform/site/wesite_tpl'), 'success');
+		message('更新风格成功！', url('site/style'), 'success');
 	}
 	$systemtags = array(
 		'imgdir',
