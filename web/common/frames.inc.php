@@ -45,11 +45,26 @@ $ms['account'] = array(
 					'title' => '微官网',
 					'url' => url('site/multi/display'),
 					'permission_name' => 'platform_site'
-				),
+				)
+			),
+		),
+		'mc' => array(
+			'title' => '粉丝',
+			'menu' => array(
 				'mc_fans' => array(
-					'title' => '粉丝列表',
+					'title' => '粉丝管理',
 					'url' => url('mc/fans'),
 					'promisson_name' => 'mc_fans',
+				)
+			),
+		),
+		'profile' => array(
+			'title' => '配置',
+			'menu' => array(
+				'profile' => array(
+					'title' => '参数配置',
+					'url' => url('profile/passport'),
+					'promisson_name' => 'profile',
 				)
 			),
 		),
