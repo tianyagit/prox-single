@@ -164,10 +164,12 @@ function buildframes($framename = ''){
 				'url' => url('site/nav/shortcut', array('m' => $modulename)),
 			);
 		}
-		
 		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
 			if (!empty($module['isrulefields'])) {
 				$url = url('platform/reply', array('m' => $modulename));
+			}
+			if (empty($url) && !empty($entries['cover'])) {
+				$url = url('platform/cover', array('eid' => $entries['cover'][0]['eid']));
 			}
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_entry'] = array(
 				'title' => "<i class='fa fa-plane'></i> 应用入口",
