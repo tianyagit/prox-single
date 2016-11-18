@@ -211,7 +211,6 @@ if ($do == 'batch_edit_fans_tag') {
 	message(error(0), '', 'ajax');
 }
 
-<<<<<<< Updated upstream
 if ($do == 'upload_fans') {
 	$next_openid = $_GPC['__input']['next_openid'];
 	if (empty($next_openid)) {
@@ -276,7 +275,5 @@ if ($do == 'sync') {
 		message(error(0, 'success'), '', 'ajax');
 	}
 }
-=======
->>>>>>> Stashed changes
 template('mc/fans');
 
