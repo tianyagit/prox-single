@@ -14,27 +14,5 @@ load()->model('frame');
 load()->model('cloud');
 load()->classs('coupon');
 
-$menu = pdo_get('core_menu', array('permission_name' => 'activity_consume_coupon'));
-if (empty($menu)) {
-	$menu = pdo_get('core_menu', array('title' => '卡券核销'));
-	if (empty($menu)) {
-		$pid = pdo_getcolumn('core_menu', array('title' => '卡券管理'), 'id');
-		if (!empty($pid)) {
-			pdo_insert('core_menu', array(
-				'pid' => $pid, 
-				'title' => '卡券核销', 
-				'name' => 'mc', 
-				'url' => './index.php?c=activity&a=consume&do=display&',
-				'append_title' => '',
-				'append_url' => '',
-				'displayorder' => '0',
-				'type' => 'url',
-				'is_display' => '1',
-				'is_system' => '1',
-				'permission_name' => 'activity_consume_coupon'
-			));
-			cache_build_frame_menu();
-		}
-	}
-}
-print_r($menu);exit;
+exit;
+print_r(parse_url('http://wx.panomall.com/web/index.php?c=material&a=mass&do=cron&id=47'));
