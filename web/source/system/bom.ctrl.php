@@ -38,12 +38,14 @@ if (checksubmit('submit')) {
 if (checksubmit('dispose')) {
 	$trees = cache_load('bomtree');
 	$path = IA_ROOT;
-	foreach ($trees as $tree) {
-		$fname = $path . $tree;
-		$string = file_get_contents($fname);
-		$string = substr($string, 3);
-		file_put_contents($fname, $string);
-		fclose($fp);
+	if (is_array($trees)) {
+		foreach ($trees as $tree) {
+			$fname = $path . $tree;
+			$string = file_get_contents($fname);
+			$string = substr($string, 3);
+			file_put_contents($fname, $string);
+			@fclose($fp);
+		}
 	}
 	cache_delete('bomtree');
 }
