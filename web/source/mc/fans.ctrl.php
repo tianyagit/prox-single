@@ -258,8 +258,8 @@ if ($do == 'sync') {
 	if ($type == 'all') {
 		$pageindex = $_GPC['__input']['pageindex'];
 		$pageindex++;
-		$sync_fans = pdo_getslice('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => '1'), array($pageindex, 1), $total, array(), '', 'fanid DESC');
-		$total = ceil($total/1);
+		$sync_fans = pdo_getslice('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => '1'), array($pageindex, 5), $total, array(), '', 'fanid DESC');
+		$total = ceil($total/5);
 		if (!empty($sync_fans)) {
 			foreach ($sync_fans as $fans) {
 				mc_init_fans_info($fans);
