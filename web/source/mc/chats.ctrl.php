@@ -9,7 +9,11 @@
 
 defined('IN_IA') or exit('Access Denied');
 
+<<<<<<< Updated upstream
 $dos = array('chats', 'send', 'endchats');
+=======
+$dos = array('chats', 'send');
+>>>>>>> Stashed changes
 $do = in_array($do , $dos) ? $do : 'chats';
 
 load()->model('mc');
@@ -21,6 +25,7 @@ if ($do == 'chats') {
 	if (!empty($fan_info['uid'])) {
 		$fan_info['member_info'] = mc_fetch($fan_info['uid']);
 	}
+<<<<<<< Updated upstream
 	$chat_record = pdo_getslice('mc_chats_record', array('uniacid' => $_W['uniacid'], 'openid' => $openid), array('1', 20), $total, array(), '', 'createtime desc');
 	if (!empty($chat_record)) {
 		foreach ($chat_record as &$record) {
@@ -29,6 +34,8 @@ if ($do == 'chats') {
 			$record['createtime'] = date('Y-m-d H:i', $record['createtime']);
 		}
 	}
+=======
+>>>>>>> Stashed changes
 }
 
 if ($do == 'send') {
@@ -44,6 +51,7 @@ if ($do == 'send') {
 	}
 	$wechat_api = WeAccount::create($_W['acid']);
 	$result = $wechat_api->sendCustomNotice($send);
+<<<<<<< Updated upstream
 	if (is_error($result)) {
 		message($result, '', 'ajax');
 	} else {
@@ -93,5 +101,14 @@ if ($do == 'endchats') {
 		$processor = WeUtility::createModuleProcessor('chats');
 		$processor->end();
 	}
+=======
+	print_r($result);die;
+	if (is_error($result)) {
+		message($result, '', 'ajax');
+	} else {
+
+	}
+
+>>>>>>> Stashed changes
 }
 template('mc/chats');
