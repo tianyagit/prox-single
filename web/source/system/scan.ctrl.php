@@ -17,7 +17,7 @@ $_W['page']['title'] = '木马查杀 - 常用系统工具 - 系统管理';
 if ($do == 'post') {
 	$config = iunserializer(cache_read('scan:config'));
 	$list = glob(IA_ROOT.'/*', GLOB_NOSORT);
-	$ignore = array();
+	$ignore = array('data','attachment');
 	foreach ($list as $key => $li) {
 		if (in_array(basename($li), $ignore)) {
 			unset($list[$key]);
