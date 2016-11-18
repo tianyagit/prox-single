@@ -34,9 +34,6 @@ if ($do == 'display') {
 	if ($_GPC['type'] == 'bind') {
 		$condition .= " AND f.`uid` > 0";
 		$type = 'bind';
-	} elseif($_GPC['type'] == '') {
-		$condition .= " AND f.`uid` = 0";
-		$type = '';
 	}
 	$nickname = $_GPC['nickname'] ? addslashes(trim($_GPC['nickname'])) : '';
 	if (!empty($nickname)) {
