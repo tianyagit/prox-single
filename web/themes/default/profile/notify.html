@@ -20,7 +20,7 @@
 	<div class="we7-form">
 		<form action="" method="post">
 		<div class="form-group">
-			<label for="" class="control-label">STMP服务器</label>
+			<label for="" class="control-label">SMTP服务器</label>
 			<div class="form-controls">
 				<input id='radio-1' type="radio" name="smtp[type]" ng-checked="type == '163'" value="163" ng-click="type = '163'"/>
 				<label for="radio-1">网易邮箱服务器（建议使用）</label>
@@ -48,9 +48,9 @@
 		<div class="form-group" ng-show="type == 'custom'">
 			<label for="" class="control-label">使用SSL加密</label>
 			<div class="form-controls">
-				<input id='radio-11' type="radio" name="smtp[authmode]" value="{$mail_setting['smtp']['authmode']}" ng-checked="setting['smtp']['authmode'] == 1" />
+				<input id='radio-11' type="radio" name="smtp[authmode]" value="1" ng-checked="setting['smtp']['authmode'] == 1" />
 				<label for="radio-11">是</label>
-				<input id='radio-12' type="radio" name="smtp[authmode]" value="{$mail_setting['smtp']['authmode']}" ng-checked="setting['smtp']['authmode'] == 0 || setting['smtp']['authmode'] == undefined"/>
+				<input id='radio-12' type="radio" name="smtp[authmode]" value="0" ng-checked="setting['smtp']['authmode'] == 0 || setting['smtp']['authmode'] == undefined"/>
 				<label for="radio-12">否</label>
 				<span class="help-block">开启此项后，连接将用SSL的形式，此项需要SMTP服务器支持</span>
 			</div>
@@ -65,8 +65,10 @@
 		<div class="form-group">
 			<label for="" class="control-label">smtp客户端授权密码</label>
 			<div class="form-controls">
-				<input type="pass" name="password" value="{$mail_setting['password']}" style="width: 600px" class="form-control" placeholder="">
-				<span class="help-block">指定发送邮件的密码，QQ邮箱此处为授权码， </span>
+				<input type="password" name="password" value="{$mail_setting['password']}" style="width: 600px" class="form-control" placeholder="">
+				<span class="help-block">指定发送邮件的密码，QQ邮箱此处为授权码，
+				<a href="http://service.mail.qq.com/cgi-bin/help?subtype=1&amp;&amp;id=28&amp;&amp;no=1001256" target="_Blank" id="code" style="">查看授权码获取方法</a>
+				</span>
 			</div>
 		</div>
 		<div class="form-group">
