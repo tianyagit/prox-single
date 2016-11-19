@@ -17,9 +17,9 @@ $_W['page']['title'] = '公众平台oAuth选项 - 会员中心';
 
 if ($do == 'save_oauth') {
 	$type = $_GPC['__input']['type'];
+	$account = $_GPC['__input']['account'];
 	if ($type == 'oauth') {
 		$host = $_GPC['__input']['host'];
-		$account = $_GPC['__input']['account'];
 		$host = rtrim($host,'/');
 		if(!empty($host) && !preg_match('/^http(s)?:\/\//', $host)) {
 			$host = $_W['sitescheme'].$host;
@@ -32,8 +32,10 @@ if ($do == 'save_oauth') {
 		cache_delete("unisetting:{$_W['uniacid']}");
 	}
 	if ($type == 'jsoauth') {
-
+		pdo_update('uni_settings', array('jsauth_acid' => $account), array('uniacid' => $_W['uniacid']));
+		cache_delete("unisetting:{$_W['uniacid']}");
 	}
+	message(error(0), '', 'ajax');
 }
 
 if ($do == 'oauth') {
@@ -54,16 +56,10 @@ if ($do == 'oauth') {
 				foreach($accountlist as $account) {
 					if(!empty($account['key']) && !empty($account['secret'])) {
 						if (in_array($account['level'], array(4))) {
-							$oauth_accounts[] = array(
-								'acid' => $account['acid'],
-								'name' => $account['name']
-							);
+							$oauth_accounts[$account['acid']] = $account['name'];
 						}
 						if (in_array($account['level'], array(3, 4))) {
-							$jsoauth_accounts[] = array(
-								'acid' => $account['acid'],
-								'name' => $account['name']
-							);
+							$jsoauth_accounts[$account['acid']] = $account['name'];
 						}
 					}
 				}
@@ -73,5 +69,6 @@ if ($do == 'oauth') {
 //获取已保存的oauth信息
 	$oauth = pdo_fetchcolumn('SELECT `oauth` FROM '.tablename('uni_settings').' WHERE `uniacid` = :uniacid LIMIT 1',array(':uniacid' => $_W['uniacid']));
 	$oauth = iunserializer($oauth) ? iunserializer($oauth) : array();
+	$jsoauth = pdo_getcolumn('uni_settings', array('uniacid' => $_W['uniacid']), 'jsauth_acid');
 	template('profile/passport');
 }
