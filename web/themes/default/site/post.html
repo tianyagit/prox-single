@@ -1,19 +1,1200 @@
 {template 'common/header'}
-<div class="we7-page-title">微官网</div>
-<ul class="we7-page-tab">
-	<li class="active"><a href="{php echo url('site/multi')}" >微官网列表</a></li>
-	<li><a href="{php echo url('site/style')}">微官网模板</a></li>
-	<li><a href="{php echo url('site/article')}">文章管理</a></li>
-	<li><a href="{php echo url('site/category')}">文章分类管理</a></li>
-</ul>
-<div id="js-wesite-post" ng-controller="WesitePost" ng-cloak>
-	<div class="we7-page-search we7-padding-bottom clearfix">
-	</div>
+<div class="panel-heading">
+	<a href="{php echo url('site/multi/display')}">返回</a>
 </div>
+
+<form action="" method="post" class="panel panel-cut" id="js-wesite-post" ng-controller="WesitePost" ng-cloak>
+	<input type="hidden" name="multiid" value="{$_GPC['multiid']}">
+	<div class="panel-body">
+		<div class="site-select-tem">
+			<div class="select-tem-heading">选择模板</div>
+			<div class="select-tem-filter">
+				<div class="form-group">
+					分类
+					<select class="select-we7" ng-model="temtype" ng-options="tem.title for tem in temtypes">
+					</select>
+				</div>
+				搜索
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="输入模板名" ng-model="searchedStyleName">
+					<span class="input-group-addon" ng-click="searchStyle()"><i class="fa fa-search"></i></span>
+				</div>
+			</div>
+			<div class="select-tem-list">
+				<ul>
+					<li class="select-tem-item" ng-repeat="style in styles" ng-class="{'active': multi.style.id == style.id}" ng-click="selectStyle(style.id)" ng-show="temtype.name == 'all' || temtype.name == style.type">
+						<input type="text" name="styleid" ng-model="multi.style.id" ng-style="{'display': 'none'}">
+						<img src="{$_W['siteroot']}app/themes/{{style.tname}}/preview.jpg" />
+						<a href="javascript:;" class="cover-dark" ng-style="{'padding': '5px'}">
+							<i class="fa fa-check cover-selected"></i>
+							<span ng-bind="style.name" ng-style="{'position': 'absolute', 'bottom': '1px', 'color': 'white'}"></span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="site-view">
+			<div class="we7-iphone-view">
+				<img src="./resource/images/new/iphone6.png" alt="" class="iphone-bg">
+				<div class="iphone-preview">
+					<div class="iphone-content shopNav">
+						<div class="title">
+							<h1><span>[页面标题]</span></h1>
+						</div>
+						<div class="nav-menu">
+							<div class="nav-menu-wx has-nav-0 has-nav-3 clearfix hidden">
+								<div class="nav-home text-center">
+									<a href=""><i class="fa fa-home"></i></a>
+								</div>
+								<ul class="nav-group">
+									<li class="nav-group-item" ng-repeat="menu in activeItem.menus">
+
+										<a href="javascript:void();" data-toggle="dropdown" class="ng-binding">
+											<i class="fa fa-minus-circle"></i> 标题
+										</a>
+
+										<dl>
+											<dd>
+
+												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
+
+												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
+
+												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
+
+												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
+
+												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
+
+											</dd>
+										</dl>
+
+									</li>
+									<li class="nav-group-item" ng-if="$index < 3" ng-repeat="menu in activeItem.menus">
+										<a ng-if="menu.submenus.length == 0" href="" class="ng-binding">
+											标题
+										</a>
+
+									</li>
+									<li class="nav-group-item" ng-if="$index < 3" ng-repeat="menu in activeItem.menus">
+										<a ng-if="menu.submenus.length == 0" href="" class="ng-binding">
+											标题
+										</a>
+
+									</li>
+								</ul>
+							</div>
+							<div class="nav-menu-app has-nav-0 ng-scope has-nav-5 hidden" style="background-color: rgb(43, 45, 48);">
+								<ul class="nav-group clearfix">
+
+									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
+										</a>
+									</li>
+
+									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
+										</a>
+									</li>
+
+									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
+										</a>
+									</li>
+
+									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
+										</a>
+									</li>
+
+									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
+										</a>
+									</li>
+
+								</ul>
+							</div>
+							<div class="js-quickmenu nav-menu-cart ng-scope has-nav-4 hidden" ng-if="activeItem.navStyle == 3" ng-class="{0 : 'has-nav-0', 1 : 'has-nav-1', 2: 'has-nav-2', 3: 'has-nav-3', 4: 'has-nav-4'}[activeItem.menus.length]" ng-style="{'background-color' : activeItem.bgColor}" style="background-color: rgb(43, 45, 48);">
+								<ul class="nav-group clearfix">
+									<li class="nav-group-item">
+										<a href="" ng-style="{'background-image': activeItem.menus[0].image ? 'url('+activeItem.menus[0].image+')' : ''}">
+											<i ng-hide="activeItem.menus[0].image" class="fa fa-home" ng-style="{'color' : activeItem.menus[0].icon.color}" ng-class="activeItem.menus[0].icon.name" style="color: rgb(0, 255, 255);">
+											</i>
+										</a>
+									</li>
+
+									<li ng-if="activeItem.menus[2]" class="nav-group-item ng-scope">
+										<a href="" ng-style="{'background-image': activeItem.menus[1].image ? 'url('+activeItem.menus[1].image+')' : ''}">
+											<i ng-hide="activeItem.menus[1].image" class="fa fa-home" ng-style="{'color' : activeItem.menus[1].icon.color}" ng-class="activeItem.menus[1].icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</li>
+
+									<li class="nav-home nav-group-item">
+										<a href="" ng-style="{'background-image': activeItem.extend[0].image ? 'url('+activeItem.extend[0].image+')' : ''}">
+											<i ng-hide="activeItem.extend[0].image" class="fa" ng-style="{'color' : activeItem.extend[0].icon.color}" ng-class="activeItem.extend[0].icon.name"></i>
+										</a>
+									</li>
+
+									<li class="nav-group-item ng-scope" ng-if="activeItem.menus[1]">
+
+										<a ng-if="activeItem.menus[2]" href="" ng-style="{'background-image': activeItem.menus[2].image ? 'url('+activeItem.menus[2].image+')' : ''}" class="ng-scope">
+											<i ng-hide="activeItem.menus[2].image" class="fa fa-home" ng-style="{'color' : activeItem.menus[2].icon.color}" ng-class="activeItem.menus[2].icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+
+									</li>
+
+									<li ng-if="activeItem.menus[3]" class="nav-group-item ng-scope">
+										<a href="" ng-style="{'background-image': activeItem.menus[3].image ? 'url('+activeItem.menus[3].image+')' : ''}">
+											<i ng-hide="activeItem.menus[3].image" class="fa fa-home" ng-style="{'color' : activeItem.menus[3].icon.color}" ng-class="activeItem.menus[3].icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</li>
+
+								</ul>
+							</div>
+							<div class="js-quickmenu nav-menu-path rotate-nav has-nav-4 ng-scope hidden" ng-if="activeItem.navStyle == 4">
+								<div class="nav-group">
+
+									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</div>
+
+									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</div>
+
+									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</div>
+
+									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</div>
+
+								</div>
+								<div class="nav-home nav-group-item js-quickmenu-toggle">
+									<a href="javascript:;" style="background-image:url(../../../pros/web/resource/images/app/centerbtn.png);"></a>
+								</div>
+							</div>
+							<div class="js-quickmenu nav-menu-sides rotate-nav has-nav-4 ng-scope" ng-if="activeItem.navStyle == 5">
+								<div class="nav-group">
+
+									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</div>
+
+									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</div>
+
+									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</div>
+
+									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
+										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
+										</a>
+									</div>
+
+								</div>
+								<div class="main-nav">
+									<div class="nav-group-item pull-left">
+										<a href="" ng-style="{'background-image': activeItem.extend[0].image ? 'url('+activeItem.extend[0].image+')' : ''}">
+											<i ng-hide="activeItem.extend[0].image" class="fa" ng-style="{'color' : activeItem.extend[0].icon.color}" ng-class="activeItem.extend[0].icon.name"></i>
+										</a>
+									</div>
+									<div class="nav-home nav-group-item js-quickmenu-toggle">
+										<a href="javascript:;" style="background-image:url(../../../pros/web/resource/images/app/centerbtn.png);"></a>
+									</div>
+									<div class="nav-group-item pull-right">
+										<a href="" ng-style="{'background-image': activeItem.extend[1].image ? 'url('+activeItem.extend[1].image+')' : ''}">
+											<i ng-hide="activeItem.extend[1].image" class="fa" ng-style="{'color' : activeItem.extend[1].icon.color}" ng-class="activeItem.extend[1].icon.name"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="site-edit-view">
+			<div class="site-edit-nav">
+				<ul>
+					<li class="site-edit-item active">
+						<a href="#entrance" data-toggle="tab">微官网入口</a>
+					</li>
+					<li class="site-edit-item">
+						<a href="#default" data-toggle="tab">基础信息</a>
+					</li>
+					<li class="site-edit-item" ng-click="loadSlideInfo()">
+						<a href="#slide" data-toggle="tab">幻灯片</a>
+					</li>
+					<li class="site-edit-item" ng-click="loadHomemenuInfo()">
+						<a href="#homemenu" data-toggle="tab">首页菜单</a>
+					</li>
+					<li class="site-edit-item" ng-click="loadQuickmenuInfo()">
+						<a href="#quickmenu" data-toggle="tab">底部快捷菜单</a>
+					</li>
+				</ul>
+			</div>
+			<div class="tab-content site-edit-content">
+				<!--入口-->
+				<div class="we7-form tab-pane active" id="entrance">
+					<div class="site-edit-heading">
+						微官网入口
+					</div>
+					<div class="entrance-url site-edit-heading">
+						<div class="form-group">
+							<label for="" class="control-label">微官网链接</label>
+							<div class="form-controls">
+								<a ng-href="{{siteEntrance}}" class="form-control-static color-default" target="_blank" ng-bind="siteEntrance"></a>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label"></label>
+							<div class="form-controls">
+								<a href="javascript:;" class="btn btn-default" id="copy-{{multi.id}}" clipboard supported="supported" text="siteEntrance" on-copied="success(multi.id)">复制链接</a>
+							</div>
+						</div>
+					</div>
+					<div class="entrance-edit">
+						<div class="form-group">
+							<label class="control-label">触发关键字</label>
+							<div class="form-controls">
+								<input type="text" name="keyword" class="form-control" ng-model="multi.site_info.keyword"/>
+								<div class="help-block">用户触发关键字，系统回复此页面的图文链接</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label">封面</label>
+							<div class="form-controls">
+								<div class="input-more" ng-class="{'active': multi.site_info.thumb}">
+									<img ng-src="{{multi.site_info.thumb}}" ng-if="multi.site_info.thumb">
+									<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage()" ng-hide="multi.site_info.thumb"><span>+</span></a>
+									<input type="text" name="thumb" ng-model="multi.site_info.thumb" ng-style="{'display' : 'none'}">
+									<div class="cover-dark">
+										<a href="javascript:;" class="cut" ng-click="uploadMultiImage()">更换</a>
+										<a href="javascript:;" class="del" ng-click="delMultiImage()"><i class="fa fa-times text-danger"></i></a>
+									</div>
+								</div>
+								<div class="help-block">用于用户触发关键字后，系统回复时的封面图片</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!--基础信息-->
+				<div class="tab-pane fade in" id="default">
+					<div class="site-edit-heading">
+						基础信息
+					</div>
+					<div class="we7-form">
+						<div class="form-group">
+							<label for="" class="control-label">微站名称</label>
+							<div class="form-controls">
+								<input type="text" name="title" class="form-control" ng-model="multi.title"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label">是否启用</label>
+							<div class="form-controls">
+								<label>
+									<input type="text" name="status" class="form-control" ng-model="multi.status" ng-style="{'display': 'none'}">
+									<div class="switch" ng-class="{'switchOn' : multi.status == 1}" ng-click="changeMultiStatus()"></div>
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label">页面描述</label>
+							<div class="form-controls">
+								<input type="text" name="description" class="form-control" ng-model="multi.site_info.description">
+								<span class="help-block">用户通过微信分享给朋友时,会自动显示页 面描述</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label">绑定域名</label>
+							<div class="form-controls">
+								<input type="text" name="bindhost" class="form-control" ng-model="multi.bindhost">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label">底部自定义</label>
+							<div class="form-controls">
+								<textarea class="form-control" cols="30" name="footer" autocomplete="off" ng-model="multi.site_info.footer"></textarea>
+								<span class="help-block">自定义底部信息，支持HTML</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!--幻灯片-->
+				<div class="tab-pane fade" id="slide">
+					<!--幻灯片列表-->
+					<div class="site-slide-list">
+						<div class="site-edit-heading">幻灯片</div>
+						<ul>
+							<li ng-repeat="list in slideLists">
+								<div class="site-slide-item media">
+									<div class="media-left media-middle slide-sort">
+										<span ng-style="{'color': '#98999a'}">排序</span>
+										<input type="text" class="form-control" ng-model="list.displayorder" ng-style="{'padding': '0', 'text-align': 'center'}">
+									</div>
+									<div class="media-left media-middle slide-img" ng-class="{'active': list.thumb}">
+										<div ng-style="{'border': '1px dashed #e7e7eb', 'overflow': 'hidden', 'position': 'relative','text-align': 'center', 'height': '65px'}">
+											<img ng-src="{{list.thumb}}" ng-if="list.thumb">
+											<a href="javascript:;" class="input-addon" ng-click="uploadSlideImage(list)" ng-hide="list.thumb" ng-style="{'line-height': '65px'}"><span>+</span></a>
+											<div class="cover-dark">
+												<a href="javascript:;" class="cut" ng-click="uploadSlideImage(list)">更换</a>
+												<a href="javascript:;" class="del" ng-click="delSlideImage(list)"><i class="fa fa-times text-danger"></i></a>
+											</div>
+										</div>
+									</div>
+									<div class="media-body">
+										<div class="slide-title">
+											<input type="text" ng-model="list.title" ng-style="{'width': '168px', 'border': '1px solid #ccc'}">
+										</div>
+										<div class="slide-alter">
+											<input type="text" ng-model="list.url" ng-style="{'width': '168px', 'border': '1px solid #ccc'}">
+										</div>
+										<a href="javascript:;" class="slide-del" ng-click="delSlide(list)"><i class="fa fa-times text-danger"></i></a>
+									</div>
+								</div>
+							</li>
+							<li class="slide-list-more site-slide-item">
+								<a href="javascript:;" class="slide-add" ng-click="addSlide()">+</a>
+							</li>
+						</ul>
+						<div class="btn btn-primary we7-padding-horizontal" ng-click="saveSlide()" ng-show="showSlideSubmit" ng-style="{'width':'100%'}">保存</div>
+					</div>
+				</div>
+
+				<!--首页菜单-->
+				<div class="tab-pane fade homemenu" id="homemenu">
+					<div class="site-edit-heading">
+						基础信息
+					</div>
+					<table class="table we7-table">
+						<col width="75px" />
+						<col width="75px" />
+						<col width="100px" />
+						<col width="" />
+						<tr>
+							<th>标题</th>
+							<th>图标</th>
+							<th>是否显示</th>
+							<th>操作</th>
+						</tr>
+						<tr>
+							<td class="title">
+								12131
+							</td>
+							<td class="icon">
+								<img src="http://7xoudk.com1.z0.glb.clouddn.com/images/31/2016/11/t4ifiG4qpJX1jQUL440au4Gilj1I1G.png" style="width:30px !important;" onerror="">
+							</td>
+							<td>
+								<div class="form-controls">
+									<label>
+										<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
+										<div class="switch switchOn"></div>
+									</label>
+								</div>
+							</td>
+							<td class="edit">
+								<a href="">复制链接</a>
+								<a href="">编辑</a>
+								<a href="">删除</a>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								12131
+							</td>
+							<td class="icon">
+								<i class="wi wi-qrcode"></i>
+							</td>
+							<td>
+								<div class="form-controls">
+									<label>
+										<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
+										<div class="switch switchOn"></div>
+									</label>
+								</div>
+							</td>
+							<td class="edit">
+								<a href="">复制链接</a>
+								<a href="">编辑</a>
+								<a href="">删除</a>
+							</td>
+						</tr>
+						<tr class="more">
+							<td colspan="4">
+								<a href="javascript:;" class="color-default">+添加</a>
+							</td>
+						</tr>
+					</table>
+
+					<!--首页菜单编辑-->
+					<div class="site-nav-edit">
+						<div class="edit-heading">
+							<a href="" class="go-back">
+								<i class="fa fa fa-chevron-circle-left"></i>
+							</a>
+							<span class="color-gray">幻灯片列表 / </span>
+							<span class="color-dark">新建幻灯片</span>
+						</div>
+						<div class="we7-form">
+							<div class="form-group">
+								<label for="" class="control-label">分配到微站</label>
+								<div class="form-controls">
+									<select name="" class="we7-select">
+										<option value="">.we7-select</option>
+										<option value="">1</option>
+										<option value="">1</option>
+									</select>
+									<span class="help-block">每个导航链接只能在一个微站上使用。</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="control-label">导航显示位置</label>
+								<div class="form-controls">
+									<select name="" class="we7-select">
+										<option value="">.we7-select</option>
+										<option value="">1</option>
+										<option value="">1</option>
+									</select>
+									<span class="help-block">设置位置后可以将导航菜单显示到模板对应的位置中。（可以同时设置多个导航在同一个位置中，会根据排序大小依次显示），显示的位置必须要有模板支持。</span>
+									<strong class="text-danger">注意：如果您添加了模板未设置的位置时，该链接将不会显示，您可以在导航列表中查看。</strong>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="control-label">名称</label>
+								<div class="form-controls">
+									<input type="text" class="form-control" id="" placeholder="">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="control-label">描述</label>
+								<div class="form-controls">
+									<textarea name="" rows="4" cols="" class="form-control"></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="control-label">链接</label>
+								<div class="form-controls">
+									<input type="text" class="form-control" id="" placeholder="">
+									<span class="form-control-addon">
+										<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">选择链接 <span class="caret"></span></span>
+									</span>
+									<span class="help-block">指定这个导航的链接目标</span>
+									<strong>使用微站链接:</strong>
+									<a href="javascript:;" class="btn btn-default btn-sm" data-toggle="modal" data-target="#settel">一键拨号</a>
+									<a href="javascript:;" class="btn btn-default btn-sm" data-toggle="modal" data-target="#setnav">一键导航</a>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="control-label">状态</label>
+								<div class="form-controls">
+									<input id='radio-1' type="radio" name='r-group-1' checked='checked' />
+									<label for="radio-1">显示	</label>
+									<input id='radio-2' type="radio" name='r-group-1' />
+									<label for="radio-2">隐藏</label>
+									<span class="help-block">设置导航菜单的显示状态</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="control-label">排序</label>
+								<div class="form-controls">
+									<input type="text" class="form-control" id="" placeholder="">
+									<span class="help-block">导航排序，越大越靠前</span>
+								</div>
+							</div>
+							<div class="penel we7-panel">
+								<div class="panel-heading">
+									导航样式
+								</div>
+								<div class="panel-body we7-margin">
+									<div class="we7-form">
+										<div class="form-group">
+											<label for="" class="control-label">图标类型</label>
+											<div class="form-controls">
+												<input id='icontype-1' type="radio" name='icontype' checked='checked' />
+												<label for="icontype-1">系统内置</label>
+												<input id='icontype-2' type="radio" name='icontype' />
+												<label for="icontype-2">自定义上传</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="" class="control-label">上传图标</label>
+											<div class="form-controls">
+												<div class="input-more input-img" style="width: 75px; height: 75px;">
+													<a href="" class="input-addon"> <span>+</span> </a>
+													<div class="cover-dark">
+														<a href="" class="cut">更换</a>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="" class="control-label">上传图标</label>
+											<div class="form-controls">
+												<div class="input-more input-img active" style="width: 75px; height: 75px;">
+													<img src="" alt="" />
+													<div class="cover-dark">
+														<a href="" class="cut">更换</a>
+														<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="" class="control-label">系统图标</label>
+											<div class="form-controls">
+												<span class="btn btn-default"><i class="fa fa-external-link"></i><button class="button">选择图标</button></span>
+												<span class="help-block">导航的背景图标，系统提供了丰富的图标ICON。</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="" class="control-label">图标颜色</label>
+											<div class="form-controls input-group">
+												<span class="input-group-addon" style="width: 35px; background-color: rgb(241, 194, 50);"></span>
+												<span class="input-group-btn">
+													<button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
+													<button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
+												</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="" class="control-label">图标大小</label>
+											<div class="form-controls">
+												<input id='radio-1' type="text" name='icon[size]' class="form-control" style="width: 100px;" />
+												<span class="form-control-addon">PX</span>
+												<span class="help-block">图标的尺寸大小，单位为像素，上传图标时此设置项无效</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<input type="submit" name="" id="" value="添加" class="btn btn-primary" />
+						</div>
+					</div>
+				</div>
+
+				<!--导航菜单-->
+				<div class="tab-pane fade shopNav" id="quickmenu">
+					<div class="site-edit-heading">
+						导航菜单
+					</div>
+					<div class="we7-form app-side">
+						<div class="form-group">
+							<label for="" class="control-label">是否开启</label>
+							<div class="form-controls">
+								<label>
+									<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
+									<div class="switch switchOn"></div>
+								</label>
+								<span class="help-block">微站的各个页面可以通过导航串联起来。通过精心设置的导航，方便访问者在页面或是栏目间快速切换，引导访问者前往您期望的页面。</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label">导航应用:</label>
+							<div class="form-controls">
+								<input id='check-1' type="checkbox" name='check-1' checked='checked' />
+								<label for="check-1">微站主页</label>
+								<input id='check-2' type="checkbox" name='check-1' />
+								<label for="check-2">微页面</label>
+								<input id='check-3' type="checkbox" name='check-1' />
+								<label for="check-3">文章及分类</label>
+								<span class="help-block">将导航应用在以上页面</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label">导航隐藏:</label>
+							<div class="form-controls">
+								<a href="" class="color-default">选择导航</a>
+								<div class="form-control-static">
+									<label class="label label-warning ng-hide" style="">未设置，将在全部模块中显示</label>
+									<label style="margin-right: 5px; display: inline-block; display: inline-block; display: inline-block;" class="label label-success ng-binding">会员中心充值模块</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block; display: inline-block;" class="label label-success ng-binding">基本图片回复</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block; display: inline-block; " class="label label-success ng-binding">基本视频回复</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">收银台</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">微考试</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">微商城</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">测试云配置</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">幸运翻牌抽奖</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">一秒广告</label>
+									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">表白体（网页防封版）（三行情诗）</label>
+
+								</div>
+								<span class="help-block">将导航隐藏在以上模块</span>
+							</div>
+						</div>
+						<div class="panel we7-panel app-shopNav-edit">
+							<div class="panel-heading">
+								当前模板: 微信公众号自定义菜单模板
+								<div class="pull-right">
+									<button class="btn btn-primary" data-toggle="modal" data-target="#shop-nav-modal">修改模板</button>
+								</div>
+							</div>
+							<div class="panel-body">
+								<div class="shopNav-wx">
+									<div class="card ">
+										<div class="btns ">
+											<a href="javascript:; "><i class="fa fa-times "></i></a>
+										</div>
+										<div class="nav-region ">
+											<div class="first-nav ">
+												<h3>一级导航</h3>
+												<div class=" ">
+													<div class="form-group ">
+														<label class="control-label ">标题</label>
+														<div class="form-controls ">
+															<input type="text " class="form-control " name="" value=" " />
+														</div>
+													</div>
+													<div class="form-group ">
+														<label class="control-label ">链接到</label>
+														<div class="form-controls ">
+															<input type="text" class="form-control " id=" " placeholder=" ">
+															<span class="form-control-addon ">
+																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+															</span>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="second-nav ">
+												<h4>二级导航</h4>
+												<div class=" ">
+													<div class="del ">
+														<a href="javascript:; "><i class="fa fa-times "></i></a>
+													</div>
+													<div class="form-group ">
+														<label class="control-label ">标题</label>
+														<div class="form-controls ">
+															<input type="text " class="form-control " name="">
+														</div>
+													</div>
+													<div class="form-group ">
+														<label class="control-label ">链接到</label>
+														<div class="form-controls ">
+															<input type="text " class="form-control ">
+															<span class="form-control-addon ">
+																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+															
+															</span>
+														</div>
+													</div>
+												</div>
+												<div class="add-shopNav ">+ 添加二级导航</div>
+												<!--最多可添加5个-->
+											</div>
+										</div>
+									</div>
+									<div class="add-shopNav text-center ">+添加一级导航</div>
+									<!--最多添加三个导航-->
+								</div>
+								<!--end微信公众号自定义菜单模板-->
+								<br />
+								<hr>
+								<h3>APP导航样式</h3>
+								<hr>
+								<!--APP导航样式:shopNav-app-->
+								<div class="shopNav-app">
+									<div class="form-group">
+										<label for="" class="control-label">页面颜色</label>
+										<div class="form-controls input-group">
+											<input class="form-control" style="width: 200px;" name="icon[color]" placeholder="请选择颜色" value="" type="text">
+											<span class="input-group-addon" style="width: 35px; background-color: rgb(241, 194, 50);"></span>
+											<span class="input-group-btn">
+												<button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
+												<button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
+											</span>
+										</div>
+									</div>
+									<div class="card">
+										<div class="btns">
+											<a href="javascript:;"><i class="fa fa-times"></i></a>
+										</div>
+										<div class="nav-img-group">
+											<div class="clearfix">
+												<div class="nav-img-normal pull-left">
+													<label class="control-label">普通：</label>
+													<div class="form-controls">
+														<div class="input-more input-img active" style="width: 75px; height: 75px;">
+															<img src="" alt="" />
+															<div class="cover-dark">
+																<a href="" class="cut">更换</a>
+																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="nav-img-highlight pull-left">
+													<label class="control-label">高亮：</label>
+													<div class="form-controls">
+														<div class="input-more input-img active" style="width: 75px; height: 75px;">
+															<img src="" alt="" />
+															<div class="cover-dark">
+																<a href="" class="cut">更换</a>
+																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+										</div>
+										<div class="form-group">
+											<label class="control-label">标题</label>
+											<div class="form-controls">
+												<input type="text" class="form-control" name="">
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="control-label">链接到</label>
+											<div class="form-controls ">
+												<input type="text " class="form-control " id=" " placeholder=" ">
+												<span class="form-control-addon ">
+													<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+												</span>
+											</div>
+										</div>
+									</div>
+									<div class="add-shopNav text-center">+添加导航</div>
+								</div>
+								<!--end APP导航样式-->
+								<br />
+								<hr>
+								<h3>带购物车导航模板</h3>
+								<hr>
+								<!--带购物车导航模板-->
+								<div class="shopNav-cart">
+									<div class="form-group" style="border-bottom:1px solid #e5e5e5; padding:0 0 15px 0; margin:0 0 10px 0;">
+										<label class="control-label">页面颜色</label>
+										<div class="form-controls input-group">
+											<input class="form-control" style="width: 200px;" name="icon[color]" placeholder="请选择颜色" value="" type="text">
+											<span class="input-group-addon" style="width: 35px; background-color: rgb(241, 194, 50);"></span>
+											<span class="input-group-btn">
+												<button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
+												<button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
+											</span>
+										</div>
+									</div>
+									<p>添加中间主图标</p>
+									<div class="card">
+										<div class="nav-img-group">
+											<div class="clearfix">
+												<div class="nav-img-normal pull-left">
+													<label class="control-label">普通：</label>
+													<div class="form-controls">
+														<div class="input-more input-img active" style="width: 75px; height: 75px;">
+															<img src="" alt="" />
+															<div class="cover-dark">
+																<a href="" class="cut">更换</a>
+																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="nav-img-highlight pull-left">
+													<label class="control-label">高亮：</label>
+													<div class="form-controls">
+														<div class="input-more input-img active" style="width: 75px; height: 75px;">
+															<img src="" alt="" />
+															<div class="cover-dark">
+																<a href="" class="cut">更换</a>
+																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+										</div>
+										<div class="form-group">
+											<label class="control-label">链接到</label>
+											<div class="form-controls ">
+												<input type="text " class="form-control " id=" " placeholder=" ">
+												<span class="form-control-addon ">
+													<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+												
+												</span>
+											</div>
+										</div>
+									</div>
+									<p>添加两侧图标</p>
+									<div class="help-block">此导航模板建议您用两个或者四个自定义图标效果图最佳哦！</div>
+									<div class="card">
+										<div class="nav-img-group">
+											<div class="btns">
+												<a href="javascript:;"><i class="fa fa-times"></i></a>
+											</div>
+											<div class="clearfix">
+												<div class="nav-img-normal pull-left">
+													<label class="control-label">普通：</label>
+													<div class="form-controls">
+														<div class="input-more input-img active" style="width: 75px; height: 75px;">
+															<img src="" alt="" />
+															<div class="cover-dark">
+																<a href="" class="cut">更换</a>
+																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="nav-img-highlight pull-left">
+													<label class="control-label">高亮：</label>
+													<div class="form-controls">
+														<div class="input-more input-img active" style="width: 75px; height: 75px;">
+															<img src="" alt="" />
+															<div class="cover-dark">
+																<a href="" class="cut">更换</a>
+																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+										</div>
+										<div class="form-group">
+											<label class="control-label">链接到</label>
+											<div class="form-controls ">
+												<input type="text " class="form-control " id=" " placeholder=" ">
+												<span class="form-control-addon ">
+																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+												
+												</span>
+											</div>
+										</div>
+									</div>
+									<div class="add-shopNav text-center">+添加导航</div>
+								</div>
+								<!--end 带购物车导航模板-->
+								<br />
+								<hr>
+								<h3>Path展开形式导航模板</h3>
+								<hr>
+								<!--Path展开形式导航模板-->
+								<div class="shopNav-path">
+										<p class="help-block">此导航模板建议您用三个自定义图标效果最佳哦！</p>
+										<div class="card">
+											<div class="btns">
+												<a href="javascript:;"><i class="fa fa-times"></i></a>
+											</div>
+											<div class="nav-img-group">
+												<div class="clearfix">
+													<div class="nav-img-normal pull-left">
+														<label class="control-label">普通：</label>
+														<div class="form-controls">
+															<div class="input-more input-img active" style="width: 75px; height: 75px;">
+																<img src="" alt="" />
+																<div class="cover-dark">
+																	<a href="" class="cut">更换</a>
+																	<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label">链接到</label>
+												<div class="form-controls ">
+													<input type="text " class="form-control " id=" " placeholder=" ">
+													<span class="form-control-addon ">
+																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+													
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="add-shopNav text-center">+添加导航</div>
+										<!--最多可添加4个-->
+								</div>
+								<!--end Path展开形式导航模板-->
+								<br />
+								<hr>
+								<h3>两侧展开导航模板</h3>
+								<hr>
+								<!--两侧展开导航模板-->
+								<div class="shopNav-sides">
+										<p>添加两侧一级图标</p>
+										<div class="card">
+											<div class="nav-img-group">
+												<div class="clearfix">
+													<div class="nav-img-normal pull-left">
+														<label class="control-label">普通：</label>
+														<div class="form-controls">
+															<div class="input-more input-img active" style="width: 75px; height: 75px;">
+																<img src="" alt="" />
+																<div class="cover-dark">
+																	<a href="" class="cut">更换</a>
+																	<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label">链接到</label>
+												<div class="form-controls ">
+													<input type="text " class="form-control " id=" " placeholder=" ">
+													<span class="form-control-addon ">
+																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+													
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="card">
+											<div class="nav-img-group">
+												<div class="clearfix">
+													<div class="nav-img-normal pull-left">
+														<label class="control-label">普通：</label>
+														<div class="form-controls">
+															<div class="input-more input-img active" style="width: 75px; height: 75px;">
+																<img src="" alt="" />
+																<div class="cover-dark">
+																	<a href="" class="cut">更换</a>
+																	<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label">链接到</label>
+												<div class="form-controls ">
+													<input type="text " class="form-control " id=" " placeholder=" ">
+													<span class="form-control-addon ">
+																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+													
+													</span>
+												</div>
+											</div>
+										</div>
+										<p>添加中间二级标题</p>
+										<p class="help-block">此导航模板建议您用四个自定义图标效果最佳哦！</p>
+										<div class="card">
+											<div class="btns">
+												<a href="javascript:;" ng-click="removeMenu(menu)"><i class="fa fa-times"></i></a>
+											</div>
+											<div class="nav-img-group">
+												<div class="clearfix">
+													<div class="nav-img-normal pull-left">
+														<label class="control-label">普通：</label>
+														<div class="form-controls">
+															<div class="input-more input-img active" style="width: 75px; height: 75px;">
+																<img src="" alt="" />
+																<div class="cover-dark">
+																	<a href="" class="cut">更换</a>
+																	<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label">链接到</label>
+												<div class="form-controls ">
+													<input type="text " class="form-control " id=" " placeholder=" ">
+													<span class="form-control-addon ">
+																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
+													
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="add-shopNav text-center">+添加导航</div>
+										<!--最多可添加4个-->
+								</div>
+								<!--end 两侧展开导航模板-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<nav class="navbar navbar-wxapp-bottom navbar-fixed-bottom" role="navigation">
+		<div class="container">
+			<div class="pager">
+				<input type="submit" name="submit" value="完成" class="btn btn-primary">
+				<input type="hidden" name="token" value="{$_W['token']}">
+			</div>
+		</div>
+	</nav>
+</form>
 <script>
-	angular.module('wesiteApp').controller('WesitePost', ['$scope', function($scope) {
-		console.log(222);
+require(['underscore'], function(){
+	angular.module('wesiteApp').value('config', {
+		multiid: {php echo !empty($id) ? json_encode($id) : '0'},
+		multi: {php echo !empty($multi) ? json_encode($multi) : 'null'},
+		styles: {php echo !empty($styles) ? json_encode($styles) : 'null'},
+		temtypes: {php echo !empty($temtypes) ? json_encode($temtypes) : 'null'},
+		links: {
+			murl: "{php echo murl('home', array(), true, true)}",
+			searchStyleLink: "{php echo url('site/multi/post')}",
+			slideDisplay: "{php echo url('site/slide/display')}",
+			slidePost: "{php echo url('site/slide/post')}",
+			slideDel: "{php echo url('site/slide/del')}",
+
+		}
+	});
+	angular.module('wesiteApp').controller('WesitePost', ['$scope', 'config', '$http', function($scope, config, $http) {
+		$scope.links = config.links;
+		//所有模板分类
+		$scope.temtypes = config.temtypes;
+		//选中的模板分类
+		$scope.temtype = {name: 'all', 'title': '全部'};
+		$scope.searchedStyleName = '';
+		//基础信息scope
+		$scope.multi = config.multi;
+		$scope.styles = config.styles;
+		//幻灯片scope
+		$scope.slideLists = [];
+		$scope.showSlideSubmit = false;
+		//首页菜单scope
+		//底部快捷菜单scope
+		//微官网入口scope
+		$scope.siteEntrance = $scope.links.murl+'t='+$scope.multi.id;
+		console.log($scope.siteEntrance);
+		//multi Functions
+		$scope.selectStyle = function(id) {
+			var id = parseInt(id);
+			$scope.multi.style.id = id;
+		};
+		$scope.searchStyle = function(){
+			$http.post($scope.links.searchStyleLink, {name: $scope.searchedStyleName})
+				.success(function(data){
+					if(data.type == 'success') $scope.styles = data.message;
+				})
+		};
+		$scope.changeMultiStatus = function(){
+			$scope.multi.status = $scope.multi.status == 1 ? 0 : 1;
+		};
+		$scope.uploadMultiImage = function(){
+			require(['fileUploader'], function(uploader){
+				uploader.init(function(imgs){
+						$scope.multi.site_info.thumb = imgs.url;
+						$scope.$apply($scope.multi.site_info);
+				}, {'direct' : true, 'multiple' : false});
+			});
+		};
+		$scope.delMultiImage = function(){
+			$scope.multi.site_info.thumb = '';
+		};
+		//slide Functions
+		$scope.loadSlideInfo = function(){
+			$http.post($scope.links.slideDisplay, {multiid: config.multiid})
+				.success(function(data) {
+					if(data.type == 'success') {
+						$scope.slideLists = data.message;
+						if(!_.isEmpty($scope.slideLists)) $scope.showSlideSubmit = true;
+					}
+				});
+		};
+		$scope.addSlide = function(){
+			$scope.slideLists.push({
+				title: '',
+				displayorder: 0,
+				thumb: '',
+				url: ''
+			});
+			$scope.showSlideSubmit = true;
+		};
+		$scope.delSlide = function(list){
+			var index = _.indexOf($scope.slideLists, list);
+			if(index > -1) {
+				$scope.slideLists = _.without($scope.slideLists, $scope.slideLists[index]);
+			}
+			if(_.isEmpty($scope.slideLists)) $scope.showSlideSubmit = false;
+		};
+		$scope.uploadSlideImage = function(list){
+			var index = _.indexOf($scope.slideLists, list);
+			if(index > -1){
+				require(['fileUploader'], function(uploader){
+					uploader.init(function(imgs){
+							$scope.slideLists[index].thumb = imgs.url;
+							$scope.$apply($scope.slideLists);
+					}, {'direct' : true, 'multiple' : false});
+				});
+			}else{
+				util.message('参数错误，请刷新页面重试！');
+			}
+		};
+		$scope.delSlideImage = function(list){
+			var index = _.indexOf($scope.slideLists, list);
+			if(index > -1){
+				$scope.slideLists[index].thumb = '';
+			}
+		};
+		$scope.saveSlide = function(){
+			$http.post($scope.links.slidePost, {slide: $scope.slideLists, multiid: config.multiid})
+				.success(function(data){
+					if(data.type == 'success'){
+						util.message(data.message);
+					}else{
+						util.message(data.message);
+					}
+				});
+		};
+		//homemenu Functions
+		$scope.loadHomemenuInfo = function(){
+
+		};
+		//entrance Functions
+		$scope.success = function(id) {
+			var id = parseInt(id);
+			var obj = $('<span class="label label-success" style="position:absolute;z-index:10;width:90px;height:34px;line-height:28px"><i class="fa fa-check-circle"></i> 复制成功</span>');
+			var enext = $('#copy-'+id).next().html();
+			if (!enext || enext.indexOf('<span class="label label-success" style="position:absolute;z-index:10"><i class="fa fa-check-circle"></i> 复制成功</span>')<0) {
+				$('#copy-'+id).after(obj);
+			}
+			setTimeout(function(){
+				obj.remove();
+			}, 2000);
+		};
+		//quickmenu Functions
+		$scope.loadQuickmenuInfo = function(){
+
+		};
 	}]);
 	angular.bootstrap($('#js-wesite-post'), ['wesiteApp']);
+});
 </script>
 {template 'common/footer'}
