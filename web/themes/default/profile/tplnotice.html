@@ -42,11 +42,11 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<div class="modal-title">会员卡计时充值模板</div>
+					<div class="modal-title">{{ tplList[active]['name'] }}</div>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<input type="" name="" id="" ng-model="tplList[active]['tpl']" class="form-control" placeholder="{{ tplList[active]['name'] }}" />
+						<input type="" name="" id="" ng-model="activetpl" class="form-control" placeholder="{{ tplList[active]['name'] }}" />
 						<span class="help-block">{{ tplList[active]['help'] }}</span>
 					</div>
 				</div>
