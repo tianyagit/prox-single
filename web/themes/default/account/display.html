@@ -8,6 +8,7 @@
 			<form action="./index.php" method="get">
 				<input type="hidden" name="c" value="account">
 				<input type="hidden" name="a" value="display">
+				<input type="text" name="letter" ng-model="activeLetter" ng-style="{'display': 'none'}">
 				<div class="cut-search" style="margin-left: 60px;">
 					<div class="input-group pull-left">
 						<input class="form-control" name="keyword" value="{$_GPC['keyword']}" type="text" placeholder="请输入微信公众号名称" >
@@ -26,9 +27,9 @@
 				<a href="javascript:;" ng-bind="letter"></a>
 			</li>
 		</ul>
-		<ul class="cut-wechat-list">
+		<ul class="cut-wechat-list" ng-if="accountList">
 			<span ng-repeat="account in accountList">
-				<li ng-repeat="detail in account.details" ng-show="activeLetter ? activeLetter == detail.title_first_pinyin : '1'">
+				<li ng-repeat="detail in account.details">
 					<div class="cut-wechat-item">
 						<i class="fa fa-2x fa-check-circle text-success hide" ng-style="{'position':'absolute', 'top':'15px', 'right':'15px'}" ng-if="detail.isconnect == 1"></i>
 						<i class="fa fa-2x fa-times-circle text-warning hide" ng-style="{'position':'absolute', 'top':'15px', 'right':'15px'}" ng-if="detail.isconnect == 0"></i>
@@ -47,6 +48,7 @@
 				</li>	
 			</span>
 		</ul>
+		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
 	</div>
 	<div class="pull-right">
 		{$pager}
@@ -54,7 +56,11 @@
 </div>
 <script>
 	angular.module('accountApp').value('config', {
-		accountList: {php echo !empty($list) ? json_encode($list) : null}
+		accountList: {php echo !empty($list) ? json_encode($list) : 'null'},
+		links: {
+			rank: "{php echo url('account/display/rank')}",
+			display: "{php echo url('account/display/display')}",
+		},
 	});
 	angular.bootstrap($('#js-account-display'), ['accountApp']);
 </script>
