@@ -41,6 +41,7 @@ if ($do == 'rank' && $_W['isajax']) {
 }
 
 if ($do == 'display') {
+	//是否存在letter字段，否则添加并更新
 	if(!pdo_fieldexists('uni_account', 'letter')) {
 		$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `letter` VARCHAR(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'title首字母' , ADD FULLTEXT (`letter`)");
 		if($add_letter) {
@@ -57,6 +58,7 @@ if ($do == 'display') {
 			}
 		}
 	}
+
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 8;
 	$start = ($pindex - 1) * $psize;
