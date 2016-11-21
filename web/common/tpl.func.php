@@ -53,6 +53,11 @@ function _tpl_form_field_date($name, $value = '', $withtime = false) {
  */
 function tpl_form_field_link($name, $value = '', $options = array()) {
 	global $_GPC;
+	if(!empty($options)) {
+		foreach ($options as $key => $val){
+			$options .= $key.':'.$val.',';
+		}
+	}
 	$s = '';
 	if (!defined('TPL_INIT_LINK')) {
 		$s = '
@@ -135,7 +140,7 @@ function tpl_form_field_link($name, $value = '', $options = array()) {
 	}
 	$s .= '
 	<div class="input-group">
-		<input type="text" value="'.$value.'" name="'.$name.'" class="form-control" autocomplete="off" style="width:500px">
+		<input type="text" value="'.$value.'" name="'.$name.'" class="form-control" autocomplete="off" style="'.($options ? $options : 'width:500px').'">
 		<span class="input-group-btn">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">选择链接 <span class="caret"></span></button>
 			<ul class="dropdown-menu">
