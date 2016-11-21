@@ -40,8 +40,31 @@ if ($do == 'send') {
 	if ($type == 'text') {
 		$send['text'] = array('content' => urlencode($content));
 	} elseif ($type == 'image') {
+		$send['image'] = array('media_id' => $content);
+	} elseif ($type == 'voice') {
+		$send['voice'] = array('media_id' => $content);
+	} elseif($type == 'video') {
 		$content = json_decode($content, true);
-		$send['image'] = array('media_id' => $content['media_id']);
+		$send['video'] = array(
+			'media_id' => $content['mediaid'],
+			'thumb_media_id' => '',
+			'title' => urlencode($content['title']),
+			'description' => ''
+		);
+	}  elseif($type == 'music') {
+		$send['music'] = array(
+			'musicurl' => tomedia($_GPC['musicurl']),
+			'hqmusicurl' => tomedia($_GPC['hqmusicurl']),
+			'title' => urlencode($_GPC['title']),
+			'description' => urlencode($_GPC['description']),
+			'thumb_media_id' => $_GPC['thumb_media_id'],
+		);
+	} elseif($type == 'news') {
+		$content = json_decode($content, true);
+		$send['msgtype'] =  'mpnews';
+		$send['mpnews'] = array(
+			'media_id' => $content['mediaid']
+		);
 	}
 	$wechat_api = WeAccount::create($_W['acid']);
 	$result = $wechat_api->sendCustomNotice($send);
@@ -62,8 +85,9 @@ if ($do == 'send') {
 			$processor->begin(300);
 		}
 
-		if($send['msgtype'] == 'news') {
-			$send['news'] = $idata;
+		if($send['msgtype'] == 'mpnews') {
+			$material = pdo_getcolumn('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $content['mediaid']), 'id');
+			$content = urlencode('图文素材');
 		}
 		//保存消息记录
 		pdo_insert('mc_chats_record',array(
@@ -94,7 +118,6 @@ if ($do == 'endchats') {
 		$processor = WeUtility::createModuleProcessor('chats');
 		$processor->end();
 	}
-	print_r($result);die;
 	if (is_error($result)) {
 		message($result, '', 'ajax');
 	} else {
