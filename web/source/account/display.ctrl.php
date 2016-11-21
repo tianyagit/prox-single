@@ -41,31 +41,57 @@ if ($do == 'rank' && $_W['isajax']) {
 }
 
 if ($do == 'display') {
+	if(!pdo_fieldexists('uni_account', 'letter')) {
+		$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `letter` VARCHAR(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'title首字母' , ADD FULLTEXT (`letter`)");
+		if($add_letter) {
+			$sql = '';
+			$all_account = pdo_fetchall("SELECT uniacid,name FROM ". tablename('uni_account'));
+			foreach ($all_account as $all_value) {
+				$letter = '';
+				$letter = get_first_char($all_value['name']);
+				$sql .= "UPDATE ". tablename('uni_account'). " SET `letter` = '". $letter . "' WHERE `uniacid` = {$all_value['uniacid']};";
+			}
+			$run = pdo_run($sql);
+			if($run){
+				pdo_query("ALTER TABLE ". tablename('uni_account') ." DROP `letter`");
+			}
+		}
+	}
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 12;
+	$psize = 8;
 	$start = ($pindex - 1) * $psize;
 	$condition = '';
-	$pars = array();
+	$param = array();
 	$keyword = trim($_GPC['keyword']);
+	$letter = trim($_GPC['letter']);
 	$s_uniacid = intval($_GPC['s_uniacid']);
 	if (!empty($_W['isfounder'])) {
 		$condition .= " WHERE a.default_acid <> 0 AND b.isdeleted <> 1";
 		$order_by = " ORDER BY a.`rank` DESC, a.`ranktime` DESC";
 	} else {
 		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1";
-		$pars[':uid'] = $_W['uid'];
+		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC, a.`ranktime` DESC";
 	}
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
-		$pars[':name'] = "%{$keyword}%";
+		$param[':name'] = "%{$keyword}%";
 	}
-
+	if(!empty($letter) && strlen($letter) == 1) {
+		$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+		$letter = $_GPC['letter'];
+		if(in_array($letter, $letters)){
+			$condition .= " AND a.`letter` = :letter";
+		}else {
+			$condition .= " AND a.`letter` NOT IN ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z')";
+		}
+		$param[':letter'] = $letter;
+	}
 	$tsql = "SELECT COUNT(*) FROM " . tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
-	$total = pdo_fetchcolumn($tsql, $pars);
+	$total = pdo_fetchcolumn($tsql, $param);
 	$sql = "SELECT * FROM ". tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$pager = pagination($total, $pindex, $psize);
-	$list = pdo_fetchall($sql, $pars);
+	$list = pdo_fetchall($sql, $param);
 	if(!empty($list)) {
 		foreach($list as $unia => &$account) {
 			$account['url'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
