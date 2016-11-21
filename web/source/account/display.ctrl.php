@@ -68,10 +68,10 @@ if ($do == 'display') {
 	$letter = trim($_GPC['letter']);
 	$s_uniacid = intval($_GPC['s_uniacid']);
 	if (!empty($_W['isfounder'])) {
-		$condition .= " WHERE a.default_acid <> 0 AND b.isdeleted <> 1";
+		$condition .= " WHERE a.default_acid <> 0 AND b.isdeleted <> 1 AND b.type = 1";
 		$order_by = " ORDER BY a.`rank` DESC, a.`ranktime` DESC";
 	} else {
-		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1";
+		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type = 1";
 		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC, a.`ranktime` DESC";
 	}
