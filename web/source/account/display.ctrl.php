@@ -41,6 +41,8 @@ if ($do == 'rank' && $_W['isajax']) {
 }
 
 if ($do == 'display') {
+	include IA_ROOT . '/framework/library/pinyin/pinyin.php';
+	$pinyin = new Pinyin_Pinyin();
 	//是否存在letter字段，否则添加并更新
 	if(!pdo_fieldexists('uni_account', 'letter')) {
 		$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `letter` VARCHAR(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'title首字母' , ADD FULLTEXT (`letter`)");
@@ -49,7 +51,7 @@ if ($do == 'display') {
 			$all_account = pdo_fetchall("SELECT uniacid,name FROM ". tablename('uni_account'));
 			foreach ($all_account as $all_value) {
 				$letter = '';
-				$letter = get_first_char($all_value['name']);
+				$letter = $pinyin->get_first_char($all_value['name']);
 				$sql .= "UPDATE ". tablename('uni_account'). " SET `letter` = '". $letter . "' WHERE `uniacid` = {$all_value['uniacid']};";
 			}
 			$run = pdo_run($sql);
@@ -100,7 +102,7 @@ if ($do == 'display') {
 			$account['details'] = uni_accounts($account['uniacid']);
 			foreach ($account['details'] as  &$account_val) {
 				$account_val['thumb'] = tomedia('headimg_'.$account_val['acid']. '.jpg').'?time='.time();
-				$account_val['title_first_pinyin'] = get_first_char($account_val['name']);
+				$account_val['title_first_pinyin'] = $pinyin->get_first_char($account_val['name']);
 			}
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
