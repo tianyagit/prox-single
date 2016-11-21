@@ -8,7 +8,8 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('cache');
 load()->model('setting');
 
-$_W['page']['title'] = '更新缓存 - 系统管理';
+$_W['page']['title'] = '更新缓存 - 设置 - 系统管理';
+
 if (checksubmit('submit')) {
 	cache_build_template();
 	cache_build_users_struct();
@@ -23,9 +24,10 @@ if (checksubmit('submit')) {
 	cache_clean('stat');
 	cache_build_cloud_ad();
 	message('缓存更新成功！', url('system/updatecache'));
-} else {
-	template('system/updatecache');
 }
+
+template('system/updatecache');
+
 
 
 
