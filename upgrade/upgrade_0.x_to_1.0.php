@@ -8,6 +8,8 @@ define('IN_SYS', true);
 require '../framework/bootstrap.inc.php';
 require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 require IA_ROOT . '/web/common/common.func.php';
+require IA_ROOT . '/framework/library/pinyin/pinyin.php';
+$pinyin = new Pinyin_Pinyin();
 
 
 //转移模块快捷菜单数据到uni_account_modules表，废弃之前存在uni_settings中的shortcuts
@@ -54,6 +56,7 @@ if (!pdo_fieldexists('modules', 'title_initial')) {
 $modules = pdo_getall('modules', array(), array('name', 'mid', 'title'));
 if (!empty($modules)) {
 	foreach ($modules as $module) {
-		pdo_update('modules', array('title_initial' => get_first_char($module['title'])), array('mid' => $module['mid']));
+		$title = $pinyin->get_first_char($module['title']);
+		pdo_update('modules', array('title_initial' => $title), array('mid' => $module['mid']));
 	}
 }
