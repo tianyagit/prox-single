@@ -306,6 +306,8 @@ if($do == 'post') {
 		}
 	}
 	if ($m == 'apply') {
+		include IA_ROOT . '/framework/library/pinyin/pinyin.php';
+		$pinyin = new Pinyin_Pinyin();
 		$module['title'] = '应用关键字';
 		$installedmodulelist = $_W['account']['modules'];
 		foreach ($installedmodulelist as $k => &$value) {
@@ -315,7 +317,7 @@ if($do == 'post') {
 			// if ((empty($_W['setting']['permurls']['modules']) && !in_array($name, $_W['setting']['permurls']['modules'])) || empty($module['isdisplay'])) {
 			// 	continue;
 			// }
-			$module['title_first_pinyin'] = get_first_char($module['title']);
+			$module['title_first_pinyin'] = $pinyin->get_first_char($module['title']);
 			if($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];
 			} else {
