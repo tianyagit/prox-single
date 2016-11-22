@@ -55,6 +55,11 @@ $ms['account'] = array(
 					'title' => '粉丝管理',
 					'url' => url('mc/fans'),
 					'promisson_name' => 'mc_fans',
+				),
+				'mc_member' => array(
+					'title' => '会员管理',
+					'url' => url('mc/member'),
+					'promisson_name' => 'mc_member',
 				)
 			),
 		),
@@ -63,7 +68,7 @@ $ms['account'] = array(
 			'menu' => array(
 				'profile' => array(
 					'title' => '参数配置',
-					'url' => url('profile/passport'),
+					'url' => url('profile/payment'),
 					'promisson_name' => 'profile',
 				)
 			),
