@@ -49,9 +49,11 @@ require.config({
 		'moment': '../lib/moment',
 		'emoji' : '../../components/emoji/emoji',
 		'material' : '../../components/material/material',
+		'trade' : '../../components/trade/trade',
 
 		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
 		'jquery': '../lib/bootstrap.min', //兼容之前amd调用
+		'validator': '../lib/bootstrapValidator.min',
 		'jquery.ui': '../lib/jquery-ui-1.10.3.min',
 		'jquery.caret': '../lib/jquery.caret',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
@@ -116,6 +118,7 @@ require.config({
 		},
 		'material': {
 			deps: ['../lib/jquery-1.11.1.min']
-		}
+		},
+		
 	}
 });
