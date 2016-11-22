@@ -136,7 +136,7 @@
 	{$pager}
 </form>
 <script>
-	require(['trade', 'bootstrap'], function(trade){
+	require(['trade'], function(trade){
 		trade.init();
 
 		$('#form1').submit(function(){
@@ -771,7 +771,7 @@
 	</div>
 </form>
 <script>
-	require(['validator'], function($){
+	require(['validator'], function(){
 		$(function(){
 			$('#form1').bootstrapValidator({
 				fields: {
