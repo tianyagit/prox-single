@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 
 $dos = array('home', 'profile', 'homemenu_display', 'homemenu_post', 'homemenu_del', 'homemenu_switch');
-$do = !empty($_GPC['do']) ? $_GPC['do'] : 'home';
+$do = in_array($do, $dos) ? $do : 'home';
 
 uni_user_permission_check('platform_nav_' . $do, true, 'nav');
 $modulename = $_GPC['m'];
