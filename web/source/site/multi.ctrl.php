@@ -17,7 +17,7 @@ $default_site = intval($setting['default_site']);
 if($do == 'post') {
 	uni_user_permission_check('site_multi_post');
 	if($_W['isajax'] && $_W['ispost']) {
-		
+		//搜索模板
 		$name = trim($_GPC['__input']['name']);
 		$sql = 'SELECT s.*, t.`name` AS `tname`, t.`title`, t.`type` FROM ' . tablename('site_styles') . ' AS s LEFT JOIN ' .
 			tablename('site_templates') . ' AS t ON s.`templateid` = t.`id` WHERE s.`uniacid` = :uniacid AND s.`name` LIKE :name';
@@ -77,9 +77,18 @@ if($do == 'post') {
 	$temtypes = ext_template_type();
 	$temtypes[] = array('name' => 'all', 'title' => '全部');
 
-	$sql = 'SELECT `s`.*, `t`.`name` AS `tname`, `t`.`title`, `t`.`type` FROM ' . tablename('site_styles') . ' AS `s` LEFT JOIN ' .
-			tablename('site_templates') . ' AS `t` ON `s`.`templateid` = `t`.`id` WHERE `s`.`uniacid` = :uniacid';
+	$sql = 'SELECT `s`.*, `t`.`id` as `tid`, `t`.`name` AS `tname`, `t`.`title`, `t`.`type`, `t`.`sections` FROM ' . tablename('site_styles') . ' AS `s` LEFT JOIN ' . tablename('site_templates') . ' AS `t` ON `s`.`templateid` = `t`.`id` WHERE `s`.`uniacid` = :uniacid';
 	$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'id');
+	//此处兼容修复模板的section数据(即模板导航)
+	load()->model('extension');
+	foreach ($styles as &$value) {
+		$manifest = ext_template_manifest($value['tname']);
+		if (isset($manifest['sections']) && $manifest['sections'] != $value['sections']) {
+			$value['sections'] = $manifest['sections'];
+			pdo_update('site_templates', array('sections' => $manifest['sections']), array('id' => $value['tid']));
+		}
+	}
+
 	if(empty($multi)) {
 		$multi = array(
 			'site_info' => array(),
@@ -110,7 +119,6 @@ if($do == 'display') {
 		$li['site_info'] = (array)iunserializer($li['site_info']);
 		$li['site_info']['thumb'] = tomedia($li['site_info']['thumb']);
 	}
-
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_multi') . " WHERE uniacid = :uniacid".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
 	template('site/display');
