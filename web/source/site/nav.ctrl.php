@@ -83,9 +83,9 @@ if($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 		$data['icon'] = '';
 		$data['css'] = serialize(array(
 				'icon' => array(
-					'font-size' => $post['css']['icon']['size'],
+					'font-size' => $post['css']['icon']['width'],
 					'color' => $post['css']['icon']['color'],
-					'width' => $post['css']['icon']['size'],
+					'width' => $post['css']['icon']['width'],
 					'icon' => empty($post['css']['icon']['icon']) ? 'fa fa-external-link' : $post['css']['icon']['icon'],
 				),
 				'name' => array(

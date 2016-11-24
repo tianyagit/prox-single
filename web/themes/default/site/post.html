@@ -1,6 +1,6 @@
 {template 'common/header'}
 <div class="panel-heading">
-	<a href="{php echo url('site/multi/display')}">返回</a>
+	<a href="{php echo url('site/multi/display')}" class="btn btn-primary">< 返回</a>
 </div>
 
 <form action="" method="post" class="panel panel-cut" id="js-wesite-post" ng-controller="WesitePost" ng-cloak>
@@ -22,7 +22,7 @@
 			</div>
 			<div class="select-tem-list">
 				<ul>
-					<li class="select-tem-item" ng-repeat="style in styles" ng-class="{'active': multi.style.id == style.id}" ng-click="selectStyle(style.id)" ng-show="temtype.name == 'all' || temtype.name == style.type">
+					<li class="select-tem-item" ng-repeat="style in styles" ng-class="{'active': multi.style.id == style.id}" ng-click="selectStyle(style)" ng-show="temtype.name == 'all' || temtype.name == style.type">
 						<input type="text" name="styleid" ng-model="multi.style.id" ng-style="{'display': 'none'}">
 						<img src="{$_W['siteroot']}app/themes/{{style.tname}}/preview.jpg" />
 						<a href="javascript:;" class="cover-dark" ng-style="{'padding': '5px'}">
@@ -36,207 +36,109 @@
 
 		<div class="site-view">
 			<div class="we7-iphone-view">
-				<img src="./resource/images/new/iphone6.png" alt="" class="iphone-bg">
-				<div class="iphone-preview">
-					<div class="iphone-content shopNav">
-						<div class="title">
-							<h1><span>[页面标题]</span></h1>
+				<div ng-style="{'background': 'url(./resource/images/new/iphone6.png) no-repeat 20px 43px'}">
+					<iframe ng-src="{{siteEntrance}}" frameborder="0" width="320" height="568" scrolling="no" id="preview-iframe" ng-style="{'transform': 'scale(0.7)'}"></iframe>
+					<span class="btn btn-primary" ng-style="{'margin-left': '42%'}" onclick="document.getElementById('preview-iframe').contentWindow.location.reload(true);">预览刷新</span>
+				</div>
+				<div class="nav-menu" ng-hide="1">
+					<div class="js-quickmenu nav-menu-wx clearfix" ng-class="{0 : 'has-nav-0', 1 : 'has-nav-1', 2: 'has-nav-2', 3: 'has-nav-3', 4 : 'has-nav-3'}[activeItem.menus.length]" ng-if="activeItem.navStyle == 1">
+						<div class="nav-home text-center">
+							<a href="{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&j={$_W['acid']}"><i class="fa fa-home"></i></a>
 						</div>
-						<div class="nav-menu">
-							<div class="nav-menu-wx has-nav-0 has-nav-3 clearfix hidden">
-								<div class="nav-home text-center">
-									<a href=""><i class="fa fa-home"></i></a>
-								</div>
-								<ul class="nav-group">
-									<li class="nav-group-item" ng-repeat="menu in activeItem.menus">
-
-										<a href="javascript:void();" data-toggle="dropdown" class="ng-binding">
-											<i class="fa fa-minus-circle"></i> 标题
-										</a>
-
-										<dl>
-											<dd>
-
-												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
-
-												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
-
-												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
-
-												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
-
-												<a href="" ng-repeat="submenu in menu.submenus" class="ng-binding">标题</a>
-
-											</dd>
-										</dl>
-
-									</li>
-									<li class="nav-group-item" ng-if="$index < 3" ng-repeat="menu in activeItem.menus">
-										<a ng-if="menu.submenus.length == 0" href="" class="ng-binding">
-											标题
-										</a>
-
-									</li>
-									<li class="nav-group-item" ng-if="$index < 3" ng-repeat="menu in activeItem.menus">
-										<a ng-if="menu.submenus.length == 0" href="" class="ng-binding">
-											标题
-										</a>
-
-									</li>
-								</ul>
+						<ul class="nav-group">
+							<li class="nav-group-item" ng-if="$index < 3" ng-repeat="menu in activeItem.menus">
+								<a ng-if="menu.submenus.length == 0" href="{{menu.url}}">
+									{{menu.title}}
+								</a>
+								<a ng-if="menu.submenus.length > 0" href="javascript:;" data-toggle="dropdown">
+									<i class="fa fa-minus-circle"></i>
+									{{menu.title}}
+								</a>
+								<dl ng-if="menu.submenus.length > 0">
+									<dd>
+										<a href="{{submenu.url}}" ng-repeat="submenu in menu.submenus">{{submenu.title}}</a>
+									</dd>
+								</dl>
+							</li>
+						</ul>
+					</div>
+					<div class="js-quickmenu nav-menu-app has-nav-0" ng-if="activeItem.navStyle == 2" ng-class="{0 : 'has-nav-0', 1 : 'has-nav-1', 2: 'has-nav-2', 3: 'has-nav-3', 4: 'has-nav-4', 5: 'has-nav-5'}[activeItem.menus.length]" ng-style="{'background-color' : activeItem.bgColor}">
+						<ul class="nav-group clearfix">
+							<li class="nav-group-item" ng-repeat="menu in activeItem.menus">
+								<a href="{{menu.url}}" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+									<i ng-hide="menu.image" class="fa" ng-style="{'color' : menu.icon.color}" js-onclass-name="{{menu.hovericon.name}}" js-onclass-color="{{menu.hovericon.color}}" ng-class="menu.icon.name"></i>
+									<span ng-style="{'color' : menu.icon.color}" js-onclass-color="{{menu.hovericon.color}}">{{menu.title}}</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="js-quickmenu nav-menu-cart" ng-if="activeItem.navStyle == 3" ng-class="{0 : 'has-nav-0', 1 : 'has-nav-1', 2: 'has-nav-2', 3: 'has-nav-3', 4: 'has-nav-4'}[activeItem.menus.length]" ng-style="{'background-color' : activeItem.bgColor}">
+						<ul class="nav-group clearfix">
+							<li class="nav-group-item">
+								<a href="{{activeItem.menus[0].url}}" ng-style="{'background-image': activeItem.menus[0].image ? 'url('+activeItem.menus[0].image+')' : ''}">
+									<i ng-hide="activeItem.menus[0].image" class="fa" ng-style="{'color' : activeItem.menus[0].icon.color}"
+									ng-class="activeItem.menus[0].icon.name">
+									</i>
+								</a>
+							</li>
+							<li ng-if="activeItem.menus[2]" class="nav-group-item">
+								<a href="{{activeItem.menus[1].url}}" ng-style="{'background-image': activeItem.menus[1].image ? 'url('+activeItem.menus[1].image+')' : ''}">
+									<i ng-hide="activeItem.menus[1].image" class="fa" ng-style="{'color' : activeItem.menus[1].icon.color}" ng-class="activeItem.menus[1].icon.name"></i>
+								</a>
+							</li>
+							<li class="nav-home nav-group-item">
+								<a href="{{activeItem.extend[0].url}}" ng-style="{'background-image': activeItem.extend[0].image ? 'url('+activeItem.extend[0].image+')' : ''}">
+									<i ng-hide="activeItem.extend[0].image" class="fa" ng-style="{'color' : activeItem.extend[0].icon.color}" ng-class="activeItem.extend[0].icon.name"></i>
+								</a>
+							</li>
+							<li class="nav-group-item" ng-if="activeItem.menus[1]">
+								<a ng-if="!activeItem.menus[2]" href="{{activeItem.menus[1].url}}" ng-style="{'background-image': activeItem.menus[1].image ? 'url('+activeItem.menus[1].image+')' : ''}">
+									<i ng-hide="activeItem.menus[1].image" class="fa" ng-style="{'color' : activeItem.menus[1].icon.color}" ng-class="activeItem.menus[1].icon.name"></i>
+								</a>
+								<a ng-if="activeItem.menus[2]" href="{{activeItem.menus[2].url}}" ng-style="{'background-image': activeItem.menus[2].image ? 'url('+activeItem.menus[2].image+')' : ''}">
+									<i ng-hide="activeItem.menus[2].image" class="fa" ng-style="{'color' : activeItem.menus[2].icon.color}" ng-class="activeItem.menus[2].icon.name"></i>
+								</a>
+							</li>
+							<li ng-if="activeItem.menus[3]" class="nav-group-item">
+								<a href="{{activeItem.menus[3].url}}" ng-style="{'background-image': activeItem.menus[3].image ? 'url('+activeItem.menus[3].image+')' : ''}">
+									<i ng-hide="activeItem.menus[3].image" class="fa" ng-style="{'color' : activeItem.menus[3].icon.color}" ng-class="activeItem.menus[3].icon.name"></i>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="js-quickmenu nav-menu-path rotate-nav has-nav-4" ng-if="activeItem.navStyle == 4">
+						<div class="nav-group">
+							<div class="nav-group-item on" ng-repeat="menu in activeItem.menus">
+								<a href="{{menu.url}}" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+									<i ng-hide="menu.image" class="fa" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name"></i>
+								</a>
 							</div>
-							<div class="nav-menu-app has-nav-0 ng-scope has-nav-5 hidden" style="background-color: rgb(43, 45, 48);">
-								<ul class="nav-group clearfix">
-
-									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
-										</a>
-									</li>
-
-									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
-										</a>
-									</li>
-
-									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
-										</a>
-									</li>
-
-									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
-										</a>
-									</li>
-
-									<li class="nav-group-item ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" style="background-position: center 2px" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" js-onclass-name="" js-onclass-color="" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-											<span ng-style="{'color' : menu.icon.color}" js-onclass-color="" class="ng-binding" style="color: rgb(0, 255, 255);">标题</span>
-										</a>
-									</li>
-
-								</ul>
+						</div>
+						<div class="nav-home nav-group-item js-quickmenu-toggle">
+							<a href="javascript:;" style="background-image:url(./resource/images/app/centerbtn.png);"></a>
+						</div>
+					</div>
+					<div class="js-quickmenu nav-menu-sides rotate-nav has-nav-4" ng-if="activeItem.navStyle == 5">
+						<div class="nav-group">
+							<div class="nav-group-item on" ng-repeat="menu in activeItem.menus">
+								<a href="{{menu.url}}" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
+									<i ng-hide="menu.image" class="fa" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name"></i>
+								</a>
 							</div>
-							<div class="js-quickmenu nav-menu-cart ng-scope has-nav-4 hidden" ng-if="activeItem.navStyle == 3" ng-class="{0 : 'has-nav-0', 1 : 'has-nav-1', 2: 'has-nav-2', 3: 'has-nav-3', 4: 'has-nav-4'}[activeItem.menus.length]" ng-style="{'background-color' : activeItem.bgColor}" style="background-color: rgb(43, 45, 48);">
-								<ul class="nav-group clearfix">
-									<li class="nav-group-item">
-										<a href="" ng-style="{'background-image': activeItem.menus[0].image ? 'url('+activeItem.menus[0].image+')' : ''}">
-											<i ng-hide="activeItem.menus[0].image" class="fa fa-home" ng-style="{'color' : activeItem.menus[0].icon.color}" ng-class="activeItem.menus[0].icon.name" style="color: rgb(0, 255, 255);">
-											</i>
-										</a>
-									</li>
-
-									<li ng-if="activeItem.menus[2]" class="nav-group-item ng-scope">
-										<a href="" ng-style="{'background-image': activeItem.menus[1].image ? 'url('+activeItem.menus[1].image+')' : ''}">
-											<i ng-hide="activeItem.menus[1].image" class="fa fa-home" ng-style="{'color' : activeItem.menus[1].icon.color}" ng-class="activeItem.menus[1].icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</li>
-
-									<li class="nav-home nav-group-item">
-										<a href="" ng-style="{'background-image': activeItem.extend[0].image ? 'url('+activeItem.extend[0].image+')' : ''}">
-											<i ng-hide="activeItem.extend[0].image" class="fa" ng-style="{'color' : activeItem.extend[0].icon.color}" ng-class="activeItem.extend[0].icon.name"></i>
-										</a>
-									</li>
-
-									<li class="nav-group-item ng-scope" ng-if="activeItem.menus[1]">
-
-										<a ng-if="activeItem.menus[2]" href="" ng-style="{'background-image': activeItem.menus[2].image ? 'url('+activeItem.menus[2].image+')' : ''}" class="ng-scope">
-											<i ng-hide="activeItem.menus[2].image" class="fa fa-home" ng-style="{'color' : activeItem.menus[2].icon.color}" ng-class="activeItem.menus[2].icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-
-									</li>
-
-									<li ng-if="activeItem.menus[3]" class="nav-group-item ng-scope">
-										<a href="" ng-style="{'background-image': activeItem.menus[3].image ? 'url('+activeItem.menus[3].image+')' : ''}">
-											<i ng-hide="activeItem.menus[3].image" class="fa fa-home" ng-style="{'color' : activeItem.menus[3].icon.color}" ng-class="activeItem.menus[3].icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</li>
-
-								</ul>
+						</div>
+						<div class="main-nav">
+							<div class="nav-group-item pull-left">
+								<a href="{{activeItem.extend[0].url}}" ng-style="{'background-image': activeItem.extend[0].image ? 'url('+activeItem.extend[0].image+')' : ''}">
+									<i ng-hide="activeItem.extend[0].image" class="fa" ng-style="{'color' : activeItem.extend[0].icon.color}" ng-class="activeItem.extend[0].icon.name"></i>
+								</a>
 							</div>
-							<div class="js-quickmenu nav-menu-path rotate-nav has-nav-4 ng-scope hidden" ng-if="activeItem.navStyle == 4">
-								<div class="nav-group">
-
-									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</div>
-
-									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</div>
-
-									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</div>
-
-									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</div>
-
-								</div>
-								<div class="nav-home nav-group-item js-quickmenu-toggle">
-									<a href="javascript:;" style="background-image:url(../../../pros/web/resource/images/app/centerbtn.png);"></a>
-								</div>
+							<div class="nav-home nav-group-item js-quickmenu-toggle">
+								<a href="javascript:;" style="background-image:url(./resource/images/app/centerbtn.png);"></a>
 							</div>
-							<div class="js-quickmenu nav-menu-sides rotate-nav has-nav-4 ng-scope" ng-if="activeItem.navStyle == 5">
-								<div class="nav-group">
-
-									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</div>
-
-									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</div>
-
-									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</div>
-
-									<div class="nav-group-item on ng-scope" ng-repeat="menu in activeItem.menus">
-										<a href="" ng-style="{'background-image': menu.image ? 'url('+menu.image+')' : ''}">
-											<i ng-hide="menu.image" class="fa fa-home" ng-style="{'color' : menu.icon.color}" ng-class="menu.icon.name" style="color: rgb(0, 255, 255);"></i>
-										</a>
-									</div>
-
-								</div>
-								<div class="main-nav">
-									<div class="nav-group-item pull-left">
-										<a href="" ng-style="{'background-image': activeItem.extend[0].image ? 'url('+activeItem.extend[0].image+')' : ''}">
-											<i ng-hide="activeItem.extend[0].image" class="fa" ng-style="{'color' : activeItem.extend[0].icon.color}" ng-class="activeItem.extend[0].icon.name"></i>
-										</a>
-									</div>
-									<div class="nav-home nav-group-item js-quickmenu-toggle">
-										<a href="javascript:;" style="background-image:url(../../../pros/web/resource/images/app/centerbtn.png);"></a>
-									</div>
-									<div class="nav-group-item pull-right">
-										<a href="" ng-style="{'background-image': activeItem.extend[1].image ? 'url('+activeItem.extend[1].image+')' : ''}">
-											<i ng-hide="activeItem.extend[1].image" class="fa" ng-style="{'color' : activeItem.extend[1].icon.color}" ng-class="activeItem.extend[1].icon.name"></i>
-										</a>
-									</div>
-								</div>
+							<div class="nav-group-item pull-right">
+								<a href="{{activeItem.extend[1].url}}" ng-style="{'background-image': activeItem.extend[1].image ? 'url('+activeItem.extend[1].image+')' : ''}">
+									<i ng-hide="activeItem.extend[1].image" class="fa" ng-style="{'color' : activeItem.extend[1].icon.color}" ng-class="activeItem.extend[1].icon.name"></i>
+								</a>
 							</div>
 						</div>
 					</div>
@@ -256,10 +158,10 @@
 						<a href="#slide" data-toggle="tab">幻灯片</a>
 					</li>
 					<li class="site-edit-item" ng-click="loadHomemenuInfo()">
-						<a href="#homemenu" data-toggle="tab">首页菜单</a>
+						<a href="#homemenu" data-toggle="tab">导航菜单</a>
 					</li>
 					<li class="site-edit-item" ng-click="loadQuickmenuInfo()">
-						<a href="#quickmenu" data-toggle="tab">底部快捷菜单</a>
+						<a href="#quickmenu" data-toggle="tab">底部菜单</a>
 					</li>
 				</ul>
 			</div>
@@ -295,7 +197,7 @@
 							<label class="control-label">封面</label>
 							<div class="form-controls">
 								<div class="input-more" ng-class="{'active': multi.site_info.thumb}">
-									<img ng-src="{{multi.site_info.thumb}}" ng-if="multi.site_info.thumb">
+									<img ng-src="{{multi.site_info.thumb}}" width="150px" ng-if="multi.site_info.thumb">
 									<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage()" ng-hide="multi.site_info.thumb"><span>+</span></a>
 									<input type="text" name="thumb" ng-model="multi.site_info.thumb" ng-style="{'display' : 'none'}">
 									<div class="cover-dark">
@@ -396,13 +298,19 @@
 
 				<!--首页菜单-->
 				<div class="tab-pane fade homemenu" id="homemenu">
-					<div class="site-edit-heading">
-						基础信息
+					<div class="site-edit-heading">首页导航菜单</div>
+					<div class="panel panel-warning" ng-show="!addHomemenuStatus">
+						<div class="panel-body">
+							<p>当前使用的风格为：<span ng-bind="multi.style.name"></span>；</p>
+							<p>模板文件为：<span ng-bind="multi.style.title"></span>（/app/themes/<span ng-bind="multi.style.tname"></span>）；</p>
+							<p ng-if="multi.style.sections == 0">此模板未提供导航位置功能</p>
+							<p ng-if="multi.style.sections != 0">此模板提供 <span ng-bind="multi.style.sections"></span> 个导航位置，您可以指定导航在特定的位置显示，未指位置的导航将无法显示</p>
+						</div>
 					</div>
-					<table class="table we7-table">
-						<col width="75px" />
-						<col width="75px" />
+					<table class="table we7-table" ng-show="!addHomemenuStatus">
 						<col width="100px" />
+						<col width="75px" />
+						<col width="95px" />
 						<col width="" />
 						<tr>
 							<th>标题</th>
@@ -410,83 +318,40 @@
 							<th>是否显示</th>
 							<th>操作</th>
 						</tr>
-						<tr>
-							<td class="title">
-								12131
-							</td>
+						<tr ng-repeat="menu in homeMenu">
+							<td class="title" ng-bind="menu.name"></td>
 							<td class="icon">
-								<img src="http://7xoudk.com1.z0.glb.clouddn.com/images/31/2016/11/t4ifiG4qpJX1jQUL440au4Gilj1I1G.png" style="width:30px !important;" onerror="">
-							</td>
-							<td>
-								<div class="form-controls">
-									<label>
-										<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-										<div class="switch switchOn"></div>
-									</label>
-								</div>
-							</td>
+								<img ng-src="{{menu.icon}}" width="30px" ng-if="menu.icon">
+								<i class="fa fa-2x {{menu.css.icon.icon}}" ng-if="menu.icon == ''"></i>
+								</td>
+							<td><div class="switch" ng-class="{'switchOn': menu.status == 1}" ng-click="updateMenu(menu, 'switch')"></div></td>
 							<td class="edit">
-								<a href="">复制链接</a>
-								<a href="">编辑</a>
-								<a href="">删除</a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								12131
-							</td>
-							<td class="icon">
-								<i class="wi wi-qrcode"></i>
-							</td>
-							<td>
-								<div class="form-controls">
-									<label>
-										<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-										<div class="switch switchOn"></div>
-									</label>
-								</div>
-							</td>
-							<td class="edit">
-								<a href="">复制链接</a>
-								<a href="">编辑</a>
-								<a href="">删除</a>
+								<a href="javascript:;" id="copy-{{menu.id}}" clipboard supported="supported" text="menu.url" on-copied="successMenu(menu.id)">复制链接</a>
+								<a href="javascript:;" ng-click="changeHomemenuStatus(menu)">编辑</a>
+								<a href="javascript:;" ng-click="updateMenu(menu, 'del')">删除</a>
 							</td>
 						</tr>
 						<tr class="more">
-							<td colspan="4">
+							<td colspan="4" ng-click="changeHomemenuStatus()">
 								<a href="javascript:;" class="color-default">+添加</a>
 							</td>
 						</tr>
 					</table>
 
 					<!--首页菜单编辑-->
-					<div class="site-nav-edit">
+					<div class="site-nav-edit" ng-show="addHomemenuStatus">
 						<div class="edit-heading">
-							<a href="" class="go-back">
-								<i class="fa fa fa-chevron-circle-left"></i>
-							</a>
-							<span class="color-gray">幻灯片列表 / </span>
-							<span class="color-dark">新建幻灯片</span>
+							<a href="javascript:;" class="go-back" ng-click="changeHomemenuStatus()"><i class="fa fa fa-chevron-circle-left"></i></a>
+							<a href="javascript:;" class="color-gray" ng-click="changeHomemenuStatus()">导航菜单列表 / </a>
+							<span class="color-dark">编辑导航菜单</span>
 						</div>
 						<div class="we7-form">
 							<div class="form-group">
-								<label for="" class="control-label">分配到微站</label>
-								<div class="form-controls">
-									<select name="" class="we7-select">
-										<option value="">.we7-select</option>
-										<option value="">1</option>
-										<option value="">1</option>
-									</select>
-									<span class="help-block">每个导航链接只能在一个微站上使用。</span>
-								</div>
-							</div>
-							<div class="form-group">
 								<label for="" class="control-label">导航显示位置</label>
 								<div class="form-controls">
-									<select name="" class="we7-select">
-										<option value="">.we7-select</option>
-										<option value="">1</option>
-										<option value="">1</option>
+									<select ng-model="menuInfo.section" class="we7-select">
+										<option ng-selected="menuInfo.section == 0">不设置位置</option>
+										<option ng-repeat="sec in sections" ng-bind="sec.val" ng-selected="menuInfo.section == sec.num"></option>
 									</select>
 									<span class="help-block">设置位置后可以将导航菜单显示到模板对应的位置中。（可以同时设置多个导航在同一个位置中，会根据排序大小依次显示），显示的位置必须要有模板支持。</span>
 									<strong class="text-danger">注意：如果您添加了模板未设置的位置时，该链接将不会显示，您可以在导航列表中查看。</strong>
@@ -495,34 +360,28 @@
 							<div class="form-group">
 								<label for="" class="control-label">名称</label>
 								<div class="form-controls">
-									<input type="text" class="form-control" id="" placeholder="">
+									<input type="text" value="1" ng-model="menuInfo.position" ng-style="{'display': 'none'}"/>
+									<input type="text" class="form-control" ng-model="menuInfo.name"/>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="" class="control-label">描述</label>
 								<div class="form-controls">
-									<textarea name="" rows="4" cols="" class="form-control"></textarea>
+									<textarea rows="4" cols="" class="form-control" ng-model="menuInfo.description"></textarea>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="" class="control-label">链接</label>
 								<div class="form-controls">
-									<input type="text" class="form-control" id="" placeholder="">
-									<span class="form-control-addon">
-										<span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">选择链接 <span class="caret"></span></span>
-									</span>
-									<span class="help-block">指定这个导航的链接目标</span>
-									<strong>使用微站链接:</strong>
-									<a href="javascript:;" class="btn btn-default btn-sm" data-toggle="modal" data-target="#settel">一键拨号</a>
-									<a href="javascript:;" class="btn btn-default btn-sm" data-toggle="modal" data-target="#setnav">一键导航</a>
+									<input type="text" class="form-control" ng-model="menuInfo.url">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="" class="control-label">状态</label>
 								<div class="form-controls">
-									<input id='radio-1' type="radio" name='r-group-1' checked='checked' />
+									<input id='radio-1' type="radio" value="1" ng-model="menuInfo.status" ng-checked="menuInfo.status == 1">
 									<label for="radio-1">显示	</label>
-									<input id='radio-2' type="radio" name='r-group-1' />
+									<input id='radio-2' type="radio" value="0" ng-model="menuInfo.status" ng-checked="menuInfo.status == 0">
 									<label for="radio-2">隐藏</label>
 									<span class="help-block">设置导航菜单的显示状态</span>
 								</div>
@@ -530,7 +389,7 @@
 							<div class="form-group">
 								<label for="" class="control-label">排序</label>
 								<div class="form-controls">
-									<input type="text" class="form-control" id="" placeholder="">
+									<input type="text" class="form-control" ng-model="menuInfo.displayorder">
 									<span class="help-block">导航排序，越大越靠前</span>
 								</div>
 							</div>
@@ -543,56 +402,46 @@
 										<div class="form-group">
 											<label for="" class="control-label">图标类型</label>
 											<div class="form-controls">
-												<input id='icontype-1' type="radio" name='icontype' checked='checked' />
+												<input id='icontype-1' type="radio" value="1" ng-model="menuInfo.icontype"  ng-checked="menuInfo.icontype == 1">
 												<label for="icontype-1">系统内置</label>
-												<input id='icontype-2' type="radio" name='icontype' />
+												<input id='icontype-2' type="radio" value="2" ng-model="menuInfo.icontype"  ng-checked="menuInfo.icontype == 2"/>
 												<label for="icontype-2">自定义上传</label>
 											</div>
 										</div>
-										<div class="form-group">
+										<div class="form-group" ng-if="menuInfo.icontype == 2">
 											<label for="" class="control-label">上传图标</label>
 											<div class="form-controls">
-												<div class="input-more input-img" style="width: 75px; height: 75px;">
-													<a href="" class="input-addon"> <span>+</span> </a>
+												<div class="input-more input-img" ng-class="{'active': menuInfo.icon}">
+													<img ng-src="{{menuInfo.icon}}" width="150px" ng-if="menuInfo.icon">
+													<a href="javascript:;" class="input-addon" ng-click="uploadHomemenuImage(menuInfo)" ng-style="{'width': '100px', 'height': '100px'}" ng-hide="menuInfo.icon">
+														<span>+</span>
+													</a>
 													<div class="cover-dark">
-														<a href="" class="cut">更换</a>
+														<a href="javascript:;" class="cut" ng-click="uploadHomemenuImage(menuInfo)">更换</a>
+														<a href="javascript:;" class="del" ng-click="delHomemenuImage(menuInfo)"><i class="fa fa-times text-danger"></i>
 													</div>
 												</div>
 											</div>
 										</div>
-										<div class="form-group">
-											<label for="" class="control-label">上传图标</label>
-											<div class="form-controls">
-												<div class="input-more input-img active" style="width: 75px; height: 75px;">
-													<img src="" alt="" />
-													<div class="cover-dark">
-														<a href="" class="cut">更换</a>
-														<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="form-group">
+										<div class="form-group" ng-if="menuInfo.icontype != 2">
 											<label for="" class="control-label">系统图标</label>
-											<div class="form-controls">
-												<span class="btn btn-default"><i class="fa fa-external-link"></i><button class="button">选择图标</button></span>
+											<div class="form-controls" >
+												<input type="text" class="form-control" ng-model="menuInfo.css.icon.icon" ng-style="{'width': '160px'}"/>
+												<span class="form-control-addon" ng-click="selectHomemenuIcon()"><i class="{{menuInfo.css.icon.icon}}" ng-init="menuInfo.css.icon.icon = 'fa fa-external-link'"></i>&nbsp;选择图标</span>
 												<span class="help-block">导航的背景图标，系统提供了丰富的图标ICON。</span>
 											</div>
 										</div>
-										<div class="form-group">
+										<div class="form-group" ng-if="menuInfo.icontype != 2">
 											<label for="" class="control-label">图标颜色</label>
 											<div class="form-controls input-group">
-												<span class="input-group-addon" style="width: 35px; background-color: rgb(241, 194, 50);"></span>
-												<span class="input-group-btn">
-													<button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
-													<button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
-												</span>
+												<input type="text" class="form-control" ng-model="menuInfo.css.icon.color" ng-style="{'display' : 'none'}">
+												<div we7-colorpicker we7-my-color="menuInfo.css.icon.color" we7-my-default-color="'#2B2D30'" ng-style="{'width': '10px','margin-left' : '-30px'}"></div>
 											</div>
 										</div>
-										<div class="form-group">
+										<div class="form-group" ng-if="menuInfo.icontype != 2">
 											<label for="" class="control-label">图标大小</label>
-											<div class="form-controls">
-												<input id='radio-1' type="text" name='icon[size]' class="form-control" style="width: 100px;" />
+											<div class="form-controls" >
+												<input class="form-control" type="text" ng-style="{'width': '50px'}" ng-model="menuInfo.css.icon.width" ng-init="menuInfo.css.icon.width = menuInfo.css.icon.width ? menuInfo.css.icon.width : 35">
 												<span class="form-control-addon">PX</span>
 												<span class="help-block">图标的尺寸大小，单位为像素，上传图标时此设置项无效</span>
 											</div>
@@ -600,35 +449,32 @@
 									</div>
 								</div>
 							</div>
-							<input type="submit" name="" id="" value="添加" class="btn btn-primary" />
+							<div class="btn btn-primary we7-padding-horizontal" ng-click="saveMenu()" ng-style="{'width':'100%'}">保存</div>
 						</div>
 					</div>
 				</div>
 
 				<!--导航菜单-->
 				<div class="tab-pane fade shopNav" id="quickmenu">
-					<div class="site-edit-heading">
-						导航菜单
-					</div>
+					<div class="site-edit-heading">导航快捷菜单</div>
 					<div class="we7-form app-side">
 						<div class="form-group">
 							<label for="" class="control-label">是否开启</label>
 							<div class="form-controls">
 								<label>
-									<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-									<div class="switch switchOn"></div>
+									<div class="switch" ng-class="{'switchOn': quickMenuStatus}" ng-click="quickMenuSwitch()"></div>
 								</label>
-								<span class="help-block">微站的各个页面可以通过导航串联起来。通过精心设置的导航，方便访问者在页面或是栏目间快速切换，引导访问者前往您期望的页面。</span>
+								<span class="help-block">微站的各个页面可以通过底部菜单串联起来。通过精心设置的底部菜单，方便访问者在页面或是栏目间快速切换，引导访问者前往您期望的页面。</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="" class="control-label">导航应用:</label>
 							<div class="form-controls">
-								<input id='check-1' type="checkbox" name='check-1' checked='checked' />
+								<input id='check-1' type="checkbox" ng-model="activeItem.position.homepage"/>
 								<label for="check-1">微站主页</label>
-								<input id='check-2' type="checkbox" name='check-1' />
+								<input id='check-2' type="checkbox" ng-model="activeItem.position.page" />
 								<label for="check-2">微页面</label>
-								<input id='check-3' type="checkbox" name='check-1' />
+								<input id='check-3' type="checkbox" ng-model="activeItem.position.article" />
 								<label for="check-3">文章及分类</label>
 								<span class="help-block">将导航应用在以上页面</span>
 							</div>
@@ -636,20 +482,10 @@
 						<div class="form-group">
 							<label for="" class="control-label">导航隐藏:</label>
 							<div class="form-controls">
-								<a href="" class="color-default">选择导航</a>
+								<a href="javascript:;" class="color-default" ng-click="showSearchModules()">选择模块</a>
 								<div class="form-control-static">
-									<label class="label label-warning ng-hide" style="">未设置，将在全部模块中显示</label>
-									<label style="margin-right: 5px; display: inline-block; display: inline-block; display: inline-block;" class="label label-success ng-binding">会员中心充值模块</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block; display: inline-block;" class="label label-success ng-binding">基本图片回复</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block; display: inline-block; " class="label label-success ng-binding">基本视频回复</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">收银台</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">微考试</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">微商城</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">测试云配置</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">幸运翻牌抽奖</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">一秒广告</label>
-									<label style="margin-right:5px; display: inline-block; display: inline-block;" class="label label-success ng-binding">表白体（网页防封版）（三行情诗）</label>
-
+									<label class="label label-warning" ng-show="!hasIgnoreModules">未设置，将在全部模块中显示</label>
+									<label style="margin-right:5px; display: inline-block;" class="label label-success" ng-show="hasIgnoreModules" ng-repeat="module in activeItem.ignoreModules">{{module.title}}</label>
 								</div>
 								<span class="help-block">将导航隐藏在以上模块</span>
 							</div>
@@ -658,152 +494,115 @@
 							<div class="panel-heading">
 								当前模板: 微信公众号自定义菜单模板
 								<div class="pull-right">
-									<button class="btn btn-primary" data-toggle="modal" data-target="#shop-nav-modal">修改模板</button>
+									<span class="btn btn-primary" data-toggle="modal" data-target="#shop-nav-modal">修改模板</span>
 								</div>
 							</div>
 							<div class="panel-body">
-								<div class="shopNav-wx">
-									<div class="card ">
-										<div class="btns ">
-											<a href="javascript:; "><i class="fa fa-times "></i></a>
+								<!--微信公众号自定义菜单模板:shopNav-wx-->
+								<div class="shopNav-wx" ng-show="activeItem.navStyle == 1">
+									<div class="card" ng-init="$parentIndex = $index" ng-repeat="menu in activeItem.menus">
+										<div class="btns">
+											<a href="javascript:;" ng-click="removeMenu(menu)"><i class="fa fa-times"></i></a>
 										</div>
-										<div class="nav-region ">
-											<div class="first-nav ">
+										<div class="nav-region">
+											<div class="first-nav">
 												<h3>一级导航</h3>
-												<div class=" ">
-													<div class="form-group ">
-														<label class="control-label ">标题</label>
-														<div class="form-controls ">
-															<input type="text " class="form-control " name="" value=" " />
+												<div>
+													<div class="form-group">
+														<label class="control-label text-center" ng-style="{'min-width': '90px'}">标题</label>
+														<div class="form-controls">
+															<input type="text" class="form-control" name="" value="" ng-model="menu.title" />
 														</div>
 													</div>
-													<div class="form-group ">
-														<label class="control-label ">链接到</label>
-														<div class="form-controls ">
-															<input type="text" class="form-control " id=" " placeholder=" ">
-															<span class="form-control-addon ">
-																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-															</span>
+													<div class="form-group">
+														<label class="control-label text-center" ng-style="{'min-width': '90px'}">链接到</label>
+														<div class="form-controls">
+															<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 														</div>
 													</div>
 												</div>
 											</div>
-											<div class="second-nav ">
+											<div class="second-nav">
 												<h4>二级导航</h4>
-												<div class=" ">
-													<div class="del ">
-														<a href="javascript:; "><i class="fa fa-times "></i></a>
+												<div ng-repeat="submenu in menu.submenus">
+													<div class="del">
+														<a href="javascript:;" ng-click="removeSubMenu($parentIndex, submenu)"><i class="fa fa-times"></i></a>
 													</div>
-													<div class="form-group ">
-														<label class="control-label ">标题</label>
-														<div class="form-controls ">
-															<input type="text " class="form-control " name="">
+													<div class="form-group">
+														<label class="control-label text-center" ng-style="{'min-width': '90px'}">标题</label>
+														<div class="form-controls">
+															<input type="text" class="form-control" name="" ng-model="submenu.title">
 														</div>
 													</div>
-													<div class="form-group ">
-														<label class="control-label ">链接到</label>
-														<div class="form-controls ">
-															<input type="text " class="form-control ">
-															<span class="form-control-addon ">
-																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-															
-															</span>
+													<div class="form-group">
+														<label class="control-label text-center" ng-style="{'min-width': '90px'}">链接到</label>
+														<div class="form-controls">
+															<div we7-linker we7-my-url="submenu.url" we7-my-title="submenu.title"></div>
 														</div>
 													</div>
 												</div>
-												<div class="add-shopNav ">+ 添加二级导航</div>
+												<div ng-show="menu.submenus.length < 5" ng-click="menu.submenus.length >= 5 ? '' : addSubMenu(menu);" class="add-shopNav">+ 添加二级导航</div>
 												<!--最多可添加5个-->
 											</div>
 										</div>
 									</div>
-									<div class="add-shopNav text-center ">+添加一级导航</div>
+									<div ng-show="activeItem.menus.length < 3" class="add-shopNav text-center" ng-click="activeItem.menus.length >= 3 ? '' : addMenu();">+添加一级导航</div>
 									<!--最多添加三个导航-->
 								</div>
 								<!--end微信公众号自定义菜单模板-->
-								<br />
-								<hr>
-								<h3>APP导航样式</h3>
-								<hr>
+
 								<!--APP导航样式:shopNav-app-->
-								<div class="shopNav-app">
-									<div class="form-group">
-										<label for="" class="control-label">页面颜色</label>
+								<div class="shopNav-app" ng-show="activeItem.navStyle == 2">
+									<div class="form-group we7-padding-top">
+										<label for="" class="control-label" ng-style="{'min-width': '90px'}">页面颜色</label>
 										<div class="form-controls input-group">
-											<input class="form-control" style="width: 200px;" name="icon[color]" placeholder="请选择颜色" value="" type="text">
-											<span class="input-group-addon" style="width: 35px; background-color: rgb(241, 194, 50);"></span>
-											<span class="input-group-btn">
-												<button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
-												<button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
-											</span>
+											<div we7-colorpicker we7-my-color="activeItem.bgColor" we7-my-default-color="'#2B2D30'"></div>
 										</div>
 									</div>
-									<div class="card">
+									<div class="card" ng-repeat="menu in activeItem.menus">
 										<div class="btns">
-											<a href="javascript:;"><i class="fa fa-times"></i></a>
+											<a href="javascript:;" ng-click="removeMenu(menu)"><i class="fa fa-times"></i></a>
 										</div>
 										<div class="nav-img-group">
 											<div class="clearfix">
 												<div class="nav-img-normal pull-left">
 													<label class="control-label">普通：</label>
 													<div class="form-controls">
-														<div class="input-more input-img active" style="width: 75px; height: 75px;">
-															<img src="" alt="" />
-															<div class="cover-dark">
-																<a href="" class="cut">更换</a>
-																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-															</div>
-														</div>
+														<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
 													</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
 													<label class="control-label">高亮：</label>
 													<div class="form-controls">
-														<div class="input-more input-img active" style="width: 75px; height: 75px;">
-															<img src="" alt="" />
-															<div class="cover-dark">
-																<a href="" class="cut">更换</a>
-																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-															</div>
-														</div>
+														<div we7-iconer we7-my-image="menu.hoverimage" we7-my-icon="menu.hovericon">选择</div>
 													</div>
 												</div>
+												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：不大于128*100像素，支持PNG格式</div>
 											</div>
-											<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label">标题</label>
+											<label class="control-label" ng-style="{'min-width': '90px'}">标题</label>
 											<div class="form-controls">
-												<input type="text" class="form-control" name="">
+												<input type="text" class="form-control" name="" ng-model="menu.title">
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label">链接到</label>
+											<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
 											<div class="form-controls ">
-												<input type="text " class="form-control " id=" " placeholder=" ">
-												<span class="form-control-addon ">
-													<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-												</span>
+												<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 											</div>
 										</div>
 									</div>
-									<div class="add-shopNav text-center">+添加导航</div>
+									<div class="add-shopNav text-center" ng-show="activeItem.menus.length < 5" ng-click="activeItem.menus.length >= 5 ? '' : addMenu();">+添加导航</div>
 								</div>
 								<!--end APP导航样式-->
-								<br />
-								<hr>
-								<h3>带购物车导航模板</h3>
-								<hr>
+
 								<!--带购物车导航模板-->
-								<div class="shopNav-cart">
-									<div class="form-group" style="border-bottom:1px solid #e5e5e5; padding:0 0 15px 0; margin:0 0 10px 0;">
-										<label class="control-label">页面颜色</label>
+								<div class="shopNav-cart" ng-show="activeItem.navStyle == 3">
+									<div class="form-group we7-padding-top" style="border-bottom:1px solid #e5e5e5;">
+										<label class="control-label" ng-style="{'min-width': '90px'}">页面颜色</label>
 										<div class="form-controls input-group">
-											<input class="form-control" style="width: 200px;" name="icon[color]" placeholder="请选择颜色" value="" type="text">
-											<span class="input-group-addon" style="width: 35px; background-color: rgb(241, 194, 50);"></span>
-											<span class="input-group-btn">
-												<button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
-												<button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
-											</span>
+											<div we7-colorpicker we7-my-color="activeItem.bgColor" we7-my-default-color="'#2B2D30'"></div>
 										</div>
 									</div>
 									<p>添加中间主图标</p>
@@ -813,201 +612,63 @@
 												<div class="nav-img-normal pull-left">
 													<label class="control-label">普通：</label>
 													<div class="form-controls">
-														<div class="input-more input-img active" style="width: 75px; height: 75px;">
-															<img src="" alt="" />
-															<div class="cover-dark">
-																<a href="" class="cut">更换</a>
-																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-															</div>
-														</div>
+														<div we7-iconer we7-my-image="activeItem.extend[0].image" we7-my-icon="activeItem.extend[0].icon" we7-my-icon-color="activeItem.extend[0].icon.color">选择</div>
 													</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
 													<label class="control-label">高亮：</label>
 													<div class="form-controls">
-														<div class="input-more input-img active" style="width: 75px; height: 75px;">
-															<img src="" alt="" />
-															<div class="cover-dark">
-																<a href="" class="cut">更换</a>
-																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-															</div>
-														</div>
+														<div we7-iconer we7-my-image="activeItem.extend[0].hoverimage" we7-my-icon="activeItem.extend[0].hovericon">选择</div>
 													</div>
 												</div>
 											</div>
-											<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+											<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：不大于128*100像素，支持PNG格式</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label">链接到</label>
+											<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
 											<div class="form-controls ">
-												<input type="text " class="form-control " id=" " placeholder=" ">
-												<span class="form-control-addon ">
-													<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-												
-												</span>
+												<div we7-linker we7-my-url="activeItem.extend[0].url" we7-my-title="activeItem.extend[0].title"></div>
 											</div>
 										</div>
 									</div>
 									<p>添加两侧图标</p>
 									<div class="help-block">此导航模板建议您用两个或者四个自定义图标效果图最佳哦！</div>
-									<div class="card">
+									<div class="card" ng-repeat="menu in activeItem.menus">
 										<div class="nav-img-group">
 											<div class="btns">
-												<a href="javascript:;"><i class="fa fa-times"></i></a>
+												<a href="javascript:;" ng-click="removeMenu(menu)"><i class="fa fa-times"></i></a>
 											</div>
 											<div class="clearfix">
 												<div class="nav-img-normal pull-left">
 													<label class="control-label">普通：</label>
 													<div class="form-controls">
-														<div class="input-more input-img active" style="width: 75px; height: 75px;">
-															<img src="" alt="" />
-															<div class="cover-dark">
-																<a href="" class="cut">更换</a>
-																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-															</div>
-														</div>
+														<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
 													</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
 													<label class="control-label">高亮：</label>
 													<div class="form-controls">
-														<div class="input-more input-img active" style="width: 75px; height: 75px;">
-															<img src="" alt="" />
-															<div class="cover-dark">
-																<a href="" class="cut">更换</a>
-																<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-															</div>
-														</div>
+														<div we7-iconer we7-my-image="menu.hoverimage" we7-my-icon="menu.hovericon">选择</div>
 													</div>
 												</div>
 											</div>
-											<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+											<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：不大于128*100像素，支持PNG格式</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label">链接到</label>
+											<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
 											<div class="form-controls ">
-												<input type="text " class="form-control " id=" " placeholder=" ">
-												<span class="form-control-addon ">
-																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-												
-												</span>
+												<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 											</div>
 										</div>
 									</div>
-									<div class="add-shopNav text-center">+添加导航</div>
+									<div class="add-shopNav text-center" ng-show="activeItem.menus.length < 4" ng-click="activeItem.menus.length >= 4 ? '' : addMenu();">+添加导航</div>
 								</div>
 								<!--end 带购物车导航模板-->
-								<br />
-								<hr>
-								<h3>Path展开形式导航模板</h3>
-								<hr>
+
 								<!--Path展开形式导航模板-->
-								<div class="shopNav-path">
+								<div class="shopNav-path" ng-show="activeItem.navStyle == 4">
 										<p class="help-block">此导航模板建议您用三个自定义图标效果最佳哦！</p>
-										<div class="card">
-											<div class="btns">
-												<a href="javascript:;"><i class="fa fa-times"></i></a>
-											</div>
-											<div class="nav-img-group">
-												<div class="clearfix">
-													<div class="nav-img-normal pull-left">
-														<label class="control-label">普通：</label>
-														<div class="form-controls">
-															<div class="input-more input-img active" style="width: 75px; height: 75px;">
-																<img src="" alt="" />
-																<div class="cover-dark">
-																	<a href="" class="cut">更换</a>
-																	<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
-											</div>
-											<div class="form-group">
-												<label class="control-label">链接到</label>
-												<div class="form-controls ">
-													<input type="text " class="form-control " id=" " placeholder=" ">
-													<span class="form-control-addon ">
-																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-													
-													</span>
-												</div>
-											</div>
-										</div>
-										<div class="add-shopNav text-center">+添加导航</div>
-										<!--最多可添加4个-->
-								</div>
-								<!--end Path展开形式导航模板-->
-								<br />
-								<hr>
-								<h3>两侧展开导航模板</h3>
-								<hr>
-								<!--两侧展开导航模板-->
-								<div class="shopNav-sides">
-										<p>添加两侧一级图标</p>
-										<div class="card">
-											<div class="nav-img-group">
-												<div class="clearfix">
-													<div class="nav-img-normal pull-left">
-														<label class="control-label">普通：</label>
-														<div class="form-controls">
-															<div class="input-more input-img active" style="width: 75px; height: 75px;">
-																<img src="" alt="" />
-																<div class="cover-dark">
-																	<a href="" class="cut">更换</a>
-																	<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
-											</div>
-											<div class="form-group">
-												<label class="control-label">链接到</label>
-												<div class="form-controls ">
-													<input type="text " class="form-control " id=" " placeholder=" ">
-													<span class="form-control-addon ">
-																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-													
-													</span>
-												</div>
-											</div>
-										</div>
-										<div class="card">
-											<div class="nav-img-group">
-												<div class="clearfix">
-													<div class="nav-img-normal pull-left">
-														<label class="control-label">普通：</label>
-														<div class="form-controls">
-															<div class="input-more input-img active" style="width: 75px; height: 75px;">
-																<img src="" alt="" />
-																<div class="cover-dark">
-																	<a href="" class="cut">更换</a>
-																	<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
-											</div>
-											<div class="form-group">
-												<label class="control-label">链接到</label>
-												<div class="form-controls ">
-													<input type="text " class="form-control " id=" " placeholder=" ">
-													<span class="form-control-addon ">
-																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-													
-													</span>
-												</div>
-											</div>
-										</div>
-										<p>添加中间二级标题</p>
-										<p class="help-block">此导航模板建议您用四个自定义图标效果最佳哦！</p>
-										<div class="card">
+										<div class="card" ng-repeat="menu in activeItem.menus">
 											<div class="btns">
 												<a href="javascript:;" ng-click="removeMenu(menu)"><i class="fa fa-times"></i></a>
 											</div>
@@ -1016,35 +677,171 @@
 													<div class="nav-img-normal pull-left">
 														<label class="control-label">普通：</label>
 														<div class="form-controls">
-															<div class="input-more input-img active" style="width: 75px; height: 75px;">
-																<img src="" alt="" />
-																<div class="cover-dark">
-																	<a href="" class="cut">更换</a>
-																	<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
-																</div>
-															</div>
+															<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
 														</div>
 													</div>
 												</div>
-												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
+												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：不大于128*100像素，支持PNG格式</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label">链接到</label>
+												<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
 												<div class="form-controls ">
-													<input type="text " class="form-control " id=" " placeholder=" ">
-													<span class="form-control-addon ">
-																<span class="dropdown-toggle " data-toggle="dropdown " aria-haspopup="true " aria-expanded="false ">选择链接 <span class="caret "></span></span>
-													
-													</span>
+													<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 												</div>
 											</div>
 										</div>
-										<div class="add-shopNav text-center">+添加导航</div>
+										<div class="add-shopNav text-center" ng-show="activeItem.menus.length < 4" ng-click="activeItem.menus.length >= 4 ? '' : addMenu();">+添加导航</div>
+										<!--最多可添加4个-->
+								</div>
+								<!--end Path展开形式导航模板-->
+
+								<!--两侧展开导航模板-->
+								<div class="shopNav-sides" ng-show="activeItem.navStyle == 5">
+										<p>添加两侧一级图标</p>
+										<div class="card">
+											<div class="nav-img-group">
+												<div class="clearfix">
+													<div class="nav-img-normal pull-left">
+														<label class="control-label">普通：</label>
+														<div class="form-controls">
+															<div we7-iconer we7-my-image="activeItem.extend[0].image" we7-my-icon="activeItem.extend[0].icon" we7-my-icon-color="activeItem.extend[0].icon.color">选择</div>
+														</div>
+													</div>
+												</div>
+												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：不大于128*100像素，支持PNG格式</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
+												<div class="form-controls ">
+													<div we7-linker we7-my-url="activeItem.extend[0].url" we7-my-title="activeItem.extend[0].title"></div>
+												</div>
+											</div>
+										</div>
+										<div class="card">
+											<div class="nav-img-group">
+												<div class="clearfix">
+													<div class="nav-img-normal pull-left">
+														<label class="control-label">普通：</label>
+														<div class="form-controls">
+															<div we7-iconer we7-my-image="activeItem.extend[1].image" we7-my-icon="activeItem.extend[1].icon" we7-my-icon-color="activeItem.extend[1].icon.color">选择</div>
+														</div>
+													</div>
+												</div>
+												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：不大于128*100像素，支持PNG格式</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
+												<div class="form-controls ">
+													<div we7-linker we7-my-url="activeItem.extend[1].url" we7-my-title="activeItem.extend[1].title"></div>
+												</div>
+											</div>
+										</div>
+										<p>添加中间二级标题</p>
+										<p class="help-block">此导航模板建议您用四个自定义图标效果最佳哦！</p>
+										<div class="card" ng-repeat="menu in activeItem.menus">
+											<div class="btns">
+												<a href="javascript:;" ng-click="removeMenu(menu)"><i class="fa fa-times"></i></a>
+											</div>
+											<div class="nav-img-group">
+												<div class="clearfix">
+													<div class="nav-img-normal pull-left">
+														<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
+													</div>
+												</div>
+												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：不大于128*100像素，支持PNG格式</div>
+											</div>
+											<div class="form-group">
+												<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
+												<div class="form-controls ">
+													<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
+												</div>
+											</div>
+										</div>
+										<div class="add-shopNav text-center" ng-show="activeItem.menus.length < 4" ng-click="activeItem.menus.length >= 4 ? '' : addMenu();">+添加导航</div>
 										<!--最多可添加4个-->
 								</div>
 								<!--end 两侧展开导航模板-->
 							</div>
 						</div>
+						<!--选择导航模板模态框-->
+						<div class="modal fade" id="shop-nav-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										<h4 class="modal-title" id="myModalLabel">选择导航模板</h4>
+									</div>
+									<div class="modal-body clearfix">
+										<div class="alert">
+											<input id="wx-radio" type="radio" value="1" ng-model="activeItem.navStyle" ng-checked="activeItem.navStyle == 1">
+											<label for="wx-radio">微信公众号自定义菜单样式</label>
+											<div class="wx-example"></div>
+										</div>
+										<div class="alert">
+											<input id="app-radio" type="radio" value="2" ng-model="activeItem.navStyle" ng-checked="activeItem.navStyle == 2">
+											<label for="app-radio">APP导航模板1（图标及底色都可配置）</label>
+											<div class="app-example"></div>
+										</div>
+										<div class="alert">
+											<input id="cart-radio" type="radio" value="3" ng-model="activeItem.navStyle" ng-checked="activeItem.navStyle == 3">
+											<label for="cart-radio">APP导航模板2</label>
+											<div class="cart-example"></div>
+										</div>
+										<div class="col-xs-6" style="padding-left:0;">
+											<div class="alert">
+												<input id="path-radio" type="radio" value="4" ng-model="activeItem.navStyle" ng-checked="activeItem.navStyle == 4">
+												<label for="path-radio">Path展开形式导航</label>
+												<div class="path-example"></div>
+											</div>
+										</div>
+										<div class="col-xs-6" style="padding-right:0;">
+											<div class="alert">
+												<input id="sides-radio" type="radio" value="5" ng-model="activeItem.navStyle" ng-checked="activeItem.navStyle == 5">
+												<label for="sides-radio">两侧展开形式导航</label>
+												<div class="sides-example"></div>
+											</div>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="selectNavStyle()">确定</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--选择模块模态框-->
+						<div class="modal fade" id="shop-modules-modal" tabindex="-1" role="dialog" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										<h4 class="modal-title">选择忽略模块</h4>
+									</div>
+									<div class="modal-body clearfix">
+										<table class="table table-hover">
+											<thead class="navbar-inner">
+												<tr>
+													<th style="width:70%;">标题</th>
+													<th style="width:30%; text-align:right"></th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="m in modules">
+													<td><span ng-bind="m.title"></span>（<span ng-bind="m.name"></span>）</td>
+													<td>
+														<a class="btn btn-default js-btn-select" ng-class="{'btn-primary' : activeItem.ignoreModules[m.name]}" js-name="{{m.name}}" js-title="{{m.title}}" onclick="$(this).toggleClass('btn-primary');$(this).html($(this).hasClass('btn-primary') ? '取消' : '选取')">选取</a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="btn btn-primary we7-padding-horizontal" ng-click="saveQucikMenu()" ng-style="{'width':'100%'}">保存</div>
 					</div>
 				</div>
 			</div>
@@ -1072,128 +869,14 @@ require(['underscore'], function(){
 			slideDisplay: "{php echo url('site/slide/display')}",
 			slidePost: "{php echo url('site/slide/post')}",
 			slideDel: "{php echo url('site/slide/del')}",
-
+			homeMenuDisplay: "{php echo url('site/nav/homemenu_display')}",
+			homeMenuPost: "{php echo url('site/nav/homemenu_post')}",
+			homeMenuSwith: "{php echo url('site/nav/homemenu_switch')}",
+			homeMenuDel: "{php echo url('site/nav/homemenu_del')}",
+			quickMenuDisplay: "{php echo url('site/multi/quickmenu_display')}",
+			quickMenuPost: "{php echo url('site/multi/quickmenu_post')}",
 		}
 	});
-	angular.module('wesiteApp').controller('WesitePost', ['$scope', 'config', '$http', function($scope, config, $http) {
-		$scope.links = config.links;
-		//所有模板分类
-		$scope.temtypes = config.temtypes;
-		//选中的模板分类
-		$scope.temtype = {name: 'all', 'title': '全部'};
-		$scope.searchedStyleName = '';
-		//基础信息scope
-		$scope.multi = config.multi;
-		$scope.styles = config.styles;
-		//幻灯片scope
-		$scope.slideLists = [];
-		$scope.showSlideSubmit = false;
-		//首页菜单scope
-		//底部快捷菜单scope
-		//微官网入口scope
-		$scope.siteEntrance = $scope.links.murl+'t='+$scope.multi.id;
-		console.log($scope.siteEntrance);
-		//multi Functions
-		$scope.selectStyle = function(id) {
-			var id = parseInt(id);
-			$scope.multi.style.id = id;
-		};
-		$scope.searchStyle = function(){
-			$http.post($scope.links.searchStyleLink, {name: $scope.searchedStyleName})
-				.success(function(data){
-					if(data.type == 'success') $scope.styles = data.message;
-				})
-		};
-		$scope.changeMultiStatus = function(){
-			$scope.multi.status = $scope.multi.status == 1 ? 0 : 1;
-		};
-		$scope.uploadMultiImage = function(){
-			require(['fileUploader'], function(uploader){
-				uploader.init(function(imgs){
-						$scope.multi.site_info.thumb = imgs.url;
-						$scope.$apply($scope.multi.site_info);
-				}, {'direct' : true, 'multiple' : false});
-			});
-		};
-		$scope.delMultiImage = function(){
-			$scope.multi.site_info.thumb = '';
-		};
-		//slide Functions
-		$scope.loadSlideInfo = function(){
-			$http.post($scope.links.slideDisplay, {multiid: config.multiid})
-				.success(function(data) {
-					if(data.type == 'success') {
-						$scope.slideLists = data.message;
-						if(!_.isEmpty($scope.slideLists)) $scope.showSlideSubmit = true;
-					}
-				});
-		};
-		$scope.addSlide = function(){
-			$scope.slideLists.push({
-				title: '',
-				displayorder: 0,
-				thumb: '',
-				url: ''
-			});
-			$scope.showSlideSubmit = true;
-		};
-		$scope.delSlide = function(list){
-			var index = _.indexOf($scope.slideLists, list);
-			if(index > -1) {
-				$scope.slideLists = _.without($scope.slideLists, $scope.slideLists[index]);
-			}
-			if(_.isEmpty($scope.slideLists)) $scope.showSlideSubmit = false;
-		};
-		$scope.uploadSlideImage = function(list){
-			var index = _.indexOf($scope.slideLists, list);
-			if(index > -1){
-				require(['fileUploader'], function(uploader){
-					uploader.init(function(imgs){
-							$scope.slideLists[index].thumb = imgs.url;
-							$scope.$apply($scope.slideLists);
-					}, {'direct' : true, 'multiple' : false});
-				});
-			}else{
-				util.message('参数错误，请刷新页面重试！');
-			}
-		};
-		$scope.delSlideImage = function(list){
-			var index = _.indexOf($scope.slideLists, list);
-			if(index > -1){
-				$scope.slideLists[index].thumb = '';
-			}
-		};
-		$scope.saveSlide = function(){
-			$http.post($scope.links.slidePost, {slide: $scope.slideLists, multiid: config.multiid})
-				.success(function(data){
-					if(data.type == 'success'){
-						util.message(data.message);
-					}else{
-						util.message(data.message);
-					}
-				});
-		};
-		//homemenu Functions
-		$scope.loadHomemenuInfo = function(){
-
-		};
-		//entrance Functions
-		$scope.success = function(id) {
-			var id = parseInt(id);
-			var obj = $('<span class="label label-success" style="position:absolute;z-index:10;width:90px;height:34px;line-height:28px"><i class="fa fa-check-circle"></i> 复制成功</span>');
-			var enext = $('#copy-'+id).next().html();
-			if (!enext || enext.indexOf('<span class="label label-success" style="position:absolute;z-index:10"><i class="fa fa-check-circle"></i> 复制成功</span>')<0) {
-				$('#copy-'+id).after(obj);
-			}
-			setTimeout(function(){
-				obj.remove();
-			}, 2000);
-		};
-		//quickmenu Functions
-		$scope.loadQuickmenuInfo = function(){
-
-		};
-	}]);
 	angular.bootstrap($('#js-wesite-post'), ['wesiteApp']);
 });
 </script>
