@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $_W['page']['title'] = '微官网';
 uni_user_permission_check('platform_site');
 load()->model('site');
-$dos = array('display', 'post', 'del', 'default', 'copy', 'switch');
+$dos = array('display', 'post', 'del', 'default', 'copy', 'switch', 'quickmenu_display', 'quickmenu_post');
 $do = in_array($do, $dos) ? $do : 'display';
 //获取默认微站
 $setting = uni_setting($_W['uniacid'], 'default_site');
@@ -207,4 +207,47 @@ if($do == 'switch') {
 	}else {
 		message('-1', '', 'ajax');
 	}
+}
+
+if($do == 'quickmenu_display' && $_W['isajax']) {
+	$multiid = intval($_GPC['__input']['multiid']);
+	if($multiid > 0){
+		$page = pdo_fetch("SELECT * FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => $multiid));
+		$params = !empty($page['params']) ? $page['params'] : 'null';
+		$status = $page['status'] == 1 ? 1 : 0;
+		$modules = uni_modules();
+		$modules = !empty($modules) ? $modules : 'null';
+		message(array('params' => json_decode($params), 'status' => $status, 'modules' => $modules), 'ajax', 'success');
+	}else {
+		message('-1', 'ajax', 'error');
+	}
+}
+
+if($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
+	$post = $_GPC['__input'];
+	$params = $post['postdata']['params'];
+	if (empty($params)) {
+		message('请您先设计手机端页面.2', 'ajax', 'error');
+	}
+	$html = htmlspecialchars_decode($post['postdata']['html'], ENT_QUOTES);
+	$html = preg_replace('/background\-image\:(\s)*url\(\"(.*)\"\)/U', 'background-image: url($2)', $html);
+	$data = array(
+		'uniacid' => $_W['uniacid'],
+		'multiid' => $post['multiid'],
+		'title' => '快捷菜单',
+		'description' => '',
+		'status' => intval($post['status']),
+		'type' => 2,
+		'params' => json_encode($params),
+		'html' => $html,
+		'createtime' => TIMESTAMP,
+	);
+	$id = pdo_fetchcolumn("SELECT id FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => $post['multiid']));
+	if (!empty($id)) {
+		pdo_update('site_page', $data, array('id' => $id));
+	} else {
+		pdo_insert('site_page', $data);
+		$id = pdo_insertid();
+	}
+	message('0', 'ajax', 'success');
 }
