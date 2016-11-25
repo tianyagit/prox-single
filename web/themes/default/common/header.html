@@ -93,9 +93,10 @@
 				{if $_W['account']['level'] == 2 || $_W['account']['level'] == 4}
 				<span><i class="label label-primary">服务号</i> {if $_W['account']['level'] == 4}<i class="label label-primary">已认证</i>{/if}</span>
 				{/if}
-				<!-- 暂屏蔽 -->
-				<!-- <span class="color-red"><i class="fa fa-warning"></i>未接入微信公众号 </span>
-				<span class="color-default"><a href="">立即接入</a></span> -->
+				{if $_W['isconnect'] == 0}
+				<span class="color-red"><i class="fa fa-warning"></i>未接入微信公众号 </span>
+				<span class="color-default"><a href="javascript:;">立即接入</a></span>
+				{/if}
 				<span class="pull-right color-default"><a href="{php echo url('account/display')}"><i class="wi wi-cut"></i>切换公众号</a></span>
 				<span class="pull-right"><a href=""><i class="wi wi-appsetting"></i>公众号设置</a></span>
 			</div>
