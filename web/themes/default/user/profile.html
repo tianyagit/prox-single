@@ -1,0 +1,632 @@
+{template 'common/header'}
+<div class="user-head-info we7-padding-bottom" >
+		<h3 class="pull-left">{$user['username']}</h3>
+		<div class="user-edit pull-right">
+			<a href="" class="btn btn-primary">编辑</a>
+			<a href="" class="btn btn-default">删除</a>
+		</div>
+	</div>
+	<div class="btn-group we7-btn-group we7-padding-bottom">
+		<a href="{php echo url('user/profile/base');}" class="btn btn-default {if $do == 'profile'} active{/if}">基础信息</a>
+		<a href="{php echo url('user/profile/application');}" class="btn btn-default {if $do == 'application'} active{/if}">应用魔板权限</a>
+		<a href="{php echo url('user/profile/account');}" class="btn btn-default {if $do == 'account'} active{/if}">使用公众号列表</a>
+	</div>
+{if $do == 'base'}	
+	<table class="table we7-table table-form">
+		<col width="140px " />
+		<col />
+		<col width="100px" />
+		<tr>
+			<th class="text-left" colspan="3">账户设置设置</th>
+		</tr>
+		<tr class="hide">     
+			<td class="table-label">
+				头像
+			</td>
+			<td>
+				<img src="../../../pros/web/resource/images/9.png"  class="img-circle" alt="用户头像" width="65px" height="65px" />
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default hide" data-toggle="modal" data-target="#avatar">修改</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">
+				用户名
+			</td>
+			<td>
+				{$user['username']}
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default hide" data-toggle="modal" data-target="#name">修改</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">
+				密码
+			</td>
+			<td>
+				******
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#pass">修改</a>
+			</td>
+		</tr>
+
+	</table>
+	<div class="modal fade" id="pass" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改密码</div>
+				</div>
+				<div class="modal-body text-center">
+					<div class="we7-form" style="width: 300px;">
+						<div class="form-group">
+							<label for="" class="control-label">原密码</label>
+							<div class="form-controls">
+								<input type="password" id="oldpassword" name="oldpassword" ng-model="userOldPassword" class="form-control" placeholder="">
+							
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label">新密码</label>
+							<div class="form-controls">
+								<input type="password" id="newpassword" name="newpassword"  ng-model="userNewPassword" class="form-control" placeholder="">
+								
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label">确认新密码</label>
+							<div class="form-controls">
+								<input type="password" id="rnewpassword" name="rnewpassword" ng-model="userRNewPassword" class="form-control" placeholder="">
+								
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+<div id = "userbase">
+{if $extendfields}
+	<table class="table we7-table table-form">
+		<col width="140px " />
+		<col />
+		<col width="100px" />
+		<tr>
+			<th class="text-left" colspan="3">基础信息</th>
+		</tr> 
+
+		
+{loop $extendfields $item}
+		{if $item['field']=='birthyear'}	
+		<tr>
+			<td class="table-label">
+				{$item['title']}
+			</td>
+			<td>
+				{$profile['births']}
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#{$item['field']}">修改</a>
+			</td>
+			<div class="modal fade" id="{$item['field']}" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="we7-modal-dialog modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<div class="modal-title">出生日期</div>
+						</div>
+						<div class="modal-body">
+							{php echo tpl_fans_form($item['field'],$profile['birth']);}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary">确定</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</tr>
+		{elseif $item['field']=='resideprovince'}
+		<tr>
+			<td class="table-label">
+				{$item['title']}
+			</td>
+			<td>
+				{$profile['resides']}
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#{$item['field']}">修改</a>
+			</td>
+			<div class="modal fade" id="{$item['field']}" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="we7-modal-dialog modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<div class="modal-title">居住地址</div>
+						</div>
+						<div class="modal-body">
+							{php echo tpl_fans_form($item['field'],$profile['reside']);}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary">确定</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</tr>
+		{else}
+		<tr>
+			<td class="table-label">
+				{$item['title']}
+			</td>
+			<td>
+				{$profile[$item['field']]}
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#{$item['field']}">修改</a>
+			</td>
+			<div class="modal fade" id="{$item['field']}" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="we7-modal-dialog modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<div class="modal-title">{$item['title']}</div>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<input type="text" name="{$item['field']}" ng-model="{$item['field']}" class="form-control" placeholder="{$item['title']}" />
+								<span class="help-block"></span>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" ng-click="editInfo("{$item['field']}")>确定</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</tr>
+		{/if}
+{/loop}
+				<tr>
+			<td class="table-label">
+				服务时间
+			</td>
+			<td>
+				{php echo date('Y-m-d', $user['starttime'])}
+				~~
+				{if empty($user['endtime'])}
+					永久有效
+				{else}
+					{php echo date('Y-m-d', $user['endtime'])}
+				{/if}
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default " data-toggle="modal" data-target="#name">修改</a>
+			</td>
+		</tr>
+		{if $user['role'] != 'founder'}
+		<tr>
+			<td class="table-label">
+				用户权限组
+			</td>
+			<td>
+			{$user['groupname']}
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default hide" data-toggle="modal" data-target="#name">修改</a>
+			</td>
+		</tr>
+		{/if}
+		<tr>
+			<td class="table-label">
+				上次登录时间
+			</td>
+			<td>
+				{php echo date('Y-m-d h:s:i',$user['lastvisit'])}
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default hide" data-toggle="modal" data-target="#name">修改</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">
+				上次登录ip
+			</td>
+			<td>
+				{$user['lastip']}
+			</td>
+			<td>
+				<a href="javascript:;" class="color-default hide" data-toggle="modal" data-target="#name">修改</a>
+			</td>
+		</tr>
+		
+	</table>
+	</div>
+{/if}
+
+{elseif $do == 'application'}
+	<table class="table we7-table">
+		<col width="110px" />
+		<col width="203px" />
+		<col width="203px" />
+		<col width="203px" />
+		<col width="203px" />
+		<tr>
+			<th class="text-left">项目</th>
+			<th>用户权限组</th>
+			<th>单独购买应用权限组</th>
+			<th>单独购买应用</th>
+			<th>合计</th>
+		</tr>
+		<tr>
+			<td class="text-left">
+				应用模块
+			</td>
+			<td>
+				1
+			</td>
+			<td>
+				0
+			</td>
+			<td>
+				0
+			</td>
+			<td>
+				1
+			</td>
+		</tr>
+		<tr>
+			<td class="text-left">
+				微官网魔板
+			</td>
+			<td>
+				1231
+			</td>
+			<td>
+				0
+			</td>
+			<td>
+				0
+			</td>
+			<td>
+				12
+			</td>
+		</tr>
+	</table>
+
+	<div class="panel we7-panel user-permission">
+		<div class="panel-heading">
+			<span>会员权限组：{$group['name']}</span>
+			<span>时间：{if $group['timelimit']==0}永久{else}{$group['timelimit']}{/if}</span>
+			<a href="" class="color-default pull-right">修改</a>
+		</div>
+		<div class="panel-body">
+			<div class="permission-heading">
+				<span>白金套餐</span>
+				<div class="pull-right permission-edit">
+					<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#demo">展开</a>
+				</div>
+			</div>
+			<table id="demo" class="table we7-table collapse">
+				<col width="90px" />
+				<col width="835px" />
+				<tr class="permission-apply">
+					<td>
+						应用
+					</td>
+					<td>
+						<ul>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+
+						</ul>
+					</td>
+					<td>
+
+					</td>
+				</tr>
+				<tr class="permission-template">
+					<td>
+						模板
+					</td>
+					<td>
+
+					</td>
+					<td></td>
+				</tr>
+			</table>
+			<div class="permission-heading">
+				<span>白金套餐</span>
+				<div class="pull-right permission-edit">
+					<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#demo1">展开</a>
+				</div>
+			</div>
+			<table id="demo1" class="table we7-table collapse">
+				<col width="90px" />
+				<col width="835px" />
+				<tr class="permission-apply">
+					<td>
+						应用
+					</td>
+					<td>
+						<ul>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+
+						</ul>
+					</td>
+					<td></td>
+				</tr>
+				<tr class="permission-template">
+					<td>
+						模板
+					</td>
+					<td>
+						<ul>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+						</ul>
+					</td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="panel we7-panel user-permission">
+		<div class="panel-heading">
+			<span>单独购买应用权限组</span>
+			<a href="" class="color-default pull-right">添加套装组</a>
+		</div>
+		<div class="panel-body">
+			<div class="permission-heading">
+				<span>白金套餐</span>
+				<div class="pull-right permission-edit">
+					<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#demo2">展开</a>
+					<a href="javasrcript:;" class="color-default">编辑</a>
+					<a href="javasrcript:;" class="color-default">删除</a>
+				</div>
+			</div>
+			<table id="demo2" class="table we7-table collapse">
+				<col width="90px" />
+				<col width="835px" />
+				<tr class="permission-apply">
+					<td>
+						应用
+					</td>
+					<td>
+						<ul>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+
+						</ul>
+					</td>
+					<td>
+
+					</td>
+				</tr>
+				<tr class="permission-template">
+					<td>
+						模板
+					</td>
+					<td>
+
+					</td>
+					<td></td>
+				</tr>
+			</table>
+			<div class="permission-heading">
+				<span>白金套餐</span>
+				<div class="pull-right permission-edit">
+					<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#demo4">展开</a>
+					<a href="javasrcript:;" class="color-default">编辑</a>
+					<a href="javasrcript:;" class="color-default">删除</a>
+				</div>
+			</div>
+			<table id="demo4" class="table we7-table collapse">
+				<col width="90px" />
+				<col width="835px" />
+				<tr class="permission-apply">
+					<td>
+						应用
+					</td>
+					<td>
+						<ul>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+
+						</ul>
+					</td>
+					<td></td>
+				</tr>
+				<tr class="permission-template">
+					<td>
+						模板
+					</td>
+					<td>
+						<ul>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+						</ul>
+					</td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="panel we7-panel user-permission">
+		<div class="panel-heading">
+			<span>单独购买应用魔板</span>
+		</div>
+		<div class="panel-body">
+			<table class="table we7-table">
+				<col width="60px" />
+				<col width="865px" />
+				<tr class="permission-apply">
+					<td>
+						应用
+					</td>
+					<td>
+						<ul>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+
+						</ul>
+						<a href="" class="color-default user-self-edit"> 添加删除</a>
+					</td>
+				</tr>
+				<tr class="permission-template">
+					<td>
+						模板
+					</td>
+					<td>
+						<ul>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+							<li>
+								<img src="../../../pros/web/resource/images/9.png" alt="" class="pull-left" />
+								<span>互粉互赚</span>
+							</li>
+
+						</ul>
+						<a href="" class="color-default user-self-edit"> 添加删除</a>
+					</td>
+						
+					
+				</tr>
+			</table>
+
+		</div>
+	</div>
+	<script type="text/javascript">
+		$('.collapse').on('hidden.bs.collapse', function() {
+			var o = '[data-target="#' + this.id + '"]';
+			$(o).text('展开');
+		})
+		$('.collapse').on('show.bs.collapse', function() {
+			var o = '[data-target="#' + this.id + '"]';
+			$(o).text('收起');
+		})
+	</script>
+
+{elseif $do == 'account'}
+	<table class="table we7-table">
+		<col width="230px"/>
+		<col />
+		<col />
+		<col width="180px"/>
+		<tr>
+			<th class="text-left">权限</th>
+			<th>有效期</th>
+			<th>可以创建公众号</th>
+			<th class="text-left">操作</th>
+		</tr>
+		<tr>
+			<td class="text-left">{$group['name']}</td>
+			<td>{if $group['timelimit'] == 0}永久{else}{$group['timelimit']} {/if}</td>
+			<td>{$group['maxaccount']}</td>
+			<td class="text-left"><a href="{php echo url('user/group/post', array('id' => $group['id']))}" class="color-default">修改用户权限组</a></td>
+		</tr>
+		<tr>
+			<td class="text-left">单独购买或分配</td>
+			<td>永久</td>
+			<td>5</td>
+			<td class="text-left"><a href="" class="color-default">修改</a></td>
+		</tr>
+	</table>
+	<table class="table we7-table">
+		<col width="87px"/>
+		<col />
+		<col width="400px"/>
+		<col width="180px"/>
+		<tr>
+			<th colspan="2" class="text-left">可使用的公众号</th>
+			<th>权限身份</th>
+			<th class="text-left">操作</th>
+		</tr>
+		{loop $wechats $item}
+		<tr>
+			<td class="text-left"><img src="{php echo tomedia('headimg_'.$item['acid'].'.jpg')}?time={php echo time()}" alt="" class="img-responsive"/></td>
+			<td class="text-left">
+				<p>{$item['name']}</p>
+				<span class="color-gray">类型：
+				{if empty($item['level']) || $item['level'] == 1} 普通订阅号
+				{elseif  empty($item['level']) || $item['level'] == 2}普通服务号
+				{elseif empty($item['level']) || $item['level'] == 3}认证订阅号
+				{elseif empty($item['level']) || $item['level'] == 4}认证服务号/认证媒体/政府订阅号
+				{/if}
+				</span>
+			</td>
+			<td>
+			{if $weids[$item['uniacid']]['role'] == 'founder'}主管理员
+			{elseif $weids[$item['uniacid']]['role'] == 'operator'}操作员
+			{else}管理员
+			{/if}
+			</td>
+			<td class="text-left"><a href="" class="color-default">
+			{if $weids[$item['uniacid']]['role'] == 'founder'}公众号设置
+			{elseif $weids[$item['uniacid']]['role'] == 'operator'}查看权限
+			{else}操作员设置
+			{/if}
+			</a></td>
+		</tr>
+		{/loop}
+	</table>
+{/if}
+{template 'common/footer'}
