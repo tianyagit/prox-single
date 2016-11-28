@@ -138,16 +138,6 @@ $ms['system'] = array(
 					'url' => url('user/group'),
 					'permission_name' => 'system_user_group',
 				),
-				'system_user_registerset' => array(
-						'title' => '注册选项',
-						'url' => url('user/registerset'),
-						'permission_name' => 'system_user_registerset',
-				),
-				'system_user_fields' => array(
-						'title' => '资料字段管理',
-						'url' => url('user/fields'),
-						'permission_name' => 'system_user_fields',
-				),
 			)
 		),
 		'cloud' => array(
