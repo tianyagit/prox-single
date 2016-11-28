@@ -60,7 +60,12 @@ $ms['account'] = array(
 					'title' => '会员管理',
 					'url' => url('mc/member'),
 					'promisson_name' => 'mc_member',
-				)
+				),
+				'site_editor' => array(
+					'title' => '会员中心',
+					'url' => url('site/editor/uc'),
+					'promisson_name' => 'site_editor'
+				),
 			),
 		),
 		'profile' => array(
