@@ -160,7 +160,7 @@ class Pinyin_Pinyin {
     public function get_first_char($string){
         $first = '';
         $pinyin = self::ChineseToPinyin($string);
-        if(empty($pinyin)){
+        if(!empty($pinyin)){
             $first = strtoupper(substr($pinyin, 0, 1));
         }
         return $first;
