@@ -1,0 +1,122 @@
+{template 'common/header'}
+
+<div class="we7-page-title">用户管理 </div>
+<ul class="we7-page-tab">
+	<li class="active"><a href="{url 'user/display'}">用户管理 </a></li>
+	<li><a href="{url 'user/recycle/display'}">用户回收站</a></li>
+	<li><a href="{url 'user/fields/display'}">用户属性设置</a></li>
+	<li><a href="{url 'user/registerset'}">用户注册设置</a></li>
+</ul>
+
+<div class="keyword-list-head clearfix we7-margin-bottom">
+		<form action="" method="get">
+			<input type="hidden" name="c" value="user">
+			<input type="hidden" name="a" value="display">
+			<div class="input-group pull-left" style="width: 400px;">
+				<input type="text" name="username" id="" value="{$_GPC['username']}" class="form-control" placeholder="搜索用户名"/>
+				<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+			</div>
+		</form>
+		<div class="pull-right">
+			<a href="{url 'user/create'}" class="btn btn-primary">+添加用户</a>
+		</div>
+</div>
+	<table class="table we7-table">
+		<col width="84px"/>
+		<col width="110px"/>
+		<col width="110px"/>
+		<col width="110px"/>
+		<col width="66px"/>
+		<col width="111px"/>
+		<col width="73px"/>
+		<col width="203px"/>
+		<tr>
+			<th class="text-left">用户名</th>
+			<th>用户权限组</th>
+			<th>创建公众号</th>
+			<th>使用公众号</th>
+			<th>应用</th>
+			<th>到期时间</th>
+			<th>状态</th>
+			<th class="text-left">操作</th>
+		</tr>
+	{loop $users $user}
+		<tr>
+			<td class="text-left">{$user['username']}</td>
+			<td><span class="color-default">
+					{if isset($usergroups[$user['groupid']])}
+						<a href="{php echo url('user/group/post', array('id' => $user['groupid']))}"><span class="color-default">{$usergroups[$user['groupid']]['name']}</span></a>
+					{else}
+						<span class="color-default">未分配</span>
+					{/if}
+				</span>
+			</td>
+			<td class="color-default"><a href="{php echo url('user/profile/account', array('uid' => $user['uid']))}"><span class="color-default">{$user['uniacid_create_num']}</span></a></td>
+			<td class="color-default"><a href="{php echo url('user/profile/account', array('uid' => $user['uid']))}"><span class="color-default">{$user['uniacid_num']}</span></a></td>
+			<td class="color-default"><a href="{php echo url('user/profile/application', array('uid' => $user['uid']))}"><span class="color-default">{if $user['module_nums'] ==-1}全部{else}{$user['module_nums']}{/if}</span></a>
+			</td>
+			<td>
+				{if empty($user['endtime'])}
+					<span class="">永久有效</span>
+				{elseif  $user['endtime'] != 0 && $user['endtime'] <= TIMESTAMP}
+					<span class="">服务已到期</span>
+				{elseif  $user['endtime'] != 0 && $user['endtime'] >= TIMESTAMP}
+				{php echo date('Y-m-d', $user['endtime'])}
+				{/if}
+			</td>
+			<td>
+				{if intval($user['status']) == 1}
+				<span class="color-red">被禁止</span>
+				{/if}
+				{if intval($user['status']) == 2}
+					<span>正常</span>
+				{/if}
+			</td>
+			<td class="text-left">
+				<div class="link-group">
+					<a href="{php echo url('user/edit', array('uid' => $user['uid']))}">编辑管理</a>
+					<a href="javascript:;" onclick="u.deny('{$user['uid']}');">{if intval($user['status']) == 2}禁止{else}启用{/if}</a>
+					<a href="javascript:;" onclick="u.del('{$user['uid']}');">删除</a>
+				</div>
+			</td>
+		</tr>
+	{/loop}
+	</table>
+	{$pager}
+</div>
+<script type="text/javascript">
+	var u ={};
+	u.deny = function(uid){
+		var uid = parseInt(uid);
+		if(isNaN(uid)) {
+			return;
+		}
+		if(!confirm('确认要禁用/解禁此用户吗? ')) {
+			return;
+		}
+		$.post('{php echo url('user/permission');}', {'do': 'deny', uid: uid}, function(dat){
+			if(dat == 'success') {
+				location.href = location.href;
+			} else {
+				util.message('操作失败, 请稍后重试. ' + dat);
+			}
+		});
+	};
+	u.del = function(uid){
+		var uid = parseInt(uid);
+		if(isNaN(uid)) {
+			return;
+		}
+		if(!confirm('确认把此用户放到回收站吗? ')) {
+			return;
+		}
+		$.post('{php echo url('user/recycle');}', {'do': 'recycle', uid: uid}, function(dat){
+			if(dat == 'success') {
+				location.href = location.href;
+			} else {
+				util.message('操作失败, 请稍后重试. ' + dat);
+			}
+		});
+	};
+</script>
+{template 'common/footer'}
