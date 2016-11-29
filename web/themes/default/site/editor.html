@@ -165,7 +165,8 @@
 				<div>微站的各个页面可以通过导航串联起来。通过精心设置的导航，方便访问者在页面或是栏目间快速切换，引导访问者前往您期望的页面。</div>
 			</div>
 			<div class="shopNav-switch col-sm-4 text-right">
-				<input type="checkbox" name="status" value="1" {if !empty($page['status'])}checked="checked"{/if} />
+				<input name="status" class="form-control" value="{$page['status']}" style="display: none;">
+				<div class="{if !empty($page['status'])}switch switchOn{else}switch{/if}" id="switch" onclick="changeSwitch()"></div>
 			</div>
 		</div>
 		<input type="hidden" name="multiid" value="{$multiid}" />
@@ -668,16 +669,22 @@
 </form>
 <script type="text/javascript">
 	$(function(){
-		require(['underscore', 'bootstrap.switch'], function() {
-			$(":checkbox[name='status']").bootstrapSwitch();
+		require(['underscore'], function() {
+			changeSwitch = function() {
+				var clas = $('#switch').attr('class') == 'switch'? 'switch switchOn' : 'switch';
+				$('#switch').attr('class', clas);
+				status = clas == 'switch' ? 0 : 1;
+				$('[name="status"]').val(status);
+			}
+
 			var activeItem = {php echo !empty($page['params']) ? $page['params'] : 'null'};
 			angular.module('quickMenuApp').value('config', {
 			'activeItem' : activeItem,
 		});
 		angular.bootstrap(document, ['quickMenuApp']);
-	});
-	$('.app-content').click(function(){
-		return false;
+		$('.app-content').click(function(){
+			return false;
+		});
 	});
 	});
 </script>
