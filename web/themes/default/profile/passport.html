@@ -139,7 +139,8 @@
 		'jsOauth' : "{$jsoauth}",
 		'oauthAccounts' : {php echo json_encode($oauth_accounts)},
 		'jsOauthAccounts' : {php echo json_encode($jsoauth_accounts)},
-		'oauth_url' : "{php echo url('profile/passport/save_oauth')}"
+		'oauth_url' : "{php echo url('profile/passport/save_oauth')}",
+		'get_setting_url' : "{php echo url('profile/passport/get_setting')}"
 	});
 	angular.bootstrap($('#js-profile-passport'), ['profileApp']);
 </script>
