@@ -60,7 +60,7 @@
 				{{  paysetting.alipay.switch === true ? '开启' : '关闭'  }}
 			</td>
 			<td class="text-center">
-				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#zhifubao" ng-click="edit('alipay')">修改</a>
+				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#zhifubao">修改</a>
 			</td>
 		</tr>
 		<tr>
@@ -193,7 +193,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" ng-click="saveEdit('alipay')">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="recover('alipay')">取消</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
 		</div>
@@ -568,6 +568,7 @@
 		'text_alipay_url' : "{php echo url('profile/payment/test_alipay')}",
 		'services' : {php echo json_encode($service)},
 		'borrows' : {php echo json_encode($borrow)},
+		'get_setting_url' : "{php echo url('profile/payment/get_setting')}"
 	});
 	angular.bootstrap($('.js-profile-payment'), ['profileApp']);
 </script>
