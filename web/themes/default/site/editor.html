@@ -30,8 +30,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="app-header"><div class="app-header-content"></div></div>
-			<div class="app-preview">
+			<div class="app-header"><div class="app-header-content" style="width: 30%;"></div></div>
+			<div class="app-preview" style="width: 30%;">
 				<div class="app-content">
 					<div class="app-usercenter">
 						<div class="inner">
@@ -125,7 +125,6 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 			<div class="app-side">
 				<div ng-init="editorPanel = ('widget-'+(activeItem['id'].toLowerCase())+'-editor.html'.toLowerCase())" ng-show="activeItem.id == editorid" ng-repeat="editorid in editors" ng-include="editorPanel" id="editor{{editorid}}" class="editor"></div>
@@ -174,8 +173,8 @@
 		<input type="hidden" name="wapeditor[params]" id="wapeditor-params" value="{{submit.params}}"/>
 		<input type="hidden" name="wapeditor[html]" id="wapeditor-html" value="{{submit.html}}"/>
 		<div class="app clearfix">
-			<div class="app-preview">
-				<div class="app-header"></div>
+			<div class="app-preview" style="width: 30%;">
+				<div class="app-header" ></div>
 				<div class="app-content">
 					<div class="modules">
 						<div class="title">
