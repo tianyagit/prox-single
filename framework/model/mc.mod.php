@@ -1829,3 +1829,35 @@ function mc_card_settings_hide($item = '') {
 	}
 	return false;
 }
+
+/**
+ * 用户消费返积分
+ * @param 	string 		$openid 		粉丝openid字段
+ * @param 	string 		$tid 		core_paylog表tid
+ * @param 	string 		$fee 		core_paylog表card_fee 使用卡券后的价格
+ */
+function mc_card_grant_credit($openid, $tid, $card_fee) {
+	global $_W;
+	$setting = uni_setting($_W['uniacid'], array('creditbehaviors'));
+	load()->model('card');
+	$recharges_set = card_params_setting('cardRecharge');
+	$card_settings = card_setting();
+	$grant_rate = $card_settings['grant_rate'];
+	$grant_rate_switch = intval($recharges_set['params']['grant_rate_switch']);
+	$grant_credit1_enable = false;
+	if (!empty($grant_rate)) {
+		if (empty($recharges_set['params']['recharge_type'])) {
+			$grant_credit1_enable = true;
+		} else {
+			if ($grant_rate_switch == '1') {
+				$grant_credit1_enable = true;
+			}
+		}
+	}
+	$paycenter_order = pdo_get('paycenter_order', array('id' => $tid), array('store_id'));
+	if (!empty($grant_credit1_enable)) {
+		$num = $fee * $grant_rate;
+		$tips .= "用户消费{$fee}元，余额支付{$fee}，积分赠送比率为:【1：{$grant_rate}】,共赠送【{$num}】积分";
+		mc_credit_update($openid, 'credit1', $num, array('0', $tip, 'paycenter', 0, $paycenter_order['store_id'], 3));
+	}
+}

@@ -43,7 +43,8 @@ if(!empty($_POST)) {
 						load()->model('activity');
 					 	$status = activity_coupon_use($coupon_info['id'], $coupon_record['id'], $log['module']);
 					}
-
+					load()->model('mc');
+					mc_card_grant_credit($log['openid'], $log['tid'], $log['card_fee']);	
 					$site = WeUtility::createModuleSite($log['module']);
 					if(!is_error($site)) {
 						$method = 'payResult';
