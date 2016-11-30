@@ -58,19 +58,6 @@
 			groupDel: "{php echo url('user/group/del')}",
 		}
 	});
-	angular.module('userGroup').controller('UserGroupDisplay', ['$scope', 'config', function($scope, config){
-		$scope.lists = config.lists;
-		$scope.links = config.links;
-		console.log($scope.lists);
-		$scope.editGroup = function(id) {
-			var id = parseInt(id);
-			location.href = $scope.links.groupPost + 'id=' +id;
-		};
-		$scope.delGroup = function(id) {
-			var id = parseInt(id);
-			location.href = $scope.links.groupDel + 'id=' +id;
-		}
-	}]);
 	angular.bootstrap($('#js-user-group-display'), ['userGroup']);
 </script>
 {template 'common/footer'}
