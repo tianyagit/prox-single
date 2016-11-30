@@ -5,6 +5,7 @@
 defined('IN_IA') or exit('Access Denied');
 $dos = array('display', 'post', 'del');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
+uni_user_permission_check('system_user_group');
 
 if ($do == 'display') {
 	$condition = '' ;
