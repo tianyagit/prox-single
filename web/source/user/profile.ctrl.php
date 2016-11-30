@@ -6,6 +6,8 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('base', 'post');
 $do = in_array($do, $dos) ? $do : 'base';
+uni_user_permission_check('system_user_profile');
+
 load()->model('user');
 $uid = intval($_GPC['uid']) ? intval($_GPC['uid']) : $_W['uid'];
 $user = user_single($uid);
