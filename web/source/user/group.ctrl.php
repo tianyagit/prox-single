@@ -21,8 +21,7 @@ if ($do == 'display') {
 		message('用户组更新成功！', referer(), 'success');
 	}
 	$module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system','issystem' => 1));
-	$sql = 'SELECT * FROM ' . tablename('users_group').$condition;
-	$lists = pdo_fetchall($sql, $params);
+	$lists = pdo_fetchall("SELECT * FROM " . tablename('users_group').$condition, $params);
 	foreach ($lists as $key => $group) {
 		$package = iunserializer($group['package']);
 		$group['package'] = uni_groups($package);
@@ -40,46 +39,61 @@ if ($do == 'display') {
 			$lists[$key]['nums'] = count($modules['modules']);
 			$lists[$key]['module_nums'] = $module_num + $lists[$key]['nums'];
 		}
-		$lists[$key]['Packages'] = implode(',', $names);
+		$lists[$key]['packages'] = implode(',', $names);
 	}
 	template('user/group-display');
 }
 
 if ($do == 'post') {
-	$id = intval($_GPC['id']);
-	echo $id;
-	exit;
-	// $_W['page']['title'] = $id ? '编辑用户组 - 用户组 - 用户管理' : '添加用户组 - 用户组 - 用户管理';
-	// if (!empty($id)) {
-	// 	$group = pdo_fetch("SELECT * FROM ".tablename('users_group') . " WHERE id = :id", array(':id' => $id));
-	// 	$group['package'] = iunserializer($group['package']);
-	// }
-	// $packages = uni_groups();
-	// if (checksubmit('submit')) {
-	// 	if (empty($_GPC['name'])) {
-	// 		message('请输入用户组名称！');
-	// 	}
-	// 	if (!empty($_GPC['package'])) {
-	// 		foreach ($_GPC['package'] as $value) {
-	// 			$package[] = intval($value);
-	// 		}
-	// 	}
-	// 	$data = array(
-	// 		'name' => $_GPC['name'],
-	// 		'package' => iserializer($package),
-	// 		'maxaccount' => intval($_GPC['maxaccount']),
-	// 		'timelimit' => intval($_GPC['timelimit'])
-	// 	);
-	// 	if (empty($id)) {
-	// 		pdo_insert('users_group', $data);
-	// 	} else {
-	// 		pdo_update('users_group', $data, array('id' => $id));
-	// 	}
-	// 	message('用户组更新成功！', url('user/group/display'), 'success');
-	// }
+	uni_user_permission_check('user_group_post');
+	$id = is_array($_GPC['id']) ? 0 : intval($_GPC['id']);
+	$_W['page']['title'] = $id ? '编辑用户组 - 用户组 - 用户管理' : '添加用户组 - 用户组 - 用户管理';
+	if (!empty($id)) {
+		$group_info = pdo_fetch("SELECT * FROM ".tablename('users_group') . " WHERE id = :id", array(':id' => $id));
+		$group_info['package'] = iunserializer($group_info['package']);
+		if(!empty($group_info['package']) && in_array(-1, $group_info['package'])) $group_info['check_all'] = true;
+	}
+	$packages = uni_groups();
+	foreach ($packages as $key => &$val) {
+		if(!empty($group_info['package']) && in_array($key, $group_info['package'])) {
+			$val['checked'] = true;
+		}else {
+			$val['checked'] = false;
+		}
+	}
+	if (checksubmit('submit')) {
+		if (empty($_GPC['name'])) {
+			message('请输入用户组名称！');
+		}
+		if (!empty($_GPC['package'])) {
+			foreach ($_GPC['package'] as $value) {
+				$package[] = intval($value);
+			}
+		}
+		$data = array(
+			'name' => $_GPC['name'],
+			'package' => iserializer($package),
+			'maxaccount' => intval($_GPC['maxaccount']),
+			'timelimit' => intval($_GPC['timelimit'])
+		);
+		if (empty($id)) {
+			pdo_insert('users_group', $data);
+		} else {
+			pdo_update('users_group', $data, array('id' => $id));
+		}
+		message('用户组更新成功！', url('user/group/display'), 'success');
+	}
+	template('user/group-post');
 }
 
 if($do == 'del') {
+	uni_user_permission_check('user_group_del');
 	$id = intval($_GPC['id']);
+	$result = pdo_delete('users_group', array('id' => $id));
+	if(!empty($result)){
+		message('删除成功！', url('user/group/display'), 'success');
+	}else {
+		message('删除失败！请稍候重试！', url('user/group'), 'error');
+	}
 	exit;
 }
