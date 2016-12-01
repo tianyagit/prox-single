@@ -42,12 +42,11 @@ $acl = array(
 		)
 	),
 	'extension' => array(
-		'direct' => array(),
+		'direct' => array('subscribe'),
 		'founder' => array(
 			'module',
 			'service',
 			'theme',
-			'subscribe',
 		)
 	),
 	'site' => array(
