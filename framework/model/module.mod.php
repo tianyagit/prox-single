@@ -303,3 +303,45 @@ function module_build_privileges() {
 	}
 	return true;
 }
+
+/**
+ * 获取所有未安装的模块
+ * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
+*/
+function get_all_unistalled_module($status)  {
+	$moduleids = array();
+	$modules = pdo_fetchall("SELECT `name` FROM " . tablename('modules') . ' ORDER BY `issystem` DESC, `mid` ASC');
+	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
+	$recycle_modules = array_keys($recycle_modules);
+	if(!empty($modules)) {
+		foreach($modules as $m) {
+			$moduleids[] = $m['name'];
+		}
+	}
+	$path = IA_ROOT . '/addons/';
+	if (is_dir($path)) {
+		$localUninstallModules = array();
+		if ($handle = opendir($path)) {
+			while (false !== ($modulepath = readdir($handle))) {
+				$manifest = ext_module_manifest($modulepath);
+				if (is_array($manifest) && !empty($manifest['application']['identifie']) && !in_array($manifest['application']['identifie'], $moduleids)) {
+					$m = ext_module_convert($manifest);
+					if ($status == 'unistalled') {
+						if (in_array($m['name'], $recycle_modules)) {
+							continue;
+						}
+					} elseif ($status == 'recycle') {
+						if (!in_array($m['name'], $recycle_modules)) {
+							continue;
+						}
+					}
+					$localUninstallModules[$m['name']] = $m;
+				}
+			}
+		}
+		return $localUninstallModules;
+	} else {
+		return array();
+	}
+
+}
