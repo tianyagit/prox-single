@@ -1,0 +1,141 @@
+{template 'common/header'}
+{if $do == 'display'}
+<form action="{php echo url('system/module_group/delete')}" method="post">
+<table class="table">
+	<thead>
+		<th></th>
+		<th>名称</th>
+		<th>可用模块</th>
+		<th>可用模板</th>
+		<th>操作</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td><input type="checkbox" disabled value="{$item['id']}" /></td>
+			<td>基础服务<span class="label label-info">系统</span></td>
+			<td>
+				<ul class="ul-float">
+					<li>基本文字回复</li>
+					<li>基本混合图文回复</li>
+					<li>基本语音回复</li>
+					<li>自定义接口回复</li>
+				</ul>
+			</td>
+			<td>
+				<ul class="ul-float">
+					<li>微站默认模板</li>
+				</ul>
+			</td>
+			<td><span></span></td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" disabled value="{$item['id']}" /></td>
+			<td>所有服务<span class="label label-info">系统</span></td>
+			<td>
+				<span class="label label-danger">系统所有模块</span></li>
+			</td>
+			<td>
+				<ul class="ul-float">
+					<span class="label label-danger">系统所有模板</span></li>
+				</ul>
+			</td>
+			<td><span></span></td>
+		</tr>
+	{loop $modules_group_list $group}
+		<tr>
+			<td><input type="checkbox" name="group_list[]" value="{$group['id']}"></td>
+			<td>{$group['name']}</td>
+			<td>
+				<ul class="ul-float">
+					{loop $group['modules'] $module}
+					<li>
+						{$module['title']}
+					</li>
+					{/loop}
+				</ul>
+			</td>
+			<td>
+				<ul class="ul-float">
+				{loop $group['templates'] $template}
+					<li>
+						{$template['title']}
+					</li>
+				{/loop}
+				</ul>
+			<td><a href="{php echo url('system/module_group/post', array('id' => $group['id']))}">编辑</a></td>
+		</tr>
+	{/loop}
+	</tbody>
+</table>
+<input type="submit" name="submit" class="btn btn-primary"  value="删除">
+</form>
+{elseif $do == 'post'}
+<form action="{php echo url('system/module_group/post')}" method="post">
+	<div class="form-group">
+		<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">服务套餐名称</label>
+		<div class="col-sm-10 col-xs-12">
+			<input type="text" class="form-control" name="name" id="name" value="{$module_group['name']}" />
+		</div>
+	</div>
+	<table class="table">
+		<thead>
+		<th style="width:120px;"><input type="checkbox" id="template" onclick="checkall('template')">(全选)选择</th>
+		<th style="width:120px;">名称</th>
+		<th>标识</th>
+		<th>简介</th>
+		</thead>
+		<tbody>
+		{loop $template_list $template}
+		<tr>
+			<td><input type="checkbox" name="template[]" value="{$template['id']}" {if !empty($module_group['template']) && in_array($template['id'], $module_group['templates'])}checked{/if}></td>
+			<td>{$template['title']}</td>
+			<td>
+				{$template['name']}
+			</td>
+			<td>
+				{$template['description']}
+			</td>
+		</tr>
+		{/loop}
+		</tbody>
+	</table>
+
+	<table class="table">
+		<thead>
+			<th style="width:120px;"><input type="checkbox" id="module" onclick="checkall('module')">(全选)选择</th>
+			<th style="width:120px;">名称</th>
+			<th>标识</th>
+			<th>简介</th>
+		</thead>
+		<tbody>
+		{loop $module_list $module}
+		<tr>
+			<td><input type="checkbox" name="module[]" value="{$module['mid']}" {if !empty($module_group['template']) && in_array($module['name'], $module_group['modules'])}checked{/if}></td>
+			<td>{$module['title']}</td>
+			<td>
+				{$module['name']}
+			</td>
+			<td>
+				{$module['description']}
+			</td>
+		</tr>
+		{/loop}
+		</tbody>
+	</table>
+	<input name="submit" value="提交" class="btn btn-primary" type="submit">
+	<input name="token" value="{$_W['token']}" type="hidden">
+	<input name="id" value="{$module_group['id']}" type="hidden">
+</form>
+<script>
+	checkall = function(type) {
+		if (type == 'template') {
+			status = $('#template').prop('checked') === true ? 'checked' : '';
+			$('[name="template[]"]').prop('checked', status);
+		} else {
+			status = $('#module').prop('checked') === true ? 'checked' : '';
+			$('[name="module[]"]').prop('checked', status);
+		}
+	}
+</script>
+{/if}
+{template 'common/footer'}

@@ -120,7 +120,7 @@ $ms['system'] = array(
 				),
 				'system_module_group' => array(
 					'title' => '应用权限套餐',
-					'url' => url('system/platform'),
+					'url' => url('system/module_group'),
 					'permission_name' => 'system_module_group',
 				),
 			)
