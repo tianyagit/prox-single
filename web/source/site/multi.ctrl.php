@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $_W['page']['title'] = '微官网';
 uni_user_permission_check('platform_site');
 load()->model('site');
-$dos = array('display', 'post', 'del', 'default', 'copy', 'switch');
+$dos = array('display', 'post', 'del', 'default', 'copy', 'switch', 'quickmenu_display', 'quickmenu_post');
 $do = in_array($do, $dos) ? $do : 'display';
 //获取默认微站
 $setting = uni_setting($_W['uniacid'], 'default_site');
@@ -16,7 +16,55 @@ $default_site = intval($setting['default_site']);
 
 if($do == 'post') {
 	uni_user_permission_check('site_multi_post');
+	if($_W['isajax'] && $_W['ispost']) {
+		//搜索模板
+		$name = trim($_GPC['__input']['name']);
+		$sql = 'SELECT s.*, t.`name` AS `tname`, t.`title`, t.`type` FROM ' . tablename('site_styles') . ' AS s LEFT JOIN ' .
+			tablename('site_templates') . ' AS t ON s.`templateid` = t.`id` WHERE s.`uniacid` = :uniacid AND s.`name` LIKE :name';
+		$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':name' => "%{$name}%"), 'id');
+		message($styles, 'ajax', 'success');
+	}
 	$id = intval($_GPC['multiid']);
+
+	if (checksubmit('submit')) {
+		$data = array(
+			'uniacid' => $_W['uniacid'],
+			'title' => trim($_GPC['title']),
+			'styleid' => intval($_GPC['styleid']),
+			'status' => intval($_GPC['status']),
+			'site_info' => iserializer(array(
+				'thumb' => $_GPC['thumb'],
+				'keyword' => $_GPC['keyword'],
+				'description' => $_GPC['description'],
+				'footer' => htmlspecialchars_decode($_GPC['footer'])
+			)),
+			'bindhost' => $_GPC['bindhost'],
+		);
+		if (empty($data['title'])) {
+			message('请填写站点名称', referer(), 'error');
+		}
+		if(!empty($id)) {
+			pdo_update('site_multi', $data, array('id' => $id));
+		} else {
+			pdo_insert('site_multi', $data);
+			$id = pdo_insertid();
+		}
+		if (!empty($_GPC['keyword'])) {
+			$cover = array(
+				'uniacid' => $_W['uniacid'],
+				'title' => $data['title'],
+				'keyword' => $_GPC['keyword'],
+				'url' => url('home', array('i' => $_W['uniacid'], 't' => $id)),
+				'description' => $_GPC['description'],
+				'thumb' => $_GPC['thumb'],
+				'module' => 'site',
+				'multiid' => $id,
+			);
+			site_cover($cover);
+		}
+		message('更新站点信息成功！', url('site/multi/display'), 'success');
+	}
+	
 	if(!empty($id)) {
 		$multi = pdo_fetch('SELECT * FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $id));
 		if(empty($multi)) {
@@ -24,51 +72,21 @@ if($do == 'post') {
 		}
 		$multi['site_info'] = iunserializer($multi['site_info']) ? iunserializer($multi['site_info']) : array();
 	}
-	$sql = 'SELECT `s`.*, `t`.`name` AS `tname`, `t`.`title` FROM ' . tablename('site_styles') . ' AS `s` LEFT JOIN ' .
-			tablename('site_templates') . ' AS `t` ON `s`.`templateid` = `t`.`id` WHERE `s`.`uniacid` = :uniacid';
-	$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'id');
-	$multi['style'] = $styles[$multi['styleid']];
 
-	if(checksubmit('submit')) {
-		if (checksubmit('submit')) {
-			$data = array(
-				'uniacid' => $_W['uniacid'],
-				'title' => trim($_GPC['title']),
-				'styleid' => intval($_GPC['styleid']),
-				'status' => intval($_GPC['status']),
-				'site_info' => iserializer(array(
-					'thumb' => $_GPC['thumb'],
-					'keyword' => $_GPC['keyword'],
-					'description' => $_GPC['description'],
-					'footer' => htmlspecialchars_decode($_GPC['footer'])
-				)),
-				'bindhost' => $_GPC['bindhost'],
-			);
-			if (empty($data['title'])) {
-				message('请填写站点名称', referer(), 'error');
-			}
-			if(!empty($id)) {
-				pdo_update('site_multi', $data, array('id' => $id));
-			} else {
-				pdo_insert('site_multi', $data);
-				$id = pdo_insertid();
-			}
-			if (!empty($_GPC['keyword'])) {
-				$cover = array(
-					'uniacid' => $_W['uniacid'],
-					'title' => $data['title'],
-					'keyword' => $_GPC['keyword'],
-					'url' => url('home', array('i' => $_W['uniacid'], 't' => $id)),
-					'description' => $_GPC['description'],
-					'thumb' => $_GPC['thumb'],
-					'module' => 'site',
-					'multiid' => $id,
-				);
-				site_cover($cover);
-			}
-			message('更新站点信息成功！', url('site/multi/display'), 'success');
-		}
+	load()->model('extension');
+	$temtypes = ext_template_type();
+	$temtypes[] = array('name' => 'all', 'title' => '全部');
+
+	$sql = 'SELECT `s`.*, `t`.`id` as `tid`, `t`.`name` AS `tname`, `t`.`title`, `t`.`type`, `t`.`sections` FROM ' . tablename('site_styles') . ' AS `s` LEFT JOIN ' . tablename('site_templates') . ' AS `t` ON `s`.`templateid` = `t`.`id` WHERE `s`.`uniacid` = :uniacid';
+	$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'id');
+
+	if(empty($multi)) {
+		$multi = array(
+			'site_info' => array(),
+			'status' => 1,
+		);
 	}
+	$multi['style'] = $styles[$multi['styleid']];
 	template('site/post');
 }
 
@@ -92,7 +110,6 @@ if($do == 'display') {
 		$li['site_info'] = (array)iunserializer($li['site_info']);
 		$li['site_info']['thumb'] = tomedia($li['site_info']['thumb']);
 	}
-
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_multi') . " WHERE uniacid = :uniacid".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
 	template('site/display');
@@ -181,4 +198,47 @@ if($do == 'switch') {
 	}else {
 		message('-1', '', 'ajax');
 	}
+}
+
+if($do == 'quickmenu_display' && $_W['isajax']) {
+	$multiid = intval($_GPC['__input']['multiid']);
+	if($multiid > 0){
+		$page = pdo_fetch("SELECT * FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => $multiid));
+		$params = !empty($page['params']) ? $page['params'] : 'null';
+		$status = $page['status'] == 1 ? 1 : 0;
+		$modules = uni_modules();
+		$modules = !empty($modules) ? $modules : 'null';
+		message(array('params' => json_decode($params), 'status' => $status, 'modules' => $modules), 'ajax', 'success');
+	}else {
+		message('-1', 'ajax', 'error');
+	}
+}
+
+if($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
+	$post = $_GPC['__input'];
+	$params = $post['postdata']['params'];
+	if (empty($params)) {
+		message('请您先设计手机端页面.2', 'ajax', 'error');
+	}
+	$html = htmlspecialchars_decode($post['postdata']['html'], ENT_QUOTES);
+	$html = preg_replace('/background\-image\:(\s)*url\(\"(.*)\"\)/U', 'background-image: url($2)', $html);
+	$data = array(
+		'uniacid' => $_W['uniacid'],
+		'multiid' => $post['multiid'],
+		'title' => '快捷菜单',
+		'description' => '',
+		'status' => intval($post['status']),
+		'type' => 2,
+		'params' => json_encode($params),
+		'html' => $html,
+		'createtime' => TIMESTAMP,
+	);
+	$id = pdo_fetchcolumn("SELECT id FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => $post['multiid']));
+	if (!empty($id)) {
+		pdo_update('site_page', $data, array('id' => $id));
+	} else {
+		pdo_insert('site_page', $data);
+		$id = pdo_insertid();
+	}
+	message('0', 'ajax', 'success');
 }

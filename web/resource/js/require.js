@@ -49,9 +49,12 @@ require.config({
 		'moment': '../lib/moment',
 		'emoji' : '../../components/emoji/emoji',
 		'material' : '../../components/material/material',
-
+		'trade' : '../../components/trade/trade',
+		'hammer' : '../lib/hammer.min',
 		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
 		'jquery': '../lib/bootstrap.min', //兼容之前amd调用
+		'bootstrap.switch': '../../components/switch/bootstrap-switch.min',
+		'validator': '../lib/bootstrapValidator.min',
 		'jquery.ui': '../lib/jquery-ui-1.10.3.min',
 		'jquery.caret': '../lib/jquery.caret',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
@@ -59,7 +62,6 @@ require.config({
 		'jquery.wookmark': '../lib/jquery.wookmark.min',
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
-
 		'underscore': '../lib/underscore-min',
 		'loadcss': '../lib/css.min', //加载CSS
 	},
@@ -83,6 +85,10 @@ require.config({
 		'map': {
 			exports: 'BMap'
 		},
+		'bootstrap.switch': {
+			exports: "$",
+			deps: ['bootstrap', 'loadcss!../../components/switch/bootstrap-switch.min.css']
+		},
 		'fileUploader': {
 			deps: ['webuploader', 'jquery.jplayer', 'loadcss!../../components/webuploader/webuploader.css', 'loadcss!../../components/webuploader/style.css']
 		},
@@ -94,7 +100,8 @@ require.config({
 			exports : '$'
 		},
 		'jquery.ui': {
-			exports: '$'
+			exports: '$',
+			deps: ['jquery']
 		},
 		'jquery.caret': {
 			exports: '$'
@@ -116,6 +123,7 @@ require.config({
 		},
 		'material': {
 			deps: ['../lib/jquery-1.11.1.min']
-		}
+		},
+		
 	}
 });
