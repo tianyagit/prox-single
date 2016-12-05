@@ -128,11 +128,17 @@ class CoreModuleSite extends WeModuleSite {
 				'uniontid' => $uniontid,
 			), array('plid' => $paylog['plid']));
 		}
-		
 		$paylog['title'] = $params['title'];
-		
 		if ($params['method'] == 'wechat') {
 			return $this->doMobilePayWechat($paylog);
+		} elseif ($params['method'] == 'alipay') {
+			return $this->doMobilePayAlipay($paylog);
+		} else {
+			$params['tid'] = $paylog['plid'];
+			$sl = base64_encode(json_encode($params));
+			$auth = sha1($sl . $_W['uniacid'] . $_W['config']['setting']['authkey']);
+			message(error(0, $_W['siteroot'] . "/payment/{$type}/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}"), '', 'ajax');
+			exit();
 		}
 	}
 	
@@ -169,6 +175,33 @@ class CoreModuleSite extends WeModuleSite {
 			unset($wechat_payment['sub_mch_id']);
 			$wechat_payment_params = wechat_build($params, $wechat_payment);
 		}
-		message(error(0, $wechat_payment_params), '', 'ajax');
+		if (is_error($wechat_payment_params)) {
+			message($wechat_payment_params, '', 'ajax');
+		} else {
+			message(error(0, $wechat_payment_params), '', 'ajax');
+		}
+	}
+
+	private function doMobilePayAlipay($paylog = array()) {
+		global $_W;
+
+		load()->model('payment');
+		load()->func('communication');
+
+		$_W['uniacid'] = $paylog['uniacid'];
+
+		$setting = uni_setting($_W['uniacid'], array('payment'));
+		$params = array(
+			'tid' => $paylog['tid'],
+			'fee' => $paylog['card_fee'],
+			'user' => $paylog['openid'],
+			'title' => urldecode($paylog['title']),
+			'uniontid' => $paylog['uniontid'],
+		);
+		$alipay_payment_params = alipay_build($params, $setting['payment']['alipay']);
+		if($alipay_payment_params['url']) {
+			message(error(0, $alipay_payment_params['url']), '', 'ajax');
+			exit();
+		}
 	}
 }
