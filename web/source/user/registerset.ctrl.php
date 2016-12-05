@@ -3,8 +3,8 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
-$_W['page']['title'] = '注册选项 - 用户设置 - 用户管理';
+uni_user_permission_check('system_user_display');
+$_W['page']['title'] = '注册选项 - 用户管理';
 load()->model('setting');
 if (checksubmit('submit')) {
 	setting_save(array('open' => intval($_GPC['open']), 'verify' => intval($_GPC['verify']), 'code' => intval($_GPC['code']), 'groupid' => intval($_GPC['groupid'])), 'register');
