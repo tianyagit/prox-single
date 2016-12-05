@@ -1,16 +1,17 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn: pro/web/source/user/group.ctrl.php : v a210cf4d3592 : 2015/09/09 10:18:06 : RenChao $
  */
 defined('IN_IA') or exit('Access Denied');
+$dos = array('display', 'post', 'del');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
+uni_user_permission_check('system_user_group');
 
 if ($do == 'display') {
-	$where = '' ;
+	$condition = '' ;
 	$params = array();
 	if (!empty($_GPC['name'])) {
-		$where .= "WHERE name LIKE :name";
+		$condition .= "WHERE name LIKE :name";
 		$params[':name'] = "%{$_GPC['name']}%";
 	}
 	$_W['page']['title'] = '用户组列表 - 用户组 - 用户管理';
@@ -21,50 +22,46 @@ if ($do == 'display') {
 		message('用户组更新成功！', referer(), 'success');
 	}
 	$module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system','issystem' => 1));
-	$sql = 'SELECT * FROM ' . tablename('users_group').$where;
-	$list = pdo_fetchall($sql, $params);
-	foreach ($list as $key => $group) {
+	$lists = pdo_fetchall("SELECT * FROM " . tablename('users_group').$condition, $params);
+	foreach ($lists as $key => $group) {
 		$package = iunserializer($group['package']);
 		$group['package'] = uni_groups($package);
-		$list[$key]['ss'] = $package;
-		 if (empty($list[$key]['ss'])) {
-		 	$list[$key]['module_nums'] = $module_num;
-		 	unset($list[$key]['ss']);
-		 	continue;
-		 }
-		 if(is_array($list[$key]['ss'])) {
-			 if (in_array(-1, $list[$key]['ss']) ) {
-			 	$list[$key]['module_nums'] = -1;
-			 	unset($list[$key]['ss']);
-			 	continue;
-			 }
+		if (empty($package)) {
+			$lists[$key]['module_nums'] = $module_num;
+			continue;
 		}
+		if(is_array($package) && in_array(-1, $package)) {
+			$lists[$key]['module_nums'] = -1;
+			continue;
+		}
+		$names = array();
 		foreach ($group['package'] as $modules) {
-			$list[$key]['Packagess'][] = $modules['name'];
-			if (is_array($modules['modules'])) {
-				foreach ($modules['modules'] as  $module) {
-					$list[$key]['module_num'][] = $module['name'];
-				}
-			}
-			$list[$key]['module_num'] = array_unique($list[$key]['module_num']);
-			$list[$key]['numss'] = $module_num;
-			$list[$key]['nums'] = count($list[$key]['module_num']);
-			$list[$key]['module_nums'] = $list[$key]['numss'] + $list[$key]['nums'];
-			unset($list[$key]['ss']);
+			$names[] = $modules['name'];
+			$lists[$key]['nums'] = count($modules['modules']);
+			$lists[$key]['module_nums'] = $module_num + $lists[$key]['nums'];
 		}
-		$list[$key]['Packages'] = implode(',', $list[$key]['Packagess']);
-		unset($list[$key]['Packagess']);
+		$lists[$key]['packages'] = implode(',', $names);
 	}
+	template('user/group-display');
 }
 
 if ($do == 'post') {
-	$id = intval($_GPC['id']);
+	uni_user_permission_check('user_group_post');
+	$id = is_array($_GPC['id']) ? 0 : intval($_GPC['id']);
 	$_W['page']['title'] = $id ? '编辑用户组 - 用户组 - 用户管理' : '添加用户组 - 用户组 - 用户管理';
 	if (!empty($id)) {
-		$group = pdo_fetch("SELECT * FROM ".tablename('users_group') . " WHERE id = :id", array(':id' => $id));
-		$group['package'] = iunserializer($group['package']);
+		$group_info = pdo_fetch("SELECT * FROM ".tablename('users_group') . " WHERE id = :id", array(':id' => $id));
+		$group_info['package'] = iunserializer($group_info['package']);
+		if(!empty($group_info['package']) && in_array(-1, $group_info['package'])) $group_info['check_all'] = true;
 	}
 	$packages = uni_groups();
+	foreach ($packages as $key => &$val) {
+		if(!empty($group_info['package']) && in_array($key, $group_info['package'])) {
+			$val['checked'] = true;
+		}else {
+			$val['checked'] = false;
+		}
+	}
 	if (checksubmit('submit')) {
 		if (empty($_GPC['name'])) {
 			message('请输入用户组名称！');
@@ -87,6 +84,17 @@ if ($do == 'post') {
 		}
 		message('用户组更新成功！', url('user/group/display'), 'success');
 	}
+	template('user/group-post');
 }
 
-template('user/group');
+if($do == 'del') {
+	uni_user_permission_check('user_group_del');
+	$id = intval($_GPC['id']);
+	$result = pdo_delete('users_group', array('id' => $id));
+	if(!empty($result)){
+		message('删除成功！', url('user/group/display'), 'success');
+	}else {
+		message('删除失败！请稍候重试！', url('user/group'), 'error');
+	}
+	exit;
+}
