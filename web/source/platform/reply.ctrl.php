@@ -138,6 +138,7 @@ if($do == 'display') {
 		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
 	}
 
+	$entries = module_entries($m);
 	template('platform/reply');
 }
 
