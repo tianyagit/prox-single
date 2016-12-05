@@ -1,7 +1,7 @@
 <?php
 /**
  * 文件操作
- * 
+ *
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
@@ -199,7 +199,7 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
 	if (!in_array($type, array('image', 'thumb', 'voice', 'video', 'audio'))) {
 		return error(-2, '未知的上传类型');
 	}
-	
+
 	global $_W;
 	$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 	$ext = strtolower($ext);
@@ -221,7 +221,7 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
 		}
 		$result['path'] = $name;
 	}
-	
+
 	if (!file_move($file['tmp_name'], ATTACHMENT_ROOT . '/' . $result['path'])) {
 		return error(-1, '保存上传文件失败');
 	}
@@ -232,7 +232,7 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
 /**
  * 上传图片到远程服务器，需要外部自行处理成功和失败时删除原图的操作
  * @param string $filename 图片的相对路径从attachment开始
- * @return boolean|error 
+ * @return boolean|error
  */
 
 function file_remote_upload($filename, $auto_delete_local = true) {
@@ -283,9 +283,7 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 	}elseif ($_W['setting']['remote']['type'] == '3') {
 		require_once(IA_ROOT . '/framework/library/qiniu/autoload.php');
 		$auth = new Qiniu\Auth($_W['setting']['remote']['qiniu']['accesskey'],$_W['setting']['remote']['qiniu']['secretkey']);
-		$zone = $_W['setting']['remote']['qiniu']['district'] == 1 ?  Qiniu\Zone::zone0() : Qiniu\Zone::zone1();
-		$config = new Qiniu\Config($zone);
-		$uploadmgr = new Qiniu\Storage\UploadManager($config);
+		$uploadmgr = new Qiniu\Storage\UploadManager();
 		$putpolicy = Qiniu\base64_urlSafeEncode(json_encode(array('scope' => $_W['setting']['remote']['qiniu']['bucket'].':'. $filename)));
 		$uploadtoken = $auth->uploadToken($_W['setting']['remote']['qiniu']['bucket'], $filename, 3600, $putpolicy);
 		list($ret, $err) = $uploadmgr->putFile($uploadtoken, $filename, ATTACHMENT_ROOT. '/'.$filename);
@@ -418,7 +416,7 @@ function file_remote_delete($file) {
 }
 
 /**
- * 图像缩略处理 
+ * 图像缩略处理
  * 可处理图像类型jpg和png
  * 如果原图像宽度小于指定宽度, 直接复制到目标地址
  * 如果原图像宽度大于指定宽度, 按比例缩放至指定宽度后保存至目标地址
@@ -654,26 +652,24 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
 	$flags = $isdir ? GLOB_ONLYDIR : 0;
 	$list = glob($filepath . '*' . (!empty($ex) && empty($subdir) ? '.' . $ex : ''), $flags);
 	if (!empty($ex)) $ex_num = strlen($ex);
-	if (is_array($list)) {
-		foreach ($list as $k => $v) {
-			$v = str_replace('\\', '/', $v);
-			$v1 = str_replace(IA_ROOT . '/', '', $v);
-			if ($subdir && is_dir($v)) {
-				file_lists($v . '/', $subdir, $ex, $isdir, $md5);
-				continue;
+	foreach ($list as $k => $v) {
+		$v = str_replace('\\', '/', $v);
+		$v1 = str_replace(IA_ROOT . '/', '', $v);
+		if ($subdir && is_dir($v)) {
+			file_lists($v . '/', $subdir, $ex, $isdir, $md5);
+			continue;
+		}
+		if (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) == $ex) {
+
+			if ($md5) {
+				$file_list[$v1] = md5_file($v);
+			} else {
+				$file_list[] = $v1;
 			}
-			if (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) == $ex) {
-	
-				if ($md5) {
-					$file_list[$v1] = md5_file($v);
-				} else {
-					$file_list[] = $v1;
-				}
-				continue;
-			} elseif (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) != $ex) {
-				unset($list[$k]);
-				continue;
-			}
+			continue;
+		} elseif (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) != $ex) {
+			unset($list[$k]);
+			continue;
 		}
 	}
 	return $file_list;

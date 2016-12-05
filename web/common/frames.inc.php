@@ -55,7 +55,17 @@ $ms['account'] = array(
 					'title' => '粉丝管理',
 					'url' => url('mc/fans'),
 					'promisson_name' => 'mc_fans',
-				)
+				),
+				'mc_member' => array(
+					'title' => '会员管理',
+					'url' => url('mc/member'),
+					'promisson_name' => 'mc_member',
+				),
+				'site_editor' => array(
+					'title' => '会员中心',
+					'url' => url('site/editor/uc'),
+					'promisson_name' => 'site_editor'
+				),
 			),
 		),
 		'profile' => array(
@@ -63,7 +73,7 @@ $ms['account'] = array(
 			'menu' => array(
 				'profile' => array(
 					'title' => '参数配置',
-					'url' => url('profile/passport'),
+					'url' => url('profile/payment'),
 					'promisson_name' => 'profile',
 				)
 			),
@@ -110,7 +120,7 @@ $ms['system'] = array(
 				),
 				'system_module_group' => array(
 					'title' => '应用权限套餐',
-					'url' => url('system/platform'),
+					'url' => url('system/module_group'),
 					'permission_name' => 'system_module_group',
 				),
 			)
@@ -132,16 +142,6 @@ $ms['system'] = array(
 					'title' => '用户组管理',
 					'url' => url('user/group'),
 					'permission_name' => 'system_user_group',
-				),
-				'system_user_registerset' => array(
-						'title' => '注册选项',
-						'url' => url('user/registerset'),
-						'permission_name' => 'system_user_registerset',
-				),
-				'system_user_fields' => array(
-						'title' => '资料字段管理',
-						'url' => url('user/fields'),
-						'permission_name' => 'system_user_fields',
 				),
 			)
 		),

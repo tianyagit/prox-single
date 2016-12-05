@@ -108,6 +108,10 @@ function uni_fetch($uniacid = 0) {
 	$cachekey = "uniaccount:{$uniacid}";
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
+		if(!isset($cache['isconnect'])){
+			$cache['isconnect'] = pdo_fetchcolumn('SELECT isconnect FROM ' . tablename('account') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
+			cache_write($cachekey, $cache);
+		}
 		return $cache;
 	}
 	$account = uni_account_default($uniacid);
@@ -458,7 +462,9 @@ function uni_account_default($uniacid = 0) {
 		$default_acid = pdo_fetchcolumn("SELECT acid FROM ".tablename('account_wechats')." WHERE uniacid = :uniacid ORDER BY level DESC", array(':uniacid' => $_W['uniacid']));
 		$account = pdo_fetch("SELECT w.* FROM " . tablename('uni_account') . " AS a, " . tablename('account_wechats') ." AS w WHERE w.acid = '{$default_acid}'");
 	}
-	$account['type'] = pdo_fetchcolumn("SELECT type FROM ".tablename('account')." WHERE acid = :acid", array(':acid' => $account['acid']));
+	$accountdata = pdo_fetch("SELECT type,isconnect FROM ".tablename('account')." WHERE acid = :acid", array(':acid' => $account['acid']));
+	$account['type'] = $accountdata['type'];
+	$account['isconnect'] = $accountdata['isconnect'];
 	return $account;
 }
 

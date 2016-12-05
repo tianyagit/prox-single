@@ -35,7 +35,7 @@
 		<tr ng-repeat="multi in multis">
 			<td class="text-left">
 				<div class="site-item-img">
-					<img ng-src="{{multi.site_info.thumb}}"/>
+					<img ng-src="{$_W['siteroot']}app/themes/{{multi.template.name}}/preview.jpg" />
 					<div class="cover-dark">
 						<a ng-href="{{links.appHome}}&t={{multi.id}}" target="_blank"></a>
 					</div>
