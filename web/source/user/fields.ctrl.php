@@ -5,19 +5,18 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-
 $dos = array('display','post');
 $do = in_array($do, $dos) ? $do : 'display';
+uni_user_permission_check('system_user_display');
 
-//显示注册字段/资料设置更新
 if ($do == 'display') {
-	$_W['page']['title'] = '字段管理 - 账号/用户- 用户管理';
-$where = '' ;
-$params = array();
-if (!empty($_GPC['title'])) {
-	$where .= "WHERE title LIKE :title";
-	$params[':title'] = "%{$_GPC['title']}%";
-}
+	$_W['page']['title'] = '字段管理 - 用户管理';
+	$condition = '' ;
+	$params = array();
+	if (!empty($_GPC['keyword'])) {
+		$condition .= " WHERE title LIKE :title";
+		$params[':title'] = "%{$_GPC['keyword']}%";
+	}
 	if (checksubmit('submit')) {
 		if (!empty($_GPC['displayorder'])) {
 			foreach ($_GPC['displayorder'] as $id => $displayorder) {
@@ -31,14 +30,13 @@ if (!empty($_GPC['title'])) {
 		}
 		message('资料设置更新成功！', referer(), 'success');
 	}
-	$sql = 'SELECT * FROM ' . tablename('profile_fields').$where." ORDER BY displayorder DESC";
+	$sql = "SELECT * FROM " . tablename('profile_fields'). $condition ." ORDER BY displayorder DESC";
 	$fields = pdo_fetchall($sql, $params);
-
+	template('user/fields-display');
 }
 
-//编辑字段
 if ($do == 'post') {
-	$_W['page']['title'] = '编辑字段 - 账号/用户 - 用户管理';
+	$_W['page']['title'] = '编辑字段 - 用户管理';
 	$id = intval($_GPC['id']);
 
 	if (checksubmit('submit')) {
@@ -84,12 +82,11 @@ if ($do == 'post') {
 			}
 			pdo_update('profile_fields', $data, array('id' => $id));
 		}
-		message('更新粉丝字段成功！', url('user/fields'));
+		message('更新字段成功！', url('user/fields'));
 	}
 
 	if (!empty($id)) {
 		$item = pdo_fetch("SELECT * FROM ".tablename('profile_fields')." WHERE id = :id", array(':id' => $id));
 	}
+	template('user/fields-post');
 }
-
-template('user/fields');
