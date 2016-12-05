@@ -13,6 +13,6 @@ load()->model('cache');
 load()->model('frame');
 load()->model('cloud');
 load()->classs('coupon');
-
+echo 1;die;
 exit;
 print_r(parse_url('http://wx.panomall.com/web/index.php?c=material&a=mass&do=cron&id=47'));
