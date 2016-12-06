@@ -81,44 +81,9 @@
 			recycleRestore: "{php echo url('user/display/recycle_restore')}",
 			checkPass: "{php echo url('user/display/check_pass')}",
 			deny: "{php echo url('user/display/recycle')}",
+			edit: "{php echo url('user/edit')}",
 		},
 	});
-angular.module('userManageApp').controller('UsersDisplay', ['$scope', 'config', function($scope, config){
-	$scope.do = config.do;
-	$scope.users = config.users;
-	$scope.usergroups = config.usergroups;
-	$scope.links = config.links;
-	$scope.handle = function(uid, does) {
-		var uid = parseInt(uid);
-		if(isNaN(uid) || !confirm('确认要这样做吗? ')) {
-			return false;
-		}else {
-			switch(does) {
-				case 'deny':
-					location.href = $scope.links.deny + 'uid=' + uid;
-					break;
-				case 'pass':
-					location.href = $scope.links.checkPass + 'uid=' + uid;
-					break;
-				case 'restore':
-					location.href = $scope.links.recycleRestore + 'uid=' + uid;
-					break;
-				case 'del':
-					location.href = $scope.links.recycleDel + 'uid=' + uid;
-					break;
-			}
-		}
-	};
-
-	$scope.edit = function(uid) {
-		var uid = parseInt(uid);
-		if(isNaN(uid)) {
-			return false;
-		}else {
-			console.log(22);
-		}
-	};
-}]);
 	angular.bootstrap($('#js-users-display'), ['userManageApp']);
 </script>
 {template 'common/footer'}
