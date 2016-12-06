@@ -9,7 +9,7 @@ class PaycenterModuleSite extends WeModuleSite {
 		global $_W, $_GPC;
 		load()->model('paycenter');
 		if($_GPC['do'] != 'pay') {
-			$session = json_decode(base64_decode($_GPC['_pc_session']), true);
+			$session = json_decode(base64_decode($_GPC["paycenter_session_{$_W['uniacid']}"]), true);
 			if(is_array($session)) {
 				load()->model('user');
 				$user = user_single(array('uid'=>$session['uid']));
@@ -23,9 +23,12 @@ class PaycenterModuleSite extends WeModuleSite {
 					$_W['username'] = $user['username'];
 					$_W['user'] = $user;	
 				} else {
-					isetcookie('_pc_session', false, -100);
+					isetcookie("paycenter_session_{$_W['uniacid']}", false, -100);
 				}
 				unset($user);
+			} else {
+				isetcookie('_pc_session', false, -100);
+				return;
 			}
 			if(empty($_W['user']) && $_W['openid'] && $_GPC['_wechat_logout'] != '1') {
 				$clerk = pdo_get('activity_clerks', array('openid' => $_W['openid'], 'uniacid' => $_W['uniacid']));
@@ -37,7 +40,7 @@ class PaycenterModuleSite extends WeModuleSite {
 						$cookie['username'] = $user['username'];
 						$cookie['hash'] = md5($user['password'] . $user['salt']);
 						$session = base64_encode(json_encode($cookie));
-						isetcookie('_pc_session', $session, !empty($_GPC['rember']) ? 7 * 86400 : 0, true);
+						isetcookie("paycenter_session_{$_W['uniacid']}", $session, !empty($_GPC['rember']) ? 7 * 86400 : 0, true);
 						$_W['uid'] = $user['uid'];
 						$_W['username'] = $user['username'];
 						$_W['user'] = $user;
@@ -73,14 +76,14 @@ class PaycenterModuleSite extends WeModuleSite {
 			$cookie['uid'] = $user['uid'];
 			$cookie['hash'] = md5($user['password'] . $user['salt']);
 			$session = base64_encode(json_encode($cookie));
-			isetcookie('_pc_session', $session, !empty($_GPC['rember']) ? 7 * 86400 : 0, true);
+			isetcookie("paycenter_session_{$_W['uniacid']}", $session, !empty($_GPC['rember']) ? 7 * 86400 : 0, true);
 			message(error(0, ''), '', 'ajax');
 		}
 		include $this->template('login');
 	}
 
 	public function doMobileLogout() {
-		isetcookie('_pc_session', '', -10000);
+		isetcookie("paycenter_session_{$_W['uniacid']}", '', -10000);
 		isetcookie('_wechat_logout', '1', 180);
 		$forward = $_GPC['forward'];
 		if(empty($forward)) {
