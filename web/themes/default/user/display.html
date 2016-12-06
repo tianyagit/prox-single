@@ -1,10 +1,9 @@
 {template 'common/header'}
-
 <div class="we7-page-title">用户管理 </div>
 <ul class="we7-page-tab">
-	<li class="active"><a href="{url 'user/display'}">用户管理</a></li>
-	<li><a href="{php echo url('user/display', array('status' => 1))}">审核用户</a></li>
-	<li><a href="{url 'user/recycle/display'}">用户回收站</a></li>
+	<li {if $_GPC['do'] == 'display' || $_GPC['do'] == ''}class="active"{/if}><a href="{url 'user/display'}">用户管理</a></li>
+	<li {if $_GPC['do'] == 'check_display'}class="active"{/if}><a href="{url 'user/display/check_display'}">审核用户</a></li>
+	<li {if $_GPC['do'] == 'recycle_display'}class="active"{/if}><a href="{url 'user/display/recycle_display'}">用户回收站</a></li>
 	<li><a href="{url 'user/fields/display'}">用户属性设置</a></li>
 	<li><a href="{url 'user/registerset'}">用户注册设置</a></li>
 </ul>
@@ -13,111 +12,113 @@
 		<form action="" method="get">
 			<input type="hidden" name="c" value="user">
 			<input type="hidden" name="a" value="display">
+			<input type="hidden" name="do" value="{$_GPC['do']}">
 			<div class="input-group pull-left" style="width: 400px;">
 				<input type="text" name="username" id="" value="{$_GPC['username']}" class="form-control" placeholder="搜索用户名"/>
 				<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
 			</div>
 		</form>
 		<div class="pull-right">
-			<a href="{url 'user/create'}" class="btn btn-primary">+添加用户</a>
+			{if $_GPC['do'] == 'display' || $_GPC['do'] == ''}<a href="{url 'user/create'}" class="btn btn-primary">+添加用户</a>{/if}
 		</div>
 </div>
-	<table class="table we7-table">
-		<col width="84px"/>
-		<col width="110px"/>
-		<col width="110px"/>
-		<col width="110px"/>
-		<col width="66px"/>
-		<col width="111px"/>
-		<col width="73px"/>
-		<col width="203px"/>
-		<tr>
-			<th class="text-left">用户名</th>
-			<th>用户权限组</th>
-			<th>创建公众号</th>
-			<th>使用公众号</th>
-			<th>应用</th>
-			<th>到期时间</th>
-			<th>状态</th>
-			<th class="text-left">操作</th>
-		</tr>
-	{loop $users $user}
-		<tr>
-			<td class="text-left">{$user['username']}</td>
-			<td><span class="color-default">
-					{if isset($usergroups[$user['groupid']])}
-						<a href="{php echo url('user/group/post', array('id' => $user['groupid']))}"><span class="color-default">{$usergroups[$user['groupid']]['name']}</span></a>
-					{else}
-						<span class="color-default">未分配</span>
-					{/if}
-				</span>
-			</td>
-			<td class="color-default"><a href="{php echo url('user/profile/account', array('uid' => $user['uid']))}"><span class="color-default">{$user['uniacid_create_num']}</span></a></td>
-			<td class="color-default"><a href="{php echo url('user/profile/account', array('uid' => $user['uid']))}"><span class="color-default">{$user['uniacid_num']}</span></a></td>
-			<td class="color-default"><a href="{php echo url('user/profile/application', array('uid' => $user['uid']))}"><span class="color-default">{if $user['module_nums'] ==-1}全部{else}{$user['module_nums']}{/if}</span></a>
-			</td>
-			<td>
-				{if empty($user['endtime'])}
-					<span class="">永久有效</span>
-				{elseif  $user['endtime'] != 0 && $user['endtime'] <= TIMESTAMP}
-					<span class="">服务已到期</span>
-				{elseif  $user['endtime'] != 0 && $user['endtime'] >= TIMESTAMP}
-				{php echo date('Y-m-d', $user['endtime'])}
-				{/if}
-			</td>
-			<td>
-				{if intval($user['status']) == 1}
-				<span class="color-red">被禁止</span>
-				{/if}
-				{if intval($user['status']) == 2}
-					<span>正常</span>
-				{/if}
-			</td>
-			<td class="text-left">
-				<div class="link-group">
-					<a href="{php echo url('user/edit', array('uid' => $user['uid']))}">编辑管理</a>
-					<a href="javascript:;" onclick="u.deny('{$user['uid']}');">{if intval($user['status']) == 2}禁止{else}启用{/if}</a>
-					<a href="javascript:;" onclick="u.del('{$user['uid']}');">删除</a>
-				</div>
-			</td>
-		</tr>
-	{/loop}
-	</table>
+<table class="table we7-table" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
+	<col width="150px">
+	<col width="200px"/>
+	<col width="120px"/>
+	<col width="120px"/>
+	<col width="100px"/>
+	<col width="120px"/>
+	<col width="150px"/>
+	<tr>
+		<th class="text-left">用户名</th>
+		<th>用户权限组</th>
+		<th>创建公众号</th>
+		<th>使用公众号</th>
+		<th>应用</th>
+		<th>到期时间</th>
+		<th class="text-left">操作</th>
+	</tr>
+	<tr ng-repeat="user in users">
+		<td class="text-left" ng-bind="user.username">{$user['username']}</td>
+		<td><span class="color-default">
+					<span class="color-default" ng-if="user.founder">管理员</span>
+					<span class="color-default" ng-if="user.groupname" ng-bind="user.groupname"></span>
+					<span class="color-default" ng-if="!user.groupname">未分配</span>
+			</span>
+		</td>
+		<td class="color-default" ng-bind="user.maxaccount"></td>
+		<td class="color-default" ng-bind="user.uniacid_num"></td>
+		<td class="color-default">
+			<span ng-if="!user.founder" ng-bind="user.module_nums"></span>
+			<span ng-if="user.founder">全部</span>
+		</td>
+		<td>
+			<span ng-bind="user.endtime"></span>
+		</td>
+		<td class="text-left">
+			<div class="link-group" ng-if="!user.founder">
+				<a href="javascript:;" ng-click="edit(user.uid);" ng-if="do == 'display'">编辑</a>
+				<a href="javascript:;" ng-click="handle(user.uid, 'deny');" ng-if="do == 'display'">禁用</a>
+				<a href="javascript:;" ng-click="handle(user.uid, 'pass');" ng-if="do == 'check_display'">通过</a>
+				<a href="javascript:;" ng-click="handle(user.uid, 'deny');" ng-if="do == 'check_display'">拒绝</a>
+				<a href="javascript:;" ng-click="handle(user.uid, 'restore');" ng-if="do == 'recycle_display'">启用</a>
+				<a href="javascript:;" ng-click="handle(user.uid, 'del');" ng-if="do == 'recycle_display'">删除</a>
+			</div>
+		</td>
+	</tr>
+</table>
+<div class="pull-right">
 	{$pager}
 </div>
 <script type="text/javascript">
-	var u ={};
-	u.deny = function(uid){
+	angular.module('userManageApp').value('config', {
+		do: "{php echo !empty($_GPC['do']) ? $_GPC['do'] : 'display'}",
+		users: {php echo !empty($users) ? json_encode($users) : 'null'},
+		usergroups: {php echo !empty($usergroups) ? json_encode($usergroups) : 'null'},
+		links: {
+			recycleDel: "{php echo url('user/display/recycle_delete')}",
+			recycleRestore: "{php echo url('user/display/recycle_restore')}",
+			checkPass: "{php echo url('user/display/check_pass')}",
+			deny: "{php echo url('user/display/recycle')}",
+		},
+	});
+angular.module('userManageApp').controller('UsersDisplay', ['$scope', 'config', function($scope, config){
+	$scope.do = config.do;
+	$scope.users = config.users;
+	$scope.usergroups = config.usergroups;
+	$scope.links = config.links;
+	$scope.handle = function(uid, does) {
+		var uid = parseInt(uid);
+		if(isNaN(uid) || !confirm('确认要这样做吗? ')) {
+			return false;
+		}else {
+			switch(does) {
+				case 'deny':
+					location.href = $scope.links.deny + 'uid=' + uid;
+					break;
+				case 'pass':
+					location.href = $scope.links.checkPass + 'uid=' + uid;
+					break;
+				case 'restore':
+					location.href = $scope.links.recycleRestore + 'uid=' + uid;
+					break;
+				case 'del':
+					location.href = $scope.links.recycleDel + 'uid=' + uid;
+					break;
+			}
+		}
+	};
+
+	$scope.edit = function(uid) {
 		var uid = parseInt(uid);
 		if(isNaN(uid)) {
-			return;
+			return false;
+		}else {
+			console.log(22);
 		}
-		if(!confirm('确认要禁用/解禁此用户吗? ')) {
-			return;
-		}
-		$.post('{php echo url('user/permission');}', {'do': 'deny', uid: uid}, function(dat){
-			if(dat == 'success') {
-				location.href = location.href;
-			} else {
-				util.message('操作失败, 请稍后重试. ' + dat);
-			}
-		});
 	};
-	u.del = function(uid){
-		var uid = parseInt(uid);
-		if(isNaN(uid)) {
-			return;
-		}
-		if(!confirm('确认把此用户放到回收站吗? ')) {
-			return;
-		}
-		$.post('{php echo url('user/recycle');}', {'do': 'recycle', uid: uid}, function(dat){
-			if(dat == 'success') {
-				location.href = location.href;
-			} else {
-				util.message('操作失败, 请稍后重试. ' + dat);
-			}
-		});
-	};
+}]);
+	angular.bootstrap($('#js-users-display'), ['userManageApp']);
 </script>
 {template 'common/footer'}
