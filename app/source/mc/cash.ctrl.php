@@ -178,7 +178,8 @@ if(!empty($type)) {
 				$fee = floatval($ps['fee']);
 				if ($log['module'] == 'paycenter') {
 					load()->model('mc');
-					mc_card_grant_credit($log['openid'], $params['tid'], $fee);
+					$paycenter_order = pdo_get('paycenter_order', array('id' => $log['tid']), array('store_id'));
+					mc_card_grant_credit($log['openid'], $paycenter_order['store_id'], $fee);
 					$result = mc_credit_update($log['openid'], 'credit2', -$fee, array('0', $tip, 'paycenter', 0, $paycenter_order['store_id'], 3));
 				} else {
 					$result = mc_credit_update($_W['member']['uid'], $setting['creditbehaviors']['currency'], -$fee, array($_W['member']['uid'], '消费' . $setting['creditbehaviors']['currency'] . ':' . $fee));
