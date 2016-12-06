@@ -7,20 +7,19 @@
 	<li><a href="{url 'user/fields/display'}">用户属性设置</a></li>
 	<li><a href="{url 'user/registerset'}">用户注册设置</a></li>
 </ul>
-
 <div class="keyword-list-head clearfix we7-margin-bottom">
-		<form action="" method="get">
-			<input type="hidden" name="c" value="user">
-			<input type="hidden" name="a" value="display">
-			<input type="hidden" name="do" value="{$_GPC['do']}">
-			<div class="input-group pull-left" style="width: 400px;">
-				<input type="text" name="username" id="" value="{$_GPC['username']}" class="form-control" placeholder="搜索用户名"/>
-				<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
-			</div>
-		</form>
-		<div class="pull-right">
-			{if $_GPC['do'] == 'display' || $_GPC['do'] == ''}<a href="{url 'user/create'}" class="btn btn-primary">+添加用户</a>{/if}
+	<form action="" method="get">
+		<input type="hidden" name="c" value="user">
+		<input type="hidden" name="a" value="display">
+		<input type="hidden" name="do" value="{$_GPC['do']}">
+		<div class="input-group pull-left" style="width: 400px;">
+			<input type="text" name="username" id="" value="{$_GPC['username']}" class="form-control" placeholder="搜索用户名"/>
+			<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
 		</div>
+	</form>
+	<div class="pull-right">
+		{if $_GPC['do'] == 'display' || $_GPC['do'] == ''}<a href="{url 'user/create'}" class="btn btn-primary">+添加用户</a>{/if}
+	</div>
 </div>
 <table class="table we7-table" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
 	<col width="150px">
@@ -41,11 +40,10 @@
 	</tr>
 	<tr ng-repeat="user in users">
 		<td class="text-left" ng-bind="user.username">{$user['username']}</td>
-		<td><span class="color-default">
-					<span class="color-default" ng-if="user.founder">管理员</span>
-					<span class="color-default" ng-if="user.groupname" ng-bind="user.groupname"></span>
-					<span class="color-default" ng-if="!user.groupname">未分配</span>
-			</span>
+		<td>
+			<span class="color-default" ng-if="user.founder">管理员</span>
+			<span class="color-default" ng-if="user.groupname && !user.founder" ng-bind="user.groupname"></span>
+			<span class="color-default" ng-if="!user.groupname && !user.founder">未分配</span>
 		</td>
 		<td class="color-default" ng-bind="user.maxaccount"></td>
 		<td class="color-default" ng-bind="user.uniacid_num"></td>
@@ -59,9 +57,9 @@
 		<td class="text-left">
 			<div class="link-group" ng-if="!user.founder">
 				<a href="javascript:;" ng-click="edit(user.uid);" ng-if="do == 'display'">编辑</a>
-				<a href="javascript:;" ng-click="handle(user.uid, 'deny');" ng-if="do == 'display'">禁用</a>
+				<a href="javascript:;" ng-click="handle(user.uid, 'deny');" ng-if="do == 'display'" data-toggle="tooltip" data-placement="left" title="禁用后可在用户回收站查找到并重新启用。">禁用</a>
 				<a href="javascript:;" ng-click="handle(user.uid, 'pass');" ng-if="do == 'check_display'">通过</a>
-				<a href="javascript:;" ng-click="handle(user.uid, 'deny');" ng-if="do == 'check_display'">拒绝</a>
+				<a href="javascript:;" ng-click="handle(user.uid, 'deny');" ng-if="do == 'check_display'" data-toggle="tooltip" data-placement="left" title="拒绝后可在用户回收站查找到并启用。">拒绝</a>
 				<a href="javascript:;" ng-click="handle(user.uid, 'restore');" ng-if="do == 'recycle_display'">启用</a>
 				<a href="javascript:;" ng-click="handle(user.uid, 'del');" ng-if="do == 'recycle_display'">删除</a>
 			</div>
@@ -72,6 +70,9 @@
 	{$pager}
 </div>
 <script type="text/javascript">
+	$(function(){
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 	angular.module('userManageApp').value('config', {
 		do: "{php echo !empty($_GPC['do']) ? $_GPC['do'] : 'display'}",
 		users: {php echo !empty($users) ? json_encode($users) : 'null'},
