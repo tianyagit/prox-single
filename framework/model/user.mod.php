@@ -257,3 +257,35 @@ function user_account_permission() {
 	);
 	return $data;
 }
+
+/*
+	*获取某一用户组下详细信息
+	*@param  number $groupid 用户组ID
+	*@return array
+*/
+function group_detail_info($groupid) {
+	$groupid = is_array($groupid) ? 0 : intval($groupid);
+	if(empty($groupid)) {
+		return false;
+	}
+	$group_info = array();
+	$packages = uni_groups();
+	$group_info = pdo_get('users_group', array('id' => $groupid));
+	if(!empty($group_info)) {
+		$group_info['package'] = iunserializer($group_info['package']);
+		foreach ($packages as $packages_key => $packages_val) {
+			foreach ($group_info['package'] as $group_info_val) {
+				if($packages_key == $group_info_val) {
+					$group_info['module_and_tpl'][] = array(
+						'id' => $packages_val['id'],
+						'name' => $packages_val['name'],
+						'modules' => $packages_val['modules'],
+						'templates' => $packages_val['templates'],
+					);
+					continue;
+				}
+			}
+		}
+	}
+	return $group_info;	
+}
