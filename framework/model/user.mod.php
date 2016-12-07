@@ -275,6 +275,15 @@ function group_detail_info($groupid) {
 		$group_info['package'] = iunserializer($group_info['package']);
 		foreach ($packages as $packages_key => $packages_val) {
 			foreach ($group_info['package'] as $group_info_val) {
+				if($group_info_val == -1) {
+					$group_info['module_and_tpl'][-1] = array(
+						'id' => '-1',
+						'name' => '所有服务',
+						'modules' => array('title' => '系统所有模块'),
+						'templates' => array('title' => '系统所有模板'),
+					);
+					continue;
+				}
 				if($packages_key == $group_info_val) {
 					$group_info['module_and_tpl'][] = array(
 						'id' => $packages_val['id'],
