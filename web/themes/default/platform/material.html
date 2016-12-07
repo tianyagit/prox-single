@@ -26,7 +26,9 @@
 						<div class="form-controls">
 							<form action="{php echo url('platform/material/list', array('type' => 'news'))}" method="post">
 								<input type="text" id="" name="title" class="form-control" size="40" value="{$_GPC['title']}" placeholder="标题/作者/摘要">
-								<input type="submit" value="搜索">
+								<span class="form-control-addon">
+									<button class="button"><i class="fa fa-search"></i></button>
+								</span>
 							</form>
 						</div>
 					</div>
