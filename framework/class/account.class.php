@@ -1342,6 +1342,7 @@ abstract class WeModuleSite extends WeBase {
 					}
 				}
 				unset($val['icon']);
+				unset($val['description']);
 			}
 		}
 		$cards_str = json_encode($cards);
