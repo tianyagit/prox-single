@@ -22,7 +22,7 @@
 				</div>
 			</form>
 			<div class="pull-right">
-				<a href="添加套餐应用列表.html" class="btn btn-primary">+添加应用权限套餐</a>
+				<a href="{php echo url('system/module_group/post')}" class="btn btn-primary">+添加应用权限套餐</a>
 			</div>
 		</div>
 		<table class="table we7-table vertical-middle">
@@ -39,33 +39,26 @@
 				<th>用户权限组</th>
 				<th class="text-left">操作</th>
 			</tr>
+			{loop $modules_group_list $module_group}
+			{if $module_group['name'] == '基础服务'}
 			<tr >
 				<td class="text-left">基础服务</td>
 				<td>基础回复模块</td>
 				<td>微站默认模板</td>
 				<td></td>
 				<td class="text-left">
-					<div class="link-group">
-						<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#extend1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-						<a href="">编辑套餐</a>
-						<a href="">删除</a>
-					</div>
 				</td>
 			</tr>
+			{elseif $module_group['name'] == '所有服务'}
 			<tr >
 				<td class="text-left">所有服务</td>
 				<td>系统所有模块</td>
 				<td>系统所有模板</td>
 				<td></td>
 				<td class="text-left">
-					<div class="link-group">
-						<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#extend1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-						<a href="">编辑套餐</a>
-						<a href="">删除</a>
-					</div>
 				</td>
 			</tr>
-			{loop $modules_group_list $module_group}
+			{else}
 			<tr >
 				<td class="text-left">{$module_group['name']}</td>
 				<td>{php echo count($module_group['modules'])}</td>
@@ -74,8 +67,8 @@
 				<td class="text-left">
 					<div class="link-group">
 						<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" data-target="toggle-{$module_group['id']}" ng-click="changeText($event)">展开</a>
-						<a href="">编辑套餐</a>
-						<a href="">删除</a>
+						<a href="{php echo url('system/module_group/post', array('id' => $module_group['id']))}">编辑套餐</a>
+						<a href="{php echo url('system/module_group/delete', array('id' => $module_group['id']))}" onclick="return confirm('确定要删除套餐吗？')">删除</a>
 					</div>
 				</td>
 			</tr>
@@ -103,6 +96,7 @@
 					</div>
 				</td>
 			</tr>
+			{/if}
 			{/loop}
 		</table>
 	</div>
@@ -115,61 +109,93 @@
 	});
 </script>
 {elseif $do == 'post'}
-<form action="{php echo url('system/module_group/post')}" method="post">
-	<div class="form-group">
-		<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">服务套餐名称</label>
-		<div class="col-sm-10 col-xs-12">
-			<input type="text" class="form-control" name="name" id="name" value="{$module_group['name']}" />
+<div class="js-modulegroup-post" ng-controller="moduleGroupPostCtrl" ng-cloak>
+	<div class="combo-list-add">
+		<ol class="breadcrumb we7-breadcrumb">
+			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
+			<li>
+				套餐应用列表
+			</li>
+			<li>
+				添加套餐应用列表
+			</li>
+		</ol>
+		<div class="we7-form">
+			<div class="form-group">
+				<label for="" class="control-label">应用套餐名称</label>
+				<div class="form-controls">
+					<input type="text" ng-model="moduleGroup.name" class="form-control"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="" class="control-label">选择用户权限组</label>
+				<div class="form-controls">
+					<select name="" class="we7-select">
+						<option value="不选择">不选择</option>
+					</select>
+				</div>
+			</div>
 		</div>
-	</div>
-	<table class="table">
-		<thead>
-		<th style="width:120px;"><input type="checkbox" id="template" onclick="checkall('template')">(全选)选择</th>
-		<th style="width:120px;">名称</th>
-		<th>标识</th>
-		<th>简介</th>
-		</thead>
-		<tbody>
-		{loop $template_list $template}
-		<tr>
-			<td><input type="checkbox" name="template[]" value="{$template['id']}" {if !empty($module_group['template']) && in_array($template['id'], $module_group['templates'])}checked{/if}></td>
-			<td>{$template['title']}</td>
-			<td>
-				{$template['name']}
-			</td>
-			<td>
-				{$template['description']}
-			</td>
-		</tr>
-		{/loop}
-		</tbody>
-	</table>
+		<div class="panel we7-panel">
+			<div class="panel-heading">
+				选择应用
+			</div>
+			<div class="panel-body we7-padding">
+				<div class="row">
+					<div class="col-sm-2 text-left" ng-repeat="module in moduleGroup.modules">
+						<a href=""><img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">{{ module.title }}</a>
+						<span class="del bg-default">删除</span>
+					</div>
+					<div class="col-sm-2">
+						<div class="input-more input-img">
+							<a href="" class="input-addon">
+								<span class="color-gray">+</span>
+							</a>
+							<div class="cover-dark">
+								<a href="" class="cut">更换</a>
+							</div>
+						</div>
+					</div>
 
-	<table class="table">
-		<thead>
-			<th style="width:120px;"><input type="checkbox" id="module" onclick="checkall('module')">(全选)选择</th>
-			<th style="width:120px;">名称</th>
-			<th>标识</th>
-			<th>简介</th>
-		</thead>
-		<tbody>
-		{loop $module_list $module}
-		<tr>
-			<td><input type="checkbox" name="module[]" value="{$module['mid']}" {if !empty($module_group['template']) && in_array($module['name'], $module_group['modules'])}checked{/if}></td>
-			<td>{$module['title']}</td>
-			<td>
-				{$module['name']}
-			</td>
-			<td>
-				{$module['description']}
-			</td>
-		</tr>
-		{/loop}
-		</tbody>
-	</table>
-	<input name="submit" value="提交" class="btn btn-primary" type="submit">
-	<input name="token" value="{$_W['token']}" type="hidden">
-	<input name="id" value="{$module_group['id']}" type="hidden">
-</form>
+				</div>
+			</div>
+		</div>
+		<div class="panel we7-panel">
+			<div class="panel-heading">
+				选择模板
+			</div>
+			<div class="panel-body we7-padding">
+				<div class="row">
+					<div class="col-sm-2 text-left">
+						<a href=""><img src="../../../pros/web/resource/images/11.png" alt="">互粉互赚</a>
+						<span class="del bg-default">删除</span>
+					</div>
+					<div class="col-sm-2">
+						<div class="input-more input-img">
+							<a href="" class="input-addon">
+								<span class="color-gray">+</span>
+							</a>
+							<div class="cover-dark">
+								<a href="" class="cut">更换</a>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<script>
+	angular.module('moduleApp').value('config', {
+		'moduleGroup' : {php echo json_encode($module_group)}
+	});
+	angular.bootstrap($('.js-modulegroup-post'), ['moduleApp']);
+	$('[data-toggle="table-collapse"]').on('click',function(){
+		var id = '[data-id="'+$(this).data('target')+'"]';
+		$(id).collapse('toggle');
+	});
+</script>
 {/if}
 {template 'common/footer'}
