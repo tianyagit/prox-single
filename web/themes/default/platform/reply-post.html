@@ -33,7 +33,7 @@
 		<div class="form-group" ng-show="reply.entry.istop == 0">
 			<label for="" class="control-label">回复优先级</label>
 			<div class="form-controls">
-			<input type="number" min="0" max="254" name="displayorder_rule" style="width:200px" value="{if intval($reply['displayorder']) < 255}{$reply['displayorder']}{/if}" placeholder="输入这条回复规则的优先级">
+			<input type="number" min="0" max="254" name="displayorder_rule" style="width:200px" value="{if intval($reply['displayorder']) < 255}{$reply['displayorder']}{/if}" placeholder="输入这条回复规则的优先级" class="form-control">
 			<span class="help-block">
 				规则优先级，越大则越靠前，最大不得超过254
 			</span>
