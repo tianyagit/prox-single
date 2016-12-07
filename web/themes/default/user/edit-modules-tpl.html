@@ -23,29 +23,29 @@
 			<span>所属用户组：<span ng-bind="group_info.name"></span></span>
 			<a href="javascript:;" class="color-default pull-right" data-toggle="modal" data-target="#group" ng-click="editGroup()">修改</a>
 		</div>
-	<div class="modal fade" id="group" role="dialog">
-		<div class="we7-modal-dialog modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<div class="modal-title">修改用户名</div>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<select class="we7-select" ng-model="changeGroup">
-							<option value="">请选择所属用户组</option>
-							<option ng-value="group.id" ng-repeat="group in groups" ng-selected="group.id == group_info.id" ng-bind="group.name"></option>
-						</select>
-						<span class="help-block"></span>
+		<div class="modal fade" id="group" role="dialog">
+			<div class="we7-modal-dialog modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<div class="modal-title">修改用户名</div>
 					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('groupid')">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<div class="modal-body">
+						<div class="form-group">
+							<select class="we7-select" ng-model="changeGroup">
+								<option value="">请选择所属用户组</option>
+								<option ng-value="group.id" ng-repeat="group in groups" ng-selected="group.id == group_info.id" ng-bind="group.name"></option>
+							</select>
+							<span class="help-block"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('groupid')">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 		<div class="panel-body" ng-repeat="pack in group_info.module_and_tpl">
 			<div class="permission-heading">
 				<span ng-bind="pack.name"></span>
@@ -53,7 +53,7 @@
 					<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#demo-{{pack.id}}" ng-click="changeText($event)">展开</a>
 				</div>
 			</div>
-			<table id="demo-{{pack.id}}" class="table we7-table collapse">
+			<table id="demo-{{pack.id}}" class="table we7-table collapse" ng-if="pack.id != '-1'">
 				<col width="90px" />
 				<col width="835px" />
 				<tr class="permission-apply">
@@ -63,6 +63,18 @@
 				<tr class="permission-template">
 					<td class="vertical-middle">模板</td>
 					<td><ul><li><span class="label label-success">系统默认模板</span></li><li ng-repeat="tpl in pack.templates"><span class="label label-info" ng-bind="tpl.title"></span></li></ul></td>
+				</tr>
+			</table>
+			<table id="demo-{{pack.id}}" class="table we7-table collapse" ng-if="pack.id == -1">
+				<col width="90px" />
+				<col width="835px" />
+				<tr class="permission-apply">
+					<td class="vertical-middle">应用</td>
+					<td><ul><li><span class="label label-danger">系统所有模块</span></li></ul></td>
+				</tr>
+				<tr class="permission-template">
+					<td class="vertical-middle">模板</td>
+					<td><ul><li><span class="label label-danger">系统所有模板</span></li></ul></td>
 				</tr>
 			</table>
 		</div>
@@ -78,31 +90,6 @@
 			editGroup: "{php echo url('user/edit/edit_modules_tpl')}",
 		},
 	});
-	angular.module('userManageApp').controller('UserEditModulesTpl', ['$scope', '$http', 'config', function($scope, $http, config){
-		$scope.user = config.user;
-		$scope.profile = config.profile;
-		$scope.group_info = config.group_info;
-		$scope.groups = config.groups;
-		$scope.links = config.links;
-		$scope.changeGroup = $scope.user.groupid;
-		$scope.httpChange = function(type) {
-			$http.post($scope.links.editGroup + 'uid=' + $scope.user.uid, {type: type, groupid: $scope.changeGroup})
-				.success(function(data){
-					if(data.type == 'success' && data.message != '0') {
-						$scope.group_info = data.message;
-						util.message('修改成功！');
-					}
-					if(data.type == 'error') {
-						if(data.message == -1) util.message('抱歉，请求错误，请刷新页面重试！');
-						if(data.message == 1) util.message('修改失败，请稍候重试！');
-					}
-				});
-		}
-		$scope.changeText = function(ev) {
-			var text = $(ev)[0].target.text;
-			$(ev)[0].target.text = text == '展开' ? '收起' : '展开';
-		};
-	}]);
 	angular.bootstrap($('#js-user-edit-modulestpl'), ['userManageApp']);
 </script>
 {template 'common/footer'}
