@@ -52,7 +52,7 @@
 					<img ng-src="{{ module.logo }}" class="img-responsive" style="width: 50px;height: 50px;"/>
 				</td>
 				<td class="text-left">
-					<p>{{ module.title }}{{ module.logo }}</p>
+					<p>{{ module.title }}</p>
 					<span>版本：{{ module.version }} </span>{if $module['upgrade']}<span class="color-red">发现新版本</span>{/if}
 				</td>
 				<td></td>
@@ -65,38 +65,11 @@
 						<a href="" class="color-red">升级</a>
 						{/if}
 						<a href="">详情</a>
-						<a href="">编辑</a>
+						<a href="#module-info" data-toggle="modal" ng-click="editModule(module)">编辑</a>
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}">停用</a>
 					</div>
 				</td>
 			</tr>
-			<!--<tr >-->
-			<!--<td>-->
-			<!--<div class="we7-form">-->
-			<!--<input id='check-3' type="checkbox" name='check-1' checked='checked' />-->
-			<!--<label for="check-3">&nbsp;</label>-->
-			<!--</div>-->
-			<!--</td>-->
-			<!--<td class="text-left">-->
-			<!--<img src="http://bbs.bcb5.com/uc_server/avatar.php?uid=2&size=middle" class="img-responsive"/>-->
-			<!--</td>-->
-			<!--<td class="text-left">-->
-			<!--<p>微现场超级版微</p>-->
-			<!--<span>版本：1.0 </span><span class="color-red">发现新版本</span>-->
-			<!--</td>-->
-			<!--<td>5个</td>-->
-			<!--<td>3个</td>-->
-			<!--<td>消耗短信</td>-->
-			<!--<td>广告联盟</td>-->
-			<!--<td class="text-left">-->
-			<!--<div class="link-group">-->
-			<!--<a href="" class="color-red">升级</a>-->
-			<!--<a href="">详情</a>-->
-			<!--<a href="">编辑</a>-->
-			<!--<a href="">停用</a>-->
-			<!--</div>-->
-			<!--</td>-->
-			<!--</tr>-->
 		</table>
 		<div class="select-all">
 			<div class="we7-form">
@@ -110,6 +83,63 @@
 		</div>
 	</form>
 </div>
+
+<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog we7-modal-dialog" style="width:800px">
+		<div class="modal-content">
+			<form action="./index.php?c=extension&a=module&do=info&" method="post" enctype="multipart/form-data" class="form-horizontal form" id="form-info">
+				<input type="hidden" name="m" value=""/>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">编辑模块信息</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块标题</label>
+						<div class="col-sm-10">
+							<input type="text" name="title" value="" class="form-control">
+							<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块简述</label>
+						<div class="col-sm-10">
+							<input type="text" name="ability" value="" class="form-control">
+							<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块介绍</label>
+						<div class="col-sm-10">
+							<textarea type="text" name="description" class="form-control" rows="5"></textarea>
+							<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块缩略图</label>
+						<div class="col-sm-10">
+							<input type="file" name="icon" value="">
+							<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块封面</label>
+						<div class="col-sm-10">
+							<input type="file" name="preview" value="">
+							<span class="help-block">模块封面, 大小为 600*350, 更好的设计将会获得官方推荐位置。仅支持jpg格式</span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<input type="submit" class="btn btn-primary" name="submit" value="保存">
+					<input type="hidden" name="token" value="c781f0df">
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
 <script>
 	angular.module('moduleApp').value('config',{
 		'letters' : {php echo json_encode($letters)},

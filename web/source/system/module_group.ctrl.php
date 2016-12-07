@@ -36,11 +36,18 @@ if ($do == 'display') {
 			}
 		}
 	}
+	if (empty($_GPC['name']) || strexists('基础服务', $_GPC['name'])) {
+		array_unshift($modules_group_list, array('name' => '基础服务'));
+
+	}
+	if (empty($_GPC['name']) || strexists('所有服务', $_GPC['name'])) {
+		array_unshift($modules_group_list, array('name' => '所有服务'));
+	}
 }
 if ($do == 'delete') {
-	$group_list = $_GPC['group_list'];
-	if (!empty($group_list)) {
-		pdo_delete('uni_group', array('id' => $group_list));
+	$id = intval($_GPC['id']);
+	if (!empty($id)) {
+		pdo_delete('uni_group', array('id' => $id));
 		cache_build_account_modules();
 	}
 	message('删除成功！', referer(), 'success');
@@ -55,6 +62,18 @@ if ($do == 'post') {
 	if (!empty($id)) {
 		$module_group = pdo_get('uni_group', array('id' => $id));
 		$module_group['modules'] = empty($module_group['modules']) ? array() : iunserializer($module_group['modules']);
+		if (!empty($module_group['modules'])) {
+			foreach ($module_group['modules'] as &$module_name) {
+				$title = pdo_getcolumn('modules', array('name' => $module_name), 'title');
+				$module['title'] = $title == false ? '' :  $title;
+				if (file_exists(IA_ROOT.'/addons/'.$module.'/icon-custom.jpg')) {
+					$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module_name.'/icon-custom.jpg');
+				} else {
+					$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module_name.'/icon.jpg');
+				}
+				$module_name = $module;
+			}
+		}
 		$module_group['templates'] = empty($module_group['templates']) ? array() : iunserializer($module_group['templates']);
 	}
 	if (checksubmit('submit')) {
