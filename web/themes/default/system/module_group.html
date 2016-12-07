@@ -65,7 +65,6 @@
 					</div>
 				</td>
 			</tr>
-
 			{loop $modules_group_list $module_group}
 			<tr >
 				<td class="text-left">{$module_group['name']}</td>
@@ -74,26 +73,25 @@
 				<td>超级VIP</td>
 				<td class="text-left">
 					<div class="link-group">
-						<a href="#toggle-{$module_group['id']}" class="color-default js-unfold" data-toggle="collapse" target="" ng-click="changeText($event)">展开</a>
+						<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" data-target="toggle-{$module_group['id']}" ng-click="changeText($event)">展开</a>
 						<a href="">编辑套餐</a>
 						<a href="">删除</a>
 					</div>
 				</td>
 			</tr>
-			<div class="collapse bg-light-gray" id="toggle-{$module_group['id']}">
-			<tr>
+			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
 				<td colspan="5">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['modules'] $module}
 						<div class="col-sm-3 text-left">
-							<a href=""><img style="height: 50px;width: 50px;" src="{if file_exists('../framework/addons/' . $module['name'] . '/icon-custom.jpg')}{php echo tomedia('../framework/addons/' . $module['name'] . '/icon-custom.jpg')}{else}{php echo tomedia('../framework/addons/' . $module['name'] . '/icon.jpg')}{/if}" alt="">{$module['title']}</a>
+							<a href=""><img style="height: 50px;width: 50px;" src="{if file_exists('../framework/addons/' . $module['name'] . '/icon-custom.jpg')}{php echo tomedia('../framework/addons/' . $module['name'] . '/icon-custom.jpg')}{else}{php echo tomedia('../framework/addons/' . $module['name'] . '/icon.jpg')}{/if}" alt="{$module['title']}" title="{$module['title']}"><span class="apply-name">{$module['title']}</span></a>
 						</div>
 						{/loop}
 					</div>
 				</td>
 			</tr>
-			<tr class="collapse bg-light-gray toggle-{$module_group['id']}" aria-expanded="true" >
+			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
 				<td colspan="5">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">模板</div>
 					<div class="col-sm-11">
@@ -111,6 +109,10 @@
 </div>
 <script>
 	angular.bootstrap($('.js-system-module_group'), ['moduleApp']);
+	$('[data-toggle="table-collapse"]').on('click',function(){
+		var id = '[data-id="'+$(this).data('target')+'"]';
+		$(id).collapse('toggle');
+	});
 </script>
 {elseif $do == 'post'}
 <form action="{php echo url('system/module_group/post')}" method="post">
