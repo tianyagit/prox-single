@@ -582,6 +582,7 @@ class WeEngine {
 			$qr = pdo_fetch("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE {$scene_condition} AND `uniacid` = '{$_W['uniacid']}'");
 			if(!empty($qr)) {
 				$message['content'] = $qr['keyword'];
+				$message['msgtype'] = 'text';
 				$params += $this->analyzeText($message);
 				return $params;
 			}
@@ -611,10 +612,26 @@ class WeEngine {
 				$scene_condition = " `scene_str` = '{$sceneid}'";
 			}
 			$qr = pdo_fetch("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE {$scene_condition} AND `uniacid` = '{$_W['uniacid']}'");
-			if(!empty($qr)) {
-				$message['content'] = $qr['keyword'];
-				$params += $this->analyzeText($message);
+	
+		}
+		if (empty($qr) && !empty($message['ticket'])) {
+			$message['source'] = 'qr';
+			$ticket = trim($message['ticket']);
+			if(!empty($ticket)) {
+				$qr = pdo_fetchall("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE `uniacid` = '{$_W['uniacid']}' AND ticket = '{$ticket}'");
+				if(!empty($qr)) {
+					if(count($qr) != 1) {
+						$qr = array();
+					} else {
+						$qr = $qr[0];
+					}
+				}
 			}
+		}
+		if(!empty($qr)) {
+			$message['content'] = $qr['keyword'];
+			$message['msgtype'] = 'text';
+			$params += $this->analyzeText($message);
 		}
 		return $params;
 	}
