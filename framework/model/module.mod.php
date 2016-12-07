@@ -325,20 +325,22 @@ function get_all_unistalled_module($status)  {
 			while (false !== ($modulepath = readdir($handle))) {
 				$manifest = ext_module_manifest($modulepath);
 				if (is_array($manifest) && !empty($manifest['application']['identifie']) && !in_array($manifest['application']['identifie'], $moduleids)) {
-					$m = ext_module_convert($manifest);
-					if ($status == 'unistalled') {
-						if (in_array($m['name'], $recycle_modules)) {
+					$manifest = ext_module_convert($manifest);
+					$module[$manifest['name']] = $manifest;
+					if ($status == 'uninstalled') {
+						if (in_array($manifest['name'], $recycle_modules)) {
 							continue;
 						}
-					} elseif ($status == 'recycle') {
-						if (!in_array($m['name'], $recycle_modules)) {
+					} else {
+						if (!in_array($manifest['name'], $recycle_modules)) {
 							continue;
 						}
 					}
-					$localUninstallModules[$m['name']] = $m;
+					$localUninstallModules[$manifest['name']] = $manifest;
 				}
 			}
 		}
+//		print_r(array_keys($module));die;
 		return $localUninstallModules;
 	} else {
 		return array();

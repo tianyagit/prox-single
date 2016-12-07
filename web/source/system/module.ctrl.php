@@ -15,12 +15,79 @@ load()->model('cache');
 load()->func('file');
 load()->model('module');
 
-$dos = array('installed', 'not_installed');
+$dos = array('installed', 'not_installed', 'recycle', 'uninstall');
 $do = in_array($do, $dos) ? $do : 'installed';
+
+if ($do == 'uninstall') {
+	if (empty($_W['isfounder'])) {
+		message('您没有卸载模块的权限', '', 'error');
+	}
+	$name = trim($_GPC['name']);
+	$module = pdo_get('modules', array('name' => $name), array('name', 'isrulefields', 'issystem', 'version'));
+	if (empty($module)) {
+		message('模块已经被卸载或是不存在！', '', 'error');
+	}
+	if (!empty($module['issystem'])) {
+		message('系统模块不能卸载！', '', 'error');
+	}
+	if ($module['isrulefields'] && !isset($_GPC['confirm'])) {
+		message('卸载模块时同时删除规则数据吗, 删除规则数据将同时删除相关规则的统计分析数据？<div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/uninstall', array('name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('system/module/uninstall', array('name' => $name, 'confirm' => 0)) . '">否</a></div>', '', 'tips');
+	} else {
+		$modulepath = IA_ROOT . '/addons/' . $name . '/';
+		$manifest = ext_module_manifest($module['name']);
+		if (empty($manifest)) {
+			$r = cloud_prepare();
+			if (is_error($r)) {
+				message($r['message'], url('cloud/profile'), 'error');
+			}
+			$packet = cloud_m_build($module['name'], $do);
+			if ($packet['sql']) {
+				pdo_run(base64_decode($packet['sql']));
+			} elseif ($packet['script']) {
+				$uninstall_file = $modulepath . TIMESTAMP . '.php';
+				file_put_contents($uninstall_file, base64_decode($packet['script']));
+				require($uninstall_file);
+				unlink($uninstall_file);
+			}
+		} elseif (!empty($manifest['uninstall'])) {
+			if (strexists($manifest['uninstall'], '.php')) {
+				if (file_exists($modulepath . $manifest['uninstall'])) {
+					require($modulepath . $manifest['uninstall']);
+				}
+			} else {
+				pdo_run($manifest['uninstall']);
+			}
+		}
+
+		ext_module_clean($name, $_GPC['confirm'] == '1');
+
+		cache_build_account_modules();
+
+		cache_build_module_subscribe_type();
+
+		pdo_insert('modules_recycle', array('modulename' => $module['name']));
+
+		message('模块已放入回收站！', url('system/module'), 'success');
+	}
+}
+
+if ($do == 'recycle') {
+	$operate = $_GPC['operate'];
+	$name = trim($_GPC['name']);
+	if ($operate == 'delete') {
+		pdo_insert('modules_recycle', array('modulename' => $name));
+		message('模块已放入回收站', url('system/module/not_installed', array('status' => 'recycle')), 'success');
+	} elseif ($operate == 'recover') {
+		pdo_delete('modules_recycle', array('modulename' => $name));
+		message('模块恢复成功', url('system/module/not_installed', array('m' => $name)), 'success');
+	}
+	template('system/module');
+}
+
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
 
-	$localUninstallModules = get_all_unistalled_module('unistalled');
+	$localUninstallModules = get_all_unistalled_module('uninstalled');
 	$total_uninstalled = count($localUninstallModules);
 
 	$pageindex = max($_GPC['page'], 1);
@@ -49,28 +116,29 @@ if ($do == 'installed') {
 	$pager = pagination($total, $pageindex, $pagesize);
 	if (!empty($module_list)) {
 		foreach ($module_list as &$module) {
-			if(file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
+			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
 			} else {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
 			}
 			$manifest = ext_module_manifest($module['name']);
-			if(is_array($manifest) && ver_compare($module['version'], $manifest['application']['version']) == '-1') {
+			if (is_array($manifest) && ver_compare($module['version'], $manifest['application']['version']) == '-1') {
 				$module['upgrade'] = true;
 			}
 		}
 	}
 }
+
+load()->model('setting');
+
 if ($do == 'not_installed') {
 	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
-	include IA_ROOT . '/framework/library/pinyin/pinyin.php';
-	$pinyin = new Pinyin_Pinyin();
 
-	$status = $_GPC['status'] == ''? 'unistalled' : 'recycle';
+	$status = $_GPC['status'] == ''? 'uninstalled' : 'recycle';
 	$title = $_GPC['title'];
 	$letter = $_GPC['letter'];
 	$pageindex = max($_GPC['page'], 1);
-	$pagesize = 2;
+	$pagesize = 10;
 
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
 	$recycle_modules = array_keys($recycle_modules);
@@ -78,7 +146,7 @@ if ($do == 'not_installed') {
 	$total_uninstalled = count($all_uninstalled);
 	$localUninstallModules = get_all_unistalled_module($status);
 	if (!empty($localUninstallModules)) {
-		foreach($localUninstallModules as $name => $module) {
+		foreach($localUninstallModules as $name => &$module) {
 			if (!empty($title)) {
 				if (!strexists($module['title'], $title)) {
 					unset($localUninstallModules[$name]);
@@ -89,6 +157,11 @@ if ($do == 'not_installed') {
 				if ($letter != $first_char) {
 					unset($localUninstallModules[$name]);
 				}
+			}
+			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
+				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
+			} else {
+				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
 			}
 		}
 	}

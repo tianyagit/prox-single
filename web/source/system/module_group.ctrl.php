@@ -15,7 +15,11 @@ load()->model('module');
 if ($do == 'display') {
 	$_W['page']['title'] = '应用套餐列表';
 
-	$modules_group_list = pdo_getall('uni_group', array('uniacid' => 0));
+	$param = array('uniacid' => 0);
+	if (!empty($_GPC['name'])) {
+		$param['name like'] = "%". trim($_GPC['name']) ."%";
+	}
+	$modules_group_list = pdo_getall('uni_group', $param);
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as &$group) {
 			if (!empty($group['modules'])) {
@@ -33,7 +37,6 @@ if ($do == 'display') {
 		}
 	}
 }
-
 if ($do == 'delete') {
 	$group_list = $_GPC['group_list'];
 	if (!empty($group_list)) {
@@ -42,7 +45,7 @@ if ($do == 'delete') {
 	}
 	message('删除成功！', referer(), 'success');
 }
-//print_r($modules_group_list);die;
+
 if ($do == 'post') {
 	$id = intval($_GPC['id']);
 	$_W['page']['title'] = $id ? '编辑应用套餐' : '添加应用套餐';

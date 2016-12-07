@@ -1,74 +1,117 @@
 {template 'common/header'}
 {if $do == 'display'}
-<form action="{php echo url('system/module_group/delete')}" method="post">
-<table class="table">
-	<thead>
-		<th></th>
-		<th>名称</th>
-		<th>可用模块</th>
-		<th>可用模板</th>
-		<th>操作</th>
-	</thead>
-	<tbody>
-		<tr>
-			<td><input type="checkbox" disabled value="{$item['id']}" /></td>
-			<td>基础服务<span class="label label-info">系统</span></td>
-			<td>
-				<ul class="ul-float">
-					<li>基本文字回复</li>
-					<li>基本混合图文回复</li>
-					<li>基本语音回复</li>
-					<li>自定义接口回复</li>
-				</ul>
-			</td>
-			<td>
-				<ul class="ul-float">
-					<li>微站默认模板</li>
-				</ul>
-			</td>
-			<td><span></span></td>
-		</tr>
-		<tr>
-			<td><input type="checkbox" disabled value="{$item['id']}" /></td>
-			<td>所有服务<span class="label label-info">系统</span></td>
-			<td>
-				<span class="label label-danger">系统所有模块</span></li>
-			</td>
-			<td>
-				<ul class="ul-float">
-					<span class="label label-danger">系统所有模板</span></li>
-				</ul>
-			</td>
-			<td><span></span></td>
-		</tr>
-	{loop $modules_group_list $group}
-		<tr>
-			<td><input type="checkbox" name="group_list[]" value="{$group['id']}"></td>
-			<td>{$group['name']}</td>
-			<td>
-				<ul class="ul-float">
-					{loop $group['modules'] $module}
-					<li>
-						{$module['title']}
-					</li>
-					{/loop}
-				</ul>
-			</td>
-			<td>
-				<ul class="ul-float">
-				{loop $group['templates'] $template}
-					<li>
-						{$template['title']}
-					</li>
-				{/loop}
-				</ul>
-			<td><a href="{php echo url('system/module_group/post', array('id' => $group['id']))}">编辑</a></td>
-		</tr>
-	{/loop}
-	</tbody>
-</table>
-<input type="submit" name="submit" class="btn btn-primary"  value="删除">
-</form>
+<div class="js-system-module_group" ng-controller="moduleGroupCtrl" ng-cloak>
+	<div class="combo-list">
+		<div class="we7-page-title">
+			应用权限套餐
+		</div>
+
+		<ul class="we7-page-tab">
+			<li class="active"><a href="套餐应用列表.html">应用权限套餐列表  </a></li>
+			<li ><a href="">销售记录</a></li>
+		</ul>
+
+		<div class="we7-page-search clearfix">
+			<form action="" method="get" class="pull-left">
+				<input type="hidden" name="c" value="system">
+				<input type="hidden" name="a" value="module_group">
+				<input type="hidden" name="do" value="display">
+				<div class="input-group we7-margin-bottom">
+					<input class="form-control" name="name" value="{$_GPC['name']}" type="text" placeholder="" >
+					<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+				</div>
+			</form>
+			<div class="pull-right">
+				<a href="添加套餐应用列表.html" class="btn btn-primary">+添加应用权限套餐</a>
+			</div>
+		</div>
+		<table class="table we7-table vertical-middle">
+
+			<col width="190px" />
+			<col />
+			<col width="140px" />
+			<col width="275px" />
+			<col width="210px" />
+			<tr>
+				<th class="text-left">套餐名称</th>
+				<th>应用个数</th>
+				<th>模块个数</th>
+				<th>用户权限组</th>
+				<th class="text-left">操作</th>
+			</tr>
+			<tr >
+				<td class="text-left">基础服务</td>
+				<td>基础回复模块</td>
+				<td>微站默认模板</td>
+				<td></td>
+				<td class="text-left">
+					<div class="link-group">
+						<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#extend1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+						<a href="">编辑套餐</a>
+						<a href="">删除</a>
+					</div>
+				</td>
+			</tr>
+			<tr >
+				<td class="text-left">所有服务</td>
+				<td>系统所有模块</td>
+				<td>系统所有模板</td>
+				<td></td>
+				<td class="text-left">
+					<div class="link-group">
+						<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#extend1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+						<a href="">编辑套餐</a>
+						<a href="">删除</a>
+					</div>
+				</td>
+			</tr>
+
+			{loop $modules_group_list $module_group}
+			<tr >
+				<td class="text-left">{$module_group['name']}</td>
+				<td>{php echo count($module_group['modules'])}</td>
+				<td>{php echo count($module_group['templates'])}</td>
+				<td>超级VIP</td>
+				<td class="text-left">
+					<div class="link-group">
+						<a href="#toggle-{$module_group['id']}" class="color-default js-unfold" data-toggle="collapse" target="" ng-click="changeText($event)">展开</a>
+						<a href="">编辑套餐</a>
+						<a href="">删除</a>
+					</div>
+				</td>
+			</tr>
+			<div class="collapse bg-light-gray" id="toggle-{$module_group['id']}">
+			<tr>
+				<td colspan="5">
+					<div class="col-sm-1 color-gray text-left we7-padding-none">应用</div>
+					<div class="col-sm-11">
+						{loop $module_group['modules'] $module}
+						<div class="col-sm-3 text-left">
+							<a href=""><img style="height: 50px;width: 50px;" src="{if file_exists('../framework/addons/' . $module['name'] . '/icon-custom.jpg')}{php echo tomedia('../framework/addons/' . $module['name'] . '/icon-custom.jpg')}{else}{php echo tomedia('../framework/addons/' . $module['name'] . '/icon.jpg')}{/if}" alt="">{$module['title']}</a>
+						</div>
+						{/loop}
+					</div>
+				</td>
+			</tr>
+			<tr class="collapse bg-light-gray toggle-{$module_group['id']}" aria-expanded="true" >
+				<td colspan="5">
+					<div class="col-sm-1 color-gray text-left we7-padding-none">模板</div>
+					<div class="col-sm-11">
+						{loop $module_group['templates'] $template}
+						<div class="col-sm-3 text-left">
+							<a href="">{$template['title']}</a>
+						</div>
+						{/loop}
+					</div>
+				</td>
+			</tr>
+			{/loop}
+		</table>
+	</div>
+</div>
+<script>
+	angular.bootstrap($('.js-system-module_group'), ['moduleApp']);
+</script>
 {elseif $do == 'post'}
 <form action="{php echo url('system/module_group/post')}" method="post">
 	<div class="form-group">
@@ -126,16 +169,5 @@
 	<input name="token" value="{$_W['token']}" type="hidden">
 	<input name="id" value="{$module_group['id']}" type="hidden">
 </form>
-<script>
-	checkall = function(type) {
-		if (type == 'template') {
-			status = $('#template').prop('checked') === true ? 'checked' : '';
-			$('[name="template[]"]').prop('checked', status);
-		} else {
-			status = $('#module').prop('checked') === true ? 'checked' : '';
-			$('[name="module[]"]').prop('checked', status);
-		}
-	}
-</script>
 {/if}
 {template 'common/footer'}
