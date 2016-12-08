@@ -29,6 +29,8 @@ if(!empty($profile)) $profile['avatar'] = tomedia($profile['avatar']);
 //编辑用户基础信息
 if ($do == 'edit_base') {
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
+	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);
+	$user['endtype'] = $user['endtime'] == 0 ? 1 : 2;
 	if(!empty($profile)) {
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
