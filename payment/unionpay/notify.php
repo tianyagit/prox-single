@@ -37,9 +37,7 @@ if (!empty($_POST) && verify($_POST) && $_POST['respMsg'] == 'success') {
 			load()->model('activity');
 		 	$status = activity_coupon_use($coupon_info['id'], $coupon_record['id'], $log['module']);
 		}
-		load()->model('mc');
-		$paycenter_order = pdo_get('paycenter_order', array('id' => $log['tid']), array('store_id'));
-		mc_card_grant_credit($log['openid'], $paycenter_order['store_id'], $log['card_fee']);
+		
 		$site = WeUtility::createModuleSite($log['module']);
 		if(!is_error($site)) {
 			$method = 'payResult';
