@@ -12,6 +12,7 @@ load()->model('user');
 if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$post = $_GPC['__input'];
 	$type = $post['type'];
+
 	$uid = is_array($post['uid']) ? 0 : intval($post['uid']);
 	if(empty($uid)) message('-1', 'ajax', 'error');
 	switch ($type) {
@@ -27,6 +28,14 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			if($pwd != $user['password']) message('3', 'ajax', 'error');
 			$newpwd = user_hash($post['newpwd'], $user['salt']);
 			$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
+			break;
+		case 'endtime' :
+			if($post['endtype'] == 1) {
+				$endtime = 0;
+			}else {
+				$endtime = strtotime($post['endtime']);
+			}
+			$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $uid));
 			break;
 		case 'realname':
 			$result = pdo_update('users_profile', array('realname' => $post['realname']), array('uid' => $uid));
