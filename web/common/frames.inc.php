@@ -93,14 +93,14 @@ $ms['wxapp'] = array(
 
 $ms['system'] = array(
 	'title' => '系统管理',
-	'url' => url('system/account'),
+	'url' => url('account/system_display'),
 	'section' => array(
 		'wxplatform' => array(
 			'title' => '微信',
 			'menu' => array(
 				'system_account' => array(
 					'title' => '微信公众号管理',
-					'url' => url('system/account'),
+					'url' => url('account/system_display'),
 					'permission_name' => 'system_account',
 				),
 				'system_platform' => array(
