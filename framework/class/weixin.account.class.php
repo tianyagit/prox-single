@@ -874,54 +874,6 @@ class WeiXinAccount extends WeAccount {
 		}
 		return $result;
 	}
-	
-	/**
-	 * 下载微信服务器端资源文件(Video无法下载)
-	 * @param array $media = array('type'=>$type, 'media_id'=>$filename)
-	 * @return error | string 返回错误信息或附件路径(统一放到 images 里面).
-	 */
-	public function downloadMedia($media, $savefile = false) {
-		$mediatypes = array('image', 'voice', 'thumb');
-		$media = is_array($media) ? $media['media_id'] : $media;
-		if (empty($media)) {
-			return error(-1, '微信下载媒体资源参数错误');
-		}
-		
-		$token = $this->getAccessToken();
-		if(is_error($token)){
-			return $token;
-		}
-		$url = "https://api.weixin.qq.com/cgi-bin/media/get?access_token={$token}&media_id={$media}";
-		$response = ihttp_get($url);
-		
-		if (empty($response['headers']['Content-disposition'])) {
-			$response = json_decode($response['content'], true);
-			if (!empty($response['video_url'])) {
-				$response = ihttp_get($response['video_url']);
-				//微信端大小写不兼容
-				$response['headers']['Content-disposition'] = $response['headers']['Content-Disposition'];
-			}
-		}
-		if($savefile && !empty($response['headers']['Content-disposition']) && strexists($response['headers']['Content-disposition'], 'filename=')){
-			global $_W;
-			preg_match('/filename=\"?([^"]*)/', $response['headers']['Content-disposition'], $match);
-			$filename = $_W['uniacid'].'/'.date('Y/m/') . $match[1];
-			$pathinfo = pathinfo($filename);
-			if (in_array(strtolower($pathinfo['extension']), array('mp4'))) {
-				$filename = 'videos/' . $filename;
-			} elseif (in_array(strtolower($pathinfo['extension']), array('amr', 'mp3', 'wma', 'wmv'))) {
-				$filename = 'audios/' . $filename;
-			} else {
-				$filename = 'images/' . $filename;
-			}
-			load()->func('file');
-			file_write($filename, $response['content']);
-			file_remote_upload($filename);
-			return $filename;
-		} else {
-			return $response['content'];
-		}
-	}
 
 	/**
 	 * 获取客服聊天记录
@@ -1606,9 +1558,12 @@ class WeiXinAccount extends WeAccount {
 		return $return;
 	}
 
-	/*
-	 * 根据media_id从公众平台获取素材。（只能获取永久素材）
-	 * */
+	/**
+	 * 获取永久素材
+	 * @param string $media_id 素材ID
+	 * @param string $savefile 是否保存为文件
+	 * @return 保存为文件时，返回文件路径否则返回文件二进制内容或是图文数组
+	 */
 	public function getMaterial($media_id, $savefile = false) {
 		$token = $this->getAccessToken();
 		if(is_error($token)){
@@ -1661,6 +1616,56 @@ class WeiXinAccount extends WeAccount {
 		}
 		return $result;
 	}
+	
+	/**
+	 * 下载临时素材
+	 * @param $mediaid 素材ID
+	 * @param $savefile 是否保存为文件
+	 *
+	 * @return 保存为文件时，返回文件路径否则返回文件二进制内容
+	 */
+	public function downloadMedia($media_id, $savefile = false) {
+		$mediatypes = array('image', 'voice', 'thumb');
+		$media_id = is_array($media_id) ? $media_id['media_id'] : $media_id;
+		if (empty($media_id)) {
+			return error(-1, '微信下载媒体资源参数错误');
+		}
+	
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://api.weixin.qq.com/cgi-bin/media/get?access_token={$token}&media_id={$media_id}";
+		$response = ihttp_get($url);
+	
+		if (empty($response['headers']['Content-disposition'])) {
+			$response = json_decode($response['content'], true);
+			if (!empty($response['video_url'])) {
+				$response = ihttp_get($response['video_url']);
+				//微信端大小写不兼容
+				$response['headers']['Content-disposition'] = $response['headers']['Content-Disposition'];
+			}
+		}
+		if($savefile && !empty($response['headers']['Content-disposition']) && strexists($response['headers']['Content-disposition'], 'filename=')){
+			global $_W;
+			preg_match('/filename=\"?([^"]*)/', $response['headers']['Content-disposition'], $match);
+			$filename = $_W['uniacid'].'/'.date('Y/m/') . $match[1];
+			$pathinfo = pathinfo($filename);
+			if (in_array(strtolower($pathinfo['extension']), array('mp4'))) {
+				$filename = 'videos/' . $filename;
+			} elseif (in_array(strtolower($pathinfo['extension']), array('amr', 'mp3', 'wma', 'wmv'))) {
+				$filename = 'audios/' . $filename;
+			} else {
+				$filename = 'images/' . $filename;
+			}
+			load()->func('file');
+			file_write($filename, $response['content']);
+			file_remote_upload($filename);
+			return $filename;
+		} else {
+			return $response['content'];
+		}
+	}
 
 	/*
 	 * 获取各种素材的总数
@@ -1694,6 +1699,7 @@ class WeiXinAccount extends WeAccount {
 		}
 		return true;
 	}
+	
 
 	/**
 	 * 修改微商城订单状态
