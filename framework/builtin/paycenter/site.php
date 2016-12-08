@@ -16,8 +16,7 @@ class PaycenterModuleSite extends WeModuleSite {
 				if(is_array($user) && $session['hash'] == md5($user['password'] . $user['salt'])) {
 					$clerk = pdo_get('activity_clerks', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
 					if(empty($clerk)) {
-						isetcookie('_pc_session', false, -100);
-						return;
+						message('您没有管理该店铺的权限', referer(), 'error');
 					}
 					$_W['uid'] = $user['uid'];
 					$_W['username'] = $user['username'];
@@ -27,8 +26,7 @@ class PaycenterModuleSite extends WeModuleSite {
 				}
 				unset($user);
 			} else {
-				isetcookie('_pc_session', false, -100);
-				return;
+				isetcookie("paycenter_session_{$_W['uniacid']}", false, -100);
 			}
 			if(empty($_W['user']) && $_W['openid'] && $_GPC['_wechat_logout'] != '1') {
 				$clerk = pdo_get('activity_clerks', array('openid' => $_W['openid'], 'uniacid' => $_W['uniacid']));
