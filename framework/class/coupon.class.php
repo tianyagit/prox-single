@@ -255,11 +255,13 @@ class coupon extends WeiXinAccount {
 
 	public function isCouponSupported() {
 		global $_W;
-		$uni_setting = uni_setting($_W['uniacid'], array('coupon_type'));
+		load()->model('module');
+		$cachekey = "modulesetting:{$_W['uniacid']}:we7_coupon";
+		$setting = cache_load($cachekey, true);
 		if ($_W['account']['level'] != ACCOUNT_SERVICE_VERIFY && $_W['account']['level'] != ACCOUNT_SUBSCRIPTION_VERIFY) {
 			return false;
 		} else {
-			if ($uni_setting['coupon_type'] == SYSTEM_COUPON) {
+			if (@$setting['coupon_type'] == SYSTEM_COUPON) {
 				return false;
 			} else {
 				return true;
