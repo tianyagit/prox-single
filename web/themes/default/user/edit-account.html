@@ -21,7 +21,7 @@
 		<col width="87px"/>
 		<col/>
 		<col width="100px"/>
-		<col width="280px"/>
+		<col width="240px"/>
 		<tr>
 			<th colspan="2" class="text-left">可使用的公众号</th>
 			<th>角色</th>
@@ -48,7 +48,7 @@
 			<td class="text-center link-group">
 				<a href="javascript:;" class="color-default" ng-if="wechat.role == 'founder' || wechat.role == 'owner' || wechat.role == 'manager'">公众号设置</a>
 				<a href="javascript:;" class="color-default" ng-if="wechat.role == 'founder' || wechat.role == 'owner' || wechat.role == 'manager'">操作员设置</a>
-				<a href="javascript:;" class="color-default">查看权限</a>
+				<a href="javascript:;" class="color-default" ng-if="wechat.role == 'operator'">---</a>
 			</td>
 		</tr>
 	</table>
