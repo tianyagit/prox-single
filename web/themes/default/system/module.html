@@ -49,7 +49,7 @@
 					</div>
 				</td>
 				<td class="text-left">
-					<img ng-src="{{ module.logo }}" class="img-responsive" style="width: 50px;height: 50px;"/>
+					<img ng-src="{{ module.logo }}" class="img-responsive" style="width: 50px;height: 50px;" />
 				</td>
 				<td class="text-left">
 					<p>{{ module.title }}</p>
@@ -65,7 +65,7 @@
 						<a href="" class="color-red">升级</a>
 						{/if}
 						<a href="">详情</a>
-						<a href="#module-info" data-toggle="modal" ng-click="editModule(module)">编辑</a>
+						<a href="javascript:;" data-toggle="modal" ng-click="editModule(module.mid)">编辑</a>
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}">停用</a>
 					</div>
 				</td>
@@ -82,70 +82,88 @@
 			</div>
 		</div>
 	</form>
-</div>
-
-<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog we7-modal-dialog" style="width:800px">
-		<div class="modal-content">
-			<form action="./index.php?c=extension&a=module&do=info&" method="post" enctype="multipart/form-data" class="form-horizontal form" id="form-info">
-				<input type="hidden" name="m" value=""/>
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">编辑模块信息</h4>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<label class="col-sm-2 control-label"> 模块标题</label>
-						<div class="col-sm-10">
-							<input type="text" name="title" value="" class="form-control">
-							<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
+	<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog we7-modal-dialog" style="width:800px">
+			<div class="modal-content">
+				<form action="" method="post" enctype="multipart/form-data" class="form-horizontal form" id="form-info">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title">编辑模块信息</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"> 模块标题</label>
+							<div class="col-sm-10">
+								<input type="text" name="title" ng-model="moduleinfo.title" class="form-control">
+								<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"> 模块简述</label>
+							<div class="col-sm-10">
+								<input type="text" name="ability" ng-model="moduleinfo.ability" class="form-control">
+								<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"> 模块介绍</label>
+							<div class="col-sm-10">
+								<textarea type="text" name="description" ng-model="moduleinfo.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
+								<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"> 模块缩略图</label>
+							<div class="col-sm-10">
+								<div class="we7-input-img active" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
+									<img ng-src="{{ moduleinfo.logo }}" ng-if="moduleinfo.logo">
+									<a href="javascript:;" class="input-addon" ng-hide="moduleinfo.logo"><span>+</span></a>
+									<input type="hidden" name="thumb">
+									<div class="cover-dark">
+										<a href="javascript:;" class="cut" ng-click="changePicture('logo')">更换</a>
+										<a href="javascript:;" class="del" ng-click="delPicture('logo')"><i class="fa fa-times text-danger"></i></a>
+									</div>
+								</div>
+								<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"> 模块封面</label>
+							<div class="col-sm-10">
+								<div class="we7-input-img active" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px;">
+									<img ng-src="{{ moduleinfo.preview }}">
+									<a href="javascript:;" class="input-addon"><span>+</span></a>
+									<input type="hidden" name="thumb">
+									<div class="cover-dark">
+										<a href="javascript:;" class="cut" ng-click="changePicture('preview')">更换</a>
+										<a href="javascript:;" class="del" ng-click="delPicture('preview')"><i class="fa fa-times text-danger"></i></a>
+									</div>
+								</div>
+								<span class="help-block">模块封面, 大小为 600*350, 更好的设计将会获得官方推荐位置。仅支持jpg格式</span>
+							</div>
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label"> 模块简述</label>
-						<div class="col-sm-10">
-							<input type="text" name="ability" value="" class="form-control">
-							<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
-						</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button  class="btn btn-primary" type="text" name="submit" ng-click="save()" data-dismiss="modal">保存</button>
+						<input type="hidden" name="token" value="c781f0df">
 					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label"> 模块介绍</label>
-						<div class="col-sm-10">
-							<textarea type="text" name="description" class="form-control" rows="5"></textarea>
-							<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label"> 模块缩略图</label>
-						<div class="col-sm-10">
-							<input type="file" name="icon" value="">
-							<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label"> 模块封面</label>
-						<div class="col-sm-10">
-							<input type="file" name="preview" value="">
-							<span class="help-block">模块封面, 大小为 600*350, 更好的设计将会获得官方推荐位置。仅支持jpg格式</span>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<input type="submit" class="btn btn-primary" name="submit" value="保存">
-					<input type="hidden" name="token" value="c781f0df">
-				</div>
-			</form>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>
 
 <script>
-	angular.module('moduleApp').value('config',{
-		'letters' : {php echo json_encode($letters)},
-		'module_list' : {php echo json_encode($module_list)}
+	require(['fileUploader'], function() {
+		angular.module('moduleApp').value('config', {
+			'letters': {php echo json_encode($letters)},
+			'module_list': {php echo json_encode($module_list)},
+			'editModuleUrl': "{php echo url('system/module/get_module_info')}",
+			'saveModuleUrl' :  "{php echo url('system/module/save_module_info')}"
+		});
+		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});
-	angular.bootstrap($('#js-system-module'), ['moduleApp']);
 </script>
 {elseif $do == 'not_installed'}
 <div id="js-system-module-not_installed" ng-controller="notInstalledCtrl" ng-cloak>
@@ -202,11 +220,11 @@
 	{$pager}
 </div>
 <script>
-	angular.module('moduleApp').value('config', {
-		'letters' : {php echo json_encode($letters)},
-		'module_list' : {php echo json_encode($localUninstallModules)}
-	});
-	angular.bootstrap($('#js-system-module-not_installed'), ['moduleApp']);
+		angular.module('moduleApp').value('config', {
+			'letters' : {php echo json_encode($letters)},
+			'module_list' : {php echo json_encode($localUninstallModules)}
+		});
+		angular.bootstrap($('#js-system-module-not_installed'), ['moduleApp']);
 </script>
 {/if}
 {template 'common/footer'}
