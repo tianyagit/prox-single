@@ -86,5 +86,5 @@ if ($do == 'delete') {
 		cache_delete("unicount:{$uniacid}");
 		cache_delete("unisetting:{$uniacid}");
 	}
-	message('公众帐号信息删除成功！，您可以在回收站中回复公众号', url('account/system_display'), 'success');
+	message('公众帐号停用成功！，您可以在回收站中回复公众号', url('account/system_display'), 'success');
 }
