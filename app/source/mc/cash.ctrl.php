@@ -176,11 +176,11 @@ if(!empty($type)) {
 					$status = activity_coupon_use($coupon_info['id'], $coupon_record['id'], $params['module']);
 				}
 				$fee = floatval($ps['fee']);
-				if ($log['module'] == 'we7_coupon') {
+				if ($log['module'] == 'paycenter') {
 					load()->model('mc');
 					$paycenter_order = pdo_get('paycenter_order', array('id' => $log['tid']), array('store_id'));
 					$is_grant_credit = mc_card_grant_credit($log['openid'], $fee, $paycenter_order['store_id']);
-					$result = mc_credit_update($log['openid'], 'credit2', -$fee, array('0', $tip, 'we7_coupon', 0, $paycenter_order['store_id'], 3));
+					$result = mc_credit_update($log['openid'], 'credit2', -$fee, array('0', $tip, 'paycenter', 0, $paycenter_order['store_id'], 3));
 				} else {
 					$result = mc_credit_update($_W['member']['uid'], $setting['creditbehaviors']['currency'], -$fee, array($_W['member']['uid'], '消费' . $setting['creditbehaviors']['currency'] . ':' . $fee));
 				}
@@ -188,7 +188,7 @@ if(!empty($type)) {
 					message($result['message'], '', 'error');
 				}
 				if (!empty($_W['openid'])) {
-					if ($log['module'] == 'we7_coupon') {
+					if ($log['module'] == 'paycenter') {
 						if (is_error($is_grant_credit)) {
 							$grant_credit_nums = 0; 
 						} else {
