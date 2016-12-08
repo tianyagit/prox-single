@@ -204,8 +204,6 @@ elseif ($do == 'articlelist') {
 			array('title'=>'我的会员卡','url'=> murl('mc/card/mycard')),
 			array('title'=>'消息','url'=> murl('mc/card/notice')),
 			array('title'=>'签到','url'=> murl('mc/card/sign_display')),
-			array('title'=>'推荐','url'=> murl('mc/card/recommend')),
-			array('title'=>'适用门店','url'=> murl('mc/store')),
 			array('title'=>'完善会员资料','url'=> murl('mc/profile')),
 		);
 	}
