@@ -119,8 +119,9 @@ class CoreModuleSite extends WeModuleSite {
 				'is_usecard' => '0',
 			);
 			pdo_insert('core_paylog', $paylog);
+			$paylog['plid'] = pdo_insertid();
 		}
-		if(!empty($paylog) && ($type != 'credit' && !empty($_GPC['notify'])) && $paylog['status'] != '0') {
+		if(!empty($paylog) && $paylog['status'] != '0') {
 			message(error(1, '这个订单已经支付成功, 不需要重复支付.'), '', 'ajax');
 		}
 		if (!empty($paylog) && empty($paylog['uniontid'])) {
