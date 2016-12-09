@@ -257,11 +257,11 @@ class coupon extends WeiXinAccount {
 		global $_W;
 		load()->model('module');
 		$cachekey = "modulesetting:{$_W['uniacid']}:we7_coupon";
-		$setting = cache_load($cachekey, true);
+		$setting = (array)cache_load($cachekey, true);
 		if ($_W['account']['level'] != ACCOUNT_SERVICE_VERIFY && $_W['account']['level'] != ACCOUNT_SUBSCRIPTION_VERIFY) {
 			return false;
 		} else {
-			if (@$setting['coupon_type'] == SYSTEM_COUPON) {
+			if ($setting['coupon_type'] == SYSTEM_COUPON) {
 				return false;
 			} else {
 				return true;
