@@ -15,8 +15,48 @@ load()->model('cache');
 load()->func('file');
 load()->model('module');
 
-$dos = array('installed', 'not_installed', 'recycle', 'uninstall');
+$dos = array('installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info');
 $do = in_array($do, $dos) ? $do : 'installed';
+
+if ($do == 'save_module_info') {
+	$module_info = $_GPC['__input']['moduleinfo'];
+	if (!empty($module_info['logo'])) {
+		$image = file_get_contents ($module_info['logo']);
+		$icon = file_exists (IA_ROOT . "/addons/" . $module_info['name'] . "/icon-custom.jpg") ? 'icon-custom.jpg' : 'icon.jpg';
+		$result = file_put_contents (IA_ROOT . "/addons/" . $module_info['name']."/".$icon, $image);
+	}
+	if (!empty($module_info['preview'])) {
+		$image = file_get_contents($module_info['preview']);
+		$preview = file_exists(IA_ROOT."/addons/".$module_info['name']. "/preview-custom.jpg") ? 'preview-custom.jpg' : 'preview.jpg';
+		$result = file_put_contents(IA_ROOT."/addons/".$module_info['name']."/".$preview, $image);
+	}
+	unset($module_info['logo'], $module_info['preview']);
+	$data = array(
+		'title' => $module_info['title'],
+		'ability' => $module_info['ability'],
+		'description' => $module_info['description'],
+	);
+	$result =  pdo_update('modules', $data, array('mid' => $module_info['mid']));
+	message(error(0), '', 'ajax');
+}
+
+if ($do == 'get_module_info') {
+	$mid = intval($_GPC['__input']['mid']);
+	if ($mid) {
+		$module = pdo_get('modules', array('mid' => $mid));
+		if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
+			$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
+		} else {
+			$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
+		}
+		if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/preview-custom.jpg')) {
+			$module['preview'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/preview-custom.jpg');
+		} else {
+			$module['preview'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/preview.jpg');
+		}
+	}
+	message(error(0, $module), '', 'ajax');
+}
 
 if ($do == 'uninstall') {
 	if (empty($_W['isfounder'])) {
@@ -112,7 +152,7 @@ if ($do == 'installed') {
 		$params[':title'] = "%".$title. "%";
 	}
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ". tablename('modules'). $condition, $params);
-	$module_list = pdo_fetchall("SELECT * FROM ". tablename('modules'). $condition. " ORDER BY `issystem` DESC, `mid` ASC". " LIMIT ".($pageindex-1)*$pagesize.", ". $pagesize, $params);
+	$module_list = pdo_fetchall("SELECT * FROM ". tablename('modules'). $condition. " ORDER BY `issystem` DESC, `mid` ASC". " LIMIT ".($pageindex-1)*$pagesize.", ". $pagesize, $params, 'name');
 	$pager = pagination($total, $pageindex, $pagesize);
 	if (!empty($module_list)) {
 		foreach ($module_list as &$module) {

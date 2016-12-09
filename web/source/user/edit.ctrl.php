@@ -29,6 +29,8 @@ if(!empty($profile)) $profile['avatar'] = tomedia($profile['avatar']);
 //编辑用户基础信息
 if ($do == 'edit_base') {
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
+	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);
+	$user['endtype'] = $user['endtime'] == 0 ? 1 : 2;
 	if(!empty($profile)) {
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
@@ -71,6 +73,17 @@ if($do == 'edit_modules_tpl') {
 }
 
 if($do == 'edit_account') {
-	echo 'account';
+	$weids = pdo_fetchall("SELECT uniacid, role FROM ".tablename('uni_account_users')." WHERE uid = :uid", array(':uid' => $uid), 'uniacid');
+	if (!empty($weids)) {
+		$wechats = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
+		foreach ($wechats as &$wechats_val) {
+			$wechats_val['thumb'] = tomedia('headimg_'.$wechats_val['acid']. '.jpg').'?time='.time();
+			foreach ($weids as $weids_key => $weids_val) {
+				if($wechats_val['uniacid'] == $weids_key) {
+					$wechats_val['role'] = $weids_val['role'];
+				}
+			}
+		}
+	}
 	template('user/edit-account');
 }
