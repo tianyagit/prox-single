@@ -5,14 +5,15 @@
 		<li><a href="{php echo url('platform/qr/display');}"> 二维码扫描统计</a></li>
 	</ul>
 	<div class="we7-padding-bottom clearfix">
-		<div class="input-group pull-left" style="width: 400px;">
-			<form action="./index.php" method="get" role="form" style="display:flex">
+		<form action="./index.php" method="get" role="form" >
+			<div class="input-group pull-left col-sm-4">
 				<input type="hidden" name="c" value="platform">
 				<input type="hidden" name="a" value="qr">
 				<input type="text" name="keyword" value="{$keyword}" class="form-control" placeholder="请输入场景名称"/>
-				<button class="input-group-addon" style="width:60px"><i class="fa fa-search"></i>搜索</button>
-			</form>
-		</div>
+				<span class="input-group-btn"><buton class="btn btn-default"><i class="fa fa-search"></i></buton></span>
+			
+			</div>
+		</form>
 		<div class="pull-right">
 			{if $_W['account']['level'] == 4}<a href="{php echo url('platform/url2qr');}" class="btn btn-default">长链接转二维码</a>{/if}
 			<a href="{php echo url('platform/qr/post');}" class="btn btn-primary">+生成关键二维码</a>

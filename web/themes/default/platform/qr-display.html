@@ -9,18 +9,20 @@
 			<input type="hidden" name="c" value="platform">
 			<input type="hidden" name="a" value="qr">
 			<input type="hidden" name="do" value="display">
-			<div class="we7-form">
+			<div class="we7-form form-inline">
 				<div class="pull-left we7-margin-right">
-					<label class="control-label">时间范围</label>
-					<div class="form-controls">
+					<label class="control-label col-sm-3">时间范围</label>
+					<div class="form-controls col-sm-8">
 						{php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)));}
 					</div>
 				</div>
 				<div class="pull-left">
-					<label class="control-label">二维码名称</label>
-					<div class="form-controls">
-						<input type="text" name="keyword" value="{$_GPC['keyword']}" style="width:300px" class="form-control" placeholder="请输入场景名称">
-						<button class="form-control-addon"><i class="fa fa-search"></i></button>
+					<label class="control-label col-sm-3">二维码名称</label>
+					<div class="form-controls col-sm-8">
+						<div class="input-group">
+							<input type="text" name="keyword" value="{$_GPC['keyword']}" style="width:300px" class="form-control" placeholder="请输入场景名称">
+							<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -13,12 +13,12 @@
 	</ul>
 	<div class="we7-padding-bottom clearfix">
 		<form action="./index.php" method="get" class="form-horizontal" role="form">
-			<div class="input-group pull-left" style="width: 400px;">
+			<div class="input-group pull-left col-sm-4">
 				<input type="hidden" name="c" value="platform">
 				<input type="hidden" name="a" value="menu">
 				<input type="hidden" name="token" value="{$_W['token']}"/>
 				<input type="text" name="keyword" id="" value="" class="form-control" placeholder="搜索关键字"/>
-				<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+				<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 			</div>
 		</form>
 		<div class="pull-right">
@@ -122,16 +122,16 @@
 		</ol>
 		<div class="we7-form">
 			<div class="form-group">
-				<label for="" class="control-label">菜单组名称</label>
-				<div class="form-controls">
+				<label for="" class="control-label col-sm-2">菜单组名称</label>
+				<div class="form-controls col-sm-8">
 					<input type="text" style="width: 600px" class="form-control" ng-model="context.group.title" ng-disabled="context.group.disabled">
 					<span class="help-block">给自定义菜单起个名字便于查找</span>
 				</div>
 			</div>
 			{if $type != 1}
 			<div class="form-group">
-				<label for="" class="control-label">菜单显示对象</label>
-				<div class="form-controls">
+				<label for="" class="control-label col-sm-2">菜单显示对象</label>
+				<div class="form-controls col-sm-8">
 					<select class="we7-select" ng-model="context.group.matchrule.sex" ng-disabled="context.group.disabled" {if $params['matchrule']['sex'] == 0}ng-init="context.group.matchrule.sex = '0'"{/if}>
 						<option value="0" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 0">性别不限</option>
 						<option value="1" ng-disabled="context.group.disabled" ng-selected="context.group.matchrule.sex == 1">男</option>
@@ -152,8 +152,8 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="" class="control-label"></label>
-				<div class="form-controls">
+				<label for="" class="control-label col-sm-2"></label>
+				<div class="form-controls col-sm-8">
 					<select class="we7-select" ng-model="context.group.matchrule.language" ng-disabled="context.group.disabled">
 						<option value="" ng-selected="context.group.matchrule.language == ''">语言不限</option>
 						{loop $languages $language}
@@ -220,16 +220,18 @@
 							<div style="display: none;" class="we7-padding-top color-gray">已添加子菜单，仅可设置菜单名称。</div>
 							<div class="we7-form we7-padding-top">
 								<div class="form-group">
-									<label for="" class="control-label">触发关键字</label>
-									<div class="form-controls">
-										<input type="text" name="" style="width: 300px" class="form-control" placeholder=""  id="title" ng-model="context.activeItem.name" ng-disabled="context.group.disabled">
-										<span ng-if="!context.group.disabled" class="form-control-addon color-default" ng-click="context.selectEmoji();">添加表情</span>
+									<label for="" class="control-label col-sm-2">触发关键字</label>
+									<div class="form-controls col-sm-8">
+										<div class="input-group">
+											<input type="text" name="" style="width: 300px" class="form-control" placeholder=""  id="title" ng-model="context.activeItem.name" ng-disabled="context.group.disabled">
+											<span ng-if="!context.group.disabled" class="input-group-addon bg-default color-default" ng-click="context.selectEmoji();"><a href="">添加表情</a></span>
+										</div>
 										<span class="help-block">字数不超过4个汉字或8个字母</span>
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="" class="control-label">菜单内容</label>
-									<div class="form-controls">
+									<label for="" class="control-label col-sm-2">菜单内容</label>
+									<div class="form-controls col-sm-10">
 										<input id="radio-1" type="radio" name="ipt" ng-checked="context.activeItem.type == 'media_id' || context.activeItem.type == 'click'" ng-model="context.activeItem.type" value="click" ng-disabled="context.group.disabled">
 										<label for="radio-1">发送消息 </label>
 										<input id="radio-2" type="radio" name="ipt" ng-model="context.activeItem.type" value="view" ng-disabled="context.group.disabled">
@@ -252,9 +254,9 @@
 								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if}ng-show="context.activeItem.type == 'view';">
 									<div class="form-group">
 										<p class="color-gray">订阅者点击该子菜单会跳转到以下链接</p>
-										<label for="" class="control-label">页面地址</label>
-										<div class="form-controls">
-											<input type="text"style="width: 300px" class="form-control" id="ipt-url" type="text" ng-model="context.activeItem.url" ng-disabled="context.group.disabled">
+										<label for="" class="control-label col-sm-2">页面地址</label>
+										<div class="form-controls col-sm-8">
+											<input type="text" class="form-control" id="ipt-url" type="text" ng-model="context.activeItem.url" ng-disabled="context.group.disabled">
 											<span ng-if="!context.group.disabled" class="form-control-addon color-default" id="search" ng-click="context.select_link()">选择地址</span>
 											<span class="help-block">指定点击此菜单时要跳转的链接（注：链接需加http://）</span>
 										</div>
@@ -265,12 +267,12 @@
 									<div class="panel-heading">
 										回复内容
 									</div>
-									<p class="color-gray" ng-show="context.activeItem.type == 'location_select'">菜单内容为地理位置，那么点击这个菜单是，系统发送当前地理位置</p>
-									<p class="color-gray"  ng-show="context.activeItem.type == 'pic_sysphoto' || context.activeItem.type == 'pic_photo_or_album'">菜单内容为系统拍照发图/拍照或者相册发图，那么点击这个菜单是，系统拍照</p>
-									<p class="color-gray" ng-show="context.activeItem.type == 'pic_weixin'">菜单内容为微信相册发图，那么点击这个菜单是，选择图片发送</p>
-									<p class="color-gray" ng-show="context.activeItem.type == 'scancode_push' || context.activeItem.type == 'scancode_waitmsg'">菜单内容为扫码，那么点击这个菜单是，手机扫描二维码</p>
-									<label for="" class="control-label">选择</label>
+									<!--<label for="" class="control-label">选择</label>-->
 									<div class="panel-body we7-padding">
+										<p class="color-gray" ng-show="context.activeItem.type == 'location_select'">菜单内容为地理位置，那么点击这个菜单是，系统发送当前地理位置</p>
+										<p class="color-gray"  ng-show="context.activeItem.type == 'pic_sysphoto' || context.activeItem.type == 'pic_photo_or_album'">菜单内容为系统拍照发图/拍照或者相册发图，那么点击这个菜单是，系统拍照</p>
+										<p class="color-gray" ng-show="context.activeItem.type == 'pic_weixin'">菜单内容为微信相册发图，那么点击这个菜单是，选择图片发送</p>
+										<p class="color-gray" ng-show="context.activeItem.type == 'scancode_push' || context.activeItem.type == 'scancode_waitmsg'">菜单内容为扫码，那么点击这个菜单是，手机扫描二维码</p>
 										<ul class="keywords-list">
 											<li ng-if="context.activeItem.material[0].etype == 'click'">
 												<div>

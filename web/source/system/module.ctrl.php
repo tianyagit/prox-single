@@ -15,8 +15,23 @@ load()->model('cache');
 load()->func('file');
 load()->model('module');
 
-$dos = array('installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info');
+$dos = array('installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
+
+if ($do == 'change_receive_ban') {
+	$modulename = $_GPC['__input']['modulename'];
+	if (!is_array($_W['setting']['module_receive_ban'])) {
+		$_W['setting']['module_receive_ban'] = array();
+	}
+	if (in_array($modulename, $_W['setting']['module_receive_ban'])) {
+		unset($_W['setting']['module_receive_ban'][$modulename]);
+	} else {
+		$_W['setting']['module_receive_ban'][$modulename] = $modulename;
+	}
+	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
+	cache_build_module_subscribe_type();
+	message(error(0), '', 'ajax');
+}
 
 if ($do == 'save_module_info') {
 	$module_info = $_GPC['__input']['moduleinfo'];
@@ -56,6 +71,75 @@ if ($do == 'get_module_info') {
 		}
 	}
 	message(error(0, $module), '', 'ajax');
+}
+
+if ($do == 'module_detail') {
+	load()->classs('account');
+	$_W['page']['title'] = '模块详情';
+	$module_name = trim($_GPC['name']);
+	$module_info = pdo_get('modules', array('name' => $module_name));
+	$module_info['logo'] = file_exists(IA_ROOT. "/addons/". $module_info['name']. "/icon-custom.jpg") ? IA_ROOT. "/addons/". $module_info['name']. "/icon-custom.jpg" : IA_ROOT. "/addons/". $module_info['name']. "/icon.jpg";
+	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0));
+	$module_group = array();
+	if (!empty($module_group_list)) {
+		foreach ($module_group_list as $group) {
+			$group['modules'] = iunserializer($group['modules']);
+			if (in_array($module_name, $group['modules'])) {
+				$module_group[] = $group;
+			}
+		}
+	}
+	$module_subscribes = array();
+	$module['subscribes'] = iunserializer($module_info['subscribes']);
+	if (!empty($module['subscribes'])) {
+		foreach ($module['subscribes'] as $event) {
+			if ($event == 'text' || $event == 'enter') {
+				continue;
+			}
+			$module_subscribes = $module['subscribes'];
+		}
+	}
+	$mtypes = ext_module_msg_types();
+	$module_ban = $_W['setting']['module_receive_ban'];
+	if (!is_array($module_ban)) {
+		$module_ban = array();
+	}
+	$receive_ban = in_array($module_info['name'], $module_ban) ? 1 : 2;
+	$modulename = $_GPC['modulename'];
+	//验证订阅消息是否成功
+	$check_subscribe = 0;
+	$module_obj = WeUtility::createModuleReceiver($module_name);
+	if (!empty($module_obj)) {
+		$module_obj->uniacid = $_W['uniacid'];
+		$module_obj->acid = $_W['acid'];
+		$module_obj->message = array(
+			'event' => 'subscribe'
+		);
+		if(method_exists($module_obj, 'receive')) {
+			$module_obj->receive();
+			$check_subscribe = 1;
+		}
+	}
+	$use_module_account = array();
+	$uniaccount_list = pdo_getall('uni_account');
+	if (!empty($uniaccount_list)) {
+		foreach($uniaccount_list as $uniaccount) {
+			$uni_group = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array(), 'groupid');
+			$uni_group = array_keys($uni_group);
+			$have_module_group_list = array();//所有包含此模块的的套餐id
+			if (!empty($module_group)) {
+				foreach ($module_group as $module_group_info) {
+					$have_module_group_list[] = $module_group_info['id'];
+				}
+			}
+			if (in_array(-1, $uni_group)) {
+				$use_module_account[] = $uniaccount;
+			} elseif (array_intersect($have_module_group_list, $uni_group)) {
+				$use_module_account[] = $uniaccount;
+			} else {
+			}
+		}
+	}
 }
 
 if ($do == 'uninstall') {
@@ -169,8 +253,6 @@ if ($do == 'installed') {
 	}
 }
 
-load()->model('setting');
-
 if ($do == 'not_installed') {
 	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
 
@@ -210,4 +292,5 @@ if ($do == 'not_installed') {
 	$pager = pagination($total, $pageindex, $pagesize);
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 }
+
 template('system/module');

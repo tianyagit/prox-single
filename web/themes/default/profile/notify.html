@@ -20,8 +20,8 @@
 	<div class="we7-form">
 		<form action="" method="post">
 		<div class="form-group">
-			<label for="" class="control-label">SMTP服务器</label>
-			<div class="form-controls">
+			<label for="" class="control-label col-sm-2">SMTP服务器</label>
+			<div class="form-controls col-sm-8">
 				<input id='radio-1' type="radio" name="smtp[type]" ng-checked="type == '163'" value="163" ng-click="type = '163'"/>
 				<label for="radio-1">网易邮箱服务器（建议使用）</label>
 				<input id='radio-2' type="radio" name="smtp[type]" ng-checked="type == 'qq'" value="qq" ng-click="type = 'qq'"/>
@@ -32,22 +32,22 @@
 			</div>
 		</div>
 		<div class="form-group" ng-show="type == 'custom'">
-			<label for="" class="control-label">SMTP服务器地址</label>
-			<div class="form-controls">
+			<label for="" class="control-label col-sm-2">SMTP服务器地址</label>
+			<div class="form-controls col-sm-8">
 				<input type="text"  name="smtp[server]" value="{$mail_setting['smtp']['server']}" style="width: 600px" class="form-control" placeholder="">
 				<span class="help-block">指定SMTP服务器的地址 </span>
 			</div>
 		</div>
 		<div class="form-group" ng-show="type == 'custom'">
-			<label for="" class="control-label">SMTP服务器端口</label>
-			<div class="form-controls">
+			<label for="" class="control-label col-sm-2">SMTP服务器端口</label>
+			<div class="form-controls col-sm-8">
 				<input type="text" name="smtp[port]" value="{$mail_setting['smtp']['port']}" style="width: 600px" class="form-control" placeholder="">
 				<span class="help-block">指定SMTP服务器的端口 </span>
 			</div>
 		</div>
 		<div class="form-group" ng-show="type == 'custom'">
-			<label for="" class="control-label">使用SSL加密</label>
-			<div class="form-controls">
+			<label for="" class="control-label col-sm-2">使用SSL加密</label>
+			<div class="form-controls col-sm-8">
 				<input id='radio-11' type="radio" name="smtp[authmode]" value="1" ng-checked="setting['smtp']['authmode'] == 1" />
 				<label for="radio-11">是</label>
 				<input id='radio-12' type="radio" name="smtp[authmode]" value="0" ng-checked="setting['smtp']['authmode'] == 0 || setting['smtp']['authmode'] == undefined"/>
@@ -56,15 +56,15 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="" class="control-label">发送帐号用户名</label>
-			<div class="form-controls">
+			<label for="" class="control-label col-sm-2">发送帐号用户名</label>
+			<div class="form-controls col-sm-8">
 				<input type="text"  name="username" value="{$mail_setting['username']}" style="width: 600px" class="form-control" placeholder="">
 				<span class="help-block">指定发送邮件的用户名，例如：test@163.com </span>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="" class="control-label">smtp客户端授权密码</label>
-			<div class="form-controls">
+			<label for="" class="control-label col-sm-2">smtp客户端授权密码</label>
+			<div class="form-controls col-sm-8">
 				<input type="password" name="password" value="{$mail_setting['password']}" style="width: 600px" class="form-control" placeholder="">
 				<span class="help-block">指定发送邮件的密码，QQ邮箱此处为授权码，
 				<a href="http://service.mail.qq.com/cgi-bin/help?subtype=1&amp;&amp;id=28&amp;&amp;no=1001256" target="_Blank" id="code" style="">查看授权码获取方法</a>
@@ -72,15 +72,15 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="" class="control-label">发件人名称</label>
-			<div class="form-controls">
+			<label for="" class="control-label col-sm-2">发件人名称</label>
+			<div class="form-controls col-sm-8">
 				<input type="text"  name="sender" value="{$mail_setting['sender']}" style="width: 600px" class="form-control" placeholder="">
 				<span class="help-block">指定发送邮件发信人名称 </span>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="" class="control-label">邮件签名</label>
-			<div class="form-controls">
+			<label for="" class="control-label col-sm-2">邮件签名</label>
+			<div class="form-controls col-sm-8">
 				<textarea rows="5" name="signature" style="width: 600px" class="form-control" placeholder="">{$mail_setting['signature']}</textarea>
 				<span class="help-block">指定邮件末尾添加的签名信息 </span>
 			</div>
