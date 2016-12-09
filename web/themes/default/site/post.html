@@ -9,15 +9,17 @@
 		<div class="site-select-tem">
 			<div class="select-tem-heading">选择模板</div>
 			<div class="select-tem-filter">
-				<div class="form-group">
+				<div class="form-group we7-padding-bottom">
 					分类
-					<select class="select-we7" ng-model="temtype" ng-options="tem.title for tem in temtypes">
+					<select class="we7-select col-sm-12" ng-model="temtype" ng-options="tem.title for tem in temtypes">
 					</select>
 				</div>
-				搜索
-				<div class="input-group">
-					<input type="text" class="form-control" placeholder="输入模板名" ng-model="searchedStyleName">
-					<span class="input-group-addon" ng-click="searchStyle()"><i class="fa fa-search"></i></span>
+				<div class="form-group">
+					搜索
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="输入模板名" ng-model="searchedStyleName">
+						<span class="input-group-btn" ng-click="searchStyle()"><a class="btn btn-default"> <i class="fa fa-search"></i></a></span>
+					</div>
 				</div>
 			</div>
 			<div class="select-tem-list">
@@ -173,31 +175,31 @@
 					</div>
 					<div class="entrance-url site-edit-heading">
 						<div class="form-group">
-							<label for="" class="control-label">微官网链接</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">微官网链接</label>
+							<div class="form-controls col-sm-10">
 								<a ng-href="{{siteEntrance}}" class="form-control-static color-default" target="_blank" ng-bind="siteEntrance"></a>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="" class="control-label"></label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2"></label>
+							<div class="form-controls col-sm-10">
 								<a href="javascript:;" class="btn btn-default" id="copy-{{multi.id}}" clipboard supported="supported" text="siteEntrance" on-copied="success(multi.id)">复制链接</a>
 							</div>
 						</div>
 					</div>
 					<div class="entrance-edit">
 						<div class="form-group">
-							<label class="control-label">触发关键字</label>
-							<div class="form-controls">
+							<label class="control-label col-sm-2">触发关键字</label>
+							<div class="form-controls col-sm-10">
 								<input type="text" name="keyword" class="form-control" ng-model="multi.site_info.keyword"/>
 								<div class="help-block">用户触发关键字，系统回复此页面的图文链接</div>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="control-label">封面</label>
-							<div class="form-controls">
-								<div class="input-more" ng-class="{'active': multi.site_info.thumb}">
-									<img ng-src="{{multi.site_info.thumb}}" width="150px" ng-if="multi.site_info.thumb">
+							<label class="control-label col-sm-2">封面</label>
+							<div class="form-controls col-sm-10">
+								<div class="we7-input-img input-more" ng-class="{'active': multi.site_info.thumb}">
+									<img ng-src="{{multi.site_info.thumb}}" ng-if="multi.site_info.thumb">
 									<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage()" ng-hide="multi.site_info.thumb"><span>+</span></a>
 									<input type="text" name="thumb" ng-model="multi.site_info.thumb" ng-style="{'display' : 'none'}">
 									<div class="cover-dark">
@@ -218,14 +220,14 @@
 					</div>
 					<div class="we7-form">
 						<div class="form-group">
-							<label for="" class="control-label">微站名称</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">微站名称</label>
+							<div class="form-controls col-sm-10">
 								<input type="text" name="title" class="form-control" ng-model="multi.title"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="" class="control-label">是否启用</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">是否启用</label>
+							<div class="form-controls col-sm-10">
 								<label>
 									<input type="text" name="status" class="form-control" ng-model="multi.status" ng-style="{'display': 'none'}">
 									<div class="switch" ng-class="{'switchOn' : multi.status == 1}" ng-click="changeMultiStatus()"></div>
@@ -233,21 +235,21 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="" class="control-label">页面描述</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">页面描述</label>
+							<div class="form-controls col-sm-10">
 								<input type="text" name="description" class="form-control" ng-model="multi.site_info.description">
 								<span class="help-block">用户通过微信分享给朋友时,会自动显示页 面描述</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="" class="control-label">绑定域名</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">绑定域名</label>
+							<div class="form-controls col-sm-10">
 								<input type="text" name="bindhost" class="form-control" ng-model="multi.bindhost">
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="" class="control-label">底部自定义</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">底部自定义</label>
+							<div class="form-controls col-sm-10">
 								<textarea class="form-control" cols="30" name="footer" autocomplete="off" ng-model="multi.site_info.footer"></textarea>
 								<span class="help-block">自定义底部信息，支持HTML</span>
 							</div>
@@ -347,8 +349,8 @@
 						</div>
 						<div class="we7-form">
 							<div class="form-group">
-								<label for="" class="control-label">导航显示位置</label>
-								<div class="form-controls">
+								<label for="" class="control-label col-sm-2">导航显示位置</label>
+								<div class="form-controls col-sm-10">
 									<select ng-model="menuInfo.section" class="we7-select">
 										<option ng-selected="menuInfo.section == 0">不设置位置</option>
 										<option ng-repeat="sec in sections" ng-bind="sec.val" ng-selected="menuInfo.section == sec.num"></option>
@@ -358,27 +360,27 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="control-label">名称</label>
-								<div class="form-controls">
+								<label for="" class="control-label col-sm-2">名称</label>
+								<div class="form-controls col-sm-10">
 									<input type="text" value="1" ng-model="menuInfo.position" ng-style="{'display': 'none'}"/>
 									<input type="text" class="form-control" ng-model="menuInfo.name"/>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="control-label">描述</label>
-								<div class="form-controls">
+								<label for="" class="control-label col-sm-2">描述</label>
+								<div class="form-controls col-sm-10">
 									<textarea rows="4" cols="" class="form-control" ng-model="menuInfo.description"></textarea>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="control-label">链接</label>
-								<div class="form-controls">
+								<label for="" class="control-label col-sm-2">链接</label>
+								<div class="form-controls col-sm-10">
 									<input type="text" class="form-control" ng-model="menuInfo.url">
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="control-label">状态</label>
-								<div class="form-controls">
+								<label for="" class="control-label col-sm-2">状态</label>
+								<div class="form-controls col-sm-10">
 									<input id='radio-1' type="radio" value="1" ng-model="menuInfo.status" ng-checked="menuInfo.status == 1">
 									<label for="radio-1">显示	</label>
 									<input id='radio-2' type="radio" value="0" ng-model="menuInfo.status" ng-checked="menuInfo.status == 0">
@@ -387,8 +389,8 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="control-label">排序</label>
-								<div class="form-controls">
+								<label for="" class="control-label col-sm-2">排序</label>
+								<div class="form-controls col-sm-10">
 									<input type="text" class="form-control" ng-model="menuInfo.displayorder">
 									<span class="help-block">导航排序，越大越靠前</span>
 								</div>
@@ -400,8 +402,8 @@
 								<div class="panel-body we7-margin">
 									<div class="we7-form">
 										<div class="form-group">
-											<label for="" class="control-label">图标类型</label>
-											<div class="form-controls">
+											<label for="" class="control-label col-sm-2">图标类型</label>
+											<div class="form-controls col-sm-10">
 												<input id='icontype-1' type="radio" value="1" ng-model="menuInfo.icontype"  ng-checked="menuInfo.icontype == 1">
 												<label for="icontype-1">系统内置</label>
 												<input id='icontype-2' type="radio" value="2" ng-model="menuInfo.icontype"  ng-checked="menuInfo.icontype == 2"/>
@@ -409,40 +411,48 @@
 											</div>
 										</div>
 										<div class="form-group" ng-if="menuInfo.icontype == 2">
-											<label for="" class="control-label">上传图标</label>
-											<div class="form-controls">
-												<div class="input-more input-img" ng-class="{'active': menuInfo.icon}">
+											<label for="" class="control-label col-sm-2">上传图标</label>
+											<div class="form-controls col-sm-10">
+												<div class="we7-input-img input-more input-img" ng-class="{'active': menuInfo.icon}" ng-style="{'width': '100px', 'height': '100px'}">
 													<img ng-src="{{menuInfo.icon}}" width="150px" ng-if="menuInfo.icon">
-													<a href="javascript:;" class="input-addon" ng-click="uploadHomemenuImage(menuInfo)" ng-style="{'width': '100px', 'height': '100px'}" ng-hide="menuInfo.icon">
+													<a href="javascript:;" class="input-addon" ng-click="uploadHomemenuImage(menuInfo)"  ng-hide="menuInfo.icon">
 														<span>+</span>
 													</a>
 													<div class="cover-dark">
 														<a href="javascript:;" class="cut" ng-click="uploadHomemenuImage(menuInfo)">更换</a>
-														<a href="javascript:;" class="del" ng-click="delHomemenuImage(menuInfo)"><i class="fa fa-times text-danger"></i>
+														<a href="javascript:;" class="del" ng-click="delHomemenuImage(menuInfo)"><i class="fa fa-times text-danger"></i></a>
 													</div>
 												</div>
 											</div>
 										</div>
 										<div class="form-group" ng-if="menuInfo.icontype != 2">
-											<label for="" class="control-label">系统图标</label>
-											<div class="form-controls" >
-												<input type="text" class="form-control" ng-model="menuInfo.css.icon.icon" ng-style="{'width': '160px'}"/>
-												<span class="form-control-addon" ng-click="selectHomemenuIcon()"><i class="{{menuInfo.css.icon.icon}}" ng-init="menuInfo.css.icon.icon = 'fa fa-external-link'"></i>&nbsp;选择图标</span>
+											<label for="" class="control-label col-sm-2">系统图标</label>
+											<div class="form-controls col-sm-10" >
+												<div class="input-group">
+													<input type="text" class="form-control" ng-model="menuInfo.css.icon.icon"/>
+													<span class="input-group-addon" ng-click="selectHomemenuIcon()"><i class="{{menuInfo.css.icon.icon}}" ng-init="menuInfo.css.icon.icon = 'fa fa-external-link'"></i></span>
+													<span class="input-group-btn" ng-click="selectHomemenuIcon()"><a class="btn btn-default">&nbsp;选择图标</a></span>
+												</div>
 												<span class="help-block">导航的背景图标，系统提供了丰富的图标ICON。</span>
 											</div>
 										</div>
 										<div class="form-group" ng-if="menuInfo.icontype != 2">
-											<label for="" class="control-label">图标颜色</label>
-											<div class="form-controls input-group">
-												<input type="text" class="form-control" ng-model="menuInfo.css.icon.color" ng-style="{'display' : 'none'}">
-												<div we7-colorpicker we7-my-color="menuInfo.css.icon.color" we7-my-default-color="'#2B2D30'" ng-style="{'width': '10px','margin-left' : '-30px'}"></div>
+											<label for="" class="control-label col-sm-2">图标颜色</label>
+											<div class="form-controls col-sm-10">
+												<div class="input-group">
+													<input type="text" class="form-control" ng-model="menuInfo.css.icon.color" ng-style="{'display' : 'none'}">
+													<div we7-colorpicker we7-my-color="menuInfo.css.icon.color" we7-my-default-color="'#2B2D30'"></div>
+											
+												</div>
 											</div>
 										</div>
 										<div class="form-group" ng-if="menuInfo.icontype != 2">
-											<label for="" class="control-label">图标大小</label>
-											<div class="form-controls" >
-												<input class="form-control" type="text" ng-style="{'width': '50px'}" ng-model="menuInfo.css.icon.width" ng-init="menuInfo.css.icon.width = menuInfo.css.icon.width ? menuInfo.css.icon.width : 35">
-												<span class="form-control-addon">PX</span>
+											<label for="" class="control-label col-sm-2">图标大小</label>
+											<div class="form-controls col-sm-10" >
+												<div class="input-group col-sm-4">
+													<input class="form-control" type="text" ng-model="menuInfo.css.icon.width" ng-init="menuInfo.css.icon.width = menuInfo.css.icon.width ? menuInfo.css.icon.width : 35">
+													<span class="input-group-addon">PX</span>
+												</div>
 												<span class="help-block">图标的尺寸大小，单位为像素，上传图标时此设置项无效</span>
 											</div>
 										</div>
@@ -459,8 +469,8 @@
 					<div class="site-edit-heading">导航快捷菜单</div>
 					<div class="we7-form app-side">
 						<div class="form-group">
-							<label for="" class="control-label">是否开启</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">是否开启</label>
+							<div class="form-controls col-sm-10">
 								<label>
 									<div class="switch" ng-class="{'switchOn': quickMenuStatus}" ng-click="quickMenuSwitch()"></div>
 								</label>
@@ -468,8 +478,8 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="" class="control-label">导航应用:</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">导航应用:</label>
+							<div class="form-controls col-sm-10 form-control-static">
 								<input id='check-1' type="checkbox" ng-model="activeItem.position.homepage"/>
 								<label for="check-1">微站主页</label>
 								<input id='check-2' type="checkbox" ng-model="activeItem.position.page" />
@@ -480,8 +490,8 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="" class="control-label">导航隐藏:</label>
-							<div class="form-controls">
+							<label for="" class="control-label col-sm-2">导航隐藏:</label>
+							<div class="form-controls col-sm-10">
 								<a href="javascript:;" class="color-default" ng-click="showSearchModules()">选择模块</a>
 								<div class="form-control-static">
 									<label class="label label-warning" ng-show="!hasIgnoreModules">未设置，将在全部模块中显示</label>
@@ -509,14 +519,14 @@
 												<h3>一级导航</h3>
 												<div>
 													<div class="form-group">
-														<label class="control-label text-center" ng-style="{'min-width': '90px'}">标题</label>
-														<div class="form-controls">
+														<label class="control-label col-sm-2 text-center" >标题</label>
+														<div class="form-controls col-sm-10">
 															<input type="text" class="form-control" name="" value="" ng-model="menu.title" />
 														</div>
 													</div>
 													<div class="form-group">
-														<label class="control-label text-center" ng-style="{'min-width': '90px'}">链接到</label>
-														<div class="form-controls">
+														<label class="control-label col-sm-2 text-center" >链接到</label>
+														<div class="form-controls col-sm-10">
 															<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 														</div>
 													</div>
@@ -529,14 +539,14 @@
 														<a href="javascript:;" ng-click="removeSubMenu($parentIndex, submenu)"><i class="fa fa-times"></i></a>
 													</div>
 													<div class="form-group">
-														<label class="control-label text-center" ng-style="{'min-width': '90px'}">标题</label>
-														<div class="form-controls">
+														<label class="control-label col-sm-2 text-center">标题</label>
+														<div class="form-controls col-sm-10">
 															<input type="text" class="form-control" name="" ng-model="submenu.title">
 														</div>
 													</div>
 													<div class="form-group">
-														<label class="control-label text-center" ng-style="{'min-width': '90px'}">链接到</label>
-														<div class="form-controls">
+														<label class="control-label col-sm-2 text-center" >链接到</label>
+														<div class="form-controls col-sm-10">
 															<div we7-linker we7-my-url="submenu.url" we7-my-title="submenu.title"></div>
 														</div>
 													</div>
@@ -554,8 +564,8 @@
 								<!--APP导航样式:shopNav-app-->
 								<div class="shopNav-app" ng-show="activeItem.navStyle == 2">
 									<div class="form-group we7-padding-top">
-										<label for="" class="control-label" ng-style="{'min-width': '90px'}">页面颜色</label>
-										<div class="form-controls input-group">
+										<label for="" class="control-label col-sm-2" >页面颜色</label>
+										<div class="form-controls col-sm-10 input-group">
 											<div we7-colorpicker we7-my-color="activeItem.bgColor" we7-my-default-color="'#2B2D30'"></div>
 										</div>
 									</div>
@@ -566,14 +576,14 @@
 										<div class="nav-img-group">
 											<div class="clearfix">
 												<div class="nav-img-normal pull-left">
-													<label class="control-label">普通：</label>
-													<div class="form-controls">
+													<label class="control-label col-sm-2">普通：</label>
+													<div class="form-controls col-sm-10">
 														<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
 													</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
-													<label class="control-label">高亮：</label>
-													<div class="form-controls">
+													<label class="control-label col-sm-2">高亮：</label>
+													<div class="form-controls col-sm-10">
 														<div we7-iconer we7-my-image="menu.hoverimage" we7-my-icon="menu.hovericon">选择</div>
 													</div>
 												</div>
@@ -581,14 +591,14 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label" ng-style="{'min-width': '90px'}">标题</label>
-											<div class="form-controls">
+											<label class="control-label col-sm-2" >标题</label>
+											<div class="form-controls col-sm-10">
 												<input type="text" class="form-control" name="" ng-model="menu.title">
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
-											<div class="form-controls ">
+											<label class="control-label col-sm-2" >链接到</label>
+											<div class="form-controls col-sm-10 ">
 												<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 											</div>
 										</div>
@@ -600,8 +610,8 @@
 								<!--带购物车导航模板-->
 								<div class="shopNav-cart" ng-show="activeItem.navStyle == 3">
 									<div class="form-group we7-padding-top" style="border-bottom:1px solid #e5e5e5;">
-										<label class="control-label" ng-style="{'min-width': '90px'}">页面颜色</label>
-										<div class="form-controls input-group">
+										<label class="control-label col-sm-2" >页面颜色</label>
+										<div class="form-controls col-sm-10 input-group">
 											<div we7-colorpicker we7-my-color="activeItem.bgColor" we7-my-default-color="'#2B2D30'"></div>
 										</div>
 									</div>
@@ -610,14 +620,14 @@
 										<div class="nav-img-group">
 											<div class="clearfix">
 												<div class="nav-img-normal pull-left">
-													<label class="control-label">普通：</label>
-													<div class="form-controls">
+													<label class="control-label col-sm-6">普通：</label>
+													<div class="form-controls col-sm-6">
 														<div we7-iconer we7-my-image="activeItem.extend[0].image" we7-my-icon="activeItem.extend[0].icon" we7-my-icon-color="activeItem.extend[0].icon.color">选择</div>
 													</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
-													<label class="control-label">高亮：</label>
-													<div class="form-controls">
+													<label class="control-label col-sm-6">高亮：</label>
+													<div class="form-controls col-sm-6">
 														<div we7-iconer we7-my-image="activeItem.extend[0].hoverimage" we7-my-icon="activeItem.extend[0].hovericon">选择</div>
 													</div>
 												</div>
@@ -625,8 +635,8 @@
 											<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：不大于82*82像素，支持PNG格式</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
-											<div class="form-controls ">
+											<label class="control-label col-sm-2" >链接到</label>
+											<div class="form-controls col-sm-10 ">
 												<div we7-linker we7-my-url="activeItem.extend[0].url" we7-my-title="activeItem.extend[0].title"></div>
 											</div>
 										</div>
@@ -640,14 +650,14 @@
 											</div>
 											<div class="clearfix">
 												<div class="nav-img-normal pull-left">
-													<label class="control-label">普通：</label>
-													<div class="form-controls">
+													<label class="control-label col-sm-2">普通：</label>
+													<div class="form-controls col-sm-10">
 														<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
 													</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
-													<label class="control-label">高亮：</label>
-													<div class="form-controls">
+													<label class="control-label col-sm-2">高亮：</label>
+													<div class="form-controls col-sm-10">
 														<div we7-iconer we7-my-image="menu.hoverimage" we7-my-icon="menu.hovericon">选择</div>
 													</div>
 												</div>
@@ -655,8 +665,8 @@
 											<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：建议82*82像素</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
-											<div class="form-controls ">
+											<label class="control-label col-sm-2" >链接到</label>
+											<div class="form-controls col-sm-10 ">
 												<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 											</div>
 										</div>
@@ -675,8 +685,8 @@
 											<div class="nav-img-group">
 												<div class="clearfix">
 													<div class="nav-img-normal pull-left">
-														<label class="control-label">普通：</label>
-														<div class="form-controls">
+														<label class="control-label col-sm-2">普通：</label>
+														<div class="form-controls col-sm-10">
 															<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
 														</div>
 													</div>
@@ -684,8 +694,8 @@
 												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：建议82*82像素</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
-												<div class="form-controls ">
+												<label class="control-label col-sm-2" >链接到</label>
+												<div class="form-controls col-sm-10 ">
 													<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 												</div>
 											</div>
@@ -702,8 +712,8 @@
 											<div class="nav-img-group">
 												<div class="clearfix">
 													<div class="nav-img-normal pull-left">
-														<label class="control-label">普通：</label>
-														<div class="form-controls">
+														<label class="control-label col-sm-2">普通：</label>
+														<div class="form-controls col-sm-10">
 															<div we7-iconer we7-my-image="activeItem.extend[0].image" we7-my-icon="activeItem.extend[0].icon" we7-my-icon-color="activeItem.extend[0].icon.color">选择</div>
 														</div>
 													</div>
@@ -711,8 +721,8 @@
 												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：建议82*82像素</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
-												<div class="form-controls ">
+												<label class="control-label col-sm-2" >链接到</label>
+												<div class="form-controls col-sm-10 ">
 													<div we7-linker we7-my-url="activeItem.extend[0].url" we7-my-title="activeItem.extend[0].title"></div>
 												</div>
 											</div>
@@ -721,8 +731,8 @@
 											<div class="nav-img-group">
 												<div class="clearfix">
 													<div class="nav-img-normal pull-left">
-														<label class="control-label">普通：</label>
-														<div class="form-controls">
+														<label class="control-label col-sm-2">普通：</label>
+														<div class="form-controls col-sm-10">
 															<div we7-iconer we7-my-image="activeItem.extend[1].image" we7-my-icon="activeItem.extend[1].icon" we7-my-icon-color="activeItem.extend[1].icon.color">选择</div>
 														</div>
 													</div>
@@ -730,8 +740,8 @@
 												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：建议82*82像素</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
-												<div class="form-controls ">
+												<label class="control-label col-sm-2" >链接到</label>
+												<div class="form-controls col-sm-10 ">
 													<div we7-linker we7-my-url="activeItem.extend[1].url" we7-my-title="activeItem.extend[1].title"></div>
 												</div>
 											</div>
@@ -751,8 +761,8 @@
 												<div class="help-block" ng-style="{'margin-left': '90px'}">尺寸要求：建议86*82像素</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label" ng-style="{'min-width': '90px'}">链接到</label>
-												<div class="form-controls ">
+												<label class="control-label col-sm-2" >链接到</label>
+												<div class="form-controls col-sm-10 ">
 													<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 												</div>
 											</div>

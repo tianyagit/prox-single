@@ -10,8 +10,8 @@
 			<input type="hidden" name="day" value="{$_GPC['day']}">
 			<input type="hidden" name="token" value="{$_W['token']}">
 			<div class="form-group">
-				<label class="control-label">群发对象</label>
-				<div class="form-controls">
+				<label class="control-label col-sm-2">群发对象</label>
+				<div class="form-controls col-sm-8">
 					<input type="hidden" name="group" value="">
 					<select class="we7-select mass-group">
 						<option ng-repeat="group in groups" ng-selected="group.name == massdata.groupname" ng-bind="group.name" ng-value="group.id"></option>
@@ -20,8 +20,8 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label">发送时间</label>
-				<div class="form-controls">
+				<label class="control-label col-sm-2">发送时间</label>
+				<div class="form-controls col-sm-8">
 					<div class="input-group clockpicker">
 						<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
 						<input type="text" readonly name="clock" ng-model="clock" class="form-control">
