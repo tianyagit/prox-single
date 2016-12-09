@@ -21,10 +21,13 @@
 		<div class="form-group">
 			{php echo tpl_form_field_daterange('time', array('start' => date('Y-m-d', $starttime), 'end' => date('Y-m-d', $endtime)))}
 		</div>
-		<div class="input-group  we7-margin-left-sm" style="width: 300px;">
-			<input name="nickname" value="{$nickname}" class="form-control" placeholder="" type="text">
-			<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+		<div class="form-group">
+			<div class="input-group col-sm-12" >
+				<input name="nickname" value="{$nickname}" class="form-control" placeholder="" type="text">
+				<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
+			</div>
 		</div>
+		
 		<input name="tag" value="{$tag}" type="hidden">
 	</form>
 	<div class="pull-right">
