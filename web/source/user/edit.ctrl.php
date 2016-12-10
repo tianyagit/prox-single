@@ -1,19 +1,19 @@
 <?php
 /**
+ * 编辑用户
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
 
+load()->model('user');
 
-$_W['page']['title'] = '编辑用户 - 用户管理';
-uni_user_permission_check('system_user_display');
 
 $do = $_GPC['do'];
 $dos = array('edit_base', 'edit_modules_tpl', 'edit_account');
 $do = in_array($do, $dos) ? $do: 'edit_base';
+uni_user_permission_check('system_user_display');
 
-load()->model('user');
+$_W['page']['title'] = '编辑用户 - 用户管理';
 $uid = intval($_GPC['uid']);
 $user = user_single($uid);
 if (empty($user)) {
@@ -48,16 +48,15 @@ if ($do == 'edit_base') {
 	template('user/edit-base');
 }
 if($do == 'edit_modules_tpl') {
-	if($_W['isajax'] && $_W['ispost']) {
-		$post = $_GPC['__input'];
-		if(intval($post['groupid']) == $user['groupid']){
+	if($_W['ispost']) {
+		if(intval($_GPC['groupid']) == $user['groupid']){
 			message('0' , 'ajax', 'success');
 		}
-		if(!empty($post['type']) && !empty($post['groupid'])) {
+		if(!empty($_GPC['type']) && !empty($_GPC['groupid'])) {
 			$data['uid'] = $uid;
-			$data[$post['type']] = intval($post['groupid']);
+			$data[$_GPC['type']] = intval($_GPC['groupid']);
 			if(user_update($data)) {
-				$group_info = group_detail_info($post['groupid']);
+				$group_info = group_detail_info($_GPC['groupid']);
 				message($group_info, 'ajax', 'success');
 			}else {
 				message('1', 'ajax', 'error');
@@ -84,6 +83,7 @@ if($do == 'edit_account') {
 				}
 			}
 		}
+		unset($wechats_val);
 	}
 	template('user/edit-account');
 }
