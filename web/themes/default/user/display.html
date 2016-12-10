@@ -38,7 +38,7 @@
 		<th>到期时间</th>
 		<th class="text-left">操作</th>
 	</tr>
-	<tr ng-repeat="user in users">
+	<tr ng-repeat="user in users" ng-if="users">
 		<td class="text-left" ng-bind="user.username">{$user['username']}</td>
 		<td>
 			<span class="color-default" ng-if="user.founder">管理员</span>
@@ -64,6 +64,9 @@
 				<a href="javascript:;" ng-click="handle(user.uid, 'del');" ng-if="do == 'recycle_display'">删除</a>
 			</div>
 		</td>
+	</tr>
+	<tr ng-if="!users">
+		<td colspan="7">暂无数据</td>
 	</tr>
 </table>
 <div class="pull-right">
