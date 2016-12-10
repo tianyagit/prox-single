@@ -14,6 +14,7 @@ load()->model('cloud');
 load()->model('cache');
 load()->func('file');
 load()->model('module');
+load()->model('account');
 
 $dos = array('installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
@@ -89,6 +90,8 @@ if ($do == 'module_detail') {
 			}
 		}
 	}
+
+	//模块订阅消息
 	$module_subscribes = array();
 	$module['subscribes'] = iunserializer($module_info['subscribes']);
 	if (!empty($module['subscribes'])) {
@@ -106,6 +109,7 @@ if ($do == 'module_detail') {
 	}
 	$receive_ban = in_array($module_info['name'], $module_ban) ? 1 : 2;
 	$modulename = $_GPC['modulename'];
+
 	//验证订阅消息是否成功
 	$check_subscribe = 0;
 	$module_obj = WeUtility::createModuleReceiver($module_name);
@@ -120,26 +124,25 @@ if ($do == 'module_detail') {
 			$check_subscribe = 1;
 		}
 	}
+
+	//可以使用此模块的公众号
+	$pageindex = max(1, $_GPC['page']);
+	$pagesize = 10;
 	$use_module_account = array();
 	$uniaccount_list = pdo_getall('uni_account');
 	if (!empty($uniaccount_list)) {
 		foreach($uniaccount_list as $uniaccount) {
-			$uni_group = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array(), 'groupid');
-			$uni_group = array_keys($uni_group);
-			$have_module_group_list = array();//所有包含此模块的的套餐id
-			if (!empty($module_group)) {
-				foreach ($module_group as $module_group_info) {
-					$have_module_group_list[] = $module_group_info['id'];
-				}
-			}
-			if (in_array(-1, $uni_group)) {
-				$use_module_account[] = $uniaccount;
-			} elseif (array_intersect($have_module_group_list, $uni_group)) {
-				$use_module_account[] = $uniaccount;
-			} else {
+			$uniaccount_have_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid']), array(), 'module');
+			$uniaccount_have_module = array_keys($uniaccount_have_module);
+			if (in_array($module_info['name'], $uniaccount_have_module)) {
+				$uniaccount_info = account_fetch($uniaccount['default_acid']);
+				$use_module_account[] = $uniaccount_info;
 			}
 		}
 	}
+	$total = count($use_module_account);
+	$use_module_account = array_slice($use_module_account, ($pageindex - 1) * $pagesize, $pagesize);
+	$pager = pagination($total, $pageindex, $pagesize);
 }
 
 if ($do == 'uninstall') {
