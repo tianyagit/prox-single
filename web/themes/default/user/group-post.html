@@ -7,23 +7,25 @@
 	</ol>
 	<form class="we7-form user-group-edit" method="post" action="">
 		<div class="form-group">
-			<label for="" class="control-label">用户权限组名</label>
-			<div class="form-controls">
-				<input type="text" name="name" class="form-control" ng-style="{'width': '600px'}" ng-model="groupInfo.name">
+			<label for="" class="control-label col-sm-2">用户权限组名</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" name="name" class="form-control" ng-model="groupInfo.name">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="" class="control-label">创建公众号数量</label>
-			<div class="form-controls">
-				<input type="text" name="maxaccount" class="form-control" ng-style="{'width': '600px'}" ng-model="groupInfo.maxaccount">
+			<label for="" class="control-label col-sm-2">创建公众号数量</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" name="maxaccount" class="form-control" ng-model="groupInfo.maxaccount">
 				<span class="help-block">限制公众号的数量，为0则不允许添加。</span>
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="" class="control-label">有效期</label>
-			<div class="form-controls">
-				<input type="text" name="timelimit" class="form-control" ng-style="{'width': '600px'}" ng-model="groupInfo.timelimit">
-				<span class="form-control-feedback">天</span>
+			<label for="" class="control-label col-sm-2">有效期</label>
+			<div class="form-controls col-sm-8">
+				<div class="input-group">
+					<input type="text" name="timelimit" class="form-control" ng-model="groupInfo.timelimit">
+					<span class="input-group-addon font-default">天</span>
+				</div>
 			<span class="help-block">设置用户组的有效期限。0为不限制期限。到期后，该用户下的所有公众号只能使用 "基础服务"</span>
 			</div>
 		</div>

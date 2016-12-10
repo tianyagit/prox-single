@@ -10,14 +10,14 @@
 			<input type="hidden" name="id" value="{$item['id']}">
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">字段</label>
-				<div class="form-controls">
-					<input type="text" id="" name="field" ng-style="{'width': '600px'}" class="form-control" ng-blur="verifyField()" ng-model="item.field" readonly ng-if="item != null" placeholder="请使用字母或数字或下划线组合字段名">
-					<input type="text" id="" name="field" ng-style="{'width': '600px'}" class="form-control" ng-blur="verifyField()" ng-model="item.field" ng-if="item == null" placeholder="请使用字母或数字或下划线组合字段名">
+				<div class="form-controls col-sm-8">
+					<input type="text" id="" name="field" class="form-control" ng-blur="verifyField()" ng-model="item.field" readonly ng-if="item != null" placeholder="请使用字母或数字或下划线组合字段名">
+					<input type="text" id="" name="field" class="form-control" ng-blur="verifyField()" ng-model="item.field" ng-if="item == null" placeholder="请使用字母或数字或下划线组合字段名">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">字段长度</label>
-				<div class="form-controls">
+				<div class="form-controls col-sm-8">
 					<select name="length" class="we7-select">
 						<option value="64">64</option>
 						<option value="128" ng-selected="item.field_length == 128">128</option>
@@ -27,27 +27,27 @@
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">排序</label>
-				<div class="form-controls">
-					<input type="text" name="displayorder" ng-style="{'width': '600px'}" class="form-control" ng-model="item.displayorder">
+				<div class="form-controls col-sm-8">
+					<input type="text" name="displayorder" class="form-control" ng-model="item.displayorder">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">名称</label>
-				<div class="form-controls">
-					<input type="text" id="" name="title" ng-style="{'width': '600px'}" class="form-control" ng-model="item.title">
+				<div class="form-controls col-sm-8">
+					<input type="text" id="" name="title" class="form-control" ng-model="item.title">
 				</div>
 			</div>
 			
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">描述</label>
-				<div class="form-controls">
-					<textarea name="description" rows="4" class="form-control" ng-style="{'width': '600px'}" ng-bind="item.description"></textarea>
+				<div class="form-controls col-sm-8">
+					<textarea name="description" rows="4" class="form-control" ng-bind="item.description"></textarea>
 			
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">是否启用</label>
-				<div class="form-controls">
+				<div class="form-controls col-sm-8">
 					<input type="radio" name="available" id="radio-1" value="1" ng-checked="available">
 				    <label for="radio-1">是</label>
 				    <input type="radio" name="available" id="radio-2" value="0" ng-checked="!available">
@@ -57,7 +57,7 @@
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">是否必填</label>
-				<div class="form-controls">
+				<div class="form-controls col-sm-8">
 					<input id='radio-3' type="radio" name="required" value="1" ng-checked="required">
 				    <label for="radio-3">是</label>
 				    <input id='radio-4' type="radio" name="required"  value="0" ng-checked="!required">
@@ -67,7 +67,7 @@
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">提交后不可修改</label>
-				<div class="form-controls">
+				<div class="form-controls col-sm-8">
 					<input id='radio-5' type="radio" name="unchangeable" value="1" ng-checked="unchangeable">
 				    <label for="radio-5">是</label>
 				    <input id='radio-6' type="radio" name="unchangeable" value="0" ng-checked="!unchangeable">
@@ -77,7 +77,7 @@
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">在注册页面显示</label>
-				<div class="form-controls">
+				<div class="form-controls col-sm-8">
 					<input id='radio-7' type="radio" name="showinregister"  value="1" ng-checked="showinregister">
 				    <label for="radio-7">是</label>
 				    <input id='radio-8' type="radio" name="showinregister" value="0" ng-checked="!showinregister">
