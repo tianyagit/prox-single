@@ -242,7 +242,7 @@
 			<img src="{php echo tomedia($module_info['logo'])}" style="width: 80px;height: 80px;" class="info-logo">
 		</a>
 		<div class="pull-right info-edit">
-			<a href="#module-info" class="btn btn-primary" data-toggle="modal" >编 辑</a>
+			<a href="#" class="btn btn-primary" data-toggle="modal" ng-click="editModule('{$module_info['mid']}')">编 辑</a>
 			<a href="" class="btn btn-danger">升级</a>
 		</div>
 		<div class="media-body">
@@ -308,10 +308,10 @@
 				</label>
 			</div>
 		</div>
-		{if !empty($module_subscribe)}
+		{if !empty($module_subscribes)}
 		<div class="panel-body">
 			<ul>
-				{loop $module_subscribe $subscribe}
+				{loop $module_subscribes $subscribe}
 				<li>{$mtypes[$subscribe]} {if $check_subscribe == 0}<lable class="label label-danger">通讯失败</lable>{/if}  </li>
 				{/loop}
 			</ul>
@@ -332,38 +332,52 @@
 				类型
 			</th>
 			<th>
-				总访问次数
+
 			</th>
 			<th>
-				状态
 			</th>
 			<th class="text-left">
 				操作
 			</th>
 		</tr>
+		{loop $use_module_account $account}
 		<tr>
 			<td class="text-left">
-				微擎外送系统测试号(禁制删除)
+				{if empty($account['name'])}
+				未知公众号
+				{else}
+				{$account['name']}
+				{/if}
 			</td>
 			<td>
-				<span class="color-gray">普通订阅号     </span>
+				<span class="color-gray">
+					{if $account['level'] == 1}
+					普通订阅号
+					{elseif $account['level'] == 2}
+					普通服务号
+					{elseif $account['level'] == 3}
+					认证订阅号
+					{elseif $account['level'] == 4}
+					认证服务号
+					{/if}
+				</span>
 			</td>
 			<td>
-				<span class="color-gray">300字     </span>
+				<span class="color-gray">     </span>
 			</td>
 			<td>
-				<span class="color-green">已开启</span>
+				<span class="color-green"></span>
 			</td>
 			<td class="text-left">
-				<a href="" class="color-default">公众号权限设置</a>
+				<a href="{php echo url('account/post/module_tpl', array('uniacid' => $account['uniacid'], 'acid' => $account['acid']))}" class="color-default">公众号权限设置</a>
 			</td>
 		</tr>
+		{/loop}
 	</table>
+	{$pager}
 	<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog we7-modal-dialog" style="width:800px">
 			<div class="modal-content">
-				<form action="./index.php?c=extension&a=module&do=info&" method="post" enctype="multipart/form-data" class="form-horizontal form" id="form-info">
-					<input type="hidden" name="m" value=""/>
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 						<h4 class="modal-title">编辑模块信息</h4>
@@ -372,34 +386,34 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块标题</label>
 							<div class="col-sm-10">
-								<input type="text" name="title" value="" class="form-control">
+								<input type="text" name="title" ng-model="moduleinfo.title" class="form-control">
 								<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块简述</label>
 							<div class="col-sm-10">
-								<input type="text" name="ability" value="" class="form-control">
+								<input type="text" name="ability" ng-model="moduleinfo.ability" class="form-control">
 								<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块介绍</label>
 							<div class="col-sm-10">
-								<textarea type="text" name="description" class="form-control" rows="5"></textarea>
+								<textarea type="text" name="description" ng-model="moduleinfo.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
 								<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块缩略图</label>
 							<div class="col-sm-10">
-								<div class="we7-input-img">
-									<img src="">
-									<a href="javascript:;" class="input-addon"><span>+</span></a>
-									<input type="hidden" name="thumb" >
+								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
+									<img ng-src="{{ moduleinfo.logo }}" ng-if="moduleinfo.logo">
+									<a href="javascript:;" class="input-addon" ng-hide="moduleinfo.logo" ng-click="changePicture('logo')"><span>+</span></a>
+									<input type="hidden" name="thumb">
 									<div class="cover-dark">
-										<a href="" class="cut" >更换</a>
-										<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+										<a href="javascript:;" class="cut" ng-click="changePicture('logo')">更换</a>
+										<a href="javascript:;" class="del" ng-click="delPicture('logo')"><i class="fa fa-times text-danger"></i></a>
 									</div>
 								</div>
 								<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
@@ -408,13 +422,13 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块封面</label>
 							<div class="col-sm-10">
-								<div class="we7-input-img active">
-									<img src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=937930560,2752874413&fm=58">
-									<a href="javascript:;" class="input-addon">+</a>
-									<input type="hidden" name="thumb" >
+								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px;">
+									<img ng-src="{{ moduleinfo.preview }}">
+									<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
+									<input type="hidden" name="thumb">
 									<div class="cover-dark">
-										<a href="" class="cut" >更换</a>
-										<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
+										<a href="javascript:;" class="cut" ng-click="changePicture('preview')">更换</a>
+										<a href="javascript:;" class="del" ng-click="delPicture('preview')"><i class="fa fa-times text-danger"></i></a>
 									</div>
 								</div>
 								<span class="help-block">模块封面, 大小为 600*350, 更好的设计将会获得官方推荐位置。仅支持jpg格式</span>
@@ -423,22 +437,25 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<input type="submit" class="btn btn-primary" name="submit" value="保存">
+						<button  class="btn btn-primary" type="text" name="submit" ng-click="save()" data-dismiss="modal">保存</button>
 						<input type="hidden" name="token" value="c781f0df">
 					</div>
-				</form>
 			</div>
 		</div>
 	</div>
 </div>
 
 <script>
-	angular.module('moduleApp').value('config', {
-		'receive_ban' : "{$receive_ban}",
-		'url' : '{php echo url('system/module/change_receive_ban')}',
-		'modulename' : '{$module_info['name']}'
+	require(['fileUploader'], function() {
+		angular.module('moduleApp').value('config', {
+			'receive_ban' : "{$receive_ban}",
+			'url' : '{php echo url('system/module/change_receive_ban')}',
+			'modulename' : '{$module_info['name']}',
+			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
+			'saveModuleUrl' : 	"{php echo url('system/module/save_module_info')}"
+		});
+		angular.bootstrap($('.js-system-module-detail'), ['moduleApp']);
 	});
-	angular.bootstrap($('.js-system-module-detail'), ['moduleApp']);
 </script>
 {/if}
 {template 'common/footer'}
