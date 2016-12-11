@@ -344,7 +344,7 @@ if ($do == 'installed') {
 	$total_uninstalled = count($localUninstallModules);
 
 	$pageindex = max($_GPC['page'], 1);
-	$pagesize = 15;
+	$pagesize = 10;
 	$letter = $_GPC['letter'];
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');

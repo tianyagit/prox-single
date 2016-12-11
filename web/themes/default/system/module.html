@@ -35,10 +35,6 @@
 		<table class="table we7-table vertical-middle">
 			<tr>
 				<th colspan="3" class="text-left">应用名</th>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>
 				<th class="text-left">操作</th>
 			</tr>
 			<tr ng-repeat="module in module_list">
@@ -53,20 +49,14 @@
 				</td>
 				<td class="text-left">
 					<p>{{ module.title }}</p>
-					<span>版本：{{ module.version }} </span>{if $module['upgrade']}<span class="color-red">发现新版本</span>{/if}
+					<span>版本：{{ module.version }} </span><span class="color-red" ng-if="module.upgrade">发现新版本</span>
 				</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
 				<td class="text-left">
 					<div class="link-group">
-						{if $module['upgrade']}
-						<a href="" class="color-red">升级</a>
-						{/if}
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">详情</a>
 						<a href="javascript:;" data-toggle="modal" ng-click="editModule(module.mid)">编辑</a>
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}">停用</a>
+						<a href="" class="color-red" ng-if="module.upgrade">升级</a>
 					</div>
 				</td>
 			</tr>
@@ -185,7 +175,7 @@
 				<input type="hidden" name="do" value="not_installed">
 				<input type="hidden" name="status" value="{if $status == 'recycle'}recycle{else}uninstalled{/if}">
 				<input type="hidden" name="letter" value="{$letter}">
-				<input class="form-control " name="title" value="{$title}" type="text" placeholder="名称" >
+				<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
 				<span class="input-group-addon"><button id="search" class="button"><i class="fa fa-search"></i></button></span>
 			</div>
 		</form>
