@@ -212,7 +212,7 @@
 				<span>版本：{{ module.version }} </span><span class="color-red">发现新版本</span>
 			</td>
 			<td class="text-left">
-				<a href="" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('system/module/install')}&module_name={{ module.name }}" class="btn btn-primary">安装应用模块</a>
 			</td>
 		</tr>
 	</table>
