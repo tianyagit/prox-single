@@ -17,10 +17,10 @@ if($do == 'post' && $_W['ispost']) {
 	if(!empty($_GPC['type'])) {
 		$type = $_GPC['type'];
 	}else {
-		message('40035', 'ajax', 'error');
+		message('40035', '', 'ajax');
 	}
 	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
-	if(empty($uid)) message('-1', 'ajax', 'error');
+	if(empty($uid)) message('-1', '', 'ajax');
 	switch ($type) {
 		case 'avatar':
 			$result = pdo_update('users_profile', array('avatar' => $_GPC['avatar']), array('uid' => $uid));
@@ -29,9 +29,9 @@ if($do == 'post' && $_W['ispost']) {
 			$result = pdo_update('users', array('username' => $_GPC['username']), array('uid' => $uid));
 			break;
 		case 'password':
-			if($_GPC['newpwd'] !== $_GPC['renewpwd']) message('2', 'ajax', 'error');
+			if($_GPC['newpwd'] !== $_GPC['renewpwd']) message('2', '', 'ajax');
 			$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
-			if($pwd != $user['password']) message('3', 'ajax', 'error');
+			if($pwd != $user['password']) message('3', '', 'ajax');
 			$newpwd = user_hash($_GPC['newpwd'], $user['salt']);
 			$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
 			break;
@@ -57,9 +57,9 @@ if($do == 'post' && $_W['ispost']) {
 			break;
 	}
 	if($result) {
-		message('0', 'ajax', 'success');
+		message('0', '', 'ajax');
 	}else {
-		message('1', 'ajax', 'error');
+		message('1', '', 'ajax');
 	}
 }
 

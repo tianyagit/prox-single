@@ -23,7 +23,7 @@ if($do == 'post') {
 		$name = trim($_GPC['name']);
 		$sql = "SELECT s.*, t.`name` AS `tname`, t.`title`, t.`type` FROM " . tablename('site_styles') . " AS s LEFT JOIN " . tablename('site_templates') . " AS t ON s.`templateid` = t.`id` WHERE s.`uniacid` = :uniacid AND s.`name` LIKE :name";
 		$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':name' => "%{$name}%"));
-		message($styles, 'ajax', 'success');
+		message(error(0, $styles), '', 'ajax');
 	}
 	$id = intval($_GPC['multiid']);
 
@@ -211,16 +211,16 @@ if($do == 'quickmenu_display' && $_W['ispost']) {
 		$status = $page['status'] == 1 ? 1 : 0;
 		$modules = uni_modules();
 		$modules = !empty($modules) ? $modules : 'null';
-		message(array('params' => json_decode($params), 'status' => $status, 'modules' => $modules), 'ajax', 'success');
+		message(error(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules)), 'ajax', 'success');
 	}else {
-		message('-1', 'ajax', 'error');
+		message('-1', '', 'ajax');
 	}
 }
 
 if($do == 'quickmenu_post' && $_W['ispost']) {
 	$params = $_GPC['postdata']['params'];
 	if (empty($params)) {
-		message('请您先设计手机端页面.2', 'ajax', 'error');
+		message('请您先设计手机端页面.2', '', 'ajax');
 	}
 	$html = htmlspecialchars_decode($_GPC['postdata']['html'], ENT_QUOTES);
 	$html = preg_replace('/background\-image\:(\s)*url\(\"(.*)\"\)/U', 'background-image: url($2)', $html);
@@ -242,5 +242,5 @@ if($do == 'quickmenu_post' && $_W['ispost']) {
 		pdo_insert('site_page', $data);
 		$id = pdo_insertid();
 	}
-	message('0', 'ajax', 'success');
+	message('0', '', 'ajax');
 }

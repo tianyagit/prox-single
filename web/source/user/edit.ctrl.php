@@ -50,19 +50,19 @@ if ($do == 'edit_base') {
 if($do == 'edit_modules_tpl') {
 	if($_W['ispost']) {
 		if(intval($_GPC['groupid']) == $user['groupid']){
-			message('0' , 'ajax', 'success');
+			message('0' , '', 'ajax');
 		}
 		if(!empty($_GPC['type']) && !empty($_GPC['groupid'])) {
 			$data['uid'] = $uid;
 			$data[$_GPC['type']] = intval($_GPC['groupid']);
 			if(user_update($data)) {
 				$group_info = group_detail_info($_GPC['groupid']);
-				message($group_info, 'ajax', 'success');
+				message($group_info, '', 'ajax');
 			}else {
-				message('1', 'ajax', 'error');
+				message('1', '', 'ajax');
 			}
 		}else {
-			message('-1', 'ajax', 'error');
+			message('-1', '', 'ajax');
 		}
 	}
 	$groups = pdo_getall('users_group', array(), array('id', 'name'), 'id');
