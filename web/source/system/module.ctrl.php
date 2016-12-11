@@ -9,6 +9,8 @@
 
 defined('IN_IA') or exit('Access Denied');
 
+include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
+
 $dos = array('install', 'installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
@@ -403,6 +405,7 @@ if ($do == 'not_installed') {
 				}
 			}
 			if (!empty($letter) && strlen($letter) == 1) {
+				$pinyin = new Pinyin_Pinyin();
 				$first_char = $pinyin->get_first_char($module['title']);
 				if ($letter != $first_char) {
 					unset($localUninstallModules[$name]);
