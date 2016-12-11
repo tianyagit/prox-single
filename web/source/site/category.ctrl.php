@@ -1,12 +1,17 @@
 <?php
 /**
+ * 文章分类管理
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
-uni_user_permission_check('site_category');
+
+load()->func('file');
+
 $do = !empty($do) ? $do : 'display';
 $do = in_array($do, array('display', 'post', 'delete')) ? $do : 'display';
+uni_user_permission_check('site_category');
+
+$_W['page']['title'] = '文章分类管理 - 微官网';
 
 if ($do == 'display') {
 	$children = array();
@@ -18,7 +23,8 @@ if ($do == 'display') {
 		}
 	}
 	template('site/category-display');
-} elseif ($do == 'post') {
+}
+if ($do == 'post') {
 	$parentid = intval($_GPC['parentid']);
 	$id = intval($_GPC['id']);
 	//获取当前默认微站的模板
@@ -99,7 +105,7 @@ if ($do == 'display') {
 			$nav = array(
 				'uniacid' => $_W['uniacid'],
 				'categoryid' => $id,
-				'displayorder' => $_GPC['displayorder'],
+				'displayorder' => intval($_GPC['displayorder']),
 				'name' => $_GPC['cname'],
 				'description' => $_GPC['description'],
 				'url' => "./index.php?c=site&a=site&cid={$category['id']}&i={$_W['uniacid']}",
@@ -154,8 +160,8 @@ if ($do == 'display') {
 		message('更新分类成功！', url('site/category'), 'success');
 	}
 	template('site/category-post');
-} elseif ($do == 'delete') {
-	load()->func('file');
+}
+if ($do == 'delete') {
 	if(checksubmit('submit')) {
 		foreach ($_GPC['rid'] as $key => $id) {
 			$id = intval($id);
