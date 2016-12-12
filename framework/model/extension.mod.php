@@ -745,25 +745,38 @@ function ext_module_msg_types() {
 	return $mtypes;
 }
 
+/**
+ * 检查模块订阅消息是否成功
+ * @param $modulename string 模块标识;
+ * @return array();
+ */
 function ext_check_module_subscribe($modulename) {
 	global $_W;
+
+	load()->func('communication');
+	load()->classs('account');
 	if (empty($modulename)) {
 		return true;
 	}
 	if (!is_array($_W['setting']['module_receive_ban'])) {
 		$_W['setting']['module_receive_ban'] = array();
 	}
-	load()->func('communication');
-	$response = ihttp_request($_W['siteroot'] . url('extension/subscribe/check', array('modulename' => $modulename)));
-	if (strexists($response['content'], 'success')) {
+	$module = WeUtility::createModuleReceiver($modulename);
+	if (empty($module)) {
+		exit('error');
+	}
+	$module->uniacid = $_W['uniacid'];
+	$module->message = array(
+		'event' => 'subscribe'
+	);
+	if(method_exists($module, 'receive')) {
+		@$module->receive();
 		unset($_W['setting']['module_receive_ban'][$modulename]);
-		$module_subscribe_success = true;
 	} else {
 		$_W['setting']['module_receive_ban'][$modulename] = $modulename;
-		$module_subscribe_success = false;
 	}
 	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
-	return $module_subscribe_success;
+	return error(0);
 }
 
 

@@ -11,7 +11,7 @@ defined('IN_IA') or exit('Access Denied');
 
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
-$dos = array('install', 'installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('upgrade', 'install', 'installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 load()->model('extension');
@@ -19,6 +19,99 @@ load()->model('cloud');
 load()->model('cache');
 load()->model('module');
 load()->model('account');
+
+if ($do == 'upgrade') {
+	$points = ext_module_bindings();
+	$module_name = addslashes($_GPC['module_name']);
+	//判断模块相关配置和文件是否合法
+	$module_info = pdo_get('modules', array('name' => $module_name));
+	if (empty($module_info)) {
+		message('模块已经被卸载或是不存在！', '', 'error');
+	}
+	$manifest = ext_module_manifest($module_name);
+	if (empty($manifest)) {
+		message('模块安装配置文件不存在或是格式不正确！', '', 'error');
+	}
+	$check_manifest_result = manifest_check($module_name, $manifest);
+	if (is_error($check_manifest_result)) {
+		message($check_manifest_result['message'], '', 'error');
+	}
+	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
+	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
+		message('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
+	}
+
+	//处理模块菜单
+	$module = ext_module_convert($manifest);
+	unset($module['name']);
+	unset($module['id']);
+	$bindings = array_elements(array_keys($points), $module, false);
+	foreach ($points as $point_name => $point_info) {
+		unset($module[$point_name]);
+		if (is_array($bindings[$point_name]) && !empty($bindings[$point_name])) {
+			foreach ($bindings[$point_name] as $entry) {
+				$entry['module'] = $manifest['application']['identifie'];
+				$entry['entry'] = $point_name;
+				if ($entry['title'] && $entry['do']) {
+					//保存xml里面包含的do和title,最后删除数据库中废弃的do和title
+					$not_delete_do[] = $entry['do'];
+					$not_delete_title[] = $entry['title'];
+					$module_binding = pdo_get('modules_bindings',array('module' => $manifest['application']['identifie'], 'entry' => $point_name, 'title' => $entry['title'], 'do' => $entry['do']));
+					if (!empty($module_binding)) {
+						pdo_update('modules_bindings', $entry, array('eid' => $module_binding['eid']));
+						continue;
+					}
+				} elseif ($entry['call']) {
+					$not_delete_call[] = $entry['call'];
+					$module_binding = pdo_get('modules_bindings',array('module' => $manifest['application']['identifie'], 'entry' => $point_name, 'call' => $entry['call']));
+					if (!empty($module_binding)) {
+						pdo_update('modules_bindings', $entry, array('eid' => $module_binding['eid']));
+						continue;
+					}
+				}
+				pdo_insert('modules_bindings', $entry);
+			}
+			//删除不存在的do和title
+			if (!empty($not_delete_do)) {
+				pdo_query('DELETE FROM ' . tablename('modules_bindings') . " WHERE module = :module AND entry = :entry AND `call` = '' AND do NOT IN ('" . implode("','", $not_delete_do) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
+				unset($not_delete_do);
+			}
+			if (!empty($not_delete_title)) {
+				pdo_query('DELETE FROM ' . tablename('modules_bindings') . " WHERE module = :module AND entry = :entry AND `call` = '' AND title NOT IN ('" . implode("','", $not_delete_title) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
+				unset($not_delete_title);
+			}
+			if (!empty($not_delete_call)) {
+				pdo_query('DELETE FROM ' . tablename('modules_bindings') . " WHERE module = :module AND  entry = :entry AND do = '' AND title = '' AND `call` NOT IN ('" . implode("','", $not_delete_call) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
+				unset($not_delete_call);
+			}
+		}
+	}
+
+	//执行模块更新文件
+	if (!empty($manifest['upgrade'])) {
+		if (strexists($manifest['upgrade'], '.php')) {
+			if (file_exists($module_path . $manifest['upgrade'])) {
+				include_once $module_path . $manifest['upgrade'];
+			}
+		} else {
+			pdo_run($manifest['upgrade']);
+		}
+	}
+
+	$module['permissions'] = iserializer($module['permissions']);
+	if (!empty($info['version']['cloud_setting'])) {
+		$module['settings'] = 2;
+	} else {
+		$module['settings'] = empty($module['settings']) ? 0 : 1;
+	}
+	pdo_update('modules', $module, array('name' => $module_name));
+	cache_build_account_modules();
+	if (!empty($module['subscribes'])) {
+		ext_check_module_subscribe($module['name']);
+	}
+	cache_delete('cloud:transtoken');
+	message('模块更新成功！', referer(), 'success');
+}
 
 if ($do =='install') {
 	$points = ext_module_bindings();

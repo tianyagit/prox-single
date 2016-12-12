@@ -56,7 +56,7 @@
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">详情</a>
 						<a href="javascript:;" data-toggle="modal" ng-click="editModule(module.mid)">编辑</a>
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}">停用</a>
-						<a href="" class="color-red" ng-if="module.upgrade">升级</a>
+						<a href="{php echo url('system/module/upgrade')}&module_name={{ module.name }}" class="color-red" ng-if="module.upgrade">升级</a>
 					</div>
 				</td>
 			</tr>
