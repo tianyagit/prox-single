@@ -18,7 +18,6 @@ if($do == 'down') {
 	}
 	$post = $_GPC['__input'];
 	$type = $types = $post['type'];
-	$type = 'image';
 	$count = $acc->getMaterialCount();
 	if(is_error($count)) {
 		message($count, '', 'ajax');
