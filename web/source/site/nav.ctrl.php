@@ -14,7 +14,7 @@ uni_user_permission_check('platform_nav_' . $do, true, 'nav');
 $modulename = $_GPC['m'];
 
 //微官网首页快捷菜单：homemenu_display、homemenu_post、homemenu_del、homemenu_switch(切换开关状态)
-if($do == 'homemenu_display' && $_W['ispost']) {
+if($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	$pars = array(
 			':uniacid' => $_W['uniacid'],
@@ -53,7 +53,7 @@ if($do == 'homemenu_display' && $_W['ispost']) {
 	}
 	message($navigations, 'ajax', 'success');
 }
-if($do == 'homemenu_post' $_W['ispost']) {
+if($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	$post = $_GPC['menu_info'];
 	if(empty($post['name'])) {
@@ -105,7 +105,7 @@ if($do == 'homemenu_post' $_W['ispost']) {
 	message('0', 'ajax', 'success');
 }
 
-if($do == 'homemenu_del' && $_W['ispost']) {
+if($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
 	$id = intval($_GPC['id']);
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	if(empty($nav_exist)){
@@ -123,7 +123,7 @@ if($do == 'homemenu_del' && $_W['ispost']) {
 	exit;
 }
 
-if($do == 'homemenu_switch' && $_W['ispost']) {
+if($do == 'homemenu_switch' && $_W['isajax'] && $_W['ispost']) {
 	$id = intval($_GPC['id']);
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	if(empty($nav_exist)){

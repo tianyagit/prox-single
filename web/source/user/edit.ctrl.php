@@ -48,7 +48,7 @@ if ($do == 'edit_base') {
 	template('user/edit-base');
 }
 if($do == 'edit_modules_tpl') {
-	if($_W['ispost']) {
+	if($_W['isajax'] && $_W['ispost']) {
 		if(intval($_GPC['groupid']) == $user['groupid']){
 			message('0' , '', 'ajax');
 		}

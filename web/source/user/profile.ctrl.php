@@ -13,7 +13,7 @@ uni_user_permission_check('system_user_profile');
 
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
-if($do == 'post' && $_W['ispost']) {
+if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	if(!empty($_GPC['type'])) {
 		$type = $_GPC['type'];
 	}else {

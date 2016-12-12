@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $dos = array('display', 'post', 'delete');
 $do = in_array($do, ) ? $do : 'display';
 
-if ($do == 'display' && $_W['ispost']) {
+if ($do == 'display' && $_W['isajax'] && $_W['ispost']) {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 10;
 	$condition = '';
@@ -26,7 +26,7 @@ if ($do == 'display' && $_W['ispost']) {
 	message($list, 'ajax', 'success');
 }
 
-if ($do == 'post' $_W['ispost']) {
+if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	foreach ($_GPC['slide'] as $key => $val) {
 		if(empty($val['thumb'])){
 			message('幻灯图片不可为空', 'ajax', 'error');

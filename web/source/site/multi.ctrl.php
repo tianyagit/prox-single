@@ -18,7 +18,7 @@ $default_site = intval($setting['default_site']);
 
 if($do == 'post') {
 	uni_user_permission_check('site_multi_post');
-	if($_W['ispost']) {
+	if($_W['isajax'] && $_W['ispost']) {
 		//搜索模板
 		$name = trim($_GPC['name']);
 		$sql = "SELECT s.*, t.`name` AS `tname`, t.`title`, t.`type` FROM " . tablename('site_styles') . " AS s LEFT JOIN " . tablename('site_templates') . " AS t ON s.`templateid` = t.`id` WHERE s.`uniacid` = :uniacid AND s.`name` LIKE :name";
@@ -203,7 +203,7 @@ if($do == 'switch') {
 	}
 }
 
-if($do == 'quickmenu_display' && $_W['ispost']) {
+if($do == 'quickmenu_display' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	if($multiid > 0){
 		$page = pdo_fetch("SELECT * FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => $multiid));
@@ -217,7 +217,7 @@ if($do == 'quickmenu_display' && $_W['ispost']) {
 	}
 }
 
-if($do == 'quickmenu_post' && $_W['ispost']) {
+if($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
 	$params = $_GPC['postdata']['params'];
 	if (empty($params)) {
 		message('请您先设计手机端页面.2', '', 'ajax');
