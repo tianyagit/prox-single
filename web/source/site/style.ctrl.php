@@ -2,12 +2,16 @@
 /**
  * 微站风格管理
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn: pro/web/source/site/style.ctrl.php : v 7e4ce85c5d2f : 2015/07/15 03:25:22 : yanghf $
  */
 defined('IN_IA') or exit('Access Denied');
-$templateid = intval($_GPC['templateid']);
+
+load()->model('extension');
+load()->model('module');
+
 $dos = array('default', 'designer', 'module', 'createtemplate', 'template', 'copy', 'build', 'del');
 $do = in_array($do, $dos) ? $do : 'template';
+
+$templateid = intval($_GPC['templateid']);
 
 if ($do == 'template') {
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
@@ -80,7 +84,6 @@ if ($do == 'template') {
 }
 
 if($do == 'default') {
-	load()->model('extension');
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
 	$multi = pdo_fetch('SELECT id,styleid FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $setting['default_site']));
 	if(empty($multi)) {
@@ -256,7 +259,7 @@ if($do == 'createtemplate') {
 		exit('require founder');
 	}
 	$name = $_GPC['name'];
-	load()->model('module');
+	
 	$module = module_fetch($name);
 	if(empty($module)) {
 		exit('invalid module');
@@ -280,7 +283,6 @@ if($do == 'createtemplate') {
 }
 
 if ($do == 'build') {
-	load()->model('extension');
 	$template = array();
 	$templates = uni_templates();
 	if(!empty($templates)) {

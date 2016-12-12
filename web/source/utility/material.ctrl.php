@@ -1,7 +1,6 @@
 <?php
 /**
  * 自动回复调用 素材管理
- *
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
@@ -24,6 +23,7 @@ if(!empty($material_list)) {
 				foreach($row['items'] as &$li) {
 					$li['thumb_url'] =  url('utility/wxcode/image', array('attach' => $li['thumb_url']));
 				}
+				unset($li);
 			}
 		} elseif($type == 'image') {
 			$row['attach'] = tomedia($row['attachment'], true);
@@ -33,6 +33,7 @@ if(!empty($material_list)) {
 		}
 		$row['createtime_cn'] = date('Y-m-d H:i', $row['createtime']);
 	}
+	unset($row);
 }
 $result = array(
 	'items' => $material_list,

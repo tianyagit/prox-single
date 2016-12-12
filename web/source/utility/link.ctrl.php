@@ -5,11 +5,10 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-
 load()->model('module');
 load()->model('site');
 
-$dos = array('entry', 'modulelink', 'articlelist', 'pagelist', 'newslist');
+$dos = array('entry', 'modulelink', 'articlelist', 'pagelist', 'newslist', 'catelist', 'page', 'news', 'article', 'newschunk');
 $do = in_array($do, $dos) ? $do : 'entry';
 
 $_W['page']['title'] = '';
@@ -23,7 +22,7 @@ if ($do == 'modulelink') {
 		$entries[$module]['title'] = $item['title'];
 	}
 }
-elseif ($do == 'articlelist') {
+if ($do == 'articlelist') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
@@ -34,11 +33,13 @@ elseif ($do == 'articlelist') {
 			$v['createtime'] = date('Y-m-d H:i', $v['createtime']);
 			$v['name'] = cutstr($v['name'], 10);
 		}
+		unset($v);
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_article').' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
 	message($result, '', 'ajax');
-}elseif ($do == 'pagelist') {
+}
+if ($do == 'pagelist') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
@@ -47,11 +48,13 @@ elseif ($do == 'articlelist') {
 		foreach ($result['list'] as $k => &$v) {
 			$v['createtime'] = date('Y-m-d H:i', $v['createtime']);
 		}
+		unset($v);
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_page'). ' WHERE uniacid = :uniacid AND type = 1', array(':uniacid' => $_W['uniacid']));
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'true'));
 	}
 	message($result, '', 'ajax');
-} elseif ($do == 'newslist') {
+}
+if ($do == 'newslist') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
@@ -63,7 +66,8 @@ elseif ($do == 'articlelist') {
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
 	message($result, '', 'ajax');
-} elseif ($do == 'catelist') {
+}
+if ($do == 'catelist') {
 	$condition = '';
 	if (!empty($_GPC['keyword'])) {
 		$condition .= " AND name LIKE :name";
@@ -79,7 +83,8 @@ elseif ($do == 'articlelist') {
 		}
 	}
 	message($category, '', 'ajax');
-} elseif ($do == 'page') {
+}
+if ($do == 'page') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
@@ -88,10 +93,12 @@ elseif ($do == 'articlelist') {
 		foreach ($result['list'] as $k => &$v) {
 			$v['createtime'] = date('Y-m-d H:i', $v['createtime']);
 		}
+		unset($v);
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_page'). ' WHERE uniacid = :uniacid AND type = 1', array(':uniacid' => $_W['uniacid']));
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'true'));
 	}
-} elseif ($do == 'news') {
+}
+if ($do == 'news') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
@@ -102,7 +109,8 @@ elseif ($do == 'articlelist') {
 		$total = pdo_fetchcolumn($sql, array(':news' => 'news', ':uniacid' => $_W['uniacid']));
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
-} elseif ($do == 'article') {
+}
+if ($do == 'article') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
@@ -113,6 +121,7 @@ elseif ($do == 'articlelist') {
 			$v['createtime'] = date('Y-m-d H:i', $v['createtime']);
 			$v['name'] = cutstr($v['name'], 10);
 		}
+		unset($v);
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_article').' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
@@ -123,7 +132,8 @@ elseif ($do == 'articlelist') {
 			unset($category[$index]);
 		}
 	}
-} elseif ($do == 'newschunk') {
+}
+if ($do == 'newschunk') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
@@ -138,10 +148,12 @@ elseif ($do == 'articlelist') {
 		foreach($result['list'] as &$row) {
 			$row['items'] = pdo_fetchall('SELECT * FROM ' . tablename('news_reply') . ' WHERE parent_id = :parent_id OR id = :id', array(':parent_id' => $row['id'], ':id' => $row['id']));
 		}
+		unset($row);
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
 	message($result, '', 'ajax');
-}elseif ($do == 'entry') {
+}
+if ($do == 'entry') {
 	$has_permission = array();
 	if(uni_user_permission_exist()) {
 		$has_permission = array(
