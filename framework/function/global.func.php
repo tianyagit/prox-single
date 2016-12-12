@@ -1147,3 +1147,11 @@ function strip_gpc($values, $type = 'g') {
 	return $values;
 }
 
+
+function parse_path($path) {
+	$exists = strstr($path, '../');
+	if (!empty($exists)) {
+		return false;
+	}
+	return $path;
+}
