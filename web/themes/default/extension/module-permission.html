@@ -165,8 +165,13 @@
 			if(!confirm('确认删除吗')) return false;
 			var eid = $(this).attr('data-id');
 			if(eid) {
-				$.post("{php echo url('extension/menu/del_bind')}", {'eid':eid}, function(){
-					location.reload();
+				$.post("{php echo url('extension/menu/del_bind')}", {'eid':eid}, function(data){
+					data = $.parseJSON(data);
+					if (data.message.errno != 0) {
+						util.message(data.message.message, '', 'error');
+					} else {
+						location.reload();
+					}
 					return false;
 				});
 			}

@@ -216,6 +216,10 @@ if($do == 'module') {
 }
 
 if($do == 'del_bind') {
+	$state = uni_permission($_W['uid'], $_W['uniacid']);
+	if($state != 'founder' && $state != 'manager') {
+		message('没有该公众号操作权限！', url('accound/display'), 'error');
+	}
 	$eid = intval($_GPC['eid']);
 	$permission = intval($_GPC['permission']);
 	pdo_delete('modules_bindings', array('eid' => $eid, 'entry' => 'mine'));

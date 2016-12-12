@@ -1,17 +1,23 @@
 <?php 
-/**
- * $sn: pro/web/source/utility/bindcall.ctrl.php : v 23eb0f142bc6 : 2015/01/17 07:46:34 : RenChao $
- */
-
 defined('IN_IA') or exit('Access Denied');
-$modulename = $_GPC['modulename'];
-$callname = $_GPC['callname'];
-$uniacid = $_GPC['uniacid'];
-$_W['uniacid'] = $_GPC['uniacid'];
+
+load()->model('module');
+
+$modulename = trim($_GPC['modulename']);
+$callname = trim($_GPC['callname']);
+$uniacid = intval($_GPC['uniacid']);
+$_W['uniacid'] = intval($_GPC['uniacid']);
 $args = $_GPC['args'];
+$module_info = module_fetch($modulename);
+if (empty($module_info)) {
+	message(error(-1, '该模块不存在'), '', 'ajax');
+}
 $site = WeUtility::createModuleSite($modulename);
 if (empty($site)) {
 	message(array(), '', 'ajax');
+}
+if (!method_exists($site, $callname)) {
+	message(error(-1, '该方法不存在'), '', 'ajax');
 }
 $ret = @$site->$callname($args);
 message($ret, '', 'ajax');
