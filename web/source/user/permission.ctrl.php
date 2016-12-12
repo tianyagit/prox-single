@@ -1,11 +1,11 @@
 <?php
 /**
+ * 查看用户权限
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
 
-$_W['page']['title'] = '查看用户权限 - 用户管理 - 账号/用户';
+$_W['page']['title'] = '查看用户权限 - 用户管理';
 
 load()->model('setting');
 

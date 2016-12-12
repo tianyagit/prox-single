@@ -150,8 +150,8 @@ $ms['system'] = array(
 			'menu' => array(
 				'system_profile' => array(
 					'title' => '系统更新',
-					'url' => url('system/profile'),
-					'permission_name' => 'system_module',
+					'url' => url('cloud/upgrade'),
+					'permission_name' => 'cloud_upgrade',
 				),
 				'system_user' => array(
 					'title' => '注册站点',

@@ -569,7 +569,7 @@ function tomedia($src, $local_path = false){
 		return $src;
 	}
 	if ($local_path || empty($_W['setting']['remote']['type']) || file_exists(IA_ROOT . '/' . $_W['config']['upload']['attachdir'] . '/' . $src)) {
-		$src = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/' . $src;
+		$src = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . $src;
 	} else {
 		$src = $_W['attachurl_remote'] . $src;
 	}

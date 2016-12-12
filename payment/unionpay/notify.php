@@ -6,7 +6,7 @@
 error_reporting(0);
 define('IN_MOBILE', true);
 require '../../framework/bootstrap.inc.php';
-$_W['uniacid'] = $_POST['reqReserved'];
+$_W['uniacid'] = intval($_POST['reqReserved']);
 load()->web('common');
 load()->classs('coupon');
 $_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
