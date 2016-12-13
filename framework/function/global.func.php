@@ -1147,6 +1147,9 @@ function strip_gpc($values, $type = 'g') {
 	return $values;
 }
 
+/*
+ * 过滤图片路径中的'../'
+ * */
 function parse_path($path) {
 	$exists = strstr($path, '../');
 	if (!empty($exists)) {
