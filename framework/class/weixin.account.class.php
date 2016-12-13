@@ -1543,7 +1543,7 @@ class WeiXinAccount extends WeAccount {
 	 * @param string $savefile 是否保存为文件
 	 * @return 保存为文件时，返回文件路径否则返回文件二进制内容或是图文数组
 	 */
-	public function getMaterial($media_id, $savefile = false) {
+	public function getMaterial($media_id, $savefile = true) {
 		$token = $this->getAccessToken();
 		if(is_error($token)){
 			return $token;
@@ -1603,7 +1603,7 @@ class WeiXinAccount extends WeAccount {
 	 *
 	 * @return 保存为文件时，返回文件路径否则返回文件二进制内容
 	 */
-	public function downloadMedia($media_id, $savefile = false) {
+	public function downloadMedia($media_id, $savefile = true) {
 		$mediatypes = array('image', 'voice', 'thumb');
 		$media_id = is_array($media_id) ? $media_id['media_id'] : $media_id;
 		if (empty($media_id)) {
