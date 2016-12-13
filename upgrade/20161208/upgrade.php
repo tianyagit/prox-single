@@ -48,10 +48,11 @@ pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'menu'
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'menu', 'title' => '通知管理', 'do' => 'noticemanage', 'direct' => '0', 'displayorder' => '0'));
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'title' => '会员卡', 'do' => 'card', 'direct' => '0', 'displayorder' => '0'));
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'title' => '兑换商城', 'do' => 'activity'));
-
+//增加模块内，个人中心导航菜单的链接
 $coupon_mine_url = murl('entry', array('m' => 'we7_coupon', 'do' => 'activity', 'op' => 'mine'));
 $goods_mine_url = murl('entry', array('m' => 'we7_coupon', 'do' => 'activity', 'activity_type' => 'goods', 'op' => 'mine'));
 pdo_insert('site_nav', array('uniacid' => $_W['uniacid'], 'module' => 'we7_coupon', 'name' => '我的卡券', 'position' => '2', 'url' => $coupon_mine_url, 'status' => '2'));
+pdo_insert('site_nav', array('uniacid' => $_W['uniacid'], 'module' => 'we7_coupon', 'name' => '我的兑换', 'position' => '2', 'url' => $goods_mine_url, 'status' => '2'));
 cache_build_account_modules();
 
 
