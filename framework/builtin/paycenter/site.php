@@ -159,6 +159,7 @@ class PaycenterModuleSite extends WeModuleSite {
 			if(!empty($order)) {
 				$log = pdo_get('core_paylog', array('tid' => $params['tid'], 'uniacid' => $_W['uniacid']));
 				if ($log['type'] != 'credit') {
+					load()->model('mc');
 					mc_card_grant_credit($log['openid'], $log['card_fee'], $order['store_id']);
 				}
 				if(!empty($params['tag'])) {
