@@ -28,7 +28,46 @@ if ($do == 'upgrade') {
 	if (empty($module_info)) {
 		message('模块已经被卸载或是不存在！', '', 'error');
 	}
-	$manifest = ext_module_manifest($module_name);
+	$type = trim($_GPC['type']);
+	if(empty($type)) {
+		$manifest = '';
+	} else {
+		$manifest = ext_module_manifest($module_name);
+	}
+	// 应用商城下载的模块远程获取XML文件
+	if (empty($manifest)) {
+		$cloud_prepare = cloud_prepare();
+		if (is_error($cloud_prepare)) {
+			message($cloud_prepare['message'], url('cloud/profile'), 'error');
+		}
+		$module_info = cloud_m_upgradeinfo($module_name);
+		if ($_GPC['type'] == 'getinfo') {
+			if ($module_info['free']) {
+				foreach ($module_info['branches'] as &$branch) {
+					$branch['upgrade_price'] = 0;
+				}
+				unset($branch);
+			}
+			message($module_info, '', 'ajax');
+		}
+		if (is_error($module_info)) {
+			message($module_info['message'], referer(), 'error');
+		} else {
+			if (empty($_GPC['flag'])) {
+				// 添加批量更新，只能是同分支不同版本的自动升级
+				if (intval($_GPC['branch']) > $module_info['version']['branch_id']) {
+					header('Location: ' . url('cloud/redirect/buybranch', array('m' => $module_name, 'branch' => intval($_GPC['branch']), 'is_upgrade' => 1)));
+					exit;
+				}
+				header('Location: ' . url('cloud/process', array('m' => $module_name, 'is_upgrade' => 1)));
+				exit;
+			} else {
+				define('ONLINE_MODULE', true);
+				$packet = cloud_m_build($module_name);
+				$manifest = ext_module_manifest_parse($packet['manifest']);
+			}
+		}
+	}
 	if (empty($manifest)) {
 		message('模块安装配置文件不存在或是格式不正确！', '', 'error');
 	}
@@ -432,10 +471,8 @@ if ($do == 'recycle') {
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-
 	$localUninstallModules = get_all_unistalled_module('uninstalled');
 	$total_uninstalled = count($localUninstallModules);
-
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 10;
 	$letter = $_GPC['letter'];
@@ -444,7 +481,6 @@ if ($do == 'installed') {
 
 	$condition = " WHERE issystem = 0 ";
 	$params = array();
-
 	if (!empty($letter) && strlen($letter) == 1) {
 		if(in_array($letter, $letters)){
 			$condition .= " AND `title_initial` = :letter";
@@ -461,6 +497,55 @@ if ($do == 'installed') {
 	$module_list = pdo_fetchall("SELECT * FROM ". tablename('modules'). $condition. " ORDER BY `issystem` DESC, `mid` DESC". " LIMIT ".($pageindex-1)*$pagesize.", ". $pagesize, $params, 'name');
 	$pager = pagination($total, $pageindex, $pagesize);
 	if (!empty($module_list)) {
+		//拉取线上模块
+		$cloud_status = 'success';
+		$cloud_prepare_result = cloud_prepare();
+		if (is_error($cloud_prepare_result)) {
+			$cloud_status = 'error';
+		}
+		$cloud_module = array();
+		$cloud_m_query_module = cloud_m_query();
+		if (is_error($cloud_m_query_module)) {
+			$cloud_status = 'error';
+		}
+		if (!is_error($cloud_m_query_module) && !empty($cloud_m_query_module)) {
+			foreach ($cloud_m_query_module as $cloud_module_name => $cloud_module_info) {
+				$cloud_m_upgradeinfo = cloud_m_upgradeinfo($cloud_module_name);//获取模块更新信息
+				$cloud_module[$cloud_module_name] = array(
+					'from' => 'cloud',
+					'version' => $cloud_module_info['version'],
+					'name' => $cloud_module_info['name'],
+					'branches' => $cloud_module_info['branches'],
+					'site_branch' => $cloud_module_info['branches'][$cloud_module_info['branch']],
+				);
+			}
+		}
+		//test 临时模拟云服务数据
+		$cloud_module = array(
+			'we7_coupon' => array(
+				'from'=> 'cloud',
+				'version'=> '6.9.7',
+				'name' => 'we7_coupon',
+				'branches' => array(
+					'715' => array(
+						'name' => '普通版',
+						'version_price' => 0,
+						'version' => '6.9.7',
+						'displayorder' => 10,
+						'status' => 1
+					),
+				),
+				'site_branch' => array(
+					'id' => 715,
+					'name' => '普通版',
+					'version_price' => 0,
+					'version' => '6.9.6',
+					'displayorder' => 10,
+					'status' => 1
+				),
+			),
+		);//test
+
 		foreach ($module_list as &$module) {
 			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
@@ -471,8 +556,21 @@ if ($do == 'installed') {
 			if (is_array($manifest) && ver_compare($module['version'], $manifest['application']['version']) == '-1') {
 				$module['upgrade'] = true;
 			}
+			if (empty($manifest)) {
+				if (in_array($module['name'], array_keys($cloud_module))) {
+					$module['from'] = 'cloud';
+					$site_branch = $cloud_module[$module['name']]['site_branch']['id'];//当前站点模块分之号
+					$site_branch_version = $cloud_module[$module['name']]['site_branch']['version'];//当前站点模块分之版本号
+					$cloud_branch_version = $cloud_module[$module['name']]['branches'][$site_branch]['version'];//云服务模块分之版本号
+					if (ver_compare($site_branch_version, $cloud_branch_version) == -1) {
+						$module['upgrade'] = true;
+					}
+				}
+			}
 		}
+		unset($module);
 	}
+
 }
 
 if ($do == 'not_installed') {

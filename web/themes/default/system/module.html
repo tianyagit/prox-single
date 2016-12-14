@@ -56,22 +56,19 @@
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">详情</a>
 						<a href="javascript:;" data-toggle="modal" ng-click="editModule(module.mid)">编辑</a>
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}">停用</a>
-						<a href="{php echo url('system/module/upgrade')}&module_name={{ module.name }}" class="color-red" ng-if="module.upgrade">升级</a>
+						<a href="./index.php?c=system&a=module&do=upgrade&module_name='+module_name" class="color-red" ng-if="module.upgrade && module.from != 'cloud'">升级</a>
+						<a href="javascript:;" class="color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud'">升级</a>
 					</div>
 				</td>
 			</tr>
 		</table>
 		<div class="select-all">
-			<div class="we7-form">
-				<input id='check-all' type="checkbox" name='check-all' checked='checked' />
-				<label for="check-all">&nbsp;</label>
-				<a href="" class="btn btn-primary">批量升级</a>
-			</div>
 			<div class="we7-form pull-right">
 				{$pager}
 			</div>
 		</div>
 	</form>
+
 	<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog we7-modal-dialog" style="width:800px">
 			<div class="modal-content">
@@ -142,6 +139,53 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="modal fade" id="upgrade-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabels" aria-hidden="true">
+		<div class="modal-dialog we7-modal-dialog" style="width:800px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">模块分支版本信息</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label class="col-sm-1 control-label"> 模块标题</label>
+						<div class="col-sm-2">
+							{{ module_list[upgradeInfo.name].title }}
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								模块分支信息
+							</div>
+							<div class="panel-body">
+								<div class="input-group col-sm-12" ng-repeat="branch in upgradeInfo.branches">
+									<div class="col-sm-3">
+										分之名称 : {{ branch.name }}
+									</div>
+									<div class="col-sm-3">
+										升级价格 : {{ branch.version_price }}
+									</div>
+									<div class="col-sm-2">
+										<button class="btn btn-default">升级说明</button>
+									</div>
+									<div class="col-sm-3">
+										<button type class="btn btn-default">免费升级到</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button  class="btn btn-primary" type="text" name="submit" ng-click="save()" data-dismiss="modal">保存</button>
+					<input type="hidden" name="token" value="c781f0df">
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
@@ -150,7 +194,8 @@
 			'letters': {php echo json_encode($letters)},
 			'module_list': {php echo json_encode($module_list)},
 			'editModuleUrl': "{php echo url('system/module/get_module_info')}",
-			'saveModuleUrl' :  "{php echo url('system/module/save_module_info')}"
+			'saveModuleUrl' :  "{php echo url('system/module/save_module_info')}",
+			'cloudModule' : {php echo json_encode($cloud_module)}
 		});
 		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});
@@ -200,7 +245,7 @@
 			</td>
 			<td class="text-left">
 				<p>{{ module.title }}</p>
-				<span>版本：{{ module.version }} </span><span class="color-red">发现新版本</span>
+				<span>版本：{{ module.version }} </span>
 			</td>
 			<td class="text-left">
 				<a href="{php echo url('system/module/install')}&module_name={{ module.name }}" class="btn btn-primary">安装应用模块</a>
