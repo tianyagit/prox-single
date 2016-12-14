@@ -164,8 +164,8 @@
 							<div class="modal-footer">
 								<button type="button" class="btn btn-primary" id="save" data-dismiss="modal">保存</button>
 							</div>
-						</div><!-- /.modal-content -->
-					</div><!-- /.modal-dialog -->
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="form-group" id="coupon_table">
@@ -232,7 +232,7 @@
 						<div class="panel-body" id="type">
 							<select name="groupid" class="form-control" id="group_list" {if !$item['members']['groupid']}style="display: none;"{/if}>
 							{loop $groups $group}
-							<option value="{$group['id']}">{if COUPON_TYPE == SYSTEM_COUPON}{$group['title']}{else}{$group['name']}{/if}</option>
+							<option value="{$group['groupid']}">{if COUPON_TYPE == SYSTEM_COUPON}{$group['title']}{else}{$group['name']}{/if}</option>
 							{/loop}
 							</select>
 							<div id="date" {if !$item['members']['cash_time']['start']}style="display: none;"{/if}>{php echo tpl_form_field_daterange('daterange', array('start' => date('Y-m-d', strtotime('-1 month', time())), 'end' => date('Y-m-d', time())))}</div>
