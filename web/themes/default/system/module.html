@@ -38,13 +38,7 @@
 				<th class="text-left">操作</th>
 			</tr>
 			<tr ng-repeat="module in module_list">
-				<td>
-					<div class="we7-form">
-						<input id='check-1' type="checkbox" name='check-1' checked='checked' />
-						<label for="check-1">&nbsp;</label>
-					</div>
-				</td>
-				<td class="text-left">
+				<td class="text-left" colspan="2">
 					<img ng-src="{{ module.logo }}" class="img-responsive" style="width: 50px;height: 50px;" />
 				</td>
 				<td class="text-left">
@@ -168,11 +162,31 @@
 										升级价格 : {{ branch.version_price }}
 									</div>
 									<div class="col-sm-2">
-										<button class="btn btn-default">升级说明</button>
+										<button class="btn btn-default" onclick="$(this).parent().next().next().toggle()">升级说明</button>
 									</div>
 									<div class="col-sm-3">
-										<button type class="btn btn-default">免费升级到</button>
+										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.id)" ng-if="branch.version_price == 0">免费升级到【{{branch.name}}】最新版本</a>
+										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.id)" ng-if="branch.version_price > 0">付费升级到【{{branch.name}}】最新版本</a>
 									</div>
+									<div style="display: none">
+										<span class="help-block">
+											{{branch.version.description}}
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="input-group col-sm-12">
+								<div class="alert-info">
+									<span><i class="fa fa-info-circle"></i></span>
+									应用分支按照等级顺序排列。
+								</div>
+								<div class="alert-info">
+									<span><i class="fa fa-info-circle"></i></span>
+									如果要升级到其它分支最新版本，需要花费对应分支价格数量的交易币。
+								</div>
+								<div class="alert-info">
+									<span><i class="fa fa-info-circle"></i></span>
+									已购买的模块分支可以免费升级到该分支的最新版本。
 								</div>
 							</div>
 						</div>
@@ -180,8 +194,6 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button  class="btn btn-primary" type="text" name="submit" ng-click="save()" data-dismiss="modal">保存</button>
-					<input type="hidden" name="token" value="c781f0df">
 				</div>
 			</div>
 		</div>
@@ -195,7 +207,8 @@
 			'module_list': {php echo json_encode($module_list)},
 			'editModuleUrl': "{php echo url('system/module/get_module_info')}",
 			'saveModuleUrl' :  "{php echo url('system/module/save_module_info')}",
-			'cloudModule' : {php echo json_encode($cloud_module)}
+			'cloudModule' : {php echo json_encode($cloud_module)},
+			'upgradeUrl' : "{php echo url('system/module/upgrade')}"
 		});
 		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});
