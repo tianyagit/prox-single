@@ -528,7 +528,7 @@
 </div>
 <script type="text/javascript">
 	$(function(){
-		require(['wapeditor', 'bootstrap.switch'], function() {
+		require(['bootstrap.switch'], function() {
 			angular.bootstrap(document, ['app']);
 			$(":checkbox[name='flag']").bootstrapSwitch();
 			$(':checkbox').on('switchChange.bootstrapSwitch', function(e, state){

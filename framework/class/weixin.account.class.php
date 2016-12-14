@@ -1533,29 +1533,8 @@ class WeiXinAccount extends WeAccount {
 			'offset' => intval($offset),
 			'count' => $count,
 		);
-		$response = ihttp_request($url, json_encode($data));
-		if(is_error($response)) {
-			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
-		}
-		if(!empty($response['headers']['Content-disposition'])){
-			global $_W;
-			$filename =str_replace(array('attachment; filename=', '"',' '),'',$response['headers']['Content-disposition']);
-			load()->func('file');
-			$filename = 'images/'.$_W['uniacid'].'/'.date('Y/m/').substr($filename,strripos($filename,'/')+1);
-			file_write($filename, $response['content']);
-			file_remote_upload($filename);
-		}
-		$result = @json_decode($response['content'], true);
-		if(empty($result)) {
-			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
-		} elseif(!empty($result['errcode'])) {
-			return error(-1, "访问公众平台接口失败, 错误: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
-		}
-		$return = array();
-		$return['total_count'] = $result['total_count'];
-		$return['item_count'] = $result['item_count'];
-		$return['data'] = $result['item'];
-		return $return;
+		$response = $this->requestApi($url, json_encode($data));
+		return $response;
 	}
 
 	/**
@@ -1598,8 +1577,7 @@ class WeiXinAccount extends WeAccount {
 			global $_W;
 			preg_match('/filename=\"?([^"]*)/', $response['headers']['Content-disposition'], $match);
 			$pathinfo = pathinfo($match[1]);
-			$filename = $_W['uniacid'].'/'.date('Y/m/') . $pathinfo['filename'] . '.' . $pathinfo['extension'];
-			$pathinfo = pathinfo($filename);
+			$filename = $_W['uniacid'].'/'.date('Y/m/');
 			if (in_array(strtolower($pathinfo['extension']), array('mp4'))) {
 				$filename = 'videos/' . $filename;
 			} elseif (in_array(strtolower($pathinfo['extension']), array('amr', 'mp3', 'wma', 'wmv'))) {
@@ -1607,6 +1585,7 @@ class WeiXinAccount extends WeAccount {
 			} else {
 				$filename = 'images/' . $filename;
 			}
+			$filename .= file_random_name($filename, $pathinfo['extension']);
 			load()->func('file');
 			file_write($filename, $response['content']);
 			file_remote_upload($filename);
@@ -1677,7 +1656,7 @@ class WeiXinAccount extends WeAccount {
 		}
 		$url = 'https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=' . $token;
 		$response = $this->requestApi($url);
-		return $result;
+		return $response;
 	}
 
 	public function delMaterial($media_id) {

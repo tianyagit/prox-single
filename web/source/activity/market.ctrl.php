@@ -172,6 +172,10 @@ elseif ($do == 'post') {
 		$groups = pdo_getall('mc_groups', array('uniacid' => $_W['uniacid']), array(), 'groupid');
 	} else {
 		$groups = mc_fans_groups();
+		foreach ($groups as &$group) {
+			$group['groupid'] = $group['id'];
+		}
+		unset($group);
 	}
 }
 if ($do == 'delete') {
