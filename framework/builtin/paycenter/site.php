@@ -186,21 +186,22 @@ class PaycenterModuleSite extends WeModuleSite {
 				}
 				pdo_update('paycenter_order', $data, array('id' => $params['tid'], 'uniacid' => $_W['uniacid']));
 				$cash_data = array(
-						'uniacid' => $_W['uniacid'],
-						'uid' => $order['uid'],
-						'fee' => $order['fee'],
-						'final_fee' => $order['final_fee'],
-						'credit1' => $order['credit1'],
-						'credit1_fee' => $order['credit1_fee'],
-						'credit2' => $order['credit2'],
-						'cash' => $params['card_fee'],
-						'final_cash' => $params['card_fee'],
-						'return_cash' => 0,
-						'remark' => $order['remark'],
-						'clerk_id' => $order['clerk_id'],
-						'store_id' => $order['store_id'],
-						'clerk_type' => $order['clerk_type'],
-						'createtime' => TIMESTAMP,
+					'uniacid' => $_W['uniacid'],
+					'uid' => $order['uid'],
+					'fee' => $order['fee'],
+					'final_fee' => $order['final_fee'],
+					'credit1' => $order['credit1'],
+					'credit1_fee' => $order['credit1_fee'],
+					'credit2' => $data['credit2'],
+					'cash' => $params['card_fee'],
+					'final_cash' => $data['cash'],
+					'return_cash' => 0,
+					'remark' => $order['remark'],
+					'clerk_id' => $order['clerk_id'],
+					'store_id' => $order['store_id'],
+					'clerk_type' => $order['clerk_type'],
+					'createtime' => TIMESTAMP,
+					'trade_type' => $log['type']
 				);
 				pdo_insert('mc_cash_record', $cash_data);
 			}
