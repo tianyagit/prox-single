@@ -7,12 +7,11 @@
 	<li{if $do == 'optimize'} class="active"{/if}><a href="{php echo url('system/database/optimize');}">优化</a></li>
 	<li{if $do == 'run'} class="active"{/if}><a href="{php echo url('system/database/run');}">运行SQL</a></li>
 </ul>
-<div class="clearfix">
 	{if $do == 'backup'}
-			<div class="alert alert-info">
-				<p>使用本系统备份的备份数据, 只能使用本系统来进行还原. 如果使用其他工具, 或者自行导入sql, 可能造成数据不完整或不正确.<p>
-				<p><strong>请在站点访问量比较低的时间段(如:深夜)操作, 或操作之前关闭站点. 来防止可能出现的意外数据丢失. </strong><p>
-			</div>
+		<div class="alert we7-page-alert">
+				<p><i class="wi wi-info-sign"></i>使用本系统备份的备份数据, 只能使用本系统来进行还原. 如果使用其他工具, 或者自行导入sql, 可能造成数据不完整或不正确.<p>
+				<p><strong class="color-dark">请在站点访问量比较低的时间段(如:深夜)操作, 或操作之前关闭站点. 来防止可能出现的意外数据丢失. </strong><p>
+		</div>
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-xs-12 col-md-10" style = "margin-top:20px">
 				<a  class="btn btn-primary span3" style = "margin-left:220px" href="{php echo url('system/database/backup', array('status'=>1,'start'=>2));}">开始备份</a>
@@ -20,11 +19,12 @@
 		</div>
  	{/if}
 	{if $do == 'restore'}
+	<div class="alert we7-page-alert">
+		<p><i class="wi wi-info-sign"></i>使用微擎系统备份的备份数据, 只能使用微擎系统来进行还原. 如果使用其他工具, 或者自行导入sql, 可能造成数据不完整或不正确.</p>
+		<p><strong>请在站点访问量比较低的时间段(如:深夜)操作, 或操作之前关闭站点. 来防止可能出现的意外数据丢失. </strong></p>
+	</div>
 	<form action="" method="post" class="form-horizontal form">
-		<div class="alert alert-info">
-			<p>使用微擎系统备份的备份数据, 只能使用微擎系统来进行还原. 如果使用其他工具, 或者自行导入sql, 可能造成数据不完整或不正确.</p>
-			<p><strong>请在站点访问量比较低的时间段(如:深夜)操作, 或操作之前关闭站点. 来防止可能出现的意外数据丢失. </strong></p>
-		</div>
+		
 
 			<table class="tabel we7-table site-list">
 				<col width="285px"/>
@@ -48,10 +48,11 @@
 			</table>
 		{/if}
 	{if $do == 'trim'}
+	<div class="alert we7-page-alert table-info" style="display:none;">
+		<p><i class="wi wi-info-sign"></i><strong>恭喜,您的数据表中已无冗余信息。</strong></p>
+	</div>
 	<form action="" method="post" class="form-horizontal form">
-		<div class="alert alert-success table-info" style="display:none;">
-			<p><strong>恭喜,您的数据表中已无冗余信息。</strong></p>
-		</div>
+		
 		{if !empty($diff)}
 		<div class="panel panel-default">
 		<div class="panel-body table-responsive">
@@ -118,11 +119,12 @@
 		</script>
 	{/if}
 	{if $do == 'optimize'}
+	<div class="alert we7-page-alert" style="margin-bottom:0">
+			<i class="wi wi-info-sign"></i><strong>数据表优化可以去除数据文件中的碎片, 使记录排列紧密, 提高读写速度.</strong>
+		</div>
 	<form action="" method="post" class="form-horizontal form">
 		
-		<div class="alert alert-info" style="margin-bottom:0">
-			<strong>数据表优化可以去除数据文件中的碎片, 使记录排列紧密, 提高读写速度.</strong>
-		</div>
+		
 		<br>
 		
 		{if !empty($optimize_table)}
@@ -168,16 +170,15 @@
 	</form>
 	{/if}
 	{if $do == 'run'}
+	<div class="alert we7-page-alert">
+		<p><i class="wi wi-info-sign"></i>通过此功能可以直接在数据库中执行特定语句, 用于调试错误. 或者系统管理员特定排错. 注意, 这里运行的语句不会有任何返回结果.</p>
+		<p><strong>注意: 此功能可能造成数据破坏, 请谨慎使用. 如果你不清楚他的功能, 请不要使用.</strong></p>
+	</div>
 	<form action="" method="post" class="we7-form" onsubmit="return confirm('请确保你已经了解这些语句的作用, 并自愿承担风险.');">
+		
 		<div class="form-group">
-			<div class="alert alert-info">
-				<p>通过此功能可以直接在数据库中执行特定语句, 用于调试错误. 或者系统管理员特定排错. 注意, 这里运行的语句不会有任何返回结果.</p>
-				<p><strong>注意: 此功能可能造成数据破坏, 请谨慎使用. 如果你不清楚他的功能, 请不要使用.</strong></p>
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="control-label">SQL</label>
-			<div class="form-controls">
+			<label class="control-label col-sm-1">SQL</label>
+			<div class="form-controls col-sm-8">
 				<textarea name="sql" class="form-control" rows="8" style="width:600px;"></textarea>
 				<span class="help-block">多条语句请使用 ; 隔开</span>
 			</div>
@@ -191,5 +192,4 @@
 		</div>
 		
 	{/if}
-</div>
 {template 'common/footer'}

@@ -32,7 +32,7 @@ if ($do == 'category_post') {
 		}
 		message('添加公告分类成功', url('article/notice/category'), 'success');
 	}
-	template('article/notice-category');
+	template('article/notice-category-post');
 }
 
 //修改公告分类
@@ -96,7 +96,7 @@ if ($do == 'post') {
 		message('编辑公告成功', url('article/notice/list'), 'success');
 	}
 	$categorys = pdo_fetchall('SELECT * FROM ' . tablename('article_category') . ' WHERE type = :type ORDER BY displayorder DESC', array(':type' => 'notice'));
-	template('article/notice');
+	template('article/notice-post');
 }
 
 //公告列表
