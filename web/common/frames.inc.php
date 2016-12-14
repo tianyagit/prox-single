@@ -13,7 +13,7 @@ $ms['account'] = array(
 			'title' => '增强功能',
 			'menu' => array(
 				'platform_reply' => array(
-					'title' => '自动回复',
+					'title' => '<i class="wi wi-reply"></i>自动回复',
 					'url' => url('platform/reply'),
 					'append' => array(
 						'title' => '<i class="fa fa-plus"></i>',
@@ -22,27 +22,27 @@ $ms['account'] = array(
 					'permission_name' => 'platform_reply',
 				),
 				'platform_menu' => array(
-					'title' => '自定义菜单',
+					'title' => '<i class="wi wi-custommenu"></i>自定义菜单',
 					'url' => url('platform/menu'),
 					'permission_name' => 'platform_menu',
 				),
 				'platform_qr' => array(
-					'title' => '二维码/转化链接',
+					'title' => '<i class="wi wi-qrcode"></i>二维码/转化链接',
 					'url' => url('platform/qr'),
 					'permission_name' => 'platform_qr',
 				),
 				'platform_mass' => array(
-					'title' => '定时群发',
+					'title' => '<i class="wi wi-crontab"></i>定时群发',
 					'url' => url('platform/mass'),
 					'permission_name' => 'platform_mass',
 				),
 				'platform_material' => array(
-					'title' => '素材/编辑器',
+					'title' => '<i class="wi wi-redact"></i>素材/编辑器',
 					'url' => url('platform/material'),
 					'permission_name' => 'platform_material',
 				),
 				'platform_site' => array(
-					'title' => '微官网',
+					'title' => '<i class="wi wi-home"></i>微官网',
 					'url' => url('site/multi/display'),
 					'permission_name' => 'platform_site'
 				)
@@ -52,17 +52,17 @@ $ms['account'] = array(
 			'title' => '粉丝',
 			'menu' => array(
 				'mc_fans' => array(
-					'title' => '粉丝管理',
+					'title' => '<i class="wi wi-fansmanage"></i>粉丝管理',
 					'url' => url('mc/fans'),
 					'promisson_name' => 'mc_fans',
 				),
 				'mc_member' => array(
-					'title' => '会员管理',
+					'title' => '<i class="wi wi-fans"></i>会员管理',
 					'url' => url('mc/member'),
 					'promisson_name' => 'mc_member',
 				),
 				'site_editor' => array(
-					'title' => '会员中心',
+					'title' => '<i class="wi wi-fans"></i>会员中心',
 					'url' => url('site/editor/uc'),
 					'promisson_name' => 'site_editor'
 				),
@@ -72,7 +72,7 @@ $ms['account'] = array(
 			'title' => '配置',
 			'menu' => array(
 				'profile' => array(
-					'title' => '参数配置',
+					'title' => '<i class="wi wi-parameter"></i>参数配置',
 					'url' => url('profile/payment'),
 					'promisson_name' => 'profile',
 				)
@@ -99,12 +99,12 @@ $ms['system'] = array(
 			'title' => '微信',
 			'menu' => array(
 				'system_account' => array(
-					'title' => '微信公众号管理',
+					'title' => '<i class="wi wi-wechat"></i> 微信公众号管理',
 					'url' => url('account/system_display'),
 					'permission_name' => 'system_account',
 				),
 				'system_platform' => array(
-					'title' => '微信开放平台设置',
+					'title' => ' <i class="wi wi-exploitsetting"></i>微信开放平台设置',
 					'url' => url('system/platform'),
 					'permission_name' => 'system_platform',
 				),
@@ -114,12 +114,12 @@ $ms['system'] = array(
 			'title' => '应用模块',
 			'menu' => array(
 				'system_module' => array(
-					'title' => '我的应用管理',
+					'title' => '<i class="wi wi-appsetting"></i>我的应用管理',
 					'url' => url('system/module'),
 					'permission_name' => 'system_module',
 				),
 				'system_module_group' => array(
-					'title' => '应用权限套餐',
+					'title' => '<i class="wi wi-appjurisdiction"></i>应用权限套餐',
 					'url' => url('system/module_group'),
 					'permission_name' => 'system_module_group',
 				),
@@ -129,17 +129,17 @@ $ms['system'] = array(
 			'title' => '帐户/用户',
 			'menu' => array(
 				'system_user_profile' => array(
-					'title' => '我的帐户',
+					'title' => '<i class="wi wi-account"></i>我的帐户',
 					'url' => url('user/profile'),
 					'permission_name' => 'system_user_profile',
 				),
 				'system_user_display' => array(
-					'title' => '用户管理',
+					'title' => '<i class="wi wi-user"></i>用户管理',
 					'url' => url('user/display'),
 					'permission_name' => 'system_user_display',
 				),
 				'system_user_group' => array(
-					'title' => '用户组管理',
+					'title' => '<i class="wi wi-userjurisdiction"></i>用户组管理',
 					'url' => url('user/group'),
 					'permission_name' => 'system_user_group',
 				),
@@ -149,17 +149,17 @@ $ms['system'] = array(
 			'title' => '云服务',
 			'menu' => array(
 				'system_profile' => array(
-					'title' => '系统更新',
+					'title' => '<i class="wi wi-update"></i>系统更新',
 					'url' => url('system/profile'),
 					'permission_name' => 'system_module',
 				),
 				'system_user' => array(
-					'title' => '注册站点',
+					'title' => '<i class="wi wi-registersite"></i>注册站点',
 					'url' => url('system/user'),
 					'permission_name' => 'system_module_group',
 				),
 				'system_user_group' => array(
-					'title' => '短信管理',
+					'title' => '<i class="wi wi-message"></i>短信管理',
 					'url' => url('system/user/group'),
 					'permission_name' => 'system_module_group',
 				),
@@ -169,12 +169,12 @@ $ms['system'] = array(
 			'title' => '文章/公告',
 			'menu' => array(
 				'system_article_news' => array(
-					'title' => '文章管理',
+					'title' => '<i class="wi wi-article"></i>文章管理',
 					'url' => url('article/news'),
 					'permission_name' => 'system_article_news',
 				),
 				'system_article_notice' => array(
-					'title' => '公告管理',
+					'title' => '<i class="wi wi-notice"></i>公告管理',
 					'url' => url('article/notice'),
 					'permission_name' => 'system_article_notice',
 				)
@@ -184,32 +184,32 @@ $ms['system'] = array(
 			'title' => '设置',
 			'menu' => array(
 				'system_setting_updatecache' => array(
-					'title' => '更新缓存',
+					'title' => '<i class="wi wi-cache"></i>更新缓存',
 					'url' => url('system/updatecache'),
 					'permission_name' => 'system_setting_updatecache',
 				),
 				'system_setting_site' => array(
-					'title' => '站点设置',
+					'title' => '<i class="wi wi-parameter"></i>站点设置',
 					'url' => url('system/site'),
 					'permission_name' => 'system_setting_site',
 				),
 				'system_setting_attachment' => array(
-					'title' => '附件设置',
+					'title' => '<i class="wi wi-attachment"></i>附件设置',
 					'url' => url('system/attachment'),
 					'permission_name' => 'system_setting_attachment',
 				),
 				'system_setting_common' => array(
-					'title' => '其他设置',
+					'title' => '<i class="wi wi-parameter"></i>其他设置',
 					'url' => url('system/common'),
 					'permission_name' => 'system_setting_common',
 				),
 				'system_setting_systeminfo' => array(
-					'title' => '系统信息',
+					'title' => '<i class="wi wi-parameter"></i>系统信息',
 					'url' => url('system/systeminfo'),
 					'permission_name' => 'system_setting_systeminfo',
 				),
 				'system_setting_logs' => array(
-					'title' => '查看日志',
+					'title' => '<i class="wi wi-log"></i>查看日志',
 					'url' => url('system/logs'),
 					'permission_name' => 'system_setting_logs',
 				),
@@ -219,27 +219,27 @@ $ms['system'] = array(
 			'title' => '常用系统工具',
 			'menu' => array(
 				'system_setting_filecheck' => array(
-					'title' => '系统文件校验',
+					'title' => '<i class="wi wi-file"></i>系统文件校验',
 					'url' => url('system/filecheck'),
 					'permission_name' => 'system_setting_filecheck',
 				),
 				'system_setting_optimize' => array(
-					'title' => '性能优化',
+					'title' => '<i class="wi wi-optimize"></i>性能优化',
 					'url' => url('system/optimize'),
 					'permission_name' => 'system_setting_optimize',
 				),
 				'system_setting_database' => array(
-					'title' => '数据库',
+					'title' => '<i class="wi wi-sql"></i>数据库',
 					'url' => url('system/database'),
 					'permission_name' => 'system_setting_database',
 				),
 				'system_setting_scan' => array(
-					'title' => '木马查杀',
+					'title' => '<i class="wi wi-safety"></i>木马查杀',
 					'url' => url('system/scan'),
 					'permission_name' => 'system_setting_scan',
 				),
 				'system_setting_bom' => array(
-					'title' => '检测文件BOM',
+					'title' => '<i class="wi wi-bom"></i>检测文件BOM',
 					'url' => url('system/bom'),
 					'permission_name' => 'system_setting_bom',
 				),
