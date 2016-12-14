@@ -94,10 +94,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 			$ret = $response['message'];
 			if(is_array($ret)) {
 				foreach($ret as $et) {
-					if (empty($et['url'])) {
-						continue;
-					}
-					$et['url'] = $et['url'] . ('&__title=' . urlencode($et['title']));
+					$et['url'] .= '&__title=' . urlencode($et['title']);
 					$entries[$bind['entry']][] = array('title' => $et['title'], 'do' => $et['do'], 'url' => $et['url'], 'from' => 'call', 'icon' => $et['icon'], 'displayorder' => $et['displayorder']);
 				}
 			}

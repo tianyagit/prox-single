@@ -163,7 +163,7 @@ function checksubmit($var = 'submit', $allowget = false) {
 		}
 	} else {
 		if(empty($_W['isajax']) && empty($_SESSION['token'][$_GPC['token']])) {
-			exit("<script type=\"text/javascript\">history.go(-1);</script>");
+			message('抱歉，表单已经失效请您重新进入提交数据', referer(), 'error');
 		} else {
 			unset($_SESSION['token'][$_GPC['token']]);
 		}
@@ -1147,11 +1147,3 @@ function strip_gpc($values, $type = 'g') {
 	return $values;
 }
 
-
-function parse_path($path) {
-	$exists = strstr($path, '../');
-	if (!empty($exists)) {
-		return false;
-	}
-	return $path;
-}

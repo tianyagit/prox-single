@@ -47,7 +47,6 @@ $acl = array(
 			'module',
 			'service',
 			'theme',
-			'menu'
 		)
 	),
 	'site' => array(
