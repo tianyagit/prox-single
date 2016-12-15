@@ -63,6 +63,7 @@ require.config({
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
 		'underscore': '../lib/underscore-min',
+		'biz': '../lib/biz',
 		'loadcss': '../lib/css.min', //加载CSS
 	},
 	shim:{
@@ -76,7 +77,7 @@ require.config({
 		},
 		'datetimepicker' : {
 			exports : '$',
-			deps: ['loadcss!../../components/datetimepicker/jquery.datetimepicker.css']
+			deps: ['jquery', 'loadcss!../../components/datetimepicker/jquery.datetimepicker.css']
 		},
 		'colorpicker': {
 			exports: '$',
