@@ -12,6 +12,7 @@ $dos = array('profile', 'callback', 'appstore', 'buybranch', 'sms');
 $do = in_array($do, $dos) ? $do : 'profile';
 
 if($do == 'profile') {
+	define('ACTIVE_FRAME_URL', url('cloud/profile'));
 	$iframe = cloud_auth_url('profile');
 	$title = '注册站点';
 }
