@@ -20,6 +20,7 @@ if($do == 'log') {
 		foreach($data as &$da) {
 			$da['createtime'] = date('Y-m-d H:i:s', $da['createtime']);
 		}
+		unset($da);
 	}
 	message(array('items' => $data), '', 'ajax');
 }
