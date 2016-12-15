@@ -97,6 +97,7 @@ if($do == 'display') {
 	$stat['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
 	$stat['today'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid AND createtime >= :starttime AND createtime <= :endtime', array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime('today'), ':endtime' => strtotime('today') + 86399));
 	$stat['yesterday'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid AND createtime >= :starttime AND createtime <= :endtime', array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime('today')-86399, ':endtime' => strtotime('today')));
+    template('mc/member');
 }
 
 if($do == 'post') {
@@ -278,6 +279,7 @@ if($do == 'post') {
 		}
 	}
 	$addresss = pdo_getall('mc_member_address', array('uid' => $uid, 'uniacid' => $_W['uniacid']));
+    template('mc/member-post');
 }
 
 if($do == 'del') {
@@ -348,6 +350,7 @@ if($do == 'add') {
 		$uid = pdo_insertid();
 		message('添加会员成功,将进入编辑页面', url('mc/member/post', array('uid' => $uid)), 'success');
 	}
+	template('mc/member-add');
 }
 
 if($do == 'group') {
@@ -393,6 +396,7 @@ if($do == 'credit_record') {
 	$pager = pagination($total, $pindex, $psize);
 	$modules = pdo_getall('modules', array('issystem' => 0), array('title', 'name'), 'name');
 	$modules['card'] = array('title' => '会员卡', 'name' => 'card');
+    template('mc/member');
 }
 
 if($do == 'credit_stat') {
@@ -423,5 +427,5 @@ if($do == 'credit_stat') {
 			$data[$key]['end'] = $data[$key]['add'] - $data[$key]['del'];
 		}
 	}
+    template('mc/member');
 }
-template('mc/member');
