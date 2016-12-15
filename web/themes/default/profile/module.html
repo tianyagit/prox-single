@@ -22,7 +22,7 @@
 	<div class="ext-apply-list clearfix">
 		{loop $modules $row}
 		<div class="ext-apply-item"  ng-show="activeLetter ? activeLetter == '{$row['first_pinyin']}' : '1'">
-			<img src="{$row['preview']}" onerror="this.src='http://pro.we7.cc/web/resource/images/nopic.jpg'" class="apply-img {if !$row['enabled']}gray{/if}" />
+			<img src="{$row['preview']}" onerror="this.src='resource/images/nopic-small.jpg'" class="apply-img {if !$row['enabled']}gray{/if}" />
 			<h2 class="apply-title">{$row['title']}</h2>
 			<span class="color-green">
 				{if $row['enabled']}

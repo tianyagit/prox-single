@@ -1,10 +1,12 @@
 <?php
 /**
  * 素材管理
+ *
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 error_reporting(0);
+$dos = array('list');
 if (!in_array($do, array('keyword'))) {
 	exit('Access Denied');
 }
@@ -34,7 +36,6 @@ if($do == 'keyword') {
 				$row['child_items'] = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $row['id'], 'status' => 1));
 			}
 		}
-		unset($row);
 	}
 	$result = array(
 		'items' => $lists,

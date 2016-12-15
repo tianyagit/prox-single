@@ -1,24 +1,24 @@
 {template 'common/header'}
 <div class="we7-page-title">更新缓存</div>
-<hr>
+<ul class="we7-page-tab"></ul>
 <div class="clearfix">
-	<form action="" method="post" class="form-horizontal" role="form">
+	<form action="" method="post" class="we7-form" role="form">
 		<div class="form-group">
-			<label class="col-xs-12 col-sm-2 col-md-2 control-label">缓存类型</label>
-			<div class="col-sm-10">
+			<label class="col-sm-2 control-label">缓存类型</label>
+			<div class="col-sm-10 form-control-static">
+				<input type="checkbox" name="type[]" value="data" id="type_data" checked="checked" />
 				<label for="type_data" class="checkbox-inline">
-					<input type="checkbox" name="type[]" value="data" id="type_data" checked="checked" /> 数据缓存
+					 数据缓存
 				</label>
+				<input type="checkbox" name="type[]" value="template" id="type_template" checked="checked" />
 				<label for="type_template" class="checkbox-inline">
-					<input type="checkbox" name="type[]" value="template" id="type_template" checked="checked" /> 模板缓存
+					 模板缓存
 				</label>
 			</div>
 		</div>
 		<div class="form-group">
-			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-1 col-xs-12 col-sm-10 col-md-10 col-lg-11">
-				<input name="submit" type="submit" value="提交" class="btn btn-primary span3" style="margin-left:130px"/>
-				<input type="hidden" name="token" value="{$_W['token']}" />
-			</div>
+			<input name="submit" type="submit" value="提交" class="btn btn-primary we7-padding-horizontal"/>
+			<input type="hidden" name="token" value="{$_W['token']}" />
 		</div>
 	</form>
 </div>

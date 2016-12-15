@@ -28,7 +28,7 @@ function template_page($id, $flag = TEMPLATE_DISPLAY) {
 		return '';
 	}
 	$page['params'] = json_decode($page['params'], true);
-	$GLOBALS['title'] = $page['title'];
+	$GLOBALS['title'] = htmlentities($page['title'], ENT_QUOTES, 'UTF-8');
 	$GLOBALS['_share'] = array('desc' => $page['description'], 'title' => $page['title'], 'imgUrl' => tomedia($page['params']['0']['params']['thumb']));;
 
 	$compile = IA_ROOT . "/data/tpl/app/{$id}.{$_W['template']}.tpl.php";

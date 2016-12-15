@@ -97,7 +97,7 @@
 				<span class="color-red"><i class="fa fa-warning"></i>未接入微信公众号 </span>
 				<span class="color-default"><a href="javascript:;">立即接入</a></span>
 				{/if}
-				<span class="pull-right color-default"><a href="{php echo url('account/display')}"><i class="wi wi-cut"></i>切换公众号</a></span>
+				<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
 				<span class="pull-right"><a href="{php echo url('account/system_display')}"><i class="wi wi-appsetting"></i>公众号管理</a></span>
 			</div>
 			<div class="panel-body">
@@ -112,7 +112,7 @@
 						<ul class="list-group">
 							{loop $section['menu'] $menuid $menu}
 							<li class="list-group-item {if $menu['active']}active{/if}">
-								<a href="{$menu['url']}">{if $menu['icon']}<img src="{$menu['icon']}" />{/if} {$menu['title']}</a>
+								<a href="{$menu['url']}">{if $menu['icon']}<img src="{$menu['icon']}" onerror="this.src='resource/images/nopic-small.jpg'"/>{/if} {$menu['title']}</a>
 							</li>
 							{/loop}
 							{if $sectionid == 'platform_module'}

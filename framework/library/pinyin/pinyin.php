@@ -163,9 +163,6 @@ class Pinyin_Pinyin {
         if(!empty($pinyin)){
             $first = strtoupper(substr($pinyin, 0, 1));
         }
-        if (!empty($first) && (ord($first) < 65 || ord($first) > 90)) {
-            return '';
-        }
         return $first;
     }
 }

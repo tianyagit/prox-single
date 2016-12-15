@@ -1,10 +1,8 @@
 <?php
 /**
- * 用户组管理
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
 $dos = array('display', 'post', 'del');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 uni_user_permission_check('system_user_group');
@@ -57,14 +55,13 @@ if ($do == 'post') {
 		if(!empty($group_info['package']) && in_array(-1, $group_info['package'])) $group_info['check_all'] = true;
 	}
 	$packages = uni_groups();
-	foreach ($packages as $key => &$package_val) {
+	foreach ($packages as $key => &$val) {
 		if(!empty($group_info['package']) && in_array($key, $group_info['package'])) {
-			$package_val['checked'] = true;
+			$val['checked'] = true;
 		}else {
-			$package_val['checked'] = false;
+			$val['checked'] = false;
 		}
 	}
-	unset($package_val);
 	if (checksubmit('submit')) {
 		if (empty($_GPC['name'])) {
 			message('请输入用户组名称！');

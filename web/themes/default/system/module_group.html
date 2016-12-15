@@ -7,7 +7,8 @@
 		</div>
 
 		<ul class="we7-page-tab">
-			<li class="active"><a href="{php echo url('system/module_group/display') }">应用权限套餐列表  </a></li>
+			<li class="active"><a href="套餐应用列表.html">应用权限套餐列表  </a></li>
+			<li ><a href="">销售记录</a></li>
 		</ul>
 
 		<div class="we7-page-search clearfix">
@@ -35,7 +36,7 @@
 				<th class="text-left">套餐名称</th>
 				<th>应用个数</th>
 				<th>模块个数</th>
-				<th></th>
+				<th>用户权限组</th>
 				<th class="text-left">操作</th>
 			</tr>
 			{loop $modules_group_list $module_group}
@@ -62,7 +63,7 @@
 				<td class="text-left">{$module_group['name']}</td>
 				<td>{php echo count($module_group['modules'])}</td>
 				<td>{php echo count($module_group['templates'])}</td>
-				<td></td>
+				<td>超级VIP</td>
 				<td class="text-left">
 					<div class="link-group">
 						<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" data-target="toggle-{$module_group['id']}" ng-click="changeText($event)">展开</a>
@@ -77,7 +78,7 @@
 					<div class="col-sm-11">
 						{loop $module_group['modules'] $module}
 						<div class="col-sm-3 text-left">
-							<a href=""><span class="label label-info">{$module['title']}</span></a>
+							<a href=""><img style="height: 50px;width: 50px;" src="{if file_exists('../framework/addons/' . $module['name'] . '/icon-custom.jpg')}{php echo tomedia('../framework/addons/' . $module['name'] . '/icon-custom.jpg')}{else}{php echo tomedia('../framework/addons/' . $module['name'] . '/icon.jpg')}{/if}" alt="{$module['title']}" title="{$module['title']}"><span class="apply-name">{$module['title']}</span></a>
 						</div>
 						{/loop}
 					</div>
@@ -89,7 +90,7 @@
 					<div class="col-sm-11">
 						{loop $module_group['templates'] $template}
 						<div class="col-sm-3 text-left">
-							<a href=""><span class="label label-info">{$template['title']}</span></a>
+							<a href="">{$template['title']}</a>
 						</div>
 						{/loop}
 					</div>
@@ -111,7 +112,7 @@
 <div class="js-modulegroup-post" ng-controller="moduleGroupPostCtrl" ng-cloak>
 	<div class="combo-list-add">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{php echo url('system/module_group/')}"><i class="fa fa-chevron-circle-left"></i> </a>
+			<a href=""><i class="fa fa-chevron-circle-left"></i> </a>
 			<li>
 				套餐应用列表
 			</li>
@@ -126,6 +127,14 @@
 					<input type="text" ng-model="moduleGroup.name" class="form-control"/>
 				</div>
 			</div>
+			<div class="form-group">
+				<label for="" class="control-label">选择用户权限组</label>
+				<div class="form-controls">
+					<select name="" class="we7-select">
+						<option value="不选择">不选择</option>
+					</select>
+				</div>
+			</div>
 		</div>
 		<div class="panel we7-panel">
 			<div class="panel-heading">
@@ -133,17 +142,20 @@
 			</div>
 			<div class="panel-body we7-padding">
 				<div class="row">
-					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModule" style="overflow: hidden">
-						<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">{{ module.title }}
-						<span class="del bg-default" ng-click="delHaveModule(module)">删除</span>
+					<div class="col-sm-2 text-left" ng-repeat="module in moduleGroup.modules">
+						<a href=""><img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">{{ module.title }}</a>
+						<span class="del bg-default">删除</span>
 					</div>
-					<div class="col-sm-2">
-						<div class="input-more input-img">
-							<a href="" class="input-addon">
-								<span class="color-gray" ng-click="addModule()">+</span>
-							</a>
+					<div class="col-sm-2 we7-input-img">
+						<img src="">
+						<a href="javascript:;" class="input-addon"><span>+</span></a>
+						<input type="hidden" name="thumb">
+						<div class="cover-dark">
+							<a href="" class="cut">更换</a>
+							<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</div>
@@ -153,75 +165,29 @@
 			</div>
 			<div class="panel-body we7-padding">
 				<div class="row">
-					<div class="col-sm-2 text-left" ng-repeat="template in groupHaveTemplate">
-						<a href="" class="label label-info">{{ template.title }}</a>
-						<span class="del bg-default" ng-click="delHaveTemplate(template)">删除</span>
+					<div class="col-sm-2 text-left">
+						<a href=""><img src="../../../pros/web/resource/images/11.png" alt="">互粉互赚</a>
+						<span class="del bg-default">删除</span>
 					</div>
-					<div class="col-sm-2">
-						<div class="input-more input-img">
-							<a href="" class="input-addon">
-								<span class="color-gray" ng-click="adTemplate()">+</span>
-							</a>
+					<div class="col-sm-2 we7-input-img">
+						<img src="">
+						<a href="javascript:;" class="input-addon"><span>+</span></a>
+						<input type="hidden" name="thumb">
+						<div class="cover-dark">
+							<a href="" class="cut">更换</a>
+							<a href="" class="del"><i class="fa fa-times text-danger"></i></a>
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</div>
+
 	</div>
-
-	<div class="modal fade" id="add_template"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog we7-modal-dialog" style="width:800px">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">添加模板(点击添加)</h4>
-				</div>
-				<div class="modal-body">
-					<div class="panel-body we7-padding">
-						<div class="row">
-							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="template in groupNotHaveTemplate" style="overflow: hidden" ng-click="addHaveTemplate(template)">
-								<p class="text-over label label-info">{{ template.title }}</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="add_module"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog we7-modal-dialog" style="width:800px">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">添加模块(点击添加)</h4>
-				</div>
-				<div class="modal-body">
-					<div class="panel-body we7-padding">
-						<div class="row">
-							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="module in groupNotHaveModule" style="overflow: hidden" ng-click="addHaveModule(module)">
-								<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
-								<p class="text-over">{{ module.title }}</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-	<input type="form-control" class="btn btn-primary" name="" ng-click="saveGroup()" value="提交">
-
 </div>
 <script>
 	angular.module('moduleApp').value('config', {
-		'moduleGroup' : {php echo json_encode($module_group)},
-		'groupHaveModule' : {php echo  json_encode($group_have_module)},
-		'groupNotHaveModule' : {php echo  json_encode($group_not_have_module)},
-		'groupHaveTemplate' : {php echo  json_encode($group_have_template)},
-		'groupNotHaveTemplate' : {php echo  json_encode($group_not_have_template)},
-		'url' : "{php echo url('system/module_group/save')}"
+		'moduleGroup' : {php echo json_encode($module_group)}
 	});
 	angular.bootstrap($('.js-modulegroup-post'), ['moduleApp']);
 	$('[data-toggle="table-collapse"]').on('click',function(){

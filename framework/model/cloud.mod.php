@@ -745,10 +745,10 @@ function _cloud_cron_parse($result) {
 }
 
 /**
- * 生成附件站点信息的云服务跳转地址
- * @param string $forward 回调地址
- * @param array $data 站点数据
- * @return string 跳转地址
+ * 
+ * @param string $forward
+ * @param array $data
+ * @return string
  */
 function cloud_auth_url($forward, $data = array()){
 	global $_W;

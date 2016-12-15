@@ -30,7 +30,7 @@ if ($do == 'category_post') {
 		}
 		message('添加分类成功', url('article/news/category'), 'success');
 	}
-	template('article/news-category');
+	template('article/news-category-post');
 }
 
 //修改分类
@@ -107,7 +107,7 @@ if ($do == 'post') {
 		message('编辑文章成功', url('article/news/list'), 'success');
 	}
 	$categorys = pdo_fetchall('SELECT * FROM ' . tablename('article_category') . ' WHERE type = :type ORDER BY displayorder DESC', array(':type' => 'news'));
-	template('article/news');
+	template('article/news-post');
 }
 
 //新闻列表

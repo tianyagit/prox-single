@@ -745,129 +745,23 @@ function ext_module_msg_types() {
 	return $mtypes;
 }
 
-/**
- * 检查模块订阅消息是否成功
- * @param $modulename string 模块标识;
- * @return array();
- */
 function ext_check_module_subscribe($modulename) {
 	global $_W;
-
-	load()->func('communication');
-	load()->classs('account');
 	if (empty($modulename)) {
 		return true;
 	}
 	if (!is_array($_W['setting']['module_receive_ban'])) {
 		$_W['setting']['module_receive_ban'] = array();
 	}
-	$module = WeUtility::createModuleReceiver($modulename);
-	if (empty($module)) {
-		exit('error');
-	}
-	$module->uniacid = $_W['uniacid'];
-	$module->message = array(
-		'event' => 'subscribe'
-	);
-	if(method_exists($module, 'receive')) {
-		@$module->receive();
+	load()->func('communication');
+	$response = ihttp_request($_W['siteroot'] . url('extension/subscribe/check', array('modulename' => $modulename)));
+	if (strexists($response['content'], 'success')) {
 		unset($_W['setting']['module_receive_ban'][$modulename]);
+		$module_subscribe_success = true;
 	} else {
 		$_W['setting']['module_receive_ban'][$modulename] = $modulename;
+		$module_subscribe_success = false;
 	}
 	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
-	return error(0);
-}
-
-
-/**
- * 检查模块配置项
- * @param $module_name string 模块标识;
- * @param $manifest array() 模块配置项;
- * @return array();
- */
-function manifest_check($module_name, $manifest) {
-	if(is_string($manifest)) {
-		return error(1, '模块配置项定义错误, 具体错误内容为: <br />' . $manifest);
-	}
-	if(empty($manifest['application']['name'])) {
-		return error(1, '模块名称未定义. ');
-	}
-	if(empty($manifest['application']['identifie']) || !preg_match('/^[a-z][a-z\d_]+$/i', $manifest['application']['identifie'])) {
-		return error(1, '模块标识符未定义或格式错误(仅支持字母和数字, 且只能以字母开头).');
-	}
-	if(strtolower($module_name) != strtolower($manifest['application']['identifie'])) {
-		return error(1, '模块名称定义与模块路径名称定义不匹配. ');
-	}
-	if(empty($manifest['application']['version']) || !preg_match('/^[\d\.]+$/i', $manifest['application']['version'])) {
-		return error(1, '模块版本号未定义(仅支持数字和句点). ');
-	}
-	if(empty($manifest['application']['ability'])) {
-		return error(1, '模块功能简述未定义. ');
-	}
-	if($manifest['platform']['isrulefields'] && !in_array('text', $manifest['platform']['handles'])) {
-		return error(1, '模块功能定义错误, 嵌入规则必须要能够处理文本类型消息.. ');
-	}
-	if((!empty($manifest['cover']) || !empty($manifest['rule'])) && !$manifest['platform']['isrulefields']) {
-		return error(1, '模块功能定义错误, 存在封面或规则功能入口绑定时, 必须要嵌入规则. ');
-	}
-	global $points;
-	if (!empty($points)) {
-		foreach($points as $name => $point) {
-			if(is_array($manifest[$name])) {
-				foreach($manifest[$name] as $menu) {
-					if(trim($menu['title']) == ''  || !preg_match('/^[a-z\d]+$/i', $menu['do']) && empty($menu['call'])) {
-						return error(1, $point['title'] . ' 扩展项功能入口定义错误, (操作标题[title], 入口方法[do])格式不正确.');
-					}
-				}
-			}
-		}
-	}
-	//模块权限检测
-	if(is_array($manifest['permissions']) && !empty($manifest['permissions'])) {
-		foreach($manifest['permissions'] as $permission) {
-			if(trim($permission['title']) == ''  || !preg_match('/^[a-z\d_]+$/i', $permission['permission'])) {
-				return error(1, "名称为： {$permission['title']} 的权限标识格式不正确,请检查标识名称或标识格式是否正确");
-			}
-		}
-	}
-	if(!is_array($manifest['versions'])) {
-		return error(1, '兼容版本格式错误');
-	}
-	return error(0);
-}
-
-/**
- * 0.52模块升级版本号处理
- * @param $module string 模块标识;
- * @return array();
- */
-function update_handle($module = '') {
-	$isupdate = 0;
-	if(file_exists(IA_ROOT . '/data/modules_log.php')) {
-		$isupdate = 1;
-	}
-	if(!$isupdate || empty($module)) {
-		return true;
-	} else {
-		@require IA_ROOT . '/data/modules_log.php';
-		if(!empty($module_log)) {
-			if(isset($module_log[$module])) {
-				pdo_update('modules', array('version' => $module_log[$module]), array('name' => $module));
-				unset($module_log[$module]);
-			}
-
-			if(empty($module_log)) {
-				@unlink(IA_ROOT . '/data/modules_log.php');
-			} else {
-				$content_update = "<?php\r\n";
-				$content_update .= "\$module_log = " . var_export($module_log, true) . ";\r\n";
-				$content_update .= "?>";
-				file_put_contents(IA_ROOT . '/data/modules_log.php', $content_update);
-			}
-		} else {
-			@unlink(IA_ROOT . '/data/modules_log.php');
-		}
-		return true;
-	}
+	return $module_subscribe_success;
 }

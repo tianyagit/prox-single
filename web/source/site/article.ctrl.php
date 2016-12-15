@@ -1,17 +1,12 @@
 <?php
 /**
- * 文章管理
  * [WeEngine System] Copyright (c) 2013 WE7.CC
+ * $sn: pro/web/source/site/article.ctrl.php : v 14b9a4299104 : 2015/09/11 10:44:21 : yanghf $
  */
 defined('IN_IA') or exit('Access Denied');
-
-load()->func('file');
-
-$dos = array('display', 'post', 'del');
-$do = in_array($do, $dos) ? $do : 'display';
-
 uni_user_permission_check('site_article');
-$_W['page']['title'] = '文章管理 - 微官网';
+load()->func('file');
+$do = in_array($do, array('display', 'post', 'del')) ? $do : 'display';
 $category = pdo_fetchall("SELECT id,parentid,name FROM ".tablename('site_category')." WHERE uniacid = '{$_W['uniacid']}' ORDER BY parentid ASC, displayorder ASC, id ASC ", array(), 'id');
 $parent = array();
 $children = array();

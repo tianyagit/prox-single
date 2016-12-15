@@ -2,16 +2,14 @@
 /**
  * 微官网管理
  * [WeEngine System] Copyright (c) 2013 WE7.CC
+ * 
  */
 defined('IN_IA') or exit('Access Denied');
-
+$_W['page']['title'] = '微官网';
+uni_user_permission_check('platform_site');
 load()->model('site');
-
 $dos = array('display', 'post', 'del', 'default', 'copy', 'switch', 'quickmenu_display', 'quickmenu_post');
 $do = in_array($do, $dos) ? $do : 'display';
-uni_user_permission_check('platform_site');
-
-$_W['page']['title'] = '微官网';
 //获取默认微站
 $setting = uni_setting($_W['uniacid'], 'default_site');
 $default_site = intval($setting['default_site']);
@@ -20,10 +18,11 @@ if($do == 'post') {
 	uni_user_permission_check('site_multi_post');
 	if($_W['isajax'] && $_W['ispost']) {
 		//搜索模板
-		$name = trim($_GPC['name']);
-		$sql = "SELECT s.*, t.`name` AS `tname`, t.`title`, t.`type` FROM " . tablename('site_styles') . " AS s LEFT JOIN " . tablename('site_templates') . " AS t ON s.`templateid` = t.`id` WHERE s.`uniacid` = :uniacid AND s.`name` LIKE :name";
-		$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':name' => "%{$name}%"));
-		message(error(0, $styles), '', 'ajax');
+		$name = trim($_GPC['__input']['name']);
+		$sql = 'SELECT s.*, t.`name` AS `tname`, t.`title`, t.`type` FROM ' . tablename('site_styles') . ' AS s LEFT JOIN ' .
+			tablename('site_templates') . ' AS t ON s.`templateid` = t.`id` WHERE s.`uniacid` = :uniacid AND s.`name` LIKE :name';
+		$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':name' => "%{$name}%"), 'id');
+		message($styles, 'ajax', 'success');
 	}
 	$id = intval($_GPC['multiid']);
 
@@ -159,7 +158,6 @@ if($do == 'copy') {
 				$nav['multiid'] = $multi_id;
 				pdo_insert('site_nav', $nav);
 			}
-			unset($nav);
 		}
 		//复制微站入口设置
 		$cover = pdo_fetch('SELECT * FROM ' . tablename('cover_reply') . ' WHERE uniacid = :uniacid AND multiid = :id', array(':uniacid' => $_W['uniacid'], ':id' => $id));
@@ -176,7 +174,6 @@ if($do == 'copy') {
 					$keyword['rid'] = $new_rid;
 					pdo_insert('rule_keyword', $keyword);
 				}
-				unset($keyword);
 				unset($cover['id']);
 				$cover['title'] =  $multi['title'] . '入口设置';
 				$cover['multiid'] =  $multi_id;
@@ -189,7 +186,7 @@ if($do == 'copy') {
 }
 
 if($do == 'switch') {
-	$id = intval($_GPC['id']);
+	$id = intval($_GPC['__input']['id']);
 	$multi_info = pdo_get('site_multi', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	if(empty($multi_info)) {
 		message('微站不存在或已删除', referer(), 'error');
@@ -203,33 +200,34 @@ if($do == 'switch') {
 	}
 }
 
-if($do == 'quickmenu_display' && $_W['isajax'] && $_W['ispost']) {
-	$multiid = intval($_GPC['multiid']);
+if($do == 'quickmenu_display' && $_W['isajax']) {
+	$multiid = intval($_GPC['__input']['multiid']);
 	if($multiid > 0){
 		$page = pdo_fetch("SELECT * FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => $multiid));
 		$params = !empty($page['params']) ? $page['params'] : 'null';
 		$status = $page['status'] == 1 ? 1 : 0;
 		$modules = uni_modules();
 		$modules = !empty($modules) ? $modules : 'null';
-		message(error(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules)), 'ajax', 'success');
+		message(array('params' => json_decode($params), 'status' => $status, 'modules' => $modules), 'ajax', 'success');
 	}else {
-		message('-1', '', 'ajax');
+		message('-1', 'ajax', 'error');
 	}
 }
 
 if($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
-	$params = $_GPC['postdata']['params'];
+	$post = $_GPC['__input'];
+	$params = $post['postdata']['params'];
 	if (empty($params)) {
-		message('请您先设计手机端页面.2', '', 'ajax');
+		message('请您先设计手机端页面.2', 'ajax', 'error');
 	}
-	$html = htmlspecialchars_decode($_GPC['postdata']['html'], ENT_QUOTES);
+	$html = htmlspecialchars_decode($post['postdata']['html'], ENT_QUOTES);
 	$html = preg_replace('/background\-image\:(\s)*url\(\"(.*)\"\)/U', 'background-image: url($2)', $html);
 	$data = array(
 		'uniacid' => $_W['uniacid'],
-		'multiid' => intval($_GPC['multiid']),
+		'multiid' => $post['multiid'],
 		'title' => '快捷菜单',
 		'description' => '',
-		'status' => intval($_GPC['status']),
+		'status' => intval($post['status']),
 		'type' => 2,
 		'params' => json_encode($params),
 		'html' => $html,
@@ -242,5 +240,5 @@ if($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
 		pdo_insert('site_page', $data);
 		$id = pdo_insertid();
 	}
-	message('0', '', 'ajax');
+	message('0', 'ajax', 'success');
 }
