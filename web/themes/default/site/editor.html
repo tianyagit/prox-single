@@ -1,10 +1,15 @@
 {template 'common/header'}
 <link href="./resource/css/app.css" rel="stylesheet">
 {if $do == 'uc'}
-<ul class="nav nav-tabs">
+<div class="we7-page-title">会员中心</div>
+<ul class="we7-page-tab">
 	<li class="active"><a href="javascript:;">会员中心</a></li>
 	<li><a href="{php echo url('site/editor/quickmenu', array('type' => 4))}">快捷菜单</a></li>
 </ul>
+<!--<ul class="nav nav-tabs">
+	<li class="active"><a href="javascript:;">会员中心</a></li>
+	<li><a href="{php echo url('site/editor/quickmenu', array('type' => 4))}">快捷菜单</a></li>
+</ul>-->
 <form action="" method="post" class="form-horizontal">
 	<input type="hidden" name="multiid" value="{$multiid}" />
 	<input type="hidden" name="id" value="{$id}" />
@@ -153,10 +158,15 @@
 	});
 </script>
 {elseif $do == 'quickmenu'}
-<ul class="nav nav-tabs">
+<div class="we7-page-title">会员中心</div>
+<ul class="we7-page-tab">
 	{if $type == '4'}<li><a href="{php echo url('site/editor/uc')}">会员中心</a></li>{else}<li><a href="{php echo url('site/multi')}">返回微站管理</a></li>{/if}
 	<li class="active"><a href="{php echo url('site/editor/quickmenu', array('multiid' => $multiid))}">快捷菜单</a></li>
 </ul>
+<!--<ul class="nav nav-tabs">
+	{if $type == '4'}<li><a href="{php echo url('site/editor/uc')}">会员中心</a></li>{else}<li><a href="{php echo url('site/multi')}">返回微站管理</a></li>{/if}
+	<li class="active"><a href="{php echo url('site/editor/quickmenu', array('multiid' => $multiid))}">快捷菜单</a></li>
+</ul>-->
 <form action="" method="post">
 	<div class="shopNav" id="quickmenu" ng-controller="MainCtrl">
 		<div class="well clearfix">
