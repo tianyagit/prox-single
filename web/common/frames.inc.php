@@ -199,7 +199,7 @@ $ms['system'] = array(
 					'permission_name' => 'system_setting_attachment',
 				),
 				'system_setting_common' => array(
-					'title' => '<i class="wi wi-parameter"></i>其他设置',
+					'title' => '<i class="wi wi-appsetting"></i>其他设置',
 					'url' => url('system/common'),
 					'permission_name' => 'system_setting_common',
 				),

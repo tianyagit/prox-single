@@ -10,11 +10,11 @@
 		<a href="{php echo url('platform/mass/send')}">定时群发记录</a>
 	</li>
 </ul>
-<div class="alert alert-info">
-	<i class="fa fa-info-circle"></i> 使用定时群发功能可设置<span class="text-danger">未来8天</span>的群发,使用该功能前请<span class="text-danger">先确保您的云服务可用</span><br>
-	<i class="fa fa-info-circle"></i> <strong>如果在提交定时群发提示:某天的群发同步到云服务失败,请<a href="{php echo url('platform/mass/send')}" class="text-danger">手动同步</a>到云服务</strong><br>
-	<i class="fa fa-info-circle"></i> <strong>使用该功能前,请将微信公众平台的<a href="{php echo url('platform/material/')}" class="text-danger">素材同步到本系统</a></strong><br>
-	<i class="fa fa-info-circle"></i> <strong>请注意：群发消息中若包含多条图文，只显示第一个</strong>
+<div class="alert we7-page-alert">
+	<p><i class="wi wi-info-sign"></i> 使用定时群发功能可设置<span class="text-danger">未来8天</span>的群发,使用该功能前请<span class="text-danger">先确保您的云服务可用</span><br></p>
+	<p><i class="wi wi-info-sign"></i> <strong class="color-dark">如果在提交定时群发提示:某天的群发同步到云服务失败,请<a href="{php echo url('platform/mass/send')}" class="text-danger">手动同步</a>到云服务</strong><br></p>
+	<p><i class="wi wi-info-sign"></i> <strong class="color-dark">使用该功能前,请将微信公众平台的<a href="{php echo url('platform/material/')}" class="text-danger">素材同步到本系统</a></strong><br></p>
+	<p><i class="wi wi-info-sign"></i> <strong class="color-dark">请注意：群发消息中若包含多条图文，只显示第一个</strong></p>
 </div>
 {if $cloud_error == 1}
 <div class="alert alert-danger">

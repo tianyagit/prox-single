@@ -112,7 +112,7 @@
 						<ul class="list-group">
 							{loop $section['menu'] $menuid $menu}
 							<li class="list-group-item {if $menu['active']}active{/if}">
-								<a href="{$menu['url']}">{if $menu['icon']}<img src="{$menu['icon']}" />{/if} {$menu['title']}</a>
+								<a href="{$menu['url']}">{if $menu['icon']}<img src="{$menu['icon']}" onerror="this.src='resource/images/nopic-small.jpg'"/>{/if} {$menu['title']}</a>
 							</li>
 							{/loop}
 							{if $sectionid == 'platform_module'}
