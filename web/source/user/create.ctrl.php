@@ -1,14 +1,17 @@
 <?php
 /**
+ * 添加用户
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 
-$_W['page']['title'] = '添加用户 - 用户管理';
+load()->model('user');
+
 uni_user_permission_check('system_user_display');
 
+$_W['page']['title'] = '添加用户 - 用户管理';
+
 if (checksubmit()) {
-	load()->model('user');
 	$username = trim($_GPC['username']);
 	if (!preg_match(REGULAR_USERNAME, $username)) {
 		message('必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。');
@@ -19,7 +22,7 @@ if (checksubmit()) {
 	if (istrlen($_GPC['password']) < 8) {
 		message('必须输入密码，且密码长度不得低于8位。');
 	}
-	if($_GPC['password'] !== $_GPC['repassword']) {
+	if(trim($_GPC['password']) !== trim($_GPC['repassword'])) {
 		message('两次密码不一致！');
 	}
 	if(!intval($_GPC['groupid'])) {
@@ -36,7 +39,7 @@ if (checksubmit()) {
 	}
 	$data = array(
 		'username' => $username,
-		'password' => $_GPC['password'],
+		'password' => trim($_GPC['password']),
 		'remark' => $_GPC['remark'],
 		'groupid' => intval($_GPC['groupid']),
 		'starttime' => TIMESTAMP,

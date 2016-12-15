@@ -225,41 +225,41 @@ function ext_module_checkupdate($modulename) {
  */
 function ext_module_bindings() {
 	static $bindings = array(
-	'cover' => array(
-		'name' => 'cover',
-		'title' => '功能封面',
-		'desc' => '功能封面是定义微站里一个独立功能的入口(手机端操作), 将呈现为一个图文消息, 点击后进入微站系统中对应的功能.'
-	),
-	'rule' => array(
-		'name' => 'rule',
-		'title' => '规则列表',
-		'desc' => '规则列表是定义可重复使用或者可创建多次的活动的功能入口(管理后台Web操作), 每个活动对应一条规则. 一般呈现为图文消息, 点击后进入定义好的某次活动中.'
-	),
-	'menu' => array(
-		'name' => 'menu',
-		'title' => '管理中心导航菜单',
-		'desc' => '管理中心导航菜单将会在管理中心生成一个导航入口(管理后台Web操作), 用于对模块定义的内容进行管理.'
-	),
-	'home' => array(
-		'name' => 'home',
-		'title' => '微站首页导航图标',
-		'desc' => '在微站的首页上显示相关功能的链接入口(手机端操作), 一般用于通用功能的展示.'
-	),
-	'profile'=> array(
-		'name' => 'profile',
-		'title' => '微站个人中心导航',
-		'desc' => '在微站的个人中心上显示相关功能的链接入口(手机端操作), 一般用于个人信息, 或针对个人的数据的展示.'
-	),
-	'shortcut'=> array(
-		'name' => 'shortcut',
-		'title' => '微站快捷功能导航',
-		'desc' => '在微站的快捷菜单上展示相关功能的链接入口(手机端操作), 仅在支持快捷菜单的微站模块上有效.'
-	),
-	'function'=> array(
-		'name' => 'function',
-		'title' => '微站独立功能',
-		'desc' => '需要特殊定义的操作, 一般用于将指定的操作指定为(direct). 如果一个操作没有在具体位置绑定, 但是需要定义为(direct: 直接访问), 可以使用这个嵌入点'
-	)
+		'cover' => array(
+			'name' => 'cover',
+			'title' => '功能封面',
+			'desc' => '功能封面是定义微站里一个独立功能的入口(手机端操作), 将呈现为一个图文消息, 点击后进入微站系统中对应的功能.'
+		),
+		'rule' => array(
+			'name' => 'rule',
+			'title' => '规则列表',
+			'desc' => '规则列表是定义可重复使用或者可创建多次的活动的功能入口(管理后台Web操作), 每个活动对应一条规则. 一般呈现为图文消息, 点击后进入定义好的某次活动中.'
+		),
+		'menu' => array(
+			'name' => 'menu',
+			'title' => '管理中心导航菜单',
+			'desc' => '管理中心导航菜单将会在管理中心生成一个导航入口(管理后台Web操作), 用于对模块定义的内容进行管理.'
+		),
+		'home' => array(
+			'name' => 'home',
+			'title' => '微站首页导航图标',
+			'desc' => '在微站的首页上显示相关功能的链接入口(手机端操作), 一般用于通用功能的展示.'
+		),
+		'profile'=> array(
+			'name' => 'profile',
+			'title' => '微站个人中心导航',
+			'desc' => '在微站的个人中心上显示相关功能的链接入口(手机端操作), 一般用于个人信息, 或针对个人的数据的展示.'
+		),
+		'shortcut'=> array(
+			'name' => 'shortcut',
+			'title' => '微站快捷功能导航',
+			'desc' => '在微站的快捷菜单上展示相关功能的链接入口(手机端操作), 仅在支持快捷菜单的微站模块上有效.'
+		),
+		'function'=> array(
+			'name' => 'function',
+			'title' => '微站独立功能',
+			'desc' => '需要特殊定义的操作, 一般用于将指定的操作指定为(direct). 如果一个操作没有在具体位置绑定, 但是需要定义为(direct: 直接访问), 可以使用这个嵌入点'
+		)
 	);
 	return $bindings;
 }
@@ -745,23 +745,129 @@ function ext_module_msg_types() {
 	return $mtypes;
 }
 
+/**
+ * 检查模块订阅消息是否成功
+ * @param $modulename string 模块标识;
+ * @return array();
+ */
 function ext_check_module_subscribe($modulename) {
 	global $_W;
+
+	load()->func('communication');
+	load()->classs('account');
 	if (empty($modulename)) {
 		return true;
 	}
 	if (!is_array($_W['setting']['module_receive_ban'])) {
 		$_W['setting']['module_receive_ban'] = array();
 	}
-	load()->func('communication');
-	$response = ihttp_request($_W['siteroot'] . url('extension/subscribe/check', array('modulename' => $modulename)));
-	if (strexists($response['content'], 'success')) {
+	$module = WeUtility::createModuleReceiver($modulename);
+	if (empty($module)) {
+		exit('error');
+	}
+	$module->uniacid = $_W['uniacid'];
+	$module->message = array(
+		'event' => 'subscribe'
+	);
+	if(method_exists($module, 'receive')) {
+		@$module->receive();
 		unset($_W['setting']['module_receive_ban'][$modulename]);
-		$module_subscribe_success = true;
 	} else {
 		$_W['setting']['module_receive_ban'][$modulename] = $modulename;
-		$module_subscribe_success = false;
 	}
 	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
-	return $module_subscribe_success;
+	return error(0);
+}
+
+
+/**
+ * 检查模块配置项
+ * @param $module_name string 模块标识;
+ * @param $manifest array() 模块配置项;
+ * @return array();
+ */
+function manifest_check($module_name, $manifest) {
+	if(is_string($manifest)) {
+		return error(1, '模块配置项定义错误, 具体错误内容为: <br />' . $manifest);
+	}
+	if(empty($manifest['application']['name'])) {
+		return error(1, '模块名称未定义. ');
+	}
+	if(empty($manifest['application']['identifie']) || !preg_match('/^[a-z][a-z\d_]+$/i', $manifest['application']['identifie'])) {
+		return error(1, '模块标识符未定义或格式错误(仅支持字母和数字, 且只能以字母开头).');
+	}
+	if(strtolower($module_name) != strtolower($manifest['application']['identifie'])) {
+		return error(1, '模块名称定义与模块路径名称定义不匹配. ');
+	}
+	if(empty($manifest['application']['version']) || !preg_match('/^[\d\.]+$/i', $manifest['application']['version'])) {
+		return error(1, '模块版本号未定义(仅支持数字和句点). ');
+	}
+	if(empty($manifest['application']['ability'])) {
+		return error(1, '模块功能简述未定义. ');
+	}
+	if($manifest['platform']['isrulefields'] && !in_array('text', $manifest['platform']['handles'])) {
+		return error(1, '模块功能定义错误, 嵌入规则必须要能够处理文本类型消息.. ');
+	}
+	if((!empty($manifest['cover']) || !empty($manifest['rule'])) && !$manifest['platform']['isrulefields']) {
+		return error(1, '模块功能定义错误, 存在封面或规则功能入口绑定时, 必须要嵌入规则. ');
+	}
+	global $points;
+	if (!empty($points)) {
+		foreach($points as $name => $point) {
+			if(is_array($manifest[$name])) {
+				foreach($manifest[$name] as $menu) {
+					if(trim($menu['title']) == ''  || !preg_match('/^[a-z\d]+$/i', $menu['do']) && empty($menu['call'])) {
+						return error(1, $point['title'] . ' 扩展项功能入口定义错误, (操作标题[title], 入口方法[do])格式不正确.');
+					}
+				}
+			}
+		}
+	}
+	//模块权限检测
+	if(is_array($manifest['permissions']) && !empty($manifest['permissions'])) {
+		foreach($manifest['permissions'] as $permission) {
+			if(trim($permission['title']) == ''  || !preg_match('/^[a-z\d_]+$/i', $permission['permission'])) {
+				return error(1, "名称为： {$permission['title']} 的权限标识格式不正确,请检查标识名称或标识格式是否正确");
+			}
+		}
+	}
+	if(!is_array($manifest['versions'])) {
+		return error(1, '兼容版本格式错误');
+	}
+	return error(0);
+}
+
+/**
+ * 0.52模块升级版本号处理
+ * @param $module string 模块标识;
+ * @return array();
+ */
+function update_handle($module = '') {
+	$isupdate = 0;
+	if(file_exists(IA_ROOT . '/data/modules_log.php')) {
+		$isupdate = 1;
+	}
+	if(!$isupdate || empty($module)) {
+		return true;
+	} else {
+		@require IA_ROOT . '/data/modules_log.php';
+		if(!empty($module_log)) {
+			if(isset($module_log[$module])) {
+				pdo_update('modules', array('version' => $module_log[$module]), array('name' => $module));
+				unset($module_log[$module]);
+			}
+
+			if(empty($module_log)) {
+				@unlink(IA_ROOT . '/data/modules_log.php');
+			} else {
+				$content_update = "<?php\r\n";
+				$content_update .= "\$module_log = " . var_export($module_log, true) . ";\r\n";
+				$content_update .= "?>";
+				file_put_contents(IA_ROOT . '/data/modules_log.php', $content_update);
+			}
+		} else {
+			@unlink(IA_ROOT . '/data/modules_log.php');
+		}
+		return true;
+	}
 }
