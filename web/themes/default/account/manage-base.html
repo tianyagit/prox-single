@@ -13,7 +13,7 @@
 		<span class="color-gray">{if $account['level'] == 1}类型：普通订阅号{/if}{if $account['level'] == 2}类型：普通服务号{/if}{if $account['level'] == 3}类型：认证订阅号{/if}{if $account['level'] == 4}类型：认证服务号/认证媒体/政府订阅号{/if}</span>
 	</div>
 	<div class="media-right media-middle">
-		<a href="{php echo url('account/system_display/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-primary">停  用</a>
+		<a href="{php echo url('account/system_display/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
 	</div>
 </div>
 <div class="clearfix"></div>
@@ -36,7 +36,7 @@
 			<td><img ng-src="{{other.headimgsrc}}" width="75px" height="75px" /></td>
 			<td><a href="javascript:;" class="color-default" ng-click="changeImage('headimgsrc')">修改</a></td>
 		</tr>
-		<tr>	 
+		<tr>
 			<td class="table-label">二维码</td>
 			<td><img src="{{other.qrcodeimgsrc}}" width="75px" height="75px"></td>
 			<td><a href="javascript:;" class="color-default" ng-click="changeImage('qrcodeimgsrc')">修改</a></td>
