@@ -14,12 +14,12 @@ uni_user_permission_check('platform_nav_' . $do, true, 'nav');
 $modulename = $_GPC['m'];
 
 //微官网首页快捷菜单：homemenu_display、homemenu_post、homemenu_del、homemenu_switch(切换开关状态)
-if($do == 'homemenu_display' && $_W['isajax']) {
-	$multiid = intval($_GPC['__input']['multiid']);
+if($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
+	$multiid = intval($_GPC['multiid']);
 	$pars = array(
-			':uniacid' => $_W['uniacid'],
-			':multiid' => $multiid,
-		);
+		':uniacid' => $_W['uniacid'],
+		':multiid' => $multiid,
+	);
 	$sql = 'SELECT * FROM ' . tablename('site_nav') . ' WHERE `uniacid`=:uniacid AND `position`= 1 AND `multiid`=:multiid ORDER BY `displayorder` DESC, id ASC';
 	$navs = pdo_fetchall($sql, $pars);
 	$navigations = array();
@@ -54,8 +54,8 @@ if($do == 'homemenu_display' && $_W['isajax']) {
 	message($navigations, 'ajax', 'success');
 }
 if($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
-	$multiid = intval($_GPC['__input']['multiid']);
-	$post = $_GPC['__input']['menu_info'];
+	$multiid = intval($_GPC['multiid']);
+	$post = $_GPC['menu_info'];
 	if(empty($post['name'])) {
 		//抱歉，请输入导航菜单的名称！
 		message('-1', 'ajax', 'error');
@@ -106,7 +106,7 @@ if($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 }
 
 if($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
-	$id = $_GPC['__input']['id'];
+	$id = intval($_GPC['id']);
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	if(empty($nav_exist)){
 		//本公众号不存在该导航
@@ -124,7 +124,7 @@ if($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
 }
 
 if($do == 'homemenu_switch' && $_W['isajax'] && $_W['ispost']) {
-	$id = $_GPC['__input']['id'];
+	$id = intval($_GPC['id']);
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	if(empty($nav_exist)){
 		//本公众号不存在该导航

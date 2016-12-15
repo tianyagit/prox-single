@@ -2,12 +2,16 @@
 /**
  * 微站风格管理
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn: pro/web/source/site/style.ctrl.php : v 7e4ce85c5d2f : 2015/07/15 03:25:22 : yanghf $
  */
 defined('IN_IA') or exit('Access Denied');
-$templateid = intval($_GPC['templateid']);
+
+load()->model('extension');
+load()->model('module');
+
 $dos = array('default', 'designer', 'module', 'createtemplate', 'template', 'copy', 'build', 'del');
 $do = in_array($do, $dos) ? $do : 'template';
+
+$templateid = intval($_GPC['templateid']);
 
 if ($do == 'template') {
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
@@ -33,7 +37,7 @@ if ($do == 'template') {
 					'name' => $v['name'],
 					'title' => $v['title'],
 					'type' => $v['type']
-				);	
+				);
 			}
 		}else {
 			$stylesResult[$k] = array(
@@ -57,13 +61,13 @@ if ($do == 'template') {
 			continue;
 		}
 		$stylesResult[] =  array(
-			'styleid' => $v['id'], 
-			'templateid' => $v['templateid'], 
-			'name' => $templates[$v['templateid']]['name'], 
-			'title' => $v['name'], 
+			'styleid' => $v['id'],
+			'templateid' => $v['templateid'],
+			'name' => $templates[$v['templateid']]['name'],
+			'title' => $v['name'],
 			'type' => $templates[$v['templateid']]['type']
 		);
-	}				
+	}
 	if (!empty($_GPC['type']) && $_GPC['type'] != 'all') {
 		$tmp = array();
 		foreach($stylesResult as $k => $v) {
@@ -80,7 +84,6 @@ if ($do == 'template') {
 }
 
 if($do == 'default') {
-	load()->model('extension');
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
 	$multi = pdo_fetch('SELECT id,styleid FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $setting['default_site']));
 	if(empty($multi)) {
@@ -256,7 +259,7 @@ if($do == 'createtemplate') {
 		exit('require founder');
 	}
 	$name = $_GPC['name'];
-	load()->model('module');
+	
 	$module = module_fetch($name);
 	if(empty($module)) {
 		exit('invalid module');
@@ -280,7 +283,6 @@ if($do == 'createtemplate') {
 }
 
 if ($do == 'build') {
-	load()->model('extension');
 	$template = array();
 	$templates = uni_templates();
 	if(!empty($templates)) {
@@ -296,9 +298,9 @@ if ($do == 'build') {
 	}
 	list($templatetitle) = explode('_', $template['title']);
 	$newstyle = array(
-			'uniacid' => $_W['uniacid'],
-			'name' => $templatetitle.'_'.random(4),
-			'templateid' => $template['id'],
+		'uniacid' => $_W['uniacid'],
+		'name' => $templatetitle.'_'.random(4),
+		'templateid' => $template['id'],
 	);
 	pdo_insert('site_styles', $newstyle);
 	$id = pdo_insertid();
@@ -308,12 +310,12 @@ if ($do == 'build') {
 		foreach($templatedata['settings'] as $style_var) {
 			if(!empty($style_var['key']) && !empty($style_var['desc'])) {
 				pdo_insert('site_styles_vars', array(
-				'content' => $style_var['value'],
-				'templateid' => $templateid,
-				'styleid' => $id,
-				'variable' => $style_var['key'],
-				'uniacid' => $_W['uniacid'],
-				'description' => $style_var['desc'],
+					'content' => $style_var['value'],
+					'templateid' => $templateid,
+					'styleid' => $id,
+					'variable' => $style_var['key'],
+					'uniacid' => $_W['uniacid'],
+					'description' => $style_var['desc'],
 				));
 			}
 		}
@@ -335,9 +337,9 @@ if($do == 'copy') {
 
 	list($name) = explode('_', $style['name']);
 	$newstyle = array(
-			'uniacid' => $_W['uniacid'],
-			'name' => $name.'_'.random(4),
-			'templateid' => $style['templateid'],
+		'uniacid' => $_W['uniacid'],
+		'name' => $name.'_'.random(4),
+		'templateid' => $style['templateid'],
 	);
 	pdo_insert('site_styles', $newstyle);
 	$id = pdo_insertid();
