@@ -1,14 +1,16 @@
-<?php 
+<?php
 /**
+ * 用户列表
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 
-$_W['page']['title'] = '用户列表 - 用户管理';
-uni_user_permission_check('system_user_display');
 $do = $_GPC['do'];
 $dos = array('display', 'check_display', 'check_pass', 'recycle_display', 'recycle_delete','recycle_restore', 'recycle');
 $do = in_array($do, $dos) ? $do: 'display';
+uni_user_permission_check('system_user_display');
+
+$_W['page']['title'] = '用户列表 - 用户管理';
 $founders = explode(',', $_W['config']['setting']['founder']);
 
 if(in_array($do, array('display', 'recycle_display', 'check_display'))) {
@@ -68,6 +70,7 @@ if(in_array($do, array('display', 'recycle_display', 'check_display'))) {
 		$user['module_num'] = array_unique($user['module_num']);
 		$user['module_nums'] = count($user['module_num']) + $system_module_num;
 	}
+	unset($user);
 	$usergroups = pdo_fetchall("SELECT * FROM ".tablename('users_group'), array(), 'id');
 	template('user/display');
 }
