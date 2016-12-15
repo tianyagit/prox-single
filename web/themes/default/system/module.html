@@ -165,8 +165,8 @@
 										<button class="btn btn-default" onclick="$(this).parent().next().next().toggle()">升级说明</button>
 									</div>
 									<div class="col-sm-3">
-										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.id)" ng-if="branch.version_price == 0">免费升级到【{{branch.name}}】最新版本</a>
-										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.id)" ng-if="branch.version_price > 0">付费升级到【{{branch.name}}】最新版本</a>
+										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.version_price == 0">免费升级到【{{branch.name}}】最新版本</a>
+										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.version_price)" ng-if="branch.version_price > 0">付费升级到【{{branch.name}}】最新版本</a>
 									</div>
 									<div style="display: none">
 										<span class="help-block">
@@ -207,8 +207,7 @@
 			'module_list': {php echo json_encode($module_list)},
 			'editModuleUrl': "{php echo url('system/module/get_module_info')}",
 			'saveModuleUrl' :  "{php echo url('system/module/save_module_info')}",
-			'cloudModule' : {php echo json_encode($cloud_module)},
-			'upgradeUrl' : "{php echo url('system/module/upgrade')}"
+			'cloudModule' : {php echo json_encode($cloud_module)}
 		});
 		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});
