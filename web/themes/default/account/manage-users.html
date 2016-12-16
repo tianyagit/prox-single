@@ -1,0 +1,106 @@
+{template 'common/header'}
+<ol class="breadcrumb we7-breadcrumb">
+	<a href="{url 'account/system_display'}"><i class="fa fa-chevron-circle-left"></i> </a>
+	<li><a href="{url 'account/system_display'}">公众号管理</a></li>
+	<li>公众号设置</li>
+</ol>
+<div class="media media-wechat-setting">
+	<a class="media-left">
+		<img src="{$headimgsrc}" class="wechat-img">
+	</a>
+	<div class="media-body media-middle ">
+		<h4 class="media-heading color-dark">{$account['name']}</h4>
+		<span class="color-gray">{if $account['level'] == 1}类型：普通订阅号{/if}{if $account['level'] == 2}类型：普通服务号{/if}{if $account['level'] == 3}类型：认证订阅号{/if}{if $account['level'] == 4}类型：认证服务号/认证媒体/政府订阅号{/if}</span>
+	</div>
+	{if $state == 'founder' || $state == 'manager'}
+	<div class="media-right media-middle">
+		<a href="{php echo url('account/system_display/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
+	</div>
+	{/if}
+</div>
+<div class="clearfix"></div>
+<div class="btn-group we7-btn-group wechat-edit-group">
+	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">基础信息</a>
+	<a href="{php echo url('account/post/sms', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">短信信息</a>
+	<a href="{php echo url('account/post/users', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default active">使用者管理</a>
+	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">可用应用模块/魔板</a>
+</div>
+
+<div class="alert alert-info">
+	<i class="fa fa-exclamation-circle"></i> 操作员不允许删除公众号和编辑公众号资料，管理员无此限制
+</div>
+<div id="js-account-manage-users" ng-controller="AccountManageUsers" ng-cloak>
+	<table class="table we7-table">
+		<col width="230px" />
+		<col />
+		<col />
+		<tr>
+			<th class="text-left">用户名</th>
+			<th>权限身份</th>
+			<th class="we7-padding-right text-right">
+				<span class="btn btn-link color-default" data-toggle="modal" data-target="#user-modal">添加使用者</span>
+			</th>
+		</tr>
+		<tr ng-repeat="permission in permissions">
+			<td class="text-left" ng-bind="member[permission.uid].username"></td>
+			<td ng-if="permission.isfounder == 1">创始人</td>
+			<td ng-if="permission.role == 'owner' && permission.isfounder == 0">主管理员</td>
+			<td ng-if="permission.role == 'manager' && permission.isfounder == 0">管理员</td>
+			<td ng-if="permission.role == 'operator' && permission.isfounder == 0">操作员</td>
+			<td  class="we7-padding-right text-right">
+				<div class="link-group">
+					<a href="javascript:;" ng-if="permission.isfounder == 1">创始人拥有系统最高权限 </a>
+					<a href="javascript:;" ng-if="permission.isfounder == 0 && permission.role == 'owner'">
+						主管理员拥有公众号的所有权限，并且公众号的权限（模块、模板）根据主管理员来获取 
+					</a>
+					<a href="javascript:;" ng-if="(state == 'founder' || state == 'manager') && permission.isfounder == 0 && (permission.role == 'manager' || permission.role == 'operator')" ng-click="setPermission(permission.uid)">权限设置  </a>
+					<a href="javascript:;" ng-if="(state == 'founder' || state == 'manager') && permission.isfounder == 0 && (permission.role == 'manager' || permission.role == 'operator')" ng-click="delPermission(permission.uid)">删除 </a>
+					<a href="javascript:;" ng-if="state != 'founder' && state != 'manager'">---</a>
+				</div>
+			</td>
+		</tr>
+			
+	</table>
+	<!-- 添加用户模态框 -->
+	<div class="modal" id="user-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h3 class="modal-title">添加账号操作员</h3>
+				</div>
+				<div class="modal-body">
+					<div class="form-group" ng-show="state == 'founder' || state == 'owner'">
+						<label class="radio-inline"><input type="radio" name="addtype" value="1" checked>操作员</label>
+						<label class="radio-inline"><input class="addtype2" type="radio" name="addtype" value="2">管理员</label>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">用户名</label>
+						<div class="col-sm-10">
+							<input id="add-username" type="text" class="form-control">
+							<span class="help-block">请输入完整的用户名。</span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="addUsername()">确认</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	angular.module('accountApp').value('config', {
+		permissions: {php echo !empty($permissions) ? json_encode($permissions) : 'null'},
+		member: {php echo !empty($member) ? json_encode($member) : 'null'},
+		state: {php echo !empty($state) ? json_encode($state) : 'null'},
+		links: {
+			delete: "{php echo url('account/post/users', array('acid' => $acid, 'uniacid' => $uniacid, 'operation' => 'delete'))}",
+			setPermission: "{php echo url('account/post/users', array('acid' => $acid, 'uniacid' => $uniacid, 'operation' => 'set_permission'));}",
+			addUser: "{php echo url('account/post/users', array('acid' => $acid, 'uniacid' => $uniacid, 'operation' => 'add'))}"
+		}
+	});
+	angular.bootstrap($('#js-account-manage-users'), ['accountApp']);
+</script>
+{template 'common/footer'}

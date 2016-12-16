@@ -3,8 +3,11 @@
  * 自动更新相关功能
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
+defined('IN_IA') or exit('Access Denied');
+
 load()->model('cloud');
 load()->func('communication');
+
 $r = cloud_prepare();
 if (is_error($r)) {
 	message($r['message'], url('cloud/profile'), 'error');

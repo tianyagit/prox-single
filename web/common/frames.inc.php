@@ -155,7 +155,7 @@ $ms['system'] = array(
 				),
 				'system_user' => array(
 					'title' => '注册站点',
-					'url' => url('system/user'),
+					'url' => url('cloud/profile'),
 					'permission_name' => 'system_module_group',
 				),
 				'system_user_group' => array(

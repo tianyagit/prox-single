@@ -49,6 +49,21 @@ $acl = array(
 		'founder' => array(),
 		'direct' => array()
 	),
+	'cloud' => array(
+		'default' => 'touch',
+		'direct' => array(
+			'touch',
+			'dock',
+			'download'
+		),
+		'founder' => array(
+			'diagnose',
+			'redirect',
+			'upgrade',
+			'process',
+			'device'
+		)
+	),
 );
 if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $controller != 'cloud' && $controller != 'utility' && $controller != 'account') {
 	$_W['siteclose'] = true;
