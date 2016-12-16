@@ -353,7 +353,8 @@ if($do == 'modules_tpl') {
 	$owner = user_single(array('uid' => $ownerid));
 	if($_W['isajax'] && $_W['ispost']) {
 		if($_GPC['type'] == 'group') {
-			if(!empty(trim($_GPC['groupdata']))) {
+			$groupdata = trim($_GPC['groupdata']);
+			if(!empty($groupdata)) {
 				$groups = explode(',', trim($_GPC['groupdata']));
 				//附加套餐组
 				pdo_delete('uni_account_group', array('uniacid' => $uniacid));
