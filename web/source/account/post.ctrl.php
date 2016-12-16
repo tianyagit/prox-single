@@ -7,6 +7,8 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('module');
 load()->model('cloud');
+load()->model('user');
+load()->model('frame');
 
 $dos = array('base', 'sms', 'users', 'modules_tpl');
 $do = in_array($do, $dos) ? $do : 'base';
@@ -170,6 +172,178 @@ if($do == 'sms') {
 }
 
 if($do == 'users') {
+	
+	$operation = $_GPC['operation'];
+	$operations = array('delete', 'edit', 'set_permission', 'add');
+	$operation = in_array($operation, $operations) ? $operation: 'edit';
+	switch ($operation) {
+		case 'edit':
+			$founders = explode(',', $_W['config']['setting']['founder']);
+			$permissions = pdo_fetchall("SELECT id, uid, role FROM ".tablename('uni_account_users')." WHERE uniacid = '$uniacid' and role != :role  ORDER BY uid ASC, role DESC", array(':role' => 'clerk'), 'uid');
+			if (!empty($permissions)) {
+				$member = pdo_fetchall("SELECT username, uid FROM ".tablename('users')." WHERE uid IN (".implode(',', array_keys($permissions)).")", array(), 'uid');
+				if(!empty($member)) {
+					foreach ($permissions as $key => $per_val) {
+						$permissions[$key]['isfounder'] = in_array($member[$key]['uid'], $founders) ? 1 : 0;
+					}
+				}
+			}
+			
+			$uids = array();
+			foreach ($permissions as $v) {
+				$uids[] = $v['uid'];
+			}
+			break;
+		case 'delete':
+			$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
+			if(empty($uid)) {
+				message('请选择要删除的用户！', referer(), 'error');
+			}
+			$data = array(
+				'uniacid' => $uniacid,
+				'uid' => $uid,
+			);
+			$exists = pdo_fetch("SELECT * FROM ".tablename('uni_account_users')." WHERE uid = :uid AND uniacid = :uniacid", array(':uniacid' => $uniacid, ':uid' => $uid));
+			if(!empty($exists)) {
+				$result = pdo_delete('uni_account_users', $data);
+				if($result) {
+					message('删除成功！', referer(), 'success');
+				}else {
+					message('删除失败，请重试！', referer(), 'error');
+				}
+			}else {
+				message('该公众号下不存在该用户！', referer(), 'error');
+			}
+			break;
+		case 'set_permission':
+			$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
+			$user = user_single(array('uid' => $uid));
+			if (empty($user)) {
+				message('您操作的用户不存在或是已经被删除！');
+			}
+			if (!pdo_fetchcolumn("SELECT id FROM ".tablename('uni_account_users')." WHERE uid = :uid AND uniacid = :uniacid", array(':uid' => $uid, ':uniacid' => $uniacid))) {
+				message('此用户没有操作该统一公众号的权限，请选指派“管理者”权限！');
+			}
+			//获取系统权限
+			$system_permission = pdo_fetch('SELECT * FROM ' . tablename('users_permission') . ' WHERE uniacid = :aid AND uid = :uid AND type = :type', array(':aid' => $uniacid, ':uid' => $uid, ':type' => 'system'));
+			if(!empty($system_permission['permission'])) {
+				$system_permission['permission'] = explode('|', $system_permission['permission']);
+			} else {
+				$system_permission['permission'] = array();
+			}
+
+			//获取模块权限
+			$mods = pdo_fetchall('SELECT * FROM ' . tablename('users_permission') . ' WHERE uniacid = :aid AND uid = :uid AND type != :type', array(':aid' => $uniacid, ':uid' => $uid, ':type' => 'system'), 'type');
+			$mod_keys = array_keys($mods);
+
+			if (checksubmit('submit')) {
+				//系统权限
+				$system_temp = array();
+				if(!empty($_GPC['system'])) {
+					foreach($_GPC['system'] as $li) {
+						$li = trim($li);
+						if(!empty($li)) {
+							$system_temp[] = $li;
+						}
+					}
+				}
+				if(!empty($system_temp)) {
+					if(empty($system_permission['id'])) {
+						$insert = array(
+							'uniacid' => $uniacid,
+							'uid' => $uid,
+							'type' => 'system',
+						);
+						$insert['permission'] = implode('|', $_GPC['system']);
+						pdo_insert('users_permission', $insert);
+					} else {
+						$update = array(
+							'permission' => implode('|', $_GPC['system'])
+						);
+						pdo_update('users_permission', $update, array('uniacid' => $uniacid, 'uid' => $uid));
+					}
+				} else {
+					pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $uid));
+				}
+				pdo_query('DELETE FROM ' . tablename('users_permission') . ' WHERE uniacid = :uniacid AND uid = :uid AND type != :type', array(':uniacid' => $uniacid, ':uid' => $uid, ':type' => 'system'));
+				//模块权限
+				if(!empty($_GPC['module'])) {
+					//print_r($_GPC);die;
+					$arr = array();
+					foreach($_GPC['module'] as $li) {
+						$insert = array(
+							'uniacid' => $uniacid,
+							'uid' => $uid,
+							'type' => $li,
+						);
+						if(empty($_GPC['module_'. $li]) || $_GPC[$li . '_select'] == 1) {
+							$insert['permission'] = 'all';
+							pdo_insert('users_permission', $insert);
+							continue;
+						} else {
+							$data = array();
+							foreach($_GPC['module_'. $li] as $v) {
+								$data[] = $v;
+							}
+							if(!empty($data)) {
+								$insert['permission'] = implode('|', $data);
+								pdo_insert('users_permission', $insert);
+							}
+						}
+					}
+				}
+				message('操作菜单权限成功！', referer(), 'success');
+			}
+
+			$menus = frame_lists();
+			foreach($menus as &$li) {
+				$li['childs'] = array();
+				if(!empty($li['child'])) {
+					foreach($li['child'] as $da) {
+						if(!empty($da['grandchild'])) {
+							foreach($da['grandchild'] as &$ca) {
+								$li['childs'][] = $ca;
+							}
+						}
+					}
+					unset($li['child']);
+				}
+			}
+			$_W['uniacid'] = $uniacid;
+			$module = uni_modules();
+			template('account/set-permission');
+			exit;
+			break;
+		case 'add':
+			$username = trim($_GPC['username']);
+			$user = user_single(array('username' => $username));
+			if(!empty($user)) {
+				$data = array(
+					'uniacid' => $uniacid,
+					'uid' => $user['uid'],
+				);
+				$exists = pdo_fetch("SELECT * FROM ".tablename('uni_account_users')." WHERE uid = :uid AND uniacid = :uniacid", array(':uniacid' => $uniacid, ':uid' => $user['uid']));
+				if(empty($exists)) {
+					$data['role'] = intval($_GPC['addtype']) == 2 ? 'manager' : 'operator';
+					$result = pdo_insert('uni_account_users', $data);
+					if($result) {
+						message('0', 'ajax', 'success');
+					}else {
+						message('-1', 'ajax', 'error');
+					}
+				} else {
+					//{$username} 已经是该公众号的操作员或管理员，请勿重复添加
+					message('2', 'ajax', 'error');
+				}
+				exit('success');
+			}else {
+				message('-1', 'ajax', 'error');
+			}
+			break;
+		default:
+			# code...
+			break;
+	}
 	template('account/manage-users');
 }
 
