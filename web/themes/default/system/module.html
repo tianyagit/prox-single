@@ -12,13 +12,15 @@
 	</ul>
 	<div class="we7-page-search clearfix">
 		<form action="" method="get" class="pull-left">
-			<div class="input-group we7-margin-bottom">
+			<div class="form-group we7-margin-bottom  col-sm-4">
 				<input type="hidden" name="letter" ng-model="activeLetter">
 				<input type="hidden" name="c" value="system">
 				<input type="hidden" name="a" value="module">
 				<input type="hidden" name="do" value="page">
-				<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
-				<span class="input-group-addon"><button class="button" id="search"><i class="fa fa-search"></i></button></span>
+				<div class="input-group">
+					<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
+					<span class="input-group-btn"><button class="btn btn-default" id="search"><i class="fa fa-search"></i></button></span>	
+				</div>
 			</div>
 		</form>
 		<!--<div class="pull-right">-->
@@ -33,22 +35,27 @@
 
 	<form action="" method="get">
 		<table class="table we7-table vertical-middle">
+			<col width="85px" />
+			<col width="400px"/>
+			<col width="90px" />
+			<col width="90px" />
+			<col width="230px" />
 			<tr>
-				<th colspan="3" class="text-left">应用名</th>
-				<th class="text-left">公众号</th>
-				<th class="text-left">数量</th>
+				<th colspan="2" class="text-left">应用名</th>
+				<th>公众号</th>
+				<th>数量</th>
 				<th class="text-left">操作</th>
 			</tr>
 			<tr ng-repeat="module in module_list">
-				<td class="text-left" colspan="2">
-					<img ng-src="{{ module.logo }}" class="img-responsive" style="width: 50px;height: 50px;" />
+				<td class="text-left">
+					<img ng-src="{{ module.logo }}" class="img-responsive" onerror="this.src='resource/images/nopic-small.jpg'" />
 				</td>
 				<td class="text-left">
 					<p>{{ module.title }}</p>
 					<span>版本：{{ module.version }} </span><span class="color-red" ng-if="module.upgrade">发现新版本</span>
 				</td>
-				<td class="text-left">{{ module.use_account }}</td>
-				<td class="text-left">{{ module.enabled_use_account }}</td>
+				<td >{{ module.use_account }}</td>
+				<td >{{ module.enabled_use_account }}</td>
 				<td class="text-left">
 					<div class="link-group">
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">详情</a>
@@ -100,7 +107,7 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块缩略图</label>
 							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
+								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px; font-size: 45px;">
 									<img ng-src="{{ moduleinfo.logo }}" ng-if="moduleinfo.logo">
 									<a href="javascript:;" class="input-addon" ng-hide="moduleinfo.logo" ng-click="changePicture('logo')"><span>+</span></a>
 									<input type="hidden" name="thumb">
@@ -115,7 +122,7 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块封面</label>
 							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px;">
+								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px; font-size: 45px;">
 									<img ng-src="{{ moduleinfo.preview }}">
 									<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
 									<input type="hidden" name="thumb">
@@ -146,16 +153,11 @@
 					<h4 class="modal-title">模块分支版本信息</h4>
 				</div>
 				<div class="modal-body">
-					<div class="form-group">
-						<label class="col-sm-1 control-label"> 模块标题</label>
-						<div class="col-sm-2">
-							{{ module_list[upgradeInfo.name].title }}
-						</div>
-					</div>
+					
 					<div class="form-group">
 						<div class="panel panel-default">
 							<div class="panel-heading">
-								模块分支信息
+								{{ module_list[upgradeInfo.name].title }}---模块分支信息
 							</div>
 							<div class="panel-body">
 								<div class="input-group col-sm-12" ng-repeat="branch in upgradeInfo.branches">
@@ -230,14 +232,16 @@
 
 	<div class="we7-page-search clearfix">
 		<form action="" method="get" class="pull-left">
-			<div class="input-group we7-margin-bottom">
-				<input type="hidden" name="c" value="system">
-				<input type="hidden" name="a" value="module">
-				<input type="hidden" name="do" value="not_installed">
-				<input type="hidden" name="status" value="{if $status == 'recycle'}recycle{else}uninstalled{/if}">
-				<input type="hidden" name="letter" value="{$letter}">
-				<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
-				<span class="input-group-addon"><button id="search" class="button"><i class="fa fa-search"></i></button></span>
+			<div class="form-group col-sm-4">
+				<div class="input-group we7-margin-bottom">
+					<input type="hidden" name="c" value="system">
+					<input type="hidden" name="a" value="module">
+					<input type="hidden" name="do" value="not_installed">
+					<input type="hidden" name="status" value="{if $status == 'recycle'}recycle{else}uninstalled{/if}">
+					<input type="hidden" name="letter" value="{$letter}">
+					<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
+					<span class="input-group-btn"><button id="search" class="btn btn-default"><i class="fa fa-search"></i></button></span>
+				</div>
 			</div>
 		</form>
 		<!--<div class="pull-right">-->
