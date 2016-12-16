@@ -17,13 +17,14 @@ if ($do == 'display') {
 	$_W['page']['title'] = '粉丝列表';
 	$fans_tag = mc_fans_groups(true);
 	$pageindex = max(1, intval($_GPC['page']));
+	$search_mod = intval($_GPC['search_mod']) == '' ? 1 : intval($_GPC['search_mod']);
 	$pagesize = 10;
 	$param = array(
 		':uniacid' => $_W['uniacid'],
 		':acid' => $_W['acid']
 		);
 	$condition = " WHERE f.`uniacid` = :uniacid AND f.`acid` = :acid";
-	$tag = $_GPC['tag'] ? $_GPC['tag'] : 0;
+	$tag = intval($_GPC['tag']) ? intval($_GPC['tag']) : 0;
 	if (!empty($tag)) {
 		$param[':tagid'] = $tag;
 		$condition .= " AND m.`tagid` = :tagid";
@@ -34,9 +35,15 @@ if ($do == 'display') {
 	}
 	$nickname = $_GPC['nickname'] ? addslashes(trim($_GPC['nickname'])) : '';
 	if (!empty($nickname)) {
-		$condition .= " AND ((f.`nickname` LIKE :nickname) OR (f.`openid` = :openid))";
-		$param[':nickname'] = "%".$nickname."%";
-		$param[':openid'] = $nickname;
+		if ($search_mod == 1) {
+			$condition .= " AND ((f.`nickname` = :nickname) OR (f.`openid` = :openid))";
+			$param[':nickname'] = $nickname;
+			$param[':openid'] = $nickname;
+		} else {
+			$condition .= " AND ((f.`nickname` LIKE :nickname) OR (f.`openid` LIKE :openid))";
+			$param[':nickname'] = "%".$nickname."%";
+			$param[':openid'] = "%".$nickname."%";
+		}
 	}
 	if (!empty($_GPC['time']['start'])) {
 		$starttime = strtotime($_GPC['time']['start']);
