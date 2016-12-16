@@ -3,6 +3,7 @@
  * [WeEngine System] Copyright (c) 2014 WE7.CC
  * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
+defined('IN_IA') or exit('Access Denied');
 
 load()->model('cloud');
 load()->model('setting');
@@ -16,7 +17,8 @@ $dos = array(
 	'module.query',
 	'module.info',
 	'module.build',
-	'module.setting.cloud', 	'theme.query',
+	'module.setting.cloud',
+	'theme.query',
 	'theme.info',
 	'theme.build',
 	'application.build',
@@ -25,9 +27,7 @@ $dos = array(
 	'api.oauth',
 );
 $do = in_array($do, $dos) ? $do : '';
-if(empty($do)) {
-	exit();
-}
+
 if($do != 'auth') {
 	if(is_error(cloud_prepare())) {
 		exit('cloud service is unavailable.');
