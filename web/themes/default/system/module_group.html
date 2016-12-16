@@ -11,13 +11,15 @@
 		</ul>
 
 		<div class="we7-page-search clearfix">
-			<form action="" method="get" class="pull-left">
-				<input type="hidden" name="c" value="system">
-				<input type="hidden" name="a" value="module_group">
-				<input type="hidden" name="do" value="display">
-				<div class="input-group we7-margin-bottom">
-					<input class="form-control" name="name" value="{$_GPC['name']}" type="text" placeholder="" >
-					<span class="input-group-addon"><button class="button"><i class="fa fa-search"></i></button></span>
+			<form action="" method="get" class="">
+				<div class="form-group col-sm-4 pull-left">
+					<input type="hidden" name="c" value="system">
+					<input type="hidden" name="a" value="module_group">
+					<input type="hidden" name="do" value="display">
+					<div class="input-group we7-margin-bottom">
+						<input class="form-control" name="name" value="{$_GPC['name']}" type="text" placeholder="名称" >
+						<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
+					</div>
 				</div>
 			</form>
 			<div class="pull-right">
@@ -121,8 +123,8 @@
 		</ol>
 		<div class="we7-form">
 			<div class="form-group">
-				<label for="" class="control-label">应用套餐名称</label>
-				<div class="form-controls">
+				<label for="" class="control-label col-sm-3">应用套餐名称</label>
+				<div class="form-controls col-sm-8">
 					<input type="text" ng-model="moduleGroup.name" class="form-control"/>
 				</div>
 			</div>
@@ -134,11 +136,11 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModule" style="overflow: hidden">
-						<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">{{ module.title }}
+						<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;" onerror="this.src='resource/images/nopic-small.jpg'">{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModule(module)">删除</span>
 					</div>
 					<div class="col-sm-2">
-						<div class="input-more input-img">
+						<div class="we7-input-img input-more input-img">
 							<a href="" class="input-addon">
 								<span class="color-gray" ng-click="addModule()">+</span>
 							</a>
@@ -158,7 +160,7 @@
 						<span class="del bg-default" ng-click="delHaveTemplate(template)">删除</span>
 					</div>
 					<div class="col-sm-2">
-						<div class="input-more input-img">
+						<div class="we7-input-img input-more input-img">
 							<a href="" class="input-addon">
 								<span class="color-gray" ng-click="adTemplate()">+</span>
 							</a>
@@ -200,8 +202,10 @@
 					<div class="panel-body we7-padding">
 						<div class="row">
 							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="module in groupNotHaveModule" style="overflow: hidden" ng-click="addHaveModule(module)">
-								<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
-								<p class="text-over">{{ module.title }}</p>
+								<a href="">
+									<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;" onerror="this.src='resource/images/nopic-small.jpg'">
+									<p class="text-over">{{ module.title }}</p>
+								</a>
 							</div>
 						</div>
 					</div>

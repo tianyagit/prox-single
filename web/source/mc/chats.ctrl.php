@@ -1,26 +1,24 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2016/11/15
- * Time: 14:14
  * 粉丝聊天功能
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 
 defined('IN_IA') or exit('Access Denied');
 
 $dos = array('chats', 'send', 'endchats');
-$dos = array('chats', 'send');
 $do = in_array($do , $dos) ? $do : 'chats';
 
 load()->model('mc');
+load()->classs('wesession');
+load()->classs('account');
 
 if ($do == 'chats') {
 	$_W['page']['title'] = '粉丝聊天';
 	$openid = addslashes($_GPC['openid']);
-	$fan_info = mc_fansinfo($openid);
-	if (!empty($fan_info['uid'])) {
-		$fan_info['member_info'] = mc_fetch($fan_info['uid']);
+	$fans_info = mc_fansinfo($openid);
+	if (!empty($fans_info['uid'])) {
+		$fans_info['member_info'] = mc_fetch($fans_info['uid']);
 	}
 	$chat_record = pdo_getslice('mc_chats_record', array('uniacid' => $_W['uniacid'], 'openid' => $openid), array('1', 20), $total, array(), '', 'createtime desc');
 	if (!empty($chat_record)) {
@@ -66,8 +64,8 @@ if ($do == 'send') {
 			'media_id' => $content['mediaid']
 		);
 	}
-	$wechat_api = WeAccount::create($_W['acid']);
-	$result = $wechat_api->sendCustomNotice($send);
+	$account_api = WeAccount::create($_W['acid']);
+	$result = $account_api->sendCustomNotice($send);
 	if (is_error($result)) {
 		message($result, '', 'ajax');
 	} else {
@@ -77,8 +75,6 @@ if ($do == 'send') {
 		$message['to'] = $account['original'];
 		if(!empty($message['to'])) {
 			$sessionid = md5($message['from'] . $message['to'] . $_W['uniacid']);
-			load()->classs('wesession');
-			load()->classs('account');
 			session_id($sessionid);
 			WeSession::start($_W['uniacid'], $_W['openid'], 300);
 			$processor = WeUtility::createModuleProcessor('chats');
@@ -111,8 +107,6 @@ if ($do == 'endchats') {
 	$message['to'] = $account['original'];
 	if(!empty($message['to'])) {
 		$sessionid = md5($message['from'] . $message['to'] . $_W['uniacid']);
-		load()->classs('wesession');
-		load()->classs('account');
 		session_id($sessionid);
 		WeSession::start($_W['uniacid'], $_W['openid'], 300);
 		$processor = WeUtility::createModuleProcessor('chats');

@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div id="main" ng-controller="DisplayCtrl">
+<div id="main" ng-controller="DisplayCtrl" ng-cloak>
 <div class="we7-page-title">
 	粉丝管理
 </div>
@@ -23,6 +23,20 @@
 		</div>
 		<div class="form-group">
 			<div class="input-group col-sm-12" >
+				<div class="input-group-btn">
+					<button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button" aria-expanded="false"> {{ searchMod == 1 ? '精确' : '模糊'}}
+						<span class="caret"></span>
+					</button>
+					<ul role="menu" class="dropdown-menu">
+						<li>
+							<a href="javascript:;" ng-click="switchSearchMod(1)">精确</a>
+						</li>
+						<li>
+							<a href="javascript:;" ng-click="switchSearchMod(2)">模糊</a>
+						</li>
+					</ul>
+				</div>
+				<input name="search_mod" type="text" style="display:none;" ng-model="searchMod">
 				<input name="nickname" value="{$nickname}" class="form-control" placeholder="" type="text">
 				<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 			</div>
@@ -94,7 +108,7 @@
 								</script>
 								<a href="javascript:;" class="btn btn-primary test we7-margin-left-sm batch-group" data-toggle='popover' >打标签</a>
 								<a href="javascript:;" class="btn btn-default we7-margin-left-sm" ng-click="sync('check')">同步选中粉丝信息</a>
-								<a href="javascript:;" class="btn btn-default we7-margin-left-sm" ng-click="uploadFans()">同步全部粉丝信息</a>
+								<a href="javascript:;" class="btn btn-default we7-margin-left-sm" ng-click="downloadFans()">同步全部粉丝信息</a>
 							</div>
 						</th>
 					</tr>
@@ -334,7 +348,7 @@
 	delTag = function() {
 		$("[data-toggle='popover']").popover('hide');
 		tag = "{$fans_tag[$tag]['id']}";
-		$.post("{php echo url('mc/fans/delTag')}", {'tag' : tag}, function(data) {
+		$.post("{php echo url('mc/fans/del_tag')}", {'tag' : tag}, function(data) {
 			data = $.parseJSON(data);
 			if (data.message.errno == 0) {
 				util.message('删除成功', "{php echo url('mc/fans')}", 'success');
@@ -347,7 +361,7 @@
 	addTag = function() {
 		$("[data-toggle='popover']").popover('hide');
 		tag = $('[name="addtag"]').val();
-		$.post("{php echo url('mc/fans/addTag')}", {'tag' : tag}, function(data) {
+		$.post("{php echo url('mc/fans/add_tag')}", {'tag' : tag}, function(data) {
 			data = $.parseJSON(data);
 			if (data.message.errno != 0) {
 				util.message(data.message.message, '', 'info');
@@ -366,10 +380,11 @@
 		}
 	}
 	angular.module('fansApp').value('config', {
-		'addTagUrl' : "{php echo url('mc/fans/addTag')}",
-		'syncAllUrl' : "{php echo url('mc/fans/upload_fans')}",
+		'addTagUrl' : "{php echo url('mc/fans/add_tag')}",
+		'syncAllUrl' : "{php echo url('mc/fans/download_fans')}",
 		'syncUrl' : "{php echo url('mc/fans/sync')}",
-		'msgUrl' : "{php echo url('mc/fans')}"
+		'msgUrl' : "{php echo url('mc/fans')}",
+		'searchMod' : "{$search_mod}"
 	});
 	angular.bootstrap($('#main'), ['fansApp']);
 </script>

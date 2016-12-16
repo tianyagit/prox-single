@@ -1,16 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2016/11/9
- * Time: 9:59
  * 粉丝管理
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 
 defined('IN_IA') or exit('Access Denied');
 set_time_limit(60);
 
-$dos = array('display', 'addTag', 'delTag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'upload_fans', 'sync');
+$dos = array('display', 'add_tag', 'del_tag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'download_fans', 'sync');
 $do = in_array($do, $dos) ? $do : 'display';
 
 load()->model('mc');
@@ -20,13 +17,14 @@ if ($do == 'display') {
 	$_W['page']['title'] = '粉丝列表';
 	$fans_tag = mc_fans_groups(true);
 	$pageindex = max(1, intval($_GPC['page']));
+	$search_mod = intval($_GPC['search_mod']) == '' ? 1 : intval($_GPC['search_mod']);
 	$pagesize = 10;
 	$param = array(
 		':uniacid' => $_W['uniacid'],
 		':acid' => $_W['acid']
 		);
 	$condition = " WHERE f.`uniacid` = :uniacid AND f.`acid` = :acid";
-	$tag = $_GPC['tag'] ? $_GPC['tag'] : 0;
+	$tag = intval($_GPC['tag']) ? intval($_GPC['tag']) : 0;
 	if (!empty($tag)) {
 		$param[':tagid'] = $tag;
 		$condition .= " AND m.`tagid` = :tagid";
@@ -37,9 +35,15 @@ if ($do == 'display') {
 	}
 	$nickname = $_GPC['nickname'] ? addslashes(trim($_GPC['nickname'])) : '';
 	if (!empty($nickname)) {
-		$condition .= " AND ((f.`nickname` LIKE :nickname) OR (f.`openid` = :openid))";
-		$param[':nickname'] = "%".$nickname."%";
-		$param[':openid'] = $nickname;
+		if ($search_mod == 1) {
+			$condition .= " AND ((f.`nickname` = :nickname) OR (f.`openid` = :openid))";
+			$param[':nickname'] = $nickname;
+			$param[':openid'] = $nickname;
+		} else {
+			$condition .= " AND ((f.`nickname` LIKE :nickname) OR (f.`openid` LIKE :openid))";
+			$param[':nickname'] = "%".$nickname."%";
+			$param[':openid'] = "%".$nickname."%";
+		}
 	}
 	if (!empty($_GPC['time']['start'])) {
 		$starttime = strtotime($_GPC['time']['start']);
@@ -120,10 +124,10 @@ if ($do == 'display') {
 	$fans['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_mapping_fans') . ' WHERE uniacid = :uniacid AND acid = :acid AND follow = 1', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
 }
 
-if ($do == 'addTag') {
-	$tag = $_GPC['tag'];
-	$wechat_api = WeAccount::create($_W['acid']);
-	$result = $wechat_api->fansTagAdd($tag);
+if ($do == 'add_tag') {
+	$tag_name = trim($_GPC['tag']);
+	$account_api = WeAccount::create();
+	$result = $account_api->fansTagAdd($tag_name);
 	if (is_error($result)) {
 		message($result, '', 'ajajx');
 	} else {
@@ -131,10 +135,10 @@ if ($do == 'addTag') {
 	}
 }
 
-if ($do == 'delTag') {
+if ($do == 'del_tag') {
 	$tagid = intval($_GPC['tag']);
-	$wechat_api = WeAccount::create($_W['acid']);
-	$tags = $wechat_api->fansTagDelete($tagid);
+	$account_api = WeAccount::create();
+	$tags = $account_api->fansTagDelete($tagid);
 	if (!is_error($tags)) {
 		$fans_list = pdo_getall('mc_mapping_fans', array('groupid LIKE' => "%,{$tagid},%"));
 		$count = count($fans_list);
@@ -142,8 +146,8 @@ if ($do == 'delTag') {
 			$buffSize = ceil($count / 500);
 			for ($i = 0; $i < $buffSize; $i++) {
 				$sql = '';
-				$buffer = array_slice($fans_list, $i * 500, 500);
-				foreach ($buffer as $fans) {
+				$wechat_fans = array_slice($fans_list, $i * 500, 500);
+				foreach ($wechat_fans as $fans) {
 					$tagids = trim(str_replace(','.$tagid.',', ',', $fans['groupid']), ',');
 					if ($tagids == ',') {
 						$tagids = '';
@@ -162,9 +166,9 @@ if ($do == 'delTag') {
 
 if ($do == 'edit_tagname') {
 	$tag = intval($_GPC['tag']);
-	$tag_name = $_GPC['tag_name'];
-	$wechat_api = WeAccount::create($_W['acid']);
-	$result = $wechat_api->fansTagEdit($tag, $tag_name);
+	$tag_name = trim($_GPC['tag_name']);
+	$account_api = WeAccount::create();
+	$result = $account_api->fansTagEdit($tag, $tag_name);
 	if (is_error($result)) {
 		message($result, '', 'ajax');
 	} else {
@@ -176,8 +180,8 @@ if ($do == 'edit_fans_tag') {
 	$fanid = intval($_GPC['fanid']);
 	$tags = $_GPC['tags'];
 	$openid = pdo_getcolumn('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'fanid' => $fanid), 'openid');
-	$wechat_api = WeAccount::create($_W['acid']);
-	$result = $wechat_api->fansTagTagging($openid, $tags);
+	$account_api = WeAccount::create();
+	$result = $account_api->fansTagTagging($openid, $tags);
 	if (!is_error($result)) {
 		pdo_delete('mc_fans_tag_mapping', array('fanid' => $fanid));
 		if (!empty($tags)) {
@@ -194,9 +198,9 @@ if ($do == 'edit_fans_tag') {
 if ($do == 'batch_edit_fans_tag') {
 	$openid_list = $_GPC['openid'];
 	$tags = $_GPC['tag'];
-	$wechat_api = WeAccount::create($_W['acid']);
+	$account_api = WeAccount::create();
 	foreach ($tags as $tag) {
-		$result = $wechat_api->fansTagBatchTagging($openid_list, $tags[0]);
+		$result = $account_api->fansTagBatchTagging($openid_list, $tags[0]);
 		if (!is_error($result)) {
 			foreach ($openid_list as $openid) {
 				$fan_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'openid' => $openid));
@@ -211,24 +215,24 @@ if ($do == 'batch_edit_fans_tag') {
 	message(error(0), '', 'ajax');
 }
 
-if ($do == 'upload_fans') {
-	$next_openid = $_GPC['__input']['next_openid'];
+if ($do == 'download_fans') {
+	$next_openid = $_GPC['next_openid'];
 	if (empty($next_openid)) {
 		pdo_update('mc_mapping_fans', array('follow' => 0), array('uniacid' => $_W['uniacid']));
 	}
-	$wechat_api = WeAccount::create($_W['acid']);
-	$wechat_fans = $wechat_api->fansAll();
-	if (!is_error($wechat_fans)) {
-		$wechat_count = count($wechat_fans['fans']);
-		$buffer_size = ceil($wechat_count / 500);
-		for ($i = 0; $i < $buffer_size; $i++) {
-			$buffer_fans = array_slice($wechat_fans['fans'], $i * 500, 500);
-			$buffer_openids = implode("','", $buffer_fans);
-			$buffer_openids = "'{$buffer_openids}'";
-			$sql = 'SELECT `openid`, `uniacid`, `acid` FROM ' . tablename('mc_mapping_fans') . " WHERE `openid` IN ({$buffer_openids})";
+	$account_api = WeAccount::create();
+	$wechat_fans_list = $account_api->fansAll();
+	if (!is_error($wechat_fans_list)) {
+		$wechat_fans_count = count($wechat_fans_list['fans']);
+		$total_page = ceil($wechat_fans_count / 500);
+		for ($i = 0; $i < $total_page; $i++) {
+			$wechat_fans = array_slice($wechat_fans_list['fans'], $i * 500, 500);
+			$wechat_openids = implode("','", $wechat_fans);
+			$wechat_openids = "'{$wechat_openids}'";
+			$sql = 'SELECT `openid`, `uniacid`, `acid` FROM ' . tablename('mc_mapping_fans') . " WHERE `openid` IN ({$wechat_openids})";
 			$system_fans = pdo_fetchall($sql, array(), 'openid');
-
-			foreach($buffer_fans as $openid) {
+			$add_fans_sql = '';
+			foreach($wechat_fans as $openid) {
 				if (empty($system_fans) || empty($system_fans[$openid])) {
 					$salt = random(8);
 					$add_fans_sql .= "('{$_W['acid']}', '{$_W['uniacid']}', 0, '{$openid}', '{$salt}', 1, 0, ''),";
@@ -239,21 +243,21 @@ if ($do == 'upload_fans') {
 				$add_fans_sql = 'INSERT INTO ' . tablename('mc_mapping_fans') . ' (`acid`, `uniacid`, `uid`, `openid`, `salt`, `follow`, `followtime`, `tag`) VALUES ' . $add_fans_sql;
 				$result = pdo_query($add_fans_sql);
 			}
-			pdo_query("UPDATE " . tablename('mc_mapping_fans') . " SET follow = '1' WHERE `openid` IN ({$buffer_openids})");
+			pdo_query("UPDATE " . tablename('mc_mapping_fans') . " SET follow = '1' WHERE `openid` IN ({$wechat_openids})");
 		}
-		$return['total'] = $wechat_fans['total'];
-		$return['count'] = !empty($wechat_fans['fans']) ? $wechat_count : 0;
-		$return['next'] = $wechat_fans['next'];
+		$return['total'] = $wechat_fans_list['total'];
+		$return['count'] = !empty($wechat_fans_list['fans']) ? $wechat_fans_count : 0;
+		$return['next'] = $wechat_fans_list['next'];
 		message(error(0, $return), '', 'ajax');
 	} else {
-		message($fans, '', 'ajax');
+		message($wechat_fans_list, '', 'ajax');
 	}
 }
 
 if ($do == 'sync') {
-	$type = $_GPC['__input']['type'];
+	$type = $_GPC['type'];
 	if ($type == 'all') {
-		$pageindex = $_GPC['__input']['pageindex'];
+		$pageindex = $_GPC['pageindex'];
 		$pageindex++;
 		$sync_fans = pdo_getslice('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => '1'), array($pageindex, 5), $total, array(), '', 'fanid DESC');
 		$total = ceil($total/5);
@@ -265,7 +269,7 @@ if ($do == 'sync') {
 		message(error(0, array('pageindex' => $pageindex, 'total' => $total)), '', 'ajax');
 	}
 	if ($type == 'check') {
-		$openids = $_GPC['__input']['openids'];
+		$openids = $_GPC['openids'];
 		$sync_fans = pdo_getall('mc_mapping_fans', array('openid' => $openids));
 		if (!empty($sync_fans)) {
 			foreach ($sync_fans as $fans) {
