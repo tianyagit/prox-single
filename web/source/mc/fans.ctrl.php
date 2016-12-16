@@ -137,7 +137,7 @@ if ($do == 'add_tag') {
 
 if ($do == 'del_tag') {
 	$tagid = intval($_GPC['tag']);
-	$account_api = WeAccount::create($_W['acid']);
+	$account_api = WeAccount::create();
 	$tags = $account_api->fansTagDelete($tagid);
 	if (!is_error($tags)) {
 		$fans_list = pdo_getall('mc_mapping_fans', array('groupid LIKE' => "%,{$tagid},%"));
@@ -180,7 +180,7 @@ if ($do == 'edit_fans_tag') {
 	$fanid = intval($_GPC['fanid']);
 	$tags = $_GPC['tags'];
 	$openid = pdo_getcolumn('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'fanid' => $fanid), 'openid');
-	$account_api = WeAccount::create($_W['acid']);
+	$account_api = WeAccount::create();
 	$result = $account_api->fansTagTagging($openid, $tags);
 	if (!is_error($result)) {
 		pdo_delete('mc_fans_tag_mapping', array('fanid' => $fanid));
@@ -198,7 +198,7 @@ if ($do == 'edit_fans_tag') {
 if ($do == 'batch_edit_fans_tag') {
 	$openid_list = $_GPC['openid'];
 	$tags = $_GPC['tag'];
-	$account_api = WeAccount::create($_W['acid']);
+	$account_api = WeAccount::create();
 	foreach ($tags as $tag) {
 		$result = $account_api->fansTagBatchTagging($openid_list, $tags[0]);
 		if (!is_error($result)) {
@@ -220,7 +220,7 @@ if ($do == 'download_fans') {
 	if (empty($next_openid)) {
 		pdo_update('mc_mapping_fans', array('follow' => 0), array('uniacid' => $_W['uniacid']));
 	}
-	$account_api = WeAccount::create($_W['acid']);
+	$account_api = WeAccount::create();
 	$wechat_fans_list = $account_api->fansAll();
 	if (!is_error($wechat_fans_list)) {
 		$wechat_fans_count = count($wechat_fans_list['fans']);
