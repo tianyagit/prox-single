@@ -7,7 +7,7 @@
 defined('IN_IA') or exit('Access Denied');
 set_time_limit(60);
 
-$dos = array('display', 'addTag', 'delTag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'upload_fans', 'sync');
+$dos = array('display', 'add_tag', 'del_tag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'download_fans', 'sync');
 $do = in_array($do, $dos) ? $do : 'display';
 
 load()->model('mc');
@@ -117,7 +117,7 @@ if ($do == 'display') {
 	$fans['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_mapping_fans') . ' WHERE uniacid = :uniacid AND acid = :acid AND follow = 1', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
 }
 
-if ($do == 'addTag') {
+if ($do == 'add_tag') {
 	$tag = $_GPC['tag'];
 	$wechat_api = WeAccount::create($_W['acid']);
 	$result = $wechat_api->fansTagAdd($tag);
@@ -128,7 +128,7 @@ if ($do == 'addTag') {
 	}
 }
 
-if ($do == 'delTag') {
+if ($do == 'del_tag') {
 	$tagid = intval($_GPC['tag']);
 	$wechat_api = WeAccount::create($_W['acid']);
 	$tags = $wechat_api->fansTagDelete($tagid);
@@ -208,7 +208,7 @@ if ($do == 'batch_edit_fans_tag') {
 	message(error(0), '', 'ajax');
 }
 
-if ($do == 'upload_fans') {
+if ($do == 'download_fans') {
 	$next_openid = $_GPC['next_openid'];
 	if (empty($next_openid)) {
 		pdo_update('mc_mapping_fans', array('follow' => 0), array('uniacid' => $_W['uniacid']));

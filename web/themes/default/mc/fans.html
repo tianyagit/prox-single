@@ -94,7 +94,7 @@
 								</script>
 								<a href="javascript:;" class="btn btn-primary test we7-margin-left-sm batch-group" data-toggle='popover' >打标签</a>
 								<a href="javascript:;" class="btn btn-default we7-margin-left-sm" ng-click="sync('check')">同步选中粉丝信息</a>
-								<a href="javascript:;" class="btn btn-default we7-margin-left-sm" ng-click="uploadFans()">同步全部粉丝信息</a>
+								<a href="javascript:;" class="btn btn-default we7-margin-left-sm" ng-click="downloadFans()">同步全部粉丝信息</a>
 							</div>
 						</th>
 					</tr>
@@ -334,7 +334,7 @@
 	delTag = function() {
 		$("[data-toggle='popover']").popover('hide');
 		tag = "{$fans_tag[$tag]['id']}";
-		$.post("{php echo url('mc/fans/delTag')}", {'tag' : tag}, function(data) {
+		$.post("{php echo url('mc/fans/del_tag')}", {'tag' : tag}, function(data) {
 			data = $.parseJSON(data);
 			if (data.message.errno == 0) {
 				util.message('删除成功', "{php echo url('mc/fans')}", 'success');
@@ -347,7 +347,7 @@
 	addTag = function() {
 		$("[data-toggle='popover']").popover('hide');
 		tag = $('[name="addtag"]').val();
-		$.post("{php echo url('mc/fans/addTag')}", {'tag' : tag}, function(data) {
+		$.post("{php echo url('mc/fans/add_tag')}", {'tag' : tag}, function(data) {
 			data = $.parseJSON(data);
 			if (data.message.errno != 0) {
 				util.message(data.message.message, '', 'info');
@@ -366,8 +366,8 @@
 		}
 	}
 	angular.module('fansApp').value('config', {
-		'addTagUrl' : "{php echo url('mc/fans/addTag')}",
-		'syncAllUrl' : "{php echo url('mc/fans/upload_fans')}",
+		'addTagUrl' : "{php echo url('mc/fans/add_tag')}",
+		'syncAllUrl' : "{php echo url('mc/fans/download_fans')}",
 		'syncUrl' : "{php echo url('mc/fans/sync')}",
 		'msgUrl' : "{php echo url('mc/fans')}"
 	});
