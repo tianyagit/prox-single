@@ -346,7 +346,7 @@ if ($do == 'module_detail') {
 
 	//验证订阅消息是否成功
 	$check_subscribe = 0;
-	$module_obj = WeUtility::createModuleReceiver($module_name);
+	@$module_obj = WeUtility::createModuleReceiver($module_name);
 	if (!empty($module_obj)) {
 		$module_obj->uniacid = $_W['uniacid'];
 		$module_obj->acid = $_W['acid'];
@@ -530,7 +530,17 @@ if ($do == 'installed') {
 				),
 			),
 		);//test
+
+		$account_list = pdo_getall('uni_account');
+		unset($account);
 		foreach ($module_list as &$module) {
+			$module['use_account'] = 0;
+			$module['enabled_use_account'] = 0;
+			foreach ($account_list as $account) {
+				$account_have_module = pdo_get('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => $module['name']));
+				$module['use_account'] = empty($account_have_module) ? $module['use_account'] : $module['use_account'] + 1;
+				$module['enabled_use_account'] = empty($account_have_module['enabled']) ? $module['enabled_use_account'] : $module['enabled_use_account'] +1;
+			}
 			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
 			} else {
@@ -554,7 +564,6 @@ if ($do == 'installed') {
 		}
 		unset($module);
 	}
-
 }
 
 if ($do == 'not_installed') {

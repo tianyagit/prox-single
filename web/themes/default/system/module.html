@@ -35,6 +35,8 @@
 		<table class="table we7-table vertical-middle">
 			<tr>
 				<th colspan="3" class="text-left">应用名</th>
+				<th class="text-left">公众号</th>
+				<th class="text-left">数量</th>
 				<th class="text-left">操作</th>
 			</tr>
 			<tr ng-repeat="module in module_list">
@@ -45,6 +47,8 @@
 					<p>{{ module.title }}</p>
 					<span>版本：{{ module.version }} </span><span class="color-red" ng-if="module.upgrade">发现新版本</span>
 				</td>
+				<td class="text-left">{{ module.use_account }}</td>
+				<td class="text-left">{{ module.enabled_use_account }}</td>
 				<td class="text-left">
 					<div class="link-group">
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">详情</a>
