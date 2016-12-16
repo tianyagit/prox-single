@@ -1,10 +1,7 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2016/11/9
- * Time: 9:59
  * 粉丝管理
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 
 defined('IN_IA') or exit('Access Denied');
@@ -212,7 +209,7 @@ if ($do == 'batch_edit_fans_tag') {
 }
 
 if ($do == 'upload_fans') {
-	$next_openid = $_GPC['__input']['next_openid'];
+	$next_openid = $_GPC['next_openid'];
 	if (empty($next_openid)) {
 		pdo_update('mc_mapping_fans', array('follow' => 0), array('uniacid' => $_W['uniacid']));
 	}
@@ -227,7 +224,7 @@ if ($do == 'upload_fans') {
 			$buffer_openids = "'{$buffer_openids}'";
 			$sql = 'SELECT `openid`, `uniacid`, `acid` FROM ' . tablename('mc_mapping_fans') . " WHERE `openid` IN ({$buffer_openids})";
 			$system_fans = pdo_fetchall($sql, array(), 'openid');
-
+			$add_fans_sql = '';
 			foreach($buffer_fans as $openid) {
 				if (empty($system_fans) || empty($system_fans[$openid])) {
 					$salt = random(8);
@@ -246,14 +243,14 @@ if ($do == 'upload_fans') {
 		$return['next'] = $wechat_fans['next'];
 		message(error(0, $return), '', 'ajax');
 	} else {
-		message($fans, '', 'ajax');
+		message($wechat_fans, '', 'ajax');
 	}
 }
 
 if ($do == 'sync') {
-	$type = $_GPC['__input']['type'];
+	$type = $_GPC['type'];
 	if ($type == 'all') {
-		$pageindex = $_GPC['__input']['pageindex'];
+		$pageindex = $_GPC['pageindex'];
 		$pageindex++;
 		$sync_fans = pdo_getslice('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => '1'), array($pageindex, 5), $total, array(), '', 'fanid DESC');
 		$total = ceil($total/5);
@@ -265,7 +262,7 @@ if ($do == 'sync') {
 		message(error(0, array('pageindex' => $pageindex, 'total' => $total)), '', 'ajax');
 	}
 	if ($type == 'check') {
-		$openids = $_GPC['__input']['openids'];
+		$openids = $_GPC['openids'];
 		$sync_fans = pdo_getall('mc_mapping_fans', array('openid' => $openids));
 		if (!empty($sync_fans)) {
 			foreach ($sync_fans as $fans) {

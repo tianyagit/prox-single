@@ -1,8 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2016/11/10
- * Time: 11:32
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 define('FRAME', 'account');
