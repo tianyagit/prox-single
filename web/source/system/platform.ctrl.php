@@ -5,7 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->model('setting');
 load()->classs('weixin.platform');
 
 setting_load('platform');

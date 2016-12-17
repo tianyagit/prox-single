@@ -90,13 +90,13 @@
 				{if $_W['account']['level'] == 2 || $_W['account']['level'] == 4}
 				<span><i class="label label-primary">服务号</i> {if $_W['account']['level'] == 4}<i class="label label-primary">已认证</i>{/if}</span>
 				{/if}
-				{if $_W['isconnect'] == 0}
+				{if $_W['uniaccount']['isconnect'] == 0}
 				<span class="color-red"><i class="fa fa-warning"></i>未接入微信公众号 </span>
 				<span class="color-default"><a href="javascript:;">立即接入</a></span>
 				{/if}
-				<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
-				<span class="pull-right"><a href="{php echo url('account/system_display')}"><i class="wi wi-appsetting"></i>公众号管理</a></span>
-				<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i> 模拟测试</a></span>
+				<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default we7-margin-left"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
+				<span class="pull-right"><a href="{php echo url('account/system_display')}" class="color-default"><i class="wi wi-appsetting"></i>公众号管理</a></span>
+				<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i>模拟测试</a></span>
 			</div>
 			<div class="panel-body">
 				<div class="left-menu">
