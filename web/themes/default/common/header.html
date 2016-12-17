@@ -12,9 +12,6 @@
 					{loop $top_nav $nav}
 						<li{if FRAME == $nav['name']} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}">{$nav['title']}</a></li>
 					{/loop}
-					<li {if $action == 'emulator'}class="active"{/if}>
-						<a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i> 模拟测试</a>
-					</li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li>
@@ -99,6 +96,7 @@
 				{/if}
 				<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
 				<span class="pull-right"><a href="{php echo url('account/system_display')}"><i class="wi wi-appsetting"></i>公众号管理</a></span>
+				<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i> 模拟测试</a></span>
 			</div>
 			<div class="panel-body">
 				<div class="left-menu">
