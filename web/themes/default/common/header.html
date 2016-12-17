@@ -14,12 +14,12 @@
 					{/loop}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li>
+					<!-- <li>
 						<a href="#"><i class="wi wi-hint"></i>提醒</a>
 					</li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="wi wi-skin"></i>皮肤 <span class="caret"></span></a>
-						<!--<ul class="dropdown-menu" role="menu">
+						<ul class="dropdown-menu" role="menu">
 							<li>
 								<a href="#">Action</a>
 							</li>
@@ -33,8 +33,8 @@
 							<li>
 								<a href="#">Separated link</a>
 							</li>
-						</ul>-->
-					</li>
+						</ul>
+					</li> -->
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="./resource/images/9.png" alt="公众号头像" class="navbar-avatar">马德坤 <span class="caret"></span></a>
 						<!--<ul class="dropdown-menu" role="menu">
@@ -82,21 +82,26 @@
 		{if in_array(FRAME, array('account', 'system'))}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
-				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" onerror="this.src='./resource/images/gw-wx.gif'">
-				<span class="font-max">{$_W['account']['name']}</span>
-				{if $_W['account']['level'] == 1 || $_W['account']['level'] == 3}
-				<span><i class="label label-primary">订阅号</i> {if $_W['account']['level'] == 3}<i class="label label-primary">已认证</i>{/if}</span>
+				{if FRAME == 'account'}
+					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" onerror="this.src='./resource/images/gw-wx.gif'">
+					<span class="font-max">{$_W['account']['name']}</span>
+					{if $_W['account']['level'] == 1 || $_W['account']['level'] == 3}
+						<span><i class="label label-primary">订阅号</i> {if $_W['account']['level'] == 3}<i class="label label-primary">已认证</i>{/if}</span>
+					{/if}
+					{if $_W['account']['level'] == 2 || $_W['account']['level'] == 4}
+						<span><i class="label label-primary">服务号</i> {if $_W['account']['level'] == 4}<i class="label label-primary">已认证</i>{/if}</span>
+					{/if}
+					{if $_W['uniaccount']['isconnect'] == 0}
+						<span class="color-red"><i class="fa fa-warning"></i>未接入微信公众号 </span>
+						<span class="color-default"><a href="javascript:;">立即接入</a></span>
+					{/if}
+						<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default we7-margin-left"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
+						<span class="pull-right"><a href="{php echo url('account/system_display')}" class="color-default"><i class="wi wi-appsetting"></i>公众号管理</a></span>
+						<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i>模拟测试</a></span>
 				{/if}
-				{if $_W['account']['level'] == 2 || $_W['account']['level'] == 4}
-				<span><i class="label label-primary">服务号</i> {if $_W['account']['level'] == 4}<i class="label label-primary">已认证</i>{/if}</span>
+				{if FRAME == 'system'}
+					<span class="font-max">我的微擎</span>
 				{/if}
-				{if $_W['uniaccount']['isconnect'] == 0}
-				<span class="color-red"><i class="fa fa-warning"></i>未接入微信公众号 </span>
-				<span class="color-default"><a href="javascript:;">立即接入</a></span>
-				{/if}
-				<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default we7-margin-left"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
-				<span class="pull-right"><a href="{php echo url('account/system_display')}" class="color-default"><i class="wi wi-appsetting"></i>公众号管理</a></span>
-				<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="fa fa-mobile"></i>模拟测试</a></span>
 			</div>
 			<div class="panel-body">
 				<div class="left-menu">
