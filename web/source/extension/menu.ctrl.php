@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display', 'del', 'ajax', 'module', 'view', 'switch', 'del_bind', 'edit-bind');
+$dos = array('display', 'del', 'ajax', 'module', 'view', 'switch', 'del_bind');
 $do = in_array($do, $dos) ? $do : 'display';
 
 load()->model('frame');

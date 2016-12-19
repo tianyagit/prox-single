@@ -113,6 +113,11 @@ function activity_coupon_owned() {
 			unset($data[$key]);
 			continue;
 		}
+		if ($coupon['status'] != '3') {
+			pdo_delete('coupon_record', array('id' => $record['id']));
+			unset($data[$key]);
+			continue;
+		}
 		if (is_error($coupon)) {
 			unset($data[$key]);
 			continue;
@@ -126,6 +131,27 @@ function activity_coupon_owned() {
 		if (!empty($modules) && !in_array($_W['current_module']['name'], $modules) && !empty($_W['current_module']['name'])) {
 			unset($data[$key]);
 			continue;
+		}
+		if (is_array($coupon['date_info']) && $coupon['date_info']['time_type'] == '2') {
+			$starttime = $record['addtime'] + $coupon['date_info']['deadline'] * 86400;
+			$endtime = $starttime + ($coupon['date_info']['limit'] - 1) * 86400;
+			if ($endtime < time()) {
+				unset($data[$key]);
+				pdo_delete('coupon_record', array('id' => $record['id']));
+				continue;
+			} else {
+				$coupon['extra_date_info'] = '有效期:' . date('Y.m.d', $starttime) . '-' . date('Y.m.d', $endtime);
+			}
+		}
+		if (is_array($coupon['date_info']) && $coupon['date_info']['time_type'] == '1') {
+			$endtime = str_replace('.', '-', $coupon['date_info']['time_limit_end']);
+			$endtime = strtotime($endtime);
+			if ($endtime < time()) {
+				pdo_delete('coupon_record', array('id' => $record['id']));
+				unset($data[$key]);
+				continue;
+			}
+
 		}
 		if ($coupon['type'] == COUPON_TYPE_DISCOUNT) {
 			$coupon['icon'] = '<div class="price">' . $coupon['extra']['discount'] * 0.1 . '<span>折</span></div>';
@@ -141,11 +167,6 @@ function activity_coupon_owned() {
 		}
 		elseif($coupon['type'] == COUPON_TYPE_GENERAL) {
 			$coupon['icon'] = '<img src="resource/images/general_coupon.png" alt="" />';
-		}
-		if (is_array($coupon['date_info']) && $coupon['date_info']['time_type'] == '2') {
-			$starttime = $record['addtime'] + $coupon['date_info']['deadline'] * 86400;
-			$endtime = $starttime + ($coupon['date_info']['limit'] - 1) * 86400;
-			$coupon['extra_date_info'] = '有效期:' . date('Y.m.d', $starttime) . '-' . date('Y.m.d', $endtime);
 		}
 		$data[$key] = $coupon;
 		$data[$key]['recid'] = $record['id'];

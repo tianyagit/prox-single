@@ -100,7 +100,7 @@ if($do == 'display') {
 			'click' => intval($_GPC['click'])
 		);
 		if (!empty($_GPC['thumb'])) {
-			$data['thumb'] = $_GPC['thumb'];
+			$data['thumb'] = parse_path($_GPC['thumb']);
 		} elseif (!empty($_GPC['autolitpic'])) {
 			$match = array();
 			$file_name = file_random_name(ATTACHMENT_ROOT.'images/'.$_W['uniacid'].'/'.date('Y/m').'/', 'jpg');

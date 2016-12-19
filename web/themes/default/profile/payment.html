@@ -1,4 +1,3 @@
-{php $newUI = true;}
 {template 'common/header'}
 <div class="main">
 	<form id="payform" action="{php echo url('profile/payment')}" enctype="multipart/form-data" method="post" class="form-horizontal form" onsubmit="return validate();" ng-controller="paySetting">
@@ -385,13 +384,12 @@
 		}
 		$('#'+id).val(token);
 	}
-	require(['angular'], function(angular){
-		angular.module('app', []).controller('paySetting', function($scope){
-			$scope.delivery = {
-				switch: {if $pay['delivery']['switch']}'true'{else}'false'{/if}
-		};
-		$scope.credit = {
-			switch: {if $pay['credit']['switch']}'true'{else}'false'{/if}
+	angular.module('app', []).controller('paySetting', function($scope){
+		$scope.delivery = {
+			switch: {if $pay['delivery']['switch']}'true'{else}'false'{/if}
+	};
+	$scope.credit = {
+		switch: {if $pay['credit']['switch']}'true'{else}'false'{/if}
 	};
 	$scope.alipay = {
 		switch: {if $pay['alipay']['switch']}'true'{else}'false'{/if}
@@ -427,6 +425,7 @@
 			});
 		});
 		angular.bootstrap(document, ['app']);
+
 		//支付宝和微信支付开启验证
 		$("#payform").submit(function(){
 			var $scope = angular.element('#payform').scope();
@@ -499,7 +498,7 @@
 				}
 			}
 		});
-console.dir(10);
+
 		//支付宝测试
 		$("#tPost").click(function(){
 			var $scope = angular.element('#payform').scope();
@@ -522,8 +521,6 @@ console.dir(10);
 				}
 			}
 		});
-	});
-
 	$('[name="wechat[service]"]').change(function() {
 		if ($(this).val() != 0) {
 			$('[name="wechat[borrow]"]').val(0);

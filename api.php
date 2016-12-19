@@ -630,7 +630,9 @@ class WeEngine {
 		}
 		if(!empty($qr)) {
 			$message['content'] = $qr['keyword'];
-			$message['msgtype'] = 'text';
+			if (!empty($qr['type'])) {
+				$message['msgtype'] = 'text';
+			}
 			$params += $this->analyzeText($message);
 		}
 		return $params;
