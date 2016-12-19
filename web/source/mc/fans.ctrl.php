@@ -222,7 +222,7 @@ if ($do == 'display') {
 
 if ($do == 'view') {
 	$_W['page']['title'] = '粉丝详情 - 粉丝 - 会员中心';
-	$fanid = intval($_GPC['id']);
+	$fanid = floatval($_GPC['id']);
 	if (empty($fanid)) {
 		message('访问错误.', '', 'error');
 	}
