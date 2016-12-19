@@ -89,7 +89,7 @@ function cloud_request($url, $post = '', $extra = array(), $timeout = 60) {
 	global $_W;
 	load()->func('communication');
 	if (!empty($_W['setting']['cloudip']['ip']) && empty($extra['ip'])) {
-		$extra['ip'] = $_W['setting']['cloudip']['ip'];
+		//$extra['ip'] = $_W['setting']['cloudip']['ip'];
 	}
 	return ihttp_request($url, $post, $extra, $timeout);
 }
@@ -883,8 +883,10 @@ function cloud_bakup_files($files) {
 	load()->func('file');
 	if (!is_dir($path) && mkdirs($path)) {
 		foreach ($files as $file) {
-			mkdirs($path . '/' . dirname($file));
-			file_put_contents($path . '/' . $file, file_get_contents(IA_ROOT . $file));
+			if (file_exists(IA_ROOT . $file)) {
+				mkdirs($path . '/' . dirname($file));
+				file_put_contents($path . '/' . $file, file_get_contents(IA_ROOT . $file));
+			}
 		}
 		file_put_contents($path . '/' . 'map.json', $map);
 	}

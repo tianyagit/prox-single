@@ -15,8 +15,7 @@ $steps = array('files', 'schemas', 'scripts');
 $step = in_array($step, $steps) ? $step : 'files';
 
 if ($step == 'files' && $_W['ispost']) {
-	$post = $_GPC['__input'];
-	$ret = cloud_download($post['path'], $post['type']);
+	$ret = cloud_download($_GPC['path'], $_GPC['type']);
 	if (!is_error($ret)) {
 		exit('success');
 	}
@@ -58,8 +57,8 @@ if (!empty($_GPC['m'])) {
 	$packet = cloud_build();
 }
 if ($step == 'schemas' && $_W['ispost']) {
-	$post = $_GPC['__input'];
-	$tablename = $post['table'];
+	$tablename = $_GPC['table'];
+	exit($tablename);
 	foreach ($packet['schemas'] as $schema) {
 		if (substr($schema['tablename'], 4) == $tablename) {
 			$remote = $schema;
@@ -84,7 +83,6 @@ if ($step == 'schemas' && $_W['ispost']) {
 	}
 	exit;
 }
-
 if (!empty($packet) && (!empty($packet['upgrade']) || !empty($packet['install']))) {
 	$schemas = array();
 	if (!empty($packet['schemas'])) {
