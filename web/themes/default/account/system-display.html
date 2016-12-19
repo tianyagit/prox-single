@@ -22,7 +22,7 @@
 	<col />
 	<col width="208px" />
 	<col width="100px"/>
-	<col width="165px" />
+	<col width="245px" />
 	<tr>
 		<th colspan="2" class="text-left">公众号</th>
 		<th>有效期</th>
@@ -48,6 +48,7 @@
 		<td><p ng-bind="list.sms"></p></td>
 		<td class="text-left vertical-middle">
 			<div class="link-group">
+				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
 				<a ng-href="{{links.post}}acid={{list.acid}}&uniacid={{list.uniacid}}">管理设置</a>
 				<a ng-href="{{links.del}}acid={{list.acid}}&uniacid={{list.uniacid}}" onclick="if(!confirm('确认放入回收站吗？')) return false;">停用</a>
 			</div>
@@ -64,6 +65,7 @@
 	angular.module('accountApp').value('config', {
 		lists: {php echo !empty($list) ? json_encode($list) : 'null'},
 		links: {
+			switch: "{php echo url('account/display/switch')}",
 			post: "{php echo url('account/post')}",
 			del: "{php echo url('account/system_display/delete')}",
 		}

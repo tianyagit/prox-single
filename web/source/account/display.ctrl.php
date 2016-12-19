@@ -9,6 +9,8 @@ $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';
 
+$state = uni_permission($_W['uid'], $uniacid);
+
 if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
 	$role = uni_permission($_W['uid'], $uniacid);
