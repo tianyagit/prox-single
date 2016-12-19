@@ -205,8 +205,8 @@ elseif ($do == 'articlelist') {
 			array('title'=>'兑换商城','url'=> murl('entry', array('m' => 'we7_coupon', 'do' => 'activity'))),
 			array('title'=>'我的卡券','url'=> murl('entry', array('m' => 'we7_coupon', 'do' => 'activity', 'op' => 'mine'))),
 			array('title'=>'我的兑换','url'=> murl('entry', array('m' => 'we7_coupon', 'do' => 'activity', 'activity_type' => 'goods', 'op' => 'mine'))),
-			array('title'=>'消息','url'=> murl('mc/card/notice')),
-			array('title'=>'签到','url'=> murl('mc/card/sign_display')),
+			array('title'=>'消息','url'=> murl('entry', array('m' => 'we7_coupon', 'do' => 'card', 'op' => 'notice'))),
+			array('title'=>'签到','url'=> murl('entry', array('m' => 'we7_coupon', 'do' => 'card', 'op' => 'sign_display'))),
 			array('title'=>'完善会员资料','url'=> murl('mc/profile')),
 		);
 	}

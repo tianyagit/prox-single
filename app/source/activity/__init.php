@@ -5,6 +5,10 @@
  */
 defined('IN_IA') or exit('Access Denied');
 checkauth();
+if ($controller == 'activity') {
+	header('Location:' . murl('entry', array('m' => 'we7_coupon', 'do' => 'activity')));
+	exit;
+}
 load()->model('activity');
 load()->model('mc');
 load()->classs('coupon');
