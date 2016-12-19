@@ -220,6 +220,9 @@
 		});
 	</script>
 {elseif $m == 'welcome'}
+	<div class="alert alert-info">
+		用户关注公众号时，发送的欢迎信息。
+	</div>
 	<div class="new-keyword" id="welcome" ng-cloak>
 		<div class="we7-form" ng-controller="WelcomeDisplay">
 			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
@@ -239,6 +242,9 @@
 		});
 	</script>
 {elseif $m == 'default'}
+	<div class="alert alert-info">
+		当系统不知道该如何回复粉丝的消息时，默认发送的内容。
+	</div>
 	<div class="new-keyword" id="default">
 		<div id="a" class="we7-form" ng-controller="DefaultDisplay">
 			<form id="reply-form" class="form-horizontal form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data">
