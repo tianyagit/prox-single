@@ -1,16 +1,18 @@
 <?php
 /**
+ * 我的账户
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+load()->model('user');
 
 $dos = array('base', 'post');
 $do = in_array($do, $dos) ? $do : 'base';
 uni_user_permission_check('system_user_profile');
-load()->model('user');
+$_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
 if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
-	$post = $_GPC['__input'];
+	$post = $_GPC;
 	$type = $post['type'];
 
 	$uid = is_array($post['uid']) ? 0 : intval($post['uid']);
@@ -59,7 +61,6 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 
 //账号信息
 if ($do == 'base') {
-	$_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 	$uid = intval($_GPC['uid']) ? intval($_GPC['uid']) : $_W['uid'];
 	$user = user_single($uid);
 	if (empty($user)) {

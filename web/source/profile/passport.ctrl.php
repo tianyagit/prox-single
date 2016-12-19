@@ -1,25 +1,22 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2016/11/18
- * Time: 11:35
+ * 公众平台oAuth选项
+ * [WeEngine System] Copyright (c) 2013 WE7.CC 
  */
 
 defined('IN_IA') or exit('Access Denied');
 
 $dos = array('oauth', 'save_oauth');
 $do = in_array($do, $dos) ? $do : 'oauth';
-
 uni_user_permission_check('mc_passport_oauth');
-//获取所有的认证服务号
 $_W['page']['title'] = '公众平台oAuth选项 - 会员中心';
 
+//获取所有的认证服务号
 if ($do == 'save_oauth') {
-	$type = $_GPC['__input']['type'];
-	$account = $_GPC['__input']['account'];
+	$type = $_GPC['type'];
+	$account = trim($_GPC['account']);
 	if ($type == 'oauth') {
-		$host = $_GPC['__input']['host'];
+		$host = $_GPC['host'];
 		$host = rtrim($host,'/');
 		if(!empty($host) && !preg_match('/^http(s)?:\/\//', $host)) {
 			$host = $_W['sitescheme'].$host;
