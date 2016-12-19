@@ -56,9 +56,11 @@
 <script>
 	angular.module('userManageApp').value('config', {
 		wechats: {php echo !empty($wechats) ? json_encode($wechats) : 'null'},
+		profile: {php echo !empty($profile) ? json_encode($profile) : 'null'},
 	});
 	angular.module('userManageApp').controller('UserEditAccount', ['$scope', 'config', function($scope, config){
 		$scope.wechats = config.wechats;
+		$scope.profile = config.profile;
 	}]);
 	angular.bootstrap($('#js-user-edit-account'), ['userManageApp']);
 </script>
