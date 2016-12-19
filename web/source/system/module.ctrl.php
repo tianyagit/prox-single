@@ -251,7 +251,7 @@ if ($do =='install') {
 }
 
 if ($do == 'change_receive_ban') {
-	$modulename = $_GPC['__input']['modulename'];
+	$modulename = $_GPC['modulename'];
 	if (!is_array($_W['setting']['module_receive_ban'])) {
 		$_W['setting']['module_receive_ban'] = array();
 	}
@@ -266,7 +266,7 @@ if ($do == 'change_receive_ban') {
 }
 
 if ($do == 'save_module_info') {
-	$module_info = $_GPC['__input']['moduleinfo'];
+	$module_info = $_GPC['moduleinfo'];
 	if (!empty($module_info['logo'])) {
 		$image = file_get_contents ($module_info['logo']);
 		$icon = file_exists (IA_ROOT . "/addons/" . $module_info['name'] . "/icon-custom.jpg") ? 'icon-custom.jpg' : 'icon.jpg';
@@ -288,7 +288,7 @@ if ($do == 'save_module_info') {
 }
 
 if ($do == 'get_module_info') {
-	$mid = intval($_GPC['__input']['mid']);
+	$mid = intval($_GPC['mid']);
 	if ($mid) {
 		$module = pdo_get('modules', array('mid' => $mid));
 		if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
