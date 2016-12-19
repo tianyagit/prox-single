@@ -10,7 +10,6 @@ load()->model('site');
 $dos = array('display', 'post', 'del', 'default', 'copy', 'switch', 'quickmenu_display', 'quickmenu_post');
 $do = in_array($do, $dos) ? $do : 'display';
 uni_user_permission_check('platform_site');
-
 $_W['page']['title'] = '微官网';
 //获取默认微站
 $setting = uni_setting($_W['uniacid'], 'default_site');
