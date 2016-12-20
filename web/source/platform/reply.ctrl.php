@@ -10,14 +10,16 @@ load()->model('module');
 
 $dos = array('display', 'post', 'delete', 'change_status');
 $do = in_array($do, $dos) ? $do : 'display';
+uni_user_permission_check('platform_reply');
+$_W['page']['title'] = '自动回复';
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
 $_W['account']['modules'] = uni_modules();
 if(empty($m)) {
 	message('错误访问.');
 }
 if ($do == 'change_status') {
-	$status = $_GPC['__input']['status'];
-	$type = $_GPC['__input']['type'];
+	$status = $_GPC['status'];
+	$type = $_GPC['type'];
 	$setting = uni_setting_load('default_message', $_W['uniacid']);
 	$setting = $setting['default_message'];
 	$setting[$type]['type'] = $status;
@@ -38,28 +40,8 @@ if ($m == 'special') {
 		'WifiConnected' => 'Wifi连接成功消息'
 	);
 }
-// uni_user_permission_check('platform_reply_' . $m, true, 'reply');
-// $module = module_fetch($m);
-
-// if(empty($module) || empty($module['isrulefields'])) {
-// 	message('访问无权限.');
-// }
 //功能模块用
 $sysmods = system_modules();
-// if(!in_array($m, $sysmods)) {
-// 	//nav
-// 	define('FRAME', 'ext');
-// 	$types = module_types();
-// 	define('ACTIVE_FRAME_URL', url('home/welcome/ext', array('m' => $m)));
-// 	$frames = buildframes(array(FRAME), $m);
-// 	$frames = $frames[FRAME];
-// 	//nav end
-// }
-$_W['page']['title'] = '自动回复';
-// load()->model('extension');
-// if (ext_module_checkupdate($module['name'])) {
-// 	message('系统检测到该模块有更新，请点击“<a href="'.url('extension/module/upgrade', array('m' => $m)).'">更新模块</a>”后继续使用！', '', 'error');
-// }
 
 if(in_array($m, array('custom'))) {
 	$site = WeUtility::createModuleSite('reply');
@@ -70,7 +52,7 @@ if($do == 'display') {
 	if ($m == 'keyword' || !in_array($m, $sysmods)) {
 		if ($_W['isajax'] && $_W['ispost']) {
 			/*改变状态：是否开启该关键字*/
-			$id = $_GPC['__input']['id'];
+			$id = $_GPC['id'];
 			$result = pdo_get('rule', array('id' => $id), array('status'));
 			if (!empty($result)) {
 				$rule = $rule_keyword = false;
@@ -125,6 +107,7 @@ if($do == 'display') {
 					$item['options'] = $entries['rule'];
 				}
 			}
+			unset($item);
 		}
 	}
 	if ($m == 'special') {
@@ -172,6 +155,7 @@ if($do == 'post') {
 			foreach($reply['keywords'] as &$kw) {
 				$kw = array_elements(array('type', 'content'), $kw);
 			}
+			unset($kw);
 		}
 		if(checksubmit('submit')) {
 			if(empty($_GPC['rulename'])) {
@@ -237,7 +221,6 @@ if($do == 'post') {
 					pdo_insert('rule_keyword', $krow);
 				}
 				$kid = pdo_insertid();
-				// $rowtpl['incontent'] = $_GPC['incontent'];//无用
 				$module->fieldsFormSubmit($rid);
 				message('回复规则保存成功！', url('platform/reply/post', array('m' => $m, 'rid' => $rid)));
 			} else {
@@ -316,10 +299,8 @@ if($do == 'post') {
 		foreach ($installedmodulelist as $k => &$value) {
 			$value['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 		}
+		unset($value);
 		foreach($installedmodulelist as $name => $module) {
-			// if ((empty($_W['setting']['permurls']['modules']) && !in_array($name, $_W['setting']['permurls']['modules'])) || empty($module['isdisplay'])) {
-			// 	continue;
-			// }
 			$module['title_first_pinyin'] = $pinyin->get_first_char($module['title']);
 			if($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];

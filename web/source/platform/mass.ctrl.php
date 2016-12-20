@@ -1,13 +1,18 @@
 <?php
 /**
+ * 定时群发
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
-uni_user_permission_exist('platform_mass');
-$_W['page']['title'] = '定时群发-微信素材';
+
+load()->func('cron');
+load()->model('cloud');
+load()->model('module');
+
 $dos = array('list', 'post', 'cron', 'send', 'del', 'preview');
 $do = in_array($do, $dos) ? $do : 'list';
+uni_user_permission_exist('platform_mass');
+$_W['page']['title'] = '定时群发-微信素材';
 
 if($do == 'list') {
 
@@ -34,6 +39,7 @@ if($do == 'list') {
 					foreach ($massdata['media']['items'] as  &$news_val) {
 						$news_val['thumb_url'] = url('utility/wxcode/image', array('attach' => $news_val['thumb_url']));
 					}
+					unset($news_val);
 					break;
 				case 'image':
 					$massdata['msgtype_zh'] = '图片';
@@ -56,23 +62,18 @@ if($do == 'list') {
 }
 
 if($do == 'del') {
-	load()->func('cron');
-	load()->model('cloud');
-	$post = $_GPC['__input'];
-	$mass = pdo_get('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => intval($post['id'])));
+	$mass = pdo_get('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => intval($_GPC['id'])));
 	if(!empty($mass) && $mass['cron_id'] > 0) {
 		$status = cron_delete(array($mass['cron_id']));
 		if(is_error($status)) {
 			message($status, '', 'ajax');
 		}
 	}
-	pdo_delete('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => intval($post['id'])));
+	pdo_delete('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => intval($_GPC['id'])));
 	message(error(0, ''), '', 'ajax');
 }
 
 if($do == 'post') {
-	load()->model('module');
-
 	$groups = pdo_fetch('SELECT * FROM ' . tablename('mc_fans_groups') . ' WHERE uniacid = :uniacid AND acid = :acid', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
 	$groups = iunserializer($groups['groups']);
 	array_unshift($groups, array('id' => -1, 'name' => '全部粉丝', 'count' => ''));
@@ -194,7 +195,6 @@ if($do == 'cron') {
 	if(empty($record)) {
 		message('群发任务不存在或已删除', referer(), 'error');
 	}
-	load()->func('cron');
 	$cron = array(
 		'uniacid' => $_W['uniacid'],
 		'name' => date('Y-m-d', $record['sendtime']) . "微信群发任务",
@@ -214,12 +214,12 @@ if($do == 'cron') {
 }
 
 if($do == 'preview') {
-	$wxname = trim($_GPC['__input']['wxname']);
+	$wxname = trim($_GPC['wxname']);
 	if(empty($wxname)) {
 		exit('微信号不能为空');
 	}
-	$type = trim($_GPC['__input']['type']);
-	$media_id = trim($_GPC['__input']['media_id']);
+	$type = trim($_GPC['type']);
+	$media_id = trim($_GPC['media_id']);
 	$acc = WeAccount::create();
 	$data = $acc->fansSendPreview($wxname, $media_id, $type);
 	if(is_error($data)) {

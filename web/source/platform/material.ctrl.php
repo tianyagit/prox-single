@@ -1,15 +1,16 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2013 WE7.CC
  * 素材管理列表页
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+
+load()->model('material');
+
 $dos = array('display', 'sync', 'del_material');
 $do = in_array($do, $dos) ? $do : 'display';
-
-$_W['page']['title'] = '永久素材-微信素材';
 uni_user_permission_check('material_mass');
-load()->model('material');
+$_W['page']['title'] = '永久素材-微信素材';
 
 if($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
@@ -45,6 +46,7 @@ if($do == 'display') {
 					}
 				}
 			}
+			unset($material);
 		}
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
@@ -67,13 +69,14 @@ if($do == 'display') {
 		foreach($video_list as &$row) {
 			$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
 		}
+		unset($row);
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
 }
 
 if ($do == 'del_material') {
 	$wechat_api = WeAccount::create($_W['acid']);
-	$media_id = $_GPC['__input']['media_id'];
+	$media_id = $_GPC['media_id'];
 	$material = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $media_id));
 	$result = $wechat_api->delMaterial($media_id);
 	if ($result['errcode'] == 0) {
@@ -87,12 +90,11 @@ if ($do == 'del_material') {
 }
 
 if ($do == 'sync') {
-	$post = $_GPC['__input'];
 	$wechat_api = WeAccount::create($_W['acid']);
-	$pageindex = max(1, $post['pageindex']);
-	$type = $post['type'];
+	$pageindex = max(1, $_GPC['pageindex']);
+	$type = $_GPC['type'];
 	$news_list = $wechat_api->batchGetMaterial($type, ($pageindex-1)*20);
-	$wechat_existid = empty($post['wechat_existid']) ? array() : $post['wechat_existid'];
+	$wechat_existid = empty($_GPC['wechat_existid']) ? array() : $_GPC['wechat_existid'];
 	$wechat_existid = syncMaterial($news_list['data'], $wechat_existid, $type);
 	if ($pageindex == 1) {
 		$original_newsid = pdo_getall('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => $type, 'model' => 'perm'), array('id'), 'id');
@@ -102,8 +104,8 @@ if ($do == 'sync') {
 			message(error('1', array('type' => $type,'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
 		}
 	} else {
-		$total = intval($post['total']);
-		$original_newsid = $post['original_newsid'];
+		$total = intval($_GPC['total']);
+		$original_newsid = $_GPC['original_newsid'];
 		if ($total != $pageindex) {
 			message(error('1', array('type' => $type, 'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
 		}

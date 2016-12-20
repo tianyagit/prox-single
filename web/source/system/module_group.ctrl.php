@@ -1,20 +1,17 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: hp
- * Date: 2016/12/2
- * Time: 16:23
  * 编辑应用套餐
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+load()->model('module');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
-load()->model('module');
 
 if ($do == 'save') {
-	$param = $_GPC['__input'];
+	$param = $_GPC;
 	if (!empty($param['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $param['id'], 'name' => $param['name']));
 		if (!empty($name_exist)) {
@@ -69,6 +66,7 @@ if ($do == 'display') {
 				}
 			}
 		}
+		unset($group);
 	}
 	if (empty($_GPC['name']) || strexists('基础服务', $_GPC['name'])) {
 		array_unshift($modules_group_list, array('name' => '基础服务'));

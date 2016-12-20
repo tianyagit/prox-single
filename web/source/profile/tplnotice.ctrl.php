@@ -1,20 +1,19 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2016/11/19
- * Time: 10:26
  * 微信通知参数
+ * [WeEngine System] Copyright (c) 2013 WE7.CC 
  */
 
 defined('IN_IA') or exit('Access Denied');
+
 $dos = array('set', 'display');
 $do = in_array($do, $dos) ? $do : 'display';
 
 uni_user_permission_check('mc_tplnotice');
 $_W['page']['title'] = '会员微信通知-会员中心';
+
 if ($do  == 'set') {
-	$tpl_list = $_GPC['__input']['tpl'];
+	$tpl_list = $_GPC['tpl'];
 	foreach ($tpl_list as &$tpl) {
 		if (!empty($tpl['tpl'])) {
 			$inspect_tpl = preg_match('/^[a-zA-Z0-9_-]{43}$/', $tpl['tpl']);
@@ -81,5 +80,3 @@ $tpl = array(
 	),
 );
 template('profile/tplnotice');
-
-

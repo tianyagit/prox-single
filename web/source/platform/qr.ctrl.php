@@ -1,18 +1,21 @@
 <?php
 /**
+ * 二维码
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 
 defined('IN_IA') or exit('Access Denied');
-uni_user_permission_check('platform_qr');
-$dos = array('display', 'post', 'list', 'del', 'extend', 'SubDisplay', 'check_scene_str', 'down_qr');
-$do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'list';
 load()->model('module');
 load()->model('account');
+load()->func('communication');
+
+$dos = array('display', 'post', 'list', 'del', 'extend', 'SubDisplay', 'check_scene_str', 'down_qr');
+$do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'list';
+uni_user_permission_check('platform_qr');
+
 //检测场景字符串是否重复
 if($do == 'check_scene_str') {
-	$scene_str = trim($_GPC['__input']['scene_str']);
+	$scene_str = trim($_GPC['scene_str']);
 	$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
 	if(!empty($is_exist)) {
 		exit('repeat');
@@ -48,6 +51,7 @@ if($do == 'list') {
 				$qrcode['modellabel']="临时";
 			}
 		}
+		unset($qrcode);
 	}
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('qrcode') . $wheresql, $param);
 	$pager = pagination($total, $pindex, $psize);
@@ -65,7 +69,7 @@ if($do == 'del') {
 		}
 		message('执行成功<br />删除二维码：'.count($list), url('platform/qr/list'),'success');
 	}else{
-		$id = $_GPC['id'];
+		$id = intval($_GPC['id']);
 		pdo_delete('qrcode', array('id' =>$id, 'uniacid' => $_W['uniacid']));
 		pdo_delete('qrcode_stat',array('qid' => $id, 'uniacid' => $_W['uniacid']));
 		message('删除成功',url('platform/qr/list'),'success');
@@ -74,7 +78,6 @@ if($do == 'del') {
 
 if($do == 'post') {
 	$_W['page']['title'] = '生成二维码 - 二维码管理 - 高级功能';
-	load()->func('communication');
 	
 	if(checksubmit('submit')){
 		//二维码结构定义
@@ -152,7 +155,6 @@ if($do == 'post') {
 }
 
 if($do == 'extend') {
-	load()->func('communication');
 	$id = intval($_GPC['id']);
 	if (!empty($id)) {
 		$qrcrow = pdo_fetch("SELECT * FROM ".tablename('qrcode')." WHERE uniacid = :uniacid AND id = :id LIMIT 1", array(':uniacid' => $_W['uniacid'], ':id' => $id));
@@ -199,6 +201,7 @@ if($do == 'display') {
 				$openid[] = $qrcode['openid'];
 			}
 		}
+		unset($qrcode);
 		$openids = implode("','", $openid);
 		$param_temp[':uniacid'] = $_W['uniacid'];
 		$param_temp[':acid'] = $_W['acid'];

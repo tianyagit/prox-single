@@ -43,7 +43,7 @@ if ($do == 'edit_base') {
 			'day' => $profile['birthday'],
 		);
 		$profile['resides'] = $profile['resideprovince'] . $profile['residecity'] . $profile['residedist'] ;
-		$profile['births'] = $profile['birthyear'] . '年' . $profile['birthmonth'] . '月' . $profile['birthday'] .'日' ;
+		$profile['births'] =($profile['birthyear'] ? $profile['birthyear'] : '--') . '年' . ($profile['birthmonth'] ? $profile['birthmonth'] : '--') . '月' . ($profile['birthday'] ? $profile['birthday'] : '--') .'日';
 	}
 	template('user/edit-base');
 }

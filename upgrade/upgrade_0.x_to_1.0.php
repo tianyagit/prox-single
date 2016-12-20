@@ -23,6 +23,10 @@ if (!pdo_fieldexists('uni_account_modules', 'displayorder')) {
 if (pdo_fieldexists('uni_settings', 'shortcuts')) {
 	//pdo_query("ALTER TABLE ".tablename('uni_settings')." DROP `shortcuts`;");
 }
+//修改用户avater字段长度
+if(pdo_fieldexists('users_profile', 'avatar')) {
+	pdo_query("ALTER TABLE ".tablename('users_profile')." CHANGE `avatar` `avatar` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '';");
+}
 $shortcuts = pdo_getall('uni_settings', array(), array('shortcuts', 'uniacid'));
 if (!empty($shortcuts)) {
 	foreach ($shortcuts as $row) {

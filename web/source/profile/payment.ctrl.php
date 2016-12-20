@@ -1,16 +1,15 @@
 <?php
 /**
- * Created by ccj.
- * User: Administrator
- * Date: 2016/11/21
- * Time: 17:19
  * 支付参数配置
+ * [WeEngine System] Copyright (c) 2013 WE7.CC 
  */
 defined('IN_IA') or exit('Access Denied');
 
+load()->model('payment');
+load()->func('communication');
+
 $dos = array('save_setting', 'display', 'test_alipay', 'get_setting');
 $do = in_array($do, $dos) ? $do : 'display';
-
 uni_user_permission_check('profile_payment');
 $_W['page']['title'] = '支付参数 - 公众号选项';
 
@@ -33,21 +32,20 @@ if ($do == 'get_setting') {
 }
 
 if ($do == 'test_alipay') {
-	$alipay = $_GPC['__input']['param'];
+	$alipay = $_GPC['param'];
 	$params = array();
 	$params['tid'] = md5(uniqid());
 	$params['user'] = '测试用户';
 	$params['fee'] = '0.01';
 	$params['title'] = '测试支付接口';
-	load()->model('payment');
-	load()->func('communication');
+
 	$result = alipay_build($params, $alipay);
 	message(error(0, $result['url']), '', 'ajax');
 }
 
 if ($do == 'save_setting') {
-	$type = $_GPC['__input']['type'];
-	$param = $_GPC['__input']['param'];
+	$type = $_GPC['type'];
+	$param = $_GPC['param'];
 	$setting = uni_setting_load('payment', $_W['uniacid']);
 	$pay_setting = $setting['payment'];
 	if ($type == 'credit' || $type == 'delivery') {

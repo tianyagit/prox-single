@@ -1,13 +1,15 @@
 <?php
 /**
+ * 切换公众号
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn: pros/web/source/account/display.ctrl.php : 2016年11月5日 10:18:14 $
  */
 defined('IN_IA') or exit('Access Denied');
 
-$_W['page']['title'] = '公众号列表 - 公众号';
 $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
+$_W['page']['title'] = '公众号列表 - 公众号';
+
+$state = uni_permission($_W['uid'], $uniacid);
 
 if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -26,7 +28,7 @@ if($do == 'switch') {
 }
 
 if ($do == 'rank' && $_W['isajax']) {
-	$uniacid = intval($_GPC['__input']['id']);
+	$uniacid = intval($_GPC['id']);
 
 	$exist = pdo_get('uni_account', array('uniacid' => $uniacid));
 	if (empty($exist)) {
@@ -107,6 +109,7 @@ if ($do == 'display') {
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
 		}
+		unset($account);
 	}
 }
 

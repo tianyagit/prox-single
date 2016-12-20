@@ -1,16 +1,18 @@
 <?php
 /**
+ * 新增素材
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  *
  */
 defined('IN_IA') or exit('Access Denied');
-$dos = array('news', 'tomedia', 'addnews', 'thumb_upload', 'image_upload', 'replace_content');
-$do = in_array($do, $dos) ? $do : 'news';
-
-$_W['page']['title'] = '新增素材-微信素材';
-uni_user_permission_check('material_mass');
 load()->func('file');
 load()->model('material');
+load()->model('account');
+
+$dos = array('news', 'tomedia', 'addnews', 'thumb_upload', 'image_upload', 'replace_content');
+$do = in_array($do, $dos) ? $do : 'news';
+uni_user_permission_check('material_mass');
+$_W['page']['title'] = '新增素材-微信素材';
 
 if ($do == 'replace_content') {
 	$content = htmlspecialchars_decode($_GPC['content']);
@@ -29,14 +31,12 @@ if ($do == 'replace_content') {
 	}
 	if (!empty($images)) {
 		foreach ($images as $image) {
-			load()->func('file');
 			$thumb = file_fetch(tomedia($image), 1024, 'material/images');
 			if(is_error($thumb)) {
 				message($thumb, '', 'ajax');
 			}
 			$thumb = ATTACHMENT_ROOT . $thumb;
 			//uploadNewsThumb
-			load()->model('account');
 			$weixin_api = WeAccount::create($_W['acid']);
 			$data = array(
 				'media' => '@'. $thumb,
@@ -65,8 +65,7 @@ if($do == 'news') {
 
 if($do == 'addnews') {
 	$wechat_api = WeAccount::create($_W['acid']);
-	$post = $_GPC['__input'];
-	$operate = $post['operate'];
+	$operate = $_GPC['operate'];
 	$articles = array();
 	$post_news = array();
 	//获取所有的图片素材，构造一个已media_id为键的数组(为了获取图片的url)
@@ -76,59 +75,61 @@ if($do == 'addnews') {
 	foreach ($image_list as $image) {
 		$image_data[$image['media_id']] = $image;
 	}
-	foreach($post['news'] as $key => $news) {
-		if ($operate == 'add') {
-			$row = array(
-				'title' => urlencode($news['title']),
-				'author' => urlencode($news['author']),
-				'digest' => urlencode($news['description']),
-				'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
-				'show_cover_pic' => 1,
-				'content_source_url' => urlencode($news['content_source_url']),
-				'thumb_media_id' => $news['media_id'],
-			);
-			$articles['articles'][] = $row;
-			$image_info =
-			$post_news[] = array(
-				'uniacid' => $_W['uniacid'],
-				'thumb_media_id' => $news['media_id'],
-				'thumb_url' => $image_data[$news['media_id']]['url'],
-				'title' => $news['title'],
-				'author' => $news['author'],
-				'digest' => $news['digest'],
-				'content' => htmlspecialchars_decode($news['content']),
-				'content_source_url' => $news['content_source_url'],
-				'show_cover_pic' => 1,
-				'url' => '',
-				'displayorder' => $key
-			);
-		} else {
-			$attach_mediaid =  pdo_getcolumn('wechat_attachment', array('id' => $post['attach_id'], 'uniacid' => $_W['uniacid']), 'media_id');
-			$wechat_news[] = array(
-				'media_id' => $attach_mediaid,
-				'index' => $key,
-				'articles' => array(
+	if(!empty($news)) {
+		foreach($_GPC['news'] as $key => $news) {
+			if ($operate == 'add') {
+				$row = array(
 					'title' => urlencode($news['title']),
-					'thumb_media_id' =>  urlencode($news['media_id']),
 					'author' => urlencode($news['author']),
-					'digest' => urlencode($news['digest']),
-					'show_cover_pic' => 1,
+					'digest' => urlencode($news['description']),
 					'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
-					'content_source_url' => urlencode('www.baidu.com')
-				)
-			);
-			$news['url'] = $image_data[$news['media_id']]['url'];
-			$post_news[$news['id']] = array(
-				'title' => $news['title'],
-				'thumb_media_id' => $news['media_id'],
-				'thumb_url' => $news['url'],
-				'author' => $news['author'],
-				'digest' => $news['digest'],
-				'show_cover_pic' => 1,
-				'content' => htmlspecialchars_decode($news['content']),
-				'content_source_url' => 'www.baidu.com',
-				'displayorder' => $key,
-			);
+					'show_cover_pic' => 1,
+					'content_source_url' => urlencode($news['content_source_url']),
+					'thumb_media_id' => $news['media_id'],
+				);
+				$articles['articles'][] = $row;
+				$image_info =
+				$post_news[] = array(
+					'uniacid' => $_W['uniacid'],
+					'thumb_media_id' => $news['media_id'],
+					'thumb_url' => $image_data[$news['media_id']]['url'],
+					'title' => $news['title'],
+					'author' => $news['author'],
+					'digest' => $news['digest'],
+					'content' => htmlspecialchars_decode($news['content']),
+					'content_source_url' => $news['content_source_url'],
+					'show_cover_pic' => 1,
+					'url' => '',
+					'displayorder' => $key
+				);
+			} else {
+				$attach_mediaid =  pdo_getcolumn('wechat_attachment', array('id' => intval($_GPC['attach_id']), 'uniacid' => $_W['uniacid']), 'media_id');
+				$wechat_news[] = array(
+					'media_id' => $attach_mediaid,
+					'index' => $key,
+					'articles' => array(
+						'title' => urlencode($news['title']),
+						'thumb_media_id' =>  urlencode($news['media_id']),
+						'author' => urlencode($news['author']),
+						'digest' => urlencode($news['digest']),
+						'show_cover_pic' => 1,
+						'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
+						'content_source_url' => urlencode('www.baidu.com')
+					)
+				);
+				$news['url'] = $image_data[$news['media_id']]['url'];
+				$post_news[$news['id']] = array(
+					'title' => $news['title'],
+					'thumb_media_id' => $news['media_id'],
+					'thumb_url' => $news['url'],
+					'author' => $news['author'],
+					'digest' => $news['digest'],
+					'show_cover_pic' => 1,
+					'content' => htmlspecialchars_decode($news['content']),
+					'content_source_url' => 'www.baidu.com',
+					'displayorder' => $key,
+				);
+			}
 		}
 	}
 	if ($operate == 'add') {

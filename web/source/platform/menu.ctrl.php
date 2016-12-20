@@ -1,7 +1,7 @@
 <?php
 /**
+ * 自定义菜单
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -10,14 +10,12 @@ load()->model('platform');
 
 $dos = array('display', 'delete', 'refresh', 'post', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
-
-$_W['page']['title'] = '公众号 - 自定义菜单';
 uni_user_permission_check('platform_menu');
+$_W['page']['title'] = '公众号 - 自定义菜单';
 
 if($_W['isajax']) {
-	$post = $_GPC['__input'];
-	if(!empty($post['method'])) {
-		$do = $post['method'];
+	if(!empty($_GPC['method'])) {
+		$do = $_GPC['method'];
 	}
 }
 
@@ -34,6 +32,7 @@ if($do == 'display') {
 			$default_sub_button[$key] = $button['sub_button'];
 			ksort($button);
 		}
+		unset($button);
 	}
 	ksort($default_menu);
 	$wechat_menu_data = base64_encode(iserializer($default_menu));
@@ -51,6 +50,7 @@ if($do == 'display') {
 				}
 				ksort($single_button);
 			}
+			unset($single_button);
 			ksort($single_menu_info);
 		}
 		$local_menu_data = base64_encode(iserializer($single_menu_info));
@@ -141,13 +141,12 @@ if($do == 'display') {
 }
 
 if($do == 'push') {
-	$post_data = $_GPC['__input'];
-	$id = intval($post_data['id']);
+	$id = intval($_GPC['id']);
 	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if(empty($data)) {
 		message(error(-1, '菜单不存在或已删除'), referer(), 'ajax');
 	}
-	if ($post_data['status'] == 1) {
+	if ($_GPC['status'] == 1) {
 		$post = iunserializer(base64_decode($data['data']));
 		if(empty($post)) {
 			message(error(-1, '菜单数据错误'), referer(), 'ajax');
@@ -182,9 +181,11 @@ if($do == 'push') {
 						}
 						$temp['sub_button'][] = $sub_temp;
 					}
+					unset($subbutton);
 				}
 				$menu['button'][] = $temp;
 			}
+			unset($button);
 		}
 
 		if(!empty($post['matchrule'])) {
@@ -226,7 +227,7 @@ if($do == 'push') {
 			}
 			message(error(0, '推送成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax');
 		}
-	} elseif ($post_data['status'] == 2) {
+	} elseif ($_GPC['status'] == 2) {
 		$status =  $_GPC['status'];
 		if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0) && $status != 'history') {
 			$account = WeAccount::create($_W['acid']);
@@ -284,8 +285,10 @@ if($do == 'post') {
 									$subbutton['type'] = 'click';
 								}
 							}
+							unset($subbutton);
 						}
 					}
+					unset($button);
 				}
 				if(!empty($menu['data']['matchrule']['province'])) {
 					$menu['data']['matchrule']['province'] .= '省';
@@ -362,9 +365,11 @@ if($do == 'post') {
 						}
 						$temp['sub_button'][] = $sub_temp;
 					}
+					unset($subbutton);
 				}
 				$menu['button'][] = $temp;
 			}
+			unset($button);
 		}
 
 		if($post['type'] == 3 && !empty($post['matchrule'])) {
@@ -484,7 +489,7 @@ if($do == 'delete') {
 }
 
 if ($do == 'current_menu') {
-	$current_menu = $_GPC['__input']['current_menu'];
+	$current_menu = $_GPC['current_menu'];
 	if ($current_menu['type'] == 'click') {
 		if (!empty($current_menu['media_id']) && empty($current_menu['key'])) {
 			$wechat_attachment = pdo_get('wechat_attachment', array('media_id' => $current_menu['media_id']));
