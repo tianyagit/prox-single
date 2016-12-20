@@ -19,7 +19,7 @@
 				<input type="hidden" name="do" value="page">
 				<div class="input-group">
 					<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
-					<span class="input-group-btn"><button class="btn btn-default" id="search"><i class="fa fa-search"></i></button></span>	
+					<span class="input-group-btn"><button class="btn btn-default" id="search"><i class="fa fa-search"></i></button></span>
 				</div>
 			</div>
 		</form>
@@ -153,7 +153,7 @@
 					<h4 class="modal-title">模块分支版本信息</h4>
 				</div>
 				<div class="modal-body">
-					
+
 					<div class="form-group">
 						<div class="panel panel-default">
 							<div class="panel-heading">
@@ -213,7 +213,7 @@
 			'module_list': {php echo json_encode($module_list)},
 			'editModuleUrl': "{php echo url('system/module/get_module_info')}",
 			'saveModuleUrl' :  "{php echo url('system/module/save_module_info')}",
-			'cloudModule' : {php echo json_encode($cloud_module)}
+			'checkUpgradeUrl' : "{php echo url('system/module/check_upgrade')}"
 		});
 		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});
@@ -278,7 +278,7 @@
 <script>
 		angular.module('moduleApp').value('config', {
 			'letters' : {php echo json_encode($letters)},
-			'module_list' : {php echo json_encode($localUninstallModules)}
+			'module_list' : {php echo json_encode($uninstallModules)}
 		});
 		angular.bootstrap($('#js-system-module-not_installed'), ['moduleApp']);
 </script>
@@ -508,7 +508,7 @@
 			'url' : '{php echo url('system/module/change_receive_ban')}',
 			'modulename' : '{$module_info['name']}',
 			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
-			'saveModuleUrl' : 	"{php echo url('system/module/save_module_info')}"
+			'saveModuleUrl' : "{php echo url('system/module/save_module_info')}"
 		});
 		angular.bootstrap($('.js-system-module-detail'), ['moduleApp']);
 	});

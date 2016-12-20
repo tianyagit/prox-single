@@ -32,8 +32,7 @@
 	</div>
 	<script type="text/javascript">
 		angular.module('cloudApp').value('config', {
-			//files : {php echo ($packet['files'] ? json_encode($packet['files']) : '[]');},
-			files : [],
+			files : {php echo ($packet['files'] ? json_encode($packet['files']) : '[]');},
 			type : '{$type}',
 			appname : '{$m}',
 			is_upgrade : '{$is_upgrade}',
@@ -58,7 +57,7 @@
 			</script>
 			{else}
 			<script>
-				location.href = '{url "extension/module/install" array("m" => $m, "flag" => 1)}';
+				location.href = '{url "system/module/install" array("module_name" => $m, "flag" => 1)}';
 			</script>
 			{/if}
 		{/if}
@@ -80,7 +79,7 @@
 			{/if}
 		</script>
 		{/if}
-		
+
 	{/if}
 	<div class="alert alert-warning">
 		正在更新数据库, 请不要关闭窗口.
