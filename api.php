@@ -582,7 +582,9 @@ class WeEngine {
 			$qr = pdo_fetch("SELECT `id`, `keyword` FROM " . tablename('qrcode') . " WHERE {$scene_condition} AND `uniacid` = '{$_W['uniacid']}'");
 			if(!empty($qr)) {
 				$message['content'] = $qr['keyword'];
-				$message['msgtype'] = 'text';
+				if (!empty($qr['type']) && $qr['type'] == 'scene') {
+					$message['msgtype'] = 'text';
+				}
 				$params += $this->analyzeText($message);
 				return $params;
 			}
@@ -630,7 +632,7 @@ class WeEngine {
 		}
 		if(!empty($qr)) {
 			$message['content'] = $qr['keyword'];
-			if (!empty($qr['type'])) {
+			if (!empty($qr['type']) && $qr['type'] == 'scene') {
 				$message['msgtype'] = 'text';
 			}
 			$params += $this->analyzeText($message);

@@ -81,7 +81,7 @@ if($do == 'down') {
 			}
 			if(!$is_down) {
 				//下载
-				$stream = $acc->getMaterial($data['media_id'], true);
+				$stream = $acc->getMaterial($data['media_id']);
 				if(is_error($stream)) {
 					$data['message'] = $stream['message'];
 					$fail[$data['media_id']] = $data;

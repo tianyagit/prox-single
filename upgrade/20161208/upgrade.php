@@ -8,6 +8,32 @@ load()->model('cache');
 
 //优先处理模块
 
+//当前公众号是否使用系统卡券
+$uni_settings = pdo_getall('uni_settings', '', array('exchange_enable', 'coupon_type', 'uniacid'), 'uniacid');
+if (!empty($uni_settings)) {
+	foreach ($uni_settings as $key => $value) {
+		if (!empty($key)) {
+			$cachekey = "modulesetting:{$key}:we7_coupon";
+			$setting['coupon_type'] = $value['coupon_type'];
+			$setting['exchange_enable'] = $value['exchange_enable'];
+			cache_write($cachekey, $setting);
+		}
+	}
+}
+//修改会员卡和店员手机端后台链接cover_reply
+$card_cover_urls = pdo_getall('cover_reply', array('module' => 'card'), array('id', 'module', 'url', 'uniacid'));
+foreach ($card_cover_urls as $k=>$value) {
+	$new_card_url = "./index.php?i={$value['uniacid']}&c=entry&m=we7_coupon&do=card";
+	pdo_update('cover_reply', array('url' => $new_card_url), array('id' => $value['id']));
+
+}
+$clerk_cover_urls = pdo_getall('cover_reply', array('module' => 'clerk'), array('id', 'module', 'url', 'uniacid'));
+foreach ($clerk_cover_urls as $k=>$value) {
+	$new_clerk_url = "./index.php?i={$value['uniacid']}&c=entry&m=we7_coupon&do=clerk";
+	pdo_update('cover_reply', array('url' => $new_clerk_url), array('id' => $value['id']));
+
+}
+
 //modules表里插入数据
 $title = '微擎卡券';
 $ability = '卡券功能，是微擎向有投放卡券需求的公众号提供的管理、推广、经营分析的整套解决方案。商户可通过卡券功能，实现卡券的管理与运营。';
@@ -16,7 +42,7 @@ $insert_data = array(
 	'name' => 'we7_coupon',
 	'type' => 'business',
 	'title' => $title,
-	'version' => '1.1',
+	'version' => '1.4',
 	'ability' => $ability,
 	'description' => $description,
 	'author' => '微擎团队',
@@ -28,6 +54,7 @@ if (empty($we7_coupon_exist)) {
 }
 
 //modules_bindings表里插入数据
+pdo_delete('modules_bindings', array('module' => 'we7_coupon'));
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'cover', 'title' => '会员卡入口设置', 'do' => 'card', 'direct' => '0', 'displayorder' => '0'));
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'cover', 'title' => '收银台入口设置', 'do' => 'clerk', 'direct' => '0', 'displayorder' => '0'));
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'menu', 'title' => '
