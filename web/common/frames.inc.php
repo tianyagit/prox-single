@@ -265,48 +265,6 @@ $ms['mc'][] = array(
 	)
 );
 $ms['mc'][] = array(
-	'title' => '会员卡管理',
-	'permission_name' => 'mc_card_manage',
-	'items' => array(
-		array(
-			'title' => '会员卡关键字',
-			'url' => url('platform/cover/card'),
-			'permission_name' => 'platform_cover_card'
-		),
-		array(
-			'title' => '会员卡管理',
-			'url' => url('mc/card/manage'),
-			'permission_name' => 'mc_card_manage'
-		),
-		array(
-			'title' => '会员卡设置',
-			'url' => url('mc/card/editor'),
-			'permission_name' => 'mc_card_editor'
-		),
-		array(
-			'title' => '会员卡其它功能',
-			'url' => url('mc/card/other'),
-			'permission_name' => 'mc_card_other'
-		)
-	)
-);
-$ms['mc'][] = array(
-	'title' => '积分兑换',
-	'permission_name' => 'activity_discount_manage',
-	'items' => array(
-		array(
-			'title' => '卡券兑换',
-			'url' => url('activity/exchange/display', array('type' => 'coupon')),
-			'permission_name' => 'activity_coupon_exchange'
-		),
-		array(
-			'title' => '真实物品兑换',
-			'url' => url('activity/exchange/display', array('type' => 'goods')),
-			'permission_name' => 'activity_goods_display'
-		),
-	)
-);
-$ms['mc'][] = array(
 	'title' => '微信素材&群发',
 	'permission_name' => 'material_manage',
 	'items' => array(
@@ -319,53 +277,6 @@ $ms['mc'][] = array(
 			'title' => '定时群发',
 			'url' => url('material/mass'),
 			'permission_name' => 'material_mass',
-		),
-	)
-);
-$ms['mc'][] = array(
-	'title' => '卡券管理',
-	'permission_name' => 'wechat_card_manage',
-	'items' => array(
-		array(
-			'title' => '卡券列表',
-			'url' => url('activity/coupon/display'),
-			'permission_name' => 'activity_coupon_display',
-		),
-		array(
-			'title' => '卡券营销',
-			'url' => url('activity/market'),
-			'permission_name' => 'activity_coupon_market',
-		),
-		array(
-			'title' => '卡券核销',
-			'url' => url('activity/consume/display', array('status' => 2)),
-			'permission_name' => 'activity_consume_coupon',
-		),
-	)
-);
-$ms['mc'][] = array(
-	'title' => '工作台',
-	'permission_name' => 'paycenter_manage',
-	'items' => array(
-		array(
-			'title' => '门店列表',
-			'url' => url('activity/store'),
-			'permission_name' => 'activity_store_list',
-		),
-		array(
-			'title' => '店员列表',
-			'url' => url('activity/clerk'),
-			'permission_name' => 'activity_clerk_list',
-		),
-		array(
-			'title' => '微信刷卡收款',
-			'url' => url('paycenter/wxmicro/pay'),
-			'permission_name' => 'paycenter_wxmicro_pay',
-		),
-		array(
-			'title' => '店员操作关键字',
-			'url' => url('platform/cover/clerk'),
-			'permission_name' => 'paycenter_clerk',
 		),
 	)
 );
