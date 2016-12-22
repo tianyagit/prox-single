@@ -1,12 +1,15 @@
 <?php
 /**
+ * 微官网文章分类
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
-uni_user_permission_check('site_category');
+
+load()->func('file');
+
 $do = !empty($do) ? $do : 'display';
 $do = in_array($do, array('display', 'post', 'delete')) ? $do : 'display';
+uni_user_permission_check('site_category');
 
 if ($do == 'display') {
 	$children = array();
@@ -155,7 +158,6 @@ if ($do == 'display') {
 	}
 	template('site/category-post');
 } elseif ($do == 'delete') {
-	load()->func('file');
 	if(checksubmit('submit')) {
 		foreach ($_GPC['rid'] as $key => $id) {
 			$id = intval($id);

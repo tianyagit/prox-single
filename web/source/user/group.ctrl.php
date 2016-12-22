@@ -10,13 +10,13 @@ $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 uni_user_permission_check('system_user_group');
 
 if ($do == 'display') {
+	$_W['page']['title'] = '用户组列表 - 用户组 - 用户管理';
 	$condition = '' ;
 	$params = array();
 	if (!empty($_GPC['name'])) {
 		$condition .= "WHERE name LIKE :name";
 		$params[':name'] = "%{$_GPC['name']}%";
 	}
-	$_W['page']['title'] = '用户组列表 - 用户组 - 用户管理';
 	if (checksubmit('submit')) {
 		if (!empty($_GPC['delete'])) {
 			pdo_query("DELETE FROM ".tablename('users_group')." WHERE id IN ('".implode("','", $_GPC['delete'])."')");

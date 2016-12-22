@@ -1,7 +1,7 @@
 <?php
 /**
+ * 权限设置
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -10,7 +10,6 @@ $_W['page']['title'] = '查看用户权限 - 用户管理';
 load()->model('setting');
 load()->model('module');
 
-$do = $_GPC['do'];
 $dos = array('deny', 'module');
 $do = in_array($do, $dos) ? $do: 'deny';
 

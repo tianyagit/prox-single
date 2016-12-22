@@ -5,7 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-$do = $_GPC['do'];
 $dos = array('display', 'check_display', 'check_pass', 'recycle_display', 'recycle_delete','recycle_restore', 'recycle');
 $do = in_array($do, $dos) ? $do: 'display';
 uni_user_permission_check('system_user_display');
