@@ -324,7 +324,7 @@ function get_all_unistalled_module($status)  {
 
 	//获取云上未安装模块
 	$cloud_module = cloud_m_query();
-	if (!empty($cloud_module)) {
+	if (!empty($cloud_module) && !is_error($cloud_module)) {
 		foreach ($cloud_module as $module) {
 			if (($status == 'uninstalled' && in_array($module['name'], $recycle_modules)) || ($status == 'recycle' && !in_array($module['name'], $recycle_modules))) {
 				continue;

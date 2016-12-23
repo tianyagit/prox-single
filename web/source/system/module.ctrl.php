@@ -20,6 +20,7 @@ load()->model('account');
 if ($do == 'check_upgrade') {
 	$module_list = $_GPC['module_list'];//test
 	$module_list = explode(',', $module_list);//test
+
 	if (!empty($module_list)) {
 		foreach ($module_list as &$module) {
 			$module = pdo_get('modules', array('name' => $module));
@@ -50,7 +51,13 @@ if ($do == 'check_upgrade') {
 		if (empty($manifest)) {
 			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
 				$cloud_m_upgrade_info = cloud_m_upgradeinfo($module['name']);//获取模块更新信息
-				$module[$module['name']]['upgrade_info'] = array(
+				if (!empty($cloud_m_upgrade_info['branches'])) {
+					foreach ($cloud_m_upgrade_info['branches'] as &$branch) {
+						$branch['version']['description'] = $branch['version']['description'];
+					}
+					unset($branch);
+				}
+				$module['upgrade_info'] = array(
 					'version' => $cloud_m_upgrade_info['version'],
 					'name' => $cloud_m_upgrade_info['name'],
 					'branches' => $cloud_m_upgrade_info['branches'],
@@ -58,9 +65,8 @@ if ($do == 'check_upgrade') {
 				);
 				$module['from'] = 'cloud';
 				$site_branch = $cloud_m_upgrade_info['version']['branch_id'];//当前站点模块分之号
-				$site_branch_version = $cloud_m_upgrade_info['version']['version'];//当前站点模块分之版本号
 				$cloud_branch_version = $cloud_m_upgrade_info['branches'][$site_branch]['version']['version'];//云服务模块分之版本号
-				if (ver_compare($site_branch_version, $cloud_branch_version) == -1) {
+				if (ver_compare($module['version'], $cloud_branch_version) == -1) {
 					$module['upgrade'] = true;
 				} else {
 					$module['upgrade'] = false;
@@ -178,7 +184,7 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	message('模块更新成功！', referer(), 'success');
+	message('模块更新成功！', url('system/module'), 'success');
 }
 
 if ($do =='install') {
