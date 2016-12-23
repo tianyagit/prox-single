@@ -227,7 +227,7 @@ if ($do =='install') {
 		}
 	}
 	if (empty($manifest)) {
-		message('模块安装配置文件不存在或是格式不正确，请刷新重试！', '', 'error');
+		message('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('system/module/not_installed'), 'error');
 	}
 	$check_manifest_result = manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
@@ -302,9 +302,9 @@ if ($do =='install') {
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
 		if (empty($module_subscribe_success)) {
-			message('模块安装成功, 请按照【公众号服务套餐】【用户组】来分配权限！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('extension/module') . '">返回模块列表</a></div>', '', 'tips');
+			message('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module') . '">返回模块列表</a></div>', '', 'tips');
 		} else {
-			message('模块安装成功, 请按照【公众号服务套餐】【用户组】来分配权限！', url('system/module'), 'success');
+			message('模块安装成功!', url('system/module'), 'success');
 		}
 	} else {
 		message('模块安装失败, 请联系模块开发者！');

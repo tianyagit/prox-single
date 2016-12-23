@@ -10,16 +10,6 @@
 		<div class="form-group">
 			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">公众号服务套餐组</label>
 			<div class="col-sm-10 col-xs-12">
-				<div class="checkbox disabled">
-					<input id="checkbox-a" type="checkbox" name="" value="" checked disabled>
-					<label for="checkbox-a" ng-bind="pack.name" class="ng-binding">基础服务</label>
-					<span class="label label-info">系统</span>
-				</div>
-				<div class="checkbox disabled">
-					<input id="checkbox-b" type="checkbox" name="" value="" checked disabled>
-					<label for="checkbox-b" ng-bind="pack.name" class="ng-binding">所有服务</label>
-					<span class="label label-info">系统</span>
-				</div>
 				{loop $module_group $group}
 				<div class="checkbox">
 					<input id="checkbox-{$group['id']}" type="checkbox" name="group[]" value="{$group['id']}">
