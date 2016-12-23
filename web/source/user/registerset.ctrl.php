@@ -1,5 +1,6 @@
 <?php
 /**
+ * 用户注册设置
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');

@@ -25,7 +25,7 @@
 			{loop $menus $name $sections}
 				<thead>
 				<tr class="info">
-					<th colspan="6">
+					<th colspan="4">
 						<div class="checkbox">
 							<input id="check-{$sections['id']}" type="checkbox" name="system_{$sections['name']}" onChange="selectall(this, 'system_{$sections["name"]}')">
 							<label for="check-{$sections['id']}" class="we7-padding-left we7-margin-horizontal-none">{$sections['title']}</label>
@@ -37,14 +37,14 @@
 					<tbody class="system_{$sections['name']}">
 					{php $i=1;}
 					{loop $sections['childs'] $item}
-						{if $i%6 == 1 || $i == 1}<tr>{/if}
+						{if $i%4 == 1 || $i == 1}<tr>{/if}
 							<td>
 								<div class="checkbox">
 									<input id="check-child-{$item['id']}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $system_permission['permission'])}checked{/if} name="system[]">
 									<label for="check-child-{$item['id']}" class="we7-padding-left we7-margin-horizontal-none">{$item['title']}</label>
 								</div>
 							</td>
-						{if $i%6 == 0}</tr>{/if}
+						{if $i%4 == 0}</tr>{/if}
 						{php $i++;}
 					{/loop}
 					</tbody>
@@ -60,23 +60,23 @@
 				</tr>
 			</thead>
 			{if !empty($module)}
-				<tbody class="module_select">
+				<tbody class="module_select" style="width:100%">
 					{php $i=1;}
 					{loop $module $k $m}
 						{if empty($m['issystem'])}
-						{if $i%6 == 1 || $i == 1}<tr>{/if}
-							<td style="overflow:inherit;">
+						{if $i%4 == 1 || $i == 1}<tr style="width:100%">{/if}
+							<td style="overflow:inherit;width:25%">
 								<div class="dropdown">
 									<span class="" data-id="{$k}">
 										<input id="check-module-{$k}" type="checkbox" value="{$k}" name="module[]" {if in_array($k, $mod_keys)}checked{/if}>
-										<label for="check-module-{$k}" class="we7-padding-left we7-margin-horizontal-none checkbox-inline">{$m['title']}</label>
+										<label for="check-module-{$k}" class="we7-padding-left we7-margin-horizontal-none checkbox-inline" title="{$m['title']}">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
 									</span>
 									<ul class="dropdown-menu" role="menu"></ul>
 									<label class="checkbox-inline info"></label>
 									<input type="hidden" name="{$k}_select" value="0"/>
 								</div>
 							</td>
-						{if $i%6 == 0}</tr>{/if}
+						{if $i%4 == 0}</tr>{/if}
 						{php $i++;}
 						{/if}
 					{/loop}

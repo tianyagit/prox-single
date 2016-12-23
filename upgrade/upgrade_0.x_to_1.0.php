@@ -64,3 +64,23 @@ if (!empty($modules)) {
 		pdo_update('modules', array('title_initial' => $title), array('mid' => $module['mid']));
 	}
 }
+
+//uni_account是否存在letter字段，否则添加并更新（切换公众号拼音索引功能）
+if(!pdo_fieldexists('uni_account', 'letter')) {
+	$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `letter` VARCHAR(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'title首字母' , ADD FULLTEXT (`letter`)");
+	if($add_letter) {
+		$sql = '';
+		$all_account = pdo_fetchall("SELECT uniacid,name FROM ". tablename('uni_account'));
+		foreach ($all_account as $all_value) {
+			$letter = '';
+			$letter = $pinyin->get_first_char($all_value['name']);
+			$sql .= "UPDATE ". tablename('uni_account'). " SET `letter` = '". $letter . "' WHERE `uniacid` = {$all_value['uniacid']};";
+		}
+		$run = pdo_run($sql);
+	}
+}
+
+//切换公众号置顶功能
+if(!pdo_fieldexists('uni_account', 'rank')) {
+	pdo_query("ALTER TABLE `ims_uni_account` CHANGE `rank` `rank` INT(10) NULL DEFAULT '0';");
+}

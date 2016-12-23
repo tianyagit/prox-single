@@ -1,19 +1,22 @@
 <?php
 /**
+ * 公众号列表
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn: pros/web/source/account/display.ctrl.php : 2016年11月5日 10:18:14 $
  */
 defined('IN_IA') or exit('Access Denied');
 
-$_W['page']['title'] = '公众号列表 - 公众号';
+load()->func('file');
+
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 uni_user_permission_check('system_account');
+$_W['page']['title'] = '公众号列表 - 公众号';
 
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 10;
 	$start = ($pindex - 1) * $psize;
+
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
@@ -29,13 +32,13 @@ if ($do == 'display') {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
+
 	$tsql = "SELECT COUNT(*) FROM " . tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
 	$total = pdo_fetchcolumn($tsql, $param);
 	$sql = "SELECT * FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
-	$pager = pagination($total, $pindex, $psize);
 	$list = pdo_fetchall($sql, $param);
 	if(!empty($list)) {
-		foreach($list as $unia => &$account) {
+		foreach($list as &$account) {
 			$settings = uni_setting($account['uniacid'], array('notify'));
 			if(!empty($settings['notify'])) {
 				$account['sms'] = $settings['notify']['sms']['balance'];
@@ -46,11 +49,13 @@ if ($do == 'display') {
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
 		}
+		unset($account);
 	}
+
+	$pager = pagination($total, $pindex, $psize);
 	template('account/system-display');
 }
 if ($do == 'delete') {
-	load()->func('file');
 	$uniacid = intval($_GPC['uniacid']);
 	$acid = intval($_GPC['acid']);
 	$uid = $_W['uid'];
@@ -70,6 +75,7 @@ if ($do == 'delete') {
 		pdo_update('account', array('isdeleted' => 1), array('acid' => $acid));
 		message('删除子公众号成功！您可以在回收站中回复公众号', referer(), 'success');
 	}
+	
 	if (!empty($uniacid)) {
 		$account = pdo_fetch("SELECT * FROM ".tablename('uni_account')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
 		if (empty($account)) {

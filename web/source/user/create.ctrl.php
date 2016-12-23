@@ -8,7 +8,6 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('user');
 
 uni_user_permission_check('system_user_display');
-
 $_W['page']['title'] = '添加用户 - 用户管理';
 
 if (checksubmit()) {
