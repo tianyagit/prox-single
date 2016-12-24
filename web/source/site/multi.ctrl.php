@@ -29,6 +29,10 @@ if($do == 'post') {
 
 	if(checksubmit('submit')) {
 		if (checksubmit('submit')) {
+			$bindhost = str_replace('http://', '', $_W['siteroot']);
+			if ($_GPC['bindhost'] . '/' == $bindhost) {
+				message('绑定域名有误', referer(), 'error');
+			}
 			$data = array(
 				'uniacid' => $_W['uniacid'],
 				'title' => trim($_GPC['title']),
