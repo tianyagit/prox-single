@@ -8,7 +8,6 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
 load()->model('module');
-load()->model('user');
 load()->classs('weixin.platform');
 
 uni_user_permission_check('system_account');
