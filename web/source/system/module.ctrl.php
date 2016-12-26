@@ -16,20 +16,14 @@ load()->model('cloud');
 load()->model('cache');
 load()->model('module');
 load()->model('account');
-
 if ($do == 'check_upgrade') {
 	$module_list = $_GPC['module_list'];//test
-	$module_list = explode(',', $module_list);//test
-
-	if (!empty($module_list)) {
+	if (!empty($module_list) && is_array($module_list)) {
 		foreach ($module_list as &$module) {
 			$module = pdo_get('modules', array('name' => $module));
 		}
 		unset($module);
-	}
-
-	if (!is_array($module_list) || empty($module_list)) {
-		$module_list = array();
+	} else {
 		message(error(0), '', 'ajax');
 	}
 	$cloud_prepare_result = cloud_prepare();
@@ -562,9 +556,9 @@ if ($do == 'installed') {
 				$module['enabled_use_account'] = empty($account_have_module['enabled']) ? $module['enabled_use_account'] : $module['enabled_use_account'] +1;
 			}
 			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
-				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
+				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg'). "?v=". time();
 			} else {
-				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
+				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg'). "?v=". time();
 			}
 		}
 		unset($module);
