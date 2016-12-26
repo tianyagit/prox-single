@@ -28,8 +28,8 @@ if($do == 'post') {
 	$id = intval($_GPC['multiid']);
 
 	if (checksubmit('submit')) {
-		$bindhost = str_replace('http://', '', $_W['siteroot']);
-		if ($_GPC['bindhost'] . '/' == $bindhost) {
+		$bindhost = parse_url($_W['siteroot']);
+		if (in_array($_GPC['bindhost'], $bindhost)) {
 			message('绑定域名有误', referer(), 'error');
 		}
 		$data = array(
