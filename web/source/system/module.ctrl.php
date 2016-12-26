@@ -527,6 +527,27 @@ if ($do == 'installed') {
 		$condition .= " AND title LIKE :title";
 		$params[':title'] = "%".$title. "%";
 	}
+	if (empty($_W['isfounder'])) {
+		$user_info = pdo_get('users', array('uid' => $_W['uid']));
+		$user_group = pdo_get('users_group', array('id' => $user_info['groupid']));
+		$user_group['package'] = iunserializer($user_group['package']);
+		if (!empty($user_group['package']) && is_array($user_group['package']) && !in_array('-1', $user_group)) {
+			$user_have_group = array();
+			foreach ($user_group['package'] as $groupid) {
+				$group = pdo_get('uni_group', array('id' => $groupid));
+				$group['modules'] = iunserializer($group['modules']);
+				if (!empty($group['modules']) && is_array($group['modules'])) {
+					$user_have_group = array_merge($user_have_group, $group['modules']);
+				}
+			}
+			unset($group);
+			if (!empty($user_have_group) && is_array($user_have_group)) {
+				$condition .= " AND name in ". "('". implode("','", $user_have_group). "')";
+			} else {
+				message('没有可用模块', referer(), 'info');
+			}
+		}
+	}
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ". tablename('modules'). $condition, $params);
 	$module_list = pdo_fetchall("SELECT * FROM ". tablename('modules'). $condition. " ORDER BY `issystem` DESC, `mid` DESC". " LIMIT ".($pageindex-1)*$pagesize.", ". $pagesize, $params, 'name');
 	$pager = pagination($total, $pageindex, $pagesize);
@@ -551,6 +572,9 @@ if ($do == 'installed') {
 }
 
 if ($do == 'not_installed') {
+	if (empty($_W['isfounder'])) {
+		message('非法访问！', referer(), 'info');
+	}
 	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
 
 	$status = $_GPC['status'] == 'recycle'? 'recycle' : 'uninstalled';

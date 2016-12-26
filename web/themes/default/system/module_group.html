@@ -41,25 +41,6 @@
 				<th class="text-left">操作</th>
 			</tr>
 			{loop $modules_group_list $module_group}
-			{if $module_group['name'] == '基础服务'}
-			<tr >
-				<td class="text-left">基础服务</td>
-				<td>基础回复模块</td>
-				<td>微站默认模板</td>
-				<td></td>
-				<td class="text-left">
-				</td>
-			</tr>
-			{elseif $module_group['name'] == '所有服务'}
-			<tr >
-				<td class="text-left">所有服务</td>
-				<td>系统所有模块</td>
-				<td>系统所有模板</td>
-				<td></td>
-				<td class="text-left">
-				</td>
-			</tr>
-			{else}
 			<tr >
 				<td class="text-left">{$module_group['name']}</td>
 				<td>{php echo count($module_group['modules'])}</td>
@@ -79,7 +60,8 @@
 					<div class="col-sm-11">
 						{loop $module_group['modules'] $module}
 						<div class="col-sm-3 text-left">
-							<a href=""><span class="label label-info">{$module['title']}</span></a>
+							<img src="{$module['logo']}" style="width:50px;height:50px;">
+							<a href="">{$module['title']}</a>
 						</div>
 						{/loop}
 					</div>
@@ -97,7 +79,6 @@
 					</div>
 				</td>
 			</tr>
-			{/if}
 			{/loop}
 		</table>
 	</div>
@@ -141,8 +122,8 @@
 					</div>
 					<div class="col-sm-2">
 						<div class="we7-input-img input-more input-img">
-							<a href="" class="input-addon">
-								<span class="color-gray" ng-click="addModule()">+</span>
+							<a href="" class="input-addon" ng-click="addModule()">
+								<span class="color-gray"></span>
 							</a>
 						</div>
 					</div>
@@ -156,13 +137,14 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="template in groupHaveTemplate">
-						<a href="" class="label label-info">{{ template.title }}</a>
+						<i class="glyphicon glyphicon-book"></i>
+						<a href="">{{ template.title }}</a>
 						<span class="del bg-default" ng-click="delHaveTemplate(template)">删除</span>
 					</div>
 					<div class="col-sm-2">
 						<div class="we7-input-img input-more input-img">
-							<a href="" class="input-addon">
-								<span class="color-gray" ng-click="adTemplate()">+</span>
+							<a href="" class="input-addon" ng-click="adTemplate()">
+								<span class="color-gray"></span>
 							</a>
 						</div>
 					</div>
@@ -214,9 +196,7 @@
 		</div>
 	</div>
 
-
 	<input type="form-control" class="btn btn-primary" name="" ng-click="saveGroup()" value="提交">
-
 </div>
 <script>
 	angular.module('moduleApp').value('config', {

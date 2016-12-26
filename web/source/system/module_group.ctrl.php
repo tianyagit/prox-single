@@ -55,25 +55,28 @@ if ($do == 'display') {
 		foreach ($modules_group_list as &$group) {
 			if (!empty($group['modules'])) {
 				$modules = iunserializer($group['modules']);
-				if (is_array($modules)) {
-					$group['modules'] = pdo_fetchall("SELECT name, title FROM ".tablename('modules')." WHERE `name` IN ('".implode("','", $modules)."')");
+				if (is_array($modules) && !empty($modules)) {
+					$group['modules'] = pdo_getall('modules', array('name' => $modules), array('name', 'title'));
+					if (!empty($group['modules'])) {
+						foreach ($group['modules'] as &$module) {
+							if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
+								$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
+							} else {
+								$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
+							}
+						}
+						unset($module);
+					}
 				}
 			}
 			if (!empty($group['templates'])) {
 				$templates = iunserializer($group['templates']);
-				if (is_array($templates)) {
-					$group['templates'] = pdo_fetchall("SELECT name, title FROM ".tablename('site_templates')." WHERE id IN ('".implode("','", $templates)."')");
+				if (is_array($templates) && !empty($templates)) {
+					$group['templates'] = pdo_getall('site_templates', array('id' => $templates), array('name', 'title'));
 				}
 			}
 		}
 		unset($group);
-	}
-	if (empty($_GPC['name']) || strexists('基础服务', $_GPC['name'])) {
-		array_unshift($modules_group_list, array('name' => '基础服务'));
-
-	}
-	if (empty($_GPC['name']) || strexists('所有服务', $_GPC['name'])) {
-		array_unshift($modules_group_list, array('name' => '所有服务'));
 	}
 }
 
