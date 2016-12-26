@@ -30,7 +30,7 @@ if($do == 'post') {
 	if(checksubmit('submit')) {
 		if (checksubmit('submit')) {
 			$bindhost = parse_url($_W['siteroot']);
-			if (in_array($_GPC['bindhost'], $bindhost)) {
+			if ($bindhost['host'] == trim($_GPC['bindhost'])) {
 				message('绑定域名有误', referer(), 'error');
 			}
 			$data = array(
