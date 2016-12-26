@@ -326,11 +326,6 @@ $ms['setting'][] = array(
 			'url' => url('mc/tplnotice'),
 			'permission_name' => 'mc_tplnotice',
 		),
-		array(
-			'title' => '工作台菜单设置',
-			'url' => url('profile/deskmenu'),
-			'permission_name' => 'profile_deskmenu',
-		),
 	)
 );
 $ms['setting'][] = array(
