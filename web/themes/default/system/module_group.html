@@ -73,7 +73,8 @@
 					<div class="col-sm-11">
 						{loop $module_group['templates'] $template}
 						<div class="col-sm-3 text-left">
-							<a href=""><span class="label label-info">{$template['title']}</span></a>
+							<i class="glyphicon glyphicon-th-large"></i>
+							<a href="">{$template['title']}</a>
 						</div>
 						{/loop}
 					</div>
@@ -117,7 +118,7 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModule" style="overflow: hidden">
-						<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;" onerror="this.src='resource/images/nopic-small.jpg'">{{ module.title }}
+						<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModule(module)">删除</span>
 					</div>
 					<div class="col-sm-2">
@@ -137,7 +138,7 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="template in groupHaveTemplate">
-						<i class="glyphicon glyphicon-book"></i>
+						<i class="glyphicon glyphicon-th-large"></i>
 						<a href="">{{ template.title }}</a>
 						<span class="del bg-default" ng-click="delHaveTemplate(template)">删除</span>
 					</div>
@@ -164,7 +165,8 @@
 					<div class="panel-body we7-padding">
 						<div class="row">
 							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="template in groupNotHaveTemplate" style="overflow: hidden" ng-click="addHaveTemplate(template)">
-								<p class="text-over label label-info">{{ template.title }}</p>
+								<i class="glyphicon glyphicon-th-large"></i>
+								<p class="text-over">{{ template.title }}</p>
 							</div>
 						</div>
 					</div>
@@ -185,7 +187,7 @@
 						<div class="row">
 							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="module in groupNotHaveModule" style="overflow: hidden" ng-click="addHaveModule(module)">
 								<a href="">
-									<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;" onerror="this.src='resource/images/nopic-small.jpg'">
+									<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 									<p class="text-over">{{ module.title }}</p>
 								</a>
 							</div>
