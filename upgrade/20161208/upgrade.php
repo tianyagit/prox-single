@@ -47,6 +47,7 @@ $insert_data = array(
 	'description' => $description,
 	'author' => '微擎团队',
 	'settings' => '2',
+	'issystem' => '1'
 );
 $we7_coupon_exist = pdo_get('modules', array('name' => 'we7_coupon'));
 if (empty($we7_coupon_exist)) {
