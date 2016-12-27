@@ -6,12 +6,12 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('chats', 'send', 'endchats');
-$do = in_array($do , $dos) ? $do : 'chats';
-
 load()->model('mc');
 load()->classs('wesession');
 load()->classs('account');
+
+$dos = array('chats', 'send', 'endchats');
+$do = in_array($do , $dos) ? $do : 'chats';
 
 if ($do == 'chats') {
 	$_W['page']['title'] = '粉丝聊天';

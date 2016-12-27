@@ -7,10 +7,11 @@
 defined('IN_IA') or exit('Access Denied');
 set_time_limit(60);
 
+load()->model('mc');
+
 $dos = array('display', 'add_tag', 'del_tag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'download_fans', 'sync');
 $do = in_array($do, $dos) ? $do : 'display';
 
-load()->model('mc');
 uni_user_permission_check('mc_fans');
 
 if ($do == 'display') {
@@ -19,6 +20,7 @@ if ($do == 'display') {
 	$pageindex = max(1, intval($_GPC['page']));
 	$search_mod = intval($_GPC['search_mod']) == '' ? 1 : intval($_GPC['search_mod']);
 	$pagesize = 10;
+
 	$param = array(
 		':uniacid' => $_W['uniacid'],
 		':acid' => $_W['acid']
@@ -68,6 +70,7 @@ if ($do == 'display') {
 			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
 		}
 	}
+
 	$fans_list = pdo_fetchall("SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize, $param);
 	if (!empty($fans_list)) {
 		foreach ($fans_list as &$v) {
@@ -119,6 +122,7 @@ if ($do == 'display') {
 			unset($user,$niemmo,$niemmo_effective);
 		}
 	}
+
 	$total = pdo_fetchcolumn("SELECT COUNT(DISTINCT f.`fanid`) FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping').' AS m ON m.`fanid` = f.`fanid`'.$condition, $param);
 	$pager = pagination($total, $pageindex, $pagesize);
 	$fans['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_mapping_fans') . ' WHERE uniacid = :uniacid AND acid = :acid AND follow = 1', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
@@ -126,10 +130,13 @@ if ($do == 'display') {
 
 if ($do == 'add_tag') {
 	$tag_name = trim($_GPC['tag']);
+	if (empty($tag_name)) {
+		message(error(1, '请填写标称名称'), '', 'ajax');
+	}
 	$account_api = WeAccount::create();
 	$result = $account_api->fansTagAdd($tag_name);
 	if (is_error($result)) {
-		message($result, '', 'ajajx');
+		message($result, '', 'ajax');
 	} else {
 		message(error(0), '', 'ajax');
 	}
@@ -137,8 +144,12 @@ if ($do == 'add_tag') {
 
 if ($do == 'del_tag') {
 	$tagid = intval($_GPC['tag']);
+	if (empty($tagid)) {
+		message(error(1, '标签id为空'), '', 'ajax');
+	}
 	$account_api = WeAccount::create();
 	$tags = $account_api->fansTagDelete($tagid);
+
 	if (!is_error($tags)) {
 		$fans_list = pdo_getall('mc_mapping_fans', array('groupid LIKE' => "%,{$tagid},%"));
 		$count = count($fans_list);
@@ -166,7 +177,14 @@ if ($do == 'del_tag') {
 
 if ($do == 'edit_tagname') {
 	$tag = intval($_GPC['tag']);
+	if (empty($tag)) {
+		message(error(1, '标签id为空'), '', 'ajax');
+	}
 	$tag_name = trim($_GPC['tag_name']);
+	if (empty($tag_name)) {
+		message(error(1, '标签名为空'), '', 'ajax');
+	}
+
 	$account_api = WeAccount::create();
 	$result = $account_api->fansTagEdit($tag, $tag_name);
 	if (is_error($result)) {
@@ -179,6 +197,9 @@ if ($do == 'edit_tagname') {
 if ($do == 'edit_fans_tag') {
 	$fanid = intval($_GPC['fanid']);
 	$tags = $_GPC['tags'];
+	if (empty($tags) || !is_array($tags)) {
+		message(error(1, '请选择标签'), '', 'ajax');
+	}
 	$openid = pdo_getcolumn('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'fanid' => $fanid), 'openid');
 	$account_api = WeAccount::create();
 	$result = $account_api->fansTagTagging($openid, $tags);
@@ -197,7 +218,14 @@ if ($do == 'edit_fans_tag') {
 
 if ($do == 'batch_edit_fans_tag') {
 	$openid_list = $_GPC['openid'];
+	if (empty($openid_list) || !is_array($openid_list)) {
+		message(error(1, '请选择粉丝'), '', 'ajax');
+	}
 	$tags = $_GPC['tag'];
+	if (empty($tags) || !is_array($tags)) {
+		message(error(1, '请选择标签'), '', 'ajax');
+	}
+
 	$account_api = WeAccount::create();
 	foreach ($tags as $tag) {
 		$result = $account_api->fansTagBatchTagging($openid_list, $tags[0]);
@@ -255,7 +283,7 @@ if ($do == 'download_fans') {
 }
 
 if ($do == 'sync') {
-	$type = $_GPC['type'];
+	$type = $_GPC['type'] == 'all' ? 'all' : 'check';
 	if ($type == 'all') {
 		$pageindex = $_GPC['pageindex'];
 		$pageindex++;
@@ -270,6 +298,9 @@ if ($do == 'sync') {
 	}
 	if ($type == 'check') {
 		$openids = $_GPC['openids'];
+		if (empty($openids) || !is_array($openids)) {
+			message(error(1, '请选择粉丝'), '', 'ajax');
+		}
 		$sync_fans = pdo_getall('mc_mapping_fans', array('openid' => $openids));
 		if (!empty($sync_fans)) {
 			foreach ($sync_fans as $fans) {
