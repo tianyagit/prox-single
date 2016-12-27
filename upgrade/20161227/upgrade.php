@@ -4,6 +4,13 @@ require '../../framework/bootstrap.inc.php';
 require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 require IA_ROOT . '/web/common/common.func.php';
 
-unlink(IA_ROOT . '/addons/we7_coupon/manifest.xml');
-unlink(IA_ROOT . '/addons/we7_coupon/install.php');
-unlink(IA_ROOT . '/addons/we7_coupon/developer.cer');
+$credit1_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statcredit1'));
+$credit2_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statcredit2'));
+$cash_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statcash'));
+$card_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statcard'));
+$paycenter_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statpaycenter'));
+pdo_update('core_menu', array('url' => $credit1_stat_url), array('permission_name' => 'stat_credit1'));
+pdo_update('core_menu', array('url' => $credit2_stat_url), array('permission_name' => 'stat_credit2'));
+pdo_update('core_menu', array('url' => $cash_stat_url), array('permission_name' => 'stat_cash'));
+pdo_update('core_menu', array('url' => $card_stat_url), array('permission_name' => 'stat_card'));
+pdo_update('core_menu', array('url' => $paycenter_stat_url), array('permission_name' => 'stat_paycenter'));
