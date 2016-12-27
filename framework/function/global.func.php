@@ -1142,3 +1142,18 @@ function strip_gpc($values, $type = 'g') {
 	}
 	return $values;
 }
+
+/**
+ * 过滤GET,POST传入的路径中的危险字符
+ * @param string $path
+ * @return boolean | string 正常返回路径，否则返回空
+ */
+function parse_path($path) {
+	$danger_char = array('../', '{php', '<?php', '<%', '<?');
+	foreach ($danger_char as $char) {
+		if (strexists($path, $char)) {
+			return false;
+		}
+	}
+	return $path;
+}

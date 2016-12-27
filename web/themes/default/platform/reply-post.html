@@ -62,7 +62,7 @@
 						</div>
 					</div>
 					<input type="text" class="keyword-input form-control" max="100" id="keyword-input-exact" ng-model="reply.keyword.exact" onblur="checkKeyWord($(this));">
-					<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="keyword-emoji"><i class="fa fa-github-alt"></i> 表情</a></span>
+					<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="keyword-emoji" ng-init="initEmotion();"><i class="fa fa-github-alt"></i> 表情</a></span>
 				</div>
 				<span class="help-block">多个关键字请使用逗号隔开，如天气，今日天气</span>
 			</div>
@@ -73,7 +73,7 @@
 						<label for="" class="control-label col-sm-3">精准触发</label>
 						<div class="form-controls input-group col-sm-6">
 							<input type="text" class="keyword-input form-control" max="30" id="keyword-exact" ng-model="reply.keyword.exact" onblur="checkKeyWord($(this));">
-							<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-exact"><i class="fa fa-github-alt"></i> 表情</a></span>
+							<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-exact" ng-init="initEmotion();"><i class="fa fa-github-alt"></i> 表情</a></span>
 						</div>
 					</div>
 					<div class="form-group">
