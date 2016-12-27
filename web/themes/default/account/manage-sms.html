@@ -105,47 +105,6 @@
 			postSms: "{php echo url('account/post/sms', array('acid' => $acid, 'uniacid' => $uniacid))}",
 		},
 	});
-	angular.module('accountApp').controller('AccountManageSms', ['$scope', '$http', 'config', function($scope, $http, config) {
-		$scope.notify = config.notify;
-		$scope.signatures = config.signatures;
-		console.log($scope.notify);
-		console.log($scope.signatures);
-		$scope.editSms = function(type, val) {
-			$scope.middleSms = {};
-			$scope.middleSms[type] = val;
-		};
-		$scope.httpChange = function(type) {
-			switch(type) {
-				case 'balance':
-					$('#balance').hide();
-					$http.post(config.links.postSms, {type: type, balance: $scope.middleSms[type]})
-						.success(function(data){
-							if(data.message.errno == 0){
-								$scope.notify.sms[type] = data.message.message.num;
-								util.message('修改成功！');
-							}else {
-								if(data.message.errno == -1) util.message('您现有短信数量为0，请联系服务商购买短信!');
-								if(data.message.errno == 1) util.message('修改失败！请稍候重试！');
-							}
-						});
-					break;
-				case 'signature':
-					$('#signature').hide();
-					$http.post(config.links.postSms, {type: type, signature: $scope.middleSms[type]})
-						.success(function(data){
-							console.log(data);
-							if(data.message.errno == 0){
-								$scope.notify.sms[type] = $scope.middleSms[type];
-								util.message('设置成功！');
-							}else {
-								if(data.message.errno == 40035) util.message('参数错误！');
-								if(data.message.errno == 1) util.message('修改失败！请稍候重试！');
-							}
-						});
-					break;
-			}
-		};
-	}]);
 	angular.bootstrap($('#js-account-manage-sms'), ['accountApp']);
 </script>
 {template 'common/footer'}
