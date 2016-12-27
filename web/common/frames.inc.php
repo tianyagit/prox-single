@@ -294,21 +294,6 @@ $ms['mc'][] = array(
 			'url' => url('stat/credit2'),
 			'permission_name' => 'stat_credit2',
 		),
-		array(
-			'title' => '会员现金消费统计',
-			'url' => url('stat/cash'),
-			'permission_name' => 'stat_cash',
-		),
-		array(
-			'title' => '会员卡统计',
-			'url' => url('stat/card'),
-			'permission_name' => 'stat_card',
-		),
-		array(
-			'title' => '收银台收款统计',
-			'url' => url('stat/paycenter'),
-			'permission_name' => 'stat_paycenter',
-		),
 	)
 );
 
@@ -340,11 +325,6 @@ $ms['setting'][] = array(
 			'title' => '微信通知设置',
 			'url' => url('mc/tplnotice'),
 			'permission_name' => 'mc_tplnotice',
-		),
-		array(
-			'title' => '工作台菜单设置',
-			'url' => url('profile/deskmenu'),
-			'permission_name' => 'profile_deskmenu',
 		),
 	)
 );

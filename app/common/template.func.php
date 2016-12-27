@@ -194,6 +194,7 @@ function moduledata($params = '') {
 	foreach ($params as $row) {
 		$row = explode('=', $row);
 		$data[$row[0]] = str_replace(array("'", '"'), '', $row[1]);
+		$row[1] = urldecode($row[1]);
 	}
 	$funcname = $data['func'];
 	$assign = !empty($data['assign']) ? $data['assign'] : $funcname;
@@ -414,9 +415,12 @@ function app_slide($params = array()) {
 }
 
 function site_widget_link($params = array()) {
-	$widgetparams = json_decode($params['params'], true);
+	$params['widgetdata'] = urldecode($params['widgetdata']);
+	$widget = json_decode($params['widgetdata'], true);
+	$widgetparams = !empty($widget['params']) ? $widget['params'] : array();
+
 	$sql = 'SELECT * FROM ' .tablename('site_article')." WHERE uniacid = :uniacid ";
-	$sqlparams = array(':uniacid' => $params['uniacid']);
+	$sqlparams = array(':uniacid' => $widget['uniacid']);
 	if (!empty($widgetparams['selectCate']['pid'])) {
 		$sql .= " AND pcate = :pid";
 		$sqlparams[':pid'] = $widgetparams['selectCate']['pid'];
@@ -445,6 +449,7 @@ function site_widget_link($params = array()) {
 			$row['thumb_url'] = tomedia($row['thumb']);
 			$row['url'] = url('site/site/detail', array('id' => $row['id']));
 		}
+		unset($row);
 	}
 	return (array)$list;
 }

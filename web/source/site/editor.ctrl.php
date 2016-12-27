@@ -13,42 +13,7 @@ if ($do == 'design') {
 	$_W['page']['title'] = '专题页面 - 微站功能';
 	$multiid = intval($_GPC['multiid']);
 	$id = intval($_GPC['id']);
-	if($_W['isajax'] && $_W['ispost'] && $_GPC['type'] == 'link') {
-		$params = htmlspecialchars_decode($_GPC['link_params']);
-		$widgetparams = json_decode($params, true);
-		$sql = 'SELECT * FROM ' .tablename('site_article')." WHERE uniacid = :uniacid ";
-		$sqlparams = array(':uniacid' => intval($_GPC['uniacid']));
-		if (!empty($widgetparams['selectCate']['pid'])) {
-			$sql .= " AND pcate = :pid";
-			$sqlparams[':pid'] = $widgetparams['selectCate']['pid'];
-		}
-		if (!empty($widgetparams['selectCate']['cid'])) {
-			$sql .= " AND ccate = :cid";
-			$sqlparams[':cid'] = $widgetparams['selectCate']['cid'];
-		}
-		if (!empty($widgetparams['iscommend'])) {
-			$sql .= " AND iscommend = '1'";
-		}
-		if (!empty($widgetparams['ishot'])) {
-			$sql .= " AND ishot = '1'";
-		}
-		if (!empty($widgetparams['isnew'])) {
-			$sql .= " ORDER BY id DESC ";
-		}
-		if (!empty($widgetparams['pageSize'])) {
-			$limit = intval($widgetparams['pageSize']);
-			$sql .= " LIMIT {$limit}";
-		}
-		$list = pdo_fetchall($sql, $sqlparams);
-		if (!empty($list)) {
-			foreach ($list as $i => &$row) {
-				$row['title'] = cutstr($row['title'], 20, true);
-				$row['thumb_url'] = tomedia($row['thumb']);
-				$row['url'] = url('site/site/detail', array('id' => $row['id']));
-			}
-		}
-		message(error(0, (array)$list), '', 'ajax');
-	}
+
 	if (!empty($_GPC['wapeditor'])) {
 		$params = $_GPC['wapeditor']['params'];
 		if (empty($params)) {
