@@ -101,6 +101,9 @@ if ($do == 'send') {
 
 if ($do == 'endchats') {
 	$openid = trim($_GPC['openid']);
+	if (empty($openid)) {
+		message(error(1, '粉丝openid不合法'), '', 'ajax');
+	}
 	$fans_info = mc_fansinfo($openid);
 	$account = account_fetch($fans_info['acid']);
 	$message['from'] = $_W['openid'] = $openid['openid'];
@@ -114,8 +117,6 @@ if ($do == 'endchats') {
 	}
 	if (is_error($result)) {
 		message($result, '', 'ajax');
-	} else {
-
 	}
 }
 template('mc/chats');
