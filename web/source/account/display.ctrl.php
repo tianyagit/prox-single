@@ -46,9 +46,6 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 }
 
 if ($do == 'display') {
-	include IA_ROOT . '/framework/library/pinyin/pinyin.php';
-	$pinyin = new Pinyin_Pinyin();
-
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 8;
 	$start = ($pindex - 1) * $psize;
@@ -70,8 +67,7 @@ if ($do == 'display') {
 	}
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$letter = trim($_GPC['letter']);
-		$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
-		if(in_array($letter, $letters)){
+		if(!empty($letter)){
 			$condition .= " AND a.`letter` = :letter";
 			$param[':letter'] = $letter;
 		}else {
@@ -90,12 +86,12 @@ if ($do == 'display') {
 			if(!empty($account['details'])) {
 				foreach ($account['details'] as  &$account_val) {
 					$account_val['thumb'] = tomedia('headimg_'.$account_val['acid']. '.jpg').'?time='.time();
-					$account_val['title_first_pinyin'] = $pinyin->get_first_char($account_val['name']);
 				}
 			}
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
 		}
+		unset($account_val);
 		unset($account);
 	}
 	$pager = pagination($total, $pindex, $psize);
