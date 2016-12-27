@@ -133,3 +133,12 @@ if (!empty($we7_coupon_exists)) {
 	pdo_update('core_menu', array('url' => $clerk_cover_url), array('permission_name' => 'paycenter_clerk'));
 	cache_build_frame_menu();
 }
+$sql = "
+	CREATE TABLE IF NOT EXISTS `ims_mc_member_property` (
+	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  `uniacid` int(11) NOT NULL,
+	  `property` varchar(200) NOT NULL DEFAULT '' COMMENT '当前公众号用户属性',
+	  PRIMARY KEY (`id`)
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='用户属性设置表';
+";
+pdo_run($sql);
