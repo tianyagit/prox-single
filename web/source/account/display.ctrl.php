@@ -21,7 +21,7 @@ if($do == 'switch') {
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
 
 	if($_W['role'] == 'clerk' || $role == 'clerk') {
-		header('location: ' . url('paycenter/desk'));
+		header('Location: ' . url('paycenter/desk'));
 		die;
 	}
 	header('Location: ' . url('platform/reply'));
