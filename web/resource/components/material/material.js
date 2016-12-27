@@ -242,7 +242,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						</li>'+
 				'					</ul>'+
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=material_add" target="_blank">新建图文</a>'+
+				'						<a style="color:white;" href="./index.php?c=platform&a=material_post" target="_blank">新建图文</a>'+
 				'					</button>'+
 				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
 				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=image" target="_blank">上传图片</a>'+

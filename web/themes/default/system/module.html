@@ -7,8 +7,8 @@
 	</div>
 	<ul class="we7-page-tab">
 		<li class="active"><a href="{php echo url('system/module/installed')}">已安装应用  </a></li>
-		<li><a href="{php echo url('system/module/not_installed')}">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-		<li><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}">已停用应用</a></li>
+		<li><a href="{php echo url('system/module/not_installed')}" ng-if="isFounder == 1">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
+		<li><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}" ng-if="isFounder == 1">已停用应用</a></li>
 	</ul>
 	<div class="we7-page-search clearfix">
 		<form action="" method="get" class="pull-left">
@@ -19,7 +19,7 @@
 				<input type="hidden" name="do" value="page">
 				<div class="input-group">
 					<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
-					<span class="input-group-btn"><button class="btn btn-default" id="search"><i class="fa fa-search"></i></button></span>	
+					<span class="input-group-btn"><button class="btn btn-default" id="search"><i class="fa fa-search"></i></button></span>
 				</div>
 			</div>
 		</form>
@@ -48,21 +48,21 @@
 			</tr>
 			<tr ng-repeat="module in module_list">
 				<td class="text-left">
-					<img ng-src="{{ module.logo }}" class="img-responsive" onerror="this.src='resource/images/nopic-small.jpg'" />
+					<img ng-src="{{ module.logo }}" class="img-responsive"/>
 				</td>
 				<td class="text-left">
 					<p>{{ module.title }}</p>
-					<span>版本：{{ module.version }} </span><span class="color-red" ng-if="module.upgrade">发现新版本</span>
+					<span>版本：{{ module.version }} </span><span class="color-red" ng-if="module.upgrade && isFounder == 1">发现新版本</span>
 				</td>
 				<td >{{ module.use_account }}</td>
 				<td >{{ module.enabled_use_account }}</td>
 				<td class="text-left">
 					<div class="link-group">
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">详情</a>
-						<a href="javascript:;" data-toggle="modal" ng-click="editModule(module.mid)">编辑</a>
-						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}">停用</a>
-						<a href="./index.php?c=system&a=module&do=upgrade&module_name='+module_name" class="color-red" ng-if="module.upgrade && module.from != 'cloud'">升级</a>
-						<a href="javascript:;" class="color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud'">升级</a>
+						<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>
+						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1">停用</a>
+						<a href="./index.php?c=system&a=module&do=upgrade&module_name='+module_name" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
+						<a href="javascript:;" class="color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 					</div>
 				</td>
 			</tr>
@@ -153,7 +153,7 @@
 					<h4 class="modal-title">模块分支版本信息</h4>
 				</div>
 				<div class="modal-body">
-					
+
 					<div class="form-group">
 						<div class="panel panel-default">
 							<div class="panel-heading">
@@ -165,18 +165,18 @@
 										分之名称 : {{ branch.name }}
 									</div>
 									<div class="col-sm-3">
-										升级价格 : {{ branch.version_price }}
+										升级价格 : {{  branch.id > upgradeInfo.site_branch.id ? branch.upgrade_price : 0 }}
 									</div>
 									<div class="col-sm-2">
-										<button class="btn btn-default" onclick="$(this).parent().next().next().toggle()">升级说明</button>
+										<button class="btn btn-default" onclick="$(this).parent().next().next().toggle();$(this).parent().next().next().html()">升级说明</button>
 									</div>
 									<div class="col-sm-3">
-										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.version_price == 0">免费升级到【{{branch.name}}】最新版本</a>
-										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.version_price)" ng-if="branch.version_price > 0">付费升级到【{{branch.name}}】最新版本</a>
+										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id = upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
+										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.upgrade_price)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
 									</div>
 									<div style="display: none">
 										<span class="help-block">
-											{{branch.version.description}}
+											<span>{{ branch.version.description }}</span>
 										</span>
 									</div>
 								</div>
@@ -209,11 +209,12 @@
 <script>
 	require(['fileUploader'], function() {
 		angular.module('moduleApp').value('config', {
+			'isFounder' : '{if $_W['isfounder']}1{else}2{/if}',
 			'letters': {php echo json_encode($letters)},
 			'module_list': {php echo json_encode($module_list)},
 			'editModuleUrl': "{php echo url('system/module/get_module_info')}",
 			'saveModuleUrl' :  "{php echo url('system/module/save_module_info')}",
-			'cloudModule' : {php echo json_encode($cloud_module)}
+			'checkUpgradeUrl' : "{php echo url('system/module/check_upgrade')}"
 		});
 		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});
@@ -278,7 +279,7 @@
 <script>
 		angular.module('moduleApp').value('config', {
 			'letters' : {php echo json_encode($letters)},
-			'module_list' : {php echo json_encode($localUninstallModules)}
+			'module_list' : {php echo json_encode($uninstallModules)}
 		});
 		angular.bootstrap($('#js-system-module-not_installed'), ['moduleApp']);
 </script>
@@ -298,8 +299,8 @@
 			<img src="{php echo tomedia($module_info['logo'])}" style="width: 80px;height: 80px;" class="info-logo">
 		</a>
 		<div class="pull-right info-edit">
-			<a href="#" class="btn btn-primary" data-toggle="modal" ng-click="editModule('{$module_info['mid']}')">编 辑</a>
-			<a href="" class="btn btn-danger">升级</a>
+			<a href="#" class="btn btn-primary" data-toggle="modal" ng-if="isFounder == 1" ng-click="editModule('{$module_info['mid']}')">编 辑</a>
+			<a href="" class="btn btn-danger" ng-if="isFounder == 1">升级</a>
 		</div>
 		<div class="media-body">
 			<h4 class="media-heading">{$module_info['title']}</h4>
@@ -312,17 +313,17 @@
 				{$module_info['description']}
 			</dd>
 		</dl>
-		<dl class="copyright">
+		<dl class="copyright" ng-if="isFounder == 1">
 			<dt><i class="wi wi-setting2"></i>版权信息  </dt>
 			<dd>
 				<span>名称：{$module_info['title']}</span>  <span>版本：{$module_info['version']}</span>  <span> 作者：{$module_info['author']}</span>
 			</dd>
 			<!--<dd>-->
-				<!--<span>QQ:361635464</span>  <span>微信：3513854324</span>-->
+			<!--<span>QQ:361635464</span>  <span>微信：3513854324</span>-->
 			<!--</dd>-->
 		</dl>
 	</div>
-	<div class="module-group">
+	<div class="module-group" ng-if="isFounder == 1">
 		<table class="table we7-table">
 			<col />
 			<col width="115px" />
@@ -353,7 +354,8 @@
 			{/loop}
 		</table>
 	</div>
-	<div class="panel we7-panel module-subscription">
+	{if !empty($module_subscribes)}
+	<div class="panel we7-panel module-subscription" ng-if="isFounder == 1">
 		<div class="panel-heading ">
 			订阅详情
 			<div class="pull-right subscription-switch">
@@ -364,7 +366,6 @@
 				</label>
 			</div>
 		</div>
-		{if !empty($module_subscribes)}
 		<div class="panel-body">
 			<ul>
 				{loop $module_subscribes $subscribe}
@@ -372,9 +373,9 @@
 				{/loop}
 			</ul>
 		</div>
-		{/if}
 	</div>
-	<table class="table we7-table">
+	{/if}
+	<table class="table we7-table" ng-if="isFounder == 1">
 		<col width="255px"/>
 		<col width="130px"/>
 		<col width="250px"/>
@@ -430,72 +431,74 @@
 		</tr>
 		{/loop}
 	</table>
-	{$pager}
+	<div ng-if="isFounder == 1">
+		{$pager}
+	</div>
 	<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog we7-modal-dialog" style="width:800px">
 			<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h4 class="modal-title">编辑模块信息</h4>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">编辑模块信息</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块标题</label>
+						<div class="col-sm-10">
+							<input type="text" name="title" ng-model="moduleinfo.title" class="form-control">
+							<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
+						</div>
 					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块标题</label>
-							<div class="col-sm-10">
-								<input type="text" name="title" ng-model="moduleinfo.title" class="form-control">
-								<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
-							</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块简述</label>
+						<div class="col-sm-10">
+							<input type="text" name="ability" ng-model="moduleinfo.ability" class="form-control">
+							<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
 						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块简述</label>
-							<div class="col-sm-10">
-								<input type="text" name="ability" ng-model="moduleinfo.ability" class="form-control">
-								<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
-							</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块介绍</label>
+						<div class="col-sm-10">
+							<textarea type="text" name="description" ng-model="moduleinfo.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
+							<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
 						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块介绍</label>
-							<div class="col-sm-10">
-								<textarea type="text" name="description" ng-model="moduleinfo.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
-								<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块缩略图</label>
-							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
-									<img ng-src="{{ moduleinfo.logo }}" ng-if="moduleinfo.logo">
-									<a href="javascript:;" class="input-addon" ng-hide="moduleinfo.logo" ng-click="changePicture('logo')"><span>+</span></a>
-									<input type="hidden" name="thumb">
-									<div class="cover-dark">
-										<a href="javascript:;" class="cut" ng-click="changePicture('logo')">更换</a>
-										<a href="javascript:;" class="del" ng-click="delPicture('logo')"><i class="fa fa-times text-danger"></i></a>
-									</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块缩略图</label>
+						<div class="col-sm-10">
+							<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
+								<img ng-src="{{ moduleinfo.logo }}" ng-if="moduleinfo.logo">
+								<a href="javascript:;" class="input-addon" ng-hide="moduleinfo.logo" ng-click="changePicture('logo')"><span>+</span></a>
+								<input type="hidden" name="thumb">
+								<div class="cover-dark">
+									<a href="javascript:;" class="cut" ng-click="changePicture('logo')">更换</a>
+									<a href="javascript:;" class="del" ng-click="delPicture('logo')"><i class="fa fa-times text-danger"></i></a>
 								</div>
-								<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
 							</div>
+							<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
 						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块封面</label>
-							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px;">
-									<img ng-src="{{ moduleinfo.preview }}">
-									<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
-									<input type="hidden" name="thumb">
-									<div class="cover-dark">
-										<a href="javascript:;" class="cut" ng-click="changePicture('preview')">更换</a>
-										<a href="javascript:;" class="del" ng-click="delPicture('preview')"><i class="fa fa-times text-danger"></i></a>
-									</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 模块封面</label>
+						<div class="col-sm-10">
+							<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px;">
+								<img ng-src="{{ moduleinfo.preview }}">
+								<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
+								<input type="hidden" name="thumb">
+								<div class="cover-dark">
+									<a href="javascript:;" class="cut" ng-click="changePicture('preview')">更换</a>
+									<a href="javascript:;" class="del" ng-click="delPicture('preview')"><i class="fa fa-times text-danger"></i></a>
 								</div>
-								<span class="help-block">模块封面, 大小为 600*350, 更好的设计将会获得官方推荐位置。仅支持jpg格式</span>
 							</div>
+							<span class="help-block">模块封面, 大小为 600*350, 更好的设计将会获得官方推荐位置。仅支持jpg格式</span>
 						</div>
 					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button  class="btn btn-primary" type="text" name="submit" ng-click="save()" data-dismiss="modal">保存</button>
-						<input type="hidden" name="token" value="c781f0df">
-					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button  class="btn btn-primary" type="text" name="submit" ng-click="save()" data-dismiss="modal">保存</button>
+					<input type="hidden" name="token" value="c781f0df">
+				</div>
 			</div>
 		</div>
 	</div>
@@ -504,11 +507,12 @@
 <script>
 	require(['fileUploader'], function() {
 		angular.module('moduleApp').value('config', {
+			'isFounder' : '{if $_W['isfounder']}1{else}2{/if}',
 			'receive_ban' : "{$receive_ban}",
 			'url' : '{php echo url('system/module/change_receive_ban')}',
 			'modulename' : '{$module_info['name']}',
 			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
-			'saveModuleUrl' : 	"{php echo url('system/module/save_module_info')}"
+			'saveModuleUrl' : "{php echo url('system/module/save_module_info')}"
 		});
 		angular.bootstrap($('.js-system-module-detail'), ['moduleApp']);
 	});

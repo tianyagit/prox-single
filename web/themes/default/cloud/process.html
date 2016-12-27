@@ -32,8 +32,7 @@
 	</div>
 	<script type="text/javascript">
 		angular.module('cloudApp').value('config', {
-			//files : {php echo ($packet['files'] ? json_encode($packet['files']) : '[]');},
-			files : [],
+			files : {php echo ($packet['files'] ? json_encode($packet['files']) : '[]');},
 			type : '{$type}',
 			appname : '{$m}',
 			is_upgrade : '{$is_upgrade}',
@@ -45,20 +44,20 @@
 {if $step == 'schemas'}
 <div class="clearfix js-processor">
 	{if empty($packet['schemas'])}
-		<!-- 如果是安装模块,数据库操作完成后,不处理script,直接跳转到extension/module/install -->
+		<!-- 如果是安装模块,数据库操作完成后,不处理script,直接跳转到system/module/install -->
 		<!-- 安装 -->
 		{if !empty($packet['install'])}
 			{if $packet['type'] == 'theme'}
 			<script>
-				location.href = '{url "extension/theme/install" array("templateid" => $m, "flag" => 1)}';
+				location.href = '{url "system/theme/install" array("templateid" => $m, "flag" => 1)}';
 			</script>
 			{elseif $packet['type'] == 'webtheme'}
 			<script>
-				location.href = '{url "extension/webtheme/install" array("webtheme" => $m, "flag" => 1)}';
+				location.href = '{url "system/webtheme/install" array("webtheme" => $m, "flag" => 1)}';
 			</script>
 			{else}
 			<script>
-				location.href = '{url "extension/module/install" array("m" => $m, "flag" => 1)}';
+				location.href = '{url "system/module/install" array("module_name" => $m, "flag" => 1)}';
 			</script>
 			{/if}
 		{/if}
@@ -80,7 +79,7 @@
 			{/if}
 		</script>
 		{/if}
-		
+
 	{/if}
 	<div class="alert alert-warning">
 		正在更新数据库, 请不要关闭窗口.
@@ -110,23 +109,19 @@
 {/if}
 	{if $step == 'scripts'}
 		{if empty($packet['scripts']) || !empty($packet['type'])}
-			<!-- 如果是更新模块,跳转到extension/module/upgrade -->
+			<!-- 如果是更新模块,跳转到system/module/upgrade -->
 			{if $is_upgrade == 1}
 				{if $packet['type'] == 'theme'}
 				<script>
-					location.href = '{url "extension/theme/upgrade" array("templateid" => $m, "flag" => 1)}';
+					location.href = '{url "system/theme/upgrade" array("templateid" => $m, "flag" => 1)}';
 				</script>
 				{elseif $packet['type'] == 'webtheme'}
 				<script>
-					location.href = '{url "extension/webtheme/upgrade" array("webthemeid" => $m, "flag" => 1)}';
+					location.href = '{url "system/webtheme/upgrade" array("webthemeid" => $m, "flag" => 1)}';
 				</script>
 				{else}
 				<script>
-					{if $_GPC['batch']}
-						location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1, "batch_from_cloud" => 1)}';
-					{else}
-						location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1)}';
-					{/if}
+					location.href = '{url "system/module/upgrade" array("module_name" => $m, "flag" => 1)}';
 				</script>
 				{/if}
 				
@@ -185,9 +180,9 @@
 							} else {
 								if(is_upgrade == 1) {
 									{if $_GPC['batch']}
-										location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1, "batch_from_cloud" => 1)}';
+										location.href = '{url "system/module/upgrade" array("m" => $m, "flag" => 1, "batch_from_cloud" => 1)}';
 									{else}
-										location.href = '{url "extension/module/upgrade" array("m" => $m, "flag" => 1)}';
+										location.href = '{url "system/module/upgrade" array("m" => $m, "flag" => 1)}';
 									{/if}
 									return;
 								}

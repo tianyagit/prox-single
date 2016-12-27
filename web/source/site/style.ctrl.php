@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('extension');
 load()->model('module');
+load()->func('file');
 
 $dos = array('default', 'designer', 'module', 'createtemplate', 'template', 'copy', 'build', 'del');
 $do = in_array($do, $dos) ? $do : 'template';
@@ -78,7 +79,6 @@ if ($do == 'template') {
 		$stylesResult = $tmp;
 	}
 	array_multisort($stylesResult, SORT_DESC);
-	load()->model('extension');
 	$temtypes = ext_template_type();
 	template('site/tpl-display');
 }
@@ -274,7 +274,6 @@ if($do == 'createtemplate') {
 	$currentTemplate = !empty($ts[$templateid]) ? $ts[$templateid]['name'] : 'default';
 	$targetfile = IA_ROOT . '/app/themes/' . $currentTemplate . '/' . $module['name'] . '/' . $file;
 	if(!file_exists($targetfile)) {
-		load()->func('file');
 		mkdirs(dirname($targetfile));
 		file_put_contents($targetfile, '<!-- 原始文件：addons/modules/' . $module['name'] . '/template/mobile/' . $file . ' -->');
 		@chmod($targetfile, $_W['config']['setting']['filemode']);

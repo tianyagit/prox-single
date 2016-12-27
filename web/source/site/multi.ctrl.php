@@ -6,6 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('site');
+load()->model('extension');
 
 $dos = array('display', 'post', 'del', 'default', 'copy', 'switch', 'quickmenu_display', 'quickmenu_post');
 $do = in_array($do, $dos) ? $do : 'display';
@@ -27,6 +28,10 @@ if($do == 'post') {
 	$id = intval($_GPC['multiid']);
 
 	if (checksubmit('submit')) {
+		$bindhost = parse_url($_W['siteroot']);
+		if ($bindhost['host'] == trim($_GPC['bindhost'])) {
+			message('绑定域名有误', referer(), 'error');
+		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
 			'title' => trim($_GPC['title']),
@@ -73,7 +78,7 @@ if($do == 'post') {
 		$multi['site_info'] = iunserializer($multi['site_info']) ? iunserializer($multi['site_info']) : array();
 	}
 
-	load()->model('extension');
+	
 	$temtypes = ext_template_type();
 	$temtypes[] = array('name' => 'all', 'title' => '全部');
 
@@ -110,6 +115,7 @@ if($do == 'display') {
 		$li['site_info'] = (array)iunserializer($li['site_info']);
 		$li['site_info']['thumb'] = tomedia($li['site_info']['thumb']);
 	}
+	unset($li);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_multi') . " WHERE uniacid = :uniacid".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
 	template('site/display');

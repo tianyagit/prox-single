@@ -7,8 +7,6 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
 
-
-$do = $_GPC['do'];
 $dos = array('edit_base', 'edit_modules_tpl', 'edit_account');
 $do = in_array($do, $dos) ? $do: 'edit_base';
 uni_user_permission_check('system_user_display');

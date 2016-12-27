@@ -75,7 +75,7 @@ if($do == 'addnews') {
 	foreach ($image_list as $image) {
 		$image_data[$image['media_id']] = $image;
 	}
-	if(!empty($news)) {
+	if(!empty($_GPC['news'])) {
 		foreach($_GPC['news'] as $key => $news) {
 			if ($operate == 'add') {
 				$row = array(

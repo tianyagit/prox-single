@@ -33,7 +33,7 @@
 							<div class="url-short">
 								<input type="text" name="shorturl" id="shorturl" value="" class="form-control" disabled="disabled">
 							</div>
-							<a href="javascript:;" class="js-clip btn btn-default disabled">复制</a>
+							<a href="javascript:;" id="copy-0" class="btn btn-default disabled" clipboard supported="supported" text="copyLink" on-copied="success('0')">点击复制</a>
 						</div>
 					</div>
 				</div>
@@ -49,6 +49,7 @@
 		transform_url: "{php echo url('platform/url2qr/change')}",
 		down_url: "{php echo url('platform/url2qr/down_qr')}",
 	});
+
 	angular.bootstrap($('#url-to-qr'), ['qrApp']);
 </script>
 {template 'common/footer'}

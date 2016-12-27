@@ -1,7 +1,7 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ * 会员中心
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('site');
@@ -103,6 +103,7 @@ if ($do == 'uc') {
 				$nav['css']['icon']['icon'] = 'fa fa-external-link';
 			}
 		}
+		unset($nav);
 	}
 	$page = pdo_fetch("SELECT * FROM ".tablename('site_page')." WHERE uniacid = :uniacid AND type = '3'", array(':uniacid' => $_W['uniacid']));
 	template('site/editor');

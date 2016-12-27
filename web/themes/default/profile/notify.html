@@ -58,16 +58,16 @@
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">发送帐号用户名</label>
 			<div class="form-controls col-sm-8">
-				<input type="text"  name="username" value="{$mail_setting['username']}" style="width: 600px" class="form-control" placeholder="">
+				<input type="text" name="username" value="{$mail_setting['username']}" style="width: 600px" class="form-control" placeholder="">
 				<span class="help-block">指定发送邮件的用户名，例如：test@163.com </span>
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">smtp客户端授权密码</label>
 			<div class="form-controls col-sm-8">
-				<input type="password" name="password" value="{$mail_setting['password']}" style="width: 600px" class="form-control" placeholder="">
+				<input type="text" name="password" value="{$mail_setting['password']}" style="width: 600px" class="form-control"  autocomplete="off" ng-focus="changeType($event)">
 				<span class="help-block">指定发送邮件的密码，QQ邮箱此处为授权码，
-				<a href="http://service.mail.qq.com/cgi-bin/help?subtype=1&amp;&amp;id=28&amp;&amp;no=1001256" target="_Blank" id="code" style="">查看授权码获取方法</a>
+				<a href="http://service.mail.qq.com/cgi-bin/help?subtype=1&amp;&amp;id=28&amp;&amp;no=1001256" target="_Blank" id="code">查看授权码获取方法</a>
 				</span>
 			</div>
 		</div>

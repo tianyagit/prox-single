@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 /**
  * 模块类型
- * 
+ *
  * @return array
  */
 function module_types() {
@@ -58,7 +58,7 @@ function module_types() {
 
 /**
  * 获取指定模块的所有入口地址
- * 
+ *
  * @param string $name 模块名称
  * @param string|array $types 入口类型
  * @param number $rid 规则编号
@@ -214,7 +214,7 @@ function module_entry($eid) {
 
 /**
  * 显示模块设置表单
- * 
+ *
  * @param string $name
  * @param number $rid
  * @param array $option 模块显示隐藏设置
@@ -224,7 +224,7 @@ function module_build_form($name, $rid, $option = array()) {
 	$rid = intval($rid);
 	$m = WeUtility::createModule($name);
 	if(!empty($m)) {
-		return $m->fieldsFormDisplay($rid, $option);		
+		return $m->fieldsFormDisplay($rid, $option);
 	}else {
 		return null;
 	}
@@ -233,7 +233,7 @@ function module_build_form($name, $rid, $option = array()) {
 
 /**
  * 获取当前公号下安装好的指定模块及模块信息
- * 
+ *
  * @param string $name 模块名称
  * @return array 模块信息
  */
@@ -307,43 +307,69 @@ function module_build_privileges() {
 /**
  * 获取所有未安装的模块
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
-*/
+ */
 function get_all_unistalled_module($status)  {
-	$moduleids = array();
-	$modules = pdo_fetchall("SELECT `name` FROM " . tablename('modules') . ' ORDER BY `issystem` DESC, `mid` ASC');
-	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
-	$recycle_modules = array_keys($recycle_modules);
-	if(!empty($modules)) {
-		foreach($modules as $m) {
-			$moduleids[] = $m['name'];
+	load()->model('cloud');
+	$status = $status == 'uninstalled' ?  'uninstalled' : 'recycle';
+	$all_module = pdo_getall('modules');
+	$installed_module = array();
+	if (!empty($all_module)) {
+		foreach ($all_module as $module) {
+			$installed_module[] = $module['name'];
 		}
 	}
+	$uninstallModules = array();
+	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
+	$recycle_modules = array_keys($recycle_modules);
+
+	//获取云上未安装模块
+	$cloud_module = cloud_m_query();
+	if (!empty($cloud_module) && !is_error($cloud_module)) {
+		foreach ($cloud_module as $module) {
+			if (($status == 'uninstalled' && in_array($module['name'], $recycle_modules)) || ($status == 'recycle' && !in_array($module['name'], $recycle_modules))) {
+				continue;
+			}
+			if (!in_array($module['name'], $installed_module)) {
+				$uninstallModules[$module['name']] = array(
+					'from' => 'cloud',
+					'name' => $module['name'],
+					'version' => $module['version'],
+					'title' => $module['title'],
+					'thumb' => $module['thumb']
+				);
+			}
+		}
+	}
+
+	//获取本地未安装模块
 	$path = IA_ROOT . '/addons/';
 	if (is_dir($path)) {
-		$localUninstallModules = array();
 		if ($handle = opendir($path)) {
 			while (false !== ($modulepath = readdir($handle))) {
+				if ($modulepath == '.' || $modulepath == '..') {
+					continue;
+				}
 				$manifest = ext_module_manifest($modulepath);
-				if (is_array($manifest) && !empty($manifest['application']['identifie']) && !in_array($manifest['application']['identifie'], $moduleids)) {
+				if (!is_array($manifest) || empty($manifest) || empty($manifest['application']['identifie'])) {
+					continue;
+				}
+				if (!in_array($manifest['application']['identifie'], $installed_module)) {
 					$manifest = ext_module_convert($manifest);
 					$module[$manifest['name']] = $manifest;
-					if ($status == 'uninstalled') {
-						if (in_array($manifest['name'], $recycle_modules)) {
-							continue;
-						}
-					} else {
-						if (!in_array($manifest['name'], $recycle_modules)) {
-							continue;
-						}
+					if (($status == 'uninstalled' && in_array($manifest['name'], $recycle_modules)) || ($status == 'recycle' && !in_array($manifest['name'], $recycle_modules))) {
+						continue;
 					}
-					$localUninstallModules[$manifest['name']] = $manifest;
+					$uninstallModules[$manifest['name']] = array(
+						'from' => 'local',
+						'name' => $manifest['name'],
+						'version' => $manifest['version'],
+						'title' => $manifest['title'],
+					);
 				}
 			}
 		}
-//		print_r(array_keys($module));die;
-		return $localUninstallModules;
+		return $uninstallModules;
 	} else {
 		return array();
 	}
-
 }

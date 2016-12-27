@@ -1016,7 +1016,7 @@ function account_delete($acid) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
 		if($state != 'founder' && $state != 'manager') {
-			message('没有该公众号操作权限！', url('accound/display'), 'error');
+			message('没有该公众号操作权限！', referer(), 'error');
 		}
 		if($uniacid == $_W['uniacid']) {
 			isetcookie('__uniacid', '');
