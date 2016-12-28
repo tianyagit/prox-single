@@ -5,6 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 $moduels = uni_modules();
+load()->model('activity');
 $params = @json_decode(base64_decode($_GPC['params']), true);
 if(empty($params) || !array_key_exists($params['module'], $moduels)) {
 	message('访问错误.');
@@ -83,7 +84,6 @@ if(!empty($type)) {
 				$record['is_usecard'] = 1;
 				$record['card_fee'] = $coupon_info['fee'];
 				$record['encrypt_code'] = trim($_GPC['code']);
-				load()->model('activity');
 				activity_coupon_type_init();
 				if (COUPON_TYPE == WECHAT_COUPON) {
 					$record['card_type'] = 1;
