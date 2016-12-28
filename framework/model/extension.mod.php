@@ -720,6 +720,9 @@ function ext_module_script_clean($modulename, $manifest) {
 			unlink($moduleDir . $manifest['upgrade']);
 		}
 	}
+	if (file_exists($moduleDir . 'manifest.xml')) {
+		unlink($moduleDir . 'manifest.xml');
+	}
 }
 
 /**
@@ -752,33 +755,24 @@ function ext_module_msg_types() {
  */
 function ext_check_module_subscribe($modulename) {
 	global $_W;
-
-	load()->func('communication');
-	load()->classs('account');
 	if (empty($modulename)) {
 		return true;
 	}
 	if (!is_array($_W['setting']['module_receive_ban'])) {
 		$_W['setting']['module_receive_ban'] = array();
 	}
-	$module = WeUtility::createModuleReceiver($modulename);
-	if (empty($module)) {
-		exit('error');
-	}
-	$module->uniacid = $_W['uniacid'];
-	$module->message = array(
-		'event' => 'subscribe'
-	);
-	if(method_exists($module, 'receive')) {
-		@$module->receive();
+	load()->func('communication');
+	$response = ihttp_request($_W['siteroot'] . url('extension/subscribe/check', array('modulename' => $modulename)));
+	if (strexists($response['content'], 'success')) {
 		unset($_W['setting']['module_receive_ban'][$modulename]);
+		$module_subscribe_success = true;
 	} else {
 		$_W['setting']['module_receive_ban'][$modulename] = $modulename;
+		$module_subscribe_success = false;
 	}
 	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
-	return error(0);
+	return $module_subscribe_success;
 }
-
 
 /**
  * 检查模块配置项
@@ -835,39 +829,4 @@ function manifest_check($module_name, $manifest) {
 		return error(1, '兼容版本格式错误');
 	}
 	return error(0);
-}
-
-/**
- * 0.52模块升级版本号处理
- * @param $module string 模块标识;
- * @return array();
- */
-function update_handle($module = '') {
-	$isupdate = 0;
-	if(file_exists(IA_ROOT . '/data/modules_log.php')) {
-		$isupdate = 1;
-	}
-	if(!$isupdate || empty($module)) {
-		return true;
-	} else {
-		@require IA_ROOT . '/data/modules_log.php';
-		if(!empty($module_log)) {
-			if(isset($module_log[$module])) {
-				pdo_update('modules', array('version' => $module_log[$module]), array('name' => $module));
-				unset($module_log[$module]);
-			}
-
-			if(empty($module_log)) {
-				@unlink(IA_ROOT . '/data/modules_log.php');
-			} else {
-				$content_update = "<?php\r\n";
-				$content_update .= "\$module_log = " . var_export($module_log, true) . ";\r\n";
-				$content_update .= "?>";
-				file_put_contents(IA_ROOT . '/data/modules_log.php', $content_update);
-			}
-		} else {
-			@unlink(IA_ROOT . '/data/modules_log.php');
-		}
-		return true;
-	}
 }
