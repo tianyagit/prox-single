@@ -34,18 +34,6 @@ if($do != 'module') {
 	if($do == 'mc') {
 		$_W['page']['title'] = '个人中心入口设置 - 会员中心访问入口- 会员中心';
 	}
-	if($do == 'clerk') {
-		$_W['page']['title'] = '店员操作入口设置 - 店员操作';
-	}
-	if($do == 'card') {
-		/*检查会员卡功能是否开启*/
-		$sql = 'SELECT `status` FROM ' . tablename('mc_card') . " WHERE `uniacid` = :uniacid";
-		$list = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
-		if ($list['status'] == 0) {
-			message('会员卡功能未开启', url('mc/card'), 'error');
-		}
-		$_W['page']['title'] = '会员卡入口设置 - 会员中心访问入口- 会员中心';
-	}
 } else {
 	$eid = intval($_GPC['eid']);
 	if(empty($eid)) {

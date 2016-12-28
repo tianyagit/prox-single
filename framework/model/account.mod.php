@@ -478,17 +478,18 @@ function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	if ($_W['role'] == 'founder' || $_W['role'] == 'manager') {
-		//return false;
-	}
-	if ($_W['role'] == 'clerk') {
+	if($_W['role'] == 'founder' || $_W['role'] == 'manager') {
 		return true;
 	}
-	$is_exist = pdo_get('users_permission', array('uid' => $uid, 'uniacid' => $uniacid), array('id'));
+	$is_exist = pdo_fetch('SELECT id FROM ' . tablename('users_permission') . ' WHERE `uid`=:uid AND `uniacid`=:uniacid', array(':uid' => $uid, ':uniacid' => $uniacid));
 	if(empty($is_exist)) {
-		return false;
+		if($_W['role'] != 'clerk') {
+			return true;
+		} else {
+			return error(-1, '');
+		}
 	} else {
-		return true;
+		return error(-1, '');
 	}
 }
 /*
@@ -1016,7 +1017,7 @@ function account_delete($acid) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
 		if($state != 'founder' && $state != 'manager') {
-			message('没有该公众号操作权限！', referer(), 'error');
+			message('没有该公众号操作权限！', url('accound/display'), 'error');
 		}
 		if($uniacid == $_W['uniacid']) {
 			isetcookie('__uniacid', '');
@@ -1052,7 +1053,7 @@ function account_delete($acid) {
 		$tables = array(
 			'account','account_wechats',
 			'activity_clerks',
-			'activity_coupon_record','activity_exchange','activity_exchange_trades','activity_exchange_trades_shipping',
+			'activity_exchange','activity_exchange_trades','activity_exchange_trades_shipping',
 			'activity_modules', 'core_attachment','core_paylog','core_queue','core_resource',
 			'wechat_attachment','coupon','coupon_modules',
 			'coupon_record', 'cover_reply', 'mc_card','mc_card_members','mc_chats_record','mc_credits_recharge','mc_credits_record',
