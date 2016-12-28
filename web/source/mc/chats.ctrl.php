@@ -6,12 +6,12 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('chats', 'send', 'endchats');
-$do = in_array($do , $dos) ? $do : 'chats';
-
 load()->model('mc');
 load()->classs('wesession');
 load()->classs('account');
+
+$dos = array('chats', 'send', 'endchats');
+$do = in_array($do , $dos) ? $do : 'chats';
 
 if ($do == 'chats') {
 	$_W['page']['title'] = '粉丝聊天';
@@ -101,6 +101,9 @@ if ($do == 'send') {
 
 if ($do == 'endchats') {
 	$openid = trim($_GPC['openid']);
+	if (empty($openid)) {
+		message(error(1, '粉丝openid不合法'), '', 'ajax');
+	}
 	$fans_info = mc_fansinfo($openid);
 	$account = account_fetch($fans_info['acid']);
 	$message['from'] = $_W['openid'] = $openid['openid'];
@@ -114,8 +117,6 @@ if ($do == 'endchats') {
 	}
 	if (is_error($result)) {
 		message($result, '', 'ajax');
-	} else {
-
 	}
 }
 template('mc/chats');

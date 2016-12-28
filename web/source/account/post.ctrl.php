@@ -37,21 +37,29 @@ if($do == 'base') {
 		switch ($type) {
 			case 'qrcodeimgsrc':
 				if(!empty($_GPC['imgsrc'])) {
-					if(file_exists($qrcodeimgsrc)) {
-						unlink($qrcodeimgsrc);
-						$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+					if(parse_path($_GPC['imgsrc'])) {
+						if(file_exists($qrcodeimgsrc)) {
+							unlink($qrcodeimgsrc);
+							$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+						}else {
+							$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+						}
 					}else {
-						$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+						message(error(40035), '', 'ajax');
 					}
 				}
 				break;
 			case 'headimgsrc':
 				if(!empty($_GPC['imgsrc'])) {
-					if(file_exists($headimgsrc)) {
-						unlink($headimgsrc);
-						$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+					if(parse_path($_GPC['imgsrc'])) {
+						if(file_exists($headimgsrc)) {
+							unlink($headimgsrc);
+							$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+						}else {
+							$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+						}
 					}else {
-						$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+						message(error(40035), '', 'ajax');
 					}
 				}
 				break;
