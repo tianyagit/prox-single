@@ -60,8 +60,8 @@
 		{if in_array(FRAME, array('account', 'system'))}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
-				{if FRAME == 'account'}
-					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" onerror="this.src='./resource/images/gw-wx.gif'">
+				{if FRAME == 'account' && $_GET['m'] == ''}
+					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					<span class="font-max">{$_W['account']['name']}</span>
 					{if $_W['account']['level'] == 1 || $_W['account']['level'] == 3}
 						<span><i class="label label-primary">订阅号</i> {if $_W['account']['level'] == 3}<i class="label label-primary">已认证</i>{/if}</span>
@@ -80,6 +80,11 @@
 				{if FRAME == 'system'}
 					<span class="font-max">我的微擎</span>
 				{/if}
+				{if $_GET['m'] != ''}
+					<a href="" class="we7-head-back"><i class="wi wi-back-cricle"></i></a>
+					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo" onerror="this.src='./resource/images/gw-wx.gif'">
+					<span class="font-max">我的微擎</span>
+				{/if}
 			</div>
 			<div class="panel-body">
 				<div class="left-menu">
@@ -93,7 +98,7 @@
 						<ul class="list-group">
 							{loop $section['menu'] $menuid $menu}
 							<li class="list-group-item {if $menu['active']}active{/if}">
-								<a href="{$menu['url']}">{if $menu['icon']}<img src="{$menu['icon']}" onerror="this.src='resource/images/nopic-small.jpg'"/>{/if} {$menu['title']}</a>
+								<a href="{$menu['url']}" class="text-over">{if $menu['icon']}<img src="{$menu['icon']}" onerror="this.src='resource/images/nopic-small.jpg'"/>{/if} {$menu['title']}</a>
 							</li>
 							{/loop}
 							{if $sectionid == 'platform_module'}
