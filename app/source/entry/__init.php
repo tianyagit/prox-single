@@ -1,8 +1,6 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
- * account 所有操作在GW界面进行
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('module');

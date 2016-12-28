@@ -29,7 +29,7 @@ if(!empty($setting['payment']['unionpay']['switch'])) {
 if(!empty($setting['payment']['baifubao']['switch'])) {
 	$dos[] = 'baifubao';
 }
-$do = $_GET['do'];
+$do = $_GPC['do'];
 $type = in_array($do, $dos) ? $do : '';
 
 if(empty($type)) {
