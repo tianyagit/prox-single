@@ -37,7 +37,6 @@ if ($do == 'replace_content') {
 				message($thumb, '', 'ajax');
 			}
 			$thumb = ATTACHMENT_ROOT . $thumb;
-			//uploadNewsThumb
 			$weixin_api = WeAccount::create($_W['acid']);
 			$data = array(
 				'media' => '@'. $thumb,
@@ -68,67 +67,51 @@ if($do == 'addnews') {
 	$operate = $_GPC['operate'];
 	$articles = array();
 	$post_news = array();
-	//获取所有的图片素材，构造一个已media_id为键的数组(为了获取图片的url)
+	//获取所有的图片素材，构造一个以media_id为键的数组(为了获取图片的url)
 	$image_list = $wechat_api->batchGetMaterial('image');
-	$image_list = $image_list['data'];
+	$image_list = $image_list['item'];
 	$image_data = array();
+
 	foreach ($image_list as $image) {
 		$image_data[$image['media_id']] = $image;
 	}
 	if(!empty($_GPC['news'])) {
 		foreach($_GPC['news'] as $key => $news) {
+			$news_info = array(
+				'title' => $news['title'],
+				'author' => $news['author'],
+				'digest' => $news['description'],
+				'content' => addslashes(htmlspecialchars_decode($news['content'])),
+				'show_cover_pic' => 1,
+				'content_source_url' => $news['content_source_url'],
+				'thumb_media_id' => $news['media_id'],
+			);
+
+			$post_data = array(
+				'thumb_media_id' => $news['media_id'],
+				'thumb_url' => $image_data[$news['media_id']]['url'],
+				'title' => $news['title'],
+				'author' => $news['author'],
+				'digest' => $news['digest'],
+				'content' => htmlspecialchars_decode($news['content']),
+				'content_source_url' => $news['content_source_url'],
+				'show_cover_pic' => 1,
+				'url' => '',
+				'displayorder' => $key
+			);
+
 			if ($operate == 'add') {
-				$row = array(
-					'title' => $news['title'],
-					'author' => $news['author'],
-					'digest' => $news['description'],
-					'content' => addslashes(htmlspecialchars_decode($news['content'])),
-					'show_cover_pic' => 1,
-					'content_source_url' => $news['content_source_url'],
-					'thumb_media_id' => $news['media_id'],
-				);
-				$articles['articles'][] = $row;
-				$image_info =
-				$post_news[] = array(
-					'uniacid' => $_W['uniacid'],
-					'thumb_media_id' => $news['media_id'],
-					'thumb_url' => $image_data[$news['media_id']]['url'],
-					'title' => $news['title'],
-					'author' => $news['author'],
-					'digest' => $news['digest'],
-					'content' => htmlspecialchars_decode($news['content']),
-					'content_source_url' => $news['content_source_url'],
-					'show_cover_pic' => 1,
-					'url' => '',
-					'displayorder' => $key
-				);
+				$articles['articles'][] = $news_info;
+				$post_data['uniacid'] = $_W['uniacid'];
+				$post_news[] = $post_data;
 			} else {
 				$attach_mediaid =  pdo_getcolumn('wechat_attachment', array('id' => intval($_GPC['attach_id']), 'uniacid' => $_W['uniacid']), 'media_id');
 				$wechat_news[] = array(
 					'media_id' => $attach_mediaid,
 					'index' => $key,
-					'articles' => array(
-						'title' => urlencode($news['title']),
-						'thumb_media_id' =>  urlencode($news['media_id']),
-						'author' => urlencode($news['author']),
-						'digest' => urlencode($news['digest']),
-						'show_cover_pic' => 1,
-						'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
-						'content_source_url' => urlencode('www.baidu.com')
-					)
+					'articles' => $news_info
 				);
-				$news['url'] = $image_data[$news['media_id']]['url'];
-				$post_news[$news['id']] = array(
-					'title' => $news['title'],
-					'thumb_media_id' => $news['media_id'],
-					'thumb_url' => $news['url'],
-					'author' => $news['author'],
-					'digest' => $news['digest'],
-					'show_cover_pic' => 1,
-					'content' => htmlspecialchars_decode($news['content']),
-					'content_source_url' => 'www.baidu.com',
-					'displayorder' => $key,
-				);
+				$post_news[$news['id']] = $post_data;
 			}
 		}
 	}
