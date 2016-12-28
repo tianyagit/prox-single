@@ -129,9 +129,12 @@ if($step == 1) {
 			unset($update['type']);
 			pdo_update('account_wechats', $update, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
-
-		copy($_GPC['qrcode'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
-		copy($_GPC['headimg'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+		if(parse_path($_GPC['qrcode'])) {
+			copy($_GPC['qrcode'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+		}
+		if(parse_path($_GPC['headimg'])) {
+			copy($_GPC['headimg'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+		}
 		//当是认证服务号的时候设置权限到借用oauth中
 		$oauth = uni_setting($uniacid, array('oauth'));
 		if ($acid && !empty($update['key']) && !empty($update['secret']) && empty($oauth['oauth']['account']) && $update['level'] == 4) {
