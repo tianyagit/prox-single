@@ -32,18 +32,17 @@ if($do == 'display') {
 			$params[':username'] = trim($_GPC['username']);
 			if (!is_numeric(trim($_GPC['username']))) {
 				$uid = pdo_fetchcolumn('SELECT `uid` FROM'. tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
-				$uid = $uid ? $uid : '';
+				$uid = empty($uid) ? $uid : '';
 				$params[':openid'] = $uid;
 			} else {
 				$params[':openid'] =  trim($_GPC['username']);
 			}
 		} else {
-			$condition .= empty($_GPC['username']) ? '' : " AND ((`uid` LIKE :openid) OR ( `realname` LIKE :username ) OR ( `nickname` LIKE :username ) OR ( `mobile` LIKE :username ))";
+			$condition .= " AND ((`uid` = :openid) OR ( `realname` LIKE :username ) OR ( `nickname` LIKE :username ) OR ( `mobile` LIKE :username ))";
 			$params[':username'] =  '%'.trim($_GPC['username']).'%';
 			if (!is_numeric(trim($_GPC['username']))) {
 				$uid = pdo_fetchcolumn('SELECT `uid` FROM'. tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
-				$uid = $uid ? $uid : '';
-				$params[':openid'] =  "%". $uid. "%";
+				$params[':openid'] =  empty($uid) ? "" : $uid;
 			} else {
 				$params[':openid'] =  "%". $_GPC['username']. "%";
 			}
