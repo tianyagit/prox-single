@@ -8,31 +8,45 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+load()->model('mc');
 
 $dos = array('display', 'post','del', 'add', 'group', 'credit_record', 'credit_stat');
 $do = in_array($do, $dos) ? $do : 'display';
 
 uni_user_permission_check('mc_member');
-load()->model('mc');
 if($do == 'display') {
 	$_W['page']['title'] = '会员列表';
 	$groups = mc_groups();
+	$search_mod = intval($_GPC['search_mod']) == 1 ? '1' : '2';
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 50;
+
 	$condition = '';
 	$params = array(':uniacid' => $_W['uniacid']);
 	$starttime = empty($_GPC['createtime']['start']) ? strtotime('-90 days') : strtotime($_GPC['createtime']['start']);
 	$endtime = empty($_GPC['createtime']['end']) ? TIMESTAMP + 86399 : strtotime($_GPC['createtime']['end']) + 86399;
 	$condition .= " AND createtime >= {$starttime} AND createtime <= {$endtime}";
-	$condition .= empty($_GPC['username']) ? '' : " AND ((`uid` = :openid) OR ( `realname` LIKE :username ) OR ( `nickname` LIKE :username ) OR ( `mobile` LIKE :username ))";
 	if (!empty($_GPC['username'])) {
-		$params[':username'] =  '%'.trim($_GPC['username']).'%';
-		if (!is_numeric(trim($_GPC['username']))) {
-			$uid = pdo_fetchcolumn('SELECT `uid` FROM'. tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
-			$uid = $uid ? $uid : '';
-			$params[':openid'] =  $uid;
+		if ($search_mod == 1) {
+			$condition .= " AND ((`uid` = :openid) OR ( `realname` = :username ) OR ( `nickname` = :username ) OR ( `mobile` = :username ))";
+			$params[':username'] = trim($_GPC['username']);
+			if (!is_numeric(trim($_GPC['username']))) {
+				$uid = pdo_fetchcolumn('SELECT `uid` FROM'. tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
+				$uid = $uid ? $uid : '';
+				$params[':openid'] = $uid;
+			} else {
+				$params[':openid'] =  trim($_GPC['username']);
+			}
 		} else {
-			$params[':openid'] =  $_GPC['username'];
+			$condition .= empty($_GPC['username']) ? '' : " AND ((`uid` LIKE :openid) OR ( `realname` LIKE :username ) OR ( `nickname` LIKE :username ) OR ( `mobile` LIKE :username ))";
+			$params[':username'] =  '%'.trim($_GPC['username']).'%';
+			if (!is_numeric(trim($_GPC['username']))) {
+				$uid = pdo_fetchcolumn('SELECT `uid` FROM'. tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
+				$uid = $uid ? $uid : '';
+				$params[':openid'] =  "%". $uid. "%";
+			} else {
+				$params[':openid'] =  "%". $_GPC['username']. "%";
+			}
 		}
 	}
 	if (!empty($_GPC['uid'])) {
@@ -40,6 +54,7 @@ if($do == 'display') {
 		$params[':uid'] = $_GPC['uid'];
 	}
 	$condition .= intval($_GPC['groupid']) > 0 ?  " AND `groupid` = '".intval($_GPC['groupid'])."'" : '';
+
 	if(checksubmit('export_submit', true)) {
 		$count = pdo_fetchcolumn("SELECT COUNT(*) FROM". tablename('mc_members')." WHERE uniacid = :uniacid ".$condition, $params);
 		$pagesize = ceil($count/5000);
@@ -92,7 +107,7 @@ if($do == 'display') {
 			}
 		}
 	}
-	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('mc_members')." WHERE uniacid = '{$_W['uniacid']}' ".$condition);
+	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('mc_members')." WHERE uniacid = '{$_W['uniacid']}' ".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
 	$stat['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
 	$stat['today'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid AND createtime >= :starttime AND createtime <= :endtime', array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime('today'), ':endtime' => strtotime('today') + 86399));

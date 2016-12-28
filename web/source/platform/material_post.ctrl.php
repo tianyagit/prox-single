@@ -9,11 +9,12 @@ load()->func('file');
 load()->model('material');
 load()->model('account');
 
-$dos = array('news', 'tomedia', 'addnews', 'thumb_upload', 'image_upload', 'replace_content');
+$dos = array('news', 'tomedia', 'addnews', 'replace_content');
 $do = in_array($do, $dos) ? $do : 'news';
 uni_user_permission_check('material_mass');
 $_W['page']['title'] = '新增素材-微信素材';
 
+//把图文素材内容中的图片url替换成微信的url
 if ($do == 'replace_content') {
 	$content = htmlspecialchars_decode($_GPC['content']);
 	$match = array();

@@ -14,6 +14,7 @@ $_W['page']['title'] = '永久素材-微信素材';
 
 if($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
+
 	if ($type == 'news') {
 		$condition = " as a RIGHT JOIN " . tablename('wechat_news') . " as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND a.model = :model AND a.media_id != ''";
 		$params = array(':uniacid' => $_W['uniacid'], ':type' => $type, ':model' => 'perm');
@@ -50,18 +51,21 @@ if($do == 'display') {
 		}
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
+
 	if ($type == 'image') {
 		$pageindex = max(1, intval($_GPC['page']));
 		$pagesize = 12;
 		$image_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'image', 'model' => 'perm'), array($pageindex, $pagesize), $total, array(),'', 'createtime DESC');
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
+
 	if ($type == 'voice') {
 		$pageindex = max(1, intval($_GPC['page']));
 		$pagesize = 12;
 		$voice_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => 'voice', 'model' => 'perm'), array($pageindex, $pagesize), $total, array(),'', 'createtime DESC');
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
+
 	if ($type == 'video') {
 		$pageindex = max(1, intval($_GPC['page']));
 		$pagesize = 12;
@@ -84,6 +88,7 @@ if ($do == 'del_material') {
 		if ($material['type'] == 'news') {
 			pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $material['id']));
 		}
+
 		pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $media_id));
 	}
 	message($result, '', 'ajax');

@@ -24,7 +24,7 @@
 		<i class="wi wi-info-sign"></i> 会员的总积分 = 账户积分 + 账户贡献. 会员所在的会员组是根据 "总积分的多少" 和 "会员组的变更规则" (<根据总积分多少自动升价> 或 <根据总积分多少只升不降>) 自动匹配.<br>
 	</strong></p>
 </div>
-<div class="panel we7-panel">
+<div class="panel we7-panel" ng-app="member" ng-controller="display" ng-cloak>
 	<div class="panel-heading">筛选</div>
 	<div class="panel-body we7-padding">
 		<form action="./index.php" method="get" class="we7-form" role="form">
@@ -39,7 +39,20 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">昵称/姓名/手机号码/openid</label>
 				<div class="col-sm-6">
-					<input type="text" class="form-control" name="username" value="{$_GPC['username']}" />
+					<div class="input-group">
+						<div class="input-group-btn">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								{{ searchMod == 2 ? '模糊' : '精准' }}
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu" style="width: 10px;">
+							<li><a href="javascript:;" ng-click="setSearchMod('2')">模糊</a></li>
+							<li><a href="javascript:;" ng-click="setSearchMod('1')">精准</a></li>
+						</ul>
+							</div>
+						<input type="text" class="form-control" name="username" value="{$_GPC['username']}" />
+						<input type="text" name="search_mod" ng-model="searchMod" style="display:none;"/>
+					</div>
 				</div>
 			</div>
 			<div class="form-group">
@@ -68,7 +81,15 @@
 		</form>
 	</div>
 </div>
+<script>
+	angular.module('member', []).controller('display', function($scope) {
+		$scope.searchMod = "{$search_mod}";
 
+		$scope.setSearchMod = function(type) {
+			$scope.searchMod = type;
+		};
+	});
+</script>
 <form method="post" class="we7-form" id="form1">
 			<table class="table we7-table">
 				<input type="hidden" name="do" value="del" />
