@@ -16,8 +16,8 @@ $_W['page']['title'] = '定时群发-微信素材';
 
 if($do == 'list') {
 	$time = strtotime(date('Y-m-d'));
-	$record = pdo_fetchall('SELECT * FROM ' . tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime >= :time ORDER BY sendtime ASC LIMIT 7', array(':uniacid' => $_W['uniacid'], ':time' => $time), 'sendtime');
-	
+	$record = pdo_getall('mc_mass_record', array('uniacid' => $_W['uniacid'], 'sendtime >=' => $time), array(), 'sendtime', 'sendtime ASC', array(1,7));
+
 	$days = array();
 	for($i = 0; $i < 8; $i++) {
 		$day_info = array();
@@ -26,6 +26,7 @@ if($do == 'list') {
 		$starttime = strtotime("+{$i} days", $time);
 		$endtime = $i+1;
 		$endtime = strtotime("+{$endtime} days", $time);
+		// $massdata = pdo_get('mc_mass_record', array('uniacid' => $_W['uniacid'], 'status' => 1, 'sendtime >=' => $starttime, 'sendtime <=' => $endtime), array('id', 'groupname', 'msgtype', 'group', 'attach_id', 'media_id'));
 		$massdata = pdo_fetch('SELECT id, `groupname`, `msgtype`, `group`, `attach_id`, `media_id`, `sendtime` FROM '. tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime));
 
 		if(!empty($massdata)) {
@@ -217,8 +218,8 @@ if($do == 'preview') {
 	}
 	$type = trim($_GPC['type']);
 	$media_id = trim($_GPC['media_id']);
-	$acc = WeAccount::create();
-	$data = $acc->fansSendPreview($wxname, $media_id, $type);
+	$account_api = WeAccount::create();
+	$data = $account_api->fansSendPreview($wxname, $media_id, $type);
 	if(is_error($data)) {
 		exit($data['message']);
 	}

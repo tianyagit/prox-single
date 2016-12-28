@@ -358,12 +358,12 @@ if($do == 'users') {
 if($do == 'modules_tpl') {
 	$unigroups = uni_groups();
 	$ownerid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
+	$ownerid = empty($ownerid) ? 1 : $ownerid; 
 	$owner = user_single(array('uid' => $ownerid));
 	if($_W['isajax'] && $_W['ispost']) {
 		if($_GPC['type'] == 'group') {
-			$groupdata = trim($_GPC['groupdata']);
-			if(!empty($groupdata)) {
-				$groups = explode(',', trim($_GPC['groupdata']));
+			$groups = $_GPC['groupdata'];
+			if(!empty($groups)) {
 				//附加套餐组
 				pdo_delete('uni_account_group', array('uniacid' => $uniacid));
 				$group = pdo_get('users_group', array('id' => $owner['groupid']));
@@ -386,11 +386,9 @@ if($do == 'modules_tpl') {
 		if($_GPC['type'] == 'extend') {
 			//如果有附加的权限，则生成专属套餐组
 			
-			$module = trim($_GPC['module']);
-			$tpl = trim($_GPC['tpl']);
+			$module = $_GPC['module'];
+			$tpl = $_GPC['tpl'];
 			if (!empty($module) || !empty($tpl)) {
-				$module = explode(',', $module);
-				$tpl = explode(',', $tpl);
 				$data = array(
 					'modules' => iserializer($module),
 					'templates' => iserializer($tpl),
@@ -411,57 +409,55 @@ if($do == 'modules_tpl') {
 		message(error(40035), '', 'ajax');
 	}
 	$modules_tpl = $extend = array();
-	if (!empty($ownerid)) {
-		$owner['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $owner['groupid']));
-		$owner['group']['package'] = iunserializer($owner['group']['package']);
-		if(!empty($owner['group']['package'])){
-			foreach ($owner['group']['package'] as $package_value) {
-				if($package_value == -1){
-					$modules_tpl[] = array(
-							'id' => -1,
-							'name' => '所有服务',
-							'modules' => array(array('name' => 'all', 'title' => '所有模块')),
-							'templates' => array(array('name' => 'all', 'title' => '所有模板')),
-						);
-				}elseif ($package_value == 0) {
-					
-				}else {
-					$modules_tpl[] = $unigroups[$package_value];
-				}
+
+	$owner['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $owner['groupid']));
+	$owner['group']['package'] = iunserializer($owner['group']['package']);
+	if(!empty($owner['group']['package'])){
+		foreach ($owner['group']['package'] as $package_value) {
+			if($package_value == -1){
+				$modules_tpl[] = array(
+						'id' => -1,
+						'name' => '所有服务',
+						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
+						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+					);
+			}elseif ($package_value == 0) {
+				
+			}else {
+				$modules_tpl[] = $unigroups[$package_value];
 			}
 		}
-		//附加套餐
-		$extendpackage = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
-		if(!empty($extendpackage)) {
-			foreach ($extendpackage as $extendpackage_val) {
-				if($extendpackage_val['groupid'] == -1){
-					$modules_tpl[] = array(
-							'id' => -1,
-							'name' => '所有服务',
-							'modules' => array(array('name' => 'all', 'title' => '所有模块')),
-							'templates' => array(array('name' => 'all', 'title' => '所有模板')),
-						);
-				}elseif ($extendpackage_val['groupid'] == 0) {
-					
-				}else {
-					$modules_tpl[] = $unigroups[$extendpackage_val['groupid']];
-				}
-			}
-		}
-		//附加权限
-		$modules = pdo_fetchall("SELECT mid, name, title FROM " . tablename('modules') . ' WHERE issystem != 1', array(), 'name');
-		$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
-		$extend = pdo_fetch("SELECT * FROM ".tablename('uni_group')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
-		$extend['modules'] = iunserializer($extend['modules']);
-		$extend['templates'] = iunserializer($extend['templates']);
-		if (!empty($extend['modules'])) {
-			$extend['modules'] = pdo_getall('modules', array('name' => $extend['modules']), array('title', 'name'));
-		}
-		if (!empty($extend['templates'])) {
-			$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('title', 'name'));
-		}
-	}else {
-		message('公众号错误！', referer(), 'error');
 	}
+	//附加套餐
+	$extendpackage = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
+	if(!empty($extendpackage)) {
+		foreach ($extendpackage as $extendpackage_val) {
+			if($extendpackage_val['groupid'] == -1){
+				$modules_tpl[] = array(
+						'id' => -1,
+						'name' => '所有服务',
+						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
+						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+					);
+			}elseif ($extendpackage_val['groupid'] == 0) {
+				
+			}else {
+				$modules_tpl[] = $unigroups[$extendpackage_val['groupid']];
+			}
+		}
+	}
+	//附加权限
+	$modules = pdo_fetchall("SELECT mid, name, title FROM " . tablename('modules') . ' WHERE issystem != 1', array(), 'name');
+	$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
+	$extend = pdo_fetch("SELECT * FROM ".tablename('uni_group')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
+	$extend['modules'] = iunserializer($extend['modules']);
+	$extend['templates'] = iunserializer($extend['templates']);
+	if (!empty($extend['modules'])) {
+		$extend['modules'] = pdo_getall('modules', array('name' => $extend['modules']), array('title', 'name'));
+	}
+	if (!empty($extend['templates'])) {
+		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('title', 'name'));
+	}
+
 	template('account/manage-modules-tpl');
 }
