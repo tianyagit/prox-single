@@ -97,10 +97,10 @@ if ($do == 'del_material') {
 if ($do == 'sync') {
 	$wechat_api = WeAccount::create($_W['acid']);
 	$pageindex = max(1, $_GPC['pageindex']);
-	$type = $_GPC['type'];
+	$type = empty($_GPC['type']) ? 'news' : $_GPC['type'];
 	$news_list = $wechat_api->batchGetMaterial($type, ($pageindex-1)*20);
 	$wechat_existid = empty($_GPC['wechat_existid']) ? array() : $_GPC['wechat_existid'];
-	$wechat_existid = syncMaterial($news_list['data'], $wechat_existid, $type);
+	$wechat_existid = syncMaterial($news_list['item'], $wechat_existid, $type);
 	if ($pageindex == 1) {
 		$original_newsid = pdo_getall('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => $type, 'model' => 'perm'), array('id'), 'id');
 		$original_newsid = array_keys($original_newsid);
@@ -113,6 +113,9 @@ if ($do == 'sync') {
 		$original_newsid = $_GPC['original_newsid'];
 		if ($total != $pageindex) {
 			message(error('1', array('type' => $type, 'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
+		}
+		if (empty($original_newsid)) {
+			$original_newsid = array();
 		}
 	}
 	$delete_id = array_diff($original_newsid, $wechat_existid);
