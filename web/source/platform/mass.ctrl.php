@@ -15,9 +15,9 @@ uni_user_permission_exist('platform_mass');
 $_W['page']['title'] = '定时群发-微信素材';
 
 if($do == 'list') {
-
 	$time = strtotime(date('Y-m-d'));
 	$record = pdo_fetchall('SELECT * FROM ' . tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime >= :time ORDER BY sendtime ASC LIMIT 7', array(':uniacid' => $_W['uniacid'], ':time' => $time), 'sendtime');
+	
 	$days = array();
 	for($i = 0; $i < 8; $i++) {
 		$day_info = array();
@@ -57,7 +57,7 @@ if($do == 'list') {
 		$day_info['info'] = $massdata;
 		$days[] = $day_info;
 	}
-
+	
 	template('platform/mass-display');
 }
 
@@ -86,12 +86,10 @@ if($do == 'post') {
 	if(!empty($massdata)) {
 		$massdata['clock'] = date('H:m', $massdata['sendtime']);
 	}else {
-		$massdata['clock'] = '08:00';		
+		$massdata['clock'] = '08:00';
 	}
 
 	if(checksubmit('submit')) {
-		load()->func('cron');
-		load()->model('cloud');
 		$cloud = cloud_prepare();
 		if(is_error($cloud)) {
 			message($cloud, '', 'ajax');
@@ -183,7 +181,6 @@ if($do == 'post') {
 			message($message, url('platform/mass/send'));
 		}
 		message('群发设置成功', url('platform/mass'));
-		exit;
 	}
 
 	template('platform/mass-post');

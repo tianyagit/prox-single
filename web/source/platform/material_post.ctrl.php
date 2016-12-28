@@ -53,8 +53,7 @@ if ($do == 'replace_content') {
 }
 
 if ($do == 'tomedia') {
-	$url = $_GPC['url'];
-	message(error('0', tomedia($url)), '', 'ajax');
+	message(error('0', tomedia($_GPC['url'])), '', 'ajax');
 }
 
 if($do == 'news') {
@@ -79,12 +78,12 @@ if($do == 'addnews') {
 		foreach($_GPC['news'] as $key => $news) {
 			if ($operate == 'add') {
 				$row = array(
-					'title' => urlencode($news['title']),
-					'author' => urlencode($news['author']),
-					'digest' => urlencode($news['description']),
-					'content' => urlencode(addslashes(htmlspecialchars_decode($news['content']))),
+					'title' => $news['title'],
+					'author' => $news['author'],
+					'digest' => $news['description'],
+					'content' => addslashes(htmlspecialchars_decode($news['content'])),
 					'show_cover_pic' => 1,
-					'content_source_url' => urlencode($news['content_source_url']),
+					'content_source_url' => $news['content_source_url'],
 					'thumb_media_id' => $news['media_id'],
 				);
 				$articles['articles'][] = $row;
