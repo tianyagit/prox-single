@@ -255,9 +255,15 @@ class coupon extends WeiXinAccount {
 
 	public function isCouponSupported() {
 		global $_W;
-		load()->model('module');
-		$cachekey = "modulesetting:{$_W['uniacid']}:we7_coupon";
-		$setting = (array)cache_load($cachekey, true);
+		$we7_coupon_module = pdo_get('modules', array('name' => 'we7_coupon'));
+		$setting = array();
+		if (!empty($we7_coupon_module)) {
+			load()->model('module');
+			$cachekey = "modulesetting:{$_W['uniacid']}:we7_coupon";
+			$setting = (array)cache_load($cachekey, true);
+		} else {
+			$setting = uni_setting($_W['uniacid'], array('coupon_type'));
+		}
 		if ($_W['account']['level'] != ACCOUNT_SERVICE_VERIFY && $_W['account']['level'] != ACCOUNT_SUBSCRIPTION_VERIFY) {
 			return false;
 		} else {
