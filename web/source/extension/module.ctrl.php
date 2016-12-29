@@ -207,7 +207,7 @@ if ($do == 'check') {
 					unset($ret['pirate_apps']);
 				}
 				foreach ($ret as $k => $v) {
-					if (!in_array(strtolower($k), $moduleids)) {
+					if (!in_array(strtolower($k), $moduleids) && $v['id']) {
 						$v['name'] = $k;
 						$cloudUninstallModules[] = $v;
 						$moduleids[] = $k;
