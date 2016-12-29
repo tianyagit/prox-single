@@ -107,7 +107,7 @@ if($do == 'addnews') {
 				$articles['articles'][] = $news_info;
 			} else {
 				$attach_mediaid =  pdo_getcolumn('wechat_attachment', array('id' => intval($_GPC['attach_id']), 'uniacid' => $_W['uniacid']), 'media_id');
-				$wechat_news[] = array(
+				$articles[] = array(
 					'media_id' => $attach_mediaid,
 					'index' => $key,
 					'articles' => $news_info
@@ -139,7 +139,7 @@ if($do == 'addnews') {
 		}
 		message(error(0, '创建图文素材成功'), '', 'ajax');
 	} else {
-		foreach ($wechat_news as $edit_news) {
+		foreach ($articles as $edit_news) {
 			$result = $account_api->editMaterialNews($edit_news);
 			if (is_error($result)) {
 				message($result, '', 'ajax');
