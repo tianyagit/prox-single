@@ -5,6 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 $moduels = uni_modules();
+load()->model('activity');
 $params = @json_decode(base64_decode($_GPC['params']), true);
 if(empty($params) || !array_key_exists($params['module'], $moduels)) {
 	message('访问错误.');
