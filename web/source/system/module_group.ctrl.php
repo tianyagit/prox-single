@@ -11,34 +11,38 @@ $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
 
 if ($do == 'save') {
-	$param = $_GPC;
-	if (!empty($param['id'])) {
-		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $param['id'], 'name' => $param['name']));
+	$package_info = array(
+		'id' => intval($_GPC['id']),
+		'name' => $_GPC['name'],
+		'modules' => $_GPC['modules'],
+		'templates' => $_GPC['templates'],
+	);
+	if (!empty($package_info['modules'])) {
+		$package_info['modules'] = iserializer(array_keys($package_info['modules']));
+	}
+	if (!empty($package_info['templates'])) {
+		foreach ($package_info['templates'] as $key => $template) {
+			$package_info['templates'][] = $template['id'];
+			unset($package_info['templates'][$key]);
+		}
+		$package_info['templates'] = iserializer($package_info['templates']);
+	}
+
+	if (!empty($package_info['id'])) {
+		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
 			message(error(1, '套餐名已存在'), '', 'ajax');
 		}
-		$param['modules'] = iserializer(array_keys($param['modules']));
-		foreach ($param['templates'] as $key => $template) {
-			$param['templates'][] = $template['id'];
-			unset($param['templates'][$key]);
-		}
-		$param['templates'] = iserializer($param['templates']);
-		$groupid = $param['id'];
-		unset($param['id']);
-		pdo_update('uni_group', $param, array('id' => $groupid));
+		$packageid = $package_info['id'];
+		unset($package_info['id']);
+		pdo_update('uni_group', $package_info, array('id' => $packageid));
 		message(error(0, url('system/module_group')), '', 'ajax');
 	} else {
-		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $param['name']));
+		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
 			message(error(1, '套餐名已存在'), '', 'ajax');
 		}
-		$param['modules'] = iserializer(array_keys($param['modules']));
-		foreach ($param['templates'] as $key => $template) {
-			$param['templates'][] = $template['id'];
-			unset($param['templates'][$key]);
-		}
-		$param['templates'] = iserializer($param['templates']);
-		pdo_insert('uni_group', $param);
+		pdo_insert('uni_group', $package_info);
 		message(error(0, url('system/module_group')), '', 'ajax');
 	}
 }

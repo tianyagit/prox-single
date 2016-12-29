@@ -15,12 +15,12 @@
 <table class="tabel we7-table article-list" id="js-wesite-category-display">
 	<col width="5px">
 	<col width="70px"/>
-	<col>
+	<col width="285px">
 	<col width="90px"/>
-	<col width="300px"/>
+	<col width=""/>
 	<tr>
 		<th></th>
-		<th>排序</th>
+		<th class="text-left">排序</th>
 		<th class="text-left">分类名称</th>
 		<th>设为栏目</th>
 		<th>操作</th>
@@ -29,32 +29,40 @@
 	{loop $category $row}
 		<tr>
 			<td><input type="checkbox" name="rid[]" value="{$row['id']}"></td>
-			<td class="text-center">{$row['displayorder']}</td>
+			<td class="text-left">{$row['displayorder']}</td>
 			<td class="text-left">
 				<span>{$row['name']}</span>
-				{if empty($row['parentid'])}
-				<a href="{php echo url('site/category/post', array('parentid' => $row['id']))}" class="color-default we7-margin-right-sm">&nbsp;+添加子分类</a>
-				{/if}
 			</td>
 			<td><span>{php echo $row['nid'] ? '是' : '否'}</span></td>
-			<td style="position:relative;">
-				<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}" class="js-clip color-default we7-margin-right-sm">复制链接</a>
-				<a href="{php echo url('site/article/post', array('pcate' => $row['id']));}" class="color-default we7-margin-right-sm">添加文章</a>
-				<a href="{php echo url('site/category/post', array('id' => $row['id']));}" class="color-default we7-margin-right-sm">编辑</a>
-				<a href="{php echo url('site/category/del', array('id' => $row['id']));}" class="color-default" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
+			<td style="position: relative;" class="text-right">
+				<div class="link-group">
+					{if empty($row['parentid'])}
+					<a href="{php echo url('site/category/post', array('parentid' => $row['id']))}" >&nbsp;+添加子分类</a>
+					{/if}
+					<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}"  class="js-clip">复制链接</a>
+					<a href="{php echo url('site/article/post', array('pcate' => $row['id']));}" >添加文章</a>
+					<a href="{php echo url('site/category/post', array('id' => $row['id']));}" >编辑</a>
+					<a href="{php echo url('site/category/del', array('id' => $row['id']));}" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
+				</div>
 			</td>
 		</tr>
 		{loop $children[$row['id']] $row}
-		<tr>
+		<tr class="bg-light-gray">
 			<td><input type="checkbox" name="rid[]" value="{$row['id']}"></td>
-			<td class="text-center">{$row['displayorder']}</td>
-			<td class="text-left"><span class="color-gray">---&nbsp;&nbsp;</span>{$row['name']}</td>
+			<td class="text-left">
+				<div class="pad-left">
+					{$row['displayorder']}
+				</div>
+			</td>
+			<td class="text-left"><span class="color-gray" style="margin-left: 50px;"></span>{$row['name']}</td>
 			<td><span>{php echo $row['enabled'] ? '是' : '否'}</span></td>
-			<td style="position:relative;">
-				<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}" class="color-default we7-margin-right-sm js-clip">复制链接</a>
-				<a href="{php echo url('site/article/post', array('pcate' => $row['parentid'], 'ccate' => $row['id']));}" class="color-default we7-margin-right-sm">添加文章</a>
-				<a href="{php echo url('site/category/post', array('id' => $row['id'], 'parentid' => $row['parentid']));}" class="color-default we7-margin-right-sm">编辑</a>
-				<a href="{php echo url('site/category/del', array('id' => $row['id']));}" class="color-default" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
+			<td style="position: relative;" class="text-right">
+				<div class="link-group">
+					<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}" class="color-default we7-margin-right-sm js-clip">复制链接</a>
+					<a href="{php echo url('site/article/post', array('pcate' => $row['parentid'], 'ccate' => $row['id']));}" class="color-default we7-margin-right-sm">添加文章</a>
+					<a href="{php echo url('site/category/post', array('id' => $row['id'], 'parentid' => $row['parentid']));}" class="color-default we7-margin-right-sm">编辑</a>
+					<a href="{php echo url('site/category/del', array('id' => $row['id']));}" class="color-default" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
+				</div>
 			</td>
 		</tr>
 		{/loop}
