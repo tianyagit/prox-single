@@ -106,7 +106,11 @@ function checkaccount() {
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
-	$frames = require_once IA_ROOT . '/web/common/frames.inc.php';
+	if (empty($GLOBALS['we7_system_menu'])) {
+		$frames = require_once IA_ROOT . '/web/common/frames.inc.php';
+	} else {
+		$frames = $GLOBALS['we7_system_menu'];
+	}
 	//@@todo 还需要进行数据库权限和菜单的组合
 	
 	//模块权限，创始人有所有模块权限

@@ -80,8 +80,8 @@
 				{if FRAME == 'system'}
 					<span class="font-max">我的微擎</span>
 				{/if}
-				{if $_GET['m'] != ''}
-					<a href="" class="we7-head-back"><i class="wi wi-back-cricle"></i></a>
+				{if !empty($_GPC['m'])}
+					<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-cricle"></i></a>
 					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					<span class="font-max">我的微擎</span>
 				{/if}
@@ -98,7 +98,7 @@
 						<ul class="list-group">
 							{loop $section['menu'] $menuid $menu}
 							<li class="list-group-item {if $menu['active']}active{/if}">
-								<a href="{$menu['url']}" class="text-over">{if $menu['icon']}<img src="{$menu['icon']}" onerror="this.src='resource/images/nopic-small.jpg'"/>{/if} {$menu['title']}</a>
+								<a href="{$menu['url']}" class="text-over">{if $menu['icon']}<i class="{$menu['icon']}"></i>{/if} {$menu['title']}</a>
 							</li>
 							{/loop}
 							{if $sectionid == 'platform_module'}
