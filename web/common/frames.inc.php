@@ -248,6 +248,13 @@ $ms['system'] = array(
 	),
 );
 
+$ms['app_market'] = array(
+	'title' => '应用商城',
+	'url' => 'http://s.we7.cc',
+	'section' => array(
+	),
+);
+
 return $ms;
 
 $ms['platform'][] =  array(

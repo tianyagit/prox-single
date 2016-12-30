@@ -9,6 +9,7 @@ load()->classs('weixin.platform');
 
 setting_load('platform');
 
+uni_user_permission_check('system_platform');
 $founders = explode(',', $_W['config']['setting']['founder']);
 if (!in_array($_W['uid'], $founders)) {
 	message('没有操作权限！', url('account/system_display'), 'error');

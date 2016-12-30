@@ -9,7 +9,7 @@ load()->func('file');
 
 $do = !empty($do) ? $do : 'display';
 $do = in_array($do, array('display', 'post', 'delete')) ? $do : 'display';
-uni_user_permission_check('site_category');
+uni_user_permission_check('platform_site');
 
 if ($do == 'display') {
 	$children = array();
