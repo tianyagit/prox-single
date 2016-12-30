@@ -140,7 +140,7 @@
 				{if empty($current_user_permission_types) || in_array($key, $current_user_permission_types) || $row['issystem'] == 1}
 				<li data-pinyin="{$row['title_first_pinyin']}" ng-show="activeLetter ? activeLetter == '{$row[title_first_pinyin]}' : '1'">
 					<div class="we7-list-item">
-						<span class="keyword-status" title="已启用"><i class="fa fa-2x fa-check-circle text-success"></i></span>
+						<!-- <span class="keyword-status" title="已启用"><i class="fa fa-2x fa-check-circle text-success"></i></span> -->
 						<div class="keyword-app-info">
 							<img src="{$row['icon']}" alt="{$row['title']}"/>
 							<p>{$row['title']}</p>
@@ -157,7 +157,7 @@
 				{loop $unenable_modules $key $row}
 				<li data-pinyin="{$row['title_first_pinyin']}" ng-show="activeLetter == {$row['title_first_pinyin']}">
 					<div class="we7-list-item">
-						<span class="keyword-status" title="未启用"><i class="fa fa-2x fa-times-circle text-warning"></i></span>
+						<!-- <span class="keyword-status" title="未启用"><i class="fa fa-2x fa-times-circle text-warning"></i></span> -->
 						<div class="keyword-app-info">
 							<img src="{$row['icon']}" alt="{$row['title']}"/>
 							<p>{$row['title']}</p>
