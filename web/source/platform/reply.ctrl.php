@@ -10,9 +10,17 @@ load()->model('module');
 
 $dos = array('display', 'post', 'delete', 'change_status');
 $do = in_array($do, $dos) ? $do : 'display';
-uni_user_permission_check('platform_reply');
-$_W['page']['title'] = '自动回复';
+
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
+if ($m == 'keyword') {
+	uni_user_permission_check('platform_reply', true);
+} elseif ($m == 'special') {
+	uni_user_permission_check('platform_reply_special');
+} elseif ($m == 'welcome' || $m = 'default') {
+	uni_user_permission_check('platform_reply_system');
+}
+
+$_W['page']['title'] = '自动回复';
 $_W['account']['modules'] = uni_modules();
 if(empty($m)) {
 	message('错误访问.');

@@ -11,7 +11,9 @@ load()->func('communication');
 
 $dos = array('display', 'post', 'list', 'del', 'extend', 'SubDisplay', 'check_scene_str', 'down_qr');
 $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'list';
+
 uni_user_permission_check('platform_qr');
+$platform_url2qr_permission = uni_user_permission_check('platform_url2qr', false);
 
 //检测场景字符串是否重复
 if($do == 'check_scene_str') {
