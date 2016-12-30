@@ -5,6 +5,11 @@
 	</div>
 	{if !empty($_W['setting']['copyright']['statcode'])}{$_W['setting']['copyright']['statcode']}{/if}
 	<script>
+		$(document).ready(function () {//为了保证能在img元素加载之后，才为这些元素设置error事件  
+			$("img").error(function () {  
+				$(this).attr("src", "resource/images/nopic.jpg");//JSP页面  
+			});  
+		});  
 		function subscribe(){
 			$.post("{url 'utility/subscribe'}", function(){
 				setTimeout(subscribe, 5000);

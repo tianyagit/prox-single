@@ -34,7 +34,7 @@
 					</div>
 					<div class="pull-right">
 						<a href="{url 'platform/reply/post' array('m' => $m)}" class="btn btn-primary">+添加关键字回复</a>
-						{if in_array($m, $sysmods)}<a href="{url 'platform/reply/post' array('m' => 'apply')}" class="btn btn-danger">+添加应用关键字</a>{/if}
+						{if in_array($m, $sysmods)}<a href="{url 'platform/reply/post' array('m' => 'apply')}" class="btn btn-danger  we7-margin-left">+添加应用关键字</a>{/if}
 					</div>
 				</div> 
 			</form>
@@ -59,7 +59,7 @@
 					<table class="table we7-table">
 						<col />
 						<col width="120px"/>
-						<col width="150px"/>
+						<col width="120px"/>
 						<tr>
 							<th class="text-left">
 								<div class="pull-left">
@@ -111,24 +111,26 @@
 								</label>
 							</td>
 							<td class="vertical-middle text-left">
-								{if $row['module'] == 'basic' || $row['module'] == 'news' || $row['module'] == 'music' || $row['module'] == 'images' || $row['module'] == 'voice' || $row['module'] == 'video' || $row['module'] == 'wxcard' || $row['module'] == 'reply'}
-								<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $row['id']))}" class="color-default keyword-link">编辑</a>
-								{/if}
-								<a href="{php echo url('platform/reply/delete', array('m' => $m, 'rid' => $row['id']))}" onclick="return confirm('删除规则将同时删除关键字与回复，确认吗？');return false;" class="color-default keyword-link">删除</a>
-								<!-- <a class="color-default keyword-link" href="{php echo url('platform/stat/trend', array('id' => $row['id'], 'm' => $row['module']))}"><i class="fa fa-bar-chart-o"></i> 使用率走势</a> -->
-								{if $row['options']}
-								<!-- <div class="btn-group">
-									<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-										功能选项
-										<span class="caret"></span>
-									</button>
-									<ul class="dropdown-menu" style="min-width:0px;">
-										{loop $row['options'] $opt}
-											<li><a href="{$opt['url']}">{$opt['title']}</a></li>
-										{/loop}
-									</ul>
-								</div> -->
-								{/if}
+								<div class="link-group">
+									{if $row['module'] == 'basic' || $row['module'] == 'news' || $row['module'] == 'music' || $row['module'] == 'images' || $row['module'] == 'voice' || $row['module'] == 'video' || $row['module'] == 'wxcard' || $row['module'] == 'reply'}
+									<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $row['id']))}">编辑</a>
+									{/if}
+									<a href="{php echo url('platform/reply/delete', array('m' => $m, 'rid' => $row['id']))}" onclick="return confirm('删除规则将同时删除关键字与回复，确认吗？');return false;">删除</a>
+									<!-- <a class="color-default keyword-link" href="{php echo url('platform/stat/trend', array('id' => $row['id'], 'm' => $row['module']))}"><i class="fa fa-bar-chart-o"></i> 使用率走势</a> -->
+									{if $row['options']}
+									<!-- <div class="btn-group">
+										<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+											功能选项
+											<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu" style="min-width:0px;">
+											{loop $row['options'] $opt}
+												<li><a href="{$opt['url']}">{$opt['title']}</a></li>
+											{/loop}
+										</ul>
+									</div> -->
+									{/if}
+								</div>
 							</td>
 						</tr>
 					</table>
@@ -223,8 +225,8 @@
 		});
 	</script>
 {elseif $m == 'welcome'}
-	<div class="alert alert-info">
-		用户关注公众号时，发送的欢迎信息。
+	<div class="alert we7-page-alert">
+		<i class="wi wi-info-sign"></i>用户关注公众号时，发送的欢迎信息。
 	</div>
 	<div class="new-keyword" id="welcome" ng-cloak>
 		<div class="we7-form" ng-controller="WelcomeDisplay">
@@ -245,8 +247,8 @@
 		});
 	</script>
 {elseif $m == 'default'}
-	<div class="alert alert-info">
-		当系统不知道该如何回复粉丝的消息时，默认发送的内容。
+	<div class="alert we7-page-alert">
+		<i class="wi wi-info-sign"></i>当系统不知道该如何回复粉丝的消息时，默认发送的内容。
 	</div>
 	<div class="new-keyword" id="default">
 		<div id="a" class="we7-form" ng-controller="DefaultDisplay">
