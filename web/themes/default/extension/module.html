@@ -295,12 +295,15 @@
 									'<button type="button" class="btn btn-default js-upgrade-info">升级说明</button>' +
 									'</div>' +
 									'<div class="col-sm-4">';
+							
 							if (module_branches[branch].id != current_branch) {
 								if ( parseInt(module_branches[branch].displayorder) > current_branch_sort) {
 									branch_info += '<a href="' + trade_link + '&branch=' + module_branches[branch].id + '" class="btn btn-warning js-module-trade" data-price="' + module_branches[branch].upgrade_price + '">付费升级到【' + module_branches[branch].name + '】</a></div></div>';
 								} else {
 									branch_info += '<a href="javascript:;" class="btn btn-default">已是最新版，无需升级</a></div></div>';
 								}
+							} else if(module_branches[branch]['status'] == 0) {
+								branch_info += '<a href="javascript:;" class="btn btn-default">分支已下架，无法升级</a></div></div>';
 							} else {
 								module_branches[branch].version.version = module_branches[branch].version.version.replace(/\./g, '');
 								current_version = current_version.replace(/\./g, '');
