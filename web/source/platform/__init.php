@@ -6,3 +6,6 @@
 if ($action != 'material_post') {
 	define('FRAME', 'account');
 }
+if ($action == 'qr') {
+	define('FRAME', 'qr');
+}

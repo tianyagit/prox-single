@@ -15,7 +15,7 @@
 			</div>
 		</form>
 		<div class="pull-right">
-			{if $_W['account']['level'] == 4}<a href="{php echo url('platform/url2qr');}" class="btn btn-default">长链接转二维码</a>{/if}
+			{if $platform_url2qr_permission === true && $_W['account']['level'] == 4}<a href="{php echo url('platform/url2qr');}" class="btn btn-default">长链接转二维码</a>{/if}
 			<a href="{php echo url('platform/qr/post');}" class="btn btn-primary">+生成关键二维码</a>
 		</div>
 	</div>
