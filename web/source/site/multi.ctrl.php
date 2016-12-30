@@ -17,7 +17,7 @@ $setting = uni_setting($_W['uniacid'], 'default_site');
 $default_site = intval($setting['default_site']);
 
 if($do == 'post') {
-	uni_user_permission_check('site_multi_post');
+	// uni_user_permission_check('site_multi_post');
 	if($_W['isajax'] && $_W['ispost']) {
 		//搜索模板
 		$name = trim($_GPC['name']);
@@ -122,7 +122,7 @@ if($do == 'display') {
 }
 
 if($do == 'del') {
-	uni_user_permission_check('site_multi_del');
+	// uni_user_permission_check('site_multi_del');
 	$id = intval($_GPC['id']);
 	if($default_site == $id) {
 		message('您删除的微站是默认微站,删除前先指定其他微站为默认微站', referer(), 'error');

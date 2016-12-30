@@ -4,6 +4,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+
 $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';

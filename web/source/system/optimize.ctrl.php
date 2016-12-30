@@ -1,5 +1,6 @@
 <?php
-/** 性能优化相关操作
+/*
+ * 性能优化相关操作
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * $sn$
  */

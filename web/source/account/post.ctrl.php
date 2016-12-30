@@ -12,6 +12,7 @@ load()->model('frame');
 
 $dos = array('base', 'sms', 'users', 'modules_tpl');
 $do = in_array($do, $dos) ? $do : 'base';
+uni_user_permission_check('system_account');
 
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);

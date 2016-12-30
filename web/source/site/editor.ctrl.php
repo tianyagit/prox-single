@@ -9,10 +9,11 @@ load()->model('module');
 
 $do = !empty($do) ? $do : 'uc';
 $do = in_array($do, array('quickmenu', 'uc')) ? $do : 'uc';
+uni_user_permission_check('site_editor');
 
 if ($do == 'uc') {
 	$_W['page']['title'] = '会员中心 - 微站功能';
-	uni_user_permission_check('site_editor_uc');
+	
 	if (!empty($_GPC['wapeditor'])) {
 		$params = $_GPC['wapeditor']['params'];
 		if (empty($params)) {

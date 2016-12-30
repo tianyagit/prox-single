@@ -1,12 +1,13 @@
 <?php
 /**
+ * 文章/公告---文章管理
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
 
 $dos = array('category_post', 'category', 'category_del', 'list', 'post', 'batch_post', 'del');
 $do = in_array($do, $dos) ? $do : 'list';
+uni_user_permission_check('system_article_news');
 
 //添加分类
 if ($do == 'category_post') {
@@ -116,7 +117,7 @@ if ($do == 'list') {
 	$condition = ' WHERE 1';
 	$cateid = intval($_GPC['cateid']);
 	$createtime = intval($_GPC['createtime']);
-	$title = trim($_GPC['title']);
+	$search_title = trim($_GPC['title']);
 	$params = array();
 	if ($cateid > 0) {
 		$condition .= ' AND cateid = :cateid';
@@ -126,9 +127,9 @@ if ($do == 'list') {
 		$condition .= ' AND createtime >= :createtime';
 		$params[':createtime'] = strtotime("-{$createtime} days");
 	}
-	if(!empty($title)) {
+	if(!empty($search_title)) {
 		$condition .= " AND title LIKE :title";
-		$params[':title'] = "%{$title}%";
+		$params[':title'] = "%{$search_title}%";
 	}
 
 	$pindex = max(1, intval($_GPC['page']));
@@ -165,8 +166,3 @@ if ($do == 'del') {
 	pdo_delete('article_news', array('id' => $id));
 	message('删除文章成功', referer(), 'success');
 }
-
-
-
-
-

@@ -48,7 +48,7 @@ if ($do == 'display') {
 }
 
 if ($do == 'post') {
-	uni_user_permission_check('user_group_post');
+	// uni_user_permission_check('user_group_post');
 	$id = is_array($_GPC['id']) ? 0 : intval($_GPC['id']);
 	$_W['page']['title'] = $id ? '编辑用户组 - 用户组 - 用户管理' : '添加用户组 - 用户组 - 用户管理';
 	if (!empty($id)) {
@@ -91,7 +91,7 @@ if ($do == 'post') {
 }
 
 if($do == 'del') {
-	uni_user_permission_check('user_group_del');
+	// uni_user_permission_check('user_group_del');
 	$id = intval($_GPC['id']);
 	$result = pdo_delete('users_group', array('id' => $id));
 	if(!empty($result)){
