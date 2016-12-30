@@ -98,7 +98,9 @@
 		</tr>
 		{/loop}
 	</table>
-	{$pager}
+	<div class="pull-right">
+		{$pager}
+	</div>
 </div>
 
 {/if}
@@ -108,7 +110,7 @@
 <div class="conditionMenu" ng-controller="conditionMenuDesigner" id="conditionMenuDesigner" ng-cloak>
 	<div class="new">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{php echo url('platform/menu')}"><i class="fa fa-chevron-circle-left"></i></a>
+			<a href="{php echo url('platform/menu')}"><i class="wi wi-back-cricle"></i></a>
 			<li>
 				<a href="{php echo url('platform/menu')}">自定义菜单</a>
 			</li>
