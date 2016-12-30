@@ -10,22 +10,22 @@
 	<!--<h5 class="page-header">日志信息</h5>-->
 	<!-- 筛选功能 -->
 	{if ($do != 'wechat')}
-			<form action="./index.php" method="get" class="we7-form form-inline" role="form">
+		<form action="./index.php" method="get" class="we7-form form-inline" role="form">
 			<input type="hidden" name="c" value="system">
 			<input type="hidden" name="a" value="logs">
 			<input type="hidden" name="do" value="{$do}">
 				<div class="form-group">
-					<div class="col-sm-8">
+					<div class="col-sm-8 we7-padding-none">
 						{php echo tpl_form_field_daterange('time', array('starttime'=>$_GPC['time']['start'],'endtime'=>$_GPC['time']['end']));}
 					</div>
 					{if $do != 'sms'}
-					<div class="col-sm-1">
+					<div class="col-sm-1 we7-padding-left">
 						<button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
 					</div>
 					{/if}
 				</div>
 				{if $do == 'sms'}
-				<div class="form-group">
+				<div class="form-group we7-margin-left">
 					<div class="input-group">
 						<input type="text" class="form-control" name="mobile" value="{$_GPC['mobile']}" placeholder="请输入手机号">
 						<div class="input-group-btn">
@@ -35,27 +35,27 @@
 					
 				</div>
 				{/if}
-			</form>
+		</form>
 	{/if}
 	
 	<!-- 微信日志 -->
 	{if ($do == 'wechat')}
-	<form action="./index.php" method="get" class="form-horizontal" role="form">
+	<form action="./index.php" method="get" class="we7-form" role="form">
 		<input type="hidden" name="c" value="system">
 		<input type="hidden" name="a" value="logs">
 		<input type="hidden" name="do" value="{$do}">
 			<div class="form-group">
-				<div class="col-sm-4 input-group">
+				<div class="col-sm-4 form-controls">
 					<select name="searchtime" class="form-control">
 						{loop $tree $row}
 						<option value="{$row}" {if $_GPC['searchtime'] == $row}selected{/if}>{$row}</option>
 						{/loop}
 					</select>
-					<div class="input-group-btn">
-						<button class="btn btn-default"><i class="fa fa-search"></i></button>
-					</div>
+					
 				</div>
-				
+				<div class="col-sm-1 we7-padding-left">
+					<button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
+				</div>
 			</div>
 	</form>
 	<pre>
@@ -111,7 +111,9 @@
 		</tr>
 		{/loop}
 	</table>
-	{$pager}
+	<div class="pull-right">
+		{$pager}
+	</div>
 	{/if}
 	
 	<!-- 数据据日志 -->
@@ -132,7 +134,9 @@
 			</tr>
 		{/loop}
 	</table>
-	{$pager}
+	<div class="pull-right">
+		{$pager}
+	</div>
 	{/if}
 	{if $do == 'sms'}
 		<table class="tabel we7-table site-list">
@@ -151,7 +155,9 @@
 			</tr>
 			{/loop}
 		</table>
-	{$pager}
+	<div class="pull-right">
+		{$pager}
+	</div>
 	{/if}
 </div>
 {template 'common/footer'}
