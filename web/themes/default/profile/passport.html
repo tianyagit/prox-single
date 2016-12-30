@@ -7,7 +7,7 @@
 		<li>
 			<a href="{php echo url('profile/payment')}">支付参数</a>
 		</li>
-		<li class="active">
+		<li{if $do == 'oauth'} class="active"{/if}>
 			<a href="{php echo url('profile/passport')}">借用权限</a>
 		</li>
 		<li>
@@ -15,6 +15,15 @@
 		</li>
 		<li>
 			<a href="{php echo url('profile/notify')}">邮件通知参数</a>
+		</li>
+		<li{if $do == 'credit'} class="active"{/if}>
+			<a href="{php echo url('profile/passport/credit')}">积分设置</a>
+		</li>
+		<li{if $do == 'fans_sync'} class="active"{/if}>
+			<a href="{php echo url('profile/passport/fans_sync')}">粉丝同步设置</a>
+		</li>
+		<li{if $do == 'register'} class="active"{/if}>
+			<a href="{php echo url('profile/passport/register')}">注册设置</a>
 		</li>
 	</ul>
 	<table class="table we7-table table-form">

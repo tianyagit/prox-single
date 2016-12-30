@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('oauth', 'save_oauth');
+$dos = array('oauth', 'save_oauth', 'credit', 'fans_sync', 'register');
 $do = in_array($do, $dos) ? $do : 'oauth';
 uni_user_permission_check('mc_passport_oauth');
 $_W['page']['title'] = '公众平台oAuth选项 - 会员中心';
@@ -68,4 +68,17 @@ if ($do == 'oauth') {
 	$oauth = iunserializer($oauth) ? iunserializer($oauth) : array();
 	$jsoauth = pdo_getcolumn('uni_settings', array('uniacid' => $_W['uniacid']), 'jsauth_acid');
 	template('profile/passport');
+}
+
+if ($do == 'credit') {
+	$_W['page']['title'] = '积分设置';
+	
+}
+
+if ($do == 'fans_sync') {
+	$_W['page']['title'] = '粉丝设置';
+}
+
+if ($do == 'register') {
+	$_W['page']['title'] = '注册设置';
 }
