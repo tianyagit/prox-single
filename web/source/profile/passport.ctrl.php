@@ -6,10 +6,19 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('oauth', 'save_oauth', 'credit', 'fans_sync', 'register');
+$dos = array('oauth', 'save_oauth', 'credit', 'fans_sync', 'register', 'save_credit_setting', 'save_tactics_setting');
 $do = in_array($do, $dos) ? $do : 'oauth';
 uni_user_permission_check('mc_passport_oauth');
 $_W['page']['title'] = '公众平台oAuth选项 - 会员中心';
+
+if ($do == 'save_tactics_setting') {
+	$setting = $_GPC['setting'];
+	if (empty($setting)) {
+		message(error(1));
+	}
+	uni_setting_save('creditbehaviors', $setting);
+	message(error(0));
+}
 
 //获取所有的认证服务号
 if ($do == 'save_oauth') {
@@ -33,6 +42,15 @@ if ($do == 'save_oauth') {
 		cache_delete("unisetting:{$_W['uniacid']}");
 	}
 	message(error(0), '', 'ajax');
+}
+
+if ($do == 'save_credit_setting') {
+	$credit_setting = $_GPC['credit_setting'];
+	if (empty($credit_setting)) {
+		message(error(1), '', 'ajax');
+	}
+	uni_setting_save('creditnames', $credit_setting);
+	message(error(0));
 }
 
 if ($do == 'oauth') {
@@ -67,12 +85,25 @@ if ($do == 'oauth') {
 	$oauth = pdo_fetchcolumn('SELECT `oauth` FROM '.tablename('uni_settings').' WHERE `uniacid` = :uniacid LIMIT 1',array(':uniacid' => $_W['uniacid']));
 	$oauth = iunserializer($oauth) ? iunserializer($oauth) : array();
 	$jsoauth = pdo_getcolumn('uni_settings', array('uniacid' => $_W['uniacid']), 'jsauth_acid');
-	template('profile/passport');
 }
 
 if ($do == 'credit') {
 	$_W['page']['title'] = '积分设置';
-	
+	$credit_setting = uni_setting_load('creditnames');
+	$credit_setting = $credit_setting['creditnames'];
+
+	$credit_tactics = uni_setting_load('creditbehaviors');
+	$credit_tactics = $credit_tactics['creditbehaviors'];
+
+	$enable_credit = array();
+	if (!empty($credit_setting)) {
+		foreach ($credit_setting as $key => $credit) {
+			if ($credit['enabled'] == 1) {
+				$enable_credit[] = $key;
+			}
+		}
+		unset($credit);
+	}
 }
 
 if ($do == 'fans_sync') {
@@ -82,3 +113,5 @@ if ($do == 'fans_sync') {
 if ($do == 'register') {
 	$_W['page']['title'] = '注册设置';
 }
+
+template('profile/passport');
