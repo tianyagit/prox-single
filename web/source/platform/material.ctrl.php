@@ -9,7 +9,7 @@ load()->model('material');
 
 $dos = array('display', 'sync', 'del_material');
 $do = in_array($do, $dos) ? $do : 'display';
-uni_user_permission_check('material_mass');
+uni_user_permission_check('platform_material');
 $_W['page']['title'] = '永久素材-微信素材';
 
 if($do == 'display') {

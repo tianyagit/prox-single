@@ -11,7 +11,7 @@ load()->model('account');
 
 $dos = array('news', 'tomedia', 'addnews', 'replace_image_url');
 $do = in_array($do, $dos) ? $do : 'news';
-uni_user_permission_check('material_mass');
+uni_user_permission_check('platform_material');
 $_W['page']['title'] = '新增素材-微信素材';
 
 //把图文素材内容中的图片url替换成微信的url
