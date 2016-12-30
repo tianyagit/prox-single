@@ -19,13 +19,12 @@
 <div class="alert alert-info">
 	<i class="fa fa-exclamation-circle"></i> 默认未勾选任何菜单时，用户拥有全部权限。
 </div>
-<div class="panel panel-default">
-	<div class="panel-body table-responsive" style="overflow:visible">
-		<table class="table">
+		
 			{loop $menus $name $sections}
+			<table class="table we7-table">
 				<thead>
-				<tr class="info">
-					<th colspan="4">
+				<tr class="text-left">
+					<th colspan="4" class="text-left">
 						<div class="checkbox">
 							<input id="check-{$sections['id']}" type="checkbox" name="system_{$sections['name']}" onChange="selectall(this, 'system_{$sections["name"]}')">
 							<label for="check-{$sections['id']}" class="we7-padding-left we7-margin-horizontal-none">{$sections['title']}</label>
@@ -38,7 +37,7 @@
 					{php $i=1;}
 					{loop $sections['childs'] $item}
 						{if $i%4 == 1 || $i == 1}<tr>{/if}
-							<td>
+							<td class="text-left">
 								<div class="checkbox">
 									<input id="check-child-{$item['id']}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $system_permission['permission'])}checked{/if} name="system[]">
 									<label for="check-child-{$item['id']}" class="we7-padding-left we7-margin-horizontal-none">{$item['title']}</label>
@@ -47,12 +46,22 @@
 						{if $i%4 == 0}</tr>{/if}
 						{php $i++;}
 					{/loop}
+					{if ($i-1)%4 != 0}
+						<?php 
+						for ($x=0; $x<4-($i-1)%4; $x++) {
+						  echo "<td></td>";
+						} 
+						?>
+						</tr>
+					{/if}
 					</tbody>
 				{/if}
+			</table>	
 			{/loop}
+			<table class="table we7-table vertical-middle">
 			<thead>
-				<tr class="info">
-					<th colspan="6">
+				<tr>
+					<th colspan="4" class="text-left">
 						<div class="checkbox">
 							<label><input type="checkbox" name="" onChange="selectall(this, 'module_select')">模块权限</label>
 						</div>
@@ -60,19 +69,19 @@
 				</tr>
 			</thead>
 			{if !empty($module)}
-				<tbody class="module_select" style="width:100%">
+				<tbody class="module_select" >
 					{php $i=1;}
 					{loop $module $k $m}
 						{if empty($m['issystem'])}
-						{if $i%4 == 1 || $i == 1}<tr style="width:100%">{/if}
-							<td style="overflow:inherit;width:25%">
+						{if $i%4 == 1 || $i == 1}<tr>{/if}
+							<td  class="text-left text-over" style="overflow:inherit;width:25%">
 								<div class="dropdown">
 									<span class="" data-id="{$k}">
 										<input id="check-module-{$k}" type="checkbox" value="{$k}" name="module[]" {if in_array($k, $mod_keys)}checked{/if}>
-										<label for="check-module-{$k}" class="we7-padding-left we7-margin-horizontal-none checkbox-inline" title="{$m['title']}">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
+										<label for="check-module-{$k}" class="text-over" title="{$m['title']}" style="width: 128px;">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
 									</span>
-									<ul class="dropdown-menu" role="menu"></ul>
-									<label class="checkbox-inline info"></label>
+									<ul class="dropdown-menu" role="menu">
+									</ul>
 									<input type="hidden" name="{$k}_select" value="0"/>
 								</div>
 							</td>
@@ -80,11 +89,18 @@
 						{php $i++;}
 						{/if}
 					{/loop}
+					{if ($i-1)%4 != 0}
+						<?php 
+						for ($x=0; $x<4-($i-1)%4; $x++) {
+						  echo "<td></td>";
+						} 
+						?>
+						</tr>
+					{/if}
 				</tbody>
 			{/if}
 		</table>
-	</div>
-</div>
+
 <button type="submit" class="btn btn-primary span3" name="submit" value="提交" onclick="if ($('input:checkbox:checked').size() == 0) {return confirm('您未勾选任何菜单权限，意味着允许用户使用所有功能。确定吗？')}">提交</button>
 <input type="hidden" name="token" value="{$_W['token']}" />
 </form>
@@ -100,11 +116,11 @@ $(function(){
 		if(!length) {
 			$.post("{php echo url('user/permission/module')}", {'m' : m, 'uid' : uid, 'uniacid' : aid}, function(data) {
 				var data = $.parseJSON(data);
-				var html = '';
+				var html = '<li><label class="checkbox-inline info">已选0项</label></li>';
 				if(!data.errno) {
 					$.each(data.errmsg, function(k, v){
 						var check = v.checked ? 'checked' : '';
-						html += '<li><a href="javascript:;"><input id="check-moduledetail-'+k+'" type="checkbox" name="module_'+m+'[]" value="'+ v.permission +'" '+check+'/><label id="check-moduledetail-'+k+'" class="we7-padding-left we7-margin-horizontal-none checkbox-inline">'+ v.title +'</label></a></li>';
+						html += '<li><a href="javascript:;"><input id="check-moduledetail-'+m+'-'+k+'" type="checkbox" name="module_'+m+'[]" value="'+ v.permission +'" '+check+'/><label for="check-moduledetail-'+m+'-'+k+'" class="we7-padding-left we7-margin-horizontal-none checkbox-inline">'+ v.title +'</label></a></li>';
 					});
 				}
 				_this.next().html(html);
