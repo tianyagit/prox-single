@@ -11,64 +11,6 @@ require IA_ROOT . '/web/common/common.func.php';
 require IA_ROOT . '/framework/library/pinyin/pinyin.php';
 $pinyin = new Pinyin_Pinyin();
 
-$change_permission_list = array(
-	array(
-		'original' => array('platform_reply_basic', 'platform_reply_news', 'platform_reply_music', 'platform_reply_images', 'platform_reply_voice', 'platform_reply_video', 'platform_reply_wxcard', 'platform_reply_userapi'),
-		'new' => array('platform_reply')
-	),
-	array(
-		'original' => array('platform_special'),
-		'new' => array('platform_reply_special'),
-	),
-	array(
-		'original' => array('platform_qr'),
-		'new' => array('platform_qr', 'platform_url2qr'),
-	),
-	array(
-		'original' => array('material_mass'),
-		'new' => array('platform_mass_task'),
-	),
-	array(
-		'original' => array('material_display', 'material_manage'),
-		'new' => array('platform_material'),
-	),
-	array(
-		'original' => array('mc_members_manage'),
-		'new' => array('mc_member_page'),
-	),
-);
-
-$users_permission = pdo_getall('users_permission', array('type' => 'system'));
-if (!empty($users_permission)) {
-	foreach ($users_permission as $user_permission) {
-		$user_original_permission = $users_permission['permission'];
-		$permission = explode('|', $user_permission['permission']);
-		if (empty($permission) || !is_array($permission)) {
-			$permission = array();
-		}
-		foreach ($change_permission_list as $change_permission) {
-			//判断用户权限里是否有要改变的权限
-			if (array_intersect($permission, $change_permission['original'])) {
-				//去掉废弃的权限
-				$permission = array_diff($permission, $change_permission['original']);
-				//添加新的权限
-				foreach ($change_permission['new'] as $new_permission) {
-					$permission[] = $new_permission;
-				}
-			}
-		}
-		$permission = implode('|', $permission);
-		if ($permission != $user_original_permission) {
-//			pdo_update('users_permission', array('permission' => $permission), array('id' => $user_permission['id']));
-		}
-	}
-}
-exit();//test;
-
-//添加图文素材的素材顺序字段
-if (!pdo_fieldexists('wechat_news', 'displayorder')) {
-	pdo_query('ALTER TABLE '. tablename('wechat_news')." ADD displayorder int(2) NOT NULL default 0");
-}
 
 //转移模块快捷菜单数据到uni_account_modules表，废弃之前存在uni_settings中的shortcuts
 //uni_settings表中存放于字段中，不能存放太多数据，也不方便修改

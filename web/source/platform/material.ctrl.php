@@ -79,10 +79,10 @@ if($do == 'display') {
 }
 
 if ($do == 'del_material') {
-	$account_api = WeAccount::create($_W['acid']);
+	$wechat_api = WeAccount::create($_W['acid']);
 	$media_id = $_GPC['media_id'];
 	$material = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $media_id));
-	$result = $account_api->delMaterial($media_id);
+	$result = $wechat_api->delMaterial($media_id);
 	if ($result['errcode'] == 0) {
 		$result = error(0, $material['type']);
 		if ($material['type'] == 'news') {
@@ -95,10 +95,10 @@ if ($do == 'del_material') {
 }
 
 if ($do == 'sync') {
-	$account_api = WeAccount::create($_W['acid']);
+	$wechat_api = WeAccount::create($_W['acid']);
 	$pageindex = max(1, $_GPC['pageindex']);
 	$type = empty($_GPC['type']) ? 'news' : $_GPC['type'];
-	$news_list = $account_api->batchGetMaterial($type, ($pageindex-1)*20);
+	$news_list = $wechat_api->batchGetMaterial($type, ($pageindex-1)*20);
 	$wechat_existid = empty($_GPC['wechat_existid']) ? array() : $_GPC['wechat_existid'];
 	$wechat_existid = syncMaterial($news_list['item'], $wechat_existid, $type);
 	if ($pageindex == 1) {

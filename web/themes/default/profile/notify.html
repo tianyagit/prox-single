@@ -21,7 +21,7 @@
 		<form action="" method="post">
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">SMTP服务器</label>
-			<div class="form-controls col-sm-8 form-control-static">
+			<div class="form-controls col-sm-8">
 				<input id='radio-1' type="radio" name="smtp[type]" ng-checked="type == '163'" value="163" ng-click="type = '163'"/>
 				<label for="radio-1">网易邮箱服务器（建议使用）</label>
 				<input id='radio-2' type="radio" name="smtp[type]" ng-checked="type == 'qq'" value="qq" ng-click="type = 'qq'"/>
@@ -47,7 +47,7 @@
 		</div>
 		<div class="form-group" ng-show="type == 'custom'">
 			<label for="" class="control-label col-sm-2">使用SSL加密</label>
-			<div class="form-controls col-sm-8  form-control-static">
+			<div class="form-controls col-sm-8">
 				<input id='radio-11' type="radio" name="smtp[authmode]" value="1" ng-checked="setting['smtp']['authmode'] == 1" />
 				<label for="radio-11">是</label>
 				<input id='radio-12' type="radio" name="smtp[authmode]" value="0" ng-checked="setting['smtp']['authmode'] == 0 || setting['smtp']['authmode'] == undefined"/>

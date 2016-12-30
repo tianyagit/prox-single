@@ -274,9 +274,7 @@
 		</tr>
 	</table>
 	</form>
-	<div class="pull-right">
-		{$pager}
-	</div>
+	{$pager}
 </div>
 <script>
 		angular.module('moduleApp').value('config', {
@@ -288,7 +286,7 @@
 {elseif $do == 'module_detail'}
 <div class="js-system-module-detail" ng-controller="detailCtrl" ng-cloak>
 	<ol class="breadcrumb we7-breadcrumb">
-		<a href="{php echo url('system/module')}"><i class="wi wi-back-cricle"></i> </a>
+		<a href="{php echo url('system/module')}"><i class="fa fa-chevron-circle-left"></i> </a>
 		<li>
 			应用列表
 		</li>
@@ -433,7 +431,7 @@
 		</tr>
 		{/loop}
 	</table>
-	<div ng-if="isFounder == 1" class="pull-right">
+	<div ng-if="isFounder == 1">
 		{$pager}
 	</div>
 	<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

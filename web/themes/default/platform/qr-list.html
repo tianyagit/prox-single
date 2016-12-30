@@ -1,25 +1,25 @@
 {template 'common/header'}
-	<div class="we7-page-title">二维码管理</div>
+	<div class="we7-page-title">二维码管�/div>
 	<ul class="we7-page-tab">
-		<li class="active"><a href="{php echo url('platform/qr/list');}">二维码列表</a></li>
-		<li><a href="{php echo url('platform/qr/display');}"> 二维码扫描统计</a></li>
+		<li class="active"><a href="{php echo url('platform/qr/list');}">二维码列�/a></li>
+		<li><a href="{php echo url('platform/qr/display');}"> 二维码扫描统�/a></li>
 	</ul>
 	<div class="we7-padding-bottom clearfix">
 		<form action="./index.php" method="get" role="form" >
 			<div class="input-group pull-left col-sm-4">
 				<input type="hidden" name="c" value="platform">
 				<input type="hidden" name="a" value="qr">
-				<input type="text" name="keyword" value="{$keyword}" class="form-control" placeholder="请输入场景名称"/>
+				<input type="text" name="keyword" value="{$keyword}" class="form-control" placeholder="请输入场景名�/>
 				<span class="input-group-btn"><buton class="btn btn-default"><i class="fa fa-search"></i></buton></span>
 			
 			</div>
 		</form>
 		<div class="pull-right">
-			{if $platform_url2qr_permission === true && $_W['account']['level'] == 4}<a href="{php echo url('platform/url2qr');}" class="btn btn-default">长链接转二维码</a>{/if}
-			<a href="{php echo url('platform/qr/post');}" class="btn btn-primary  we7-margin-left">+生成关键二维码</a>
+			{if $platform_url2qr_permission === true && $_W['account']['level'] == 4}<a href="{php echo url('platform/url2qr');}" class="btn btn-default">长链接转二维�/a>{/if}
+			<a href="{php echo url('platform/qr/post');}" class="btn btn-primary">+生成关键二维�/a>
 		</div>
 	</div>
-	<table class="table we7-table vertical-middle" id="js-qr-list" ng-controller="QrDisplay" ng-cloak>
+	<table class="table we7-table" id="js-qr-list" ng-controller="QrDisplay" ng-cloak>
 		<col width="85px"/>
 		<col width="180px" />
 		<col width="120px" />
@@ -28,8 +28,8 @@
 		<col width="210px">
 		<tr>
 			<th></th>
-			<th>二维码名称</th>
-			<th>对应关键字</th>
+			<th>二维码名�/th>
+			<th>对应关键�/th>
 			<th class="text-left">生成时间</th>
 			<th>到期时间</th>
 			<th class="text-left">操作</th>
@@ -42,11 +42,17 @@
 			<td class="text-left">{php echo date('Y-m-d <br /> H:i:s', $row[createtime]);}</td>
 			<td>{$row[endtime]}</td>
 			<td class="text-left">
+				<a href="{php echo url('platform/qr/down_qr', array('id' => $row['id']))}" class="color-default we7-margin-right">下载</a>
+				<a href="{php echo url('platform/qr/post', array('id'=> $row['id']))}" class="color-default we7-margin-right">编辑</a>
+				{if $row['model'] == 2}
+					<a href="{php echo url('platform/qr/del', array('id'=> $row['id']))}" class="color-default" onclick="return confirm('您确定要删除该二维码以及其统计数据吗�)">删除</a>
+				{/if}
+				{if $row['model'] == 1}<a href="{php echo url('platform/qr/extend', array('id'=> $row['id']))}" class="color-default">延时</a>{/if}
 				<div class="link-group">
 					<a href="{php echo url('platform/qr/down_qr', array('id' => $row['id']))}">下载</a>
 					<a href="{php echo url('platform/qr/post', array('id'=> $row['id']))}" >编辑</a>
 					{if $row['model'] == 2}
-						<a href="{php echo url('platform/qr/del', array('id'=> $row['id']))}"  onclick="return confirm('您确定要删除该二维码以及其统计数据吗？')">删除</a>
+						<a href="{php echo url('platform/qr/del', array('id'=> $row['id']))}"  onclick="return confirm('您确定要删除该二维码以及其统计数据吗�)">删除</a>
 					{/if}
 					{if $row['model'] == 1}<a href="{php echo url('platform/qr/extend', array('id'=> $row['id']))}" >延时</a>{/if}
 				</div>
@@ -56,9 +62,9 @@
 	</table>
 	<div class="help-block">
 		<a href="{php echo url('platform/qr/del', array('scgq'=> '1'))}" onclick="javascript:return confirm('您确定要删除吗？\n将删除所有过期二维码以及其统计数据！！！')" class="btn btn-primary" style="margin-bottom:15px">删除全部已过期二维码</a>
-		<span style="vertical-align:super">注意：永久二维码无法在微信平台删除，但是您可以点击<a href="javascript:;" class="color-default">【删除】</a>来删除本地数据。</span>
+		<span style="vertical-align:super">注意：永久二维码无法在微信平台删除，但是您可以点�a href="javascript:;" style="color:#428bca">【删除�/a>来删除本地数据�/span>
 	</div>
-	<div class="pull-right">
+	<div class="text-center">
 		{$pager}
 	</div>
 </div>
