@@ -49,11 +49,16 @@ function file_move($filename, $dest) {
 /**
  * 获取指定目录下所有文件路径
  * @param string $path 文件夹目录
+ * @param array $include 指定获取子目录
  * @return array
  */
-function file_tree($path) {
+function file_tree($path, $include = array()) {
 	$files = array();
-	$ds = glob($path . '/*');
+	if (!empty($include)) {
+		$ds = glob($path . '/{'.implode(',', $include).'}', GLOB_BRACE);
+	} else {
+		$ds = glob($path . '/*');
+	}
 	if (is_array($ds)) {
 		foreach ($ds as $entry) {
 			if (is_file($entry)) {
