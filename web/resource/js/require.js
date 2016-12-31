@@ -102,7 +102,6 @@ require.config({
 		},
 		'jquery.ui': {
 			exports: '$',
-			deps: ['jquery']
 		},
 		'jquery.caret': {
 			exports: '$'
