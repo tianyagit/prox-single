@@ -22,7 +22,7 @@
 <div class="btn-group we7-btn-group wechat-edit-group">
 	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">基础信息</a>
 	<a href="{php echo url('account/post/sms', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default active">短信信息</a>
-	<a href="{php echo url('account/post/users', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">使用者管理</a>
+	<a href="{php echo url('account/post_user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">使用者管理</a>
 	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">可用应用模块/魔板</a>
 </div>
 <div id="js-account-manage-sms" ng-controller="AccountManageSms" ng-cloak>

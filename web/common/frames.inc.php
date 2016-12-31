@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $ms = array();
 $ms['account'] = array(
 	'title' => '公众号',
+	'url' => url('platform/reply'),
 	'section' => array(
 		'platform_plus' => array(
 			'title' => '增强功能',
@@ -87,6 +88,7 @@ $ms['account'] = array(
 
 $ms['wxapp'] = array(
 	'title' => '小程序',
+	'url' => url('wxapp/account'),
 	'section' => array(
 	),
 );

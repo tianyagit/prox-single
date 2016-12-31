@@ -4,7 +4,6 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
 load()->model('reply');
 load()->model('module');
 
@@ -13,15 +12,15 @@ $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
 if ($m == 'keyword') {
-	uni_user_permission_check('platform_reply', true);
+	uni_user_permission_check('platform_reply');
 } elseif ($m == 'special') {
 	uni_user_permission_check('platform_reply_special');
-} elseif ($m == 'welcome' || $m = 'default') {
+} elseif ($m == 'welcome' || $m == 'default') {
 	uni_user_permission_check('platform_reply_system');
+} elseif($m == 'apply') {
+	uni_user_permission_check('platform_reply_apply');
 }
-
 $_W['page']['title'] = '自动回复';
-$_W['account']['modules'] = uni_modules();
 if(empty($m)) {
 	message('错误访问.');
 }
@@ -50,7 +49,6 @@ if ($m == 'special') {
 }
 //功能模块用
 $sysmods = system_modules();
-
 if(in_array($m, array('custom'))) {
 	$site = WeUtility::createModuleSite('reply');
 	$site_urls = $site->getTabUrls();
@@ -303,8 +301,8 @@ if($do == 'post') {
 		include IA_ROOT . '/framework/library/pinyin/pinyin.php';
 		$pinyin = new Pinyin_Pinyin();
 		$module['title'] = '应用关键字';
-		$installedmodulelist = $_W['account']['modules'];
-		foreach ($installedmodulelist as $k => &$value) {
+		$installedmodulelist = uni_modules();
+		foreach ($installedmodulelist as &$value) {
 			$value['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 		}
 		unset($value);
