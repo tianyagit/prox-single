@@ -142,3 +142,7 @@ if(!pdo_fieldexists('uni_account', 'letter')) {
 if(!pdo_fieldexists('uni_account', 'rank')) {
 	pdo_query("ALTER TABLE `ims_uni_account` CHANGE `rank` `rank` INT(10) NULL DEFAULT '0';");
 }
+
+if (!pdo_fieldexists('core_menu', 'group_name')) {
+	pdo_query("ALTER TABLE ". tablename('core_menu'). " ADD `group_name` VARCHAR(30) NOT NULL DEFAULT '';");
+}
