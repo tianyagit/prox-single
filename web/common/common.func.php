@@ -132,6 +132,24 @@ function buildframes($framename = ''){
 				}
 			}
 		}
+	} elseif (!empty($modules)) {
+		$new_modules = array_reverse($modules);
+		$i = 0;
+		foreach ($new_modules as $module) {
+			if (!empty($module['issystem'])) {
+				continue;
+			}
+			if ($i == 5) {
+				break;
+			}
+			$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
+				'title' => $module['title'],
+				'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
+				'url' => url('home/welcome/ext', array('m' => $module['name'])),
+				'is_display' => 1,
+			);
+			$i++;
+		}
 	}
 	//@@todo 进入模块界面后权限
 	$modulename = trim($_GPC['m']);
@@ -148,24 +166,28 @@ function buildframes($framename = ''){
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_settings'] = array(
 				'title' => "<i class='fa fa-cog'></i> 参数设置",
 				'url' => url('profile/module/setting', array('m' => $modulename)),
+				'is_display' => 1,
 			);
 		}
 		if($entries['home']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_home'] = array(
 				'title' => "<i class='fa fa-home'></i> 微站首页导航",
 				'url' => url('site/nav/home', array('m' => $modulename)),
+				'is_display' => 1,
 			);
 		}
 		if($entries['profile']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_profile'] = array(
 				'title' => "<i class='fa fa-user'></i> 个人中心导航",
 				'url' => url('site/nav/profile', array('m' => $modulename)),
+				'is_display' => 1,
 			);
 		}
 		if($entries['shortcut']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_shortcut'] = array(
 				'title' => "<i class='fa fa-plane'></i> 快捷菜单",
 				'url' => url('site/nav/shortcut', array('m' => $modulename)),
+				'is_display' => 1,
 			);
 		}
 		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
@@ -176,8 +198,9 @@ function buildframes($framename = ''){
 				$url = url('platform/cover', array('eid' => $entries['cover'][0]['eid']));
 			}
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_entry'] = array(
-				'title' => "<i class='fa fa-plane'></i> 应用入口",
+				'title' => "<i class='wi wi-reply'></i> 应用入口",
 				'url' => $url,
+				'is_display' => 1,
 			);
 		}
 		if (!empty($entries['menu'])) {
@@ -186,8 +209,9 @@ function buildframes($framename = ''){
 				if(empty($row)) continue;
 				foreach($row as $li) {
 					$frames['account']['section']['platform_module_menu']['menu']['platform_module_menu'.$row['eid']] = array(
-						'title' => "<i class='fa fa-plane'></i> {$row['title']}",
-						'url' => url('site/nav/shortcut', array('m' => $modulename)),
+						'title' => "<i class='wi wi-appsetting'></i> {$row['title']}",
+						'url' => url('site/entry/', array('eid' => $row['eid'])),
+						'is_display' => 1,
 					);
 				}
 			}
@@ -300,7 +324,6 @@ function _calc_current_frames(&$frames) {
 				if(!empty($do)) {
 					$get['do'] = $do;
 				}
-
 				$diff = array_diff_assoc($urls, $get);
 				if(empty($diff)) {
 					$menu['active'] = ' active';
