@@ -10,11 +10,64 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('mc');
 
-$dos = array('display', 'post','del', 'add', 'group', 'credit_record', 'credit_stat');
+$dos = array('display', 'post','del', 'add', 'group', 'credit_record', 'credit_stat', 'register_setting', 'credit_setting', 'save_credit_setting', 'save_tactics_setting');
 $do = in_array($do, $dos) ? $do : 'display';
 
-uni_user_permission_check('mc_member_page');
+if ($do == 'save_tactics_setting') {
+	$setting = $_GPC['setting'];
+	if (empty($setting)) {
+		message(error(1));
+	}
+	uni_setting_save('creditbehaviors', $setting);
+	message(error(0));
+}
+
+if ($do == 'save_credit_setting') {
+	$credit_setting = $_GPC['credit_setting'];
+	if (empty($credit_setting)) {
+		message(error(1), '', 'ajax');
+	}
+	uni_setting_save('creditnames', $credit_setting);
+	message(error(0));
+}
+
+if ($do == 'register_setting') {
+	$_W['page']['title'] = '注册设置';
+	if (checksubmit('submit')) {
+		$passport = $_GPC['passport'];
+		if (!empty($passport)) {
+			uni_setting_save('passport', $passport);
+			message('设置成功', '', 'success');
+		}
+	}
+	$setting = uni_setting_load('passport');
+	$register_setting = $setting['passport'];
+	template('mc/member');
+}
+
+if ($do == 'credit_setting') {
+	$_W['page']['title'] = '积分设置';
+	$credit_setting = uni_setting_load('creditnames');
+	$credit_setting = $credit_setting['creditnames'];
+
+	$credit_tactics = uni_setting_load('creditbehaviors');
+	$credit_tactics = $credit_tactics['creditbehaviors'];
+
+	$enable_credit = array();
+	if (!empty($credit_setting)) {
+		foreach ($credit_setting as $key => $credit) {
+			if ($credit['enabled'] == 1) {
+				$enable_credit[] = $key;
+			}
+		}
+		unset($credit);
+	}
+	template('mc/member');
+}
+
 if($do == 'display') {
+	uni_user_permission_check('mc_member_page');
+
 	$_W['page']['title'] = '会员列表';
 	$groups = mc_groups();
 	$search_mod = intval($_GPC['search_mod']) == 1 ? '1' : '2';
@@ -115,6 +168,8 @@ if($do == 'display') {
 }
 
 if($do == 'post') {
+	uni_user_permission_check('mc_member_page');
+
 	$_W['page']['title'] = '编辑会员资料 - 会员 - 会员中心';
 	$uid = intval($_GPC['uid']);
 	if ($_W['ispost'] && $_W['isajax']) {
@@ -297,6 +352,8 @@ if($do == 'post') {
 }
 
 if($do == 'del') {
+	uni_user_permission_check('mc_member_page');
+
 	$_W['page']['title'] = '删除会员资料 - 会员 - 会员中心';
 	if(checksubmit('submit')) {
 		if(!empty($_GPC['uid'])) {
@@ -320,6 +377,8 @@ if($do == 'del') {
 }
 
 if($do == 'add') {
+	uni_user_permission_check('mc_member_page');
+
 	if($_W['isajax']) {
 		$type = trim($_GPC['type']);
 		$data = trim($_GPC['data']);

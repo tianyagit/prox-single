@@ -70,6 +70,8 @@ if ($do == 'display') {
 						}
 						unset($module);
 					}
+				} else {
+					$group['modules'] = array();
 				}
 			}
 			if (!empty($group['templates'])) {
@@ -77,6 +79,8 @@ if ($do == 'display') {
 				if (is_array($templates) && !empty($templates)) {
 					$group['templates'] = pdo_getall('site_templates', array('id' => $templates), array('name', 'title'));
 				}
+			} else {
+				$group['templates'] = array();
 			}
 		}
 		unset($group);

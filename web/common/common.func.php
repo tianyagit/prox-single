@@ -107,8 +107,10 @@ function checkaccount() {
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
 	$frames = cache_load('system_frame');
-
-	//@@todo 还需要进行数据库权限和菜单的组合
+	if(empty($frames)) {
+		cache_build_frame_menu();
+		$frames = cache_load('system_frame');
+	}
 	
 	//模块权限，创始人有所有模块权限
 	load()->model('module');
