@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $we7_system_menu = array();
 $we7_system_menu['account'] = array(
 	'title' => '公众号',
+	'url' => url('platform/reply'),
 	'section' => array(
 		'platform_plus' => array(
 			'title' => '增强功能',
