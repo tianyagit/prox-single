@@ -223,6 +223,24 @@ function array_elements($keys, $src, $default = FALSE) {
 	return $return;
 }
 
+function array_sort($array, $keys, $type='asc'){
+	//$array为要排序的数组,$keys为要用来排序的键名,$type默认为升序排序
+	$keysvalue = $new_array = array();
+	foreach ($array as $k => $v){
+		$keysvalue[$k] = $v[$keys];
+	}
+	if($type == 'asc'){
+		asort($keysvalue);
+	}else{
+		arsort($keysvalue);
+	}
+	reset($keysvalue);
+	foreach ($keysvalue as $k => $v){
+		$new_array[$k] = $array[$k];
+	}
+	return $new_array;
+}
+
 /**
  * 判断给定参数是否位于区间内或将参数转换为区间内的数
  *
@@ -1160,4 +1178,44 @@ function parse_path($path) {
 		}
 	}
 	return $path;
+}
+
+/**
+ * 文件大小
+ * @param string $dir 文件的路径
+ * @return int $size 文件大小
+ */
+function dir_size($dir) {
+	$size = 0;
+	if(is_dir($dir)) {
+		$handle = opendir($dir);
+		while (false !== ($entry = readdir($handle))) {
+			if($entry != '.' && $entry != '..') {
+				if(is_dir("{$dir}/{$entry}")) {
+					$size += dir_size("{$dir}/{$entry}");
+				} else {
+					$size += filesize("{$dir}/{$entry}");
+				}
+			}
+		}
+		closedir($handle);
+	}
+	return $size;
+}
+
+/**
+ *字节数转成 bit
+ * @param string $str 字节数
+ * @return float
+ */
+function parse_size($str) {
+	if(strtolower($str[strlen($str) -1]) == 'k') {
+		return floatval($str) * 1024;
+	}
+	if(strtolower($str[strlen($str) -1]) == 'm') {
+		return floatval($str) * 1048576;
+	}
+	if(strtolower($str[strlen($str) -1]) == 'g') {
+		return floatval($str) * 1073741824;
+	}
 }

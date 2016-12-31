@@ -106,7 +106,8 @@ function checkaccount() {
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
-	$frames = require_once IA_ROOT . '/web/common/frames.inc.php';
+	$frames = cache_load('system_frame');
+
 	//@@todo 还需要进行数据库权限和菜单的组合
 	
 	//模块权限，创始人有所有模块权限
@@ -200,6 +201,10 @@ function buildframes($framename = ''){
 			'name' => $menuid,
 			'url' => $menu['url'],
 		);
+	}
+	$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame'), array('title', 'url'));
+	if (!empty($add_top_nav)) {
+		$top_nav = array_merge($top_nav, $add_top_nav);
 	}
 	return !empty($framename) ? $frames[$framename] : $frames;
 }

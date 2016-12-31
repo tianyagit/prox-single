@@ -128,38 +128,49 @@ function cache_build_users_struct() {
 }
 
 function cache_build_frame_menu() {
-	$data = pdo_fetchall("SELECT * FROM " . tablename('core_menu') . " WHERE pid = 0 AND is_display = 1 ORDER BY is_system DESC, displayorder DESC, id ASC");
-	$frames =array();
-	if(!empty($data)) {
-		foreach($data as $da) {
-			$frames[$da['name']] = array();
-			$childs = pdo_fetchall("SELECT * FROM " . tablename('core_menu') . " WHERE pid = :pid AND is_display = 1 ORDER BY is_system DESC, displayorder DESC, id ASC", array(':pid' => $da['id']));
-			if(!empty($childs)) {
-				foreach($childs as $child) {
-					$temp = array();
-					$temp['title'] = $child['title'];
-					$grandchilds = pdo_fetchall("SELECT * FROM " . tablename('core_menu') . " WHERE pid = :pid AND is_display = 1 AND type = :type ORDER BY is_system DESC, displayorder DESC, id ASC", array(':pid' => $child['id'], ':type' => 'url'));
-					if(!empty($grandchilds)) {
-						foreach($grandchilds as $grandchild) {
-							$item = array();
-							$item['id'] = $grandchild['id'];
-							$item['title'] = $grandchild['title'];
-							$item['url'] = $grandchild['url'];
-							$item['permission_name'] = $grandchild['permission_name'];
-							if(!empty($grandchild['append_title'])) {
-								$item['append']['title'] = '<i class="'.$grandchild['append_title'].'"></i>';
-								$item['append']['url'] = $grandchild['append_url'];
-							}
-							$temp['items'][] = $item;
-						}
-					}
-					$frames[$da['name']][$child['permission_name']] = $temp;
+	$system_menu_db = pdo_getall('core_menu', array('permission_name !=' => ''), array(), 'permission_name');
+	
+	$system_menu = require_once IA_ROOT . '/web/common/frames.inc.php';
+	if (!empty($system_menu) && is_array($system_menu)) {
+		foreach ($system_menu as $menu_name => $menu) {
+			$system_menu[$menu_name]['is_system'] = true;
+			$system_menu[$menu_name]['is_display'] = true;
+			foreach ($menu['section'] as $section_name => $section) {
+				$displayorder = max(count($section['menu']), 1);
+				
+				//查询此节点下新增的菜单
+				if (empty($section['menu'])) {
+					$section['menu'] = array();
 				}
+				$add_menu = pdo_getall('core_menu', array('group_name' => $section_name), array(
+					'title', 'url', 'is_display', 'is_system', 'permission_name', 'displayorder'
+				), 'permission_name', 'displayorder DESC');
+				if (!empty($add_menu)) {
+					foreach ($add_menu as $permission_name => $menu) {
+						$menu['icon'] = 'wi wi-appsetting';
+						$section['menu'][$permission_name] = $menu;
+					}
+				}
+				foreach ($section['menu']  as $permission_name => $sub_menu) {
+					$sub_menu_db = $system_menu_db[$sub_menu['permission_name']];
+					$system_menu[$menu_name]['section'][$section_name]['menu'][$permission_name] = array(
+						'is_system' => isset($sub_menu['is_system']) ? $sub_menu['is_system'] : 1,
+						'is_display' => isset($sub_menu_db['is_display']) ? $sub_menu_db['is_display'] : 1,
+						'title' => !empty($sub_menu_db['title']) ? $sub_menu_db['title'] : $sub_menu['title'],
+						'url' => $sub_menu['url'],
+						'permission_name' => $sub_menu['permission_name'],
+						'icon' => $sub_menu['icon'],
+						'displayorder' => !empty($sub_menu_db['displayorder']) ? $sub_menu_db['displayorder'] : $displayorder,
+					);
+					$displayorder--;
+					$displayorder = max($displayorder, 0);
+				}
+				$system_menu[$menu_name]['section'][$section_name]['menu'] = array_sort($system_menu[$menu_name]['section'][$section_name]['menu'], 'displayorder', 'desc');
 			}
 		}
+		cache_delete('system_frame');
+		cache_write('system_frame', $system_menu);
 	}
-	cache_delete('system_frame');
-	cache_write('system_frame', $frames);
 }
 
 function cache_build_module_subscribe_type() {

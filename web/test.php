@@ -10,10 +10,14 @@ load()->web('common');
 load()->web('template');
 load()->func('communication');
 load()->model('cache');
-load()->model('frame');
 load()->model('cloud');
 load()->classs('coupon');
 
+cache_build_frame_menu();
+
+$system_menu = cache_load('system_frame');
+print_r($system_menu);
+exit;
 $qiniu_conf = base64_encode(file_get_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Config.php'));
 $qiniu_zone = base64_encode(file_get_contents(IA_ROOT.'/framework/library/qiniu/src/Qiniu/Zone.php'));
 $cos_conf = base64_encode(file_get_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php'));
