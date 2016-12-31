@@ -9,11 +9,11 @@ if (is_error($prepare)) {
 	message($prepare['message'], url('cloud/profile'), 'error');
 }
 
-$do = $_GPC['do'];
-$dos = array('files', 'schemas', 'scripts');
-$do = in_array($do, $dos) ? $do : 'files';
+$step = $_GPC['step'];
+$steps = array('files', 'schemas', 'scripts');
+$step = in_array($step, $steps) ? $step : 'files';
 
-if ($do == 'files' && $_W['ispost']) {
+if ($step == 'files' && $_W['ispost']) {
 	$ret = cloud_download($_GPC['path'], $_GPC['type']);
 	if (!is_error($ret)) {
 		exit('success');
@@ -21,7 +21,7 @@ if ($do == 'files' && $_W['ispost']) {
 	exit($ret['message']);
 }
 
-if ($do == 'scripts' && $_W['ispost']) {
+if ($step == 'scripts' && $_W['ispost']) {
 	$fname = trim($_GPC['fname']);
 	$entry = IA_ROOT . '/data/update/' . $fname;
 	if (is_file($entry) && preg_match('/^update\(\d{12}\-\d{12}\)\.php$/', $fname)) {
@@ -54,7 +54,7 @@ if (!empty($_GPC['m'])) {
 } else {
 	$packet = cloud_build();
 }
-if ($do == 'schemas' && $_W['ispost']) {
+if ($step == 'schemas' && $_W['ispost']) {
 	$tablename = $_GPC['table'];
 	exit($tablename);
 	foreach ($packet['schemas'] as $schema) {

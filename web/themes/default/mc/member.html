@@ -6,16 +6,19 @@
 <div class="we7-page-title">会员管理</div>
 <ul class="we7-page-tab">
 	<li {if $do == 'display' || $do == 'post'} class="active"{/if}>
-		<a href="{php echo url('mc/member')}">会员管理</a>
+	<a href="{php echo url('mc/member')}">会员管理</a>
 	</li>
-	<li{if $do == 'oauth'} class="active"{/if}>
-	<a href="{php echo url('profile/passport')}">会员中心</a>
+	<li{if $do == 'uc'} class="active"{/if}>
+	<a href="{php echo url('site/editor/uc')}">会员中心</a>
+	</li>
+	<li {if $do == 'quickmenu'} class="active"{/if}>
+	<a href="{php echo url('site/editor/quickmenu', array('type' => 4))}">快捷菜单</a>
 	</li>
 	<li {if $do == 'credit_setting'} class="active"{/if}>
-		<a href="{php echo url('mc/member/credit_setting')}">积分设置</a>
+	<a href="{php echo url('mc/member/credit_setting')}">积分设置</a>
 	</li>
 	<li {if $do == 'register_setting'} class="active"{/if}>
-		<a href="{php echo url('mc/member/register_setting')}">注册设置</a>
+	<a href="{php echo url('mc/member/register_setting')}">注册设置</a>
 	</li>
 </ul>
 {else}
@@ -1013,22 +1016,19 @@
 		<col />
 		<col width="140px" />
 		<tr>
-			<th class="text-left" colspan="5">支付参数</th>
+			<th class="text-left" colspan="4">支付参数</th>
 		</tr>
 		<tr ng-repeat="(key, credit) in creditSetting  track by key">
 			<td >{{ key }}</td>
-			<td style="width: 80px;">{{ credit.title }}</td>
-			<td><a href="javascript:;" style="width: 500px;color: #0000ff;" ng-click="editCreditName(key)">设置名称</a></td>
+			<td>{{ credit.title }}</td>
 			<td>
-				{{ credit.enabled == 1 ? '开启' : '关闭' }}
-			</td>
-			<td class="text-center">
 				<label>
 					<input name="" class="form-control" type="checkbox"  style="display: none;">
 					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" ng-if="key != 'credit1' && key != 'credit2'"  ng-click="changeEnabled(key)"></div>
 					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" ng-if="key == 'credit1' || key == 'credit2'" style="opacity : 0.3"></div>
 				</label>
 			</td>
+			<td class="pull-right"><a href="javascript:;" style="width: 500px;color: #0000ff;" ng-click="editCreditName(key)">设置名称</a></td>
 		</tr>
 	</table>
 

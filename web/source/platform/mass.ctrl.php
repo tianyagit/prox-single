@@ -76,7 +76,8 @@ if($do == 'del') {
 
 if($do == 'post') {
 	$groups = pdo_fetch('SELECT * FROM ' . tablename('mc_fans_groups') . ' WHERE uniacid = :uniacid AND acid = :acid', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
-	$groups = iunserializer($groups['groups']);
+	$groups = (array)iunserializer($groups['groups']);
+	//数据库查出来的groups不包括全部粉丝，故在此添加上(ng-repeat使用方便)
 	array_unshift($groups, array('id' => -1, 'name' => '全部粉丝', 'count' => ''));
 
 	$time = strtotime(date('Y-m-d'));

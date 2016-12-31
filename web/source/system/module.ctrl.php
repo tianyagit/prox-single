@@ -272,7 +272,6 @@ if ($do =='install') {
 		} else {
 			pdo_run($manifest['install']);
 		}
-		update_handle($module['name']);
 		// 如果模块来自应用商城，删除对应文件
 		if (defined('ONLINE_MODULE')) {
 			ext_module_script_clean($module['name'], $manifest);
