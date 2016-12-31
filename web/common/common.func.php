@@ -125,6 +125,7 @@ function buildframes($framename = ''){
 						'title' => $module['title'],
 						'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
 						'url' => url('home/welcome/ext', array('m' => $module['name'])),
+						'is_display' => 1,
 					);
 				}
 			}

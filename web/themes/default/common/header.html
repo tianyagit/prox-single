@@ -99,7 +99,7 @@
 							{loop $section['menu'] $menuid $menu}
 								{if !empty($menu['is_display'])}
 								<li class="list-group-item {if $menu['active']}active{/if}">
-									<a href="{$menu['url']}" class="text-over">{if $menu['icon']}<i class="{$menu['icon']}"></i>{/if} {$menu['title']}</a>
+									<a href="{$menu['url']}" class="text-over">{if $menu['icon']}<img src="{$menu['icon']}" onerror="this.src='resource/images/nopic-small.jpg'"/>{/if} {$menu['title']}</a>
 								</li>
 								{/if}
 							{/loop}
