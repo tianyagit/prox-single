@@ -4,12 +4,20 @@
 </style>
 {if $do != 'credit_record' && $do != 'credit_stat'}
 <div class="we7-page-title">会员管理</div>
-<ul class="we7-page-tab"></ul>
-<!--<ul class="nav nav-tabs">
-	<li {if $do == 'display'}class="active"{/if}><a href="{php echo url('mc/member/display')}">会员列表</a></li>
-	{if $do == 'post'}<li class="active"><a href="{php echo url('mc/member/post', array('uid' => $uid));}">编辑会员资料</a></li>{/if}
-	<li {if $do == 'add'}class="active"{/if}><a href="{php echo url('mc/member/add');}">添加会员</a></li>
-</ul>-->
+<ul class="we7-page-tab">
+	<li {if $do == 'display' || $do == 'post'} class="active"{/if}>
+		<a href="{php echo url('mc/member')}">会员管理</a>
+	</li>
+	<li{if $do == 'oauth'} class="active"{/if}>
+	<a href="{php echo url('profile/passport')}">会员中心</a>
+	</li>
+	<li {if $do == 'credit_setting'} class="active"{/if}>
+		<a href="{php echo url('mc/member/credit_setting')}">积分设置</a>
+	</li>
+	<li {if $do == 'register_setting'} class="active"{/if}>
+		<a href="{php echo url('mc/member/register_setting')}">注册设置</a>
+	</li>
+</ul>
 {else}
 <ul class="nav nav-tabs">
 	<li {if $do  == 'credit_stat'} class="active"{/if}><a href="{php echo url('mc/member/credit_stat', array('type' => 1, 'uid' => $uid));}">数据概况</a></li>
@@ -997,5 +1005,209 @@
 		});
 	});
 </script>
+{elseif $do == 'credit_setting'}
+
+<div id="js-profile-credit" ng-controller="creditCtrl" ng-cloak>
+	<table class="table we7-table table-form">
+		<col width="140px " />
+		<col />
+		<col width="140px" />
+		<tr>
+			<th class="text-left" colspan="5">支付参数</th>
+		</tr>
+		<tr ng-repeat="(key, credit) in creditSetting  track by key">
+			<td >{{ key }}</td>
+			<td style="width: 80px;">{{ credit.title }}</td>
+			<td><a href="javascript:;" style="width: 500px;color: #0000ff;" ng-click="editCreditName(key)">设置名称</a></td>
+			<td>
+				{{ credit.enabled == 1 ? '开启' : '关闭' }}
+			</td>
+			<td class="text-center">
+				<label>
+					<input name="" class="form-control" type="checkbox"  style="display: none;">
+					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" ng-if="key != 'credit1' && key != 'credit2'"  ng-click="changeEnabled(key)"></div>
+					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" ng-if="key == 'credit1' || key == 'credit2'" style="opacity : 0.3"></div>
+				</label>
+			</td>
+		</tr>
+	</table>
+
+	<table class="table we7-table table-form">
+		<col width="140px " />
+		<col />
+		<col width="140px" />
+		<tr>
+			<th class="text-left" colspan="3">积分策略</th>
+		</tr>
+		<tr>
+			<td >基本和营销</td>
+			<td>
+				{{ creditSetting[tactics.activity].title }}
+			</td>
+			<td class="text-center">
+				<a href="javascript:;" ng-click="editCreditTactics('activity')">更改</a>
+			</td>
+		</tr>
+		<tr>
+			<td >交易和支付(余额)</td>
+			<td>
+				{{ creditSetting[tactics.currency].title }}
+			</td>
+			<td class="text-center">
+				<a href="javascript:;" ng-click="editCreditTactics('currency')">更改</a>
+			</td>
+		</tr>
+	</table>
+
+	<div class="modal fade" id="credit-name" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">设置积分名称</div>
+				</div>
+				<div class="modal-body">
+					<div class="we7-form">
+						<div class="form-group">
+							<div class="form-controls col-sm-10">
+								<input type="text" name="" class="form-control" ng-model="creditTitle" placeholder="输入积分名称" ng-model="paysetting.alipay.partner">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="setCreditName(key)" data-dismiss="modal">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="tactics" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">设置积分策略</div>
+				</div>
+				<div class="modal-body">
+					<div class="we7-form">
+						<div class="form-group">
+							<div class="form-controls col-sm-10">
+								<select ng-model="tactics.activity" ng-if="activeTacticsType == 'activity'" class="form-control">
+									<option ng-repeat="credit in enabledCredit" value="{{ credit }}" ng-selected="credit == tactics.activity">{{ creditSetting[credit].title }}</option>
+								</select>
+
+								<select ng-model="tactics.currency" ng-if="activeTacticsType == 'currency'" class="form-control">
+									<option ng-repeat="credit in enabledCredit" value="{{ credit }}" ng-selected="credit == tactics.currency">{{ creditSetting[credit].title }}</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="setCreditTactics()" data-dismiss="modal">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<script>
+	angular.module('profileApp').value('config', {
+		'creditSetting' : {php echo json_encode($credit_setting)},
+		'enabledCredit' : {php echo json_encode($enable_credit)},
+		'activity' : "{$credit_tactics['activity']}",
+		'currency' : "{$credit_tactics['currency']}",
+		'saveCreditSetting' : "{php echo url('mc/member/save_credit_setting')}",
+		'saveTacticsSetting' : "{php echo url('mc/member/save_tactics_setting')}"
+	});
+	angular.bootstrap($('#js-profile-credit'), ['profileApp']);
+</script>
+
+{elseif $do == 'register_setting'}
+	<form id="payform" action="{php echo url('mc/member/register_setting')}" method="post" class="form-horizontal form">
+		<div class="panel-body">
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label">会员注册设置</label>
+					<div class="col-sm-9 col-xs-12">
+							<input id="radio-1" type="radio" name="passport[focusreg]" value="1" {if !empty($register_setting['focusreg'])} checked="checked"{/if}/>
+						<label for="radio-1">
+						会员手动注册
+						</label>
+							<input id="radio-2" type="radio" name="passport[focusreg]" value="0" {if empty($register_setting['focusreg'])} checked="checked"{/if}/>
+						<label for="radio-2">
+
+						系统自动注册
+						</label>
+						<span class="help-block">当设置为"系统自动注册"，用户从微信进入系统时，当模块使用"checkauth"验证用户身份时，可以在非登录状态下直接使用模块功能。</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label">身份验证项</label>
+					<div class="col-sm-9 col-xs-12">
+						<input id="radio-3"  type="radio" name="passport[item]" value="mobile" {if $register_setting['item'] == 'mobile'}
+						checked="checked"{/if}/>
+						<label for="radio-3">
+						手机注册
+						</label>
+							<input id="radio-4" type="radio" name="passport[item]" value="email" {if $register_setting['item'] == 'email'} checked="checked"{/if}/>
+						<label for="radio-4">
+						邮箱注册
+						</label>
+							<input id="radio-5" type="radio" name="passport[item]" value="random" {if $register_setting['item'] == 'random' || empty($register_setting['item'])} checked="checked"{/if}/>
+						<label for="radio-5">
+
+						二者都行
+						</label>
+						<span class="help-block">该项设置用户注册时用户名的格式,如果设置为:"邮箱注册",系统会判断用户的注册名是否是邮箱格式</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label">强制验证手机号/邮箱</label>
+					<div class="col-sm-9 col-xs-12">
+							<input id="radio-6" type="radio" name="passport[audit]" value="1" {if $register_setting['audit'] == 1} checked="checked"{/if}/>
+						<label for="radio-6">
+						是
+						</label>
+							<input id="radio-7" type="radio" name="passport[audit]" value="0" {if empty($register_setting['audit'])} checked="checked"{/if}/>
+						<label for="radio-7">
+
+						否
+						</label>
+						<span class="help-block">设置强制验证手机号/邮箱，用户在注册的时候，系统会给用户的手机或邮箱发送验证码，以验证手机或邮箱的有效性</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label">身份验证方式</label>
+					<div class="col-sm-9 col-xs-12">
+							<input id="radio-8" type="radio" name="passport[type]" value="code" {if $register_setting['type'] == 'code'} checked="checked"{/if}/>
+						<label for="radio-8">
+
+						随机密码
+						</label>
+							<input id="radio-9" type="radio" name="passport[type]" value="password" {if $register_setting['type'] == 'password' || empty($passport['type'])} checked="checked"{/if}/>
+						<label for="radio-9">
+
+						固定密码
+						</label>
+							<input id="radio-10" type="radio" name="passport[type]" value="hybird" {if $register_setting['type'] == 'hybird'} checked="checked"{/if}/>
+						<label for="radio-10">
+
+						混合密码
+						</label>
+						<span class="help-block">使用邮箱或者手机号+密码来登录系统</span>
+						<span class="help-block">随机密码方式: 采用发送验证码的方式, 用户不需要记录密码. 在微信以外的渠道登录系统时, 需要输入手机或邮箱+验证码来进入系统</span>
+						<span class="help-block">固定密码方式: 采用设置密码的方式, 用户在首次使用时设置固定的访问密码. 在微信以外的渠道登录系统时, 需要输入手机或邮箱+密码来进入系统</span>
+						<span class="help-block">混合密码方式: 混合使用两种验证方式, 用户可以自己选择是否设置访问密码. 如果设置了访问密码, 那么登录是可以使用手机或邮箱+随机密码或固定密码来进入系统</span>
+						<span class="help-block"><strong>注意: 使用随机密码或者混合密码时, 必须先 <a href="{php echo url('profile/notify');}" target="_blank">设置邮件</a> 或短信 选项</strong></span>
+					</div>
+				</div>
+			</div>
+		<div class="form-group col-sm-12">
+			<input type="submit" name="submit" value="提交" class="btn btn-primary col-lg-1" />
+			<input type="hidden" name="token" value="{$_W['token']}" />
+		</div>
+	</form>
 {/if}
 {template 'common/footer'}
