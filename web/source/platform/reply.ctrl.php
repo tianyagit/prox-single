@@ -19,6 +19,9 @@ if ($m == 'keyword') {
 	uni_user_permission_check('platform_reply_system');
 } elseif($m == 'apply') {
 	uni_user_permission_check('platform_reply_apply');
+} else {
+	$modules = uni_modules();
+	$_W['current_module'] = $modules[$m];
 }
 $_W['page']['title'] = '自动回复';
 if(empty($m)) {
