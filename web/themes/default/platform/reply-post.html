@@ -22,6 +22,12 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label for="" class="control-label col-sm-2">&nbsp;</label>
+			<div class="form-controls color-default col-sm-8">
+				<a href="javascript:void(0);" ng-click="changeShowAdvance()">展开高级设置<i class="fa fa-chevron-down" ng-class="{'fa-chevron-down': !reply.showAdvance, 'fa-chevron-up': reply.showAdvance}"></i></a>
+			</div>
+		</div>
+		<div class="form-group" ng-show="reply.showAdvance">
 			<label for="" class="control-label col-sm-2">全局置顶</label>
 			<div class="form-controls col-sm-8">
 				<input id="istop-1" type="radio" name="istop" ng-model="reply.entry.istop" ng-value="1" value="1" {if intval($reply['displayorder'] >= 255)} checked="checked"{/if}/>
@@ -31,7 +37,7 @@
 			</div>
 			
 		</div>
-		<div class="form-group" ng-show="reply.entry.istop == 0">
+		<div class="form-group" ng-show="reply.entry.istop == 0 && reply.showAdvance">
 			<label for="" class="control-label col-sm-2">回复优先级</label>
 			<div class="form-controls col-sm-4">
 			<input type="number" min="0" max="254" name="displayorder_rule" value="{if intval($reply['displayorder']) < 255}{$reply['displayorder']}{/if}" placeholder="输入这条回复规则的优先级" class="form-control">
@@ -182,6 +188,7 @@ require(['underscore'], function() {
 		replydata: {php echo json_encode($reply)},
 		uniacid: {php echo json_encode($_W['uniacid'])},
 	});
+
 	angular.bootstrap($('#js-reply-form'), ['replyFormApp']);
 
 	// 检测规则是否已经存在
