@@ -99,13 +99,7 @@ $we7_system_menu['account'] = array(
 					'url' => url('mc/member'),
 					'icon' => 'wi wi-fans',
 					'permission_name' => 'mc_member',
-				),
-				'mc_member_page' => array(
-					'title' => '会员中心',
-					'url' => url('site/editor/uc'),
-					'icon' => 'wi wi-fans',
-					'permission_name' => 'mc_member_page'
-				),
+				)
 			),
 		),
 		'profile' => array(
