@@ -13,7 +13,7 @@ load()->model('mc');
 $dos = array('display', 'post','del', 'add', 'group', 'credit_record', 'credit_stat');
 $do = in_array($do, $dos) ? $do : 'display';
 
-uni_user_permission_check('mc_member');
+uni_user_permission_check('mc_member_page');
 if($do == 'display') {
 	$_W['page']['title'] = '会员列表';
 	$groups = mc_groups();

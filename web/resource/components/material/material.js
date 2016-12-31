@@ -111,7 +111,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 						return false;
 					});
 				} else {
-					$content.html('<div class="info text-center"><i class="fa fa-info-circle fa-lg"></i> 暂无数据</div>');
+					$content.html('<div class="info text-center"><i class="wi wi-info-cricle fa-lg"></i> 暂无数据</div>');
 				}
 			});				
 			$this.modalobj.find('#btn-select .btn-primary').unbind('click').click(function(){
@@ -207,8 +207,8 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 		'buildHtml' : function() {
 			var dialog = {};
 			dialog['mainDialog'] = '<div id="material-Modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">\n' +
-				'	<div class="modal-dialog">\n' +
-				'		<div class="modal-content modal-lg">\n' +
+				'	<div class="modal-dialog modal-lg">\n' +
+				'		<div class="modal-content ">\n' +
 				'			<div class="modal-header">\n' +
 				'				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>\n' +
 				'				<h3>'+
@@ -241,27 +241,17 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'							<a data-toggle="tab" data-type="module" role="tab" aria-controls="module" href="#module">模块</a>'+
 				'						</li>'+
 				'					</ul>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=material_post" target="_blank">新建图文</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=image" target="_blank">上传图片</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=display&do=list&type=video" target="_blank">新建视频</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary hidden active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=activity&a=coupon&do=display" target="_blank">新建卡券</a>'+
-				'					</button>'+
-				'					<button style="margin-top:-30px;margin-right:40px;" type="button" class="btn btn-primary active pull-right ' + (this.options.ignore.keyword ? 'hide' : 'show') + '">'+
-				'						<a style="color:white;" href="./index.php?c=platform&a=reply&do=post&m=keyword" target="_blank">新建关键字</a>'+
-				'					</button>'+
 				'				</h3>'+
 				'			</div>\n' +
 				'			<div class="modal-body material-content">\n' +
+				'				<div class="material-head">'+
+				'					<a class="btn btn-primary active we7-margin-vertical-sm pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '" href="./index.php?c=platform&a=material_post" target="_blank">新建图文</a>'+
+				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=image" target="_blank">上传图片</a>'+
+				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
+				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=video" target="_blank">新建视频</a>'+
+				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '" href="./index.php?c=activity&a=coupon&do=display" target="_blank">新建卡券</a>'+
+				'					<a class="btn btn-primary active we7-margin-vertical-sm pull-right ' + (this.options.ignore.keyword ? 'hide' : 'show') + '" href="./index.php?c=platform&a=reply&do=post&m=keyword" target="_blank">新建关键字</a>'+
+				'				</div>'+		
 				'				<div class="tab-content">'+
 				'					<div id="basic" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="news" class="tab-pane material clearfix" class="active" role="tabpanel" style="position:relative"></div>'+
@@ -273,13 +263,11 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'					<div id="keyword" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="module" class="tab-pane history" role="tabpanel"></div>'+
 				'				</div>' +
+				'				<nav id="material-list-pager" class="text-right we7-margin-top">\n' +
+				'				</nav>\n' +
 				'			</div>\n' +
 				'			<div class="modal-footer">\n' +
-				'				<div style="float: left;">\n' +
-				'					<nav id="material-list-pager">\n' +
-				'					</nav>\n' +
-				'				</div>\n' +
-				'				<div id="btn-select" style="float: right; display: none">\n' +
+				'				<div id="btn-select" style=" display: none">\n' +
 				'					<span class="btn btn-default" data-dismiss="modal">取消</span>\n' +
 				'					<span class="btn btn-primary">确认</span>\n' +
 				'				</div>\n' +
@@ -288,7 +276,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'	</div>\n' +
 				'</div>';
 
-			dialog['basicDialog'] = '<textarea id="basictext" cols="120" rows="10"></textarea>'+
+			dialog['basicDialog'] = '<textarea id="basictext" cols="116" rows="10"></textarea>'+
 				'						<div class="help-block">'+
 				'							您还可以使用表情和链接。'+
 				'							<a class="emotion-triggers" href="javascript:;" onclick="initSelectEmotion();"><i class="fa fa-github-alt"></i> 表情</a>'+
@@ -341,15 +329,18 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'	</div>'+
 				'</div>';
 
-			dialog['voiceDialog'] ='<table class="table table-hover table-bordered" style="margin-bottom:0">'+
+			dialog['voiceDialog'] ='<table class="table table-hover we7-table" style="margin-bottom:0">'+
+				'						<col width=""/>'+	
+				'						<col width="150px"/>'+
+				'						<col width="180px"/>'+
 				'						<thead class="navbar-inner">'+
 				'							<tr>'+
 				'								<th>标题</th>'+
-				'								<th style="width:20%;text-align:center">创建时间</th>'+
-				'								<th style="width:20%;text-align:center"></th>'+
+				'								<th style="text-align:center">创建时间</th>'+
+				'								<th style="text-align:center"></th>'+
 				'							</tr>'+
-				'							</thead>'+
-				'							<tbody class="history-content">'+
+				'						</thead>'+
+				'						<tbody class="history-content">'+
 				'							<%var items = _.sortBy(items, function(item) {return -item.createtime;});%>' +
 				'							<%_.each(items, function(item) {%> \n' +
 				'							<tr>'+
@@ -366,15 +357,18 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						</tbody>'+
 				'					</table>';
 
-			dialog['videoDialog'] ='<table class="table table-hover table-bordered" style="margin-bottom:0">'+
+			dialog['videoDialog'] ='<table class="table table-hover we7-table" style="margin-bottom:0">'+
+				'						<col width=""/>'+	
+				'						<col width="150px"/>'+
+				'						<col width="180px"/>'+
 				'						<thead class="navbar-inner">'+
 				'							<tr>'+
 				'								<th>标题</th>'+
-				'								<th style="width:20%;text-align:center">创建时间</th>'+
-				'								<th style="width:10%;text-align:center"></th>'+
+				'								<th style="text-align:center">创建时间</th>'+
+				'								<th style="text-align:center"></th>'+
 				'							</tr>'+
-				'							</thead>'+
-				'							<tbody class="history-content">'+
+				'						</thead>'+
+				'						<tbody class="history-content">'+
 				'							<%var items = _.sortBy(items, function(item) {return -item.createtime;});%>' +
 				'							<%_.each(items, function(item) {%> \n' +
 				'							<tr>'+
@@ -391,7 +385,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						</tbody>'+
 				'					</table>';
 
-			dialog['wxcardDialog'] ='<table class="table table-hover table-bordered">\n'+
+			dialog['wxcardDialog'] ='<table class="table table-hover we7-table">\n'+
 				'				<thead>\n'+
 				'					<tr>\n'+
 				'						<th width="130" class="text-center">标题</th>\n'+
@@ -449,7 +443,7 @@ define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.
 				'						</div>'+
 				'					</div>'+
 				'					<%});%>';
-			dialog['keywordDialog'] = '<table class="table table-hover table-bordered" style="margin-bottom:0">'+
+			dialog['keywordDialog'] = '<table class="table table-hover we7-table" style="margin-bottom:0">'+
 				'						<thead class="navbar-inner">'+
 				'							<tr>'+
 				'								<th style="width:20%;text-align:center">规则名</th>'+

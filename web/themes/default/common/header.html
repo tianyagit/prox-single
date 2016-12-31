@@ -10,7 +10,7 @@
 				<ul class="nav navbar-nav navbar-left">
 					{php global $top_nav;}
 					{loop $top_nav $nav}
-						<li{if FRAME == $nav['name']} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}">{$nav['title']}</a></li>
+						<li{if FRAME == $nav['name']} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if $nav['title'] == '应用商城'}target="_blank"{/if}>{$nav['title']}</a></li>
 					{/loop}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
@@ -74,7 +74,7 @@
 						<span class="color-default"><a href="javascript:;">立即接入</a></span>
 					{/if}
 						<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default we7-margin-left"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
-						<span class="pull-right"><a href="{php echo url('account/system_display')}" class="color-default"><i class="wi wi-appsetting"></i>公众号设置</a></span>
+						<span class="pull-right"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="color-default"><i class="wi wi-appsetting"></i>公众号设置</a></span>
 						<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="wi wi-phone"></i>模拟测试</a></span>
 				{/if}
 				{if FRAME == 'system'}

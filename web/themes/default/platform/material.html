@@ -95,10 +95,10 @@
 					<div class="appmsg-opr">
 						<ul>
 							<li class="appmsg-opr-item">
-								<a href="{php echo url('platform/material_post/news', array('newsid' => $material['id']))}" class="">&nbsp;<i class="wi wi-text color-gray"></i></a>
+								<a href="{php echo url('platform/material_post/news', array('newsid' => $material['id']))}" class="">&nbsp;<i class="wi wi-text"></i></a>
 							</li>
 							<li class="appmsg-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['media_id']}')">&nbsp;<i class="wi wi-delect color-gray"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['media_id']}')">&nbsp;<i class="wi wi-delect"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -111,7 +111,7 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
-					<a href="javascript:;" class="btn btn-primary" ng-click="upload('image')">上传新图片</a>
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('image')">上传新图片</a>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -126,7 +126,7 @@
 					<div class="img-opr">
 						<ul>
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['media_id']}')">&nbsp;<i class="">删除</i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['media_id']}')">&nbsp;<i class="wi wi-delect"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -139,13 +139,13 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
-					<a href="javascript:;" class="btn btn-primary" ng-click="upload('voice')">上传语音</a>
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('voice')">上传语音</a>
 				</div>
 			</div>
 			<ul class="material-audio-list">
 				{loop $voice_list $voice}
 				<li class="material-audio-item">
-					<div class="audio-item AudioPlaying">
+					<div class="audio-item">
 						<div class="icon-audio-wrp">
 							<span class="icon-audio-msg"></span>
 						</div>
@@ -158,7 +158,7 @@
 					<div class="audio-opr">
 						<ul>
 							<li class="audio-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['media_id']}')">&nbsp;<i class="">删除</i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['media_id']}')">&nbsp;<i class="wi wi-delect"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -171,7 +171,7 @@
 			<div class="material-list-head clearfix">
 				<div class="action">
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
-					<a href="javascript:;" class="btn btn-primary" ng-click="upload('video')">上传视频</a>
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('video')">上传视频</a>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -188,7 +188,7 @@
 					<div class="img-opr">
 						<ul>
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['media_id']}')">&nbsp;<i class="">删除</i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['media_id']}')">&nbsp;<i class="wi wi-delect"></i></a>
 							</li>
 						</ul>
 					</div>

@@ -3,8 +3,6 @@
 <ul class="we7-page-tab">
 	<li {if $do == 'list'}class="active"{/if}><a href="{php echo url('article/news/list');}">新闻列表</a></li>
 	<li {if $do == 'category' || $do == 'category_post'}class="active"{/if}><a href="{php echo url('article/news/category');}">新闻分类</a></li>
-	<!--<li {if $do == 'post' && !$id}class="active"{/if}><a href="{php echo url('article/news/post');}">添加新闻</a></li>
-	{if $do == 'post' && $id}<li class="active"><a href="{php echo url('article/news/post');}">编辑新闻</a></li>{/if}-->
 </ul>
 {if $do == 'list'}
 <div class="clearfix">

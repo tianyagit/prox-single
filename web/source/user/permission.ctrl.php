@@ -5,13 +5,14 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-$_W['page']['title'] = '查看用户权限 - 用户管理';
 
 load()->model('setting');
 load()->model('module');
 
 $dos = array('deny', 'module');
 $do = in_array($do, $dos) ? $do: 'deny';
+uni_user_permission_check('system_account');
+$_W['page']['title'] = '查看用户权限 - 用户管理';
 
 $uid = intval($_GPC['uid']);
 $user = user_single($uid);

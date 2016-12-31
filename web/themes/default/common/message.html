@@ -26,7 +26,7 @@
 		</div>-->
 <div class="alert we7-page-alert media">
 	<a class="media-left media-middle">
-		<i class="wi wi-{if $label=='success'}right-sign{/if}{if $label=='danger'}warning-sign{/if}{if $label=='info'}info-sign{/if}{if $label=='warning'}error-sign{/if}"></i>
+		<i class="wi text-{$label} wi-{if $label=='success'}right-sign{/if}{if $label=='danger'}warning-sign{/if}{if $label=='info'}info-sign{/if}{if $label=='warning'}error-sign{/if}"></i>
 	</a>
 	<div class="media-body">
 		{if is_array($msg)}

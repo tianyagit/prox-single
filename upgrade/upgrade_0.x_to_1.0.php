@@ -59,11 +59,10 @@ if (!empty($users_permission)) {
 		}
 		$permission = implode('|', $permission);
 		if ($permission != $user_original_permission) {
-//			pdo_update('users_permission', array('permission' => $permission), array('id' => $user_permission['id']));
+			pdo_update('users_permission', array('permission' => $permission), array('id' => $user_permission['id']));
 		}
 	}
 }
-exit();//test;
 
 //添加图文素材的素材顺序字段
 if (!pdo_fieldexists('wechat_news', 'displayorder')) {

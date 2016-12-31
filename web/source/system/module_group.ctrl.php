@@ -9,7 +9,6 @@ load()->model('module');
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
-
 if ($do == 'save') {
 	$package_info = array(
 		'id' => intval($_GPC['id']),

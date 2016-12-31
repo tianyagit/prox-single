@@ -12,10 +12,11 @@
 		{if !empty($id)}<a href="{php echo url('site/category/post', array('id' => $id))}" class="btn btn-primary we7-padding-horizontal">编辑文章分类</a>{/if}
 	</div>
 </div>
+<form action="./index.php?c=platform&a=site&do=article&operation=del_category" class="we7-form" method="post">
 <table class="tabel we7-table article-list" id="js-wesite-category-display">
 	<col width="5px">
-	<col width="70px"/>
-	<col width="285px">
+	<col width="130px"/>
+	<col width="235px">
 	<col width="90px"/>
 	<col width=""/>
 	<tr>
@@ -25,15 +26,22 @@
 		<th>设为栏目</th>
 		<th>操作</th>
 	</tr>
-	<form action="./index.php?c=platform&a=site&do=article&operation=del_category" method="post">
 	{loop $category $row}
 		<tr>
-			<td><input type="checkbox" name="rid[]" value="{$row['id']}"></td>
+			<td>
+				<input type="checkbox" name="rid[]" id="rid-{$row['id']}" value="{$row['id']}">
+				<label for="rid-{$row['id']}">&nbsp;</label>
+			</td>
 			<td class="text-left">{$row['displayorder']}</td>
 			<td class="text-left">
 				<span>{$row['name']}</span>
 			</td>
-			<td><span>{php echo $row['nid'] ? '是' : '否'}</span></td>
+			<td>
+				<label>
+					<!--<input name="" id="" class="form-control" type="checkbox">-->
+					<div class="switch switch{php echo $row['enabled'] ? 'On' : 'Off'}"></div>
+				</label>
+			</td>
 			<td style="position: relative;" class="text-right">
 				<div class="link-group">
 					{if empty($row['parentid'])}
@@ -48,14 +56,22 @@
 		</tr>
 		{loop $children[$row['id']] $row}
 		<tr class="bg-light-gray">
-			<td><input type="checkbox" name="rid[]" value="{$row['id']}"></td>
+			<td>
+				<input type="checkbox" name="rid[]" id="rid-{$row['id']}" value="{$row['id']}">
+				<label for="rid-{$row['id']}">&nbsp;</label>
+			</td>
 			<td class="text-left">
 				<div class="pad-left">
 					{$row['displayorder']}
 				</div>
 			</td>
-			<td class="text-left"><span class="color-gray" style="margin-left: 50px;"></span>{$row['name']}</td>
-			<td><span>{php echo $row['enabled'] ? '是' : '否'}</span></td>
+			<td class="text-left"><span class="color-gray" style="margin-left: 50px;">{$row['name']}</span></td>
+			<td>
+				<label>
+					<!--<input name="" id="" class="form-control" type="checkbox">-->
+					<div class="switch switch{php echo $row['enabled'] ? 'On' : 'Off'}"></div>
+				</label>
+			</td>
 			<td style="position: relative;" class="text-right">
 				<div class="link-group">
 					<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}" class="color-default we7-margin-right-sm js-clip">复制链接</a>
@@ -67,15 +83,15 @@
 		</tr>
 		{/loop}
 	{/loop}
-		<tr>
-			<td colspan="2">
-				<input type="checkbox" name="select_all" id="select_all" value="1" style="margin-left:-10px">
-				<input type="submit" class="btn btn-danger" name="submit" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
-				<input type="hidden" name="token" value="{$_W['token']}" />			
-			</td>
-		</tr>
-	</form>
 </table>
+<div class="clearfix"></div>
+<div class="we7-margin-left">
+	<input type="checkbox" name="select_all" id="select_all" value="1" style="margin-left:-10px">
+	<label for="select_all">&nbsp;</label>
+	<input type="submit" class="btn btn-danger" name="submit" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
+	<input type="hidden" name="token" value="{$_W['token']}" />	
+</div>
+</form>
 <script>
 $('#select_all').click(function(){
 	$('.article-list :checkbox').prop('checked', $(this).prop('checked'));

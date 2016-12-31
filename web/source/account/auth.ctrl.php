@@ -11,6 +11,7 @@ set_time_limit(0);
 
 $dos = array('ticket', 'forward', 'test', 'confirm');
 $do = in_array($do, $dos) ? $do : 'forward';
+uni_user_permission_check('system_account');
 
 $account_platform = new WeiXinPlatform();
 

@@ -16,6 +16,12 @@
 		<li class="active">
 			<a href="{php echo url('profile/notify')}">邮件通知参数</a>
 		</li>
+		<li class="">
+			<a href="{php echo url('profile/passport/fans_sync')}">粉丝同步设置</a>
+		</li>
+		<li{if $do == 'register'} class="active"{/if}>
+		<a href="{php echo url('profile/passport/uc_setting')}">uc站点整合</a>
+		</li>
 	</ul>
 	<div class="we7-form">
 		<form action="" method="post">

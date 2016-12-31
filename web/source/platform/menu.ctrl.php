@@ -320,9 +320,9 @@ if($do == 'post') {
 	$status = $params['status'];
 	$groups = mc_fans_groups();
 	$languages = platform_menu_languages();
-	if($_W['isajax']) {	
+	if($_W['isajax'] && $_W['ispost']) {
 		set_time_limit(0);
-		$post = $post['group'];
+		$post = $_GPC['group'];
 		$menu = array();
 		if(!empty($post['button'])) {
 			foreach($post['button'] as $key => &$button) {
