@@ -66,7 +66,7 @@ if (!empty($users_permission)) {
 
 //添加图文素材的素材顺序字段
 if (!pdo_fieldexists('wechat_news', 'displayorder')) {
-	pdo_query('ALTER TABLE '. tablename('wechat_news')." ADD displayorder int(2) NOT NULL default 0");
+	pdo_query('ALTER TABLE '. tablename('wechat_news')." ADD `displayorder` INT(2) NOT NULL DEFAULT '0'");
 }
 
 //转移模块快捷菜单数据到uni_account_modules表，废弃之前存在uni_settings中的shortcuts
@@ -82,7 +82,7 @@ if (pdo_fieldexists('uni_settings', 'shortcuts')) {
 }
 //修改用户avater字段长度
 if(pdo_fieldexists('users_profile', 'avatar')) {
-	pdo_query("ALTER TABLE ".tablename('users_profile')." CHANGE `avatar` `avatar` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '';");
+	pdo_query("ALTER TABLE ".tablename('users_profile')." CHANGE `avatar` `avatar` VARCHAR(255) NOT NULL DEFAULT '';");
 }
 $shortcuts = pdo_getall('uni_settings', array(), array('shortcuts', 'uniacid'));
 if (!empty($shortcuts)) {
@@ -112,7 +112,7 @@ if (!empty($shortcuts)) {
 
 //增加模块和公众号拼音索引
 if (!pdo_fieldexists('modules', 'title_initial')) {
-	pdo_query("ALTER TABLE `ims_modules` ADD `title_initial` VARCHAR(1) NOT NULL DEFAULT '';");
+	pdo_query("ALTER TABLE ". tablename('modules') ." ADD `title_initial` VARCHAR(1) NOT NULL DEFAULT '';");
 }
 $modules = pdo_getall('modules', array(), array('name', 'mid', 'title'));
 if (!empty($modules)) {
@@ -124,7 +124,7 @@ if (!empty($modules)) {
 
 //uni_account是否存在letter字段，否则添加并更新（切换公众号拼音索引功能）
 if(!pdo_fieldexists('uni_account', 'letter')) {
-	$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `letter` VARCHAR(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'title首字母' , ADD FULLTEXT (`letter`)");
+	$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `letter` VARCHAR(1) NOT NULL COMMENT 'title首字母' , ADD FULLTEXT (`letter`)");
 	if($add_letter) {
 		$sql = '';
 		$all_account = pdo_fetchall("SELECT uniacid,name FROM ". tablename('uni_account'));
@@ -139,7 +139,7 @@ if(!pdo_fieldexists('uni_account', 'letter')) {
 
 //切换公众号置顶功能
 if(!pdo_fieldexists('uni_account', 'rank')) {
-	pdo_query("ALTER TABLE `ims_uni_account` CHANGE `rank` `rank` INT(10) NULL DEFAULT '0';");
+	pdo_query("ALTER TABLE ". tablename('uni_account') ." CHANGE `rank` `rank` INT(10) NULL DEFAULT '0';");
 }
 
 if (!pdo_fieldexists('core_menu', 'group_name')) {
