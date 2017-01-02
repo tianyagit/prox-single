@@ -9,6 +9,8 @@ load()->model('module');
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
+uni_user_permission_check('system_module_group');
+
 if ($do == 'save') {
 	$package_info = array(
 		'id' => intval($_GPC['id']),

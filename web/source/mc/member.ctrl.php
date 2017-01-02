@@ -10,6 +10,8 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('mc');
 
+uni_user_permission_check('mc_member');
+
 $dos = array('display', 'post','del', 'add', 'group', 'credit_record', 'credit_stat', 'register_setting', 'credit_setting', 'save_credit_setting', 'save_tactics_setting');
 $do = in_array($do, $dos) ? $do : 'display';
 

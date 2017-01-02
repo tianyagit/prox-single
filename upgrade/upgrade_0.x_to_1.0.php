@@ -147,3 +147,11 @@ if (!pdo_fieldexists('core_menu', 'group_name')) {
 }
 //增大缓存表字段长度
 pdo_query("ALTER TABLE ". tablename('core_cache'). " CHANGE `value` `value` LONGTEXT NOT NULL;");
+
+//自动回复功能调整
+if(!pdo_fieldexists('rule', 'containtype')) {
+	pdo_query("ALTER TABLE ". tablename('rule') ." ADD `containtype` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '包含的回复类型（如文字、图文、语音等）';");
+}
+if(!pdo_fieldexists('rule', 'reply_type')) {
+	pdo_query("ALTER TABLE ". tablename('rule') ." ADD `reply_type` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '匹配关键字类型：1、混合；2、单一';");
+}
