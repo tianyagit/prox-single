@@ -6,16 +6,18 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
-
-$dos = array('check_upgrade', 'upgrade', 'install', 'installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
-$do = in_array($do, $dos) ? $do : 'installed';
-
 load()->model('extension');
 load()->model('cloud');
 load()->model('cache');
 load()->model('module');
 load()->model('account');
+include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
+
+$dos = array('check_upgrade', 'upgrade', 'install', 'installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
+$do = in_array($do, $dos) ? $do : 'installed';
+
+uni_user_permission_check('system_module');
+
 if ($do == 'check_upgrade') {
 	$module_list = $_GPC['module_list'];//test
 	if (!empty($module_list) && is_array($module_list)) {
