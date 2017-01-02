@@ -39,7 +39,6 @@
 				<div class="pull-right">
 					<a href="javascript:;" ng-click="sync('{$type}')" class="btn btn-default">同步微信</a>
 					<a href="{php echo url('platform/material_post')}" class="btn btn-primary we7-margin-left">新建图文消息</a>
-					
 				</div>
 			</div>
 			<div class="material-appmsg-list">
@@ -94,6 +93,9 @@
 					</div>
 					<div class="appmsg-opr">
 						<ul>
+							<li class="appmsg-opr-item">
+								<a href="javascript:;" class="" ng-click="checkGroup('news', {$material['id']})">群发</a>
+							</li>
 							<li class="appmsg-opr-item">
 								<a href="{php echo url('platform/material_post/news', array('newsid' => $material['id']))}" class="">&nbsp;<i class="wi wi-text"></i></a>
 							</li>
@@ -198,6 +200,25 @@
 		</div>
 		{/if}
 	</div>
+	<div class="modal fade" id="check-group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title" id="myModalLabel">选择群发的粉丝组</h4>
+				</div>
+				<div class="modal-body">
+					<select class="form-control" ng-model="group">
+						<option value="">请选择粉丝组</option>
+						<option ng-repeat="group in groups" value="{{ group.id }}">{{ group.name }}</option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="sendMaterial()">发送</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <div class="pull-right">
 	{$pager}
@@ -207,7 +228,9 @@
 		//同步素材
 		angular.module('materialApp').value('config', {
 			'del_url' : "{php echo url('platform/material/del_material')}",
-			'sync_url' : "{php echo url('platform/material/sync')}"
+			'sync_url' : "{php echo url('platform/material/sync')}",
+			'send_url' : "{php echo url('platform/material/send')}",
+			'group' : {php echo json_encode($group)}
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
 

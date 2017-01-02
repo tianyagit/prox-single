@@ -6,17 +6,54 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('material');
+load()->model('mc');
 
-$dos = array('display', 'sync', 'del_material');
+$dos = array('display', 'sync', 'del_material', 'send');
 $do = in_array($do, $dos) ? $do : 'display';
 
 uni_user_permission_check('platform_material');
 
 $_W['page']['title'] = '永久素材-微信素材';
 
+if($do == 'send') {
+	$group = intval($_GPC['group']);
+	$type = trim($_GPC['type']);
+	$id = intval($_GPC['id']);
+	$media = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	if(empty($media)) {
+		message(error(1, '素材不存在'), '', 'ajax');
+	}
+	$media_id = trim($media['media_id']);
+	$account_api = WeAccount::create();
+	$result = $account_api->fansSendAll($group, $type, $media['media_id']);
+	if(is_error($result)) {
+		message(error(1, $result['message']), '', 'ajax');
+	}
+
+	$groups = pdo_get('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']));
+	if(!empty($groups)) {
+		$groups = iunserializer($groups['groups']);
+	}
+	$record = array(
+		'uniacid' => $_W['uniacid'],
+		'acid' => $_W['acid'],
+		'groupname' => $groups[$group]['name'],
+		'fansnum' => $groups[$group]['count'],
+		'msgtype' => $type,
+		'group' => $group,
+		'attach_id' => $id,
+		'status' => 0,
+		'type' => 0,
+		'sendtime' => TIMESTAMP,
+		'createtime' => TIMESTAMP,
+	);
+	pdo_insert('mc_mass_record', $record);
+	message(error(0), '', 'ajax');
+}
+
 if($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-
+	$group = mc_fans_groups(true);
 	if ($type == 'news') {
 		$condition = " as a RIGHT JOIN " . tablename('wechat_news') . " as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND a.model = :model AND a.media_id != ''";
 		$params = array(':uniacid' => $_W['uniacid'], ':type' => $type, ':model' => 'perm');

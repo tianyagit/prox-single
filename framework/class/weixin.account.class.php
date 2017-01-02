@@ -1462,7 +1462,7 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/update_news?access_token={$token}";
-		$response = ihttp_request($url, urldecode(json_encode($data)));
+		$response = ihttp_request($url, stripslashes(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
 		if(is_error($response)) {
 			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
 		}
@@ -1574,7 +1574,6 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token={$token}";
-		
 		$data = stripslashes(urldecode(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
 		$response = $this->requestApi($url, $data);
 		if (is_error($response)) {
