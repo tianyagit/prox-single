@@ -65,10 +65,11 @@ if($do == 'display') {
 		}
 		$pageindex = max(1, intval($_GPC['page']));
 		$pagesize = 21;
-		$limit = " ORDER BY createtime DESC, b.id ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
+		$limit = " ORDER BY a.createtime DESC, b.id ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
 		$total = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition, $params);
 		$total = count($total);
 		$material_list = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition . $limit, $params, 'id');
+
 		if (!empty($material_list)) {
 			foreach ($material_list as &$material) {
 				if ($type == 'video') {
@@ -139,15 +140,16 @@ if ($do == 'sync') {
 	$type = empty($_GPC['type']) ? 'news' : $_GPC['type'];
 	$news_list = $account_api->batchGetMaterial($type, ($pageindex-1)*20);
 	$wechat_existid = empty($_GPC['wechat_existid']) ? array() : $_GPC['wechat_existid'];
-	$wechat_existid = syncMaterial($news_list['item'], $wechat_existid, $type);
 	if ($pageindex == 1) {
 		$original_newsid = pdo_getall('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => $type, 'model' => 'perm'), array('id'), 'id');
 		$original_newsid = array_keys($original_newsid);
+		$wechat_existid = syncMaterial($news_list['item'], array(), $type);
 		if ($news_list['total_count'] > 20) {
 			$total = ceil($news_list['total_count']/20);
 			message(error('1', array('type' => $type,'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
 		}
 	} else {
+		$wechat_existid = syncMaterial($news_list['item'], $wechat_existid, $type);
 		$total = intval($_GPC['total']);
 		$original_newsid = $_GPC['original_newsid'];
 		if ($total != $pageindex) {
