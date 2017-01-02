@@ -203,6 +203,15 @@ function buildframes($framename = ''){
 				'is_display' => 1,
 			);
 		}
+		if (!empty($entries['cover'])) {
+			foreach ($entries['cover'] as $key => $menu) {
+				$frames['account']['section']['platform_module_common']['menu']['platform_module_cover'][] = array(
+					'title' => "{$menu['title']}",
+					'url' => url('platform/cover', array('eid' => $menu['eid'])),
+					'is_display' => 0,
+				);
+			}
+		}
 		if (!empty($entries['menu'])) {
 			$frames['account']['section']['platform_module_menu']['title'] = '业务菜单';
 			foreach($entries['menu'] as $key => $row) {

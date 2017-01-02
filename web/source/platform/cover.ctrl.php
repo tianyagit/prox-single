@@ -7,34 +7,30 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('reply');
 load()->model('module');
 
-$dos = array('mc', 'card', 'module', 'clerk');
+$dos = array('module');
 $do = in_array($do, $dos) ? $do : 'module';
 
 uni_user_permission_check('platform_cover_' . $do, true, 'cover');
-$entries['mc']['title'] = '个人中心入口设置';
-$entries['mc']['module'] = 'mc';
-$entries['mc']['do'] = '';
-$entries['mc']['url'] = url('mc/home', array('i' => $_W['uniacid']));
-$entries['mc']['url_show'] = murl('mc/home', array(), true, true); //用于显示的url
 
-$entries['card']['title'] = '会员卡入口设置';
-$entries['card']['module'] = 'card';
-$entries['card']['do'] = '';
-$entries['card']['url'] = url('mc/card/mycard', array('i' => $_W['uniacid']));
-$entries['card']['url_show'] = murl('mc/card/mycard', array(), true, true);
-
-$entries['clerk']['title'] = '收银台关键字设置';
-$entries['clerk']['module'] = 'clerk';
-$entries['clerk']['do'] = '';
-$entries['clerk']['url'] = url('entry', array('i' => $_W['uniacid'],'do' => 'home', 'm' => 'paycenter'));
-$entries['clerk']['url_show'] = murl('entry', array('m' => 'paycenter', 'do' => 'home'), true, true);
-
-if($do != 'module') {
-	$entry = $entries[$do];
-	if($do == 'mc') {
-		$_W['page']['title'] = '个人中心入口设置 - 会员中心访问入口- 会员中心';
+if($do == 'module') {
+	$modulename = $_GPC['m'];
+	$module = $_W['current_module'] = module_fetch($modulename);
+	if (empty($module)) {
+		message('模块不存在或是未安装');
 	}
-} else {
+	if (!empty($module['isrulefields'])) {
+		$url = url('platform/reply', array('m' => $module['name']));
+	}
+	if (empty($url)) {
+		$url = url('platform/cover', array('m' => $module['name']));
+	}
+	define('ACTIVE_FRAME_URL', $url);
+	
+	$entries = module_entries($modulename);
+	$cover_list = pdo_getall('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
+	print_r($cover_list);exit;
+	
+} elseif ($do == 'post') {
 	$eid = intval($_GPC['eid']);
 	if(empty($eid)) {
 		message('访问错误');
@@ -45,26 +41,17 @@ if($do != 'module') {
 	}
 	$module = module_fetch($entry['module']);
 	$cover['title'] = $entry['title'];
-	//nav
-	define('FRAME', 'ext');
-	$types = module_types();
-
-	if(!$GLOBALS['ext_type']) {
-		define('ACTIVE_FRAME_URL', url('platform/cover', array('eid' => $entry['eid'])));
-	} else {
-		define('ACTIVE_FRAME_URL', url('home/welcome/ext', array('m' => $entry['module'])));
+	
+	if (!empty($module['isrulefields'])) {
+		$url = url('platform/reply', array('m' => $module['name']));
 	}
-	$frames = buildframes(array(FRAME));
-	$frames = $frames[FRAME];
-	//nav end
+	if (empty($url) && !empty($entries['cover'])) {
+		$url = url('platform/cover', array('eid' => $eid));
+	}
+	define('ACTIVE_FRAME_URL', $url);
 }
 
-$sql = "SELECT * FROM " . tablename('cover_reply') . ' WHERE `module` = :module AND `do` = :do AND uniacid = :uniacid';
-$pars = array();
-$pars[':module'] = $entry['module'];
-$pars[':do'] = $entry['do'];
-$pars[':uniacid'] = $_W['uniacid'];
-$cover = pdo_fetch($sql, $pars);
+$cover = pdo_get('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
 
 if(!empty($cover)) {
 	$cover['saved'] = true;
