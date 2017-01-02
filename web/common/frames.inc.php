@@ -85,6 +85,10 @@ $we7_system_menu['account'] = array(
 				)
 			),
 		),
+		'platform_module' => array(
+			'title' => '应用模块',
+			'menu' => array(),
+		),
 		'mc' => array(
 			'title' => '粉丝',
 			'menu' => array(
@@ -112,10 +116,6 @@ $we7_system_menu['account'] = array(
 					'permission_name' => 'profile_setting',
 				)
 			),
-		),
-		'platform_module' => array(
-			'title' => '应用模块',
-			'menu' => array(),
 		),
 	),
 );
