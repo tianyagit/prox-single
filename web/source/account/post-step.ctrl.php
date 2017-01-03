@@ -252,6 +252,15 @@ if($step == 1) {
 		}
 	}
 	$unigroups = uni_groups();
+	if(!empty($unigroups['modules'])) {
+		foreach ($unigroups['modules'] as $module_key => $module_val) {
+			if(file_exists(IA_ROOT.'/addons/'.$module_val['name'].'/icon-custom.jpg')) {
+				$unigroups['modules'][$module_key]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_val['name'].'/icon-custom.jpg');
+			}else {
+				$unigroups['modules'][$module_key]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_val['name'].'/icon.jpg');
+			}
+		}
+	}
 	$settings = uni_setting($uniacid, array('notify'));
 
 	$notify = $settings['notify'] ? $settings['notify'] : array();
@@ -266,6 +275,16 @@ if($step == 1) {
 	$extend['templates'] = iunserializer($extend['templates']);
 	if (!empty($extend['modules'])) {
 		$owner['extend']['modules'] = pdo_getall('modules', array('name' => $extend['modules']));
+		if (!empty($owner['extend']['modules'])) {
+			foreach ($owner['extend']['modules'] as &$extend_module) {
+				if (file_exists(IA_ROOT.'/addons/'.$extend_module['name'].'/icon-custom.jpg')) {
+					$extend_module['logo'] = tomedia(IA_ROOT.'/addons/'.$extend_module['name'].'/icon-custom.jpg');
+				} else {
+					$extend_module['logo'] = tomedia(IA_ROOT.'/addons/'.$extend_module['name'].'/icon.jpg');
+				}
+			}
+			unset($extend_module);
+		}
 	}
 	if (!empty($extend['templates'])) {
 		$owner['extend']['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']));

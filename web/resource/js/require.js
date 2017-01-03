@@ -62,9 +62,14 @@ require.config({
 		'jquery.wookmark': '../lib/jquery.wookmark.min',
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
+		/*toast组件*/
+		'jquery.toast': '../../components/toast/toastr.min',
+
 		'underscore': '../lib/underscore-min',
 		'biz': '../lib/biz',
 		'loadcss': '../lib/css.min', //加载CSS
+		/*复制组件（部分浏览器不兼容flash）*/
+		'clipboard' : '../lib/clipboard.min',
 	},
 	shim:{
 		'jquery' : {
@@ -117,6 +122,9 @@ require.config({
 		},
 		'jquery.jplayer': {
 			exports: "$"
+		},
+		'jquery.toast': {
+			deps: ['loadcss!../../components/toast/toastr.min.css']
 		},
 		'emoji': {
 			deps: ['loadcss!../../components/emoji/emotions.css']

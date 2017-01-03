@@ -13,6 +13,10 @@ if ($do == 'platform') {
 	
 	template('home/welcome');
 } elseif ($do == 'ext') {
-	
+	$modulename = $_GPC['m'];
+	if (!empty($modulename)) {
+		$modules = uni_modules();
+		$_W['current_module'] = $modules[$modulename];
+	}
 	template('home/welcome-ext');
 }

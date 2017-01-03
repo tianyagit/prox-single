@@ -180,7 +180,8 @@ if($do == 'display') {
 	message('模块置顶成功', referer(), 'success');
 } elseif ($do == 'setting') {
 	$modulename = $_GPC['m'];
-	$module = $modulelist[$modulename];
+	$module = $_W['current_module'] = $modulelist[$modulename];
+	
 	if(empty($module)) {
 		message('抱歉，你操作的模块不能被访问！');
 	}

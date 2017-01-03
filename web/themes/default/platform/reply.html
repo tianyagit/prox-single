@@ -15,8 +15,9 @@
 	</div>
 	<ul class="we7-page-tab">
 		<li class="active"><a href="{url 'platform/reply' array('m' => $m)}">关键字链接入口 </a></li>
-		<li><a href="javascript:;">微官网入口设置</a></li>
-		<li><a href="javascript:;">个人中心入口设置</a></li>
+		{if !empty($frames['section']['platform_module_common']['menu']['platform_module_cover'])}
+		<li><a href="{url 'platform/cover' array('m' => $m)}">封面链接入口</a></li>
+		{/if}
 	</ul>	
 {/if}
 {if $m == 'keyword' || !in_array($m, $sysmods)}

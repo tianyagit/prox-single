@@ -1,0 +1,68 @@
+{template 'common/header'}
+<div class="we7-page-title">
+	入口设置
+</div>
+<ul class="we7-page-tab">
+	<li><a href="{url 'platform/reply' array('m' => $modulename)}">关键字链接入口 </a></li>
+	{if !empty($frames['section']['platform_module_common']['menu']['platform_module_cover'])}
+	<li class="active"><a href="{url 'platform/cover' array('m' => $modulename)}">封面链接入口</a></li>
+	{/if}
+</ul>
+{if $do == 'module'}
+	<div id="js-keyword-display" ng-controller="KeywordDisplay" ng-cloak>
+		<table class="table we7-table vertical-middle">
+			<col width="115px"/>
+			<col width="200px" />
+			<col width="" />
+			<col width="250px" />
+			<col />
+			<tr>
+				<th>二维码</th>
+				<th class="text-left">入口名称</th>
+				<th>关键字</th>
+				<th class="text-left">操作</th>
+			</tr>
+			{loop $entries['cover'] $menu}
+			<tr>
+				<td data-url="{$_W['siteroot']}app/{$menu['url']}" class="js-url-qrcode"> 
+					<div class="qrcode-block"><canvas width="100" height="100"></canvas></div>
+				</td>
+				<td class="text-left">{$menu['title']}</td>
+				<td>
+					{loop $menu['cover']['rule']['keywords'] $kw}
+					<span class="form-control-static keyword-tag" data-toggle="tooltip" data-placement="bottom" title="{if $kw['type']==1}等于{elseif $kw['type']==2}包含{elseif $kw['type']==3}正则{/if}">{$kw['content']}</span>&nbsp;
+					{/loop}
+				</td>
+				<td class="text-left">
+					<div class="link-group" style="position:relative;">
+						<a href="" class="color-default we7-margin-right">编辑</a>
+						<a href="javascript:;" data-url="{$_W['siteroot']}app/{$menu['url']}" style="margin-right:0px;" class="color-default js-clip">复制链接</a>
+					</div>
+				</td>
+			</tr>
+			{/loop}
+		</table>
+	</div>
+{/if}
+<script type="text/javascript">
+<!--
+	$(function() {
+		require(['jquery.qrcode'], function(){
+			$('.js-url-qrcode').each(function(){
+				url = $(this).data('url');
+				$(this).find('.qrcode-block').html('').qrcode({
+					render: 'canvas',
+					width: 100,
+					height: 100,
+					text: url
+				});
+			});
+		});
+		$('.js-clip').each(function(){
+			util.clip(this, $(this).data('url'));
+		});
+	});
+	angular.bootstrap($('#js-keyword-display'), ['replyFormApp']);
+//-->
+</script>
+{template 'common/footer'}
