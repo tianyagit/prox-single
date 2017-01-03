@@ -12,6 +12,7 @@ function syncMaterial($material, $exist_material, $type) {
 	global $_W;
 	$material = empty($material) ? array() : $material;
 	foreach ($material as $news) {
+		$attachid = '';
 		$material_exist = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $news['media_id']));
 		if (empty($material_exist)) {
 			$material_data = array(
@@ -33,6 +34,7 @@ function syncMaterial($material, $exist_material, $type) {
 				$material_data['tag'] = iserializer(array('title' => $news['name']));
 			}
 			pdo_insert('wechat_attachment', $material_data);
+			$attachid = pdo_insertid();
 		} else {
 			if ($type == 'image') {
 				$material_data = array(
@@ -60,11 +62,12 @@ function syncMaterial($material, $exist_material, $type) {
 			$exist_material[] = $material_exist['id'];
 		}
 		if ($type == 'news') {
-			pdo_delete('wechat_news', array('uniacid' =>$_W['uniacid'], 'attach_id' => $material_exist['id']));
+			$attachid = empty($attachid) ? $material_exist['id'] : $attachid;
+			pdo_delete('wechat_news', array('uniacid' =>$_W['uniacid'], 'attach_id' => $attachid));
 			foreach ($news['content']['news_item'] as $key => $new) {
 				$new_data = array(
 					'uniacid' => $_W['uniacid'],
-					'attach_id' => $material_exist['id'],
+					'attach_id' => $attachid,
 					'thumb_media_id' => $new['thumb_media_id'],
 					'thumb_url' => $new['thumb_url'],
 					'title' => $new['title'],

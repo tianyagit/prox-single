@@ -405,18 +405,10 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/get_current_selfmenu_info?access_token={$token}";
-		$response = ihttp_get($url);
-		if(is_error($response)) {
-			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
-		}
-		$result = @json_decode($response['content'], true);
-		//46003代表没有设置自定义菜单
-		if(!empty($result['errcode']) && $result['errcode'] != '46003') {
-			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
-		}
+		$result = $this->requestApi($url);
 		return $result;
 	}
-	
+
 	public function menuQuery() {
 		$token = $this->getAccessToken();
 		if(is_error($token)){
@@ -1462,7 +1454,7 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/update_news?access_token={$token}";
-		$response = ihttp_request($url, urldecode(json_encode($data)));
+		$response = ihttp_request($url, stripslashes(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
 		if(is_error($response)) {
 			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
 		}
@@ -1574,7 +1566,6 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token={$token}";
-		
 		$data = stripslashes(urldecode(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
 		$response = $this->requestApi($url, $data);
 		if (is_error($response)) {

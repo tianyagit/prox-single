@@ -64,6 +64,7 @@ if($step == 1) {
 				'name' => $name,
 				'description' => $description,
 				'groupid' => 0,
+				'createtime' => TIMESTAMP,
 			);
 			if (!pdo_insert('uni_account', $data)) {
 				message('添加公众号失败');
