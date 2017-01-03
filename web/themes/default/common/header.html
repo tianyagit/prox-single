@@ -1,5 +1,28 @@
 {template 'common/header-base'}
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
+{if empty($_COOKIE['check_setmeal']) && !empty($_W['account']['endtime']) && ($_W['account']['endtime'] - TIMESTAMP < (6*86400))}
+
+	<div class="upgrade-tips we7-body-alert" id="setmeal-tips">
+		<div class="alert-info text-center">
+			<a href="{php echo url('user/edit', array('uid' => $_W['account']['uid']));}" target="_blank">
+				您的服务有效期限：{php echo date('Y-m-d', $_W['account']['starttime']);} ~ {php echo date('Y-m-d', $_W['account']['endtime']);}.
+				{if $_W['account']['endtime'] < TIMESTAMP}
+				目前已到期，请联系管理员续费
+				{else}
+				将在{php echo floor(($_W['account']['endtime'] - strtotime(date('Y-m-d')))/86400);}天后到期，请及时付费
+				{/if}
+			</a>
+			<span class="tips-close" onclick="check_setmeal_hide();"><i class="wi wi-error-sign"></i></span>
+		</div>
+	</div>
+	<script>
+		function check_setmeal_hide() {
+			util.cookie.set('check_setmeal', 1, 1800);
+			$('#setmeal-tips').hide();
+			return false;
+		}
+	</script>
+{/if}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container">
@@ -15,19 +38,19 @@
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li class="dropdown">
-						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>{$_W['user']['username']} ({if $_W['role'] == 'founder'}系统管理员{elseif $_W['role'] == 'manager'}公众号管理员{else}公众号操作员{/if}) <span class="caret"></span></a>
-						<ul class="dropdown-menu" role="menu">
+						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="wi wi-user color-gray"></i>{$_W['user']['username']} ({if $_W['role'] == 'founder'}系统管理员{elseif $_W['role'] == 'manager'}公众号管理员{else}公众号操作员{/if}) <span class="caret"></span></a>
+						<ul class="dropdown-menu color-gray" role="menu">
 							<li>
-								<a href="{url 'user/profile'}" target="_blank"><i class="fa fa-weixin fa-fw"></i> 我的账号</a>
+								<a href="{url 'user/profile'}" target="_blank"><i class="wi wi-account color-gray"></i> 我的账号</a>
 							</li>
 							{if $_W['isfounder']}
 							<li class="divider"></li>
-							<li><a href="{url 'cloud/upgrade'}" target="_blank"><i class="fa fa-cloud-download fa-fw"></i> 自动更新</a></li>
-							<li><a href="{url 'system/updatecache'}" target="_blank"><i class="fa fa-refresh fa-fw"></i> 更新缓存</a></li>
+							<li><a href="{url 'cloud/upgrade'}" target="_blank"><i class="wi wi-update color-gray"></i> 自动更新</a></li>
+							<li><a href="{url 'system/updatecache'}" target="_blank"><i class="wi wi-cache color-gray"></i> 更新缓存</a></li>
 							<li class="divider"></li>
 							{/if}
 							<li>
-								<a href="{url 'user/logout'}"><i class="fa fa-sign-out fa-fw"></i> 退出系统</a>
+								<a href="{url 'user/logout'}"><i class="fa fa-sign-out color-gray"></i> 退出系统</a>
 							</li>
 						</ul>
 					</li>
@@ -36,25 +59,6 @@
 		</div>
 	</nav>
 </div>
-{if empty($_COOKIE['check_setmeal']) && !empty($_W['account']['endtime']) && ($_W['account']['endtime'] - TIMESTAMP < (6*86400))}
-	<div class="upgrade-tips" id="setmeal-tips">
-		<a href="{php echo url('user/edit', array('uid' => $_W['account']['uid']));}" target="_blank">
-			您的服务有效期限：{php echo date('Y-m-d', $_W['account']['starttime']);} ~ {php echo date('Y-m-d', $_W['account']['endtime']);}.
-			{if $_W['account']['endtime'] < TIMESTAMP}
-			目前已到期，请联系管理员续费
-			{else}
-			将在{php echo floor(($_W['account']['endtime'] - strtotime(date('Y-m-d')))/86400);}天后到期，请及时付费
-			{/if}
-		</a><span class="tips-close" style="background:#d03e14;" onclick="check_setmeal_hide();"><i class="fa fa-times-circle"></i></span>
-	</div>
-	<script>
-		function check_setmeal_hide() {
-			util.cookie.set('check_setmeal', 1, 1800);
-			$('#setmeal-tips').hide();
-			return false;
-		}
-	</script>
-{/if}
 <div class="main">
 	<div class="container">
 		{if in_array(FRAME, array('account', 'system'))}
@@ -62,7 +66,7 @@
 			<div class="content-head panel-heading">
 				{if !empty($_GPC['m']) || defined('IN_MODULE')}
 					<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-cricle"></i></a>
-					<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon.jpg")}" class="head-logo" onerror="this.src='./resource/images/gw-wx.gif'">
+					<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					<span class="font-lg">{$_W['current_module']['title']}</span>
 				{elseif FRAME == 'account'}
 					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo" onerror="this.src='./resource/images/gw-wx.gif'">
@@ -78,7 +82,7 @@
 						<span class="color-default"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}">立即接入</a></span>
 					{/if}
 						<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default we7-margin-left"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
-						<span class="pull-right"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="color-default"><i class="wi wi-appsetting"></i>公众号设置</a></span>
+						<span class="pull-right"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}"><i class="wi wi-appsetting"></i>公众号设置</a></span>
 						<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="wi wi-phone"></i>模拟测试</a></span>
 				{/if}
 				{if FRAME == 'system'}
@@ -101,7 +105,7 @@
 									<a href="{$menu['url']}" class="text-over">
 										{if $menu['icon']}
 											{if $sectionid == 'platform_module'}
-												<img src="{$menu['icon']}" onerror="this.src='resource/images/nopic-small.jpg'"/>
+												<img src="{$menu['icon']}"/>
 											{else}
 												<i class="{$menu['icon']}"></i>
 											{/if}
