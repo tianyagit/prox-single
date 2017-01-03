@@ -204,7 +204,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_cloud_sms' => array(
 					'title' => '短信管理',
-					'url' => url('system/user/group'),
+					'url' => url('cloud/redirect'),
 					'icon' => 'wi wi-message',
 					'permission_name' => 'system_cloud_sms',
 				),
