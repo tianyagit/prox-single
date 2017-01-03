@@ -162,7 +162,7 @@
 				<a href="{php echo url('mc/fans', array('follow' => $follow, 'nickname' => $nickname, 'tag' => 0, 'time[start]' => date('Y-m-d', $starttime), 'time[end]' => date('Y-m-d', $endtime)))}">全部用户（{$fans['total']}）</a>
 			</dt>
 			{loop $fans_tag $tag_info}
-			<dd class="fans-group-item active">
+			<dd class="fans-group-item {if $tag == $tag_info['id']}active{/if}">
 				<a href="{php echo url('mc/fans', array('follow' => $follow, 'nickname' => $nickname, 'tag' => $tag_info['id'], 'time[start]' => date('Y-m-d', $starttime), 'time[end]' => date('Y-m-d', $endtime)))}">{$tag_info['name']}（{$tag_info['count']}）</a>
 			</dd>
 			{/loop}
