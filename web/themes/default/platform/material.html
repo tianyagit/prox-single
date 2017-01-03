@@ -37,7 +37,9 @@
 					</div>
 				</div>
 				<div class="pull-right">
+					{if $_W['account']['level'] > 2}
 					<a href="javascript:;" ng-click="sync('{$type}')" class="btn btn-default">同步微信</a>
+					{/if}
 					<a href="{php echo url('platform/material_post')}" class="btn btn-primary we7-margin-left">新建图文消息</a>
 				</div>
 			</div>
@@ -112,7 +114,9 @@
 		<div class="material-appmsg">
 			<div class="material-list-head clearfix">
 				<div class="action">
+					{if $_W['account']['level'] > 2}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
+					{/if}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('image')">上传新图片</a>
 				</div>
 			</div>
@@ -143,7 +147,9 @@
 		<div class="material-appmsg">
 			<div class="material-list-head clearfix">
 				<div class="action">
+					{if $_W['account']['level'] > 2}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
+					{/if}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('voice')">上传语音</a>
 				</div>
 			</div>
@@ -178,7 +184,9 @@
 		<div class="material-appmsg">
 			<div class="material-list-head clearfix">
 				<div class="action">
+					{if $_W['account']['level'] > 2}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
+					{/if}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('video')">上传视频</a>
 				</div>
 			</div>
