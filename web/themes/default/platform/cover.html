@@ -9,7 +9,7 @@
 	{/if}
 </ul>
 {if $do == 'module'}
-	{loop $frames['section']['platform_module_common']['menu']['platform_module_cover'] $menu}
+	{loop $entries['cover'] $menu}
 	<table class="table we7-table">
 		<col />
 		<col width="120px"/>
@@ -20,11 +20,11 @@
 					<label for="rid-{$row['id']}">规则名：{$menu['title']}</label>
 				</div>
 				<span class="pull-right">
-					{if $row['displayorder'] > 0}
-						{if $row['displayorder'] == '255'}
+					{if $menu['cover']['rule']['displayorder'] > 0}
+						{if $menu['cover']['rule']['displayorder'] == '255'}
 							<span class="label label-primary">置顶</span>
 						{else}
-							<span class="label label-info">优先级 {$row['displayorder']}</span>
+							<span class="label label-info">优先级 {$menu['cover']['rule']['displayorder']}</span>
 						{/if}
 					{/if}
 				</span>
@@ -38,7 +38,7 @@
 					<div class="form-inline">
 						<label for="" class="control-label">关&nbsp;键&nbsp;字</label>
 						<div class="form-controls">
-							{loop $row['keywords'] $kw}
+							{loop $menu['cover']['rule']['keywords'] $kw}
 							<p class="form-control-static keyword-tag" data-toggle="tooltip" data-placement="bottom" title="{if $kw['type']==1}等于{elseif $kw['type']==2}包含{elseif $kw['type']==3}正则{/if}">{$kw['content']}</p>&nbsp;
 							{if $kw['type'] == 4}<p class="form-control-static keyword-tag" data-toggle="tooltip" data-placement="bottom" title="托管">优先级在{$row['displayorder']}之下直接生效</p>{/if}
 							{/loop}
@@ -50,7 +50,7 @@
 			</td>
 			<td class="vertical-middle">
 				<label>
-					<div class="switch {if $row['status']} switchOn{/if}" id="key-{$row['id']}" ng-click="changeStatus({$row[id]})"></div>
+					<div class="switch {if $menu['cover']['rule']['status']} switchOn{/if}" id="key-{$row['id']}" ng-click="changeStatus({$row[id]})"></div>
 				</label>
 			</td>
 			<td class="vertical-middle text-left">
