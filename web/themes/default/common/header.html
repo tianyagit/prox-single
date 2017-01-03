@@ -10,7 +10,7 @@
 				<ul class="nav navbar-nav navbar-left">
 					{php global $top_nav;}
 					{loop $top_nav $nav}
-						<li{if FRAME == $nav['name']} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if $nav['title'] == '应用商城'}target="_blank"{/if}>{$nav['title']}</a></li>
+						<li{if FRAME == $nav['name']} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if $nav['title'] == '应用市场'}target="_blank"{/if}>{$nav['title']}</a></li>
 					{/loop}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">

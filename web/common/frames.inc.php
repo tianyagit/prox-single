@@ -120,11 +120,11 @@ $we7_system_menu['account'] = array(
 	),
 );
 
-$we7_system_menu['wxapp'] = array(
-	'title' => '小程序',
-	'section' => array(
-	),
-);
+// $we7_system_menu['wxapp'] = array(
+// 	'title' => '小程序',
+// 	'section' => array(
+// 	),
+// );
 
 $we7_system_menu['system'] = array(
 	'title' => '系统管理',
@@ -310,6 +310,12 @@ $we7_system_menu['system'] = array(
 			)
 		),
 	),
+);
+
+$we7_system_menu['appmarket'] = array(
+		'title' => '应用市场',
+		'url' => 'http://s.we7.cc',
+		'section' => array(),
 );
 
 return $we7_system_menu;
