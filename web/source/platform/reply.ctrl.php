@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('reply');
 load()->model('module');
 
-$dos = array('display', 'post', 'delete', 'change_status');
+$dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_status');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
@@ -27,14 +27,7 @@ $_W['page']['title'] = '自动回复';
 if(empty($m)) {
 	message('错误访问.');
 }
-if ($do == 'change_status') {
-	$status = $_GPC['status'];
-	$type = $_GPC['type'];
-	$setting = uni_setting_load('default_message', $_W['uniacid']);
-	$setting = $setting['default_message'];
-	$setting[$type]['type'] = $status;
-	$result = uni_setting_save('default_message', $setting);
-}
+
 if ($m == 'special') {
 	$mtypes = array(
 		'image' => '图片消息',
@@ -60,7 +53,6 @@ if(in_array($m, array('custom'))) {
 
 if($do == 'display') {
 	if ($m == 'keyword' || !in_array($m, $sysmods)) {
-
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 8;
 		$cids = $parentcates = $list =  array();
@@ -351,7 +343,17 @@ if($do == 'delete') {
 	message('规则操作成功！', referer());
 }
 
-if($do == 'change_status') {
+//非文字自动回复切换开启关闭状态
+if ($do == 'change_status') {
+	$status = intval($_GPC['status']);
+	$type = $_GPC['type'];
+	$setting = uni_setting_load('default_message', $_W['uniacid']);
+	$setting = $setting['default_message'];
+	$setting[$type]['type'] = $status;
+	$result = uni_setting_save('default_message', $setting);
+}
+
+if($do == 'change_keyword_status') {
 	/*改变状态：是否开启该关键字*/
 	$id = intval($_GPC['id']);
 	$result = pdo_get('rule', array('id' => $id), array('status'));
@@ -370,5 +372,5 @@ if($do == 'change_status') {
 			message(error(-1), '', 'ajax');
 		}
 	}
-	message(error(-1), 'ajax', 'info');
+	message(error(-1), '', 'ajax');
 }
