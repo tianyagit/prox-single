@@ -187,7 +187,7 @@
 				<li>3 引导页面</li>
 			</ul>
 		</div>
-		<form action="" method="post" class="we7-form" id="js-account-post-step3" ng-controller="AccountPostStepThree1" ng-cloak>
+		<form action="" method="post" class="we7-form" id="js-account-post-step3" ng-controller="AccountPostStepThree" ng-cloak>
 			<input type="hidden" name="step" value="3">
 			<input type="hidden" name="uniacid" value="{$_GPC['uniacid']}">
 			<input type="hidden" name="acid" value="{$_GPC['acid']}">
@@ -423,35 +423,6 @@
 				userinfo: "{php echo url('account/post-step', array('step' => 3, 'get_type' => 'userinfo'))}",
 			}
 		});
-angular.module('accountApp').controller('AccountPostStepThree1', [
-	'$scope',
-	'$http',
-	'config',
-	'AccountAppCommon',
-	function($scope, $http, config, AccountAppCommon){
-		console.log(22);
-		$scope.notify = config.notify;
-		$scope.owner = config.owner;
-		$scope.links = config.links;
-		$scope.selectOwner = function(ev) {
-			ev.preventDefault();
-			AccountAppCommon.selectOwner();
-		};
-		$scope.changeGroup = function(){
-			var user = $('input[name="uid"]').val();
-			if (!user) {
-				$('#groupid').val(0);
-				util.message('请先选择管理员');
-				return false;
-			}
-			AccountAppCommon.update_package_list($('#groupid').find('option:selected').data('package'));
-		};
-		$scope.changeText = function(ev) {
-			var text = $(ev)[0].target.text;
-			$(ev)[0].target.text = text == '展开' ? '收起' : '展开';
-		};
-		$scope.addPermission = AccountAppCommon.addPermission;
-}]);
 		angular.bootstrap($('#js-account-post-step3'),['accountApp']);
 	</script>
 {elseif $_GPC['step'] == 4}

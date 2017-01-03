@@ -3,7 +3,6 @@
  * 手动添加公众号
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
-
 defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
@@ -26,9 +25,9 @@ if($step == 1) {
 		if($max_total >= $maxaccount) {
 			$authurl = "javascript:alert('您所在会员组最多只能添加 {$maxaccount} 个公众号');";
 		}
-	} 
+	}
+
 	if (empty($authurl) && !empty($_W['setting']['platform']['authstate'])) {
-		
 		$account_platform = new WeiXinPlatform();
 		$authurl = $account_platform->getAuthLoginUrl();
 	}
@@ -251,6 +250,7 @@ if($step == 1) {
 			exit;
 		}
 	}
+
 	$unigroups = uni_groups();
 	if(!empty($unigroups['modules'])) {
 		foreach ($unigroups['modules'] as $module_key => $module_val) {
@@ -261,15 +261,17 @@ if($step == 1) {
 			}
 		}
 	}
-	$settings = uni_setting($uniacid, array('notify'));
 
+	$settings = uni_setting($uniacid, array('notify'));
 	$notify = $settings['notify'] ? $settings['notify'] : array();
+
 	$ownerid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 	if (!empty($ownerid)) {
 		$owner = user_single(array('uid' => $ownerid));
 		$owner['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $owner['groupid']));
 		$owner['group']['package'] = iunserializer($owner['group']['package']);
 	}
+
 	$extend = pdo_fetch("SELECT * FROM ".tablename('uni_group')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
 	$extend['modules'] = iunserializer($extend['modules']);
 	$extend['templates'] = iunserializer($extend['templates']);
@@ -290,6 +292,7 @@ if($step == 1) {
 		$owner['extend']['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']));
 	}
 	$extend['package'] = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
+
 	$groups = pdo_fetchall("SELECT id, name, package FROM ".tablename('users_group')." ORDER BY id ASC", array(), 'id');
 	$modules = pdo_fetchall("SELECT mid, name, title FROM " . tablename('modules') . ' WHERE issystem != 1', array(), 'name');
 	$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
