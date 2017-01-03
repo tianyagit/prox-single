@@ -547,15 +547,15 @@ if ($do == 'installed') {
 	$module_list = pdo_fetchall("SELECT * FROM ". tablename('modules'). $condition. " ORDER BY `issystem` DESC, `mid` DESC". " LIMIT ".($pageindex-1)*$pagesize.", ". $pagesize, $params, 'name');
 	$pager = pagination($total, $pageindex, $pagesize);
 	if (!empty($module_list)) {
-		$account_list = pdo_getall('uni_account');
+//		$account_list = pdo_getall('uni_account');
 		foreach ($module_list as &$module) {
 			$module['use_account'] = 0;
 			$module['enabled_use_account'] = 0;
-			foreach ($account_list as $account) {
-				$account_have_module = pdo_get('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => $module['name']));
-				$module['use_account'] = empty($account_have_module) ? $module['use_account'] : $module['use_account'] + 1;
-				$module['enabled_use_account'] = empty($account_have_module['enabled']) ? $module['enabled_use_account'] : $module['enabled_use_account'] +1;
-			}
+//			foreach ($account_list as $account) {
+//				$account_have_module = pdo_get('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => $module['name']));
+//				$module['use_account'] = empty($account_have_module) ? $module['use_account'] : $module['use_account'] + 1;
+//				$module['enabled_use_account'] = empty($account_have_module['enabled']) ? $module['enabled_use_account'] : $module['enabled_use_account'] +1;
+//			}
 			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg'). "?v=". time();
 			} else {
