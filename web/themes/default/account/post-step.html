@@ -187,7 +187,7 @@
 				<li>3 引导页面</li>
 			</ul>
 		</div>
-		<form action="" method="post" class="we7-form" id="js-account-post-step3" ng-controller="AccountPostStepThree" ng-cloak>
+		<form action="" method="post" class="we7-form" id="js-account-post-step3" ng-controller="AccountPostStepThree1" ng-cloak>
 			<input type="hidden" name="step" value="3">
 			<input type="hidden" name="uniacid" value="{$_GPC['uniacid']}">
 			<input type="hidden" name="acid" value="{$_GPC['acid']}">
@@ -239,7 +239,7 @@
 			</div>
 			<table class="table we7-table">
 				<tr>
-					<td colspan="2" class="text-left bg-light-gray">公众号可使用应用权限组</td>
+					<td colspan="2" class="text-left bg-light-gray">公众号可使用应用权限组（各权限组均包含系统模块和微站默认模板）</td>
 				</tr>
 				<tr>
 					<th class="text-left bg-light-gray">应用权限组</th>
@@ -252,7 +252,7 @@
 					</td>
 					<td class="text-left">
 						<div class="link-group">
-							<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#extend0" ng-click="changeText($event)">展开</a>
+							<a href="javasrcript:void(0);" class="color-default js-unfold" data-toggle="collapse" data-target="#extend0" ng-click="changeText($event)">展开</a>
 						</div>
 					</td>
 				</tr>
@@ -280,7 +280,7 @@
 						</td>
 						<td class="text-left">
 							<div class="link-group">
-								<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#extend{$package['id']}" ng-click="changeText($event)">展开</a>
+								<a href="javasrcript:void(0);" class="color-default js-unfold" data-toggle="collapse" data-target="#extend{$package['id']}" ng-click="changeText($event)">展开</a>
 							</div>
 						</td>
 					</tr>
@@ -289,27 +289,33 @@
 							<div>
 								<div class="col-sm-1 color-gray text-left we7-padding-none">应用权限</div>
 								<div class="col-sm-11">
-									<div class="col-sm-3 text-left">
-										<a href="javascript:;" class="label label-info">系统模块</a>
-									</div>
+									{if !empty($package['modules'])}
 									{loop $package['modules'] $module}
 									<div class="col-sm-3 text-left">
-										<a href="javascript:;" class="label label-info">{$module['title']}</a>
+										<img src="{$module['logo']}" style="width:50px;height:50px;">
+										<a href="javascript:void(0);">{$module['title']}</a>
 									</div>
 									{/loop}
+									{else}
+									<div class="col-sm-3 text-left">---</div>
+									{/if}
 								</div>
 							</div>
 							<div>
 								<div class="col-sm-1 color-gray text-left we7-padding-none">模板权限</div>
 								<div class="col-sm-11">
-									<div class="col-sm-3 text-left">
-										<a href="javascript:;" class="label label-info">微站默认模板</a>
-									</div>							
+									{if !empty($package['templates']) && $package['templates'] != 'N;'}
 									{loop $package['templates'] $template}
 									<div class="col-sm-3 text-left">
-										<a href="javascript:;" class="label label-info">{$template['title']}</a>
+										<i class="glyphicon glyphicon-th-large"></i>
+										<a href="javascript:void(0);">{$template['title']}</a>
 									</div>
 									{/loop}
+									{else}
+									<div class="col-sm-3 text-left">
+										<a href="">---</a>
+									</div>
+									{/if}
 								</div>
 							</div>
 						</td>
@@ -417,6 +423,35 @@
 				userinfo: "{php echo url('account/post-step', array('step' => 3, 'get_type' => 'userinfo'))}",
 			}
 		});
+angular.module('accountApp').controller('AccountPostStepThree1', [
+	'$scope',
+	'$http',
+	'config',
+	'AccountAppCommon',
+	function($scope, $http, config, AccountAppCommon){
+		console.log(22);
+		$scope.notify = config.notify;
+		$scope.owner = config.owner;
+		$scope.links = config.links;
+		$scope.selectOwner = function(ev) {
+			ev.preventDefault();
+			AccountAppCommon.selectOwner();
+		};
+		$scope.changeGroup = function(){
+			var user = $('input[name="uid"]').val();
+			if (!user) {
+				$('#groupid').val(0);
+				util.message('请先选择管理员');
+				return false;
+			}
+			AccountAppCommon.update_package_list($('#groupid').find('option:selected').data('package'));
+		};
+		$scope.changeText = function(ev) {
+			var text = $(ev)[0].target.text;
+			$(ev)[0].target.text = text == '展开' ? '收起' : '展开';
+		};
+		$scope.addPermission = AccountAppCommon.addPermission;
+}]);
 		angular.bootstrap($('#js-account-post-step3'),['accountApp']);
 	</script>
 {elseif $_GPC['step'] == 4}
