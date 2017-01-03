@@ -75,6 +75,7 @@ if ($do == 'display') {
 	if (!empty($fans_list)) {
 		foreach ($fans_list as &$v) {
 			$v['tag_show'] = mc_show_tag($v['groupid']);
+			$v['tag_show'] = explode(',', $v['tag_show']);
 			$v['groupid'] = trim($v['groupid'], ',');
 			if (!empty($v['uid'])) {
 				$user = mc_fetch($v['uid'], array('realname', 'nickname', 'mobile', 'email', 'avatar'));
@@ -121,6 +122,7 @@ if ($do == 'display') {
 			}
 			unset($user,$niemmo,$niemmo_effective);
 		}
+		unset($v);
 	}
 
 	$total = pdo_fetchcolumn("SELECT COUNT(DISTINCT f.`fanid`) FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping').' AS m ON m.`fanid` = f.`fanid`'.$condition, $param);

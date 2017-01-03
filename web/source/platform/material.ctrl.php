@@ -29,7 +29,6 @@ if($do == 'send') {
 	if(is_error($result)) {
 		message(error(1, $result['message']), '', 'ajax');
 	}
-
 	$groups = pdo_get('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']));
 	if(!empty($groups)) {
 		$groups = iunserializer($groups['groups']);
