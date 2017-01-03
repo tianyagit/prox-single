@@ -57,29 +57,10 @@ if(in_array($m, array('custom'))) {
 	$site_urls = $site->getTabUrls();
 }
 
+
 if($do == 'display') {
 	if ($m == 'keyword' || !in_array($m, $sysmods)) {
-		if ($_W['isajax'] && $_W['ispost']) {
-			/*改变状态：是否开启该关键字*/
-			$id = $_GPC['id'];
-			$result = pdo_get('rule', array('id' => $id), array('status'));
-			if (!empty($result)) {
-				$rule = $rule_keyword = false;
-				if($result['status'] == 1) {
-					$rule = pdo_update('rule', array('status' => 0), array('id' => $id));
-					$rule_keyword = pdo_update('rule_keyword', array('status' => 0), array('uniacid' => $_W['uniacid'], 'rid' => $id));
-				}else {
-					$rule = pdo_update('rule', array('status' => 1), array('id' => $id));
-					$rule_keyword = pdo_update('rule_keyword', array('status' => 1), array('uniacid' => $_W['uniacid'], 'rid' => $id));
-				}
-				if($rule && $rule_keyword) {
-					message('0', 'ajax', 'info');
-				}else {
-					message('-1', 'ajax', 'info');
-				}
-			}
-			message('-1', 'ajax', 'info');
-		}		
+
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 8;
 		$cids = $parentcates = $list =  array();
@@ -368,4 +349,26 @@ if($do == 'delete') {
 		}
 	}
 	message('规则操作成功！', referer());
+}
+
+if($do == 'change_status') {
+	/*改变状态：是否开启该关键字*/
+	$id = intval($_GPC['id']);
+	$result = pdo_get('rule', array('id' => $id), array('status'));
+	if (!empty($result)) {
+		$rule = $rule_keyword = false;
+		if($result['status'] == 1) {
+			$rule = pdo_update('rule', array('status' => 0), array('id' => $id));
+			$rule_keyword = pdo_update('rule_keyword', array('status' => 0), array('uniacid' => $_W['uniacid'], 'rid' => $id));
+		}else {
+			$rule = pdo_update('rule', array('status' => 1), array('id' => $id));
+			$rule_keyword = pdo_update('rule_keyword', array('status' => 1), array('uniacid' => $_W['uniacid'], 'rid' => $id));
+		}
+		if($rule && $rule_keyword) {
+			message(error(0), '', 'ajax');
+		}else {
+			message(error(-1), '', 'ajax');
+		}
+	}
+	message(error(-1), 'ajax', 'info');
 }
