@@ -66,13 +66,13 @@ if (!empty($users_permission)) {
 
 //添加图文素材的素材顺序字段
 if (!pdo_fieldexists('wechat_news', 'displayorder')) {
-	pdo_query('ALTER TABLE '. tablename('wechat_news')." ADD `displayorder` INT(2) NOT NULL DEFAULT '0'");
+	pdo_query('ALTER TABLE '. tablename('wechat_news')." ADD `displayorder` INT(2) NOT NULL DEFAULT '0';");
 }
 
 //转移模块快捷菜单数据到uni_account_modules表，废弃之前存在uni_settings中的shortcuts
 //uni_settings表中存放于字段中，不能存放太多数据，也不方便修改
 if (!pdo_fieldexists('uni_account_modules', 'shortcut')) {
-	pdo_query("ALTER TABLE ".tablename('uni_account_modules')." ADD `display` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0';");
+	pdo_query("ALTER TABLE ".tablename('uni_account_modules')." ADD `shortcut` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0';");
 }
 if (!pdo_fieldexists('uni_account_modules', 'displayorder')) {
 	pdo_query("ALTER TABLE ".tablename('uni_account_modules')." ADD `displayorder` INT UNSIGNED NOT NULL DEFAULT '0';");
@@ -124,7 +124,7 @@ if (!empty($modules)) {
 
 //uni_account是否存在letter字段，否则添加并更新（切换公众号拼音索引功能）
 if(!pdo_fieldexists('uni_account', 'letter')) {
-	$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `letter` VARCHAR(1) NOT NULL COMMENT 'title首字母' , ADD FULLTEXT (`letter`)");
+	$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `letter` VARCHAR(1) NOT NULL COMMENT 'title首字母' , ADD FULLTEXT (`letter`);");
 	if($add_letter) {
 		$sql = '';
 		$all_account = pdo_fetchall("SELECT uniacid,name FROM ". tablename('uni_account'));
@@ -154,4 +154,20 @@ if(!pdo_fieldexists('rule', 'containtype')) {
 }
 if(!pdo_fieldexists('rule', 'reply_type')) {
 	pdo_query("ALTER TABLE ". tablename('rule') ." ADD `reply_type` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '匹配关键字类型：1、混合；2、单一';");
+}
+
+//登陆后默认进入上一次管理/操作的公众号
+if(!pdo_fieldexists('users', 'lastuniacid')) {
+	pdo_query("ALTER TABLE ". tablename('users') ." ADD `lastuniacid` INT(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT '最后一次操作的公众号ID' AFTER `lastvisit`;");
+}
+
+//新增公众号按添加时间排序
+if(!pdo_fieldexists('uni_account', 'createtime')) {
+	pdo_query("ALTER TABLE ". tablename('uni_account') ." ADD `createtime` INT(10) NOT NULL COMMENT '添加时间';");
+}
+if(!pdo_fieldexists('uni_account_users', 'createtime')) {
+	pdo_query("ALTER TABLE ". tablename('uni_account_users') ." ADD `createtime` INT(10) NOT NULL COMMENT '添加时间';");
+}
+if(!pdo_fieldexists('account_wechats', 'createtime')) {
+	pdo_query("ALTER TABLE ". tablename('account_wechats') ." ADD `createtime` INT(10) NOT NULL COMMENT '添加时间' ;");
 }
