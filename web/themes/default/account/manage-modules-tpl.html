@@ -171,7 +171,7 @@
 					<div class="tab-content">
 						<table class="table we7-table">
 							<tr>
-								<th class="text-left bg-light-gray">应用权限组</th>
+								<th class="text-left bg-light-gray">应用权限组（各权限组均包含系统模块和微站默认模板）</th>
 								<th class="text-left bg-light-gray">操作</th>
 							</tr>
 							<tr>
@@ -218,11 +218,11 @@
 										<div>
 											<div class="col-sm-2 color-gray text-left we7-padding-none">应用权限</div>
 											<div class="col-sm-10">
-												<div class="col-sm-3 text-left">
+												<div class="col-sm-3 text-left" ng-style="{'margin-right': '35px','margin-bottom': '15px'}">
 													<a href="javascript:;" class="label label-info">系统模块</a>
 												</div>
 												{loop $package['modules'] $module}
-												<div class="col-sm-3 text-left">
+												<div class="col-sm-3 text-left" ng-style="{'margin-right': '35px','margin-bottom': '15px'}">
 													<a href="javascript:;" class="label label-info">{$module['title']}</a>
 												</div>
 												{/loop}
@@ -231,13 +231,13 @@
 										<div>
 											<div class="col-sm-2 color-gray text-left we7-padding-none">模板权限</div>
 											<div class="col-sm-10">
-												<div class="col-sm-3 text-left">
+												<div class="col-sm-3 text-left" ng-style="{'margin-right': '35px','margin-bottom': '15px'}">
 													<a href="javascript:;" class="label label-info">微站默认模板</a>
-												</div>							
-												{loop $package['templates'] $template}
-												<div class="col-sm-3 text-left">
-													<a href="javascript:;" class="label label-info">{$template['title']}</a>
 												</div>
+												{loop $package['templates'] $template}
+												<div class="col-sm-3 text-left" ng-style="{'margin-right': '35px','margin-bottom': '15px'}">
+													<a href="javascript:;" class="label label-info">{$template['title']}</a>
+												</div>a
 												{/loop}
 											</div>
 										</div>
