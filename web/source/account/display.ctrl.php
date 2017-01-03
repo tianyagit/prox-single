@@ -4,6 +4,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+load()->model('user');
 
 $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
@@ -17,8 +18,13 @@ if($do == 'switch') {
 	if(empty($role)) {
 		message('操作失败, 非法访问.');
 	}
+
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
+	$status = array();
+	$status['lastuniacid'] = $uniacid;
+	$status['uid'] = $_W['uid'];
+	user_update($status);
 
 	if($_W['role'] == 'clerk' || $role == 'clerk') {
 		header('Location: ' . url('paycenter/desk'));
@@ -55,11 +61,11 @@ if ($do == 'display') {
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($_W['isfounder'])) {
 		$condition .= " WHERE a.default_acid <> 0 AND b.isdeleted <> 1 AND b.type = 1";
-		$order_by = " ORDER BY a.`rank` DESC";
+		$order_by = " ORDER BY a.`rank` DESC, a.`createtime` DESC";
 	} else {
 		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type = 1";
 		$param[':uid'] = $_W['uid'];
-		$order_by = " ORDER BY c.`rank` DESC";
+		$order_by = " ORDER BY c.`rank` DESC, a.`createtime` DESC";
 	}
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";

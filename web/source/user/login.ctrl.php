@@ -79,7 +79,11 @@ function _login($forward = '') {
 			$forward = $_GPC['forward'];
 		}
 		if(empty($forward)) {
-			$forward = './index.php?c=account&a=display';
+			if(!empty($record['lastuniacid'])) {
+				$forward = './index.php?c=platform&a=reply';
+			}else {
+				$forward = './index.php?c=account&a=display';
+			}
 		}
 		if ($record['uid'] != $_GPC['__uid']) {
 			isetcookie('__uniacid', '', -7 * 86400);

@@ -22,11 +22,11 @@ if ($do == 'display') {
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($_W['isfounder'])) {
 		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type = 1";
-		$order_by = " ORDER BY a.`acid` DESC";
+		$order_by = " ORDER BY a.`acid` DESC, a.`createtime` DESC";
 	} else {
 		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type = 1";
 		$param[':uid'] = $_W['uid'];
-		$order_by = " ORDER BY c.`rank` DESC";
+		$order_by = " ORDER BY c.`rank` DESC, a.`createtime` DESC";
 	}
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";

@@ -189,6 +189,9 @@ function user_update($user) {
 	if (isset($user['endtime'])) {
 		$record['endtime'] = $user['endtime'];
 	}
+	if(isset($user['lastuniacid'])) {
+		$record['lastuniacid'] = intval($user['lastuniacid']);
+	}
 	if (empty($record)) {
 		return false;
 	}
