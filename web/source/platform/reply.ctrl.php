@@ -124,9 +124,9 @@ if($do == 'post') {
 				$rids = implode($keywords, ',');
 				$sql = 'SELECT `id`, `name` FROM ' . tablename('rule') . " WHERE `id` IN ($rids)";
 				$rules = pdo_fetchall($sql);
-				exit(@json_encode($rules));
+				message(error(0, @json_encode($rules)), '', 'ajax');
 			}
-			exit('success');
+			message(error(-1), '', 'ajax');
 		}
 		$rid = intval($_GPC['rid']);
 		if(!empty($rid)) {
