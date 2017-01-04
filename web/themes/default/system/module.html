@@ -169,8 +169,8 @@
 										<button class="btn btn-default" onclick="$(this).parent().next().next().toggle();$(this).parent().next().next().html()">升级说明</button>
 									</div>
 									<div class="col-sm-3">
-										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id = upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
-										<a ng-href="{{ branch.id > upgradeInfo.site_branch.id ? './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' : './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.upgrade_price)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
+										<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" class="btn btn-default" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
+										<a ng-href="{{ './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' }}" class="btn btn-default" ng-click="upgrade(branch.upgrade_price)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
 									</div>
 									<div style="display: none">
 										<span class="help-block">
