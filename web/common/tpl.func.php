@@ -169,15 +169,13 @@ function tpl_form_module_link($name) {
 		$s = '
 		<script type="text/javascript">
 			function showModuleLink(elm) {
-				require(["util","jquery"], function(u, $){
-					u.showModuleLink(function(href, permission) {
-						var ipt = $(elm).parent().prev();
-						var ipts = $(elm).parent().prev().prev();
-						ipt.val(href);
-						ipts.val(permission);
-						});
-					});
-				}
+				util.showModuleLink(function(href, permission) {
+					var ipt = $(elm).parent().prev();
+					var ipts = $(elm).parent().prev().prev();
+					ipt.val(href);
+					ipts.val(permission);
+				});
+			}
 		</script>';
 		define('TPL_INIT_module', true);
 	}
@@ -205,18 +203,16 @@ function tpl_form_field_emoji($name, $value = '') {
 		$s = '
 		<script type="text/javascript">
 			function showEmojiDialog(elm) {
-				require(["util", "jquery"], function(u, $){
-					var btn = $(elm);
-					var spview = btn.parent().prev();
-					var ipt = spview.prev();
-					if(!ipt.val()){
-						spview.css("display","none");
-					}
-					u.emojiBrowser(function(emoji){
-						ipt.val("\\\" + emoji.find("span").text().replace("+", "").toLowerCase());
-						spview.show();
-						spview.find("span").removeClass().addClass(emoji.find("span").attr("class"));
-					});
+				var btn = $(elm);
+				var spview = btn.parent().prev();
+				var ipt = spview.prev();
+				if(!ipt.val()){
+					spview.css("display","none");
+				}
+				util.emojiBrowser(function(emoji){
+					ipt.val("\\\" + emoji.find("span").text().replace("+", "").toLowerCase());
+					spview.show();
+					spview.find("span").removeClass().addClass(emoji.find("span").attr("class"));
 				});
 			}
 		</script>';
@@ -245,19 +241,17 @@ function tpl_form_field_color($name, $value = '') {
 	if (!defined('TPL_INIT_COLOR')) {
 		$s = '
 		<script type="text/javascript">
-			require(["jquery", "util"], function($, util){
-				$(function(){
-					$(".colorpicker").each(function(){
-						var elm = this;
-						util.colorpicker(elm, function(color){
-							$(elm).parent().prev().prev().val(color.toHexString());
-							$(elm).parent().prev().css("background-color", color.toHexString());
-						});
+			$(function(){
+				$(".colorpicker").each(function(){
+					var elm = this;
+					util.colorpicker(elm, function(color){
+						$(elm).parent().prev().prev().val(color.toHexString());
+						$(elm).parent().prev().css("background-color", color.toHexString());
 					});
-					$(".colorclean").click(function(){
-						$(this).parent().prev().prev().val("");
-						$(this).parent().prev().css("background-color", "#FFF");
-					});
+				});
+				$(".colorclean").click(function(){
+					$(this).parent().prev().prev().val("");
+					$(this).parent().prev().css("background-color", "#FFF");
 				});
 			});
 		</script>';
@@ -295,19 +289,17 @@ function tpl_form_field_icon($name, $value='') {
 		$s = '
 		<script type="text/javascript">
 			function showIconDialog(elm) {
-				require(["util","jquery"], function(u, $){
-					var btn = $(elm);
-					var spview = btn.parent().prev();
-					var ipt = spview.prev();
-					if(!ipt.val()){
-						spview.css("display","none");
-					}
-					u.iconBrowser(function(ico){
-						ipt.val(ico);
-						spview.show();
-						spview.find("i").attr("class","");
-						spview.find("i").addClass("fa").addClass(ico);
-					});
+				var btn = $(elm);
+				var spview = btn.parent().prev();
+				var ipt = spview.prev();
+				if(!ipt.val()){
+					spview.css("display","none");
+				}
+				util.iconBrowser(function(ico){
+					ipt.val(ico);
+					spview.show();
+					spview.find("i").attr("class","");
+					spview.find("i").addClass("fa").addClass(ico);
 				});
 			}
 		</script>';
@@ -400,10 +392,8 @@ function tpl_form_field_image($name, $value = '', $default = '', $options = arra
 				});
 			}
 			function deleteImage(elm){
-				require(["jquery"], function($){
-					$(elm).prev().attr("src", "./resource/images/nopic.jpg");
-					$(elm).parent().prev().find("input").val("");
-				});
+				$(elm).prev().attr("src", "./resource/images/nopic.jpg");
+				$(elm).parent().prev().find("input").val("");
 			}
 		</script>';
 		define('TPL_INIT_IMAGE', true);
@@ -453,9 +443,7 @@ function tpl_form_field_multi_image($name, $value = array(), $options = array())
 		}, ' . json_encode($options) . ');
 	}
 	function deleteMultiImage(elm){
-		require(["jquery"], function($){
-			$(elm).parent().remove();
-		});
+		$(elm).parent().remove();
 	}
 </script>';
 		define('TPL_INIT_MULTI_IMAGE', true);
@@ -525,7 +513,7 @@ function tpl_form_field_audio($name, $value = '', $options = array()) {
 	}
 
 	function setAudioPlayer(){
-		require(["jquery", "util", "jquery.jplayer"], function($, u){
+		require(["jquery.jplayer"], function(){
 			$(function(){
 				$(".audio-player").each(function(){
 					$(this).prev().find("button").eq(0).click(function(){
@@ -534,7 +522,7 @@ function tpl_form_field_audio($name, $value = '', $options = array()) {
 							$(this).parent().parent().next().jPlayer("stop");
 						} else {
 							if(src) {
-								$(this).parent().parent().next().jPlayer("setMedia", {mp3: u.tomedia(src)}).jPlayer("play");
+								$(this).parent().parent().next().jPlayer("setMedia", {mp3: util.tomedia(src)}).jPlayer("play");
 							}
 						}
 					});
@@ -605,19 +593,17 @@ function tpl_form_field_multi_audio($name, $value = array(), $options = array())
 		});
 	}
 	function deleteMultiAudio(elm){
-		require([\'jquery\'], function($){
-			$(elm).parent().parent().parent().remove();
-		});
+		$(elm).parent().parent().parent().remove();
 	}
 	function setMultiAudioPlayer(elm){
-		require(["jquery", "util", "jquery.jplayer"], function($, u){
+		require(["jquery.jplayer"], function(){
 			$(".multi-audio-player",$(elm)).next().find("button").eq(0).click(function(){
 				var src = $(this).parent().prev().val();
 				if($(this).find("i").hasClass("fa-stop")) {
 					$(this).parent().parent().prev().jPlayer("stop");
 				} else {
 					if(src) {
-						$(this).parent().parent().prev().jPlayer("setMedia", {mp3: u.tomedia(src)}).jPlayer("play");
+						$(this).parent().parent().prev().jPlayer("setMedia", {mp3: util.tomedia(src)}).jPlayer("play");
 					}
 				}
 			});
@@ -772,10 +758,8 @@ function tpl_form_field_wechat_image($name, $value = '', $default = '', $options
 				});
 			}
 			function deleteImage(elm){
-				require(["jquery"], function($){
-					$(elm).prev().attr("src", "./resource/images/nopic.jpg");
-					$(elm).parent().prev().find("input").val("");
-				});
+				$(elm).prev().attr("src", "./resource/images/nopic.jpg");
+				$(elm).parent().prev().find("input").val("");
 			}
 		</script>';
 		define('TPL_INIT_WECHAT_IMAGE', true);
@@ -821,19 +805,15 @@ function tpl_form_field_wechat_multi_image($name, $value = '', $default = '', $o
 		$s = '
 <script type="text/javascript">
 	function uploadWechatMultiImage(elm) {
-		require(["jquery","util"], function($, util){
-			var name = $(elm).next().val();
-			util.wechat_image("", function(urls){
-				$.each(urls, function(idx, url){
-					$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'./resource/images/nopic.jpg\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.media_id+\'"><em class="close" title="删除这张图片" onclick="deleteWechatMultiImage(this)">×</em></div>\');
-				});
-			}, '.json_encode($options).');
-		});
+		var name = $(elm).next().val();
+		util.wechat_image("", function(urls){
+			$.each(urls, function(idx, url){
+				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'./resource/images/nopic.jpg\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.media_id+\'"><em class="close" title="删除这张图片" onclick="deleteWechatMultiImage(this)">×</em></div>\');
+			});
+		}, '.json_encode($options).');
 	}
 	function deleteWechatMultiImage(elm){
-		require(["jquery"], function($){
-			$(elm).parent().remove();
-		});
+		$(elm).parent().remove();
 	}
 </script>';
 		define('TPL_INIT_WECHAT_MULTI_IMAGE', true);
@@ -906,7 +886,7 @@ function tpl_form_field_wechat_voice($name, $value = '', $options = array()) {
 	}
 
 	function setWechatAudioPlayer(){
-		require(["jquery", "util", "jquery.jplayer"], function($, u){
+		require(["jquery.jplayer"], function(){
 			$(function(){
 				$(".audio-player").each(function(){
 					$(this).prev().find("button").eq(0).click(function(){
@@ -915,7 +895,7 @@ function tpl_form_field_wechat_voice($name, $value = '', $options = array()) {
 							$(this).parent().parent().next().jPlayer("stop");
 						} else {
 							if(src) {
-								$(this).parent().parent().next().jPlayer("setMedia", {mp3: u.tomedia(src)}).jPlayer("play");
+								$(this).parent().parent().next().jPlayer("setMedia", {mp3: util.tomedia(src)}).jPlayer("play");
 							}
 						}
 					});
@@ -1032,7 +1012,7 @@ function tpl_form_field_location_category($name, $values = array(), $del = false
 	if (!defined('TPL_INIT_LOCATION_CATEGORY')) {
 		$html .= '
 		<script type="text/javascript">
-			require(["jquery", "location"], function($, loc){
+			require(["location"], function(loc){
 				$(".tpl-location-container").each(function(){
 
 					var elms = {};
