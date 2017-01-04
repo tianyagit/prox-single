@@ -6,8 +6,16 @@
 	{if !empty($_W['setting']['copyright']['statcode'])}{$_W['setting']['copyright']['statcode']}{/if}
 	<script>
 		$(document).ready(function () {//为了保证能在img元素加载之后，才为这些元素设置error事件  
-			$("img").error(function () {  
-				$(this).attr("src", "resource/images/nopic.jpg");//JSP页面  
+			$("img").error(function () { 
+				if(!$(this).attr("onerror")){
+					var img = "resource/images/nopic.jpg";
+					if($(this).width() == $(this).height()){
+						img = "resource/images/nopic-107.png";
+					} else if($(this).width() < $(this).height()){
+						img = "resource/images/nopic-203.png";
+					}
+					$(this).attr("src", img);
+				}
 			});  
 		});  
 		function subscribe(){
@@ -44,14 +52,14 @@
 		{if defined('IN_MODULE')}
 		$.getJSON("{url 'utility/checkupgrade/module' array('m' => IN_MODULE)}", function(result) {
 			if (result.message.errno == -10) {
-				$('body').prepend('<div id="upgrade-tips-module" class="upgrade-tips"><a href="http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzkzODAwMzEzOV8xNzEwOTZfNDAwMDgyODUwMl8yXw" target="_blank">' + result.message.message + '</a></div>');
+				$('body').prepend('<div id="upgrade-tips-module" class="upgrade-tips we7-body-alert"><div class="alert-info text-center"><a href="http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzkzODAwMzEzOV8xNzEwOTZfNDAwMDgyODUwMl8yXw" target="_blank">' + result.message.message + '</a></div></div>');
 				if ($('#upgrade-tips').size()) {
 					$('#upgrade-tips-module').css('top', '25px');
 				}
 			}
 		});
 		{/if}
-		
+				
 	</script>
 </body>
 </html>
