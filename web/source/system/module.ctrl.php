@@ -62,7 +62,8 @@ if ($do == 'check_upgrade') {
 				$module['from'] = 'cloud';
 				$site_branch = $cloud_m_upgrade_info['version']['branch_id'];//当前站点模块分之号
 				$cloud_branch_version = $cloud_m_upgrade_info['branches'][$site_branch]['version']['version'];//云服务模块分之版本号
-				if (ver_compare($module['version'], $cloud_branch_version) == -1) {
+				$best_branch = current($cloud_m_upgrade_info['branches']);
+				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_upgrade_info['version']['branch_id'] < $best_branch['id'] && !empty($cloud_m_upgrade_info['version']['branch_id']))) {
 					$module['upgrade'] = true;
 				} else {
 					$module['upgrade'] = false;
@@ -555,7 +556,7 @@ if ($do == 'installed') {
 //				$account_have_module = pdo_get('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => $module['name']));
 //				$module['use_account'] = empty($account_have_module) ? $module['use_account'] : $module['use_account'] + 1;
 //				$module['enabled_use_account'] = empty($account_have_module['enabled']) ? $module['enabled_use_account'] : $module['enabled_use_account'] +1;
-//			}
+			}
 			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg'). "?v=". time();
 			} else {

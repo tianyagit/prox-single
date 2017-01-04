@@ -53,7 +53,7 @@ if ($do == 'display') {
 	}
 
 	$pager = pagination($total, $pindex, $psize);
-	template('account/system-display');
+	template('account/manage-display');
 }
 if ($do == 'delete') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -66,7 +66,7 @@ if ($do == 'delete') {
 		}
 		$state = uni_permission($uid, $uniacid);
 		if($state != 'founder' && $state != 'manager') {
-			message('没有该公众号操作权限！', url('account/system_display'), 'error');
+			message('没有该公众号操作权限！', url('account/manage'), 'error');
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
 		if ($uniaccount['default_acid'] == $acid) {
@@ -79,11 +79,11 @@ if ($do == 'delete') {
 	if (!empty($uniacid)) {
 		$account = pdo_fetch("SELECT * FROM ".tablename('uni_account')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
 		if (empty($account)) {
-			message('抱歉，帐号不存在或是已经被删除', url('account/system_display'), 'error');
+			message('抱歉，帐号不存在或是已经被删除', url('account/manage'), 'error');
 		}
 		$state = uni_permission($uid, $uniacid);
 		if($state != 'founder' && $state != 'manager') {
-			message('没有该公众号操作权限！', url('account/system_display'), 'error');
+			message('没有该公众号操作权限！', url('account/manage'), 'error');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 		if($_GPC['uniacid'] == $_W['uniacid']) {
@@ -92,5 +92,5 @@ if ($do == 'delete') {
 		cache_delete("unicount:{$uniacid}");
 		cache_delete("unisetting:{$uniacid}");
 	}
-	message('公众帐号停用成功！，您可以在回收站中回复公众号', url('account/system_display'), 'success');
+	message('公众帐号停用成功！，您可以在回收站中回复公众号', url('account/manage'), 'success');
 }

@@ -124,9 +124,9 @@ if($do == 'post') {
 				$rids = implode($keywords, ',');
 				$sql = 'SELECT `id`, `name` FROM ' . tablename('rule') . " WHERE `id` IN ($rids)";
 				$rules = pdo_fetchall($sql);
-				exit(@json_encode($rules));
+				message(error(0, @json_encode($rules)), '', 'ajax');
 			}
-			exit('success');
+			message(error(-1), '', 'ajax');
 		}
 		$rid = intval($_GPC['rid']);
 		if(!empty($rid)) {
@@ -204,7 +204,7 @@ if($do == 'post') {
 				}
 				$kid = pdo_insertid();
 				$module->fieldsFormSubmit($rid);
-				message('回复规则保存成功！', url('platform/reply/post', array('m' => $m, 'rid' => $rid)));
+				message('回复规则保存成功！', url('platform/reply'));
 			} else {
 				message('回复规则保存失败, 请联系网站管理员！');
 			}

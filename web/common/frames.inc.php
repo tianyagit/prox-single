@@ -128,14 +128,14 @@ $we7_system_menu['account'] = array(
 
 $we7_system_menu['system'] = array(
 	'title' => '系统管理',
-	'url' => url('account/system_display'),
+	'url' => url('account/manage'),
 	'section' => array(
 		'wxplatform' => array(
 			'title' => '微信',
 			'menu' => array(
 				'system_account' => array(
 					'title' => ' 微信公众号管理',
-					'url' => url('account/system_display'),
+					'url' => url('account/manage'),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_account',
 				),

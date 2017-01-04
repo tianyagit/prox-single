@@ -26,7 +26,6 @@ if($do == 'list') {
 		$starttime = strtotime("+{$i} days", $time);
 		$endtime = $i+1;
 		$endtime = strtotime("+{$endtime} days", $time);
-		// $massdata = pdo_get('mc_mass_record', array('uniacid' => $_W['uniacid'], 'status' => 1, 'sendtime >=' => $starttime, 'sendtime <=' => $endtime), array('id', 'groupname', 'msgtype', 'group', 'attach_id', 'media_id'));
 		$massdata = pdo_fetch('SELECT id, `groupname`, `msgtype`, `group`, `attach_id`, `media_id`, `sendtime` FROM '. tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime));
 
 		if(!empty($massdata)) {
@@ -75,7 +74,7 @@ if($do == 'del') {
 }
 
 if($do == 'post') {
-	$groups = pdo_fetch('SELECT * FROM ' . tablename('mc_fans_groups') . ' WHERE uniacid = :uniacid AND acid = :acid', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
+	$groups = pdo_get('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']));
 	$groups = (array)iunserializer($groups['groups']);
 	//数据库查出来的groups不包括全部粉丝，故在此添加上(ng-repeat使用方便)
 	array_unshift($groups, array('id' => -1, 'name' => '全部粉丝', 'count' => ''));
@@ -236,7 +235,7 @@ if($do == 'send') {
 	$params[':uniacid'] = $_W['uniacid'];
 	$params[':acid'] = $_W['acid'];
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('mc_mass_record').$condition, $params);
-	$lists = pdo_fetchall("SELECT * FROM ".tablename('mc_mass_record') . $condition ." ORDER BY `id` DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
+	$lists = pdo_getall('mc_mass_record', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']), array(), '', 'id DESC', 'LIMIT '.($pindex-1)* $psize.','.$psize);
 	$types = array('text' => '文本消息', 'image' => '图片消息', 'voice' => '语音消息', 'video' => '视频消息', 'news' => '图文消息', 'wxcard' => '微信卡券');
 	$pager = pagination($total, $pindex, $psize);
 	template('platform/mass-send');

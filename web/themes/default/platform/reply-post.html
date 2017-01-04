@@ -67,10 +67,11 @@
 							</select>
 						</div>
 					</div>
-					<input type="text" class="keyword-input form-control" max="100" id="keyword-input-exact" ng-model="reply.keyword.exact" onblur="checkKeyWord($(this));">
+					<input type="text" class="keyword-input form-control" max="100" id="keyword-input-exact" ng-model="reply.keyword.exact" ng-blur="checkKeyWord($event);" data-type="keyword">
 					<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="keyword-emoji" ng-init="initEmotion();"><i class="fa fa-github-alt"></i> 表情</a></span>
 				</div>
 				<span class="help-block">多个关键字请使用逗号隔开，如天气，今日天气</span>
+				<span class="help-block"></span><!-- 提示语标签，勿删 -->
 			</div>
 
 			<div class="form-controls col-sm-8 col-sm-offset-2" ng-if="reply.entry.reply_type == 1">
@@ -78,23 +79,26 @@
 					<div class="form-group">
 						<label for="" class="control-label col-sm-3">精准触发</label>
 						<div class="form-controls input-group col-sm-6">
-							<input type="text" class="keyword-input form-control" max="30" id="keyword-exact" ng-model="reply.keyword.exact" onblur="checkKeyWord($(this));">
+							<input type="text" class="keyword-input form-control" max="30" id="keyword-exact" ng-model="reply.keyword.exact" ng-blur="checkKeyWord($event);" data-type="keyword">
 							<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-exact" ng-init="initEmotion();"><i class="fa fa-github-alt"></i> 表情</a></span>
 						</div>
+						<span></span><span class="help-block"></span><!-- 提示语标签，勿删 -->
 					</div>
 					<div class="form-group">
 						<label for="" class="control-label col-sm-3">包含关键字触发</label>
 						<div class="form-controls input-group col-sm-6">
-							<input type="text" class="keyword-input form-control" max="30" id="keyword-indistinct" ng-model="reply.keyword.contain" onblur="checkKeyWord($(this));">
+							<input type="text" class="keyword-input form-control" max="30" id="keyword-indistinct" ng-model="reply.keyword.contain" ng-blur="checkKeyWord($event);" data-type="keyword">
 							<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-indistinct"><i class="fa fa-github-alt"></i> 表情</a></span>
 						</div>
+						<span></span><span class="help-block"></span><!-- 提示语标签，勿删 -->
 					</div>
 					<div class="form-group">
 						<label for="" class="control-label col-sm-3">正则匹配关键字触发</label>
 						<div class="form-controls input-group col-sm-6">
-							<input type="text" class="keyword-input form-control" max="30" id="keyword-regexp" ng-model="reply.keyword.regexp" onblur="checkKeyWord($(this));">
+							<input type="text" class="keyword-input form-control" max="30" id="keyword-regexp" ng-model="reply.keyword.regexp" ng-blur="checkKeyWord($event);" data-type="keyword">
 							<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-regexp"><i class="fa fa-github-alt"></i> 表情</a></span>
 						</div>
+						<span></span><span class="help-block"></span><!-- 提示语标签，勿删 -->
 					</div>
 					<span class="help-block"></span>
 				</div>
@@ -187,55 +191,11 @@ require(['underscore'], function() {
 	angular.module('replyFormApp').value('config', {
 		replydata: {php echo json_encode($reply)},
 		uniacid: {php echo json_encode($_W['uniacid'])},
+		links: {
+			postUrl: "{php echo url('platform/reply/post', array('m' => $_GPC['m']));}",
+		},
 	});
-
 	angular.bootstrap($('#js-reply-form'), ['replyFormApp']);
-
-	// 检测规则是否已经存在
-	window.checkKeyWord = function(key) {
-		var keyword = key.val().trim();
-		if (keyword == '') {
-			key.next().next().text('');
-			return false;
-		}
-		var type = key.attr('data-type');
-		var wordIndex = key.index('.keyword-input');
-		var isLeagl = true;
-		$('.keyword-input').each(function(index) {
-			var currentWord = $(this).val().trim();
-			if (keyword == currentWord && wordIndex != index) {
-				isLeagl = false;
-				return false;
-			}
-		});
-		if (isLeagl === false) {
-			key.next().next().text('');
-			util.message('该关键字已重复存在于当前规则中.');
-			return false;
-		}
-
-		$.post(location.href, {keyword:keyword}, function(resp){
-			if(resp != 'success') {
-				var rid = $('input[name="rid"]').val();
-				var rules = JSON.parse(resp);
-				var url = "{php echo url('platform/reply/post', array('m' => $_GPC['m']));}";
-				var ruleurl = '';
-				for (rule in rules) {
-					if (rid != rules[rule].id) {
-						ruleurl += "<a href='" + url + "&rid=" + rules[rule].id + "' target='_blank'><strong class='text-danger'>" + rules[rule].name + "</strong></a>&nbsp;";
-					}
-				}
-				if (ruleurl != '') {
-					key.next().next().html('该关键字已存在于 ' + ruleurl + ' 规则中.');
-				}
-			} else {
-				key.next().next().text('');
-			}
-		});
-	}
-	$('.keyword-input').each(function() {
-		$(this).attr('data-type', 'keyword');
-	});
 });
 {/if}
 {if $m == 'apply'}

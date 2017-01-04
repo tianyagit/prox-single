@@ -8,7 +8,7 @@
 <div class="clearfix">
 	<form action="" method="post" class="we7-form form" id="form">
 	{if !empty($upload_max_filesize) && !empty($post_max_size)}
-		
+
 		<div class="form-group">
 			<label class="col-sm-2 control-label">PHP 环境说明</label>
 			<div class="col-sm-10">
@@ -131,7 +131,7 @@
 				<label class="radio-inline" for="ftp[ssl]-1">
 					 是
 				</label>
-				<input type="radio" id="ftp[ssl]-0" name="ftp[ssl]" value="0" {if empty($remote['ftp']['ssl'])} checked="checked" {/if}> 
+				<input type="radio" id="ftp[ssl]-0" name="ftp[ssl]" value="0" {if empty($remote['ftp']['ssl'])} checked="checked" {/if}>
 				<label class="radio-inline" for="ftp[ssl]-0">
 					否
 				</label>
@@ -225,7 +225,7 @@
 
 		</div>
 		<div class="form-group">
-			
+
 			<div class="col-sm-9">
 				<span class="text-danger" id="mistake" style="display: none;">
 					填写的Access Key ID 或 Access Key Secret 错误，请重新填写。
@@ -309,16 +309,6 @@
 		<div class="col-sm-9">
 			<input type="text" name="qiniu[bucket]" class="form-control" value="{$remote['qiniu']['bucket']}" placeholder="" />
 			<span class="help-block">请保证bucket为可公共读取的</span>
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-2 control-label">存储区域</label>
-		<div class="col-sm-9">
-			<select class="form-control" name="qiniu[district]">
-				<option value="1" {if $remote['qiniu']['district'] == 1}selected{/if}>华东</option>
-				<option value="2" {if $remote['qiniu']['district'] == 2}selected{/if}>华北</option>
-			</select>
-			<span class="help-block">请查看bucket空间设置，并选择相应的存储区域。</span>
 		</div>
 	</div>
 	<div class="form-group">
@@ -417,7 +407,7 @@
 			'port' : parseInt($(':text[name="ftp[port]"]').val()),
 			'overtime' : parseInt($(':text[name="ftp[overtime]"]').val())
 		};
-		$.post("{php echo url('utility/checkattach/ftp')}", param, function(data){
+		$.post("{php echo url('system/attachment/ftp')}", param, function(data){
 			var data = $.parseJSON(data);
 			if(data.message.errno == 0) {
 				util.message(data.message.message);
@@ -440,7 +430,7 @@
 			'url'  : $.trim($(':text[name="custom[url]"]').val()),
 			'bucket' : bucket
 		};
-		$.post("{php echo url('utility/checkattach/oss')}",param, function(data) {
+		$.post("{php echo url('system/attachment/oss')}",param, function(data) {
 			var data = $.parseJSON(data);
 			if(data.message.errno == 0) {
 				util.message('配置成功');
@@ -467,10 +457,9 @@
 			'accesskey' : $.trim($(':text[name="qiniu[accesskey]"]').val()),
 			'secretkey' : $.trim($(':text[name="qiniu[secretkey]"]').val()),
 			'url'  : $.trim($(':text[name="qiniu[url]"]').val()),
-			'bucket' :  $.trim($(':text[name="qiniu[bucket]"]').val()),
-			'district' :  $.trim($('[name="qiniu[district]"]').val())
+			'bucket' :  $.trim($(':text[name="qiniu[bucket]"]').val())
 		};
-		$.post("{php echo url('utility/checkattach/qiniu')}",param, function(data) {
+		$.post("{php echo url('system/attachment/qiniu')}",param, function(data) {
 			var data = $.parseJSON(data);
 			if(data.message.errno == 0) {
 				util.message('配置成功');
@@ -511,7 +500,7 @@
 			'bucket' :  bucket,
 			'url' : url
 		};
-		$.post("{php echo url('utility/checkattach/cos')}",param, function(data) {
+		$.post("{php echo url('system/attachment/cos')}",param, function(data) {
 			var data = $.parseJSON(data);
 			if(data.message.errno == 0) {
 				util.message('配置成功');

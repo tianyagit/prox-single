@@ -1,7 +1,7 @@
 {template 'common/header'}
 <ol class="breadcrumb we7-breadcrumb">
-	<a href="{url 'account/system_display'}"><i class="wi wi-back-cricle"></i> </a>
-	<li><a href="{url 'account/system_display'}">公众号管理</a></li>
+	<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i> </a>
+	<li><a href="{url 'account/manage'}">公众号管理</a></li>
 	<li>公众号设置</li>
 </ol>
 <div class="media media-wechat-setting">
@@ -14,7 +14,7 @@
 	</div>
 	{if $state == 'founder' || $state == 'manager'}
 	<div class="media-right media-middle">
-		<a href="{php echo url('account/system_display/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
+		<a href="{php echo url('account/manage/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
 	</div>
 	{/if}
 </div>

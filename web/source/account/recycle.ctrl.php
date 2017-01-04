@@ -66,6 +66,10 @@ if ($do == 'recover') {
 }
 
 if($do == 'delete') {
+	$state = uni_permission($_W['uid'], $uniacid);
+	if($state != 'founder' && $state != 'manager') {
+		message('没有权限！', referer(), 'error');
+	}
 	$acid = intval($_GPC['acid']);
 
 	if (!empty($acid)) {

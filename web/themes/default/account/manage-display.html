@@ -1,13 +1,13 @@
 {template 'common/header'}
 <div class="we7-page-title">公众号管理</div>
 <ul class="we7-page-tab">
-	<li class="active"><a href="{url 'account/system_display'}">公众号列表</a></li>
+	<li class="active"><a href="{url 'account/manage'}">公众号列表</a></li>
 	<li><a href="{url 'account/recycle'}">公众号回收站</a></li>
 </ul>
 <div class="clearfix we7-margin-bottom">
 	<form action="" class="form-inline  pull-left" method="get">
 		<input type="hidden" name="c" value="account">
-		<input type="hidden" name="a" value="system_display">
+		<input type="hidden" name="a" value="manage">
 		<div class="input-group form-group" style="width: 400px;">
 			<input type="text" name="keyword" value="{$_GPC['keyword']}" class="form-control" placeholder="搜索关键字"/>
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
@@ -67,7 +67,7 @@
 		links: {
 			switch: "{php echo url('account/display/switch')}",
 			post: "{php echo url('account/post')}",
-			del: "{php echo url('account/system_display/delete')}",
+			del: "{php echo url('account/manage/delete')}",
 		}
 	});
 	angular.bootstrap($('#js-system-account-display'), ['accountApp']);

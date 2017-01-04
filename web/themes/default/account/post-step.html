@@ -2,8 +2,8 @@
 {if $_GPC['step'] == 1 || $_GPC['step'] == ''}
 	<div class="account-list-add" id="js-account-post-step1" ng-controller="AccountPostStepOne" ng-cloak>
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{url 'account/system_display'}"><i class="wi wi-back-cricle"></i></a>
-			<li><a href="{url 'account/system_display'}">公众号列表</a></li>
+			<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i></a>
+			<li><a href="{url 'account/manage'}">公众号列表</a></li>
 			<li>新建公众号</li>
 		</ol>
 		<div class="panel we7-panel">
@@ -57,8 +57,8 @@
 {elseif $_GPC['step'] == 2}
 	<div class="account-list-add-step">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{url 'account/system_display'}"><i class="wi wi-back-cricle"></i> </a>
-			<li><a href="{url 'account/system_display'}">公众号列表</a></li>
+			<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i> </a>
+			<li><a href="{url 'account/manage'}">公众号列表</a></li>
 			<li>新建公众号</li>
 		</ol>
 		<div class="we7-step">
@@ -176,8 +176,8 @@
 {elseif $_GPC['step'] == 3}
 	<div class="account-list-add-step">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{url 'account/system_display'}"><i class="wi wi-back-cricle"></i> </a>
-			<li><a href="{url 'account/system_display'}">公众号列表</a></li>
+			<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i> </a>
+			<li><a href="{url 'account/manage'}">公众号列表</a></li>
 			<li>新建公众号</li>
 		</ol>
 		<div class="we7-step">
@@ -428,8 +428,8 @@
 {elseif $_GPC['step'] == 4}
 	<div class="account-list-add-step">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{url 'account/system_display'}"><i class="wi wi-back-cricle"></i> </a>
-			<li><a href="{url 'account/system_display'}">公众号列表</a></li>
+			<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i> </a>
+			<li><a href="{url 'account/manage'}">公众号列表</a></li>
 			<li>新建公众号</li>
 		</ol>
 		<div class="we7-step">
@@ -518,7 +518,7 @@
 							<p># 编辑公众号 <a ng-href="{{links.post}}acid={{account.acid}}&uniacid={{account.uniacid}}">{$account['name']}</a></p>
 							<a href="javascript:window.location.reload();" class="btn btn-success">检测是否接入成功</a>&nbsp;
 							<a ng-href="{{links.switch}}uniacid={{account.uniacid}}" class="btn btn-primary">暂不接入，先去查看公众号功能</a>&nbsp;
-							<a ng-href="{{links.system_display}}" class="btn btn-info">返回公众号列表</a>
+							<a ng-href="{{links.manage}}" class="btn btn-info">返回公众号列表</a>
 						</div>
 						<div ng-if="account.isconnect == 1">
 							<a ng-href="{{links.post}}acid={{account.acid}}&uniacid={{account.uniacid}}" class="btn btn-primary">管理公众号</a>
@@ -534,7 +534,7 @@
 			links: {
 				siteroot: "{$_W['siteroot']}",
 				post: "{php echo url('account/post')}",
-				system_display: "{php echo url('account/system_display')}",
+				manage: "{php echo url('account/manage')}",
 				switch: "{php echo url('account/display/switch')}",
 			}
 		});
