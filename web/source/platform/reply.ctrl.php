@@ -204,7 +204,7 @@ if($do == 'post') {
 				}
 				$kid = pdo_insertid();
 				$module->fieldsFormSubmit($rid);
-				message('回复规则保存成功！', url('platform/reply/post', array('m' => $m, 'rid' => $rid)));
+				message('回复规则保存成功！', url('platform/reply'));
 			} else {
 				message('回复规则保存失败, 请联系网站管理员！');
 			}

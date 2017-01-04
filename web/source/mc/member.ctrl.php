@@ -286,7 +286,7 @@ if($do == 'post') {
 				pdo_insert('mc_members', $_GPC);
 				$uid = pdo_insertid();
 				pdo_update('mc_mapping_fans', array('uid' => $uid), array('fanid' => $fanid, 'uniacid' => $_W['uniacid']));
-				message('更新资料成功！', url('mc/member/post', array('uid' => $uid)), 'success');
+				message('更新资料成功！', url('mc/member'), 'success');
 			} else {
 				$email_effective = intval($_GPC['email_effective']);
 				if(($email_effective == 1 && empty($_GPC['email']))) {
@@ -296,7 +296,7 @@ if($do == 'post') {
 				$uid = mc_update($uid, $_GPC);
 			}
 		}
-		message('更新资料成功！', referer(), 'success');
+		message('更新资料成功！', url('mc/member'), 'success');
 	}
 	$groups = mc_groups($_W['uniacid']);
 	$profile = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $uid));
