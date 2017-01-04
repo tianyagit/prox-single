@@ -77,22 +77,18 @@ require.config({
 			deps: ['../lib/jquery-1.11.1.min']
 		},
 		'daterangepicker': {
-			exports: '$',
 			deps: ['moment', 'loadcss!../../components/daterangepicker/daterangepicker.css']
 		},
 		'datetimepicker' : {
-			exports : '$',
 			deps: ['jquery', 'loadcss!../../components/datetimepicker/jquery.datetimepicker.css']
 		},
 		'colorpicker': {
-			exports: '$',
 			deps: ['loadcss!../../components/colorpicker/spectrum.css']
 		},
 		'map': {
 			exports: 'BMap'
 		},
 		'bootstrap.switch': {
-			exports: "$",
 			deps: ['bootstrap', 'loadcss!../../components/switch/bootstrap-switch.min.css']
 		},
 		'fileUploader': {
@@ -105,33 +101,11 @@ require.config({
 		'district' : {
 			exports : '$'
 		},
-		'jquery.ui': {
-			exports: '$',
-		},
-		'jquery.caret': {
-			exports: '$'
-		},
-		'jquery.jplayer': {
-			exports: '$'
-		},
-		'jquery.wookmark': {
-			exports: '$'
-		},
-		'jquery.qrcode': {
-			exports: '$'
-		},
-		'jquery.jplayer': {
-			exports: "$"
-		},
 		'jquery.toast': {
 			deps: ['loadcss!../../components/toast/toastr.min.css']
 		},
 		'emoji': {
 			deps: ['loadcss!../../components/emoji/emotions.css']
-		},
-		'material': {
-			deps: ['../lib/jquery-1.11.1.min']
-		},
-		
+		}
 	}
 });
