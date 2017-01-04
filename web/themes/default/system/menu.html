@@ -51,7 +51,7 @@
 							<div class="switch" ng-init="displayStatus['{$sub_menu['permission_name']}'] = {php echo $sub_menu['is_display'] ? 'true' : 'false'}" ng-click="changeDisplay('{$sub_menu['permission_name']}')" ng-class="{'switchOn' : displayStatus['{$sub_menu['permission_name']}'], 'switchOff' : !displayStatus['{$sub_menu['permission_name']}']}"></div>
 						</td>
 						<td class="text-right we7-padding-right">
-							<a href="javascript:;" class="color-default we7-margin-right-sm" ng-click="editItemPanel({displayorder: '{$sub_menu['displayorder']}', title : '{$sub_menu['title']}', url : '{$sub_menu['url']}', permissionName : '{$sub_menu['permission_name']}', isSystem : '{$sub_menu['is_system']}'})">编辑</a>
+							<a href="javascript:;" class="color-default we7-margin-right-sm" ng-click="editItemPanel({displayorder: '{$sub_menu['displayorder']}', title : '{$sub_menu['title']}', url : '{$sub_menu['url']}', permissionName : '{$sub_menu['permission_name']}', isSystem : '{$sub_menu['is_system']}', id : '{$sub_menu['id']}', 'group' : '{$sub_menu['group']}'})">编辑</a>
 							{if empty($sub_menu['is_system'])}<a href="javascript:;" ng-click="removeSubItem('{$sub_permission_name}')" class="color-default">删除</a>{/if}
 						</td>
 					</tr>
@@ -61,7 +61,7 @@
 						<div class="pad-bottom ">{{submenu.displayorder}}</div>
 					</td>
 					<td class="text-left"> 
-						<span style="margin-left: 50px;">{{submenu.title}}{{submenu.$$hashKey}}</span>
+						<span style="margin-left: 50px;">{{submenu.title}}</span>
 					</td>
 					<td>
 						<label>
@@ -71,7 +71,7 @@
 					</td>
 					<td class="text-right we7-padding-right">
 						<a href="javascript:;" class="color-default we7-margin-right-sm" ng-click="editItemPanel({group : '{$section_name}', displayorder: '0', title : submenu.title + submenu.$$hashKey})">编辑</a>
-						<a href="javascript:;" ng-click="removeSubItem('{$permission_name}', $index)" class="color-default">删除</a>
+						<a href="javascript:;" ng-click="removeSubItem('{$section_name}', $index)" class="color-default">删除</a>
 					</td>
 				</tr>
 			{/loop}
@@ -102,16 +102,16 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 菜单标识</label>
 							<div class="col-sm-10">
-								<input type="text" name="permission_name" ng-readonly="activeItem.isSystem" ng-model="activeItem.permissionName" class="form-control">
+								<input type="text" name="permission_name" ng-readonly="activeItem.isSystem == '1'" ng-model="activeItem.permissionName" class="form-control">
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 菜单链接</label>
 							<div class="col-sm-10">
-								<input type="text" name="url" ng-readonly="activeItem.isSystem" ng-model="activeItem.url" class="form-control">
+								<input type="text" name="url" ng-readonly="activeItem.isSystem == '1'" ng-model="activeItem.url" class="form-control">
 							</div>
 						</div>
-						<div class="form-group" ng-hide="activeItem.isSystem || activeItem.group == 'frame'">
+						<div class="form-group" ng-hide="activeItem.isSystem == '1' || activeItem.group == 'frame'">
 							<label class="col-sm-2 control-label"> 菜单图标</label>
 							<div class="col-sm-10">
 								<div class="input-group">

@@ -240,7 +240,10 @@ function buildframes($framename = ''){
 	}
 	$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame'), array('title', 'url'));
 	if (!empty($add_top_nav)) {
-		$top_nav = array_merge($top_nav, $add_top_nav);
+		foreach ($add_top_nav as $menu) {
+			$menu['blank'] = true;
+			$top_nav[] = $menu;
+		}
 	}
 	return !empty($framename) ? $frames[$framename] : $frames;
 }

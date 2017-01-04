@@ -43,6 +43,7 @@ if ($do == 'display') {
 	}
 	template('system/menu');
 } elseif ($do == 'post') {
+	$id = intval($_GPC['id']);
 	$menu = array(
 		'title' => $_GPC['title'],
 		'url' => $_GPC['url'],
@@ -57,7 +58,7 @@ if ($do == 'display') {
 	if (!preg_match('/^[a-zA-Z0-9_]+$/', $menu['permission_name'], $match)) {
 		message(error(-1, '菜单标识只能是数字、字母、下划线'), referer(), 'ajax');
 	}
-	if (substr($menu['url'], 0, 4) != 'http' && substr($menu['url'], 0, 2) != '//') {
+	if (empty($menu['is_system']) && substr($menu['url'], 0, 4) != 'http' && substr($menu['url'], 0, 2) != '//') {
 		message(error(-1, '请输入完整的链接'), referer(), 'ajax');
 	}
 	if (in_array($menu['permission_name'], $system_menu_permission)) {
@@ -66,16 +67,19 @@ if ($do == 'display') {
 	} else {
 		$menu['group_name'] = $_GPC['group'];
 		$menu['is_system'] = 0;
+		
 		$menu_db = pdo_get('core_menu', array('permission_name' => $menu['permission_name']));
-		if (!empty($menu_db)) {
+		if (!empty($menu_db) && $menu_db['id'] != $id) {
 			message(error(-1, '菜单标识不得重复请更换'), referer(), 'ajax');
 		}
+		
 	}
 	$permission_name = $menu['permission_name'];
 	$menu_db = pdo_get('core_menu', array('permission_name' => $permission_name));
 	
 	if (!empty($menu_db)) {
 		unset($menu['permission_name']);
+		$menu['group_name'] = $menu_db['group_name'];
 		pdo_update('core_menu', $menu, array('permission_name' => $permission_name));
 	} else {
 		$menu['is_display'] = 1;
