@@ -38,7 +38,7 @@
 				{else}
 				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="fa fa-angle-right"></i> <span>显示到菜单</span></a>
 				{/if}
-				<a href="{php echo url('profile/module/top', array('modulename' => $row['name']))}" class="manage-stick"><i class="wi wi-stick"></i><span>置顶</span></a>
+				<a href="{php echo url('profile/module/top', array('modulename' => $row['name']))}" class="manage-stick"><i class="wi wi-stick-sign"></i><span>置顶</span></a>
 			</div>
 		</div>
 		{/loop}

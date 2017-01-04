@@ -117,11 +117,11 @@
 			</div>
 		</div>
 		{if in_array($m, $sysmods)}
-			{php echo module_build_form('reply', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
+			{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
 		{else}
 			{php echo module_build_form($m, $rid)}
 		{/if}
-		<input type="hidden" name="token" value="{$_W['token']}" />
+		<input type="hidden" name="token" value="{$_W['token']}">
 		<input type="submit" name="submit" value="发布" class="btn btn-primary btn-submit"/>
 	</div>
 	{/if}
