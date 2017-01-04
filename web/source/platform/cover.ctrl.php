@@ -50,7 +50,7 @@ if($do == 'module') {
 	if (is_error($entry)) {
 		message('模块菜单不存在或是模块已经被删除');
 	}
-	$module = module_fetch($entry['module']);
+	$module = $_W['current_module'] = module_fetch($entry['module']);
 	$reply = pdo_get('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
 	
 	if (checksubmit('submit')) {
@@ -134,14 +134,16 @@ if($do == 'module') {
 		if(!empty($reply['thumb'])) {
 			$reply['src'] = tomedia($reply['thumb']);
 		}
-		$reply = reply_single($reply['rid']);
+		$reply['rule'] = reply_single($reply['rid']);
 		$reply['url_show'] = $entry['url_show'];
 	} else {
 		$reply = array(
-			'name' => $entry['title'],
+			'title' => $entry['title'],
 			'url_show' => $entry['url_show'],
-			'reply_type' => '2',
-			'displayorder' => '0',
+			'rule' => array(
+				'reply_type' => '2',
+				'displayorder' => '0',
+			)
 		);
 	}
 }
