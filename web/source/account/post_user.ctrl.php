@@ -6,7 +6,6 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('module');
-load()->model('frame');
 
 $dos = array('delete', 'edit', 'set_permission', 'add');
 $do = in_array($do, $dos) ? $do : 'edit';
