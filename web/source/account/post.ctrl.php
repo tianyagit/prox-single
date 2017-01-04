@@ -31,31 +31,28 @@ if($do == 'base') {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
 		}else {
-			message('40035', 'ajax', 'success');
+			message(error(40035), '', 'ajax');
 		}
 		switch ($type) {
 			case 'qrcodeimgsrc':
-				if(!empty($_GPC['imgsrc'])) {
-					if(parse_path($_GPC['imgsrc'])) {
-						if(file_exists($qrcodeimgsrc)) {
-							unlink($qrcodeimgsrc);
-							$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
-						}else {
-							$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
-						}
-					}else {
-						message(error(40035), '', 'ajax');
-					}
-				}
-				break;
 			case 'headimgsrc':
 				if(!empty($_GPC['imgsrc'])) {
 					if(parse_path($_GPC['imgsrc'])) {
-						if(file_exists($headimgsrc)) {
-							unlink($headimgsrc);
-							$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
-						}else {
-							$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+						if($type == 'qrcodeimgsrc') {
+							if(file_exists($qrcodeimgsrc)) {
+								unlink($qrcodeimgsrc);
+								$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+							}else {
+								$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+							}
+						}
+						if($type == 'headimgsrc') {
+							if(file_exists($headimgsrc)) {
+								unlink($headimgsrc);
+								$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+							}else {
+								$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+							}
 						}
 					}else {
 						message(error(40035), '', 'ajax');
@@ -68,13 +65,30 @@ if($do == 'base') {
 				$result = ($uni_account && $account_wechats) ? true : false;
 				break;
 			case 'account' :
-				$result = pdo_update('account_wechats', array('account' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
-				break;
+				$data = array('account' => trim($_GPC['request_data']));break;
 			case 'original':
-				$result = pdo_update('account_wechats', array('original' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
-				break;
+				$data = array('original' => trim($_GPC['request_data']));break;
 			case 'level':
-				$result = pdo_update('account_wechats', array('level' => intval($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
+				$data = array('level' => intval($_GPC['request_data']));break;
+			case 'key':
+				$data = array('key' => trim($_GPC['request_data']));break;
+			case 'secret':
+				$data = array('secret' => trim($_GPC['request_data']));break;
+			case 'token':
+				$oauth = (array)uni_setting($uniacid, array('oauth'));
+				if($oauth['oauth'] == $acid && $account['level'] != 4) {
+					$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
+					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
+				}
+				$data = array('token' => trim($_GPC['request_data']));
+				break;
+			case 'encodingaeskey':
+				$oauth = (array)uni_setting($uniacid, array('oauth'));
+				if($oauth['oauth'] == $acid && $account['level'] != 4) {
+					$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
+					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
+				}
+				$data = array('encodingaeskey' => trim($_GPC['request_data']));
 				break;
 			case 'endtime' :
 				if(intval($_GPC['endtype']) == 1) {
@@ -86,28 +100,9 @@ if($do == 'base') {
 				if(empty($owneruid)) message('-1', 'ajax', 'error');
 				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $owneruid));
 				break;
-			case 'key':
-				$result = pdo_update('account_wechats', array('key' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
-				break;
-			case 'secret':
-				$result = pdo_update('account_wechats', array('secret' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
-				break;
-			case 'token':
-				$oauth = (array)uni_setting($uniacid, array('oauth'));
-				if($oauth['oauth'] == $acid && $account['level'] != 4) {
-					$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
-					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
-				}
-				$result = pdo_update('account_wechats', array('token' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
-				break;
-			case 'encodingaeskey':
-				$oauth = (array)uni_setting($uniacid, array('oauth'));
-				if($oauth['oauth'] == $acid && $account['level'] != 4) {
-					$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
-					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
-				}
-				$result = pdo_update('account_wechats', array('encodingaeskey' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
-				break;
+		}
+		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime'))) {
+			$result = pdo_update('account_wechats', $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
 		if($result) {
 			cache_delete("uniaccount:{$uniacid}");
@@ -116,17 +111,17 @@ if($do == 'base') {
 			cache_delete("jsticket:{$acid}");
 			cache_delete("cardticket:{$acid}");
 			module_build_privileges();
-			message('0', 'ajax', 'success');
+			message(error(0), '', 'ajax');
 		}else {
-			message('1', 'ajax', 'error');
+			message(error(1), '', 'ajax');
 		}
 	}
 	
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
 	$uniaccount = array();
-	$uniaccount = pdo_fetch("SELECT * FROM ".tablename('uni_account')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
-	
+	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
+
 	template('account/manage-base');
 }
 
@@ -233,7 +228,7 @@ if($do == 'modules_tpl') {
 	}
 	$modules_tpl = $extend = array();
 
-	$owner['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $owner['groupid']));
+	$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), 'id, name, package');
 	$owner['group']['package'] = iunserializer($owner['group']['package']);
 	if(!empty($owner['group']['package'])){
 		foreach ($owner['group']['package'] as $package_value) {
@@ -270,9 +265,10 @@ if($do == 'modules_tpl') {
 		}
 	}
 	//附加权限
-	$modules = pdo_fetchall("SELECT mid, name, title FROM " . tablename('modules') . ' WHERE issystem != 1', array(), 'name');
-	$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
-	$extend = pdo_fetch("SELECT * FROM ".tablename('uni_group')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
+	$modules = pdo_getall('modules', array('issystem !=' => 1), array('mid', 'name', 'title'), 'name');
+	$templates = pdo_getall('site_templates');
+
+	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
 	$extend['modules'] = iunserializer($extend['modules']);
 	$extend['templates'] = iunserializer($extend['templates']);
 	if (!empty($extend['modules'])) {
