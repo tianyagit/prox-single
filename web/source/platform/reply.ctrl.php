@@ -88,6 +88,16 @@ if($do == 'display') {
 				if(!empty($entries)) {
 					$item['options'] = $entries['rule'];
 				}
+				//若是模块，获取模块图片
+				if (!in_array($item['module'], array("basic", "news", "images", "voice", "video", "music", "wxcard", "reply"))) {
+					if (file_exists(IA_ROOT.'/addons/'.$item['module'].'/icon-custom.jpg')) {
+						$item['logo'] = tomedia(IA_ROOT.'/addons/'.$item['module'].'/icon-custom.jpg');
+					}elseif(file_exists(IA_ROOT.'/addons/'.$item['module'].'/icon.jpg')) {
+						$item['logo'] = tomedia(IA_ROOT.'/addons/'.$item['module'].'/icon.jpg');
+					}else {
+						$item['logo'] = './resource/images/11.png';
+					}
+				}
 			}
 			unset($item);
 		}
