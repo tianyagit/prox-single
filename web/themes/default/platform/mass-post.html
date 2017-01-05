@@ -29,7 +29,7 @@
 					<span class="help-block text-danger">特别注意:发送时间不能小于当前时间.不要超过晚上11点</span>
 				</div>
 			</div>
-			{php echo module_build_form('reply', $massdata['id'], array('news'=> false, 'image'=> false,'voice'=> false,'video'=> false))}
+			{php echo module_build_form('core', $massdata['id'], array('news'=> false, 'image'=> false,'voice'=> false,'video'=> false))}
 			<input type="submit" name="submit" value="发布" class="btn btn-primary btn-submit"/>
 		</form>
 	</div>

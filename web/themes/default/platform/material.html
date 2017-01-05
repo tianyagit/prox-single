@@ -96,13 +96,13 @@
 					<div class="appmsg-opr">
 						<ul>
 							<li class="appmsg-opr-item">
-								<a href="javascript:;" class="" ng-click="checkGroup('news', {$material['id']})">群发</a>
+								<a href="javascript:;" class="" ng-click="checkGroup('news', {$material['id']})" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="appmsg-opr-item">
-								<a href="{php echo url('platform/material_post/news', array('newsid' => $material['id']))}" class="">&nbsp;<i class="wi wi-text"></i></a>
+								<a href="{php echo url('platform/material_post/news', array('newsid' => $material['id']))}" class="" title="编辑">&nbsp;<i class="wi wi-text"></i></a>
 							</li>
 							<li class="appmsg-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['media_id']}')">&nbsp;<i class="wi wi-delect"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['media_id']}')" title="删除">&nbsp;<i class="wi wi-delect"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -132,10 +132,10 @@
 					<div class="img-opr">
 						<ul>
 							<li class="img-opr-item">
-								<a href="javascript:;" class="" ng-click="checkGroup('image', {$image['id']})">群发</a>
+								<a href="javascript:;" class="" ng-click="checkGroup('image', {$image['id']})" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['media_id']}')">&nbsp;<i class="wi wi-delect"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['media_id']}')" title="删除">&nbsp;<i class="wi wi-delect"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -169,10 +169,10 @@
 					<div class="audio-opr">
 						<ul>
 							<li class="audio-opr-item">
-								<a href="javascript:;" class="" ng-click="checkGroup('voice', {$voice['id']})">群发</a>
+								<a href="javascript:;" class="" ng-click="checkGroup('voice', {$voice['id']})" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="audio-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['media_id']}')">&nbsp;<i class="wi wi-delect"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['media_id']}')" title="删除">&nbsp;<i class="wi wi-delect"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -204,10 +204,10 @@
 					<div class="img-opr">
 						<ul>
 							<li class="img-opr-item">
-								<a href="javascript:;" class="" ng-click="checkGroup('video', {$video['id']})">群发</a>
+								<a href="javascript:;" class="" ng-click="checkGroup('video', {$video['id']})" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['media_id']}')">&nbsp;<i class="wi wi-delect"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['media_id']}')" title="删除">&nbsp;<i class="wi wi-delect"></i></a>
 							</li>
 						</ul>
 					</div>

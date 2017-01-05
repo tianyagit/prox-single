@@ -76,6 +76,30 @@ parent.require(['jquery', 'util'], function($, util){
 	if($type == 'ajax' || $type == 'sql') {
 		$label = 'warning';
 	}
+	//message通过cookie传递
+	/*
+	 * title 标题
+	 * msg 提示内容
+	 * label 提示类型
+	 */
+	setCookie("modal",'',time()-600);
+	$modal = array();
+	if (is_array($msg)){
+		$modal['title'] = 'MYSQL 错误';
+		$modal['msg'] = 'php echo cutstr('.$msg['sql'].', 300, 1);';
+	} else{
+		$modal['title'] = $caption;
+		$modal['msg'] = $msg;
+	}
+	$modal['label'] = $label;
+	setCookie("modal",json_encode($modal),time()+600);
+	if ($redirect){
+		header('location:'.$redirect);
+	} else {
+		header('location:'.getenv("HTTP_REFERER"));
+	}
+	exit();
+	//end message通过cookie传递
 	include template('common/message', TEMPLATE_INCLUDEPATH);
 	exit();
 }
@@ -240,7 +264,10 @@ function buildframes($framename = ''){
 	}
 	$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame'), array('title', 'url'));
 	if (!empty($add_top_nav)) {
-		$top_nav = array_merge($top_nav, $add_top_nav);
+		foreach ($add_top_nav as $menu) {
+			$menu['blank'] = true;
+			$top_nav[] = $menu;
+		}
 	}
 	return !empty($framename) ? $frames[$framename] : $frames;
 }

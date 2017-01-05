@@ -18,5 +18,14 @@ if ($do == 'platform') {
 		$modules = uni_modules();
 		$_W['current_module'] = $modules[$modulename];
 	}
+	$frames = buildframes(FRAME);
+	foreach ($frames['section'] as $secion) {
+		foreach ($secion['menu'] as $menu) {
+			if (!empty($menu['url'])) {
+				header('Location: ' . $menu['url']);
+				exit;
+			}
+		}
+	}
 	template('home/welcome-ext');
 }

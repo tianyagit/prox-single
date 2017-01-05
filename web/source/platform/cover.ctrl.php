@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('reply');
 load()->model('module');
 
-$dos = array('module');
+$dos = array('module', 'post');
 $do = in_array($do, $dos) ? $do : 'module';
 
 uni_user_permission_check('platform_cover_' . $do, true, 'cover');
@@ -42,38 +42,41 @@ if($do == 'module') {
 	}
 	
 } elseif ($do == 'post') {
-	$eid = intval($_GPC['eid']);
-	if(empty($eid)) {
+	$entry_id = intval($_GPC['eid']);
+	if(empty($entry_id)) {
 		message('访问错误');
 	}
-	$entry = module_entry($eid);
+	$entry = module_entry($entry_id);
 	if (is_error($entry)) {
 		message('模块菜单不存在或是模块已经被删除');
 	}
-	$module = module_fetch($entry['module']);
+	$module = $_W['current_module'] = module_fetch($entry['module']);
+	$reply = pdo_get('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
 	
 	if (checksubmit('submit')) {
 		if(trim($_GPC['keywords']) == '') {
 			message('必须输入触发关键字.');
 		}
-	
 		$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
 		if(empty($keywords)) {
 			message('必须填写有效的触发关键字.');
 		}
 		$rule = array(
-				'uniacid' => $_W['uniacid'],
-				'name' => $entry['title'],
-				'module' => 'cover',
-				'status' => intval($_GPC['status']),
+			'uniacid' => $_W['uniacid'],
+			'name' => $entry['title'],
+			'module' => 'cover',
+			'containtype' => '',
+			'reply_type' => intval($_GPC['reply_type']) == 2 ? 2 : 1,
+			'status' => $_GPC['status'] == 'true' ? 1 : 0,
+			'displayorder' => intval($_GPC['displayorder_rule']),
 		);
-		if(!empty($_GPC['istop'])) {
+		if($_GPC['istop'] == 1) {
 			$rule['displayorder'] = 255;
 		} else {
-			$rule['displayorder'] = range_limit($_GPC['displayorder'], 0, 254);
+			$rule['displayorder'] = range_limit($rule['displayorder'], 0, 254);
 		}
 		if (!empty($reply)) {
-			$rid = $reply['id'];
+			$rid = $reply['rid'];
 			$result = pdo_update('rule', $rule, array('id' => $rid));
 		} else {
 			$result = pdo_insert('rule', $rule);
@@ -82,41 +85,36 @@ if($do == 'module') {
 	
 		if (!empty($rid)) {
 			//更新，添加，删除关键字
-			$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `uniacid`=:uniacid';
-			$pars = array();
-			$pars[':rid'] = $rid;
-			$pars[':uniacid'] = $_W['uniacid'];
-			pdo_query($sql, $pars);
-	
-			$rowtpl = array(
-					'rid' => $rid,
-					'uniacid' => $_W['uniacid'],
-					'module' => 'cover',
-					'status' => $rule['status'],
-					'displayorder' => $rule['displayorder'],
+			pdo_delete('rule_keyword', array('rid' => $rid, 'uniacid' => $_W['uniacid']));
+			$keyword_row = array(
+				'rid' => $rid,
+				'uniacid' => $_W['uniacid'],
+				'module' => 'cover',
+				'status' => $rule['status'],
+				'displayorder' => $rule['displayorder'],
 			);
-			foreach($keywords as $kw) {
-				$krow = $rowtpl;
-				$krow['type'] = range_limit($kw['type'], 1, 4);
-				$krow['content'] = $kw['content'];
-				pdo_insert('rule_keyword', $krow);
+			foreach($keywords as $keyword) {
+				$keyword_insert = $keyword_row;
+				$keyword_insert['type'] = range_limit($keyword['type'], 1, 4);
+				$keyword_insert['content'] = $keyword['content'];
+				pdo_insert('rule_keyword', $keyword_insert);
 			}
 	
 			$entry = array(
-					'uniacid' => $_W['uniacid'],
-					'multiid' => 0,
-					'rid' => $rid,
-					'title' => $_GPC['title'],
-					'description' => $_GPC['description'],
-					'thumb' => $_GPC['thumb'],
-					'url' => $entry['url'],
-					'do' => $entry['do'],
-					'module' => $entry['module'],
+				'uniacid' => $_W['uniacid'],
+				'multiid' => 0,
+				'rid' => $rid,
+				'title' => $_GPC['rulename'],
+				'description' => $_GPC['description'],
+				'thumb' => $_GPC['thumb'],
+				'url' => $entry['url'],
+				'do' => $entry['do'],
+				'module' => $entry['module'],
 			);
-			if (empty($cover['id'])) {
+			if (empty($reply['id'])) {
 				pdo_insert('cover_reply', $entry);
 			} else {
-				pdo_update('cover_reply', $entry, array('id' => $cover['id']));
+				pdo_update('cover_reply', $entry, array('id' => $reply['id']));
 			}
 			message('封面保存成功！', 'refresh', 'success');
 		} else {
@@ -124,7 +122,6 @@ if($do == 'module') {
 		}
 	}
 	
-	$cover['title'] = $entry['title'];
 	if (!empty($module['isrulefields'])) {
 		$url = url('platform/reply', array('m' => $module['name']));
 	}
@@ -133,21 +130,21 @@ if($do == 'module') {
 	}
 	define('ACTIVE_FRAME_URL', $url);
 	
-	$cover = pdo_get('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
-	if(!empty($cover)) {
-		$cover['saved'] = true;
-		if(!empty($cover['thumb'])) {
-			$cover['src'] = tomedia($cover['thumb']);
+	if(!empty($reply)) {
+		if(!empty($reply['thumb'])) {
+			$reply['src'] = tomedia($reply['thumb']);
 		}
-		$cover['url_show'] = $entry['url_show'];
-		$reply = reply_single($cover['rid']);
-		$entry['title'] = $cover['title'];
+		$reply['rule'] = reply_single($reply['rid']);
+		$reply['url_show'] = $entry['url_show'];
 	} else {
-		$cover['title'] = $entry['title'];
-		$cover['url_show'] = $entry['url_show'];
-	}
-	if(empty($reply)) {
-		$reply = array();
+		$reply = array(
+			'title' => $entry['title'],
+			'url_show' => $entry['url_show'],
+			'rule' => array(
+				'reply_type' => '2',
+				'displayorder' => '0',
+			)
+		);
 	}
 }
 template('platform/cover');

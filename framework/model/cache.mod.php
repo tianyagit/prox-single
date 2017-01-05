@@ -143,7 +143,7 @@ function cache_build_frame_menu() {
 					$section['menu'] = array();
 				}
 				$add_menu = pdo_getall('core_menu', array('group_name' => $section_name), array(
-					'title', 'url', 'is_display', 'is_system', 'permission_name', 'displayorder'
+					'id', 'title', 'url', 'is_display', 'is_system', 'permission_name', 'displayorder'
 				), 'permission_name', 'displayorder DESC');
 				if (!empty($add_menu)) {
 					foreach ($add_menu as $permission_name => $menu) {
@@ -161,6 +161,7 @@ function cache_build_frame_menu() {
 						'permission_name' => $sub_menu['permission_name'],
 						'icon' => $sub_menu['icon'],
 						'displayorder' => !empty($sub_menu_db['displayorder']) ? $sub_menu_db['displayorder'] : $displayorder,
+						'id' => $sub_menu['id'],
 					);
 					$displayorder--;
 					$displayorder = max($displayorder, 0);
