@@ -1,4 +1,4 @@
-define(['jquery', 'underscore', 'util', 'bootstrap', 'jquery.wookmark', 'jquery.jplayer'], function($, _){
+define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 	var material = {
 		'defaultoptions' : {
 			callback : null,

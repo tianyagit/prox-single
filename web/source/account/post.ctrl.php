@@ -266,16 +266,16 @@ if($do == 'modules_tpl') {
 	}
 	//附加权限
 	$modules = pdo_getall('modules', array('issystem !=' => 1), array('mid', 'name', 'title'), 'name');
-	$templates = pdo_getall('site_templates');
+	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
 
 	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
 	$extend['modules'] = iunserializer($extend['modules']);
 	$extend['templates'] = iunserializer($extend['templates']);
 	if (!empty($extend['modules'])) {
-		$extend['modules'] = pdo_getall('modules', array('name' => $extend['modules']), array('title', 'name'));
+		$extend['modules'] = pdo_getall('modules', array('name' => $extend['modules']), array('mid', 'title', 'name'));
 	}
 	if (!empty($extend['templates'])) {
-		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('title', 'name'));
+		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('id', 'name', 'title'));
 	}
 
 	template('account/manage-modules-tpl');
