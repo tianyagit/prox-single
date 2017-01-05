@@ -7,14 +7,14 @@
 		</div>
 
 		<ul class="we7-page-tab">
-			<li class="active"><a href="{php echo url('system/module_group/display') }">应用权限套餐列表  </a></li>
+			<li class="active"><a href="{php echo url('system/module-group/display') }">应用权限套餐列表  </a></li>
 		</ul>
 
 		<div class="we7-page-search clearfix">
 			<form action="" method="get" class="we7-form">
 				<div class="form-group we7-padding-none col-sm-4 pull-left">
 					<input type="hidden" name="c" value="system">
-					<input type="hidden" name="a" value="module_group">
+					<input type="hidden" name="a" value="module-group">
 					<input type="hidden" name="do" value="display">
 					<div class="input-group">
 						<input class="form-control" name="name" value="{$_GPC['name']}" type="text" placeholder="名称" >
@@ -23,7 +23,7 @@
 				</div>
 			</form>
 			<div class="pull-right">
-				<a href="{php echo url('system/module_group/post')}" class="btn btn-primary">+添加应用权限套餐</a>
+				<a href="{php echo url('system/module-group/post')}" class="btn btn-primary">+添加应用权限套餐</a>
 			</div>
 		</div>
 		<table class="table we7-table vertical-middle">
@@ -49,8 +49,8 @@
 				<td class="text-left">
 					<div class="link-group">
 						<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" data-target="toggle-{$module_group['id']}" ng-click="changeText($event)">展开</a>
-						<a href="{php echo url('system/module_group/post', array('id' => $module_group['id']))}">编辑套餐</a>
-						<a href="{php echo url('system/module_group/delete', array('id' => $module_group['id']))}" onclick="return confirm('确定要删除套餐吗？')">删除</a>
+						<a href="{php echo url('system/module-group/post', array('id' => $module_group['id']))}">编辑套餐</a>
+						<a href="{php echo url('system/module-group/delete', array('id' => $module_group['id']))}" onclick="return confirm('确定要删除套餐吗？')">删除</a>
 					</div>
 				</td>
 			</tr>
@@ -95,7 +95,7 @@
 <div class="js-modulegroup-post" ng-controller="moduleGroupPostCtrl" ng-cloak>
 	<div class="combo-list-add">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{php echo url('system/module_group/')}"><i class="wi wi-back-cricle"></i> </a>
+			<a href="{php echo url('system/module-group/')}"><i class="wi wi-back-cricle"></i> </a>
 			<li>
 				套餐应用列表
 			</li>
@@ -207,7 +207,7 @@
 		'groupNotHaveModule' : {php echo  json_encode($group_not_have_module)},
 		'groupHaveTemplate' : {php echo  json_encode($group_have_template)},
 		'groupNotHaveTemplate' : {php echo  json_encode($group_not_have_template)},
-		'url' : "{php echo url('system/module_group/save')}"
+		'url' : "{php echo url('system/module-group/save')}"
 	});
 	angular.bootstrap($('.js-modulegroup-post'), ['moduleApp']);
 	$('[data-toggle="table-collapse"]').on('click',function(){

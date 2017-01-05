@@ -37,14 +37,14 @@ if ($do == 'save') {
 		$packageid = $package_info['id'];
 		unset($package_info['id']);
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
-		message(error(0, url('system/module_group')), '', 'ajax');
+		message(error(0, url('system/module-group')), '', 'ajax');
 	} else {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
 			message(error(1, '套餐名已存在'), '', 'ajax');
 		}
 		pdo_insert('uni_group', $package_info);
-		message(error(0, url('system/module_group')), '', 'ajax');
+		message(error(0, url('system/module-group')), '', 'ajax');
 	}
 }
 
@@ -172,8 +172,8 @@ if ($do == 'post') {
 			cache_build_account_modules();
 		}
 		module_build_privileges();
-		message('公众号组更新成功！', url('system/module_group/display'), 'success');
+		message('公众号组更新成功！', url('system/module-group/display'), 'success');
 	}
 }
 
-template('system/module_group');
+template('system/module-group');

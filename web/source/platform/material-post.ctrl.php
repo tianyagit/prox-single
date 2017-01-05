@@ -61,7 +61,7 @@ if ($do == 'tomedia') {
 if($do == 'news') {
 	$newsid = intval($_GPC['newsid']);
 	$news_list = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $newsid), array(), '',  'displayorder ASC');
-	template('platform/material_post');
+	template('platform/material-post');
 }
 
 if($do == 'addnews') {
@@ -120,8 +120,8 @@ if($do == 'addnews') {
 	}
 	if ($operate == 'add') {
 		$media_id = $account_api->addMatrialNews($articles);
-		if(is_error($result)) {
-			message($result, '', 'ajax');
+		if(is_error($media_id)) {
+			message($media_id, '', 'ajax');
 		}
 		$wechat_attachment = array(
 			'uniacid' => $_W['uniacid'],

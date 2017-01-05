@@ -54,15 +54,16 @@
 		{/if}
 		<div class="table we7-tables {if !in_array($m, $sysmods)} we7-padding-vertical{/if}">
 			<form action="{php echo url('platform/reply/delete');}" method="post" role="form" class="form we7-form" id="form1">
-				<input type="hidden" name="m" value="{$m}"/>
+				<input type="hidden" name="m" value="{$m}">
 				{if !empty($replies)}
 					{loop $replies $row}
 					<table class="table we7-table">
+						<col width="80px"/>
 						<col />
 						<col width="120px"/>
 						<col width="130px"/>
 						<tr>
-							<th class="text-left">
+							<th class="text-left"  colspan="2">
 								<div class="pull-left">
 									<input id='rid-{$row['id']}' type="checkbox" name='rid[]' value="{$row['id']}"/>
 									<label for="rid-{$row['id']}">规则名：{$row['name']}</label>
@@ -81,6 +82,12 @@
 							<th class="text-left">操作</th>
 						</tr>
 						<tr>
+							<td class="vertical-middle">
+								{if $row['module'] != 'basic' && $row['module'] != 'news' && $row['module'] != 'music' && $row['module'] != 'images' && $row['module'] != 'voice' && $row['module'] != 'video' && $row['module'] != 'wxcard' && $row['module'] != 'reply'}
+									<img src="{$row['logo']}" alt="" class="keyword-img"/>
+								{else}
+								{/if}
+							</td>
 							<td class="text-left">
 								<div class="we7-form">
 									<div class="form-inline">
@@ -113,7 +120,11 @@
 							</td>
 							<td class="vertical-middle text-left">
 								<div class="link-group">
+									{if $row['module'] == 'basic' || $row['module'] == 'news' || $row['module'] == 'music' || $row['module'] == 'images' || $row['module'] == 'voice' || $row['module'] == 'video' || $row['module'] == 'wxcard' || $row['module'] == 'reply'}
 									<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $row['id']))}">编辑</a>
+									{else}
+									<a href="{php echo url('platform/reply/post', array('m' => $row['module'], 'rid' => $row['id']))}">编辑</a>
+									{/if}
 									<a href="{php echo url('platform/reply/delete', array('m' => $m, 'rid' => $row['id']))}" onclick="return confirm('删除规则将同时删除关键字与回复，确认吗？');return false;">删除</a>
 									<!-- <a class="color-default keyword-link" href="{php echo url('platform/stat/trend', array('id' => $row['id'], 'm' => $row['module']))}"><i class="fa fa-bar-chart-o"></i> 使用率走势</a> -->
 									{if $row['options']}

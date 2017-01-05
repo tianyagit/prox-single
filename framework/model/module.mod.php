@@ -311,7 +311,7 @@ function module_build_privileges() {
  * 获取所有未安装的模块
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
  */
-function get_all_unistalled_module($status)  {
+function module_get_all_unistalled($status)  {
 	load()->model('cloud');
 	$status = $status == 'uninstalled' ?  'uninstalled' : 'recycle';
 	$all_module = pdo_getall('modules');

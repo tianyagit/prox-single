@@ -158,7 +158,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module_group' => array(
 					'title' => '应用权限套餐',
-					'url' => url('system/module_group'),
+					'url' => url('system/module-group'),
 					'icon' => 'wi wi-appjurisdiction',
 					'permission_name' => 'system_module_group',
 				),
@@ -204,7 +204,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_cloud_sms' => array(
 					'title' => '短信管理',
-					'url' => url('cloud/redirect'),
+					'url' => url('cloud/sms'),
 					'icon' => 'wi wi-message',
 					'permission_name' => 'system_cloud_sms',
 				),

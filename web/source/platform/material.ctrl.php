@@ -142,13 +142,13 @@ if ($do == 'sync') {
 	if ($pageindex == 1) {
 		$original_newsid = pdo_getall('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => $type, 'model' => 'perm'), array('id'), 'id');
 		$original_newsid = array_keys($original_newsid);
-		$wechat_existid = syncMaterial($news_list['item'], array(), $type);
+		$wechat_existid = material_sync($news_list['item'], array(), $type);
 		if ($news_list['total_count'] > 20) {
 			$total = ceil($news_list['total_count']/20);
 			message(error('1', array('type' => $type,'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
 		}
 	} else {
-		$wechat_existid = syncMaterial($news_list['item'], $wechat_existid, $type);
+		$wechat_existid = material_sync($news_list['item'], $wechat_existid, $type);
 		$total = intval($_GPC['total']);
 		$original_newsid = $_GPC['original_newsid'];
 		if ($total != $pageindex) {

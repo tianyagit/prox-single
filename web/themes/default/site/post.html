@@ -165,13 +165,13 @@
 						<a href="#default" data-toggle="tab">基础信息</a>
 					</li>
 					<li class="site-edit-item" ng-click="loadSlideInfo()">
-						<a href="#slide" data-toggle="tab">幻灯片</a>
+						<a href="#slide" data-toggle="tab" id="load-slide">幻灯片</a>
 					</li>
 					<li class="site-edit-item" ng-click="loadHomemenuInfo()">
-						<a href="#homemenu" data-toggle="tab">导航菜单</a>
+						<a href="#homemenu" data-toggle="tab" id="load-homemenu">导航菜单</a>
 					</li>
 					<li class="site-edit-item" ng-click="loadQuickmenuInfo()">
-						<a href="#quickmenu" data-toggle="tab">底部菜单</a>
+						<a href="#quickmenu" data-toggle="tab" id="load-quickmenu">底部菜单</a>
 					</li>
 				</ul>
 			</div>
@@ -898,5 +898,10 @@ require(['underscore'], function(){
 		}
 	});
 	angular.bootstrap($('#js-wesite-post'), ['wesiteApp']);
+	var clickType = "{php echo trim($_GPC['clicktype'])}";
+	var index = $.inArray(clickType, ['slide', 'homemenu', 'quickmenu']);
+	if(index > -1) {
+		$('#load-'+clickType).click();
+	};
 });
 </script>

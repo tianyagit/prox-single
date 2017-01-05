@@ -238,7 +238,7 @@ if ($do =='install') {
 	$module = ext_module_convert($manifest);
 	$module_group = uni_groups();
 	if (!$_W['ispost'] || empty($_GPC['flag'])) {
-		template('system/select_module_group');
+		template('system/select-module-group');
 		exit;
 	}
 	$post_groups = $_GPC['group'];
@@ -501,7 +501,7 @@ if ($do == 'recycle') {
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	$localUninstallModules = get_all_unistalled_module('uninstalled');
+	$localUninstallModules = module_get_all_unistalled('uninstalled');
 	$total_uninstalled = count($localUninstallModules);
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 10;
@@ -582,9 +582,9 @@ if ($do == 'not_installed') {
 
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
 	$recycle_modules = array_keys($recycle_modules);
-	$all_uninstalled = get_all_unistalled_module('uninstalled');
+	$all_uninstalled = module_get_all_unistalled('uninstalled');
 	$total_uninstalled = count($all_uninstalled);
-	$uninstallModules = get_all_unistalled_module($status);
+	$uninstallModules = module_get_all_unistalled($status);
 	if (!empty($uninstallModules)) {
 		foreach($uninstallModules as $name => &$module) {
 			if (!empty($letter) && strlen($letter) == 1) {
