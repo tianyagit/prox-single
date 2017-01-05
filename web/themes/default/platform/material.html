@@ -247,7 +247,8 @@
 			'del_url' : "{php echo url('platform/material/del_material')}",
 			'sync_url' : "{php echo url('platform/material/sync')}",
 			'send_url' : "{php echo url('platform/material/send')}",
-			'group' : {php echo json_encode($group)}
+			'group' : {php echo json_encode($group)},
+			'syncNews' : "{$_GPC['sync_news']}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
 
