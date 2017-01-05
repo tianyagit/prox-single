@@ -238,7 +238,7 @@ if ($do =='install') {
 	$module = ext_module_convert($manifest);
 	$module_group = uni_groups();
 	if (!$_W['ispost'] || empty($_GPC['flag'])) {
-		template('system/select_module_group');
+		template('system/select-module-group');
 		exit;
 	}
 	$post_groups = $_GPC['group'];
