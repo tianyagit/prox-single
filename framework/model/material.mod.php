@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
  * @param array $type 素材类型
  * @return array() 本地与微信端都存在的素材id集合
  */
-function syncMaterial($material, $exist_material, $type) {
+function material_sync($material, $exist_material, $type) {
 	global $_W;
 	$material = empty($material) ? array() : $material;
 	foreach ($material as $news) {
