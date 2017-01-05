@@ -127,7 +127,7 @@
 								<tr>
 									<td>{$module['title']}{if $module['issystem']}<span class="label label-success">系统模块</span>{/if}</td>
 									<td>{$module['name']}</td>
-									<td><a class="btn btn-default js-btn-select {if is_array($extend['modules']) && in_array($module['name'], $extend['modules'])}btn-primary{/if}" data-title="{$module['title']}" data-name="{$module['name']}" onclick="$(this).toggleClass('btn-primary')">选取</a></td>
+									<td><a class="btn btn-default js-btn-select {if is_array($extend['modules']) && in_array($module, $extend['modules'])}btn-primary{/if}" data-title="{$module['title']}" data-name="{$module['name']}" onclick="$(this).toggleClass('btn-primary')">选取</a></td>
 								</tr>
 								{/loop}
 							</table>
@@ -146,7 +146,7 @@
 								<tr>
 									<td>{$temp['title']}</td>
 									<td>{$temp['name']}</td>
-									<td><a class="btn btn-default js-btn-select {if is_array($extend['templates']) && in_array($temp['id'], $extend['templates'])}btn-primary{/if}" data-title="{$temp['title']}" data-name="{$temp['name']}" data-id="{$temp['id']}" onclick="$(this).toggleClass('btn-primary')">选取</a></td>
+									<td><a class="btn btn-default js-btn-select {if is_array($extend['templates']) && in_array($temp, $extend['templates'])}btn-primary{/if}" data-title="{$temp['title']}" data-name="{$temp['name']}" data-id="{$temp['id']}" onclick="$(this).toggleClass('btn-primary')">选取</a></td>
 								</tr>
 								{/loop}
 							</table>
