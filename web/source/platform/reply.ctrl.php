@@ -361,6 +361,9 @@ if ($do == 'change_status') {
 	$setting = $setting['default_message'];
 	$setting[$type]['type'] = $status;
 	$result = uni_setting_save('default_message', $setting);
+	if($result) {
+		message(error(0), '','ajax');
+	}
 }
 
 if($do == 'change_keyword_status') {
