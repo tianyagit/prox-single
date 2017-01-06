@@ -145,6 +145,10 @@ if(!pdo_fieldexists('uni_account', 'rank')) {
 if (!pdo_fieldexists('core_menu', 'group_name')) {
 	pdo_query("ALTER TABLE ". tablename('core_menu'). " ADD `group_name` VARCHAR(30) NOT NULL DEFAULT '';");
 }
+
+if (!pdo_fieldexists('core_menu', 'icon')) {
+	pdo_query("ALTER TABLE ". tablename('core_menu'). " ADD `icon` VARCHAR(10) NOT NULL DEFAULT '';");
+}
 //增大缓存表字段长度
 pdo_query("ALTER TABLE ". tablename('core_cache'). " CHANGE `value` `value` LONGTEXT NOT NULL;");
 
