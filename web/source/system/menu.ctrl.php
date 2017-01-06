@@ -51,6 +51,7 @@ if ($do == 'display') {
 		'is_system' => $_GPC['isSystem'],
 		'displayorder' => $_GPC['displayorder'],
 		'type' => 'url',
+		'icon' => $_GPC['icon'],
 	);
 	if (empty($menu['title']) || empty($menu['url']) || empty($menu['permission_name'])) {
 		message(error(-1, '请完善菜单信息'), referer(), 'ajax');

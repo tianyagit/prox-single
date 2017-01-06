@@ -143,11 +143,11 @@ function cache_build_frame_menu() {
 					$section['menu'] = array();
 				}
 				$add_menu = pdo_getall('core_menu', array('group_name' => $section_name), array(
-					'id', 'title', 'url', 'is_display', 'is_system', 'permission_name', 'displayorder'
+					'id', 'title', 'url', 'is_display', 'is_system', 'permission_name', 'displayorder', 'icon',
 				), 'permission_name', 'displayorder DESC');
 				if (!empty($add_menu)) {
 					foreach ($add_menu as $permission_name => $menu) {
-						$menu['icon'] = 'wi wi-appsetting';
+						$menu['icon'] = !empty($menu['icon']) ? $menu['icon'] : 'wi wi-appsetting';
 						$section['menu'][$permission_name] = $menu;
 					}
 				}
