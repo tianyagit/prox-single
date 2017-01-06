@@ -26,7 +26,7 @@
 				<a href="{php echo url('system/module-group/post')}" class="btn btn-primary">+添加应用权限套餐</a>
 			</div>
 		</div>
-		<table class="table we7-table vertical-middle">
+		<table class="table we7-table table-hover vertical-middle">
 
 			<col width="190px" />
 			<col />
@@ -59,7 +59,7 @@
 					<div class="col-sm-1 color-gray text-left we7-padding-none">应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['modules'] $module}
-						<div class="col-sm-3 text-left">
+						<div class="col-sm-3 text-left text-over">
 							<img src="{$module['logo']}" style="width:50px;height:50px;">
 							<a href="">{$module['title']}</a>
 						</div>
@@ -72,7 +72,7 @@
 					<div class="col-sm-1 color-gray text-left we7-padding-none">模板</div>
 					<div class="col-sm-11">
 						{loop $module_group['templates'] $template}
-						<div class="col-sm-3 text-left">
+						<div class="col-sm-3 text-left  text-over">
 							<i class="glyphicon glyphicon-th-large"></i>
 							<a href="">{$template['title']}</a>
 						</div>

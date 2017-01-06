@@ -53,7 +53,7 @@
 					<a href="javasrcript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#demo-{{pack.id}}" ng-click="changeText($event)">展开</a>
 				</div>
 			</div>
-			<table id="demo-{{pack.id}}" class="table we7-table collapse" ng-if="pack.id != '-1'">
+			<table id="demo-{{pack.id}}" class="table we7-table table-hover collapse" ng-if="pack.id != '-1'">
 				<col width="90px" />
 				<col width="835px" />
 				<tr class="permission-apply">
@@ -65,7 +65,7 @@
 					<td><ul><li><span class="label label-success">系统默认模板</span></li><li ng-repeat="tpl in pack.templates"><span class="label label-info" ng-bind="tpl.title"></span></li></ul></td>
 				</tr>
 			</table>
-			<table id="demo-{{pack.id}}" class="table we7-table collapse" ng-if="pack.id == -1">
+			<table id="demo-{{pack.id}}" class="table we7-table table-hover collapse" ng-if="pack.id == -1">
 				<col width="90px" />
 				<col width="835px" />
 				<tr class="permission-apply">

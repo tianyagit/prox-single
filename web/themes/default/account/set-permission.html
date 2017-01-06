@@ -11,8 +11,8 @@
 
 {loop $menus $name $sections}
 	{if $sections['section']}
+			<table class="table we7-table table-hover">
 	<div class="we7-page-title">{$sections['title']}</div>
-		<table class="table we7-table">
 		{loop $sections['section'] $section_id $section}
 			{if $section_id != 'platform_module'}
 				<thead>
@@ -65,8 +65,8 @@
 	{/if}
 {/loop}
 
+			<table class="table we7-table table-hover vertical-middle">
 
-	<table class="table we7-table vertical-middle">
 	<thead>
 		<tr>
 			<th colspan="4" class="text-left">

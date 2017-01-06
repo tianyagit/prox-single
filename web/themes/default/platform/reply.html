@@ -57,7 +57,7 @@
 				<input type="hidden" name="m" value="{$m}">
 				{if !empty($replies)}
 					{loop $replies $row}
-					<table class="table we7-table">
+					<table class="table we7-table table-hover">
 						<col width="80px"/>
 						<col />
 						<col width="120px"/>
@@ -190,7 +190,7 @@
 {elseif $m == 'special'}
 	<div class="NoKeyword-list" id="js-special-display" ng-controller="SpecialDisplay" ng-cloak>
 		<div class="table we7-tables">
-			<table class="table we7-table">
+			<table class="table we7-table table-hover">
 				<col width="160px"/>
 				<col />
 				<col width="120px"/>

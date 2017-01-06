@@ -18,6 +18,10 @@ if ($do == 'save') {
 		'modules' => $_GPC['modules'],
 		'templates' => $_GPC['templates'],
 	);
+	if (empty($package_info['name'])) {
+		message(error(1, '请输入套餐名'), '', 'ajax');
+	}
+
 	if (!empty($package_info['modules'])) {
 		$package_info['modules'] = iserializer(array_keys($package_info['modules']));
 	}
@@ -37,6 +41,8 @@ if ($do == 'save') {
 		$packageid = $package_info['id'];
 		unset($package_info['id']);
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
+		cache_build_account_modules();
+		module_build_privileges();
 		message(error(0, url('system/module-group')), '', 'ajax');
 	} else {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
@@ -44,6 +50,7 @@ if ($do == 'save') {
 			message(error(1, '套餐名已存在'), '', 'ajax');
 		}
 		pdo_insert('uni_group', $package_info);
+		module_build_privileges();
 		message(error(0, url('system/module-group')), '', 'ajax');
 	}
 }
@@ -75,6 +82,8 @@ if ($do == 'display') {
 				} else {
 					$group['modules'] = array();
 				}
+			} else {
+				$group['modules'] = array();
 			}
 			if (!empty($group['templates'])) {
 				$templates = iunserializer($group['templates']);
@@ -154,25 +163,6 @@ if ($do == 'post') {
 				$group_not_have_template[$template['name']] =  $template;
 			}
 		}
-	}
-
-	if (checksubmit('submit')) {
-		if (empty($_GPC['name'])) {
-			message('请输入公众号组名称！');
-		}
-		$data = array(
-			'name' => $_GPC['name'],
-			'modules' => iserializer($_GPC['module']),
-			'templates' => iserializer($_GPC['template'])
-		);
-		if (empty($id)) {
-			pdo_insert('uni_group', $data);
-		} else {
-			pdo_update('uni_group', $data, array('id' => $id));
-			cache_build_account_modules();
-		}
-		module_build_privileges();
-		message('公众号组更新成功！', url('system/module-group/display'), 'success');
 	}
 }
 
