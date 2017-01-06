@@ -98,66 +98,7 @@ $('#toggle').click(function() {
     </div>
 </div>
 <script type="text/javascript">
-	function setCookie(cname, cvalue, exdays) {
-		var d = new Date();
-		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-		var expires = "expires=" + d.toGMTString();
-		document.cookie = cname + "=" + cvalue + "; " + expires;
-	}
-	
-	function getCookie(cname) {
-	
-		var name = cname + "=";
-	
-		var ca = document.cookie.split(';');
-	
-		for(var i = 0; i < ca.length; i++) {
-	
-			var c = ca[i].trim();
-	
-			if(c.indexOf(name) == 0) return c.substring(name.length, c.length);
-	
-		}
-	
-		return "";
-	
-	}
-	
-	function checkModal() {
-		var modal = getCookie("modal");
-		if(modal != "") {
-			var modal = eval("("+unescape(modal)+")");
-			var alert_modal = $('#alert-model');
-			if(modal.title) {
-				$('#alert-model .modal-title').text(modal.title)
-			}
-			var icon =  '';
-			switch(modal.label)
-			{
-			case 'success':
-			  icon = 'right-sign';
-			  break;
-			case 'danger':
-			  icon = 'warning-sign';
-			  break;
-			case 'info':
-			  icon = 'info-sign';
-			  break;
-			case 'warning':
-			  icon = 'error-sign';
-			  break;
-			default:
-			  icon = 'info-sign';
-			}
-			$('#alert-model .modal-body').html('<i class="text-'+ modal.label +' wi' + ' wi-' + icon +'"></i>'+modal.msg)
-			alert_modal.modal('show');
-			setTimeout(function(){
-				alert_modal.modal('hide');
-			},3000);
-			setCookie("modal", '', 30000);
-		}
-	}
-	checkModal();
+	util.cookie_message();
 </script>
 </body>
 </html>
