@@ -114,6 +114,11 @@ if($do == 'display') {
 		$li['template'] = pdo_fetch("SELECT * FROM ".tablename('site_templates')." WHERE id = :id", array(':id' => $li['style']['templateid']));
 		$li['site_info'] = (array)iunserializer($li['site_info']);
 		$li['site_info']['thumb'] = tomedia($li['site_info']['thumb']);
+		if(file_exists('../app/themes/'.$li['template']['name'].'/preview.jpg')) {
+			$li['preview_thumb'] = $_W['siteroot'].'app/themes/'.$li['template']['name'].'/preview.jpg';
+		}else {
+			$li['preview_thumb'] = $_W['siteroot'].'web/resource/images/nopic-203.png';
+		}
 	}
 	unset($li);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_multi') . " WHERE uniacid = :uniacid".$condition, $params);
