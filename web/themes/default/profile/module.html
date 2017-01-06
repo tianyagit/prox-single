@@ -21,7 +21,7 @@
 	<div we7-initial-searchbar we7-search-callback="searchModule(letter)"></div>
 	<div class="ext-apply-list clearfix">
 		{loop $modules $row}
-		<div class="ext-apply-item"  ng-show="activeLetter ? activeLetter == '{$row['first_pinyin']}' : '1'">
+		<div class="ext-apply-item {if $row['shortcut']}apply-show{/if}"  ng-show="activeLetter ? activeLetter == '{$row['first_pinyin']}' : '1'">
 			<img src="{$row['preview']}" class="apply-img {if !$row['enabled']}gray{/if}" />
 			<h2 class="apply-title">{$row['title']}</h2>
 			<span class="color-green">
@@ -42,9 +42,6 @@
 			</div>
 		</div>
 		{/loop}
-		<div class="ext-apply-item more">
-			<a href="">+</a>
-		</div>
 	</div>
 	<div class="pull-right">{$pager}</div>
 </div>
