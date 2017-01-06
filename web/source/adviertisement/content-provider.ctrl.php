@@ -310,4 +310,4 @@ if ($do == 'content_provider') {
 	$title = '广告主';
 }
 
-template('system/content-provider');
+template('adviertisement/content-provider');
