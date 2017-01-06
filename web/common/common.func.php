@@ -186,6 +186,19 @@ function buildframes($framename = ''){
 		$entries = module_entries($modulename);
 		
 		$frames['account']['section'] = array();
+		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
+			if (!empty($module['isrulefields'])) {
+				$url = url('platform/reply', array('m' => $modulename));
+			}
+			if (empty($url) && !empty($entries['cover'])) {
+				$url = url('platform/cover', array('eid' => $entries['cover'][0]['eid']));
+			}
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_entry'] = array(
+				'title' => "<i class='wi wi-reply'></i> 应用入口",
+				'url' => $url,
+				'is_display' => 1,
+			);
+		}
 		if($module['settings']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_settings'] = array(
 				'title' => "<i class='fa fa-cog'></i> 参数设置",
@@ -211,19 +224,6 @@ function buildframes($framename = ''){
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_shortcut'] = array(
 				'title' => "<i class='fa fa-plane'></i> 快捷菜单",
 				'url' => url('site/nav/shortcut', array('m' => $modulename)),
-				'is_display' => 1,
-			);
-		}
-		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
-			if (!empty($module['isrulefields'])) {
-				$url = url('platform/reply', array('m' => $modulename));
-			}
-			if (empty($url) && !empty($entries['cover'])) {
-				$url = url('platform/cover', array('eid' => $entries['cover'][0]['eid']));
-			}
-			$frames['account']['section']['platform_module_common']['menu']['platform_module_entry'] = array(
-				'title' => "<i class='wi wi-reply'></i> 应用入口",
-				'url' => $url,
 				'is_display' => 1,
 			);
 		}
