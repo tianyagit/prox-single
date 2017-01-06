@@ -312,6 +312,12 @@ $we7_system_menu['system'] = array(
 	),
 );
 
+$we7_system_menu['sprovider'] = array (
+	'title' => '广告联盟',
+	'url' => url('system/content-provider'),
+	'section' => array(),
+);
+
 $we7_system_menu['appmarket'] = array(
 		'title' => '应用市场',
 		'url' => 'http://s.we7.cc',

@@ -49,7 +49,7 @@ if ($do == 'save_setting') {
 	$setting = uni_setting_load('payment', $_W['uniacid']);
 	$pay_setting = $setting['payment'];
 	if ($type == 'credit' || $type == 'delivery') {
-		$param['switch'] = !$param['switch'];
+		$param['switch'] = $param['switch'] == 'false' ? true : false;
 	}
 	if ($type == 'wechat') {
 		$param['account'] = $_W['acid'];
