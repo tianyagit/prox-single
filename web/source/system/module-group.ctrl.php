@@ -82,6 +82,8 @@ if ($do == 'display') {
 				} else {
 					$group['modules'] = array();
 				}
+			} else {
+				$group['modules'] = array();
 			}
 			if (!empty($group['templates'])) {
 				$templates = iunserializer($group['templates']);
