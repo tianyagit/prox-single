@@ -162,6 +162,7 @@ function cache_build_frame_menu() {
 						'icon' => $sub_menu['icon'],
 						'displayorder' => !empty($sub_menu_db['displayorder']) ? $sub_menu_db['displayorder'] : $displayorder,
 						'id' => $sub_menu['id'],
+						'sub_permission' => $sub_menu['sub_permission'],
 					);
 					$displayorder--;
 					$displayorder = max($displayorder, 0);

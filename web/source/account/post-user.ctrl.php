@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->model('module');
+load()->model('system');
 
 $dos = array('delete', 'edit', 'set_permission', 'add');
 $do = in_array($do, $dos) ? $do : 'edit';
@@ -110,25 +110,26 @@ if($do == 'add' && $_W['isajax'] && $_W['ispost']) {
 	}
 }
 if($do == 'set_permission') {
-	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
+	$uid = intval($_GPC['uid']);
 	$user = user_single(array('uid' => $uid));
 	if (empty($user)) {
 		message('您操作的用户不存在或是已经被删除！');
 	}
-	if (!pdo_fetchcolumn("SELECT id FROM ".tablename('uni_account_users')." WHERE uid = :uid AND uniacid = :uniacid", array(':uid' => $uid, ':uniacid' => $uniacid))) {
+	
+	if (!pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'id')) {
 		message('此用户没有操作该统一公众号的权限，请选指派“管理者”权限！');
 	}
 	//获取系统权限
-	$system_permission = pdo_fetch('SELECT * FROM ' . tablename('users_permission') . ' WHERE uniacid = :aid AND uid = :uid AND type = :type', array(':aid' => $uniacid, ':uid' => $uid, ':type' => 'system'));
+	$system_permission = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => 'system'));
 	if(!empty($system_permission['permission'])) {
 		$system_permission['permission'] = explode('|', $system_permission['permission']);
 	} else {
 		$system_permission['permission'] = array();
 	}
-
+	
 	//获取模块权限
-	$mods = pdo_fetchall('SELECT * FROM ' . tablename('users_permission') . ' WHERE uniacid = :aid AND uid = :uid AND type != :type', array(':aid' => $uniacid, ':uid' => $uid, ':type' => 'system'), 'type');
-	$mod_keys = array_keys($mods);
+	$module_permission = pdo_getall('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type !=' => 'system'), array(), 'type');
+	$module_permission_keys = array_keys($module_permission);
 
 	if (checksubmit('submit')) {
 		//系统权限
@@ -189,21 +190,7 @@ if($do == 'set_permission') {
 		message('操作菜单权限成功！', referer(), 'success');
 	}
 
-	$menus = frame_lists();
-	foreach($menus as &$li) {
-		$li['childs'] = array();
-		if(!empty($li['child'])) {
-			foreach($li['child'] as $da) {
-				if(!empty($da['grandchild'])) {
-					foreach($da['grandchild'] as &$ca) {
-						$li['childs'][] = $ca;
-					}
-				}
-			}
-			unset($ca);
-			unset($li['child']);
-		}
-	}
+	$menus = system_menu_permission_list();
 	$_W['uniacid'] = $uniacid;
 	$module = uni_modules();
 	template('account/set-permission');

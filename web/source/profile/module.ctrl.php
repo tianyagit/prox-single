@@ -22,7 +22,7 @@ if($do == 'display') {
 	$_W['page']['title'] = '公众号 - 应用模块 - 更多应用';
 	
 	$pageindex = max(1, intval($_GPC['page']));
-	$pagesize = 29;
+	$pagesize = 30;
 	
 	$condition = '';
 	$total_condition = array(
@@ -111,7 +111,9 @@ if($do == 'display') {
 				$row['enabled'] = 1;
 			}
 			$row['isdisplay'] = 1;
+			$row['preview'] = tomedia('addons/' . $name . '/icon.jpg');
 		}
+		unset($row);
 	}
 	$pager = pagination($total, $pageindex, $pagesize);
 	template('profile/module');
