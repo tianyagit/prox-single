@@ -130,6 +130,7 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 	}
 	if($result) {
+		pdo_update('users_profile', array('edittime' => TIMESTAMP), array('uid' => $uid));
 		message('0', 'ajax', 'success');
 	}else {
 		message('1', 'ajax', 'error');
@@ -144,8 +145,7 @@ if ($do == 'base') {
 		message('抱歉，用户不存在或是已经被删除！', url('user/profile'), 'error');
 	}
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
-	
-	$profile = pdo_fetch('SELECT * FROM '.tablename('users_profile').' WHERE `uid` = :uid LIMIT 1',array(':uid' => $_W['uid']));
+	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
 	if(!empty($profile)) {
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],

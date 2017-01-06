@@ -84,6 +84,10 @@ if (pdo_fieldexists('uni_settings', 'shortcuts')) {
 if(pdo_fieldexists('users_profile', 'avatar')) {
 	pdo_query("ALTER TABLE ".tablename('users_profile')." CHANGE `avatar` `avatar` VARCHAR(255) NOT NULL DEFAULT '';");
 }
+//新增系统管理->用户管理按修改时间排序
+if(!pdo_fieldexists('users_profile', 'edittime')) {
+	pdo_query("ALTER TABLE ". tablename('users_profile') ." ADD `edittime` INT(10) NOT NULL COMMENT '修改时间' AFTER `createtime`;");
+}
 $shortcuts = pdo_getall('uni_settings', array(), array('shortcuts', 'uniacid'));
 if (!empty($shortcuts)) {
 	foreach ($shortcuts as $row) {
