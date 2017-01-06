@@ -8,7 +8,7 @@
 		$(document).ready(function () {//为了保证能在img元素加载之后，才为这些元素设置error事件  
 			$("img").error(function () { 
 				if(!$(this).attr("onerror")){
-					var img = "resource/images/nopic.jpg";
+					var img = "resource/images/nopic-107.png";
 					if($(this).width() == $(this).height()){
 						img = "resource/images/nopic-107.png";
 					} else if($(this).width() < $(this).height()){
