@@ -3,7 +3,7 @@
  * 
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
-if ($action != 'material_post') {
+if ($action != 'material-post') {
 	define('FRAME', 'account');
 }
 if ($action == 'qr') {
