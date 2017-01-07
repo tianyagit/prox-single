@@ -29,7 +29,7 @@
 				<input type="hidden" name="m" value="{$_GPC['m']}" />
 				<input type="hidden" name="status" value="{$status}" />
 				<div class="keyword-list-head">
-					<div class="input-group col-sm-4 pull-left">
+					<div class="input-group col-sm-4 pull-left we7-margin-bottom">
 						<input class="form-control" name="keyword" type="text" value="{$_GPC['keyword']}" placeholder="输入规则名称">
 						<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 					</div>
@@ -40,8 +40,9 @@
 				</div> 
 			</form>
 		</div>
+		<div class="clearfix"></div>
 		{if in_array($m, $sysmods)}
-		<div class="btn-group we7-btn-group we7-padding-vertical btn-group-justified">
+		<div class="btn-group we7-btn-group we7-margin-bottom btn-group-justified">
 			<a href="{url 'platform/reply/display' array('m' => 'keyword')}" class="btn {if !$_GPC[type]}active{/if}">全部</a>
 			<a href="{url 'platform/reply/display' array('m' => 'keyword', 'type' => 'news')}" class="btn {if $_GPC[type] == 'news'}active{/if}">回复图文</a>
 			<a href="{url 'platform/reply/display' array('m' => 'keyword', 'type' => 'apply')}" class="btn {if $_GPC[type] == 'apply'}active{/if}">回复模块</a>
@@ -52,7 +53,7 @@
 			<a href="{url 'platform/reply/display' array('m' => 'keyword', 'type' => 'video')}" class="btn {if $_GPC[type] == 'video'}active{/if}">回复视频</a>
 		</div>
 		{/if}
-		<div class="table we7-tables {if !in_array($m, $sysmods)} we7-padding-vertical{/if}">
+		<div class="table we7-tables {if !in_array($m, $sysmods)} we7-padding-bottom {/if}">
 			<form action="{php echo url('platform/reply/delete');}" method="post" role="form" class="form we7-form" id="form1">
 				<input type="hidden" name="m" value="{$m}">
 				{if !empty($replies)}

@@ -94,9 +94,9 @@ parent.require(['jquery', 'util'], function($, util){
 	$modal['type'] = $label;
 	setCookie("modal",json_encode($modal),time()+600,'/');
 	if ($redirect){
-		header('location:'.$redirect);
+		header('location: '.$redirect);
 	} else {
-		header('location:'.getenv("HTTP_REFERER"));
+		header('location: '.getenv("HTTP_REFERER"));
 	}
 	exit();
 	//end message通过cookie传递
