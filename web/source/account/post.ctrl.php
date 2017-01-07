@@ -185,7 +185,7 @@ if($do == 'modules_tpl') {
 				//附加套餐组
 				pdo_delete('uni_account_group', array('uniacid' => $uniacid));
 				$group = pdo_get('users_group', array('id' => $owner['groupid']));
-				$group['package'] = iunserializer($group['package']);
+				$group['package'] = (array)iunserializer($group['package']);
 				$group['package'] = array_unique($group['package']);
 				foreach ($groups as $packageid) {
 					if (!empty($packageid) && !in_array($packageid, $group['package'])) {
