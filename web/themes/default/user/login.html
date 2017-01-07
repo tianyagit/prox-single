@@ -80,6 +80,9 @@ $('#toggle').click(function() {
 </script>
 <script type="text/javascript">
 	util.cookie_message('3');
+	require(['we7.check'],function(){
+		$('body').we7_check();
+	})
 </script>
 </body>
 </html>

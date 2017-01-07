@@ -245,7 +245,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'			</div>\n' +
 				'			<div class="modal-body material-content">\n' +
 				'				<div class="material-head">'+
-				'					<a class="btn btn-primary active we7-margin-vertical-sm pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '" href="./index.php?c=platform&a=material_post" target="_blank">新建图文</a>'+
+				'					<a class="btn btn-primary active we7-margin-vertical-sm pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '" href="./index.php?c=platform&a=material-post" target="_blank">新建图文</a>'+
 				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=image" target="_blank">上传图片</a>'+
 				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
 				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=video" target="_blank">新建视频</a>'+
