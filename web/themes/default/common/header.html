@@ -61,7 +61,7 @@
 </div>
 <div class="main">
 	<div class="container">
-		{if in_array(FRAME, array('account', 'system'))}
+		{if in_array(FRAME, array('account', 'system', 'adviertisement'))}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				{if !empty($_GPC['m']) || defined('IN_MODULE')}
@@ -87,6 +87,9 @@
 				{/if}
 				{if FRAME == 'system'}
 					<span class="font-lg">我的微擎</span>
+				{/if}
+				{if FRAME == 'adviertisement'}
+				<span class="font-lg">广告联盟</span>
 				{/if}
 			</div>
 			<div class="panel-body">

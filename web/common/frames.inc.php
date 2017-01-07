@@ -314,7 +314,25 @@ $we7_system_menu['system'] = array(
 $we7_system_menu['adviertisement'] = array (
 	'title' => '广告联盟',
 	'url' => url('adviertisement/content-provider'),
-	'section' => array(),
+	'section' => array(
+		'adviertisement' => array(
+			'title' => '常用系统工具',
+			'menu' => array(
+				'adviertisement-content-provider' => array(
+					'title' => '流量主',
+					'url' => url('adviertisement/content-provider'),
+					'icon' => 'wi wi-file',
+					'permission_name' => 'adviertisement_content-use',
+				),
+				'adviertisement-content-create' => array(
+					'title' => '广告主',
+					'url' => url('adviertisement/content_create'),
+					'icon' => 'wi wi-optimize',
+					'permission_name' => 'adviertisement_content-create',
+				),
+			)
+		),
+	),
 );
 
 $we7_system_menu['appmarket'] = array(
