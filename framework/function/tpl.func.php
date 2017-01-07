@@ -61,7 +61,7 @@ function tpl_form_field_daterange($name, $value = array(), $time = false) {
 	if (empty($time) && !defined('TPL_INIT_DATERANGE_DATE')) {
 		$s = '
 <script type="text/javascript">
-	require(["daterangepicker"], function($){
+	require(["daterangepicker"], function(){
 		$(function(){
 			$(".daterange.daterange-date").each(function(){
 				var elm = this;
