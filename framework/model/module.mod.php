@@ -242,7 +242,7 @@ function module_build_form($name, $rid, $option = array()) {
  */
 function module_fetch($name) {
 	load()->model('account');
-	$modules = uni_modules();
+	$modules = uni_modules(false);
 	return $modules[$name];
 }
 
