@@ -61,10 +61,10 @@
 </div>
 <div class="main">
 	<div class="container">
-		{if in_array(FRAME, array('account', 'system'))}
+		{if in_array(FRAME, array('account', 'system', 'adviertisement'))}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
-				{if !empty($_GPC['m']) || defined('IN_MODULE')}
+				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default')) || defined('IN_MODULE')}
 					<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-cricle"></i></a>
 					<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					<span class="font-lg">{$_W['current_module']['title']}</span>
@@ -86,7 +86,10 @@
 						<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="wi wi-phone"></i>模拟测试</a></span>
 				{/if}
 				{if FRAME == 'system'}
-					<span class="font-lg">我的微擎</span>
+					<span class="font-lg"><i class="wi wi-setting"></i> 我的微擎</span>
+				{/if}
+				{if FRAME == 'adviertisement'}
+				<span class="font-lg">广告联盟</span>
 				{/if}
 			</div>
 			<div class="panel-body">
