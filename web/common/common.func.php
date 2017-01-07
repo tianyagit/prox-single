@@ -82,7 +82,7 @@ parent.require(['jquery', 'util'], function($, util){
 	 * msg 提示内容
 	 * label 提示类型
 	 */
-	setCookie("modal",'',time()-600);
+	setCookie("modal",'',time()-600,'/');
 	$modal = array();
 	if (is_array($msg)){
 		$modal['title'] = 'MYSQL 错误';
@@ -91,8 +91,8 @@ parent.require(['jquery', 'util'], function($, util){
 		$modal['title'] = $caption;
 		$modal['msg'] = $msg;
 	}
-	$modal['label'] = $label;
-	setCookie("modal",json_encode($modal),time()+600);
+	$modal['type'] = $label;
+	setCookie("modal",json_encode($modal),time()+600,'/');
 	if ($redirect){
 		header('location:'.$redirect);
 	} else {

@@ -311,10 +311,9 @@ $we7_system_menu['system'] = array(
 		),
 	),
 );
-
-$we7_system_menu['sprovider'] = array (
+$we7_system_menu['adviertisement'] = array (
 	'title' => '广告联盟',
-	'url' => url('system/content-provider'),
+	'url' => url('adviertisement/content-provider'),
 	'section' => array(),
 );
 
