@@ -71,16 +71,16 @@
 			<td class="text-left">
 				<div class="we7-margin-vertical">
 					<p class="color-gray">基础操作</p>
-					<a ng-href="{{links.post}}&multiid={{multi.id}}" class="color-default we7-margin-right">编辑</a>
-					<a ng-href="{{links.copy}}&multiid={{multi.id}}" class="color-default we7-margin-right">复制站点</a>
-					<a ng-href="{{links.del}}&id={{multi.id}}" class="color-default" ng-if="default_site != multi.id" onclick="if(!confirm('删除后将不可恢复,确定删除吗?')) return false;">删除</a>
+					<a ng-href="{{links.post}}multiid={{multi.id}}" class="color-default we7-margin-right">编辑</a>
+					<a ng-href="{{links.copy}}multiid={{multi.id}}" class="color-default we7-margin-right">复制站点</a>
+					<a ng-href="{{links.del}}id={{multi.id}}" class="color-default" ng-if="default_site != multi.id" onclick="if(!confirm('删除后将不可恢复,确定删除吗?')) return false;">删除</a>
 					<a href="javascript:;" class="label label-success" ng-if="default_site == multi.id">默认微站</a>
 				</div>
 				<div class="we7-margin-bottom">
 					<p class="color-gray">内容设置</p>
-					<a href="{{links.post}}&multiid={{multi.id}}&clicktype=slide" class="color-default we7-margin-right">幻灯片</a>
-					<a href="{{links.post}}&multiid={{multi.id}}&clicktype=homemenu" class="color-default we7-margin-right">导航菜单</a>
-					<a href="{{links.post}}&multiid={{multi.id}}&clicktype=quickmenu" class="color-default">快捷菜单</a>
+					<a href="{{links.post}}multiid={{multi.id}}&clicktype=slide" class="color-default we7-margin-right">幻灯片</a>
+					<a href="{{links.post}}multiid={{multi.id}}&clicktype=homemenu" class="color-default we7-margin-right">导航菜单</a>
+					<a href="{{links.post}}multiid={{multi.id}}&clicktype=quickmenu" class="color-default">快捷菜单</a>
 				</div>
 			</td>
 		</tr>
