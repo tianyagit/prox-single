@@ -13,8 +13,8 @@
 	</div>
 </div>
 <form action="./index.php?c=platform&a=site&do=article&operation=del_category" class="we7-form" method="post">
-<table class="table we7-table table-hover article-list" id="js-wesite-category-display">
-	<col width="5px">
+<table class="table we7-table table-hover article-list vertical-middle" id="js-wesite-category-display">
+	<col width="80px">
 	<col width="130px"/>
 	<col width="235px">
 	<col width="90px"/>
@@ -86,7 +86,7 @@
 </table>
 <div class="clearfix"></div>
 <div class="we7-margin-left">
-	<input type="checkbox" name="select_all" id="select_all" value="1" style="margin-left:-10px">
+	<input type="checkbox" name="select_all" id="select_all" value="1">
 	<label for="select_all">&nbsp;</label>
 	<input type="submit" class="btn btn-danger" name="submit" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
 	<input type="hidden" name="token" value="{$_W['token']}" />	
