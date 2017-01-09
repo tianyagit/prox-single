@@ -32,7 +32,7 @@
 	<table class="table we7-table table-hover">
 		<col width="200px"/>
 		<col />
-		<col width="120px"/>
+		<col width="180px"/>
 		<col width="220px"/>
 		<tr>
 			<th class="text-left">菜单组名</th>
@@ -66,16 +66,15 @@
 				{/if}
 			</td>
 			<td>
+				{if $da['type'] == 1}
+				{if $da['status'] == 0}
+				<a href="javascript:;" class="js-switch-{$da['id']} color-default" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})" onclick="if(!confirm('确定设置为默认菜单?')) {return false;}">设置为默认菜单</a>
+				{else}
+				<span class="color-green">默认菜单开启中</span>
+				{/if}
+				{else}
 				<label>
-					{if $da['type'] == 1}
-					{if $da['status'] == 0}
-					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
-					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
-					{else}
-					<span>开启中</span>
-					{/if}
-					{else}
-					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
+					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})">
 					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
 					{/if}
 				</label>
@@ -250,7 +249,6 @@
 										<label for="radio-7">拍照相册</label>
 										<input id="radio-8" type="radio" name="ipt" ng-model="context.activeItem.type" value="pic_weixin" ng-disabled="context.group.disabled">
 										<label for="radio-8">相册发图 </label>
-										<input id='radio-9' type="radio" name='r-group-1' checked='checked' />
 									</div>
 								</div>
 								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if}ng-show="context.activeItem.type == 'view';">
