@@ -191,7 +191,7 @@
 {elseif $do == 'uc_setting'}
 
 <div class="main js-profile-uc" ng-controller="ucCtrl">
-	<form id="form1" action="{php echo url('profile/passport/uc_setting')}" method="post" class="form-horizontal form ng-cloak" >
+	<form id="form1" action="{php echo url('profile/passport/uc_setting')}" method="post" class="we7-form form ng-cloak" >
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				设置UC参数
@@ -206,13 +206,15 @@
 				</div>
 				<div class="form-group">
 					<label class="col-xs-12 col-sm-3 col-md-2 control-label">启用UC</label>
-					<div class="col-sm-8 col-xs-12">
-							<input type="radio" id="status1" name="status" ng-model="uc.status" value="1"/>
+					<div class="col-sm-8">
+							
 						<label class="radio-inline">
+							<input type="radio" id="status1" name="status" ng-model="uc.status" value="1"/>
 						开启
 						</label>
-							<input type="radio" id="status0" name="status" ng-model="uc.status" value="0"/>
+							
 						<label class="radio-inline">
+							<input type="radio" id="status0" name="status" ng-model="uc.status" value="0"/>
 							关闭
 						</label>
 						<span class="help-block">使用UC能够整合其他系统的会员信息. 如果你不清楚此功能的作用, 请咨询您的技术人员.</span>
@@ -260,13 +262,14 @@
 					<div class="form-group">
 						<label class="col-xs-12 col-sm-3 col-md-2 control-label">通信方式</label>
 						<div class="col-sm-8 col-xs-12">
+							<label class="radio-inline">
 								<input type="radio" name="connect" ng-model="uc.connect" value="mysql"/>
-							<label class="radio-inline">
-							MYSQL方式
+								MYSQL方式
 							</label>
-								<input type="radio" name="connect" ng-model="uc.connect" value="http"/>
+							
 							<label class="radio-inline">
-							远程方式HTTP
+								<input type="radio" name="connect" ng-model="uc.connect" value="http"/>
+								远程方式HTTP
 							</label>
 						</div>
 					</div>
@@ -310,12 +313,13 @@
 						<div class="form-group">
 							<label class="col-xs-12 col-sm-3 col-md-2 control-label">是否持久连接</label>
 							<div class="col-sm-8 col-xs-12">
-									<input type="radio" name="dbconnect" value="1" ng-model="uc.dbconnect"/>
+									
 								<label class="radio-inline">
+									<input type="radio" name="dbconnect" value="1" ng-model="uc.dbconnect"/>
 								是
 								</label>
-									<input type="radio" name="dbconnect" value="0" ng-model="uc.dbconnect"/>
 								<label class="radio-inline">
+									<input type="radio" name="dbconnect" value="0" ng-model="uc.dbconnect"/>
 								否
 								</label>
 							</div>
