@@ -113,6 +113,11 @@ function activity_coupon_owned() {
 			unset($data[$key]);
 			continue;
 		}
+		if ($coupon['status'] != '3') {
+			pdo_delete('coupon_record', array('id' => $record['id']));
+			unset($data[$key]);
+			continue;
+		}
 		if (is_error($coupon)) {
 			unset($data[$key]);
 			continue;
@@ -126,6 +131,27 @@ function activity_coupon_owned() {
 		if (!empty($modules) && !in_array($_W['current_module']['name'], $modules) && !empty($_W['current_module']['name'])) {
 			unset($data[$key]);
 			continue;
+		}
+		if (is_array($coupon['date_info']) && $coupon['date_info']['time_type'] == '2') {
+			$starttime = $record['addtime'] + $coupon['date_info']['deadline'] * 86400;
+			$endtime = $starttime + ($coupon['date_info']['limit'] - 1) * 86400;
+			if ($endtime < time()) {
+				unset($data[$key]);
+				pdo_delete('coupon_record', array('id' => $record['id']));
+				continue;
+			} else {
+				$coupon['extra_date_info'] = '有效期:' . date('Y.m.d', $starttime) . '-' . date('Y.m.d', $endtime);
+			}
+		}
+		if (is_array($coupon['date_info']) && $coupon['date_info']['time_type'] == '1') {
+			$endtime = str_replace('.', '-', $coupon['date_info']['time_limit_end']);
+			$endtime = strtotime($endtime);
+			if ($endtime < time()) {
+				pdo_delete('coupon_record', array('id' => $record['id']));
+				unset($data[$key]);
+				continue;
+			}
+
 		}
 		if ($coupon['type'] == COUPON_TYPE_DISCOUNT) {
 			$coupon['icon'] = '<div class="price">' . $coupon['extra']['discount'] * 0.1 . '<span>折</span></div>';
@@ -142,19 +168,14 @@ function activity_coupon_owned() {
 		elseif($coupon['type'] == COUPON_TYPE_GENERAL) {
 			$coupon['icon'] = '<img src="resource/images/general_coupon.png" alt="" />';
 		}
-		if (is_array($coupon['date_info']) && $coupon['date_info']['time_type'] == '2') {
-			$starttime = $record['addtime'] + $coupon['date_info']['deadline'] * 86400;
-			$endtime = $starttime + ($coupon['date_info']['limit'] - 1) * 86400;
-			$coupon['extra_date_info'] = '有效期:' . date('Y.m.d', $starttime) . '-' . date('Y.m.d', $endtime);
-		}
 		$data[$key] = $coupon;
 		$data[$key]['recid'] = $record['id'];
 		$data[$key]['code'] = $record['code'];
 		if ($coupon['source'] == '2') {
 			if (empty($data[$key]['code'])) {
-				$data[$key]['extra_ajax'] = url('activity/coupon/addcard');
+				$data[$key]['extra_ajax'] = url('entry', array('m' => 'we7_coupon', 'do' => 'activity', 'type' => 'coupon', 'op' => 'addcard'));
 			} else {
-				$data[$key]['extra_ajax'] = url('activity/coupon/opencard');
+				$data[$key]['extra_ajax'] = url('entry', array('m' => 'we7_coupon', 'do' => 'activity', 'type' => 'coupon', 'op' => 'opencard'));
 			}
 		}
 	}
@@ -451,56 +472,7 @@ function activity_goods_grant($uid, $exid){
 	return $insert_id;
 }
 
-/**
- * 指定会员兑换指定活动
- * @param int $uid 会员UID
- * @param int $exid 活动ID
- * @return mixed
- **/
-function activity_module_grant($uid, $exid){
-	global $_W;
-	$exchange = activity_exchange_info($exid, $_W['uniacid']);
-	if (empty($exchange)) {
-		return error(-1, '没有指定的活动参与次数兑换');
-	}
-	if ($exchange['starttime'] > TIMESTAMP) {
-		return error(-1, '该活动参与次数兑换尚未开始');
-	}
-	if ($exchange['endtime'] < TIMESTAMP) {
-		return error(-1, '该活动参与次数兑换已经结束');
-	}
-	if ($exchange['pretotal'] > 0) {
-		$activity_modules = pdo_fetch('SELECT * FROM ' . tablename('activity_modules') . ' WHERE uniacid = :uniacid AND uid = :uid AND exid = :exid AND module = :module', array(':uniacid' => $_W['uniacid'], ':uid' => $uid, 'exid' => $exid, 'module' => $exchange['extra']['name']));
-		if ($activity_modules) {
-			$starttime = strtotime(date('Y-m-d')) - intval($exchange['extra']['period']) * 3600 * 24;
-			//num = 1 表示兑换记录, num = -1 表示消费记录
-			$pnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('activity_modules_record') . ' WHERE mid = :mid AND num = 1 AND createtime > :createtime', array('mid' => $activity_modules['mid'], ':createtime' => $starttime));
-			if ($pnum >= $exchange['pretotal']) {
-				return error(-1, '每人每' . $exchange['extra']['period'] . '天内,只能兑换' . $exchange['pretotal'] . '次');
-			}
-			//更新用户对于某个模块的可用次数
-			pdo_update('activity_modules', array('available' => $activity_modules['available'] + 1), array('mid' => $activity_modules['mid'], 'uid' => $uid));
-		} else {
-			$data = array(
-				'uniacid' => $_W['uniacid'],
-				'uid' => intval($uid),
-				'exid' => $exid,
-				'module' => trim($exchange['extra']['name']),
-				'available' => 1
-			);
-			pdo_insert('activity_modules', $data);
-			$activity_modules['mid'] = pdo_insertid();
-		}
 
-		//记录可用次数的变更记录
-		$data = array('mid' => $activity_modules['mid'], 'num' => 1, 'createtime' => TIMESTAMP);
-		pdo_insert('activity_modules_record', $data);
-		return true;
-	} else {
-		return error(-1, '该兑换活动每人可兑换' . intval($exchange['pretotal']));
-	}
-	return true;
-}
 
 /**
  * 获取礼品兑换信息(仅用于判断真实物品或活动参与次数)
@@ -640,21 +612,24 @@ function activity_get_member($type, $param = array()) {
 	if (!in_array($type, $types)) {
 		return error('1', '没有匹配的用户类型');
 	}
-	//新会员，一个月内消费不超过一次
-	if ($type == 'new_member') {
+		$propertys = activity_member_propertys();
+		if ($type == 'new_member') {
+		$property_time = strtotime('-' . $propertys['newmember'] . ' month', time());
 		$members_sql = "SELECT c.openid FROM ( SELECT a.uid FROM ". tablename('mc_members')." as a LEFT JOIN ".tablename('mc_cash_record')." as b ON a.uid = b.uid WHERE a.uniacid = :uniacid AND a.createtime > :time AND (b.createtime > :time or b.id is null) GROUP BY a.uid HAVING COUNT(*) < 2) as d  LEFT JOIN ". tablename('mc_mapping_fans')." as c ON d.uid = c.uid WHERE c.openid <> ''";
-		$members = pdo_fetchall($members_sql, array(':uniacid' => $_W['uniacid'], ':time' => strtotime('-1 month', time())), 'openid');
+		$members = pdo_fetchall($members_sql, array(':uniacid' => $_W['uniacid'], ':time' => $property_time), 'openid');
 	}
-	//老会员，注册超过两个月的会员
-	if ($type == 'old_member') {
-		$members = pdo_fetchall("SELECT b.openid FROM ".tablename('mc_members')." as a LEFT JOIN ". tablename('mc_mapping_fans')." as b ON a.uid = b.uid WHERE a.createtime < :time AND a.uniacid = :uniacid AND b.openid <> ''", array(':time' => strtotime('-2 month'), ':uniacid' => $_W['uniacid']), 'openid');
+		if ($type == 'old_member') {
+		$property_time = strtotime('-' . $propertys['oldmember'] . ' month', time());
+		$members = pdo_fetchall("SELECT b.openid FROM ".tablename('mc_members')." as a LEFT JOIN ". tablename('mc_mapping_fans')." as b ON a.uid = b.uid WHERE a.createtime < :time AND a.uniacid = :uniacid AND b.openid <> ''", array(':time' => $property_time, ':uniacid' => $_W['uniacid']), 'openid');
 	}
 	if ($type == 'activity_member') {
-		$members = pdo_fetchall("SELECT * FROM " . tablename('mc_cash_record') . " as a LEFT JOIN ". tablename('mc_mapping_fans')." as b ON a.uid = b.uid WHERE a.uniacid = :uniacid AND a.createtime > :time AND b.openid <> '' GROUP BY a.uid HAVING COUNT(*) > 2", array(':uniacid' => $_W['uniacid'], ':time' => strtotime('-1 month', time())), 'openid');
+		$property_time = strtotime('-' . $propertys['activitymember'] . ' month', time());
+		$members = pdo_fetchall("SELECT * FROM " . tablename('mc_cash_record') . " as a LEFT JOIN ". tablename('mc_mapping_fans')." as b ON a.uid = b.uid WHERE a.uniacid = :uniacid AND a.createtime > :time AND b.openid <> '' GROUP BY a.uid HAVING COUNT(*) > 2", array(':uniacid' => $_W['uniacid'], ':time' => $property_time), 'openid');
 	}
 	if ($type == 'quiet_member') {
+		$property_time = strtotime('-' . $propertys['quietmember'] . ' month', time());
 		$members = pdo_fetchall("SELECT a.openid FROM " . tablename('mc_mapping_fans') . " as a LEFT JOIN ".tablename('mc_cash_record')." as b ON a.uid = b.uid WHERE a.uniacid = :uniacid AND b.id is null GROUP BY a.uid ", array(':uniacid' => $_W['uniacid']), 'openid');
-		$member = pdo_fetchall("SELECT a.openid FROM " . tablename('mc_mapping_fans') . " as a LEFT JOIN ".tablename('mc_cash_record')." as b ON a.uid = b.uid WHERE a.uniacid = :uniacid AND b.createtime > :time GROUP BY a.uid ", array(':uniacid' => $_W['uniacid'], ':time' => strtotime('-1 month', time())), 'openid');
+		$member = pdo_fetchall("SELECT a.openid FROM " . tablename('mc_mapping_fans') . " as a LEFT JOIN ".tablename('mc_cash_record')." as b ON a.uid = b.uid WHERE a.uniacid = :uniacid AND b.createtime > :time GROUP BY a.uid ", array(':uniacid' => $_W['uniacid'], ':time' => $property_time), 'openid');
 		if (!empty($member)) {
 			foreach ($member as $key => $mem) {
 				unset($members[$key]);
@@ -899,4 +874,20 @@ function activity_coupon_status() {
 		'CARD_STATUS_USER_DISPATCH' => 5, //在公众平台投放过的卡券
 		'CARD_STATUS_DISPATCH' => 5, //在公众平台投放过的卡券
 	);
+}
+
+function activity_member_propertys() {
+	global $_W;
+	$current_property_info = pdo_get('mc_member_property', array('uniacid' => $_W['uniacid']));
+	if (!empty($current_property_info)) {
+		$propertys = json_decode($current_property_info['property'], true);
+	} else {
+		$propertys = array(
+			'newmember' => '1',
+			'oldmember' => '2',
+			'activitymember' => '1',
+			'quietmember' => '1'
+		);
+	}
+	return $propertys;
 }
