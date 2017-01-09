@@ -32,7 +32,7 @@
 	<table class="table we7-table table-hover">
 		<col width="200px"/>
 		<col />
-		<col width="120px"/>
+		<col width="180px"/>
 		<col width="220px"/>
 		<tr>
 			<th class="text-left">菜单组名</th>
@@ -66,16 +66,15 @@
 				{/if}
 			</td>
 			<td>
+				{if $da['type'] == 1}
+				{if $da['status'] == 0}
+				<a href="javascript:;" class="js-switch-{$da['id']} color-default" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})" onclick="if(!confirm('确定设置为默认菜单?')) {return false;}">设置为默认菜单</a>
+				{else}
+				<span class="color-green">默认菜单开启中</span>
+				{/if}
+				{else}
 				<label>
-					{if $da['type'] == 1}
-					{if $da['status'] == 0}
-					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
-					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
-					{else}
-					<span>开启中</span>
-					{/if}
-					{else}
-					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']})">
+					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})">
 					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
 					{/if}
 				</label>
@@ -214,7 +213,7 @@
 					<div class="portable-editor to-left" style="display: block;">     
 						<div class="editor-inner">
 							<div class="menu-form-hd">
-								<span class="pull-left font-defalut">菜单名称</span>
+								<span class="pull-left font-defalut">当前菜单</span>
 								<div class="text-right">
 									<a href="javascript:void(0);" class="color-default" ng-click="context.removeBut(context.activeItem, context.activeType)">删除菜单</a>
 								</div>
@@ -222,7 +221,7 @@
 							<div style="display: none;" class="we7-padding-top color-gray">已添加子菜单，仅可设置菜单名称。</div>
 							<div class="we7-form we7-padding-top">
 								<div class="form-group">
-									<label for="" class="control-label col-sm-2">触发关键字</label>
+									<label for="" class="control-label col-sm-2">菜单名称</label>
 									<div class="form-controls col-sm-8">
 										<div class="input-group">
 											<input type="text" name="" style="width: 300px" class="form-control" placeholder=""  id="title" ng-model="context.activeItem.name" ng-disabled="context.group.disabled">
@@ -250,7 +249,6 @@
 										<label for="radio-7">拍照相册</label>
 										<input id="radio-8" type="radio" name="ipt" ng-model="context.activeItem.type" value="pic_weixin" ng-disabled="context.group.disabled">
 										<label for="radio-8">相册发图 </label>
-										<input id='radio-9' type="radio" name='r-group-1' checked='checked' />
 									</div>
 								</div>
 								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if}ng-show="context.activeItem.type == 'view';">

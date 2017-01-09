@@ -33,7 +33,7 @@
 			<th class="text-left">操作</th>
 		</tr>
 		<tr ng-repeat="multi in multis">
-			<td class="text-left">
+			<td class="text-left vertical-middle">
 				<div class="site-item-img">
 					<img ng-src="{{multi.preview_thumb}}">
 					<div class="cover-dark">
@@ -61,7 +61,7 @@
 					<a href="javascript:;" id="copy-{{multi.id}}" class="color-default" clipboard supported="supported" text="multi.copyLink" on-copied="success(multi.id)">点击复制</a>
 				</div>
 			</td>
-			<td>
+			<td class="vertical-middle">
 				<label>
 					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
 					<div class="switch" ng-class="{'switchOn' : multi.status == 1}" ng-style="{'opacity': 0.3}" ng-if="default_site == multi.id"></div>

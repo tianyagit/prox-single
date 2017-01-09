@@ -236,7 +236,7 @@ if($do == 'push') {
 				$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 				$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
 				$message = "调用微信接口删除失败:{$ret['message']}<br>";
-				message($message, '', 'error');
+				message(error(-1, $message), '', 'error');
 			} else {
 				pdo_update('uni_account_menus', array('status' => '0'), array('id' => $data['id']));
 				message(error(0, '关闭成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax');
@@ -443,7 +443,7 @@ if($do == 'post') {
 				} else {
 					pdo_insert('uni_account_menus', $insert);
 				}
-				message(error(0, ''), '', 'ajax');
+				message(error(0, ''), url('platform/menu/display', array('type' => '3')), 'ajax');
 			}
 		}
 	}
