@@ -64,12 +64,14 @@ require.config({
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
 		/*toast组件*/
 		'jquery.toast': '../../components/toast/toastr.min',
-
+	
 		'underscore': '../lib/underscore-min',
 		'biz': '../lib/biz',
 		'loadcss': '../lib/css.min', //加载CSS
 		/*复制组件（部分浏览器不兼容flash）*/
 		'clipboard' : '../lib/clipboard.min',
+		/*单选多选组件 待完善*/
+		'we7.check' : '../lib/we7.check',
 	},
 	shim:{
 		'jquery' : {

@@ -6,6 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
+load()->func('file');
 
 $dos = array('edit_base', 'edit_modules_tpl', 'edit_account');
 $do = in_array($do, $dos) ? $do: 'edit_base';
@@ -30,6 +31,10 @@ if ($do == 'edit_base') {
 	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);
 	$user['endtype'] = $user['endtime'] == 0 ? 1 : 2;
 	if(!empty($profile)) {
+		$avatar = file_fetch($profile['avatar']);
+		if(is_error($avatar)) {
+			$profile['avatar'] = './resource/images/nopic-107.png';
+		}
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
 			'city' => $profile['residecity'],

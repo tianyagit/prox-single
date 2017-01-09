@@ -34,7 +34,7 @@
 			<div class="cover-dark">
 				<a href="{url 'home/welcome/ext'  array('m' => $row['name'])}" class="mange-goto"><i class="fa fa-angle-right"></i>进入应用</a>
 				{if $row['shortcut']}
-				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="fa fa-angle-right"></i> <span>移出菜单</span></a>
+				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="wi wi-remove"></i> <span>移出菜单</span></a>
 				{else}
 				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="wi wi-eye"></i> <span>显示到菜单</span></a>
 				{/if}

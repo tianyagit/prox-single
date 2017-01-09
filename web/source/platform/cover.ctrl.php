@@ -11,18 +11,25 @@ $dos = array('module', 'post');
 $do = in_array($do, $dos) ? $do : 'module';
 
 uni_user_permission_check('platform_cover_' . $do, true, 'cover');
+define('IN_MODULE', true);
 
 if($do == 'module') {
 	$modulename = $_GPC['m'];
+	$entry_id = intval($_GPC['eid']);
+	
+	if (empty($modulename)) {
+		$entry = module_entry($entry_id);
+		$modulename = $entry['module'];
+	}
 	$module = $_W['current_module'] = module_fetch($modulename);
 	if (empty($module)) {
-		message('模块不存在或是未安装');
+		message('模块不存在或是未安装', '', 'error');
 	}
 	if (!empty($module['isrulefields'])) {
-		$url = url('platform/reply', array('m' => $module['name']));
+		$url = url('platform/reply', array('m' => $module['name'], 'eid' => $entry_id));
 	}
 	if (empty($url)) {
-		$url = url('platform/cover', array('m' => $module['name']));
+		$url = url('platform/cover', array('m' => $module['name'], 'eid' => $entry_id));
 	}
 	define('ACTIVE_FRAME_URL', $url);
 	

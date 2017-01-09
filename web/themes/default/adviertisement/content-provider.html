@@ -1,10 +1,4 @@
 {template 'common/header'}
-<ul class="nav nav-tabs">
-	<li{if $do == 'finance_info' || $do == 'account_list' || $do == 'display' || $do == 'register_flow' || $do == 'flow_control'} class="active"{/if}>
-	<a href="{php echo url('adviertisement/content-provider/account_list');}">流量主</a>
-	</li>
-	<li{if $do == 'content_provider'} class="active"{/if}><a href="{php echo url('adviertisement/content-provider/content_provider');}">广告主</a></li>
-</ul>
 <style>
 	.nav .nav-tabs-flow {
 		border-bottom: 1px solid #ddd;
@@ -23,21 +17,19 @@
 		font-size: 12px!important;
 	}
 </style>
-<div class="clearfix">
-	{if $do != 'content_provider'}
-	<div class="alert alert-info">
-		<div>
-			<i class="fa fa-info-circle"></i>
-			免费用户默认开通流量主服务，如果要进行关闭，请升级为授权版或商业版。
-		</div>
-		<div>
-			<i class="fa fa-info-circle"></i>
-			免费用户对公众号进行标签设置后，可以对广告进行分成。
-		</div>
-	</div>
-	{/if}
-	{if $do != 'content_provider'}
-	<ul class="nav nav-tabs-flow">
+<div class="we7-page-title">
+	{if $do == 'finance_info' || $do == 'account_list' || $do == 'display' || $do == 'register_flow' || $do == 'flow_control'} 流量主{/if}
+	{if $do == 'content_provider'}广告主{/if}
+</div>
+<!--<ul class="nav nav-tabs">
+	<li{if $do == 'finance_info' || $do == 'account_list' || $do == 'display' || $do == 'register_flow' || $do == 'flow_control'} class="active"{/if}>
+	<a href="{php echo url('adviertisement/content-provider/account_list');}">流量主</a>
+	</li>
+	<li{if $do == 'content_provider'} class="active"{/if}><a href="{php echo url('adviertisement/content-provider/content_provider');}">广告主</a></li>
+</ul>-->
+
+{if $do != 'content_provider'}
+	<ul class="we7-page-tab">
 		<li{if $do == 'account_list' || $do == 'display' || $do == 'register_flow' || $do == 'flow_control'} class="active"{/if}>
 		{if $flow_master_info['status'] == 4 || IMS_FAMILY == 'v'}
 		<a href="{php echo url('adviertisement/content-provider/account_list');}">流量管理</a>
@@ -49,11 +41,23 @@
 		<li{if $do == 'finance_info'} class="active"{/if}><a href="{php echo url('adviertisement/content-provider/finance_info');}">财务信息</a></li>
 		{/if}
 	</ul>
-	{/if}
+{/if}
+{if $do != 'content_provider'}
+	<div class="alert we7-page-alert">
+		<div>
+			<i class="wi wi-info-sign color-default"></i>
+			免费用户默认开通流量主服务，如果要进行关闭，请升级为授权版或商业版。
+		</div>
+		<div>
+			<i class="wi wi-info-sign  color-default"></i>
+			免费用户对公众号进行标签设置后，可以对广告进行分成。
+		</div>
+	</div>
+{/if}
 	{if $do == 'display'}
-	<div class="panel panel-default">
+	<div class="panel we7-panel">
 		<div class="panel-heading">申请流量主</div>
-		<div class="panel-body">
+		<div class="panel-body we7-padding">
 			<div class="col-xs-7">
 				<span>流量主: {if empty($flow_master_info['status'])}未申请{else}{$flow_master_info['status_text']}{/if}</span>
 				{if $flow_master_info['status'] == 3 && !empty($flow_master_info['refuse_reason'])}
@@ -74,13 +78,13 @@
 	</div>
 	{/if}
 	{if $do == 'register_flow'}
-	<div class="panel panel-default">
+	<div class="panel we7-panel">
 		<div class="panel-heading">申请流量主</div>
-		<div class="panel-body">
-			<form action="" method="post" class="form-horizontal" role="form" enctype="multipart/form-data" id="form1">
+		<div class="panel-body we7-padding">
+			<form action="" method="post" class="we7-form" role="form" enctype="multipart/form-data" id="form1">
 				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label">联系人</label>
-					<div class="col-sm-9 col-xs-12">
+					<label class="col-sm-2 control-label">联系人</label>
+					<div class="col-sm-10 form-controls">
 						<input type="text" name="linkman" id="linkman" class="form-control" autocomplete="off" value="{$flow_master_info['linkman']}" placeholder="请输入联系人" />
 						<div class="help-block">
 							请填写联系人
@@ -88,8 +92,8 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label">电话</label>
-					<div class="col-sm-9 col-xs-12">
+					<label class="col-sm-2 control-label">电话</label>
+					<div class="col-sm-10 form-controls">
 						<input type="text" name="mobile" class="form-control" value="{$flow_master_info['mobile']}" autocomplete="off" placeholder="请输入电话" />
 						<div class="help-block">
 							请填写电话
@@ -97,8 +101,8 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label">联系地址</label>
-					<div class="col-sm-9 col-xs-12">
+					<label class="col-sm-2 control-label">联系地址</label>
+					<div class="col-sm-10 form-controls">
 						<input type="text" name="address" class="form-control" value="{$flow_master_info['address']}" autocomplete="off" placeholder="请输入联系地址" />
 						<div class="help-block">
 							请输入联系地址
@@ -106,8 +110,8 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label">身份证上传</label>
-					<div class="col-sm-9 col-xs-12">
+					<label class="col-sm-2 control-label">身份证上传</label>
+					<div class="col-sm-10 form-controls">
 						<input type="file" name="id_card_photo">
 						<div class="help-block">
 							请上传身份证
@@ -116,8 +120,8 @@
 				</div>
 				{if !empty($flow_master_info['id_card_photo'])}
 				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label"></label>
-					<div class="col-sm-9 col-xs-12">
+					<label class="col-sm-2 control-label"></label>
+					<div class="col-sm-10 form-controls">
 						<div class="input-group">
 							<img src="{$flow_master_info['id_card_photo']}?time={php echo time()}" class="img-responsive img-thumbnail" width="150" />
 						</div>
@@ -125,8 +129,8 @@
 				</div>
 				{/if}
 				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label">营业执照上传</label>
-					<div class="col-sm-9 col-xs-12">
+					<label class="col-sm-2 control-label">营业执照上传</label>
+					<div class="col-sm-10 form-controls">
 						<input type="file" name="business_licence_photo">
 						<div class="help-block">
 							请上传营业执照
@@ -135,8 +139,8 @@
 				</div>
 				{if !empty($flow_master_info['business_licence_photo'])}
 				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label"></label>
-					<div class="col-sm-9 col-xs-12">
+					<label class="col-sm-2 control-label"></label>
+					<div class="col-sm-10 form-controls">
 						<div class="input-group">
 							<img src="{$flow_master_info['business_licence_photo']}?time={php echo time()}" class="img-responsive img-thumbnail" width="150" />
 						</div>
@@ -144,8 +148,8 @@
 				</div>
 				{/if}
 				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label"></label>
-					<div class="col-sm-9 col-xs-12">
+					<label class="col-sm-2 control-label"></label>
+					<div class="col-sm-10 form-controls">
 						<input name="submit" type="submit" value="提交" class="btn btn-primary span2 js-register-flow" />
 						<input type="hidden" name="token" value="{$_W['token']}" />
 					</div>
@@ -178,10 +182,10 @@
 	</script>
 	{/if}
 	{if $do == 'account_list'}
-	<div class="panel panel-info">
+	<div class="panel we7-panel">
 		<div class="panel-heading">筛选</div>
-		<div class="panel-body">
-			<form action="./index.php" method="get" role="form" class="form-horizontal">
+		<div class="panel-body we7-padding">
+			<form action="./index.php" method="get" role="form" class="we7-form">
 				<input type="hidden" name="c" value="adviertisement">
 				<input type="hidden" name="a" value="content-provider">
 
@@ -207,15 +211,23 @@
 			</form>
 		</div>
 	</div>
-	<div class="panel panel-default">
+	<div class="panel we7-panel">
 		<div class="panel-heading">
 			详细数据
 		</div>
-		<div class="table-responsive panel-body">
-			<table class="table table-hover">
+		<div class="table-responsive panel-body ">
+			<table class="table table-hover we7-table vertical-middle">
+				<col width="110px"/>
+				<col />
+				<col width="300px"/>
+				{if !empty($commission_show)}
+				<col width='100px'/>
+				{/if}
+				<col width="100px"/>
+				<col width="100px"/>
 				<thead>
 				<tr>
-					<th class="row-hover">公众号<i></i></th>
+					<th class="row-hover" style="width:600px;" colspan="2">公众号<i></i></th>
 					<th style="width:300px;">标签<i></i></th>
 					{if !empty($commission_show)}
 					<th style="width:100px;">累计金额<i></i></th>
@@ -228,11 +240,11 @@
 				{loop $list $uni}
 				{loop $uni['details'] $account}
 				<tr>
-					<td class="row-hover">
-						<div class="col-xs-12 col-sm-12 col-md-2 col-lg-1">
-							<img src="{php echo tomedia('headimg_'.$account['acid'].'.jpg');}?time={php echo time()}" class="" width="50" height="50"  onerror="this.src='resource/images/gw-wx.gif'" />
-						</div>
-						<div class="col-xs-12 col-sm-12 col-md-4 col-lg-5 item" style="font-size:16px;">
+					<td>
+						<img src="{php echo tomedia('headimg_'.$account['acid'].'.jpg');}?time={php echo time()}" class="" width="50" height="50"  onerror="this.src='resource/images/gw-wx.gif'" />
+					</td>
+					<td class="row-hover text-left">
+						<div style="font-size:16px;">
 							{$account['name']}
 							<br>
 							<span class="help-block" style="font-size:13px;">类型:{if $account['level'] == '1'}普通订阅号{elseif $account['level'] == '2'}普通服务号{elseif $account['level'] == '3'}认证订阅号{elseif $account['level'] == '4'}认证服务号/认证媒体/政府订阅号{/if}</span>
@@ -263,13 +275,15 @@
 						{/if}
 					</td>
 					<td>
-						<a href="{php echo url('adviertisement/content-provider/flow_control', array('uniacid' => $account['uniacid']))}">
-							{if IMS_FAMILY == 'v' ||$uni['flow_setting_enable'] == 2}
-							设置
-							{elseif $uni['flow_setting_enable'] == 1}
-							开通广告联盟
-							{/if}
-						</a>
+						<div class="link-group">
+							<a href="{php echo url('adviertisement/content-provider/flow_control', array('uniacid' => $account['uniacid']))}">
+								{if IMS_FAMILY == 'v' ||$uni['flow_setting_enable'] == 2}
+								设置
+								{elseif $uni['flow_setting_enable'] == 1}
+								开通广告联盟
+								{/if}
+							</a>
+						</div>
 					</td>
 				</tr>
 				{/loop}
@@ -281,13 +295,20 @@
 	<div class="pull-right">{$pager}</div>
 	{/if}
 	{if $do == 'flow_control'}
-	<div class="panel panel-default">
+	<div class="panel we7-panel">
 		<div class="panel-heading">公众号信息</div>
 		<div class="panel-body">
-			<table class="table table-hover">
+			<table class="table table-hover we7-table vertical-middle">
+				<col width="110px"/>
+				<col />
+				<col width="300px"/>
+				{if !empty($commission_show)}
+				<col width='100px'/>
+				{/if}
+				<col width="100px"/>
 				<thead>
 				<tr>
-					<th class="row-hover">公众号<i></i></th>
+					<th class="row-hover" colspan="2">公众号<i></i></th>
 					<th style="width:300px;">标签<i></i></th>
 					{if !empty($commission_show)}
 					<th style="width:150px;">累计金额<i></i></th>
@@ -298,10 +319,10 @@
 				<tbody>
 				<tr>
 					<td>
-						<div class="col-xs-12 col-sm-12 col-md-2 col-lg-1">
-							<img src="{php echo tomedia('headimg_'.$current_account['acid'].'.jpg');}?time={php echo time()}" class="" width="50" height="50"  onerror="this.src='resource/images/gw-wx.gif'" />
-						</div>
-						<div class="col-xs-12 col-sm-12 col-md-4 col-lg-5 item" style="font-size:16px;">
+						<img src="{php echo tomedia('headimg_'.$current_account['acid'].'.jpg');}?time={php echo time()}" class="" width="50" height="50"  onerror="this.src='resource/images/gw-wx.gif'" />		
+					</td>
+					<td class="text-left">
+						<div class="" style="font-size:16px;">
 							{$current_account['name']}
 							<br>
 							<span class="help-block" style="font-size:13px;">类型:{if $current_account['level'] == '1'}普通订阅号{elseif $current_account['level'] == '2'}普通服务号{elseif $current_account['level'] == '3'}认证订阅号{elseif $current_account['level'] == '4'}认证服务号/认证媒体/政府订阅号{/if}</span>
@@ -312,16 +333,18 @@
 					<td>{if !empty($current_uniaccount)}{$current_uniaccount['amount']}{else}0{/if}元</td>
 					{/if}
 					<td>
-						{if IMS_FAMILY != 'v'}
-						{if empty($current_uniaccount['enable']) || $current_uniaccount['enable'] == 1}
-						<a href="#ad-tags" data-toggle="modal" class="btn btn-primary">开通</a>
-						{elseif $current_uniaccount['enable'] == 2}
-						<a href="javascript:;" class="btn btn-danger js-stop-provider" data-uniacid="{$_GPC['uniacid']}">停止</a>
-						<a href="#ad-tags" data-toggle="modal" class="btn btn-primary">设置</a>
-						{/if}
-						{else}
-						<a href="#ad-tags" data-toggle="modal" class="btn btn-primary">设置</a>
-						{/if}
+						<div class="link-group">
+							{if IMS_FAMILY != 'v'}
+							{if empty($current_uniaccount['enable']) || $current_uniaccount['enable'] == 1}
+							<a href="#ad-tags" data-toggle="modal">开通</a>
+							{elseif $current_uniaccount['enable'] == 2}
+							<a href="javascript:;" class="js-stop-provider" data-uniacid="{$_GPC['uniacid']}">停止</a>
+							<a href="#ad-tags" data-toggle="modal" >设置</a>
+							{/if}
+							{else}
+							<a href="#ad-tags" data-toggle="modal" >设置</a>
+							{/if}
+						</div>
 					</td>
 				</tr>
 				</tbody>
@@ -329,18 +352,18 @@
 		</div>
 	</div>
 	{if IMS_FAMILY != 'v' && $current_uniaccount['enable'] == 2}
-	<div class="panel panel-default">
+	<div class="panel we7-panel">
 		<div class="panel-heading">
 			应用信息
 				<span class="pull-right" style="display:none;">
 					<a href="">批量设置</a>
 				</span>
 		</div>
-		<div class="panel-body">
+		<div class="panel-body we7-padding">
 			<div class="row">
 				{if !empty($modulelist_available)}
 				{loop $modulelist_available $list}
-				<div class="col-xs-3" style="padding:20px;">
+				<div class="col-xs-3">
 					<div class="col-xs-2">
 						<img src="{$list['icon']}" width="48" height="48" class="img-rounded">
 					</div>
@@ -543,7 +566,7 @@
 	</script>
 	{/if}
 	{if $do == 'finance_info'}
-	<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin: 10px -1em 1em 0px;">
+	<nav class="navbar navbar-default navbar-static-top we7-margin-vertical" role="navigation">
 		<div class="navbar-header">
 			<a class="navbar-brand" href="{php echo url('adviertisement/content-provider/finance_info')}">数据统计</a>
 			<ul class="nav navbar-nav navbar-right">
@@ -558,10 +581,10 @@
 			</ul>
 		</div>
 	</nav>
-	<div class="panel panel-default">
+	<div class="panel we7-panel">
 		<div class="panel-heading">账户流水</div>
 		<div class="panel-body">
-			<table class="table table-hover">
+			<table class="table we7-table table-hover">
 				<thead>
 				<tr>
 					<th>时间</th>
@@ -604,8 +627,7 @@
 	{/if}
 
 	{if $do == 'content_provider'}
-	<iframe src="{$iframe}" marginheight="0" marginwidth="0" frameborder="0" width="100%" style="height:1800px;" scrolling="no" allowTransparency="true"></iframe>
+	<iframe src="{$iframe}" marginheight="0" marginwidth="0" frameborder="0" width="100%" style="width: 989px; height:1800px; margin-left: -30px; margin-right: -30px;"  allowTransparency="true"></iframe>
 	{/if}
 
-</div>
 {template 'common/footer'}

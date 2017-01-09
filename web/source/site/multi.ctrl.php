@@ -49,6 +49,10 @@ if($do == 'post') {
 			message('请填写站点名称', referer(), 'error');
 		}
 		if(!empty($id)) {
+			//默认微站状态不可关闭
+			if($id == $default_site) {
+				$data['status'] = 1;
+			}
 			pdo_update('site_multi', $data, array('id' => $id));
 		} else {
 			pdo_insert('site_multi', $data);

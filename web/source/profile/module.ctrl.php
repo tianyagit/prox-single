@@ -90,9 +90,11 @@ if($do == 'display') {
 			$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
 						(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder
 						FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' 
-						AND ".(!empty($package_module) ? " a.name IN ('".implode("','", $package_module)."')" : '')." $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
+						".(!empty($package_module) ? " AND a.name IN ('".implode("','", $package_module)."')" : '')." $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
 			
-			$total_condition['name'] = $package_module;
+			if (!empty($package_module)) {
+				$total_condition['name'] = $package_module;
+			}
 			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 		}
 		if (!empty($modules)) {
@@ -130,7 +132,7 @@ if($do == 'display') {
 		$data = array(
 			'uniacid' => $_W['uniacid'],
 			'module' => $modulename,
-			'enabled' => STATUS_OFF,
+			'enabled' => STATUS_ON,
 			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
 			'settings' => '',
 		);

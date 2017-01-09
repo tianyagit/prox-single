@@ -238,7 +238,8 @@
 							<div class="form-controls col-sm-10">
 								<label>
 									<input type="text" name="status" class="form-control" ng-model="multi.status" ng-style="{'display': 'none'}">
-									<div class="switch" ng-class="{'switchOn' : multi.status == 1}" ng-click="changeMultiStatus()"></div>
+									<div class="switch" ng-class="{'switchOn' : multi.status == 1}" ng-click="changeMultiStatus()" ng-if='default_site != multi.id'></div>
+									<div class="switch switchOn" ng-style="{'opacity': '0.3'}" ng-if='default_site == multi.id'></div>
 								</label>
 							</div>
 						</div>
@@ -879,6 +880,7 @@
 <script>
 require(['underscore'], function(){
 	angular.module('wesiteApp').value('config', {
+		default_site: {php echo !empty($default_site) ? json_encode($default_site) : '0'},
 		multiid: {php echo !empty($id) ? json_encode($id) : '0'},
 		multi: {php echo !empty($multi) ? json_encode($multi) : 'null'},
 		styles: {php echo !empty($styles) ? json_encode($styles) : 'null'},
