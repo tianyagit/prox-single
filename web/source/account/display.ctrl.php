@@ -4,7 +4,6 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-load()->model('user');
 
 $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
@@ -21,10 +20,6 @@ if($do == 'switch') {
 
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
-	$status = array();
-	$status['lastuniacid'] = $uniacid;
-	$status['uid'] = $_W['uid'];
-	user_update($status);
 
 	if($_W['role'] == 'clerk' || $role == 'clerk') {
 		header('Location: ' . url('paycenter/desk'));
