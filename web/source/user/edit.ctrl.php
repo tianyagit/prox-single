@@ -59,7 +59,7 @@ if($do == 'edit_modules_tpl') {
 			$data['uid'] = $uid;
 			$data[$_GPC['type']] = intval($_GPC['groupid']);
 			if(user_update($data)) {
-				$group_info = group_detail_info($_GPC['groupid']);
+				$group_info = user_group_detail_info($_GPC['groupid']);
 				message($group_info, '', 'ajax');
 			}else {
 				message('1', '', 'ajax');
@@ -69,7 +69,7 @@ if($do == 'edit_modules_tpl') {
 		}
 	}
 	$groups = pdo_getall('users_group', array(), array('id', 'name'), 'id');
-	$group_info = group_detail_info($user['groupid']);
+	$group_info = user_group_detail_info($user['groupid']);
 
 	template('user/edit-modules-tpl');
 }

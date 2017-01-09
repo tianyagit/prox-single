@@ -28,13 +28,13 @@
 			$('.url').each(function() {
 				util.clip(this, $('.url').data('url'));
 			});
-			$('.url').click(function () {
+			$('.url').click(function() {
 				util.clip(this, $(this).data('url'));
 			});
 
 		</script>
 		<td class="edit">
-			<a href="{php echo url('site/multi')}">设置微站</a>
+			<a href="{php echo url('site/multi')}">微站设置</a>
 		</td>
 	</tr>
 	{/loop}

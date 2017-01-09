@@ -79,7 +79,7 @@ function _login($forward = '') {
 			$forward = $_GPC['forward'];
 		}
 		if(empty($forward)) {
-			if(!empty($record['lastuniacid'])) {
+			if(!empty($_GPC['__uniacid'])) {
 				$forward = './index.php?c=platform&a=reply';
 			}else {
 				$forward = './index.php?c=account&a=display';

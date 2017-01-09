@@ -63,7 +63,22 @@ function reply_keywords_search($condition = '', $params = array(), $pindex = 0, 
 		$sql .= " LIMIT {$start},{$psize}";
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('rule_keyword') . $where, $params);
 	}
-	return pdo_fetchall($sql, $params);
+	$result = pdo_fetchall($sql, $params);
+	if (!empty($result)) {
+		foreach ($result as $key => $val) {
+			$containtypes = pdo_get('rule', array('id' => $val['rid']), array('containtype'));
+			if (!empty($containtypes)) {
+				$containtype = explode(',', $containtypes['containtype']);
+				$containtype = array_filter($containtype);
+			} else {
+				$containtype = array();
+			}
+			$result[$key]['reply_type'] = $containtype;
+		}
+	} else {
+		$result = array();
+	}
+	return $result;
 }
 
 /**

@@ -177,7 +177,7 @@ if($do == 'post') {
 			} else {
 				$rule['displayorder'] = range_limit($rule['displayorder'], 0, 254);
 			}
-			$module = WeUtility::createModule('reply');
+			$module = WeUtility::createModule('core');
 			if(empty($module)) {
 				message('抱歉，模块不存在请重新选择其它模块！');
 			}
