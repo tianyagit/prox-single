@@ -74,7 +74,7 @@ if($do == 'display') {
 	$groups = mc_groups();
 	$search_mod = intval($_GPC['search_mod']) == 1 ? '1' : '2';
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 50;
+	$psize = 25;
 
 	$condition = '';
 	$params = array(':uniacid' => $_W['uniacid']);
