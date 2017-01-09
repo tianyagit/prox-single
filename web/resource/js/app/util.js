@@ -453,14 +453,14 @@ util.message = function(msg, redirect, type){
 };
 
 util.cookie_message = function(time) {
-	var modal = util.cookie.get('modal');
-	if(modal) {
+	var message = util.cookie.get('message');
+	if(message) {
 		
-		var del = util.cookie.del('modal');
+		var del = util.cookie.del('message');
 		
-		var modal = eval("("+modal+")");
+		var message = eval("("+message+")");
 		
-		util.modal_message(modal.msg, modal.type, modal.title, time);
+		util.modal_message(message.msg, message.type, message.title, time);
 	}
 }
 /*
@@ -794,7 +794,7 @@ util.ajaxshow = function(url, title, options, events) {
 }; //end of ajaxshow
 
 util.cookie = {
-	'prefix' : '',
+	'prefix' : window.sysinfo.cookie.pre,
 	// 保存 Cookie
 	'set' : function(name, value, seconds) {
 		expires = new Date();

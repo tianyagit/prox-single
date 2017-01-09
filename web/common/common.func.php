@@ -76,30 +76,23 @@ parent.require(['jquery', 'util'], function($, util){
 	if($type == 'ajax' || $type == 'sql') {
 		$label = 'warning';
 	}
-	//message通过cookie传递
-	/*
-	 * title 标题
-	 * msg 提示内容
-	 * label 提示类型
-	 */
-	setCookie("modal",'',time()-600,'/');
-	$modal = array();
+	$message = array();
 	if (is_array($msg)){
-		$modal['title'] = 'MYSQL 错误';
-		$modal['msg'] = 'php echo cutstr('.$msg['sql'].', 300, 1);';
+		$message['title'] = 'MYSQL 错误';
+		$message['msg'] = 'php echo cutstr('.$msg['sql'].', 300, 1);';
 	} else{
-		$modal['title'] = $caption;
-		$modal['msg'] = $msg;
+		$message['title'] = $caption;
+		$message['msg'] = $msg;
 	}
-	$modal['type'] = $label;
-	setCookie("modal",json_encode($modal),time()+600,'/');
+	$message['type'] = $label;
+	
+	isetcookie("message", json_encode($message), 600);
 	if ($redirect){
 		header('location: '.$redirect);
 	} else {
 		header('location: '.getenv("HTTP_REFERER"));
 	}
 	exit();
-	//end message通过cookie传递
 	include template('common/message', TEMPLATE_INCLUDEPATH);
 	exit();
 }
