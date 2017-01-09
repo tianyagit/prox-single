@@ -266,7 +266,7 @@ function user_account_permission() {
 	*@param  number $groupid 用户组ID
 	*@return array
 */
-function group_detail_info($groupid) {
+function user_group_detail_info($groupid) {
 	$groupid = is_array($groupid) ? 0 : intval($groupid);
 	if(empty($groupid)) {
 		return false;
