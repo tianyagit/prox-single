@@ -74,10 +74,10 @@ if ($do == 'display') {
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$letter = trim($_GPC['letter']);
 		if(!empty($letter)){
-			$condition .= " AND a.`letter` = :letter";
-			$param[':letter'] = $letter;
+			$condition .= " AND a.`title_initial` = :title_initial";
+			$param[':title_initial'] = $letter;
 		}else {
-			$condition .= " AND a.`letter` = ''";
+			$condition .= " AND a.`title_initial` = ''";
 		}
 	}
 
