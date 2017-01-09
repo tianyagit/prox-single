@@ -8,23 +8,33 @@
 </div>
 {/if}
 
-<table class="table we7-table table-hover" ng-show="!addHomemenuStatus">
-	<col width="100px" />
-	<col width="75px" />
-	<col width="95px" />
+<table class="table we7-table table-hover">
+	<col width="130px" />
+	<col width="150px" />
+	<col width="350px" />
 	<col width="" />
 	<tr>
 		<th>标题</th>
 		<th>图标</th>
-		<th>是否显示</th>
+		<th>链接</th>
 		<th>操作</th>
 	</tr>
 	{loop $entries $menu}
 	<tr ng-repeat="menu in homeMenu">
 		<td class="title">{$menu['title']}</td>
-		<td><div class="switch" ng-class="{'switchOn': menu.status == 1}" ng-click="updateMenu(menu, 'switch')"></div></td>
+		<td><i class="{$menu['icon']}"></i></td>
+		<td><a href="javascript:;" class="url" data-url="{$menu['url']}">{$menu['url']}</a></td>
+		<script>
+			$('.url').each(function() {
+				util.clip(this, $('.url').data('url'));
+			});
+			$('.url').click(function () {
+				util.clip(this, $(this).data('url'));
+			});
+
+		</script>
 		<td class="edit">
-			<a href="javascript:;">复制链接</a>
+			<a href="{php echo url('site/multi')}">设置微站</a>
 		</td>
 	</tr>
 	{/loop}

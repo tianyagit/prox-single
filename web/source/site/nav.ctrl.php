@@ -164,7 +164,7 @@ if ($do == 'home' || $do == 'profile') {
 	if(!empty($bindings)) {
 		foreach($bindings as $modulename => $group) {
 			foreach($group as $bind) {
-				$entries[] = array('module' => $modulename, 'from' => $bind['from'], 'title' => $bind['title'], 'url' => $bind['url']);
+				$entries[] = array('module' => $modulename, 'from' => $bind['from'], 'title' => $bind['title'], 'url' => $bind['url'], 'icon' => $bind['icon']);
 			}
 		}
 	}
