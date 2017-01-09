@@ -495,7 +495,7 @@ util.modal_message = function(msg, type ,title, time) {
 	
 	if($.inArray(type, ['success']) != -1) {
 		is_toast = true;
-		time = time ? time : 1;
+		time = time ? time : 3;
 	}
 	
 	//内容
@@ -527,7 +527,7 @@ util.modal_message = function(msg, type ,title, time) {
 			modalobj.addClass('modal-' + type);
 		}
 		modalobj.on('show.bs.modal', function(){modalhide();});
-		modalobj.on('hidden.bs.modal', function(){modalobj.remove;});
+		modalobj.on('hidden.bs.modal', function(){modalobj.remove();});
 		function modalhide() {
 				setTimeout(function(){
 					modalobj.modal('hide');
