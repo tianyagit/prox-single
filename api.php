@@ -685,7 +685,8 @@ EOF;
 				'module' => $keyword['module'],
 				'rule' => $keyword['rid'],
 				'priority' => $keyword['displayorder'],
-				'keyword' => $keyword
+				'keyword' => $keyword,
+				'reply_type' => $keyword['reply_type']
 			);
 			$pars[] = $params;
 		}
@@ -903,9 +904,14 @@ EOF;
 		if(empty($param['module']) || !in_array($param['module'], $this->modules)) {
 			return false;
 		}
-		$processor = WeUtility::createModuleProcessor($param['module']);
+		if ($param['module'] == 'reply') {
+			$processor = WeUtility::createModuleProcessor('core');
+		} else {
+			$processor = WeUtility::createModuleProcessor($param['module']);
+		}
 		$processor->message = $param['message'];
 		$processor->rule = $param['rule'];
+		$processor->reply_type = $param['reply_type'];
 		$processor->priority = intval($param['priority']);
 		$processor->inContext = $param['context'] === true;
 		$response = $processor->respond();
