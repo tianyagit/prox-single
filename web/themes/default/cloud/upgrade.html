@@ -26,12 +26,18 @@
 					<div class="form-group  we7-padding-none">
 						<label for="" class="control-label color-gray col-sm-2">更新协议事项</label>
 						<div class="form-controls col-sm-10 form-control-static">
-							<input id='agreement_0' type="checkbox" name='agreement_0' autocomplete="off" />
-							<label for="agreement_0">确保您的系统文件官方文件保持一致，避免被非法篡改，远离盗版</label>
-							<input id='agreement_1' type="checkbox" name='agreement_1' autocomplete="off"/>
-							<label for="agreement_1">已经做好了相关文件的备份工作，并且认同官方的更新行为并自愿承担更新所存在的风险</label>
-							<input id='agreement_2' type="checkbox" name='agreement_2' autocomplete="off"/>
-							<label for="agreement_2">认同“购买系统商业授权后进行商业化运营”的协议</label>
+							<div class="">
+								<input id='agreement_0' type="checkbox" name='agreement_0' autocomplete="off" />
+								<label for="agreement_0">确保您的系统文件官方文件保持一致，避免被非法篡改，远离盗版</label>
+							</div>
+							<div class="">
+								<input id='agreement_1' type="checkbox" name='agreement_1' autocomplete="off"/>
+								<label for="agreement_1">已经做好了相关文件的备份工作，并且认同官方的更新行为并自愿承担更新所存在的风险</label>
+							</div>
+							<div class="">
+								<input id='agreement_2' type="checkbox" name='agreement_2' autocomplete="off"/>
+								<label for="agreement_2">认同“购买系统商业授权后进行商业化运营”的协议</label>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -89,7 +95,7 @@
 				</button>
 				<h4 class="modal-title">更新文件</h4>
 			</div>
-			<div class="modal-body bg-default color-dark">
+			<div class="modal-body color-dark">
 				{loop $upgrade['files'] $line}
 				<div><span style="display:inline-block; width:30px;">{if is_file(IA_ROOT . $line)}M{else}A{/if}</span>{$line}</div>
 				{/loop}
@@ -111,7 +117,7 @@
 				</button>
 				<h4 class="modal-title">更新数据库</h4>
 			</div>
-			<div class="modal-body bg-default color-dark">
+			<div class="modal-body color-dark">
 				{loop $upgrade['database'] $line}
 				<div class="row">
 					<div class="col-sm-2">表名:</div>
