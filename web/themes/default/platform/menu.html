@@ -9,7 +9,7 @@
 	</div>
 	<ul class="we7-page-tab">
 		<li {if $type == '1'}class="active" {/if}><a href="{url 'platform/menu' array('type' => '1')}">默认菜单</a></li>
-		<li {if $type == '3'}class="active"{/if}><a href="{url 'platform/menu' array('type' => '3')}">自定义菜单</a></li>
+		<li {if $type == '3'}class="active"{/if}><a href="{url 'platform/menu' array('type' => '3')}">个性化菜单</a></li>
 	</ul>
 	<div class="we7-padding-bottom clearfix">
 		<form action="./index.php" method="get" class="form-horizontal" role="form">
@@ -25,7 +25,7 @@
 			{if $type == '1'}
 			<a href="{php echo url('platform/menu/post', array('type' => 1));}" class="btn btn-primary we7-padding-horizontal">+添加默认菜单</a>
 			{elseif $type == '3'}
-			<a href="{php echo url('platform/menu/post', array('type' => 3));}" class="btn btn-primary we7-padding-horizontal">+添加自定义菜单</a>
+			<a href="{php echo url('platform/menu/post', array('type' => 3));}" class="btn btn-primary we7-padding-horizontal">+添加个性化菜单</a>
 			{/if}
 		</div>
 	</div>
@@ -109,10 +109,10 @@
 <div class="conditionMenu" ng-controller="conditionMenuDesigner" id="conditionMenuDesigner" ng-cloak>
 	<div class="new">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{php echo url('platform/menu')}"><i class="wi wi-back-cricle"></i></a>
+			<a href="{php echo url('platform/menu', array('type' => $_GPC['type']))}"><i class="wi wi-back-cricle"></i></a>
 			<li>
-				<a href="{php echo url('platform/menu')}">自定义菜单</a>
-			</li>
+				<a href="{php echo url('platform/menu', array('type' => $_GPC['type']))}">自定义菜单</a>
+			</li>	
 			<li>
 				{if !empty($id)}
 				编辑菜单
@@ -262,7 +262,7 @@
 										</div>
 									</div>
 								</div>
-								<div>
+								
 								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'" style="width:540px;">
 									<div class="panel-heading">
 										回复内容

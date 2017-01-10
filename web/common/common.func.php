@@ -131,7 +131,7 @@ function buildframes($framename = ''){
 	
 	//模块权限，创始人有所有模块权限
 	load()->model('module');
-	$modules = uni_modules();
+	$modules = uni_modules(false);
 	$sysmodules = system_modules();
 
 	$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'shortcut' => STATUS_ON), array('module'), '', 'displayorder DESC');
@@ -176,8 +176,10 @@ function buildframes($framename = ''){
 			$modulename = pdo_getcolumn('modules_bindings', array('eid' => $eid), 'module');
 		}
 		$module = module_fetch($modulename);
+		if (empty($module)) {
+			message('模块不存在或是您没有权限操作', '', 'error');
+		}
 		$entries = module_entries($modulename);
-		
 		$frames['account']['section'] = array();
 		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
 			if (!empty($module['isrulefields'])) {

@@ -104,7 +104,7 @@ if($do == 'display') {
 	}
 	if ($m == 'special') {
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
-		$setting = $setting['default_message'];
+		$setting = $setting['default_message'] ? $setting['default_message'] : array();
 	}
 	if ($m == 'welcome') {
 		$setting = uni_setting($_W['uniacid'], array('welcome'));
@@ -224,7 +224,7 @@ if($do == 'post') {
 	if ($m == 'special') {
 		$type = trim($_GPC['type']);
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
-		$setting = $setting['default_message'];
+		$setting = $setting['default_message'] ? $setting['default_message'] : array();
 		if (checksubmit('submit')) {
 			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
 			$status = $_GPC['status'];
@@ -358,7 +358,7 @@ if ($do == 'change_status') {
 	$status = intval($_GPC['status']);
 	$type = $_GPC['type'];
 	$setting = uni_setting_load('default_message', $_W['uniacid']);
-	$setting = $setting['default_message'];
+	$setting = $setting['default_message'] ? $setting['default_message'] : array();
 	$setting[$type]['type'] = $status;
 	$result = uni_setting_save('default_message', $setting);
 	if($result) {
