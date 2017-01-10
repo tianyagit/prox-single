@@ -889,29 +889,7 @@ util.encrypt = function (str) {
 	}
 };
 util.toast = function(msg, type, title) {
-//	require(['jquery.toast'], function(toastr){
-//		toastr.options = {
-//			"closeButton": true,
-//			"debug": false,
-//			"newestOnTop": false,
-//			"progressBar": false,
-//			"positionClass": "toast-top-center",
-//			"preventDuplicates": false,
-//			"onclick": null,
-//			"showDuration": "300",
-//			"hideDuration": "1000",
-//			"timeOut": "5000",
-//			"extendedTimeOut": "1000",
-//			"showEasing": "swing",
-//			"hideEasing": "linear",
-//			"showMethod": "fadeIn",
-//			"hideMethod": "fadeOut"
-//		};
-//		var types = ['success', 'error', 'info', 'warning'];
-//		type = types.indexOf(type) > -1 ? type : 'info';
-//		toastr[type](msg, title);
-//	});
-	util.modal_message(msg, type, title);
+	util.modal_message(msg, type, title, '5');
 };
 if (typeof define === "function" && define.amd) {
 	define(function(){
