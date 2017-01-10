@@ -9,6 +9,8 @@ require '../framework/bootstrap.inc.php';
 require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 require IA_ROOT . '/web/common/common.func.php';
 require IA_ROOT . '/framework/library/pinyin/pinyin.php';
+load()->func('file');
+
 $pinyin = new Pinyin_Pinyin();
 
 $change_permission_list = array(

@@ -1703,7 +1703,7 @@ function mc_init_fans_info($old_fan_info){
 		);
 		if (!empty($fan['tagid_list'])) {
 			$tagid_arr = $fan['tagid_list'];
-			sort($tagid_arr, SORT_NATURAL);
+			@sort($tagid_arr, SORT_NATURAL);
 			mc_insert_fanstag_mapping($old_fan_info['fanid'], $tagid_arr);
 		}
 		pdo_update('mc_mapping_fans', $record, array('fanid' => $old_fan_info['fanid']));
