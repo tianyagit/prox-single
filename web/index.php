@@ -49,6 +49,16 @@ $acl = array(
 		'founder' => array(),
 		'direct' => array()
 	),
+	'utility' => array(
+		'direct' => array(
+			'verifycode',
+			'code',
+			'file',
+			'bindcall',
+			'subscribe',
+			'wxcode',
+		)
+	),
 	'cloud' => array(
 		'default' => 'touch',
 		'direct' => array(
