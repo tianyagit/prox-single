@@ -100,7 +100,7 @@
 	</div>
 	<script type="text/javascript">
 		angular.module('cloudApp').value('config', {
-			schemas : {php echo ($packet['schemas'] ? json_encode($packet['schemas']) : '[]');},
+			schemas : {php echo ($schemas ? json_encode($schemas) : '[]');},
 			is_module_install : {php echo (!empty($packet['install']) ? 'true' : 'false')},
 		});
 		angular.bootstrap($('.js-processor'), ['cloudApp']);
