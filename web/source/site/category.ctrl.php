@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->func('file');
 
 $do = !empty($do) ? $do : 'display';
-$do = in_array($do, array('display', 'post', 'delete')) ? $do : 'display';
+$do = in_array($do, array('display', 'post', 'delete', 'change_status')) ? $do : 'display';
 uni_user_permission_check('platform_site');
 
 if ($do == 'display') {
@@ -190,5 +190,19 @@ if ($do == 'display') {
 		}
 		pdo_delete('site_category', array('id' => $id, 'parentid' => $id), 'OR');
 		message('分类删除成功！', referer(), 'success');
+	}
+} else if ($do == 'change_status') {
+	$id = intval($_GPC['id']);
+	$category_exist = pdo_get('site_category', array('id' => $id, 'uniacid' => $_W['uniacid']));
+	if (!empty($category_exist)) {
+		$status = $category_exist['enabled'] == 1 ? 0 : 1;
+		$result = pdo_update('site_category', array('enabled' => $status), array('id' => $id));
+		if ($result) {
+			message(error(0), '', 'ajax');
+		} else {
+			message(error(1), '', 'ajax');
+		}
+	} else {
+		message(error(-1), '', 'ajax');
 	}
 }
