@@ -89,7 +89,7 @@
 				</button>
 				<h4 class="modal-title">更新文件</h4>
 			</div>
-			<div class="modal-body bg-default color-dark">
+			<div class="modal-body color-dark">
 				{loop $upgrade['files'] $line}
 				<div><span style="display:inline-block; width:30px;">{if is_file(IA_ROOT . $line)}M{else}A{/if}</span>{$line}</div>
 				{/loop}
@@ -111,7 +111,7 @@
 				</button>
 				<h4 class="modal-title">更新数据库</h4>
 			</div>
-			<div class="modal-body bg-default color-dark">
+			<div class="modal-body color-dark">
 				{loop $upgrade['database'] $line}
 				<div class="row">
 					<div class="col-sm-2">表名:</div>
