@@ -9,6 +9,10 @@ load()->model('user');
 
 uni_user_permission_check('system_user_display');
 $_W['page']['title'] = '添加用户 - 用户管理';
+$state = uni_permission($_W['uid'], $uniacid);
+if($state != 'founder' && $state != 'manager') {
+	message('没有操作权限！', referer(), 'error');
+}
 
 if (checksubmit()) {
 	$username = trim($_GPC['username']);

@@ -162,6 +162,7 @@ function cloud_build() {
 		}
 		$upgrade = array();
 		$upgrade['upgrade'] = $ret['upgrade'];
+		$upgrade['data'] = $ret;
 		$upgrade['lastupdate'] = TIMESTAMP;
 		cache_write('upgrade', $upgrade);
 		cache_write('cloud:transtoken', authcode($ret['token'], 'ENCODE'));

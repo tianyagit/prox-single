@@ -44,10 +44,12 @@ if ($do == 'upgrade') {
 	}
 	cache_load('upgrade');
 	if (!empty($_W['cache']['upgrade'])) {
-		$upgrade = $_W['cache']['upgrade'];
+		$upgrade_cache = $_W['cache']['upgrade'];
 	}
-	if (empty($upgrade) || TIMESTAMP - $upgrade['lastupdate'] >= 3600 * 24 || $upgrade['upgrade']) {
+	if (empty($upgrade_cache) || TIMESTAMP - $upgrade_cache['lastupdate'] >= 3600 * 24 || empty($upgrade_cache['data'])) {
 		$upgrade = cloud_build();
+	} else {
+		$upgrade = $upgrade_cache['data'];
 	}
 	cache_delete('cloud:transtoken');
 	if (!empty($upgrade['schemas'])) {

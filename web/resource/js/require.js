@@ -62,9 +62,6 @@ require.config({
 		'jquery.wookmark': '../lib/jquery.wookmark.min',
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
-		/*toast组件*/
-		'jquery.toast': '../../components/toast/toastr.min',
-	
 		'underscore': '../lib/underscore-min',
 		'biz': '../lib/biz',
 		'loadcss': '../lib/css.min', //加载CSS

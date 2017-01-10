@@ -56,7 +56,6 @@ if (!empty($_GPC['m'])) {
 }
 if ($step == 'schemas' && $_W['ispost']) {
 	$tablename = $_GPC['table'];
-	exit($tablename);
 	foreach ($packet['schemas'] as $schema) {
 		if (substr($schema['tablename'], 4) == $tablename) {
 			$remote = $schema;

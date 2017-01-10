@@ -10,6 +10,10 @@ $do = in_array($do, $dos) ? $do: 'display';
 uni_user_permission_check('system_user_display');
 
 $_W['page']['title'] = '用户列表 - 用户管理';
+$state = uni_permission($_W['uid'], $uniacid);
+if($state != 'founder' && $state != 'manager') {
+	message('没有操作权限！', referer(), 'error');
+}
 $founders = explode(',', $_W['config']['setting']['founder']);
 
 if(in_array($do, array('display', 'recycle_display', 'check_display'))) {

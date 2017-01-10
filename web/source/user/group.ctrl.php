@@ -8,6 +8,10 @@ defined('IN_IA') or exit('Access Denied');
 $dos = array('display', 'post', 'del');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 uni_user_permission_check('system_user_group');
+$state = uni_permission($_W['uid'], $uniacid);
+if ($state != 'founder' && $state != 'manager') {
+	message('没有操作权限！');
+}
 
 if ($do == 'display') {
 	$_W['page']['title'] = '用户组列表 - 用户组 - 用户管理';
