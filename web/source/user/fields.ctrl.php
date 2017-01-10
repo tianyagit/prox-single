@@ -8,6 +8,10 @@ defined('IN_IA') or exit('Access Denied');
 $dos = array('display','post');
 $do = in_array($do, $dos) ? $do : 'display';
 uni_user_permission_check('system_user_display');
+$state = uni_permission($_W['uid'], $uniacid);
+if ($state != 'founder' && $state != 'manager') {
+	message('没有操作权限！');
+}
 
 if ($do == 'display') {
 	$_W['page']['title'] = '字段管理 - 用户管理';
