@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('module');
 load()->model('cloud');
+load()->model('cache');
 
 $dos = array('base', 'sms', 'modules_tpl');
 $do = in_array($do, $dos) ? $do : 'base';
@@ -195,6 +196,8 @@ if($do == 'modules_tpl') {
 						));
 					}
 				}
+				cache_build_account_modules($uniacid);
+				cache_build_account($uniacid);
 				message(error(0), '', 'ajax');
 			}else {
 				message(error(40035), '', 'ajax');
@@ -219,6 +222,8 @@ if($do == 'modules_tpl') {
 				} else {
 					pdo_update('uni_group', $data, array('id' => $id));
 				}
+				cache_build_account_modules($uniacid);
+				cache_build_account($uniacid);
 			} else {
 				pdo_delete('uni_group', array('uniacid' => $uniacid));
 			}
