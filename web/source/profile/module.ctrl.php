@@ -87,37 +87,37 @@ if($do == 'display') {
 					}
 				}
 			}
-			$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
-						(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder
-						FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' 
-						".(!empty($package_module) ? " AND a.name IN ('".implode("','", $package_module)."')" : '')." $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
-			
-			if (!empty($package_module)) {
+			if ($package_module) {
+				$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
+							(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder
+							FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' 
+							AND a.name IN ('".implode("','", $package_module)."') $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
+
 				$total_condition['name'] = $package_module;
+				$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 			}
-			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 		}
 		if (!empty($modules)) {
 			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modules), 'uniacid' => $_W['uniacid']), array('module', 'enabled', 'shortcut'), 'module');
-		}
-		if (!empty($module_profile)) {
-			foreach ($module_profile as $name => $row) {
-				$modules[$name]['enabled'] = $row['enabled'];
-				$modules[$name]['shortcut'] = $row['shortcut'];
+			if (!empty($module_profile)) {
+				foreach ($module_profile as $name => $row) {
+					$modules[$name]['enabled'] = $row['enabled'];
+					$modules[$name]['shortcut'] = $row['shortcut'];
+				}
 			}
-		}
-		foreach ($modules as $name => &$row) {
-			if ($row['issystem'] == 1) {
-				$row['enabled'] = 1;
-			} elseif (!isset($row['enabled'])) {
-				$row['enabled'] = 1;
+			foreach ($modules as $name => &$row) {
+				if ($row['issystem'] == 1) {
+					$row['enabled'] = 1;
+				} elseif (!isset($row['enabled'])) {
+					$row['enabled'] = 1;
+				}
+				$row['isdisplay'] = 1;
+				$row['preview'] = tomedia('addons/' . $name . '/icon.jpg');
 			}
-			$row['isdisplay'] = 1;
-			$row['preview'] = tomedia('addons/' . $name . '/icon.jpg');
+			unset($row);
+			$pager = pagination($total, $pageindex, $pagesize);
 		}
-		unset($row);
 	}
-	$pager = pagination($total, $pageindex, $pagesize);
 	template('profile/module');
 } elseif ($do == 'shortcut') {
 	$status = intval($_GPC['shortcut']);
