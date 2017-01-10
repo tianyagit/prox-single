@@ -163,3 +163,13 @@ if(!pdo_fieldexists('rule', 'containtype')) {
 if(!pdo_fieldexists('rule', 'reply_type')) {
 	pdo_query("ALTER TABLE ". tablename('rule') ." ADD `reply_type` TINYINT(1) NOT NULL DEFAULT '1';");
 }
+
+//删除文件
+$path = IA_ROOT."/data/patch/20170110/1702_Ooo9MzRfUU0n0x1T140O5p2Rt4oP41x3/map.json";
+$delete_file = file_get_contents($path);
+$delete_file = json_decode($delete_file, true);
+foreach ($delete_file as $file) {
+	if (file_exists(IA_ROOT."/".$file)) {
+		unlink(IA_ROOT."/".$file);
+	}
+}
