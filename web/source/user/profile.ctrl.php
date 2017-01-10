@@ -5,6 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('user');
+load()->func('file');
 
 $dos = array('base', 'post');
 $do = in_array($do, $dos) ? $do : 'base';
@@ -13,11 +14,13 @@ $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
 if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$post = $_GPC;
-	$type = $post['type'];
+	$type = trim($post['type']);
 
 	$uid = is_array($post['uid']) ? 0 : intval($post['uid']);
-	if(empty($uid)) message('-1', 'ajax', 'error');
+	if(empty($uid) || empty($type)) message(error(40035), '', 'ajax');
 	$users_profile_exist = pdo_get('users_profile', array('uid' => $uid));
+
+	if($users_profile_exist[$type] == $post[$type]) message(error(0), '', 'ajax');
 	switch ($type) {
 		case 'avatar':
 			if($users_profile_exist) {
@@ -44,9 +47,9 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			break;
 		case 'password':
-			if($post['newpwd'] !== $post['renewpwd']) message('2', 'ajax', 'error');
+			if($post['newpwd'] !== $post['renewpwd']) message(error(2), '', 'ajax');
 			$pwd = user_hash($post['oldpwd'], $user['salt']);
-			if($pwd != $user['password']) message('3', 'ajax', 'error');
+			if($pwd != $user['password']) message(error(3), '', 'ajax');
 			$newpwd = user_hash($post['newpwd'], $user['salt']);
 			if($users_profile_exist) {
 				$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
@@ -131,9 +134,9 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	}
 	if($result) {
 		pdo_update('users_profile', array('edittime' => TIMESTAMP), array('uid' => $uid));
-		message('0', 'ajax', 'success');
+		message(error(0), '', 'ajax');
 	}else {
-		message('1', 'ajax', 'error');
+		message(error(1), '', 'ajax');
 	}
 }
 
@@ -147,6 +150,10 @@ if ($do == 'base') {
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
 	if(!empty($profile)) {
+		$avatar = file_fetch($profile['avatar']);
+		if(is_error($avatar)) {
+			$profile['avatar'] = './resource/images/nopic-107.png';
+		}
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
 			'city' => $profile['residecity'],
@@ -158,7 +165,7 @@ if ($do == 'base') {
 			'day' => $profile['birthday'],
 		);
 		$profile['avatar'] = tomedia($profile['avatar']);
-		$profile['resides'] = $profile['resideprovince'] . $profile['residecity'] . $profile['residedist'] ;
+		$profile['resides'] = $profile['resideprovince'] .' '. $profile['residecity'] .' '. $profile['residedist'] ;
 
 		$profile['births'] = ($profile['birthyear'] ? $profile['birthyear'] : '--') . '年' . ($profile['birthmonth'] ? $profile['birthmonth'] : '--') . '月' . ($profile['birthday'] ? $profile['birthday'] : '--') .'日';
 	}
