@@ -9,6 +9,8 @@ require '../framework/bootstrap.inc.php';
 require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 require IA_ROOT . '/web/common/common.func.php';
 require IA_ROOT . '/framework/library/pinyin/pinyin.php';
+load()->func('file');
+
 $pinyin = new Pinyin_Pinyin();
 
 $change_permission_list = array(
@@ -169,7 +171,7 @@ $delete_file = '["app\/resource\/css\/common.css","app\/resource\/css\/mui.min.c
 $delete_file = json_decode($delete_file, true);
 foreach ($delete_file as $file) {
 	if (file_exists(IA_ROOT."/".$file)) {
-		$patch_dir = IA_ROOT.'/data/patch/'. date('Ym'). "/". date("Hi"). "_deletefile/";
+		$patch_dir = IA_ROOT.'/data/patch/'. date('Ymd'). "/". date("Hi"). "_deletefile/";
 		if (!is_dir(dirname($patch_dir. $file))) {
 			mkdirs(dirname($patch_dir. $file));
 		}
