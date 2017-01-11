@@ -115,10 +115,11 @@ if($do == 'edit') {
 	if (empty($user)) {
 		message('您操作的用户不存在或是已经被删除！');
 	}
-	
-	if (!pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'id')) {
-		message('此用户没有操作该统一公众号的权限，请选指派“管理者”权限！');
+	$role = uni_permission($uid);
+	if (empty($role)) {
+		message('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！');
 	}
+	
 	//获取系统权限
 	$user_menu_permission = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => 'system'));
 	if(!empty($user_menu_permission['permission'])) {
@@ -130,17 +131,22 @@ if($do == 'edit') {
 	$module_permission = pdo_getall('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type !=' => 'system'), array(), 'type');
 	$module_permission_keys = array_keys($module_permission);
 	
-	$menus = system_menu_permission_list();
+	$menus = system_menu_permission_list($role);
 	$module = uni_modules();
 	
 	if (checksubmit('submit')) {
 		//获取全部permission_name，方便判断是否是系统菜单
 		$menu_permission = array();
 		if (!empty($menus)) {
-			foreach ($menus as $menu_name => $menu) {
-				foreach ($menu['section'] as $section_name => $section) {
-					foreach ($section['menu']  as $permission_name => $sub_menu) {
-						$menu_permission[] = $sub_menu['permission_name'];
+			foreach ($menus as $nav_id => $section) {
+				foreach ($section['section'] as $section_id => $section) {
+					foreach ($section['menu']  as $menu_id => $menu) {
+						$menu_permission[] = $menu['permission_name'];
+						if (!empty($menu['sub_permission'])) {
+							foreach ($menu['sub_permission'] as $sub_menu) {
+								$menu_permission[] = $sub_menu['permission_name'];
+							}
+						}
 					}
 				}
 			}
