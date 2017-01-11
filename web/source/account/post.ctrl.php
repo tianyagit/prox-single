@@ -202,7 +202,8 @@ if($do == 'modules_tpl') {
 				cache_build_account($uniacid);
 				message(error(0, '修改成功！'), '', 'ajax');
 			}else {
-				message(error(40035, '参数错误！'), '', 'ajax');
+				pdo_delete('uni_account_group', array('uniacid' => $uniacid));
+				message(error(0, '修改成功！'), '', 'ajax');
 			}
 		}
 
