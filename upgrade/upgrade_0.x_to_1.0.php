@@ -184,3 +184,6 @@ foreach ($delete_file as $file) {
 		}
 	}
 }
+
+//更新we7_coupon的is_system为2,强制开启模块
+pdo_update('modules', array('issystem' => 2), array('name' => 'we7_coupon'));
