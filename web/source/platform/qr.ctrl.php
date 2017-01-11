@@ -16,16 +16,16 @@ uni_user_permission_check('platform_qr');
 $platform_url2qr_permission = uni_user_permission_check('platform_url2qr', false);
 
 //检测场景字符串是否重复
-if($do == 'check_scene_str') {
+if ($do == 'check_scene_str') {
 	$scene_str = trim($_GPC['scene_str']);
 	$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
-	if(!empty($is_exist)) {
-		exit('repeat');
+	if (!empty($is_exist)) {
+		message(error(1, 'repeat'), '', 'ajax');
 	}
-	exit('success');
+	message(error(0, 'success'), '', 'ajax');
 }
 
-if($do == 'list') {
+if ($do == 'list') {
 	$_W['page']['title'] = '二维码管理 - 高级功能';
 	$wheresql = " WHERE uniacid = :uniacid AND acid = :acid AND type = 'scene'";
 	$param = array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']);
@@ -42,7 +42,7 @@ if($do == 'list') {
 			$qrcode['endtime'] = $qrcode['createtime'] + $qrcode['expire'];
 			if (TIMESTAMP > $qrcode['endtime']) {
 				$qrcode['endtime'] = '<font color="red">已过期</font>';
-			}else{
+			} else {
 				$qrcode['endtime'] = date('Y-m-d H:i:s',$qrcode['endtime']);
 			}
 			if ($qrcode['model'] == 2) {
@@ -62,7 +62,7 @@ if($do == 'list') {
 	template('platform/qr-list');
 }
 
-if($do == 'del') {
+if ($do == 'del') {
 	if ($_GPC['scgq']) {
 		$list = pdo_fetchall("SELECT id FROM ".tablename('qrcode')." WHERE uniacid = :uniacid AND acid = :acid AND status = '0' AND type='scene'", array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']), 'id');
 		if (!empty($list)) {
@@ -70,7 +70,7 @@ if($do == 'del') {
 			pdo_query("DELETE FROM ".tablename('qrcode_stat')." WHERE qid IN (".implode(',', array_keys($list)).")");
 		}
 		message('执行成功<br />删除二维码：'.count($list), url('platform/qr/list'),'success');
-	}else{
+	} else {
 		$id = intval($_GPC['id']);
 		pdo_delete('qrcode', array('id' =>$id, 'uniacid' => $_W['uniacid']));
 		pdo_delete('qrcode_stat',array('qid' => $id, 'uniacid' => $_W['uniacid']));
@@ -78,10 +78,10 @@ if($do == 'del') {
 	}
 }
 
-if($do == 'post') {
+if ($do == 'post') {
 	$_W['page']['title'] = '生成二维码 - 二维码管理 - 高级功能';
 	
-	if(checksubmit('submit')){
+	if (checksubmit('submit')){
 		//二维码结构定义
 		$barcode = array(
 			'expire_seconds' => '',
@@ -114,7 +114,7 @@ if($do == 'post') {
 		} else if ($qrctype == 2) {
 			$scene_str = trim($_GPC['scene_str']) ? trim($_GPC['scene_str'])  : message('场景值不能为空');
 			$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
-			if(!empty($is_exist)) {
+			if (!empty($is_exist)) {
 				message("场景值:{$scene_str}已经存在,请更换场景值");
 			}
 			$barcode['action_info']['scene']['scene_str'] = $scene_str;
@@ -124,7 +124,7 @@ if($do == 'post') {
 			message('抱歉，此公众号暂不支持您请求的二维码类型！');
 		}
 		
-		if(!is_error($result)) {
+		if (!is_error($result)) {
 			$insert = array(
 				'uniacid' => $_W['uniacid'],
 				'acid' => $acid,
@@ -147,7 +147,7 @@ if($do == 'post') {
 		}
 	}
 
-	if(!empty($_GPC['id'])) {
+	if (!empty($_GPC['id'])) {
 		$id = intval($_GPC['id']);
 		$row = pdo_fetch("SELECT * FROM ".tablename('qrcode')." WHERE uniacid = {$_W['uniacid']} AND id = '{$id}'");
 		$rid = pdo_get('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $row['keyword']), array('rid'));
@@ -156,7 +156,7 @@ if($do == 'post') {
 	template('platform/qr-post');
 }
 
-if($do == 'extend') {
+if ($do == 'extend') {
 	$id = intval($_GPC['id']);
 	if (!empty($id)) {
 		$qrcrow = pdo_fetch("SELECT * FROM ".tablename('qrcode')." WHERE uniacid = :uniacid AND id = :id LIMIT 1", array(':uniacid' => $_W['uniacid'], ':id' => $id));
@@ -167,7 +167,7 @@ if($do == 'extend') {
 			$barcode['expire_seconds'] = 2592000;
 			$barcode['action_name'] = 'QR_SCENE';
 			$result = $uniacccount->barCodeCreateDisposable($barcode);
-			if(is_error($result)) {
+			if (is_error($result)) {
 				message($result['message'], '', 'error');
 			}
 			$update['ticket'] = $result['ticket'];
@@ -180,7 +180,7 @@ if($do == 'extend') {
 	}
 }
 
-if($do == 'display') {
+if ($do == 'display') {
 	$_W['page']['title'] = '扫描统计 - 二维码管理 - 高级功能';
 	$starttime = empty($_GPC['time']['start']) ? TIMESTAMP -  86399 * 30 : strtotime($_GPC['time']['start']);
 	$endtime = empty($_GPC['time']['end']) ? TIMESTAMP + 6*86400: strtotime($_GPC['time']['end']) + 86399;
@@ -199,7 +199,7 @@ if($do == 'display') {
 			} else {
 				$qrcode['type']="扫描";
 			}
-			if(!in_array($qrcode['openid'], $openid)) {
+			if (!in_array($qrcode['openid'], $openid)) {
 				$openid[] = $qrcode['openid'];
 			}
 		}
@@ -214,7 +214,7 @@ if($do == 'display') {
 	template('platform/qr-display');
 }
 
-if($do == 'down_qr') {
+if ($do == 'down_qr') {
 	$id = intval($_GPC['id']);
 	$down = pdo_get('qrcode', array('id' => $id));
 	$pic = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' . urlencode($down['ticket']);

@@ -225,48 +225,12 @@ function user_level() {
 	return $level;
 }
 
-function user_permission($uid, $uniacid = '') {
-	global $_W;
-	$uniacid = !empty($uniacid) ? $uniacid : $_W['uniacid'];
-	$data = pdo_fetch("SELECT * FROM " . tablename('users_permission') . ' WHERE uid = :uid AND uniacid = :uniacid', array(':uid' => $uid, ':uniacid' => $uniacid));
-	$arr = array();
-	if (!empty($data['system'])) {
-		$data['system'] = explode(',', $data['system']);
-	}
-	if (!empty($data['module'])) {
-		$data['module'] = iunserializer($data['module']);
-	}
-	return $data;
-}
-
-/*
- * 获取某个用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
- * */
-function user_account_permission() {
-	global $_W;
-	$group = pdo_fetch('SELECT * FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $_W['user']['groupid']));
-	$uniacocunts = pdo_getall('uni_account_users', array('uid' => $_W['uid'], 'role' => 'owner'), array(), 'uniacid');
-	if (empty($uniacocunts)) {
-		$uniacid_num = 0;
-	} else {
-		//再次判断公众号是否真实存在
-		$uniacid_num = pdo_fetchcolumn('SELECT COUNT(*) FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $_W['uid'], ':role' => 'owner'));
-	}
-	$data = array(
-		'group_name' => $group['name'],
-		'maxaccount' => $group['maxaccount'],
-		'uniacid_num' => $uniacid_num,
-		'uniacid_limit' => max((intval($group['maxaccount']) - $uniacid_num), 0),
-	);
-	return $data;
-}
-
-/*
-	*获取某一用户组下详细信息
-	*@param  number $groupid 用户组ID
-	*@return array
+/**
+ *获取某一用户组下详细信息
+ *@param  number $groupid 用户组ID
+ *@return array
 */
-function user_group_detail_info($groupid) {
+function user_group_detail_info($groupid = 0) {
 	$groupid = is_array($groupid) ? 0 : intval($groupid);
 	if(empty($groupid)) {
 		return false;

@@ -5,6 +5,8 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+load()->model('module');
+
 /**
  * 生成URL，统一生成方便管理
  * @param string $segment
@@ -122,7 +124,7 @@ function checkaccount() {
 
 //新版buildframes
 function buildframes($framename = ''){
-	global $_W, $_GPC, $top_nav,$acl;
+	global $_W, $_GPC, $top_nav;
 	$frames = cache_load('system_frame');
 	if(empty($frames)) {
 		cache_build_frame_menu();
@@ -130,7 +132,6 @@ function buildframes($framename = ''){
 	}
 	
 	//模块权限，创始人有所有模块权限
-	load()->model('module');
 	$modules = uni_modules(false);
 	$sysmodules = system_modules();
 
@@ -242,20 +243,37 @@ function buildframes($framename = ''){
 			}
 		}
 	}
-	//操作员系统管理界面菜单
-	if (!empty($_W['role']) && $_W['role'] == 'operator') {
-		foreach ($frames['system']['section'] as $system_section_key => $system_section_val) {
-			foreach ($system_section_val['menu'] as $menu_key => $menu_val) {
-				$key = substr($menu_key, 7);
-				if(in_array($key, $acl['system']['founder'])) unset($frames['system']['section'][$system_section_key]['menu'][$menu_key]);
-			}
-			if(empty($frames['system']['section'][$system_section_key]['menu'])) unset($frames['system']['section'][$system_section_key]);
+	//管理员系统管理界面菜单
+	$system_menu_default_permission = frames_menu_append();
+	//从数据库中获取用户权限，并附加上系统管理中的权限
+	if (!empty($_W['role']) && $_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR) {
+		$user_permission = uni_user_permission('system');
+		if (!empty($system_menu_default_permission[ACCOUNT_MANAGE_NAME_OPERATOR])) {
+			$user_permission = array_merge($user_permission, $system_menu_default_permission[ACCOUNT_MANAGE_NAME_OPERATOR]);
 		}
 	}
 	//@@todo 店员界面菜单
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
 		
 	}
+	if (!empty($user_permission)) {
+		foreach ($frames as $nav_id => $section) {
+			foreach ($section['section'] as $section_id => $secion) {
+				$section_show = false;
+				foreach ($secion['menu'] as $menu_id => $menu) {
+					if (!in_array($menu['permission_name'], $user_permission)) {
+						$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
+					} else {
+						$section_show = true;
+					}
+				}
+				if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
+					$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
+				}
+			}
+		}
+	}
+	
 	foreach ($frames as $menuid => $menu) {
 		$top_nav[] = array(
 			'title' => $menu['title'],
@@ -305,6 +323,29 @@ function filter_url($params) {
 	$query_arr['page'] = 1;
 	$query = http_build_query($query_arr);
 	return './index.php?' . $query;
+}
+/**
+ * 系统菜单中预设的附加权限
+ */
+function frames_menu_append() {
+	$system_menu_default_permission = array(
+		'founder' => array(),
+		'manager' => array(
+			'account',
+			'platform',
+			'module',
+			'module_group',
+			'my',
+			'user',
+			'user_group',
+		),
+		'operator' => array(
+			'system_account',
+			'system_my',
+		),
+		'clerk' => array(),
+	);
+	return $system_menu_default_permission;
 }
 
 /**

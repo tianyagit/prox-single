@@ -60,32 +60,6 @@ function uni_owned($uid = 0) {
 }
 
 /**
- * 获取指定操作用户在指定的公众号所具有的操作权限
- * @param int $uid 操作用户
- * @param int $uniacid 指定统一公众号
- * @return string 操作用户的 role (manager|operator)
- */
-function uni_permission($uid = 0, $uniacid = 0) {
-	global $_W;
-	$uid = empty($uid) ? $_W['uid'] : intval($uid);
-	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders)) {
-		return 'founder';
-	}
-
-	$sql = 'SELECT `role` FROM ' . tablename('uni_account_users') . ' WHERE `uid`=:uid AND `uniacid`=:uniacid';
-	$pars = array();
-	$pars[':uid'] = $uid;
-	$pars[':uniacid'] = $uniacid;
-	$role = pdo_fetchcolumn($sql, $pars);
-	if(in_array($role, array('manager', 'owner'))) {
-		$role = 'manager';
-	}
-	return $role;
-}
-
-/**
  * 获取当前公号的所有子公众号
  * @param int $uniacid 公众号ID
  * @return array 当前公号下所有子公众号
@@ -469,6 +443,32 @@ function uni_account_default($uniacid = 0) {
 }
 
 /**
+ * 获取指定操作用户在指定的公众号所具有的操作权限
+ * @param int $uid 操作用户
+ * @param int $uniacid 指定统一公众号
+ * @return string 操作用户的 role (manager|operator)
+ */
+function uni_permission($uid = 0, $uniacid = 0) {
+	global $_W;
+	$uid = empty($uid) ? $_W['uid'] : intval($uid);
+	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
+	$founders = explode(',', $_W['config']['setting']['founder']);
+	if (in_array($uid, $founders)) {
+		return ACCOUNT_MANAGE_NAME_FOUNDER;
+	}
+
+	$sql = 'SELECT `role` FROM ' . tablename('uni_account_users') . ' WHERE `uid`=:uid AND `uniacid`=:uniacid';
+	$pars = array();
+	$pars[':uid'] = $uid;
+	$pars[':uniacid'] = $uniacid;
+	$role = pdo_fetchcolumn($sql, $pars);
+	if(in_array($role, array('manager', 'owner'))) {
+		$role = ACCOUNT_MANAGE_NAME_MANAGER;
+	}
+	return $role;
+}
+
+/**
  * 判断某个用户在某个公众号是否配置过权限清单
  * @param number $uid
  * @param number $uniacid
@@ -478,50 +478,47 @@ function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	if($_W['role'] == 'founder' || $_W['role'] == 'manager') {
+	if ($_W['role'] == 'founder' || $_W['role'] == 'manager') {
+		return false;
+	}
+	if ($_W['role'] == 'clerk') {
 		return true;
 	}
-	$is_exist = pdo_fetch('SELECT id FROM ' . tablename('users_permission') . ' WHERE `uid`=:uid AND `uniacid`=:uniacid', array(':uid' => $uid, ':uniacid' => $uniacid));
+	$is_exist = pdo_get('users_permission', array('uid' => $uid, 'uniacid' => $uniacid), array('id'));
 	if(empty($is_exist)) {
-		if($_W['role'] != 'clerk') {
-			return true;
-		} else {
-			return error(-1, '');
-		}
+		return false;
 	} else {
-		return error(-1, '');
+		return true;
 	}
-}
-/*
- * 默认获取某个操作员对于某个公众号的权限
-* $type => 'system' 获取系统菜单权限
-* */
-function uni_user_permission($type = 'system', $uid = 0, $uniacid = 0) {
-	global $_W;
-	$uid = empty($uid) ? $_W['uid'] : intval($uid);
-	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
-	$sql = 'SELECT `permission` FROM ' . tablename('users_permission') . ' WHERE `uid`=:uid AND `uniacid`=:uniacid AND `type`=:type';
-	$pars = array();
-	$pars[':uid'] = $uid;
-	$pars[':uniacid'] = $uniacid;
-	$pars[':type'] = $type;
-	$data = pdo_fetchcolumn($sql, $pars);
-	$permission = array();
-	if(!empty($data)) {
-		$permission = explode('|', $data);
-	}
-	return $permission;
 }
 
-function uni_user_permission_check($permission_name, $is_html = true, $action = '') {
+/*
+ * 默认获取当前操作员对于某个公众号的权限
+* $type => 'system' 获取系统菜单权限
+* */
+function uni_user_permission($type = 'system') {
+	global $_W;
+	$user_permission = pdo_getcolumn('users_permission', array('uid' => $_W['uid'], 'uniacid' => $_W['uniacid'], 'type' => $type), 'permission');
+	if(!empty($user_permission)) {
+		$user_permission = explode('|', $user_permission);
+	}
+	$permission_append = frames_menu_append();
+	if (!empty($permission_append[$_W['role']])) {
+		$user_permission = array_merge($user_permission, $permission_append[$_W['role']]);
+	}
+	return (array)$user_permission;
+}
+
+function uni_user_permission_check($permission_name, $show_message = true, $action = '') {
 	global $_W, $_GPC;
-	$status = uni_user_permission_exist();
-	if(!is_error($status)) {
+	$user_has_permission = uni_user_permission_exist();
+	if (empty($user_has_permission)) {
 		return true;
 	}
-	$m = trim($_GPC['m']);
+	$modulename = trim($_GPC['m']);
 	$do = trim($_GPC['do']);
-	$eid = intval($_GPC['eid']);
+	$entry_id = intval($_GPC['eid']);
+	
 	if($action == 'reply') {
 		$system_modules = system_modules();
 		if(!empty($m) && !in_array($m, $system_modules)) {
@@ -550,7 +547,7 @@ function uni_user_permission_check($permission_name, $is_html = true, $action = 
 		$users_permission = uni_user_permission('system');
 	}
 	if($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
-		if($is_html) {
+		if($show_message) {
 			message('您没有进行该操作的权限', referer(), 'error');
 		} else {
 			return false;
@@ -584,6 +581,28 @@ function uni_user_module_permission_check($action = '', $module_name = '') {
 		return false;
 	}
 	return true;
+}
+
+/**
+ * 获取某个用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
+ * */
+function uni_user_account_permission() {
+	global $_W;
+	$group = pdo_fetch('SELECT * FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $_W['user']['groupid']));
+	$uniacocunts = pdo_getall('uni_account_users', array('uid' => $_W['uid'], 'role' => 'owner'), array(), 'uniacid');
+	if (empty($uniacocunts)) {
+		$uniacid_num = 0;
+	} else {
+		//再次判断公众号是否真实存在
+		$uniacid_num = pdo_fetchcolumn('SELECT COUNT(*) FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $_W['uid'], ':role' => 'owner'));
+	}
+	$data = array(
+		'group_name' => $group['name'],
+		'maxaccount' => $group['maxaccount'],
+		'uniacid_num' => $uniacid_num,
+		'uniacid_limit' => max((intval($group['maxaccount']) - $uniacid_num), 0),
+	);
+	return $data;
 }
 
 function uni_update_week_stat() {
@@ -645,24 +664,6 @@ function uni_update_week_stat() {
 	}
 	cache_write($cachekey, array('expire' => TIMESTAMP + 7200));
 	return true;
-}
-
-/**
- * 获取支持的公众号类型
- * @return array
- */
-function account_types() {
-	static $types;
-	if (empty($types)) {
-		$types = array();
-		$types['wechat'] = array(
-			'title' => '微信',
-			'name' => 'wechat',
-			'sn' => '1',
-			'table' => 'account_wechats'
-		);
-	}
-	return $types;
 }
 
 /**

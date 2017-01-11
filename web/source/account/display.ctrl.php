@@ -9,7 +9,7 @@ $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';
 
-$state = uni_permission($_W['uid'], $uniacid);
+$state = uni_permission($_W['uid'], $_W['uniacid']);
 
 if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -43,7 +43,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account_users'));
 		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	}
-	message(error(0), '', 'ajax');
+	message(error(0, '更新成功！'), '', 'ajax');
 }
 
 if ($do == 'display') {

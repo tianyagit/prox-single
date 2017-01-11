@@ -88,8 +88,8 @@ if ($do == 'uc') {
 		message('个人中心保存成功.', url('site/editor/uc'), 'success');
 	}
 	$navs = pdo_fetchall("SELECT id, icon, css, name, module, status, url FROM ".tablename('site_nav')." WHERE uniacid = :uniacid AND position = '2' ORDER BY displayorder DESC, id ASC", array(':uniacid' => $_W['uniacid']));
-	if(!empty($navs)) {
-		foreach($navs as &$nav) {
+	if (!empty($navs)) {
+		foreach ($navs as &$nav) {
 			/*处理icon图片链接*/
 			if (!empty($nav['module'])) {
 				$nav['module_info'] = module_fetch($nav['module']);
@@ -100,7 +100,7 @@ if ($do == 'uc') {
 			if (is_serialized($nav['css'])) {
 				$nav['css'] = iunserializer($nav['css']);
 			}
-			if(empty($nav['css']['icon']['icon'])) {
+			if (empty($nav['css']['icon']['icon'])) {
 				$nav['css']['icon']['icon'] = 'fa fa-external-link';
 			}
 		}

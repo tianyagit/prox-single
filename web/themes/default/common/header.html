@@ -4,7 +4,10 @@
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="/"><img src="./resource/images/logo/logo.png"/></a>
+				<a class="navbar-brand" href="/">
+					<img src="./resource/images/logo/logo.png" class="pull-left"/>
+					<span class="version">{IMS_VERSION}</span>
+				</a>
 			</div>
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav navbar-left">
@@ -93,37 +96,39 @@
 			</div>
 			<div class="panel-body">
 				<div class="left-menu">
-					{loop $frames['section'] $sectionid $section}
-					<div class="panel panel-menu">
-						{if $section['title']}
-							<div class="panel-heading">
-								{$section['title']}<span class="wi wi-appsetting pull-right setting"></span>
-							</div>
-						{/if}
-						<ul class="list-group">
-							{loop $section['menu'] $menuid $menu}
-								{if !empty($menu['is_display'])}
-								<li class="list-group-item {if $menu['active']}active{/if}">
-									<a href="{$menu['url']}" class="text-over" {if $sectionid == 'platform_module'}target="_blank"{/if}>
-										{if $menu['icon']}
-											{if $sectionid == 'platform_module'}
-												<img src="{$menu['icon']}"/>
-											{else}
-												<i class="{$menu['icon']}"></i>
+					{loop $frames['section'] $section_id $section}
+						{if !isset($section['is_display']) || !empty($section['is_display'])}
+						<div class="panel panel-menu">
+							{if $section['title']}
+								<div class="panel-heading">
+									{$section['title']}<span class="wi wi-appsetting pull-right setting"></span>
+								</div>
+							{/if}
+							<ul class="list-group">
+								{loop $section['menu'] $menu_id $menu}
+									{if !empty($menu['is_display'])}
+									<li class="list-group-item {if $menu['active']}active{/if}">
+										<a href="{$menu['url']}" class="text-over" {if $section_id == 'platform_module'}target="_blank"{/if}>
+											{if $menu['icon']}
+												{if $section_id == 'platform_module'}
+													<img src="{$menu['icon']}"/>
+												{else}
+													<i class="{$menu['icon']}"></i>
+												{/if}
 											{/if}
-										{/if}
-										{$menu['title']}
-									</a>
+											{$menu['title']}
+										</a>
+									</li>
+									{/if}
+								{/loop}
+								{if $section_id == 'platform_module'}
+								<li class="list-group-item list-group-more">
+									<a href="{url 'profile/module'}" target="_blank"><span class="label label-more">更多应用</span></a>
 								</li>
 								{/if}
-							{/loop}
-							{if $sectionid == 'platform_module'}
-							<li class="list-group-item list-group-more">
-								<a href="{url 'profile/module'}" target="_blank"><span class="label label-more">更多应用</span></a>
-							</li>
-							{/if}
-						</ul>
-					</div>
+							</ul>
+						</div>
+						{/if}
 					{/loop}
 				</div>
 				<div class="right-content">

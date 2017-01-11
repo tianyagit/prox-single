@@ -1,15 +1,4 @@
 {template 'common/header'}
-<style>
-.table>thead>tr>th{border-bottom:0;}
-.table>thead>tr>th .checkbox label{font-weight:bold;}
-.table>tbody>tr>td{border-top:0;}
-.table .checkbox{padding-top:4px;}
-.table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td{overflow:inherit;}
-.dropdown>span{display:inline-block; padding:3px 10px; border:1px solid transparent; border-bottom:0; cursor:pointer; position:relative;}
-.open>span{color:#d9534f; border-color:rgba(0,0,0,0.15); border-bottom:0; background:#fff; border-top-left-radius:4px; border-top-right-radius:4px; z-index:1001;}
-.dropdown-menu{margin:0; border-top-left-radius:0; top:98%;}
-.dropdown-menu ul li{float:left;width:230px}
-</style>
 <ol class="breadcrumb we7-breadcrumb">
 	<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i> </a>
 	<li><a href="{url 'account/manage'}">公众号管理</a></li>
@@ -19,82 +8,108 @@
 <div class="alert alert-info">
 	<i class="fa fa-exclamation-circle"></i> 默认未勾选任何菜单时，用户拥有全部权限。
 </div>
-		
-			{loop $menus $name $sections}
+
+{loop $menus $name $sections}
+	{if $sections['section']}
 			<table class="table we7-table table-hover">
+	<div class="we7-page-title">{$sections['title']}</div>
+		{loop $sections['section'] $section_id $section}
+			{if $section_id != 'platform_module'}
 				<thead>
 				<tr class="text-left">
 					<th colspan="4" class="text-left">
-						<input id="check-{$sections['id']}" type="checkbox" name="system_{$sections['name']}" onChange="selectall(this, 'system_{$sections["name"]}')">
-						<label for="check-{$sections['id']}" class="we7-padding-none we7-margin-horizontal-none">{$sections['title']}</label>
-						
+						<div class="">
+							<input id="check-{$section_id}" type="checkbox" name="system_{$section_id}" onChange="selectall(this, 'system_{$section_id}')">
+							<label for="check-{$section_id}" class=" we7-margin-horizontal-none">{$section['title']}</label>
+						</div>
 					</th>
 				</tr>
 				</thead>
-				{if $sections['childs']}
-					<tbody class="system_{$sections['name']}">
-					{php $i=1;}
-					{loop $sections['childs'] $item}
-						{if $i%4 == 1 || $i == 1}<tr>{/if}
-							<td class="text-left">
-								<input id="check-child-{$item['id']}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $system_permission['permission'])}checked{/if} name="system[]">
-								<label for="check-child-{$item['id']}" class="we7-padding-none we7-margin-horizontal-none">{$item['title']}</label>
-							</td>
-						{if $i%4 == 0}</tr>{/if}
-						{php $i++;}
-					{/loop}
-					{if ($i-1)%4 != 0}
-						<?php 
-						for ($x=0; $x<4-($i-1)%4; $x++) {
-						  echo "<td></td>";
-						} 
-						?>
-						</tr>
-					{/if}
-					</tbody>
+				<tbody class="system_{$sections['name']}">
+				{php $i=1;}
+				{loop $section['menu'] $item_id $item}
+					{if $i%4 == 1 || $i == 1}<tr>{/if}
+					<td class="text-left " style="overflow:inherit;">
+						<div class="dropdown system-select-dropdown">
+							<span>
+								<input id="check-child-{$item_id}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
+								<label for="check-child-{$item_id}" class=" we7-margin-horizontal-none">{$item['title']}</label>
+							</span>
+							{if $item['sub_permission']}
+							<ul class="dropdown-menu">
+								{loop $item['sub_permission'] $sub_permission}
+								<li class="text-left">
+									<label class="we7-margin-horizontal-none"><input id="check-child-{$sub_permission['permission_name']}" type="checkbox" value="{$item['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
+										{$sub_permission['title']}
+									</label>
+								</li>
+								{/loop}
+							</ul>
+							{/if}
+						</div>
+						
+					</td>
+					{if $i%4 == 0}</tr><tr>{/if}
+					{php $i++;}
+				{/loop}
+				{if ($i-1)%4 != 0}
+					<?php 
+					for ($x=0; $x<4-($i-1)%4; $x++) {
+						echo "<td></td>";
+					} 
+					?>
+					</tr>
 				{/if}
-			</table>	
-			{/loop}
-			<table class="table we7-table table-hover vertical-middle">
-			<thead>
-				<tr>
-					<th colspan="4" class="text-left">
-						<label><input type="checkbox" name="" onChange="selectall(this, 'module_select')">模块权限</label>
-					</th>
-				</tr>
-			</thead>
-			{if !empty($module)}
-				<tbody class="module_select" >
-					{php $i=1;}
-					{loop $module $k $m}
-						{if empty($m['issystem'])}
-						{if $i%4 == 1 || $i == 1}<tr>{/if}
-							<td  class="text-left text-over" style="overflow:inherit;width:25%">
-								<div class="dropdown">
-									<span class="" data-id="{$k}">
-										<input id="check-module-{$k}" type="checkbox" value="{$k}" name="module[]" {if in_array($k, $mod_keys)}checked{/if}>
-										<label for="check-module-{$k}" class="text-over" title="{$m['title']}" style="width: 128px;">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
-									</span>
-									<ul class="dropdown-menu" role="menu">
-									</ul>
-									<input type="hidden" name="{$k}_select" value="0"/>
-								</div>
-							</td>
-						{if $i%4 == 0}</tr>{/if}
-						{php $i++;}
-						{/if}
-					{/loop}
-					{if ($i-1)%4 != 0}
-						<?php 
-						for ($x=0; $x<4-($i-1)%4; $x++) {
-						  echo "<td></td>";
-						} 
-						?>
-						</tr>
-					{/if}
 				</tbody>
 			{/if}
-		</table>
+		{/loop}
+	</table>
+	{/if}
+{/loop}
+
+	<table class="table we7-table table-hover vertical-middle">
+
+		<thead>
+			<tr>
+				<th colspan="4" class="text-left">
+					<div class="checkbox">
+						<label><input type="checkbox" name="" onChange="selectall(this, 'module_select')">模块权限</label>
+					</div>
+				</th>
+			</tr>
+		</thead>
+	{if !empty($module)}
+		<tbody class="module_select" >
+			{php $i=1;}
+			{loop $module $k $m}
+				{if empty($m['issystem'])}
+				{if $i%4 == 1 || $i == 1}<tr>{/if}
+					<td  class="text-left text-over" style="overflow:inherit;width:25%">
+						<div class="dropdown system-select-dropdown">
+							<span class="" data-id="{$k}">
+								<input id="check-module-{$k}" type="checkbox" value="{$k}" name="module[]" {if in_array($k, $module_permission_keys)}checked{/if}>
+								<label for="check-module-{$k}" class="text-over" title="{$m['title']}" style="width: 128px;">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
+							</span>
+							<ul class="dropdown-menu" role="menu">
+							</ul>
+							<input type="hidden" name="{$k}_select" value="0"/>
+						</div>
+					</td>
+				{if $i%4 == 0}</tr>{/if}
+				{php $i++;}
+				{/if}
+			{/loop}
+			{if ($i-1)%4 != 0}
+				<?php 
+				for ($x=0; $x<4-($i-1)%4; $x++) {
+				  echo "<td></td>";
+				} 
+				?>
+				</tr>
+			{/if}
+		</tbody>
+	{/if}
+</table>
 
 <button type="submit" class="btn btn-primary span3" name="submit" value="提交" onclick="if ($('input:checkbox:checked').size() == 0) {return confirm('您未勾选任何菜单权限，意味着允许用户使用所有功能。确定吗？')}">提交</button>
 <input type="hidden" name="token" value="{$_W['token']}" />
@@ -115,13 +130,10 @@ $(function(){
 				if(!data.errno) {
 					$.each(data.errmsg, function(k, v){
 						var check = v.checked ? 'checked' : '';
-						html += '<li><a href="javascript:;"><input id="check-moduledetail-'+m+'-'+k+'" type="checkbox" name="module_'+m+'[]" value="'+ v.permission +'" '+check+'/><label for="check-moduledetail-'+m+'-'+k+'" class="">'+ v.title +'</label></a></li>';
+						html += '<li><a href="javascript:;"><input id="check-moduledetail-'+m+'-'+k+'" type="checkbox" name="module_'+m+'[]" value="'+ v.permission +'" '+check+'/><label for="check-moduledetail-'+m+'-'+k+'" class="we7-padding-left we7-margin-horizontal-none checkbox-inline">'+ v.title +'</label></a></li>';
 					});
 				}
-				//输入框
-				var $html = $(html);
-					$html.we7_check();
-				_this.next().html($html);
+				_this.next().html(html);
 			});
 		}
 

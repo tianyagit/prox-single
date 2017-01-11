@@ -10,7 +10,7 @@ load()->model('user');
 uni_user_permission_check('system_user_display');
 $_W['page']['title'] = '添加用户 - 用户管理';
 $state = uni_permission($_W['uid'], $uniacid);
-if($state != 'founder' && $state != 'manager') {
+if ($state != 'founder' && $state != 'manager') {
 	message('没有操作权限！', referer(), 'error');
 }
 
@@ -25,10 +25,10 @@ if (checksubmit()) {
 	if (istrlen($_GPC['password']) < 8) {
 		message('必须输入密码，且密码长度不得低于8位。');
 	}
-	if(trim($_GPC['password']) !== trim($_GPC['repassword'])) {
+	if (trim($_GPC['password']) !== trim($_GPC['repassword'])) {
 		message('两次密码不一致！');
 	}
-	if(!intval($_GPC['groupid'])) {
+	if (!intval($_GPC['groupid'])) {
 		message('请选择所属用户组');
 	}
 	$group = pdo_fetch("SELECT id,timelimit FROM ".tablename('users_group')." WHERE id = :id", array(':id' => intval($_GPC['groupid'])));

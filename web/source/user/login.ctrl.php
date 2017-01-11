@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
-if(checksubmit() || $_W['isajax']) {
+if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 $setting = $_W['setting'];
@@ -23,7 +23,7 @@ function _login($forward = '') {
 	}
 	if (!empty($_W['setting']['copyright']['verifycode'])) {
 		$verify = trim($_GPC['verify']);
-		if(empty($verify)) {
+		if (empty($verify)) {
 			message('请输入验证码');
 		}
 		$result = checkcaptcha($verify);
@@ -31,17 +31,17 @@ function _login($forward = '') {
 			message('输入验证码错误');
 		}
 	}
-	if(empty($username)) {
+	if (empty($username)) {
 		message('请输入要登录的用户名');
 	}
 	$member['username'] = $username;
 	$member['password'] = $_GPC['password'];
-	if(empty($member['password'])) {
+	if (empty($member['password'])) {
 		message('请输入密码');
 	}
 	$record = user_single($member);
-	if(!empty($record)) {
-		if($record['status'] == 1) {
+	if (!empty($record)) {
+		if ($record['status'] == 1) {
 			message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
 		}
 		$founders = explode(',', $_W['config']['setting']['founder']);
@@ -66,22 +66,22 @@ function _login($forward = '') {
 		$status['lastvisit'] = TIMESTAMP;
 		$status['lastip'] = CLIENT_IP;
 		user_update($status);
-				if($record['type'] == ACCOUNT_OPERATE_CLERK) {
+		if ($record['type'] == ACCOUNT_OPERATE_CLERK) {
 			$role = uni_permission($record['uid'], $record['uniacid']);
 			isetcookie('__uniacid', $record['uniacid'], 7 * 86400);
 			isetcookie('__uid', $record['uid'], 7 * 86400);
 			
-			if($_W['role'] == 'clerk' || $role == 'clerk') {
+			if ($_W['role'] == 'clerk' || $role == 'clerk') {
 				message('登陆成功', url('activity/desk', array('uniacid' => $record['uniacid'])), 'success');
 			}
 		}
-		if(empty($forward)) {
+		if (empty($forward)) {
 			$forward = $_GPC['forward'];
 		}
-		if(empty($forward)) {
-			if(!empty($_GPC['__uniacid'])) {
+		if (empty($forward)) {
+			if (!empty($_GPC['__uniacid'])) {
 				$forward = './index.php?c=platform&a=reply';
-			}else {
+			} else {
 				$forward = './index.php?c=account&a=display';
 			}
 		}
