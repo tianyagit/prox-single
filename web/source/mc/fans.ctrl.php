@@ -54,23 +54,24 @@ if ($do == 'display') {
 		$starttime = strtotime('-3 month', time());
 		$endtime = time();
 	}
-	$param[':starttime'] = $starttime;
-	$param[':endtime'] = $endtime;
+	if (empty($tag)) {
+		$param[':starttime'] = $starttime;
+		$param[':endtime'] = $endtime;
+	}
 	$follow = intval($_GPC['follow']) ? intval($_GPC['follow']) : 1;
 	if ($follow == 1) {
 		$orderby = " ORDER BY f.`followtime` DESC";
 		$condition .= " AND f.`follow` = 1";
-		if (!empty($starttime)) {
+		if (!empty($starttime) && empty($tag)) {
 			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
 		}
 	} elseif ($follow == 2) {
 		$orderby = " ORDER BY f.`unfollowtime` DESC";
 		$condition .= " AND f.`follow` = 0";
-		if (!empty($starttime)) {
-			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
+		if (!empty($starttime) && empty($tag)) {
+			$condition .= " AND f.`unfollowtime` >= :starttime AND f.`unfollowtime` <= :endtime";
 		}
 	}
-
 	$fans_list = pdo_fetchall("SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize, $param);
 	if (!empty($fans_list)) {
 		foreach ($fans_list as &$v) {
