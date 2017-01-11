@@ -4,27 +4,28 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
 load()->model('user');
 load()->func('file');
 
 $dos = array('base', 'post');
 $do = in_array($do, $dos) ? $do : 'base';
-uni_user_permission_check('system_my');
+uni_user_permission_check('system_user_profile');
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
-if($do == 'post') {
+if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$post = $_GPC;
 	$type = trim($post['type']);
 
 	$uid = is_array($post['uid']) ? 0 : intval($post['uid']);
-	if (empty($uid) || empty($type)) {
-		message(error(40035), '', 'ajax');
-	}
+	if(empty($uid) || empty($type)) message(error(40035, '参数错误，请刷新后重试！'), '', 'ajax');
 	$users_profile_exist = pdo_get('users_profile', array('uid' => $uid));
 
-	if ($users_profile_exist[$type] == $post[$type]) {
-		message(error(0), '', 'ajax');
+	if ($type == 'birth') {
+		if($users_profile_exist['year'] == $post['year'] && $users_profile_exist['month'] == $post['month'] && $users_profile_exist['day'] == $post['day']) message(error(0, '未作修改！'), '', 'ajax');
+	} elseif ($type == 'reside') {
+		if($users_profile_exist['province'] == $post['province'] && $users_profile_exist['city'] == $post['city'] && $users_profile_exist['district'] == $post['district']) message(error(0, '未作修改！'), '', 'ajax');
+	} else {
+		if($users_profile_exist[$type] == $post[$type]) message(error(0, '未作修改！'), '', 'ajax');
 	}
 	switch ($type) {
 		case 'avatar':
@@ -56,9 +57,9 @@ if($do == 'post') {
 			}
 			break;
 		case 'password':
-			if($post['newpwd'] !== $post['renewpwd']) message(error(2), '', 'ajax');
+			if($post['newpwd'] !== $post['renewpwd']) message(error(2, '两次密码不一致！'), '', 'ajax');
 			$pwd = user_hash($post['oldpwd'], $user['salt']);
-			if($pwd != $user['password']) message(error(3), '', 'ajax');
+			if($pwd != $user['password']) message(error(3, '原密码不正确！'), '', 'ajax');
 			$newpwd = user_hash($post['newpwd'], $user['salt']);
 			if($users_profile_exist) {
 				$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
@@ -102,14 +103,14 @@ if($do == 'post') {
 			break;
 		case 'birth':
 			if($users_profile_exist) {
-				$result = pdo_update('users_profile', array('birthyear' => $post['year'], 'birthmonth' => $post['month'], 'birthday' => $post['day']), array('uid' => $uid));
+				$result = pdo_update('users_profile', array('birthyear' => intval($post['year']), 'birthmonth' => intval($post['month']), 'birthday' => intval($post['day'])), array('uid' => $uid));
 			}else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
-						'birthyear' => $post['year'],
-						'birthmonth' => $post['month'],
-						'birthday' => $post['day']
+						'birthyear' => intval($post['year']),
+						'birthmonth' => intval($post['month']),
+						'birthday' => intval($post['day'])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
@@ -143,9 +144,9 @@ if($do == 'post') {
 	}
 	if($result) {
 		pdo_update('users_profile', array('edittime' => TIMESTAMP), array('uid' => $uid));
-		message(error(0), '', 'ajax');
+		message(error(0, '修改成功！'), '', 'ajax');
 	}else {
-		message(error(1), '', 'ajax');
+		message(error(1, '修改失败，请稍候重试！'), '', 'ajax');
 	}
 }
 

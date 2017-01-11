@@ -146,7 +146,7 @@ function tpl_form_field_calendar($name, $values = array()) {
 		$html .= '
 		<script type="text/javascript">
 			function handlerCalendar(elm) {
-				require(["jquery","moment"], function($, moment){
+				require(["moment"], function(moment){
 					var tpl = $(elm).parent().parent();
 					var year = tpl.find("select.tpl-year").val();
 					var month = tpl.find("select.tpl-month").val();
@@ -167,7 +167,7 @@ function tpl_form_field_calendar($name, $values = array()) {
 					}
 				});
 			}
-			require(["jquery"], function($){
+			require([""], function(){
 				$(".tpl-calendar").each(function(){
 					handlerCalendar($(this).find("select.tpl-year")[0]);
 				});
@@ -226,7 +226,7 @@ function tpl_form_field_district($name, $values = array()) {
 	if (!defined('TPL_INIT_DISTRICT')) {
 		$html .= '
 		<script type="text/javascript">
-			require(["jquery", "district"], function($, dis){
+			require(["district"], function(dis){
 				$(".tpl-district-container").each(function(){
 					var elms = {};
 					elms.province = $(this).find(".tpl-province")[0];
