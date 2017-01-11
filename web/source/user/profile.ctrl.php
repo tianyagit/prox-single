@@ -35,8 +35,11 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			break;
 		case 'username':
+			if(trim($post['username']) == 'admin') {
+				message(error(1), '', 'ajax');
+			}
 			if($users_profile_exist) {
-				$result = pdo_update('users', array('username' => $post['username']), array('uid' => $uid));
+				$result = pdo_update('users', array('username' => trim($post['username'])), array('uid' => $uid));
 			}else {
 				$data = array(
 						'uid' => $uid,
@@ -81,7 +84,7 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'realname':
 			if($users_profile_exist) {
-				$result = pdo_update('users_profile', array('realname' => $post['realname']), array('uid' => $uid));
+				$result = pdo_update('users_profile', array('realname' => trim($post['realname'])), array('uid' => $uid));
 			}else {
 				$data = array(
 						'uid' => $uid,
@@ -107,7 +110,7 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'address':
 			if($users_profile_exist) {
-				$result = pdo_update('users_profile', array('address' => $post['address']), array('uid' => $uid));
+				$result = pdo_update('users_profile', array('address' => trim($post['address'])), array('uid' => $uid));
 			}else {
 				$data = array(
 						'uid' => $uid,

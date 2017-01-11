@@ -122,7 +122,7 @@ function checkaccount() {
 
 //新版buildframes
 function buildframes($framename = ''){
-	global $_W, $_GPC, $top_nav;
+	global $_W, $_GPC, $top_nav,$acl;
 	$frames = cache_load('system_frame');
 	if(empty($frames)) {
 		cache_build_frame_menu();
@@ -245,8 +245,17 @@ function buildframes($framename = ''){
 			}
 		}
 	}
-
-	//@@todo 操作员界面菜单
+	//操作员系统管理界面菜单
+	if (!empty($_W['role']) && $_W['role'] == 'operator') {
+		foreach ($frames['system']['section'] as $system_section_key => $system_section_val) {
+			foreach ($system_section_val['menu'] as $menu_key => $menu_val) {
+				$key = substr($menu_key, 7);
+				if(in_array($key, $acl['system']['founder'])) unset($frames['system']['section'][$system_section_key]['menu'][$menu_key]);
+			}
+			if(empty($frames['system']['section'][$system_section_key]['menu'])) unset($frames['system']['section'][$system_section_key]);
+		}
+	}
+	//@@todo 店员界面菜单
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
 		
 	}

@@ -65,6 +65,9 @@ if($do == 'delete') {
 }
 if($do == 'add' && $_W['isajax'] && $_W['ispost']) {
 	$username = trim($_GPC['username']);
+	if($username == 'admin') {
+		message(error(1), '', 'ajax');
+	}
 	$user = user_single(array('username' => $username));
 	if(!empty($user)) {
 		//addtype为1：操作员；2：:管理员；3、主管理员

@@ -63,7 +63,7 @@ if($do == 'display') {
 			if($_GPC['type'] == 'apply') {
 				$condition .= ' AND module NOT IN ("basic", "news", "images", "voice", "video", "music", "wxcard", "reply")';
 			}else {
-				$condition .= " AND FIND_IN_SET(:type, `containtype`) OR module = :type";
+				$condition .= " AND (FIND_IN_SET(:type, `containtype`) OR module = :type)";
 				$params[':type'] = $_GPC['type'];	
 			}
 		}

@@ -12,7 +12,7 @@
 		{if !empty($id)}<a href="{php echo url('site/category/post', array('id' => $id))}" class="btn btn-primary we7-padding-horizontal">编辑文章分类</a>{/if}
 	</div>
 </div>
-<form action="./index.php?c=platform&a=site&do=article&operation=del_category" class="we7-form" method="post">
+<form action="./index.php?c=site&a=category&do=delete" class="we7-form" method="post">
 <table class="table we7-table table-hover article-list vertical-middle" id="js-wesite-category-display">
 	<col width="80px">
 	<col width="130px"/>
@@ -38,8 +38,7 @@
 			</td>
 			<td>
 				<label>
-					<!--<input name="" id="" class="form-control" type="checkbox">-->
-					<div class="switch switch{php echo $row['enabled'] ? 'On' : 'Off'}"></div>
+					<div class="switch switch{php echo $row['enabled'] ? 'On' : 'Off'}" onclick="changeStatus({$row['id']})"></div>
 				</label>
 			</td>
 			<td style="position: relative;" class="text-right">
@@ -68,8 +67,7 @@
 			<td class="text-left"><span class="color-gray" style="margin-left: 50px;">{$row['name']}</span></td>
 			<td>
 				<label>
-					<!--<input name="" id="" class="form-control" type="checkbox">-->
-					<div class="switch switch{php echo $row['enabled'] ? 'On' : 'Off'}"></div>
+					<div class="switch switch{php echo $row['enabled'] ? 'On' : 'Off'}" onclick="changeStatus({$row['id']})"></div>
 				</label>
 			</td>
 			<td style="position: relative;" class="text-right">
@@ -99,5 +97,17 @@ $('#select_all').click(function(){
 $('.js-clip').each(function(){
 	util.clip(this, $(this).attr('data-url'));
 });
+var changeStatus = function(id) {
+	var id = parseInt(id);
+	$.post('./index.php?c=site&a=category&do=change_status', {id: id},function(data) {
+		if (data.message.errno == 0){
+			util.toast('更改成功！', 'success');
+			location.reload();
+		} else {
+			if (data.message.errno == 1) util.toast('更改失败！', 'error');
+			if (data.message.errno == -1) util.toast('分类不存在，请刷新重试！');
+		}
+	}, 'json');
+}
 </script>
 {template 'common/footer'}

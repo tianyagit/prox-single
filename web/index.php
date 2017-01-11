@@ -13,9 +13,6 @@ if (empty($_W['isfounder']) && !empty($_W['user']) && $_W['user']['status'] == 1
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
 }
 
-// @@todo 测试代码，还未完善切换公众号
-// isetcookie('__uniacid', 281, 7 * 86400);
-
 $acl = array(
 	'home' => array(
 		'default' => 'welcome',
@@ -45,9 +42,14 @@ $acl = array(
 		)
 	),
 	'account' => array(
-		'default' => 'display',
-		'founder' => array(),
-		'direct' => array()
+		'default' => 'welcome',
+		'direct' => array(
+			'welcome',
+			'auth'
+		),
+		'founder' => array(
+			'groups'
+		)
 	),
 	'utility' => array(
 		'direct' => array(
@@ -73,6 +75,42 @@ $acl = array(
 			'process',
 			'device'
 		)
+	),
+	'article' => array(
+		'direct' => array(
+				'notice-show',
+				'news-show'
+		),
+		'founder' => array(
+			
+		),
+	),
+	'system' => array(
+		'direct' => array(),
+		'founder' => array(
+			'platform',
+			'module',
+			'module_group',
+			'user',
+			'user_group',
+			'profile',
+			'cloud_register',
+			'cloud_sms',
+			'article',
+			'article_notice',
+			'setting_updatecache',
+			'setting_site',
+			'setting_menu',
+			'setting_attachment',
+			'setting_common',
+			'setting_systeminfo',
+			'setting_logs',
+			'utility_filecheck',
+			'utility_optimize',
+			'utility_database',
+			'utility_scan',
+			'utility_bom',
+		),
 	),
 );
 if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $controller != 'cloud' && $controller != 'utility' && $controller != 'account') {
