@@ -97,7 +97,7 @@
 			<div class="panel-body">
 				<div class="left-menu">
 					{loop $frames['section'] $section_id $section}
-						{if $section['is_display']}
+						{if !isset($section['is_display']) || !empty($section['is_display'])}
 						<div class="panel panel-menu">
 							{if $section['title']}
 								<div class="panel-heading">
