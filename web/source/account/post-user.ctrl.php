@@ -18,19 +18,19 @@ if (empty($uniacid) || empty($acid)) {
 	message('请选择要编辑的公众号', referer(), 'error');
 }
 $state = uni_permission($_W['uid'], $uniacid);
-if($state != 'founder' && $state != 'manager') {
+if ($state != 'founder' && $state != 'manager') {
 	message('没有该公众号操作权限！', referer(), 'error');
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
-if($do == 'edit') {
+if ($do == 'edit') {
 	$permissions = pdo_fetchall("SELECT id, uid, role FROM ".tablename('uni_account_users')." WHERE uniacid = '$uniacid' and role != :role  ORDER BY uid ASC, role DESC", array(':role' => 'clerk'), 'uid');
 	$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), array('uid', 'id'));
 	if (!empty($permissions)) {
 		$member = pdo_fetchall("SELECT username, uid FROM ".tablename('users')." WHERE uid IN (".implode(',', array_keys($permissions)).")", array(), 'uid');
-		if(!empty($member)) {
+		if (!empty($member)) {
 			foreach ($permissions as $key => $per_val) {
 				$permissions[$key]['isfounder'] = in_array($member[$key]['uid'], $founders) ? 1 : 0;
 				$permissions[$key]['username'] = $member[$key]['username'] ? $member[$key]['username'] : '';
@@ -54,7 +54,7 @@ if($do == 'edit') {
 	$exists = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
 	if (!empty($exists)) {
 		$result = pdo_delete('uni_account_users', $data);
-		if($result) {
+		if ($result) {
 			message('删除成功！', referer(), 'success');
 		} else {
 			message('删除失败，请重试！', referer(), 'error');
@@ -65,10 +65,13 @@ if($do == 'edit') {
 } elseif ($do == 'set_manager') {
 	$username = trim($_GPC['username']);
 	$user = user_single(array('username' => $username));
-	if(in_array($user['uid'], $founders)) {
+	if ($user['status'] != 2) {
+		message(error(3, '用户未通过审核！'), '', 'ajax');
+	}
+	if (in_array($user['uid'], $founders)) {
 		message(error(1, '不可操作网站创始人！'), '', 'ajax');
 	}
-	if(!empty($user)) {
+	if (!empty($user)) {
 		//addtype为1：操作员；2：:管理员；3、主管理员
 		$addtype = intval($_GPC['addtype']);
 		$data = array(
@@ -78,26 +81,26 @@ if($do == 'edit') {
 
 		$exists = pdo_get('uni_account_users', array('uid' => $user['uid'], 'uniacid' => $uniacid));
 		$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
-		if(empty($exists)) {
-			if($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
-				if(empty($owner)) {
+		if (empty($exists)) {
+			if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
+				if (empty($owner)) {
 					$data['role'] = ACCOUNT_MANAGE_NAME_OWNER;
 				} else  {
 					$result = pdo_update('uni_account_users', $data, array('id' => $owner['id']));
-					if($result) {
+					if ($result) {
 						message(error(0, '修改成功！'), '', 'ajax');
 					} else  {
 						message(error(1, '修改失败！'), '', 'ajax');
 					}
 					exit;
 				}
-			} else if($addtype == ACCOUNT_MANAGE_TYPE_MANAGER) {
+			} else if ($addtype == ACCOUNT_MANAGE_TYPE_MANAGER) {
 				$data['role'] = ACCOUNT_MANAGE_NAME_MANAGER;
 			} else  {
 				$data['role'] = ACCOUNT_MANAGE_NAME_OPERATOR;
 			}
 			$result = pdo_insert('uni_account_users', $data);
-			if($result) {
+			if ($result) {
 				message(error(0, '添加成功！'), '', 'ajax');
 			} else  {
 				message(error(1, '添加失败！'), '', 'ajax');
@@ -121,7 +124,7 @@ if($do == 'edit') {
 	}
 	//获取系统权限
 	$user_menu_permission = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => 'system'));
-	if(!empty($user_menu_permission['permission'])) {
+	if (!empty($user_menu_permission['permission'])) {
 		$user_menu_permission['permission'] = explode('|', $user_menu_permission['permission']);
 	} else {
 		$user_menu_permission['permission'] = array();
@@ -146,13 +149,13 @@ if($do == 'edit') {
 			}
 		}
 		$user_menu_permission_new = array();
-		if(!empty($_GPC['system'])) {
+		if (!empty($_GPC['system'])) {
 			foreach ($_GPC['system'] as $permission_name) {
 				if (in_array($permission_name, $menu_permission)) {
 					$user_menu_permission_new[] = $permission_name;
 				}
 			}
-			if(empty($user_menu_permission['id'])) {
+			if (empty($user_menu_permission['id'])) {
 				$insert = array(
 					'uniacid' => $uniacid,
 					'uid' => $uid,

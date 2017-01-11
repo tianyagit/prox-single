@@ -56,12 +56,12 @@
 		</td>
 		<td class="text-left">
 			<div class="link-group" ng-if="!user.founder">
-				<a href="javascript:;" ng-click="edit(user.uid);" ng-if="do == 'display'">编辑</a>
-				<a href="javascript:;" ng-click="handle(user.uid, 'deny');" ng-if="do == 'display'" data-toggle="tooltip" data-placement="left" title="禁用后可在用户回收站查找到并重新启用。">禁用</a>
-				<a href="javascript:;" ng-click="handle(user.uid, 'pass');" ng-if="do == 'check_display'">通过</a>
-				<a href="javascript:;" ng-click="handle(user.uid, 'deny');" ng-if="do == 'check_display'" data-toggle="tooltip" data-placement="left" title="拒绝后可在用户回收站查找到并启用。">拒绝</a>
-				<a href="javascript:;" ng-click="handle(user.uid, 'restore');" ng-if="do == 'recycle_display'">启用</a>
-				<a href="javascript:;" ng-click="handle(user.uid, 'del');" ng-if="do == 'recycle_display'">删除</a>
+				<a ng-href="{{links.edit}}uid={{user.uid}}" ng-if="do == 'display'">编辑</a>
+				<a ng-href="{{links.deny}}uid={{user.uid}}" ng-if="do == 'display'" data-toggle="tooltip" data-placement="left" title="禁用后可在用户回收站查找到并重新启用。">禁用</a>
+				<a ng-href="{{links.checkPass}}uid={{user.uid}}" ng-if="do == 'check_display'">通过</a>
+				<a ng-href="{{links.deny}}uid={{user.uid}}" ng-if="do == 'check_display'" data-toggle="tooltip" data-placement="left" title="拒绝后可在用户回收站查找到并启用。">拒绝</a>
+				<a ng-href="{{links.recycleRestore}}uid={{user.uid}}" ng-if="do == 'recycle_display'">启用</a>
+				<a ng-href="{{links.recycleDel}}uid={{user.uid}}" ng-if="do == 'recycle_display'">删除</a>
 			</div>
 		</td>
 	</tr>
