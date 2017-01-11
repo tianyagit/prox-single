@@ -9,13 +9,17 @@ load()->func('file');
 
 $dos = array('base', 'post');
 $do = in_array($do, $dos) ? $do : 'base';
-uni_user_permission_check('system_user_profile');
+uni_user_permission_check('system_my');
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
 if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$type = trim($_GPC['type']);
 
-	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
+	if ($_W['isfounder']) {
+		$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
+	} else {
+		$uid = $_W['uid'];
+	}
 	if (empty($uid) || empty($type)) {
 		message(error(40035, '参数错误，请刷新后重试！'), '', 'ajax');
 	}
