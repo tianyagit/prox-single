@@ -9,6 +9,9 @@ load()->model('module');
 
 $dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_status');
 $do = in_array($do, $dos) ? $do : 'display';
+if (empty($_W['uniacid'])) {
+	message('请先选择您要操作的公众号', url('account/display'), 'error');
+}
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
 if ($m == 'keyword') {
