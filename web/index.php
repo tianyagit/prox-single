@@ -1,7 +1,6 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn: pro/web/index.php : v 14b9a4299104 : 2015/09/11 10:44:21 : yanghf $
  */
 define('IN_SYS', true);
 require '../framework/bootstrap.inc.php';
@@ -12,20 +11,47 @@ load()->web('template');
 if (empty($_W['isfounder']) && !empty($_W['user']) && $_W['user']['status'] == 1) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
 }
-
-$acl = array(
+//@@todo 还需要判断各角色的权限
+$_W['acl'] = $acl = array(
+	'account' => array(
+		'default' => '',
+		'direct' => array(
+			'auth',
+		),
+		'operator' => array(
+			'display',
+			'manage',
+		),
+	),
+	'article' => array(
+		'direct' => array(
+			'notice-show',
+			'news-show',
+		),
+		'founder' => array(
+			'news',
+			'notice',
+		),
+	),
+	'cloud' => array(
+		'default' => 'touch',
+		'direct' => array(
+			'touch',
+			'dock',
+			'download',
+		),
+		'founder' => array(
+			'diagnose',
+			'redirect',
+			'upgrade',
+			'process',
+			'device',
+		)
+	),
 	'home' => array(
 		'default' => 'welcome',
 		'founder' => array(),
-		'direct' => array()
-	),
-	'user' => array(
-		'default' => 'display',
-		'direct' => array(
-			'login',
-			'register',
-			'logout'
-		)
+		'direct' => array('welcome')
 	),
 	'platform' => array(
 		'default' => 'reply',
@@ -41,14 +67,12 @@ $acl = array(
 			'entry'
 		)
 	),
-	'account' => array(
-		'default' => 'welcome',
+	'user' => array(
+		'default' => 'display',
 		'direct' => array(
-			'welcome',
-			'auth'
-		),
-		'founder' => array(
-			'groups'
+			'login',
+			'register',
+			'logout'
 		)
 	),
 	'utility' => array(
@@ -56,60 +80,33 @@ $acl = array(
 			'verifycode',
 			'code',
 			'file',
-			'bindcall',
 			'subscribe',
 			'wxcode',
 		)
 	),
-	'cloud' => array(
-		'default' => 'touch',
-		'direct' => array(
-			'touch',
-			'dock',
-			'download'
-		),
-		'founder' => array(
-			'diagnose',
-			'redirect',
-			'upgrade',
-			'process',
-			'device'
-		)
-	),
-	'article' => array(
-		'direct' => array(
-				'notice-show',
-				'news-show'
-		),
-		'founder' => array(
-			
-		),
-	),
 	'system' => array(
 		'direct' => array(),
 		'founder' => array(
-			'platform',
+			'attachment',
+			'bom',
+			'database',
+			'filecheck',
+			'logs',
+			'menu',
+			'optimize',
+			'scan',
+			'site',
+		),
+		'operator' => array(
+			'account',
+			'updatecache',
+		),
+		'manager' => array(
+			'account',
 			'module',
-			'module_group',
-			'user',
-			'user_group',
-			'profile',
-			'cloud_register',
-			'cloud_sms',
-			'article',
-			'article_notice',
-			'setting_updatecache',
-			'setting_site',
-			'setting_menu',
-			'setting_attachment',
-			'setting_common',
-			'setting_systeminfo',
-			'setting_logs',
-			'utility_filecheck',
-			'utility_optimize',
-			'utility_database',
-			'utility_scan',
-			'utility_bom',
+			'module-group',
+			'platform',
+			'updatecache',
 		),
 	),
 );
