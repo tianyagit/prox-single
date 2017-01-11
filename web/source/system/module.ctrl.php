@@ -11,6 +11,7 @@ load()->model('cloud');
 load()->model('cache');
 load()->model('module');
 load()->model('account');
+
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
 $dos = array('check_upgrade', 'upgrade', 'install', 'installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
