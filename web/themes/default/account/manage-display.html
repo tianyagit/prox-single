@@ -13,7 +13,7 @@
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
 	</form>
-	{if (!empty($_W['allroles']) && (in_array('owner', $_W['allroles']) || in_array('manager', $_W['allroles']))) || $_W['isfounder']}
+	{if $state == 'founder' || $state == 'manager'}
 	<div class="pull-right">
 		<a href="{url 'account/post-step'}" class="btn btn-primary we7-padding-horizontal">添加公众号</a>
 	</div>
@@ -51,7 +51,7 @@
 		<td class="text-left vertical-middle">
 			<div class="link-group">
 				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
-				{if (!empty($_W['allroles']) && (in_array('owner', $_W['allroles']) || in_array('manager', $_W['allroles']))) || $_W['isfounder']}
+				{if $state == 'founder' || $state == 'manager'}
 				<a ng-href="{{links.post}}acid={{list.acid}}&uniacid={{list.uniacid}}">管理设置</a>
 				<a ng-href="{{links.del}}acid={{list.acid}}&uniacid={{list.uniacid}}" onclick="if(!confirm('确认放入回收站吗？')) return false;">停用</a>
 				{/if}
