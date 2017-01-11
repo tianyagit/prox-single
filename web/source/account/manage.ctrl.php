@@ -14,7 +14,7 @@ $_W['page']['title'] = '公众号列表 - 公众号';
 
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 10;
+	$psize = 20;
 	$start = ($pindex - 1) * $psize;
 
 	$condition = '';
