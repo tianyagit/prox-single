@@ -307,7 +307,7 @@
 					</div>
 				</div>
 
-				<!--首页菜单-->
+				<!--首页导航菜单-->
 				<div class="tab-pane fade homemenu" id="homemenu">
 					<div class="site-edit-heading">首页导航菜单</div>
 					<div class="panel panel-warning" ng-show="!addHomemenuStatus">
@@ -320,9 +320,9 @@
 					</div>
 					<table class="table we7-table table-hover" ng-show="!addHomemenuStatus">
 						<col width="100px" />
-						<col width="75px" />
-						<col width="95px" />
-						<col width="" />
+						<col width="70px" />
+						<col width="90px" />
+						<col width="180px" />
 						<tr>
 							<th>标题</th>
 							<th>图标</th>
@@ -349,7 +349,7 @@
 						</tr>
 					</table>
 
-					<!--首页菜单编辑-->
+					<!--首页导航菜单编辑-->
 					<div class="site-nav-edit" ng-show="addHomemenuStatus">
 						<div class="edit-heading">
 							<a href="javascript:;" class="go-back" ng-click="changeHomemenuStatus()"><i class="wi wi-back-cricle"></i></a>
@@ -475,7 +475,7 @@
 					</div>
 				</div>
 
-				<!--导航菜单-->
+				<!--底部菜单-->
 				<div class="tab-pane fade shopNav" id="quickmenu">
 					<div class="site-edit-heading">导航快捷菜单</div>
 					<div class="we7-form app-side">
@@ -900,6 +900,7 @@ require(['underscore'], function(){
 		}
 	});
 	angular.bootstrap($('#js-wesite-post'), ['wesiteApp']);
+
 	var clickType = "{php echo trim($_GPC['clicktype'])}";
 	var index = $.inArray(clickType, ['slide', 'homemenu', 'quickmenu']);
 	if(index > -1) {

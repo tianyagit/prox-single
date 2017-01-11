@@ -216,16 +216,16 @@ if ($do == 'switch') {
 		message(error(-1, '请求失败！'), '', 'ajax');
 	}
 }
-
+//底部快捷菜单:quickmenu_display、quickmenu_post
 if ($do == 'quickmenu_display' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	if($multiid > 0){
-		$page = pdo_fetch("SELECT * FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => $multiid));
+		$page = pdo_get('site_page', array('multiid' => $multiid, 'type' => 2));
 		$params = !empty($page['params']) ? $page['params'] : 'null';
 		$status = $page['status'] == 1 ? 1 : 0;
 		$modules = uni_modules();
 		$modules = !empty($modules) ? $modules : 'null';
-		message(error(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules)), 'ajax', 'success');
+		message(error(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules)), '', 'ajax');
 	} else {
 		message(error(-1, '请求失败！'), '', 'ajax');
 	}
@@ -249,12 +249,16 @@ if ($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
 		'html' => $html,
 		'createtime' => TIMESTAMP,
 	);
-	$id = pdo_fetchcolumn("SELECT id FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => $post['multiid']));
+	$id = pdo_fetchcolumn("SELECT id FROM ".tablename('site_page')." WHERE multiid = :multiid AND type = 2", array(':multiid' => intval($_GPC['multiid'])));
 	if (!empty($id)) {
-		pdo_update('site_page', $data, array('id' => $id));
+		$result = pdo_update('site_page', $data, array('id' => $id));
 	} else {
-		pdo_insert('site_page', $data);
+		$result = pdo_insert('site_page', $data);
 		$id = pdo_insertid();
 	}
-	message(error(0, '保存成功！'), '', 'ajax');
+	if ($result) {
+		message(error(0, '保存成功！'), '', 'ajax');
+	} else {
+		message(error(1, '保存失败！'), '', 'ajax');
+	}
 }
