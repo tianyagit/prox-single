@@ -254,12 +254,14 @@ if($do == 'post') {
 			$settings = array(
 				'welcome' => $rule['content']
 			);
-			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
-			if(!empty($item)){
-				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
-			}else{
-				$settings['uniacid'] = $_W['uniacid'];
-				pdo_insert('uni_settings', $settings);
+			if (!empty($rule_id)) {
+				$item = pdo_fetch ('SELECT uniacid FROM ' . tablename ('uni_settings') . " WHERE uniacid=:uniacid", array (':uniacid' => $_W['uniacid']));
+				if (!empty($item)) {
+					pdo_update ('uni_settings', $settings, array ('uniacid' => $_W['uniacid']));
+				} else {
+					$settings['uniacid'] = $_W['uniacid'];
+					pdo_insert ('uni_settings', $settings);
+				}
 			}
 			cache_delete("unisetting:{$_W['uniacid']}");
 			message('系统回复更新成功！', url('platform/reply', array('m' => 'welcome')));
@@ -272,14 +274,16 @@ if($do == 'post') {
 			$settings = array(
 				'default' => $rule['content']
 			);
-			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
-			if(!empty($item)){
-				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
-			}else{
-				$settings['uniacid'] = $_W['uniacid'];
-				pdo_insert('uni_settings', $settings);
+			if (!empty($rule_id)) {
+				$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
+				if(!empty($item)){
+					pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
+				}else{
+					$settings['uniacid'] = $_W['uniacid'];
+					pdo_insert('uni_settings', $settings);
+				}
+				cache_delete("unisetting:{$_W['uniacid']}");
 			}
-			cache_delete("unisetting:{$_W['uniacid']}");
 			message('系统回复更新成功！', url('platform/reply', array('m' => 'default')));
 		}
 	}

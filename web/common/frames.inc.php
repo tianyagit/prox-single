@@ -320,13 +320,13 @@ $we7_system_menu['adviertisement'] = array (
 			'menu' => array(
 				'adviertisement-content-provider' => array(
 					'title' => '流量主',
-					'url' => url('adviertisement/content-provider'),
+					'url' => url('adviertisement/content-provider/account_list'),
 					'icon' => 'wi wi-flow',
 					'permission_name' => 'adviertisement_content-use',
 				),
 				'adviertisement-content-create' => array(
 					'title' => '广告主',
-					'url' => url('adviertisement/content_create'),
+					'url' => url('adviertisement/content-provider/content_provider'),
 					'icon' => 'wi wi-adgroup',
 					'permission_name' => 'adviertisement_content-create',
 				),

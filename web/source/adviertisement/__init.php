@@ -7,9 +7,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 define('FRAME', 'adviertisement');
-if ($do == 'content_provider') {
-	define('ACTIVE_FRAME_URL', url('adviertisement/content_create'));
+if ($do == 'display') {
+	define('ACTIVE_FRAME_URL', url('adviertisement/content-provider/account_list'));
 }
-if ($action == 'content_create') {
-	header('Location: '. url('adviertisement/content-provider/content_provider'));
-}
+
