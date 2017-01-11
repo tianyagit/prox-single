@@ -510,7 +510,7 @@ function uni_user_permission($type = 'system', $uid = 0, $uniacid = 0) {
 	if(!empty($data)) {
 		$permission = explode('|', $data);
 	}
-	return $permission;
+	return (array)$permission;
 }
 
 function uni_user_permission_check($permission_name, $is_html = true, $action = '') {

@@ -88,6 +88,7 @@ $we7_system_menu['account'] = array(
 		'platform_module' => array(
 			'title' => '应用模块',
 			'menu' => array(),
+			'is_display' => true,
 		),
 		'mc' => array(
 			'title' => '粉丝',
