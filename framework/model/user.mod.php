@@ -239,7 +239,7 @@ function user_permission($uid, $uniacid = '') {
 	return $data;
 }
 
-/*
+/**
  * 获取某个用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
  * */
 function user_account_permission() {
@@ -261,12 +261,12 @@ function user_account_permission() {
 	return $data;
 }
 
-/*
-	*获取某一用户组下详细信息
-	*@param  number $groupid 用户组ID
-	*@return array
+/**
+ *获取某一用户组下详细信息
+ *@param  number $groupid 用户组ID
+ *@return array
 */
-function user_group_detail_info($groupid) {
+function user_group_detail_info($groupid = 0) {
 	$groupid = is_array($groupid) ? 0 : intval($groupid);
 	if(empty($groupid)) {
 		return false;
@@ -300,4 +300,22 @@ function user_group_detail_info($groupid) {
 		}
 	}
 	return $group_info;	
+}
+
+/**
+ *获取某一用户在本站点的所有身份（owner、manager、operator、clerk）
+ *@param number $uid 用户uid
+ *@return array
+*/
+function user_all_roles($uid = 0) {
+	$uid = is_array($uid) ? 0 : intval($uid);
+	$roles = array();
+	$result = pdo_getall('uni_account_users', array('uid' => $uid), array('role'));
+	if ($result) {
+		foreach ($result as $key => $value) {
+			$roles[] = $value['role'];
+		}
+		$roles = array_unique($roles);
+	}
+	return $roles;
 }

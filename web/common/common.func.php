@@ -122,7 +122,7 @@ function checkaccount() {
 
 //新版buildframes
 function buildframes($framename = ''){
-	global $_W, $_GPC, $top_nav,$acl;
+	global $_W, $_GPC, $top_nav;
 	$frames = cache_load('system_frame');
 	if(empty($frames)) {
 		cache_build_frame_menu();
@@ -245,12 +245,41 @@ function buildframes($framename = ''){
 			}
 		}
 	}
-	//操作员系统管理界面菜单
-	if (!empty($_W['role']) && $_W['role'] == 'operator') {
+	$menu_frames = array(
+		'system' => array(
+			'founder' => array(),
+			'manager' => array(
+				'account',
+				'platform',
+				'module',
+				'module_group',
+				'my',
+				'user',
+				'user_group',
+			),
+			'operator' => array(
+				'account',
+				'my',
+			),
+			'clerk' => array(),
+		),
+	);
+	//管理员系统管理界面菜单
+	if (!empty($_W['allroles']) && (in_array('manager', $_W['allroles']) || in_array('owner', $_W['allroles']))) {
 		foreach ($frames['system']['section'] as $system_section_key => $system_section_val) {
 			foreach ($system_section_val['menu'] as $menu_key => $menu_val) {
 				$key = substr($menu_key, 7);
-				if(in_array($key, $acl['system']['founder'])) unset($frames['system']['section'][$system_section_key]['menu'][$menu_key]);
+				if(in_array($key, $menu_frames['system']['manager'])) unset($frames['system']['section'][$system_section_key]['menu'][$menu_key]);
+			}
+			if(empty($frames['system']['section'][$system_section_key]['menu'])) unset($frames['system']['section'][$system_section_key]);
+		}		
+	}
+	//操作员系统管理界面菜单
+	if (!empty($_W['allroles']) && in_array('operator', $_W['allroles']) && !in_array('owner', $_W['allroles']) && !in_array('manager', $_W['allroles'])) {
+		foreach ($frames['system']['section'] as $system_section_key => $system_section_val) {
+			foreach ($system_section_val['menu'] as $menu_key => $menu_val) {
+				$key = substr($menu_key, 7);
+				if(in_array($key, $menu_frames['system']['operator'])) unset($frames['system']['section'][$system_section_key]['menu'][$menu_key]);
 			}
 			if(empty($frames['system']['section'][$system_section_key]['menu'])) unset($frames['system']['section'][$system_section_key]);
 		}
