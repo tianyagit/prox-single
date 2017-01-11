@@ -29,6 +29,10 @@ if (empty($user)) {
 $founders = explode(',', $_W['config']['setting']['founder']);
 $profile = pdo_fetch('SELECT * FROM '.tablename('users_profile').' WHERE `uid` = :uid LIMIT 1',array(':uid' => $uid));
 if (!empty($profile)) $profile['avatar'] = tomedia($profile['avatar']);
+$avatar = file_fetch($profile['avatar']);
+if (is_error($avatar)) {
+	$profile['avatar'] = './resource/images/nopic-107.png';
+}
 
 //编辑用户基础信息
 if ($do == 'edit_base') {
@@ -36,10 +40,6 @@ if ($do == 'edit_base') {
 	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);
 	$user['endtype'] = $user['endtime'] == 0 ? 1 : 2;
 	if (!empty($profile)) {
-		$avatar = file_fetch($profile['avatar']);
-		if (is_error($avatar)) {
-			$profile['avatar'] = './resource/images/nopic-107.png';
-		}
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
 			'city' => $profile['residecity'],
