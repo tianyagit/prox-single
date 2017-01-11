@@ -80,6 +80,9 @@ if ($do == 'display') {
 			if (!empty($v['uid'])) {
 				$user = mc_fetch($v['uid'], array('realname', 'nickname', 'mobile', 'email', 'avatar'));
 			}
+			if (!empty($user)) {
+				$v['member'] = $user;
+			}
 			if (!empty($v['tag']) && is_string($v['tag'])) {
 				if (is_base64($v['tag'])) {
 					$v['tag'] = base64_decode($v['tag']);
@@ -94,25 +97,6 @@ if ($do == 'display') {
 			}
 			if (empty($v['tag'])) {
 				$v['tag'] = array();
-			}
-
-			if (!empty($user)) {
-				$niemmo = $user['realname'];
-				if (empty($niemmo)) {
-					$niemmo = $user['nickname'];
-				}
-				if (empty($niemmo)) {
-					$niemmo = $user['mobile'];
-				}
-				if (empty($niemmo)) {
-					$niemmo = $user['email'];
-				}
-				if (empty($niemmo) || (!empty($niemmo) && substr($niemmo, -6) == 'we7.cc' && strlen($niemmo) == 39)) {
-					$niemmo_effective = 0;
-				} else {
-					$niemmo_effective = 1;
-				}
-				$v['user'] = array('niemmo_effective' => $niemmo_effective, 'niemmo' => $niemmo, 'nickname' => $user['nickname']);
 			}
 			if (empty($v['user']['nickname']) && !empty($v['tag']['nickname'])) {
 				$v['user']['nickname'] = $v['tag']['nickname'];
