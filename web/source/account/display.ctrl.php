@@ -25,7 +25,7 @@ if($do == 'switch') {
 		header('Location: ' . url('paycenter/desk'));
 		die;
 	}
-	header('Location: ' . url('platform/reply'));
+	header('Location: ' . url('home/welcome'));
 	exit;
 }
 

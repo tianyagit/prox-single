@@ -13,9 +13,6 @@ load()->model('user');
 $dos = array('display', 'setting', 'shortcut', 'enable');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
-if($do != 'setting') {
-	uni_user_permission_check('profile_module');
-}
 $modulelist = uni_modules(false);
 
 if($do == 'display') {
