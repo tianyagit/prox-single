@@ -11,12 +11,12 @@ uni_user_permission_check('system_user_display');
 
 $_W['page']['title'] = '用户列表 - 用户管理';
 $state = uni_permission($_W['uid'], $uniacid);
-if($state != 'founder' && $state != 'manager') {
+if ($state != 'founder' && $state != 'manager') {
 	message('没有操作权限！', referer(), 'error');
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
 
-if(in_array($do, array('display', 'recycle_display', 'check_display'))) {
+if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	switch ($do) {
@@ -41,12 +41,12 @@ if(in_array($do, array('display', 'recycle_display', 'check_display'))) {
 	$pager = pagination($total, $pindex, $psize);
 	$system_module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system',':issystem' => 1));
 	foreach ($users as &$user) {
-		if(empty($user['endtime'])) {
+		if (empty($user['endtime'])) {
 			$user['endtime'] = '永久有效';
-		}else {
-			if($user['endtime'] <= TIMESTAMP) {
+		} else {
+			if ($user['endtime'] <= TIMESTAMP) {
 				$user['endtime'] = '服务已到期';
-			}else {
+			} else {
 				$user['endtime'] = date('Y-m-d', $user['endtime']);
 			}
 		}
@@ -79,7 +79,7 @@ if(in_array($do, array('display', 'recycle_display', 'check_display'))) {
 	template('user/display');
 }
 
-if(in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_pass'))) {
+if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_pass'))) {
 	$uid = intval($_GPC['uid']);
 	$uid_user = user_single($uid);
 	if (in_array($uid, $founders)) {

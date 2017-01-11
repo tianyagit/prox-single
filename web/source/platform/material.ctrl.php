@@ -15,22 +15,22 @@ uni_user_permission_check('platform_material');
 
 $_W['page']['title'] = '永久素材-微信素材';
 
-if($do == 'send') {
+if ($do == 'send') {
 	$group = intval($_GPC['group']);
 	$type = trim($_GPC['type']);
 	$id = intval($_GPC['id']);
 	$media = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
-	if(empty($media)) {
+	if (empty($media)) {
 		message(error(1, '素材不存在'), '', 'ajax');
 	}
 	$media_id = trim($media['media_id']);
 	$account_api = WeAccount::create();
 	$result = $account_api->fansSendAll($group, $type, $media['media_id']);
-	if(is_error($result)) {
+	if (is_error($result)) {
 		message(error(1, $result['message']), '', 'ajax');
 	}
 	$groups = pdo_get('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']));
-	if(!empty($groups)) {
+	if (!empty($groups)) {
 		$groups = iunserializer($groups['groups']);
 	}
 	$record = array(
@@ -47,10 +47,10 @@ if($do == 'send') {
 		'createtime' => TIMESTAMP,
 	);
 	pdo_insert('mc_mass_record', $record);
-	message(error(0), '', 'ajax');
+	message(error(0, '发送成功！'), '', 'ajax');
 }
 
-if($do == 'display') {
+if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
 	$group = mc_fans_groups(true);
 	if ($type == 'news') {
@@ -130,7 +130,7 @@ if ($do == 'del_material') {
 
 		pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $media_id));
 	}
-	message($result, '', 'ajax');
+	message(error(0, $result), '', 'ajax');
 }
 
 if ($do == 'sync') {
@@ -165,7 +165,7 @@ if ($do == 'sync') {
 			pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $id));
 		}
 	}
-	message(error(0), '', 'ajax');
+	message(error(0, '更新成功！'), '', 'ajax');
 }
 
 template('platform/material');

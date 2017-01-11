@@ -159,7 +159,7 @@ if($step == 1) {
 		$result['uid'] = $user['uid'];
 		$result['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $user['groupid']));
 		$result['package'] = iunserializer($result['group']['package']);
-		message($result, '', 'ajax');
+		message(error(0, $result), '', 'ajax');
 		exit;
 	}
 	if (checksubmit('submit')) {

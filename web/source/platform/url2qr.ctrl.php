@@ -13,12 +13,12 @@ $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'display';
 uni_user_permission_check('platform_qr');
 $_W['page']['title'] = '长链接转二维码';
 
-if($do == 'display') {
+if ($do == 'display') {
 	template('platform/url2qr');
 }
 
-if($do == 'change') {
-	if($_W['ispost'] && $_W['isajax']) {
+if ($do == 'change') {
+	if ($_W['ispost'] && $_W['isajax']) {
 		$longurl = trim($_GPC['longurl']);
 		$token = WeAccount::token(WeAccount::TYPE_WEIXIN);
 		$url = "https://api.weixin.qq.com/cgi-bin/shorturl?access_token={$token}";
@@ -26,16 +26,16 @@ if($do == 'change') {
 		$send['action'] = 'long2short';
 		$send['long_url'] = $longurl;
 		$response = ihttp_request($url, json_encode($send));
-		if(is_error($response)) {
+		if (is_error($response)) {
 			$result = error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
 		}
 		$result = @json_decode($response['content'], true);
-		if(empty($result)) {
+		if (empty($result)) {
 			$result =  error(-1, "接口调用失败, 元数据: {$response['meta']}");
-		} elseif(!empty($result['errcode'])) {
+		} elseif (!empty($result['errcode'])) {
 			$result = error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']}");
 		}
-		if(is_error($result)) {
+		if (is_error($result)) {
 			exit(json_encode(array('errcode' => -1, 'errmsg' => $result['message'])));
 		}
 		exit(json_encode($result));
@@ -44,7 +44,7 @@ if($do == 'change') {
 	}
 }
 
-if($do == 'qr') {
+if ($do == 'qr') {
 	$url = $_GPC['url'];
 	require(IA_ROOT . '/framework/library/qrcode/phpqrcode.php');
 	$errorCorrectionLevel = "L";
@@ -53,7 +53,7 @@ if($do == 'qr') {
 	exit();
 }
 
-if($do == 'down_qr') {
+if ($do == 'down_qr') {
 	$qrlink = $_GPC['qrlink'];
 	require(IA_ROOT . '/framework/library/qrcode/phpqrcode.php');
 	$errorCorrectionLevel = "L";

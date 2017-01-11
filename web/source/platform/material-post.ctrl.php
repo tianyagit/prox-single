@@ -21,12 +21,12 @@ if ($do == 'replace_image_url') {
 	$content = htmlspecialchars_decode($_GPC['content']);
 	$match = array();
 	preg_match_all('/<img.*src=[\'"](.*\.(?:png|jpg|jpeg|jpe|gif))[\'"].*\/?>/iU', $content, $match);
-	if(!empty($match[1])) {
-		foreach($match[1] as $val) {
-			if((strexists($val, 'http://') || strexists($val, 'https://')) && !strexists($val, 'mmbiz.qlogo.cn') && !strexists($val, 'mmbiz.qpic.cn')) {
+	if (!empty($match[1])) {
+		foreach ($match[1] as $val) {
+			if ((strexists($val, 'http://') || strexists($val, 'https://')) && !strexists($val, 'mmbiz.qlogo.cn') && !strexists($val, 'mmbiz.qpic.cn')) {
 				$images[] = $val;
 			} else {
-				if(strexists($val, './attachment/images/')) {
+				if (strexists($val, './attachment/images/')) {
 					$images[] = tomedia($val);
 				}
 			}
@@ -36,7 +36,7 @@ if ($do == 'replace_image_url') {
 		foreach ($images as $image) {
 			$thumb = file_fetch(tomedia($image), 1024, 'material/images');
 			if(is_error($thumb)) {
-				message($thumb, '', 'ajax');
+				message(error(0, $thumb), '', 'ajax');
 			}
 			$thumb = ATTACHMENT_ROOT . $thumb;
 			$account_api = WeAccount::create($_W['acid']);
@@ -45,7 +45,7 @@ if ($do == 'replace_image_url') {
 			);
 			$result = $account_api->uploadNewsThumb($data);
 			if (is_error($result)) {
-				message($result, '', 'ajax');
+				message(error(0, $result), '', 'ajax');
 			} else {
 				$content = str_replace($image, $result['message'], $content);
 			}
@@ -58,13 +58,13 @@ if ($do == 'tomedia') {
 	message(error('0', tomedia($_GPC['url'])), '', 'ajax');
 }
 
-if($do == 'news') {
+if ($do == 'news') {
 	$newsid = intval($_GPC['newsid']);
 	$news_list = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $newsid), array(), '',  'displayorder ASC');
 	template('platform/material-post');
 }
 
-if($do == 'addnews') {
+if ($do == 'addnews') {
 	$account_api = WeAccount::create($_W['acid']);
 	$operate = $_GPC['operate'] == 'add' ? 'add' : 'edit';
 	$articles = array();
@@ -78,8 +78,8 @@ if($do == 'addnews') {
 		$image_data[$image['media_id']] = $image;
 	}
 
-	if(!empty($_GPC['news'])) {
-		foreach($_GPC['news'] as $key => $news) {
+	if (!empty($_GPC['news'])) {
+		foreach ($_GPC['news'] as $key => $news) {
 			//微信接口结构
 			$news_info = array(
 				'title' => $news['title'],
@@ -120,8 +120,8 @@ if($do == 'addnews') {
 	}
 	if ($operate == 'add') {
 		$media_id = $account_api->addMatrialNews($articles);
-		if(is_error($media_id)) {
-			message($media_id, '', 'ajax');
+		if (is_error($media_id)) {
+			message(error(0, $media_id), '', 'ajax');
 		}
 		$wechat_attachment = array(
 			'uniacid' => $_W['uniacid'],
@@ -144,7 +144,7 @@ if($do == 'addnews') {
 		foreach ($articles as $edit_news) {
 			$result = $account_api->editMaterialNews($edit_news);
 			if (is_error($result)) {
-				message($result, '', 'ajax');
+				message(error(0, $result), '', 'ajax');
 			}
 		}
 		foreach ($post_news as $id => $news) {

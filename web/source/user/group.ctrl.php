@@ -36,7 +36,7 @@ if ($do == 'display') {
 			$lists[$key]['module_nums'] = $module_num;
 			continue;
 		}
-		if(is_array($package) && in_array(-1, $package)) {
+		if (is_array($package) && in_array(-1, $package)) {
 			$lists[$key]['module_nums'] = -1;
 			continue;
 		}
@@ -58,13 +58,13 @@ if ($do == 'post') {
 	if (!empty($id)) {
 		$group_info = pdo_fetch("SELECT * FROM ".tablename('users_group') . " WHERE id = :id", array(':id' => $id));
 		$group_info['package'] = iunserializer($group_info['package']);
-		if(!empty($group_info['package']) && in_array(-1, $group_info['package'])) $group_info['check_all'] = true;
+		if (!empty($group_info['package']) && in_array(-1, $group_info['package'])) $group_info['check_all'] = true;
 	}
 	$packages = uni_groups();
 	foreach ($packages as $key => &$package_val) {
-		if(!empty($group_info['package']) && in_array($key, $group_info['package'])) {
+		if (!empty($group_info['package']) && in_array($key, $group_info['package'])) {
 			$package_val['checked'] = true;
-		}else {
+		} else {
 			$package_val['checked'] = false;
 		}
 	}
@@ -94,7 +94,7 @@ if ($do == 'post') {
 	template('user/group-post');
 }
 
-if($do == 'del') {
+if ($do == 'del') {
 	// uni_user_permission_check('user_group_del');
 	$id = intval($_GPC['id']);
 	$result = pdo_delete('users_group', array('id' => $id));

@@ -13,7 +13,7 @@ $do = in_array($do, $dos) ? $do : 'module';
 uni_user_permission_check('platform_cover_' . $do, true, 'cover');
 define('IN_MODULE', true);
 
-if($do == 'module') {
+if ($do == 'module') {
 	$modulename = $_GPC['m'];
 	$entry_id = intval($_GPC['eid']);
 	
@@ -61,11 +61,11 @@ if($do == 'module') {
 	$reply = pdo_get('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
 	
 	if (checksubmit('submit')) {
-		if(trim($_GPC['keywords']) == '') {
+		if (trim($_GPC['keywords']) == '') {
 			message('必须输入触发关键字.');
 		}
 		$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
-		if(empty($keywords)) {
+		if (empty($keywords)) {
 			message('必须填写有效的触发关键字.');
 		}
 		$rule = array(
@@ -77,7 +77,7 @@ if($do == 'module') {
 			'status' => $_GPC['status'] == 'true' ? 1 : 0,
 			'displayorder' => intval($_GPC['displayorder_rule']),
 		);
-		if($_GPC['istop'] == 1) {
+		if ($_GPC['istop'] == 1) {
 			$rule['displayorder'] = 255;
 		} else {
 			$rule['displayorder'] = range_limit($rule['displayorder'], 0, 254);
@@ -100,7 +100,7 @@ if($do == 'module') {
 				'status' => $rule['status'],
 				'displayorder' => $rule['displayorder'],
 			);
-			foreach($keywords as $keyword) {
+			foreach ($keywords as $keyword) {
 				$keyword_insert = $keyword_row;
 				$keyword_insert['type'] = range_limit($keyword['type'], 1, 4);
 				$keyword_insert['content'] = $keyword['content'];
@@ -137,8 +137,8 @@ if($do == 'module') {
 	}
 	define('ACTIVE_FRAME_URL', $url);
 	
-	if(!empty($reply)) {
-		if(!empty($reply['thumb'])) {
+	if (!empty($reply)) {
+		if (!empty($reply['thumb'])) {
 			$reply['src'] = tomedia($reply['thumb']);
 		}
 		$reply['rule'] = reply_single($reply['rid']);
