@@ -29,7 +29,7 @@
 	{loop $category $row}
 		<tr>
 			<td>
-				<input type="checkbox" name="rid[]" id="rid-{$row['id']}" value="{$row['id']}">
+				<input type="checkbox" we7-check-all="1" name="rid[]" id="rid-{$row['id']}" value="{$row['id']}">
 				<label for="rid-{$row['id']}">&nbsp;</label>
 			</td>
 			<td class="text-left">{$row['displayorder']}</td>
@@ -84,7 +84,7 @@
 </table>
 <div class="clearfix"></div>
 <div class="we7-margin-left">
-	<input type="checkbox" name="select_all" id="select_all" value="1">
+	<input type="checkbox" we7-check-all="1" name="rid[]" id="select_all" value="1">
 	<label for="select_all">&nbsp;</label>
 	<input type="submit" class="btn btn-danger" name="submit" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
 	<input type="hidden" name="token" value="{$_W['token']}" />	

@@ -97,7 +97,7 @@
 					<tr>
 						<th class="text-left" colspan="4">
 							<div class="we7-form">
-								<input id='checkall' type="checkbox" name='' onclick="checkall()"/>
+								<input id='checkall' type="checkbox" we7-check-all="1" name='openid[]' onclick="checkall()"/>
 
 								<label for="checkall">全选 </label>
 								<script>
@@ -116,7 +116,7 @@
 					<tr>
 						<td>
 							<div class="we7-form">
-								<input id='option[{$fan['fanid']}]' type="checkbox" class="openid" name='openid[]' value="{$fan['openid']}"/>
+								<input id='option[{$fan['fanid']}]' type="checkbox" we7-check-all="1" class="openid" name='openid[]' value="{$fan['openid']}"/>
 								<label for="option[{$fan['fanid']}]"> </label>
 							</div>
 						</td>
@@ -127,7 +127,7 @@
 						</td>
 						<td>
 							<p><a href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="nick-name" data-fanid="{$fan['fanid']}" data-group="{$fan['groupid']}">{$fan['nickname']}</a></p>
-							<p><a href="" class="remark-name">{$fan['member']['realname']}</a> {if !empty($fan['member']['mobile'])}<i class="fa fa-align-justify fans-tel"></i>{/if}</p>
+							<p class="remark-name"><a href="">{$fan['member']['realname']}</a> {if !empty($fan['member']['mobile'])}<i class="wi wi-iphone fans-tel"></i>{/if}</p>
 							<div class="fans-tag-area">
 								<span class="tag-list">
 									{loop $fan['tag_show'] $k $tag_show}
@@ -195,6 +195,7 @@
 	<div class="pull-right we7-margin-top">
 		{$pager}
 	</div>
+</div>
 <script>
 	$("[data-toggle='popover']").on('show.bs.popover', function () {
 		$("[aria-describedby]").popover('hide');
@@ -237,6 +238,7 @@
 			'<div class="popover-btn we7-margin-top-sm">' +
 			'<a href="javascript:;" class="btn btn-primary we7-margin-right-sm" onclick="editFansTag()">确定</a>' +
 			'<a href="javascript:;"  class="btn btn-default popover-hide">取消</a>' +
+			'<script type="text/javascript">$(":radio,:checkbox").we7_check();<\/script>' +
 			'</div>',
 		});
 
@@ -256,6 +258,7 @@
 		'<div class="popover-btn we7-margin-top-sm">' +
 		'<a href="javascript:;" class="btn btn-primary we7-margin-right-sm" onclick="batchEditFansTag()">确定</a>' +
 		'<a href="javascript:;"  class="btn btn-default popover-hide">取消</a>' +
+		'<script type="text/javascript">$(":radio,:checkbox").we7_check();<\/script>' +
 		'</div>',
 		});
 		$('body').on('click', '.popover-hide', function(){

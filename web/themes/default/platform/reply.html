@@ -66,7 +66,7 @@
 						<tr>
 							<th class="text-left"  colspan="2">
 								<div class="pull-left">
-									<input id='rid-{$row['id']}' type="checkbox" name='rid[]' value="{$row['id']}"/>
+									<input id='rid-{$row['id']}' type="checkbox" name='rid[]' we7-check-all="we7-check-all" value="{$row['id']}"/>
 									<label class="text-over reply-item-name">规则名：{$row['name']}</label>
 								</div>
 								<span class="pull-right">
@@ -148,7 +148,7 @@
 					</table>
 					{/loop}
 					<div>
-						<input type="checkbox" name="select_all" id="select_all"  class="we7-margin-left" value="1" />
+						<input type="checkbox" name="rid[]" we7-check-all="we7-check-all" id="select_all"  class="we7-margin-left" value="1" />
 						<label for="select_all">&nbsp;</label>
 						<!--<label class="checkbox-inline" style="margin-top:-20px;margin-left:17px"><input type="checkbox" name="select_all" id="select_all" value="1"/></label>-->
 						<input type="submit" class="btn btn-danger" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
