@@ -19,7 +19,7 @@
 				<tr class="text-left">
 					<th colspan="4" class="text-left">
 						<div class="">
-							<input id="check-{$section_id}" type="checkbox" name="system_{$section_id}" onChange="selectall(this, 'system_{$section_id}')">
+							<input id="check-{$section_id}" type="checkbox"  we7-check-all="1" name="system_{$section_id}" onChange="selectall(this, 'system_{$section_id}')">
 							<label for="check-{$section_id}" class=" we7-margin-horizontal-none">{$section['title']}</label>
 						</div>
 					</th>
@@ -32,14 +32,15 @@
 					<td class="text-left " style="overflow:inherit;">
 						<div class="dropdown system-select-dropdown">
 							<span>
-								<input id="check-child-{$item_id}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
+								<input id="check-child-{$item_id}" type="checkbox" we7-check-all="1" value="{$item['permission_name']}" {if in_array($item['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
 								<label for="check-child-{$item_id}" class=" we7-margin-horizontal-none">{$item['title']}</label>
 							</span>
 							{if $item['sub_permission']}
 							<ul class="dropdown-menu">
 								{loop $item['sub_permission'] $sub_permission}
 								<li class="text-left">
-									<label class="we7-margin-horizontal-none"><input id="check-child-{$sub_permission['permission_name']}" type="checkbox" value="{$item['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
+									<label class="we7-margin-horizontal-none">
+										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$item['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
 										{$sub_permission['title']}
 									</label>
 								</li>
@@ -73,7 +74,7 @@
 			<tr>
 				<th colspan="4" class="text-left">
 					<div class="checkbox">
-						<label><input type="checkbox" name="" onChange="selectall(this, 'module_select')">模块权限</label>
+						<label><input type="checkbox"  we7-check-all="1" name="module[]" onChange="selectall(this, 'module_select')">模块权限</label>
 					</div>
 				</th>
 			</tr>
@@ -87,7 +88,7 @@
 					<td  class="text-left text-over" style="overflow:inherit;width:25%">
 						<div class="dropdown system-select-dropdown">
 							<span class="" data-id="{$k}">
-								<input id="check-module-{$k}" type="checkbox" value="{$k}" name="module[]" {if in_array($k, $module_permission_keys)}checked{/if}>
+								<input id="check-module-{$k}" type="checkbox" value="{$k}" name="module[]" we7-check-all="1" {if in_array($k, $module_permission_keys)}checked{/if}>
 								<label for="check-module-{$k}" class="text-over" title="{$m['title']}" style="width: 128px;">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
 							</span>
 							<ul class="dropdown-menu" role="menu">
@@ -130,7 +131,7 @@ $(function(){
 				if(!data.errno) {
 					$.each(data.errmsg, function(k, v){
 						var check = v.checked ? 'checked' : '';
-						html += '<li><a href="javascript:;"><input id="check-moduledetail-'+m+'-'+k+'" type="checkbox" name="module_'+m+'[]" value="'+ v.permission +'" '+check+'/><label for="check-moduledetail-'+m+'-'+k+'" class="we7-padding-left we7-margin-horizontal-none checkbox-inline">'+ v.title +'</label></a></li>';
+						html += '<li><a href="javascript:;"><input id="check-moduledetail-'+m+'-'+k+'" we7-check-all="1"  type="checkbox" name="module_'+m+'[]" value="'+ v.permission +'" '+check+'/><label for="check-moduledetail-'+m+'-'+k+'" class="we7-padding-left we7-margin-horizontal-none checkbox-inline">'+ v.title +'</label></a></li>';
 					});
 				}
 				_this.next().html(html);
