@@ -381,59 +381,59 @@
 		<col width="250px"/>
 		<col width="122px"/>
 		<col />
-		<tr>
-			<th class="text-left">
-				使用公众号
-			</th>
-			<th>
-				类型
-			</th>
-			<th>
+		<!--<tr>-->
+			<!--<th class="text-left">-->
+				<!--使用公众号-->
+			<!--</th>-->
+			<!--<th>-->
+				<!--类型-->
+			<!--</th>-->
+			<!--<th>-->
 
-			</th>
-			<th>
-			</th>
-			<th class="text-left">
-				操作
-			</th>
-		</tr>
-		{loop $use_module_account $account}
-		<tr>
-			<td class="text-left">
-				{if empty($account['name'])}
-				未知公众号
-				{else}
-				{$account['name']}
-				{/if}
-			</td>
-			<td>
-				<span class="color-gray">
-					{if $account['level'] == 1}
-					普通订阅号
-					{elseif $account['level'] == 2}
-					普通服务号
-					{elseif $account['level'] == 3}
-					认证订阅号
-					{elseif $account['level'] == 4}
-					认证服务号
-					{/if}
-				</span>
-			</td>
-			<td>
-				<span class="color-gray">     </span>
-			</td>
-			<td>
-				<span class="color-green"></span>
-			</td>
-			<td class="text-left">
-				<a href="{php echo url('account/post/module_tpl', array('uniacid' => $account['uniacid'], 'acid' => $account['acid']))}" class="color-default">公众号权限设置</a>
-			</td>
-		</tr>
-		{/loop}
+			<!--</th>-->
+			<!--<th>-->
+			<!--</th>-->
+			<!--<th class="text-left">-->
+				<!--操作-->
+			<!--</th>-->
+		<!--</tr>-->
+		<!--{loop $use_module_account $account}-->
+		<!--<tr>-->
+			<!--<td class="text-left">-->
+				<!--{if empty($account['name'])}-->
+				<!--未知公众号-->
+				<!--{else}-->
+				<!--{$account['name']}-->
+				<!--{/if}-->
+			<!--</td>-->
+			<!--<td>-->
+				<!--<span class="color-gray">-->
+					<!--{if $account['level'] == 1}-->
+					<!--普通订阅号-->
+					<!--{elseif $account['level'] == 2}-->
+					<!--普通服务号-->
+					<!--{elseif $account['level'] == 3}-->
+					<!--认证订阅号-->
+					<!--{elseif $account['level'] == 4}-->
+					<!--认证服务号-->
+					<!--{/if}-->
+				<!--</span>-->
+			<!--</td>-->
+			<!--<td>-->
+				<!--<span class="color-gray">     </span>-->
+			<!--</td>-->
+			<!--<td>-->
+				<!--<span class="color-green"></span>-->
+			<!--</td>-->
+			<!--<td class="text-left">-->
+				<!--<a href="{php echo url('account/post/module_tpl', array('uniacid' => $account['uniacid'], 'acid' => $account['acid']))}" class="color-default">公众号权限设置</a>-->
+			<!--</td>-->
+		<!--</tr>-->
+		<!--{/loop}-->
 	</table>
-	<div ng-if="isFounder == 1" class="pull-right">
-		{$pager}
-	</div>
+	<!--<div ng-if="isFounder == 1" class="pull-right">-->
+		<!--{$pager}-->
+	<!--</div>-->
 	<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog we7-modal-dialog" style="width:800px">
 			<div class="modal-content">
