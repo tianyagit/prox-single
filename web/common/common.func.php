@@ -176,9 +176,6 @@ function buildframes($framename = ''){
 			$modulename = pdo_getcolumn('modules_bindings', array('eid' => $eid), 'module');
 		}
 		$module = module_fetch($modulename);
-		if (empty($module)) {
-			message('模块不存在或是您没有权限操作', '', 'error');
-		}
 		$entries = module_entries($modulename);
 		$frames['account']['section'] = array();
 		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
