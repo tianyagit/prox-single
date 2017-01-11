@@ -18,9 +18,9 @@
 				<thead>
 				<tr class="text-left">
 					<th colspan="4" class="text-left">
-						<div class="checkbox">
+						<div class="">
 							<input id="check-{$section_id}" type="checkbox" name="system_{$section_id}" onChange="selectall(this, 'system_{$section_id}')">
-							<label for="check-{$section_id}" class="we7-padding-left we7-margin-horizontal-none">{$section['title']}</label>
+							<label for="check-{$section_id}" class=" we7-margin-horizontal-none">{$section['title']}</label>
 						</div>
 					</th>
 				</tr>
@@ -29,23 +29,25 @@
 				{php $i=1;}
 				{loop $section['menu'] $item_id $item}
 					{if $i%4 == 1 || $i == 1}<tr>{/if}
-					<td class="text-left dropdown">
-						<div class="checkbox">
-							<input id="check-child-{$item_id}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
-							<label for="check-child-{$item_id}" class="we7-padding-left we7-margin-horizontal-none">{$item['title']}</label>
+					<td class="text-left " style="overflow:inherit;">
+						<div class="dropdown system-select-dropdown">
+							<span>
+								<input id="check-child-{$item_id}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
+								<label for="check-child-{$item_id}" class=" we7-margin-horizontal-none">{$item['title']}</label>
+							</span>
+							{if $item['sub_permission']}
+							<ul class="dropdown-menu">
+								{loop $item['sub_permission'] $sub_permission}
+								<li class="text-left">
+									<label class="we7-margin-horizontal-none"><input id="check-child-{$sub_permission['permission_name']}" type="checkbox" value="{$item['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
+										{$sub_permission['title']}
+									</label>
+								</li>
+								{/loop}
+							</ul>
+							{/if}
 						</div>
-						{if $item['sub_permission']}
-						<ul class="dropdown-menu">
-							{loop $item['sub_permission'] $sub_permission}
-							<li class="text-left">
-								<div class="checkbox">
-									<input id="check-child-{$sub_permission['permission_name']}" type="checkbox" value="{$item['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
-									<label for="check-child-{$sub_permission['permission_name']}" class="we7-padding-left we7-margin-horizontal-none">{$sub_permission['title']}</label>
-								</div>
-							</li>
-							{/loop}
-						</ul>
-						{/if}
+						
 					</td>
 					{if $i%4 == 0}</tr><tr>{/if}
 					{php $i++;}
@@ -65,17 +67,17 @@
 	{/if}
 {/loop}
 
-			<table class="table we7-table table-hover vertical-middle">
+	<table class="table we7-table table-hover vertical-middle">
 
-	<thead>
-		<tr>
-			<th colspan="4" class="text-left">
-				<div class="checkbox">
-					<label><input type="checkbox" name="" onChange="selectall(this, 'module_select')">模块权限</label>
-				</div>
-			</th>
-		</tr>
-	</thead>
+		<thead>
+			<tr>
+				<th colspan="4" class="text-left">
+					<div class="checkbox">
+						<label><input type="checkbox" name="" onChange="selectall(this, 'module_select')">模块权限</label>
+					</div>
+				</th>
+			</tr>
+		</thead>
 	{if !empty($module)}
 		<tbody class="module_select" >
 			{php $i=1;}
@@ -83,7 +85,7 @@
 				{if empty($m['issystem'])}
 				{if $i%4 == 1 || $i == 1}<tr>{/if}
 					<td  class="text-left text-over" style="overflow:inherit;width:25%">
-						<div class="dropdown">
+						<div class="dropdown system-select-dropdown">
 							<span class="" data-id="{$k}">
 								<input id="check-module-{$k}" type="checkbox" value="{$k}" name="module[]" {if in_array($k, $module_permission_keys)}checked{/if}>
 								<label for="check-module-{$k}" class="text-over" title="{$m['title']}" style="width: 128px;">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
