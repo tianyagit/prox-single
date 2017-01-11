@@ -35,8 +35,9 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			break;
 		case 'username':
-			if(trim($post['username']) == 'admin') {
-				message(error(1), '', 'ajax');
+			$founders = explode(',', $_W['config']['setting']['founder']);
+			if (in_array($uid, $founders)) {
+				message(error(1, '用户名不可与网站创始人同名！'), '', 'ajax');
 			}
 			if($users_profile_exist) {
 				$result = pdo_update('users', array('username' => trim($post['username'])), array('uid' => $uid));
