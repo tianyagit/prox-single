@@ -70,7 +70,7 @@ if ($do == 'del') {
 		}
 	}
 	pdo_delete('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => intval($_GPC['id'])));
-	message(error(0, ''), '', 'ajax');
+	message(error(0, '删除成功！'), '', 'ajax');
 }
 
 if ($do == 'post') {
@@ -214,16 +214,16 @@ if ($do == 'cron') {
 if ($do == 'preview') {
 	$wxname = trim($_GPC['wxname']);
 	if (empty($wxname)) {
-		exit('微信号不能为空');
+		message(error(1, '微信号不能为空'), '', 'ajax');
 	}
 	$type = trim($_GPC['type']);
 	$media_id = trim($_GPC['media_id']);
 	$account_api = WeAccount::create();
 	$data = $account_api->fansSendPreview($wxname, $media_id, $type);
 	if (is_error($data)) {
-		exit($data['message']);
+		message(error(-1, $data['message']), '', 'ajax');
 	}
-	exit('success');
+	message(error(0, 'success'), '', 'ajax');
 }
 
 if ($do == 'send') {
