@@ -246,24 +246,8 @@ function buildframes($framename = ''){
 			}
 		}
 	}
-	$system_menu_default_permission = array(
-		'founder' => array(),
-		'manager' => array(
-			'account',
-			'platform',
-			'module',
-			'module_group',
-			'my',
-			'user',
-			'user_group',
-		),
-		'operator' => array(
-			'system_account',
-			'system_my',
-		),
-		'clerk' => array(),
-	);
 	//管理员系统管理界面菜单
+	$system_menu_default_permission = frames_menu_append();
 	//从数据库中获取用户权限，并附加上系统管理中的权限
 	if (!empty($_W['role']) && $_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR) {
 		$user_permission = uni_user_permission('system');
@@ -342,6 +326,29 @@ function filter_url($params) {
 	$query_arr['page'] = 1;
 	$query = http_build_query($query_arr);
 	return './index.php?' . $query;
+}
+/**
+ * 系统菜单中预设的附加权限
+ */
+function frames_menu_append() {
+	$system_menu_default_permission = array(
+		'founder' => array(),
+		'manager' => array(
+			'account',
+			'platform',
+			'module',
+			'module_group',
+			'my',
+			'user',
+			'user_group',
+		),
+		'operator' => array(
+			'system_account',
+			'system_my',
+		),
+		'clerk' => array(),
+	);
+	return $system_menu_default_permission;
 }
 
 /**
