@@ -4,23 +4,28 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+
 load()->model('user');
 load()->func('file');
 
 $dos = array('base', 'post');
 $do = in_array($do, $dos) ? $do : 'base';
-uni_user_permission_check('system_user_profile');
+uni_user_permission_check('system_my');
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
-if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
+if($do == 'post') {
 	$post = $_GPC;
 	$type = trim($post['type']);
 
 	$uid = is_array($post['uid']) ? 0 : intval($post['uid']);
-	if(empty($uid) || empty($type)) message(error(40035), '', 'ajax');
+	if (empty($uid) || empty($type)) {
+		message(error(40035), '', 'ajax');
+	}
 	$users_profile_exist = pdo_get('users_profile', array('uid' => $uid));
 
-	if($users_profile_exist[$type] == $post[$type]) message(error(0), '', 'ajax');
+	if ($users_profile_exist[$type] == $post[$type]) {
+		message(error(0), '', 'ajax');
+	}
 	switch ($type) {
 		case 'avatar':
 			if($users_profile_exist) {
