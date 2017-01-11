@@ -113,7 +113,7 @@ function uni_modules($enabledOnly = true) {
 	$cachekey = "unimodules:{$_W['uniacid']}:{$enabledOnly}";
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
-		return $cache;
+		//return $cache;
 	}
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
 	load()->model('user');
@@ -144,10 +144,10 @@ function uni_modules($enabledOnly = true) {
 				$packageids[] = $extend_packageid;
 			}
 		}
-		if (in_array('-1', $packageids)) {
+		if (!empty($packageids) && in_array('-1', $packageids)) {
 			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " ORDER BY issystem DESC, mid ASC", array(), 'name');
 		} else {
-			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE id IN ('".implode("','", $packageids)."') OR uniacid = '{$_W['uniacid']}'");
+			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
 			$ms = array();
 			$mssql = '';
 			if (!empty($wechatgroup)) {
@@ -162,6 +162,12 @@ function uni_modules($enabledOnly = true) {
 				$mssql = " OR `name` IN ('".implode("','", $ms)."')";
 			}
 			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE issystem = 1{$mssql} ORDER BY issystem DESC, mid ASC", array(), 'name');
+		}
+	}
+	$focus_enable_modules = pdo_getall('modules', array('issystem' => 2));
+	if (!empty($focus_enable_modules)) {
+		foreach ($focus_enable_modules as $focus_enable_modules_row) {
+			$modules[$focus_enable_modules_row['name']] = $focus_enable_modules_row;
 		}
 	}
 	if (!empty($modules)) {
@@ -183,23 +189,25 @@ function uni_modules($enabledOnly = true) {
 			$modules[$name]['enabled'] = $row['enabled'];
 		}
 	}
-	foreach ($modules as $name => &$row) {
-		if ($row['issystem'] == 1) {
-			$row['enabled'] = 1;
-		} elseif (!isset($row['enabled'])) {
-			$row['enabled'] = 1;
+	if (!empty($modules)) {
+		foreach ($modules as $name => &$row) {
+			if ($row['issystem'] == 1) {
+				$row['enabled'] = 1;
+			} elseif (!isset($row['enabled'])) {
+				$row['enabled'] = 1;
+			}
+			if (empty($row['config'])) {
+				$row['config'] = array();
+			}
+			if (!empty($row['subscribes'])) {
+				$row['subscribes'] = iunserializer($row['subscribes']);
+			}
+			if (!empty($row['handles'])) {
+				$row['handles'] = iunserializer($row['handles']);
+			}
+			$row['isdisplay'] = 1;
+			unset($modules[$name]['description']);
 		}
-		if (empty($row['config'])) {
-			$row['config'] = array();
-		}
-		if (!empty($row['subscribes'])) {
-			$row['subscribes'] = iunserializer($row['subscribes']);
-		}
-		if (!empty($row['handles'])) {
-			$row['handles'] = iunserializer($row['handles']);
-		}
-		$row['isdisplay'] = 1;
-		unset($modules[$name]['description']);
 	}
 	$modules['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
 	cache_write($cachekey, $modules);
@@ -478,10 +486,10 @@ function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	if ($_W['role'] == 'founder' || $_W['role'] == 'manager') {
+	if ($_W['role'] == 'founder') {
 		return false;
 	}
-	if ($_W['role'] == 'clerk') {
+	if (FRAME == 'system') {
 		return true;
 	}
 	$is_exist = pdo_get('users_permission', array('uid' => $uid, 'uniacid' => $uniacid), array('id'));
@@ -501,6 +509,8 @@ function uni_user_permission($type = 'system') {
 	$user_permission = pdo_getcolumn('users_permission', array('uid' => $_W['uid'], 'uniacid' => $_W['uniacid'], 'type' => $type), 'permission');
 	if(!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
+	} else {
+		$user_permission = array('account_*');
 	}
 	$permission_append = frames_menu_append();
 	if (!empty($permission_append[$_W['role']])) {

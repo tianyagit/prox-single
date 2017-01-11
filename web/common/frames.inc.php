@@ -255,12 +255,6 @@ $we7_system_menu['system'] = array(
 					'icon' => 'wi wi-attachment',
 					'permission_name' => 'system_setting_attachment',
 				),
-				'system_setting_common' => array(
-					'title' => '其他设置',
-					'url' => url('system/common'),
-					'icon' => 'wi wi-parameter',
-					'permission_name' => 'system_setting_common',
-				),
 				'system_setting_systeminfo' => array(
 					'title' => '系统信息',
 					'url' => url('system/systeminfo'),
