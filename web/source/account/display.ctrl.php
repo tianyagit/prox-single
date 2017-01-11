@@ -43,7 +43,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account_users'));
 		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	}
-	message(error(0), '', 'ajax');
+	message(error(0, '更新成功！'), '', 'ajax');
 }
 
 if ($do == 'display') {

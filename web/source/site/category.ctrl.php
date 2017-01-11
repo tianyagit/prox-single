@@ -27,15 +27,15 @@ if ($do == 'display') {
 	//获取当前默认微站的模板
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
 	$site_styleid = pdo_fetchcolumn('SELECT styleid FROM ' . tablename('site_multi') . ' WHERE id = :id', array(':id' => $setting['default_site']));
-	if($site_styleid) {
+	if ($site_styleid) {
 		$site_template = pdo_fetch("SELECT a.*,b.name,b.sections FROM ".tablename('site_styles').' AS a LEFT JOIN ' . tablename('site_templates') . ' AS b ON a.templateid = b.id WHERE a.uniacid = :uniacid AND a.id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $site_styleid));
 	}
 
 	//微站风格模板
 	$styles = pdo_fetchall("SELECT a.*, b.name AS tname, b.title FROM ".tablename('site_styles').' AS a LEFT JOIN ' . tablename('site_templates') . ' AS b ON a.templateid = b.id WHERE a.uniacid = :uniacid', array(':uniacid' => $_W['uniacid']), 'id');
-	if(!empty($id)) {
+	if (!empty($id)) {
 		$category = pdo_fetch("SELECT * FROM ".tablename('site_category')." WHERE id = '$id' AND uniacid = {$_W['uniacid']}");
-		if(empty($category)) {
+		if (empty($category)) {
 			message('分类不存在或已删除', '', 'error');
 		}
 		if (!empty($category['css'])) {
@@ -57,7 +57,7 @@ if ($do == 'display') {
 	}
 	$category['style'] = $styles[$category['styleid']];
 	$category['style']['tname'] = empty($category['style']['tname'])? 'default' : $category['style']['tname'];
-	if(!empty($category['nid'])) {
+	if (!empty($category['nid'])) {
 		$category['nav'] = pdo_get('site_nav', array('id' => $category['nid']));
 	} else {
 		$category['nav'] = array();
@@ -82,7 +82,7 @@ if ($do == 'display') {
 			'multiid' => intval($_GPC['multiid'])
 		);
 		
-		if($data['icontype'] == 1) {
+		if ($data['icontype'] == 1) {
 			$data['icon'] = '';
 			$data['css'] = serialize(array(
 				'icon' => array(
@@ -98,7 +98,7 @@ if ($do == 'display') {
 		}
 		
 		$isnav = intval($_GPC['isnav']);
-		if($isnav) {
+		if ($isnav) {
 			$nav = array(
 				'uniacid' => $_W['uniacid'],
 				'categoryid' => $id,
@@ -127,12 +127,12 @@ if ($do == 'display') {
 				$nav['css'] = '';
 				$nav['icon'] = $_GPC['iconfile'];
 			}
-			if($category['nid']) {
+			if ($category['nid']) {
 				$nav_exist = pdo_fetch('SELECT id FROM ' . tablename('site_nav') . ' WHERE id = :id AND uniacid = :uniacid', array(':id' => $category['nid'], ':uniacid' => $_W['uniacid']));
 			} else {
 				$nav_exist = '';
 			}
-			if(!empty($nav_exist)) {
+			if (!empty($nav_exist)) {
 				pdo_update('site_nav', $nav, array('id' => $category['nid'], 'uniacid' => $_W['uniacid']));
 			} else {
 				pdo_insert('site_nav', $nav);
@@ -140,7 +140,7 @@ if ($do == 'display') {
 				$data['nid'] = $nid;
 			}
 		} else {
-			if($category['nid']) {
+			if ($category['nid']) {
 				$data['nid'] = 0;
 				pdo_delete('site_nav', array('id' => $category['nid'], 'uniacid' => $_W['uniacid']));
 			}
@@ -158,7 +158,7 @@ if ($do == 'display') {
 	}
 	template('site/category-post');
 } elseif ($do == 'delete') {
-	if(checksubmit('submit')) {
+	if (checksubmit('submit')) {
 		foreach ($_GPC['rid'] as $key => $id) {
 			$id = intval($id);
 			$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
@@ -175,7 +175,7 @@ if ($do == 'display') {
 			pdo_delete('site_category', array('id' => $id));
 		}
 		message('分类批量删除成功！', referer(), 'success');
-	}else {
+	} else {
 		$id = intval($_GPC['id']);
 		$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
 		if (empty($category)) {
@@ -198,11 +198,11 @@ if ($do == 'display') {
 		$status = $category_exist['enabled'] == 1 ? 0 : 1;
 		$result = pdo_update('site_category', array('enabled' => $status), array('id' => $id));
 		if ($result) {
-			message(error(0), '', 'ajax');
+			message(error(0, '更改成功！'), '', 'ajax');
 		} else {
-			message(error(1), '', 'ajax');
+			message(error(1, '更改失败！'), '', 'ajax');
 		}
 	} else {
-		message(error(-1), '', 'ajax');
+		message(error(-1, '分类不存在！'), '', 'ajax');
 	}
 }

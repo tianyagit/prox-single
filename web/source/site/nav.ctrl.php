@@ -14,7 +14,7 @@ uni_user_permission_check('platform_nav_' . $do, true, 'nav');
 $modulename = $_GPC['m'];
 
 //微官网首页快捷菜单：homemenu_display、homemenu_post、homemenu_del、homemenu_switch(切换开关状态)
-if($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	$pars = array(
 		':uniacid' => $_W['uniacid'],
@@ -23,8 +23,8 @@ if($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
 	$sql = 'SELECT * FROM ' . tablename('site_nav') . ' WHERE `uniacid`=:uniacid AND `position`= 1 AND `multiid`=:multiid ORDER BY `displayorder` DESC, id ASC';
 	$navs = pdo_fetchall($sql, $pars);
 	$navigations = array();
-	if(!empty($navs)) {
-		foreach($navs as $nav) {
+	if (!empty($navs)) {
+		foreach ($navs as $nav) {
 			/*处理icon图片链接*/
 			if (!empty($nav['icon'])) {
 				$nav['icon'] = tomedia($nav['icon']);
@@ -32,7 +32,7 @@ if($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
 			if (is_serialized($nav['css'])) {
 				$nav['css'] = iunserializer($nav['css']);
 			}
-			if(empty($nav['css']['icon']['icon'])) {
+			if (empty($nav['css']['icon']['icon'])) {
 				$nav['css']['icon']['icon'] = 'fa fa-external-link';
 			}
 			$navigations[] = array(
@@ -51,19 +51,19 @@ if($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
 			);
 		}
 	}
-	message($navigations, 'ajax', 'success');
+	message(error(0, $navigations), '', 'ajax');
 }
-if($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	$post = $_GPC['menu_info'];
-	if(empty($post['name'])) {
+	if (empty($post['name'])) {
 		//抱歉，请输入导航菜单的名称！
-		message('-1', 'ajax', 'error');
+		message(error(-1, '抱歉，请输入导航菜单的名称！'), '', 'ajax');
 	}
 	$url = ((strexists($post['url'], 'http://') || strexists($post['url'], 'https://')) && !strexists($post['url'], '#wechat_redirect')) ? $post['url'] . '#wechat_redirect' : $post['url'];
 	if (intval($post['section']) > 10) {
 		$post['section'] = 10;
-	}else {
+	} else {
 		$post['section'] = intval($post['section']);
 	}
 	$data = array(
@@ -97,50 +97,48 @@ if($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 		$data['css'] = '';
 		$data['icon'] = $post['icon'];
 	}
-	if(empty($post['id'])) {
+	if (empty($post['id'])) {
 		pdo_insert('site_nav', $data);
 	} else {
 		pdo_update('site_nav', $data, array('id' => $post['id']));
 	}
-	message('0', 'ajax', 'success');
+	message(error(0, '更新成功！'), '', 'ajax');
 }
 
-if($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
 	$id = intval($_GPC['id']);
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
-	if(empty($nav_exist)){
+	if (empty($nav_exist)){
 		//本公众号不存在该导航
-		message('-1', 'ajax', 'error');
-	}else {
+		message(error(-1, '本公众号不存在该导航！'), '', 'ajax');
+	} else {
 		$nav_del = pdo_delete('site_nav', array('id' => $id));
-		if(!empty($nav_del)){
-			message('0', 'ajax', 'success');
-		}else {
+		if (!empty($nav_del)){
+			message(error(0, '删除成功！'), '', 'ajax');
+		} else {
 			//删除失败
-			message('1', 'ajax', 'error');
+			message(error(1, '删除失败！'), '', 'ajax');
 		}
 	}
 	exit;
 }
 
-if($do == 'homemenu_switch' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'homemenu_switch' && $_W['isajax'] && $_W['ispost']) {
 	$id = intval($_GPC['id']);
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
-	if(empty($nav_exist)){
+	if (empty($nav_exist)){
 		//本公众号不存在该导航
 		message('-1', 'ajax', 'error');
-	}else {
+	} else {
 		$status = $nav_exist['status'] == 1 ? 0 : 1;
 		$nav_update = pdo_update('site_nav', array('status' => $status), array('id' => $id));
-		if(!empty($nav_update)){
-			message('0', 'ajax', 'success');
-		}else {
+		if (!empty($nav_update)){
+			message(error(0, '更新成功！'), '', 'ajax');
+		} else {
 			//更新失败
-			message('1', 'ajax', 'error');
+			message(error(1, '更新失败！'), '', 'ajax');
 		}
 	}
-	exit;
-	message('switch', 'ajax', 'success');
 }
 
 //首页导航
@@ -148,22 +146,22 @@ if ($do == 'home' || $do == 'profile') {
 	$modules = uni_modules();
 	$bindings = array();
 	
-	if(!empty($modulename)) {
+	if (!empty($modulename)) {
 		$modulenames = array($modulename);
 	} else {
 		$modulenames = array_keys($modules);
 	}
 	
-	foreach($modulenames as $modulename) {
+	foreach ($modulenames as $modulename) {
 		$entries = module_entries($modulename, array($do));
-		if(!empty($entries[$do])) {
+		if (!empty($entries[$do])) {
 			$bindings[$modulename] = $entries[$do];
 		}
 	}
 	$entries = array();
-	if(!empty($bindings)) {
-		foreach($bindings as $modulename => $group) {
-			foreach($group as $bind) {
+	if (!empty($bindings)) {
+		foreach ($bindings as $modulename => $group) {
+			foreach ($group as $bind) {
 				$entries[] = array('module' => $modulename, 'from' => $bind['from'], 'title' => $bind['title'], 'url' => $bind['url'], 'icon' => $bind['icon']);
 			}
 		}

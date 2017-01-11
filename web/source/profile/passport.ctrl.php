@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('oauth', 'save_oauth', 'fans_sync', 'uc_setting');
 $do = in_array($do, $dos) ? $do : 'oauth';
-uni_user_permission_check('mc_passport_oauth');
+uni_user_permission_check('profile_setting');
 $_W['page']['title'] = '公众平台oAuth选项 - 会员中心';
 
 if ($do == 'uc_setting') {

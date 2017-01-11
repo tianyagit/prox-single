@@ -9,33 +9,38 @@ load()->func('file');
 
 $dos = array('base', 'post');
 $do = in_array($do, $dos) ? $do : 'base';
-uni_user_permission_check('system_user_profile');
+uni_user_permission_check('system_my');
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
-if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
-	$post = $_GPC;
-	$type = trim($post['type']);
+if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
+	$type = trim($_GPC['type']);
 
-	$uid = is_array($post['uid']) ? 0 : intval($post['uid']);
-	if(empty($uid) || empty($type)) message(error(40035, '参数错误，请刷新后重试！'), '', 'ajax');
+	if ($_W['isfounder']) {
+		$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
+	} else {
+		$uid = $_W['uid'];
+	}
+	if (empty($uid) || empty($type)) {
+		message(error(40035, '参数错误，请刷新后重试！'), '', 'ajax');
+	}
 	$users_profile_exist = pdo_get('users_profile', array('uid' => $uid));
 
 	if ($type == 'birth') {
-		if($users_profile_exist['year'] == $post['year'] && $users_profile_exist['month'] == $post['month'] && $users_profile_exist['day'] == $post['day']) message(error(0, '未作修改！'), '', 'ajax');
+		if ($users_profile_exist['year'] == $_GPC['year'] && $users_profile_exist['month'] == $_GPC['month'] && $users_profile_exist['day'] == $_GPC['day']) message(error(0, '未作修改！'), '', 'ajax');
 	} elseif ($type == 'reside') {
-		if($users_profile_exist['province'] == $post['province'] && $users_profile_exist['city'] == $post['city'] && $users_profile_exist['district'] == $post['district']) message(error(0, '未作修改！'), '', 'ajax');
+		if ($users_profile_exist['province'] == $_GPC['province'] && $users_profile_exist['city'] == $_GPC['city'] && $users_profile_exist['district'] == $_GPC['district']) message(error(0, '未作修改！'), '', 'ajax');
 	} else {
-		if($users_profile_exist[$type] == $post[$type]) message(error(0, '未作修改！'), '', 'ajax');
+		if ($users_profile_exist[$type] == $_GPC[$type]) message(error(0, '未作修改！'), '', 'ajax');
 	}
 	switch ($type) {
 		case 'avatar':
-			if($users_profile_exist) {
-				$result = pdo_update('users_profile', array('avatar' => $post['avatar']), array('uid' => $uid));
-			}else {
+			if ($users_profile_exist) {
+				$result = pdo_update('users_profile', array('avatar' => $_GPC['avatar']), array('uid' => $uid));
+			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
-						'avatar' => $post['avatar']
+						'avatar' => $_GPC['avatar']
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
@@ -45,25 +50,25 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			if (in_array($uid, $founders)) {
 				message(error(1, '用户名不可与网站创始人同名！'), '', 'ajax');
 			}
-			if($users_profile_exist) {
-				$result = pdo_update('users', array('username' => trim($post['username'])), array('uid' => $uid));
-			}else {
+			if ($users_profile_exist) {
+				$result = pdo_update('users', array('username' => trim($_GPC['username'])), array('uid' => $uid));
+			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
-						'username' => trim($post['username'])
+						'username' => trim($_GPC['username'])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
 		case 'password':
-			if($post['newpwd'] !== $post['renewpwd']) message(error(2, '两次密码不一致！'), '', 'ajax');
-			$pwd = user_hash($post['oldpwd'], $user['salt']);
-			if($pwd != $user['password']) message(error(3, '原密码不正确！'), '', 'ajax');
-			$newpwd = user_hash($post['newpwd'], $user['salt']);
-			if($users_profile_exist) {
+			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) message(error(2, '两次密码不一致！'), '', 'ajax');
+			$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
+			if ($pwd != $user['password']) message(error(3, '原密码不正确！'), '', 'ajax');
+			$newpwd = user_hash($_GPC['newpwd'], $user['salt']);
+			if ($users_profile_exist) {
 				$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
-			}else {
+			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
@@ -73,14 +78,14 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			break;
 		case 'endtime' :
-			if($post['endtype'] == 1) {
+			if ($_GPC['endtype'] == 1) {
 				$endtime = 0;
-			}else {
-				$endtime = strtotime($post['endtime']);
+			} else {
+				$endtime = strtotime($_GPC['endtime']);
 			}
-			if($users_profile_exist) {
+			if ($users_profile_exist) {
 				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $uid));
-			}else {
+			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
@@ -90,62 +95,62 @@ if($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			break;
 		case 'realname':
-			if($users_profile_exist) {
-				$result = pdo_update('users_profile', array('realname' => trim($post['realname'])), array('uid' => $uid));
-			}else {
+			if ($users_profile_exist) {
+				$result = pdo_update('users_profile', array('realname' => trim($_GPC['realname'])), array('uid' => $uid));
+			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
-						'realname' => trim($post['realname'])
+						'realname' => trim($_GPC['realname'])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
 		case 'birth':
-			if($users_profile_exist) {
-				$result = pdo_update('users_profile', array('birthyear' => intval($post['year']), 'birthmonth' => intval($post['month']), 'birthday' => intval($post['day'])), array('uid' => $uid));
-			}else {
+			if ($users_profile_exist) {
+				$result = pdo_update('users_profile', array('birthyear' => intval($_GPC['year']), 'birthmonth' => intval($_GPC['month']), 'birthday' => intval($_GPC['day'])), array('uid' => $uid));
+			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
-						'birthyear' => intval($post['year']),
-						'birthmonth' => intval($post['month']),
-						'birthday' => intval($post['day'])
+						'birthyear' => intval($_GPC['year']),
+						'birthmonth' => intval($_GPC['month']),
+						'birthday' => intval($_GPC['day'])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
 		case 'address':
-			if($users_profile_exist) {
-				$result = pdo_update('users_profile', array('address' => trim($post['address'])), array('uid' => $uid));
-			}else {
+			if ($users_profile_exist) {
+				$result = pdo_update('users_profile', array('address' => trim($_GPC['address'])), array('uid' => $uid));
+			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
-						'address' => trim($post['address'])
+						'address' => trim($_GPC['address'])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
 		case 'reside':
-			if($users_profile_exist) {
-				$result = pdo_update('users_profile', array('resideprovince' => $post['province'], 'residecity' => $post['city'], 'residedist' => $post['district']), array('uid' => $uid));
-			}else {
+			if ($users_profile_exist) {
+				$result = pdo_update('users_profile', array('resideprovince' => $_GPC['province'], 'residecity' => $_GPC['city'], 'residedist' => $_GPC['district']), array('uid' => $uid));
+			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
-						'resideprovince' => $post['province'],
-						'residecity' => $post['city'],
-						'residedist' => $post['district']
+						'resideprovince' => $_GPC['province'],
+						'residecity' => $_GPC['city'],
+						'residedist' => $_GPC['district']
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
 	}
-	if($result) {
+	if ($result) {
 		pdo_update('users_profile', array('edittime' => TIMESTAMP), array('uid' => $uid));
 		message(error(0, '修改成功！'), '', 'ajax');
-	}else {
+	} else {
 		message(error(1, '修改失败，请稍候重试！'), '', 'ajax');
 	}
 }
@@ -159,9 +164,9 @@ if ($do == 'base') {
 	}
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
-	if(!empty($profile)) {
+	if (!empty($profile)) {
 		$avatar = file_fetch($profile['avatar']);
-		if(is_error($avatar)) {
+		if (is_error($avatar)) {
 			$profile['avatar'] = './resource/images/nopic-107.png';
 		}
 		$profile['reside'] = array(
