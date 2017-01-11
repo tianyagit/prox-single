@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('system');
 
-$dos = array('delete', 'edit', 'set_permission', 'add');
+$dos = array('delete', 'edit', 'set_permission', 'set_manager');
 $do = in_array($do, $dos) ? $do : 'edit';
 uni_user_permission_check('system_account');
 
@@ -41,10 +41,10 @@ if($do == 'edit') {
 	foreach ($permissions as $v) {
 		$uids[] = $v['uid'];
 	}
-}
-if($do == 'delete') {
+	template('account/manage-users');
+} elseif ($do == 'delete') {
 	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
-	if(empty($uid)) {
+	if (empty($uid)) {
 		message('请选择要删除的用户！', referer(), 'error');
 	}
 	$data = array(
@@ -52,18 +52,17 @@ if($do == 'delete') {
 		'uid' => $uid,
 	);
 	$exists = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
-	if(!empty($exists)) {
+	if (!empty($exists)) {
 		$result = pdo_delete('uni_account_users', $data);
 		if($result) {
 			message('删除成功！', referer(), 'success');
-		}else {
+		} else {
 			message('删除失败，请重试！', referer(), 'error');
 		}
-	}else {
+	} else {
 		message('该公众号下不存在该用户！', referer(), 'error');
 	}
-}
-if($do == 'add' && $_W['isajax'] && $_W['ispost']) {
+} elseif ($do == 'set_manager') {
 	$username = trim($_GPC['username']);
 	$user = user_single(array('username' => $username));
 	if(in_array($user['uid'], $founders)) {
@@ -80,42 +79,37 @@ if($do == 'add' && $_W['isajax'] && $_W['ispost']) {
 		$exists = pdo_get('uni_account_users', array('uid' => $user['uid'], 'uniacid' => $uniacid));
 		$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
 		if(empty($exists)) {
-			if($addtype == 3) {
+			if($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
 				if(empty($owner)) {
 					$data['role'] = 'owner';
-				}else {
+				} else  {
 					$result = pdo_update('uni_account_users', $data, array('id' => $owner['id']));
 					if($result) {
 						message(error(0, '修改成功！'), '', 'ajax');
-					}else {
+					} else  {
 						message(error(1, '修改失败！'), '', 'ajax');
 					}
 					exit;
 				}
-			}elseif($addtype == 2) {
+			} else if($addtype == ACCOUNT_MANAGE_TYPE_MANAGER) {
 				$data['role'] = 'manager';
-			}else {
+			} else  {
 				$data['role'] = 'operator';
 			}
 			$result = pdo_insert('uni_account_users', $data);
 			if($result) {
-				cache_build_account_modules($uniacid);
-				cache_build_account($uniacid);
-				cache_build_frame_menu();
 				message(error(0, '添加成功！'), '', 'ajax');
-			}else {
+			} else  {
 				message(error(1, '添加失败！'), '', 'ajax');
 			}
 		} else {
 			//{$username} 已经是该公众号的操作员或管理员，请勿重复添加
 			message(error(2, $username.'已经是该公众号的操作员或管理员，请勿重复添加！'), '', 'ajax');
 		}
-		exit('success');
-	}else {
+	} else  {
 		message(error(-1, '参数错误，请刷新重试！'), '', 'ajax');
 	}
-}
-if($do == 'set_permission') {
+} elseif ($do == 'set_permission') {
 	$uid = intval($_GPC['uid']);
 	$user = user_single(array('uid' => $uid));
 	if (empty($user)) {
@@ -200,6 +194,4 @@ if($do == 'set_permission') {
 	$_W['uniacid'] = $uniacid;
 	$module = uni_modules();
 	template('account/set-permission');
-	exit;
 }
-template('account/manage-users');
