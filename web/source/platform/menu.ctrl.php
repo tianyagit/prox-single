@@ -437,14 +437,14 @@ if($do == 'post') {
 					}
 					pdo_insert('uni_account_menus', $insert);
 				}
-				message(error(0, ''), url('platform/menu/display'), 'ajax');
+				message(error(0, '创建菜单成功'), url('platform/menu/display'), 'ajax');
 			} elseif($post['type'] == 3) {
 				if($post['status'] == 0 && $post['id'] > 0) {
 					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 3, 'id' => $post['id']));
 				} else {
 					pdo_insert('uni_account_menus', $insert);
 				}
-				message(error(0, ''), url('platform/menu/display', array('type' => '3')), 'ajax');
+				message(error(0, '创建菜单成功'), url('platform/menu/display', array('type' => '3')), 'ajax');
 			}
 		}
 	}
