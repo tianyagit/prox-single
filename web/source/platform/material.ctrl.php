@@ -130,7 +130,7 @@ if ($do == 'del_material') {
 
 		pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'media_id' => $media_id));
 	}
-	message(error(0, $result), '', 'ajax');
+	message($result, '', 'ajax');
 }
 
 if ($do == 'sync') {
