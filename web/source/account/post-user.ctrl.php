@@ -99,6 +99,9 @@ if($do == 'add' && $_W['isajax'] && $_W['ispost']) {
 			}
 			$result = pdo_insert('uni_account_users', $data);
 			if($result) {
+				cache_build_account_modules($uniacid);
+				cache_build_account($uniacid);
+				cache_build_frame_menu();
 				message(error(0), '', 'ajax');
 			}else {
 				message(error(1), '', 'ajax');
