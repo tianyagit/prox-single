@@ -21,11 +21,11 @@ $state = uni_permission($_W['uid'], $uniacid);
 if($state != 'founder' && $state != 'manager') {
 	message('没有该公众号操作权限！', referer(), 'error');
 }
+$founders = explode(',', $_W['config']['setting']['founder']);
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'edit') {
-	$founders = explode(',', $_W['config']['setting']['founder']);
 	$permissions = pdo_fetchall("SELECT id, uid, role FROM ".tablename('uni_account_users')." WHERE uniacid = '$uniacid' and role != :role  ORDER BY uid ASC, role DESC", array(':role' => 'clerk'), 'uid');
 	$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), array('uid', 'id'));
 	if (!empty($permissions)) {
@@ -65,10 +65,10 @@ if($do == 'delete') {
 }
 if($do == 'add' && $_W['isajax'] && $_W['ispost']) {
 	$username = trim($_GPC['username']);
-	if($username == 'admin') {
-		message(error(1), '', 'ajax');
-	}
 	$user = user_single(array('username' => $username));
+	if(in_array($user['uid'], $founders)) {
+		message(error(1, '不可操作网站创始人！'), '', 'ajax');
+	}
 	if(!empty($user)) {
 		//addtype为1：操作员；2：:管理员；3、主管理员
 		$addtype = intval($_GPC['addtype']);
@@ -86,9 +86,9 @@ if($do == 'add' && $_W['isajax'] && $_W['ispost']) {
 				}else {
 					$result = pdo_update('uni_account_users', $data, array('id' => $owner['id']));
 					if($result) {
-						message(error(0), '', 'ajax');
+						message(error(0, '修改成功！'), '', 'ajax');
 					}else {
-						message(error(1), '', 'ajax');
+						message(error(1, '修改失败！'), '', 'ajax');
 					}
 					exit;
 				}
@@ -99,17 +99,20 @@ if($do == 'add' && $_W['isajax'] && $_W['ispost']) {
 			}
 			$result = pdo_insert('uni_account_users', $data);
 			if($result) {
-				message(error(0), '', 'ajax');
+				cache_build_account_modules($uniacid);
+				cache_build_account($uniacid);
+				cache_build_frame_menu();
+				message(error(0, '添加成功！'), '', 'ajax');
 			}else {
-				message(error(1), '', 'ajax');
+				message(error(1, '添加失败！'), '', 'ajax');
 			}
 		} else {
 			//{$username} 已经是该公众号的操作员或管理员，请勿重复添加
-			message(error(2), '', 'ajax');
+			message(error(2, $username.'已经是该公众号的操作员或管理员，请勿重复添加！'), '', 'ajax');
 		}
 		exit('success');
 	}else {
-		message(error(-1), '', 'ajax');
+		message(error(-1, '参数错误，请刷新重试！'), '', 'ajax');
 	}
 }
 if($do == 'set_permission') {
