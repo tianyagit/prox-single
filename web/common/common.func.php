@@ -284,6 +284,7 @@ function buildframes($framename = ''){
 			if(empty($frames['system']['section'][$system_section_key]['menu'])) unset($frames['system']['section'][$system_section_key]);
 		}
 	}
+	
 	//@@todo 店员界面菜单
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
 		

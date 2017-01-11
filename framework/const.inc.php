@@ -50,11 +50,15 @@ define('ACCOUNT_OPERATE_MANAGER', 2);
 define('ACCOUNT_OPERATE_CLERK', 3);
 //操作员
 define('ACCOUNT_MANAGE_TYPE_OPERATOR', 1);
+define('ACCOUNT_MANAGE_NAME_OPERATOR', 'operator');
 //管理员
 define('ACCOUNT_MANAGE_TYPE_MANAGER', 2);
+define('ACCOUNT_MANAGE_NAME_MANAGER', 'manager');
 //所有者
 define('ACCOUNT_MANAGE_TYPE_OWNER', 3);
-
+define('ACCOUNT_MANAGE_NAME_OWNER', 'owner');
+//创始人
+define('ACCOUNT_MANAGE_NAME_FOUNDER', 'founder');
 //系统卡券
 define('SYSTEM_COUPON', 1);
 //微信卡券

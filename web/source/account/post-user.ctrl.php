@@ -81,7 +81,7 @@ if($do == 'edit') {
 		if(empty($exists)) {
 			if($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
 				if(empty($owner)) {
-					$data['role'] = 'owner';
+					$data['role'] = ACCOUNT_MANAGE_NAME_OWNER;
 				} else  {
 					$result = pdo_update('uni_account_users', $data, array('id' => $owner['id']));
 					if($result) {
@@ -92,9 +92,9 @@ if($do == 'edit') {
 					exit;
 				}
 			} else if($addtype == ACCOUNT_MANAGE_TYPE_MANAGER) {
-				$data['role'] = 'manager';
+				$data['role'] = ACCOUNT_MANAGE_NAME_MANAGER;
 			} else  {
-				$data['role'] = 'operator';
+				$data['role'] = ACCOUNT_MANAGE_NAME_OPERATOR;
 			}
 			$result = pdo_insert('uni_account_users', $data);
 			if($result) {
@@ -120,78 +120,56 @@ if($do == 'edit') {
 		message('此用户没有操作该统一公众号的权限，请选指派“管理者”权限！');
 	}
 	//获取系统权限
-	$system_permission = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => 'system'));
-	if(!empty($system_permission['permission'])) {
-		$system_permission['permission'] = explode('|', $system_permission['permission']);
+	$user_menu_permission = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => 'system'));
+	if(!empty($user_menu_permission['permission'])) {
+		$user_menu_permission['permission'] = explode('|', $user_menu_permission['permission']);
 	} else {
-		$system_permission['permission'] = array();
+		$user_menu_permission['permission'] = array();
 	}
-	
 	//获取模块权限
 	$module_permission = pdo_getall('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type !=' => 'system'), array(), 'type');
 	$module_permission_keys = array_keys($module_permission);
-
+	
+	$menus = system_menu_permission_list();
+	$module = uni_modules();
+	
 	if (checksubmit('submit')) {
-		//系统权限
-		$system_temp = array();
-		if(!empty($_GPC['system'])) {
-			foreach($_GPC['system'] as $li) {
-				$li = trim($li);
-				if(!empty($li)) {
-					$system_temp[] = $li;
+		//获取全部permission_name，方便判断是否是系统菜单
+		$menu_permission = array();
+		if (!empty($menus)) {
+			foreach ($menus as $menu_name => $menu) {
+				foreach ($menu['section'] as $section_name => $section) {
+					foreach ($section['menu']  as $permission_name => $sub_menu) {
+						$menu_permission[] = $sub_menu['permission_name'];
+					}
 				}
 			}
 		}
-		if(!empty($system_temp)) {
-			if(empty($system_permission['id'])) {
+		$user_menu_permission_new = array();
+		if(!empty($_GPC['system'])) {
+			foreach ($_GPC['system'] as $permission_name) {
+				if (in_array($permission_name, $menu_permission)) {
+					$user_menu_permission_new[] = $permission_name;
+				}
+			}
+			if(empty($user_menu_permission['id'])) {
 				$insert = array(
 					'uniacid' => $uniacid,
 					'uid' => $uid,
 					'type' => 'system',
+					'permission' => implode('|', $user_menu_permission_new),
 				);
-				$insert['permission'] = implode('|', $_GPC['system']);
 				pdo_insert('users_permission', $insert);
 			} else {
 				$update = array(
-					'permission' => implode('|', $_GPC['system'])
+					'permission' => implode('|', $user_menu_permission_new),
 				);
 				pdo_update('users_permission', $update, array('uniacid' => $uniacid, 'uid' => $uid));
 			}
 		} else {
 			pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $uid));
 		}
-		pdo_query('DELETE FROM ' . tablename('users_permission') . ' WHERE uniacid = :uniacid AND uid = :uid AND type != :type', array(':uniacid' => $uniacid, ':uid' => $uid, ':type' => 'system'));
-		//模块权限
-		if(!empty($_GPC['module'])) {
-			//print_r($_GPC);die;
-			$arr = array();
-			foreach($_GPC['module'] as $li) {
-				$insert = array(
-					'uniacid' => $uniacid,
-					'uid' => $uid,
-					'type' => $li,
-				);
-				if(empty($_GPC['module_'. $li]) || $_GPC[$li . '_select'] == 1) {
-					$insert['permission'] = 'all';
-					pdo_insert('users_permission', $insert);
-					continue;
-				} else {
-					$data = array();
-					foreach($_GPC['module_'. $li] as $v) {
-						$data[] = $v;
-					}
-					if(!empty($data)) {
-						$insert['permission'] = implode('|', $data);
-						pdo_insert('users_permission', $insert);
-					}
-				}
-			}
-		}
 		message('操作菜单权限成功！', referer(), 'success');
 	}
-
-	$menus = system_menu_permission_list();
-	$_W['uniacid'] = $uniacid;
-	$module = uni_modules();
 	template('account/set-permission');
 }

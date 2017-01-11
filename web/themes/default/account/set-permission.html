@@ -31,7 +31,7 @@
 					{if $i%4 == 1 || $i == 1}<tr>{/if}
 					<td class="text-left dropdown">
 						<div class="checkbox">
-							<input id="check-child-{$item_id}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $system_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
+							<input id="check-child-{$item_id}" type="checkbox" value="{$item['permission_name']}" {if in_array($item['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
 							<label for="check-child-{$item_id}" class="we7-padding-left we7-margin-horizontal-none">{$item['title']}</label>
 						</div>
 						{if $item['sub_permission']}
@@ -39,7 +39,7 @@
 							{loop $item['sub_permission'] $sub_permission}
 							<li class="text-left">
 								<div class="checkbox">
-									<input id="check-child-{$sub_permission['permission_name']}" type="checkbox" value="{$item['permission_name']}" {if in_array($sub_permission['permission_name'], $system_permission['permission'])}checked{/if} name="system[]">
+									<input id="check-child-{$sub_permission['permission_name']}" type="checkbox" value="{$item['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
 									<label for="check-child-{$sub_permission['permission_name']}" class="we7-padding-left we7-margin-horizontal-none">{$sub_permission['title']}</label>
 								</div>
 							</li>
