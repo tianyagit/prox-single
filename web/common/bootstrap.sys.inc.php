@@ -37,7 +37,6 @@ if(!empty($_GPC['__uniacid'])) {
 
 	}
 }
-$_W['allroles'] = user_all_roles($_W['uid']);
 $_W['template'] = 'default';
 if(!empty($_W['setting']['basic']['template'])) {
 	$_W['template'] = $_W['setting']['basic']['template'];

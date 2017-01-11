@@ -301,21 +301,3 @@ function user_group_detail_info($groupid = 0) {
 	}
 	return $group_info;	
 }
-
-/**
- *获取某一用户在本站点的所有身份（owner、manager、operator、clerk）
- *@param number $uid 用户uid
- *@return array
-*/
-function user_all_roles($uid = 0) {
-	$uid = is_array($uid) ? 0 : intval($uid);
-	$roles = array();
-	$result = pdo_getall('uni_account_users', array('uid' => $uid), array('role'));
-	if ($result) {
-		foreach ($result as $key => $value) {
-			$roles[] = $value['role'];
-		}
-		$roles = array_unique($roles);
-	}
-	return $roles;
-}
