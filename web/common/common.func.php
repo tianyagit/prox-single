@@ -246,7 +246,7 @@ function buildframes($framename = ''){
 		}
 	}
 	//操作员系统管理界面菜单
-	if (!empty($_W['role']) && $_W['role'] == 'operator') {
+	if (!empty($_W['role']) && $_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR) {
 		foreach ($frames['system']['section'] as $system_section_key => $system_section_val) {
 			foreach ($system_section_val['menu'] as $menu_key => $menu_val) {
 				$key = substr($menu_key, 7);
@@ -255,6 +255,7 @@ function buildframes($framename = ''){
 			if(empty($frames['system']['section'][$system_section_key]['menu'])) unset($frames['system']['section'][$system_section_key]);
 		}
 	}
+	
 	//@@todo 店员界面菜单
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
 		

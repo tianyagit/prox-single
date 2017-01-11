@@ -81,7 +81,7 @@ if($do == 'edit') {
 		if(empty($exists)) {
 			if($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
 				if(empty($owner)) {
-					$data['role'] = 'owner';
+					$data['role'] = ACCOUNT_MANAGE_NAME_OWNER;
 				} else  {
 					$result = pdo_update('uni_account_users', $data, array('id' => $owner['id']));
 					if($result) {
@@ -92,9 +92,9 @@ if($do == 'edit') {
 					exit;
 				}
 			} else if($addtype == ACCOUNT_MANAGE_TYPE_MANAGER) {
-				$data['role'] = 'manager';
+				$data['role'] = ACCOUNT_MANAGE_NAME_MANAGER;
 			} else  {
-				$data['role'] = 'operator';
+				$data['role'] = ACCOUNT_MANAGE_NAME_OPERATOR;
 			}
 			$result = pdo_insert('uni_account_users', $data);
 			if($result) {

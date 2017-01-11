@@ -71,7 +71,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	if (in_array($uid, $founders)) {
-		return 'founder';
+		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
 
 	$sql = 'SELECT `role` FROM ' . tablename('uni_account_users') . ' WHERE `uid`=:uid AND `uniacid`=:uniacid';
@@ -80,7 +80,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	$pars[':uniacid'] = $uniacid;
 	$role = pdo_fetchcolumn($sql, $pars);
 	if(in_array($role, array('manager', 'owner'))) {
-		$role = 'manager';
+		$role = ACCOUNT_MANAGE_NAME_MANAGER;
 	}
 	return $role;
 }
