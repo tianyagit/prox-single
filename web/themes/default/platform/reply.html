@@ -6,8 +6,9 @@
 	<ul class="we7-page-tab">
 		<li {if $m == 'keyword' || $m == ''}class="active" {/if}><a href="{url 'platform/reply' array('m' => 'keyword')}">关键字自动回复 </a></li>
 		<li {if $m == 'special'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'special')}">非文字自动回复</a></li>
-			<li {if $m == 'welcome'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'welcome')}">首次访问自动回复</a></li>
-			<li {if $m == 'default'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'default')}">默认回复</a></li>
+		<li {if $m == 'welcome'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'welcome')}">首次访问自动回复</a></li>
+		<li {if $m == 'default'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'default')}">默认回复</a></li>
+		<li {if $m == 'userapi'}class="active"{/if}><a href="{url 'platform/reply/display' array('m' => 'userapi')}">常用服务</a></li>
 	</ul>
 {else}
 	<div class="we7-page-title">
@@ -280,5 +281,42 @@
 			angular.bootstrap($('#default'), ['replyFormApp']);
 		});
 	</script>
+{elseif $m == 'userapi'}
+<div class="NoKeyword-list" id="js-userapi-display" ng-controller="serviceDisplay" ng-cloak>
+	<div class="table we7-tables">
+		<table class="table we7-table table-hover">
+			<col width="160px"/>
+			<col />
+			<col width="120px"/>
+			<col width="180px"/>
+			<tr>
+				<th class="text-left">服务名称</th>
+				<th class="text-left">功能说明</th>
+				<th>状态</th>
+			</tr>
+			<tr ng-repeat="(id, api) in userapi track by id">
+				<td class="text-left">
+					{{ api.name }}
+				</td>
+				<td class="text-left" ng-bind-html="api.description">
+				</td>
+				<td class="vertical-middle">
+					<label>
+						<div ng-class="api.switch == 'checked' ? 'switch switchOn' : 'switch'" ng-click="changeStatus(id)"></div>
+					</label>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script>
+	$(function() {
+		angular.module('replyFormApp').value('config', {
+			'url' : '{php echo url('platform/reply/change_status')}',
+			'userapi' : {php echo json_encode($userapi_list)}
+		});
+		angular.bootstrap($('#js-userapi-display'), ['replyFormApp']);
+	});
+</script>
 {/if}
 {template 'common/footer'}

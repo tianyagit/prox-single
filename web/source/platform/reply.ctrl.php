@@ -19,6 +19,8 @@ if ($m == 'keyword') {
 	uni_user_permission_check('platform_reply_system');
 } elseif ($m == 'apply') {
 	uni_user_permission_check('platform_reply_apply');
+} elseif ($m == 'service') {
+	uni_user_permission_check('platform_service');
 } else {
 	$modules = uni_modules();
 	$_W['current_module'] = $modules[$m];
@@ -45,6 +47,7 @@ if ($m == 'special') {
 }
 //功能模块用
 $sysmods = system_modules();
+
 if (in_array($m, array('custom'))) {
 	$site = WeUtility::createModuleSite('reply');
 	$site_urls = $site->getTabUrls();
@@ -113,6 +116,20 @@ if ($do == 'display') {
 	if ($m == 'default') {
 		$setting = uni_setting($_W['uniacid'], array('default'));
 		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
+	}
+	if ($m == 'userapi') {
+		$module_info = module_fetch('userapi');
+		$userapi_config = $module_info['config'];
+		$userapi_list = reply_search("`uniacid` = 0 AND module = 'userapi' AND `status`=1");
+		if (!empty($userapi_list)) {
+			foreach ($userapi_list as $key => $userapi) {
+				$description = pdo_getcolumn('userapi_reply', array('rid' => $userapi['id']), 'description');
+				$userapi['description'] = $description ? $description : '';
+				$userapi['switch'] = $userapi_config[$userapi['id']] == 'checked' ? 'checked' : '';
+				$userapi_list[$userapi['id']] = $userapi;
+				unset($userapi_list[$key]);
+			}
+		}
 	}
 
 	$entries = module_entries($m);
@@ -362,14 +379,25 @@ if($do == 'delete') {
 
 //非文字自动回复切换开启关闭状态
 if ($do == 'change_status') {
-	$status = intval($_GPC['status']);
-	$type = $_GPC['type'];
-	$setting = uni_setting_load('default_message', $_W['uniacid']);
-	$setting = $setting['default_message'] ? $setting['default_message'] : array();
-	$setting[$type]['type'] = $status;
-	$result = uni_setting_save('default_message', $setting);
-	if ($result) {
-		message(error(0, '更新成功！'), '','ajax');
+	$m = $_GPC['m'];
+	if ($m == 'userapi') {
+		$rid = intval($_GPC['rid']);
+		$module_info = module_fetch('userapi');
+		$config = $module_info['config'];
+		$config[$rid] = $config[$rid] ? false : true;
+		$module_api = WeUtility::createModule('userapi');
+		$module_api->saveSettings($config);
+		message(error(0), '', 'ajax');
+	} else {
+		$status = intval($_GPC['status']);
+		$type = $_GPC['type'];
+		$setting = uni_setting_load('default_message', $_W['uniacid']);
+		$setting = $setting['default_message'] ? $setting['default_message'] : array();
+		$setting[$type]['type'] = $status;
+		$result = uni_setting_save('default_message', $setting);
+		if ($result) {
+			message(error(0, '更新成功！'), '','ajax');
+		}
 	}
 }
 
