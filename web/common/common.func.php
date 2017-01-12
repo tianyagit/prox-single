@@ -52,13 +52,11 @@ function message($msg, $redirect = '', $type = '') {
 		if($type != 'ajax' && !empty($_GPC['target'])) {
 			exit("
 <script type=\"text/javascript\">
-parent.require(['jquery', 'util'], function($, util){
 	var url = ".(!empty($redirect) ? 'parent.location.href' : "''").";
 	var modalobj = util.message('".$msg."', '', '".$type."');
 	if (url) {
 		modalobj.on('hide.bs.modal', function(){\$('.modal').each(function(){if(\$(this).attr('id') != 'modal-message') {\$(this).modal('hide');}});top.location.reload()});
 	}
-});
 </script>");
 		} else {
 			$vars = array();
@@ -78,26 +76,25 @@ parent.require(['jquery', 'util'], function($, util){
 	if($type == 'ajax' || $type == 'sql') {
 		$label = 'warning';
 	}
+	
 	$message = array();
 	if (is_array($msg)){
 		$message['title'] = 'MYSQL 错误';
-		$message['msg'] = 'php echo cutstr('.$msg['sql'].', 300, 1);';
+		$message['msg'] = 'php echo cutstr(' . $msg['sql'] . ', 300, 1);';
 	} else{
 		$message['title'] = $caption;
 		$message['msg'] = $msg;
 	}
 	$message['type'] = $label;
-	$message['msg']= rawurlencode($message['msg']);
-	isetcookie("message", json_encode($message), 600);
+	$redirect = $redirect ? $redirect : referer();
+	$message['redirect'] = $redirect;
+	$message['msg'] = urlencode($message['msg']);
+	isetcookie("message", stripslashes(json_encode($message, JSON_UNESCAPED_UNICODE)), 600);
 	
-	if ($redirect){
+	if ($label == 'success'){
 		header('Location: ' . $redirect);
-	} else {
-		header('Location: ' . referer());
 	}
-	exit();
-	include template('common/message', TEMPLATE_INCLUDEPATH);
-	exit();
+	
 }
 
 /**
