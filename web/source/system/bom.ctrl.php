@@ -10,6 +10,7 @@ $_W['page']['title'] = '检测文件BOM - 常用系统工具 - 系统管理';
 set_time_limit(0);
 
 load()->func('file');
+uni_user_permission_check('system_utility_bom');
 
 //检测BOM异常
 if (checksubmit('submit')) {

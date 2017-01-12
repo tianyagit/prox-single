@@ -281,7 +281,7 @@ $we7_system_menu['system'] = array(
 					'title' => '文章管理',
 					'url' => url('article/news'),
 					'icon' => 'wi wi-article',
-					'permission_name' => 'system_article',
+					'permission_name' => 'system_article_news',
 				),
 				'system_article_notice' => array(
 					'title' => '公告管理',
