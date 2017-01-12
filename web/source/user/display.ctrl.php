@@ -7,29 +7,27 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('display', 'check_display', 'check_pass', 'recycle_display', 'recycle_delete','recycle_restore', 'recycle');
 $do = in_array($do, $dos) ? $do: 'display';
-uni_user_permission_check('system_user_display');
 
 $_W['page']['title'] = '用户列表 - 用户管理';
-$state = uni_permission($_W['uid'], $uniacid);
-if ($state != 'founder' && $state != 'manager') {
-	message('没有操作权限！', referer(), 'error');
-}
 $founders = explode(',', $_W['config']['setting']['founder']);
 
 if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 20;
 	switch ($do) {
 		case 'check_display':
+			uni_user_permission_check('system_user_check');
 			$condition = ' WHERE u.status = 1 ';
 			break;
 		case 'recycle_display':
+			uni_user_permission_check('system_user_recycle');
 			$condition = ' WHERE u.status = 3 ';
 			break;
 		default:
+			uni_user_permission_check('system_user');
 			$condition = ' WHERE u.status = 2 ';
 			break;
 	}
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 20;
 	$params = array();
 	if (!empty($_GPC['username'])) {
 		$condition .= " AND u.username LIKE :username";
@@ -81,6 +79,16 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 }
 
 if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_pass'))) {
+	switch ($do) {
+		case 'check_pass':
+			uni_user_permission_check('system_user_check');
+			break;
+		case 'recycle':
+		case 'recycle_delete':
+		case 'recycle_restore':
+			uni_user_permission_check('system_user_recycle');
+			break;
+	}
 	$uid = intval($_GPC['uid']);
 	$uid_user = user_single($uid);
 	if (in_array($uid, $founders)) {

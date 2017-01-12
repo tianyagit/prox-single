@@ -7,13 +7,10 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('display','post');
 $do = in_array($do, $dos) ? $do : 'display';
-uni_user_permission_check('system_user_display');
-$state = uni_permission($_W['uid'], $uniacid);
-if ($state != 'founder' && $state != 'manager') {
-	message('没有操作权限！');
-}
+
 
 if ($do == 'display') {
+	uni_user_permission_check('system_user_fields');
 	$_W['page']['title'] = '字段管理 - 用户管理';
 	$condition = '' ;
 	$params = array();
@@ -40,6 +37,7 @@ if ($do == 'display') {
 }
 
 if ($do == 'post') {
+	uni_user_permission_check('system_user_fields_post');
 	$_W['page']['title'] = '编辑字段 - 用户管理';
 	$id = intval($_GPC['id']);
 
