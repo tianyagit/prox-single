@@ -418,17 +418,18 @@ if ($do == 'module_detail') {
 	$pageindex = max(1, $_GPC['page']);
 	$pagesize = 10;
 	$use_module_account = array();
-//	$uniaccount_list = pdo_getall('uni_account');
-//	if (!empty($uniaccount_list)) {
-//		foreach($uniaccount_list as $uniaccount) {
-//			$uniaccount_have_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid']), array(), 'module');
-//			$uniaccount_have_module = array_keys($uniaccount_have_module);
-//			if (in_array($module_info['name'], $uniaccount_have_module)) {
-//				$uniaccount_info = account_fetch($uniaccount['default_acid']);
-//				$use_module_account[] = $uniaccount_info;
-//			}
-//		}
-//	}
+/*	$uniaccount_list = pdo_getall('uni_account');
+	if (!empty($uniaccount_list)) {
+		foreach($uniaccount_list as $uniaccount) {
+			$uniaccount_have_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid']), array(), 'module');
+			$uniaccount_have_module = array_keys($uniaccount_have_module);
+			if (in_array($module_info['name'], $uniaccount_have_module)) {
+				$uniaccount_info = account_fetch($uniaccount['default_acid']);
+				$use_module_account[] = $uniaccount_info;
+			}
+		}
+	}
+*/
 	$total = count($use_module_account);
 	$use_module_account = array_slice($use_module_account, ($pageindex - 1) * $pagesize, $pagesize);
 	$pager = pagination($total, $pageindex, $pagesize);

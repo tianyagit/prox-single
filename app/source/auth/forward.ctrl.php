@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-$_W['setting']['authmode'] = empty($_W['setting']['authmode']) ? 1 : $_W['setting']['authmode'];
+$_W['setting']['authmode'] = 1;
 //通过点击图文进来的粉丝,需要将session的数据清空.否则,一直使用的上次session的uid
 unset($_SESSION['uid']);
 if($_GPC['__auth']) {
