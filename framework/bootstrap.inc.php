@@ -156,6 +156,8 @@ if(Agent::isMicroMessage() == Agent::MICRO_MESSAGE_YES) {
 	$_W['container'] = 'unknown';
 }
 
+$_W['count_uninstalled_module'] = $_GPC['count_uninstalled_module'];
+
 $controller = $_GPC['c'];
 $action = $_GPC['a'];
 $do = $_GPC['do'];

@@ -298,6 +298,8 @@ if ($do =='install') {
 		module_build_privileges();
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
+		cache_delete('all_uninstalled_module');
+		cache_delete('all_recycle_module');
 		if (empty($module_subscribe_success)) {
 			message('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module') . '">返回模块列表</a></div>', '', 'tips');
 		} else {
@@ -477,10 +479,10 @@ if ($do == 'uninstall') {
 		}
 
 		ext_module_clean($name, $_GPC['confirm'] == '1');
-
 		cache_build_account_modules();
-
 		cache_build_module_subscribe_type();
+		cache_delete('all_uninstalled_module');
+		cache_delete('all_recycle_module');
 
 		pdo_insert('modules_recycle', array('modulename' => $module['name']));
 
@@ -491,6 +493,8 @@ if ($do == 'uninstall') {
 if ($do == 'recycle') {
 	$operate = $_GPC['operate'];
 	$name = trim($_GPC['name']);
+	cache_delete('all_uninstalled_module');
+	cache_delete('all_recycle_module');
 	if ($operate == 'delete') {
 		pdo_insert('modules_recycle', array('modulename' => $name));
 		message('模块已放入回收站', url('system/module/not_installed', array('status' => 'recycle')), 'success');
@@ -503,8 +507,7 @@ if ($do == 'recycle') {
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	$localUninstallModules = module_get_all_unistalled('uninstalled');
-	$total_uninstalled = count($localUninstallModules);
+	$total_uninstalled = module_count_unistalled_module('uninstalled');
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 10;
 	$letter = $_GPC['letter'];
@@ -584,8 +587,7 @@ if ($do == 'not_installed') {
 
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
 	$recycle_modules = array_keys($recycle_modules);
-	$all_uninstalled = module_get_all_unistalled('uninstalled');
-	$total_uninstalled = count($all_uninstalled);
+	$total_uninstalled = module_count_unistalled_module();
 	$uninstallModules = module_get_all_unistalled($status);
 	if (!empty($uninstallModules)) {
 		foreach($uninstallModules as $name => &$module) {

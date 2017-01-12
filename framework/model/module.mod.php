@@ -308,12 +308,34 @@ function module_build_privileges() {
 }
 
 /**
+ * 获取所有未安装的模块的总数
+ */
+function module_count_unistalled_module() {
+	global $_W;
+	if (empty($_W['count_uninstalled_module'])) {
+		$uninstall_module_num = module_get_all_unistalled('uninstalled');
+		isetcookie('count_uninstalled_module', count($uninstall_module_num), 86400*24);
+		$_W['count_uninstalled_module'] = count($uninstall_module_num);
+	}
+	return $_W['count_uninstalled_module'];
+}
+
+/**
  * 获取所有未安装的模块
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
  */
 function module_get_all_unistalled($status)  {
 	load()->model('cloud');
+	load()->classs('cloudapi');
 	$status = $status == 'uninstalled' ?  'uninstalled' : 'recycle';
+	$uninstallModules = $status == 'uninstalled' ? cache_load('all_uninstalled_module') : cache_load('all_recycle_module');
+	if (!empty($uninstallModules)) {
+		$cloud_api = new CloudApi();
+		$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
+		if ($uninstallModules['cloud_m_count'] == $cloud_m_count) {
+			return $uninstallModules['modules'];
+		}
+	}
 	$all_module = pdo_getall('modules');
 	$installed_module = array();
 	if (!empty($all_module)) {
@@ -324,8 +346,6 @@ function module_get_all_unistalled($status)  {
 	$uninstallModules = array();
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
 	$recycle_modules = array_keys($recycle_modules);
-
-	//获取云上未安装模块
 	$cloud_module = cloud_m_query();
 	if (!empty($cloud_module) && !is_error($cloud_module)) {
 		foreach ($cloud_module as $module) {
@@ -344,7 +364,6 @@ function module_get_all_unistalled($status)  {
 		}
 	}
 
-	//获取本地未安装模块
 	$path = IA_ROOT . '/addons/';
 	if (is_dir($path)) {
 		if ($handle = opendir($path)) {
@@ -370,6 +389,15 @@ function module_get_all_unistalled($status)  {
 					);
 				}
 			}
+		}
+		$cache = array(
+			'cloud_m_count' => $cloud_m_count,
+			'modules' => $uninstallModules
+		);
+		if ($status == 'recycle') {
+			cache_write('all_recycle_module', $cache);
+		} else {
+			cache_write('all_uninstalled_module', $cache);
 		}
 		return $uninstallModules;
 	} else {
