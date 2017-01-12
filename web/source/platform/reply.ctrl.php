@@ -118,20 +118,19 @@ if ($do == 'display') {
 		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
 	}
 	if ($m == 'userapi') {
-		$module_info = module_fetch('userapi');
-		$userapi_config = $module_info['config'];
-		$userapi_list = reply_search("`uniacid` = 0 AND module = 'userapi' AND `status`=1");
-		if (!empty($userapi_list)) {
-			foreach ($userapi_list as $key => $userapi) {
+		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
+		$userapi_config = iunserializer($userapi_config);
+		$userapi = reply_search("`uniacid` = 0 AND module = 'userapi' AND `status`=1");
+		$userapi_list = array();
+		if (!empty($userapi)) {
+			foreach ($userapi as $key => $userapi) {
 				$description = pdo_getcolumn('userapi_reply', array('rid' => $userapi['id']), 'description');
 				$userapi['description'] = $description ? $description : '';
 				$userapi['switch'] = $userapi_config[$userapi['id']] == 'checked' ? 'checked' : '';
 				$userapi_list[$userapi['id']] = $userapi;
-				unset($userapi_list[$key]);
 			}
 		}
 	}
-
 	$entries = module_entries($m);
 	template('platform/reply');
 }
@@ -382,8 +381,8 @@ if ($do == 'change_status') {
 	$m = $_GPC['m'];
 	if ($m == 'userapi') {
 		$rid = intval($_GPC['rid']);
-		$module_info = module_fetch('userapi');
-		$config = $module_info['config'];
+		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
+		$config = iunserializer($userapi_config);
 		$config[$rid] = $config[$rid] ? false : true;
 		$module_api = WeUtility::createModule('userapi');
 		$module_api->saveSettings($config);
