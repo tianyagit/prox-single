@@ -59,7 +59,7 @@ if ($do == 'display') {
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 8;
 		$cids = $parentcates = $list =  array();
-		$condition = 'uniacid = :uniacid';
+		$condition = 'uniacid = :uniacid AND module != "cover"';
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		if (isset($_GPC['type']) && !empty($_GPC['type'])) {

@@ -125,7 +125,7 @@
 				{loop $list $li}
 				<tr>
 					<td>
-						<input type="checkbox" name="uid[]" id="uid-{$li['uid']}" value="{$li['uid']}" class="">
+						<input type="checkbox" we7-check-all="1" name="uid[]" id="uid-{$li['uid']}" value="{$li['uid']}" class="">
 						<label for="uid-{$li['uid']}">&nbsp;</label>
 					</td>
 					<td>{$li['uid']}</td>
@@ -175,7 +175,7 @@
 				</tr>-->
 			</table>
 			<div class="we7-margin-left">
-				<input type="checkbox" id="check-all" name="" onclick="var ck = this.checked;$(':checkbox').each(function(){this.checked = ck});">
+				<input type="checkbox" we7-check-all="1" id="check-all" name="uid[]" onclick="var ck = this.checked;$(':checkbox').each(function(){this.checked = ck});">
 				<label for="check-all"> &nbsp;</label>
 				<input type="submit" name="submit" class="btn btn-primary btn-submit" value="删除">
 			</div>

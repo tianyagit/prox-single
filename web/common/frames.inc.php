@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $we7_system_menu = array();
 $we7_system_menu['account'] = array(
 	'title' => '公众号',
-	'url' => url('platform/reply'),
+	'url' => url('home/welcome'),
 	'section' => array(
 		'platform_plus' => array(
 			'title' => '增强功能',
@@ -254,12 +254,6 @@ $we7_system_menu['system'] = array(
 					'url' => url('system/attachment'),
 					'icon' => 'wi wi-attachment',
 					'permission_name' => 'system_setting_attachment',
-				),
-				'system_setting_common' => array(
-					'title' => '其他设置',
-					'url' => url('system/common'),
-					'icon' => 'wi wi-parameter',
-					'permission_name' => 'system_setting_common',
 				),
 				'system_setting_systeminfo' => array(
 					'title' => '系统信息',

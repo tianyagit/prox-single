@@ -43,7 +43,7 @@
 			</tr>
 			<tr ng-repeat="article in articleList" ng-if="articleList">
 				<td>
-					<input type="checkbox" name="rid[]" id="rid-{{article.id}}" value="{{article.id}}">
+					<input type="checkbox" we7-check-all="1" name="rid[]" id="rid-{{article.id}}" value="{{article.id}}">
 					<label for="rid-{{article.id}}">&nbsp;</label>
 				</td>
 				<td ng-bind="article.displayorder"></td>
@@ -62,7 +62,7 @@
 			</tr>
 		</table>
 		<div class="pull-left we7-margin-top">
-			<input type="checkbox" name="select_all" id="select_all" value="1" ng-style="{'margin-left': '30px'}">
+			<input type="checkbox" we7-check-all="1" name="rid[]" id="select_all" value="1" ng-style="{'margin-left': '30px'}">
 			<input type="hidden" name="token" value="{$_W['token']}" />
 			<input type="submit" class="btn btn-danger" name="submit" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
 		</div>

@@ -11,9 +11,6 @@ setting_load('platform');
 
 uni_user_permission_check('system_platform');
 $founders = explode(',', $_W['config']['setting']['founder']);
-if (!in_array($_W['uid'], $founders)) {
-	message('没有操作权限！', url('account/manage'), 'error');
-}
 $_W['page']['title'] = '开放平台设置';
 
 if($_W['isajax'] && $_W['ispost']) {

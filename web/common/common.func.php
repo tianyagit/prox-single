@@ -169,7 +169,16 @@ function buildframes($framename = ''){
 			$i++;
 		}
 	}
-	//@@todo 进入模块界面后权限
+	if (array_diff(array_keys($modules), $sysmodules)) {
+		$frames['account']['section']['platform_module']['menu']['platform_module_more'] = array(
+			'title' => '更多应用',
+			'url' => url('profile/module'),
+			'is_display' => 1,
+		);
+	} else {
+		$frames['account']['section']['platform_module']['is_display'] = false;
+	}
+	//进入模块界面后权限
 	$modulename = trim($_GPC['m']);
 	$eid = intval($_GPC['eid']);
 	if ((!empty($modulename) || !empty($eid)) && !in_array($modulename, system_modules())) {
@@ -243,14 +252,10 @@ function buildframes($framename = ''){
 			}
 		}
 	}
-	//管理员系统管理界面菜单
-	$system_menu_default_permission = frames_menu_append();
 	//从数据库中获取用户权限，并附加上系统管理中的权限
-	if (!empty($_W['role']) && $_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR) {
+	//仅当系统管理时才使用预设权限
+	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER)) {
 		$user_permission = uni_user_permission('system');
-		if (!empty($system_menu_default_permission[ACCOUNT_MANAGE_NAME_OPERATOR])) {
-			$user_permission = array_merge($user_permission, $system_menu_default_permission[ACCOUNT_MANAGE_NAME_OPERATOR]);
-		}
 	}
 	//@@todo 店员界面菜单
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
@@ -258,6 +263,14 @@ function buildframes($framename = ''){
 	}
 	if (!empty($user_permission)) {
 		foreach ($frames as $nav_id => $section) {
+			//如果默认没有权限数据时允许全部，直接跳过
+			if (in_array($nav_id . '_*', $user_permission)) {
+				continue;
+			}
+			if (!in_array($nav_id, $user_permission)) {
+				unset($frames[$nav_id]);
+				continue;
+			}
 			foreach ($section['section'] as $section_id => $secion) {
 				$section_show = false;
 				foreach ($secion['menu'] as $menu_id => $menu) {
@@ -294,7 +307,7 @@ function buildframes($framename = ''){
 function system_modules() {
 	return array(
 		'basic', 'news', 'music', 'userapi', 'recharge', 'images', 'video', 'voice', 'wxcard',
-		'custom', 'chats', 'paycenter', 'keyword', 'special', 'welcome', 'default', 'apply', 'reply'
+		'custom', 'chats', 'paycenter', 'keyword', 'special', 'welcome', 'default', 'apply', 'reply', 'core'
 	);
 }
 
@@ -331,17 +344,21 @@ function frames_menu_append() {
 	$system_menu_default_permission = array(
 		'founder' => array(),
 		'manager' => array(
+			'system_account',
+			'system_platform',
+			'system_module',
+			'system_module_group',
+			'system_my',
+			'system_setting_updatecache',
 			'account',
-			'platform',
-			'module',
-			'module_group',
-			'my',
-			'user',
-			'user_group',
+			'system',
 		),
 		'operator' => array(
 			'system_account',
 			'system_my',
+			'system_setting_updatecache',
+			'account',
+			'system',
 		),
 		'clerk' => array(),
 	);

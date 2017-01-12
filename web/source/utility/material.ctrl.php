@@ -1,6 +1,6 @@
 <?php
 /**
- * 自动回复调用 素材管理
+ * 自动回复公共组建（素材：video、news、image、voice）
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');

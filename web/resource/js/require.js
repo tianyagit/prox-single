@@ -48,6 +48,7 @@ require.config({
 		'district' : '../lib/district',
 		'moment': '../lib/moment',
 		'emoji' : '../../components/emoji/emoji',
+		'fontawesome' : '../../components/fontawesome/fontawesome',
 		'material' : '../../components/material/material',
 		'trade' : '../../components/trade/trade',
 		'hammer' : '../lib/hammer.min',
@@ -105,6 +106,9 @@ require.config({
 		},
 		'emoji': {
 			deps: ['loadcss!../../components/emoji/emotions.css']
+		},
+		'fontawesome': {
+			deps: ['loadcss!../../components/fontawesome/style.css']
 		}
 	}
 });

@@ -58,6 +58,7 @@
 </div>
 <script>
 	angular.module('userManageApp').value('config', {
+		user: {php echo !empty($user) ? json_encode($user) : 'null'},
 		wechats: {php echo !empty($wechats) ? json_encode($wechats) : 'null'},
 		profile: {php echo !empty($profile) ? json_encode($profile) : 'null'},
 	});

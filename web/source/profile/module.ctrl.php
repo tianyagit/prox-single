@@ -13,9 +13,6 @@ load()->model('user');
 $dos = array('display', 'setting', 'shortcut', 'enable');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
-if($do != 'setting') {
-	uni_user_permission_check('profile_setting');
-}
 $modulelist = uni_modules(false);
 
 if($do == 'display') {
@@ -52,7 +49,8 @@ if($do == 'display') {
 		$groupid = '-2';
 	}
 	if (empty($groupid)) {
-		$modules = array();
+		$modules = 
+		$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE issystem = 1 ORDER BY issystem DESC, mid ASC", array(), 'name');
 	} else {
 		if ($groupid == '-1') {
 			$packageids = array('-1');
@@ -69,13 +67,13 @@ if($do == 'display') {
 				}
 			}
 		}
-		if (in_array('-1', $packageids)) {
+		if (!empty($packageids) && in_array('-1', $packageids)) {
 			$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
 						(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder 
 						FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
 			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 		} else {
-			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE id IN ('".implode("','", $packageids)."') OR uniacid = '{$_W['uniacid']}'");
+			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
 			$package_module = array();
 			if (!empty($wechatgroup)) {
 				foreach ($wechatgroup as $row) {
@@ -96,6 +94,9 @@ if($do == 'display') {
 				$total_condition['name'] = $package_module;
 				$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 			}
+		}
+		if (empty($modules)) {
+			$modules = pdo_getall('modules', array('issystem' => 2), array(), 'name');
 		}
 		if (!empty($modules)) {
 			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modules), 'uniacid' => $_W['uniacid']), array('module', 'enabled', 'shortcut'), 'module');

@@ -1,12 +1,11 @@
 <?php
 /**
  * 计划任务运行日志
- *
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 error_reporting(0);
-global $_W;
+
 if (!in_array($do, array('log'))) {
 	exit('Access Denied');
 }
