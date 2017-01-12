@@ -58,7 +58,7 @@ if ($do == 'edit_base') {
 if ($do == 'edit_modules_tpl') {
 	if ($_W['isajax'] && $_W['ispost']) {
 		if (intval($_GPC['groupid']) == $user['groupid']){
-			message(error(0, '未做更改！') , '', 'ajax');
+			message(error(2, '未做更改！') , '', 'ajax');
 		}
 		if (!empty($_GPC['type']) && !empty($_GPC['groupid'])) {
 			$data['uid'] = $uid;
