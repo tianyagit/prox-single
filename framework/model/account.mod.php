@@ -478,8 +478,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 		$roles = array_keys($roles);
 		if (in_array(ACCOUNT_MANAGE_NAME_OWNER, $roles) || in_array(ACCOUNT_MANAGE_NAME_MANAGER, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
-		}
-		if (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, array_keys($roles))) {
+		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, array_keys($roles))) {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
 	}
