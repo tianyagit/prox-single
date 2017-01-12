@@ -32,10 +32,9 @@ if(!empty($_GPC['__uniacid'])) {
 	$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
 	$_W['acid'] = $_W['account']['acid'];
 	$_W['weid'] = $_W['uniacid'];
-	if(!empty($_W['uid'])) {
-		$_W['role'] = uni_permission($_W['uid'], $_W['uniacid']);
-
-	}
+}
+if(!empty($_W['uid'])) {
+	$_W['role'] = uni_permission($_W['uid'], $_W['uniacid']);
 }
 $_W['template'] = 'default';
 if(!empty($_W['setting']['basic']['template'])) {

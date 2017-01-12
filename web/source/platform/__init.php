@@ -5,9 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if (empty($_W['uniacid'])) {
-	message('请先选择您要操作的公众号', url('account/display'), 'error');
-}
+checkaccount();
 
 if ($action != 'material-post') {
 	define('FRAME', 'account');
