@@ -41,9 +41,9 @@
 	<div class="clearfix" style="margin-bottom:5em;">
 		<div class="panel panel-default container">
 			<div class="panel-body">
-				<form action="" method="post" role="form" id="form1">
+				<form action="" class="we7-form" method="post" role="form" id="form1">
 					<div class="form-group">
-						<label>用户名:<span style="color:red">*</span></label>
+						<label class="control-label">用户名:<span style="color:red">*</span></label>
 						<input name="username" type="text" class="form-control" placeholder="请输入用户名">
 					</div>
 					<div class="form-group">
@@ -74,8 +74,8 @@
 						<input name="invitation" type="text" class="form-control" placeholder="请输入邀请码">
 					</div-->
 					<div class="pull-right">
-						<a href="{url 'user/login'}" class="btn btn-link">登录</a>
-						<input type="submit" name="submit" value="注册" class="btn btn-default" />
+						<a href="{url 'user/login'}" class="btn btn-link">已有账号？</a>
+						<input type="submit" name="submit" value="确认" class="btn btn-primary" />
 						<input name="token" value="{$_W['token']}" type="hidden" />
 					</div>
 				</form>
