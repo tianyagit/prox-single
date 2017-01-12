@@ -8,8 +8,10 @@ load()->model('module');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
-
-uni_user_permission_check('system_module_group');
+//只有创始人、主管理员、管理员才有权限
+if ($_W['role'] != 'owner' && $_W['role'] != 'manager' && $_W['role'] != 'founder') {
+	message('无权限操作！', referer(), 'error');
+}
 
 if ($do == 'save') {
 	$package_info = array(

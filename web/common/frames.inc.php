@@ -146,7 +146,7 @@ $we7_system_menu['system'] = array(
 						),
 						array(
 							'title' => '添加公众号',
-							'permission_name' => 'system_account_add',
+							'permission_name' => 'system_account_post',
 						),
 						array(
 							'title' => '公众号停用',

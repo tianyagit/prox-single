@@ -12,7 +12,7 @@
 		<h4 class="media-heading color-dark">{$account['name']}</h4>
 		<span class="color-gray">{if $account['level'] == 1}类型：普通订阅号{/if}{if $account['level'] == 2}类型：普通服务号{/if}{if $account['level'] == 3}类型：认证订阅号{/if}{if $account['level'] == 4}类型：认证服务号/认证媒体/政府订阅号{/if}</span>
 	</div>
-	{if $state == 'founder' || $state == 'manager'}	
+	{if $_W['role'] == 'founder' || $_W['role'] == 'owner'}
 	<div class="media-right media-middle">
 		<a href="{php echo url('account/manage/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
 	</div>

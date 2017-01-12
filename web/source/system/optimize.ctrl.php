@@ -9,7 +9,6 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('opcache');
 $do = in_array($do, $dos) ? $do : 'index';
-uni_user_permission_check('system_utility_optimize');
 $_W['page']['title'] = '性能优化 - 常用系统工具 - 系统管理';
 
 if ($do == 'opcache') {

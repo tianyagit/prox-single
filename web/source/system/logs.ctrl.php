@@ -7,7 +7,6 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('wechat', 'system', 'database','sms');
 $do = in_array($do, $dos) ? $do : 'wechat';
-uni_user_permission_check('system_setting_logs');
 $_W['page']['title'] = '查看日志  - 系统管理';
 
 $params = array();

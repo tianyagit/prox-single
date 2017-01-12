@@ -9,7 +9,10 @@ load()->model('system');
 
 $dos = array('delete', 'edit', 'set_permission', 'set_manager');
 $do = in_array($do, $dos) ? $do : 'edit';
-uni_user_permission_check('system_account');
+//只有创始人、主管理员、管理员才有权限
+if ($_W['role'] != 'owner' && $_W['role'] != 'founder' && $_W['role'] != 'manager') {
+	message('无权限操作！', referer(), 'error');
+}
 
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
@@ -17,10 +20,7 @@ $_W['page']['title'] = '管理设置 - 微信公众号管理';
 if (empty($uniacid) || empty($acid)) {
 	message('请选择要编辑的公众号', referer(), 'error');
 }
-$state = uni_permission($_W['uid'], $uniacid);
-if ($state != 'founder' && $state != 'manager') {
-	message('没有该公众号操作权限！', referer(), 'error');
-}
+
 $founders = explode(',', $_W['config']['setting']['founder']);
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $account = account_fetch($acid);
@@ -53,6 +53,9 @@ if ($do == 'edit') {
 	);
 	$exists = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
 	if (!empty($exists)) {
+		if ($_W['role'] == 'manager' && ($exists['role'] == 'owner' || $exists['role'] == 'manager')) {
+			message('管理员不可操作其他管理员', referer(), 'error');
+		}
 		$result = pdo_delete('uni_account_users', $data);
 		if ($result) {
 			message('删除成功！', referer(), 'success');
@@ -83,6 +86,9 @@ if ($do == 'edit') {
 		$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
 		if (empty($exists)) {
 			if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
+				if ($_W['role'] == 'manager') {
+					message(error(4, '管理员不可操作主管理员'), '', 'ajax');
+				}
 				if (empty($owner)) {
 					$data['role'] = ACCOUNT_MANAGE_NAME_OWNER;
 				} else  {
@@ -95,6 +101,9 @@ if ($do == 'edit') {
 					exit;
 				}
 			} else if ($addtype == ACCOUNT_MANAGE_TYPE_MANAGER) {
+				if ($_W['role'] == 'manager') {
+					message(error(4, '管理员不可操作管理员'), '', 'ajax');
+				}
 				$data['role'] = ACCOUNT_MANAGE_NAME_MANAGER;
 			} else  {
 				$data['role'] = ACCOUNT_MANAGE_NAME_OPERATOR;
@@ -118,7 +127,7 @@ if ($do == 'edit') {
 	if (empty($user)) {
 		message('您操作的用户不存在或是已经被删除！');
 	}
-	$role = uni_permission($uid);
+	$role = uni_permission($_W['uid']);
 	if (empty($role)) {
 		message('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！');
 	}

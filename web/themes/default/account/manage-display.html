@@ -2,7 +2,9 @@
 <div class="we7-page-title">公众号管理</div>
 <ul class="we7-page-tab">
 	<li class="active"><a href="{url 'account/manage'}">公众号列表</a></li>
+	{if $_W['role'] == 'owner' || $_W['role'] == 'founder'}
 	<li><a href="{url 'account/recycle'}">公众号回收站</a></li>
+	{/if}
 </ul>
 <div class="clearfix we7-margin-bottom">
 	<form action="" class="form-inline  pull-left" method="get">
@@ -51,9 +53,11 @@
 		<td class="text-left vertical-middle">
 			<div class="link-group">
 				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
-				{if $state == 'founder' || $state == 'manager'}
-				<a ng-href="{{links.post}}acid={{list.acid}}&uniacid={{list.uniacid}}">管理设置</a>
-				<a ng-href="{{links.del}}acid={{list.acid}}&uniacid={{list.uniacid}}" onclick="if(!confirm('确认放入回收站吗？')) return false;">停用</a>
+				{if $_W['role'] == 'founder' || $_W['role'] == 'owner' || $_W['role'] == 'manager'}
+					<a ng-href="{{links.post}}acid={{list.acid}}&uniacid={{list.uniacid}}">管理设置</a>
+					{if $_W['role'] == 'manager'}
+					<a ng-href="{{links.del}}acid={{list.acid}}&uniacid={{list.uniacid}}" onclick="if(!confirm('确认放入回收站吗？')) return false;">停用</a>
+					{/if}
 				{/if}
 			</div>
 		</td>

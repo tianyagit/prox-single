@@ -10,19 +10,21 @@ load()->model('cloud');
 load()->model('cache');
 
 $dos = array('base', 'sms', 'modules_tpl');
-$do = in_array($do, $dos) ? $do : 'base';
+if ($_W['role'] == 'founder' || $_W['role'] == 'owner') {
+	$do = in_array($do, $dos) ? $do : 'base';
+} elseif ($_W['role'] == 'manager') {
+	$do = in_array($do, $dos) ? $do : 'modules_tpl';
+} else {
+	message('无权限操作！', referer(), 'error');
+}
 
-uni_user_permission_check('system_account');
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 $_W['page']['title'] = '管理设置 - 微信公众号管理';
 if (empty($uniacid) || empty($acid)) {
 	message('请选择要编辑的公众号', referer(), 'error');
 }
-$state = uni_permission($_W['uid'], $uniacid);
-if($state != 'founder' && $state != 'manager') {
-	message('没有该公众号操作权限！', referer(), 'error');
-}
+
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
