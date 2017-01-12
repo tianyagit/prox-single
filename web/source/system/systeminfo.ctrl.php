@@ -1,11 +1,13 @@
 <?php
 /**
+ * 系统信息
  * [WeEngine System] Copyright (c) 2013 WE7.CC
 */
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('system');
 
+uni_user_permission_check('system_setting_systeminfo');
 $_W['page']['title'] = '系统信息 - 工具  - 系统管理';
 
 $info = array(

@@ -4,13 +4,12 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
-$dos = array('attachment', 'remote', 'buckets', 'oss', 'cos', 'qiniu');
-$do = in_array($do, $dos) ? $do : 'global';
-
 load()->model('setting');
 load()->model('attachment');
 
+$dos = array('attachment', 'remote', 'buckets', 'oss', 'cos', 'qiniu');
+$do = in_array($do, $dos) ? $do : 'global';
+uni_user_permission_check('system_setting_attachment');
 $_W['page']['title'] = '附件设置 - 系统管理';
 
 //全局设置

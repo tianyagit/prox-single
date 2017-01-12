@@ -239,7 +239,7 @@ function user_group_detail_info($groupid = 0) {
 	$packages = uni_groups();
 	$group_info = pdo_get('users_group', array('id' => $groupid));
 	if(!empty($group_info)) {
-		$group_info['package'] = iunserializer($group_info['package']);
+		$group_info['package'] = (array)iunserializer($group_info['package']);
 		foreach ($packages as $packages_key => $packages_val) {
 			foreach ($group_info['package'] as $group_info_val) {
 				if($group_info_val == -1) {

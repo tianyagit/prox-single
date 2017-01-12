@@ -3,6 +3,12 @@
  * 
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
+defined('IN_IA') or exit('Access Denied');
+
+if (empty($_W['uniacid'])) {
+	message('请先选择您要操作的公众号', url('account/display'), 'error');
+}
+
 if ($action != 'material-post') {
 	define('FRAME', 'account');
 }

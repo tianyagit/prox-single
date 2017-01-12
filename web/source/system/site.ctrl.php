@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('copyright');
 $do = in_array($do, $dos) ? $do : 'copyright';
-
+uni_user_permission_check('system_setting_site');
 $_W['page']['title'] = '站点设置 - 工具  - 系统管理';
 
 $settings = $_W['setting']['copyright'];

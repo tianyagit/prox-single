@@ -113,7 +113,7 @@ function uni_modules($enabledOnly = true) {
 	$cachekey = "unimodules:{$_W['uniacid']}:{$enabledOnly}";
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
-		//return $cache;
+		return $cache;
 	}
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
 	load()->model('user');
@@ -510,10 +510,11 @@ function uni_user_permission($type = 'system') {
 	if(!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
 	} else {
-		$user_permission = array('account_*');
+		$user_permission = array();
 	}
 	$permission_append = frames_menu_append();
-	if (!empty($permission_append[$_W['role']])) {
+	//目前只有系统管理才有预设权限，公众号权限走数据库
+	if (!empty($permission_append[$_W['role']]) && FRAME == 'system') {
 		$user_permission = array_merge($user_permission, $permission_append[$_W['role']]);
 	}
 	return (array)$user_permission;

@@ -87,12 +87,13 @@ parent.require(['jquery', 'util'], function($, util){
 		$message['msg'] = $msg;
 	}
 	$message['type'] = $label;
-	
+	$message['msg']= rawurlencode($message['msg']);
 	isetcookie("message", json_encode($message), 600);
+	
 	if ($redirect){
-		header('location: '.$redirect);
+		header('Location: ' . $redirect);
 	} else {
-		header('location: '.getenv("HTTP_REFERER"));
+		header('Location: ' . referer());
 	}
 	exit();
 	include template('common/message', TEMPLATE_INCLUDEPATH);
@@ -261,14 +262,10 @@ function buildframes($framename = ''){
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
 		
 	}
+	
 	if (!empty($user_permission)) {
 		foreach ($frames as $nav_id => $section) {
-			//如果默认没有权限数据时允许全部，直接跳过
-			if (in_array($nav_id . '_*', $user_permission)) {
-				continue;
-			}
-			if (!in_array($nav_id, $user_permission)) {
-				unset($frames[$nav_id]);
+			if (empty($section['section'])) {
 				continue;
 			}
 			foreach ($section['section'] as $section_id => $secion) {
@@ -288,18 +285,15 @@ function buildframes($framename = ''){
 	}
 	
 	foreach ($frames as $menuid => $menu) {
+		if (!empty($menu['founder']) && empty($_W['isfounder'])) {
+			continue;
+		}
 		$top_nav[] = array(
 			'title' => $menu['title'],
 			'name' => $menuid,
 			'url' => $menu['url'],
+			'blank' => $menu['blank'],
 		);
-	}
-	$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame'), array('title', 'url'));
-	if (!empty($add_top_nav)) {
-		foreach ($add_top_nav as $menu) {
-			$menu['blank'] = true;
-			$top_nav[] = $menu;
-		}
 	}
 	return !empty($framename) ? $frames[$framename] : $frames;
 }
@@ -350,15 +344,11 @@ function frames_menu_append() {
 			'system_module_group',
 			'system_my',
 			'system_setting_updatecache',
-			'account',
-			'system',
 		),
 		'operator' => array(
 			'system_account',
 			'system_my',
 			'system_setting_updatecache',
-			'account',
-			'system',
 		),
 		'clerk' => array(),
 	);

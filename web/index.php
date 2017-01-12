@@ -51,7 +51,7 @@ $_W['acl'] = $acl = array(
 	'home' => array(
 		'default' => 'welcome',
 		'founder' => array(),
-		'direct' => array('welcome')
+		'direct' => array()
 	),
 	'platform' => array(
 		'default' => 'reply',

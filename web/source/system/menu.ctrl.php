@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('display', 'post', 'display_status', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
+uni_user_permission_check('system_setting_menu');
 $_W['page']['title'] = '系统管理 - 菜单设置';
 
 $system_menu = cache_load('system_frame');

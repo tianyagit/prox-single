@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $we7_system_menu = array();
 $we7_system_menu['account'] = array(
 	'title' => '公众号',
-	'url' => url('home/welcome'),
+	'url' => url('platform/reply'),
 	'section' => array(
 		'platform_plus' => array(
 			'title' => '增强功能',
@@ -139,6 +139,32 @@ $we7_system_menu['system'] = array(
 					'url' => url('account/manage'),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_account',
+					'sub_permission' => array(
+						array(
+							'title' => '公众号管理设置',
+							'permission_name' => 'system_account_manage',
+						),
+						array(
+							'title' => '添加公众号',
+							'permission_name' => 'system_account_add',
+						),
+						array(
+							'title' => '公众号停用',
+							'permission_name' => 'system_account_stop',
+						),
+						array(
+							'title' => '公众号回收站',
+							'permission_name' => 'system_account_recycle',
+						),
+						array(
+							'title' => '公众号删除',
+							'permission_name' => 'system_account_delete',
+						),
+						array(
+							'title' => '公众号恢复',
+							'permission_name' => 'system_account_recover',
+						),
+					),
 				),
 				'system_platform' => array(
 					'title' => ' 微信开放平台设置',
@@ -179,12 +205,49 @@ $we7_system_menu['system'] = array(
 					'url' => url('user/display'),
 					'icon' => 'wi wi-user',
 					'permission_name' => 'system_user',
+					'sub_permission' => array(
+							array(
+								'title' => '编辑用户',
+								'permission_name' => 'system_user_post',
+							),
+							array(
+								'title' => '审核用户',
+								'permission_name' => 'system_user_check',
+							),
+							array(
+								'title' => '用户回收站',
+								'permission_name' => 'system_user_recycle',
+							),
+							array(
+								'title' => '用户属性设置',
+								'permission_name' => 'system_user_fields',
+							),
+							array(
+								'title' => '用户属性设置-编辑字段',
+								'permission_name' => 'system_user_fields_post',
+							),
+							array(
+								'title' => '用户注册设置',
+								'permission_name' => 'system_user_registerset',
+							),
+					),
+					
 				),
 				'system_user_group' => array(
 					'title' => '用户组管理',
 					'url' => url('user/group'),
 					'icon' => 'wi wi-userjurisdiction',
 					'permission_name' => 'system_user_group',
+					'sub_permission' => array(
+						array(
+							'title' => '编辑用户组',
+							'permission_name' => 'system_user_group_post',
+						),
+						array(
+							'title' => '删除用户组',
+							'permission_name' => 'system_user_group_del',
+						),
+					),
 				),
 			)
 		),
@@ -218,7 +281,7 @@ $we7_system_menu['system'] = array(
 					'title' => '文章管理',
 					'url' => url('article/news'),
 					'icon' => 'wi wi-article',
-					'permission_name' => 'system_article',
+					'permission_name' => 'system_article_news',
 				),
 				'system_article_notice' => array(
 					'title' => '公告管理',
@@ -328,12 +391,15 @@ $we7_system_menu['adviertisement'] = array (
 			)
 		),
 	),
+	'founder' => true,
 );
 
 $we7_system_menu['appmarket'] = array(
-		'title' => '应用市场',
-		'url' => 'http://s.we7.cc',
-		'section' => array(),
+	'title' => '应用市场',
+	'url' => 'http://s.we7.cc',
+	'section' => array(),
+	'blank' => true,
+	'founder' => true,
 );
 
 return $we7_system_menu;
