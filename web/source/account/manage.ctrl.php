@@ -9,7 +9,7 @@ load()->func('file');
 
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
-uni_user_permission_check('system_account');
+
 if(empty($_W['uniacid']) && !$_W['isfounder']) {
 	message('请先选择您要操作的公众号，选择后再行进入系统管理！', url('account/display'), 'error');
 }
@@ -18,6 +18,7 @@ $_W['page']['title'] = '公众号列表 - 公众号';
 $state = uni_permission($_W['uid'], $_W['uniacid']);
 
 if ($do == 'display') {
+	uni_user_permission_check('system_account');
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$start = ($pindex - 1) * $psize;
@@ -61,6 +62,7 @@ if ($do == 'display') {
 	template('account/manage-display');
 }
 if ($do == 'delete') {
+	uni_user_permission_check('system_account_stop');
 	$uniacid = intval($_GPC['uniacid']);
 	$acid = intval($_GPC['acid']);
 	$uid = $_W['uid'];

@@ -10,7 +10,7 @@ load()->func('file');
 
 $dos = array('edit_base', 'edit_modules_tpl', 'edit_account');
 $do = in_array($do, $dos) ? $do: 'edit_base';
-uni_user_permission_check('system_user_display');
+uni_user_permission_check('system_user_post');
 
 $_W['page']['title'] = '编辑用户 - 用户管理';
 $state = uni_permission($_W['uid'], $uniacid);
@@ -58,7 +58,7 @@ if ($do == 'edit_base') {
 if ($do == 'edit_modules_tpl') {
 	if ($_W['isajax'] && $_W['ispost']) {
 		if (intval($_GPC['groupid']) == $user['groupid']){
-			message(error(0, '未做更改！') , '', 'ajax');
+			message(error(2, '未做更改！') , '', 'ajax');
 		}
 		if (!empty($_GPC['type']) && !empty($_GPC['groupid'])) {
 			$data['uid'] = $uid;

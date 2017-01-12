@@ -87,7 +87,7 @@ parent.require(['jquery', 'util'], function($, util){
 		$message['msg'] = $msg;
 	}
 	$message['type'] = $label;
-	
+	$message['msg']= rawurlencode($message['msg']);
 	isetcookie("message", json_encode($message), 600);
 	
 	if ($redirect){
