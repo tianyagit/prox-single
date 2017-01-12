@@ -927,6 +927,9 @@ class Card {
 			'base_info' => $this->getBaseinfo(),
 		);
 		$carddata = array_merge($carddata, $this->getCardExtraData());
+		if (strtolower($this->types[$this->type]) == 'discount') {
+			$carddata['discount'] = 100 - $carddata['discount'];
+		}
 		$card = array(
 			'card' => array(
 				'card_type' => $this->types[$this->type],
