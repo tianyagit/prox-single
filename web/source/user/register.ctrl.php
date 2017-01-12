@@ -57,7 +57,6 @@ if(checksubmit()) {
 			message('你输入的验证码不正确, 请重新输入.');
 		}
 	}
-	
 
 	$member['status'] = !empty($_W['setting']['register']['verify']) ? 1 : 2;
 	$member['remark'] = '';
@@ -66,20 +65,18 @@ if(checksubmit()) {
 		$member['groupid'] = pdo_fetchcolumn('SELECT id FROM '.tablename('users_group').' ORDER BY id ASC LIMIT 1');
 		$member['groupid'] = intval($member['groupid']);
 	}
-		$group = pdo_fetch('SELECT * FROM '.tablename('users_group').' WHERE id = :id', array(':id' => $member['groupid']));
+	$group = pdo_fetch('SELECT * FROM '.tablename('users_group').' WHERE id = :id', array(':id' => $member['groupid']));
 	$timelimit = intval($group['timelimit']);
-	$timeadd = 0;
 	if($timelimit > 0) {
-		$timeadd = strtotime($timelimit . ' days');
+		$member['endtime'] = strtotime($timelimit . ' days');
 	}
 	$member['starttime'] = TIMESTAMP;
-	$member['endtime'] = $timeadd;
-
+	
 	$uid = user_register($member);
 	if($uid > 0) {
 		unset($member['password']);
 		$member['uid'] = $uid;
-				if (!empty($profile)) {
+		if (!empty($profile)) {
 			$profile['uid'] = $uid;
 			$profile['createtime'] = TIMESTAMP;
 			pdo_insert('users_profile', $profile);

@@ -21,7 +21,7 @@
 			}
 		{/if}
 		{/loop}
- */		{if $setting['register']['code']}
+ */		{if $_W['setting']['register']['code']}
 		if($.trim($(':text[name="code"]').val()) == '') {
 			util.message('没有输入验证码.', '', 'error');
 			return false;
@@ -62,7 +62,7 @@
 							</div>
 						{/loop}
 					{/if}
-					{if $setting['register']['code']}
+					{if $_W['setting']['register']['code']}
 						<div class="form-group">
 							<label style="display:block;">验证码:<span style="color:red;">*</span></label>
 							<input name="code" type="text" class="form-control" placeholder="请输入验证码" style="width:65%;display:inline;margin-right:17px">
