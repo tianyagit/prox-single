@@ -5,6 +5,8 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+checkaccount();
+
 $dos = array('platform', 'ext');
 $do = in_array($do, $dos) ? $do : 'platform';
 define('FRAME', 'account');

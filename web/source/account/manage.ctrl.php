@@ -10,10 +10,6 @@ load()->func('file');
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
-if(empty($_W['uniacid']) && !$_W['isfounder']) {
-	message('请先选择您要操作的公众号，选择后再行进入系统管理！', url('account/display'), 'error');
-}
-
 $_W['page']['title'] = '公众号列表 - 公众号';
 $state = uni_permission($_W['uid'], $_W['uniacid']);
 
