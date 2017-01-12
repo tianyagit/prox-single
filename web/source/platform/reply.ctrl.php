@@ -236,14 +236,17 @@ if ($do == 'post') {
 				uni_setting_save('default_message', $setting);
 				message('关闭成功', url('platform/reply', array('m' => 'special')));
 			}
-			$reply_module = WeUtility::createModule('reply');
+			$reply_module = WeUtility::createModule('core');
+			if (empty($rule_id)) {
+				$rule_id = $_GPC['reply']['reply_keyword'] = pdo_getcolumn('rule_keyword', array('content' => $setting[$type]['keyword'], 'uniacid' => $_W['uniacid']), 'rid');
+			}
 			$result = $reply_module->fieldsFormValidate();
 			if (is_error($result)) {
 				message($result['message'], '', 'info');
 			}
 			$result = $reply_module->fieldsFormSubmit($rule_id);
 			$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
-			$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
+			$setting[$type] = array('type' => 1, 'keyword' => $rule['content']);
 			uni_setting_save('default_message', $setting);
 			message('发布成功', url('platform/reply', array('m' => 'special')));
 		}
