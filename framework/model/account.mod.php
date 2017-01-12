@@ -113,7 +113,7 @@ function uni_modules($enabledOnly = true) {
 	$cachekey = "unimodules:{$_W['uniacid']}:{$enabledOnly}";
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
-		//return $cache;
+		return $cache;
 	}
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
 	load()->model('user');
