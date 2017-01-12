@@ -139,6 +139,32 @@ $we7_system_menu['system'] = array(
 					'url' => url('account/manage'),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_account',
+					'sub_permission' => array(
+						array(
+							'title' => '公众号管理设置',
+							'permission_name' => 'system_account_manage',
+						),
+						array(
+							'title' => '添加公众号',
+							'permission_name' => 'system_account_add',
+						),
+						array(
+							'title' => '公众号停用',
+							'permission_name' => 'system_account_stop',
+						),
+						array(
+							'title' => '公众号回收站',
+							'permission_name' => 'system_account_recycle',
+						),
+						array(
+							'title' => '公众号删除',
+							'permission_name' => 'system_account_delete',
+						),
+						array(
+							'title' => '公众号恢复',
+							'permission_name' => 'system_account_recover',
+						),
+					),
 				),
 				'system_platform' => array(
 					'title' => ' 微信开放平台设置',
