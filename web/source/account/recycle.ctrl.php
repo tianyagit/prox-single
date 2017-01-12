@@ -9,10 +9,13 @@ load()->model('account');
 
 $dos = array('display', 'recover', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
+//只有创始人、主管理员才有权限使用回收站功能
+if ($_W['role'] != 'owner' && $_W['role'] != 'founder') {
+	message('无权限操作！', referer(), 'error');
+}
 $_W['page']['title'] = '公众号回收站 - 公众号';
 
 if ($do == 'display') {
-	uni_user_permission_check('system_account_recycle');
 	$pindex = max(1, $_GPC['page']);
 	$psize = 20;
 	$start = ($pindex - 1) * $psize;
@@ -49,7 +52,6 @@ if ($do == 'display') {
 }
 
 if ($do == 'recover') {
-	uni_user_permission_check('system_account_recover');
 	$state = uni_permission($_W['uid'], $uniacid);
 	if($state != 'founder' && $state != 'manager') {
 		message('没有权限！', referer(), 'error');
@@ -67,7 +69,6 @@ if ($do == 'recover') {
 }
 
 if($do == 'delete') {
-	uni_user_permission_check('system_account_delete');
 	$state = uni_permission($_W['uid'], $uniacid);
 	if($state != 'founder' && $state != 'manager') {
 		message('没有权限！', referer(), 'error');

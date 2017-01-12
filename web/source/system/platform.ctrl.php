@@ -9,7 +9,10 @@ load()->classs('weixin.platform');
 
 setting_load('platform');
 
-uni_user_permission_check('system_platform');
+//只有创始人、主管理员、管理员才有权限
+if ($_W['role'] != 'owner' && $_W['role'] != 'manager' && $_W['role'] != 'founder') {
+	message('无权限操作！', referer(), 'error');
+}
 $founders = explode(',', $_W['config']['setting']['founder']);
 $_W['page']['title'] = '开放平台设置';
 

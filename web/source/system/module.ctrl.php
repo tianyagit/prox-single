@@ -1,7 +1,7 @@
 <?php
 /**
- *
  * 模块管理
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 
 defined('IN_IA') or exit('Access Denied');
@@ -17,7 +17,10 @@ include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 $dos = array('check_upgrade', 'upgrade', 'install', 'installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
-uni_user_permission_check('system_module');
+//只有创始人、主管理员、管理员才有权限
+if ($_W['role'] != 'owner' && $_W['role'] != 'manager' && $_W['role'] != 'founder') {
+	message('无权限操作！', referer(), 'error');
+}
 
 if ($do == 'check_upgrade') {
 	$module_list = $_GPC['module_list'];//test

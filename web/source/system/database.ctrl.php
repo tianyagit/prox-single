@@ -13,7 +13,6 @@ load()->func('db');
 
 $dos = array('backup', 'restore', 'trim', 'optimize', 'run');
 $do = in_array($do, $dos) ? $do : 'backup';
-uni_user_permission_check('system_utility_database');
 
 //备份
 if ($do == 'backup') {

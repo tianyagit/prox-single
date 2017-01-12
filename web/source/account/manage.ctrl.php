@@ -11,7 +11,6 @@ $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
 $_W['page']['title'] = '公众号列表 - 公众号';
-$state = uni_permission($_W['uid'], $_W['uniacid']);
 
 if ($do == 'display') {
 	uni_user_permission_check('system_account');
@@ -58,7 +57,10 @@ if ($do == 'display') {
 	template('account/manage-display');
 }
 if ($do == 'delete') {
-	uni_user_permission_check('system_account_stop');
+	//只有创始人、主管理员才有权限停用公众号
+	if ($_W['role'] != 'owner' && $_W['role'] != 'founder') {
+		message('无权限操作！', referer(), 'error');
+	}
 	$uniacid = intval($_GPC['uniacid']);
 	$acid = intval($_GPC['acid']);
 	$uid = $_W['uid'];

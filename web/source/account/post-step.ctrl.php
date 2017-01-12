@@ -9,7 +9,7 @@ load()->func('file');
 load()->model('module');
 load()->classs('weixin.platform');
 
-uni_user_permission_check('system_account_add');
+uni_user_permission_check('system_account_post');
 $_W['page']['title'] = '添加/编辑公众号 - 公众号管理';
 $uniacid = intval($_GPC['uniacid']);
 $step = intval($_GPC['step']) ? intval($_GPC['step']) : 1;
