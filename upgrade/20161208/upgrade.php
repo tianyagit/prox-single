@@ -42,11 +42,12 @@ $insert_data = array(
 	'name' => 'we7_coupon',
 	'type' => 'business',
 	'title' => $title,
-	'version' => '1.5',
+	'version' => '1.6',
 	'ability' => $ability,
 	'description' => $description,
 	'author' => '微擎团队',
 	'settings' => '2',
+	'issystem' => '1'
 );
 $we7_coupon_exist = pdo_get('modules', array('name' => 'we7_coupon'));
 if (empty($we7_coupon_exist)) {
@@ -76,52 +77,69 @@ pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'menu'
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'title' => '会员卡', 'do' => 'card', 'direct' => '0', 'displayorder' => '0'));
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'title' => '兑换商城', 'do' => 'activity'));
 //增加模块内，个人中心导航菜单的链接
-$coupon_mine_url = murl('entry', array('m' => 'we7_coupon', 'do' => 'activity', 'op' => 'mine'));
-$goods_mine_url = murl('entry', array('m' => 'we7_coupon', 'do' => 'activity', 'activity_type' => 'goods', 'op' => 'mine'));
-pdo_insert('site_nav', array('uniacid' => $_W['uniacid'], 'module' => 'we7_coupon', 'name' => '我的卡券', 'position' => '2', 'url' => $coupon_mine_url, 'status' => '2'));
-pdo_insert('site_nav', array('uniacid' => $_W['uniacid'], 'module' => 'we7_coupon', 'name' => '我的兑换', 'position' => '2', 'url' => $goods_mine_url, 'status' => '2'));
+pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'call' => 'gethometiles'))
 cache_build_account_modules();
 
+$we7_coupon_exists = pdo_get('modules', array('name' => 'we7_coupon'));
 
+if (!empty($we7_coupon_exists)) {
+	//获取需更改的url地址
+	$cardmanage_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'cardmanage', 'op' => 'display'));
+	$cardeditor_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'membercard', 'op' => 'editor'));
+	$notice_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'noticemanage', 'op' => 'list'));
+	$sign_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'noticemanage', 'op' => 'list'));
+	$coupon_exchange = url('site/entry', array('m' => 'we7_coupon', 'do' => 'couponexchange', 'op' => 'display'));
+	$goods_exchange = url('site/entry', array('m' => 'we7_coupon', 'do' => 'goodsexchange', 'op' => 'display'));
+	$couponlist_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'couponmanage', 'op' => 'display'));
+	$couponmarket_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'couponmarket', 'op' => 'display'));
+	$couponconsume_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'couponconsume', 'op' => 'display'));
+	$storelist_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'storelist', 'op' => 'display'));
+	$clerklist_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'clerklist', 'op' => 'display'));
+	$paycenter_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'paycenter', 'op' => 'pay'));
+	//入口文件
+	$card_cover = pdo_get('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'cover', 'do' => 'card'));
+	$clerk_cover = pdo_get('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'cover', 'do' => 'clerk'));
+	$membercard_cover_url = url('platform/cover', array('eid' => $card_cover['eid']));
+	$clerk_cover_url = url('platform/cover', array('eid' => $clerk_cover['eid']));
+	$credit1_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statcredit1'));
+	$credit2_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statcredit2'));
+	$cash_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statcash'));
+	$card_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statcard'));
+	$paycenter_stat_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'statpaycenter'));
 
+	//更新core_menu表
 
-//获取需更改的url地址
-$cardmanage_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'cardmanage', 'op' => 'display'));
-$cardeditor_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'membercard', 'op' => 'editor'));
-$notice_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'noticemanage', 'op' => 'list'));
-$sign_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'noticemanage', 'op' => 'list'));
-$coupon_exchange = url('site/entry', array('m' => 'we7_coupon', 'do' => 'couponexchange', 'op' => 'display'));
-$goods_exchange = url('site/entry', array('m' => 'we7_coupon', 'do' => 'goodsexchange', 'op' => 'display'));
-$couponlist_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'couponmanage', 'op' => 'display'));
-$couponmarket_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'couponmarket', 'op' => 'display'));
-$couponconsume_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'couponconsume', 'op' => 'display'));
-$storelist_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'storelist', 'op' => 'display'));
-$clerklist_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'clerklist', 'op' => 'display'));
-$paycenter_url = url('site/entry', array('m' => 'we7_coupon', 'do' => 'paycenter', 'op' => 'pay'));
-//入口文件
-$card_cover = pdo_get('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'cover', 'do' => 'card'));
-$clerk_cover = pdo_get('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'cover', 'do' => 'clerk'));
-$membercard_cover_url = url('platform/cover', array('eid' => $card_cover['eid']));
-$clerk_cover_url = url('platform/cover', array('eid' => $clerk_cover['eid']));
-
-
-//更新core_menu表
-
-//会员卡管理
-pdo_update('core_menu', array('url' => $membercard_cover_url), array('permission_name' => 'platform_cover_card'));
-pdo_update('core_menu', array('url' => $cardmanage_url), array('permission_name' => 'mc_card_manage'));
-pdo_update('core_menu', array('url' => $cardeditor_url), array('permission_name' => 'mc_card_editor'));
-pdo_update('core_menu', array('url' => $notice_url), array('permission_name' => 'mc_card_other'));
-//积分兑换
-pdo_update('core_menu', array('url' => $coupon_exchange), array('permission_name' => 'activity_card_display'));
-pdo_update('core_menu', array('url' => $goods_exchange), array('permission_name' => 'activity_goods_display'));
-//卡券管理
-pdo_update('core_menu', array('url' => $couponlist_url), array('permission_name' => 'activity_coupon_display'));
-pdo_update('core_menu', array('url' => $couponmarket_url), array('permission_name' => 'activity_coupon_market'));
-pdo_update('core_menu', array('url' => $couponconsume_url), array('permission_name' => 'activity_consume_coupon'));
-//工作台
-pdo_update('core_menu', array('url' => $storelist_url), array('permission_name' => 'activity_store_list'));
-pdo_update('core_menu', array('url' => $clerklist_url), array('permission_name' => 'activity_clerk_list'));
-pdo_update('core_menu', array('url' => $paycenter_url), array('permission_name' => 'paycenter_wxmicro_pay'));
-pdo_update('core_menu', array('url' => $clerk_cover_url), array('permission_name' => 'paycenter_clerk'));
-cache_build_frame_menu();
+	//统计中心
+	pdo_update('core_menu', array('url' => $credit1_stat_url), array('permission_name' => 'stat_credit1'));
+	pdo_update('core_menu', array('url' => $credit2_stat_url), array('permission_name' => 'stat_credit2'));
+	pdo_update('core_menu', array('url' => $cash_stat_url), array('permission_name' => 'stat_cash'));
+	pdo_update('core_menu', array('url' => $card_stat_url), array('permission_name' => 'stat_card'));
+	pdo_update('core_menu', array('url' => $paycenter_stat_url), array('permission_name' => 'stat_paycenter'));
+	//会员卡管理
+	pdo_update('core_menu', array('url' => $membercard_cover_url), array('permission_name' => 'platform_cover_card'));
+	pdo_update('core_menu', array('url' => $cardmanage_url), array('permission_name' => 'mc_card_manage'));
+	pdo_update('core_menu', array('url' => $cardeditor_url), array('permission_name' => 'mc_card_editor'));
+	pdo_update('core_menu', array('url' => $notice_url), array('permission_name' => 'mc_card_other'));
+	//积分兑换
+	pdo_update('core_menu', array('url' => $coupon_exchange), array('permission_name' => 'activity_card_display'));
+	pdo_update('core_menu', array('url' => $goods_exchange), array('permission_name' => 'activity_goods_display'));
+	//卡券管理
+	pdo_update('core_menu', array('url' => $couponlist_url), array('permission_name' => 'activity_coupon_display'));
+	pdo_update('core_menu', array('url' => $couponmarket_url), array('permission_name' => 'activity_coupon_market'));
+	pdo_update('core_menu', array('url' => $couponconsume_url), array('permission_name' => 'activity_consume_coupon'));
+	//工作台
+	pdo_update('core_menu', array('url' => $storelist_url), array('permission_name' => 'activity_store_list'));
+	pdo_update('core_menu', array('url' => $clerklist_url), array('permission_name' => 'activity_clerk_list'));
+	pdo_update('core_menu', array('url' => $paycenter_url), array('permission_name' => 'paycenter_wxmicro_pay'));
+	pdo_update('core_menu', array('url' => $clerk_cover_url), array('permission_name' => 'paycenter_clerk'));
+	cache_build_frame_menu();
+}
+$sql = "
+	CREATE TABLE IF NOT EXISTS `ims_mc_member_property` (
+	  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  `uniacid` int(11) NOT NULL,
+	  `property` varchar(200) NOT NULL DEFAULT '' COMMENT '当前公众号用户属性',
+	  PRIMARY KEY (`id`)
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='用户属性设置表';
+";
+pdo_run($sql);

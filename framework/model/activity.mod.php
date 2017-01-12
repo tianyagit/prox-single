@@ -256,7 +256,8 @@ function activity_coupon_grant($id,$openid) {
 	if (empty($openid)) {
 		return error(-1, '兑换失败');
 	}
-	$code = base_convert(uniqid(), 16, 10);
+	$code = base_convert(md5(uniqid() . random(4)), 16, 10);
+	$code = substr($code, 1, 16);
 	$user = mc_fetch($fan['uid'], array('groupid'));
 	$credit_names = array('credit1' => '积分', 'credit2' => '余额');
 	$coupon = activity_coupon_info($id);
@@ -470,57 +471,6 @@ function activity_goods_grant($uid, $exid){
 	pdo_insert('activity_exchange_trades_shipping', $insert);
 	pdo_update('activity_exchange', array('num' => $exchange['num'] + 1), array('id' => $exid, 'uniacid' => $_W['uniacid']));
 	return $insert_id;
-}
-
-/**
- * 指定会员兑换指定活动
- * @param int $uid 会员UID
- * @param int $exid 活动ID
- * @return mixed
- **/
-function activity_module_grant($uid, $exid){
-	global $_W;
-	$exchange = activity_exchange_info($exid, $_W['uniacid']);
-	if (empty($exchange)) {
-		return error(-1, '没有指定的活动参与次数兑换');
-	}
-	if ($exchange['starttime'] > TIMESTAMP) {
-		return error(-1, '该活动参与次数兑换尚未开始');
-	}
-	if ($exchange['endtime'] < TIMESTAMP) {
-		return error(-1, '该活动参与次数兑换已经结束');
-	}
-	if ($exchange['pretotal'] > 0) {
-		$activity_modules = pdo_fetch('SELECT * FROM ' . tablename('activity_modules') . ' WHERE uniacid = :uniacid AND uid = :uid AND exid = :exid AND module = :module', array(':uniacid' => $_W['uniacid'], ':uid' => $uid, 'exid' => $exid, 'module' => $exchange['extra']['name']));
-		if ($activity_modules) {
-			$starttime = strtotime(date('Y-m-d')) - intval($exchange['extra']['period']) * 3600 * 24;
-			//num = 1 表示兑换记录, num = -1 表示消费记录
-			$pnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('activity_modules_record') . ' WHERE mid = :mid AND num = 1 AND createtime > :createtime', array('mid' => $activity_modules['mid'], ':createtime' => $starttime));
-			if ($pnum >= $exchange['pretotal']) {
-				return error(-1, '每人每' . $exchange['extra']['period'] . '天内,只能兑换' . $exchange['pretotal'] . '次');
-			}
-			//更新用户对于某个模块的可用次数
-			pdo_update('activity_modules', array('available' => $activity_modules['available'] + 1), array('mid' => $activity_modules['mid'], 'uid' => $uid));
-		} else {
-			$data = array(
-				'uniacid' => $_W['uniacid'],
-				'uid' => intval($uid),
-				'exid' => $exid,
-				'module' => trim($exchange['extra']['name']),
-				'available' => 1
-			);
-			pdo_insert('activity_modules', $data);
-			$activity_modules['mid'] = pdo_insertid();
-		}
-
-		//记录可用次数的变更记录
-		$data = array('mid' => $activity_modules['mid'], 'num' => 1, 'createtime' => TIMESTAMP);
-		pdo_insert('activity_modules_record', $data);
-		return true;
-	} else {
-		return error(-1, '该兑换活动每人可兑换' . intval($exchange['pretotal']));
-	}
-	return true;
 }
 
 /**
@@ -928,4 +878,20 @@ function activity_coupon_status() {
 		'CARD_STATUS_USER_DISPATCH' => 5, //在公众平台投放过的卡券
 		'CARD_STATUS_DISPATCH' => 5, //在公众平台投放过的卡券
 	);
+}
+
+function activity_member_propertys() {
+	global $_W;
+	$current_property_info = pdo_get('mc_member_property', array('uniacid' => $_W['uniacid']));
+	if (!empty($current_property_info)) {
+		$propertys = json_decode($current_property_info['property'], true);
+	} else {
+		$propertys = array(
+			'newmember' => '1',
+			'oldmember' => '2',
+			'activitymember' => '1',
+			'quietmember' => '1'
+		);
+	}
+	return $propertys;
 }

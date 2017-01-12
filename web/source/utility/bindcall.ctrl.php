@@ -13,15 +13,17 @@ $uniacid = intval($_GPC['uniacid']);
 $_W['uniacid'] = intval($_GPC['uniacid']);
 $args = $_GPC['args'];
 $module_info = module_fetch($modulename);
+//模块不存在返回空
 if (empty($module_info)) {
-	message(error(-1, '该模块不存在'), '', 'ajax');
+	message(array(), '', 'ajax');
 }
 $site = WeUtility::createModuleSite($modulename);
 if (empty($site)) {
 	message(array(), '', 'ajax');
 }
+//call不存在返回空
 if (!method_exists($site, $callname)) {
-	message(error(-1, '该方法不存在'), '', 'ajax');
+	message(array(), '', 'ajax');
 }
 $ret = @$site->$callname($args);
 message($ret, '', 'ajax');

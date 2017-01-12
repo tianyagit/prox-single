@@ -15,6 +15,12 @@ load()->model('cloud');
 load()->classs('coupon');
 
 
+if (!pdo_tableexists('activity_clerks')) {
+	pdo_delete('core_menu', array('permission_name ' => 'profile_deskmenu'));
+	pdo_delete('core_menu', array('permission_name ' => 'stat_card'));
+	pdo_delete('core_menu', array('permission_name ' => 'stat_paycenter'));
+	pdo_delete('core_menu', array('permission_name ' => 'stat_cash'));
+}
 
 
 

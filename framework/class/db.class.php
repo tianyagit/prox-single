@@ -299,7 +299,7 @@ class DB {
 		
 		if (!empty($orderby)) {
 			if (is_array($orderby)) {
-				$orderbysql = implode(',', $orderbysql);
+				$orderbysql = implode(',', $orderby);
 			} else {
 				$orderbysql = $orderby;
 			}
@@ -687,18 +687,18 @@ class DB {
 		}
 		//获取SQL中的表名
 		$table_prefix = str_replace('`', '', tablename(''));
-		preg_match('/(?!from|insert into|replace into|update) `?('.$table_prefix.'[a-zA-Z0-9_-]+)/i', $sql, $match);
-		$tablename = $match[1];
-		
-		if (empty($tablename)) {
+		preg_match_all('/(?!from|insert into|replace into|update) `?('.$table_prefix.'[a-zA-Z0-9_-]+)/i', $sql, $match);
+		$tablename = implode(':', $match[1]);
+		if (empty($tablename) || in_array("`{$tablename}`", array($this->tablename('core_cache'), $this->tablename('core_queue'))) ) {
 			return false;
 		}
-		
+		$tablename = str_replace($this->tablepre, '', $tablename);
 		//获取命名空间
-		$namespace = cache_read('dbcache:namespace:'.$tablename, true);
+		$namespace = $this->getColumn('core_cache', array('key' => 'dbcache:namespace:'.$tablename), 'value');
 		if (empty($namespace) || $forcenew) {
-			$namespace = TIMESTAMP;
-			cache_write('dbcache:namespace:'.$tablename, $namespace, 0, true);
+			$namespace = random(8);
+			$this->delete('core_cache', array('key LIKE' => "%{$tablename}%", 'key !=' => 'dbkey:'.$tablename));
+			$this->insert('core_cache', array('key' => 'dbkey:'.$tablename, 'value' => $namespace), true);
 		}
 		return $tablename . ':' . $namespace;
 	}

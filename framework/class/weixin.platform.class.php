@@ -210,7 +210,7 @@ class WeiXinPlatform extends WeiXinAccount {
 		return $js_ticket['value'];
 	}
 	
-	public function getJssdkConfig(){
+	public function getJssdkConfig($url = ''){
 		global $_W;
 		$jsapiTicket = $this->getJsApiTicket();
 		if(is_error($jsapiTicket)){
@@ -218,7 +218,9 @@ class WeiXinPlatform extends WeiXinAccount {
 		}
 		$nonceStr = random(16);
 		$timestamp = TIMESTAMP;
-		$url = $_W['siteurl'];
+		if (empty($url)) {
+			$url = $_W['siteurl'];
+		}
 		$string1 = "jsapi_ticket={$jsapiTicket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
 		$signature = sha1($string1);
 		$config = array(

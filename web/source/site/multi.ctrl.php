@@ -29,8 +29,8 @@ if($do == 'post') {
 
 	if(checksubmit('submit')) {
 		if (checksubmit('submit')) {
-			$bindhost = str_replace('http://', '', $_W['siteroot']);
-			if ($_GPC['bindhost'] . '/' == $bindhost) {
+			$bindhost = parse_url($_W['siteroot']);
+			if ($bindhost['host'] == trim($_GPC['bindhost'])) {
 				message('绑定域名有误', referer(), 'error');
 			}
 			$data = array(

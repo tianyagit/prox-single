@@ -183,7 +183,7 @@ if ($do == 'check') {
 						'site_branch' => $v['branches'][$v['branch']],
 					);
 				}
-				$mods['pirate_apps'] = !empty($v['pirate_apps']) ? array_values($v['pirate_apps']) : array();
+				$mods['pirate_apps'] = $ret['pirate_apps'];
 			}
 			if (!empty($mods)) {
 				exit(json_encode($mods));
@@ -203,8 +203,11 @@ if ($do == 'check') {
 
 			if (!is_error($ret)) {
 				$cloudUninstallModules = array();
+				if ($ret['pirate_apps']) {
+					unset($ret['pirate_apps']);
+				}
 				foreach ($ret as $k => $v) {
-					if (!in_array(strtolower($k), $moduleids)) {
+					if (!in_array(strtolower($k), $moduleids) && $v['id']) {
 						$v['name'] = $k;
 						$cloudUninstallModules[] = $v;
 						$moduleids[] = $k;
@@ -393,6 +396,10 @@ if($do == 'install') {
 	}
 	$module['permissions'] = iserializer($module['permissions']);
 	if (!empty($info['version']['cloud_setting'])) {
+		$module['settings'] = 2;
+	}
+	if ($modulename == 'we7_coupon') {
+		$module['issystem'] = 1;
 		$module['settings'] = 2;
 	}
 	if (pdo_insert('modules', $module)) {
