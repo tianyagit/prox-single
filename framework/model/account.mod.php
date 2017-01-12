@@ -510,10 +510,11 @@ function uni_user_permission($type = 'system') {
 	if(!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
 	} else {
-		$user_permission = array('account_*');
+		$user_permission = array();
 	}
 	$permission_append = frames_menu_append();
-	if (!empty($permission_append[$_W['role']])) {
+	//目前只有系统管理才有预设权限，公众号权限走数据库
+	if (!empty($permission_append[$_W['role']]) && FRAME == 'system') {
 		$user_permission = array_merge($user_permission, $permission_append[$_W['role']]);
 	}
 	return (array)$user_permission;

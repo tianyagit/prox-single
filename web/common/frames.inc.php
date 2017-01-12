@@ -328,12 +328,15 @@ $we7_system_menu['adviertisement'] = array (
 			)
 		),
 	),
+	'founder' => true,
 );
 
 $we7_system_menu['appmarket'] = array(
-		'title' => '应用市场',
-		'url' => 'http://s.we7.cc',
-		'section' => array(),
+	'title' => '应用市场',
+	'url' => 'http://s.we7.cc',
+	'section' => array(),
+	'blank' => true,
+	'founder' => true,
 );
 
 return $we7_system_menu;
