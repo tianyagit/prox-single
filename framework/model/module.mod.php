@@ -325,82 +325,20 @@ function module_count_unistalled_module() {
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
  */
 function module_get_all_unistalled($status)  {
-	load()->model('cloud');
-	load()->classs('cloudapi');
-	$status = $status == 'uninstalled' ?  'uninstalled' : 'recycle';
 	$uninstallModules = $status == 'uninstalled' ? cache_load('all_uninstalled_module') : cache_load('all_recycle_module');
-	if (!empty($uninstallModules)) {
+	if (empty($uninstallModules)) {
+		cache_build_uninstalled_module($status);
+	} else {
+		load()->model('cloud');
+		load()->classs('cloudapi');
 		$cloud_api = new CloudApi();
 		$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 		if ($uninstallModules['cloud_m_count'] == $cloud_m_count) {
 			return $uninstallModules['modules'];
-		}
-	}
-	$all_module = pdo_getall('modules');
-	$installed_module = array();
-	if (!empty($all_module)) {
-		foreach ($all_module as $module) {
-			$installed_module[] = $module['name'];
-		}
-	}
-	$uninstallModules = array();
-	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
-	$recycle_modules = array_keys($recycle_modules);
-	$cloud_module = cloud_m_query();
-	if (!empty($cloud_module) && !is_error($cloud_module)) {
-		foreach ($cloud_module as $module) {
-			if (($status == 'uninstalled' && in_array($module['name'], $recycle_modules)) || ($status == 'recycle' && !in_array($module['name'], $recycle_modules))) {
-				continue;
-			}
-			if (!in_array($module['name'], $installed_module)) {
-				$uninstallModules[$module['name']] = array(
-					'from' => 'cloud',
-					'name' => $module['name'],
-					'version' => $module['version'],
-					'title' => $module['title'],
-					'thumb' => $module['thumb']
-				);
-			}
-		}
-	}
-
-	$path = IA_ROOT . '/addons/';
-	if (is_dir($path)) {
-		if ($handle = opendir($path)) {
-			while (false !== ($modulepath = readdir($handle))) {
-				if ($modulepath == '.' || $modulepath == '..') {
-					continue;
-				}
-				$manifest = ext_module_manifest($modulepath);
-				if (!is_array($manifest) || empty($manifest) || empty($manifest['application']['identifie'])) {
-					continue;
-				}
-				if (!in_array($manifest['application']['identifie'], $installed_module)) {
-					$manifest = ext_module_convert($manifest);
-					$module[$manifest['name']] = $manifest;
-					if (($status == 'uninstalled' && in_array($manifest['name'], $recycle_modules)) || ($status == 'recycle' && !in_array($manifest['name'], $recycle_modules))) {
-						continue;
-					}
-					$uninstallModules[$manifest['name']] = array(
-						'from' => 'local',
-						'name' => $manifest['name'],
-						'version' => $manifest['version'],
-						'title' => $manifest['title'],
-					);
-				}
-			}
-		}
-		$cache = array(
-			'cloud_m_count' => $cloud_m_count,
-			'modules' => $uninstallModules
-		);
-		if ($status == 'recycle') {
-			cache_write('all_recycle_module', $cache);
 		} else {
-			cache_write('all_uninstalled_module', $cache);
+			cache_build_uninstalled_module($status);
 		}
-		return $uninstallModules;
-	} else {
-		return array();
 	}
+	$uninstallModules = $status == 'uninstalled' ? cache_load('all_uninstalled_module') : cache_load('all_recycle_module');
+	return $uninstallModules['modules'];
 }

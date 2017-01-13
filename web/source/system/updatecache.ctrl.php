@@ -8,10 +8,6 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('cache');
 load()->model('setting');
 
-//只有创始人、主管理员、管理员才有权限
-if ($_W['role'] != 'owner' && $_W['role'] != 'manager' && $_W['role'] != 'founder') {
-	message('无权限操作！', referer(), 'error');
-}
 $_W['page']['title'] = '更新缓存 - 设置 - 系统管理';
 
 //清空缓存分为两种，一种为重建，一种为清空。

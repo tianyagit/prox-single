@@ -12,6 +12,9 @@ $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 if ($_W['role'] != 'owner' && $_W['role'] != 'manager' && $_W['role'] != 'founder') {
 	message('无权限操作！', referer(), 'error');
 }
+if ($do != 'display' && $_W['role'] != 'founder') {
+	message('您只有查看权限！', url('system/module-group'), 'error');
+}
 
 if ($do == 'save') {
 	$package_info = array(

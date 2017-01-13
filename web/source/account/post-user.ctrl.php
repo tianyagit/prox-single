@@ -68,14 +68,18 @@ if ($do == 'edit') {
 } elseif ($do == 'set_manager') {
 	$username = trim($_GPC['username']);
 	$user = user_single(array('username' => $username));
-	if ($user['status'] != 2) {
-		message(error(3, '用户未通过审核！'), '', 'ajax');
-	}
-	if (in_array($user['uid'], $founders)) {
-		message(error(1, '不可操作网站创始人！'), '', 'ajax');
-	}
 	if (!empty($user)) {
-		//addtype为1：操作员；2：:管理员；3、主管理员
+		if ($user['status'] != 2) {
+			message(error(3, '用户未通过审核或不存在！'), '', 'ajax');
+		}
+		if (in_array($user['uid'], $founders)) {
+			message(error(1, '不可操作网站创始人！'), '', 'ajax');
+		}
+		//添加/修改公众号操作员、管理员、主管理员时执行数量判断
+		if (is_error($permission = uni_create_permission(144, 1))) {
+			message(error(5, $permission['message']), '' , 'error');
+		}
+
 		$addtype = intval($_GPC['addtype']);
 		$data = array(
 			'uniacid' => $uniacid,

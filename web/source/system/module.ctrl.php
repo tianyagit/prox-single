@@ -301,8 +301,8 @@ if ($do =='install') {
 		module_build_privileges();
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
-		cache_delete('all_uninstalled_module');
-		cache_delete('all_recycle_module');
+		cache_build_uninstalled_module('uninstalled');
+		cache_build_uninstalled_module('recycle');
 		if (empty($module_subscribe_success)) {
 			message('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module') . '">返回模块列表</a></div>', '', 'tips');
 		} else {
@@ -484,8 +484,8 @@ if ($do == 'uninstall') {
 		ext_module_clean($name, $_GPC['confirm'] == '1');
 		cache_build_account_modules();
 		cache_build_module_subscribe_type();
-		cache_delete('all_uninstalled_module');
-		cache_delete('all_recycle_module');
+		cache_build_uninstalled_module('uninstalled');
+		cache_build_uninstalled_module('recycle');
 
 		pdo_insert('modules_recycle', array('modulename' => $module['name']));
 
@@ -496,8 +496,8 @@ if ($do == 'uninstall') {
 if ($do == 'recycle') {
 	$operate = $_GPC['operate'];
 	$name = trim($_GPC['name']);
-	cache_delete('all_uninstalled_module');
-	cache_delete('all_recycle_module');
+	cache_build_uninstalled_module('uninstalled');
+	cache_build_uninstalled_module('recycle');
 	if ($operate == 'delete') {
 		pdo_insert('modules_recycle', array('modulename' => $name));
 		message('模块已放入回收站', url('system/module/not_installed', array('status' => 'recycle')), 'success');

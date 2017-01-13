@@ -466,8 +466,10 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	}
 	if (!empty($uniacid)) {
 		$role = pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'role');
-		if(in_array($role, array(ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_OWNER))) {
-			$role = ACCOUNT_MANAGE_NAME_MANAGER;
+		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
+			$role = ACCOUNT_MANAGE_NAME_OWNER;
+		} elseif ($role == ACCOUNT_MANAGE_NAME_MANAGER) {
+			$role = ACCOUNT_MANAGE_NAME_MANAGER;	
 		} else {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
@@ -476,8 +478,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 		$roles = array_keys($roles);
 		if (in_array(ACCOUNT_MANAGE_NAME_OWNER, $roles) || in_array(ACCOUNT_MANAGE_NAME_MANAGER, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
-		}
-		if (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, array_keys($roles))) {
+		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, array_keys($roles))) {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
 	}

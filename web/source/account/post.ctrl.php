@@ -15,14 +15,18 @@ if ($_W['role'] == 'founder' || $_W['role'] == 'owner') {
 } elseif ($_W['role'] == 'manager') {
 	$do = in_array($do, $dos) ? $do : 'modules_tpl';
 } else {
-	message('无权限操作！', referer(), 'error');
+	message('无权限操作！', url('account/manager'), 'error');
 }
 
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 $_W['page']['title'] = '管理设置 - 微信公众号管理';
+$state = uni_permission($_W['uid'], $uniacid);
+if ($state != 'founder' && $state != 'manager') {
+	message('您是该公众号的操作员，无权限操作！', url('account/manage'), 'error');
+}
 if (empty($uniacid) || empty($acid)) {
-	message('请选择要编辑的公众号', referer(), 'error');
+	message('请选择要编辑的公众号', url('account/manager'), 'error');
 }
 
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
@@ -30,6 +34,9 @@ $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'base') {
+	if ($_W['role'] != 'founder' && $_W['role'] != 'owner') {
+		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
+	}
 	if($_W['ispost'] && $_W['isajax']) {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
@@ -131,6 +138,9 @@ if($do == 'base') {
 }
 
 if($do == 'sms') {
+	if ($_W['role'] != 'founder' && $_W['role'] != 'owner') {
+		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
+	}
 	$settings = uni_setting($uniacid, array('notify'));
 	$notify = $settings['notify'] ? $settings['notify'] : array();
 
