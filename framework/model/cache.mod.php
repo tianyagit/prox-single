@@ -284,6 +284,7 @@ function cache_build_uninstalled_module($status) {
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
 	$recycle_modules = array_keys($recycle_modules);
 	$cloud_module = cloud_m_query();
+	unset($cloud_module['pirate_apps']);
 	if (!empty($cloud_module) && !is_error($cloud_module)) {
 		foreach ($cloud_module as $module) {
 			if (($status == 'uninstalled' && in_array($module['name'], $recycle_modules)) || ($status == 'recycle' && !in_array($module['name'], $recycle_modules))) {
