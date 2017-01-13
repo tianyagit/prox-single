@@ -93,8 +93,8 @@ function message($msg, $redirect = '', $type = '') {
 	
 	if ($label == 'success'){
 		header('Location: ' . $redirect);
+		exit;
 	}
-	
 }
 
 /**

@@ -130,7 +130,7 @@ if (!empty($modules)) {
 
 //uni_account是否存在letter字段，否则添加并更新（切换公众号拼音索引功能）
 if(!pdo_fieldexists('uni_account', 'title_initial')) {
-	$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `title_initial` VARCHAR(1) NOT NULL COMMENT 'title首字母';");
+	$add_letter = pdo_query("ALTER TABLE ". tablename('uni_account') . " ADD `title_initial` VARCHAR(1) NOT NULL DEFAULT '';");
 	if($add_letter) {
 		$sql = '';
 		$all_account = pdo_fetchall("SELECT uniacid,name FROM ". tablename('uni_account'));

@@ -159,7 +159,7 @@
 			</dl>
 		</div>
 		<script>
-			angular.module('app', []).controller('processor', function($scope, $http){
+			angular.module('cloudApp', ['app']).controller('processor', function($scope, $http){
 				$scope.scripts = {php echo json_encode($scripts);};
 				$scope.fails = [];
 				
@@ -167,9 +167,7 @@
 				var total = $scope.scripts.length;
 				var i = 1;
 				var error = function() {
-					require(['util'], function(u){
-						u.message('未能成功执行清理升级操作, 请联系开发商. ');
-					});
+					util.message('未能成功执行清理升级操作, 请联系开发商. ');
 				}
 				var proc = function() {
 					var script = $scope.scripts.shift();
@@ -194,9 +192,7 @@
 									location.href = '{url "cloud/upgrade"}';
 								}
 							} else {
-								require(['util'], function(u){
-									u.message('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除.', '{url "system/database/trim"}');
-								});
+								util.message('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除.', '{url "system/database/trim"}');
 							}
 							return;
 						}
@@ -221,7 +217,7 @@
 				}
 				proc();
 			});
-			angular.bootstrap(document, ['app']);
+			angular.bootstrap(document, ['cloudApp']);
 		</script>
 	{/if}
 </div>
