@@ -10,7 +10,7 @@ load()->classs('weixin.platform');
 setting_load('platform');
 
 //只有创始人、主管理员、管理员才有权限
-if ($_W['role'] != 'owner' && $_W['role'] != 'manager' && $_W['role'] != 'founder') {
+if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	message('无权限操作！', referer(), 'error');
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
