@@ -86,7 +86,7 @@ if ($do == 'edit') {
 			'uid' => $user['uid'],
 		);
 
-		$exists = pdo_get('uni_account_users', array('uid' => $user['uid'], 'uniacid' => $uniacid));
+		$exists = pdo_get('uni_account_users', $data);
 		$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
 		if (empty($exists)) {
 			if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
@@ -112,6 +112,7 @@ if ($do == 'edit') {
 			} else  {
 				$data['role'] = ACCOUNT_MANAGE_NAME_OPERATOR;
 			}
+			pdo_delete('uni_account_users',  array('uniacid' => $uniacid,'uid' => $user['uid']));
 			$result = pdo_insert('uni_account_users', $data);
 			if ($result) {
 				message(error(0, '添加成功！'), '', 'ajax');
