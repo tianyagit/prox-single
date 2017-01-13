@@ -311,13 +311,13 @@ function module_build_privileges() {
  * 获取所有未安装的模块的总数
  */
 function module_count_unistalled_module() {
-	global $_W;
-	if (empty($_W['count_uninstalled_module'])) {
+	global $_GPC;
+	if (empty($_GPC['count_uninstalled_module'])) {
 		$uninstall_module_num = module_get_all_unistalled('uninstalled');
 		isetcookie('count_uninstalled_module', count($uninstall_module_num), 86400*24);
-		$_W['count_uninstalled_module'] = count($uninstall_module_num);
+		$_GPC['count_uninstalled_module'] = count($uninstall_module_num);
 	}
-	return $_W['count_uninstalled_module'];
+	return $_GPC['count_uninstalled_module'];
 }
 
 /**
