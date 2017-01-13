@@ -37,6 +37,12 @@ function url($segment, $params = array()) {
  */
 function message($msg, $redirect = '', $type = '') {
 	global $_W, $_GPC;
+	static $message_cookie;
+	//如果同一个页面调用多次message，只有第一次生效否则提示信息将被最后一个覆盖
+	if (!empty($message_cookie)) {
+		return false;
+	}
+	
 	if($redirect == 'refresh') {
 		$redirect = $_W['script_name'] . '?' . $_SERVER['QUERY_STRING'];
 	}
@@ -76,24 +82,21 @@ function message($msg, $redirect = '', $type = '') {
 	if($type == 'ajax' || $type == 'sql') {
 		$label = 'warning';
 	}
-	
-	$message = array();
 	if (is_array($msg)){
-		$message['title'] = 'MYSQL 错误';
-		$message['msg'] = 'php echo cutstr(' . $msg['sql'] . ', 300, 1);';
+		$message_cookie['title'] = 'MYSQL 错误';
+		$message_cookie['msg'] = 'php echo cutstr(' . $msg['sql'] . ', 300, 1);';
 	} else{
-		$message['title'] = $caption;
-		$message['msg'] = $msg;
+		$message_cookie['title'] = $caption;
+		$message_cookie['msg'] = $msg;
 	}
-	$message['type'] = $label;
-	$redirect = $redirect ? $redirect : referer();
-	$message['redirect'] = $redirect;
-	$message['msg'] = rawurlencode($message['msg']);
-	isetcookie("message", stripslashes(json_encode($message, JSON_UNESCAPED_UNICODE)), 600);
+	$message_cookie['type'] = $label;
+	$message_cookie['redirect'] = $redirect ? $redirect : referer();
+	$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
+	
+	isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
 	
 	if ($label == 'success'){
 		header('Location: ' . $redirect);
-		exit;
 	}
 }
 
@@ -263,6 +266,9 @@ function buildframes($framename = ''){
 	if (!empty($user_permission)) {
 		foreach ($frames as $nav_id => $section) {
 			if (empty($section['section'])) {
+				continue;
+			}
+			if (in_array("{$nav_id}*", $user_permission)) {
 				continue;
 			}
 			foreach ($section['section'] as $section_id => $secion) {
