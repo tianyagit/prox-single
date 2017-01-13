@@ -13,7 +13,6 @@ $do = in_array($_GPC['do'], $dos)? $do : 'display';
 $_W['page']['title'] = '公众号列表 - 公众号';
 
 if ($do == 'display') {
-	uni_user_permission_check('system_account');
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$start = ($pindex - 1) * $psize;

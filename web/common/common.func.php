@@ -88,13 +88,13 @@ function message($msg, $redirect = '', $type = '') {
 	$message['type'] = $label;
 	$redirect = $redirect ? $redirect : referer();
 	$message['redirect'] = $redirect;
-	$message['msg'] = urlencode($message['msg']);
+	$message['msg'] = rawurlencode($message['msg']);
 	isetcookie("message", stripslashes(json_encode($message, JSON_UNESCAPED_UNICODE)), 600);
 	
 	if ($label == 'success'){
 		header('Location: ' . $redirect);
+		exit;
 	}
-	
 }
 
 /**
