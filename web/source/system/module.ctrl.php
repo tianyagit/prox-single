@@ -421,7 +421,7 @@ if ($do == 'module_detail') {
 
 	//可以使用此模块的公众号
 	$pageindex = max(1, $_GPC['page']);
-	$pagesize = 10;
+	$pagesize = 20;
 	$use_module_account = array();
 /*	$uniaccount_list = pdo_getall('uni_account');
 	if (!empty($uniaccount_list)) {
