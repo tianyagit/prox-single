@@ -203,7 +203,7 @@ if ($do == 'delete') {
 	if(empty($media)) {
 		exit('文件不存在或已经删除');
 	}
-	if(empty($_W['isfounder']) && $_W['role'] != 'manager') {
+	if(empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
 		exit('您没有权限删除该文件');
 	}
 	load()->func('file');

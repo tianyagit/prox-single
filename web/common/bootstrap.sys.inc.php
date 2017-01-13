@@ -34,7 +34,7 @@ if(!empty($_GPC['__uniacid'])) {
 	$_W['weid'] = $_W['uniacid'];
 }
 if(!empty($_W['uid'])) {
-	$_W['role'] = uni_permission($_W['uid'], $_W['uniacid']);
+	$_W['role'] = uni_permission($_W['uid']);
 }
 $_W['template'] = 'default';
 if(!empty($_W['setting']['basic']['template'])) {

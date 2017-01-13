@@ -9,10 +9,6 @@ load()->model('system');
 
 $dos = array('delete', 'edit', 'set_permission', 'set_manager');
 $do = in_array($do, $dos) ? $do : 'edit';
-//只有创始人、主管理员、管理员才有权限
-if ($_W['role'] != 'owner' && $_W['role'] != 'founder' && $_W['role'] != 'manager') {
-	message('无权限操作！', referer(), 'error');
-}
 
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
@@ -21,6 +17,11 @@ if (empty($uniacid) || empty($acid)) {
 	message('请选择要编辑的公众号', referer(), 'error');
 }
 
+$state = uni_permission($_W['uid'], $uniacid);
+//只有创始人、主管理员、管理员才有权限
+if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
+	message('无权限操作！', referer(), 'error');
+}
 $founders = explode(',', $_W['config']['setting']['founder']);
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $account = account_fetch($acid);
@@ -53,7 +54,7 @@ if ($do == 'edit') {
 	);
 	$exists = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
 	if (!empty($exists)) {
-		if ($_W['role'] == 'manager' && ($exists['role'] == 'owner' || $exists['role'] == 'manager')) {
+		if ($state == ACCOUNT_MANAGE_NAME_MANAGER && ($exists['role'] == ACCOUNT_MANAGE_NAME_OWNER || $exists['role'] == ACCOUNT_MANAGE_NAME_MANAGER)) {
 			message('管理员不可操作其他管理员', referer(), 'error');
 		}
 		$result = pdo_delete('uni_account_users', $data);
@@ -86,11 +87,11 @@ if ($do == 'edit') {
 			'uid' => $user['uid'],
 		);
 
-		$exists = pdo_get('uni_account_users', array('uid' => $user['uid'], 'uniacid' => $uniacid));
+		$exists = pdo_get('uni_account_users', $data);
 		$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
 		if (empty($exists)) {
 			if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
-				if ($_W['role'] == 'manager') {
+				if ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
 					message(error(4, '管理员不可操作主管理员'), '', 'ajax');
 				}
 				if (empty($owner)) {
@@ -105,13 +106,14 @@ if ($do == 'edit') {
 					exit;
 				}
 			} else if ($addtype == ACCOUNT_MANAGE_TYPE_MANAGER) {
-				if ($_W['role'] == 'manager') {
+				if ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
 					message(error(4, '管理员不可操作管理员'), '', 'ajax');
 				}
 				$data['role'] = ACCOUNT_MANAGE_NAME_MANAGER;
 			} else  {
 				$data['role'] = ACCOUNT_MANAGE_NAME_OPERATOR;
 			}
+			pdo_delete('uni_account_users',  array('uniacid' => $uniacid,'uid' => $user['uid']));
 			$result = pdo_insert('uni_account_users', $data);
 			if ($result) {
 				message(error(0, '添加成功！'), '', 'ajax');

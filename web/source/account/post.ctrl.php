@@ -9,32 +9,29 @@ load()->model('module');
 load()->model('cloud');
 load()->model('cache');
 
-$dos = array('base', 'sms', 'modules_tpl');
-if ($_W['role'] == 'founder' || $_W['role'] == 'owner') {
-	$do = in_array($do, $dos) ? $do : 'base';
-} elseif ($_W['role'] == 'manager') {
-	$do = in_array($do, $dos) ? $do : 'modules_tpl';
-} else {
-	message('无权限操作！', url('account/manager'), 'error');
-}
-
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
-$_W['page']['title'] = '管理设置 - 微信公众号管理';
-$state = uni_permission($_W['uid'], $uniacid);
-if ($state != 'founder' && $state != 'manager') {
-	message('您是该公众号的操作员，无权限操作！', url('account/manage'), 'error');
-}
 if (empty($uniacid) || empty($acid)) {
 	message('请选择要编辑的公众号', url('account/manager'), 'error');
 }
+$state = uni_permission($_W['uid'], $uniacid);
 
+$dos = array('base', 'sms', 'modules_tpl');
+if ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER) {
+	$do = in_array($do, $dos) ? $do : 'base';
+} elseif ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
+	$do = in_array($do, $dos) ? $do : 'modules_tpl';
+} else {
+	message('您是该公众号的操作员，无权限操作！', url('account/manager'), 'error');
+}
+
+$_W['page']['title'] = '管理设置 - 微信公众号管理';
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'base') {
-	if ($_W['role'] != 'founder' && $_W['role'] != 'owner') {
+	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
 	if($_W['ispost'] && $_W['isajax']) {
@@ -138,7 +135,7 @@ if($do == 'base') {
 }
 
 if($do == 'sms') {
-	if ($_W['role'] != 'founder' && $_W['role'] != 'owner') {
+	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
 	$settings = uni_setting($uniacid, array('notify'));

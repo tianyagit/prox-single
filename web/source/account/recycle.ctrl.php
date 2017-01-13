@@ -10,7 +10,7 @@ load()->model('account');
 $dos = array('display', 'recover', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
 //只有创始人、主管理员才有权限使用回收站功能
-if ($_W['role'] != 'owner' && $_W['role'] != 'founder') {
+if ($_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	message('无权限操作！', referer(), 'error');
 }
 $_W['page']['title'] = '公众号回收站 - 公众号';
@@ -52,13 +52,14 @@ if ($do == 'display') {
 }
 
 if ($do == 'recover') {
+	$acid = intval($_GPC['acid']);
+	$uniacid = intval($_GPC['uniacid']);
+
 	$state = uni_permission($_W['uid'], $uniacid);
-	if($state != 'founder' && $state != 'manager') {
+	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
 		message('没有权限！', referer(), 'error');
 	}
 
-	$acid = intval($_GPC['acid']);
-	$uniacid = intval($_GPC['uniacid']);
 
 	if (!empty($uniacid)) {
 		pdo_update('account', array('isdeleted' => 0), array('uniacid' => $uniacid));
@@ -69,11 +70,13 @@ if ($do == 'recover') {
 }
 
 if($do == 'delete') {
+	$uniacid = intval($_GPC['uniacid']);
+	$acid = intval($_GPC['acid']);
+	
 	$state = uni_permission($_W['uid'], $uniacid);
-	if($state != 'founder' && $state != 'manager') {
+	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('没有权限！', referer(), 'error');
 	}
-	$acid = intval($_GPC['acid']);
 
 	if (!empty($acid)) {
 		account_delete($acid);
