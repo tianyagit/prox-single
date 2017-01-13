@@ -76,7 +76,7 @@ if ($do == 'edit') {
 			message(error(1, '不可操作网站创始人！'), '', 'ajax');
 		}
 		//添加/修改公众号操作员、管理员、主管理员时执行数量判断
-		if (is_error($permission = uni_create_permission(144, 1))) {
+		if (is_error($permission = uni_create_permission($user['uid'], 1))) {
 			message(error(5, $permission['message']), '' , 'error');
 		}
 
