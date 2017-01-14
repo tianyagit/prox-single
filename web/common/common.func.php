@@ -73,7 +73,8 @@ function message($msg, $redirect = '', $type = '') {
 		}
 	}
 	if (empty($msg) && !empty($redirect)) {
-		header('location: '.$redirect);
+		header('Location: '.$redirect);
+		exit;
 	}
 	$label = $type;
 	if($type == 'error') {
@@ -109,7 +110,7 @@ function message($msg, $redirect = '', $type = '') {
 function checklogin() {
 	global $_W;
 	if (empty($_W['uid'])) {
-		message('抱歉，您无权进行该操作，请先登录！', url('user/login'), 'warning');
+		message('', url('user/login'), 'warning');
 	}
 	return true;
 }
@@ -120,8 +121,7 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		header('Location:' . url('account/display'));
-		exit;
+		message('', url('account/display'), 'info');
 	}
 }
 
