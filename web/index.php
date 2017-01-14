@@ -11,7 +11,6 @@ load()->web('template');
 if (empty($_W['isfounder']) && !empty($_W['user']) && $_W['user']['status'] == 1) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
 }
-tpl_form_field_date()
 //@@todo 还需要判断各角色的权限
 $_W['acl'] = $acl = array(
 	'account' => array(
