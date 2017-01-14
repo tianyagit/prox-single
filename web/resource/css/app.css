@@ -238,8 +238,8 @@ ul{list-style:none;}
 .app .app-preview .app-region .arrow-top,.app .app-preview .arrow-top:after{width: 0; height: 0; border-style: solid; border-width: 0 8px 10px 8px; border-color: transparent transparent  #d1d1d1 transparent; position: absolute; left: 50%; top: -10px;}
 .app .app-preview .app-region .arrow-top:after{content: ""; border-bottom-color: #f8f8f8; top: 1px; left:-8px; z-index:1;}
 .app .app-region{position:relative;width:100%;}
-.app .app-region .panel{border-radius:0; position:relative; width:100%; border-left:0; border-right:0; border-bottom:0;}
-.app .app-region .panel .panel-body{padding:0 11px 4px 11px;}
+.app .app-region .panel{border-radius:0; position:relative; background-color: transparent; width:100%; border-left:0; border-right:0; border-bottom:0;}
+.app .app-region .panel .panel-body{padding:0 11px 4px 11px; background-color: transparent;}
 .app .app-region .panel .panel-body label{height:40px;line-height:40px;}
 .app .app-region .panel .panel-body .js-editor-submit-div{margin-top:-75px;}
 .app .app-region .panel .panel-body .js-editor-submit{margin-left:50px;}
@@ -248,7 +248,8 @@ ul{list-style:none;}
 .app .app-region .panel .panel-body ul li,.app .app-side .app-add-item .addItem-wrap ul li{float: left; display: table; margin: 0 0 10px 5px; background: #fff;}
 .app .app-region .app-add-filed a,.app .app-side .app-add-item .addItem-wrap .app-add-filed a {display:table-cell; width:60px; height:40px; text-align:center; box-sizing: border-box; white-space:normal; vertical-align:middle; line-height:14px; cursor:pointer; padding:6px 8px; color:#428bca;}
 
-.app .app-side{margin:71px 0 0 0;height:700px; width: 560px; overflow-x: hidden; overflow-y: auto;} 
+.app .app-side{margin:71px 0 0 0;width: 560px; overflow-x: hidden; } 
+.app .app-side .panel {border-radius: 0;}
 .app .app-side .panel-body{padding:12px 10px;}
 .app .app-side>div{position:relative; padding-bottom:60px; width:535px; margin-left:20px;}
 .app .app-side .pages{padding:0;margin-top:-50px;}
@@ -405,6 +406,7 @@ ul{list-style:none;}
 .usercenter .app-usercenter .mnav-box .list-group-item{background-color:transparent;}
 .usercenter .app .modules .app-textNav .inner .list-group-item a{color:#606366;}
 /*店铺导航*/
+.shopNav .well {border-radius: 0;}
 .shopNav .well h3,.publicAd .well h3{margin:0 ; font-size:16px; line-height:30px; font-weight:bold;}
 .shopNav .app .app-preview{border-radius:18px; padding-bottom:100px; position:relative;}
 .shopNav .app .app-preview:after{content:""; position:absolute; bottom:20px; left:145px; width:60px; height:60px; border:1px solid #ddd; border-radius:100%;}
