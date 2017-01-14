@@ -343,7 +343,6 @@ function frames_menu_append() {
 		'founder' => array(),
 		'owner' => array(
 			'system_account',
-			'system_platform',
 			'system_module',
 			'system_module_group',
 			'system_my',
@@ -351,7 +350,6 @@ function frames_menu_append() {
 		),
 		'manager' => array(
 			'system_account',
-			'system_platform',
 			'system_module',
 			'system_module_group',
 			'system_my',
