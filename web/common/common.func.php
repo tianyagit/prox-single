@@ -150,6 +150,9 @@ function buildframes($framename = ''){
 						'url' => url('home/welcome/ext', array('m' => $module['name'])),
 						'is_display' => 1,
 					);
+					if (file_exists(IA_ROOT. "addons/{$module['name']}/icon.jpg")) {
+						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia(IA_ROOT. "addons/{$module['name']}/icon.jpg");
+					}
 				}
 			}
 		}
