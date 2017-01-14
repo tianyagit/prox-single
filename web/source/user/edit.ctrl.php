@@ -13,10 +13,6 @@ $do = in_array($do, $dos) ? $do: 'edit_base';
 uni_user_permission_check('system_user_post');
 
 $_W['page']['title'] = '编辑用户 - 用户管理';
-$state = uni_permission($_W['uid'], $uniacid);
-if ($state != 'founder') {
-	message('没有操作权限！');
-}
 
 $uid = intval($_GPC['uid']);
 $user = user_single($uid);
