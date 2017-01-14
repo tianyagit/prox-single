@@ -20,8 +20,10 @@
 </div>
 <div class="clearfix"></div>
 <div class="btn-group we7-btn-group wechat-edit-group">
+	{if $state == 'founder' || $state == 'owner'}
 	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">基础信息</a>
 	<a href="{php echo url('account/post/sms', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">短信信息</a>
+	{/if}
 	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default active">使用者管理</a>
 	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">可用应用模块/模板</a>
 </div>
@@ -54,9 +56,8 @@
 				<div class="link-group">
 					<a href="javascript:;" ng-if="permission.isfounder == 1">创始人拥有系统最高权限 </a>
 					{if $_W['isfounder']}<a href="javascript:;" ng-if="permission.role == 'owner' && permission.isfounder == 0" ng-click="changeOwner(permission.username)">修改</a>{/if}
-					<a href="javascript:;" ng-if="(state == 'founder' || state == 'manager') && permission.isfounder == 0 && (permission.role == 'manager' || permission.role == 'operator')" ng-click="setPermission(permission.uid)">权限设置  </a>
-					<a href="javascript:;" ng-if="(state == 'founder' || state == 'manager') && permission.isfounder == 0 && (permission.role == 'manager' || permission.role == 'operator')" ng-click="delPermission(permission.uid)">删除 </a>
-					<a href="javascript:;" ng-if="state != 'founder' && state != 'manager'">---</a>
+					<a href="javascript:;" ng-if="permission.isfounder == 0 && (((state == 'founder' || state == 'owner') && (permission.role == 'manager' || permission.role == 'operator')) || (state == 'manager' && permission.role == 'operator'))" ng-click="setPermission(permission.uid)">权限设置  </a>
+					<a href="javascript:;" ng-if="permission.isfounder == 0 && (((state == 'founder' || state == 'owner') && (permission.role == 'manager' || permission.role == 'operator')) || (state == 'manager' && permission.role == 'operator'))" ng-click="delPermission(permission.uid)">删除 </a>
 				</div>
 			</td>
 		</tr>
