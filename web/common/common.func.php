@@ -120,7 +120,8 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		message('这项功能需要你选择特定公众号才能使用！', url('account/display'), 'info');
+		header('Location:' . url('account/display'));
+		exit;
 	}
 }
 
