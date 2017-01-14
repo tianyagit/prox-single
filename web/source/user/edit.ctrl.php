@@ -14,7 +14,7 @@ uni_user_permission_check('system_user_post');
 
 $_W['page']['title'] = '编辑用户 - 用户管理';
 $state = uni_permission($_W['uid'], $uniacid);
-if ($state != 'founder' && $state != 'manager') {
+if ($state != 'founder') {
 	message('没有操作权限！');
 }
 
