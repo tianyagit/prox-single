@@ -256,7 +256,7 @@ function buildframes($framename = ''){
 	}
 	//从数据库中获取用户权限，并附加上系统管理中的权限
 	//仅当系统管理时才使用预设权限
-	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER)) {
+	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
 		$user_permission = uni_user_permission('system');
 	}
 	//@@todo 店员界面菜单
@@ -341,6 +341,14 @@ function filter_url($params) {
 function frames_menu_append() {
 	$system_menu_default_permission = array(
 		'founder' => array(),
+		'owner' => array(
+			'system_account',
+			'system_platform',
+			'system_module',
+			'system_module_group',
+			'system_my',
+			'system_setting_updatecache',
+		),
 		'manager' => array(
 			'system_account',
 			'system_platform',
