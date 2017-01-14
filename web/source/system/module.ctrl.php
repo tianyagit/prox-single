@@ -517,7 +517,7 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 
-	$condition = " WHERE issystem = 0 ";
+	$condition = " WHERE issystem = 0 OR name = 'we7_coupon' ";
 	$params = array();
 	if (!empty($letter) && strlen($letter) == 1) {
 		if(in_array($letter, $letters)){
