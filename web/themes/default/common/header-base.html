@@ -21,6 +21,7 @@
 		{if !empty($_W['acid'])}'acid': '{$_W['acid']}',{/if}
 		{if !empty($_W['openid'])}'openid': '{$_W['openid']}',{/if}
 		{if !empty($_W['uid'])}'uid': '{$_W['uid']}',{/if}
+		'isfounder': {if $_W['isfounder']}1{else}0{/if},
 		'siteroot': '{$_W['siteroot']}',
 		'siteurl': '{$_W['siteurl']}',
 		'attachurl': '{$_W['attachurl']}',
