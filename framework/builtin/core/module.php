@@ -7,7 +7,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 class CoreModule extends WeModule {
-	public $modules = array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword');
+	public $modules = array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword', 'module');
 	public $tablename = array(
 			'basic' => 'basic_reply',
 			'news' => 'news_reply',
@@ -34,7 +34,6 @@ class CoreModule extends WeModule {
 
 	public function fieldsFormDisplay($rid = 0, $option = array()) {
 		global $_GPC, $_W;
-
 		$replies = array();
 		switch($_GPC['a']) {
 			case 'mass':

@@ -480,14 +480,13 @@ if ($do == 'uninstall') {
 				pdo_run($manifest['uninstall']);
 			}
 		}
+		pdo_insert('modules_recycle', array('modulename' => $module['name']));
 
 		ext_module_clean($name, $_GPC['confirm'] == '1');
 		cache_build_account_modules();
 		cache_build_module_subscribe_type();
 		cache_build_uninstalled_module('uninstalled');
 		cache_build_uninstalled_module('recycle');
-
-		pdo_insert('modules_recycle', array('modulename' => $module['name']));
 
 		message('模块已放入回收站！', url('system/module'), 'success');
 	}

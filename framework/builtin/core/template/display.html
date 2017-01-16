@@ -180,6 +180,9 @@
 				module: type === 'module' ? false : true
 			}
 		};
+		if (type == 'module') {
+			document.cookie = "special_reply_type={$_GPC['type']}";
+		}
 		util.material(function(material){
 			var replyVal = [];
 			$(':hidden[name="reply[reply_'+type+']"]').val() == '' ? '' : replyVal.push($(':hidden[name="reply[reply_'+type+']"]').val());
