@@ -43,13 +43,20 @@ function cache_build_account_modules($uniacid = 0) {
 	}	
 }
 
-function cache_build_account() {
+function cache_build_account($uniacid = 0) {
 	global $_W;
-	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
-	foreach($uniacid_arr as $account){
-		cache_delete("uniaccount:{$account['uniacid']}");
-		cache_delete("unisetting:{$account['uniacid']}");
-		cache_delete("defaultgroupid:{$account['uniacid']}");
+	$uniacid = intval($uniacid);
+	if (empty($uniacid)) {
+		$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
+		foreach($uniacid_arr as $account){
+			cache_delete("uniaccount:{$account['uniacid']}");
+			cache_delete("unisetting:{$account['uniacid']}");
+			cache_delete("defaultgroupid:{$account['uniacid']}");
+		}
+	} else {
+		cache_delete("uniaccount:{$uniacid}");
+		cache_delete("unisetting:{$uniacid}");
+		cache_delete("defaultgroupid:{$uniacid}");
 	}
 }
 
