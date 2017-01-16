@@ -16,6 +16,7 @@
 	<input type="hidden" name="reply[reply_video]" value="">
 	<input type="hidden" name="reply[reply_wxcard]" value="">
 	<input type="hidden" name="reply[reply_keyword]" value="">
+	<input type="hidden" name="reply[reply_module]" value="">
 		<ul class="keywords-list">
 		</ul>
 		<div class="we7-select-msg we7-padding-vertical-max">
@@ -44,6 +45,9 @@
 				</li>
 				<li class="tab-nav tab-cardmsg {if $options['keyword']}hidden{/if}">
 					<a href="javascript:void(0);" onclick="select_mediaid('keyword');">&nbsp;<i class="wi wi-keyword"></i><span class="msg-tab-title">触发关键字</span></a>
+				</li>
+				<li class="tab-nav tab-cardmsg {if $options['module']}hidden{/if}">
+					<a href="javascript:void(0);" onclick="select_mediaid('module');">&nbsp;<i class="wi wi-keyword"></i><span class="msg-tab-title">模块</span></a>
 				</li>
 			</ul>
 		</div>
@@ -146,6 +150,12 @@
 				oldVal.splice(index, 1);
 				$(':hidden[name="reply[reply_'+type+']"]').val(oldVal);
 				break;
+			case 'module':
+				oldVal = oldVal.split(',');
+				index = _.indexOf(oldVal, media);
+				oldVal.splice(index, 1);
+				$(':hidden[name="reply[reply_'+type+']"]').val(oldVal);
+				break;
 		}
 		//显示隐藏-start
 		if((action == 'qr' || action == 'mass' || m == 'special' || m == 'welcome' || m == 'default') && $(':hidden[name="reply[reply_'+type+']"]').val().length == 0) {
@@ -219,7 +229,32 @@
 					'</li>'
 				);
 
-			}else {
+			}  else if(type == 'module') {
+				if($.trim(material.name).length == 0) {
+					return false;
+				}
+				replyVal.push(angular.toJson(material.name));
+				$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
+				$('.keywords-list').append(
+						'<li>'+
+						'<div class="del-'+type+'-media">'+
+						'	<div class="desc">'+
+						'		<div class="media-content">'+
+						'			<div class="appmsgSendedItem">'+
+						'				<a class="title-wrp" href="javascript:;">'+
+						'					 <span class="icon cover" style="background-image:url('+material.icon+');"></span>'+
+						'					<span class="title">[模块]'+material.title+'</span>'+
+						'				</a>'+
+						'			</div>'+
+						'		</div>'+
+						'	</div>'+
+						'	<div class="opr">'+
+						'		<a href="javascript:;" data-media="'+material.name+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+						'	</div>'+
+						'</div>'+
+						'</li>'
+				);
+			} else {
 				if(type != 'music' && $.trim(material.media_id).length == 0) {
 					return false;
 				};
@@ -608,8 +643,33 @@
 								'</li>'
 						);
 					});
-					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal[0]);
-
+					$(':hidden[name="reply[reply_'+type+']"]').val(keywordVal[0]['content']);
+					break;
+				case 'module':
+					angular.forEach(val, function(keywordVal, keywordKey) {
+						replyVal.push(angular.toJson(keywordVal.rid));
+						var keywords = '&nbsp;&nbsp;' + keywordVal.content;
+						$('.keywords-list').append(
+								'<li>'+
+								'<div class="del-'+type+'-media">'+
+								'	<div class="desc">'+
+								'		<div class="media-content">'+
+								'			<div class="appmsgSendedItem">'+
+								'				<a class="title-wrp" href="javascript:;">'+
+								'					 <span class="icon cover" style="background-image:url('+keywordVal.icon+');"></span>'+
+								'					<span class="title">[模块]'+keywordVal.title+'</span>'+
+								'				</a>'+
+								'			</div>'+
+								'		</div>'+
+								'	</div>'+
+								'	<div class="opr">'+
+								'		<a href="javascript:;" data-media="'+keywordVal.name+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+								'	</div>'+
+								'</div>'+
+								'</li>'
+						);
+					});
+					$(':hidden[name="reply[reply_'+type+']"]').val(val[0]['name']);
 					break;
 				case 'music':
 					angular.forEach(val, function(musicVal, musicKey) {
@@ -653,7 +713,7 @@
 
 	window.validateReplyForm = function(form, $, _, util, $scope) {
 		var allEmpty = true;
-		var modules = ['basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword'];
+		var modules = ['basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword', 'module'];
 		if($scope.reply.entry.module == 'reply') {
 			angular.forEach(modules, function(val, key){
 				if($(':hidden[name="reply[reply_'+val+']"]').val() != '') {
