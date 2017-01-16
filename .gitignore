@@ -32,3 +32,4 @@ attachment/**/*
 !attachment/images/global/**/*
 addons/**/*
 web/test.php
+framework/builtin/core/module.cer

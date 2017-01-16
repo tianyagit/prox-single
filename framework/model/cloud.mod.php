@@ -281,8 +281,8 @@ function cloud_sms_send($mobile, $content, $postdata = array()) {
 	if (is_error($result)) {
 		return error($result['errno'], $result['message']);
 	}
-	if (intval($result['errno']) != -1) {
-		$row['notify']['sms']['balance'] = $row['notify']['sms']['balance'] - 1;
+	if (intval($result['errno']) === 0) {
+		$row['notify']['sms']['balance'] = $row['notify']['sms']['balance'] - $result['message'];
 		if ($row['notify']['sms']['balance'] < 0) {
 			$row['notify']['sms']['balance'] = 0;
 		}
