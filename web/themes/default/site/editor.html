@@ -42,9 +42,6 @@
 						<ul class="app-add-filed clearfix">
 							<li ng-repeat="m in modules" ng-if="!m.issystem && !m.isbase" ng-click="addItem(m['id'])"><a id="{{m['id']}}" class="btn btn-default" href="#" ng-bind="m['name']"></a></li>
 						</ul>
-						<div class="js-editor-submit-div">
-							<button type="button" class="btn btn-primary js-editor-submit single-submit">上架</button>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -151,6 +148,13 @@
 			<div class="app-footer"><div we7-pagelength></div></div>
 		</div>
 	</div>
+	<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+		<div class="container text-center we7-margin-vertical-sm">
+			<div class="js-editor-submit-div">
+				<button type="button" class="btn btn-primary btn-submit js-editor-submit single-submit">上架</button>
+			</div>
+		</div>
+	</nav>
 </form>
 <script type="text/javascript">
 	$(function(){
@@ -327,7 +331,7 @@
 			</div>
 			<div class="app-side">
 				{if $type == '2'}
-				<div class="panel panel-default" style="margin-bottom:15px; padding-bottom:0;">
+				<div class="panel we7-panel" style="margin-bottom:15px; padding-bottom:0;">
 					<div class="panel-body">
 						<div>将导航应用在以下页面:</div>
 						<div style="margin:10px 0;">
@@ -354,7 +358,7 @@
 				<div class="app-shopNav-edit" style="display:none;">
 					<div class="arrow-left"></div>
 					<div class="inner">
-						<div class="panel panel-default form-horizontal">
+						<div class="panel we7-panel form-horizontal">
 							<div class="panel-body">
 								<div class="shopNav-edit-header clearfix">
 									<div class="pull-right">
@@ -607,7 +611,11 @@
 					</div>
 				</div>
 			</div>
-			<a class="btn btn-primary js-editor-submit btn-submit" href="javascript:;">保存</a>
+			<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+				<div class="container text-center we7-margin-vertical-sm">
+					<a class="btn btn-primary js-editor-submit btn-submit" href="javascript:;">保存</a>
+				</div>
+			</nav>
 		<!--	<div class="shop-preview col-sm-12">
 				<div class="text-center alert alert-warning">
 					<a class="btn btn-primary js-editor-submit" href="javascript:;">保存</a>

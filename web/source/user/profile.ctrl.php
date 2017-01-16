@@ -62,8 +62,10 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'password':
 			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) message(error(2, '两次密码不一致！'), '', 'ajax');
-			$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
-			if ($pwd != $user['password']) message(error(3, '原密码不正确！'), '', 'ajax');
+			if (!$_W['isfounder']) {
+				$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
+				if ($pwd != $user['password']) message(error(3, '原密码不正确！'), '', 'ajax');
+			}
 			$newpwd = user_hash($_GPC['newpwd'], $user['salt']);
 			if ($users_profile_exist) {
 				$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));

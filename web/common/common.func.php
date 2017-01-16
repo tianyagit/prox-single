@@ -37,11 +37,6 @@ function url($segment, $params = array()) {
  */
 function message($msg, $redirect = '', $type = '') {
 	global $_W, $_GPC;
-	static $message_cookie;
-	//如果同一个页面调用多次message，只有第一次生效否则提示信息将被最后一个覆盖
-	if (!empty($message_cookie)) {
-		return false;
-	}
 	
 	if($redirect == 'refresh') {
 		$redirect = $_W['script_name'] . '?' . $_SERVER['QUERY_STRING'];
@@ -96,10 +91,8 @@ function message($msg, $redirect = '', $type = '') {
 	
 	isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
 	
-	if ($label == 'success'){
-		header('Location: ' . $redirect);
-		exit;
-	}
+	header('Location: ' . $redirect);
+	exit;
 }
 
 /**
@@ -150,6 +143,9 @@ function buildframes($framename = ''){
 						'url' => url('home/welcome/ext', array('m' => $module['name'])),
 						'is_display' => 1,
 					);
+					if (file_exists(IA_ROOT. "addons/{$module['name']}/icon.jpg")) {
+						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia(IA_ROOT. "addons/{$module['name']}/icon.jpg");
+					}
 				}
 			}
 		}
