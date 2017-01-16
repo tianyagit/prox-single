@@ -27,13 +27,20 @@ function cache_build_setting() {
 /**
  * 重建公众号下可使用的模块
  */
-function cache_build_account_modules() {
-	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
-	foreach($uniacid_arr as $account){
-		cache_delete("unimodules:{$account['uniacid']}:1");
-		cache_delete("unimodules:{$account['uniacid']}:");
-		cache_delete("unimodulesappbinding:{$account['uniacid']}");
-	}
+function cache_build_account_modules($uniacid = 0) {
+	$uniacid = intval($uniacid);
+	if (empty($uniacid)) {
+		$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
+		foreach($uniacid_arr as $account){
+			cache_delete("unimodules:{$account['uniacid']}:1");
+			cache_delete("unimodules:{$account['uniacid']}:");
+			cache_delete("unimodulesappbinding:{$account['uniacid']}");
+		}
+	} else {
+		cache_delete("unimodules:{$uniacid}:1");
+		cache_delete("unimodules:{$uniacid}:");
+		cache_delete("unimodulesappbinding:{$uniacid}");
+	}	
 }
 
 function cache_build_account() {
