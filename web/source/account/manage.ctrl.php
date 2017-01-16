@@ -56,21 +56,18 @@ if ($do == 'display') {
 	template('account/manage-display');
 }
 if ($do == 'delete') {
-	//只有创始人、主管理员才有权限停用公众号
-	if ($_W['role'] != 'owner' && $_W['role'] != 'founder') {
-		message('无权限操作！', referer(), 'error');
-	}
 	$uniacid = intval($_GPC['uniacid']);
 	$acid = intval($_GPC['acid']);
 	$uid = $_W['uid'];
+	//只有创始人、主管理员才有权限停用公众号
+	$state = uni_permission($uid, $uniacid);
+	if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER) {
+		message('无权限操作！', url('account/manage'), 'error');
+	}
 	if (!empty($acid) && empty($uniacid)) {
 		$account = account_fetch($acid);
 		if (empty($account)) {
 			message('子公众号不存在或是已经被删除');
-		}
-		$state = uni_permission($uid, $uniacid);
-		if($state != 'founder' && $state != 'manager') {
-			message('没有该公众号操作权限！', url('account/manage'), 'error');
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
 		if ($uniaccount['default_acid'] == $acid) {

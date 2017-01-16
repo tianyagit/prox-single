@@ -2,7 +2,7 @@
 <div class="we7-page-title">公众号管理</div>
 <ul class="we7-page-tab">
 	<li class="active"><a href="{url 'account/manage'}">公众号列表</a></li>
-	{if $_W['role'] == 'owner' || $_W['role'] == 'founder'}
+	{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
 	<li><a href="{url 'account/recycle'}">公众号回收站</a></li>
 	{/if}
 </ul>
@@ -15,12 +15,12 @@
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
 	</form>
-	{if $_W['role'] == 'founder' || $_W['role'] == 'manager' || $_W['role'] == 'owner'}
+	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER}
 	<div class="pull-right">
 		<a href="{url 'account/post-step'}" class="btn btn-primary we7-padding-horizontal">添加公众号</a>
 	</div>
 	{/if}
-</div>                                                                                              
+</div>
 <table class="table we7-table table-hover vertical-middle" id="js-system-account-display" ng-controller="SystemAccountDisplay" ng-cloak>
 	<col width="85px" />
 	<col />
@@ -53,9 +53,9 @@
 		<td class="text-left vertical-middle">
 			<div class="link-group">
 				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
-				{if $_W['role'] == 'founder' || $_W['role'] == 'owner' || $_W['role'] == 'manager'}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER}
 					<a ng-href="{{links.post}}acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder'">管理设置</a>
-					{if $_W['role'] != 'manager'}
+					{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
 					<a ng-href="{{links.del}}acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;">停用</a>
 					{/if}
 				{/if}

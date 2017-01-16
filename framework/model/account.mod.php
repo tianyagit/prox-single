@@ -469,16 +469,18 @@ function uni_permission($uid = 0, $uniacid = 0) {
 		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
 			$role = ACCOUNT_MANAGE_NAME_OWNER;
 		} elseif ($role == ACCOUNT_MANAGE_NAME_MANAGER) {
-			$role = ACCOUNT_MANAGE_NAME_MANAGER;	
+			$role = ACCOUNT_MANAGE_NAME_MANAGER;
 		} else {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
 	} else {
 		$roles = pdo_getall('uni_account_users', array('uid' => $uid), array('role'), 'role');
 		$roles = array_keys($roles);
-		if (in_array(ACCOUNT_MANAGE_NAME_OWNER, $roles) || in_array(ACCOUNT_MANAGE_NAME_MANAGER, $roles)) {
+		if (in_array(ACCOUNT_MANAGE_NAME_OWNER, $roles)) {
+			$role = ACCOUNT_MANAGE_NAME_OWNER;
+		} elseif (in_array(ACCOUNT_MANAGE_NAME_MANAGER, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
-		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, array_keys($roles))) {
+		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
 	}
@@ -519,7 +521,7 @@ function uni_user_permission($type = 'system') {
 	if(!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
 	} else {
-		$user_permission = array();
+		$user_permission = array('account*');
 	}
 	$permission_append = frames_menu_append();
 	//目前只有系统管理才有预设权限，公众号权限走数据库

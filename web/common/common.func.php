@@ -37,6 +37,7 @@ function url($segment, $params = array()) {
  */
 function message($msg, $redirect = '', $type = '') {
 	global $_W, $_GPC;
+	
 	if($redirect == 'refresh') {
 		$redirect = $_W['script_name'] . '?' . $_SERVER['QUERY_STRING'];
 	}
@@ -67,7 +68,8 @@ function message($msg, $redirect = '', $type = '') {
 		}
 	}
 	if (empty($msg) && !empty($redirect)) {
-		header('location: '.$redirect);
+		header('Location: '.$redirect);
+		exit;
 	}
 	$label = $type;
 	if($type == 'error') {
@@ -76,25 +78,21 @@ function message($msg, $redirect = '', $type = '') {
 	if($type == 'ajax' || $type == 'sql') {
 		$label = 'warning';
 	}
-	
-	$message = array();
 	if (is_array($msg)){
-		$message['title'] = 'MYSQL 错误';
-		$message['msg'] = 'php echo cutstr(' . $msg['sql'] . ', 300, 1);';
+		$message_cookie['title'] = 'MYSQL 错误';
+		$message_cookie['msg'] = 'php echo cutstr(' . $msg['sql'] . ', 300, 1);';
 	} else{
-		$message['title'] = $caption;
-		$message['msg'] = $msg;
+		$message_cookie['title'] = $caption;
+		$message_cookie['msg'] = $msg;
 	}
-	$message['type'] = $label;
-	$redirect = $redirect ? $redirect : referer();
-	$message['redirect'] = $redirect;
-	$message['msg'] = rawurlencode($message['msg']);
-	isetcookie("message", stripslashes(json_encode($message, JSON_UNESCAPED_UNICODE)), 600);
+	$message_cookie['type'] = $label;
+	$message_cookie['redirect'] = $redirect ? $redirect : referer();
+	$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
 	
-	if ($label == 'success'){
-		header('Location: ' . $redirect);
-		exit;
-	}
+	isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
+	
+	header('Location: ' . $redirect);
+	exit;
 }
 
 /**
@@ -105,7 +103,7 @@ function message($msg, $redirect = '', $type = '') {
 function checklogin() {
 	global $_W;
 	if (empty($_W['uid'])) {
-		message('抱歉，您无权进行该操作，请先登录！', url('user/login'), 'warning');
+		message('', url('user/login'), 'warning');
 	}
 	return true;
 }
@@ -116,7 +114,7 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		message('这项功能需要你选择特定公众号才能使用！', url('account/display'), 'info');
+		message('', url('account/display'), 'info');
 	}
 }
 
@@ -145,6 +143,9 @@ function buildframes($framename = ''){
 						'url' => url('home/welcome/ext', array('m' => $module['name'])),
 						'is_display' => 1,
 					);
+					if (file_exists(IA_ROOT. "addons/{$module['name']}/icon.jpg")) {
+						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia(IA_ROOT. "addons/{$module['name']}/icon.jpg");
+					}
 				}
 			}
 		}
@@ -252,7 +253,7 @@ function buildframes($framename = ''){
 	}
 	//从数据库中获取用户权限，并附加上系统管理中的权限
 	//仅当系统管理时才使用预设权限
-	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER)) {
+	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
 		$user_permission = uni_user_permission('system');
 	}
 	//@@todo 店员界面菜单
@@ -263,6 +264,9 @@ function buildframes($framename = ''){
 	if (!empty($user_permission)) {
 		foreach ($frames as $nav_id => $section) {
 			if (empty($section['section'])) {
+				continue;
+			}
+			if (in_array("{$nav_id}*", $user_permission)) {
 				continue;
 			}
 			foreach ($section['section'] as $section_id => $secion) {
@@ -334,9 +338,15 @@ function filter_url($params) {
 function frames_menu_append() {
 	$system_menu_default_permission = array(
 		'founder' => array(),
+		'owner' => array(
+			'system_account',
+			'system_module',
+			'system_module_group',
+			'system_my',
+			'system_setting_updatecache',
+		),
 		'manager' => array(
 			'system_account',
-			'system_platform',
 			'system_module',
 			'system_module_group',
 			'system_my',

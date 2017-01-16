@@ -4,8 +4,8 @@
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="/">
-					<img src="./resource/images/logo/logo.png" class="pull-left"/>
+				<a class="navbar-brand" href="{$_W['siteroot']}">
+					<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
 					<span class="version">{IMS_VERSION}</span>
 				</a>
 			</div>
@@ -84,11 +84,13 @@
 						<span class="color-default"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}">立即接入</a></span>
 					{/if}
 						<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default we7-margin-left"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
+						{if uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OPERATOR}
 						<span class="pull-right"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}"><i class="wi wi-appsetting"></i>公众号设置</a></span>
+						{/if}
 						<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="wi wi-iphone"></i>模拟测试</a></span>
 				{/if}
 				{if FRAME == 'system'}
-					<span class="font-lg"><i class="wi wi-setting"></i> 我的微擎</span>
+					<span class="font-lg"><i class="wi wi-setting"></i> 系统管理</span>
 				{/if}
 				{if FRAME == 'adviertisement'}
 				<span class="font-lg"><i class="wi wi-ad"></i>广告联盟</span>
