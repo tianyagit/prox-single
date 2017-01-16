@@ -21,15 +21,16 @@
 		{if !empty($_W['acid'])}'acid': '{$_W['acid']}',{/if}
 		{if !empty($_W['openid'])}'openid': '{$_W['openid']}',{/if}
 		{if !empty($_W['uid'])}'uid': '{$_W['uid']}',{/if}
-		'isfounder': {if $_W['isfounder']}1{else}0{/if},
+		'isfounder': {if !empty($_W['isfounder'])}1{else}0{/if},
 		'siteroot': '{$_W['siteroot']}',
 		'siteurl': '{$_W['siteurl']}',
 		'attachurl': '{$_W['attachurl']}',
 		'attachurl_local': '{$_W['attachurl_local']}',
 		'attachurl_remote': '{$_W['attachurl_remote']}',
 		{if defined('MODULE_URL')}'MODULE_URL': '{MODULE_URL}',{/if}
+		{if defined('IN_MODULE')}'IN_MODULE': '{IN_MODULE}',{/if}
 		'cookie' : {'pre': '{$_W['config']['cookie']['pre']}'},
-		'account' : {php echo json_encode($_W['account'])}
+		'account' : {php echo json_encode($_W['account'])},
 	};
 	</script>
 	<script>var require = { urlArgs: 'v=20170112' };</script>
