@@ -312,12 +312,12 @@ function module_build_privileges() {
  */
 function module_count_unistalled_module() {
 	global $_GPC;
-	if (empty($_GPC['count_uninstalled_module'])) {
+	load()->model('cache');
+	$uninstall_module_num = cache_load('we7:module:count_uninstalled_module');
+	if (empty($uninstall_module_num)) {
 		$uninstall_module_num = module_get_all_unistalled('uninstalled');
-		isetcookie('count_uninstalled_module', count($uninstall_module_num), 86400*24);
-		$_GPC['count_uninstalled_module'] = count($uninstall_module_num);
 	}
-	return $_GPC['count_uninstalled_module'];
+	return count($uninstall_module_num);
 }
 
 /**
@@ -325,20 +325,16 @@ function module_count_unistalled_module() {
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
  */
 function module_get_all_unistalled($status)  {
-	$uninstallModules = $status == 'uninstalled' ? cache_load('all_uninstalled_module') : cache_load('all_recycle_module');
-	if (empty($uninstallModules)) {
-		cache_build_uninstalled_module($status);
+	load()->model('cloud');
+	load()->classs('cloudapi');
+	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
+	$uninstallModules =  cache_load('we7:module:all_uninstalled_module');
+	$cloud_api = new CloudApi();
+	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
+	if (is_array($uninstallModules['modules']) && $uninstallModules['cloud_m_count'] == $cloud_m_count) {
+		return $uninstallModules['modules'][$status];
 	} else {
-		load()->model('cloud');
-		load()->classs('cloudapi');
-		$cloud_api = new CloudApi();
-		$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-		if ($uninstallModules['cloud_m_count'] == $cloud_m_count) {
-			return $uninstallModules['modules'];
-		} else {
-			cache_build_uninstalled_module($status);
-		}
+		$uninstallModules = cache_build_uninstalled_module();
 	}
-	$uninstallModules = $status == 'uninstalled' ? cache_load('all_uninstalled_module') : cache_load('all_recycle_module');
-	return $uninstallModules['modules'];
+	return $uninstallModules['modules'][$status];
 }

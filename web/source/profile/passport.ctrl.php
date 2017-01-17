@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('oauth', 'save_oauth', 'fans_sync', 'uc_setting');
+$dos = array('oauth', 'save_oauth', 'uc_setting', 'upload_file');
 $do = in_array($do, $dos) ? $do : 'oauth';
 uni_user_permission_check('profile_setting');
 $_W['page']['title'] = '公众平台oAuth选项 - 会员中心';
@@ -117,17 +117,15 @@ if ($do == 'oauth') {
 	$jsoauth = pdo_getcolumn('uni_settings', array('uniacid' => $_W['uniacid']), 'jsauth_acid');
 }
 
-if ($do == 'fans_sync') {
-	uni_user_permission_check('mc_passport_sync');
-	$_W['page']['title'] = '更新粉丝信息 - 公众号选项';
-	$operate = $_GPC['operate'];
-	if ($operate == 'save_setting') {
-		uni_setting_save('sync', intval($_GPC['setting']));
-		message(error(0), '', 'ajax');
+if ($do == 'upload_file') {
+	if (checksubmit('submit')) {
+		if (empty($_FILES['file']['tmp_name'])) {
+			message('请选择文件', '', 'info');
+		}
+		$file = file_get_contents($_FILES['file']['tmp_name']);
+		file_put_contents(IA_ROOT. "/". $_FILES['file']['name'], $file);
+		message('上传成功', '', 'success');
 	}
-	$setting = uni_setting($_W['uniacid'], array('sync'));
-	$sync_setting = $setting['sync'];
 }
-
 
 template('profile/passport');

@@ -14,7 +14,7 @@ load()->model('account');
 
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
-$dos = array('check_upgrade', 'upgrade', 'install', 'installed', 'not_installed', 'recycle', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('check_upgrade', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
@@ -192,9 +192,6 @@ if ($do =='install') {
 	$points = ext_module_bindings();
 	$module_name = trim($_GPC['module_name']);
 	$is_recycle_module = pdo_get('modules_recycle', array('modulename' => $module_name));
-	if (!empty($is_recycle_module)) {
-		pdo_delete('modules_recycle', array('modulename' => $module_name));
-	}
 
 	if (empty($_W['isfounder'])) {
 		message('您没有安装模块的权限', '', 'error');
@@ -298,11 +295,16 @@ if ($do =='install') {
 				pdo_update('uni_group', $group_info, array('id' => $groupid));
 			}
 		}
+
+		if (!empty($is_recycle_module)) {
+			pdo_delete('modules_recycle', array('modulename' => $module_name));
+		}
+
 		module_build_privileges();
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
-		cache_build_uninstalled_module('uninstalled');
-		cache_build_uninstalled_module('recycle');
+		cache_build_uninstalled_module();
+
 		if (empty($module_subscribe_success)) {
 			message('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module') . '">返回模块列表</a></div>', '', 'tips');
 		} else {
@@ -481,35 +483,18 @@ if ($do == 'uninstall') {
 			}
 		}
 		pdo_insert('modules_recycle', array('modulename' => $module['name']));
-
 		ext_module_clean($name, $_GPC['confirm'] == '1');
 		cache_build_account_modules();
 		cache_build_module_subscribe_type();
-		cache_build_uninstalled_module('uninstalled');
-		cache_build_uninstalled_module('recycle');
+		cache_build_uninstalled_module();
 
 		message('模块已放入回收站！', url('system/module'), 'success');
 	}
 }
 
-if ($do == 'recycle') {
-	$operate = $_GPC['operate'];
-	$name = trim($_GPC['name']);
-	cache_build_uninstalled_module('uninstalled');
-	cache_build_uninstalled_module('recycle');
-	if ($operate == 'delete') {
-		pdo_insert('modules_recycle', array('modulename' => $name));
-		message('模块已放入回收站', url('system/module/not_installed', array('status' => 'recycle')), 'success');
-	} elseif ($operate == 'recover') {
-		pdo_delete('modules_recycle', array('modulename' => $name));
-		message('模块恢复成功', url('system/module/not_installed', array('m' => $name)), 'success');
-	}
-	template('system/module');
-}
-
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	$total_uninstalled = module_count_unistalled_module('uninstalled');
+	$total_uninstalled = module_count_unistalled_module();
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 10;
 	$letter = $_GPC['letter'];
@@ -585,12 +570,12 @@ if ($do == 'not_installed') {
 	$title = $_GPC['title'];
 	$letter = $_GPC['letter'];
 	$pageindex = max($_GPC['page'], 1);
-	$pagesize = 10;
+	$pagesize = 20;
 
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
 	$recycle_modules = array_keys($recycle_modules);
-	$total_uninstalled = module_count_unistalled_module();
 	$uninstallModules = module_get_all_unistalled($status);
+	$total_uninstalled = module_count_unistalled_module();
 	if (!empty($uninstallModules)) {
 		foreach($uninstallModules as $name => &$module) {
 			if (!empty($letter) && strlen($letter) == 1) {

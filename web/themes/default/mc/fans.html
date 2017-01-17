@@ -1,4 +1,48 @@
 {template 'common/header'}
+{if $do == 'fans_sync_set'}
+<div class="we7-page-title">
+	粉丝管理
+</div>
+<ul class="we7-page-tab">
+	<li class="">
+		<a href="{php echo url('mc/fans')}" >全部粉丝</a>
+	</li>
+	<li class="active">
+		<a href="{php echo url('mc/fans/fans_sync_set')}">粉丝同步设置</a>
+	</li>
+</ul>
+<div id="js-profile-sync" ng-controller="syncCtrl" ng-cloak>
+	<table class="table we7-table table-hover table-form">
+		<col width="140px " />
+		<col />
+		<col width="140px" />
+		<tr>
+			<th class="text-left" colspan="3">粉丝同步</th>
+		</tr>
+		<tr>
+			<td >是否开启</td>
+			<td>
+				{{ syncSetting == 1 ? '开启' : '关闭' }}
+			</td>
+			<td class="text-center">
+				<label>
+					<input name="" class="form-control" type="checkbox"  style="display: none;">
+					<div ng-class="syncSetting == 1 ? 'switch switchOn' : 'switch'"  ng-click="setSync()"></div>
+				</label>
+			</td>
+		</tr>
+	</table>
+
+</div>
+
+<script>
+	angular.module('profileApp').value('config', {
+		'syncSetting' : "{$sync_setting}",
+		'saveSyncSetting' : "{php echo url('mc/fans/fans_sync_set', array('operate' => 'save_setting'))}"
+	});
+	angular.bootstrap($('#js-profile-sync'), ['profileApp']);
+</script>
+{else}
 <div id="main" ng-controller="DisplayCtrl" ng-cloak>
 <div class="we7-page-title">
 	粉丝管理
@@ -6,6 +50,9 @@
 <ul class="we7-page-tab">
 	<li class="active">
 		<a href="{php echo url('mc/fans')}" >全部粉丝</a>
+	</li>
+	<li class="">
+		<a href="{php echo url('mc/fans/fans_sync_set')}">粉丝同步设置</a>
 	</li>
 </ul>
 <div class="we7-page-search we7-padding-bottom clearfix">
@@ -393,4 +440,5 @@
 	});
 	angular.bootstrap($('#main'), ['fansApp']);
 </script>
+{/if}
 {template 'common/footer'}

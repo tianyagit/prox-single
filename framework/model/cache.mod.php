@@ -265,14 +265,12 @@ function cache_build_cloud_ad() {
 
 /**
  * 更新未安装模块列表
- * @param $status 模块类型 recycle : 在回收站的模块; uninstalled : 未安装模块
  */
-function cache_build_uninstalled_module($status) {
+function cache_build_uninstalled_module() {
 	load()->model('cloud');
 	load()->classs('cloudapi');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-	$status = $status == 'uninstalled' ?  'uninstalled' : 'recycle';
 	$all_module = pdo_getall('modules');
 	$installed_module = array();
 	if (!empty($all_module)) {
@@ -280,18 +278,16 @@ function cache_build_uninstalled_module($status) {
 			$installed_module[] = $module['name'];
 		}
 	}
-	$uninstallModules = array();
+	$uninstallModules = array('recycle' => array(), 'uninstalled' => array());
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
 	$recycle_modules = array_keys($recycle_modules);
 	$cloud_module = cloud_m_query();
 	unset($cloud_module['pirate_apps']);
 	if (!empty($cloud_module) && !is_error($cloud_module)) {
 		foreach ($cloud_module as $module) {
-			if (($status == 'uninstalled' && in_array($module['name'], $recycle_modules)) || ($status == 'recycle' && !in_array($module['name'], $recycle_modules))) {
-				continue;
-			}
 			if (!in_array($module['name'], $installed_module)) {
-				$uninstallModules[$module['name']] = array(
+				$status = in_array($module['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
+				$uninstallModules[$status][$module['name']] = array(
 					'from' => 'cloud',
 					'name' => $module['name'],
 					'version' => $module['version'],
@@ -316,15 +312,18 @@ function cache_build_uninstalled_module($status) {
 				if (!in_array($manifest['application']['identifie'], $installed_module)) {
 					$manifest = ext_module_convert($manifest);
 					$module[$manifest['name']] = $manifest;
-					if (($status == 'uninstalled' && in_array($manifest['name'], $recycle_modules)) || ($status == 'recycle' && !in_array($manifest['name'], $recycle_modules))) {
-						continue;
-					}
-					$uninstallModules[$manifest['name']] = array(
+					$module_info = array(
 						'from' => 'local',
 						'name' => $manifest['name'],
 						'version' => $manifest['version'],
 						'title' => $manifest['title'],
 					);
+					if (in_array($manifest['name'], $recycle_modules)) {
+						$uninstallModules['recycle'][$manifest['name']] = $module_info;
+					}
+					if (!in_array($manifest['name'], $recycle_modules)) {
+						$uninstallModules['uninstalled'][$manifest['name']] = $module_info;
+					}
 				}
 			}
 		}
@@ -332,13 +331,8 @@ function cache_build_uninstalled_module($status) {
 			'cloud_m_count' => $cloud_m_count,
 			'modules' => $uninstallModules
 		);
-		if ($status == 'recycle') {
-			cache_write('all_recycle_module', $cache);
-		} else {
-			isetcookie('count_uninstalled_module', count($uninstallModules), 24*86400);
-			cache_write('all_uninstalled_module', $cache);
-		}
-
+		cache_write('we7:module:all_uninstalled_module', $cache);
+		cache_write('we7:module:count_uninstalled_module', count($uninstallModules[$status]));
 		return $uninstallModules;
 	} else {
 		return array();
