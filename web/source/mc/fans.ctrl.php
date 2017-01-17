@@ -9,7 +9,7 @@ set_time_limit(60);
 
 load()->model('mc');
 
-$dos = array('display', 'add_tag', 'del_tag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'download_fans', 'sync');
+$dos = array('display', 'add_tag', 'del_tag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'download_fans', 'sync', 'fans_sync_set');
 $do = in_array($do, $dos) ? $do : 'display';
 
 uni_user_permission_check('mc_fans');
@@ -296,6 +296,18 @@ if ($do == 'sync') {
 		}
 		message(error(0, 'success'), '', 'ajax');
 	}
+}
+
+if ($do == 'fans_sync_set') {
+	uni_user_permission_check('mc_passport_sync');
+	$_W['page']['title'] = '更新粉丝信息 - 公众号选项';
+	$operate = $_GPC['operate'];
+	if ($operate == 'save_setting') {
+		uni_setting_save('sync', intval($_GPC['setting']));
+		message(error(0), '', 'ajax');
+	}
+	$setting = uni_setting($_W['uniacid'], array('sync'));
+	$sync_setting = $setting['sync'];
 }
 template('mc/fans');
 

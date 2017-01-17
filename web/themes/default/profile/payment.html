@@ -16,11 +16,11 @@
 		<li>
 			<a href="{php echo url('profile/notify')}">邮件通知参数</a>
 		</li>
-		<li class="">
-			<a href="{php echo url('profile/passport/fans_sync')}">粉丝同步设置</a>
-		</li>
 		<li{if $do == 'register'} class="active"{/if}>
 		<a href="{php echo url('profile/passport/uc_setting')}">uc站点整合</a>
+		</li>
+		<li{if $do == 'upload_file'} class="active"{/if}>
+		<a href="{php echo url('profile/passport/upload_file')}">js接口上传文件</a>
 		</li>
 	</ul>
 	<table class="table we7-table table-hover table-form">
