@@ -17,7 +17,7 @@ $dos = array('upgrade');
 $do = in_array($do, $dos) ? $do : 'upgrade';
 
 if (empty($_W['setting']['site']['profile_perfect'])) {
-	message('请先完善云服务的站点注册信息!', url('cloud/profile'), 'warning');
+	//message('请先完善云服务的站点注册信息!', url('cloud/profile'), 'warning');
 }
 
 if ($do == 'upgrade') {

@@ -9,10 +9,9 @@ checkaccount();
 
 $dos = array('platform', 'ext');
 $do = in_array($do, $dos) ? $do : 'platform';
-define('FRAME', 'account');
 
 if ($do == 'platform') {
-	
+	define('FRAME', 'account');
 	template('home/welcome');
 } elseif ($do == 'ext') {
 	$modulename = $_GPC['m'];
@@ -20,6 +19,18 @@ if ($do == 'platform') {
 		$modules = uni_modules();
 		$_W['current_module'] = $modules[$modulename];
 	}
+	//如果模块存在自定义封面，则调用
+	$site = WeUtility::createModule($modulename);
+	if (!is_error($site)) {
+		define('FRAME', 'module_welcome');
+		$method = 'welcomeDisplay';
+		if(method_exists($site, $method)){
+			$entries = module_entries($modulename, array('menu', 'home', 'profile', 'shortcut', 'cover', 'mine'));
+			$site->$method($entries);
+			exit;
+		}
+	}
+	define('FRAME', 'account');
 	$frames = buildframes('account');
 	foreach ($frames['section'] as $secion) {
 		foreach ($secion['menu'] as $menu) {
