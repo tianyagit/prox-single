@@ -121,8 +121,11 @@
 		{else}
 			{php echo module_build_form($m, $rid)}
 		{/if}
-		<input type="hidden" name="token" value="{$_W['token']}">
-		<input type="submit" name="submit" value="发布" class="btn btn-primary btn-submit"/>
+		<div class="form-group">
+			<input type="hidden" name="token" value="{$_W['token']}">
+			<input type="submit" name="submit" value="发布" class="btn btn-primary btn-submit"/>
+		</div>
+		</form>
 	</div>
 	{/if}
 	{if $m == 'apply'}
