@@ -329,10 +329,10 @@ function cache_build_uninstalled_module() {
 		}
 		$cache = array(
 			'cloud_m_count' => $cloud_m_count,
-			'modules' => $uninstallModules
+			'modules' => $uninstallModules,
+			'uninstall_count' => count($uninstallModules['uninstalled'])
 		);
-		cache_write('we7:module:all_uninstalled_module', $cache);
-		cache_write('we7:module:count_uninstalled_module', count($uninstallModules[$status]));
+		cache_write('we7:module:all_uninstall', $cache);
 		return $uninstallModules;
 	} else {
 		return array();

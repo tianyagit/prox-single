@@ -120,11 +120,15 @@ if ($do == 'oauth') {
 if ($do == 'upload_file') {
 	if (checksubmit('submit')) {
 		if (empty($_FILES['file']['tmp_name'])) {
-			message('请选择文件', '', 'info');
+			message('请选择文件', url('profile/passport/upload_file'), 'error');
 		}
 		$file = file_get_contents($_FILES['file']['tmp_name']);
+		$file_name = 'MP_verify_'. $file. ".txt";
+		if ($file_name != $_FILES['file']['name'] || !preg_match("/^[A-Za-z0-9]+$/", $file)) {
+			message('上传文件不合法,请重新上传', url('profile/passport/upload_file'), 'error');
+		}
 		file_put_contents(IA_ROOT. "/". $_FILES['file']['name'], $file);
-		message('上传成功', '', 'success');
+		message('上传成功', url('profile/passport/upload_file'), 'success');
 	}
 }
 
