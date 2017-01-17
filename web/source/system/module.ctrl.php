@@ -480,14 +480,13 @@ if ($do == 'uninstall') {
 				pdo_run($manifest['uninstall']);
 			}
 		}
+		pdo_insert('modules_recycle', array('modulename' => $module['name']));
 
 		ext_module_clean($name, $_GPC['confirm'] == '1');
 		cache_build_account_modules();
 		cache_build_module_subscribe_type();
 		cache_build_uninstalled_module('uninstalled');
 		cache_build_uninstalled_module('recycle');
-
-		pdo_insert('modules_recycle', array('modulename' => $module['name']));
 
 		message('模块已放入回收站！', url('system/module'), 'success');
 	}
@@ -517,7 +516,7 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 
-	$condition = " WHERE issystem = 0 OR name = 'we7_coupon' ";
+	$condition = " WHERE (issystem = 0 OR name = 'we7_coupon') ";
 	$params = array();
 	if (!empty($letter) && strlen($letter) == 1) {
 		if(in_array($letter, $letters)){

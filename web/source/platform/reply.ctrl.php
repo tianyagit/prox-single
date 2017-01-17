@@ -108,6 +108,7 @@ if ($do == 'display') {
 	if ($m == 'special') {
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'] ? $setting['default_message'] : array();
+		$module = uni_modules();
 	}
 	if ($m == 'welcome') {
 		$setting = uni_setting($_W['uniacid'], array('welcome'));
@@ -243,27 +244,32 @@ if ($do == 'post') {
 		$setting = $setting['default_message'] ? $setting['default_message'] : array();
 		if (checksubmit('submit')) {
 			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
-			$status = $_GPC['status'];
-			if (empty($status)) {
-				$setting[$type] = array('type' => '');
+			$module = trim(htmlspecialchars_decode($_GPC['reply']['reply_module']), "\"");
+			if ((empty($rule_id) && empty($module)) || $_GPC['status'] === '0') {
+				$setting[$type] = array('type' => '', 'module' => $module, 'keyword' => $rule_id);
 				uni_setting_save('default_message', $setting);
 				message('关闭成功', url('platform/reply', array('m' => 'special')));
 			}
+			$reply_type = empty($rule_id) ? 'module' : 'keyword';
 			$reply_module = WeUtility::createModule('core');
-			if (empty($rule_id)) {
-				$rule_id = $_GPC['reply']['reply_keyword'] = pdo_getcolumn('rule_keyword', array('content' => $setting[$type]['keyword'], 'uniacid' => $_W['uniacid']), 'rid');
-			}
 			$result = $reply_module->fieldsFormValidate();
 			if (is_error($result)) {
 				message($result['message'], '', 'info');
 			}
-			$result = $reply_module->fieldsFormSubmit($rule_id);
-			$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
-			$setting[$type] = array('type' => 1, 'keyword' => $rule['content']);
+			if ($reply_type == 'module') {
+				$setting[$type] = array('type' => 'module', 'module' => $module);
+			} else {
+				$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
+				$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
+			}
 			uni_setting_save('default_message', $setting);
 			message('发布成功', url('platform/reply', array('m' => 'special')));
 		}
-		$rule_id = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting[$type]['keyword']), 'rid');
+		if ($setting[$type]['type'] == 'module') {
+			$rule_id = $setting[$type]['module'];
+		} else {
+			$rule_id = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting[$type]['keyword']), 'rid');
+		}
 		template('platform/specialreply-post');
 	}
 	if ($m == 'welcome') {
@@ -388,11 +394,22 @@ if ($do == 'change_status') {
 		$module_api->saveSettings($config);
 		message(error(0), '', 'ajax');
 	} else {
-		$status = intval($_GPC['status']);
 		$type = $_GPC['type'];
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'] ? $setting['default_message'] : array();
-		$setting[$type]['type'] = $status;
+		if (empty($setting[$type]['type'])) {
+			if (!empty($setting[$type]['keyword'])) {
+				$setting[$type]['type'] = 'keyword';
+			}
+			if (!empty($setting[$type]['module'])) {
+				$setting[$type]['type'] = 'module';
+			}
+			if (empty($setting[$type]['type'])) {
+				message(error(1, '请先设置回复内容'), '', 'ajax');
+			}
+		} else {
+			$setting[$type]['type'] = '';
+		}
 		$result = uni_setting_save('default_message', $setting);
 		if ($result) {
 			message(error(0, '更新成功！'), '','ajax');

@@ -22,6 +22,11 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	if (empty($uid) || empty($type)) {
 		message(error(40035, '参数错误，请刷新后重试！'), '', 'ajax');
 	}
+	$user = user_single($uid);
+	if (empty($user)) {
+		message(error(-1, '用户不存在或已经被删除！'), '', 'ajax');
+	}
+
 	$users_profile_exist = pdo_get('users_profile', array('uid' => $uid));
 
 	if ($type == 'birth') {
@@ -29,7 +34,11 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	} elseif ($type == 'reside') {
 		if ($users_profile_exist['province'] == $_GPC['province'] && $users_profile_exist['city'] == $_GPC['city'] && $users_profile_exist['district'] == $_GPC['district']) message(error(0, '未作修改！'), '', 'ajax');
 	} else {
-		if ($users_profile_exist[$type] == $_GPC[$type]) message(error(0, '未作修改！'), '', 'ajax');
+		if (in_array($type, array('username', 'password'))) {
+			if ($user[$type] == $_GPC[$type] && $type != 'password') message(error(0, '未做修改！'), '', 'ajax');
+		} else {
+			if ($users_profile_exist[$type] == $_GPC[$type]) message(error(0, '未作修改！'), '', 'ajax');
+		}
 	}
 	switch ($type) {
 		case 'avatar':
@@ -67,13 +76,15 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				if ($pwd != $user['password']) message(error(3, '原密码不正确！'), '', 'ajax');
 			}
 			$newpwd = user_hash($_GPC['newpwd'], $user['salt']);
+			if ($newpwd == $user['password']) {
+				message(error(0, '未作修改！'), '', 'ajax');
+			}
 			if ($users_profile_exist) {
 				$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
 			} else {
 				$data = array(
 						'uid' => $uid,
 						'createtime' => TIMESTAMP,
-						'password' => $newpwd
 					);
 				$result = pdo_insert('users_profile', $data);
 			}

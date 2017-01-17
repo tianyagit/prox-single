@@ -7,7 +7,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 class CoreModule extends WeModule {
-	public $modules = array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword');
+	public $modules = array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword', 'module');
 	public $tablename = array(
 			'basic' => 'basic_reply',
 			'news' => 'news_reply',
@@ -27,13 +27,13 @@ class CoreModule extends WeModule {
 			'voice' => true,
 			'video' => true,
 			'wxcard' => true,
-			'keyword' => true
+			'keyword' => true,
+			'module' => true,
 		);
 	private $replies = array();
 
 	public function fieldsFormDisplay($rid = 0, $option = array()) {
 		global $_GPC, $_W;
-
 		$replies = array();
 		switch($_GPC['a']) {
 			case 'mass':
@@ -78,6 +78,37 @@ class CoreModule extends WeModule {
 				if(!empty($rid) && $rid > 0) {
 					$isexists = pdo_fetch("SELECT id, name, module FROM ".tablename('rule')." WHERE id = :id", array(':id' => $rid));
 				}
+				if ($_GPC['m'] == 'special') {
+					$default_setting = uni_setting_load('default_message', $_W['uniacid']);
+					$default_setting = $default_setting['default_message'] ? $default_setting['default_message'] : array();
+					$reply_type = $default_setting[$_GPC['type']]['type'];
+					if (empty($reply_type)) {
+						if (!empty($default_setting[$_GPC['type']]['keyword'])) {
+							$reply_type = 'keyword';
+						}
+						if (!empty($default_setting[$_GPC['type']]['module'])) {
+							$reply_type = 'module';
+						}
+						if (empty($reply_type)) {
+							break;
+						}
+					}
+					if ($reply_type == 'module') {
+						$replies['module'][0]['name'] = $default_setting[$_GPC['type']]['module'];
+						$module_info = pdo_get('modules', array('name' => $default_setting[$_GPC['type']]['module']));
+						$replies['module'][0]['title'] = $module_info['title'];
+						if (file_exists(IA_ROOT. "/addons/". $module_info['name']. "/custom-icon.jpg")) {
+							$replies['module'][0]['icon'] = "../addons/". $module_info['name']. "/custom-icon.jgp";
+						} else {
+							$replies['module'][0]['icon'] = "../addons/". $module_info['name']. "/icon.jpg";
+						}
+					} else {
+						$keyword = pdo_fetchall("SELECT content FROM ". tablename('rule_keyword') ." WHERE uniacid = :uniacid AND rid = :rid", array(':uniacid' => $_W['uniacid'], ':rid' => $rid));
+						$replies['keyword'][0]['name'] = $isexists['name'];
+						$replies['keyword'][0]['content'] = $keyword[0]['content'];
+					}
+					break;
+				}
 				if(!empty($isexists)) {
 					$module = $isexists['module'];
 					$module = $module == 'images' ? 'image' : $module;
@@ -118,7 +149,7 @@ class CoreModule extends WeModule {
 		if(!is_array($option)) {
 			$option = array();
 		}
-		$options = array_merge($this->options, $option);			
+		$options = array_merge($this->options, $option);
 		include $this->template('display');
 	}
 	

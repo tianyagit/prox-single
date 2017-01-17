@@ -14,33 +14,50 @@ if (!in_array($do, array('list'))) {
 }
 
 if($do == 'list') {
-	$installedmodulelist = uni_modules(false);
-	foreach ($installedmodulelist as $k => $value) {
-		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
-	}
-	foreach($installedmodulelist as $name => $module) {
-		if($module['issystem']) {
-			$path = '/framework/builtin/' . $module['name'];
-		} else {
-			$path = '../addons/' . $module['name'];
-		}
-		$cion = $path . '/icon-custom.jpg';
-		if(!file_exists($cion)) {
-			$cion = $path . '/icon.jpg';
-			if(!file_exists($cion)) {
-				$cion = './resource/images/nopic-small.jpg';
+	global $_W;
+	if (!empty($_COOKIE['special_reply_type'])) {
+		$enable_modules = array();
+		$_W['account']['modules'] = uni_modules();
+		foreach($_W['account']['modules'] as $m) {
+			if(is_array($_W['account']['modules'][$m['name']]['handles']) && in_array($_COOKIE['special_reply_type'], $_W['account']['modules'][$m['name']]['handles'])) {
+				$enable_modules[$m['name']] = $m;
+				if (file_exists(IA_ROOT. "/addons/". $m['name']. "/icon-custom.jpg")) {
+					$enable_modules[$m['name']]['icon'] = tomedia(IA_ROOT. "/addons/". $m['name']. "/icon-custom.jpg");
+				} else {
+					$enable_modules[$m['name']]['icon'] = tomedia(IA_ROOT. "/addons/". $m['name']. "/icon.jpg");
+				}
 			}
 		}
-		$module['icon'] = $cion;
-		if($module['enabled'] == 1) {
-			$enable_modules[$name] = $module;
-		} else {
-			$unenable_modules[$name] = $module;
+		setcookie('special_reply_type', '', time()-3600);
+	} else {
+		$installedmodulelist = uni_modules(false);
+		foreach ($installedmodulelist as $k => $value) {
+			$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
+		}
+		foreach($installedmodulelist as $name => $module) {
+			if($module['issystem']) {
+				$path = '/framework/builtin/' . $module['name'];
+			} else {
+				$path = '../addons/' . $module['name'];
+			}
+			$cion = $path . '/icon-custom.jpg';
+			if(!file_exists($cion)) {
+				$cion = $path . '/icon.jpg';
+				if(!file_exists($cion)) {
+					$cion = './resource/images/nopic-small.jpg';
+				}
+			}
+			$module['icon'] = $cion;
+			if($module['enabled'] == 1) {
+				$enable_modules[$name] = $module;
+			} else {
+				$unenable_modules[$name] = $module;
+			}
 		}
 	}
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 30;
-	$current_module_list = array_slice($enable_modules, $pindex * $psize, $psize);
+	$current_module_list = array_slice($enable_modules, ($pindex - 1) * $psize, $psize);
 	$result = array(
 		'items' => $current_module_list,
 		'pager' => pagination(count($enable_modules), $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),

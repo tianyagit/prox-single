@@ -30,7 +30,7 @@ function cache_build_setting() {
  */
 function cache_build_account_modules($uniacid = 0) {
 	$uniacid = intval($uniacid);
-	if (!empty($uniacid)) {
+	if (empty($uniacid)) {
 		$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
 		foreach($uniacid_arr as $account){
 			cache_delete("unimodules:{$account['uniacid']}:1");
@@ -51,7 +51,7 @@ function cache_build_account_modules($uniacid = 0) {
 function cache_build_account($uniacid = 0) {
 	global $_W;
 	$uniacid = intval($uniacid);
-	if (!empty($uniacid)) {
+	if (empty($uniacid)) {
 		$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
 		foreach($uniacid_arr as $account){
 			cache_delete("uniaccount:{$account['uniacid']}");

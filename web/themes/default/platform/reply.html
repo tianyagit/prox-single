@@ -200,7 +200,7 @@
 				<col width="180px"/>
 				<tr>
 					<th class="text-left">类型</th>
-					<th class="text-left">关键字</th>
+					<th class="text-left">关键字/模块</th>
 					<th>状态</th>
 					<th class="text-left">操作</th>
 				</tr>
@@ -210,11 +210,14 @@
 						{$title}
 					</td>
 					<td class="text-left">
-						{$setting[$name]['keyword']}
+						{if !empty($setting[$name]['type'])}
+						{if $setting[$name]['type'] == 'keyword'}{$setting[$name]['keyword']}{else}{$module[$setting[$name]['module']]['title']}{/if}
+						{else}
+						{if !empty($setting[$name]['keyword'])}{$setting[$name]['keyword']}{else}{$module[$setting[$name]['module']]['title']}{/if}
+						{/if}
 					</td>
 					<td class="vertical-middle">
 						<label>
-							<input name="" class="form-control" value="{if !empty($setting[$name]['type'])}1{else}0{/if}" data-type="{$name}" type="checkbox"  style="display: none;">
 							<div ng-class="switch_class['{$name}']" ng-click="changestatus('{$name}')"></div>
 						</label>
 					</td>
