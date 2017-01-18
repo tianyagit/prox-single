@@ -17,6 +17,19 @@ if(empty($settings) || !is_array($settings)) {
 	$settings['slides'] = iunserializer($settings['slides']);
 }
 
+$path = IA_ROOT . '/web/themes/';
+if(is_dir($path)) {
+	if ($handle = opendir($path)) {
+		while (false !== ($templatepath = readdir($handle))) {
+			if ($templatepath != '.' && $templatepath != '..') {
+				if(is_dir($path.$templatepath)){
+					$template[] = $templatepath;
+				}
+			}
+		}
+	}
+}
+
 if ($do == 'copyright') {
 	if (checksubmit('submit')) {
 		$data = array(
@@ -46,6 +59,8 @@ if ($do == 'copyright') {
 			'showhomepage' => intval($_GPC['showhomepage']),
 		);
 		$test = setting_save($data, 'copyright');
+		$template = trim($_GPC['template']);
+		setting_save(array('template' => $template), 'basic');
 		message('更新设置成功！', url('system/site'));
 	}
 }
