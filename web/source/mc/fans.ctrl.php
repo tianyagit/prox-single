@@ -137,26 +137,32 @@ if ($do == 'display') {
 		$starttime = strtotime($_GPC['time']['start']);
 		$endtime = strtotime($_GPC['time']['end']);
 		$endtime = !empty($endtime) ? $endtime + 86399 : 0;
-		
-		if (!empty($starttime)) {
-			$params[':starttime'] = $starttime;
-		}
-		if (!empty($endtime)) {
-			$params[':endtime'] = $endtime;
+		if ($_GPC['first_search'] != 1) {
+			if (!empty($starttime)) {
+				$params[':starttime'] = $starttime;
+			}
+			if (!empty($endtime)) {
+				$params[':endtime'] = $endtime;
+			}
 		}
 	}
+	
 	$follow = intval($_GPC['follow']) ? intval($_GPC['follow']) : 1;
 	if ($follow == 1) {
 		$orderby = " ORDER BY f.`fanid` DESC";
 		$condition .= " AND f.`follow` = 1";
-		if (!empty($starttime)) {
-			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
+		if ($_GPC['first_search'] != 1) {
+			if (!empty($starttime)) {
+				$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
+			}
 		}
 	} elseif ($follow == 2) {
 		$orderby = " ORDER BY f.`unfollowtime` DESC";
 		$condition .= " AND f.`follow` = 0";
-		if (!empty($starttime)) {
-			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
+		if ($_GPC['first_search'] != 1) {
+			if (!empty($starttime)) {
+				$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
+			}
 		}
 	}
 	if (!empty($_GPC['tag_selected_id'])) {

@@ -130,7 +130,13 @@ function tpl_form_field_daterange($name, $value = array(), $time = false) {
 		$value['endtime'] = date('Y-m-d', strtotime('now'));
 		$value['endtime_show'] = '请选择';
 	}
+	if ($value['endtime_show'] == '请选择') {
+		$first_search = 1;
+	} else {
+		$first_search = 0;
+	}
 	$s .= '
+	<input name="first_search" type="hidden" value="'. $first_search.'" />
 	<input name="'.$name . '[start]'.'" type="hidden" value="'. $value['starttime'].'" />
 	<input name="'.$name . '[end]'.'" type="hidden" value="'. $value['endtime'].'" />
 	<button class="btn btn-default daterange '.(!empty($time) ? 'daterange-time' : 'daterange-date').'" type="button"><span class="date-title">'.$value['starttime_show'].' 至 '.$value['endtime_show'].'</span> <i class="fa fa-calendar"></i></button>
