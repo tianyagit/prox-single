@@ -33,13 +33,13 @@ function cache_memcache() {
  * @param 缓存键名 ，多个层级或分组请使用:隔开
  * @return mixed
  */
-function cache_read($key) {
+function cache_read($key, $forcecache = false) {
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
 	}
 	$result = $memcache->get(cache_prefix($key));
-	if (empty($result)) {
+	if (empty($result) && empty($forcecache)) {
 		$dbcache = pdo_get('core_cache', array('key' => $key), array('value'));
 		if (!empty($dbcache['value'])) {
 			$result = iunserializer($dbcache['value']);
@@ -48,6 +48,7 @@ function cache_read($key) {
 	}
 	return $result;
 }
+
 
 /**
  * 检索缓存中指定层级或分组的所有缓存
@@ -66,16 +67,17 @@ function cache_search($key) {
  * @param mixed $data
  * @return mixed
  */
-function cache_write($key, $value, $ttl = 0) {
+function cache_write($key, $value, $ttl = 0, $forcecache = false) {
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
 	}
-	$record = array();
-	$record['key'] = $key;
-	$record['value'] = iserializer($value);
-	pdo_insert('core_cache', $record, true);
-	
+	if (empty($forcecache)) {
+		$record = array();
+		$record['key'] = $key;
+		$record['value'] = iserializer($value);
+		pdo_insert('core_cache', $record, true);
+	}
 	if ($memcache->set(cache_prefix($key), $value, MEMCACHE_COMPRESSED, $ttl)) {
 		return true;
 	} else {
