@@ -23,7 +23,7 @@ if($do == 'display') {
 	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : '1';
 	set_time_limit(0);
 	$account = WeAccount::create();
-	$default_menu_info = $account->getCurrentSelfmenuInfo();
+	$default_menu_info = $account->menuCurrentQuery();
 	$default_menu = $default_menu_info['selfmenu_info'];
 	$default_menu['type'] = 1;
 	$default_menu['matchrule'] = array();
