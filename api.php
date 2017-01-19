@@ -649,7 +649,12 @@ class WeEngine {
 		if(!isset($message['content'])) {
 			return $pars;
 		}
-		
+		//关键字先查缓存有没有匹配规则，缓存超时为5分钟
+		$cachekey = 'we7:' . $_W['uniacid'] . ':keyword:' . md5($message['content']);
+		$keyword_cache = cache_load($cachekey);
+		if (!empty($keyword_cache) && $keyword_cache['expire'] > TIMESTAMP) {
+			return $keyword_cache['data'];
+		}
 		$condition = <<<EOF
 `uniacid` IN ( 0, {$_W['uniacid']} )
 AND 
@@ -690,6 +695,11 @@ EOF;
 			);
 			$pars[] = $params;
 		}
+		$cache = array(
+			'data' => $pars,
+			'expire' => TIMESTAMP + 5 * 60,
+		);
+		cache_write($cachekey, $cache);
 		return $pars;
 	}
 	

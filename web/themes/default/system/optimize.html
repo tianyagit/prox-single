@@ -2,11 +2,11 @@
 <div class="we7-page-title">性能优化</div>
 <ul class="we7-page-tab"></ul>
 <div class="alert we7-page-alert">
-		<p><i class="wi wi-info-sign"></i> 启用内存优化功能将会大幅度提升程序性能和服务器的负载能力，内存优化功能需要服务器系统以及PHP扩展模块支持</p>
-		<p><i class="wi wi-info-sign"></i> 目前支持的内存优化接口有 Memcache、eAccelerator、opcache<br><p>
-		<p><i class="wi wi-info-sign"></i> 其中eAccelerator在PHP5.5版本以下可以开启，opcache在PHP5.5版本以上可以开启<p>
-		<p><i class="wi wi-info-sign"></i> 内存接口的主要设置位于 config.php 当中，您可以通过编辑 config.php 进行高级设置<p>
-	</div>
+	<p><i class="wi wi-info-sign"></i> 启用内存优化功能将会大幅度提升程序性能和服务器的负载能力，内存优化功能需要服务器系统以及PHP扩展模块支持</p>
+	<p><i class="wi wi-info-sign"></i> 目前支持的内存优化接口有 Memcache、eAccelerator、opcache<br><p>
+	<p><i class="wi wi-info-sign"></i> 其中eAccelerator在PHP5.5版本以下可以开启，opcache在PHP5.5版本以上可以开启<p>
+	<p><i class="wi wi-info-sign"></i> 内存接口的主要设置位于 config.php 当中，您可以通过编辑 config.php 进行高级设置<p>
+</div>
 <div class="clearfix">
 	
 	<div class="panel we7-panel">
@@ -107,6 +107,25 @@
 					<td class="text-left">{$setting['proxy']['host']} 因安全原因，密码不予显示</td>
 				</tr>
 				{/if}
+			</table>
+	</div>
+	<br />
+	<div class="alert we7-page-alert">
+		<p><i class="wi wi-info-sign"></i> 开启后，可以有效的缓存低频的变动数据，提升系统效率。<p>
+	</div>
+	<div class="panel we7-panel">
+		<div class="panel-heading">SQL缓存</div>
+			<table class="table we7-table table-hover site-list">
+				<tr>
+					<td width="200">状态</td>
+					<td class="text-left">
+						{if !empty($setting['sqlcache'])}
+							<span class="label label-success">已开启</span>
+						{else}
+							<span class="label label-danger">未开启</span>
+						{/if}
+					</td>
+				</tr>
 			</table>
 	</div>
 </div>
