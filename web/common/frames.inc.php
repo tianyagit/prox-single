@@ -189,6 +189,12 @@ $we7_system_menu['system'] = array(
 					'icon' => 'wi wi-appjurisdiction',
 					'permission_name' => 'system_module_group',
 				),
+				'system_template' => array(
+					'title' => '我的模板管理',
+					'url' => url('system/template'),
+					'icon' => 'wi wi-appjurisdiction',
+					'permission_name' => 'system_template',
+				),
 			)
 		),
 		'user' => array(
