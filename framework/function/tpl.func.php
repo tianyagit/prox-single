@@ -114,10 +114,8 @@ function tpl_form_field_daterange($name, $value = array(), $time = false) {
 			$value['starttime'] = empty($time) ? date('Y-m-d',strtotime($value['start'])) : date('Y-m-d H:i',strtotime($value['start']));
 		}
 		$value['starttime'] = empty($value['starttime']) ? (empty($time) ? date('Y-m-d') : date('Y-m-d H:i') ): $value['starttime'];
-		$value['starttime_show'] = $value['starttime'];
 	} else {
-		$value['starttime'] = date('Y-m-d', strtotime('now - 6days'));
-		$value['starttime_show'] = '请选择';
+		$value['starttime'] = '请选择';
 	}
 	
 	if ($value['endtime'] !== false && $value['end'] !== false) {
@@ -125,21 +123,13 @@ function tpl_form_field_daterange($name, $value = array(), $time = false) {
 			$value['endtime'] = empty($time) ? date('Y-m-d',strtotime($value['end'])) : date('Y-m-d H:i',strtotime($value['end']));
 		}
 		$value['endtime'] = empty($value['endtime']) ? $value['starttime'] : $value['endtime'];
-		$value['endtime_show'] = $value['endtime'];
 	} else {
-		$value['endtime'] = date('Y-m-d', strtotime('now'));
-		$value['endtime_show'] = '请选择';
-	}
-	if ($value['endtime_show'] == '请选择') {
-		$first_search = 1;
-	} else {
-		$first_search = 0;
+		$value['endtime'] = '请选择';
 	}
 	$s .= '
-	<input name="first_search" type="hidden" value="'. $first_search.'" />
 	<input name="'.$name . '[start]'.'" type="hidden" value="'. $value['starttime'].'" />
 	<input name="'.$name . '[end]'.'" type="hidden" value="'. $value['endtime'].'" />
-	<button class="btn btn-default daterange '.(!empty($time) ? 'daterange-time' : 'daterange-date').'" type="button"><span class="date-title">'.$value['starttime_show'].' 至 '.$value['endtime_show'].'</span> <i class="fa fa-calendar"></i></button>
+	<button class="btn btn-default daterange '.(!empty($time) ? 'daterange-time' : 'daterange-date').'" type="button"><span class="date-title">'.$value['starttime'].' 至 '.$value['endtime'].'</span> <i class="fa fa-calendar"></i></button>
 	';
 	return $s;
 }
