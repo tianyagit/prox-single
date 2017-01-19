@@ -256,7 +256,8 @@ function activity_coupon_grant($id,$openid) {
 	if (empty($openid)) {
 		return error(-1, '兑换失败');
 	}
-	$code = base_convert(uniqid(), 16, 10);
+	$code = base_convert(md5(uniqid() . random(4)), 16, 10);
+	$code = substr($code, 1, 16);
 	$user = mc_fetch($fan['uid'], array('groupid'));
 	$credit_names = array('credit1' => '积分', 'credit2' => '余额');
 	$coupon = activity_coupon_info($id);
