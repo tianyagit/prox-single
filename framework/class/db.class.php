@@ -701,7 +701,7 @@ class DB {
 		if (empty($namespace) || $forcenew) {
 			$namespace = random(8);
 			$this->delete('core_cache', array('key LIKE' => "%{$tablename}%", 'key !=' => 'dbkey:'.$tablename));
-			$this->insert('core_cache', array('key' => 'dbkey:'.$tablename, 'value' => $namespace), true);
+			$this->insert('core_cache', array('key' => 'we7:dbkey:'.$tablename, 'value' => $namespace), true);
 		}
 		return $tablename . ':' . $namespace;
 	}
