@@ -317,7 +317,10 @@ if ($do == 'post') {
 		$pinyin = new Pinyin_Pinyin();
 		$module['title'] = '应用关键字';
 		$installedmodulelist = uni_modules();
-		foreach ($installedmodulelist as &$value) {
+		foreach ($installedmodulelist as $key => &$value) {
+			if ($value['type'] == 'system') {
+				unset($installedmodulelist[$key]);
+			}
 			$value['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 		}
 		unset($value);

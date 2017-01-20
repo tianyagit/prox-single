@@ -21,7 +21,7 @@ function _tpl_form_field_date($name, $value = '', $withtime = false) {
 	$s = '
 		<script type="text/javascript">
 			require(["datetimepicker"], function(){
-				$(function(){
+				
 						var option = {
 							lang : "zh",
 							step : 5,
@@ -30,7 +30,7 @@ function _tpl_form_field_date($name, $value = '', $withtime = false) {
 							format : "Y-m-d' . (!empty($withtime) ? ' H:i"' : '"') .'
 						};
 					$(".datetimepicker[name = \'' . $name . '\']").datetimepicker(option);
-				});
+				
 			});
 		</script>';
 	$withtime = empty($withtime) ? false : true;

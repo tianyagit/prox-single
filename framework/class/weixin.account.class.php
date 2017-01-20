@@ -399,7 +399,7 @@ class WeiXinAccount extends WeAccount {
 		return $this->menuCreate($menu);
 	}
 	
-	public function getCurrentSelfmenuInfo() {
+	public function menuCurrentQuery() {
 		$token = $this->getAccessToken();
 		if(is_error($token)){
 			return $token;
@@ -1454,15 +1454,9 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/update_news?access_token={$token}";
-		$response = ihttp_request($url, stripslashes(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
-		if(is_error($response)) {
-			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
-		}
-		$result = @json_decode($response['content'], true);
-		if(empty($result)) {
-			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
-		} elseif(!empty($result['errcode'])) {
-			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
+		$response = $this->requestApi($url, stripslashes(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
+		if (is_error($response)) {
+			return $response;
 		}
 		return true;
 	}
@@ -1471,26 +1465,21 @@ class WeiXinAccount extends WeAccount {
 	 * 上传图文消息内的图片获取URL
 	 * @param array $data 图片信息
 	 */
-	public function uploadNewsThumb($data) {
+	public function uploadNewsThumb($thumb) {
 		$token = $this->getAccessToken();
 		if(is_error($token)){
 			return $token;
 		}
+		$data = array(
+			'media' => '@'. $thumb,
+		);
 		$url = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$token}";
-		load()->func('communication');
-		$response = @ihttp_request($url, $data);
-		if(is_error($response)) {
+		$response = $this->requestApi($url, stripslashes(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
+		if (is_error($response)) {
 			return $response;
+		} else {
+			return $response['url'];
 		}
-		$content = @json_decode($response['content'], true);
-		if(empty($content)) {
-			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
-		}
-		if(!empty($content['errcode'])) {
-			$message = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']}";
-			return error(-1, $message);
-		}
-		return error(0, $content['url']);
 	}
 
 	public function uploadVideoFixed($title, $description, $path) {

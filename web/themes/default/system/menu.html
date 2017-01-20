@@ -3,7 +3,7 @@
 	菜单管理
 </div>
 <ul class="we7-page-tab"></ul>
-<div class="js-menu-container" ng-controller="MenuCtrl">
+<div class="js-menu-container" ng-controller="MenuCtrl" ng-cloak>
 	<div class="we7-padding-bottom clearfix">
 		<div class="pull-right">
 			<a class="btn btn-primary we7-padding-horizontal" ng-click="editItemPanel({group : 'frame'})">+新建菜单</a>
@@ -23,8 +23,8 @@
 		{loop $system_menu $permission_name $menu}
 			<tr>
 				<td class="text-left"></td>
-				<td class="text-left" style="margin-left: 50px;"> 
-					<span>{$menu['title']} ({$menu['url']})</span>
+				<td class="text-left"> 
+					<span>{$menu['title']}</span>
 				</td>
 				<td></td>
 				<td>{if empty($menu['is_system'])}<a href="javascript:;" ng-click="removeSubItem('{$menu['permission_name']}')" class="color-default">删除</a>{/if}</td>
@@ -32,8 +32,8 @@
 			{loop $menu['section'] $section_name $section}
 				<tr>
 					<td class="text-left"><div class="pad-bottom "></div></td>
-					<td class="text-left" style="margin-left: 50px;"> 
-						<span>{$section['title']}</span>
+					<td class="text-left"> 
+						<span style="margin-left: 25px;">{$section['title']}</span>
 					</td>
 					<td></td>
 					<td class="text-right we7-padding-right">
@@ -46,7 +46,7 @@
 							<div class="pad-bottom ">{php echo intval($sub_menu['displayorder'])}</div>
 						</td>
 						<td class="text-left"> 
-							<span style="margin-left: 50px;">{$sub_menu['title']}</span>
+							<span style="margin-left: 60px;">{$sub_menu['title']}</span>
 						</td>
 						<td>
 							<div class="switch" ng-init="displayStatus['{$sub_menu['permission_name']}'] = {php echo $sub_menu['is_display'] ? 'true' : 'false'}" ng-click="changeDisplay('{$sub_menu['permission_name']}')" ng-class="{'switchOn' : displayStatus['{$sub_menu['permission_name']}'], 'switchOff' : !displayStatus['{$sub_menu['permission_name']}']}"></div>
@@ -61,7 +61,7 @@
 					<td class="text-left">
 						<div class="pad-bottom ">{{submenu.displayorder}}</div>
 					</td>
-					<td class="text-left"> 
+					<td class="text-left">
 						<span style="margin-left: 50px;">{{submenu.title}}</span>
 					</td>
 					<td>
@@ -133,10 +133,8 @@
 	</div>
 </div>
 <script type="text/javascript">
-<!--
 	$(function(){
 		angular.bootstrap($('.js-menu-container'), ['systemApp']);
 	});
-//-->
 </script>
 {template 'common/footer'}

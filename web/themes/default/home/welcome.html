@@ -1,7 +1,46 @@
 {template 'common/header'}
-<ul class="nav nav-tabs">
-	<li class="active"><a href="{php echo url('home/welcome/' . $do);}">账号概况 - {$title}</a></li>
-</ul>
-<div class="clearfix welcome-container">
+<div class="welcome-container">
+	<div class="panel we7-panel account-stat">
+		<div class="panel-heading">今日关键指标</div>
+		<div class="panel-body we7-padding-vertical">
+			<div class="col-sm-3 text-center">
+				<div class="title">今日新关注</div>
+				<div class="num">{$today_add_num}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">今日取消关注</div>
+				<div class="num">{$today_cancel_num}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">今日净增关注</div>
+				<div class="num">{$today_jing_num}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">累计关注</div>
+				<div class="num">{$today_total_num}</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel we7-panel account-stat">
+		<div class="panel-heading">昨日关键指标</div>
+		<div class="panel-body we7-padding-vertical">
+			<div class="col-sm-3 text-center">
+				<div class="title">昨日新关注</div>
+				<div class="num">{$yesterday_stat['new']}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">昨日取消关注</div>
+				<div class="num">{$yesterday_stat['cancel']}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">昨日净增关注</div>
+				<div class="num">{php echo intval($yesterday_stat['new']) - intval($yesterday_stat['cancel'])}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">累计关注</div>
+				<div class="num">{$yesterday_stat['cumulate']}</div>
+			</div>
+		</div>
+	</div>
 </div>
 {template 'common/footer'}

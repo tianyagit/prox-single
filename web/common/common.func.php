@@ -91,7 +91,11 @@ function message($msg, $redirect = '', $type = '') {
 	
 	isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
 	
-	header('Location: ' . $redirect);
+	if (!empty($message_cookie['redirect'])) {
+		header('Location: ' . $message_cookie['redirect']);
+	} else {
+		include template('common/message', TEMPLATE_INCLUDEPATH);
+	}
 	exit;
 }
 
