@@ -47,12 +47,13 @@ if($do == 'post') {
 		}
 		$uniacid = pdo_insertid();
 
-				$multi['uniacid'] = $uniacid;
+		$multi['uniacid'] = $uniacid;
 		$multi['title'] = $name;
-		$multi['styleid'] = 0;		pdo_insert('site_multi', $multi);
+		$multi['styleid'] = 0;
+		pdo_insert('site_multi', $multi);
 		$multi_id = pdo_insertid();
 
-				$update['name'] = $name;
+		$update['name'] = $name;
 		$update['account'] = trim('we7team');
 		$update['original'] = trim('gh_we7team');
 		$update['level'] = intval(1);
@@ -104,7 +105,7 @@ if($do == 'post') {
 			case 3:
 				$wxapp_version['redirect'] = json_encode($submit_val['tomodule']);
 				break;
-		}		
+		}
 		pdo_insert('wxapp_versions', $wxapp_version);
 		$versionid = pdo_insertid();
 		
