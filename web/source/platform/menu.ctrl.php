@@ -24,6 +24,9 @@ if($do == 'display') {
 	set_time_limit(0);
 	$account = WeAccount::create();
 	$default_menu_info = $account->menuCurrentQuery();
+	if (is_error($default_menu_info)) {
+		message($default_menu_info['message'], url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid'])), 'error');
+	}
 	$default_menu = $default_menu_info['selfmenu_info'];
 	$default_menu['type'] = 1;
 	$default_menu['matchrule'] = array();
