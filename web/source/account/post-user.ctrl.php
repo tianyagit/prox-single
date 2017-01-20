@@ -133,7 +133,7 @@ if ($do == 'edit') {
 	if (empty($user)) {
 		message('您操作的用户不存在或是已经被删除！');
 	}
-	$role = uni_permission($_W['uid']);
+	$role = uni_permission($_W['uid'], $uniacid);
 	if (empty($role)) {
 		message('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！');
 	}

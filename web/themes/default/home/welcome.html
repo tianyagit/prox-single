@@ -1,30 +1,44 @@
 {template 'common/header'}
 <div class="welcome-container">
 	<div class="panel we7-panel account-stat">
+		<div class="panel-heading">今日关键指标</div>
 		<div class="panel-body we7-padding-vertical">
 			<div class="col-sm-3 text-center">
-				<div class="title">今日新增人数</div>
-				<div class="num">200</div>
-				<div>较昨天同时段：<span class="color-green wi wi-up"></span>1.56%</div>
-				<div>较上周同时段：<span class="color-green wi wi-up"></span>1.88%</div>
+				<div class="title">今日新关注</div>
+				<div class="num">{$today_add_num}</div>
 			</div>
 			<div class="col-sm-3 text-center">
-				<div class="title">昨日新增人数</div>
-				<div class="num">10</div>
-				<div>较昨天同时段：<span class="color-green wi wi-up"></span>1.56%</div>
-				<div>较上周同时段：<span class="color-green wi wi-down"></span>1.88%</div>
+				<div class="title">今日取消关注</div>
+				<div class="num">{$today_cancel_num}</div>
 			</div>
 			<div class="col-sm-3 text-center">
-				<div class="title">昨日净增人数</div>
-				<div class="num">200</div>
-				<div>较昨天同时段：<span class="color-green wi wi-up"></span>1.56%</div>
-				<div>较上周同时段：<span class="color-green wi wi-down"></span>1.88%</div>
+				<div class="title">今日净增关注</div>
+				<div class="num">{$today_jing_num}</div>
 			</div>
 			<div class="col-sm-3 text-center">
-				<div class="title">累计关注人数</div>
-				<div class="num">200</div>
-				<div>较昨天同时段：<span class="color-green wi wi-up"></span>1.56%</div>
-				<div>较上周同时段：<span class="color-green wi wi-down"></span>1.88%</div>
+				<div class="title">累计关注</div>
+				<div class="num">{$today_total_num}</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel we7-panel account-stat">
+		<div class="panel-heading">昨日关键指标</div>
+		<div class="panel-body we7-padding-vertical">
+			<div class="col-sm-3 text-center">
+				<div class="title">昨日新关注</div>
+				<div class="num">{$yesterday_stat['new']}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">昨日取消关注</div>
+				<div class="num">{$yesterday_stat['cancel']}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">昨日净增关注</div>
+				<div class="num">{php echo intval($yesterday_stat['new']) - intval($yesterday_stat['cancel'])}</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">累计关注</div>
+				<div class="num">{$yesterday_stat['cumulate']}</div>
 			</div>
 		</div>
 	</div>
