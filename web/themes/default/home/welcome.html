@@ -1,7 +1,32 @@
 {template 'common/header'}
-<ul class="nav nav-tabs">
-	<li class="active"><a href="{php echo url('home/welcome/' . $do);}">账号概况 - {$title}</a></li>
-</ul>
-<div class="clearfix welcome-container">
+<div class="welcome-container">
+	<div class="panel we7-panel account-stat">
+		<div class="panel-body we7-padding">
+			<div class="col-sm-3 text-center">
+				<div class="title">今日新增人数</div>
+				<div class="num">200</div>
+				<div>较昨天同时段：<span class="color-green wi wi-up"></span>1.56%</div>
+				<div>较上周同时段：<span class="color-green wi wi-up"></span>1.88%</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">昨日新增人数</div>
+				<div class="num">10</div>
+				<div>较昨天同时段：<span class="color-green wi wi-up"></span>1.56%</div>
+				<div>较上周同时段：<span class="color-green wi wi-down"></span>1.88%</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">昨日净增人数</div>
+				<div class="num">200</div>
+				<div>较昨天同时段：<span class="color-green wi wi-up"></span>1.56%</div>
+				<div>较上周同时段：<span class="color-green wi wi-down"></span>1.88%</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">累计关注人数</div>
+				<div class="num">200</div>
+				<div>较昨天同时段：<span class="color-green wi wi-up"></span>1.56%</div>
+				<div>较上周同时段：<span class="color-green wi wi-down"></span>1.88%</div>
+			</div>
+		</div>
+	</div>
 </div>
 {template 'common/footer'}
