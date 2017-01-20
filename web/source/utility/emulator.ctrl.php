@@ -122,7 +122,7 @@ template('common/header');
 							<div class="radio-inline"><input type="radio" name="type" value="event" id="type_event" onclick="toggle('event')" /><label for="type_event">&nbsp;菜单</label></div>
 							<div class="radio-inline"><input type="radio" name="type" value="subscribe" id="type_subscribe" onclick="toggle('subscribe')" /><label for="type_subscribe">&nbsp;模拟关注</label></div>
 							<div class="radio-inline"><input type="radio" name="type" value="unsubscribe" id="type_unsubscribe" onclick="toggle('unsubscribe')" /><label for="type_unsubscribe">&nbsp;取消关注</label></div>
-							<div class="radio-inline"><input type="radio" name="type" value="other" style="display: none;" id="other" onclick="toggle('other')" /><label for="other">&nbsp;其他</label></div>
+							<div class="radio-inline"><input type="radio" name="type" value="other" id="type_other" onclick="toggle('other')" /><label for="type_other">&nbsp;其他</label></div>
 						</div>
 					</div>
 					<div class="form-group">
