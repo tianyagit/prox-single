@@ -496,7 +496,7 @@ if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
 	$total_uninstalled = module_count_unistalled_module();
 	$pageindex = max($_GPC['page'], 1);
-	$pagesize = 10;
+	$pagesize = 20;
 	$letter = $_GPC['letter'];
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
