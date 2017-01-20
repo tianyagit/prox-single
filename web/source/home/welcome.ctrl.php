@@ -22,23 +22,14 @@ if ($do == 'platform') {
 	//如果模块存在自定义封面，则调用
 	$site = WeUtility::createModule($modulename);
 	if (!is_error($site)) {
-		define('FRAME', 'module_welcome');
 		$method = 'welcomeDisplay';
 		if(method_exists($site, $method)){
+			define('FRAME', 'module_welcome');
 			$entries = module_entries($modulename, array('menu', 'home', 'profile', 'shortcut', 'cover', 'mine'));
 			$site->$method($entries);
 			exit;
 		}
 	}
 	define('FRAME', 'account');
-	$frames = buildframes('account');
-	foreach ($frames['section'] as $secion) {
-		foreach ($secion['menu'] as $menu) {
-			if (!empty($menu['url'])) {
-				header('Location: ' . $_W['siteroot'] . 'web/' . $menu['url']);
-				exit;
-			}
-		}
-	}
 	template('home/welcome-ext');
 }
