@@ -23,7 +23,7 @@ if ($do == 'display') {
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
-	$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type = 1";
+	$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = 1 OR b.type = 3)";
 	$order_by = " ORDER BY a.`acid` DESC";
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
