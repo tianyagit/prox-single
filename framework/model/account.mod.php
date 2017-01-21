@@ -482,6 +482,8 @@ function uni_permission($uid = 0, $uniacid = 0) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
 		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
+		} else {
+			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
 	}
 	return $role;

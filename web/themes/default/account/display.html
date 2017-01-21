@@ -4,6 +4,15 @@
 		请选择您要操作的公众号
 	</div>
 	<div class="panel-body">
+		{if !$_W['isfounder'] && !empty($account_info['uniacid_limit'])}
+			<div class="alert alert-warning">
+				温馨提示：
+				<i class="fa fa-info-circle"></i>
+				Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>，
+				账号有效期限：<span class="text-strong">{php echo date('Y-m-d', $_W['user']['starttime'])} ~~ {if empty($_W['user']['endtime'])}无限制{else}{php echo date('Y-m-d', $_W['user']['endtime'])}{/if}</span>，
+				可创建 <span class="text-strong">{$account_info['maxaccount']} </span>个公众号，已创建<span class="text-strong"> {$account_info['uniacid_num']} </span>个，还可创建 <span class="text-strong">{$account_info['uniacid_limit']} </span>个公众号。
+			</div>
+		{/if}
 		<div class="cut-header">
 			<form action="./index.php" method="get">
 				<input type="hidden" name="c" value="account">
@@ -16,12 +25,14 @@
 					</div>
 				</div>
 			</form>
-			{if $state == 'founder' || $state == 'manager'}
 			<div class="cut-manage pull-right">
-				<a href="./index.php?c=account&a=post-step" class="color-default"><i class="fa fa-plus"></i>新增公众号</a>
-				<a href="./index.php?c=account&a=manage" class="color-default"><i class="wi wi-wechatstatistics"></i>公众号管理</a>
+				{if !empty($account_info['uniacid_limit'])}
+					<a href="./index.php?c=account&a=post-step" class="color-default"><i class="fa fa-plus"></i>新增公众号</a>
+				{/if}
+				{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_MANAGER}
+					<a href="./index.php?c=account&a=manage" class="color-default"><i class="wi wi-wechatstatistics"></i>公众号管理</a>
+				{/if}
 			</div>
-			{/if}
 		</div>
 		<div class="clearfix"></div>
 		<ul class="letters-list cut-wechat-letters">
