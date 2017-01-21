@@ -9,6 +9,12 @@ load()->model('module');
 load()->model('cloud');
 load()->model('cache');
 
+if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
+	$account_type = ACCOUNT_TYPE_APP_NORMAL;
+	$account_typename = '小程序';
+} else {
+	$account_typename = '公众号';
+}
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
@@ -68,7 +74,11 @@ if($do == 'base') {
 				break;
 			case 'name':
 				$uni_account = pdo_update('uni_account', array('name' => trim($_GPC['request_data'])), array('uniacid' => $uniacid));
-				$account_wechats = pdo_update('account_wechats', array('name' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
+				if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
+					$account_wechats = pdo_update('account_wxapp', array('name' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
+				} else {
+					$account_wechats = pdo_update('account_wechats', array('name' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
+				}
 				$result = ($uni_account && $account_wechats) ? true : false;
 				break;
 			case 'account' :
@@ -111,7 +121,11 @@ if($do == 'base') {
 				break;
 		}
 		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime'))) {
-			$result = pdo_update('account_wechats', $data, array('acid' => $acid, 'uniacid' => $uniacid));
+			if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
+				$result = pdo_update('account_wxapp', $data, array('acid' => $acid, 'uniacid' => $uniacid));
+			} else {
+				$result = pdo_update('account_wechats', $data, array('acid' => $acid, 'uniacid' => $uniacid));
+			}
 		}
 		if($result) {
 			cache_delete("uniaccount:{$uniacid}");
