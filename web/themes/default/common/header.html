@@ -71,7 +71,7 @@
 					<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					<span class="font-lg">{$_W['current_module']['title']}</span>
 				{elseif FRAME == 'account'}
-					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo" onerror="this.src='./resource/images/gw-wx.gif'">
+					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo">
 					<span class="font-lg">{$_W['account']['name']}</span>
 					{if $_W['account']['level'] == 1 || $_W['account']['level'] == 3}
 						<span class="label label-primary">订阅号 </span>{if $_W['account']['level'] == 3}<span class="label label-primary">已认证</span>{/if}

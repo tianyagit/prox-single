@@ -730,10 +730,10 @@ function account_create($uniacid, $account) {
  */
 function account_fetch($acid) {
 	$account_info = pdo_get('account', array('acid' => $acid));
-	if ($account_info['type'] != ACCOUNT_TYPE_APP_NORMAL) {
-		$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
-	} else {
+	if ($account_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 		$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wxapp') . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
+	} else {
+		$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
 	}
 	if (empty($account)) {
 		return error(1, '公众号不存在');

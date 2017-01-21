@@ -46,9 +46,8 @@
 				<span ng-if="wechat.role == 'clerk'">店员</span>
 			</td>
 			<td class="text-center link-group">
-				<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}" class="color-default" ng-if="wechat.role == 'founder' || wechat.role == 'owner' || wechat.role == 'manager'">公众号设置</a>
-				<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}" class="color-default" ng-if="wechat.role == 'founder' || wechat.role == 'owner' || wechat.role == 'manager'">操作员设置</a>
-				<a href="javascript:;" class="color-default" ng-if="wechat.role == 'operator'">---</a>
+				<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}" class="color-default">公众号设置</a>
+				<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}" class="color-default">操作员设置</a>
 			</td>
 		</tr>
 		<tr ng-if="!wechats">

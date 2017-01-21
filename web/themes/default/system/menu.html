@@ -37,7 +37,9 @@
 					</td>
 					<td></td>
 					<td class="text-right we7-padding-right">
+						{if $section_name != 'platform_module'}
 						<a href="javascript:;" class="color-default we7-margin-right-sm" ng-click="addSubItem('{$section_name}', {title : '新增菜单', displayorder : 0, isDisplay : 1})">+添加下级分类</a>
+						{/if}
 					</td>
 				</tr>
 				{loop $section['menu'] $sub_permission_name $sub_menu}

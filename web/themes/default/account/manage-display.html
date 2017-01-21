@@ -25,7 +25,7 @@
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
 	</form>
-	{if !empty($account_info['uniacid_limit'])}
+	{if !empty($account_info['uniacid_limit']) || $_W['isfounder']}
 	<div class="pull-right">
 		{if $account_type == ACCOUNT_TYPE_APP_NORMAL}
 		<a href="{php echo url('account/post-step', array('step' => '2', 'type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-primary we7-padding-horizontal">添加小程序</a>

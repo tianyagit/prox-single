@@ -46,7 +46,7 @@
 					<div class="cut-wechat-item">
 						<i class="fa fa-2x fa-check-circle text-success hide" ng-style="{'position':'absolute', 'top':'15px', 'right':'15px'}" ng-if="detail.isconnect == 1"></i>
 						<i class="fa fa-2x fa-times-circle text-warning hide" ng-style="{'position':'absolute', 'top':'15px', 'right':'15px'}" ng-if="detail.isconnect == 0"></i>
-						<img ng-src="{{detail.thumb}}" onerror="this.src='resource/images/gw-wx.gif'"/>
+						<img ng-src="{{detail.thumb}}">
 						<p class="wechat-name" ng-bind="detail.name"></p>
 						<span class="wechat-versions" ng-if="detail.level == 1">类型：普通订阅号</span>
 						<span class="wechat-versions" ng-if="detail.level == 2">类型：普通服务号</span>
