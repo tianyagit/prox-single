@@ -10,6 +10,12 @@ load()->model('system');
 $dos = array('delete', 'edit', 'set_permission', 'set_manager');
 $do = in_array($do, $dos) ? $do : 'edit';
 
+if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
+	$account_type = ACCOUNT_TYPE_APP_NORMAL;
+	$account_typename = '小程序';
+} else {
+	$account_typename = '公众号';
+}
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 $_W['page']['title'] = '管理设置 - 微信公众号管理';
