@@ -21,10 +21,10 @@ if ($do == 'display') {
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($_W['isfounder'])) {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type = 1";
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND (b.type = 1 OR b.type = 3)";
 		$order_by = " ORDER BY a.`acid` DESC";
 	} else {
-		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type = 1";
+		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND (b.type = 1 OR b.type = 3)";
 		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
 	}
