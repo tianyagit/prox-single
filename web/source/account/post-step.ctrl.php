@@ -17,7 +17,6 @@ $step = intval($_GPC['step']) ? intval($_GPC['step']) : 1;
 if($step == 1) {
 	// 用户点击 '授权登录添加公众号'，判断公共号最大个数限制
 	if (!$_W['isfounder']) {
-		$stat = uni_user_account_permission();
 		$max_tsql = "SELECT COUNT(*) FROM " . tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1";
 		$max_pars[':uid'] = $_W['uid'];
 		$max_total = pdo_fetchcolumn($max_tsql, $max_pars);
@@ -34,7 +33,7 @@ if($step == 1) {
 }elseif ($step == 2) {
 	if (!empty($uniacid)) {
 		$state = uni_permission($uid, $uniacid);
-		if ($state != 'founder' && $state != 'manager') {
+		if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
 			message('没有该公众号操作权限！');
 		}
 		if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
