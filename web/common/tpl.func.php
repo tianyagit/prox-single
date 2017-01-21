@@ -18,21 +18,6 @@ defined('IN_IA') or exit('Access Denied');
  */
 function _tpl_form_field_date($name, $value = '', $withtime = false) {
 	$s = '';
-	$s = '
-		<script type="text/javascript">
-			require(["datetimepicker"], function(){
-				
-						var option = {
-							lang : "zh",
-							step : 5,
-							timepicker : ' . (!empty($withtime) ? "true" : "false") .',
-							closeOnDateSelect : true,
-							format : "Y-m-d' . (!empty($withtime) ? ' H:i"' : '"') .'
-						};
-					$(".datetimepicker[name = \'' . $name . '\']").datetimepicker(option);
-				
-			});
-		</script>';
 	$withtime = empty($withtime) ? false : true;
 	if (!empty($value)) {
 		$value = strexists($value, '-') ? strtotime($value) : $value;
@@ -41,6 +26,19 @@ function _tpl_form_field_date($name, $value = '', $withtime = false) {
 	}
 	$value = ($withtime ? date('Y-m-d H:i:s', $value) : date('Y-m-d', $value));
 	$s .= '<input type="text" name="' . $name . '"  value="'.$value.'" placeholder="请选择日期时间" readonly="readonly" class="datetimepicker form-control" style="padding-left:12px;" />';
+	$s .= '
+		<script type="text/javascript">
+			require(["datetimepicker"], function(){
+					var option = {
+						lang : "zh",
+						step : 5,
+						timepicker : ' . (!empty($withtime) ? "true" : "false") .',
+						closeOnDateSelect : true,
+						format : "Y-m-d' . (!empty($withtime) ? ' H:i"' : '"') .'
+					};
+				$(".datetimepicker[name = \'' . $name . '\']").datetimepicker(option);
+			});
+		</script>';
 	return $s;
 }
 
