@@ -482,6 +482,8 @@ function uni_permission($uid = 0, $uniacid = 0) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
 		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
+		} else {
+			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
 	}
 	return $role;
@@ -702,8 +704,13 @@ function account_create($uniacid, $account) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
-	unset($account['type']);
-	pdo_insert('account_wechats', $account);
+	if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+		unset($account['type']);
+		pdo_insert('account_wxapp', $account);
+	} else {
+		unset($account['type']);
+		pdo_insert('account_wechats', $account);
+	}
 	return $acid;
 }
 
@@ -713,7 +720,12 @@ function account_create($uniacid, $account) {
  * @return array
  */
 function account_fetch($acid) {
-	$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
+	$account_info = pdo_get('account', array('acid' => $acid));
+	if ($account_info['type'] != ACCOUNT_TYPE_APP_NORMAL) {
+		$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
+	} else {
+		$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wxapp') . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
+	}
 	if (empty($account)) {
 		return error(1, '公众号不存在');
 	}

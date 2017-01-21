@@ -9,11 +9,17 @@ load()->model('account');
 
 $dos = array('display', 'recover', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
+if ($_GPC['type'] == 'wxapp') {
+	$account_type = ACCOUNT_TYPE_APP_NORMAL;
+	$account_typename = '小程序';
+} else {
+	$account_typename = '公众号';
+}
 //只有创始人、主管理员才有权限使用回收站功能
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	message('无权限操作！', referer(), 'error');
 }
-$_W['page']['title'] = '公众号回收站 - 公众号';
+$_W['page']['title'] = $account_typename . '回收站 - ' . $account_typename;
 
 if ($do == 'display') {
 	$pindex = max(1, $_GPC['page']);
@@ -23,16 +29,25 @@ if ($do == 'display') {
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
-	$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type = 1";
+	if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = 1 OR b.type = 3)";
+	} else {
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type = 4";
+	}
+	
 	$order_by = " ORDER BY a.`acid` DESC";
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-
-	$tsql = "SELECT count(*) FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}" ;
+	if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
+		$tsql = "SELECT count(*) FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}" ;
+		$sql = "SELECT * FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
+	} else {
+		$tsql = "SELECT count(*) FROM ". tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}" ;
+		$sql = "SELECT * FROM ". tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
+	}
 	$total = pdo_fetchcolumn($tsql, $param);
-	$sql = "SELECT * FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$del_accounts = pdo_fetchall($sql, $param);
 	if(!empty($del_accounts)) {
 		foreach ($del_accounts as &$account) {
@@ -54,19 +69,17 @@ if ($do == 'display') {
 if ($do == 'recover') {
 	$acid = intval($_GPC['acid']);
 	$uniacid = intval($_GPC['uniacid']);
-
 	$state = uni_permission($_W['uid'], $uniacid);
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
 		message('没有权限！', referer(), 'error');
 	}
-
 
 	if (!empty($uniacid)) {
 		pdo_update('account', array('isdeleted' => 0), array('uniacid' => $uniacid));
 	} else {
 		pdo_update('account', array('isdeleted' => 0), array('acid' => $acid));
 	}
-	message('公众号恢复成功', referer(), 'success');
+	message('恢复成功', referer(), 'success');
 }
 
 if($do == 'delete') {
@@ -81,5 +94,5 @@ if($do == 'delete') {
 	if (!empty($acid)) {
 		account_delete($acid);
 	}
-	message('删除公众号成功！', referer(), 'success');
+	message('删除成功！', referer(), 'success');
 }

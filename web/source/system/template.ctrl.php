@@ -226,115 +226,25 @@ if ($do == 'install') {
 }
 
 if($do == 'upgrade') {
-	$check = intval($_GPC['check']);
-	$batch = intval($_GPC['batch']);
-	if($check == 1) {
-		isetcookie('batch', 1);
-		$batch = 1;
-		$r = cloud_prepare();
-		if(is_error($r)) {
-			exit('cloud service is unavailable');
-		}
-		$templates = pdo_fetchall('SELECT id,name,version FROM ' . tablename('site_templates'), array(), 'name');
-		$upgrade = array();
-		$mods = array();
-		$ret = cloud_t_query();
-		if(!is_error($ret)) {
-			foreach($ret as $k => $v) {
-				if(!$templates[$k]) continue;
-				if(ver_compare($templates[$k]['version'], $v['version']) == -1) {
-					$upgrade[] = $k;
-				}
-			}
-		} else {
-			message('从云平台获取模板信息失败,请稍后重试', referer(), 'error');
-		}
-		if(empty($upgrade)) {
-			message('您的模板已经是最新版本', referer(), 'success');
-		}
-		$upgrade_str = iserializer($upgrade);
-		cache_write('upgrade:template', $upgrade_str);
+	$template_name = $_GPC['templateid'];
+	$template = pdo_get("site_templates", array('name' => $template_name));
+	if (empty($template)) {
+		message('模板已经被卸载或是不存在！', url('system/template'), 'error');
 	}
-
-	if($batch == 1) {
-		$wait_upgrade = (array)iunserializer(cache_read('upgrade:template'));
-		if(empty($wait_upgrade)) {
-			isetcookie('batch', 0, -10000);
-			message('您的模板已经是最新版本', url('extension/theme'), 'success');
-		}
-		$id = array_shift($wait_upgrade);
-	} else {
-		$id = $_GPC['templateid'];
-	}
-
-	$theme = pdo_fetch("SELECT id, name, title FROM " . tablename('site_templates') . " WHERE name = :name", array(':name' => $id));
-	if (empty($theme)) {
-		if($batch == 1) {
-			cache_write('upgrade:template', iserializer($wait_upgrade));
-			message($theme['title'] . ' 模板已经被卸载或是不存在。系统将进入下一个模板的更新。<br>请勿关闭浏览器', url('extension/theme/upgrade', array('batch' => 1)), 'success');
-		}
-		message('模板已经被卸载或是不存在！', '', 'error');
-	}
-	$r = cloud_prepare();
-	if(is_error($r)) {
-		message($r['message'], url('cloud/profile'), 'error');
-	}
-
-	$info = cloud_t_info($id);
-	if (is_error($info)) {
-		message($info['message'], referer(), 'error');
-	}
-
-	$upgrade_info = cloud_t_upgradeinfo($id);
-
-	if (is_error($upgrade_info)) {
-		message($upgrade_info['message'], referer(), 'error');
-	}
-	if ($_W['isajax']) {
-		if ($upgrade_info['free']) {
-			foreach ($upgrade_info['branches'] as &$branch) {
-				$branch['upgrade_price'] = 0;
-			}
-		}
-		message($upgrade_info, '', 'ajax');
-	}
-
 	if (!is_error($info)) {
-		if (empty($_GPC['flag'])) {
-			if (intval($_GPC['branch']) > $upgrade_info['version']['branch_id']) {
-				header('location: ' . url('cloud/redirect/buybranch', array('m' => $id, 'branch' => intval($_GPC['branch']), 'type' => 'theme', 'is_upgrade' => 1)));
-				exit;
-			}
-
-			load()->func('file');
-			rmdirs(IA_ROOT . '/app/themes/' . $id, true);
-			header('Location: ' . url('cloud/process', array('t' => $id, 'is_upgrade' => 1)));
-			exit;
-		} else {
-			$packet = cloud_t_build($id);
+		if (!empty($_GPC['flag'])) {
+			$packet = cloud_t_build($template_name);
 			$manifest = ext_template_manifest_parse($packet['manifest']);
 		}
 	}
 	if (empty($manifest)) {
-		if($batch == 1) {
-			cache_write('upgrade:template', iserializer($wait_upgrade));
-			message($theme['title'] . ' 模块安装配置文件不存在或是格式不正确。系统将进入下一个模板的更新。<br>请勿关闭浏览器', url('extension/theme/upgrade', array('batch' => 1)), 'success');
-		}
 		message('模块安装配置文件不存在或是格式不正确！', '', 'error');
 	}
-	if(ver_compare($theme['version'], $packet['version']) != -1) {
-		if($batch == 1) {
-			cache_write('upgrade:template', iserializer($wait_upgrade));
-			message($theme['title'] . ' 模板版本不低于要更新的版本。系统将进入下一个模板的更新。<br>请勿关闭浏览器', url('extension/theme/upgrade', array('batch' => 1)), 'success');
-		}
+	if(ver_compare($template['version'], $packet['version']) != -1) {
 		message('已安装的模板版本不低于要更新的版本, 操作无效.');
 	}
-	pdo_update('site_templates', array('version' => $packet['version']), array('id' => $theme['id']));
-	if($batch == 1) {
-		cache_write('upgrade:template', iserializer($wait_upgrade));
-		message($theme['title'] . ' 模板更新成功。系统将进入下一个模板的更新。<br>请勿关闭浏览器', url('extension/theme/upgrade', array('batch' => 1)), 'success');
-	}
-	message('模板更新成功！', url('extension/theme'), 'success');
+	pdo_update('site_templates', array('version' => $packet['version']), array('id' => $template['id']));
+	message('模板更新成功！', url('system/template'), 'success');
 }
 
 template('system/template');

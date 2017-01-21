@@ -113,7 +113,7 @@
 			{if $is_upgrade == 1}
 				{if $packet['type'] == 'theme'}
 				<script>
-					location.href = '{url "system/theme/upgrade" array("templateid" => $m, "flag" => 1)}';
+					location.href = '{url "system/template/upgrade" array("templateid" => $m, "flag" => 1)}';
 				</script>
 				{elseif $packet['type'] == 'webtheme'}
 				<script>

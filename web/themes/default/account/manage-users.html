@@ -1,8 +1,8 @@
 {template 'common/header'}
 <ol class="breadcrumb we7-breadcrumb">
-	<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i> </a>
-	<li><a href="{url 'account/manage'}">公众号管理</a></li>
-	<li>公众号设置</li>
+	<a href="{if $account_type == ACCOUNT_TYPE_APP_NORMAL}{php echo url('account/manage', array('type' => 'wxapp'))}{else}{url 'account/manage'}{/if}"><i class="wi wi-back-cricle"></i> </a>
+	<li><a href="{if $account_type == ACCOUNT_TYPE_APP_NORMAL}{php echo url('account/manage', array('type' => 'wxapp'))}{else}{url 'account/manage'}{/if}">{$account_typename}列表</a></li>
+	<li>新建{$account_typename}</li>
 </ol>
 <div class="media media-wechat-setting">
 	<a class="media-left">
@@ -21,11 +21,13 @@
 <div class="clearfix"></div>
 <div class="btn-group we7-btn-group wechat-edit-group">
 	{if $state == 'founder' || $state == 'owner'}
-	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">基础信息</a>
+	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default">基础信息</a>
+	{if $account_type != ACCOUNT_TYPE_APP_NORMAL}
 	<a href="{php echo url('account/post/sms', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">短信信息</a>
 	{/if}
-	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default active">使用者管理</a>
-	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">可用应用模块/模板</a>
+	{/if}
+	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default active">使用者管理</a>
+	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default">可用应用模块/模板</a>
 </div>
 
 <div class="alert alert-info">
