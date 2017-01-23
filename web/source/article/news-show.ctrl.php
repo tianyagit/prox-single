@@ -32,4 +32,4 @@ if($do == 'list') {
 	$pager = pagination($total, $pindex, $psize);
 }
 
-template('system/news-show');
+template('article/news-show');

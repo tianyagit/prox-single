@@ -17,6 +17,7 @@ $_W['acl'] = $acl = array(
 		'default' => '',
 		'direct' => array(
 			'auth',
+			'welcome',
 		),
 		'operator' => array(
 			'display',

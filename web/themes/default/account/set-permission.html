@@ -10,9 +10,9 @@
 </div>
 
 {loop $menus $name $sections}
-	{if $sections['section']}
-			<table class="table we7-table table-hover">
-	<div class="we7-page-title">{$sections['title']}</div>
+	{if $sections['section'] && $name != 'name'}
+	<table class="table we7-table table-hover">
+		<div class="we7-page-title">{$sections['title']}</div>
 		{loop $sections['section'] $section_id $section}
 			{if $section_id != 'platform_module'}
 				<thead>
@@ -25,7 +25,7 @@
 					</th>
 				</tr>
 				</thead>
-				<tbody class="system_{$sections['name']}">
+				<tbody class="system_{$section_id}">
 				{php $i=1;}
 				{loop $section['menu'] $item_id $item}
 					{if $i%4 == 1 || $i == 1}<tr>{/if}
@@ -151,11 +151,11 @@ $(function(){
 		var _parent = $(this).parents('.dropdown');
 		_parent.find('.dropdown-menu :checkbox').prop('checked', $(this).prop('checked'));
 		if($(this).prop('checked')) {
-			$(this).parents('.dropdown').find('label.info').html('已全选');
-			$(this).parents('.dropdown').find('input[type="hidden"]').val(1);
+			_parent.find('label.info').html('已全选');
+			_parent.find('input[type="hidden"]').val(1);
 		} else {
-			$(this).parents('.dropdown').find('input[type="hidden"]').val(0);
-			$(this).parents('.dropdown').find('label.info').html('已选0项');
+			_parent.find('input[type="hidden"]').val(0);
+			_parent.find('label.info').html('已选0项');
 		}
 	});
 
