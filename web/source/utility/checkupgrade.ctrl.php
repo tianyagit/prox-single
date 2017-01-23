@@ -42,9 +42,6 @@ if ($do == 'system') {
 		if (is_error($info)) {
 			message($info, '', 'ajax');;
 		}
-		if (is_error($info) && $info['errno'] == -10) {
-			message($info, '', 'ajax');
-		}
 		
 		if (!empty($info) && !empty($info['version']['version'])) {
 			if (ver_compare($module['version'], $info['version']['version'])) {

@@ -9,21 +9,28 @@ load()->func('file');
 load()->model('module');
 load()->classs('weixin.platform');
 
-uni_user_permission_check('system_account_post');
-$_W['page']['title'] = '添加/编辑公众号 - 公众号管理';
+$account_type = intval($_GPC['type']);
+if ($account_type == ACCOUNT_TYPE_APP_NORMAL) {
+	$account_typename = '小程序';
+} else {
+	$account_typename = '公众号';
+}
+$_W['page']['title'] = '添加/编辑' . $account_typename . ' - ' . $account_typename . '管理';
 $uniacid = intval($_GPC['uniacid']);
 $step = intval($_GPC['step']) ? intval($_GPC['step']) : 1;
 
 if($step == 1) {
 	// 用户点击 '授权登录添加公众号'，判断公共号最大个数限制
 	if (!$_W['isfounder']) {
-		$stat = uni_user_account_permission();
+		//模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
+		$account_info = uni_user_account_permission();
+		//当前用户可添加公众号数量判断
 		$max_tsql = "SELECT COUNT(*) FROM " . tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1";
 		$max_pars[':uid'] = $_W['uid'];
 		$max_total = pdo_fetchcolumn($max_tsql, $max_pars);
 		$maxaccount = pdo_fetchcolumn('SELECT `maxaccount` FROM '. tablename('users_group') .' WHERE id = :groupid', array(':groupid' => $_W['user']['groupid']));
 		if($max_total >= $maxaccount) {
-			$authurl = "javascript:alert('您所在会员组最多只能添加 {$maxaccount} 个公众号');";
+			$authurl = "javascript:alert('您所在会员组最多只能添加 {$maxaccount} 个' . {$account_typename});";
 		}
 	}
 
@@ -34,8 +41,8 @@ if($step == 1) {
 }elseif ($step == 2) {
 	if (!empty($uniacid)) {
 		$state = uni_permission($uid, $uniacid);
-		if ($state != 'founder' && $state != 'manager') {
-			message('没有该公众号操作权限！');
+		if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
+			message('没有该' . $account_typename . '操作权限！');
 		}
 		if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
 			message($permission['message'], '' , 'error');
@@ -53,7 +60,7 @@ if($step == 1) {
 		$update = array();
 		$update['name'] = trim($_GPC['cname']);
 		if(empty($update['name'])) {
-			message('公众号名称必须填写');
+			message($account_typename . '名称必须填写');
 		}
 		//如果uniacid不存在,创建主公号
 		if (empty($uniacid)) {
@@ -65,7 +72,7 @@ if($step == 1) {
 				'groupid' => 0,
 			);
 			if (!pdo_insert('uni_account', $data)) {
-				message('添加公众号失败');
+				message('添加' . $account_typename . '失败');
 			}
 			$uniacid = pdo_insertid();
 			//获取默认模板的id
@@ -106,27 +113,35 @@ if($step == 1) {
 			
 			module_build_privileges();
 		}
-
+		if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
+			$update['level'] = intval($_GPC['level']);
+			$update['type'] = 1;
+		} else {
+			$update['type'] = ACCOUNT_TYPE_APP_NORMAL;
+		}
 		$update['account'] = trim($_GPC['account']);
 		$update['original'] = trim($_GPC['original']);
-		$update['level'] = intval($_GPC['level']);
 		$update['key'] = trim($_GPC['key']);
 		$update['secret'] = trim($_GPC['secret']);
-		$update['type'] = 1;
 		$update['encodingaeskey'] = trim($_GPC['encodingaeskey']);
 		if (empty($acid)) {
 			$acid = account_create($uniacid, $update);
 			if(is_error($acid)) {
-				message('添加公众号信息失败', '', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 2), 'error'));
+				message('添加' . $account_typename . '信息失败', '', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 2), 'error'));
 			}
 			pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 			if (empty($_W['isfounder'])) {
 				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
 			}
 		} else {
-			pdo_update('account', array('type' => 1, 'hash' => ''), array('acid' => $acid, 'uniacid' => $uniacid));
-			unset($update['type']);
-			pdo_update('account_wechats', $update, array('acid' => $acid, 'uniacid' => $uniacid));
+			pdo_update('account', array('type' => $update['type'], 'hash' => ''), array('acid' => $acid, 'uniacid' => $uniacid));
+			if ($update['type'] != ACCOUNT_TYPE_APP_NORMAL) {
+				unset($update['type']);
+				pdo_update('account_wechats', $update, array('acid' => $acid, 'uniacid' => $uniacid));
+			} else {
+				unset($update['type']);
+				pdo_update('account_wxapp', $update, array('acid' => $acid, 'uniacid' => $uniacid));
+			}
 		}
 		if(parse_path($_GPC['qrcode'])) {
 			copy($_GPC['qrcode'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
@@ -134,14 +149,15 @@ if($step == 1) {
 		if(parse_path($_GPC['headimg'])) {
 			copy($_GPC['headimg'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
 		}
-		//当是认证服务号的时候设置权限到借用oauth中
-		$oauth = uni_setting($uniacid, array('oauth'));
-		if ($acid && !empty($update['key']) && !empty($update['secret']) && empty($oauth['oauth']['account']) && $update['level'] == 4) {
-			pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
+		if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
+			//当是认证服务号的时候设置权限到借用oauth中
+			$oauth = uni_setting($uniacid, array('oauth'));
+			if ($acid && !empty($update['key']) && !empty($update['secret']) && empty($oauth['oauth']['account']) && $update['level'] == 4) {
+				pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
+			}
 		}
-
 		cache_delete("unisetting:{$uniacid}");
-		header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 3)));
+		header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 3, 'type' => $account_type)));
 		exit;
 	}
 }elseif ($step == 3) {
@@ -243,9 +259,9 @@ if($step == 1) {
 		cache_delete("cardticket:{$acid}");
 		module_build_privileges();
 		if (!empty($_GPC['from'])) {
-			message('公众号权限修改成功', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 3, 'from' => 'list')), 'success');
+			message($account_typename . '权限修改成功', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 3, 'from' => 'list')), 'success');
 		} else {
-			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 4)));
+			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 4, 'type' => $account_type)));
 			exit;
 		}
 	}

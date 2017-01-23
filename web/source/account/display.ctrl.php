@@ -10,6 +10,8 @@ $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';
 
 $state = uni_permission($_W['uid'], $_W['uniacid']);
+//模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
+$account_info = uni_user_account_permission();
 
 if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);

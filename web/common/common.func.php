@@ -91,7 +91,11 @@ function message($msg, $redirect = '', $type = '') {
 	
 	isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
 	
-	header('Location: ' . $redirect);
+	if (!empty($message_cookie['redirect'])) {
+		header('Location: ' . $message_cookie['redirect']);
+	} else {
+		include template('common/message', TEMPLATE_INCLUDEPATH);
+	}
 	exit;
 }
 
@@ -143,8 +147,8 @@ function buildframes($framename = ''){
 						'url' => url('home/welcome/ext', array('m' => $module['name'])),
 						'is_display' => 1,
 					);
-					if (file_exists(IA_ROOT. "addons/{$module['name']}/icon.jpg")) {
-						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia(IA_ROOT. "addons/{$module['name']}/icon.jpg");
+					if (file_exists(IA_ROOT. "addons/{$module['name']}/custom-icon.jpg")) {
+						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia(IA_ROOT. "addons/{$module['name']}/custom-icon.jpg");
 					}
 				}
 			}

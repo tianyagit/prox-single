@@ -10,6 +10,12 @@ load()->model('system');
 $dos = array('delete', 'edit', 'set_permission', 'set_manager');
 $do = in_array($do, $dos) ? $do : 'edit';
 
+if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
+	$account_type = ACCOUNT_TYPE_APP_NORMAL;
+	$account_typename = '小程序';
+} else {
+	$account_typename = '公众号';
+}
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 $_W['page']['title'] = '管理设置 - 微信公众号管理';
@@ -133,7 +139,7 @@ if ($do == 'edit') {
 	if (empty($user)) {
 		message('您操作的用户不存在或是已经被删除！');
 	}
-	$role = uni_permission($_W['uid']);
+	$role = uni_permission($_W['uid'], $uniacid);
 	if (empty($role)) {
 		message('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！');
 	}

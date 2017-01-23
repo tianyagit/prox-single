@@ -313,11 +313,11 @@ function module_build_privileges() {
 function module_count_unistalled_module() {
 	global $_GPC;
 	load()->model('cache');
-	$uninstall_module_num = cache_load('we7:module:count_uninstalled_module');
+	$uninstall_module_num = cache_load('we7:module:all_uninstall');
 	if (empty($uninstall_module_num)) {
 		$uninstall_module_num = module_get_all_unistalled('uninstalled');
 	}
-	return count($uninstall_module_num);
+	return $uninstall_module_num['uninstall_count'];
 }
 
 /**
@@ -328,7 +328,7 @@ function module_get_all_unistalled($status)  {
 	load()->model('cloud');
 	load()->classs('cloudapi');
 	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
-	$uninstallModules =  cache_load('we7:module:all_uninstalled_module');
+	$uninstallModules =  cache_load('we7:module:all_uninstall');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 	if (is_array($uninstallModules['modules']) && $uninstallModules['cloud_m_count'] == $cloud_m_count) {

@@ -13,6 +13,7 @@ $_W['page']['title'] = '更新缓存 - 设置 - 系统管理';
 //清空缓存分为两种，一种为重建，一种为清空。
 //清空类的直接把缓存全部删除，不在一条一条的删除
 if (checksubmit('submit')) {
+	pdo_delete('core_cache');
 	cache_clean();
 	
 	cache_build_template();

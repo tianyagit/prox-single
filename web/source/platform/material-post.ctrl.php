@@ -40,14 +40,11 @@ if ($do == 'replace_image_url') {
 			}
 			$thumb = ATTACHMENT_ROOT . $thumb;
 			$account_api = WeAccount::create($_W['acid']);
-			$data = array(
-				'media' => '@'. $thumb,
-			);
-			$result = $account_api->uploadNewsThumb($data);
+			$result = $account_api->uploadNewsThumb($thumb);
 			if (is_error($result)) {
-				message(error(0, $result), '', 'ajax');
+				message($result, '', 'ajax');
 			} else {
-				$content = str_replace($image, $result['message'], $content);
+				$content = str_replace($image, $result, $content);
 			}
 		}
 	}

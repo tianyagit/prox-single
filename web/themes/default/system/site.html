@@ -75,6 +75,17 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label class="col-sm-2 control-label" style="text-align:left;">后台风格设置</label>
+			<div class="col-sm-8">
+				<select name="template" class="form-control">
+					{loop $template $temp}
+					<option value="{$temp}" {if $_W['setting']['basic']['template'] == $temp}selected{/if}>{$temp}</option>
+					{/loop}
+				</select>
+				<span class="help-block">favorite icon</span>
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="col-sm-2 control-label" style="text-align:left;">favorite icon</label>
 			<div class="col-sm-8">
 				{php echo tpl_form_field_image('icon', $settings['icon'], '', array('global' => true, 'extras' => array('image'=> ' width="32" ')));}

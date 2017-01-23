@@ -44,6 +44,9 @@ if ($do == 'display') {
 	template('system/menu');
 } elseif ($do == 'post') {
 	$id = intval($_GPC['id']);
+	if ($_GPC['group'] == 'platform_module') {
+		message(error(-1, '应用模块下不可添加下级分类！'), referer(), 'ajax');
+	}
 	$menu = array(
 		'title' => $_GPC['title'],
 		'url' => $_GPC['url'],

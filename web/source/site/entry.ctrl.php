@@ -73,4 +73,4 @@ if (!is_error($site)) {
 	$method = 'doWeb' . ucfirst($entry['do']);
 	exit($site->$method());
 }
-exit("访问的方法 {$method} 不存在.");
+message("访问的方法 {$method} 不存在.", referer(), 'error');

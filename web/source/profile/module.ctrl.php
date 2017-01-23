@@ -113,7 +113,11 @@ if($do == 'display') {
 					$row['enabled'] = 1;
 				}
 				$row['isdisplay'] = 1;
-				$row['preview'] = tomedia('addons/' . $name . '/icon.jpg');
+				if (file_exists(IA_ROOT. "/addons/". $name. "icon-custom.jpg")) {
+					$row['preview'] = tomedia('addons/' . $name . '/custom-icon.jpg');
+				} else {
+					$row['preview'] = tomedia('addons/' . $name . '/icon.jpg');
+				}
 			}
 			unset($row);
 			$pager = pagination($total, $pageindex, $pagesize);
