@@ -13,6 +13,7 @@ $do = in_array($do, $dos) ? $do : 'edit';
 if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
 	$account_type = ACCOUNT_TYPE_APP_NORMAL;
 	$account_typename = '小程序';
+	$template_show = '-wxapp';
 } else {
 	$account_typename = '公众号';
 }
@@ -48,7 +49,7 @@ if ($do == 'edit') {
 	foreach ($permissions as $v) {
 		$uids[] = $v['uid'];
 	}
-	template('account/manage-users');
+	template('account/manage-users' . $template_show);
 } elseif ($do == 'delete') {
 	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	if (empty($uid)) {
