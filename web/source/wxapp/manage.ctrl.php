@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 
-$dos = array('edit', 'get_categorys', 'save_category', 'del_category');
+$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version');
 $do = in_array($do, $dos) ? $do : 'edit';
 $_W['page']['title'] = '小程序 - 管理';
 
@@ -53,15 +53,15 @@ if ($do == 'edit') {
 		$nav = $_GPC['nav'];
 		$recommend = $_GPC['recommend'];
 		$id = intval($_GPC['id']);
-				if (!empty($slide)) {
+		if (!empty($slide)) {
 			if (empty($id)) {
 				$slide['uniacid'] = $_W['uniacid'];
 				$slide['multiid'] = $multiid;
 				pdo_insert('site_slide', $slide);
-				message('添加幻灯片成功', url('wxapp/manage/edit', array('multiid' => $multiid)), 'success');
+				message('添加幻灯片成功', url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'])), 'success');
 			} else {
 				$result = pdo_update('site_slide', $slide, array('uniacid' => $_W['uniacid'], 'multiid' => $multiid, 'id' => $id));
-				message('更新幻灯片成功', url('wxapp/manage/edit', array('multiid' => $multiid)), 'success');
+				message('更新幻灯片成功', url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'])), 'success');
 			}
 		}
 		if (!empty($nav)) {
@@ -70,20 +70,20 @@ if ($do == 'edit') {
 				$nav['multiid'] = $multiid;
 				$nav['status'] = 1;
 				pdo_insert('site_nav', $nav);
-				message('添加导航图标成功', url('wxapp/manage/edit', array('wxapp' => 'nav', 'multiid' => $multiid)), 'success');
+				message('添加导航图标成功', url('wxapp/manage/edit', array('wxapp' => 'nav', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'])), 'success');
 			} else {
 				pdo_update('site_nav', $nav, array('uniacid' => $_W['uniacid'], 'multiid' => $multiid, 'id' => $id));
-				message('更新导航图标成功', url('wxapp/manage/edit', array('wxapp' => 'nav', 'multiid' => $multiid)), 'success');
+				message('更新导航图标成功', url('wxapp/manage/edit', array('wxapp' => 'nav', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'])), 'success');
 			}
 		}
 		if (!empty($recommend)) {
 			if (empty($id)) {
 				$recommend['uniacid'] = $_W['uniacid'];
 				$result = pdo_insert('site_article', $recommend);
-				message('添加推荐图片成功', url('wxapp/manage/edit', array('wxapp' => 'recommend', 'multiid' => $multiid)), 'success');
+				message('添加推荐图片成功', url('wxapp/manage/edit', array('wxapp' => 'recommend', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'])), 'success');
 			} else {
 				pdo_update('site_article', $recommend, array('uniacid' => $_W['uniacid'], 'id' => $id));
-				message('更新推荐图片成功', url('wxapp/manage/edit', array('wxapp' => 'recommend', 'multiid' => $multiid)), 'success');
+				message('更新推荐图片成功', url('wxapp/manage/edit', array('wxapp' => 'recommend', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'])), 'success');
 			}
 		}
 			}
@@ -97,9 +97,9 @@ if ($do == 'edit') {
 	$recommends = pdo_getall('site_article', array('uniacid' => $_W['uniacid']));
 	
 	$version_info = pdo_get('wxapp_versions', array('multiid' => $multiid, 'uniacid' => $_W['uniacid']), array('id', 'version'));
+
 	$versionid = $version_info['id'];
 	$modules = pdo_getcolumn('wxapp_versions', array('multiid' => $multiid), 'modules');
-
 	$modules = json_decode($modules, true);
 	if (!empty($modules)) {
 		foreach ($modules as $module => &$version) {
@@ -107,4 +107,12 @@ if ($do == 'edit') {
 		}
 	}
 	template('wxapp/wxapp-edit');
+}
+
+if ($do == 'switch_version') {
+	$uniacid = intval($_GPC['uniacid']);
+	if (!empty($uniacid)) {
+		$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $uniacid));
+	}
+	template('wxapp/switch-version');
 }

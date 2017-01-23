@@ -12,6 +12,7 @@ load()->classs('weixin.platform');
 $account_type = intval($_GPC['type']);
 if ($account_type == ACCOUNT_TYPE_APP_NORMAL) {
 	$account_typename = '小程序';
+	$template_show = '-wxapp';
 } else {
 	$account_typename = '公众号';
 }
@@ -320,4 +321,4 @@ if($step == 1) {
 	}
 	$account = account_fetch($uni_account['default_acid']);
 }
-template('account/post-step');
+template('account/post-step' . $template_show);

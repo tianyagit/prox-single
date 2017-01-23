@@ -1,8 +1,8 @@
 {template 'common/header'}
 <ol class="breadcrumb we7-breadcrumb">
-	<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i> </a>
-	<li><a href="{url 'account/manage'}">公众号管理</a></li>
-	<li>公众号设置</li>
+	<a href="{php echo url('account/manage', array('type' => 'wxapp'))}"><i class="wi wi-back-cricle"></i> </a>
+	<li><a href="{php echo url('account/manage', array('type' => 'wxapp'))}">小程序列表</a></li>
+	<li>新建小程序</li>
 </ol>
 <div class="media media-wechat-setting">
 	<a class="media-left">
@@ -14,16 +14,15 @@
 	</div>
 	{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER}
 	<div class="media-right media-middle">
-		<a href="{php echo url('account/manage/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
+		<a href="{php echo url('account/manage/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
 	</div>
 	{/if}
 </div>
 <div class="clearfix"></div>
 <div class="btn-group we7-btn-group wechat-edit-group">
-	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default active">基础信息</a>
-	<a href="{php echo url('account/post/sms', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">短信信息</a>
-	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">使用者管理</a>
-	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-default">可用应用模块/模板</a>
+	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default active">基础信息</a>
+	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default">使用者管理</a>
+	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default">可用应用模块/模板</a>
 </div>
 <div id="js-account-manage-base" ng-controller="AccountManageBase" ng-cloak>
 	{if $_W['uniaccount']['isconnect'] == 0}
@@ -37,7 +36,7 @@
 		<col />
 		<col width="100px" />
 		<tr>
-			<th class="text-left" colspan="3">公众号设置</th>
+			<th class="text-left" colspan="3">小程序设置</th>
 		</tr>
 		<tr>
 			<td class="table-label">头像</td>
@@ -50,12 +49,12 @@
 			<td><a href="javascript:;" class="color-default" ng-click="changeImage('qrcodeimgsrc')">修改</a></td>
 		</tr>
 		<tr>
-			<td class="table-label">公众号名称</td>
+			<td class="table-label">小程序名称</td>
 			<td ng-bind="account.name"></td>
 			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#name" ng-click="editInfo('name', account.name)">修改</a></td>
 		</tr>
 		<tr>
-			<td class="table-label">{$account_typename}帐号</td>
+			<td class="table-label">小程序帐号</td>
 			<td ng-bind="account.account"></td>
 			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#account" ng-click="editInfo('account', account.account)">修改</a></td>
 		</tr>
@@ -63,15 +62,6 @@
 			<td class="table-label">原始ID</td>
 			<td ng-bind="account.original"></td>
 			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#original" ng-click="editInfo('original', account.original)">修改</a></td>
-		</tr>
-		<tr>
-			<td class="table-label">类型</td>
-			<td ng-if="account.level == 1">普通订阅号</td>
-			<td ng-if="account.level == 2">普通服务号</td>
-			<td ng-if="account.level == 3">认证订阅号</td>
-			<td ng-if="account.level == 4">认证服务号/认证媒体/政府订阅号</td>
-			<td ng-if="account.level == 0">---</td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#level" ng-click="editInfo('level', account.level)">修改</a></td>
 		</tr>
 		<tr>
 			<td class="table-label">到期时间</td>
@@ -84,7 +74,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<div class="modal-title">修改公众号名称</div>
+					<div class="modal-title">修改小程序名称</div>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
@@ -104,7 +94,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<div class="modal-title">修改公众号账号</div>
+					<div class="modal-title">修改小程序账号</div>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
@@ -280,7 +270,7 @@
 		headimgsrc: "{php echo $headimgsrc}",
 		qrcodeimgsrc: "{php echo $qrcodeimgsrc}",
 		links: {
-			basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid))}",
+			basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid, 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}",
 			siteroot: "{php echo $_W['siteroot']}",
 		},
 	});

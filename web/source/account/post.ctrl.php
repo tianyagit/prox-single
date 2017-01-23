@@ -12,6 +12,7 @@ load()->model('cache');
 if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
 	$account_type = ACCOUNT_TYPE_APP_NORMAL;
 	$account_typename = '小程序';
+	$template_show = '-wxapp';
 } else {
 	$account_typename = '公众号';
 }
@@ -145,7 +146,7 @@ if($do == 'base') {
 	$uniaccount = array();
 	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
 
-	template('account/manage-base');
+	template('account/manage-base' . $template_show);
 }
 
 if($do == 'sms') {
@@ -309,5 +310,5 @@ if($do == 'modules_tpl') {
 		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('id', 'name', 'title'));
 	}
 
-	template('account/manage-modules-tpl');
+	template('account/manage-modules-tpl' . $template_show);
 }
