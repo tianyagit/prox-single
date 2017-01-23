@@ -67,7 +67,12 @@ function uni_owned($uid = 0) {
 function uni_accounts($uniacid = 0) {
 	global $_W;
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
-	$accounts = pdo_fetchall("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(acid) WHERE a.uniacid = :uniacid AND a.isdeleted <> 1 ORDER BY a.acid ASC", array(':uniacid' => $uniacid), 'acid');
+	$account_info = pdo_get('account', array('uniacid' => $uniacid));
+	if ($account_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+		$accounts = pdo_fetchall("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wxapp') . " w USING(acid) WHERE a.uniacid = :uniacid AND a.isdeleted <> 1 ORDER BY a.acid ASC", array(':uniacid' => $uniacid), 'acid');
+	} else {
+		$accounts = pdo_fetchall("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(acid) WHERE a.uniacid = :uniacid AND a.isdeleted <> 1 ORDER BY a.acid ASC", array(':uniacid' => $uniacid), 'acid');
+	}
 	return $accounts;
 }
 

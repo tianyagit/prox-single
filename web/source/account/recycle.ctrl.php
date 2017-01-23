@@ -12,6 +12,7 @@ $do = in_array($do, $dos) ? $do : 'display';
 if ($_GPC['type'] == 'wxapp') {
 	$account_type = ACCOUNT_TYPE_APP_NORMAL;
 	$account_typename = '小程序';
+	$template_show = '-wxapp';
 } else {
 	$account_typename = '公众号';
 }
@@ -63,7 +64,7 @@ if ($do == 'display') {
 	}
 
 	$pager = pagination($total, $pindex, $psize);
-	template('account/recycle');
+	template('account/recycle' . $template_show);
 }
 
 if ($do == 'recover') {

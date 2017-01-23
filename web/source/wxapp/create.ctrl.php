@@ -13,11 +13,18 @@ $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
 
 if($do == 'post') {
+	$uniacid = intval($_GPC['uniacid']);
+	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid));
 	if(!empty($_GPC['wxappval'])) {
 		$submit_val = json_decode(ihtml_entity_decode($_GPC['wxappval']), true);
 				$request_cloud_data = array();
 		$version = ($submit_val['version0'] ? $submit_val['version0'] : 0) .'.'.($submit_val['version1'] ? $submit_val['version1'] : 0).'.'.($submit_val['version2'] ? $submit_val['version2'] : 0);
-
+		$name = trim($submit_val['name']);
+		$multi['uniacid'] = $uniacid;
+		$multi['title'] = $name;
+		$multi['styleid'] = 0;
+		pdo_insert('site_multi', $multi);
+		$multi_id = pdo_insertid();
 		$bottom_menu = array();
 		foreach ($submit_val['menus'] as $menu_val) {
 			$menu_val['defaultImage'] = empty($menu_val['defaultImage']) ? $_W['siteroot'].'web/resource/images/bottom-default.png' : $menu_val['defaultImage'];
@@ -35,39 +42,6 @@ if($do == 'post') {
 			$modules[$module_val['module']] = $module_val['version'];
 		}
 										
-		$name = trim($submit_val['name']);
-		$description = '微信小程序体验版';
-		$data = array(
-			'name' => $name,
-			'description' => $description,
-			'groupid' => 0,
-		);
-		if (!pdo_insert('uni_account', $data)) {
-			message('添加公众号失败');
-		}
-		$uniacid = pdo_insertid();
-
-		$multi['uniacid'] = $uniacid;
-		$multi['title'] = $name;
-		$multi['styleid'] = 0;
-		pdo_insert('site_multi', $multi);
-		$multi_id = pdo_insertid();
-
-		$update['name'] = $name;
-		$update['account'] = trim('we7team');
-		$update['original'] = trim('gh_we7team');
-		$update['level'] = intval(1);
-		$update['key'] = trim('we7teamkey');
-		$update['secret'] = trim('we7teamsecret');
-		$update['type'] = 3;
-		$update['encodingaeskey'] = trim('we7teamencodingaeskey');
-		if (empty($acid)) {
-			$acid = wxapp_account_create($uniacid, $update, 3);
-			if(is_error($acid)) {
-				message('添加公众号信息失败', '', url('account/post-step/', array('uniacid' => intval($_GPC['uniacid']), 'step' => 2), 'error'));
-			}
-			pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
-		}
 		$request_cloud_data = array(
 			'name' => $submit_val['name'],
 			'modules' => $modules,
