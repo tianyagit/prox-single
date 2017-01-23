@@ -70,7 +70,6 @@ function attachment_qiniu_auth($key, $secret,$bucket) {
 	}
 }
 function attachment_cos_auth($bucket,$appid, $key, $secret, $version = 'old', $bucket_local = '') {
-	require_once(IA_ROOT.'/framework/library/cos/include.php');
 	if (!is_numeric($appid)) {
 		return error(-1, '传入appid值不合法, 请重新输入');
 	}
@@ -81,16 +80,17 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $version = 'old', $b
 		return error(-1, '传入secretkey值不合法，请重新传入');
 	}
 	if ($version == 'new') {
-		require_once(IA_ROOT.'/framework/library/newcos/include.php');
-		qcloudcos\Cosapi :: setRegion($bucket_local);
-		qcloudcos\Cosapi :: setTimeout(180);
 		$con = $original = @file_get_contents(IA_ROOT.'/framework/library/newcos/qcloudcos/conf.php');
 		$con = preg_replace('/const[\s]APP_ID[\s]=[\s]\'.*\';/', 'const APP_ID = \''.$appid.'\';', $con);
 		$con = preg_replace('/const[\s]SECRET_ID[\s]=[\s]\'.*\';/', 'const SECRET_ID = \''.$key.'\';', $con);
 		$con = preg_replace('/const[\s]SECRET_KEY[\s]=[\s]\'.*\';/', 'const SECRET_KEY = \''.$secret.'\';', $con);
 		file_put_contents(IA_ROOT.'/framework/library/newcos/qcloudcos/Conf.php', $con);
+		require_once(IA_ROOT.'/framework/library/newcos/include.php');
+		qcloudcos\Cosapi :: setRegion($bucket_local);
+		qcloudcos\Cosapi :: setTimeout(180);
 		$uploadRet = qcloudcos\Cosapi::upload($bucket, ATTACHMENT_ROOT.'images/global/MicroEngine.ico', '/MicroEngine.ico','',3 * 1024 * 1024, 0);
 	} else {
+		require_once(IA_ROOT.'/framework/library/cos/include.php');
 		$con = $original = @file_get_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php');
 		if (empty($con)) {
 			$conf_content = base64_decode("PD9waHANCm5hbWVzcGFjZSBRY2xvdWRfY29zOw0KDQpjbGFzcyBDb25mDQp7DQogICAgY29uc3QgUEtHX1ZFUlNJT04gPSAndjMuMyc7DQoNCiAgICBjb25zdCBBUElfSU1BR0VfRU5EX1BPSU5UID0gJ2h0dHA6Ly93ZWIuaW1hZ2UubXlxY2xvdWQuY29tL3Bob3Rvcy92MS8nOw0KICAgIGNvbnN0IEFQSV9WSURFT19FTkRfUE9JTlQgPSAnaHR0cDovL3dlYi52aWRlby5teXFjbG91ZC5jb20vdmlkZW9zL3YxLyc7DQogICAgY29uc3QgQVBJX0NPU0FQSV9FTkRfUE9JTlQgPSAnaHR0cDovL3dlYi5maWxlLm15cWNsb3VkLmNvbS9maWxlcy92MS8nOw0KICAgIC8v6K+35YiwaHR0cDovL2NvbnNvbGUucWNsb3VkLmNvbS9jb3Pljrvojrflj5bkvaDnmoRhcHBpZOOAgXNpZOOAgXNrZXkNCiAgICBjb25zdCBBUFBJRCA9ICcnOw0KICAgIGNvbnN0IFNFQ1JFVF9JRCA9ICcnOw0KICAgIGNvbnN0IFNFQ1JFVF9LRVkgPSAnJzsNCg0KDQogICAgcHVibGljIHN0YXRpYyBmdW5jdGlvbiBnZXRVQSgpIHsNCiAgICAgICAgcmV0dXJuICdjb3MtcGhwLXNkay0nLnNlbGY6OlBLR19WRVJTSU9OOw0KICAgIH0NCn0NCg0KLy9lbmQgb2Ygc2NyaXB0DQo=");
