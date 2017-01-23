@@ -31,7 +31,8 @@ if(empty($id)) {
 	$id = intval($_GPC['id']);
 }
 if (!empty($id)) {
-	$_W['account'] = account_fetch($id);
+	$uniacid = pdo_getcolumn('account', array('acid' => $id), 'uniacid');
+	$_W['account'] = uni_fetch($uniacid);
 }
 if(empty($_W['account'])) {
 	exit('initial error hash or id');
