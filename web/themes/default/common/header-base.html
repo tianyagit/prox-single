@@ -32,6 +32,10 @@
 		'cookie' : {'pre': '{$_W['config']['cookie']['pre']}'},
 		'account' : {php echo json_encode($_W['account'])},
 	};
+	//页面加载等待js
+	function load(){
+		$(".loader").fadeOut("fast");
+	}
 	</script>
 	<script>var require = { urlArgs: 'v=20170112' };</script>
 	<script type="text/javascript" src="./resource/js/lib/jquery-1.11.1.min.js"></script>
@@ -40,4 +44,9 @@
 	<script type="text/javascript" src="./resource/js/app/common.min.js?v=20170112"></script>
 	<script type="text/javascript" src="./resource/js/require.js?v=20170112"></script>
 </head>
-<body>
+<body onload="load()">
+	<div class="loader">
+		<div class="la-ball-clip-rotate">
+			<div></div>
+		</div>
+	</div>
