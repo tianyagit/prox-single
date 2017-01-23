@@ -375,7 +375,7 @@
 			<span class="help-block">请保证bucket为可公共读取的</span>
 		</div>
 	</div>
-	<div class="form-group" id="cos_local" {if $remote['cos']['local'] != 'new'}style="display:none"{/if}>
+	<div class="form-group" id="cos_local" {if $remote['cos']['version'] != 'new'}style="display:none"{/if}>
 	<label class="col-xs-12 col-sm-3 col-md-2 control-label">bucket所在区域</label>
 	<div class="col-sm-9 col-xs-12">
 		<select class="form-control" name="cos[local]">
