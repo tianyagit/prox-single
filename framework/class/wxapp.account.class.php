@@ -154,7 +154,7 @@ class WxappAccount extends WeAccount {
 		return $result;
 	}
 	
-	public function result($errno, $message, $data) {
+	public function result($errno, $message = '', $data = '') {
 		exit(json_encode(array(
 			'errno' => $errno,
 			'message' => $message,
