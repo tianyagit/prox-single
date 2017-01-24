@@ -996,7 +996,7 @@ function uni_setmeal($uniacid = 0) {
 		$user['timelimit'] = date('Y-m-d', $owner['starttime']) . ' ~ 无限制' ;
 	} else {
 		if($owner['endtime'] <= TIMESTAMP) {
-			$user['timelimit'] = ' <strong class="text-danger"> 已到期</strong>';
+			$user['timelimit'] = '已到期';
 		} else {
 			$year = 0;
 			$month = 0;
