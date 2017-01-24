@@ -328,6 +328,9 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 			}
 			return error(-1, $message);
 		}
+		if ($auto_delete_local) {
+			file_delete($filename);
+		}
 	}
 }
 
