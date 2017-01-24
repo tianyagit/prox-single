@@ -1,0 +1,32 @@
+/*首页*/
+.home .panel{border-radius:0;}
+.home .panel-default{border-color:#EEE;}
+.home .content h4{border-bottom:1px #E9E9E9 solid; padding:15px 15px 15px 25px; margin:0; font-weight:normal; font-size:18px;}
+.home .content h6{font-size:16px; color:#333;}
+.home .content .con .panel-body .row{text-align:center;}
+.home .content .con .panel-body .row>div{overflow:hidden; text-align:center;}
+.home .content .con .panel-body .row p{color:#666;}
+.home .content .con .panel-body .system-announcement{margin:0 10px;}
+.home .content .con .panel-body .system-announcement li{margin:15px 0; height:40px; line-height:40px; background:#f7f7f9;}
+.home .content .con .panel-body .system-announcement li a{display:block; float:left; text-align:left; padding:0 15px; color:#666;}
+.home .content .con .panel-body .system-announcement li span{display:inline-block; float:left; color:#FFF; width:50px;}
+.home .content .con .panel-body .system-announcement li span.style-1{background:#6592df;}
+.home .content .con .panel-body .system-announcement li span.style-2{background:#60bc6a;}
+.home .content .con .panel-body .system-info>div{display:inline-block; margin:20px 0;}
+.home .content .con .panel-body .system-info .icon{display:inline-block; width:100px; height:100px; border-radius:50%; background:#4eacea;}
+.home .content .con .panel-body .system-info .icon i{font-size:50px; color:#FFF; margin-top:25px;}
+.home .content .con .panel-body .module-info{height:auto;}
+.home .content .con .panel-body .module-info>div{display:inline-block; margin:20px 0;}
+.home .content .con .panel-body .module-info .icon img{width:62px; height:62px;}
+.home .content .contact .info{font-size:16px;}
+.home #head{position:absolute; z-index:1; text-align:center; width:100%; top:10%;}
+.home #head .advertisement{font-size:50px; color:#FFF; margin:5% 0 10% 0;}
+.home #head .btns .btn{margin:0 10px;}
+.home #banner{width:100%; margin:0 auto;}
+.home #banner .item{width:100%; background-size:cover; background-position:50% 50%;}
+.home #banner .carousel-indicators .fa{color:#FFF; font-size:50px; background:none !important;}
+.home .content .banner{background-image:url('../images/banner-bg.png'); background-size: 990px 380px; background-position: center 15px; border-top: 1px solid #EEEEEE; border-bottom: 1px solid #EEEEEE; background-repeat: no-repeat; height:380px; background-color:#FFFFFF; min-width: 1014px; min-height: 180px;}
+.home .content .con{padding-top:20px;}
+.home .footer{height:50px; line-height:25px; margin-bottom:30px; color:#666;}
+.home .footer a{color:#666;}
+.home .footer a:hover{color:#428bca; text-decoration:none;}

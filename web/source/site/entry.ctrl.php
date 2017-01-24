@@ -71,6 +71,6 @@ if (!is_error($site)) {
 		$site_urls = $site->getTabUrls();
 	}
 	$method = 'doWeb' . ucfirst($entry['do']);
-    exit($site->$method());
+	exit($site->$method());
 }
 message("访问的方法 {$method} 不存在.", referer(), 'error');

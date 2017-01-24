@@ -9,9 +9,9 @@
 					<span class="wxapp-name">第一个微擎小程序</span>
 					<span class="wxapp-version">v0.0.1</span>
 					<div class="pull-right">
-						<a href="" class="color-default">切换版本</a>
-						<a href="" class="color-default">设计新版本</a>
-						<a href="" class="color-default"><i class="fa fa-refresh"></i>切换小程序</a>
+						<a href="{php echo url('wxapp/manage/switch_version', array('uniacid' => $_GPC['uniacid']))}" class="color-default">切换版本</a>
+						<a href="{php echo url('wxapp/create', array('uniacid' => $_GPC['uniacid']))}" class="color-default">设计新版本</a>
+						<a href="{php echo url('wxapp/account/display')}" class="color-default"><i class="fa fa-refresh"></i>切换小程序</a>
 					</div>
 					<!--end头部信息-->
 				</div>
@@ -222,7 +222,7 @@
 										<span class="color-gray">幻灯片列表 / </span>
 										<span class="color-dark">新建幻灯片</span>
 									</div>
-									<form action="{php echo url('wxapp/manage/edit')}" method="post" class="form-defalut" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
 										<div class="form-defalut" ng-if="slideid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label">标题</label>
@@ -292,7 +292,7 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/manage/edit')}" method="post" class="form-defalut" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
 										<div class="form-defalut" ng-if="navid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label">标题</label>
@@ -362,7 +362,7 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/manage/edit')}" method="post" class="form-defalut" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
 										<div class="form-defalut" ng-if="recommendid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label">标题</label>
@@ -465,7 +465,7 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/manage/edit')}" method="post" class="form-defalut" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
 										<div class="form-defalut" ng-if="categoryeditid == 'add' || (categoryparentid != '' && categoryparentid != unidefined)">
 											<div class="form-group" >
 												<label for="" class="control-label">标题</label>
