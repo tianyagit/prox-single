@@ -24,7 +24,47 @@ if ($do == 'openid') {
 		$_SESSION['session_key'] = $oauth['session_key'];
 		//更新Openid到mapping_fans表中
 		$fans = mc_fansinfo($oauth['openid']);
-		print_r($fans);exit;
+		if (empty($fans)) {
+			$record = array(
+				'openid' => $oauth['openid'],
+				'uid' => 0,
+				'acid' => $_W['acid'],
+				'uniacid' => $_W['uniacid'],
+				'salt' => random(8),
+				'updatetime' => TIMESTAMP,
+				'nickname' => '',
+				'follow' => '1',
+				'followtime' => TIMESTAMP,
+				'unfollowtime' => 0,
+				'tag' => '',
+			);
+			$email = md5($oauth['openid']).'@we7.cc';
+			$email_exists_member = pdo_getcolumn('mc_members', array('email' => $email), 'uid');
+			if (!empty($email_exists_member)) {
+				$uid = $email_exists_member;
+			} else {
+				$default_groupid = pdo_fetchcolumn('SELECT groupid FROM ' .tablename('mc_groups') . ' WHERE uniacid = :uniacid AND isdefault = 1', array(':uniacid' => $_W['uniacid']));
+				$data = array(
+					'uniacid' => $_W['uniacid'],
+					'email' => $email,
+					'salt' => random(8),
+					'groupid' => $default_groupid,
+					'createtime' => TIMESTAMP,
+					'password' => md5($message['from'] . $data['salt'] . $_W['config']['setting']['authkey']),
+					'nickname' => '',
+					'avatar' => '',
+					'gender' => '',
+					'nationality' => '',
+					'resideprovince' => '',
+					'residecity' => '',
+				);
+				pdo_insert('mc_members', $data);
+				$uid = pdo_insertid();
+			}
+			$record['uid'] = $uid;
+			$_SESSION['uid'] = $uid;
+			pdo_insert('mc_mapping_fans', $record);
+		}
 		$account_api->result(0, '', array('sessionid' => $_W['session_id']));
 	} else {
 		$account_api->result(0, $oauth['message']);
@@ -42,5 +82,35 @@ if ($do == 'openid') {
 	}
 	
 	$userinfo = $account_api->pkcs7Encode($encrypt_data, $iv);
-	print_r($userinfo);exit;
+	
+	$fans = mc_fansinfo($userinfo['openId']);
+	$fans_update = array(
+		'nickname' => $userinfo['nickName'],
+		'unionid' => $userinfo['unionId'],
+		'tag' => base64_encode(iserializer(array(
+			'subscribe' => 1,
+			'openid' => $userinfo['openId'],
+			'nickname' => $userinfo['nickName'],
+			'sex' => $userinfo['gender'],
+			'language' => $userinfo['language'],
+			'city' => $userinfo['city'],
+			'province' => $userinfo['province'],
+			'country' => $userinfo['country'],
+			'headimgurl' => $userinfo['avatarUrl'],
+		))),
+	);
+	
+	//如果有unionid则查找相关粉丝，将会员数据同步
+	if (!empty($userinfo['unionId'])) {
+		$union_fans = pdo_get('mc_mapping_fans', array('unionid' => $userinfo['unionId']));
+		if (!empty($union_fans['uid'])) {
+			if (!empty($fans['uid'])) {
+				pdo_delete('mc_members', array('uid' => $fans['uid']));
+			}
+			$fans_update['uid'] = $union_fans['uid'];
+			$_SESSION['uid'] = $union_fans['uid'];
+		}
+	}
+	pdo_update('mc_mapping_fans', $fans_update, array('fanid' => $fans['fanid']));
+	$account_api->result(0);
 }
