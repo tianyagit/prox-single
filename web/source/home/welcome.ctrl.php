@@ -20,6 +20,9 @@ if ($do == 'platform') {
 	$_W['page']['title'] = '平台相关数据';
 	$yesterday = date('Ymd', strtotime('-1 days'));
 	$yesterday_stat = pdo_get('stat_fans', array('date' => $yesterday, 'uniacid' => $_W['uniacid']));
+	$yesterday_stat['new'] = intval($yesterday_stat['new']);
+	$yesterday_stat['cancel'] = intval($yesterday_stat['cancel']);
+	$yesterday_stat['cumulate'] = intval($yesterday_stat['cumulate']);
 	$today_stat = pdo_get('stat_fans', array('date' => date('Ymd'), 'uniacid' => $_W['uniacid']));
 	//今日粉丝详情
 	$today_add_num = intval($today_stat['new']);
