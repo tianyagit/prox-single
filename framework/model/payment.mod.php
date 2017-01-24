@@ -126,7 +126,7 @@ function wechat_build($params, $wechat) {
 		$package['appid'] = $wechat['appid'];
 		$package['mch_id'] = $wechat['mchid'];
 		$package['nonce_str'] = random(8);
-		$package['body'] = $params['title'];
+		$package['body'] = cutstr($params['title'], 26);
 		$package['attach'] = $_W['uniacid'];
 		$package['out_trade_no'] = $params['uniontid'];
 		$package['total_fee'] = $params['fee'] * 100;
