@@ -367,8 +367,8 @@
 														<option>选择分类</option>
 														<option ng-repeat="category in categorys" value="{{ category.id }}" ng-selected="category.id == {$recommend['ccate']}">{{ category.name }}</option>
 													</select>
+													<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 												</div>
-												<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 											</div>
 											<div class="form-group">
 												<label for="" class="control-label">图片</label>
