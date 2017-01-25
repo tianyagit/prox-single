@@ -117,7 +117,7 @@ function checklogin() {
  */
 function checkaccount() {
 	global $_W;
-	if (empty($_W['uniacid'])) {
+	if (empty($_W['uniacid']) || $_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 		message('', url('account/display'), 'info');
 	}
 }
