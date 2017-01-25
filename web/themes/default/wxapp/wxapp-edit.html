@@ -147,7 +147,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" class="color-default" ng-click="recommendedit({$recommend['id']}, '{$recommend['pcate']}')">编辑</a>
-														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id'], 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
 													</div>
 												</div>
 											</div>
