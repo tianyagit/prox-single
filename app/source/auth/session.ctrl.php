@@ -99,10 +99,9 @@ if ($do == 'openid') {
 			'headimgurl' => $userinfo['avatarUrl'],
 		))),
 	);
-	
 	//如果有unionid则查找相关粉丝，将会员数据同步
 	if (!empty($userinfo['unionId'])) {
-		$union_fans = pdo_get('mc_mapping_fans', array('unionid' => $userinfo['unionId']));
+		$union_fans = pdo_get('mc_mapping_fans', array('unionid' => $userinfo['unionId'], 'openid !=' => $userinfo['openId']));
 		if (!empty($union_fans['uid'])) {
 			if (!empty($fans['uid'])) {
 				pdo_delete('mc_members', array('uid' => $fans['uid']));
@@ -112,5 +111,8 @@ if ($do == 'openid') {
 		}
 	}
 	pdo_update('mc_mapping_fans', $fans_update, array('fanid' => $fans['fanid']));
-	$account_api->result(0);
+	$member = mc_fetch($fans['uid']);
+	unset($member['password']);
+	unset($member['salt']);
+	$account_api->result(0, '', $member);
 }
