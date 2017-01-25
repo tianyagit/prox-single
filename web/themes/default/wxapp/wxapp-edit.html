@@ -323,14 +323,9 @@
 											<div class="form-group form-inline">
 												<label for="" class="control-label">分类</label>
 												<div class="form_controls">
-													<select class="form-control" name="recommend[pcate]" required onchange="change_category($(this))">
-														<option value="" disabled>一级分类</option>
-														{loop $categorys $cate}
-														<option value="{$cate['id']}"}>{$cate['name']}</option>
-														{/loop}
-													</select>
 													<select class="form-control" name="recommend[ccate]">
-														<option>二级分类</option>
+														<option>选择分类</option>
+														<option ng-repeat="category in categorys" value="{{ category.id }}">{{ category.name }}</option>
 													</select>
 													<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 												</div>
@@ -359,7 +354,6 @@
 																</tr>
 																<tr>
 																	<td colspan="4"><a href="javascript:;" class="buttom-add color-default" ng-click="edit_category()" style="text-decoration: none;">添加分类</a></td>
-
 																</tr>
 																</tbody>
 															</table>
@@ -369,6 +363,7 @@
 													</div>
 												</div>
 											</div>
+
 											<div class="form-group">
 												<label for="" class="control-label">图片</label>
 												<div class="form_controls">
@@ -401,21 +396,12 @@
 											<div class="form-group form-inline">
 												<label for="" class="control-label">分类</label>
 												<div class="form_controls">
-													<select class="form-control pcategory" name="recommend[pcate]" onchange="change_category($(this))">
-														<option value="" disabled>一级分类</option>
-														{loop $categorys $cate}
-														<option value="{$cate['id']}" {if $recommend['pcate'] == $cate['id']}selected{/if}>{$cate['name']}</option>
-														{/loop}
-													</select>
 													<select class="form-control" name="recommend[ccate]">
-														<option>二级分类</option>
-														{loop $categorys $cates}
-														{loop $cates['categorys'] $categ}
-														<option value="{$categ['id']}" ng-show="recommendpid == '{$categ['parentid']}'" ng-selected="{$categ['id']} == '{$recommend['ccate']}'">{$categ['name']}</option>
-														{/loop}
-														{/loop}
+														<option>选择分类</option>
+														<option ng-repeat="category in categorys" value="{{ category.id }}" ng-selected="category.id == {$recommend['ccate']}">{{ category.name }}</option>
 													</select>
 												</div>
+												<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 											</div>
 											<div class="form-group">
 												<label for="" class="control-label">图片</label>
@@ -446,7 +432,7 @@
 	</div>
 </div>
 <script>
-	angular.module('wxApp').controller('MainCtrl', ['$scope', function($scope, $http){
+	angular.module('wxApp').controller('MainCtrl', ['$scope', '$http', function($scope, $http){
 		$scope.category = {
 			'id' : '',
 			'name' : '',
@@ -473,17 +459,41 @@
 			$scope.categoryparentid = pid;
 		};
 		$scope.get_categorys = function() {
-			$http.post('{php echo url('wxapp/version/get_categorys')}', {'multiid' : '{$multiid}'}).success(function(data) {
+			$http.post("{php echo url('wxapp/version/get_categorys')}", {'multiid' : '{$multiid}'}).success(function(data) {
 				$scope.categorys = data.message.message;
 			});
 		};
-		$scope.edit_category = function (category) {
+		$scope.get_categorys();
+		$scope.edit_category = function () {
 			$scope.categorys.push({'name' : '', 'displayorder' : '', 'linkurl' : ''});
+		};
+		$scope.del_category = function(index) {
+			if ($scope.categorys[index].id != undefined) {
+				$http.post("{php echo url('wxapp/version/del_category')}", {'id' : $scope.categorys[index].id}).success(function() {});
+				$scope.get_categorys();
+			} else {
+				$scope.categorys.splice(index, 1);
+			}
+		}
+		$scope.save_category = function() {
+			$scope.name_exist = false;
+			angular.forEach($scope.categorys, function(val) {
+				if (val.name == '') {
+					util.message('请填写类名');
+					$scope.name_exist = true;
+				}
+			});
+			if ($scope.name_exist == true) {
+				return false;
+			}
+			$http.post("{php echo url('wxapp/version/save_category')}", {'post' : $scope.categorys, 'multiid' : {$multiid}}).success(function() {});
+			$scope.get_categorys();
+			$('#myModal').modal('hide');
 		};
 	}]);
 	angular.bootstrap($('#js-wxapp-edit'), ['wxApp']);
 	change_category = function (element) {
-		$.post('{php echo url('wxapp/version/edit', array('operate' => 'change_category'))}', {'categoryid' : element.val()}, function(data) {
+		$.post("{php echo url('wxapp/version/edit', array('operate' => 'change_category'))}", {'categoryid' : element.val()}, function(data) {
 			var data = $.parseJSON(data);
 			var html = '<option  value="">二级分类</option>';
 			var categorys = data.message.message;

@@ -12,26 +12,28 @@ $_W['page']['title'] = '小程序 - 管理';
 
 if ($do == 'del_category') {
 	$id = $_GPC['id'];
-	$result = pdo_delete('site_category', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	$result = pdo_delete('site_category', array('id' => $id));
 }
 
 if ($do == 'get_categorys') {
-	$multiid = $_GPC['multiid'];
-	$categorys = pdo_getall('site_category', array('uniacid' => $_W['uniacid'], 'multiid' => $multiid));
+	$multiid = intval($_GPC['multiid']);
+	$categorys = pdo_getall('site_category', array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid));
 	return message(error(1, $categorys), '', 'ajax');
 }
 
 if ($do == 'save_category') {
 	$post =  $_GPC['post'];
+	$multiid = intval($_GPC['multiid']);
 	foreach ($post as $category) {
 		if (!empty($category['id'])) {
 			$update = array('name' => $category['name'], 'displayorder' => $category['displayorder'], 'linkurl' => $category['linkurl']);
-			pdo_update('site_category', $update, array('uniacid' => $_W['uniacid'], 'id' => $category['id']));
+			pdo_update('site_category', $update, array('uniacid' => $_GPC['uniacid'], 'id' => $category['id']));
 		} else {
 			if (!empty($category['name'])) {
 				$insert = $category;
-				$insert['uniacid'] = $_W['uniacid'];
+				$insert['uniacid'] = $_GPC['uniacid'];
 				$insert['multiid'] = $multiid;
+				unset($insert['$$hashKey']);
 				pdo_insert('site_category', $insert);
 			}
 		}
