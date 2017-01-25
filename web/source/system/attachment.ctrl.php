@@ -103,7 +103,6 @@ if ($do == 'global') {
 				'secretid' => trim($_GPC['cos']['secretid']),
 				'secretkey' => strexists(trim($_GPC['cos']['secretkey']), '*') ? $_W['setting']['remote']['cos']['secretkey'] : trim($_GPC['cos']['secretkey']),
 				'bucket' => trim($_GPC['cos']['bucket']),
-				'version' => trim($_GPC['cos']['version']),
 				'local' => trim($_GPC['cos']['local']),
 				'url' => trim($_GPC['cos']['url'])
 			)
@@ -183,7 +182,7 @@ if ($do == 'global') {
 				}
 				$remote['cos']['url'] = strexists($remote['cos']['url'], 'http') ? trim($remote['cos']['url'], '/') : 'http://'. trim($remote['cos']['url'], '/');
 			}
-			$auth = attachment_cos_auth($remote['cos']['bucket'], $remote['cos']['appid'], $remote['cos']['secretid'], $remote['cos']['secretkey'], $remote['cos']['version'], $remote['cos']['local']);
+			$auth = attachment_cos_auth($remote['cos']['bucket'], $remote['cos']['appid'], $remote['cos']['secretid'], $remote['cos']['secretkey'], $remote['cos']['local']);
 
 			if (is_error($auth)) {
 				message($auth['message'], referer(), 'info');
