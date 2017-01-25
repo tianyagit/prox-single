@@ -14,44 +14,95 @@ $_W['page']['title'] = '小程序 - 新建版本';
 
 if($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
-	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid));
+	$wxapp_version_info = pdo_fetch("SELECT version, uniacid, id, multiid FROM " . tablename('wxapp_versions') . " WHERE uniacid = :uniacid ORDER BY version DESC", array(':uniacid' => $uniacid));
+	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	if (!empty($wxapp_version_info)) {
+		$version_nums = explode('.', $wxapp_version_info['version']);
+		if ($version_nums[2] < 9) {
+			$version_nums[2] += 1;
+		} else {
+			if ($version_nums[1] < 9) {
+				if ($version_nums[0] < 9) {
+					$version_nums[1] += 1;
+					$version_nums[2] = 0;
+				} else {
+					$version_nums[0] += 1;
+					$version_nums[1] = 0;
+					$version_nums[2] = 0;
+				}
+			} else {
+				$version_nums[0] += 1;
+				$version_nums[1] = 0;
+				$version_nums[2] = 0;
+			}
+		}
+	}
+	
 	if(!empty($_GPC['wxappval'])) {
 		$submit_val = json_decode(ihtml_entity_decode($_GPC['wxappval']), true);
-				$request_cloud_data = array();
+		$request_cloud_data = array();
 		$version = ($submit_val['version0'] ? $submit_val['version0'] : 0) .'.'.($submit_val['version1'] ? $submit_val['version1'] : 0).'.'.($submit_val['version2'] ? $submit_val['version2'] : 0);
-		$name = trim($submit_val['name']);
-		$multi['uniacid'] = $uniacid;
-		$multi['title'] = $name;
-		$multi['styleid'] = 0;
-		pdo_insert('site_multi', $multi);
-		$multi_id = pdo_insertid();
 		$bottom_menu = array();
 		foreach ($submit_val['menus'] as $menu_val) {
 			$menu_val['defaultImage'] = empty($menu_val['defaultImage']) ? $_W['siteroot'].'web/resource/images/bottom-default.png' : $menu_val['defaultImage'];
 			$menu_val['selectedImage'] = empty($menu_val['selectedImage']) ? $_W['siteroot'].'web/resource/images/bottom-default.png' : $menu_val['selectedImage'];
 			$bottom_menu[] = array(
-					'pagePath' => 'we7/page/index/index',
-					'iconPath' => $menu_val['defaultImage'],
-					'selectedIconPath' => $menu_val['selectedImage'],
-					'text' => $menu_val['name']
-				);
+				'pagePath' => 'we7/page/index/index',
+				'iconPath' => $menu_val['defaultImage'],
+				'selectedIconPath' => $menu_val['selectedImage'],
+				'text' => $menu_val['name']
+			);
 		}
 
 		$modules = array();
 		foreach ($submit_val['modules'] as $module_val) {
 			$modules[$module_val['module']] = $module_val['version'];
 		}
-										
+		if (empty($uniacid)) {
+			$name = trim($submit_val['name']);
+			$description = '微信小程序体验版';
+			$data = array(
+				'name' => $name,
+				'description' => $description,
+				'groupid' => 0,
+			);
+			if (!pdo_insert('uni_account', $data)) {
+				message('添加公众号失败');
+			}
+			$uniacid = pdo_insertid();
+			$multi['uniacid'] = $uniacid;
+			$multi['title'] = $name;
+			$multi['styleid'] = 0;
+			pdo_insert('site_multi', $multi);
+			$multi_id = pdo_insertid();
+
+			$update['name'] = $name;
+			$update['account'] = trim($submit_val['account']);
+			$update['original'] = trim($submit_val['original']);
+			$update['level'] = intval(1);
+			$update['key'] = trim($submit_val['key']);
+			$update['secret'] = trim($submit_val['secret']);
+			$update['type'] = ACCOUNT_TYPE_APP_NORMAL;
+			if (empty($acid)) {
+				$acid = wxapp_account_create($uniacid, $update, 3);
+				if(is_error($acid)) {
+					message('添加小程序信息失败', url('wxapp/create'), 'error');
+				}
+				pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
+			}
+		}
+		
+		$multi_info = pdo_get('site_multi', array('uniacid' => $uniacid), array('id', 'uniacid'));
 		$request_cloud_data = array(
 			'name' => $submit_val['name'],
 			'modules' => $modules,
 			'siteInfo' => array(
-					'uniacid' => $uniacid,
-					'acid' => $acid,
-					'multiid'  => $multi_id,
-					'version'  => $version,
-					'siteroot' => $_W['siteroot'].'app/index.php'
-				),
+				'uniacid' => $uniacid,
+				'acid' => $acid,
+				'multiid'  => $multi_info['id'],
+				'version'  => $version,
+				'siteroot' => $_W['siteroot'].'app/index.php'
+			),
 		);
 		if($submit_val['showmenu']) {
 			$request_cloud_data['tabBar'] = array(
@@ -62,9 +113,8 @@ if($do == 'post') {
 				'list' => $bottom_menu
 			);
 		}
-
 		$wxapp_version['uniacid'] = $uniacid;
-		$wxapp_version['multiid'] = $multi_id;
+		$wxapp_version['multiid'] = $multi_info['id'];
 		$wxapp_version['version'] = $version;
 		$wxapp_version['modules'] = json_encode($request_cloud_data['modules']);
 		$wxapp_version['design_method'] = intval($submit_val['type']);

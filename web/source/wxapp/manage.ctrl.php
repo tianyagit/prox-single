@@ -42,6 +42,7 @@ if ($do == 'save_category') {
 if ($do == 'edit') {
 	$multiid = intval($_GPC['multiid']);
 	$operate = $_GPC['operate'];
+	$version_id = intval($_GPC['version_id']);
 	if ($operate == 'delete') {
 		$type = $_GPC['type'];
 		$id = intval($_GPC['id']);
@@ -86,20 +87,19 @@ if ($do == 'edit') {
 				message('更新推荐图片成功', url('wxapp/manage/edit', array('wxapp' => 'recommend', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'])), 'success');
 			}
 		}
-			}
-	$slides = pdo_getall('site_slide', array('uniacid' => $_W['uniacid'], 'multiid' => $multiid));
-	$navs = pdo_getall('site_nav', array('uniacid' => $_W['uniacid'], 'multiid' => $multiid));
+	}
+	$slides = pdo_getall('site_slide', array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid));
+	$navs = pdo_getall('site_nav', array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid));
 	if (!empty($navs)) {
 		foreach($navs as &$nav) {
 			$nav['css'] = iunserializer($nav['css']);
 		}
 	}
-	$recommends = pdo_getall('site_article', array('uniacid' => $_W['uniacid']));
-	
-	$version_info = pdo_get('wxapp_versions', array('multiid' => $multiid, 'uniacid' => $_W['uniacid']), array('id', 'version'));
-
+	$recommends = pdo_getall('site_article', array('uniacid' => $_GPC['uniacid']));
+	$version_info = pdo_get('wxapp_versions', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'id' => $version_id), array('id', 'version', 'uniacid'));
+	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $version_info['uniacid']));
 	$versionid = $version_info['id'];
-	$modules = pdo_getcolumn('wxapp_versions', array('multiid' => $multiid), 'modules');
+	$modules = pdo_getcolumn('wxapp_versions', array('id' => $versionid), 'modules');
 	$modules = json_decode($modules, true);
 	if (!empty($modules)) {
 		foreach ($modules as $module => &$version) {

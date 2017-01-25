@@ -197,7 +197,7 @@ if($do == 'sms') {
 		}
 	}
 
-	template('account/manage-sms');
+	template('account/manage-sms' . $template_show);
 }
 
 if($do == 'modules_tpl') {

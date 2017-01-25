@@ -65,10 +65,10 @@ if ($do == 'display') {
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
-	$version = pdo_get('wxapp_versions', array('uniacid' => $uniacid), array('version', 'multiid'), 'version DESC');
+	$version = pdo_fetch("SELECT version, multiid, id, uniacid FROM " . tablename('wxapp_versions') . " WHERE uniacid = :uniacid ORDER BY version DESC", array(':uniacid' => $uniacid));
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
-	header('Location: ' . url('wxapp/manage/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid)));
+	header('Location: ' . url('wxapp/manage/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
 	exit;
 } elseif ($do == 'rank') {
 	$uniacid = intval($_GPC['uniacid']);
