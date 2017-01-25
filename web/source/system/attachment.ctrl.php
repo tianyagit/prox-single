@@ -122,7 +122,6 @@ if ($do == 'remote') {
 				'secretid' => trim($_GPC['cos']['secretid']),
 				'secretkey' => strexists(trim($_GPC['cos']['secretkey']), '*') ? $_W['setting']['remote']['cos']['secretkey'] : trim($_GPC['cos']['secretkey']),
 				'bucket' => trim($_GPC['cos']['bucket']),
-				'version' => trim($_GPC['cos']['version']),
 				'local' => trim($_GPC['cos']['local']),
 				'url' => trim($_GPC['cos']['url'])
 			)
@@ -202,7 +201,7 @@ if ($do == 'remote') {
 				}
 				$remote['cos']['url'] = strexists($remote['cos']['url'], 'http') ? trim($remote['cos']['url'], '/') : 'http://'. trim($remote['cos']['url'], '/');
 			}
-			$auth = attachment_cos_auth($remote['cos']['bucket'], $remote['cos']['appid'], $remote['cos']['secretid'], $remote['cos']['secretkey'], $remote['cos']['version'], $remote['cos']['local']);
+			$auth = attachment_cos_auth($remote['cos']['bucket'], $remote['cos']['appid'], $remote['cos']['secretid'], $remote['cos']['secretkey'], $remote['cos']['local']);
 
 			if (is_error($auth)) {
 				message($auth['message'], referer(), 'info');
@@ -351,7 +350,7 @@ if ($do == 'cos') {
 	if (!strexists($url, '//'.$bucket.'-') && strexists($url, '.cos.myqcloud.com')) {
 		$url = 'http://'.$bucket.'-'.trim($_GPC['appid']).'.cos.myqcloud.com';
 	}
-	$auth= attachment_cos_auth(trim($_GPC['bucket']), trim($_GPC['appid']), trim($_GPC['secretid']), trim($_GPC['secretkey']), $_GPC['version'], $_GPC['local']);
+	$auth= attachment_cos_auth(trim($_GPC['bucket']), trim($_GPC['appid']), trim($_GPC['secretid']), trim($_GPC['secretkey']), $_GPC['local']);
 
 	if (is_error($auth)) {
 		message(error(-1, '配置失败，请检查配置'), '', 'ajax');
