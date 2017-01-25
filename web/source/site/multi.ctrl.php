@@ -15,9 +15,13 @@ $_W['page']['title'] = '微官网';
 //获取默认微站
 $setting = uni_setting($_W['uniacid'], 'default_site');
 $default_site = intval($setting['default_site']);
+//处理错误数据，默认微站状态不可为零
+$default_site_status = pdo_getcolumn('site_multi', array('id' => $default_site), 'status');
+if ($default_site_status != 1) {
+	pdo_update('site_multi', array('status' => 1), array('id' => $default_site));
+}
 
 if ($do == 'post') {
-	// uni_user_permission_check('site_multi_post');
 	if ($_W['isajax'] && $_W['ispost']) {
 		//搜索模板
 		$name = trim($_GPC['name']);
