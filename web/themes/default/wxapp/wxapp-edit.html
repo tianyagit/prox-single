@@ -9,9 +9,9 @@
 					<span class="wxapp-name">{$wxapp_info['name']}</span>
 					<span class="wxapp-version">{$version_info['version']}</span>
 					<div class="pull-right">
-						<a href="{php echo url('wxapp/manage/switch_version', array('uniacid' => $_GPC['uniacid']))}" class="color-default">切换版本</a>
-						<a href="{php echo url('wxapp/create', array('uniacid' => $_GPC['uniacid']))}" class="color-default">设计新版本</a>
-						<a href="{php echo url('wxapp/account/display')}" class="color-default"><i class="fa fa-refresh"></i>切换小程序</a>
+						<a href="{php echo url('wxapp/version/switch_version', array('uniacid' => $_GPC['uniacid']))}" class="color-default">切换版本</a>
+						<a href="{php echo url('wxapp/post', array('uniacid' => $_GPC['uniacid']))}" class="color-default">设计新版本</a>
+						<a href="{php echo url('wxapp/display/display')}" class="color-default"><i class="fa fa-refresh"></i>切换小程序</a>
 					</div>
 					<!--end头部信息-->
 				</div>
@@ -84,7 +84,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" ng-click="slideedit({$slide['id']})" class="color-default">编辑</a>
-														<a href="{php echo url('wxapp/manage/edit', array('id' => $slide['id'], 'operate' => 'delete', 'type' => 'slide'))}" onclick="return confirm('确认删除幻灯片吗');" class="color-default">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('id' => $slide['id'], 'operate' => 'delete', 'type' => 'slide'))}" onclick="return confirm('确认删除幻灯片吗');" class="color-default">删除</a>
 													</div>
 												</div>
 											</div>
@@ -116,7 +116,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" class="color-default" ng-click="navedit({$nav['id']})">编辑</a>
-														<a href="{php echo url('wxapp/manage/edit', array('type' => 'nav', 'id' => $nav['id'], 'operate' => 'delete'))}" onclick="return confirm('确认删除导航吗？');" class="color-default slide-del">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('type' => 'nav', 'id' => $nav['id'], 'operate' => 'delete'))}" onclick="return confirm('确认删除导航吗？');" class="color-default slide-del">删除</a>
 													</div>
 												</div>
 											</div>
@@ -147,7 +147,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" class="color-default" ng-click="recommendedit({$recommend['id']}, '{$recommend['pcate']}')">编辑</a>
-														<a href="{php echo url('wxapp/manage/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
 													</div>
 												</div>
 											</div>
@@ -166,7 +166,7 @@
 										<span class="color-gray">幻灯片列表 / </span>
 										<span class="color-dark">新建幻灯片</span>
 									</div>
-									<form action="{php echo url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
 										<div class="form-defalut" ng-if="slideid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label">标题</label>
@@ -236,7 +236,7 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
 										<div class="form-defalut" ng-if="navid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label">标题</label>
@@ -306,7 +306,7 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/manage/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
 										<div class="form-defalut" ng-if="recommendid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label">标题</label>
@@ -369,7 +369,6 @@
 													</div>
 												</div>
 											</div>
-
 											<div class="form-group">
 												<label for="" class="control-label">图片</label>
 												<div class="form_controls">
@@ -474,7 +473,7 @@
 			$scope.categoryparentid = pid;
 		};
 		$scope.get_categorys = function() {
-			$http.post('{php echo url('wxapp/manage/get_categorys')}', {'multiid' : '{$multiid}'}).success(function(data) {
+			$http.post('{php echo url('wxapp/version/get_categorys')}', {'multiid' : '{$multiid}'}).success(function(data) {
 				$scope.categorys = data.message.message;
 			});
 		};
@@ -484,7 +483,7 @@
 	}]);
 	angular.bootstrap($('#js-wxapp-edit'), ['wxApp']);
 	change_category = function (element) {
-		$.post('{php echo url('wxapp/manage/edit', array('operate' => 'change_category'))}', {'categoryid' : element.val()}, function(data) {
+		$.post('{php echo url('wxapp/version/edit', array('operate' => 'change_category'))}', {'categoryid' : element.val()}, function(data) {
 			var data = $.parseJSON(data);
 			var html = '<option  value="">二级分类</option>';
 			var categorys = data.message.message;
