@@ -20,11 +20,10 @@
 </div>
 <div class="clearfix"></div>
 <div class="btn-group we7-btn-group wechat-edit-group">
-	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default">基础信息</a>
-	<a href="{php echo url('account/post/sms', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default">短信信息</a>
-	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default">使用者管理</a>
-	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default">可用应用模块/模板</a>
-	<a href="{php echo url('account/post-version/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default active">版本管理</a>
+	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default">基础信息</a>
+	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default">使用者管理</a>
+	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default">可用应用模块/模板</a>
+	<a href="{php echo url('account/post-version/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default active">版本管理</a>
 </div>
 	<!--版本管理-->
 	<div class="version-management">

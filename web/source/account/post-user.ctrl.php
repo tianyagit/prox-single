@@ -10,20 +10,12 @@ load()->model('system');
 $dos = array('delete', 'edit', 'set_permission', 'set_manager');
 $do = in_array($do, $dos) ? $do : 'edit';
 
-if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
-	$account_type = ACCOUNT_TYPE_APP_NORMAL;
-	$account_typename = '小程序';
-	$template_show = '-wxapp';
-} else {
-	$account_typename = '公众号';
-}
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
-$_W['page']['title'] = '管理设置 - 微信公众号管理';
+$_W['page']['title'] = '管理设置 - 微信' . ACCOUNT_TYPE_NAME . '管理';
 if (empty($uniacid) || empty($acid)) {
 	message('请选择要编辑的公众号', referer(), 'error');
 }
-
 $state = uni_permission($_W['uid'], $uniacid);
 //只有创始人、主管理员、管理员才有权限
 if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
@@ -32,7 +24,6 @@ if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER
 $founders = explode(',', $_W['config']['setting']['founder']);
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $account = account_fetch($acid);
-
 if ($do == 'edit') {
 	$permissions = pdo_fetchall("SELECT id, uid, role FROM ".tablename('uni_account_users')." WHERE uniacid = '$uniacid' and role != :role  ORDER BY uid ASC, role DESC", array(':role' => 'clerk'), 'uid');
 	$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), array('uid', 'id'));
@@ -49,7 +40,7 @@ if ($do == 'edit') {
 	foreach ($permissions as $v) {
 		$uids[] = $v['uid'];
 	}
-	template('account/manage-users' . $template_show);
+	template('account/manage-users' . ACCOUNT_TYPE_TEMPLATE);
 } elseif ($do == 'delete') {
 	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	if (empty($uid)) {

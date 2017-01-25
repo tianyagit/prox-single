@@ -9,13 +9,6 @@ load()->model('account');
 
 $dos = array('display', 'recover', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
-if ($_GPC['type'] == 'wxapp') {
-	$account_type = ACCOUNT_TYPE_APP_NORMAL;
-	$account_typename = '小程序';
-	$template_show = '-wxapp';
-} else {
-	$account_typename = '公众号';
-}
 //只有创始人、主管理员才有权限使用回收站功能
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	message('无权限操作！', referer(), 'error');
@@ -30,10 +23,10 @@ if ($do == 'display') {
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
-	if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = 1 OR b.type = 3)";
-	} else {
+	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type = 4";
+	} else {
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = 1 OR b.type = 3)";
 	}
 	
 	$order_by = " ORDER BY a.`acid` DESC";
@@ -41,13 +34,18 @@ if ($do == 'display') {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-	if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
-		$tsql = "SELECT count(*) FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}" ;
-		$sql = "SELECT * FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
-	} else {
+	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$tsql = "SELECT count(*) FROM ". tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}" ;
 		$sql = "SELECT * FROM ". tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
+	} else {
+		$tsql = "SELECT count(*) FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}" ;
+		$sql = "SELECT * FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	}
+	// if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
+		
+	// } else {
+		
+	// }
 	$total = pdo_fetchcolumn($tsql, $param);
 	$del_accounts = pdo_fetchall($sql, $param);
 	if(!empty($del_accounts)) {
@@ -64,7 +62,7 @@ if ($do == 'display') {
 	}
 
 	$pager = pagination($total, $pindex, $psize);
-	template('account/recycle' . $template_show);
+	template('account/recycle' . ACCOUNT_TYPE_TEMPLATE);
 }
 
 if ($do == 'recover') {

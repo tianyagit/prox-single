@@ -1,16 +1,16 @@
 {template 'common/header'}
 <div class="we7-page-title">小程序管理</div>
 <ul class="we7-page-tab">
-	<li><a href="{php echo url ('account/manage', array('type' => 'wxapp'))}">小程序列表</a></li>
+	<li><a href="{php echo url ('account/manage', array('account_type' => '4'))}">小程序列表</a></li>
 	{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
-	<li class="active"><a href="{php echo url ('account/recycle', array('type' => 'wxapp'))}">小程序回收站</a></li>
+	<li class="active"><a href="{php echo url ('account/recycle', array('account_type' => '4'))}">小程序回收站</a></li>
 	{/if}
 </ul>
 <div class="clearfix we7-margin-bottom">
 	<form action="" class="form-inline  pull-left" method="get">
 		<input type="hidden" name="c" value="account">
 		<input type="hidden" name="a" value="recycle">
-		<input type="hidden" name="type" value="wxapp">
+		<input type="hidden" name="account_type" value="4">
 		<div class="input-group form-group" style="width: 400px;">
 			<input type="text" name="keyword" value="{$_GPC['keyword']}" class="form-control" placeholder="搜索关键字"/>
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>

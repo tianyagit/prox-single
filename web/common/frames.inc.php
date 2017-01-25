@@ -122,7 +122,7 @@ $we7_system_menu['account'] = array(
 );
 $we7_system_menu['wxapp'] = array(
 	'title' => '小程序',
-	'url' => url('account/manage', array('type' => 'wxapp')),
+	'url' => url('wxapp/display/home'),
 	'section' => array(
 	),
 );
@@ -136,7 +136,7 @@ $we7_system_menu['system'] = array(
 			'menu' => array(
 				'system_account' => array(
 					'title' => ' 微信公众号管理',
-					'url' => url('account/manage', array('type' => '')),
+					'url' => url('account/manage', array('account_type' => '')),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_account',
 					'sub_permission' => array(
@@ -174,7 +174,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_wxapp' => array(
 					'title' => '微信小程序管理',
-					'url' => url('account/manage', array('type' => 'wxapp')),
+					'url' => url('account/manage', array('account_type' => '4')),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_wxapp',
 				),

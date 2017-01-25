@@ -86,7 +86,7 @@ if($do == 'post') {
 			if (empty($acid)) {
 				$acid = wxapp_account_create($uniacid, $update, 3);
 				if(is_error($acid)) {
-					message('添加小程序信息失败', url('wxapp/create'), 'error');
+					message('添加小程序信息失败', url('wxapp/post'), 'error');
 				}
 				pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 			}
@@ -133,7 +133,7 @@ if($do == 'post') {
 		pdo_insert('wxapp_versions', $wxapp_version);
 		$versionid = pdo_insertid();
 		
-		message('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/account/switch', array('uniacid' => $uniacid)));
+		message('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)));
 	}
 	template('wxapp/create-post');
 }

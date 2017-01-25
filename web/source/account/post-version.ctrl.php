@@ -10,13 +10,6 @@ load()->model('system');
 $dos = array('delete', 'display');
 $do = in_array($do, $dos) ? $do : 'display';
 
-if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
-	$account_type = ACCOUNT_TYPE_APP_NORMAL;
-	$account_typename = '小程序';
-	$template_show = '-wxapp';
-} else {
-	$account_typename = '公众号';
-}
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid)) {

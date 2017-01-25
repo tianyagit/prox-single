@@ -718,13 +718,8 @@ function account_create($uniacid, $account) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
-	if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-		unset($account['type']);
-		pdo_insert('account_wxapp', $account);
-	} else {
-		unset($account['type']);
-		pdo_insert('account_wechats', $account);
-	}
+	unset($account['type']);
+	pdo_insert('account_wechats', $account);
 	return $acid;
 }
 
