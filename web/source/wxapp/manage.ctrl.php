@@ -11,18 +11,18 @@ $do = in_array($do, $dos) ? $do : 'edit';
 $_W['page']['title'] = '小程序 - 管理';
 
 if ($do == 'del_category') {
-	$id = $_GPC['__input']['id'];
+	$id = $_GPC['id'];
 	$result = pdo_delete('site_category', array('uniacid' => $_W['uniacid'], 'id' => $id));
 }
 
 if ($do == 'get_categorys') {
-	$multiid = $_GPC['__input']['multiid'];
+	$multiid = $_GPC['multiid'];
 	$categorys = pdo_getall('site_category', array('uniacid' => $_W['uniacid'], 'multiid' => $multiid));
 	return message(error(1, $categorys), '', 'ajax');
 }
 
 if ($do == 'save_category') {
-	$post =  $_GPC['__input']['post'];
+	$post =  $_GPC['post'];
 	foreach ($post as $category) {
 		if (!empty($category['id'])) {
 			$update = array('name' => $category['name'], 'displayorder' => $category['displayorder'], 'linkurl' => $category['linkurl']);
