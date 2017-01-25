@@ -68,7 +68,7 @@ if ($do == 'display') {
 	$version = pdo_fetch("SELECT version, multiid, id, uniacid FROM " . tablename('wxapp_versions') . " WHERE uniacid = :uniacid ORDER BY version DESC", array(':uniacid' => $uniacid));
 	isetcookie('__uniacid_wxapp', $uniacid, 7 * 86400);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
-	header('Location: ' . url('wxapp/manage/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
+	header('Location: ' . url('wxapp/version/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
 	exit;
 } elseif ($do == 'rank') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -89,7 +89,7 @@ if ($do == 'display') {
 	if (!empty($uniacid)) {
 		$version = pdo_fetch("SELECT version, multiid, id, uniacid FROM " . tablename('wxapp_versions') . " WHERE uniacid = :uniacid ORDER BY version DESC", array(':uniacid' => $uniacid));
 		if (!empty($version)) {
-			header('Location: ' . url('wxapp/manage/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
+			header('Location: ' . url('wxapp/version/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
 		}
 	} else {
 		header('Location: ' . url('wxapp/display/display'));
