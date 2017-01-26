@@ -147,7 +147,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" class="color-default" ng-click="recommendedit({$recommend['id']}, '{$recommend['pcate']}')">编辑</a>
-														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id'], 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
 													</div>
 												</div>
 											</div>
@@ -330,39 +330,6 @@
 													<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 												</div>
 											</div>
-											<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-												<div class="modal-dialog modal-dialog-default  modal-lg">
-													<div class="modal-content">
-														<div class="modal-header">
-															<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-															<h4 class="modal-title" id="myModalLabel">分类设置</h4>
-														</div>
-														<div class="modal-body">
-															<table class="table we7-table we7-form">
-																<tr>
-																	<th>类名</th>
-																	<th>排序</th>
-																	<th>链接</th>
-																	<th>操作</th>
-																</tr>
-																<tbody>
-																<tr ng-repeat="category in categorys">
-																	<td><input ng-model="category.name" class="form-control" size="15"></td>
-																	<td><input ng-model="category['displayorder']" class="form-control"></td>
-																	<td><input ng-model="category['linkurl']" class="form-control"></td>
-																	<td><a href="" ng-click="del_category($index)">删除</a></td>
-																</tr>
-																<tr>
-																	<td colspan="4"><a href="javascript:;" class="buttom-add color-default" ng-click="edit_category()" style="text-decoration: none;">添加分类</a></td>
-																</tr>
-																</tbody>
-															</table>
-															<!--<button type="button" class="btn btn-primary" ng-click="edit_category()">添加分类</button>-->
-															<button type="button" class="btn btn-primary" ng-click="save_category()" style="margin-left: 0px;">保存</button>
-														</div>
-													</div>
-												</div>
-											</div>
 
 											<div class="form-group">
 												<label for="" class="control-label">图片</label>
@@ -400,8 +367,8 @@
 														<option>选择分类</option>
 														<option ng-repeat="category in categorys" value="{{ category.id }}" ng-selected="category.id == {$recommend['ccate']}">{{ category.name }}</option>
 													</select>
+													<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 												</div>
-												<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 											</div>
 											<div class="form-group">
 												<label for="" class="control-label">图片</label>
@@ -421,6 +388,40 @@
 										</div>
 										{/loop}
 									</form>
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog modal-dialog-default  modal-lg">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+													<h4 class="modal-title" id="myModalLabel">分类设置</h4>
+												</div>
+												<div class="modal-body">
+													<table class="table we7-table we7-form">
+														<tr>
+															<th>类名</th>
+															<th>排序</th>
+															<th>链接</th>
+															<th>操作</th>
+														</tr>
+														<tbody>
+														<tr ng-repeat="category in categorys">
+															<td><input ng-model="category.name" class="form-control" size="15"></td>
+															<td><input ng-model="category['displayorder']" class="form-control"></td>
+															<td><input ng-model="category['linkurl']" class="form-control"></td>
+															<td><a href="" ng-click="del_category($index)">删除</a></td>
+														</tr>
+														<tr>
+															<td colspan="4"><a href="javascript:;" class="buttom-add color-default" ng-click="edit_category()" style="text-decoration: none;">添加分类</a></td>
+														</tr>
+														</tbody>
+													</table>
+													<!--<button type="button" class="btn btn-primary" ng-click="edit_category()">添加分类</button>-->
+													<button type="button" class="btn btn-primary" ng-click="save_category()" style="margin-left: 0px;">保存</button>
+												</div>
+											</div>
+										</div>
+									</div>
+
 								</div>
 								<!--end列表-->
 							</div>

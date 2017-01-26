@@ -15,8 +15,8 @@
 			</div>
 			<div class="panel-body">
 				<div class="wxapp-manage">
-					<a href="{php echo url('wxapp/create')}" class="color-default"><i class="fa fa-plus"></i>新建小程序</a>
-					<a href="{php echo url('account/manage', array('type' => 'wxapp'))}" class="color-default"><i class="fa fa-refresh"></i>小程序管理</a>
+					<a href="{php echo url('wxapp/post')}" class="color-default"><i class="fa fa-plus"></i>新建小程序</a>
+					<a href="{php echo url('account/manage', array('account_type' => '4'))}" class="color-default"><i class="fa fa-refresh"></i>小程序管理</a>
 				</div>
 				<ul class="wxapp-cut-list">
 					{loop $wxapp_lists $list}
@@ -24,8 +24,8 @@
 						<div class="wxapp-item-iphone">
 							<img src="./resource/images/173.png"/>
 							<div class="cover-dark">
-								<a href="{php echo url('wxapp/manage/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['versions']['multiid'], 'version_id' => $list['versions']['id']))}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
-								<a href="{php echo url('wxapp/manage/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['versions']['multiid'], 'version_id' => $list['versions']['id']))}" class="manage">管理</a>
+								<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['versions']['multiid'], 'version_id' => $list['versions']['id']))}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
+								<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['versions']['multiid'], 'version_id' => $list['versions']['id']))}" class="manage">管理</a>
 								<a href="{php echo url('wxapp/display/rank', array('uniacid' => $list['uniacid']))}" class="stick">置顶</a>
 							</div>
 						</div>

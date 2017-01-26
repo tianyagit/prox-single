@@ -13,6 +13,7 @@ $_W['page']['title'] = '小程序 - 管理';
 if ($do == 'del_category') {
 	$id = $_GPC['id'];
 	$result = pdo_delete('site_category', array('id' => $id));
+
 }
 
 if ($do == 'get_categorys') {
@@ -49,7 +50,7 @@ if ($do == 'edit') {
 		$type = $_GPC['type'];
 		$id = intval($_GPC['id']);
 		pdo_delete('site_'.$type, array('id' => $id));
-		message('删除成功', url('wxapp/version/edit', array('multiid' => $multiid)), 'success');
+		message('删除成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'])), 'success');
 	}
 	if (checksubmit('submit')) {
 		$slide = $_GPC['slide'];
