@@ -125,8 +125,7 @@ if($do == 'base') {
 			message(error(1, '修改失败！'), '', 'ajax');
 		}
 	}
-	$https_pos = strstr($_W['siteroot'], 'https');
-	if (!empty($https_pos)) {
+	if (!empty($_W['ishttps'])) {
 		$socket_url = str_replace('https', 'wss', $_W['siteroot']);
 	} else {
 		$socket_url = str_replace('http', 'wss', $_W['siteroot']);
