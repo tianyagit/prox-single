@@ -30,6 +30,16 @@ if (!empty($setting)) {
 			);
 		}
 		$update['color'] = iserializer($val['color']);
+		$params = json_decode($val['params'], true);
+		if (!empty($params)) {
+			foreach ($params as $key => &$value) {
+				if ($value['id'] == 'cardBasic') {
+					$value['params']['color'] = $val['color'];
+				}
+			}
+		}
+		$update['params'] = json_encode($params);
 		pdo_update('mc_card', $update, array('id' => $k));
 	}
 }
+
