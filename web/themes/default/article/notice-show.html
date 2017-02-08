@@ -1,7 +1,7 @@
-{template 'common/header-base'}
+{template 'common/header'}
 <div class="notice-show container">
 	{if $do == 'list'}
-		<ol class="breadcrumb">
+		<!--<ol class="breadcrumb">
 			<li><a href="./index.php">系统首页</a></li>
 			<li><a href="{php echo url('article/notice-show/list');}">公告列表</a></li>
 			<li class="active">{if !$cateid}所有公告{else}{$categroys[$cateid]['title']}{/if}</li>
@@ -13,29 +13,44 @@
 					<a href="{php echo url('article/notice-show/list', array('cateid' => $categroy['id']));}" class="btn {if $cateid == $categroy['id']}btn-primary{else}btn-default{/if}">{$categroy['title']}</a>
 				{/if}
 			{/loop}
-		</div>
-		<div class="panel panel-default">
+		</div>-->
+		<div class="panel we7-panel">
 			<div class="panel-heading">
-				<h5>公告列表</h5>
+				<span class="font-lg">公告列表</span>
 			</div>
-			<div class="panel-body">
-				<ul>
-					{loop $data $da}
-						<li><a href="{php echo url('article/notice-show/detail', array('id' => $da['id']));}">{$da['title']}</a><span class="date">{php echo date('Y-m-d', $da['createtime']);}</span></li>
-					{/loop}
-				</ul>
+			<div class="panel-body welcome-container we7-padding">
+				<div class="btn-group we7-btn-group we7-margin-bottom btn-group-justified">
+					<a href="{php echo url('article/notice-show/list');}" class="btn {if !$cateid}active{/if}">全部</a>
+					{loop $categroys $key $categroy}
+					{if $key}
+						<a href="{php echo url('article/notice-show/list', array('cateid' => $categroy['id']));}" class="btn {if $cateid == $categroy['id']}active{/if}">{$categroy['title']}</a>
+					{/if}
+				{/loop}
+				</div>
+				<div class="notice">
+					<ul class="list-group">
+						{loop $data $da}
+						<li class="list-group-item">
+							<a href="{php echo url('article/notice-show/detail', array('id' => $da['id']));}" target="_blank" class="text-over">{$da['title']}</a>
+							<span class="time">{php echo date('Y-m-d', $da['createtime']);}</span>
+						</li>
+						{/loop}
+					</ul>
+				</div>
+				<div class="pull-right">
+					{$pager}
+				</div>
 			</div>
 		</div>
-		{$pager}
 	{/if}
 	{if $do == 'detail'}
-		<ol class="breadcrumb">
+		<!--<ol class="breadcrumb">
 			<li><a href="./index.php">系统首页</a></li>
 			<li class="active"><a href="{php echo url('article/notice-show/list');}">公告列表</a></li>
 			<li class="active">{$notice['title']}</li>
-		</ol>
-		<div class="panel panel-default">
-			<div class="panel-heading text-center">
+		</ol>-->
+		<div class="panel we7-panel news-detail">
+			<!--<div class="panel-heading text-center">
 				<h6>{$notice['title']}</h6>
 				<div class="small text-center text-muted">
 					<span>{php echo date('Y-m-d H:i', $notice['createtime']);}</span>
@@ -44,6 +59,13 @@
 			</div>
 			<div class="panel-body">
 				{$notice['content']}
+			</div>-->
+			<div class="panel-body we7-padding">
+				<h3 class="text-center title">{$notice['title']}</h3>
+				{$notice['content']}
+				<div class="text-right">
+					<p class="time">{php echo date('Y-m-d H:i', $notice['createtime']);}</p>
+				</div>
 			</div>
 		</div>
 	{/if}

@@ -63,7 +63,7 @@
 {/if}
 <div class="main">
 	<div class="container">
-		{if in_array(FRAME, array('account', 'system', 'adviertisement'))}
+		{if in_array(FRAME, array('account', 'system', 'adviertisement')) && $_GPC['a'] != 'news-show' && $_GPC['a'] != 'notice-show'}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
