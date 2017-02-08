@@ -1,19 +1,6 @@
 {template 'common/header'}
 <div class="notice-show container">
 	{if $do == 'list'}
-		<!--<ol class="breadcrumb">
-			<li><a href="./index.php">系统首页</a></li>
-			<li><a href="{php echo url('article/notice-show/list');}">公告列表</a></li>
-			<li class="active">{if !$cateid}所有公告{else}{$categroys[$cateid]['title']}{/if}</li>
-		</ol>
-		<div class="category-btn">
-			<a href="{php echo url('article/notice-show/list');}" class="btn {if !$cateid}btn-primary{else}btn-default{/if}">所有公告</a>
-			{loop $categroys $key $categroy}
-				{if $key}
-					<a href="{php echo url('article/notice-show/list', array('cateid' => $categroy['id']));}" class="btn {if $cateid == $categroy['id']}btn-primary{else}btn-default{/if}">{$categroy['title']}</a>
-				{/if}
-			{/loop}
-		</div>-->
 		<div class="panel we7-panel">
 			<div class="panel-heading">
 				<span class="font-lg">公告列表</span>
@@ -44,30 +31,26 @@
 		</div>
 	{/if}
 	{if $do == 'detail'}
-		<!--<ol class="breadcrumb">
-			<li><a href="./index.php">系统首页</a></li>
+	<div class="we7-padding">
+		
+		<ol class="breadcrumb we7-breadcrumb">
+			<a href="{url 'account/welcome'}"><i class="wi wi-back-cricle"></i></a>
 			<li class="active"><a href="{php echo url('article/notice-show/list');}">公告列表</a></li>
 			<li class="active">{$notice['title']}</li>
-		</ol>-->
+		</ol>
 		<div class="panel we7-panel news-detail">
-			<!--<div class="panel-heading text-center">
-				<h6>{$notice['title']}</h6>
+			<div class="panel-heading text-center">
+				<h3 class="text-center">{$notice['title']}</h3>
 				<div class="small text-center text-muted">
 					<span>{php echo date('Y-m-d H:i', $notice['createtime']);}</span>
 					<span>阅读：{$notice['click']}次</span>
 				</div>
 			</div>
-			<div class="panel-body">
-				{$notice['content']}
-			</div>-->
 			<div class="panel-body we7-padding">
-				<h3 class="text-center title">{$notice['title']}</h3>
-				{$notice['content']}
-				<div class="text-right">
-					<p class="time">{php echo date('Y-m-d H:i', $notice['createtime']);}</p>
-				</div>
+				{php echo html_entity_decode($notice['content'], ENT_QUOTES)}
 			</div>
 		</div>
+	</div>
 	{/if}
 </div>
 {template 'common/footer'}
