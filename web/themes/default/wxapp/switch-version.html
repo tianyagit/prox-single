@@ -11,7 +11,7 @@
 		<div class="panel panel-cut">
 			<div class="panel-heading">
 				选择版本
-				<a href="" class="panel-del"><i class="fa fa-times"></i></a>
+				<a href="" class="panel-del" style="display:none;"><i class="fa fa-times"></i></a>
 			</div>
 			<div class="panel-body">
 				<div class="wxapp-manage">
@@ -24,8 +24,8 @@
 						<div class="wxapp-item-iphone">
 							<img src="./resource/images/173.png"/>
 							<div class="cover-dark">
-								<a href="{php echo url('wxapp/manage/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
-								<a href="{php echo url('wxapp/manage/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage">管理</a>
+								<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
+								<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage">管理</a>
 								<!-- <a href="" class="stick">置顶</a> -->
 							</div>
 						</div>
