@@ -63,13 +63,27 @@
 {/if}
 <div class="main">
 	<div class="container">
-		{if in_array(FRAME, array('account', 'system', 'adviertisement')) && $_GPC['a'] != 'news-show' && $_GPC['a'] != 'notice-show'}
+		{if in_array(FRAME, array('account', 'system', 'adviertisement'))}
+		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
+		<a href="javascript:;" onclick="main_to_big()" class="js-big-main button-to-big color-gray" title="加宽">宽屏</a>
+		<script>
+			function main_to_big() {
+				$('.main').toggleClass('main-lg');
+				if($('.main').hasClass('main-lg')) {
+					$('.js-big-main').text('正常');
+				} else {
+					$('.js-big-main').text('宽屏');
+					}
+				}
+		</script>	
+		{/if}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
 					<a href="javascript:;" onclick="history.go(-1)" class="we7-head-back"><i class="wi wi-back-cricle"></i></a>
 					<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					<span class="font-lg">{$_W['current_module']['title']}</span>
+					
 				{elseif FRAME == 'account'}
 					<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo">
 					<span class="font-lg">{$_W['account']['name']}</span>
