@@ -14,6 +14,7 @@
 					{/if}
 					{/loop}
 				</div>
+				{if !empty($data)}
 				<div class="notice">
 					<ul class="list-group">
 						{loop $data $da}
@@ -27,6 +28,9 @@
 				<div class="pull-right">
 					{$pager}
 				</div>
+				{else}
+				<div class="text-center">暂无数据</div>
+				{/if}
 			</div>
 			
 		</div>
