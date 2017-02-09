@@ -179,6 +179,10 @@ if ($do == 'upgrade') {
 	} else {
 		$module['settings'] = empty($module['settings']) ? 0 : 1;
 	}
+	if ($modulename == 'we7_coupon') {
+		$module['issystem'] = 1;
+		$module['settings'] = 2;
+	}
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
 	if (!empty($module['subscribes'])) {

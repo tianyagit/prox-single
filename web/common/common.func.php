@@ -107,7 +107,11 @@ function message($msg, $redirect = '', $type = '') {
 function checklogin() {
 	global $_W;
 	if (empty($_W['uid'])) {
-		message('', url('user/login'), 'warning');
+		if (!empty($_W['setting']['copyright']['showhomepage'])) {
+			message('', url('account/welcome'), 'warning');
+		} else {
+			message('', url('user/login'), 'warning');
+		}
 	}
 	return true;
 }
