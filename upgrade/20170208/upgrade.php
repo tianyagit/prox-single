@@ -9,7 +9,6 @@ $setting = pdo_getall('mc_card', '', '', 'id');
 if (!empty($setting)) {
 	foreach ($setting as $k => &$val) {
 		$color = iunserializer($val['color']);
-		$colors[] = iunserializer($val['color']);
 		if (!empty($color)) {
 			if (!is_array($color)) {
 				$val['color'] = array(
