@@ -5,7 +5,7 @@ require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 require IA_ROOT . '/web/common/common.func.php';
 
 //会员卡数据修复
-if (!empty(pdo_tableexists('mc_card'))) {
+if (pdo_tableexists('mc_card')) {
 	$setting = pdo_getall('mc_card', '', '', 'id');
 	if (!empty($setting)) {
 		foreach ($setting as $k => &$val) {
