@@ -434,6 +434,7 @@
 </div>
 <script>
 	angular.module('wxApp').controller('MainCtrl', ['$scope', '$http', function($scope, $http){
+		uniacid = "{$_GPC['uniacid']}";
 		$scope.category = {
 			'id' : '',
 			'name' : '',
@@ -460,7 +461,7 @@
 			$scope.categoryparentid = pid;
 		};
 		$scope.get_categorys = function() {
-			$http.post("{php echo url('wxapp/version/get_categorys')}", {'multiid' : '{$multiid}'}).success(function(data) {
+			$http.post("{php echo url('wxapp/version/get_categorys')}", {'uniacid' : uniacid, 'multiid' : '{$multiid}'}).success(function(data) {
 				$scope.categorys = data.message.message;
 			});
 		};
@@ -487,7 +488,7 @@
 			if ($scope.name_exist == true) {
 				return false;
 			}
-			$http.post("{php echo url('wxapp/version/save_category')}", {'post' : $scope.categorys, 'multiid' : {$multiid}}).success(function() {});
+			$http.post("{php echo url('wxapp/version/save_category')}", {'post' : $scope.categorys, 'uniacid' : uniacid, 'multiid' : {$multiid}}).success(function() {});
 			$scope.get_categorys();
 			$('#myModal').modal('hide');
 		};
