@@ -77,7 +77,7 @@ pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'menu'
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'title' => '会员卡', 'do' => 'card', 'direct' => '0', 'displayorder' => '0'));
 pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'title' => '兑换商城', 'do' => 'activity'));
 //增加模块内，个人中心导航菜单的链接
-pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'call' => 'gethometiles'))
+pdo_insert('modules_bindings', array('module' => 'we7_coupon', 'entry' => 'profile', 'call' => 'gethometiles'));
 cache_build_account_modules();
 
 $we7_coupon_exists = pdo_get('modules', array('name' => 'we7_coupon'));
