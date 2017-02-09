@@ -11,7 +11,7 @@
 					<div class="pull-right">
 						<a href="{php echo url('wxapp/version/switch_version', array('uniacid' => $_GPC['uniacid']))}" class="color-default">切换版本</a>
 						<a href="{php echo url('wxapp/post', array('uniacid' => $_GPC['uniacid']))}" class="color-default">设计新版本</a>
-						<a href="{php echo url('wxapp/display/display')}" class="color-default"><i class="fa fa-refresh"></i>切换小程序</a>
+						<a href="{php echo url('wxapp/display/display')}" class="color-default"><i class="wi wi-cut"></i>切换小程序</a>
 					</div>
 					<!--end头部信息-->
 				</div>
@@ -24,13 +24,13 @@
 							</div>
 							<ul class="list-group">
 								<li class="list-group-item" ng-class="{active : wxapp == 'slide'}" ng-click="wxapp = 'slide'">
-									<a href=""><i class="fa fa-adjust"></i>幻灯片 </a>
+									<a href=""><i class="wi wi-img"></i>幻灯片 </a>
 								</li>
 								<li class="list-group-item" ng-class="{active : wxapp == 'nav'}" ng-click="wxapp = 'nav'">
-									<a href=""><i class="fa fa-adjust"></i>导航图标</a>
+									<a href=""><i class="wi wi-template"></i>导航图标</a>
 								</li>
 								<li class="list-group-item" ng-class="{active : wxapp == 'recommend'}" ng-click="wxapp = 'recommend'">
-									<a href=""><i class="fa fa-adjust"></i>推荐图片</a>
+									<a href=""><i class="wi wi-appmsg"></i>推荐图片</a>
 								</li>
 							</ul>
 						</div>
@@ -166,29 +166,29 @@
 										<span class="color-gray">幻灯片列表 / </span>
 										<span class="color-dark">新建幻灯片</span>
 									</div>
-									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
-										<div class="form-defalut" ng-if="slideid == 'add'">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form we7-form" enctype="multipart/form-data">
+										<div class="form we7-form" ng-if="slideid == 'add'">
 											<div class="form-group" >
-												<label for="" class="control-label">标题</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">标题</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" required name="slide[title]" class="form-control input-slide-title"  placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">排序</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">排序</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="slide[displayorder]" class="form-control input-slide-sort" id="" placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">图片</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">图片</label>
+												<div class="form-controls col-sm-10">
 													{php echo tpl_form_field_image('slide[thumb]', '')}
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">链接</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">链接</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="slide[url]" class="form-control input-slide-link" required placeholder="">
 												</div>
 											</div>
@@ -196,28 +196,28 @@
 											<input type="hidden" name="token" value="{$_W['token']}" />
 										</div>
 										{loop $slides $slide}
-										<div class="form-defalut" ng-if="slideid == {$slide['id']}">
+										<div class="form we7-form" ng-if="slideid == {$slide['id']}">
 											<div class="form-group" >
-												<label for="" class="control-label">标题</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">标题</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="slide[title]" class="form-control input-slide-title" required value="{$slide['title']}" placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">排序</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">排序</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="slide[displayorder]" class="form-control input-slide-sort" id="" value="{$slide['displayorder']}" placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">图片</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">图片</label>
+												<div class="form-controls col-sm-10">
 													{php echo tpl_form_field_image('slide[thumb]', $slide['thumb'])}
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">链接</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">链接</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="slide[url]" class="form-control input-slide-link" required value="{$slide['url']}" id="" placeholder="">
 												</div>
 											</div>
@@ -236,29 +236,29 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
-										<div class="form-defalut" ng-if="navid == 'add'">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form we7-form" enctype="multipart/form-data">
+										<div class="form we7-form" ng-if="navid == 'add'">
 											<div class="form-group" >
-												<label for="" class="control-label">标题</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">标题</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="nav[name]" required class="form-control input-slide-title"  placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">排序</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">排序</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="nav[displayorder]" class="form-control input-slide-sort" placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">图片</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">图片</label>
+												<div class="form-controls col-sm-10">
 													{php echo tpl_form_field_image('nav[icon]', '')}
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">链接</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">链接</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="nav[url]" required class="form-control input-slide-link" id="" placeholder="">
 												</div>
 											</div>
@@ -266,28 +266,28 @@
 											<input type="hidden" name="token" value="{$_W['token']}" />
 										</div>
 										{loop $navs $nav}
-										<div class="form-defalut" ng-if="navid == {php echo $nav['id']}">
+										<div class="form we7-form" ng-if="navid == {php echo $nav['id']}">
 											<div class="form-group" >
-												<label for="" class="control-label">标题</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">标题</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="nav[name]" required class="form-control input-slide-title" value="{$nav['name']}" placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">排序</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">排序</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="nav[displayorder]" class="form-control input-slide-sort" id="" value="{$nav['displayorder']}" placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">图片</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">图片</label>
+												<div class="form-controls col-sm-10">
 													{php echo tpl_form_field_image('nav[icon]', $nav['icon'])}
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">链接</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">链接</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="nav[url]" required class="form-control input-slide-link" value="{$nav['url']}" id="" placeholder="">
 												</div>
 											</div>
@@ -306,24 +306,24 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form-defalut" enctype="multipart/form-data">
-										<div class="form-defalut" ng-if="recommendid == 'add'">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form we7-form" enctype="multipart/form-data">
+										<div class="form we7-form" ng-if="recommendid == 'add'">
 											<div class="form-group" >
-												<label for="" class="control-label">标题</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">标题</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" required name="recommend[title]" class="form-control input-slide-title"  placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">排序</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">排序</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="recommend[displayorder]" class="form-control input-slide-sort" id="" placeholder="">
 												</div>
 											</div>
 											<div class="form-group form-inline">
-												<label for="" class="control-label">分类</label>
-												<div class="form_controls">
-													<select class="form-control" name="recommend[ccate]">
+												<label for="" class="control-label col-sm-2">分类</label>
+												<div class="form-controls col-sm-10">
+													<select class="form-control we7-select" name="recommend[ccate]">
 														<option>选择分类</option>
 														<option ng-repeat="category in categorys" value="{{ category.id }}">{{ category.name }}</option>
 													</select>
@@ -332,14 +332,14 @@
 											</div>
 
 											<div class="form-group">
-												<label for="" class="control-label">图片</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">图片</label>
+												<div class="form-controls col-sm-10">
 													{php echo tpl_form_field_image('recommend[thumb]')}
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">链接</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">链接</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="recommend[source]" required class="form-control input-slide-link" id="" placeholder="">
 												</div>
 											</div>
@@ -347,22 +347,22 @@
 											<input type="hidden" name="token" value="{$_W['token']}" />
 										</div>
 										{loop $recommends $recommend}
-										<div class="form-defalut" ng-if="recommendid == {$recommend['id']}">
+										<div class="form we7-form" ng-if="recommendid == {$recommend['id']}">
 											<div class="form-group" >
-												<label for="" class="control-label">标题</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">标题</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="recommend[title]"  required class="form-control input-slide-title" value="{$recommend['title']}" placeholder="">
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">排序</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">排序</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="recommend[displayorder]" class="form-control input-slide-sort" id="" value="{$recommend['displayorder']}" placeholder="">
 												</div>
 											</div>
 											<div class="form-group form-inline">
-												<label for="" class="control-label">分类</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">分类</label>
+												<div class="form-controls col-sm-10">
 													<select class="form-control" name="recommend[ccate]">
 														<option>选择分类</option>
 														<option ng-repeat="category in categorys" value="{{ category.id }}" ng-selected="category.id == {$recommend['ccate']}">{{ category.name }}</option>
@@ -371,14 +371,14 @@
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">图片</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">图片</label>
+												<div class="form-controls col-sm-10">
 													{php echo tpl_form_field_image('recommend[thumb]', $recommend['thumb'])}
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="control-label">链接</label>
-												<div class="form_controls">
+												<label for="" class="control-label col-sm-2">链接</label>
+												<div class="form-controls col-sm-10">
 													<input type="text" name="recommend[source]" required class="form-control input-slide-link" value="{$recommend['source']}" id="" placeholder="">
 												</div>
 											</div>
