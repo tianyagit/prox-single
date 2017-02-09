@@ -70,26 +70,16 @@
 		}
 	</script>
 {/if}
-<div class="main">
+<div class="main {if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')) && $_GPC['main-lg']} main-lg {/if}">
 	<div class="container">
 		{if in_array(FRAME, array('account', 'system', 'adviertisement')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
-		<a href="javascript:;" onclick="main_to_big()" class="js-big-main button-to-big color-gray" title="加宽">宽屏</a>
-		<script>
-			function main_to_big() {
-				$('.main').toggleClass('main-lg');
-				if($('.main').hasClass('main-lg')) {
-					$('.js-big-main').text('正常');
-				} else {
-					$('.js-big-main').text('宽屏');
-					}
-				}
-		</script>	
+		<a href="javascript:;" class="js-big-main button-to-big color-gray" title="加宽">{if $_GPC['main-lg']}正常{else}宽屏{/if}</a>
 		{/if}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
-					<a href="javascript:;" onclick="history.go(-1)" class="we7-head-back"><i class="wi wi-back-cricle"></i></a>
+					<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-cricle"></i></a>
 					<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					<span class="font-lg">{$_W['current_module']['title']}</span>
 					
