@@ -169,6 +169,19 @@
 								</div>
 							</div>
 							<div ng-if="type == 2">
+								<div class="wxapp-type-cut">
+									<div class="dropdown dropdown-toggle">
+										<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											 选择模板
+										    <span class="caret"></a>
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="dLabel">
+										    <li><a href="">DIY设计</a></li>
+										    <li><a href="">选择模板</a></li>
+										    <li><a href="" class="active">直接跳转应用</a></li>
+										</ul>
+									</div>
+								</div>
 								<div class="wxapp-tem-preview">
 									<div class="wxapp-phone">
 										<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
@@ -227,8 +240,21 @@
 								</div>
 							</div>
 							<div class="form-group" ng-if="type == 3">
+								<div class="wxapp-type-cut">
+									<div class="dropdown dropdown-toggle">
+										<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											 直接跳转应用
+										    <span class="caret"></a>
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="dLabel">
+										    <li><a href="">DIY设计</a></li>
+										    <li><a href="">选择模板</a></li>
+										    <li><a href="" class="active">直接跳转应用</a></li>
+										</ul>
+									</div>
+								</div>
 								<input type="hidden" name="tomodule" value="">
-								<ul class="app-allow-list">
+								<ul class="app-allow-list" style="padding-top: 110px;">
 									<li class="select to-module" ng-click="selectHomeModule(m)" ng-repeat="m in modules">
 										<div class="app-info">
 											<img ng-src="{{m.icon}}"/>
