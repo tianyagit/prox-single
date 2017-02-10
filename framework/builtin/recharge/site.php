@@ -13,9 +13,13 @@ class RechargeModuleSite extends WeModuleSite {
 		global $_W, $_GPC;
 		checkauth();
 		$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'credit';
+		load()->model('module');
 		if($type == 'credit') {
-			load() -> model('card');
-			$recharge_settings = card_params_setting('cardRecharge');
+			load()->model('card');
+			$we7_coupon_info = module_fetch('we7_coupon');
+			if (!empty($we7_coupon_info)) {
+				$recharge_settings = card_params_setting('cardRecharge');
+			}
 			if(checksubmit()) {
 				$fee = floatval($_GPC['fee']);
 				$backtype = trim($_GPC['backtype']);
@@ -177,8 +181,8 @@ class RechargeModuleSite extends WeModuleSite {
 	 */
 	public function payResult($params) {
 		global $_W;
-		load()-> model('mc');
-		load() -> model('card');
+		load()->model('mc');
+		load()->model('card');
 		$order = pdo_fetch("SELECT * FROM ".tablename('mc_credits_recharge')." WHERE tid = :tid", array(':tid' => $params['tid']));
 		if ($params['result'] == 'success' && $params['from'] == 'notify') {
 			$fee = $params['fee'];
