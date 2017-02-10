@@ -283,7 +283,7 @@
 {elseif $do == 'module_detail'}
 <div class="js-system-module-detail" ng-controller="detailCtrl" ng-cloak>
 	<ol class="breadcrumb we7-breadcrumb">
-		<a href="{php echo referer()}"><i class="wi wi-back-cricle"></i> </a>
+		<a href="{php echo referer()}"><i class="wi wi-back-circle"></i> </a>
 		<li>
 			应用列表
 		</li>
@@ -306,13 +306,13 @@
 	</div>
 	<div class="module-description">
 		<dl class="description">
-			<dt><i class="wi wi-setting2"></i>功能介绍 </dt>
+			<dt><i class="wi wi-appsetting"></i>功能介绍 </dt>
 			<dd>
 				{$module_info['description']}
 			</dd>
 		</dl>
 		<dl class="copyright" ng-if="isFounder == 1">
-			<dt><i class="wi wi-setting2"></i>版权信息  </dt>
+			<dt><i class="wi wi-appsetting"></i>版权信息  </dt>
 			<dd>
 				<span>名称：{$module_info['title']}</span>  <span>版本：{$module_info['version']}</span>  <span> 作者：{$module_info['author']}</span>
 			</dd>
