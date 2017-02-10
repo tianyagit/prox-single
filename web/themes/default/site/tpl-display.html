@@ -39,7 +39,7 @@
 				<a ng-href="{{links.designer}}&styleid={{style.styleid}}" class="manage-item" data-toggle="tooltip" data-placement="bottom" title="设计风格"><i class="wi wi-text"></i></a>
 				<a ng-href="{{links.copy}}&styleid={{style.styleid}}" class="manage-item" data-toggle="tooltip" data-placement="bottom" title="复制风格"><i class="wi wi-copy"></i></a>
 				<a href="javascript:;" class="manage-item" ng-click="preview(style.styleid)" data-toggle="tooltip" data-placement="bottom" title="预览"><i class="wi wi-eye"></i></a>
-				<a ng-href="{{links.del}}&styleid={{style.styleid}}" class="manage-item" onclick="if(!confirm('删除后将不可恢复,确定删除吗?')) return false;" data-toggle="tooltip" data-placement="bottom" title="删除"><i class="wi wi-delete"></i></a>
+				<a ng-href="{{links.del}}&styleid={{style.styleid}}" class="manage-item" onclick="if(!confirm('删除后将不可恢复,确定删除吗?')) return false;" data-toggle="tooltip" data-placement="bottom" title="删除"><i class="wi wi-delete2"></i></a>
 			</div>
 		</div>
 		<div class="site-template-item" ng-repeat="style in stylesResult" ng-if="!style.styleid">
@@ -61,7 +61,7 @@
 				<a href="javascript:;" class="manage-item" title="设计风格"><i class="wi wi-text"></i></a>
 				<a href="javascript:;" class="manage-item" title="复制风格"><i class="wi wi-template"></i></a>
 				<a href="javascript:;" class="manage-item" class="预览"><i class="wi wi-eye"></i></a>
-				<a href="javascript:;" class="manage-item" title="删除"><i class="wi wi-delete"></i></a>
+				<a href="javascript:;" class="manage-item" title="删除"><i class="wi wi-delete2"></i></a>
 			</div>
 		</div>
 	</div>

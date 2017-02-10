@@ -111,7 +111,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 						return false;
 					});
 				} else {
-					$content.html('<div class="info text-center"><i class="wi wi-info-cricle fa-lg"></i> 暂无数据</div>');
+					$content.html('<div class="info text-center"><i class="wi wi-info-circle fa-lg"></i> 暂无数据</div>');
 				}
 			});				
 			$this.modalobj.find('#btn-select .btn-primary').unbind('click').click(function(){
