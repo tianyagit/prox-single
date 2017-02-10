@@ -7,6 +7,8 @@ defined('IN_IA') or exit('Access Denied');
 
 checkaccount();
 
+load()->model('welcome');
+
 $dos = array('platform', 'ext');
 $do = in_array($do, $dos) ? $do : 'platform';
 
@@ -18,6 +20,7 @@ if ($do == 'platform') {
 
 	uni_update_week_stat();
 	$_W['page']['title'] = '平台相关数据';
+	//今日昨日指标
 	$yesterday = date('Ymd', strtotime('-1 days'));
 	$yesterday_stat = pdo_get('stat_fans', array('date' => $yesterday, 'uniacid' => $_W['uniacid']));
 	$yesterday_stat['new'] = intval($yesterday_stat['new']);
@@ -32,7 +35,19 @@ if ($do == 'platform') {
 	if($today_total_num < 0) {
 		$today_total_num = 0;
 	}
-	
+
+	//公告
+	$notices = pdo_getall('article_notice', array('is_display' => 1), array('id', 'title', 'createtime'), '', 'createtime DESC', array(1,5));
+	if(!empty($notices)) {
+		foreach ($notices as $key => $notice_val) {
+			$notices[$key]['url'] = url('article/notice-show/detail', array('id' => $notice_val['id']));
+			$notices[$key]['createtime'] = date('Y-m-d', $notice_val['createtime']);
+		}
+	}
+
+	//最新模块
+	$last_modules = welcome_get_last_modules();
+
 	template('home/welcome');
 } elseif ($do == 'ext') {
 	$modulename = $_GPC['m'];
