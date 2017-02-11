@@ -13,9 +13,9 @@ class RechargeModuleSite extends WeModuleSite {
 		global $_W, $_GPC;
 		checkauth();
 		$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'credit';
-		load()->model('module');
 		if($type == 'credit') {
 			load()->model('card');
+			load()->model('module');
 			$we7_coupon_info = module_fetch('we7_coupon');
 			if (!empty($we7_coupon_info)) {
 				$recharge_settings = card_params_setting('cardRecharge');
@@ -183,6 +183,7 @@ class RechargeModuleSite extends WeModuleSite {
 		global $_W;
 		load()->model('mc');
 		load()->model('card');
+		load()->model('module');
 		$order = pdo_fetch("SELECT * FROM ".tablename('mc_credits_recharge')." WHERE tid = :tid", array(':tid' => $params['tid']));
 		if ($params['result'] == 'success' && $params['from'] == 'notify') {
 			$fee = $params['fee'];
@@ -199,13 +200,16 @@ class RechargeModuleSite extends WeModuleSite {
 			if(empty($order['type']) || $order['type'] == 'credit') {
 				$setting = uni_setting($_W['uniacid'], array('creditbehaviors', 'recharge'));
 				$credit = $setting['creditbehaviors']['currency'];
-				$recharge_settings = card_params_setting('cardRecharge');
-				$recharge_params = $recharge_settings['params'];
 				if(empty($credit)) {
 					message('站点积分行为参数配置错误,请联系服务商', '', 'error');
 				} else {
-					if ($recharge_params['recharge_type'] == '1') {
-						$recharges = $recharge_params['recharges'];
+					$we7_coupon_info = module_fetch('we7_coupon');
+					if (!empty($we7_coupon_info)) {
+						$recharge_settings = card_params_setting('cardRecharge');
+						$recharge_params = $recharge_settings['params'];
+						if ($recharge_params['recharge_type'] == '1') {
+							$recharges = $recharge_params['recharges'];
+						}
 					}
 					if ($order['backtype'] == '2') {
 						$total_fee = $fee;
