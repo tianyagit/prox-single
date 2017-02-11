@@ -210,7 +210,8 @@
 			'module_list': {php echo json_encode($module_list)},
 			'editModuleUrl': "{php echo url('system/module/get_module_info')}",
 			'saveModuleUrl' :  "{php echo url('system/module/save_module_info')}",
-			'checkUpgradeUrl' : "{php echo url('system/module/check_upgrade')}"
+			'checkUpgradeUrl' : "{php echo url('system/module/check_upgrade')}",
+			'get_upgrade_info_url' : "{php echo url('system/module/get_upgrade_info')}"
 		});
 		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});

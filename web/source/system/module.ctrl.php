@@ -14,12 +14,28 @@ load()->model('account');
 
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
-$dos = array('check_upgrade', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	message('无权限操作！', referer(), 'error');
+}
+
+if ($do == 'get_upgrade_info') {
+	$module_name = trim($_GPC['name']);
+	$cloud_m_upgrade_info = cloud_m_upgradeinfo($module_name);
+	$module = array(
+		'version' => $cloud_m_upgrade_info['version'],
+		'name' => $cloud_m_upgrade_info['name'],
+		'branches' => $cloud_m_upgrade_info['branches'],
+		'site_branch' => $cloud_m_upgrade_info['branches'][$cloud_m_upgrade_info['version']['branch_id']],
+		'from' => 'cloud'
+	);
+	if (ver_compare($module['site_branch']['version']['version'], $module['branches'][$module['site_branch']['version']['version']]['version']['version']) != -1) {
+		unset($module['branches'][$module['site_branch']['version']['version']]);
+	}
+	message(error(0, $module), '', 'ajax');
 }
 
 if ($do == 'check_upgrade') {
@@ -50,28 +66,16 @@ if ($do == 'check_upgrade') {
 
 		if (empty($manifest)) {
 			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
-				$cloud_m_upgrade_info = cloud_m_upgradeinfo($module['name']);//获取模块更新信息
-				if (!empty($cloud_m_upgrade_info['branches'])) {
-					foreach ($cloud_m_upgrade_info['branches'] as &$branch) {
-						$branch['version']['description'] = $branch['version']['description'];
-					}
-					unset($branch);
-				}
-				$module['upgrade_info'] = array(
-					'version' => $cloud_m_upgrade_info['version'],
-					'name' => $cloud_m_upgrade_info['name'],
-					'branches' => $cloud_m_upgrade_info['branches'],
-					'site_branch' => $cloud_m_upgrade_info['branches'][$cloud_m_upgrade_info['version']['branch_id']],
-				);
-				$module['from'] = 'cloud';
-				$site_branch = $cloud_m_upgrade_info['version']['branch_id'];//当前站点模块分之号
-				$cloud_branch_version = $cloud_m_upgrade_info['branches'][$site_branch]['version']['version'];//云服务模块分之版本号
-				$best_branch = current($cloud_m_upgrade_info['branches']);
-				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_upgrade_info['version']['branch_id'] < $best_branch['id'] && !empty($cloud_m_upgrade_info['version']['branch_id']))) {
+				$cloud_m_info = $cloud_m_query_module[$module['name']];
+				$site_branch = $cloud_m_info['site_branch']['id'];
+				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
+				$best_branch = current($cloud_m_info['branches']);
+				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['branch'] < $best_branch['id'] && !empty($cloud_m_info['version']))) {
 					$module['upgrade'] = true;
 				} else {
 					$module['upgrade'] = false;
 				}
+				$module['from'] = 'cloud';
 			}
 		}
 	}
