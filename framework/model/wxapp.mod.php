@@ -7,14 +7,14 @@ defined('IN_IA') or exit('Access Denied');
 
 
 function wxapp_getpackage($data) {
-		$request_cloud_data = json_encode($data);
-		load()->classs('cloudapi');
-		$api = new CloudApi();
-		$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
-		if(strpos($result, 'error:') === 0){
-			return error(-1, substr($result, 6));
-		}
-		return $result;
+	$request_cloud_data = json_encode($data);
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
+	if(strpos($result, 'error:') === 0){
+		return error(-1, substr($result, 6));
+	}
+	return $result;
 }
 
 function wxapp_account_create($uniacid, $account) {

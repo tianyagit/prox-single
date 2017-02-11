@@ -18,7 +18,7 @@
 				<div class="panel-body">
 					<div class="left-menu">
 						<!--菜单列表-->
-						<div class="panel panel-menu">
+						<div class="panel panel-menu" style="display:none;">
 							<div class="panel-heading">
 								首页设置<span class="fa fa-cog pull-right"></span>
 							</div>
@@ -40,7 +40,7 @@
 							</div>
 							<ul class="list-group">
 								{loop $modules $module}
-								<a href="{php echo url('home/welcome/ext', array('m' => $module['name']))}">
+								<a href="{php echo url('home/welcome/ext', array('m' => $module['name']))}" target="_blank">
 								<li class="list-group-item">
 									<i class="fa fa-adjust"></i>{$module['title']}
 								</li>
@@ -62,7 +62,7 @@
 								<!--end预览内容-->
 							</div>
 							<!--end预览-->
-							<div class="wxapp-slide">
+							<div class="wxapp-slide" style="display:none;">
 								<!--列表-->
 								<div class="wxapp-slide-list"  ng-show="wxapp == 'slide'">
 									<div class="slide-heading">

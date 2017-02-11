@@ -155,7 +155,7 @@
 										<i class="wi wi-select-diy"></i>
 										<p>DIY设计</p>
 									</li>
-									<li ng-click="selectType(2)">
+									<li class="ban">
 										<i class="wi wi-select-tem"></i>
 										<p>选择模板</p>
 									</li>
@@ -164,9 +164,6 @@
 										<p>直接跳转应用</p>
 									</li>
 								</ul>
-								<div class="type-footer">
-									<i class="fa fa-exclamation-circle"></i>请慎重选择，一旦选择不可更改！
-								</div>
 							</div>
 							<div ng-if="type == 2">
 								<div class="wxapp-type-cut">
@@ -176,9 +173,9 @@
 										    <span class="caret"></a>
 										</a>
 										<ul class="dropdown-menu" aria-labelledby="dLabel">
-										    <li><a href="">DIY设计</a></li>
-										    <li><a href="">选择模板</a></li>
-										    <li><a href="" class="active">直接跳转应用</a></li>
+										    <li><a href="" class="active">DIY设计</a></li>
+											<li ng-click="selectType(2)"><a href="" class="active">选择模板</a></li>
+											<li ng-click="selectType(3)"><a href="" class="active">直接跳转应用</a></li>
 										</ul>
 									</div>
 								</div>
@@ -247,9 +244,9 @@
 										    <span class="caret"></a>
 										</a>
 										<ul class="dropdown-menu" aria-labelledby="dLabel">
-										    <li><a href="">DIY设计</a></li>
-										    <li><a href="">选择模板</a></li>
-										    <li><a href="" class="active">直接跳转应用</a></li>
+										    <li><a href="" class="active">DIY设计</a></li>
+											<li ng-click="selectType(2)"><a href="" class="active">选择模板</a></li>
+											<li ng-click="selectType(3)"><a href="" class="active">直接跳转应用</a></li>
 										</ul>
 									</div>
 								</div>

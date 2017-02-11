@@ -4,9 +4,11 @@
  * [WeEngine System] Copyright (c) 2014 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-load()->model('module');
 
-$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version');
+load()->model('module');
+load()->model('wxapp');
+
+$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version', 'download');
 $do = in_array($do, $dos) ? $do : 'edit';
 $_W['page']['title'] = '小程序 - 管理';
 
@@ -118,4 +120,30 @@ if ($do == 'switch_version') {
 		$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $uniacid));
 	}
 	template('wxapp/switch-version');
+}
+
+if ($do == 'download') {
+	$version_id = intval($_GPC['version_id']);
+	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
+	$account_info = pdo_get('account_wxapp', array('uniacid' => $version_info['uniacid']));
+	$package = array(
+		'name' => $account_info['name'],
+		'modules' => json_decode($version_info['modules'], true),
+		'app.js' => '',
+		'app.json' => '',
+		'app.wxss' => '',
+		'siteInfo' => array(
+			'uniacid' => $account_info['uniacid'],
+			'acid'    => $account_info['acid'],
+			'multiid' => $version_info['multiid'],
+			'version' => $version_info['version'],
+			'siteroot'=> $_W['siteroot'] . 'app/index.php',
+		),
+		'tabBar' => json_decode($version_info['quickmenu'], true),
+
+	);
+	$arr = wxapp_getpackage($package);
+	echo "<pre>";
+	print_r($arr);
+	echo "</pre>";
 }
