@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('setting');
 load()->model('attachment');
 
-$dos = array('attachment', 'remote', 'buckets', 'oss', 'cos', 'qiniu');
+$dos = array('attachment', 'remote', 'buckets', 'oss', 'cos', 'qiniu', 'ftp');
 $do = in_array($do, $dos) ? $do : 'global';
 $_W['page']['title'] = '附件设置 - 系统管理';
 
@@ -233,7 +233,6 @@ if ($do == 'buckets') {
 	message(error(1, $bucket), '', 'ajax');
 }
 
-
 if($do == 'ftp') {
 	require(IA_ROOT . '/framework/library/ftp/ftp.php');
 	$ftp_config = array(
@@ -267,7 +266,7 @@ if($do == 'ftp') {
 				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax');
 			}
 		} else {
-			message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax');
+			message(error(-1, '上传图片失败，请检查配置'),'','ajax');
 		}
 	} else {
 		message(error(-1, 'FTP服务器连接失败，请检查配置'),'','ajax');
