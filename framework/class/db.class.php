@@ -83,6 +83,10 @@ class DB {
 	 *		  失败返回FALSE
 	 */
 	public function query($sql, $params = array()) {
+		//为了不影响 last insertid 把缓存提前执行，可能插入失败后也会清空缓存
+		if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert', 'replac'))) {
+			$this->cacheNameSpace($sql, true);
+		}
 		$starttime = microtime();
 		if (empty($params)) {
 			$result = $this->pdo->exec($sql);
@@ -108,10 +112,6 @@ class DB {
 		if (!$result) {
 			return false;
 		} else {
-			//数据变更后，清空相关缓存
-			if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert', 'replac'))) {
-				$this->cacheNameSpace($sql, true);
-			}
 			return $statement->rowCount();
 		}
 	}
@@ -685,7 +685,7 @@ class DB {
 	 */
 	private function cacheNameSpace($sql, $forcenew = false) {
 		global $_W;
-		if ($_W['config']['setting']['cache'] != 'memcache') {
+		if ($_W['config']['setting']['cache'] != 'memcache' || empty($_W['config']['setting']['memcache']['sql'])) {
 			return false;
 		}
 		//获取SQL中的表名

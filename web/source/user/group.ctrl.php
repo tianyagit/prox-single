@@ -25,24 +25,30 @@ if ($do == 'display') {
 	}
 	$module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system','issystem' => 1));
 	$lists = pdo_fetchall("SELECT * FROM " . tablename('users_group').$condition, $params);
-	foreach ($lists as $key => $group) {
-		$package = iunserializer($group['package']);
-		$group['package'] = uni_groups($package);
-		if (empty($package)) {
-			$lists[$key]['module_nums'] = $module_num;
-			continue;
+	if (!empty($lists)) {
+		foreach ($lists as $key => $group) {
+			$package = iunserializer($group['package']);
+			$group['package'] = uni_groups($package);
+			if (empty($package)) {
+				$lists[$key]['module_nums'] = '系统默认';
+				continue;
+			}
+			if (is_array($package) && in_array(-1, $package)) {
+				$lists[$key]['module_nums'] = -1;
+				continue;
+			}
+			$names = array();
+			if (!empty($group['package'])) {
+				foreach ($group['package'] as $modules) {
+					$names[] = $modules['name'];
+					$lists[$key]['module_nums'] = count($modules['modules']);
+				}
+			}else {
+				pdo_update('users_group', array('package' => 'N;'), array('id' => $group['id']));
+			}
+
+			$lists[$key]['packages'] = implode(',', $names);
 		}
-		if (is_array($package) && in_array(-1, $package)) {
-			$lists[$key]['module_nums'] = -1;
-			continue;
-		}
-		$names = array();
-		foreach ($group['package'] as $modules) {
-			$names[] = $modules['name'];
-			$lists[$key]['nums'] = count($modules['modules']);
-			$lists[$key]['module_nums'] = $module_num + $lists[$key]['nums'];
-		}
-		$lists[$key]['packages'] = implode(',', $names);
 	}
 	template('user/group-display');
 }

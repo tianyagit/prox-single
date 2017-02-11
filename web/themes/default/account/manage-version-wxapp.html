@@ -1,6 +1,6 @@
 {template 'common/header'}
 <ol class="breadcrumb we7-breadcrumb">
-	<a href="{php echo url('account/manage', array('type' => 'wxapp'))}"><i class="wi wi-back-cricle"></i> </a>
+	<a href="{php echo url('account/manage', array('type' => 'wxapp'))}"><i class="wi wi-back-circle"></i> </a>
 	<li><a href="{php echo url('account/manage', array('type' => 'wxapp'))}">小程序管理</a></li>
 	<li>小程序设置</li>
 </ol>
@@ -28,7 +28,7 @@
 	<!--版本管理-->
 	<div class="version-management">
 		<div class="text-right">
-			<a href="{php echo url('wxapp/create', array('uniacid' => $uniacid))}" class="btn btn-primary">新建版本</a>
+			<a href="{php echo url('wxapp/post', array('uniacid' => $uniacid))}" class="btn btn-primary">新建版本</a>
 		</div>
 		<div class="wxapp-version-list clearfix">
 			{loop $wxapp_version_lists $list}
@@ -40,9 +40,11 @@
 					<img src="./resource/images/173.png"/>
 				</div>
 				<div class="cover-dark">
-					<a href="{php echo url('wxapp/manage/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
-					<a href="{php echo url('wxapp/manage/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage">管理</a>
-					<a href="{php echo url('account/post-version/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-fa-del"><i class="fa fa-trash"></i></a>
+					<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
+					<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage">管理</a>
+					<a href="{php echo url('account/post-version/down', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-fa-down" target="_blank" title="下载"><i class="wi wi-down-sign"></i></a>
+					<a href="{php echo url('account/post-version/down', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-down" target="_blank" title="下载">下载</a>
+					<a href="{php echo url('account/post-version/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-fa-del"><i class="wi wi-delete2"></i></a>
 					<a href="{php echo url('account/post-version/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-del">删除</a>
 				</div>
 			</div>

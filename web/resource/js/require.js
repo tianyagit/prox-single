@@ -80,7 +80,7 @@ require.config({
 			deps: ['moment', 'loadcss!../../components/daterangepicker/daterangepicker.css']
 		},
 		'datetimepicker' : {
-			deps: ['jquery', 'loadcss!../../components/datetimepicker/jquery.datetimepicker.css']
+			deps: ['loadcss!../../components/datetimepicker/jquery.datetimepicker.css']
 		},
 		'colorpicker': {
 			deps: ['loadcss!../../components/colorpicker/spectrum.css']

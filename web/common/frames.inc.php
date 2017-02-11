@@ -113,7 +113,7 @@ $we7_system_menu['account'] = array(
 				'profile' => array(
 					'title' => '参数配置',
 					'url' => url('profile/payment'),
-					'icon' => 'wi wi-parameter',
+					'icon' => 'wi wi-parameter-stting',
 					'permission_name' => 'profile_setting',
 				)
 			),
@@ -175,7 +175,7 @@ $we7_system_menu['system'] = array(
 				'system_wxapp' => array(
 					'title' => '微信小程序管理',
 					'url' => url('account/manage', array('account_type' => '4')),
-					'icon' => 'wi wi-wechat',
+					'icon' => 'wi wi-small-routine',
 					'permission_name' => 'system_wxapp',
 				),
 			)
@@ -198,7 +198,7 @@ $we7_system_menu['system'] = array(
 				'system_template' => array(
 					'title' => '我的模板管理',
 					'url' => url('system/template'),
-					'icon' => 'wi wi-appjurisdiction',
+					'icon' => 'wi wi-template',
 					'permission_name' => 'system_template',
 				),
 			)
@@ -315,13 +315,13 @@ $we7_system_menu['system'] = array(
 				'system_setting_site' => array(
 					'title' => '站点设置',
 					'url' => url('system/site'),
-					'icon' => 'wi wi-parameter',
+					'icon' => 'wi wi-site-setting',
 					'permission_name' => 'system_setting_site',
 				),
 				'system_setting_menu' => array(
 					'title' => '菜单设置',
 					'url' => url('system/menu'),
-					'icon' => 'wi wi-parameter',
+					'icon' => 'wi wi-menu-setting',
 					'permission_name' => 'system_setting_menu',
 				),
 				'system_setting_attachment' => array(
@@ -333,7 +333,7 @@ $we7_system_menu['system'] = array(
 				'system_setting_systeminfo' => array(
 					'title' => '系统信息',
 					'url' => url('system/systeminfo'),
-					'icon' => 'wi wi-parameter',
+					'icon' => 'wi wi-system-info',
 					'permission_name' => 'system_setting_systeminfo',
 				),
 				'system_setting_logs' => array(

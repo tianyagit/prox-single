@@ -179,6 +179,10 @@ if ($do == 'upgrade') {
 	} else {
 		$module['settings'] = empty($module['settings']) ? 0 : 1;
 	}
+	if ($modulename == 'we7_coupon') {
+		$module['issystem'] = 1;
+		$module['settings'] = 2;
+	}
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
 	if (!empty($module['subscribes'])) {
@@ -333,14 +337,12 @@ if ($do == 'change_receive_ban') {
 if ($do == 'save_module_info') {
 	$module_info = $_GPC['moduleinfo'];
 	if (!empty($module_info['logo'])) {
-		$image = file_get_contents ($module_info['logo']);
-		$icon = file_exists (IA_ROOT . "/addons/" . $module_info['name'] . "/icon-custom.jpg") ? 'icon-custom.jpg' : 'icon.jpg';
-		$result = file_put_contents (IA_ROOT . "/addons/" . $module_info['name']."/".$icon, $image);
+		$image = file_get_contents(parse_path($module_info['logo']));
+		$result = file_put_contents(IA_ROOT . "/addons/" . $module_info['name'] . '/icon-custom.jpg', $image);
 	}
 	if (!empty($module_info['preview'])) {
-		$image = file_get_contents($module_info['preview']);
-		$preview = file_exists(IA_ROOT."/addons/".$module_info['name']. "/preview-custom.jpg") ? 'preview-custom.jpg' : 'preview.jpg';
-		$result = file_put_contents(IA_ROOT."/addons/".$module_info['name']."/".$preview, $image);
+		$image = file_get_contents(parse_path($module_info['preview']));
+		$result = file_put_contents(IA_ROOT."/addons/".$module_info['name'] . '/preview-custom.jpg', $image);
 	}
 	unset($module_info['logo'], $module_info['preview']);
 	$data = array(

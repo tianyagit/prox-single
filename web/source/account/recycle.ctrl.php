@@ -24,9 +24,9 @@ if ($do == 'display') {
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type = 4";
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type = ".ACCOUNT_TYPE_APP_NORMAL;
 	} else {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = 1 OR b.type = 3)";
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
 	}
 	
 	$order_by = " ORDER BY a.`acid` DESC";
