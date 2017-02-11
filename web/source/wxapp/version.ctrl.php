@@ -140,10 +140,13 @@ if ($do == 'download') {
 			'siteroot'=> $_W['siteroot'] . 'app/index.php',
 		),
 		'tabBar' => json_decode($version_info['quickmenu'], true),
-
 	);
-	$arr = wxapp_getpackage($package);
-	echo "<pre>";
-	print_r($arr);
-	echo "</pre>";
+	$result = wxapp_getpackage($package);
+	if (is_error($result)) {
+		message($result['message'], '', 'error');
+	}
+	header('content-type: application/zip');
+	header('content-disposition: attachment; filename="'.$package['name'].'v'.$version_info['version'].'.zip"');
+	echo $result;
+	exit;
 }
