@@ -16,145 +16,14 @@
 		<a href="{php echo url('profile/notify')}">邮件通知参数</a>
 	</li>
 	<li{if $do == 'uc_setting'} class="active"{/if}>
-		<a href="{php echo url('profile/passport/uc_setting')}">uc站点整合</a>
+	<a href="{php echo url('profile/passport/uc_setting')}">uc站点整合</a>
 	</li>
 	<li{if $do == 'upload_file'} class="active"{/if}>
 	<a href="{php echo url('profile/passport/upload_file')}">上传js接口文件</a>
 	</li>
 </ul>
 
-{if $do == 'oauth'}
-
-<div id="js-profile-passport" ng-controller="oauthCtrl" ng-cloak>
-	<table class="table we7-table table-hover table-form">
-		<col width="140px " />
-		<col />
-		<col width="100px" />
-		<tr>
-			<th class="text-left" colspan="3">公众平台oAuth设置</th>
-		</tr>
-		<tr>
-			<td class="text-left">
-				选择公众号
-			</td>
-			<td class="text-left">
-				{{ oauthtitle }}
-			</td>
-			<td class="text-left ">
-				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#oauth">修改</a>
-			</td>
-		</tr>
-		<tr>
-			<td class="text-left">
-				oAuth独立域名
-			</td>
-			<td class="text-left">
-				{{ originalHost }}
-			</td>
-			<td class="text-left">
-				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#host">修改</a>
-			</td>
-		</tr>
-	</table>
-	<div class="modal fade" id="oauth" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="we7-modal-dialog modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<div class="modal-title">选择公众号</div>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<select ng-model="oauthAccount" class="we7-select">
-							<option value="" ng-selected="oauthAccount == ''">请选择公众号</option>
-							<option value="{{ key }}" ng-selected="key == oauthAccount" ng-repeat="(key,account) in oauthAccounts track by key">{{ account }}</option>
-						</select>
-						<span class="help-block">在微信公众号请求用户网页授权之前，开发者需要先到公众平台网站的【开发者中心】<b>网页服务</b>中配置授权回调域名。<a href="http://www.we7.cc/manual/dev:v0.6:qa:mobile_redirect_url_error" target="_black" class="color-default">查看详情</a></span>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="saveOauth('oauth')">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="modal fade" id="host" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="we7-modal-dialog modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<div class="modal-title">oAuth独立域名</div>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<input type="text"  name="host" ng-model="oauthHost" class="form-control" placeholder="oAuth独立域名">
-						<span class="help-block">适用于您的微站或是活动有多个域名的情况下，由此域名做统一的oauth授权用。例如：http://www.baidu.com 注意：结尾没有 / </span>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="saveOauth('oauth')">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="recover()">取消</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<table class="table we7-table table-hover table-form">
-		<col width="140px " />
-		<col />
-		<col width="100px" />
-		<tr>
-			<th class="text-left" colspan="3">借用 JS 分享设置</th>
-		</tr>
-		<tr>
-			<td class="text-left">
-				选择公众号
-			</td>
-			<td class="text-left">
-				{{ jsOauthtitle }}
-			</td>
-			<td class="text-left ">
-				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#jsauth_acid">修改</a>
-			</td>
-		</tr>
-	</table>
-	<div class="modal fade" id="jsauth_acid" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="we7-modal-dialog modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<div class="modal-title">选择公众号</div>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<select name="jsauth_acid" ng-model="jsOauthAccount" class="we7-select">
-							<option value="{{ key }}" ng-repeat="(key,account) in jsOauthAccounts track by key">{{ account }}</option>
-						</select>
-						<span class="help-block">在系统中使用微信分享接口前，开发者需要先到公众平台网站的【公众号设置】 / 【功能设置】中配置 【JS 接口安全域名】。<a href="http://www.we7.cc/manual/dev:v0.6:qa:jsauth" target="_black">查看详情</a></span>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="saveOauth('jsoauth')">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<script>
-	angular.module('profileApp').value('config', {
-		'oauthAccount' : "{$oauth['account']}",
-		'oauthHost' : "{$oauth['host']}",
-		'jsOauth' : "{$jsoauth}",
-		'oauthAccounts' : {php echo json_encode($oauth_accounts)},
-		'jsOauthAccounts' : {php echo json_encode($jsoauth_accounts)},
-		'oauth_url' : "{php echo url('profile/passport/save_oauth')}",
-		'get_setting_url' : "{php echo url('profile/passport/get_setting')}"
-	});
-	angular.bootstrap($('#js-profile-passport'), ['profileApp']);
-</script>
-
-{elseif $do == 'uc_setting'}
+{if $do == 'uc_setting'}
 
 <div class="main js-profile-uc" ng-controller="ucCtrl">
 	<form id="form1" action="{php echo url('profile/passport/uc_setting')}" method="post" class="we7-form form ng-cloak" >
@@ -173,12 +42,12 @@
 				<div class="form-group">
 					<label class="col-xs-12 col-sm-3 col-md-2 control-label">启用UC</label>
 					<div class="col-sm-8">
-							
+
 						<label class="radio-inline">
 							<input type="radio" id="status1" name="status" ng-model="uc.status" value="1"/>
-						开启
+							开启
 						</label>
-							
+
 						<label class="radio-inline">
 							<input type="radio" id="status0" name="status" ng-model="uc.status" value="0"/>
 							关闭
@@ -232,7 +101,7 @@
 								<input type="radio" name="connect" ng-model="uc.connect" value="mysql"/>
 								MYSQL方式
 							</label>
-							
+
 							<label class="radio-inline">
 								<input type="radio" name="connect" ng-model="uc.connect" value="http"/>
 								远程方式HTTP
@@ -279,14 +148,14 @@
 						<div class="form-group">
 							<label class="col-xs-12 col-sm-3 col-md-2 control-label">是否持久连接</label>
 							<div class="col-sm-8 col-xs-12">
-									
+
 								<label class="radio-inline">
 									<input type="radio" name="dbconnect" value="1" ng-model="uc.dbconnect"/>
-								是
+									是
 								</label>
 								<label class="radio-inline">
 									<input type="radio" name="dbconnect" value="0" ng-model="uc.dbconnect"/>
-								否
+									否
 								</label>
 							</div>
 						</div>
@@ -325,21 +194,21 @@
 {elseif $do == 'upload_file'}
 <div class="main" >
 	<form id="form21" action="{php echo url('profile/common/upload_file')}" method="post" class="we7-form form" enctype="multipart/form-data">
-			<div class="panel-body">
-				<div class="alert alert-info">
-					<p>
-						设置JS接口安全域名，需要上传的文件。 <br />
-					</p>
-				</div>
-				<div class="form-group">
-					<label class="col-xs-12 col-sm-3 col-md-2 control-label">上传文件</label>
-					<div class="col-sm-8">
-						<input type="file" name="file" value="">
-					</div>
-				</div>
-				<input type="hidden" name="token" value="{$_W['token']}" />
-				<input type="submit" class="btn btn-primary" name="submit" value="上传" />
+		<div class="panel-body">
+			<div class="alert alert-info">
+				<p>
+					设置JS接口安全域名，需要上传的文件。 <br />
+				</p>
 			</div>
+			<div class="form-group">
+				<label class="col-xs-12 col-sm-3 col-md-2 control-label">上传文件</label>
+				<div class="col-sm-8">
+					<input type="file" name="file" value="">
+				</div>
+			</div>
+			<input type="hidden" name="token" value="{$_W['token']}" />
+			<input type="submit" class="btn btn-primary" name="submit" value="上传" />
+		</div>
 	</form>
 </div>
 {/if}
