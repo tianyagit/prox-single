@@ -16,17 +16,16 @@
 		<a href="{php echo url('profile/notify')}">邮件通知参数</a>
 	</li>
 	<li{if $do == 'uc_setting'} class="active"{/if}>
-	<a href="{php echo url('profile/passport/uc_setting')}">uc站点整合</a>
+	<a href="{php echo url('profile/common/uc_setting')}">uc站点整合</a>
 	</li>
 	<li{if $do == 'upload_file'} class="active"{/if}>
-	<a href="{php echo url('profile/passport/upload_file')}">上传js接口文件</a>
+	<a href="{php echo url('profile/common/upload_file')}">上传js接口文件</a>
 	</li>
 </ul>
 
 {if $do == 'uc_setting'}
-
 <div class="main js-profile-uc" ng-controller="ucCtrl">
-	<form id="form1" action="{php echo url('profile/passport/uc_setting')}" method="post" class="we7-form form ng-cloak" >
+	<form id="form1" action="{php echo url('profile/common/uc_setting')}" method="post" class="we7-form form ng-cloak" >
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				设置UC参数
