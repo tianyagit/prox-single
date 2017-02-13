@@ -333,7 +333,7 @@ function cache_build_uninstalled_module() {
 			'uninstall_count' => count($uninstallModules['uninstalled'])
 		);
 		cache_write('we7:module:all_uninstall', $cache);
-		return $uninstallModules;
+		return $cache;
 	} else {
 		return array();
 	}

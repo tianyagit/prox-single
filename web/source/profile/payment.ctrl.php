@@ -51,23 +51,27 @@ if ($do == 'save_setting') {
 	if ($type == 'credit' || $type == 'delivery') {
 		$param['switch'] = $param['switch'] == 'false' ? true : false;
 	}
+	if ($type == 'alipay' || $type == 'wechat_facilitator' || $type == 'baifubao' || $type == 'line') {
+		$param['switch'] = $param['switch'] == 'true' ? true : false;
+	}
 	if ($type == 'wechat') {
 		$param['account'] = $_W['acid'];
 	}
 	if ($type == 'unionpay') {
+		$unionpay = $_GPC['unionpay'];
 		if ($unionpay['switch'] && empty($_FILES['unionpay']['tmp_name']['signcertpath']) && !file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx')) {
-			message('请上联银商户私钥证书.');
+			message('请上联银商户私钥证书.', referer(), 'error');
 		}
 		$param = array(
-			'switch' => $_GPC['unionpay']['switch'] == 'false'? false : true,
-			'merid' => $_GPC['unionpay']['merid'],
-			'signcertpwd' => $_GPC['unionpay']['signcertpwd']
+			'switch' => $unionpay['switch'] == 'false'? false : true,
+			'merid' => $unionpay['merid'],
+			'signcertpwd' => $unionpay['signcertpwd']
 		);
 		if($param['switch'] && (empty($param['merid']) || empty($param['signcertpwd']))) {
-			message('请输入完整的银联支付接口信息.');
+			message('请输入完整的银联支付接口信息.', referer(), 'error');
 		}
 		if ($param['switch'] && empty($_FILES['unionpay']['tmp_name']['signcertpath']) && !file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx')) {
-			message('请上传银联商户私钥证书.');
+			message('请上传银联商户私钥证书.', referer(), 'error');
 		}
 		if ($param['switch'] && !empty($_FILES['unionpay']['tmp_name']['signcertpath'])) {
 			load()->func('file');
@@ -112,25 +116,27 @@ MFF/yA==
 	message(error(0), '', 'ajax');
 }
 
-$setting = uni_setting_load('payment', $_W['uniacid']);
-$pay_setting = $setting['payment'];
-if(!is_array($pay_setting) || empty($pay_setting)) {
-	$pay_setting = array(
-		'delivery' => array('switch' => false),
-		'credit' => array('switch' => false),
-		'alipay' => array('switch' => false, 'account' => '', 'partner' => '', 'secret' => ''),
-		'wechat' => array('switch' => false, 'account' => '', 'signkey' => '', 'partner' => '', 'key' => '', 'version' => '', 'mchid' => '', 'apikey' => '', 'service' => '', 'borrow' => '', 'sub_mch_id' => ''),
-		'wechat_facilitator' => array('switch' => false, 'mchid' => '', 'signkey' => ''),
-		'unionpay' => array('switch' => false, 'signcertpwd' => '', 'merid' => ''),
-		'baifubao' => array('switch' => false, 'signkey' => '', 'mchid' => ''),
-		'line' => array('switch' => false, 'message' => ''),
-	);
+if ($do == 'display') {
+	$setting = uni_setting_load('payment', $_W['uniacid']);
+	$pay_setting = $setting['payment'];
+	if(!is_array($pay_setting) || empty($pay_setting)) {
+		$pay_setting = array(
+			'delivery' => array('switch' => false),
+			'credit' => array('switch' => false),
+			'alipay' => array('switch' => false, 'account' => '', 'partner' => '', 'secret' => ''),
+			'wechat' => array('switch' => false, 'account' => '', 'signkey' => '', 'partner' => '', 'key' => '', 'version' => '', 'mchid' => '', 'apikey' => '', 'service' => '', 'borrow' => '', 'sub_mch_id' => ''),
+			'wechat_facilitator' => array('switch' => false, 'mchid' => '', 'signkey' => ''),
+			'unionpay' => array('switch' => false, 'signcertpwd' => '', 'merid' => ''),
+			'baifubao' => array('switch' => false, 'signkey' => '', 'mchid' => ''),
+			'line' => array('switch' => false, 'message' => ''),
+		);
+	}
+	if (empty($_W['isfounder'])) {
+		$user_account_list = pdo_getall('uni_account_users', array('uid' => $_W['uid']), array(), 'uniacid');
+		$param['uniacid'] = array_keys($user_account_list);
+	}
+	$accounts = array();
+	$accounts[$_W['acid']] = array_elements(array('name', 'acid', 'key', 'secret', 'level'), $_W['account']);
+	$pay_setting['unionpay']['signcertexists'] = file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx');
 }
-if (empty($_W['isfounder'])) {
-	$user_account_list = pdo_getall('uni_account_users', array('uid' => $_W['uid']), array(), 'uniacid');
-	$param['uniacid'] = array_keys($user_account_list);
-}
-$accounts = array();
-$accounts[$_W['acid']] = array_elements(array('name', 'acid', 'key', 'secret', 'level'), $_W['account']);
-$pay_setting['unionpay']['signcertexists'] = file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx');
 template('profile/payment');

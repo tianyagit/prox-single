@@ -38,7 +38,19 @@
 			<col width="400px"/>
 			<col width="230px" />
 			<tr>
-				<th colspan="2" class="text-left">应用名</th>
+				<th colspan="2" class="text-left">
+					<div class="dropdown dropdown-toggle we7-dropdown">
+						<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							应用名
+							<span class="caret">
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="dLabel">
+							<li><a href="" class="active">应用名</a></li>
+							<li ng-click="selectType(2)"><a href="" class="active">应用名</a></li>
+							<li ng-click="selectType(3)"><a href="" class="active">应用名</a></li>
+						</ul>
+					</div>
+				</th>
 				<!--<th>公众号</th>-->
 				<!--<th>数量</th>-->
 				<th class="text-left">操作</th>
@@ -507,9 +519,9 @@
 			'isFounder' : '{if $_W['isfounder']}1{else}2{/if}',
 			'receive_ban' : "{$receive_ban}",
 			'url' : '{php echo url('system/module/change_receive_ban')}',
-				'modulename' : '{$module_info['name']}',
-				'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
-				'saveModuleUrl' : "{php echo url('system/module/save_module_info')}"
+			'modulename' : '{$module_info['name']}',
+			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
+			'saveModuleUrl' : "{php echo url('system/module/save_module_info')}"
 	});
 	angular.bootstrap($('.js-system-module-detail'), ['moduleApp']);
 	});
