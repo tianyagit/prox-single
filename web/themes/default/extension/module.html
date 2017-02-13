@@ -231,10 +231,6 @@
 					$('.upgrade-label').each(function() {
 						var n = $(this).attr('module');
 						var v = $(this).attr('version');
-						if (n == 'ewei_hotel')
-						{
-							alert('')
-						}
 						if ($.inArray(n, sys) > -1) {
 							$('.hide-form[id="' + n + '"]').html('<span class="label label-primary">来自系统安装</span>').show();
 						} else if ($.inArray(n, modules.pirate_apps) > -1) {

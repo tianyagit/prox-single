@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('app');
 load()->func('tpl');
 load()->model('user');
+load()->model('module');
 
 $dos = array('display', 'credits', 'address', 'card', 'mycard', 'record', 
 			'mobile', 'email', 'card_qrcode', 
@@ -346,12 +347,16 @@ if ($do == 'binding_account') {
 					pdo_update('mc_members', $profile_update, array('uid' => $member['uid'], 'uniacid' => $_W['uniacid']));
 					pdo_delete('mc_members', array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
 					//转换各种券的信息
-					pdo_update('coupon_record', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
-					pdo_update('activity_exchange_trades', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
-					pdo_update('activity_exchange_trades_shipping', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
+					$we7_coupon_info = module_fetch('we7_coupon');
+					if (!empty($we7_coupon_info)) {
+						pdo_update('coupon_record', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
+						pdo_update('mc_card_members', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
+						pdo_update('activity_exchange_trades', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
+						pdo_update('activity_exchange_trades_shipping', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
+					}
 					//积分变更日志信息
 					pdo_update('mc_credits_record', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
-					pdo_update('mc_card_members', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
+					
 				}
 				message('绑定已有账号成功', url('mc/home'), 'success');
 			}
