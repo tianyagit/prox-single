@@ -315,9 +315,11 @@ function module_count_unistalled_module() {
 	load()->model('cache');
 	$uninstall_module_num = cache_load('we7:module:all_uninstall');
 	if (empty($uninstall_module_num)) {
-		$uninstall_module_num = module_get_all_unistalled('uninstalled');
+		$uninstall_module = module_get_all_unistalled('uninstalled');
+		return count($uninstall_module);
+	} else {
+		return $uninstall_module_num['uninstall_count'];
 	}
-	return $uninstall_module_num['uninstall_count'];
 }
 
 /**
