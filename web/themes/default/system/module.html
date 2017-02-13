@@ -507,9 +507,9 @@
 			'isFounder' : '{if $_W['isfounder']}1{else}2{/if}',
 			'receive_ban' : "{$receive_ban}",
 			'url' : '{php echo url('system/module/change_receive_ban')}',
-				'modulename' : '{$module_info['name']}',
-				'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
-				'saveModuleUrl' : "{php echo url('system/module/save_module_info')}"
+			'modulename' : '{$module_info['name']}',
+			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
+			'saveModuleUrl' : "{php echo url('system/module/save_module_info')}"
 	});
 	angular.bootstrap($('.js-system-module-detail'), ['moduleApp']);
 	});
