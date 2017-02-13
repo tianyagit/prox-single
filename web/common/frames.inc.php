@@ -278,6 +278,12 @@ $we7_system_menu['system'] = array(
 					'icon' => 'wi wi-registersite',
 					'permission_name' => 'system_cloud_register',
 				),
+				'system_cloud_diagnose' => array(
+					'title' => '云服务诊断',
+					'url' => url('cloud/diagnose'),
+					'icon' => 'wi wi-diagnose',
+					'permission_name' => 'system_cloud_diagnose',
+				),
 				'system_cloud_sms' => array(
 					'title' => '短信管理',
 					'url' => url('cloud/sms'),
