@@ -45,10 +45,10 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 			$('.checkMedia').removeClass('checkedMedia');
 			var $content = $this.modalobj.find('.material-content #' + type);
 			$content.html('<div class="info text-center"><i class="fa fa-spinner fa-pulse fa-lg"></i> 数据加载中</div>');
-
+			
 			if(type == 'basic') {
 				var Dialog = type + 'Dialog';
-				$this.modalobj.find('#btn-select').show();
+				$this.modalobj.find('#material-footer').show();
 				$content.html(_.template($this.buildHtml()[Dialog]));
 				$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
 					var attachment = [];
@@ -60,7 +60,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 			}
 			if(type == 'music') {
 				var Dialog = type + 'Dialog';
-				$this.modalobj.find('#btn-select').show();
+				$this.modalobj.find('#material-footer').show();
 				$content.html(_.template($this.buildHtml()[Dialog]));
 				$this.modalobj.find('.modal-footer .btn-primary').unbind('click').click(function(){
 					var attachment = [];
@@ -88,7 +88,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				data = data.message;
 				$this.modalobj.find('#material-list-pager').html('');
 				if(!_.isEmpty(data.items)) {
-					$this.modalobj.find('#btn-select').show();
+					//$this.modalobj.find('#btn-select').show();
 					$content.data('attachment', data.items);
 					$content.empty();
 					var Dialog = type + 'Dialog';
@@ -266,8 +266,8 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'				<nav id="material-list-pager" class="text-right we7-margin-top">\n' +
 				'				</nav>\n' +
 				'			</div>\n' +
-				'			<div class="modal-footer">\n' +
-				'				<div id="btn-select" style=" display: none">\n' +
+				'			<div class="modal-footer" id="material-footer" style="display: none">\n' +
+				'				<div id="btn-select">\n' +
 				'					<span class="btn btn-default" data-dismiss="modal">取消</span>\n' +
 				'					<span class="btn btn-primary">确认</span>\n' +
 				'				</div>\n' +
