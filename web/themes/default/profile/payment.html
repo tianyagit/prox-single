@@ -263,9 +263,9 @@
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">接口类型</label>
 								<div class="form-controls col-sm-10">
-									<input id='radio-15' type="radio" name='r-group-22222' ng-checked='paysetting.wechat.version == 1'  value="1" ng-click="changeVersion(1)"/>
+									<input id='radio-15' type="radio" name='paysetting[wechat][version]' ng-checked='paysetting.wechat.version == 1'  value="1" ng-click="changeVersion(1)"/>
 									<label for="radio-15">旧版  </label>
-									<input id='radio-25' type="radio" name='r-group-22222' ng-checked='paysetting.wechat.version == 2' value="2" ng-click="changeVersion(2)"/>
+									<input id='radio-25' type="radio" name='paysetting[wechat][version]' ng-checked='paysetting.wechat.version == 2' value="2" ng-click="changeVersion(2)"/>
 									<label for="radio-25">新版(2014年9月之后申请的)  </label>
 									<span class="help-block">由于微信支付接口调整，需要根据申请时间来区分支付接口</span>
 								</div>
