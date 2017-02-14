@@ -508,9 +508,9 @@
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">百度钱包支付</label>
 							<div class="form-controls col-sm-10">
-								<input id='radio-1223' type="radio" name='r-group-1' ng-checked='paysetting.baifubao.switch === true' ng-click="changeSwitch('baifubao', true)"/>
+								<input id='radio-1223' type="radio" name='paysetting[baifubao][switch]' ng-checked='paysetting.baifubao.switch === true' ng-click="changeSwitch('baifubao', true)"/>
 								<label for="radio-1223">开启 </label>
-								<input id='radio-21212' type="radio" name='r-group-1'  ng-checked='paysetting.baifubao.switch === false' ng-click="changeSwitch('baifubao', false)" />
+								<input id='radio-21212' type="radio" name='paysetting[baifubao][switch]'  ng-checked='paysetting.baifubao.switch === false' ng-click="changeSwitch('baifubao', false)" />
 								<label for="radio-21212">关闭 </label>
 								<span class="help-block">是否使用百度钱包支付</span>
 							</div>
@@ -550,9 +550,9 @@
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">汇款支付</label>
 							<div class="form-controls col-sm-10">
-								<input id='radio-166' type="radio" name='r-group-11212' ng-checked='paysetting.line.switch === true' ng-click="changeSwitch('line', true)" />
+								<input id='radio-166' type="radio" name='paysetting[line][switch]' ng-checked='paysetting.line.switch === true' ng-click="changeSwitch('line', true)" />
 								<label for="radio-166">开启 </label>
-								<input id='radio-2667' type="radio" name='r-group-11212' ng-checked='paysetting.line.switch === false' ng-click="changeSwitch('line', false)"/>
+								<input id='radio-2667' type="radio" name='paysetting[line][switch]' ng-checked='paysetting.line.switch === false' ng-click="changeSwitch('line', false)"/>
 								<label for="radio-2667">关闭 </label>
 								<span class="help-block">是否支持线下汇款方式支付</span>
 							</div>
