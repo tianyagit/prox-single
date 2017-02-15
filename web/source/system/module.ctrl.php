@@ -23,6 +23,7 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NA
 
 if ($do == 'get_upgrade_info') {
 	$module_name = trim($_GPC['name']);
+	$module_info = module_fetch($module_name);
 	$cloud_m_upgrade_info = cloud_m_upgradeinfo($module_name);
 	$module = array(
 		'version' => $cloud_m_upgrade_info['version'],
@@ -31,8 +32,8 @@ if ($do == 'get_upgrade_info') {
 		'site_branch' => $cloud_m_upgrade_info['branches'][$cloud_m_upgrade_info['version']['branch_id']],
 		'from' => 'cloud'
 	);
-	if (ver_compare($module['site_branch']['version']['version'], $module['branches'][$module['site_branch']['version']['version']]['version']['version']) != -1) {
-		unset($module['branches'][$module['site_branch']['version']['version']]);
+	if (ver_compare($module_info['version'], $module['site_branch']['version']['version']) != '-1') {
+		unset($module['branches'][$module['site_branch']['id']]);
 	}
 	message(error(0, $module), '', 'ajax');
 }
@@ -68,7 +69,9 @@ if ($do == 'check_upgrade') {
 				$cloud_m_info = $cloud_m_query_module[$module['name']];
 				$site_branch = $cloud_m_info['site_branch']['id'];
 				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
-				$best_branch = current($cloud_m_info['branches']);
+				$branch_id_list = array_keys($cloud_m_info['branches']);
+				$best_branch_id = max($branch_id_list);
+				$best_branch = $cloud_m_info['branches'][$best_branch_id];
 				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['branch'] < $best_branch['id'] && !empty($cloud_m_info['version']))) {
 					$module['upgrade'] = true;
 				} else {
@@ -432,18 +435,18 @@ if ($do == 'module_detail') {
 	$pageindex = max(1, $_GPC['page']);
 	$pagesize = 20;
 	$use_module_account = array();
-/*	$uniaccount_list = pdo_getall('uni_account');
-	if (!empty($uniaccount_list)) {
-		foreach($uniaccount_list as $uniaccount) {
-			$uniaccount_have_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid']), array(), 'module');
-			$uniaccount_have_module = array_keys($uniaccount_have_module);
-			if (in_array($module_info['name'], $uniaccount_have_module)) {
-				$uniaccount_info = account_fetch($uniaccount['default_acid']);
-				$use_module_account[] = $uniaccount_info;
+	/*	$uniaccount_list = pdo_getall('uni_account');
+		if (!empty($uniaccount_list)) {
+			foreach($uniaccount_list as $uniaccount) {
+				$uniaccount_have_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid']), array(), 'module');
+				$uniaccount_have_module = array_keys($uniaccount_have_module);
+				if (in_array($module_info['name'], $uniaccount_have_module)) {
+					$uniaccount_info = account_fetch($uniaccount['default_acid']);
+					$use_module_account[] = $uniaccount_info;
+				}
 			}
 		}
-	}
-*/
+	*/
 	$total = count($use_module_account);
 	$use_module_account = array_slice($use_module_account, ($pageindex - 1) * $pagesize, $pagesize);
 	$pager = pagination($total, $pageindex, $pagesize);
