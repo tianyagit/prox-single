@@ -11,7 +11,6 @@ load()->model('cloud');
 load()->model('cache');
 load()->model('module');
 load()->model('account');
-
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
 $dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
@@ -276,6 +275,8 @@ if ($do =='install') {
 	if (!empty($module_info['version']['cloud_setting'])) {
 		$module['settings'] = 2;
 	}
+	$pinyin = new Pinyin_Pinyin();
+	$module['title_initial'] = $pinyin->get_first_char($module['title']);
 	if (pdo_insert('modules', $module)) {
 		if (strexists($manifest['install'], '.php')) {
 			if (file_exists($module_path . $manifest['install'])) {
