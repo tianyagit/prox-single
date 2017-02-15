@@ -1,9 +1,9 @@
 {template 'common/header'}
 <div class="we7-page-title">小程序管理</div>
 <ul class="we7-page-tab">
-	<li class="active"><a href="{php echo url ('account/manage', array('type' => 'wxapp'))}">小程序列表</a></li>
+	<li class="active"><a href="{php echo url ('account/manage', array('account_type' => '4'))}">小程序列表</a></li>
 	{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
-	<li><a href="{php echo url ('account/recycle', array('type' => 'wxapp'))}">小程序回收站</a></li>
+	<li><a href="{php echo url ('account/recycle', array('account_type' => '4'))}">小程序回收站</a></li>
 	{/if}
 </ul>
 <div class="clearfix we7-margin-bottom">
@@ -19,7 +19,7 @@
 	<form action="" class="form-inline  pull-left" method="get">
 		<input type="hidden" name="c" value="account">
 		<input type="hidden" name="a" value="manage">
-		<input type="hidden" name="type" value="wxapp">
+		<input type="hidden" name="account_type" value="4">
 		<div class="input-group form-group" style="width: 400px;">
 			<input type="text" name="keyword" value="{$_GPC['keyword']}" class="form-control" placeholder="搜索关键字"/>
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
@@ -27,7 +27,7 @@
 	</form>
 	{if !empty($account_info['uniacid_limit']) || $_W['isfounder']}
 	<div class="pull-right">
-		<a href="{php echo url('account/post-step', array('step' => '2', 'type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-primary we7-padding-horizontal">添加小程序</a>
+		<a href="{php echo url('wxapp/post')}" class="btn btn-primary we7-padding-horizontal">添加小程序</a>
 	</div>
 	{/if}
 </div>
@@ -71,13 +71,13 @@
 	$(function(){
 		$('[data-toggle="tooltip"]').tooltip();
 	});
-	switch_url = "{php echo url('wxapp/account/switch')}";
+	switch_url = "{php echo url('wxapp/display/switch')}";
 	angular.module('accountApp').value('config', {
 		lists: {php echo !empty($list) ? json_encode($list) : 'null'},
 		links: {
 			switch: switch_url,
 			post: "{php echo url('account/post', array('account_type' => ACCOUNT_TYPE_APP_NORMAL))}",
-			del: "{php echo url('account/manage/delete', array('type' => ACCOUNT_TYPE_APP_NORMAL))}",
+			del: "{php echo url('account/manage/delete', array('account_type' => ACCOUNT_TYPE_APP_NORMAL))}",
 		}
 	});
 	angular.bootstrap($('#js-system-account-display'), ['accountApp']);

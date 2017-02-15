@@ -113,19 +113,19 @@ $we7_system_menu['account'] = array(
 				'profile' => array(
 					'title' => '参数配置',
 					'url' => url('profile/payment'),
-					'icon' => 'wi wi-parameter',
+					'icon' => 'wi wi-parameter-stting',
 					'permission_name' => 'profile_setting',
 				)
 			),
 		),
 	),
 );
-
-// $we7_system_menu['wxapp'] = array(
-// 	'title' => '小程序',
-// 	'section' => array(
-// 	),
-// );
+$we7_system_menu['wxapp'] = array(
+	'title' => '小程序',
+	'url' => url('wxapp/display/home'),
+	'section' => array(
+	),
+);
 
 $we7_system_menu['system'] = array(
 	'title' => '系统管理',
@@ -136,7 +136,7 @@ $we7_system_menu['system'] = array(
 			'menu' => array(
 				'system_account' => array(
 					'title' => ' 微信公众号管理',
-					'url' => url('account/manage', array('type' => '')),
+					'url' => url('account/manage', array('account_type' => '')),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_account',
 					'sub_permission' => array(
@@ -174,8 +174,8 @@ $we7_system_menu['system'] = array(
 				),
 				'system_wxapp' => array(
 					'title' => '微信小程序管理',
-					'url' => url('account/manage', array('type' => 'wxapp')),
-					'icon' => 'wi wi-wechat',
+					'url' => url('account/manage', array('account_type' => '4')),
+					'icon' => 'wi wi-small-routine',
 					'permission_name' => 'system_wxapp',
 				),
 			)
@@ -198,7 +198,7 @@ $we7_system_menu['system'] = array(
 				'system_template' => array(
 					'title' => '我的模板管理',
 					'url' => url('system/template'),
-					'icon' => 'wi wi-appjurisdiction',
+					'icon' => 'wi wi-template',
 					'permission_name' => 'system_template',
 				),
 			)
@@ -278,6 +278,12 @@ $we7_system_menu['system'] = array(
 					'icon' => 'wi wi-registersite',
 					'permission_name' => 'system_cloud_register',
 				),
+				'system_cloud_diagnose' => array(
+					'title' => '云服务诊断',
+					'url' => url('cloud/diagnose'),
+					'icon' => 'wi wi-diagnose',
+					'permission_name' => 'system_cloud_diagnose',
+				),
 				'system_cloud_sms' => array(
 					'title' => '短信管理',
 					'url' => url('cloud/sms'),
@@ -315,13 +321,13 @@ $we7_system_menu['system'] = array(
 				'system_setting_site' => array(
 					'title' => '站点设置',
 					'url' => url('system/site'),
-					'icon' => 'wi wi-parameter',
+					'icon' => 'wi wi-site-setting',
 					'permission_name' => 'system_setting_site',
 				),
 				'system_setting_menu' => array(
 					'title' => '菜单设置',
 					'url' => url('system/menu'),
-					'icon' => 'wi wi-parameter',
+					'icon' => 'wi wi-menu-setting',
 					'permission_name' => 'system_setting_menu',
 				),
 				'system_setting_attachment' => array(
@@ -333,7 +339,7 @@ $we7_system_menu['system'] = array(
 				'system_setting_systeminfo' => array(
 					'title' => '系统信息',
 					'url' => url('system/systeminfo'),
-					'icon' => 'wi wi-parameter',
+					'icon' => 'wi wi-system-info',
 					'permission_name' => 'system_setting_systeminfo',
 				),
 				'system_setting_logs' => array(

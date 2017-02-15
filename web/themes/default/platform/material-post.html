@@ -1,12 +1,12 @@
 {template 'common/header'}
 {php load()->func('tpl')}
 {php echo tpl_ueditor('', '', array('allow_upload_video' => false));}
-<div class="main" ng-module="materialApp" ng-controller="materialAdd" id="main" ng-cloak>
+<div class="" ng-module="materialApp" ng-controller="materialAdd" id="main" ng-cloak>
 	<div class="container">
 		<div class="penel we7-panel panel-special">
 			<div class="panel-heading">
 				<ol class="breadcrumb we7-breadcrumb">
-					<a href="{php echo url('platform/material')}"><i class="wi wi-back-cricle"></i> </a>
+					<a href="{php echo url('platform/material')}"><i class="wi wi-back-circle"></i> </a>
 					<li>
 						<a href="{php echo url('platform/material')}">素材库</a>
 					</li>
@@ -34,7 +34,7 @@
 											<div class="appmsg-edit-mask">
 												<a onclick="return false;" class="sort-up" href="javascript:;" ng-click="changeOrder('up', $index)" data-toggle="tooltip" data-placement="bottom" title="上移" ng-if="$index != 0"><i class="wi wi-stick-sign"></i></a>
 												<a onclick="return false;" class="sort-down" href="javascript:;" ng-click="changeOrder('down', $index)" data-toggle="tooltip" data-placement="bottom" title="下移" ng-if="$index != (materialList.length - 1)"><i class="wi wi-down-sign"></i></a>
-												<a onclick="return false;" class="del" href="javascript:;" ng-if="$index != 0 && operate == 'add'" ng-click="deleteMaterial($index)" data-toggle="tooltip" data-placement="bottom" title="删除"><i class="wi wi-delete"></i></a>
+												<a onclick="return false;" class="del" href="javascript:;" ng-if="$index != 0 && operate == 'add'" ng-click="deleteMaterial($index)" data-toggle="tooltip" data-placement="bottom" title="删除"><i class="wi wi-delete2"></i></a>
 											</div>
 										</div>
 									</div>
@@ -67,7 +67,7 @@
 							<!-- BEGIN 原文链接 -->
 							<div class="we7-form appmsg-edit-item origin-url-area">
 								<div class="form-controls">
-									<label>图文链接</label>
+									<label>跳转链接</label>
 								</div>
 								<span class="form-control-box"><input class="form-control" name="source-url" ng-model="materialList[activeIndex].content_source_url" type="text" size="60"></span>
 							</div>
@@ -138,5 +138,6 @@
 		angular.bootstrap($('#main'), ['materialApp']);
 	});
 	$('[data-toggle="tooltip"]').tooltip();
+	ueditoroption.autoFloatEnabled = false;
 </script>
 {template 'common/footer'}

@@ -8,8 +8,11 @@
 			</form>
 			<div class="panel panel-app">
 				<div class="panel-heading">
-					<a href="javascript:;" onclick="history.go(-1)" class="go-back">
-						<</a>新建小程序
+					<ol class="breadcrumb we7-breadcrumb">
+						<a href="javascript:;" onclick="history.go(-1)" class="go-back">
+						<i class="wi wi-back-circle"></i></a>
+						<span class="font-lg">新建小程序</span>
+					</ol>
 				</div>
 				<div class="panel-body">
 					<ul class="nav nav-wxapp" role="tablist">
@@ -52,38 +55,65 @@
 					</ul>
 					<div class="wxapp-content tab-content">
 						<div id="select" ng-show="createStep == 1">
-							<div class="form-defalut">
+							<div class="form-defalut we7-form">
 								<div class="form-group">
-									<label for="" class="control-label">小程序名称</label>
-									<div class="form_controls">
-										<input type="text" name="name" value="" class="form-control wxapp-name" id="" placeholder="小程序名称">
+									<label for="" class="control-label col-sm-2">小程序名称</label>
+									<div class="form-controls col-sm-10">
+										<input type="text" name="name" value="{$wxapp_info['name']}" class="form-control wxapp-name" id="" placeholder="小程序名称">
+									</div>
+								</div>
+								{if empty($wxapp_info)}
+								<div class="form-group">
+									<label for="" class="control-label col-sm-2">小程序账号</label>
+									<div class="form-controls col-sm-10">
+										<input type="text" name="account" value="" class="form-control wxapp-name" id="" placeholder="小程序账号">
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label">版本号</label>
-									<div class="form_controls">
-										<input type="number" name="version0" min="0" max="100" value="" class="form-control wxapp-version version0">
+									<label for="" class="control-label col-sm-2">原始ID</label>
+									<div class="form-controls col-sm-10">
+										<input type="text" name="original" value="" class="form-control wxapp-name" id="" placeholder="原始ID">
 									</div>
-									<div class="form_controls">
+								</div>
+								<div class="form-group">
+									<label for="" class="control-label col-sm-2">AppId</label>
+									<div class="form-controls col-sm-10">
+										<input type="text" name="key" value="" class="form-control wxapp-name" id="" placeholder="AppId">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="" class="control-label col-sm-2">AppSecret</label>
+									<div class="form-controls col-sm-10">
+										<input type="text" name="secret" value="" class="form-control wxapp-name" id="" placeholder="AppSecret">
+									</div>
+								</div>
+								{/if}
+								<div class="form-group">
+									<label class="control-label col-sm-2">版本号</label>
+									<div class="form-controls col-sm-1">
+										<input type="number" name="version0" min="0" max="100" value="{$version_nums[0]}" {if !empty($version_nums)}disabled{/if} class="form-control wxapp-version version0">
+									</div>
+									<div class="form-controls pull-left">
 										<p class="form-control-static wxapp-version">.</p>
 									</div>
-									<div class="form_controls">
-										<input type="number" name="version1" min="0" max="100" value="" class="form-control wxapp-version version1">
+									<div class="form-controls col-sm-1">
+										<input type="number" name="version1" min="0" max="100" value="{$version_nums[1]}" {if !empty($version_nums)}disabled{/if} class="form-control wxapp-version version1">
 									</div>
-									<div class="form_controls">
+									<div class="form-controls pull-left">
 										<p class="form-control-static wxapp-version">.</p>
 									</div>
-									<div class="form_controls">
-										<input type="number" name="version2" min="0" max="100" value="" class="form-control wxapp-version version2">
+									<div class="form-controls col-sm-1">
+										<input type="number" name="version2" min="0" max="100" value="{$version_nums[2]}" {if !empty($version_nums)}disabled{/if} class="form-control wxapp-version version2">
 									</div>
-
 								</div>
 								<div class="form-group">
 									<input type="hidden" name="modules" value="">
-									<label class="control-label">添加应用</label>
-									<ul class="app-list">
-										<div we7-select-more></div>
-									</ul>
+									<label class="control-label col-sm-2">添加应用</label>
+									<div class="form-controls col-sm-10">
+										<ul class="app-list">
+											<div we7-select-more></div>
+										</ul>
+									</div>
 								</div>
 								
 							</div>
@@ -125,7 +155,7 @@
 										<i class="wi wi-select-diy"></i>
 										<p>DIY设计</p>
 									</li>
-									<li ng-click="selectType(2)">
+									<li class="ban">
 										<i class="wi wi-select-tem"></i>
 										<p>选择模板</p>
 									</li>
@@ -134,11 +164,21 @@
 										<p>直接跳转应用</p>
 									</li>
 								</ul>
-								<div class="type-footer">
-									<i class="fa fa-exclamation-circle"></i>请慎重选择，一旦选择不可更改！
-								</div>
 							</div>
 							<div ng-if="type == 2">
+								<div class="wxapp-type-cut">
+									<div class="dropdown dropdown-toggle">
+										<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											 选择模板
+										    <span class="caret"></a>
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="dLabel">
+										    <li><a href="" class="active">DIY设计</a></li>
+											<li ng-click="selectType(2)"><a href="" class="active">选择模板</a></li>
+											<li ng-click="selectType(3)"><a href="" class="active">直接跳转应用</a></li>
+										</ul>
+									</div>
+								</div>
 								<div class="wxapp-tem-preview">
 									<div class="wxapp-phone">
 										<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
@@ -197,8 +237,21 @@
 								</div>
 							</div>
 							<div class="form-group" ng-if="type == 3">
+								<div class="wxapp-type-cut">
+									<div class="dropdown dropdown-toggle">
+										<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											 直接跳转应用
+										    <span class="caret"></a>
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="dLabel">
+										    <li><a href="" class="active">DIY设计</a></li>
+											<li ng-click="selectType(2)"><a href="" class="active">选择模板</a></li>
+											<li ng-click="selectType(3)"><a href="" class="active">直接跳转应用</a></li>
+										</ul>
+									</div>
+								</div>
 								<input type="hidden" name="tomodule" value="">
-								<ul class="app-allow-list">
+								<ul class="app-allow-list" style="padding-top: 110px;">
 									<li class="select to-module" ng-click="selectHomeModule(m)" ng-repeat="m in modules">
 										<div class="app-info">
 											<img ng-src="{{m.icon}}"/>
@@ -233,34 +286,34 @@
 								</div>
 								<div class="creat-buttom-select form-defalut">
 									<div class="form-group">
-										<label for="" class="control-label">是否显示</label>
-										<div class="form_controls">
+										<label for="" class="control-label col-sm-3">是否显示</label>
+										<div class="form-controls col-sm-9">
 											<label><input name="" id="" class="form-control" type="checkbox"  style="display: none;">
 											<div class="switch" ng-class="{'switchOn': ifShowMenu}" ng-click="showMenu()"></div>
 											</label>
 										</div>
 									</div>
 									<div class="form-group buttom-bg-color">
-										<label for="" class="control-label">背景颜色</label>
-										<div class="form_controls" style="width:100px">
+										<label for="" class="control-label col-sm-3">背景颜色</label>
+										<div class="form-controls col-sm-4" >
 											<div we7-colorpicker we7-my-color="bottom.bgcolor" we7-my-default-color="bottom.bgcolor"></div>
 										</div>
 									</div>
 									<div class="form-group buttom-boundary-color">
-										<label for="" class="control-label">交界线颜色</label>
-										<div class="form_controls" style="width:100px">
+										<label for="" class="control-label col-sm-3">交界线颜色</label>
+										<div class="form-controls col-sm-4" >
 											<div we7-colorpicker we7-my-color="bottom.boundary" we7-my-default-color="bottom.boundary"></div>
 										</div>
 									</div>
 									<div class="form-group buttom-bg-color">
-										<label for="" class="control-label">文字默认颜色</label>
-										<div class="form_controls" style="width:100px">
+										<label for="" class="control-label col-sm-3">文字默认颜色</label>
+										<div class="form-controls col-sm-4" >
 											<div we7-colorpicker we7-my-color="bottom.color" we7-my-default-color="bottom.color"></div>
 										</div>
 									</div>
 									<div class="form-group buttom-bg-color">
-										<label for="" class="control-label">文字选中颜色</label>
-										<div class="form_controls" style="width:100px">
+										<label for="" class="control-label col-sm-3">文字选中颜色</label>
+										<div class="form-controls col-sm-4" >
 											<div we7-colorpicker we7-my-color="bottom.selectedColor" we7-my-default-color="bottom.selectedColor"></div>
 										</div>
 									</div>
@@ -276,7 +329,7 @@
 									</td> -->
 								</div>
 								<div class="buttom-list">
-									<table class="table-default buttom-list-table">
+									<table class="table we7-table buttom-list-table vertical-middle">
 										<col width="70" />
 										<col width="70" />
 										<col width="100" />
@@ -289,21 +342,19 @@
 											<th>跳转到</th>
 											<th>操作</th>
 										</tr>
-										<tr ng-repeat="menu in menus">
+										<tr ng-repeat="menu in menus" class="we7-form">
 											<td>
 												<div class="nav-img-box">
-													<img ng-src="{{menu.defaultImage}}" width="100%">
-													<div class="cover-dark" style="display:block">
-														<div ng-click="addDefaultImg($index)" class="select">选择</div>
-													</div>
+													<img ng-src="{{menu.defaultImage}}" >
+													<div ng-click="addDefaultImg($index)" class="select">选择</div>
+													
 												</div>
 											</td>
 											<td>
 												<div class="nav-img-box">
-													<img ng-src="{{menu.selectedImage}}" width="100%">
-													<div class="cover-dark" style="display:block">
-														<div ng-click="addSelectedImg($index)" class="select">选择</div>
-													</div>
+													<img ng-src="{{menu.selectedImage}}">
+													<div ng-click="addSelectedImg($index)" class="select">选择</div>
+													
 												</div>
 											</td>
 											<td>
@@ -319,52 +370,54 @@
 											</td>
 										</tr>
 										<tr class="buttom-more">
-											<td colspan="7"><a href="javascript:;" class="buttom-add" ng-click="addMenu()">+</a></td>
+											<td colspan="5"><a href="javascript:;" class="buttom-add" ng-click="addMenu()">+</a></td>
 										</tr>
 									</table>
 								</div>
 							</div>
 						</div>
 						<div id="finish" ng-show="createStep == 4">
-							<div class="form-defalut wxapp-finish">
+							<div class="form we7-form wxapp-finish">
 								<div class="form-group">
-									<label for="" class="control-label">小程序名称</label>
-									<div class="form_controls">
+									<label for="" class="control-label col-sm-2">小程序名称</label>
+									<div class="form-controls col-sm-10">
 										<p class="form-control-static" ng-bind="submit.name"></p>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label">版本号</label>
-									<div class="form_controls">
+									<label class="control-label col-sm-2">版本号</label>
+									<div class="form-controls col-sm-10">
 										<p class="form-control-static">V {{submit.version0}}.{{submit.version1}}.{{submit.version2}}</p>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label">打包应用</label>
-									<ul class="app-list">
-										<li class="select" ng-repeat="m in submit.modules">
-											<div class="app-info">
-												<img ng-src="{{m.icon}}" />
-												<p>{{m.title}}</p>
-											</div>
-										</li>
-									</ul>
+									<label class="control-label col-sm-2">打包应用</label>
+									<div class="form-controls col-sm-10">
+										<ul class="app-list">
+											<li class="select" ng-repeat="m in submit.modules">
+												<div class="app-info">
+													<img ng-src="{{m.icon}}" />
+													<p>{{m.title}}</p>
+												</div>
+											</li>
+										</ul>
+									</div>
 								</div>
 								<div class="form-group" ng-if="type == 2">
-									<label class="control-label">首页模板</label>
-									<div class="form_controls">
+									<label class="control-label col-sm-2">首页模板</label>
+									<div class="form-controls col-sm-10">
 										<p class="form-control-static" ng-bind="submit.template"></p>
 									</div>
 								</div>
 								<div class="form-group" ng-if="type == 3">
-									<label class="control-label">首页跳转应用</label>
-									<div class="form_controls">
+									<label class="control-label col-sm-2">首页跳转应用</label>
+									<div class="form-controls col-sm-10">
 										<p class="form-control-static" ng-bind="submit.tomodule.title"></p>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="control-label">底部菜单</label>
-									<div class="form_controls">	
+									<label class="control-label col-sm-2">底部菜单</label>
+									<div class="form-controls col-sm-10">	
 										<table class="table-finish-buttom">
 											<col width="75px"/>
 											<col width="105"/>
@@ -408,6 +461,7 @@
 
 require(['fileUploader','underscore'], function(uploader){
 	angular.module('wxApp').value('config', {
+		'uniacid' : "{$uniacid}"
 	});
 	angular.bootstrap($('#js-wxapp-create'), ['wxApp']);
 });

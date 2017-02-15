@@ -1,8 +1,8 @@
 {template 'common/header'}
 <ol class="breadcrumb we7-breadcrumb">
-	<a href="{php echo url('account/manage', array('type' => 'wxapp'))}"><i class="wi wi-back-cricle"></i> </a>
-	<li><a href="{php echo url('account/manage', array('type' => 'wxapp'))}">小程序列表</a></li>
-	<li>新建小程序</li>
+	<a href="{php echo url('account/manage', array('type' => 'wxapp'))}"><i class="wi wi-back-circle"></i> </a>
+	<li><a href="{php echo url('account/manage', array('type' => 'wxapp'))}">小程序管理</a></li>
+	<li>小程序设置</li>
 </ol>
 <div class="media media-wechat-setting">
 	<a class="media-left">
@@ -10,7 +10,7 @@
 	</a>
 	<div class="media-body media-middle ">
 		<h4 class="media-heading color-dark">{$account['name']}</h4>
-		<span class="color-gray">{if $account['level'] == 1}类型：普通订阅号{/if}{if $account['level'] == 2}类型：普通服务号{/if}{if $account['level'] == 3}类型：认证订阅号{/if}{if $account['level'] == 4}类型：认证服务号/认证媒体/政府订阅号{/if}</span>
+		<span class="color-gray">小程序</span>
 	</div>
 	{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER}
 	<div class="media-right media-middle">
@@ -20,9 +20,10 @@
 </div>
 <div class="clearfix"></div>
 <div class="btn-group we7-btn-group wechat-edit-group">
-	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default active">基础信息</a>
-	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default">使用者管理</a>
-	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $account_type))}" class="btn btn-default">可用应用模块/模板</a>
+	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default active">基础信息</a>
+	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default">使用者管理</a>
+	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default">可用应用模块/模板</a>
+	<a href="{php echo url('account/post-version/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default">版本管理</a>
 </div>
 <div id="js-account-manage-base" ng-controller="AccountManageBase" ng-cloak>
 	{if $_W['uniaccount']['isconnect'] == 0}
@@ -237,28 +238,33 @@
 	<table class="table wechat-communication">
 		<col width="160px " />
 		<col />
-		<tr><th class="text-left" colspan="2">公众平台通信</th></tr>
+		<tr><th class="text-left" colspan="2">服务器配置</th></tr>
 		<tr>
-			<td class="table-label">URL<p>(服务器地址)</p></td>
+			<td class="table-label">request合法域名</td>
 			<td>
-				<a href="javascript:;" class="we7-padding-right" ng-bind="other.serviceUrl"></a>
-				<a href="javascript:;" id="copy-0" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.serviceUrl" on-copied="success('0')">点击复制</a>
+				<a href="javascript:;" class="we7-padding-right" ng-bind="other.siteurl"></a>
+				<a href="javascript:;" id="copy-0" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.siteurl" on-copied="success('0')">点击复制</a>
 			</td>
 		</tr>
 		<tr>
-			<td class="table-label">Token<p>(令牌)</p></td>
+			<td class="table-label">socket合法域名</td>
 			<td>
-				<a href="javascript:;" class="we7-padding-right" ng-bind="account.token"></a>
-				<a href="javascript:;" class="btn btn-primary btn-sm" ng-click="httpChange('token')">生成新的</a>
-				<a href="javascript:;" id="copy-1" class="btn btn-primary btn-sm" clipboard supported="supported" text="account.token" on-copied="success('1')">点击复制</a>
+				<a href="javascript:;" class="we7-padding-right" ng-bind="other.socket_url"></a>
+				<a href="javascript:;" id="copy-1" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.socket_url" on-copied="success('1')">点击复制</a>
 			</td>
 		</tr>
 		<tr>
-			<td class="table-label">EncodingAESKey<p>(消息加解密密钥)</p> </td>
+			<td class="table-label">uploadFile合法域名</td>
 			<td>
-				<a href="javascript:;" class="we7-padding-right" ng-bind="account.encodingaeskey"></a>
-				<a href="javascript:;" class="btn btn-primary btn-sm" ng-click="httpChange('encodingaeskey')">生成新的</a>
-				<a href="javascript:;" id="copy-2" class="btn btn-primary btn-sm" clipboard supported="supported" text="account.encodingaeskey" on-copied="success('2')">点击复制</a>
+				<a href="javascript:;" class="we7-padding-right" ng-bind="other.siteurl"></a>
+				<a href="javascript:;" id="copy-2" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.siteurl" on-copied="success('2')">点击复制</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">downloadFile合法域名</td>
+			<td>
+				<a href="javascript:;" class="we7-padding-right" ng-bind="other.siteurl"></a>
+				<a href="javascript:;" id="copy-3" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.siteurl" on-copied="success('3')">点击复制</a>
 			</td>
 		</tr>
 	</table>
@@ -272,6 +278,7 @@
 		links: {
 			basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid, 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}",
 			siteroot: "{php echo $_W['siteroot']}",
+			socket_url: "{php echo $socket_url}"
 		},
 	});
 	angular.bootstrap($('#js-account-manage-base'), ['accountApp']);

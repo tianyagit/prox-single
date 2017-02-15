@@ -24,7 +24,52 @@ class WxappAccount extends WeAccount {
 		return $response = $this->requestApi($url);
 	}
 	
-	public function error_code($code, $errmsg = '未知错误') {
+	/**
+	 * 
+	 * @param string $encryptData 待解密的数据
+	 * @param string $vi 
+	 */
+	public function pkcs7Encode($encrypt_data, $iv) {
+		require_once IA_ROOT . '/framework/library/pkcs7/pkcs7Encoder.php';
+		
+		$aes_cipher = base64_decode($encrypt_data);
+		$iv = base64_decode($iv);
+		$key = base64_decode($_SESSION['session_key']);
+		
+		$pc = new Prpcrypt($key);
+		$result = $pc->decrypt($aes_cipher, $iv);
+		
+		if ($result[0] != 0) {
+			return error($result[0], '解密失败');
+		}
+		$result = json_decode($result[1], true);
+		if (empty($result)) {
+			return error(1, '解密失败');
+		}
+		if ($result['watermark']['appid'] != $this->account['key']) {
+			return error(1, '解密失败');
+		}
+		unset($result['watermark']);
+		return $result;
+	}
+	
+	public function getJssdkConfig($url = ''){
+		return array();
+	}
+	
+	/**
+	 * 调用系统的支付功能, 只能在 Mobile 端调用
+	 * @param array $params
+	 * $params['tid'] 支付订单编号, 应保证在同一模块内部唯一
+	 * $params['title'] 商家名称
+	 * $params['fee'] 总费用, 只能大于 0
+	 * $params['user'] 付款用户, 付款的用户名(选填项)
+	 */
+	public function pay($params = array()) {
+		
+	}
+	
+	public function errorCode($code, $errmsg = '未知错误') {
 		$errors = array(
 			'-1' => '系统繁忙',
 			'0' => '请求成功',
@@ -144,17 +189,17 @@ class WxappAccount extends WeAccount {
 		$response = ihttp_request($url, $post);
 		$result = @json_decode($response['content'], true);
 		if(is_error($response)) {
-			return error($result['errcode'], "访问公众平台接口失败, 错误详情: {$this->error_code($result['errcode'])}");
+			return error($result['errcode'], "访问公众平台接口失败, 错误详情: {$this->errorCode($result['errcode'])}");
 		}
 		if(empty($result)) {
 			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
 		} elseif(!empty($result['errcode'])) {
-			return error($result['errcode'], "访问公众平台接口失败, 错误: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
+			return error($result['errcode'], "访问公众平台接口失败, 错误: {$result['errmsg']},错误详情：{$this->errorCode($result['errcode'])}");
 		}
 		return $result;
 	}
 	
-	public function result($errno, $message, $data) {
+	public function result($errno, $message = '', $data = '') {
 		exit(json_encode(array(
 			'errno' => $errno,
 			'message' => $message,

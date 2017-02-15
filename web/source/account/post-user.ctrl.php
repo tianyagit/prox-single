@@ -4,26 +4,18 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
+load()->model('module');
 load()->model('system');
 
-$dos = array('delete', 'edit', 'set_permission', 'set_manager');
+$dos = array('delete', 'edit', 'set_permission', 'set_manager', 'module');
 $do = in_array($do, $dos) ? $do : 'edit';
 
-if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
-	$account_type = ACCOUNT_TYPE_APP_NORMAL;
-	$account_typename = '小程序';
-	$template_show = '-wxapp';
-} else {
-	$account_typename = '公众号';
-}
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
-$_W['page']['title'] = '管理设置 - 微信公众号管理';
+$_W['page']['title'] = '管理设置 - 微信' . ACCOUNT_TYPE_NAME . '管理';
 if (empty($uniacid) || empty($acid)) {
 	message('请选择要编辑的公众号', referer(), 'error');
 }
-
 $state = uni_permission($_W['uid'], $uniacid);
 //只有创始人、主管理员、管理员才有权限
 if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
@@ -32,7 +24,6 @@ if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER
 $founders = explode(',', $_W['config']['setting']['founder']);
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $account = account_fetch($acid);
-
 if ($do == 'edit') {
 	$permissions = pdo_fetchall("SELECT id, uid, role FROM ".tablename('uni_account_users')." WHERE uniacid = '$uniacid' and role != :role  ORDER BY uid ASC, role DESC", array(':role' => 'clerk'), 'uid');
 	$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), array('uid', 'id'));
@@ -49,7 +40,7 @@ if ($do == 'edit') {
 	foreach ($permissions as $v) {
 		$uids[] = $v['uid'];
 	}
-	template('account/manage-users' . $template_show);
+	template('account/manage-users' . ACCOUNT_TYPE_TEMPLATE);
 } elseif ($do == 'delete') {
 	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	if (empty($uid)) {
@@ -203,4 +194,84 @@ if ($do == 'edit') {
 		message('操作菜单权限成功！', referer(), 'success');
 	}
 	template('account/set-permission');
+} elseif($do == 'module' && $_W['isajax']) {
+	$uid = intval($_GPC['uid']);
+	$user = user_single($uid);
+	if(empty($user)) {
+		message(error(1, '访问错误, 未找到指定操作用户.'), '', 'ajax');
+	}
+	$founders = explode(',', $_W['config']['setting']['founder']);
+	$isfounder = in_array($user['uid'], $founders);
+	if($isfounder) {
+		message(error(2, '访问错误, 无法编辑站长.'), '', 'ajax');
+	}
+
+	$module_name = trim($_GPC['m']);
+	$uniacid = intval($_GPC['uniacid']);
+	$uid = intval($_GPC['uid']);
+	$module = pdo_fetch('SELECT * FROM ' . tablename('modules') . ' WHERE name = :m', array(':m' => $module_name));
+	//获取模块权限
+	$purview = pdo_fetch('SELECT * FROM ' . tablename('users_permission') . ' WHERE uniacid = :aid AND uid = :uid AND type = :type', array(':aid' => $uniacid, ':uid' => $uid, ':type' => $module_name));
+	if(!empty($purview['permission'])) {
+		$purview['permission'] = explode('|', $purview['permission']);
+	} else {
+		$purview['permission'] = array();
+	}
+
+	$mineurl = array();
+	$all = 0;
+	if(!empty($mods)) {
+		foreach($mods as $mod) {
+			if($mod['url'] == 'all') {
+				$all = 1;
+				break;
+			} else {
+				$mineurl[] = $mod['url'];
+			}
+		}
+	}
+	$data = array();
+	if($module['settings']) {
+		$data[] = array('title' => '参数设置', 'permission' => $module_name.'_settings');
+	}
+	if($module['isrulefields']) {
+		$data[] = array('title' => '回复规则列表', 'permission' => $module_name.'_rule');
+	}
+	$entries = module_entries($m);
+	if(!empty($entries['home'])) {
+		$data[] = array('title' => '微站首页导航', 'permission' => $module_name.'_home');
+	}
+	if(!empty($entries['profile'])) {
+		$data[] = array('title' => '个人中心导航', 'permission' => $module_name.'_profile');
+	}
+	if(!empty($entries['shortcut'])) {
+		$data[] = array('title' => '快捷菜单', 'permission' => $module_name.'_shortcut');
+	}
+	if(!empty($entries['cover'])) {
+		foreach($entries['cover'] as $cover) {
+			$data[] = array('title' => $cover['title'], 'permission' => $module_name.'_cover_'.$cover['do']);
+		}
+	}
+	if(!empty($entries['menu'])) {
+		foreach($entries['menu'] as $menu) {
+			$data[] = array('title' => $menu['title'], 'permission' => $module_name.'_menu_'.$menu['do']);
+		}
+	}
+	unset($entries);
+	if(!empty($module['permissions'])) {
+		$module['permissions'] = (array)iunserializer($module['permissions']);
+		$data = array_merge($data, $module['permissions']);
+	}
+	foreach($data as &$data_val) {
+		$data_val['checked'] = 0;
+		if(in_array($data_val['permission'], $purview['permission']) || in_array('all', $purview['permission'])) {
+			$data_val['checked'] = 1;
+		}
+	}
+	unset($data_val);
+	if (empty($data)) {
+		message(error(3, '无子权限！'), '', 'ajax');
+	} else {
+		message(error(0, $data), '', 'ajax');
+	}
 }

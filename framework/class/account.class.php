@@ -1498,3 +1498,61 @@ abstract class WeModuleCron extends WeBase {
 		message(error($errno, $note), '', 'ajax');
 	}
 }
+
+/**
+ * 模块小程序
+ */
+abstract class WeModuleWxapp extends WeBase {
+	public $appid;
+	public $version;
+	
+	public function result($errno, $message, $data) {
+		exit(json_encode(array(
+			'errno' => $errno,
+			'message' => $message,
+			'data' => $data,
+		)));
+	}
+	
+	public function __call($name, $arguments) {
+		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/wxapp';
+		$function_name = strtolower(substr($name, 6));
+		//版本号不存在相应的目录则直接使用最新版
+		$file = "$dir/{$this->version}/{$function_name}.inc.php";
+		if (!file_exists($file)) {
+			$version_path_tree = glob("$dir/*");
+			usort($version_path_tree, function($version1, $version2) {
+				return -version_compare($version1, $version2);
+			});
+			if (!empty($version_path_tree)) {
+				foreach ($version_path_tree as $path) {
+					$file = "$path/{$function_name}.inc.php";
+					if (file_exists($file)) {
+						break;
+					}
+				}
+			}
+		}
+		if(file_exists($file)) {
+			require $file;
+			exit;
+		}
+		return null;
+	}
+	
+	public function checkSign() {
+		global $_GPC;
+		if (!empty($_GET) && !empty($_GPC['sign'])) {
+			foreach ($_GET as $key => $get_value) {
+				if (!empty($get_value) && $key != 'sign') {
+					$sign_list[$key] = $get_value;
+				}
+			}
+			ksort($sign_list);
+			$sign = http_build_query($sign_list, '', '&') . $this->token;
+			return md5($sign) == $_GPC['sign'];
+		} else {
+			return false;
+		}
+	}
+}

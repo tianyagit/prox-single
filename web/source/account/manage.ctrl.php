@@ -10,13 +10,7 @@ load()->func('file');
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
-if ($_GPC['type'] == 'wxapp') {
-	$account_type = ACCOUNT_TYPE_APP_NORMAL;
-	$account_typename = '小程序';
-	$template_show = '-wxapp';
-} else {
-	$account_typename = '公众号';
-}
+
 $_W['page']['title'] = $account_typename . '列表 - ' . $account_typename;
 //模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
 $account_info = uni_user_account_permission();
@@ -30,17 +24,17 @@ if ($do == 'display') {
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($_W['isfounder'])) {
-		if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
-			$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND (b.type = 1 OR b.type = 3)";
+		if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
+			$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type = ".ACCOUNT_TYPE_APP_NORMAL;
 		} else {
-			$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type = 4";
+			$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
 		}
 		$order_by = " ORDER BY a.`acid` DESC";
 	} else {
-		if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
-			$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND (b.type = 1 OR b.type = 3)";
+		if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
+			$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type = ".ACCOUNT_TYPE_APP_NORMAL;
 		} else {
-			$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type = 4";
+			$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
 		}
 		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
@@ -49,12 +43,12 @@ if ($do == 'display') {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-	if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
-		$tsql = "SELECT COUNT(*) FROM " . tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
-		$sql = "SELECT * FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
-	} else {
+	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$tsql = "SELECT COUNT(*) FROM " . tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
 		$sql = "SELECT * FROM ". tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
+	} else {
+		$tsql = "SELECT COUNT(*) FROM " . tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
+		$sql = "SELECT * FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	}
 	$total = pdo_fetchcolumn($tsql, $param);
 	$list = pdo_fetchall($sql, $param);
@@ -73,7 +67,7 @@ if ($do == 'display') {
 		unset($account);
 	}
 	$pager = pagination($total, $pindex, $psize);
-	template('account/manage-display' . $template_show);
+	template('account/manage-display' . ACCOUNT_TYPE_TEMPLATE);
 }
 if ($do == 'delete') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -100,19 +94,17 @@ if ($do == 'delete') {
 	
 	if (!empty($uniacid)) {
 		$account = pdo_get('uni_account', array('uniacid' => $uniacid));
-		if ($type == ACCOUNT_TYPE_APP_NORMAL) {
-			$redirect_url = url('account/manage', array('type' => 'wxapp'));
-			$account_typename = '小程序';
+		if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
+			$redirect_url = url('account/manage', array('account_type' => '4'));
 		} else {
 			$redirect_url = url('account/manage');
-			$account_typename = '公众号';
 		}
 		if (empty($account)) {
 			message('抱歉，帐号不存在或是已经被删除', $redirect_url, 'error');
 		}
 		$state = uni_permission($uid, $uniacid);
 		if($state != 'founder' && $state != 'manager') {
-			message('没有该'. $account_typename . '操作权限！', $redirect_url, 'error');
+			message('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', $redirect_url, 'error');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 		if($_GPC['uniacid'] == $_W['uniacid']) {

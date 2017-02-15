@@ -718,13 +718,8 @@ function account_create($uniacid, $account) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
-	if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-		unset($account['type']);
-		pdo_insert('account_wxapp', $account);
-	} else {
-		unset($account['type']);
-		pdo_insert('account_wechats', $account);
-	}
+	unset($account['type']);
+	pdo_insert('account_wechats', $account);
 	return $acid;
 }
 
@@ -996,7 +991,7 @@ function uni_setmeal($uniacid = 0) {
 		$user['timelimit'] = date('Y-m-d', $owner['starttime']) . ' ~ 无限制' ;
 	} else {
 		if($owner['endtime'] <= TIMESTAMP) {
-			$user['timelimit'] = ' <strong class="text-danger"> 已到期</strong>';
+			$user['timelimit'] = '已到期';
 		} else {
 			$year = 0;
 			$month = 0;
@@ -1060,6 +1055,7 @@ function uni_is_multi_acid($uniacid = 0) {
 function account_delete($acid) {
 	global $_W;
 	load()->func('file');
+	load()->model('module');
 	//判断是不是主公众号
 	$account = pdo_get('uni_account', array('default_acid' => $acid));
 	if ($account) {
@@ -1100,12 +1096,8 @@ function account_delete($acid) {
 
 		//遍历全部表删除公众号数据
 		$tables = array(
-			'account','account_wechats',
-			'activity_clerks',
-			'activity_exchange','activity_exchange_trades','activity_exchange_trades_shipping',
-			'activity_modules', 'core_attachment','core_paylog','core_queue','core_resource',
-			'wechat_attachment','coupon','coupon_modules',
-			'coupon_record', 'cover_reply', 'mc_card','mc_card_members','mc_chats_record','mc_credits_recharge','mc_credits_record',
+			'account','account_wechats', 'core_attachment','core_paylog','core_queue','core_resource',
+			'wechat_attachment', 'cover_reply', 'mc_chats_record','mc_credits_recharge','mc_credits_record',
 			'mc_fans_groups','mc_groups','mc_handsel','mc_mapping_fans','mc_mapping_ucenter','mc_mass_record',
 			'mc_member_address','mc_member_fields','mc_members','menu_event',
 			'qrcode','qrcode_stat', 'rule','rule_keyword','site_article','site_category','site_multi','site_nav','site_slide',
@@ -1113,6 +1105,12 @@ function account_delete($acid) {
 			'stat_rule','uni_account','uni_account_modules','uni_account_users','uni_settings', 'uni_group', 'uni_verifycode','users_permission',
 			'mc_member_fields',
 		);
+		$we7_coupon_info = module_fetch('we7_coupon');
+		if (!empty($we7_coupon_info)) {
+			$we7_coupon_tables = array('activity_clerks', 'activity_clerks',
+				'activity_exchange', 'activity_exchange_trades', 'activity_exchange_trades_shipping', 'coupon','coupon_modules', 'coupon_record', 'mc_card','mc_card_members');
+			$tables = array_merge($tables, $we7_coupon_tables);
+		}
 		if (!empty($tables)) {
 			foreach ($tables as $table) {
 				$tablename = str_replace($GLOBALS['_W']['config']['db']['tablepre'], '', $table);

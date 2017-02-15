@@ -9,13 +9,6 @@ load()->model('module');
 load()->model('cloud');
 load()->model('cache');
 
-if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
-	$account_type = ACCOUNT_TYPE_APP_NORMAL;
-	$account_typename = '小程序';
-	$template_show = '-wxapp';
-} else {
-	$account_typename = '公众号';
-}
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
@@ -32,7 +25,7 @@ if ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER
 	message('您是该公众号的操作员，无权限操作！', url('account/manager'), 'error');
 }
 
-$_W['page']['title'] = '管理设置 - 微信公众号管理';
+$_W['page']['title'] = '管理设置 - 微信' . ACCOUNT_TYPE_NAME . '管理';
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
@@ -75,11 +68,7 @@ if($do == 'base') {
 				break;
 			case 'name':
 				$uni_account = pdo_update('uni_account', array('name' => trim($_GPC['request_data'])), array('uniacid' => $uniacid));
-				if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
-					$account_wechats = pdo_update('account_wxapp', array('name' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
-				} else {
-					$account_wechats = pdo_update('account_wechats', array('name' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
-				}
+				$account_wechats = pdo_update(ACCOUNT_TYPE_TABLENAME, array('name' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
 				$result = ($uni_account && $account_wechats) ? true : false;
 				break;
 			case 'account' :
@@ -122,11 +111,7 @@ if($do == 'base') {
 				break;
 		}
 		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime'))) {
-			if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
-				$result = pdo_update('account_wxapp', $data, array('acid' => $acid, 'uniacid' => $uniacid));
-			} else {
-				$result = pdo_update('account_wechats', $data, array('acid' => $acid, 'uniacid' => $uniacid));
-			}
+			$result = pdo_update(ACCOUNT_TYPE_TABLENAME, $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
 		if($result) {
 			cache_delete("uniaccount:{$uniacid}");
@@ -140,13 +125,17 @@ if($do == 'base') {
 			message(error(1, '修改失败！'), '', 'ajax');
 		}
 	}
-	
+	if (!empty($_W['ishttps'])) {
+		$socket_url = str_replace('https', 'wss', $_W['siteroot']);
+	} else {
+		$socket_url = str_replace('http', 'wss', $_W['siteroot']);
+	}
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
 	$uniaccount = array();
 	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
 
-	template('account/manage-base' . $template_show);
+	template('account/manage-base' . ACCOUNT_TYPE_TEMPLATE);
 }
 
 if($do == 'sms') {
@@ -197,7 +186,7 @@ if($do == 'sms') {
 		}
 	}
 
-	template('account/manage-sms');
+	template('account/manage-sms' . ACCOUNT_TYPE_TEMPLATE);
 }
 
 if($do == 'modules_tpl') {
@@ -310,5 +299,5 @@ if($do == 'modules_tpl') {
 		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('id', 'name', 'title'));
 	}
 
-	template('account/manage-modules-tpl' . $template_show);
+	template('account/manage-modules-tpl' . ACCOUNT_TYPE_TEMPLATE);
 }

@@ -1,6 +1,6 @@
 {template 'common/header'}
 <ol class="breadcrumb we7-breadcrumb">
-	<a href="{url 'account/manage'}"><i class="wi wi-back-cricle"></i> </a>
+	<a href="{url 'account/manage'}"><i class="wi wi-back-circle"></i> </a>
 	<li><a href="{url 'account/manage'}">公众号管理</a></li>
 	<li>公众号设置</li>
 </ol>
@@ -117,7 +117,8 @@
 </form>
 <script>
 $(function(){
-	var aid = "{$_GPC['uniacid']}";
+	var uniacid = "{$_GPC['uniacid']}";
+	var acid = "{$_GPC['acid']}";
 	//模块下拉框
 	$('.dropdown span').hover(function(){
 		var _this = $(this);
@@ -125,17 +126,17 @@ $(function(){
 		var uid = "{$uid}";
 		var length = $(this).next().find('li').size();
 		if(!length) {
-			$.post("{php echo url('user/permission/module')}", {'m' : m, 'uid' : uid, 'uniacid' : aid}, function(data) {
-				var data = $.parseJSON(data);
+			$.post("{php echo url('account/post-user/module')}", {'m' : m, 'uid' : uid, 'uniacid' : uniacid, 'acid' : acid}, function(data) {
+				console.log(data);
 				var html = '<li><label class="checkbox-inline info">已选0项</label></li>';
-				if(!data.errno) {
-					$.each(data.errmsg, function(k, v){
+				if(!data.message.errno) {
+					$.each(data.message.message, function(k, v){
 						var check = v.checked ? 'checked' : '';
 						html += '<li><a href="javascript:;"><input id="check-moduledetail-'+m+'-'+k+'" we7-check-all="1"  type="checkbox" name="module_'+m+'[]" value="'+ v.permission +'" '+check+'/><label for="check-moduledetail-'+m+'-'+k+'" class="we7-padding-left we7-margin-horizontal-none checkbox-inline">'+ v.title +'</label></a></li>';
 					});
 				}
 				_this.next().html(html);
-			});
+			}, 'json');
 		}
 
 		$(this).parent().addClass('open').find('.dropdown-menu').show();

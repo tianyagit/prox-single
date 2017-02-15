@@ -113,8 +113,8 @@ if($do == 'display') {
 					$row['enabled'] = 1;
 				}
 				$row['isdisplay'] = 1;
-				if (file_exists(IA_ROOT. "/addons/". $name. "icon-custom.jpg")) {
-					$row['preview'] = tomedia('addons/' . $name . '/custom-icon.jpg');
+				if (file_exists(IA_ROOT. "/addons/". $name. "/icon-custom.jpg")) {
+					$row['preview'] = tomedia('addons/' . $name . '/icon-custom.jpg');
 				} else {
 					$row['preview'] = tomedia('addons/' . $name . '/icon.jpg');
 				}
