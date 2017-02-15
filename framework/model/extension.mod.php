@@ -25,6 +25,8 @@ function ext_module_convert($manifest) {
 		'handles' => iserializer(is_array($manifest['platform']['handles']) ? $manifest['platform']['handles'] : array()),
 		'isrulefields' => intval($manifest['platform']['isrulefields']),
 		'iscard' => intval($manifest['platform']['iscard']),
+		'supports' => $manifest['platform']['supports'],
+		'page' => $manifest['bindings']['page'],
 		'cover' => $manifest['bindings']['cover'],
 		'rule' => $manifest['bindings']['rule'],
 		'menu' => $manifest['bindings']['menu'],
@@ -94,6 +96,7 @@ function ext_module_manifest_parse($xml) {
 			'handles' => array(),
 			'isrulefields' => false,
 			'iscard' => false,
+			'supports' => array(),
 		);
 		$subscribes = $platform->getElementsByTagName('subscribes')->item(0);
 		if (!empty($subscribes)) {
@@ -122,6 +125,16 @@ function ext_module_manifest_parse($xml) {
 		$card = $platform->getElementsByTagName('card')->item(0);
 		if (!empty($card) && $card->getAttribute('embed') == 'true') {
 			$manifest['platform']['iscard'] = true;
+		}
+		$supports = $platform->getElementsByTagName('supports')->item(0);
+		if (!empty($supports)) {
+			$support_type = $supports->getElementsByTagName('item');
+			for ($i = 0; $i < $support_type->length; $i++) {
+				$t = $support_type->item($i)->getAttribute('type');
+				if (!empty($t)) {
+					$manifest['platform']['supports'][] = $t;
+				}
+			}
 		}
 	}
 	$bindings = $root->getElementsByTagName('bindings')->item(0);
@@ -259,6 +272,11 @@ function ext_module_bindings() {
 			'name' => 'function',
 			'title' => '微站独立功能',
 			'desc' => '需要特殊定义的操作, 一般用于将指定的操作指定为(direct). 如果一个操作没有在具体位置绑定, 但是需要定义为(direct: 直接访问), 可以使用这个嵌入点'
+		),
+		'page'=> array(
+			'name' => 'page',
+			'title' => '小程序入口',
+			'desc' => '用于小程序入口的链接'
 		)
 	);
 	return $bindings;

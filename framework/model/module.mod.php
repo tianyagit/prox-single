@@ -316,10 +316,20 @@ function module_count_unistalled_module() {
 	$uninstall_module_num = cache_load('we7:module:all_uninstall');
 	if (empty($uninstall_module_num)) {
 		$uninstall_module = module_get_all_unistalled('uninstalled');
-		return count($uninstall_module);
 	} else {
-		return $uninstall_module_num['uninstall_count'];
+		$uninstall_module = $uninstall_module_num['modules']['uninstalled'];
 	}
+	if (!empty($uninstall_module)) {
+		foreach($uninstall_module as $name => &$module) {
+			if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['app_support'] == 2) {
+				unset($uninstall_module[$name]);
+			}
+			if (empty(ACCOUNT_TYPE) && $module['wxapp_support'] == 2) {
+				unset($uninstall_module[$name]);
+			}
+		}
+	}
+	return count($uninstall_module);
 }
 
 /**

@@ -21,6 +21,7 @@ if ($do == 'save') {
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
 		'modules' => $_GPC['modules'],
+		'wxapp' => $_GPC['wxapp'],
 		'templates' => $_GPC['templates'],
 	);
 	if (empty($package_info['name'])) {
@@ -29,6 +30,9 @@ if ($do == 'save') {
 
 	if (!empty($package_info['modules'])) {
 		$package_info['modules'] = iserializer(array_keys($package_info['modules']));
+	}
+	if (!empty($package_info['wxapp'])) {
+		$package_info['wxapp'] = iserializer(array_keys($package_info['wxapp']));
 	}
 	if (!empty($package_info['templates'])) {
 		foreach ($package_info['templates'] as $key => $template) {
@@ -90,6 +94,24 @@ if ($do == 'display') {
 			} else {
 				$group['modules'] = array();
 			}
+			if (!empty($group['wxapp'])) {
+				$wxapp = iunserializer($group['wxapp']);
+				if (is_array($wxapp) && !empty($wxapp)) {
+					$group['wxapp'] = pdo_getall('modules', array('name' => $wxapp), array('name', 'title'));
+					if (!empty($group['wxapp'])) {
+						foreach ($group['wxapp'] as &$wxapp) {
+							if (file_exists(IA_ROOT.'/addons/'.$wxapp['name'].'/icon-custom.jpg')) {
+								$wxapp['logo'] = tomedia(IA_ROOT.'/addons/'.$wxapp['name'].'/icon-custom.jpg');
+							} else {
+								$wxapp['logo'] = tomedia(IA_ROOT.'/addons/'.$wxapp['name'].'/icon.jpg');
+							}
+						}
+						unset($wxapp);
+					}
+				} else {
+					$group['wxapp'] = array();
+				}
+			}
 			if (!empty($group['templates'])) {
 				$templates = iunserializer($group['templates']);
 				if (is_array($templates) && !empty($templates)) {
@@ -118,8 +140,10 @@ if ($do == 'post') {
 
 	$module_list = pdo_getall('modules', array('issystem' => 0), array(), 'name');
 	$template_list = pdo_getall('site_templates',array(), array(), 'name');
-	$group_have_module = array();
+	$group_have_module_app = array();
+	$group_have_module_wxapp = array();
 	$group_have_template = array();
+	$group_have_module = array();
 	if (!empty($id)) {
 		$module_group = pdo_get('uni_group', array('id' => $id));
 		$module_group['modules'] = empty($module_group['modules']) ? array() : iunserializer($module_group['modules']);
@@ -135,6 +159,27 @@ if ($do == 'post') {
 				} else {
 					$group_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_name.'/icon.jpg');
 				}
+				if ($group_have_module[$module_info['name']]['app_support'] == 2) {
+					$group_have_module_app[$module_info['name']] = $group_have_module[$module_info['name']];
+				}
+			}
+		}
+		$module_group['wxapp'] = empty($module_group['wxapp']) ? array() : iunserializer($module_group['wxapp']);
+		if (!empty($module_group['wxapp'])) {
+			foreach ($module_group['wxapp'] as $module_name) {
+				$module_info = pdo_get('modules', array('name' => $module_name));
+				if (empty($module_info)) {
+					continue;
+				}
+				$group_have_module[$module_info['name']] = $module_info;
+				if (file_exists(IA_ROOT.'/addons/'.$module_name.'/icon-custom.jpg')) {
+					$group_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_name.'/icon-custom.jpg');
+				} else {
+					$group_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_name.'/icon.jpg');
+				}
+				if ($group_have_module[$module_info['name']]['wxapp_support'] == 2) {
+					$group_have_module_wxapp[$module_info['name']] = $group_have_module[$module_info['name']];
+				}
 			}
 		}
 		$module_group['templates'] = empty($module_group['templates']) ? array() : iunserializer($module_group['templates']);
@@ -148,8 +193,10 @@ if ($do == 'post') {
 		}
 	}
 	$group_not_have_module = array();//套餐未拥有模块
+	$group_not_have_module_app = array();
+	$group_not_have_module_wxapp = array();
 	if (!empty($module_list)) {
-		foreach ($module_list as $module_info) {
+		foreach ($module_list as $name => $module_info) {
 			if (!in_array($module_info['name'], array_keys($group_have_module))) {
 				$group_not_have_module[$module_info['name']] = $module_info;
 				if (file_exists(IA_ROOT.'/addons/'.$module_name.'/icon-custom.jpg')) {
@@ -157,10 +204,15 @@ if ($do == 'post') {
 				} else {
 					$group_not_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg');
 				}
+				if ($group_not_have_module[$module_info['name']]['app_support'] == 2) {
+					$group_not_have_module_app[$module_info['name']] = $group_not_have_module[$module_info['name']];
+				}
+				if ($group_not_have_module[$module_info['name']]['wxapp_support'] == 2) {
+					$group_not_have_module_wxapp[$module_info['name']] = $group_not_have_module[$module_info['name']];
+				}
 			}
 		}
 	}
-
 	$group_not_have_template = array();//套餐未拥有模板
 	if (!empty($template_list)) {
 		foreach ($template_list as $template) {

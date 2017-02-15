@@ -36,6 +36,7 @@
 			type : '{$type}',
 			appname : '{$m}',
 			is_upgrade : '{$is_upgrade}',
+			account_type : "{$_GPC['account_type']}"
 		});
 		angular.bootstrap($('.js-processor'), ['cloudApp']);
 	</script>
@@ -57,7 +58,7 @@
 			</script>
 			{else}
 			<script>
-				location.href = '{url "system/module/install" array("module_name" => $m, "flag" => 1)}';
+				location.href = '{url "system/module/install" array("module_name" => $m, "flag" => 1, "account_type" => $_GPC["account_type"])}';
 			</script>
 			{/if}
 		{/if}
