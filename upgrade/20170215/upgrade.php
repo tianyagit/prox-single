@@ -5,7 +5,7 @@
  */
 
 define('IN_SYS', true);
-require '../framework/bootstrap.inc.php';
+require '../../framework/bootstrap.inc.php';
 require IA_ROOT . '/web/common/common.func.php';
 require IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
