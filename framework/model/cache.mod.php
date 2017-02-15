@@ -292,7 +292,9 @@ function cache_build_uninstalled_module() {
 					'name' => $module['name'],
 					'version' => $module['version'],
 					'title' => $module['title'],
-					'thumb' => $module['thumb']
+					'thumb' => $module['thumb'],
+					'wxapp_support' => $module['site_branch']['wxapp_support'],
+					'app_support' => $module['site_branch']['app_support']
 				);
 			}
 		}

@@ -33,11 +33,12 @@
 			<col width="190px" />
 			<col />
 			<col width="140px" />
-			<col width="275px" />
-			<col width="210px" />
+			<col width="140px" />
+			<col width="190px" />
 			<tr>
 				<th class="text-left">套餐名称</th>
 				<th>应用个数</th>
+				<th>小程序个数</th>
 				<th>模块个数</th>
 				<th></th>
 				<th class="text-left">操作</th>
@@ -46,6 +47,7 @@
 			<tr >
 				<td class="text-left">{$module_group['name']}</td>
 				<td>{php echo count($module_group['modules'])}</td>
+				<td>{php echo count($module_group['wxapp'])}</td>
 				<td>{php echo count($module_group['templates'])}</td>
 				<td></td>
 				<td class="text-left">
@@ -66,6 +68,19 @@
 						<div class="col-sm-3 text-left text-over">
 							<img src="{$module['logo']}" style="width:50px;height:50px;">
 							<a href="">{$module['title']}</a>
+						</div>
+						{/loop}
+					</div>
+				</td>
+			</tr>
+			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
+				<td colspan="5">
+					<div class="col-sm-1 color-gray text-left we7-padding-none">小程序</div>
+					<div class="col-sm-11">
+						{loop $module_group['wxapp'] $wxapp}
+						<div class="col-sm-3 text-left text-over">
+							<img src="{$wxapp['logo']}" style="width:50px;height:50px;">
+							<a href="">{$wxapp['title']}</a>
 						</div>
 						{/loop}
 					</div>
@@ -121,13 +136,33 @@
 			</div>
 			<div class="panel-body we7-padding">
 				<div class="row">
-					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModule" style="overflow: hidden">
+					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleApp" style="overflow: hidden">
 						<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModule(module)">删除</span>
 					</div>
 					<div class="col-sm-2">
 						<div class="we7-input-img input-more input-img">
 							<a href="" class="input-addon" ng-click="addModule()">
+								<span class="color-gray"></span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel we7-panel">
+			<div class="panel-heading">
+				选择小程序
+			</div>
+			<div class="panel-body we7-padding">
+				<div class="row">
+					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleWxapp" style="overflow: hidden">
+						<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">{{ module.title }}
+						<span class="del bg-default" ng-click="delHaveModuleWxapp(module)">删除</span>
+					</div>
+					<div class="col-sm-2">
+						<div class="we7-input-img input-more input-img">
+							<a href="" class="input-addon" ng-click="addModuleWxapp()">
 								<span class="color-gray"></span>
 							</a>
 						</div>
@@ -189,7 +224,7 @@
 				<div class="modal-body">
 					<div class="panel-body we7-padding">
 						<div class="row">
-							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="module in groupNotHaveModule" style="overflow: hidden" ng-click="addHaveModule(module)">
+							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="module in groupNotHaveModuleApp" style="overflow: hidden" ng-click="addHaveModule(module)">
 								<a href="">
 									<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 									<p class="text-over">{{ module.title }}</p>
@@ -201,16 +236,39 @@
 			</div>
 		</div>
 	</div>
-
+	<div class="modal fade" id="add_module_wxapp"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog we7-modal-dialog" style="width:800px">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">添加小程序(点击添加)</h4>
+				</div>
+				<div class="modal-body">
+					<div class="panel-body we7-padding">
+						<div class="row">
+							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="module in groupNotHaveModuleWxapp" style="overflow: hidden" ng-click="addHaveModuleWxapp(module)">
+								<a href="">
+									<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+									<p class="text-over">{{ module.title }}</p>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<input type="form-control" class="btn btn-primary" name="" ng-click="saveGroup()" value="提交">
 </div>
 <script>
 	angular.module('moduleApp').value('config', {
 		'moduleGroup' : {php echo json_encode($module_group)},
-		'groupHaveModule' : {php echo  json_encode($group_have_module)},
-		'groupNotHaveModule' : {php echo  json_encode($group_not_have_module)},
-		'groupHaveTemplate' : {php echo  json_encode($group_have_template)},
-		'groupNotHaveTemplate' : {php echo  json_encode($group_not_have_template)},
+		'groupHaveModuleApp' : {php echo json_encode($group_have_module_app)},
+		'groupHaveModuleWxapp' : {php echo json_encode($group_have_module_wxapp)},
+		'groupNotHaveModuleApp' : {php echo json_encode($group_not_have_module_app)},
+		'groupNotHaveModuleWxapp' : {php echo json_encode($group_not_have_module_wxapp)},
+		'groupHaveTemplate' : {php echo json_encode($group_have_template)},
+		'groupNotHaveTemplate' : {php echo json_encode($group_not_have_template)},
 		'url' : "{php echo url('system/module-group/save')}"
 	});
 	angular.bootstrap($('.js-modulegroup-post'), ['moduleApp']);
