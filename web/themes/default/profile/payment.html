@@ -253,7 +253,7 @@
 								<label for="radio-13">服务商支付  </label>
 								{/if}
 								{/if}
-								<input id='radio-24' type="radio" name='wechat[switch]' value="4" checked=""/>
+								<input id='radio-24' type="radio" name='wechat[switch]' ng-checked='paysetting.wechat.switch == 4 || paysetting.wechat.switch === false' ng-click="changeSwitch('wechat', 4)" value="4" checked=""/>
 								<label for="radio-24">关闭 </label>
 							</div>
 						</div>
@@ -263,9 +263,9 @@
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">接口类型</label>
 								<div class="form-controls col-sm-10">
-									<input id='radio-15' type="radio" name='r-group-1' ng-checked="paysetting.wechat.version == 1"  value="1" ng-click="paysetting.wechat.version = 1"/>
+									<input id='radio-15' type="radio" name='paysetting[wechat][version]' ng-checked='paysetting.wechat.version == 1'  value="1" ng-click="changeVersion(1)"/>
 									<label for="radio-15">旧版  </label>
-									<input id='radio-25' type="radio" name='r-group-1' ng-checked="paysetting.wechat.version == 2" value="2" ng-click="paysetting.wechat.version = 2"/>
+									<input id='radio-25' type="radio" name='paysetting[wechat][version]' ng-checked='paysetting.wechat.version == 2' value="2" ng-click="changeVersion(2)"/>
 									<label for="radio-25">新版(2014年9月之后申请的)  </label>
 									<span class="help-block">由于微信支付接口调整，需要根据申请时间来区分支付接口</span>
 								</div>
@@ -447,7 +447,7 @@
 	<!--银联支付-->
 	<div class="modal fade" id="yinlian" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="we7-modal-dialog modal-dialog">
-			<form action="{php echo url('profile/payment/save_setting', array('__input' => array('type' => 'unionpay')))}" enctype="multipart/form-data" method="post" id="form1" >
+			<form action="{php echo url('profile/payment/save_setting', array('type' => 'unionpay'))}" enctype="multipart/form-data" method="post" id="form1" >
 				<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -458,9 +458,9 @@
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">银联支付</label>
 							<div class="form-controls col-sm-10">
-								<input id='radio-133' type="radio" name='unionpay[switch]' ng-checked="paysetting.unionpay.switch === true" ng-click="changeSwitch('unionpay', true)" value="true"/>
+								<input id='radio-133' type="radio" name='unionpay[switch]' {if $pay_setting['unionpay']['switch'] === true}checked{/if} value="true"/>
 								<label for="radio-133">开启 </label>
-								<input id='radio-266' type="radio" name='unionpay[switch]' ng-checked="paysetting.unionpay.switch === false" ng-click="changeSwitch('unionpay', false)" value="false"/>
+								<input id='radio-266' type="radio" name='unionpay[switch]' {if $pay_setting['unionpay']['switch'] !== true}checked{/if} value="false"/>
 								<label for="radio-266">关闭 </label>
 								<span class="help-block">是否使用银联支付</span>
 							</div>
@@ -468,26 +468,26 @@
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">商户私钥证书（签名）</label>
 							<div class="form-controls col-sm-10">
-								<input type="file" name="unionpay[signcertpath]" id="amend" ng-show="paysetting.unionpay.signcertexists === false"  class="form-control" placeholder="">
-								<span ng-show="paysetting.unionpay.signcertexists === true">证书已上传<input type="button" class="btn btn-success" onclick="amend.click()" value="修改"></span>
+								<input type="file" name="unionpay[signcertpath]" id="amend" {if $pay_setting['unionpay']['signcertexists'] !== false}style="display:none;"{/if} class="form-control" placeholder="">
+								<span {if $pay_setting['unionpay']['signcertexists'] === false}style="display:none;"{/if}>证书已上传<input type="button" class="btn btn-success" onclick="amend.click()" value="修改"></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">商户号</label>
 							<div class="form-controls col-sm-10">
-								<input type="text" name="unionpay[merid]" ng-model="paysetting.unionpay.merid" class="form-control" placeholder="">
+								<input type="text" name="unionpay[merid]" value="{$pay_setting['unionpay']['merid']}" class="form-control" placeholder="">
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">商户私钥证书密码</label>
 							<div class="form-controls col-sm-10">
-								<input type="text" name="unionpay[signcertpwd]" ng-model="paysetting.unionpay.signcertpwd" class="form-control" placeholder="">
+								<input type="text" name="unionpay[signcertpwd]" value="{$pay_setting['unionpay']['signcertpwd']}" class="form-control" placeholder="">
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="saveEdit('unionpay')">确定</button>
+					<button type="submit" class="btn btn-primary">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -508,9 +508,9 @@
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">百度钱包支付</label>
 							<div class="form-controls col-sm-10">
-								<input id='radio-1223' type="radio" name='r-group-1' ng-checked='paysetting.baifubao.switch === true' ng-click="changeSwitch('baifubao', true)"/>
+								<input id='radio-1223' type="radio" name='paysetting[baifubao][switch]' ng-checked='paysetting.baifubao.switch === true' ng-click="changeSwitch('baifubao', true)"/>
 								<label for="radio-1223">开启 </label>
-								<input id='radio-21212' type="radio" name='r-group-1'  ng-checked='paysetting.baifubao.switch === false' ng-click="changeSwitch('baifubao', false)" />
+								<input id='radio-21212' type="radio" name='paysetting[baifubao][switch]'  ng-checked='paysetting.baifubao.switch === false' ng-click="changeSwitch('baifubao', false)" />
 								<label for="radio-21212">关闭 </label>
 								<span class="help-block">是否使用百度钱包支付</span>
 							</div>
@@ -550,9 +550,9 @@
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">汇款支付</label>
 							<div class="form-controls col-sm-10">
-								<input id='radio-166' type="radio" name='r-group-11212' ng-checked='paysetting.line.switch === true' ng-click="changeSwitch('line', true)" />
+								<input id='radio-166' type="radio" name='paysetting[line][switch]' ng-checked='paysetting.line.switch === true' ng-click="changeSwitch('line', true)" />
 								<label for="radio-166">开启 </label>
-								<input id='radio-2667' type="radio" name='r-group-11212' ng-checked='paysetting.line.switch === false' ng-click="changeSwitch('line', false)"/>
+								<input id='radio-2667' type="radio" name='paysetting[line][switch]' ng-checked='paysetting.line.switch === false' ng-click="changeSwitch('line', false)"/>
 								<label for="radio-2667">关闭 </label>
 								<span class="help-block">是否支持线下汇款方式支付</span>
 							</div>
