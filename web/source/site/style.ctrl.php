@@ -283,6 +283,7 @@ if ($do == 'createtemplate') {
 }
 
 if ($do == 'build') {
+	$templateid = intval($_GPC['styleid']);
 	$template = array();
 	$templates = uni_templates();
 	if (!empty($templates)) {
