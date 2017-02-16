@@ -232,14 +232,14 @@
 									<p>微擎0.6支持微信支付接口，注意你的微擎访问地址一定不要写错了，这里我们用访问地址代替下面说明中出现的链接，申请微信支付的接口说明如下：</p>
 									<br>
 									<h4>JS API网页支付参数</h4>
-									<p>支付授权目录: http://wx2.we7.cc/payment/wechat/</p>
-									<p>支付请求实例: http://wx2.we7.cc/payment/wechat/pay.php</p>
+									<p>支付授权目录: {$_W['siteroot']}payment/wechat/</p>
+									<p>支付请求实例: {$_W['siteroot']}payment/wechat/pay.php</p>
 									<p>共享收货地址: 选择"是"</p>
 									<br>
 									<h4>Native原生支付</h4>
-									<p>支付回调URL: http://wx2.we7.cc/payment/wechat/native.php</p>
-									<p>维权通知URL: http://wx2.we7.cc/payment/wechat/rights.php</p>
-									<p>警告通知URL: http://wx2.we7.cc/payment/wechat/warning.php</p>
+									<p>支付回调URL: {$_W['siteroot']}payment/wechat/native.php</p>
+									<p>维权通知URL: {$_W['siteroot']}payment/wechat/rights.php</p>
+									<p>警告通知URL: {$_W['siteroot']}payment/wechat/warning.php</p>
 								</div>
 								{if $accounts[$_W['acid']]['level'] > 2}
 								<input id='radio-11' type="radio" name='wechat[switch]' ng-checked='paysetting.wechat.switch == 1' ng-click="changeSwitch('wechat', 1)" value="1"/>
