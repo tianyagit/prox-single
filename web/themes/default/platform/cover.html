@@ -25,7 +25,7 @@
 			</tr>
 			{loop $entries['cover'] $menu}
 			<tr>
-				<td data-url="{$_W['siteroot']}app/{$menu['url']}" data-size="100" class="js-url-qrcode"> 
+				<td data-url="{$_W['siteroot']}app/{$menu['cover']['url']}" data-size="100" class="js-url-qrcode"> 
 					<div class="qrcode-block"><canvas></canvas></div>
 				</td>
 				<td class="text-left">{$menu['title']}</td>

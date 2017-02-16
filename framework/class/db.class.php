@@ -541,21 +541,21 @@ class DB {
 	 * 		查询字段长度
 	 * @return boolean
 	 */
-	public function fieldmatch($tablename, $fieldname, $datatype, $length) {
-		$type_lists = array('tinytext', 'text', 'mediumtext', 'longtext');
+	public function fieldmatch($tablename, $fieldname, $datatype = '', $length = '') {
+		$datatype = strtolower($datatype);
 		$field_info = $this->fetch("DESCRIBE " . $this->tablename($tablename) . " `{$fieldname}`", array());
 		if (empty($field_info)) {
 			return false;
 		}
-		if (!empty(strtolower($datatype))) {
-			if (in_array(strtolower($datatype), $type_lists)) {
-				return $field_info['Type'] == strtolower($datatype) ? true : -1;
+		if (!empty($datatype)) {
+			$find = strexists($field_info['Type'], '(');
+			if (empty($find)) {
+				$length = '';
 			}
-			if (empty($length)) {
-				return strpos($field_info['Type'], strtolower($datatype)) ? true : -1;
-			} else {
-				return $field_info['Type'] == strtolower($datatype) . '(' . $length . ')' ? true : -1;
+			if (!empty($length)) {
+				$datatype .= ("({$length})");
 			}
+			return strpos($field_info['Type'], $datatype) === 0 ? true : -1;
 		}
 		return true;
 	}

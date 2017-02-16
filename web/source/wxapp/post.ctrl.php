@@ -13,12 +13,18 @@ $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
 
 if ($do == 'getlink') {
-	$eids = explode(',', $_GPC['module']['url']);
-	foreach ($eids as $key => $val) {
-		$show_urls[$key] = pdo_get('modules_bindings', array('eid' => $val));
-		$show_urls[$key]['module'] = $_GPC['module'];
+	foreach ($_GPC['module'] as $val) {
+		$eids .= ',' . $val['url'];
 	}
-	message(error(-1, $show_urls), '', 'ajax');
+	$eids = explode(',', $eids);
+	foreach ($eids as $k => $eid) {
+		if (!empty($eid)) {
+			$bindings_info = pdo_get('modules_bindings', array('eid' => $eid));
+			$show_urls[$eid] = $bindings_info;
+			$show_urls[$eid]['module'] = $_GPC['module'][$bindings_info['module']];
+		}
+	}
+	message(error(0, $show_urls), '', 'ajax');
 }
 
 if($do == 'post') {
