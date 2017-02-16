@@ -362,7 +362,7 @@
 											</td>
 											
 											<td>
-												<select class="form-control" id="lineheight" ng-model="menu.module" ng-options="module.title for module in modules">
+												<select class="form-control" id="lineheight" ng-model="menu.module" ng-options="menu.title group by menu.module.title for menu in show_url">
 												</select>
 											</td>
 											<td>
@@ -461,7 +461,8 @@
 
 require(['fileUploader','underscore'], function(uploader){
 	angular.module('wxApp').value('config', {
-		'uniacid' : "{$uniacid}"
+		'uniacid' : "{$uniacid}",
+		'getlink_url' : "{php echo url('wxapp/post/getlink')}"
 	});
 	angular.bootstrap($('#js-wxapp-create'), ['wxApp']);
 });
@@ -477,7 +478,6 @@ var selectModule = function(module, title, icon, showurl, version){
 			'		</div>'+
 			'	</li>';
 	$('#select .app-list').prepend(html);
-
 	modulesVal.push({
 		title: title,
 		module: module,
