@@ -64,6 +64,7 @@ require.config({
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
 		'underscore': '../lib/underscore-min',
+		'ueditor': '../../components/ueditor/ueditor.all.min',
 		'biz': '../lib/biz',
 		'loadcss': '../lib/css.min', //加载CSS
 		/*复制组件（部分浏览器不兼容flash）*/
@@ -72,6 +73,14 @@ require.config({
 		'we7.check' : '../lib/we7.check',
 	},
 	shim:{
+		'ueditor': {
+			deps: ['./resource/components/ueditor/third-party/zeroclipboard/ZeroClipboard.min.js', './resource/components/ueditor/ueditor.config.js'],
+			exports: 'UE',
+			init:function(ZeroClipboard){
+				//导出到全局变量，供ueditor使用
+				window.ZeroClipboard = ZeroClipboard;
+			}
+		},
 		'jquery' : {
 			exports: '$',
 			deps: ['../lib/jquery-1.11.1.min']
@@ -87,6 +96,10 @@ require.config({
 		},
 		'map': {
 			exports: 'BMap'
+		},
+		'bootstrap': {
+			deps: ['jquery'],
+			exports: '$'
 		},
 		'bootstrap.switch': {
 			deps: ['bootstrap', 'loadcss!../../components/switch/bootstrap-switch.min.css']
