@@ -542,18 +542,20 @@ class DB {
 	 * @return boolean
 	 */
 	public function fieldmatch($tablename, $fieldname, $datatype, $length) {
+		$type_lists = array('tinytext', 'text', 'mediumtext', 'longtext');
 		$field_info = $this->fetch("DESCRIBE " . $this->tablename($tablename) . " `{$fieldname}`", array());
 		if (empty($field_info)) {
 			return false;
 		}
-		if (!empty($datatype)) {
-			if (empty($length)) {
-				$types = explode('(', $field_info['Type']);
-				return in_array($datatype, $types) ? true : -1;
-			} else {
-				$suffix = '(' . $length . ')';
+		if (!empty(strtolower($datatype))) {
+			if (in_array(strtolower($datatype), $type_lists)) {
+				return $field_info['Type'] == strtolower($datatype) ? true : -1;
 			}
-			return $field_info['Type'] == $datatype . $suffix ? true : -1;
+			if (empty($length)) {
+				return strpos($field_info['Type'], strtolower($datatype)) ? true : -1;
+			} else {
+				return $field_info['Type'] == strtolower($datatype) . '(' . $length . ')' ? true : -1;
+			}
 		}
 		return true;
 	}
