@@ -8,9 +8,18 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('post', 'getapps', 'getpackage');
+$dos = array('post', 'getapps', 'getpackage', 'getlink');
 $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
+
+if ($do == 'getlink') {
+	$eids = explode(',', $_GPC['module']['url']);
+	foreach ($eids as $key => $val) {
+		$show_urls[$key] = pdo_get('modules_bindings', array('eid' => $val));
+		$show_urls[$key]['module'] = $_GPC['module'];
+	}
+	message(error(-1, $show_urls), '', 'ajax');
+}
 
 if($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -37,7 +46,6 @@ if($do == 'post') {
 			}
 		}
 	}
-	
 	if(!empty($_GPC['wxappval'])) {
 		$submit_val = json_decode(ihtml_entity_decode($_GPC['wxappval']), true);
 		$request_cloud_data = array();
@@ -47,13 +55,12 @@ if($do == 'post') {
 			$menu_val['defaultImage'] = empty($menu_val['defaultImage']) ? $_W['siteroot'].'web/resource/images/bottom-default.png' : $menu_val['defaultImage'];
 			$menu_val['selectedImage'] = empty($menu_val['selectedImage']) ? $_W['siteroot'].'web/resource/images/bottom-default.png' : $menu_val['selectedImage'];
 			$bottom_menu[] = array(
-				'pagePath' => 'we7/page/index/index',
+				'pagePath' => $menu_val['module']['url'],
 				'iconPath' => $menu_val['defaultImage'],
 				'selectedIconPath' => $menu_val['selectedImage'],
 				'text' => $menu_val['name']
 			);
 		}
-
 		$modules = array();
 		foreach ($submit_val['modules'] as $module_val) {
 			$modules[$module_val['module']] = $module_val['version'];
@@ -186,19 +193,28 @@ if($do == 'getapps') {
 						$cion = './resource/images/nopic-small.jpg';
 					}
 				}
-								$m = module_entries($module['name'], array('home'));
-				if(!empty($m['home'])) {
-					foreach($m['home'] as $val) {
-						$rst = array();
-						if(isset($val['eid']) && !empty($val['eid'])) {
-							$rst = module_entry($val['eid']);
-							$rst['module_title'] = $module['title'];
-							$rst['module_icon'] = $cion;
-							$rst['version'] = $module['version'];
-							$apps[] = $rst;
-						}
-					}	
+				if ($module['wxapp_support'] == 2) {
+					$arr = pdo_getall('modules_bindings', array('module' => $module['name'], 'entry' => 'page'), array('module', 'title', 'url', 'eid'), 'eid');
+					$rst['bindings'] = array_keys($arr);
+					$rst['module'] = $module['name'];
+					$rst['module_title'] = $module['title'];
+					$rst['module_icon'] = $cion;
+					$rst['version'] = $module['version'];
+					$apps[] = $rst;
 				}
+				// $m = module_entries($module['name'], array('home'));
+				// if(!empty($m['home'])) {
+				// 	foreach($m['home'] as $val) {
+				// 		$rst = array();
+				// 		if(isset($val['eid']) && !empty($val['eid'])) {
+				// 			$rst = module_entry($val['eid']);
+				// 			$rst['module_title'] = $module['title'];
+				// 			$rst['module_icon'] = $cion;
+				// 			$rst['version'] = $module['version'];
+				// 			$apps[] = $rst;
+				// 		}
+				// 	}	
+				// }
 			}
 		}
 		cache_write('packageapps', $apps);				
