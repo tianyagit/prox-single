@@ -126,6 +126,20 @@ if ($do == 'upgrade') {
 	$module = ext_module_convert($manifest);
 	unset($module['name']);
 	unset($module['id']);
+	$wxapp_support = false;
+	$app_support = false;
+	if (!empty($module['supports'])) {
+		foreach ($module['supports'] as $support) {
+			if ($support == 'wxapp') {
+				$wxapp_support = true;
+			}
+			if ($support == 'app') {
+				$app_support = true;
+			}
+		}
+	}
+	$module['wxapp_support'] = !empty($wxapp_support) ? 2 : 1;
+	$module['app_support'] = !empty($app_support) ? 2 : 1;
 	$bindings = array_elements(array_keys($points), $module, false);
 	foreach ($points as $point_name => $point_info) {
 		unset($module[$point_name]);
@@ -133,6 +147,10 @@ if ($do == 'upgrade') {
 			foreach ($bindings[$point_name] as $entry) {
 				$entry['module'] = $manifest['application']['identifie'];
 				$entry['entry'] = $point_name;
+				if ($point_name == 'page' && !empty($wxapp_support)) {
+					$entry['url'] = $entry['do'];
+					$entry['do'] = '';
+				}
 				if ($entry['title'] && $entry['do']) {
 					//保存xml里面包含的do和title,最后删除数据库中废弃的do和title
 					$not_delete_do[] = $entry['do'];
@@ -167,7 +185,8 @@ if ($do == 'upgrade') {
 			}
 		}
 	}
-
+	unset($module['page']);
+	unset($module['supports']);
 	//执行模块更新文件
 	if (!empty($manifest['upgrade'])) {
 		if (strexists($manifest['upgrade'], '.php')) {
