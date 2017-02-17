@@ -1081,7 +1081,7 @@ function tpl_ueditor($id, $value = '', $options = array()) {
 	$s .= "
 	<script type=\"text/javascript\">
 		$(function(){
-			util.editor(" . ($id ? $id : "''") . ", {
+			util.editor('" . ($id ? $id : "") . "', {
 				height : {$options['height']}, 
 				dest_dir : " .($options['dest_dir'] ? $options['dest_dir'] : "''") . ",
 				image_limit : " . (intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024) . ",
