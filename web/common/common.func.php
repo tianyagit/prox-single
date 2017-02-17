@@ -134,7 +134,6 @@ function buildframes($framename = ''){
 		cache_build_frame_menu();
 		$frames = cache_load('system_frame');
 	}
-	
 	//模块权限，创始人有所有模块权限
 	$modules = uni_modules(false);
 	$sysmodules = system_modules();
@@ -173,6 +172,9 @@ function buildframes($framename = ''){
 				'url' => url('home/welcome/ext', array('m' => $module['name'])),
 				'is_display' => 1,
 			);
+			if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
+				$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
+			}
 			$i++;
 		}
 	}
@@ -280,7 +282,7 @@ function buildframes($framename = ''){
 			foreach ($section['section'] as $section_id => $secion) {
 				$section_show = false;
 				foreach ($secion['menu'] as $menu_id => $menu) {
-					if (!in_array($menu['permission_name'], $user_permission)) {
+					if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
 						$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
 					} else {
 						$section_show = true;
