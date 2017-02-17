@@ -89,9 +89,11 @@ if($do == 'delete') {
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('没有权限！', referer(), 'error');
 	}
-
 	if (!empty($acid)) {
 		account_delete($acid);
+	}
+	if (!empty($uniacid)) {
+		pdo_delete('wxapp_versions', array('uniacid' => $uniacid));
 	}
 	message('删除成功！', referer(), 'success');
 }
