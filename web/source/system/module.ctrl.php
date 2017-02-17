@@ -32,6 +32,13 @@ if ($do == 'get_upgrade_info') {
 		'site_branch' => $cloud_m_upgrade_info['branches'][$cloud_m_upgrade_info['version']['branch_id']],
 		'from' => 'cloud'
 	);
+	$module['site_branch']['id'] = intval($module['site_branch']['id']);
+	if (!empty($module['branches'])) {
+		foreach ($module['branches'] as &$branch) {
+			$branch['id'] = intval($branch['id']);
+		}
+		unset($branch);
+	}
 	if (ver_compare($module_info['version'], $module['site_branch']['version']['version']) != '-1') {
 		unset($module['branches'][$module['site_branch']['id']]);
 	}
