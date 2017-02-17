@@ -40,7 +40,6 @@ if ($do == 'test_alipay') {
 	$params['title'] = '测试支付接口';
 
 	$result = alipay_build($params, $alipay);
-	print_r($result);die;
 	message(error(0, $result['url']), '', 'ajax');
 }
 
