@@ -287,19 +287,20 @@ function cache_build_uninstalled_module() {
 		foreach ($cloud_module as $module) {
 			if (!in_array($module['name'], $installed_module)) {
 				$status = in_array($module['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
-				$uninstallModules[$status][$module['name']] = array(
-					'from' => 'cloud',
-					'name' => $module['name'],
-					'version' => $module['version'],
-					'title' => $module['title'],
-					'thumb' => $module['thumb'],
-					'wxapp_support' => $module['site_branch']['wxapp_support'],
-					'app_support' => $module['site_branch']['app_support']
-				);
+				if (!empty($module['id'])) {
+					$uninstallModules[$status][$module['name']] = array(
+						'from' => 'cloud',
+						'name' => $module['name'],
+						'version' => $module['version'],
+						'title' => $module['title'],
+						'thumb' => $module['thumb'],
+						'wxapp_support' => !empty($module['site_branch']['wxapp_support']) ? $module['site_branch']['wxapp_support'] : 1,
+						'app_support' => !empty($module['site_branch']['app_support']) ? $module['site_branch']['app_support'] : 2
+					);
+				}
 			}
 		}
 	}
-
 	$path = IA_ROOT . '/addons/';
 	if (is_dir($path)) {
 		if ($handle = opendir($path)) {
@@ -314,11 +315,15 @@ function cache_build_uninstalled_module() {
 				if (!in_array($manifest['application']['identifie'], $installed_module)) {
 					$manifest = ext_module_convert($manifest);
 					$module[$manifest['name']] = $manifest;
+					$app_support = !empty($manifest['support']['app_support']) ? $manifest['support']['app_support'] : 2;
+					$wxapp_support = !empty($manifest['support']['wxapp_support']) ? $manifest['support']['wxapp_support'] : 1;
 					$module_info = array(
 						'from' => 'local',
 						'name' => $manifest['name'],
 						'version' => $manifest['version'],
 						'title' => $manifest['title'],
+						'app_support' => $app_support,
+						'wxapp_support' => $wxapp_support
 					);
 					if (in_array($manifest['name'], $recycle_modules)) {
 						$uninstallModules['recycle'][$manifest['name']] = $module_info;
