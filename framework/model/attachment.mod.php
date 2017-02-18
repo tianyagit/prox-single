@@ -123,7 +123,7 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $bucket_local = '') 
 				$message = '输入的bucket有误';
 				break;
 			case -133:
-				$message = '请确认你的cos是否为新版';
+				$message = '请确认你的bucket是否存在';
 				break;
 		}
 		if (empty($bucket_local)) {
