@@ -526,7 +526,40 @@ class DB {
 		$isexists = $this->fetch("DESCRIBE " . $this->tablename($tablename) . " `{$fieldname}`", array());
 		return !empty($isexists) ? true : false;
 	}
-	
+
+	/**
+	 * 查询字段类型是否匹配
+	 * 成功返回TRUE，失败返回FALSE，字段存在，但类型错误返回-1
+	 * 
+	 * @param string $tablename
+	 * 		查询表名
+	 * @param string $fieldname
+	 * 		查询字段名
+	 * @param string $datatype
+	 * 		查询字段类型
+	 * @param string $length
+	 * 		查询字段长度
+	 * @return boolean
+	 */
+	public function fieldmatch($tablename, $fieldname, $datatype = '', $length = '') {
+		$datatype = strtolower($datatype);
+		$field_info = $this->fetch("DESCRIBE " . $this->tablename($tablename) . " `{$fieldname}`", array());
+		if (empty($field_info)) {
+			return false;
+		}
+		if (!empty($datatype)) {
+			$find = strexists($field_info['Type'], '(');
+			if (empty($find)) {
+				$length = '';
+			}
+			if (!empty($length)) {
+				$datatype .= ("({$length})");
+			}
+			return strpos($field_info['Type'], $datatype) === 0 ? true : -1;
+		}
+		return true;
+	}
+
 	/**
 	 * 查询索引是否存在
 	 * 成功返回TRUE，失败返回FALSE

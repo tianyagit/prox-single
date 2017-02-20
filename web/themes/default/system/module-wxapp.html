@@ -5,9 +5,9 @@
 		应用管理
 	</div>
 	<ul class="we7-page-tab">
-		<li class="active"><a href="{php echo url('system/module/installed')}">已安装应用  </a></li>
-		<li><a href="{php echo url('system/module/not_installed')}" ng-if="isFounder == 1">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-		<li><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}" ng-if="isFounder == 1">已停用应用</a></li>
+		<li class="active"><a href="{php echo url('system/module/installed', array('account_type' => 4))}">已安装应用  </a></li>
+		<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" ng-if="isFounder == 1">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
+		<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4, 'status' => 'recycle'))}" ng-if="isFounder == 1">已停用应用</a></li>
 	</ul>
 	<div class="we7-page-search clearfix">
 		<form action="" method="get" class="pull-left">
@@ -16,6 +16,7 @@
 				<input type="hidden" name="c" value="system">
 				<input type="hidden" name="a" value="module">
 				<input type="hidden" name="do" value="page">
+				<input type="hidden" name="account_type" value="4">
 				<div class="input-group">
 					<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
 					<span class="input-group-btn"><button class="btn btn-default" id="search"><i class="fa fa-search"></i></button></span>
@@ -69,7 +70,7 @@
 					<div class="link-group">
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">详情</a>
 						<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>
-						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1">停用</a>
+						<a href="{php echo url('system/module/uninstall', array('account_type' => 4))}&name={{ module.name }}" ng-if="isFounder == 1">停用</a>
 						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
 						<a href="javascript:;" class="color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 					</div>
@@ -195,7 +196,7 @@
 								<div class="link-group">
 									<a tabindex="2" href="javascript:;" role="button" data-toggle="popover" title="{{ module_list[upgradeInfo.name].title }}升级说明" data-container="#upgrade-info" data-placement="bottom" data-trigger="focus" data-html="true" data-content="{{ branch.version.description }}">升级说明</a>
 									<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
-									<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, branch.id)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
+									<a ng-href="{{ './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' }}" ng-click="upgrade(branch.upgrade_price)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
 								</div>
 							</td>
 							<script>
@@ -232,9 +233,9 @@
 		应用管理
 	</div>
 	<ul class="we7-page-tab">
-		<li><a href="{php echo url('system/module/installed')}">已安装应用  </a></li>
-		<li {if $status == 'uninstalled'}class="active"{/if}><a href="{php echo url('system/module/not_installed')}">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-		<li {if $status == 'recycle'}class="active"{/if}><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}">已停用应用</a></li>
+		<li><a href="{php echo url('system/module/installed', array('account_type' => 4))}">已安装应用  </a></li>
+		<li {if $status == 'uninstalled'}class="active"{/if}><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
+		<li {if $status == 'recycle'}class="active"{/if}><a href="{php echo url('system/module/not_installed', array('account_type' => 4, 'status' => 'recycle'))}">已停用应用</a></li>
 	</ul>
 
 	<div class="we7-page-search clearfix">
@@ -245,6 +246,7 @@
 					<input type="hidden" name="a" value="module">
 					<input type="hidden" name="do" value="not_installed">
 					<input type="hidden" name="status" value="{if $status == 'recycle'}recycle{else}uninstalled{/if}">
+					<input type="hidden" name="account_type" value="4">
 					<input type="hidden" name="letter" value="{$letter}">
 					<input class="form-control" name="title" value="{$title}" type="text" placeholder="名称" >
 					<span class="input-group-btn"><button id="search" class="btn btn-default"><i class="fa fa-search"></i></button></span>
@@ -275,7 +277,7 @@
 				<span>版本：{{ module.version }} </span>
 			</td>
 			<td class="text-left">
-				<a href="{php echo url('system/module/install')}&module_name={{ module.name }}" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('system/module/install', array('account_type' => 4))}&module_name={{ module.name }}" class="btn btn-primary">安装应用模块</a>
 			</td>
 		</tr>
 	</table>

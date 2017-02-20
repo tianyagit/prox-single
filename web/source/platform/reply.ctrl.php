@@ -140,7 +140,7 @@ if ($do == 'post') {
 	if ($m == 'keyword' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
-			/*检测规则是否已经存在*/
+
 			$sql = 'SELECT `rid` FROM ' . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
 			$result = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':content' => $_GPC['keyword']));
 			if (!empty($result)) {
@@ -195,12 +195,17 @@ if ($do == 'post') {
 				$rule['displayorder'] = range_limit($rule['displayorder'], 0, 254);
 			}
 			$module = WeUtility::createModule('core');
-			if (empty($module)) {
-				message('抱歉，模块不存在请重新选择其它模块！');
-			}
 			$msg = $module->fieldsFormValidate();
-			if (is_string($msg) && trim($msg) != '') {
-				message($msg);
+			$module_info = module_fetch($m);
+			if (!empty($module_info) && empty($module_info['issystem'])) {
+				$user_module = WeUtility::createModule($m);
+				if (empty($user_module)) {
+					message('抱歉，模块不存在请重新选择其它模块！');
+				}
+				$user_module_error_msg = $user_module->fieldsFormValidate();
+			}
+			if ((is_string($msg) && trim($msg) != '') || (is_string($user_module_error_msg) && trim($user_module_error_msg) != '')) {
+				message($msg.$user_module_error_msg);
 			}
 			if (!empty($rid)) {
 				$result = pdo_update('rule', $rule, array('id' => $rid));
@@ -210,7 +215,6 @@ if ($do == 'post') {
 			}
 
 			if (!empty($rid)) {
-				//更新，添加，删除关键字
 				$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `uniacid`=:uniacid';
 				$pars = array();
 				$pars[':rid'] = $rid;
@@ -231,6 +235,9 @@ if ($do == 'post') {
 				}
 				$kid = pdo_insertid();
 				$module->fieldsFormSubmit($rid);
+				if (!empty($module_info) && empty($module_info['issystem'])) {
+					$user_module->fieldsFormSubmit($rid);
+				}
 				message('回复规则保存成功！', referer(), 'success');
 			} else {
 				message('回复规则保存失败, 请联系网站管理员！');

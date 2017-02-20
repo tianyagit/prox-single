@@ -1,6 +1,6 @@
 {template 'common/header'}
 <ol class="breadcrumb we7-breadcrumb">
-	<a href="文章列表.html"><i class="wi wi-back-circle"></i> </a>
+	<a href="{php echo url('site/style')}"><i class="wi wi-back-circle"></i> </a>
 	<li><a href="{php echo url('site/style')}">微官网模板</a></li>
 	<li><a href="#">设计风格</a></li>
 </ol>
@@ -113,15 +113,15 @@
 					<div class="form-inline we7-margin-bottom" ng-repeat="styleinfo in customStyles">
 						<div class="input-group" >
 							<span class="input-group-addon">变量名</span>
-							<input class="form-control" name="custom[name][]" ng-model="styleinfo.variable" type="text" placeholder="请输入配置变量" pattern="[0-9A-Za-z]{1,20}">
+							<input class="form-control" name="custom[name][]" ng-model="styleinfo.variable" type="text" placeholder="请输入配置变量" pattern="[a-zA-Z0-9\-\_]{1,20}">
 						</div>
 						<div class="input-group" >
 							<span class="input-group-addon">变量描述</span>
-							<input class="form-control" name="custom[desc][]" ng-model="styleinfo.description" type="text" placeholder="请输入变量描述" pattern="[0-9A-Za-z]{1,20}">
+							<input class="form-control" name="custom[desc][]" ng-model="styleinfo.description" type="text" placeholder="请输入变量描述" pattern=".{1,20}">
 						</div>
 						<div class="input-group" >
 							<span class="input-group-addon">值</span>
-							<input class="form-control" name="custom[value][]" ng-model="styleinfo.content" type="text" placeholder="请输入配置值" pattern="[0-9A-Za-z]{1,20}">
+							<input class="form-control" name="custom[value][]" ng-model="styleinfo.content" type="text" placeholder="请输入配置值" pattern="[0-9A-Za-z\-]{1,20}">
 						</div>
 						<label class="checkbox-inline color-default">
 							<a href="javascript:;" ng-click="delCustomArrtibute($event)" class="fa fa-times-circle" title="删除此操作"></a>
@@ -140,11 +140,11 @@
 	<div class="form-inline we7-margin-bottom">
 		<div class="input-group" >
 			<span class="input-group-addon">变量名</span>
-			<input class="form-control" name="custom[name][]" value="{$style['variable']}" type="text" placeholder="请输入配置变量" pattern="[0-9A-Za-z\-]{1,20}">
+			<input class="form-control" name="custom[name][]" value="{$style['variable']}" type="text" placeholder="请输入配置变量" pattern="[0-9A-Za-z\-\_]{1,20}">
 		</div>
 		<div class="input-group" >
 			<span class="input-group-addon">变量描述</span>
-			<input class="form-control" name="custom[desc][]" value="{$style['description']}" type="text" placeholder="请输入变量描述" pattern="[0-9A-Za-z\-]{1,20}">
+			<input class="form-control" name="custom[desc][]" value="{$style['description']}" type="text" placeholder="请输入变量描述" pattern=".{1,20}">
 		</div>
 		<div class="input-group" >
 			<span class="input-group-addon">值</span>

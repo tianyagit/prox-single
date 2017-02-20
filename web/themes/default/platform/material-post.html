@@ -1,6 +1,4 @@
 {template 'common/header'}
-{php load()->func('tpl')}
-{php echo tpl_ueditor('', '', array('allow_upload_video' => false));}
 <div class="" ng-module="materialApp" ng-controller="materialAdd" id="main" ng-cloak>
 	<div class="container">
 		<div class="penel we7-panel panel-special">
@@ -67,7 +65,7 @@
 							<!-- BEGIN 原文链接 -->
 							<div class="we7-form appmsg-edit-item origin-url-area">
 								<div class="form-controls">
-									<label>图文链接</label>
+									<label>跳转链接</label>
 								</div>
 								<span class="form-control-box"><input class="form-control" name="source-url" ng-model="materialList[activeIndex].content_source_url" type="text" size="60"></span>
 							</div>
@@ -138,6 +136,5 @@
 		angular.bootstrap($('#main'), ['materialApp']);
 	});
 	$('[data-toggle="tooltip"]').tooltip();
-	ueditoroption.autoFloatEnabled = false;
 </script>
 {template 'common/footer'}

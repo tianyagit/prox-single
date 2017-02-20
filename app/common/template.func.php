@@ -314,12 +314,11 @@ function site_article($params = array()) {
 		$psize = max(1, $limit);
 	}
 	$result = array();
-
 	$condition = " WHERE uniacid = :uniacid ";
 	$pars = array(':uniacid' => $_W['uniacid']);
 	if (!empty($cid)) {
-		$category = pdo_fetch("SELECT parentid FROM ".tablename('site_category')." WHERE id = :id", array(':id' => $cid));
-		if (!empty($category['parentid'])) {
+		$category = pdo_getcolumn('site_category', array('id' => $cid, 'enabled' => 1), 'parentid');
+		if (!empty($category)) {
 			$condition .= " AND ccate = :ccate ";
 			$pars[':ccate'] = $cid;
 		} else {

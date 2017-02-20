@@ -49,7 +49,7 @@
 					<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}"  class="js-clip">复制链接</a>
 					<a href="{php echo url('site/article/post', array('pcate' => $row['id']));}" >添加文章</a>
 					<a href="{php echo url('site/category/post', array('id' => $row['id']));}" >编辑</a>
-					<a href="{php echo url('site/category/del', array('id' => $row['id']));}" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
+					<a href="{php echo url('site/category/delete', array('id' => $row['id']));}" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
 				</div>
 			</td>
 		</tr>
@@ -75,7 +75,7 @@
 					<a href="javascript:;" data-url="{php echo murl('site/site', array('cid' => $row['id']), true, true)}" class="color-default we7-margin-right-sm js-clip">复制链接</a>
 					<a href="{php echo url('site/article/post', array('pcate' => $row['parentid'], 'ccate' => $row['id']));}" class="color-default we7-margin-right-sm">添加文章</a>
 					<a href="{php echo url('site/category/post', array('id' => $row['id'], 'parentid' => $row['parentid']));}" class="color-default we7-margin-right-sm">编辑</a>
-					<a href="{php echo url('site/category/del', array('id' => $row['id']));}" class="color-default" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
+					<a href="{php echo url('site/category/delete', array('id' => $row['id']));}" class="color-default" onclick="return confirm('确认删除此分类吗？');return false;">删除</a>
 				</div>
 			</td>
 		</tr>
