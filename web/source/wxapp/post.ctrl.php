@@ -58,8 +58,8 @@ if($do == 'post') {
 		$version = ($submit_val['version0'] ? $submit_val['version0'] : 0) .'.'.($submit_val['version1'] ? $submit_val['version1'] : 0).'.'.($submit_val['version2'] ? $submit_val['version2'] : 0);
 		$bottom_menu = array();
 		foreach ($submit_val['menus'] as $menu_val) {
-			$menu_val['defaultImage'] = empty($menu_val['defaultImage']) ? $_W['siteroot'].'web/resource/images/bottom-default.png' : $menu_val['defaultImage'];
-			$menu_val['selectedImage'] = empty($menu_val['selectedImage']) ? $_W['siteroot'].'web/resource/images/bottom-default.png' : $menu_val['selectedImage'];
+			$menu_val['defaultImage'] = $menu_val['defaultImage'] == './resource/images/bottom-default.png' ? $_W['siteroot'] . 'web/resource/images/bottom-default.png' : $menu_val['defaultImage'];
+			$menu_val['selectedImage'] = $menu_val['selectedImage'] == './resource/images/bottom-default.png' ? $_W['siteroot'] . 'web/resource/images/bottom-default.png' : $menu_val['selectedImage'];
 			$bottom_menu[] = array(
 				'pagePath' => $menu_val['module']['url'],
 				'iconPath' => $menu_val['defaultImage'],
