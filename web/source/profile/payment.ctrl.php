@@ -33,11 +33,21 @@ if ($do == 'get_setting') {
 
 if ($do == 'test_alipay') {
 	$alipay = $_GPC['param'];
+	$pay_data = array(
+		'uniacid' => $_W['uniacid'],
+		'acid' => $_W['acid'],
+		'uniontid' => date('Ymd', time()).time(),
+		'module' => 'system',
+		'fee' => '0.01',
+		'status' => 0,
+		'card_fee' => 0.01
+	);
 	$params = array();
 	$params['tid'] = md5(uniqid());
 	$params['user'] = '测试用户';
 	$params['fee'] = '0.01';
 	$params['title'] = '测试支付接口';
+	$params['uniontid'] = $pay_data['uniontid'];
 
 	$result = alipay_build($params, $alipay);
 	message(error(0, $result['url']), '', 'ajax');
