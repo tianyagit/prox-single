@@ -93,7 +93,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="httpChange('name')">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('name')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -113,7 +113,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="httpChange('account')">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('account')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -133,7 +133,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="httpChange('original')">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('original')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -158,7 +158,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="httpChange('level')">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('level')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -181,13 +181,13 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="httpChange('endtime')">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('endtime')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<table class="table we7-table table-hover table-form wechat-menu">
 		<col width="140px " />
 		<col />
@@ -218,7 +218,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="httpChange('key')">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('key')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -238,7 +238,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="httpChange('secret')">确定</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('secret')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -259,7 +259,7 @@
 			<td class="table-label">Token<p>(令牌)</p></td>
 			<td>
 				<a href="javascript:;" class="we7-padding-right" ng-bind="account.token"></a>
-				<a href="javascript:;" class="btn btn-primary btn-sm" ng-click="httpChange('token')">生成新的</a>
+				<a href="javascript:;" class="btn btn-primary btn-sm" data-dismiss="modal" ng-click="httpChange('token')">生成新的</a>
 				<a href="javascript:;" id="copy-1" class="btn btn-primary btn-sm" clipboard supported="supported" text="account.token" on-copied="success('1')">点击复制</a>
 			</td>
 		</tr>
@@ -267,13 +267,14 @@
 			<td class="table-label">EncodingAESKey<p>(消息加解密密钥)</p> </td>
 			<td>
 				<a href="javascript:;" class="we7-padding-right" ng-bind="account.encodingaeskey"></a>
-				<a href="javascript:;" class="btn btn-primary btn-sm" ng-click="httpChange('encodingaeskey')">生成新的</a>
+				<a href="javascript:;" class="btn btn-primary btn-sm" data-dismiss="modal" ng-click="httpChange('encodingaeskey')">生成新的</a>
 				<a href="javascript:;" id="copy-2" class="btn btn-primary btn-sm" clipboard supported="supported" text="account.encodingaeskey" on-copied="success('2')">点击复制</a>
 			</td>
 		</tr>
 	</table>
 </div>
 <script>
+
 	angular.module('accountApp').value('config', {
 		account: {php echo !empty($account) ? json_encode($account) : 'null'},
 		uniaccount: {php echo !empty($uniaccount) ? json_encode($uniaccount) : 'null'},

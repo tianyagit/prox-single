@@ -89,7 +89,7 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $bucket_local = '') 
 		$con = preg_replace('/const[\s]APP_ID[\s]=[\s]\'.*\';/', 'const APP_ID = \''.$appid.'\';', $con);
 		$con = preg_replace('/const[\s]SECRET_ID[\s]=[\s]\'.*\';/', 'const SECRET_ID = \''.$key.'\';', $con);
 		$con = preg_replace('/const[\s]SECRET_KEY[\s]=[\s]\'.*\';/', 'const SECRET_KEY = \''.$secret.'\';', $con);
-		file_put_contents(IA_ROOT.'/framework/library/newcos/qcloudcos/Conf.php', $con);
+		file_put_contents(IA_ROOT.'/framework/library/newcos/qcloudcos/conf.php', $con);
 		require_once(IA_ROOT.'/framework/library/newcos/include.php');
 		qcloudcos\Cosapi :: setRegion($bucket_local);
 		qcloudcos\Cosapi :: setTimeout(180);
@@ -123,7 +123,7 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $bucket_local = '') 
 				$message = '输入的bucket有误';
 				break;
 			case -133:
-				$message = '请确认你的cos是否为新版';
+				$message = '请确认你的bucket是否存在';
 				break;
 		}
 		if (empty($bucket_local)) {

@@ -204,9 +204,9 @@ if ($do == 'post') {
 				} else {
 					$group_not_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg');
 				}
-				if ($group_not_have_module[$module_info['name']]['app_support'] == 2) {
+//				if ($group_not_have_module[$module_info['name']]['app_support'] == 2) {
 					$group_not_have_module_app[$module_info['name']] = $group_not_have_module[$module_info['name']];
-				}
+//				}
 				if ($group_not_have_module[$module_info['name']]['wxapp_support'] == 2) {
 					$group_not_have_module_wxapp[$module_info['name']] = $group_not_have_module[$module_info['name']];
 				}
