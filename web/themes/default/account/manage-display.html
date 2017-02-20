@@ -33,7 +33,7 @@
 <table class="table we7-table table-hover vertical-middle" id="js-system-account-display" ng-controller="SystemAccountDisplay" ng-cloak>
 	<col width="85px" />
 	<col />
-	<col width="208px" />
+	<col width="200px" />
 	<col width="100px"/>
 	<col width="245px" />
 	<tr>
@@ -51,7 +51,7 @@
 			<span class="color-gray" ng-if="list.level == 1">类型：普通订阅号</span>
 			<span class="color-gray" ng-if="list.level == 2">类型：普通服务号</span>
 			<span class="color-gray" ng-if="list.level == 3">类型：认证订阅号</span>
-			<span class="color-gray" ng-if="list.level == 4">类型：认证服务号</span>
+			<span class="color-gray" ng-if="list.level == 4" title="认证服务号/认证媒体/政府订阅号">类型：认证服务号</span>
 			<span class="color-red" ng-if="list.isconnect == 0" data-toggle="tooltip" data-placement="right" title="公众号接入状态显示“未接入”解决方案：进入微信公众平台，依次选择: 开发者中心 -> 修改配置，然后将对应公众号在平台的url和token复制到微信公众平台对应的选项，公众平台会自动进行检测"><i class="wi wi-error-sign"></i>未接入</span>
 			<span class="color-green" ng-if="list.isconnect == 1"><i class="wi wi-right-sign"></i>已接入</span>
 		</td>
