@@ -64,6 +64,7 @@ require.config({
 		'underscore': '../lib/underscore-min',
 		'biz': '../lib/biz',
 		//兼容
+		'util' : '../app/util',
 		'ueditor': '../../components/ueditor/ueditor.all.min',
 		'angular': '../lib/angular.min',
 		'angular.sanitize': '../lib/angular-sanitize.min',
@@ -84,6 +85,9 @@ require.config({
 				//导出到全局变量，供ueditor使用
 				window.ZeroClipboard = ZeroClipboard;
 			}
+		},
+		'util' : {
+			exports: 'util',
 		},
 		'jquery' : {
 			exports: '$',
