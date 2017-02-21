@@ -236,7 +236,7 @@ class DB {
 			if (is_array($fields)) {
 				$select = '`'.implode('`,`', $fields).'`';
 			} else {
-				$select = $fields;
+				$select = '`'. $fields. '`';
 			}
 		}
 		$condition = $this->implode($params, 'AND');

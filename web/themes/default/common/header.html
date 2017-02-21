@@ -115,16 +115,16 @@
 			</div>
 			<div class="panel-body">
 				<div class="left-menu">
-					{loop $frames['section'] $section_id $section}
-						{if !isset($section['is_display']) || !empty($section['is_display'])}
+					{loop $frames['frame_section'] $frame_section_id $frame_section}
+						{if !isset($frame_section['is_display']) || !empty($frame_section['is_display'])}
 						<div class="panel panel-menu">
-							{if $section['title']}
+							{if $frame_section['title']}
 								<div class="panel-heading">
-									{$section['title']}<span class="wi wi-appsetting pull-right setting"></span>
+									{$frame_section['title']}<span class="wi wi-appsetting pull-right setting"></span>
 								</div>
 							{/if}
 							<ul class="list-group">
-								{loop $section['menu'] $menu_id $menu}
+								{loop $frame_section['menu'] $menu_id $menu}
 									{if !empty($menu['is_display'])}
 										{if $menu_id == 'platform_module_more'}
 										<li class="list-group-item list-group-more">
@@ -132,9 +132,9 @@
 										</li>
 										{else}
 										<li class="list-group-item {if $menu['active']}active{/if}">
-											<a href="{$menu['url']}" class="text-over" {if $section_id == 'platform_module'}target="_blank"{/if}>
+											<a href="{$menu['url']}" class="text-over" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
 												{if $menu['icon']}
-													{if $section_id == 'platform_module'}
+													{if $frame_section_id == 'platform_module'}
 														<img src="{$menu['icon']}"/>
 													{else}
 														<i class="{$menu['icon']}"></i>
