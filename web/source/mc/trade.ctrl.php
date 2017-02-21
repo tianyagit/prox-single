@@ -4,13 +4,17 @@
  * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
+
+load()->model('mc');
+load()->model('card');
+load()->model('module');
+
 if($_W['role'] != 'clerk') {
 	uni_user_permission_check('mc_member');
 }
 $_W['page']['title'] = '会员交易-会员管理';
 $dos = array('consume', 'user', 'modal', 'credit', 'card', 'cardsn', 'tpl', 'cardconsume');
 $do = in_array($do, $dos) ? $do : 'tpl';
-load()->model('mc');
 
 if($do == 'user') {
 	$type = trim($_GPC['type']);
@@ -24,40 +28,45 @@ if($do == 'user') {
 	} elseif(count($data) > 1) {
 		exit(json_encode(array('error' => 'not-unique', 'message' => '用户不唯一,请重新输入用户信息')));
 	} else {
-		load()->model('card');
+		$card = array();
 		$user = $data[0];
 		$user['groupname'] = $_W['account']['groups'][$user['groupid']]['title'];
-
-		$card = card_setting();
-		$member = pdo_get('mc_card_members', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
-		if(!empty($card) && $card['status'] == 1) {
-			if(!empty($member)) {
-				$str = "会员卡号:{$member['cardsn']}.";
-				$user['discount'] = $card['discount'][$user['groupid']];
-				$user['cardsn'] = $member['cardsn'];
-				if(!empty($user['discount']) && !empty($user['discount']['discount'])) {
-					$str .= "折扣:满{$user['discount']['condition']}元";
-					if($card['discount_type'] == 1) {
-						$str .= "减{$user['discount']['discount']}元";
-					} else {
-						$discount = $user['discount']['discount'] * 10;
-						$str .= "打{$discount}折";
+		$we7_coupon_info = module_fetch('we7_coupon');
+		if (!empty($we7_coupon_info)) {
+			$card = card_setting();
+			$member = pdo_get('mc_card_members', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
+			if(!empty($card) && $card['status'] == 1) {
+				if(!empty($member)) {
+					$str = "会员卡号:{$member['cardsn']}.";
+					$user['discount'] = $card['discount'][$user['groupid']];
+					$user['cardsn'] = $member['cardsn'];
+					if(!empty($user['discount']) && !empty($user['discount']['discount'])) {
+						$str .= "折扣:满{$user['discount']['condition']}元";
+						if($card['discount_type'] == 1) {
+							$str .= "减{$user['discount']['discount']}元";
+						} else {
+							$discount = $user['discount']['discount'] * 10;
+							$str .= "打{$discount}折";
+						}
+						$user['discount_cn'] = $str;
 					}
-					$user['discount_cn'] = $str;
+				} else {
+					$user['discount_cn'] = '会员未领取会员卡,不能享受优惠';
 				}
 			} else {
-				$user['discount_cn'] = '会员未领取会员卡,不能享受优惠';
+				$user['discount_cn'] = '商家未开启会员卡功能';
 			}
-		} else {
-			$user['discount_cn'] = '商家未开启会员卡功能';
 		}
+		
 		$html = "姓名:{$user['realname']},会员组:{$user['groupname']}<br>";
-		$html .= "{$user['discount_cn']}<br>";
+		if(!empty($we7_coupon_info)) {
+			$html .= "{$user['discount_cn']}<br>";
+		}
 		$html .= "余额:{$user['credit2']}元,积分:{$user['credit1']}<br>";
-
-		if(!empty($card) && $card['offset_rate'] > 0 && $card['offset_max'] > 0) {
+		if(!empty($we7_coupon_info) && !empty($card) && $card['offset_rate'] > 0 && $card['offset_max'] > 0) {
 			$html .= "{$card['offset_rate']}积分可抵消1元。最多可抵消{$card['offset_max']}元";
 		}
+		
 		exit(json_encode(array('error' => 'none', 'user' => $user, 'html' => $html, 'card' => $card, 'group' => $_W['account']['groups'], 'grouplevel' => $_W['account']['grouplevel'])));
 	}
 }
