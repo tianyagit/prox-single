@@ -35,7 +35,7 @@ if($step == 1) {
 }elseif ($step == 2) {
 	if (!empty($uniacid)) {
 		$state = uni_permission($uid, $uniacid);
-		if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
+		if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			message('没有该公众号操作权限！');
 		}
 		if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
@@ -144,7 +144,10 @@ if($step == 1) {
 		exit;
 	}
 }elseif ($step == 3) {
-	if (empty($_W['isfounder'])) {
+	$acid = intval($_GPC['acid']);
+	$uniacid = intval($_GPC['uniacid']);
+	$state = uni_permission($_W['uid'], $uniacid);
+	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('您无权进行该操作！');
 	}
 	if ($_GPC['get_type'] == 'userinfo' && $_W['ispost']) {
@@ -164,9 +167,7 @@ if($step == 1) {
 	if (checksubmit('submit')) {
 		//设置公众号管理员
 		$uid = intval($_GPC['uid']);
-		$acid = intval($_GPC['acid']);
 		$groupid = intval($_GPC['groupid']);
-		$uniacid = intval($_GPC['uniacid']);
 		if (!empty($_GPC['signature'])) {
 			$signature = trim($_GPC['signature']);
 			$setting = pdo_get('uni_settings', array('uniacid' => $_W['uniacid']));
