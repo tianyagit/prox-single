@@ -1061,8 +1061,8 @@ function account_delete($acid) {
 	if ($account) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
-		if($state != 'founder' && $state != 'manager') {
-			message('没有该公众号操作权限！', url('accound/display'), 'error');
+		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
+			message('没有该公众号操作权限！', url('account/recycle'), 'error');
 		}
 		if($uniacid == $_W['uniacid']) {
 			isetcookie('__uniacid', '');
@@ -1124,7 +1124,7 @@ function account_delete($acid) {
 		}
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
-		if($state != 'founder' && $state != 'manager') {
+		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			message('没有该公众号操作权限！', url('accound/display'), 'error');
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
