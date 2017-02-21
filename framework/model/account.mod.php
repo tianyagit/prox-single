@@ -1125,7 +1125,7 @@ function account_delete($acid) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该公众号操作权限！', url('accound/display'), 'error');
+			message('没有该公众号操作权限！', url('account/recycle'), 'error');
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
 		if ($uniaccount['default_acid'] == $acid) {
