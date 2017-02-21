@@ -333,6 +333,10 @@ if($do == 'post') {
 				$temp = array();
 				$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
 				$temp['name'] = urlencode($temp['name']);
+				$keyword_exist = strexists($button['key'], 'keyword:');
+				if ($keyword_exist) {
+					$button['key'] = substr($button['key'], 8);
+				}
 				if (empty($button['sub_button'])) {
 					$temp['type'] = $button['type'];
 					if($button['type'] == 'view') {
