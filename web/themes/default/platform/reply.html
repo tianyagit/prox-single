@@ -129,20 +129,9 @@
 									<a href="{php echo url('platform/reply/post', array('m' => $row['module'], 'rid' => $row['id']))}">编辑</a>
 									{/if}
 									<a href="{php echo url('platform/reply/delete', array('m' => $m, 'rid' => $row['id']))}" onclick="return confirm('删除规则将同时删除关键字与回复，确认吗？');return false;">删除</a>
-									<!-- <a class="color-default keyword-link" href="{php echo url('platform/stat/trend', array('id' => $row['id'], 'm' => $row['module']))}"><i class="fa fa-bar-chart-o"></i> 使用率走势</a> -->
-									{if $row['options']}
-									<!-- <div class="btn-group">
-										<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-											功能选项
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu" style="min-width:0px;">
-											{loop $row['options'] $opt}
-												<li><a href="{$opt['url']}">{$opt['title']}</a></li>
-											{/loop}
-										</ul>
-									</div> -->
-									{/if}
+									{loop $entries['rule'] $ext_menu}
+									<a href="{$ext_menu['url']}&id={$row['id']}&rid={$row['id']}">{$ext_menu['title']}</a>
+									{/loop}
 								</div>
 							</td>
 						</tr>
