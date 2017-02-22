@@ -48,6 +48,10 @@ $table = 'test_pdo';
 $param = array(
 	'uniacid' => 2
 );
+$param_a = array(
+	'uniacid' => 1,
+	'displayorder' => 1,
+);
 
 //pdo_get()第二个参数有值时
 $result_a = pdo_get($table, $param);
@@ -62,7 +66,11 @@ if ($result_b != $data[0]) {
 }
 
 //pdo_get()第二个参数为多值时
-$result_c = pdo_get($table, '');
+$result_c = pdo_get($table, $param_a);
+if ($result_c != $data[0]) {
+	echo "pdo_get()函数返回值不正确, result_b";die;
+}
+
 
 
 
