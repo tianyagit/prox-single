@@ -231,36 +231,14 @@ class DB {
 	}
 	
 	public function get($tablename, $params = array(), $fields = array()) {
-		$select = '*';
-		if (!empty($fields)){
-			if (is_array($fields)) {
-				$select = '`'.implode('`,`', $fields).'`';
-			} else {
-				if (strexists($fields, "(") && strexists($fields, ")")) {
-					$select = $fields;
-				} else {
-					$select = '`'. $fields. '`';
-				}
-			}
-		}
+		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
 		$sql = "SELECT {$select} FROM " . $this->tablename($tablename) . (!empty($condition['fields']) ? " WHERE {$condition['fields']}" : '') . " LIMIT 1";
 		return $this->fetch($sql, $condition['params']);
 	}
 	
 	public function getall($tablename, $params = array(), $fields = array(), $keyfield = '', $orderby = array(), $limit = array()) {
-		$select = '*';
-		if (!empty($fields)){
-			if (is_array($fields)) {
-				$select = '`'.implode('`,`', $fields).'`';
-			} else {
-				if (strexists($fields, "(") && strexists($fields, ")")) {
-					$select = $fields;
-				} else {
-					$select = '`'. $fields. '`';
-				}
-			}
-		}
+		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
 		
 		if (!empty($limit)) {
@@ -288,18 +266,7 @@ class DB {
 	}
 	
 	public function getslice($tablename, $params = array(), $limit = array(), &$total = null, $fields = array(), $keyfield = '', $orderby = array()) {
-		$select = '*';
-		if (!empty($fields)){
-			if (is_array($fields)) {
-				$select = '`'.implode('`,`', $fields).'`';
-			} else {
-				if (strexists($fields, "(") && strexists($fields, ")")) {
-					$select = $fields;
-				} else {
-					$select = '`'. $fields. '`';
-				}
-			}
-		}
+		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
 		if (!empty($limit)) {
 			if (is_array($limit)) {
@@ -496,6 +463,40 @@ class DB {
 		return $result;
 	}
 	
+	private function parseSelect($field = array()) {
+		if (empty($field)) {
+			return '*';
+		}
+		if (!is_array($field)) {
+			$field = array($field);
+		}
+		$select = array();
+		$index = 0;
+		foreach ($field as $field_row) {
+			if (strexists($field_row, '*')) {
+				if (!strexists(strtolower($field_row), 'as')) {
+					$field_row .= " AS '{$index}'";
+				}
+			} elseif (strexists(strtolower($field_row), 'select')) {
+				//当前可能包含子查询，但不推荐此写法
+				if ($field_row[0] != '(') {
+					$field_row = "($field_row) AS '{$index}'";
+				}
+			} elseif (strexists($field_row, '(')) {
+				$field_row = str_replace(array('(', ')'), array('(`',  '`)'), $field_row);
+				//如果聚合函数没有指定AS字段，则添加当前索引为AS
+				if (!strexists(strtolower($field_row), 'as')) {
+					$field_row .= " AS '{$index}'";
+				}
+			} else {
+				$field_row = '`'. $field_row. '`';
+			}
+			$select[] = $field_row;
+			$index++;
+		}
+		return implode(',', $select);
+	}
+	
 	/**
 	 * 执行SQL文件
 	 */
@@ -631,7 +632,7 @@ class DB {
 					load()->web('common');
 					load()->web('template');
 				}
-				message("SQL: <br/>{$append['sql']}<hr/>Params: <br/>{$params}<hr/>SQL Error: <br/>{$append['error'][2]}<hr/>Traces: <br/>{$ts}");
+				exit("SQL: <br/>{$append['sql']}<hr/>Params: <br/>{$params}<hr/>SQL Error: <br/>{$append['error'][2]}<hr/>Traces: <br/>{$ts}");
 			}
 		}
 		return $this->errors;
