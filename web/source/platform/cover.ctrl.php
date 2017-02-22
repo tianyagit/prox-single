@@ -34,20 +34,6 @@ if ($do == 'module') {
 	define('ACTIVE_FRAME_URL', $url);
 	
 	$entries = module_entries($modulename);
-	if (!empty($entries)) {
-		$cover_list = pdo_getall('cover_reply', array('module' => $modulename, 'uniacid' => $_W['uniacid']), array('title', 'do', 'rid', 'url'), 'do');
-		if (!empty($cover_list)) {
-			foreach ($cover_list as &$cover) {
-				$cover['rule'] = reply_single($cover['rid']);
-			}
-			unset($cover);
-		}
-		foreach ($entries['cover'] as &$menu) {
-			$menu['cover'] = $cover_list[$menu['do']];
-		}
-		unset($menu);
-	}
-	
 } elseif ($do == 'post') {
 	$entry_id = intval($_GPC['eid']);
 	if(empty($entry_id)) {
