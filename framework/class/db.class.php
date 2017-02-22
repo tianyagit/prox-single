@@ -254,7 +254,11 @@ class DB {
 			if (is_array($fields)) {
 				$select = '`'.implode('`,`', $fields).'`';
 			} else {
-				$select = $fields;
+				if (strexists($fields, "(") && strexists($fields, ")")) {
+					$select = $fields;
+				} else {
+					$select = '`'. $fields. '`';
+				}
 			}
 		}
 		$condition = $this->implode($params, 'AND');
@@ -289,7 +293,11 @@ class DB {
 			if (is_array($fields)) {
 				$select = '`'.implode('`,`', $fields).'`';
 			} else {
-				$select = $fields;
+				if (strexists($fields, "(") && strexists($fields, ")")) {
+					$select = $fields;
+				} else {
+					$select = '`'. $fields. '`';
+				}
 			}
 		}
 		$condition = $this->implode($params, 'AND');

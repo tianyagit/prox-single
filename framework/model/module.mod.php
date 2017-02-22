@@ -335,7 +335,7 @@ function module_get_all_unistalled($status)  {
 	$uninstallModules =  cache_load('we7:module:all_uninstall');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-	if (is_array($uninstallModules['modules']) && $uninstallModules['cloud_m_count']['module_quantity'] == $cloud_m_count['module_quantity']) {
+	if (is_array($uninstallModules['modules']) && $uninstallModules['cloud_m_count'] == $cloud_m_count['module_quantity']) {
 		return $uninstallModules['modules'][$status];
 	} else {
 		$uninstallModules = cache_build_uninstalled_module();

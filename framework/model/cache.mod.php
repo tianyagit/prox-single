@@ -335,7 +335,7 @@ function cache_build_uninstalled_module() {
 			}
 		}
 		$cache = array(
-			'cloud_m_count' => $cloud_m_count,
+			'cloud_m_count' => $cloud_m_count['module_quantity'],
 			'modules' => $uninstallModules,
 			'uninstall_count' => count($uninstallModules['uninstalled'])
 		);
