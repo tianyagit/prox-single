@@ -73,11 +73,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 	} else {
 		$types = array_intersect($types, $ts);
 	}
-	$fields = implode("','", $types);
-	$sql = 'SELECT * FROM ' . tablename('modules_bindings')." WHERE `module`=:module AND `entry` IN ('{$fields}') ORDER BY displayorder DESC, eid ASC";
-	$pars = array();
-	$pars[':module'] = $name;
-	$bindings = pdo_fetchall($sql, $pars);
+	$bindings = pdo_getall('modules_bindings', array('module' => $name, 'entry' => $types));
 	$entries = array();
 	foreach($bindings as $bind) {
 		if(!empty($bind['call'])) {
@@ -146,11 +142,7 @@ function module_app_entries($name, $types = array(), $args = null) {
 	} else {
 		$types = array_intersect($types, $ts);
 	}
-	$fields = implode("','", $types);
-	$sql = 'SELECT * FROM ' . tablename('modules_bindings')." WHERE `module`=:module AND `entry` IN ('{$fields}') ORDER BY eid ASC";
-	$pars = array();
-	$pars[':module'] = $name;
-	$bindings = pdo_fetchall($sql, $pars);
+	$bindings = pdo_getall('modules_bindings', array('module' => $name, 'entry' => $types));
 	$entries = array();
 	foreach($bindings as $bind) {
 		if(!empty($bind['call'])) {
