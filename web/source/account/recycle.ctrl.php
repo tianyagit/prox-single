@@ -10,7 +10,7 @@ load()->model('account');
 $dos = array('display', 'recover', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
 //只有创始人、主管理员才有权限使用回收站功能
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	message('无权限操作！', referer(), 'error');
 }
 $_W['page']['title'] = $account_typename . '回收站 - ' . $account_typename;
@@ -23,13 +23,21 @@ if ($do == 'display') {
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
+
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type = ".ACCOUNT_TYPE_APP_NORMAL;
+		$order_by = " ORDER BY a.`acid` DESC";
 	} else {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
+		if (!empty($_W['isfounder'])) {
+			$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
+			$order_by = " ORDER BY a.`acid` DESC";
+		} else {
+			$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted = 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
+			$param[':uid'] = $_W['uid'];
+			$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
+		}		
 	}
 	
-	$order_by = " ORDER BY a.`acid` DESC";
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
@@ -69,7 +77,7 @@ if ($do == 'recover') {
 	$acid = intval($_GPC['acid']);
 	$uniacid = intval($_GPC['uniacid']);
 	$state = uni_permission($_W['uid'], $uniacid);
-	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
+	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('没有权限！', referer(), 'error');
 	}
 
@@ -89,9 +97,11 @@ if($do == 'delete') {
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('没有权限！', referer(), 'error');
 	}
-
 	if (!empty($acid)) {
 		account_delete($acid);
+	}
+	if (!empty($uniacid)) {
+		pdo_delete('wxapp_versions', array('uniacid' => $uniacid));
 	}
 	message('删除成功！', referer(), 'success');
 }

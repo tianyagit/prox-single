@@ -304,7 +304,7 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 		}
 	} elseif ($_W['setting']['remote']['type'] == '4') {
 		if (!empty($_W['setting']['remote']['cos']['local'])) {
-			require(IA_ROOT.'/framework/library/newcos/include.php');
+			require(IA_ROOT.'/framework/library/cosv4.2/include.php');
 			qcloudcos\Cosapi :: setRegion($_W['setting']['remote']['cos']['local']);
 			$uploadRet = qcloudcos\Cosapi::upload($_W['setting']['remote']['cos']['bucket'], ATTACHMENT_ROOT .$filename,'/'.$filename,'',3 * 1024 * 1024, 0);
 		} else {

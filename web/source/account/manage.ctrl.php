@@ -103,7 +103,7 @@ if ($do == 'delete') {
 			message('抱歉，帐号不存在或是已经被删除', $redirect_url, 'error');
 		}
 		$state = uni_permission($uid, $uniacid);
-		if($state != 'founder' && $state != 'manager') {
+		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			message('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', $redirect_url, 'error');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));

@@ -1286,6 +1286,7 @@ abstract class WeModuleSite extends WeBase {
 	protected function pay($params = array(), $mine = array()) {
 		global $_W;
 		load()->model('activity');
+		load()->model('module');
 		activity_coupon_type_init();
 		if(!$this->inMobile) {
 			message('支付功能只能在手机上使用');
@@ -1327,24 +1328,27 @@ abstract class WeModuleSite extends WeBase {
 			message('没有有效的支付方式, 请联系网站管理员.');
 		}
 		$pay = $setting['payment'];
-		$cards = activity_paycenter_coupon_available();
-		if (!empty($cards)) {
-			foreach ($cards as $key => &$val) {
-				if ($val['type'] == '1') {
-					$val['discount_cn'] = sprintf("%.2f", $params['fee'] * (1 - $val['extra']['discount'] * 0.01));
-					$coupon[$key] = $val;
-				} else {
-					$val['discount_cn'] = sprintf("%.2f", $val['extra']['reduce_cost'] * 0.01);
-					$token[$key] = $val;
-					if ($log['fee'] < $val['extra']['least_cost'] * 0.01) {
-						unset($token[$key]);
+		$we7_coupon_info = module_fetch('we7_coupon');
+		if (!empty($we7_coupon_info)) {
+			$cards = activity_paycenter_coupon_available();
+			if (!empty($cards)) {
+				foreach ($cards as $key => &$val) {
+					if ($val['type'] == '1') {
+						$val['discount_cn'] = sprintf("%.2f", $params['fee'] * (1 - $val['extra']['discount'] * 0.01));
+						$coupon[$key] = $val;
+					} else {
+						$val['discount_cn'] = sprintf("%.2f", $val['extra']['reduce_cost'] * 0.01);
+						$token[$key] = $val;
+						if ($log['fee'] < $val['extra']['least_cost'] * 0.01) {
+							unset($token[$key]);
+						}
 					}
+					unset($val['icon']);
+					unset($val['description']);
 				}
-				unset($val['icon']);
-				unset($val['description']);
 			}
+			$cards_str = json_encode($cards);
 		}
-		$cards_str = json_encode($cards);
 		if (empty($_W['member']['uid'])) {
 			$pay['credit']['switch'] = false;
 		}

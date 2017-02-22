@@ -33,11 +33,21 @@ if ($do == 'get_setting') {
 
 if ($do == 'test_alipay') {
 	$alipay = $_GPC['param'];
+	$pay_data = array(
+		'uniacid' => $_W['uniacid'],
+		'acid' => $_W['acid'],
+		'uniontid' => date('Ymd', time()).time(),
+		'module' => 'system',
+		'fee' => '0.01',
+		'status' => 0,
+		'card_fee' => 0.01
+	);
 	$params = array();
 	$params['tid'] = md5(uniqid());
 	$params['user'] = '测试用户';
 	$params['fee'] = '0.01';
 	$params['title'] = '测试支付接口';
+	$params['uniontid'] = $pay_data['uniontid'];
 
 	$result = alipay_build($params, $alipay);
 	message(error(0, $result['url']), '', 'ajax');
@@ -117,6 +127,31 @@ MFF/yA==
 }
 
 if ($do == 'display') {
+	$params = array();
+	if(empty($_W['isfounder'])) {
+		$where = " WHERE `uniacid` IN (SELECT `uniacid` FROM " . tablename('uni_account_users') . " WHERE `uid`=:uid)";
+		$params[':uid'] = $_W['uid'];
+	}
+	$sql = "SELECT * FROM " . tablename('uni_account') . $where;
+	$uniaccounts = pdo_fetchall($sql, $params);
+	$borrow = array();
+	$service = array();
+	if(!empty($uniaccounts)) {
+		foreach ($uniaccounts as $uniaccount) {
+			$account = account_fetch ($uniaccount['default_acid']);
+			$account_setting = pdo_get ('uni_settings', array ('uniacid' => $account['uniacid']));
+			$payment = iunserializer ($account_setting['payment']);
+			if (!empty($account['key']) && !empty($account['secret']) && in_array ($account['level'], array (4)) && !empty($payment) && intval($payment['wechat']['switch']) == 1) {
+				if ((!is_bool($payment['wechat']['switch']) && $payment['wechat']['switch'] != 4) || (is_bool($payment['wechat']['switch']) && !empty($payment['wechat']['switch']))) {
+					$borrow[$account['uniacid']] = $account['name'];
+				}
+			}
+			if (!empty($payment['wechat_facilitator']['switch'])) {
+				$service[$account['uniacid']] = $account['name'];
+			}
+		}
+	}
+
 	$setting = uni_setting_load('payment', $_W['uniacid']);
 	$pay_setting = $setting['payment'];
 	if(!is_array($pay_setting) || empty($pay_setting)) {

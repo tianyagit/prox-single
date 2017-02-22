@@ -103,7 +103,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 			}
 		} else {
 			if($bind['entry'] == 'cover') {
-				$url = wurl("platform/cover", array('eid' => $bind['eid']));
+				$url = murl('entry', array('eid' => $bind['eid']));
 			}
 			if($bind['entry'] == 'menu') {
 				$url = wurl("site/entry", array('eid' => $bind['eid']));
@@ -343,7 +343,7 @@ function module_get_all_unistalled($status)  {
 	$uninstallModules =  cache_load('we7:module:all_uninstall');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-	if (is_array($uninstallModules['modules']) && $uninstallModules['cloud_m_count'] == $cloud_m_count) {
+	if (is_array($uninstallModules['modules']) && $uninstallModules['cloud_m_count'] == $cloud_m_count['module_quantity']) {
 		return $uninstallModules['modules'][$status];
 	} else {
 		$uninstallModules = cache_build_uninstalled_module();

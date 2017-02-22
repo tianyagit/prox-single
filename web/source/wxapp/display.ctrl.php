@@ -90,6 +90,8 @@ if ($do == 'display') {
 		$version = pdo_fetch("SELECT version, multiid, id, uniacid FROM " . tablename('wxapp_versions') . " WHERE uniacid = :uniacid ORDER BY version DESC", array(':uniacid' => $uniacid));
 		if (!empty($version)) {
 			header('Location: ' . url('wxapp/version/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
+		} else {
+			header('Location: ' . url('wxapp/display/display'));
 		}
 	} else {
 		header('Location: ' . url('wxapp/display/display'));

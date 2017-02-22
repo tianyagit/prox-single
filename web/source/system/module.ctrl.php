@@ -32,6 +32,13 @@ if ($do == 'get_upgrade_info') {
 		'site_branch' => $cloud_m_upgrade_info['branches'][$cloud_m_upgrade_info['version']['branch_id']],
 		'from' => 'cloud'
 	);
+	$module['site_branch']['id'] = intval($module['site_branch']['id']);
+	if (!empty($module['branches'])) {
+		foreach ($module['branches'] as &$branch) {
+			$branch['id'] = intval($branch['id']);
+		}
+		unset($branch);
+	}
 	if (ver_compare($module_info['version'], $module['site_branch']['version']['version']) != '-1') {
 		unset($module['branches'][$module['site_branch']['id']]);
 	}
@@ -126,6 +133,20 @@ if ($do == 'upgrade') {
 	$module = ext_module_convert($manifest);
 	unset($module['name']);
 	unset($module['id']);
+	$wxapp_support = false;
+	$app_support = false;
+	if (!empty($module['supports'])) {
+		foreach ($module['supports'] as $support) {
+			if ($support == 'wxapp') {
+				$wxapp_support = true;
+			}
+			if ($support == 'app') {
+				$app_support = true;
+			}
+		}
+	}
+	$module['wxapp_support'] = !empty($wxapp_support) ? 2 : 1;
+	$module['app_support'] = !empty($app_support) ? 2 : 1;
 	$bindings = array_elements(array_keys($points), $module, false);
 	foreach ($points as $point_name => $point_info) {
 		unset($module[$point_name]);
@@ -133,6 +154,10 @@ if ($do == 'upgrade') {
 			foreach ($bindings[$point_name] as $entry) {
 				$entry['module'] = $manifest['application']['identifie'];
 				$entry['entry'] = $point_name;
+				if ($point_name == 'page' && !empty($wxapp_support)) {
+					$entry['url'] = $entry['do'];
+					$entry['do'] = '';
+				}
 				if ($entry['title'] && $entry['do']) {
 					//保存xml里面包含的do和title,最后删除数据库中废弃的do和title
 					$not_delete_do[] = $entry['do'];
@@ -167,7 +192,8 @@ if ($do == 'upgrade') {
 			}
 		}
 	}
-
+	unset($module['page']);
+	unset($module['supports']);
 	//执行模块更新文件
 	if (!empty($manifest['upgrade'])) {
 		if (strexists($manifest['upgrade'], '.php')) {
@@ -623,9 +649,11 @@ if ($do == 'not_installed') {
 			}
 			if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['app_support'] == 2) {
 				unset($uninstallModules[$name]);
+				continue;
 			}
-			if (empty(ACCOUNT_TYPE) && $module['wxapp_support'] == 2) {
+			if (ACCOUNT_TYPE == 0 && $module['wxapp_support'] == 2) {
 				unset($uninstallModules[$name]);
+				continue;
 			}
 			if (!empty($title)) {
 				if (!strexists($module['title'], $title)) {
