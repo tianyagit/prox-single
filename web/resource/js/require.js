@@ -52,8 +52,6 @@ require.config({
 		'material' : '../../components/material/material',
 		'trade' : '../../components/trade/trade',
 		'hammer' : '../lib/hammer.min',
-		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
-		'jquery': '../lib/bootstrap.min', //兼容之前amd调用
 		'bootstrap.switch': '../../components/switch/bootstrap-switch.min',
 		'validator': '../lib/bootstrapValidator.min',
 		'jquery.ui': '../lib/jquery-ui-1.10.3.min',
@@ -64,8 +62,15 @@ require.config({
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
 		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
 		'underscore': '../lib/underscore-min',
-		'ueditor': '../../components/ueditor/ueditor.all.min',
 		'biz': '../lib/biz',
+		//兼容
+		'util' : '../app/util',
+		'ueditor': '../../components/ueditor/ueditor.all.min',
+		'angular': '../lib/angular.min',
+		'angular.sanitize': '../lib/angular-sanitize.min',
+		'angular.hotkeys': '../lib/angular.hotkeys',
+		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
+		'jquery': '../lib/bootstrap.min', //兼容之前amd调用
 		'loadcss': '../lib/css.min', //加载CSS
 		/*复制组件（部分浏览器不兼容flash）*/
 		'clipboard' : '../lib/clipboard.min',
@@ -80,6 +85,9 @@ require.config({
 				//导出到全局变量，供ueditor使用
 				window.ZeroClipboard = ZeroClipboard;
 			}
+		},
+		'util' : {
+			exports: 'util',
 		},
 		'jquery' : {
 			exports: '$',
@@ -100,6 +108,18 @@ require.config({
 		'bootstrap': {
 			deps: ['jquery'],
 			exports: '$'
+		},
+		'jquery.wookmark': {
+			exports: "$",
+			deps: ['jquery']
+		},
+		'jquery.ui': {
+			exports: "$",
+			deps: ['jquery']
+		},
+		'jquery.caret': {
+			exports: "$",
+			deps: ['jquery']
 		},
 		'bootstrap.switch': {
 			deps: ['bootstrap', 'loadcss!../../components/switch/bootstrap-switch.min.css']
@@ -122,6 +142,18 @@ require.config({
 		},
 		'fontawesome': {
 			deps: ['loadcss!../../components/fontawesome/style.css']
+		},
+		'angular': {
+			exports: 'angular',
+			deps: ['jquery']
+		},
+		'angular.sanitize': {
+			exports: 'angular',
+			deps: ['angular']
+		},
+		'angular.hotkeys': {
+			exports: "angular",
+			deps: ['angular']
 		}
 	}
 });

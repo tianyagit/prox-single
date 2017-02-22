@@ -103,7 +103,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 			}
 		} else {
 			if($bind['entry'] == 'cover') {
-				$url = wurl("platform/cover", array('eid' => $bind['eid']));
+				$url = murl('entry', array('eid' => $bind['eid']));
 			}
 			if($bind['entry'] == 'menu') {
 				$url = wurl("site/entry", array('eid' => $bind['eid']));

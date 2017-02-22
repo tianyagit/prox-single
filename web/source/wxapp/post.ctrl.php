@@ -121,8 +121,8 @@ if($do == 'post') {
 			$request_cloud_data['tabBar'] = array(
 				'color' => $submit_val['buttom']['color'],
 				'selectedColor' => $submit_val['buttom']['selectedColor'],
-				'borderStyle' => 'black',
-				'backgroundColor' => $submit_val['buttom']['boundary'],
+				'borderStyle' => $submit_val['buttom']['boundary'],
+				'backgroundColor' => $submit_val['buttom']['bgcolor'],
 				'list' => $bottom_menu
 			);
 		}
