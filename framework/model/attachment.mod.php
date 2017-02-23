@@ -80,17 +80,17 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $bucket_local = '') 
 		return error(-1, '传入secretkey值不合法，请重新传入');
 	}
 	if (!empty($bucket_local)) {
-		$con = $original = @file_get_contents(IA_ROOT.'/framework/library/newcos/qcloudcos/conf.php');
+		$con = $original = @file_get_contents(IA_ROOT.'/framework/library/cosv4.2/qcloudcos/conf.php');
 		if (empty($con)) {
 			$conf_content = base64_decode("PD9waHANCg0KbmFtZXNwYWNlIHFjbG91ZGNvczsNCg0KY2xhc3MgQ29uZiB7DQogICAgLy8gQ29zIHBocCBzZGsgdmVyc2lvbiBudW1iZXIuDQogICAgY29uc3QgVkVSU0lPTiA9ICd2NC4yLjInOw0KICAgIGNvbnN0IEFQSV9DT1NBUElfRU5EX1BPSU5UID0gJ2h0dHA6Ly9yZWdpb24uZmlsZS5teXFjbG91ZC5jb20vZmlsZXMvdjIvJzsNCg0KICAgIC8vIFBsZWFzZSByZWZlciB0byBodHRwOi8vY29uc29sZS5xY2xvdWQuY29tL2NvcyB0byBmZXRjaCB5b3VyIGFwcF9pZCwgc2VjcmV0X2lkIGFuZCBzZWNyZXRfa2V5Lg0KICAgIGNvbnN0IEFQUF9JRCA9ICcnOw0KICAgIGNvbnN0IFNFQ1JFVF9JRCA9ICcnOw0KICAgIGNvbnN0IFNFQ1JFVF9LRVkgPSAnJzsNCg0KICAgIC8qKg0KICAgICAqIEdldCB0aGUgVXNlci1BZ2VudCBzdHJpbmcgdG8gc2VuZCB0byBDT1Mgc2VydmVyLg0KICAgICAqLw0KICAgIHB1YmxpYyBzdGF0aWMgZnVuY3Rpb24gZ2V0VXNlckFnZW50KCkgew0KICAgICAgICByZXR1cm4gJ2Nvcy1waHAtc2RrLScgLiBzZWxmOjpWRVJTSU9OOw0KICAgIH0NCn0NCg==");
-			file_put_contents(IA_ROOT.'/framework/library/newcos/qcloudcos/conf.php', $conf_content);
+			file_put_contents(IA_ROOT.'/framework/library/cosv4.2/qcloudcos/conf.php', $conf_content);
 			$con = $original = $conf_content;
 		}
 		$con = preg_replace('/const[\s]APP_ID[\s]=[\s]\'.*\';/', 'const APP_ID = \''.$appid.'\';', $con);
 		$con = preg_replace('/const[\s]SECRET_ID[\s]=[\s]\'.*\';/', 'const SECRET_ID = \''.$key.'\';', $con);
 		$con = preg_replace('/const[\s]SECRET_KEY[\s]=[\s]\'.*\';/', 'const SECRET_KEY = \''.$secret.'\';', $con);
-		file_put_contents(IA_ROOT.'/framework/library/newcos/qcloudcos/Conf.php', $con);
-		require_once(IA_ROOT.'/framework/library/newcos/include.php');
+		file_put_contents(IA_ROOT.'/framework/library/cosv4.2/qcloudcos/conf.php', $con);
+		require_once(IA_ROOT.'/framework/library/cosv4.2/include.php');
 		qcloudcos\Cosapi :: setRegion($bucket_local);
 		qcloudcos\Cosapi :: setTimeout(180);
 		$uploadRet = qcloudcos\Cosapi::upload($bucket, ATTACHMENT_ROOT.'images/global/MicroEngine.ico', '/MicroEngine.ico','',3 * 1024 * 1024, 0);
@@ -129,7 +129,7 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $bucket_local = '') 
 		if (empty($bucket_local)) {
 			file_put_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php', $original);
 		} else {
-			file_put_contents(IA_ROOT.'/framework/library/newcos/qcloudcos/Conf.php', $original);
+			file_put_contents(IA_ROOT.'/framework/library/cosv4.2/qcloudcos/Conf.php', $original);
 		}
 		return error(-1, $message);
 	}
