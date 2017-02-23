@@ -25,9 +25,8 @@ if ($do == 'uc') {
 		}
 		$page = $params[0];
 		$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
-		$html = preg_replace('/<?php/U', '', $html);
-		$html = preg_replace('/\{.*php/U', '', $html);
-		$html = preg_replace('/<.*script.*(src)+/U', '', $html);
+		$html = str_replace(array('<?', '<%', '<?php', '{php'), '', $html);
+		$html = preg_replace('/<\s*?script.*(src)+/i', '', $html);
 		$data = array(
 			'uniacid' => $_W['uniacid'],
 			'multiid' => '0',
@@ -123,9 +122,8 @@ if ($do == 'uc') {
 			message('请您先设计手机端页面.', '', 'error');
 		}
 		$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
-		$html = preg_replace('/<?php/U', '', $html);
-		$html = preg_replace('/\{.*php/U', '', $html);
-		$html = preg_replace('/<.*script.*(src)+/U', '', $html);
+		$html = str_replace(array('<?', '<%', '<?php', '{php'), '', $html);
+		$html = preg_replace('/<\s*?script.*(src)+/i', '', $html);
 		$html = preg_replace('/background\-image\:(\s)*url\(\"(.*)\"\)/U', 'background-image: url($2)', $html);
 		$data = array(
 			'uniacid' => $_W['uniacid'],
