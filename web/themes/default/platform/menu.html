@@ -317,18 +317,17 @@
 								</div>
 								<div class="panel we7-panel" style="width: 540px;" ng-show="context.activeItem.type == 'click'">
 									<div class="panel-heading">
-										回复内容
+										回复内容 {{context.activeItem}}
 									</div>
 									<div class="panel-body we7-padding">
 										<ul class="keywords-list">
-											<li ng-if="context.activeItem.material[0].type == 'keyword'">
+											<li ng-if="context.activeItem.material[0].type == 'keyword' || (context.activeItem.type == 'click' && context.activeItem.key)">
 												<div>
 													<div class="desc">
 														<div class="media-content">
 															<a class="title-wrp" href="javascript:;">
-																<span class="title">[关键字]{{context.activeItem.material[0].name}}</span>
+																<span class="title">[关键字]{{context.activeItem.material[0].child_items[0].content ? context.activeItem.material[0].child_items[0].content : context.activeItem.key}}</span>
 															</a>
-															<p class="desc"><a href="javascript:;" class="appmsg-desc">{{context.activeItem.material[0].child_items[0].content}}</a></p>
 														</div>
 													</div>
 												</div>
