@@ -57,19 +57,18 @@ if ($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	$post = $_GPC['menu_info'];
 	if (empty($post['name'])) {
-		//抱歉，请输入导航菜单的名称！
 		message(error(-1, '抱歉，请输入导航菜单的名称！'), '', 'ajax');
 	}
 	$url = ((strexists($post['url'], 'http://') || strexists($post['url'], 'https://')) && !strexists($post['url'], '#wechat_redirect')) ? $post['url'] . '#wechat_redirect' : $post['url'];
-	if (intval($post['section']) > 10) {
-		$post['section'] = 10;
+	if (intval($post['section']['num']) > 10) {
+		$post['section']['num'] = 10;
 	} else {
-		$post['section'] = intval($post['section']);
+		$post['section']['num'] = intval($post['section']['num']);
 	}
 	$data = array(
 		'uniacid' => $_W['uniacid'],
 		'multiid' => $multiid,
-		'section' => $post['section'],
+		'section' => $post['section']['num'],
 		'name' => $post['name'],
 		'description' => $post['description'],
 		'displayorder' => intval($post['displayorder']),
