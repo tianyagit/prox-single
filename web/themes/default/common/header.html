@@ -1,5 +1,9 @@
 {template 'common/header-base'}
-{php $frames = buildframes(FRAME);_calc_current_frames($frames);}
+{if empty($GLOBALS['frames'])}
+	{php $frames = buildframes(FRAME);_calc_current_frames($frames);}
+{else}
+	{php $frames = $GLOBALS['frames'];_calc_current_frames($frames);}
+{/if}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container">
@@ -115,6 +119,7 @@
 			</div>
 			<div class="panel-body">
 				<div class="left-menu">
+					{if empty($GLOBALS['frames'])}
 					{loop $frames['section'] $frame_section_id $frame_section}
 						{if !isset($frame_section['is_display']) || !empty($frame_section['is_display'])}
 						<div class="panel panel-menu">
@@ -150,6 +155,34 @@
 						</div>
 						{/if}
 					{/loop}
+					{else}
+						{loop $frames $k $frame}
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h4 class="panel-title">
+									{$frame['title']}
+									<a class="panel-collapse collapsed pull-right" data-toggle="collapse" href="#frame-{$k}">
+										<i class="fa fa-chevron-circle-down"></i>
+									</a>
+								</h4>
+							</div>
+							<ul class="list-group collapse in" id="frame-{$k}">
+								{loop $frame['items'] $link}
+								{if empty($link['is_permission'])}
+									{if !empty($link['append'])}
+									<li class="list-group-item{$link['active']}" onclick="window.location.href = '{$link['url']}';" style="cursor:pointer; overflow:hidden;" kw="{$link['title']}">
+										<a class="pull-right" href="{$link['append']['url']}">{$link['append']['title']}</a>
+										{$link['title']}
+									</li>
+									{else}
+									<a class="list-group-item{$link['active']}" href="{$link['url']}" kw="{$link['title']}">{$link['title']}</a>
+									{/if}
+								{/if}
+								{/loop}
+							</ul>
+						</div>
+						{/loop}
+					{/if}
 				</div>
 				<div class="right-content">
 		{/if}
