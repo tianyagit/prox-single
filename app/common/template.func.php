@@ -258,10 +258,10 @@ function modulefunc($modulename, $funcname, $params) {
  */
 function site_navs($params = array()) {
 	global $_W, $multi, $cid, $ishomepage;
-	$condition = '';
+	$condition = array();
 	if(!$cid || !$ishomepage) {
 		if (!empty($params['section'])) {
-			$condition = " AND section = '".intval($params['section'])."'";
+			$condition['section'] = intval($params['section']);
 		}
 		if(empty($params['multiid'])) {
 			load()->model('account');
@@ -270,10 +270,19 @@ function site_navs($params = array()) {
 		} else{
 			$multiid = intval($params['multiid']);
 		}
-		$navs = pdo_fetchall("SELECT id, name, description, url, icon, css, position, module FROM ".tablename('site_nav')." WHERE position = '1' AND status = 1 AND uniacid = '{$_W['uniacid']}' AND multiid = '{$multiid}' $condition ORDER BY section ASC,displayorder DESC, id DESC");
+		$condition['position'] = 1;
+		$condition['status'] = 1;
+		$condition['uniacid'] = $_W['uniacid'];
+		$condition['multiid'] = $multiid;
+		$fields = array('id', 'name', 'description', 'url', 'icon', 'css', 'position', 'module');
+		$navs = pdo_getall('site_nav', $condition, $fields, '', 'section ASC, displayorder DESC, id DESC');
 	} else {
-		$condition = " AND parentid = '".$cid."'";
-		$navs = pdo_fetchall("SELECT * FROM ".tablename('site_category')." WHERE enabled = '1' AND uniacid = '{$_W['uniacid']}' $condition ORDER BY displayorder DESC, id DESC");
+		$condition = array(
+					'parentid' => $cid,
+					'enabled' => 1,
+					'uniacid' => $_W['uniacid']
+				);
+		$navs = pdo_getall('site_category', $condition, array(), '', 'displayorder DESC, id DESC');
 	}
 	if(!empty($navs)) {
 		foreach ($navs as &$row) {
