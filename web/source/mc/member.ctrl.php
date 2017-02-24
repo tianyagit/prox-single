@@ -363,12 +363,15 @@ if($do == 'del') {
 				}
 			}
 			if (!empty($delete_uids)) {
+
 				$tables = array('mc_members', 'mc_card_members', 'mc_card_notices', 'mc_card_notices_unread', 'mc_card_record', 'mc_card_sign_record', 'mc_cash_record', 'mc_credits_recharge', 'mc_credits_record', 'mc_mapping_fans', 'mc_member_address', 'mc_mapping_ucenter');
 				foreach ($tables as $key => $value) {
 					pdo_delete($value, array('uniacid' => $_W['uniacid'], 'uid' => $delete_uids));
 				}
 				message('删除成功！', referer(), 'success');
 			}
+		} else {
+
 		}
 		message('请选择要删除的项目！', referer(), 'error');
 	}
