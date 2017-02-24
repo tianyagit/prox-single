@@ -8,22 +8,29 @@ defined('IN_IA') or exit('Access Denied');
 /**
  * 添加公众号时执行数量判断
  * @param int $uid 操作用户
- * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号)
+ * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号;3. 小程序)
  * @return array|boolean 错误原因或成功
  */
 function uni_create_permission($uid, $type = 1) {
 	$groupid = pdo_fetchcolumn('SELECT groupid FROM ' . tablename('users') . ' WHERE uid = :uid', array(':uid' => $uid));
-	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
+	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount, maxwxapp FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
 	$list = pdo_fetchall('SELECT c.uniacid FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $uid, ':role' => 'owner'));
 	foreach ($list as $item) {
-		$uniacids[] = $item['uniacid'];
+		$account_info = uni_fetch($item['uniacid']);
+		if ($account_info['type'] == 4) {
+			$wxapp_lists[] = $account_info;
+		} else {
+			$uniacids[] = $item['uniacid'];
+			$account_lists[] = $account_info;
+		}
 	}
 	unset($item);
-	$uniacidnum = count($list);
+	$account_num = count($account_lists);
+	$wxapp_num = count($wxapp_lists);
 	//添加主公号
 	if ($type == 1) {
-		if ($uniacidnum >= $groupdata['maxaccount']) {
-			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxaccount'] . '个主公号');
+		if ($account_num >= $groupdata['maxaccount']) {
+			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxaccount'] . '个主公众号');
 		}
 	} elseif ($type == 2) {
 		$subaccountnum = 0;
@@ -31,7 +38,11 @@ function uni_create_permission($uid, $type = 1) {
 			$subaccountnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('account') . ' WHERE uniacid IN (' . implode(',', $uniacids) . ')');
 		}
 		if ($subaccountnum >= $groupdata['maxsubaccount']) {
-			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxsubaccount'] . '个子公号');
+			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxsubaccount'] . '个子公众号');
+		}
+	} elseif ($type == 3) {
+		if ($wxapp_num >= $groupdata['maxwxapp']) {
+			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxwxapp'] . '个小程序');
 		}
 	}
 	return true;
@@ -292,6 +303,10 @@ function uni_groups($groupids = array()) {
 					$row['modules'] = pdo_fetchall("SELECT name, title FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $modules) . "')");
 				}
 			}
+			if (!empty($row['wxapp'])) {
+				$wxapps = iunserializer($row['wxapp']);
+				$row['wxapp'] = pdo_fetchall("SELECT name, title FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $wxapps) . "')");
+			}
 			if (!empty($row['templates'])) {
 				$templates = iunserializer($row['templates']);
 				if (is_array($templates)) {
@@ -445,10 +460,12 @@ function uni_account_default($uniacid = 0) {
 	global $_W;
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$uni_account = pdo_fetch("SELECT * FROM ".tablename('uni_account')." a LEFT JOIN ".tablename('account')." w ON a.default_acid = w.acid WHERE a.uniacid = :uniacid", array(':uniacid' => $uniacid), 'acid');
-	$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
-	$account['type'] = $uni_account['type'];
-	$account['isconnect'] = $uni_account['isconnect'];
-	return $account;
+	if (!empty($uni_account)) {
+		$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
+		$account['type'] = $uni_account['type'];
+		$account['isconnect'] = $uni_account['isconnect'];
+		return $account;
+	}
 }
 /**
  * 根据公众号类型选择数据表
@@ -745,6 +762,7 @@ function account_fetch($acid) {
 	$account['uid'] = $owner['uid'];
 	$account['starttime'] = $owner['starttime'];
 	$account['endtime'] = $owner['endtime'];
+	$account['thumb'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 	load()->model('mc');
 	$account['groups'] = mc_groups($uniacid);
 	$account['grouplevel'] = pdo_fetchcolumn('SELECT grouplevel FROM ' . tablename('uni_settings') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));

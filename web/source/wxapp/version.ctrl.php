@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version', 'download');
+$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version', 'download', 'account_list', 'save_connection');
 $do = in_array($do, $dos) ? $do : 'edit';
 $_W['page']['title'] = '小程序 - 管理';
 
@@ -101,17 +101,62 @@ if ($do == 'edit') {
 		}
 	}
 	$recommends = pdo_getall('site_article', array('uniacid' => $_GPC['uniacid']));
-	$version_info = pdo_get('wxapp_versions', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'id' => $version_id), array('id', 'version', 'uniacid'));
+	$version_info = pdo_get('wxapp_versions', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'id' => $version_id), array('id', 'version', 'uniacid', 'connection', 'modules'));
 	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $version_info['uniacid']));
 	$versionid = $version_info['id'];
-	$modules = pdo_getcolumn('wxapp_versions', array('id' => $versionid), 'modules');
-	$modules = json_decode($modules, true);
-	if (!empty($modules)) {
-		foreach ($modules as $module => &$version) {
-			$version = pdo_get('modules', array('name' => $module));
+	$modules = json_decode($version_info['modules'], true);
+	$connection = json_decode($version_info['connection'], true);
+	if (!empty($connection)) {
+		foreach ($connection as $module => $uniacid) {
+			if (!empty($uniacid)) {
+				$accounts = uni_account_default($uniacid);
+				if (!empty($accounts) && $accounts['isdeleted'] == 0 && $accounts['type'] != 4) {
+					$accounts['thumb'] = tomedia('headimg_'.$accounts['acid']. '.jpg').'?time='.time();
+					$account_list[$module] = $accounts;
+				}
+			}
+			
 		}
 	}
+	if (!empty($modules)) {
+		foreach ($modules as $module => &$version) {
+			$version = module_fetch($module);
+			if (file_exists(IA_ROOT.'/addons/'.$version['name'].'/icon-custom.jpg')) {
+				$version['logo'] = tomedia(IA_ROOT.'/addons/'.$version['name'].'/icon-custom.jpg');
+			} else {
+				$version['logo'] = tomedia(IA_ROOT.'/addons/'.$version['name'].'/icon.jpg');
+			}
+			$module_connections[$module] = $version;
+			$module_connections[$module]['connection'] = $account_list[$module];
+		}
+		unset($version);
+	}
 	template('wxapp/wxapp-edit');
+}
+
+if ($do == 'account_list') {
+	$uni_account_modules = pdo_getall('uni_account_modules', array('module' => $_GPC['module'], 'enabled' => '1'), array('uniacid'), 'uniacid');
+	foreach ($uni_account_modules as $key=>$val) {
+		$accounts = uni_account_default($key);
+		if (!empty($accounts) && $accounts['isdeleted'] == 0 && $accounts['type'] != 4) {
+			$accounts['thumb'] = tomedia('headimg_'.$accounts['acid']. '.jpg').'?time='.time();
+			$account_list[$key] = $accounts;
+		}
+	}
+	message(error(0, $account_list), '', 'ajax');
+}
+
+if ($do == 'save_connection') {
+	$connection_info = pdo_get('wxapp_versions', array('id' => intval($_GPC['version_id'])), array('connection'));
+	$connections = json_decode($connection_info['connection'], true);
+	$connections[$_GPC['module']] = intval($_GPC['uniacid']);
+	$result = pdo_update('wxapp_versions', array('connection' => json_encode($connections)), array('id' => intval($_GPC['version_id'])));
+	$account_info = uni_account_default($_GPC['uniacid']);
+	$account_info['thumb'] = tomedia('headimg_' . $account_info['acid'] . '.jpg') . '?time=' .time();
+	if (is_error($result)) {
+		message(error(-1, $result['message']), '', 'ajax');
+	}
+	message(error(0, $account_info), '', 'ajax');
 }
 
 if ($do == 'switch_version') {

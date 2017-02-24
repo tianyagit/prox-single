@@ -49,11 +49,22 @@
 							</ul>
 						</div>
 						<!--end菜单列表-->
+						<div class="panel panel-menu">
+							<div class="panel-heading">
+								基础设置
+							</div>
+							<ul class="list-group">
+								<li class="list-group-item" ng-class="{active : wxapp == 'setting'}" ng-click="wxapp = 'setting'">
+									<i class="fa fa-adjust"></i>关联设置
+								</li>
+								</a>
+							</ul>
+						</div>
 					</div>
-					<div class="right-contnt">
+					<div class="right-content">
 						<div class="wxapp-slide-project">
 							<!--预览-->
-							<div class="wxapp-phone">
+							<div class="wxapp-phone" ng-class="{hidden : wxapp == 'setting'}">
 								<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
 								<!--预览内容-->
 								<div class="wxapp-home-preview">
@@ -64,7 +75,7 @@
 							<!--end预览-->
 							<div class="wxapp-slide" style="display:none;">
 								<!--列表-->
-								<div class="wxapp-slide-list"  ng-show="wxapp == 'slide'">
+								<div class="wxapp-slide-list" ng-show="wxapp == 'slide'">
 									<div class="slide-heading">
 										幻灯片
 									</div>
@@ -425,6 +436,58 @@
 								</div>
 								<!--end列表-->
 							</div>
+							<div class="we7-page-title" ng-show="wxapp == 'setting'">关联设置</div>
+							<div class="we7-padding" ng-show="wxapp == 'setting'">
+								<table class="table we7-table table-hover vertical-middle">
+									<col width="180px" />
+									<col width="140px"/>
+									<col width="140px" />
+									<tr>
+										<th class="text-left">关联设置</th>
+										<th class="text-left">公众号</th>
+										<th class="text-left">操作</th>
+									</tr>
+									{loop $module_connections $module $connection}
+									<tr >
+										<td class="text-left">
+											<img src="{$connection['logo']}" style="width:50px;height:50px;">
+											{$connection['title']}
+										</td>
+										<td class="text-left">
+											<img src="{$connection['connection']['thumb']}" style="width:50px;height:50px;" class="js-connection-img-{$module}">
+											<span class="js-connection-name-{$module}">{$connection['connection']['name']}</span>
+										</td>
+										<td class="text-left">
+											<div class="link-group">
+												<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" ng-click="showAccount('{$connection["name"]}')">修改</a>
+											</div>
+										</td>
+									</tr>
+									{/loop}
+								</table>
+								<div class="modal fade" id="show_account" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog we7-modal-dialog" style="width:800px">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+												<h4 class="modal-title">选择公众号(点击选择)</h4>
+											</div>
+											<div class="modal-body">
+												<div class="panel-body we7-padding">
+													<div class="row">
+														<div class="col-sm-2 text-center we7-margin-bottom" style="overflow: hidden" ng-repeat="account in account_list" ng-click="selectAccount(current_module, account.uniacid)">
+															<a href="javascript:;">
+																<img src="{{account.thumb}}" alt="" style="width:50px;height:50px;">
+																<p class="text-over">{{account.name}}</p>
+															</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -435,6 +498,9 @@
 <script>
 	angular.module('wxApp').controller('MainCtrl', ['$scope', '$http', function($scope, $http){
 		uniacid = "{$_GPC['uniacid']}";
+		success_url = "{php echo url('wxapp/version/edit', array('multiid' => $_GPC['multiid'], 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}";
+		$scope.account_list = [];
+		$scope.current_module = '';
 		$scope.category = {
 			'id' : '',
 			'name' : '',
@@ -454,6 +520,28 @@
 			$scope.wxapp = 'recommendedit';
 			$scope.recommendid = id;
 			$scope.recommendpid = pid;
+		};
+
+		$scope.showAccount = function(module) {
+			$scope.account_list = '';
+			$http.post("{php echo url('wxapp/version/account_list')}", {module : module}).success(function(data) {
+				$scope.account_list = data.message.message;
+				$scope.current_module = module;
+				console.dir(data);
+			});
+			$('#show_account').modal('show');
+		};
+		$scope.selectAccount = function(module, uniacid) {
+			$http.post("{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}", {module : module, uniacid : uniacid}).success(function(data) {
+				if (data.message.errno == 0) {
+					$('.js-connection-img-' + module).attr('src', data.message.message.thumb);
+					$('.js-connection-name-' + module).text(data.message.message.name);
+					util.message('修改成功', '', 'success');
+				} else {
+					util.message(data.message.message, '', 'error');
+				}
+				$('#show_account').modal('hide');
+			});
 		};
 		$scope.categoryedit = function (id, pid) {
 			$scope.wxapp = 'categoryedit';

@@ -15,7 +15,7 @@
 	<div class="btn-group we7-btn-group we7-padding-bottom">
 		<a href="{php echo url('user/edit/edit_base', array('uid' => $_GPC['uid']))}" class="btn btn-default">基础信息</a>
 		<a href="{php echo url('user/edit/edit_modules_tpl', array('uid' => $_GPC['uid']))}" class="btn btn-default">应用模板权限</a>
-		<a href="{php echo url('user/edit/edit_account', array('uid' => $_GPC['uid']))}" class="btn btn-default active">使用公众号列表</a>
+		<a href="{php echo url('user/edit/edit_account', array('uid' => $_GPC['uid']))}" class="btn btn-default active">使用账号列表</a>
 	</div>
 	<table class="table we7-table table-hover">
 		<col width="87px"/>
@@ -54,11 +54,46 @@
 			<td colspan="4">暂无数据</td>
 		</tr>
 	</table>
+	<table class="table we7-table table-hover">
+		<col width="87px"/>
+		<col/>
+		<col width="100px"/>
+		<col width="240px"/>
+		<tr>
+			<th colspan="2" class="text-left">可使用的小程序</th>
+			<th>角色</th>
+			<th class="text-center">操作</th>
+		</tr>
+		<tr ng-repeat="wxapp in wxapps" ng-if="wxapp">
+			<td class="text-left"><img ng-src="{{wxapp.thumb}}" class="img-responsive"/></td>
+			<td class="text-left">
+				<p ng-bind="wxapp.name"></p>
+				<span class="color-gray">类型：
+					<span>小程序</span>
+				</span>
+			</td>
+			<td>
+				<span ng-if="wxapp.role == 'founder'">创始人</span>
+				<span ng-if="wxapp.role == 'owner'">主管理员</span>
+				<span ng-if="wxapp.role == 'manager'">管理员</span>
+				<span ng-if="wxapp.role == 'operator'">操作员</span>
+				<span ng-if="wxapp.role == 'clerk'">店员</span>
+			</td>
+			<td class="text-center link-group">
+				<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wxapp.uniacid}}&acid={{wxapp.acid}}&account_type=4" class="color-default">小程序设置</a>
+				<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wxapp.uniacid}}&acid={{wxapp.acid}}&account_type=4" class="color-default">操作员设置</a>
+			</td>
+		</tr>
+		<tr ng-if="!wxapps">
+			<td colspan="4">暂无数据</td>
+		</tr>
+	</table>
 </div>
 <script>
 	angular.module('userManageApp').value('config', {
 		user: {php echo !empty($user) ? json_encode($user) : 'null'},
-		wechats: {php echo !empty($wechats) ? json_encode($wechats) : 'null'},
+		wechats: {php echo !empty($account_detail) ? json_encode($account_detail) : 'null'},
+		wxapps: {php echo !empty($wxapp_detail) ? json_encode($wxapp_detail) : 'null'},
 		profile: {php echo !empty($profile) ? json_encode($profile) : 'null'},
 	});
 
