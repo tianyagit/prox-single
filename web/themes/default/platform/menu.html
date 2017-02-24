@@ -37,7 +37,10 @@
 		<tr>
 			<th class="text-left">菜单组名</th>
 			<th class="text-left">显示对象</th>
-			<th>是否开启</th>
+			<th>
+				是否在微信生效
+				{if $type == '1'}<div class="color-gray">(只能生效一个默认菜单)</div>{/if}
+			</th>
 			<th class="text-left">操作</th>
 		</tr>
 		{loop $data $da}
@@ -68,9 +71,9 @@
 			<td>
 				{if $da['type'] == 1}
 				{if $da['status'] == 0}
-				<a href="javascript:;" class="js-switch-{$da['id']} color-default" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})">设置为默认菜单</a>
+				<a href="javascript:;" class="js-switch-{$da['id']} color-default" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})">生效并置顶</a>
 				{else}
-				<span class="color-green">默认菜单开启中</span>
+				<span class="color-green">菜单生效中</span>
 				{/if}
 				{else}
 				<label>
