@@ -131,8 +131,10 @@ function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
 	if (!empty($GLOBALS['frames'])) {
 		$frames = array();
-		foreach ($GLOBALS['frames'] as $key => $row) {
+		$globals_frames = (array)$GLOBALS['frames'];
+		foreach ($globals_frames as $key => $row) {
 			if (empty($row)) continue;
+			$row = (array)$row;
 			$frames['section']['platform_module_menu'.$key]['title'] = $row['title'];
 			foreach ($row['items'] as $li) {
 				$frames['section']['platform_module_menu'.$key]['menu']['platform_module_menu'.$li['id']] = array(
