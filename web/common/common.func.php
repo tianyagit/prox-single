@@ -129,7 +129,7 @@ function checkaccount() {
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
-	if (!empty($GLOBALS['frames'])) {
+	if (!empty($GLOBALS['frames']) && !empty($_GPC['m'])) {
 		$frames = array();
 		$globals_frames = (array)$GLOBALS['frames'];
 		foreach ($globals_frames as $key => $row) {
