@@ -53,7 +53,7 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 		$user['uniacid_num'] = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('uni_account_users')." WHERE uid = :uid", array(':uid' => $user['uid']));
 
 		$user['module_num'] =array();
-		$group1 = pdo_get('users_group', array('id' => $user['groupid']));
+		$group = pdo_get('users_group', array('id' => $user['groupid']));
 		if (!empty($group)) {
 			$user['maxaccount'] = in_array($user['uid'], $founders) ? '不限' : $group['maxaccount'];
 			$user['groupname'] = $group['name'];
@@ -72,7 +72,6 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 		$user['module_nums'] = count($user['module_num']) + $system_module_num;
 	}
 	unset($user);
-
 	$usergroups = pdo_getall('users_group', array(), array(), 'id');
 
 	template('user/display');
