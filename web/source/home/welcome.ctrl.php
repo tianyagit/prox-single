@@ -67,5 +67,6 @@ if ($do == 'platform') {
 		}
 	}
 	define('FRAME', 'account');
+	define('IN_MODULE', $modulename);
 	template('home/welcome-ext');
 }

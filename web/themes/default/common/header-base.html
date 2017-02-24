@@ -27,8 +27,7 @@
 		'attachurl': '{$_W['attachurl']}',
 		'attachurl_local': '{$_W['attachurl_local']}',
 		'attachurl_remote': '{$_W['attachurl_remote']}',
-		{if defined('MODULE_URL')}'MODULE_URL': '{MODULE_URL}',{/if}
-		{if defined('IN_MODULE')}'IN_MODULE': '{IN_MODULE}',{/if}
+		'module' : {'url' : '{if defined('MODULE_URL')}{MODULE_URL}{/if}', 'name' : '{if defined('IN_MODULE')}{IN_MODULE}{/if}'},
 		'cookie' : {'pre': '{$_W['config']['cookie']['pre']}'},
 		'account' : {php echo json_encode($_W['account'])},
 	};

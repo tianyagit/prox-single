@@ -80,7 +80,10 @@ if ($do == 'recover') {
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('没有权限！', referer(), 'error');
 	}
-
+	$account_info = uni_user_account_permission();
+	if ($account_info['uniacid_limit'] <= 0) {
+		message('您所在用户组可添加的主公号数量已达上限，请停用后再行恢复此公众号！', referer(), 'error');
+	}
 	if (!empty($uniacid)) {
 		pdo_update('account', array('isdeleted' => 0), array('uniacid' => $uniacid));
 	} else {

@@ -129,6 +129,23 @@ function checkaccount() {
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
+	if (!empty($GLOBALS['frames']) && !empty($_GPC['m'])) {
+		$frames = array();
+		$globals_frames = (array)$GLOBALS['frames'];
+		foreach ($globals_frames as $key => $row) {
+			if (empty($row)) continue;
+			$row = (array)$row;
+			$frames['section']['platform_module_menu'.$key]['title'] = $row['title'];
+			foreach ($row['items'] as $li) {
+				$frames['section']['platform_module_menu'.$key]['menu']['platform_module_menu'.$li['id']] = array(
+					'title' => "<i class='wi wi-appsetting'></i> {$li['title']}",
+					'url' => $li['url'],
+					'is_display' => 1,
+				);
+			}
+		}
+		return $frames;
+	}
 	$frames = cache_load('system_frame');
 	if(empty($frames)) {
 		cache_build_frame_menu();

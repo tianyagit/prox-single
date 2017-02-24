@@ -194,6 +194,7 @@ if($do == 'modules_tpl') {
 	$ownerid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 	$ownerid = empty($ownerid) ? 1 : $ownerid; 
 	$owner = user_single(array('uid' => $ownerid));
+
 	if($_W['isajax'] && $_W['ispost']) {
 		if($_GPC['type'] == 'group') {
 			$groups = $_GPC['groupdata'];
