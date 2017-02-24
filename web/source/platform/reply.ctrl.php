@@ -132,7 +132,7 @@ if ($do == 'display') {
 			}
 		}
 	}
-	$entries = module_entries($m, 'rule');
+	$entries = module_entries($m, array('rule'));
 	template('platform/reply');
 }
 
