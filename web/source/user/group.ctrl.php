@@ -31,10 +31,12 @@ if ($do == 'display') {
 			$group['package'] = uni_groups($package);
 			if (empty($package)) {
 				$lists[$key]['module_nums'] = '系统默认';
+				$lists[$key]['wxapp_nums'] = '系统默认';
 				continue;
 			}
 			if (is_array($package) && in_array(-1, $package)) {
 				$lists[$key]['module_nums'] = -1;
+				$lists[$key]['wxapp_nums'] = -1;
 				continue;
 			}
 			$names = array();
@@ -42,6 +44,7 @@ if ($do == 'display') {
 				foreach ($group['package'] as $modules) {
 					$names[] = $modules['name'];
 					$lists[$key]['module_nums'] = count($modules['modules']);
+					$lists[$key]['wxapp_nums'] = count($modules['wxapp']);
 				}
 			}else {
 				pdo_update('users_group', array('package' => 'N;'), array('id' => $group['id']));
@@ -84,6 +87,7 @@ if ($do == 'post') {
 			'name' => $_GPC['name'],
 			'package' => iserializer($package),
 			'maxaccount' => intval($_GPC['maxaccount']),
+			'maxwxapp' => intval($_GPC['maxwxapp']),
 			'timelimit' => intval($_GPC['timelimit'])
 		);
 		if (empty($id)) {

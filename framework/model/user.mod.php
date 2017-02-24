@@ -265,3 +265,44 @@ function user_group_detail_info($groupid = 0) {
 	}
 	return $group_info;	
 }
+
+/**
+ *获取某一用户可用公众号或小程序的详细信息
+ *@param number $uid 用户ID
+ *@param number $account_type账号类型，空是公众号，4是小程序
+ *@return array
+ */
+function user_account_detail_info($uid, $account_type = '') {
+	if (empty($account_type)) {
+		$sql = "SELECT c.uniacid, c.role FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type != 4 AND c.uid = :uid";
+		$weids = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
+		if (!empty($weids)) {
+			$wechats = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
+			foreach ($wechats as &$wechats_val) {
+				$wechats_val['thumb'] = tomedia('headimg_'.$wechats_val['acid']. '.jpg').'?time='.time();
+				foreach ($weids as $weids_key => $weids_val) {
+					if ($wechats_val['uniacid'] == $weids_key) {
+						$wechats_val['role'] = $weids_val['role'];
+					}
+				}
+			}
+			unset($wechats_val);
+		}
+	} elseif ($account_type == 4) {
+		$sql = "SELECT c.uniacid, c.role FROM ". tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type = 4 AND c.uid = :uid";
+		$weids = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
+		if (!empty($weids)) {
+			$wechats = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename('account_wxapp') . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
+			foreach ($wechats as &$wechats_val) {
+				$wechats_val['thumb'] = tomedia('headimg_'.$wechats_val['acid']. '.jpg').'?time='.time();
+				foreach ($weids as $weids_key => $weids_val) {
+					if ($wechats_val['uniacid'] == $weids_key) {
+						$wechats_val['role'] = $weids_val['role'];
+					}
+				}
+			}
+			unset($wechats_val);
+		}
+	}
+	return $wechats;
+}

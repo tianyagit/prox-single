@@ -249,7 +249,7 @@ if($do == 'modules_tpl') {
 	}
 	$modules_tpl = $extend = array();
 
-	$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), 'id, name, package');
+	$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
 	$owner['group']['package'] = iunserializer($owner['group']['package']);
 	if(!empty($owner['group']['package'])){
 		foreach ($owner['group']['package'] as $package_value) {

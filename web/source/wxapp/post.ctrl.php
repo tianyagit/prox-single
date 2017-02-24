@@ -70,6 +70,7 @@ if($do == 'post') {
 		$modules = array();
 		foreach ($submit_val['modules'] as $module_val) {
 			$modules[$module_val['module']] = $module_val['version'];
+			$modules_connection[$module_val['module']] = '';
 		}
 		if (empty($uniacid)) {
 			$name = trim($submit_val['name']);
@@ -130,6 +131,7 @@ if($do == 'post') {
 		$wxapp_version['multiid'] = $multi_info['id'];
 		$wxapp_version['version'] = $version;
 		$wxapp_version['modules'] = json_encode($request_cloud_data['modules']);
+		$wxapp_version['connection'] = json_encode($modules_connection);
 		$wxapp_version['design_method'] = intval($submit_val['type']);
 		$wxapp_version['quickmenu'] = json_encode($request_cloud_data['tabBar']);
 		$wxapp_version['createtime'] = time();
