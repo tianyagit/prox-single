@@ -80,7 +80,7 @@ function _login($forward = '') {
 		}
 		if (empty($forward)) {
 			if (!empty($_GPC['__uniacid'])) {
-				$forward = './index.php?c=platform&a=reply';
+				$forward = './index.php?c=home&a=welcome';
 			} else {
 				$forward = './index.php?c=account&a=display';
 			}
