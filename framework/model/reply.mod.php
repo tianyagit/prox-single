@@ -56,7 +56,7 @@ function reply_keywords_search($condition = '', $params = array(), $pindex = 0, 
 	if (!empty($condition)) {
 		$where = " WHERE {$condition} ";
 	}
-	$sql = 'SELECT * FROM ' . tablename('rule_keyword') . $where . ' ORDER BY displayorder DESC, `type` ASC, id DESC LIMIT 3';
+	$sql = 'SELECT * FROM ' . tablename('rule_keyword') . $where . ' ORDER BY displayorder DESC, `type` ASC, id DESC';
 	if ($pindex > 0) {
 		// 需要分页
 		$start = ($pindex - 1) * $psize;
