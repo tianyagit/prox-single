@@ -195,7 +195,7 @@ if($do == 'modules_tpl') {
 	$ownerid = empty($ownerid) ? 1 : $ownerid; 
 	$owner = user_single(array('uid' => $ownerid));
 
-	if($_W['isajax'] && $_W['ispost']) {
+	if($_W['isajax'] && $_W['ispost'] && ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER)) {
 		if($_GPC['type'] == 'group') {
 			$groups = $_GPC['groupdata'];
 			if(!empty($groups)) {

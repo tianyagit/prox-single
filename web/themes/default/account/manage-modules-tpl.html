@@ -98,11 +98,12 @@
 			</td>
 		</tr>
 	</table>
+	{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
 	<p>
 		<a href="javascript:;" class="btn btn-primary" data-toggle="modal" data-target="#change-group">修改套餐</a>
 		<a href="javascript:;" class="btn btn-primary" data-toggle="modal" data-target="#jurisdiction-add">修改附加权限</a>
 	</p>
-
+	{/if}
 	<div class="modal" id="jurisdiction-add">
 		<div class="modal-dialog we7-modal-dialog">
 			<div class="modal-content">
