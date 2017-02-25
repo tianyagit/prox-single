@@ -264,7 +264,7 @@ if ($do == 'edit') {
 	if($module['isrulefields']) {
 		$data[] = array('title' => '回复规则列表', 'permission' => $module_name.'_rule');
 	}
-	$entries = module_entries($m);
+	$entries = module_entries($module_name);
 	if(!empty($entries['home'])) {
 		$data[] = array('title' => '微站首页导航', 'permission' => $module_name.'_home');
 	}
