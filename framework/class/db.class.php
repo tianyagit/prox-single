@@ -444,6 +444,11 @@ class DB {
 					$operator = " = `$fields` + ";
 				} elseif ($operator == '-=') {
 					$operator = " = `$fields` - ";
+				} elseif ($operator == '!=' || $operator == '<>') {
+					//如果是数组不等于情况，则转换为NOT IN
+					if (is_array($value)) {
+						$operator = 'NOT IN';
+					}
 				}
 				if (is_array($value)) {
 					$insql = array();
