@@ -10,7 +10,7 @@
 </div>
 
 {loop $menus $name $sections}
-	{if $sections['section'] && $name != 'name'}
+	{if $sections['section'] && !in_array($name, array('system', 'adviertisement'))}
 	<table class="table we7-table table-hover">
 		<div class="we7-page-title">{$sections['title']}</div>
 		{loop $sections['section'] $section_id $section}
@@ -19,7 +19,7 @@
 				<tr class="text-left">
 					<th colspan="4" class="text-left">
 						<div class="">
-							<input id="check-{$section_id}" type="checkbox"  we7-check-all="1" name="system_{$section_id}" onChange="selectall(this, 'system_{$section_id}')">
+							<!-- <input id="check-{$section_id}" type="checkbox"  we7-check-all="1" name="system_{$section_id}" onChange="selectall(this, 'system_{$section_id}')"> -->
 							<label for="check-{$section_id}" class=" we7-margin-horizontal-none">{$section['title']}</label>
 						</div>
 					</th>
@@ -27,20 +27,20 @@
 				</thead>
 				<tbody class="system_{$section_id}">
 				{php $i=1;}
-				{loop $section['menu'] $item_id $item}
+				{loop $section['menu'] $menu_id $menu}
 					{if $i%4 == 1 || $i == 1}<tr>{/if}
 					<td class="text-left " style="overflow:inherit;">
 						<div class="dropdown system-select-dropdown">
 							<span>
-								<input id="check-child-{$item_id}" type="checkbox" we7-check-all="1" value="{$item['permission_name']}" {if in_array($item['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
-								<label for="check-child-{$item_id}" class="text-over we7-margin-horizontal-none" data-toggle="tooltip">{$item['title']}</label>
+								<input id="check-child-{$menu_id}" type="checkbox" we7-check-all="1" value="{$menu['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]" autocomplete="off" />
+								<label for="check-child-{$menu_id}" class="text-over we7-margin-horizontal-none" data-toggle="tooltip">{$menu['title']}</label>
 							</span>
-							{if $item['sub_permission']}
+							{if $menu['sub_permission']}
 							<ul class="dropdown-menu">
-								{loop $item['sub_permission'] $sub_permission}
+								{loop $menu['sub_permission'] $sub_permission}
 								<li class="text-left">
 									<label class="we7-margin-horizontal-none">
-										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$item['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
+										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$sub_permission['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
 										{$sub_permission['title']}
 									</label>
 								</li>
@@ -68,18 +68,19 @@
 	{/if}
 {/loop}
 
+{if !empty($module)}
 	<table class="table we7-table table-hover vertical-middle">
-
+		<div class="we7-page-title">模块</div>
 		<thead>
 			<tr>
 				<th colspan="4" class="text-left">
 					<div class="">
-						<label><input type="checkbox"  we7-check-all="1" name="module[]" onChange="selectall(this, 'module_select')">模块权限</label>
+						<!-- <input type="checkbox"  we7-check-all="1" name="module[]" onChange="selectall(this, 'module_select')"> -->
+						<label class=" we7-margin-horizontal-none">模块权限</label>
 					</div>
 				</th>
 			</tr>
 		</thead>
-	{if !empty($module)}
 		<tbody class="module_select" >
 			{php $i=1;}
 			{loop $module $k $m}
@@ -109,8 +110,8 @@
 				</tr>
 			{/if}
 		</tbody>
-	{/if}
-</table>
+	</table>
+{/if}
 
 <button type="submit" class="btn btn-primary span3" name="submit" value="提交" onclick="if ($('input:checkbox:checked').size() == 0) {return confirm('您未勾选任何菜单权限，意味着允许用户使用所有功能。确定吗？')}">提交</button>
 <input type="hidden" name="token" value="{$_W['token']}" />
@@ -194,14 +195,6 @@ $(function(){
 		}
 	});
 });
-
-
-//处理全选函数
-function selectall(obj, a){
-	$('.'+a+' input:checkbox').each(function() {
-		$(this)[0].checked = obj.checked ? true : false;
-	});
-}
 //当已经全选时，默认全选按钮选中
 $(function() {
 	$('.table>tbody').each(function() {

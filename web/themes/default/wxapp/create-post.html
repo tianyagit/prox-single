@@ -155,7 +155,7 @@
 										<i class="wi wi-select-diy"></i>
 										<p>DIY设计</p>
 									</li>
-									<li class="ban">
+									<li ng-click="selectType(2)">
 										<i class="wi wi-select-tem"></i>
 										<p>选择模板</p>
 									</li>
@@ -211,14 +211,14 @@
 										选择模板
 									</div>
 									<div class="select-tem-filter">
-										<div class="form-group">
+										<div class="form-group" style="display:none;">
 											<select name="" class="select-we7">
 												<option value="">全部分类</option>
 												<option value="">分类1</option>
 												<option value="">分类2</option>
 											</select>
 										</div>
-										<div class="input-group">
+										<div class="input-group" style="display:none;">
 											<input type="text" name="" class="form-control" placeholder="输入模板名">
 											<span class="input-group-addon"><i class="fa fa-search"></i></span>
 										</div>

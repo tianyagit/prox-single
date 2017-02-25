@@ -13,15 +13,20 @@ $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
 
 if ($do == 'getlink') {
-	foreach ($_GPC['module'] as $val) {
-		$eids .= ',' . $val['url'];
+	if (!empty($_GPC['module'])) {
+		foreach ($_GPC['module'] as $key=>&$val) {
+			$eids .= ',' . $val['url'];
+			$selected_modules[$val['module']] = $val;
+		}
 	}
 	$eids = explode(',', $eids);
-	foreach ($eids as $k => $eid) {
-		if (!empty($eid)) {
-			$bindings_info = pdo_get('modules_bindings', array('eid' => $eid));
-			$show_urls[$eid] = $bindings_info;
-			$show_urls[$eid]['module'] = $_GPC['module'][$bindings_info['module']];
+	if (!empty($eids)) {
+		foreach ($eids as $k => $eid) {
+			if (!empty($eid)) {
+				$bindings_info = pdo_get('modules_bindings', array('eid' => $eid));
+				$show_urls[$eid] = $bindings_info;
+				$show_urls[$eid]['module'] = $selected_modules[$bindings_info['module']];
+			}
 		}
 	}
 	message(error(0, $show_urls), '', 'ajax');
@@ -137,9 +142,9 @@ if($do == 'post') {
 		$wxapp_version['createtime'] = time();
 		switch ($wxapp_version['design_method']) {
 			case 1:
-				$wxapp_version['template'] = intval($submit_val['template']);
 				break;
 			case 2:
+				$wxapp_version['template'] = intval($submit_val['template']);
 				break;
 			case 3:
 				$wxapp_version['redirect'] = json_encode($submit_val['tomodule']);
