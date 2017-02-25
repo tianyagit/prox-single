@@ -313,7 +313,7 @@ function mc_oauth_userinfo($acid = 0) {
 	global $_W;
 	if (isset($_SESSION['userinfo'])) {
 		$userinfo = unserialize(base64_decode($_SESSION['userinfo']));
-		if (!empty($userinfo['subscribe']) || !empty($userinfo['nickname'])) {
+		if ((!empty($userinfo['subscribe']) || !empty($userinfo['nickname'])) && $_SESSION['expire'] > TIMESTAMP) {
 			return $userinfo;
 		}
 	}
@@ -331,7 +331,9 @@ function mc_oauth_userinfo($acid = 0) {
 			}
 			$userinfo['avatar'] = $userinfo['headimgurl'];
 			$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
-
+			//设置获取信息缓存时间
+			$_SESSION['expire'] = TIMESTAMP + 300;
+			
 			$fan = mc_fansinfo($_SESSION['openid']);
 			if (!empty($fan)) {
 				$record = array(

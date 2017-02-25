@@ -159,6 +159,8 @@ if ($scope == 'userinfo') {
 		}
 		$userinfo['avatar'] = $userinfo['headimgurl'];
 		$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
+		//设置获取信息缓存时间
+		$_SESSION['expire'] = TIMESTAMP + 300;
 		$fan = pdo_get('mc_mapping_fans', array('openid' => $oauth['openid']));
 		if (!empty($fan)) {
 			$record = array();
