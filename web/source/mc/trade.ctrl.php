@@ -1,7 +1,7 @@
 <?php
 /**
+ * 会员交易
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -9,12 +9,12 @@ load()->model('mc');
 load()->model('card');
 load()->model('module');
 
-if($_W['role'] != 'clerk') {
-	uni_user_permission_check('mc_member');
-}
 $_W['page']['title'] = '会员交易-会员管理';
 $dos = array('consume', 'user', 'modal', 'credit', 'card', 'cardsn', 'tpl', 'cardconsume');
 $do = in_array($do, $dos) ? $do : 'tpl';
+if($_W['role'] != 'clerk') {
+	uni_user_permission_check('mc_member');
+}
 
 if($do == 'user') {
 	$type = trim($_GPC['type']);

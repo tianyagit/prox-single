@@ -9,7 +9,7 @@ load()->model('module');
 
 $do = !empty($do) ? $do : 'uc';
 $do = in_array($do, array('quickmenu', 'uc')) ? $do : 'uc';
-uni_user_permission_check('site_editor');
+uni_user_permission_check('platform_site');
 
 if ($do == 'uc') {
 	$_W['page']['title'] = '会员中心 - 微站功能';

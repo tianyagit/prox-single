@@ -19,18 +19,18 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-reply',
 					'permission_name' => 'platform_reply',
 					'sub_permission' => array(
-						array(
-							'title' => '关键字自动回复 ',
-							'permission_name' => 'platform_reply',
-						),
-						array(
-							'title' => '非关键字自动回复 ',
-							'permission_name' => 'platform_reply_special',
-						),
-						array(
-							'title' => '欢迎/默认回复',
-							'permission_name' => 'platform_reply_system',
-						),
+// 						array(
+// 							'title' => '关键字自动回复 ',
+// 							'permission_name' => 'platform_reply_keyword',
+// 						),
+// 						array(
+// 							'title' => '非关键字自动回复 ',
+// 							'permission_name' => 'platform_reply_special',
+// 						),
+// 						array(
+// 							'title' => '欢迎/默认回复',
+// 							'permission_name' => 'platform_reply_system',
+// 						),
 					),
 				),
 				'platform_menu' => array(
@@ -45,14 +45,14 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-qrcode',
 					'permission_name' => 'platform_qr',
 					'sub_permission' => array(
-						array(
-							'title' => '二维码',
-							'permission_name' => 'platform_qr',
-						),
-						array(
-							'title' => '转化链接',
-							'permission_name' => 'platform_url2qr',
-						),
+// 						array(
+// 							'title' => '二维码',
+// 							'permission_name' => 'platform_qr_qr',
+// 						),
+// 						array(
+// 							'title' => '转化链接',
+// 							'permission_name' => 'platform_url2qr',
+// 						),
 					),
 				),
 				'platform_mass_task' => array(
@@ -73,14 +73,14 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-home',
 					'permission_name' => 'platform_site',
 					'sub_permission' => array(
-						array(
-							'title' => '添加/编辑',
-							'permission_name' => 'platform_site_post',
-						),
-						array(
-							'title' => '删除',
-							'permission_name' => 'platform_site_delete',
-						),
+// 						array(
+// 							'title' => '添加/编辑',
+// 							'permission_name' => 'platform_site_post',
+// 						),
+// 						array(
+// 							'title' => '删除',
+// 							'permission_name' => 'platform_site_delete',
+// 						),
 					),
 				)
 			),
