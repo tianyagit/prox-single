@@ -61,8 +61,9 @@ if($do == 'display') {
 			$default_menu_id = $k;
 		}
 	}
-	$rands = substr(str_shuffle(implode(range('A', 'z'))), 4, 5);
-	
+	//自定5位字符串
+	$rands = random(5, false);
+
 	if (!empty($default_menu_id)) {
 		pdo_update('uni_account_menus', array('status' => '1'), array('id' => $default_menu_id));
 		pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '1', 'id !=' => $default_menu_id));
@@ -428,11 +429,6 @@ if($do == 'post') {
 			if(!isset($menu['matchrule'])) {
 				$menu['matchrule'] = array();
 			}
-			//检测$post['title']里面值是否已经存在
-			$check_titles = pdo_getall('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
-			if (!empty($check_titles)) {
-				message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/menu', array('id' => $id, 'type' => '1')), 'ajax');
-			}
 			//检测菜单里面一级子菜单名字 值内容是否一样;
 			//提交过来数组里面值个数 和 删除重复值以后值得个数
 			//如果有重复值则会删除重复值,最后两个值就会不一样
@@ -460,6 +456,11 @@ if($do == 'post') {
 					$default_menu_ids = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1, 'status' => 1), array('id'));
 					foreach ($default_menu_ids as $id) {
 						pdo_update('uni_account_menus', array('status' => '0'), array('id' => $id));
+					}
+					//检测$post['title']里面值是否已经存在
+					$check_titles = pdo_getall('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
+					if (!empty($check_titles)) {
+						message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/menu', array('id' => $id, 'type' => '1')), 'ajax');
 					}
 					pdo_insert('uni_account_menus', $insert);
 				}
