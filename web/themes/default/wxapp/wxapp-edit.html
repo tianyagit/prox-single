@@ -18,6 +18,7 @@
 				<div class="panel-body">
 					<div class="left-menu">
 						<!--菜单列表-->
+						{if $version_info['design_method'] == 2}
 						<div class="panel panel-menu">
 							<div class="panel-heading">
 								首页设置<span class="fa fa-cog pull-right"></span>
@@ -34,6 +35,7 @@
 								</li>
 							</ul>
 						</div>
+						{/if}
 						<div class="panel panel-menu">
 							<div class="panel-heading">
 								模块
@@ -64,7 +66,7 @@
 					<div class="right-content">
 						<div class="wxapp-slide-project">
 							<!--预览-->
-							<div class="wxapp-phone" ng-class="{hidden : wxapp == 'setting'}">
+							<div class="wxapp-phone" ng-show="wxapp != 'setting'">
 								<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
 								<!--预览内容-->
 								<div class="wxapp-home-preview">
@@ -73,7 +75,8 @@
 								<!--end预览内容-->
 							</div>
 							<!--end预览-->
-							<div class="wxapp-slide">
+							{if $version_info['design_method'] == 2}
+							<div class="wxapp-slide" ng-show="wxapp != 'setting'">
 								<!--列表-->
 								<div class="wxapp-slide-list" ng-show="wxapp == 'slide'">
 									<div class="slide-heading">
@@ -436,6 +439,7 @@
 								</div>
 								<!--end列表-->
 							</div>
+							{/if}
 							<div class="we7-page-title" ng-show="wxapp == 'setting'">关联设置</div>
 							<div class="we7-padding" ng-show="wxapp == 'setting'">
 								<table class="table we7-table table-hover vertical-middle">
