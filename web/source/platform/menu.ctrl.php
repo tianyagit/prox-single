@@ -61,6 +61,8 @@ if($do == 'display') {
 			$default_menu_id = $k;
 		}
 	}
+	$rands = substr(str_shuffle(implode(range('A', 'z'))), 4, 5);
+	
 	if (!empty($default_menu_id)) {
 		pdo_update('uni_account_menus', array('status' => '1'), array('id' => $default_menu_id));
 		pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '1', 'id !=' => $default_menu_id));
@@ -68,6 +70,7 @@ if($do == 'display') {
 		$insert_data = array(
 			'uniacid' => $_W['uniacid'],
 			'type' => 1,
+			'title' => '默认菜单_' . $rands, 
 			'group_id' => -1,
 			'sex' => 0,
 			'data' => $wechat_menu_data,
@@ -328,8 +331,11 @@ if($do == 'post') {
 		set_time_limit(0);
 		$post = $_GPC['group'];
 		$menu = array();
+		$check_btname = array();
+		$rands = 0;
 		if(!empty($post['button'])) {
 			foreach($post['button'] as $key => &$button) {
+				$check_btname[$rands++] = $button['name'];
 				$temp = array();
 				$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
 				$temp['name'] = urlencode($temp['name']);
@@ -354,6 +360,7 @@ if($do == 'post') {
 					}
 				} else {
 					foreach($button['sub_button'] as &$subbutton) {
+						$check_btname[$rands++] = $subbutton['name'];
 						$sub_temp = array();
 						$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
 						$sub_temp['name'] = urlencode($sub_temp['name']);
@@ -421,6 +428,18 @@ if($do == 'post') {
 			if(!isset($menu['matchrule'])) {
 				$menu['matchrule'] = array();
 			}
+			//检测$post['title']里面值是否已经存在
+			$check_titles = pdo_getall('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
+			if (!empty($check_titles)) {
+				message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/menu', array('id' => $id, 'type' => '1')), 'ajax');
+			}
+			//检测菜单里面一级子菜单名字 值内容是否一样;
+			//提交过来数组里面值个数 和 删除重复值以后值得个数
+			//如果有重复值则会删除重复值,最后两个值就会不一样
+			if (count(array_unique($check_btname)) != count($check_btname)) {
+				message(error(-1, '一级子菜单和二级子菜单出现重复'), url('platform/menu/menu', array('id' => $id, 'type' => '1')), 'ajax');
+			}
+			
 			$insert = array(
 				'uniacid' => $_W['uniacid'],
 				'menuid' => $ret,
