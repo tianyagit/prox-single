@@ -154,56 +154,82 @@ function buildframes($framename = ''){
 	//模块权限，创始人有所有模块权限
 	$modules = uni_modules(false);
 	$sysmodules = system_modules();
-
-	$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'shortcut' => STATUS_ON), array('module'), '', 'displayorder DESC');
-	if (!empty($account_module)) {
-		foreach ($account_module as $module) {
-			if (!in_array($module['module'], $sysmodules)) {
-				$module = module_fetch($module['module']);
-				if (!empty($module)) {
-					$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
-						'title' => $module['title'],
-						'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
-						'url' => url('home/welcome/ext', array('m' => $module['name'])),
-						'is_display' => 1,
-					);
-					if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
-						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
+	//非创始人应用模块菜单
+	if (!$_W['isfounder'] && uni_user_permission_exist($_W['uid'], $_W['uniacid'])) {
+		$module_permission = pdo_getall('users_permission', array('uid' => $_W['uid'], 'uniacid' => $_W['uniacid'], 'type !=' => 'system'), array('type'));
+		if (!empty($module_permission)) {
+			foreach ($module_permission as $module) {
+				if (!in_array($module['type'], $sysmodules)) {
+					$module = $modules[$module['type']];
+					if (!empty($module)) {
+						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
+							'title' => $module['title'],
+							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
+							'url' => url('home/welcome/ext', array('m' => $module['name'])),
+							'is_display' => 1,
+						);
+						if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
+							$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
+						}
 					}
 				}
 			}
+		}else {
+			$frames['account']['section']['platform_module']['is_display'] = false;
 		}
-	} elseif (!empty($modules)) {
-		$new_modules = array_reverse($modules);
-		$i = 0;
-		foreach ($new_modules as $module) {
-			if (!empty($module['issystem'])) {
-				continue;
+	}else {
+		//创始人菜单
+		$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'shortcut' => STATUS_ON), array('module'), '', 'displayorder DESC');
+		if (!empty($account_module)) {
+			foreach ($account_module as $module) {
+				if (!in_array($module['module'], $sysmodules)) {
+					$module = module_fetch($module['module']);
+					if (!empty($module)) {
+						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
+							'title' => $module['title'],
+							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
+							'url' => url('home/welcome/ext', array('m' => $module['name'])),
+							'is_display' => 1,
+						);
+						if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
+							$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
+						}
+					}
+				}
 			}
-			if ($i == 5) {
-				break;
+		} elseif (!empty($modules)) {
+			$new_modules = array_reverse($modules);
+			$i = 0;
+			foreach ($new_modules as $module) {
+				if (!empty($module['issystem'])) {
+					continue;
+				}
+				if ($i == 5) {
+					break;
+				}
+				$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
+					'title' => $module['title'],
+					'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
+					'url' => url('home/welcome/ext', array('m' => $module['name'])),
+					'is_display' => 1,
+				);
+				if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
+					$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
+				}
+				$i++;
 			}
-			$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
-				'title' => $module['title'],
-				'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
-				'url' => url('home/welcome/ext', array('m' => $module['name'])),
+		}
+		if (array_diff(array_keys($modules), $sysmodules)) {
+			$frames['account']['section']['platform_module']['menu']['platform_module_more'] = array(
+				'title' => '更多应用',
+				'url' => url('profile/module'),
 				'is_display' => 1,
 			);
-			if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
-				$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
-			}
-			$i++;
+		} else {
+			$frames['account']['section']['platform_module']['is_display'] = false;
 		}
 	}
-	if (array_diff(array_keys($modules), $sysmodules)) {
-		$frames['account']['section']['platform_module']['menu']['platform_module_more'] = array(
-			'title' => '更多应用',
-			'url' => url('profile/module'),
-			'is_display' => 1,
-		);
-	} else {
-		$frames['account']['section']['platform_module']['is_display'] = false;
-	}
+
 	//进入模块界面后权限
 	$modulename = trim($_GPC['m']);
 	$eid = intval($_GPC['eid']);
