@@ -46,7 +46,7 @@ class CloudApi {
 	private function developerCerContent(){
 		$cer = $this->getCerContent('developer.cer');
 		if (is_error($cer)) {
-			return error(1, '访问云API获取授权失败,模块中没有开发者数字证书,请到 <a href="http://s.we7.cc/index.php?c=develop&a=auth" target="_blank">开发者中心</a> 下载数字证书!');;
+			return error(1, '访问云API获取授权失败,模块中没有开发者数字证书,请到 <a href="https://s.we7.cc/index.php?c=develop&a=auth" target="_blank">开发者中心</a> 下载数字证书!');;
 		}
 		
 		return $cer;
@@ -71,7 +71,7 @@ class CloudApi {
 			$pars = _cloud_build_params();
 			$pars['method'] = 'api.oauth';
 			$pars['module'] = $this->module;
-			$data = cloud_request('http://s.we7.cc/gateway.php', $pars);
+			$data = cloud_request('https://s.we7.cc/gateway.php', $pars);
 			if (is_error($data)) {
 				return $data;
 			}
@@ -110,7 +110,7 @@ class CloudApi {
 			$pars = _cloud_build_params();
 			$pars['method'] = 'api.oauth';
 			$pars['module'] = $this->module;
-			$data = cloud_request('http://s.we7.cc/gateway.php', $pars);
+			$data = cloud_request('https://s.we7.cc/gateway.php', $pars);
 			if (is_error($data)) {
 				return $data;
 			}

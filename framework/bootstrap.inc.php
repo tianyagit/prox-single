@@ -80,11 +80,6 @@ if (isset($_W['config']['setting']['https'])) {
 					strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
 					? true : false;
 }
-$_W['ishttps'] = !empty($_W['config']['setting']['https']) ? true : 
-	($_SERVER['SERVER_PORT'] == 443 || 
-	(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') ||
-	strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
-	? true : false);
 
 $_W['isajax'] = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 $_W['ispost'] = $_SERVER['REQUEST_METHOD'] == 'POST';
