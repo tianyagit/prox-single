@@ -53,11 +53,6 @@ if($step == 1) {
 	if (checksubmit('submit')) {
 		$update = array();
 		$update['name'] = trim($_GPC['cname']);
-		//检测新添加公众号名称是否存在
-		$check_uniacname = pdo_getall('uni_account', array('name' => $update['name']), 'name');
-		if (!empty($check_uniacname)) {
-			message('该公众号名称已经存在');
-		}
 
 		if(empty($update['name'])) {
 			message('公众号名称必须填写');
@@ -71,6 +66,11 @@ if($step == 1) {
 				'description' => $description,
 				'groupid' => 0,
 			);
+			//检测新添加公众号名称是否存在
+			$check_uniacname = pdo_get('uni_account', array('name' => $name), 'name');
+			if (!empty($check_uniacname)) {
+				message('该公众号名称已经存在');
+			}
 			if (!pdo_insert('uni_account', $data)) {
 				message('添加公众号失败');
 			}
