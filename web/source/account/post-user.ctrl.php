@@ -75,8 +75,9 @@ if ($do == 'edit') {
 			message(error(1, '不可操作网站创始人！'), '', 'ajax');
 		}
 		//添加/修改公众号操作员、管理员、主管理员时执行数量判断
-		if (is_error($permission = uni_create_permission($user['uid'], 1))) {
-			message(error(5, $permission['message']), '' , 'error');
+		$uni_account_type = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? 3 : 1;
+		if (is_error($permission = uni_create_permission($user['uid'], $uni_account_type))) {
+			message(error(5, $permission['message']), '', 'error');
 		}
 
 		$addtype = intval($_GPC['addtype']);
@@ -149,9 +150,9 @@ if ($do == 'edit') {
 	
 	$menus = system_menu_permission_list($role);
 	$module = uni_modules();
-	
 	if (checksubmit('submit')) {
-		//获取全部permission_name，方便判断是否是系统菜单
+		//系统权限
+		//获取全部系统permission_name，方便判断是否是系统菜单
 		$menu_permission = array();
 		if (!empty($menus)) {
 			foreach ($menus as $nav_id => $section) {
@@ -190,6 +191,32 @@ if ($do == 'edit') {
 			}
 		} else {
 			pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $uid));
+		}
+
+		//模块权限
+		pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type !=' => 'system'));
+		if(!empty($_GPC['module'])) {
+			foreach($_GPC['module'] as $module_val) {
+				$insert = array(
+					'uniacid' => $uniacid,
+					'uid' => $uid,
+					'type' => $module_val,
+				);
+				if(empty($_GPC['module_'. $module_val]) || $_GPC[$module_val . '_select'] == 1) {
+					$insert['permission'] = 'all';
+					pdo_insert('users_permission', $insert);
+					continue;
+				} else {
+					$data = array();
+					foreach($_GPC['module_'. $module_val] as $v) {
+						$data[] = $v;
+					}
+					if(!empty($data)) {
+						$insert['permission'] = implode('|', $data);
+						pdo_insert('users_permission', $insert);
+					}
+				}
+			}
 		}
 		message('操作菜单权限成功！', referer(), 'success');
 	}
@@ -237,7 +264,7 @@ if ($do == 'edit') {
 	if($module['isrulefields']) {
 		$data[] = array('title' => '回复规则列表', 'permission' => $module_name.'_rule');
 	}
-	$entries = module_entries($m);
+	$entries = module_entries($module_name);
 	if(!empty($entries['home'])) {
 		$data[] = array('title' => '微站首页导航', 'permission' => $module_name.'_home');
 	}

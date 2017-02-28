@@ -105,7 +105,7 @@ if($do == 'base') {
 				}
 				$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 				if (empty($owneruid)) {
-					message(error(-1, '抱歉，用户不存在或是已经被删除！'), '', 'ajax');
+					message(error(-1, '抱歉，该公众号未设置主管理员。请先设置主管理员后再行修改到期时间！'), url('account/post-user/edit', array('uniacid' => $uniacid, 'acid' => $acid)), 'ajax');
 				}
 				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $owneruid));
 				break;
@@ -194,7 +194,8 @@ if($do == 'modules_tpl') {
 	$ownerid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 	$ownerid = empty($ownerid) ? 1 : $ownerid; 
 	$owner = user_single(array('uid' => $ownerid));
-	if($_W['isajax'] && $_W['ispost']) {
+
+	if($_W['isajax'] && $_W['ispost'] && ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER)) {
 		if($_GPC['type'] == 'group') {
 			$groups = $_GPC['groupdata'];
 			if(!empty($groups)) {
@@ -249,7 +250,7 @@ if($do == 'modules_tpl') {
 	}
 	$modules_tpl = $extend = array();
 
-	$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), 'id, name, package');
+	$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
 	$owner['group']['package'] = iunserializer($owner['group']['package']);
 	if(!empty($owner['group']['package'])){
 		foreach ($owner['group']['package'] as $package_value) {

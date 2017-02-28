@@ -76,19 +76,7 @@ if ($do == 'edit_modules_tpl') {
 }
 
 if ($do == 'edit_account') {
-	$sql = "SELECT c.uniacid, c.role FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type = 1 AND c.uid = :uid";
-	$weids = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
-	if (!empty($weids)) {
-		$wechats = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
-		foreach ($wechats as &$wechats_val) {
-			$wechats_val['thumb'] = tomedia('headimg_'.$wechats_val['acid']. '.jpg').'?time='.time();
-			foreach ($weids as $weids_key => $weids_val) {
-				if ($wechats_val['uniacid'] == $weids_key) {
-					$wechats_val['role'] = $weids_val['role'];
-				}
-			}
-		}
-		unset($wechats_val);
-	}
+	$account_detail = user_account_detail_info($uid);
+	$wxapp_detail = user_account_detail_info($uid, 4);
 	template('user/edit-account');
 }

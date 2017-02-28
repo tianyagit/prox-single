@@ -61,6 +61,8 @@ if($do == 'display') {
 			$default_menu_id = $k;
 		}
 	}
+	$rands = random(5, false);
+
 	if (!empty($default_menu_id)) {
 		pdo_update('uni_account_menus', array('status' => '1'), array('id' => $default_menu_id));
 		pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '1', 'id !=' => $default_menu_id));
@@ -68,6 +70,7 @@ if($do == 'display') {
 		$insert_data = array(
 			'uniacid' => $_W['uniacid'],
 			'type' => 1,
+			'title' => '默认菜单_' . $rands, 
 			'group_id' => -1,
 			'sex' => 0,
 			'data' => $wechat_menu_data,
@@ -124,6 +127,16 @@ if($do == 'display') {
 		$params[':type'] = $type;
 	}
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('uni_account_menus') . $condition, $params);
+	$data_before = pdo_getall('uni_account_menus', array('title' => '', 'type' => $type, 'uniacid' => $_W['uniacid']));
+	foreach ($data_before as $data_bval) {
+		$rands = random(5, false);
+		if ($type == '1') {
+			$intitle = '默认菜单_' . $rands;
+		} else {
+			$intitle = '标题_' . $rands;
+		}
+		pdo_update('uni_account_menus', array('title' => $intitle), array('id' => $data_bval['id'], 'uniacid' => $_W['uniacid']));
+	}
 	$data = pdo_fetchall("SELECT * FROM " . tablename('uni_account_menus') . $condition . " ORDER BY type ASC, status DESC,id DESC LIMIT " . ($pindex - 1) * $psize . "," . $psize, $params);
 	$pager = pagination($total, $pindex, $psize);
 	$names = array(
@@ -328,8 +341,11 @@ if($do == 'post') {
 		set_time_limit(0);
 		$post = $_GPC['group'];
 		$menu = array();
+		$check_btname = array();
+		$rands = 0;
 		if(!empty($post['button'])) {
 			foreach($post['button'] as $key => &$button) {
+				$check_btname[$rands++] = $button['name'];
 				$temp = array();
 				$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
 				$temp['name'] = urlencode($temp['name']);
@@ -354,6 +370,7 @@ if($do == 'post') {
 					}
 				} else {
 					foreach($button['sub_button'] as &$subbutton) {
+						$check_btname[$rands++] = $subbutton['name'];
 						$sub_temp = array();
 						$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
 						$sub_temp['name'] = urlencode($sub_temp['name']);
@@ -421,6 +438,33 @@ if($do == 'post') {
 			if(!isset($menu['matchrule'])) {
 				$menu['matchrule'] = array();
 			}
+
+			//检测$post['title']里面值是否已经存在
+			if ($post['id'] > 0) {
+				$post_getone = pdo_get('uni_account_menus', array('id' => $post['id']), array('id', 'title'));
+			}
+			if ($post_getone['title'] != $post['title'] || empty($post['id'])) {
+				if ($post['title'] == '系统默认菜单') {
+					$rands = random(5, false);
+					$post['title'] = '默认菜单_' . $rands;
+				}
+				if ($post['title'] == '标题') {
+					$rands = random(5, false);
+					$post['title'] = '标题_' . $rands;
+				}
+				$check_titles = pdo_get('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
+				if (!empty($check_titles)) {
+					message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/post', array('id' => $id, 'type' => $post['type'])), 'ajax');
+				}	
+			}
+			
+			//检测菜单里面一级子菜单名字 值内容是否一样;
+			//提交过来数组里面值个数 和 删除重复值以后值得个数
+			//如果有重复值则会删除重复值,最后两个值就会不一样
+			if (count(array_unique($check_btname)) != count($check_btname)) {
+				message(error(-1, '一级子菜单和二级子菜单出现重复'), url('platform/menu/post', array('id' => $id, 'type' => $post['type'])), 'ajax');
+			}
+			
 			$insert = array(
 				'uniacid' => $_W['uniacid'],
 				'menuid' => $ret,
@@ -434,6 +478,7 @@ if($do == 'post') {
 				'status' => '1',
 				'createtime' => TIMESTAMP,
 			);
+			
 			if($post['type'] == 1) {
 				if (!empty($_GPC['id'])) {
 					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 1, 'id' => intval($_GPC['id'])));
@@ -442,6 +487,7 @@ if($do == 'post') {
 					foreach ($default_menu_ids as $id) {
 						pdo_update('uni_account_menus', array('status' => '0'), array('id' => $id));
 					}
+					
 					pdo_insert('uni_account_menus', $insert);
 				}
 				message(error(0, '创建菜单成功'), url('platform/menu/display'), 'ajax');

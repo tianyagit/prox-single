@@ -55,8 +55,7 @@ if ($do == 'platform') {
 		$modules = uni_modules();
 		$_W['current_module'] = $modules[$modulename];
 	}
-	//如果模块存在自定义封面，则调用
-	$site = WeUtility::createModule($modulename);
+		$site = WeUtility::createModule($modulename);
 	if (!is_error($site)) {
 		$method = 'welcomeDisplay';
 		if(method_exists($site, $method)){
@@ -67,5 +66,15 @@ if ($do == 'platform') {
 		}
 	}
 	define('FRAME', 'account');
+	define('IN_MODULE', $modulename);
+	$frames = buildframes('account');
+	foreach ($frames['section'] as $secion) {
+		foreach ($secion['menu'] as $menu) {
+			if (!empty($menu['url'])) {
+				header('Location: ' . $_W['siteroot'] . 'web/' . $menu['url']);
+				exit;
+			}
+		}
+	}
 	template('home/welcome-ext');
 }

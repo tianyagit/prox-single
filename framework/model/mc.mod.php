@@ -1681,78 +1681,116 @@ function mc_plugins() {
 }
 
 /**
- * 初始化粉丝个人信息
- * @param 	array 		$old_fan_info 	粉丝之前信息
+ * 初始化粉丝信息，新建或是更新
+ * @param string $openid 初始化粉丝openid
+ * @param boolean $force_init_member 是否强制初始化会员
+ * @return boolean
  */
-function mc_init_fans_info($old_fan_info){
+function mc_init_fans_info($openid, $force_init_member = false){
+	global $_W;
 	static $account_api;
 	if (empty($account_api)) {
 		$account_api = WeAccount::create();
 	}
-	$fan = $account_api->fansQueryInfo($old_fan_info['openid'], true);
-	if (!is_error($fan) && $fan['subscribe'] == 1) {
-		$fan['nickname'] = stripcslashes($fan['nickname']);
-		$fan['remark'] = !empty($fan['remark']) ? stripslashes($fan['remark']) : '';
-		$record = array(
-			'updatetime' => TIMESTAMP,
-			'followtime' => $fan['subscribe_time'],
-			'nickname' => stripcslashes($fan['nickname']),
-			'tag' => base64_encode(iserializer($fan)),
-			'unionid' => $fan['unionid'],
-			'groupid' => !empty($fan['tagid_list']) ? (','.join(',', $fan['tagid_list']).',') : '',
-		);
-		if (!empty($fan['tagid_list'])) {
-			$tagid_arr = $fan['tagid_list'];
-			@sort($tagid_arr, SORT_NATURAL);
-			mc_insert_fanstag_mapping($old_fan_info['fanid'], $tagid_arr);
-		}
-		pdo_update('mc_mapping_fans', $record, array('fanid' => $old_fan_info['fanid']));
-		
-		if (!empty($old_fan_info['uid'])) {
-			$user = mc_fetch($old_fan_info['uid'], array('nickname', 'gender', 'residecity', 'resideprovince', 'nationality', 'avatar'));
-			$rec = array();
-			if (empty($user['nickname']) && !empty($fan['nickname'])) {
-				$rec['nickname'] = stripslashes($fan['nickname']);
-			}
-			if (empty($user['gender']) && !empty($fan['sex'])) {
-				$rec['gender'] = $fan['sex'];
-			}
-			if (empty($user['residecity']) && !empty($fan['city'])) {
-				$rec['residecity'] = $fan['city'] . '市';
-			}
-			if (empty($user['resideprovince']) && !empty($fan['province'])) {
-				$rec['resideprovince'] = $fan['province'] . '省';
-			}
-			if (empty($user['nationality']) && !empty($fan['country'])) {
-				$rec['nationality'] = $fan['country'];
-			}
-			if (empty($user['avatar']) && !empty($fan['headimgurl'])) {
-				$rec['avatar'] = rtrim($fan['headimgurl'], '0') . 132;
-			}
-			if (!empty($rec)) {
-				pdo_update('mc_members', $rec, array('uid' => $old_fan_info['uid']));
-			}
-		}
-	} elseif (!is_error($fan) && empty($fan['subscribe'])) {
-		pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('fanid' => $old_fan_info['fanid']));
+	$fans = $account_api->fansQueryInfo($openid);
+	if (empty($fans) || is_error($fans)) {
+		return true;
 	}
-	return true;
+	//如果粉丝已经取消关注，则只更新状态
+	if (empty($fans['subscribe'])) {
+		pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('fanid' => $openid));
+		return true;
+	}
+	$fans_mapping = mc_fansinfo($openid);
+	$fans_update_info = array(
+		'openid' => $fans['openid'],
+		'acid' => $_W['acid'],
+		'uniacid' => $_W['uniacid'],
+		'updatetime' => TIMESTAMP,
+		'followtime' => $fans['subscribe_time'],
+		'follow' => $fans['subscribe'],
+		'nickname' => stripcslashes($fans['nickname']),
+		'tag' => base64_encode(iserializer($fans)),
+		'unionid' => $fans['unionid'],
+		'groupid' => !empty($fans['tagid_list']) ? (','.join(',', $fans['tagid_list']).',') : '',
+	);
+	if (!empty($fans['headimgurl'])) {
+		$fans['headimgurl'] = rtrim($fans['headimgurl'], '0') . 132;
+	}
+	//强制初始化会员信息
+	if ($force_init_member) {
+		$member_update_info = array(
+			'uniacid' => $_W['uniacid'],
+			'nickname' => $fans_update_info['nickname'],
+			'avatar' => $fans['headimgurl'],
+			'gender' => $fans['sex'],
+			'nationality' => $fans['country'],
+			'resideprovince' => $fans['province'] . '省',
+			'residecity' => $fans['city'] . '市',
+		);
+
+		if (empty($fans_mapping['uid'])) {
+			$email = md5($openid).'@we7.cc';
+			$email_exists_member = pdo_getcolumn('mc_members', array('email' => $email), 'uid');
+			if (!empty($email_exists_member)) {
+				$uid = $email_exists_member;
+			} else {
+				$member_update_info['groupid'] = pdo_getcolumn('mc_groups', array('uniacid' => $_W['uniacid'], 'isdefault' => 1));
+				$member_update_info['salt'] = random(8);
+				$member_update_info['email'] = $email;
+				$member_update_info['createtime'] = TIMESTAMP;
+
+				pdo_insert('mc_members', $member_update_info);
+				$uid = pdo_insertid();
+			}
+			$fans_update_info['uid'] = $uid;
+		} else {
+			$fans_update_info['uid'] = $fans_mapping['uid'];
+		}
+	}
+
+	if (!empty($fans_mapping)) {
+		pdo_update('mc_mapping_fans', $fans_update_info, array('fanid' => $fans_mapping['fanid']));
+	} else {
+		$fans_update_info['salt'] = random(8);
+		$fans_update_info['unfollowtime'] = 0;
+		$fans_update_info['createtime'] = TIMESTAMP;
+
+		pdo_insert('mc_mapping_fans', $fans_update_info);
+		$fans_mapping['fanid'] = pdo_insertid();
+	}
+	//初始化粉丝标签
+	if (!empty($fans['tagid_list'])) {
+		$groupid = $fans['tagid_list'];
+		@sort($groupid, SORT_NATURAL);
+		mc_insert_fanstag_mapping($fans_mapping['fanid'], $groupid);
+	}
+	return $fans_update_info;
 }
 
 /**
- * 插入 mc_fans_tag_mapping，fanid-tagid 对应关系
- * @param 	int 		$fanid 		粉丝id
- * @param 	array|int 	$tagid_arr 	标签id列表
+ * 更新粉丝标签，删除多余的，添加新增的
+ * @param int $fanid 粉丝ID
+ * @param array $groupid_list 粉丝标签
+ * @return boolean
  */
-function mc_insert_fanstag_mapping($fanid, $tagid_arr){
-	$tagid_arr = (array) $tagid_arr;
-	foreach ($tagid_arr as $tagid) {
+function mc_insert_fanstag_mapping($fanid, $groupid_list){
+	if (empty($groupid_list)) {
+		return true;
+	}
+
+	foreach ($groupid_list as $groupid) {
 		$record_mapping = array(
 			'fanid' => $fanid,
-			'tagid' => $tagid
+			'tagid' => $groupid
 		);
-		pdo_insert('mc_fans_tag_mapping', $record_mapping, true);
+		$isfound = pdo_getcolumn('mc_fans_tag_mapping', $record_mapping, 'id');
+		if (empty($isfound)) {
+			pdo_insert('mc_fans_tag_mapping', $record_mapping);
+		}
 	}
+	pdo_delete('mc_fans_tag_mapping', array('fanid' => $fanid, 'tagid !=' => $groupid_list));
+	return true;
 }
 
 /**

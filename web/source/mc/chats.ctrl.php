@@ -12,6 +12,7 @@ load()->classs('account');
 
 $dos = array('chats', 'send', 'endchats');
 $do = in_array($do , $dos) ? $do : 'chats';
+uni_user_permission_check('mc_fans');
 
 if ($do == 'chats') {
 	$_W['page']['title'] = '粉丝聊天';

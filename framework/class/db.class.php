@@ -444,6 +444,11 @@ class DB {
 					$operator = " = `$fields` + ";
 				} elseif ($operator == '-=') {
 					$operator = " = `$fields` - ";
+				} elseif ($operator == '!=' || $operator == '<>') {
+					//如果是数组不等于情况，则转换为NOT IN
+					if (is_array($value)) {
+						$operator = 'NOT IN';
+					}
 				}
 				if (is_array($value)) {
 					$insql = array();
@@ -632,7 +637,7 @@ class DB {
 					load()->web('common');
 					load()->web('template');
 				}
-				exit("SQL: <br/>{$append['sql']}<hr/>Params: <br/>{$params}<hr/>SQL Error: <br/>{$append['error'][2]}<hr/>Traces: <br/>{$ts}");
+				message("SQL: <br/>{$append['sql']}<hr/>Params: <br/>{$params}<hr/>SQL Error: <br/>{$append['error'][2]}<hr/>Traces: <br/>{$ts}", '', 'error');
 			}
 		}
 		return $this->errors;

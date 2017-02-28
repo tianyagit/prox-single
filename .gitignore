@@ -31,3 +31,4 @@ data/**/*
 attachment/**/*
 !attachment/images/global/**/*
 addons/**/*
+.tags

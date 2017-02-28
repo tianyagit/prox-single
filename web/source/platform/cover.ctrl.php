@@ -10,7 +10,7 @@ load()->model('module');
 $dos = array('module', 'post');
 $do = in_array($do, $dos) ? $do : 'module';
 
-uni_user_permission_check('platform_cover_' . $do, true, 'cover');
+// uni_user_permission_check('platform_cover_' . $do, true, 'cover');
 define('IN_MODULE', true);
 
 if ($do == 'module') {
@@ -32,7 +32,6 @@ if ($do == 'module') {
 		$url = url('platform/cover', array('m' => $module['name'], 'eid' => $entry_id));
 	}
 	define('ACTIVE_FRAME_URL', $url);
-	
 	$entries = module_entries($modulename);
 } elseif ($do == 'post') {
 	$entry_id = intval($_GPC['eid']);

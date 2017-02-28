@@ -15,7 +15,7 @@
 	</div>
 </div>
 <table class="table we7-table table-hover" id="js-user-group-display" ng-controller="UserGroupDisplay" ng-cloak>
-	<col width="200px"/>
+	<col width="180px"/>
 	<col width="100px"/>
 	<col width="120px"/>
 	<col width=""/>
@@ -25,14 +25,17 @@
 		<th class="text-left">用户组</th>
 		<th>有限期</th>
 		<th>可创建公众号</th>
+		<th>可创建小程序</th>
 		<th>应用权限套餐</th>
 		<th>可用应用</th>
+		<th>可用小程序应用</th>
 		<th class="text-left">操作</th>
 	</tr>
 	<tr ng-repeat="list in lists">
 		<td class="text-left" ng-bind="list.name"></td>
 		<td><span ng-if="list.timelimit != 0" ng-bind="list.timelimit+'天'"></span><span ng-if="list.timelimit == 0">永久有效</span></td>
 		<td><span ng-if="list.maxaccount == 0">无权限</span><span ng-if="list.maxaccount != 0" ng-bind="list.maxaccount"></span></td>
+		<td><span ng-if="list.maxwxapp == 0">无权限</span><span ng-if="list.maxwxapp != 0" ng-bind="list.maxwxapp"></span></td>
 		<td>
 			<span ng-if="list.module_nums == -1">全部</span>
 			<span ng-if="list.package != 'N;'" class="color-default" ng-bind="list.packages"></span>
@@ -41,6 +44,10 @@
 		<td>
 			<span ng-if="list.module_nums == -1">全部</span>
 			<span ng-if="list.module_nums != -1" ng-bind="list.module_nums"></span>
+		</td>
+		<td>
+			<span ng-if="list.wxapp_nums == -1">全部</span>
+			<span ng-if="list.wxapp_nums != -1" ng-bind="list.wxapp_nums"></span>
 		</td> 
 		<td class="text-left">
 			<div class="link-group">

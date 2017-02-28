@@ -11,16 +11,8 @@ $dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_statu
 $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
-if ($m == 'keyword') {
+if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service'))) {
 	uni_user_permission_check('platform_reply');
-} elseif ($m == 'special') {
-	uni_user_permission_check('platform_reply_special');
-} elseif ($m == 'welcome' || $m == 'default') {
-	uni_user_permission_check('platform_reply_system');
-} elseif ($m == 'apply') {
-	uni_user_permission_check('platform_reply_apply');
-} elseif ($m == 'service') {
-	uni_user_permission_check('platform_service');
 } else {
 	$modules = uni_modules();
 	$_W['current_module'] = $modules[$m];
@@ -132,7 +124,7 @@ if ($do == 'display') {
 			}
 		}
 	}
-	$entries = module_entries($m, 'rule');
+	$entries = module_entries($m, array('rule'));
 	template('platform/reply');
 }
 

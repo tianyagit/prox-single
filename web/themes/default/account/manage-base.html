@@ -78,6 +78,12 @@
 			<td ng-bind="account.end"></td>
 			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#endtime" ng-click="editInfo('endtype', account.endtype)">修改</a></td>
 		</tr>
+		<tr>
+			<td class="table-label">接入方式</td>
+			<td ng-if="account.type == 1">普通接入</td>
+			<td ng-if="account.type == 3">授权接入</td>
+			<td><a href="javascript:;" class="color-default"></a></td>
+		</tr>
 	</table>
 	<div class="modal fade" id="name" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="we7-modal-dialog modal-dialog">

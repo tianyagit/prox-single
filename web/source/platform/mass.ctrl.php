@@ -11,7 +11,7 @@ load()->model('module');
 
 $dos = array('list', 'post', 'cron', 'send', 'del', 'preview');
 $do = in_array($do, $dos) ? $do : 'list';
-uni_user_permission_exist('platform_mass');
+uni_user_permission_check('platform_mass_task');
 $_W['page']['title'] = '定时群发-微信素材';
 
 if ($do == 'list') {

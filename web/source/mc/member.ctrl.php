@@ -64,8 +64,6 @@ if ($do == 'credit_setting') {
 }
 
 if($do == 'display') {
-	uni_user_permission_check('mc_member_page');
-
 	$_W['page']['title'] = '会员列表';
 	$groups = mc_groups();
 	$search_mod = intval($_GPC['search_mod']) == 1 ? '1' : '2';
@@ -166,8 +164,6 @@ if($do == 'display') {
 }
 
 if($do == 'post') {
-	uni_user_permission_check('mc_member_page');
-
 	$_W['page']['title'] = '编辑会员资料 - 会员 - 会员中心';
 	$uid = intval($_GPC['uid']);
 	if ($_W['ispost'] && $_W['isajax']) {
@@ -350,7 +346,6 @@ if($do == 'post') {
 }
 
 if($do == 'del') {
-	uni_user_permission_check('mc_member_page');
 	if(!empty($_GPC['uid'])) {
 		if (is_array($_GPC['uid'])) {
 			$delete_uids = array();
@@ -375,8 +370,6 @@ if($do == 'del') {
 }
 
 if($do == 'add') {
-	uni_user_permission_check('mc_member_page');
-
 	if($_W['isajax']) {
 		$type = trim($_GPC['type']);
 		$data = trim($_GPC['data']);

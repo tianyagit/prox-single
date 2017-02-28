@@ -8,22 +8,24 @@ defined('IN_IA') or exit('Access Denied');
 /**
  * 添加公众号时执行数量判断
  * @param int $uid 操作用户
- * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号)
+ * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号;3. 小程序)
  * @return array|boolean 错误原因或成功
  */
 function uni_create_permission($uid, $type = 1) {
 	$groupid = pdo_fetchcolumn('SELECT groupid FROM ' . tablename('users') . ' WHERE uid = :uid', array(':uid' => $uid));
-	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
-	$list = pdo_fetchall('SELECT c.uniacid FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $uid, ':role' => 'owner'));
+	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount, maxwxapp FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
+	$list = pdo_fetchall('SELECT d.type, count(*) AS count FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0 GROUP BY d.type', array(':uid' => $uid, ':role' => 'owner'));
 	foreach ($list as $item) {
-		$uniacids[] = $item['uniacid'];
+		if ($item['type'] == 4) {
+			$wxapp_num = $item['count'];
+		} else {
+			$account_num = $item['count'];
+		}
 	}
-	unset($item);
-	$uniacidnum = count($list);
 	//添加主公号
 	if ($type == 1) {
-		if ($uniacidnum >= $groupdata['maxaccount']) {
-			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxaccount'] . '个主公号');
+		if ($account_num >= $groupdata['maxaccount']) {
+			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxaccount'] . '个主公众号');
 		}
 	} elseif ($type == 2) {
 		$subaccountnum = 0;
@@ -31,7 +33,11 @@ function uni_create_permission($uid, $type = 1) {
 			$subaccountnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('account') . ' WHERE uniacid IN (' . implode(',', $uniacids) . ')');
 		}
 		if ($subaccountnum >= $groupdata['maxsubaccount']) {
-			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxsubaccount'] . '个子公号');
+			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxsubaccount'] . '个子公众号');
+		}
+	} elseif ($type == 3) {
+		if ($wxapp_num >= $groupdata['maxwxapp']) {
+			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxwxapp'] . '个小程序');
 		}
 	}
 	return true;
@@ -68,11 +74,7 @@ function uni_accounts($uniacid = 0) {
 	global $_W;
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$account_info = pdo_get('account', array('uniacid' => $uniacid));
-	if ($account_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-		$accounts = pdo_fetchall("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wxapp') . " w USING(acid) WHERE a.uniacid = :uniacid AND a.isdeleted <> 1 ORDER BY a.acid ASC", array(':uniacid' => $uniacid), 'acid');
-	} else {
-		$accounts = pdo_fetchall("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(acid) WHERE a.uniacid = :uniacid AND a.isdeleted <> 1 ORDER BY a.acid ASC", array(':uniacid' => $uniacid), 'acid');
-	}
+	$accounts = pdo_fetchall("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename(uni_account_tablename($account_info['type'])) . " w USING(acid) WHERE a.uniacid = :uniacid AND a.isdeleted <> 1 ORDER BY a.acid ASC", array(':uniacid' => $uniacid), 'acid');
 	return $accounts;
 }
 
@@ -292,6 +294,10 @@ function uni_groups($groupids = array()) {
 					$row['modules'] = pdo_fetchall("SELECT name, title FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $modules) . "')");
 				}
 			}
+			if (!empty($row['wxapp'])) {
+				$wxapps = iunserializer($row['wxapp']);
+				$row['wxapp'] = pdo_fetchall("SELECT name, title FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $wxapps) . "')");
+			}
 			if (!empty($row['templates'])) {
 				$templates = iunserializer($row['templates']);
 				if (is_array($templates)) {
@@ -445,10 +451,12 @@ function uni_account_default($uniacid = 0) {
 	global $_W;
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$uni_account = pdo_fetch("SELECT * FROM ".tablename('uni_account')." a LEFT JOIN ".tablename('account')." w ON a.default_acid = w.acid WHERE a.uniacid = :uniacid", array(':uniacid' => $uniacid), 'acid');
-	$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
-	$account['type'] = $uni_account['type'];
-	$account['isconnect'] = $uni_account['isconnect'];
-	return $account;
+	if (!empty($uni_account)) {
+		$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
+		$account['type'] = $uni_account['type'];
+		$account['isconnect'] = $uni_account['isconnect'];
+		return $account;
+	}
 }
 /**
  * 根据公众号类型选择数据表
@@ -730,11 +738,7 @@ function account_create($uniacid, $account) {
  */
 function account_fetch($acid) {
 	$account_info = pdo_get('account', array('acid' => $acid));
-	if ($account_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-		$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wxapp') . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
-	} else {
-		$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename('account_wechats') . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
-	}
+	$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename(uni_account_tablename($account_info['type'])) . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
 	if (empty($account)) {
 		return error(1, '公众号不存在');
 	}
@@ -745,218 +749,11 @@ function account_fetch($acid) {
 	$account['uid'] = $owner['uid'];
 	$account['starttime'] = $owner['starttime'];
 	$account['endtime'] = $owner['endtime'];
+	$account['thumb'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 	load()->model('mc');
 	$account['groups'] = mc_groups($uniacid);
 	$account['grouplevel'] = pdo_fetchcolumn('SELECT grouplevel FROM ' . tablename('uni_settings') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
 	return $account;
-}
-
-/**
- * 登录微信公众号
- * @param string $username 微信公众号用户名
- * @param string $password 微信公众号密码
- * @param string $imgcode 登录验证码
- * @return boolean|array 登录成功或错误信息
- */
-function account_weixin_login($username = '', $password = '', $imgcode = '') {
-	global $_W, $_GPC;
-	if (empty($username) || empty($password)) {
-		$username = $_W['account']['username'];
-		$password = $_W['account']['password'];
-	}
-	$auth['token'] = cache_load('wxauth:' . $username . ':token');
-	load()->func('communication');
-	$loginurl = WEIXIN_ROOT . '/cgi-bin/login?lang=zh_CN';
-	$post = array(
-		'username' => $username,
-		'pwd' => $password,
-		'imgcode' => $imgcode,
-		'f' => 'json',
-	);
-	//获取验证码cookie
-	$code_cookie = $_GPC['code_cookie'];
-	$response = ihttp_request($loginurl, $post, array('CURLOPT_REFERER' => 'https://mp.weixin.qq.com/', 'CURLOPT_COOKIE' => $code_cookie));
-	if (is_error($response)) {
-		return false;
-	}
-
-	$data = json_decode($response['content'], true);
-	if ($data['base_resp']['ret'] == 0) {
-		preg_match('/token=([0-9]+)/', $data['redirect_url'], $match);
-		cache_write('wxauth:' . $username . ':token', $match[1]);
-		cache_write('wxauth:' . $username . ':cookie', implode('; ', $response['headers']['Set-Cookie']));
-		isetcookie('code_cookie', '', -1000);
-	} else {
-		return error(-1, $data['base_resp']['err_msg']);
-	}
-	return true;
-}
-
-/**
- * 获取微信公众号的基本信息
- * @param string $username 微信公众号用户名
- * @return array 公众号的基本信息或错误信息
- */
-function account_weixin_basic($username) {
-	$response = account_weixin_http($username, WEIXIN_ROOT . '/cgi-bin/settingpage?t=setting/index&action=index&lang=zh_CN&f=json');
-	if(is_error($response)) {
-		return $response;
-	}
-	$result =  json_decode($response['content'], true);
-	if ($result['base_resp']['ret'] != 0) {
-		return error(-1, $result['base_resp']['err_msg']);
-	}
-
-	$fakeid = $result['user_info']['fake_id'];
-	$image = account_weixin_http($username, WEIXIN_ROOT . '/misc/getheadimg?fakeid=' . $fakeid);
-	if (!is_error($image) && !empty($image['content'])) {
-		$info['headimg'] = $image['content'];
-	}
-	$image = account_weixin_http($username, WEIXIN_ROOT . '/misc/getqrcode?fakeid=' . $fakeid . '&style=1&action=download');
-	if (!is_error($image) && !empty($image['content'])) {
-		$info['qrcode'] = $image['content'];
-	}
-	$info['original'] = $result['setting_info']['original_username'];
-	$info['name'] = $result['user_info']['nick_name'];
-	$info['account'] = $result['user_info']['user_name'];
-	$info['signature'] = $result['setting_info']['intro']['signature'];
-	$info['level'] = 1;
-	if($result['user_info']['service_type'] == 1) {
-		$info['level'] = 1;
-		if($result['user_info']['is_wx_verify'] == 1) {
-			$info['level'] = 3;
-		}
-	} elseif($result['user_info']['service_type'] == 2) {
-		$info['level'] = 2;
-		if($result['user_info']['is_wx_verify'] == 1) {
-			$info['level'] = 4;
-		}
-	}
-	$response = account_weixin_http($username, WEIXIN_ROOT . '/advanced/advanced?action=dev&t=advanced/dev&lang=zh_CN&f=json');
-	if(!is_error($response)) {
-		$result =  json_decode($response['content'], true);
-		$info['key'] = $result['advanced_info']['dev_info']['app_id'];
-		$info['secret'] = '';
-	}
-	return $info;
-}
-
-function account_weixin_interface($username, $account) {
-	global $_W;
-	$response = account_weixin_http($username, WEIXIN_ROOT . '/advanced/callbackprofile?t=ajax-response&lang=zh_CN',
-		array(
-			'url' => $_W['siteroot'].'api.php?id='.$account['id'],
-			'callback_token' => $account['token'],
-			'encoding_aeskey' => $account['encodingaeskey'],
-			'callback_encrypt_mode' => '0',
-			'operation_seq' => '203038881',
-	));
-	if (is_error($response)) {
-		return $response;
-	}
-	$response = json_decode($response['content'], true);
-	if (!empty($response['base_resp']['ret'])) {
-		return error($response['ret'], $response['msg']);
-	}
-	$response = account_weixin_http($username, WEIXIN_ROOT . '/misc/skeyform?form=advancedswitchform', array('f' => 'json', 'lang' => 'zh_CN', 'flag' => '1', 'type' => '2', 'ajax' => '1', 'random' => random(5, 1)));
-	if (is_error($response)) {
-		return $response;
-	}
-	return true;
-}
-
-function account_weixin_http($username, $url, $post = '') {
-	global $_W;
-	if (empty($_W['cache']['wxauth:'.$username.':token']) || empty($_W['cache']['wxauth:'.$username.':cookie'])) {
-		cache_load('wxauth:'.$username.':token');
-		cache_load('wxauth:'.$username.':cookie');
-	}
-	$auth = $_W['cache'];
-	return ihttp_request($url . '&token=' . $auth['wxauth:'.$username.':token'], $post, array('CURLOPT_COOKIE' => $auth['wxauth:'.$username.':cookie'], 'CURLOPT_REFERER' => WEIXIN_ROOT . '/advanced/advanced?action=edit&t=advanced/edit&token='.$auth['wxauth:'.$username.':token']));
-}
-
-function account_weixin_userlist($pindex = 0, $psize = 1, &$total = 0) {
-	global $_W;
-	$url = WEIXIN_ROOT . '/cgi-bin/contactmanagepage?t=wxm-friend&lang=zh_CN&type=0&keyword=&groupid=0&pagesize='.$psize.'&pageidx='.$pindex;
-	$response = account_weixin_http($_W['account']['username'], $url);
-	$html = $response['content'];
-	preg_match('/PageCount \: \'(\d+)\'/', $html, $match);
-	$total = $match[1];
-	preg_match_all('/"fakeId" : "([0-9]+?)"/', $html, $match);
-	return $match[1];
-}
-
-function account_weixin_send($uid, $message = '') {
-	global $_W;
-	$username = $_W['account']['username'];
-	if (empty($_W['cache']['wxauth'][$username])) {
-		cache_load('wxauth:'.$username.':');
-	}
-	$auth = $_W['cache']['wxauth'][$username];
-	$url = WEIXIN_ROOT . '/cgi-bin/singlesend?t=ajax-response&lang=zh_CN';
-	$post = array(
-		'ajax' => 1,
-		'content' => $message,
-		'error' => false,
-		'tofakeid' => $uid,
-		'token' => $auth['token'],
-		'type' => 1,
-	);
-	$response = ihttp_request($url, $post, array(
-		'CURLOPT_COOKIE' => $auth['cookie'],
-		'CURLOPT_REFERER' => WEIXIN_ROOT . '/cgi-bin/singlemsgpage?token='.$auth['token'].'&fromfakeid='.$uid.'&msgid=&source=&count=20&t=wxm-singlechat&lang=zh_CN',
-	));
-}
-
-function account_txweibo_login($username, $password, $verify = '') {
-	$cookie = cache_load("txwall:$username");
-	if (!empty($cookie)) {
-		$response = ihttp_request('http://t.qq.com', '', array(
-			'CURLOPT_COOKIE' => $cookie,
-			'CURLOPT_REFERER' => 'http://t.qq.com/',
-			"User-Agent" => "Mozilla/5.0 (Windows NT 5.1; rv:13.0) Gecko/20100101 Firefox/13.0",
-		));
-		if (!strexists($response['content'], '登录框')) {
-			return $cookie;
-		}
-	}
-	$loginsign = '';
-
-	$loginui = 'http://ui.ptlogin2.qq.com/cgi-bin/login?appid=46000101&s_url=http%3A%2F%2Ft.qq.com';
-	$response = ihttp_request($loginui);
-	preg_match('/login_sig:"(.*?)"/', $response['content'], $match);
-	$loginsign = $match[1];
-	
-	$checkloginurl = 'http://check.ptlogin2.qq.com/check?uin='.$username.'&appid=46000101&r='.TIMESTAMP;
-	$response = ihttp_request($checkloginurl);
-	$cookie = implode('; ', $response['headers']['Set-Cookie']);
-	preg_match_all("/'(.*?)'/", $response['content'], $match);
-	list($needVerify, $verify1, $verify2) = $match[1];
-	if (!empty($needVerify)) {
-		if (empty($verify)) {
-			return error(1, '请输入验证码！');
-		}
-		$verify1 = $verify;
-		$cookie .= '; ' . cache_load('txwall:verify');
-	}
-	$verify2 = pack('H*', str_replace('\x', '', $verify2));
-	$temp = md5($password, true);
-	$temp = strtoupper(md5($temp . $verify2));
-	$password = strtoupper(md5($temp . strtoupper($verify1)));
-	$loginurl = "http://ptlogin2.qq.com/login?u={$username}&p={$password}&verifycode={$verify1}&login_sig={$loginsign}&low_login_enable=1&low_login_hour=720&aid=46000101&u1=http%3A%2F%2Ft.qq.com&ptredirect=1&h=1&from_ui=1&dumy=&fp=loginerroralert&g=1&t=1&dummy=&daid=6&";
-	$response = ihttp_request($loginurl, '', array(
-		'CURLOPT_COOKIE' => $cookie,
-		'CURLOPT_REFERER' => 'http://t.qq.com/',
-		"User-Agent" => "Mozilla/5.0 (Windows NT 5.1; rv:13.0) Gecko/20100101 Firefox/13.0",
-	));
-	$info = explode("'", $response['content']);
-	if ($info[1] != 0) {
-		return error('1', $info[9]);
-	}
-	$response = ihttp_request($info[5]);
-	$cookie = implode('; ', $response['headers']['Set-Cookie']);
-	cache_write("txwall:$username", $cookie);
-	return $cookie;
 }
 
 /*
@@ -1105,18 +902,6 @@ function account_delete($acid) {
 			'stat_rule','uni_account','uni_account_modules','uni_account_users','uni_settings', 'uni_group', 'uni_verifycode','users_permission',
 			'mc_member_fields',
 		);
-		$we7_coupon_info = module_fetch('we7_coupon');
-		if (!empty($we7_coupon_info)) {
-			$we7_coupon_tables = array('activity_clerks', 'activity_clerks',
-				'activity_exchange', 'activity_exchange_trades', 'activity_exchange_trades_shipping', 'coupon','coupon_modules', 'coupon_record', 'mc_card','mc_card_members');
-			$tables = array_merge($tables, $we7_coupon_tables);
-		}
-		if (!empty($tables)) {
-			foreach ($tables as $table) {
-				$tablename = str_replace($GLOBALS['_W']['config']['db']['tablepre'], '', $table);
-				pdo_delete($tablename, array( 'uniacid'=> $uniacid));
-			}
-		}
 	} else {
 		$account = account_fetch($acid);
 		if (empty($account)) {
@@ -1148,4 +933,3 @@ function account_delete($acid) {
 	}
 	return true;
 }
-
