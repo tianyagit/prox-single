@@ -1083,7 +1083,7 @@ function tpl_ueditor($id, $value = '', $options = array()) {
 		require(['util'], function(util){
 			util.editor('" . ($id ? $id : "") . "', {
 			height : {$options['height']}, 
-			dest_dir : " .($options['dest_dir'] ? $options['dest_dir'] : "''") . ",
+			dest_dir : '" .($options['dest_dir'] ? $options['dest_dir'] : "") . "',
 			image_limit : " . (intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024) . ",
 			allow_upload_video : " . ($options['allow_upload_video'] ? 'true' : 'false') . ",
 			audio_limit : " . (intval($GLOBALS['_W']['setting']['upload']['audio']['limit']) * 1024) . ",
