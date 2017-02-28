@@ -50,6 +50,14 @@ function cache_load($key, $unserialize = false) {
 	}
 }
 
+/**
+ * 统一系统缓存名称前缀
+ * @param string $cache_key
+ * @return string
+ */
+function cache_system_key($cache_key) {
+	return 'we7:' . $cache_key;
+}
 
 function &cache_global($key) {
 	
