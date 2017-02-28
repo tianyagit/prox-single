@@ -398,6 +398,7 @@ if($do == 'post') {
 		}
 
 		if($post['type'] == 3 && !empty($post['matchrule'])) {
+
 			if($post['matchrule']['sex'] > 0) {
 				$menu['matchrule']['sex'] = $post['matchrule']['sex'];
 			}
@@ -424,6 +425,10 @@ if($do == 'post') {
 				if($inarray === 1) $menu['matchrule']['language'] = $post['matchrule']['language'];
 			}
 		}
+		if($post['type'] == 3 && empty($menu['matchrule'])) {
+			//判断是否有菜单显示对象提交,默认菜单和个性化菜单唯一区别就是有无菜单显示对象
+			message(error(-1, '请选择菜单显示对象'), url('platform/menu/post', array('id' => $id, 'type' => 3)), 'ajax');
+		}
 		$account = WeAccount::create();
 		$ret = $account->menuCreate($menu);
 		if(is_error($ret)) {
@@ -438,7 +443,6 @@ if($do == 'post') {
 			if(!isset($menu['matchrule'])) {
 				$menu['matchrule'] = array();
 			}
-
 			//检测$post['title']里面值是否已经存在
 			if ($post['id'] > 0) {
 				$post_getone = pdo_get('uni_account_menus', array('id' => $post['id']), array('id', 'title'));
@@ -487,7 +491,6 @@ if($do == 'post') {
 					foreach ($default_menu_ids as $id) {
 						pdo_update('uni_account_menus', array('status' => '0'), array('id' => $id));
 					}
-					
 					pdo_insert('uni_account_menus', $insert);
 				}
 				message(error(0, '创建菜单成功'), url('platform/menu/display'), 'ajax');
