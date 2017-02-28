@@ -102,11 +102,25 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		$news = array();
 		foreach($commends as $c) {
 			$row = array();
-			$row['title'] = $c['title'];
-			$row['description'] = $c['description'];
-			!empty($c['thumb']) && $row['picurl'] = tomedia($c['thumb']);
-			$row['url'] = empty($c['url']) ? $this->createMobileUrl('detail', array('id' => $c['id'])) : $c['url'];
-			$news[] = $row;
+			if (!empty($c['media_id'])) {
+				$news_material = pdo_getall('wechat_news', array('attach_id' => $c['media_id']), array(), '', ' displayorder ASC');
+				if (!empty($news_material)) {
+					foreach ($news_material as $material) {
+						$row['title'] = $material['title'];
+						$row['description'] = $material['description'];
+						$row['picurl'] = "material/".$_W['uniacid']."/images".$material['thumb_media_id'].".jpg";
+						$row['url'] = $material['content_source_url'];
+						$news[] = $row;
+					}
+				}
+				break;
+			} else {
+				$row['title'] = $c['title'];
+				$row['description'] = $c['description'];
+				!empty($c['thumb']) && $row['picurl'] = tomedia($c['thumb']);
+				$row['url'] = empty($c['url']) ? $this->createMobileUrl('detail', array('id' => $c['id'])) : $c['url'];
+				$news[] = $row;
+			}
 		}
 		return $news;
 	}
