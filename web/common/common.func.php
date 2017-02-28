@@ -175,10 +175,10 @@ function buildframes($framename = ''){
 					}
 				}
 			}
-		}else {
+		} else {
 			$frames['account']['section']['platform_module']['is_display'] = false;
 		}
-	}else {
+	} else {
 		//创始人菜单
 		$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'shortcut' => STATUS_ON), array('module'), '', 'displayorder DESC');
 		if (!empty($account_module)) {
