@@ -619,7 +619,6 @@ function cloud_module_setting_prepare($module, $binding) {
 		'module' => $module,
 	);
 	$iframe_auth_url = cloud_auth_url('module', $auth);
-	
 	return $iframe_auth_url;
 }
 
