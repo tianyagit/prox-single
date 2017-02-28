@@ -127,9 +127,14 @@ if (!empty($_GPC['scope']) && $_GPC['scope'] == 'snsapi_base' && !empty($_GPC['c
 	$oauth_account = WeAccount::create($_W['account']['oauth']);
 	$oauth = $oauth_account->getOauthInfo($_GPC['code']);
 	$oauth['openid'] = 'oTKzFjv2FQ7EetJGLbxuGY6m0KmY';
-	//mc_init_fans_info($oauth['openid'], true);
-
+	$fans = mc_init_fans_info($oauth['openid'], true);
+	$_SESSION['oauth_openid'] = $oauth['openid'];
+	$_SESSION['oauth_acid'] = $_W['account']['oauth']['acid'];
+	$_SESSION['openid'] = $oauth['openid'];
+	$_SESSION['uid'] = $fans['uid'];
+	$_SESSION['userinfo'] = $fans['tag'];
 }
+
 if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4') {
 	if (($_W['container'] == 'wechat' && !$_GPC['logout'] && empty($_W['openid']) && ($controller != 'auth' || ($controller == 'auth' && !in_array($action, array('forward', 'oauth'))))) ||
 		($_W['container'] == 'wechat' && !$_GPC['logout'] && empty($_SESSION['oauth_openid']) && ($controller != 'auth'))) {

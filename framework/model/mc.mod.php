@@ -1744,6 +1744,8 @@ function mc_init_fans_info($openid, $force_init_member = false){
 				$uid = pdo_insertid();
 			}
 			$fans_update_info['uid'] = $uid;
+		} else {
+			$fans_update_info['uid'] = $fans_mapping['uid'];
 		}
 	}
 
@@ -1763,7 +1765,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 		@sort($groupid, SORT_NATURAL);
 		mc_insert_fanstag_mapping($fans_mapping['fanid'], $groupid);
 	}
-	return true;
+	return $fans_update_info;
 }
 
 /**
