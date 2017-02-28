@@ -128,6 +128,16 @@ if($do == 'display') {
 		$params[':type'] = $type;
 	}
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('uni_account_menus') . $condition, $params);
+	$data_before = pdo_getall('uni_account_menus', array('title' => '', 'type' => $type));
+	foreach ($data_before as $data_bval) {
+		$rands = random(5, false);
+		if ($type == '1') {
+			$intitle = '默认菜单_' . $rands;
+		} else {
+			$intitle = '标题_' . $rands;
+		}
+		pdo_update('uni_account_menus', array('title' => $intitle), array('id' => $data_bval['id'], 'uniacid' => $_W['uniacid']));
+	}
 	$data = pdo_fetchall("SELECT * FROM " . tablename('uni_account_menus') . $condition . " ORDER BY type ASC, status DESC,id DESC LIMIT " . ($pindex - 1) * $psize . "," . $psize, $params);
 	$pager = pagination($total, $pindex, $psize);
 	$names = array(
@@ -429,11 +439,31 @@ if($do == 'post') {
 			if(!isset($menu['matchrule'])) {
 				$menu['matchrule'] = array();
 			}
+
+			//检测$post['title']里面值是否已经存在
+			if ($post['id'] > 0) {
+				$post_getone = pdo_get('uni_account_menus', array('id' => $post['id']), array('id', 'title'));
+			}
+			if ($post_getone['title'] != $post['title'] || empty($_GPC['id'])) {
+				if ($post['title'] == '系统默认菜单') {
+					$rands = random(5, false);
+					$post['title'] = '默认菜单_' . $rands;
+				}
+				if ($post['title'] == '标题') {
+					$rands = random(5, false);
+					$post['title'] = '标题_' . $rands;
+				}
+				$check_titles = pdo_getall('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
+				if (!empty($check_titles)) {
+					message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/menu', array('id' => $id, 'type' => $post['type'])), 'ajax');
+				}	
+			}
+			
 			//检测菜单里面一级子菜单名字 值内容是否一样;
 			//提交过来数组里面值个数 和 删除重复值以后值得个数
 			//如果有重复值则会删除重复值,最后两个值就会不一样
 			if (count(array_unique($check_btname)) != count($check_btname)) {
-				message(error(-1, '一级子菜单和二级子菜单出现重复'), url('platform/menu/menu', array('id' => $id, 'type' => '1')), 'ajax');
+				message(error(-1, '一级子菜单和二级子菜单出现重复'), url('platform/menu/menu', array('id' => $id, 'type' => $post['type'])), 'ajax');
 			}
 			
 			$insert = array(
@@ -449,6 +479,7 @@ if($do == 'post') {
 				'status' => '1',
 				'createtime' => TIMESTAMP,
 			);
+			
 			if($post['type'] == 1) {
 				if (!empty($_GPC['id'])) {
 					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 1, 'id' => intval($_GPC['id'])));
@@ -457,11 +488,7 @@ if($do == 'post') {
 					foreach ($default_menu_ids as $id) {
 						pdo_update('uni_account_menus', array('status' => '0'), array('id' => $id));
 					}
-					//检测$post['title']里面值是否已经存在
-					$check_titles = pdo_getall('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
-					if (!empty($check_titles)) {
-						message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/menu', array('id' => $id, 'type' => '1')), 'ajax');
-					}
+					
 					pdo_insert('uni_account_menus', $insert);
 				}
 				message(error(0, '创建菜单成功'), url('platform/menu/display'), 'ajax');
