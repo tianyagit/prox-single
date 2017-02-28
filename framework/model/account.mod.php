@@ -14,19 +14,14 @@ defined('IN_IA') or exit('Access Denied');
 function uni_create_permission($uid, $type = 1) {
 	$groupid = pdo_fetchcolumn('SELECT groupid FROM ' . tablename('users') . ' WHERE uid = :uid', array(':uid' => $uid));
 	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount, maxwxapp FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
-	$list = pdo_fetchall('SELECT c.uniacid FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $uid, ':role' => 'owner'));
+	$list = pdo_fetchall('SELECT d.type, count(*) AS count FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0 GROUP BY d.type', array(':uid' => $uid, ':role' => 'owner'));
 	foreach ($list as $item) {
-		$account_info = uni_fetch($item['uniacid']);
-		if ($account_info['type'] == 4) {
-			$wxapp_lists[] = $account_info;
+		if ($item['type'] == 4) {
+			$wxapp_num = $item['count'];
 		} else {
-			$uniacids[] = $item['uniacid'];
-			$account_lists[] = $account_info;
+			$account_num = $item['count'];
 		}
 	}
-	unset($item);
-	$account_num = count($account_lists);
-	$wxapp_num = count($wxapp_lists);
 	//添加主公号
 	if ($type == 1) {
 		if ($account_num >= $groupdata['maxaccount']) {

@@ -105,7 +105,7 @@ if($do == 'base') {
 				}
 				$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 				if (empty($owneruid)) {
-					message(error(-1, '抱歉，用户不存在或是已经被删除！'), '', 'ajax');
+					message(error(-1, '抱歉，该公众号未设置主管理员。请先设置主管理员后再行修改到期时间！'), url('account/post-user/edit', array('uniacid' => $uniacid, 'acid' => $acid)), 'ajax');
 				}
 				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $owneruid));
 				break;

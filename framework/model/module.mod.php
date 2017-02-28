@@ -304,7 +304,6 @@ function module_build_privileges() {
  */
 function module_count_unistalled_module() {
 	global $_GPC;
-	load()->model('cache');
 	$uninstall_module_num = cache_load('we7:module:all_uninstall');
 	if (empty($uninstall_module_num)) {
 		$uninstall_module = module_get_all_unistalled('uninstalled');

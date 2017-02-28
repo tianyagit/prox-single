@@ -298,7 +298,7 @@
 								displayorder: 0,
 								incontent: 0,
 								parent_id: 0,
-								mediaid: material.media_id,
+								media_id:material.id
 							}));
 						});
 						$('.keywords-list').append(
@@ -483,6 +483,7 @@
 							incontent: newsVal.incontent ? newsVal.incontent : 0,
 							parent_id: newsVal.parent_id ? newsVal.parent_id : 0,
 							mediaid: newsVal.id,
+							media_id:newsVal.media_id
 						}));
 						$('.keywords-list').append(
 							'<li>'+
@@ -494,7 +495,7 @@
 							'					<span class="icon cover" style="background-image:url('+(newsVal.thumb ? newsVal.thumb : newsVal.thumb_url)+');"></span>'+
 							'					<span class="title">[图文消息]'+newsVal.title+'</span>'+
 							'				</a>'+
-							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(newsVal.description ? newsVal.description : newsVal.digest)+'</a></p>'+
+							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(newsVal.description ? newsVal.description : '')+'</a></p>'+
 							'			</div>'+
 							'		</div>'+
 							'	</div>'+

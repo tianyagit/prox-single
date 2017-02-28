@@ -61,7 +61,6 @@ if($do == 'display') {
 			$default_menu_id = $k;
 		}
 	}
-	//自定5位字符串
 	$rands = random(5, false);
 
 	if (!empty($default_menu_id)) {
@@ -128,7 +127,7 @@ if($do == 'display') {
 		$params[':type'] = $type;
 	}
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('uni_account_menus') . $condition, $params);
-	$data_before = pdo_getall('uni_account_menus', array('title' => '', 'type' => $type));
+	$data_before = pdo_getall('uni_account_menus', array('title' => '', 'type' => $type, 'uniacid' => $_W['uniacid']));
 	foreach ($data_before as $data_bval) {
 		$rands = random(5, false);
 		if ($type == '1') {
@@ -444,7 +443,7 @@ if($do == 'post') {
 			if ($post['id'] > 0) {
 				$post_getone = pdo_get('uni_account_menus', array('id' => $post['id']), array('id', 'title'));
 			}
-			if ($post_getone['title'] != $post['title'] || empty($_GPC['id'])) {
+			if ($post_getone['title'] != $post['title'] || empty($post['id'])) {
 				if ($post['title'] == '系统默认菜单') {
 					$rands = random(5, false);
 					$post['title'] = '默认菜单_' . $rands;
@@ -453,9 +452,9 @@ if($do == 'post') {
 					$rands = random(5, false);
 					$post['title'] = '标题_' . $rands;
 				}
-				$check_titles = pdo_getall('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
+				$check_titles = pdo_get('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
 				if (!empty($check_titles)) {
-					message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/menu', array('id' => $id, 'type' => $post['type'])), 'ajax');
+					message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/post', array('id' => $id, 'type' => $post['type'])), 'ajax');
 				}	
 			}
 			
@@ -463,7 +462,7 @@ if($do == 'post') {
 			//提交过来数组里面值个数 和 删除重复值以后值得个数
 			//如果有重复值则会删除重复值,最后两个值就会不一样
 			if (count(array_unique($check_btname)) != count($check_btname)) {
-				message(error(-1, '一级子菜单和二级子菜单出现重复'), url('platform/menu/menu', array('id' => $id, 'type' => $post['type'])), 'ajax');
+				message(error(-1, '一级子菜单和二级子菜单出现重复'), url('platform/menu/post', array('id' => $id, 'type' => $post['type'])), 'ajax');
 			}
 			
 			$insert = array(

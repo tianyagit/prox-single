@@ -40,7 +40,6 @@ class CoreModule extends WeModule {
 				if(!empty($rid) && $rid > 0) {
 					$isexists = pdo_get('mc_mass_record', array('id' => $rid), array('media_id', 'msgtype'));
 				}
-
 				if(!empty($isexists)) {
 					switch($isexists['msgtype']) {
 						case 'news':
@@ -53,6 +52,7 @@ class CoreModule extends WeModule {
 								}
 							}
 							$replies['news'] = $news_items;
+
 							break;
 						case 'image':
 							$img = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('attachment'));
@@ -181,7 +181,7 @@ class CoreModule extends WeModule {
 	}
 	
 	public function fieldsFormSubmit($rid = 0) {
-		global $_GPC;
+		global $_GPC, $_W;
 		$delsql = '';
 		foreach ($this->modules as $k => $val) {
 			$tablename = $this->tablename[$val];
@@ -214,11 +214,25 @@ class CoreModule extends WeModule {
 					}
 					break;
 				case 'news':
-						if(!empty($replies)) {
-							foreach ($replies as $reply) {
-								pdo_insert($tablename, array('rid' => $rid, 'parent_id' => $reply['parent_id'], 'title' => $reply['title'], 'author' => $reply['author'], 'description' => $reply['description'], 'thumb' => $reply['thumb'], 'content' => $reply['content'], 'url' => $reply['url'], 'displayorder' => $reply['displayorder'], 'incontent' => $reply['incontent'], 'createtime' => $reply['createtime']));
-							}
+					if(!empty($replies)) {
+						$reply_news = array();
+						foreach ($replies as $reply) {
+							$reply_news[$reply['media_id']] = $reply;
 						}
+						unset($reply);
+
+						foreach ($reply_news as $reply) {
+							$news_attach = pdo_get ('wechat_news', array ('attach_id' => $reply['media_id'], 'displayorder' => 0));
+							if (!file_exists (ATTACHMENT_ROOT . "material/" . $_W['uniacid'] . "/images" . $news_attach['thumb_media_id'] . ".jpg")) {
+								if (!is_dir (ATTACHMENT_ROOT . "material/" . $_W['uniacid'])) {
+									mkdirs (ATTACHMENT_ROOT . "material/" . $_W['uniacid']);
+								}
+								$image_content = file_get_contents ($news_attach['thumb_url']);
+								file_put_contents (ATTACHMENT_ROOT . "/material/" . $_W['uniacid'] . "/images" . $news_attach['thumb_media_id'] . ".jpg", $image_content);
+							}
+							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $news_attach['title'], 'thumb' => $_W['siteroot'] . "attachment/material/" . $_W['uniacid'] . "/images" . $news_attach['thumb_media_id'] . ".jpg", 'createtime' => $reply['createtime'], 'media_id' => $reply['media_id']));
+						}
+					}
 					break;
 				case 'image':
 					if(!empty($replies)) {
