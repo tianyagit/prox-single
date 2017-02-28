@@ -154,14 +154,20 @@ function uni_modules($enabledOnly = true) {
 		if (!empty($packageids) && in_array('-1', $packageids)) {
 			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " ORDER BY issystem DESC, mid ASC", array(), 'name');
 		} else {
-			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
+			$wechatgroup = pdo_fetchall("SELECT `modules`, `wxapp` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
 			$ms = array();
 			$mssql = '';
 			if (!empty($wechatgroup)) {
 				foreach ($wechatgroup as $row) {
 					$row['modules'] = iunserializer($row['modules']);
+					$row['wxapp'] = iunserializer($row['wxapp']);
 					if (!empty($row['modules'])) {
 						foreach ($row['modules'] as $modulename) {
+							$ms[$modulename] = $modulename;
+						}
+					}
+					if (!empty($row['wxapp'])) {
+						foreach ($row['wxapp'] as $modulename) {
 							$ms[$modulename] = $modulename;
 						}
 					}
