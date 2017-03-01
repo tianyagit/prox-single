@@ -85,7 +85,8 @@ if (intval($_W['account']['level']) == 4) {
 				'follow' => $userinfo['subscribe'],
 				'followtime' => $userinfo['subscribe_time'],
 				'unfollowtime' => 0,
-				'tag' => base64_encode(iserializer($userinfo))
+				'tag' => base64_encode(iserializer($userinfo)),
+				'unionid' => $userinfo['unionid'],
 			);
 			if (!isset($unisetting['passport']) || empty($unisetting['passport']['focusreg'])) {
 				$email = md5($oauth['openid']).'@we7.cc';
@@ -158,12 +159,15 @@ if ($scope == 'userinfo') {
 		}
 		$userinfo['avatar'] = $userinfo['headimgurl'];
 		$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
+		//设置获取信息缓存时间
+		$_SESSION['expire'] = TIMESTAMP + 300;
 		$fan = pdo_get('mc_mapping_fans', array('openid' => $oauth['openid']));
 		if (!empty($fan)) {
 			$record = array();
 			$record['updatetime'] = TIMESTAMP;
 			$record['nickname'] = stripslashes($userinfo['nickname']);
 			$record['tag'] = base64_encode(iserializer($userinfo));
+			$record['unionid'] = $userinfo['unionid'];
 			pdo_update('mc_mapping_fans', $record, array('openid' => $fan['openid'], 'acid' => $_W['acid'], 'uniacid' => $_W['uniacid']));
 
 			if (!empty($fan['uid']) || !empty($_SESSION['uid'])) {
@@ -207,6 +211,7 @@ if ($scope == 'userinfo') {
 				'follow' => 0,
 				'followtime' => 0,
 				'unfollowtime' => 0,
+				'unionid' => $userinfo['unionid'],
 				'tag' => base64_encode(iserializer($userinfo))
 			);
 			if (!isset($unisetting['passport']) || empty($unisetting['passport']['focusreg'])) {

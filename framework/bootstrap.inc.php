@@ -72,7 +72,15 @@ if(!empty($_W['config']['setting']['memory_limit']) && function_exists('ini_get'
 		@ini_set('memory_limit', $_W['config']['setting']['memory_limit']);
 	}
 }
-$_W['ishttps'] = !empty($_W['config']['setting']['https']) ? true : (strtolower(($_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') ? true : false)));
+if (isset($_W['config']['setting']['https'])) {
+	$_W['ishttps'] = $_W['config']['setting']['https'];
+} else {
+	$_W['ishttps'] = $_SERVER['SERVER_PORT'] == 443 || 
+					(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') ||
+					strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
+					? true : false;
+}
+
 $_W['isajax'] = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 $_W['ispost'] = $_SERVER['REQUEST_METHOD'] == 'POST';
 

@@ -313,7 +313,7 @@ function mc_oauth_userinfo($acid = 0) {
 	global $_W;
 	if (isset($_SESSION['userinfo'])) {
 		$userinfo = unserialize(base64_decode($_SESSION['userinfo']));
-		if (!empty($userinfo['subscribe']) || !empty($userinfo['nickname'])) {
+		if ((!empty($userinfo['subscribe']) || !empty($userinfo['nickname'])) && $_SESSION['expire'] > TIMESTAMP) {
 			return $userinfo;
 		}
 	}
@@ -331,7 +331,9 @@ function mc_oauth_userinfo($acid = 0) {
 			}
 			$userinfo['avatar'] = $userinfo['headimgurl'];
 			$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
-
+			//设置获取信息缓存时间
+			$_SESSION['expire'] = TIMESTAMP + 300;
+			
 			$fan = mc_fansinfo($_SESSION['openid']);
 			if (!empty($fan)) {
 				$record = array(
@@ -339,7 +341,8 @@ function mc_oauth_userinfo($acid = 0) {
 					'nickname' => stripslashes($userinfo['nickname']),
 					'follow' => $userinfo['subscribe'],
 					'followtime' => $userinfo['subscribe_time'],
-					'tag' => base64_encode(iserializer($userinfo))
+					'unionid' => $userinfo['unionid'],
+					'tag' => base64_encode(iserializer($userinfo)),
 				);
 				pdo_update('mc_mapping_fans', $record, array('openid' => $_SESSION['openid'], 'acid' => $_W['acid'], 'uniacid' => $_W['uniacid']));
 			} else {
@@ -350,6 +353,7 @@ function mc_oauth_userinfo($acid = 0) {
 				$record['openid'] = $_SESSION['openid'];
 				$record['acid'] = $_W['acid'];
 				$record['uniacid'] = $_W['uniacid'];
+				$record['unionid'] = $userinfo['unionid'];
 				pdo_insert('mc_mapping_fans', $record);
 			}
 			
