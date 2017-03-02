@@ -48,7 +48,6 @@ class CoreModule extends WeModule {
 							if(!empty($news_items)) {
 								foreach($news_items as &$item) {
 									$item['thumb_url'] =  url('utility/wxcode/image', array('attach' => $item['thumb_url']));
-									print_r($item['thumb_url']);die;
 									$item['id'] = $isexists['media_id'];
 								}
 							}
