@@ -1,6 +1,6 @@
 {template 'common/header-base'}
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
-<div class="head">
+<div class="head {if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE'))} screen-responsive {/if}">
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container">
 			<div class="navbar-header">
@@ -71,11 +71,8 @@
 	</script>
 {/if}
 <div class="main">
-	<div class="container">
+	<div class="container {if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE'))} screen-responsive {/if}">
 		{if in_array(FRAME, array('account', 'system', 'adviertisement')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
-		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
-		<a href="javascript:;" class="js-big-main button-to-big color-gray" title="加宽">{if $_GPC['main-lg']}正常{else}宽屏{/if}</a>
-		{/if}
 		<div class="panel panel-content">
 			<div class="content-head panel-heading">
 				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
