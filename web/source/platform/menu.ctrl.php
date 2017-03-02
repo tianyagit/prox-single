@@ -552,7 +552,7 @@ if ($do == 'current_menu') {
 			$wechat_attachment = pdo_get('wechat_attachment', array('media_id' => $current_menu['media_id']));
 			if ($wechat_attachment['type'] == 'news') {
 				$material = pdo_get('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $wechat_attachment['id']));
-				$material['items'][0]['thumb_url'] =  url('utility/wxcode/image', array('attach' => $material['thumb_url']));
+				$material['items'][0]['thumb_url'] =  tomedia($material['thumb_url']);
 				$material['items'][0]['title'] = $material['title'];
 				$material['items'][0]['digest'] = $material['digest'];
 				$material['type'] = 'news';

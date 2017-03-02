@@ -588,7 +588,8 @@ function tomedia($src, $local_path = false){
 	}
 	$t = strtolower($src);
 	if (strexists($t, 'https://mmbiz.qlogo.cn') || strexists($t, 'http://mmbiz.qpic.cn')) {
-		return url('utility/wxcode/image', array('attach' => $src));
+		$url = url('utility/wxcode/image', array('attach' => $src));
+		return $_W['siteroot'] . 'web' . ltrim($url, '.');
 	}
 	if (strexists($t, 'http://') || strexists($t, 'https://') || substr($t, 0, 2) == '//') {
 		return $src;

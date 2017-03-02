@@ -21,7 +21,7 @@ if(!empty($material_list)) {
 			$row['items'] = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $row['id']));
 			if(!empty($row['items'])) {
 				foreach($row['items'] as &$li) {
-					$li['thumb_url'] =  url('utility/wxcode/image', array('attach' => $li['thumb_url']));
+					$li['thumb_url'] = tomedia($li['thumb_url']);
 				}
 				unset($li);
 			}

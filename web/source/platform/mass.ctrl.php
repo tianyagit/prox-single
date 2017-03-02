@@ -37,7 +37,7 @@ if ($do == 'list') {
 					$massdata['msgtype_zh'] = '图文';
 					$massdata['media']['items'] = pdo_getall('wechat_news', array('attach_id' => $massdata['attach_id']));
 					foreach ($massdata['media']['items'] as  &$news_val) {
-						$news_val['thumb_url'] = url('utility/wxcode/image', array('attach' => $news_val['thumb_url']));
+						$news_val['thumb_url'] = tomedia($news_val['thumb_url']);
 					}
 					unset($news_val);
 					break;
