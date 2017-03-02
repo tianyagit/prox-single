@@ -12,16 +12,18 @@ defined('IN_IA') or exit('Access Denied');
  * @return array
  */
 function cache_read($key) {
-	$val = pdo_getcolumn('core_cache', array('key' => $key), 'value');
-	$val = iunserializer($val);
-	if (!empty($val['expire'])) {
-		if ($val['expire'] > time()) {
-			return $val['data'];
+	$cachedata = pdo_getcolumn('core_cache', array('key' => $key), 'value');
+	if (empty($cachedata)) {
+		return '';
+	}
+	$cachedata = iunserializer($cachedata);
+	if (!empty($cachedata['expire'])) {
+		if ($cachedata['expire'] > TIMESTAMP) {
+			return $cachedata['data'];
 		}
 	} else {
-		return $val;
+		return $cachedata;
 	}
-	return '';
 }
 
 /**
@@ -55,13 +57,14 @@ function cache_write($key, $data, $expire = 0) {
 	$record = array();
 	$record['key'] = $key;
 	if (!empty($expire)) {
-		$cache_data = $data;
-		$data = array(
-			'expire' => time() + $expire,
-			'data' => $cache_data
+		$cache_data = array(
+			'expire' => TIMESTAMP + $expire,
+			'data' => $data
 		);
+	} else {
+		$cache_data = $data;
 	}
-	$record['value'] = iserializer($data);
+	$record['value'] = iserializer($cache_data);
 	return pdo_insert('core_cache', $record, true);
 }
 
