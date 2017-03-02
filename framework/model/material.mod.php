@@ -95,10 +95,6 @@ function material_get($attach_id) {
 	if (empty($attach_id)) {
 		return error(1, "素材id参数不能为空");
 	}
-	$material = cache_load(cache_system_key("material:" . $attach_id));
-	if (!empty($material) && $material['expire_time'] > time()) {
-		return $material['material'];
-	}
 	$material = pdo_get('wechat_attachment', array('id' => $attach_id));
 	if (!empty($material)) {
 		if ($material['type'] == 'news') {
@@ -112,14 +108,43 @@ function material_get($attach_id) {
 				return error('1', '素材不存在');
 			}
 			$material['news'] = $news;
+		} elseif ($material['type'] == 'image') {
+			$material['attachment'] = tomedia($material['attachment']);
 		}
-		$cache = array(
-			'expire_time' => time() + CACHE_EXPIRE_MIDDLE,
-			'material' => $material
-		);
-		cache_write(cache_system_key("material:" . $material['id']), $cache);
 		return $material;
 	} else {
 		return error('1', "素材不存在");
 	}
+}
+
+/**
+ * 构造素材回复消息结构
+ * @param array $material 素材的id
+ * @return array() 回复消息结构
+ */
+function material_build_reply($attach_id) {
+	if (empty($attach_id)) {
+		return error(1, "素材id参数不能为空");
+	}
+	$cachekey = cache_system_key('material_reply:' . $attach_id);
+	$reply = cache_load($cachekey);
+	if (!empty($reply)) {
+		return $reply;
+	}
+	$reply_material = material_get($attach_id);
+	$reply = array();
+	if ($reply_material['type'] == 'news') {
+		if (!empty($reply_material['news'])) {
+			foreach ($reply_material['news'] as $material) {
+				$reply[] = array(
+					'title' => $material['title'],
+					'description' => $material['description'],
+					'picurl' => $material['thumb_url'],
+					'url' => $material['content_source_url'],
+				);
+			}
+		}
+	}
+	cache_write($cachekey, $reply, CACHE_EXPIRE_MIDDLE);
+	return $reply;
 }

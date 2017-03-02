@@ -75,6 +75,9 @@ if ($do == 'check_upgrade') {
 			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
 				$cloud_m_info = $cloud_m_query_module[$module['name']];
 				$site_branch = $cloud_m_info['site_branch']['id'];
+				if (empty($site_branch)) {
+					$site_branch = $cloud_m_info['branch'];
+				}
 				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
 				$branch_id_list = array_keys($cloud_m_info['branches']);
 				$best_branch_id = max($branch_id_list);
