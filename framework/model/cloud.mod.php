@@ -4,7 +4,7 @@
  * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
-define('CLOUD_GATEWAY_URL', 'https://v2.addons.we7.cc/gateway.php');
+define('CLOUD_GATEWAY_URL', $_W['sitescheme'] . 'v2.addons.we7.cc/gateway.php');
 
 function cloud_client_define() {
 	return array(
