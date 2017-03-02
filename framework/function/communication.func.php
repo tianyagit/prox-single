@@ -23,7 +23,7 @@ function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 		$urlset['query'] = "?{$urlset['query']}";
 	}
 	if (empty($urlset['port'])) {
-		$urlset['port'] = $urlset['scheme'] == 'https' ? '443' : '80';
+		//$urlset['port'] = $urlset['scheme'] == 'https' ? '443' : '80';
 	}
 	if (strexists($url, 'https://') && !extension_loaded('openssl')) {
 		if (!extension_loaded("openssl")) {
@@ -37,7 +37,7 @@ function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 			$urlset['host'] = $extra['ip'];
 			unset($extra['ip']);
 		}
-		curl_setopt($ch, CURLOPT_URL, $urlset['scheme'] . '://' . $urlset['host'] . ($urlset['port'] == '80' ? '' : ':' . $urlset['port']) . $urlset['path'] . $urlset['query']);
+		curl_setopt($ch, CURLOPT_URL, $urlset['scheme'] . '://' . $urlset['host'] . ($urlset['port'] == '80' || empty($urlset['port']) ? '' : ':' . $urlset['port']) . $urlset['path'] . $urlset['query']);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 1);
