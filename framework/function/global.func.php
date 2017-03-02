@@ -575,6 +575,9 @@ function tomedia($src, $local_path = false){
 	if (empty($src)) {
 		return '';
 	}
+	if (strexists($src, "c=utility&a=wxcode&do=image&attach=")) {
+		return $src;
+	}
 	if (strexists($src, 'addons/')) {
 		return $_W['siteroot'] . substr($src, strpos($src, 'addons/'));
 	}

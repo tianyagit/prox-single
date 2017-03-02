@@ -48,6 +48,7 @@ class CoreModule extends WeModule {
 							if(!empty($news_items)) {
 								foreach($news_items as &$item) {
 									$item['thumb_url'] =  url('utility/wxcode/image', array('attach' => $item['thumb_url']));
+									print_r($item['thumb_url']);die;
 									$item['id'] = $isexists['media_id'];
 								}
 							}
@@ -183,6 +184,7 @@ class CoreModule extends WeModule {
 	public function fieldsFormSubmit($rid = 0) {
 		global $_GPC, $_W;
 		load()->func('file');
+		load()->func('communication');
 		$delsql = '';
 		foreach ($this->modules as $k => $val) {
 			$tablename = $this->tablename[$val];
@@ -221,22 +223,10 @@ class CoreModule extends WeModule {
 							$reply_news[$reply['media_id']] = $reply;
 						}
 						unset($reply);
-
 						foreach ($reply_news as $reply) {
 							$news_attach = pdo_getall('wechat_news', array ('attach_id' => $reply['media_id']), array(), '', ' displayorder ASC');
-							if (!empty($news_attach)) {
-								foreach ($news_attach as $news) {
-									if (!file_exists (ATTACHMENT_ROOT . "material/" . $_W['uniacid'] . "/images" . $news['thumb_media_id'] . ".jpg")) {
-										if (!is_dir (ATTACHMENT_ROOT . "material/" . $_W['uniacid'])) {
-											mkdirs (ATTACHMENT_ROOT . "material/" . $_W['uniacid']);
-										}
-										$image_content = file_get_contents ($news['thumb_url']);
-										file_put_contents (ATTACHMENT_ROOT . "/material/" . $_W['uniacid'] . "/images" . $news['thumb_media_id'] . ".jpg", $image_content);
-									}
-								}
-								unset($news);
-							}
-							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $news_attach[0]['title'], 'thumb' => $_W['siteroot'] . "attachment/material/" . $_W['uniacid'] . "/images" . $news_attach[0]['thumb_media_id'] . ".jpg", 'createtime' => $reply['createtime'], 'media_id' => $reply['media_id']));
+							$file = pdo_getcolumn('wechat_attachment', array('media_id' => $news_attach[0]['thumb_media_id']), 'attachment');
+							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $news_attach[0]['title'], 'thumb' => tomedia($file), 'createtime' => $reply['createtime'], 'media_id' => $reply['media_id']));
 						}
 					}
 					break;

@@ -106,9 +106,11 @@ class CoreModuleProcessor extends WeModuleProcessor {
 				$news_material = pdo_getall('wechat_news', array('attach_id' => $c['media_id']), array(), '', ' displayorder ASC');
 				if (!empty($news_material)) {
 					foreach ($news_material as $material) {
+						$image_file = pdo_getcolumn('wechat_attachment', array('media_id' => $material['thumb_media_id']), 'attachment');
 						$row['title'] = $material['title'];
 						$row['description'] = $material['description'];
-						$row['picurl'] = "material/".$_W['uniacid']."/images".$material['thumb_media_id'].".jpg";
+						$row['picurl'] = tomedia($image_file);
+						$row['picurl'] = $_W['siteroot']. "web".ltrim($row['picurl'], ".");
 						$row['url'] = $material['content_source_url'];
 						$news[] = $row;
 					}
