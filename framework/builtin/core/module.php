@@ -47,8 +47,7 @@ class CoreModule extends WeModule {
 							$news_items = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $news['id']));
 							if(!empty($news_items)) {
 								foreach($news_items as &$item) {
-									$item['thumb_url'] =  url('utility/wxcode/image', array('attach' => $item['thumb_url']));
-									print_r($item['thumb_url']);die;
+									$item['thumb_url'] = tomedia($item['thumb_url']);
 									$item['id'] = $isexists['media_id'];
 								}
 							}

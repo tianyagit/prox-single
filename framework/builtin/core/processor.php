@@ -110,7 +110,6 @@ class CoreModuleProcessor extends WeModuleProcessor {
 						$row['title'] = $material['title'];
 						$row['description'] = $material['description'];
 						$row['picurl'] = tomedia($image_file);
-						$row['picurl'] = $_W['siteroot']. "web".ltrim($row['picurl'], ".");
 						$row['url'] = $material['content_source_url'];
 						$news[] = $row;
 					}
