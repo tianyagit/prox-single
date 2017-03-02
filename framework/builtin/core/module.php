@@ -215,12 +215,9 @@ class CoreModule extends WeModule {
 					break;
 				case 'news':
 					if(!empty($replies)) {
-						$reply_news = array();
-						foreach ($replies as $reply) {
-							$reply_news[$reply['media_id']] = $reply;
-						}
+						$replies = array_unique($replies);
 						unset($reply);
-						foreach ($reply_news as $reply) {
+						foreach ($replies as $reply) {
 							$news = pdo_get('wechat_news', array ('attach_id' => $reply['media_id'], 'displayorder' => 0));
 							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $news['title'], 'thumb' => tomedia($news['thumb_url']), 'createtime' => $reply['createtime'], 'media_id' => $reply['media_id']));
 						}
