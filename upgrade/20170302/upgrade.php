@@ -17,15 +17,14 @@ $check_uniam = pdo_fetchall("SELECT `id`, `title`, `type` FROM " . tablename('un
 
 if(!empty($check_uniam)){
 	foreach ($check_uniam as $check_bval) {
-		$rands = random(5, false);
 		if (strexists($check_bval['title'], '默认菜单') || strexists($check_bval['title'], '个性化菜单') || strexists($check_bval['title'], '标题') || empty($check_bval['title'])) {
 			if ($check_bval['type'] == '1') {
-				$intitle = '默认菜单_' . $rands;
+				$intitle = '默认菜单_' . $check_bval['id'];
 			} else {
-				$intitle = '标题_' . $rands;
+				$intitle = '标题_' . $check_bval['id'];
 			}
 		} else {
-			$intitle = $check_bval['title'] . '_' . $rands;
+			$intitle = $check_bval['title'] . '_' . $check_bval['id'];
 		}
 		pdo_update('uni_account_menus', array('title' => $intitle), array('id' => $check_bval['id']));
 	}
