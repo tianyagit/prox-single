@@ -125,11 +125,7 @@ if($do == 'base') {
 			message(error(1, '修改失败！'), '', 'ajax');
 		}
 	}
-	if (!empty($_W['ishttps'])) {
-		$socket_url = str_replace('https', 'wss', $_W['siteroot']);
-	} else {
-		$socket_url = str_replace('http', 'wss', $_W['siteroot']);
-	}
+	$socket_url = str_replace(array('https', 'http'), 'wss', $_W['siteroot']);
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
 	$uniaccount = array();

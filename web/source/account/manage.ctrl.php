@@ -94,17 +94,12 @@ if ($do == 'delete') {
 	
 	if (!empty($uniacid)) {
 		$account = pdo_get('uni_account', array('uniacid' => $uniacid));
-		if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-			$redirect_url = url('account/manage', array('account_type' => '4'));
-		} else {
-			$redirect_url = url('account/manage');
-		}
 		if (empty($account)) {
-			message('抱歉，帐号不存在或是已经被删除', $redirect_url, 'error');
+			message('抱歉，帐号不存在或是已经被删除', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		$state = uni_permission($uid, $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', $redirect_url, 'error');
+			message('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 		if($_GPC['uniacid'] == $_W['uniacid']) {
@@ -113,5 +108,5 @@ if ($do == 'delete') {
 		cache_delete("unicount:{$uniacid}");
 		cache_delete("unisetting:{$uniacid}");
 	}
-	message('停用成功！，您可以在回收站中恢复', $redirect_url, 'success');
+	message('停用成功！，您可以在回收站中恢复', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'success');
 }

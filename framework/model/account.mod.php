@@ -16,7 +16,7 @@ function uni_create_permission($uid, $type = 1) {
 	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount, maxwxapp FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
 	$list = pdo_fetchall('SELECT d.type, count(*) AS count FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0 GROUP BY d.type', array(':uid' => $uid, ':role' => 'owner'));
 	foreach ($list as $item) {
-		if ($item['type'] == 4) {
+		if ($item['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 			$wxapp_num = $item['count'];
 		} else {
 			$account_num = $item['count'];
