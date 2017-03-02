@@ -4,6 +4,8 @@
  * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
+define('CLOUD_GATEWAY_URL', 'https://v2.addons.we7.cc/gateway.php');
+define('CLOUD_GATEWAY_URL_NORMAL', 'http://v2.addons.we7.cc/gateway.php');
 
 function cloud_client_define() {
 	return array(
@@ -89,9 +91,13 @@ function cloud_request($url, $post = '', $extra = array(), $timeout = 60) {
 	global $_W;
 	load()->func('communication');
 	if (!empty($_W['setting']['cloudip']['ip']) && empty($extra['ip'])) {
-		//$extra['ip'] = $_W['setting']['cloudip']['ip'];
+		$extra['ip'] = $_W['setting']['cloudip']['ip'];
 	}
-	return ihttp_request($url, $post, $extra, $timeout);
+	$response = ihttp_request($url, $post, $extra, $timeout);
+	if (is_error($response)) {
+		setting_save(array(), 'cloudip');
+	}
+	return $response;
 }
 
 function cloud_prepare() {
