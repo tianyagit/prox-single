@@ -4,6 +4,8 @@
  * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
+define('CLOUD_GATEWAY_URL', 'https://v2.addons.we7.cc/gateway.php');
+define('CLOUD_GATEWAY_URL_NORMAL', 'http://v2.addons.we7.cc/gateway.php');
 
 function cloud_client_define() {
 	return array(
@@ -607,6 +609,11 @@ function cloud_sms_info() {
  * 获取当前站点所有公众号信息
  * @return string 公众号序列化
  */
+	$response = ihttp_request($url, $post, $extra, $timeout);
+	if (is_error($response)) {
+		setting_save(array(), 'cloudip');
+	}
+	return $response;
 function cloud_extra_account() {
 	$data = array();
 	$data['accounts'] = pdo_fetchall("SELECT name, account, original FROM ".tablename('account_wechats') . " GROUP BY account");
