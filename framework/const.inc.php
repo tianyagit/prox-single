@@ -83,3 +83,7 @@ define('ATTACH_COS', 4);//远程附件类型：腾讯云对象存储
 
 define('STATUS_OFF', 0); //关闭状态
 define('STATUS_ON', 1); //开启状态
+
+define('CACHE_EXPIRE_SHORT', 60);
+define('CACHE_EXPIRE_MIDDLE', 300);
+define('CACHE_EXPIRE_LONG', 3600);

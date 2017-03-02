@@ -85,3 +85,41 @@ function material_sync($material, $exist_material, $type) {
 	}
 	return $exist_material;
 }
+
+/**
+ * 获取素材
+ * @param array $material 素材的id
+ * @return array() 素材内容
+ */
+function material_get($attach_id) {
+	if (empty($attach_id)) {
+		return error(1, "素材id参数不能为空");
+	}
+	$material = cache_load(cache_system_key("material:" . $attach_id));
+	if (!empty($material) && $material['expire_time'] > time()) {
+		return $material['material'];
+	}
+	$material = pdo_get('wechat_attachment', array('id' => $attach_id));
+	if (!empty($material)) {
+		if ($material['type'] == 'news') {
+			$news = pdo_getall('wechat_news', array('attach_id' => $material['id']), array(), '', ' displayorder ASC');
+			if (!empty($news)) {
+				foreach ($news as &$news_row) {
+					$news_row['thumb_url'] = tomedia($news_row['thumb_url']);
+				}
+				unset($news_row);
+			} else {
+				return error('1', '素材不存在');
+			}
+			$material['news'] = $news;
+		}
+		$cache = array(
+			'expire_time' => time() + CACHE_EXPIRE_MIDDLE,
+			'material' => $material
+		);
+		cache_write(cache_system_key("material:" . $material['id']), $cache);
+		return $material;
+	} else {
+		return error('1', "素材不存在");
+	}
+}

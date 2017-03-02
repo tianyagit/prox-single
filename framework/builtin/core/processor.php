@@ -83,6 +83,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 	}
 	private function news_respond() {
 		global $_W;
+		load()->model('material');
 		$rid = $this->rule;
 		$sql = "SELECT * FROM " . tablename('news_reply') . " WHERE rid = :id AND parent_id = -1 ORDER BY displayorder DESC, id ASC LIMIT 8";
 		$commends = pdo_fetchall($sql, array(':id' => $rid));
@@ -103,13 +104,12 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		foreach($commends as $c) {
 			$row = array();
 			if (!empty($c['media_id'])) {
-				$news_material = pdo_getall('wechat_news', array('attach_id' => $c['media_id']), array(), '', ' displayorder ASC');
-				if (!empty($news_material)) {
-					foreach ($news_material as $material) {
-						$image_file = pdo_getcolumn('wechat_attachment', array('media_id' => $material['thumb_media_id']), 'attachment');
+				$news_material = material_get($c['media_id']);
+				if (!empty($news_material['news'])) {
+					foreach ($news_material['news'] as $material) {
 						$row['title'] = $material['title'];
 						$row['description'] = $material['description'];
-						$row['picurl'] = tomedia($image_file);
+						$row['picurl'] = $material['thumb_url'];
 						$row['url'] = $material['content_source_url'];
 						$news[] = $row;
 					}

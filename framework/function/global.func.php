@@ -1032,18 +1032,17 @@ function utf8_bytes($cp) {
 
 function media2local($media_id, $all = false){
 	global $_W;
-	if (empty($media_id)) {
-		return '';
-	}
-	$data = pdo_fetch('SELECT * FROM ' . tablename('wechat_attachment') . ' WHERE uniacid = :uniacid AND media_id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $media_id));
-	if (!empty($data)) {
+	load()->model('material');
+	$data = material_get($media_id);
+	if (!is_error($data)) {
 		$data['attachment'] = tomedia($data['attachment'], true);
 		if (!$all) {
 			return $data['attachment'];
 		}
 		return $data;
+	} else {
+		return '';
 	}
-	return '';
 }
 
 function aes_decode($message, $encodingaeskey = '', $appid = '') {
