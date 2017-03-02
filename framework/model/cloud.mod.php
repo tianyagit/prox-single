@@ -91,9 +91,13 @@ function cloud_request($url, $post = '', $extra = array(), $timeout = 60) {
 	global $_W;
 	load()->func('communication');
 	if (!empty($_W['setting']['cloudip']['ip']) && empty($extra['ip'])) {
-		//$extra['ip'] = $_W['setting']['cloudip']['ip'];
+		$extra['ip'] = $_W['setting']['cloudip']['ip'];
 	}
-	return ihttp_request($url, $post, $extra, $timeout);
+	$response = ihttp_request($url, $post, $extra, $timeout);
+	if (is_error($response)) {
+		setting_save(array(), 'cloudip');
+	}
+	return $response;
 }
 
 function cloud_prepare() {
@@ -609,11 +613,6 @@ function cloud_sms_info() {
  * 获取当前站点所有公众号信息
  * @return string 公众号序列化
  */
-	$response = ihttp_request($url, $post, $extra, $timeout);
-	if (is_error($response)) {
-		setting_save(array(), 'cloudip');
-	}
-	return $response;
 function cloud_extra_account() {
 	$data = array();
 	$data['accounts'] = pdo_fetchall("SELECT name, account, original FROM ".tablename('account_wechats') . " GROUP BY account");
