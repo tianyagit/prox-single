@@ -17,7 +17,7 @@ function cache_read($key) {
 		return '';
 	}
 	$cachedata = iunserializer($cachedata);
-	if (!empty($cachedata['expire'])) {
+	if (is_array($cachedata) && !empty($cachedata['expire'])) {
 		if ($cachedata['expire'] > TIMESTAMP) {
 			return $cachedata['data'];
 		}
