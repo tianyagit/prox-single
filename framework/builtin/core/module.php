@@ -34,7 +34,6 @@ class CoreModule extends WeModule {
 
 	public function fieldsFormDisplay($rid = 0, $option = array()) {
 		global $_GPC, $_W;
-		load()->model('material');
 		$replies = array();
 		switch($_GPC['a']) {
 			case 'mass':
@@ -183,7 +182,6 @@ class CoreModule extends WeModule {
 	
 	public function fieldsFormSubmit($rid = 0) {
 		global $_GPC, $_W;
-		load()->model('material');
 		$delsql = '';
 		foreach ($this->modules as $k => $val) {
 			$tablename = $this->tablename[$val];
