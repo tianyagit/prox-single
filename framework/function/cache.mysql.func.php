@@ -12,11 +12,16 @@ defined('IN_IA') or exit('Access Denied');
  * @return array
  */
 function cache_read($key) {
-	$sql = 'SELECT `value` FROM ' . tablename('core_cache') . ' WHERE `key`=:key';
-	$params = array();
-	$params[':key'] = $key;
-	$val = pdo_fetchcolumn($sql, $params);
-	return iunserializer($val);
+	$val = pdo_getcolumn('core_cache', array('key' => $key), 'value');
+	$val = iunserializer($val);
+	if (!empty($val['expire'])) {
+		if ($val['expire'] > time()) {
+			return $val['data'];
+		}
+	} else {
+		return $val;
+	}
+	return '';
 }
 
 /**
@@ -40,14 +45,22 @@ function cache_search($prefix) {
  * 将缓存数据写入数据库
  * @param string $key 缓存键名
  * @param mixed $data 缓存数据
+ * @param string $expire 缓存超时时间
  * @return mixed
  */
-function cache_write($key, $data) {
+function cache_write($key, $data, $expire = 0) {
 	if (empty($key) || !isset($data)) {
 		return false;
 	}
 	$record = array();
 	$record['key'] = $key;
+	if (!empty($expire)) {
+		$cache_data = $data;
+		$data = array(
+			'expire' => time() + $expire,
+			'data' => $cache_data
+		);
+	}
 	$record['value'] = iserializer($data);
 	return pdo_insert('core_cache', $record, true);
 }
