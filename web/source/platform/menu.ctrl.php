@@ -22,8 +22,8 @@ if($_W['isajax']) {
 if($do == 'display') {
 	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : 1;
 	set_time_limit(0);
-	$account = WeAccount::create();
-	$default_menu_info = $account->menuCurrentQuery();
+	$accountApi = WeAccount::create();
+	$default_menu_info = $accountApi->menuCurrentQuery();
 	if (is_error($default_menu_info)) {
 		message($default_menu_info['message'], url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid'])), 'error');
 	}
@@ -69,7 +69,6 @@ if($do == 'display') {
 		$insert_data = array(
 			'uniacid' => $_W['uniacid'],
 			'type' => 1,
-			'title' => '默认菜单_' . random(5, false),
 			'group_id' => -1,
 			'sex' => 0,
 			'data' => $wechat_menu_data,
@@ -80,11 +79,12 @@ if($do == 'display') {
 		);
 		pdo_insert('uni_account_menus', $insert_data);
 		$insert_id = pdo_insertid();
+		pdo_update('uni_account_menus', array('title' => '默认菜单_'.$insert_id), array('id' => $insert_id));
 		pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid'], 'type' => 1, 'id !=' => $insert_id));
 	}
 
 	//拉取个性化菜单
-	$get_menu_info = $account->menuQuery();
+	$get_menu_info = $accountApi->menuQuery();
 	if(is_error($get_menu_info)) {
 		message($get_menu_info['message'], '', 'error');
 	}
@@ -215,10 +215,10 @@ if($do == 'push') {
 		if ($data['type'] == 1) {
 			unset($menu['matchrule']);
 		}
-		$account = WeAccount::create($_W['acid']);
-		$ret = $account->menuCreate($menu);
-		if(is_error($ret)) {
-			message(error(-1, $ret['message']), '', 'ajax');
+		$accountApi = WeAccount::create($_W['acid']);
+		$result = $accountApi->menuCreate($menu);
+		if(is_error($result)) {
+			message(error(-1, $result['message']), '', 'ajax');
 		} else {
 			if($data['type'] == 1) {
 				pdo_update('uni_account_menus', array('status' => '1'), array('id' => $data['id']));
@@ -229,19 +229,19 @@ if($do == 'push') {
 					$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
 					unset($menu['matchrule']['tag_id']);
 				}
-				$status = pdo_update('uni_account_menus', array('status' => 1, 'menuid' => $ret), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
+				$status = pdo_update('uni_account_menus', array('status' => 1, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
 			}
 			message(error(0, '推送成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax');
 		}
 	} elseif ($_GPC['status'] == 2) {
 		$status =  $_GPC['status'];
 		if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0) && $status != 'history') {
-			$account = WeAccount::create($_W['acid']);
-			$ret = $account->menuDelete($data['menuid']);
-			if(is_error($ret) && empty($_GPC['f'])) {
+			$accountApi = WeAccount::create($_W['acid']);
+			$result = $accountApi->menuDelete($data['menuid']);
+			if(is_error($result) && empty($_GPC['f'])) {
 				$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 				$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
-				$message = "调用微信接口删除失败:{$ret['message']}<br>";
+				$message = "调用微信接口删除失败:{$result['message']}<br>";
 				message(error(-1, $message), '', 'error');
 			} else {
 				pdo_update('uni_account_menus', array('status' => '0'), array('id' => $data['id']));
@@ -329,13 +329,14 @@ if($do == 'post') {
 	$languages = platform_menu_languages();
 	if($_W['isajax'] && $_W['ispost']) {
 		set_time_limit(0);
+		$_GPC['group']['title'] = trim($_GPC['group']['title']);
+		$_GPC['group']['type'] = intval($_GPC['group']['type']) == 0 ? 1 : intval($_GPC['group']['type']);
 		$post = $_GPC['group'];
 		//检测菜单组名称
-		$title = trim($post['title']);
-		if (empty($title)) {
+		if (empty($post['title'])) {
 			message(error(-1, '请填写菜单组名称！'), '', 'ajax');
 		}
-		$check_title = pdo_get('uni_account_menus', array('title' => trim($post['title'])), array('id'));
+		$check_title = pdo_get('uni_account_menus', array('title' => $post['title']), array('id'));
 		if (!empty($check_title)) {
 			message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
 		}
@@ -433,10 +434,10 @@ if($do == 'post') {
 		if (count(array_unique($check_btname)) != count($check_btname)) {
 			message(error(-1, '一级子菜单和二级子菜单出现重复'), '', 'ajax');
 		}
-		$account = WeAccount::create();
-		$ret = $account->menuCreate($menu);
-		if(is_error($ret)) {
-			message($ret, '', 'ajax');
+		$accountApi = WeAccount::create();
+		$result = $accountApi->menuCreate($menu);
+		if(is_error($result)) {
+			message($result, '', 'ajax');
 		} else {
 			// 将$menu中 tag_id 再转为 group_id
 			if($post['matchrule']['group_id'] != -1) {
@@ -450,9 +451,9 @@ if($do == 'post') {
 			
 			$insert = array(
 				'uniacid' => $_W['uniacid'],
-				'menuid' => $ret,
-				'title' => trim($post['title']),
-				'type' => intval($post['type']),
+				'menuid' => $result,
+				'title' => $post['title'],
+				'type' => $post['type'],
 				'sex' => intval($menu['matchrule']['sex']),
 				'group_id' => isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : -1,
 				'client_platform_type' => intval($menu['matchrule']['client_platform_type']),
@@ -494,16 +495,16 @@ if($do == 'delete') {
 	}
 	$status =  $_GPC['status'];
 	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0)) {
-		$account = WeAccount::create($_W['acid']);
-		$ret = $account->menuDelete($data['menuid']);
-		if(is_error($ret) && empty($_GPC['f'])) {
-			if ($ret['errno'] == '65301') {
+		$accountApi = WeAccount::create($_W['acid']);
+		$result = $accountApi->menuDelete($data['menuid']);
+		if(is_error($result) && empty($_GPC['f'])) {
+			if ($result['errno'] == '65301') {
 				pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 				message('删除菜单成功', referer(), 'success');
 			}
 			$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 			$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
-			$message = "调用微信接口删除失败:{$ret['message']}<br>";
+			$message = "调用微信接口删除失败:{$result['message']}<br>";
 			// $message .= "强制删除本地数据? <a href='{$url}' class='btn btn-primary'>是</a> <a href='{$url_display}' class='btn btn-default'>取消</a>";
 			message($message, '', 'error');
 		}
