@@ -20,7 +20,7 @@ if($_W['isajax']) {
 }
 
 if($do == 'display') {
-	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : '1';
+	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : 1;
 	set_time_limit(0);
 	$account = WeAccount::create();
 	$default_menu_info = $account->menuCurrentQuery();
@@ -39,7 +39,7 @@ if($do == 'display') {
 	}
 	ksort($default_menu);
 	$wechat_menu_data = base64_encode(iserializer($default_menu));
-	$all_default_menus = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => '1'), array('data', 'id'), 'id');
+	$all_default_menus = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1), array('data', 'id'), 'id');
 	foreach ($all_default_menus as $k=>$menu_data) {
 		$single_menu_info = iunserializer(base64_decode($menu_data['data']));
 		$single_menu_info['type'] = 1;
@@ -61,16 +61,15 @@ if($do == 'display') {
 			$default_menu_id = $k;
 		}
 	}
-	$rands = random(5, false);
 
 	if (!empty($default_menu_id)) {
-		pdo_update('uni_account_menus', array('status' => '1'), array('id' => $default_menu_id));
-		pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '1', 'id !=' => $default_menu_id));
+		pdo_update('uni_account_menus', array('status' => 1), array('id' => $default_menu_id));
+		pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid'], 'type' => 1, 'id !=' => $default_menu_id));
 	} else {
 		$insert_data = array(
 			'uniacid' => $_W['uniacid'],
 			'type' => 1,
-			'title' => '默认菜单_' . $rands, 
+			'title' => '默认菜单_' . random(5, false),
 			'group_id' => -1,
 			'sex' => 0,
 			'data' => $wechat_menu_data,
@@ -81,7 +80,7 @@ if($do == 'display') {
 		);
 		pdo_insert('uni_account_menus', $insert_data);
 		$insert_id = pdo_insertid();
-		pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '1', 'id !=' => $insert_id));
+		pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid'], 'type' => 1, 'id !=' => $insert_id));
 	}
 
 	//拉取个性化菜单
@@ -90,12 +89,13 @@ if($do == 'display') {
 		message($get_menu_info['message'], '', 'error');
 	}
 	$condition_menus = $get_menu_info['conditionalmenu'];
-	pdo_update('uni_account_menus', array('status' => '0'), array('uniacid' => $_W['uniacid'], 'type' => '3'));
+	pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid'], 'type' => 3));
 	if (!empty($condition_menus)) {
 		foreach($condition_menus as $menu) {
 			$data = array(
 				'uniacid' => $_W['uniacid'],
-				'type' => '3',
+				'type' => 3,
+				'title' => '个性化菜单_'. random(5, false),
 				'group_id' => isset($menu['matchrule']['tag_id']) ? $menu['matchrule']['tag_id'] : (isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : '-1'),
 				'sex' => $menu['matchrule']['sex'],
 				'client_platform_type' => $menu['matchrule']['client_platform_type'],
@@ -105,7 +105,7 @@ if($do == 'display') {
 				'status' => 1,
 			);
 			if (!empty($menu['matchrule'])) {
-				$menu_id = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'menuid' => $menu['menuid'], 'type' => '3'), array('id'));
+				$menu_id = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'menuid' => $menu['menuid'], 'type' => 3), array('id'));
 			}
 			if(!empty($menu_id['id'])) {
 				pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'id' => $menu_id['id']));
@@ -127,16 +127,6 @@ if($do == 'display') {
 		$params[':type'] = $type;
 	}
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('uni_account_menus') . $condition, $params);
-	$data_before = pdo_getall('uni_account_menus', array('title' => '', 'type' => $type, 'uniacid' => $_W['uniacid']));
-	foreach ($data_before as $data_bval) {
-		$rands = random(5, false);
-		if ($type == '1') {
-			$intitle = '默认菜单_' . $rands;
-		} else {
-			$intitle = '标题_' . $rands;
-		}
-		pdo_update('uni_account_menus', array('title' => $intitle), array('id' => $data_bval['id'], 'uniacid' => $_W['uniacid']));
-	}
 	$data = pdo_fetchall("SELECT * FROM " . tablename('uni_account_menus') . $condition . " ORDER BY type ASC, status DESC,id DESC LIMIT " . ($pindex - 1) * $psize . "," . $psize, $params);
 	$pager = pagination($total, $pindex, $psize);
 	$names = array(
@@ -340,6 +330,16 @@ if($do == 'post') {
 	if($_W['isajax'] && $_W['ispost']) {
 		set_time_limit(0);
 		$post = $_GPC['group'];
+		//检测菜单组名称
+		$title = trim($post['title']);
+		if (empty($title)) {
+			message(error(-1, '请填写菜单组名称！'), '', 'ajax');
+		}
+		$check_title = pdo_get('uni_account_menus', array('title' => trim($post['title'])), array('id'));
+		if (!empty($check_title)) {
+			message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
+		}
+		
 		$menu = array();
 		$check_btname = array();
 		$rands = 0;
@@ -397,8 +397,12 @@ if($do == 'post') {
 			unset($button);
 		}
 
-		if($post['type'] == 3 && !empty($post['matchrule'])) {
+		//判断是否有菜单显示对象提交,默认菜单和个性化菜单唯一区别就是有无菜单显示对象
+		if($post['type'] == 3 && empty($menu['matchrule'])) {
+			message(error(-1, '请选择菜单显示对象'), '', 'ajax');
+		}
 
+		if($post['type'] == 3 && !empty($post['matchrule'])) {
 			if($post['matchrule']['sex'] > 0) {
 				$menu['matchrule']['sex'] = $post['matchrule']['sex'];
 			}
@@ -425,9 +429,9 @@ if($do == 'post') {
 				if($inarray === 1) $menu['matchrule']['language'] = $post['matchrule']['language'];
 			}
 		}
-		if($post['type'] == 3 && empty($menu['matchrule'])) {
-			//判断是否有菜单显示对象提交,默认菜单和个性化菜单唯一区别就是有无菜单显示对象
-			message(error(-1, '请选择菜单显示对象'), url('platform/menu/post', array('id' => $id, 'type' => 3)), 'ajax');
+		//检测菜单名称是否重名
+		if (count(array_unique($check_btname)) != count($check_btname)) {
+			message(error(-1, '一级子菜单和二级子菜单出现重复'), '', 'ajax');
 		}
 		$account = WeAccount::create();
 		$ret = $account->menuCreate($menu);
@@ -443,43 +447,18 @@ if($do == 'post') {
 			if(!isset($menu['matchrule'])) {
 				$menu['matchrule'] = array();
 			}
-			//检测$post['title']里面值是否已经存在
-			if ($post['id'] > 0) {
-				$post_getone = pdo_get('uni_account_menus', array('id' => $post['id']), array('id', 'title'));
-			}
-			if ($post_getone['title'] != $post['title'] || empty($post['id'])) {
-				if ($post['title'] == '系统默认菜单') {
-					$rands = random(5, false);
-					$post['title'] = '默认菜单_' . $rands;
-				}
-				if ($post['title'] == '标题') {
-					$rands = random(5, false);
-					$post['title'] = '标题_' . $rands;
-				}
-				$check_titles = pdo_get('uni_account_menus', array('title' => $post['title'], 'uniacid' => $_W['uniacid']), array('id'));
-				if (!empty($check_titles)) {
-					message(error(-1, '该菜单组名称已经存在!请重新定义'), url('platform/menu/post', array('id' => $id, 'type' => $post['type'])), 'ajax');
-				}	
-			}
-			
-			//检测菜单里面一级子菜单名字 值内容是否一样;
-			//提交过来数组里面值个数 和 删除重复值以后值得个数
-			//如果有重复值则会删除重复值,最后两个值就会不一样
-			if (count(array_unique($check_btname)) != count($check_btname)) {
-				message(error(-1, '一级子菜单和二级子菜单出现重复'), url('platform/menu/post', array('id' => $id, 'type' => $post['type'])), 'ajax');
-			}
 			
 			$insert = array(
 				'uniacid' => $_W['uniacid'],
 				'menuid' => $ret,
-				'title' => $post['title'],
-				'type' => $post['type'],
+				'title' => trim($post['title']),
+				'type' => intval($post['type']),
 				'sex' => intval($menu['matchrule']['sex']),
 				'group_id' => isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : -1,
 				'client_platform_type' => intval($menu['matchrule']['client_platform_type']),
 				'area' => trim($menus['matchrule']['country']) . trim($menu['matchrule']['province']) . trim($menu['matchrule']['city']),
 				'data' => base64_encode(iserializer($menu)),
-				'status' => '1',
+				'status' => 1,
 				'createtime' => TIMESTAMP,
 			);
 			
