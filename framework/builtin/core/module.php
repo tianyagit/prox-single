@@ -182,8 +182,6 @@ class CoreModule extends WeModule {
 	
 	public function fieldsFormSubmit($rid = 0) {
 		global $_GPC, $_W;
-		load()->func('file');
-		load()->func('communication');
 		$delsql = '';
 		foreach ($this->modules as $k => $val) {
 			$tablename = $this->tablename[$val];

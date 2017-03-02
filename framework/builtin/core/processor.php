@@ -104,16 +104,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		foreach($commends as $c) {
 			$row = array();
 			if (!empty($c['media_id'])) {
-				$news_material = material_get($c['media_id']);
-				if (!empty($news_material['news'])) {
-					foreach ($news_material['news'] as $material) {
-						$row['title'] = $material['title'];
-						$row['description'] = $material['description'];
-						$row['picurl'] = $material['thumb_url'];
-						$row['url'] = $material['content_source_url'];
-						$news[] = $row;
-					}
-				}
+				$news = material_build_reply($c['media_id']);
 				break;
 			} else {
 				$row['title'] = $c['title'];
