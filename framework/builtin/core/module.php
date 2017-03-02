@@ -34,6 +34,7 @@ class CoreModule extends WeModule {
 
 	public function fieldsFormDisplay($rid = 0, $option = array()) {
 		global $_GPC, $_W;
+		load()->model('material');
 		$replies = array();
 		switch($_GPC['a']) {
 			case 'mass':
@@ -182,6 +183,7 @@ class CoreModule extends WeModule {
 	
 	public function fieldsFormSubmit($rid = 0) {
 		global $_GPC, $_W;
+		load()->model('material');
 		$delsql = '';
 		foreach ($this->modules as $k => $val) {
 			$tablename = $this->tablename[$val];
@@ -221,9 +223,8 @@ class CoreModule extends WeModule {
 						}
 						unset($reply);
 						foreach ($reply_news as $reply) {
-							$news_attach = pdo_getall('wechat_news', array ('attach_id' => $reply['media_id']), array(), '', ' displayorder ASC');
-							$file = pdo_getcolumn('wechat_attachment', array('media_id' => $news_attach[0]['thumb_media_id']), 'attachment');
-							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $news_attach[0]['title'], 'thumb' => tomedia($file), 'createtime' => $reply['createtime'], 'media_id' => $reply['media_id']));
+							$news = pdo_get('wechat_news', array ('attach_id' => $reply['media_id'], 'displayorder' => 0));
+							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $news['title'], 'thumb' => tomedia($news['thumb_url']), 'createtime' => $reply['createtime'], 'media_id' => $reply['media_id']));
 						}
 					}
 					break;

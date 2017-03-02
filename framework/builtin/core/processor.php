@@ -101,16 +101,16 @@ class CoreModuleProcessor extends WeModuleProcessor {
 			return false;
 		}
 		$news = array();
-		foreach($commends as $c) {
+		foreach($commends as $commend) {
 			$row = array();
-			if (!empty($c['media_id'])) {
-				$news = material_build_reply($c['media_id']);
+			if (!empty($commend['media_id'])) {
+				$news = material_build_reply($commend['media_id']);
 				break;
 			} else {
-				$row['title'] = $c['title'];
-				$row['description'] = $c['description'];
-				!empty($c['thumb']) && $row['picurl'] = tomedia($c['thumb']);
-				$row['url'] = empty($c['url']) ? $this->createMobileUrl('detail', array('id' => $c['id'])) : $c['url'];
+				$row['title'] = $commend['title'];
+				$row['description'] = $commend['description'];
+				!empty($commend['thumb']) && $row['picurl'] = tomedia($commend['thumb']);
+				$row['url'] = empty($commend['url']) ? $this->createMobileUrl('detail', array('id' => $commend['id'])) : $commend['url'];
 				$news[] = $row;
 			}
 		}
