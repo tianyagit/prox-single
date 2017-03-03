@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('nav', 'slide', 'commend', 'connection');
+$dos = array('nav', 'slide', 'commend');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -66,10 +66,4 @@ if ($do == 'nav') {
 		}
 	}
 	message(error(0, $category), '', 'ajax');
-} elseif ($do == 'connection') {
-	$version_info = pdo_get('wxapp_versions', array(
-	 	'uniacid' => $_W['uniacid'],
-	 	'version' => $_GPC['version']
- 	), array('id', 'modules', 'design_method', 'redirect'));
-	message(error(0, $version_info), '', 'ajax');
 }

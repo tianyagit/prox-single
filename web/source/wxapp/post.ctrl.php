@@ -75,7 +75,7 @@ if($do == 'post') {
 		$modules = array();
 		foreach ($submit_val['modules'] as $module_val) {
 			$modules[$module_val['module']] = $module_val['version'];
-			$modules_connection[$module_val['module']] = '';
+			$modules_connection[$module_val['module']] = $uniacid;
 		}
 		if (empty($uniacid)) {
 			$name = trim($submit_val['name']);

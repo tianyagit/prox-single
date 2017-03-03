@@ -633,6 +633,44 @@ class WeUtility {
 		}
 	}
 
+ 	/**
+	 * 创建模块小程序类
+	 * @param string $name
+	 */
+	public static function createModuleWxapp($name) {
+		global $_W;
+		static $file;
+		$classname = "{$name}ModuleWxapp";
+		if(!class_exists($classname)) {
+			$file = IA_ROOT . "/addons/{$name}/wxapp.php";
+			if(!is_file($file)) {
+				$file = IA_ROOT . "/framework/builtin/{$name}/wxapp.php";
+			}
+			if(!is_file($file)) {
+				trigger_error('ModuleWxapp Definition File Not Found '.$file, E_USER_WARNING);
+				return null;
+			}
+			require $file;
+		}
+		if(!class_exists($classname)) {
+			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
+			return null;
+		}
+		$o = new $classname();
+		$o->uniacid = $o->weid = $_W['uniacid'];
+		$o->modulename = $name;
+		load()->model('module');
+		$o->module = module_fetch($name);
+		$o->__define = $file;
+		self::defineConst($o);
+		$o->inMobile = defined('IN_MOBILE');
+		if($o instanceof WeModuleWxapp) {
+			return $o;
+		} else {
+			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
+			return null;
+		}
+	}
 	/**
 	 * 记录日志
 	 * @param string $level
