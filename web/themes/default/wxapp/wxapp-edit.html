@@ -161,7 +161,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" class="color-default" ng-click="recommendedit({$recommend['id']}, '{$recommend['pcate']}')">编辑</a>
-														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'recommend', 'id' => $recommend['id'], 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id'], 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
 													</div>
 												</div>
 											</div>
@@ -337,7 +337,7 @@
 											<div class="form-group form-inline">
 												<label for="" class="control-label col-sm-2">分类</label>
 												<div class="form-controls col-sm-10">
-													<select class="form-control we7-select" name="recommend[ccate]">
+													<select class="form-control we7-select" name="recommend[pcate]">
 														<option>选择分类</option>
 														<option ng-repeat="category in categorys" value="{{ category.id }}">{{ category.name }}</option>
 													</select>
@@ -377,9 +377,9 @@
 											<div class="form-group form-inline">
 												<label for="" class="control-label col-sm-2">分类</label>
 												<div class="form-controls col-sm-10">
-													<select class="form-control" name="recommend[ccate]">
+													<select class="form-control" name="recommend[pcate]">
 														<option>选择分类</option>
-														<option ng-repeat="category in categorys" value="{{ category.id }}" ng-selected="category.id == {$recommend['ccate']}">{{ category.name }}</option>
+														<option ng-repeat="category in categorys" value="{{ category.id }}" ng-selected="category.id == {$recommend['pcate']}">{{ category.name }}</option>
 													</select>
 													<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 												</div>
