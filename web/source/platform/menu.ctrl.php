@@ -22,8 +22,8 @@ if($_W['isajax']) {
 if($do == 'display') {
 	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : 1;
 	set_time_limit(0);
-	$accountApi = WeAccount::create();
-	$default_menu_info = $accountApi->menuCurrentQuery();
+	$account_api = WeAccount::create();
+	$default_menu_info = $account_api->menuCurrentQuery();
 	if (is_error($default_menu_info)) {
 		message($default_menu_info['message'], url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid'])), 'error');
 	}
@@ -84,7 +84,7 @@ if($do == 'display') {
 	}
 
 	//拉取个性化菜单
-	$get_menu_info = $accountApi->menuQuery();
+	$get_menu_info = $account_api->menuQuery();
 	if(is_error($get_menu_info)) {
 		message($get_menu_info['message'], '', 'error');
 	}
@@ -95,7 +95,6 @@ if($do == 'display') {
 			$data = array(
 				'uniacid' => $_W['uniacid'],
 				'type' => 3,
-				'title' => '个性化菜单_'. random(5, false),
 				'group_id' => isset($menu['matchrule']['tag_id']) ? $menu['matchrule']['tag_id'] : (isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : '-1'),
 				'sex' => $menu['matchrule']['sex'],
 				'client_platform_type' => $menu['matchrule']['client_platform_type'],
@@ -108,9 +107,12 @@ if($do == 'display') {
 				$menu_id = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'menuid' => $menu['menuid'], 'type' => 3), array('id'));
 			}
 			if(!empty($menu_id['id'])) {
+				$data['title'] = '个性化菜单_' . $menu_id['id'];
 				pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'id' => $menu_id['id']));
 			} else {
 				pdo_insert('uni_account_menus', $data);
+				$insert_id = pdo_insertid();
+				pdo_update('uni_account_menus', array('title' => '个性化菜单_'.$insert_id), array('id' => $insert_id));
 			}
 		}
 	}
@@ -215,8 +217,8 @@ if($do == 'push') {
 		if ($data['type'] == 1) {
 			unset($menu['matchrule']);
 		}
-		$accountApi = WeAccount::create($_W['acid']);
-		$result = $accountApi->menuCreate($menu);
+		$account_api = WeAccount::create($_W['acid']);
+		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
 			message(error(-1, $result['message']), '', 'ajax');
 		} else {
@@ -236,8 +238,8 @@ if($do == 'push') {
 	} elseif ($_GPC['status'] == 2) {
 		$status =  $_GPC['status'];
 		if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0) && $status != 'history') {
-			$accountApi = WeAccount::create($_W['acid']);
-			$result = $accountApi->menuDelete($data['menuid']);
+			$account_api = WeAccount::create($_W['acid']);
+			$result = $account_api->menuDelete($data['menuid']);
 			if(is_error($result) && empty($_GPC['f'])) {
 				$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 				$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
@@ -434,8 +436,8 @@ if($do == 'post') {
 		if (count(array_unique($check_btname)) != count($check_btname)) {
 			message(error(-1, '一级子菜单和二级子菜单出现重复'), '', 'ajax');
 		}
-		$accountApi = WeAccount::create();
-		$result = $accountApi->menuCreate($menu);
+		$account_api = WeAccount::create();
+		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
 			message($result, '', 'ajax');
 		} else {
@@ -495,8 +497,8 @@ if($do == 'delete') {
 	}
 	$status =  $_GPC['status'];
 	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0)) {
-		$accountApi = WeAccount::create($_W['acid']);
-		$result = $accountApi->menuDelete($data['menuid']);
+		$account_api = WeAccount::create($_W['acid']);
+		$result = $account_api->menuDelete($data['menuid']);
 		if(is_error($result) && empty($_GPC['f'])) {
 			if ($result['errno'] == '65301') {
 				pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
