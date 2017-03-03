@@ -131,6 +131,11 @@ class CoreModule extends WeModule {
 											$img_value['img_url'] = tomedia($img['attachment'], true);
 										}
 										break;
+									case 'news' :
+										foreach ($replies[$key] as &$news_value) {
+											$news_value['thumb'] = tomedia($news_value['thumb']);
+										}
+										break;
 								}
 							}
 						}
