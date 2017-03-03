@@ -14,6 +14,20 @@ $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'platform') {
 	define('FRAME', 'account');
+
+	$cache_key = "{$_W['username']}:lastaccount";
+	$cache_lastaccount = cache_load($cache_key);
+	$uniacid = $cache_lastaccount['account'];
+	if (empty($uniacid)) {
+		header('Location: ' . url('account/display'));
+		exit;
+	} else {
+		$_W['uniacid'] = $uniacid;
+		$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
+		$_W['acid'] = $_W['account']['acid'];
+		$_W['weid'] = $_W['uniacid'];
+	}
+
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
 		message('公众号已到服务期限，请续费', referer(), 'info');
 	}
