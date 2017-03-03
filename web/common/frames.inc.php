@@ -195,12 +195,6 @@ $we7_system_menu['system'] = array(
 					'icon' => 'wi wi-appsetting',
 					'permission_name' => 'system_module_wxapp',
 				),
-				'system_module_group' => array(
-					'title' => '应用权限套餐',
-					'url' => url('system/module-group'),
-					'icon' => 'wi wi-appjurisdiction',
-					'permission_name' => 'system_module_group',
-				),
 				'system_template' => array(
 					'title' => '我的模板管理',
 					'url' => url('system/template'),
@@ -249,10 +243,20 @@ $we7_system_menu['system'] = array(
 								'permission_name' => 'system_user_registerset',
 							),
 					),
-					
+				),
+			)
+		),
+		'permission' => array(
+			'title' => '权限管理',
+			'menu' => array(
+				'system_module_group' => array(
+					'title' => '功能权限组',
+					'url' => url('system/module-group'),
+					'icon' => 'wi wi-appjurisdiction',
+					'permission_name' => 'system_module_group',
 				),
 				'system_user_group' => array(
-					'title' => '用户组管理',
+					'title' => '用户权限组',
 					'url' => url('user/group'),
 					'icon' => 'wi wi-userjurisdiction',
 					'permission_name' => 'system_user_group',
