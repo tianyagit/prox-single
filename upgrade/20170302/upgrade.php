@@ -12,20 +12,5 @@ if(!pdo_fieldexists('news_reply', 'media_id')) {
 	pdo_query("ALTER TABLE ".tablename('news_reply')." ADD `media_id` int(10) NOT NULL DEFAULT '0';");
 }
 
-//查询自定义菜单名称是否有存在
-$check_uniam = pdo_fetchall("SELECT `id`, `title`, `type` FROM " . tablename('uni_account_menus') . "WHERE `title` IN (SELECT `title` FROM " . tablename('uni_account_menus') . "GROUP BY `title` having count(*) >1 )" );
-
-if(!empty($check_uniam)){
-	foreach ($check_uniam as $check_bval) {
-		if (strexists($check_bval['title'], '默认菜单') || strexists($check_bval['title'], '个性化菜单') || strexists($check_bval['title'], '标题') || empty($check_bval['title'])) {
-			if ($check_bval['type'] == '1') {
-				$intitle = '默认菜单_' . $check_bval['id'];
-			} else {
-				$intitle = '标题_' . $check_bval['id'];
-			}
-		} else {
-			$intitle = $check_bval['title'] . '_' . $check_bval['id'];
-		}
-		pdo_update('uni_account_menus', array('title' => $intitle), array('id' => $check_bval['id']));
-	}
-}
+//自定义菜单为重名title添加后缀（如：title为‘默认菜单’的有两个重名，其id分别为1、2，执行该语句后title分别为：‘默认菜单_1’、‘默认菜单_2’）
+pdo_query("UPDATE ". tablename('uni_account_menus') . " SET title = concat(title,'_',id) WHERE  `title` IN (SELECT a.title FROM (SELECT `title` FROM " . tablename('uni_account_menus') . " GROUP BY `title` having count(*) >1 ) a)");
