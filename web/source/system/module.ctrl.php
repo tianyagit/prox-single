@@ -209,7 +209,7 @@ if ($do == 'upgrade') {
 	}
 
 	$module['permissions'] = iserializer($module['permissions']);
-	if (!empty($info['version']['cloud_setting'])) {
+	if (!empty($module_info['version']['cloud_setting'])) {
 		$module['settings'] = 2;
 	} else {
 		$module['settings'] = empty($module['settings']) ? 0 : 1;
