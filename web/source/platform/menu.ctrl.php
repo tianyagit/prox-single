@@ -384,6 +384,10 @@ if($do == 'post') {
 						$sub_temp = array();
 						$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
 						$sub_temp['name'] = urlencode($sub_temp['name']);
+						$sub_keyword_exist = strexists($subbutton['key'], 'keyword:');
+						if ($sub_keyword_exist) {
+							$subbutton['key'] = substr($subbutton['key'], 8);
+						}
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
