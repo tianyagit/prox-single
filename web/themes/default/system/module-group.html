@@ -174,8 +174,8 @@
 			</div>
 			<div class="panel-body we7-padding">
 				<div class="row">
-					<div class="col-sm-2 text-left" ng-repeat="template in groupHaveTemplate">
-						<i class="glyphicon glyphicon-th-large"></i>
+					<div class="col-sm-2 text-left text-over" ng-repeat="template in groupHaveTemplate">
+						<i class="wi wi-home"></i>
 						<a href="">{{ template.title }}</a>
 						<span class="del bg-default" ng-click="delHaveTemplate(template)">删除</span>
 					</div>
@@ -201,7 +201,7 @@
 				<div class="modal-body">
 					<div class="panel-body we7-padding">
 						<div class="row">
-							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="template in groupNotHaveTemplate" style="overflow: hidden">
+							<div class="col-sm-2 text-center we7-margin-bottom" ng-repeat="template in groupNotHaveTemplate" style="overflow: hidden; padding: 0;">
 								<a href="javascript:;" ng-click="selectModule(template, 'template')">
 									<i class="glyphicon glyphicon-th-large"></i>
 									<p class="text-over">{{ template.title }}</p>
