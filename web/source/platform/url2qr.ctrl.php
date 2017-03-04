@@ -20,7 +20,7 @@ if ($do == 'display') {
 if ($do == 'change') {
 	if ($_W['ispost'] && $_W['isajax']) {
 		$longurl = trim($_GPC['longurl']);
-		$token = WeAccount::token(WeAccount::TYPE_WEIXIN);
+		$token = WeAccount::token();
 		$url = "https://api.weixin.qq.com/cgi-bin/shorturl?access_token={$token}";
 		$send = array();
 		$send['action'] = 'long2short';
