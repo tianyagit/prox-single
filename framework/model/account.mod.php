@@ -908,6 +908,12 @@ function account_delete($acid) {
 			'stat_rule','uni_account','uni_account_modules','uni_account_users','uni_settings', 'uni_group', 'uni_verifycode','users_permission',
 			'mc_member_fields',
 		);
+		if (!empty($tables)) {
+			foreach ($tables as $table) {
+				$tablename = str_replace($GLOBALS['_W']['config']['db']['tablepre'], '', $table);
+				pdo_delete($tablename, array( 'uniacid'=> $uniacid));
+			}
+		}
 	} else {
 		$account = account_fetch($acid);
 		if (empty($account)) {
