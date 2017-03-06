@@ -21,8 +21,9 @@ $state = uni_permission($_W['uid'], $uniacid);
 if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
 	message('无权限操作！', referer(), 'error');
 }
-$account = account_fetch($acid);
+
 if ($do == 'display') {
+	$account = account_fetch($acid);
 	$uniacid = intval($_GPC['uniacid']);
 	if (!empty($uniacid)) {
 		$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $uniacid));

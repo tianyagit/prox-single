@@ -338,9 +338,16 @@ if($do == 'post') {
 		if (empty($post['title'])) {
 			message(error(-1, '请填写菜单组名称！'), '', 'ajax');
 		}
-		$check_title = pdo_get('uni_account_menus', array('title' => $post['title']), array('id'));
-		if (!empty($check_title)) {
-			message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
+		if (empty($id)) {
+			$check_title = pdo_get('uni_account_menus', array('title' => $post['title']), array('id'));
+			if (!empty($check_title)) {
+				message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
+			}
+		} else {
+			$check_title = pdo_getall('uni_account_menus', array('title' => $post['title']), array('id'));
+			if (!empty($check_title) && count($check_title) > 1) {
+				message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
+			}
 		}
 		
 		$menu = array();
@@ -377,6 +384,10 @@ if($do == 'post') {
 						$sub_temp = array();
 						$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
 						$sub_temp['name'] = urlencode($sub_temp['name']);
+						$sub_keyword_exist = strexists($subbutton['key'], 'keyword:');
+						if ($sub_keyword_exist) {
+							$subbutton['key'] = substr($subbutton['key'], 8);
+						}
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);

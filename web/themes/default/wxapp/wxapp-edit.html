@@ -57,7 +57,7 @@
 							</div>
 							<ul class="list-group">
 								<li class="list-group-item" ng-class="{active : wxapp == 'setting'}" ng-click="wxapp = 'setting'">
-									<i class="fa fa-adjust"></i>关联设置
+									<i class="wi wi-appsetting"></i>关联设置
 								</li>
 								</a>
 							</ul>
@@ -98,7 +98,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" ng-click="slideedit({$slide['id']})" class="color-default">编辑</a>
-														<a href="{php echo url('wxapp/version/edit', array('id' => $slide['id'], 'operate' => 'delete', 'type' => 'slide'))}" onclick="return confirm('确认删除幻灯片吗');" class="color-default">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('id' => $slide['id'], 'operate' => 'delete', 'type' => 'slide', 'multiid' => $multiid, 'version_id' => $_GPC['version_id'], 'uniacid' => $_GPC['uniacid']))}" onclick="return confirm('确认删除幻灯片吗');" class="color-default">删除</a>
 													</div>
 												</div>
 											</div>
@@ -130,7 +130,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" class="color-default" ng-click="navedit({$nav['id']})">编辑</a>
-														<a href="{php echo url('wxapp/version/edit', array('type' => 'nav', 'id' => $nav['id'], 'operate' => 'delete'))}" onclick="return confirm('确认删除导航吗？');" class="color-default slide-del">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('type' => 'nav', 'id' => $nav['id'], 'operate' => 'delete', 'multiid' => $multiid, 'version_id' => $_GPC['version_id'], 'uniacid' => $_GPC['uniacid']))}" onclick="return confirm('确认删除导航吗？');" class="color-default slide-del">删除</a>
 													</div>
 												</div>
 											</div>
@@ -161,7 +161,7 @@
 													</div>
 													<div class="slide-alter">
 														<a href="" class="color-default" ng-click="recommendedit({$recommend['id']}, '{$recommend['pcate']}')">编辑</a>
-														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id'], 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
+														<a href="{php echo url('wxapp/version/edit', array('operate' => 'delete', 'type' => 'article', 'id' => $recommend['id'], 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}" onclick="return confirm('确认删除推荐吗？')" class="color-default slide-del">删除</a>
 													</div>
 												</div>
 											</div>
@@ -180,7 +180,7 @@
 										<span class="color-gray">幻灯片列表 / </span>
 										<span class="color-dark">新建幻灯片</span>
 									</div>
-									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form we7-form" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}" method="post" class="form we7-form" enctype="multipart/form-data">
 										<div class="form we7-form" ng-if="slideid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label col-sm-2">标题</label>
@@ -250,7 +250,7 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form we7-form" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}" method="post" class="form we7-form" enctype="multipart/form-data">
 										<div class="form we7-form" ng-if="navid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label col-sm-2">标题</label>
@@ -320,7 +320,7 @@
 										<span class="color-gray">导航列表 / </span>
 										<span class="color-dark">新建导航图标</span>
 									</div>
-									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid']))}" method="post" class="form we7-form" enctype="multipart/form-data">
+									<form action="{php echo url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}" method="post" class="form we7-form" enctype="multipart/form-data">
 										<div class="form we7-form" ng-if="recommendid == 'add'">
 											<div class="form-group" >
 												<label for="" class="control-label col-sm-2">标题</label>
@@ -337,7 +337,7 @@
 											<div class="form-group form-inline">
 												<label for="" class="control-label col-sm-2">分类</label>
 												<div class="form-controls col-sm-10">
-													<select class="form-control we7-select" name="recommend[ccate]">
+													<select class="form-control we7-select" name="recommend[pcate]">
 														<option>选择分类</option>
 														<option ng-repeat="category in categorys" value="{{ category.id }}">{{ category.name }}</option>
 													</select>
@@ -377,9 +377,9 @@
 											<div class="form-group form-inline">
 												<label for="" class="control-label col-sm-2">分类</label>
 												<div class="form-controls col-sm-10">
-													<select class="form-control" name="recommend[ccate]">
+													<select class="form-control" name="recommend[pcate]">
 														<option>选择分类</option>
-														<option ng-repeat="category in categorys" value="{{ category.id }}" ng-selected="category.id == {$recommend['ccate']}">{{ category.name }}</option>
+														<option ng-repeat="category in categorys" value="{{ category.id }}" ng-selected="category.id == {$recommend['pcate']}">{{ category.name }}</option>
 													</select>
 													<a class="btn btn-default" data-toggle="modal" data-target="#myModal" ng-click="get_categorys()">设置分类</a>
 												</div>

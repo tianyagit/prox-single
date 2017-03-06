@@ -15,10 +15,10 @@
 			</div>
 			<div class="panel-body">
 				<div class="wxapp-manage">
-					<a href="{php echo url('wxapp/post')}" class="color-default"><i class="fa fa-plus"></i>新建小程序</a>
+					<a href="{php echo url('wxapp/post')}" class="color-default"><i class="wi wi-registersite"></i>新建小程序</a>
 					<a href="{php echo url('account/manage', array('account_type' => '4'))}" class="color-default"><i class="wi wi-appsetting"></i>小程序管理</a>
 				</div>
-				<ul class="wxapp-cut-list">
+				<ul class="wxapp-cut-list clearfix">
 					{loop $wxapp_lists $list}
 					<li class="wxapp-cut-item">
 						<div class="wxapp-item-iphone">

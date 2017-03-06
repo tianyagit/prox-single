@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('nav', 'slide', 'commend', 'connection');
+$dos = array('nav', 'slide', 'commend');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -40,16 +40,11 @@ if ($do == 'nav') {
 	//获取一级分类
 	$category = pdo_getall('site_category', array(
 		'uniacid' => $_W['uniacid'], 
-		'multiid' => $multiid,
-		'enabled' => 1,
-		'ishomepage' => 1,
+		'multiid' => $multiid
 	), array('id', 'name', 'parentid'), '', 'displayorder DESC');
 	//一级分类不能添加文章，推荐时获取到其子类
 	if (!empty($category)) {
 		foreach ($category as $id => &$category_row) {
-			$condition = array(
-				'iscommend' => 1,
-			);
 			if (empty($category_row['parentid'])) {
 				$condition['pcate'] = $category_row['id'];
 			} else {
@@ -66,10 +61,4 @@ if ($do == 'nav') {
 		}
 	}
 	message(error(0, $category), '', 'ajax');
-} elseif ($do == 'connection') {
-	$version_info = pdo_get('wxapp_versions', array(
-	 	'uniacid' => $_W['uniacid'],
-	 	'version' => $_GPC['version']
- 	), array('id', 'modules', 'design_method', 'redirect'));
-	message(error(0, $version_info), '', 'ajax');
 }
