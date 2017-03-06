@@ -56,6 +56,7 @@
 <script>
 	var action = "{php echo $_GPC['a']}";
 	var m = "{php echo $_GPC['m']}";
+
 	//删除已选素材
 	var delmedia = function(type, ele) {
 		var oldVal = $(':hidden[name="reply[reply_'+type+']"]').val();
@@ -316,6 +317,7 @@
 							'		</div>'+
 							'	</div>'+
 							'	<div class="opr">'+
+							'		<a href="./index.php?c=platform&a=material-post&type=reply&news_id='+material.items[0]['attach_id']+'" target="_blank" class="del-gray">编辑</a>'+
 							'		<a href="javascript:;" data-media="'+material.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'	</div>'+
 							'</div>'+
@@ -500,6 +502,7 @@
 							'		</div>'+
 							'	</div>'+
 							'	<div class="opr">'+
+							'		<a href="./index.php?c=platform&a=material-post&type=reply&news_id='+newsVal.id+'" class="del-gray">编辑</a>'+
 							'		<a href="javascript:;" data-media="'+newsVal.id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'	</div>'+
 							'</div>'+
