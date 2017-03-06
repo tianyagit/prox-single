@@ -34,6 +34,7 @@ class CoreModule extends WeModule {
 
 	public function fieldsFormDisplay($rid = 0, $option = array()) {
 		global $_GPC, $_W;
+		load()->model('material');
 		$replies = array();
 		switch($_GPC['a']) {
 			case 'mass':
@@ -133,7 +134,12 @@ class CoreModule extends WeModule {
 										break;
 									case 'news' :
 										foreach ($replies[$key] as &$news_value) {
-											$news_value['thumb'] = tomedia($news_value['thumb']);
+											if (!empty($news_value)) {
+												$news_material = material_get($news_value['media_id']);
+												$news_value['thumb'] = tomedia($news_material['news'][0]['thumb_url']);
+											} else {
+												$news_value['thumb'] = tomedia($news_value['thumb']);
+											}
 										}
 										break;
 								}

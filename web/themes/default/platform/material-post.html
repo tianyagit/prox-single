@@ -131,6 +131,7 @@
 			'materialList' : {php echo json_encode($news_list)},
 			'type' : '{$type}',
 			'news_rid' : '{$newsreply_id}',
+			'local' : 	{if $attachment['model'] == 'local' || ($type == 'reply' && empty($newsid))}'location'{else}'wechat'{/if},
 			'operate' : {if !empty($newsid)}'edit'{else}'add'{/if},
 			'url' : '{php echo url('platform/material-post/tomedia')}',
 			'newsUpload_url' : '{php echo url('platform/material-post/addnews')}',
