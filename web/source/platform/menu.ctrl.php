@@ -349,6 +349,7 @@ if($do == 'post') {
 				message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
 			}
 		}
+		
 		$menu = array();
 		$check_btname = array();
 		$rands = 0;
