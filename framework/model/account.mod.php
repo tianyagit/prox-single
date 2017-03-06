@@ -744,6 +744,9 @@ function account_create($uniacid, $account) {
  */
 function account_fetch($acid) {
 	$account_info = pdo_get('account', array('acid' => $acid));
+	if (empty($account_info)) {
+		return error(-1, '公众号不存在');
+	}
 	$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename(uni_account_tablename($account_info['type'])) . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
 	if (empty($account)) {
 		return error(1, '公众号不存在');
