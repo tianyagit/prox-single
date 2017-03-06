@@ -130,7 +130,7 @@
 		angular.module('materialApp').value('material', {
 			'materialList' : {php echo json_encode($news_list)},
 			'type' : '{$type}',
-			'news_rid' : '{$newsreply_id}',
+			'news_rid' : '{$reply_news_id}',
 			'local' : 	{if $attachment['model'] == 'local' || ($type == 'reply' && empty($newsid))}'location'{else}'wechat'{/if},
 			'operate' : {if !empty($newsid)}'edit'{else}'add'{/if},
 			'url' : '{php echo url('platform/material-post/tomedia')}',

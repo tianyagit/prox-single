@@ -56,16 +56,11 @@ if ($do == 'tomedia') {
 
 if ($do == 'news') {
 	$type = trim($_GPC['type']);
-	if ($type == 'reply') {
-		$newsreply_id = intval($_GPC['news_id']);
-		$news = pdo_get('news_reply', array('id' => $newsreply_id));
-		$newsid = $news['media_id'];
-		$attach_id = intval($_GPC['attach_id']);
-		if (!empty($newsid) || !empty($attach_id)) {
-			$newsid = empty($attach_id) ? $newsid : $attach_id;
-			$attachment = material_get($newsid);
-			$news_list = $attachment['news'];
-		} else {
+	$newsid = intval($_GPC['newsid']);
+	if (empty($newsid)) {
+		if ($type == 'reply') {
+			$reply_news_id = intval($_GPC['reply_news_id']);
+			$news = pdo_get('news_reply', array('id' => $reply_news_id));
 			$news_list = pdo_getall('news_reply', array('parent_id' => $news['id']), array(), '', ' displayorder ASC');
 			$news_list = array_merge(array($news), $news_list);
 			if (!empty($news_list)) {
@@ -85,10 +80,8 @@ if ($do == 'news') {
 		}
 	} else {
 		$newsid = intval($_GPC['newsid']);
-		$material = material_get($newsid);
-		$news_list = $material['news'];
-		unset($material['news']);
-		$attachment = $material;
+		$attachment = material_get($newsid);
+		$news_list = $attachment['news'];
 	}
 	template('platform/material-post');
 }
@@ -104,13 +97,6 @@ if ($do == 'addnews') {
 
 	$image_data = array();
 	//获取所有的图片素材，构造一个以media_id为键的数组(为了获取图片的url)
-	$image_list = $account_api->batchGetMaterial('image');
-	$image_list = $image_list['item'];
-	if (!empty($image_list) && is_array($image_list)) {
-		foreach ($image_list as $image) {
-			$image_data[$image['media_id']] = $image;
-		}
-	}
 	if (!empty($_GPC['news'])) {
 		foreach ($_GPC['news'] as $key => $news) {
 			//微信接口结构
@@ -126,7 +112,7 @@ if ($do == 'addnews') {
 			$post_data = array(
 				'uniacid' => $_W['uniacid'],
 				'thumb_media_id' => $news['media_id'],
-				'thumb_url' => $is_save_location === true ? $news['thumb'] : $image_data[$news['media_id']]['url'],
+				'thumb_url' => $news['thumb'],
 				'title' => $news['title'],
 				'author' => $news['author'],
 				'digest' => $news['digest'],
@@ -136,7 +122,6 @@ if ($do == 'addnews') {
 				'url' => '',
 				'displayorder' => $key
 			);
-
 			if ($operate == 'add') {
 				$post_news[] = $post_data;
 				$articles['articles'][] = $news_info;
@@ -168,6 +153,7 @@ if ($do == 'addnews') {
 		);
 		pdo_insert('wechat_attachment', $wechat_attachment);
 		$attach_id = pdo_insertid();
+		//兼容0.8版图文回复
 		if ($is_save_location === true) {
 			pdo_update('news_reply', array('media_id' => $attach_id), array('id' => $news_rid));
 		}
