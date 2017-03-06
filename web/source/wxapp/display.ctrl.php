@@ -65,8 +65,9 @@ if ($do == 'display') {
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
-	$version = pdo_fetch("SELECT version, multiid, id, uniacid FROM " . tablename('wxapp_versions') . " WHERE uniacid = :uniacid ORDER BY version DESC", array(':uniacid' => $uniacid));
-	$cache_key = "{$_W['user']['username']}:lastaccount";
+	$version = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array('version', 'multiid', 'id', 'uniacid'), '', 'version DESC', 1);
+	$version = $version[0];
+	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
 	$cache_lastaccount = cache_load($cache_key);
 	$cache_lastaccount['wxapp'] = $uniacid;
 	cache_write($cache_key, $cache_lastaccount);

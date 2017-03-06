@@ -1,6 +1,7 @@
 {template 'common/header'}
 <link href="./resource/css/app.css" rel="stylesheet">
 {if $do == 'uc'}
+{php echo tpl_ueditor('')}
 <div class="we7-page-title">会员中心</div>
 <ul class="we7-page-tab">
 	<li {if $do == 'display' || $do == 'post'} class="active"{/if}>
