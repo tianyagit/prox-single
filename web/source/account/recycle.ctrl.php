@@ -37,23 +37,14 @@ if ($do == 'display') {
 			$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
 		}		
 	}
-	
+
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		$tsql = "SELECT count(*) FROM ". tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}" ;
-		$sql = "SELECT * FROM ". tablename('account_wxapp'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
-	} else {
-		$tsql = "SELECT count(*) FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}" ;
-		$sql = "SELECT * FROM ". tablename('account_wechats'). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
-	}
-	// if ($account_type != ACCOUNT_TYPE_APP_NORMAL) {
-		
-	// } else {
-		
-	// }
+    $uni_account_type = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? 4 : 1;
+	$tsql = "SELECT count(*) FROM " .tablename(uni_account_tablename($uni_account_type)) . " AS a LEFT JOIN" . tablename('account') . " AS b ON a.acid = b.acid {$condition} {$order_by}";
+	$sql = $sql = "SELECT * FROM ". tablename(uni_account_tablename($uni_account_type)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$total = pdo_fetchcolumn($tsql, $param);
 	$del_accounts = pdo_fetchall($sql, $param);
 	if(!empty($del_accounts)) {
@@ -68,7 +59,6 @@ if ($do == 'display') {
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
 		}
 	}
-
 	$pager = pagination($total, $pindex, $psize);
 	template('account/recycle' . ACCOUNT_TYPE_TEMPLATE);
 }
@@ -95,16 +85,10 @@ if ($do == 'recover') {
 if($do == 'delete') {
 	$uniacid = intval($_GPC['uniacid']);
 	$acid = intval($_GPC['acid']);
-	
 	$state = uni_permission($_W['uid'], $uniacid);
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('没有权限！', referer(), 'error');
 	}
-	if (!empty($acid)) {
-		account_delete($acid);
-	}
-	if (!empty($uniacid)) {
-		pdo_delete('wxapp_versions', array('uniacid' => $uniacid));
-	}
+    account_delete($acid);
 	message('删除成功！', referer(), 'success');
 }
