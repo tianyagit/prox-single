@@ -3,6 +3,13 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * $sn$
  */
+
+//小程序打包的模块内重定向URL
+$uniacid_resource_exist = strpos($_SERVER['HTTP_REFERER'], '&uniacid_resource=wxapp');
+if ( !empty($uniacid_resource_exist) && (($controller == 'platform' && ($action == 'reply' || $action == 'cover')) || ($controller == 'profile' && $action == 'module' && $a == 'setting') || ($controller == 'site' && ($action == 'nav' || $action == 'entry'))) ) {
+	header('Location: ./web/index.php?' . $_SERVER['QUERY_STRING']. 'uniacid_source=wxapp&uniacid='. $_GPC['__uniacid']);
+}
+
 load()->model('user');
 load()->func('tpl');
 $_W['token'] = token();
@@ -28,7 +35,18 @@ if(is_array($session)) {
 unset($session);
 
 if(!empty($_GPC['__uniacid'])) {
-	$_W['uniacid'] = intval($_GPC['__uniacid']);
+	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
+	$cache_lastaccount = cache_load($cache_key);
+	if (in_array($controller, array('wxapp'))) {
+		$uniacid = $cache_lastaccount['wxapp'];
+	} else {
+		if ( (!empty($_GPC['uniacid_source']) && $_GPC['uniacid_source'] == 'wxapp') ) {
+			$uniacid = intval($_GPC['uniacid']);
+		} else {
+			$uniacid = $cache_lastaccount['account'];
+		}
+	}
+	$_W['uniacid'] = $uniacid;
 	$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
 	$_W['acid'] = $_W['account']['acid'];
 	$_W['weid'] = $_W['uniacid'];

@@ -42,7 +42,7 @@
 							</div>
 							<ul class="list-group">
 								{loop $modules $module}
-								<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'type' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank">
+								<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'uniacid_source' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank">
 								<li class="list-group-item">
 									<i class="fa fa-adjust"></i>{$module['title']}
 								</li>

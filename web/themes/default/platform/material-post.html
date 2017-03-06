@@ -67,7 +67,9 @@
 								<div class="form-controls">
 									<label>跳转链接</label>
 								</div>
-								<span class="form-control-box"><input class="form-control" name="source-url" ng-model="materialList[activeIndex].content_source_url" type="text" size="60"></span>
+								<span class="form-control-box">
+									<div we7-linker we7-my-url="materialList[activeIndex].content_source_url" we7-my-title="materialList[activeIndex].content_source_url"></div>
+								</span>
 							</div>
 							<!-- END 原文链接 -->
 						</div>

@@ -15,7 +15,7 @@ $do = in_array($do, $dos) ? $do : 'platform';
 if ($do == 'platform') {
 	define('FRAME', 'account');
 
-	$cache_key = "{$_W['username']}:lastaccount";
+	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
 	$cache_lastaccount = cache_load($cache_key);
 	$uniacid = $cache_lastaccount['account'];
 	if (empty($uniacid)) {

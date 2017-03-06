@@ -207,7 +207,7 @@
 							<label class="control-label col-sm-2">封面</label>
 							<div class="form-controls col-sm-10">
 								<div class="we7-input-img input-more" ng-class="{'active': multi.site_info.thumb}">
-									<img ng-src="{{multi.site_info.thumb}}" ng-if="multi.site_info.thumb">
+									<img src="{{multi.site_info.thumb}}" ng-if="multi.site_info.thumb">
 									<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage()" ng-hide="multi.site_info.thumb"><span>+</span></a>
 									<input type="text" name="thumb" ng-model="multi.site_info.thumb" ng-style="{'display' : 'none'}">
 									<div class="cover-dark">
