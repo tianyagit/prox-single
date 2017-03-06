@@ -75,7 +75,7 @@ if ($do == 'edit') {
 			message(error(1, '不可操作网站创始人！'), '', 'ajax');
 		}
 		//添加/修改公众号操作员、管理员、主管理员时执行数量判断
-		$uni_account_type = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? 3 : 1;
+		$uni_account_type = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? 4 : 1;
 		if (is_error($permission = uni_create_permission($user['uid'], $uni_account_type))) {
 			message(error(5, $permission['message']), '', 'error');
 		}

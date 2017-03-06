@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 /**
  * 添加公众号时执行数量判断
  * @param int $uid 操作用户
- * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号;3. 小程序)
+ * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号; 4. 小程序)
  * @return array|boolean 错误原因或成功
  */
 function uni_create_permission($uid, $type = 1) {
@@ -35,7 +35,7 @@ function uni_create_permission($uid, $type = 1) {
 		if ($subaccountnum >= $groupdata['maxsubaccount']) {
 			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxsubaccount'] . '个子公众号');
 		}
-	} elseif ($type == 3) {
+	} elseif ($type == 4) {
 		if ($wxapp_num >= $groupdata['maxwxapp']) {
 			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxwxapp'] . '个小程序');
 		}
@@ -899,7 +899,7 @@ function account_delete($acid) {
 
 		//遍历全部表删除公众号数据
 		$tables = array(
-			'account','account_wechats', 'core_attachment','core_paylog','core_queue','core_resource',
+			'account','account_wechats', 'account_wxapp', 'wxapp_versions', 'core_attachment','core_paylog','core_queue','core_resource',
 			'wechat_attachment', 'cover_reply', 'mc_chats_record','mc_credits_recharge','mc_credits_record',
 			'mc_fans_groups','mc_groups','mc_handsel','mc_mapping_fans','mc_mapping_ucenter','mc_mass_record',
 			'mc_member_address','mc_member_fields','mc_members','menu_event',
