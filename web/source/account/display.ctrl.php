@@ -19,7 +19,7 @@ if($do == 'switch') {
 	if(empty($role)) {
 		message('操作失败, 非法访问.');
 	}
-	$cache_key = "{$_W['username']}:lastaccount";
+	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
 	$cache_lastaccount = cache_load($cache_key);
 	$cache_lastaccount['account'] = $uniacid;
 	cache_write($cache_key, $cache_lastaccount);
