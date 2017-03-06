@@ -116,13 +116,13 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块缩略图</label>
 							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px; font-size: 45px;">
+								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
 									<img ng-src="{{ moduleinfo.logo }}" ng-if="moduleinfo.logo">
 									<a href="javascript:;" class="input-addon" ng-hide="moduleinfo.logo" ng-click="changePicture('logo')"><span>+</span></a>
 									<input type="hidden" name="thumb">
 									<div class="cover-dark">
 										<a href="javascript:;" class="cut" ng-click="changePicture('logo')">更换</a>
-										<a href="javascript:;" class="del" ng-click="delPicture('logo')"><i class="fa fa-times text-danger"></i></a>
+										<a href="javascript:;" class="del" ng-click="delPicture('logo')"><i class="fa fa-times"></i></a>
 									</div>
 								</div>
 								<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
@@ -131,13 +131,13 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块封面</label>
 							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px; font-size: 45px;">
+								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px;">
 									<img ng-src="{{ moduleinfo.preview }}">
 									<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
 									<input type="hidden" name="thumb">
 									<div class="cover-dark">
 										<a href="javascript:;" class="cut" ng-click="changePicture('preview')">更换</a>
-										<a href="javascript:;" class="del" ng-click="delPicture('preview')"><i class="fa fa-times text-danger"></i></a>
+										<a href="javascript:;" class="del" ng-click="delPicture('preview')"><i class="fa fa-times"></i></a>
 									</div>
 								</div>
 								<span class="help-block">模块封面, 大小为 600*350, 更好的设计将会获得官方推荐位置。仅支持jpg格式</span>
