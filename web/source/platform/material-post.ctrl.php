@@ -139,7 +139,7 @@ if ($do == 'addnews') {
 		}
 	}
 	if ($operate == 'add') {
-		if ($is_save_location === false) {
+		if (!$is_save_location) {
 			$media_id = $account_api->addMatrialNews($articles);
 			if (is_error($media_id)) {
 				message(error(1, $media_id), '', 'ajax');
@@ -148,28 +148,28 @@ if ($do == 'addnews') {
 		$wechat_attachment = array(
 			'uniacid' => $_W['uniacid'],
 			'acid' => $_W['acid'],
-			'media_id' => $is_save_location === false ? $media_id : '',
+			'media_id' => !$is_save_location ? $media_id : '',
 			'type' => 'news',
-			'model' => $is_save_location === false ? 'perm' : 'local',
+			'model' => !$is_save_location ? 'perm' : 'local',
 			'createtime' => time()
 		);
 		pdo_insert('wechat_attachment', $wechat_attachment);
 		$attach_id = pdo_insertid();
 		//兼容0.8版图文回复
-		if ($is_save_location === true) {
+		if ($is_save_location) {
 			pdo_update('news_reply', array('media_id' => $attach_id), array('id' => $news_rid));
 		}
 		$wechat_new = $account_api->getMaterial($media_id);
 		foreach ($post_news as $key => $news) {
 			$news['attach_id'] = $attach_id;
-			if ($is_save_location === false) {
+			if (!$is_save_location) {
 				$news['url'] = $wechat_new['news_item'][$key]['url'];
 			}
 			pdo_insert('wechat_news', $news);
 		}
 		message(error(0, '创建图文素材成功'), '', 'ajax');
 	} else {
-		if ($is_save_location === false) {
+		if (!$is_save_location) {
 			foreach ($articles as $edit_news) {
 				$result = $account_api->editMaterialNews($edit_news);
 				if (is_error($result)) {
