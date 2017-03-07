@@ -187,7 +187,7 @@ function cache_build_frame_menu() {
 					$displayorder--;
 					$displayorder = max($displayorder, 0);
 				}
-				$system_menu[$menu_name]['section'][$section_name]['menu'] = array_sort($system_menu[$menu_name]['section'][$section_name]['menu'], 'displayorder', 'desc');
+				$system_menu[$menu_name]['section'][$section_name]['menu'] = iarray_sort($system_menu[$menu_name]['section'][$section_name]['menu'], 'displayorder', 'desc');
 			}
 		}
 		$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame'), array('title', 'url', 'permission_name'));

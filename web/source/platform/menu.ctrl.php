@@ -338,12 +338,14 @@ if($do == 'post') {
 		if (empty($post['title'])) {
 			message(error(-1, '请填写菜单组名称！'), '', 'ajax');
 		}
-		if (empty($id)) {
-			$condition = array('title' => $post['title'], 'type' => $type);
-		} else {
-			$condition = array('title' => $post['title'], 'type' => $type, 'id <>' => $id);
+		$check_title_exist_condition = array(
+			'title' => $post['title'],
+			'type' => $type,
+		);
+		if (!empty($id)) {
+			$check_title_exist_condition['id <>'] = $id;
 		}
-		$check_title_exist = pdo_get('uni_account_menus', $condition, array('id'));
+		$check_title_exist = pdo_getcolumn('uni_account_menus', $check_title_exist_condition, 'id');
 		if (!empty($check_title_exist)) {
 			message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
 		}

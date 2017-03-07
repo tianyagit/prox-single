@@ -120,7 +120,7 @@ function checklogin() {
  * 检查操作员是否已经选择一个公众号作为工作区域
  */
 function checkaccount() {
-	global $_W, $_GPC;
+	global $_W;
 	if (empty($_W['uniacid'])) {
 		message('', url('account/display'), 'info');
 	}
