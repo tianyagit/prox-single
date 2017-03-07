@@ -11,7 +11,7 @@ defined('IN_IA') or exit('Access Denied');
  * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号; 4. 小程序)
  * @return array|boolean 错误原因或成功
  */
-function uni_create_permission($uid, $type = 1) {
+function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 	$groupid = pdo_fetchcolumn('SELECT groupid FROM ' . tablename('users') . ' WHERE uid = :uid', array(':uid' => $uid));
 	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount, maxwxapp FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
 	$list = pdo_fetchall('SELECT d.type, count(*) AS count FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0 GROUP BY d.type', array(':uid' => $uid, ':role' => 'owner'));
@@ -23,19 +23,11 @@ function uni_create_permission($uid, $type = 1) {
 		}
 	}
 	//添加主公号
-	if ($type == 1) {
+	if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 		if ($account_num >= $groupdata['maxaccount']) {
 			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxaccount'] . '个主公众号');
 		}
-	} elseif ($type == 2) {
-		$subaccountnum = 0;
-		if (!empty($uniacids)) {
-			$subaccountnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('account') . ' WHERE uniacid IN (' . implode(',', $uniacids) . ')');
-		}
-		if ($subaccountnum >= $groupdata['maxsubaccount']) {
-			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxsubaccount'] . '个子公众号');
-		}
-	} elseif ($type == 4) {
+	} elseif ($type == ACCOUNT_TYPE_APP_NORMAL) {
 		if ($wxapp_num >= $groupdata['maxwxapp']) {
 			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxwxapp'] . '个小程序');
 		}
