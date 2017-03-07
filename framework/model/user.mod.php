@@ -256,6 +256,7 @@ function user_group_detail_info($groupid = 0) {
 						'id' => $packages_val['id'],
 						'name' => $packages_val['name'],
 						'modules' => $packages_val['modules'],
+						'wxapp' => $packages_val['wxapp'],
 						'templates' => $packages_val['templates'],
 					);
 					continue;

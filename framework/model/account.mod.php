@@ -156,7 +156,7 @@ function uni_modules($enabledOnly = true) {
 		if (!empty($packageids) && in_array('-1', $packageids)) {
 			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " ORDER BY issystem DESC, mid ASC", array(), 'name');
 		} else {
-			$wechatgroup = pdo_fetchall("SELECT `modules`, `wxapp` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
+			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
 			$ms = array();
 			$mssql = '';
 			if (!empty($wechatgroup)) {
@@ -287,7 +287,7 @@ function uni_groups($groupids = array()) {
 		unset($row);
 		$condition .= " AND id IN (" . implode(',', $groupids) . ")";
 	}
-	$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id ASC", array(), 'id');
+	$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
 	if (in_array('-1', $groupids)) {
 		$list[-1] = array('id' => -1, 'name' => '所有服务');
 	}
@@ -295,16 +295,22 @@ function uni_groups($groupids = array()) {
 		$list[0] = array('id' => 0, 'name' => '基础服务');
 	}
 	if (!empty($list)) {
-		foreach ($list as &$row) {
+		foreach ($list as $k=>&$row) {
 			if (!empty($row['modules'])) {
 				$modules = iunserializer($row['modules']);
 				if (is_array($modules)) {
-					$row['modules'] = pdo_fetchall("SELECT name, title FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $modules) . "')");
+					$modules_lists = pdo_fetchall("SELECT name, title, app_support, wxapp_support FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $modules) . "')");
+					$row['modules'] = $modules_lists;
+					if (!empty($row['modules'])) {
+						foreach ($row['modules'] as $key=>&$module) {
+							if ($module['wxapp_support'] == 2) {
+								$row['wxapp'][] = $module;
+								unset($row['modules'][$key]);
+							}
+						}
+					}
+
 				}
-			}
-			if (!empty($row['wxapp'])) {
-				$wxapps = iunserializer($row['wxapp']);
-				$row['wxapp'] = pdo_fetchall("SELECT name, title FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $wxapps) . "')");
 			}
 			if (!empty($row['templates'])) {
 				$templates = iunserializer($row['templates']);
