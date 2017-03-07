@@ -134,10 +134,6 @@
 						</label>
 						{/if}
 						<label class="radio-inline">
-							<input type="radio" name="wechat[switch]" id="wechat_borrow" ng-model="wechat.switch" ng-checked="wechat.switch == 2" ng-disabled="wechat_facilitator.switch == 'true'" value="2" />
-							借用支付
-						</label>
-						<label class="radio-inline">
 							<input type="radio" name="wechat[switch]" id="wechat_close" ng-model="wechat.switch" ng-checked="wechat.switch == 4 || wechat.switch == 'false'" value="4" />
 							关闭
 						</label>
@@ -148,20 +144,6 @@
 				{if empty($pay['wechat']['version']) && !empty($pay['wechat']['signkey'])}
 				{php $pay['wechat']['version'] = 1;}
 				{/if}
-				<div ng-show="wechat.switch == '2'">
-					<div class="form-group">
-						<label class="col-xs-12 col-sm-3 col-md-2 control-label">借用公众号</label>
-						<div class="col-sm-9 col-xs-12">
-							<select name="wechat[borrow]" class="form-control">
-								<option value="0">不借用任何公众号</option>
-								{loop $borrow $acid $name}
-								<option value="{$acid}" {if $pay['wechat']['borrow'] == $acid}selected{/if}>{$name}</option>
-								{/loop}
-							</select>
-							<span class="help-block">借用认证服务号支付权限完成支付。</span>
-						</div>
-					</div>
-				</div>
 				<div ng-show="wechat.switch == '1'">
 					<div class="form-group" {if $accounts[$_W['acid']]['level'] == 3}style="display: none"{/if}>
 					<label class="col-xs-12 col-sm-3 col-md-2 control-label">接口类型</label>
