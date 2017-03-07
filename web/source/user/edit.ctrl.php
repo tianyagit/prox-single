@@ -77,6 +77,5 @@ if ($do == 'edit_modules_tpl') {
 
 if ($do == 'edit_account') {
 	$account_detail = user_account_detail_info($uid);
-	$wxapp_detail = user_account_detail_info($uid, 4);
 	template('user/edit-account');
 }
