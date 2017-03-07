@@ -3,13 +3,6 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * $sn$
  */
-
-//小程序打包的模块内重定向URL
-$uniacid_resource_exist = strpos($_SERVER['HTTP_REFERER'], '&uniacid_resource=wxapp');
-if ( !empty($uniacid_resource_exist) && (($controller == 'platform' && ($action == 'reply' || $action == 'cover')) || ($controller == 'profile' && $action == 'module' && $a == 'setting') || ($controller == 'site' && ($action == 'nav' || $action == 'entry'))) ) {
-	header('Location: ./web/index.php?' . $_SERVER['QUERY_STRING']. 'uniacid_source=wxapp&uniacid='. $_GPC['__uniacid']);
-}
-
 load()->model('user');
 load()->func('tpl');
 $_W['token'] = token();
@@ -42,6 +35,11 @@ if(!empty($_GPC['__uniacid'])) {
 	} else {
 		if ( (!empty($_GPC['uniacid_source']) && $_GPC['uniacid_source'] == 'wxapp') ) {
 			$uniacid = intval($_GPC['uniacid']);
+			if (!empty($uniacid)) {
+				isetcookie('__uniacid', $uniacid, 7 * 86400);
+				$cache_lastaccount['account'] = $uniacid;
+				cache_write($cache_key, $cache_lastaccount);
+			}
 		} else {
 			$uniacid = $cache_lastaccount['account'];
 		}

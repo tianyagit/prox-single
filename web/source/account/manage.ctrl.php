@@ -24,9 +24,9 @@ if ($do == 'display') {
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
 	$type_lists = array(
-		ACCOUNT_TYPE_APP_NORMAL => "(" . ACCOUNT_TYPE_APP_NORMAL . ")",
-		ACCOUNT_TYPE_OFFCIAL_NORMAL => "(" . ACCOUNT_TYPE_OFFCIAL_NORMAL . "," . ACCOUNT_TYPE_OFFCIAL_AUTH . ")",
-		ACCOUNT_TYPE_OFFCIAL_AUTH => "(" . ACCOUNT_TYPE_OFFCIAL_NORMAL . "," . ACCOUNT_TYPE_OFFCIAL_AUTH . ")",
+		ACCOUNT_TYPE_APP_NORMAL => '(' . ACCOUNT_TYPE_APP_NORMAL . ')',
+		ACCOUNT_TYPE_OFFCIAL_NORMAL => '(' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ')',
+		ACCOUNT_TYPE_OFFCIAL_AUTH => '(' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ')',
 	);
 	$uni_account_type = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? 4 : 1;
 	if (!empty($_W['isfounder'])) {

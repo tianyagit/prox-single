@@ -756,6 +756,9 @@ class WeiXinAccount extends WeAccount {
 		if(is_error($content)) {
 			message('获取微信公众号授权失败, 请稍后重试！错误详情: ' . $content['message']);
 		}
+		if (empty($content['content'])) {
+			return error('-1', 'AccessToken获取失败，请检查appid和appsecret的值是否与微信公众平台一致！');
+		}
 		$token = @json_decode($content['content'], true);
 		if(empty($token) || !is_array($token) || empty($token['access_token']) || empty($token['expires_in'])) {
 			$errorinfo = substr($content['meta'], strpos($content['meta'], '{'));
