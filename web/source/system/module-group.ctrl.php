@@ -20,8 +20,7 @@ if ($do == 'save') {
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
-		'modules' => $_GPC['modules'],
-		'wxapp' => $_GPC['wxapp'],
+		'modules' => array_merge(array_keys($_GPC['modules']), array_keys($_GPC['wxapp'])),
 		'templates' => $_GPC['templates'],
 	);
 	if (empty($package_info['name'])) {
@@ -29,10 +28,7 @@ if ($do == 'save') {
 	}
 
 	if (!empty($package_info['modules'])) {
-		$package_info['modules'] = iserializer(array_keys($package_info['modules']));
-	}
-	if (!empty($package_info['wxapp'])) {
-		$package_info['wxapp'] = iserializer(array_keys($package_info['wxapp']));
+		$package_info['modules'] = iserializer($package_info['modules']);
 	}
 	if (!empty($package_info['templates'])) {
 		foreach ($package_info['templates'] as $key => $template) {
@@ -41,7 +37,6 @@ if ($do == 'save') {
 		}
 		$package_info['templates'] = iserializer($package_info['templates']);
 	}
-
 	if (!empty($package_info['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
@@ -71,13 +66,12 @@ if ($do == 'display') {
 	if (!empty($_GPC['name'])) {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
 	}
-	$modules_group_list = pdo_getall('uni_group', $param);
+	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as &$group) {
 			if (!empty($group['modules'])) {
-				$modules = iunserializer($group['modules']);
+				$modules = $group['modules'];
 				if (is_array($modules) && !empty($modules)) {
-					$group['modules'] = pdo_getall('modules', array('name' => $modules), array('name', 'title'));
 					if (!empty($group['modules'])) {
 						foreach ($group['modules'] as &$module) {
 							if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
@@ -95,9 +89,8 @@ if ($do == 'display') {
 				$group['modules'] = array();
 			}
 			if (!empty($group['wxapp'])) {
-				$wxapp = iunserializer($group['wxapp']);
+				$wxapp = $group['wxapp'];
 				if (is_array($wxapp) && !empty($wxapp)) {
-					$group['wxapp'] = pdo_getall('modules', array('name' => $wxapp), array('name', 'title'));
 					if (!empty($group['wxapp'])) {
 						foreach ($group['wxapp'] as &$wxapp) {
 							if (file_exists(IA_ROOT.'/addons/'.$wxapp['name'].'/icon-custom.jpg')) {
@@ -112,14 +105,7 @@ if ($do == 'display') {
 					$group['wxapp'] = array();
 				}
 			}
-			if (!empty($group['templates'])) {
-				$templates = iunserializer($group['templates']);
-				if (is_array($templates) && !empty($templates)) {
-					$group['templates'] = pdo_getall('site_templates', array('id' => $templates), array('name', 'title'));
-				}
-			} else {
-				$group['templates'] = array();
-			}
+			$group['templates'] = !empty($group['templates']) ? $group['templates'] : array();
 		}
 		unset($group);
 	}
@@ -145,7 +131,8 @@ if ($do == 'post') {
 	$group_have_template = array();
 	$group_have_module = array();
 	if (!empty($id)) {
-		$module_group = pdo_get('uni_group', array('id' => $id));
+		$uni_module_groups = uni_groups();
+		$module_group = $uni_module_groups[$id];
 		$module_group['modules'] = empty($module_group['modules']) ? array() : iunserializer($module_group['modules']);
 		if (!empty($module_group['modules'])) {
 			foreach ($module_group['modules'] as $module_name) {
@@ -159,9 +146,9 @@ if ($do == 'post') {
 				} else {
 					$group_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_name.'/icon.jpg');
 				}
-//				if ($group_have_module[$module_info['name']]['app_support'] == 2) {
+				if ($group_have_module[$module_info['name']]['app_support'] == 2) {
 					$group_have_module_app[$module_info['name']] = $group_have_module[$module_info['name']];
-//				}
+				}
 			}
 		}
 		$module_group['wxapp'] = empty($module_group['wxapp']) ? array() : iunserializer($module_group['wxapp']);
@@ -204,9 +191,9 @@ if ($do == 'post') {
 				} else {
 					$group_not_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg');
 				}
-//				if ($group_not_have_module[$module_info['name']]['app_support'] == 2) {
+				if ($group_not_have_module[$module_info['name']]['app_support'] == 2) {
 					$group_not_have_module_app[$module_info['name']] = $group_not_have_module[$module_info['name']];
-//				}
+				}
 				if ($group_not_have_module[$module_info['name']]['wxapp_support'] == 2) {
 					$group_not_have_module_wxapp[$module_info['name']] = $group_not_have_module[$module_info['name']];
 				}

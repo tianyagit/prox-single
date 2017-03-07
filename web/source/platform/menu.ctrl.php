@@ -339,15 +339,13 @@ if($do == 'post') {
 			message(error(-1, '请填写菜单组名称！'), '', 'ajax');
 		}
 		if (empty($id)) {
-			$check_title = pdo_get('uni_account_menus', array('title' => $post['title'], 'type' => $type), array('id'));
-			if (!empty($check_title)) {
-				message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
-			}
+			$condition = array('title' => $post['title'], 'type' => $type);
 		} else {
-			$check_title = pdo_get('uni_account_menus', array('title' => $post['title'], 'type' => $type, 'id <>' => $id), array('id'));
-			if (!empty($check_title)) {
-				message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
-			}
+			$condition = array('title' => $post['title'], 'type' => $type, 'id <>' => $id);
+		}
+		$check_title_exist = pdo_get('uni_account_menus', $condition, array('id'));
+		if (!empty($check_title_exist)) {
+			message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax');
 		}
 		
 		$menu = array();

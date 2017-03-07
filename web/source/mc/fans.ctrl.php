@@ -277,7 +277,7 @@ if ($do == 'sync') {
 		$total = ceil($total/5);
 		if (!empty($sync_fans)) {
 			foreach ($sync_fans as $fans) {
-				mc_init_fans_info($fans);
+				mc_init_fans_info($fans['openid']);
 			}
 		}
 		message(error(0, array('pageindex' => $pageindex, 'total' => $total)), '', 'ajax');
@@ -290,7 +290,7 @@ if ($do == 'sync') {
 		$sync_fans = pdo_getall('mc_mapping_fans', array('openid' => $openids));
 		if (!empty($sync_fans)) {
 			foreach ($sync_fans as $fans) {
-				mc_init_fans_info($fans);
+				mc_init_fans_info($fans['openid']);
 			}
 		}
 		message(error(0, 'success'), '', 'ajax');

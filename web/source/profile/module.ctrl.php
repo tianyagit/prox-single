@@ -49,7 +49,6 @@ if($do == 'display') {
 		$groupid = '-2';
 	}
 	if (empty($groupid)) {
-		$modules = 
 		$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE issystem = 1 ORDER BY issystem DESC, mid ASC", array(), 'name');
 	} else {
 		if ($groupid == '-1') {
@@ -73,14 +72,21 @@ if($do == 'display') {
 						FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
 			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 		} else {
-			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
+			$groups = uni_groups();
+			if (!empty($packageids)) {
+				foreach ($packageids as $k=>$id) {
+					if (!empty($groups[$id])) {
+						$wechatgroup[$id] = $groups[$id];
+					}
+				}
+			}
 			$package_module = array();
 			if (!empty($wechatgroup)) {
 				foreach ($wechatgroup as $row) {
-					$row['modules'] = iunserializer($row['modules']);
+					$row['modules'] = array_merge($row['modules'], $row['wxapp']);
 					if (!empty($row['modules'])) {
 						foreach ($row['modules'] as $modulename) {
-							$package_module[$modulename] = $modulename;
+							$package_module[$modulename['name']] = $modulename['name'];
 						}
 					}
 				}

@@ -121,7 +121,7 @@ function checklogin() {
  */
 function checkaccount() {
 	global $_W, $_GPC;
-	if ($_GPC['type'] == 'wxapp') {
+	if ($_GPC['uniacid_source'] == 'wxapp') {
 		$uniacid = intval($_GPC['uniacid']);
 		if (!empty($uniacid)) {
 			isetcookie('__uniacid', $uniacid, 7 * 86400);
