@@ -40,7 +40,6 @@ if($do == 'base') {
 		}else {
 			message(error(40035, '参数错误！'), '', 'ajax');
 		}
-		$uni_account_type = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? 4 : 1;
 		switch ($type) {
 			case 'qrcodeimgsrc':
 			case 'headimgsrc':
@@ -69,7 +68,7 @@ if($do == 'base') {
 				break;
 			case 'name':
 				$uni_account = pdo_update('uni_account', array('name' => trim($_GPC['request_data'])), array('uniacid' => $uniacid));
-				$account_wechats = pdo_update(uni_account_tablename($uni_account_type), array('name' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
+				$account_wechats = pdo_update(uni_account_tablename(ACCOUNT_TYPE), array('name' => trim($_GPC['request_data'])), array('acid' => $acid, 'uniacid' => $uniacid));
 				$result = ($uni_account && $account_wechats) ? true : false;
 				break;
 			case 'account' :
@@ -112,7 +111,7 @@ if($do == 'base') {
 				break;
 		}
 		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime'))) {
-			$result = pdo_update(uni_account_tablename($uni_account_type), $data, array('acid' => $acid, 'uniacid' => $uniacid));
+			$result = pdo_update(uni_account_tablename(ACCOUNT_TYPE), $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
 		if($result) {
 			cache_delete("uniaccount:{$uniacid}");
