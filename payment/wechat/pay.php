@@ -76,7 +76,7 @@ $params = array(
 	'title' => urldecode($params['title']),
 	'uniontid' => $log['uniontid'],
 );
-if (intval($wechat['switch']) == 2 || intval($wechat['switch']) == 3 ) {
+if (intval($wechat['switch']) == 3 ) {
 	$wOpt = wechat_proxy_build($params, $wechat);
 } else {
 	unset($wechat['sub_mch_id']);
