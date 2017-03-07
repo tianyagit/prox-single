@@ -19,16 +19,14 @@ if(empty($_W['isfounder'])) {
 }
 $sql = "SELECT * FROM " . tablename('uni_account') . $where;
 $uniaccounts = pdo_fetchall($sql, $params);
-$borrow = array();
+$service = array();
 if(!empty($uniaccounts)) {
 	foreach($uniaccounts as $uniaccount) {
 		$account = account_fetch($uniaccount['default_acid']);
 		$account_setting = pdo_get('uni_settings', array('uniacid' => $account['uniacid']));
 		$payment = iunserializer($account_setting['payment']);
-		if (!empty($account['key']) && !empty($account['secret']) && in_array($account['level'], array(4)) && !empty($payment) && intval($payment['wechat']['switch']) == 1 ) {
-			if ((!is_bool($payment['wechat']['switch']) && $payment['wechat']['switch'] != 4) || (is_bool($payment['wechat']['switch']) && !empty($payment['wechat']['switch']))) {
-				$borrow[$account['uniacid']] = $account['name'];
-			}
+		if (!empty($payment['wechat_facilitator']['switch'])) {
+			$service[$account['uniacid']] = $account['name'];
 		}
 	}
 }
@@ -61,13 +59,19 @@ if($_W['ispost']) {
 		}
 		exit();
 	}
-	$wechat = array_elements(array('switch', 'account', 'signkey', 'partner', 'key', 'version', 'mchid', 'apikey', 'version', 'borrow', 'sub_mch_id'), $_GPC['wechat']);
+	$wechat = array_elements(array('switch', 'account', 'signkey', 'partner', 'key', 'version', 'mchid', 'apikey', 'version', 'service', 'borrow', 'sub_mch_id'), $_GPC['wechat']);
 	$wechat['signkey'] = $wechat['version'] == 2 ? trim($wechat['apikey']) : trim($wechat['signkey']);
 	$wechat['partner'] = trim($wechat['partner']);
 	$wechat['key'] = trim($wechat['key']);
 	$wechat['sub_mch_id'] = trim($wechat['sub_mch_id']);
 	if($wechat['switch'] && empty($wechat['account'])) {
 		message('请输入完整的微信支付接口信息.');
+	}
+	$wechat_facilitator['mchid'] = intval($_GPC['wechat_facilitator']['mchid']);
+	$wechat_facilitator['signkey'] = trim($_GPC['wechat_facilitator']['signkey']);
+	$wechat_facilitator['switch'] = trim($_GPC['wechat_facilitator']['switch']) == 'true' ? true : false;
+	if (!empty($wechat_facilitator['switch']) && empty($wechat_facilitator['mchid'])) {
+		message('请填写完整微信服务商信息', referer(), 'info');
 	}
 	$unionpay = array_elements(array('switch', 'signcertpwd', 'merid'), $_GPC['unionpay']);
 	$unionpay['switch'] = $unionpay['switch'] == 'true';
@@ -90,10 +94,14 @@ if($_W['ispost']) {
 	$pay['credit'] = $credit;
 	$pay['alipay'] = $alipay;
 	$pay['wechat'] = $wechat;
+	$pay['wechat_facilitator'] = $wechat_facilitator;
 	$pay['delivery'] = $delivery;
 	$pay['unionpay'] = $unionpay;
 	$pay['baifubao'] = $baifubao;
 	$pay['line'] = $line;
+	if (intval($pay['wechat']['switch']) == 2) {
+		$pay['wechat']['switch'] = 4;
+	}
 	if ($unionpay['switch'] && !empty($_FILES['unionpay']['tmp_name']['signcertpath'])) {
 		load()->func('file');
 		mkdirs(IA_ROOT . '/attachment/unionpay/');
@@ -137,4 +145,7 @@ MFF/yA==
 $pay['unionpay']['signcertexists'] = file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx');
 $accounts = array();
 $accounts[$_W['acid']] = array_elements(array('name', 'acid', 'key', 'secret', 'level'), $_W['account']);
+if (intval($pay['wechat']['switch']) == 2) {
+	$pay['wechat']['switch'] = 4;
+}
 template('profile/payment');
