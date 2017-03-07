@@ -141,11 +141,6 @@ if ($do == 'display') {
 			$account = account_fetch ($uniaccount['default_acid']);
 			$account_setting = pdo_get ('uni_settings', array ('uniacid' => $account['uniacid']));
 			$payment = iunserializer ($account_setting['payment']);
-			if (!empty($account['key']) && !empty($account['secret']) && in_array ($account['level'], array (4)) && !empty($payment) && intval($payment['wechat']['switch']) == 1) {
-				if ((!is_bool($payment['wechat']['switch']) && $payment['wechat']['switch'] != 4) || (is_bool($payment['wechat']['switch']) && !empty($payment['wechat']['switch']))) {
-					$borrow[$account['uniacid']] = $account['name'];
-				}
-			}
 			if (!empty($payment['wechat_facilitator']['switch'])) {
 				$service[$account['uniacid']] = $account['name'];
 			}
@@ -165,6 +160,10 @@ if ($do == 'display') {
 			'baifubao' => array('switch' => false, 'signkey' => '', 'mchid' => ''),
 			'line' => array('switch' => false, 'message' => ''),
 		);
+	}
+	//废弃微信借用支付
+	if (intval($pay_setting['wechat']['switch']) == '2') {
+		$pay_setting['wechat']['switch'] = 4;
 	}
 	if (empty($_W['isfounder'])) {
 		$user_account_list = pdo_getall('uni_account_users', array('uid' => $_W['uid']), array(), 'uniacid');

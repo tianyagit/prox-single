@@ -11,7 +11,7 @@ $scope = $_GPC['scope'];
 if (!empty($_SESSION['pay_params'])) {
 	//借用微信支付或服务商支付，授权公众号信息改成借用公众号信息
 	$setting = uni_setting($_W['uniacid'], array('payment'));
-	$uniacid = !empty($setting['payment']['wechat']['service']) ? $setting['payment']['wechat']['service'] : $setting['payment']['wechat']['borrow'];
+	$uniacid = $setting['payment']['wechat']['service'];
 	$acid = pdo_getcolumn('uni_account', array('uniacid' => $uniacid), 'default_acid');
 	$setting = account_fetch($acid);
 	$_W['account']['oauth'] = array(
