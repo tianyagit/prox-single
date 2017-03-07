@@ -273,21 +273,38 @@ function user_group_detail_info($groupid = 0) {
  *@param number $account_type账号类型，空是公众号，4是小程序
  *@return array
  */
-function user_account_detail_info($uid, $account_type = '') {
-    $type = empty($account_type) ? 1 : 4;
-    $sql = "SELECT c.uniacid, c.role FROM ". tablename(uni_account_tablename($type)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type != 4 AND c.uid = :uid";
-    $weids = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
-    if (!empty($weids)) {
-        $wechats = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename(uni_account_tablename($type)) . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
-        foreach ($wechats as &$wechats_val) {
-            $wechats_val['thumb'] = tomedia('headimg_'.$wechats_val['acid']. '.jpg').'?time='.time();
-            foreach ($weids as $weids_key => $weids_val) {
-                if ($wechats_val['uniacid'] == $weids_key) {
-                    $wechats_val['role'] = $weids_val['role'];
-                }
-            }
-        }
-        unset($wechats_val);
-    }
-	return $wechats;
+function user_account_detail_info($uid) {
+	$sql = "SELECT b.uniacid, b.role, a.type FROM " . tablename('account'). " AS a LEFT JOIN ". tablename('uni_account_users') . " AS b ON a.uniacid = b.uniacid WHERE a.acid <> 0 AND a.isdeleted <> 1 AND b.uid = :uid";
+	$weids = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
+	foreach ($weids as $uniacid => $account) {
+		if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+			$app_weids[$uniacid] = $account;
+		} elseif ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+			$wxapp_weids[$uniacid] = $account;
+		}
+	}
+	if (!empty($wxapp_weids)) {
+		$wxapps = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename(uni_account_tablename(ACCOUNT_TYPE_APP_NORMAL)) . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($wxapp_weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
+	}
+	if (!empty($app_weids)) {
+		$wechats = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename(uni_account_tablename(ACCOUNT_TYPE_OFFCIAL_NORMAL)) . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($app_weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
+	}
+	$accounts = array_merge($wxapps, $wechats);
+	if (!empty($accounts)) {
+		foreach ($accounts as &$account_val) {
+			$account_val['thumb'] = tomedia('headimg_'.$account_val['acid']. '.jpg').'?time='.time();
+			foreach ($weids as $weids_key => $weids_val) {
+				if ($account_val['uniacid'] == $weids_key) {
+					$account_val['role'] = $weids_val['role'];
+					if ($weids_val['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+						$account_lists['wxapp'][$weids_key] = $account_val;
+					} elseif ($weids_val['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $weids_val['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+						$account_lists['wechat'][$weids_key] = $account_val;	
+					}
+				}
+			}
+		}
+		unset($account_val);
+	}
+	return $account_lists;
 }
