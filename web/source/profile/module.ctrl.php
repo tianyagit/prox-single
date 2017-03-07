@@ -72,21 +72,14 @@ if($do == 'display') {
 						FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
 			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 		} else {
-			$groups = uni_groups();
-			if (!empty($packageids)) {
-				foreach ($packageids as $k=>$id) {
-					if (!empty($groups[$id])) {
-						$wechatgroup[$id] = $groups[$id];
-					}
-				}
-			}
+			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
 			$package_module = array();
 			if (!empty($wechatgroup)) {
 				foreach ($wechatgroup as $row) {
-					$row['modules'] = array_merge($row['modules'], $row['wxapp']);
+					$row['modules'] = iunserializer($row['modules']);
 					if (!empty($row['modules'])) {
 						foreach ($row['modules'] as $modulename) {
-							$package_module[$modulename['name']] = $modulename['name'];
+							$package_module[$modulename] = $modulename;
 						}
 					}
 				}
