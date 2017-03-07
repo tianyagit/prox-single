@@ -23,7 +23,7 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 		}
 	}
 	//添加主公号
-	if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
+	if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 		if ($account_num >= $groupdata['maxaccount']) {
 			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxaccount'] . '个主公众号');
 		}
