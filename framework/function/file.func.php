@@ -275,15 +275,12 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 			$ossClient = new \OSS\OssClient($_W['setting']['remote']['alioss']['key'], $_W['setting']['remote']['alioss']['secret'], $endpoint);
 			$ossClient->uploadFile($_W['setting']['remote']['alioss']['bucket'], $filename, ATTACHMENT_ROOT.$filename);
 		} catch (\OSS\Core\OssException $e) {
-			if (empty($error)) {
-				if ($auto_delete_local) {
-					file_delete($filename);
-				}
-				return true;
-			} else {
-				return error(1, $e->getMessage());
-			}
+			return error(1, $e->getMessage());
 		}
+		if ($auto_delete_local) {
+			file_delete($filename);
+		}
+		return true;
 	}elseif ($_W['setting']['remote']['type'] == '3') {
 		require_once(IA_ROOT . '/framework/library/qiniu/autoload.php');
 		$auth = new Qiniu\Auth($_W['setting']['remote']['qiniu']['accesskey'],$_W['setting']['remote']['qiniu']['secretkey']);
