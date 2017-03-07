@@ -315,7 +315,7 @@ function module_count_unistalled_module() {
 			if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['app_support'] == 2) {
 				unset($uninstall_module[$name]);
 			}
-			if (ACCOUNT_TYPE == 0 && $module['wxapp_support'] == 2) {
+			if (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['wxapp_support'] == 2) {
 				unset($uninstall_module[$name]);
 			}
 		}

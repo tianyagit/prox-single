@@ -28,12 +28,11 @@ if ($do == 'display') {
 		ACCOUNT_TYPE_OFFCIAL_NORMAL => '(' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ')',
 		ACCOUNT_TYPE_OFFCIAL_AUTH => '(' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ')',
 	);
-	$uni_account_type = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? 4 : 1;
 	if (!empty($_W['isfounder'])) {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type IN ".$type_lists[$uni_account_type];
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type IN ".$type_lists[ACCOUNT_TYPE];
 		$order_by = " ORDER BY a.`acid` DESC";
 	} else {
-		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted = 1 AND b.type IN ".$type_lists[$uni_account_type];
+		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted = 1 AND b.type IN ".$type_lists[ACCOUNT_TYPE];
 		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
 	}
@@ -41,8 +40,8 @@ if ($do == 'display') {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-	$tsql = "SELECT count(*) FROM " .tablename(uni_account_tablename($uni_account_type)) . " AS a LEFT JOIN" . tablename('account') . " AS b ON a.acid = b.acid {$condition} {$order_by}";
-	$sql = $sql = "SELECT * FROM ". tablename(uni_account_tablename($uni_account_type)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
+	$tsql = "SELECT count(*) FROM " .tablename(uni_account_tablename(ACCOUNT_TYPE)) . " AS a LEFT JOIN" . tablename('account') . " AS b ON a.acid = b.acid {$condition} {$order_by}";
+	$sql = $sql = "SELECT * FROM ". tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$total = pdo_fetchcolumn($tsql, $param);
 	$del_accounts = pdo_fetchall($sql, $param);
 	if(!empty($del_accounts)) {
