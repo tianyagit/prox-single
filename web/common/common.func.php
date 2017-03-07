@@ -121,13 +121,6 @@ function checklogin() {
  */
 function checkaccount() {
 	global $_W, $_GPC;
-	if ($_GPC['type'] == 'wxapp') {
-		$uniacid = intval($_GPC['uniacid']);
-		if (!empty($uniacid)) {
-			isetcookie('__uniacid', $uniacid, 7 * 86400);
-			isetcookie('__uid', $_W['uid'], 7 * 86400);
-		}
-	}
 	if (empty($_W['uniacid'])) {
 		message('', url('account/display'), 'info');
 	}
