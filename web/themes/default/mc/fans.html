@@ -56,7 +56,10 @@
 	</li>
 </ul>
 <div class="we7-page-search we7-padding-bottom clearfix">
-	<form action="" method="post" class="form-inline pull-left" role="form">
+	<div class="pull-right">
+		<button class="btn btn-primary we7-padding-horizontal add-group" data-toggle="popover">+添加分组</button>
+	</div>
+	<form action="" method="post" class="form-inline" role="form">
 		<div class="form-group">
 			<div class="form-controls">
 				<select name="follow" class="we7-select" >
@@ -91,10 +94,6 @@
 		
 		<input name="tag" value="{$tag}" type="hidden">
 	</form>
-	<div class="pull-right">
-		<button class="btn btn-primary we7-padding-horizontal add-group" data-toggle="popover">+添加分组</button>
-	</div>
-
 </div>
 <div class="popover-add-group" style="display: none;">
 	<div class="input-group" style="width: 250px;">
