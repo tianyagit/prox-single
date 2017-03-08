@@ -9,8 +9,9 @@ if ($action != 'display') {
 if ($controller == 'account' && $action == 'manage') {
 	if ($_GPC['account_type'] == '4') {
 		define('ACTIVE_FRAME_URL', url('account/manage/display', array('account_type' => '4')));
-	} 
+	}
 }
+$_GPC['account_type'] = !empty($_GPC['account_type']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
 if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
 	define('ACCOUNT_TYPE', ACCOUNT_TYPE_APP_NORMAL);
 	define('ACCOUNT_TYPE_OFFCIAL', 0);

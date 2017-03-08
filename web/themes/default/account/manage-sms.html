@@ -1,30 +1,5 @@
 {template 'common/header'}
-<ol class="breadcrumb we7-breadcrumb">
-	<a href="{url 'account/manage'}"><i class="wi wi-back-circle"></i> </a>
-	<li><a href="{url 'account/manage'}">公众号管理</a></li>
-	<li>公众号设置</li>
-</ol>
-<div class="media media-wechat-setting">
-	<a class="media-left">
-		<img src="{$headimgsrc}" class="wechat-img">
-	</a>
-	<div class="media-body media-middle ">
-		<h4 class="media-heading color-dark">{$account['name']}</h4>
-		<span class="color-gray">{if $account['level'] == 1}类型：普通订阅号{/if}{if $account['level'] == 2}类型：普通服务号{/if}{if $account['level'] == 3}类型：认证订阅号{/if}{if $account['level'] == 4}类型：认证服务号/认证媒体/政府订阅号{/if}</span>
-	</div>
-	{if $state == 'founder' || $state == 'owner'}
-	<div class="media-right media-middle">
-		<a href="{php echo url('account/manage/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid']))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
-	</div>
-	{/if}
-</div>
-<div class="clearfix"></div>
-<div class="btn-group we7-btn-group wechat-edit-group">
-	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $_GPC['account_type']))}" class="btn btn-default">基础信息</a>
-	<a href="{php echo url('account/post/sms', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $_GPC['account_type']))}" class="btn btn-default active">短信信息</a>
-	<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $_GPC['account_type']))}" class="btn btn-default">使用者管理</a>
-	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $_GPC['account_type']))}" class="btn btn-default">可用应用模块/模板</a>
-</div>
+{template 'account/account-header'}
 <div id="js-account-manage-sms" ng-controller="AccountManageSms" ng-cloak>
 	<table class="table we7-table table-hover">
 		<col width="200px"/>

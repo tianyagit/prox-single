@@ -44,7 +44,6 @@ if ($do == 'get_upgrade_info') {
 	}
 	message(error(0, $module), '', 'ajax');
 }
-
 if ($do == 'check_upgrade') {
 	$module_list = $_GPC['module_list'];//test
 	if (!empty($module_list) && is_array($module_list)) {
@@ -80,6 +79,9 @@ if ($do == 'check_upgrade') {
 				}
 				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
 				$branch_id_list = array_keys($cloud_m_info['branches']);
+				if (empty($branch_id_list)) {
+					$branch_id_list = array();
+				}
 				$best_branch_id = max($branch_id_list);
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
 				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['branch'] < $best_branch['id'] && !empty($cloud_m_info['version']))) {

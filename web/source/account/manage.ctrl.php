@@ -23,16 +23,19 @@ if ($do == 'display') {
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
-	$type_lists = array(
-		ACCOUNT_TYPE_APP_NORMAL => '(' . ACCOUNT_TYPE_APP_NORMAL . ')',
-		ACCOUNT_TYPE_OFFCIAL_NORMAL => '(' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ')',
-		ACCOUNT_TYPE_OFFCIAL_AUTH => '(' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ')',
+	
+	$type_condition = array(
+		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL),
+		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
+		ACCOUNT_TYPE_OFFCIAL_AUTH => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
 	);
+	$type_condition_sql = "'".implode("','", $type_condition[ACCOUNT_TYPE])."'";
+	
 	if (!empty($_W['isfounder'])) {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type IN ".$type_lists[ACCOUNT_TYPE];
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
 		$order_by = " ORDER BY a.`acid` DESC";
 	} else {
-		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type IN ".$type_lists[ACCOUNT_TYPE];
+		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
 		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
 	}
