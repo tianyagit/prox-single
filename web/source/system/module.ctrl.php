@@ -11,9 +11,10 @@ load()->model('cloud');
 load()->model('cache');
 load()->model('module');
 load()->model('account');
+load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
-$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban', 'check_receive');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
@@ -44,6 +45,7 @@ if ($do == 'get_upgrade_info') {
 	}
 	message(error(0, $module), '', 'ajax');
 }
+
 if ($do == 'check_upgrade') {
 	$module_list = $_GPC['module_list'];//test
 	if (!empty($module_list) && is_array($module_list)) {
@@ -430,7 +432,6 @@ if ($do == 'get_module_info') {
 }
 
 if ($do == 'module_detail') {
-	load()->classs('account');
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
 	$module_info = pdo_get('modules', array('name' => $module_name));
@@ -466,19 +467,6 @@ if ($do == 'module_detail') {
 	$modulename = $_GPC['modulename'];
 
 	//验证订阅消息是否成功
-	$check_subscribe = 0;
-	@$module_obj = WeUtility::createModuleReceiver($module_name);
-	if (!empty($module_obj)) {
-		$module_obj->uniacid = $_W['uniacid'];
-		$module_obj->acid = $_W['acid'];
-		$module_obj->message = array(
-			'event' => 'subscribe'
-		);
-		if(method_exists($module_obj, 'receive')) {
-			$module_obj->receive();
-			$check_subscribe = 1;
-		}
-	}
 
 	//可以使用此模块的公众号
 	$pageindex = max(1, $_GPC['page']);
@@ -499,6 +487,23 @@ if ($do == 'module_detail') {
 	$total = count($use_module_account);
 	$use_module_account = array_slice($use_module_account, ($pageindex - 1) * $pagesize, $pagesize);
 	$pager = pagination($total, $pageindex, $pagesize);
+}
+
+if ($do == 'check_receive') {
+	$module_name = trim($_GPC['module_name']);
+	$module_obj = WeUtility::createModuleReceiver($module_name);
+	if (!empty($module_obj)) {
+		$module_obj->uniacid = $_W['uniacid'];
+		$module_obj->acid = $_W['acid'];
+		$module_obj->message = array(
+			'event' => 'subscribe'
+		);
+		if(method_exists($module_obj, 'receive')) {
+			$module_obj->receive();
+			return message(error(0), '', 'ajax');
+		}
+	}
+	return message(error(1), '', 'ajax');
 }
 
 if ($do == 'uninstall') {

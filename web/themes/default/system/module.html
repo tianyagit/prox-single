@@ -378,7 +378,7 @@
 		<div class="panel-body">
 			<ul>
 				{loop $module_subscribes $subscribe}
-				<li>{$mtypes[$subscribe]} {if $check_subscribe == 0}<lable class="label label-danger">通讯失败</lable>{/if}  </li>
+				<li>{$mtypes[$subscribe]} <lable ng-if="subscribe == 2" class="label label-danger">通讯失败</lable>  </li>
 				{/loop}
 			</ul>
 		</div>
@@ -521,7 +521,8 @@
 			'url' : '{php echo url('system/module/change_receive_ban')}',
 			'modulename' : '{$module_info['name']}',
 			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
-			'saveModuleUrl' : "{php echo url('system/module/save_module_info')}"
+			'saveModuleUrl' : "{php echo url('system/module/save_module_info')}",
+			'checkReceiveUrl' : "{php echo url('system/module/check_receive')}"
 	});
 	angular.bootstrap($('.js-system-module-detail'), ['moduleApp']);
 	});
