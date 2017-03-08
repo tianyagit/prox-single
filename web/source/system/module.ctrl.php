@@ -11,9 +11,10 @@ load()->model('cloud');
 load()->model('cache');
 load()->model('module');
 load()->model('account');
+load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
-$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban', 'check_receive');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
@@ -80,6 +81,10 @@ if ($do == 'check_upgrade') {
 				}
 				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
 				$branch_id_list = array_keys($cloud_m_info['branches']);
+				if (empty($branch_id_list)) {
+					$module['upgrade'] = false;
+					continue;
+				}
 				$best_branch_id = max($branch_id_list);
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
 				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['branch'] < $best_branch['id'] && !empty($cloud_m_info['version']))) {
@@ -428,7 +433,6 @@ if ($do == 'get_module_info') {
 }
 
 if ($do == 'module_detail') {
-	load()->classs('account');
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
 	$module_info = pdo_get('modules', array('name' => $module_name));
@@ -464,19 +468,6 @@ if ($do == 'module_detail') {
 	$modulename = $_GPC['modulename'];
 
 	//验证订阅消息是否成功
-	$check_subscribe = 0;
-	@$module_obj = WeUtility::createModuleReceiver($module_name);
-	if (!empty($module_obj)) {
-		$module_obj->uniacid = $_W['uniacid'];
-		$module_obj->acid = $_W['acid'];
-		$module_obj->message = array(
-			'event' => 'subscribe'
-		);
-		if(method_exists($module_obj, 'receive')) {
-			$module_obj->receive();
-			$check_subscribe = 1;
-		}
-	}
 
 	//可以使用此模块的公众号
 	$pageindex = max(1, $_GPC['page']);
@@ -497,6 +488,23 @@ if ($do == 'module_detail') {
 	$total = count($use_module_account);
 	$use_module_account = array_slice($use_module_account, ($pageindex - 1) * $pagesize, $pagesize);
 	$pager = pagination($total, $pageindex, $pagesize);
+}
+
+if ($do == 'check_receive') {
+	$module_name = trim($_GPC['module_name']);
+	$module_obj = WeUtility::createModuleReceiver($module_name);
+	if (!empty($module_obj)) {
+		$module_obj->uniacid = $_W['uniacid'];
+		$module_obj->acid = $_W['acid'];
+		$module_obj->message = array(
+			'event' => 'subscribe'
+		);
+		if(method_exists($module_obj, 'receive')) {
+			$module_obj->receive();
+			return message(error(0), '', 'ajax');
+		}
+	}
+	return message(error(1), '', 'ajax');
 }
 
 if ($do == 'uninstall') {

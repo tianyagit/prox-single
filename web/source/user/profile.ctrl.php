@@ -58,16 +58,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			if (in_array($uid, $founders)) {
 				message(error(1, '用户名不可与网站创始人同名！'), '', 'ajax');
 			}
-			if ($users_profile_exist) {
-				$result = pdo_update('users', array('username' => trim($_GPC['username'])), array('uid' => $uid));
-			} else {
-				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'username' => trim($_GPC['username'])
-					);
-				$result = pdo_insert('users_profile', $data);
-			}
+			$result = pdo_update('users', array('username' => trim($_GPC['username'])), array('uid' => $uid));
 			break;
 		case 'password':
 			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) message(error(2, '两次密码不一致！'), '', 'ajax');
