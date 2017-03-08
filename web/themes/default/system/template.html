@@ -12,7 +12,7 @@
 		</li>
 	</ul>
 	<div class="we7-page-search we7-padding-bottom clearfix">
-		<form action="{if $do == 'not_install'}{php echo url('system/template/not_install')}{else}{php echo url('system/template/installed')}{/if}" method="post" class="form-inline" role="form">
+		<form action="{if $do == 'not_install'}{php echo url('system/template/not_install')}{else}{php echo url('system/template/installed')}{/if}" method="post" role="form">
 			<div class="input-group col-sm-4">
 				<input name="keyword" value="{$_GPC['keyword']}" class="form-control" placeholder="" type="text">
 				<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>

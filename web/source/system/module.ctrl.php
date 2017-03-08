@@ -654,7 +654,7 @@ if ($do == 'not_installed') {
 				unset($uninstallModules[$name]);
 				continue;
 			}
-			if (ACCOUNT_TYPE == 0 && $module['wxapp_support'] == 2) {
+			if (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['wxapp_support'] == 2) {
 				unset($uninstallModules[$name]);
 				continue;
 			}

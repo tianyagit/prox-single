@@ -8,7 +8,10 @@
 </ul>
 <div id="js-wesite-article-display" ng-controller="wesiteArticleDisplay" ng-cloak>
 	<div class="we7-page-search we7-padding-bottom clearfix">
-		<form action="./index.php" method="get" class="form-inline pull-left" role="form">
+		<div class="pull-right">
+			<a href="{php echo url('site/article/post')}" class="btn btn-primary we7-padding-horizontal">+新建文章</a>
+		</div>
+		<form action="./index.php" method="get" class="form-inline" role="form">
 			<input type="hidden" name="a" value="article" />
 			<input type="hidden" name="c" value="site" />
 			<input type="hidden" name="do" value="display" />
@@ -20,9 +23,6 @@
 				<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 			</div>
 		</form>
-		<div class="pull-right">
-			<a href="{php echo url('site/article/post')}" class="btn btn-primary we7-padding-horizontal">+新建文章</a>
-		</div>
 	</div>
 	<form action="./index.php?c=site&a=article&do=del" method="post" role="form">
 		<table class="table we7-table table-hover article-list vertical-middle">

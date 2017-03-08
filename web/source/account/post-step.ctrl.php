@@ -43,7 +43,6 @@ if($step == 1) {
 		}
 	} else {
 		if (empty($_W['isfounder']) && is_error($permission = uni_create_permission($_W['uid'], 1))) {
-			message($permission['message'], '' , 'error');
 			if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
 				message($permission['message'], '' , 'error');
 			}

@@ -23,28 +23,28 @@ if ($do == 'display') {
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
-
-	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type = ".ACCOUNT_TYPE_APP_NORMAL;
+	
+	$type_condition = array(
+		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL),
+		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
+		ACCOUNT_TYPE_OFFCIAL_AUTH => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
+	);
+	$type_condition_sql = "'".implode("','", $type_condition[ACCOUNT_TYPE])."'";
+	
+	if (!empty($_W['isfounder'])) {
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type IN ($type_condition_sql)";
 		$order_by = " ORDER BY a.`acid` DESC";
 	} else {
-		if (!empty($_W['isfounder'])) {
-			$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
-			$order_by = " ORDER BY a.`acid` DESC";
-		} else {
-			$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted = 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
-			$param[':uid'] = $_W['uid'];
-			$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
-		}		
+		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted = 1 AND b.type IN ($type_condition_sql)";
+		$param[':uid'] = $_W['uid'];
+		$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
 	}
-
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-    $uni_account_type = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? 4 : 1;
-	$tsql = "SELECT count(*) FROM " .tablename(uni_account_tablename($uni_account_type)) . " AS a LEFT JOIN" . tablename('account') . " AS b ON a.acid = b.acid {$condition} {$order_by}";
-	$sql = $sql = "SELECT * FROM ". tablename(uni_account_tablename($uni_account_type)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
+	$tsql = "SELECT count(*) FROM " .tablename(uni_account_tablename(ACCOUNT_TYPE)) . " AS a LEFT JOIN" . tablename('account') . " AS b ON a.acid = b.acid {$condition} {$order_by}";
+	$sql = $sql = "SELECT * FROM ". tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$total = pdo_fetchcolumn($tsql, $param);
 	$del_accounts = pdo_fetchall($sql, $param);
 	if(!empty($del_accounts)) {
