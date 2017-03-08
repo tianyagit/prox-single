@@ -71,8 +71,6 @@ if ($do == 'display') {
 	$cache_lastaccount = cache_load($cache_key);
 	$cache_lastaccount['wxapp'] = $uniacid;
 	cache_write($cache_key, $cache_lastaccount);
-	isetcookie('__uniacid_wxapp', $uniacid, 7 * 86400);
-	isetcookie('__uid', $_W['uid'], 7 * 86400);
 	header('Location: ' . url('wxapp/version/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
 	exit;
 } elseif ($do == 'rank') {
@@ -90,7 +88,7 @@ if ($do == 'display') {
 	}
 	message('更新成功');
 } elseif ($do == 'home') {
-	$cache_key = "{$_W['user']['username']}:lastaccount";
+	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
 	$cache_lastaccount = cache_load($cache_key);
 	$uniacid = $cache_lastaccount['wxapp'];
 	if (!empty($uniacid)) {

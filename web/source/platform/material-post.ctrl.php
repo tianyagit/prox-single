@@ -77,8 +77,6 @@ if ($do == 'news') {
 					);
 				}
 			}
-		} else {
-			message('素材不存在', '', 'error');
 		}
 	} else {
 		$newsid = intval($_GPC['newsid']);
