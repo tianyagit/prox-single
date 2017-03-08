@@ -82,7 +82,8 @@ if ($do == 'check_upgrade') {
 				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
 				$branch_id_list = array_keys($cloud_m_info['branches']);
 				if (empty($branch_id_list)) {
-					$branch_id_list = array();
+					$module['upgrade'] = false;
+					continue;
 				}
 				$best_branch_id = max($branch_id_list);
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
