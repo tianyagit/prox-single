@@ -11,7 +11,7 @@ if ($controller == 'account' && $action == 'manage') {
 		define('ACTIVE_FRAME_URL', url('account/manage/display', array('account_type' => '4')));
 	}
 }
-$_GPC['account_type'] = !empty($_GPC['account_type']) ? $_GPC['account_type'] : 1;
+$_GPC['account_type'] = !empty($_GPC['account_type']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
 if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
 	define('ACCOUNT_TYPE', ACCOUNT_TYPE_APP_NORMAL);
 	define('ACCOUNT_TYPE_OFFCIAL', 0);
