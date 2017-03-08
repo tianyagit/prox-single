@@ -17,10 +17,12 @@ if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 }
 
 if ($do == 'save') {
+	$modules = (array)array_keys($_GPC['modules']);
+	$wxapp = (array)array_keys($_GPC['wxapp']);
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
-		'modules' => array_merge(array_keys($_GPC['modules']), array_keys($_GPC['wxapp'])),
+		'modules' => array_merge($modules, $wxapp),
 		'templates' => $_GPC['templates'],
 	);
 	if (empty($package_info['name'])) {
