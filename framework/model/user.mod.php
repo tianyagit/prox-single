@@ -275,31 +275,31 @@ function user_group_detail_info($groupid = 0) {
  */
 function user_account_detail_info($uid) {
 	$sql = "SELECT b.uniacid, b.role, a.type FROM " . tablename('account'). " AS a LEFT JOIN ". tablename('uni_account_users') . " AS b ON a.uniacid = b.uniacid WHERE a.acid <> 0 AND a.isdeleted <> 1 AND b.uid = :uid";
-	$weids = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
-	foreach ($weids as $uniacid => $account) {
+	$account_users_info = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
+	foreach ($account_users_info as $uniacid => $account) {
 		if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-			$app_weids[$uniacid] = $account;
+			$app_user_info[$uniacid] = $account;
 		} elseif ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-			$wxapp_weids[$uniacid] = $account;
+			$wxapp_user_info[$uniacid] = $account;
 		}
 	}
-	if (!empty($wxapp_weids)) {
-		$wxapps = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename(uni_account_tablename(ACCOUNT_TYPE_APP_NORMAL)) . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($wxapp_weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
+	if (!empty($wxapp_user_info)) {
+		$wxapps = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename(uni_account_tablename(ACCOUNT_TYPE_APP_NORMAL)) . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($wxapp_user_info)).") ORDER BY a.uniacid ASC", array(), 'acid');
 	}
-	if (!empty($app_weids)) {
-		$wechats = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename(uni_account_tablename(ACCOUNT_TYPE_OFFCIAL_NORMAL)) . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($app_weids)).") ORDER BY a.uniacid ASC", array(), 'acid');
+	if (!empty($app_user_info)) {
+		$wechats = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename(uni_account_tablename(ACCOUNT_TYPE_OFFCIAL_NORMAL)) . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($app_user_info)).") ORDER BY a.uniacid ASC", array(), 'acid');
 	}
 	$accounts = array_merge($wxapps, $wechats);
 	if (!empty($accounts)) {
 		foreach ($accounts as &$account_val) {
-			$account_val['thumb'] = tomedia('headimg_'.$account_val['acid']. '.jpg').'?time='.time();
-			foreach ($weids as $weids_key => $weids_val) {
-				if ($account_val['uniacid'] == $weids_key) {
-					$account_val['role'] = $weids_val['role'];
-					if ($weids_val['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-						$account_lists['wxapp'][$weids_key] = $account_val;
-					} elseif ($weids_val['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $weids_val['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-						$account_lists['wechat'][$weids_key] = $account_val;	
+			$account_val['thumb'] = tomedia('headimg_'.$account_val['acid']. '.jpg');
+			foreach ($account_users_info as $uniacid => $user_info) {
+				if ($account_val['uniacid'] == $uniacid) {
+					$account_val['role'] = $user_info['role'];
+					if ($user_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+						$account_lists['wxapp'][$uniacid] = $account_val;
+					} elseif ($user_info['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $user_info['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+						$account_lists['wechat'][$uniacid] = $account_val;	
 					}
 				}
 			}
