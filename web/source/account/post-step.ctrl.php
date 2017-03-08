@@ -157,7 +157,7 @@ if($step == 1) {
 	}
 	if ($_GPC['get_type'] == 'userinfo' && $_W['ispost']) {
 		$result = array();
-		$uid = intval($_GPC['uid']);
+		$uid = intval($_GPC['uid'][0]);
 		$user = user_single(array('uid' => $uid));
 		if (empty($user)) {
 			message(error(-1, '用户不存在或是已经被删除'), '', 'ajax');
