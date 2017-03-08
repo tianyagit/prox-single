@@ -17,8 +17,8 @@ if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 }
 
 if ($do == 'save') {
-	$modules = (array)array_keys($_GPC['modules']);
-	$wxapp = (array)array_keys($_GPC['wxapp']);
+	$modules = empty($_GPC['modules']) ? array() : (array)array_keys($_GPC['modules']);
+	$wxapp = empty($_GPC['wxapp']) ? array() : (array)array_keys($_GPC['wxapp']);
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
