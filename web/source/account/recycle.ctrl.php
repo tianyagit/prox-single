@@ -43,8 +43,8 @@ if ($do == 'display') {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-	$tsql = "SELECT count(*) FROM " .tablename(uni_account_tablename(ACCOUNT_TYPE)) . " AS a LEFT JOIN" . tablename('account') . " AS b ON a.acid = b.acid {$condition} {$order_by}";
-	$sql = $sql = "SELECT * FROM ". tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
+	$tsql = "SELECT count(*) FROM " .tablename(uni_account_tablename(ACCOUNT_TYPE)) . " AS a LEFT JOIN " . tablename('account') . " AS b ON a.acid = b.acid {$condition} {$order_by}";
+	$sql = $sql = "SELECT * FROM ". tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN ". tablename('account'). " as b ON a.acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$total = pdo_fetchcolumn($tsql, $param);
 	$del_accounts = pdo_fetchall($sql, $param);
 	if(!empty($del_accounts)) {
@@ -71,7 +71,7 @@ if ($do == 'recover') {
 		message('没有权限！', referer(), 'error');
 	}
 	$account_info = uni_user_account_permission();
-	if ($account_info['uniacid_limit'] <= 0) {
+	if ($account_info['uniacid_limit'] <= 0 && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 		message('您所在用户组可添加的主公号数量已达上限，请停用后再行恢复此公众号！', referer(), 'error');
 	}
 	if (!empty($uniacid)) {
