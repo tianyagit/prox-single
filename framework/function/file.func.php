@@ -280,8 +280,8 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 		if ($auto_delete_local) {
 			file_delete($filename);
 		}
+		return true;
 	}elseif ($_W['setting']['remote']['type'] == '3') {
-
 		require_once(IA_ROOT . '/framework/library/qiniu/autoload.php');
 		$auth = new Qiniu\Auth($_W['setting']['remote']['qiniu']['accesskey'],$_W['setting']['remote']['qiniu']['secretkey']);
 		$config = new Qiniu\Config();

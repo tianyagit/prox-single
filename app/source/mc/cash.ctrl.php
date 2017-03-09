@@ -131,8 +131,8 @@ if(!empty($type)) {
 	if($type == 'wechat') {
 		$payopenid = $_GPC['payopenid'];
 		$setting = uni_setting($_W['uniacid'], array('payment', 'recharge'));
-		if ((intval($setting['payment']['wechat']['switch']) == 2 || intval($setting['payment']['wechat']['switch']) == 3) && empty($payopenid)) { //如果开启借用权限 那么需要先去授权
-			$uniacid = !empty($setting['payment']['wechat']['service']) ? $setting['payment']['wechat']['service'] : $setting['payment']['wechat']['borrow'];
+		if (intval($setting['payment']['wechat']['switch']) == 3 && empty($payopenid)) { //如果开启借用权限 那么需要先去授权
+			$uniacid = $setting['payment']['wechat']['service'];
 			$acid = pdo_getcolumn('uni_account', array('uniacid' => $uniacid), 'default_acid');
 			$from = $_GPC['params'];
 			$url = $_W['siteroot'].'app'.str_replace('./', '/', murl('auth/oauth'));
@@ -188,7 +188,7 @@ if(!empty($type)) {
 					$is_grant_credit = mc_card_grant_credit($log['openid'], $fee, $paycenter_order['store_id']);
 					$result = mc_credit_update($log['openid'], 'credit2', -$fee, array('0', $tip, 'we7_coupon', 0, $paycenter_order['store_id'], 3));
 				} else {
-					$result = mc_credit_update($_W['member']['uid'], $setting['creditbehaviors']['currency'], -$fee, array($_W['member']['uid'], '消费' . $setting['creditbehaviors']['currency'] . ':' . $fee));
+					$result = mc_credit_update($_W['member']['uid'], $setting['creditbehaviors']['currency'], -$fee, array($_W['member']['uid'], '消费' . $setting['creditbehaviors']['currency'] . ':' . $fee, $log['module']));
 				}
 				if (is_error($result)) {
 					message($result['message'], '', 'error');
