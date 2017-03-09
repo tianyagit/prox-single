@@ -66,6 +66,7 @@ if ($do == 'save_setting') {
 	}
 	if ($type == 'wechat') {
 		$param['account'] = $_W['acid'];
+		$param['signkey'] = $param['version'] == 2 ? trim($param['apikey']) : trim($param['signkey']);
 	}
 	if ($type == 'unionpay') {
 		$unionpay = $_GPC['unionpay'];
