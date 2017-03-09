@@ -274,6 +274,8 @@ function user_group_detail_info($groupid = 0) {
  *@return array
  */
 function user_account_detail_info($uid) {
+	$wxapps = $wechats = $account_lists = array();
+	
 	$sql = "SELECT b.uniacid, b.role, a.type FROM " . tablename('account'). " AS a LEFT JOIN ". tablename('uni_account_users') . " AS b ON a.uniacid = b.uniacid WHERE a.acid <> 0 AND a.isdeleted <> 1 AND b.uid = :uid";
 	$account_users_info = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
 	foreach ($account_users_info as $uniacid => $account) {
