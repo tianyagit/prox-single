@@ -68,7 +68,7 @@ if ($do == 'recover') {
 	$uniacid = intval($_GPC['uniacid']);
 	$state = uni_permission($_W['uid'], $uniacid);
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-		message('没有权限！', referer(), 'error');
+		message('没有权限，请联系该公众号的主管理员或网站创始人进行恢复操作！', referer(), 'error');
 	}
 	$account_info = uni_user_account_permission();
 	if ($account_info['uniacid_limit'] <= 0 && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
