@@ -238,7 +238,7 @@
 			var address = $(":text[name='address']").val();
 			var lng = $(":text[name='baidumap[lng]']").val();
 			var lat = $(":text[name='baidumap[lat]']").val();
-			var navinfo = 'http://api.map.baidu.com/marker?location=' + lat + ','+ lng + '&title=' + title + '&name=' + title + '&content=' + address + '&output=html&src=we7';
+			var navinfo = 'https://api.map.baidu.com/marker?location=' + lat + ','+ lng + '&title=' + title + '&name=' + title + '&content=' + address + '&output=html&src=we7';
 			$(":text[name='url']").val(navinfo);
 		});
 		/*选择图标类型按钮切换*/
