@@ -64,8 +64,12 @@
 		<div class="we7-step">
 			<ul>
 				<li class="active">1 设置公众号信息</li>
+				{if !empty($_W['isfounder'])}
 				<li>2 设置权限</li>
 				<li>3 引导页面</li>
+				{else}
+				<li>2 引导页面</li>
+				{/if}
 			</ul>
 		</div>
 		<form action="" method="post" class="we7-form" enctype="multipart/form-data" id="js-account-post-step2" ng-controller="AccountPostStepTwo" ng-cloak>
@@ -183,8 +187,12 @@
 		<div class="we7-step">
 			<ul>
 				<li>1 设置公众号信息</li>
+				{if !empty($_W['isfounder'])}
 				<li class="active">2 设置权限</li>
 				<li>3 引导页面</li>
+				{else}
+				<li class="active">2 引导页面</li>
+				{/if}
 			</ul>
 		</div>
 		<form action="" method="post" class="we7-form" id="js-account-post-step3" ng-controller="AccountPostStepThree" ng-cloak>
@@ -214,7 +222,7 @@
 						<label for="" class="control-label col-sm-2">主管理员</label>
 						<div class="form-controls col-sm-8">
 							<div class="input-group">
-								<input type="hidden" name="uid" value="{$owner['username']}" id="manager">
+								<input type="hidden" name="uid" value="{$owner['uid']}" id="manager">
 								<input type="text" class="form-control" value="{$owner['username']}" id="showname">
 								<span class="input-group-btn">
 									<button class="btn btn-default" ng-click="selectOwner($event)">选择管理员</button>
@@ -435,8 +443,12 @@
 		<div class="we7-step">
 			<ul>
 				<li>1 设置公众号信息</li>
+				{if !empty($_W['isfounder'])}
 				<li>2 设置权限</li>
 				<li class="active">3 引导页面</li>
+				{else}
+				<li class="active">2 引导页面</li>
+				{/if}
 			</ul>
 		</div>
 		<div class="we7-form" id="js-account-post-step4" ng-controller="AccountPostStepFour" ng-cloak>

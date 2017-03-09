@@ -145,14 +145,18 @@ if($step == 1) {
 			pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
 		}
 		cache_delete("unisetting:{$uniacid}");
-		header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 3)));
+
+		if (!empty($_GPC['uniacid']) || empty($_W['isfounder'])) {
+			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 4)));
+		} else {
+			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 3)));
+		}
 		exit;
 	}
 }elseif ($step == 3) {
 	$acid = intval($_GPC['acid']);
 	$uniacid = intval($_GPC['uniacid']);
-	$state = uni_permission($_W['uid'], $uniacid);
-	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
+	if (empty($_W['isfounder'])) {
 		message('您无权进行该操作！');
 	}
 	if ($_GPC['get_type'] == 'userinfo' && $_W['ispost']) {
@@ -170,9 +174,24 @@ if($step == 1) {
 		exit;
 	}
 	if (checksubmit('submit')) {
-		//设置公众号管理员
+		//设置公众号主管理员
 		$uid = intval($_GPC['uid']);
 		$groupid = intval($_GPC['groupid']);
+		if (!empty($uid)) {
+			//删除原所有者，删除现在所有者其他身份
+			$account_info = uni_user_account_permission();
+			if ($account_info['uniacid_limit'] <= 0) {
+				message("您所设置的主管理员所在的用户组可添加的主公号数量已达上限，请选择其他人做主管理员！", referer(), 'error');
+			}
+			pdo_delete('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
+			$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
+			if (!empty($owner)) {
+				pdo_update('uni_account_users', array('uid' => $uid), array('uniacid' => $uniacid, 'role' => 'owner'));
+			} else {
+				$account_users = array('uniacid' => $uniacid, 'uid' => $uid, 'role' => 'owner');
+				pdo_insert('uni_account_users', $account_users);
+			}
+		}
 		if (!empty($_GPC['signature'])) {
 			$signature = trim($_GPC['signature']);
 			$setting = pdo_get('uni_settings', array('uniacid' => $_W['uniacid']));
@@ -182,17 +201,6 @@ if($step == 1) {
 			uni_setting_save('notify', $notify);
 			$notify = serialize($notify);
 			pdo_update('uni_settings', array('notify' => $notify), array('uniacid' => $uniacid));
-		}
-		if (!empty($uid)) {
-			//删除原所有者，删除现在所有者其他身份
-			pdo_delete('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
-			$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
-			if (!empty($owner)) {
-				pdo_update('uni_account_users', array('uid' => $uid), array('uniacid' => $uniacid, 'role' => 'owner'));
-			} else {
-				$account_users = array('uniacid' => $uniacid, 'uid' => $uid, 'role' => 'owner');
-				pdo_insert('uni_account_users', $account_users);
-			}
 		}
 		$user = array(
 			'uid' => $uid,
