@@ -97,6 +97,8 @@ if ($do == 'edit') {
 				} else  {
 					$result = pdo_update('uni_account_users', $data, array('id' => $owner['id']));
 					if ($result) {
+						//设置主管理员后，删除该用户在该公众号下设置的权限（即主管理员拥有该公众号所有权限）
+						pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $user['uid']));
 						message(error(0, '修改成功！'), '', 'ajax');
 					} else  {
 						message(error(1, '修改失败！'), '', 'ajax');
@@ -114,6 +116,9 @@ if ($do == 'edit') {
 			pdo_delete('uni_account_users',  array('uniacid' => $uniacid,'uid' => $user['uid']));
 			$result = pdo_insert('uni_account_users', $data);
 			if ($result) {
+				if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
+					pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $user['uid']));
+				}
 				message(error(0, '添加成功！'), '', 'ajax');
 			} else  {
 				message(error(1, '添加失败！'), '', 'ajax');
