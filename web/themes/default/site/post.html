@@ -564,7 +564,7 @@
 											</div>
 										</div>
 									</div>
-									<div ng-show="activeItem.menus.length < 3" class="add-shopNav text-center" ng-click="activeItem.menus.length >= 3 ? '' : addMenu();">+添加一级导航</div>
+									<div ng-show="!activeItem.menus || activeItem.menus.length < 3" class="add-shopNav text-center" ng-click="activeItem.menus.length >= 3 ? '' : addMenu();">+添加一级导航</div>
 									<!--最多添加三个导航-->
 								</div>
 								<!--end微信公众号自定义菜单模板-->
