@@ -24,7 +24,7 @@
 			</td>
 			<td class="we7-padding-right color-default"></td>
 		</tr>
-		<tr>
+		<tr style="display:none;">
 			<td colspan="5">
 				<div class="col-sm-1 color-gray text-left we7-padding-none">小程序</div>
 				<div class="col-sm-11">
@@ -83,12 +83,13 @@
 			</td>
 		</tr>
 	</table>
-	{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
+
+	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
 	<p>
 		<a href="javascript:;" class="btn btn-primary" data-toggle="modal" data-target="#change-group">修改套餐</a>
 		<a href="javascript:;" class="btn btn-primary" data-toggle="modal" data-target="#jurisdiction-add">修改附加权限</a>
 	</p>
-	{/if}
+	
 	<div class="modal" id="jurisdiction-add">
 		<div class="modal-dialog we7-modal-dialog">
 			<div class="modal-content">
@@ -242,6 +243,7 @@
 			</div>
 		</div>
 	</div>
+	{/if}
 </div>
 <script>
 	angular.module('accountApp').value('config', {

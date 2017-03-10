@@ -70,15 +70,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			if ($newpwd == $user['password']) {
 				message(error(0, '未作修改！'), '', 'ajax');
 			}
-			if ($users_profile_exist) {
-				$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
-			} else {
-				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-					);
-				$result = pdo_insert('users_profile', $data);
-			}
+			$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
 			break;
 		case 'endtime' :
 			if ($_GPC['endtype'] == 1) {
@@ -86,16 +78,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			} else {
 				$endtime = strtotime($_GPC['endtime']);
 			}
-			if ($users_profile_exist) {
-				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $uid));
-			} else {
-				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'endtime' => $endtime
-					);
-				$result = pdo_insert('users_profile', $data);
-			}
+			$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $uid));
 			break;
 		case 'realname':
 			if ($users_profile_exist) {
