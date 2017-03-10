@@ -772,7 +772,7 @@ function ext_module_msg_types() {
  * @return array();
  */
 function ext_check_module_subscribe($modulename) {
-	global $_W;
+	global $_W, $_GPC;
 	if (empty($modulename)) {
 		return true;
 	}
@@ -780,8 +780,9 @@ function ext_check_module_subscribe($modulename) {
 		$_W['setting']['module_receive_ban'] = array();
 	}
 	load()->func('communication');
-	$response = ihttp_request($_W['siteroot'] . url('extension/subscribe/check', array('modulename' => $modulename)));
-	if (strexists($response['content'], 'success')) {
+	$response = ihttp_request($_W['siteroot'] . "web/index.php?c=system&a=module&do=check_receive&module_name=" . $modulename. '&__session=' . $_GPC['__session']);
+	$response['content'] = json_decode($response['content'], true);
+	if (empty($response['content']['message']['errno'])) {
 		unset($_W['setting']['module_receive_ban'][$modulename]);
 		$module_subscribe_success = true;
 	} else {
