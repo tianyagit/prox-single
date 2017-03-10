@@ -297,7 +297,7 @@ if ($do =='install') {
 		}	
 	}
 	$module['wxapp_support'] = !empty($wxapp_support) ? 2 : 1;
-	$module['app_support'] = !empty($app_support) ? 2 : 1;
+	$module['app_support'] = !empty($app_support) || (empty($wxapp_support) && empty($app_support)) ? 2 : 1;
 	$post_groups = $_GPC['group'];
 	ext_module_clean($module_name);
 	$bindings = array_elements(array_keys($points), $module, false);
