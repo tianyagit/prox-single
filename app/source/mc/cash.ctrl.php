@@ -126,8 +126,8 @@ if(!empty($type)) {
 	if($type == 'wechat') {
 		$payopenid = $_GPC['payopenid'];
 		$setting = uni_setting($_W['uniacid'], array('payment', 'recharge'));
-		if (intval($setting['payment']['wechat']['switch']) == 3 && empty($payopenid)) { //如果开启借用权限 那么需要先去授权
-			$uniacid = $setting['payment']['wechat']['service'];
+		if ((intval($setting['payment']['wechat']['switch']) == 2 || intval($setting['payment']['wechat']['switch']) == 3) && empty($payopenid)) { //如果开启借用权限 那么需要先去授权
+			$uniacid = !empty($setting['payment']['wechat']['service']) ? $setting['payment']['wechat']['service'] : $setting['payment']['wechat']['borrow'];
 			$acid = pdo_getcolumn('uni_account', array('uniacid' => $uniacid), 'default_acid');
 			$from = $_GPC['params'];
 			$url = $_W['siteroot'].'app'.str_replace('./', '/', murl('auth/oauth'));

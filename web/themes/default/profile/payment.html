@@ -352,7 +352,20 @@
 							</div>
 						</div>
 						{/if}
-
+						{if !empty($borrow)}
+						<div ng-show="paysetting.wechat.switch == 2">
+							<div class="form-group">
+								<label for="" class="control-label col-sm-2">借用公众号</label>
+								<div class="form-controls col-sm-10">
+									<select name="borrow" class="we7-select" ng-model="paysetting.wechat.borrow">
+										<option value="" ng-selected="paysetting.wechat.borrow == 0 || paysetting.wechat.borrow == '' || paysetting.wechat.borrow == undefined">请选择要借用的公众号</option>
+										<option value="{{key}}" ng-selected="paysetting.wechat.borrow == key" ng-repeat="(key, account) in config.borrows track by key">{{ account }}</option>
+									</select>
+									<span class="help-block">借用认证服务号支付权限完成支付。</span>
+								</div>
+							</div>
+						</div>
+						{/if}
 						{if !empty($service)}
 						<div ng-show="paysetting.wechat.switch == 3">
 							<div class="form-group">
