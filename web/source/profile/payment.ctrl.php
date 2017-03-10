@@ -99,9 +99,6 @@ if($_W['ispost']) {
 	$pay['unionpay'] = $unionpay;
 	$pay['baifubao'] = $baifubao;
 	$pay['line'] = $line;
-	if (intval($pay['wechat']['switch']) == 2) {
-		$pay['wechat']['switch'] = 4;
-	}
 	if ($unionpay['switch'] && !empty($_FILES['unionpay']['tmp_name']['signcertpath'])) {
 		load()->func('file');
 		mkdirs(IA_ROOT . '/attachment/unionpay/');
@@ -145,7 +142,4 @@ MFF/yA==
 $pay['unionpay']['signcertexists'] = file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx');
 $accounts = array();
 $accounts[$_W['acid']] = array_elements(array('name', 'acid', 'key', 'secret', 'level'), $_W['account']);
-if (intval($pay['wechat']['switch']) == 2) {
-	$pay['wechat']['switch'] = 4;
-}
 template('profile/payment');
