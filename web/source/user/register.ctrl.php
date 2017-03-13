@@ -50,9 +50,7 @@ if(checksubmit()) {
 		}
 	}
 	if(!empty($setting['register']['code'])) {
-		$code = $_GPC['code'];
-		$hash = md5($code . $_W['config']['setting']['authkey']);
-		if($_GPC['__code'] != $hash) {
+		if (!checkcaptcha($_GPC['code'])) {
 			message('你输入的验证码不正确, 请重新输入.');
 		}
 	}
