@@ -780,7 +780,7 @@ function ext_check_module_subscribe($modulename) {
 		$_W['setting']['module_receive_ban'] = array();
 	}
 	load()->func('communication');
-	$response = ihttp_request($_W['siteroot'] . "web/index.php?c=system&a=module&do=check_receive&module_name=" . $modulename. '&__session=' . $_GPC['__session']);
+	$response = ihttp_request($_W['siteroot'] . 'web/' .  url('system/module/check_receive', array('module_name' => 'wechat_money')));
 	$response['content'] = json_decode($response['content'], true);
 	if (empty($response['content']['message']['errno'])) {
 		unset($_W['setting']['module_receive_ban'][$modulename]);

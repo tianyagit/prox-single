@@ -90,7 +90,9 @@ $_W['acl'] = $acl = array(
 		)
 	),
 	'system' => array(
-		'direct' => array(),
+		'direct' => array(
+			'module',
+		),
 		'founder' => array(
 			'attachment',
 			'bom',
@@ -108,7 +110,6 @@ $_W['acl'] = $acl = array(
 		),
 		'manager' => array(
 			'account',
-			'module',
 			'module-group',
 			'platform',
 			'updatecache',
