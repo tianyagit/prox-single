@@ -14,11 +14,11 @@ load()->model('account');
 load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
-$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban', 'check_receive');
+$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER && $do != 'check_receive') {
+if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	message('无权限操作！', referer(), 'error');
 }
 
@@ -488,23 +488,6 @@ if ($do == 'module_detail') {
 	$total = count($use_module_account);
 	$use_module_account = array_slice($use_module_account, ($pageindex - 1) * $pagesize, $pagesize);
 	$pager = pagination($total, $pageindex, $pagesize);
-}
-
-if ($do == 'check_receive') {
-	$module_name = trim($_GPC['module_name']);
-	$module_obj = WeUtility::createModuleReceiver($module_name);
-	if (!empty($module_obj)) {
-		$module_obj->uniacid = $_W['uniacid'];
-		$module_obj->acid = $_W['acid'];
-		$module_obj->message = array(
-			'event' => 'subscribe'
-		);
-		if(method_exists($module_obj, 'receive')) {
-			$module_obj->receive();
-			return message(error(0), '', 'ajax');
-		}
-	}
-	return message(error(1), '', 'ajax');
 }
 
 if ($do == 'uninstall') {

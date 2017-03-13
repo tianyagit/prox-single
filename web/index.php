@@ -87,11 +87,11 @@ $_W['acl'] = $acl = array(
 			'file',
 			'subscribe',
 			'wxcode',
+			'modules'
 		)
 	),
 	'system' => array(
 		'direct' => array(
-			'module',
 		),
 		'founder' => array(
 			'attachment',
@@ -113,6 +113,7 @@ $_W['acl'] = $acl = array(
 			'module-group',
 			'platform',
 			'updatecache',
+			'module'
 		),
 	),
 );
