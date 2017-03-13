@@ -77,7 +77,8 @@ if (isset($_W['config']['setting']['https'])) {
 } else {
 	$_W['ishttps'] = $_SERVER['SERVER_PORT'] == 443 || 
 					(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') ||
-					strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'
+					strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https' ||
+					strtolower($_SERVER['HTTP_X_CLIENT_SCHEME']) == 'https' //阿里云判断方式
 					? true : false;
 }
 
