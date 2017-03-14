@@ -50,7 +50,7 @@ if ($do == 'buybranch') {
 	$response = json_decode($response['content'], true);
 
 	if (is_error($response['message'])) {
-		message($response['message']['message'], url('extension/module'), 'error');
+		message($response['message']['message'], url('system/module'), 'error');
 	}
 
 	$params = array(
