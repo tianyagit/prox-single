@@ -66,6 +66,9 @@ $site = WeUtility::createModuleSite($entry['module']);
 define('IN_MODULE', $entry['module']);
 
 if (!is_error($site)) {
+	if ($_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) {
+		$_W['role'] = ACCOUNT_MANAGE_NAME_MANAGER;
+	}
 	$sysmodule = system_modules();
 	if (in_array($m, $sysmodule)) {
 		$site_urls = $site->getTabUrls();
