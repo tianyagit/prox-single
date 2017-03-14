@@ -57,7 +57,7 @@
 						</div>
 						<ul class="nav-group">
 							<li class="nav-group-item" ng-if="$index < 3" ng-repeat="menu in activeItem.menus">
-								<a ng-if="menu.submenus.length == 0" href="{{menu.url}}">
+								<a ng-if="!menu.submenus || menu.submenus.length == 0" href="{{menu.url}}">
 									{{menu.title}}
 								</a>
 								<a ng-if="menu.submenus.length > 0" href="javascript:;" data-toggle="dropdown">
