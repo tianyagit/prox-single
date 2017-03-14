@@ -412,7 +412,7 @@ if($do == 'post') {
 		}
 
 		//判断是否有菜单显示对象提交,默认菜单和个性化菜单唯一区别就是有无菜单显示对象
-		if($post['type'] == 3 && empty($menu['matchrule'])) {
+		if($post['type'] == 3 && empty($post['matchrule'])) {
 			message(error(-1, '请选择菜单显示对象'), '', 'ajax');
 		}
 
@@ -507,7 +507,12 @@ if($do == 'delete') {
 		message('菜单不存在或已经删除', referer(), 'error');
 	}
 	$status =  $_GPC['status'];
-	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0)) {
+
+	if ($data['type'] == 3 && $data['status'] == 0) {
+		pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+		message('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
+	}
+	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0 && $data['status'] != 0)) {
 		$account_api = WeAccount::create($_W['acid']);
 		$result = $account_api->menuDelete($data['menuid']);
 		if(is_error($result) && empty($_GPC['f'])) {
@@ -518,7 +523,6 @@ if($do == 'delete') {
 			$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 			$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
 			$message = "调用微信接口删除失败:{$result['message']}<br>";
-			// $message .= "强制删除本地数据? <a href='{$url}' class='btn btn-primary'>是</a> <a href='{$url_display}' class='btn btn-default'>取消</a>";
 			message($message, '', 'error');
 		}
 	}

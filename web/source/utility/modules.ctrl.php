@@ -9,8 +9,25 @@ error_reporting(0);
 load()->model('module');
 
 $dos = array('list');
-if (!in_array($do, array('list'))) {
+if (!in_array($do, array('list', 'check_receive'))) {
 	exit('Access Denied');
+}
+
+if ($do == 'check_receive') {
+	$module_name = trim($_GPC['module_name']);
+	$module_obj = WeUtility::createModuleReceiver($module_name);
+	if (!empty($module_obj)) {
+		$module_obj->uniacid = $_W['uniacid'];
+		$module_obj->acid = $_W['acid'];
+		$module_obj->message = array(
+			'event' => 'subscribe'
+		);
+		if(method_exists($module_obj, 'receive')) {
+			$module_obj->receive();
+			return message(error(0), '', 'ajax');
+		}
+	}
+	return message(error(1), '', 'ajax');
 }
 
 if($do == 'list') {
