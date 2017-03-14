@@ -287,16 +287,24 @@ function cache_build_uninstalled_module() {
 		foreach ($cloud_module as $module) {
 			if (!in_array($module['name'], $installed_module)) {
 				$status = in_array($module['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
+				$wxapp_support = !empty($module['site_branch']['wxapp_support']) ? $module['site_branch']['wxapp_support'] : 1;
+				$app_support = !empty($module['site_branch']['app_support']) ? $module['site_branch']['app_support'] : 2;
 				if (!empty($module['id'])) {
-					$uninstallModules[$status][$module['name']] = array(
+					$cloud_module_info = array (
 						'from' => 'cloud',
 						'name' => $module['name'],
 						'version' => $module['version'],
 						'title' => $module['title'],
 						'thumb' => $module['thumb'],
-						'wxapp_support' => !empty($module['site_branch']['wxapp_support']) ? $module['site_branch']['wxapp_support'] : 1,
-						'app_support' => !empty($module['site_branch']['app_support']) ? $module['site_branch']['app_support'] : 2
+						'wxapp_support' => $wxapp_support,
+						'app_support' => $app_support
 					);
+					if ($wxapp_support == 2) {
+						$uninstallModules[$status]['wxapp'][$module['name']] = $cloud_module_info;
+					}
+					if ($app_support == 2) {
+						$uninstallModules[$status]['app'][$module['name']] = $cloud_module_info;
+					}
 				}
 			}
 		}
@@ -325,11 +333,12 @@ function cache_build_uninstalled_module() {
 						'app_support' => $app_support,
 						'wxapp_support' => $wxapp_support
 					);
-					if (in_array($manifest['name'], $recycle_modules)) {
-						$uninstallModules['recycle'][$manifest['name']] = $module_info;
+					$module_type = in_array($manifest['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
+					if ($module_info['app_support'] == 2) {
+						$uninstallModules[$module_type]['app'][$manifest['name']] = $module_info;
 					}
-					if (!in_array($manifest['name'], $recycle_modules)) {
-						$uninstallModules['uninstalled'][$manifest['name']] = $module_info;
+					if ($module_info['wxapp_support'] == 2) {
+						$uninstallModules[$module_type]['wxapp'][$manifest['name']] = $module_info;
 					}
 				}
 			}
@@ -337,9 +346,10 @@ function cache_build_uninstalled_module() {
 		$cache = array(
 			'cloud_m_count' => $cloud_m_count['module_quantity'],
 			'modules' => $uninstallModules,
-			'uninstall_count' => count($uninstallModules['uninstalled'])
+			'app_count' => count($uninstallModules['uninstalled']['app']),
+			'wxapp_count' => count($uninstallModules['uninstalled']['wxapp'])
 		);
-		cache_write('we7:module:all_uninstall', $cache);
+		cache_write('we7:module:all_uninstall', $cache, CACHE_EXPIRE_LONG);
 		return $cache;
 	} else {
 		return array();

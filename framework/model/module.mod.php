@@ -328,16 +328,28 @@ function module_count_unistalled_module() {
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
  */
 function module_get_all_unistalled($status)  {
+	global $_GPC;
+	load()->func('communication');
 	load()->model('cloud');
 	load()->classs('cloudapi');
 	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
-	$uninstallModules =  cache_load('we7:module:all_uninstall');
-	$cloud_api = new CloudApi();
-	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-	if (is_array($uninstallModules['modules']) && $uninstallModules['cloud_m_count'] == $cloud_m_count['module_quantity']) {
-		return $uninstallModules['modules'][$status];
+	$uninstallModules =  cache_load(cache_system_key('module:all_uninstall'));
+	if ($_GPC['c'] == 'system' && $_GPC['a'] == 'module' && $_GPC['do'] == 'not_installed' && $status == 'uninstalled') {
+		$cloud_api = new CloudApi();
+		$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 	} else {
+		$cloud_m_count = $uninstallModules['cloud_m_count'];
+	}
+	if (!is_array($uninstallModules['modules']) || $uninstallModules['cloud_m_count'] != $cloud_m_count['module_quantity']) {
 		$uninstallModules = cache_build_uninstalled_module();
 	}
-	return $uninstallModules['modules'][$status];
+	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
+		$uninstallModules['modules'] = $uninstallModules['modules'][$status]['wxapp'];
+		$uninstallModules['module_count'] = $uninstallModules['wxapp_count'];
+		return $uninstallModules;
+	} else {
+		$uninstallModules['modules'] = $uninstallModules['modules'][$status]['app'];
+		$uninstallModules['module_count'] = $uninstallModules['app_count'];
+		return $uninstallModules;
+	}
 }
