@@ -12,8 +12,28 @@ load()->model('module');
 $_W['page']['title'] = '会员交易-会员管理';
 $dos = array('consume', 'user', 'modal', 'credit', 'card', 'cardsn', 'tpl', 'cardconsume');
 $do = in_array($do, $dos) ? $do : 'tpl';
-if($_W['role'] != 'clerk') {
+
+$user_permission_lists = pdo_get('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $_W['user']['uid'], 'type' => 'we7_coupon'), array('permission'));
+$user_permission = (array)explode('|', $user_permission_lists['permission']);
+
+$clerk_menu_permission = pdo_getall('activity_clerk_menu', array('system' => 1, 'type' => 'modal', 'pid <>' => 0));
+foreach ($clerk_menu_permission as $key => $value) {
+	$clerk_menu[$value['url']] = $value['permission'];
+}
+$is_user_available = false;
+foreach ($user_permission as $k=>$val) {
+	if (in_array($val, $clerk_menu)) {
+		$is_user_available = true;
+		break;
+	}
+}
+if ($do == 'user' && !$is_user_available) {
 	uni_user_permission_check('mc_member');
+}
+if (in_array($do, array('consume', 'credit', 'card', 'cardconsume'))) {
+	if (!in_array($clerk_menu[$do], $user_permission) && !(in_array($clerk_menu['credit1'], $user_permission) || in_array($clerk_menu['credit2'], $user_permission))) {
+		uni_user_permission_check('mc_member');
+	}	
 }
 
 if($do == 'user') {
