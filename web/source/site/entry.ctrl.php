@@ -29,6 +29,7 @@ if (empty($entry) || empty($entry['do'])) {
 
 if (!$entry['direct']) {
 	checklogin();
+	checkaccount();
 	
 	$module = module_fetch($entry['module']);
 	if (empty($module)) {
