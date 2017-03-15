@@ -542,7 +542,8 @@ if ($do == 'uninstall') {
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	$total_uninstalled = module_count_unistalled_module();
+	$uninstalled_module = module_get_all_unistalled('uninstalled');
+	$total_uninstalled = $uninstalled_module['module_count'];
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
 	$letter = $_GPC['letter'];
@@ -627,10 +628,9 @@ if ($do == 'not_installed') {
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
 
-	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
-	$recycle_modules = array_keys($recycle_modules);
 	$uninstallModules = module_get_all_unistalled($status);
-	$total_uninstalled = module_count_unistalled_module();
+	$total_uninstalled = $uninstallModules['module_count'];
+	$uninstallModules = $uninstallModules['modules'];
 	if (!empty($uninstallModules)) {
 		foreach($uninstallModules as $name => &$module) {
 			if (!empty($letter) && strlen($letter) == 1) {
