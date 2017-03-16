@@ -353,3 +353,49 @@ function module_get_all_unistalled($status)  {
 		return $uninstallModules;
 	}
 }
+
+/**
+ * 获取某个模块的权限列表
+ * @param string $name 模块标识
+ */
+function module_permission_fetch($name) {
+	$module = pdo_fetch('SELECT * FROM ' . tablename('modules') . ' WHERE name = :m', array(':m' => $name));
+	$data = array();
+	if ($module['permissions']) {
+		$data[] = array('title' => '权限设置', 'permission' => $name.'_permissions');
+	}
+	if($module['settings']) {
+		$data[] = array('title' => '参数设置', 'permission' => $name.'_settings');
+	}
+	if($module['isrulefields']) {
+		$data[] = array('title' => '回复规则列表', 'permission' => $name.'_rule');
+	}
+	$entries = module_entries($name);
+	if(!empty($entries['home'])) {
+		$data[] = array('title' => '微站首页导航', 'permission' => $name.'_home');
+	}
+	if(!empty($entries['profile'])) {
+		$data[] = array('title' => '个人中心导航', 'permission' => $name.'_profile');
+	}
+	if(!empty($entries['shortcut'])) {
+		$data[] = array('title' => '快捷菜单', 'permission' => $name.'_shortcut');
+	}
+	if(!empty($entries['cover'])) {
+		foreach($entries['cover'] as $cover) {
+			$data[] = array('title' => $cover['title'], 'permission' => $name.'_cover_'.$cover['do']);
+		}
+	}
+	if(!empty($entries['menu'])) {
+		foreach($entries['menu'] as $menu) {
+			$data[] = array('title' => $menu['title'], 'permission' => $name.'_menu_'.$menu['do']);
+		}
+	}
+	unset($entries);
+	if(!empty($module['permissions'])) {
+		$module['permissions'] = (array)iunserializer($module['permissions']);
+		foreach ($module['permissions'] as $permission) {
+			$data[] = array('title' => $permission['title'], 'permission' => $name . '_permission_' . $permission['permission']);
+		}
+	}
+	return $data;
+}

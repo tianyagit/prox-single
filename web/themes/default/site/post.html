@@ -207,7 +207,7 @@
 							<label class="control-label col-sm-2">封面</label>
 							<div class="form-controls col-sm-10">
 								<div class="we7-input-img input-more" ng-class="{'active': multi.site_info.thumb}">
-									<img src="{{multi.site_info.thumb}}" ng-if="multi.site_info.thumb">
+									<img ng-src="{{multi.site_info.thumb}}" ng-if="multi.site_info.thumb">
 									<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage()" ng-hide="multi.site_info.thumb"><span>+</span></a>
 									<input type="text" name="thumb" ng-model="multi.site_info.thumb" ng-style="{'display' : 'none'}">
 									<div class="cover-dark">
@@ -332,7 +332,7 @@
 						<tr ng-repeat="menu in homeMenu">
 							<td class="title" ng-bind="menu.name"></td>
 							<td class="icon">
-								<img ng-src="{{menu.icon}}" width="30px" ng-if="menu.icon">
+								<img ng-src="{{attachurl + menu.icon}}" width="30px" ng-if="menu.icon">
 								<i class="fa fa-2x {{menu.css.icon.icon}}" ng-if="menu.icon == ''"></i>
 								</td>
 							<td><div class="switch" ng-class="{'switchOn': menu.status == 1}" ng-click="updateMenu(menu, 'switch')"></div></td>
@@ -422,7 +422,7 @@
 											<label for="" class="control-label col-sm-2">上传图标</label>
 											<div class="form-controls col-sm-10">
 												<div class="we7-input-img input-more input-img" ng-class="{'active': menuInfo.icon}" ng-style="{'width': '100px', 'height': '100px'}">
-													<img ng-src="{{menuInfo.icon}}" width="150px" ng-if="menuInfo.icon">
+													<img ng-src="{{attachurl + menuInfo.icon}}" width="150px" ng-if="menuInfo.icon">
 													<a href="javascript:;" class="input-addon" ng-click="uploadHomemenuImage(menuInfo)"  ng-hide="menuInfo.icon">
 														<span>+</span>
 													</a>
@@ -882,6 +882,7 @@ require(['underscore'], function(){
 		multi: {php echo !empty($multi) ? json_encode($multi) : 'null'},
 		styles: {php echo !empty($styles) ? json_encode($styles) : 'null'},
 		temtypes: {php echo !empty($temtypes) ? json_encode($temtypes) : 'null'},
+		attachurl: {php echo !empty($_W['attachurl']) ? json_encode($_W['attachurl']) : 'null'},
 		links: {
 			murl: "{php echo murl('home', array(), true, true)}",
 			searchStyleLink: "{php echo url('site/multi/post')}",

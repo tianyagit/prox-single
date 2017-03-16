@@ -10,7 +10,7 @@ load()->model('module');
 load()->model('account');
 load()->model('user');
 
-$dos = array('display', 'setting', 'shortcut', 'enable');
+$dos = array('display', 'setting', 'shortcut', 'enable', 'permissions');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
 $modulelist = uni_modules(false);
@@ -238,4 +238,149 @@ if($do == 'display') {
 	$obj = WeUtility::createModule($module['name']);
 	$obj->settingsDisplay($config);
 	exit();
+}
+
+if ($do == 'permissions') {
+	$name = $_GPC['m'];
+	$module = $_W['current_module'] = $modulelist[$name];
+	if(empty($module)) {
+		message('抱歉，你操作的模块不能被访问！');
+	}
+	if(!uni_user_module_permission_check($name.'_permissions', $name)) {
+		message('您没有权限进行该操作');
+	}
+	
+	$op = !empty($_GPC['op']) ? trim($_GPC['op']) : 'display';
+
+	if ($op == 'display') {
+		$entries = module_entries($name);
+		$user_permissions = pdo_getall('users_permission', array('uniacid' => $_W['uniacid'], 'type' => $name, 'uid <>' => ''), '', 'uid');
+		$uids = !empty($user_permissions) && is_array($user_permissions) ? array_keys($user_permissions) : array();
+		$users_lists = array();
+		if (!empty($uids)) {
+			$users_lists = pdo_getall('users', array('uid' => $uids), '', 'uid');
+		}
+		$current_module_permission = module_permission_fetch($name);
+		if (!empty($current_module_permission)) {
+			foreach ($current_module_permission as $key => $permission) {
+				$permission_name[$permission['permission']] = $permission['title'];
+			}
+		}
+		if (!empty($user_permissions)) {
+			foreach ($user_permissions as $key => &$permission) {
+				$permission['permission'] = explode('|', $permission['permission']);
+				foreach ($permission['permission'] as $k => $val) {
+					$permission['permission'][$val] = $permission_name[$val];
+					unset($permission['permission'][$k]);
+				}
+				$permission['user_info'] = $users_lists[$key];
+			}
+			unset($permission);
+		}
+	}
+
+	if ($op == 'post') {
+		load()->model('module');
+		$m = trim($_GPC['m']);
+		$uniacid = intval($_W['uniacid']);
+		$uid = intval($_GPC['uid']);
+		//获取用户信息
+		$user = pdo_get('users', array('uid' => $uid));
+		$module = pdo_get('modules', array('name' => $m));
+		//获取模块权限
+		$purview = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $m));
+		if(!empty($purview['permission'])) {
+			$purview['permission'] = explode('|', $purview['permission']);
+		} else {
+			$purview['permission'] = array();
+		}
+
+		$current_module_permission = module_permission_fetch($m);
+		foreach ($current_module_permission as &$data) {
+			$data['checked'] = 0;
+			if(in_array($data['permission'], $purview['permission']) || in_array('all', $purview['permission'])) {
+				$data['checked'] = 1;
+			}
+		}
+		if (checksubmit()) {
+			$insert_user = array();
+			$insert_user['username'] = trim($_GPC['username']);
+			$insert_user['remark'] = trim($_GPC['remark']);
+			$insert_user['password'] = trim($_GPC['password']);
+			$insert_user['repassword'] = trim($_GPC['repassword']);
+			$insert_user['type'] = 3;
+			$operator_id = intval($_GPC['uid']);
+			if (empty($insert_user['username'])) {
+				message('必须输入用户名，格式为 1-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。');
+			}
+			if (empty($operator_id)) {
+				if (user_check(array('username' => $insert_user['username']))) {
+					message('非常抱歉，此用户名已经被注册，你需要更换注册名称！');
+				}
+				if (istrlen($insert_user['password']) < 8) {
+					message('必须输入密码，且密码长度不得低于8位。');
+				}
+				if ($insert_user['repassword'] != $insert_user['password']) {
+					message('两次输入密码不一致');
+				}
+				unset($insert_user['repassword']);
+				$operator['uid'] = user_register($insert_user);
+				if (!$operator['uid']) {
+					message('注册账号失败');
+				}
+			} else {
+				$operator = array();
+				if (!empty($insert_user['password'])) {
+					if (istrlen($insert_user['password']) < 8) {
+						message('必须输入密码，且密码长度不得低于8位。');
+					}
+					if ($insert_user['repassword'] != $insert_user['password']) {
+						message('两次输入密码不一致');
+					}
+					$operator['password'] = $insert_user['password'];
+					$operator['salt'] = $user['salt'];
+				}
+				$operator['uid'] = $operator_id;
+				$operator['username'] = $insert_user['username'];
+				$operator['remark'] = $insert_user['remark'];
+				$operator['type'] = $insert_user['type'];
+				user_update($operator);
+			}
+			$permission = $_GPC['module_permission'];
+			if (!empty($permission)) {
+				$permission = implode('|', array_unique($permission));
+			} else {
+				$permission = '';
+			}
+			$permission_exist = pdo_get('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid'], 'type' => $m));
+			if (empty($permission_exist)) {
+				pdo_insert('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid'], 'type' => $m, 'permission' => $permission));
+			} else {
+				pdo_update('users_permission', array('permission' => $permission), array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid'], 'type' => $m));
+			}
+			$account_user = pdo_get('uni_account_users', array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid']));
+			if (empty($account_user)) {
+				pdo_insert('uni_account_users', array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid'], 'role' => 'operator'));
+			} else {
+				pdo_update('uni_account_users', array('role' => 'operator'), array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid']));
+			}
+			message('编辑店员资料成功', url('profile/module/permissions', array('m' => $m, 'op' => 'display')), 'success');
+		}	
+	}
+
+	if ($op == 'delete') {
+		$operator_id = intval($_GPC['uid']);
+		if (empty($operator_id)) {
+			message('参数错误', referer(), 'error');
+		} else {
+			$user = pdo_get('users', array('uid' => $operator_id), array('uid'));
+			if (!empty($user)) {
+				pdo_delete('users', array('uid' => $operator_id));
+				pdo_delete('uni_account_users', array('uid' => $operator_id, 'role' => 'operator', 'uniacid' => $_W['uniacid']));
+				pdo_delete('users_permission', array('uid' => $operator_id, 'type' => $_GPC['m'], 'uniacid' => $_W['uniacid']));
+			}
+			message('删除成功', referer(), 'success');
+		}
+	}
+	template('profile/module_permission');
 }

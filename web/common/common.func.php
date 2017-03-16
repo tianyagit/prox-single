@@ -272,7 +272,6 @@ function buildframes($framename = ''){
 		}
 		$module = module_fetch($modulename);
 		$entries = module_entries($modulename);
-
 		if($status) {
 			$permission = pdo_get('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $_W['uid'], 'type' => $modulename), array('permission'));
 			if(!empty($permission)) {
@@ -286,6 +285,9 @@ function buildframes($framename = ''){
 				}
 				if(!in_array($modulename.'_settings', $permission)) {
 					unset($module['settings']);
+				}
+				if(!in_array($modulename.'_permissions', $permission)) {
+					unset($module['permissions']);
 				}
 				if(!in_array($modulename.'_home', $permission)) {
 					unset($entries['home']);
@@ -330,6 +332,13 @@ function buildframes($framename = ''){
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_settings'] = array(
 				'title' => "<i class='fa fa-cog'></i> 参数设置",
 				'url' => url('profile/module/setting', array('m' => $modulename)),
+				'is_display' => 1,
+			);
+		}
+		if ($module['permissions']) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_permissions'] = array(
+				'title' => "<i class='fa fa-cog'></i> 权限设置",
+				'url' => url('profile/module/permissions', array('m' => $modulename)),
 				'is_display' => 1,
 			);
 		}
