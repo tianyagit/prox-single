@@ -26,9 +26,6 @@ if ($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
 	if (!empty($navs)) {
 		foreach ($navs as $nav) {
 			/*处理icon图片链接*/
-			if (!empty($nav['icon'])) {
-				$nav['icon'] = tomedia($nav['icon']);
-			}
 			if (is_serialized($nav['css'])) {
 				$nav['css'] = iunserializer($nav['css']);
 			}
