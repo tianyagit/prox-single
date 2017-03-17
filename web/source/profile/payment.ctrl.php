@@ -135,17 +135,29 @@ if ($do == 'display') {
 	$proxy_wechatpay_account = account_wechatpay_proxy();
 	$setting = uni_setting_load('payment', $_W['uniacid']);
 	$pay_setting = $setting['payment'];
-	if(!is_array($pay_setting) || empty($pay_setting)) {
-		$pay_setting = array(
-			'delivery' => array('switch' => false),
-			'credit' => array('switch' => false),
-			'alipay' => array('switch' => false, 'account' => '', 'partner' => '', 'secret' => ''),
-			'wechat' => array('switch' => false, 'account' => '', 'signkey' => '', 'partner' => '', 'key' => '', 'version' => '', 'mchid' => '', 'apikey' => '', 'service' => '', 'borrow' => '', 'sub_mch_id' => ''),
-			'wechat_facilitator' => array('switch' => false, 'mchid' => '', 'signkey' => ''),
-			'unionpay' => array('switch' => false, 'signcertpwd' => '', 'merid' => ''),
-			'baifubao' => array('switch' => false, 'signkey' => '', 'mchid' => ''),
-			'line' => array('switch' => false, 'message' => ''),
-		);
+	if (empty($pay_setting['delivery'])) {
+		$pay_setting['delivery'] = array('switch' => false);
+	}
+	if (empty($pay_setting['credit'])) {
+		$pay_setting['delivery'] = array('switch' => false);
+	}
+	if (empty($pay_setting['alipay'])) {
+		$pay_setting['alipay'] = array('switch' => false, 'account' => '', 'partner' => '', 'secret' => '');
+	}
+	if (empty($pay_setting['wechat'])) {
+		$pay_setting['wechat'] = array('switch' => false, 'account' => '', 'signkey' => '', 'partner' => '', 'key' => '', 'version' => '', 'mchid' => '', 'apikey' => '', 'service' => '', 'borrow' => '', 'sub_mch_id' => '');
+	}
+	if (empty($pay_setting['wechat_facilitator'])) {
+		$pay_setting['wechat_facilitator'] = array('switch' => false, 'mchid' => '', 'signkey' => '');
+	}
+	if (empty($pay_setting['unionpay'])) {
+		$pay_setting['unionpay'] = array('switch' => false, 'signcertpwd' => '', 'merid' => '');
+	}
+	if (empty($pay_setting['baifubao'])) {
+		$pay_setting['baifubao'] = array('switch' => false, 'signkey' => '', 'mchid' => '');
+	}
+	if (empty($pay_setting['line'])) {
+		$pay_setting['line'] = array('switch' => false, 'message' => '');
 	}
 	//废弃微信借用支付
 	if (empty($_W['isfounder'])) {
