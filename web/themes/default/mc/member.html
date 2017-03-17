@@ -8,6 +8,9 @@
 	<li {if $do == 'display' || $do == 'post'} class="active"{/if}>
 	<a href="{php echo url('mc/member')}">会员管理</a>
 	</li>
+	<li {if $_GPC['a'] == 'group'} class="active"{/if}>
+	<a href="{php echo url('mc/group')}">会员组</a>
+	</li>
 	<li{if $do == 'uc'} class="active"{/if}>
 	<a href="{php echo url('site/editor/uc')}">会员中心</a>
 	</li>

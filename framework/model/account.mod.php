@@ -948,3 +948,18 @@ function account_delete($acid) {
 	}
 	return true;
 }
+
+/**
+ * 获取所有可借用支付的公众号
+ * @return array() 微信支付可借用的的公众号和服务商公众号
+ */
+function account_wechatpay_proxy () {
+	global $_W;
+	$proxy_account = cache_load(cache_system_key('proxy_wechatpay_account:'));
+	if (empty($proxy_account)) {
+		$proxy_account = cache_build_proxy_wechatpay_account();
+	}
+	unset($proxy_account['borrow'][$_W['uniacid']]);
+	unset($proxy_account['service'][$_W['uniacid']]);
+	return $proxy_account;
+}

@@ -86,10 +86,10 @@
 		<script type="text/javascript">
 				$(function(){
 					$('input[name="upload[image][thumb]"]').click(function(){
-						if($('input[name="upload[image][thumb]"]').val()){
-							$('.upload-image-thumb-width-height').show();
+						if($(this).val() == 1){
+							$('.upload-image-thumb-width-height').css('display', '');
 						} else {
-							$('.upload-image-thumb-width-height').hide();
+							$('.upload-image-thumb-width-height').css('display', 'none');
 						}
 					});
 				});

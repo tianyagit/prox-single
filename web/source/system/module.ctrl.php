@@ -49,13 +49,11 @@ if ($do == 'get_upgrade_info') {
 if ($do == 'check_upgrade') {
 	$module_list = $_GPC['module_list'];//test
 	if (!empty($module_list) && is_array($module_list)) {
-		foreach ($module_list as &$module) {
-			$module = pdo_get('modules', array('name' => $module));
-		}
-		unset($module);
+		$module_list = pdo_getall('modules', array('name' => $module_list));
 	} else {
 		message(error(0), '', 'ajax');
 	}
+
 	$cloud_prepare_result = cloud_prepare();
 	$cloud_m_query_module = cloud_m_query();
 	if (is_error($cloud_m_query_module)) {
@@ -104,7 +102,7 @@ if ($do == 'upgrade') {
 	$points = ext_module_bindings();
 	$module_name = addslashes($_GPC['module_name']);
 	//判断模块相关配置和文件是否合法
-	$module_info = pdo_get('modules', array('name' => $module_name));
+	$module_info = module_fetch($module_name);
 	if (empty($module_info)) {
 		message('模块已经被卸载或是不存在！', '', 'error');
 	}
@@ -239,7 +237,7 @@ if ($do =='install') {
 	if (empty($_W['isfounder'])) {
 		message('您没有安装模块的权限', '', 'error');
 	}
-	if (pdo_getcolumn('modules', array('name' => $module_name), 'mid')) {
+	if (module_fetch($module_name)) {
 		message('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
@@ -381,6 +379,10 @@ if ($do =='install') {
 
 if ($do == 'change_receive_ban') {
 	$modulename = $_GPC['modulename'];
+	$module_exist = module_fetch($modulename);
+	if (empty($module_exist)) {
+		message(error(1, '模块不存在'), '', 'ajax');;
+	}
 	if (!is_array($_W['setting']['module_receive_ban'])) {
 		$_W['setting']['module_receive_ban'] = array();
 	}
@@ -435,7 +437,7 @@ if ($do == 'get_module_info') {
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
-	$module_info = pdo_get('modules', array('name' => $module_name));
+	$module_info = module_fetch($module_name);
 	$module_info['logo'] = file_exists(IA_ROOT. "/addons/". $module_info['name']. "/icon-custom.jpg") ? IA_ROOT. "/addons/". $module_info['name']. "/icon-custom.jpg" : IA_ROOT. "/addons/". $module_info['name']. "/icon.jpg";
 	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0));
 	$module_group = array();
@@ -495,7 +497,7 @@ if ($do == 'uninstall') {
 		message('您没有卸载模块的权限', '', 'error');
 	}
 	$name = trim($_GPC['name']);
-	$module = pdo_get('modules', array('name' => $name), array('name', 'isrulefields', 'issystem', 'version'));
+	$module = module_fetch($name);
 	if (empty($module)) {
 		message('模块已经被卸载或是不存在！', '', 'error');
 	}
