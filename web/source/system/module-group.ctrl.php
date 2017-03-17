@@ -137,7 +137,8 @@ if ($do == 'post') {
 		$module_group = $uni_module_groups[$id];
 		$module_group['modules'] = empty($module_group['modules']) ? array() : iunserializer($module_group['modules']);
 		if (!empty($module_group['modules'])) {
-			foreach ($module_group['modules'] as $module_name) {
+			foreach ($module_group['modules'] as $module) {
+				$module_name = !empty($module['name']) ? $module['name'] : '';
 				$module_info = pdo_get('modules', array('name' => $module_name));
 				if (empty($module_info)) {
 					continue;
@@ -155,7 +156,8 @@ if ($do == 'post') {
 		}
 		$module_group['wxapp'] = empty($module_group['wxapp']) ? array() : iunserializer($module_group['wxapp']);
 		if (!empty($module_group['wxapp'])) {
-			foreach ($module_group['wxapp'] as $module_name) {
+			foreach ($module_group['wxapp'] as $module) {
+				$module_name = !empty($module['name']) ? $module['name'] : '';
 				$module_info = pdo_get('modules', array('name' => $module_name));
 				if (empty($module_info)) {
 					continue;
