@@ -100,9 +100,9 @@ $('.js-clip').each(function(){
 var changeStatus = function(id) {
 	var id = parseInt(id);
 	$.post('./index.php?c=site&a=category&do=change_status', {id: id},function(data) {
+		console.log(data);
 		if (data.message.errno == 0){
-			util.toast('更改成功！', 'success');
-			location.reload();
+			util.message(data.message.message, data.redirect, 'success');
 		} else {
 			if (data.message.errno == 1) util.toast('更改失败！', 'error');
 			if (data.message.errno == -1) util.toast('分类不存在，请刷新重试！');
