@@ -1873,8 +1873,9 @@ function mc_card_settings_hide($item = '') {
  * @param 	string 		$openid 		粉丝openid字段
  * @param 	string 		$card_fee 		core_paylog表card_fee 使用卡券后的价格
  * @param 	string 		$storeid 		消费门店id
+ * @param 	string 		$modulename 		模块标识
  */
-function mc_card_grant_credit($openid, $card_fee, $storeid = 0) {
+function mc_card_grant_credit($openid, $card_fee, $storeid = 0, $modulename) {
 	global $_W;
 	$setting = uni_setting($_W['uniacid'], array('creditbehaviors'));
 	load()->model('card');
@@ -1895,7 +1896,7 @@ function mc_card_grant_credit($openid, $card_fee, $storeid = 0) {
 	if (!empty($grant_credit1_enable)) {
 		$num = $card_fee * $grant_rate;
 		$tips .= "用户消费{$card_fee}元，余额支付{$card_fee}，积分赠送比率为:【1：{$grant_rate}】,共赠送【{$num}】积分";
-		mc_credit_update($openid, 'credit1', $num, array('0', $tip, 'paycenter', 0, $storeid, 3));
+		mc_credit_update($openid, 'credit1', $num, array('0', $tip, $modulename, 0, $storeid, 3));
 		return error(0, $num);
 	} else {
 		return error(-1, '');
