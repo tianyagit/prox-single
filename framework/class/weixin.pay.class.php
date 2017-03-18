@@ -10,12 +10,25 @@ class WeiXinPay extends pay{
 		global $_W;
 		$setting = uni_setting($_W['uniacid']);
 		$wxpay = $setting['payment']['wechat'];
-		$this->wxpay = array(
-			'appid' => $_W['account']['key'],
-			'mch_id' => $wxpay['mchid'],
-			'key' => $wxpay['apikey'],
-			'notify_url' => $_W['siteroot'] . 'payment/wechat/notify.php',
-		);
+		if (intval($wxpay['switch']) == 3) {
+			$oauth_account = uni_setting($wxpay['service'], array('payment'));
+			$oauth_acid = pdo_getcolumn('uni_account', array('uniacid' => $wxpay['service']), 'default_acid');
+			$oauth_appid = pdo_getcolumn('account_wechats', array('acid' => $oauth_acid), 'key');
+			$this->wxpay = array(
+				'appid' => $oauth_appid,
+				'mch_id' => $oauth_account['payment']['wechat_facilitator']['mchid'],
+				'sub_mch_id' => $wxpay['sub_mch_id'],
+				'key' => $oauth_account['payment']['wechat_facilitator']['signkey'],
+				'notify_url' => $_W['siteroot'] . 'payment/wechat/notify.php',
+			);
+		} else {
+			$this->wxpay = array(
+				'appid' => $_W['account']['key'],
+				'mch_id' => $wxpay['mchid'],
+				'key' => $wxpay['apikey'],
+				'notify_url' => $_W['siteroot'] . 'payment/wechat/notify.php',
+			);
+		}
 	}
 
 	public function array2url($params, $force = false) {
