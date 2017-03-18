@@ -351,11 +351,8 @@ if($do == 'post') {
 		}
 		
 		$menu = array();
-		$check_btname = array();
-		$rands = 0;
 		if(!empty($post['button'])) {
 			foreach($post['button'] as $key => &$button) {
-				$check_btname[$rands++] = $button['name'];
 				$temp = array();
 				$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
 				$temp['name'] = urlencode($temp['name']);
@@ -380,7 +377,6 @@ if($do == 'post') {
 					}
 				} else {
 					foreach($button['sub_button'] as &$subbutton) {
-						$check_btname[$rands++] = $subbutton['name'];
 						$sub_temp = array();
 						$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
 						$sub_temp['name'] = urlencode($sub_temp['name']);
@@ -443,10 +439,7 @@ if($do == 'post') {
 				if($inarray === 1) $menu['matchrule']['language'] = $post['matchrule']['language'];
 			}
 		}
-		//检测菜单名称是否重名
-		if (count(array_unique($check_btname)) != count($check_btname)) {
-			message(error(-1, '一级子菜单和二级子菜单出现重复'), '', 'ajax');
-		}
+
 		$account_api = WeAccount::create();
 		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
