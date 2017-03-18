@@ -4,13 +4,14 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+load()->func('communication');
+
 $dos = array('mail');
 $do = in_array($do, $dos) ? $do : 'mail';
-
 uni_user_permission_check('profile_setting');
+$_W['page']['title'] = '邮件通知参数配置';
 
 if ($do == 'mail') {
-	$_W['page']['title'] = '邮件通知参数配置';
 	if (checksubmit('submit')) {
 		$notify['mail'] = array(
 			'username' => $_GPC['username'],
@@ -22,7 +23,6 @@ if ($do == 'mail') {
 		$setting = array('notify' => iserializer($notify));
 		$original_setting = uni_setting_load('notify');
 		pdo_update('uni_settings', $setting, array('uniacid' => $_W['uniacid']));
-		load()->func('communication');
 		$result = ihttp_email($notify['mail']['username'], $_W['account']['name'] . '验证邮件'.date('Y-m-d H:i:s'), '如果您收到这封邮件则表示您系统的发送邮件配置成功！');
 		if (is_error($result)) {
 			$setting = array('notify' => iserializer($original_setting));
