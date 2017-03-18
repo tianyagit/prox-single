@@ -45,15 +45,10 @@ function wechat_proxy_build($params, $wechat) {
 	global $_W;
 	$uniacid = !empty($wechat['service']) ? $wechat['service'] : $wechat['borrow'];
 	$oauth_account = uni_setting($uniacid, array('payment'));
-	if (intval($wechat['switch']) == '2') {
-		$_W['uniacid'] = $uniacid;
-		$wechat['signkey'] = $oauth_account['payment']['wechat']['signkey'];
-		$wechat['mchid'] = $oauth_account['payment']['wechat']['mchid'];
-		unset($wechat['sub_mch_id']);
-	} else {
-		$wechat['signkey'] = $oauth_account['payment']['wechat_facilitator']['signkey'];
-		$wechat['mchid'] = $oauth_account['payment']['wechat_facilitator']['mchid'];
-	}
+	$_W['uniacid'] = $uniacid;
+	$wechat['signkey'] = $oauth_account['payment']['wechat']['signkey'];
+	$wechat['mchid'] = $oauth_account['payment']['wechat']['mchid'];
+	unset($wechat['sub_mch_id']);
 	$acid = pdo_getcolumn('uni_account', array('uniacid' => $uniacid), 'default_acid');
 	$wechat['appid'] = pdo_getcolumn('account_wechats', array('acid' => $acid), 'key');
 	$wechat['version'] = 2;

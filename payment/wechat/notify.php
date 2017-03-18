@@ -49,12 +49,7 @@ if(is_array($setting['payment'])) {
 			}
 		}
 
-		if (intval($wechat['switch']) == 3) {
-			$facilitator_setting = uni_setting($wechat['service'], array('payment'));
-			$wechat['signkey'] = $facilitator_setting['payment']['wechat_facilitator']['signkey'];
-		} else {
-			$wechat['signkey'] = ($wechat['version'] == 1) ? $wechat['key'] : $wechat['signkey'];
-		}
+		$wechat['signkey'] = ($wechat['version'] == 1) ? $wechat['key'] : $wechat['signkey'];
 		$sign = strtoupper(md5($string1 . "key={$wechat['signkey']}"));
 		if($sign == $get['sign']) {
 			$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniontid`=:uniontid';

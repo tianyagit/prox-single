@@ -375,13 +375,9 @@ function cache_build_proxy_wechatpay_account() {
 					$borrow[$account['uniacid']] = $account['name'];
 				}
 			}
-			if (!empty($payment['wechat_facilitator']['switch'])) {
-				$service[$account['uniacid']] = $account['name'];
-			}
 		}
 	}
 	$cache = array(
-		'service' => $service,
 		'borrow' => $borrow
 	);
 	cache_write(cache_system_key("proxy_wechatpay_account:"), $cache);
