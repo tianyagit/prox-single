@@ -310,36 +310,33 @@ function cache_build_uninstalled_module() {
 		}
 	}
 	$path = IA_ROOT . '/addons/';
-	if (is_dir($path)) {
-		if ($handle = opendir($path)) {
-			while (false !== ($modulepath = readdir($handle))) {
-				if ($modulepath == '.' || $modulepath == '..') {
-					continue;
+	$module_file = glob($path . '*');
+	if (is_array($module_file) && !empty($module_file)) {
+		foreach ($module_file as $modulepath) {
+			$modulepath = str_replace($path, '', $modulepath);
+			$manifest = ext_module_manifest($modulepath);
+			if (!is_array($manifest) || empty($manifest) || empty($manifest['application']['identifie'])) {
+				continue;
+			}
+			if (!in_array($manifest['application']['identifie'], $installed_module)) {
+				$manifest = ext_module_convert($manifest);
+				$module[$manifest['name']] = $manifest;
+				$app_support = empty($manifest['supports']) || in_array('app', $manifest['supports']) ? 2 : 1;
+				$wxapp_support = in_array('wxapp', $manifest['supports']) ? 2 : 1;
+				$module_info = array(
+					'from' => 'local',
+					'name' => $manifest['name'],
+					'version' => $manifest['version'],
+					'title' => $manifest['title'],
+					'app_support' => $app_support,
+					'wxapp_support' => $wxapp_support
+				);
+				$module_type = in_array($manifest['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
+				if ($module_info['app_support'] == 2) {
+					$uninstallModules[$module_type]['app'][$manifest['name']] = $module_info;
 				}
-				$manifest = ext_module_manifest($modulepath);
-				if (!is_array($manifest) || empty($manifest) || empty($manifest['application']['identifie'])) {
-					continue;
-				}
-				if (!in_array($manifest['application']['identifie'], $installed_module)) {
-					$manifest = ext_module_convert($manifest);
-					$module[$manifest['name']] = $manifest;
-					$app_support = empty($manifest['supports']) || in_array('app', $manifest['supports']) ? 2 : 1;
-					$wxapp_support = in_array('wxapp', $manifest['supports']) ? 2 : 1;
-					$module_info = array(
-						'from' => 'local',
-						'name' => $manifest['name'],
-						'version' => $manifest['version'],
-						'title' => $manifest['title'],
-						'app_support' => $app_support,
-						'wxapp_support' => $wxapp_support
-					);
-					$module_type = in_array($manifest['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
-					if ($module_info['app_support'] == 2) {
-						$uninstallModules[$module_type]['app'][$manifest['name']] = $module_info;
-					}
-					if ($module_info['wxapp_support'] == 2) {
-						$uninstallModules[$module_type]['wxapp'][$manifest['name']] = $module_info;
-					}
+				if ($module_info['wxapp_support'] == 2) {
+					$uninstallModules[$module_type]['wxapp'][$manifest['name']] = $module_info;
 				}
 			}
 		}
