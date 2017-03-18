@@ -65,9 +65,9 @@
 				</div>
 			</td>
 			<td class="vertical-middle">
+				<div ng-if="default_site == multi.id">默认开启</div>
 				<label>
 					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-					<div class="switch" ng-class="{'switchOn' : multi.status == 1}" ng-style="{'opacity': 0.3}" ng-if="default_site == multi.id"></div>
 					<div class="switch" ng-class="{'switchOn' : multi.status == 1}" ng-click="switchOn(multi, multi.id)" ng-if="default_site != multi.id"></div>
 				</label>
 			</td>
