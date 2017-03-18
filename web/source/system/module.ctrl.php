@@ -643,14 +643,6 @@ if ($do == 'not_installed') {
 					continue;
 				}
 			}
-			if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['app_support'] == 2) {
-				unset($uninstallModules[$name]);
-				continue;
-			}
-			if (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['wxapp_support'] == 2) {
-				unset($uninstallModules[$name]);
-				continue;
-			}
 			if (!empty($title)) {
 				if (!strexists($module['title'], $title)) {
 					unset($uninstallModules[$name]);
