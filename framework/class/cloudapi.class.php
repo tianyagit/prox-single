@@ -252,7 +252,11 @@ class CloudApi {
 		$ihttp_options = array();
 		$cookiejar = $response['headers']['Set-Cookie'];
 		if (!empty($cookiejar)) {
-			$ihttp_options['CURLOPT_COOKIE'] = implode('; ', $cookiejar);
+			if (is_array($cookiejar)) {
+				$ihttp_options['CURLOPT_COOKIE'] = implode('; ', $cookiejar);
+			} else {
+				$ihttp_options['CURLOPT_COOKIE'] = $cookiejar;
+			}
 		}
 		
 		$response = ihttp_request($url, $post_params, $ihttp_options);

@@ -282,20 +282,8 @@ if ($do =='install') {
 		template('system/select-module-group');
 		exit;
 	}
-	$wxapp_support = false;
-	$app_support = false;
-	if (!empty($module['supports'])) {
-		foreach ($module['supports'] as $support) {
-			if ($support == 'wxapp') {
-				$wxapp_support = true;
-			}
-			if ($support == 'app') {
-				$app_support = true;
-			}
-		}	
-	}
-	$module['wxapp_support'] = !empty($wxapp_support) ? 2 : 1;
-	$module['app_support'] = !empty($app_support) || (empty($wxapp_support) && empty($app_support)) ? 2 : 1;
+	$module['app_support'] = empty($module['supports']) || in_array('app', $module['supports']) ? 2 : 1;
+	$module['wxapp_support'] = in_array('wxapp', $module['supports']) ? 2 : 1;
 	$post_groups = $_GPC['group'];
 	ext_module_clean($module_name);
 	$bindings = array_elements(array_keys($points), $module, false);
@@ -642,14 +630,6 @@ if ($do == 'not_installed') {
 					unset($uninstallModules[$name]);
 					continue;
 				}
-			}
-			if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['app_support'] == 2) {
-				unset($uninstallModules[$name]);
-				continue;
-			}
-			if (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['wxapp_support'] == 2) {
-				unset($uninstallModules[$name]);
-				continue;
 			}
 			if (!empty($title)) {
 				if (!strexists($module['title'], $title)) {
