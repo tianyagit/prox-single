@@ -21,12 +21,6 @@
 				<span class="help-block">您可以给这组触发关键字规则起一个名字, 方便下次修改和查看. </span>
 			</div>
 		</div>
-		<div class="form-group">
-			<label for="" class="control-label col-sm-2">&nbsp;</label>
-			<div class="form-controls color-default col-sm-8">
-				<a href="javascript:void(0);" ng-click="changeShowAdvance()"><span ng-show="!reply.showAdvance">展开</span><span ng-show="reply.showAdvance">收起</span>高级设置<i class="fa fa-chevron-down" ng-class="{'fa-chevron-down': !reply.showAdvance, 'fa-chevron-up': reply.showAdvance}"></i></a>
-			</div>
-		</div>
 		<div class="form-group" ng-show="reply.showAdvance">
 			<label for="" class="control-label col-sm-2">全局置顶</label>
 			<div class="form-controls col-sm-8">
@@ -44,6 +38,12 @@
 			<span class="help-block">
 				规则优先级，越大则越靠前，最大不得超过254
 			</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="" class="control-label col-sm-2">&nbsp;</label>
+			<div class="form-controls color-default col-sm-8">
+				<a href="javascript:void(0);" ng-click="changeShowAdvance()"><span ng-show="!reply.showAdvance">展开</span><span ng-show="reply.showAdvance">收起</span>高级设置<i class="fa fa-chevron-down" ng-class="{'fa-chevron-down': !reply.showAdvance, 'fa-chevron-up': reply.showAdvance}"></i></a>
 			</div>
 		</div>
 		<div class="form-group">
