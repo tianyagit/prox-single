@@ -299,29 +299,6 @@ function module_build_privileges() {
 	return true;
 }
 
-/**
- * 获取所有未安装的模块的总数
- */
-function module_count_unistalled_module() {
-	global $_GPC;
-	$uninstall_module_num = cache_load('we7:module:all_uninstall');
-	if (empty($uninstall_module_num)) {
-		$uninstall_module = module_get_all_unistalled('uninstalled');
-	} else {
-		$uninstall_module = $uninstall_module_num['modules']['uninstalled'];
-	}
-	if (!empty($uninstall_module)) {
-		foreach($uninstall_module as $name => &$module) {
-			if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['app_support'] == 2) {
-				unset($uninstall_module[$name]);
-			}
-			if (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['wxapp_support'] == 2) {
-				unset($uninstall_module[$name]);
-			}
-		}
-	}
-	return count($uninstall_module);
-}
 
 /**
  * 获取所有未安装的模块
