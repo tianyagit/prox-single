@@ -23,6 +23,7 @@ if ($do == 'get_setting') {
 			'credit' => array('switch' => false),
 			'alipay' => array('switch' => false, 'account' => '', 'partner' => '', 'secret' => ''),
 			'wechat' => array('switch' => false, 'account' => '', 'signkey' => '', 'partner' => '', 'key' => '', 'version' => '', 'mchid' => '', 'apikey' => '', 'service' => '', 'borrow' => '', 'sub_mch_id' => ''),
+			'wechat_facilitator' => array('switch' => false, 'mchid' => '', 'signkey' => ''),
 			'unionpay' => array('switch' => false, 'signcertpwd' => '', 'merid' => ''),
 			'baifubao' => array('switch' => false, 'signkey' => '', 'mchid' => ''),
 			'line' => array('switch' => false, 'message' => ''),
@@ -120,6 +121,9 @@ MFF/yA==
 	$payment = iserializer($pay_setting);
 	pdo_update('uni_settings', array('payment' => $payment), array('uniacid' => $_W['uniacid']));
 	cache_delete("unisetting:{$_W['uniacid']}");
+	if (($type == 'wechat_facilitator' && $setting['payment']['wechat_facilitator']['switch'] !== $param['switch']) || ($type == 'wechat' && intval($param['switch']) != intval($setting['payment']['wechat']['switch']))) {
+		cache_delete(cache_system_key('proxy_wechatpay_account:'));
+	}
 	if ($type == 'unionpay') {
 		header('LOCATION: '.url('profile/payment'));
 		exit();
@@ -142,6 +146,9 @@ if ($do == 'display') {
 	}
 	if (empty($pay_setting['wechat'])) {
 		$pay_setting['wechat'] = array('switch' => false, 'account' => '', 'signkey' => '', 'partner' => '', 'key' => '', 'version' => '', 'mchid' => '', 'apikey' => '', 'service' => '', 'borrow' => '', 'sub_mch_id' => '');
+	}
+	if (empty($pay_setting['wechat_facilitator'])) {
+		$pay_setting['wechat_facilitator'] = array('switch' => false, 'mchid' => '', 'signkey' => '');
 	}
 	if (empty($pay_setting['unionpay'])) {
 		$pay_setting['unionpay'] = array('switch' => false, 'signcertpwd' => '', 'merid' => '');
