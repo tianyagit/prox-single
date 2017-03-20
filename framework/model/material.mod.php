@@ -102,6 +102,15 @@ function material_get($attach_id) {
 			if (!empty($news)) {
 				foreach ($news as &$news_row) {
 					$news_row['thumb_url'] = tomedia($news_row['thumb_url']);
+					preg_match_all('/src=[\'\"]?([^\'\"]*)[\'\"]?/i', $news_row['content'], $match);
+					if (!empty($match[1])) {
+						foreach ($match[1] as $val) {
+							if ((strexists($val, 'http://') || strexists($val, 'https://')) && (strexists($val, 'mmbiz.qlogo.cn') || strexists($val, 'mmbiz.qpic.cn'))) {
+								$news_row['content'] = str_replace($val, tomedia($val), $news_row['content']);
+							}
+						}
+					}
+					$news_row['content'] = str_replace('data-src', 'src', $news_row['content']);
 				}
 				unset($news_row);
 			} else {

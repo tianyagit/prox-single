@@ -19,6 +19,14 @@ $_W['page']['title'] = '新增素材-微信素材';
 if ($do == 'replace_image_url') {
 	$content = htmlspecialchars_decode($_GPC['content']);
 	$match = array();
+	preg_match_all('/<img.*src=[\'"](.*)[\'"].*\/?>/iU', $content, $match_wechat);
+	if (!empty($match_wechat[1])) {
+		foreach ($match_wechat[1] as $val) {
+			$wechat_thumb_url = urldecode(str_replace($_W['siteroot'] . 'web/index.php?c=utility&a=wxcode&do=image&attach=', '', $val));
+			$content = str_replace($val, $wechat_thumb_url, $content);
+		}
+	}
+	unset($val);
 	preg_match_all('/<img.*src=[\'"](.*\.(?:png|jpg|jpeg|jpe|gif))[\'"].*\/?>/iU', $content, $match);
 	if (!empty($match[1])) {
 		foreach ($match[1] as $val) {
