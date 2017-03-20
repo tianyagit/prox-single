@@ -25,7 +25,7 @@ if($do == 'display') {
 	$account_api = WeAccount::create();
 	$default_menu_info = $account_api->menuCurrentQuery();
 	if (is_error($default_menu_info)) {
-		message($default_menu_info['message'], url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid'])), 'error');
+		message($default_menu_info['message'], '', 'error');
 	}
 	$default_menu = $default_menu_info['selfmenu_info'];
 	$default_menu['type'] = 1;
