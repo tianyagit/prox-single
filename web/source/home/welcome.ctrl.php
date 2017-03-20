@@ -18,23 +18,26 @@ if ($do == 'platform') {
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
 		message('公众号已到服务期限，请续费', referer(), 'info');
 	}
-
-	uni_update_week_stat();
-	$_W['page']['title'] = '平台相关数据';
-	//今日昨日指标
-	$yesterday = date('Ymd', strtotime('-1 days'));
-	$yesterday_stat = pdo_get('stat_fans', array('date' => $yesterday, 'uniacid' => $_W['uniacid']));
-	$yesterday_stat['new'] = intval($yesterday_stat['new']);
-	$yesterday_stat['cancel'] = intval($yesterday_stat['cancel']);
-	$yesterday_stat['cumulate'] = intval($yesterday_stat['cumulate']);
-	$today_stat = pdo_get('stat_fans', array('date' => date('Ymd'), 'uniacid' => $_W['uniacid']));
-	//今日粉丝详情
-	$today_add_num = intval($today_stat['new']);
-	$today_cancel_num = intval($today_stat['cancel']);
-	$today_jing_num = $today_add_num - $today_cancel_num;
-	$today_total_num = intval($today_jing_num) + intval($yesterday_stat['cumulate']);
-	if($today_total_num < 0) {
-		$today_total_num = 0;
+	if ($_W['isajax'] && $_GPC['get_fans_kpi'] == 1) {
+		uni_update_week_stat();
+		$_W['page']['title'] = '平台相关数据';
+		//今日昨日指标
+		$yesterday = date('Ymd', strtotime('-1 days'));
+		$yesterday_stat = pdo_get('stat_fans', array('date' => $yesterday, 'uniacid' => $_W['uniacid']));
+		$yesterday_stat['new'] = intval($yesterday_stat['new']);
+		$yesterday_stat['cancel'] = intval($yesterday_stat['cancel']);
+		$yesterday_stat['jing_num'] = intval($yesterday_stat['new']) - intval($yesterday_stat['cancel']);
+		$yesterday_stat['cumulate'] = intval($yesterday_stat['cumulate']);
+		//今日粉丝详情
+		$today_stat = pdo_get('stat_fans', array('date' => date('Ymd'), 'uniacid' => $_W['uniacid']));
+		$today_stat['new'] = intval($today_stat['new']);
+		$today_stat['cancel'] = intval($today_stat['cancel']);
+		$today_stat['jing_num'] = $today_stat['new'] - $today_stat['cancel'];
+		$today_stat['cumulate'] = intval($today_stat['jing_num']) + $yesterday_stat['cumulate'];
+		if($today_stat['cumulate'] < 0) {
+			$today_stat['cumulate'] = 0;
+		}
+		message(error(0, array('yesterday' => $yesterday_stat, 'today' => $today_stat)), '', 'ajax');
 	}
 
 	//公告
