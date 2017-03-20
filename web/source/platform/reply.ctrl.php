@@ -274,18 +274,20 @@ if ($do == 'post') {
 	if ($m == 'welcome') {
 		if (checksubmit('submit')) {
 			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
-			$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
-			$settings = array(
-				'welcome' => $rule['content']
-			);
 			if (!empty($rule_id)) {
-				$item = pdo_fetch ('SELECT uniacid FROM ' . tablename ('uni_settings') . " WHERE uniacid=:uniacid", array (':uniacid' => $_W['uniacid']));
-				if (!empty($item)) {
-					pdo_update ('uni_settings', $settings, array ('uniacid' => $_W['uniacid']));
-				} else {
-					$settings['uniacid'] = $_W['uniacid'];
-					pdo_insert ('uni_settings', $settings);
-				}
+				$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
+				$settings = array(
+					'welcome' => $rule['content']
+				);
+			} else {
+				$settings = array('welcome' => '');
+			}
+			$item = pdo_fetch ('SELECT uniacid FROM ' . tablename ('uni_settings') . " WHERE uniacid=:uniacid", array (':uniacid' => $_W['uniacid']));
+			if (!empty($item)) {
+				pdo_update ('uni_settings', $settings, array ('uniacid' => $_W['uniacid']));
+			} else {
+				$settings['uniacid'] = $_W['uniacid'];
+				pdo_insert ('uni_settings', $settings);
 			}
 			cache_delete("unisetting:{$_W['uniacid']}");
 			message('系统回复更新成功！', url('platform/reply', array('m' => 'welcome')));
