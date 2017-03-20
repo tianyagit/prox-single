@@ -1477,7 +1477,7 @@ class WeiXinAccount extends WeAccount {
 			'media' => '@'. $thumb,
 		);
 		$url = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={$token}";
-		$response = $this->requestApi($url, stripslashes(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
+		$response = $this->requestApi($url, $data);
 		if (is_error($response)) {
 			return $response;
 		} else {

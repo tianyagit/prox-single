@@ -104,7 +104,7 @@ if ($do == 'addnews') {
 				'title' => $news['title'],
 				'author' => $news['author'],
 				'digest' => $news['description'],
-				'content' => addslashes(htmlspecialchars_decode($news['content'])),
+				'content' => htmlspecialchars_decode($news['content']),
 				'show_cover_pic' => 1,
 				'content_source_url' => $news['content_source_url'],
 				'thumb_media_id' => $news['media_id'],
