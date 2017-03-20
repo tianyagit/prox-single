@@ -336,7 +336,7 @@ function module_get_all_unistalled($status)  {
  * @param string $name 模块标识
  */
 function module_permission_fetch($name) {
-	$module = pdo_get('modules', array('name' => $name));
+	$module = module_fetch($name);
 	$data = array();
 	if ($module['permissions']) {
 		$data[] = array('title' => '权限设置', 'permission' => $name.'_permissions');

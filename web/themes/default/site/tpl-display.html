@@ -76,12 +76,12 @@
 		type: {php echo !empty($_GPC['type']) ? json_encode($_GPC['type']) : 'null'},
 		setting: {php echo !empty($setting) ? json_encode($setting) : 'null'},
 		links: {
-			template: "{php echo url('site/style/template', array('operation' => 'template'))}",
-			default: "{php echo url('site/style/default', array('operation' => 'default'))}",
-			designer: "{php echo url('site/style/designer', array('operation' => 'designer'))}",
-			copy: "{php echo url('site/style/copy', array('operation' => 'copy'))}",
-			build: "{php echo url('site/style/build', array('operation' => 'build'))}",
-			del: "{php echo url('site/style/del', array('operation' => 'del'))}",
+			template: "{php echo url('site/style/template')}",
+			default: "{php echo url('site/style/default')}",
+			designer: "{php echo url('site/style/designer')}",
+			copy: "{php echo url('site/style/copy')}",
+			build: "{php echo url('site/style/build')}",
+			del: "{php echo url('site/style/del')}",
 			home: "{php echo murl('home', array(), true, true)}",
 		},
 	});

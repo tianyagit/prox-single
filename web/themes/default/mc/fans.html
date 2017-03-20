@@ -175,7 +175,7 @@
 							<p><a href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="nick-name" data-fanid="{$fan['fanid']}" data-group="{$fan['groupid']}">{$fan['nickname']}</a></p>
 							<p class="remark-name"><a href="">{$fan['member']['realname']}</a> {if !empty($fan['member']['mobile'])}<i class="wi wi-iphone fans-tel"></i>{/if}</p>
 							<div class="fans-tag-area">
-								<span class="tag-list">
+								<span class="tag-list put-group get-fans-tag js-group" data-id="{$fan['fanid']}" data-toggle='popover'>
 									{loop $fan['tag_show'] $k $tag_show}
 									{if $k == 0 && $tag_show == '无标签'}
 									无标签
@@ -183,10 +183,11 @@
 									<a href="javascript:;" class="label label-primary">{$tag_show}</a>
 									{/if}
 									{/loop}
+									<span class="tag-btn" >
+										<i class="caret"></i>
+									</span>
 								</span>
-								<span class="tag-btn get-fans-tag" data-id="{$fan['fanid']}">
-									<i class="put-group caret js-group" data-toggle='popover'></i>
-								</span>
+
 							</div>
 						</td>
 						<td>
@@ -273,11 +274,11 @@
 			template : '<div class="popover we7-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
 			content : '' +
 			'<div class="we7-form">' +
-				'<div class="form-group">'+
+				'<div class="form-group row">'+
 					{loop $fans_tag $tags}
-					'<input id="option{$tags['id']}" data-tag="{$tags['id']}" type="checkbox" name="tagname" value="{$tags['id']}" />' +
+					'<div class="col-sm-4" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="option{$tags['id']}" data-tag="{$tags['id']}" type="checkbox" name="tagname" value="{$tags['id']}" />' +
 					'<label for="option{$tags['id']}">{$tags['name']} </label>' +
-		'<input type="hidden" name="fanid"  />' +
+		'<input type="hidden" name="fanid"  /></div>' +
 		{/loop}
 				'</div>' +
 			'</div>' +

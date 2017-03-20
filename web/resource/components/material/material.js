@@ -3,6 +3,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 		'defaultoptions' : {
 			callback : null,
 			type : 'all',
+			typeVal: null,
 			multiple : false,
 			ignore : {
 				'basic' : false,
@@ -276,7 +277,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'	</div>\n' +
 				'</div>';
 
-			dialog['basicDialog'] = '<textarea id="basictext" cols="116" rows="10"></textarea>'+
+			dialog['basicDialog'] = '<textarea id="basictext" cols="116" rows="10">'+ (this.options.typeVal ? this.options.typeVal : "") +'</textarea>'+
 				'						<div class="help-block">'+
 				'							您还可以使用表情和链接。'+
 				'							<a class="emotion-triggers" href="javascript:;" onclick="initSelectEmotion();"><i class="fa fa-github-alt"></i> 表情</a>'+

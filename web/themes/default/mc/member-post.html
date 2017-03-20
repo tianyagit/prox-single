@@ -9,11 +9,458 @@
 		编辑会员
 	</li>
 </ol>
+<div class="user-head-info we7-padding-bottom">
+	<img ng-src="./resource/images/nopic-107.png" class="img-circle user-avatar pull-left" src="./resource/images/nopic-107.png">
+	<div class="pull-left">
+		<h3>姓名</h3>
+	</div>
+</div>
+<div class="btn-group we7-btn-group we7-margin-bottom btn-group-justified">
+	<a href="javascript:;" class="btn active">积分</a>
+	<a href="javascript:;" class="btn ">余额</a>
+	<a href="javascript:;" class="btn ">消费</a>
+	<a href="javascript:;" class="btn ">编辑会员</a>
+	<a href="{php echo url('mc/member/credit_stat',array('uid' => $li['uid'], 'type' => 1))}" title="日志" class="btn">日志</a>
+</div>
 <div class="main">
 	<form action="" class="we7-form form" method="post" enctype="multipart/form-data">
 		{if !empty($profile)}
+		<!--积分-->
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">积分</th>
+			</tr>
+			<tr>
+				<td class="table-label">积分</td>
+				<td>0.0</td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<!--end积分-->
+		<!--余额-->
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">余额</th>
+			</tr>
+			<tr>
+				<td class="table-label">余额</td>
+				<td>0.00</td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<!--end余额-->
+		<!--消费-->
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">消费</th>
+			</tr>
+			<tr>
+				<td class="table-label">消费</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<!--end消费-->
+		<!--编辑会员-->
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col width="500px">
+			<tr>
+				<th class="text-left" colspan="2">密码</th>
+			</tr>
+			<tr>
+				<td class="table-label">密码</td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改密码</a>
+				</td>
+			</tr>
+		</table>
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">基本资料</th>
+			</tr>
+			<tr>
+				<td class="table-label">头像</td>
+				<td><img src="" alt="" class="img-circle" style="width: 65px; height: 65px;"/></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">用户UID</td>
+				<td>{$uid}</td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">所在会员组</td>
+				<td>铜牌会员组</td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">昵称</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">真实姓名</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">性别</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">生日</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">户籍</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">详细地址</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">手机</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">QQ</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">Email</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">联系方式</th>
+			</tr>
+			<tr>
+				<td class="table-label">固定电话</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">MSN</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">阿里旺旺</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">支付宝账号</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col width="100px">
+			<tr>
+				<th class="text-left">收货地址</th>
+				<th class="text-right">
+					<a href="javascript:;" class="color-default">添加收货地址</a>
+				</th>
+			</tr>
+			<tr>
+				<td class="table-label">
+					山西省-太原市-小店区-晋阳街长治路口 <span class="label label-success">默认收货地址</span>
+				</td>
+				<td class="text-right">
+					<div class="link-group">
+						<a href="javascript:;">编辑</a>
+						<a href="javascript:;">删除</a>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">
+					山西省-太原市-小店区-晋阳街长治路口
+				</td>
+				<td class="text-right">
+					<div class="link-group">
+						<a href="javascript:;">设为默认</a>
+						<a href="javascript:;">编辑</a>
+						<a href="javascript:;">删除</a>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">教育情况</th>
+			</tr>
+			<tr>
+				<td class="table-label">学号</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">班级</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">毕业学校</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">学历</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">工作情况</th>
+			</tr>
+			<tr>
+				<td class="table-label">公司</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">职业</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">职位</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">年收入</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">个人情况</th>
+			</tr>
+			<tr>
+				<td class="table-label">星座</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">生肖</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">国籍</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">身高</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">体重</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">血型</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">身份证号</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">邮编</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">个人主页</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">情感状态</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">交友目的</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">自我介绍</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">兴趣爱好</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<table class="table we7-table table-hover table-form">
+			<col width="140px">
+			<col />
+			<col width="100px">
+			<tr>
+				<th class="text-left" colspan="3">其他信息</th>
+			</tr>
+			<tr>
+				<td class="table-label">VIP级别</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">出生生日</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">居住地址</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-label">工号</td>
+				<td></td>
+				<td class="text-right">
+					<a href="javascript:;" class="color-default">修改</a>
+				</td>
+			</tr>
+		</table>
+		<!--end编辑会员-->
 		<div class="panel we7-panel">
-			<div class="panel-heading">修改密码</div>
+			<div class="panel-heading">基本资料</div>
 			<div class="panel-body we7-padding">
 				<div class="form-group">
 					<label class="col-sm-2 control-label">新密码</label>

@@ -170,7 +170,7 @@ class CoreModuleSite extends WeModuleSite {
 			'title' => urldecode($paylog['title']),
 			'uniontid' => $paylog['uniontid'],
 		);
-		if (intval($wechat_payment['switch']) == 2 || intval($wechat_payment['switch']) == 3 ) {
+		if (intval($wechat_payment['switch']) == 2 || intval($wechat_payment['switch']) == 3) {
 			$wechat_payment_params = wechat_proxy_build($params, $wechat_payment);
 		} else {
 			unset($wechat_payment['sub_mch_id']);
