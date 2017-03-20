@@ -15,23 +15,22 @@
 		<h3>姓名</h3>
 	</div>
 </div>
-<div class="btn-group we7-btn-group we7-margin-bottom btn-group-justified">
-	<a href="javascript:;" class="btn active">积分</a>
-	<a href="javascript:;" class="btn ">余额</a>
-	<a href="javascript:;" class="btn ">消费</a>
-	<a href="javascript:;" class="btn ">编辑会员</a>
+<div class="btn-group we7-btn-group">
+	<a href="javascript:;" class="btn active">积分、余额、消费</a>
+	<a href="javascript:;" class="btn ">基本信息</a>
 	<a href="{php echo url('mc/member/credit_stat',array('uid' => $li['uid'], 'type' => 1))}" title="日志" class="btn">日志</a>
 </div>
+
 <div class="main">
 	<form action="" class="we7-form form" method="post" enctype="multipart/form-data">
 		{if !empty($profile)}
-		<!--积分-->
+		<!--积分、余额、消费-->
 		<table class="table we7-table table-hover table-form">
 			<col width="140px">
 			<col />
 			<col width="100px">
 			<tr>
-				<th class="text-left" colspan="3">积分</th>
+				<th class="text-left" colspan="3">积分、余额、消费</th>
 			</tr>
 			<tr>
 				<td class="table-label">积分</td>
@@ -40,32 +39,12 @@
 					<a href="javascript:;" class="color-default">修改</a>
 				</td>
 			</tr>
-		</table>
-		<!--end积分-->
-		<!--余额-->
-		<table class="table we7-table table-hover table-form">
-			<col width="140px">
-			<col />
-			<col width="100px">
-			<tr>
-				<th class="text-left" colspan="3">余额</th>
-			</tr>
 			<tr>
 				<td class="table-label">余额</td>
 				<td>0.00</td>
 				<td class="text-right">
 					<a href="javascript:;" class="color-default">修改</a>
 				</td>
-			</tr>
-		</table>
-		<!--end余额-->
-		<!--消费-->
-		<table class="table we7-table table-hover table-form">
-			<col width="140px">
-			<col />
-			<col width="100px">
-			<tr>
-				<th class="text-left" colspan="3">消费</th>
 			</tr>
 			<tr>
 				<td class="table-label">消费</td>
@@ -75,8 +54,8 @@
 				</td>
 			</tr>
 		</table>
-		<!--end消费-->
-		<!--编辑会员-->
+		<!--end积分、余额、消费-->
+		<!--基本信息-->
 		<table class="table we7-table table-hover table-form">
 			<col width="140px">
 			<col width="500px">

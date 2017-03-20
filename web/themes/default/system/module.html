@@ -42,7 +42,7 @@
 					<div class="dropdown dropdown-toggle we7-dropdown">
 						<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							应用名
-							<span class="caret">
+							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="dLabel">
 							<li><a href="" class="active">应用名</a></li>
@@ -67,8 +67,8 @@
 				<!--<td >{{ module.enabled_use_account }}</td>-->
 				<td class="text-left">
 					<div class="link-group">
-						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">详情</a>
-						<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>
+						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">管理设置</a>
+						<!--<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>-->
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1">停用</a>
 						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
 						<a href="javascript:;" class="color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
@@ -302,44 +302,168 @@
 			应用管理
 		</li>
 	</ol>
-	<div class="module-info media">
-		<a class="pull-left" href="#">
-			<img src="{php echo tomedia($module_info['logo'])}" style="width: 80px;height: 80px;" class="info-logo">
-		</a>
-		<div class="pull-right info-edit">
+	<div class="user-head-info we7-padding-bottom">
+		<img src="{php echo tomedia($module_info['logo'])}" class="user-avatar img-rounded pull-left">
+		<h3 class="pull-left">{$module_info['title']}</h3>
+		<div class="user-edit pull-right">
 			<a href="#" class="btn btn-primary" data-toggle="modal" ng-if="isFounder == 1" ng-click="editModule('{$module_info['mid']}')">编 辑</a>
 			<a href="" class="btn btn-danger" ng-if="isFounder == 1 && checkupgrade == 1" ng-click="setUpgradeInfo()">升级</a>
 		</div>
-		<div class="media-body">
-			<h4 class="media-heading">{$module_info['title']}</h4>
-		</div>
 	</div>
-	<div class="module-description">
-		<dl class="description">
-			<dt><i class="wi wi-appsetting"></i>功能介绍 </dt>
-			<dd>
-				{$module_info['description']}
-			</dd>
-		</dl>
-		<dl class="copyright" ng-if="isFounder == 1">
-			<dt><i class="wi wi-appsetting"></i>版权信息  </dt>
-			<dd>
-				<span>名称：{$module_info['title']}</span>  <span>版本：{$module_info['version']}</span>  <span> 作者：{$module_info['author']}</span>
-			</dd>
-			<!--<dd>-->
-			<!--<span>QQ:361635464</span>  <span>微信：3513854324</span>-->
-			<!--</dd>-->
-		</dl>
+
+	<div class="btn-group we7-btn-group we7-margin-bottom">
+		<a href="javascript:;" class="btn active">基本信息</a>
+		<a href="javascript:;" class="btn">应用权限组</a>
+		<a href="javascript:;" class="btn">公众平台消息处理选项</a>
+		<a href="javascript:;" class="btn">升级</a>
 	</div>
+	<!--基本信息-->
+	<table class="table we7-table table-hover table-form">
+		<col width="140px">
+		<col />
+		<col width="100px">
+		<tr>
+			<th class="text-left" colspan="3">编辑模块基本信息</th>
+		</tr>
+		<tr>
+			<td class="table-label">模块标题</td>
+			<td>{$module_info['title']}</td>
+			<td class="text-right">
+				<a href="javascript:;" class="color-default">修改</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">模块作者</td>
+			<td colspan="2">{$module_info['author']}</td>
+		</tr>
+		<tr>
+			<td class="table-label">模块版本</td>
+			<td colspan="2">{$module_info['version']}</td>
+		</tr>
+		<tr>
+			<td class="table-label">模块简述</td>
+			<td></td>
+			<td class="text-right">
+				<a href="javascript:;" class="color-default">修改</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">模块介绍</td>
+			<td>{$module_info['description']}</td>
+			<td class="text-right">
+				<a href="javascript:;" class="color-default">修改</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">模块缩略图</td>
+			<td><img src="" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
+			<td class="text-right">
+				<a href="javascript:;" class="color-default">修改</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">模块封面</td>
+			<td><img src="" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
+			<td class="text-right">
+				<a href="javascript:;" class="color-default">修改</a>
+			</td>
+		</tr>
+	</table>
+	<!--end基本信息-->
+	<!--升级-->
+	<table class="table we7-table table-hover">
+		<col width="300px"/>
+		<col />
+		<col />
+		<col />
+		<col width="200px;"/>
+		<tr>
+			<th class="text-left">分支名称</th>
+			<th>分支价格</th>
+			<th>目前版本</th>
+			<th>最新版本</th>
+			<th class="text-right">操作</th>
+		</tr>
+		<tr>
+			<td class="text-left">分支名称分支名称分支名称</td>
+			<td class="color-red">3000.00</td>
+			<td>1.0.1</td>
+			<td>1.0.5</td>
+			<td class="text-right">
+				<div class="color-gray">无需升级</div>
+				<a href="javascript:;" class="btn btn-danger">升级</a>
+			</td>
+		</tr>
+	</table>
+	<table class="table we7-table table-hover">
+		<col width="300px"/>
+		<col />
+		<col />
+		<col />
+		<col width="200px"/>
+		<tr>
+			<th class="text-left">分支名称</th>
+			<th>分支价格</th>
+			<th>目前版本</th>
+			<th>最新版本</th>
+			<th class="text-right">操作</th>
+		</tr>
+		<tr>
+			<td class="text-left">分支名称分支名称分支名称</td>
+			<td class="color-red">3000.00</td>
+			<td>1.0.1</td>
+			<td>1.0.5</td>
+			<td class="text-right">
+				<a href="javascript:;" class="btn btn-danger">购买</a>
+			</td>
+		</tr>
+		<tr>
+			<td class="text-left">版本更新内容</td>
+			<td colspan="4" class="text-right">
+				<a class="color-default view-detail" data-toggle="collapse" href="#version-detail">查看详情 <i class="wi wi-angle-down"></i></a>
+			</td>
+		</tr>
+		<tr class="collapse" id="version-detail">
+			<td colspan="5" class="details-versions">
+				<div class="js-version-lists">
+
+					<div class="details-version">
+						<div class="details-version-time">
+							<p class="time-d">20</p>
+							<p class="time-y-m">2017.3</p>
+						</div>
+						<i class="fa fa-circle-o"></i>
+						<div class="details-version-content">
+							<div class="panel panel-version">
+								<div class="panel-heading">
+									版本号：3.0 - 基础运营版  <span class="time-h">12:00</span>
+								</div>
+								<div class="panel-body">
+									优化文章采集时的图片本地化过程
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				{if $recent_versions['total'] > 10}
+				<div class="text-center">
+					<a href="javascript:;" class="btn c-blue js-versions-more">加载更多<i class="fa fa-angle-down"></i></a>
+				</div>
+				{/if}
+			</td>
+		</tr>
+	</table>
+	<!--end 升级-->
 	<div class="module-group" ng-if="isFounder == 1">
 		<table class="table we7-table table-hover">
 			<col />
-			<col width="115px" />
+			<col width="100px" />
 			<tr>
 				<th class="text-left">
 					应用权限组
 				</th>
-				<th>
+				<th class="text-right">
 					<a href="{php echo url('system/module-group')}" class="color-default">添加</a>
 				</th>
 			</tr>
@@ -355,7 +479,7 @@
 				<td class="text-left">
 					<span>{$group['name']}</span>
 				</td>
-				<td>
+				<td class="text-right">
 					<a href="{php echo url('system/module-group/post', array('id' => $group['id']))}" class="color-default">设置</a>
 				</td>
 			</tr>
