@@ -149,6 +149,7 @@ class CoreModule extends WeModule {
 					}else {
 						$replies['keyword'][0]['name'] = $isexists['name'];
 						$keyword = pdo_fetchall("SELECT content FROM ". tablename('rule_keyword') ." WHERE uniacid = :uniacid AND rid = :rid", array(':uniacid' => $_W['uniacid'], ':rid' => $rid));
+						$replies['keyword'][0]['rid'] = $rid;
 						foreach ($keyword as $val) {
 							$replies['keyword'][0]['content'] .= $val['content'].'&nbsp;&nbsp;';
 						}

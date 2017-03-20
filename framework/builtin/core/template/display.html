@@ -678,7 +678,7 @@
 								'</li>'
 						);
 					});
-					$(':hidden[name="reply[reply_'+type+']"]').val(keywordVal[0]['content']);
+					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal[0]);
 					break;
 				case 'module':
 					angular.forEach(val, function(keywordVal, keywordKey) {
