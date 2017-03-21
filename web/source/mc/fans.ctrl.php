@@ -243,8 +243,8 @@ if ($do == 'download_fans') {
 			$wechat_fans = array_slice($wechat_fans_list['fans'], $i * 500, 500);
 			$wechat_openids = implode("','", $wechat_fans);
 			$wechat_openids = "'{$wechat_openids}'";
-			$sql = 'SELECT `openid`, `uniacid`, `acid` FROM ' . tablename('mc_mapping_fans') . " WHERE `openid` IN ({$wechat_openids})";
-			$system_fans = pdo_fetchall($sql, array(), 'openid');
+			$sql = 'SELECT `openid`, `uniacid`, `acid` FROM ' . tablename('mc_mapping_fans') . " WHERE uniacid = :uniacid AND `openid` IN ({$wechat_openids})";
+			$system_fans = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'openid');
 			$add_fans_sql = '';
 			foreach($wechat_fans as $openid) {
 				if (empty($system_fans) || empty($system_fans[$openid])) {
