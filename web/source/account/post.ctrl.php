@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('cloud');
 load()->model('cache');
+load()->classs('weixin.platform');
 
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
@@ -34,6 +35,7 @@ if($do == 'base') {
 	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
+
 	if($_W['ispost'] && $_W['isajax']) {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
@@ -109,8 +111,17 @@ if($do == 'base') {
 				}
 				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $owneruid));
 				break;
+			case 'jointype':
+				$original_type = pdo_get('account', array('uniacid' => $uniacid), 'type');
+				if ($original_type['type'] == 1) {
+					$result = true;
+				} else {
+					$update_type = pdo_update('account', array('type' => 1), array('uniacid' => $uniacid));
+					$result = $update_type ? true : false;
+				}
+				break;
 		}
-		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime'))) {
+		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime', 'jointype'))) {
 			$result = pdo_update(uni_account_tablename(ACCOUNT_TYPE), $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
 		if($result) {
@@ -123,6 +134,22 @@ if($do == 'base') {
 			message(error(0, '修改成功！'), '', 'ajax');
 		}else {
 			message(error(1, '修改失败！'), '', 'ajax');
+		}
+	}
+
+	if ($_W['setting']['platform']['authstate']) {
+		$account_platform = new WeiXinPlatform();
+		$preauthcode = $account_platform->getPreauthCode();
+		if (is_error($preauthcode)) {
+			$authurl = array(
+				'errno' => 1,
+				'url' => "{$preauthcode['message']}"
+			);
+		} else {
+			$authurl = array(
+				'errno' => 0,
+				'url' => sprintf(ACCOUNT_PLATFORM_API_LOGIN, $account_platform->appid, $preauthcode, urlencode(urlencode($GLOBALS['_W']['siteroot'] . 'index.php?c=account&a=auth&do=forward')))
+			);
 		}
 	}
 	$socket_url = str_replace(array('https', 'http'), 'wss', $_W['siteroot']);
