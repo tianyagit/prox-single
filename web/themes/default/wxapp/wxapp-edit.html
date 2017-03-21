@@ -42,7 +42,7 @@
 							</div>
 							<ul class="list-group">
 								{loop $modules $module}
-								<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'uniacid_source' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank" onclick="if(!confirm('您当前操作的公众号与该模块关联的公众号不一致，确定要切换到关联公众号吗？')) return false;">
+								<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'uniacid_source' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank" onclick="if(!confirm('您当前操作的公众号与该模块关联的公众号不一致，确定要切换并前往{$wxapp_info['name']}公众号下的{$module['title']}模块')) return false;">
 								<li class="list-group-item">
 									<i class="fa fa-adjust"></i>{$module['title']}
 								</li>
