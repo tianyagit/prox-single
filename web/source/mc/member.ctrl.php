@@ -238,6 +238,7 @@ if($do == 'post') {
 					$_GPC['email'] = md5($_GPC['openid']) . '@we7.cc';
 				}
 				$fanid = intval($_GPC['fanid']);
+				$fan_info = pdo_get('mc_mapping_fans', array('fanid' => $fanid), 'openid');
 				//没有使用mc_update函数
 				$struct = array_keys(mc_fields());
 				$struct[] = 'birthyear';
@@ -278,6 +279,8 @@ if($do == 'post') {
 				pdo_insert('mc_members', $_GPC);
 				$uid = pdo_insertid();
 				pdo_update('mc_mapping_fans', array('uid' => $uid), array('fanid' => $fanid, 'uniacid' => $_W['uniacid']));
+				$cachekey = cache_system_key("mc_fansinfo:{$fan_info['openid']}");
+				cache_delete($cachekey);
 				message('更新资料成功！', url('mc/member'), 'success');
 			} else {
 				$email_effective = intval($_GPC['email_effective']);

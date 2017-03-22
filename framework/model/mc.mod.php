@@ -47,7 +47,7 @@ function mc_update($uid, $fields) {
 		return false;
 	}
 	//如果是$uid 是一个openid并且是新增用户，需要更新mc_mapping_fans对应的uid
-	$uid_temp = $uid;
+	$uid_temp = trim($uid);
 
 	$uid = mc_openid2uid($uid);
 
@@ -117,7 +117,9 @@ function mc_update($uid, $fields) {
 		pdo_insert('mc_members', $fields);
 		$insert_id = pdo_insertid();
 		if(is_string($uid_temp)) {
-			pdo_update('mc_mapping_fans', array('uid' => $insert_id), array('uniacid' => $_W['uniacid'], 'openid' => trim($uid_temp)));
+			pdo_update('mc_mapping_fans', array('uid' => $insert_id), array('uniacid' => $_W['uniacid'], 'openid' => $uid_temp));
+			$cachekey = cache_system_key("mc_fansinfo:{$uid_temp}");
+			cache_delete($cachekey);
 		}
 		return $insert_id;
 	} else {
@@ -231,6 +233,41 @@ function mc_fetch($uid, $fields = array()) {
 }
 
 /**
+	* 将会员uid转换为粉丝openid
+	* @param mixed $uid 会员uid
+	* @return mixed
+*/
+function mc_uid2openid($uid) {
+	global $_W;
+	if (is_string($uid)) {
+		return $uid;
+	}
+	if (is_numeric($uid)) {
+		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
+		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
+	}
+	if (is_array($uid)) {
+		$openids = array();
+		foreach ($uid as $key => $value) {
+			if (is_string($value)) {
+				$openids[] = $value;
+			} elseif (is_numeric($value)) {
+				$uids[] = $value;
+			}
+		}
+		if (!empty($uids)) {
+			$sql = 'SELECT openid FROM ' . tablename('mc_mapping_fans') . " WHERE `uniacid`=:uniacid AND `uid` IN (" . implode(",", $uids) . ")";
+			$pars = array(':uniacid' => $_W['uniacid']);
+			$fans_info = pdo_fetchall($sql, $pars, 'openid');
+			$fans_info = array_keys($fans_info);
+			$openids = array_merge($openids, $fans_info);
+		}
+		return $openids;
+	}
+	return false;
+}
+
+/**
  * 获取粉丝信息
  * @param mixed $openidOruid 粉丝或会员ID
  * @param int $acid 子公众号ID
@@ -242,14 +279,20 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 	if (empty($openidOruid)) {
 		return array();
 	}
-	$params = array();
 	if (is_numeric($openidOruid)) {
-		$condition = '`uid` = :uid';
-		$params[':uid'] = $openidOruid;
+		$openid = mc_uid2openid($openidOruid);
 	} else {
-		$condition = '`openid` = :openid';
-		$params[':openid'] = $openidOruid;
+		$openid = $openidOruid;
 	}
+
+	$cachekey = cache_system_key("mc_fansinfo:{$openid}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+	$params = array();
+	$condition = '`openid` = :openid';
+	$params[':openid'] = $openid;
 
 	if (!empty($acid)) {
 		$params[':acid'] = $acid;
@@ -280,7 +323,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 			$fan['tag'] = array();
 		}
 	}
-	if (empty($fan) && $openidOruid == $_W['openid'] && !empty($_SESSION['userinfo'])) {
+	if (empty($fan) && $openid == $_W['openid'] && !empty($_SESSION['userinfo'])) {
 		$fan['tag'] = unserialize(base64_decode($_SESSION['userinfo']));
 		$fan['uid'] = 0;
 		$fan['openid'] = $fan['tag']['openid'];
@@ -293,6 +336,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 			$fan['uid'] = $mc_oauth_fan['uid'];
 		}
 	}
+	cache_write($cachekey, $fan);
 	return $fan;
 }
 
@@ -350,6 +394,8 @@ function mc_oauth_userinfo($acid = 0) {
 					'tag' => base64_encode(iserializer($userinfo))
 				);
 				pdo_update('mc_mapping_fans', $record, array('openid' => $_SESSION['openid'], 'acid' => $_W['acid'], 'uniacid' => $_W['uniacid']));
+				$cachekey = cache_system_key("mc_fansinfo:{$_SESSION['openid']}");
+				cache_delete($cachekey);
 			} else {
 				$record = array();
 				$record['updatetime'] = TIMESTAMP;
@@ -539,6 +585,8 @@ function mc_require($uid, $fields, $pre = '') {
 			if (empty($uid)) {
 				pdo_update('mc_oauth_fans', array('uid' => $insertuid), array('oauth_openid' => $_W['openid']));
 				pdo_update('mc_mapping_fans', array('uid' => $insertuid), array('openid' => $_W['openid']));
+				$cachekey = cache_system_key("mc_fansinfo:{$_W['openid']}");
+				cache_delete($cachekey);
 			}
 			message('资料完善成功.', 'refresh');
 		}
@@ -942,12 +990,8 @@ function mc_openid2uid($openid) {
 		return $openid;
 	}
 	if (is_string($openid)) {
-		$sql = 'SELECT uid FROM ' . tablename('mc_mapping_fans') . ' WHERE `uniacid`=:uniacid AND `openid`=:openid';
-		$pars = array();
-		$pars[':uniacid'] = $_W['uniacid'];
-		$pars[':openid'] = $openid;
-		$uid = pdo_fetchcolumn($sql, $pars);
-		return $uid;
+		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'openid' => $openid), array('uid'));
+		return !empty($fans_info) ? $fans_info['uid'] : false;
 	}
 	if (is_array($openid)) {
 		$uids = array();
@@ -1713,6 +1757,8 @@ function mc_init_fans_info($openid, $force_init_member = false){
 	//如果粉丝已经取消关注，则只更新状态
 	if (empty($fans['subscribe'])) {
 		pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('fanid' => $openid));
+		$cachekey = cache_system_key("mc_fansinfo:{$openid}");
+		cache_delete($cachekey);
 		return true;
 	}
 	$fans_mapping = mc_fansinfo($openid);
@@ -1765,6 +1811,9 @@ function mc_init_fans_info($openid, $force_init_member = false){
 
 	if (!empty($fans_mapping)) {
 		pdo_update('mc_mapping_fans', $fans_update_info, array('fanid' => $fans_mapping['fanid']));
+		$cachekey = cache_system_key("mc_fansinfo:{$openid}");
+		cache_delete($cachekey);
+
 	} else {
 		$fans_update_info['salt'] = random(8);
 		$fans_update_info['unfollowtime'] = 0;

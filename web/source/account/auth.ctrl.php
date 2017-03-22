@@ -47,7 +47,7 @@ if ($do == 'forward') {
 	if (!empty($account_info['authorizer_info']['user_name'])) {
 		$account_found = pdo_get('account_wechats', array('original' => $account_info['authorizer_info']['user_name']));
 		if (!empty($account_found)) {
-			pdo_update('account', array('type' => 3), array('acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid']));
+			pdo_update('account', array('type' => ACCOUNT_OAUTH_LOGIN), array('acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid']));
 			message('授权接入成功', url('account/post', array('acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid'])), 'success');
 		}
 	}
@@ -98,7 +98,7 @@ if ($do == 'forward') {
 
 	$account_index_insert = array(
 		'uniacid' => $uniacid,
-		'type' => 3,
+		'type' => ACCOUNT_OAUTH_LOGIN,
 		'hash' => random(8),
 		'isconnect' => 1
 	);

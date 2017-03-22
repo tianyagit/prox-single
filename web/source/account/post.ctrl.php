@@ -113,10 +113,10 @@ if($do == 'base') {
 				break;
 			case 'jointype':
 				$original_type = pdo_get('account', array('uniacid' => $uniacid), 'type');
-				if ($original_type['type'] == 1) {
+				if ($original_type['type'] == ACCOUNT_NORMAL_LOGIN) {
 					$result = true;
 				} else {
-					$update_type = pdo_update('account', array('type' => 1), array('uniacid' => $uniacid));
+					$update_type = pdo_update('account', array('type' => ACCOUNT_NORMAL_LOGIN), array('uniacid' => $uniacid));
 					$result = $update_type ? true : false;
 				}
 				break;
