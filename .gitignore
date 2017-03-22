@@ -33,3 +33,4 @@ attachment/**/*
 addons/**/*
 .tags
 deployment.properties
+.tags_sorted_by_file

@@ -126,8 +126,9 @@ if ($do == 'edit') {
 			} else {
 				$version['logo'] = tomedia(IA_ROOT.'/addons/'.$version['name'].'/icon.jpg');
 			}
-			$module_connections[$module] = $version;
+			$module_connections[$module] = (array)$version;
 			$module_connections[$module]['connection'] = $account_list[$module];
+			$module_connections[$module]['link_name'] = !empty($module_connections[$module]['connection']) ? $module_connections[$module]['connection']['name'] : $wxapp_info['name'];
 		}
 		unset($version);
 	}
