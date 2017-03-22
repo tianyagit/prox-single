@@ -21,19 +21,19 @@ $info = array(
 $size = 0;
 $size = @ini_get('upload_max_filesize');
 if ($size) {
-	$size = parse_size($size);
+	$size = bytecount($size);
 }
 if ($size > 0) {
 	$ts = @ini_get('post_max_size');
 	if ($ts) {
-		$ts = parse_size($size);
+		$ts = bytecount($size);
 	}
 	if ($ts > 0) {
 		$size = min($size, $ts);
 	}
 	$ts = @ini_get('memory_limit');
 	if ($ts) {
-		$ts = parse_size($size);
+		$ts = bytecount($size);
 	}
 	if ($ts > 0) {
 		$size = min($size, $ts);
