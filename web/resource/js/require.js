@@ -111,15 +111,12 @@ require.config({
 		},
 		'jquery.wookmark': {
 			exports: "$",
-			deps: ['jquery']
 		},
 		'jquery.ui': {
 			exports: "$",
-			deps: ['jquery']
 		},
 		'jquery.caret': {
 			exports: "$",
-			deps: ['jquery']
 		},
 		'bootstrap.switch': {
 			deps: ['bootstrap', 'loadcss!../../components/switch/bootstrap-switch.min.css']
