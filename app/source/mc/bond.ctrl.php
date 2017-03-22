@@ -320,6 +320,8 @@ if ($do == 'binding_account') {
 					'acid' => $_W['acid'],
 					'openid' => $_W['openid'],
 				));
+				$cachekey = cache_system_key("mc_fansinfo:{$_W['openid']}");
+				cache_delete($cachekey);
 
 				//删除之前的帐号信息，转称资料，积分数据
 				$member_old = mc_fetch($_W['member']['uid']);
