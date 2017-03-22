@@ -156,15 +156,15 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">是否显示</label>
 					<div class="col-sm-8 col-lg-9 col-xs-12">
-						<label class="radio-inline"><input type="radio" name="is_display" value="1" {if $notice['is_display'] == 1} checked{/if}> 显示</label>
-						<label class="radio-inline"><input type="radio" name="is_display" value="0" {if $notice['is_display'] == 0} checked{/if}> 不显示</label>
+						<input type="radio" id="is_display-1" name="is_display" value="1" {if $notice['is_display'] == 1} checked{/if}> <label class="radio-inline" for="is_display-1">显示</label>
+						<input type="radio" id="is_display-2" name="is_display" value="0" {if $notice['is_display'] == 0} checked{/if}> <label class="radio-inline" for="is_display-2">不显示</label>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">显示在首页</label>
 					<div class="col-sm-8 col-lg-9 col-xs-12">
-						<label class="radio-inline"><input type="radio" name="is_show_home" value="1" {if $notice['is_show_home'] == 1} checked{/if}> 是</label>
-						<label class="radio-inline"><input type="radio" name="is_show_home" value="0" {if $notice['is_show_home'] == 0} checked{/if}> 否</label>
+						<input type="radio" id="is_show_home-1" name="is_show_home" value="1" {if $notice['is_show_home'] == 1} checked{/if}> <label class="radio-inline" for="is_show_home-1">是</label>
+						<input type="radio" id="is_show_home-2" name="is_show_home" value="0" {if $notice['is_show_home'] == 0} checked{/if}> <label class="radio-inline" for="is_show_home-2">否</label>
 					</div>
 				</div>
 			</div>
