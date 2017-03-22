@@ -56,8 +56,12 @@
 				<th class="text-left">操作</th>
 			</tr>
 			<tr ng-repeat="module in module_list">
-				<td class="text-left">
+				<td class="text-left module-img">
 					<img style="width: 50px;height : 50px;" ng-src="{{ module.logo }}" class="img-responsive"/>
+					<div class="img hidden">
+						<img src="" alt="子应用icon" class="plugin-img"/>
+						<img src="" alt="主应用icon" class="module-img"/>
+					</div>
 				</td>
 				<td class="text-left">
 					<p>{{ module.title }}</p>
@@ -304,6 +308,10 @@
 	</ol>
 	<div class="user-head-info we7-padding-bottom">
 		<img src="{php echo tomedia($module_info['logo'])}" class="user-avatar img-rounded pull-left">
+		<div class="img pull-left hidden">
+			<img src="" alt="子应用icon" class="plugin-img"/>
+			<img src="" alt="主应用icon" class="module-img"/>
+		</div>
 		<h3 class="pull-left">{$module_info['title']}</h3>
 		<div class="user-edit pull-right">
 			<a href="#" class="btn btn-primary" data-toggle="modal" ng-if="isFounder == 1" ng-click="editModule('{$module_info['mid']}')">编 辑</a>
@@ -313,6 +321,7 @@
 
 	<div class="btn-group we7-btn-group we7-margin-bottom">
 		<a href="javascript:;" class="btn active">基本信息</a>
+		<a href="javascript:;" class="btn">模块子应用</a>
 		<a href="javascript:;" class="btn">应用权限组</a>
 		<a href="javascript:;" class="btn">公众平台消息处理选项</a>
 		<a href="javascript:;" class="btn">升级</a>
@@ -370,8 +379,28 @@
 		</tr>
 	</table>
 	<!--end基本信息-->
+	<!--模块子应用-->
+	<div class="panel we7-panel">
+		<div class="panel-heading">
+			模块子应用
+		</div>
+		<div class="panel-body">
+			<div class="plugin-list clearfix">
+				<div class="item">
+					<a href="jaascript:;" target="_blank">
+						<div class="img">
+							<img src="" alt="子应用icon" class="plugin-img"/>
+							<img src="" alt="主应用icon" class="module-img"/>
+						</div>
+						<div class="name">子应用名称</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--模块子应用-->
 	<!--升级-->
-	<table class="table we7-table table-hover">
+	<table class="table we7-table table-hover vertical-middle">
 		<col width="300px"/>
 		<col />
 		<col />
@@ -395,7 +424,7 @@
 			</td>
 		</tr>
 	</table>
-	<table class="table we7-table table-hover">
+	<table class="table we7-table table-hover vertical-middle">
 		<col width="300px"/>
 		<col />
 		<col />

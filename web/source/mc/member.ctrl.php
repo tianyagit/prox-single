@@ -213,7 +213,7 @@ if($do == 'post') {
 			exit('error');
 		}
 		$password = md5($password . $user['salt'] . $_W['config']['setting']['authkey']);
-		if (pdo_update('mc_members', array('password' => $password), array('uid' => $uid))) {
+		if (mc_update($uid, array('password' => $password))) {
 			exit('success');
 		}
 		exit('othererror');
@@ -431,8 +431,9 @@ if($do == 'group') {
 		}
 		$credit = intval($group['credit']);
 		$credit6 = $credit - $member['credit1'];
-		$status = pdo_update('mc_members', array('credit6' => $credit6, 'groupid' => $id), array('uid' => $uid, 'uniacid' => $_W['uniacid']));
-		if($status !== false) {
+		$status_update_groupid = mc_update($uid, array('groupid' => $id));
+		$status_update_credit6 = mc_credit_update($uid, 'credit6', $credit6);
+		if($status_update_groupid && !is_error($status_update_credit6)) {
 			$openid = pdo_fetchcolumn('SELECT openid FROM ' . tablename('mc_mapping_fans') . ' WHERE acid = :acid AND uid = :uid', array(':acid' => $_W['acid'], ':uid' => $uid));
 			if(!empty($openid)) {
 				mc_notice_group($openid, $_W['account']['groups'][$member['groupid']]['title'], $_W['account']['groups'][$id]['title']);

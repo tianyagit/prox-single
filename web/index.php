@@ -85,6 +85,7 @@ $_W['acl'] = $acl = array(
 			'verifycode',
 			'code',
 			'file',
+			'bindcall',
 			'subscribe',
 			'wxcode',
 			'modules'

@@ -18,14 +18,14 @@
 		<div class="form-group">
 			<label class="col-sm-2 control-label">查杀目录</label>
 			<div class="col-sm-10" style="">
-				{loop $list $li}
-				<label class="checkbox" style="margin-left:15px">
+				{loop $list $index $li}
+				<div class="checkbox" style="margin-left:15px">
 					{if is_dir($li)}
-					<input type="checkbox" name="dir[]" value="{$li}"/><i class="fa fa-folder-open"> </i> {php echo basename($li);}
+					<input type="checkbox" name="dir[]" id="dir[{$index}]" value="{$li}"/><label for="dir[{$index}]"><i class="fa fa-folder-open"> </i> {php echo basename($li);}</label>
 					{else}
-					<input type="checkbox" name="dir[]" value="{$li}"/><i class="fa fa-file-code-o"> </i> {php echo basename($li);}
+					<input type="checkbox" name="dir[]" id="dir[{$index}]" value="{$li}"/><label for="dir[{$index}]"><i class="fa fa-file-code-o"> </i> {php echo basename($li);}</label>
 					{/if}
-				</label>
+				</div>
 				{/loop}
 			</div>
 		</div>

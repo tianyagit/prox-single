@@ -32,3 +32,4 @@ attachment/**/*
 !attachment/images/global/**/*
 addons/**/*
 .tags
+deployment.properties

@@ -58,7 +58,7 @@ if($_GPC['__auth']) {
 									$record['avatar'] = rtrim($userinfo['headimgurl'], '0') . 132;
 								}
 								if(!empty($record)) {
-									pdo_update('mc_members', $record, array('uid' => intval($user['uid'])));
+									mc_update($user['uid'], $record);
 								}
 							}
 						}

@@ -57,7 +57,7 @@
 			<td class="table-label">接入方式</td>
 			<td ng-if="account.type == 1">普通接入</td>
 			<td ng-if="account.type == 3">授权接入</td>
-			<td><a href="javascript:;" class="color-default"></a></td>
+			<td ng-if="authstate && authurl"><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#jointype" ng-click="editInfo('type', account.type)">修改</a></td>
 		</tr>
 	</table>
 	<div class="modal fade" id="name" tabindex="-1" role="dialog" aria-hidden="true">
@@ -154,8 +154,8 @@
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<label class="radio-inline"><input type="radio" name="endtype" value="2" ng-model="middleAccount.endtype" ng-checked="middleAccount.endtype == 2">设置期限</label>
-						<label class="radio-inline"><input type="radio" name="endtype" value="1" ng-model="middleAccount.endtype" ng-checked="middleAccount.endtype == 1">永久</label>
+						<input id="endtype-1" type="radio" name="endtype" value="2" ng-model="middleAccount.endtype" ng-checked="middleAccount.endtype == 2"><label for="endtype-1">设置期限</label>
+						<input id="endtype-2" type="radio" name="endtype" value="1" ng-model="middleAccount.endtype" ng-checked="middleAccount.endtype == 1"><label for="endtype-2">永久</label>
 					</div>
 					<div class="form-group" ng-show="middleAccount.endtype == 2">
 						{php echo tpl_form_field_date('endtime', $account['endtime']);}
@@ -163,6 +163,26 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('endtime')">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="jointype" role="dialog">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改接入方式</div>
+				</div>
+				<div class="modal-body text-center">
+					<input id="type-1" type="radio" name="jointype" value="1" ng-model="middleAccount.type" ng-checked="middleAccount.type == 1">
+					<label class="radio-inline" for="type-1">普通介入</label>
+					<input id="type-2" type="radio" name="jointype" value="3" ng-model="middleAccount.type" ng-checked="middleAccount.type == 3">
+					<label class="radio-inline" for="type-2">授权接入</label>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('jointype')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -261,6 +281,8 @@
 		uniaccount: {php echo !empty($uniaccount) ? json_encode($uniaccount) : 'null'},
 		headimgsrc: "{php echo $headimgsrc}",
 		qrcodeimgsrc: "{php echo $qrcodeimgsrc}",
+		authstate: "{php echo $_W['setting']['platform']['authstate']}",
+		authurl: {php echo !empty($authurl) ? json_encode($authurl) : 'null'},
 		links: {
 			basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid))}",
 			siteroot: "{php echo $_W['siteroot']}",
