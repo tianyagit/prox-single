@@ -123,6 +123,8 @@ function mc_update($uid, $fields) {
 	} else {
 		if (!empty($fields)) {
 			$result = pdo_update('mc_members', $fields, array('uid' => $uid));
+			$cachekey = cache_system_key("mc_member_info:{$uid}");
+			cache_delete($cachekey);
 		} else {
 			$result = 0;
 		}
@@ -141,6 +143,11 @@ function mc_fetch($uid, $fields = array()) {
 	$uid = mc_openid2uid($uid);
 	if (empty($uid)) {
 		return array();
+	}
+	$cachekey = cache_system_key("mc_member_info:{$uid}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
 	}
 	$struct = mc_fields();
 	$struct = array_keys($struct);
@@ -219,6 +226,7 @@ function mc_fetch($uid, $fields = array()) {
 			$result['credit6'] = floatval($result['credit6']);
 		}
 	}
+	cache_write($cachekey, $result);
 	return $result;
 }
 
@@ -379,7 +387,9 @@ function mc_oauth_userinfo($acid = 0) {
 					$record['avatar'] = $userinfo['headimgurl'];
 				}
 				if (!empty($record)) {
-					pdo_update('mc_members', $record, array('uid' => intval($uid)));
+					pdo_update('mc_members', $record, array('uid' => $uid));
+					$cachekey = cache_system_key("mc_member_info:{$uid}");
+					cache_delete($cachekey);
 				}
 			}
 			return $userinfo;
@@ -576,6 +586,8 @@ function mc_credit_update($uid, $credittype, $creditval = 0, $log = array()) {
 	$value = pdo_fetchcolumn("SELECT $credittype FROM " . tablename('mc_members') . " WHERE `uid` = :uid", array(':uid' => $uid));
 	if ($creditval > 0 || ($value + $creditval >= 0) || $credittype == 'credit6') {
 		pdo_update('mc_members', array($credittype => $value + $creditval), array('uid' => $uid));
+		$cachekey = cache_system_key("mc_member_info:{$uid}");
+		cache_delete($cachekey);
 	} else {
 		return error('-1', "积分类型为“{$credittype}”的积分不够，无法操作。");
 	}
@@ -1009,6 +1021,8 @@ function mc_group_update($uid = 0) {
 	}
 	if($groupid > 0 && $groupid != $user['groupid']) {
 		pdo_update('mc_members', array('groupid' => $groupid), array('uniacid' => $_W['uniacid'], 'uid' => $uid));
+		$cachekey = cache_system_key("mc_member_info:{$uid}");
+		cache_delete($cachekey);
 		mc_notice_group($user['openid'], $_W['uniaccount']['groups'][$user['groupid']]['title'], $_W['uniaccount']['groups'][$groupid]['title']);
 	}
 	$user['groupid'] = $groupid;

@@ -192,7 +192,7 @@ if ($scope == 'userinfo') {
 					$record['avatar'] = $userinfo['headimgurl'];
 				}
 				if(!empty($record)) {
-					pdo_update('mc_members', $record, array('uid' => intval($user['uid'])));
+					mc_update($user['uid'], $record);
 				}
 			}
 		} else {
