@@ -47,7 +47,9 @@ function mc_update($uid, $fields) {
 		return false;
 	}
 	//如果是$uid 是一个openid并且是新增用户，需要更新mc_mapping_fans对应的uid
-	$uid_temp = trim($uid);
+	if (is_string($uid)) {
+		$openid = $uid;
+	}
 
 	$uid = mc_openid2uid($uid);
 
@@ -116,9 +118,9 @@ function mc_update($uid, $fields) {
 		$fields['createtime'] = TIMESTAMP;
 		pdo_insert('mc_members', $fields);
 		$insert_id = pdo_insertid();
-		if(is_string($uid_temp)) {
-			pdo_update('mc_mapping_fans', array('uid' => $insert_id), array('uniacid' => $_W['uniacid'], 'openid' => $uid_temp));
-			cache_build_fansinfo($uid_temp);
+		if (!empty($openid)) {
+			pdo_update('mc_mapping_fans', array('uid' => $insert_id), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
+			cache_build_fansinfo($openid);
 		}
 		return $insert_id;
 	} else {
@@ -238,7 +240,13 @@ function mc_fetch($uid, $fields = array()) {
 function mc_uid2openid($uid) {
 	global $_W;
 	if (is_string($uid)) {
-		return $uid;
+		$openid = trim($uid);
+		$openid_exist = pdo_get('mc_mapping_fans', array('openid' => $openid));
+		if (!empty($openid_exist)) {
+			return $openid;
+		} else {
+			return false;
+		}
 	}
 	if (is_numeric($uid)) {
 		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
@@ -279,6 +287,9 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 	}
 	if (is_numeric($openidOruid)) {
 		$openid = mc_uid2openid($openidOruid);
+		if (empty($openid)) {
+			return array();
+		}
 	} else {
 		$openid = $openidOruid;
 	}
