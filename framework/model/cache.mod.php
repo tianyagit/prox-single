@@ -74,6 +74,7 @@ function cache_build_fansinfo($openid) {
 	$openid = trim($openid);
 	$cachekey = cache_system_key("fansinfo:{$openid}");
 	cache_delete($cachekey);
+	return true;
 }
 
 /**
@@ -84,6 +85,7 @@ function cache_build_memberinfo($uid) {
 	$uid = intval($uid);
 	$cachekey = cache_system_key("memberinfo:{$uid}");
 	cache_delete($cachekey);
+	return true;
 }
 
 function cache_build_accesstoken() {
