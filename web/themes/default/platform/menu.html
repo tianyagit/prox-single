@@ -189,13 +189,13 @@
 										</a>
 										<div class="sub-pre-menu-box">
 											<ul class="sub-pre-menu-list designer-y">
-												<li ng-repeat="subBut in but.sub_button">
+												<li ng-repeat="subBut in but.sub_button.list">
 													<input type="hidden" data-role="sub" data-hash="{{subBut.$$hashKey}}"/>
 													<span class="sub-pre-menu-inner" ng-click="context.editBut(subBut, but, {$id});">
-														<span class="">{{subBut.name}}</span>
+														<span>{{subBut.name}}</span>
 													</span>
 												</dd>
-												<li ng-if="but.sub_button.length < 5" ng-click="context.addSubBut(but);"><i class="fa fa-plus"></i></a>
+												<li ng-if="but.sub_button.list.length < 5" ng-click="context.addSubBut(but);"><i class="fa fa-plus"></i></a>
 												</dd>
 											</ul>
 										</div>
@@ -450,7 +450,7 @@
 								</a>
 								<div class="sub-pre-menu-box" style="display: block;">
 									<ul class="sub-pre-menu-list"> 
-										<li ng-repeat="subBut in but.sub_button">
+										<li ng-repeat="subBut in but.sub_button.list">
 											<a href="javascript:void(0);" class="" title="{{subBut.name}}">{{subBut.name}}</a>
 										</li> 
 									</ul>

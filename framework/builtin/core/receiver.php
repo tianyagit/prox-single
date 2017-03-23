@@ -102,8 +102,7 @@ class CoreModuleReceiver extends WeModuleReceiver {
 					'tag' => base64_encode(iserializer($userinfo)),
 				);
 				pdo_update('mc_mapping_fans', $fans, array('openid' => $this->message['from']));
-				$cachekey = cache_system_key("mc_fansinfo:" . $this->message['form']);
-				cache_delete($cachekey);
+				cache_build_fansinfo($this->message['form']);
 				if (!empty($_W['member']['uid'])) {
 					$member = array();
 					if (!empty($userinfo['nickname'])) {

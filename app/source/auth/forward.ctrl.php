@@ -36,8 +36,7 @@ if($_GPC['__auth']) {
 							$record['nickname'] = stripslashes($userinfo['nickname']);
 							$record['tag'] = base64_encode(iserializer($userinfo));
 							pdo_update('mc_mapping_fans', $record, array('openid' => $fan['openid']));
-							$cachekey = cache_system_key("mc_fansinfo:{$fan['openid']}");
-							cache_delete($cachekey);
+							cache_build_fansinfo($fan['openid']);
 							if(!empty($fan['uid'])) {
 								$user = mc_fetch($fan['uid'], array('nickname', 'gender', 'residecity', 'resideprovince', 'nationality', 'avatar'));
 								$record = array();

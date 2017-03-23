@@ -320,8 +320,7 @@ if ($do == 'binding_account') {
 					'acid' => $_W['acid'],
 					'openid' => $_W['openid'],
 				));
-				$cachekey = cache_system_key("mc_fansinfo:{$_W['openid']}");
-				cache_delete($cachekey);
+				cache_build_fansinfo($_W['openid']);
 
 				//删除之前的帐号信息，转称资料，积分数据
 				$member_old = mc_fetch($_W['member']['uid']);
@@ -342,8 +341,7 @@ if ($do == 'binding_account') {
 					$profile_update['credit4'] = $member_old['credit4'] + $member_new['credit4'];
 					$profile_update['credit5'] = $member_old['credit5'] + $member_new['credit5'];
 					pdo_update('mc_members', $profile_update, array('uid' => $member['uid'], 'uniacid' => $_W['uniacid']));
-					$cachekey = cache_system_key("mc_member_info:{$member['uid']}");
-					cache_delete($cachekey);
+					cache_build_memberinfo($member['uid']);
 					pdo_delete('mc_members', array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
 					//转换各种券的信息
 					pdo_update('coupon_record', array('uid' => $member['uid']), array('uid' => $_W['member']['uid'], 'uniacid' => $_W['uniacid']));
