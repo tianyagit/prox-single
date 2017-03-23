@@ -157,3 +157,75 @@ function material_build_reply($attach_id) {
 	cache_write($cachekey, $reply, CACHE_EXPIRE_MIDDLE);
 	return $reply;
 }
+
+/**
+ *将内容中通过tomeida()转义的微信图片地址替换成微信图片地址
+ * @param $content string 待处理的图文内容
+ */
+function replace_transform_url_to_wechat_url($content) {
+	global $_W;
+	$match_wechat = array();
+	$content = htmlspecialchars_decode($content);
+	preg_match_all ('/<img.*src=[\'"](.*)[\'"].*\/?>/iU', $content, $match_wechat);
+	if (!empty($match_wechat[1])) {
+		foreach ($match_wechat[1] as $val) {
+			$wechat_thumb_url = urldecode(str_replace($_W['siteroot'] . 'web/index.php?c=utility&a=wxcode&do=image&attach=', '', $val));
+			$content = str_replace($val, $wechat_thumb_url, $content);
+		}
+	}
+	return $content;
+}
+
+/**
+ * 获取内容中所有非微信图片的图片地址
+ * @param $content string 待处理的内容
+ * @param $images array 内容中所有图片的地址
+ */
+function get_content_image_url($content) {
+	global $_W;
+	$content = htmlspecialchars_decode ($content);
+	$match = array ();
+	$images = array ();
+	preg_match_all ('/<img.*src=[\'"](.*\.(?:png|jpg|jpeg|jpe|gif))[\'"].*\/?>/iU', $content, $match);
+	if (!empty($match[1])) {
+		foreach ($match[1] as $val) {
+			if ((strexists ($val, 'http://') || strexists ($val, 'https://')) && !strexists ($val, 'mmbiz.qlogo.cn') && !strexists ($val, 'mmbiz.qpic.cn')) {
+				$images[] = $val;
+			} else {
+				if (strexists ($val, './attachment/images/')) {
+					$images[] = tomedia ($val);
+				}
+			}
+		}
+	}
+	return $images;
+}
+
+
+
+/**
+ * 替换图文素材内容中图片url地址（把非微信url替换成微信url）
+ * @param $content string 待处理的图文内容
+ */
+function replace_image_url($content) {
+	global $_W;
+	$content = replace_transform_url_to_wechat_url($content);
+	$images = get_content_image_url($content);
+	if (!empty($images)) {
+		foreach ($images as $image) {
+			$thumb = file_fetch(tomedia($image), 1024, 'material/images');
+			if(is_error($thumb)) {
+				return $thumb;
+			}
+			$thumb = ATTACHMENT_ROOT . $thumb;
+			$account_api = WeAccount::create($_W['acid']);
+			$result = $account_api->uploadNewsThumb($thumb);
+			if (is_error($result)) {
+				return $result;
+			} else {
+				$content = str_replace($image, $result, $content);
+			}
+		}
+	}
+	return $content;
+}

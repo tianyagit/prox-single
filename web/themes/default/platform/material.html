@@ -49,7 +49,12 @@
 					<div class="appmsg-content">
 						<div class="appmsg-info">
 							<em class="appmsg-date">{php echo date('Y年m月d', $material['createtime'])}</em>
-							{if $material['prompt_msg']}
+							{if $material['model'] == 'local'}
+							<i class="wi wi-file pull-right color-default" style="font-size: 20px;"></i>
+							{else}
+							<i class="wi wi-wechat pull-right color-green" style="font-size: 20px;"></i>
+							{/if}
+							{if $material['prompt_msg'] && $material['model'] != 'local'}
 							<div class="undone-tips">
 								图文内容不完整
 								<br> 请补全每一篇图文的封面图、标题和正文
@@ -95,14 +100,16 @@
 					</div>
 					<div class="appmsg-opr">
 						<ul>
+							{if $material['model'] == 'perm'}
 							<li class="appmsg-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('news', {$material['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{/if}
 							<li class="appmsg-opr-item">
 								<a href="{php echo url('platform/material-post/news', array('newsid' => $material['id']))}" class="" data-toggle="tooltip" data-placement="bottom" title="编辑">&nbsp;<i class="wi wi-text"></i></a>
 							</li>
 							<li class="appmsg-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['media_id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -135,7 +142,7 @@
 								<a href="javascript:;" class="" ng-click="checkGroup('image', {$image['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['media_id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -172,7 +179,7 @@
 								<a href="javascript:;" class="" ng-click="checkGroup('voice', {$voice['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="audio-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['media_id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -207,7 +214,7 @@
 								<a href="javascript:;" class="" ng-click="checkGroup('video', {$video['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['media_id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
