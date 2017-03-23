@@ -982,7 +982,6 @@ function mc_openid2uid($openid) {
 			$fans = array_keys($fans);
 			$uids = array_merge((array)$uids, $fans);
 		}
-		cache_write($cachekey, $uids);
 		return $uids;
 	}
 	return false;
@@ -1032,7 +1031,6 @@ function mc_uid2openid($uid) {
 			$fans_info = array_keys($fans_info);
 			$openids = array_merge($openids, $fans_info);
 		}
-		cahe_write($cachekey, $openids);
 		return $openids;
 	}
 	return false;
