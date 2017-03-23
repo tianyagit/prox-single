@@ -739,11 +739,17 @@ class DB {
 		if ($_W['config']['setting']['cache'] != 'memcache' || empty($_W['config']['setting']['memcache']['sql'])) {
 			return false;
 		}
+		$skip_tablename = array(
+			$this->tablename('core_cache'),
+			$this->tablename('core_queue'),
+			$this->tablename('mc_member'),
+			$this->tablename('mc_mapping_fans'),
+		);
 		//获取SQL中的表名
 		$table_prefix = str_replace('`', '', tablename(''));
 		preg_match_all('/(?!from|insert into|replace into|update) `?('.$table_prefix.'[a-zA-Z0-9_-]+)/i', $sql, $match);
 		$tablename = implode(':', $match[1]);
-		if (empty($tablename) || in_array("`{$tablename}`", array($this->tablename('core_cache'), $this->tablename('core_queue'))) ) {
+		if (empty($tablename) || in_array("`{$tablename}`", $skip_tablename)) {
 			return false;
 		}
 		$tablename = str_replace($this->tablepre, '', $tablename);
