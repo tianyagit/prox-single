@@ -232,46 +232,7 @@ function mc_fetch($uid, $fields = array()) {
 	return $result;
 }
 
-/**
-	* 将会员uid转换为粉丝openid
-	* @param mixed $uid 会员uid
-	* @return mixed
-*/
-function mc_uid2openid($uid) {
-	global $_W;
-	if (is_string($uid)) {
-		$openid = trim($uid);
-		$openid_exist = pdo_get('mc_mapping_fans', array('openid' => $openid));
-		if (!empty($openid_exist)) {
-			return $openid;
-		} else {
-			return false;
-		}
-	}
-	if (is_numeric($uid)) {
-		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
-		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
-	}
-	if (is_array($uid)) {
-		$openids = array();
-		foreach ($uid as $key => $value) {
-			if (is_string($value)) {
-				$openids[] = $value;
-			} elseif (is_numeric($value)) {
-				$uids[] = $value;
-			}
-		}
-		if (!empty($uids)) {
-			$sql = 'SELECT openid FROM ' . tablename('mc_mapping_fans') . " WHERE `uniacid`=:uniacid AND `uid` IN (" . implode(",", $uids) . ")";
-			$pars = array(':uniacid' => $_W['uniacid']);
-			$fans_info = pdo_fetchall($sql, $pars, 'openid');
-			$fans_info = array_keys($fans_info);
-			$openids = array_merge($openids, $fans_info);
-		}
-		return $openids;
-	}
-	return false;
-}
+
 
 /**
  * 获取粉丝信息
@@ -994,8 +955,15 @@ function mc_openid2uid($openid) {
 	if (is_numeric($openid)) {
 		return $openid;
 	}
+	$cachekey = cache_system_key("uid:{$openid}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+
 	if (is_string($openid)) {
 		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'openid' => $openid), array('uid'));
+		cache_write($cachekey, $fans_info['uid']);
 		return !empty($fans_info) ? $fans_info['uid'] : false;
 	}
 	if (is_array($openid)) {
@@ -1014,11 +982,61 @@ function mc_openid2uid($openid) {
 			$fans = array_keys($fans);
 			$uids = array_merge((array)$uids, $fans);
 		}
+		cache_write($cachekey, $uids);
 		return $uids;
 	}
 	return false;
 }
 
+/**
+	* 将会员uid转换为粉丝openid
+	* @param mixed $uid 会员uid
+	* @return mixed
+*/
+function mc_uid2openid($uid) {
+	global $_W;
+
+	$cachekey = cache_system_key("openid:{$uid}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+
+	if (is_string($uid)) {
+		$openid = trim($uid);
+		$openid_exist = pdo_get('mc_mapping_fans', array('openid' => $openid));
+		if (!empty($openid_exist)) {
+			return $openid;
+		} else {
+			return false;
+		}
+	}
+	if (is_numeric($uid)) {
+		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
+		cache_write($cachekey, $fans_info['openid']);
+		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
+	}
+	if (is_array($uid)) {
+		$openids = array();
+		foreach ($uid as $key => $value) {
+			if (is_string($value)) {
+				$openids[] = $value;
+			} elseif (is_numeric($value)) {
+				$uids[] = $value;
+			}
+		}
+		if (!empty($uids)) {
+			$sql = 'SELECT openid FROM ' . tablename('mc_mapping_fans') . " WHERE `uniacid`=:uniacid AND `uid` IN (" . implode(",", $uids) . ")";
+			$pars = array(':uniacid' => $_W['uniacid']);
+			$fans_info = pdo_fetchall($sql, $pars, 'openid');
+			$fans_info = array_keys($fans_info);
+			$openids = array_merge($openids, $fans_info);
+		}
+		cahe_write($cachekey, $openids);
+		return $openids;
+	}
+	return false;
+}
 /*
  * 更新会员所在的会员组.
  * */
