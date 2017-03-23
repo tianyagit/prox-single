@@ -146,7 +146,7 @@ function mc_fetch($uid, $fields = array()) {
 	if (empty($uid)) {
 		return array();
 	}
-	$cachekey = cache_system_key("mc_member_info:{$uid}");
+	$cachekey = cache_system_key("memberinfo:{$uid}");
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -285,7 +285,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 		$openid = $openidOruid;
 	}
 
-	$cachekey = cache_system_key("mc_fansinfo:{$openid}");
+	$cachekey = cache_system_key("fansinfo:{$openid}");
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
