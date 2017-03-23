@@ -159,10 +159,10 @@ function material_build_reply($attach_id) {
 }
 
 /**
- *将内容中通过tomeida()转义的微信图片地址替换成微信图片地址
+ *将内容中通过tomeida()转义的微信图片代理地址替换成微信图片原生地址
  * @param $content string 待处理的图文内容
  */
-function replace_transform_url_to_wechat_url($content) {
+function material_strip_wechat_image_proxy($content) {
 	global $_W;
 	$match_wechat = array();
 	$content = htmlspecialchars_decode($content);
@@ -181,7 +181,7 @@ function replace_transform_url_to_wechat_url($content) {
  * @param $content string 待处理的内容
  * @param $images array 内容中所有图片的地址
  */
-function get_content_image_url($content) {
+function material_get_image_url($content) {
 	global $_W;
 	$content = htmlspecialchars_decode ($content);
 	$match = array ();
@@ -207,10 +207,10 @@ function get_content_image_url($content) {
  * 替换图文素材内容中图片url地址（把非微信url替换成微信url）
  * @param $content string 待处理的图文内容
  */
-function replace_image_url($content) {
+function material_parse_content($content) {
 	global $_W;
-	$content = replace_transform_url_to_wechat_url($content);
-	$images = get_content_image_url($content);
+	$content = material_strip_wechat_image_proxy($content);
+	$images = material_get_image_url($content);
 	if (!empty($images)) {
 		foreach ($images as $image) {
 			$thumb = file_fetch(tomedia($image), 1024, 'material/images');

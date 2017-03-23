@@ -75,7 +75,7 @@ if ($do == 'addnews') {
 				'thumb_media_id' => $news['media_id'],
 			);
 			if (!$is_save_location) {
-				$news_info['content'] = replace_image_url($news_info['content']);
+				$news_info['content'] = material_parse_content($news_info['content']);
 				if (is_error($news_info['content'])) {
 					message($news_info['content'], '', 'ajax');
 				}
