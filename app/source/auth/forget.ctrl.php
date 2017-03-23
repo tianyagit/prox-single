@@ -56,7 +56,7 @@ if($do == 'reset') {
 			message('用户不存在', referer(), 'error');
 		} else {
 			$password = md5($password . $user['salt'] . $_W['config']['setting']['authkey']);
-			pdo_update('mc_members', array('password' => $password), array('uniacid' => $_W['uniacid'], $type => $username));
+			mc_update($user['uid'], array('password' => $password));
 		}
 		message('找回成功', referer(), 'success');
 	}

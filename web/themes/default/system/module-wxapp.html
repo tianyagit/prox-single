@@ -2,12 +2,12 @@
 {if $do == 'installed'}
 <div id="js-system-module" ng-controller="installedCtrl" ng-cloak>
 	<div class="we7-page-title">
-		应用管理
+		小程序管理
 	</div>
 	<ul class="we7-page-tab">
-		<li class="active"><a href="{php echo url('system/module/installed', array('account_type' => 4))}">已安装应用  </a></li>
-		<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" ng-if="isFounder == 1">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-		<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4, 'status' => 'recycle'))}" ng-if="isFounder == 1">已停用应用</a></li>
+		<li class="active"><a href="{php echo url('system/module/installed', array('account_type' => 4))}">已安装的小程序  </a></li>
+		<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" ng-if="isFounder == 1">未安装的小程序<span class="color-red">  ({$total_uninstalled}) </span></a></li>
+		<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4, 'status' => 'recycle'))}" ng-if="isFounder == 1">已停用小程序</a></li>
 	</ul>
 	<div class="we7-page-search clearfix">
 		<!--<div class="pull-right">-->

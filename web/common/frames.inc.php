@@ -190,7 +190,7 @@ $we7_system_menu['system'] = array(
 					'permission_name' => 'system_module',
 				),
 				'system_module_wxapp' => array(
-					'title' => '我的小程序管理',
+					'title' => '小程序功能管理',
 					'url' => url('system/module', array('account_type' => '4')),
 					'icon' => 'wi wi-appsetting',
 					'permission_name' => 'system_module_wxapp',

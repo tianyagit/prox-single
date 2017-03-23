@@ -213,7 +213,7 @@ if($do == 'post') {
 			exit('error');
 		}
 		$password = md5($password . $user['salt'] . $_W['config']['setting']['authkey']);
-		if (pdo_update('mc_members', array('password' => $password), array('uid' => $uid))) {
+		if (mc_update($uid, array('password' => $password))) {
 			exit('success');
 		}
 		exit('othererror');
@@ -238,6 +238,7 @@ if($do == 'post') {
 					$_GPC['email'] = md5($_GPC['openid']) . '@we7.cc';
 				}
 				$fanid = intval($_GPC['fanid']);
+				$fan_info = pdo_get('mc_mapping_fans', array('fanid' => $fanid), 'openid');
 				//没有使用mc_update函数
 				$struct = array_keys(mc_fields());
 				$struct[] = 'birthyear';
@@ -278,6 +279,8 @@ if($do == 'post') {
 				pdo_insert('mc_members', $_GPC);
 				$uid = pdo_insertid();
 				pdo_update('mc_mapping_fans', array('uid' => $uid), array('fanid' => $fanid, 'uniacid' => $_W['uniacid']));
+				$cachekey = cache_system_key("mc_fansinfo:{$fan_info['openid']}");
+				cache_delete($cachekey);
 				message('更新资料成功！', url('mc/member'), 'success');
 			} else {
 				$email_effective = intval($_GPC['email_effective']);
@@ -431,8 +434,9 @@ if($do == 'group') {
 		}
 		$credit = intval($group['credit']);
 		$credit6 = $credit - $member['credit1'];
-		$status = pdo_update('mc_members', array('credit6' => $credit6, 'groupid' => $id), array('uid' => $uid, 'uniacid' => $_W['uniacid']));
-		if($status !== false) {
+		$status_update_groupid = mc_update($uid, array('groupid' => $id));
+		$status_update_credit6 = mc_credit_update($uid, 'credit6', $credit6);
+		if($status_update_groupid && !is_error($status_update_credit6)) {
 			$openid = pdo_fetchcolumn('SELECT openid FROM ' . tablename('mc_mapping_fans') . ' WHERE acid = :acid AND uid = :uid', array(':acid' => $_W['acid'], ':uid' => $uid));
 			if(!empty($openid)) {
 				mc_notice_group($openid, $_W['account']['groups'][$member['groupid']]['title'], $_W['account']['groups'][$id]['title']);

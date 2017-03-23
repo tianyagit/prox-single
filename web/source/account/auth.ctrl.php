@@ -47,7 +47,8 @@ if ($do == 'forward') {
 	if (!empty($account_info['authorizer_info']['user_name'])) {
 		$account_found = pdo_get('account_wechats', array('original' => $account_info['authorizer_info']['user_name']));
 		if (!empty($account_found)) {
-			message('公众号已经在系统中接入，是否要更改为授权接入方式？ <div><a class="btn btn-primary" href="' . url('account/auth/confirm', array('level' => $level, 'auth_refresh_token' => $auth_refresh_token, 'auth_appid' => $auth_appid, 'acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid'])) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" href="index.php">否</a></div>', '', 'tips');
+			pdo_update('account', array('type' => ACCOUNT_OAUTH_LOGIN), array('acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid']));
+			message('授权接入成功', url('account/post', array('acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid'])), 'success');
 		}
 	}
 	$account_insert = array(
@@ -97,7 +98,7 @@ if ($do == 'forward') {
 
 	$account_index_insert = array(
 		'uniacid' => $uniacid,
-		'type' => 3,
+		'type' => ACCOUNT_OAUTH_LOGIN,
 		'hash' => random(8),
 		'isconnect' => 1
 	);

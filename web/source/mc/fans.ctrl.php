@@ -197,6 +197,8 @@ if ($do == 'edit_fans_tag') {
 			}
 			$tags = implode(',', $tags);
 			pdo_update('mc_mapping_fans', array('groupid' => $tags), array('fanid' => $fanid));
+			$cachekey = cache_system_key("mc_fansinfo:{$openid}");
+			cache_delete($cachekey);
 		}
 	}
 	message($result, '', 'ajax');
@@ -221,6 +223,8 @@ if ($do == 'batch_edit_fans_tag') {
 				pdo_insert('mc_fans_tag_mapping', array('fanid' => $fan_info['fanid'], 'tagid' => $tag));
 				$groupid = $fan_info['group'].",".$tag;
 				pdo_update('mc_mapping_fans', array('groupid' => $groupid), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
+				$cachekey = cache_system_key("mc_fansinfo:{$openid}");
+				cache_delete($cachekey);
 			}
 		} else {
 			message($result, '', 'ajax');

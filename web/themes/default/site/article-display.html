@@ -24,7 +24,7 @@
 			</div>
 		</form>
 	</div>
-	<form action="./index.php?c=site&a=article&do=del" method="post" role="form">
+	<form action="./index.php?c=site&a=article&do=del" method="post" class="we7-form" role="form">
 		<table class="table we7-table table-hover article-list vertical-middle">
 			<col width="80px">
 			<col width="70px"/>
@@ -63,6 +63,7 @@
 		</table>
 		<div class="pull-left we7-margin-top">
 			<input type="checkbox" we7-check-all="1" name="rid[]" id="select_all" value="1" ng-style="{'margin-left': '30px'}">
+			<label for="select_all">&nbsp;</label>
 			<input type="hidden" name="token" value="{$_W['token']}" />
 			<input type="submit" class="btn btn-danger" name="submit" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
 		</div>

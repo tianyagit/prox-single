@@ -316,7 +316,7 @@ function iunserializer($value) {
 }
 
 /**
- * 判断是否为加密字符串
+ * 判断是否为base64加密字符串
  * @param string $str
  * @return boolean
  */
@@ -591,7 +591,7 @@ function tomedia($src, $local_path = false){
 		$url = url('utility/wxcode/image', array('attach' => $src));
 		return $_W['siteroot'] . 'web' . ltrim($url, '.');
 	}
-	if (strexists($t, 'http://') || strexists($t, 'https://') || substr($t, 0, 2) == '//') {
+	if ((substr($t, 0, 7) == 'http://') || (substr($t, 0, 8) == 'https://') || (substr($t, 0, 2) == '//')) {
 		return $src;
 	}
 	if ($local_path || empty($_W['setting']['remote']['type']) || file_exists(IA_ROOT . '/' . $_W['config']['upload']['attachdir'] . '/' . $src)) {
@@ -935,6 +935,26 @@ function sizecount($size) {
 }
 
 /**
+ *字节数转成 bit
+ * @param string $str 字节数
+ * @return float
+ */
+function bytecount($str) {
+	if (strtolower($str[strlen($str) -1]) == 'b') {
+		$str = substr($str, 0, -1);
+	}
+	if(strtolower($str[strlen($str) -1]) == 'k') {
+		return floatval($str) * 1024;
+	}
+	if(strtolower($str[strlen($str) -1]) == 'm') {
+		return floatval($str) * 1048576;
+	}
+	if(strtolower($str[strlen($str) -1]) == 'g') {
+		return floatval($str) * 1073741824;
+	}
+}
+
+/**
  * 获取数组的XML结构
  * @param array $arr 要转换的数组
  * @param int $level 节点层级, 1 为 Root
@@ -1205,21 +1225,4 @@ function dir_size($dir) {
 		closedir($handle);
 	}
 	return $size;
-}
-
-/**
- *字节数转成 bit
- * @param string $str 字节数
- * @return float
- */
-function parse_size($str) {
-	if(strtolower($str[strlen($str) -1]) == 'k') {
-		return floatval($str) * 1024;
-	}
-	if(strtolower($str[strlen($str) -1]) == 'm') {
-		return floatval($str) * 1048576;
-	}
-	if(strtolower($str[strlen($str) -1]) == 'g') {
-		return floatval($str) * 1073741824;
-	}
 }

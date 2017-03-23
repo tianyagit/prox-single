@@ -239,7 +239,9 @@
 								<label>
 									<input type="text" name="status" class="form-control" ng-model="multi.status" ng-style="{'display': 'none'}">
 									<div class="switch" ng-class="{'switchOn' : multi.status == 1}" ng-click="changeMultiStatus()" ng-if='default_site != multi.id'></div>
-									<div class="switch switchOn" ng-style="{'opacity': '0.3'}" ng-if='default_site == multi.id'></div>
+									<div class="switch switchOn" ng-style="{'opacity': '0.3'}" ng-if='default_site == multi.id'>
+									</div>
+									<span class="help-block" ng-if="default_site == multi.id">默认微站不可关闭</span>
 								</label>
 							</div>
 						</div>
