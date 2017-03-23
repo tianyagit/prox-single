@@ -66,6 +66,26 @@ function cache_build_account($uniacid = 0) {
 
 }
 
+/**
+ * 重建粉丝缓存
+ * @param string openid 要重建缓存的openid
+ */
+function cache_build_fansinfo($openid) {
+	$openid = trim($openid);
+	$cachekey = cache_system_key("fansinfo:{$openid}");
+	cache_delete($cachekey);
+}
+
+/**
+ * 重建会员缓存
+ * @param int uid 要重建缓存的会员uid
+ */
+function cache_build_memberinfo($uid) {
+	$uid = intval($uid);
+	$cachekey = cache_system_key("memberinfo:{$uid}");
+	cache_delete($cachekey);
+}
+
 function cache_build_accesstoken() {
 	global $_W;
 	$uniacid_arr = pdo_fetchall("SELECT acid FROM " . tablename('account_wechats'));

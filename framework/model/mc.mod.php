@@ -118,15 +118,13 @@ function mc_update($uid, $fields) {
 		$insert_id = pdo_insertid();
 		if(is_string($uid_temp)) {
 			pdo_update('mc_mapping_fans', array('uid' => $insert_id), array('uniacid' => $_W['uniacid'], 'openid' => $uid_temp));
-			$cachekey = cache_system_key("mc_fansinfo:{$uid_temp}");
-			cache_delete($cachekey);
+			cache_build_fansinfo($uid_temp);
 		}
 		return $insert_id;
 	} else {
 		if (!empty($fields)) {
 			$result = pdo_update('mc_members', $fields, array('uid' => $uid));
-			$cachekey = cache_system_key("mc_member_info:{$uid}");
-			cache_delete($cachekey);
+			cache_build_memberinfo($uid);
 		} else {
 			$result = 0;
 		}
@@ -394,8 +392,7 @@ function mc_oauth_userinfo($acid = 0) {
 					'tag' => base64_encode(iserializer($userinfo))
 				);
 				pdo_update('mc_mapping_fans', $record, array('openid' => $_SESSION['openid'], 'acid' => $_W['acid'], 'uniacid' => $_W['uniacid']));
-				$cachekey = cache_system_key("mc_fansinfo:{$_SESSION['openid']}");
-				cache_delete($cachekey);
+				cache_build_fansinfo($_SESSION['openid']);
 			} else {
 				$record = array();
 				$record['updatetime'] = TIMESTAMP;
@@ -434,8 +431,7 @@ function mc_oauth_userinfo($acid = 0) {
 				}
 				if (!empty($record)) {
 					pdo_update('mc_members', $record, array('uid' => $uid));
-					$cachekey = cache_system_key("mc_member_info:{$uid}");
-					cache_delete($cachekey);
+					cache_build_memberinfo($uid);
 				}
 			}
 			return $userinfo;
@@ -585,8 +581,7 @@ function mc_require($uid, $fields, $pre = '') {
 			if (empty($uid)) {
 				pdo_update('mc_oauth_fans', array('uid' => $insertuid), array('oauth_openid' => $_W['openid']));
 				pdo_update('mc_mapping_fans', array('uid' => $insertuid), array('openid' => $_W['openid']));
-				$cachekey = cache_system_key("mc_fansinfo:{$_W['openid']}");
-				cache_delete($cachekey);
+				cache_build_fansinfo($_W['openid']);
 			}
 			message('资料完善成功.', 'refresh');
 		}
@@ -634,8 +629,7 @@ function mc_credit_update($uid, $credittype, $creditval = 0, $log = array()) {
 	$value = pdo_fetchcolumn("SELECT $credittype FROM " . tablename('mc_members') . " WHERE `uid` = :uid", array(':uid' => $uid));
 	if ($creditval > 0 || ($value + $creditval >= 0) || $credittype == 'credit6') {
 		pdo_update('mc_members', array($credittype => $value + $creditval), array('uid' => $uid));
-		$cachekey = cache_system_key("mc_member_info:{$uid}");
-		cache_delete($cachekey);
+		cache_build_memberinfo($uid);
 	} else {
 		return error('-1', "积分类型为“{$credittype}”的积分不够，无法操作。");
 	}
@@ -1065,8 +1059,7 @@ function mc_group_update($uid = 0) {
 	}
 	if($groupid > 0 && $groupid != $user['groupid']) {
 		pdo_update('mc_members', array('groupid' => $groupid), array('uniacid' => $_W['uniacid'], 'uid' => $uid));
-		$cachekey = cache_system_key("mc_member_info:{$uid}");
-		cache_delete($cachekey);
+		cache_build_memberinfo($uid);
 		mc_notice_group($user['openid'], $_W['uniaccount']['groups'][$user['groupid']]['title'], $_W['uniaccount']['groups'][$groupid]['title']);
 	}
 	$user['groupid'] = $groupid;
@@ -1757,8 +1750,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 	//如果粉丝已经取消关注，则只更新状态
 	if (empty($fans['subscribe'])) {
 		pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('fanid' => $openid));
-		$cachekey = cache_system_key("mc_fansinfo:{$openid}");
-		cache_delete($cachekey);
+		cache_build_fansinfo($openid);
 		return true;
 	}
 	$fans_mapping = mc_fansinfo($openid);
@@ -1811,9 +1803,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 
 	if (!empty($fans_mapping)) {
 		pdo_update('mc_mapping_fans', $fans_update_info, array('fanid' => $fans_mapping['fanid']));
-		$cachekey = cache_system_key("mc_fansinfo:{$openid}");
-		cache_delete($cachekey);
-
+		cache_build_fansinfo($openid);
 	} else {
 		$fans_update_info['salt'] = random(8);
 		$fans_update_info['unfollowtime'] = 0;
