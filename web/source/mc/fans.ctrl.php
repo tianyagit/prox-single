@@ -238,15 +238,18 @@ if ($do == 'download_fans') {
 	}
 	$account_api = WeAccount::create();
 	$wechat_fans_list = $account_api->fansAll();
+	//重复接入公众号处理机制
+	$same_account_exist = pdo_getall('account_wechats', array('key' => $_W['account']['key'], 'uniacid <>' => $_W['uniacid']), array(), 'uniacid');
+	if (!empty($same_account_exist)) {
+		pdo_update('mc_mapping_fans', array('uniacid' => $_W['uniacid']), array('uniacid' => array_keys($same_account_exist)));
+	}
+
 	if (!is_error($wechat_fans_list)) {
 		$wechat_fans_count = count($wechat_fans_list['fans']);
 		$total_page = ceil($wechat_fans_count / 500);
 		for ($i = 0; $i < $total_page; $i++) {
 			$wechat_fans = array_slice($wechat_fans_list['fans'], $i * 500, 500);
-			$wechat_openids = implode("','", $wechat_fans);
-			$wechat_openids = "'{$wechat_openids}'";
-			$sql = 'SELECT `openid`, `uniacid`, `acid` FROM ' . tablename('mc_mapping_fans') . " WHERE uniacid = :uniacid AND `openid` IN ({$wechat_openids})";
-			$system_fans = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'openid');
+			$system_fans = pdo_getall('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'openid' => $wechat_fans), array(), 'openid');
 			$add_fans_sql = '';
 			foreach($wechat_fans as $openid) {
 				if (empty($system_fans) || empty($system_fans[$openid])) {
@@ -259,7 +262,7 @@ if ($do == 'download_fans') {
 				$add_fans_sql = 'INSERT INTO ' . tablename('mc_mapping_fans') . ' (`acid`, `uniacid`, `uid`, `openid`, `salt`, `follow`, `followtime`, `tag`) VALUES ' . $add_fans_sql;
 				$result = pdo_query($add_fans_sql);
 			}
-			pdo_query("UPDATE " . tablename('mc_mapping_fans') . " SET follow = '1' WHERE `openid` IN ({$wechat_openids})");
+			pdo_update('mc_mapping_fans', array('follow' => 1), array('openid' => $wechat_fans));
 		}
 		$return['total'] = $wechat_fans_list['total'];
 		$return['count'] = !empty($wechat_fans_list['fans']) ? $wechat_fans_count : 0;

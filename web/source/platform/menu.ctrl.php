@@ -287,8 +287,9 @@ if($do == 'post') {
 							if ($button['type'] == 'media_id') {
 								$button['type'] = 'click';
 							}
-							$button['sub_button']['list'] = array();
+							$button['sub_button'] = array();
 						} else {
+							$button['sub_button'] = !empty($button['sub_button']['list']) ? $button['sub_button']['list'] : $button['sub_button'];
 							foreach($button['sub_button'] as &$subbutton) {
 								if ($subbutton['type'] == 'media_id') {
 									$subbutton['type'] = 'click';

@@ -426,7 +426,9 @@ if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
-	$module_info['logo'] = file_exists(IA_ROOT. "/addons/". $module_info['name']. "/icon-custom.jpg") ? IA_ROOT. "/addons/". $module_info['name']. "/icon-custom.jpg" : IA_ROOT. "/addons/". $module_info['name']. "/icon.jpg";
+	if (!empty($module_info['main_module'])) {
+		$main_module = module_fetch($module_info['main_module']);
+	}
 	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0));
 	$module_group = array();
 	if (!empty($module_group_list)) {
@@ -532,7 +534,7 @@ if ($do == 'uninstall') {
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	$uninstalled_module = module_get_all_unistalled('uninstalled');
+	$uninstalled_module = @module_get_all_unistalled('uninstalled');
 	$total_uninstalled = $uninstalled_module['module_count'];
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
@@ -540,69 +542,26 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 
-	$condition = " WHERE (issystem = 0 OR name = 'we7_coupon') ";
-	$params = array();
-	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		$condition .= " AND `wxapp_support` = :wxapp_support";
-		$params[':wxapp_support'] = 2;
-	} else {
-		$condition .= " AND `app_support` = :app_support";
-		$params[':app_support'] = 2;
-	}
-	if (!empty($letter) && strlen($letter) == 1) {
-		if(in_array($letter, $letters)){
-			$condition .= " AND `title_initial` = :letter";
-		}else {
-			$condition .= " AND `title_initial` NOT IN ('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z')";
-		}
-		$params[':letter'] = $letter;
-	}
-	if (!empty($title)) {
-		$condition .= " AND title LIKE :title";
-		$params[':title'] = "%".$title. "%";
-	}
-	if (empty($_W['isfounder'])) {
-		$user_info = pdo_get('users', array('uid' => $_W['uid']));
-		$user_group = pdo_get('users_group', array('id' => $user_info['groupid']));
-		$user_group['package'] = iunserializer($user_group['package']);
-		if (!empty($user_group['package']) && is_array($user_group['package']) && !in_array('-1', $user_group)) {
-			$user_have_group = array();
-			foreach ($user_group['package'] as $groupid) {
-				$group = pdo_get('uni_group', array('id' => $groupid));
-				$group['modules'] = iunserializer($group['modules']);
-				if (!empty($group['modules']) && is_array($group['modules'])) {
-					$user_have_group = array_merge($user_have_group, $group['modules']);
+	$module_list = uni_modules();
+	if (!empty($module_list)) {
+		foreach ($module_list as $key => &$module) {
+			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] == 1) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] == 1)) {
+				unset($module_list[$key]);
+			}
+			if (!empty($letter) && strlen($letter) == 1) {
+				if ($module['title_initial'] != $letter){
+					unset($module_list[$key]);
 				}
 			}
-			unset($group);
-			if (!empty($user_have_group) && is_array($user_have_group)) {
-				$condition .= " AND name in ". "('". implode("','", $user_have_group). "')";
-			} else {
-				message('没有可用模块', referer(), 'info');
-			}
-		}
-	}
-	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ". tablename('modules'). $condition, $params);
-	$module_list = pdo_fetchall("SELECT * FROM ". tablename('modules'). $condition. " ORDER BY `issystem` DESC, `mid` DESC". " LIMIT ".($pageindex-1)*$pagesize.", ". $pagesize, $params, 'name');
-	$pager = pagination($total, $pageindex, $pagesize);
-	if (!empty($module_list)) {
-//		$account_list = pdo_getall('uni_account');
-		foreach ($module_list as &$module) {
-			$module['use_account'] = 0;
-			$module['enabled_use_account'] = 0;
-//			foreach ($account_list as $account) {
-//				$account_have_module = pdo_get('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => $module['name']));
-//				$module['use_account'] = empty($account_have_module) ? $module['use_account'] : $module['use_account'] + 1;
-//				$module['enabled_use_account'] = empty($account_have_module['enabled']) ? $module['enabled_use_account'] : $module['enabled_use_account'] +1;
-//			}
-			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
-				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg'). "?v=". time();
-			} else {
-				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg'). "?v=". time();
+			if (!empty($title) && !strexists($module['title'], $title)) {
+				unset($module_list[$key]);
 			}
 		}
 		unset($module);
 	}
+	$total = count($module_list);
+	$module_list = array_slice($module_list, ($pageindex - 1) * $pagesize, $pagesize);
+	$pager = pagination($total, $pageindex, $pagesize);
 }
 
 if ($do == 'not_installed') {
