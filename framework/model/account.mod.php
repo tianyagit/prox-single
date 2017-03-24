@@ -113,9 +113,9 @@ function uni_modules($enabledOnly = true) {
 	global $_W;
 	$cachekey = "unimodules:{$_W['uniacid']}:{$enabledOnly}";
 	$cache = cache_load($cachekey);
-//	if (!empty($cache)) {
-//		return $cache;
-//	}
+	if (!empty($cache)) {
+		return $cache;
+	}
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
 	load()->model('user');
 	$owner = user_single(array('uid' => $owneruid));
@@ -197,14 +197,26 @@ function uni_modules($enabledOnly = true) {
 		}
 	}
 	if (!empty($modules)) {
-		foreach ($modules as $name => &$row) {
-
-			unset($modules[$name]['description']);
+		$module_list = array();//加上模块插件后的模块列表
+		foreach ($modules as $name => &$module) {
+			$module = module_parse_info($module);
+			unset($module['description']);
+			$module_list[$name] = $module;
+			if (!empty($module['plugin'])) {
+				$plugin_list = pdo_getall('modules', array('main_module' => $module['mid']));
+				if (!empty($plugin_list)) {
+					foreach ($plugin_list as $plugin) {
+						$plugin = module_parse_info($plugin);
+						unset($plugin['description']);
+						$module_list[$plugin['name']] = $plugin;
+					}
+				}
+			}
 		}
 	}
-	$modules['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
+	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
 	cache_write($cachekey, $modules);
-	return $modules;
+	return $module_list;
 }
 
 function uni_modules_app_binding() {
