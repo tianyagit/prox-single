@@ -203,6 +203,7 @@
 			</div>
 		</div>
 	</div>
+	<input type="hidden" name="fanid"  />
 	<div class="fans-group-list">
 		<dl>
 			<dt class="fans-group-item">
@@ -278,7 +279,7 @@
 					{loop $fans_tag $tags}
 					'<div class="col-sm-4" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="option{$tags['id']}" data-tag="{$tags['id']}" type="checkbox" name="tagname" value="{$tags['id']}" />' +
 					'<label for="option{$tags['id']}">{$tags['name']} </label>' +
-		'<input type="hidden" name="fanid"  /></div>' +
+		'</div>' +
 		{/loop}
 				'</div>' +
 			'</div>' +
