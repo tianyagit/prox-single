@@ -117,7 +117,7 @@
 	$.ajax({
 		type : "get",
 		data : {'date' : '{$_W['timestamp']}', 'version' : '{php echo IMS_VERSION}', 'siteurl' : '{$_W['siteroot']}'},
-		url : "http://v2.addons.we7.cc/web/index.php?c=site&a=diagnose&jsonpcallback=?",
+		url : "https://v2.addons.we7.cc/web/index.php?c=site&a=diagnose&jsonpcallback=?",
 		dataType : "jsonp",
 		success : function(data){
 			if (data['check_time']['errno'] == '0') {

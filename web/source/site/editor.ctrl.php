@@ -25,9 +25,13 @@ if ($do == 'design') {
 		}
 		$page = $params[0]['property'][0];
 		$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
-		$html = str_replace(array('<?', '<%', '<?php', '{php'), '', $html);
-		$html = preg_replace('/<\s*?script.*(src|language)+/i', '', $html);
-		$multipage = htmlspecialchars_decode($_GPC['wapeditor']['multipage'], ENT_QUOTES);
+		$html = str_replace(array('<?', '<%', '<?php', '{php'), '_', $html);
+		$html = preg_replace('/<\s*?script.*(src|language)+/i', '_', $html);
+
+		$multipage = addslashes(htmlspecialchars_decode(stripslashes($_GPC['wapeditor']['multipage']), ENT_QUOTES));
+		$multipage = preg_replace('/^\[\\\"/', '["', $multipage);
+		$multipage = preg_replace('/\\\"\]$/', '"]', $multipage);
+		
 		$data = array(
 			'uniacid' => $_W['uniacid'],
 			'multiid' => '0',
@@ -95,8 +99,8 @@ if ($do == 'design') {
 		}
 		$page = $params[0];
 		$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
-		$html = str_replace(array('<?', '<%', '<?php', '{php'), '', $html);
-		$html = preg_replace('/<\s*?script.*(src|language)+/i', '', $html);
+		$html = str_replace(array('<?', '<%', '<?php', '{php'), '_', $html);
+		$html = preg_replace('/<\s*?script.*(src|language)+/i', '_', $html);
 		$data = array(
 			'uniacid' => $_W['uniacid'],
 			'multiid' => '0',
@@ -191,8 +195,8 @@ if ($do == 'design') {
 			message('请您先设计手机端页面.', '', 'error');
 		}
 		$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
-		$html = str_replace(array('<?', '<%', '<?php', '{php'), '', $html);
-		$html = preg_replace('/<\s*?script.*(src|language)+/i', '', $html);
+		$html = str_replace(array('<?', '<%', '<?php', '{php'), '_', $html);
+		$html = preg_replace('/<\s*?script.*(src|language)+/i', '_', $html);
 		$html = preg_replace('/background\-image\:(\s)*url\(\"(.*)\"\)/i', 'background-image: url($2)', $html);
 		$data = array(
 			'uniacid' => $_W['uniacid'],
