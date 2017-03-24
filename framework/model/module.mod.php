@@ -378,28 +378,32 @@ function module_permission_fetch($name) {
 }
 
 /**
- * 解析从数据库中取出的模块信息返回可用
- * @param string $name 模块标识
+ * 解析从数据库中取出的模块信息
+ * @param array() $name 模块信息
  */
 function module_parse_info($module_info) {
-	if ($row['issystem'] == 1) {
-		$row['enabled'] = 1;
-	} elseif (!isset($row['enabled'])) {
-		$row['enabled'] = 1;
+	if (empty($module_info)) {
+		return array();
 	}
-	if (empty($row['config'])) {
-		$row['config'] = array();
+	if ($module_info['issystem'] == 1) {
+		$module_info['enabled'] = 1;
+	} elseif (!isset($module_info['enabled'])) {
+		$module_info['enabled'] = 1;
 	}
-	if (!empty($row['subscribes'])) {
-		$row['subscribes'] = iunserializer($row['subscribes']);
+	if (empty($module_info['config'])) {
+		$module_info['config'] = array();
 	}
-	if (!empty($row['handles'])) {
-		$row['handles'] = iunserializer($row['handles']);
+	if (!empty($module_info['subscribes'])) {
+		$module_info['subscribes'] = iunserializer($module_info['subscribes']);
 	}
-	$row['isdisplay'] = 1;
-	if (file_exists(IA_ROOT.'/addons/'.$row['name'].'/icon-custom.jpg')) {
-		$row['logo'] = tomedia(IA_ROOT.'/addons/'.$row['name'].'/icon-custom.jpg'). "?v=". time();
+	if (!empty($module_info['handles'])) {
+		$module_info['handles'] = iunserializer($module_info['handles']);
+	}
+	$module_info['isdisplay'] = 1;
+	if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg')) {
+		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg'). "?v=". time();
 	} else {
-		$row['logo'] = tomedia(IA_ROOT.'/addons/'.$row['name'].'/icon.jpg'). "?v=". time();
+		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg'). "?v=". time();
 	}
+	return $module_info;
 }

@@ -1179,6 +1179,7 @@ abstract class WeModuleProcessor extends WeBase {
 			'[uniacid]' => $_W['uniacid'],
 		);
 		$url = str_replace(array_keys($mapping), array_values($mapping), $url);
+		$url = preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $url);
 		if(strexists($url, 'http://') || strexists($url, 'https://')) {
 			return $url;
 		}
