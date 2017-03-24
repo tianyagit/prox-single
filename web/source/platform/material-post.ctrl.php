@@ -36,7 +36,7 @@ if ($do == 'news') {
 						'title' => $row_news['title'],
 						'author' => $row_news['author'],
 						'digest' => $row_news['description'],
-						'content_source_url' => $row_news['url'],
+						'content_source_url' => preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $row_news['url']),
 						'content' => $row_news['content'],
 						'displayorder' => $key
 					);
