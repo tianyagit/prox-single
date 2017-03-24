@@ -57,10 +57,10 @@
 			</tr>
 			<tr ng-repeat="module in module_list">
 				<td class="text-left module-img">
-					<img style="width: 50px;height : 50px;" ng-src="{{ module.logo }}" class="img-responsive"/>
-					<div class="img hidden">
-						<img src="" alt="子应用icon" class="plugin-img"/>
-						<img src="" alt="主应用icon" class="module-img"/>
+					<img style="width: 50px;height : 50px;" ng-if="module.main_module == 0" ng-src="{{ module.logo }}" class="img-responsive"/>
+					<div class="img" ng-if="module.main_module != 0">
+						<img src="" alt="子应用icon" class="plugin-img" ng-src="{{ module.logo }}"/>
+						<img src="" alt="主应用icon" class="module-img" ng-src="{{ module_list[module.main_module].logo }}"/>
 					</div>
 				</td>
 				<td class="text-left">
@@ -307,11 +307,14 @@
 		</li>
 	</ol>
 	<div class="user-head-info we7-padding-bottom">
-		<img src="{php echo tomedia($module_info['logo'])}" class="user-avatar img-rounded pull-left">
-		<div class="img pull-left hidden">
-			<img src="" alt="子应用icon" class="plugin-img"/>
-			<img src="" alt="主应用icon" class="module-img"/>
+		{if !empty($module_info['main_module'])}
+		<div class="img pull-left">
+			<img alt="子应用icon" class="plugin-img" src="{php echo tomedia($module_info['logo'])}"/>
+			<img alt="主应用icon" class="module-img" src="{php echo tomedia($main_module['logo'])}"/>
 		</div>
+		{else}
+		<img src="{php echo tomedia($module_info['logo'])}" class="user-avatar img-rounded pull-left">
+		{/if}
 		<h3 class="pull-left">{$module_info['title']}</h3>
 		<div class="user-edit pull-right">
 			<a href="#" class="btn btn-primary" data-toggle="modal" ng-if="isFounder == 1" ng-click="editModule('{$module_info['mid']}')">编 辑</a>
