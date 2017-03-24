@@ -72,18 +72,15 @@ if ($do == 'display') {
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as &$group) {
 			if (!empty($group['modules'])) {
-				$modules = $group['modules'];
-				if (is_array($modules) && !empty($modules)) {
-					if (!empty($group['modules'])) {
-						foreach ($group['modules'] as &$module) {
-							if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
-								$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
-							} else {
-								$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
-							}
+				if (is_array($group['modules']) && !empty($group['modules'])) {
+					foreach ($group['modules'] as &$module) {
+						if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
+							$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
+						} else {
+							$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
 						}
-						unset($module);
 					}
+					unset($module);
 				} else {
 					$group['modules'] = array();
 				}
@@ -132,6 +129,7 @@ if ($do == 'post') {
 	$group_have_module_wxapp = array();
 	$group_have_template = array();
 	$group_have_module = array();
+
 	if (!empty($id)) {
 		$uni_module_groups = uni_groups();
 		$module_group = $uni_module_groups[$id];
@@ -139,26 +137,22 @@ if ($do == 'post') {
 		if (!empty($module_group['modules'])) {
 			foreach ($module_group['modules'] as $module) {
 				$module_name = !empty($module['name']) ? $module['name'] : '';
-				$module_info = pdo_get('modules', array('name' => $module_name));
+				$module_info = module_fetch($module_name);
 				if (empty($module_info)) {
 					continue;
 				}
 				$group_have_module[$module_info['name']] = $module_info;
-				if (file_exists(IA_ROOT.'/addons/'.$module_name.'/icon-custom.jpg')) {
-					$group_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_name.'/icon-custom.jpg');
-				} else {
-					$group_have_module[$module_info['name']]['logo'] = tomedia(IA_ROOT.'/addons/'.$module_name.'/icon.jpg');
-				}
 				if ($group_have_module[$module_info['name']]['app_support'] == 2) {
 					$group_have_module_app[$module_info['name']] = $group_have_module[$module_info['name']];
 				}
 			}
 		}
+
 		$module_group['wxapp'] = empty($module_group['wxapp']) ? array() : iunserializer($module_group['wxapp']);
 		if (!empty($module_group['wxapp'])) {
 			foreach ($module_group['wxapp'] as $module) {
 				$module_name = !empty($module['name']) ? $module['name'] : '';
-				$module_info = pdo_get('modules', array('name' => $module_name));
+				$module_info = module_fetch($module_name);
 				if (empty($module_info)) {
 					continue;
 				}
