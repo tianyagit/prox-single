@@ -5,19 +5,19 @@
 		<div class="panel-body we7-padding-vertical">
 			<div class="col-sm-3 text-center">
 				<div class="title">今日新关注</div>
-				<div class="num" ng-bind="fans_kpi.today.new"></div>
+				<div class="num" ng-init="0" ng-bind="fans_kpi.today.new"></div>
 			</div>
 			<div class="col-sm-3 text-center">
 				<div class="title">今日取消关注</div>
-				<div class="num" ng-bind="fans_kpi.today.cancel"></div>
+				<div class="num" ng-init="0" ng-bind="fans_kpi.today.cancel"></div>
 			</div>
 			<div class="col-sm-3 text-center">
 				<div class="title">今日净增关注</div>
-				<div class="num" ng-bind="fans_kpi.today.jing_num"></div>
+				<div class="num" ng-init="0" ng-bind="fans_kpi.today.jing_num"></div>
 			</div>
 			<div class="col-sm-3 text-center">
 				<div class="title">累计关注</div>
-				<div class="num" ng-bind="fans_kpi.today.cumulate"></div>
+				<div class="num" ng-init="0" ng-bind="fans_kpi.today.cumulate"></div>
 			</div>
 		</div>
 	</div>
@@ -26,19 +26,19 @@
 		<div class="panel-body we7-padding-vertical">
 			<div class="col-sm-3 text-center">
 				<div class="title">昨日新关注</div>
-				<div class="num" ng-bind="fans_kpi.yesterday.new"></div>
+				<div class="num" ng-init="0" ng-bind="fans_kpi.yesterday.new"></div>
 			</div>
 			<div class="col-sm-3 text-center">
 				<div class="title">昨日取消关注</div>
-				<div class="num" ng-bind="fans_kpi.yesterday.cancel"></div>
+				<div class="num" ng-init="0" ng-bind="fans_kpi.yesterday.cancel"></div>
 			</div>
 			<div class="col-sm-3 text-center">
 				<div class="title">昨日净增关注</div>
-				<div class="num" ng-bind="fans_kpi.yesterday.jing_num"></div>
+				<div class="num" ng-init="0" ng-bind="fans_kpi.yesterday.jing_num"></div>
 			</div>
 			<div class="col-sm-3 text-center">
 				<div class="title">累计关注</div>
-				<div class="num" ng-bind="fans_kpi.yesterday.cumulate"></div>
+				<div class="num" ng-init="0" ng-bind="fans_kpi.yesterday.cumulate"></div>
 			</div>
 		</div>
 	</div>
@@ -64,8 +64,10 @@
 			最新发布应用
 			<a href="http://s.we7.cc" target="_blank" class="pull-right color-default">查看更多应用</a>
 		</div>
-		<div class="panel-body">
-			<a ng-href="{{module.url}}" target="_blank" ng-if="module.logo && $index+1 < 8" class="apply-item" ng-repeat="module in last_modules">
+		<div class="panel-body text-center" ng-class="{'we7-margin-vertical': !last_modules}">
+			<span href="javascript:;" ng-if="!last_modules && loaderror == 0">数据加载中...</span>
+			<span href="javascript:;" ng-if="!last_modules && loaderror == 1">数据加载失败，<a href="javascript:;" class="btn-link" ng-click="get_last_modules()">点击重试</a></span>
+			<a ng-href="{{module.url}}" target="_blank" ng-if="last_modules && module.logo && $index+1 < 8" class="apply-item" ng-repeat="module in last_modules">
 				<img ng-src="{{module.logo}}">
 				<span class="text-over" ng-bind="module.title"></span>
 			</a>
@@ -75,7 +77,6 @@
 <script>
 	angular.module('homeApp').value('config', {
 		notices: {php echo !empty($notices) ? json_encode($notices) : 'null'},
-		last_modules: {php echo !empty($last_modules) ? json_encode($last_modules) : 'null'},
 	});
 	angular.bootstrap($('#js-home-welcome'), ['homeApp']);
 </script>

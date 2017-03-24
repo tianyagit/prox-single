@@ -376,3 +376,34 @@ function module_permission_fetch($name) {
 	}
 	return $data;
 }
+
+/**
+ * 解析从数据库中取出的模块信息
+ * @param array() $name 模块信息
+ */
+function module_parse_info($module_info) {
+	if (empty($module_info)) {
+		return array();
+	}
+	if ($module_info['issystem'] == 1) {
+		$module_info['enabled'] = 1;
+	} elseif (!isset($module_info['enabled'])) {
+		$module_info['enabled'] = 1;
+	}
+	if (empty($module_info['config'])) {
+		$module_info['config'] = array();
+	}
+	if (!empty($module_info['subscribes'])) {
+		$module_info['subscribes'] = iunserializer($module_info['subscribes']);
+	}
+	if (!empty($module_info['handles'])) {
+		$module_info['handles'] = iunserializer($module_info['handles']);
+	}
+	$module_info['isdisplay'] = 1;
+	if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg')) {
+		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg'). "?v=". time();
+	} else {
+		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg'). "?v=". time();
+	}
+	return $module_info;
+}
