@@ -146,7 +146,7 @@ function uni_modules($enabledOnly = true) {
 			}
 		}
 		if (!empty($packageids) && in_array('-1', $packageids)) {
-			$modules = pdo_getall('modules', array('main_module' => 0), array(), 'name', array('issystem DESC', 'mid DESC'));
+			$modules = pdo_getall('modules', array('main_module' => ''), array(), 'name', array('issystem DESC', 'mid DESC'));
 		} else {
 			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
 			$ms = array();
@@ -168,7 +168,7 @@ function uni_modules($enabledOnly = true) {
 				}
 				$mssql = " OR `name` IN ('".implode("','", $ms)."')";
 			}
-			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE main_module = 0 AND issystem = 1{$mssql} ORDER BY issystem DESC, mid DESC", array(), 'name');
+			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE main_module = '' AND issystem = 1{$mssql} ORDER BY issystem DESC, mid DESC", array(), 'name');
 		}
 	}
 	$focus_enable_modules = pdo_getall('modules', array('issystem' => 2));
@@ -203,7 +203,7 @@ function uni_modules($enabledOnly = true) {
 			unset($module['description']);
 			$module_list[$name] = $module;
 			if (!empty($module['plugin'])) {
-				$plugin_list = pdo_getall('modules', array('main_module' => $module['mid']));
+				$plugin_list = pdo_getall('modules', array('main_module' => $module['name']));
 				if (!empty($plugin_list)) {
 					foreach ($plugin_list as $plugin) {
 						$plugin = module_parse_info($plugin);
@@ -214,6 +214,7 @@ function uni_modules($enabledOnly = true) {
 			}
 		}
 	}
+
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
 	cache_write($cachekey, $module_list);
 	return $module_list;

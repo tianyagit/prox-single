@@ -426,7 +426,9 @@ if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
-	$module_info['logo'] = file_exists(IA_ROOT. "/addons/". $module_info['name']. "/icon-custom.jpg") ? IA_ROOT. "/addons/". $module_info['name']. "/icon-custom.jpg" : IA_ROOT. "/addons/". $module_info['name']. "/icon.jpg";
+	if (!empty($module_info['main_module'])) {
+		$main_module = module_fetch($module_info['main_module']);
+	}
 	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0));
 	$module_group = array();
 	if (!empty($module_group_list)) {
