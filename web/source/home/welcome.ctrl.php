@@ -9,7 +9,7 @@ checkaccount();
 
 load()->model('welcome');
 
-$dos = array('platform', 'ext', 'get_fans_kpi');
+$dos = array('platform', 'ext', 'get_fans_kpi', 'get_last_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'platform') {
@@ -26,9 +26,6 @@ if ($do == 'platform') {
 			$notices[$key]['createtime'] = date('Y-m-d', $notice_val['createtime']);
 		}
 	}
-
-	//最新模块
-	$last_modules = welcome_get_last_modules();
 
 	template('home/welcome');
 } elseif ($do == 'ext') {
@@ -79,4 +76,12 @@ if ($do == 'platform') {
 		$today_stat['cumulate'] = 0;
 	}
 	message(error(0, array('yesterday' => $yesterday_stat, 'today' => $today_stat)), '', 'ajax');
+} elseif ($do == 'get_last_modules') {
+	//最新模块
+	$last_modules = welcome_get_last_modules();
+	if (is_error($last_modules)) {
+		message(error(1, $last_modules['message']), '', 'ajax');
+	} else {
+		message(error(0, $last_modules), '', 'ajax');
+	}
 }
