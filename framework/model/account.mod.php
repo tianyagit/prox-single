@@ -215,7 +215,7 @@ function uni_modules($enabledOnly = true) {
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
-	cache_write($cachekey, $modules);
+	cache_write($cachekey, $module_list);
 	return $module_list;
 }
 
