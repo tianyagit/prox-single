@@ -267,6 +267,7 @@ function uni_modules_app_binding() {
  * @return array uni_group 套餐信息列表
  */
 function uni_groups($groupids = array()) {
+	load()->model('module');
 	$condition = ' WHERE uniacid = 0';
 	if (!is_array($groupids)) {
 		$groupids = array($groupids);
@@ -290,17 +291,23 @@ function uni_groups($groupids = array()) {
 			if (!empty($row['modules'])) {
 				$modules = iunserializer($row['modules']);
 				if (is_array($modules)) {
-					$modules_lists = pdo_fetchall("SELECT name, title, app_support, wxapp_support FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $modules) . "')");
+					$modules_lists = pdo_fetchall("SELECT name, title, app_support, wxapp_support FROM " . tablename('modules') . " WHERE name IN ('" . implode("','", $modules) . "')", array(), 'name');
 					$row['modules'] = $modules_lists;
 					if (!empty($row['modules'])) {
 						foreach ($row['modules'] as $key=>&$module) {
+							if (file_exists(IA_ROOT.'/addons/' . $module['name'] . '/icon-custom.jpg')) {
+								$module['logo'] = tomedia(IA_ROOT.'/addons/' . $module['name'] . '/icon-custom.jpg');
+							} else {
+								$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
+							}
 							if ($module['wxapp_support'] == 2) {
 								$row['wxapp'][] = $module;
-								unset($row['modules'][$key]);
+								if ($module['app_support'] == 1) {
+									unset($row['modules'][$key]);
+								}
 							}
 						}
 					}
-
 				}
 			}
 			if (!empty($row['templates'])) {
