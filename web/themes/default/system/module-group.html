@@ -135,10 +135,10 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleApp" style="overflow: hidden">
-						<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
-						<span class="img hidden">
-							<img src="" alt="子应用icon" class="plugin-img"/>
-							<img src="" alt="主应用icon" class="module-img"/>
+						<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;" ng-if="module.main_module == ''">
+						<span class="img" ng-if="module.main_module != ''">
+							<img ng-src="{{ module.logo }}" alt="子应用icon" class="plugin-img"/>
+							<img ng-src="{{ groupHaveModuleApp[module.main_module].logo || groupNotHaveModuleApp[module.main_module].logo }}" alt="主应用icon" class="module-img"/>
 						</span>
 						{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModule(module)">删除</span>
@@ -236,10 +236,10 @@
 						<div class="row">
 							<div class="col-sm-2 text-center we7-margin-bottom select-module" ng-repeat="module in groupNotHaveModuleApp" style="overflow: hidden">
 								<a href="javascript:;" ng-click="selectModule(module, 'module')">
-									<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
-									<div class="img hidden">
-										<img src="" alt="子应用icon" class="plugin-img"/>
-										<img src="" alt="主应用icon" class="module-img"/>
+									<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;" ng-if="module.main_module == ''">
+									<div class="img"  ng-if="module.main_module != ''">
+										<img ng-src="{{ module.logo }}" alt="子应用icon" class="plugin-img"/>
+										<img ng-src="{{ groupNotHaveModuleApp[module.main_module].logo || groupHaveModuleApp[module.main_module].logo }}" alt="主应用icon" class="module-img"/>
 									</div>
 									<p class="text-over">{{ module.title }}</p>
 								</a>
@@ -255,6 +255,7 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="modal fade" id="add_module_wxapp"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog we7-modal-dialog" style="width:800px">
 			<div class="modal-content">
@@ -267,7 +268,7 @@
 						<div class="row">
 							<div class="col-sm-2 text-center we7-margin-bottom select-module-wxapp" ng-repeat="module in groupNotHaveModuleWxapp" style="overflow: hidden">
 								<a href="javascript:;" ng-click="selectModule(module, 'module_wxapp')">
-									<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+									<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 									<p class="text-over">{{ module.title }}</p>
 								</a>
 								<span id="module_wxapp-{{module.mid}}" class="selected hidden" ng-click="cancleModule(module, 'module_wxapp')" style="position:absolute;width:82%;height:100%;left:10px;top:0;opacity:0.8;cursor:pointer;background:#e7e8eb; vertical-align:middle;font-size:30px"><i class="wi wi-right-sign color-green"></i></span>

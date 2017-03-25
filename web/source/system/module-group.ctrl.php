@@ -123,8 +123,6 @@ if ($do == 'post') {
 	$group_id = intval($_GPC['id']);
 	$_W['page']['title'] = $group_id ? '编辑应用套餐' : '添加应用套餐';
 
-	$module_list = pdo_getall('modules', array('issystem' => 0), array(), 'name');
-	$template_list = pdo_getall('site_templates',array(), array(), 'name');
 	$group_have_module_app = array();
 	$group_have_module_wxapp = array();
 	$group_have_template = array();
@@ -137,6 +135,7 @@ if ($do == 'post') {
 		$group_have_template = empty($module_group['templates']) ? array() : $module_group['templates'];
 	}
 
+	$module_list = pdo_getall('modules', array('issystem' => 0), array(), 'name', array('mid DESC'));
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
 	if (!empty($module_list)) {
@@ -147,13 +146,36 @@ if ($do == 'post') {
 				$module_info['logo'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/icon.jpg');
 			}
 			if ($module_info['app_support'] == 2 && !in_array($name, array_keys($group_have_module_app))) {
-				$group_not_have_module_app[$name] = $module_info;
+				if (!empty($module_info['main_module'])) {
+					if (in_array($module_info['main_module'], array_keys($group_have_module_app))) {
+						$group_not_have_module_app[$name] = $module_info;
+					}
+				} elseif (!empty($module_info['plugin'])) {
+					$group_not_have_module_app[$name] = $module_info;
+					$plugin_list = pdo_getall('modules', array('main_module' => $module_info['name']), array(), 'name');
+					if (!empty($plugin_list)) {
+						foreach ($plugin_list as $plugin) {
+							if (!in_array($plugin['name'], array_keys($group_have_module_app))) {
+								if (file_exists(IA_ROOT.'/addons/' . $plugin['name'] . '/icon-custom.jpg')) {
+									$plugin['logo'] = tomedia(IA_ROOT . '/addons/' . $plugin['name'] . '/icon-custom.jpg');
+								} else {
+									$plugin['logo'] = tomedia(IA_ROOT . '/addons/' . $plugin['name'] . '/icon.jpg');
+								}
+								$group_not_have_module_app[$plugin['name']] = $plugin;
+							}
+						}
+					}
+				} else {
+					$group_not_have_module_app[$name] = $module_info;
+				}
 			}
 			if ($module_info['wxapp_support'] == 2 && !in_array($name, array_keys($group_have_module_wxapp))) {
 				$group_not_have_module_wxapp[$name] = $module_info;
 			}
 		}
 	}
+
+	$template_list = pdo_getall('site_templates', array(), array(), 'name');
 	$group_not_have_template = array();//套餐未拥有模板
 	if (!empty($template_list)) {
 		foreach ($template_list as $template) {
@@ -163,4 +185,5 @@ if ($do == 'post') {
 		}
 	}
 }
+
 template('system/module-group');
