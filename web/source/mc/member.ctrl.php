@@ -374,7 +374,7 @@ if($do == 'del') {
 if($do == 'add') {
 	if($_W['isajax']) {
 		$type = trim($_GPC['type']);
-		$type_list = array('realname', 'mobile', 'password', 'email', 'credit1', 'credit2');
+		$type_list = array('mobile', 'email');
 		$data = trim($_GPC['data']);
 		if(empty($data) || empty($type) || !in_array($type, $type_list)) {
 			exit(json_encode(array('valid' => false)));
