@@ -101,6 +101,7 @@ function material_get($attach_id) {
 			$news = pdo_getall('wechat_news', array('attach_id' => $material['id']), array(), '', ' displayorder ASC');
 			if (!empty($news)) {
 				foreach ($news as &$news_row) {
+					$news_row['content_source_url'] = preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $news_row['content_source_url']);
 					$news_row['thumb_url'] = tomedia($news_row['thumb_url']);
 					preg_match_all('/src=[\'\"]?([^\'\"]*)[\'\"]?/i', $news_row['content'], $match);
 					if (!empty($match[1])) {

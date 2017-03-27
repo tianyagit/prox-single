@@ -69,7 +69,7 @@ if($do == 'display') {
 		if (!empty($packageids) && in_array('-1', $packageids)) {
 			$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
 						(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder 
-						FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
+						FROM " . tablename('modules') . " AS a WHERE a.main_module = '' AND a.issystem <> '1' $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
 			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 		} else {
 			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
@@ -87,7 +87,7 @@ if($do == 'display') {
 			if ($package_module) {
 				$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
 							(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder
-							FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' 
+							FROM " . tablename('modules') . " AS a WHERE a.main_module = '' AND a.issystem <> '1'
 							AND a.name IN ('".implode("','", $package_module)."') $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
 
 				$total_condition['name'] = $package_module;

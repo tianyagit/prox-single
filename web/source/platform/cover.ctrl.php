@@ -16,6 +16,7 @@ define('IN_MODULE', true);
 if ($do == 'module') {
 	$modulename = $_GPC['m'];
 	$entry_id = intval($_GPC['eid']);
+	$arr_keywords = array();
 	
 	if (empty($modulename)) {
 		$entry = module_entry($entry_id);
@@ -33,6 +34,20 @@ if ($do == 'module') {
 	}
 	define('ACTIVE_FRAME_URL', $url);
 	$entries = module_entries($modulename);
+	$replies = pdo_getall('cover_reply', array('module' => $module['name'], 'uniacid' => $_W['uniacid']));
+	foreach ($replies as &$reply){
+		$keywords = pdo_getall('rule_keyword', array('rid' => $reply['rid'], 'uniacid' => $_W['uniacid']), array('type','content'));
+		if (!empty($keywords)){
+			foreach ($keywords as $keyword){
+				$arr_keywords[$reply['do']][] = $keyword;
+			}
+		}
+	}
+	foreach ($entries['cover'] as &$entry){
+		if (!empty($arr_keywords[$entry['do']])){
+			$entry['cover']['rule']['keywords'] = $arr_keywords[$entry['do']];
+		}
+	}
 } elseif ($do == 'post') {
 	$entry_id = intval($_GPC['eid']);
 	if(empty($entry_id)) {
