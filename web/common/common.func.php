@@ -165,13 +165,10 @@ function buildframes($framename = ''){
 					if (!empty($module)) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 							'title' => $module['title'],
-							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
+							'icon' =>  $module['logo'],
 							'url' => url('home/welcome/ext', array('m' => $module['name'])),
 							'is_display' => 1,
 						);
-						if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
-							$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
-						}
 					}
 				}
 			}
@@ -188,13 +185,10 @@ function buildframes($framename = ''){
 					if (!empty($module)) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 							'title' => $module['title'],
-							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
+							'icon' =>  $module['logo'],
 							'url' => url('home/welcome/ext', array('m' => $module['name'])),
 							'is_display' => 1,
 						);
-						if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
-							$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
-						}
 					}
 				}
 			}
@@ -314,6 +308,7 @@ function buildframes($framename = ''){
 				}
 			}
 		}
+
 		$frames['account']['section'] = array();
 		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
 			if (!empty($module['isrulefields'])) {
@@ -385,8 +380,31 @@ function buildframes($framename = ''){
 				}
 			}
 		}
+		if (!empty($module['plugin']) || !empty($module['main_module'])) {
+			if (!empty($module['main_module'])) {
+				$main_module = module_fetch($module['main_module']);
+				$plugin_list = explode(',', $main_module['plugin']);
+			} else {
+				$plugin_list = explode(',', $module['plugin']);
+			}
+			$plugin_list = array_intersect($plugin_list, array_keys($modules));
+			if (!empty($plugin_list)) {
+				$frames['account']['section']['platform_module_menu']['plugin_menu'] = array(
+					'main_module' => !empty($main_module) ? $main_module['name'] : $module['name'],
+					'title' => !empty($main_module) ? $main_module['title'] : $module['title'],
+					'icon' => !empty($main_module) ? $main_module['logo'] : $module['logo'],
+					'menu' => array()
+				);
+				foreach ($plugin_list as $plugin) {
+					$frames['account']['section']['platform_module_menu']['plugin_menu']['menu'][$modules[$plugin]['name']] = array(
+						'title' => $modules[$plugin]['title'],
+						'icon' => $modules[$plugin]['logo'],
+						'url' => url('home/welcome/ext', array('m' => $plugin)),
+					);
+				}
+			}
+		}
 	}
-
 	foreach ($frames as $menuid => $menu) {
 		if (!empty($menu['founder']) && empty($_W['isfounder'])) {
 			continue;
