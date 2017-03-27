@@ -503,104 +503,29 @@
 	</div>
 </div>
 <script>
-	angular.module('wxApp').controller('MainCtrl', ['$scope', '$http', function($scope, $http){
-		uniacid = "{$_GPC['uniacid']}";
-		success_url = "{php echo url('wxapp/version/edit', array('multiid' => $_GPC['multiid'], 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}";
-		$scope.account_list = [];
-		$scope.current_module = '';
-		$scope.category = {
-			'id' : '',
-			'name' : '',
-			'displayorder' : '',
-			'linkurl' : ''
-		};
-		$scope.wxapp = '{$_GPC['wxapp']}' == '' ? 'slide' : '{$_GPC['wxapp']}';
-		$scope.slideedit = function (id) {
-			$scope.wxapp = 'slideedit';
-			$scope.slideid = id;
-		};
-		$scope.navedit = function (id) {
-			$scope.wxapp = 'navedit';
-			$scope.navid = id;
-		};
-		$scope.recommendedit = function (id,pid) {
-			$scope.wxapp = 'recommendedit';
-			$scope.recommendid = id;
-			$scope.recommendpid = pid;
-		};
-
-		$scope.showAccount = function(module) {
-			$scope.account_list = '';
-			$http.post("{php echo url('wxapp/version/account_list')}", {module : module}).success(function(data) {
-				$scope.account_list = data.message.message;
-				$scope.current_module = module;
-				console.dir(data);
-			});
-			$('#show_account').modal('show');
-		};
-		$scope.selectAccount = function(module, uniacid) {
-			$http.post("{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}", {module : module, uniacid : uniacid}).success(function(data) {
-				if (data.message.errno == 0) {
-					$('.js-connection-img-' + module).attr('src', data.message.message.thumb);
-					$('.js-connection-name-' + module).text(data.message.message.name);
-					util.message('修改成功', '', 'success');
-				} else {
-					util.message(data.message.message, '', 'error');
-				}
-				$('#show_account').modal('hide');
-			});
-		};
-		$scope.categoryedit = function (id, pid) {
-			$scope.wxapp = 'categoryedit';
-			$scope.categoryeditid = id;
-			$scope.categoryparentid = pid;
-		};
-		$scope.get_categorys = function() {
-			$http.post("{php echo url('wxapp/version/get_categorys')}", {'uniacid' : uniacid, 'multiid' : '{$multiid}'}).success(function(data) {
-				$scope.categorys = data.message.message;
-			});
-		};
-		$scope.get_categorys();
-		$scope.edit_category = function () {
-			$scope.categorys.push({'name' : '', 'displayorder' : '', 'linkurl' : ''});
-		};
-		$scope.del_category = function(index) {
-			if ($scope.categorys[index].id != undefined) {
-				$http.post("{php echo url('wxapp/version/del_category')}", {'id' : $scope.categorys[index].id}).success(function() {});
-				$scope.get_categorys();
-			} else {
-				$scope.categorys.splice(index, 1);
-			}
-		}
-		$scope.save_category = function() {
-			$scope.name_exist = false;
-			angular.forEach($scope.categorys, function(val) {
-				if (val.name == '') {
-					util.message('请填写类名');
-					$scope.name_exist = true;
-				}
-			});
-			if ($scope.name_exist == true) {
-				return false;
-			}
-			$http.post("{php echo url('wxapp/version/save_category')}", {'post' : $scope.categorys, 'uniacid' : uniacid, 'multiid' : {$multiid}}).success(function() {});
-			$scope.get_categorys();
-			$('#myModal').modal('hide');
-		};
-	}]);
+$(function(){
+	var uniacid = "{$_GPC['uniacid']}";
+	multiid = "{$multiid}";
+	wxapp = '{$_GPC['wxapp']}' == '' ? 'slide' : '{$_GPC['wxapp']}';
+	success_url = "{php echo url('wxapp/version/edit', array('multiid' => $_GPC['multiid'], 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}";
+	showAccount_url = "{php echo url('wxapp/version/account_list')}";
+	selectAccount_url = "{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}";
+	get_categorys_url = "{php echo url('wxapp/version/get_categorys')}";
+	del_category_url = "{php echo url('wxapp/version/del_category')}";
+	save_category_url = "{php echo url('wxapp/version/save_category')}";
+	angular.module('wxApp').value('config', {
+		'uniacid' : uniacid,
+		'multiid' : multiid,
+		'wxapp' : wxapp,
+		'success_url' : success_url,
+		'showAccount_url' : showAccount_url,
+		'selectAccount_url' : selectAccount_url,
+		'get_categorys_url' : get_categorys_url,
+		'del_category_url' : del_category_url,
+		'save_category_url' : save_category_url
+	});
 	angular.bootstrap($('#js-wxapp-edit'), ['wxApp']);
-	change_category = function (element) {
-		$.post("{php echo url('wxapp/version/edit', array('operate' => 'change_category'))}", {'categoryid' : element.val()}, function(data) {
-			var data = $.parseJSON(data);
-			var html = '<option  value="">二级分类</option>';
-			var categorys = data.message.message;
-			for (var i = 0; i < categorys.length; i++) {
-				html += '<option value='+categorys[i]['id']+'>'+categorys[i]['name']+'</option>';
-			}
-			element.next().html(html);
-		});
-	};
-
+});
 </script>
 </body>
 </html>
