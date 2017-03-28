@@ -29,11 +29,11 @@ unset($session);
 
 if(!empty($_GPC['__uniacid'])) {
 	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
-	$cache_lastaccount = cache_load($cache_key);
+	$cache_lastaccount = (array)cache_load($cache_key);
 	if (in_array($controller, array('wxapp'))) {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else {
-		if ( (!empty($_GPC['uniacid_source']) && $_GPC['uniacid_source'] == 'wxapp') ) {
+		if ((!empty($_GPC['uniacid_source']) && $_GPC['uniacid_source'] == 'wxapp')) {
 			$uniacid = intval($_GPC['uniacid']);
 			if (!empty($uniacid)) {
 				isetcookie('__uniacid', $uniacid, 7 * 86400);
