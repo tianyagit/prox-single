@@ -43,7 +43,7 @@ if ($do == 'display') {
 		$cid = intval($_GPC['category']['parentid']);
 		$condition .= " AND pcate = '{$cid}'";
 	}
-	$list = pdo_fetchall("SELECT * FROM ".tablename('site_article')." WHERE uniacid = '{$_W['uniacid']}' $condition ORDER BY displayorder DESC, id DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
+	$list = pdo_fetchall("SELECT * FROM ".tablename('site_article')." WHERE uniacid = '{$_W['uniacid']}' $condition ORDER BY displayorder DESC, edittime DESC, id DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_article') . " WHERE uniacid = '{$_W['uniacid']}'".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
 	template('site/article-display');
@@ -102,6 +102,7 @@ if ($do == 'display') {
 			'displayorder' => intval($_GPC['displayorder']),
 			'linkurl' => addslashes($_GPC['linkurl']),
 			'createtime' => TIMESTAMP,
+			'edittime' => TIMESTAMP,
 			'click' => intval($_GPC['click'])
 		);
 		if (!empty($_GPC['thumb'])) {
@@ -157,6 +158,7 @@ if ($do == 'display') {
 			$data['credit'] = iserializer(array('status' => 0, 'limit' => 0, 'share' => 0, 'click' => 0));
 		}	
 		if (empty($id)) {
+			unset($data['edittime']);
 			if (!empty($keywords)) {
 				pdo_insert('rule', $rule);
 				$rid = pdo_insertid();
