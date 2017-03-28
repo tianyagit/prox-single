@@ -88,7 +88,8 @@
 										<a  href="javascript:void(0);" class="btn btn-default" ng-click="pickPicture('local')">本地图片</a>
 										<a  href="javascript:void(0);" class="btn btn-default" ng-click="pickPicture('wechat')">微信图片素材</a>
 									</div>
-									<image ng-src="{{ materialList[activeIndex].thumb }}"></image>
+									<div class=""><input type="checkbox" ng-checked="{{ materialList[activeIndex].show_cover_pic }}" ng-click="updateSelection()"/><a>在正文顶部显示封面图</a></div>
+									<image ng-src="{{ materialList[activeIndex].thumb }}" style="width: 200px;"></image>
 								</div>
 							</div>
 							<!-- END 封面 -->

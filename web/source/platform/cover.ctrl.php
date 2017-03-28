@@ -39,9 +39,9 @@ if ($do == 'module') {
 	foreach ($replies as $replay){
 		$arr_keywords[$replay['do']][] = $replay;
 	}
-	foreach ($entries['cover'] as &$entry){
-		if (!empty($arr_keywords[$entry['do']])){
-			$entry['cover']['rule']['keywords'] = $arr_keywords[$entry['do']];
+	foreach ($entries['cover'] as &$cover){
+		if (!empty($arr_keywords[$cover['do']])){
+			$cover['cover']['rule']['keywords'] = $arr_keywords[$cover['do']];
 		}
 	}
 } elseif ($do == 'post') {
