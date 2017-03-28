@@ -504,9 +504,9 @@
 </div>
 <script>
 $(function(){
-	var uniacid = "{$_GPC['uniacid']}";
-	multiid = "{$multiid}";
-	wxapp = '{$_GPC['wxapp']}' == '' ? 'slide' : '{$_GPC['wxapp']}';
+	var multiid = '{$multiid}';
+	uniacid = "{$_GPC['uniacid']}";
+	wxapp = "{$_GPC['wxapp']}" == '' ? 'slide' : "{$_GPC['wxapp']}";
 	success_url = "{php echo url('wxapp/version/edit', array('multiid' => $_GPC['multiid'], 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}";
 	showAccount_url = "{php echo url('wxapp/version/account_list')}";
 	selectAccount_url = "{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}";
