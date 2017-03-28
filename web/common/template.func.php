@@ -105,6 +105,7 @@ function template_parse($str, $inmodule = false) {
 	$str = preg_replace('/{url\s+(\S+)\s+(array\(.+?\))}/', '<?php echo url($1, $2);?>', $str);
 	$str = preg_replace('/{media\s+(\S+)}/', '<?php echo tomedia($1);?>', $str);
 	$str = preg_replace_callback('/<\?php([^\?]+)\?>/s', "template_addquote", $str);
+	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "modulehook", $str);
 	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
 	$str = str_replace('{##', '{', $str);
 	$str = str_replace('##}', '}', $str);
@@ -113,6 +114,30 @@ function template_parse($str, $inmodule = false) {
 	}
 	$str = "<?php defined('IN_IA') or exit('Access Denied');?>" . $str;
 	return $str;
+}
+
+function modulehook($params = array()) {
+	if (empty($params[1])) {
+		return '';
+	}
+	$params = explode(' ', $params[1]);
+	if (empty($params)) {
+		return '';
+	}
+	$plugin = array();
+	$plugin['name'] = str_replace('plugin:', '', $params[0]);
+	$plugin['do'] = str_replace('do:', '', $params[1]);
+	$plugin_info = module_fetch($plugin['name']);
+	if (empty($plugin_info) || empty($plugin_info['main_module'])) {
+		return '';
+	}
+	$plugin_module = WeUtility::createModuleSite($plugin_info['name']);
+	$function_name = "doWeb{$plugin['do']}";
+	if (method_exists($plugin_module, $function_name) && $plugin_module instanceof WeModuleSite) {
+		return $plugin_module->$function_name();
+	} else {
+		return '';
+	}
 }
 
 function template_addquote($matchs) {
