@@ -596,6 +596,17 @@ class WeUtility {
 			$o->__define = IA_ROOT . "/addons/{$name}/site.php";
 		} else {
 			$o->__define = $file;
+			if (!empty($o->module['plugin'])) {
+				$plugin_list = explode(',', $o->module['plugin']);
+				if (!empty($plugin_list) && is_array($plugin_list)) {
+					foreach ($plugin_list as $plugin) {
+						$plugin = module_fetch($plugin);
+						if (!empty($plugin)) {
+							$o->installed_plugin_list[] = $plugin['name'];
+						}
+					}
+				}
+			}
 		}
 		self::defineConst($o);
 		$o->inMobile = defined('IN_MOBILE');
