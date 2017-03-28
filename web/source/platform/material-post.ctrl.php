@@ -38,6 +38,7 @@ if ($do == 'news') {
 						'digest' => $row_news['description'],
 						'content_source_url' => preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $row_news['url']),
 						'content' => $row_news['content'],
+						'show_cover_pic' => intval($row_news['incontent']),
 						'displayorder' => $key
 					);
 				}
@@ -70,8 +71,8 @@ if ($do == 'addnews') {
 				'author' => $news['author'],
 				'digest' => $news['description'],
 				'content' => htmlspecialchars_decode($news['content']),
-				'show_cover_pic' => 1,
 				'content_source_url' => $news['content_source_url'],
+				'show_cover_pic' => $news['show_cover_pic'],
 				'thumb_media_id' => $news['media_id'],
 			);
 			if (!$is_save_location) {
@@ -92,7 +93,7 @@ if ($do == 'addnews') {
 				'digest' => $news['digest'],
 				'content' => htmlspecialchars_decode($news['content']),
 				'content_source_url' => $news['content_source_url'],
-				'show_cover_pic' => 1,
+				'show_cover_pic' => $news['show_cover_pic'],
 				'url' => '',
 				'displayorder' => $key
 			);
