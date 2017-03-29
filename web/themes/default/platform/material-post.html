@@ -100,32 +100,8 @@
 										<div class="help-block">选填，如果不填写会默认抓取正文前54个字</div>
 									</div>
 								</div>
-								<div class="upload-wrap hidden">
-									<div class="hidden">
-										<a  href="javascript:void(0);" class="btn btn-default" ng-click="pickPicture('local')">本地图片</a>
-										<a  href="javascript:void(0);" class="btn btn-default" ng-click="pickPicture('wechat')">微信图片素材</a>
-									</div>
-									<div class="we7-margin-vertical">
-										<input type="checkbox" ng-checked="{{ materialList[activeIndex].show_cover_pic }}" ng-click="updateSelection()" id="display-cover"/>
-										<label for="display-cover">在正文顶部显示封面图</label>
-									</div>
-									<image ng-src="{{ materialList[activeIndex].thumb }}" style="width: 200px;"></image>
-								</div>
 							</div>
 							<!-- END 封面 -->
-							<!-- BEGIN 摘要 -->
-							<div class="appmsg-edit-item gap-left appmsg-description hidden">
-								<label for="" class="frm-label">
-									<strong class="title" ng-click="zhaiyao()">摘要</strong>
-									<p class="tips l gap-left">选填，如果不填写会默认抓取正文前54个字</p>
-								</label>
-									<span class="form-textarea-box">
-									<textarea class="form-textarea" ng-model="materialList[activeIndex]['digest']" name="digest" max-length="120" rows="4" ></textarea>
-									<em class="form-control-append hidden">0/120</em>
-									</span>
-								<div class="frm-msg fail"></div>
-						</div>
-						<!-- END 摘要 -->
 					</div>
 				</div>
 			</div>
