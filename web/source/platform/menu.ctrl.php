@@ -42,23 +42,25 @@ if($do == 'display') {
 	$all_default_menus = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1), array('data', 'id'), 'id');
 	foreach ($all_default_menus as $k=>$menu_data) {
 		$single_menu_info = iunserializer(base64_decode($menu_data['data']));
-		$single_menu_info['type'] = 1;
-		$single_menu_info['matchrule'] = array();
-		if (!empty($single_menu_info['button'])) {
-			foreach ($single_menu_info['button'] as $key=>&$single_button) {
-				if (!empty($default_sub_button[$key])) {
-					$single_button['sub_button'] = $default_sub_button[$key];
-				} else {
-					unset($single_button['sub_button']);
+		if (is_array($single_menu_info)) {
+			$single_menu_info['type'] = 1;
+			$single_menu_info['matchrule'] = array();
+			if (!empty($single_menu_info['button'])) {
+				foreach ($single_menu_info['button'] as $key=>&$single_button) {
+					if (!empty($default_sub_button[$key])) {
+						$single_button['sub_button'] = $default_sub_button[$key];
+					} else {
+						unset($single_button['sub_button']);
+					}
+					ksort($single_button);
 				}
-				ksort($single_button);
+				unset($single_button);
+				ksort($single_menu_info);
 			}
-			unset($single_button);
-			ksort($single_menu_info);
-		}
-		$local_menu_data = base64_encode(iserializer($single_menu_info));
-		if ($wechat_menu_data == $local_menu_data) {
-			$default_menu_id = $k;
+			$local_menu_data = base64_encode(iserializer($single_menu_info));
+			if ($wechat_menu_data == $local_menu_data) {
+				$default_menu_id = $k;
+			}
 		}
 	}
 
@@ -361,10 +363,13 @@ if($do == 'post') {
 				if ($keyword_exist) {
 					$button['key'] = substr($button['key'], 8);
 				}
+				$state = 'we7sid-'.$_W['session_id'];
 				if (empty($button['sub_button'])) {
 					$temp['type'] = $button['type'];
 					if($button['type'] == 'view') {
 						$temp['url'] = urlencode($button['url']);
+						$oauth_account = WeAccount::create($_W['account']['oauth']);
+						$temp['url'] = $oauth_account->getOauthCodeUrl($temp['url'], $state);
 					} elseif ($button['type'] == 'click') {
 						if (!empty($button['media_id']) && empty($button['key'])) {
 							$temp['media_id'] = urlencode($button['media_id']);
@@ -388,6 +393,8 @@ if($do == 'post') {
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
+							$oauth_account = WeAccount::create($_W['account']['oauth']);
+							$sub_temp['url'] = $oauth_account->getOauthCodeUrl($sub_temp['url'], $state);
 						} elseif ($subbutton['type'] == 'click') {
 							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
 								$sub_temp['media_id'] = urlencode($subbutton['media_id']);

@@ -592,7 +592,22 @@ class WeUtility {
 		$o->modulename = $name;
 		load()->model('module');
 		$o->module = module_fetch($name);
-		$o->__define = $file;
+		if (!empty($o->module['main_module'])) {
+			$o->__define = IA_ROOT . "/addons/{$name}/site.php";
+		} else {
+			$o->__define = $file;
+			if (!empty($o->module['plugin'])) {
+				$plugin_list = explode(',', $o->module['plugin']);
+				if (!empty($plugin_list) && is_array($plugin_list)) {
+					foreach ($plugin_list as $plugin) {
+						$plugin = module_fetch($plugin);
+						if (!empty($plugin)) {
+							$o->installed_plugin_list[] = $plugin['name'];
+						}
+					}
+				}
+			}
+		}
 		self::defineConst($o);
 		$o->inMobile = defined('IN_MOBILE');
 		if($o instanceof WeModuleSite) {
@@ -855,6 +870,7 @@ abstract class WeBase {
 				}
 			}
 		}
+
 		if(!is_file($source)) {
 			exit("Error: template source '{$filename}' is not exist!");
 		}
@@ -864,6 +880,19 @@ abstract class WeBase {
 			template_compile($source, $compile, true);
 		}
 		return $compile;
+	}
+
+	/**
+	 * 构造插件插件引用的html页面，
+	 * @param $filename string 引用的页面位置
+	 * @return string html代码
+	 */
+	protected function pluginTemplate($filename) {
+		ob_start();
+		include $this->template($filename);
+		$template = ob_get_contents();
+		ob_clean();
+		return $template;
 	}
 }
 

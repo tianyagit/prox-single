@@ -150,7 +150,7 @@ function material_build_reply($attach_id) {
 					'title' => $material['title'],
 					'description' => $material['description'],
 					'picurl' => $material['thumb_url'],
-					'url' => $material['content_source_url'],
+					'url' => !empty($material['content_source_url']) ? $material['content_source_url'] : $material['url'],
 				);
 			}
 		}
