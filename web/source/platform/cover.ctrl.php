@@ -44,6 +44,7 @@ if ($do == 'module') {
 			$cover['cover']['rule']['keywords'] = $arr_keywords[$cover['do']];
 		}
 	}
+	unset($cover);
 } elseif ($do == 'post') {
 	$entry_id = intval($_GPC['eid']);
 	if(empty($entry_id)) {
