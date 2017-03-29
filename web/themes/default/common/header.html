@@ -71,6 +71,15 @@
 	</script>
 {/if}
 <div class="main">
+	<div class="container message-noexist text-center hidden">
+		<span class="error-icon"><i class="wi wi-warning-sign"></i></span>
+		<div class="tips">您访问的页面不存在</div>
+		<div class="state">工程师正在努力修复中...</div>
+		<div class="btn-group">
+			<a class="btn btn-primary" href="#">返回首页</a>
+			<button type="button" class="btn btn-default" disabled>5S</button>
+		</div>
+	</div>
 	<div class="container">
 		{if in_array(FRAME, array('account', 'system', 'adviertisement')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
