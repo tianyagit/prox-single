@@ -102,8 +102,8 @@ if ($do == 'upgrade') {
 	$points = ext_module_bindings();
 	$module_name = addslashes($_GPC['module_name']);
 	//判断模块相关配置和文件是否合法
-	$module_info = module_fetch($module_name);
-	if (empty($module_info)) {
+	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
+	if (empty($module_exist)) {
 		message('模块已经被卸载或是不存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
@@ -237,7 +237,7 @@ if ($do =='install') {
 	if (empty($_W['isfounder'])) {
 		message('您没有安装模块的权限', '', 'error');
 	}
-	if (module_fetch($module_name)) {
+	if (pdo_getcolumn('modules', array('name' => $module_name), 'mid')) {
 		message('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
@@ -366,8 +366,8 @@ if ($do =='install') {
 }
 
 if ($do == 'change_receive_ban') {
-	$modulename = $_GPC['modulename'];
-	$module_exist = module_fetch($modulename);
+	$modulename = trim($_GPC['modulename']);
+	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
 	if (empty($module_exist)) {
 		message(error(1, '模块不存在'), '', 'ajax');;
 	}
@@ -425,7 +425,7 @@ if ($do == 'get_module_info') {
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
-	$module_info = module_fetch($module_name);
+	$module_info = pdo_get('modules', array('name' => $module_name));
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}
@@ -487,7 +487,7 @@ if ($do == 'uninstall') {
 		message('您没有卸载模块的权限', '', 'error');
 	}
 	$name = trim($_GPC['name']);
-	$module = module_fetch($name);
+	$module = pdo_get('modules', array('name' => $name), array('name', 'isrulefields', 'issystem', 'version'));
 	if (empty($module)) {
 		message('模块已经被卸载或是不存在！', '', 'error');
 	}
