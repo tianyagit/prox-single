@@ -143,7 +143,7 @@ if ($do == 'post') {
 				$rids = implode($keywords, ',');
 				$sql = 'SELECT `id`, `name` FROM ' . tablename('rule') . " WHERE `id` IN ($rids)";
 				$rules = pdo_fetchall($sql);
-				message(error(0, @json_encode($rules)), '', 'ajax', true);
+				iajax(0, @json_encode($rules), '');
 			}
 			message(error(-1), '', 'ajax', true);
 		}
@@ -411,7 +411,7 @@ if ($do == 'change_status') {
 				$setting[$type]['type'] = 'module';
 			}
 			if (empty($setting[$type]['type'])) {
-				message(error(1, '请先设置回复内容'), '', 'ajax', true);
+				iajax(1, '请先设置回复内容', '');
 			}
 		} else {
 			$setting[$type]['type'] = '';
@@ -437,10 +437,10 @@ if ($do == 'change_keyword_status') {
 			$rule_keyword = pdo_update('rule_keyword', array('status' => 1), array('uniacid' => $_W['uniacid'], 'rid' => $id));
 		}
 		if ($rule && $rule_keyword) {
-			message(error(0, '更新成功！'), '', 'ajax', true);
+			iajax(0, '更新成功！', '');
 		} else {
-			message(error(-1, '更新失败！'), '', 'ajax', true);
+			iajax(-1, '更新失败！', '');
 		}
 	}
-	message(error(-1, '更新失败！'), '', 'ajax', true);
+	iajax(-1, '更新失败！', '');
 }

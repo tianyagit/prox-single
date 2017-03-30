@@ -187,11 +187,11 @@ if($do == 'post') {
 				}
 				pdo_insert('mc_member_address', $post);
 				$post['id'] = pdo_insertid();
-				message(error(1, $post), '', 'ajax', true);
+				iajax(1, $post, '');
 			} else {
 				pdo_update('mc_member_address', $post, array('id' => intval($_GPC['id']), 'uniacid' => $_W['uniacid']));
 				$post['id'] = intval($_GPC['id']);
-				message(error(1, $post), '', 'ajax', true);
+				iajax(1, $post, '');
 			}
 		}
 		if ($_GPC['op'] == 'del') {

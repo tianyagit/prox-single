@@ -40,7 +40,7 @@ if($do == 'base') {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
 		}else {
-			message(error(40035, '参数错误！'), '', 'ajax', true);
+			iajax(40035, '参数错误！', '');
 		}
 		switch ($type) {
 			case 'qrcodeimgsrc':
@@ -64,7 +64,7 @@ if($do == 'base') {
 							}
 						}
 					}else {
-						message(error(40035, '参数错误！'), '', 'ajax', true);
+						iajax(40035, '参数错误！', '');
 					}
 				}
 				break;
@@ -107,7 +107,7 @@ if($do == 'base') {
 				}
 				$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 				if (empty($owneruid)) {
-					message(error(-1, '抱歉，该公众号未设置主管理员。请先设置主管理员后再行修改到期时间！'), url('account/post-user/edit', array('uniacid' => $uniacid, 'acid' => $acid)), 'ajax', true);
+					iajax(-1, '抱歉，该公众号未设置主管理员。请先设置主管理员后再行修改到期时间！', url('account/post-user/edit', array('uniacid' => $uniacid, 'acid' => $acid)));
 				}
 				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $owneruid));
 				break;
@@ -131,9 +131,9 @@ if($do == 'base') {
 			cache_delete("jsticket:{$acid}");
 			cache_delete("cardticket:{$acid}");
 			module_build_privileges();
-			message(error(0, '修改成功！'), '', 'ajax', true);
+			iajax(0, '修改成功！', '');
 		}else {
-			message(error(1, '修改失败！'), '', 'ajax', true);
+			iajax(1, '修改失败！', '');
 		}
 	}
 
@@ -174,7 +174,7 @@ if($do == 'sms') {
 
 	if ($_W['isajax'] && $_W['ispost'] && $_GPC['type'] == 'balance') {
 		if ($max_num == 0) {
-			message(error(-1, '您现有短信数量为0，请联系服务商购买短信！'), '', 'ajax', true);
+			iajax(-1, '您现有短信数量为0，请联系服务商购买短信！', '');
 		}
 		$balance = intval($_GPC['balance']);
 		$notify['sms']['balance'] = $balance;
@@ -185,9 +185,9 @@ if($do == 'sms') {
 		$updatedata['notify'] = $notify;
 		$result = pdo_update('uni_settings', $updatedata , array('uniacid' => $uniacid));
 		if($result){
-			message(error(0, array('count' => $count_num, 'num' => $num)), '', 'ajax', true);
+			iajax(0, array('count' => $count_num, 'num' => $num), '');
 		}else {
-			message(error(1, '修改失败！'), '', 'ajax', true);
+			iajax(1, '修改失败！', '');
 		}
 	}
 	if($_W['isajax'] && $_W['ispost'] && $_GPC['type'] == 'signature') {
@@ -200,12 +200,12 @@ if($do == 'sms') {
 			$notify = serialize($notify);
 			$result = pdo_update('uni_settings', array('notify' => $notify), array('uniacid' => $uniacid));
 			if($result) {
-				message(error(0, '修改成功！'), '', 'ajax', true);
+				iajax(0, '修改成功！', '');
 			}else {
-				message(error(1, '修改失败！'), '', 'ajax', true);
+				iajax(1, '修改失败！', '');
 			}
 		}else {
-			message(error(40035, '参数错误！'), '', 'ajax', true);
+			iajax(40035, '参数错误！', '');
 		}
 	}
 
@@ -237,10 +237,10 @@ if($do == 'modules_tpl') {
 				}
 				cache_build_account_modules($uniacid);
 				cache_build_account($uniacid);
-				message(error(0, '修改成功！'), '', 'ajax', true);
+				iajax(0, '修改成功！', '');
 			}else {
 				pdo_delete('uni_account_group', array('uniacid' => $uniacid));
-				message(error(0, '修改成功！'), '', 'ajax', true);
+				iajax(0, '修改成功！', '');
 			}
 		}
 
@@ -267,9 +267,9 @@ if($do == 'modules_tpl') {
 			} else {
 				pdo_delete('uni_group', array('uniacid' => $uniacid));
 			}
-			message(error(0, '修改成功！'), '', 'ajax', true);
+			iajax(0, '修改成功！', '');
 		}
-		message(error(40035, '参数错误！'), '', 'ajax', true);
+		iajax(40035, '参数错误！', '');
 	}
 	$modules_tpl = $extend = array();
 

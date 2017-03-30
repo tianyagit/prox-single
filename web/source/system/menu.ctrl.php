@@ -49,7 +49,7 @@ if ($do == 'display') {
 } elseif ($do == 'post') {
 	$id = intval($_GPC['id']);
 	if ($_GPC['group'] == 'platform_module') {
-		message(error(-1, '应用模块下不可添加下级分类！'), referer(), 'ajax', true);
+		iajax(-1, '应用模块下不可添加下级分类！', referer());
 	}
 	$menu = array(
 		'title' => $_GPC['title'],
@@ -61,13 +61,13 @@ if ($do == 'display') {
 		'icon' => $_GPC['icon'],
 	);
 	if (empty($menu['title']) || empty($menu['url']) || empty($menu['permission_name'])) {
-		message(error(-1, '请完善菜单信息'), referer(), 'ajax', true);
+		iajax(-1, '请完善菜单信息', referer());
 	}
 	if (!preg_match('/^[a-zA-Z0-9_]+$/', $menu['permission_name'], $match)) {
-		message(error(-1, '菜单标识只能是数字、字母、下划线'), referer(), 'ajax', true);
+		iajax(-1, '菜单标识只能是数字、字母、下划线', referer());
 	}
 	if (empty($menu['is_system']) && substr($menu['url'], 0, 4) != 'http' && substr($menu['url'], 0, 2) != '//') {
-		message(error(-1, '请输入完整的链接'), referer(), 'ajax', true);
+		iajax(-1, '请输入完整的链接', referer());
 	}
 	if (in_array($menu['permission_name'], $system_menu_permission)) {
 		$menu['is_system'] = 1;
@@ -78,7 +78,7 @@ if ($do == 'display') {
 		
 		$menu_db = pdo_get('core_menu', array('permission_name' => $menu['permission_name']));
 		if (!empty($menu_db) && $menu_db['id'] != $id) {
-			message(error(-1, '菜单标识不得重复请更换'), referer(), 'ajax', true);
+			iajax(-1, '菜单标识不得重复请更换', referer());
 		}
 		
 	}
@@ -94,7 +94,7 @@ if ($do == 'display') {
 		pdo_insert('core_menu', $menu);
 	}
 	cache_build_frame_menu();
-	message(error(0, '更新成功'), referer(), 'ajax', true);
+	iajax(0, '更新成功', referer());
 } elseif ($do == 'display_status') {
 	$permission_name = $_GPC['permission_name'];
 	$status = intval($_GPC['status']);
@@ -106,17 +106,17 @@ if ($do == 'display') {
 		pdo_insert('core_menu',  array('is_display' => $status, 'permission_name' => $permission_name));
 	}
 	cache_build_frame_menu();
-	message(error(0, '更新成功'), referer(), 'ajax', true);
+	iajax(0, '更新成功', referer());
 } elseif ($do == 'delete') {
 	$permission_name = $_GPC['permission_name'];
 	$menu_db = pdo_get('core_menu', array('permission_name' => $permission_name));
 	
 	if (!empty($menu_db['is_system'])) {
-		message(error(-1, '系统菜单不能删除'), referer(), 'ajax', true);
+		iajax(-1, '系统菜单不能删除', referer());
 	}
 	if (!empty($menu_db)) {
 		pdo_delete('core_menu', array('id' => $menu_db['id']));
 		cache_build_frame_menu();
 	}
-	message(error(0, '更新成功'), referer(), 'ajax', true);
+	iajax(0, '更新成功', referer());
 }

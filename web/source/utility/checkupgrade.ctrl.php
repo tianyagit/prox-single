@@ -57,5 +57,5 @@ if ($do == 'system') {
 			}
 		}
 	}
-	message(error(0, ''), '', 'ajax', true);
+	iajax(0, '', '');
 }

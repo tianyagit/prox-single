@@ -69,10 +69,10 @@ if ($do == 'edit') {
 	$user = user_single(array('username' => $username));
 	if (!empty($user)) {
 		if ($user['status'] != 2) {
-			message(error(3, '用户未通过审核或不存在！'), '', 'ajax', true);
+			iajax(3, '用户未通过审核或不存在！', '');
 		}
 		if (in_array($user['uid'], $founders)) {
-			message(error(1, '不可操作网站创始人！'), '', 'ajax', true);
+			iajax(1, '不可操作网站创始人！', '');
 		}
 		//添加/修改公众号操作员、管理员、主管理员时执行数量判断
 		if (is_error($permission = uni_create_permission($user['uid'], ACCOUNT_TYPE))) {
@@ -90,7 +90,7 @@ if ($do == 'edit') {
 		if (empty($exists)) {
 			if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
 				if ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
-					message(error(4, '管理员不可操作主管理员'), '', 'ajax', true);
+					iajax(4, '管理员不可操作主管理员', '');
 				}
 				if (empty($owner)) {
 					$data['role'] = ACCOUNT_MANAGE_NAME_OWNER;
@@ -99,15 +99,15 @@ if ($do == 'edit') {
 					if ($result) {
 						//设置主管理员后，删除该用户在该公众号下设置的权限（即主管理员拥有该公众号所有权限）
 						pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $user['uid']));
-						message(error(0, '修改成功！'), '', 'ajax', true);
+						iajax(0, '修改成功！', '');
 					} else  {
-						message(error(1, '修改失败！'), '', 'ajax', true);
+						iajax(1, '修改失败！', '');
 					}
 					exit;
 				}
 			} else if ($addtype == ACCOUNT_MANAGE_TYPE_MANAGER) {
 				if ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
-					message(error(4, '管理员不可操作管理员'), '', 'ajax', true);
+					iajax(4, '管理员不可操作管理员', '');
 				}
 				$data['role'] = ACCOUNT_MANAGE_NAME_MANAGER;
 			} else  {
@@ -119,16 +119,16 @@ if ($do == 'edit') {
 				if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
 					pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $user['uid']));
 				}
-				message(error(0, '添加成功！'), '', 'ajax', true);
+				iajax(0, '添加成功！', '');
 			} else  {
-				message(error(1, '添加失败！'), '', 'ajax', true);
+				iajax(1, '添加失败！', '');
 			}
 		} else {
 			//{$username} 已经是该公众号的操作员或管理员，请勿重复添加
-			message(error(2, $username.'已经是该公众号的操作员或管理员，请勿重复添加！'), '', 'ajax', true);
+			iajax(2, $username.'已经是该公众号的操作员或管理员，请勿重复添加！', '');
 		}
 	} else  {
-		message(error(-1, '参数错误，请刷新重试！'), '', 'ajax', true);
+		iajax(-1, '参数错误，请刷新重试！', '');
 	}
 } elseif ($do == 'set_permission') {
 	$uid = intval($_GPC['uid']);
@@ -229,12 +229,12 @@ if ($do == 'edit') {
 	$uid = intval($_GPC['uid']);
 	$user = user_single($uid);
 	if(empty($user)) {
-		message(error(1, '访问错误, 未找到指定操作用户.'), '', 'ajax', true);
+		iajax(1, '访问错误, 未找到指定操作用户.', '');
 	}
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	$isfounder = in_array($user['uid'], $founders);
 	if($isfounder) {
-		message(error(2, '访问错误, 无法编辑站长.'), '', 'ajax', true);
+		iajax(2, '访问错误, 无法编辑站长.', '');
 	}
 
 	$module_name = trim($_GPC['m']);
@@ -301,8 +301,8 @@ if ($do == 'edit') {
 	}
 	unset($data_val);
 	if (empty($data)) {
-		message(error(3, '无子权限！'), '', 'ajax', true);
+		iajax(3, '无子权限！', '');
 	} else {
-		message(error(0, $data), '', 'ajax', true);
+		iajax(0, $data, '');
 	}
 }

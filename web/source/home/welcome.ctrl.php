@@ -75,13 +75,13 @@ if ($do == 'platform') {
 	if($today_stat['cumulate'] < 0) {
 		$today_stat['cumulate'] = 0;
 	}
-	message(error(0, array('yesterday' => $yesterday_stat, 'today' => $today_stat)), '', 'ajax', true);
+	iajax(0, array('yesterday' => $yesterday_stat, 'today' => $today_stat), '');
 } elseif ($do == 'get_last_modules') {
 	//最新模块
 	$last_modules = welcome_get_last_modules();
 	if (is_error($last_modules)) {
-		message(error(1, $last_modules['message']), '', 'ajax', true);
+		iajax(1, $last_modules['message'], '');
 	} else {
-		message(error(0, $last_modules), '', 'ajax', true);
+		iajax(0, $last_modules, '');
 	}
 }

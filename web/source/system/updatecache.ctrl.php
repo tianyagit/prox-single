@@ -24,7 +24,7 @@ if (checksubmit('submit', true)) {
 	cache_build_frame_menu();
 	cache_build_module_subscribe_type();
 	cache_build_cloud_ad();
-	message(error(0, '更新缓存成功！'), '', 'ajax', true);
+	iajax(0, '更新缓存成功！', '');
 }
 
 template('system/updatecache');
