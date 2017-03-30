@@ -227,14 +227,18 @@ function module_build_form($name, $rid, $option = array()) {
 }
 
 /**
- * 获取当前公号下安装好的指定模块及模块信息
+ * 获取当前权限下指定模块及模块信息
  *
  * @param string $name 模块名称
  * @return array 模块信息
  */
 function module_fetch($name) {
 	load()->model('account');
+	load()->model('user');
 	$modules = uni_modules(false);
+	if (empty($modules)) {
+		$modules = user_modules();
+	}
 	return $modules[$name];
 }
 
@@ -379,7 +383,7 @@ function module_permission_fetch($name) {
 
 /**
  * 解析从数据库中取出的模块信息
- * @param array() $name 模块信息
+ * @param array() $module_info 模块信息
  */
 function module_parse_info($module_info) {
 	if (empty($module_info)) {
@@ -406,4 +410,81 @@ function module_parse_info($module_info) {
 		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg'). "?v=". time();
 	}
 	return $module_info;
+}
+
+/**
+ *  卸载模块
+ * @param string $module_name 模块标识
+ * @param bool $is_clean_rule 是否删除相关的统计数据和回复规则
+ */
+function module_uninstall($module_name, $is_clean_rule = false) {
+	global $_W;
+	load()->model('cloud');
+	if (empty($_W['isfounder'])) {
+		return error(1, '您没有卸载模块的权限！');
+	}
+	$module_name = trim($module_name);
+	$module = module_fetch($module_name);
+	if (empty($module)) {
+		return error(1, '模块已经被卸载或是不存在！');
+	}
+	if (!empty($module['issystem'])) {
+		return error(1, '系统模块不能卸载！');
+	}
+	$modulepath = IA_ROOT . '/addons/' . $module_name . '/';
+	$manifest = ext_module_manifest($module_name);
+	if (empty($manifest)) {
+		$r = cloud_prepare();
+		if (is_error($r)) {
+			message($r['message'], url('cloud/profile'), 'error');
+		}
+		$packet = cloud_m_build($module_name, 'uninstall');
+		if ($packet['sql']) {
+			pdo_run(base64_decode($packet['sql']));
+		} elseif ($packet['script']) {
+			$uninstall_file = $modulepath . TIMESTAMP . '.php';
+			file_put_contents($uninstall_file, base64_decode($packet['script']));
+			require($uninstall_file);
+			unlink($uninstall_file);
+		}
+	} elseif (!empty($manifest['uninstall'])) {
+		if (strexists($manifest['uninstall'], '.php')) {
+			if (file_exists($modulepath . $manifest['uninstall'])) {
+				require($modulepath . $manifest['uninstall']);
+			}
+		} else {
+			pdo_run($manifest['uninstall']);
+		}
+	}
+	pdo_insert('modules_recycle', array('modulename' => $module_name));
+	ext_module_clean($module_name, $is_clean_rule);
+	cache_build_account_modules();
+	cache_build_module_subscribe_type();
+	cache_build_uninstalled_module();
+
+	return true;
+}
+
+/**
+ *  获取指定模块在当前公众号安装的插件
+ * @param string $module_name 模块标识
+ * @param array() $plugin_list 插件列表
+ */
+function module_get_plugin_list($module_name) {
+	$module_info = module_fetch($module_name);
+	if (!empty($module_info['plugin'])) {
+		$plugin_list = array();
+		$module_info['plugin'] = explode(',', $module_info['plugin']);
+		if (!empty($module_info['plugin']) && is_array($module_info['plugin'])) {
+			foreach ($module_info['plugin'] as $plugin) {
+				$plugin_info = module_fetch($plugin);
+				if (!empty($plugin_info)) {
+					$plugin_list[$plugin] = $plugin_info;
+				}
+			}
+		}
+		return $plugin_list;
+	} else {
+		return array();
+	}
 }

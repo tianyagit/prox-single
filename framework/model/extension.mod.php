@@ -26,6 +26,8 @@ function ext_module_convert($manifest) {
 		'isrulefields' => intval($manifest['platform']['isrulefields']),
 		'iscard' => intval($manifest['platform']['iscard']),
 		'supports' => $manifest['platform']['supports'],
+		'main_module' => $manifest['platform']['main_module'],
+		'plugin' => $manifest['platform']['plugin_list'],
 		'page' => $manifest['bindings']['page'],
 		'cover' => $manifest['bindings']['cover'],
 		'rule' => $manifest['bindings']['rule'],
@@ -134,6 +136,23 @@ function ext_module_manifest_parse($xml) {
 				if (!empty($t)) {
 					$manifest['platform']['supports'][] = $t;
 				}
+			}
+		}
+		$plugins = $platform->getElementsByTagName('plugins')->item(0);
+		if (!empty($plugins)) {
+			$plugin_list = $plugins->getElementsByTagName('item');
+			for ($i = 0; $i < $plugin_list->length; $i++) {
+				$plugin = $plugin_list->item($i)->getAttribute('name');
+				if (!empty($plugin)) {
+					$manifest['platform']['plugin_list'][] = $plugin;
+				}
+			}
+		}
+		$plugin_main = $platform->getElementsByTagName('plugin-main')->item(0);
+		if (!empty($plugin_main)) {
+			$plugin_main = $plugin_main->getAttribute('name');
+			if (!empty($plugin_main)) {
+				$manifest['platform']['main_module'] = $plugin_main;
 			}
 		}
 	}

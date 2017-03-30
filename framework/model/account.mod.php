@@ -132,7 +132,7 @@ function uni_modules($enabledOnly = true) {
 	if (empty($groupid)) {
 		$modules = pdo_getall('modules', array('issystem' => 1), array(), 'name', array('issystem DESC'));
 	} elseif ($groupid == '-1') {
-		$modules = pdo_getall('modules', array('main_module' => 0), array(), 'name', array('issystem DESC', 'mid DESC'));
+		$modules = pdo_getall('modules', array('main_module' => ''), array(), 'name', array('issystem DESC', 'mid DESC'));
 	} else {
 		$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
 		if (!empty($group)) {
@@ -154,21 +154,15 @@ function uni_modules($enabledOnly = true) {
 			if (!empty($wechatgroup)) {
 				foreach ($wechatgroup as $row) {
 					$row['modules'] = iunserializer($row['modules']);
-					$row['wxapp'] = iunserializer($row['wxapp']);
 					if (!empty($row['modules'])) {
 						foreach ($row['modules'] as $modulename) {
-							$ms[$modulename] = $modulename;
-						}
-					}
-					if (!empty($row['wxapp'])) {
-						foreach ($row['wxapp'] as $modulename) {
 							$ms[$modulename] = $modulename;
 						}
 					}
 				}
 				$mssql = " OR `name` IN ('".implode("','", $ms)."')";
 			}
-			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE main_module = '' AND issystem = 1{$mssql} ORDER BY issystem DESC, mid DESC", array(), 'name');
+			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE (issystem = 1{$mssql}) AND main_module = '' ORDER BY issystem DESC, mid DESC", array(), 'name');
 		}
 	}
 	$focus_enable_modules = pdo_getall('modules', array('issystem' => 2));
