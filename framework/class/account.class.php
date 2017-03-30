@@ -466,6 +466,7 @@ class WeUtility {
 				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
 			}
 			require_once $codefile;
+			restore_include_path();
 		}
 		if(!class_exists($classname)) {
 			trigger_error('Module Definition Class Not Found', E_USER_WARNING);
@@ -593,6 +594,7 @@ class WeUtility {
 				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
 			}
 			require_once $codefile;
+			restore_include_path();
 		}
 		if(!class_exists($classname)) {
 			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);

@@ -16,7 +16,7 @@ define('IN_MODULE', true);
 if ($do == 'module') {
 	$modulename = $_GPC['m'];
 	$entry_id = intval($_GPC['eid']);
-	$arr_keywords = array();
+	$cover_keywords = array();
 	if (empty($modulename)) {
 		$entry = module_entry($entry_id);
 		$modulename = $entry['module'];
@@ -33,15 +33,15 @@ if ($do == 'module') {
 	}
 	define('ACTIVE_FRAME_URL', $url);
 	$entries = module_entries($modulename);
-	$sql = "SELECT b.do,a.type, a.content from ".tablename(rule_keyword)." as a LEFT JOIN ".tablename(cover_reply)." as b ON a.rid = b.rid WHERE b.uniacid = :uniacid and b.module = :module";
-	$params = array('uniacid' => $_W['uniacid'], 'module' => $module['name']);
+	$sql = "SELECT b.`do`, a.`type`, a.`content` FROM ".tablename('rule_keyword')." as a LEFT JOIN ".tablename('cover_reply')." as b ON a.rid = b.rid WHERE b.uniacid = :uniacid AND b.module = :module";
+	$params = array(':uniacid' => $_W['uniacid'], ':module' => $module['name']);
 	$replies = pdo_fetchall($sql, $params);
 	foreach ($replies as $replay){
-		$arr_keywords[$replay['do']][] = $replay;
+		$cover_keywords[$replay['do']][] = $replay;
 	}
 	foreach ($entries['cover'] as &$cover){
-		if (!empty($arr_keywords[$cover['do']])){
-			$cover['cover']['rule']['keywords'] = $arr_keywords[$cover['do']];
+		if (!empty($cover_keywords[$cover['do']])){
+			$cover['cover']['rule']['keywords'] = $cover_keywords[$cover['do']];
 		}
 	}
 	unset($cover);
