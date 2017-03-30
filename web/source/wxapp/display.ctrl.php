@@ -77,7 +77,7 @@ if ($do == 'display') {
 	$uniacid = intval($_GPC['uniacid']);
 	$exist = pdo_get('uni_account', array('uniacid' => $uniacid));
 	if (empty($exist)) {
-		message('公众号不存在');
+		message('公众号不存在', '', '', true);
 	}
 	if (!empty($_W['isfounder'])) {
 		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account'));
@@ -86,7 +86,7 @@ if ($do == 'display') {
 		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account_users'));
 		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	}
-	message('更新成功');
+	message('更新成功', '', '', true);
 } elseif ($do == 'home') {
 	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
 	$cache_lastaccount = cache_load($cache_key);

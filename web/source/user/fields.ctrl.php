@@ -29,7 +29,7 @@ if ($do == 'display') {
 				), array('id' => $id));
 			}
 		}
-		message('资料设置更新成功！', referer(), 'success');
+		message('资料设置更新成功！', referer(), 'success', true);
 	}
 	$sql = "SELECT * FROM " . tablename('profile_fields'). $condition ." ORDER BY displayorder DESC";
 	$fields = pdo_fetchall($sql, $params);
@@ -43,13 +43,13 @@ if ($do == 'post') {
 
 	if (checksubmit('submit')) {
 		if (empty($_GPC['title'])) {
-			message('抱歉，请填写资料名称！');
+			message('抱歉，请填写资料名称！', '', '', true);
 		}
 		if (empty($_GPC['field'])) {
-			message('请填写字段名!');
+			message('请填写字段名!', '', '', true);
 		}
 		if (!preg_match('/^[A-Za-z0-9_]*$/', $_GPC['field'])) {
-			message('请使用字母或数字或下划线组合字段名!');
+			message('请使用字母或数字或下划线组合字段名!', '', '', true);
 		}
 		$data = array(
 			'title' => $_GPC['title'],
@@ -84,7 +84,7 @@ if ($do == 'post') {
 			}
 			pdo_update('profile_fields', $data, array('id' => $id));
 		}
-		message('更新字段成功！', url('user/fields'));
+		message('更新字段成功！', url('user/fields'), 'success', true);
 	}
 
 	if (!empty($id)) {

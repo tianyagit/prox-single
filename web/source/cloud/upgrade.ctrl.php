@@ -10,7 +10,7 @@ load()->func('communication');
 
 $r = cloud_prepare();
 if (is_error($r)) {
-	message($r['message'], url('cloud/profile'), 'error');
+	message($r['message'], url('cloud/profile'), 'error', true);
 }
 
 $dos = array('upgrade');
@@ -18,7 +18,7 @@ $do = in_array($do, $dos) ? $do : 'upgrade';
 uni_user_permission_check('system_cloud_upgrade');
 
 if (empty($_W['setting']['site']['profile_perfect'])) {
-	//message('请先完善云服务的站点注册信息!', url('cloud/profile'), 'warning');
+	//message('请先完善云服务的站点注册信息!', url('cloud/profile'), 'warning', true);
 }
 
 if ($do == 'upgrade') {
@@ -26,21 +26,21 @@ if ($do == 'upgrade') {
 	if (empty($_W['setting']['cloudip']) || $_W['setting']['cloudip']['expire'] < TIMESTAMP) {
 		$cloudip = gethostbyname('v2.addons.we7.cc');
 		if (empty($cloudip) || !preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/', $cloudip)) {
-			message('云服务域名解析失败，请查看服务器DNS设置或是在“云服务诊断”中手动设置云服务IP', url('cloud/diagnose'), 'error');
+			message('云服务域名解析失败，请查看服务器DNS设置或是在“云服务诊断”中手动设置云服务IP', url('cloud/diagnose'), 'error', true);
 		}
 		setting_save(array('ip' => $cloudip, 'expire' => TIMESTAMP + 201600), 'cloudip');
 	}
 	if (checksubmit('submit')) {
 		$upgrade = cloud_build();
 		if (is_error($upgrade)) {
-			message($upgrade['message'], '', 'error');
+			message($upgrade['message'], '', 'error', true);
 		}
 		if ($upgrade['upgrade']) {
-			message("检测到新版本: <strong>{$upgrade['version']} (Release {$upgrade['release']})</strong>, 请立即更新.", 'refresh');
+			message("检测到新版本: <strong>{$upgrade['version']} (Release {$upgrade['release']})</strong>, 请立即更新.", 'refresh', true);
 		} else {
 			cache_delete('checkupgrade:system');
 			cache_delete('cloud:transtoken');
-			message('检查结果: 恭喜, 你的程序已经是最新版本. ', 'refresh');
+			message('检查结果: 恭喜, 你的程序已经是最新版本. ', 'refresh', true);
 		}
 	}
 	cache_load('upgrade');

@@ -11,7 +11,7 @@ load()->func('file');
 $flow_master_info = cloud_flow_master_get();
 $flow_uniaccount_list = cloud_flow_uniaccount_list_get();
 if (isset($flow_master_info['site_key']) && $flow_master_info['site_key'] == '0') {
-	message('请注册站点或者重置站点信息', referer(), 'error');
+	message('请注册站点或者重置站点信息', referer(), 'error', true);
 }
 $commission_show = false;
 if (!empty($flow_uniaccount_list)) {
@@ -23,7 +23,7 @@ if (!empty($flow_uniaccount_list)) {
 }
 $status = cloud_prepare();
 if (is_error($status)) {
-	message($status['message'], url('cloud/profile'), 'error');
+	message($status['message'], url('cloud/profile'), 'error', true);
 }
 if ($do == 'display') {
 	if ($flow_master_info['status'] == 4 || IMS_FAMILY == 'v') {
@@ -34,24 +34,24 @@ if ($do == 'display') {
 
 if ($do == 'register_flow') {
 	if (($flow_master_info['status'] == 4 || IMS_FAMILY == 'v') || $flow_master_info['status'] == 2) {
-		message('权限不足', url('adviertisement/content-provider/account_list'), 'error');
+		message('权限不足', url('adviertisement/content-provider/account_list'), 'error', true);
 	}
 	if (checksubmit('submit')) {
 		$linkman = trim($_GPC['linkman']);
 		$mobile = trim($_GPC['mobile']);
 		$address = trim($_GPC['address']);
 		if (empty($linkman)) {
-			message('联系人不能为空', referer(), 'error');
+			message('联系人不能为空', referer(), 'error', true);
 		}
 		if (empty($mobile)) {
-			message('电话不能为空', referer(), 'error');
+			message('电话不能为空', referer(), 'error', true);
 		} else {
 			if(!preg_match(REGULAR_MOBILE, $mobile)) {
-				message('手机号格式不正确', referer(), 'error');
+				message('手机号格式不正确', referer(), 'error', true);
 			}
 		}
 		if (empty($address)) {
-			message('联系地址不能为空', referer(), 'error');
+			message('联系地址不能为空', referer(), 'error', true);
 		}
 		if (!empty($_FILES['id_card_photo']['tmp_name'])) {
 			$_W['uploadsetting'] = array();
@@ -61,7 +61,7 @@ if ($do == 'register_flow') {
 			$upload = file_upload($_FILES['id_card_photo'], 'image', "id_card");
 			$id_card_photo = $upload['path'];
 			if(is_error($upload)) {
-				message('身份证保存失败,'.$upload['message'],referer(),'info');
+				message('身份证保存失败,'.$upload['message'],referer(),'info', true);
 			}
 		}
 		if (!empty($_FILES['business_licence_photo']['tmp_name'])) {
@@ -72,7 +72,7 @@ if ($do == 'register_flow') {
 			$upload = file_upload($_FILES['business_licence_photo'], 'image', "business_licence");
 			$business_licence_photo = $upload['path'];
 			if(is_error($upload)) {
-				message('营业执照保存失败,'.$upload['message'], referer(), 'info');
+				message('营业执照保存失败,'.$upload['message'], referer(), 'info', true);
 			}
 		}
 		if (!empty($flow_master_info['id_card_photo']) && empty($id_card_photo)) {
@@ -90,9 +90,9 @@ if ($do == 'register_flow') {
 		);
 		$result = cloud_flow_master_post($flow_master);
 		if (is_error($result)) {
-			message($result['message'], '', 'error');
+			message($result['message'], '', 'error', true);
 		} else {
-			message('提交成功，请等待审核', url('adviertisement/content-provider/display'), 'info');
+			message('提交成功，请等待审核', url('adviertisement/content-provider/display'), 'info', true);
 		}
 	}
 }
@@ -164,7 +164,7 @@ if ($do == 'account_list') {
 
 if ($do == 'flow_control') {
 	if (empty($_GPC['uniacid'])) {
-		message('公众号id参数有误，请重新进入', url('adviertisement/content-provider/account_list'), 'error');
+		message('公众号id参数有误，请重新进入', url('adviertisement/content-provider/account_list'), 'error', true);
 	}
 	$current_account = uni_fetch($_GPC['uniacid']);
 	load() -> model('account');
@@ -225,7 +225,7 @@ if ($do == 'flow_control') {
 						$ad_tags[$value] = $items[$value];
 					}
 				} else {
-					message(error(1, '请至少选择一个标签'), '', 'ajax');
+					message(error(1, '请至少选择一个标签'), '', 'ajax', true);
 				}
 			}
 			$uniacid = intval($_GPC['uniacid']);
@@ -253,9 +253,9 @@ if ($do == 'flow_control') {
 			}
 		}
 		if (!is_error($result)) {
-			message(error(0, '设置成功'), referer(), 'ajax');
+			message(error(0, '设置成功'), referer(), 'ajax', true);
 		} else {
-			message(error(-1, $result['message']), '', 'ajax');
+			message(error(-1, $result['message']), '', 'ajax', true);
 		}
 	}
 }
@@ -266,15 +266,15 @@ if ($do == 'ad_type_get') {
 	$flow_app_list_setting = cloud_flow_app_list_get($uniacid);
 	$current_app_set = $flow_app_list_setting[$module_name];
 	if (!is_error($current_app_set)) {
-		message(error(0, $current_app_set['ad_types']), '', 'ajax');
+		message(error(0, $current_app_set['ad_types']), '', 'ajax', true);
 	} else {
-		message(error(-1, $result['message']), '', 'ajax');
+		message(error(-1, $result['message']), '', 'ajax', true);
 	}
 }
 
 if ($do == 'finance_info') {
 	if (empty($commission_show)) {
-		message('权限不足', url('adviertisement/content-provider/account_list'), 'error');
+		message('权限不足', url('adviertisement/content-provider/account_list'), 'error', true);
 	}
 	$params = array(
 		'size' => '15',

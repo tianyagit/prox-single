@@ -34,8 +34,9 @@ function url($segment, $params = array()) {
  * ajax     json
  * sql
  * </pre>
+ * @param boolean $tips 是否是以tips形式展示（兼容1.0之前版本该函数的页面展示形式）
  */
-function message($msg, $redirect = '', $type = '') {
+function message($msg, $redirect = '', $type = '', $tips = false) {
 	global $_W, $_GPC;
 	
 	if($redirect == 'refresh') {
@@ -78,21 +79,26 @@ function message($msg, $redirect = '', $type = '') {
 	if($type == 'ajax' || $type == 'sql') {
 		$label = 'warning';
 	}
-	if (is_array($msg)){
-		$message_cookie['title'] = 'MYSQL 错误';
-		$message_cookie['msg'] = 'php echo cutstr(' . $msg['sql'] . ', 300, 1);';
-	} else{
-		$message_cookie['title'] = $caption;
-		$message_cookie['msg'] = $msg;
-	}
-	$message_cookie['type'] = $label;
-	$message_cookie['redirect'] = $redirect ? $redirect : referer();
-	$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
 	
-	isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
-	
-	if (!empty($message_cookie['redirect'])) {
-		header('Location: ' . $message_cookie['redirect']);
+	if ($tips) {
+		if (is_array($msg)){
+			$message_cookie['title'] = 'MYSQL 错误';
+			$message_cookie['msg'] = 'php echo cutstr(' . $msg['sql'] . ', 300, 1);';
+		} else{
+			$message_cookie['title'] = $caption;
+			$message_cookie['msg'] = $msg;
+		}
+		$message_cookie['type'] = $label;
+		$message_cookie['redirect'] = $redirect ? $redirect : referer();
+		$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
+		
+		isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
+		
+		if (!empty($message_cookie['redirect'])) {
+			header('Location: ' . $message_cookie['redirect']);
+		} else {
+			include template('common/message-tips', TEMPLATE_INCLUDEPATH);
+		}
 	} else {
 		include template('common/message', TEMPLATE_INCLUDEPATH);
 	}
@@ -108,9 +114,9 @@ function checklogin() {
 	global $_W;
 	if (empty($_W['uid'])) {
 		if (!empty($_W['setting']['copyright']['showhomepage'])) {
-			message('', url('account/welcome'), 'warning');
+			message('', url('account/welcome'), 'warning', true);
 		} else {
-			message('', url('user/login'), 'warning');
+			message('', url('user/login'), 'warning', true);
 		}
 	}
 	return true;
@@ -122,7 +128,7 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		message('', url('account/display'), 'info');
+		message('', url('account/display'), 'info', true);
 	}
 }
 

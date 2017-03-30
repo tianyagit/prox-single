@@ -12,7 +12,7 @@ if($do == 'detail') {
 	$id = intval($_GPC['id']);
 	$news = article_news_info($id);
 	if(is_error($news)) {
-		message('新闻不存在或已删除', referer(), 'error');
+		message('新闻不存在或已删除', referer(), 'error', true);
 	}
 	$_W['page']['title'] = $news['title'] . '-新闻列表';
 }

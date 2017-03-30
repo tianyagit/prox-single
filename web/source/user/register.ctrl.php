@@ -9,7 +9,7 @@ load()->model('user');
 
 $_W['page']['title'] = '注册选项 - 用户设置 - 用户管理';
 if (empty($_W['setting']['register']['open'])) {
-	message('本站暂未开启注册功能，请联系管理员！');
+	message('本站暂未开启注册功能，请联系管理员！', '', '', true);
 }
 
 $extendfields = pdo_getall('profile_fields', array('available' => 1, 'showinregister' => 1), array('field', 'title', 'description', 'required'), 'field', 'displayorder DESC');
@@ -17,14 +17,14 @@ if(checksubmit()) {
 	$member = array();
 	$member['username'] = trim($_GPC['username']);
 	if(!preg_match(REGULAR_USERNAME, $member['username'])) {
-		message('必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。');
+		message('必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。', '', '', true);
 	}
 	if(user_check(array('username' => $member['username']))) {
-		message('非常抱歉，此用户名已经被注册，你需要更换注册名称！');
+		message('非常抱歉，此用户名已经被注册，你需要更换注册名称！', '', '', true);
 	}
 	$member['password'] = $_GPC['password'];
 	if(istrlen($member['password']) < 8) {
-		message('必须输入密码，且密码长度不得低于8位。');
+		message('必须输入密码，且密码长度不得低于8位。', '', '', true);
 	}
 	$profile = array();
  	if (!empty($extendfields)) {
@@ -45,14 +45,14 @@ if(checksubmit()) {
 		}
 		foreach ($extendfields as $row) {
 			if (!empty($row['required']) && empty($_GPC[$row['field']])) {
-				message('“'.$row['title'].'”此项为必填项，请返回填写完整！');
+				message('“'.$row['title'].'”此项为必填项，请返回填写完整！', '', '', true);
 			}
 			$profile[$row['field']] = $_GPC[$row['field']];
 		}
 	}
 	if(!empty($_W['setting']['register']['code'])) {
 		if (!checkcaptcha($_GPC['code'])) {
-			message('你输入的验证码不正确, 请重新输入.');
+			message('你输入的验证码不正确, 请重新输入.', '', '', true);
 		}
 	}
 
@@ -80,8 +80,8 @@ if(checksubmit()) {
 			pdo_insert('users_profile', $profile);
 		}
 		pdo_update('users_invitation', array('inviteuid' => $uid), array('id' => $invite['id']));
-		message('注册成功'.(!empty($_W['setting']['register']['verify']) ? '，請等待管理员审核！' : '，请重新登录！'), url('user/login', array('uid' => $uid, 'username' => $member['username'])));
+		message('注册成功'.(!empty($_W['setting']['register']['verify']) ? '，請等待管理员审核！' : '，请重新登录！'), url('user/login', array('uid' => $uid, 'username' => $member['username'])), 'success', true);
 	}
-	message('增加用户失败，请稍候重试或联系网站管理员解决！');
+	message('增加用户失败，请稍候重试或联系网站管理员解决！', '', '', true);
 }
 template('user/register');

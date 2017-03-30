@@ -15,15 +15,15 @@ $args = $_GPC['args'];
 $module_info = module_fetch($modulename);
 //模块不存在返回空
 if (empty($module_info)) {
-	message(array(), '', 'ajax');
+	message(array(), '', 'ajax', true);
 }
 $site = WeUtility::createModuleSite($modulename);
 if (empty($site)) {
-	message(array(), '', 'ajax');
+	message(array(), '', 'ajax', true);
 }
 //call不存在返回空
 if (!method_exists($site, $callname)) {
-	message(array(), '', 'ajax');
+	message(array(), '', 'ajax', true);
 }
 $ret = @$site->$callname($args);
-message($ret, '', 'ajax');
+message($ret, '', 'ajax', true);

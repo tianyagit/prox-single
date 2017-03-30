@@ -71,6 +71,7 @@
 	</script>
 {/if}
 <div class="main">
+	{if !defined('IN_MESSAGE')}
 	<div class="container">
 		{if in_array(FRAME, array('account', 'system', 'adviertisement')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
@@ -219,3 +220,4 @@
 				</div>
 				<div class="right-content">
 		{/if}
+	{/if}

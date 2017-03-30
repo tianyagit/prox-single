@@ -24,14 +24,14 @@ if ($do == 'display' && $_W['isajax'] && $_W['ispost']) {
 	$list = pdo_fetchall("SELECT * FROM ".tablename('site_slide')." WHERE uniacid = '{$_W['uniacid']}' $condition ORDER BY displayorder DESC, uniacid DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_slide') . " WHERE uniacid = '{$_W['uniacid']}' $condition");
 	$pager = pagination($total, $pindex, $psize);
-	message(error(0, $list), '', 'ajax');
+	message(error(0, $list), '', 'ajax', true);
 }
 
 if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	foreach ($_GPC['slide'] as $key => $val) {
 		if (empty($val['thumb'])){
-			message(error(-1, '幻灯图片不可为空'), '', 'ajax');
+			message(error(-1, '幻灯图片不可为空'), '', 'ajax', true);
 		}
 	}
 	pdo_fetch("DELETE FROM ".tablename('site_slide')." WHERE uniacid = :uniacid AND multiid = :multiid" , array(':uniacid' => $_W['uniacid'],':multiid' => $multiid));
@@ -46,5 +46,5 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 		);
 		pdo_insert('site_slide', $data);
 	}
-	message(error(0, '幻灯片保存成功！'), '', 'ajax');
+	message(error(0, '幻灯片保存成功！'), '', 'ajax', true);
 }

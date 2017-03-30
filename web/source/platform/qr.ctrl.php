@@ -19,9 +19,9 @@ if ($do == 'check_scene_str') {
 	$scene_str = trim($_GPC['scene_str']);
 	$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
 	if (!empty($is_exist)) {
-		message(error(1, 'repeat'), '', 'ajax');
+		message(error(1, 'repeat'), '', 'ajax', true);
 	}
-	message(error(0, 'success'), '', 'ajax');
+	message(error(0, 'success'), '', 'ajax', true);
 }
 
 if ($do == 'list') {
@@ -68,12 +68,12 @@ if ($do == 'del') {
 			pdo_query("DELETE FROM ".tablename('qrcode')." WHERE id IN (".implode(',', array_keys($list)).")");
 			pdo_query("DELETE FROM ".tablename('qrcode_stat')." WHERE qid IN (".implode(',', array_keys($list)).")");
 		}
-		message('执行成功<br />删除二维码：'.count($list), url('platform/qr/list'),'success');
+		message('执行成功<br />删除二维码：'.count($list), url('platform/qr/list'),'success', true);
 	} else {
 		$id = intval($_GPC['id']);
 		pdo_delete('qrcode', array('id' =>$id, 'uniacid' => $_W['uniacid']));
 		pdo_delete('qrcode_stat',array('qid' => $id, 'uniacid' => $_W['uniacid']));
-		message('删除成功',url('platform/qr/list'),'success');
+		message('删除成功',url('platform/qr/list'),'success', true);
 	}
 }
 
@@ -101,7 +101,7 @@ if ($do == 'post') {
 				'name' => trim($_GPC['scene-name'])
 			);
 			pdo_update('qrcode', $update, array('uniacid' => $_W['uniacid'], 'id' => $id));
-			message('恭喜，更新带参数二维码成功！', url('platform/qr/list'), 'success');
+			message('恭喜，更新带参数二维码成功！', url('platform/qr/list'), 'success', true);
 		}
 	
 		if ($qrctype == 1) {
@@ -111,16 +111,16 @@ if ($do == 'post') {
 			$barcode['action_name'] = 'QR_SCENE';
 			$result = $uniacccount->barCodeCreateDisposable($barcode);
 		} else if ($qrctype == 2) {
-			$scene_str = trim($_GPC['scene_str']) ? trim($_GPC['scene_str'])  : message('场景值不能为空');
+			$scene_str = trim($_GPC['scene_str']) ? trim($_GPC['scene_str'])  : message('场景值不能为空', '', '', true);
 			$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
 			if (!empty($is_exist)) {
-				message("场景值:{$scene_str}已经存在,请更换场景值");
+				message("场景值:{$scene_str}已经存在,请更换场景值", '', 'error', true);
 			}
 			$barcode['action_info']['scene']['scene_str'] = $scene_str;
 			$barcode['action_name'] = 'QR_LIMIT_STR_SCENE';
 			$result = $uniacccount->barCodeCreateFixed($barcode);
 		} else {
-			message('抱歉，此公众号暂不支持您请求的二维码类型！');
+			message('抱歉，此公众号暂不支持您请求的二维码类型！', '', '', true);
 		}
 		
 		if (!is_error($result)) {
@@ -140,9 +140,9 @@ if ($do == 'post') {
 				'type' => 'scene',
 			);
 			pdo_insert('qrcode', $insert);
-			message('恭喜，生成带参数二维码成功！', url('platform/qr/list', array('name' => 'qrcode')), 'success');
+			message('恭喜，生成带参数二维码成功！', url('platform/qr/list', array('name' => 'qrcode')), 'success', true);
 		} else {
-			message("公众平台返回接口错误. <br />错误代码为: {$result['errorcode']} <br />错误信息为: {$result['message']}");
+			message("公众平台返回接口错误. <br />错误代码为: {$result['errorcode']} <br />错误信息为: {$result['message']}", '', '', true);
 		}
 	}
 
@@ -167,7 +167,7 @@ if ($do == 'extend') {
 			$barcode['action_name'] = 'QR_SCENE';
 			$result = $uniacccount->barCodeCreateDisposable($barcode);
 			if (is_error($result)) {
-				message($result['message'], '', 'error');
+				message($result['message'], '', 'error', true);
 			}
 			$update['ticket'] = $result['ticket'];
 			$update['url'] = $result['url'];
@@ -175,7 +175,7 @@ if ($do == 'extend') {
 			$update['createtime'] = TIMESTAMP;
 			pdo_update('qrcode', $update, array('id' => $id, 'uniacid' => $_W['uniacid']));
 		}
-		message('恭喜，延长临时二维码时间成功！', referer(), 'success');
+		message('恭喜，延长临时二维码时间成功！', referer(), 'success', true);
 	}
 }
 

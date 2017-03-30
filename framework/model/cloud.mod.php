@@ -160,7 +160,7 @@ function cloud_build() {
 		if($ret['family'] == 'x' && IMS_FAMILY == 'v') {
 			load()->model('setting');
 			setting_upgrade_version('x', IMS_VERSION, IMS_RELEASE_DATE);
-			message('您已经购买了商业授权版本, 系统将转换为商业版, 并重新运行自动更新程序.', 'refresh');
+			message('您已经购买了商业授权版本, 系统将转换为商业版, 并重新运行自动更新程序.', 'refresh', true);
 		}
 		$ret['upgrade'] = false;
 		if(!empty($ret['files']) || !empty($ret['schemas']) || !empty($ret['scripts'])) {

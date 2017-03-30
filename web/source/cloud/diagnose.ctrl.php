@@ -18,11 +18,11 @@ if ($do == 'testapi') {
 	$starttime = microtime(true);
 	$response = cloud_request('http://v2.addons.we7.cc', array(), array('ip' => $_GPC['ip']));
 	$endtime = microtime(true);
-	message('请求接口成功，耗时 '.(round($endtime - $starttime, 5)).' 秒', '', 'ajax');
+	message('请求接口成功，耗时 '.(round($endtime - $starttime, 5)).' 秒', '', 'ajax', true);
 } else {
 	if(checksubmit()) {
 		setting_save('', 'site');
-		message('成功清除站点记录.', 'refresh');
+		message('成功清除站点记录.', 'refresh', 'success', true);
 	}
 	if (checksubmit('updateserverip')) {
 		if (!empty($_GPC['ip'])) {
@@ -30,7 +30,7 @@ if ($do == 'testapi') {
 		} else {
 			setting_save(array(), 'cloudip');
 		}
-		message('修改云服务ip成功.', 'refresh');
+		message('修改云服务ip成功.', 'refresh', 'success', true);
 	}
 	if(empty($_W['setting']['site'])) {
 		$_W['setting']['site'] = array();

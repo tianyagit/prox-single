@@ -88,13 +88,13 @@ if ($do == 'default') {
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
 	$multi = pdo_fetch('SELECT id,styleid FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $setting['default_site']));
 	if (empty($multi)) {
-		message('您的默认微站找不到,请联系网站管理员', '', 'error');
+		message('您的默认微站找不到,请联系网站管理员', '', 'error', true);
 	}
 
 	$styleid = intval($_GPC['styleid']);
 	$style = pdo_fetch("SELECT * FROM ".tablename('site_styles')." WHERE id = :styleid AND uniacid = :uniacid", array(':styleid' => $styleid, ':uniacid' => $_W['uniacid']));
 	if (empty($style)) {
-		message('抱歉，风格不存在或是您无权限使用！', '', 'error');
+		message('抱歉，风格不存在或是您无权限使用！', '', 'error', true);
 	}
 	$templateid = $style['templateid'];
 	$template = array();
@@ -108,7 +108,7 @@ if ($do == 'default') {
 		}
 	}
 	if (empty($template)) {
-		message('抱歉，模板不存在或是您无权限使用！', '', 'error');
+		message('抱歉，模板不存在或是您无权限使用！', '', 'error', true);
 	}
 	pdo_update('site_multi', array('styleid' => $styleid), array('uniacid' => $_W['uniacid'], 'id' => $setting['default_site']));
 	$styles = pdo_fetchall("SELECT variable, content FROM " . tablename('site_styles_vars') . " WHERE styleid = :styleid  AND uniacid = '{$_W['uniacid']}'", array(':styleid' => $styleid), 'variable');
@@ -136,19 +136,19 @@ if ($do == 'default') {
 			}
 		}
 	}
-	message('默认模板更新成功！', url('site/style/template'), 'success');
+	message('默认模板更新成功！', url('site/style/template'), 'success', true);
 }
 
 if ($do == 'designer') {
 	$styleid = intval($_GPC['styleid']);
 	$style = pdo_fetch("SELECT * FROM ".tablename('site_styles')." WHERE id = :id AND uniacid = :unacid", array(':id' => $styleid, ':unacid' => $_W['uniacid']));
 	if (empty($style)) {
-		message('抱歉，风格不存在或是已经被删除！', '', 'error');
+		message('抱歉，风格不存在或是已经被删除！', '', 'error', true);
 	}
 	$templateid = $style['templateid'];
 	$template = pdo_fetch("SELECT * FROM " . tablename('site_templates') . " WHERE id = '{$templateid}'");
 	if (empty($template)) {
-		message('抱歉，模板不存在或是已经被删除！', '', 'error');
+		message('抱歉，模板不存在或是已经被删除！', '', 'error', true);
 	}
 	$styles = pdo_fetchall("SELECT variable, content, description FROM " . tablename('site_styles_vars') . " WHERE styleid = :styleid AND uniacid = :uniacid", array(':styleid' => $styleid, ':uniacid' => $_W['uniacid']), 'variable');
 	if (checksubmit('submit')) {
@@ -205,7 +205,7 @@ if ($do == 'designer') {
 			pdo_query("DELETE FROM " . tablename('site_styles_vars') . " WHERE variable IN ('" . implode("','", array_keys($styles)) . "') AND styleid = :styleid AND uniacid = '{$_W['uniacid']}'", array(':styleid' => $styleid));
 		}
 		pdo_update('site_styles', array('name' => $_GPC['name']), array('id' => $styleid));
-		message('更新风格成功！', url('site/style'), 'success');
+		message('更新风格成功！', url('site/style'), 'success', true);
 	}
 	$systemtags = array(
 		'imgdir',
@@ -226,7 +226,7 @@ if ($do == 'module') {
 	// uni_user_permission_check('site_style_module');
 	$_W['page']['title'] = '模块扩展模板说明 - 网站风格设置 - 微站功能';
 	if (empty($_W['isfounder'])) {
-		message('您无权进行该操作！');
+		message('您无权进行该操作！', '', '', true);
 	}
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
 	$styleid = pdo_fetchcolumn("SELECT styleid FROM ".tablename('site_multi')." WHERE id = :id", array(':id' => $setting['default_site']));
@@ -279,7 +279,7 @@ if ($do == 'createtemplate') {
 		file_put_contents($targetfile, '<!-- 原始文件：addons/modules/' . $module['name'] . '/template/mobile/' . $file . ' -->');
 		@chmod($targetfile, $_W['config']['setting']['filemode']);
 	}
-	message('操作成功！', '', 'success');
+	message('操作成功！', '', 'success', true);
 }
 
 if ($do == 'build') {
@@ -295,7 +295,7 @@ if ($do == 'build') {
 		}
 	}
 	if (empty($template)) {
-		message('抱歉，模板不存在或是您无权限使用！', '', 'error');
+		message('抱歉，模板不存在或是您无权限使用！', '', 'error', true);
 	}
 	list($templatetitle) = explode('_', $template['title']);
 	$newstyle = array(
@@ -321,19 +321,19 @@ if ($do == 'build') {
 			}
 		}
 	}
-	message('风格创建成功，进入“设计风格”界面。', url('site/style/designer', array('templateid' => $template['id'], 'styleid' => $id)), 'success');
+	message('风格创建成功，进入“设计风格”界面。', url('site/style/designer', array('templateid' => $template['id'], 'styleid' => $id)), 'success', true);
 }
 
 if ($do == 'copy') {
 	$styleid = intval($_GPC['styleid']);
 	$style = pdo_fetch("SELECT * FROM ".tablename('site_styles')." WHERE id = :id AND uniacid = '{$_W['uniacid']}'", array(':id' => $styleid));
 	if (empty($style)) {
-		message('抱歉，风格不存在或是已经被删除！', '', 'error');
+		message('抱歉，风格不存在或是已经被删除！', '', 'error', true);
 	}
 	$templateid = $style['templateid'];
 	$template = pdo_fetch("SELECT * FROM " . tablename('site_templates') . " WHERE id = '{$templateid}'");
 	if (empty($template)) {
-		message('抱歉，模板不存在或是已经被删除！', '', 'error');
+		message('抱歉，模板不存在或是已经被删除！', '', 'error', true);
 	}
 
 	list($name) = explode('_', $style['name']);
@@ -352,12 +352,12 @@ if ($do == 'copy') {
 			pdo_insert('site_styles_vars', $data);
 		}
 	}
-	message('风格复制成功，进入“设计风格”界面。', url('site/style/designer', array('templateid' => $style['templateid'], 'styleid' => $id)), 'success');
+	message('风格复制成功，进入“设计风格”界面。', url('site/style/designer', array('templateid' => $style['templateid'], 'styleid' => $id)), 'success', true);
 }
 
 if ($do == 'del') {
 	$styleid = intval($_GPC['styleid']);
 	pdo_delete('site_styles_vars', array('uniacid' => $_W['uniacid'], 'styleid' => $styleid));
 	pdo_delete('site_styles', array('uniacid' => $_W['uniacid'], 'id' => $styleid));
-	message('删除风格成功。', referer(), 'success');
+	message('删除风格成功。', referer(), 'success', true);
 }

@@ -76,36 +76,32 @@
 						<div class="appmsg-edit-highlight-area">
 							<div class="appmsg-edit-title">发布样式编辑</div>
 							<!-- EBGIN 封面 -->
-							<div class="appmsg-edit-item gap-left">
-								<label for="" class="form-label">
-									<strong class="title">封面</strong>
-									<p class="tips gap-left">小图片建议尺寸：200像素 * 200像素</p>
-								</label>
-								<div class="upload-wrap clearfix">
-									<div class="">
-										<!--<a  href="javascript:void(0);" class="btn btn-default">从正文选择</a>-->
-										&nbsp;&nbsp;
+							<div class="appmsg-edit-item gap-left we7-form">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">封面</label>
+									<div class="col-sm-8">
 										<a  href="javascript:void(0);" class="btn btn-default" ng-click="pickPicture('local')">本地图片</a>
-										<a  href="javascript:void(0);" class="btn btn-default" ng-click="pickPicture('wechat')">微信图片素材</a>
+										<a  href="javascript:void(0);" class="btn btn-default we7-margin-left" ng-click="pickPicture('wechat')">微信图片素材</a>
+										<div style="margin: 20px 0 10px 0;">
+											<input type="checkbox" ng-checked="{{ materialList[activeIndex].show_cover_pic }}" ng-click="updateSelection()" id="display-cover"/>
+											<label for="display-cover">在正文顶部显示封面图</label>
+										</div>
+										<image ng-src="{{ materialList[activeIndex].thumb }}" style="width: 200px;"></image>
+										<div class="help-block">小图片建议尺寸：200像素 * 200像素</div>
 									</div>
-									<div class=we7-margin-vertical><input type="checkbox" ng-checked="{{ materialList[activeIndex].show_cover_pic }}" ng-click="updateSelection()"/><a>在正文顶部显示封面图</a></div>
-									<image ng-src="{{ materialList[activeIndex].thumb }}" style="width: 200px;"></image>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" ng-click="zhaiyao()">摘要</label>
+									<div class="col-sm-8">
+										<span class="form-textarea-box">
+											<textarea class="form-textarea" ng-model="materialList[activeIndex]['digest']" name="digest" max-length="120" rows="4" ></textarea>
+											<em class="form-control-append hidden">0/120</em>
+										</span>
+										<div class="help-block">选填，如果不填写会默认抓取正文前54个字</div>
+									</div>
 								</div>
 							</div>
 							<!-- END 封面 -->
-							<!-- BEGIN 摘要 -->
-							<div class="appmsg-edit-item gap-left appmsg-description">
-								<label for="" class="frm-label">
-									<strong class="title" ng-click="zhaiyao()">摘要</strong>
-									<p class="tips l gap-left">选填，如果不填写会默认抓取正文前54个字</p>
-								</label>
-									<span class="form-textarea-box">
-									<textarea class="form-textarea" ng-model="materialList[activeIndex]['digest']" name="digest" max-length="120" rows="4" ></textarea>
-									<em class="form-control-append hidden">0/120</em>
-									</span>
-								<div class="frm-msg fail"></div>
-						</div>
-						<!-- END 摘要 -->
 					</div>
 				</div>
 			</div>

@@ -40,5 +40,5 @@ if($do == 'keyword') {
 		'items' => $lists,
 		'pager' => pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
 	);
-	message($result, '', 'ajax');
+	message($result, '', 'ajax', true);
 }

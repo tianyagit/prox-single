@@ -32,7 +32,7 @@ if ($do == 'post') {
 
 	if (checksubmit('submit')) {
 		if (empty($_GPC['dir'])) {
-			message('请选择要扫描的目录', referer(), 'success');
+			message('请选择要扫描的目录', referer(), 'success', true);
 		}
 		foreach ($_GPC['dir'] as $k => $v) {
 			if (in_array(basename($v), $ignore)) {
@@ -48,7 +48,7 @@ if ($do == 'post') {
 		cache_delete('scan:file');
 		cache_delete('scan:badfile');
 		cache_write('scan:config', iserializer($info));
-		message("配置保存完成，开始文件统计。。。", url('system/scan', array('do' => 'count')), 'success');
+		message("配置保存完成，开始文件统计。。。", url('system/scan', array('do' => 'count')), 'success', true);
 	}
 }
 
@@ -57,7 +57,7 @@ if ($do == 'count') {
 	$files = array();
 	$config = iunserializer(cache_read('scan:config'));
 	if (empty($config)) {
-		message('获取扫描配置失败', url('system/scan'), 'error');
+		message('获取扫描配置失败', url('system/scan'), 'error', true);
 	}
 	$config['file_type'] = explode('|', $config['file_type']);
 	$list_arr = array();
@@ -75,7 +75,7 @@ if ($do == 'count') {
 	unset($list_arr['data/config.php']);
 	$list_arr = iserializer($list_arr);
 	cache_write('scan:file', $list_arr);
-	message("文件统计完成，进行特征函数过滤。。。", url('system/scan', array('do' => 'filter_func')), 'success');
+	message("文件统计完成，进行特征函数过滤。。。", url('system/scan', array('do' => 'filter_func')), 'success', true);
 }
 
 //特征函数过滤
@@ -92,7 +92,7 @@ if ($do == 'filter_func') {
 	}
 	if (!isset($badfiles)) $badfiles = array();
 	cache_write('scan:badfile', iserializer($badfiles));
-	message("特征函数过滤完成，进行特征代码过滤。。。", url('system/scan', array('do' => 'filter_code')), 'success');
+	message("特征函数过滤完成，进行特征代码过滤。。。", url('system/scan', array('do' => 'filter_code')), 'success', true);
 }
 
 //特征代码过滤
@@ -115,7 +115,7 @@ if ($do == 'filter_code') {
 		}
 	}
 	cache_write('scan:badfile', iserializer($badfiles));
-	message("特征代码过滤完成，进行加密文件过滤。。。", url('system/scan', array('do' => 'encode')), 'success');
+	message("特征代码过滤完成，进行加密文件过滤。。。", url('system/scan', array('do' => 'encode')), 'success', true);
 }
 
 //加密文件过滤
@@ -139,14 +139,14 @@ if ($do == 'encode') {
 		}
 	}
 	cache_write('scan:badfile', iserializer($badfiles));
-	message("扫描完成。。。", url('system/scan', array('do' => 'display')), 'success');
+	message("扫描完成。。。", url('system/scan', array('do' => 'display')), 'success', true);
 }
 
 //查杀报告
 if ($do == 'display') {
 	$badfiles = iunserializer(cache_read('scan:badfile'));
 	if (empty($badfiles)) {
-		message('没有找到扫描结果，请重新扫描',  url('system/scan'), 'error');
+		message('没有找到扫描结果，请重新扫描',  url('system/scan'), 'error', true);
 	}
 	unset($badfiles['data/config.php']);
 	foreach ($badfiles as $k => &$v) {
@@ -176,18 +176,18 @@ if ($do == 'view') {
 	$file = authcode(trim($_GPC['file'], 'DECODE'));
 	$file_tmp = $file;
 	if (empty($file) || strexists($file, './') || strexists($file, '../') || $file == 'data/config.php') {
-		message('文件不存在', referer(), 'error');
+		message('文件不存在', referer(), 'error', true);
 	}
 	//设置过滤文件
 	$file_arr = explode('/', $file);
 	$ignore = array('payment');
 
 	if (is_array($file_arr) && in_array($file_arr[0], $ignore)) {
-		message('系统不允许查看当前文件', referer(), 'error');
+		message('系统不允许查看当前文件', referer(), 'error', true);
 	}
 	$file = IA_ROOT . '/' . $file;
 	if (!is_file($file)) {
-		message('文件不存在', referer(), 'error');
+		message('文件不存在', referer(), 'error', true);
 	}
 	$badfiles = iunserializer(cache_read('scan:badfile'));
 	$info = $badfiles[$file_tmp];

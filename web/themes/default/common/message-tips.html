@@ -1,0 +1,41 @@
+{template 'common/header-base'}
+<script type="text/javascript">
+	function setCookie(cname,cvalue,exdays){
+		var d = new Date();
+		d.setTime(d.getTime()+(exdays*24*60*60*1000));
+		var expires = "expires="+d.toGMTString();
+		document.cookie = cname+"="+cvalue+"; "+expires;
+	}
+	//设置cookie
+	var modal = new Object();
+		{if is_array($msg)}
+			modal.title = 'MYSQL 错误';
+			modal.msg = '{php echo cutstr($msg['sql'], 300, 1);}';
+		{else}
+			modal.title = '{$caption}';
+			modal.msg = '<i class="wi text-{$label} wi-{if $label=='success'}right-sign{/if}{if $label=='danger'}warning-sign{/if}{if $label=='info'}info-sign{/if}{if $label=='warning'}error-sign{/if}"></i>{$msg}';
+		{/if}
+		{if $redirect}
+			modal.redirect = "{$redirect}";
+			
+		{else}
+			modal.redirect = "";
+		{/if}
+	setCookie("modal",JSON.stringify(modal),30000);
+	
+	//跳转
+	{if $redirect}
+		setTimeout(function(){
+			window.location.href= "{$redirect}"; 
+		},0)	
+	{else}
+		setTimeout(function(){
+			window.history.back(-1);
+		},0)
+	{/if}
+	
+</script>
+<div class="hidden">
+	<div>
+	{template 'common/footer-base'}
+</div>
