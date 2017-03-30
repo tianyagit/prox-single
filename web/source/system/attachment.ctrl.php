@@ -27,7 +27,7 @@ if ($do == 'global') {
 		}
 		$upload['image']['limit'] = max(0, intval(trim($upload['image']['limit'])));
 		if (empty($upload['image']['limit'])) {
-			message('请设置图片上传支持的文件大小, 单位 KB.');
+			message('请设置图片上传支持的文件大小, 单位 KB.', '', '', true);
 		}
 		if (empty($upload['image']['extentions'])) {
 			message('请添加支持的图片附件后缀类型', '', '', true);
@@ -47,7 +47,7 @@ if ($do == 'global') {
 		}
 		$upload['audio']['limit'] = max(0, intval(trim($upload['audio']['limit'])));
 		if (empty($upload['image']['limit'])) {
-			message('请设置音频视频上传支持的文件大小, 单位 KB.');
+			message('请设置音频视频上传支持的文件大小, 单位 KB.', '', '', true);
 		}
 		if (!empty($upload['audio']['extentions'])) {
 			$upload['audio']['extentions'] = explode("\n", $upload['audio']['extentions']);
@@ -63,7 +63,7 @@ if ($do == 'global') {
 			message('请添加支持的音频视频附件后缀类型', '', '', true);
 		}
 		setting_save($upload, 'upload');
-		message('更新设置成功！', url('system/attachment'));
+		message('更新设置成功！', url('system/attachment'), 'success', true);
 	}
 	
 	$post_max_size = ini_get('post_max_size');

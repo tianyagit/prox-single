@@ -52,7 +52,7 @@ if(checksubmit()) {
 	}
 	if(!empty($_W['setting']['register']['code'])) {
 		if (!checkcaptcha($_GPC['code'])) {
-			message('你输入的验证码不正确, 请重新输入.');
+			message('你输入的验证码不正确, 请重新输入.', '', '', true);
 		}
 	}
 

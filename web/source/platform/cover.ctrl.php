@@ -122,7 +122,7 @@ if ($do == 'module') {
 			}
 			message('封面保存成功！', 'refresh', 'success', true);
 		} else {
-			message('封面保存失败, 请联系网站管理员！');
+			message('封面保存失败, 请联系网站管理员！', '', 'error', true);
 		}
 	}
 	

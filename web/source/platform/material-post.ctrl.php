@@ -81,7 +81,7 @@ if ($do == 'addnews') {
 					message($news_info['content'], '', 'ajax', true);
 				}
 				if (empty($news_info['thumb_media_id'])) {
-					message(error(1, '请将封面图片换成微信图片素材后再上传。'));
+					message(error(1, '请将封面图片换成微信图片素材后再上传。'), '', 'ajax', true);
 				}
 			}
 			$post_data = array(

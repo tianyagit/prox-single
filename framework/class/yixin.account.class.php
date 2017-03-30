@@ -302,11 +302,11 @@ class YiXinAccount extends WeAccount {
 			$url = "https://api.yixin.im/cgi-bin/token?grant_type=client_credential&appid={$this->account['key']}&secret={$this->account['secret']}";
 			$content = ihttp_get($url);
 			if(is_error($content)) {
-				message('获取微信公众号授权失败, 请稍后重试！错误详情: ' . $content['message']);
+				message('获取微信公众号授权失败, 请稍后重试！错误详情: ' . $content['message'], '', 'error', true);
 			}
 			$token = @json_decode($content['content'], true);
 			if(empty($token) || !is_array($token) || empty($token['access_token']) || empty($token['expires_in'])) {
-				message('获取微信公众号授权失败, 请稍后重试！ 公众平台返回原始数据为: <br />' . $content['meta']);
+				message('获取微信公众号授权失败, 请稍后重试！ 公众平台返回原始数据为: <br />' . $content['meta'], '', 'error', true);
 			}
 			$record = array();
 			$record['token'] = $token['access_token'];

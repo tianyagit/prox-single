@@ -232,7 +232,7 @@ if ($do == 'post') {
 				}
 				message('回复规则保存成功！', referer(), 'success', true);
 			} else {
-				message('回复规则保存失败, 请联系网站管理员！');
+				message('回复规则保存失败, 请联系网站管理员！', referer(), 'error', true);
 			}
 		}
 		template('platform/reply-post');
@@ -385,7 +385,7 @@ if($do == 'delete') {
 			}
 		}
 	}
-	message('规则操作成功！', referer());
+	message('规则操作成功！', referer(), 'success', true);
 }
 
 //非文字自动回复切换开启关闭状态

@@ -84,7 +84,7 @@ if ($do == 'post') {
 			}
 			pdo_update('profile_fields', $data, array('id' => $id));
 		}
-		message('更新字段成功！', url('user/fields'));
+		message('更新字段成功！', url('user/fields'), 'success', true);
 	}
 
 	if (!empty($id)) {

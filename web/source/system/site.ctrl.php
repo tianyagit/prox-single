@@ -24,7 +24,7 @@ if ($do == 'copyright') {
 			'reason' => $_GPC['reason'],
 		);
 		$test = setting_save($data, 'copyright');
-		message('更新设置成功！', url('system/site'));
+		message('更新设置成功！', url('system/site'), 'success', true);
 	}
 }
 

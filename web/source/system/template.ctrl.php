@@ -202,7 +202,7 @@ if ($do == 'install') {
 	if (pdo_insert('site_templates', $manifest)) {
 		$tid = pdo_insertid();
 	} else {
-		message('模板安装失败, 请联系模板开发者！');
+		message('模板安装失败, 请联系模板开发者！', '', 'error', true);
 	}
 	if($template_name && $post_groups) {
 		if (!pdo_get('site_templates', array('id' => $tid))) {
@@ -241,7 +241,7 @@ if($do == 'upgrade') {
 		message('模块安装配置文件不存在或是格式不正确！', '', 'error', true);
 	}
 	if(ver_compare($template['version'], $packet['version']) != -1) {
-		message('已安装的模板版本不低于要更新的版本, 操作无效.');
+		message('已安装的模板版本不低于要更新的版本, 操作无效.', '', 'error', true);
 	}
 	pdo_update('site_templates', array('version' => $packet['version']), array('id' => $template['id']));
 	message('模板更新成功！', url('system/template'), 'success', true);

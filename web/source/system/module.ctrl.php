@@ -361,7 +361,7 @@ if ($do =='install') {
 			message('模块安装成功!', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success', true);
 		}
 	} else {
-		message('模块安装失败, 请联系模块开发者！');
+		message('模块安装失败, 请联系模块开发者！', '', 'error', true);
 	}
 }
 

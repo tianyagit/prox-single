@@ -114,7 +114,7 @@ if ($do == 'post') {
 			$scene_str = trim($_GPC['scene_str']) ? trim($_GPC['scene_str'])  : message('场景值不能为空', '', '', true);
 			$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
 			if (!empty($is_exist)) {
-				message("场景值:{$scene_str}已经存在,请更换场景值");
+				message("场景值:{$scene_str}已经存在,请更换场景值", '', 'error', true);
 			}
 			$barcode['action_info']['scene']['scene_str'] = $scene_str;
 			$barcode['action_name'] = 'QR_LIMIT_STR_SCENE';

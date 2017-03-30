@@ -90,7 +90,7 @@ function _login($forward = '') {
 			isetcookie('__uid', '', -7 * 86400);
 		}
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
-		message("欢迎回来，{$record['username']}。", $forward);
+		message("欢迎回来，{$record['username']}。", $forward, 'success', true);
 	} else {
 		if (empty($failed)) {
 			pdo_insert('users_failed_login', array('ip' => CLIENT_IP, 'username' => $username, 'count' => '1', 'lastupdate' => TIMESTAMP));

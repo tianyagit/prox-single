@@ -15,7 +15,7 @@ class CoreModuleSite extends WeModuleSite {
 			'module' => $_GPC['module'],
 		);
 		if (empty($params['tid']) || empty($params['fee']) || empty($params['module'])) {
-			message(error(1, '支付参数不完整'));
+			message(error(1, '支付参数不完整'), '', 'ajax', true);
 		}
 		//如果价格为0 直接执行模块支付回调方法
 		if($params['fee'] <= 0) {
@@ -29,7 +29,7 @@ class CoreModuleSite extends WeModuleSite {
 			$method = 'payResult';
 			if (method_exists($site, $method)) {
 				$site->$method($notify_params);
-				message(error(-1, '支付成功'));
+				message(error(-1, '支付成功'), '', 'ajax', true);
 			}
 		}
 		
@@ -49,11 +49,11 @@ class CoreModuleSite extends WeModuleSite {
 			pdo_insert('core_paylog', $log);
 		}
 		if($log['status'] == '1') {
-			message(error(1, '订单已经支付'));
+			message(error(1, '订单已经支付'), '', 'ajax', true);
 		}
 		$setting = uni_setting($_W['uniacid'], array('payment', 'creditbehaviors'));
 		if(!is_array($setting['payment'])) {
-			message(error(1, '暂无有效支付方式'));
+			message(error(1, '暂无有效支付方式'), '', 'ajax', true);
 		}
 		$pay = $setting['payment'];
 		if (empty($_W['member']['uid'])) {

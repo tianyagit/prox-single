@@ -225,7 +225,7 @@ if($do == 'restore') {
 					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore), 'success', true);
 				}
 			} else {
-				message('非法访问', 'error');
+				message('非法访问', '','error', true);
 			}
 		}
 	}

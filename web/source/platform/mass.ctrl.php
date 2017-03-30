@@ -179,9 +179,9 @@ if ($do == 'post') {
 			pdo_update('mc_mass_record', array('cron_id' => $status), array('id' => $insert_id));
 		}
 		if ($cron_status) {
-			message($message, url('platform/mass/send'));
+			message($message, url('platform/mass/send'), 'info', true);
 		}
-		message('群发设置成功', url('platform/mass'));
+		message('群发设置成功', url('platform/mass'), 'success', true);
 	}
 
 	template('platform/mass-post');

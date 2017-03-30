@@ -144,7 +144,7 @@ class UserApiModuleSite extends WeModuleSite {
 					}
 				}
 			}
-			message('成功导入.', referer());
+			message('成功导入.', referer(), 'success', true);
 		}
 		if($foo == 'delete') {
 			$rid = intval($_GPC['rid']);
@@ -154,7 +154,7 @@ class UserApiModuleSite extends WeModuleSite {
 			pdo_query($sql);
 			$sql = 'DELETE FROM ' . tablename($this->tablename) . " WHERE `rid`={$rid}";
 			pdo_query($sql);
-			message('成功删除.', referer());
+			message('成功删除.', referer(), 'success', true);
 		}
 		if($foo == 'post') {
 			$rid = intval($_GPC['id']);
@@ -184,7 +184,7 @@ class UserApiModuleSite extends WeModuleSite {
 					$rid = pdo_insertid();
 				}
 				if(empty($rid)) {
-					message('增加服务失败, 请稍后重试. ');
+					message('增加服务失败, 请稍后重试. ', '', 'error', true);
 				}
 				$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `weid`=0';
 				$pars = array();
@@ -251,15 +251,15 @@ class UserApiModuleSite extends WeModuleSite {
 				);
 				if($_GPC['id']) {
 					if(pdo_update($this->tablename, $reply, array('rid' => $rid)) !== false) {
-						message('编辑服务成功. ', 'refresh');
+						message('编辑服务成功. ', 'refresh', 'success', true);
 					} else {
-						message('编辑服务失败, 请稍后重试. ');
+						message('编辑服务失败, 请稍后重试. ', '', 'error', true);
 					}
 				} else {
 					if(pdo_insert($this->tablename, $reply)) {
-						message('增加服务成功. ', 'refresh');
+						message('增加服务成功. ', 'refresh', 'success', true);
 					} else {
-						message('增加服务失败, 请稍后重试. ');
+						message('增加服务失败, 请稍后重试. ', '', 'error', true);
 					}
 				}
 			}

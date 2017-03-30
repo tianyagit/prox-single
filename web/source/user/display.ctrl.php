@@ -100,12 +100,12 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 		case 'check_pass':
 			$data = array('status' => 2);
 			pdo_update('users', $data , array('uid' => $uid));
-			message('更新成功！', referer());
+			message('更新成功！', referer(), 'success', true);
 			break;
 		case 'recycle'://删除用户到回收站
 			$data = array('status' => 3);
 			pdo_update('users', $data , array('uid' => $uid));
-			message('更新成功！', referer());
+			message('更新成功！', referer(), 'success', true);
 			break;
 		case 'recycle_delete'://永久删除用户
 			if (pdo_delete('users', array('uid' => $uid)) === 1) {
@@ -113,15 +113,15 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 				cache_build_account_modules();
 				pdo_delete('uni_account_users', array('uid' => $uid));
 				pdo_delete('users_profile', array('uid' => $uid));
-				message('删除成功！', referer());
+				message('删除成功！', referer(), 'success', true);
 			}else {
-				message('删除失败！', referer());
+				message('删除失败！', referer(), 'error', true);
 			}
 			break;
 		case 'recycle_restore':
 			$data = array('status' => 2);
 			pdo_update('users', $data , array('uid' => $uid));
-			message('启用成功！', referer());
+			message('启用成功！', referer(), 'success', true);
 			break;
 	}
 }
