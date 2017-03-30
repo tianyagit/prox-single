@@ -103,9 +103,9 @@ if ($do == 'upgrade') {
 	$points = ext_module_bindings();
 	$module_name = addslashes($_GPC['module_name']);
 	//判断模块相关配置和文件是否合法
-	$module_info = module_fetch($module_name);
-	if (empty($module_info)) {
-		message('模块已经被卸载或是不存在！', '', 'error');
+	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
+	if (empty($module_exist)) {
+		message('模块已经被卸载或是不存在！', '', 'error', true);
 	}
 	$manifest = ext_module_manifest($module_name);
 	// 应用商城下载的模块远程获取XML文件
@@ -376,8 +376,8 @@ if ($do =='install') {
 }
 
 if ($do == 'change_receive_ban') {
-	$modulename = $_GPC['modulename'];
-	$module_exist = module_fetch($modulename);
+	$modulename = trim($_GPC['modulename']);
+	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
 	if (empty($module_exist)) {
 		message(error(1, '模块不存在'), '', 'ajax');;
 	}
@@ -435,7 +435,7 @@ if ($do == 'get_module_info') {
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
-	$module_info = module_fetch($module_name);
+	$module_info = pdo_get('modules', array('name' => $module_name));
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}

@@ -117,21 +117,21 @@ if ($do == 'display') {
 if ($do == 'add_tag') {
 	$tag_name = trim($_GPC['tag']);
 	if (empty($tag_name)) {
-		message(error(1, '请填写标称名称'), '', 'ajax');
+		message(error(1, '请填写标称名称'), '', 'ajax', true);
 	}
 	$account_api = WeAccount::create();
 	$result = $account_api->fansTagAdd($tag_name);
 	if (is_error($result)) {
-		message($result, '', 'ajax');
+		message($result, '', 'ajax', true);
 	} else {
-		message(error(0), '', 'ajax');
+		message(error(0), '', 'ajax', true);
 	}
 }
 
 if ($do == 'del_tag') {
 	$tagid = intval($_GPC['tag']);
 	if (empty($tagid)) {
-		message(error(1, '标签id为空'), '', 'ajax');
+		message(error(1, '标签id为空'), '', 'ajax', true);
 	}
 	$account_api = WeAccount::create();
 	$tags = $account_api->fansTagDelete($tagid);
@@ -155,28 +155,28 @@ if ($do == 'del_tag') {
 			}
 		}
 		pdo_delete('mc_fans_tag_mapping', array('tagid' => $tagid));
-		message(error(0, 'success'), '', 'ajax');
+		message(error(0, 'success'), '', 'ajax', true);
 	} else {
-		message(error(-1, $tags['message']), '', 'ajax');
+		message(error(-1, $tags['message']), '', 'ajax', true);
 	}
 }
 
 if ($do == 'edit_tagname') {
 	$tag = intval($_GPC['tag']);
 	if (empty($tag)) {
-		message(error(1, '标签id为空'), '', 'ajax');
+		message(error(1, '标签id为空'), '', 'ajax', true);
 	}
 	$tag_name = trim($_GPC['tag_name']);
 	if (empty($tag_name)) {
-		message(error(1, '标签名为空'), '', 'ajax');
+		message(error(1, '标签名为空'), '', 'ajax', true);
 	}
 
 	$account_api = WeAccount::create();
 	$result = $account_api->fansTagEdit($tag, $tag_name);
 	if (is_error($result)) {
-		message($result, '', 'ajax');
+		message($result, '', 'ajax', true);
 	} else {
-		message(error('0'), '', 'ajax');
+		message(error('0'), '', 'ajax', true);
 	}
 }
 
@@ -184,7 +184,7 @@ if ($do == 'edit_fans_tag') {
 	$fanid = intval($_GPC['fanid']);
 	$tags = $_GPC['tags'];
 	if (empty($tags) || !is_array($tags)) {
-		message(error(1, '请选择标签'), '', 'ajax');
+		message(error(1, '请选择标签'), '', 'ajax', true);
 	}
 	$openid = pdo_getcolumn('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'fanid' => $fanid), 'openid');
 	$account_api = WeAccount::create();
@@ -200,17 +200,17 @@ if ($do == 'edit_fans_tag') {
 			cache_build_fansinfo($openid);
 		}
 	}
-	message($result, '', 'ajax');
+	message($result, '', 'ajax', true);
 }
 
 if ($do == 'batch_edit_fans_tag') {
 	$openid_list = $_GPC['openid'];
 	if (empty($openid_list) || !is_array($openid_list)) {
-		message(error(1, '请选择粉丝'), '', 'ajax');
+		message(error(1, '请选择粉丝'), '', 'ajax', true);
 	}
 	$tags = $_GPC['tag'];
 	if (empty($tags) || !is_array($tags)) {
-		message(error(1, '请选择标签'), '', 'ajax');
+		message(error(1, '请选择标签'), '', 'ajax', true);
 	}
 
 	$account_api = WeAccount::create();
@@ -225,10 +225,10 @@ if ($do == 'batch_edit_fans_tag') {
 				cache_build_fansinfo($openid);
 			}
 		} else {
-			message($result, '', 'ajax');
+			message($result, '', 'ajax', true);
 		}
 	}
-	message(error(0), '', 'ajax');
+	message(error(0), '', 'ajax', true);
 }
 
 if ($do == 'download_fans') {
@@ -267,9 +267,9 @@ if ($do == 'download_fans') {
 		$return['total'] = $wechat_fans_list['total'];
 		$return['count'] = !empty($wechat_fans_list['fans']) ? $wechat_fans_count : 0;
 		$return['next'] = $wechat_fans_list['next'];
-		message(error(0, $return), '', 'ajax');
+		message(error(0, $return), '', 'ajax', true);
 	} else {
-		message($wechat_fans_list, '', 'ajax');
+		message($wechat_fans_list, '', 'ajax', true);
 	}
 }
 
@@ -285,12 +285,12 @@ if ($do == 'sync') {
 				mc_init_fans_info($fans['openid']);
 			}
 		}
-		message(error(0, array('pageindex' => $pageindex, 'total' => $total)), '', 'ajax');
+		message(error(0, array('pageindex' => $pageindex, 'total' => $total)), '', 'ajax', true);
 	}
 	if ($type == 'check') {
 		$openids = $_GPC['openids'];
 		if (empty($openids) || !is_array($openids)) {
-			message(error(1, '请选择粉丝'), '', 'ajax');
+			message(error(1, '请选择粉丝'), '', 'ajax', true);
 		}
 		$sync_fans = pdo_getall('mc_mapping_fans', array('openid' => $openids));
 		if (!empty($sync_fans)) {
@@ -298,7 +298,7 @@ if ($do == 'sync') {
 				mc_init_fans_info($fans['openid']);
 			}
 		}
-		message(error(0, 'success'), '', 'ajax');
+		message(error(0, 'success'), '', 'ajax', true);
 	}
 }
 
@@ -308,7 +308,7 @@ if ($do == 'fans_sync_set') {
 	$operate = $_GPC['operate'];
 	if ($operate == 'save_setting') {
 		uni_setting_save('sync', intval($_GPC['setting']));
-		message(error(0), '', 'ajax');
+		message(error(0), '', 'ajax', true);
 	}
 	$setting = uni_setting($_W['uniacid'], array('sync'));
 	$sync_setting = $setting['sync'];

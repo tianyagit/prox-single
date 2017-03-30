@@ -527,7 +527,7 @@ function mc_require($uid, $fields, $pre = '') {
 					continue;
 				}
 				if (empty($value)) {
-					message('请填写完整所有资料.', referer(), 'error');
+					message('请填写完整所有资料.', referer(), 'error', true);
 				}
 			}
 			if (empty($record['nickname']) && !empty($_W['fans']['nickname'])) {
@@ -540,13 +540,13 @@ function mc_require($uid, $fields, $pre = '') {
 			if (in_array('email', $fields)) {
 				$emailexists = pdo_fetchcolumn("SELECT email FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND email = :email " . $condition, array(':uniacid' => $_W['uniacid'], ':email' => trim($record['email'])));
 				if (!empty($emailexists)) {
-					message('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error');
+					message('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error', true);
 				}
 			}
 			if (in_array('mobile', $fields)) {
 				$mobilexists = pdo_fetchcolumn("SELECT mobile FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND mobile = :mobile " . $condition, array(':uniacid' => $_W['uniacid'], ':mobile' => trim($record['mobile'])));
 				if (!empty($mobilexists)) {
-					message('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error');
+					message('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error', true);
 				}
 			}
 			$insertuid = mc_update($uid, $record);
@@ -555,7 +555,7 @@ function mc_require($uid, $fields, $pre = '') {
 				pdo_update('mc_mapping_fans', array('uid' => $insertuid), array('openid' => $_W['openid']));
 				cache_build_fansinfo($_W['openid']);
 			}
-			message('资料完善成功.', 'refresh');
+			message('资料完善成功.', 'refresh', 'success', true);
 		}
 		load()->func('tpl');
 		load()->model('activity');
@@ -757,7 +757,7 @@ function mc_fans_groups($force_update = false) {
 	}
 	$tags = $account_api->fansTagFetchAll();
 	if (is_error($tags)) {
-		message($tags['message'], '', 'error');
+		message($tags['message'], '', 'error', true);
 	}
 	if (!empty($tags['tags'])) {
 		$tags_tmp = array();

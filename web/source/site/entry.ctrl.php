@@ -24,7 +24,7 @@ if (!empty($eid)) {
 	}
 }
 if (empty($entry) || empty($entry['do'])) {
-	message('非法访问.');
+	message('非法访问.', '', '', true);
 }
 
 if (!$entry['direct']) {
@@ -33,7 +33,7 @@ if (!$entry['direct']) {
 	
 	$module = module_fetch($entry['module']);
 	if (empty($module)) {
-		message("访问非法, 没有操作权限. (module: {$entry['module']})");
+		message("访问非法, 没有操作权限. (module: {$entry['module']})", '', '', true);
 	}
 	
 	if ($entry['entry'] == 'menu') {
@@ -42,7 +42,7 @@ if (!$entry['direct']) {
 		$permission = uni_user_module_permission_check($entry['module'] . '_rule', $entry['module']);
 	}
 	if (!$permission) {
-		message('您没有权限进行该操作');
+		message('您没有权限进行该操作', '', '', true);
 	}
 	$_W['page']['title'] = $entry['title'];
 	define('ACTIVE_FRAME_URL', url('site/entry/', array('eid' => $entry['eid'])));
@@ -50,7 +50,7 @@ if (!$entry['direct']) {
 
 if (!empty($entry['module']) && !empty($_W['founder'])) {
 	if (ext_module_checkupdate($entry['module'])) {
-		message('系统检测到该模块有更新，请点击“<a href="' . url('extension/module/upgrade', array('m' => $entry['module'])) . '">更新模块</a>”后继续使用！', '', 'error');
+		message('系统检测到该模块有更新，请点击“<a href="' . url('extension/module/upgrade', array('m' => $entry['module'])) . '">更新模块</a>”后继续使用！', '', 'error', true);
 	}
 }
 
@@ -77,4 +77,4 @@ if (!is_error($site)) {
 	$method = 'doWeb' . ucfirst($entry['do']);
 	exit($site->$method());
 }
-message("访问的方法 {$method} 不存在.", referer(), 'error');
+message("访问的方法 {$method} 不存在.", referer(), 'error', true);

@@ -28,7 +28,7 @@ if ($do == 'get_setting') {
 			'line' => array('switch' => false, 'message' => ''),
 		);
 	}
-	message(error(0, $pay_setting), '', 'ajax');
+	message(error(0, $pay_setting), '', 'ajax', true);
 }
 
 if ($do == 'test_alipay') {
@@ -50,7 +50,7 @@ if ($do == 'test_alipay') {
 	$params['uniontid'] = $pay_data['uniontid'];
 
 	$result = alipay_build($params, $alipay);
-	message(error(0, $result['url']), '', 'ajax');
+	message(error(0, $result['url']), '', 'ajax', true);
 }
 
 if ($do == 'save_setting') {
@@ -71,7 +71,7 @@ if ($do == 'save_setting') {
 	if ($type == 'unionpay') {
 		$unionpay = $_GPC['unionpay'];
 		if ($unionpay['switch'] && empty($_FILES['unionpay']['tmp_name']['signcertpath']) && !file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx')) {
-			message('请上联银商户私钥证书.', referer(), 'error');
+			message('请上联银商户私钥证书.', referer(), 'error', true);
 		}
 		$param = array(
 			'switch' => $unionpay['switch'] == 'false'? false : true,
@@ -79,10 +79,10 @@ if ($do == 'save_setting') {
 			'signcertpwd' => $unionpay['signcertpwd']
 		);
 		if($param['switch'] && (empty($param['merid']) || empty($param['signcertpwd']))) {
-			message('请输入完整的银联支付接口信息.', referer(), 'error');
+			message('请输入完整的银联支付接口信息.', referer(), 'error', true);
 		}
 		if ($param['switch'] && empty($_FILES['unionpay']['tmp_name']['signcertpath']) && !file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx')) {
-			message('请上传银联商户私钥证书.', referer(), 'error');
+			message('请上传银联商户私钥证书.', referer(), 'error', true);
 		}
 		if ($param['switch'] && !empty($_FILES['unionpay']['tmp_name']['signcertpath'])) {
 			load()->func('file');
@@ -124,7 +124,7 @@ MFF/yA==
 		header('LOCATION: '.url('profile/payment'));
 		exit();
 	}
-	message(error(0), '', 'ajax');
+	message(error(0), '', 'ajax', true);
 }
 
 if ($do == 'display') {

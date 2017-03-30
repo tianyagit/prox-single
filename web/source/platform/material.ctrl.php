@@ -21,13 +21,13 @@ if ($do == 'send') {
 	$id = intval($_GPC['id']);
 	$media = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if (empty($media)) {
-		message(error(1, '素材不存在'), '', 'ajax');
+		message(error(1, '素材不存在'), '', 'ajax', true);
 	}
 	$media_id = trim($media['media_id']);
 	$account_api = WeAccount::create();
 	$result = $account_api->fansSendAll($group, $type, $media['media_id']);
 	if (is_error($result)) {
-		message(error(1, $result['message']), '', 'ajax');
+		message(error(1, $result['message']), '', 'ajax', true);
 	}
 	$groups = pdo_get('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']));
 	if (!empty($groups)) {
@@ -47,7 +47,7 @@ if ($do == 'send') {
 		'createtime' => TIMESTAMP,
 	);
 	pdo_insert('mc_mass_record', $record);
-	message(error(0, '发送成功！'), '', 'ajax');
+	message(error(0, '发送成功！'), '', 'ajax', true);
 }
 
 if ($do == 'display') {
@@ -125,7 +125,7 @@ if ($do == 'del_material') {
 		}
 		pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	}
-	message($result, '', 'ajax');
+	message($result, '', 'ajax', true);
 }
 
 if ($do == 'sync') {
@@ -140,14 +140,14 @@ if ($do == 'sync') {
 		$wechat_existid = material_sync($news_list['item'], array(), $type);
 		if ($news_list['total_count'] > 20) {
 			$total = ceil($news_list['total_count']/20);
-			message(error('1', array('type' => $type,'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
+			message(error('1', array('type' => $type,'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax', true);
 		}
 	} else {
 		$wechat_existid = material_sync($news_list['item'], $wechat_existid, $type);
 		$total = intval($_GPC['total']);
 		$original_newsid = $_GPC['original_newsid'];
 		if ($total != $pageindex) {
-			message(error('1', array('type' => $type, 'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax');
+			message(error('1', array('type' => $type, 'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid)), '', 'ajax', true);
 		}
 		if (empty($original_newsid)) {
 			$original_newsid = array();
@@ -160,7 +160,7 @@ if ($do == 'sync') {
 			pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $id));
 		}
 	}
-	message(error(0, '更新成功！'), '', 'ajax');
+	message(error(0, '更新成功！'), '', 'ajax', true);
 }
 
 template('platform/material');

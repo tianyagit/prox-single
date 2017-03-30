@@ -24,10 +24,10 @@ if ($do == 'check_receive') {
 		);
 		if(method_exists($module_obj, 'receive')) {
 			$module_obj->receive();
-			return message(error(0), '', 'ajax');
+			return message(error(0), '', 'ajax', true);
 		}
 	}
-	return message(error(1), '', 'ajax');
+	return message(error(1), '', 'ajax', true);
 }
 
 if($do == 'list') {
@@ -79,5 +79,5 @@ if($do == 'list') {
 		'items' => $current_module_list,
 		'pager' => pagination(count($enable_modules), $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
 	);
-	message($result, '', 'ajax');
+	message($result, '', 'ajax', true);
 }

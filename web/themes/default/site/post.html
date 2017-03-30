@@ -46,9 +46,13 @@
 
 		<div class="site-view">
 			<div class="we7-iphone-view">
-				<div ng-style="{'background': 'url(./resource/images/new/iphone6.png) no-repeat 20px 43px'}">
-					<iframe ng-src="{{siteEntrance}}" frameborder="0" width="320" height="568" scrolling="no" id="preview-iframe" ng-style="{'transform': 'scale(0.7)'}"></iframe>
-					<span class="btn btn-primary" ng-style="{'margin-left': '42%'}" onclick="document.getElementById('preview-iframe').contentWindow.location.reload(true);">预览刷新</span>
+				<div ng-style="{'background': 'url(./resource/images/new/iphone6.png) no-repeat 9px 0px', 'margin-top': '-30px'}">
+					<iframe ng-src="{{siteEntrance}}" frameborder="0" width="320" height="568" scrolling="no" id="preview-iframe" ng-style="{'transform': 'scale(0.7)', 'margin-left': '-10px', 'margin-top': '-44px'}"></iframe>
+					<span class="btn btn-primary" ng-style="{'margin-left': '36%'}" onclick="document.getElementById('preview-iframe').contentWindow.location.reload(true);">预览刷新</span>
+					<div class="help-block">
+						<span class="color-red">温馨提示：</span>
+						预览刷新功能只支持幻灯片、导航菜单、底部菜单功能。其他请点击"完成"按钮再行查看！
+					</div>
 				</div>
 				<div class="nav-menu" ng-hide="1">
 					<div class="js-quickmenu nav-menu-wx clearfix" ng-class="{0 : 'has-nav-0', 1 : 'has-nav-1', 2: 'has-nav-2', 3: 'has-nav-3', 4 : 'has-nav-3'}[activeItem.menus.length]" ng-if="activeItem.navStyle == 1">

@@ -612,7 +612,7 @@ function uni_user_permission_check($permission_name, $show_message = true, $acti
 	}
 	if($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
 		if($show_message) {
-			message('您没有进行该操作的权限', referer(), 'error');
+			message('您没有进行该操作的权限', referer(), 'error', true);
 		} else {
 			return false;
 		}
@@ -880,7 +880,7 @@ function account_delete($acid) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该公众号操作权限！', url('account/recycle'), 'error');
+			message('没有该公众号操作权限！', url('account/recycle'), 'error', true);
 		}
 		if($uniacid == $_W['uniacid']) {
 			isetcookie('__uniacid', '');
@@ -932,16 +932,16 @@ function account_delete($acid) {
 	} else {
 		$account = account_fetch($acid);
 		if (empty($account)) {
-			message('子公众号不存在或是已经被删除');
+			message('子公众号不存在或是已经被删除', '', '', true);
 		}
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该公众号操作权限！', url('account/recycle'), 'error');
+			message('没有该公众号操作权限！', url('account/recycle'), 'error', true);
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
 		if ($uniaccount['default_acid'] == $acid) {
-			message('默认子公众号不能删除');
+			message('默认子公众号不能删除', '', '', true);
 		}
 		pdo_delete('account', array('acid' => $acid));
 		pdo_delete('account_wechats', array('acid' => $acid, 'uniacid' => $uniacid));

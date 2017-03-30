@@ -297,16 +297,16 @@ class YiXinAccount extends WeAccount {
 			return $this->account['access_token']['token'];
 		} else {
 			if (empty($this->account['key']) || empty($this->account['secret'])) {
-				message('请填写公众号的appid及appsecret, (需要你的号码为易信服务号)！', url('account/post', array('acid' => $this->account['acid'], 'uniacid' => $this->account['uniacid'])), 'error');
+				message('请填写公众号的appid及appsecret, (需要你的号码为易信服务号)！', url('account/post', array('acid' => $this->account['acid'], 'uniacid' => $this->account['uniacid'])), 'error', true);
 			}
 			$url = "https://api.yixin.im/cgi-bin/token?grant_type=client_credential&appid={$this->account['key']}&secret={$this->account['secret']}";
 			$content = ihttp_get($url);
 			if(is_error($content)) {
-				message('获取微信公众号授权失败, 请稍后重试！错误详情: ' . $content['message']);
+				message('获取微信公众号授权失败, 请稍后重试！错误详情: ' . $content['message'], '', 'error', true);
 			}
 			$token = @json_decode($content['content'], true);
 			if(empty($token) || !is_array($token) || empty($token['access_token']) || empty($token['expires_in'])) {
-				message('获取微信公众号授权失败, 请稍后重试！ 公众平台返回原始数据为: <br />' . $content['meta']);
+				message('获取微信公众号授权失败, 请稍后重试！ 公众平台返回原始数据为: <br />' . $content['meta'], '', 'error', true);
 			}
 			$record = array();
 			$record['token'] = $token['access_token'];

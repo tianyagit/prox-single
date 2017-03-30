@@ -16,7 +16,7 @@ if ($do == 'platform') {
 	define('FRAME', 'account');
 
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
-		message('公众号已到服务期限，请续费', referer(), 'info');
+		message('公众号已到服务期限，请续费', referer(), 'info', true);
 	}
 	//公告
 	$notices = pdo_getall('article_notice', array('is_display' => 1), array('id', 'title', 'createtime'), '', 'createtime DESC', array(1,5));
@@ -75,13 +75,13 @@ if ($do == 'platform') {
 	if($today_stat['cumulate'] < 0) {
 		$today_stat['cumulate'] = 0;
 	}
-	message(error(0, array('yesterday' => $yesterday_stat, 'today' => $today_stat)), '', 'ajax');
+	message(error(0, array('yesterday' => $yesterday_stat, 'today' => $today_stat)), '', 'ajax', true);
 } elseif ($do == 'get_last_modules') {
 	//最新模块
 	$last_modules = welcome_get_last_modules();
 	if (is_error($last_modules)) {
-		message(error(1, $last_modules['message']), '', 'ajax');
+		message(error(1, $last_modules['message']), '', 'ajax', true);
 	} else {
-		message(error(0, $last_modules), '', 'ajax');
+		message(error(0, $last_modules), '', 'ajax', true);
 	}
 }

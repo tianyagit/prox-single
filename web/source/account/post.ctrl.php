@@ -13,7 +13,7 @@ load()->classs('weixin.platform');
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
-	message('请选择要编辑的公众号', url('account/manager'), 'error');
+	message('请选择要编辑的公众号', url('account/manager'), 'error', true);
 }
 $state = uni_permission($_W['uid'], $uniacid);
 
@@ -23,7 +23,7 @@ if ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER
 } elseif ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
 	$do = in_array($do, $dos) ? $do : 'modules_tpl';
 } else {
-	message('您是该公众号的操作员，无权限操作！', url('account/manager'), 'error');
+	message('您是该公众号的操作员，无权限操作！', url('account/manager'), 'error', true);
 }
 
 $_W['page']['title'] = '管理设置 - 微信' . ACCOUNT_TYPE_NAME . '管理';
@@ -33,14 +33,14 @@ $account = account_fetch($acid);
 
 if($do == 'base') {
 	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
+		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error', true);
 	}
 
 	if($_W['ispost'] && $_W['isajax']) {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
 		}else {
-			message(error(40035, '参数错误！'), '', 'ajax');
+			message(error(40035, '参数错误！'), '', 'ajax', true);
 		}
 		switch ($type) {
 			case 'qrcodeimgsrc':
@@ -64,7 +64,7 @@ if($do == 'base') {
 							}
 						}
 					}else {
-						message(error(40035, '参数错误！'), '', 'ajax');
+						message(error(40035, '参数错误！'), '', 'ajax', true);
 					}
 				}
 				break;
@@ -107,7 +107,7 @@ if($do == 'base') {
 				}
 				$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 				if (empty($owneruid)) {
-					message(error(-1, '抱歉，该公众号未设置主管理员。请先设置主管理员后再行修改到期时间！'), url('account/post-user/edit', array('uniacid' => $uniacid, 'acid' => $acid)), 'ajax');
+					message(error(-1, '抱歉，该公众号未设置主管理员。请先设置主管理员后再行修改到期时间！'), url('account/post-user/edit', array('uniacid' => $uniacid, 'acid' => $acid)), 'ajax', true);
 				}
 				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $owneruid));
 				break;
@@ -131,9 +131,9 @@ if($do == 'base') {
 			cache_delete("jsticket:{$acid}");
 			cache_delete("cardticket:{$acid}");
 			module_build_privileges();
-			message(error(0, '修改成功！'), '', 'ajax');
+			message(error(0, '修改成功！'), '', 'ajax', true);
 		}else {
-			message(error(1, '修改失败！'), '', 'ajax');
+			message(error(1, '修改失败！'), '', 'ajax', true);
 		}
 	}
 
@@ -163,7 +163,7 @@ if($do == 'base') {
 
 if($do == 'sms') {
 	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
+		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error', true);
 	}
 	$settings = uni_setting($uniacid, array('notify'));
 	$notify = $settings['notify'] ? $settings['notify'] : array();
@@ -174,7 +174,7 @@ if($do == 'sms') {
 
 	if ($_W['isajax'] && $_W['ispost'] && $_GPC['type'] == 'balance') {
 		if ($max_num == 0) {
-			message(error(-1, '您现有短信数量为0，请联系服务商购买短信！'), '', 'ajax');
+			message(error(-1, '您现有短信数量为0，请联系服务商购买短信！'), '', 'ajax', true);
 		}
 		$balance = intval($_GPC['balance']);
 		$notify['sms']['balance'] = $balance;
@@ -185,9 +185,9 @@ if($do == 'sms') {
 		$updatedata['notify'] = $notify;
 		$result = pdo_update('uni_settings', $updatedata , array('uniacid' => $uniacid));
 		if($result){
-			message(error(0, array('count' => $count_num, 'num' => $num)), '', 'ajax');
+			message(error(0, array('count' => $count_num, 'num' => $num)), '', 'ajax', true);
 		}else {
-			message(error(1, '修改失败！'), '', 'ajax');
+			message(error(1, '修改失败！'), '', 'ajax', true);
 		}
 	}
 	if($_W['isajax'] && $_W['ispost'] && $_GPC['type'] == 'signature') {
@@ -200,12 +200,12 @@ if($do == 'sms') {
 			$notify = serialize($notify);
 			$result = pdo_update('uni_settings', array('notify' => $notify), array('uniacid' => $uniacid));
 			if($result) {
-				message(error(0, '修改成功！'), '', 'ajax');
+				message(error(0, '修改成功！'), '', 'ajax', true);
 			}else {
-				message(error(1, '修改失败！'), '', 'ajax');
+				message(error(1, '修改失败！'), '', 'ajax', true);
 			}
 		}else {
-			message(error(40035, '参数错误！'), '', 'ajax');
+			message(error(40035, '参数错误！'), '', 'ajax', true);
 		}
 	}
 
@@ -237,10 +237,10 @@ if($do == 'modules_tpl') {
 				}
 				cache_build_account_modules($uniacid);
 				cache_build_account($uniacid);
-				message(error(0, '修改成功！'), '', 'ajax');
+				message(error(0, '修改成功！'), '', 'ajax', true);
 			}else {
 				pdo_delete('uni_account_group', array('uniacid' => $uniacid));
-				message(error(0, '修改成功！'), '', 'ajax');
+				message(error(0, '修改成功！'), '', 'ajax', true);
 			}
 		}
 
@@ -267,9 +267,9 @@ if($do == 'modules_tpl') {
 			} else {
 				pdo_delete('uni_group', array('uniacid' => $uniacid));
 			}
-			message(error(0, '修改成功！'), '', 'ajax');
+			message(error(0, '修改成功！'), '', 'ajax', true);
 		}
-		message(error(40035, '参数错误！'), '', 'ajax');
+		message(error(40035, '参数错误！'), '', 'ajax', true);
 	}
 	$modules_tpl = $extend = array();
 

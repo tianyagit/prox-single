@@ -17,11 +17,11 @@ if ($do == 'uc') {
 	if (!empty($_GPC['wapeditor'])) {
 		$params = $_GPC['wapeditor']['params'];
 		if (empty($params)) {
-			message('请您先设计手机端页面.', '', 'error');
+			message('请您先设计手机端页面.', '', 'error', true);
 		}
 		$params = json_decode(ihtml_entity_decode($params), true);
 		if (empty($params)) {
-			message('请您先设计手机端页面.', '', 'error');
+			message('请您先设计手机端页面.', '', 'error', true);
 		}
 		$page = $params[0];
 		$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
@@ -84,7 +84,7 @@ if ($do == 'uc') {
 		}
 		$ids_str = implode(',', $ids);
 		pdo_query('DELETE FROM ' . tablename('site_nav') . " WHERE uniacid = :uniacid AND position = '2' AND id NOT IN ($ids_str)", array(':uniacid' => $_W['uniacid']));
-		message('个人中心保存成功.', url('site/editor/uc'), 'success');
+		message('个人中心保存成功.', url('site/editor/uc'), 'success', true);
 	}
 	$navs = pdo_fetchall("SELECT id, icon, css, name, module, status, url FROM ".tablename('site_nav')." WHERE uniacid = :uniacid AND position = '2' ORDER BY displayorder DESC, id ASC", array(':uniacid' => $_W['uniacid']));
 	if (!empty($navs)) {
@@ -115,11 +115,11 @@ if ($do == 'uc') {
 	if ($_GPC['wapeditor']) {
 		$params = $_GPC['wapeditor']['params'];
 		if (empty($params)) {
-			message('请您先设计手机端页面.', '', 'error');
+			message('请您先设计手机端页面.', '', 'error', true);
 		}
 		$params = json_decode(html_entity_decode(urldecode($params)), true);
 		if (empty($params)) {
-			message('请您先设计手机端页面.', '', 'error');
+			message('请您先设计手机端页面.', '', 'error', true);
 		}
 		$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
 		$html = str_replace(array('<?', '<%', '<?php', '{php'), '_', $html);
@@ -150,7 +150,7 @@ if ($do == 'uc') {
 			pdo_insert('site_page', $data);
 			$id = pdo_insertid();
 		}
-		message('快捷菜单保存成功.', url('site/editor/quickmenu', array('multiid' => $multiid, 'type' => $type)), 'success');
+		message('快捷菜单保存成功.', url('site/editor/quickmenu', array('multiid' => $multiid, 'type' => $type)), 'success', true);
 	}
 	if ($type == '4') {
 		$page = pdo_fetch("SELECT * FROM ".tablename('site_page')." WHERE type = :type AND uniacid = :uniacid", array(':type' => $type, ':uniacid' => $_W['uniacid']));
@@ -163,5 +163,5 @@ if ($do == 'uc') {
 	$id = intval($_GPC['id']);
 	pdo_delete('site_page', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	site_cover_delete($id);
-	message('删除微页面成功', referer(), 'success');
+	message('删除微页面成功', referer(), 'success', true);
 }

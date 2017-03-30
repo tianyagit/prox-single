@@ -19,14 +19,14 @@ if ($do == 'backup') {
 	$_W['page']['title'] = '备份 - 数据库 - 常用系统工具 - 系统管理';
 	if ($_GPC['status']) {
 		if (empty($_W['setting']['copyright']['status'])) {
-			message('为了保证备份数据完整请关闭站点后再进行此操作', url('system/site'), 'error');
+			message('为了保证备份数据完整请关闭站点后再进行此操作', url('system/site'), 'error', true);
 		}
 		
 		//获取系统数据库中所有表
 		$sql = "SHOW TABLE STATUS LIKE '{$_W['config']['db']['tablepre']}%'";
 		$tables = pdo_fetchall($sql);
 		if (empty($tables)) {
-			message('数据已经备份完成', url('system/database/'), 'success');
+			message('数据已经备份完成', url('system/database/'), 'success', true);
 		}
 		
 		//设置备份文件的卷数。
@@ -107,7 +107,7 @@ if ($do == 'backup') {
 							'status'=>1
 						);
 						$current_series = $series-1;
-						message('正在导出数据, 请不要关闭浏览器, 当前第 ' . $current_series . ' 卷.', url('system/database/backup/',$current));
+						message('正在导出数据, 请不要关闭浏览器, 当前第 ' . $current_series . ' 卷.', url('system/database/backup/',$current), 'info', true);
 					}
 					
 				}
@@ -123,7 +123,7 @@ if ($do == 'backup') {
 		$bakfile = $bakdir . "/volume-{$volume_suffix}-{$series}.sql";
 		$dump .= "\n\n----WeEngine MySQL Dump End";
 		file_put_contents($bakfile, $dump);
-		message('数据已经备份完成', url('system/database/'), 'success');	
+		message('数据已经备份完成', url('system/database/'), 'success', true);	
 	}
 }
 
@@ -211,7 +211,7 @@ if($do == 'restore') {
 			$restore_volume_sizes = max(1, intval($_GPC['restore_volume_sizes']));
 			if ($reduction[$restore_dirname]) {
 				if ($reduction[$restore_dirname]['volume'] < $restore_volume_sizes) {
-					message('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'));
+					message('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'), 'success', true);
 				} else {
 					$sql = file_get_contents($path .$restore_dirname . "/volume-{$restore_volume_prefix}-{$restore_volume_sizes}.sql");
 					pdo_run($sql);
@@ -222,10 +222,10 @@ if($do == 'restore') {
 						'restore_volume_prefix' => $restore_volume_prefix,
 						'restore_volume_sizes' => $restore_volume_sizes,
 					);
-					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore));
+					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore), 'success', true);
 				}
 			} else {
-				message('非法访问', 'error');
+				message('非法访问', '','error', true);
 			}
 		}
 	}
@@ -235,7 +235,7 @@ if($do == 'restore') {
 		$delete_dirname = $_GPC['delete_dirname'];
 		if ($reduction[$delete_dirname]) {
 			rmdirs($path . $delete_dirname);
-			message('删除备份成功.', url('system/database/restore'));
+			message('删除备份成功.', url('system/database/restore'), 'success', true);
 		}
 	}
 }
@@ -263,7 +263,7 @@ if ($do == 'trim') {
  * @@todo 没有该控制器
 	$r = cloud_prepare();
 	if(is_error($r)) {
-		message($r['message'], url('cloud/profile'), 'error');
+		message($r['message'], url('cloud/profile'), 'error', true);
 	}
 	*/
 	
@@ -326,19 +326,19 @@ if ($do == 'optimize') {
 				pdo_fetch($sql);
 			}
 		}
-		message('数据表优化成功.', 'refresh');
+		message('数据表优化成功.', 'refresh', 'success', true);
 	}
 }
 //运行SQL
 if ($do == 'run') {
 	$_W['page']['title'] = '运行SQL - 数据库 - 常用系统工具 - 系统管理';
 	if (!DEVELOPMENT) {
-		message('请先开启开发模式后再使用此功能', referer(), 'info');
+		message('请先开启开发模式后再使用此功能', referer(), 'info', true);
 	}
 	if (checksubmit()) {
 		$sql = $_POST['sql'];
 		pdo_run($sql);
-		message('查询执行成功.', 'refresh');
+		message('查询执行成功.', 'refresh', 'success', true);
 	}
 }
 

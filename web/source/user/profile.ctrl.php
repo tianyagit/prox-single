@@ -20,24 +20,24 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 		$uid = $_W['uid'];
 	}
 	if (empty($uid) || empty($type)) {
-		message(error(40035, '参数错误，请刷新后重试！'), '', 'ajax');
+		message(error(40035, '参数错误，请刷新后重试！'), '', 'ajax', true);
 	}
 	$user = user_single($uid);
 	if (empty($user)) {
-		message(error(-1, '用户不存在或已经被删除！'), '', 'ajax');
+		message(error(-1, '用户不存在或已经被删除！'), '', 'ajax', true);
 	}
 
 	$users_profile_exist = pdo_get('users_profile', array('uid' => $uid));
 
 	if ($type == 'birth') {
-		if ($users_profile_exist['year'] == $_GPC['year'] && $users_profile_exist['month'] == $_GPC['month'] && $users_profile_exist['day'] == $_GPC['day']) message(error(0, '未作修改！'), '', 'ajax');
+		if ($users_profile_exist['year'] == $_GPC['year'] && $users_profile_exist['month'] == $_GPC['month'] && $users_profile_exist['day'] == $_GPC['day']) message(error(0, '未作修改！'), '', 'ajax', true);
 	} elseif ($type == 'reside') {
-		if ($users_profile_exist['province'] == $_GPC['province'] && $users_profile_exist['city'] == $_GPC['city'] && $users_profile_exist['district'] == $_GPC['district']) message(error(0, '未作修改！'), '', 'ajax');
+		if ($users_profile_exist['province'] == $_GPC['province'] && $users_profile_exist['city'] == $_GPC['city'] && $users_profile_exist['district'] == $_GPC['district']) message(error(0, '未作修改！'), '', 'ajax', true);
 	} else {
 		if (in_array($type, array('username', 'password'))) {
-			if ($user[$type] == $_GPC[$type] && $type != 'password') message(error(0, '未做修改！'), '', 'ajax');
+			if ($user[$type] == $_GPC[$type] && $type != 'password') message(error(0, '未做修改！'), '', 'ajax', true);
 		} else {
-			if ($users_profile_exist[$type] == $_GPC[$type]) message(error(0, '未作修改！'), '', 'ajax');
+			if ($users_profile_exist[$type] == $_GPC[$type]) message(error(0, '未作修改！'), '', 'ajax', true);
 		}
 	}
 	switch ($type) {
@@ -56,19 +56,24 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 		case 'username':
 			$founders = explode(',', $_W['config']['setting']['founder']);
 			if (in_array($uid, $founders)) {
-				message(error(1, '用户名不可与网站创始人同名！'), '', 'ajax');
+				message(error(1, '用户名不可与网站创始人同名！'), '', 'ajax', true);
 			}
-			$result = pdo_update('users', array('username' => trim($_GPC['username'])), array('uid' => $uid));
+			$username = trim($_GPC['username']);
+			$name_exist = pdo_get('users', array('username' => $username));
+			if(!empty($name_exist)) {
+				message(error(2, '用户名已存在，请更换其他用户名！'), '', 'ajax', true);
+			}
+			$result = pdo_update('users', array('username' => $username), array('uid' => $uid));
 			break;
 		case 'password':
-			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) message(error(2, '两次密码不一致！'), '', 'ajax');
+			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) message(error(2, '两次密码不一致！'), '', 'ajax', true);
 			if (!$_W['isfounder']) {
 				$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
-				if ($pwd != $user['password']) message(error(3, '原密码不正确！'), '', 'ajax');
+				if ($pwd != $user['password']) message(error(3, '原密码不正确！'), '', 'ajax', true);
 			}
 			$newpwd = user_hash($_GPC['newpwd'], $user['salt']);
 			if ($newpwd == $user['password']) {
-				message(error(0, '未作修改！'), '', 'ajax');
+				message(error(0, '未作修改！'), '', 'ajax', true);
 			}
 			$result = pdo_update('users', array('password' => $newpwd), array('uid' => $uid));
 			break;
@@ -135,9 +140,9 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	}
 	if ($result) {
 		pdo_update('users_profile', array('edittime' => TIMESTAMP), array('uid' => $uid));
-		message(error(0, '修改成功！'), '', 'ajax');
+		message(error(0, '修改成功！'), '', 'ajax', true);
 	} else {
-		message(error(1, '修改失败，请稍候重试！'), '', 'ajax');
+		message(error(1, '修改失败，请稍候重试！'), '', 'ajax', true);
 	}
 }
 
@@ -145,7 +150,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 if ($do == 'base') {
 	$user = user_single($_W['uid']);
 	if (empty($user)) {
-		message('抱歉，用户不存在或是已经被删除！', url('user/profile'), 'error');
+		message('抱歉，用户不存在或是已经被删除！', url('user/profile'), 'error', true);
 	}
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
