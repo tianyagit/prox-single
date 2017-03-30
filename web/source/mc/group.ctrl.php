@@ -27,7 +27,7 @@ if ($do == 'change_group_level') {
 	$group_level = intval($_GPC['group_level']);
 	pdo_update('uni_settings', array('grouplevel' => $group_level), array('uniacid' => $_W['uniacid']));
 	cache_delete("unisetting:{$_W['uniacid']}");
-	message(error(0), '', 'ajax', true);
+	iajax(0, '');
 }
 
 if ($do == 'save_group') {
@@ -77,12 +77,12 @@ if ($do == 'set_default') {
 	$group_id = intval($_GPC['group_id']);
 	pdo_update('mc_groups', array('isdefault' => 0), array('uniacid' => $_W['uniacid']));
 	pdo_update('mc_groups', array('isdefault' => 1), array('groupid' => $group_id));
-	message(error(0), '', '', true);
+	iajax(0, '');
 }
 
 if ($do == 'del_group') {
 	$group_id = intval($_GPC['group_id']);
 	pdo_delete('mc_groups', array('groupid' => $group_id));
-	message(error(0), '', '', true);
+	iajax(0, '');
 }
 template('mc/group');

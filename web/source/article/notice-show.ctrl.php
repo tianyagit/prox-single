@@ -14,7 +14,7 @@ if($do == 'detail') {
 	$id = intval($_GPC['id']);
 	$notice = article_notice_info($id);
 	if(is_error($notice)) {
-		message('公告不存在或已删除', referer(), 'error', true);
+		itoast('公告不存在或已删除', referer(), 'error');
 	}
 	$_W['page']['title'] = $notice['title'] . '-公告列表';
 	pdo_query('UPDATE ' . tablename('article_notice') . ' SET click = click + 1 WHERE id = :id', array(':id' => $id));

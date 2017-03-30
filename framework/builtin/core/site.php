@@ -177,7 +177,7 @@ class CoreModuleSite extends WeModuleSite {
 			$wechat_payment_params = wechat_build($params, $wechat_payment);
 		}
 		if (is_error($wechat_payment_params)) {
-			message($wechat_payment_params, '', 'ajax', true);
+			itoast($wechat_payment_params, '', 'ajax');
 		} else {
 			iajax(0, $wechat_payment_params, '');
 		}

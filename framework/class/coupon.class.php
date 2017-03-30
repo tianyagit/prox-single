@@ -721,11 +721,11 @@ EOF;
 
 									}
 								} else {
-									u.message('卡券不存在', '', 'error', true);
+									u.itoast('卡券不存在', '', 'error');
 								}
 							});
 						} else {
-							u.message('使用卡券失败', '', 'error', true);
+							u.itoast('使用卡券失败', '', 'error');
 						}
 					}
 				});

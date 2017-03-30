@@ -23,7 +23,7 @@ if ($do == 'module') {
 	}
 	$module = $_W['current_module'] = module_fetch($modulename);
 	if (empty($module)) {
-		message('模块不存在或是未安装', '', 'error', true);
+		itoast('模块不存在或是未安装', '', 'error');
 	}
 	if (!empty($module['isrulefields'])) {
 		$url = url('platform/reply', array('m' => $module['name'], 'eid' => $entry_id));
@@ -48,22 +48,22 @@ if ($do == 'module') {
 } elseif ($do == 'post') {
 	$entry_id = intval($_GPC['eid']);
 	if(empty($entry_id)) {
-		message('访问错误', '', '', true);
+		itoast('访问错误', '', '');
 	}
 	$entry = module_entry($entry_id);
 	if (is_error($entry)) {
-		message('模块菜单不存在或是模块已经被删除', '', '', true);
+		itoast('模块菜单不存在或是模块已经被删除', '', '');
 	}
 	$module = $_W['current_module'] = module_fetch($entry['module']);
 	$reply = pdo_get('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
 	
 	if (checksubmit('submit')) {
 		if (trim($_GPC['keywords']) == '') {
-			message('必须输入触发关键字.', '', '', true);
+			itoast('必须输入触发关键字.', '', '');
 		}
 		$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
 		if (empty($keywords)) {
-			message('必须填写有效的触发关键字.', '', '', true);
+			itoast('必须填写有效的触发关键字.', '', '');
 		}
 		$rule = array(
 			'uniacid' => $_W['uniacid'],
@@ -120,9 +120,9 @@ if ($do == 'module') {
 			} else {
 				pdo_update('cover_reply', $entry, array('id' => $reply['id']));
 			}
-			message('封面保存成功！', 'refresh', 'success', true);
+			itoast('封面保存成功！', 'refresh', 'success');
 		} else {
-			message('封面保存失败, 请联系网站管理员！', '', 'error', true);
+			itoast('封面保存失败, 请联系网站管理员！', '', 'error');
 		}
 	}
 	

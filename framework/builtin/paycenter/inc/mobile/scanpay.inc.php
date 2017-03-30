@@ -6,11 +6,11 @@ paycenter_check_login();
 $user_permission = uni_user_permission('system');
 $op = trim($_GPC['op']) ? trim($_GPC['op']) : 'index';
 if ($_W['account']['level'] != ACCOUNT_SERVICE_VERIFY) {
-	message('公众号权限不足', '', 'error', true);
+	itoast('公众号权限不足', '', 'error');
 }
 if($op == 'post') {
 	if(checksubmit()) {
-		$fee = trim($_GPC['fee']) ? trim($_GPC['fee']) : message('收款金额有误', '', 'error', true);
+		$fee = trim($_GPC['fee']) ? trim($_GPC['fee']) : itoast('收款金额有误', '', 'error');
 		$body = trim($_GPC['body']) ? trim($_GPC['body']) : '收银台收款' . $fee;
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -34,10 +34,10 @@ if($op == 'qrcode') {
 	$id = intval($_GPC['id']);
 	$order = pdo_get('paycenter_order', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if(empty($order)) {
-		message('订单不存在或已删除', '', 'error', true);
+		itoast('订单不存在或已删除', '', 'error');
 	}
 	if($order['status'] == 1) {
-		message('该订单已付款', '', 'error', true);
+		itoast('该订单已付款', '', 'error');
 	}
 }
 
@@ -59,7 +59,7 @@ if($op == 'detail') {
 	$id = intval($_GPC['id']);
 	$order = pdo_get('paycenter_order', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if(empty($order)) {
-		message('订单不存在', '', '', true);
+		itoast('订单不存在', '', '');
 	} else {
 		$store_id = $order['store_id'];
 		$types = paycenter_order_types();

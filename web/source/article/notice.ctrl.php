@@ -31,7 +31,7 @@ if ($do == 'category_post') {
 				$i++;
 			}
 		}
-		message('添加公告分类成功', url('article/notice/category'), 'success', true);
+		itoast('添加公告分类成功', url('article/notice/category'), 'success');
 	}
 	template('article/notice-category-post');
 }
@@ -48,7 +48,7 @@ if ($do == 'category') {
 				);
 				pdo_update('article_category', $data, array('id' => intval($v)));
 			}
-			message('修改公告分类成功', referer(), 'success', true);
+			itoast('修改公告分类成功', referer(), 'success');
 		}
 	}
 	$data = pdo_fetchall('SELECT * FROM ' . tablename('article_category') . ' WHERE type = :type ORDER BY displayorder DESC', array(':type' => 'notice'));
@@ -60,7 +60,7 @@ if ($do == 'category_del') {
 	$id = intval($_GPC['id']);
 	pdo_delete('article_category', array('id' => $id,'type' => 'notice'));
 	pdo_delete('article_notice', array('cateid' => $id));
-	message('删除公告分类成功', referer(), 'success', true);
+	itoast('删除公告分类成功', referer(), 'success');
 }
 
 //编辑/添加公告
@@ -75,9 +75,9 @@ if ($do == 'post') {
 		);
 	}
 	if (checksubmit()) {
-		$title = trim($_GPC['title']) ? trim($_GPC['title']) : message('公告标题不能为空', '', 'error', true);
-		$cateid = intval($_GPC['cateid']) ? intval($_GPC['cateid']) : message('公告分类不能为空', '', 'error', true);
-		$content = trim($_GPC['content']) ? trim($_GPC['content']) : message('公告内容不能为空', '', 'error', true);
+		$title = trim($_GPC['title']) ? trim($_GPC['title']) : itoast('公告标题不能为空', '', 'error');
+		$cateid = intval($_GPC['cateid']) ? intval($_GPC['cateid']) : itoast('公告分类不能为空', '', 'error');
+		$content = trim($_GPC['content']) ? trim($_GPC['content']) : itoast('公告内容不能为空', '', 'error');
 		$data = array(
 			'title' => $title,
 			'cateid' => $cateid,
@@ -94,7 +94,7 @@ if ($do == 'post') {
 		} else {
 			pdo_insert('article_notice', $data);
 		}
-		message('编辑公告成功', url('article/notice/list'), 'success', true);
+		itoast('编辑公告成功', url('article/notice/list'), 'success');
 	}
 	$categorys = pdo_fetchall('SELECT * FROM ' . tablename('article_category') . ' WHERE type = :type ORDER BY displayorder DESC', array(':type' => 'notice'));
 	template('article/notice-post');
@@ -144,7 +144,7 @@ if ($do == 'batch_post') {
 				);
 				pdo_update('article_notice', $data, array('id' => intval($v)));
 			}
-			message('编辑公告列表成功', referer(), 'success', true);
+			itoast('编辑公告列表成功', referer(), 'success');
 		}
 	}
 }
@@ -154,5 +154,5 @@ if ($do == 'del') {
 	$id = intval($_GPC['id']);
 	pdo_delete('article_notice', array('id' => $id));
 	pdo_delete('article_unread_notice', array('notice_id' => $id));
-	message('删除公告成功', referer(), 'success', true);
+	itoast('删除公告成功', referer(), 'success');
 }

@@ -52,7 +52,7 @@ if ($do == 'edit') {
 		$type = $_GPC['type'];
 		$id = intval($_GPC['id']);
 		pdo_delete('site_'.$type, array('id' => $id));
-		message('删除成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => $type)), 'success', true);
+		itoast('删除成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => $type)), 'success');
 	}
 	if (checksubmit('submit')) {
 		$slide = $_GPC['slide'];
@@ -64,10 +64,10 @@ if ($do == 'edit') {
 				$slide['uniacid'] = $_GPC['uniacid'];
 				$slide['multiid'] = $multiid;
 				pdo_insert('site_slide', $slide);
-				message('添加幻灯片成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'slide')), 'success', true);
+				itoast('添加幻灯片成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'slide')), 'success');
 			} else {
 				$result = pdo_update('site_slide', $slide, array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid, 'id' => $id));
-				message('更新幻灯片成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'slide')), 'success', true);
+				itoast('更新幻灯片成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'slide')), 'success');
 			}
 		}
 		if (!empty($nav)) {
@@ -76,20 +76,20 @@ if ($do == 'edit') {
 				$nav['multiid'] = $multiid;
 				$nav['status'] = 1;
 				pdo_insert('site_nav', $nav);
-				message('添加导航图标成功', url('wxapp/version/edit', array('wxapp' => 'nav', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'nav')), 'success', true);
+				itoast('添加导航图标成功', url('wxapp/version/edit', array('wxapp' => 'nav', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'nav')), 'success');
 			} else {
 				pdo_update('site_nav', $nav, array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid, 'id' => $id));
-				message('更新导航图标成功', url('wxapp/version/edit', array('wxapp' => 'nav', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'nav')), 'success', true);
+				itoast('更新导航图标成功', url('wxapp/version/edit', array('wxapp' => 'nav', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'nav')), 'success');
 			}
 		}
 		if (!empty($recommend)) {
 			if (empty($id)) {
 				$recommend['uniacid'] = $_GPC['uniacid'];
 				$result = pdo_insert('site_article', $recommend);
-				message('添加推荐图片成功', url('wxapp/version/edit', array('wxapp' => 'recommend', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'recommend')), 'success', true);
+				itoast('添加推荐图片成功', url('wxapp/version/edit', array('wxapp' => 'recommend', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'recommend')), 'success');
 			} else {
 				pdo_update('site_article', $recommend, array('uniacid' => $_GPC['uniacid'], 'id' => $id));
-				message('更新推荐图片成功', url('wxapp/version/edit', array('wxapp' => 'recommend', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'recommend')), 'success', true);
+				itoast('更新推荐图片成功', url('wxapp/version/edit', array('wxapp' => 'recommend', 'multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => 'recommend')), 'success');
 			}
 		}
 	}
@@ -197,7 +197,7 @@ if ($do == 'download') {
 	);
 	$result = wxapp_getpackage($package);
 	if (is_error($result)) {
-		message($result['message'], '', 'error', true);
+		itoast($result['message'], '', 'error');
 	}
 	header('content-type: application/zip');
 	header('content-disposition: attachment; filename="'.$package['name'].'v'.$version_info['version'].'.zip"');

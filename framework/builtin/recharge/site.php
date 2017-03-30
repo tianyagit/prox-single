@@ -21,7 +21,7 @@ class RechargeModuleSite extends WeModuleSite {
 				$backtype = trim($_GPC['backtype']);
 				$back= floatval($_GPC['back']);
 				if (empty($fee) || $fee <= 0) {
-					message('请选择充值金额', referer(), 'error', true);
+					itoast('请选择充值金额', referer(), 'error');
 				}
 				$chargerecord = array(
 					'uid' => $_W['member']['uid'],
@@ -36,7 +36,7 @@ class RechargeModuleSite extends WeModuleSite {
 					'createtime' => TIMESTAMP,
 				);
 				if (!pdo_insert('mc_credits_recharge', $chargerecord)) {
-					message('创建充值订单失败，请重试！', url('entry', array('m' => 'recharge', 'do' => 'pay')), 'error', true);
+					itoast('创建充值订单失败，请重试！', url('entry', array('m' => 'recharge', 'do' => 'pay')), 'error');
 				}
 				$params = array(
 					'tid' => $chargerecord['tid'],
@@ -76,23 +76,23 @@ class RechargeModuleSite extends WeModuleSite {
 		} else {
 			$fee = floatval($_GPC['fee']);
 			if(!$fee) {
-				message('充值金额不能为0', referer(), 'error', true);
+				itoast('充值金额不能为0', referer(), 'error');
 			}
 			if($fee <= 0) {
-				message('请输入充值的金额', referer(), 'error', true);
+				itoast('请输入充值的金额', referer(), 'error');
 			}
 			$setting = pdo_get('mc_card', array('uniacid' => $_W['uniacid'], 'status' => 1));
 			if(empty($setting)) {
-				message('会员卡未开启,请联系商家', referer(), 'error', true);
+				itoast('会员卡未开启,请联系商家', referer(), 'error');
 			}
 			if($type == 'card_nums') {
 				if(!$setting['nums_status']) {
-					message("会员卡未开启{$setting['nums_text']}充值,请联系商家", referer(), 'error', true);
+					itoast("会员卡未开启{$setting['nums_text']}充值,请联系商家", referer(), 'error');
 				}
 				$setting['nums'] = iunserializer($setting['nums']);
 				$num_keys = array_keys($setting['nums']);
 				if (!in_array($fee, $num_keys)) {
-					message('充值金额错误,请联系商家', referer(), 'error', true);
+					itoast('充值金额错误,请联系商家', referer(), 'error');
 				}
 				foreach ($setting['nums'] as $key => $val) {
 					if ($fee == $val['recharge']) {
@@ -107,13 +107,13 @@ class RechargeModuleSite extends WeModuleSite {
 			}
 			if($type == 'card_times') {
 				if(!$setting['times_status']) {
-					message("会员卡未开启{$setting['times_text']}充值,请联系商家", referer(), 'error', true);
+					itoast("会员卡未开启{$setting['times_text']}充值,请联系商家", referer(), 'error');
 				}
 
 				$setting['times'] = iunserializer($setting['times']);
 				$time_keys = array_keys($setting['times']);
 				if (!in_array($fee, $time_keys)) {
-					message('充值金额错误,请联系商家', referer(), 'error', true);
+					itoast('充值金额错误,请联系商家', referer(), 'error');
 				}
 				foreach ($setting['times'] as $key => $val) {
 					if ($fee == $val['recharge']) {
@@ -153,7 +153,7 @@ class RechargeModuleSite extends WeModuleSite {
 					'createtime' => TIMESTAMP,
 				);
 				if (!pdo_insert('mc_credits_recharge', $chargerecord)) {
-					message('创建充值订单失败，请重试！', url('mc/card/mycard'), 'error', true);
+					itoast('创建充值订单失败，请重试！', url('mc/card/mycard'), 'error');
 				}
 			}
 			$types = array(
@@ -198,7 +198,7 @@ class RechargeModuleSite extends WeModuleSite {
 				$recharge_settings = card_params_setting('cardRecharge');
 				$recharge_params = $recharge_settings['params'];
 				if(empty($credit)) {
-					message('站点积分行为参数配置错误,请联系服务商', '', 'error', true);
+					itoast('站点积分行为参数配置错误,请联系服务商', '', 'error');
 				} else {
 					if ($recharge_params['recharge_type'] == '1') {
 						$recharges = $recharge_params['recharges'];
@@ -291,9 +291,9 @@ class RechargeModuleSite extends WeModuleSite {
 		//如果消息是用户直接返回（非通知），则提示一个付款成功
 		if ($params['from'] == 'return') {
 			if ($params['result'] == 'success') {
-				message('支付成功！', $_W['siteroot'] . 'app/' . $url, 'success', true);
+				itoast('支付成功！', $_W['siteroot'] . 'app/' . $url, 'success');
 			} else {
-				message('支付失败！', $_W['siteroot'] . 'app/' . $url, 'error', true);
+				itoast('支付失败！', $_W['siteroot'] . 'app/' . $url, 'error');
 			}
 		}
 	}
@@ -308,11 +308,11 @@ class RechargeModuleSite extends WeModuleSite {
 		$pars[':tid'] = $params['tid'];
 		$log = pdo_fetch($sql, $pars);
 		if(!empty($log) && $log['status'] == '1') {
-			message('这个订单已经支付成功, 不需要重复支付.', '', 'info', true);
+			itoast('这个订单已经支付成功, 不需要重复支付.', '', 'info');
 		}
 		$setting = uni_setting($_W['uniacid'], array('payment', 'creditbehaviors'));
 		if(!is_array($setting['payment'])) {
-			message('没有有效的支付方式, 请联系网站管理员.', '', 'error', true);
+			itoast('没有有效的支付方式, 请联系网站管理员.', '', 'error');
 		}
 		$log = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => $params['module'], 'tid' => $params['tid']));
 		if (empty($log)) {

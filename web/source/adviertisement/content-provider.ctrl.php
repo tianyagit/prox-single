@@ -11,7 +11,7 @@ load()->func('file');
 $flow_master_info = cloud_flow_master_get();
 $flow_uniaccount_list = cloud_flow_uniaccount_list_get();
 if (isset($flow_master_info['site_key']) && $flow_master_info['site_key'] == '0') {
-	message('请注册站点或者重置站点信息', referer(), 'error', true);
+	itoast('请注册站点或者重置站点信息', referer(), 'error');
 }
 $commission_show = false;
 if (!empty($flow_uniaccount_list)) {
@@ -23,7 +23,7 @@ if (!empty($flow_uniaccount_list)) {
 }
 $status = cloud_prepare();
 if (is_error($status)) {
-	message($status['message'], url('cloud/profile'), 'error', true);
+	itoast($status['message'], url('cloud/profile'), 'error');
 }
 if ($do == 'display') {
 	if ($flow_master_info['status'] == 4 || IMS_FAMILY == 'v') {
@@ -34,24 +34,24 @@ if ($do == 'display') {
 
 if ($do == 'register_flow') {
 	if (($flow_master_info['status'] == 4 || IMS_FAMILY == 'v') || $flow_master_info['status'] == 2) {
-		message('权限不足', url('adviertisement/content-provider/account_list'), 'error', true);
+		itoast('权限不足', url('adviertisement/content-provider/account_list'), 'error');
 	}
 	if (checksubmit('submit')) {
 		$linkman = trim($_GPC['linkman']);
 		$mobile = trim($_GPC['mobile']);
 		$address = trim($_GPC['address']);
 		if (empty($linkman)) {
-			message('联系人不能为空', referer(), 'error', true);
+			itoast('联系人不能为空', referer(), 'error');
 		}
 		if (empty($mobile)) {
-			message('电话不能为空', referer(), 'error', true);
+			itoast('电话不能为空', referer(), 'error');
 		} else {
 			if(!preg_match(REGULAR_MOBILE, $mobile)) {
-				message('手机号格式不正确', referer(), 'error', true);
+				itoast('手机号格式不正确', referer(), 'error');
 			}
 		}
 		if (empty($address)) {
-			message('联系地址不能为空', referer(), 'error', true);
+			itoast('联系地址不能为空', referer(), 'error');
 		}
 		if (!empty($_FILES['id_card_photo']['tmp_name'])) {
 			$_W['uploadsetting'] = array();
@@ -61,7 +61,7 @@ if ($do == 'register_flow') {
 			$upload = file_upload($_FILES['id_card_photo'], 'image', "id_card");
 			$id_card_photo = $upload['path'];
 			if(is_error($upload)) {
-				message('身份证保存失败,'.$upload['message'],referer(),'info', true);
+				itoast('身份证保存失败,'.$upload['message'],referer(),'info');
 			}
 		}
 		if (!empty($_FILES['business_licence_photo']['tmp_name'])) {
@@ -72,7 +72,7 @@ if ($do == 'register_flow') {
 			$upload = file_upload($_FILES['business_licence_photo'], 'image', "business_licence");
 			$business_licence_photo = $upload['path'];
 			if(is_error($upload)) {
-				message('营业执照保存失败,'.$upload['message'], referer(), 'info', true);
+				itoast('营业执照保存失败,'.$upload['message'], referer(), 'info');
 			}
 		}
 		if (!empty($flow_master_info['id_card_photo']) && empty($id_card_photo)) {
@@ -90,9 +90,9 @@ if ($do == 'register_flow') {
 		);
 		$result = cloud_flow_master_post($flow_master);
 		if (is_error($result)) {
-			message($result['message'], '', 'error', true);
+			itoast($result['message'], '', 'error');
 		} else {
-			message('提交成功，请等待审核', url('adviertisement/content-provider/display'), 'info', true);
+			itoast('提交成功，请等待审核', url('adviertisement/content-provider/display'), 'info');
 		}
 	}
 }
@@ -164,7 +164,7 @@ if ($do == 'account_list') {
 
 if ($do == 'flow_control') {
 	if (empty($_GPC['uniacid'])) {
-		message('公众号id参数有误，请重新进入', url('adviertisement/content-provider/account_list'), 'error', true);
+		itoast('公众号id参数有误，请重新进入', url('adviertisement/content-provider/account_list'), 'error');
 	}
 	$current_account = uni_fetch($_GPC['uniacid']);
 	load() -> model('account');
@@ -274,7 +274,7 @@ if ($do == 'ad_type_get') {
 
 if ($do == 'finance_info') {
 	if (empty($commission_show)) {
-		message('权限不足', url('adviertisement/content-provider/account_list'), 'error', true);
+		itoast('权限不足', url('adviertisement/content-provider/account_list'), 'error');
 	}
 	$params = array(
 		'size' => '15',

@@ -124,7 +124,7 @@ if ($do == 'homemenu_switch' && $_W['isajax'] && $_W['ispost']) {
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	if (empty($nav_exist)){
 		//本公众号不存在该导航
-		message('-1', 'ajax', 'error', true);
+		iajax(-1, '');
 	} else {
 		$status = $nav_exist['status'] == 1 ? 0 : 1;
 		$nav_update = pdo_update('site_nav', array('status' => $status), array('id' => $id));

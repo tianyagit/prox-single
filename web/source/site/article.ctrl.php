@@ -59,7 +59,7 @@ if ($do == 'display') {
 		$pcate = $item['pcate'];
 		$ccate = $item['ccate'];
 		if (empty($item)) {
-			message('抱歉，文章不存在或是已经删除！', '', 'error', true);
+			itoast('抱歉，文章不存在或是已经删除！', '', 'error');
 		}
 		$key = pdo_fetchall('SELECT content FROM ' . tablename('rule_keyword') . ' WHERE rid = :rid AND uniacid = :uniacid', array(':rid' => $item['rid'], ':uniacid' => $_W['uniacid']));
 		if (!empty($key)) {
@@ -84,7 +84,7 @@ if ($do == 'display') {
 	}
 	if (checksubmit('submit')) {
 		if (empty($_GPC['title'])) {
-			message('标题不能为空，请输入标题！', '', '', true);
+			itoast('标题不能为空，请输入标题！', '', '');
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -150,9 +150,9 @@ if ($do == 'display') {
 		//积分设置
 		if (!empty($_GPC['credit']['status'])) {
 			$credit['status'] = intval($_GPC['credit']['status']);
-			$credit['limit'] = intval($_GPC['credit']['limit']) ? intval($_GPC['credit']['limit']) : message('请设置积分上限', '', '', true);
-			$credit['share'] = intval($_GPC['credit']['share']) ? intval($_GPC['credit']['share']) : message('请设置分享时赠送积分多少', '', '', true);
-			$credit['click'] = intval($_GPC['credit']['click']) ? intval($_GPC['credit']['click']) : message('请设置阅读时赠送积分多少', '', '', true);
+			$credit['limit'] = intval($_GPC['credit']['limit']) ? intval($_GPC['credit']['limit']) : itoast('请设置积分上限', '', '');
+			$credit['share'] = intval($_GPC['credit']['share']) ? intval($_GPC['credit']['share']) : itoast('请设置分享时赠送积分多少', '', '');
+			$credit['click'] = intval($_GPC['credit']['click']) ? intval($_GPC['credit']['click']) : itoast('请设置阅读时赠送积分多少', '', '');
 			$data['credit'] = iserializer($credit);
 		} else {
 			$data['credit'] = iserializer(array('status' => 0, 'limit' => 0, 'share' => 0, 'click' => 0));
@@ -196,7 +196,7 @@ if ($do == 'display') {
 			}
 			pdo_update('site_article', $data, array('id' => $id));
 		}
-		message('文章更新成功！', url('site/article/display'), 'success', true);
+		itoast('文章更新成功！', url('site/article/display'), 'success');
 	} else {
 		template('site/article-post');
 	}
@@ -207,7 +207,7 @@ if ($do == 'display') {
 			$row = pdo_fetch("SELECT id,rid,kid,thumb FROM ".tablename('site_article')." WHERE id = :id", array(':id' => $id));
 			
 			if (empty($row)) {
-				message('抱歉，文章不存在或是已经被删除！', '', '', true);
+				itoast('抱歉，文章不存在或是已经被删除！', '', '');
 			}
 			if (!empty($row['thumb'])) {
 				file_delete($row['thumb']);
@@ -219,13 +219,13 @@ if ($do == 'display') {
 			}
 			pdo_delete('site_article', array('id' => $id));
 		}
-		message('批量删除成功！', referer(), 'success', true);
+		itoast('批量删除成功！', referer(), 'success');
 	} else {
 		$id = intval($_GPC['id']);
 		$row = pdo_fetch("SELECT id,rid,kid,thumb FROM ".tablename('site_article')." WHERE id = :id", array(':id' => $id));
 		
 		if (empty($row)) {
-			message('抱歉，文章不存在或是已经被删除！', '', '', true);
+			itoast('抱歉，文章不存在或是已经被删除！', '', '');
 		}
 		if (!empty($row['thumb'])) {
 			file_delete($row['thumb']);
@@ -236,9 +236,9 @@ if ($do == 'display') {
 			pdo_delete('news_reply', array('rid' => $row['rid']));
 		}
 		if (pdo_delete('site_article', array('id' => $id))){
-			message('删除成功！', referer(), 'success', true);
+			itoast('删除成功！', referer(), 'success');
 		} else {
-			message('删除失败！', referer(), 'error', true);
+			itoast('删除失败！', referer(), 'error');
 		}				
 	}
 }

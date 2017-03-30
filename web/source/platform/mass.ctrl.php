@@ -112,7 +112,7 @@ if ($do == 'post') {
 			if (!empty($corn_ids)) {
 				$status = cron_delete($corn_ids);
 				if(is_error($status)) {
-					message('删除群发错误,请重新提交', referer(), true);
+					itoast('删除群发错误,请重新提交', referer());
 				}
 			}
 			$ids = implode(',', array_keys($records));
@@ -179,9 +179,9 @@ if ($do == 'post') {
 			pdo_update('mc_mass_record', array('cron_id' => $status), array('id' => $insert_id));
 		}
 		if ($cron_status) {
-			message($message, url('platform/mass/send'), 'info', true);
+			itoast($message, url('platform/mass/send'), 'info');
 		}
-		message('群发设置成功', url('platform/mass'), 'success', true);
+		itoast('群发设置成功', url('platform/mass'), 'success');
 	}
 
 	template('platform/mass-post');
@@ -191,7 +191,7 @@ if ($do == 'cron') {
 	$id = intval($_GPC['id']);
 	$record = pdo_get('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if (empty($record)) {
-		message('群发任务不存在或已删除', referer(), 'error', true);
+		itoast('群发任务不存在或已删除', referer(), 'error');
 	}
 	$cron = array(
 		'uniacid' => $_W['uniacid'],
@@ -205,10 +205,10 @@ if ($do == 'cron') {
 	);
 	$status = cron_add($cron);
 	if (is_error($status)) {
-		message($status['message'], referer(), 'error', true);
+		itoast($status['message'], referer(), 'error');
 	}
 	pdo_update('mc_mass_record', array('cron_id' => $status), array('uniacid' => $_W['uniacid'], 'id' => $id));
-	message('同步到云服务成功', referer(), 'success', true);
+	itoast('同步到云服务成功', referer(), 'success');
 }
 
 if ($do == 'preview') {

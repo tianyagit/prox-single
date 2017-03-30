@@ -17,7 +17,7 @@ if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
 	$role = uni_permission($_W['uid'], $uniacid);
 	if(empty($role)) {
-		message('操作失败, 非法访问.', '', 'error', true);
+		itoast('操作失败, 非法访问.', '', 'error');
 	}
 	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
 	$cache_lastaccount = cache_load($cache_key);

@@ -78,10 +78,10 @@ if ($do == 'addnews') {
 			if (!$is_save_location) {
 				$news_info['content'] = material_parse_content($news_info['content']);
 				if (is_error($news_info['content'])) {
-					message($news_info['content'], '', 'ajax', true);
+					iajax(0, $news_info['content']);
 				}
 				if (empty($news_info['thumb_media_id'])) {
-					iajax(1, '请将封面图片换成微信图片素材后再上传。', '');
+					iajax(1, '请将封面图片换成微信图片素材后再上传。');
 				}
 			}
 			$post_data = array(

@@ -28,7 +28,7 @@ if ($do  == 'set') {
 		iajax(1, $error, '');
 	} else {
 		uni_setting_save('tplnotice', $tpl_list);
-		message(error(0), '', 'ajax', true);
+		iajax(0, '');
 	}
 }
 

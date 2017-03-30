@@ -104,7 +104,7 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	exit;
 }
 
-function iajax($code, $message, $redirect = '') {
+function iajax($code = 0, $message = '', $redirect = '') {
 	message(error($code, $message), $redirect, 'ajax', false);
 }
 
@@ -121,9 +121,9 @@ function checklogin() {
 	global $_W;
 	if (empty($_W['uid'])) {
 		if (!empty($_W['setting']['copyright']['showhomepage'])) {
-			message('', url('account/welcome'), 'warning', true);
+			itoast('', url('account/welcome'), 'warning');
 		} else {
-			message('', url('user/login'), 'warning', true);
+			itoast('', url('user/login'), 'warning');
 		}
 	}
 	return true;
@@ -135,7 +135,7 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		message('', url('account/display'), 'info', true);
+		itoast('', url('account/display'), 'info');
 	}
 }
 

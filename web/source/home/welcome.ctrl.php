@@ -16,7 +16,7 @@ if ($do == 'platform') {
 	define('FRAME', 'account');
 
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
-		message('公众号已到服务期限，请续费', referer(), 'info', true);
+		itoast('公众号已到服务期限，请续费', referer(), 'info');
 	}
 	//公告
 	$notices = pdo_getall('article_notice', array('is_display' => 1), array('id', 'title', 'createtime'), '', 'createtime DESC', array(1,5));

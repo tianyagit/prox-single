@@ -68,7 +68,7 @@ if ($do == 'send') {
 	$account_api = WeAccount::create($_W['acid']);
 	$result = $account_api->sendCustomNotice($send);
 	if (is_error($result)) {
-		message($result, '', 'ajax', true);
+		itoast($result, '', 'ajax');
 	} else {
 		//生成上下文
 		$account = account_fetch($_W['acid']);
@@ -117,7 +117,7 @@ if ($do == 'endchats') {
 		$processor->end();
 	}
 	if (is_error($result)) {
-		message($result, '', 'ajax', true);
+		itoast($result, '', 'ajax');
 	}
 }
 template('mc/chats');

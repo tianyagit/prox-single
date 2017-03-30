@@ -13,7 +13,7 @@ load()->classs('weixin.platform');
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
-	message('请选择要编辑的公众号', url('account/manager'), 'error', true);
+	itoast('请选择要编辑的公众号', url('account/manager'), 'error');
 }
 $state = uni_permission($_W['uid'], $uniacid);
 
@@ -23,7 +23,7 @@ if ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER
 } elseif ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
 	$do = in_array($do, $dos) ? $do : 'modules_tpl';
 } else {
-	message('您是该公众号的操作员，无权限操作！', url('account/manager'), 'error', true);
+	itoast('您是该公众号的操作员，无权限操作！', url('account/manager'), 'error');
 }
 
 $_W['page']['title'] = '管理设置 - 微信' . ACCOUNT_TYPE_NAME . '管理';
@@ -33,7 +33,7 @@ $account = account_fetch($acid);
 
 if($do == 'base') {
 	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error', true);
+		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
 
 	if($_W['ispost'] && $_W['isajax']) {
@@ -163,7 +163,7 @@ if($do == 'base') {
 
 if($do == 'sms') {
 	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-		message('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error', true);
+		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
 	$settings = uni_setting($uniacid, array('notify'));
 	$notify = $settings['notify'] ? $settings['notify'] : array();

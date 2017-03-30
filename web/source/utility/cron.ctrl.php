@@ -21,5 +21,5 @@ if($do == 'log') {
 		}
 		unset($da);
 	}
-	message(array('items' => $data), '', 'ajax', true);
+	iajax(0, array('items' => $data));
 }

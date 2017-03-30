@@ -150,7 +150,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 if ($do == 'base') {
 	$user = user_single($_W['uid']);
 	if (empty($user)) {
-		message('抱歉，用户不存在或是已经被删除！', url('user/profile'), 'error', true);
+		itoast('抱歉，用户不存在或是已经被删除！', url('user/profile'), 'error');
 	}
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));

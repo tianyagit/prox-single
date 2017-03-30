@@ -53,9 +53,9 @@ if ($do == 'uc_setting') {
 		}
 		$uc = iserializer($uc);
 		if(uni_setting_save('uc', $uc)){
-			message('设置UC参数成功！', referer(), 'success', true);
+			itoast('设置UC参数成功！', referer(), 'success');
 		}else {
-			message('设置UC参数失败，请核对内容重新提交！', referer(), 'error', true);
+			itoast('设置UC参数失败，请核对内容重新提交！', referer(), 'error');
 		}
 	}
 }
@@ -63,15 +63,15 @@ if ($do == 'uc_setting') {
 if ($do == 'upload_file') {
 	if (checksubmit('submit')) {
 		if (empty($_FILES['file']['tmp_name'])) {
-			message('请选择文件', url('profile/common/upload_file'), 'error', true);
+			itoast('请选择文件', url('profile/common/upload_file'), 'error');
 		}
 		$file = file_get_contents($_FILES['file']['tmp_name']);
 		$file_name = 'MP_verify_'. $file. ".txt";
 		if ($file_name != $_FILES['file']['name'] || !preg_match("/^[A-Za-z0-9]+$/", $file)) {
-			message('上传文件不合法,请重新上传', url('profile/common/upload_file'), 'error', true);
+			itoast('上传文件不合法,请重新上传', url('profile/common/upload_file'), 'error');
 		}
 		file_put_contents(IA_ROOT. "/". $_FILES['file']['name'], $file);
-		message('上传成功', url('profile/common/upload_file'), 'success', true);
+		itoast('上传成功', url('profile/common/upload_file'), 'success');
 	}
 }
 

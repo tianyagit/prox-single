@@ -105,7 +105,7 @@ if ($do == 'upgrade') {
 	//判断模块相关配置和文件是否合法
 	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
 	if (empty($module_exist)) {
-		message('模块已经被卸载或是不存在！', '', 'error', true);
+		itoast('模块已经被卸载或是不存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
 	// 应用商城下载的模块远程获取XML文件

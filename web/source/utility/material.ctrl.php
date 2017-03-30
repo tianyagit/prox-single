@@ -39,4 +39,4 @@ $result = array(
 	'items' => $material_list,
 	'pager' => pagination($total, $pageindex, $pagesize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
 );
-message($result, '', 'ajax', true);
+iajax(0, $result);

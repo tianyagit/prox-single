@@ -10,10 +10,10 @@ $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 //只有创始人、主管理员、管理员才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('无权限操作！', referer(), 'error', true);
+	itoast('无权限操作！', referer(), 'error');
 }
 if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('您只有查看权限！', url('system/module-group'), 'error', true);
+	itoast('您只有查看权限！', url('system/module-group'), 'error');
 }
 
 if ($do == 'save') {
@@ -116,7 +116,7 @@ if ($do == 'delete') {
 		pdo_delete('uni_group', array('id' => $id));
 		cache_build_account_modules();
 	}
-	message('删除成功！', referer(), 'success', true);
+	itoast('删除成功！', referer(), 'success');
 }
 
 if ($do == 'post') {

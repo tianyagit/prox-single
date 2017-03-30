@@ -125,7 +125,7 @@ if ($do == 'del_material') {
 		}
 		pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	}
-	message($result, '', 'ajax', true);
+	iajax(0, $result);
 }
 
 if ($do == 'sync') {

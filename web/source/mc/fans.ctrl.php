@@ -122,9 +122,9 @@ if ($do == 'add_tag') {
 	$account_api = WeAccount::create();
 	$result = $account_api->fansTagAdd($tag_name);
 	if (is_error($result)) {
-		message($result, '', 'ajax', true);
+		iajax(1, $result);
 	} else {
-		message(error(0), '', 'ajax', true);
+		iajax(0, '');
 	}
 }
 
@@ -174,9 +174,9 @@ if ($do == 'edit_tagname') {
 	$account_api = WeAccount::create();
 	$result = $account_api->fansTagEdit($tag, $tag_name);
 	if (is_error($result)) {
-		message($result, '', 'ajax', true);
+		iajax(1, $result);
 	} else {
-		message(error('0'), '', 'ajax', true);
+		iajax(0, '');
 	}
 }
 
@@ -200,7 +200,7 @@ if ($do == 'edit_fans_tag') {
 			cache_build_fansinfo($openid);
 		}
 	}
-	message($result, '', 'ajax', true);
+	iajax(0, $result);
 }
 
 if ($do == 'batch_edit_fans_tag') {
@@ -225,10 +225,10 @@ if ($do == 'batch_edit_fans_tag') {
 				cache_build_fansinfo($openid);
 			}
 		} else {
-			message($result, '', 'ajax', true);
+			iajax(0, $result);
 		}
 	}
-	message(error(0), '', 'ajax', true);
+	iajax(0, '');
 }
 
 if ($do == 'download_fans') {
@@ -269,7 +269,7 @@ if ($do == 'download_fans') {
 		$return['next'] = $wechat_fans_list['next'];
 		iajax(0, $return, '');
 	} else {
-		message($wechat_fans_list, '', 'ajax', true);
+		iajax(1, $wechat_fans_list);
 	}
 }
 
@@ -308,7 +308,7 @@ if ($do == 'fans_sync_set') {
 	$operate = $_GPC['operate'];
 	if ($operate == 'save_setting') {
 		uni_setting_save('sync', intval($_GPC['setting']));
-		message(error(0), '', 'ajax', true);
+		iajax(0, '');
 	}
 	$setting = uni_setting($_W['uniacid'], array('sync'));
 	$sync_setting = $setting['sync'];

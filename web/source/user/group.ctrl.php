@@ -21,7 +21,7 @@ if ($do == 'display') {
 		if (!empty($_GPC['delete'])) {
 			pdo_query("DELETE FROM ".tablename('users_group')." WHERE id IN ('".implode("','", $_GPC['delete'])."')");
 		}
-		message('用户组更新成功！', referer(), 'success', true);
+		itoast('用户组更新成功！', referer(), 'success');
 	}
 	$module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system','issystem' => 1));
 	$lists = pdo_fetchall("SELECT * FROM " . tablename('users_group').$condition, $params);
@@ -76,7 +76,7 @@ if ($do == 'post') {
 	unset($package_val);
 	if (checksubmit('submit')) {
 		if (empty($_GPC['name'])) {
-			message('请输入用户组名称！', '', '', true);
+			itoast('请输入用户组名称！', '', '');
 		}
 		if (!empty($_GPC['package'])) {
 			foreach ($_GPC['package'] as $value) {
@@ -95,7 +95,7 @@ if ($do == 'post') {
 		} else {
 			pdo_update('users_group', $data, array('id' => $id));
 		}
-		message('用户组更新成功！', url('user/group/display'), 'success', true);
+		itoast('用户组更新成功！', url('user/group/display'), 'success');
 	}
 	template('user/group-post');
 }
@@ -105,9 +105,9 @@ if ($do == 'del') {
 	$id = intval($_GPC['id']);
 	$result = pdo_delete('users_group', array('id' => $id));
 	if(!empty($result)){
-		message('删除成功！', url('user/group/display'), 'success', true);
+		itoast('删除成功！', url('user/group/display'), 'success');
 	}else {
-		message('删除失败！请稍候重试！', url('user/group'), 'error', true);
+		itoast('删除失败！请稍候重试！', url('user/group'), 'error');
 	}
 	exit;
 }

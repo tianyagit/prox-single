@@ -14,12 +14,12 @@ $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 $_W['page']['title'] = '管理设置 - 微信' . ACCOUNT_TYPE_NAME . '管理';
 if (empty($uniacid) || empty($acid)) {
-	message('请选择要编辑的公众号', referer(), 'error', true);
+	itoast('请选择要编辑的公众号', referer(), 'error');
 }
 $state = uni_permission($_W['uid'], $uniacid);
 //只有创始人、主管理员、管理员才有权限
 if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
-	message('无权限操作！', referer(), 'error', true);
+	itoast('无权限操作！', referer(), 'error');
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
@@ -44,7 +44,7 @@ if ($do == 'edit') {
 } elseif ($do == 'delete') {
 	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	if (empty($uid)) {
-		message('请选择要删除的用户！', referer(), 'error', true);
+		itoast('请选择要删除的用户！', referer(), 'error');
 	}
 	$data = array(
 		'uniacid' => $uniacid,
@@ -53,16 +53,16 @@ if ($do == 'edit') {
 	$exists = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
 	if (!empty($exists)) {
 		if ($state == ACCOUNT_MANAGE_NAME_MANAGER && ($exists['role'] == ACCOUNT_MANAGE_NAME_OWNER || $exists['role'] == ACCOUNT_MANAGE_NAME_MANAGER)) {
-			message('管理员不可操作其他管理员', referer(), 'error', true);
+			itoast('管理员不可操作其他管理员', referer(), 'error');
 		}
 		$result = pdo_delete('uni_account_users', $data);
 		if ($result) {
-			message('删除成功！', referer(), 'success', true);
+			itoast('删除成功！', referer(), 'success');
 		} else {
-			message('删除失败，请重试！', referer(), 'error', true);
+			itoast('删除失败，请重试！', referer(), 'error');
 		}
 	} else {
-		message('该公众号下不存在该用户！', referer(), 'error', true);
+		itoast('该公众号下不存在该用户！', referer(), 'error');
 	}
 } elseif ($do == 'set_manager') {
 	$username = trim($_GPC['username']);
@@ -76,7 +76,7 @@ if ($do == 'edit') {
 		}
 		//添加/修改公众号操作员、管理员、主管理员时执行数量判断
 		if (is_error($permission = uni_create_permission($user['uid'], ACCOUNT_TYPE))) {
-			message(error(5, $permission['message']), '', 'error', true);
+			itoast(error(5, $permission['message']), '', 'error');
 		}
 
 		$addtype = intval($_GPC['addtype']);
@@ -134,11 +134,11 @@ if ($do == 'edit') {
 	$uid = intval($_GPC['uid']);
 	$user = user_single(array('uid' => $uid));
 	if (empty($user)) {
-		message('您操作的用户不存在或是已经被删除！', '', '', true);
+		itoast('您操作的用户不存在或是已经被删除！', '', '');
 	}
 	$role = uni_permission($_W['uid'], $uniacid);
 	if (empty($role)) {
-		message('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！', '', '', true);
+		itoast('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！', '', '');
 	}
 	
 	//获取系统权限
@@ -222,7 +222,7 @@ if ($do == 'edit') {
 				}
 			}
 		}
-		message('操作菜单权限成功！', referer(), 'success', true);
+		itoast('操作菜单权限成功！', referer(), 'success');
 	}
 	template('account/set-permission');
 } elseif($do == 'module' && $_W['isajax']) {

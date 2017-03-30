@@ -11,7 +11,7 @@ setting_load('platform');
 
 //只有创始人才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('无权限操作！', url('account/manage'), 'error', true);
+	itoast('无权限操作！', url('account/manage'), 'error');
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
 $_W['page']['title'] = '开放平台设置';
@@ -50,7 +50,7 @@ if(empty($_W['setting']['platform'])) {
 }
 $url = parse_url($_W['siteroot']);
 if (!function_exists('mcrypt_module_open')) {
-	message('抱歉，您的系统不支持加解密 mcrypt 模块，无法进行平台接入', '', '', true);
+	itoast('抱歉，您的系统不支持加解密 mcrypt 模块，无法进行平台接入', '', '');
 }
 $account_platform = new WeiXinPlatform();
 $authurl = $account_platform->getAuthLoginUrl();
