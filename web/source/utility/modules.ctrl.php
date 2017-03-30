@@ -24,7 +24,7 @@ if ($do == 'check_receive') {
 		);
 		if(method_exists($module_obj, 'receive')) {
 			$module_obj->receive();
-			return itoast(error(0), '', 'ajax');
+			return iajax(0, '');
 		}
 	}
 	return iajax(1, '');

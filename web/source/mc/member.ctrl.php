@@ -23,7 +23,7 @@ if ($do == 'save_tactics_setting') {
 if ($do == 'save_credit_setting') {
 	$credit_setting = $_GPC['credit_setting'];
 	if (empty($credit_setting)) {
-		itoast(error(1), '', 'ajax');
+		iajax(1, '');
 	}
 	uni_setting_save('creditnames', $credit_setting);
 	iajax(0, '');

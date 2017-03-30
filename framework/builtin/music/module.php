@@ -126,7 +126,7 @@ class MusicModule extends WeModule {
 		$result = array();
 		$upload = file_upload($file, 'music');
 		if (is_error($upload)) {
-			itoast($upload['message'], '', 'ajax');
+			iajax(1, $upload['message']);
 		}
 		$result['url'] = $upload['url'];
 		$result['error'] = 0;

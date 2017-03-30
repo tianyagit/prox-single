@@ -325,7 +325,7 @@ if ($do == 'qiniu') {
 	$filename = 'MicroEngine.ico';
 	$response = ihttp_request($url. '/'.$filename, array(), array('CURLOPT_REFERER' => $_SERVER['SERVER_NAME']));
 	if (is_error($response)) {
-		itoast(error(-1, '配置失败，七牛访问url错误'),'','ajax');
+		iajax(-1, '配置失败，七牛访问url错误');
 	}
 	if (intval($response['code']) != 200) {
 		iajax(-1, '配置失败，七牛访问url错误,请保证bucket为公共读取的');
