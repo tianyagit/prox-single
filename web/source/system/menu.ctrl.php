@@ -19,10 +19,14 @@ if(empty($system_menu)) {
 $system_menu_permission = array();
 if (!empty($system_menu)) {
 	foreach ($system_menu as $menu_name => $menu) {
-		foreach ($menu['section'] as $section_name => $section) {
-			foreach ($section['menu']  as $permission_name => $sub_menu) {
-				if ($sub_menu['is_system']) {
-					$system_menu_permission[] = $sub_menu['permission_name'];
+		if (!empty($menu['section'])) {
+			foreach ($menu['section'] as $section_name => $section) {
+				if (!empty($section['menu'])) {
+					foreach ($section['menu']  as $permission_name => $sub_menu) {
+						if ($sub_menu['is_system']) {
+							$system_menu_permission[] = $sub_menu['permission_name'];
+						}
+					}
 				}
 			}
 		}
