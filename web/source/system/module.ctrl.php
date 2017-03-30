@@ -10,6 +10,7 @@ load()->model('extension');
 load()->model('cloud');
 load()->model('cache');
 load()->model('module');
+load()->model('user');
 load()->model('account');
 load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
@@ -284,6 +285,15 @@ if ($do =='install') {
 	}
 	$module['app_support'] = empty($module['supports']) || in_array('app', $module['supports']) ? 2 : 1;
 	$module['wxapp_support'] = in_array('wxapp', $module['supports']) ? 2 : 1;
+	if (in_array('plugin', $module['supports'])) {
+		$module['plugin'] = implode(',', $module['plugin']);
+	}
+	if (!empty($module['main_module'])) {
+		$main_module_exist = module_fetch($module['main_module']);
+		if (empty($main_module_exist)) {
+			message('请先安装此插件的主模块后再安装插件', url('system/module/not_installed'), 'error');
+		}
+	}
 	$post_groups = $_GPC['group'];
 	ext_module_clean($module_name);
 	$bindings = array_elements(array_keys($points), $module, false);
@@ -483,58 +493,45 @@ if ($do == 'module_detail') {
 }
 
 if ($do == 'uninstall') {
-	if (empty($_W['isfounder'])) {
-		message('您没有卸载模块的权限', '', 'error');
-	}
 	$name = trim($_GPC['name']);
+	$message = '';
 	$module = module_fetch($name);
-	if (empty($module)) {
-		message('模块已经被卸载或是不存在！', '', 'error');
-	}
-	if (!empty($module['issystem'])) {
-		message('系统模块不能卸载！', '', 'error');
-	}
-	if ($module['isrulefields'] && !isset($_GPC['confirm'])) {
-		message('卸载模块时同时删除规则数据吗, 删除规则数据将同时删除相关规则的统计分析数据？<div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/uninstall', array('name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('system/module/uninstall', array('account_type' => ACCOUNT_TYPE, 'name' => $name, 'confirm' => 0)) . '">否</a></div>', '', 'tips');
-	} else {
-		$modulepath = IA_ROOT . '/addons/' . $name . '/';
-		$manifest = ext_module_manifest($module['name']);
-		if (empty($manifest)) {
-			$r = cloud_prepare();
-			if (is_error($r)) {
-				message($r['message'], url('cloud/profile'), 'error');
+	if (!empty($module['plugin'])) {
+		$plugin_list = module_get_plugin_list($module['name']);
+		if (!empty($plugin_list) && is_array($plugin_list)) {
+			$message .= '删除' . $module['title'] . '并删除' . $module['title'] .  '包含插件<ul>';
+			foreach ($plugin_list as $plugin) {
+				$message .= "<li>{$plugin['title']}</li>";
 			}
-			$packet = cloud_m_build($module['name'], $do);
-			if ($packet['sql']) {
-				pdo_run(base64_decode($packet['sql']));
-			} elseif ($packet['script']) {
-				$uninstall_file = $modulepath . TIMESTAMP . '.php';
-				file_put_contents($uninstall_file, base64_decode($packet['script']));
-				require($uninstall_file);
-				unlink($uninstall_file);
-			}
-		} elseif (!empty($manifest['uninstall'])) {
-			if (strexists($manifest['uninstall'], '.php')) {
-				if (file_exists($modulepath . $manifest['uninstall'])) {
-					require($modulepath . $manifest['uninstall']);
-				}
-			} else {
-				pdo_run($manifest['uninstall']);
-			}
+			unset($plugin);
+			$message .= '</ul>';
 		}
-		pdo_insert('modules_recycle', array('modulename' => $module['name']));
-		ext_module_clean($name, $_GPC['confirm'] == '1');
-		cache_build_account_modules();
-		cache_build_module_subscribe_type();
-		cache_build_uninstalled_module();
-
-		message('模块已放入回收站！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 	}
+	if (!isset($_GPC['confirm'])) {
+		if ($module['isrulefields']) {
+			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/uninstall', array('name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('system/module/uninstall', array('account_type' => ACCOUNT_TYPE, 'name' => $name, 'confirm' => 0)) . '">否</a></div>';
+		} elseif (!empty($plugin_list)) {
+			$message .= "<a href=" . url('system/module/uninstall', array('name' => $name,'confirm' => 0)) . " class='btn btn-info'>继续删除</a>";
+		}
+		if (!empty($message)) {
+			message($message, '', 'tips');
+		}
+	}
+	if (!empty($plugin_list) && is_array($plugin_list)) {
+		foreach ($plugin_list as $plugin) {
+			module_uninstall($plugin['name']);
+		}
+	}
+	$uninstall_result = module_uninstall($module['name'], $_GPC['confirm'] == 1);
+	if (is_error($uninstall_result)) {
+		message($uninstall_result['message'], url('system/module'), 'error');
+	}
+	message('模块已放入回收站！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	$uninstalled_module = @module_get_all_unistalled('uninstalled');
+	$uninstalled_module = module_get_all_unistalled('uninstalled');
 	$total_uninstalled = $uninstalled_module['module_count'];
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
@@ -542,7 +539,7 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 
-	$module_list = uni_modules();
+	$module_list = user_modules();
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
 			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] == 1) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] == 1)) {
