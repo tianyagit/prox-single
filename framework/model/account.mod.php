@@ -289,11 +289,7 @@ function uni_groups($groupids = array()) {
 					$row['modules'] = array();
 					if (!empty($module_list)) {
 						foreach ($module_list as $key => &$module) {
-							if (file_exists(IA_ROOT.'/addons/' . $module['name'] . '/icon-custom.jpg')) {
-								$module['logo'] = tomedia(IA_ROOT.'/addons/' . $module['name'] . '/icon-custom.jpg');
-							} else {
-								$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
-							}
+							$module = module_parse_info($module);
 							if ($module['wxapp_support'] == 2) {
 								$row['wxapp'][$module['name']] = $module;
 							}
