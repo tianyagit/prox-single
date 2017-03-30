@@ -436,7 +436,7 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	if (empty($manifest)) {
 		$r = cloud_prepare();
 		if (is_error($r)) {
-			message($r['message'], url('cloud/profile'), 'error');
+			itoast($r['message'], url('cloud/profile'), 'error');
 		}
 		$packet = cloud_m_build($module_name, 'uninstall');
 		if ($packet['sql']) {

@@ -20,7 +20,7 @@ $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('无权限操作！', referer(), 'error');
+	itoast('无权限操作！', referer(), 'error');
 }
 
 if ($do == 'get_upgrade_info') {
@@ -52,7 +52,7 @@ if ($do == 'check_upgrade') {
 	if (!empty($module_list) && is_array($module_list)) {
 		$module_list = pdo_getall('modules', array('name' => $module_list));
 	} else {
-		message(error(0), '', 'ajax');
+		iajax(0, '');
 	}
 
 	$cloud_prepare_result = cloud_prepare();
@@ -112,11 +112,11 @@ if ($do == 'upgrade') {
 	if (empty($manifest)) {
 		$cloud_prepare = cloud_prepare();
 		if (is_error($cloud_prepare)) {
-			message($cloud_prepare['message'], '', 'ajax');
+			iajax(1, $cloud_prepare['message']);
 		}
 		$module_info = cloud_m_upgradeinfo($module_name);
 		if (is_error($module_info)) {
-			message($module_info, '', 'ajax');
+			iajax(1, $module_info);
 		}
 		if (!empty($_GPC['flag'])) {
 			define('ONLINE_MODULE', true);
@@ -125,15 +125,15 @@ if ($do == 'upgrade') {
 		}
 	}
 	if (empty($manifest)) {
-		message('模块安装配置文件不存在或是格式不正确！', '', 'error');
+		itoast('模块安装配置文件不存在或是格式不正确！', '', 'error');
 	}
 	$check_manifest_result = manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
-		message($check_manifest_result['message'], '', 'error');
+		itoast($check_manifest_result['message'], '', 'error');
 	}
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
 	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
-		message('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
+		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 
 	//处理模块菜单
@@ -228,7 +228,7 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	message('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
+	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do =='install') {
@@ -236,21 +236,21 @@ if ($do =='install') {
 	$module_name = trim($_GPC['module_name']);
 	$is_recycle_module = pdo_get('modules_recycle', array('modulename' => $module_name));
 	if (empty($_W['isfounder'])) {
-		message('您没有安装模块的权限', '', 'error');
+		itoast('您没有安装模块的权限', '', 'error');
 	}
 	if (module_fetch($module_name)) {
-		message('模块已经安装或是唯一标识已存在！', '', 'error');
+		itoast('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
 	if (!empty($manifest)) {
 		$result = cloud_m_prepare($module_name);
 		if (is_error($result)) {
-			message($result['message'], url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
+			itoast($result['message'], url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 	} else {
 		$result = cloud_prepare();
 		if (is_error($result)) {
-			message($result['message'], url('cloud/profile'), 'error');
+			itoast($result['message'], url('cloud/profile'), 'error');
 		}
 		$module_info = cloud_m_info($module_name);
 		if (!is_error($module_info)) {
@@ -263,19 +263,19 @@ if ($do =='install') {
 				$manifest = ext_module_manifest_parse($packet['manifest']);
 			}
 		} else {
-			message($module_info['message'], '', 'error');
+			itoast($module_info['message'], '', 'error');
 		}
 	}
 	if (empty($manifest)) {
-		message('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
+		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
 	}
 	$check_manifest_result = manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
-		message($check_manifest_result['message'], '', 'error');
+		itoast($check_manifest_result['message'], '', 'error');
 	}
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
 	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
-		message('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
+		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 	$module = ext_module_convert($manifest);
 	$module_group = uni_groups();
@@ -291,7 +291,7 @@ if ($do =='install') {
 	if (!empty($module['main_module'])) {
 		$main_module_exist = module_fetch($module['main_module']);
 		if (empty($main_module_exist)) {
-			message('请先安装此插件的主模块后再安装插件', url('system/module/not_installed'), 'error');
+			itoast('请先安装此插件的主模块后再安装插件', url('system/module/not_installed'), 'error');
 		}
 	}
 	$post_groups = $_GPC['group'];
@@ -366,12 +366,12 @@ if ($do =='install') {
 		cache_build_uninstalled_module();
 
 		if (empty($module_subscribe_success)) {
-			message('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
+			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
 		} else {
-			message('模块安装成功!', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
+			itoast('模块安装成功!', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 		}
 	} else {
-		message('模块安装失败, 请联系模块开发者！');
+		itoast('模块安装失败, 请联系模块开发者！');
 	}
 }
 
@@ -391,7 +391,7 @@ if ($do == 'change_receive_ban') {
 	}
 	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
 	cache_build_module_subscribe_type();
-	message(error(0), '', 'ajax');
+	iajax(0, '');
 }
 
 if ($do == 'save_module_info') {
@@ -411,7 +411,7 @@ if ($do == 'save_module_info') {
 		'description' => $module_info['description'],
 	);
 	$result =  pdo_update('modules', $data, array('mid' => $module_info['mid']));
-	message(error(0), '', 'ajax');
+	iajax(0, '');
 }
 
 if ($do == 'get_module_info') {
@@ -514,7 +514,7 @@ if ($do == 'uninstall') {
 			$message .= "<a href=" . url('system/module/uninstall', array('name' => $name,'confirm' => 0)) . " class='btn btn-info'>继续删除</a>";
 		}
 		if (!empty($message)) {
-			message($message, '', 'tips');
+			itoast($message, '', 'tips');
 		}
 	}
 	if (!empty($plugin_list) && is_array($plugin_list)) {
@@ -524,9 +524,9 @@ if ($do == 'uninstall') {
 	}
 	$uninstall_result = module_uninstall($module['name'], $_GPC['confirm'] == 1);
 	if (is_error($uninstall_result)) {
-		message($uninstall_result['message'], url('system/module'), 'error');
+		itoast($uninstall_result['message'], url('system/module'), 'error');
 	}
-	message('模块已放入回收站！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
+	itoast('模块已放入回收站！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do == 'installed') {
@@ -563,7 +563,7 @@ if ($do == 'installed') {
 
 if ($do == 'not_installed') {
 	if (empty($_W['isfounder'])) {
-		message('非法访问！', referer(), 'info');
+		itoast('非法访问！', referer(), 'info');
 	}
 	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
 

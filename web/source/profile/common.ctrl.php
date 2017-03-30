@@ -25,17 +25,17 @@ if ($do == 'uc_setting') {
 		$uc['status'] = intval($_GPC['status']);
 		$uc['connect'] = trim($_GPC['connect']);
 		if($uc['status'] == '1' && in_array($uc['connect'], array('mysql','http'))) {
-			$uc['title'] = empty($_GPC['title']) ? message('请填写正确的站点名称！', referer(), 'error', true) : trim($_GPC['title']);
-			$uc['appid'] = empty($_GPC['appid']) ? message('请填写正确的应用id！', referer(), 'error', true) : intval($_GPC['appid']);
-			$uc['key'] = empty($_GPC['key']) ? message('请填写与UCenter的通信密钥！', referer(), 'error', true) : trim($_GPC['key']);
-			$uc['charset'] = empty($_GPC['charset']) ? message('请填写UCenter的字符集！', referer(), 'error', true) : trim($_GPC['charset']);
+			$uc['title'] = empty($_GPC['title']) ? itoast('请填写正确的站点名称！', referer(), 'error') : trim($_GPC['title']);
+			$uc['appid'] = empty($_GPC['appid']) ? itoast('请填写正确的应用id！', referer(), 'error') : intval($_GPC['appid']);
+			$uc['key'] = empty($_GPC['key']) ? itoast('请填写与UCenter的通信密钥！', referer(), 'error') : trim($_GPC['key']);
+			$uc['charset'] = empty($_GPC['charset']) ? itoast('请填写UCenter的字符集！', referer(), 'error') : trim($_GPC['charset']);
 			if($uc['connect'] == 'mysql') {
-				$uc['dbhost'] = empty($_GPC['dbhost']) ? message('请填写UCenter数据库主机地址！', referer(), 'error', true) : trim($_GPC['dbhost']);
-				$uc['dbuser'] = empty($_GPC['dbuser']) ? message('请填写UCenter数据库用户名！', referer(), 'error', true) : trim($_GPC['dbuser']);
-				$uc['dbpw'] = empty($_GPC['dbpw']) ? message('请填写UCenter数据库密码！', referer(), 'error', true) : trim($_GPC['dbpw']);
-				$uc['dbname'] = empty($_GPC['dbname']) ? message('请填写UCenter数据库名称！', referer(), 'error', true) : trim($_GPC['dbname']);
-				$uc['dbcharset'] = empty($_GPC['dbcharset']) ? message('请填写UCenter数据库字符集！', referer(), 'error', true) : trim($_GPC['dbcharset']);
-				$uc['dbtablepre'] = empty($_GPC['dbtablepre']) ? message('请填写UCenter数据表前缀！', referer(), 'error', true) : trim($_GPC['dbtablepre']);
+				$uc['dbhost'] = empty($_GPC['dbhost']) ? itoast('请填写UCenter数据库主机地址！', referer(), 'error') : trim($_GPC['dbhost']);
+				$uc['dbuser'] = empty($_GPC['dbuser']) ? itoast('请填写UCenter数据库用户名！', referer(), 'error') : trim($_GPC['dbuser']);
+				$uc['dbpw'] = empty($_GPC['dbpw']) ? itoast('请填写UCenter数据库密码！', referer(), 'error') : trim($_GPC['dbpw']);
+				$uc['dbname'] = empty($_GPC['dbname']) ? itoast('请填写UCenter数据库名称！', referer(), 'error') : trim($_GPC['dbname']);
+				$uc['dbcharset'] = empty($_GPC['dbcharset']) ? itoast('请填写UCenter数据库字符集！', referer(), 'error') : trim($_GPC['dbcharset']);
+				$uc['dbtablepre'] = empty($_GPC['dbtablepre']) ? itoast('请填写UCenter数据表前缀！', referer(), 'error') : trim($_GPC['dbtablepre']);
 				$uc['dbconnect'] = intval($_GPC['dbconnect']);
 				$uc['api'] = trim($_GPC['api']);
 				$uc['ip'] = trim($_GPC['ip']);
@@ -47,8 +47,8 @@ if ($do == 'uc_setting') {
 				$uc['dbcharset'] = trim($_GPC['dbcharset']);
 				$uc['dbtablepre'] = trim($_GPC['dbtablepre']);
 				$uc['dbconnect'] = intval($_GPC['dbconnect']);
-				$uc['api'] = empty($_GPC['api']) ? message('请填写UCenter 服务端的URL地址！', referer(), 'error', true) : trim($_GPC['api']);
-				$uc['ip'] = empty($_GPC['ip']) ? message('请填写UCenter的IP！', referer(), 'error', true) : trim($_GPC['ip']);
+				$uc['api'] = empty($_GPC['api']) ? itoast('请填写UCenter 服务端的URL地址！', referer(), 'error') : trim($_GPC['api']);
+				$uc['ip'] = empty($_GPC['ip']) ? itoast('请填写UCenter的IP！', referer(), 'error') : trim($_GPC['ip']);
 			}
 		}
 		$uc = iserializer($uc);
