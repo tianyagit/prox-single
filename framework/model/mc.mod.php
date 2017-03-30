@@ -555,7 +555,7 @@ function mc_require($uid, $fields, $pre = '') {
 				pdo_update('mc_mapping_fans', array('uid' => $insertuid), array('openid' => $_W['openid']));
 				cache_build_fansinfo($_W['openid']);
 			}
-			message('资料完善成功.', 'refresh');
+			message('资料完善成功.', 'refresh', 'success', true);
 		}
 		load()->func('tpl');
 		load()->model('activity');

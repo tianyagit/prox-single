@@ -33,7 +33,7 @@ if (!$entry['direct']) {
 	
 	$module = module_fetch($entry['module']);
 	if (empty($module)) {
-		message("访问非法, 没有操作权限. (module: {$entry['module']})");
+		message("访问非法, 没有操作权限. (module: {$entry['module']})", '', '', true);
 	}
 	
 	if ($entry['entry'] == 'menu') {

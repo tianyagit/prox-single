@@ -208,7 +208,7 @@ if ($do == 'remote') {
 			}
 		}
 		setting_save($remote, 'remote');
-		message('远程附件配置信息更新成功！', url('system/attachment/remote'));
+		message('远程附件配置信息更新成功！', url('system/attachment/remote'), 'success', true);
 	}
 	$remote = $_W['setting']['remote'];
 	if (!empty($remote['alioss']['key']) && !empty($remote['alioss']['secret'])) {

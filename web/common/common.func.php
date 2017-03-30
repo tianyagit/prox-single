@@ -36,7 +36,7 @@ function url($segment, $params = array()) {
  * </pre>
  * @param boolean $tips 是否是以tips形式展示（兼容1.0之前版本该函数的页面展示形式）
  */
-function message($msg, $redirect = '', $type = '', $tips = true) {
+function message($msg, $redirect = '', $type = '', $tips = false) {
 	global $_W, $_GPC;
 	
 	if($redirect == 'refresh') {
