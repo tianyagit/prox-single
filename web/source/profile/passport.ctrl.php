@@ -32,7 +32,7 @@ if ($do == 'save_oauth') {
 		pdo_update('uni_settings', array('jsauth_acid' => $account), array('uniacid' => $_W['uniacid']));
 		cache_delete("unisetting:{$_W['uniacid']}");
 	}
-	message(error(0), '', 'ajax');
+	message(error(0), '', 'ajax', true);
 }
 
 if ($do == 'oauth') {

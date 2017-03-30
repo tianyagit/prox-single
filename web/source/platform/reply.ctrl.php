@@ -143,15 +143,15 @@ if ($do == 'post') {
 				$rids = implode($keywords, ',');
 				$sql = 'SELECT `id`, `name` FROM ' . tablename('rule') . " WHERE `id` IN ($rids)";
 				$rules = pdo_fetchall($sql);
-				message(error(0, @json_encode($rules)), '', 'ajax');
+				message(error(0, @json_encode($rules)), '', 'ajax', true);
 			}
-			message(error(-1), '', 'ajax');
+			message(error(-1), '', 'ajax', true);
 		}
 		$rid = intval($_GPC['rid']);
 		if (!empty($rid)) {
 			$reply = reply_single($rid);
 			if (empty($reply) || $reply['uniacid'] != $_W['uniacid']) {
-				message('抱歉，您操作的规则不在存或是已经被删除！', url('platform/reply', array('m' => $m)), 'error');
+				message('抱歉，您操作的规则不在存或是已经被删除！', url('platform/reply', array('m' => $m)), 'error', true);
 			}
 			foreach ($reply['keywords'] as &$kw) {
 				$kw = array_elements(array('type', 'content'), $kw);
@@ -230,7 +230,7 @@ if ($do == 'post') {
 				if (!empty($module_info) && empty($module_info['issystem'])) {
 					$user_module->fieldsFormSubmit($rid);
 				}
-				message('回复规则保存成功！', referer(), 'success');
+				message('回复规则保存成功！', referer(), 'success', true);
 			} else {
 				message('回复规则保存失败, 请联系网站管理员！');
 			}
@@ -247,13 +247,13 @@ if ($do == 'post') {
 			if ((empty($rule_id) && empty($module)) || $_GPC['status'] === '0') {
 				$setting[$type] = array('type' => '', 'module' => $module, 'keyword' => $rule_id);
 				uni_setting_save('default_message', $setting);
-				message('关闭成功', url('platform/reply', array('m' => 'special')));
+				message('关闭成功', url('platform/reply', array('m' => 'special')), 'success', true);
 			}
 			$reply_type = empty($rule_id) ? 'module' : 'keyword';
 			$reply_module = WeUtility::createModule('core');
 			$result = $reply_module->fieldsFormValidate();
 			if (is_error($result)) {
-				message($result['message'], '', 'info');
+				message($result['message'], '', 'info', true);
 			}
 			if ($reply_type == 'module') {
 				$setting[$type] = array('type' => 'module', 'module' => $module);
@@ -262,7 +262,7 @@ if ($do == 'post') {
 				$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
 			}
 			uni_setting_save('default_message', $setting);
-			message('发布成功', url('platform/reply', array('m' => 'special')));
+			message('发布成功', url('platform/reply', array('m' => 'special')), 'success', true);
 		}
 		if ($setting[$type]['type'] == 'module') {
 			$rule_id = $setting[$type]['module'];
@@ -290,7 +290,7 @@ if ($do == 'post') {
 				pdo_insert ('uni_settings', $settings);
 			}
 			cache_delete("unisetting:{$_W['uniacid']}");
-			message('系统回复更新成功！', url('platform/reply', array('m' => 'welcome')));
+			message('系统回复更新成功！', url('platform/reply', array('m' => 'welcome')), 'success', true);
 		}
 	}
 	if ($m == 'default') {
@@ -312,7 +312,7 @@ if ($do == 'post') {
 				pdo_insert('uni_settings', $settings);
 			}
 			cache_delete("unisetting:{$_W['uniacid']}");
-			message('系统回复更新成功！', url('platform/reply', array('m' => 'default')));
+			message('系统回复更新成功！', url('platform/reply', array('m' => 'default')), 'success', true);
 		}
 	}
 	if ($m == 'apply') {
@@ -370,7 +370,7 @@ if($do == 'delete') {
 		$rid = intval($rid);
 		$reply = reply_single($rid);
 		if (empty($reply) || $reply['uniacid'] != $_W['uniacid']) {
-			message('抱歉，您操作的规则不在存或是已经被删除！', url('platform/reply', array('m' => $m)), 'error');
+			message('抱歉，您操作的规则不在存或是已经被删除！', url('platform/reply', array('m' => $m)), 'error', true);
 		}
 		//删除回复，关键字及规则
 		if (pdo_delete('rule', array('id' => $rid))) {
@@ -398,7 +398,7 @@ if ($do == 'change_status') {
 		$config[$rid] = $config[$rid] ? false : true;
 		$module_api = WeUtility::createModule('userapi');
 		$module_api->saveSettings($config);
-		message(error(0), '', 'ajax');
+		message(error(0), '', 'ajax', true);
 	} else {
 		$type = $_GPC['type'];
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
@@ -411,14 +411,14 @@ if ($do == 'change_status') {
 				$setting[$type]['type'] = 'module';
 			}
 			if (empty($setting[$type]['type'])) {
-				message(error(1, '请先设置回复内容'), '', 'ajax');
+				message(error(1, '请先设置回复内容'), '', 'ajax', true);
 			}
 		} else {
 			$setting[$type]['type'] = '';
 		}
 		$result = uni_setting_save('default_message', $setting);
 		if ($result) {
-			message(error(0, '更新成功！'), '','ajax');
+			message(error(0, '更新成功！'), '','ajax', true);
 		}
 	}
 }
@@ -437,10 +437,10 @@ if ($do == 'change_keyword_status') {
 			$rule_keyword = pdo_update('rule_keyword', array('status' => 1), array('uniacid' => $_W['uniacid'], 'rid' => $id));
 		}
 		if ($rule && $rule_keyword) {
-			message(error(0, '更新成功！'), '', 'ajax');
+			message(error(0, '更新成功！'), '', 'ajax', true);
 		} else {
-			message(error(-1, '更新失败！'), '', 'ajax');
+			message(error(-1, '更新失败！'), '', 'ajax', true);
 		}
 	}
-	message(error(-1, '更新失败！'), '', 'ajax');
+	message(error(-1, '更新失败！'), '', 'ajax', true);
 }

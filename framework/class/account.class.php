@@ -1457,9 +1457,9 @@ abstract class WeModuleSite extends WeBase {
 		global $_W;
 		if($ret['from'] == 'return') {
 			if ($ret['type'] == 'credit2') {
-				message('已经成功支付', url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])));
+				message('已经成功支付', url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success', true);
 			} else {
-				message('已经成功支付', '../../' . url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])));
+				message('已经成功支付', '../../' . url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success', true);
 			}
 		}
 	}
@@ -1564,7 +1564,7 @@ abstract class WeModuleCron extends WeBase {
 	public function addCronLog($tid, $errno, $note, $tag = array()) {
 		global $_W;
 		if(!$tid) {
-			message(error(-1, 'tid参数错误'), '', 'ajax');
+			message(error(-1, 'tid参数错误'), '', 'ajax', true);
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -1576,7 +1576,7 @@ abstract class WeModuleCron extends WeBase {
 			'createtime' => TIMESTAMP
 		);
 		pdo_insert('core_cron_record', $data);
-		message(error($errno, $note), '', 'ajax');
+		message(error($errno, $note), '', 'ajax', true);
 	}
 }
 

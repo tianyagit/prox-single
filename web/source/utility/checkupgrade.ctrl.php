@@ -10,7 +10,7 @@ load()->func('communication');
 load()->model('extension');
 $r = cloud_prepare();
 if(is_error($r)) {
-	message($r['message'], url('cloud/profile'), 'error');
+	message($r['message'], url('cloud/profile'), 'error', true);
 }
 
 $do = !empty($_GPC['do']) && in_array($do, array('module', 'system')) ? $_GPC['do'] : exit('Access Denied');
@@ -22,14 +22,14 @@ if ($do == 'system') {
 			$upgrade = array('version' => $upgrade['version'], 'release' => $upgrade['release'], 'upgrade' => 1, 'lastupdate' => TIMESTAMP);
 			cache_write('checkupgrade:system', $upgrade);
 			cache_delete('cloud:transtoken');
-			message($upgrade, '', 'ajax');
+			message($upgrade, '', 'ajax', true);
 		} else {
 			$upgrade = array('lastupdate' => TIMESTAMP);
 			cache_delete('cloud:transtoken');
 			cache_write('checkupgrade:system', $upgrade);
 		}
 	} else {
-		message($lock, '', 'ajax');
+		message($lock, '', 'ajax', true);
 	}
 } elseif ($do == 'module') {
 	$modulename = $_GPC['m'];
@@ -40,22 +40,22 @@ if ($do == 'system') {
 		$manifest = ext_module_manifest($modulename);
 
 		if (is_error($info)) {
-			message($info, '', 'ajax');;
+			message($info, '', 'ajax', true);;
 		}
 		
 		if (!empty($info) && !empty($info['version']['version'])) {
 			if (ver_compare($module['version'], $info['version']['version'])) {
 				$upgrade = array('name' => $module['title'], 'version' => $info['version']['version'], 'upgrade' => 1, 'lastupdate' => TIMESTAMP);
-				message($upgrade, '', 'ajax');
+				message($upgrade, '', 'ajax', true);
 			}
 		} else {
 			if (!empty($manifest)) {
 				if (ver_compare($module['version'], $manifest['application']['version'])) {
 					$upgrade = array('name' => $module['title'], 'version' => $manifest['application']['version'], 'upgrade' => 1, 'lastupdate' => TIMESTAMP);
-					message($upgrade, '', 'ajax');
+					message($upgrade, '', 'ajax', true);
 				}
 			}
 		}
 	}
-	message(error(0, ''), '', 'ajax');
+	message(error(0, ''), '', 'ajax', true);
 }

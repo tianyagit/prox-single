@@ -39,12 +39,12 @@ if($step == 1) {
 			message('没有该公众号操作权限！');
 		}
 		if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
-			message($permission['message'], '' , 'error');
+			message($permission['message'], '' , 'error', true);
 		}
 	} else {
 		if (empty($_W['isfounder']) && is_error($permission = uni_create_permission($_W['uid'], 1))) {
 			if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
-				message($permission['message'], '' , 'error');
+				message($permission['message'], '' , 'error', true);
 			}
 		}
 	}
@@ -122,7 +122,7 @@ if($step == 1) {
 		if (empty($acid)) {
 			$acid = account_create($uniacid, $update);
 			if(is_error($acid)) {
-				message('添加公众号信息失败', '', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 2), 'error'));
+				message('添加公众号信息失败', '', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 2), 'error'), true);
 			}
 			pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 			if (empty($_W['isfounder'])) {
@@ -164,13 +164,13 @@ if($step == 1) {
 		$uid = intval($_GPC['uid'][0]);
 		$user = user_single(array('uid' => $uid));
 		if (empty($user)) {
-			message(error(-1, '用户不存在或是已经被删除'), '', 'ajax');
+			message(error(-1, '用户不存在或是已经被删除'), '', 'ajax', true);
 		}
 		$result['username'] = $user['username'];
 		$result['uid'] = $user['uid'];
 		$result['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $user['groupid']));
 		$result['package'] = iunserializer($result['group']['package']);
-		message(error(0, $result), '', 'ajax');
+		message(error(0, $result), '', 'ajax', true);
 		exit;
 	}
 	if (checksubmit('submit')) {
@@ -181,7 +181,7 @@ if($step == 1) {
 			//删除原所有者，删除现在所有者其他身份
 			$account_info = uni_user_account_permission();
 			if ($account_info['uniacid_limit'] <= 0) {
-				message("您所设置的主管理员所在的用户组可添加的主公号数量已达上限，请选择其他人做主管理员！", referer(), 'error');
+				message("您所设置的主管理员所在的用户组可添加的主公号数量已达上限，请选择其他人做主管理员！", referer(), 'error', true);
 			}
 			pdo_delete('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
 			$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
@@ -256,7 +256,7 @@ if($step == 1) {
 		cache_delete("cardticket:{$acid}");
 		module_build_privileges();
 		if (!empty($_GPC['from'])) {
-			message('公众号权限修改成功', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 3, 'from' => 'list')), 'success');
+			message('公众号权限修改成功', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 3, 'from' => 'list')), 'success', true);
 		} else {
 			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 4)));
 			exit;

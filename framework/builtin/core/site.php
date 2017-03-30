@@ -73,7 +73,7 @@ class CoreModuleSite extends WeModuleSite {
 		$params = $_POST;
 		
 		if(empty($params) || !array_key_exists($params['module'], $moduels)) {
-			message(error(1, '模块不存在'), '', 'ajax');
+			message(error(1, '模块不存在'), '', 'ajax', true);
 		}
 		
 		$setting = uni_setting($_W['uniacid'], 'payment');
@@ -98,7 +98,7 @@ class CoreModuleSite extends WeModuleSite {
 		}
 		$type = in_array($params['method'], $dos) ? $params['method'] : '';
 		if(empty($type)) {
-			message(error(1, '暂无有效支付方式,请联系商家'), '', 'ajax');
+			message(error(1, '暂无有效支付方式,请联系商家'), '', 'ajax', true);
 		}
 		$moduleid = pdo_getcolumn('modules', array('name' => $params['module']), 'mid');
 		$moduleid = empty($moduleid) ? '000000' : sprintf("%06d", $moduleid);
@@ -122,7 +122,7 @@ class CoreModuleSite extends WeModuleSite {
 			$paylog['plid'] = pdo_insertid();
 		}
 		if(!empty($paylog) && $paylog['status'] != '0') {
-			message(error(1, '这个订单已经支付成功, 不需要重复支付.'), '', 'ajax');
+			message(error(1, '这个订单已经支付成功, 不需要重复支付.'), '', 'ajax', true);
 		}
 		if (!empty($paylog) && empty($paylog['uniontid'])) {
 			pdo_update('core_paylog', array(
@@ -138,7 +138,7 @@ class CoreModuleSite extends WeModuleSite {
 			$params['tid'] = $paylog['plid'];
 			$sl = base64_encode(json_encode($params));
 			$auth = sha1($sl . $_W['uniacid'] . $_W['config']['setting']['authkey']);
-			message(error(0, $_W['siteroot'] . "/payment/{$type}/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}"), '', 'ajax');
+			message(error(0, $_W['siteroot'] . "/payment/{$type}/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}"), '', 'ajax', true);
 			exit();
 		}
 	}
@@ -177,9 +177,9 @@ class CoreModuleSite extends WeModuleSite {
 			$wechat_payment_params = wechat_build($params, $wechat_payment);
 		}
 		if (is_error($wechat_payment_params)) {
-			message($wechat_payment_params, '', 'ajax');
+			message($wechat_payment_params, '', 'ajax', true);
 		} else {
-			message(error(0, $wechat_payment_params), '', 'ajax');
+			message(error(0, $wechat_payment_params), '', 'ajax', true);
 		}
 	}
 
@@ -201,7 +201,7 @@ class CoreModuleSite extends WeModuleSite {
 		);
 		$alipay_payment_params = alipay_build($params, $setting['payment']['alipay']);
 		if($alipay_payment_params['url']) {
-			message(error(0, $alipay_payment_params['url']), '', 'ajax');
+			message(error(0, $alipay_payment_params['url']), '', 'ajax', true);
 			exit();
 		}
 	}

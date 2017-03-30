@@ -21,7 +21,7 @@ class RechargeModuleSite extends WeModuleSite {
 				$backtype = trim($_GPC['backtype']);
 				$back= floatval($_GPC['back']);
 				if (empty($fee) || $fee <= 0) {
-					message('请选择充值金额', referer(), 'error');
+					message('请选择充值金额', referer(), 'error', true);
 				}
 				$chargerecord = array(
 					'uid' => $_W['member']['uid'],
@@ -36,7 +36,7 @@ class RechargeModuleSite extends WeModuleSite {
 					'createtime' => TIMESTAMP,
 				);
 				if (!pdo_insert('mc_credits_recharge', $chargerecord)) {
-					message('创建充值订单失败，请重试！', url('entry', array('m' => 'recharge', 'do' => 'pay')), 'error');
+					message('创建充值订单失败，请重试！', url('entry', array('m' => 'recharge', 'do' => 'pay')), 'error', true);
 				}
 				$params = array(
 					'tid' => $chargerecord['tid'],
@@ -76,23 +76,23 @@ class RechargeModuleSite extends WeModuleSite {
 		} else {
 			$fee = floatval($_GPC['fee']);
 			if(!$fee) {
-				message('充值金额不能为0', referer(), 'error');
+				message('充值金额不能为0', referer(), 'error', true);
 			}
 			if($fee <= 0) {
-				message('请输入充值的金额', referer(), 'error');
+				message('请输入充值的金额', referer(), 'error', true);
 			}
 			$setting = pdo_get('mc_card', array('uniacid' => $_W['uniacid'], 'status' => 1));
 			if(empty($setting)) {
-				message('会员卡未开启,请联系商家', referer(), 'error');
+				message('会员卡未开启,请联系商家', referer(), 'error', true);
 			}
 			if($type == 'card_nums') {
 				if(!$setting['nums_status']) {
-					message("会员卡未开启{$setting['nums_text']}充值,请联系商家", referer(), 'error');
+					message("会员卡未开启{$setting['nums_text']}充值,请联系商家", referer(), 'error', true);
 				}
 				$setting['nums'] = iunserializer($setting['nums']);
 				$num_keys = array_keys($setting['nums']);
 				if (!in_array($fee, $num_keys)) {
-					message('充值金额错误,请联系商家', referer(), 'error');
+					message('充值金额错误,请联系商家', referer(), 'error', true);
 				}
 				foreach ($setting['nums'] as $key => $val) {
 					if ($fee == $val['recharge']) {
@@ -107,13 +107,13 @@ class RechargeModuleSite extends WeModuleSite {
 			}
 			if($type == 'card_times') {
 				if(!$setting['times_status']) {
-					message("会员卡未开启{$setting['times_text']}充值,请联系商家", referer(), 'error');
+					message("会员卡未开启{$setting['times_text']}充值,请联系商家", referer(), 'error', true);
 				}
 
 				$setting['times'] = iunserializer($setting['times']);
 				$time_keys = array_keys($setting['times']);
 				if (!in_array($fee, $time_keys)) {
-					message('充值金额错误,请联系商家', referer(), 'error');
+					message('充值金额错误,请联系商家', referer(), 'error', true);
 				}
 				foreach ($setting['times'] as $key => $val) {
 					if ($fee == $val['recharge']) {
@@ -153,7 +153,7 @@ class RechargeModuleSite extends WeModuleSite {
 					'createtime' => TIMESTAMP,
 				);
 				if (!pdo_insert('mc_credits_recharge', $chargerecord)) {
-					message('创建充值订单失败，请重试！', url('mc/card/mycard'), 'error');
+					message('创建充值订单失败，请重试！', url('mc/card/mycard'), 'error', true);
 				}
 			}
 			$types = array(
@@ -198,7 +198,7 @@ class RechargeModuleSite extends WeModuleSite {
 				$recharge_settings = card_params_setting('cardRecharge');
 				$recharge_params = $recharge_settings['params'];
 				if(empty($credit)) {
-					message('站点积分行为参数配置错误,请联系服务商', '', 'error');
+					message('站点积分行为参数配置错误,请联系服务商', '', 'error', true);
 				} else {
 					if ($recharge_params['recharge_type'] == '1') {
 						$recharges = $recharge_params['recharges'];
@@ -291,9 +291,9 @@ class RechargeModuleSite extends WeModuleSite {
 		//如果消息是用户直接返回（非通知），则提示一个付款成功
 		if ($params['from'] == 'return') {
 			if ($params['result'] == 'success') {
-				message('支付成功！', $_W['siteroot'] . 'app/' . $url, 'success');
+				message('支付成功！', $_W['siteroot'] . 'app/' . $url, 'success', true);
 			} else {
-				message('支付失败！', $_W['siteroot'] . 'app/' . $url, 'error');
+				message('支付失败！', $_W['siteroot'] . 'app/' . $url, 'error', true);
 			}
 		}
 	}

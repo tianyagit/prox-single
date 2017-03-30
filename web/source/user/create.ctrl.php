@@ -11,7 +11,7 @@ uni_user_permission_check('system_user_post');
 $_W['page']['title'] = '添加用户 - 用户管理';
 $state = uni_permission($_W['uid']);
 if ($state != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('没有操作权限！', referer(), 'error');
+	message('没有操作权限！', referer(), 'error', true);
 }
 
 if (checksubmit()) {
@@ -51,7 +51,7 @@ if (checksubmit()) {
 	$uid = user_register($data);
 	if ($uid > 0) {
 		unset($data);
-		message('用户增加成功！', url('user/edit', array('uid' => $uid)));
+		message('用户增加成功！', url('user/edit', array('uid' => $uid)), 'success', true);
 	}
 	message('增加用户失败，请稍候重试或联系网站管理员解决！');
 }

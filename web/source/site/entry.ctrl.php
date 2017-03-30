@@ -50,7 +50,7 @@ if (!$entry['direct']) {
 
 if (!empty($entry['module']) && !empty($_W['founder'])) {
 	if (ext_module_checkupdate($entry['module'])) {
-		message('系统检测到该模块有更新，请点击“<a href="' . url('extension/module/upgrade', array('m' => $entry['module'])) . '">更新模块</a>”后继续使用！', '', 'error');
+		message('系统检测到该模块有更新，请点击“<a href="' . url('extension/module/upgrade', array('m' => $entry['module'])) . '">更新模块</a>”后继续使用！', '', 'error', true);
 	}
 }
 
@@ -77,4 +77,4 @@ if (!is_error($site)) {
 	$method = 'doWeb' . ucfirst($entry['do']);
 	exit($site->$method());
 }
-message("访问的方法 {$method} 不存在.", referer(), 'error');
+message("访问的方法 {$method} 不存在.", referer(), 'error', true);

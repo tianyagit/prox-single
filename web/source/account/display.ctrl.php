@@ -36,7 +36,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 
 	$exist = pdo_get('uni_account', array('uniacid' => $uniacid));
 	if (empty($exist)) {
-		message(error(1, '公众号不存在'), '', 'ajax');
+		message(error(1, '公众号不存在'), '', 'ajax', true);
 	}
 	if (!empty($_W['isfounder'])) {
 		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account'));
@@ -45,7 +45,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account_users'));
 		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	}
-	message(error(0, '更新成功！'), '', 'ajax');
+	message(error(0, '更新成功！'), '', 'ajax', true);
 }
 
 if ($do == 'display') {

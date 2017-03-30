@@ -18,7 +18,7 @@ if ($do == 'testapi') {
 	$starttime = microtime(true);
 	$response = cloud_request('http://v2.addons.we7.cc', array(), array('ip' => $_GPC['ip']));
 	$endtime = microtime(true);
-	message('请求接口成功，耗时 '.(round($endtime - $starttime, 5)).' 秒', '', 'ajax');
+	message('请求接口成功，耗时 '.(round($endtime - $starttime, 5)).' 秒', '', 'ajax', true);
 } else {
 	if(checksubmit()) {
 		setting_save('', 'site');

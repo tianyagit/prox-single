@@ -29,7 +29,7 @@ if ($do == 'getlink') {
 			}
 		}
 	}
-	message(error(0, $show_urls), '', 'ajax');
+	message(error(0, $show_urls), '', 'ajax', true);
 }
 
 if($do == 'post') {
@@ -105,7 +105,7 @@ if($do == 'post') {
 			if (empty($acid)) {
 				$acid = wxapp_account_create($uniacid, $update, 3);
 				if(is_error($acid)) {
-					message('添加小程序信息失败', url('wxapp/post'), 'error');
+					message('添加小程序信息失败', url('wxapp/post'), 'error', true);
 				}
 				if (empty($_W['isfounder'])) {
 					pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
@@ -156,7 +156,7 @@ if($do == 'post') {
 		pdo_insert('wxapp_versions', $wxapp_version);
 		$versionid = pdo_insertid();
 		
-		message('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)));
+		message('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)), 'success', true);
 	}
 	template('wxapp/create-post');
 }
@@ -235,5 +235,5 @@ if($do == 'getapps') {
 		}
 		cache_write('packageapps', $apps);				
 	}
-	message(error(0, $apps), '', 'ajax');
+	message(error(0, $apps), '', 'ajax', true);
 }

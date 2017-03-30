@@ -148,9 +148,9 @@ if($do == 'display') {
 		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
 	}
 	if ($status) {
-		message('添加模块快捷操作成功！', referer(), 'success');
+		message('添加模块快捷操作成功！', referer(), 'success', true);
 	} else {
-		message('取消模块快捷操作成功！', referer(), 'success');
+		message('取消模块快捷操作成功！', referer(), 'success', true);
 	}
 } elseif ($do == 'enable') {
 	$modulename = $_GPC['modulename'];
@@ -164,7 +164,7 @@ if($do == 'display') {
 		'uniacid' => $_W['uniacid']
 	));
 	cache_build_account_modules();
-	message('模块操作成功！', referer(), 'success');
+	message('模块操作成功！', referer(), 'success', true);
 } elseif ($do == 'top') {
 	$modulename = $_GPC['modulename'];
 	$module = $modulelist[$modulename];
@@ -185,7 +185,7 @@ if($do == 'display') {
 			'shortcut' => STATUS_OFF,
 		));
 	}
-	message('模块置顶成功', referer(), 'success');
+	message('模块置顶成功', referer(), 'success', true);
 } elseif ($do == 'setting') {
 	$modulename = $_GPC['m'];
 	$module = $_W['current_module'] = $modulelist[$modulename];
@@ -202,7 +202,7 @@ if($do == 'display') {
 	if (($module['settings'] == 2) && !is_file(IA_ROOT."/addons/{$module['name']}/developer.cer")) {
 		
 		if (empty($_W['setting']['site']['key']) || empty($_W['setting']['site']['token'])) {
-			message('站点未注册，请先注册站点。', url('cloud/profile'), 'info');
+			message('站点未注册，请先注册站点。', url('cloud/profile'), 'info', true);
 		}
 		
 		if (empty($config)) {
@@ -364,14 +364,14 @@ if ($do == 'permissions') {
 			} else {
 				pdo_update('uni_account_users', array('role' => 'operator'), array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid']));
 			}
-			message('编辑店员资料成功', url('profile/module/permissions', array('m' => $m, 'op' => 'display')), 'success');
+			message('编辑店员资料成功', url('profile/module/permissions', array('m' => $m, 'op' => 'display')), 'success', true);
 		}	
 	}
 
 	if ($op == 'delete') {
 		$operator_id = intval($_GPC['uid']);
 		if (empty($operator_id)) {
-			message('参数错误', referer(), 'error');
+			message('参数错误', referer(), 'error', true);
 		} else {
 			$user = pdo_get('users', array('uid' => $operator_id), array('uid'));
 			if (!empty($user)) {
@@ -379,7 +379,7 @@ if ($do == 'permissions') {
 				pdo_delete('uni_account_users', array('uid' => $operator_id, 'role' => 'operator', 'uniacid' => $_W['uniacid']));
 				pdo_delete('users_permission', array('uid' => $operator_id, 'type' => $_GPC['m'], 'uniacid' => $_W['uniacid']));
 			}
-			message('删除成功', referer(), 'success');
+			message('删除成功', referer(), 'success', true);
 		}
 	}
 	template('profile/module_permission');

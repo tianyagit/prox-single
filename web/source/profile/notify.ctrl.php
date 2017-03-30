@@ -27,10 +27,10 @@ if ($do == 'mail') {
 		if (is_error($result)) {
 			$setting = array('notify' => iserializer($original_setting));
 			pdo_update('uni_settings', $setting, array('uniacid' => $_W['uniacid']));
-			message('配置失败，请检查配置信息', url('profile/notify'), 'info');
+			message('配置失败，请检查配置信息', url('profile/notify'), 'info', true);
 		} else {
 			cache_delete("unisetting:{$_W['uniacid']}");
-			message('配置成功！', url('profile/notify',array('do' => 'mail')));
+			message('配置成功！', url('profile/notify',array('do' => 'mail')), 'success', true);
 		}
 	}
 	$notify_setting = uni_setting_load('notify');

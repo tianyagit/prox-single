@@ -11,7 +11,7 @@ setting_load('platform');
 
 //只有创始人才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('无权限操作！', url('account/manage'), 'error');
+	message('无权限操作！', url('account/manage'), 'error', true);
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
 $_W['page']['title'] = '开放平台设置';
@@ -32,9 +32,9 @@ if($_W['isajax'] && $_W['ispost']) {
 
 	$result = setting_save($data,'platform');
 	if($result) {
-		message(error(0, '修改成功！'), '', 'ajax');
+		message(error(0, '修改成功！'), '', 'ajax', true);
 	}else {
-		message(error(1, '修改失败！'), '', 'ajax');
+		message(error(1, '修改失败！'), '', 'ajax', true);
 	}
 }
 

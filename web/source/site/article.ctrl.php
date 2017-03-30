@@ -59,7 +59,7 @@ if ($do == 'display') {
 		$pcate = $item['pcate'];
 		$ccate = $item['ccate'];
 		if (empty($item)) {
-			message('抱歉，文章不存在或是已经删除！', '', 'error');
+			message('抱歉，文章不存在或是已经删除！', '', 'error', true);
 		}
 		$key = pdo_fetchall('SELECT content FROM ' . tablename('rule_keyword') . ' WHERE rid = :rid AND uniacid = :uniacid', array(':rid' => $item['rid'], ':uniacid' => $_W['uniacid']));
 		if (!empty($key)) {
@@ -196,7 +196,7 @@ if ($do == 'display') {
 			}
 			pdo_update('site_article', $data, array('id' => $id));
 		}
-		message('文章更新成功！', url('site/article/display'), 'success');
+		message('文章更新成功！', url('site/article/display'), 'success', true);
 	} else {
 		template('site/article-post');
 	}
@@ -219,7 +219,7 @@ if ($do == 'display') {
 			}
 			pdo_delete('site_article', array('id' => $id));
 		}
-		message('批量删除成功！', referer(), 'success');
+		message('批量删除成功！', referer(), 'success', true);
 	} else {
 		$id = intval($_GPC['id']);
 		$row = pdo_fetch("SELECT id,rid,kid,thumb FROM ".tablename('site_article')." WHERE id = :id", array(':id' => $id));
@@ -236,9 +236,9 @@ if ($do == 'display') {
 			pdo_delete('news_reply', array('rid' => $row['rid']));
 		}
 		if (pdo_delete('site_article', array('id' => $id))){
-			message('删除成功！', referer(), 'success');
+			message('删除成功！', referer(), 'success', true);
 		} else {
-			message('删除失败！', referer(), 'error');
+			message('删除失败！', referer(), 'error', true);
 		}				
 	}
 }

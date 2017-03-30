@@ -23,7 +23,7 @@ if ($do == 'module') {
 	}
 	$module = $_W['current_module'] = module_fetch($modulename);
 	if (empty($module)) {
-		message('模块不存在或是未安装', '', 'error');
+		message('模块不存在或是未安装', '', 'error', true);
 	}
 	if (!empty($module['isrulefields'])) {
 		$url = url('platform/reply', array('m' => $module['name'], 'eid' => $entry_id));
@@ -120,7 +120,7 @@ if ($do == 'module') {
 			} else {
 				pdo_update('cover_reply', $entry, array('id' => $reply['id']));
 			}
-			message('封面保存成功！', 'refresh', 'success');
+			message('封面保存成功！', 'refresh', 'success', true);
 		} else {
 			message('封面保存失败, 请联系网站管理员！');
 		}

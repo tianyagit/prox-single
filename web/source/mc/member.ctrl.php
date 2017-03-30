@@ -23,7 +23,7 @@ if ($do == 'save_tactics_setting') {
 if ($do == 'save_credit_setting') {
 	$credit_setting = $_GPC['credit_setting'];
 	if (empty($credit_setting)) {
-		message(error(1), '', 'ajax');
+		message(error(1), '', 'ajax', true);
 	}
 	uni_setting_save('creditnames', $credit_setting);
 	message(error(0));
@@ -35,7 +35,7 @@ if ($do == 'register_setting') {
 		$passport = $_GPC['passport'];
 		if (!empty($passport)) {
 			uni_setting_save('passport', $passport);
-			message('设置成功', '', 'success');
+			message('设置成功', '', 'success', true);
 		}
 	}
 	$setting = uni_setting_load('passport');
@@ -187,24 +187,24 @@ if($do == 'post') {
 				}
 				pdo_insert('mc_member_address', $post);
 				$post['id'] = pdo_insertid();
-				message(error(1, $post), '', 'ajax');
+				message(error(1, $post), '', 'ajax', true);
 			} else {
 				pdo_update('mc_member_address', $post, array('id' => intval($_GPC['id']), 'uniacid' => $_W['uniacid']));
 				$post['id'] = intval($_GPC['id']);
-				message(error(1, $post), '', 'ajax');
+				message(error(1, $post), '', 'ajax', true);
 			}
 		}
 		if ($_GPC['op'] == 'del') {
 			$id = intval($_GPC['id']);
 			pdo_delete('mc_member_address', array('id' => $id, 'uniacid' => $_W['uniacid']));
-			message(error(1), '', 'ajax');
+			message(error(1), '', 'ajax', true);
 		}
 		if ($_GPC['op'] == 'isdefault') {
 			$id = intval($_GPC['id']);
 			$uid = intval($_GPC['uid']);
 			pdo_update('mc_member_address', array('isdefault' => 0), array('uid' => $uid, 'uniacid' => $_W['uniacid']));
 			pdo_update('mc_member_address', array('isdefault' => 1), array('id' => $id, 'uniacid' => $_W['uniacid']));
-			message(error(1), '', 'ajax');
+			message(error(1), '', 'ajax', true);
 		}
 		$password = $_GPC['password'];
 		$sql = 'SELECT `uid`, `salt` FROM ' . tablename('mc_members') . " WHERE `uniacid`=:uniacid AND `uid` = :uid";
@@ -280,7 +280,7 @@ if($do == 'post') {
 				$uid = pdo_insertid();
 				pdo_update('mc_mapping_fans', array('uid' => $uid), array('fanid' => $fanid, 'uniacid' => $_W['uniacid']));
 				cache_build_fansinfo($fan_info['openid']);
-				message('更新资料成功！', url('mc/member'), 'success');
+				message('更新资料成功！', url('mc/member'), 'success', true);
 			} else {
 				$email_effective = intval($_GPC['email_effective']);
 				if(($email_effective == 1 && empty($_GPC['email']))) {
@@ -290,7 +290,7 @@ if($do == 'post') {
 				$uid = mc_update($uid, $_GPC);
 			}
 		}
-		message('更新资料成功！', url('mc/member'), 'success');
+		message('更新资料成功！', url('mc/member'), 'success', true);
 	}
 	$groups = mc_groups($_W['uniacid']);
 	$profile = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $uid));
@@ -365,9 +365,9 @@ if($do == 'del') {
 			foreach ($tables as $key => $value) {
 				pdo_delete($value, array('uniacid' => $_W['uniacid'], 'uid' => $delete_uids));
 			}
-			message('删除成功！', referer(), 'success');
+			message('删除成功！', referer(), 'success', true);
 		}
-		message('请选择要删除的项目！', referer(), 'error');
+		message('请选择要删除的项目！', referer(), 'error', true);
 	}
 }
 
@@ -415,7 +415,7 @@ if($do == 'add') {
 		);
 		pdo_insert('mc_members', $data);
 		$uid = pdo_insertid();
-		message('添加会员成功,将进入编辑页面', url('mc/member/post', array('uid' => $uid)), 'success');
+		message('添加会员成功,将进入编辑页面', url('mc/member/post', array('uid' => $uid)), 'success', true);
 	}
 	template('mc/member-add');
 }

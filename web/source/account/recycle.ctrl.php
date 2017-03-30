@@ -11,7 +11,7 @@ $dos = array('display', 'recover', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
 //只有创始人、主管理员才有权限使用回收站功能
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('无权限操作！', referer(), 'error');
+	message('无权限操作！', referer(), 'error', true);
 }
 $_W['page']['title'] = $account_typename . '回收站 - ' . $account_typename;
 
@@ -68,18 +68,18 @@ if ($do == 'recover') {
 	$uniacid = intval($_GPC['uniacid']);
 	$state = uni_permission($_W['uid'], $uniacid);
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-		message('没有权限，请联系该公众号的主管理员或网站创始人进行恢复操作！', referer(), 'error');
+		message('没有权限，请联系该公众号的主管理员或网站创始人进行恢复操作！', referer(), 'error', true);
 	}
 	$account_info = uni_user_account_permission();
 	if ($account_info['uniacid_limit'] <= 0 && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-		message('您所在用户组可添加的主公号数量已达上限，请停用后再行恢复此公众号！', referer(), 'error');
+		message('您所在用户组可添加的主公号数量已达上限，请停用后再行恢复此公众号！', referer(), 'error', true);
 	}
 	if (!empty($uniacid)) {
 		pdo_update('account', array('isdeleted' => 0), array('uniacid' => $uniacid));
 	} else {
 		pdo_update('account', array('isdeleted' => 0), array('acid' => $acid));
 	}
-	message('恢复成功', referer(), 'success');
+	message('恢复成功', referer(), 'success', true);
 }
 
 if($do == 'delete') {
@@ -87,8 +87,8 @@ if($do == 'delete') {
 	$acid = intval($_GPC['acid']);
 	$state = uni_permission($_W['uid'], $uniacid);
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-		message('没有权限！', referer(), 'error');
+		message('没有权限！', referer(), 'error', true);
 	}
     account_delete($acid);
-	message('删除成功！', referer(), 'success');
+	message('删除成功！', referer(), 'success', true);
 }

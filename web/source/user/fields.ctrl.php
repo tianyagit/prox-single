@@ -29,7 +29,7 @@ if ($do == 'display') {
 				), array('id' => $id));
 			}
 		}
-		message('资料设置更新成功！', referer(), 'success');
+		message('资料设置更新成功！', referer(), 'success', true);
 	}
 	$sql = "SELECT * FROM " . tablename('profile_fields'). $condition ." ORDER BY displayorder DESC";
 	$fields = pdo_fetchall($sql, $params);

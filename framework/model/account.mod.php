@@ -618,7 +618,7 @@ function uni_user_permission_check($permission_name, $show_message = true, $acti
 	}
 	if($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
 		if($show_message) {
-			message('您没有进行该操作的权限', referer(), 'error');
+			message('您没有进行该操作的权限', referer(), 'error', true);
 		} else {
 			return false;
 		}
@@ -886,7 +886,7 @@ function account_delete($acid) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该公众号操作权限！', url('account/recycle'), 'error');
+			message('没有该公众号操作权限！', url('account/recycle'), 'error', true);
 		}
 		if($uniacid == $_W['uniacid']) {
 			isetcookie('__uniacid', '');
@@ -943,7 +943,7 @@ function account_delete($acid) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该公众号操作权限！', url('account/recycle'), 'error');
+			message('没有该公众号操作权限！', url('account/recycle'), 'error', true);
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
 		if ($uniaccount['default_acid'] == $acid) {

@@ -10,10 +10,10 @@ $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 //只有创始人、主管理员、管理员才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('无权限操作！', referer(), 'error');
+	message('无权限操作！', referer(), 'error', true);
 }
 if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('您只有查看权限！', url('system/module-group'), 'error');
+	message('您只有查看权限！', url('system/module-group'), 'error', true);
 }
 
 if ($do == 'save') {
@@ -26,7 +26,7 @@ if ($do == 'save') {
 		'templates' => $_GPC['templates'],
 	);
 	if (empty($package_info['name'])) {
-		message(error(1, '请输入套餐名'), '', 'ajax');
+		message(error(1, '请输入套餐名'), '', 'ajax', true);
 	}
 
 	if (!empty($package_info['modules'])) {
@@ -42,22 +42,22 @@ if ($do == 'save') {
 	if (!empty($package_info['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
-			message(error(1, '套餐名已存在'), '', 'ajax');
+			message(error(1, '套餐名已存在'), '', 'ajax', true);
 		}
 		$packageid = $package_info['id'];
 		unset($package_info['id']);
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
 		cache_build_account_modules();
 		module_build_privileges();
-		message(error(0, url('system/module-group')), '', 'ajax');
+		message(error(0, url('system/module-group')), '', 'ajax', true);
 	} else {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
-			message(error(1, '套餐名已存在'), '', 'ajax');
+			message(error(1, '套餐名已存在'), '', 'ajax', true);
 		}
 		pdo_insert('uni_group', $package_info);
 		module_build_privileges();
-		message(error(0, url('system/module-group')), '', 'ajax');
+		message(error(0, url('system/module-group')), '', 'ajax', true);
 	}
 }
 
@@ -116,7 +116,7 @@ if ($do == 'delete') {
 		pdo_delete('uni_group', array('id' => $id));
 		cache_build_account_modules();
 	}
-	message('删除成功！', referer(), 'success');
+	message('删除成功！', referer(), 'success', true);
 }
 
 if ($do == 'post') {

@@ -91,7 +91,7 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 	$uid = intval($_GPC['uid']);
 	$uid_user = user_single($uid);
 	if (in_array($uid, $founders)) {
-		message('访问错误, 无法操作站长.', url('user/display'), 'error');
+		message('访问错误, 无法操作站长.', url('user/display'), 'error', true);
 	}
 	if (empty($uid_user)) {
 		exit('未指定用户,无法删除.');

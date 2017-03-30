@@ -162,36 +162,36 @@ if ($do == 'remote') {
 			}
 		} elseif ($remote['type'] == ATTACH_QINIU) {
 			if (empty($remote['qiniu']['accesskey'])) {
-				message('请填写Accesskey', referer(), 'info');
+				message('请填写Accesskey', referer(), 'info', true);
 			}
 			if (empty($remote['qiniu']['secretkey'])) {
-				message('secretkey', referer(), 'info');
+				message('secretkey', referer(), 'info', true);
 			}
 			if (empty($remote['qiniu']['bucket'])) {
-				message('请填写bucket', referer(), 'info');
+				message('请填写bucket', referer(), 'info', true);
 			}
 			if (empty($remote['qiniu']['url'])) {
-				message('请填写url', referer(), 'info');
+				message('请填写url', referer(), 'info', true);
 			} else {
 				$remote['qiniu']['url'] = strexists($remote['qiniu']['url'], 'http') ? trim($remote['qiniu']['url'], '/') : 'http://'. trim($remote['qiniu']['url'], '/');
 			}
 			$auth = attachment_qiniu_auth($remote['qiniu']['accesskey'], $remote['qiniu']['secretkey'], $remote['qiniu']['bucket']);
 			if (is_error($auth)) {
 				$message = $auth['message']['error'] == 'bad token' ? 'Accesskey或Secretkey填写错误， 请检查后重新提交' : 'bucket填写错误或是bucket所对应的存储区域选择错误，请检查后重新提交';
-				message($message, referer(), 'info');
+				message($message, referer(), 'info', true);
 			}
 		} elseif ($remote['type'] == ATTACH_COS) {
 			if (empty($remote['cos']['appid'])) {
-				message('请填写APPID', referer(), 'info');
+				message('请填写APPID', referer(), 'info', true);
 			}
 			if (empty($remote['cos']['secretid'])) {
-				message('请填写SECRETID', referer(), 'info');
+				message('请填写SECRETID', referer(), 'info', true);
 			}
 			if (empty($remote['cos']['secretkey'])) {
-				message('请填写SECRETKEY', referer(), 'info');
+				message('请填写SECRETKEY', referer(), 'info', true);
 			}
 			if (empty($remote['cos']['bucket'])) {
-				message('请填写BUCKET', referer(), 'info');
+				message('请填写BUCKET', referer(), 'info', true);
 			}
 			if (empty($remote['cos']['url'])) {
 				$remote['cos']['url'] = 'http://'.$remote['cos']['bucket'].'-'.$remote['cos']['appid'].'.cos.myqcloud.com';
@@ -204,7 +204,7 @@ if ($do == 'remote') {
 			$auth = attachment_cos_auth($remote['cos']['bucket'], $remote['cos']['appid'], $remote['cos']['secretid'], $remote['cos']['secretkey'], $remote['cos']['local']);
 
 			if (is_error($auth)) {
-				message($auth['message'], referer(), 'info');
+				message($auth['message'], referer(), 'info', true);
 			}
 		}
 		setting_save($remote, 'remote');
@@ -222,7 +222,7 @@ if ($do == 'buckets') {
 	$secret = $_GPC['secret'];
 	$buckets = attachment_alioss_buctkets($key, $secret);
 	if (is_error($buckets)) {
-		message(error(-1), '', 'ajax');
+		message(error(-1), '', 'ajax', true);
 	}
 	$bucket_datacenter = attachment_alioss_datacenters();
 	$bucket = array();
@@ -230,7 +230,7 @@ if ($do == 'buckets') {
 		$value['loca_name'] = $key. '@@'. $bucket_datacenter[$value['location']];
 		$bucket[] = $value;
 	}
-	message(error(1, $bucket), '', 'ajax');
+	message(error(1, $bucket), '', 'ajax', true);
 }
 
 if($do == 'ftp') {
@@ -254,22 +254,22 @@ if($do == 'ftp') {
 			load()->func('communication');
 			$response = ihttp_get($url. '/'. $filename);
 			if (is_error($response)) {
-				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax');
+				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax', true);
 			}
 			if (intval($response['code']) != 200) {
-				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax');
+				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax', true);
 			}
 			$image = getimagesizefromstring($response['content']);
 			if (!empty($image) && strexists($image['mime'], 'image')) {
-				message(error(0,'配置成功'),'','ajax');
+				message(error(0,'配置成功'),'','ajax', true);
 			} else {
-				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax');
+				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax', true);
 			}
 		} else {
-			message(error(-1, '上传图片失败，请检查配置'),'','ajax');
+			message(error(-1, '上传图片失败，请检查配置'),'','ajax', true);
 		}
 	} else {
-		message(error(-1, 'FTP服务器连接失败，请检查配置'),'','ajax');
+		message(error(-1, 'FTP服务器连接失败，请检查配置'),'','ajax', true);
 	}
 }
 
@@ -282,7 +282,7 @@ if ($do == 'oss') {
 	list($bucket, $url) = explode('@@', $_GPC['bucket']);
 	$result = attachment_newalioss_auth($key, $secret, $bucket,$url);
 	if (is_error($result)) {
-		message(error(-1, 'OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写'),'','ajax');
+		message(error(-1, 'OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写'),'','ajax', true);
 	}
 	$ossurl = $buckets[$bucket]['location'].'.aliyuncs.com';
 	if (!empty($_GPC['url'])) {
@@ -299,16 +299,16 @@ if ($do == 'oss') {
 	$filename = 'MicroEngine.ico';
 	$response = ihttp_request($url. '/'.$filename, array(), array('CURLOPT_REFERER' => $_SERVER['SERVER_NAME']));
 	if (is_error($response)) {
-		message(error(-1, '配置失败，阿里云访问url错误'),'','ajax');
+		message(error(-1, '配置失败，阿里云访问url错误'),'','ajax', true);
 	}
 	if (intval($response['code']) != 200) {
-		message(error(-1, '配置失败，阿里云访问url错误,请保证bucket为公共读取的'),'','ajax');
+		message(error(-1, '配置失败，阿里云访问url错误,请保证bucket为公共读取的'),'','ajax', true);
 	}
 	$image = getimagesizefromstring($response['content']);
 	if (!empty($image) && strexists($image['mime'], 'image')) {
-		message(error(0,'配置成功'),'','ajax');
+		message(error(0,'配置成功'),'','ajax', true);
 	} else {
-		message(error(-1, '配置失败，阿里云访问url错误'),'','ajax');
+		message(error(-1, '配置失败，阿里云访问url错误'),'','ajax', true);
 	}
 }
 
@@ -317,7 +317,7 @@ if ($do == 'qiniu') {
 	$_GPC['secretkey'] = strexists($_GPC['secretkey'], '*') ? $_W['setting']['remote']['qiniu']['secretkey'] : $_GPC['secretkey'];
 	$auth= attachment_qiniu_auth(trim($_GPC['accesskey']), trim($_GPC['secretkey']), trim($_GPC['bucket']));
 	if (is_error($auth)) {
-		message(error(-1, '配置失败，请检查配置。注：请检查存储区域是否选择的是和bucket对应<br/>的区域'), '', 'ajax');
+		message(error(-1, '配置失败，请检查配置。注：请检查存储区域是否选择的是和bucket对应<br/>的区域'), '', 'ajax', true);
 	}
 	load()->func('communication');
 	$url = $_GPC['url'];
@@ -325,16 +325,16 @@ if ($do == 'qiniu') {
 	$filename = 'MicroEngine.ico';
 	$response = ihttp_request($url. '/'.$filename, array(), array('CURLOPT_REFERER' => $_SERVER['SERVER_NAME']));
 	if (is_error($response)) {
-		message(error(-1, '配置失败，七牛访问url错误'),'','ajax');
+		message(error(-1, '配置失败，七牛访问url错误'),'','ajax', true);
 	}
 	if (intval($response['code']) != 200) {
-		message(error(-1, '配置失败，七牛访问url错误,请保证bucket为公共读取的'),'','ajax');
+		message(error(-1, '配置失败，七牛访问url错误,请保证bucket为公共读取的'),'','ajax', true);
 	}
 	$image = getimagesizefromstring($response['content']);
 	if (!empty($image) && strexists($image['mime'], 'image')) {
-		message(error(0,'配置成功'),'','ajax');
+		message(error(0,'配置成功'),'','ajax', true);
 	} else {
-		message(error(-1, '配置失败，七牛访问url错误'),'','ajax');
+		message(error(-1, '配置失败，七牛访问url错误'),'','ajax', true);
 	}
 }
 
@@ -352,23 +352,23 @@ if ($do == 'cos') {
 	$auth= attachment_cos_auth(trim($_GPC['bucket']), trim($_GPC['appid']), trim($_GPC['secretid']), trim($_GPC['secretkey']), $_GPC['local']);
 
 	if (is_error($auth)) {
-		message(error(-1, '配置失败，请检查配置'), '', 'ajax');
+		message(error(-1, '配置失败，请检查配置'), '', 'ajax', true);
 	}
 	load()->func('communication');
 	$url = strexists($url, 'http') ? trim($url, '/') : 'http://'.trim($url, '/');
 	$filename = 'MicroEngine.ico';
 	$response = ihttp_request($url. '/'.$filename, array(), array('CURLOPT_REFERER' => $_SERVER['SERVER_NAME']));
 	if (is_error($response)) {
-		message(error(-1, '配置失败，腾讯cos访问url错误'),'','ajax');
+		message(error(-1, '配置失败，腾讯cos访问url错误'),'','ajax', true);
 	}
 	if (intval($response['code']) != 200) {
-		message(error(-1, '配置失败，腾讯cos访问url错误,请保证bucket为公共读取的'),'','ajax');
+		message(error(-1, '配置失败，腾讯cos访问url错误,请保证bucket为公共读取的'),'','ajax', true);
 	}
 	$image = getimagesizefromstring($response['content']);
 	if (!empty($image) && strexists($image['mime'], 'image')) {
-		message(error(0,'配置成功'),'','ajax');
+		message(error(0,'配置成功'),'','ajax', true);
 	} else {
-		message(error(-1, '配置失败，腾讯cos访问url错误'),'','ajax');
+		message(error(-1, '配置失败，腾讯cos访问url错误'),'','ajax', true);
 	}
 }
 

@@ -297,7 +297,7 @@ class YiXinAccount extends WeAccount {
 			return $this->account['access_token']['token'];
 		} else {
 			if (empty($this->account['key']) || empty($this->account['secret'])) {
-				message('请填写公众号的appid及appsecret, (需要你的号码为易信服务号)！', url('account/post', array('acid' => $this->account['acid'], 'uniacid' => $this->account['uniacid'])), 'error');
+				message('请填写公众号的appid及appsecret, (需要你的号码为易信服务号)！', url('account/post', array('acid' => $this->account['acid'], 'uniacid' => $this->account['uniacid'])), 'error', true);
 			}
 			$url = "https://api.yixin.im/cgi-bin/token?grant_type=client_credential&appid={$this->account['key']}&secret={$this->account['secret']}";
 			$content = ihttp_get($url);

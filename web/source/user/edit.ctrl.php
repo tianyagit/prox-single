@@ -17,10 +17,10 @@ $_W['page']['title'] = '编辑用户 - 用户管理';
 $uid = intval($_GPC['uid']);
 $user = user_single($uid);
 if (empty($user)) {
-	message('访问错误, 未找到该操作员.', url('user/display'), 'error');
+	message('访问错误, 未找到该操作员.', url('user/display'), 'error', true);
 } else {
-	if ($user['status'] == 1) message('访问错误，该用户未审核通过，请先审核通过再修改！', url('user/display/check_display'), 'error');
-	if ($user['status'] == 3) message('访问错误，该用户已被禁用，请先启用再修改！', url('user/display/recycle_display'), 'error');
+	if ($user['status'] == 1) message('访问错误，该用户未审核通过，请先审核通过再修改！', url('user/display/check_display'), 'error', true);
+	if ($user['status'] == 3) message('访问错误，该用户已被禁用，请先启用再修改！', url('user/display/recycle_display'), 'error', true);
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
 $profile = pdo_fetch('SELECT * FROM '.tablename('users_profile').' WHERE `uid` = :uid LIMIT 1',array(':uid' => $uid));
@@ -54,19 +54,19 @@ if ($do == 'edit_base') {
 if ($do == 'edit_modules_tpl') {
 	if ($_W['isajax'] && $_W['ispost']) {
 		if (intval($_GPC['groupid']) == $user['groupid']){
-			message(error(2, '未做更改！') , '', 'ajax');
+			message(error(2, '未做更改！') , '', 'ajax', true);
 		}
 		if (!empty($_GPC['type']) && !empty($_GPC['groupid'])) {
 			$data['uid'] = $uid;
 			$data[$_GPC['type']] = intval($_GPC['groupid']);
 			if (user_update($data)) {
 				$group_info = user_group_detail_info($_GPC['groupid']);
-				message(error(0, $group_info), '', 'ajax');
+				message(error(0, $group_info), '', 'ajax', true);
 			} else {
-				message(error(1, '更改失败！'), '', 'ajax');
+				message(error(1, '更改失败！'), '', 'ajax', true);
 			}
 		} else {
-			message(error(-1, '参数错误！'), '', 'ajax');
+			message(error(-1, '参数错误！'), '', 'ajax', true);
 		}
 	}
 	$groups = pdo_getall('users_group', array(), array('id', 'name'), 'id');
