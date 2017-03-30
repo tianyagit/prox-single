@@ -198,11 +198,11 @@ if ($do == 'display') {
 		$status = $category_exist['enabled'] == 1 ? 0 : 1;
 		$result = pdo_update('site_category', array('enabled' => $status), array('id' => $id));
 		if ($result) {
-			message(error(0, '更改成功！'), url('site/category'), 'ajax', true);
+			iajax(0, '更改成功！', url('site/category'));
 		} else {
-			message(error(1, '更改失败！'), '', 'ajax', true);
+			iajax(1, '更改失败！', '');
 		}
 	} else {
-		message(error(-1, '分类不存在！'), '', 'ajax', true);
+		iajax(-1, '分类不存在！', '');
 	}
 }

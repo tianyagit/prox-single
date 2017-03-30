@@ -19,7 +19,7 @@ if ($do == 'get_upgrade_info') {
 		if (!empty($template_info)) {
 			$cloud_t_upgrade_info = cloud_t_upgradeinfo($template_name);//获取模块更新信息
 			if (is_error($cloud_t_upgrade_info)) {
-				message(error(1, $cloud_t_upgrade_info['message']), '', 'ajax', true);
+				iajax(1, $cloud_t_upgrade_info['message'], '');
 			}
 			$template_upgrade_info = array(
 				'name' => $cloud_t_upgrade_info['name'],
@@ -28,9 +28,9 @@ if ($do == 'get_upgrade_info') {
 				'branches' => $cloud_t_upgrade_info['branches'],
 				'site_branch' => $cloud_t_upgrade_info['branches'][$cloud_t_upgrade_info['version']['branch_id']],
 			);
-			message(error(0, $template_upgrade_info), '', 'ajax', true);
+			iajax(0, $template_upgrade_info, '');
 		} else {
-			message(error(1, '模板不存在'), '', 'ajax', true);
+			iajax(1, '模板不存在', '');
 		}
 	}
 }
@@ -67,7 +67,7 @@ if ($do == 'check_upgrade') {
 			}
 		}
 	}
-	message(error(0, $template_list), '', 'ajax', true);
+	iajax(0, $template_list, '');
 }
 
 if ($do == 'installed') {

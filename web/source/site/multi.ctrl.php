@@ -27,7 +27,7 @@ if ($do == 'post') {
 		$name = trim($_GPC['name']);
 		$sql = "SELECT s.*, t.`name` AS `tname`, t.`title`, t.`type` FROM " . tablename('site_styles') . " AS s LEFT JOIN " . tablename('site_templates') . " AS t ON s.`templateid` = t.`id` WHERE s.`uniacid` = :uniacid AND s.`name` LIKE :name";
 		$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':name' => "%{$name}%"));
-		message(error(0, $styles), '', 'ajax', true);
+		iajax(0, $styles, '');
 	}
 	$id = intval($_GPC['multiid']);
 
@@ -215,9 +215,9 @@ if ($do == 'switch') {
 	$data = array('status' => $multi_info['status'] == 1 ? 0 : 1);
 	$result = pdo_update('site_multi', $data, array('id' => $id));
 	if(!empty($result)) {
-		message(error(0, '更新成功！'), '', 'ajax', true);
+		iajax(0, '更新成功！', '');
 	}else {
-		message(error(-1, '请求失败！'), '', 'ajax', true);
+		iajax(-1, '请求失败！', '');
 	}
 }
 //底部快捷菜单:quickmenu_display、quickmenu_post
@@ -229,9 +229,9 @@ if ($do == 'quickmenu_display' && $_W['isajax'] && $_W['ispost']) {
 		$status = $page['status'] == 1 ? 1 : 0;
 		$modules = uni_modules();
 		$modules = !empty($modules) ? $modules : 'null';
-		message(error(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules)), '', 'ajax', true);
+		iajax(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules), '');
 	} else {
-		message(error(-1, '请求失败！'), '', 'ajax', true);
+		iajax(-1, '请求失败！', '');
 	}
 }
 
@@ -261,8 +261,8 @@ if ($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
 		$id = pdo_insertid();
 	}
 	if ($result) {
-		message(error(0, '保存成功！'), '', 'ajax', true);
+		iajax(0, '保存成功！', '');
 	} else {
-		message(error(1, '保存失败！'), '', 'ajax', true);
+		iajax(1, '保存失败！', '');
 	}
 }

@@ -21,7 +21,7 @@ if ($do == 'del_category') {
 if ($do == 'get_categorys') {
 	$multiid = intval($_GPC['multiid']);
 	$categorys = pdo_getall('site_category', array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid));
-	return message(error(1, $categorys), '', 'ajax', true);
+	return iajax(1, $categorys, '');
 }
 
 if ($do == 'save_category') {
@@ -41,7 +41,7 @@ if ($do == 'save_category') {
 			}
 		}
 	}
-	return message(error(1, 1), '', 'ajax', true);
+	return iajax(1, 1, '');
 }
 
 if ($do == 'edit') {
@@ -144,7 +144,7 @@ if ($do == 'account_list') {
 			$account_list[$key] = $accounts;
 		}
 	}
-	message(error(0, $account_list), '', 'ajax', true);
+	iajax(0, $account_list, '');
 }
 
 if ($do == 'save_connection') {
@@ -155,9 +155,9 @@ if ($do == 'save_connection') {
 	$account_info = uni_account_default($_GPC['uniacid']);
 	$account_info['thumb'] = tomedia('headimg_' . $account_info['acid'] . '.jpg') . '?time=' .time();
 	if (is_error($result)) {
-		message(error(-1, $result['message']), '', 'ajax', true);
+		iajax(-1, $result['message'], '');
 	}
-	message(error(0, $account_info), '', 'ajax', true);
+	iajax(0, $account_info, '');
 }
 
 if ($do == 'switch_version') {

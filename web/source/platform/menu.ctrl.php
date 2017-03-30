@@ -154,12 +154,12 @@ if($do == 'push') {
 	$id = intval($_GPC['id']);
 	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if(empty($data)) {
-		message(error(-1, '菜单不存在或已删除'), referer(), 'ajax', true);
+		iajax(-1, '菜单不存在或已删除', referer());
 	}
 	if ($_GPC['status'] == 1) {
 		$post = iunserializer(base64_decode($data['data']));
 		if(empty($post)) {
-			message(error(-1, '菜单数据错误'), referer(), 'ajax', true);
+			iajax(-1, '菜单数据错误', referer());
 		}
 		$menu = array();
 		if(!empty($post['button'])) {
@@ -222,7 +222,7 @@ if($do == 'push') {
 		$account_api = WeAccount::create($_W['acid']);
 		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
-			message(error(-1, $result['message']), '', 'ajax', true);
+			iajax(-1, $result['message'], '');
 		} else {
 			if($data['type'] == 1) {
 				pdo_update('uni_account_menus', array('status' => '1'), array('id' => $data['id']));
@@ -235,7 +235,7 @@ if($do == 'push') {
 				}
 				$status = pdo_update('uni_account_menus', array('status' => 1, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
 			}
-			message(error(0, '推送成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax', true);
+			iajax(0, '推送成功', url('platform/menu/display', array('type' => $data['type'])));
 		}
 	} elseif ($_GPC['status'] == 2) {
 		$status =  $_GPC['status'];
@@ -249,7 +249,7 @@ if($do == 'push') {
 				message(error(-1, $message), '', 'error', true);
 			} else {
 				pdo_update('uni_account_menus', array('status' => '0'), array('id' => $data['id']));
-				message(error(0, '关闭成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax', true);
+				iajax(0, '关闭成功', url('platform/menu/display', array('type' => $data['type'])));
 			}
 		}
 	}
@@ -339,7 +339,7 @@ if($do == 'post') {
 		$post = $_GPC['group'];
 		//检测菜单组名称
 		if (empty($post['title'])) {
-			message(error(-1, '请填写菜单组名称！'), '', 'ajax', true);
+			iajax(-1, '请填写菜单组名称！', '');
 		}
 		$check_title_exist_condition = array(
 			'title' => $post['title'],
@@ -350,7 +350,7 @@ if($do == 'post') {
 		}
 		$check_title_exist = pdo_getcolumn('uni_account_menus', $check_title_exist_condition, 'id');
 		if (!empty($check_title_exist)) {
-			message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax', true);
+			iajax(-1, '菜单组名称已存在，请重新命名！', '');
 		}
 		
 		$menu = array();
@@ -417,7 +417,7 @@ if($do == 'post') {
 
 		//判断是否有菜单显示对象提交,默认菜单和个性化菜单唯一区别就是有无菜单显示对象
 		if($post['type'] == 3 && empty($post['matchrule'])) {
-			message(error(-1, '请选择菜单显示对象'), '', 'ajax', true);
+			iajax(-1, '请选择菜单显示对象', '');
 		}
 
 		if($post['type'] == 3 && !empty($post['matchrule'])) {
@@ -487,14 +487,14 @@ if($do == 'post') {
 					}
 					pdo_insert('uni_account_menus', $insert);
 				}
-				message(error(0, '创建菜单成功'), url('platform/menu/display'), 'ajax', true);
+				iajax(0, '创建菜单成功', url('platform/menu/display'));
 			} elseif($post['type'] == 3) {
 				if($post['status'] == 0 && $post['id'] > 0) {
 					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 3, 'id' => $post['id']));
 				} else {
 					pdo_insert('uni_account_menus', $insert);
 				}
-				message(error(0, '创建菜单成功'), url('platform/menu/display', array('type' => '3')), 'ajax', true);
+				iajax(0, '创建菜单成功', url('platform/menu/display', array('type' => '3')));
 			}
 		}
 	}
@@ -609,5 +609,5 @@ if ($do == 'current_menu') {
 			}
 		}
 	}
-	message(error(0, $material), '', 'ajax', true);
+	iajax(0, $material, '');
 }

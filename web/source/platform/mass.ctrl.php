@@ -66,11 +66,11 @@ if ($do == 'del') {
 	if (!empty($mass) && $mass['cron_id'] > 0) {
 		$status = cron_delete(array($mass['cron_id']));
 		if (is_error($status)) {
-			message(error(0, $status), '', 'ajax', true);
+			iajax(0, $status, '');
 		}
 	}
 	pdo_delete('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => intval($_GPC['id'])));
-	message(error(0, '删除成功！'), '', 'ajax', true);
+	iajax(0, '删除成功！', '');
 }
 
 if ($do == 'post') {
@@ -93,7 +93,7 @@ if ($do == 'post') {
 	if (checksubmit('submit')) {
 		$cloud = cloud_prepare();
 		if (is_error($cloud)) {
-			message(error(0, $cloud), '', 'ajax', true);
+			iajax(0, $cloud, '');
 		}
 
 		//删除提交日的群发任务
@@ -214,16 +214,16 @@ if ($do == 'cron') {
 if ($do == 'preview') {
 	$wxname = trim($_GPC['wxname']);
 	if (empty($wxname)) {
-		message(error(1, '微信号不能为空'), '', 'ajax', true);
+		iajax(1, '微信号不能为空', '');
 	}
 	$type = trim($_GPC['type']);
 	$media_id = trim($_GPC['media_id']);
 	$account_api = WeAccount::create();
 	$data = $account_api->fansSendPreview($wxname, $media_id, $type);
 	if (is_error($data)) {
-		message(error(-1, $data['message']), '', 'ajax', true);
+		iajax(-1, $data['message'], '');
 	}
-	message(error(0, 'success'), '', 'ajax', true);
+	iajax(0, 'success', '');
 }
 
 if ($do == 'send') {

@@ -96,14 +96,14 @@ if ($do == 'send') {
 			'content' => iserializer($send[$send['msgtype']]),
 			'createtime' => TIMESTAMP,
 		));
-		message(error(0, array('createtime' => date('Y-m-d', time()), 'content' => $content)), '', 'ajax', true);
+		iajax(0, array('createtime' => date('Y-m-d', time()), 'content' => $content), '');
 	}
 }
 
 if ($do == 'endchats') {
 	$openid = trim($_GPC['openid']);
 	if (empty($openid)) {
-		message(error(1, '粉丝openid不合法'), '', 'ajax', true);
+		iajax(1, '粉丝openid不合法', '');
 	}
 	$fans_info = mc_fansinfo($openid);
 	$account = account_fetch($fans_info['acid']);

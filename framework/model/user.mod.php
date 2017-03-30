@@ -310,3 +310,54 @@ function user_account_detail_info($uid) {
 	}
 	return $account_lists;
 }
+
+
+/**
+ * 获取当前用户拥有的所有模块及小程序
+ * @return array 模块列表
+ */
+function user_modules() {
+	global $_W;
+	load()->model('module');
+	$cachekey = cache_system_key("user_modules:" . $_W['uid']);
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+	$module_list = array();
+	$user_info = user_single(array('uid' => $_W['uid']));
+	if ($_W['isfounder']) {
+		$main_module_list = pdo_getall('modules', array('main_module' => ''));
+	} elseif (empty($user_info['groupid'])) {
+		$main_module_list = pdo_getall('modules', array('issystem' => 1));
+	} else {
+		$user_group_info = pdo_get('users_group', array('id' => $user_info['groupid']));
+		$user_group_info = iunserializer($user_group_info);
+		$user_group_modules = array();
+		if (!empty($user_group_info['package']) && is_array($user_group_info['package'])) {
+			$uni_groups = pdo_fetchall('SELECT * FROM ' . tablename('uni_group') . ' WHERE id IN ' . "('" .  implode("','", $user_group_info['package']) . "') OR uniacid=" . $_W['uniacid']);
+			if (!empty($uni_groups)) {
+				foreach ($uni_groups as $uni_group_modules) {
+					$user_group_modules = array_merge($user_group_modules, $uni_group_modules);
+				}
+			}
+		}
+		$main_module_list = pdo_getall('modules', array('name' => $user_group_modules, 'main_module' => ''));
+	}
+	$plugin_module_list = pdo_getall('modules', array('main_module <>' => ''), array(), 'name');
+	if (!empty($main_module_list) && is_array($main_module_list)) {
+		foreach ($main_module_list as $main_module) {
+			$module_list[$main_module['name']] = module_parse_info($main_module);
+			$plugin_list = empty($main_module['plugin']) ? array() : explode(',', $main_module['plugin']);
+			if (!empty($plugin_list) && is_array($plugin_list)) {
+				foreach ($plugin_list as $plugin) {
+					if (in_array($plugin, array_keys($plugin_module_list))) {
+						$module_list[$plugin] = module_parse_info($plugin_module_list[$plugin]);
+					}
+				}
+			}
+		}
+	}
+	cache_write($cachekey, $module_list);
+	return $module_list;
+}

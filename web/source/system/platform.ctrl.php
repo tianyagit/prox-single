@@ -32,9 +32,9 @@ if($_W['isajax'] && $_W['ispost']) {
 
 	$result = setting_save($data,'platform');
 	if($result) {
-		message(error(0, '修改成功！'), '', 'ajax', true);
+		iajax(0, '修改成功！', '');
 	}else {
-		message(error(1, '修改失败！'), '', 'ajax', true);
+		iajax(1, '修改失败！', '');
 	}
 }
 

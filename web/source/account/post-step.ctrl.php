@@ -164,13 +164,13 @@ if($step == 1) {
 		$uid = intval($_GPC['uid'][0]);
 		$user = user_single(array('uid' => $uid));
 		if (empty($user)) {
-			message(error(-1, '用户不存在或是已经被删除'), '', 'ajax', true);
+			iajax(-1, '用户不存在或是已经被删除', '');
 		}
 		$result['username'] = $user['username'];
 		$result['uid'] = $user['uid'];
 		$result['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $user['groupid']));
 		$result['package'] = iunserializer($result['group']['package']);
-		message(error(0, $result), '', 'ajax', true);
+		iajax(0, $result, '');
 		exit;
 	}
 	if (checksubmit('submit')) {

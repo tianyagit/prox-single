@@ -93,16 +93,23 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 		$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
 		
 		isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
-		
 		if (!empty($message_cookie['redirect'])) {
 			header('Location: ' . $message_cookie['redirect']);
 		} else {
-			include template('common/message-tips', TEMPLATE_INCLUDEPATH);
+			include template('common/message', TEMPLATE_INCLUDEPATH);
 		}
 	} else {
 		include template('common/message', TEMPLATE_INCLUDEPATH);
 	}
 	exit;
+}
+
+function iajax($code, $message, $redirect = '') {
+	message(error($code, $message), $redirect, 'ajax', false);
+}
+
+function itoast($message, $redirect = '', $type = '') {
+	message($message, $redirect, $type, true);
 }
 
 /**
