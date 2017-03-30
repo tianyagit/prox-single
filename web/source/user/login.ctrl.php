@@ -24,35 +24,35 @@ function _login($forward = '') {
 	if (!empty($_W['setting']['copyright']['verifycode'])) {
 		$verify = trim($_GPC['verify']);
 		if (empty($verify)) {
-			message('请输入验证码');
+			message('请输入验证码', '', '', true);
 		}
 		$result = checkcaptcha($verify);
 		if (empty($result)) {
-			message('输入验证码错误');
+			message('输入验证码错误', '', '', true);
 		}
 	}
 	if (empty($username)) {
-		message('请输入要登录的用户名');
+		message('请输入要登录的用户名', '', '', true);
 	}
 	$member['username'] = $username;
 	$member['password'] = $_GPC['password'];
 	if (empty($member['password'])) {
-		message('请输入密码');
+		message('请输入密码', '', '', true);
 	}
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == 1) {
-			message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
+			message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', '', '', true);
 		}
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$_W['isfounder'] = in_array($record['uid'], $founders);
 		if (empty($_W['isfounder'])) {
 			if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
-				message('您的账号有效期限已过，请联系网站管理员解决！');
+				message('您的账号有效期限已过，请联系网站管理员解决！', '', '', true);
 			}
 		}
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
-			message('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason']);
+			message('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], '', '', true);
 		}
 		$cookie = array();
 		$cookie['uid'] = $record['uid'];
@@ -97,6 +97,6 @@ function _login($forward = '') {
 		} else {
 			pdo_update('users_failed_login', array('count' => $failed['count'] + 1, 'lastupdate' => TIMESTAMP), array('id' => $failed['id']));
 		}
-		message('登录失败，请检查您输入的用户名和密码！');
+		message('登录失败，请检查您输入的用户名和密码！', '', '', true);
 	}
 }

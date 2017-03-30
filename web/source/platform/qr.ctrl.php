@@ -111,7 +111,7 @@ if ($do == 'post') {
 			$barcode['action_name'] = 'QR_SCENE';
 			$result = $uniacccount->barCodeCreateDisposable($barcode);
 		} else if ($qrctype == 2) {
-			$scene_str = trim($_GPC['scene_str']) ? trim($_GPC['scene_str'])  : message('场景值不能为空');
+			$scene_str = trim($_GPC['scene_str']) ? trim($_GPC['scene_str'])  : message('场景值不能为空', '', '', true);
 			$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
 			if (!empty($is_exist)) {
 				message("场景值:{$scene_str}已经存在,请更换场景值");
@@ -120,7 +120,7 @@ if ($do == 'post') {
 			$barcode['action_name'] = 'QR_LIMIT_STR_SCENE';
 			$result = $uniacccount->barCodeCreateFixed($barcode);
 		} else {
-			message('抱歉，此公众号暂不支持您请求的二维码类型！');
+			message('抱歉，此公众号暂不支持您请求的二维码类型！', '', '', true);
 		}
 		
 		if (!is_error($result)) {
@@ -142,7 +142,7 @@ if ($do == 'post') {
 			pdo_insert('qrcode', $insert);
 			message('恭喜，生成带参数二维码成功！', url('platform/qr/list', array('name' => 'qrcode')), 'success', true);
 		} else {
-			message("公众平台返回接口错误. <br />错误代码为: {$result['errorcode']} <br />错误信息为: {$result['message']}");
+			message("公众平台返回接口错误. <br />错误代码为: {$result['errorcode']} <br />错误信息为: {$result['message']}", '', '', true);
 		}
 	}
 

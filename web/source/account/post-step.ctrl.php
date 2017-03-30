@@ -36,7 +36,7 @@ if($step == 1) {
 	if (!empty($uniacid)) {
 		$state = uni_permission($uid, $uniacid);
 		if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该公众号操作权限！');
+			message('没有该公众号操作权限！', '', '', true);
 		}
 		if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
 			message($permission['message'], '' , 'error', true);
@@ -54,7 +54,7 @@ if($step == 1) {
 		$update['name'] = trim($_GPC['cname']);
 
 		if(empty($update['name'])) {
-			message('公众号名称必须填写');
+			message('公众号名称必须填写', '', '', true);
 		}
 		//如果uniacid不存在,创建主公号
 		if (empty($uniacid)) {
@@ -68,10 +68,10 @@ if($step == 1) {
 			//检测新添加公众号名称是否存在
 			$check_uniacname = pdo_get('uni_account', array('name' => $name), 'name');
 			if (!empty($check_uniacname)) {
-				message('该公众号名称已经存在');
+				message('该公众号名称已经存在', '', '', true);
 			}
 			if (!pdo_insert('uni_account', $data)) {
-				message('添加公众号失败');
+				message('添加公众号失败', '', '', true);
 			}
 			$uniacid = pdo_insertid();
 			//获取默认模板的id
@@ -157,7 +157,7 @@ if($step == 1) {
 	$acid = intval($_GPC['acid']);
 	$uniacid = intval($_GPC['uniacid']);
 	if (empty($_W['isfounder'])) {
-		message('您无权进行该操作！');
+		message('您无权进行该操作！', '', '', true);
 	}
 	if ($_GPC['get_type'] == 'userinfo' && $_W['ispost']) {
 		$result = array();
@@ -313,7 +313,7 @@ if($step == 1) {
 	$acid = intval($_GPC['acid']);
 	$uni_account = pdo_get('uni_account', array('uniacid' => $uniacid));
 	if (empty($uni_account)) {
-		message('非法访问');
+		message('非法访问', '', '', true);
 	}
 	$account = account_fetch($uni_account['default_acid']);
 }

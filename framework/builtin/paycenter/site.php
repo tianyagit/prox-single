@@ -254,7 +254,7 @@ class PaycenterModuleSite extends WeModuleSite {
 		$encrypt_code = trim($_GPC['encrypt_code']);
 		$openid = trim($_GPC['openid']);
 		if(empty($card_id) || empty($encrypt_code)) {
-			message('卡券签名参数错误');
+			message('卡券签名参数错误', '', '', true);
 		}
 		if ($source == '1') {
 			$card = pdo_get('coupon', array('uniacid' => $_W['uniacid'], 'id' => $card_id));
@@ -262,7 +262,7 @@ class PaycenterModuleSite extends WeModuleSite {
 			$card = pdo_get('coupon', array('uniacid' => $_W['uniacid'], 'card_id' => $card_id));
 		}
 		if(empty($card)) {
-			message('卡券不存在或已删除');
+			message('卡券不存在或已删除', '', '', true);
 		}
 		$card['date_info'] = iunserializer($card['date_info']);
 		$card['logo_url'] = tomedia($card['logo_url']);
@@ -273,7 +273,7 @@ class PaycenterModuleSite extends WeModuleSite {
 			load() -> classs('coupon');
 			$coupon = new coupon($_W['acid']);
 			if (is_null($coupon)) {
-				message('系统错误');
+				message('系统错误', '', '', true);
 			}
 			$code = $coupon->DecryptCode(array('encrypt_code' => $encrypt_code));
 			$code = $code['code'];

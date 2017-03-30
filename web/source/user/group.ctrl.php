@@ -76,7 +76,7 @@ if ($do == 'post') {
 	unset($package_val);
 	if (checksubmit('submit')) {
 		if (empty($_GPC['name'])) {
-			message('请输入用户组名称！');
+			message('请输入用户组名称！', '', '', true);
 		}
 		if (!empty($_GPC['package'])) {
 			foreach ($_GPC['package'] as $value) {

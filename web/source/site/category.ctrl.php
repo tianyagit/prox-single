@@ -66,7 +66,7 @@ if ($do == 'display') {
 
 	if (checksubmit('submit')) {
 		if (empty($_GPC['cname'])) {
-			message('抱歉，请输入分类名称！');
+			message('抱歉，请输入分类名称！', '', '', true);
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],

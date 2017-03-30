@@ -50,7 +50,7 @@ if(empty($_W['setting']['platform'])) {
 }
 $url = parse_url($_W['siteroot']);
 if (!function_exists('mcrypt_module_open')) {
-	message('抱歉，您的系统不支持加解密 mcrypt 模块，无法进行平台接入');
+	message('抱歉，您的系统不支持加解密 mcrypt 模块，无法进行平台接入', '', '', true);
 }
 $account_platform = new WeiXinPlatform();
 $authurl = $account_platform->getAuthLoginUrl();

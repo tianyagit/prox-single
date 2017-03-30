@@ -24,7 +24,7 @@ if (!empty($eid)) {
 	}
 }
 if (empty($entry) || empty($entry['do'])) {
-	message('非法访问.');
+	message('非法访问.', '', '', true);
 }
 
 if (!$entry['direct']) {
@@ -42,7 +42,7 @@ if (!$entry['direct']) {
 		$permission = uni_user_module_permission_check($entry['module'] . '_rule', $entry['module']);
 	}
 	if (!$permission) {
-		message('您没有权限进行该操作');
+		message('您没有权限进行该操作', '', '', true);
 	}
 	$_W['page']['title'] = $entry['title'];
 	define('ACTIVE_FRAME_URL', url('site/entry/', array('eid' => $entry['eid'])));

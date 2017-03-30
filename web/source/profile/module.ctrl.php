@@ -128,7 +128,7 @@ if($do == 'display') {
 	$modulename = $_GPC['modulename'];
 	$module = module_fetch($modulename);
 	if(empty($module)) {
-		message('抱歉，你操作的模块不能被访问！');
+		message('抱歉，你操作的模块不能被访问！', '', '', true);
 	}
 	
 	$module_status = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $_W['uniacid']), array('id', 'shortcut'));
@@ -155,7 +155,7 @@ if($do == 'display') {
 } elseif ($do == 'enable') {
 	$modulename = $_GPC['modulename'];
 	if(empty($modulelist[$modulename])) {
-		message('抱歉，你操作的模块不能被访问！');
+		message('抱歉，你操作的模块不能被访问！', '', '', true);
 	}
 	pdo_update('uni_account_modules', array(
 		'enabled' => empty($_GPC['enabled']) ? STATUS_OFF : STATUS_ON,
@@ -169,7 +169,7 @@ if($do == 'display') {
 	$modulename = $_GPC['modulename'];
 	$module = $modulelist[$modulename];
 	if(empty($module)) {
-		message('抱歉，你操作的模块不能被访问！');
+		message('抱歉，你操作的模块不能被访问！', '', '', true);
 	}
 	$max_displayorder = (int)pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid']), 'MAX(displayorder)');
 	
@@ -191,11 +191,11 @@ if($do == 'display') {
 	$module = $_W['current_module'] = $modulelist[$modulename];
 	
 	if(empty($module)) {
-		message('抱歉，你操作的模块不能被访问！');
+		message('抱歉，你操作的模块不能被访问！', '', '', true);
 	}
 	//@@todo 权限判断还没有优化
 	if(!uni_user_module_permission_check($modulename.'_settings', $modulename)) {
-		message('您没有权限进行该操作');
+		message('您没有权限进行该操作', '', '', true);
 	}
 	
 	$config = $module['config'];
@@ -221,11 +221,11 @@ if($do == 'display') {
 		$iframe = cloud_module_setting_prepare($module_simple, 'setting');
 		$result = ihttp_post($iframe, array('inherit_setting' => base64_encode(iserializer($config))));
 		if (is_error($result)) {
-			message($result['message']);
+			message($result['message'], '', '', true);
 		}
 		$result = json_decode($result['content'], true);
 		if (is_error($result)) {
-			message($result['message']);
+			message($result['message'], '', '', true);
 		}
 		
 		$module_simple = array_elements(array('name', 'type', 'title', 'version', 'settings'), $module);
@@ -244,10 +244,10 @@ if ($do == 'permissions') {
 	$name = $_GPC['m'];
 	$module = $_W['current_module'] = $modulelist[$name];
 	if(empty($module)) {
-		message('抱歉，你操作的模块不能被访问！');
+		message('抱歉，你操作的模块不能被访问！', '', '', true);
 	}
 	if(!uni_user_module_permission_check($name.'_permissions', $name)) {
-		message('您没有权限进行该操作');
+		message('您没有权限进行该操作', '', '', true);
 	}
 	
 	$op = !empty($_GPC['op']) ? trim($_GPC['op']) : 'display';
@@ -311,31 +311,31 @@ if ($do == 'permissions') {
 			$insert_user['type'] = 3;
 			$operator_id = intval($_GPC['uid']);
 			if (empty($insert_user['username'])) {
-				message('必须输入用户名，格式为 1-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。');
+				message('必须输入用户名，格式为 1-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。', '', '', true);
 			}
 			if (empty($operator_id)) {
 				if (user_check(array('username' => $insert_user['username']))) {
-					message('非常抱歉，此用户名已经被注册，你需要更换注册名称！');
+					message('非常抱歉，此用户名已经被注册，你需要更换注册名称！', '', '', true);
 				}
 				if (istrlen($insert_user['password']) < 8) {
-					message('必须输入密码，且密码长度不得低于8位。');
+					message('必须输入密码，且密码长度不得低于8位。', '', '', true);
 				}
 				if ($insert_user['repassword'] != $insert_user['password']) {
-					message('两次输入密码不一致');
+					message('两次输入密码不一致', '', '', true);
 				}
 				unset($insert_user['repassword']);
 				$operator['uid'] = user_register($insert_user);
 				if (!$operator['uid']) {
-					message('注册账号失败');
+					message('注册账号失败', '', '', true);
 				}
 			} else {
 				$operator = array();
 				if (!empty($insert_user['password'])) {
 					if (istrlen($insert_user['password']) < 8) {
-						message('必须输入密码，且密码长度不得低于8位。');
+						message('必须输入密码，且密码长度不得低于8位。', '', '', true);
 					}
 					if ($insert_user['repassword'] != $insert_user['password']) {
-						message('两次输入密码不一致');
+						message('两次输入密码不一致', '', '', true);
 					}
 					$operator['password'] = $insert_user['password'];
 					$operator['salt'] = $user['salt'];

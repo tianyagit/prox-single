@@ -161,13 +161,13 @@ class UserApiModuleSite extends WeModuleSite {
 			require model('rule');
 			if(checksubmit()) {
 				if (empty($_GPC['name'])) {
-					message('抱歉，规则名称为必填项，请选回修改！');
+					message('抱歉，规则名称为必填项，请选回修改！', '', '', true);
 				}
 				if (($_GPC['type'] && empty($_GPC['apiurl'])) || (empty($_GPC['type']) && empty($_GPC['apilocal']))) {
-					message('请填写接口地址！');
+					message('请填写接口地址！', '', '', true);
 				}
 				if ($_GPC['type'] && empty($_GPC['token'])) {
-					message('请填写Token值！');
+					message('请填写Token值！', '', '', true);
 				}
 				$rule = array(
 					'weid' => 0,

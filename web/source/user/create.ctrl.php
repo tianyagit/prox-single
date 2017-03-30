@@ -17,23 +17,23 @@ if ($state != ACCOUNT_MANAGE_NAME_FOUNDER) {
 if (checksubmit()) {
 	$username = trim($_GPC['username']);
 	if (!preg_match(REGULAR_USERNAME, $username)) {
-		message('必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。');
+		message('必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。', '', '', true);
 	}
 	if (user_check(array('username' => $username))) {
-		message('非常抱歉，此用户名已经被注册，你需要更换注册名称！');
+		message('非常抱歉，此用户名已经被注册，你需要更换注册名称！', '', '', true);
 	}
 	if (istrlen($_GPC['password']) < 8) {
-		message('必须输入密码，且密码长度不得低于8位。');
+		message('必须输入密码，且密码长度不得低于8位。', '', '', true);
 	}
 	if (trim($_GPC['password']) !== trim($_GPC['repassword'])) {
-		message('两次密码不一致！');
+		message('两次密码不一致！', '', '', true);
 	}
 	if (!intval($_GPC['groupid'])) {
-		message('请选择所属用户组');
+		message('请选择所属用户组', '', '', true);
 	}
 	$group = pdo_fetch("SELECT id,timelimit FROM ".tablename('users_group')." WHERE id = :id", array(':id' => intval($_GPC['groupid'])));
 	if (empty($group)) {
-		message('会员组不存在');
+		message('会员组不存在', '', '', true);
 	}
 	$timelimit = intval($group['timelimit']);
 	$timeadd = 0;
@@ -53,7 +53,7 @@ if (checksubmit()) {
 		unset($data);
 		message('用户增加成功！', url('user/edit', array('uid' => $uid)), 'success', true);
 	}
-	message('增加用户失败，请稍候重试或联系网站管理员解决！');
+	message('增加用户失败，请稍候重试或联系网站管理员解决！', '', '', true);
 }
 $groups = pdo_fetchall("SELECT id, name FROM ".tablename('users_group')." ORDER BY id ASC");
 

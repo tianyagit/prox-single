@@ -1366,7 +1366,7 @@ abstract class WeModuleSite extends WeBase {
 		load()->model('module');
 		activity_coupon_type_init();
 		if(!$this->inMobile) {
-			message('支付功能只能在手机上使用');
+			message('支付功能只能在手机上使用', '', '', true);
 		}
 		$params['module'] = $this->module['name'];
 //		如果价格为0 直接执行模块支付回调方法

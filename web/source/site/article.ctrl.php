@@ -84,7 +84,7 @@ if ($do == 'display') {
 	}
 	if (checksubmit('submit')) {
 		if (empty($_GPC['title'])) {
-			message('标题不能为空，请输入标题！');
+			message('标题不能为空，请输入标题！', '', '', true);
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -150,9 +150,9 @@ if ($do == 'display') {
 		//积分设置
 		if (!empty($_GPC['credit']['status'])) {
 			$credit['status'] = intval($_GPC['credit']['status']);
-			$credit['limit'] = intval($_GPC['credit']['limit']) ? intval($_GPC['credit']['limit']) : message('请设置积分上限');
-			$credit['share'] = intval($_GPC['credit']['share']) ? intval($_GPC['credit']['share']) : message('请设置分享时赠送积分多少');
-			$credit['click'] = intval($_GPC['credit']['click']) ? intval($_GPC['credit']['click']) : message('请设置阅读时赠送积分多少');
+			$credit['limit'] = intval($_GPC['credit']['limit']) ? intval($_GPC['credit']['limit']) : message('请设置积分上限', '', '', true);
+			$credit['share'] = intval($_GPC['credit']['share']) ? intval($_GPC['credit']['share']) : message('请设置分享时赠送积分多少', '', '', true);
+			$credit['click'] = intval($_GPC['credit']['click']) ? intval($_GPC['credit']['click']) : message('请设置阅读时赠送积分多少', '', '', true);
 			$data['credit'] = iserializer($credit);
 		} else {
 			$data['credit'] = iserializer(array('status' => 0, 'limit' => 0, 'share' => 0, 'click' => 0));
@@ -207,7 +207,7 @@ if ($do == 'display') {
 			$row = pdo_fetch("SELECT id,rid,kid,thumb FROM ".tablename('site_article')." WHERE id = :id", array(':id' => $id));
 			
 			if (empty($row)) {
-				message('抱歉，文章不存在或是已经被删除！');
+				message('抱歉，文章不存在或是已经被删除！', '', '', true);
 			}
 			if (!empty($row['thumb'])) {
 				file_delete($row['thumb']);
@@ -225,7 +225,7 @@ if ($do == 'display') {
 		$row = pdo_fetch("SELECT id,rid,kid,thumb FROM ".tablename('site_article')." WHERE id = :id", array(':id' => $id));
 		
 		if (empty($row)) {
-			message('抱歉，文章不存在或是已经被删除！');
+			message('抱歉，文章不存在或是已经被删除！', '', '', true);
 		}
 		if (!empty($row['thumb'])) {
 			file_delete($row['thumb']);

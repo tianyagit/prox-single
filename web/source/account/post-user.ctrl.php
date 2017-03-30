@@ -134,11 +134,11 @@ if ($do == 'edit') {
 	$uid = intval($_GPC['uid']);
 	$user = user_single(array('uid' => $uid));
 	if (empty($user)) {
-		message('您操作的用户不存在或是已经被删除！');
+		message('您操作的用户不存在或是已经被删除！', '', '', true);
 	}
 	$role = uni_permission($_W['uid'], $uniacid);
 	if (empty($role)) {
-		message('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！');
+		message('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！', '', '', true);
 	}
 	
 	//获取系统权限

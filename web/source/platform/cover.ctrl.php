@@ -48,22 +48,22 @@ if ($do == 'module') {
 } elseif ($do == 'post') {
 	$entry_id = intval($_GPC['eid']);
 	if(empty($entry_id)) {
-		message('访问错误');
+		message('访问错误', '', '', true);
 	}
 	$entry = module_entry($entry_id);
 	if (is_error($entry)) {
-		message('模块菜单不存在或是模块已经被删除');
+		message('模块菜单不存在或是模块已经被删除', '', '', true);
 	}
 	$module = $_W['current_module'] = module_fetch($entry['module']);
 	$reply = pdo_get('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
 	
 	if (checksubmit('submit')) {
 		if (trim($_GPC['keywords']) == '') {
-			message('必须输入触发关键字.');
+			message('必须输入触发关键字.', '', '', true);
 		}
 		$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
 		if (empty($keywords)) {
-			message('必须填写有效的触发关键字.');
+			message('必须填写有效的触发关键字.', '', '', true);
 		}
 		$rule = array(
 			'uniacid' => $_W['uniacid'],

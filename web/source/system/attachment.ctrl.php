@@ -23,14 +23,14 @@ if ($do == 'global') {
 		}
 		$upload['image']['width'] = intval(trim($upload['image']['width']));
 		if (!empty($upload['image']['thumb']) && empty($upload['image']['width'])) {
-			message('请设置图片缩略宽度.');
+			message('请设置图片缩略宽度.', '', '', true);
 		}
 		$upload['image']['limit'] = max(0, intval(trim($upload['image']['limit'])));
 		if (empty($upload['image']['limit'])) {
 			message('请设置图片上传支持的文件大小, 单位 KB.');
 		}
 		if (empty($upload['image']['extentions'])) {
-			message('请添加支持的图片附件后缀类型');
+			message('请添加支持的图片附件后缀类型', '', '', true);
 		}
 		if (!empty($upload['image']['extentions'])) {
 			$upload['image']['extentions'] = explode("\n", $upload['image']['extentions']);
@@ -43,7 +43,7 @@ if ($do == 'global') {
 			}
 		}
 		if (!is_array($upload['image']['extentions']) || count($upload['image']['extentions']) < 1) {
-			message('请添加支持的图片附件后缀类型');
+			message('请添加支持的图片附件后缀类型', '', '', true);
 		}
 		$upload['audio']['limit'] = max(0, intval(trim($upload['audio']['limit'])));
 		if (empty($upload['image']['limit'])) {
@@ -60,7 +60,7 @@ if ($do == 'global') {
 			}
 		}
 		if (!is_array($upload['audio']['extentions']) || count($upload['audio']['extentions']) < 1) {
-			message('请添加支持的音频视频附件后缀类型');
+			message('请添加支持的音频视频附件后缀类型', '', '', true);
 		}
 		setting_save($upload, 'upload');
 		message('更新设置成功！', url('system/attachment'));
@@ -128,18 +128,18 @@ if ($do == 'remote') {
 		);
 		if ($remote['type'] == ATTACH_OSS) {
 			if (trim($remote['alioss']['key']) == '') {
-				message('阿里云OSS-Access Key ID不能为空');
+				message('阿里云OSS-Access Key ID不能为空', '', '', true);
 			}
 			if (trim($remote['alioss']['secret']) == '') {
-				message('阿里云OSS-Access Key Secret不能为空');
+				message('阿里云OSS-Access Key Secret不能为空', '', '', true);
 			}
 			$buckets = attachment_alioss_buctkets($remote['alioss']['key'], $remote['alioss']['secret']);
 			if (is_error($buckets)) {
-				message('OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写');
+				message('OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写', '', '', true);
 			}
 			list($remote['alioss']['bucket'], $remote['alioss']['url']) = explode('@@', $_GPC['alioss']['bucket']);
 			if (empty($buckets[$remote['alioss']['bucket']])) {
-				message('Bucket不存在或是已经被删除');
+				message('Bucket不存在或是已经被删除', '', '', true);
 			}
 			$remote['alioss']['url'] = 'http://'.$remote['alioss']['bucket'].'.'.$buckets[$remote['alioss']['bucket']]['location'].'.aliyuncs.com';
 			$remote['alioss']['ossurl'] = $buckets[$remote['alioss']['bucket']]['location'].'.aliyuncs.com';
@@ -152,13 +152,13 @@ if ($do == 'remote') {
 			}
 		} elseif ($remote['type'] == ATTACH_FTP) {
 			if (empty($remote['ftp']['host'])) {
-				message('FTP服务器地址为必填项.');
+				message('FTP服务器地址为必填项.', '', '', true);
 			}
 			if (empty($remote['ftp']['username'])) {
-				message('FTP帐号为必填项.');
+				message('FTP帐号为必填项.', '', '', true);
 			}
 			if (empty($remote['ftp']['password'])) {
-				message('FTP密码为必填项.');
+				message('FTP密码为必填项.', '', '', true);
 			}
 		} elseif ($remote['type'] == ATTACH_QINIU) {
 			if (empty($remote['qiniu']['accesskey'])) {

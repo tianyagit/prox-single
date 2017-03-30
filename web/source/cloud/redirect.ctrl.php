@@ -83,7 +83,7 @@ if($do == 'callback') {
 			exit();
 		}
 	}
-	message('访问错误.');
+	message('访问错误.', '', '', true);
 }
 
 template('cloud/frame');

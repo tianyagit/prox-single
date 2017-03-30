@@ -86,7 +86,7 @@ if($do == 'post') {
 				'groupid' => 0,
 			);
 			if (!pdo_insert('uni_account', $data)) {
-				message('添加公众号失败');
+				message('添加公众号失败', '', '', true);
 			}
 			$uniacid = pdo_insertid();
 			$multi['uniacid'] = $uniacid;
@@ -164,7 +164,7 @@ if($do == 'getpackage') {
 	$uniacid = $_W['uniacid'];
 	$versionid = $_GPC['versionid'];
 	if(empty($uniacid) || !is_numeric($uniacid) || empty($versionid) || !is_numeric($versionid)) {
-		message('参数错误！');
+		message('参数错误！', '', '', true);
 	}
 	$request_cloud_data = array();
 	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
@@ -182,7 +182,7 @@ if($do == 'getpackage') {
 	$result = wxapp_getpackage($request_cloud_data);
 
 	if(is_error($result)) {
-		message($result['message']);
+		message($result['message'], '', '', true);
 	}else {
 		header('content-type: application/zip');
 		header('content-disposition: attachment; filename="'.$request_cloud_data['name'].'.zip"');

@@ -77,11 +77,11 @@ if ($do == 'delete') {
 	if (!empty($acid) && empty($uniacid)) {
 		$account = account_fetch($acid);
 		if (empty($account)) {
-			message('子公众号不存在或是已经被删除');
+			message('子公众号不存在或是已经被删除', '', '', true);
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
 		if ($uniaccount['default_acid'] == $acid) {
-			message('默认子公众号不能删除');
+			message('默认子公众号不能删除', '', '', true);
 		}
 		pdo_update('account', array('isdeleted' => 1), array('acid' => $acid));
 		message('删除子公众号成功！您可以在回收站中回复公众号', referer(), 'success', true);

@@ -19,7 +19,7 @@ if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'ser
 }
 $_W['page']['title'] = '自动回复';
 if (empty($m)) {
-	message('错误访问.');
+	message('错误访问.', '', '', true);
 }
 
 if ($m == 'special') {
@@ -160,11 +160,11 @@ if ($do == 'post') {
 		}
 		if (checksubmit('submit')) {
 			if (empty($_GPC['rulename'])) {
-				message('必须填写回复规则名称.');
+				message('必须填写回复规则名称.', '', '', true);
 			}
 			$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
 			if (empty($keywords)) {
-				message('必须填写有效的触发关键字.');
+				message('必须填写有效的触发关键字.', '', '', true);
 			}
 			$containtype = '';
 			foreach ($_GPC['reply'] as $replykey => $replyval) {
@@ -192,12 +192,12 @@ if ($do == 'post') {
 			if (!empty($module_info) && empty($module_info['issystem'])) {
 				$user_module = WeUtility::createModule($m);
 				if (empty($user_module)) {
-					message('抱歉，模块不存在请重新选择其它模块！');
+					message('抱歉，模块不存在请重新选择其它模块！', '', '', true);
 				}
 				$user_module_error_msg = $user_module->fieldsFormValidate();
 			}
 			if ((is_string($msg) && trim($msg) != '') || (is_string($user_module_error_msg) && trim($user_module_error_msg) != '')) {
-				message($msg.$user_module_error_msg);
+				message($msg.$user_module_error_msg, '', '', true);
 			}
 			if (!empty($rid)) {
 				$result = pdo_update('rule', $rule, array('id' => $rid));
@@ -364,7 +364,7 @@ if($do == 'delete') {
 		$rids = array($rids);
 	}
 	if(empty($rids)) {
-		message('非法访问.');
+		message('非法访问.', '', '', true);
 	}
 	foreach ($rids as $rid) {
 		$rid = intval($rid);

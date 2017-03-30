@@ -14,10 +14,10 @@ $do = in_array($do, $dos) ? $do : 'display';
 if ($do == 'save_tactics_setting') {
 	$setting = $_GPC['setting'];
 	if (empty($setting)) {
-		message(error(1));
+		message(error(1), '', '', true);
 	}
 	uni_setting_save('creditbehaviors', $setting);
-	message(error(0));
+	message(error(0), '', '', true);
 }
 
 if ($do == 'save_credit_setting') {
@@ -26,7 +26,7 @@ if ($do == 'save_credit_setting') {
 		message(error(1), '', 'ajax', true);
 	}
 	uni_setting_save('creditnames', $credit_setting);
-	message(error(0));
+	message(error(0), '', '', true);
 }
 
 if ($do == 'register_setting') {
@@ -387,17 +387,17 @@ if($do == 'add') {
 		}
 	}
 	if(checksubmit('form')) {
-		$realname = trim($_GPC['realname']) ? trim($_GPC['realname']) : message('姓名不能为空');
-		$mobile = trim($_GPC['mobile']) ? trim($_GPC['mobile']) : message('手机不能为空');
+		$realname = trim($_GPC['realname']) ? trim($_GPC['realname']) : message('姓名不能为空', '', '', true);
+		$mobile = trim($_GPC['mobile']) ? trim($_GPC['mobile']) : message('手机不能为空', '', '', true);
 		$user = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'mobile' => $mobile));
 		if(!empty($user)) {
-			message('手机号被占用');
+			message('手机号被占用', '', '', true);
 		}
 		$email = trim($_GPC['email']);
 		if(!empty($email)) {
 			$user = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'email' => $email));
 			if(!empty($user)) {
-				message('邮箱被占用');
+				message('邮箱被占用', '', '', true);
 			}
 		}
 		$salt = random(8);

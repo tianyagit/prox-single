@@ -938,7 +938,7 @@ function account_delete($acid) {
 	} else {
 		$account = account_fetch($acid);
 		if (empty($account)) {
-			message('子公众号不存在或是已经被删除');
+			message('子公众号不存在或是已经被删除', '', '', true);
 		}
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
@@ -947,7 +947,7 @@ function account_delete($acid) {
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
 		if ($uniaccount['default_acid'] == $acid) {
-			message('默认子公众号不能删除');
+			message('默认子公众号不能删除', '', '', true);
 		}
 		pdo_delete('account', array('acid' => $acid));
 		pdo_delete('account_wechats', array('acid' => $acid, 'uniacid' => $uniacid));

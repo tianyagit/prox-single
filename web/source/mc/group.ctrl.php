@@ -77,12 +77,12 @@ if ($do == 'set_default') {
 	$group_id = intval($_GPC['group_id']);
 	pdo_update('mc_groups', array('isdefault' => 0), array('uniacid' => $_W['uniacid']));
 	pdo_update('mc_groups', array('isdefault' => 1), array('groupid' => $group_id));
-	message(error(0));
+	message(error(0), '', '', true);
 }
 
 if ($do == 'del_group') {
 	$group_id = intval($_GPC['group_id']);
 	pdo_delete('mc_groups', array('groupid' => $group_id));
-	message(error(0));
+	message(error(0), '', '', true);
 }
 template('mc/group');

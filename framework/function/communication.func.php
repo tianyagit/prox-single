@@ -27,7 +27,7 @@ function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 	}
 	if (strexists($url, 'https://') && !extension_loaded('openssl')) {
 		if (!extension_loaded("openssl")) {
-			message('请开启您PHP环境的openssl');
+			message('请开启您PHP环境的openssl', '', '', true);
 		}
 	}
 	if (function_exists('curl_init') && function_exists('curl_exec')) {
