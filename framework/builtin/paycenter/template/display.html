@@ -128,7 +128,7 @@
 
 	window.validateReplyForm = function(form, $, _, util, $scope) {
 		if($scope.context.items.length == 0) {
-			util.message('没有回复内容', '', 'error', true);
+			util.message('没有回复内容', '', 'error');
 			return false;
 		}
 		var error = {empty: false, message: ''};
