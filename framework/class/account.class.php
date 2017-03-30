@@ -1564,7 +1564,7 @@ abstract class WeModuleCron extends WeBase {
 	public function addCronLog($tid, $errno, $note, $tag = array()) {
 		global $_W;
 		if(!$tid) {
-			message(error(-1, 'tid参数错误'), '', 'ajax', true);
+			iajax(-1, 'tid参数错误', '');
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -1576,7 +1576,7 @@ abstract class WeModuleCron extends WeBase {
 			'createtime' => TIMESTAMP
 		);
 		pdo_insert('core_cron_record', $data);
-		message(error($errno, $note), '', 'ajax', true);
+		iajax($errno, $note, '');
 	}
 }
 

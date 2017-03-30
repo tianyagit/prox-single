@@ -43,7 +43,7 @@ if ($do == 'get_upgrade_info') {
 	if (ver_compare($module_info['version'], $module['site_branch']['version']['version']) != '-1') {
 		unset($module['branches'][$module['site_branch']['id']]);
 	}
-	message(error(0, $module), '', 'ajax', true);
+	iajax(0, $module, '');
 }
 
 if ($do == 'check_upgrade') {
@@ -95,7 +95,7 @@ if ($do == 'check_upgrade') {
 		}
 	}
 	unset($module);
-	message(error(0, $module_list), '', 'ajax', true);
+	iajax(0, $module_list, '');
 }
 
 if ($do == 'upgrade') {
@@ -369,7 +369,7 @@ if ($do == 'change_receive_ban') {
 	$modulename = trim($_GPC['modulename']);
 	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
 	if (empty($module_exist)) {
-		message(error(1, '模块不存在'), '', 'ajax', true);;
+		iajax(1, '模块不存在', '');;
 	}
 	if (!is_array($_W['setting']['module_receive_ban'])) {
 		$_W['setting']['module_receive_ban'] = array();
@@ -419,7 +419,7 @@ if ($do == 'get_module_info') {
 			$module['preview'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/preview.jpg');
 		}
 	}
-	message(error(0, $module), '', 'ajax', true);
+	iajax(0, $module, '');
 }
 
 if ($do == 'module_detail') {

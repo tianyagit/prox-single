@@ -48,13 +48,13 @@ if ($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
 			);
 		}
 	}
-	message(error(0, $navigations), '', 'ajax', true);
+	iajax(0, $navigations, '');
 }
 if ($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
 	$post = $_GPC['menu_info'];
 	if (empty($post['name'])) {
-		message(error(-1, '抱歉，请输入导航菜单的名称！'), '', 'ajax', true);
+		iajax(-1, '抱歉，请输入导航菜单的名称！', '');
 	}
 	$url = ((strexists($post['url'], 'http://') || strexists($post['url'], 'https://')) && !strexists($post['url'], '#wechat_redirect')) ? $post['url'] . '#wechat_redirect' : $post['url'];
 	if (intval($post['section']['num']) > 10) {
@@ -98,7 +98,7 @@ if ($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 	} else {
 		pdo_update('site_nav', $data, array('id' => $post['id']));
 	}
-	message(error(0, '更新成功！'), '', 'ajax', true);
+	iajax(0, '更新成功！', '');
 }
 
 if ($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
@@ -106,14 +106,14 @@ if ($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	if (empty($nav_exist)){
 		//本公众号不存在该导航
-		message(error(-1, '本公众号不存在该导航！'), '', 'ajax', true);
+		iajax(-1, '本公众号不存在该导航！', '');
 	} else {
 		$nav_del = pdo_delete('site_nav', array('id' => $id));
 		if (!empty($nav_del)){
-			message(error(0, '删除成功！'), '', 'ajax', true);
+			iajax(0, '删除成功！', '');
 		} else {
 			//删除失败
-			message(error(1, '删除失败！'), '', 'ajax', true);
+			iajax(1, '删除失败！', '');
 		}
 	}
 	exit;
@@ -129,10 +129,10 @@ if ($do == 'homemenu_switch' && $_W['isajax'] && $_W['ispost']) {
 		$status = $nav_exist['status'] == 1 ? 0 : 1;
 		$nav_update = pdo_update('site_nav', array('status' => $status), array('id' => $id));
 		if (!empty($nav_update)){
-			message(error(0, '更新成功！'), '', 'ajax', true);
+			iajax(0, '更新成功！', '');
 		} else {
 			//更新失败
-			message(error(1, '更新失败！'), '', 'ajax', true);
+			iajax(1, '更新失败！', '');
 		}
 	}
 }

@@ -225,7 +225,7 @@ if ($do == 'flow_control') {
 						$ad_tags[$value] = $items[$value];
 					}
 				} else {
-					message(error(1, '请至少选择一个标签'), '', 'ajax', true);
+					iajax(1, '请至少选择一个标签', '');
 				}
 			}
 			$uniacid = intval($_GPC['uniacid']);
@@ -253,9 +253,9 @@ if ($do == 'flow_control') {
 			}
 		}
 		if (!is_error($result)) {
-			message(error(0, '设置成功'), referer(), 'ajax', true);
+			iajax(0, '设置成功', referer());
 		} else {
-			message(error(-1, $result['message']), '', 'ajax', true);
+			iajax(-1, $result['message'], '');
 		}
 	}
 }
@@ -266,9 +266,9 @@ if ($do == 'ad_type_get') {
 	$flow_app_list_setting = cloud_flow_app_list_get($uniacid);
 	$current_app_set = $flow_app_list_setting[$module_name];
 	if (!is_error($current_app_set)) {
-		message(error(0, $current_app_set['ad_types']), '', 'ajax', true);
+		iajax(0, $current_app_set['ad_types'], '');
 	} else {
-		message(error(-1, $result['message']), '', 'ajax', true);
+		iajax(-1, $result['message'], '');
 	}
 }
 

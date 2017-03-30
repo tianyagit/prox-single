@@ -29,7 +29,7 @@ if ($do == 'getlink') {
 			}
 		}
 	}
-	message(error(0, $show_urls), '', 'ajax', true);
+	iajax(0, $show_urls, '');
 }
 
 if($do == 'post') {
@@ -235,5 +235,5 @@ if($do == 'getapps') {
 		}
 		cache_write('packageapps', $apps);				
 	}
-	message(error(0, $apps), '', 'ajax', true);
+	iajax(0, $apps, '');
 }

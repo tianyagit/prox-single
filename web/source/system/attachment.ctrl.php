@@ -230,7 +230,7 @@ if ($do == 'buckets') {
 		$value['loca_name'] = $key. '@@'. $bucket_datacenter[$value['location']];
 		$bucket[] = $value;
 	}
-	message(error(1, $bucket), '', 'ajax', true);
+	iajax(1, $bucket, '');
 }
 
 if($do == 'ftp') {
@@ -317,7 +317,7 @@ if ($do == 'qiniu') {
 	$_GPC['secretkey'] = strexists($_GPC['secretkey'], '*') ? $_W['setting']['remote']['qiniu']['secretkey'] : $_GPC['secretkey'];
 	$auth= attachment_qiniu_auth(trim($_GPC['accesskey']), trim($_GPC['secretkey']), trim($_GPC['bucket']));
 	if (is_error($auth)) {
-		message(error(-1, '配置失败，请检查配置。注：请检查存储区域是否选择的是和bucket对应<br/>的区域'), '', 'ajax', true);
+		iajax(-1, '配置失败，请检查配置。注：请检查存储区域是否选择的是和bucket对应<br/>的区域', '');
 	}
 	load()->func('communication');
 	$url = $_GPC['url'];
@@ -352,7 +352,7 @@ if ($do == 'cos') {
 	$auth= attachment_cos_auth(trim($_GPC['bucket']), trim($_GPC['appid']), trim($_GPC['secretid']), trim($_GPC['secretkey']), $_GPC['local']);
 
 	if (is_error($auth)) {
-		message(error(-1, '配置失败，请检查配置'), '', 'ajax', true);
+		iajax(-1, '配置失败，请检查配置', '');
 	}
 	load()->func('communication');
 	$url = strexists($url, 'http') ? trim($url, '/') : 'http://'.trim($url, '/');

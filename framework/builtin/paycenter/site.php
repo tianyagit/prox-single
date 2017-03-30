@@ -59,21 +59,21 @@ class PaycenterModuleSite extends WeModuleSite {
 
 			$user = user_single($user);
 			if(empty($user)) {
-				message(error(-1, '账号或密码错误'), '', 'ajax', true);
+				iajax(-1, '账号或密码错误', '');
 			}
 			if($user['status'] == 1) {
-				message(error(-1, '您的账号正在审核或是已经被系统禁止，请联系网站管理员解决'), '', 'ajax', true);
+				iajax(-1, '您的账号正在审核或是已经被系统禁止，请联系网站管理员解决', '');
 			}
 			$clerk = pdo_get('activity_clerks', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
 			if(empty($clerk)) {
-				message(error(-1, '您没有管理该店铺的权限'), '', 'ajax', true);
+				iajax(-1, '您没有管理该店铺的权限', '');
 			}
 			$cookie = array();
 			$cookie['uid'] = $user['uid'];
 			$cookie['hash'] = md5($user['password'] . $user['salt']);
 			$session = base64_encode(json_encode($cookie));
 			isetcookie('_pc_session', $session, !empty($_GPC['rember']) ? 7 * 86400 : 0, true);
-			message(error(0, ''), '', 'ajax', true);
+			iajax(0, '', '');
 		}
 		include $this->template('login');
 	}

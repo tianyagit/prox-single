@@ -28,7 +28,7 @@ if ($do == 'get_setting') {
 			'line' => array('switch' => false, 'message' => ''),
 		);
 	}
-	message(error(0, $pay_setting), '', 'ajax', true);
+	iajax(0, $pay_setting, '');
 }
 
 if ($do == 'test_alipay') {
@@ -50,7 +50,7 @@ if ($do == 'test_alipay') {
 	$params['uniontid'] = $pay_data['uniontid'];
 
 	$result = alipay_build($params, $alipay);
-	message(error(0, $result['url']), '', 'ajax', true);
+	iajax(0, $result['url'], '');
 }
 
 if ($do == 'save_setting') {

@@ -33,25 +33,25 @@ if ($do == 'change_group_level') {
 if ($do == 'save_group') {
 	$group = $_GPC['group'];
 	if (empty($group)) {
-		message(error(1, '编辑失败'), '', 'ajax', true);
+		iajax(1, '编辑失败', '');
 	}
 	$data = array(
 		'title' => $group['title'],
 		'credit' => $group['credit']
 	);
 	if (empty($data['title'])) {
-		message(error(1, '请填写会员组名称'), '', 'ajax', true);
+		iajax(1, '请填写会员组名称', '');
 	}
 	if (!empty($group['groupid'])) {
 		pdo_update('mc_groups', $data, array('groupid' => $group['groupid']));
-		message(error(2, '修改成功'), '', 'ajax', true);
+		iajax(2, '修改成功', '');
 	} else {
 		$data['uniacid'] = $_W['uniacid'];
 		$default_group = pdo_get('mc_groups', array('uniacid' => $_W['uniacid'], 'isdefault' => 1));
 		$data['isdefault'] = empty($default_group) ? 1 : 0;
 		pdo_insert('mc_groups', $data);
 		$data['groupid'] = pdo_insertid();
-		message(error(3, $data), '', 'ajax', true);
+		iajax(3, $data, '');
 	}
 }
 
@@ -63,13 +63,13 @@ if ($do == 'get_group') {
 			'is_default' => 0,
 			'credit' => 0
 		);
-		message(error(0, $data), '', 'ajax', true);
+		iajax(0, $data, '');
 	}
 	$group_info = pdo_get('mc_groups', array('groupid' => $group_id));
 	if (empty($group_info)) {
-		message(error(1, '会员组不存在'), '', 'ajax', true);
+		iajax(1, '会员组不存在', '');
 	} else {
-		message(error(0, $group_info), '', 'ajax', true);
+		iajax(0, $group_info, '');
 	}
 }
 

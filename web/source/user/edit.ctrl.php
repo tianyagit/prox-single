@@ -61,12 +61,12 @@ if ($do == 'edit_modules_tpl') {
 			$data[$_GPC['type']] = intval($_GPC['groupid']);
 			if (user_update($data)) {
 				$group_info = user_group_detail_info($_GPC['groupid']);
-				message(error(0, $group_info), '', 'ajax', true);
+				iajax(0, $group_info, '');
 			} else {
-				message(error(1, '更改失败！'), '', 'ajax', true);
+				iajax(1, '更改失败！', '');
 			}
 		} else {
-			message(error(-1, '参数错误！'), '', 'ajax', true);
+			iajax(-1, '参数错误！', '');
 		}
 	}
 	$groups = pdo_getall('users_group', array(), array('id', 'name'), 'id');

@@ -19,9 +19,9 @@ if ($do == 'check_scene_str') {
 	$scene_str = trim($_GPC['scene_str']);
 	$is_exist = pdo_fetchcolumn('SELECT id FROM ' . tablename('qrcode') . ' WHERE uniacid = :uniacid AND acid = :acid AND scene_str = :scene_str AND model = 2', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid'], ':scene_str' => $scene_str));
 	if (!empty($is_exist)) {
-		message(error(1, 'repeat'), '', 'ajax', true);
+		iajax(1, 'repeat', '');
 	}
-	message(error(0, 'success'), '', 'ajax', true);
+	iajax(0, 'success', '');
 }
 
 if ($do == 'list') {
