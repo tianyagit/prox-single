@@ -105,6 +105,14 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	exit;
 }
 
+function iajax($code, $message, $redirect = '') {
+	message(error($code, $message), $redirect, 'ajax', false);
+}
+
+function itoast($message, $redirect = '', $type = '') {
+	message($message, $redirect, $type, true);
+}
+
 /**
  * 验证操作用户是否已登录
  * 
