@@ -557,7 +557,9 @@ if ($do == 'installed') {
 		unset($module);
 	}
 	$total = count($module_list);
-	$module_list = array_slice($module_list, ($pageindex - 1) * $pagesize, $pagesize);
+	if ($total > 0){
+		$module_list = array_slice($module_list, ($pageindex - 1) * $pagesize, $pagesize);
+	}
 	$pager = pagination($total, $pageindex, $pagesize);
 }
 
