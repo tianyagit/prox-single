@@ -364,14 +364,11 @@ function cache_build_uninstalled_module() {
 				}
 			}
 		}
-	$cache = array(
+		$cache = array(
 				'cloud_m_count' => $cloud_m_count['module_quantity'],
 				'modules' => $uninstallModules,
 				'app_count' => count($uninstallModules['uninstalled']['app']),
 				'wxapp_count' => count($uninstallModules['uninstalled']['wxapp'])
-	);
-	cache_write('we7:module:all_uninstall', $cache, CACHE_EXPIRE_LONG);
-	return $cache;
 		);
 		cache_write('we7:module:all_uninstall', $cache, CACHE_EXPIRE_LONG);
 		return $cache;
