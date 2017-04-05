@@ -324,35 +324,49 @@ function user_modules() {
 	if (!empty($cache)) {
 		return $cache;
 	}
-	$module_list = array();
 	$user_info = user_single(array('uid' => $_W['uid']));
 	if ($_W['isfounder']) {
-		$main_module_list = pdo_getall('modules', array('main_module' => ''));
+		$modules = pdo_getall('modules', array(), array(), 'name');
 	} elseif (empty($user_info['groupid'])) {
-		$main_module_list = pdo_getall('modules', array('issystem' => 1));
+		$modules = pdo_getall('modules', array('issystem' => 1), array(), 'name');
 	} else {
 		$user_group_info = pdo_get('users_group', array('id' => $user_info['groupid']));
 		$user_group_info = iunserializer($user_group_info);
 		$user_group_modules = array();
 		if (!empty($user_group_info['package']) && is_array($user_group_info['package'])) {
-			$uni_groups = pdo_fetchall('SELECT * FROM ' . tablename('uni_group') . ' WHERE id IN ' . "('" .  implode("','", $user_group_info['package']) . "') OR uniacid=" . $_W['uniacid']);
+			$uni_groups = pdo_fetchall('SELECT * FROM ' . tablename('uni_group') . ' WHERE id IN ' . "('" .  implode("','", $user_group_info['package']) . "')");
 			if (!empty($uni_groups)) {
 				foreach ($uni_groups as $uni_group_modules) {
 					$user_group_modules = array_merge($user_group_modules, $uni_group_modules);
 				}
 			}
 		}
-		$main_module_list = pdo_getall('modules', array('name' => $user_group_modules, 'main_module' => ''));
+		$modules = pdo_getall('modules', array('name' => $user_group_modules, 'main_module' => ''), array(), 'name');
 	}
-	$plugin_module_list = pdo_getall('modules', array('main_module <>' => ''), array(), 'name');
-	if (!empty($main_module_list) && is_array($main_module_list)) {
-		foreach ($main_module_list as $main_module) {
-			$module_list[$main_module['name']] = module_parse_info($main_module);
-			$plugin_list = empty($main_module['plugin']) ? array() : explode(',', $main_module['plugin']);
-			if (!empty($plugin_list) && is_array($plugin_list)) {
-				foreach ($plugin_list as $plugin) {
-					if (in_array($plugin, array_keys($plugin_module_list))) {
-						$module_list[$plugin] = module_parse_info($plugin_module_list[$plugin]);
+
+	if (!empty($modules)) {
+		$module_list = array();//加上模块插件后的模块列表
+		$plugin_list = pdo_getall('module_plugin', array(), array(), 'name');
+		$have_plugin_module = pdo_fetchall('SELECT GROUP_CONCAT(name) as plugin_list, main_module FROM ' . tablename('module_plugin') . " GROUP BY main_module", array(), 'main_module');
+		foreach ($modules as $name => &$module) {
+			if (in_array($name, array_keys($plugin_list))) {
+				continue;
+			}
+			$module = module_parse_info($module);
+			$module['main_module'] = '';
+			$module_list[$name] = $module;
+			if (in_array($name, array_keys($have_plugin_module))) {
+				$module_plugin_list = explode(',', $have_plugin_module[$name]['plugin_list']);
+				$module_list[$name]['plugin'] = $module_plugin_list;
+				if (is_array($module_plugin_list) && !empty($module_plugin_list)) {
+					foreach ($module_plugin_list as $plugin) {
+						$plugin = $modules[$plugin];
+						if (empty($plugin)) {
+							continue;
+						}
+						$plugin['main_module'] = $name;
+						$plugin = module_parse_info($plugin);
+						$module_list[$plugin['name']] = $plugin;
 					}
 				}
 			}

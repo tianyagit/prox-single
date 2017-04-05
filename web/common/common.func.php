@@ -402,9 +402,9 @@ function buildframes($framename = ''){
 		if (!empty($module['plugin']) || !empty($module['main_module'])) {
 			if (!empty($module['main_module'])) {
 				$main_module = module_fetch($module['main_module']);
-				$plugin_list = explode(',', $main_module['plugin']);
+				$plugin_list = $main_module['plugin'];
 			} else {
-				$plugin_list = explode(',', $module['plugin']);
+				$plugin_list = $module['plugin'];
 			}
 			$plugin_list = array_intersect($plugin_list, array_keys($modules));
 			if (!empty($plugin_list)) {

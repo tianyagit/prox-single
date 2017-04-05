@@ -69,7 +69,7 @@ if($do == 'display') {
 		if (!empty($packageids) && in_array('-1', $packageids)) {
 			$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
 						(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder 
-						FROM " . tablename('modules') . " AS a WHERE a.main_module = '' AND a.issystem <> '1' $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
+						FROM " . tablename('modules') . " AS a WHERE  a.issystem <> '1' $condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
 			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 		} else {
 			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
@@ -106,17 +106,14 @@ if($do == 'display') {
 				}
 			}
 			foreach ($modules as $name => &$row) {
+				$row = module_fetch($name);
+				$row['preview'] = $row['logo'];
 				if ($row['issystem'] == 1) {
 					$row['enabled'] = 1;
 				} elseif (!isset($row['enabled'])) {
 					$row['enabled'] = 1;
 				}
 				$row['isdisplay'] = 1;
-				if (file_exists(IA_ROOT. "/addons/". $name. "/icon-custom.jpg")) {
-					$row['preview'] = tomedia('addons/' . $name . '/icon-custom.jpg');
-				} else {
-					$row['preview'] = tomedia('addons/' . $name . '/icon.jpg');
-				}
 			}
 			unset($row);
 			$pager = pagination($total, $pageindex, $pagesize);
