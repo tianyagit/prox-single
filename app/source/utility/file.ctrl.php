@@ -16,7 +16,7 @@ if ($do == 'delete') {
 		if (!empty($id)) {
 			$attachment = pdo_get('core_attachment', array('id' => $id), array('attachment', 'uniacid', 'uid'));
 			if (!empty($attachment)) {
-				if ($attachment['uniacid'] != $_W['uniacid'] || empty($_W['openid'])) {
+				if ($attachment['uniacid'] != $_W['uniacid'] || empty($_W['openid']) || (!empty($_W['fans']) && $attachment['uid'] != $_W['fans']['from_user']) || (!empty($_W['member']) && $attachment['uid'] != $_W['member']['uid'])) {
 					return message(error(1, '无权删除！'), '', 'ajax');
 				}
 				load()->func('file');
