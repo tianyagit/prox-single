@@ -409,6 +409,7 @@ function module_parse_info($module_info) {
 	} else {
 		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg'). "?v=". time();
 	}
+	unset($module_info['description']);
 	return $module_info;
 }
 

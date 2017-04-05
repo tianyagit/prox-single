@@ -132,7 +132,7 @@ function uni_modules($enabledOnly = true) {
 	if (empty($groupid)) {
 		$modules = pdo_getall('modules', array('issystem' => 1), array(), 'name', array('issystem DESC'));
 	} elseif ($groupid == '-1') {
-		$modules = pdo_getall('modules', array('main_module' => ''), array(), 'name', array('issystem DESC', 'mid DESC'));
+		$modules = pdo_getall('modules', array(), array(), 'name', array('issystem DESC', 'mid DESC'));
 	} else {
 		$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
 		if (!empty($group)) {
@@ -146,7 +146,7 @@ function uni_modules($enabledOnly = true) {
 			}
 		}
 		if (!empty($packageids) && in_array('-1', $packageids)) {
-			$modules = pdo_getall('modules', array('main_module' => ''), array(), 'name', array('issystem DESC', 'mid DESC'));
+			$modules = pdo_getall('modules', array(), array(), 'name', array('issystem DESC', 'mid DESC'));
 		} else {
 			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
 			$ms = array();
@@ -162,7 +162,7 @@ function uni_modules($enabledOnly = true) {
 				}
 				$mssql = " OR `name` IN ('".implode("','", $ms)."')";
 			}
-			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE (issystem = 1{$mssql}) AND main_module = '' ORDER BY issystem DESC, mid DESC", array(), 'name');
+			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE issystem = 1{$mssql} ORDER BY issystem DESC, mid DESC", array(), 'name');
 		}
 	}
 	$focus_enable_modules = pdo_getall('modules', array('issystem' => 2));
@@ -192,23 +192,32 @@ function uni_modules($enabledOnly = true) {
 	}
 	if (!empty($modules)) {
 		$module_list = array();//加上模块插件后的模块列表
+		$plugin_list = pdo_getall('module_plugin', array(), array(), 'name');
+		$have_plugin_module = pdo_fetchall('SELECT GROUP_CONCAT(name) as plugin_list, main_module FROM ' . tablename('module_plugin') . " GROUP BY main_module", array(), 'main_module');
 		foreach ($modules as $name => &$module) {
+			if (in_array($name, array_keys($plugin_list))) {
+				continue;
+			}
 			$module = module_parse_info($module);
-			unset($module['description']);
+			$module['main_module'] = '';
 			$module_list[$name] = $module;
-			if (!empty($module['plugin'])) {
-				$plugin_list = pdo_getall('modules', array('main_module' => $module['name']));
-				if (!empty($plugin_list)) {
-					foreach ($plugin_list as $plugin) {
+			if (in_array($name, array_keys($have_plugin_module))) {
+				$module_plugin_list = explode(',', $have_plugin_module[$name]['plugin_list']);
+				$module_list[$name]['plugin'] = $module_plugin_list;
+				if (is_array($module_plugin_list) && !empty($module_plugin_list)) {
+					foreach ($module_plugin_list as $plugin) {
+						$plugin = $modules[$plugin];
+						if (empty($plugin)) {
+							continue;
+						}
+						$plugin['main_module'] = $name;
 						$plugin = module_parse_info($plugin);
-						unset($plugin['description']);
 						$module_list[$plugin['name']] = $plugin;
 					}
 				}
 			}
 		}
 	}
-
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
 	cache_write($cachekey, $module_list);
 	return $module_list;
@@ -289,7 +298,7 @@ function uni_groups($groupids = array()) {
 					$row['modules'] = array();
 					if (!empty($module_list)) {
 						foreach ($module_list as $key => &$module) {
-							$module = module_parse_info($module);
+							$module = module_fetch($key);
 							if ($module['wxapp_support'] == 2) {
 								$row['wxapp'][$module['name']] = $module;
 							}
@@ -299,11 +308,10 @@ function uni_groups($groupids = array()) {
 								}
 								$row['modules'][$module['name']] = $module;
 								if (!empty($module['plugin'])) {
-									$plugin_list = explode(',', $module['plugin']);
-									$group_have_plugin = array_intersect($plugin_list, array_keys($module_list));
+									$group_have_plugin = array_intersect($module['plugin'], array_keys($module_list));
 									if (!empty($group_have_plugin)) {
 										foreach ($group_have_plugin as $plugin) {
-											$row['modules'][$plugin] = $module_list[$plugin];
+											$row['modules'][$plugin] = module_fetch($plugin);
 										}
 									}
 								}
@@ -312,6 +320,7 @@ function uni_groups($groupids = array()) {
 					}
 				}
 			}
+
 			if (!empty($row['templates'])) {
 				$templates = iunserializer($row['templates']);
 				if (is_array($templates)) {

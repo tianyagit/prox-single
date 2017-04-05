@@ -435,7 +435,7 @@ if ($do == 'get_module_info') {
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
-	$module_info = pdo_get('modules', array('name' => $module_name));
+	$module_info = module_fetch($module_name);
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}
