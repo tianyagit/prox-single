@@ -36,11 +36,11 @@ if ($do == 'change') {
 			$result = error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']}");
 		}
 		if (is_error($result)) {
-			message(error(-1, $result['message']), '', 'ajax', true);
+			iajax(-1, $result['message'], '');
 		}
-		message(error(0, $result), '', 'ajax', true);
+		iajax(0, $result, '');
 	} else {
-		message(error(1, 'error'), '', 'ajax', true);
+		iajax(1, 'error', '');
 	}
 }
 

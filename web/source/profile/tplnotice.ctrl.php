@@ -25,10 +25,10 @@ if ($do  == 'set') {
 		unset($tpl['name'], $tpl['help']);
 	}
 	if (!empty($error)) {
-		message(error(1, $error), '', 'ajax', true);
+		iajax(1, $error, '');
 	} else {
 		uni_setting_save('tplnotice', $tpl_list);
-		message(error(0), '', 'ajax', true);
+		iajax(0, '');
 	}
 }
 

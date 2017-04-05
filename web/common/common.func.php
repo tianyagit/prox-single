@@ -93,11 +93,10 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 		$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
 		
 		isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
-		
 		if (!empty($message_cookie['redirect'])) {
 			header('Location: ' . $message_cookie['redirect']);
 		} else {
-			include template('common/message-tips', TEMPLATE_INCLUDEPATH);
+			include template('common/message', TEMPLATE_INCLUDEPATH);
 		}
 	} else {
 		include template('common/message', TEMPLATE_INCLUDEPATH);
@@ -105,7 +104,7 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	exit;
 }
 
-function iajax($code, $message, $redirect = '') {
+function iajax($code = 0, $message = '', $redirect = '') {
 	message(error($code, $message), $redirect, 'ajax', false);
 }
 
@@ -122,9 +121,9 @@ function checklogin() {
 	global $_W;
 	if (empty($_W['uid'])) {
 		if (!empty($_W['setting']['copyright']['showhomepage'])) {
-			message('', url('account/welcome'), 'warning', true);
+			itoast('', url('account/welcome'), 'warning');
 		} else {
-			message('', url('user/login'), 'warning', true);
+			itoast('', url('user/login'), 'warning');
 		}
 	}
 	return true;
@@ -136,7 +135,7 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		message('', url('account/display'), 'info', true);
+		itoast('', url('account/display'), 'info');
 	}
 }
 
@@ -179,10 +178,13 @@ function buildframes($framename = ''){
 					if (!empty($module)) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 							'title' => $module['title'],
-							'icon' =>  $module['logo'],
+							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
 							'url' => url('home/welcome/ext', array('m' => $module['name'])),
 							'is_display' => 1,
 						);
+					}
+					if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
+						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
 					}
 				}
 			}
@@ -199,10 +201,13 @@ function buildframes($framename = ''){
 					if (!empty($module)) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 							'title' => $module['title'],
-							'icon' =>  $module['logo'],
+							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
 							'url' => url('home/welcome/ext', array('m' => $module['name'])),
 							'is_display' => 1,
 						);
+					}
+					if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
+						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
 					}
 				}
 			}

@@ -66,11 +66,11 @@ if ($do == 'del') {
 	if (!empty($mass) && $mass['cron_id'] > 0) {
 		$status = cron_delete(array($mass['cron_id']));
 		if (is_error($status)) {
-			message(error(0, $status), '', 'ajax', true);
+			iajax(0, $status, '');
 		}
 	}
 	pdo_delete('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => intval($_GPC['id'])));
-	message(error(0, '删除成功！'), '', 'ajax', true);
+	iajax(0, '删除成功！', '');
 }
 
 if ($do == 'post') {
@@ -93,7 +93,7 @@ if ($do == 'post') {
 	if (checksubmit('submit')) {
 		$cloud = cloud_prepare();
 		if (is_error($cloud)) {
-			message(error(0, $cloud), '', 'ajax', true);
+			iajax(0, $cloud, '');
 		}
 
 		//删除提交日的群发任务
@@ -112,7 +112,7 @@ if ($do == 'post') {
 			if (!empty($corn_ids)) {
 				$status = cron_delete($corn_ids);
 				if(is_error($status)) {
-					message('删除群发错误,请重新提交', referer(), true);
+					itoast('删除群发错误,请重新提交', referer());
 				}
 			}
 			$ids = implode(',', array_keys($records));
@@ -179,9 +179,9 @@ if ($do == 'post') {
 			pdo_update('mc_mass_record', array('cron_id' => $status), array('id' => $insert_id));
 		}
 		if ($cron_status) {
-			message($message, url('platform/mass/send'), 'info', true);
+			itoast($message, url('platform/mass/send'), 'info');
 		}
-		message('群发设置成功', url('platform/mass'), 'success', true);
+		itoast('群发设置成功', url('platform/mass'), 'success');
 	}
 
 	template('platform/mass-post');
@@ -191,7 +191,7 @@ if ($do == 'cron') {
 	$id = intval($_GPC['id']);
 	$record = pdo_get('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if (empty($record)) {
-		message('群发任务不存在或已删除', referer(), 'error', true);
+		itoast('群发任务不存在或已删除', referer(), 'error');
 	}
 	$cron = array(
 		'uniacid' => $_W['uniacid'],
@@ -205,25 +205,25 @@ if ($do == 'cron') {
 	);
 	$status = cron_add($cron);
 	if (is_error($status)) {
-		message($status['message'], referer(), 'error', true);
+		itoast($status['message'], referer(), 'error');
 	}
 	pdo_update('mc_mass_record', array('cron_id' => $status), array('uniacid' => $_W['uniacid'], 'id' => $id));
-	message('同步到云服务成功', referer(), 'success', true);
+	itoast('同步到云服务成功', referer(), 'success');
 }
 
 if ($do == 'preview') {
 	$wxname = trim($_GPC['wxname']);
 	if (empty($wxname)) {
-		message(error(1, '微信号不能为空'), '', 'ajax', true);
+		iajax(1, '微信号不能为空', '');
 	}
 	$type = trim($_GPC['type']);
 	$media_id = trim($_GPC['media_id']);
 	$account_api = WeAccount::create();
 	$data = $account_api->fansSendPreview($wxname, $media_id, $type);
 	if (is_error($data)) {
-		message(error(-1, $data['message']), '', 'ajax', true);
+		iajax(-1, $data['message'], '');
 	}
-	message(error(0, 'success'), '', 'ajax', true);
+	iajax(0, 'success', '');
 }
 
 if ($do == 'send') {

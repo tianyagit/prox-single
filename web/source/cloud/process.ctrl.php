@@ -6,7 +6,7 @@ load()->func('communication');
 load()->model('cloud');
 $prepare = cloud_prepare();
 if (is_error($prepare)) {
-	message($prepare['message'], url('cloud/profile'), 'error', true);
+	itoast($prepare['message'], url('cloud/profile'), 'error');
 }
 
 $step = $_GPC['step'];
@@ -123,11 +123,11 @@ DAT;
 	}
 } else {
 	if (is_error($packet)) {
-		message($packet['message'], '', 'error', true);
+		itoast($packet['message'], '', 'error');
 	} else {
 		cache_delete('checkupgrade:system');
 		cache_delete('cloud:transtoken');
-		message('更新已完成. ', url('cloud/upgrade'), 'info', true);
+		itoast('更新已完成. ', url('cloud/upgrade'), 'info');
 	}
 }
 template('cloud/process');

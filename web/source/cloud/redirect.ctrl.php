@@ -33,7 +33,7 @@ if($do == 'appstore') {
 
 if($do == 'promotion') {
 	if(empty($_W['setting']['site']['key']) || empty($_W['setting']['site']['token'])) {
-		message("你的程序需要在微擎云服务平台注册你的站点资料, 来接入云平台服务后才能使用推广功能.", url('cloud/profile'), 'error', true);
+		itoast("你的程序需要在微擎云服务平台注册你的站点资料, 来接入云平台服务后才能使用推广功能.", url('cloud/profile'), 'error');
 	}
 	$iframe = cloud_auth_url('promotion');
 	$title = '我要推广';
@@ -50,7 +50,7 @@ if ($do == 'buybranch') {
 	$response = json_decode($response['content'], true);
 
 	if (is_error($response['message'])) {
-		message($response['message']['message'], url('system/module'), 'error', true);
+		itoast($response['message']['message'], url('system/module'), 'error');
 	}
 
 	$params = array(
@@ -63,7 +63,7 @@ if ($do == 'buybranch') {
 		$params['m'] = $auth['name'];
 	}
 
-	message($response['message']['message'], url('cloud/process', $params), 'success', true);
+	itoast($response['message']['message'], url('cloud/process', $params), 'success');
 }
 
 if($do == 'callback') {
@@ -83,7 +83,7 @@ if($do == 'callback') {
 			exit();
 		}
 	}
-	message('访问错误.', '', '', true);
+	itoast('访问错误.', '', '');
 }
 
 template('cloud/frame');

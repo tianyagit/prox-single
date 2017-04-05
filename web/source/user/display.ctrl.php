@@ -91,7 +91,7 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 	$uid = intval($_GPC['uid']);
 	$uid_user = user_single($uid);
 	if (in_array($uid, $founders)) {
-		message('访问错误, 无法操作站长.', url('user/display'), 'error', true);
+		itoast('访问错误, 无法操作站长.', url('user/display'), 'error');
 	}
 	if (empty($uid_user)) {
 		exit('未指定用户,无法删除.');
@@ -100,12 +100,12 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 		case 'check_pass':
 			$data = array('status' => 2);
 			pdo_update('users', $data , array('uid' => $uid));
-			message('更新成功！', referer(), 'success', true);
+			itoast('更新成功！', referer(), 'success');
 			break;
 		case 'recycle'://删除用户到回收站
 			$data = array('status' => 3);
 			pdo_update('users', $data , array('uid' => $uid));
-			message('更新成功！', referer(), 'success', true);
+			itoast('更新成功！', referer(), 'success');
 			break;
 		case 'recycle_delete'://永久删除用户
 			if (pdo_delete('users', array('uid' => $uid)) === 1) {
@@ -113,15 +113,15 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 				cache_build_account_modules();
 				pdo_delete('uni_account_users', array('uid' => $uid));
 				pdo_delete('users_profile', array('uid' => $uid));
-				message('删除成功！', referer(), 'success', true);
+				itoast('删除成功！', referer(), 'success');
 			}else {
-				message('删除失败！', referer(), 'error', true);
+				itoast('删除失败！', referer(), 'error');
 			}
 			break;
 		case 'recycle_restore':
 			$data = array('status' => 2);
 			pdo_update('users', $data , array('uid' => $uid));
-			message('启用成功！', referer(), 'success', true);
+			itoast('启用成功！', referer(), 'success');
 			break;
 	}
 }

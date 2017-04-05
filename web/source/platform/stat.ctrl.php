@@ -168,11 +168,11 @@ if ($do == 'history') {
 }
 
 if ($do == 'del') {
-	$op = $_GPC['op'] ? trim($_GPC['op']) : message('非法访问', '', 'error', true);
+	$op = $_GPC['op'] ? trim($_GPC['op']) : itoast('非法访问', '', 'error');
 	$id = intval($_GPC['id']);
 	if($op == 'history') {
 		pdo_delete('stat_msg_history', array('id' => $id, 'uniacid' => $_W['uniacid']));
-		message('删除聊天数据成功', url('platform/stat/history'), 'success', true);
+		itoast('删除聊天数据成功', url('platform/stat/history'), 'success');
 	}
 }
 if ($do == 'rule') {
@@ -329,7 +329,7 @@ if ($do == 'setting') {
 		$stat = iserializer($stat);
 		pdo_update('uni_settings', array('stat' => $stat), array('uniacid' => $_W['uniacid']));
 		cache_delete("unisetting:{$_W['uniacid']}");
-		message('设置参数成功', 'refresh', 'success', true);
+		itoast('设置参数成功', 'refresh', 'success');
 	}
 	template('platform/stat-setting');
 }

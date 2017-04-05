@@ -17,7 +17,7 @@ if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
 	$role = uni_permission($_W['uid'], $uniacid);
 	if(empty($role)) {
-		message('操作失败, 非法访问.', '', 'error', true);
+		itoast('操作失败, 非法访问.', '', 'error');
 	}
 	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
 	$cache_lastaccount = cache_load($cache_key);
@@ -36,7 +36,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 
 	$exist = pdo_get('uni_account', array('uniacid' => $uniacid));
 	if (empty($exist)) {
-		message(error(1, '公众号不存在'), '', 'ajax', true);
+		iajax(1, '公众号不存在', '');
 	}
 	if (!empty($_W['isfounder'])) {
 		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account'));
@@ -45,7 +45,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account_users'));
 		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	}
-	message(error(0, '更新成功！'), '', 'ajax', true);
+	iajax(0, '更新成功！', '');
 }
 
 if ($do == 'display') {

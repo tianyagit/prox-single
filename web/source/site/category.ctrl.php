@@ -36,7 +36,7 @@ if ($do == 'display') {
 	if (!empty($id)) {
 		$category = pdo_fetch("SELECT * FROM ".tablename('site_category')." WHERE id = '$id' AND uniacid = {$_W['uniacid']}");
 		if (empty($category)) {
-			message('分类不存在或已删除', '', 'error', true);
+			itoast('分类不存在或已删除', '', 'error');
 		}
 		if (!empty($category['css'])) {
 			$category['css'] = iunserializer($category['css']);
@@ -52,7 +52,7 @@ if ($do == 'display') {
 	if (!empty($parentid)) {
 		$parent = pdo_fetch("SELECT id, name FROM ".tablename('site_category')." WHERE id = '$parentid'");
 		if (empty($parent)) {
-			message('抱歉，上级分类不存在或是已经被删除！', url('site/category/display'), 'error', true);
+			itoast('抱歉，上级分类不存在或是已经被删除！', url('site/category/display'), 'error');
 		}
 	}
 	$category['style'] = $styles[$category['styleid']];
@@ -66,7 +66,7 @@ if ($do == 'display') {
 
 	if (checksubmit('submit')) {
 		if (empty($_GPC['cname'])) {
-			message('抱歉，请输入分类名称！', '', '', true);
+			itoast('抱歉，请输入分类名称！', '', '');
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -154,7 +154,7 @@ if ($do == 'display') {
 			$nav_url['url'] = "./index.php?c=site&a=site&cid={$id}&i={$_W['uniacid']}";
 			pdo_update('site_nav', $nav_url, array('id' => $data['nid'], 'uniacid' => $_W['uniacid']));
 		}
-		message('更新分类成功！', url('site/category'), 'success', true);
+		itoast('更新分类成功！', url('site/category'), 'success');
 	}
 	template('site/category-post');
 } elseif ($do == 'delete') {
@@ -163,7 +163,7 @@ if ($do == 'display') {
 			$id = intval($id);
 			$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
 			if (empty($category)) {
-				message('抱歉，分类不存在或是已经被删除！', referer(), 'error', true);
+				itoast('抱歉，分类不存在或是已经被删除！', referer(), 'error');
 			}
 			$navs = pdo_fetchall("SELECT icon, id FROM ".tablename('site_nav')." WHERE id IN (SELECT nid FROM ".tablename('site_category')." WHERE id = {$id} OR parentid = '$id')", array(), 'id');
 			if (!empty($navs)) {
@@ -174,12 +174,12 @@ if ($do == 'display') {
 			}
 			pdo_delete('site_category', array('id' => $id));
 		}
-		message('分类批量删除成功！', referer(), 'success', true);
+		itoast('分类批量删除成功！', referer(), 'success');
 	} else {
 		$id = intval($_GPC['id']);
 		$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
 		if (empty($category)) {
-			message('抱歉，分类不存在或是已经被删除！', referer(), 'error', true);
+			itoast('抱歉，分类不存在或是已经被删除！', referer(), 'error');
 		}
 		$navs = pdo_fetchall("SELECT icon, id FROM ".tablename('site_nav')." WHERE id IN (SELECT nid FROM ".tablename('site_category')." WHERE id = {$id} OR parentid = '$id')", array(), 'id');
 		if (!empty($navs)) {
@@ -189,7 +189,7 @@ if ($do == 'display') {
 			pdo_query("DELETE FROM ".tablename('site_nav')." WHERE id IN (".implode(',', array_keys($navs)).")");
 		}
 		pdo_delete('site_category', array('id' => $id, 'parentid' => $id), 'OR');
-		message('分类删除成功！', referer(), 'success', true);
+		itoast('分类删除成功！', referer(), 'success');
 	}
 } else if ($do == 'change_status') {
 	$id = intval($_GPC['id']);
@@ -198,11 +198,11 @@ if ($do == 'display') {
 		$status = $category_exist['enabled'] == 1 ? 0 : 1;
 		$result = pdo_update('site_category', array('enabled' => $status), array('id' => $id));
 		if ($result) {
-			message(error(0, '更改成功！'), url('site/category'), 'ajax', true);
+			iajax(0, '更改成功！', url('site/category'));
 		} else {
-			message(error(1, '更改失败！'), '', 'ajax', true);
+			iajax(1, '更改失败！', '');
 		}
 	} else {
-		message(error(-1, '分类不存在！'), '', 'ajax', true);
+		iajax(-1, '分类不存在！', '');
 	}
 }

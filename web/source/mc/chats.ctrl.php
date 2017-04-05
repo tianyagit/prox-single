@@ -68,7 +68,7 @@ if ($do == 'send') {
 	$account_api = WeAccount::create($_W['acid']);
 	$result = $account_api->sendCustomNotice($send);
 	if (is_error($result)) {
-		message($result, '', 'ajax', true);
+		iajax(1, $result);
 	} else {
 		//生成上下文
 		$account = account_fetch($_W['acid']);
@@ -96,14 +96,14 @@ if ($do == 'send') {
 			'content' => iserializer($send[$send['msgtype']]),
 			'createtime' => TIMESTAMP,
 		));
-		message(error(0, array('createtime' => date('Y-m-d', time()), 'content' => $content)), '', 'ajax', true);
+		iajax(0, array('createtime' => date('Y-m-d', time()), 'content' => $content), '');
 	}
 }
 
 if ($do == 'endchats') {
 	$openid = trim($_GPC['openid']);
 	if (empty($openid)) {
-		message(error(1, '粉丝openid不合法'), '', 'ajax', true);
+		iajax(1, '粉丝openid不合法', '');
 	}
 	$fans_info = mc_fansinfo($openid);
 	$account = account_fetch($fans_info['acid']);
@@ -117,7 +117,7 @@ if ($do == 'endchats') {
 		$processor->end();
 	}
 	if (is_error($result)) {
-		message($result, '', 'ajax', true);
+		iajax(1, $result);
 	}
 }
 template('mc/chats');

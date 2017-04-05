@@ -16,7 +16,7 @@ uni_user_permission_check('platform_material');
 $_W['page']['title'] = '新增素材-微信素材';
 
 if ($do == 'tomedia') {
-	message(error('0', tomedia($_GPC['url'])), '', 'ajax', true);
+	iajax('0', tomedia($_GPC['url']), '');
 }
 
 if ($do == 'news') {
@@ -78,10 +78,10 @@ if ($do == 'addnews') {
 			if (!$is_save_location) {
 				$news_info['content'] = material_parse_content($news_info['content']);
 				if (is_error($news_info['content'])) {
-					message($news_info['content'], '', 'ajax', true);
+					iajax(0, $news_info['content']);
 				}
 				if (empty($news_info['thumb_media_id'])) {
-					message(error(1, '请将封面图片换成微信图片素材后再上传。'), '', 'ajax', true);
+					iajax(1, '请将封面图片换成微信图片素材后再上传。');
 				}
 			}
 			$post_data = array(
@@ -121,7 +121,7 @@ if ($do == 'addnews') {
 		if (!$is_save_location) {
 			$media_id = $account_api->addMatrialNews($articles);
 			if (is_error($media_id)) {
-				message(error(1, $media_id), '', 'ajax', true);
+				iajax(1, $media_id, '');
 			}
 			$wechat_new = $account_api->getMaterial($media_id);
 		}
@@ -151,19 +151,19 @@ if ($do == 'addnews') {
 			pdo_delete('wechat_attachment', array('id' => $local_attach_id));
 			pdo_delete('wechat_news', array('attach_id' => $local_attach_id));
 		}
-		message(error(0, '创建图文素材成功'), '', 'ajax', true);
+		iajax(0, '创建图文素材成功', '');
 	} else {
 		if (!$is_save_location) {
 			foreach ($articles as $edit_news) {
 				$result = $account_api->editMaterialNews($edit_news);
 				if (is_error($result)) {
-					message(error(0, $result), '', 'ajax', true);
+					iajax(0, $result, '');
 				}
 			}
 		}
 		foreach ($post_news as $id => $news) {
 			pdo_update('wechat_news', $news, array('uniacid' => $_W['uniacid'], 'id' => $id));
 		}
-		message(error(0, '更新图文素材成功'), '', 'ajax', true);
+		iajax(0, '更新图文素材成功', '');
 	}
 }

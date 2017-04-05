@@ -72,29 +72,29 @@ if ($do == 'delete') {
 	//只有创始人、主管理员才有权限停用公众号
 	$state = uni_permission($uid, $uniacid);
 	if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER) {
-		message('无权限操作！', url('account/manage'), 'error', true);
+		itoast('无权限操作！', url('account/manage'), 'error');
 	}
 	if (!empty($acid) && empty($uniacid)) {
 		$account = account_fetch($acid);
 		if (empty($account)) {
-			message('子公众号不存在或是已经被删除', '', '', true);
+			itoast('子公众号不存在或是已经被删除', '', '');
 		}
 		$uniaccount = uni_fetch($account['uniacid']);
 		if ($uniaccount['default_acid'] == $acid) {
-			message('默认子公众号不能删除', '', '', true);
+			itoast('默认子公众号不能删除', '', '');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('acid' => $acid));
-		message('删除子公众号成功！您可以在回收站中回复公众号', referer(), 'success', true);
+		itoast('删除子公众号成功！您可以在回收站中回复公众号', referer(), 'success');
 	}
 	
 	if (!empty($uniacid)) {
 		$account = pdo_get('uni_account', array('uniacid' => $uniacid));
 		if (empty($account)) {
-			message('抱歉，帐号不存在或是已经被删除', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error', true);
+			itoast('抱歉，帐号不存在或是已经被删除', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		$state = uni_permission($uid, $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error', true);
+			itoast('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 		if($_GPC['uniacid'] == $_W['uniacid']) {
@@ -103,5 +103,5 @@ if ($do == 'delete') {
 		cache_delete("unicount:{$uniacid}");
 		cache_delete("unisetting:{$uniacid}");
 	}
-	message('停用成功！，您可以在回收站中恢复', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'success', true);
+	itoast('停用成功！，您可以在回收站中恢复', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'success');
 }

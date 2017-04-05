@@ -37,7 +37,7 @@ if ($do == 'articlelist') {
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_article').' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
-	message($result, '', 'ajax', true);
+	iajax(0, $result);
 }
 if ($do == 'pagelist') {
 	$result = array();
@@ -52,7 +52,7 @@ if ($do == 'pagelist') {
 		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_page'). ' WHERE uniacid = :uniacid AND type = 1', array(':uniacid' => $_W['uniacid']));
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'true'));
 	}
-	message($result, '', 'ajax', true);
+	iajax(0, $result);
 }
 if ($do == 'newslist') {
 	$result = array();
@@ -65,7 +65,7 @@ if ($do == 'newslist') {
 		$total = pdo_fetchcolumn($sql, array(':news' => 'news', ':uniacid' => $_W['uniacid']));
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
-	message($result, '', 'ajax', true);
+	iajax(0, $result);
 }
 if ($do == 'catelist') {
 	$condition = '';
@@ -82,7 +82,7 @@ if ($do == 'catelist') {
 			unset($category[$index]);
 		}
 	}
-	message($category, '', 'ajax', true);
+	iajax(0, $category);
 }
 if ($do == 'page') {
 	$result = array();
@@ -151,7 +151,7 @@ if ($do == 'newschunk') {
 		unset($row);
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
-	message($result, '', 'ajax', true);
+	iajax(0, $result);
 }
 if ($do == 'entry') {
 	$has_permission = array();

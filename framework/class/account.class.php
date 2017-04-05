@@ -466,6 +466,7 @@ class WeUtility {
 				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
 			}
 			require_once $codefile;
+			restore_include_path();
 		}
 		if(!class_exists($classname)) {
 			trigger_error('Module Definition Class Not Found', E_USER_WARNING);
@@ -593,6 +594,7 @@ class WeUtility {
 				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
 			}
 			require_once $codefile;
+			restore_include_path();
 		}
 		if(!class_exists($classname)) {
 			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
@@ -1377,7 +1379,7 @@ abstract class WeModuleSite extends WeBase {
 		load()->model('module');
 		activity_coupon_type_init();
 		if(!$this->inMobile) {
-			message('支付功能只能在手机上使用', '', '', true);
+			itoast('支付功能只能在手机上使用', '', '');
 		}
 		$params['module'] = $this->module['name'];
 //		如果价格为0 直接执行模块支付回调方法
@@ -1409,11 +1411,11 @@ abstract class WeModuleSite extends WeBase {
 			pdo_insert('core_paylog', $log);
 		}
 		if($log['status'] == '1') {
-			message('这个订单已经支付成功, 不需要重复支付.', '', 'info', true);
+			itoast('这个订单已经支付成功, 不需要重复支付.', '', 'info');
 		}
 		$setting = uni_setting($_W['uniacid'], array('payment', 'creditbehaviors'));
 		if(!is_array($setting['payment'])) {
-			message('没有有效的支付方式, 请联系网站管理员.', '', 'error', true);
+			itoast('没有有效的支付方式, 请联系网站管理员.', '', 'error');
 		}
 		$pay = $setting['payment'];
 		$we7_coupon_info = module_fetch('we7_coupon');
@@ -1468,9 +1470,9 @@ abstract class WeModuleSite extends WeBase {
 		global $_W;
 		if($ret['from'] == 'return') {
 			if ($ret['type'] == 'credit2') {
-				message('已经成功支付', url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success', true);
+				itoast('已经成功支付', url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success');
 			} else {
-				message('已经成功支付', '../../' . url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success', true);
+				itoast('已经成功支付', '../../' . url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success');
 			}
 		}
 	}
@@ -1575,7 +1577,7 @@ abstract class WeModuleCron extends WeBase {
 	public function addCronLog($tid, $errno, $note, $tag = array()) {
 		global $_W;
 		if(!$tid) {
-			message(error(-1, 'tid参数错误'), '', 'ajax', true);
+			iajax(-1, 'tid参数错误', '');
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -1587,7 +1589,7 @@ abstract class WeModuleCron extends WeBase {
 			'createtime' => TIMESTAMP
 		);
 		pdo_insert('core_cron_record', $data);
-		message(error($errno, $note), '', 'ajax', true);
+		iajax($errno, $note, '');
 	}
 }
 

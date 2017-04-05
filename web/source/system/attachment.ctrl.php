@@ -23,14 +23,14 @@ if ($do == 'global') {
 		}
 		$upload['image']['width'] = intval(trim($upload['image']['width']));
 		if (!empty($upload['image']['thumb']) && empty($upload['image']['width'])) {
-			message('请设置图片缩略宽度.', '', '', true);
+			itoast('请设置图片缩略宽度.', '', '');
 		}
 		$upload['image']['limit'] = max(0, intval(trim($upload['image']['limit'])));
 		if (empty($upload['image']['limit'])) {
-			message('请设置图片上传支持的文件大小, 单位 KB.', '', '', true);
+			itoast('请设置图片上传支持的文件大小, 单位 KB.', '', '');
 		}
 		if (empty($upload['image']['extentions'])) {
-			message('请添加支持的图片附件后缀类型', '', '', true);
+			itoast('请添加支持的图片附件后缀类型', '', '');
 		}
 		if (!empty($upload['image']['extentions'])) {
 			$upload['image']['extentions'] = explode("\n", $upload['image']['extentions']);
@@ -43,11 +43,11 @@ if ($do == 'global') {
 			}
 		}
 		if (!is_array($upload['image']['extentions']) || count($upload['image']['extentions']) < 1) {
-			message('请添加支持的图片附件后缀类型', '', '', true);
+			itoast('请添加支持的图片附件后缀类型', '', '');
 		}
 		$upload['audio']['limit'] = max(0, intval(trim($upload['audio']['limit'])));
 		if (empty($upload['image']['limit'])) {
-			message('请设置音频视频上传支持的文件大小, 单位 KB.', '', '', true);
+			itoast('请设置音频视频上传支持的文件大小, 单位 KB.', '', '');
 		}
 		if (!empty($upload['audio']['extentions'])) {
 			$upload['audio']['extentions'] = explode("\n", $upload['audio']['extentions']);
@@ -60,10 +60,10 @@ if ($do == 'global') {
 			}
 		}
 		if (!is_array($upload['audio']['extentions']) || count($upload['audio']['extentions']) < 1) {
-			message('请添加支持的音频视频附件后缀类型', '', '', true);
+			itoast('请添加支持的音频视频附件后缀类型', '', '');
 		}
 		setting_save($upload, 'upload');
-		message('更新设置成功！', url('system/attachment'), 'success', true);
+		itoast('更新设置成功！', url('system/attachment'), 'success');
 	}
 	
 	$post_max_size = ini_get('post_max_size');
@@ -128,18 +128,18 @@ if ($do == 'remote') {
 		);
 		if ($remote['type'] == ATTACH_OSS) {
 			if (trim($remote['alioss']['key']) == '') {
-				message('阿里云OSS-Access Key ID不能为空', '', '', true);
+				itoast('阿里云OSS-Access Key ID不能为空', '', '');
 			}
 			if (trim($remote['alioss']['secret']) == '') {
-				message('阿里云OSS-Access Key Secret不能为空', '', '', true);
+				itoast('阿里云OSS-Access Key Secret不能为空', '', '');
 			}
 			$buckets = attachment_alioss_buctkets($remote['alioss']['key'], $remote['alioss']['secret']);
 			if (is_error($buckets)) {
-				message('OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写', '', '', true);
+				itoast('OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写', '', '');
 			}
 			list($remote['alioss']['bucket'], $remote['alioss']['url']) = explode('@@', $_GPC['alioss']['bucket']);
 			if (empty($buckets[$remote['alioss']['bucket']])) {
-				message('Bucket不存在或是已经被删除', '', '', true);
+				itoast('Bucket不存在或是已经被删除', '', '');
 			}
 			$remote['alioss']['url'] = 'http://'.$remote['alioss']['bucket'].'.'.$buckets[$remote['alioss']['bucket']]['location'].'.aliyuncs.com';
 			$remote['alioss']['ossurl'] = $buckets[$remote['alioss']['bucket']]['location'].'.aliyuncs.com';
@@ -152,46 +152,46 @@ if ($do == 'remote') {
 			}
 		} elseif ($remote['type'] == ATTACH_FTP) {
 			if (empty($remote['ftp']['host'])) {
-				message('FTP服务器地址为必填项.', '', '', true);
+				itoast('FTP服务器地址为必填项.', '', '');
 			}
 			if (empty($remote['ftp']['username'])) {
-				message('FTP帐号为必填项.', '', '', true);
+				itoast('FTP帐号为必填项.', '', '');
 			}
 			if (empty($remote['ftp']['password'])) {
-				message('FTP密码为必填项.', '', '', true);
+				itoast('FTP密码为必填项.', '', '');
 			}
 		} elseif ($remote['type'] == ATTACH_QINIU) {
 			if (empty($remote['qiniu']['accesskey'])) {
-				message('请填写Accesskey', referer(), 'info', true);
+				itoast('请填写Accesskey', referer(), 'info');
 			}
 			if (empty($remote['qiniu']['secretkey'])) {
-				message('secretkey', referer(), 'info', true);
+				itoast('secretkey', referer(), 'info');
 			}
 			if (empty($remote['qiniu']['bucket'])) {
-				message('请填写bucket', referer(), 'info', true);
+				itoast('请填写bucket', referer(), 'info');
 			}
 			if (empty($remote['qiniu']['url'])) {
-				message('请填写url', referer(), 'info', true);
+				itoast('请填写url', referer(), 'info');
 			} else {
 				$remote['qiniu']['url'] = strexists($remote['qiniu']['url'], 'http') ? trim($remote['qiniu']['url'], '/') : 'http://'. trim($remote['qiniu']['url'], '/');
 			}
 			$auth = attachment_qiniu_auth($remote['qiniu']['accesskey'], $remote['qiniu']['secretkey'], $remote['qiniu']['bucket']);
 			if (is_error($auth)) {
 				$message = $auth['message']['error'] == 'bad token' ? 'Accesskey或Secretkey填写错误， 请检查后重新提交' : 'bucket填写错误或是bucket所对应的存储区域选择错误，请检查后重新提交';
-				message($message, referer(), 'info', true);
+				itoast($message, referer(), 'info');
 			}
 		} elseif ($remote['type'] == ATTACH_COS) {
 			if (empty($remote['cos']['appid'])) {
-				message('请填写APPID', referer(), 'info', true);
+				itoast('请填写APPID', referer(), 'info');
 			}
 			if (empty($remote['cos']['secretid'])) {
-				message('请填写SECRETID', referer(), 'info', true);
+				itoast('请填写SECRETID', referer(), 'info');
 			}
 			if (empty($remote['cos']['secretkey'])) {
-				message('请填写SECRETKEY', referer(), 'info', true);
+				itoast('请填写SECRETKEY', referer(), 'info');
 			}
 			if (empty($remote['cos']['bucket'])) {
-				message('请填写BUCKET', referer(), 'info', true);
+				itoast('请填写BUCKET', referer(), 'info');
 			}
 			if (empty($remote['cos']['url'])) {
 				$remote['cos']['url'] = 'http://'.$remote['cos']['bucket'].'-'.$remote['cos']['appid'].'.cos.myqcloud.com';
@@ -204,11 +204,11 @@ if ($do == 'remote') {
 			$auth = attachment_cos_auth($remote['cos']['bucket'], $remote['cos']['appid'], $remote['cos']['secretid'], $remote['cos']['secretkey'], $remote['cos']['local']);
 
 			if (is_error($auth)) {
-				message($auth['message'], referer(), 'info', true);
+				itoast($auth['message'], referer(), 'info');
 			}
 		}
 		setting_save($remote, 'remote');
-		message('远程附件配置信息更新成功！', url('system/attachment/remote'), 'success', true);
+		itoast('远程附件配置信息更新成功！', url('system/attachment/remote'), 'success');
 	}
 	$remote = $_W['setting']['remote'];
 	if (!empty($remote['alioss']['key']) && !empty($remote['alioss']['secret'])) {
@@ -222,7 +222,7 @@ if ($do == 'buckets') {
 	$secret = $_GPC['secret'];
 	$buckets = attachment_alioss_buctkets($key, $secret);
 	if (is_error($buckets)) {
-		message(error(-1), '', 'ajax', true);
+		iajax(-1, '');
 	}
 	$bucket_datacenter = attachment_alioss_datacenters();
 	$bucket = array();
@@ -230,7 +230,7 @@ if ($do == 'buckets') {
 		$value['loca_name'] = $key. '@@'. $bucket_datacenter[$value['location']];
 		$bucket[] = $value;
 	}
-	message(error(1, $bucket), '', 'ajax', true);
+	iajax(1, $bucket, '');
 }
 
 if($do == 'ftp') {
@@ -254,22 +254,22 @@ if($do == 'ftp') {
 			load()->func('communication');
 			$response = ihttp_get($url. '/'. $filename);
 			if (is_error($response)) {
-				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax', true);
+				iajax(-1, '配置失败，FTP远程访问url错误');
 			}
 			if (intval($response['code']) != 200) {
-				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax', true);
+				iajax(-1, '配置失败，FTP远程访问url错误');
 			}
 			$image = getimagesizefromstring($response['content']);
 			if (!empty($image) && strexists($image['mime'], 'image')) {
-				message(error(0,'配置成功'),'','ajax', true);
+				iajax(0,'配置成功');
 			} else {
-				message(error(-1, '配置失败，FTP远程访问url错误'),'','ajax', true);
+				iajax(-1, '配置失败，FTP远程访问url错误');
 			}
 		} else {
-			message(error(-1, '上传图片失败，请检查配置'),'','ajax', true);
+			iajax(-1, '上传图片失败，请检查配置');
 		}
 	} else {
-		message(error(-1, 'FTP服务器连接失败，请检查配置'),'','ajax', true);
+		iajax(-1, 'FTP服务器连接失败，请检查配置');
 	}
 }
 
@@ -282,7 +282,7 @@ if ($do == 'oss') {
 	list($bucket, $url) = explode('@@', $_GPC['bucket']);
 	$result = attachment_newalioss_auth($key, $secret, $bucket,$url);
 	if (is_error($result)) {
-		message(error(-1, 'OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写'),'','ajax', true);
+		iajax(-1, 'OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写');
 	}
 	$ossurl = $buckets[$bucket]['location'].'.aliyuncs.com';
 	if (!empty($_GPC['url'])) {
@@ -299,16 +299,16 @@ if ($do == 'oss') {
 	$filename = 'MicroEngine.ico';
 	$response = ihttp_request($url. '/'.$filename, array(), array('CURLOPT_REFERER' => $_SERVER['SERVER_NAME']));
 	if (is_error($response)) {
-		message(error(-1, '配置失败，阿里云访问url错误'),'','ajax', true);
+		iajax(-1, '配置失败，阿里云访问url错误');
 	}
 	if (intval($response['code']) != 200) {
-		message(error(-1, '配置失败，阿里云访问url错误,请保证bucket为公共读取的'),'','ajax', true);
+		iajax(-1, '配置失败，阿里云访问url错误,请保证bucket为公共读取的');
 	}
 	$image = getimagesizefromstring($response['content']);
 	if (!empty($image) && strexists($image['mime'], 'image')) {
-		message(error(0,'配置成功'),'','ajax', true);
+		iajax(0,'配置成功');
 	} else {
-		message(error(-1, '配置失败，阿里云访问url错误'),'','ajax', true);
+		iajax(-1, '配置失败，阿里云访问url错误');
 	}
 }
 
@@ -317,7 +317,7 @@ if ($do == 'qiniu') {
 	$_GPC['secretkey'] = strexists($_GPC['secretkey'], '*') ? $_W['setting']['remote']['qiniu']['secretkey'] : $_GPC['secretkey'];
 	$auth= attachment_qiniu_auth(trim($_GPC['accesskey']), trim($_GPC['secretkey']), trim($_GPC['bucket']));
 	if (is_error($auth)) {
-		message(error(-1, '配置失败，请检查配置。注：请检查存储区域是否选择的是和bucket对应<br/>的区域'), '', 'ajax', true);
+		iajax(-1, '配置失败，请检查配置。注：请检查存储区域是否选择的是和bucket对应<br/>的区域', '');
 	}
 	load()->func('communication');
 	$url = $_GPC['url'];
@@ -325,16 +325,16 @@ if ($do == 'qiniu') {
 	$filename = 'MicroEngine.ico';
 	$response = ihttp_request($url. '/'.$filename, array(), array('CURLOPT_REFERER' => $_SERVER['SERVER_NAME']));
 	if (is_error($response)) {
-		message(error(-1, '配置失败，七牛访问url错误'),'','ajax', true);
+		iajax(-1, '配置失败，七牛访问url错误');
 	}
 	if (intval($response['code']) != 200) {
-		message(error(-1, '配置失败，七牛访问url错误,请保证bucket为公共读取的'),'','ajax', true);
+		iajax(-1, '配置失败，七牛访问url错误,请保证bucket为公共读取的');
 	}
 	$image = getimagesizefromstring($response['content']);
 	if (!empty($image) && strexists($image['mime'], 'image')) {
-		message(error(0,'配置成功'),'','ajax', true);
+		iajax(0,'配置成功');
 	} else {
-		message(error(-1, '配置失败，七牛访问url错误'),'','ajax', true);
+		iajax(-1, '配置失败，七牛访问url错误');
 	}
 }
 
@@ -352,23 +352,23 @@ if ($do == 'cos') {
 	$auth= attachment_cos_auth(trim($_GPC['bucket']), trim($_GPC['appid']), trim($_GPC['secretid']), trim($_GPC['secretkey']), $_GPC['local']);
 
 	if (is_error($auth)) {
-		message(error(-1, '配置失败，请检查配置'), '', 'ajax', true);
+		iajax(-1, '配置失败，请检查配置', '');
 	}
 	load()->func('communication');
 	$url = strexists($url, 'http') ? trim($url, '/') : 'http://'.trim($url, '/');
 	$filename = 'MicroEngine.ico';
 	$response = ihttp_request($url. '/'.$filename, array(), array('CURLOPT_REFERER' => $_SERVER['SERVER_NAME']));
 	if (is_error($response)) {
-		message(error(-1, '配置失败，腾讯cos访问url错误'),'','ajax', true);
+		iajax(-1, '配置失败，腾讯cos访问url错误');
 	}
 	if (intval($response['code']) != 200) {
-		message(error(-1, '配置失败，腾讯cos访问url错误,请保证bucket为公共读取的'),'','ajax', true);
+		iajax(-1, '配置失败，腾讯cos访问url错误,请保证bucket为公共读取的');
 	}
 	$image = getimagesizefromstring($response['content']);
 	if (!empty($image) && strexists($image['mime'], 'image')) {
-		message(error(0,'配置成功'),'','ajax', true);
+		iajax(0,'配置成功');
 	} else {
-		message(error(-1, '配置失败，腾讯cos访问url错误'),'','ajax', true);
+		iajax(-1, '配置失败，腾讯cos访问url错误');
 	}
 }
 

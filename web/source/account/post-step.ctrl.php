@@ -36,15 +36,15 @@ if($step == 1) {
 	if (!empty($uniacid)) {
 		$state = uni_permission($uid, $uniacid);
 		if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
-			message('没有该公众号操作权限！', '', '', true);
+			itoast('没有该公众号操作权限！', '', '');
 		}
 		if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
-			message($permission['message'], '' , 'error', true);
+			itoast($permission['message'], '' , 'error');
 		}
 	} else {
 		if (empty($_W['isfounder']) && is_error($permission = uni_create_permission($_W['uid'], 1))) {
 			if (is_error($permission = uni_create_permission($_W['uid'], 2))) {
-				message($permission['message'], '' , 'error', true);
+				itoast($permission['message'], '' , 'error');
 			}
 		}
 	}
@@ -54,7 +54,7 @@ if($step == 1) {
 		$update['name'] = trim($_GPC['cname']);
 
 		if(empty($update['name'])) {
-			message('公众号名称必须填写', '', '', true);
+			itoast('公众号名称必须填写', '', '');
 		}
 		//如果uniacid不存在,创建主公号
 		if (empty($uniacid)) {
@@ -68,10 +68,10 @@ if($step == 1) {
 			//检测新添加公众号名称是否存在
 			$check_uniacname = pdo_get('uni_account', array('name' => $name), 'name');
 			if (!empty($check_uniacname)) {
-				message('该公众号名称已经存在', '', '', true);
+				itoast('该公众号名称已经存在', '', '');
 			}
 			if (!pdo_insert('uni_account', $data)) {
-				message('添加公众号失败', '', '', true);
+				itoast('添加公众号失败', '', '');
 			}
 			$uniacid = pdo_insertid();
 			//获取默认模板的id
@@ -122,7 +122,7 @@ if($step == 1) {
 		if (empty($acid)) {
 			$acid = account_create($uniacid, $update);
 			if(is_error($acid)) {
-				message('添加公众号信息失败', '', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 2), 'error'), true);
+				itoast('添加公众号信息失败', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 2)), 'error');
 			}
 			pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 			if (empty($_W['isfounder'])) {
@@ -157,20 +157,20 @@ if($step == 1) {
 	$acid = intval($_GPC['acid']);
 	$uniacid = intval($_GPC['uniacid']);
 	if (empty($_W['isfounder'])) {
-		message('您无权进行该操作！', '', '', true);
+		itoast('您无权进行该操作！', '', '');
 	}
 	if ($_GPC['get_type'] == 'userinfo' && $_W['ispost']) {
 		$result = array();
 		$uid = intval($_GPC['uid'][0]);
 		$user = user_single(array('uid' => $uid));
 		if (empty($user)) {
-			message(error(-1, '用户不存在或是已经被删除'), '', 'ajax', true);
+			iajax(-1, '用户不存在或是已经被删除', '');
 		}
 		$result['username'] = $user['username'];
 		$result['uid'] = $user['uid'];
 		$result['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $user['groupid']));
 		$result['package'] = iunserializer($result['group']['package']);
-		message(error(0, $result), '', 'ajax', true);
+		iajax(0, $result, '');
 		exit;
 	}
 	if (checksubmit('submit')) {
@@ -181,7 +181,7 @@ if($step == 1) {
 			//删除原所有者，删除现在所有者其他身份
 			$account_info = uni_user_account_permission();
 			if ($account_info['uniacid_limit'] <= 0) {
-				message("您所设置的主管理员所在的用户组可添加的主公号数量已达上限，请选择其他人做主管理员！", referer(), 'error', true);
+				itoast("您所设置的主管理员所在的用户组可添加的主公号数量已达上限，请选择其他人做主管理员！", referer(), 'error');
 			}
 			pdo_delete('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
 			$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
@@ -256,7 +256,7 @@ if($step == 1) {
 		cache_delete("cardticket:{$acid}");
 		module_build_privileges();
 		if (!empty($_GPC['from'])) {
-			message('公众号权限修改成功', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 3, 'from' => 'list')), 'success', true);
+			itoast('公众号权限修改成功', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 3, 'from' => 'list')), 'success');
 		} else {
 			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 4)));
 			exit;
@@ -313,7 +313,7 @@ if($step == 1) {
 	$acid = intval($_GPC['acid']);
 	$uni_account = pdo_get('uni_account', array('uniacid' => $uniacid));
 	if (empty($uni_account)) {
-		message('非法访问', '', '', true);
+		itoast('非法访问', '', '');
 	}
 	$account = account_fetch($uni_account['default_acid']);
 }

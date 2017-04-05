@@ -13,7 +13,7 @@ $_W['page']['title'] = '性能优化 - 常用系统工具 - 系统管理';
 
 if ($do == 'opcache') {
 	opcache_reset();
-	message('清空缓存成功', url('system/optimize'), 'success', true);
+	itoast('清空缓存成功', url('system/optimize'), 'success');
 } else {
 	$extensions = array(
 		'memcache' => array(

@@ -25,7 +25,7 @@ if($do == 'display') {
 	$account_api = WeAccount::create();
 	$default_menu_info = $account_api->menuCurrentQuery();
 	if (is_error($default_menu_info)) {
-		message($default_menu_info['message'], '', 'error', true);
+		itoast($default_menu_info['message'], '', 'error');
 	}
 	$default_menu = $default_menu_info['selfmenu_info'];
 	$default_menu['type'] = 1;
@@ -88,7 +88,7 @@ if($do == 'display') {
 	//拉取个性化菜单
 	$get_menu_info = $account_api->menuQuery();
 	if(is_error($get_menu_info)) {
-		message($get_menu_info['message'], '', 'error', true);
+		itoast($get_menu_info['message'], '', 'error');
 	}
 	$condition_menus = $get_menu_info['conditionalmenu'];
 	pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid'], 'type' => 3));
@@ -154,12 +154,12 @@ if($do == 'push') {
 	$id = intval($_GPC['id']);
 	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if(empty($data)) {
-		message(error(-1, '菜单不存在或已删除'), referer(), 'ajax', true);
+		iajax(-1, '菜单不存在或已删除', referer());
 	}
 	if ($_GPC['status'] == 1) {
 		$post = iunserializer(base64_decode($data['data']));
 		if(empty($post)) {
-			message(error(-1, '菜单数据错误'), referer(), 'ajax', true);
+			iajax(-1, '菜单数据错误', referer());
 		}
 		$menu = array();
 		if(!empty($post['button'])) {
@@ -222,7 +222,7 @@ if($do == 'push') {
 		$account_api = WeAccount::create($_W['acid']);
 		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
-			message(error(-1, $result['message']), '', 'ajax', true);
+			iajax(-1, $result['message'], '');
 		} else {
 			if($data['type'] == 1) {
 				pdo_update('uni_account_menus', array('status' => '1'), array('id' => $data['id']));
@@ -235,7 +235,7 @@ if($do == 'push') {
 				}
 				$status = pdo_update('uni_account_menus', array('status' => 1, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
 			}
-			message(error(0, '推送成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax', true);
+			iajax(0, '推送成功', url('platform/menu/display', array('type' => $data['type'])));
 		}
 	} elseif ($_GPC['status'] == 2) {
 		$status =  $_GPC['status'];
@@ -246,10 +246,10 @@ if($do == 'push') {
 				$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 				$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
 				$message = "调用微信接口删除失败:{$result['message']}<br>";
-				message(error(-1, $message), '', 'error', true);
+				itoast(error(-1, $message), '', 'error');
 			} else {
 				pdo_update('uni_account_menus', array('status' => '0'), array('id' => $data['id']));
-				message(error(0, '关闭成功'), url('platform/menu/display', array('type' => $data['type'])), 'ajax', true);
+				iajax(0, '关闭成功', url('platform/menu/display', array('type' => $data['type'])));
 			}
 		}
 	}
@@ -259,10 +259,10 @@ if($do == 'copy') {
 	$id = intval($_GPC['id']);
 	$menu = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if(empty($menu)) {
-		message('菜单不存在或已经删除', url('platform/menu/display'), 'error', true);
+		itoast('菜单不存在或已经删除', url('platform/menu/display'), 'error');
 	}
 	if($menu['type'] != 3) {
-		message('该菜单不能复制', url('platform/menu/display'), 'error', true);
+		itoast('该菜单不能复制', url('platform/menu/display'), 'error');
 	}
 	unset($menu['id'], $menu['menuid']);
 	$menu['status'] = 0;
@@ -285,6 +285,9 @@ if($do == 'post') {
 			if(!empty($menu['data'])) {
 				if (!empty($menu['data']['button'])) {
 					foreach ($menu['data']['button'] as &$button) {
+						if (!empty($button['url'])) {
+							$button['url'] = preg_replace('/(.*)redirect_uri=(.*)&response_type(.*)wechat_redirect/', '$2', $button['url']);
+						}
 						if (empty($button['sub_button'])) {
 							if ($button['type'] == 'media_id') {
 								$button['type'] = 'click';
@@ -293,6 +296,9 @@ if($do == 'post') {
 						} else {
 							$button['sub_button'] = !empty($button['sub_button']['list']) ? $button['sub_button']['list'] : $button['sub_button'];
 							foreach($button['sub_button'] as &$subbutton) {
+								if (!empty($subbutton['url'])) {
+									$subbutton['url'] = preg_replace('/(.*)redirect_uri=(.*)&response_type(.*)wechat_redirect/', '$2', $subbutton['url']);
+								}
 								if ($subbutton['type'] == 'media_id') {
 									$subbutton['type'] = 'click';
 								}
@@ -339,7 +345,7 @@ if($do == 'post') {
 		$post = $_GPC['group'];
 		//检测菜单组名称
 		if (empty($post['title'])) {
-			message(error(-1, '请填写菜单组名称！'), '', 'ajax', true);
+			iajax(-1, '请填写菜单组名称！', '');
 		}
 		$check_title_exist_condition = array(
 			'title' => $post['title'],
@@ -350,7 +356,7 @@ if($do == 'post') {
 		}
 		$check_title_exist = pdo_getcolumn('uni_account_menus', $check_title_exist_condition, 'id');
 		if (!empty($check_title_exist)) {
-			message(error(-1, '菜单组名称已存在，请重新命名！'), '', 'ajax', true);
+			iajax(-1, '菜单组名称已存在，请重新命名！', '');
 		}
 		
 		$menu = array();
@@ -368,8 +374,6 @@ if($do == 'post') {
 					$temp['type'] = $button['type'];
 					if($button['type'] == 'view') {
 						$temp['url'] = urlencode($button['url']);
-						$oauth_account = WeAccount::create($_W['account']['oauth']);
-						$temp['url'] = $oauth_account->getOauthCodeUrl($temp['url'], $state);
 					} elseif ($button['type'] == 'click') {
 						if (!empty($button['media_id']) && empty($button['key'])) {
 							$temp['media_id'] = urlencode($button['media_id']);
@@ -393,8 +397,6 @@ if($do == 'post') {
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
-							$oauth_account = WeAccount::create($_W['account']['oauth']);
-							$sub_temp['url'] = $oauth_account->getOauthCodeUrl($sub_temp['url'], $state);
 						} elseif ($subbutton['type'] == 'click') {
 							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
 								$sub_temp['media_id'] = urlencode($subbutton['media_id']);
@@ -417,7 +419,7 @@ if($do == 'post') {
 
 		//判断是否有菜单显示对象提交,默认菜单和个性化菜单唯一区别就是有无菜单显示对象
 		if($post['type'] == 3 && empty($post['matchrule'])) {
-			message(error(-1, '请选择菜单显示对象'), '', 'ajax', true);
+			iajax(-1, '请选择菜单显示对象', '');
 		}
 
 		if($post['type'] == 3 && !empty($post['matchrule'])) {
@@ -451,7 +453,7 @@ if($do == 'post') {
 		$account_api = WeAccount::create();
 		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
-			message($result, '', 'ajax', true);
+			iajax(1, $result);
 		} else {
 			// 将$menu中 tag_id 再转为 group_id
 			if($post['matchrule']['group_id'] != -1) {
@@ -487,14 +489,14 @@ if($do == 'post') {
 					}
 					pdo_insert('uni_account_menus', $insert);
 				}
-				message(error(0, '创建菜单成功'), url('platform/menu/display'), 'ajax', true);
+				iajax(0, '创建菜单成功', url('platform/menu/display'));
 			} elseif($post['type'] == 3) {
 				if($post['status'] == 0 && $post['id'] > 0) {
 					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => 3, 'id' => $post['id']));
 				} else {
 					pdo_insert('uni_account_menus', $insert);
 				}
-				message(error(0, '创建菜单成功'), url('platform/menu/display', array('type' => '3')), 'ajax', true);
+				iajax(0, '创建菜单成功', url('platform/menu/display', array('type' => '3')));
 			}
 		}
 	}
@@ -505,13 +507,13 @@ if($do == 'delete') {
 	$id = intval($_GPC['id']);
 	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if(empty($data)) {
-		message('菜单不存在或已经删除', referer(), 'error', true);
+		itoast('菜单不存在或已经删除', referer(), 'error');
 	}
 	$status =  $_GPC['status'];
 
 	if ($data['type'] == 3 && $data['status'] == 0) {
 		pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-		message('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success', true);
+		itoast('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
 	}
 	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0 && $data['status'] != 0)) {
 		$account_api = WeAccount::create($_W['acid']);
@@ -519,12 +521,12 @@ if($do == 'delete') {
 		if(is_error($result) && empty($_GPC['f'])) {
 			if ($result['errno'] == '65301') {
 				pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-				message('删除菜单成功', referer(), 'success', true);
+				itoast('删除菜单成功', referer(), 'success');
 			}
 			$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
 			$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
 			$message = "调用微信接口删除失败:{$result['message']}<br>";
-			message($message, '', 'error', true);
+			itoast($message, '', 'error');
 		}
 	}
 	if ($status == 'history') {
@@ -540,7 +542,7 @@ if($do == 'delete') {
 			pdo_update('uni_account_menus', array('isdeleted' => 1), array('uniacid' => $_W['uniacid'], 'id' => $id));
 		}
 	}
-	message('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success', true);
+	itoast('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
 }
 
 if ($do == 'current_menu') {
@@ -609,5 +611,5 @@ if ($do == 'current_menu') {
 			}
 		}
 	}
-	message(error(0, $material), '', 'ajax', true);
+	iajax(0, $material, '');
 }

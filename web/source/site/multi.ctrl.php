@@ -27,14 +27,14 @@ if ($do == 'post') {
 		$name = trim($_GPC['name']);
 		$sql = "SELECT s.*, t.`name` AS `tname`, t.`title`, t.`type` FROM " . tablename('site_styles') . " AS s LEFT JOIN " . tablename('site_templates') . " AS t ON s.`templateid` = t.`id` WHERE s.`uniacid` = :uniacid AND s.`name` LIKE :name";
 		$styles = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':name' => "%{$name}%"));
-		message(error(0, $styles), '', 'ajax', true);
+		iajax(0, $styles, '');
 	}
 	$id = intval($_GPC['multiid']);
 
 	if (checksubmit('submit')) {
 		$bindhost = parse_url($_W['siteroot']);
 		if ($bindhost['host'] == trim($_GPC['bindhost'])) {
-			message('绑定域名有误', referer(), 'error', true);
+			itoast('绑定域名有误', referer(), 'error');
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -50,7 +50,7 @@ if ($do == 'post') {
 			'bindhost' => $_GPC['bindhost'],
 		);
 		if (empty($data['title'])) {
-			message('请填写站点名称', referer(), 'error', true);
+			itoast('请填写站点名称', referer(), 'error');
 		}
 		if (!empty($id)) {
 			//默认微站状态不可关闭
@@ -75,13 +75,13 @@ if ($do == 'post') {
 			);
 			site_cover($cover);
 		}
-		message('更新站点信息成功！', url('site/multi/display'), 'success', true);
+		itoast('更新站点信息成功！', url('site/multi/display'), 'success');
 	}
 	
 	if (!empty($id)) {
 		$multi = pdo_fetch('SELECT * FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $id));
 		if (empty($multi)) {
-			message('微站不存在或已删除', referer(), 'error', true);
+			itoast('微站不存在或已删除', referer(), 'error');
 		}
 		$multi['site_info'] = iunserializer($multi['site_info']) ? iunserializer($multi['site_info']) : array();
 	}
@@ -138,7 +138,7 @@ if ($do == 'del') {
 	// uni_user_permission_check('site_multi_del');
 	$id = intval($_GPC['id']);
 	if ($default_site == $id) {
-		message('您删除的微站是默认微站,删除前先指定其他微站为默认微站', referer(), 'error', true);
+		itoast('您删除的微站是默认微站,删除前先指定其他微站为默认微站', referer(), 'error');
 	}
 	//删除导航
 	pdo_delete('site_nav', array('uniacid' => $_W['uniacid'], 'multiid' => $id));
@@ -153,21 +153,21 @@ if ($do == 'del') {
 	}
 	//删除微站信息
 	pdo_delete('site_multi', array('uniacid' => $_W['uniacid'], 'id' => $id));
-	message('删除微站成功', referer(), 'success', true);
+	itoast('删除微站成功', referer(), 'success');
 }
 
 if ($do == 'copy') {
 	$id = intval($_GPC['multiid']);
 	$multi = pdo_fetch('SELECT * FROM ' . tablename('site_multi') . ' WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $id));
 	if (empty($multi)) {
-		message('微站不存在或已删除', referer(), 'error', true);
+		itoast('微站不存在或已删除', referer(), 'error');
 	}
 	$multi['title'] = $multi['title'] . '_' . random(6);
 	unset($multi['id']);
 	pdo_insert('site_multi', $multi);
 	$multi_id = pdo_insertid();
 	if (!$multi_id) {
-		message('复制微站出错', '', 'error', true);
+		itoast('复制微站出错', '', 'error');
 	} else {
 		//复制微站导航链接
 		$navs = pdo_fetchall('SELECT * FROM ' . tablename('site_nav') . ' WHERE uniacid = :uniacid AND multiid = :id', array(':uniacid' => $_W['uniacid'], ':id' => $id));
@@ -202,7 +202,7 @@ if ($do == 'copy') {
 				pdo_insert('cover_reply', $cover);
 			}
 		}
-		message('复制微站成功', url('site/multi/post', array('multiid' => $multi_id)), 'success', true);
+		itoast('复制微站成功', url('site/multi/post', array('multiid' => $multi_id)), 'success');
 	}
 }
 
@@ -210,14 +210,14 @@ if ($do == 'switch') {
 	$id = intval($_GPC['id']);
 	$multi_info = pdo_get('site_multi', array('id' => $id, 'uniacid' => $_W['uniacid']));
 	if(empty($multi_info)) {
-		message('微站不存在或已删除', referer(), 'error', true);
+		itoast('微站不存在或已删除', referer(), 'error');
 	}
 	$data = array('status' => $multi_info['status'] == 1 ? 0 : 1);
 	$result = pdo_update('site_multi', $data, array('id' => $id));
 	if(!empty($result)) {
-		message(error(0, '更新成功！'), '', 'ajax', true);
+		iajax(0, '更新成功！', '');
 	}else {
-		message(error(-1, '请求失败！'), '', 'ajax', true);
+		iajax(-1, '请求失败！', '');
 	}
 }
 //底部快捷菜单:quickmenu_display、quickmenu_post
@@ -229,16 +229,16 @@ if ($do == 'quickmenu_display' && $_W['isajax'] && $_W['ispost']) {
 		$status = $page['status'] == 1 ? 1 : 0;
 		$modules = uni_modules();
 		$modules = !empty($modules) ? $modules : 'null';
-		message(error(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules)), '', 'ajax', true);
+		iajax(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules), '');
 	} else {
-		message(error(-1, '请求失败！'), '', 'ajax', true);
+		iajax(-1, '请求失败！', '');
 	}
 }
 
 if ($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
 	$params = $_GPC['postdata']['params'];
 	if (empty($params)) {
-		message('请您先设计手机端页面.2', '', 'ajax', true);
+		iajax(1, '请您先设计手机端页面.');
 	}
 	$html = htmlspecialchars_decode($_GPC['postdata']['html'], ENT_QUOTES);
 	$html = preg_replace('/background\-image\:(\s)*url\(\"(.*)\"\)/U', 'background-image: url($2)', $html);
@@ -261,8 +261,8 @@ if ($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
 		$id = pdo_insertid();
 	}
 	if ($result) {
-		message(error(0, '保存成功！'), '', 'ajax', true);
+		iajax(0, '保存成功！', '');
 	} else {
-		message(error(1, '保存失败！'), '', 'ajax', true);
+		iajax(1, '保存失败！', '');
 	}
 }

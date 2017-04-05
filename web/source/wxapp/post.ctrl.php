@@ -29,7 +29,7 @@ if ($do == 'getlink') {
 			}
 		}
 	}
-	message(error(0, $show_urls), '', 'ajax', true);
+	iajax(0, $show_urls, '');
 }
 
 if($do == 'post') {
@@ -86,7 +86,7 @@ if($do == 'post') {
 				'groupid' => 0,
 			);
 			if (!pdo_insert('uni_account', $data)) {
-				message('添加公众号失败', '', '', true);
+				itoast('添加公众号失败', '', '');
 			}
 			$uniacid = pdo_insertid();
 			$multi['uniacid'] = $uniacid;
@@ -105,7 +105,7 @@ if($do == 'post') {
 			if (empty($acid)) {
 				$acid = wxapp_account_create($uniacid, $update, 3);
 				if(is_error($acid)) {
-					message('添加小程序信息失败', url('wxapp/post'), 'error', true);
+					itoast('添加小程序信息失败', url('wxapp/post'), 'error');
 				}
 				if (empty($_W['isfounder'])) {
 					pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
@@ -156,7 +156,7 @@ if($do == 'post') {
 		pdo_insert('wxapp_versions', $wxapp_version);
 		$versionid = pdo_insertid();
 		
-		message('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)), 'success', true);
+		itoast('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)), 'success');
 	}
 	template('wxapp/create-post');
 }
@@ -164,7 +164,7 @@ if($do == 'getpackage') {
 	$uniacid = $_W['uniacid'];
 	$versionid = $_GPC['versionid'];
 	if(empty($uniacid) || !is_numeric($uniacid) || empty($versionid) || !is_numeric($versionid)) {
-		message('参数错误！', '', '', true);
+		itoast('参数错误！', '', '');
 	}
 	$request_cloud_data = array();
 	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
@@ -182,7 +182,7 @@ if($do == 'getpackage') {
 	$result = wxapp_getpackage($request_cloud_data);
 
 	if(is_error($result)) {
-		message($result['message'], '', '', true);
+		itoast($result['message'], '', '');
 	}else {
 		header('content-type: application/zip');
 		header('content-disposition: attachment; filename="'.$request_cloud_data['name'].'.zip"');
@@ -235,5 +235,5 @@ if($do == 'getapps') {
 		}
 		cache_write('packageapps', $apps);				
 	}
-	message(error(0, $apps), '', 'ajax', true);
+	iajax(0, $apps, '');
 }

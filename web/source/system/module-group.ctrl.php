@@ -10,10 +10,10 @@ $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 //只有创始人、主管理员、管理员才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('无权限操作！', referer(), 'error', true);
+	itoast('无权限操作！', referer(), 'error');
 }
 if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	message('您只有查看权限！', url('system/module-group'), 'error', true);
+	itoast('您只有查看权限！', url('system/module-group'), 'error');
 }
 
 if ($do == 'save') {
@@ -26,7 +26,7 @@ if ($do == 'save') {
 		'templates' => $_GPC['templates'],
 	);
 	if (empty($package_info['name'])) {
-		message(error(1, '请输入套餐名'), '', 'ajax', true);
+		iajax(1, '请输入套餐名', '');
 	}
 
 	if (!empty($package_info['modules'])) {
@@ -42,22 +42,22 @@ if ($do == 'save') {
 	if (!empty($package_info['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
-			message(error(1, '套餐名已存在'), '', 'ajax', true);
+			iajax(1, '套餐名已存在', '');
 		}
 		$packageid = $package_info['id'];
 		unset($package_info['id']);
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
 		cache_build_account_modules();
 		module_build_privileges();
-		message(error(0, url('system/module-group')), '', 'ajax', true);
+		iajax(0, url('system/module-group'), '');
 	} else {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
-			message(error(1, '套餐名已存在'), '', 'ajax', true);
+			iajax(1, '套餐名已存在', '');
 		}
 		pdo_insert('uni_group', $package_info);
 		module_build_privileges();
-		message(error(0, url('system/module-group')), '', 'ajax', true);
+		iajax(0, url('system/module-group'), '');
 	}
 }
 
@@ -103,7 +103,7 @@ if ($do == 'delete') {
 		pdo_delete('uni_group', array('id' => $id));
 		cache_build_account_modules();
 	}
-	message('删除成功！', referer(), 'success', true);
+	itoast('删除成功！', referer(), 'success');
 }
 
 if ($do == 'post') {
