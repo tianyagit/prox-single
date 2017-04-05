@@ -307,7 +307,7 @@ if ($do == 'browser') {
 		unset($item['uid']);
 	}
 	$total = pdo_fetchcolumn('SELECT count(*) FROM '.tablename('wechat_attachment') . $condition, $param);
-	itoast(array('page'=> pagination($total, $page, $size, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')), 'items' => $list));
+	iajax(0, array('page'=> pagination($total, $page, $size, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')), 'items' => $list));
 }
 
 if ($do == 'delete') {
