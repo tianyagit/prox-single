@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('cloud');
 load()->func('communication');
+load()->func('db');
 
 $r = cloud_prepare();
 if (is_error($r)) {

@@ -86,7 +86,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				url = './index.php?c=utility&a=modules&do=list';
 			}
 			$.getJSON(url, {'page': page}, function(data){
-				data = data.message;
+				data = data.message.message;
 				$this.modalobj.find('#material-list-pager').html('');
 				if(!_.isEmpty(data.items)) {
 					//$this.modalobj.find('#btn-select').show();
