@@ -71,20 +71,7 @@ if ($do == 'display') {
 	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as &$group) {
-			if (!empty($group['modules'])) {
-				if (is_array($group['modules']) && !empty($group['modules'])) {
-					foreach ($group['modules'] as &$module) {
-						if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
-							$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
-						} else {
-							$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
-						}
-					}
-					unset($module);
-				} else {
-					$group['modules'] = array();
-				}
-			} else {
+			if (empty($group['modules'])) {
 				$group['modules'] = array();
 			}
 			if (!empty($group['wxapp'])) {
@@ -140,11 +127,7 @@ if ($do == 'post') {
 	$group_not_have_module_wxapp = array();
 	if (!empty($module_list)) {
 		foreach ($module_list as $name => $module_info) {
-			if (file_exists(IA_ROOT.'/addons/' . $module_name . '/icon-custom.jpg')) {
-				$module_info['logo'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg');
-			} else {
-				$module_info['logo'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/icon.jpg');
-			}
+			$module_info = module_fetch($name);
 			if ($module_info['app_support'] == 2 && !in_array($name, array_keys($group_have_module_app))) {
 				if (!empty($module_info['main_module'])) {
 					if (in_array($module_info['main_module'], array_keys($group_have_module_app))) {
@@ -152,16 +135,13 @@ if ($do == 'post') {
 					}
 				} elseif (!empty($module_info['plugin'])) {
 					$group_not_have_module_app[$name] = $module_info;
-					$plugin_list = pdo_getall('modules', array('main_module' => $module_info['name']), array(), 'name');
-					if (!empty($plugin_list)) {
-						foreach ($plugin_list as $plugin) {
-							if (!in_array($plugin['name'], array_keys($group_have_module_app))) {
-								if (file_exists(IA_ROOT.'/addons/' . $plugin['name'] . '/icon-custom.jpg')) {
-									$plugin['logo'] = tomedia(IA_ROOT . '/addons/' . $plugin['name'] . '/icon-custom.jpg');
-								} else {
-									$plugin['logo'] = tomedia(IA_ROOT . '/addons/' . $plugin['name'] . '/icon.jpg');
+					if (!empty($module_info['plugin'])) {
+						foreach ($module_info['plugin'] as $plugin) {
+							if (!in_array($plugin, array_keys($group_have_module_app))) {
+								$plugin = module_fetch($plugin);
+								if (!empty($plugin)) {
+									$group_not_have_module_app[$plugin['name']] = $plugin;
 								}
-								$group_not_have_module_app[$plugin['name']] = $plugin;
 							}
 						}
 					}

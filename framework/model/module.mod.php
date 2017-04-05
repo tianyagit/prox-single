@@ -314,7 +314,7 @@ function module_get_all_unistalled($status)  {
 	load()->model('cloud');
 	load()->classs('cloudapi');
 	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
-	$uninstallModules =  (array)cache_load(cache_system_key('module:all_uninstall'));
+	$uninstallModules =  cache_load(cache_system_key('module:all_uninstall'));
 	if ($_GPC['c'] == 'system' && $_GPC['a'] == 'module' && $_GPC['do'] == 'not_installed' && $status == 'uninstalled') {
 		$cloud_api = new CloudApi();
 		$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
@@ -409,6 +409,7 @@ function module_parse_info($module_info) {
 	} else {
 		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg'). "?v=". time();
 	}
+	unset($module_info['description']);
 	return $module_info;
 }
 
@@ -430,6 +431,9 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	}
 	if (!empty($module['issystem'])) {
 		return error(1, '系统模块不能卸载！');
+	}
+	if (!empty($module['plugin'])) {
+		pdo_delete('module_plugin', array('main_module' => $module_name));
 	}
 	$modulepath = IA_ROOT . '/addons/' . $module_name . '/';
 	$manifest = ext_module_manifest($module_name);
@@ -474,7 +478,6 @@ function module_get_plugin_list($module_name) {
 	$module_info = module_fetch($module_name);
 	if (!empty($module_info['plugin'])) {
 		$plugin_list = array();
-		$module_info['plugin'] = explode(',', $module_info['plugin']);
 		if (!empty($module_info['plugin']) && is_array($module_info['plugin'])) {
 			foreach ($module_info['plugin'] as $plugin) {
 				$plugin_info = module_fetch($plugin);

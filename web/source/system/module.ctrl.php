@@ -313,8 +313,6 @@ if ($do =='install') {
 			}
 		}
 	}
-	unset($module['page']);
-	unset($module['supports']);
 	$module['permissions'] = iserializer($module['permissions']);
 	$module_subscribe_success = true;
 	if (!empty($module['subscribes'])) {
@@ -328,6 +326,12 @@ if ($do =='install') {
 	}
 	$pinyin = new Pinyin_Pinyin();
 	$module['title_initial'] = $pinyin->get_first_char($module['title']);
+	if (!empty($module['plugin']) && is_array($module['plugin'])) {
+		foreach ($module['plugin'] as $plugin) {
+			pdo_insert('module_plugin', array('name' => $plugin, 'main_module' => $module['name']));
+		}
+	}
+	unset($module['page'], $module['supports'], $module['plugin'], $module['main_module']);
 	if (pdo_insert('modules', $module)) {
 		if (strexists($manifest['install'], '.php')) {
 			if (file_exists($module_path . $manifest['install'])) {
@@ -435,7 +439,7 @@ if ($do == 'get_module_info') {
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
-	$module_info = pdo_get('modules', array('name' => $module_name));
+	$module_info = module_fetch($module_name);
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}
