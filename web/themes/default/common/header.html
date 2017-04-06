@@ -415,7 +415,7 @@
 					<div class="plugin-menu clearfix">
 						<div class="plugin-menu-main pull-left">
 							<ul class="list-group">
-								<li class="list-group-item">
+								<li class="list-group-item{if $_GPC['m'] == ''} active{/if}">
 									<a href="{php echo url('home/welcome/ext', array('m' => $frames['section']['platform_module_menu']['plugin_menu']['main_module']))}">
 										<img src="{$frames['section']['platform_module_menu']['plugin_menu']['icon']}" alt="" class="img-icon" />
 										<div>{$frames['section']['platform_module_menu']['plugin_menu']['title']}</div>
@@ -425,7 +425,7 @@
 									<div>插件</div>
 								</li>
 								{loop $frames['section']['platform_module_menu']['plugin_menu']['menu'] $plugin_name $plugin}
-								<li class="list-group-item active">
+								<li class="list-group-item{if $_GPC['m'] == $plugin_name} active{/if}">
 									<a href="{php echo url('home/welcome/ext', array('m' => $plugin_name))}">
 										<img src="{$plugin['icon']}" alt="" class="img-icon" />
 										<div>{$plugin['title']}</div>
