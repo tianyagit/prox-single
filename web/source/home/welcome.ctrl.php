@@ -186,6 +186,9 @@ if($do == 'ext') {
 			}
 			if($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];
+				if ($name == 'we7_coupon') {
+					$path = '../addons/' . $module['name'];
+				}
 			} else {
 				$path = '../addons/' . $module['name'];
 			}
