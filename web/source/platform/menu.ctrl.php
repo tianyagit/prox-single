@@ -370,10 +370,15 @@ if($do == 'post') {
 					$button['key'] = substr($button['key'], 8);
 				}
 				$state = 'we7sid-'.$_W['session_id'];
+
 				if (empty($button['sub_button'])) {
 					$temp['type'] = $button['type'];
 					if($button['type'] == 'view') {
 						$temp['url'] = urlencode($button['url']);
+						if (strpos($button['url'], $_W['siteroot']) === 0) {
+							$oauth_account = WeAccount::create($_W['account']['oauth']);
+							$temp['url'] = $oauth_account->getOauthCodeUrl($temp['url'], $state);
+						}
 					} elseif ($button['type'] == 'click') {
 						if (!empty($button['media_id']) && empty($button['key'])) {
 							$temp['media_id'] = urlencode($button['media_id']);
@@ -397,6 +402,10 @@ if($do == 'post') {
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
+							if (strpos($subbutton['url'], $_W['siteroot']) === 0) {
+								$oauth_account = WeAccount::create($_W['account']['oauth']);
+								$sub_temp['url'] = $oauth_account->getOauthCodeUrl($sub_temp['url'], $state);
+							}
 						} elseif ($subbutton['type'] == 'click') {
 							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
 								$sub_temp['media_id'] = urlencode($subbutton['media_id']);
