@@ -605,26 +605,53 @@ class WeUtility {
 		$o->modulename = $name;
 		load()->model('module');
 		$o->module = module_fetch($name);
-		if (!empty($o->module['main_module'])) {
-			$o->__define = IA_ROOT . "/addons/{$name}/site.php";
-		} else {
-			$o->__define = $file;
-			if (!empty($o->module['plugin'])) {
-				$plugin_list = explode(',', $o->module['plugin']);
-				if (!empty($plugin_list) && is_array($plugin_list)) {
-					foreach ($plugin_list as $plugin) {
-						$plugin = module_fetch($plugin);
-						if (!empty($plugin)) {
-							$o->installed_plugin_list[] = $plugin['name'];
-						}
-					}
-				}
-			}
+		$o->__define = $file;
+		if (!empty($o->module['plugin'])) {
+			$o->installed_plugin_list = module_get_plugin_list($o->module['name']);
 		}
 		self::defineConst($o);
 		$o->inMobile = defined('IN_MOBILE');
 		if($o instanceof WeModuleSite) {
 			return $o;
+		} else {
+			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
+			return null;
+		}
+	}
+
+	/**
+	 * 创建模块插件类
+	 * @param unknown $name
+	 * @return NULL|WeModuleSite
+	 */
+	public static function createModulePlugin($name) {
+		global $_W;
+		$classname = "{$name}ModulePlugin";
+		if(!class_exists($classname)) {
+			$file = IA_ROOT . "/addons/{$name}/hock.php";
+			if(!is_file($file)) {
+				$file = IA_ROOT . "/framework/builtin/{$name}/hock.php";
+			}
+			if(!is_file($file)) {
+				trigger_error('ModulePlugin Definition File Not Found '.$file, E_USER_WARNING);
+				return null;
+			}
+			require $file;
+		}
+		if(!class_exists($classname)) {
+			trigger_error('ModulePlugin Definition Class Not Found', E_USER_WARNING);
+			return null;
+		}
+		$plugin = new $classname();
+		$plugin->uniacid = $plugin->weid = $_W['uniacid'];
+		$plugin->modulename = $name;
+		load()->model('module');
+		$plugin->module = module_fetch($name);
+		$plugin->__define = $file;
+		self::defineConst($plugin);
+		$plugin->inMobile = defined('IN_MOBILE');
+		if($plugin instanceof WeModulePlugin) {
+			return $plugin;
 		} else {
 			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
 			return null;
@@ -893,19 +920,6 @@ abstract class WeBase {
 			template_compile($source, $compile, true);
 		}
 		return $compile;
-	}
-
-	/**
-	 * 构造插件插件引用的html页面，
-	 * @param $filename string 引用的页面位置
-	 * @return string html代码
-	 */
-	protected function pluginTemplate($filename) {
-		ob_start();
-		include $this->template($filename);
-		$template = ob_get_contents();
-		ob_clean();
-		return $template;
 	}
 }
 
@@ -1649,4 +1663,11 @@ abstract class WeModuleWxapp extends WeBase {
 			return false;
 		}
 	}
+}
+
+/**
+ * 模块插件
+ */
+abstract class WeModulePlugin extends WeBase {
+
 }

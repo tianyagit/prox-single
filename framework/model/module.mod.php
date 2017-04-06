@@ -321,7 +321,7 @@ function module_get_all_unistalled($status)  {
 	} else {
 		$cloud_m_count = $uninstallModules['cloud_m_count'];
 	}
-	if (!empty($uninstallModules['modules']) || $uninstallModules['cloud_m_count'] != $cloud_m_count['module_quantity']) {
+	if (empty($uninstallModules['modules']) || $uninstallModules['cloud_m_count'] != $cloud_m_count['module_quantity']) {
 		$uninstallModules = cache_build_uninstalled_module();
 	}
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
