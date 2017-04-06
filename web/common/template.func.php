@@ -125,16 +125,31 @@ function modulehook($params = array()) {
 		return '';
 	}
 	$plugin = array();
-	$plugin['name'] = str_replace('plugin:', '', $params[0]);
-	$plugin['do'] = str_replace('do:', '', $params[1]);
+
+	$plugin['name'] = str_replace('plugin=', '', $params[0]);
+	$plugin['do'] = str_replace('func=', '', $params[1]);
+	if (empty($plugin['name']) || empty($plugin['name'])) {
+		return '';
+	}
+	$return_data = str_replace('data=', '', $params[2]) ? true : false;
 	$plugin_info = module_fetch($plugin['name']);
 	if (empty($plugin_info) || empty($plugin_info['main_module'])) {
 		return '';
 	}
-	$plugin_module = WeUtility::createModuleSite($plugin_info['name']);
-	$function_name = "doWeb{$plugin['do']}";
-	if (method_exists($plugin_module, $function_name) && $plugin_module instanceof WeModuleSite) {
-		return $plugin_module->$function_name();
+	$plugin_module = WeUtility::createModulePlugin($plugin_info['name']);
+	if (method_exists($plugin_module, $plugin['do']) && $plugin_module instanceof WeModulePlugin) {
+		if ($return_data) {
+
+			return $plugin_module->$plugin['do']();
+		} else {
+			ob_flush();
+			ob_clean();
+			ob_start();
+			$plugin_module->$plugin['do']();
+			$template = ob_get_contents();
+			ob_clean();
+			return $template;
+		}
 	} else {
 		return '';
 	}
