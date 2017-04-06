@@ -375,7 +375,7 @@ if($do == 'post') {
 					$temp['type'] = $button['type'];
 					if($button['type'] == 'view') {
 						$temp['url'] = urlencode($button['url']);
-						if (strpos($button['url'], $_W['siteroot']) === 0) {
+						if (strexists($button['url'], $_W['siteroot'])) {
 							$oauth_account = WeAccount::create($_W['account']['oauth']);
 							$temp['url'] = $oauth_account->getOauthCodeUrl($temp['url'], $state);
 						}
@@ -402,7 +402,7 @@ if($do == 'post') {
 						$sub_temp['type'] = $subbutton['type'];
 						if($subbutton['type'] == 'view') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
-							if (strpos($subbutton['url'], $_W['siteroot']) === 0) {
+							if (strexists($subbutton['url'], $_W['siteroot'])) {
 								$oauth_account = WeAccount::create($_W['account']['oauth']);
 								$sub_temp['url'] = $oauth_account->getOauthCodeUrl($sub_temp['url'], $state);
 							}
