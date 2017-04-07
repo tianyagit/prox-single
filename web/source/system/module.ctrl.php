@@ -327,7 +327,13 @@ if ($do =='install') {
 	$module['title_initial'] = $pinyin->get_first_char($module['title']);
 	if (!empty($module['plugin']) && is_array($module['plugin'])) {
 		foreach ($module['plugin'] as $plugin) {
-			pdo_insert('module_plugin', array('name' => $plugin, 'main_module' => $module['name']));
+			pdo_insert('modules_plugin', array('name' => $plugin, 'main_module' => $module['name']));
+		}
+	}
+	if (!empty($module['main_module'])) {
+		$plugin_exist = pdo_get('modules_plugin', array('name' => $module['name']));
+		if (empty($plugin_exist)) {
+			pdo_insert('modules_plugin', array('name' => $module['name'], 'main_module' => $module['main_module']));
 		}
 	}
 	unset($module['page'], $module['supports'], $module['plugin'], $module['main_module']);
@@ -542,7 +548,7 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 
-	$module_list = user_modules();
+	$module_list = $all_modules = user_modules();
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
 			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] == 1) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] == 1)) {
