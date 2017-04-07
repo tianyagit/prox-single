@@ -358,7 +358,17 @@ class WeiXinAccount extends WeAccount {
 		if(!empty($menu['matchrule'])) {
 			$url = "https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token={$token}";
 		}
-		$data = urldecode(json_encode($menu));
+		$menu_str = json_encode($menu);
+		$menu_str_arr = explode('https:\/\/open.weixin.qq.com', $menu_str);
+		foreach ($menu_str_arr as $k => $val) {
+			preg_match('/&redirect_uri=(.*)&response_type/', $val, $match);
+			$val = urldecode($val);
+			if (!empty($match)) {
+				$val = preg_replace('/&redirect_uri=(.*)&response_type/', '&redirect_uri='.$match[1].'&response_type', $val);
+			}
+			$menu_str_arr[$k] = $val;
+		}
+		$data = implode('https:\/\/open.weixin.qq.com', $menu_str_arr);
 		$response = ihttp_post($url, $data);
 		if(is_error($response)) {
 			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
