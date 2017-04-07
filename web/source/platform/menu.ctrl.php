@@ -379,7 +379,7 @@ if($do == 'post') {
 						$temp['url'] = urlencode($button['url']);
 						if (strpos($button['url'], $_W['siteroot']) === 0) {
 							$oauth_account = WeAccount::create($_W['account']['oauth']);
-							$temp['url'] = $oauth_account->getOauthCodeUrl($temp['url'], $state);
+							$temp['url'] = $oauth_account->getOauthCodeUrl(urlencode($temp['url']), $state);
 						}
 					} elseif ($button['type'] == 'click') {
 						if (!empty($button['media_id']) && empty($button['key'])) {
@@ -406,7 +406,7 @@ if($do == 'post') {
 							$sub_temp['url'] = urlencode($subbutton['url']);
 							if (strpos($subbutton['url'], $_W['siteroot']) === 0) {
 								$oauth_account = WeAccount::create($_W['account']['oauth']);
-								$sub_temp['url'] = $oauth_account->getOauthCodeUrl($sub_temp['url'], $state);
+								$sub_temp['url'] = $oauth_account->getOauthCodeUrl(urlencode($sub_temp['url']), $state);
 							}
 						} elseif ($subbutton['type'] == 'click') {
 							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
