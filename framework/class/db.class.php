@@ -69,6 +69,11 @@ class DB {
 	}
 
 	public function prepare($sql) {
+		$sqlsafe = SqlChecker::checkquery($sql);
+		if (is_error($sqlsafe)) {
+			trigger_error($sqlsafe['message'], E_USER_ERROR);
+			return false;
+		}
 		$statement = $this->pdo->prepare($sql);
 		return $statement;
 	}
@@ -83,6 +88,11 @@ class DB {
 	 *		  失败返回FALSE
 	 */
 	public function query($sql, $params = array()) {
+		$sqlsafe = SqlChecker::checkquery($sql);
+		if (is_error($sqlsafe)) {
+			trigger_error($sqlsafe['message'], E_USER_ERROR);
+			return false;
+		}
 		//为了不影响 last insertid 把缓存提前执行，可能插入失败后也会清空缓存
 		if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert', 'replac'))) {
 			$this->cacheNameSpace($sql, true);
@@ -240,7 +250,6 @@ class DB {
 	public function getall($tablename, $params = array(), $fields = array(), $keyfield = '', $orderby = array(), $limit = array()) {
 		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
-		
 		if (!empty($limit)) {
 			if (is_array($limit)) {
 				if (count($limit) == 1) {
@@ -450,8 +459,10 @@ class DB {
 						$operator = 'NOT IN';
 					}
 				}
-				if (is_array($value)) {
+				if (is_array($value) && !empty($value)) {
 					$insql = array();
+					//忽略数组的键值，防止SQL注入
+					$value = array_values($value);
 					foreach ($value as $k => $v) {
 						$insql[] = ":{$suffix}{$fields}_{$k}";
 						$result['params'][":{$suffix}{$fields}_{$k}"] = is_null($v) ? '' : $v;
@@ -761,5 +772,115 @@ class DB {
 			$this->insert('core_cache', array('key' => 'we7:dbkey:'.$tablename, 'value' => $namespace), true);
 		}
 		return $tablename . ':' . $namespace;
+	}
+}
+
+/**
+ * SQL安全检测
+ *
+ */
+class SqlChecker {
+	private static $checkcmd = array('SELECT', 'UPDATE', 'INSERT', 'REPLAC', 'DELETE');
+	private static $disable = array(
+		'function' => array('load_file', 'hex', 'substring', 'if', 'ord', 'char', 'updatexml'),
+		'action' => array('@', 'intooutfile', 'intodumpfile', 'unionselect', 'unionall', 'uniondistinct'),
+		'note' => array('/*','*/','#','--'),
+	);
+
+	public static function checkquery($sql) {
+		$cmd = strtoupper(substr(trim($sql), 0, 6));
+		if (in_array($cmd, self::$checkcmd)) {
+			$mark = $clean = '';
+			$sql = str_replace(array('\\\\', '\\\'', '\\"', '\'\''), '', $sql);
+			if (strpos($sql, '/') === false && strpos($sql, '#') === false && strpos($sql, '-- ') === false && strpos($sql, '@') === false && strpos($sql, '`') === false) {
+				$cleansql = preg_replace("/'(.+?)'/s", '', $sql);
+			} else {
+				$cleansql = self::stripSafeChar($sql);
+			}
+			
+			$cleansql = preg_replace("/[^a-z0-9_\-\(\)#\*\/\"]+/is", "", strtolower($cleansql));
+			if (is_array(self::$disable['function'])) {
+				foreach (self::$disable['function'] as $fun) {
+					if (strpos($cleansql, $fun . '(') !== false) {
+						return error(1, 'SQL中包含禁用函数');
+					}
+				}
+			}
+			
+			if (is_array(self::$disable['action'])) {
+				foreach (self::$disable['action'] as $action) {
+					if (strpos($cleansql, $action) !== false) {
+						return error(2, 'SQL中包含禁用操作符');
+					}
+				}
+			}
+			
+			if (is_array(self::$disable['note'])) {
+				foreach (self::$disable['note'] as $note) {
+					if (strpos($cleansql, $note) !== false) {
+						return error(3, 'SQL中包含注释信息');
+					}
+				}
+			}
+		} elseif (substr($cmd, 0, 2) === '/*') {
+			return error(3, 'SQL中包含注释信息');
+		}
+	}
+	
+	private static function stripSafeChar($sql) {
+		$len = strlen($sql);
+		$mark = $clean = '';
+		for ($i = 0; $i < $len; $i++) {
+			$str = $sql[$i];
+			switch ($str) {
+				case '`':
+					if(!$mark) {
+						$mark = '`';
+						$clean .= $str;
+					} elseif ($mark == '`') {
+						$mark = '';
+					}
+					break;
+				case '\'':
+					if (!$mark) {
+						$mark = '\'';
+						$clean .= $str;
+					} elseif ($mark == '\'') {
+						$mark = '';
+					}
+					break;
+				case '/':
+					if (empty($mark) && $sql[$i + 1] == '*') {
+						$mark = '/*';
+						$clean .= $mark;
+						$i++;
+					} elseif ($mark == '/*' && $sql[$i - 1] == '*') {
+						$mark = '';
+						$clean .= '*';
+					}
+					break;
+				case '#':
+					if (empty($mark)) {
+						$mark = $str;
+						$clean .= $str;
+					}
+					break;
+				case "\n":
+					if ($mark == '#' || $mark == '--') {
+						$mark = '';
+					}
+					break;
+				case '-':
+					if (empty($mark) && substr($sql, $i, 3) == '-- ') {
+						$mark = '-- ';
+						$clean .= $mark;
+					}
+					break;
+				default:
+					break;
+			}
+			$clean .= $mark ? '' : $str;
+		}
+		return $clean;
 	}
 }

@@ -160,7 +160,7 @@ if($do == 'display') {
 	$stat['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
 	$stat['today'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid AND createtime >= :starttime AND createtime <= :endtime', array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime('today'), ':endtime' => strtotime('today') + 86399));
 	$stat['yesterday'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid AND createtime >= :starttime AND createtime <= :endtime', array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime('today')-86399, ':endtime' => strtotime('today')));
-    template('mc/member');
+	template('mc/member');
 }
 
 if($do == 'post') {
@@ -344,7 +344,7 @@ if($do == 'post') {
 		}
 	}
 	$addresss = pdo_getall('mc_member_address', array('uid' => $uid, 'uniacid' => $_W['uniacid']));
-    template('mc/member-post');
+	template('mc/member-post');
 }
 
 if($do == 'del') {
@@ -372,12 +372,12 @@ if($do == 'del') {
 }
 
 if($do == 'add') {
-	if($_W['isajax']) {
+	if(1 || $_W['isajax']) {
 		$type = trim($_GPC['type']);
 		$type_list = array('mobile', 'email');
 		$data = trim($_GPC['data']);
 		if(empty($data) || empty($type) || !in_array($type, $type_list)) {
-			exit(json_encode(array('valid' => false)));
+			//exit(json_encode(array('valid' => false)));
 		}
 		$user = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], $type => $data));
 		if(empty($user)) {
@@ -464,7 +464,7 @@ if($do == 'credit_record') {
 	$pager = pagination($total, $pindex, $psize);
 	$modules = pdo_getall('modules', array('issystem' => 0), array('title', 'name'), 'name');
 	$modules['card'] = array('title' => '会员卡', 'name' => 'card');
-    template('mc/member');
+	template('mc/member');
 }
 
 if($do == 'credit_stat') {
@@ -495,5 +495,5 @@ if($do == 'credit_stat') {
 			$data[$key]['end'] = $data[$key]['add'] - $data[$key]['del'];
 		}
 	}
-    template('mc/member');
+	template('mc/member');
 }
