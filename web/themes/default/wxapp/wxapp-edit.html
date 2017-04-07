@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div id="js-wxapp-edit" ng-controller="MainCtrl" ng-cloak>
+<div id="js-wxapp-edit" ng-controller="WxappEditCtrl" ng-cloak>
 	<div class="container">
 		<div class="caret-wxapp">
 			<div class="panel panel-app">
@@ -503,29 +503,36 @@
 	</div>
 </div>
 <script>
-$(function(){
-	var multiid = '{$multiid}';
-	uniacid = "{$_GPC['uniacid']}";
-	wxapp = "{$_GPC['wxapp']}" == '' ? 'slide' : "{$_GPC['wxapp']}";
-	success_url = "{php echo url('wxapp/version/edit', array('multiid' => $_GPC['multiid'], 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}";
-	showAccount_url = "{php echo url('wxapp/version/account_list')}";
-	selectAccount_url = "{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}";
-	get_categorys_url = "{php echo url('wxapp/version/get_categorys')}";
-	del_category_url = "{php echo url('wxapp/version/del_category')}";
-	save_category_url = "{php echo url('wxapp/version/save_category')}";
 	angular.module('wxApp').value('config', {
-		'uniacid' : uniacid,
-		'multiid' : multiid,
-		'wxapp' : wxapp,
-		'success_url' : success_url,
-		'showAccount_url' : showAccount_url,
-		'selectAccount_url' : selectAccount_url,
-		'get_categorys_url' : get_categorys_url,
-		'del_category_url' : del_category_url,
-		'save_category_url' : save_category_url
+		uniacid : "{php echo $_GPC['uniacid']}",
+		multiid : "{php echo $multiid}",
+		wxapp : "{php echo $_GPC['wxapp']}" == '' ? 'slide' : "{php echo $_GPC['wxapp']}",
+		success_url : "{php echo url('wxapp/version/edit', array('multiid' => $_GPC['multiid'], 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}",
+		showAccount_url : "{php echo url('wxapp/version/account_list')}",
+		selectAccount_url : "{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}",
+		get_categorys_url : "{php echo url('wxapp/version/get_categorys')}",
+		del_category_url : "{php echo url('wxapp/version/del_category')}",
+		save_category_url : "{php echo url('wxapp/version/save_category')}",
+		links: {
+			accountList: "{php echo url('wxapp/version/account_list')}",
+			saveConnection: "{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}",
+			getCategorys: "{php echo url('wxapp/version/get_categorys')}",
+			delCategory: "{php echo url('wxapp/version/del_category')}",
+			saveCategory: "{php echo url('wxapp/version/save_category')}",
+		}
 	});
 	angular.bootstrap($('#js-wxapp-edit'), ['wxApp']);
-});
+	change_category = function (element) {
+		$.post("{php echo url('wxapp/version/edit', array('operate' => 'change_category'))}", {'categoryid' : element.val()}, function(data) {
+			var data = $.parseJSON(data);
+			var html = '<option  value="">二级分类</option>';
+			var categorys = data.message.message;
+			for (var i = 0; i < categorys.length; i++) {
+				html += '<option value='+categorys[i]['id']+'>'+categorys[i]['name']+'</option>';
+			}
+			element.next().html(html);
+		});
+	};
 </script>
 </body>
 </html>
