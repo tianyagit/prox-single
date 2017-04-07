@@ -66,15 +66,15 @@ if($do == 'display') {
 				}
 			}
 		}
+
 		$plugin_condition = '';
-		$plugin_list = pdo_getall('module_plugin', array(), array(), 'name');
+		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
 		if (!empty($plugin_list)) {
 			$plugin_condition .= " AND name NOT IN ('" . implode("','", array_keys($plugin_list)) . "')";
 		}
 		if (!empty($packageids) && in_array('-1', $packageids)) {
-			$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
-						(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder 
-						FROM " . tablename('modules') . " AS a WHERE  a.issystem <> '1' $condition $plugin_condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
+			$sql = "SELECT a.name, a.title, a.issystem FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module WHERE  a.issystem <> '1' AND b.uniacid = {$_W['uniacid']} $condition $plugin_condition ORDER BY b.displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
+			$modules = pdo_fetchall($sql, $params, 'name');
 			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 		} else {
 			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");

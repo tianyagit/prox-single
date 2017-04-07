@@ -250,7 +250,6 @@ class DB {
 	public function getall($tablename, $params = array(), $fields = array(), $keyfield = '', $orderby = array(), $limit = array()) {
 		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
-		
 		if (!empty($limit)) {
 			if (is_array($limit)) {
 				if (count($limit) == 1) {
@@ -460,8 +459,10 @@ class DB {
 						$operator = 'NOT IN';
 					}
 				}
-				if (is_array($value)) {
+				if (is_array($value) && !empty($value)) {
 					$insql = array();
+					//忽略数组的键值，防止SQL注入
+					$value = array_values($value);
 					foreach ($value as $k => $v) {
 						$insql[] = ":{$suffix}{$fields}_{$k}";
 						$result['params'][":{$suffix}{$fields}_{$k}"] = is_null($v) ? '' : $v;
@@ -774,12 +775,16 @@ class DB {
 	}
 }
 
+/**
+ * SQL安全检测
+ *
+ */
 class SqlChecker {
 	private static $checkcmd = array('SELECT', 'UPDATE', 'INSERT', 'REPLAC', 'DELETE');
 	private static $disable = array(
 		'function' => array('load_file', 'hex', 'substring', 'if', 'ord', 'char', 'updatexml'),
 		'action' => array('@', 'intooutfile', 'intodumpfile', 'unionselect', 'unionall', 'uniondistinct'),
-		'note' => array('/*','*/','#','--','"'),
+		'note' => array('/*','*/','#','--'),
 	);
 
 	public static function checkquery($sql) {
@@ -794,7 +799,6 @@ class SqlChecker {
 			}
 			
 			$cleansql = preg_replace("/[^a-z0-9_\-\(\)#\*\/\"]+/is", "", strtolower($cleansql));
-			
 			if (is_array(self::$disable['function'])) {
 				foreach (self::$disable['function'] as $fun) {
 					if (strpos($cleansql, $fun . '(') !== false) {

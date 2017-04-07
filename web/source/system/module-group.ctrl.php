@@ -5,6 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('module');
+load()->model('user');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
@@ -68,6 +69,7 @@ if ($do == 'display') {
 	if (!empty($_GPC['name'])) {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
 	}
+	$modules = user_modules();
 	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as &$group) {
