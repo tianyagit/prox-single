@@ -331,6 +331,12 @@ if ($do =='install') {
 			pdo_insert('module_plugin', array('name' => $plugin, 'main_module' => $module['name']));
 		}
 	}
+	if (!empty($module['main_module'])) {
+		$plugin_exist = pdo_get('module_plugin', array('name' => $module['name']));
+		if (empty($plugin_exist)) {
+			pdo_insert('module_plugin', array('name' => $module['name'], 'main_module' => $module['main_module']));
+		}
+	}
 	unset($module['page'], $module['supports'], $module['plugin'], $module['main_module']);
 	if (pdo_insert('modules', $module)) {
 		if (strexists($manifest['install'], '.php')) {
@@ -543,7 +549,7 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 
-	$module_list = user_modules();
+	$module_list = $all_modules = user_modules();
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
 			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] == 1) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] == 1)) {
