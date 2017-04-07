@@ -328,13 +328,13 @@ if ($do =='install') {
 	$module['title_initial'] = $pinyin->get_first_char($module['title']);
 	if (!empty($module['plugin']) && is_array($module['plugin'])) {
 		foreach ($module['plugin'] as $plugin) {
-			pdo_insert('module_plugin', array('name' => $plugin, 'main_module' => $module['name']));
+			pdo_insert('modules_plugin', array('name' => $plugin, 'main_module' => $module['name']));
 		}
 	}
 	if (!empty($module['main_module'])) {
-		$plugin_exist = pdo_get('module_plugin', array('name' => $module['name']));
+		$plugin_exist = pdo_get('modules_plugin', array('name' => $module['name']));
 		if (empty($plugin_exist)) {
-			pdo_insert('module_plugin', array('name' => $module['name'], 'main_module' => $module['main_module']));
+			pdo_insert('modules_plugin', array('name' => $module['name'], 'main_module' => $module['main_module']));
 		}
 	}
 	unset($module['page'], $module['supports'], $module['plugin'], $module['main_module']);

@@ -433,7 +433,7 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 		return error(1, '系统模块不能卸载！');
 	}
 	if (!empty($module['plugin'])) {
-		pdo_delete('module_plugin', array('main_module' => $module_name));
+		pdo_delete('modules_plugin', array('main_module' => $module_name));
 	}
 	$modulepath = IA_ROOT . '/addons/' . $module_name . '/';
 	$manifest = ext_module_manifest($module_name);

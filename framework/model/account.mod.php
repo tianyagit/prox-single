@@ -192,8 +192,8 @@ function uni_modules($enabledOnly = true) {
 	}
 	if (!empty($modules)) {
 		$module_list = array();//加上模块插件后的模块列表
-		$plugin_list = pdo_getall('module_plugin', array(), array(), 'name');
-		$have_plugin_module = pdo_fetchall('SELECT GROUP_CONCAT(name) as plugin_list, main_module FROM ' . tablename('module_plugin') . " GROUP BY main_module", array(), 'main_module');
+		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
+		$have_plugin_module = pdo_fetchall('SELECT GROUP_CONCAT(name) as plugin_list, main_module FROM ' . tablename('modules_plugin') . " GROUP BY main_module", array(), 'main_module');
 		foreach ($modules as $name => &$module) {
 			if (in_array($name, array_keys($plugin_list))) {
 				continue;

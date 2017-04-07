@@ -68,7 +68,7 @@ if($do == 'display') {
 		}
 
 		$plugin_condition = '';
-		$plugin_list = pdo_getall('module_plugin', array(), array(), 'name');
+		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
 		if (!empty($plugin_list)) {
 			$plugin_condition .= " AND name NOT IN ('" . implode("','", array_keys($plugin_list)) . "')";
 		}
