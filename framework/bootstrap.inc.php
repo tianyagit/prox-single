@@ -59,7 +59,7 @@ if(DEVELOPMENT) {
 } else {
 	error_reporting(0);
 }
-if(!in_array($_W['config']['setting']['cache'], array('mysql', 'file', 'memcache'))) {
+if(!in_array($_W['config']['setting']['cache'], array('mysql', 'memcache'))) {
 	$_W['config']['setting']['cache'] = 'mysql';
 }
 load()->func('cache');

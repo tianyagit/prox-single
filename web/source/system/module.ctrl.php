@@ -103,7 +103,7 @@ if ($do == 'upgrade') {
 	$points = ext_module_bindings();
 	$module_name = addslashes($_GPC['module_name']);
 	//判断模块相关配置和文件是否合法
-	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
+	$module_exist = module_fetch($module_name);
 	if (empty($module_exist)) {
 		itoast('模块已经被卸载或是不存在！', '', 'error');
 	}
@@ -135,11 +135,10 @@ if ($do == 'upgrade') {
 	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
-
+	
 	//处理模块菜单
 	$module = ext_module_convert($manifest);
-	unset($module['name']);
-	unset($module['id']);
+	
 	$wxapp_support = false;
 	$app_support = false;
 	if (!empty($module['supports'])) {

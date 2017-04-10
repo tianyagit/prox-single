@@ -119,7 +119,9 @@ class CloudApi {
 				return $data;
 			}
 		}
-		$cer = file_get_contents($cer_filepath);
+		if (is_file($cer_filepath)) {
+			$cer = file_get_contents($cer_filepath);
+		}
 		if (is_error($cer)) {
 			return error(1, '访问云API获取授权失败,模块中未发现数字证书(module.cer).');;
 		}

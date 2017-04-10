@@ -325,11 +325,11 @@ function module_get_all_unistalled($status)  {
 		$uninstallModules = cache_build_uninstalled_module();
 	}
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		$uninstallModules['modules'] = $uninstallModules['modules'][$status]['wxapp'];
+		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['wxapp'];
 		$uninstallModules['module_count'] = $uninstallModules['wxapp_count'];
 		return $uninstallModules;
 	} else {
-		$uninstallModules['modules'] = $uninstallModules['modules'][$status]['app'];
+		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['app'];
 		$uninstallModules['module_count'] = $uninstallModules['app_count'];
 		return $uninstallModules;
 	}
