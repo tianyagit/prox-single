@@ -11,6 +11,11 @@ defined('IN_IA') or exit('Access Denied');
  * @return array
  */
 function ext_module_convert($manifest) {
+	$app_support = empty($manifest['platform']['supports']['supports']) || in_array('app', $manifest['platform']['supports']['supports']) ? 2 : 1;
+	$wxapp_support = in_array('wxapp', $manifest['platform']['supports']['supports']) ? 2 : 1;
+	if ($app_support == 1 && $wxapp_support == 1) {
+		$app_support = 2;
+	}
 	return array(
 		'name' => $manifest['application']['identifie'],
 		'title' => $manifest['application']['name'],
@@ -25,15 +30,14 @@ function ext_module_convert($manifest) {
 		'handles' => iserializer(is_array($manifest['platform']['handles']) ? $manifest['platform']['handles'] : array()),
 		'isrulefields' => intval($manifest['platform']['isrulefields']),
 		'iscard' => intval($manifest['platform']['iscard']),
-		'supports' => $manifest['platform']['supports'],
-		'main_module' => $manifest['platform']['main_module'],
-		'plugin' => $manifest['platform']['plugin_list'],
 		'page' => $manifest['bindings']['page'],
 		'cover' => $manifest['bindings']['cover'],
 		'rule' => $manifest['bindings']['rule'],
 		'menu' => $manifest['bindings']['menu'],
 		'home' => $manifest['bindings']['home'],
 		'profile' => $manifest['bindings']['profile'],
+		'app_support' => $app_support,
+		'wxapp_support' => $wxapp_support,
 		'shortcut' => $manifest['bindings']['shortcut'],
 		'function' => $manifest['bindings']['function'],
 		'permissions' => $manifest['permissions'],

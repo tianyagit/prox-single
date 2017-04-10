@@ -111,13 +111,14 @@ function uni_fetch($uniacid = 0) {
  */
 function uni_modules($enabledOnly = true) {
 	global $_W;
+	load()->model('user');
+	load()->model('module');
 	$cachekey = "unimodules:{$_W['uniacid']}:{$enabledOnly}";
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
 	}
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
-	load()->model('user');
 	$owner = user_single(array('uid' => $owneruid));
 	//如果没有所有者，则取创始人权限
 	if (empty($owner)) {
