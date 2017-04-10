@@ -79,14 +79,23 @@ if ($do == 'check_upgrade') {
 					$site_branch = $cloud_m_info['branch'];
 				}
 				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
-				$branch_id_list = array_keys($cloud_m_info['branches']);
-				if (empty($branch_id_list)) {
+				if (!empty($cloud_m_info['branches'])) {
+					$best_branch_id = 0;
+					foreach ($cloud_m_info['branches'] as $branch) {
+						if ($best_branch_id == 0) {
+							$best_branch_id = $branch['id'];
+						} else {
+							if ($branch['displayorder'] > $cloud_m_info['branches'][$best_branch_id]['displayorder']) {
+								$best_branch_id = $branch['id'];
+							}
+						}
+					}
+				} else {
 					$module['upgrade'] = false;
 					continue;
 				}
-				$best_branch_id = max($branch_id_list);
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
-				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['branch'] < $best_branch['id'] && !empty($cloud_m_info['version']))) {
+				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version']))) {
 					$module['upgrade'] = true;
 				} else {
 					$module['upgrade'] = false;
@@ -282,11 +291,6 @@ if ($do =='install') {
 	if (!$_W['ispost'] || empty($_GPC['flag'])) {
 		template('system/select-module-group');
 		exit;
-	}
-	$module['app_support'] = empty($module['supports']) || in_array('app', $module['supports']) ? 2 : 1;
-	$module['wxapp_support'] = in_array('wxapp', $module['supports']) ? 2 : 1;
-	if (in_array('plugin', $module['supports'])) {
-		$module['plugin'] = implode(',', $module['plugin']);
 	}
 	if (!empty($module['main_module'])) {
 		$main_module_exist = module_fetch($module['main_module']);
