@@ -332,7 +332,9 @@
 								displayorder: 0,
 								incontent: 0,
 								parent_id: 0,
-								media_id:material.id
+								media_id:material.id,
+								mediaid: material.media_id,
+								attach_id: material.id
 							}));
 						});
 						$('.keywords-list').append(
@@ -350,7 +352,7 @@
 							'		</div>'+
 							'	</div>'+
 							'	<div class="opr">'+
-							'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+material.items[0]['attach_id']+'" target="_blank" class="del-gray">编辑</a>'+
+							'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+material.id+'" target="_blank" class="del-gray">编辑</a>'+
 							'		<a href="javascript:;" data-media="'+material.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'	</div>'+
 							'</div>'+
