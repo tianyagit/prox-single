@@ -588,7 +588,7 @@ if ($do == 'not_installed') {
 
 	$uninstallModules = module_get_all_unistalled($status);
 	$total_uninstalled = $uninstallModules['module_count'];
-	$uninstallModules = $uninstallModules['modules'];
+	$uninstallModules = (array)$uninstallModules['modules'];
 	if (!empty($uninstallModules)) {
 		foreach($uninstallModules as $name => &$module) {
 			if (!empty($letter) && strlen($letter) == 1) {
