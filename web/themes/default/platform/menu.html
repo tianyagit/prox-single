@@ -29,7 +29,7 @@
 			{/if}
 		</div>
 	</div>
-	<table class="table we7-table table-hover">
+	<table class="table we7-table table-hover vertical-middle">
 		<col width="200px"/>
 		<col />
 		<col width="180px"/>
@@ -76,7 +76,7 @@
 				<span class="color-green">菜单生效中</span>
 				{/if}
 				{else}
-				<label>
+				<label style="margin: 0; vertical-align: middle;">
 					<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})">
 					<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
 					{/if}
@@ -227,7 +227,7 @@
 									<label for="" class="control-label col-sm-2">菜单名称</label>
 									<div class="form-controls col-sm-8">
 										<div class="input-group">
-											<input type="text" name="" style="width: 300px" class="form-control" placeholder=""  id="title" ng-model="context.activeItem.name" ng-disabled="context.group.disabled">
+											<input type="text" name="" class="form-control" placeholder=""  id="title" ng-model="context.activeItem.name" ng-disabled="context.group.disabled">
 											<span ng-if="!context.group.disabled" class="input-group-addon bg-default color-default" ng-click="context.selectEmoji();"><a href="">添加表情</a></span>
 										</div>
 										<span class="help-block">字数不超过4个汉字或8个字母</span>
@@ -266,7 +266,7 @@
 									</div>
 								</div>
 								
-								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'" style="width:540px;">
+								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'" style="width:100%;">
 									<div class="panel-heading">
 										回复内容
 									</div>
@@ -318,7 +318,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="panel we7-panel" style="width: 540px;" ng-show="context.activeItem.type == 'click'">
+								<div class="panel we7-panel" style="width: 100%;" ng-show="context.activeItem.type == 'click'">
 									<div class="panel-heading">
 										回复内容
 									</div>
