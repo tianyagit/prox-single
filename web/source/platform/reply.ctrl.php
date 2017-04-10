@@ -230,9 +230,9 @@ if ($do == 'post') {
 				if (!empty($module_info) && empty($module_info['issystem'])) {
 					$user_module->fieldsFormSubmit($rid);
 				}
-				itoast('回复规则保存成功！', referer(), 'success');
+				itoast('回复规则保存成功！', url('platform/reply', array('m' => $m)), 'success');
 			} else {
-				itoast('回复规则保存失败, 请联系网站管理员！', referer(), 'error');
+				itoast('回复规则保存失败, 请联系网站管理员！', url('platform/reply', array('m' => $m)), 'error');
 			}
 		}
 		template('platform/reply-post');

@@ -112,7 +112,7 @@ if ($do == 'upgrade') {
 	$points = ext_module_bindings();
 	$module_name = addslashes($_GPC['module_name']);
 	//判断模块相关配置和文件是否合法
-	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
+	$module_exist = module_fetch($module_name);
 	if (empty($module_exist)) {
 		itoast('模块已经被卸载或是不存在！', '', 'error');
 	}
@@ -144,7 +144,7 @@ if ($do == 'upgrade') {
 	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
-
+	
 	if (!empty($manifest['platform']['plugin_list'])) {
 		pdo_delete('modules_plugin', array('main_module' => $manifest['application']['identifie']));
 		foreach ($manifest['platform']['plugin_list'] as $plugin) {
@@ -153,6 +153,7 @@ if ($do == 'upgrade') {
 	}
 	//处理模块菜单
 	$module = ext_module_convert($manifest);
+	
 	unset($module['name']);
 	$bindings = array_elements(array_keys($points), $module, false);
 	foreach ($points as $point_name => $point_info) {
@@ -577,7 +578,7 @@ if ($do == 'not_installed') {
 
 	$uninstallModules = module_get_all_unistalled($status);
 	$total_uninstalled = $uninstallModules['module_count'];
-	$uninstallModules = $uninstallModules['modules'];
+	$uninstallModules = (array)$uninstallModules['modules'];
 	if (!empty($uninstallModules)) {
 		foreach($uninstallModules as $name => &$module) {
 			if (!empty($letter) && strlen($letter) == 1) {

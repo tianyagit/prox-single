@@ -104,6 +104,7 @@ function ext_module_manifest_parse($xml) {
 			'iscard' => false,
 			'supports' => array(),
 		);
+		//订阅信息
 		$subscribes = $platform->getElementsByTagName('subscribes')->item(0);
 		if (!empty($subscribes)) {
 			$messages = $subscribes->getElementsByTagName('message');
@@ -114,6 +115,7 @@ function ext_module_manifest_parse($xml) {
 				}
 			}
 		}
+		//直接处理消息
 		$handles = $platform->getElementsByTagName('handles')->item(0);
 		if (!empty($handles)) {
 			$messages = $handles->getElementsByTagName('message');
@@ -124,10 +126,12 @@ function ext_module_manifest_parse($xml) {
 				}
 			}
 		}
+		//是否嵌入规则
 		$rule = $platform->getElementsByTagName('rule')->item(0);
 		if (!empty($rule) && $rule->getAttribute('embed') == 'true') {
 			$manifest['platform']['isrulefields'] = true;
 		}
+		//是否嵌入卡券
 		$card = $platform->getElementsByTagName('card')->item(0);
 		if (!empty($card) && $card->getAttribute('embed') == 'true') {
 			$manifest['platform']['iscard'] = true;
@@ -142,6 +146,7 @@ function ext_module_manifest_parse($xml) {
 				}
 			}
 		}
+		//模块扩展插件
 		$plugins = $platform->getElementsByTagName('plugins')->item(0);
 		if (!empty($plugins)) {
 			$plugin_list = $plugins->getElementsByTagName('item');
@@ -160,6 +165,7 @@ function ext_module_manifest_parse($xml) {
 			}
 		}
 	}
+	//模块注册菜单
 	$bindings = $root->getElementsByTagName('bindings')->item(0);
 	if (!empty($bindings)) {
 		global $points;
@@ -358,174 +364,6 @@ function ext_module_clean($modulename, $isCleanRule = false) {
 	$sql = 'DELETE FROM ' . tablename('uni_account_modules') . ' WHERE `module`=:module';
 	pdo_query($sql, $pars);
 
-}
-
-/**
- * XML Schema
- */
-function ext_module_manifest_validate() {
-	$xsd = <<<TPL
-<?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns="http://www.we7.cc" targetNamespace="http://www.we7.cc" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-	<xs:element name="entry">
-		<xs:complexType>
-			<xs:attribute name="title" type="xs:string" />
-			<xs:attribute name="do" type="xs:string" />
-			<xs:attribute name="direct" type="xs:boolean" />
-			<xs:attribute name="state" type="xs:string" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="dl">
-		<xs:complexType>
-			<xs:attribute name="name" type="xs:string" />
-			<xs:attribute name="value" type="xs:string" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="message">
-		<xs:complexType>
-			<xs:attribute name="type" type="xs:string" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="manifest">
-		<xs:complexType>
-			<xs:all>
-				<xs:element name="application" minOccurs="1" maxOccurs="1">
-					<xs:complexType>
-						<xs:all>
-							<xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
-							<xs:element name="identifie" type="xs:string"  minOccurs="1" maxOccurs="1" />
-							<xs:element name="version" type="xs:string"  minOccurs="1" maxOccurs="1" />
-							<xs:element name="type" type="xs:string"  minOccurs="1" maxOccurs="1" />
-							<xs:element name="ability" type="xs:string"  minOccurs="1" maxOccurs="1" />
-							<xs:element name="description" type="xs:string"  minOccurs="1" maxOccurs="1" />
-							<xs:element name="author" type="xs:string"  minOccurs="1" maxOccurs="1" />
-							<xs:element name="url" type="xs:string"  minOccurs="1" maxOccurs="1" />
-						</xs:all>
-						<xs:attribute name="setting" type="xs:boolean" />
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="platform" minOccurs="0" maxOccurs="1">
-					<xs:complexType>
-						<xs:all>
-							<xs:element name="subscribes" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="message" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="handles" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="message" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="rule" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:attribute name="embed" type="xs:boolean" />
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="card" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:attribute name="embed" type="xs:boolean" />
-								</xs:complexType>
-							</xs:element>
-						</xs:all>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="bindings" minOccurs="0" maxOccurs="1">
-					<xs:complexType>
-						<xs:all>
-							<xs:element name="cover" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-									<xs:attribute name="call" type="xs:string" />
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="rule" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-									<xs:attribute name="call" type="xs:string" />
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="menu" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-									<xs:attribute name="call" type="xs:string" />
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="home" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-									<xs:attribute name="call" type="xs:string" />
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="profile" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-									<xs:attribute name="call" type="xs:string" />
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="shortcut" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-									<xs:attribute name="call" type="xs:string" />
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="function" minOccurs="0" maxOccurs="1">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-									<xs:attribute name="call" type="xs:string" />
-								</xs:complexType>
-							</xs:element>
-						</xs:all>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="permissions" minOccurs="0" maxOccurs="1">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element ref="entry" minOccurs="0" maxOccurs="unbounded" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="crons" minOccurs="0" maxOccurs="1">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="item" minOccurs="0" maxOccurs="unbounded">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="dl" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="install" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="uninstall" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="upgrade" type="xs:string" minOccurs="0" maxOccurs="1" />
-			</xs:all>
-			<xs:attribute name="versionCode" type="xs:string" />
-		</xs:complexType>
-	</xs:element>
-</xs:schema>
-TPL;
-	return trim($xsd);
 }
 
 /**
