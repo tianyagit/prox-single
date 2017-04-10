@@ -67,10 +67,10 @@
 				var middleVal = oldVal.split(',');
 				newVal = angular.copy(middleVal);
 				angular.forEach(middleVal, function(val, key) {
-					if(val.match(media)) {
-						newVal = _.without(newVal, middleVal[key]);
-					}
+					middleVal[key] = htmlEncode(val);
 				});
+				var index = _.indexOf(middleVal, htmlEncode(angular.toJson(media)));
+				newVal = _.without(newVal, newVal[index]);
 				$(':hidden[name="reply[reply_'+type+']"]').val(newVal);
 				break;
 			case 'image':
@@ -195,18 +195,24 @@
 						if ($(editmedia.get(i)).find('.edit-gray').data('media') == val) {
 							var inputVal = $(':hidden[name="reply[reply_'+type+']"]').val();
 							var inputValArr = inputVal.split(',');
-							var index = _.indexOf(inputValArr, angular.toJson(val));
+							angular.forEach(inputValArr, function(val, key) {
+								inputValArr[key] = htmlEncode(val);
+							});
+							var index = _.indexOf(inputValArr, htmlEncode(angular.toJson(val)));
 							inputValArr[index] = angular.toJson(material.content);
+							angular.forEach(inputValArr, function(val, key) {
+								inputValArr[key] = htmlDecode(val);
+							});
 							replyVal = inputValArr.join(',');
 							$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
-							$(editmedia.get(i)).find('.edit-gray').data('media', material.content);
+							$(editmedia.get(i)).find('.edit-gray').data('media', htmlEncode(material.content));
 							$(editmedia.get(i)).html(
 								'	<div class="desc">'+
-								'		<div class="media-content">'+material.content+'</div>'+
+								'		<div class="media-content">'+htmlEncode(material.content)+'</div>'+
 								'	</div>'+
 								'	<div class="opr">'+
-								'		<a href="javascript:;" data-media="'+material.content+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+material.content+'\')">编辑</a>'+
-								'		<a href="javascript:;" data-media="'+material.content+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+								'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(material.content)+'\')">编辑</a>'+
+								'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 								'	</div>'
 							);
 							break;
@@ -222,11 +228,11 @@
 						'<li>'+
 						'<div class="del-'+type+'-media">'+
 						'	<div class="desc">'+
-						'		<div class="media-content">'+material.content+'</div>'+
+						'		<div class="media-content">'+htmlEncode(material.content)+'</div>'+
 						'	</div>'+
 						'	<div class="opr">'+
-						'		<a href="javascript:;" data-media="'+material.content+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+material.content+'\')">编辑</a>'+
-						'		<a href="javascript:;" data-media="'+material.content+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+						'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(material.content)+'\')">编辑</a>'+
+						'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 						'	</div>'+
 						'</div>'+
 						'</li>'
@@ -487,11 +493,11 @@
 							'<li>'+
 							'<div class="del-'+type+'-media">'+
 							'	<div class="desc">'+
-							'		<div class="media-content">'+basicVal.content+'</div>'+
+							'		<div class="media-content">'+htmlEncode(basicVal.content)+'</div>'+
 							'	</div>'+
 							'	<div class="opr">'+
-							'		<a href="javascript:;" data-media="'+basicVal.content+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+basicVal.content+'\')">编辑</a>'+
-							'		<a href="javascript:;" data-media="'+basicVal.content+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'		<a href="javascript:;" data-media="'+htmlEncode(basicVal.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(basicVal.content)+'\')">编辑</a>'+
+							'		<a href="javascript:;" data-media="'+htmlEncode(basicVal.content)+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'	</div>'+
 							'</div>'+
 							'</li>'
@@ -766,4 +772,24 @@
 		}
 		return true;
 	};
+	function htmlEncode(str) { 
+		var s = "";
+		if(str.length == 0) return "";
+		s = str.replace(/&/g,"&amp;");
+		s = s.replace(/</g,"&lt;");
+		s = s.replace(/>/g,"&gt;");
+		s = s.replace(/\'/g,"&#039;");
+		s = s.replace(/\"/g,"&quot;");
+		return s;
+	}
+	function htmlDecode(str) {
+		var s = "";
+		if(str.length == 0) return "";
+		s = str.replace(/&amp;/g,"&");
+		s = s.replace(/&lt;/g,"<");
+		s = s.replace(/&gt;/g,">");
+		s = s.replace(/&#039;/g,"'");
+		s = s.replace(/&quot;/g,'"');
+		return s;
+	}
 </script>
