@@ -20,7 +20,7 @@ define('CACHE_FILE_PATH', IA_ROOT . '/data/cache/');
 function cache_read($key, $dir = '', $include = true) {
 	$key = str_replace(':', '@', $key);
 	$key = CACHE_FILE_PATH . $key;
-	if (!is_file($key)) {
+	if (!is_file($key) || !parse_path($key)) {
 		return array();
 	}
 	return $include ? include $key : file_get_contents($key);
@@ -42,6 +42,9 @@ function cache_write($key, $data, $dir = '') {
 		$data = "<?php \r\ndefined('IN_IA') or exit('Access Denied');\r\nreturn " . var_export($data, true) . ';';
 	}
 	$key = CACHE_FILE_PATH . $key;
+	if (!parse_path($key)) {
+		return array();
+	}
 	mkdirs(dirname($key));
 	file_put_contents($key, $data);
 	@chmod($key, $_W['config']['setting']['filemode']);
@@ -56,6 +59,9 @@ function cache_write($key, $data, $dir = '') {
 function cache_delete($key, $dir = '') {
 	$key = str_replace(':', '@', $key);
 	$key = CACHE_FILE_PATH . $key;
+	if (!parse_path($key)) {
+		return array();
+	}
 	return file_delete($key);
 }
 
