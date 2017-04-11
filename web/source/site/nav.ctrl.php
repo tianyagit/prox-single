@@ -10,7 +10,10 @@ load()->model('module');
 $dos = array('home', 'profile', 'homemenu_display', 'homemenu_post', 'homemenu_del', 'homemenu_switch');
 $do = in_array($do, $dos) ? $do : 'home';
 
-uni_user_permission_check('platform_nav_' . $do, true, 'nav');
+$system_modules = system_modules();
+if (!in_array($_GPC['m'], $system_modules)) {
+	uni_user_permission_check('', true, 'nav');
+}
 $modulename = $_GPC['m'];
 
 //微官网首页导航菜单：homemenu_display、homemenu_post、homemenu_del、homemenu_switch(切换开关状态)
