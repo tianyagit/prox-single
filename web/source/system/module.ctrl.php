@@ -79,14 +79,23 @@ if ($do == 'check_upgrade') {
 					$site_branch = $cloud_m_info['branch'];
 				}
 				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
-				$branch_id_list = array_keys($cloud_m_info['branches']);
-				if (empty($branch_id_list)) {
+				if (!empty($cloud_m_info['branches'])) {
+					$best_branch_id = 0;
+					foreach ($cloud_m_info['branches'] as $branch) {
+						if ($best_branch_id == 0) {
+							$best_branch_id = $branch['id'];
+						} else {
+							if ($branch['displayorder'] > $cloud_m_info['branches'][$best_branch_id]['displayorder']) {
+								$best_branch_id = $branch['id'];
+							}
+						}
+					}
+				} else {
 					$module['upgrade'] = false;
 					continue;
 				}
-				$best_branch_id = max($branch_id_list);
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
-				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['branch'] < $best_branch['id'] && !empty($cloud_m_info['version']))) {
+				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version']))) {
 					$module['upgrade'] = true;
 				} else {
 					$module['upgrade'] = false;
@@ -136,23 +145,16 @@ if ($do == 'upgrade') {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 	
+	if (!empty($manifest['platform']['plugin_list'])) {
+		pdo_delete('modules_plugin', array('main_module' => $manifest['application']['identifie']));
+		foreach ($manifest['platform']['plugin_list'] as $plugin) {
+			pdo_insert('modules_plugin', array('main_module' => $manifest['application']['identifie'], 'name' => $plugin));
+		}
+	}
 	//处理模块菜单
 	$module = ext_module_convert($manifest);
 	
-	$wxapp_support = false;
-	$app_support = false;
-	if (!empty($module['supports'])) {
-		foreach ($module['supports'] as $support) {
-			if ($support == 'wxapp') {
-				$wxapp_support = true;
-			}
-			if ($support == 'app') {
-				$app_support = true;
-			}
-		}
-	}
-	$module['wxapp_support'] = !empty($wxapp_support) ? 2 : 1;
-	$module['app_support'] = !empty($app_support) ? 2 : 1;
+	unset($module['name']);
 	$bindings = array_elements(array_keys($points), $module, false);
 	foreach ($points as $point_name => $point_info) {
 		unset($module[$point_name]);
@@ -198,8 +200,6 @@ if ($do == 'upgrade') {
 			}
 		}
 	}
-	unset($module['page']);
-	unset($module['supports']);
 	//执行模块更新文件
 	if (!empty($manifest['upgrade'])) {
 		if (strexists($manifest['upgrade'], '.php')) {
@@ -223,6 +223,8 @@ if ($do == 'upgrade') {
 	}
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
+	cache_delete(cache_system_key("user_modules:" . $_W['uid']));
+	cache_build_uninstalled_module();
 	if (!empty($module['subscribes'])) {
 		ext_check_module_subscribe($module['name']);
 	}
@@ -282,15 +284,15 @@ if ($do =='install') {
 		template('system/select-module-group');
 		exit;
 	}
-	$module['app_support'] = empty($module['supports']) || in_array('app', $module['supports']) ? 2 : 1;
-	$module['wxapp_support'] = in_array('wxapp', $module['supports']) ? 2 : 1;
-	if (in_array('plugin', $module['supports'])) {
-		$module['plugin'] = implode(',', $module['plugin']);
+	if (!empty($manifest['platform']['plugin_list'])) {
+		foreach ($manifest['platform']['plugin_list'] as $plugin) {
+			pdo_insert('modules_plugin', array('main_module' => $manifest['application']['identifie'], 'name' => $plugin));
+		}
 	}
-	if (!empty($module['main_module'])) {
-		$main_module_exist = module_fetch($module['main_module']);
-		if (empty($main_module_exist)) {
-			itoast('请先安装此插件的主模块后再安装插件', url('system/module/not_installed'), 'error');
+	if (!empty($manifest['platform']['main_module'])) {
+		$main_module_plugin_list = pdo_getall('modules_plugin', array('main_module' => $manifest['platform']['main_module']), array(), 'name');
+		if (!in_array($manifest['application']['identifie'], array_keys($main_module_plugin_list))) {
+			itoast('请先更新主模块后再安装插件', url('system/module/not_installed'), 'error');
 		}
 	}
 	$post_groups = $_GPC['group'];
@@ -325,18 +327,6 @@ if ($do =='install') {
 	}
 	$pinyin = new Pinyin_Pinyin();
 	$module['title_initial'] = $pinyin->get_first_char($module['title']);
-	if (!empty($module['plugin']) && is_array($module['plugin'])) {
-		foreach ($module['plugin'] as $plugin) {
-			pdo_insert('modules_plugin', array('name' => $plugin, 'main_module' => $module['name']));
-		}
-	}
-	if (!empty($module['main_module'])) {
-		$plugin_exist = pdo_get('modules_plugin', array('name' => $module['name']));
-		if (empty($plugin_exist)) {
-			pdo_insert('modules_plugin', array('name' => $module['name'], 'main_module' => $module['main_module']));
-		}
-	}
-	unset($module['page'], $module['supports'], $module['plugin'], $module['main_module']);
 	if (pdo_insert('modules', $module)) {
 		if (strexists($manifest['install'], '.php')) {
 			if (file_exists($module_path . $manifest['install'])) {
@@ -373,6 +363,7 @@ if ($do =='install') {
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
+		cache_delete(cache_system_key("user_modules:" . $_W['uid']));
 
 		if (empty($module_subscribe_success)) {
 			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
