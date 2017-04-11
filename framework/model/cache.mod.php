@@ -309,7 +309,7 @@ function cache_build_uninstalled_module() {
 		foreach ($cloud_module as $module) {
 			if (!in_array($module['name'], $installed_module)) {
 				if (!empty($module['main_module'])) {
-					$plugin_exist = pdo_get('modules_plugin', array('main_module' => $module['name']));
+					$plugin_exist = pdo_get('modules_plugin', array('main_module' => $module['main_module'], 'name' => $module['name']));
 					if (empty($plugin_exist)) {
 						continue;
 					}
@@ -317,6 +317,9 @@ function cache_build_uninstalled_module() {
 				$status = in_array($module['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
 				$wxapp_support = !empty($module['site_branch']['wxapp_support']) ? $module['site_branch']['wxapp_support'] : 1;
 				$app_support = !empty($module['site_branch']['app_support']) ? $module['site_branch']['app_support'] : 2;
+				if ($wxapp_support ==  1 && $app_support == 1) {
+					$app_support = 2;
+				}
 				if (!empty($module['id'])) {
 					$cloud_module_info = array (
 						'from' => 'cloud',
@@ -325,7 +328,8 @@ function cache_build_uninstalled_module() {
 						'title' => $module['title'],
 						'thumb' => $module['thumb'],
 						'wxapp_support' => $wxapp_support,
-						'app_support' => $app_support
+						'app_support' => $app_support,
+						'main_module' => empty($module['main_module']) ? '' : $module['main_module']
 					);
 					if ($wxapp_support == 2) {
 						$uninstallModules[$status]['wxapp'][$module['name']] = $cloud_module_info;
@@ -365,7 +369,8 @@ function cache_build_uninstalled_module() {
 					'version' => $manifest['version'],
 					'title' => $manifest['title'],
 					'app_support' => $app_support,
-					'wxapp_support' => $wxapp_support
+					'wxapp_support' => $wxapp_support,
+					'main_module' => empty($manifest['platform']['main_module']) ? '' : $manifest['platform']['main_module']
 				);
 				$module_type = in_array($manifest['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
 				if ($module_info['app_support'] == 2) {
