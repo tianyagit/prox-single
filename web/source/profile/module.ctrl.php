@@ -90,11 +90,8 @@ if($do == 'display') {
 				}
 			}
 			if ($package_module) {
-				$modules = pdo_fetchall("SELECT a.name, a.title, a.issystem,
-							(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder
-							FROM " . tablename('modules') . " AS a WHERE a.main_module = '' AND a.issystem <> '1'
-							AND a.name IN ('".implode("','", $package_module)."') $condition $plugin_condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}", $params, 'name');
-
+				$sql = "SELECT a.name, a.title, a.issystem,(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' AND a.name IN ('".implode("','", $package_module)."') $condition $plugin_condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
+				$modules = pdo_fetchall($sql, $params, 'name');
 				$total_condition['name'] = $package_module;
 				$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
 			}
