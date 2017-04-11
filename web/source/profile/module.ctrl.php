@@ -192,7 +192,7 @@ if($do == 'display') {
 	if(empty($module)) {
 		itoast('抱歉，你操作的模块不能被访问！', '', '');
 	}
-	//@@todo 权限判断还没有优化
+
 	if(!uni_user_module_permission_check($modulename.'_settings', $modulename)) {
 		itoast('您没有权限进行该操作', '', '');
 	}

@@ -16,7 +16,7 @@ if ($do == 'platform') {
 	define('FRAME', 'account');
 
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
-		itoast('公众号已到服务期限，请续费', referer(), 'info');
+		itoast('公众号已到服务期限，请联系管理员并续费', url('account/manage'), 'info');
 	}
 
 	template('home/welcome');

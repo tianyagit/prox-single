@@ -10,7 +10,10 @@ load()->model('module');
 $dos = array('module', 'post');
 $do = in_array($do, $dos) ? $do : 'module';
 
-// uni_user_permission_check('platform_cover_' . $do, true, 'cover');
+$system_modules = system_modules();
+if (!in_array($_GPC['m'], $system_modules)) {
+	uni_user_permission_check('', true, 'cover');
+}
 define('IN_MODULE', true);
 
 if ($do == 'module') {
