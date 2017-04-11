@@ -845,13 +845,13 @@ EOF;
 			$card_id = trim($message['cardid']);
 			$openid = trim($message['fromusername']);
 			$code = trim($message['usercardcode']);
-			pdo_update('coupon_record', array('status' => 4), array('acid' => $_W['acid'], 'card_id' => $card_id, 'openid' => $openid, 'code' => $code));
+			pdo_update('coupon_record', array('status' => 4), array('card_id' => $card_id, 'openid' => $openid, 'code' => $code));
 		} elseif ($message['event'] == 'user_consume_card') {
 			//核销卡券事件
 			$card_id = trim($message['cardid']);
 			$openid = trim($message['fromusername']);
 			$code = trim($message['usercardcode']);
-			pdo_update('coupon_record', array('status' => 3), array('acid' => $_W['acid'], 'card_id' => $card_id, 'openid' => $openid, 'code' => $code));
+			pdo_update('coupon_record', array('status' => 3), array('card_id' => $card_id, 'openid' => $openid, 'code' => $code));
 			$this->receive();
 		}
 		//卡券的推送事件处理完成后，无需再走系统消息流程
