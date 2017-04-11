@@ -45,7 +45,6 @@ if ($do == 'news') {
 			}
 		}
 	} else {
-		$newsid = intval($_GPC['newsid']);
 		$attachment = material_get($newsid);
 		$news_list = $attachment['news'];
 	}
