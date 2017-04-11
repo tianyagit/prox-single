@@ -595,12 +595,29 @@ if ($do == 'not_installed') {
 					continue;
 				}
 			}
+
 			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
 			} elseif (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg')) {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
 			} else {
 				$module['logo'] = tomedia($module['thumb']);
+			}
+			if (!empty($module['main_module'])) {
+				$main_module_installed = module_fetch($module['main_module']);
+				if ($main_module_installed) {
+					$module['main_module_logo'] = $main_module_installed['logo'];
+				} else {
+					if ($module['from'] == 'cloud') {
+						$module['main_module_logo'] = tomedia($uninstallModules[$module['main_module']]['thumb']);
+					} else {
+						if (file_exists(IA_ROOT.'/addons/'.$module['main_module'].'/icon-custom.jpg')) {
+							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
+						} elseif (file_exists(IA_ROOT.'/addons/'.$module['main_module'].'/icon.jpg')) {
+							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
+						}
+					}
+				}
 			}
 		}
 	}
