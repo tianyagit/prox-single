@@ -556,10 +556,19 @@ function uni_user_module_permission_check($action = '', $module_name = '') {
 	if(!is_error($status)) {
 		return true;
 	}
-	$do = $_GPC['do'];
-	$m = $_GPC['m'];
-	if(!empty($do) && !empty($m)) {
-		$is_exist = pdo_fetch('SELECT eid FROM ' . tablename('modules_bindings') . ' WHERE module=:module AND do = :do AND entry = :entry', array(':module' => $m, ':do' => $do, ':entry' => 'menu'));
+	$a = trim($_GPC['a']);
+	$do = trim($_GPC['do']);
+	$m = trim($_GPC['m']);
+	//参数设置权限
+	if ($a == 'module' && $do == 'setting' && !empty($m)) {
+		$permission_name = $m . '_setting';
+		$users_permission = uni_user_permission($m);
+		if ($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
+			return false;
+		}
+	//模块其他业务菜单
+	} elseif (!empty($do) && !empty($m)) {
+		$is_exist = pdo_get('modules_bindings', array('module' => $m, 'do' => $do, 'entry' => 'menu'), array('eid'));
 		if(empty($is_exist)) {
 			return true;
 		}
