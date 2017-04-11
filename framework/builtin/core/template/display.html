@@ -332,7 +332,7 @@
 								displayorder: 0,
 								incontent: 0,
 								parent_id: 0,
-								media_id:material.id
+								mediaid: material.media_id,
 							}));
 						});
 						$('.keywords-list').append(
@@ -350,7 +350,7 @@
 							'		</div>'+
 							'	</div>'+
 							'	<div class="opr">'+
-							'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+material.items[0]['attach_id']+'" target="_blank" class="del-gray">编辑</a>'+
+							'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+material.id+'" target="_blank" class="del-gray">编辑</a>'+
 							'		<a href="javascript:;" data-media="'+material.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'	</div>'+
 							'</div>'+
@@ -518,8 +518,7 @@
 							displayorder: newsVal.displayorder ? newsVal.displayorder : 0,
 							incontent: newsVal.incontent ? newsVal.incontent : 0,
 							parent_id: newsVal.parent_id ? newsVal.parent_id : 0,
-							mediaid: newsVal.id,
-							media_id:newsVal.media_id
+							mediaid: newsVal.media_id
 						}));
 						$('.keywords-list').append(
 							'<li>'+
@@ -536,8 +535,8 @@
 							'		</div>'+
 							'	</div>'+
 							'	<div class="opr">'+
-							'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+newsVal.media_id+'&reply_news_id='+newsVal.id+'" target="_blank" class="del-gray">编辑</a>'+
-							'		<a href="javascript:;" data-media="'+newsVal.id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+(newsVal.attach_id ? newsVal.attach_id : '')+'&reply_news_id='+newsVal.id+'" target="_blank" class="del-gray">编辑</a>'+
+							'		<a href="javascript:;" data-media="'+newsVal.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'	</div>'+
 							'</div>'+
 							'</li>'

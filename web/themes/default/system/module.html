@@ -73,8 +73,8 @@
 					<div class="link-group">
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">管理设置</a>
 						<!--<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>-->
-						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1">停用</a>
-						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
+						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1" onclick="return confirm('确认要停用模块吗？')">停用</a>
+							<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
 						<a href="javascript:;" class="color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 					</div>
 				</td>
@@ -193,13 +193,13 @@
 						</tr>
 						<tr ng-repeat="branch in upgradeInfo.branches">
 							<td class="text-left">  {{ branch.name }}</td>
-							<td class="text-center">  {{  branch.id > upgradeInfo.site_branch.id ? branch.upgrade_price : 0 }}元</td>
+							<td class="text-center">  {{  branch.displayorder > upgradeInfo.site_branch.displayorder ? branch.upgrade_price : 0 }}元</td>
 							
 							<td class="text-right">
 								<div class="link-group">
 									<a tabindex="2" href="javascript:;" role="button" data-toggle="popover" title="{{ module_list[upgradeInfo.name].title }}升级说明" data-container="#upgrade-info" data-placement="bottom" data-trigger="focus" data-html="true" data-content="{{ branch.version.description }}">升级说明</a>
 									<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
-									<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, branch.id)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
+									<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, branch.id)" ng-if="branch.displayorder > upgradeInfo.site_branch.displayorder">付费升级到【{{branch.name}}】最新版本</a>
 								</div>
 							</td>
 							<script>

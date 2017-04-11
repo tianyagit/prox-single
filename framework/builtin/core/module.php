@@ -49,7 +49,8 @@ class CoreModule extends WeModule {
 							if(!empty($news_items)) {
 								foreach($news_items as &$item) {
 									$item['thumb_url'] = tomedia($item['thumb_url']);
-									$item['id'] = $isexists['media_id'];
+									$item['media_id'] = $isexists['media_id'];
+									$item['attach_id'] = $item['attach_id'];
 								}
 							}
 							$replies['news'] = $news_items;
@@ -136,6 +137,7 @@ class CoreModule extends WeModule {
 										foreach ($replies[$key] as &$news_value) {
 											if (!empty($news_value)) {
 												$news_material = material_get($news_value['media_id']);
+												$news_value['attach_id'] = $news_material['id'];
 												$news_value['thumb'] = tomedia($news_material['news'][0]['thumb_url']);
 											} else {
 												$news_value['thumb'] = tomedia($news_value['thumb']);
@@ -157,7 +159,6 @@ class CoreModule extends WeModule {
 				}
 				break;
 		}
-
 		if(!is_array($option)) {
 			$option = array();
 		}
@@ -229,12 +230,7 @@ class CoreModule extends WeModule {
 					if(!empty($replies)) {
 						$reply_news = array();
 						foreach ($replies as $reply) {
-							$reply_news[$reply['media_id']] = $reply;
-						}
-						unset($reply);
-						foreach ($reply_news as $reply) {
-							$news = pdo_get('wechat_news', array ('attach_id' => $reply['media_id'], 'displayorder' => 0));
-							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $news['title'], 'thumb' => tomedia($news['thumb_url']), 'createtime' => $reply['createtime'], 'media_id' => $reply['media_id']));
+							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $reply['title'], 'thumb' => tomedia($reply['thumb']), 'createtime' => $reply['createtime'], 'media_id' => $reply['mediaid']));
 						}
 					}
 					break;
