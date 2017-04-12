@@ -341,7 +341,7 @@ function user_modules() {
 				}
 			}
 		}
-		$modules = pdo_getall('modules', array('name' => $user_group_modules, 'main_module' => ''), array(), 'name');
+		$modules = pdo_getall('modules', array('name' => $user_group_modules), array(), 'name');
 	}
 
 	if (!empty($modules)) {
