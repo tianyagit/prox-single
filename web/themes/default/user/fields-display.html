@@ -21,7 +21,7 @@
 	</div>
 </div>
 <form action="" method="post"  id="js-fields-display" ng-controller="FieldsDisplay" ng-cloak>
-	<table class="table we7-table table-hover">
+	<table class="table we7-table table-hover vertical-middle">
 		<col width="100px"/>
 		<col />
 		<col />
@@ -56,12 +56,8 @@
 			</td> 
 			<td>
 				<div class="we7-form">
-					<div class="form-group we7-padding-none">
-						<div class="form-controls">
-							<input id='require-check-{{field.id}}' type="checkbox" value="1" name='required[{{field.id}}]' ng-checked='field.required == 1'>
-							<label for="require-check-{{field.id}}">&nbsp;</label>
-						</div>
-					</div>
+					<input id='require-check-{{field.id}}' type="checkbox" value="1" name='required[{{field.id}}]' ng-checked='field.required == 1'>
+					<label for="require-check-{{field.id}}">&nbsp;</label>
 				</div>
 			</td>
 			<td class="text-left">
