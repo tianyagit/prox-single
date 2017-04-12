@@ -295,7 +295,7 @@ if ($do == 'browser') {
 	}
 	$page = intval($_GPC['page']);
 	$page = max(1, $page);
-	$size = intval($_GPC['psize']) ? intval($_GPC['psize']) : 32;
+	$size = intval($_GPC['psize']) ? intval($_GPC['psize']) : 10;
 	$sql = 'SELECT * FROM '.tablename('wechat_attachment')."{$condition} ORDER BY id DESC LIMIT ".(($page-1) * $size).','.$size;
 	$list = pdo_fetchall($sql, $param, 'id');
 	foreach ($list as &$item) {
@@ -341,7 +341,7 @@ if ($do == 'delete') {
 	$content = @json_decode($resp['content'], true);
 	if(empty($content)) {
 		$result['error'] = 0;
-		$result['message'] = "接口调用失败, 元数据: {$response['meta']}";
+		$result['message'] = "接口调用失败, 元数据: {$resp['meta']}";
 		die(json_encode($result));
 	}
 	if(!empty($content['errcode'])) {
