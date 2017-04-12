@@ -17,7 +17,7 @@ $result = array(
 	'data' => ''
 );
 
-$type = $_COOKIE['__fileupload_type'];;
+$type = $_COOKIE['__fileupload_type'];
 $type = in_array($type, array('image','audio','video')) ? $type : 'image';
 $option = array();
 $option = array_elements(array('uploadtype', 'global', 'dest_dir'), $_POST);
@@ -251,7 +251,7 @@ if ($do == 'local') {
 
 	$page = intval($_GPC['page']);
 	$page = max(1, $page);
-	$size = $_GPC['pagesize'] ? intval($_GPC['pagesize']) : 32;
+	$size = $_GPC['pagesize'] ? intval($_GPC['pagesize']) : 10;
 
 	$remote = $_W['setting']['remote'];
 
