@@ -47,8 +47,7 @@ if ($do == 'forward') {
 	if (!empty($account_info['authorizer_info']['user_name'])) {
 		$account_found = pdo_get('account_wechats', array('original' => $account_info['authorizer_info']['user_name']));
 		if (!empty($account_found)) {
-			pdo_update('account', array('type' => ACCOUNT_OAUTH_LOGIN), array('acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid']));
-			itoast('授权接入成功', url('account/post', array('acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid'])), 'success');
+			message('公众号已经在系统中接入，是否要更改为授权接入方式？ <div><a class="btn btn-primary" href="' . url('account/auth/confirm', array('level' => $level, 'auth_refresh_token' => $auth_refresh_token, 'auth_appid' => $auth_appid, 'acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid'])) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" href="index.php">否</a></div>', '', 'tips');
 		}
 	}
 	$account_insert = array(
@@ -144,14 +143,14 @@ if ($do == 'forward') {
 		'level' => $level,
 		'key' => $auth_appid,
 	), array('acid' => $acid));
-	pdo_update('account', array('isconnect' => '1', 'type' => '3', 'isdeleted' => 0), array('acid' => $acid));
+	pdo_update('account', array('isconnect' => '1', 'type' => ACCOUNT_OAUTH_LOGIN, 'isdeleted' => 0), array('acid' => $acid));
 	cache_delete("uniaccount:{$uniacid}");
 	cache_delete("unisetting:{$uniacid}");
 	cache_delete("accesstoken:{$acid}");
 	cache_delete("jsticket:{$acid}");
 	cache_delete("cardticket:{$acid}");
 	cache_delete("account:auth:refreshtoken:{$acid}");
-	itoast('更改公众号授权接入成功', url('account/manage', array('type' => '3')), 'success');
+	itoast('更改公众号授权接入成功', url('account/post', array('acid' => $acid, 'uniacid' => $uniacid)), 'success');
 } elseif ($do == 'ticket') {
 	$post = file_get_contents('php://input');
 	WeUtility::logging('debug', 'account-ticket' . $post);
