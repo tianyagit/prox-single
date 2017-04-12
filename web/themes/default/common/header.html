@@ -339,7 +339,7 @@
 			<div class="content-head panel-heading">
 				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
 					<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-circle"></i></a>
-					<span class="we7-head-account">{$_W['account']['name']}</span>
+					<span class="we7-head-account"><a href="{php echo url('home/welcome/account')}">{$_W['account']['name']}</a></span>
 					{if file_exists(IA_ROOT. "/addons/". $_W['current_module']['name']. "/icon-custom.jpg")}
 					<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon-custom.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					{else}
