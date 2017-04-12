@@ -52,6 +52,7 @@ if (!empty($_GPC['m'])) {
 	$is_upgrade = intval($_GPC['is_upgrade']);
 	$packet = cloud_w_build($_GPC['w']);
 } else {
+	$m = '';
 	$packet = cloud_build();
 }
 if ($step == 'schemas' && $_W['ispost']) {
