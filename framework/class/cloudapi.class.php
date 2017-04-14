@@ -71,7 +71,7 @@ class CloudApi {
 			$pars = _cloud_build_params();
 			$pars['method'] = 'api.oauth';
 			$pars['module'] = $this->module;
-			$data = cloud_request('http://s.we7.cc/gateway.php', $pars);
+			$data = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 			if (is_error($data)) {
 				return $data;
 			}
@@ -110,7 +110,7 @@ class CloudApi {
 			$pars = _cloud_build_params();
 			$pars['method'] = 'api.oauth';
 			$pars['module'] = $this->module;
-			$data = cloud_request('http://s.we7.cc/gateway.php', $pars);
+			$data = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 			if (is_error($data)) {
 				return $data;
 			}

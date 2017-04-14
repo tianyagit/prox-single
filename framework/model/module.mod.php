@@ -317,11 +317,12 @@ function module_get_all_unistalled($status)  {
 	$uninstallModules =  cache_load(cache_system_key('module:all_uninstall'));
 	if ($_GPC['c'] == 'system' && $_GPC['a'] == 'module' && $_GPC['do'] == 'not_installed' && $status == 'uninstalled') {
 		$cloud_api = new CloudApi();
-		$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
+		$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
+		$cloud_m_count = $get_cloud_m_count['module_quantity'];
 	} else {
 		$cloud_m_count = $uninstallModules['cloud_m_count'];
 	}
-	if (empty($uninstallModules['modules']) || $uninstallModules['cloud_m_count'] != $cloud_m_count['module_quantity']) {
+	if (empty($uninstallModules['modules']) || intval($uninstallModules['cloud_m_count']) !== intval($cloud_m_count) || is_error($get_cloud_m_count)) {
 		$uninstallModules = cache_build_uninstalled_module();
 	}
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {

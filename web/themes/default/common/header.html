@@ -335,11 +335,11 @@
 		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
 		<a href="javascript:;" class="js-big-main button-to-big color-gray" title="加宽">{if $_GPC['main-lg']}正常{else}宽屏{/if}</a>
 		{/if}
-		<div class="panel {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content{/if}">
+		<div class="panel panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
 			<div class="content-head panel-heading">
 				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
 					<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-circle"></i></a>
-					<span class="we7-head-account">{$_W['account']['name']}</span>
+					<span class="we7-head-account"><a href="{php echo url('home/welcome/account')}">{$_W['account']['name']}</a></span>
 					{if file_exists(IA_ROOT. "/addons/". $_W['current_module']['name']. "/icon-custom.jpg")}
 					<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon-custom.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 					{else}
@@ -417,8 +417,8 @@
 							<ul class="list-group">
 								<li class="list-group-item{if $_GPC['m'] == ''} active{/if}">
 									<a href="{php echo url('home/welcome/ext', array('m' => $frames['section']['platform_module_menu']['plugin_menu']['main_module']))}">
-										<img src="{$frames['section']['platform_module_menu']['plugin_menu']['icon']}" alt="" class="img-icon" />
-										<div>{$frames['section']['platform_module_menu']['plugin_menu']['title']}</div>
+										<i class="wi wi-main-apply"></i>
+										<div>主应用</div>
 									</a>
 								</li>
 								<li class="list-group-item">

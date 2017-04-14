@@ -9,7 +9,7 @@
 	<table class="table we7-table table-hover">
 		<thead class="navbar-inner">
 		<tr>
-			<th class="text-center" style="width:50px;">操作员名称</th>
+			<th class="text-center" style="width:100px;">操作员名称</th>
 			<th class="text-center" style="width:150px">权限信息</th>
 			<th class="text-center" style="width:100px;">操作</th>
 		</tr>
@@ -25,9 +25,9 @@
 					{/loop}
 				</td>
 				<td class="text-center" style="width:100px;">
-					<div class="text-center" >
-						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op' =>'post', 'm' => $name));}" class="btn btn-default btn-sm">编辑</a>
-						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op'=>'delete', 'm' => $name));}" class="btn btn-default btn-sm">删除</a>
+					<div class="link-group" >
+						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op' =>'post', 'm' => $name));}">编辑</a>
+						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op'=>'delete', 'm' => $name));}">删除</a>
 					</div>
 				</td>
 			</tr>
@@ -43,7 +43,7 @@
 {/if}
 {if $op == 'post'}
 <div class="clearfix">
-	<form action="" method="post" class="form-horizontal ajaxfrom" role="form" id="form-user">
+	<form action="" method="post" class="form-horizontal ajaxfrom we7-form" role="form" id="form-user">
 		<div class="form-group">
 			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-2 control-label">用户名</label>
 			<div class="col-sm-10 col-lg-9 col-xs-12">
@@ -78,7 +78,8 @@
 				{loop $current_module_permission $permission}
 				<div class="col-sm-4">
 					<div class="checkbox">
-						<label><input type="checkbox" value="{$permission['permission']}" name="module_permission[]" {if !empty($permission['checked'])}checked{/if}>{$permission['title']}</label>
+						<input type="checkbox" value="{$permission['permission']}" name="module_permission[]" {if !empty($permission['checked'])}checked{/if}>
+						<label>{$permission['title']}</label>
 					</div>
 				</div>
 				{/loop}
