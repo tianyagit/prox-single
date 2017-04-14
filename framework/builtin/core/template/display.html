@@ -208,7 +208,10 @@
 							$(editmedia.get(i)).find('.edit-gray').data('media', htmlEncode(material.content));
 							$(editmedia.get(i)).html(
 								'	<div class="desc">'+
-								'		<div class="media-content">'+htmlEncode(material.content)+'</div>'+
+								'		<div class="media-content">'+
+								'			<span data-toggle="tooltip" data-placement="bottom" title="'+htmlEncode(material.content)+'">'+htmlEncode(cutStr(material.content,60))+
+								'			</span>'+
+								'		</div>'+
 								'	</div>'+
 								'	<div class="opr">'+
 								'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(material.content)+'\')">编辑</a>'+
@@ -228,7 +231,9 @@
 						'<li>'+
 						'<div class="del-'+type+'-media">'+
 						'	<div class="desc">'+
-						'		<div class="media-content">'+htmlEncode(material.content)+'</div>'+
+						'		<div class="media-content">'+
+						'			<span data-toggle="tooltip" data-placement="bottom" title="'+htmlEncode(material.content)+'">'+htmlEncode(cutStr(material.content,60))+'</span>'+
+						'		</div>'+
 						'	</div>'+
 						'	<div class="opr">'+
 						'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(material.content)+'\')">编辑</a>'+
@@ -493,7 +498,9 @@
 							'<li>'+
 							'<div class="del-'+type+'-media">'+
 							'	<div class="desc">'+
-							'		<div class="media-content">'+htmlEncode(basicVal.content)+'</div>'+
+							'		<div class="media-content">'+
+							'			<span data-toggle="tooltip" data-placement="bottom"  title="'+htmlEncode(basicVal.content)+'">'+htmlEncode(cutStr(basicVal.content,60))+'</span>'+
+							'		</div>'+
 							'	</div>'+
 							'	<div class="opr">'+
 							'		<a href="javascript:;" data-media="'+htmlEncode(basicVal.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(basicVal.content)+'\')">编辑</a>'+
@@ -791,4 +798,30 @@
 		s = s.replace(/&quot;/g,'"');
 		return s;
 	}
+    function cutStr(str, len) {
+        var str_length = 0;
+        var str_len = 0;
+        str_cut = new String();
+        str_len = str.length;
+        for (var i = 0; i < str_len; i++) {
+            a = str.charAt(i);
+            str_length++;
+            if (escape(a).length > 4) {
+                //中文字符的长度经编码之后大于4  
+                str_length++;
+            }
+            str_cut = str_cut.concat(a);
+            if (str_length >= len) {
+                str_cut = str_cut.concat("...");
+                return str_cut;
+            }
+        }
+        //如果给定字符串小于指定长度，则返回源字符串；  
+        if (str_length < len) {
+            return str;
+        }
+    }
+	$(document).on("mouseover","body",function(){
+	 	$("[data-toggle='tooltip']").tooltip();
+	});
 </script>
