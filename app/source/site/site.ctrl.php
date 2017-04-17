@@ -95,6 +95,8 @@ if($do == 'list') {
 		$detail['thumb'] = '';
 	}
 	$title = $detail['title'];
+	//页面标题显示内容控制 0 显示文章标题(或页面标题) -公众号名称(或站点名称)- Powered by WE7.CC  1 显示 公众号名称(或站点名称)
+	$titletag=1;
 	//独立选择内容模板
 	if(!empty($detail['template'])) {
 		$_W['template'] = $detail['template'];

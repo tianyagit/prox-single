@@ -119,12 +119,14 @@
 		</div>
 		{elseif $type == 'image'}
 		<div class="material-appmsg">
+			<div class="upload-queue"></div>
 			<div class="material-list-head clearfix">
 				<div class="action">
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
 					{/if}
-					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('image')">上传新图片</a>
+					<div id="webUploaderBtn" style="float: right;"></div>
+					<div id="webUploaderBtn2" style="float: right;"></div>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -157,7 +159,8 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
 					{/if}
-					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('voice')">上传语音</a>
+					<div id="webUploaderBtn" style="float: right;"></div>
+					<div id="webUploaderBtn2" style="float: right;"></div>
 				</div>
 			</div>
 			<ul class="material-audio-list">
@@ -194,7 +197,8 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
 					{/if}
-					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('video')">上传视频</a>
+					<div id="webUploaderBtn" style="float: right;"></div>
+					<div id="webUploaderBtn2" style="float: right;"></div>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -258,7 +262,7 @@
 			'syncNews' : "{$_GPC['sync_news']}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
-
+		fileUploader.upload("{php echo $type}");
 		$('.material-appmsg-list .material-appmsg-item').wookmark({
 			align: 'center',
 			autoResize: false,

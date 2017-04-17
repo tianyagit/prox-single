@@ -44,6 +44,7 @@ if (!$entry['direct']) {
 	if (!$permission) {
 		itoast('您没有权限进行该操作', '', '');
 	}
+	define('CRUMBS_NAV', 1);
 	$_W['page']['title'] = $entry['title'];
 	define('ACTIVE_FRAME_URL', url('site/entry/', array('eid' => $entry['eid'])));
 }
