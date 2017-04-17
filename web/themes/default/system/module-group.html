@@ -148,10 +148,10 @@
 							<img ng-src="{{ module.logo }}" alt="子应用icon" class="plugin-img"/>
 							<img ng-src="{{ groupHaveModuleApp[module.main_module].logo || groupNotHaveModuleApp[module.main_module].logo }}" alt="主应用icon" class="module-img"/>
 						</span>
-						{{ module.title }}
+						<span class="name">{{ module.title }}</span>
 						<span class="del bg-default" ng-click="delHaveModule(module)">删除</span>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-2 add-more">
 						<div class="we7-input-img input-more input-img">
 							<a href="" class="input-addon" ng-click="addModule()">
 								<span class="color-gray"></span>
@@ -171,7 +171,7 @@
 						<img src="{{ module.logo }}" alt="" style="width:50px;height:50px;">{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModuleWxapp(module)">删除</span>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-2 add-more">
 						<div class="we7-input-img input-more input-img">
 							<a href="" class="input-addon" ng-click="addModuleWxapp()">
 								<span class="color-gray"></span>
@@ -192,7 +192,7 @@
 						<a href="">{{ template.title }}</a>
 						<span class="del bg-default" ng-click="delHaveTemplate(template)">删除</span>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-2 add-more">
 						<div class="we7-input-img input-more input-img">
 							<a href="" class="input-addon" ng-click="adTemplate()">
 								<span class="color-gray"></span>

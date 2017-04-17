@@ -402,7 +402,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-body" style="text-align:left;">
-					<table class="table we7-table vertical-middle" style="min-width:568px;">
+					<table class="table we7-table vertical-middle we7-form" style="min-width:568px;">
 						<thead>
 						<tr>
 							<th style="width: 100px;" class="text-center">选择</th>
@@ -419,7 +419,7 @@
 						</tr>
 						{loop $tags['items'] $key $items}
 						<tr>
-							<td class="text-center"><input type="checkbox" id="chk_tag_{$key}" name="tagids[]" data-name="{$items}" value="{$key}" {if !empty($current_tags[$key])} checked{/if}></td>
+							<td class="text-center"><input type="checkbox" id="chk_tag_{$key}" name="tagids[]" data-name="{$items}" value="{$key}" {if !empty($current_tags[$key])} checked{/if}><label>&nbsp;</label></td>
 							<td class="text-left"><label for="chk_tag_{$key}" style="font-weight:normal;" class="name">{$items}</label></td>
 						</tr>
 						{/loop}
