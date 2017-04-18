@@ -196,7 +196,10 @@ if($do == 'display') {
 	if(!uni_user_module_permission_check($modulename.'_settings', $modulename)) {
 		itoast('您没有权限进行该操作', '', '');
 	}
+	
+	// 兼容历史性问题：模块内获取不到模块信息$module的问题
 	define('CRUMBS_NAV', 1);
+	
 	$config = $module['config'];
 	if (($module['settings'] == 2) && !is_file(IA_ROOT."/addons/{$module['name']}/developer.cer")) {
 		
