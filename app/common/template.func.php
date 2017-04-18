@@ -521,3 +521,49 @@ function site_quickmenu() {
 	});
 </script>";
 }
+
+function template_modulehook_parser($params = array()) {
+	if (empty($params[1])) {
+		return '';
+	}
+	$params = explode(' ', $params[1]);
+	if (empty($params)) {
+		return '';
+	}
+	$plugin = array();
+	foreach ($params as $row) {
+		$row = explode('=', $row);
+		$plugin[$row[0]] = str_replace(array("'", '"'), '', $row[1]);
+		$row[1] = urldecode($row[1]);
+	}
+	$plugin_info = module_fetch($plugin['module']);
+	if (empty($plugin_info)) {
+		return false;
+	}
+
+	if (empty($plugin['return']) || $plugin['return'] == 'false') {
+		$plugin['return'] = false;
+	} else {
+		$plugin['return'] = true;
+	}
+
+	if (empty($plugin['func']) || empty($plugin['module'])) {
+		return false;
+	}
+
+	if (defined('IN_SYS')) {
+		$plugin['func'] = "hookWeb{$plugin['func']}";
+	} else {
+		$plugin['func'] = "hookMobile{$plugin['func']}";
+	}
+
+	$plugin_module = WeUtility::createModuleHook($plugin_info['name']);
+	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModuleHook) {
+		$hookparams = var_export($plugin, true);
+		$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
+		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, '{$plugin['func']}'), {$hookparams}); ?>";
+		return $php;
+	} else {
+		return false;
+	}
+}

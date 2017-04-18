@@ -106,7 +106,7 @@ function template_parse($str, $inmodule = false) {
 	$str = preg_replace('/{media\s+(\S+)}/', '<?php echo tomedia($1);?>', $str);
 	$str = preg_replace_callback('/<\?php([^\?]+)\?>/s', "template_addquote", $str);
 	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "template_modulehook_parser", $str);
-	$str = preg_replace('/{\/hook}/', '<?php } } ?>', $str);
+	$str = preg_replace('/{\/hook}/', '<?php ; ?>', $str);
 	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
 	$str = str_replace('{##', '{', $str);
 	$str = str_replace('##}', '}', $str);
@@ -162,7 +162,7 @@ function template_modulehook_parser($params = array()) {
 	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModuleHook) {
 		$hookparams = var_export($plugin, true);
 		$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
-		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, {$plugin['func']}), {$hookparams}); ?>";
+		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, '{$plugin['func']}'), {$hookparams}); ?>";
 		return $php;
 	} else {
 		return false;
