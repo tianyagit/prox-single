@@ -109,7 +109,7 @@
 								<a href="{php echo url('platform/material-post/news', array('newsid' => $material['id']))}" class="" data-toggle="tooltip" data-placement="bottom" title="编辑">&nbsp;<i class="wi wi-text"></i></a>
 							</li>
 							<li class="appmsg-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$material['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$material['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -144,7 +144,7 @@
 								<a href="javascript:;" class="" ng-click="checkGroup('image', {$image['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$image['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$image['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -182,7 +182,7 @@
 								<a href="javascript:;" class="" ng-click="checkGroup('voice', {$voice['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="audio-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$voice['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$voice['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -218,7 +218,7 @@
 								<a href="javascript:;" class="" ng-click="checkGroup('video', {$video['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$video['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$video['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>

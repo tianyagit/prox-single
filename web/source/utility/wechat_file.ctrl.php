@@ -9,6 +9,8 @@ defined('IN_IA') or exit('Access Denied');
 error_reporting(0);
 global $_W;
 load()->func('file');
+load()->func('communication');
+load()->model('account');
 //微信公众平台文件限制.
 $limit = array();
 //临时素材
@@ -157,7 +159,6 @@ if ($do == 'upload') {
 	$fullname = ATTACHMENT_ROOT  . '/' . $pathname;
 
 	// 上传到微信服务器
-	load()->model('account');
 	$acc = WeAccount::create($acid);
 	$token = $acc->getAccessToken();
 	if (is_error($token)) {
@@ -183,7 +184,6 @@ if ($do == 'upload') {
 		);
 		$type = 'image';
 	}
-	load()->func('communication');
 	$resp = ihttp_request($sendapi, $data);
 	if(is_error($resp)) {
 		$result['error'] = 0;
@@ -319,7 +319,6 @@ if ($do == 'delete') {
 		$result['message'] = '素材不存在';
 		die(json_encode($result));
 	}
-	load()->model('account');
 	$acc = WeAccount::create($acid);
 	$token = $acc->getAccessToken();
 	if (is_error($token)) {
@@ -331,7 +330,6 @@ if ($do == 'delete') {
 	$post = array(
 		'media_id' => $data['media_id']
 	);
-	load()->func('communication');
 	$resp = ihttp_request($sendapi, json_encode($post));
 	if(is_error($resp)) {
 		$result['error'] = 0;

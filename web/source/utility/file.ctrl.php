@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 error_reporting(0);
 global $_W;
 load()->func('file');
+load()->func('communication');
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'local'))) {
 	exit('Access Denied');
 }
@@ -60,7 +61,6 @@ if (!empty($option['global'])) {
 /* 提取图片  */
 if ($do == 'fetch') {
 	$url = trim($_GPC['url']);
-	load()->func('communication');
 	$resp = ihttp_get($url);
 	if (is_error($resp)) {
 		$result['message'] = '提取文件失败, 错误信息: '.$resp['message'];
@@ -206,7 +206,6 @@ if ($do == 'delete') {
 	if(empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
 		exit('您没有权限删除该文件');
 	}
-	load()->func('file');
 	if (!empty($_W['setting']['remote']['type'])) {
 		$status = file_remote_delete($media['attachment']);
 	} else {
