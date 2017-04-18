@@ -4,26 +4,23 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>
-			{if !empty($titletag)}
-				{if !empty($_W['account']['name'])} 
-					{$_W['account']['name']} 
-				{elseif !empty($_W['page']['sitename'])} 
-					{$_W['page']['sitename']} 
-				{else} 
-					微擎 
-				{/if} 
-			{else} 
-				{if !empty($title)} {$title} 
-			{elseif !empty($_W['page']['title'])} 
-				{$_W['page']['title']} 
-			{/if} 
-			{if !empty($_W['page']['sitename'])}
+	{if $only_show_account_name}
+		{$title}
+	{else}
+		{if !empty($title)} 
+			{$title} 
+		{elseif !empty($_W['page']['title'])} 
+			{$_W['page']['title']} 
+		{/if} 
+		{if !empty($_W['page']['sitename'])}
 			- {$_W['page']['sitename']} 
-			{else}
+		{else}
 			- {$_W['account']['name']} 
-			{/if} 
-			{if IMS_FAMILY != 'x'} - Powered by WE7.CC {/if}
-			{/if}
+		{/if} 
+		{if IMS_FAMILY != 'x'} 
+			- Powered by WE7.CC 
+		{/if}
+	{/if}
 	</title>
 	<meta name="format-detection" content="telephone=no, address=no">
 	<meta name="apple-mobile-web-app-capable" content="yes" /> <!-- apple devices fullscreen -->

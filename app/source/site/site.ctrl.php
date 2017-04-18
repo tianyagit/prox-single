@@ -94,9 +94,9 @@ if($do == 'list') {
 	} else {
 		$detail['thumb'] = '';
 	}
-	$title = $detail['title'];
-	//页面标题显示内容控制 0 显示文章标题(或页面标题) -公众号名称(或站点名称)- Powered by WE7.CC  1 显示 公众号名称(或站点名称)
-	$titletag=1;
+	//微站-文章页面只显示公众号名称
+	$only_show_account_name = true;
+	$title=empty($_W['account']['name'])?(empty($_W['uniaccount']['name'])?"":$_W['uniaccount']['name']):$_W['account']['name'];
 	//独立选择内容模板
 	if(!empty($detail['template'])) {
 		$_W['template'] = $detail['template'];
