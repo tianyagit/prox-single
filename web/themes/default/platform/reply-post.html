@@ -10,7 +10,7 @@
 			{if !empty($rid)}<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}">编辑{$module['title']}</a></li>{/if}
 		</li>
 	</ol>
-	{if $m == 'keyword' || !in_array($m, $sysmods)}
+	{if $m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)}
 	<form id="reply-form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data" id="js-reply-form" ng-controller="KeywordReply" ng-cloak>
 		<div class="we7-form">
 		<input type="hidden" name="rid" value="{$rid}" />
@@ -117,7 +117,9 @@
 			</div>
 		</div>
 		</div>
-		{if in_array($m, $sysmods)}
+		{if $m ==  'userapi'}
+			{php echo module_build_form('userapi', $rid)}
+		{elseif in_array($m, $sysmods)}
 			{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
 		{else}
 			{php echo module_build_form($m, $rid)}
@@ -189,7 +191,7 @@
 	{/if}
 </div>
 <script>
-{if $m == 'keyword' || !in_array($m, $sysmods)}
+{if $m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)}
 require(['underscore'], function() {
 	angular.module('replyFormApp').value('config', {
 		replydata: {php echo json_encode($reply)},
