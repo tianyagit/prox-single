@@ -264,6 +264,7 @@ function modulefunc($modulename, $funcname, $params) {
  * @return string
  */
 function modulehook($params = array()) {
+	load()->model('module');
 	if (empty($params[1])) {
 		return '';
 	}

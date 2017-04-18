@@ -130,6 +130,7 @@ function template_parse($str, $inmodule = false) {
  * @return string
  */
 function modulehook($params = array()) {
+	load()->model('module');
 	if (empty($params[1])) {
 		return '';
 	}
