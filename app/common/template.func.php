@@ -254,7 +254,7 @@ function modulefunc($modulename, $funcname, $params) {
 
 /**
  * 模块插件机制页面钩子
- * func - 指定获取数据的函数，此函数定义在模块目录下的hock.php文件中
+ * func - 指定获取数据的函数，此函数定义在模块目录下的hook.php文件中
  * module - 指定获取数据的模块。
  * assign - 指定该标签得到数据后，存入的变量名称。如果为空则存在与func同名的变量中，方便在下方的代码中使用。
  * item - 指定循环体内的迭代时的变量名。相当于`foreach ($foo as $i => $row)` 中 $row变量。

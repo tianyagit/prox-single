@@ -628,9 +628,9 @@ class WeUtility {
 		global $_W;
 		$classname = "{$name}ModulePlugin";
 		if(!class_exists($classname)) {
-			$file = IA_ROOT . "/addons/{$name}/hock.php";
+			$file = IA_ROOT . "/addons/{$name}/hook.php";
 			if(!is_file($file)) {
-				$file = IA_ROOT . "/framework/builtin/{$name}/hock.php";
+				$file = IA_ROOT . "/framework/builtin/{$name}/hook.php";
 			}
 			if(!is_file($file)) {
 				trigger_error('ModulePlugin Definition File Not Found '.$file, E_USER_WARNING);
