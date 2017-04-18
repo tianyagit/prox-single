@@ -45,9 +45,11 @@
 				<span ng-if="wechat.role == 'operator'">操作员</span>
 				<span ng-if="wechat.role == 'clerk'">店员</span>
 			</td>
-			<td class="text-center link-group">
-				<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}&account_type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" class="color-default">公众号设置</a>
-				<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}&account_type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" class="color-default">操作员设置</a>
+			<td class="text-center">
+				<div class="link-group">
+					<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}&account_type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" class="color-default">公众号设置</a>
+					<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}&account_type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" class="color-default">操作员设置</a>
+				</div>
 			</td>
 		</tr>
 		<tr ng-if="!wechats">
@@ -79,9 +81,11 @@
 				<span ng-if="wxapp.role == 'operator'">操作员</span>
 				<span ng-if="wxapp.role == 'clerk'">店员</span>
 			</td>
-			<td class="text-center link-group">
-				<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wxapp.uniacid}}&acid={{wxapp.acid}}&account_type={ACCOUNT_TYPE_APP_NORMAL}" class="color-default">小程序设置</a>
-				<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wxapp.uniacid}}&acid={{wxapp.acid}}&account_type={ACCOUNT_TYPE_APP_NORMAL}" class="color-default">操作员设置</a>
+			<td class="text-center">
+				<div class="link-group">
+					<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wxapp.uniacid}}&acid={{wxapp.acid}}&account_type={ACCOUNT_TYPE_APP_NORMAL}" class="color-default">小程序设置</a>
+					<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wxapp.uniacid}}&acid={{wxapp.acid}}&account_type={ACCOUNT_TYPE_APP_NORMAL}" class="color-default">操作员设置</a>
+				</div>
 			</td>
 		</tr>
 		<tr ng-if="!wxapps">

@@ -12,17 +12,17 @@
 		<tr>
 			<td class="table-label">头像</td>
 			<td><img ng-src="{{profile.avatar}}" class="img-circle" width="65px" height="65px" /></td>
-			<td><a href="javascript:;" class="color-default" ng-click="changeAvatar()">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" ng-click="changeAvatar()">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">用户名</td>
 			<td ng-bind="user.username"></td>
-			<td><a href="#name" class="color-default" data-toggle="modal" data-target="" ng-click="editInfo('username', user.username)">修改</a></td>
+			<td><div class="link-group"><a href="#name" data-toggle="modal" data-target="" ng-click="editInfo('username', user.username)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">密码</td>
 			<td>******</td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#pass">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#pass">修改</a></div></td>
 		</tr>
 	</table>
 	<div class="modal fade" id="name" role="dialog">
@@ -93,22 +93,22 @@
 		<tr>     
 			<td class="table-label">真实姓名</td>
 			<td ng-bind="profile.realname"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#realname" ng-click="editInfo('realname', profile.realname)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#realname" ng-click="editInfo('realname', profile.realname)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">出生年月日</td>
 			<td ng-bind="profile.births"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#birth">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#birth">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">邮寄地址</td>
 			<td ng-bind="profile.address"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#address" ng-click="editInfo('address', profile.address)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#address" ng-click="editInfo('address', profile.address)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">居住地址</td>
 			<td ng-bind="profile.resides"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#reside">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#reside">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">上次登录时间</td>

@@ -25,9 +25,9 @@
 					{/loop}
 				</td>
 				<td class="text-center" style="width:100px;">
-					<div class="text-center" >
-						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op' =>'post', 'm' => $name));}" class="btn btn-default btn-sm">编辑</a>
-						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op'=>'delete', 'm' => $name));}" class="btn btn-default btn-sm">删除</a>
+					<div class="text-center link-group" >
+						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op' =>'post', 'm' => $name));}">编辑</a>
+						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op'=>'delete', 'm' => $name));}" class="del">删除</a>
 					</div>
 				</td>
 			</tr>

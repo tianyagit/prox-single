@@ -422,7 +422,7 @@
 															<td><input ng-model="category.name" class="form-control" size="15"></td>
 															<td><input ng-model="category['displayorder']" class="form-control"></td>
 															<td><input ng-model="category['linkurl']" class="form-control"></td>
-															<td><a href="" ng-click="del_category($index)">删除</a></td>
+															<td><div class="link-group"><a href="" ng-click="del_category($index)" class="del">删除</a></div></td>
 														</tr>
 														<tr>
 															<td colspan="4"><a href="javascript:;" class="buttom-add color-default" ng-click="edit_category()" style="text-decoration: none;">添加分类</a></td>
@@ -463,7 +463,7 @@
 										</td>
 										<td class="text-left">
 											<div class="link-group">
-												<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" ng-click="showAccount('{$connection["link_name"]}')">修改</a>
+												<a href="javascript:;" class="js-unfold" data-toggle="table-collapse" ng-click="showAccount('{$connection["link_name"]}')">修改</a>
 											</div>
 										</td>
 									</tr>
