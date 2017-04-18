@@ -105,7 +105,7 @@ function template_parse($str, $inmodule = false) {
 	$str = preg_replace('/{url\s+(\S+)\s+(array\(.+?\))}/', '<?php echo url($1, $2);?>', $str);
 	$str = preg_replace('/{media\s+(\S+)}/', '<?php echo tomedia($1);?>', $str);
 	$str = preg_replace_callback('/<\?php([^\?]+)\?>/s', "template_addquote", $str);
-	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "modulehook", $str);
+	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "template_modulehook_parser", $str);
 	$str = preg_replace('/{\/hook}/', '<?php } } ?>', $str);
 	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
 	$str = str_replace('{##', '{', $str);
@@ -117,20 +117,13 @@ function template_parse($str, $inmodule = false) {
 	return $str;
 }
 
+function template_addquote($matchs) {
+	$code = "<?php {$matchs[1]}?>";
+	$code = preg_replace('/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\](?![a-zA-Z0-9_\-\.\x7f-\xff\[\]]*[\'"])/s', "['$1']", $code);
+	return str_replace('\\\"', '\"', $code);
+}
 
-/**
- * 模块插件机制页面钩子
- * func - 指定获取数据的函数，此函数定义在模块目录下的hook.php文件中
- * module - 指定获取数据的模块。
- * assign - 指定该标签得到数据后，存入的变量名称。如果为空则存在与func同名的变量中，方便在下方的代码中使用。
- * item - 指定循环体内的迭代时的变量名。相当于`foreach ($foo as $i => $row)` 中 $row变量。
- * limit - 指定获取变量时条数。
- * return - 为true时，获取到数据后直接循环输出，为false时，获取到相应的模板直接显示。
- *
- * @return string
- */
-function modulehook($params = array()) {
-	load()->model('module');
+function template_modulehook_parser($params = array()) {
 	if (empty($params[1])) {
 		return '';
 	}
@@ -144,41 +137,34 @@ function modulehook($params = array()) {
 		$plugin[$row[0]] = str_replace(array("'", '"'), '', $row[1]);
 		$row[1] = urldecode($row[1]);
 	}
-	$plugin['return'] = empty($plugin['return']) || $plugin['return'] == 'false' ? false : true;
-	if (empty($plugin['func']) || empty($plugin['module'])) {
-		return '';
-	}
 	$plugin_info = module_fetch($plugin['module']);
-	if (empty($plugin_info) || empty($plugin_info['main_module'])) {
-		return '';
+	if (empty($plugin_info)) {
+		return false;
 	}
-	$plugin_module = WeUtility::createModulePlugin($plugin_info['name']);
-	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModulePlugin) {
-		if ($plugin['return']) {
-			$plugin['index'] = !empty($plugin['index']) ? $plugin['index'] : 0;
-			$plugin['limit'] = !empty($plugin['limit']) ? $plugin['limit'] : 10;
-			$assign = empty($plugin['assign']) ? $plugin['func'] : $plugin['assign'];
-			$item = !empty($plugin['item']) ? $plugin['item'] : 'row';
-			$php = "<?php \$plugin_module = WeUtility::createModulePlugin('{$plugin_info['name']}');\${$assign} = \$plugin_module->{$plugin['func']}();";
-			$php .= "if(is_array(\${$assign})) { \$i=0; foreach(\${$assign} as \$i => \${$item}) { \$i++; if (\$i >= {$plugin['limit']}) {break;};\${$item}['{$plugin['index']}'] = \$i; ";
-			$php .= "?>";
-			return $php;
-		} else {
-			ob_flush();
-			ob_clean();
-			ob_start();
-			$plugin_module->$plugin['func']();
-			$template = ob_get_contents();
-			ob_clean();
-			return $template;
-		}
-	} else {
-		return '';
-	}
-}
 
-function template_addquote($matchs) {
-	$code = "<?php {$matchs[1]}?>";
-	$code = preg_replace('/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\](?![a-zA-Z0-9_\-\.\x7f-\xff\[\]]*[\'"])/s', "['$1']", $code);
-	return str_replace('\\\"', '\"', $code);
+	if (empty($plugin['return']) || $plugin['return'] == 'false') {
+		$plugin['return'] = false;
+	} else {
+		$plugin['return'] = true;
+	}
+
+	if (empty($plugin['func']) || empty($plugin['module'])) {
+		return false;
+	}
+
+	if (defined('IN_SYS')) {
+		$plugin['func'] = "hookWeb{$plugin['func']}";
+	} else {
+		$plugin['func'] = "hookMobile{$plugin['func']}";
+	}
+
+	$plugin_module = WeUtility::createModuleHook($plugin_info['name']);
+	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModuleHook) {
+		$hookparams = var_export($plugin, true);
+		$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
+		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, {$plugin['func']}), {$hookparams}); ?>";
+		return $php;
+	} else {
+		return false;
+	}
 }
