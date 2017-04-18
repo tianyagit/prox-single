@@ -6,6 +6,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->func('file');
+load()->func('communication');
 load()->model('material');
 load()->model('account');
 $dos = array('news', 'tomedia', 'addnews');
@@ -79,8 +80,6 @@ if ($do == 'addnews') {
 					iajax(0, $news_info['content']);
 				}
 				if (empty($news_info['thumb_media_id'])) {
-					load()->model('account');
-					load()->func('communication');
 					//同步图片到本地
 					$reload_full_name = file_fetch($news['thumb'], '1024');
 					$fullname = ATTACHMENT_ROOT . $reload_full_name;
