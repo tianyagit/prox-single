@@ -229,8 +229,8 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	cache_delete("unimodules:{$_W['uniacid']}:{true}");
-	cache_delete("unimodules:{$_W['uniacid']}:{false}");
+	cache_delete("unimodules:{$_W['uniacid']}:1");
+	cache_delete("unimodules:{$_W['uniacid']}:");
 	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
@@ -366,8 +366,8 @@ if ($do =='install') {
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
 		cache_delete(cache_system_key("user_modules:" . $_W['uid']));
-		cache_delete("unimodules:{$_W['uniacid']}:{true}");
-		cache_delete("unimodules:{$_W['uniacid']}:{false}");
+		cache_delete("unimodules:{$_W['uniacid']}:1");
+		cache_delete("unimodules:{$_W['uniacid']}:");
 
 
 		if (empty($module_subscribe_success)) {
