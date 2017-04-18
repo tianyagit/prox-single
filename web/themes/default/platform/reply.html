@@ -8,7 +8,8 @@
 		<li {if $m == 'special'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'special')}">非文字自动回复</a></li>
 		<li {if $m == 'welcome'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'welcome')}">首次访问自动回复</a></li>
 		<li {if $m == 'default'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'default')}">默认回复</a></li>
-		<li {if $m == 'userapi'}class="active"{/if}><a href="{url 'platform/reply/display' array('m' => 'userapi')}">常用服务</a></li>
+		<li {if $m == 'service'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'service')}">常用服务</a></li>
+		<li {if $m == 'userapi'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'userapi')}">自定义接口回复</a></li>
 	</ul>
 {else}
 	<div class="we7-page-title">
@@ -21,7 +22,7 @@
 		{/if}
 	</ul>	
 {/if}
-{if $m == 'keyword' || !in_array($m, $sysmods)}
+{if $m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)}
 	<div id="js-keyword-display" ng-controller="KeywordDisplay" ng-cloak>
 		<div class="keyword-list-head">
 			<form action="./index.php" method="get" class="form-horizontal" role="form">
@@ -35,14 +36,13 @@
 						<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 					</div>
 					<div class="pull-right">
-						<a href="{url 'platform/reply/post' array('m' => $m)}" class="btn btn-primary">+添加关键字回复</a>
-						{if in_array($m, $sysmods)}<a href="{url 'platform/reply/post' array('m' => 'apply')}" class="btn btn-danger  we7-margin-left">+添加应用关键字</a>{/if}
+						<a href="{url 'platform/reply/post' array('m' => $m)}" class="btn btn-primary">+添加{if $m == 'userapi'}自定义接口{else}关键字{/if}回复</a>
+						{if in_array($m, $sysmods) && $m != 'userapi'}<a href="{url 'platform/reply/post' array('m' => 'apply')}" class="btn btn-danger  we7-margin-left">+添加应用关键字</a>{/if}
 					</div>
-				</div> 
+				</div>
 			</form>
 		</div>
-		<div class="clearfix"></div>
-		{if in_array($m, $sysmods)}
+		{if in_array($m, $sysmods) && $m != 'userapi'}
 		<div class="btn-group we7-btn-group we7-margin-bottom btn-group-justified">
 			<a href="{url 'platform/reply/display' array('m' => 'keyword')}" class="btn {if !$_GPC[type]}active{/if}">全部</a>
 			<a href="{url 'platform/reply/display' array('m' => 'keyword', 'type' => 'news')}" class="btn {if $_GPC[type] == 'news'}active{/if}">回复图文</a>
@@ -54,6 +54,7 @@
 			<a href="{url 'platform/reply/display' array('m' => 'keyword', 'type' => 'video')}" class="btn {if $_GPC[type] == 'video'}active{/if}">回复视频</a>
 		</div>
 		{/if}
+		<div class="clearfix"></div>
 		<div class="table we7-tables {if !in_array($m, $sysmods)} we7-padding-bottom {/if}">
 			<form action="{php echo url('platform/reply/delete');}" method="post" role="form" class="form we7-form" id="form1">
 				<input type="hidden" name="m" value="{$m}">
@@ -85,7 +86,7 @@
 							<th class="text-left">操作</th>
 						</tr>
 						<tr>
-							{if $row['module'] != 'basic' && $row['module'] != 'news' && $row['module'] != 'music' && $row['module'] != 'images' && $row['module'] != 'voice' && $row['module'] != 'video' && $row['module'] != 'wxcard' && $row['module'] != 'reply'}
+							{if !in_array($row['module'], $sysmods)}
 								
 							<td class="vertical-middle">
 								<img src="{$row['logo']}" alt="" class="keyword-img"/>
@@ -107,7 +108,9 @@
 										<label for="" class="control-label col-sm-2">回复内容</label>
 										<div class="form-controls form-control-static">
 											<span class="">
-											{if $row['module'] == 'basic' || $row['module'] == 'news' || $row['module'] == 'music' || $row['module'] == 'images' || $row['module'] == 'voice' || $row['module'] == 'video' || $row['module'] == 'wxcard' || $row['module'] == 'reply'}
+											{if $m == 'userapi'}
+												自定义
+											{elseif in_array($row['module'], $sysmods)}
 												共{$row['allreply']['sum']}条（{if $row['allreply']['basic'] > 0}{$row['allreply']['basic']}条文字 {/if}{if $row['allreply']['images'] > 0}{$row['allreply']['images']}条图片 {/if}{if $row['allreply']['news'] > 0}{$row['allreply']['news']}条图文 {/if}{if $row['allreply']['music'] > 0}{$row['allreply']['music']}条音乐 {/if}{if $row['allreply']['voice'] > 0}{$row['allreply']['voice']}条语音 {/if}{if $row['allreply']['video'] > 0}{$row['allreply']['video']}条视频 {/if}{if $row['allreply']['wxcard'] > 0}{$row['allreply']['wxcard']}条卡券{/if}）
 											{else}
 												模块
@@ -124,7 +127,7 @@
 							</td>
 							<td class="vertical-middle text-left">
 								<div class="link-group">
-									{if $row['module'] == 'basic' || $row['module'] == 'news' || $row['module'] == 'music' || $row['module'] == 'images' || $row['module'] == 'voice' || $row['module'] == 'video' || $row['module'] == 'wxcard' || $row['module'] == 'reply'}
+									{if in_array($row['module'], $sysmods)}
 									<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $row['id']))}">编辑</a>
 									{else}
 									<a href="{php echo url('platform/reply/post', array('m' => $row['module'], 'rid' => $row['id']))}">编辑</a>
@@ -141,7 +144,6 @@
 					<div>
 						<input type="checkbox" name="rid[]" we7-check-all="we7-check-all" id="select_all"  class="we7-margin-left" value="1" />
 						<label for="select_all">&nbsp;</label>
-						<!--<label class="checkbox-inline" style="margin-top:-20px;margin-left:17px"><input type="checkbox" name="select_all" id="select_all" value="1"/></label>-->
 						<input type="submit" class="btn btn-danger" value="删除" onclick="if(!confirm('确定删除选中的规则吗？')) return false;"/>
 						<input type="hidden" name="token" value="{$_W['token']}"/>
 						<div class="pull-right">
@@ -274,42 +276,42 @@
 			angular.bootstrap($('#default'), ['replyFormApp']);
 		});
 	</script>
-{elseif $m == 'userapi'}
-<div class="NoKeyword-list" id="js-userapi-display" ng-controller="serviceDisplay" ng-cloak>
-	<div class="table we7-tables">
-		<table class="table we7-table table-hover">
-			<col width="160px"/>
-			<col />
-			<col width="120px"/>
-			<col width="180px"/>
-			<tr>
-				<th class="text-left">服务名称</th>
-				<th class="text-left">功能说明</th>
-				<th>状态</th>
-			</tr>
-			<tr ng-repeat="(id, api) in userapi track by id">
-				<td class="text-left">
-					{{ api.name }}
-				</td>
-				<td class="text-left" ng-bind-html="api.description">
-				</td>
-				<td class="vertical-middle">
-					<label>
-						<div ng-class="api.switch == 'checked' ? 'switch switchOn' : 'switch'" ng-click="changeStatus(id)"></div>
-					</label>
-				</td>
-			</tr>
-		</table>
+{elseif $m == 'service'}
+	<div class="NoKeyword-list" id="js-service-display" ng-controller="serviceDisplay" ng-cloak>
+		<div class="table we7-tables">
+			<table class="table we7-table table-hover">
+				<col width="160px"/>
+				<col />
+				<col width="120px"/>
+				<col width="180px"/>
+				<tr>
+					<th class="text-left">服务名称</th>
+					<th class="text-left">功能说明</th>
+					<th>状态</th>
+				</tr>
+				<tr ng-repeat="(id, api) in service track by id">
+					<td class="text-left">
+						{{ api.name }}
+					</td>
+					<td class="text-left" ng-bind-html="api.description">
+					</td>
+					<td class="vertical-middle">
+						<label>
+							<div ng-class="api.switch == 'checked' ? 'switch switchOn' : 'switch'" ng-click="changeStatus(id)"></div>
+						</label>
+					</td>
+				</tr>
+			</table>
+		</div>
 	</div>
-</div>
-<script>
-	$(function() {
-		angular.module('replyFormApp').value('config', {
-			'url' : '{php echo url('platform/reply/change_status')}',
-			'userapi' : {php echo json_encode($userapi_list)}
+	<script>
+		$(function() {
+			angular.module('replyFormApp').value('config', {
+				'url' : "{php echo url('platform/reply/change_status')}",
+				'service' : "{php echo json_encode($userapi_list)}"
+			});
+			angular.bootstrap($('#js-service-display'), ['replyFormApp']);
 		});
-		angular.bootstrap($('#js-userapi-display'), ['replyFormApp']);
-	});
-</script>
+	</script>
 {/if}
 {template 'common/footer'}
