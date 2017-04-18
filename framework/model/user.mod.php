@@ -133,7 +133,7 @@ function user_single($user_or_uid) {
 		}
 	} else {
 		//clerk_type 操作人类型,1: 线上操作 2: 系统后台(公众号管理员和操作员) 3: 店员
-		$record['name'] = $user['username'];
+		$record['name'] = $record['username'];
 		$record['clerk_id'] = $user['uid'];
 		$record['store_id'] = 0;
 		$record['clerk_type'] = '2';

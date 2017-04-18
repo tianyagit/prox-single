@@ -253,65 +253,6 @@ function modulefunc($modulename, $funcname, $params) {
 }
 
 /**
- * 模块插件机制页面钩子
- * func - 指定获取数据的函数，此函数定义在模块目录下的hock.php文件中
- * module - 指定获取数据的模块。
- * assign - 指定该标签得到数据后，存入的变量名称。如果为空则存在与func同名的变量中，方便在下方的代码中使用。
- * item - 指定循环体内的迭代时的变量名。相当于`foreach ($foo as $i => $row)` 中 $row变量。
- * limit - 指定获取变量时条数。
- * return - 为true时，获取到数据后直接循环输出，为false时，获取到相应的模板直接显示。
- *
- * @return string
- */
-function modulehook($params = array()) {
-	if (empty($params[1])) {
-		return '';
-	}
-	$params = explode(' ', $params[1]);
-	if (empty($params)) {
-		return '';
-	}
-	$plugin = array();
-	foreach ($params as $row) {
-		$row = explode('=', $row);
-		$plugin[$row[0]] = str_replace(array("'", '"'), '', $row[1]);
-		$row[1] = urldecode($row[1]);
-	}
-	$plugin['return'] = empty($plugin['return']) || $plugin['return'] == 'false' ? false : true;
-	if (empty($plugin['func']) || empty($plugin['module'])) {
-		return '';
-	}
-
-	$plugin_info = module_fetch($plugin['module']);
-	if (empty($plugin_info) || empty($plugin_info['main_module'])) {
-		return '';
-	}
-	$plugin_module = WeUtility::createModulePlugin($plugin_info['name']);
-	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModulePlugin) {
-		if ($plugin['return']) {
-			$plugin['index'] = !empty($plugin['index']) ? $plugin['index'] : 0;
-			$plugin['limit'] = !empty($plugin['limit']) ? $plugin['limit'] : 10;
-			$assign = empty($plugin['assign']) ? $plugin['func'] : $plugin['assign'];
-			$item = !empty($plugin['item']) ? $plugin['item'] : 'row';
-			$php = "<?php \$plugin_module = WeUtility::createModulePlugin('{$plugin_info['name']}');\${$assign} = \$plugin_module->{$plugin['func']}();";
-			$php .= "if(is_array(\${$assign})) { \$i=0; foreach(\${$assign} as \$i => \${$item}) { \$i++; if (\$i >= {$plugin['limit']}) {break;};\${$item}['{$plugin['index']}'] = \$i; ";
-			$php .= "?>";
-			return $php;
-		} else {
-			ob_flush();
-			ob_clean();
-			ob_start();
-			$plugin_module->$plugin['func']();
-			$template = ob_get_contents();
-			ob_clean();
-			return $template;
-		}
-	} else {
-		return '';
-	}
-}
-
-/**
  * 以 HTML 的形式返回微站链接
  *
  * @param array $params

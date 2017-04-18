@@ -96,6 +96,7 @@ if ($do == 'display') {
 			}
 			unset($item);
 		}
+		$entries = module_entries($m, array('rule'));
 	}
 	if ($m == 'special') {
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
@@ -110,7 +111,7 @@ if ($do == 'display') {
 		$setting = uni_setting($_W['uniacid'], array('default'));
 		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
 	}
-	if ($m == 'userapi') {
+	if ($m == 'service') {
 		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
 		$userapi_config = iunserializer($userapi_config);
 		$userapi = reply_search("`uniacid` = 0 AND module = 'userapi' AND `status`=1");
@@ -124,12 +125,35 @@ if ($do == 'display') {
 			}
 		}
 	}
-	$entries = module_entries($m, array('rule'));
+	if ($m == 'userapi') {
+		$pindex = max(1, intval($_GPC['page']));
+		$psize = 8;
+		
+		$condition = 'uniacid = :uniacid AND `module`=:module';
+		$params = array();
+		$params[':uniacid'] = $_W['uniacid'];
+		$params[':module'] = 'userapi';
+		if(isset($_GPC['keyword'])) {
+			$condition .= ' AND `name` LIKE :keyword';
+			$params[':keyword'] = "%{$_GPC['keyword']}%";
+		}
+
+		$replies = reply_search($condition, $params, $pindex, $psize, $total);
+		$pager = pagination($total, $pindex, $psize);
+		if (!empty($replies)) {
+			foreach($replies as &$item) {
+				$condition = '`rid`=:rid';
+				$params = array();
+				$params[':rid'] = $item['id'];
+				$item['keywords'] = reply_keywords_search($condition, $params);
+			}
+		}
+	}
 	template('platform/reply');
 }
 
 if ($do == 'post') {
-	if ($m == 'keyword' || !in_array($m, $sysmods)) {
+	if ($m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
 
@@ -167,6 +191,7 @@ if ($do == 'post') {
 				itoast('必须填写有效的触发关键字.', '', '');
 			}
 			$containtype = '';
+			$_GPC['reply'] = (array)$_GPC['reply'];
 			foreach ($_GPC['reply'] as $replykey => $replyval) {
 				if (!empty($replyval)) {
 					$containtype .= substr($replykey, 6).',';
@@ -186,8 +211,7 @@ if ($do == 'post') {
 			} else {
 				$rule['displayorder'] = range_limit($rule['displayorder'], 0, 254);
 			}
-			$module = WeUtility::createModule('core');
-			$msg = $module->fieldsFormValidate();
+
 			$module_info = module_fetch($m);
 			if (!empty($module_info) && empty($module_info['issystem'])) {
 				$user_module = WeUtility::createModule($m);
@@ -195,6 +219,13 @@ if ($do == 'post') {
 					itoast('抱歉，模块不存在请重新选择其它模块！', '', '');
 				}
 				$user_module_error_msg = $user_module->fieldsFormValidate();
+			} else {
+				if ($m == 'userapi') {
+					$module = WeUtility::createModule('userapi');
+				} else {
+					$module = WeUtility::createModule('core');
+				}
+				$msg = $module->fieldsFormValidate();
 			}
 			if ((is_string($msg) && trim($msg) != '') || (is_string($user_module_error_msg) && trim($user_module_error_msg) != '')) {
 				itoast($msg.$user_module_error_msg, '', '');
@@ -379,7 +410,12 @@ if($do == 'delete') {
 			pdo_delete('stat_rule', array('rid' => $rid));
 			pdo_delete('stat_keyword', array('rid' => $rid));
 			//调用模块中的删除
-			$module = WeUtility::createModule('reply');
+			if ($m == 'userapi') {
+				$reply_module = 'userapi';
+			} else {
+				$reply_module = 'reply';
+			}
+			$module = WeUtility::createModule($reply_module);
 			if (method_exists($module, 'ruleDeleted')) {
 				$module->ruleDeleted($rid);
 			}
@@ -391,7 +427,7 @@ if($do == 'delete') {
 //非文字自动回复切换开启关闭状态
 if ($do == 'change_status') {
 	$m = $_GPC['m'];
-	if ($m == 'userapi') {
+	if ($m == 'service') {
 		$rid = intval($_GPC['rid']);
 		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
 		$config = iunserializer($userapi_config);

@@ -20,97 +20,26 @@ if($do == 'display') {
 	
 	$pageindex = max(1, intval($_GPC['page']));
 	$pagesize = 30;
-	
-	$condition = '';
-	$total_condition = array(
-		'issystem !=' => '1',
-	);
-	$params = array();
-	if (!empty($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
-		$condition .= " AND a.title_initial = :title_initial";
-		$params[':title_initial'] = $total_condition['title_initial'] = strtoupper($_GPC['letter']);
-	}
-	if (!empty($_GPC['keyword'])) {
-		$keyword = trim(addslashes($_GPC['keyword']));
-		$condition .= " AND a.title LIKE :keyword";
-		$params[':keyword'] = $total_condition['title'] = "%{$keyword}%";
-	}
-	
-	$owneruid = pdo_getcolumn('uni_account_users', array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
-	$owner = user_single(array('uid' => $owneruid));
-	//如果没有所有者，则取创始人权限
-	if (empty($owner)) {
-		$groupid = '-1';
-	} else {
-		$groupid = $owner['groupid'];
-	}
-	$extend = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array(), 'groupid');
-	if (!empty($extend)) {
-		$groupid = '-2';
-	}
-	if (empty($groupid)) {
-		$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE issystem = 1 ORDER BY issystem DESC, mid ASC", array(), 'name');
-	} else {
-		if ($groupid == '-1') {
-			$packageids = array('-1');
-		} else {
-			$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
-			if (!empty($group)) {
-				$packageids = iunserializer($group['package']);
-			} else {
-				$packageids = array();
-			}
-			if (!empty($extend)) {
-				foreach ($extend as $extend_packageid => $row) {
-					$packageids[] = $extend_packageid;
-				}
-			}
-		}
 
-		$plugin_condition = '';
-		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
-		if (!empty($plugin_list)) {
-			$plugin_condition .= " AND name NOT IN ('" . implode("','", array_keys($plugin_list)) . "')";
-		}
-		if (!empty($packageids) && in_array('-1', $packageids)) {
-			$sql = "SELECT a.name, a.title, a.issystem FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module WHERE  a.issystem <> '1' AND b.uniacid = {$_W['uniacid']} $condition $plugin_condition ORDER BY b.displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
-			$modules = pdo_fetchall($sql, $params, 'name');
-			$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
-		} else {
-			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
-			$package_module = array();
-			if (!empty($wechatgroup)) {
-				foreach ($wechatgroup as $row) {
-					$row['modules'] = iunserializer($row['modules']);
-					if (!empty($row['modules'])) {
-						foreach ($row['modules'] as $modulename) {
-							$package_module[$modulename] = $modulename;
-						}
-					}
-				}
+	$modules = uni_modules();
+	if (!empty($modules)) {
+		foreach ($modules as $name => &$row) {
+			if (!empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
+				unset($modules[$name]);
+				continue;
 			}
-			if ($package_module) {
-				$sql = "SELECT a.name, a.title, a.issystem,(SELECT b.displayorder FROM " . tablename('uni_account_modules') . " AS b WHERE b.uniacid = '{$_W['uniacid']}' AND b.module = a.name) AS displayorder FROM " . tablename('modules') . " AS a WHERE a.issystem <> '1' AND a.name IN ('".implode("','", $package_module)."') $condition $plugin_condition ORDER BY displayorder DESC, a.mid ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
-				$modules = pdo_fetchall($sql, $params, 'name');
-				$total_condition['name'] = $package_module;
-				$total = pdo_getcolumn('modules', $total_condition, 'COUNT(*)');
+			$row['preview'] = $row['logo'];
+			if ($row['issystem'] == 1) {
+				$row['enabled'] = 1;
+			} elseif (!isset($row['enabled'])) {
+				$row['enabled'] = 1;
 			}
+			$row['isdisplay'] = 1;
 		}
-		if (empty($modules)) {
-			$modules = pdo_getall('modules', array('issystem' => 2), array(), 'name');
-		}
+		unset($row);
+		$total = count($modules);
+		$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
 		if (!empty($modules)) {
-			foreach ($modules as $name => &$row) {
-				$row = module_fetch($name);
-				$row['preview'] = $row['logo'];
-				if ($row['issystem'] == 1) {
-					$row['enabled'] = 1;
-				} elseif (!isset($row['enabled'])) {
-					$row['enabled'] = 1;
-				}
-				$row['isdisplay'] = 1;
-			}
-			unset($row);
 			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modules), 'uniacid' => $_W['uniacid']), array('module', 'enabled', 'shortcut'), 'module');
 			if (!empty($module_profile)) {
 				foreach ($module_profile as $name => $row) {
@@ -118,9 +47,10 @@ if($do == 'display') {
 					$modules[$name]['shortcut'] = $row['shortcut'];
 				}
 			}
-			$pager = pagination($total, $pageindex, $pagesize);
 		}
+		$pager = pagination($total, $pageindex, $pagesize);
 	}
+
 	template('profile/module');
 } elseif ($do == 'shortcut') {
 	$status = intval($_GPC['shortcut']);
