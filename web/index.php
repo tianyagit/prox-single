@@ -214,13 +214,15 @@ function _calc_current_frames(&$frames) {
 	global $controller, $action;
 	if (! empty($frames['section']) && is_array($frames['section'])) {
 		foreach ($frames['section'] as &$frame) {
-			if (empty($frame['menu']))
+			if (empty($frame['menu'])) {
 				continue;
+			}
 			foreach ($frame['menu'] as &$menu) {
 				$query = parse_url($menu['url'], PHP_URL_QUERY);
 				parse_str($query, $urls);
-				if (empty($urls))
+				if (empty($urls)) {
 					continue;
+				}
 				if (defined('ACTIVE_FRAME_URL')) {
 					$query = parse_url(ACTIVE_FRAME_URL, PHP_URL_QUERY);
 					parse_str($query, $get);
