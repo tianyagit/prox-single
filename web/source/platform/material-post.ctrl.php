@@ -60,7 +60,6 @@ if ($do == 'addnews') {
 	$articles = array();
 	$post_news = array();
 	$local_upload_to_wechat = '';
-
 	//获取所有的图片素材，构造一个以media_id为键的数组(为了获取图片的url)
 	if (!empty($_GPC['news'])) {
 		foreach ($_GPC['news'] as $key => $news) {
@@ -80,7 +79,67 @@ if ($do == 'addnews') {
 					iajax(0, $news_info['content']);
 				}
 				if (empty($news_info['thumb_media_id'])) {
-					iajax(1, '请将封面图片换成微信图片素材后再上传。');
+					//同步图片到本地
+					$reload_full_name = file_fetch($news['thumb'], '1024');
+					$fullname = ATTACHMENT_ROOT . $reload_full_name;
+					// 上传到微信服务器
+					load()->model('account');
+					$acc = WeAccount::create($_W['acid']);
+					$token = $acc->getAccessToken();
+					if (is_error($token)) {
+						$result['message'] = $token['message'];
+						iajax(1, json_encode($result));
+					}
+					$sendapi = 'https://api.weixin.qq.com/cgi-bin/material/add_material' . "?access_token={$token}&type=image";
+					$data = array(
+						'media' => '@'.$fullname
+					);				
+					load()->func('communication');
+					$resp = ihttp_request($sendapi, $data);
+					if(is_error($resp)) {
+						$result['error'] = 0;
+						$result['message'] = $resp['message'];
+						iajax(1, json_encode($result));
+					}
+					$content = @json_decode($resp['content'], true);
+					if(empty($content)) {
+						$result['error'] = 0;
+						$result['message'] = "接口调用失败, 元数据: {$resp['meta']}";
+						iajax(1, json_encode($result));
+					}
+					if(!empty($content['errcode'])) {
+						$result['error'] = 0;
+						$result['message'] = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->error_code($content['errcode'])}";
+						iajax(1, json_encode($result));
+					}
+					if(!empty($content['media_id'])){
+						$result['media_id'] = $content['media_id'];
+					}
+					if(!empty($content['thumb_media_id'])){
+						$result['media_id'] = $content['thumb_media_id'];
+					}
+					$size = getimagesize($fullname);
+					$insert = array(
+							'uniacid' => $_W['uniacid'],
+							'acid' => $_W['acid'],
+							'uid' => $_W['uid'],
+							'filename' => basename($fullname),
+							'attachment' => $content['url'],
+							'media_id' => $result['media_id'],
+							'width' => $size[0],
+							'height' => $size[1],
+							'type' => 'image',
+							'model' => 'prem',
+							'tag' => $content['url'],
+							'createtime' => TIMESTAMP
+					);
+					if (!pdo_insert('wechat_attachment', $insert, true)){
+						iajax(1, '同步素材插入表操作失败。');
+					}else{
+						$news['media_id'] = $result['media_id'];
+						$news_info['thumb_media_id'] = $result['media_id'];
+						file_delete($fullname);
+					}
 				}
 			}
 			$post_data = array(
