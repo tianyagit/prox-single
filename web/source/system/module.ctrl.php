@@ -229,6 +229,7 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
+	cache_delete("unimodules:{$_W['uniacid']}:1");
 	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
@@ -364,6 +365,7 @@ if ($do =='install') {
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
 		cache_delete(cache_system_key("user_modules:" . $_W['uid']));
+		cache_delete("unimodules:{$_W['uniacid']}:1");
 
 		if (empty($module_subscribe_success)) {
 			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
