@@ -6,6 +6,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+
 if($_W['config']['setting']['cache'] == 'memcache') {
 	if (extension_loaded('memcache')) {
 		$config = $_W['config']['setting']['memcache'];

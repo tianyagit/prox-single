@@ -607,7 +607,7 @@ class WeUtility {
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		if (!empty($o->module['plugin'])) {
-			$o->installed_plugin_list = module_get_plugin_list($o->module['name']);
+			$o->plugin_list = module_get_plugin_list($o->module['name']);
 		}
 		self::defineConst($o);
 		$o->inMobile = defined('IN_MOBILE');
