@@ -11,7 +11,7 @@
 
 {loop $menus $name $sections}
 	{if $sections['section'] && !in_array($name, array('system', 'adviertisement'))}
-	<table class="table we7-table table-hover">
+	<table class="table we7-table table-hover we7-form">
 		<div class="we7-page-title">{$sections['title']}</div>
 		{loop $sections['section'] $section_id $section}
 			{if $section_id != 'platform_module'}
@@ -39,8 +39,8 @@
 							<ul class="dropdown-menu">
 								{loop $menu['sub_permission'] $sub_permission}
 								<li class="text-left">
+									<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$sub_permission['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
 									<label class="we7-margin-horizontal-none">
-										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$sub_permission['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission['permission'])}checked{/if} name="system[]">
 										{$sub_permission['title']}
 									</label>
 								</li>
@@ -69,7 +69,7 @@
 {/loop}
 
 {if !empty($module)}
-	<table class="table we7-table table-hover vertical-middle">
+	<table class="table we7-table table-hover vertical-middle we7-form">
 		<div class="we7-page-title">模块</div>
 		<thead>
 			<tr>
