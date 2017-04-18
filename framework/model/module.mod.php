@@ -467,7 +467,8 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	cache_build_module_subscribe_type();
 	cache_build_uninstalled_module();
 	cache_delete(cache_system_key("user_modules:" . $_W['uid']));
-	cache_delete("unimodules:{$_W['uniacid']}:1");
+	cache_delete("unimodules:{$_W['uniacid']}:{true}");
+	cache_delete("unimodules:{$_W['uniacid']}:{false}");
 
 	return true;
 }

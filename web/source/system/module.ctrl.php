@@ -229,7 +229,8 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	cache_delete("unimodules:{$_W['uniacid']}:1");
+	cache_delete("unimodules:{$_W['uniacid']}:{true}");
+	cache_delete("unimodules:{$_W['uniacid']}:{false}");
 	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
@@ -291,9 +292,9 @@ if ($do =='install') {
 		}
 	}
 	if (!empty($manifest['platform']['main_module'])) {
-		$main_module_plugin_list = pdo_getall('modules_plugin', array('main_module' => $manifest['platform']['main_module']), array(), 'name');
-		if (!in_array($manifest['application']['identifie'], array_keys($main_module_plugin_list))) {
-			itoast('请先更新主模块后再安装插件', url('system/module/not_installed'), 'error');
+		$plugin_exist = pdo_get('modules_plugin', array('main_module' => $manifest['platform']['main_module'], 'name' => $manifest['application']['identifie']));
+		if (empty($plugin_exist)) {
+			itoast('请先更新主模块后再安装插件', url('system/modulet_installed'), 'error');
 		}
 	}
 	$post_groups = $_GPC['group'];
@@ -365,7 +366,9 @@ if ($do =='install') {
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
 		cache_delete(cache_system_key("user_modules:" . $_W['uid']));
-		cache_delete("unimodules:{$_W['uniacid']}:1");
+		cache_delete("unimodules:{$_W['uniacid']}:{true}");
+		cache_delete("unimodules:{$_W['uniacid']}:{false}");
+
 
 		if (empty($module_subscribe_success)) {
 			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
