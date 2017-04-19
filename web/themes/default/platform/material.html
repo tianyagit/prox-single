@@ -50,9 +50,9 @@
 						<div class="appmsg-info">
 							<em class="appmsg-date">{php echo date('Y年m月d', $material['createtime'])}</em>
 							{if $material['model'] == 'local'}
-							<i class="wi wi-file pull-right color-default" style="font-size: 20px;"></i>
+							<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
 							{else}
-							<i class="wi wi-wechat pull-right color-green" style="font-size: 20px;"></i>
+							<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
 							{/if}
 							{if $material['prompt_msg'] && $material['model'] != 'local'}
 							<div class="undone-tips">
@@ -70,7 +70,12 @@
 							<p class="appmsg-desc">{$material['items']['0']['digest']}</p>
 							<a href="{$material['items']['0']['url']}" target="_blank" class="cover-dark">
 								<div class="edit-mask-content">
-									预览文章
+									{if $material['model'] == 'local'}
+									本地预览<span data-toggle="tooltip" data-placement="bottom" title="本地文章，不可以群发，可以转换成为微信文章."><i class="wi wi-explain-sign"></i></span>
+									<span class="hidden">外部链接预览<span data-toggle="tooltip" data-placement="bottom" title="外部链接，内容不是文章，不可以群发或转换为微信文章."><i class="wi wi-explain-sign"></i></span></span>
+									{else}
+									微信预览
+									{/if}
 								</div>
 								<span class="vm-box"></span>
 							</a>
@@ -104,6 +109,10 @@
 							<li class="appmsg-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('news', {$material['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{else}
+							<li class="appmsg-opr-item">
+								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信文章"><i class="wi wi-transform"></i></a>
+							</li>
 							{/if}
 							<li class="appmsg-opr-item">
 								<a href="{php echo url('platform/material-post/news', array('newsid' => $material['id']))}" class="" data-toggle="tooltip" data-placement="bottom" title="编辑">&nbsp;<i class="wi wi-text"></i></a>
@@ -128,18 +137,37 @@
 					<div id="webUploaderBtn" style="float: right;"></div>
 					<div id="webUploaderBtn2" style="float: right;"></div>
 				</div>
+				<div class="btn-group we7-btn-group">
+					<a href="javascript:;" class="btn active">微信</a>
+					<a href="javascript:;" class="btn ">服务器</a>
+				</div>
 			</div>
-			<ul class="material-img-list">
+			<ul class="material-img-list clearfix">
 				{loop $image_list $image}
 				<li class="material-img-item">
+					<div class="appimg-info">
+						{if $material['model'] == 'local'}
+						<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
+						{else}
+						<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+						{/if}
+						<span class="appimg-title">{$image['filename']}</span>
+					</div>
 					<div class="img-item">
-						<h4 class="img-title">
-							<a href="" target="-blank">{$image['filename']}</a>
-						</h4>
 						<img class="img-thumb" src="{php echo tomedia($image['attachment'], true);}">
+						<a href="{$material['items']['0']['url']}" target="_blank" class="cover-dark">
+							<div class="edit-mask-content">
+								<div><span class="wi wi-eye"></span></div>
+								<div>预览</div>
+							</div>
+							<span class="vm-box"></span>
+						</a>
 					</div>
 					<div class="img-opr">
 						<ul>
+							<li class="img-opr-item">
+								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信图片"><i class="wi wi-transform"></i></a>
+							</li>
 							<li class="img-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('image', {$image['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
