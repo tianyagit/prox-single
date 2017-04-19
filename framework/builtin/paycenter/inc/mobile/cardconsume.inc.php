@@ -12,13 +12,13 @@ if($op == 'consume') {
 		$code = trim($_GPC['code']);
 		$record = pdo_get('coupon_record', array('code' => $code));
 		if(empty($record)) {
-			iajax(-1, '卡券记录不存在', '');
+			message(error(-1, '卡券记录不存在'), '', 'ajax');
 		}
 		$status = activity_coupon_use($record['couponid'], $record['id'], 'paycenter');
 		if (!is_error($status)) {
-			iajax('0', '', '');
+			message(error('0', ''), '', 'ajax');
 		} else {
-			iajax('-1', $status['message'],'' );
+			message(error('-1', $status['message']),'' , 'ajax');
 		}
 	}
 }
