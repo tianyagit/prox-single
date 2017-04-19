@@ -118,7 +118,7 @@
 								<a href="{php echo url('platform/material-post/news', array('newsid' => $material['id']))}" class="" data-toggle="tooltip" data-placement="bottom" title="编辑">&nbsp;<i class="wi wi-text"></i></a>
 							</li>
 							<li class="appmsg-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$material['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$material['id']}', 'wechat')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -134,19 +134,22 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
 					{/if}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					{if $islocal}
 					<div id="webUploaderBtn2" style="float: right;"></div>
+					{else}
+					<div id="webUploaderBtn" style="float: right;"></div>
+					{/if}
 				</div>
 				<div class="btn-group we7-btn-group">
-					<a href="javascript:;" class="btn active">微信</a>
-					<a href="javascript:;" class="btn ">服务器</a>
+					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if !$islocal} active {/if}">微信</a>
+					<a href="{php echo url('platform/material', array('type' => $type, 'islocal' => 'true'))}" class="btn {if $islocal} active {/if}">服务器</a>
 				</div>
 			</div>
 			<ul class="material-img-list clearfix">
 				{loop $image_list $image}
 				<li class="material-img-item">
 					<div class="appimg-info">
-						{if $material['model'] == 'local'}
+						{if $islocal}
 						<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
 						{else}
 						<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
@@ -154,7 +157,11 @@
 						<span class="appimg-title">{$image['filename']}</span>
 					</div>
 					<div class="img-item">
+						{if $islocal}
+						<img class="img-thumb" src="{php echo tomedia($image['attachment']);}">
+						{else}
 						<img class="img-thumb" src="{php echo tomedia($image['attachment'], true);}">
+						{/if}
 						<a href="{$material['items']['0']['url']}" target="_blank" class="cover-dark">
 							<div class="edit-mask-content">
 								<div><span class="wi wi-eye"></span></div>
@@ -165,14 +172,17 @@
 					</div>
 					<div class="img-opr">
 						<ul>
+							{if $islocal}
 							<li class="img-opr-item">
-								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信图片"><i class="wi wi-transform"></i></a>
+								<a href="javascript:;" class="" ng-click="transToWechat('{$type}', '{$image['id']}')" data-toggle="tooltip" data-placement="bottom" title="转换为微信图片"><i class="wi wi-transform"></i></a>
 							</li>
+							{else}
 							<li class="img-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('image', {$image['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{/if}
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$image['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$image['id']}', '{php echo $islocal? local : wechat}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -187,8 +197,15 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
 					{/if}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					{if $islocal}
 					<div id="webUploaderBtn2" style="float: right;"></div>
+					{else}
+					<div id="webUploaderBtn" style="float: right;"></div>
+					{/if}
+				</div>
+				<div class="btn-group we7-btn-group">
+					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if !$islocal} active {/if}">微信</a>
+					<a href="{php echo url('platform/material', array('type' => $type, 'islocal' => 'true'))}" class="btn {if $islocal} active {/if}">服务器</a>
 				</div>
 			</div>
 			<ul class="material-audio-list">
@@ -206,11 +223,17 @@
 					</div>
 					<div class="audio-opr">
 						<ul>
+							{if $islocal}
+							<li class="audio-opr-item">
+								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信图片"><i class="wi wi-transform"></i></a>
+							</li>
+							{else}
 							<li class="audio-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('voice', {$voice['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{/if}
 							<li class="audio-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$voice['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$voice['id']}', '{php echo $islocal? local : wechat}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -225,8 +248,15 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
 					{/if}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					{if $islocal}
 					<div id="webUploaderBtn2" style="float: right;"></div>
+					{else}
+					<div id="webUploaderBtn" style="float: right;"></div>
+					{/if}
+				</div>
+				<div class="btn-group we7-btn-group">
+					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if !$islocal} active {/if}">微信</a>
+					<a href="{php echo url('platform/material', array('type' => $type, 'islocal' => 'true'))}" class="btn {if $islocal} active {/if}">服务器</a>
 				</div>
 			</div>
 			<ul class="material-img-list">
@@ -234,7 +264,7 @@
 				<li class="material-img-item">
 					<div class="img-item">
 						<h4 class="img-title">
-							<a href="" target="-blank">{$video['tag']['title']}</a>
+							<a href="" target="-blank">{php echo ($islocal? $video['filename'] : $video['tag']['title'])}</a>
 						</h4>
 						<div class="img-thumb" style="background-image:url('{php echo tomedia($video['attachment'])}')">
 
@@ -242,11 +272,17 @@
 					</div>
 					<div class="img-opr">
 						<ul>
+							{if $islocal}
+							<li class="img-opr-item">
+								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信图片"><i class="wi wi-transform"></i></a>
+							</li>
+							{else}
 							<li class="img-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('video', {$video['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{/if}
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$video['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$video['id']}', '{php echo $islocal? local : wechat}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -286,6 +322,7 @@
 			'del_url' : "{php echo url('platform/material/del_material')}",
 			'sync_url' : "{php echo url('platform/material/sync')}",
 			'send_url' : "{php echo url('platform/material/send')}",
+			'trans_url' : "{php echo url('platform/material/trans')}",
 			'group' : {php echo json_encode($group)},
 			'syncNews' : "{$_GPC['sync_news']}"
 		});
