@@ -23,7 +23,7 @@ if($do == 'display') {
 
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => &$row) {
-			if (!empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
+			if (!empty($row['issystem']) || !empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
 				unset($modulelist[$name]);
 				continue;
 			}
