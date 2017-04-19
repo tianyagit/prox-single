@@ -150,9 +150,9 @@ function template_parse($str) {
 	$str = preg_replace('/{url\s+(\S+)\s+(array\(.+?\))}/', '<?php echo url($1, $2);?>', $str);
 	$str = preg_replace('/{media\s+(\S+)}/', '<?php echo tomedia($1);?>', $str);
 	$str = preg_replace_callback('/{data\s+(.+?)}/s', "moduledata", $str);
-	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "modulehook", $str);
+	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "template_modulehook_parser", $str);
 	$str = preg_replace('/{\/data}/', '<?php } } ?>', $str);
-	$str = preg_replace('/{\/hook}/', '<?php } } ?>', $str);
+	$str = preg_replace('/{\/hook}/', '<?php ; ?>', $str);
 	$str = preg_replace_callback('/<\?php([^\?]+)\?>/s', "template_addquote", $str);
 	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
 	$str = str_replace('{##', '{', $str);
