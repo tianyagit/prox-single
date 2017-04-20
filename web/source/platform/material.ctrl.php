@@ -65,7 +65,7 @@ if ($do == 'send') {
 
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-	$islocal = boolval($_GPC['islocal']) ? true : false;
+	$islocal = isset($_GPC['islocal']) && (trim($_GPC['islocal']) != '' || trim($_GPC['islocal']) != '0') ? true : false;
 	$group = mc_fans_groups(true);
 	if ($type == 'news') {
 		$condition = " as a RIGHT JOIN " . tablename('wechat_news') . " as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND (a.model = :model || a.model = :modela)";
@@ -308,71 +308,77 @@ if ($do == 'sync') {
 if ($do == 'trans') {
 	$material_id = intval($_GPC['material_id']);
 	$type = trim($_GPC['type']);
-	$allow_type_arr = array('image', 'voice', 'video', 'thumb', 'audio');
-	if (!in_array($type, $allow_type_arr)){
-		iajax(-1, '参数有误');
+	$allow_type_arr = array(
+		'image',
+		'voice',
+		'video',
+		'thumb',
+		'audio' 
+	);
+	if (! in_array($type, $allow_type_arr)) {
+		iajax(- 1, '参数有误');
 	}
 	$material = pdo_get('core_attachment', array(
 		'uniacid' => $_W['uniacid'],
 		'id' => $material_id 
 	));
 	if (empty($material)) {
-		iajax(-1, '同步素材不存在或已删除');
+		iajax(- 1, '同步素材不存在或已删除');
 	}
 	if (! empty($_W['setting']['remote']['type'])) {
-		//同步素材到本地
+		// 同步素材到本地
 		$remote_file_url = tomedia($material['attachment']);
 		$remote_file_url_parts = parse_url($remote_file_url);
 		$remote_file_url_parts['basename'] = pathinfo($remote_file_url, PATHINFO_BASENAME);
-		$remote_file_url_parts['dirname'] = pathinfo($remote_file_url_parts['path'], PATHINFO_DIRNAME).'/';
+		$remote_file_url_parts['dirname'] = pathinfo($remote_file_url_parts['path'], PATHINFO_DIRNAME) . '/';
 		$remote_file_download = downloadFile($remote_file_url, $remote_file_url_parts['dirname'], $remote_file_url_parts['basename']);
-		if (!$remote_file_download){
-			iajax(-1, '本地同步素材失败');
+		if (! $remote_file_download) {
+			iajax(- 1, '本地同步素材失败');
 		}
 		$filepath = $remote_file_download;
 	} else {
 		$filepath = ATTACHMENT_ROOT . $material['attachment'];
 	}
-	//同步到微信
+	// 同步到微信
 	$acc = WeAccount::create($_W['uniacid']);
 	$token = $acc->getAccessToken();
 	if (is_error($token)) {
 		$result['message'] = $token['message'];
-		iajax(-1, json_encode($result));
+		iajax(- 1, json_encode($result));
 	}
 	$sendapi = 'https://api.weixin.qq.com/cgi-bin/material/add_material' . "?access_token={$token}&type={$type}";
 	$data = array(
-		'media' => '@'.$filepath
+		'media' => '@' . $filepath 
 	);
-	if($type == 'video') {
+	if ($type == 'video') {
 		$description = array(
 			'title' => urlencode(trim($remote_file_url_parts['basename'])),
-			'introduction' => urlencode(trim($remote_file_url_parts['basename']))
+			'introduction' => urlencode(trim($remote_file_url_parts['basename'])) 
 		);
 		$data['description'] = urldecode(json_encode($description));
 	}
 	
 	$resp = ihttp_request($sendapi, $data);
-	if(is_error($resp)) {
+	if (is_error($resp)) {
 		$result['error'] = 0;
 		$result['message'] = $resp['message'];
-		iajax(-1, json_encode($result));
+		iajax(- 1, json_encode($result));
 	}
 	$content = @json_decode($resp['content'], true);
-	if(empty($content)) {
+	if (empty($content)) {
 		$result['error'] = 0;
 		$result['message'] = "接口调用失败, 元数据: {$resp['meta']}";
-		iajax(-1, json_encode($result));
+		iajax(- 1, json_encode($result));
 	}
-	if(!empty($content['errcode'])) {
+	if (! empty($content['errcode'])) {
 		$result['error'] = 0;
 		$result['message'] = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->error_code($content['errcode'])}";
-		iajax(-1, json_encode($result));
+		iajax(- 1, json_encode($result));
 	}
-	if(!empty($content['media_id'])){
+	if (! empty($content['media_id'])) {
 		$result['media_id'] = $content['media_id'];
 	}
-	if(!empty($content['thumb_media_id'])){
+	if (! empty($content['thumb_media_id'])) {
 		$result['media_id'] = $content['thumb_media_id'];
 	}
 	$insert = array(
@@ -384,39 +390,40 @@ if ($do == 'trans') {
 		'media_id' => $result['media_id'],
 		'type' => $type,
 		'model' => 'perm',
-		'createtime' => TIMESTAMP
+		'createtime' => TIMESTAMP 
 	);
-	if($type == 'image' || $type == 'thumb') {
+	if ($type == 'image' || $type == 'thumb') {
 		$size = getimagesize($filepath);
 		$insert['width'] = $size[0];
 		$insert['height'] = $size[1];
 		$insert['tag'] = $content['url'];
-		if(!empty($insert['tag'])) {
+		if (! empty($insert['tag'])) {
 			$insert['attachment'] = $content['url'];
 		}
 		$result['width'] = $size[0];
 		$result['hieght'] = $size[1];
 	}
-	if($type == 'video') {
+	if ($type == 'video') {
 		$insert['tag'] = iserializer($description);
 	}
 	pdo_insert('wechat_attachment', $insert);
 	$result['type'] = $type;
 	$result['url'] = tomedia($remote_file_url_parts['path']);
 	
-	if($type == 'image' || $type == 'thumb') {
+	if ($type == 'image' || $type == 'thumb') {
 		@unlink($filepath);
 	}
-	if($type == 'video') {
+	if ($type == 'video') {
 		$result['title'] = $description['title'];
 		$result['introduction'] = $description['introduction'];
 	}
 	$result['mode'] = 'perm';
-	//删除本地文件和数据库
+	// 删除本地文件和数据库
 	file_delete($remote_file_url_parts['path']);
-	pdo_delete('core_attachment', array('id' => $material_id));
+	pdo_delete('core_attachment', array(
+		'id' => $material_id 
+	));
 	iajax(0, json_encode($result));
-	exit;
 }
 
 template('platform/material');
