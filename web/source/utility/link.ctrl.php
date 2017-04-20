@@ -26,7 +26,14 @@ if ($do == 'articlelist') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
-	$result['list'] = pdo_fetchall("SELECT id, title, thumb, description, content, author, incontent, linkurl,  createtime, uniacid FROM ".tablename('site_article')." WHERE uniacid = :uniacid ORDER BY displayorder DESC, id  LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(':uniacid' => $_W['uniacid']), 'id');
+	$condition = '';
+	if (!empty($_GPC['keyword'])) {
+		$condition .= " AND title LIKE :title";
+		$param = array(':uniacid' => $_W['uniacid'], ':title' => '%'. trim($_GPC['keyword']) .'%');
+	} else {
+		$param = array(':uniacid' => $_W['uniacid']);
+	}
+	$result['list'] = pdo_fetchall("SELECT id, title, thumb, description, content, author, incontent, linkurl,  createtime, uniacid FROM ".tablename('site_article')." WHERE uniacid = :uniacid". $condition ." ORDER BY displayorder DESC, id  LIMIT " . ($pindex - 1) * $psize . ',' . $psize, $param, 'id');
 	if (!empty($result['list'])) {
 		foreach ($result['list'] as $k => &$v) {
 			$v['thumb_url'] = tomedia($v['thumb']);
@@ -34,7 +41,7 @@ if ($do == 'articlelist') {
 			$v['name'] = cutstr($v['name'], 10);
 		}
 		unset($v);
-		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_article').' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
+		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_article')." WHERE uniacid = :uniacid". $condition, $param);
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
 	iajax(0, $result);
@@ -43,13 +50,20 @@ if ($do == 'pagelist') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
-	$result['list'] = pdo_fetchall("SELECT * FROM ".tablename('site_page')." WHERE uniacid = :uniacid AND type = '1' ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(':uniacid' => $_W['uniacid']), 'id');
+	$condition = '';
+	if (!empty($_GPC['keyword'])) {
+		$condition .= " AND title LIKE :title";
+		$param = array(':uniacid' => $_W['uniacid'], ':title' => '%'. trim($_GPC['keyword']) .'%');
+	} else {
+		$param = array(':uniacid' => $_W['uniacid']);
+	}
+	$result['list'] = pdo_fetchall("SELECT * FROM ".tablename('site_page')." WHERE uniacid = :uniacid AND type = '1'".$condition." ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, $param, 'id');
 	if (!empty($result['list'])) {
 		foreach ($result['list'] as $k => &$v) {
 			$v['createtime'] = date('Y-m-d H:i', $v['createtime']);
 		}
 		unset($v);
-		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('site_page'). ' WHERE uniacid = :uniacid AND type = 1', array(':uniacid' => $_W['uniacid']));
+		$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " .tablename('site_page'). " WHERE uniacid = :uniacid AND type = 1" . $condition, $param);
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'true'));
 	}
 	iajax(0, $result);
@@ -58,11 +72,18 @@ if ($do == 'newslist') {
 	$result = array();
 	$psize = 10;
 	$pindex = max(1, intval($_GPC['page']));
-	$sql = "SELECT n.id, n.title FROM ". tablename('rule')."AS r,". tablename('news_reply'). " AS n WHERE r.id = n.rid AND r.module = :news AND r.uniacid = :uniacid ORDER BY n.displayorder DESC LIMIT ". ($pindex - 1) * $psize . ',' . $psize;
-	$result['list'] = pdo_fetchall($sql, array(':news' => 'news', ':uniacid' => $_W['uniacid']), 'id');
+	$condition = '';
+	if (!empty($_GPC['keyword'])) {
+		$condition .= " AND n.title LIKE :title";
+		$param = array(':news' => 'reply', ':uniacid' => $_W['uniacid'], ':title' => '%'. trim($_GPC['keyword']) .'%');
+	} else {
+		$param = array(':news' => 'reply', ':uniacid' => $_W['uniacid']);
+	}
+	$sql = "SELECT n.id, n.title FROM ". tablename('rule')."AS r,". tablename('news_reply'). " AS n WHERE r.id = n.rid AND r.module = :news AND r.uniacid = :uniacid". $condition ." ORDER BY n.displayorder DESC LIMIT ". ($pindex - 1) * $psize . ',' . $psize;
+	$result['list'] = pdo_fetchall($sql, $param, 'id');
 	if (!empty($result['list'])) {
-		$sql = "SELECT COUNT(*) FROM ". tablename('rule')."AS r,". tablename('news_reply'). " AS n WHERE r.id = n.rid AND r.module = :news AND r.uniacid = :uniacid ";
-		$total = pdo_fetchcolumn($sql, array(':news' => 'news', ':uniacid' => $_W['uniacid']));
+		$sql = "SELECT COUNT(*) FROM ". tablename('rule')."AS r,". tablename('news_reply'). " AS n WHERE r.id = n.rid AND r.module = :news AND r.uniacid = :uniacid ". $condition;
+		$total = pdo_fetchcolumn($sql, $param);
 		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
 	}
 	iajax(0, $result);
