@@ -2,7 +2,7 @@
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
-		<div class="container {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}{/if}">
+		<div class="container {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}plugin-head{/if}">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="{$_W['siteroot']}">
 					<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
@@ -328,16 +328,16 @@
 			</div>
 		</div>
 	</div>
-	
+
 	{if !defined('IN_MESSAGE')}
 	<div class="container">
 		{if in_array(FRAME, array('account', 'system', 'adviertisement')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
-		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
+		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
 		<a href="javascript:;" class="js-big-main button-to-big color-gray" title="加宽">{if $_GPC['main-lg']}正常{else}宽屏{/if}</a>
 		{/if}
 		<div class="panel panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
 			<div class="content-head panel-heading">
-				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
+				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
 					<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-circle"></i></a>
 					<span class="we7-head-account"><a href="{php echo url('home/welcome/account')}">{$_W['account']['name']}</a></span>
 					{if file_exists(IA_ROOT. "/addons/". $_W['current_module']['name']. "/icon-custom.jpg")}
@@ -385,10 +385,11 @@
 						<div class="panel panel-menu">
 							{if $frame_section['title']}
 								<div class="panel-heading">
-									{$frame_section['title']}<span class="wi wi-appsetting pull-right setting"></span>
+									<a href="javascript:;" class="no-collapse">{$frame_section['title']}<span class="wi wi-appsetting pull-right setting"></span></a>
+									<a class="panel-collapse collapsed" data-toggle="collapse" href="#frame-{$frame_section_id}">{$frame_section['title']}<span class="wi wi-down-sign-s pull-right"></span></a>
 								</div>
 							{/if}
-							<ul class="list-group">
+							<ul class="list-group collapse in" id="frame-{$frame_section_id}">
 								{loop $frame_section['menu'] $menu_id $menu}
 									{if !empty($menu['is_display'])}
 										{if $menu_id == 'platform_module_more'}
@@ -446,10 +447,11 @@
 							<div class="panel panel-menu">
 								{if $frame_section['title']}
 								<div class="panel-heading">
-									{$frame_section['title']}<span class="wi wi-appsetting pull-right setting"></span>
+									<a href="javascript:;" class="no-collapse">{$frame_section['title']}<span class="wi wi-appsetting pull-right setting"></span></a>
+									<a class="panel-collapse collapsed" data-toggle="collapse" href="#frame0-{$frame_section_id}">{$frame_section['title']}<span class="wi wi-down-sign-s pull-right"></span></a>
 								</div>
 								{/if}
-								<ul class="list-group">
+								<ul class="list-group collapse in" id="frame0-{$frame_section_id}">
 									{loop $frame_section['menu'] $menu_id $menu}
 									{if !empty($menu['is_display'])}
 									{if $menu_id == 'platform_module_more'}

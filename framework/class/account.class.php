@@ -5,6 +5,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+load()->model('module');
 /**
  * 公众号业务操作基类
  */
@@ -475,7 +476,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -514,7 +514,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -553,7 +552,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -603,7 +601,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		if (!empty($o->module['plugin'])) {
@@ -624,33 +621,32 @@ class WeUtility {
 	 * @param unknown $name
 	 * @return NULL|WeModuleSite
 	 */
-	public static function createModulePlugin($name) {
+	public static function createModuleHook($name) {
 		global $_W;
-		$classname = "{$name}ModulePlugin";
+		$classname = "{$name}ModuleHook";
+		$file = IA_ROOT . "/addons/{$name}/hook.php";
+		if(!is_file($file)) {
+			$file = IA_ROOT . "/framework/builtin/{$name}/hook.php";
+		}
 		if(!class_exists($classname)) {
-			$file = IA_ROOT . "/addons/{$name}/hook.php";
 			if(!is_file($file)) {
-				$file = IA_ROOT . "/framework/builtin/{$name}/hook.php";
-			}
-			if(!is_file($file)) {
-				trigger_error('ModulePlugin Definition File Not Found '.$file, E_USER_WARNING);
+				trigger_error('ModuleHook Definition File Not Found '.$file, E_USER_WARNING);
 				return null;
 			}
 			require $file;
 		}
 		if(!class_exists($classname)) {
-			trigger_error('ModulePlugin Definition Class Not Found', E_USER_WARNING);
+			trigger_error('ModuleHook Definition Class Not Found', E_USER_WARNING);
 			return null;
 		}
 		$plugin = new $classname();
 		$plugin->uniacid = $plugin->weid = $_W['uniacid'];
 		$plugin->modulename = $name;
-		load()->model('module');
 		$plugin->module = module_fetch($name);
 		$plugin->__define = $file;
 		self::defineConst($plugin);
 		$plugin->inMobile = defined('IN_MOBILE');
-		if($plugin instanceof WeModulePlugin) {
+		if($plugin instanceof WeModuleHook) {
 			return $plugin;
 		} else {
 			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
@@ -685,7 +681,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -723,7 +718,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -1668,6 +1662,6 @@ abstract class WeModuleWxapp extends WeBase {
 /**
  * 模块插件
  */
-abstract class WeModulePlugin extends WeBase {
+abstract class WeModuleHook extends WeBase {
 
 }

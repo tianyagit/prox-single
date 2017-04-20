@@ -11,8 +11,12 @@ function wxapp_getpackage($data) {
 	load()->classs('cloudapi');
 	$api = new CloudApi();
 	$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
-	if(strpos($result, 'error:') === 0){
-		return error(-1, substr($result, 6));
+	if (is_error($result)) {
+			return error(-1, $result['message']);
+	} else {
+		if (strpos($result, 'error:') === 0 ) {
+			return error(-1, substr($result, 6));
+		}
 	}
 	return $result;
 }

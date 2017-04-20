@@ -16,8 +16,8 @@
 					</label>
 				</div>
 			</div>
-			<div id="key" ng-hide="status == ''" >
-			{php echo module_build_form('core', $rule_id, array('keyword' => false, 'module' => false))}
+			<div id="key" ng-hide="status == ''">
+				{php echo module_build_form('core', $rule_id, array('keyword' => false, 'module' => false))}
 			</div>
 			<input type="submit" name="submit"  value="保存" class="btn btn-primary" style="padding: 6px 50px;"/>
 			<input type="hidden" name="token" value="{$_W['token']}">

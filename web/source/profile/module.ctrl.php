@@ -21,10 +21,11 @@ if($do == 'display') {
 	$pageindex = max(1, intval($_GPC['page']));
 	$pagesize = 30;
 
-	$modules = uni_modules();
-	if (!empty($modules)) {
-		foreach ($modules as $name => &$row) {
-			if ((!empty($_GPC['keyword']) && !strexists($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
+	if (!empty($modulelist)) {
+		foreach ($modulelist as $name => &$row) {
+			if (!empty($row['issystem']) || !empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
+				unset($modulelist[$name]);
+				continue;
 				unset($modules[$name]);
 				continue;
 			}
@@ -37,17 +38,20 @@ if($do == 'display') {
 			$row['isdisplay'] = 1;
 		}
 		unset($row);
-		$total = count($modules);
-		$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
-		if (!empty($modules)) {
-			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modules), 'uniacid' => $_W['uniacid']), array('module', 'enabled', 'shortcut'), 'module');
+		$modules = array();
+		if (!empty($modulelist)) {
+			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array('module', 'enabled', 'shortcut'), 'module', array('displayorder DESC'));
 			if (!empty($module_profile)) {
 				foreach ($module_profile as $name => $row) {
+					$modules[$name] = $modulelist[$name];
 					$modules[$name]['enabled'] = $row['enabled'];
 					$modules[$name]['shortcut'] = $row['shortcut'];
 				}
 			}
 		}
+		}
+		$total = count($modules);
+		$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
 

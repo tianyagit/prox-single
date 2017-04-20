@@ -59,7 +59,7 @@
 </div>
 <script>
 	angular.module('massApp').value('config', {
-		logUrl: "{php echo url('utility/cron/log');}"
+		logUrl: "{php echo url('cron/manager/log');}"
 	});
 	angular.bootstrap($('#js-mass-send'), ['massApp']);
 </script>
