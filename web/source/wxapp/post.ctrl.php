@@ -11,7 +11,6 @@ load()->model('wxapp');
 $dos = array('post', 'getapps', 'getpackage', 'getlink');
 $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
-
 if ($do == 'getlink') {
 	if (!empty($_GPC['module'])) {
 		foreach ($_GPC['module'] as $key=>&$val) {
@@ -155,8 +154,7 @@ if($do == 'post') {
 		}
 		pdo_insert('wxapp_versions', $wxapp_version);
 		$versionid = pdo_insertid();
-		
-		itoast('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)), 'success');
+		message('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)), 'success');
 	}
 	template('wxapp/create-post');
 }

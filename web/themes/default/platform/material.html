@@ -50,9 +50,9 @@
 						<div class="appmsg-info">
 							<em class="appmsg-date">{php echo date('Y年m月d', $material['createtime'])}</em>
 							{if $material['model'] == 'local'}
-							<i class="wi wi-file pull-right color-default" style="font-size: 20px;"></i>
+							<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
 							{else}
-							<i class="wi wi-wechat pull-right color-green" style="font-size: 20px;"></i>
+							<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
 							{/if}
 							{if $material['prompt_msg'] && $material['model'] != 'local'}
 							<div class="undone-tips">
@@ -70,7 +70,12 @@
 							<p class="appmsg-desc">{$material['items']['0']['digest']}</p>
 							<a href="{$material['items']['0']['url']}" target="_blank" class="cover-dark">
 								<div class="edit-mask-content">
-									预览文章
+									{if $material['model'] == 'local'}
+									本地预览<span data-toggle="tooltip" data-placement="bottom" title="本地文章，不可以群发，可以转换成为微信文章."><i class="wi wi-explain-sign"></i></span>
+									<span class="hidden">外部链接预览<span data-toggle="tooltip" data-placement="bottom" title="外部链接，内容不是文章，不可以群发或转换为微信文章."><i class="wi wi-explain-sign"></i></span></span>
+									{else}
+									微信预览
+									{/if}
 								</div>
 								<span class="vm-box"></span>
 							</a>
@@ -104,12 +109,16 @@
 							<li class="appmsg-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('news', {$material['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{else}
+							<li class="appmsg-opr-item">
+								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信文章"><i class="wi wi-transform"></i></a>
+							</li>
 							{/if}
 							<li class="appmsg-opr-item">
 								<a href="{php echo url('platform/material-post/news', array('newsid' => $material['id']))}" class="" data-toggle="tooltip" data-placement="bottom" title="编辑">&nbsp;<i class="wi wi-text"></i></a>
 							</li>
 							<li class="appmsg-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$material['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$material['id']}', 'wechat')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -125,26 +134,48 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
 					{/if}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					{if $islocal}
 					<div id="webUploaderBtn2" style="float: right;"></div>
+					{else}
+					<div id="webUploaderBtn" style="float: right;"></div>
+					{/if}
+				</div>
+				<div class="btn-group we7-btn-group">
+					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if !$islocal} active {/if}">微信</a>
+					<a href="{php echo url('platform/material', array('type' => $type, 'islocal' => 'true'))}" class="btn {if $islocal} active {/if}">服务器</a>
 				</div>
 			</div>
-			<ul class="material-img-list">
+			<ul class="material-img-list clearfix">
 				{loop $image_list $image}
 				<li class="material-img-item">
+					<div class="appimg-info">
+						{if $islocal}
+						<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
+						{else}
+						<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+						{/if}
+						<span class="appimg-title">{$image['filename']}</span>
+					</div>
 					<div class="img-item">
-						<h4 class="img-title">
-							<a href="" target="-blank">{$image['filename']}</a>
-						</h4>
+						{if $islocal}
+						<img class="img-thumb" src="{php echo tomedia($image['attachment']);}">
+						{else}
 						<img class="img-thumb" src="{php echo tomedia($image['attachment'], true);}">
+						{/if}
 					</div>
 					<div class="img-opr">
 						<ul>
+							{if $islocal}
+							<li class="img-opr-item">
+								<a href="javascript:;" class="" ng-click="transToWechat('{$type}', '{$image['id']}')" data-toggle="tooltip" data-placement="bottom" title="转换为微信图片"><i class="wi wi-transform"></i></a>
+							</li>
+							{else}
 							<li class="img-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('image', {$image['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{/if}
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$image['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$image['id']}', '{php echo $islocal? local : wechat}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -154,35 +185,57 @@
 		</div>
 		{elseif $type == 'voice'}
 		<div class="material-appmsg">
+		<div class="upload-queue"></div>
 			<div class="material-list-head clearfix">
 				<div class="action">
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
 					{/if}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					{if $islocal}
 					<div id="webUploaderBtn2" style="float: right;"></div>
+					{else}
+					<div id="webUploaderBtn" style="float: right;"></div>
+					{/if}
+				</div>
+				<div class="btn-group we7-btn-group">
+					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if !$islocal} active {/if}">微信</a>
+					<a href="{php echo url('platform/material', array('type' => $type, 'islocal' => 'true'))}" class="btn {if $islocal} active {/if}">服务器</a>
 				</div>
 			</div>
 			<ul class="material-audio-list">
 				{loop $voice_list $voice}
 				<li class="material-audio-item">
+					<div class="audio-info clearfix">
+						{if $islocal}
+						<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
+						{else}
+						<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+						{/if}
+						<span class="audio-time">{php echo date('m月d日', $voice['createtime'])}</span>
+					</div>
 					<div class="audio-item">
 						<div class="icon-audio-wrp">
 							<span class="icon-audio-msg"></span>
 						</div>
 						<div class="audio-content">
 							<div class="audio-title">{$voice['attachment']}</div>
-							<div class="audio-time">{php echo date('m月d日', $voice['createtime'])}</div>
+							<!--<div class="audio-time">{php echo date('m月d日', $voice['createtime'])}</div>-->
 							<div class="audio-length">{php echo date('h:i', $voice['createtime'])}</div>
 						</div>
 					</div>
 					<div class="audio-opr">
 						<ul>
+							{if $islocal}
+							<li class="audio-opr-item">
+								<a href="javascript:;" class="" ng-click="transToWechat('{$type}', '{$voice['id']}')" data-toggle="tooltip" data-placement="bottom" title="转换为微信语音"><i class="wi wi-transform"></i></a>
+							</li>
+							{else}
 							<li class="audio-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('voice', {$voice['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{/if}
 							<li class="audio-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$voice['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$voice['id']}', '{php echo $islocal? local : wechat}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -192,33 +245,52 @@
 		</div>
 		{elseif $type == 'video'}
 		<div class="material-appmsg">
+		<div class="upload-queue"></div>
 			<div class="material-list-head clearfix">
 				<div class="action">
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
 					{/if}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					{if $islocal}
 					<div id="webUploaderBtn2" style="float: right;"></div>
+					{else}
+					<div id="webUploaderBtn" style="float: right;"></div>
+					{/if}
+				</div>
+				<div class="btn-group we7-btn-group">
+					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if !$islocal} active {/if}">微信</a>
+					<a href="{php echo url('platform/material', array('type' => $type, 'islocal' => 'true'))}" class="btn {if $islocal} active {/if}">服务器</a>
 				</div>
 			</div>
 			<ul class="material-img-list">
 				{loop $video_list $video}
 				<li class="material-img-item">
 					<div class="img-item">
-						<h4 class="img-title">
-							<a href="" target="-blank">{$video['tag']['title']}</a>
-						</h4>
+						<div class="appimg-info">
+							{if $islocal}
+							<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
+							{else}
+							<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+							{/if}
+							<span class="appimg-title">{php echo ($islocal? $video['filename'] : $video['tag']['title'])}</span>
+						</div>
 						<div class="img-thumb" style="background-image:url('{php echo tomedia($video['attachment'])}')">
 
 						</div>
 					</div>
 					<div class="img-opr">
 						<ul>
+							{if $islocal}
+							<li class="img-opr-item">
+								<a href="javascript:;" class="" ng-click="transToWechat('{$type}', '{$video['id']}')" data-toggle="tooltip" data-placement="bottom" title="转换为微信视频"><i class="wi wi-transform"></i></a>
+							</li>
+							{else}
 							<li class="img-opr-item">
 								<a href="javascript:;" class="" ng-click="checkGroup('video', {$video['id']})" data-toggle="tooltip" data-placement="bottom" title="群发"><i class="wi wi-send"></i></a>
 							</li>
+							{/if}
 							<li class="img-opr-item">
-								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$video['id']}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
+								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$video['id']}', '{php echo $islocal? local : wechat}')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
 							</li>
 						</ul>
 					</div>
@@ -248,7 +320,7 @@
 		</div>
 	</div>
 </div>
-<div class="pull-right">
+<div class="text-right">
 	{$pager}
 </div>
 <script>
@@ -258,6 +330,7 @@
 			'del_url' : "{php echo url('platform/material/del_material')}",
 			'sync_url' : "{php echo url('platform/material/sync')}",
 			'send_url' : "{php echo url('platform/material/send')}",
+			'trans_url' : "{php echo url('platform/material/trans')}",
 			'group' : {php echo json_encode($group)},
 			'syncNews' : "{$_GPC['sync_news']}"
 		});

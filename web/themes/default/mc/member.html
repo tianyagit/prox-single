@@ -127,7 +127,7 @@
 				</tr>
 				{loop $list $li}
 				<tr>
-					<td>
+					<td style="overflow: hidden;">
 						<input type="checkbox" we7-check-all="1" name="uid[]" id="uid-{$li['uid']}" value="{$li['uid']}" class="">
 						<label for="uid-{$li['uid']}">&nbsp;</label>
 					</td>
@@ -183,9 +183,9 @@
 				<input type="hidden" name="token" value="{$_W['token']}">
 				<input type="checkbox" we7-check-all="1" id="check-all" name="uid[]" onclick="var ck = this.checked;$(':checkbox').each(function(){this.checked = ck});">
 				<label for="check-all"> &nbsp;</label>
-				<input type="submit" name="submit" class="btn btn-primary btn-submit" value="删除">
+				<input type="submit" name="submit" class="btn btn-danger btn-submit" value="删除">
 			</div>
-			
+
 	<div class="pull-right">
 		{$pager}
 	</div>
@@ -1034,7 +1034,7 @@
 					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" ng-if="key == 'credit1' || key == 'credit2'" style="opacity : 0.3"></div>
 				</label>
 			</td>
-			<td class="pull-right"><a href="javascript:;" class="color-default" ng-click="editCreditName(key)">设置名称</a></td>
+			<td class="pull-right"><div class="link-group"><a href="javascript:;" ng-click="editCreditName(key)">设置名称</a></div></td>
 		</tr>
 	</table>
 
@@ -1051,7 +1051,7 @@
 				{{ creditSetting[tactics.activity].title }}
 			</td>
 			<td class="text-center">
-				<a href="javascript:;"  class="color-default" ng-click="editCreditTactics('activity')">更改</a>
+				<div class="link-group"><a href="javascript:;" ng-click="editCreditTactics('activity')">更改</a></div>
 			</td>
 		</tr>
 		<tr>
@@ -1060,7 +1060,7 @@
 				{{ creditSetting[tactics.currency].title }}
 			</td>
 			<td class="text-center">
-				<a href="javascript:;"  class="color-default" ng-click="editCreditTactics('currency')">更改</a>
+				<div class="link-group"><a href="javascript:;" ng-click="editCreditTactics('currency')">更改</a></div>
 			</td>
 		</tr>
 	</table>
@@ -1172,36 +1172,22 @@
 				<div class="form-group">
 					<label class="col-xs-12 col-sm-3 col-md-2 control-label">强制验证手机号/邮箱</label>
 					<div class="col-sm-9 col-xs-12">
-							<input id="radio-6" type="radio" name="passport[audit]" value="1" {if $register_setting['audit'] == 1} checked="checked"{/if}/>
-						<label for="radio-6">
-						是
-						</label>
-							<input id="radio-7" type="radio" name="passport[audit]" value="0" {if empty($register_setting['audit'])} checked="checked"{/if}/>
-						<label for="radio-7">
-
-						否
-						</label>
+						<input id="radio-6" type="radio" name="passport[audit]" value="1" {if $register_setting['audit'] == 1} checked="checked"{/if}/>
+						<label for="radio-6">是</label>
+						<input id="radio-7" type="radio" name="passport[audit]" value="0" {if empty($register_setting['audit'])} checked="checked"{/if}/>
+						<label for="radio-7">否</label>
 						<span class="help-block">设置强制验证手机号/邮箱，用户在注册的时候，系统会给用户的手机或邮箱发送验证码，以验证手机或邮箱的有效性</span>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-xs-12 col-sm-3 col-md-2 control-label">身份验证方式</label>
 					<div class="col-sm-9 col-xs-12">
-							<input id="radio-8" type="radio" name="passport[type]" value="code" {if $register_setting['type'] == 'code'} checked="checked"{/if}/>
-						<label for="radio-8">
-
-						随机密码
-						</label>
-							<input id="radio-9" type="radio" name="passport[type]" value="password" {if $register_setting['type'] == 'password' || empty($passport['type'])} checked="checked"{/if}/>
-						<label for="radio-9">
-
-						固定密码
-						</label>
-							<input id="radio-10" type="radio" name="passport[type]" value="hybird" {if $register_setting['type'] == 'hybird'} checked="checked"{/if}/>
-						<label for="radio-10">
-
-						混合密码
-						</label>
+						<input id="radio-8" type="radio" name="passport[type]" value="code" {if $register_setting['type'] == 'code'} checked="checked"{/if}/>
+						<label for="radio-8">随机密码</label>
+						<input id="radio-9" type="radio" name="passport[type]" value="password" {if $register_setting['type'] == 'password' || empty($passport['type'])} checked="checked"{/if}/>
+						<label for="radio-9">固定密码</label>
+						<input id="radio-10" type="radio" name="passport[type]" value="hybird" {if $register_setting['type'] == 'hybird'} checked="checked"{/if}/>
+						<label for="radio-10">混合密码</label>
 						<span class="help-block">使用邮箱或者手机号+密码来登录系统</span>
 						<span class="help-block">随机密码方式: 采用发送验证码的方式, 用户不需要记录密码. 在微信以外的渠道登录系统时, 需要输入手机或邮箱+验证码来进入系统</span>
 						<span class="help-block">固定密码方式: 采用设置密码的方式, 用户在首次使用时设置固定的访问密码. 在微信以外的渠道登录系统时, 需要输入手机或邮箱+密码来进入系统</span>

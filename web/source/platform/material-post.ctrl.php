@@ -80,10 +80,21 @@ if ($do == 'addnews') {
 					iajax(0, $news_info['content']);
 				}
 				if (empty($news_info['thumb_media_id'])) {
-					//同步图片到本地
-					$reload_full_name = file_fetch($news['thumb'], '1024');
-					$fullname = ATTACHMENT_ROOT . $reload_full_name;
-					// 上传到微信服务器
+					$material = pdo_get('core_attachment', array(
+						'uniacid' => $_W['uniacid'],
+						'id' => intval($news['media_id'])
+					));
+					if (empty($material)){
+						iajax(1, '所选素材文件不存在或已删除');
+					}
+					//获取本地图片
+					if (! empty($_W['setting']['remote']['type'])) {
+						$reload_full_name = file_fetch(tomedia($material['attachment']), '1024');
+						$fullname = ATTACHMENT_ROOT . $reload_full_name;
+					}else{
+						$fullname = ATTACHMENT_ROOT . $material['attachment'];
+					}
+					//上传到微信服务器
 					$acc = WeAccount::create($_W['acid']);
 					$token = $acc->getAccessToken();
 					if (is_error($token)) {

@@ -212,6 +212,13 @@ if ($do == 'post') {
 				$rule['displayorder'] = range_limit($rule['displayorder'], 0, 254);
 			}
 
+			if ($m == 'userapi') {
+				$module = WeUtility::createModule('userapi');
+			} else {
+				$module = WeUtility::createModule('core');
+			}
+			$msg = $module->fieldsFormValidate();
+
 			$module_info = module_fetch($m);
 			if (!empty($module_info) && empty($module_info['issystem'])) {
 				$user_module = WeUtility::createModule($m);
@@ -219,13 +226,6 @@ if ($do == 'post') {
 					itoast('抱歉，模块不存在请重新选择其它模块！', '', '');
 				}
 				$user_module_error_msg = $user_module->fieldsFormValidate();
-			} else {
-				if ($m == 'userapi') {
-					$module = WeUtility::createModule('userapi');
-				} else {
-					$module = WeUtility::createModule('core');
-				}
-				$msg = $module->fieldsFormValidate();
 			}
 			if ((is_string($msg) && trim($msg) != '') || (is_string($user_module_error_msg) && trim($user_module_error_msg) != '')) {
 				itoast($msg.$user_module_error_msg, '', '');
