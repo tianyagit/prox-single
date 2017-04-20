@@ -11,7 +11,7 @@
 		</li>
 	</ol>
 	{if $m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)}
-	<form id="reply-form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data" id="js-reply-form" ng-controller="KeywordReply" ng-cloak>
+	<form id="reply-form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data" ng-controller="KeywordReply" ng-cloak>
 		<div class="we7-form">
 		<input type="hidden" name="rid" value="{$rid}" />
 		<div class="form-group">
@@ -126,7 +126,8 @@
 		{/if}
 		<div class="form-group we7-form">
 			<input type="hidden" name="token" value="{$_W['token']}">
-			<input type="submit" name="submit" value="发布" class="btn btn-primary btn-submit"/>
+			<input type="submit" name="submit" value="发布" class="reply-form-submit" ng-hide="1">
+			<span value="发布" class="btn btn-primary" ng-click="submitForm()">发布</span>
 		</div>
 	</form>
 	{/if}
