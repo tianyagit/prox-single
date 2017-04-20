@@ -192,6 +192,7 @@
 		</div>
 		{elseif $type == 'voice'}
 		<div class="material-appmsg">
+		<div class="upload-queue"></div>
 			<div class="material-list-head clearfix">
 				<div class="action">
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
@@ -225,7 +226,7 @@
 						<ul>
 							{if $islocal}
 							<li class="audio-opr-item">
-								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信图片"><i class="wi wi-transform"></i></a>
+								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信语音"><i class="wi wi-transform"></i></a>
 							</li>
 							{else}
 							<li class="audio-opr-item">
@@ -243,6 +244,7 @@
 		</div>
 		{elseif $type == 'video'}
 		<div class="material-appmsg">
+		<div class="upload-queue"></div>
 			<div class="material-list-head clearfix">
 				<div class="action">
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
@@ -274,7 +276,7 @@
 						<ul>
 							{if $islocal}
 							<li class="img-opr-item">
-								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信图片"><i class="wi wi-transform"></i></a>
+								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信视频"><i class="wi wi-transform"></i></a>
 							</li>
 							{else}
 							<li class="img-opr-item">
