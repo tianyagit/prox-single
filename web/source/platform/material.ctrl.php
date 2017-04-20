@@ -344,7 +344,7 @@ if ($do == 'trans') {
 	$token = $acc->getAccessToken();
 	if (is_error($token)) {
 		$result['message'] = $token['message'];
-		iajax(- 1, json_encode($result));
+		iajax(- 1, $result['message']);
 	}
 	$sendapi = 'https://api.weixin.qq.com/cgi-bin/material/add_material' . "?access_token={$token}&type={$type}";
 	$data = array(
@@ -362,13 +362,13 @@ if ($do == 'trans') {
 	if (is_error($resp)) {
 		$result['error'] = 0;
 		$result['message'] = $resp['message'];
-		iajax(- 1, json_encode($result));
+		iajax(- 1, $result['message']);
 	}
 	$content = @json_decode($resp['content'], true);
 	if (empty($content)) {
 		$result['error'] = 0;
 		$result['message'] = "接口调用失败, 元数据: {$resp['meta']}";
-		iajax(- 1, json_encode($result));
+		iajax(- 1, $result['message']);
 	}
 	if (! empty($content['errcode'])) {
 		$result['error'] = 0;

@@ -227,7 +227,7 @@
 						<ul>
 							{if $islocal}
 							<li class="audio-opr-item">
-								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信语音"><i class="wi wi-transform"></i></a>
+								<a href="javascript:;" class="" ng-click="transToWechat('{$type}', '{$voice['id']}')" data-toggle="tooltip" data-placement="bottom" title="转换为微信语音"><i class="wi wi-transform"></i></a>
 							</li>
 							{else}
 							<li class="audio-opr-item">
@@ -282,7 +282,7 @@
 						<ul>
 							{if $islocal}
 							<li class="img-opr-item">
-								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信视频"><i class="wi wi-transform"></i></a>
+								<a href="javascript:;" class="" ng-click="transToWechat('{$type}', '{$video['id']}')" data-toggle="tooltip" data-placement="bottom" title="转换为微信视频"><i class="wi wi-transform"></i></a>
 							</li>
 							{else}
 							<li class="img-opr-item">
