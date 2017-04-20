@@ -762,3 +762,37 @@ function file_is_image($url) {
 	$extension = strtolower($pathinfo['extension']);
 	return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
 }
+
+/*
+ * 下载远程文件
+ * $url 文件地址
+ * $save_dir 文件保存路径。默认为：ROOT/attachment/
+ * $filename 文件名（需加格式后缀）。默认为：原文件名";
+ * */
+function downloadFile($url,$save_dir='',$filename=''){
+	if(trim($url)==''){
+		return false;
+	}
+	$dir_info = basename($url);
+	$dir_info = explode('.', $dir_info);
+	$dir_ext = array_pop($dir_info);
+	if ($filename == ''){
+		$filename = array_pop($dir_info);
+		$filename.= ".".$dir_ext;
+	}
+	//创建保存目录
+	$save_dir = ATTACHMENT_ROOT.$save_dir;
+	if(!file_exists($save_dir) && mkdir($save_dir, 0700, true)){
+		return false;
+	}
+	ob_start();
+	readfile($url);
+	$content=ob_get_contents();
+	ob_end_clean();
+	$size=strlen($content);
+	$fp2=@fopen($save_dir.$filename,'a');
+	fwrite($fp2,$content);
+	fclose($fp2);
+	unset($content,$url);
+	return $save_dir.$filename;
+}
