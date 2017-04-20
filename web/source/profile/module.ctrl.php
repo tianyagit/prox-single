@@ -23,22 +23,16 @@ if($do == 'display') {
 
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => &$row) {
-			if (!empty($row['issystem']) || !empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
+			if (!empty($row['issystem']) || !empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
 				unset($modulelist[$name]);
 				continue;
 			}
-			$row['preview'] = $row['logo'];
-			if ($row['issystem'] == 1) {
-				$row['enabled'] = 1;
-			} elseif (!isset($row['enabled'])) {
-				$row['enabled'] = 1;
-			}
-			$row['isdisplay'] = 1;
 		}
-		unset($row);
+		$total = count($modulelist);
+		$modulelist = array_slice($modulelist, ($pageindex - 1) * $pagesize, $pagesize);
 		$modules = array();
 		if (!empty($modulelist)) {
-			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array('module', 'enabled', 'shortcut'), 'module', array('displayorder DESC'));
+			$module_profile = pdo_getall('uni_account_modules', array ('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array ('module', 'enabled', 'shortcut'), 'module');
 			if (!empty($module_profile)) {
 				foreach ($module_profile as $name => $row) {
 					$modules[$name] = $modulelist[$name];
@@ -47,12 +41,9 @@ if($do == 'display') {
 				}
 			}
 		}
-		$total = count($modules);
-		$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
-		$pager = pagination($total, $pageindex, $pagesize);
+		$pager = pagination ($total, $pageindex, $pagesize);
 	}
-
-	template('profile/module');
+	template ('profile/module');
 } elseif ($do == 'shortcut') {
 	$status = intval($_GPC['shortcut']);
 	$modulename = $_GPC['modulename'];
@@ -108,7 +99,7 @@ if($do == 'display') {
 		pdo_update('uni_account_modules', array('displayorder' => ++$max_displayorder), array('id' => $module_profile['id']));
 	} else {
 		pdo_insert('uni_account_modules', array(
-			'displayorder' => ++$max_displayorder, 
+			'displayorder' => ++$max_displayorder,
 			'module' => $modulename,
 			'uniacid' => $_W['uniacid'],
 			'enabled' => STATUS_ON,
@@ -298,7 +289,7 @@ if ($do == 'permissions') {
 				pdo_update('uni_account_users', array('role' => 'operator'), array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid']));
 			}
 			itoast('编辑店员资料成功', url('profile/module/permissions', array('m' => $m, 'op' => 'display')), 'success');
-		}	
+		}
 	}
 
 	if ($op == 'delete') {

@@ -74,7 +74,7 @@
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">管理设置</a>
 						<!--<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>-->
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1" onclick="return confirm('确认要停用模块吗？')">停用</a>
-							<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
+						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
 						<a href="javascript:;" class="color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 					</div>
 				</td>
@@ -312,30 +312,23 @@
 		</li>
 	</ol>
 	<div class="user-head-info we7-padding-bottom">
-		{if !empty($module_info['main_module'])}
-		<div class="img pull-left">
-			<img alt="子应用icon" class="plugin-img" src="{php echo tomedia($module_info['logo'])}"/>
-			<img alt="主应用icon" class="module-img" src="{php echo tomedia($main_module['logo'])}"/>
+		<div class="img pull-left" ng-if="moduleinfo.main_module != ''">
+			<img alt="子应用icon" class="plugin-img" ng-src="{{ moduleinfo.logo }}"/>
+			<img alt="主应用icon" class="module-img" src="{$main_module['logo']}"/>
 		</div>
-		{else}
-		<img src="{php echo tomedia($module_info['logo'])}" class="user-avatar img-rounded pull-left">
-		{/if}
-		<h3 class="pull-left">{$module_info['title']}</h3>
-		<div class="user-edit pull-right">
-			<a href="#" class="btn btn-primary" data-toggle="modal" ng-if="isFounder == 1" ng-click="editModule('{$module_info['mid']}')">编 辑</a>
-			<a href="" class="btn btn-danger" ng-if="isFounder == 1 && checkupgrade == 1" ng-click="setUpgradeInfo()">升级</a>
-		</div>
+		<img ng-src="{{ moduleinfo.logo }}" class="user-avatar img-rounded pull-left" ng-if="moduleinfo.main_module == ''">
+		<h3 class="pull-left">{{ moduleinfo.title }}</h3>
 	</div>
 
 	<div class="btn-group we7-btn-group we7-margin-bottom">
-		<a href="javascript:;" class="btn active">基本信息</a>
-		<a href="javascript:;" class="btn">模块子应用</a>
-		<a href="javascript:;" class="btn">应用权限组</a>
-		<a href="javascript:;" class="btn">公众平台消息处理选项</a>
-		<a href="javascript:;" class="btn">升级</a>
+		<a href="javascript:;" ng-click="changeShow('base')" class="btn " ng-class="{'active' : show == 'base' || show == ''}">基本信息</a>
+		<a href="javascript:;" ng-click="changeShow('plugin')" class="btn " ng-class="{'active' : show == 'plugin'}" ng-show="moduleinfo.main_module == ''">模块子应用</a>
+		<a href="javascript:;" ng-click="changeShow('group')" class="btn " ng-class="{'active' : show == 'group'}">应用权限组</a>
+		<a href="javascript:;" ng-click="changeShow('subscribe')" class="btn " ng-class="{'active' : show == 'subscribe'}">公众平台消息处理选项</a>
+		<a href="javascript:;" ng-click="changeShow('upgrade')" class="btn " ng-class="{'active' : show == 'upgrade'}" ng-show="checkupgrade == 1">升级</a>
 	</div>
 	<!--基本信息-->
-	<table class="table we7-table table-hover table-form">
+	<table class="table we7-table table-hover table-form" ng-show="show == 'base' || show == ''">
 		<col width="140px">
 		<col />
 		<col width="100px">
@@ -344,63 +337,63 @@
 		</tr>
 		<tr>
 			<td class="table-label">模块标题</td>
-			<td>{$module_info['title']}</td>
+			<td>{{ moduleinfo.title }}</td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default">修改</a>
+				<a href="javascript:;" ng-click="editModule('title')" class="color-default">修改</a>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块作者</td>
-			<td colspan="2">{$module_info['author']}</td>
+			<td colspan="2">{{ moduleinfo.author }}</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块版本</td>
-			<td colspan="2">{$module_info['version']}</td>
+			<td colspan="2">{{ moduleinfo.version }}</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块简述</td>
-			<td></td>
+			<td>{{ moduleinfo.ability }}</td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default">修改</a>
+				<a href="javascript:;" class="color-default" ng-click="editModule('ability')">修改</a>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块介绍</td>
-			<td>{$module_info['description']}</td>
+			<td>{{ moduleinfo.description }}</td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default">修改</a>
+				<a href="javascript:;" class="color-default" ng-click="editModule('description')">修改</a>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块缩略图</td>
-			<td><img src="" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
+			<td><img ng-src="{{ moduleinfo.logo }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default">修改</a>
+				<a href="javascript:;" class="color-default" ng-click="editModule('logo')">修改</a>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块封面</td>
-			<td><img src="" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
+			<td><img ng-src="{{ moduleinfo.preview }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default">修改</a>
+				<a href="javascript:;" class="color-default" ng-click="editModule('preview')">修改</a>
 			</td>
 		</tr>
 	</table>
 	<!--end基本信息-->
 	<!--模块子应用-->
-	<div class="panel we7-panel">
+	<div class="panel we7-panel" ng-show="show == 'plugin' && moduleinfo.main_module == ''">
 		<div class="panel-heading">
 			模块子应用
 		</div>
 		<div class="panel-body">
 			<div class="plugin-list clearfix">
-				<div class="item">
-					<a href="jaascript:;" target="_blank">
+				<div class="item" ng-repeat="plugin in moduleinfo.plugin">
+					<a href="{php echo url('system/module/module_detail')}name={{plugin.name}}" target="_blank">
 						<div class="img">
-							<img src="" alt="子应用icon" class="plugin-img"/>
-							<img src="" alt="主应用icon" class="module-img"/>
+							<img ng-src="{{ plugin.logo }}" alt="子应用icon" class="plugin-img"/>
+							<img ng-src="{{ moduleinfo.logo }}" alt="主应用icon" class="module-img"/>
 						</div>
-						<div class="name">子应用名称</div>
+						<div class="name">{{ plugin.title }}</div>
 					</a>
 				</div>
 			</div>
@@ -408,31 +401,26 @@
 	</div>
 	<!--模块子应用-->
 	<!--升级-->
-	<table class="table we7-table table-hover vertical-middle">
+	<table class="table we7-table table-hover vertical-middle" ng-show="show == 'upgrade'" ng-if="isFounder == 1 && upgradeInfo.from == 'local'">
 		<col width="300px"/>
 		<col />
 		<col />
 		<col />
 		<col width="200px;"/>
 		<tr>
-			<th class="text-left">分支名称</th>
-			<th>分支价格</th>
 			<th>目前版本</th>
 			<th>最新版本</th>
 			<th class="text-right">操作</th>
 		</tr>
 		<tr>
-			<td class="text-left">分支名称分支名称分支名称</td>
-			<td class="color-red">3000.00</td>
-			<td>1.0.1</td>
-			<td>1.0.5</td>
+			<td>{{ moduleinfo.version }}</td>
+			<td>{{ upgradeInfo.best_version }}</td>
 			<td class="text-right">
-				<div class="color-gray">无需升级</div>
-				<a href="javascript:;" class="btn btn-danger">升级</a>
+				<a href="{php echo url('system/module/upgrade')}module_name={{ moduleinfo.name }}" class="btn btn-danger">升级</a>
 			</td>
 		</tr>
 	</table>
-	<table class="table we7-table table-hover vertical-middle">
+	<table class="table we7-table table-hover vertical-middle" ng-show="show == 'upgrade'" ng-if="isFounder == 1 && upgradeInfo.from == 'cloud'">
 		<col width="300px"/>
 		<col />
 		<col />
@@ -445,13 +433,14 @@
 			<th>最新版本</th>
 			<th class="text-right">操作</th>
 		</tr>
-		<tr>
-			<td class="text-left">分支名称分支名称分支名称</td>
-			<td class="color-red">3000.00</td>
-			<td>1.0.1</td>
-			<td>1.0.5</td>
+		<tr ng-repeat="branch in upgradeInfo.branches" ng-if="branch.displayorder >= upgradeInfo.site_branch.displayorder">
+			<td class="text-left">{{ branch.name }}</td>
+			<td class="color-red">{{ branch.displayorder > upgradeInfo.site_branch.displayorder ? branch.upgrade_price : 0}}</td>
+			<td>{{ moduleinfo.version }}</td>
+			<td>{{ branch.version.version }}</td>
 			<td class="text-right">
-				<a href="javascript:;" class="btn btn-danger">购买</a>
+				<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id" class="btn btn-danger">购买</a>
+				<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, branch.id)" ng-if="branch.id > upgradeInfo.site_branch.id" class="btn btn-danger">购买</a>
 			</td>
 		</tr>
 		<tr>
@@ -466,8 +455,8 @@
 
 					<div class="details-version">
 						<div class="details-version-time">
-							<p class="time-d">20</p>
-							<p class="time-y-m">2017.3</p>
+							<p class="time-d">{{ branch.day }}</p>
+							<p class="time-y-m">{{ branch.month }}</p>
 						</div>
 						<i class="fa fa-circle-o"></i>
 						<div class="details-version-content">
@@ -493,7 +482,7 @@
 	</table>
 	<!--end 升级-->
 	<div class="module-group" ng-if="isFounder == 1">
-		<table class="table we7-table table-hover">
+		<table class="table we7-table table-hover" ng-show="show == 'group'">
 			<col />
 			<col width="100px" />
 			<tr>
@@ -524,7 +513,7 @@
 		</table>
 	</div>
 	{if !empty($module_subscribes)}
-	<div class="panel we7-panel module-subscription" ng-if="isFounder == 1">
+	<div class="panel we7-panel module-subscription" ng-if="isFounder == 1" ng-show="show == 'subscribe'">
 		<div class="panel-heading ">
 			订阅详情
 			<div class="pull-right subscription-switch">
@@ -611,28 +600,28 @@
 					<h4 class="modal-title">编辑模块信息</h4>
 				</div>
 				<div class="modal-body">
-					<div class="form-group">
+					<div class="form-group" ng-show="editType == 'title'">
 						<label class="col-sm-2 control-label"> 模块标题</label>
 						<div class="col-sm-10">
 							<input type="text" name="title" ng-model="moduleinfo.title" class="form-control">
 							<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group" ng-show="editType == 'ability'">
 						<label class="col-sm-2 control-label"> 模块简述</label>
 						<div class="col-sm-10">
 							<input type="text" name="ability" ng-model="moduleinfo.ability" class="form-control">
 							<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group" ng-show="editType == 'description'">
 						<label class="col-sm-2 control-label"> 模块介绍</label>
 						<div class="col-sm-10">
 							<textarea type="text" name="description" ng-model="moduleinfo.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
 							<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group" ng-show="editType == 'logo'">
 						<label class="col-sm-2 control-label"> 模块缩略图</label>
 						<div class="col-sm-10">
 							<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
@@ -647,10 +636,10 @@
 							<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group" ng-show="editType == 'preview'">
 						<label class="col-sm-2 control-label"> 模块封面</label>
 						<div class="col-sm-10">
-							<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo}"  style="width: 100px;height: 100px;">
+							<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.preview}"  style="width: 100px;height: 100px;">
 								<img ng-src="{{ moduleinfo.preview }}">
 								<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
 								<input type="hidden" name="thumb">
@@ -672,64 +661,6 @@
 		</div>
 	</div>
 
-
-	<div class="modal fade" id="upgrade-Info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabels" aria-hidden="true">
-		<div class="modal-dialog we7-modal-dialog" style="width:800px">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">模块分支版本信息</h4>
-				</div>
-				<div class="modal-body">
-					<div style="margin:-30px -30px 30px;" class="modal-alert">
-						<div class="alert alert-info">
-							<p><i class="wi  wi-info-sign"></i> 应用分支按照等级顺序排列。</p>
-							<p><i class="wi  wi-info-sign"></i> 如果要升级到其它分支最新版本，需要花费对应分支价格数量的交易币。</p>
-							<p><i class="wi  wi-info-sign"></i> 已购买的模块分支可以免费升级到该分支的最新版本。</p>
-						</div>
-					</div>
-					<table class="table we7-table vertical-middle">
-						<col width="">
-						<col width="180px">
-						<col width="400px">
-						<tr>
-							<th colspan="3" class="text-left">{$module_info['title']}---模块分支信息</th>
-						</tr>
-						<tr>
-							<td class="text-left">
-								分支名称
-							</td>
-							<td class="text-center">
-								升级价格
-							</td>
-							<td class="text-center">
-								操作
-							</td>
-						</tr>
-						<tr ng-repeat="branch in upgradeInfo.branches">
-							<td class="text-left">  {{ branch.name }}</td>
-							<td class="text-center">  {{  branch.id > upgradeInfo.site_branch.id ? branch.upgrade_price : 0 }}元</td>
-
-							<td class="text-right">
-								<div class="link-group">
-									<a tabindex="2" href="javascript:;" role="button" data-toggle="popover" title="{$module_info['title']}升级说明" data-container="#upgrade-Info" data-placement="bottom" data-trigger="focus" data-html="true" data-content="{{ branch.version.description }}">升级说明</a>
-									<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
-									<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, branch.id)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
-								</div>
-							</td>
-							<script>
-								$('[data-toggle="popover"]').popover();
-							</script>
-						</tr>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
 </div>
 
 <script>
@@ -737,6 +668,7 @@
 		angular.module('moduleApp').value('config', {
 			'isFounder' : '{if $_W['isfounder']}1{else}2{/if}',
 			'receive_ban' : "{$receive_ban}",
+			'moduleInfo' : {php echo json_encode($module_info)},
 			'url' : '{php echo url('system/module/change_receive_ban')}',
 			'modulename' : '{$module_info['name']}',
 			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",

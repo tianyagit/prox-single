@@ -523,6 +523,7 @@ function site_quickmenu() {
 }
 
 function template_modulehook_parser($params = array()) {
+	load()->model('module');
 	if (empty($params[1])) {
 		return '';
 	}

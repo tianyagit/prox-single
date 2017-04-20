@@ -15,7 +15,7 @@ load()->model('account');
 load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 
-$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'get_module_info', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
@@ -38,6 +38,8 @@ if ($do == 'get_upgrade_info') {
 	if (!empty($module['branches'])) {
 		foreach ($module['branches'] as &$branch) {
 			$branch['id'] = intval($branch['id']);
+			$branch['day'] = intval(date('d', $branch['version']['createtime']));
+			$branch['month'] = date('Y.m', $branch['version']['createtime']);
 		}
 		unset($branch);
 	}
@@ -64,6 +66,7 @@ if ($do == 'check_upgrade') {
 		$manifest = ext_module_manifest($module['name']);
 		if (!empty($manifest)&& is_array($manifest)) {
 			if (ver_compare($module['version'], $manifest['application']['version']) == '-1') {
+				$module['best_version'] = $manifest['application']['version'];
 				$module['upgrade'] = true;
 			} else {
 				$module['upgrade'] = false;
@@ -401,49 +404,54 @@ if ($do == 'change_receive_ban') {
 
 if ($do == 'save_module_info') {
 	$module_info = $_GPC['moduleinfo'];
-	if (!empty($module_info['logo'])) {
+	$type = $_GPC['type'];
+	if (!empty($module_info['logo']) && $type == 'logo') {
 		$image = file_get_contents(parse_path($module_info['logo']));
 		$result = file_put_contents(IA_ROOT . "/addons/" . $module_info['name'] . '/icon-custom.jpg', $image);
 	}
-	if (!empty($module_info['preview'])) {
+	if (!empty($module_info['preview']) && $type == 'preview') {
 		$image = file_get_contents(parse_path($module_info['preview']));
 		$result = file_put_contents(IA_ROOT."/addons/".$module_info['name'] . '/preview-custom.jpg', $image);
 	}
-	unset($module_info['logo'], $module_info['preview']);
 	$data = array(
 		'title' => $module_info['title'],
 		'ability' => $module_info['ability'],
 		'description' => $module_info['description'],
 	);
 	$result =  pdo_update('modules', $data, array('mid' => $module_info['mid']));
-	iajax(0, '');
-}
-
-if ($do == 'get_module_info') {
-	$mid = intval($_GPC['mid']);
-	if ($mid) {
-		$module = pdo_get('modules', array('mid' => $mid));
-		if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
-			$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
-		} else {
-			$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
-		}
-		if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/preview-custom.jpg')) {
-			$module['preview'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/preview-custom.jpg');
-		} else {
-			$module['preview'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/preview.jpg');
+	$cachekey = cache_system_key("user_modules:" . $_W['uid']);
+	$cachekey_list = array(cache_system_key("user_modules:" . $_W['uid']), "unimodules:{$_W['uniacid']}:", "unimodules:{$_W['uniacid']}:1");
+	foreach ($cachekey_list as $cachekey) {
+		$modules = cache_load($cachekey);
+		if (!empty($modules[$module_info['name']])) {
+			$modules[$module_info['name']] = $module_info;
+			cache_write($cachekey, $modules);
 		}
 	}
-	iajax(0, $module, '');
+	iajax(0, '');
 }
 
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
+	if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/preview-custom.jpg')) {
+		$module_info['preview'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/preview-custom.jpg');
+	} else {
+		$module_info['preview'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/preview.jpg');
+	}
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}
+	if (!empty($module_info['plugin'])) {
+		foreach ($module_info['plugin'] as $key => &$plugin) {
+			$plugin = module_fetch($plugin);
+			if (empty($plugin)) {
+				unset($module_info['plugin'][$name]);
+			}
+		}
+	}
+	unset($plugin);
 	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0));
 	$module_group = array();
 	if (!empty($module_group_list)) {
@@ -473,6 +481,7 @@ if ($do == 'module_detail') {
 	}
 	$receive_ban = in_array($module_info['name'], $module_ban) ? 1 : 2;
 	$modulename = $_GPC['modulename'];
+
 
 	//验证订阅消息是否成功
 
