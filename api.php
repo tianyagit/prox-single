@@ -851,7 +851,10 @@ EOF;
 			$card_id = trim($message['cardid']);
 			$openid = trim($message['fromusername']);
 			$code = trim($message['usercardcode']);
-			pdo_update('coupon_record', array('status' => 3), array('card_id' => $card_id, 'openid' => $openid, 'code' => $code));
+			if (!empty($message['locationid'])) {
+				$stores_info = pdo_get('activity_stores', array('location_id' => $message['locationid']), array('id'));
+			}
+			pdo_update('coupon_record', array('status' => 3, 'usetime' => TIMESTAMP, 'store_id' => $stores_info['id']), array('card_id' => $card_id, 'openid' => $openid, 'code' => $code));
 			$this->receive();
 		}
 		//卡券的推送事件处理完成后，无需再走系统消息流程
