@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 function _tpl_form_field_date($name, $values = '', $withtime = false) {
 	$html = '';
-	$html .= '<input class="mui-calendar-picker" type="text" placeholder="请选择日期" readonly value="' . $values . '" name="' . $name . '" />';
+	$html .= '<input class="mui-calendar-picker" type="text" placeholder="请选择日期" readonly value="' . $values . '" />';
 	$html .= '<input type="hidden" value="' . $values . '" name="' . $name . '"/>';
 	if (!defined('TPL_INIT_CALENDAR')) {
 		$html .= '
