@@ -253,7 +253,6 @@ function modulefunc($modulename, $funcname, $params) {
 }
 
 /**
-	load()->model('module');
  * 以 HTML 的形式返回微站链接
  *
  * @param array $params
@@ -524,6 +523,7 @@ function site_quickmenu() {
 }
 
 function template_modulehook_parser($params = array()) {
+	load()->model('module');
 	if (empty($params[1])) {
 		return '';
 	}
