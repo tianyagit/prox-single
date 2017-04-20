@@ -6,7 +6,8 @@
 defined('IN_IA') or exit('Access Denied');
 error_reporting(0);
 
-if (!in_array($do, array('log'))) {
+$dos = array('log');
+if (!in_array($do, $dos)) {
 	exit('Access Denied');
 }
 
