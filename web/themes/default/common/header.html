@@ -2,7 +2,7 @@
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
-		<div class="container">
+		<div class="container {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}{/if}">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="{$_W['siteroot']}">
 					<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
@@ -419,7 +419,7 @@
 					<div class="plugin-menu clearfix">
 						<div class="plugin-menu-main pull-left">
 							<ul class="list-group">
-								<li class="list-group-item{if $_W['current_module'] == ''} active{/if}">
+								<li class="list-group-item{if empty($_W['current_module']['name'])} active{/if}">
 									<a href="{php echo url('home/welcome/ext', array('m' => $frames['section']['platform_module_menu']['plugin_menu']['main_module']))}">
 										<i class="wi wi-main-apply"></i>
 										<div>主应用</div>
@@ -429,7 +429,7 @@
 									<div>插件</div>
 								</li>
 								{loop $frames['section']['platform_module_menu']['plugin_menu']['menu'] $plugin_name $plugin}
-								<li class="list-group-item{if $_W['current_module'] == $plugin_name} active{/if}">
+								<li class="list-group-item{if $_W['current_module']['name'] == $plugin_name} active{/if}">
 									<a href="{php echo url('home/welcome/ext', array('m' => $plugin_name))}">
 										<img src="{$plugin['icon']}" alt="" class="img-icon" />
 										<div>{$plugin['title']}</div>
