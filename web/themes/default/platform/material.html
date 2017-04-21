@@ -111,7 +111,7 @@
 							</li>
 							{else}
 							<li class="appmsg-opr-item">
-								<a href="javascript:;" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信文章"><i class="wi wi-transform"></i></a>
+								<a href="javascript:;" ng-click="newsToWechat({$material['id']})" class="" data-toggle="tooltip" data-placement="bottom" title="转换为微信文章"><i class="wi wi-transform"></i></a>
 							</li>
 							{/if}
 							<li class="appmsg-opr-item">
@@ -327,10 +327,12 @@
 	require(['jquery.wookmark', 'fileUploader'], function() {
 		//同步素材
 		angular.module('materialApp').value('config', {
+			'materialList' : {php echo json_encode($material_list)},
 			'del_url' : "{php echo url('platform/material/del_material')}",
 			'sync_url' : "{php echo url('platform/material/sync')}",
 			'send_url' : "{php echo url('platform/material/send')}",
 			'trans_url' : "{php echo url('platform/material/trans')}",
+			'newsUpload_url' : "{php echo url('platform/material-post/addnews')}",
 			'group' : {php echo json_encode($group)},
 			'syncNews' : "{$_GPC['sync_news']}"
 		});

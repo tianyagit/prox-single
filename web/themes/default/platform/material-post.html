@@ -130,11 +130,11 @@
 			'type' : '{$type}',
 			'news_rid' : '{$reply_news_id}',
 			'operate' : {if !empty($newsid)}'edit'{else}'add'{/if},
-			'url' : '{php echo url('platform/material-post/tomedia')}',
-			'newsUpload_url' : '{php echo url('platform/material-post/addnews')}',
-			'msg_url' : '{php echo url('platform/material/display')}',
-			'upload_thumb_url' : '{php echo url('platform/material-post/thumb_upload')}',
-			'upload_iamge_url' : '{php echo url('platform/material-post/image_upload')}',
+			'url' : "{php echo url('platform/material-post/tomedia')}",
+			'newsUpload_url' : "{php echo url('platform/material-post/addnews')}",
+			'msg_url' : "{php echo url('platform/material/display')}",
+			'upload_thumb_url' : "{php echo url('platform/material-post/thumb_upload')}",
+			'upload_iamge_url' : "{php echo url('platform/material-post/image_upload')}",
 			'replace_url' : "{php echo url('platform/material-post/replace_image_url')}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);

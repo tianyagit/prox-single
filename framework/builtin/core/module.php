@@ -135,7 +135,7 @@ class CoreModule extends WeModule {
 										break;
 									case 'news' :
 										foreach ($replies[$key] as &$news_value) {
-											if (!empty($news_value)) {
+											if (!empty($news_value) && !empty($news_value['media_id'])) {
 												$news_material = material_get($news_value['media_id']);
 												$news_value['attach_id'] = $news_material['id'];
 												$news_value['thumb'] = tomedia($news_material['news'][0]['thumb_url']);
