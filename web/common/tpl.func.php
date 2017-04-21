@@ -382,7 +382,7 @@ function tpl_form_field_image($name, $value = '', $default = '', $options = arra
 						}
 						if(url.media_id){
 							if(img.length > 0){
-								img.get(0).src = "";
+								img.get(0).src = url.url;
 							}
 							ipt.val(url.media_id);
 						}
