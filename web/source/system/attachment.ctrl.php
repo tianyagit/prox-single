@@ -13,6 +13,8 @@ $_W['page']['title'] = '附件设置 - 系统管理';
 
 //全局设置
 if ($do == 'global') {
+	$post_max_size = ini_get('post_max_size');
+	$upload_max_filesize = ini_get('upload_max_filesize');
 	if (checksubmit('submit')) {
 		$harmtype = array('asp','php','jsp','js','css','php3','php4','php5','ashx','aspx','exe','cgi');
 		$upload = $_GPC['upload'];
@@ -25,7 +27,7 @@ if ($do == 'global') {
 		if (!empty($upload['image']['thumb']) && empty($upload['image']['width'])) {
 			itoast('请设置图片缩略宽度.', '', '');
 		}
-		$upload['image']['limit'] = max(0, intval(trim($upload['image']['limit'])));
+		$upload['image']['limit'] = max(0, min(intval(trim($upload['image']['limit'])), return_bytes($post_max_size, 'k')));
 		if (empty($upload['image']['limit'])) {
 			itoast('请设置图片上传支持的文件大小, 单位 KB.', '', '');
 		}
@@ -45,7 +47,7 @@ if ($do == 'global') {
 		if (!is_array($upload['image']['extentions']) || count($upload['image']['extentions']) < 1) {
 			itoast('请添加支持的图片附件后缀类型', '', '');
 		}
-		$upload['audio']['limit'] = max(0, intval(trim($upload['audio']['limit'])));
+		$upload['audio']['limit'] = max(0, min(intval(trim($upload['audio']['limit'])), return_bytes($post_max_size, 'k')));
 		if (empty($upload['image']['limit'])) {
 			itoast('请设置音频视频上传支持的文件大小, 单位 KB.', '', '');
 		}
@@ -65,9 +67,6 @@ if ($do == 'global') {
 		setting_save($upload, 'upload');
 		itoast('更新设置成功！', url('system/attachment'), 'success');
 	}
-	
-	$post_max_size = ini_get('post_max_size');
-	$upload_max_filesize = ini_get('upload_max_filesize');
 	if (empty($_W['setting']['upload'])) {
 		$upload = $_W['config']['upload'];
 	} else {
