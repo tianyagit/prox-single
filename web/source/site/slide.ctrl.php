@@ -29,22 +29,27 @@ if ($do == 'display' && $_W['isajax'] && $_W['ispost']) {
 
 if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$multiid = intval($_GPC['multiid']);
-	foreach ($_GPC['slide'] as $key => $val) {
-		if (empty($val['thumb'])){
-			iajax(-1, '幻灯图片不可为空', '');
+	
+	if (empty($_GPC['slide'])) {
+		pdo_delete('site_slide', array('uniacid' => $_W['uniacid'], 'multiid' => $multiid));
+	} else {
+		foreach ($_GPC['slide'] as $key => $val) {
+			if (empty($val['thumb'])){
+				iajax(-1, '幻灯图片不可为空', '');
+			}
 		}
-	}
-	pdo_fetch("DELETE FROM ".tablename('site_slide')." WHERE uniacid = :uniacid AND multiid = :multiid" , array(':uniacid' => $_W['uniacid'],':multiid' => $multiid));
-	foreach ($_GPC['slide'] as  $value) {
-		$data = array(
-			'uniacid' => $_W['uniacid'],
-			'multiid' => $multiid,
-			'title' => $value['title'],
-			'url' => $value['url'],
-			'thumb' => $value['thumb'],
-			'displayorder' => intval($value['displayorder']),
-		);
-		pdo_insert('site_slide', $data);
+		pdo_delete('site_slide', array('uniacid' => $_W['uniacid'], 'multiid' => $multiid));
+		foreach ($_GPC['slide'] as  $value) {
+			$data = array(
+				'uniacid' => $_W['uniacid'],
+				'multiid' => $multiid,
+				'title' => $value['title'],
+				'url' => $value['url'],
+				'thumb' => $value['thumb'],
+				'displayorder' => intval($value['displayorder']),
+			);
+			pdo_insert('site_slide', $data);
+		}
 	}
 	iajax(0, '幻灯片保存成功！', '');
 }

@@ -80,12 +80,13 @@ if ($do == 'addnews') {
 					iajax(0, $news_info['content']);
 				}
 				if (empty($news_info['thumb_media_id'])) {
+					$news['thumb'] = (isset($news['thumb']) && $news['thumb'] != '') ? $news['thumb'] : $news['thumb_url'];
 					$material = pdo_get('core_attachment', array(
 						'uniacid' => $_W['uniacid'],
-						'id' => intval($news['media_id'])
+						'attachment' => substr(parse_url($news['thumb'], PHP_URL_PATH),'1')
 					));
 					if (empty($material)){
-						iajax(1, '所选素材文件不存在或已删除');
+						iajax(1, '所选素材文件不存在或已删除'.substr(parse_url($news['thumb'], PHP_URL_PATH),'1'));
 					}
 					//获取本地图片
 					if (! empty($_W['setting']['remote']['type'])) {
@@ -99,7 +100,7 @@ if ($do == 'addnews') {
 					$token = $acc->getAccessToken();
 					if (is_error($token)) {
 						$result['message'] = $token['message'];
-						iajax(1, json_encode($result));
+						iajax(1, $result['message']);
 					}
 					$sendapi = 'https://api.weixin.qq.com/cgi-bin/material/add_material' . "?access_token={$token}&type=image";
 					$data = array(
@@ -109,18 +110,18 @@ if ($do == 'addnews') {
 					if(is_error($resp)) {
 						$result['error'] = 0;
 						$result['message'] = $resp['message'];
-						iajax(1, json_encode($result));
+						iajax(1, $result['message']);
 					}
 					$content = @json_decode($resp['content'], true);
 					if(empty($content)) {
 						$result['error'] = 0;
 						$result['message'] = "接口调用失败, 元数据: {$resp['meta']}";
-						iajax(1, json_encode($result));
+						iajax(1, $result['message']);
 					}
 					if(!empty($content['errcode'])) {
 						$result['error'] = 0;
 						$result['message'] = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->error_code($content['errcode'])}";
-						iajax(1, json_encode($result));
+						iajax(1, $result['message']);
 					}
 					if(!empty($content['media_id'])){
 						$result['media_id'] = $content['media_id'];
@@ -148,7 +149,13 @@ if ($do == 'addnews') {
 					}else{
 						$news['media_id'] = $result['media_id'];
 						$news_info['thumb_media_id'] = $result['media_id'];
+						pdo_delete('core_attachment', array(
+							'id' => $material['id']
+						));
 						file_delete($fullname);
+						pdo_delete('wechat_news', array(
+							'attach_id' => $news['attach_id']
+						));
 					}
 				}
 			}
