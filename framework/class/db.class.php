@@ -444,7 +444,7 @@ class DB {
 				}
 				if (empty($operator)) {
 					$fields = trim($fields);
-					if (is_array($value)) {
+					if (is_array($value) && !empty($value)) {
 						$operator = 'IN';
 					} else {
 						$operator = '=';
@@ -455,7 +455,7 @@ class DB {
 					$operator = " = `$fields` - ";
 				} elseif ($operator == '!=' || $operator == '<>') {
 					//如果是数组不等于情况，则转换为NOT IN
-					if (is_array($value)) {
+					if (is_array($value) && !empty($value)) {
 						$operator = 'NOT IN';
 					}
 				}
@@ -472,7 +472,7 @@ class DB {
 				} else {
 					$result['fields'] .= $split . "`$fields` {$operator}  :{$suffix}$fields";
 					$split = ' ' . $glue . ' ';
-					$result['params'][":{$suffix}$fields"] = is_null($value) ? '' : $value;
+					$result['params'][":{$suffix}$fields"] = is_null($value) || is_array($value) ? '' : $value;
 				}
 			}
 		}
@@ -648,6 +648,7 @@ class DB {
 					load()->web('common');
 					load()->web('template');
 				}
+				WeUtility::logging('SQL Error', "SQL: <br/>{$append['sql']}<hr/>Params: <br/>{$params}<hr/>SQL Error: <br/>{$append['error'][2]}<hr/>Traces: <br/>{$ts}");
 				message("SQL: <br/>{$append['sql']}<hr/>Params: <br/>{$params}<hr/>SQL Error: <br/>{$append['error'][2]}<hr/>Traces: <br/>{$ts}", '', 'error');
 			}
 		}

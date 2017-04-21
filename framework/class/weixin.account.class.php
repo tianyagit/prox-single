@@ -496,7 +496,7 @@ class WeiXinAccount extends WeAccount {
 		return $result['user_info_list'];
 	}
 
-	public function fansAll() {
+	public function fansAll($startopenid = '') {
 		global $_GPC;
 		$token = $this->getAccessToken();
 		if(is_error($token)){
@@ -504,7 +504,10 @@ class WeiXinAccount extends WeAccount {
 		}
 		$url = 'https://api.weixin.qq.com/cgi-bin/user/get?access_token=' . $token;
 		if(!empty($_GPC['next_openid'])) {
-			$url .= '&next_openid=' . $_GPC['next_openid'];
+			$startopenid = $_GPC['next_openid'];
+		}
+		if (!empty($startopenid)) {
+			$url .= '&next_openid=' . $startopenid;
 		}
 		$response = ihttp_get($url);
 		if(is_error($response)) {

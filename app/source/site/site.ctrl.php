@@ -4,11 +4,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-$do = in_array($do, array(
-	'list',
-	'detail',
-	'handsel' 
-)) ? $do : 'list';
+$do = in_array($do, array('list', 'detail', 'handsel')) ? $do : 'list';
 load()->model('site');
 load()->model('mc');
 

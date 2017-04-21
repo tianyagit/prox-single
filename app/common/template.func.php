@@ -150,9 +150,9 @@ function template_parse($str) {
 	$str = preg_replace('/{url\s+(\S+)\s+(array\(.+?\))}/', '<?php echo url($1, $2);?>', $str);
 	$str = preg_replace('/{media\s+(\S+)}/', '<?php echo tomedia($1);?>', $str);
 	$str = preg_replace_callback('/{data\s+(.+?)}/s', "moduledata", $str);
-	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "modulehook", $str);
+	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "template_modulehook_parser", $str);
 	$str = preg_replace('/{\/data}/', '<?php } } ?>', $str);
-	$str = preg_replace('/{\/hook}/', '<?php } } ?>', $str);
+	$str = preg_replace('/{\/hook}/', '<?php ; ?>', $str);
 	$str = preg_replace_callback('/<\?php([^\?]+)\?>/s', "template_addquote", $str);
 	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
 	$str = str_replace('{##', '{', $str);
@@ -543,11 +543,10 @@ function template_modulehook_parser($params = array()) {
 	}
 
 	if (empty($plugin['return']) || $plugin['return'] == 'false') {
-		$plugin['return'] = false;
+		//$plugin['return'] = false;
 	} else {
-		$plugin['return'] = true;
+		//$plugin['return'] = true;
 	}
-
 	if (empty($plugin['func']) || empty($plugin['module'])) {
 		return false;
 	}
@@ -561,10 +560,15 @@ function template_modulehook_parser($params = array()) {
 	$plugin_module = WeUtility::createModuleHook($plugin_info['name']);
 	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModuleHook) {
 		$hookparams = var_export($plugin, true);
-		$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
-		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, '{$plugin['func']}'), {$hookparams}); ?>";
+		if (!empty($hookparams)) {
+			$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
+		} else {
+			$hookparams = 'array()';
+		}
+		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, '{$plugin['func']}'), array('params' => {$hookparams})); ?>";
 		return $php;
 	} else {
-		return false;
+		$php = "<!--模块 {$plugin_info['name']} 不存在嵌入点 {$plugin['func']}-->";
+		return $php;
 	}
 }
