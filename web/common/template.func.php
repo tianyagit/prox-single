@@ -144,11 +144,10 @@ function template_modulehook_parser($params = array()) {
 	}
 
 	if (empty($plugin['return']) || $plugin['return'] == 'false') {
-		$plugin['return'] = false;
+		//$plugin['return'] = false;
 	} else {
-		$plugin['return'] = true;
+		//$plugin['return'] = true;
 	}
-
 	if (empty($plugin['func']) || empty($plugin['module'])) {
 		return false;
 	}
@@ -162,10 +161,15 @@ function template_modulehook_parser($params = array()) {
 	$plugin_module = WeUtility::createModuleHook($plugin_info['name']);
 	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModuleHook) {
 		$hookparams = var_export($plugin, true);
-		$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
-		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, '{$plugin['func']}'), {$hookparams}); ?>";
+		if (!empty($hookparams)) {
+			$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
+		} else {
+			$hookparams = 'array()';
+		}
+		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, '{$plugin['func']}'), array('params' => {$hookparams})); ?>";
 		return $php;
 	} else {
-		return false;
+		$php = "<!--模块 {$plugin_info['name']} 不存在嵌入点 {$plugin['func']}-->";
+		return $php;
 	}
 }

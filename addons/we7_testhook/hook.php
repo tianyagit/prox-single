@@ -12,4 +12,12 @@ class We7_testhookModuleHook extends WeModuleHook {
 	public function hookWebTest() {
 		include $this->template('testplugin');
 	}
+	
+	public function hookWebUserlist($hook) {
+		include $this->template('userlist');
+	}
+	
+	public function hookMobileMyprofile($hook) {
+		include $this->template('myprofile');
+	}
 }
