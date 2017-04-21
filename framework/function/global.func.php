@@ -223,8 +223,15 @@ function array_elements($keys, $src, $default = FALSE) {
 	return $return;
 }
 
+/**
+ * 根据键值对数组排序
+ * 
+ * @param array $array 需要排序的数组
+ * @param string $keys 用来排序的键名
+ * @param string $type 排序规则
+ * @return array
+ */
 function iarray_sort($array, $keys, $type='asc'){
-	//$array为要排序的数组,$keys为要用来排序的键名,$type默认为升序排序
 	$keysvalue = $new_array = array();
 	foreach ($array as $k => $v){
 		$keysvalue[$k] = $v[$keys];
@@ -1225,4 +1232,33 @@ function dir_size($dir) {
 		closedir($handle);
 	}
 	return $size;
+}
+
+/**
+ * 文件占用空间大转小
+ * @param string $val 大小(1G)
+ * @param string $type 需要转换结果单位
+ * @return int $val
+ */
+function return_bytes($val, $type = 'k') {
+	$val = trim($val);
+	$last = strtolower($val[strlen($val)-1]);
+	if (in_array($last, array('t','g','m','k'))){
+		$val = trim(substr($val, '0', '-1'));
+		switch($last) {
+			case 't':
+				if ($type == 'k') break;
+				$val *= 1024;
+			case 'g':
+				if ($type == 'g') break;
+				$val *= 1024;
+			case 'm':
+				if ($type == 'm') break;
+				$val *= 1024;
+			case 'k':
+				if ($type == 'k') break;
+				$val *= 1024;
+		}
+	}
+	return $val;
 }
