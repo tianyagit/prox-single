@@ -341,6 +341,7 @@ function user_modules() {
 				}
 			}
 		}
+		$user_group_modules = empty($user_group_modules) ?  '' : $user_group_modules;
 		$modules = pdo_getall('modules', array('name' => $user_group_modules), array(), 'name');
 	}
 

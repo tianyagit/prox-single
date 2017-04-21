@@ -38,6 +38,7 @@ if ($do == 'get_upgrade_info') {
 	if (!empty($module['branches'])) {
 		foreach ($module['branches'] as &$branch) {
 			$branch['id'] = intval($branch['id']);
+			$branch['displayorder'] = intval($branch['displayorder']);
 			$branch['day'] = intval(date('d', $branch['version']['createtime']));
 			$branch['month'] = date('Y.m', $branch['version']['createtime']);
 		}
