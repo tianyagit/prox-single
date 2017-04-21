@@ -233,8 +233,8 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	cache_delete("unimodules:{$_W['uniacid']}:1");
-	cache_delete("unimodules:{$_W['uniacid']}:");
+	cache_delete(cache_system_key("module_info:{$modulename}:"));
+
 	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
@@ -370,9 +370,9 @@ if ($do =='install') {
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
 		cache_delete(cache_system_key("user_modules:" . $_W['uid']));
-		cache_delete("unimodules:{$_W['uniacid']}:1");
-		cache_delete("unimodules:{$_W['uniacid']}:");
-
+		cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:1"));
+		cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:"));
+		cache_delete(cache_system_key("module_info:{$module['name']}:"));
 
 		if (empty($module_subscribe_success)) {
 			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
@@ -420,15 +420,7 @@ if ($do == 'save_module_info') {
 		'description' => $module_info['description'],
 	);
 	$result =  pdo_update('modules', $data, array('mid' => $module_info['mid']));
-	$cachekey = cache_system_key("user_modules:" . $_W['uid']);
-	$cachekey_list = array(cache_system_key("user_modules:" . $_W['uid']), "unimodules:{$_W['uniacid']}:", "unimodules:{$_W['uniacid']}:1");
-	foreach ($cachekey_list as $cachekey) {
-		$modules = cache_load($cachekey);
-		if (!empty($modules[$module_info['name']])) {
-			$modules[$module_info['name']] = $module_info;
-			cache_write($cachekey, $modules);
-		}
-	}
+	cache_delete(cache_system_key("module_info:" . $module_info['name']));
 	iajax(0, '');
 }
 
@@ -554,7 +546,7 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 
-	$module_list = $all_modules = user_modules();
+	$module_list = $all_modules = user_modules($_W['uid']);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
 			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] == 1) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] == 1)) {
