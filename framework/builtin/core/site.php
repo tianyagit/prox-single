@@ -15,7 +15,7 @@ class CoreModuleSite extends WeModuleSite {
 			'module' => $_GPC['module'],
 		);
 		if (empty($params['tid']) || empty($params['fee']) || empty($params['module'])) {
-			iajax(1, '支付参数不完整', '');
+			message(error(1, '支付参数不完整'));
 		}
 		//如果价格为0 直接执行模块支付回调方法
 		if($params['fee'] <= 0) {
@@ -29,7 +29,7 @@ class CoreModuleSite extends WeModuleSite {
 			$method = 'payResult';
 			if (method_exists($site, $method)) {
 				$site->$method($notify_params);
-				iajax(-1, '支付成功', '');
+				message(error(-1, '支付成功'));
 			}
 		}
 		
@@ -49,11 +49,11 @@ class CoreModuleSite extends WeModuleSite {
 			pdo_insert('core_paylog', $log);
 		}
 		if($log['status'] == '1') {
-			iajax(1, '订单已经支付', '');
+			message(error(1, '订单已经支付'));
 		}
 		$setting = uni_setting($_W['uniacid'], array('payment', 'creditbehaviors'));
 		if(!is_array($setting['payment'])) {
-			iajax(1, '暂无有效支付方式', '');
+			message(error(1, '暂无有效支付方式'));
 		}
 		$pay = $setting['payment'];
 		if (empty($_W['member']['uid'])) {
@@ -73,7 +73,7 @@ class CoreModuleSite extends WeModuleSite {
 		$params = $_POST;
 		
 		if(empty($params) || !array_key_exists($params['module'], $moduels)) {
-			iajax(1, '模块不存在', '');
+			message(error(1, '模块不存在'), '', 'ajax', true);
 		}
 		
 		$setting = uni_setting($_W['uniacid'], 'payment');
@@ -98,7 +98,7 @@ class CoreModuleSite extends WeModuleSite {
 		}
 		$type = in_array($params['method'], $dos) ? $params['method'] : '';
 		if(empty($type)) {
-			iajax(1, '暂无有效支付方式,请联系商家', '');
+			message(error(1, '暂无有效支付方式,请联系商家'), '', 'ajax', true);
 		}
 		$moduleid = pdo_getcolumn('modules', array('name' => $params['module']), 'mid');
 		$moduleid = empty($moduleid) ? '000000' : sprintf("%06d", $moduleid);
@@ -122,7 +122,7 @@ class CoreModuleSite extends WeModuleSite {
 			$paylog['plid'] = pdo_insertid();
 		}
 		if(!empty($paylog) && $paylog['status'] != '0') {
-			iajax(1, '这个订单已经支付成功, 不需要重复支付.', '');
+			message(error(1, '这个订单已经支付成功, 不需要重复支付.'), '', 'ajax', true);
 		}
 		if (!empty($paylog) && empty($paylog['uniontid'])) {
 			pdo_update('core_paylog', array(
@@ -138,7 +138,7 @@ class CoreModuleSite extends WeModuleSite {
 			$params['tid'] = $paylog['plid'];
 			$sl = base64_encode(json_encode($params));
 			$auth = sha1($sl . $_W['uniacid'] . $_W['config']['setting']['authkey']);
-			iajax(0, $_W['siteroot'] . "/payment/{$type}/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}", '');
+			message(error(0, $_W['siteroot'] . "/payment/{$type}/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}"), '', 'ajax', true);
 			exit();
 		}
 	}
@@ -177,9 +177,9 @@ class CoreModuleSite extends WeModuleSite {
 			$wechat_payment_params = wechat_build($params, $wechat_payment);
 		}
 		if (is_error($wechat_payment_params)) {
-			iajax(1, $wechat_payment_params);
+			message($wechat_payment_params, '', 'ajax', true);
 		} else {
-			iajax(0, $wechat_payment_params, '');
+			message(error(0, $wechat_payment_params), '', 'ajax', true);
 		}
 	}
 
@@ -201,7 +201,7 @@ class CoreModuleSite extends WeModuleSite {
 		);
 		$alipay_payment_params = alipay_build($params, $setting['payment']['alipay']);
 		if($alipay_payment_params['url']) {
-			iajax(0, $alipay_payment_params['url'], '');
+			message(error(0, $alipay_payment_params['url']), '', 'ajax', true);
 			exit();
 		}
 	}

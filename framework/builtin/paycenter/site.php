@@ -16,7 +16,7 @@ class PaycenterModuleSite extends WeModuleSite {
 				if(is_array($user) && $session['hash'] == md5($user['password'] . $user['salt'])) {
 					$clerk = pdo_get('activity_clerks', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
 					if(empty($clerk)) {
-						itoast('您没有管理该店铺的权限', referer(), 'error');
+						message('您没有管理该店铺的权限', referer(), 'error');
 					}
 					$_W['uid'] = $user['uid'];
 					$_W['username'] = $user['username'];
@@ -59,21 +59,21 @@ class PaycenterModuleSite extends WeModuleSite {
 
 			$user = user_single($user);
 			if(empty($user)) {
-				iajax(-1, '账号或密码错误', '');
+				message(error(-1, '账号或密码错误'), '', 'ajax');
 			}
 			if($user['status'] == 1) {
-				iajax(-1, '您的账号正在审核或是已经被系统禁止，请联系网站管理员解决', '');
+				message(error(-1, '您的账号正在审核或是已经被系统禁止，请联系网站管理员解决'), '', 'ajax');
 			}
 			$clerk = pdo_get('activity_clerks', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
 			if(empty($clerk)) {
-				iajax(-1, '您没有管理该店铺的权限', '');
+				message(error(-1, '您没有管理该店铺的权限'), '', 'ajax');
 			}
 			$cookie = array();
 			$cookie['uid'] = $user['uid'];
 			$cookie['hash'] = md5($user['password'] . $user['salt']);
 			$session = base64_encode(json_encode($cookie));
 			isetcookie('_pc_session', $session, !empty($_GPC['rember']) ? 7 * 86400 : 0, true);
-			iajax(0, '', '');
+			message(error(0, ''), '', 'ajax');
 		}
 		include $this->template('login');
 	}
@@ -124,10 +124,10 @@ class PaycenterModuleSite extends WeModuleSite {
 		$id = intval($_GPC['id']);
 		$order = pdo_get('paycenter_order', array('uniacid' => $_W['uniacid'], 'id' => $id));
 		if(empty($order)) {
-			itoast('订单不存在或已删除', '', 'error');
+			message('订单不存在或已删除', '', 'error');
 		}
 		if($order['status'] == 1) {
-			itoast('该订单已付款', '', 'error');
+			message('该订单已付款', '', 'error');
 		}
 		if(!empty($_W['member']['uid']) || !empty($_W['fans'])) {
 			$update = array(
@@ -196,7 +196,7 @@ class PaycenterModuleSite extends WeModuleSite {
 			}
 		}
 		if($params['result'] == 'success' && $params['from'] == 'return') {
-			itoast('支付成功！', $this->createMobileUrl('paydetail', array('id' => $params['tid'])), 'success');
+			message('支付成功！', $this->createMobileUrl('paydetail', array('id' => $params['tid'])), 'success');
 		}
 	}
 
@@ -205,7 +205,7 @@ class PaycenterModuleSite extends WeModuleSite {
 		$id = intval($_GPC['id']);
 		$order = pdo_get('paycenter_order', array('id' => $id, 'uniacid' => $_W['uniacid']));
 		if(empty($order)) {
-			itoast('订单不存在或已删除', '', 'error');
+			message('订单不存在或已删除', '', 'error');
 		}
 		if($order['store_id'] > 0) {
 			$store = pdo_get('activity_stores', array('id' => $order['store_id']), array('business_name'));
@@ -216,9 +216,9 @@ class PaycenterModuleSite extends WeModuleSite {
 	public function doMobileSelfpay() {
 		global $_W, $_GPC;
 		if(checksubmit()) {
-			$fee = trim($_GPC['fee']) ? trim($_GPC['fee']) : itoast('收款金额有误', '', 'error');
+			$fee = trim($_GPC['fee']) ? trim($_GPC['fee']) : message('收款金额有误', '', 'error');
 			$body = trim($_GPC['body']) ? trim($_GPC['body']) : '收银台收款' . trim($_GPC['fee']);
-			$openid = trim($_GPC['openid']) ? trim($_GPC['openid']) : itoast('用户信息错误',  '', 'error');
+			$openid = trim($_GPC['openid']) ? trim($_GPC['openid']) : message('用户信息错误',  '', 'error');
 			$clerk = pdo_get('activity_clerks', array('uniacid' => $_W['uniacid'], 'id' => intval($_GPC['clerk_id'])));
 			$data = array(
 				'uniacid' => $_W['uniacid'],
@@ -241,7 +241,7 @@ class PaycenterModuleSite extends WeModuleSite {
 		}
 		$fans = mc_oauth_userinfo();
 		if(is_error($fans) || empty($fans)) {
-			itoast('获取粉丝信息失败', '', 'error');
+			message('获取粉丝信息失败', '', 'error');
 		}
 		include $this->template('selfpay');
 	}
@@ -254,7 +254,7 @@ class PaycenterModuleSite extends WeModuleSite {
 		$encrypt_code = trim($_GPC['encrypt_code']);
 		$openid = trim($_GPC['openid']);
 		if(empty($card_id) || empty($encrypt_code)) {
-			itoast('卡券签名参数错误', '', '');
+			message('卡券签名参数错误');
 		}
 		if ($source == '1') {
 			$card = pdo_get('coupon', array('uniacid' => $_W['uniacid'], 'id' => $card_id));
@@ -262,7 +262,7 @@ class PaycenterModuleSite extends WeModuleSite {
 			$card = pdo_get('coupon', array('uniacid' => $_W['uniacid'], 'card_id' => $card_id));
 		}
 		if(empty($card)) {
-			itoast('卡券不存在或已删除', '', '');
+			message('卡券不存在或已删除');
 		}
 		$card['date_info'] = iunserializer($card['date_info']);
 		$card['logo_url'] = tomedia($card['logo_url']);
@@ -273,7 +273,7 @@ class PaycenterModuleSite extends WeModuleSite {
 			load() -> classs('coupon');
 			$coupon = new coupon($_W['acid']);
 			if (is_null($coupon)) {
-				itoast('系统错误', '', '');
+				message('系统错误');
 			}
 			$code = $coupon->DecryptCode(array('encrypt_code' => $encrypt_code));
 			$code = $code['code'];
@@ -290,18 +290,18 @@ class PaycenterModuleSite extends WeModuleSite {
 			$_W['user']['clerk_type'] = 3;
 			$_W['user']['store_id'] = $clerk['storeid'];
 			if(empty($clerk)) {
-				itoast('店员密码错误', referer(), 'error');
+				message('店员密码错误', referer(), 'error');
 			}
 			if(!$code) {
-				itoast('code码错误', referer(), 'error');
+				message('code码错误', referer(), 'error');
 			}
 			load() -> model('activity');
 			$record = pdo_get('coupon_record', array('code' => $code, 'uniacid' => $_W['uniacid']));
 			$status = activity_coupon_use($card['id'], $record['id'], 'paycenter');
 			if(is_error($status)) {
-				itoast($status['message'], referer(), 'error');
+				message($status['message'], referer(), 'error');
 			}
-			itoast('核销卡券成功', url('activity/coupon/mine'), 'success');
+			message('核销卡券成功', url('activity/coupon/mine'), 'success');
 		}
 		include $this->template('consume');
 	}
