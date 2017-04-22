@@ -21,6 +21,7 @@ if (!pdo_tableexists('activity_clerks')) {
 	pdo_delete('core_menu', array('permission_name ' => 'stat_paycenter'));
 	pdo_delete('core_menu', array('permission_name ' => 'stat_cash'));
 }
+die;die;
 
 
 
