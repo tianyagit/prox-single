@@ -11,7 +11,18 @@ $pagesize = 10;
 if($type == 'image') {
 	$pagesize = 50;
 }
-$material_list = pdo_getslice('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => $type, 'model' => 'perm'), array($pageindex, $pagesize), $total, array(), 'id', 'createtime DESC');
+
+$condition = array('uniacid' => $_W['uniacid'], 'type' => $type, 'model' => 'perm');
+if ($type == 'news') {
+	$newsmodel = trim($_GPC['newsmodel']);
+	if (empty($newsmodel) || !in_array($newsmodel, array('wx', 'local'))) {
+		$condition['model'] = 'perm';
+	} else {
+		$condition['model'] = $newsmodel == 'local' ? 'local' : 'perm';
+	}
+}
+$material_list = pdo_getslice('wechat_attachment', $condition, array($pageindex, $pagesize), $total, array(), 'id', 'createtime DESC');
+
 if(!empty($material_list)) {
 	foreach($material_list as &$row) {
 		if($type == 'video') {
