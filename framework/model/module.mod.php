@@ -322,7 +322,9 @@ function module_get_all_unistalled($status)  {
 		$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 		$cloud_m_count = $get_cloud_m_count['module_quantity'];
 	} else {
-		$cloud_m_count = $uninstallModules['cloud_m_count'];
+		if(is_array($uninstallModules)){
+			$cloud_m_count = $uninstallModules['cloud_m_count'];
+		}
 	}
 	if (empty($uninstallModules['modules']) || intval($uninstallModules['cloud_m_count']) !== intval($cloud_m_count) || is_error($get_cloud_m_count)) {
 		$uninstallModules = cache_build_uninstalled_module();
