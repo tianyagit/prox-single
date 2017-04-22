@@ -27,17 +27,17 @@
 		<tr>
 			<td class="table-label">头像</td>
 			<td><img ng-src="{{profile.avatar}}" class="img-circle" width="65px" height="65px" /></td>
-			<td><a href="javascript:;" class="color-default" ng-click="changeAvatar()">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" ng-click="changeAvatar()">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">用户名</td>
 			<td ng-bind="user.username"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#name" ng-click="editInfo('username', user.username)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#name" ng-click="editInfo('username', user.username)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">密码</td>
 			<td>******</td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#pass">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#pass">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">到期时间</td>

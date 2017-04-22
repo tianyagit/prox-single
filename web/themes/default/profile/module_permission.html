@@ -27,7 +27,7 @@
 				<td class="text-center" style="width:100px;">
 					<div class="link-group" >
 						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op' =>'post', 'm' => $name));}">编辑</a>
-						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op'=>'delete', 'm' => $name));}">删除</a>
+						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op'=>'delete', 'm' => $name));}" class="del">删除</a>
 					</div>
 				</td>
 			</tr>

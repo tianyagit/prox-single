@@ -263,13 +263,15 @@
 						{/if}
 					</td>
 					<td>
-						<a href="{php echo url('adviertisement/content-provider/flow_control', array('uniacid' => $account['uniacid']))}">
+						<div class="link-group">
+							<a href="{php echo url('adviertisement/content-provider/flow_control', array('uniacid' => $account['uniacid']))}">
 							{if IMS_FAMILY == 'v' ||$uni['flow_setting_enable'] == 2}
 							设置
 							{elseif $uni['flow_setting_enable'] == 1}
 							开通广告联盟
 							{/if}
-						</a>
+							</a>
+						</div>
 					</td>
 				</tr>
 				{/loop}
@@ -312,16 +314,18 @@
 					<td>{if !empty($current_uniaccount)}{$current_uniaccount['amount']}{else}0{/if}元</td>
 					{/if}
 					<td>
-						{if IMS_FAMILY != 'v'}
-						{if empty($current_uniaccount['enable']) || $current_uniaccount['enable'] == 1}
-						<a href="#ad-tags" data-toggle="modal" class="btn btn-primary">开通</a>
-						{elseif $current_uniaccount['enable'] == 2}
-						<a href="javascript:;" class="btn btn-danger js-stop-provider" data-uniacid="{$_GPC['uniacid']}">停止</a>
-						<a href="#ad-tags" data-toggle="modal" class="btn btn-primary">设置</a>
-						{/if}
-						{else}
-						<a href="#ad-tags" data-toggle="modal" class="btn btn-primary">设置</a>
-						{/if}
+						<div class="link-group">
+							{if IMS_FAMILY != 'v'}
+							{if empty($current_uniaccount['enable']) || $current_uniaccount['enable'] == 1}
+							<a href="#ad-tags" data-toggle="modal">开通</a>
+							{elseif $current_uniaccount['enable'] == 2}
+							<a href="javascript:;" class="btn btn-danger js-stop-provider" data-uniacid="{$_GPC['uniacid']}">停止</a>
+							<a href="#ad-tags" data-toggle="modal">设置</a>
+							{/if}
+							{else}
+							<a href="#ad-tags" data-toggle="modal">设置</a>
+							{/if}
+						</div>
 					</td>
 				</tr>
 				</tbody>

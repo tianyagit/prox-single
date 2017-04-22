@@ -8,34 +8,34 @@
 	<table class="table we7-table table-hover table-form">
 		<col width="140px" />
 		<col />
-		<col width="230px" />
+		<col width="100px" />
 		<tr>
 			<th class="text-left" colspan="3">公众号设置</th>
 		</tr>
 		<tr>
 			<td class="table-label">头像</td>
 			<td><img ng-src="{{other.headimgsrc}}" width="75px" height="75px" /></td>
-			<td><a href="javascript:;" class="color-default" ng-click="changeImage('headimgsrc')">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" ng-click="changeImage('headimgsrc')">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">二维码</td>
 			<td><img src="{{other.qrcodeimgsrc}}" width="75px" height="75px"></td>
-			<td><a href="javascript:;" class="color-default" ng-click="changeImage('qrcodeimgsrc')">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" ng-click="changeImage('qrcodeimgsrc')">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">公众号名称</td>
 			<td ng-bind="account.name"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#name" ng-click="editInfo('name', account.name)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#name" ng-click="editInfo('name', account.name)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">帐号</td>
 			<td ng-bind="account.account"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#account" ng-click="editInfo('account', account.account)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#account" ng-click="editInfo('account', account.account)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">原始ID</td>
 			<td ng-bind="account.original"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#original" ng-click="editInfo('original', account.original)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#original" ng-click="editInfo('original', account.original)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">类型</td>
@@ -44,18 +44,18 @@
 			<td ng-if="account.level == 3">认证订阅号</td>
 			<td ng-if="account.level == 4">认证服务号/认证媒体/政府订阅号</td>
 			<td ng-if="account.level == 0">---</td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#level" ng-click="editInfo('level', account.level)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#level" ng-click="editInfo('level', account.level)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">到期时间</td>
 			<td ng-bind="account.end"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#endtime" ng-click="editInfo('endtype', account.endtype)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#endtime" ng-click="editInfo('endtype', account.endtype)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">接入方式</td>
 			<td ng-if="account.type == 1">普通接入</td>
 			<td ng-if="account.type == 3">授权接入</td>
-			<td ng-if="authstate && authurl"><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#jointype" ng-click="editInfo('type', account.type)">修改</a></td>
+			<td ng-if="authstate && authurl"><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#jointype" ng-click="editInfo('type', account.type)">修改</a></div></td>
 		</tr>
 	</table>
 	<div class="modal fade" id="name" tabindex="-1" role="dialog" aria-hidden="true">
@@ -119,7 +119,7 @@
 		</div>
 	</div>
 	<div class="modal fade" id="level" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="we7-modal-dialog modal-dialog">
+		<div class="we7-modal-dialog modal-dialog we7-form">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -190,17 +190,17 @@
 	<table class="table we7-table table-hover table-form wechat-menu">
 		<col width="140px " />
 		<col />
-		<col width="230px" />
+		<col width="100px" />
 		<tr><th class="text-left" colspan="3">自定义菜单通讯设置</th></tr>
 		<tr>
 			<td class="table-label">AppId</td>
 			<td ng-bind="account.key"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#key"  ng-click="editInfo('key', account.key)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#key"  ng-click="editInfo('key', account.key)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">AppSecret</td>
 			<td ng-bind="account.secret"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#secret"  ng-click="editInfo('secret', account.secret)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#secret"  ng-click="editInfo('secret', account.secret)">修改</a></div></td>
 		</tr>
 	</table>
 	<div class="modal fade" id="key" tabindex="-1" role="dialog" aria-hidden="true">
@@ -244,26 +244,30 @@
 		</div>
 	</div>
 	<table class="table wechat-communication">
-		<col width="160px " />
-		<col/>
-		<col width="230px "/>
+		<col width="160px" />
+		<col />
+		<col width="230px"/>
 		<tr><th class="text-left" colspan="3">公众平台通信</th></tr>
 		<tr>
 			<td class="table-label">URL<p>(服务器地址)</p></td>
 			<td>
-				<a href="javascript:;" ng-bind="other.serviceUrl"></a>
+				<a href="javascript:;" class="we7-padding-right" ng-bind="other.serviceUrl"></a>
 			</td>
-			<td class="link-group">
-				<a href="javascript:;" id="copy-0" class="color-default" clipboard supported="supported" text="other.serviceUrl" on-copied="success('0')">点击复制</a>
+			<td>
+				<div class="link-group"><a href="javascript:;" id="copy-0" clipboard supported="supported" text="other.serviceUrl" on-copied="success('0')">点击复制</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">Token<p>(令牌)</p></td>
-			<td><a href="javascript:;" ng-bind="account.token"></a></td>
-			<td class="link-group">
-				<a href="javascript:;" data-toggle="modal" data-target="#token">修改</a>
-				<a href="javascript:;" data-dismiss="modal" ng-click="httpChange('token')">生成新的</a>
-				<a href="javascript:;" id="copy-1" clipboard supported="supported" text="account.token" on-copied="success('1')">点击复制</a>
+			<td>
+				<a href="javascript:;" class="we7-padding-right" ng-bind="account.token"></a>
+			</td>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" data-toggle="modal" data-target="#token">修改</a>
+					<a href="javascript:;" data-dismiss="modal" ng-click="httpChange('token')">生成新的</a>
+					<a href="javascript:;" id="copy-1" clipboard supported="supported" text="account.token" on-copied="success('1')">点击复制</a>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -271,10 +275,12 @@
 			<td>
 				<a href="javascript:;" class="we7-padding-right" ng-bind="account.encodingaeskey"></a>
 			</td>
-			<td class="link-group">
-				<a href="javascript:;" data-toggle="modal" data-target="#encodingaeskey">修改</a>
-				<a href="javascript:;" data-dismiss="modal" ng-click="httpChange('encodingaeskey')">生成新的</a>
-				<a href="javascript:;" id="copy-2" clipboard supported="supported" text="account.encodingaeskey" on-copied="success('2')">点击复制</a>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" data-toggle="modal" data-target="#encodingaeskey">修改</a>
+					<a href="javascript:;" data-dismiss="modal" ng-click="httpChange('encodingaeskey')">生成新的</a>
+					<a href="javascript:;" id="copy-2" clipboard supported="supported" text="account.encodingaeskey" on-copied="success('2')">点击复制</a>
+				</div>
 			</td>
 		</tr>
 	</table>
