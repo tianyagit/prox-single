@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $type = trim($_GPC['type']);
 $pageindex = max(1, intval($_GPC['page']));
-$pagesize = 10;
+$pagesize = 4;
 if($type == 'image') {
 	$pagesize = 50;
 }
