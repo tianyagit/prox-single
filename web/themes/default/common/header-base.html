@@ -32,9 +32,17 @@
 		'account' : {php echo json_encode($_W['account'])},
 	};
 	//页面加载等待js
-	// function load(){
-	// 	$(".loader").fadeOut("fast");
-	// }
+	function load(){
+		var screenH = document.documentElement.clientHeight;
+		$('.main-panel-body,.panel-cut').css('min-height', screenH-100);
+		$('.caret-wxapp .panel-app').css('min-height', screenH-145);
+		if($('.left-menu').length == 0){
+			$('.footer').addClass('footer-no-left');
+		}
+		if($('.plugin-menu').length > 0){
+			$('.footer').addClass('footer-plugin');
+		}
+	}
 	</script>
 	<script>var require = { urlArgs: 'v=20170112' };</script>
 	<script type="text/javascript" src="./resource/js/lib/jquery-1.11.1.min.js"></script>
@@ -43,7 +51,7 @@
 	<script type="text/javascript" src="./resource/js/app/common.min.js?v=20170112"></script>
 	<script type="text/javascript" src="./resource/js/require.js?v=20170112"></script>
 </head>
-<body class="{if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')) && $_GPC['main-lg']} main-lg-body {/if}">
+<body onload="load()" class="{if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')) && $_GPC['main-lg']} main-lg-body {/if}">
 	<div class="loader" style="display:none">
 		<div class="la-ball-clip-rotate">
 			<div></div>
