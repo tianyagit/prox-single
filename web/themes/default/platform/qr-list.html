@@ -45,7 +45,7 @@
 					<a href="{php echo url('platform/qr/down_qr', array('id' => $row['id']))}">下载</a>
 					<a href="{php echo url('platform/qr/post', array('id'=> $row['id']))}" >编辑</a>
 					{if $row['model'] == 2}
-						<a href="{php echo url('platform/qr/del', array('id'=> $row['id']))}"  onclick="return confirm('您确定要删除该二维码以及其统计数据吗？')">删除</a>
+						<a href="{php echo url('platform/qr/del', array('id'=> $row['id']))}" class="del" onclick="return confirm('您确定要删除该二维码以及其统计数据吗？')">删除</a>
 					{/if}
 					{if $row['model'] == 1}<a href="{php echo url('platform/qr/extend', array('id'=> $row['id']))}" >延时</a>{/if}
 				</div>

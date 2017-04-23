@@ -54,9 +54,9 @@
 				</td>
 				<td class="text-left">
 					<div class="link-group">
-						<a href="javascript:;" id="copy-{{article.id}}" class="color-default we7-margin-right" clipboard supported="supported" text="article.link" on-copied="success(article.id)">复制链接</a>
-						<a href="javascript:;" class="color-default we7-margin-right" ng-click="editArticle(article.id)">编辑</a>
-						<a href="javascript:;" class="color-default" ng-click="delArticle(article.id)">删除</a>
+						<a href="javascript:;" id="copy-{{article.id}}" class="we7-margin-right" clipboard supported="supported" text="article.link" on-copied="success(article.id)">复制链接</a>
+						<a href="javascript:;" class="we7-margin-right" ng-click="editArticle(article.id)">编辑</a>
+						<a href="javascript:;" class="del" ng-click="delArticle(article.id)">删除</a>
 					</div>
 				</td>
 			</tr>

@@ -313,65 +313,69 @@ function user_account_detail_info($uid) {
 
 
 /**
- * 获取当前用户拥有的所有模块及小程序
+ * 获取当前用户拥有的所有模块及小程序的标识
+ * @param $uid string 用户id
  * @return array 模块列表
  */
-function user_modules() {
+function user_modules($uid) {
 	global $_W;
 	load()->model('module');
-	$cachekey = cache_system_key("user_modules:" . $_W['uid']);
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
-	}
-	$user_info = user_single(array('uid' => $_W['uid']));
-	if ($_W['isfounder']) {
-		$modules = pdo_getall('modules', array(), array(), 'name');
-	} elseif (empty($user_info['groupid'])) {
-		$modules = pdo_getall('modules', array('issystem' => 1), array(), 'name');
-	} else {
-		$user_group_info = pdo_get('users_group', array('id' => $user_info['groupid']));
-		$user_group_info = iunserializer($user_group_info);
-		$user_group_modules = array();
-		if (!empty($user_group_info['package']) && is_array($user_group_info['package'])) {
-			$uni_groups = pdo_fetchall('SELECT * FROM ' . tablename('uni_group') . ' WHERE id IN ' . "('" .  implode("','", $user_group_info['package']) . "')");
-			if (!empty($uni_groups)) {
-				foreach ($uni_groups as $uni_group_modules) {
-					$user_group_modules = array_merge($user_group_modules, $uni_group_modules);
+	$uid = empty($uid) ? $_W['uid'] : $uid;
+	$cachekey = cache_system_key("user_modules:" . $uid);
+	$modules = cache_load($cachekey);
+
+	if (empty($modules)) {
+		$founders = explode (',', $_W['config']['setting']['founder']);
+		$user_info = user_single (array ('uid' => $uid));
+		if (in_array ($uid, $founders)) {
+			$modules = pdo_getall ('modules', array (), array (), 'name');
+		} elseif (empty($user_info['groupid'])) {
+			$modules = pdo_getall ('modules', array ('issystem' => 1), array (), 'name');
+		} else {
+			$user_group_info = pdo_get ('users_group', array ('id' => $user_info['groupid']));
+			$user_group_info = iunserializer ($user_group_info);
+			$user_group_modules = array ();
+			if (!empty($user_group_info['package']) && is_array($user_group_info['package'])) {
+				$uni_groups = pdo_getall('uni_group', array('id' => $user_group_info['package'], 'uniacid' => $_W['uniacid']));
+				if (!empty($uni_groups)) {
+					foreach ($uni_groups as $uni_group_modules) {
+						$user_group_modules = array_merge($user_group_modules, $uni_group_modules);
+					}
 				}
 			}
+			$modules = pdo_getall('modules', array('name' => $user_group_modules), array (), 'name');
 		}
-		$modules = pdo_getall('modules', array('name' => $user_group_modules), array(), 'name');
+		cache_write($cachekey, array_keys($modules));
 	}
 
 	if (!empty($modules)) {
 		$module_list = array();//加上模块插件后的模块列表
 		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
-		$have_plugin_module = pdo_fetchall('SELECT GROUP_CONCAT(name) as plugin_list, main_module FROM ' . tablename('modules_plugin') . " GROUP BY main_module", array(), 'main_module');
-		foreach ($modules as $name => &$module) {
-			if (in_array($name, array_keys($plugin_list))) {
+		$have_plugin_module = array();
+		if (!empty($plugin_list)) {
+			foreach ($plugin_list as $plugin) {
+				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin;
+			}
+		}
+		unset($plugin);
+		foreach ($modules as $name => $module) {
+			$module = is_array($module)?$name:$module;//应用管理 已安装应用$module是字符串 未安装应用安装时是数组
+			if (in_array($module, array_keys($plugin_list))) {
 				continue;
 			}
-			$module = module_parse_info($module);
-			$module['main_module'] = '';
-			$module_list[$name] = $module;
-			if (in_array($name, array_keys($have_plugin_module))) {
-				$module_plugin_list = explode(',', $have_plugin_module[$name]['plugin_list']);
-				$module_list[$name]['plugin'] = $module_plugin_list;
+			$module_list[$module] = module_fetch($module);
+			if (in_array($module, array_keys($have_plugin_module))) {
+				$module_plugin_list = $have_plugin_module[$module];
 				if (is_array($module_plugin_list) && !empty($module_plugin_list)) {
 					foreach ($module_plugin_list as $plugin) {
-						$plugin = $modules[$plugin];
-						if (empty($plugin)) {
+						if (!in_array($plugin['name'], $modules)) {
 							continue;
 						}
-						$plugin['main_module'] = $name;
-						$plugin = module_parse_info($plugin);
-						$module_list[$plugin['name']] = $plugin;
+						$module_list[$plugin['name']] = module_fetch($plugin['name']);
 					}
 				}
 			}
 		}
 	}
-	cache_write($cachekey, $module_list);
 	return $module_list;
 }

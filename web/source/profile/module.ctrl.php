@@ -24,15 +24,15 @@ if($do == 'display') {
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => &$row) {
 			if (!empty($row['issystem']) || !empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
-				unset($modulelist[$name]);
+				if ($name != 'we7_coupon') {
+					unset($modulelist[$name]);
+				}
 				continue;
 			}
 		}
-		$total = count($modulelist);
-		$modulelist = array_slice($modulelist, ($pageindex - 1) * $pagesize, $pagesize);
 		$modules = array();
 		if (!empty($modulelist)) {
-			$module_profile = pdo_getall('uni_account_modules', array ('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array ('module', 'enabled', 'shortcut'), 'module');
+			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array ('module', 'enabled', 'shortcut'), 'module');
 			if (!empty($module_profile)) {
 				foreach ($module_profile as $name => $row) {
 					$modules[$name] = $modulelist[$name];
@@ -41,6 +41,8 @@ if($do == 'display') {
 				}
 			}
 		}
+		$total = count($modules);
+		$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
 		$pager = pagination ($total, $pageindex, $pagesize);
 	}
 	template ('profile/module');

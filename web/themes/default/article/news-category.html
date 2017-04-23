@@ -31,7 +31,7 @@
 							<td><input type="text" name="displayorder[]" value="{$da['displayorder']}" class="form-control"/></td>
 							<td><input type="text" name="title[]" value="{$da['title']}" class="form-control"/></td>
 							<td class="text-left">
-								<a href="{php echo url('article/news/category_del', array('id' => $da['id']));}" class="color-default" onclick="if(!confirm('删除分类后，该分类下新闻也会被删除，确定删除吗？')) return false;">删除</a>
+								<div class="link-group"><a href="{php echo url('article/news/category_del', array('id' => $da['id']));}" class="del" onclick="if(!confirm('删除分类后，该分类下新闻也会被删除，确定删除吗？')) return false;">删除</a></div>
 							</td>
 						</tr>
 					{/loop}

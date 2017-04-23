@@ -17,17 +17,21 @@
 		<tr>
 			<td class="table-label">头像</td>
 			<td><img ng-src="{{other.headimgsrc}}" width="75px" height="75px" /></td>
-			<td><a href="javascript:;" class="color-default" ng-click="changeImage('headimgsrc')">修改</a></td>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" ng-click="changeImage('headimgsrc')">修改</a>
+				</div>
+			</td>
 		</tr>
 		<tr>
 			<td class="table-label">二维码</td>
 			<td><img src="{{other.qrcodeimgsrc}}" width="75px" height="75px"></td>
-			<td><a href="javascript:;" class="color-default" ng-click="changeImage('qrcodeimgsrc')">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" ng-click="changeImage('qrcodeimgsrc')">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">小程序名称</td>
 			<td ng-bind="account.name"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#name" ng-click="editInfo('name', account.name)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#name" ng-click="editInfo('name', account.name)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">小程序帐号</td>
@@ -37,12 +41,12 @@
 		<tr>
 			<td class="table-label">原始ID</td>
 			<td ng-bind="account.original"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#original" ng-click="editInfo('original', account.original)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#original" ng-click="editInfo('original', account.original)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">到期时间</td>
 			<td ng-bind="account.end"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#endtime" ng-click="editInfo('endtype', account.endtype)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#endtime" ng-click="editInfo('endtype', account.endtype)">修改</a></div></td>
 		</tr>
 	</table>
 	<div class="modal fade" id="name" tabindex="-1" role="dialog" aria-hidden="true">
@@ -162,12 +166,12 @@
 		<tr>
 			<td class="table-label">AppId</td>
 			<td ng-bind="account.key"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#key"  ng-click="editInfo('key', account.key)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#key"  ng-click="editInfo('key', account.key)">修改</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">AppSecret</td>
 			<td ng-bind="account.secret"></td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#secret"  ng-click="editInfo('secret', account.secret)">修改</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#secret"  ng-click="editInfo('secret', account.secret)">修改</a></div></td>
 		</tr>
 	</table>
 	<div class="modal fade" id="key" tabindex="-1" role="dialog" aria-hidden="true">
@@ -213,33 +217,42 @@
 	<table class="table wechat-communication">
 		<col width="160px " />
 		<col />
-		<tr><th class="text-left" colspan="2">服务器配置</th></tr>
+		<col />
+		<tr><th class="text-left" colspan="3">服务器配置</th></tr>
 		<tr>
 			<td class="table-label">request合法域名</td>
 			<td>
 				<a href="javascript:;" class="we7-padding-right" ng-bind="other.siteurl"></a>
-				<a href="javascript:;" id="copy-0" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.siteurl" on-copied="success('0')">点击复制</a>
+			</td>
+			<td>
+				<div class="link-group"><a href="javascript:;" id="copy-0" clipboard supported="supported" text="other.siteurl" on-copied="success('0')">点击复制</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">socket合法域名</td>
 			<td>
 				<a href="javascript:;" class="we7-padding-right" ng-bind="other.socket_url"></a>
-				<a href="javascript:;" id="copy-1" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.socket_url" on-copied="success('1')">点击复制</a>
+			</td>
+			<td>
+				<div class="link-group"><a href="javascript:;" id="copy-1" clipboard supported="supported" text="other.socket_url" on-copied="success('1')">点击复制</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">uploadFile合法域名</td>
 			<td>
 				<a href="javascript:;" class="we7-padding-right" ng-bind="other.siteurl"></a>
-				<a href="javascript:;" id="copy-2" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.siteurl" on-copied="success('2')">点击复制</a>
+			</td>
+			<td>
+				<div class="link-group"><a href="javascript:;" id="copy-2" clipboard supported="supported" text="other.siteurl" on-copied="success('2')">点击复制</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">downloadFile合法域名</td>
 			<td>
 				<a href="javascript:;" class="we7-padding-right" ng-bind="other.siteurl"></a>
-				<a href="javascript:;" id="copy-3" class="btn btn-primary btn-sm" clipboard supported="supported" text="other.siteurl" on-copied="success('3')">点击复制</a>
+			</td>
+			<td>
+				<div class="link-group"><a href="javascript:;" id="copy-3" clipboard supported="supported" text="other.siteurl" on-copied="success('3')">点击复制</a></div>
 			</td>
 		</tr>
 	</table>

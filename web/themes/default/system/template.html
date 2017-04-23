@@ -104,7 +104,9 @@
 			</div>
 
 		</div>
-		{$pager}
+		<div class="text-right">
+			{$pager}
+		</div>
 		<script>
 			angular.module('moduleApp').value('config', {
 				'templateList' : {php echo json_encode($template_list)},

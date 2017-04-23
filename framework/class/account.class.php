@@ -1582,7 +1582,7 @@ abstract class WeModuleCron extends WeBase {
 	}
 
 	//记录触发记录
-	public function addCronLog($tid, $errno, $note, $tag = array()) {
+	public function addCronLog($tid, $errno, $note) {
 		global $_W;
 		if(!$tid) {
 			iajax(-1, 'tid参数错误', '');
@@ -1593,7 +1593,6 @@ abstract class WeModuleCron extends WeBase {
 			'type' => $_W['cron']['filename'],
 			'tid' => $tid,
 			'note' => $note,
-			'tag' => iserializer($tag),
 			'createtime' => TIMESTAMP
 		);
 		pdo_insert('core_cron_record', $data);
