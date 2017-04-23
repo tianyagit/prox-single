@@ -207,8 +207,6 @@ function material_get_image_url($content) {
 	return $images;
 }
 
-
-
 /**
  * 替换图文素材内容中图片url地址（把非微信url替换成微信url）
  * @param $content string 待处理的图文内容
@@ -234,4 +232,25 @@ function material_parse_content($content) {
 		}
 	}
 	return $content;
+}
+
+/**
+ * 获取素材文件到本地
+ * @param string $url
+ * @param string $type
+ * @return string 返回生成本地文件路径
+ */
+function material_get_local_file($url, $type) {
+	global $_W;
+	if (! empty($_W['setting']['remote']['type'])) {
+		$remote_file_url = tomedia($url);
+		$filepath = file_fetch($remote_file_url,0,'',$type);
+		if(is_error($filepath)) {
+			return $filepath;
+		}
+		$filepath = ATTACHMENT_ROOT . $filepath; 
+	} else {
+		$filepath = ATTACHMENT_ROOT . $url;
+	}
+	return $filepath;
 }

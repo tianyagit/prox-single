@@ -6,10 +6,13 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->func('file');
-load()->func('communication');
 load()->model('material');
 load()->model('account');
-$dos = array('news', 'tomedia', 'addnews');
+$dos = array(
+	'news',
+	'tomedia',
+	'addnews' 
+);
 $do = in_array($do, $dos) ? $do : 'news';
 
 uni_user_permission_check('platform_material');
@@ -23,13 +26,20 @@ if ($do == 'tomedia') {
 if ($do == 'news') {
 	$type = trim($_GPC['type']);
 	$newsid = intval($_GPC['newsid']);
+	$upload_limit = file_upload_limit();
 	if (empty($newsid)) {
 		if ($type == 'reply') {
 			$reply_news_id = intval($_GPC['reply_news_id']);
-			$news = pdo_get('news_reply', array('id' => $reply_news_id));
-			$news_list = pdo_getall('news_reply', array('parent_id' => $news['id']), array(), '', ' displayorder ASC');
-			$news_list = array_merge(array($news), $news_list);
-			if (!empty($news_list)) {
+			$news = pdo_get('news_reply', array(
+				'id' => $reply_news_id 
+			));
+			$news_list = pdo_getall('news_reply', array(
+				'parent_id' => $news['id'] 
+			), array(), '', ' displayorder ASC');
+			$news_list = array_merge(array(
+				$news 
+			), $news_list);
+			if (! empty($news_list)) {
 				foreach ($news_list as $key => &$row_news) {
 					$row_news = array(
 						'uniacid' => $_W['uniacid'],
@@ -40,7 +50,7 @@ if ($do == 'news') {
 						'content_source_url' => preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $row_news['url']),
 						'content' => $row_news['content'],
 						'show_cover_pic' => intval($row_news['incontent']),
-						'displayorder' => $key
+						'displayorder' => $key 
 					);
 				}
 			}
@@ -55,16 +65,17 @@ if ($do == 'news') {
 if ($do == 'addnews') {
 	$account_api = WeAccount::create($_W['acid']);
 	$operate = $_GPC['operate'] == 'add' ? 'add' : 'edit';
-	$type =  trim($_GPC['type']);
+	$type = trim($_GPC['type']);
 	$is_save_location = trim($_GPC['target']) == 'wechat' ? false : true;
 	$news_rid = intval($_GPC['news_rid']);
+	$attach_id = intval($_GPC['attach_id']);
 	$articles = array();
 	$post_news = array();
 	$local_upload_to_wechat = '';
-	//获取所有的图片素材，构造一个以media_id为键的数组(为了获取图片的url)
-	if (!empty($_GPC['news'])) {
+	// 获取所有的图片素材，构造一个以media_id为键的数组(为了获取图片的url)
+	if (! empty($_GPC['news'])) {
 		foreach ($_GPC['news'] as $key => $news) {
-			//微信接口结构
+			// 微信接口结构
 			$news_info = array(
 				'title' => $news['title'],
 				'author' => $news['author'],
@@ -72,91 +83,19 @@ if ($do == 'addnews') {
 				'content' => htmlspecialchars_decode($news['content']),
 				'content_source_url' => $news['content_source_url'],
 				'show_cover_pic' => $news['show_cover_pic'],
-				'thumb_media_id' => $news['media_id'],
+				'thumb_media_id' => $news['media_id'] 
 			);
-			if (!$is_save_location) {
+			if (! $is_save_location) {
 				$news_info['content'] = material_parse_content($news_info['content']);
 				if (is_error($news_info['content'])) {
 					iajax(0, $news_info['content']);
 				}
-				if (empty($news_info['thumb_media_id'])) {
-					$news['thumb'] = (isset($news['thumb']) && $news['thumb'] != '') ? $news['thumb'] : $news['thumb_url'];
-					$material = pdo_get('core_attachment', array(
-						'uniacid' => $_W['uniacid'],
-						'attachment' => substr(parse_url($news['thumb'], PHP_URL_PATH),'1')
-					));
-					if (empty($material)){
-						iajax(1, '所选素材文件不存在或已删除'.substr(parse_url($news['thumb'], PHP_URL_PATH),'1'));
-					}
-					//获取本地图片
-					if (! empty($_W['setting']['remote']['type'])) {
-						$reload_full_name = file_fetch(tomedia($material['attachment']), '1024');
-						$fullname = ATTACHMENT_ROOT . $reload_full_name;
-					}else{
-						$fullname = ATTACHMENT_ROOT . $material['attachment'];
-					}
-					//上传到微信服务器
-					$acc = WeAccount::create($_W['acid']);
-					$token = $acc->getAccessToken();
-					if (is_error($token)) {
-						$result['message'] = $token['message'];
-						iajax(1, $result['message']);
-					}
-					$sendapi = 'https://api.weixin.qq.com/cgi-bin/material/add_material' . "?access_token={$token}&type=image";
-					$data = array(
-						'media' => '@'.$fullname
-					);				
-					$resp = ihttp_request($sendapi, $data);
-					if(is_error($resp)) {
-						$result['error'] = 0;
-						$result['message'] = $resp['message'];
-						iajax(1, $result['message']);
-					}
-					$content = @json_decode($resp['content'], true);
-					if(empty($content)) {
-						$result['error'] = 0;
-						$result['message'] = "接口调用失败, 元数据: {$resp['meta']}";
-						iajax(1, $result['message']);
-					}
-					if(!empty($content['errcode'])) {
-						$result['error'] = 0;
-						$result['message'] = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->error_code($content['errcode'])}";
-						iajax(1, $result['message']);
-					}
-					if(!empty($content['media_id'])){
-						$result['media_id'] = $content['media_id'];
-					}
-					if(!empty($content['thumb_media_id'])){
-						$result['media_id'] = $content['thumb_media_id'];
-					}
-					$size = getimagesize($fullname);
-					$insert = array(
-							'uniacid' => $_W['uniacid'],
-							'acid' => $_W['acid'],
-							'uid' => $_W['uid'],
-							'filename' => basename($fullname),
-							'attachment' => $content['url'],
-							'media_id' => $result['media_id'],
-							'width' => $size[0],
-							'height' => $size[1],
-							'type' => 'image',
-							'model' => 'prem',
-							'tag' => $content['url'],
-							'createtime' => TIMESTAMP
-					);
-					if (!pdo_insert('wechat_attachment', $insert, true)){
-						iajax(1, '同步素材插入表操作失败。');
-					}else{
-						$news['media_id'] = $result['media_id'];
-						$news_info['thumb_media_id'] = $result['media_id'];
-						pdo_delete('core_attachment', array(
-							'id' => $material['id']
-						));
-						file_delete($fullname);
-						pdo_delete('wechat_news', array(
-							'attach_id' => $news['attach_id']
-						));
-					}
+				if ($news['media_id'] == '') {
+					$remote_to_local_path = material_get_local_file($news['thumb'], 'image');
+					$result = $account_api->uploadMediaFixed($remote_to_local_path, 'image');
+					$news_info['thumb_media_id'] = $result['media_id'];
+					$news['media_id'] = $result['media_id'];
+					$news['thumb'] = $result['url'];
 				}
 			}
 			$post_data = array(
@@ -170,13 +109,18 @@ if ($do == 'addnews') {
 				'content_source_url' => $news['content_source_url'],
 				'show_cover_pic' => $news['show_cover_pic'],
 				'url' => '',
-				'displayorder' => $key
+				'displayorder' => $key 
 			);
-			$attach_mediaid =  pdo_getcolumn('wechat_attachment', array('id' => intval($_GPC['attach_id']), 'uniacid' => $_W['uniacid']), 'media_id');
-			//本地素材上传到微信时是添加微信素材的操作
+			$attach_mediaid = pdo_getcolumn('wechat_attachment', array(
+				'id' => $attach_id,
+				'uniacid' => $_W['uniacid'] 
+			), 'media_id');
+			// 本地素材上传到微信时是添加微信素材的操作
 			if (empty($attach_mediaid) && $operate == 'edit' && $is_save_location == false) {
 				$operate = 'add';
-				$local_attach_id = pdo_getcolumn('wechat_news', array('id' => $news['id']), 'attach_id');
+				$local_attach_id = pdo_getcolumn('wechat_news', array(
+					'id' => $news['id'] 
+				), 'attach_id');
 			}
 			if ($operate == 'add') {
 				$post_news[] = $post_data;
@@ -185,15 +129,15 @@ if ($do == 'addnews') {
 				$articles[] = array(
 					'media_id' => $attach_mediaid,
 					'index' => $key,
-					'articles' => $news_info
+					'articles' => $news_info 
 				);
 				$post_news[$news['id']] = $post_data;
 			}
 		}
 	}
-
+	
 	if ($operate == 'add') {
-		if (!$is_save_location) {
+		if (! $is_save_location) {
 			$media_id = $account_api->addMatrialNews($articles);
 			if (is_error($media_id)) {
 				iajax(1, $media_id, '');
@@ -203,41 +147,59 @@ if ($do == 'addnews') {
 		$wechat_attachment = array(
 			'uniacid' => $_W['uniacid'],
 			'acid' => $_W['acid'],
-			'media_id' => !$is_save_location ? $media_id : '',
+			'media_id' => ! $is_save_location ? $media_id : '',
 			'type' => 'news',
-			'model' => !$is_save_location ? 'perm' : 'local',
-			'createtime' => time()
+			'model' => ! $is_save_location ? 'perm' : 'local',
+			'createtime' => time() 
 		);
 		pdo_insert('wechat_attachment', $wechat_attachment);
 		$attach_id = pdo_insertid();
-		//兼容0.8版图文回复
+		// 兼容0.8版图文回复
 		if ($is_save_location && $news_rid) {
-			pdo_update('news_reply', array('media_id' => $attach_id), array('id' => $news_rid));
+			pdo_update('news_reply', array(
+				'media_id' => $attach_id 
+			), array(
+				'id' => $news_rid 
+			));
 		}
 		foreach ($post_news as $key => $news) {
 			$news['attach_id'] = $attach_id;
-			if (!$is_save_location) {
+			if (! $is_save_location) {
 				$news['url'] = $wechat_new['news_item'][$key]['url'];
 			}
 			pdo_insert('wechat_news', $news);
 		}
-		//本地素材上传到微信删除本地素材
-		if (!empty($local_attach_id)) {
-			pdo_delete('wechat_attachment', array('id' => $local_attach_id));
-			pdo_delete('wechat_news', array('attach_id' => $local_attach_id));
+		// 本地素材上传到微信删除本地素材
+		if (! empty($local_attach_id)) {
+			pdo_delete('wechat_attachment', array(
+				'id' => $local_attach_id 
+			));
+			pdo_delete('wechat_news', array(
+				'attach_id' => $local_attach_id 
+			));
 		}
 		iajax(0, '创建图文素材成功', '');
 	} else {
-		if (!$is_save_location) {
+		if (! $is_save_location) {
 			foreach ($articles as $edit_news) {
 				$result = $account_api->editMaterialNews($edit_news);
 				if (is_error($result)) {
 					iajax(0, $result, '');
 				}
 			}
+		} else {
+			pdo_update('wechat_attachment', array(
+				'media_id' => '',
+				'model' => 'local' 
+			), array(
+				'id' => $attach_id 
+			));
 		}
 		foreach ($post_news as $id => $news) {
-			pdo_update('wechat_news', $news, array('uniacid' => $_W['uniacid'], 'id' => $id));
+			pdo_update('wechat_news', $news, array(
+				'uniacid' => $_W['uniacid'],
+				'id' => $id 
+			));
 		}
 		iajax(0, '更新图文素材成功', '');
 	}
