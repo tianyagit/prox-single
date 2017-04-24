@@ -91,7 +91,7 @@ if ($do == 'addnews') {
 					iajax(0, $news_info['content']);
 				}
 				if ($news['media_id'] == '') {
-					$remote_to_local_path = material_get_local_file($news['thumb'], 'image');
+					$remote_to_local_path = material_remote_to_local($news['thumb'], 'image');
 					$result = $account_api->uploadMediaFixed($remote_to_local_path, 'image');
 					$news_info['thumb_media_id'] = $result['media_id'];
 					$news['media_id'] = $result['media_id'];

@@ -240,11 +240,11 @@ function material_parse_content($content) {
  * @param string $type
  * @return string 返回生成本地文件路径
  */
-function material_get_local_file($url, $type) {
+function material_remote_to_local($url, $type) {
 	global $_W;
 	if (! empty($_W['setting']['remote']['type'])) {
 		$remote_file_url = tomedia($url);
-		$filepath = file_fetch($remote_file_url,0,'',$type);
+		$filepath = file_fetch($remote_file_url,0,'');
 		if(is_error($filepath)) {
 			return $filepath;
 		}
@@ -253,4 +253,32 @@ function material_get_local_file($url, $type) {
 		$filepath = ATTACHMENT_ROOT . $url;
 	}
 	return $filepath;
+}
+
+/**
+ * 获取后台设置上传文件大小限制
+ *
+ * @return array
+ */
+function file_upload_limit() {
+	global $_W;
+	$default = 5 * 1024 * 1024;
+	$upload_limit = array(
+		'num' => '30',
+		'image' => $default,
+		'voice' => $default,
+		'video' => $default
+	);
+	if (empty($_W['setting']['upload'])) {
+		$upload = $_W['config']['upload'];
+	} else {
+		$upload = $_W['setting']['upload'];
+	}
+	if (isset($upload['image']['limit']) && (bytecount($upload['image']['limit'].'kb')>0)){
+		$upload_limit['image'] = bytecount($upload['image']['limit'].'kb');
+	}
+	if (isset($upload['image']['limit']) && (bytecount($upload['audio']['limit'].'kb')>0)){
+		$upload_limit['voice'] = $upload_limit['video'] = bytecount($upload['audio']['limit'].'kb');
+	}
+	return $upload_limit;
 }
