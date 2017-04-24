@@ -81,6 +81,14 @@ define('ATTACH_OSS', 2);//远程附件类型：阿里云
 define('ATTACH_QINIU', 3);//远程附件类型：七牛
 define('ATTACH_COS', 4);//远程附件类型：腾讯云对象存储
 
+define('ATTACH_TYPE_IMAGE', 1);
+define('ATTACH_TYPE_VOICE', 2);
+define('ATTACH_TYPE_VEDIO', 3);
+define('ATTACH_TYPE_NEWS', 4);
+
+define('ATTACH_SAVE_TYPE_FIXED', 1);
+define('ATTACH_SAVE_TYPE_TEMP', 2);
+
 define('STATUS_OFF', 0); //关闭状态
 define('STATUS_ON', 1); //开启状态
 define('STATUS_SUCCESS', 0); //ajax返回成功状态，增强语义
