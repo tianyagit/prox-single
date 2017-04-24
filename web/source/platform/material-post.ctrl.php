@@ -85,7 +85,7 @@ if ($do == 'addnews') {
 				'show_cover_pic' => $news['show_cover_pic'],
 				'thumb_media_id' => $news['media_id'] 
 			);
-			if (! $is_save_location) {
+			if (!$is_save_location) {
 				$news_info['content'] = material_parse_content($news_info['content']);
 				if (is_error($news_info['content'])) {
 					iajax(0, $news_info['content']);
@@ -135,7 +135,6 @@ if ($do == 'addnews') {
 			}
 		}
 	}
-	
 	if ($operate == 'add') {
 		if (! $is_save_location) {
 			$media_id = $account_api->addMatrialNews($articles);

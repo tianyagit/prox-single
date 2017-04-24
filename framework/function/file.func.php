@@ -26,7 +26,7 @@ function file_write($filename, $data) {
 function file_read($filename) {
 	global $_W;
 	$filename = ATTACHMENT_ROOT . '/' . $filename;
-	if (! is_file($filename)) {
+	if (!is_file($filename)) {
 		return false;
 	}
 	return file_get_contents($filename);
@@ -63,7 +63,7 @@ function file_move($filename, $dest) {
  */
 function file_tree($path, $include = array()) {
 	$files = array();
-	if (! empty($include)) {
+	if (!empty($include)) {
 		$ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
 	} else {
 		$ds = glob($path . '/*');
@@ -92,7 +92,7 @@ function file_tree($path, $include = array()) {
  * @return boolean
  */
 function mkdirs($path) {
-	if (! is_dir($path)) {
+	if (!is_dir($path)) {
 		mkdirs(dirname($path));
 		mkdir($path);
 	}
@@ -116,7 +116,7 @@ function file_copy($src, $des, $filter) {
 		if (($file != '.') && ($file != '..')) {
 			if (is_dir($src . '/' . $file)) {
 				file_copy($src . '/' . $file, $des . '/' . $file, $filter);
-			} elseif (! in_array(substr($file, strrpos($file, '.') + 1), $filter)) {
+			} elseif (!in_array(substr($file, strrpos($file, '.') + 1), $filter)) {
 				copy($src . '/' . $file, $des . '/' . $file);
 			}
 		}
@@ -134,7 +134,7 @@ function file_copy($src, $des, $filter) {
  * @return boolean
  */
 function rmdirs($path, $clean = false) {
-	if (! is_dir($path)) {
+	if (!is_dir($path)) {
 		return false;
 	}
 	$files = glob($path . '/*');
@@ -158,81 +158,41 @@ function rmdirs($path, $clean = false) {
  * @return array 错误信息 error 或 array('success' => bool，'path' => 保存路径（从附件目录开始的完整相对路径）)
  */
 function file_upload($file, $type = 'image', $name = '') {
-	$harmtype = array(
-		'asp',
-		'php',
-		'jsp',
-		'js',
-		'css',
-		'php3',
-		'php4',
-		'php5',
-		'ashx',
-		'aspx',
-		'exe',
-		'cgi' 
-	);
+	$harmtype = array('asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi');
 	if (empty($file)) {
-		return error(- 1, '没有上传内容');
+		return error(-1, '没有上传内容');
 	}
-	if (! in_array($type, array(
-		'image',
-		'thumb',
-		'voice',
-		'video',
-		'audio' 
-	))) {
-		return error(- 2, '未知的上传类型');
+	if (!in_array($type, array('image', 'thumb', 'voice', 'video', 'audio'))) {
+		return error(-2, '未知的上传类型');
 	}
-	
 	global $_W;
 	$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 	$ext = strtolower($ext);
 	switch ($type) {
 		case 'image' :
 		case 'thumb' :
-			$allowExt = array(
-				'gif',
-				'jpg',
-				'jpeg',
-				'bmp',
-				'png',
-				'ico' 
-			);
+			$allowExt = array('gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico');
 			$limit = 4 * 1024;
 			break;
 		case 'voice' :
 		case 'audio' :
-			$allowExt = array(
-				'mp3',
-				'wma',
-				'wav',
-				'amr' 
-			);
+			$allowExt = array('mp3', 'wma', 'wav', 'amr');
 			$limit = 6 * 1024;
 			break;
 		case 'video' :
-			$allowExt = array(
-				'rm',
-				'rmvb',
-				'wmv',
-				'avi',
-				'mpg',
-				'mpeg',
-				'mp4' 
-			);
+			$allowExt = array('rm', 'rmvb', 'wmv', 'avi', 'mpg', 'mpeg', 'mp4');
 			$limit = 20 * 1024;
 			break;
 	}
 	$setting = $_W['setting']['upload'][$type];
-	if (! empty($setting)) {
+	if (!empty($setting)) {
 		$allowExt = array_merge($setting['extentions'], $allowExt);
 	}
-	if (! in_array(strtolower($ext), $allowExt) || in_array(strtolower($ext), $harmtype)) {
-		return error(- 3, '不允许上传此类文件');
+	if (!in_array(strtolower($ext), $allowExt) || in_array(strtolower($ext), $harmtype)) {
+		return error(-3, '不允许上传此类文件');
 	}
-	if (! empty($limit) && $limit * 1024 < filesize($file['tmp_name'])) {
-		return error(- 4, "上传的文件超过大小限制，请上传小于 {$limit}k 的文件");
+	if (!empty($limit) && $limit * 1024 < filesize($file['tmp_name'])) {
+		return error(-4, "上传的文件超过大小限制，请上传小于 {$limit}k 的文件");
 	}
 	$result = array();
 	if (empty($name) || $name == 'auto') {
@@ -244,51 +204,32 @@ function file_upload($file, $type = 'image', $name = '') {
 		$result['path'] = $path . $filename;
 	} else {
 		mkdirs(dirname(ATTACHMENT_ROOT . '/' . $name));
-		if (! strexists($name, $ext)) {
+		if (!strexists($name, $ext)) {
 			$name .= '.' . $ext;
 		}
 		$result['path'] = $name;
 	}
 	
-	if (! file_move($file['tmp_name'], ATTACHMENT_ROOT . '/' . $result['path'])) {
-		return error(- 1, '保存上传文件失败');
+	if (!file_move($file['tmp_name'], ATTACHMENT_ROOT . '/' . $result['path'])) {
+		return error(-1, '保存上传文件失败');
 	}
 	$result['success'] = true;
 	return $result;
 }
 function file_wechat_upload($file, $type = 'image', $name = '') {
-	$harmtype = array(
-		'asp',
-		'php',
-		'jsp',
-		'js',
-		'css',
-		'php3',
-		'php4',
-		'php5',
-		'ashx',
-		'aspx',
-		'exe',
-		'cgi' 
-	);
+	$harmtype = array('asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi');
 	if (empty($file)) {
-		return error(- 1, '没有上传内容');
+		return error(-1, '没有上传内容');
 	}
-	if (! in_array($type, array(
-		'image',
-		'thumb',
-		'voice',
-		'video',
-		'audio' 
-	))) {
-		return error(- 2, '未知的上传类型');
+	if (!in_array($type, array('image', 'thumb', 'voice', 'video', 'audio'))) {
+		return error(-2, '未知的上传类型');
 	}
 	
 	global $_W;
 	$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 	$ext = strtolower($ext);
 	if (in_array(strtolower($ext), $harmtype)) {
-		return error(- 3, '不允许上传此类文件');
+		return error(-3, '不允许上传此类文件');
 	}
 	
 	$result = array();
@@ -300,14 +241,14 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
 		$result['path'] = $path . $filename;
 	} else {
 		mkdirs(dirname(ATTACHMENT_ROOT . '/' . $name));
-		if (! strexists($name, $ext)) {
+		if (!strexists($name, $ext)) {
 			$name .= '.' . $ext;
 		}
 		$result['path'] = $name;
 	}
 	
-	if (! file_move($file['tmp_name'], ATTACHMENT_ROOT . '/' . $result['path'])) {
-		return error(- 1, '保存上传文件失败');
+	if (!file_move($file['tmp_name'], ATTACHMENT_ROOT . '/' . $result['path'])) {
+		return error(-1, '保存上传文件失败');
 	}
 	$result['success'] = true;
 	return $result;
@@ -343,7 +284,7 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 			if ($auto_delete_local) {
 				file_delete($filename);
 			}
-			if (! empty($response)) {
+			if (!empty($response)) {
 				return true;
 			} else {
 				return error(1, '远程附件上传失败，请检查配置并重新上传');
@@ -385,7 +326,7 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 			return true;
 		}
 	} elseif ($_W['setting']['remote']['type'] == '4') {
-		if (! empty($_W['setting']['remote']['cos']['local'])) {
+		if (!empty($_W['setting']['remote']['cos']['local'])) {
 			require (IA_ROOT . '/framework/library/cosv4.2/include.php');
 			qcloudcos\Cosapi::setRegion($_W['setting']['remote']['cos']['local']);
 			$uploadRet = qcloudcos\Cosapi::upload($_W['setting']['remote']['cos']['bucket'], ATTACHMENT_ROOT . $filename, '/' . $filename, '', 3 * 1024 * 1024, 0);
@@ -395,20 +336,20 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 		}
 		if ($uploadRet['code'] != 0) {
 			switch ($uploadRet['code']) {
-				case - 62 :
+				case -62 :
 					$message = '输入的appid有误';
 					break;
-				case - 79 :
+				case -79 :
 					$message = '输入的SecretID有误';
 					break;
-				case - 97 :
+				case -97 :
 					$message = '输入的SecretKEY有误';
 					break;
-				case - 166 :
+				case -166 :
 					$message = '输入的bucket有误';
 					break;
 			}
-			return error(- 1, $message);
+			return error(-1, $message);
 		}
 		if ($auto_delete_local) {
 			file_delete($filename);
@@ -505,7 +446,7 @@ function file_remote_delete($file) {
 	} elseif ($_W['setting']['remote']['type'] == '4') {
 		$bucketName = $_W['setting']['remote']['cos']['bucket'];
 		$path = "/" . $file;
-		if (! empty($_W['setting']['remote']['cos']['local'])) {
+		if (!empty($_W['setting']['remote']['cos']['local'])) {
 			require (IA_ROOT . '/framework/library/cosv4.2/include.php');
 			qcloudcos\Cosapi::setRegion($_W['setting']['remote']['cos']['local']);
 			$result = qcloudcos\Cosapi::delFile($bucketName, $path);
@@ -513,8 +454,8 @@ function file_remote_delete($file) {
 			require (IA_ROOT . '/framework/library/cos/include.php');
 			$result = Qcloud_cos\Cosapi::delFile($bucketName, $path);
 		}
-		if (! empty($result['code'])) {
-			return error(- 1, '删除cos远程文件失败');
+		if (!empty($result['code'])) {
+			return error(-1, '删除cos远程文件失败');
 		} else {
 			return true;
 		}
@@ -539,10 +480,10 @@ function file_remote_delete($file) {
 function file_image_thumb($srcfile, $desfile = '', $width = 0) {
 	global $_W;
 	
-	if (! file_exists($srcfile)) {
+	if (!file_exists($srcfile)) {
 		return error('-1', '原图像不存在');
 	}
-	if (! file_is_image($srcfile)) {
+	if (!file_is_image($srcfile)) {
 		return error('-1', '原图像不存在');
 	}
 	if (intval($width) == 0) {
@@ -563,11 +504,11 @@ function file_image_thumb($srcfile, $desfile = '', $width = 0) {
 	
 	$des = dirname($desfile);
 	// 创建存放目录
-	if (! file_exists($des)) {
-		if (! mkdirs($des)) {
+	if (!file_exists($des)) {
+		if (!mkdirs($des)) {
 			return error('-1', '创建目录失败');
 		}
-	} elseif (! is_writable($des)) {
+	} elseif (!is_writable($des)) {
 		return error('-1', '目录无法写入');
 	}
 	
@@ -642,7 +583,7 @@ function file_image_thumb($srcfile, $desfile = '', $width = 0) {
  * @return boolean|array 指示裁切成功或裁切失败原因
  */
 function file_image_crop($src, $desfile, $width = 400, $height = 300, $position = 1) {
-	if (! file_exists($src)) {
+	if (!file_exists($src)) {
 		return error('-1', '原图像不存在');
 	}
 	if (intval($width) <= 0 || intval($height) <= 0) {
@@ -654,11 +595,11 @@ function file_image_crop($src, $desfile, $width = 400, $height = 300, $position 
 	
 	$des = dirname($desfile);
 	// 创建存放目录
-	if (! file_exists($des)) {
-		if (! mkdirs($des)) {
+	if (!file_exists($des)) {
+		if (!mkdirs($des)) {
 			return error('-1', '创建目录失败');
 		}
-	} elseif (! is_writable($des)) {
+	} elseif (!is_writable($des)) {
 		return error('-1', '目录无法写入');
 	}
 	// 原图像信息
@@ -696,36 +637,36 @@ function file_image_crop($src, $desfile, $width = 400, $height = 300, $position 
 			$dst_y = 0;
 			break;
 		case 2 :
-			$dst_x = ($org_info[0] - $width) / 2;
+			$dst_x = ($org_info[0] -$width) / 2;
 			$dst_y = 0;
 			break;
 		case 3 :
-			$dst_x = $org_info[0] - $width;
+			$dst_x = $org_info[0] -$width;
 			$dst_y = 0;
 			break;
 		case 4 :
 			$dst_x = 0;
-			$dst_y = ($org_info[1] - $height) / 2;
+			$dst_y = ($org_info[1] -$height) / 2;
 			break;
 		case 5 :
-			$dst_x = ($org_info[0] - $width) / 2;
-			$dst_y = ($org_info[1] - $height) / 2;
+			$dst_x = ($org_info[0] -$width) / 2;
+			$dst_y = ($org_info[1] -$height) / 2;
 			break;
 		case 6 :
-			$dst_x = $org_info[0] - $width;
-			$dst_y = ($org_info[1] - $height) / 2;
+			$dst_x = $org_info[0] -$width;
+			$dst_y = ($org_info[1] -$height) / 2;
 			break;
 		case 7 :
 			$dst_x = 0;
-			$dst_y = $org_info[1] - $height;
+			$dst_y = $org_info[1] -$height;
 			break;
 		case 8 :
-			$dst_x = ($org_info[0] - $width) / 2;
-			$dst_y = $org_info[1] - $height;
+			$dst_x = ($org_info[0] -$width) / 2;
+			$dst_y = $org_info[1] -$height;
 			break;
 		case 9 :
-			$dst_x = $org_info[0] - $width;
-			$dst_y = $org_info[1] - $height;
+			$dst_x = $org_info[0] -$width;
+			$dst_y = $org_info[1] -$height;
 			break;
 		default :
 			$dst_x = 0;
@@ -774,8 +715,8 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
 	if ($enforcement)
 		$file_list = array();
 	$flags = $isdir ? GLOB_ONLYDIR : 0;
-	$list = glob($filepath . '*' . (! empty($ex) && empty($subdir) ? '.' . $ex : ''), $flags);
-	if (! empty($ex))
+	$list = glob($filepath . '*' . (!empty($ex) && empty($subdir) ? '.' . $ex : ''), $flags);
+	if (!empty($ex))
 		$ex_num = strlen($ex);
 	foreach ($list as $k => $v) {
 		$v = str_replace('\\', '/', $v);
@@ -784,7 +725,7 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
 			file_lists($v . '/', $subdir, $ex, $isdir, $md5);
 			continue;
 		}
-		if (! empty($ex) && strtolower(substr($v, - $ex_num, $ex_num)) == $ex) {
+		if (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) == $ex) {
 			
 			if ($md5) {
 				$file_list[$v1] = md5_file($v);
@@ -792,7 +733,7 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
 				$file_list[] = $v1;
 			}
 			continue;
-		} elseif (! empty($ex) && strtolower(substr($v, - $ex_num, $ex_num)) != $ex) {
+		} elseif (!empty($ex) && strtolower(substr($v, -$ex_num, $ex_num)) != $ex) {
 			unset($list[$k]);
 			continue;
 		}
@@ -820,9 +761,9 @@ function file_fetch($url, $limit = 0, $path = '', $type = 'image', $filename = '
 	global $_W;
 	$url = trim($url);
 	if (empty($url)) {
-		return error(- 1, '文件地址不存在');
+		return error(-1, '文件地址不存在');
 	}
-	if (! $limit) {
+	if (!$limit) {
 		if ($type == 'image' || $type == 'thumb') {
 			$limit = $_W['setting']['upload']['image']['limit'] * 1024;
 		} else {
@@ -834,16 +775,16 @@ function file_fetch($url, $limit = 0, $path = '', $type = 'image', $filename = '
 	if (empty($path)) {
 		$path = $type . "s/{$_W['uniacid']}/" . date('Y/m/');
 	}
-	if (! file_exists(ATTACHMENT_ROOT . $path) && mkdir(ATTACHMENT_ROOT . $path, 0700, true)) {
-		return error(- 1, '提取文件失败: 权限不足.');
+	if (!file_exists(ATTACHMENT_ROOT . $path) && mkdir(ATTACHMENT_ROOT . $path, 0700, true)) {
+		return error(-1, '提取文件失败: 权限不足.');
 	}
 	load()->func('communication');
 	$resp = ihttp_get($url);
 	if (is_error($resp)) {
-		return error(- 1, '提取文件失败, 错误信息: ' . $resp['message']);
+		return error(-1, '提取文件失败, 错误信息: ' . $resp['message']);
 	}
 	if (intval($resp['code']) != 200) {
-		return error(- 1, '提取文件失败: 未找到该资源文件.');
+		return error(-1, '提取文件失败: 未找到该资源文件.');
 	}
 	$ext = '';
 	switch ($resp['headers']['Content-Type']) {
@@ -874,12 +815,12 @@ function file_fetch($url, $limit = 0, $path = '', $type = 'image', $filename = '
 			$ext = 'wma';
 			break;
 		default :
-			return error(- 1, '提取资源失败, 资源文件类型错误.');
+			return error(-1, '提取资源失败, 资源文件类型错误.');
 			break;
 	}
 	/* 文件大小过滤 */
 	if (intval($resp['headers']['Content-Length']) > $limit) {
-		return error(- 1, '上传的媒体文件过大(' . sizecount($resp['headers']['Content-Length']) . ' > ' . sizecount($limit));
+		return error(-1, '上传的媒体文件过大(' . sizecount($resp['headers']['Content-Length']) . ' > ' . sizecount($limit));
 	}
 	if ($filename == '') {
 		$filename = file_random_name(ATTACHMENT_ROOT . $path, $ext);
@@ -887,19 +828,14 @@ function file_fetch($url, $limit = 0, $path = '', $type = 'image', $filename = '
 	$pathname = $path . $filename;
 	$fullname = ATTACHMENT_ROOT . $pathname;
 	if (file_put_contents($fullname, $resp['content']) == false) {
-		return error(- 1, '提取失败.');
+		return error(-1, '提取失败.');
 	}
 	return $pathname;
 }
 function file_is_image($url) {
 	$pathinfo = pathinfo($url);
 	$extension = strtolower($pathinfo['extension']);
-	return ! empty($extension) && in_array($extension, array(
-		'jpg',
-		'jpeg',
-		'gif',
-		'png' 
-	));
+	return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
 }
 
 /**

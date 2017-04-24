@@ -254,3 +254,10 @@ function material_get_local_file($url, $type) {
 	}
 	return $filepath;
 }
+
+/**
+ * 根据附件ID将，本地图文上传至微信服务器
+ */
+function material_local_news_upload($attach_id) {
+	
+}
