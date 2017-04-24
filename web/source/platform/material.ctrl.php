@@ -8,14 +8,7 @@ load()->model('material');
 load()->model('mc');
 load()->func('file');
 
-$dos = array(
-	'display',
-	'sync',
-	'del_material',
-	'send',
-	'trans',
-	'postwechat' 
-);
+$dos = array('display', 'sync', 'del_material', 'send', 'trans', 'postwechat');
 $do = in_array($do, $dos) ? $do : 'display';
 
 uni_user_permission_check('platform_material');
@@ -317,7 +310,7 @@ if ($do == 'trans') {
 		'thumb',
 		'audio' 
 	);
-	if (! in_array($type, $allow_type_arr)) {
+	if (!in_array($type, $allow_type_arr)) {
 		iajax(- 1, '参数有误');
 	}
 	$material = pdo_get('core_attachment', array(
