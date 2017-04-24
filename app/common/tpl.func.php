@@ -156,7 +156,7 @@ function tpl_app_form_field_calendar($name, $values = array()) {
 			<script type="text/javascript">
 				$(document).on("tap", ".mui-calendar-picker", function(){
 					var $this = $(this);
-					util.datepicker({type: "date", beginYear: 1960, endYear: 2016}, function(rs){
+					util.datepicker({type: "date", beginYear: 1930, endYear: 2016}, function(rs){
 						$this.val(rs.value)
 						.next().val(rs.y.text)
 						.next().val(rs.m.text)
