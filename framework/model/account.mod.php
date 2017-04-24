@@ -122,14 +122,14 @@ function uni_modules($enabledOnly = true) {
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
 
 		if (empty($owner_uid) || in_array($owner_uid, $founders)) {
-			$modules = user_modules($owner_uid);
+			$module_list = user_modules($owner_uid);
 		} else {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
 
 			if (!empty($packageids) && in_array('-1', $packageids)) {
-				$modules = pdo_getall('modules', array(), array('name'), 'name', array('issystem DESC', 'mid DESC'));
+				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('issystem DESC', 'mid DESC'));
 			} else {
 				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$_W['uniacid']}'");
 				if (!empty($uni_groups)) {
@@ -144,50 +144,56 @@ function uni_modules($enabledOnly = true) {
 				if (!empty($modules)) {
 					$sql = " OR name IN ('" . implode("','", $modules) . "')" ;
 				}
-				$modules = pdo_fetchall("SELECT name FROM " . tablename('modules') . " WHERE issystem = 1{$sql} ORDER BY issystem DESC, mid DESC", array(), 'name');
+				$module_list = pdo_fetchall("SELECT name FROM " . tablename('modules') . " WHERE issystem = 1{$sql} ORDER BY issystem DESC, mid DESC", array(), 'name');
 			}
 		}
-		$modules = array_keys($modules);
+
+		if (!empty($module_list)) {
+			$modules = array();
+			$plugin_list = pdo_getall('modules_plugin', array('name' => array_keys($module_list)), array());
+			$have_plugin_module = array();
+			if (!empty($plugin_list)) {
+				foreach ($plugin_list as $plugin) {
+					$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
+					unset($module_list[$plugin['name']]);
+				}
+			}
+
+			$my_modules = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => array_keys($module_list)), array(), 'module', array('enabled DESC'));
+
+			foreach ($module_list as $name => $module) {
+				if ($enabledOnly && !$module_list[$name]['issystem'] && ($my_modules[$name]['enabled'] == 0 || empty($my_modules[$name]))) {
+					continue;
+				}
+				$module = array(
+					'name' => $name,
+					'enable' => $enabledOnly[$name]['enabled']
+				);
+				if (!empty($my_modules[$name]['settings'])) {
+					$module['config'] = iunserializer($my_modules[$name]['settings']);
+				}
+				$modules[$name] = $module;
+				if (!empty($have_plugin_module[$name])) {
+					foreach ($have_plugin_module[$name] as $plugin) {
+						$modules[$plugin] = $plugin;
+					}
+				}
+			}
+			unset($module);
+		}
 		cache_write($cachekey, $modules);
 	}
 
+	$module_list = array();
 	if (!empty($modules)) {
-		$mymodules = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => $modules), array(), 'module', array('enabled DESC'));
-	}
-	//过滤掉未启用的模块
-
-	if (!empty($modules)) {
-		$module_list = array();//加上模块插件后的模块列表
-		$plugin_list = pdo_getall('modules_plugin', array('name' => $modules), array());
-		$have_plugin_module = array();
-		if (!empty($plugin_list)) {
-			foreach ($plugin_list as $plugin) {
-				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
-				$module_key = array_search($plugin['name'], $modules);
-				unset($modules[$module_key]);
-			}
-		}
-
-		foreach ($modules as $module) {
-			if ($enabledOnly && !$modules[$module]['issystem'] && ($mymodules[$module]['enabled'] == 0 || empty($mymodules[$module]))) {
-				continue;
-			}
-			if (!empty($plugin_list[$module])) {
-				continue;
-			}
-			$modules[$module]['enabled'] = $mymodules[$module]['enabled'];
-			$module_list[$module] = module_fetch($module);
-			if (!empty($mymodules[$module]['settings'])) {
-				$module_list[$module]['config'] = iunserializer($mymodules[$module]['settings']);
-			}
-			if (!empty($have_plugin_module[$module])) {
-				foreach ($have_plugin_module[$module] as $plugin) {
-					$module_list[$plugin] = module_fetch($plugin);
-				}
-			}
+		foreach ($modules as $name => $module) {
+			$module_list[$name] = module_fetch($name);
+			$module_list[$name]['config'] = empty($module['config']) ? array() : $module['config'];
+			$module_list[$name]['enabled'] = empty($module['config']) ? 0 : $module['enabled'];
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
+
 	return $module_list;
 }
 
