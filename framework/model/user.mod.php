@@ -325,55 +325,62 @@ function user_modules($uid) {
 	$modules = cache_load($cachekey);
 
 	if (empty($modules)) {
-		$founders = explode (',', $_W['config']['setting']['founder']);
-		$user_info = user_single (array ('uid' => $uid));
-		if (in_array ($uid, $founders)) {
-			$modules = pdo_getall ('modules', array (), array (), 'name');
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$user_info = user_single(array ('uid' => $uid));
+
+		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
+		if (in_array($uid, $founders)) {
+			$modules = pdo_getall('modules', array(), array('name'), 'name');
 		} elseif (empty($user_info['groupid'])) {
-			$modules = pdo_getall ('modules', array ('issystem' => 1), array (), 'name');
+			$modules = $system_modules;
 		} else {
-			$user_group_info = pdo_get ('users_group', array ('id' => $user_info['groupid']));
-			$user_group_info = iunserializer ($user_group_info);
-			$user_group_modules = array ();
-			if (!empty($user_group_info['package']) && is_array($user_group_info['package'])) {
-				$uni_groups = pdo_getall('uni_group', array('id' => $user_group_info['package'], 'uniacid' => $_W['uniacid']));
-				if (!empty($uni_groups)) {
-					foreach ($uni_groups as $uni_group_modules) {
-						$user_group_modules = array_merge($user_group_modules, $uni_group_modules);
+			$user_group_info = pdo_get('users_group', array ('id' => $user_info['groupid']));
+			if (!empty($user_group_info) && !empty($user_group_info['package'])) {
+				$packageids = unserialize($user_group_info['package']);
+			} else {
+				$packageids = array();
+			}
+			//如果套餐组中包含-1，则直接取全部权限，否则根据情况获取模块权限
+			if (!empty($packageids) && in_array('-1', $packageids)) {
+				$modules = pdo_getall('modules', array(), array('name'), 'name');
+			} else {
+				//此处缺少公众号专属套餐
+				$package_group = pdo_getall('uni_group', array('id' => $packageids));
+				$package_group_module = array();
+				if (!empty($package_group)) {
+					foreach ($package_group as $row) {
+						if (!empty($row['modules'])) {
+							$row['modules'] = (array)unserialize($row['modules']);
+						}
+						if (!empty($row['modules'])) {
+							foreach ($row['modules'] as $modulename) {
+								$package_group_module[$modulename] = $modulename;
+							}
+						}
 					}
 				}
+				$modules = pdo_fetchall("SELECT name FROM ".tablename('modules')." WHERE 
+										name IN ('" . implode("','", $package_group_module) . "') OR issystem = '1'", array(), 'name');
 			}
-			$modules = pdo_getall('modules', array('name' => $user_group_modules), array (), 'name');
 		}
-		cache_write($cachekey, array_keys($modules));
+		$modules = array_keys($modules);
+		cache_write($cachekey, $modules);
 	}
-
+	
 	if (!empty($modules)) {
 		$module_list = array();//加上模块插件后的模块列表
-		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
+		$plugin_list = pdo_getall('modules_plugin', array('main_module' => $modules), array());
+		
 		$have_plugin_module = array();
 		if (!empty($plugin_list)) {
 			foreach ($plugin_list as $plugin) {
-				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin;
+				$have_plugin_module[$plugin['main_module']][$plugin['name']] = module_fetch($plugin['name']);
 			}
 		}
-		unset($plugin);
 		foreach ($modules as $name => $module) {
-			$module = is_array($module)?$name:$module;//应用管理 已安装应用$module是字符串 未安装应用安装时是数组
-			if (in_array($module, array_keys($plugin_list))) {
-				continue;
-			}
 			$module_list[$module] = module_fetch($module);
-			if (in_array($module, array_keys($have_plugin_module))) {
-				$module_plugin_list = $have_plugin_module[$module];
-				if (is_array($module_plugin_list) && !empty($module_plugin_list)) {
-					foreach ($module_plugin_list as $plugin) {
-						if (!in_array($plugin['name'], $modules)) {
-							continue;
-						}
-						$module_list[$plugin['name']] = module_fetch($plugin['name']);
-					}
-				}
+			if (!empty($have_plugin_module[$module])) {
+				$module_list[$module]['plugin_list'] = $have_plugin_module[$module];
 			}
 		}
 	}
