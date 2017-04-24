@@ -113,99 +113,109 @@ function uni_modules($enabledOnly = true) {
 	global $_W;
 	load()->model('user');
 	load()->model('module');
-
-	$cachekey = cache_system_key("unimodules:{$_W['uniacid']}:{$enabledOnly}");
-	$modules = cache_load($cachekey);
-
-	if (empty($modules)) {
-		$owner_uid = pdo_getcolumn ('uni_account_users', array ('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
-		$owner = user_single(array ('uid' => $owner_uid));
-		//如果没有所有者，则取创始人权限
-		$uni_groupid = pdo_getall ('uni_account_group', array ('uniacid' => $_W['uniacid']), array (), 'groupid');
-		if (empty($uni_groupid) && empty($owner['groupid'])) {
-			if (!empty($owner)) {
-				$modules = pdo_getall ('modules', array ('issystem' => 1), array (), 'name', array ('issystem DESC'));
-			} else {
-				$modules = pdo_getall ('modules', array (), array (), 'name', array ('issystem DESC', 'mid DESC'));
-			}
+	$extend = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array(), 'groupid');
+	
+	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
+	$owner = user_single(array('uid' => $owneruid));
+		if (empty($owner)) {
+		$groupid = '-1';
+	} else {
+		$groupid = $owner['groupid'];
+	}
+	
+	if (!empty($extend)) {
+		$groupid = '-2';
+	}
+	if (empty($groupid)) {
+		$modules = pdo_getall('modules', array('issystem' => 1), array(), 'name', array('issystem DESC'));
+	} elseif ($groupid == '-1') {
+		$modules = pdo_getall('modules', array(), array(), 'name', array('issystem DESC', 'mid DESC'));
+	} else {
+		$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
+		if (!empty($group)) {
+			$packageids = iunserializer($group['package']);
 		} else {
-			$user_modules = user_modules($owner_uid);
-			if (!empty($uni_groupid)) {
-				foreach ($uni_groupid as $extend_packageid => $row) {
-					$packageids[] = $extend_packageid;
-				}
+			$packageids = array();
+		}
+		if (!empty($extend)) {
+			foreach ($extend as $extend_packageid => $row) {
+				$packageids[] = $extend_packageid;
 			}
-			if (!empty($packageids) && in_array ('-1', $packageids)) {
-				$modules = pdo_getall ('modules', array (), array (), 'name', array ('issystem DESC', 'mid DESC'));
-			} else {
-				$uni_group_modules = pdo_getall('uni_group', array('id' => $packageids, 'uniacid' => $_W['uniacid']));
-				$ms = array ();
-				$mssql = '';
-				if (!empty($uni_group_modules)) {
-					foreach ($uni_group_modules as $module) {
-						$module['modules'] = iunserializer ($module['modules']);
-						if (!empty($module['modules'])) {
-							foreach ($module['modules'] as $modulename) {
-								$ms[] = $modulename;
-							}
+		}
+		if (!empty($packageids) && in_array('-1', $packageids)) {
+			$modules = pdo_getall('modules', array(), array(), 'name', array('issystem DESC', 'mid DESC'));
+		} else {
+			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
+			$ms = array();
+			$mssql = '';
+			if (!empty($wechatgroup)) {
+				foreach ($wechatgroup as $row) {
+					$row['modules'] = iunserializer($row['modules']);
+					if (!empty($row['modules'])) {
+						foreach ($row['modules'] as $modulename) {
+							$ms[$modulename] = $modulename;
 						}
 					}
-					unset($module);
-					$ms = array_merge ($user_modules, $ms);
-					$mssql = " OR `name` IN ('" . implode ("','", $ms) . "')";
 				}
-				$modules = pdo_fetchall ("SELECT * FROM " . tablename ('modules') . " WHERE issystem = 1{$mssql} ORDER BY issystem DESC, mid DESC", array (), 'name');
+				$mssql = " OR `name` IN ('".implode("','", $ms)."')";
 			}
+			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE issystem = 1{$mssql} ORDER BY issystem DESC, mid DESC", array(), 'name');
 		}
-		$modules = array_keys($modules);
-		cache_write($cachekey, $modules);
 	}
-
-	if (!empty($modules)) {
-		$mymodules = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => $modules), array(), 'module', array('enabled DESC'));
-	}
-	//过滤掉未启用的模块
-
-	if (!empty($modules)) {
-		$module_list = array();//加上模块插件后的模块列表
-		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
-		$have_plugin_module = array();
-		if (!empty($plugin_list)) {
-			foreach ($plugin_list as $plugin) {
-				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin;
-			}
+	$focus_enable_modules = pdo_getall('modules', array('issystem' => 2));
+	if (!empty($focus_enable_modules)) {
+		foreach ($focus_enable_modules as $focus_enable_modules_row) {
+			$modules[$focus_enable_modules_row['name']] = $focus_enable_modules_row;
 		}
-		unset($plugin);
-
-		foreach ($modules as  $module) {
-			if ($enabledOnly && !$modules[$module]['issystem']) {
-				if ($mymodules[$module]['enabled'] == 0 || empty($mymodules[$module])) {
+	}
+	if (!empty($modules)) {
+		$ms = implode("','", array_keys($modules));
+		$ms = "'{$ms}'";
+		$mymodules = pdo_fetchall("SELECT `module`, `enabled`, `settings` FROM " . tablename('uni_account_modules') . " WHERE uniacid = '{$_W['uniacid']}' AND `module` IN ({$ms}) ORDER BY enabled DESC", array(), 'module');
+	}
+	if (!empty($mymodules)) {
+		foreach ($mymodules as $name => $row) {
+			if ($enabledOnly && !$modules[$name]['issystem']) {
+				if ($row['enabled'] == 0 || empty($modules[$name])) {
+					unset($modules[$name]);
 					continue;
 				}
 			}
-			if (in_array($module, array_keys($plugin_list))) {
+			if (!empty($row['settings'])) {
+				$modules[$name]['config'] = iunserializer($row['settings']);
+			}
+			$modules[$name]['enabled'] = $row['enabled'];
+		}
+	}
+	if (!empty($modules)) {
+		$module_list = array();		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
+		$have_plugin_module = pdo_fetchall('SELECT GROUP_CONCAT(name) as plugin_list, main_module FROM ' . tablename('modules_plugin') . " GROUP BY main_module", array(), 'main_module');
+		foreach ($modules as $name => &$module) {
+			if (in_array($name, array_keys($plugin_list))) {
 				continue;
 			}
-			$modules[$module]['enabled'] = $mymodules[$module]['enabled'];
-			$module = module_fetch($module);
-			$module_list[$module['name']] = $module;
-			if (!empty($mymodules[$module['name']]['settings'])) {
-				$module_list[$module['name']]['config'] = iunserializer($mymodules[$module['name']]['settings']);
-			}
-			if (in_array($module['name'], array_keys($have_plugin_module))) {
-				$module_plugin_list = array_keys($have_plugin_module[$module['name']]);
+			$module = module_parse_info($module);
+			$module['main_module'] = '';
+			$module_list[$name] = $module;
+			if (in_array($name, array_keys($have_plugin_module))) {
+				$module_plugin_list = explode(',', $have_plugin_module[$name]['plugin_list']);
+				$module_list[$name]['plugin'] = $module_plugin_list;
 				if (is_array($module_plugin_list) && !empty($module_plugin_list)) {
 					foreach ($module_plugin_list as $plugin) {
-						if (!in_array($plugin, $modules)) {
+						$plugin = $modules[$plugin];
+						if (empty($plugin)) {
 							continue;
 						}
-						$module_list[$plugin] = module_fetch($plugin);
+						$plugin['main_module'] = $name;
+						$plugin = module_parse_info($plugin);
+						$module_list[$plugin['name']] = $plugin;
 					}
 				}
 			}
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
+	cache_write($cachekey, $module_list);
 	return $module_list;
 }
 
@@ -418,7 +428,7 @@ function uni_setting_load($name = '', $uniacid = 0) {
 		$unisetting = pdo_get('uni_settings', array('uniacid' => $uniacid));
 		if (!empty($unisetting)) {
 			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify', 
-								'creditnames', 'default_message', 'creditbehaviors', 'shortcuts', 'payment', 
+								'creditnames', 'default_message', 'creditbehaviors', 'payment', 
 								'recharge', 'tplnotice', 'mcplugin');
 			foreach ($unisetting as $key => &$row) {
 				if (in_array($key, $serialize) && !empty($row)) {

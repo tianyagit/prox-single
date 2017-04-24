@@ -14,6 +14,12 @@ load()->model('cloud');
 load()->classs('coupon');
 load()->func('file');
 
+$user_modules = user_modules(173);
+print_r($user_modules);exit;
+$modules = uni_modules(false);
+print_r($modules);exit;
+
+
 $old_path = IA_ROOT.'/data/old';
 $new_path = IA_ROOT.'/data/new';
 $old_file_tree = file_tree($old_path);
