@@ -327,12 +327,12 @@ if ($do == 'trans') {
 	if (empty($material)) {
 		iajax(- 1, '同步素材不存在或已删除');
 	}
-	$filepath = material_get_local_file($material['attachment'], $type);
+	$filepath = material_remote_to_local($material['attachment'], $type);
 	if (! is_file($filepath)) {
 		iajax(1, '本地文件获取失败');
 	}
 	$filename = pathinfo($filepath, PATHINFO_BASENAME);
-	$result = $account_api->uploadMediaFixed($filepath, $type, $filename);
+	$result = $account_api->uploadMediaFixed($filepath, $type);
 	if (is_error($result)) {
 		iajax(1, $result['message']);
 	}
@@ -356,7 +356,7 @@ if ($do == 'postwechat') {
 			iajax(0, $news['content']);
 		}
 		if ($news['thumb_media_id'] == '') {
-			$remote_to_local_path = material_get_local_file($news['thumb_url'], 'image');
+			$remote_to_local_path = material_remote_to_local($news['thumb_url'], 'image');
 			$result = $account_api->uploadMediaFixed($remote_to_local_path, 'image');
 			if (is_error($result)) {
 				iajax(1, $result['message']);
