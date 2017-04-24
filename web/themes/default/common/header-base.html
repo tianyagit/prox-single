@@ -16,6 +16,16 @@
 			alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.');
 		}
 	}
+	function load(){
+		var linkGroupLen = $('.link-group a').length;
+		if(linkGroupLen == 1){
+			$('.link-group').css('min-width',100);
+		}else if(linkGroupLen == 2){
+			$('.link-group').css('min-width',190);
+		}else if(linkGroupLen > 2){
+			$('.link-group').css('min-width',320);
+		}
+	}
 	window.sysinfo = {
 		{if !empty($_W['uniacid'])}'uniacid': '{$_W['uniacid']}',{/if}
 		{if !empty($_W['acid'])}'acid': '{$_W['acid']}',{/if}
