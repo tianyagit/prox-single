@@ -40,13 +40,14 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 			$this.modalobj.modal('show');
 			return $this.modalobj;
 		},
-		'localPage' : function(type, page) {
+		//newsmodel: 微信素材wx和本地素材local
+		'localPage' : function(type, page, newsmodel) {
 			var $this = this;
 			var page = page || 1;
 			$('.checkMedia').removeClass('checkedMedia');
 			var $content = $this.modalobj.find('.material-content #' + type);
 			$content.html('<div class="info text-center"><i class="fa fa-spinner fa-pulse fa-lg"></i> 数据加载中</div>');
-			
+
 			if(type == 'basic') {
 				var Dialog = type + 'Dialog';
 				$this.modalobj.find('#material-footer').show();
@@ -85,6 +86,10 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 			if(type == 'module') {
 				url = './index.php?c=utility&a=modules&do=list';
 			}
+			if (type == 'news') {
+				var newsmodel = newsmodel == 'local' ? 'local' : 'wx';
+				url += newsmodel == 'local' ? '&newsmodel=local' : '&newsmodel=wx';
+			}
 			$.getJSON(url, {'page': page}, function(data){
 				data = data.message.message;
 				$this.modalobj.find('#material-list-pager').html('');
@@ -103,12 +108,18 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 								autoResize :true
 							});
 						}, 100);
-					}
+						$this.modalobj.find('.material-content .newsmodel-type').unbind('click').click(function(){
+							console.log('click');
+							$(this).addClass('active').siblings().removeClass('active');
+							$this.localPage(type, 1, $(this).data('type'));
+							return false;
+						});
+					}	
 					$this.selectMedia();
 					$this.playaudio();
 					$this.modalobj.find('#material-list-pager').html(data.pager);
 					$this.modalobj.find('#material-list-pager .pagination a').click(function(){
-						$this.localPage(type, $(this).attr('page'));
+						$this.localPage(type, $(this).attr('page'), newsmodel);
 						return false;
 					});
 				} else {
@@ -207,7 +218,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 
 		'buildHtml' : function() {
 			var dialog = {};
-			dialog['mainDialog'] = '<div id="material-Modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">\n' +
+			dialog['mainDialog'] = '<div id="material-Modal" class="uploader-modal modal fade" tabindex="-1" role="dialog" aria-hidden="true">\n' +
 				'	<div class="modal-dialog modal-lg">\n' +
 				'		<div class="modal-content ">\n' +
 				'			<div class="modal-header">\n' +
@@ -245,14 +256,18 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'				</h3>'+
 				'			</div>\n' +
 				'			<div class="modal-body material-content">\n' +
+								(this.options.ignore.news ? '' :
+				'				<ul class="nav nav-pills nav-stacked">'+
+				'					<li role="presentation" data-type="wx" class="newsmodel-type active">微信</li>'+
+				'					<li role="presentation" data-type="local" class="newsmodel-type">服务器</li>'+
+				'				</ul>') +
 				'				<div class="material-head">'+
-				'					<a class="btn btn-primary active we7-margin-vertical-sm pull-right ' + (this.options.ignore.news ? 'hide' : 'show') + '" href="./index.php?c=platform&a=material-post" target="_blank">新建图文</a>'+
-				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=image" target="_blank">上传图片</a>'+
-				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=voice" target="_blank">新建语音</a>'+
-				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '" href="./index.php?c=platform&a=display&do=list&type=video" target="_blank">新建视频</a>'+
-				'					<a class="btn btn-primary hidden we7-margin-vertical-sm active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '" href="./index.php?c=activity&a=coupon&do=display" target="_blank">新建卡券</a>'+
+				'					<a class="btn btn-primary active we7-margin-vertical-sm active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '" href="./index.php?c=platform&a=material&type=image" target="_blank">上传图片</a>'+
+				'					<a class="btn btn-primary active we7-margin-vertical-sm active pull-right ' + (this.options.ignore.voice ? 'hide' : 'show') + '" href="./index.php?c=platform&a=material&type=voice" target="_blank">新建语音</a>'+
+				'					<a class="btn btn-primary active we7-margin-vertical-sm active pull-right ' + (this.options.ignore.video ? 'hide' : 'show') + '" href="./index.php?c=platform&a=material&type=video" target="_blank">新建视频</a>'+
+				'					<a class="btn btn-primary active we7-margin-vertical-sm active pull-right ' + (this.options.ignore.wxcard ? 'hide' : 'show') + '" href="./index.php?c=activity&a=coupon&do=display" target="_blank">新建卡券</a>'+
 				'					<a class="btn btn-primary active we7-margin-vertical-sm pull-right ' + (this.options.ignore.keyword ? 'hide' : 'show') + '" href="./index.php?c=platform&a=reply&do=post&m=keyword" target="_blank">新建关键字</a>'+
-				'				</div>'+		
+				'				</div>'+
 				'				<div class="tab-content">'+
 				'					<div id="basic" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="news" class="tab-pane material clearfix" class="active" role="tabpanel" style="position:relative"></div>'+
@@ -410,40 +425,49 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'				</tbody>'+
 				'   		</table>';
 
-			dialog['newsDialog'] = '<%var items = _.sortBy(items, function(item) {return -item.createtime;});%>' +
-				'					<%_.each(items, function(item) {%> \n' +
-				'					<div class="col-md-5 col-md-5 col-md-5 water" style="display:none">'+
-				'						<div class="panel-group checkMedia" data-media="<%=item.media_id%>" data-type="news" data-attachid="<%=item.id%>">'+
-				'							<%var index = 0;%>\n' +
-				'							<%_.each(item.items, function(data) {%>\n' +
-				'								<%index++;%>\n' +
-				'								<div class="panel panel-default">'+
-				'									<%if(index == 1) {%>\n' +
-				'									<div class="panel-body">'+
-				'										<div class="img">'+
-				'											<i class="default">封面图片</i>'+
-				'											<img src="<%=data.thumb_url%>" width="100%">'+
-				'											<span class="text-left"><%=data.title%></span>'+
-				'										</div>'+
-				'									</div>'+
-				'									<%} else {%>\n' +
-				'									<div class="panel-body">'+
-				'										<div class="text">'+
-				'											<h4><%=data.title%></h4>'+
-				'										</div>'+
-				'										<div class="img">'+
-				'											<img src="<%=data.thumb_url%>">'+
-				'											<i class="default">缩略图</i>'+
-				'										</div>'+
-				'									</div>'+
-				'									<%}%>\n' +
-				'								</div>'+
-				'							<%});%>'+
-				'							<div class="mask"></div>'+
-				'							<i class="fa fa-check"></i>'+
+			dialog['newsDialog'] = '<div role="tabpanel">'+
+				'						<div class="tablepanel-top text-right">'+
+				'							<button class="btn btn-primary" type="button"><a href="./index.php?c=platform&a=material-post" target="_blank">新建图文</a></button>'+
 				'						</div>'+
-				'					</div>'+
-				'					<%});%>';
+				'						<div class="tablepanel-con">'+
+				'							<div class="graphic-list material clearfix" style="position: relative;">'+
+				'								<%var items = _.sortBy(items, function(item) {return -item.createtime;});%>' +
+				'								<%_.each(items, function(item) {%> \n' +
+				'									<div class="col-md-5 water">'+
+				'									<div class="panel-group checkMedia" data-media="<%=item.media_id%>" data-type="news" data-attachid="<%=item.id%>">'+
+				'										<%var index = 0;%>\n' +
+				'										<%_.each(item.items, function(data) {%>\n' +
+				'											<%index++;%>\n' +
+				'											<div class="panel panel-default">'+
+				'												<%if(index == 1) {%>\n' +
+				'												<div class="panel-body">'+
+				'													<div class="img">'+
+				'														<i class="default">封面图片</i>'+
+				'														<img src="<%=data.thumb_url%>" width="100%">'+
+				'														<span class="text-left"><%=data.title%></span>'+
+				'													</div>'+
+				'												</div>'+
+				'												<%} else {%>\n' +
+				'												<div class="panel-body">'+
+				'													<div class="text">'+
+				'														<h4><%=data.title%></h4>'+
+				'													</div>'+
+				'													<div class="img">'+
+				'														<img src="<%=data.thumb_url%>">'+
+				'														<i class="default">缩略图</i>'+
+				'													</div>'+
+				'												</div>'+
+				'												<%}%>\n' +
+				'											</div>'+
+				'										<%});%>'+
+				'										<div class="mask"></div>'+
+				'										<i class="fa fa-check"></i>'+
+				'									</div>'+
+				'									</div>'+
+				'								<%});%>'+
+				'							</div>'+
+				'						</div>'+
+				'					</div>';
 			dialog['keywordDialog'] = '<table class="table table-hover we7-table" style="margin-bottom:0">'+
 				'						<thead class="navbar-inner">'+
 				'							<tr>'+

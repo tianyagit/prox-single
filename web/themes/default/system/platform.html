@@ -31,7 +31,11 @@
 				<input type="text"  name="appid" ng-model="platform.appid" readonly class="form-control">
 				<div class="help-block">在微信开放平台注册且审核通过后可以获取到AppId</div>
 			</td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#AppID">修改</a></td>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" data-toggle="modal" data-target="#AppID">修改</a>
+				</div>
+			</td>
 		</tr>
 		<tr>
 			<td class="table-label">AppSecret</td>
@@ -39,7 +43,9 @@
 				<input type="text" name="appsecret" ng-model="platform.appsecret" readonly class="form-control">
 				<div class="help-block">在微信开放平台注册且审核通过后可以获取到AppSecret</div>
 			</td>
-			<td><a href="javascript:;" class="color-default" data-toggle="modal" data-target="#AppSecret">修改</a></td>
+			<td>
+				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#AppSecret">修改</a></div>
+			</td>
 		</tr>
 	</table>
 	<div class="modal fade" id="AppID" tabindex="-1" role="dialog" aria-hidden="true">
@@ -94,21 +100,23 @@
 			<td>
 				<span ng-bind="url.host"></span>
 			</td>
-			<td><a href="javascript:;" id="copy-0" class="color-default" clipboard supported="supported" text="url.host" on-copied="success('0')">点击复制</a></td>
+			<td>
+				<div class="link-group"><a href="javascript:;" id="copy-0" clipboard supported="supported" text="url.host" on-copied="success('0')">点击复制</a></div>
+			</td>
 		</tr>
 		<tr>
 			<td class="table-label">发起授权页的体验URL</td>
 			<td>
 				<span>{$url['host']}{$url['path']}web/index.php?c=account&a=auth&do=test</span>
 			</td>
-			<td><a href="javascript:;" id="copy-1" class="color-default" clipboard supported="supported" text="url.host+url.path+'web/index.php?c=account&a=auth&do=test'" on-copied="success('1')">点击复制</a></td>
+			<td><div class="link-group"><a href="javascript:;" id="copy-1" clipboard supported="supported" text="url.host+url.path+'web/index.php?c=account&a=auth&do=test'" on-copied="success('1')">点击复制</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">授权事件接受URL</td>
 			<td>
 				<span>{$url['host']}{$url['path']}web/index.php?c=account&a=auth&do=ticket</span>
 			</td>
-			<td><a href="javascript:;" id="copy-2" class="color-default" clipboard supported="supported" text="url.host+url.path+'web/index.php?c=account&a=auth&do=ticket'" on-copied="success('2')">点击复制</a></td>
+			<td><div class="link-group"><a href="javascript:;" id="copy-2" clipboard supported="supported" text="url.host+url.path+'web/index.php?c=account&a=auth&do=ticket'" on-copied="success('2')">点击复制</a></div></td>
 		</tr>
 		<tr>
 			<td class="color-red">公众号消息校验Token</td>
@@ -117,10 +125,12 @@
 				<input type="text" class="form-control" ng-model="platform.token" readonly>
 				<div class="help-block">与公众平台接入设置值一致，必须为英文或者数字，长度为3到32个字符. 请妥善保管, Token 泄露将可能被窃取或篡改平台的操作数据.</div>
 			</td>
-			<td class="link-group">
-				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#token">修改</a>
-				<a href="javascript:;" ng-click="httpChange('token')">生成新的</a>
-				<a href="javascript:;" id="copy-3" class="color-default" clipboard supported="supported" text="platform.token" on-copied="success('3')">点击复制</a>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" data-toggle="modal" data-target="#token">修改</a>
+					<a href="javascript:;" ng-click="httpChange('token')">生成新的</a>
+					<a href="javascript:;" id="copy-3" clipboard supported="supported" text="platform.token" on-copied="success('3')">点击复制</a>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -130,10 +140,12 @@
 				<input type="text" class="form-control" ng-model="platform.encodingaeskey" readonly>
 				<div class="help-block">与公众平台接入设置值一致，必须为英文或者数字，长度为43个字符. 请妥善保管, EncodingAESKey 泄露将可能被窃取或篡改平台的操作数据.</div>
 			</td>
-			<td class="link-group">
-				<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#encodingaeskey">修改</a>
-				<a href="javascript:;" ng-click="httpChange('encodingaeskey')">生成新的</a>
-				<a href="javascript:;" id="copy-4" class="color-default" clipboard supported="supported" text="platform.encodingaeskey" on-copied="success('4')">点击复制</a>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" data-toggle="modal" data-target="#encodingaeskey">修改</a>
+					<a href="javascript:;" ng-click="httpChange('encodingaeskey')">生成新的</a>
+					<a href="javascript:;" id="copy-4" clipboard supported="supported" text="platform.encodingaeskey" on-copied="success('4')">点击复制</a>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -141,14 +153,14 @@
 			<td>
 				<input type="text" readonly value="{$url['host']}{$url['path']}api.php?appid=/$APPID$" class="form-control">
 			</td>
-			<td><a href="javascript:;" id="copy-5" class="color-default" clipboard supported="supported" text="url.host+url.path+'api.php?appid=/$APPID$'" on-copied="success('5')">点击复制</a></td>
+			<td><div class="link-group"><a href="javascript:;" id="copy-5" clipboard supported="supported" text="url.host+url.path+'api.php?appid=/$APPID$'" on-copied="success('5')">点击复制</a></div></td>
 		</tr>
 		<tr>
 			<td class="table-label">网页开发域名</td>
 			<td>
 				<input type="text" readonly ng-model="url.host" class="form-control">	
 			</td>
-			<td><a href="javascript:;" id="copy-6" class="color-default" clipboard supported="supported" text="url.host" on-copied="success('6')">点击复制</a></td>
+			<td><div class="link-group"><a href="javascript:;" id="copy-6" clipboard supported="supported" text="url.host" on-copied="success('6')">点击复制</a></div></td>
 		</tr>
 	</table>
 	<div class="modal fade" id="token" tabindex="-1" role="dialog" aria-hidden="true">

@@ -27,7 +27,7 @@
 					<span>{$menu['title']}</span>
 				</td>
 				<td></td>
-				<td>{if empty($menu['is_system'])}<a href="javascript:;" ng-click="removeSubItem('{$menu['permission_name']}')" class="color-default">删除</a>{/if}</td>
+				<td>{if empty($menu['is_system'])}<a href="javascript:;" ng-click="removeSubItem('{$menu['permission_name']}')" class="btn btn-danger">删除</a>{/if}</td>
 			</tr>
 			{loop $menu['section'] $section_name $section}
 				<tr>
@@ -54,8 +54,10 @@
 							<div class="switch" ng-init="displayStatus['{$sub_menu['permission_name']}'] = {php echo $sub_menu['is_display'] ? 'true' : 'false'}" ng-click="changeDisplay('{$sub_menu['permission_name']}')" ng-class="{'switchOn' : displayStatus['{$sub_menu['permission_name']}'], 'switchOff' : !displayStatus['{$sub_menu['permission_name']}']}"></div>
 						</td>
 						<td class="text-right we7-padding-right">
-							<a href="javascript:;" class="color-default we7-margin-right-sm" ng-click="editItemPanel({displayorder: '{$sub_menu['displayorder']}', title : '{$sub_menu['title']}', url : '{$sub_menu['url']}', permissionName : '{$sub_menu['permission_name']}', isSystem : '{$sub_menu['is_system']}', id : '{$sub_menu['id']}', 'group' : '{$sub_menu['group']}'})">编辑</a>
-							{if empty($sub_menu['is_system'])}<a href="javascript:;" ng-click="removeSubItem('{$sub_permission_name}')" class="color-default">删除</a>{/if}
+							<div class="link-group">
+								<a href="javascript:;" class="we7-margin-right-sm" ng-click="editItemPanel({displayorder: '{$sub_menu['displayorder']}', title : '{$sub_menu['title']}', url : '{$sub_menu['url']}', permissionName : '{$sub_menu['permission_name']}', isSystem : '{$sub_menu['is_system']}', id : '{$sub_menu['id']}', 'group' : '{$sub_menu['group']}'})">编辑</a>
+								{if empty($sub_menu['is_system'])}<a href="javascript:;" ng-click="removeSubItem('{$sub_permission_name}')" class="del">删除</a>{/if}
+							</div>
 						</td>
 					</tr>
 				{/loop}
@@ -73,8 +75,10 @@
 						</label>
 					</td>
 					<td class="text-right we7-padding-right">
-						<a href="javascript:;" class="color-default we7-margin-right-sm" ng-click="editItemPanel({group : '{$section_name}', displayorder: '0', title : submenu.title + submenu.$$hashKey})">编辑</a>
-						<a href="javascript:;" ng-click="removeSubItem('{$section_name}', $index)" class="color-default">删除</a>
+						<div class="link-group">
+							<a href="javascript:;" class="we7-margin-right-sm" ng-click="editItemPanel({group : '{$section_name}', displayorder: '0', title : submenu.title + submenu.$$hashKey})">编辑</a>
+							<a href="javascript:;" ng-click="removeSubItem('{$section_name}', $index)" class="del">删除</a>
+						</div>
 					</td>
 				</tr>
 			{/loop}

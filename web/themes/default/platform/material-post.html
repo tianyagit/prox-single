@@ -148,7 +148,11 @@
 			'msg_url' : "{php echo url('platform/material/display')}",
 			'upload_thumb_url' : "{php echo url('platform/material-post/thumb_upload')}",
 			'upload_iamge_url' : "{php echo url('platform/material-post/image_upload')}",
-			'replace_url' : "{php echo url('platform/material-post/replace_image_url')}"
+			'replace_url' : "{php echo url('platform/material-post/replace_image_url')}",
+			'fileNumLimit' : "{$upload_limit['fileNumLimit']}",
+			'fileSingleImageSizeLimit' : "{$upload_limit['fileSingleImageSizeLimit']}",
+			'fileSingleVoiceSizeLimit' : "{$upload_limit['fileSingleVoiceSizeLimit']}",
+			'fileSingleVideoSizeLimit' : "{$upload_limit['fileSingleVideoSizeLimit']}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
 	});

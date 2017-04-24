@@ -42,7 +42,12 @@
 					<td class="text-left">{$row['bakdir']}</td>
 					<td class="text-left">{php echo date('Y-m-d H:i:s', $row['time']);}</td>
 					<td>{$row['volume']}</td>
-					<td class="text-left"><a href="{php echo url('system/database/restore', array('restore_dirname' => $row['bakdir']));}" onclick="return confirm('确认要恢复这条备份记录吗? 当前数据库的数据将会被覆盖.');">还原此备份</a> &nbsp; <a href="{php echo url('system/database/restore', array('delete_dirname' => $row['bakdir']));}" onclick="return confirm('确认要删除这条备份记录吗? ');">删除</a></td>
+					<td class="text-left">
+						<div class="link-group">
+							<a href="{php echo url('system/database/restore', array('restore_dirname' => $row['bakdir']));}" onclick="return confirm('确认要恢复这条备份记录吗? 当前数据库的数据将会被覆盖.');">还原此备份</a>
+							<a href="{php echo url('system/database/restore', array('delete_dirname' => $row['bakdir']));}" class="del" onclick="return confirm('确认要删除这条备份记录吗? ');">删除</a>
+						</div>
+					</td>
 				</tr>
 				{/loop}
 			</table>
@@ -80,7 +85,7 @@
 					{loop $row['indexes'] $index}
 						<div style="height:50px;float:right" id="index{$index}">
 							<span>{$index}</span>
-							<a href="javascript:;" data-type="index" title="删除" class="btn btn-default btn-sm" >删除</a>
+							<a href="javascript:;" data-type="index" title="删除" class="btn btn-danger btn-sm" >删除</a>
 						</div>
 					{/loop}
 				</td>

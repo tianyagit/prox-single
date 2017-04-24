@@ -4,7 +4,6 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
 load()->model('material');
 load()->model('mc');
 load()->func('file');
@@ -14,7 +13,8 @@ $dos = array(
 	'sync',
 	'del_material',
 	'send',
-	'trans' 
+	'trans',
+	'postwechat' 
 );
 $do = in_array($do, $dos) ? $do : 'display';
 
@@ -66,6 +66,7 @@ if ($do == 'send') {
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
 	$islocal = isset($_GPC['islocal']) && (trim($_GPC['islocal']) != '' || trim($_GPC['islocal']) != '0') ? true : false;
+	$upload_limit = file_upload_limit();
 	$group = mc_fans_groups(true);
 	if ($type == 'news') {
 		$condition = " as a RIGHT JOIN " . tablename('wechat_news') . " as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND (a.model = :model || a.model = :modela)";
@@ -306,6 +307,7 @@ if ($do == 'sync') {
 }
 
 if ($do == 'trans') {
+	$account_api = WeAccount::create($_W['acid']);
 	$material_id = intval($_GPC['material_id']);
 	$type = trim($_GPC['type']);
 	$allow_type_arr = array(
@@ -325,105 +327,59 @@ if ($do == 'trans') {
 	if (empty($material)) {
 		iajax(- 1, '同步素材不存在或已删除');
 	}
-	if (! empty($_W['setting']['remote']['type'])) {
-		// 同步素材到本地
-		$remote_file_url = tomedia($material['attachment']);
-		$remote_file_url_parts = parse_url($remote_file_url);
-		$remote_file_url_parts['basename'] = pathinfo($remote_file_url, PATHINFO_BASENAME);
-		$remote_file_url_parts['dirname'] = pathinfo($remote_file_url_parts['path'], PATHINFO_DIRNAME) . '/';
-		$remote_file_download = downloadFile($remote_file_url, $remote_file_url_parts['dirname'], $remote_file_url_parts['basename']);
-		if (! $remote_file_download) {
-			iajax(- 1, '本地同步素材失败');
-		}
-		$filepath = $remote_file_download;
-	} else {
-		$filepath = ATTACHMENT_ROOT . $material['attachment'];
+	$filepath = material_get_local_file($material['attachment'], $type);
+	if (! is_file($filepath)) {
+		iajax(1, '本地文件获取失败');
 	}
-	// 同步到微信
-	$acc = WeAccount::create($_W['uniacid']);
-	$token = $acc->getAccessToken();
-	if (is_error($token)) {
-		$result['message'] = $token['message'];
-		iajax(- 1, $result['message']);
+	$filename = pathinfo($filepath, PATHINFO_BASENAME);
+	$result = $account_api->uploadMediaFixed($filepath, $type, $filename);
+	if (is_error($result)) {
+		iajax(1, $result['message']);
 	}
-	$sendapi = 'https://api.weixin.qq.com/cgi-bin/material/add_material' . "?access_token={$token}&type={$type}";
-	$data = array(
-		'media' => '@' . $filepath 
-	);
-	if ($type == 'video') {
-		$description = array(
-			'title' => urlencode(trim($remote_file_url_parts['basename'])),
-			'introduction' => urlencode(trim($remote_file_url_parts['basename'])) 
-		);
-		$data['description'] = urldecode(json_encode($description));
-	}
-	
-	$resp = ihttp_request($sendapi, $data);
-	if (is_error($resp)) {
-		$result['error'] = 0;
-		$result['message'] = $resp['message'];
-		iajax(- 1, $result['message']);
-	}
-	$content = @json_decode($resp['content'], true);
-	if (empty($content)) {
-		$result['error'] = 0;
-		$result['message'] = "接口调用失败, 元数据: {$resp['meta']}";
-		iajax(- 1, $result['message']);
-	}
-	if (! empty($content['errcode'])) {
-		$result['error'] = 0;
-		$result['message'] = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->error_code($content['errcode'])}";
-		iajax(- 1, json_encode($result));
-	}
-	if (! empty($content['media_id'])) {
-		$result['media_id'] = $content['media_id'];
-	}
-	if (! empty($content['thumb_media_id'])) {
-		$result['media_id'] = $content['thumb_media_id'];
-	}
-	$insert = array(
-		'uniacid' => $_W['uniacid'],
-		'acid' => $_W['acid'],
-		'uid' => $_W['uid'],
-		'filename' => $remote_file_url_parts['basename'],
-		'attachment' => $remote_file_url_parts['path'],
-		'media_id' => $result['media_id'],
-		'type' => $type,
-		'model' => 'perm',
-		'createtime' => TIMESTAMP 
-	);
-	if ($type == 'image' || $type == 'thumb') {
-		$size = getimagesize($filepath);
-		$insert['width'] = $size[0];
-		$insert['height'] = $size[1];
-		$insert['tag'] = $content['url'];
-		if (! empty($insert['tag'])) {
-			$insert['attachment'] = $content['url'];
-		}
-		$result['width'] = $size[0];
-		$result['hieght'] = $size[1];
-	}
-	if ($type == 'video') {
-		$insert['tag'] = iserializer($description);
-	}
-	pdo_insert('wechat_attachment', $insert);
-	$result['type'] = $type;
-	$result['url'] = tomedia($remote_file_url_parts['path']);
-	
-	if ($type == 'image' || $type == 'thumb') {
-		@unlink($filepath);
-	}
-	if ($type == 'video') {
-		$result['title'] = $description['title'];
-		$result['introduction'] = $description['introduction'];
-	}
-	$result['mode'] = 'perm';
-	// 删除本地文件和数据库
-	file_delete($remote_file_url_parts['path']);
-	pdo_delete('core_attachment', array(
-		'id' => $material_id 
-	));
 	iajax(0, json_encode($result));
 }
 
+if ($do == 'postwechat') {
+	$account_api = WeAccount::create($_W['acid']);
+	$material_id = intval($_GPC['material_id']);
+	$wechat_news = pdo_getall('wechat_news', array(
+		'uniacid' => $_W['uniacid'],
+		'attach_id' => $material_id 
+	));
+	$articles = array();
+	if (empty($wechat_news)) {
+		iajax(1, '素材不存在');
+	}
+	foreach ($wechat_news as $news) {
+		$news['content'] = material_parse_content($news['content']);
+		if (is_error($news['content'])) {
+			iajax(0, $news['content']);
+		}
+		if ($news['thumb_media_id'] == '') {
+			$remote_to_local_path = material_get_local_file($news['thumb_url'], 'image');
+			$result = $account_api->uploadMediaFixed($remote_to_local_path, 'image');
+			if (is_error($result)) {
+				iajax(1, $result['message']);
+			}
+			$news['thumb_media_id'] = $result['media_id'];
+			$news['thumb_url'] = $result['url'];
+		}
+		pdo_update('wechat_news', $news, array(
+			'id' => $news['id'] 
+		));
+		$articles['articles'][] = $news;
+	}
+	$media_id = $account_api->addMatrialNews($articles);
+	if (is_error($media_id)) {
+		iajax(1, $media_id, '');
+	}
+	pdo_update('wechat_attachment', array(
+		'media_id' => $media_id,
+		'model' => 'perm' 
+	), array(
+		'uniacid' => $_W['uniacid'],
+		'id' => $material_id 
+	));
+	iajax(0, '转换成功');
+}
 template('platform/material');

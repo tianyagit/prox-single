@@ -106,8 +106,7 @@
 							<td class="text-left">
 								<div class="link-group">
 									<a href="{php echo url('article/news/post', array('id' => $new['id']));}">编辑</a>
-									<a href="{php echo url('article/news/del', array('id' => $new['id']));}" onclick="if(!confirm('确定删除吗')) return false;">删除</a>
-							
+									<a href="{php echo url('article/news/del', array('id' => $new['id']));}" class="del" onclick="if(!confirm('确定删除吗')) return false;">删除</a>
 								</div>
 							</td>
 						</tr>
