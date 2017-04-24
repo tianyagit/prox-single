@@ -32,6 +32,9 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				if(type == 'news'){
 					$('#material-Modal').addClass('news');
 				}
+				if(type == 'image'){
+					$('#material-Modal').addClass('image');
+				}
 				if(type == 'music'){
 					$('#material-Modal').addClass('music');
 				}
