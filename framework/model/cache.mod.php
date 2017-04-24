@@ -362,7 +362,7 @@ function cache_build_uninstalled_module() {
 				$manifest = ext_module_convert($manifest);
 				$module[$manifest['name']] = $manifest;
 				$app_support = empty($manifest['supports']) || in_array('app', $manifest['supports']) ? 2 : 1;
-				$wxapp_support = in_array('wxapp', $manifest['supports']) ? 2 : 1;
+				$wxapp_support = in_array('wxapp', (array)$manifest['supports']) ? 2 : 1;
 				$module_info = array(
 					'from' => 'local',
 					'name' => $manifest['name'],

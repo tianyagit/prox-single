@@ -345,7 +345,6 @@ function user_modules($uid) {
 			}
 			$modules = pdo_getall('modules', array('name' => $user_group_modules), array (), 'name');
 		}
-		$modules = array_keys($modules);
 		cache_write($cachekey, array_keys($modules));
 	}
 
@@ -359,8 +358,8 @@ function user_modules($uid) {
 			}
 		}
 		unset($plugin);
-
 		foreach ($modules as $name => $module) {
+			$module = is_array($module)?$name:$module;//应用管理 已安装应用$module是字符串 未安装应用安装时是数组
 			if (in_array($module, array_keys($plugin_list))) {
 				continue;
 			}

@@ -1233,32 +1233,3 @@ function dir_size($dir) {
 	}
 	return $size;
 }
-
-/**
- * 文件占用空间大转小
- * @param string $val 大小(1G)
- * @param string $type 需要转换结果单位
- * @return int $val
- */
-function return_bytes($val, $type = 'k') {
-	$val = trim($val);
-	$last = strtolower($val[strlen($val)-1]);
-	if (in_array($last, array('t','g','m','k'))){
-		$val = trim(substr($val, '0', '-1'));
-		switch($last) {
-			case 't':
-				if ($type == 'k') break;
-				$val *= 1024;
-			case 'g':
-				if ($type == 'g') break;
-				$val *= 1024;
-			case 'm':
-				if ($type == 'm') break;
-				$val *= 1024;
-			case 'k':
-				if ($type == 'k') break;
-				$val *= 1024;
-		}
-	}
-	return $val;
-}
