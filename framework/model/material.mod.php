@@ -256,6 +256,11 @@ function material_remote_to_local($url, $type) {
 }
 
 /**
+ * 根据附件ID将，本地图文上传至微信服务器
+ */
+function material_local_news_upload($attach_id) {
+	
+}
  * 获取后台设置上传文件大小限制
  *
  * @return array

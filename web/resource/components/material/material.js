@@ -26,6 +26,21 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 			$this.modalobj = $('#material-Modal');
 			$this.modalobj.find('.modal-header .nav li a').click(function(){
 				var type = $(this).data('type');
+				if(type == 'basic'){
+					$('#material-Modal').addClass('basic');
+				}
+				if(type == 'news'){
+					$('#material-Modal').addClass('news');
+				}
+				if(type == 'music'){
+					$('#material-Modal').addClass('music');
+				}
+				if(type == 'voice'){
+					$('#material-Modal').addClass('voice');
+				}
+				if(type == 'video'){
+					$('#material-Modal').addClass('video');
+				}
 				$this.localPage(type, 1);
 				$(this).tab('show');
 				return false;
@@ -255,7 +270,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'					</ul>'+
 				'				</h3>'+
 				'			</div>\n' +
-				'			<div class="modal-body material-content">\n' +
+				'			<div class="modal-body material-content clearfix">\n' +
 								(this.options.ignore.news ? '' :
 				'				<ul class="nav nav-pills nav-stacked">'+
 				'					<li role="presentation" data-type="wx" class="newsmodel-type active">微信</li>'+
