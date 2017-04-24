@@ -74,52 +74,7 @@
 {if !defined('IN_MESSAGE')}
 <div class="container">
 {if in_array(FRAME, array('account', 'system', 'adviertisement')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
-		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
-<a href="javascript:;" class="js-big-main button-to-big color-gray" title="加宽">{if $_GPC['main-lg']}正常{else}宽屏{/if}</a>
-{/if}
 		<div class="panel panel-content main-panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
-			<div class="content-head panel-heading main-panel-heading">
-				{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
-	<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-circle"></i></a>
-	<span class="we7-head-account"><a href="{php echo url('home/welcome/account')}">{$_W['account']['name']}</a></span>
-	{if file_exists(IA_ROOT. "/addons/". $_W['current_module']['name']. "/icon-custom.jpg")}
-	<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon-custom.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
-	{else}
-	<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
-	{/if}
-	<span class="font-lg">{$_W['current_module']['title']}</span>
-
-	<!-- 兼容历史性问题：模块内获取不到模块信息$module的问题-start -->
-	{if CRUMBS_NAV == 1}
-	{php global $module;}
-	{/if}
-	<!-- end -->
-	{elseif FRAME == 'account'}
-	<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo">
-	<span class="font-lg">{$_W['account']['name']}</span>
-	{if $_W['account']['level'] == 1 || $_W['account']['level'] == 3}
-	<span class="label label-primary">订阅号</span>{if $_W['account']['level'] == 3}<span class="label label-primary">已认证</span>{/if}
-	{/if}
-	{if $_W['account']['level'] == 2 || $_W['account']['level'] == 4}
-	<span class="label label-primary">服务号</span> {if $_W['account']['level'] == 4}<span class="label label-primary">已认证</span>{/if}
-	{/if}
-	{if $_W['uniaccount']['isconnect'] == 0}
-	<span class="color-red"><i class="wi wi-warning-sign"></i>未接入微信公众号 </span>
-	<span class="color-default"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}">立即接入</a></span>
-	{/if}
-	<span class="pull-right"><a href="{php echo url('account/display')}" class="color-default we7-margin-left"><i class="wi wi-cut color-default"></i>切换公众号</a></span>
-	{if uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OPERATOR}
-	<span class="pull-right"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}"><i class="wi wi-appsetting"></i>公众号设置</a></span>
-	{/if}
-	<span class="pull-right"><a href="{php echo url('utility/emulator');}" target="_blank"><i class="wi wi-iphone"></i>模拟测试</a></span>
-	{/if}
-	{if FRAME == 'system'}
-	<span class="font-lg"><i class="wi wi-setting"></i> 系统管理</span>
-	{/if}
-	{if FRAME == 'adviertisement'}
-	<span class="font-lg"><i class="wi wi-ad"></i>广告联盟</span>
-	{/if}
-</div>
 <div class="panel-body clearfix main-panel-body">
 	<div class="left-menu">
 		{if empty($frames['section']['platform_module_menu']['plugin_menu'])}
@@ -179,7 +134,6 @@
 		<div class="panel panel-menu">
 			{if $frame_section['title']}
 			<div class="panel-heading">
-				<span class="no-collapse">{$frame_section['title']}<i class="wi wi-appsetting pull-right setting"></i></span>
 				<span class="" data-toggle="collapse" data-target="#frame-{$frame_section_id}">{$frame_section['title']}<i class="wi wi-down-sign-s pull-right"></i></span>
 			</div>
 			{/if}
@@ -242,8 +196,6 @@
 				<div class="panel panel-menu">
 					{if $frame_section['title']}
 					<div class="panel-heading">
-									{$frame_section['title']}<span class="wi wi-appsetting pull-right setting"></span>
-						<span class="no-collapse">{$frame_section['title']}<i class="wi wi-appsetting pull-right setting"></i></span>
 						<span class="collapsed" data-toggle="collapse" data-target="#frame0-{$frame_section_id}" aria-expanded="true" aria-controls="frame0-{$frame_section_id}">{$frame_section['title']}<i class="wi wi-down-sign-s pull-right"></i></span></a>
 					</div>
 					{/if}
