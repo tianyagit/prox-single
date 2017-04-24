@@ -330,8 +330,8 @@
 			'del_url' : "{php echo url('platform/material/del_material')}",
 			'sync_url' : "{php echo url('platform/material/sync')}",
 			'send_url' : "{php echo url('platform/material/send')}",
-			'trans_url' : "{php echo url('platform/material/trans')}",
-			'postwechat_url' : "{php echo url('platform/material/postwechat')}",
+			'trans_url' : "{php echo url('platform/material/upload_material')}",
+			'postwechat_url' : "{php echo url('platform/material/upload_news')}",
 			'group' : {php echo json_encode($group)},
 			'syncNews' : "{$_GPC['sync_news']}",
 		});
@@ -341,10 +341,10 @@
 			'multiple': true,
 			'isWechat': true,
 			'type' : "{php echo $type}",
-			'fileNumLimit' : "{$upload_limit['fileNumLimit']}",
-			'fileSingleImageSizeLimit' : "{$upload_limit['fileSingleImageSizeLimit']}",
-			'fileSingleVoiceSizeLimit' : "{$upload_limit['fileSingleVoiceSizeLimit']}",
-			'fileSingleVideoSizeLimit' : "{$upload_limit['fileSingleVideoSizeLimit']}"
+			'num_limit' : "{$upload_limit['num']}",
+			'image_limit' : "{$upload_limit['image']}",
+			'voice_limit' : "{$upload_limit['voice']}",
+			'video_limit' : "{$upload_limit['video']}"
 		});
 		$('.material-appmsg-list .material-appmsg-item').wookmark({
 			align: 'center',

@@ -235,37 +235,96 @@ function material_parse_content($content) {
 }
 
 /**
- * 获取素材文件到本地
- * @param string $url
- * @param string $type
- * @return string 返回生成本地文件路径
+ * 根据附件ID将，本地图文上传至微信服务器
+ * @param int $attach_id
+ * 
  */
-function material_remote_to_local($url, $type) {
+function material_local_news_upload($attach_id) {
 	global $_W;
+	$account_api = WeAccount::create($_W['acid']);
+	$material = material_get($attach_id);
+	if (is_error($material)){
+		return error('-1', '获取素材文件失败');
+	}
+	foreach ($material['news'] as $news) {
+		$news['content'] = material_parse_content($news['content']);
+		if (is_error($news['content'])) {
+			return error('-1001', $news['content']);
+		}
+		if (empty($news['thumb_media_id']) && !empty($news['thumb_url'])) {
+			$result = material_local_image_upload($news['thumb_url']);
+			if (is_error($result)){
+				return error('-1002', $result['message']);
+			}
+			$news['thumb_media_id'] = $result['media_id'];
+			$news['thumb_url'] = $result['url'];
+		}
+		pdo_update('wechat_news', $news, array(
+			'id' => $news['id']
+		));
+		if (empty($material['media_id'])){
+			$articles['articles'][] = $news;
+		}else{
+			$edit_attachment['media_id'] = $material['media_id'];
+			$edit_attachment['index'] = $news['displayorder'];
+			$edit_attachment['articles'] = $news;
+			$result = $account_api->editMaterialNews($edit_attachment);
+			if (is_error($result)){
+				return error('-1003', $result['message']);
+			}
+		}
+	}
+	if (empty($material['media_id'])){
+		$media_id = $account_api->addMatrialNews($articles);
+		if (is_error($media_id)) {
+			return error('-1004', $media_id, '');
+		}
+		pdo_update('wechat_attachment', array(
+			'media_id' => $media_id,
+			'model' => 'perm'
+		), array(
+			'uniacid' => $_W['uniacid'],
+			'id' => $attach_id
+		));
+	}else{
+		pdo_update('wechat_attachment', array(
+			'model' => 'perm'
+		), array(
+			'uniacid' => $_W['uniacid'],
+			'id' => $attach_id
+		));
+	}
+	return $material;
+}
+
+/**
+ * 上传素材文件到微信，获取mediaId
+ * @param string $url
+ * 
+ */
+function material_local_image_upload($url, $type='images') {
+	global $_W;
+	$account_api = WeAccount::create($_W['acid']);
 	if (! empty($_W['setting']['remote']['type'])) {
 		$remote_file_url = tomedia($url);
 		$filepath = file_fetch($remote_file_url,0,'');
 		if(is_error($filepath)) {
 			return $filepath;
 		}
-		$filepath = ATTACHMENT_ROOT . $filepath; 
+		$filepath = ATTACHMENT_ROOT . $filepath;
 	} else {
+		$url = str_replace('/attachment/', '', parse_url($url, PHP_URL_PATH));
 		$filepath = ATTACHMENT_ROOT . $url;
 	}
-	return $filepath;
+	return $account_api->uploadMediaFixed($filepath, $type);
 }
 
 /**
- * 根据附件ID将，本地图文上传至微信服务器
- */
-function material_local_news_upload($attach_id) {
-	
-}
  * 获取后台设置上传文件大小限制
  *
  * @return array
  */
-function file_upload_limit() {
+function material_upload_limit() {
 	global $_W;
 	$default = 5 * 1024 * 1024;
 	$upload_limit = array(
@@ -274,11 +333,7 @@ function file_upload_limit() {
 		'voice' => $default,
 		'video' => $default
 	);
-	if (empty($_W['setting']['upload'])) {
-		$upload = $_W['config']['upload'];
-	} else {
-		$upload = $_W['setting']['upload'];
-	}
+	$upload = $_W['setting']['upload'];
 	if (isset($upload['image']['limit']) && (bytecount($upload['image']['limit'].'kb')>0)){
 		$upload_limit['image'] = bytecount($upload['image']['limit'].'kb');
 	}

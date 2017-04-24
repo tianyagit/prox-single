@@ -868,6 +868,11 @@ function file_fetch($url, $limit = 0, $path = '') {
 	}
 	if (empty($path)) {
 		$path = $type . "/{$_W['uniacid']}/" . date('Y/m/');
+	}else{
+		$path = parse_path($path);
+	}
+	if (! $path){
+		return error(- 1, '提取文件失败: 上传路径配置有误.');
 	}
 	if (! file_exists(ATTACHMENT_ROOT . $path) && mkdir(ATTACHMENT_ROOT . $path, 0700, true)) {
 		return error(- 1, '提取文件失败: 权限不足.');

@@ -1432,7 +1432,7 @@ class WeiXinAccount extends WeAccount {
 	 * @param string $path 文件物理路径
 	 * @param string $type 素材类型 image, voice, video, thumb
 	 */
-	public function uploadMediaFixed($path, $type = 'image') {
+	public function uploadMediaFixed($path, $type = 'images') {
 		if(empty($path)) {
 			return error(-1, '参数错误');
 		}
