@@ -26,20 +26,25 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 			$this.modalobj = $('#material-Modal');
 			$this.modalobj.find('.modal-header .nav li a').click(function(){
 				var type = $(this).data('type');
-				if(type == 'basic'){
-					$('#material-Modal').addClass('basic');
-				}
-				if(type == 'news'){
-					$('#material-Modal').addClass('news');
-				}
-				if(type == 'music'){
-					$('#material-Modal').addClass('music');
-				}
-				if(type == 'voice'){
-					$('#material-Modal').addClass('voice');
-				}
-				if(type == 'video'){
-					$('#material-Modal').addClass('video');
+				switch(type) {
+					case 'basic':
+						$('#material-Modal').addClass('basic');
+						break;
+					case 'news':
+						$('#material-Modal').addClass('news');
+						break;
+					case 'music':
+						$('#material-Modal').addClass('music');
+						break;
+					case 'voice':
+						$('#material-Modal').addClass('voice');
+						break;
+					case 'video':
+						$('#material-Modal').addClass('video');
+						break;
+					case 'image':
+						$('#material-Modal').addClass('image');
+						break;
 				}
 				$this.localPage(type, 1);
 				$(this).tab('show');

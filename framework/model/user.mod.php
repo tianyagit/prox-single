@@ -320,7 +320,6 @@ function user_account_detail_info($uid) {
 function user_modules($uid) {
 	global $_W;
 	load()->model('module');
-	$uid = empty($uid) ? $_W['uid'] : $uid;
 	$cachekey = cache_system_key("user_modules:" . $uid);
 	$modules = cache_load($cachekey);
 
@@ -329,9 +328,9 @@ function user_modules($uid) {
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
-		if (in_array($uid, $founders)) {
+		if (empty($uid) || in_array($uid, $founders)) {
 			$modules = pdo_getall('modules', array(), array('name'), 'name');
-		} elseif (empty($user_info['groupid'])) {
+		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
 			$modules = $system_modules;
 		} else {
 			$user_group_info = pdo_get('users_group', array ('id' => $user_info['groupid']));
@@ -369,18 +368,22 @@ function user_modules($uid) {
 	
 	if (!empty($modules)) {
 		$module_list = array();//加上模块插件后的模块列表
-		$plugin_list = pdo_getall('modules_plugin', array('main_module' => $modules), array());
-		
+		$plugin_list = pdo_getall('modules_plugin', array('name' => $modules), array());
 		$have_plugin_module = array();
 		if (!empty($plugin_list)) {
 			foreach ($plugin_list as $plugin) {
-				$have_plugin_module[$plugin['main_module']][$plugin['name']] = module_fetch($plugin['name']);
+				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
+				$module_key = array_search($plugin['name'], $modules);
+				unset($modules[$module_key]);
 			}
 		}
-		foreach ($modules as $name => $module) {
+
+		foreach ($modules as $module) {
 			$module_list[$module] = module_fetch($module);
 			if (!empty($have_plugin_module[$module])) {
-				$module_list[$module]['plugin_list'] = $have_plugin_module[$module];
+				foreach ($have_plugin_module[$module] as $plugin) {
+					$module_list[$plugin] = module_fetch($plugin);
+				}
 			}
 		}
 	}
