@@ -118,5 +118,9 @@ if ($do == 'addnews') {
 	if ($is_sendto_wechat) {
 		$result = material_local_news_upload($attach_id);
 	}
-	iajax(0, '编辑图文素材成功');
+	if (is_error($result)){
+		iajax(-1, '提交微信素材失败');
+	}else{
+		iajax(0, '编辑图文素材成功');
+	}
 }
