@@ -410,6 +410,10 @@ function module_parse_info($module_info) {
 	}
 	$module_info['isdisplay'] = 1;
 	$module_info['main_module'] = pdo_getcolumn('modules_plugin', array('name' => $module_info['name']), 'main_module');
+	if (!empty($module_info['main_module'])) {
+		$main_module_info = module_fetch($module_info['main_module']);
+		$module_info['main_module_logo'] = $main_module_info['logo'];
+	}
 	$module_info['plugin_list'] = pdo_getall('modules_plugin', array('main_module' => $module_info['name']), array(), 'name');
 	$module_info['plugin_list'] = array_keys($module_info['plugin_list']);
 

@@ -314,7 +314,7 @@
 	<div class="user-head-info we7-padding-bottom">
 		<div class="img pull-left" ng-if="moduleinfo.main_module != ''">
 			<img alt="子应用icon" class="plugin-img" ng-src="{{ moduleinfo.logo }}"/>
-			<img alt="主应用icon" class="module-img" src="{$main_module['logo']}"/>
+			<img alt="主应用icon" class="module-img" ng-src="{{ moduleinfo.main_module_logo }}"/>
 		</div>
 		<img ng-src="{{ moduleinfo.logo }}" class="user-avatar img-rounded pull-left" ng-if="moduleinfo.main_module == ''">
 		<h3 class="pull-left">{{ moduleinfo.title }}</h3>
