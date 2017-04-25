@@ -550,7 +550,9 @@ if($do == 'upgrade') {
 
 		if (!is_error($info)) {
 			if (empty($_GPC['flag'])) {
-				if (intval($_GPC['branch']) > $info['version']['branch_id']) {
+				$site_branch_displayorder = $info['branches'][$info['version']['branch_id']]['displayorder'];
+				$upgrade_branch_displayorder = $info['branches'][intval($_GPC['branch'])]['displayorder'];
+				if (($upgrade_branch_displayorder > $site_branch_displayorder) || ($site_branch_displayorder == $upgrade_branch_displayorder && intval($_GPC['branch']) > $info['version']['branch_id'])) {
 					header('location: ' . url('cloud/redirect/buybranch', array('m' => $id, 'branch' => intval($_GPC['branch']), 'is_upgrade' => 1)));
 					exit;
 				}
