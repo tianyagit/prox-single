@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('site');
 
-$dos = array('entry', 'modulelink', 'articlelist', 'pagelist', 'newslist', 'catelist', 'page', 'news', 'article', 'newschunk');
+$dos = array('entry', 'modulelink', 'articlelist', 'pagelist', 'newslist', 'catelist', 'page', 'news', 'article');
 $do = in_array($do, $dos) ? $do : 'entry';
 
 $_W['page']['title'] = '';
@@ -153,26 +153,6 @@ if ($do == 'article') {
 			unset($category[$index]);
 		}
 	}
-}
-if ($do == 'newschunk') {
-	$result = array();
-	$psize = 10;
-	$pindex = max(1, intval($_GPC['page']));
-	$rids = pdo_getall('rule', array('uniacid' => $_W['uniacid'], 'module' => 'news'), array(), 'id');
-	$keys = array_keys($rids);
-	$keys[] = 0;
-	$keys = implode(',', $keys);
-	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('news_reply') . " WHERE parent_id = 0 AND rid IN ({$keys})");
-	$sql = "SELECT id,title,createtime FROM ". tablename('news_reply') . " WHERE parent_id = 0 AND rid IN ({$keys}) ORDER BY id DESC LIMIT ". ($pindex - 1) * $psize . ',' . $psize;
-	$result['list'] = pdo_fetchall($sql, array(), 'id');
-	if (!empty($result['list'])) {
-		foreach($result['list'] as &$row) {
-			$row['items'] = pdo_fetchall('SELECT * FROM ' . tablename('news_reply') . ' WHERE parent_id = :parent_id OR id = :id', array(':parent_id' => $row['id'], ':id' => $row['id']));
-		}
-		unset($row);
-		$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null'));
-	}
-	iajax(0, $result);
 }
 if ($do == 'entry') {
 	$has_permission = array();
