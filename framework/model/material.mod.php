@@ -87,6 +87,67 @@ function material_sync($material, $exist_material, $type) {
 }
 
 /**
+ * 生成本地图文素材
+ * @param array $post_data
+ * @return int 本地图文素材ID
+ */
+function material_set($data, $attach_id) {
+	global $_W;
+	foreach ($data as $key => $news) {
+		if (empty($news['title']) || empty($news['author']) || empty($news['content'])){
+			return error('-1', '参数不能为空');
+		}
+		$post_news[] = array(
+				'id'	=> $news['id'],
+				'uniacid' => $_W['uniacid'],
+				'thumb_media_id' => $news['media_id'],
+				'thumb_url' => $news['thumb'],
+				'title' => $news['title'],
+				'author' => $news['author'],
+				'digest' => $news['digest'],
+				'content' => htmlspecialchars_decode($news['content']),
+				'content_source_url' => $news['content_source_url'],
+				'show_cover_pic' => $news['show_cover_pic'] ? 1 : 0,
+				'displayorder' => $key
+		);
+	}
+	if (!empty($attach_id)){
+		$wechat_attachment = pdo_get('wechat_attachment', array(
+				'id' => $attach_id,
+				'uniacid' => $_W['uniacid']
+		));
+		if (empty($wechat_attachment)){
+			return error('-2', '编辑素材不存在');
+		}
+		$wechat_attachment['model'] = 'local';
+		pdo_update('wechat_attachment', $wechat_attachment, array(
+				'id' => $attach_id
+		));
+		foreach ($post_news as $id => $news) {
+			pdo_update('wechat_news', $news, array(
+					'id' => $news['id']
+			));
+		}
+	} else {
+		$wechat_attachment = array(
+				'uniacid' => $_W['uniacid'],
+				'acid' => $_W['acid'],
+				'media_id' => '',
+				'type' => 'news',
+				'model' => 'local',
+				'createtime' => time()
+		);
+		pdo_insert('wechat_attachment', $wechat_attachment);
+		$attach_id = pdo_insertid();
+		foreach ($post_news as $key => $news) {
+			$news['attach_id'] = $attach_id;
+			pdo_insert('wechat_news', $news);
+		}
+	}
+	return $attach_id;
+}
+
+/**
  * 获取素材
  * @param array $material 素材的id或者mediaid
  * @return array() 素材内容
@@ -249,12 +310,12 @@ function material_local_news_upload($attach_id) {
 	foreach ($material['news'] as $news) {
 		$news['content'] = material_parse_content($news['content']);
 		if (is_error($news['content'])) {
-			return error('-1001', $news['content']);
+			return error('-2', $news['content']);
 		}
 		if (empty($news['thumb_media_id']) && !empty($news['thumb_url'])) {
 			$result = material_local_image_upload($news['thumb_url']);
 			if (is_error($result)){
-				return error('-1002', $result['message']);
+				return error('-3', $result['message']);
 			}
 			$news['thumb_media_id'] = $result['media_id'];
 			$news['thumb_url'] = $result['url'];
@@ -264,20 +325,20 @@ function material_local_news_upload($attach_id) {
 		));
 		if (empty($material['media_id'])){
 			$articles['articles'][] = $news;
-		}else{
+		} else {
 			$edit_attachment['media_id'] = $material['media_id'];
 			$edit_attachment['index'] = $news['displayorder'];
 			$edit_attachment['articles'] = $news;
 			$result = $account_api->editMaterialNews($edit_attachment);
 			if (is_error($result)){
-				return error('-1003', $result['message']);
+				return error('-4', $result['message']);
 			}
 		}
 	}
 	if (empty($material['media_id'])){
 		$media_id = $account_api->addMatrialNews($articles);
 		if (is_error($media_id)) {
-			return error('-1004', $media_id, '');
+			return error('-5', $media_id, '');
 		}
 		pdo_update('wechat_attachment', array(
 			'media_id' => $media_id,
@@ -286,7 +347,7 @@ function material_local_news_upload($attach_id) {
 			'uniacid' => $_W['uniacid'],
 			'id' => $attach_id
 		));
-	}else{
+	} else {
 		pdo_update('wechat_attachment', array(
 			'model' => 'perm'
 		), array(
@@ -317,6 +378,24 @@ function material_local_image_upload($url, $type='images') {
 		$filepath = ATTACHMENT_ROOT . $url;
 	}
 	return $account_api->uploadMediaFixed($filepath, $type);
+}
+
+/**
+ * 同步本地素材到微信
+ * @param int $material_id
+ * @return array
+ */
+function material_local_upload($material_id){
+	global $_W;
+	$type_arr = array('1' => 'images', '2' => 'voices', '3' => 'videos');
+	$material = pdo_get('core_attachment', array(
+			'uniacid' => $_W['uniacid'],
+			'id' => $material_id
+	));
+	if (empty($material)) {
+		iajax(- 1, '同步素材不存在或已删除');
+	}
+	return material_local_image_upload($material['attachment'], $type_arr[$material['type']]);
 }
 
 /**
