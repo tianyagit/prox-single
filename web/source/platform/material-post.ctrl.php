@@ -64,7 +64,7 @@ if ($do == 'addnews') {
 	if (empty($_GPC['news'])) {
 		iajax(- 1, '提交内容参数有误');
 	}
-	$attach_id = material_set($_GPC['news'], $attach_id);
+	$attach_id = material_news_set($_GPC['news'], $attach_id);
 	if (is_error($attach_id)){
 		iajax(-1, $attach_id['message']);
 	}

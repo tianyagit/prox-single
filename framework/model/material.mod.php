@@ -91,51 +91,52 @@ function material_sync($material, $exist_material, $type) {
  * @param array $post_data
  * @return int 本地图文素材ID
  */
-function material_set($data, $attach_id) {
+function material_news_set($data, $attach_id = '0') {
 	global $_W;
+	$attach_id = intval($attach_id);
 	foreach ($data as $key => $news) {
 		if (empty($news['title']) || empty($news['author']) || empty($news['content'])){
 			return error('-1', '参数不能为空');
 		}
 		$post_news[] = array(
-				'id'	=> $news['id'],
-				'uniacid' => $_W['uniacid'],
-				'thumb_media_id' => $news['media_id'],
-				'thumb_url' => $news['thumb'],
-				'title' => $news['title'],
-				'author' => $news['author'],
-				'digest' => $news['digest'],
-				'content' => htmlspecialchars_decode($news['content']),
-				'content_source_url' => $news['content_source_url'],
-				'show_cover_pic' => $news['show_cover_pic'] ? 1 : 0,
-				'displayorder' => $key
+			'id'	=> $news['id'],
+			'uniacid' => $_W['uniacid'],
+			'thumb_media_id' => $news['media_id'],
+			'thumb_url' => $news['thumb'],
+			'title' => $news['title'],
+			'author' => $news['author'],
+			'digest' => $news['digest'],
+			'content' => htmlspecialchars_decode($news['content']),
+			'content_source_url' => $news['content_source_url'],
+			'show_cover_pic' => $news['show_cover_pic'] ? 1 : 0,
+			'displayorder' => $key
 		);
 	}
 	if (!empty($attach_id)){
 		$wechat_attachment = pdo_get('wechat_attachment', array(
-				'id' => $attach_id,
-				'uniacid' => $_W['uniacid']
+			'id' => $attach_id,
+			'uniacid' => $_W['uniacid']
 		));
 		if (empty($wechat_attachment)){
 			return error('-2', '编辑素材不存在');
 		}
 		$wechat_attachment['model'] = 'local';
 		pdo_update('wechat_attachment', $wechat_attachment, array(
-				'id' => $attach_id
+			'id' => $attach_id
 		));
 		foreach ($post_news as $id => $news) {
 			pdo_update('wechat_news', $news, array(
-					'id' => $news['id']
+				'id' => $news['id']
 			));
 		}
 	} else {
 		$wechat_attachment = array(
-				'uniacid' => $_W['uniacid'],
-				'acid' => $_W['acid'],
-				'media_id' => '',
-				'type' => 'news',
-				'model' => 'local',
-				'createtime' => time()
+			'uniacid' => $_W['uniacid'],
+			'acid' => $_W['acid'],
+			'media_id' => '',
+			'type' => 'news',
+			'model' => 'local',
+			'createtime' => time()
 		);
 		pdo_insert('wechat_attachment', $wechat_attachment);
 		$attach_id = pdo_insertid();
