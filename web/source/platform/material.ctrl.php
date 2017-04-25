@@ -8,7 +8,7 @@ load()->model('material');
 load()->model('mc');
 load()->func('file');
 
-$dos = array('display', 'sync', 'del_material', 'send', 'upload_material', 'upload_news');
+$dos = array('display', 'sync', 'del_material', 'send');
 $do = in_array($do, $dos) ? $do : 'display';
 
 uni_user_permission_check('platform_material');
@@ -299,41 +299,4 @@ if ($do == 'sync') {
 	iajax(0, '更新成功！', '');
 }
 
-if ($do == 'upload_material') {
-	$account_api = WeAccount::create($_W['acid']);
-	$material_id = intval($_GPC['material_id']);
-	$type = trim($_GPC['type']);
-	$allow_type_arr = array(
-		'image',
-		'voice',
-		'video',
-		'thumb',
-		'audio' 
-	);
-	if (!in_array($type, $allow_type_arr)) {
-		iajax(- 1, '参数有误');
-	}
-	$material = pdo_get('core_attachment', array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $material_id 
-	));
-	if (empty($material)) {
-		iajax(- 1, '同步素材不存在或已删除');
-	}
-	$result = material_local_image_upload($material['attachment'], $type);
-	if (is_error($result)) {
-		iajax(1, $result['message']);
-	}
-	iajax(0, json_encode($result));
-}
-
-if ($do == 'upload_news') {
-	$material_id = intval($_GPC['material_id']);
-	$result = material_local_news_upload($material_id);
-	if (is_error($result)){
-		iajax(-1, $result['message']);
-	}else{
-		iajax(0, '转换成功');
-	}
-}
 template('platform/material');
