@@ -23,10 +23,11 @@ if($do == 'display') {
 
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => &$row) {
+			if ($name == 'we7_coupon') {
+				$row['issystem'] = 0;
+			}
 			if (!empty($row['issystem']) || !empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
-				if ($name != 'we7_coupon') {
-					unset($modulelist[$name]);
-				}
+				unset($modulelist[$name]);
 				continue;
 			}
 		}

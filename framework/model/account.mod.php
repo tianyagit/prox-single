@@ -129,7 +129,7 @@ function uni_modules($enabledOnly = true) {
 			$packageids = array_keys($packageids);
 
 			if (!empty($packageids) && in_array('-1', $packageids)) {
-				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('issystem DESC', 'mid DESC'));
+				$module_list = pdo_getall('modules', array(), array('name', 'issystem'), 'name', array('issystem DESC', 'mid DESC'));
 			} else {
 				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$_W['uniacid']}'");
 				if (!empty($uni_groups)) {
@@ -140,11 +140,7 @@ function uni_modules($enabledOnly = true) {
 				}
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
-				$sql = '';
-				if (!empty($modules)) {
-					$sql = " OR name IN ('" . implode("','", $modules) . "')" ;
-				}
-				$module_list = pdo_fetchall("SELECT name FROM " . tablename('modules') . " WHERE issystem = 1{$sql} ORDER BY issystem DESC, mid DESC", array(), 'name');
+				$module_list = pdo_getall('modules', array('name' => $modules), array('name', 'issystem'), 'name', array('mid DESC'));
 			}
 		}
 
@@ -167,7 +163,7 @@ function uni_modules($enabledOnly = true) {
 				}
 				$module = array(
 					'name' => $name,
-					'enable' => $enabledOnly[$name]['enabled']
+					'enable' => $my_modules[$name]['enabled']
 				);
 				if (!empty($my_modules[$name]['settings'])) {
 					$module['config'] = iunserializer($my_modules[$name]['settings']);
@@ -189,11 +185,10 @@ function uni_modules($enabledOnly = true) {
 		foreach ($modules as $name => $module) {
 			$module_list[$name] = module_fetch($name);
 			$module_list[$name]['config'] = empty($module['config']) ? array() : $module['config'];
-			$module_list[$name]['enabled'] = empty($module['config']) ? 0 : $module['enabled'];
+			$module_list[$name]['enabled'] = empty($module['enabled']) ? 0 : $module['enabled'];
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
-
 	return $module_list;
 }
 

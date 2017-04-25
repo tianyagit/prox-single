@@ -52,7 +52,7 @@ if ($do == 'send') {
 
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-	$islocal = isset($_GPC['islocal']) && (trim($_GPC['islocal']) != '' || trim($_GPC['islocal']) != '0') ? true : false;
+	$islocal = intval($_GPC['islocal']);
 	$upload_limit = material_upload_limit();
 	$group = mc_fans_groups(true);
 	if ($type == 'news') {

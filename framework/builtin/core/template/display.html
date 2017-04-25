@@ -487,6 +487,7 @@
 	window.initReplyController = function($scope) {
 		$scope.context = {};
 		$scope.context.items = {php echo json_encode($replies)};
+		var newsMediaIds = [];
 		angular.forEach($scope.context.items, function(val, key){
 			var replyVal = [];
 			var type = key;
@@ -514,6 +515,7 @@
 					break;
 				case 'news':
 					angular.forEach(val, function(newsVal, newsKey) {
+						var index = _.indexOf(newsMediaIds, newsVal.media_id);
 						replyVal.push(angular.toJson({
 							title: newsVal.title,
 							author: newsVal.author,
@@ -527,27 +529,30 @@
 							parent_id: newsVal.parent_id ? newsVal.parent_id : 0,
 							mediaid: newsVal.media_id
 						}));
-						$('.keywords-list').append(
-							'<li>'+
-							'<div class="del-'+type+'-media">'+
-							'	<div class="desc">'+
-							'		<div class="media-content">'+
-							'			<div class="appmsgSendedItem">'+
-							'				<a class="title-wrp" href="javascript:;">'+
-							'					<span class="icon cover" style="background-image:url('+(newsVal.thumb ? newsVal.thumb : newsVal.thumb_url)+');"></span>'+
-							'					<span class="title">[图文消息]'+newsVal.title+'</span>'+
-							'				</a>'+
-							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(newsVal.description ? newsVal.description : '')+'</a></p>'+
-							'			</div>'+
-							'		</div>'+
-							'	</div>'+
-							'	<div class="opr">'+
-							'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+(newsVal.attach_id ? newsVal.attach_id : '')+'&reply_news_id='+newsVal.id+'" target="_blank" class="del-gray">编辑</a>'+
-							'		<a href="javascript:;" data-media="'+newsVal.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'	</div>'+
-							'</div>'+
-							'</li>'
-						);
+						if (index == -1) {
+							$('.keywords-list').append(
+								'<li>'+
+								'<div class="del-'+type+'-media">'+
+								'	<div class="desc">'+
+								'		<div class="media-content">'+
+								'			<div class="appmsgSendedItem">'+
+								'				<a class="title-wrp" href="javascript:;">'+
+								'					<span class="icon cover" style="background-image:url('+(newsVal.thumb ? newsVal.thumb : newsVal.thumb_url)+');"></span>'+
+								'					<span class="title">[图文消息]'+newsVal.title+'</span>'+
+								'				</a>'+
+								'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(newsVal.description ? newsVal.description : '')+'</a></p>'+
+								'			</div>'+
+								'		</div>'+
+								'	</div>'+
+								'	<div class="opr">'+
+								'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+(newsVal.attach_id ? newsVal.attach_id : '')+'&reply_news_id='+newsVal.id+'" target="_blank" class="del-gray">编辑</a>'+
+								'		<a href="javascript:;" data-media="'+newsVal.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+								'	</div>'+
+								'</div>'+
+								'</li>'
+							);
+							newsMediaIds.push(newsVal.media_id);
+						}
 					});
 					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;
