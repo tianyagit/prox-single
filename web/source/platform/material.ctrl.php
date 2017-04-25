@@ -19,10 +19,7 @@ if ($do == 'send') {
 	$group = intval($_GPC['group']);
 	$type = trim($_GPC['type']);
 	$id = intval($_GPC['id']);
-	$media = pdo_get('wechat_attachment', array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $id 
-	));
+	$media = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if (empty($media)) {
 		iajax(1, '素材不存在', '');
 	}
@@ -32,11 +29,8 @@ if ($do == 'send') {
 	if (is_error($result)) {
 		iajax(1, $result['message'], '');
 	}
-	$groups = pdo_get('mc_fans_groups', array(
-		'uniacid' => $_W['uniacid'],
-		'acid' => $_W['acid'] 
-	));
-	if (! empty($groups)) {
+	$groups = pdo_get('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']));
+	if (!empty($groups)) {
 		$groups = iunserializer($groups['groups']);
 	}
 	$record = array(
@@ -50,7 +44,7 @@ if ($do == 'send') {
 		'status' => 0,
 		'type' => 0,
 		'sendtime' => TIMESTAMP,
-		'createtime' => TIMESTAMP 
+		'createtime' => TIMESTAMP,
 	);
 	pdo_insert('mc_mass_record', $record);
 	iajax(0, '发送成功！', '');
@@ -71,7 +65,7 @@ if ($do == 'display') {
 		);
 		$id = intval($_GPC['id']);
 		$title = addslashes($_GPC['title']);
-		if (! empty($title)) {
+		if (!empty($title)) {
 			$condition .= ' AND (b.title LIKE :title OR b.author = :title OR b.digest LIKE :title)';
 			$params[':title'] = '%' . $title . "%";
 		}
@@ -247,53 +241,29 @@ if ($do == 'sync') {
 	$news_list = $account_api->batchGetMaterial($type, ($pageindex - 1) * 20);
 	$wechat_existid = empty($_GPC['wechat_existid']) ? array() : $_GPC['wechat_existid'];
 	if ($pageindex == 1) {
-		$original_newsid = pdo_getall('wechat_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'type' => $type,
-			'model' => 'perm' 
-		), array(
-			'id' 
-		), 'id');
+		$original_newsid = pdo_getall('wechat_attachment', array('uniacid' => $_W['uniacid'], 'type' => $type, 'model' => 'perm'), array('id'), 'id');
 		$original_newsid = array_keys($original_newsid);
 		$wechat_existid = material_sync($news_list['item'], array(), $type);
 		if ($news_list['total_count'] > 20) {
-			$total = ceil($news_list['total_count'] / 20);
-			iajax('1', array(
-				'type' => $type,
-				'total' => $total,
-				'pageindex' => $pageindex + 1,
-				'wechat_existid' => $wechat_existid,
-				'original_newsid' => $original_newsid 
-			), '');
+			$total = ceil($news_list['total_count']/20);
+			iajax('1', array('type' => $type,'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid), '');
 		}
 	} else {
 		$wechat_existid = material_sync($news_list['item'], $wechat_existid, $type);
 		$total = intval($_GPC['total']);
 		$original_newsid = $_GPC['original_newsid'];
 		if ($total != $pageindex) {
-			iajax('1', array(
-				'type' => $type,
-				'total' => $total,
-				'pageindex' => $pageindex + 1,
-				'wechat_existid' => $wechat_existid,
-				'original_newsid' => $original_newsid 
-			), '');
+			iajax('1', array('type' => $type, 'total' => $total, 'pageindex' => $pageindex+1, 'wechat_existid' => $wechat_existid, 'original_newsid' => $original_newsid), '');
 		}
 		if (empty($original_newsid)) {
 			$original_newsid = array();
 		}
 	}
 	$delete_id = array_diff($original_newsid, $wechat_existid);
-	if (! empty($delete_id) && is_array($delete_id)) {
+	if (!empty($delete_id) && is_array($delete_id)) {
 		foreach ($delete_id as $id) {
-			pdo_delete('wechat_attachment', array(
-				'uniacid' => $_W['uniacid'],
-				'id' => $id 
-			));
-			pdo_delete('wechat_news', array(
-				'uniacid' => $_W['uniacid'],
-				'attach_id' => $id 
-			));
+			pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
+			pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $id));
 		}
 	}
 	iajax(0, '更新成功！', '');

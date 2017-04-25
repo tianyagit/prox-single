@@ -9,13 +9,7 @@ error_reporting(0);
 global $_W;
 load()->func('file');
 load()->func('communication');
-if (! in_array($do, array(
-	'upload',
-	'fetch',
-	'browser',
-	'delete',
-	'local' 
-))) {
+if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'local'))) {
 	exit('Access Denied');
 }
 $result = array(
@@ -25,21 +19,12 @@ $result = array(
 );
 
 $type = $_COOKIE['__fileupload_type'];
-$type = in_array($type, array(
-	'image',
-	'audio',
-	'voice',
-	'video' 
-)) ? $type : 'image';
+$type = in_array($type, array('image','audio','video')) ? $type : 'image';
 $option = array();
-$option = array_elements(array(
-	'uploadtype',
-	'global',
-	'dest_dir' 
-), $_POST);
+$option = array_elements(array('uploadtype', 'global', 'dest_dir'), $_POST);
 $option['width'] = intval($option['width']);
-$option['global'] = ! empty($_COOKIE['__fileupload_global']);
-if (! empty($option['global']) && empty($_W['isfounder'])) {
+$option['global'] = !empty($_COOKIE['__fileupload_global']);
+if (!empty($option['global']) && empty($_W['isfounder'])) {
 	$result['message'] = '没有向 global 文件夹上传文件的权限.';
 	die(json_encode($result));
 }
@@ -48,7 +33,7 @@ $dest_dir = $_COOKIE['__fileupload_dest_dir'];
 if (preg_match('/^[a-zA-Z0-9_\/]{0,50}$/', $dest_dir, $out)) {
 	$dest_dir = trim($dest_dir, '/');
 	$pieces = explode('/', $dest_dir);
-	if (count($pieces) > 3) {
+	if(count($pieces) > 3){
 		$dest_dir = '';
 	}
 } else {
@@ -59,7 +44,7 @@ $setting = $_W['setting']['upload'][$type];
 $uniacid = intval($_W['uniacid']);
 
 // 设置多媒体上传目录
-if (! empty($option['global'])) {
+if (!empty($option['global'])) {
 	$setting['folder'] = "{$type}s/global/";
 	if (! empty($dest_dir)) {
 		$setting['folder'] .= '/' . $dest_dir . '/';
@@ -180,7 +165,7 @@ if ($do == 'fetch' || $do == 'upload') {
 		'attachment' => $pathname,
 		'url' => tomedia($pathname),
 		'is_image' => $type == 'image' ? 1 : 0,
-		'filesize' => filesize($fullname) 
+		'filesize' => filesize($fullname),
 	);
 	if ($type == 'image') {
 		$size = getimagesize($fullname);
@@ -190,7 +175,7 @@ if ($do == 'fetch' || $do == 'upload') {
 		$size = filesize($fullname);
 		$info['size'] = sizecount($size);
 	}
-	if (! empty($_W['setting']['remote']['type'])) {
+	if (!empty($_W['setting']['remote']['type'])) {
 		$remotestatus = file_remote_upload($pathname);
 		if (is_error($remotestatus)) {
 			$result['message'] = '远程附件上传失败，请检查配置并重新上传';
@@ -214,17 +199,14 @@ if ($do == 'fetch' || $do == 'upload') {
 
 if ($do == 'delete') {
 	$id = intval($_GPC['id']);
-	$media = pdo_get('core_attachment', array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $id 
-	));
+	$media = pdo_get('core_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
 	if (empty($media)) {
 		exit('文件不存在或已经删除');
 	}
 	if (empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
 		exit('您没有权限删除该文件');
 	}
-	if (! empty($_W['setting']['remote']['type'])) {
+	if (!empty($_W['setting']['remote']['type'])) {
 		$status = file_remote_delete($media['attachment']);
 	} else {
 		$status = file_delete($media['attachment']);
@@ -232,10 +214,7 @@ if ($do == 'delete') {
 	if (is_error($status)) {
 		exit($status['message']);
 	}
-	pdo_delete('core_attachment', array(
-		'uniacid' => $uniacid,
-		'id' => $id 
-	));
+	pdo_delete('core_attachment', array('uniacid' => $uniacid, 'id' => $id));
 	exit('success');
 }
 
@@ -252,12 +231,9 @@ if ($do == 'local') {
 		'video' => 3 
 	);
 	$condition = ' WHERE uniacid = :uniacid AND type = :type';
-	$params = array(
-		':uniacid' => $_W['uniacid'],
-		':type' => $typeindex[$type] 
-	);
-	if ($dest_dir) {
-		$condition .= " AND `attachment` LIKE :attachment";
+	$params = array(':uniacid' => $_W['uniacid'], ':type' => $typeindex[$type]);
+	if($dest_dir){
+		$condition .= " AND `attachment` LIKE :attachment";	
 		$params[':attachment'] = "%{$dest_dir}%";
 	}
 	$year = intval($_GPC['year']);
