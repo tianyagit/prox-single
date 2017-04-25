@@ -127,8 +127,9 @@ function uni_modules($enabledOnly = true) {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
+
 			if (!empty($packageids) && in_array('-1', $packageids)) {
-				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('issystem DESC', 'mid DESC'));
+				$module_list = pdo_getall('modules', array(), array('name', 'issystem'), 'name', array('issystem DESC', 'mid DESC'));
 			} else {
 				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$_W['uniacid']}'");
 				if (!empty($uni_groups)) {
@@ -139,7 +140,7 @@ function uni_modules($enabledOnly = true) {
 				}
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
-				$module_list = pdo_getall('modules', array('name' => $modules), array('name'), 'name', array('mid DESC'));
+				$module_list = pdo_getall('modules', array('name' => $modules), array('name', 'issystem'), 'name', array('mid DESC'));
 			}
 		}
 
