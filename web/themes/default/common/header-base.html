@@ -9,7 +9,8 @@
 	<meta name="description" content="{if empty($_W['page']['copyright']['description'])}{if IMS_FAMILY != 'x'}公众平台自助引擎（www.we7.cc），简称微擎，微擎是一款免费开源的微信公众平台管理系统，是国内最完善移动网站及移动互联网技术解决方案。{/if}{else}{$_W['page']['copyright']['description']}{/if}" />
 	<link rel="shortcut icon" href="{if !empty($_W['setting']['copyright']['icon'])}{$_W['attachurl']}{$_W['setting']['copyright']['icon']}{else}./resource/images/favicon.ico{/if}" />
 	<link href="./resource/css/bootstrap.min.css?v=20170112" rel="stylesheet">
-	<link href="./resource/css/common.css?v=20170112" rel="stylesheet">
+	<!--<link href="./resource/css/common.css?v=20170112" rel="stylesheet">-->
+	<link href="./resource/css/common.black.css?v=20170112" rel="stylesheet">
 	<script type="text/javascript">
 	if(navigator.appName == 'Microsoft Internet Explorer'){
 		if(navigator.userAgent.indexOf("MSIE 5.0")>0 || navigator.userAgent.indexOf("MSIE 6.0")>0 || navigator.userAgent.indexOf("MSIE 7.0")>0) {
@@ -17,14 +18,20 @@
 		}
 	}
 	function load(){
-		var linkGroupLen = $('.link-group a').length;
-		if(linkGroupLen == 1){
-			$('.link-group').css('min-width',100);
-		}else if(linkGroupLen == 2){
-			$('.link-group').css('min-width',190);
-		}else if(linkGroupLen > 2){
-			$('.link-group').css('min-width',320);
-		}
+		var $linkGroup = $('.link-group');
+		$linkGroup.each(
+			function(){
+				var len = $(this).children('a').length;
+				console.log(len);
+				if(len == 1){
+					$(this).css('min-width',100);
+				}else if(len == 2){
+					$(this).css('min-width',200);
+				}else if(len > 2){
+					$(this).css('min-width',320);
+				}
+			}
+		);
 	}
 	window.sysinfo = {
 		{if !empty($_W['uniacid'])}'uniacid': '{$_W['uniacid']}',{/if}
@@ -49,7 +56,7 @@
 	<script type="text/javascript" src="./resource/js/app/common.min.js?v=20170112"></script>
 	<script type="text/javascript" src="./resource/js/require.js?v=20170112"></script>
 </head>
-<body class="{if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')) && $_GPC['main-lg']} main-lg-body {/if}">
+<body onload="load()" class="{if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')) && $_GPC['main-lg']} main-lg-body {/if}">
 	<div class="loader" style="display:none">
 		<div class="la-ball-clip-rotate">
 			<div></div>
