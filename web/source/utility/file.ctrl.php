@@ -73,17 +73,17 @@ if ($do == 'fetch') {
 	$ext = '';
 	if ($type == 'image') {
 		switch ($resp['headers']['Content-Type']) {
-			case 'application/x-jpg' :
-			case 'image/jpeg' :
+			case 'application/x-jpg':
+			case 'image/jpeg':
 				$ext = 'jpg';
 				break;
-			case 'image/png' :
+			case 'image/png':
 				$ext = 'png';
 				break;
-			case 'image/gif' :
+			case 'image/gif':
 				$ext = 'gif';
 				break;
-			default :
+			default:
 				$result['message'] = '提取资源失败, 资源文件类型错误.';
 				die(json_encode($result));
 				break;
@@ -219,17 +219,9 @@ if ($do == 'delete') {
 }
 
 if ($do == 'local') {
-	$types = array(
-		'image',
-		'audio',
-		'video' 
-	);
+	$types = array('image', 'audio', 'video');
 	$type = in_array($_GPC['type'], $types) ? $_GPC['type'] : 'image';
-	$typeindex = array(
-		'image' => 1,
-		'audio' => 2,
-		'video' => 3 
-	);
+	$typeindex = array('image' => 1, 'audio' => 2, 'video' => 3);
 	$condition = ' WHERE uniacid = :uniacid AND type = :type';
 	$params = array(':uniacid' => $_W['uniacid'], ':type' => $typeindex[$type]);
 	if($dest_dir){
