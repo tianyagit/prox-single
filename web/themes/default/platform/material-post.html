@@ -149,10 +149,10 @@
 			'upload_thumb_url' : "{php echo url('platform/material-post/thumb_upload')}",
 			'upload_iamge_url' : "{php echo url('platform/material-post/image_upload')}",
 			'replace_url' : "{php echo url('platform/material-post/replace_image_url')}",
-			'fileNumLimit' : "{$upload_limit['fileNumLimit']}",
-			'fileSingleImageSizeLimit' : "{$upload_limit['fileSingleImageSizeLimit']}",
-			'fileSingleVoiceSizeLimit' : "{$upload_limit['fileSingleVoiceSizeLimit']}",
-			'fileSingleVideoSizeLimit' : "{$upload_limit['fileSingleVideoSizeLimit']}"
+			'num_limit' : "{$upload_limit['num']}",
+			'image_limit' : "{$upload_limit['image']}",
+			'voice_limit' : "{$upload_limit['voice']}",
+			'video_limit' : "{$upload_limit['video']}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
 	});

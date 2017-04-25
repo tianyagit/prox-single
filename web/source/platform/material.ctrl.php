@@ -8,7 +8,7 @@ load()->model('material');
 load()->model('mc');
 load()->func('file');
 
-$dos = array('display', 'sync', 'del_material', 'send', 'trans', 'postwechat');
+$dos = array('display', 'sync', 'del_material', 'send');
 $do = in_array($do, $dos) ? $do : 'display';
 
 uni_user_permission_check('platform_material');
@@ -58,8 +58,8 @@ if ($do == 'send') {
 
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-	$islocal = isset($_GPC['islocal']) && (trim($_GPC['islocal']) != '' || trim($_GPC['islocal']) != '0') ? true : false;
-	$upload_limit = file_upload_limit();
+	$islocal = intval($_GPC['islocal']);
+	$upload_limit = material_upload_limit();
 	$group = mc_fans_groups(true);
 	if ($type == 'news') {
 		$condition = " as a RIGHT JOIN " . tablename('wechat_news') . " as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND (a.model = :model || a.model = :modela)";
@@ -299,80 +299,4 @@ if ($do == 'sync') {
 	iajax(0, '更新成功！', '');
 }
 
-if ($do == 'trans') {
-	$account_api = WeAccount::create($_W['acid']);
-	$material_id = intval($_GPC['material_id']);
-	$type = trim($_GPC['type']);
-	$allow_type_arr = array(
-		'image',
-		'voice',
-		'video',
-		'thumb',
-		'audio' 
-	);
-	if (!in_array($type, $allow_type_arr)) {
-		iajax(- 1, '参数有误');
-	}
-	$material = pdo_get('core_attachment', array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $material_id 
-	));
-	if (empty($material)) {
-		iajax(- 1, '同步素材不存在或已删除');
-	}
-	$filepath = material_get_local_file($material['attachment'], $type);
-	if (! is_file($filepath)) {
-		iajax(1, '本地文件获取失败');
-	}
-	$filename = pathinfo($filepath, PATHINFO_BASENAME);
-	$result = $account_api->uploadMediaFixed($filepath, $type, $filename);
-	if (is_error($result)) {
-		iajax(1, $result['message']);
-	}
-	iajax(0, json_encode($result));
-}
-
-if ($do == 'postwechat') {
-	$account_api = WeAccount::create($_W['acid']);
-	$material_id = intval($_GPC['material_id']);
-	$wechat_news = pdo_getall('wechat_news', array(
-		'uniacid' => $_W['uniacid'],
-		'attach_id' => $material_id 
-	));
-	$articles = array();
-	if (empty($wechat_news)) {
-		iajax(1, '素材不存在');
-	}
-	foreach ($wechat_news as $news) {
-		$news['content'] = material_parse_content($news['content']);
-		if (is_error($news['content'])) {
-			iajax(0, $news['content']);
-		}
-		if ($news['thumb_media_id'] == '') {
-			$remote_to_local_path = material_get_local_file($news['thumb_url'], 'image');
-			$result = $account_api->uploadMediaFixed($remote_to_local_path, 'image');
-			if (is_error($result)) {
-				iajax(1, $result['message']);
-			}
-			$news['thumb_media_id'] = $result['media_id'];
-			$news['thumb_url'] = $result['url'];
-		}
-		pdo_update('wechat_news', $news, array(
-			'id' => $news['id'] 
-		));
-		$articles['articles'][] = $news;
-	}
-	$media_id = $account_api->addMatrialNews($articles);
-	if (is_error($media_id)) {
-		iajax(1, $media_id, '');
-	}
-	pdo_update('wechat_attachment', array(
-		'media_id' => $media_id,
-		'model' => 'perm' 
-	), array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $material_id 
-	));
-	iajax(0, '转换成功');
-}
 template('platform/material');
