@@ -109,7 +109,7 @@ if ($do == 'display') {
 				break;
 		}
 		if ($server == 'local') {
-			$material_list = pdo_getslice($table, $conditions, array($pageindex,	$pagesize), $total, array(), '', 'createtime DESC');
+			$material_list = pdo_getslice($table, $conditions, array($pageindex, $pagesize), $total, array(), '', 'createtime DESC');
 		} else {
 			$conditions['model'] = 'perm';
 			$material_list = pdo_getslice($table, $conditions, array($pageindex, $pagesize), $total, array(), '', 'createtime DESC');
