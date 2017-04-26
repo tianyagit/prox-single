@@ -8,7 +8,7 @@ load()->model('material');
 load()->model('mc');
 load()->func('file');
 
-$dos = array('display', 'sync', 'del_material', 'send');
+$dos = array('display', 'sync', 'delete', 'send');
 $do = in_array($do, $dos) ? $do : 'display';
 
 uni_user_permission_check('platform_material');
@@ -52,186 +52,104 @@ if ($do == 'send') {
 
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-	$islocal = intval($_GPC['islocal']);
+	$islocal = trim($_GPC['islocal']) == 'true' ? true : false;
 	$upload_limit = material_upload_limit();
 	$group = mc_fans_groups(true);
+	$pageindex = max(1, intval($_GPC['page']));
+	$pagesize = 24;
+	$search = addslashes($_GPC['title']);
+	$material_list = array();
 	if ($type == 'news') {
-		$condition = " as a RIGHT JOIN " . tablename('wechat_news') . " as b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = :type AND (a.model = :model || a.model = :modela)";
-		$params = array(
-			':uniacid' => $_W['uniacid'],
-			':type' => $type,
-			':model' => 'perm',
-			':modela' => 'local' 
-		);
-		$id = intval($_GPC['id']);
-		$title = addslashes($_GPC['title']);
-		if (!empty($title)) {
-			$condition .= ' AND (b.title LIKE :title OR b.author = :title OR b.digest LIKE :title)';
-			$params[':title'] = '%' . $title . "%";
+		$conditions[':uniacid'] = $_W['uniacid'];
+		$sql = "SELECT * FROM `ims_wechat_attachment` AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news'";
+		if (! empty($params['search'])) {
+			$sql .= ' AND (b.title LIKE :search OR b.author = :search OR b.digest LIKE :search)';
+			$conditions[':search'] = '%' . $search . '%';
 		}
-		$pageindex = max(1, intval($_GPC['page']));
-		$pagesize = 21;
-		$limit = " ORDER BY a.createtime DESC, b.id ASC LIMIT " . ($pageindex - 1) * $pagesize . ", {$pagesize}";
-		$total = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition, $params);
-		$total = count($total);
-		$material_list = pdo_fetchall("SELECT a.* FROM " . tablename('wechat_attachment') . $condition . $limit, $params, 'id');
-		
-		if (! empty($material_list)) {
-			foreach ($material_list as &$material) {
-				$material['items'] = pdo_fetchall("SELECT * FROM " . tablename('wechat_news') . " WHERE uniacid = :uniacid AND attach_id = :attach_id ORDER BY displayorder ASC", array(
-					':uniacid' => $_W['uniacid'],
-					':attach_id' => $material['id'] 
-				));
-				if (! empty($material['items'])) {
-					$material['prompt_msg'] = false;
-					foreach ($material['items'] as $material_row) {
-						if (empty($material_row['title']) || empty($material_row['thumb_url']) || empty($material_row['content'])) {
-							$material['prompt_msg'] = true;
-							break;
-						}
-					}
+		$sql .= " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize;
+		$news_list = pdo_fetchall($sql, $conditions);
+		if (! empty($news_list)) {
+			foreach ($news_list as $news){
+				if (isset($material_list[$news['attach_id']])){
+					$material_list[$news['attach_id']]['items'][$news['displayorder']] = $news;
+				}else{
+					$material_list[$news['attach_id']] = array(
+						'id' => $news['id'],
+						'filename' => $news['filename'],
+						'attachment' => $news['attachment'],
+						'media_id' => $news['media_id'],
+						'type' => $news['type'],
+						'model' => $news['model'],
+						'tag' => $news['tag'],
+						'createtime' => $news['createtime'],
+						'items' => array($news['displayorder'] => $news),
+					);
 				}
 			}
-			unset($material);
 		}
+		unset($news_list);
+		$total = count($material_list);
 		$pager = pagination($total, $pageindex, $pagesize);
-	}
-	
-	if ($type == 'image') {
-		$pageindex = max(1, intval($_GPC['page']));
-		$pagesize = 12;
-		if ($islocal) {
-			$image_list = pdo_getslice('core_attachment', array(
-				'uniacid' => $_W['uniacid'],
-				'type' => '1' 
-			), array(
-				$pageindex,
-				$pagesize 
-			), $total, array(), '', 'createtime DESC');
-			$pager = pagination($total, $pageindex, $pagesize);
-		} else {
-			$image_list = pdo_getslice('wechat_attachment', array(
-				'uniacid' => $_W['uniacid'],
-				'type' => 'image',
-				'model' => 'perm' 
-			), array(
-				$pageindex,
-				$pagesize 
-			), $total, array(), '', 'createtime DESC');
-			$pager = pagination($total, $pageindex, $pagesize);
+	} else {
+		$table = $islocal ? 'core_attachment' : 'wechat_attachment';
+		switch ($type) {
+			case 'image' :
+				$sql_type = $islocal ? '1' : 'image';
+				break;
+			case 'voice' :
+				$sql_type = $islocal ? '2' : 'voice';
+				break;
+			case 'video' :
+				$sql_type = $islocal ? '3' : 'video';
+				break;
+			default :
+				$sql_type = $islocal ? '1' : 'image';
+				break;
 		}
-	}
-	
-	if ($type == 'voice') {
-		$pageindex = max(1, intval($_GPC['page']));
-		$pagesize = 12;
 		if ($islocal) {
-			$voice_list = pdo_getslice('core_attachment', array(
-				'uniacid' => $_W['uniacid'],
-				'type' => '2' 
+			$material_list = pdo_getslice('core_attachment', array(
+					'uniacid' => $_W['uniacid'],
+					'type' => $sql_type
 			), array(
-				$pageindex,
-				$pagesize 
+					$pageindex,
+					$pagesize
 			), $total, array(), '', 'createtime DESC');
-			$pager = pagination($total, $pageindex, $pagesize);
+			
 		} else {
-			$voice_list = pdo_getslice('wechat_attachment', array(
-				'uniacid' => $_W['uniacid'],
-				'type' => 'voice',
-				'model' => 'perm' 
+			$material_list = pdo_getslice('wechat_attachment', array(
+					'uniacid' => $_W['uniacid'],
+					'type' => $sql_type,
+					'model' => 'perm'
 			), array(
-				$pageindex,
-				$pagesize 
+					$pageindex,
+					$pagesize
 			), $total, array(), '', 'createtime DESC');
-			$pager = pagination($total, $pageindex, $pagesize);
-		}
-	}
-	
-	if ($type == 'video') {
-		$pageindex = max(1, intval($_GPC['page']));
-		$pagesize = 12;
-		if ($islocal) {
-			$video_list = pdo_getslice('core_attachment', array(
-				'uniacid' => $_W['uniacid'],
-				'type' => '3' 
-			), array(
-				$pageindex,
-				$pagesize 
-			), $total, array(), '', 'createtime DESC');
-			$pager = pagination($total, $pageindex, $pagesize);
-		} else {
-			$video_list = pdo_getslice('wechat_attachment', array(
-				'uniacid' => $_W['uniacid'],
-				'type' => 'video',
-				'model' => 'perm' 
-			), array(
-				$pageindex,
-				$pagesize 
-			), $total, array(), '', 'createtime DESC');
-			foreach ($video_list as &$row) {
-				$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
+			if ($type == 'video'){
+				foreach ($material_list as &$row) {
+					$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
+				}
+				unset($row);
 			}
-			unset($row);
-			$pager = pagination($total, $pageindex, $pagesize);
 		}
+		unset($sql_type);
+		$pager = pagination($total, $pageindex, $pagesize);
 	}
 }
 
-if ($do == 'del_material') {
+if ($do == 'delete') {
 	$material_id = intval($_GPC['material_id']);
-	$postserver = trim($_GPC['server']) == 'local' ? 'local' : 'wechat';
-	$del_code = 0;
-	if ($postserver == 'wechat') {
-		$account_api = WeAccount::create($_W['acid']);
-		$material = pdo_get('wechat_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id 
-		));
-		$result = $account_api->delMaterial($material['media_id']);
-		if ($result['errcode'] == 0) {
-			$result = error(0, $material['type']);
-			if ($material['type'] == 'news') {
-				pdo_delete('wechat_news', array(
-					'uniacid' => $_W['uniacid'],
-					'attach_id' => $material['id'] 
-				));
-			}
-			pdo_delete('wechat_attachment', array(
-				'uniacid' => $_W['uniacid'],
-				'id' => $material_id 
-			));
-		}
-	} elseif ($postserver == 'local') {
-		$local_type_array = array(
-			'1' => 'image',
-			'2' => 'voice',
-			'3' => 'video' 
-		);
-		$material = pdo_get('core_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id 
-		));
-		if (empty($material)) {
-			iajax(- 1, '文件不存在或已经删除');
-		}
-		if (empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
-			iajax(- 1, '您没有权限删除该文件');
-		}
-		if (! empty($_W['setting']['remote']['type'])) {
-			$status = file_remote_delete($material['attachment']);
-		} else {
-			$status = file_delete($material['attachment']);
-		}
-		if (is_error($status)) {
-			iajax(- 1, '删除文件操作发生错误');
-		}
-		pdo_delete('core_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id 
-		));
-		$result = error(0, $local_type_array[$material['type']]);
+	$server = $_GPC['server'] == 'local' ? 'local' : 'wechat';
+	$type = trim($_GPC['type']);
+	if ($type == 'news'){
+		$result = material_delete_news($material_id);
+	} else {
+		//TODO 非图文素材整合后去掉server判断
+		$result = material_delete($material_id, $server);
 	}
-	iajax($del_code, $result);
+	if (is_error($result)){
+		iajax('-1', $result['message']);
+	}
+	iajax('0', '删除素材成功');
 }
 
 if ($do == 'sync') {

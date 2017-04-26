@@ -14,7 +14,7 @@ $_W['page']['title'] = '附件设置 - 系统管理';
 //全局设置
 if ($do == 'global') {
 	$post_max_size = ini_get('post_max_size');
-	$post_max_size = $post_max_size>0 ? bytecount($post_max_size)/1024 : 0;
+	$post_max_size = $post_max_size > 0 ? bytecount($post_max_size) / 1024 : 0;
 	$upload_max_filesize = ini_get('upload_max_filesize');
 	if (checksubmit('submit')) {
 		$harmtype = array('asp','php','jsp','js','css','php3','php4','php5','ashx','aspx','exe','cgi');
