@@ -40,6 +40,7 @@ if ($do == 'get_upgrade_info') {
 			$branch['displayorder'] = intval($branch['displayorder']);
 			$branch['day'] = intval(date('d', $branch['version']['createtime']));
 			$branch['month'] = date('Y.m', $branch['version']['createtime']);
+			$branch['hour'] = date('H:i', $branch['version']['createtime']);
 		}
 		unset($branch);
 	}
@@ -435,8 +436,8 @@ if ($do == 'module_detail') {
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}
-	if (!empty($module_info['plugin'])) {
-		foreach ($module_info['plugin'] as $key => &$plugin) {
+	if (!empty($module_info['plugin_list'])) {
+		foreach ($module_info['plugin_list'] as $key => &$plugin) {
 			$plugin = module_fetch($plugin);
 			if (empty($plugin)) {
 				unset($module_info['plugin'][$name]);

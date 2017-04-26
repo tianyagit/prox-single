@@ -322,7 +322,7 @@
 
 	<div class="btn-group we7-btn-group we7-margin-bottom">
 		<a href="javascript:;" ng-click="changeShow('base')" class="btn " ng-class="{'active' : show == 'base' || show == ''}">基本信息</a>
-		<a href="javascript:;" ng-click="changeShow('plugin')" class="btn " ng-class="{'active' : show == 'plugin'}" ng-show="moduleinfo.main_module == ''">模块子应用</a>
+		<a href="javascript:;" ng-click="changeShow('plugin')" class="btn " ng-class="{'active' : show == 'plugin'}" ng-show="moduleinfo.main_module == '' && moduleinfo.plugin_list != undefined && moduleinfo.plugin_list != ''">模块子应用</a>
 		<a href="javascript:;" ng-click="changeShow('group')" class="btn " ng-class="{'active' : show == 'group'}">应用权限组</a>
 		<a href="javascript:;" ng-click="changeShow('subscribe')" class="btn " ng-class="{'active' : show == 'subscribe'}">公众平台消息处理选项</a>
 		<a href="javascript:;" ng-click="changeShow('upgrade')" class="btn " ng-class="{'active' : show == 'upgrade'}" ng-show="checkupgrade == 1">升级</a>
@@ -387,7 +387,7 @@
 		</div>
 		<div class="panel-body">
 			<div class="plugin-list clearfix">
-				<div class="item" ng-repeat="plugin in moduleinfo.plugin">
+				<div class="item" ng-repeat="plugin in moduleinfo.plugin_list">
 					<a href="{php echo url('system/module/module_detail')}name={{plugin.name}}" target="_blank">
 						<div class="img">
 							<img ng-src="{{ plugin.logo }}" alt="子应用icon" class="plugin-img"/>
@@ -433,52 +433,53 @@
 			<th>最新版本</th>
 			<th class="text-right">操作</th>
 		</tr>
-		<tr ng-repeat="branch in upgradeInfo.branches" ng-if="branch.displayorder >= upgradeInfo.site_branch.displayorder">
-			<td class="text-left">{{ branch.name }}</td>
-			<td class="color-red">{{ branch.displayorder > upgradeInfo.site_branch.displayorder ? branch.upgrade_price : 0}}</td>
-			<td>{{ moduleinfo.version }}</td>
-			<td>{{ branch.version.version }}</td>
-			<td class="text-right">
-				<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id" class="btn btn-danger">购买</a>
-				<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, branch.id)" ng-if="branch.id > upgradeInfo.site_branch.id" class="btn btn-danger">购买</a>
-			</td>
-		</tr>
-		<tr>
-			<td class="text-left">版本更新内容</td>
-			<td colspan="4" class="text-right">
-				<a class="color-default view-detail" data-toggle="collapse" href="#version-detail">查看详情 <i class="wi wi-angle-down"></i></a>
-			</td>
-		</tr>
-		<tr class="collapse" id="version-detail">
-			<td colspan="5" class="details-versions">
-				<div class="js-version-lists">
+		<tbody ng-repeat="branch in upgradeInfo.branches">
+			<tr ng-if="branch.displayorder >= upgradeInfo.site_branch.displayorder">
+				<td class="text-left">{{ branch.name }}<span class="label label-success">{{ branch.id == upgradeInfo.site_branch.id ? '当前分支' : ''}}</span></td>
+				<td class="color-red">{{ branch.displayorder > upgradeInfo.site_branch.displayorder ? branch.upgrade_price : ''}}</td>
+				<td>{{ upgradeInfo.site_branch.displayorder == branch.displayorder ? moduleinfo.version : ''}}</td>
+				<td>{{ branch.version.version }}</td>
+				<td class="text-right">
+					<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id" class="btn btn-primary">升级</a>
+					<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, branch.id)" ng-if="branch.displayorder > upgradeInfo.site_branch.displayorder" class="btn btn-danger">购买</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="text-left">版本更新内容</td>
+				<td colspan="4" class="text-right">
+					<a class="color-default view-detail" data-toggle="collapse" href="#version-detail-{{ branch.id }}" onclick="change($(this))">查看详情 <i class="wi wi-angle-down"></i></a>
+				</td>
+			</tr>
+			<tr class="collapse" id="version-detail-{{ branch.id }}">
+				<td colspan="5" class="details-versions">
+					<div class="js-version-lists">
 
-					<div class="details-version">
-						<div class="details-version-time">
-							<p class="time-d">{{ branch.day }}</p>
-							<p class="time-y-m">{{ branch.month }}</p>
-						</div>
-						<i class="fa fa-circle-o"></i>
-						<div class="details-version-content">
-							<div class="panel panel-version">
-								<div class="panel-heading">
-									版本号：3.0 - 基础运营版  <span class="time-h">12:00</span>
-								</div>
-								<div class="panel-body">
-									优化文章采集时的图片本地化过程
+						<div class="details-version">
+							<div class="details-version-time">
+								<p class="time-d">{{ branch.day }}</p>
+								<p class="time-y-m">{{ branch.month }}</p>
+							</div>
+							<i class="fa fa-circle-o"></i>
+							<div class="details-version-content">
+								<div class="panel panel-version">
+									<div class="panel-heading">
+										版本号：{{ branch.version.version }} - {{ branch.name }}  <span class="time-h" ng-bind="branch.hour"></span>
+									</div>
+									<div class="panel-body" ng-bind-html="branch.version.description">
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 
-				</div>
-				{if $recent_versions['total'] > 10}
-				<div class="text-center">
-					<a href="javascript:;" class="btn c-blue js-versions-more">加载更多<i class="fa fa-angle-down"></i></a>
-				</div>
-				{/if}
-			</td>
-		</tr>
+					</div>
+					{if $recent_versions['total'] > 10}
+					<div class="text-center">
+						<a href="javascript:;" class="btn c-blue js-versions-more">加载更多<i class="fa fa-angle-down"></i></a>
+					</div>
+					{/if}
+				</td>
+			</tr>
+		</tbody>
 	</table>
 	<!--end 升级-->
 	<div class="module-group" ng-if="isFounder == 1">
