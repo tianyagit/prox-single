@@ -129,7 +129,6 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 							});
 						}, 100);
 						$this.modalobj.find('.material-content .newsmodel-type').unbind('click').click(function(){
-							console.log('click');
 							$(this).addClass('active').siblings().removeClass('active');
 							$this.localPage(type, 1, $(this).data('type'));
 							return false;
