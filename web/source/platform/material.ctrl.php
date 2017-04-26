@@ -52,13 +52,14 @@ if ($do == 'send') {
 
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-	$islocal = trim($_GPC['islocal']) == 'true' ? true : false;
+	$server = $_GPC['server'] == 'local' ? 'local' : 'wechat';
 	$upload_limit = material_upload_limit();
 	$group = mc_fans_groups(true);
 	$pageindex = max(1, intval($_GPC['page']));
 	$pagesize = 24;
 	$search = addslashes($_GPC['title']);
-	$material_list = array();
+	$material_list = $conditions = array();
+	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
 		$sql = "SELECT * FROM `ims_wechat_attachment` AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news'";
@@ -91,39 +92,27 @@ if ($do == 'display') {
 		$total = count($material_list);
 		$pager = pagination($total, $pageindex, $pagesize);
 	} else {
-		$table = $islocal ? 'core_attachment' : 'wechat_attachment';
+		$conditions['uniacid'] = $_W['uniacid'];
+		$table = $tables[$server];
 		switch ($type) {
 			case 'image' :
-				$sql_type = $islocal ? '1' : 'image';
+				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_IMAGE : 'image';
 				break;
 			case 'voice' :
-				$sql_type = $islocal ? '2' : 'voice';
+				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VOICE : 'voice';
 				break;
 			case 'video' :
-				$sql_type = $islocal ? '3' : 'video';
+				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VEDIO : 'video';
 				break;
 			default :
-				$sql_type = $islocal ? '1' : 'image';
+				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_IMAGE : 'image';
 				break;
 		}
-		if ($islocal) {
-			$material_list = pdo_getslice('core_attachment', array(
-					'uniacid' => $_W['uniacid'],
-					'type' => $sql_type
-			), array(
-					$pageindex,
-					$pagesize
-			), $total, array(), '', 'createtime DESC');
-			
+		if ($server == 'local') {
+			$material_list = pdo_getslice($table, $conditions, array($pageindex,	$pagesize), $total, array(), '', 'createtime DESC');
 		} else {
-			$material_list = pdo_getslice('wechat_attachment', array(
-					'uniacid' => $_W['uniacid'],
-					'type' => $sql_type,
-					'model' => 'perm'
-			), array(
-					$pageindex,
-					$pagesize
-			), $total, array(), '', 'createtime DESC');
+			$conditions['model'] = 'perm';
+			$material_list = pdo_getslice($table, $conditions, array($pageindex, $pagesize), $total, array(), '', 'createtime DESC');
 			if ($type == 'video'){
 				foreach ($material_list as &$row) {
 					$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
@@ -131,7 +120,6 @@ if ($do == 'display') {
 				unset($row);
 			}
 		}
-		unset($sql_type);
 		$pager = pagination($total, $pageindex, $pagesize);
 	}
 }
@@ -141,7 +129,7 @@ if ($do == 'delete') {
 	$server = $_GPC['server'] == 'local' ? 'local' : 'wechat';
 	$type = trim($_GPC['type']);
 	if ($type == 'news'){
-		$result = material_delete_news($material_id);
+		$result = material_news_delete($material_id);
 	} else {
 		//TODO 非图文素材整合后去掉server判断
 		$result = material_delete($material_id, $server);
