@@ -134,11 +134,14 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
 					{/if}
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('image')">上传新图片</a>
+					<!--
 					{if $server == 'local'}
 					<div id="webUploaderBtn2" style="float: right;"></div>
 					{else}
 					<div id="webUploaderBtn" style="float: right;"></div>
 					{/if}
+					 -->
 				</div>
 				<div class="btn-group we7-btn-group">
 					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if $server == 'wechat'} active {/if}">微信</a>
@@ -191,11 +194,14 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
 					{/if}
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('voice')">上传语音</a>
+					<!--
 					{if $server == 'local'}
 					<div id="webUploaderBtn2" style="float: right;"></div>
 					{else}
 					<div id="webUploaderBtn" style="float: right;"></div>
 					{/if}
+					-->
 				</div>
 				<div class="btn-group we7-btn-group">
 					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if $server == 'wechat'} active {/if}">微信</a>
@@ -251,11 +257,14 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
 					{/if}
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('video')">上传视频</a>
+					<!-- 
 					{if $server == 'local'}
 					<div id="webUploaderBtn2" style="float: right;"></div>
 					{else}
 					<div id="webUploaderBtn" style="float: right;"></div>
 					{/if}
+					 -->
 				</div>
 				<div class="btn-group we7-btn-group">
 					<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if $server == 'wechat'} active {/if}">微信</a>
@@ -336,16 +345,16 @@
 			'syncNews' : "{$_GPC['sync_news']}",
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
-		fileUploader.upload({
-			'direct': true,
-			'multiple': true,
-			'isWechat': true,
-			'type' : "{php echo $type}",
-			'num_limit' : "{$upload_limit['num']}",
-			'image_limit' : "{$upload_limit['image']}",
-			'voice_limit' : "{$upload_limit['voice']}",
-			'video_limit' : "{$upload_limit['video']}"
-		});
+		//fileUploader.upload({
+		//	'direct': true,
+		//	'multiple': true,
+		//	'isWechat': true,
+		//	'type' : "{php echo $type}",
+		//	'num_limit' : "{$upload_limit['num']}",
+		//	'image_limit' : "{$upload_limit['image']}",
+		//	'voice_limit' : "{$upload_limit['voice']}",
+		//	'video_limit' : "{$upload_limit['video']}"
+		//});
 		$('.material-appmsg-list .material-appmsg-item').wookmark({
 			align: 'center',
 			autoResize: false,
