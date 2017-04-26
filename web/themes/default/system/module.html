@@ -435,7 +435,7 @@
 		</tr>
 		<tbody ng-repeat="branch in upgradeInfo.branches">
 			<tr ng-if="branch.displayorder >= upgradeInfo.site_branch.displayorder">
-				<td class="text-left">{{ branch.name }}<span class="text-success">{{ branch.id == upgradeInfo.site_branch.id ? '(当前分之)' : ''}}</span></td>
+				<td class="text-left">{{ branch.name }}<span class="label label-success">{{ branch.id == upgradeInfo.site_branch.id ? '当前分支' : ''}}</span></td>
 				<td class="color-red">{{ branch.displayorder > upgradeInfo.site_branch.displayorder ? branch.upgrade_price : ''}}</td>
 				<td>{{ upgradeInfo.site_branch.displayorder == branch.displayorder ? moduleinfo.version : ''}}</td>
 				<td>{{ branch.version.version }}</td>
@@ -447,7 +447,7 @@
 			<tr>
 				<td class="text-left">版本更新内容</td>
 				<td colspan="4" class="text-right">
-					<a class="color-default view-detail" data-toggle="collapse" href="#version-detail-{{ branch.id }}">查看详情 <i class="wi wi-angle-down"></i></a>
+					<a class="color-default view-detail" data-toggle="collapse" href="#version-detail-{{ branch.id }}" onclick="change($(this))">查看详情 <i class="wi wi-angle-down"></i></a>
 				</td>
 			</tr>
 			<tr class="collapse" id="version-detail-{{ branch.id }}">
