@@ -445,9 +445,10 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="text-left">版本更新内容</td>
+				<td class="text-left">{{ branch.displayorder == upgradeInfo.site_branch.displayorder ? '版本更新内容' : ''}}</td>
 				<td colspan="4" class="text-right">
-					<a class="color-default view-detail" data-toggle="collapse" href="#version-detail-{{ branch.id }}" onclick="change($(this))">查看详情 <i class="wi wi-angle-down"></i></a>
+					<a class="color-default view-detail" ng-if="branch.displayorder == upgradeInfo.site_branch.displayorder ? true : false" data-toggle="collapse" href="#version-detail-{{ branch.id }}" onclick="change($(this))">查看详情 <i class="wi wi-angle-down"></i></a>
+					<a href="http://s.we7.cc/module-{{branch.id}}.html" ng-if="branch.displayorder > upgradeInfo.site_branch.displayorder" class="color-default view-detail" target="_blank">查看分支详情</a>
 				</td>
 			</tr>
 			<tr class="collapse" id="version-detail-{{ branch.id }}">

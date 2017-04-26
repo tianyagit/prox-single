@@ -134,10 +134,10 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
 					{/if}
-					{if $server == 'local'}
-					<div id="webUploaderBtn2" style="float: right;"></div>
+					{if $server == 'wechat'}
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('image', true, true)">上传微信图片</a>
 					{else}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('image', true, false)">上传服务器图片</a>
 					{/if}
 				</div>
 				<div class="btn-group we7-btn-group">
@@ -191,10 +191,10 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
 					{/if}
-					{if $server == 'local'}
-					<div id="webUploaderBtn2" style="float: right;"></div>
+					{if $server == 'wechat'}
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('voice', true, true)">上传微信语音</a>
 					{else}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('voice', true, false)">上传服务器语音</a>
 					{/if}
 				</div>
 				<div class="btn-group we7-btn-group">
@@ -219,7 +219,6 @@
 						</div>
 						<div class="audio-content">
 							<div class="audio-title">{$voice['attachment']}</div>
-							<!--<div class="audio-time">{php echo date('m月d日', $voice['createtime'])}</div>-->
 							<div class="audio-length">{php echo date('h:i', $voice['createtime'])}</div>
 						</div>
 					</div>
@@ -251,10 +250,10 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
 					{/if}
-					{if $server == 'local'}
-					<div id="webUploaderBtn2" style="float: right;"></div>
+					{if $server == 'wechat'}
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('video', true, true)">上传微信视频</a>
 					{else}
-					<div id="webUploaderBtn" style="float: right;"></div>
+					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('video', true, false)">上传服务器视频</a>
 					{/if}
 				</div>
 				<div class="btn-group we7-btn-group">
@@ -336,16 +335,6 @@
 			'syncNews' : "{$_GPC['sync_news']}",
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
-		fileUploader.upload({
-			'direct': true,
-			'multiple': true,
-			'isWechat': true,
-			'type' : "{php echo $type}",
-			'num_limit' : "{$upload_limit['num']}",
-			'image_limit' : "{$upload_limit['image']}",
-			'voice_limit' : "{$upload_limit['voice']}",
-			'video_limit' : "{$upload_limit['video']}"
-		});
 		$('.material-appmsg-list .material-appmsg-item').wookmark({
 			align: 'center',
 			autoResize: false,

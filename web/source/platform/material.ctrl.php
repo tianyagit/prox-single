@@ -62,11 +62,14 @@ if ($do == 'display') {
 	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
-		$sql = "SELECT * FROM `ims_wechat_attachment` AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news'";
-		if (! empty($params['search'])) {
+		$sql = "SELECT *, a.id as id FROM `ims_wechat_attachment` AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
+		if (! empty($search)) {
 			$sql .= ' AND (b.title LIKE :search OR b.author = :search OR b.digest LIKE :search)';
 			$conditions[':search'] = '%' . $search . '%';
 		}
+		$sql_total = "SELECT count(*) id FROM `ims_wechat_attachment` AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
+		$total = pdo_fetch($sql_total, $conditions);
+		$total = $total['id'];
 		$sql .= " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize;
 		$news_list = pdo_fetchall($sql, $conditions);
 		if (! empty($news_list)) {
@@ -89,7 +92,6 @@ if ($do == 'display') {
 			}
 		}
 		unset($news_list);
-		$total = count($material_list);
 		$pager = pagination($total, $pageindex, $pagesize);
 	} else {
 		$conditions['uniacid'] = $_W['uniacid'];
