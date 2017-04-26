@@ -146,7 +146,7 @@
 				</div>
 			</div>
 			<ul class="material-img-list clearfix">
-				{loop $image_list $image}
+				{loop $material_list $image}
 				<li class="material-img-item">
 					<div class="appimg-info">
 						{if $islocal}
@@ -203,7 +203,7 @@
 				</div>
 			</div>
 			<ul class="material-audio-list">
-				{loop $voice_list $voice}
+				{loop $material_list $voice}
 				<li class="material-audio-item">
 					<div class="audio-info clearfix">
 						{if $islocal}
@@ -263,7 +263,7 @@
 				</div>
 			</div>
 			<ul class="material-img-list">
-				{loop $video_list $video}
+				{loop $material_list $video}
 				<li class="material-img-item">
 					<div class="img-item">
 						<div class="appimg-info">
@@ -327,7 +327,7 @@
 	require(['jquery.wookmark', 'fileUploader'], function() {
 		//同步素材
 		angular.module('materialApp').value('config', {
-			'del_url' : "{php echo url('platform/material/del_material')}",
+			'del_url' : "{php echo url('platform/material/delete')}",
 			'sync_url' : "{php echo url('platform/material/sync')}",
 			'send_url' : "{php echo url('platform/material/send')}",
 			'trans_url' : "{php echo url('platform/material-post/upload_material')}",
