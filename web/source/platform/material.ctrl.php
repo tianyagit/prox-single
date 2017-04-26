@@ -62,7 +62,7 @@ if ($do == 'display') {
 	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
-		$sql = "SELECT *, a.id as id FROM `ims_wechat_attachment` AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news'";
+		$sql = "SELECT *, a.id as id FROM `ims_wechat_attachment` AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
 		if (! empty($search)) {
 			$sql .= ' AND (b.title LIKE :search OR b.author = :search OR b.digest LIKE :search)';
 			$conditions[':search'] = '%' . $search . '%';
