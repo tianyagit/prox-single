@@ -314,7 +314,7 @@ function material_local_news_upload($attach_id) {
 			return error('-2', $news['content']);
 		}
 		if (empty($news['thumb_media_id']) && !empty($news['thumb_url'])) {
-			$result = material_local_image_upload($news['thumb_url']);
+			$result = material_local_upload_by_url($news['thumb_url']);
 			if (is_error($result)){
 				return error('-3', $result['message']);
 			}
@@ -360,11 +360,12 @@ function material_local_news_upload($attach_id) {
 }
 
 /**
+ * 目前图片、音频、视频素材上传都用这个方法
  * 上传素材文件到微信，获取mediaId
  * @param string $url
  * 
  */
-function material_local_image_upload($url, $type='images') {
+function material_local_upload_by_url($url, $type='images') {
 	global $_W;
 	$account_api = WeAccount::create($_W['acid']);
 	if (! empty($_W['setting']['remote']['type'])) {
@@ -394,9 +395,9 @@ function material_local_upload($material_id){
 			'id' => $material_id
 	));
 	if (empty($material)) {
-		iajax(- 1, '同步素材不存在或已删除');
+		return error('-1', '同步素材不存在或已删除');
 	}
-	return material_local_image_upload($material['attachment'], $type_arr[$material['type']]);
+	return material_local_upload_by_url($material['attachment'], $type_arr[$material['type']]);
 }
 
 /**
@@ -422,3 +423,80 @@ function material_upload_limit() {
 	}
 	return $upload_limit;
 }
+
+/**
+ * 删除图文素材
+ * @param int $material_id 素材id
+ * @type string $type 素材类型
+ * 
+ */
+function material_news_delete($material_id){
+	global $_W;
+	if (empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
+		return error('-1', '您没有权限删除该文件');
+	}
+	$material_id = intval($material_id);
+	$material = pdo_get('wechat_attachment', array(
+			'uniacid' => $_W['uniacid'],
+			'id' => $material_id,
+	));
+	if (empty($material)){
+		return error('-2', '素材文件不存在或已删除');
+	}
+	if (!empty($material['media_id'])){
+		$account_api = WeAccount::create($_W['acid']);
+		$result = $account_api->delMaterial($material['media_id']);
+	}
+	if (is_error($result)){
+		return $result;
+	}
+	pdo_delete('wechat_news', array(
+			'uniacid' => $_W['uniacid'],
+			'attach_id' => $material_id
+	));
+	pdo_delete('wechat_attachment', array(
+			'uniacid' => $_W['uniacid'],
+			'id' => $material_id
+	));
+	return $result;
+}
+
+/**
+ * 删除除图文外其他素材
+ * @param int $material_id 素材id
+ * @param string $location 微信/本地 素材
+ */
+function material_delete($material_id, $location){
+	global $_W;
+	if (empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
+		return error('-1', '您没有权限删除该文件');
+	}
+	$material_id = intval($material_id);
+	$table = $location == 'wechat' ? 'wechat_attachment' : 'core_attachment';
+	$material = pdo_get($table, array(
+					'uniacid' => $_W['uniacid'],
+					'id' => $material_id)
+				);
+	if (empty($material)){
+		return error('-2', '素材文件不存在或已删除');
+	}
+	if ($location == 'wechat' && !empty($material['media_id'])){
+		$account_api = WeAccount::create($_W['acid']);
+		$result = $account_api->delMaterial($material['media_id']);
+	} else {
+		if (! empty($_W['setting']['remote']['type'])) {
+			$result = file_remote_delete($material['attachment']);
+		} else {
+			$result = file_delete($material['attachment']);
+		}
+	}
+	if (is_error($result)) {
+		return error('-3', '删除文件操作发生错误');
+	}
+	pdo_delete($table, array(
+		'uniacid' => $_W['uniacid'],
+		'id' => $material_id
+	));
+	return $result;
+}
+
