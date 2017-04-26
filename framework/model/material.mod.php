@@ -430,7 +430,7 @@ function material_upload_limit() {
  * @type string $type 素材类型
  * 
  */
-function material_delete_news($material_id){
+function material_news_delete($material_id){
 	global $_W;
 	if (empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
 		return error('-1', '您没有权限删除该文件');
