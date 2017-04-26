@@ -16,32 +16,6 @@
 			alert('您使用的 IE 浏览器版本过低, 推荐使用 Chrome 浏览器或 IE8 及以上版本浏览器.');
 		}
 	}
-	function load(){
-	/*	var screenH = document.documentElement.clientHeight;
-		$('.main-panel-body,.panel-cut').css('min-height' , screenH-100);
-		$('.creat-wxapp .panel-app').css('min-height' , screenH-145);
-		if($('.left-menu').length == 0){
-			$('.footer').addClass('footer-no-left');
-		}
-		if($('.plugin-menu').length > 0){
-			$('.footer').addClass('footer-plugin');
-		}
-		var $linkGroup = $('.link-group');
-		$linkGroup.each(
-			function(){
-				var len = $(this).children('a').length;
-				console.log(len);
-				if(len == 1){
-					$(this).css('min-width',100);
-				}else if(len == 2){
-					$(this).css('min-width',200);
-				}else if(len > 2){
-					$(this).css('min-width',320);
-				}
-			}
-		);
-	*/
-	}
 	window.sysinfo = {
 		{if !empty($_W['uniacid'])}'uniacid': '{$_W['uniacid']}',{/if}
 		{if !empty($_W['acid'])}'acid': '{$_W['acid']}',{/if}
@@ -65,7 +39,7 @@
 	<script type="text/javascript" src="./resource/js/app/common.min.js?v=20170112"></script>
 	<script type="text/javascript" src="./resource/js/require.js?v=20170112"></script>
 </head>
-<body onload="load()" class=" {if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')) && $_GPC['main-lg']} main-lg-body {/if}">
+<body {if !empty($_W['setting']['copyright']['skin']) && $_W['setting']['copyright']['skin'] == 'black'}onload="resizeView()"{/if} class=" {if (!empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')) && $_GPC['main-lg']} main-lg-body {/if}">
 	<div class="loader" style="display:none">
 		<div class="la-ball-clip-rotate">
 			<div></div>
