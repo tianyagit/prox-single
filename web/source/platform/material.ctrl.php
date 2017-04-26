@@ -64,7 +64,7 @@ if ($do == 'display') {
 		$sql = "SELECT * FROM `ims_wechat_attachment` AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news'";
 		if (! empty($params['search'])) {
 			$sql .= ' AND (b.title LIKE :search OR b.author = :search OR b.digest LIKE :search)';
-			$conditions[':search'] = '%' . $search . "%";
+			$conditions[':search'] = '%' . $search . '%';
 		}
 		$sql .= " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize;
 		$news_list = pdo_fetchall($sql, $conditions);
