@@ -33,7 +33,7 @@ if($do == 'display') {
 		}
 		$modules = array();
 		if (!empty($modulelist)) {
-			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array ('module', 'enabled', 'shortcut'), 'module');
+			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array ('module', 'enabled', 'shortcut'), 'module', array('displayorder DESC'));
 			if (!empty($module_profile)) {
 				foreach ($module_profile as $name => $row) {
 					$modules[$name] = $modulelist[$name];
