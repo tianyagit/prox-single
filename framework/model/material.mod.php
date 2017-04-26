@@ -91,28 +91,28 @@ function material_sync($material, $exist_material, $type) {
  * @param array $post_data
  * @return int 本地图文素材ID
  */
-function material_news_set($data, $attach_id = '0') {
+function material_news_set($data, $attach_id) {
 	global $_W;
 	$attach_id = intval($attach_id);
 	foreach ($data as $key => $news) {
-		if (empty($news['title']) || empty($news['author']) || empty($news['content'])){
-			return error('-1', '参数不能为空');
+		if (empty($news['title']) || empty($news['content']) || (!empty($news['thumb']) && !parse_path($news['thumb'])) || (!empty($news['content_source_url']) && !parse_path($news['content_source_url']))){
+			return error('-1', '参数有误');
 		}
 		$post_news[] = array(
-			'id'	=> $news['id'],
+			'id'	=> isset($news['id'])? intval($news['id']) : '',
 			'uniacid' => $_W['uniacid'],
-			'thumb_media_id' => $news['media_id'],
+			'thumb_media_id' => isset($news['media_id'])? addslashes($news['media_id']) : '',
 			'thumb_url' => $news['thumb'],
-			'title' => $news['title'],
-			'author' => $news['author'],
-			'digest' => $news['digest'],
+			'title' => addslashes($news['title']),
+			'author' => addslashes($news['author']),
+			'digest' => addslashes($news['digest']),
 			'content' => htmlspecialchars_decode($news['content']),
 			'content_source_url' => $news['content_source_url'],
 			'show_cover_pic' => $news['show_cover_pic'] ? 1 : 0,
 			'displayorder' => $key
 		);
 	}
-	if (!empty($attach_id)){
+	if ($attach_id > 0){
 		$wechat_attachment = pdo_get('wechat_attachment', array(
 			'id' => $attach_id,
 			'uniacid' => $_W['uniacid']
@@ -165,7 +165,7 @@ function material_get($attach_id) {
 	}
 	if (!empty($material)) {
 		if ($material['type'] == 'news') {
-			$news = pdo_getall('wechat_news', array('attach_id' => $material['id']), array(), '', ' displayorder ASC');
+			$news = pdo_getall('wechat_news', array('attach_id' => $material['id']), array(), '', ' displayorder DESC');
 			if (!empty($news)) {
 				foreach ($news as &$news_row) {
 					$news_row['content_source_url'] = preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $news_row['content_source_url']);
