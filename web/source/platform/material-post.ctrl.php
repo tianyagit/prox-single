@@ -53,6 +53,9 @@ if ($do == 'news') {
 		}
 	} else {
 		$attachment = material_get($newsid);
+		if (is_error($attachment)){
+			itoast('图文素材不存在，或已删除', url('platform/material'), 'warning');
+		}
 		$news_list = $attachment['news'];
 	}
 	template('platform/material-post');
