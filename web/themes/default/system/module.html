@@ -73,7 +73,7 @@
 					<div class="link-group">
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">管理设置</a>
 						<!--<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>-->
-						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1" onclick="return confirm('确认要停用模块吗？')">停用</a>
+						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" class="del" ng-if="isFounder == 1" onclick="return confirm('确认要停用模块吗？')">停用</a>
 						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
 						<a href="javascript:;" class="color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 					</div>
@@ -314,7 +314,7 @@
 	<div class="user-head-info we7-padding-bottom">
 		<div class="img pull-left" ng-if="moduleinfo.main_module != ''">
 			<img alt="子应用icon" class="plugin-img" ng-src="{{ moduleinfo.logo }}"/>
-			<img alt="主应用icon" class="module-img" src="{$main_module['logo']}"/>
+			<img alt="主应用icon" class="module-img" ng-src="{{ moduleinfo.main_module_logo }}"/>
 		</div>
 		<img ng-src="{{ moduleinfo.logo }}" class="user-avatar img-rounded pull-left" ng-if="moduleinfo.main_module == ''">
 		<h3 class="pull-left">{{ moduleinfo.title }}</h3>
@@ -339,7 +339,7 @@
 			<td class="table-label">模块标题</td>
 			<td>{{ moduleinfo.title }}</td>
 			<td class="text-right">
-				<a href="javascript:;" ng-click="editModule('title')" class="color-default">修改</a>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('title')">修改</a></div>
 			</td>
 		</tr>
 		<tr>
@@ -354,28 +354,28 @@
 			<td class="table-label">模块简述</td>
 			<td>{{ moduleinfo.ability }}</td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default" ng-click="editModule('ability')">修改</a>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('ability')">修改</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块介绍</td>
 			<td>{{ moduleinfo.description }}</td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default" ng-click="editModule('description')">修改</a>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('description')">修改</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块缩略图</td>
 			<td><img ng-src="{{ moduleinfo.logo }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default" ng-click="editModule('logo')">修改</a>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('logo')">修改</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块封面</td>
 			<td><img ng-src="{{ moduleinfo.preview }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
 			<td class="text-right">
-				<a href="javascript:;" class="color-default" ng-click="editModule('preview')">修改</a>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('preview')">修改</a></div>
 			</td>
 		</tr>
 	</table>
@@ -506,7 +506,7 @@
 					<span>{$group['name']}</span>
 				</td>
 				<td class="text-right">
-					<a href="{php echo url('system/module-group/post', array('id' => $group['id']))}" class="color-default">设置</a>
+					<div class="link-group"><a href="{php echo url('system/module-group/post', array('id' => $group['id']))}">设置</a></div>
 				</td>
 			</tr>
 			{/loop}
