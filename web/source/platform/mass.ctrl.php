@@ -85,7 +85,7 @@ if ($do == 'post') {
 	$endtime = strtotime("+{$endtime} days", $time);
 	$massdata = pdo_fetch('SELECT id, `groupname`, `group`, `attach_id`, `media_id`, `sendtime` FROM '. tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime));
 	if (!empty($massdata)) {
-		$massdata['clock'] = date('H:m', $massdata['sendtime']);
+		$massdata['clock'] = date('H:i', $massdata['sendtime']);
 	} else {
 		$massdata['clock'] = '08:00';
 	}
@@ -127,6 +127,15 @@ if ($do == 'post') {
 				$msgtype = substr($reply_k, 6);
 				switch($msgtype) {
 					case 'news':
+						$mass = ltrim($reply_val, '{');
+						$mass = rtrim($mass, '}');
+						$mass = explode('},{', $mass);
+						foreach ($mass as &$val) {
+							$val = json_decode(htmlspecialchars_decode('{'.$val.'}'), true);
+						}
+						unset($val);
+						$mass['mediaid'] = $mass[0]['mediaid'];
+						break;
 					case 'video':
 						$mass = json_decode(htmlspecialchars_decode($reply_val), true);
 						break;
