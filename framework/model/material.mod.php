@@ -102,6 +102,9 @@ function material_news_set($data, $attach_id) {
 		) {
 			return error('-1', '参数有误');
 		}
+		if (!material_url_check($news['content_source_url']) || !material_url_check($news['url']) || !material_url_check($news['thumb'])){
+			return error('-3', '提交链接参数不合法');
+		}
 		$post_news[] = array(
 			'id' => intval($news['id']),
 			'uniacid' => $_W['uniacid'],
@@ -112,9 +115,9 @@ function material_news_set($data, $attach_id) {
 			'content' => htmlspecialchars_decode($news['content']),
 			'url' => $news['url'],
 			'show_cover_pic' => intval($news['show_cover_pic']),
-			'displayorder' => $key,
+			'displayorder' 		=> intval($key),
 			'thumb_media_id' => addslashes($news['media_id']),
-			'content_source_url' => preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $news['content_source_url']),
+			'content_source_url' => $news['content_source_url'],
 		);
 	}
 	if (!empty($attach_id)){
@@ -512,3 +515,17 @@ function material_delete($material_id, $location){
 	return $result;
 }
 
+/**
+ * 验证输入内容是否为合法链接
+ * @param $str
+ * @return boolean
+ */
+function material_url_check($str){
+	if (empty($str)){
+		return true;
+	}else{
+		$preg1 = "/(http|https):\/\/*/";
+		$preg2 = "/.\/index.php\?*/";
+		return preg_match($preg1, $str) || preg_match($preg2, $str);
+	}
+}

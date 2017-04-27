@@ -216,6 +216,9 @@ class CoreModuleSite extends WeModuleSite {
 		//兼容0.8写法，在此回复新版1.0本地素材
 		if (!empty($row['media_id']) && intval($row['media_id']) != 0) {
 			$row = pdo_get('wechat_news', array('attach_id' => $row['media_id'], 'displayorder' => $row['displayorder']));
+			if (!empty($row['content_source_url'])) {
+				header("Location: ".$row['content_source_url']);
+			}
 		}
 		$row = istripslashes($row);
 		$title = $row['title'];
