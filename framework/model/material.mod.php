@@ -95,25 +95,29 @@ function material_news_set($data, $attach_id) {
 	global $_W;
 	$attach_id = intval($attach_id);
 	foreach ($data as $key => $news) {
-		if (empty($news['title']) || (!empty($news['thumb']) && !parse_path($news['thumb'])) || (!empty($news['url']) && !parse_path($news['url'])) || (!empty($news['content_source_url']) && !parse_path($news['content_source_url']))){
+		if (empty($news['title']) || 
+			(!empty($news['thumb']) && !parse_path($news['thumb'])) || 
+			(!empty($news['url']) && !parse_path($news['url'])) || 
+			(!empty($news['content_source_url']) && !parse_path($news['content_source_url']))
+		) {
 			return error('-1', '参数有误');
 		}
 		$post_news[] = array(
-			'id'				=> isset($news['id'])? intval($news['id']) : '',
-			'uniacid' 			=> $_W['uniacid'],
-			'thumb_url' 		=> $news['thumb'],
-			'title' 			=> addslashes($news['title']),
-			'author' 			=> addslashes($news['author']),
-			'digest' 			=> addslashes($news['digest']),
-			'content' 			=> htmlspecialchars_decode($news['content']),
-			'url' 				=> $news['url'],
-			'show_cover_pic' 	=> $news['show_cover_pic'] ? 1 : 0,
-			'displayorder' 		=> $key,
-			'thumb_media_id' 	=> isset($news['media_id'])? addslashes($news['media_id']) : '',
+			'id' => intval($news['id']),
+			'uniacid' => $_W['uniacid'],
+			'thumb_url' => $news['thumb'],
+			'title' => addslashes($news['title']),
+			'author' => addslashes($news['author']),
+			'digest' => addslashes($news['digest']),
+			'content' => htmlspecialchars_decode($news['content']),
+			'url' => $news['url'],
+			'show_cover_pic' => intval($news['show_cover_pic']),
+			'displayorder' => $key,
+			'thumb_media_id' => addslashes($news['media_id']),
 			'content_source_url' => $news['content_source_url'],
 		);
 	}
-	if ($attach_id > 0){
+	if (!empty($attach_id)){
 		$wechat_attachment = pdo_get('wechat_attachment', array(
 			'id' => $attach_id,
 			'uniacid' => $_W['uniacid']
