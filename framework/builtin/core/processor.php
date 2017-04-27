@@ -103,7 +103,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		$news = array();
 		foreach($commends as $commend) {
 			$row = array();
-			if (!empty($commend['media_id'])) {
+			if (!empty($commend['media_id']) && intval($commend['media_id']) == 0) {
 				$news = material_build_reply($commend['media_id']);
 				break;
 			} else {

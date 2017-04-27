@@ -62,12 +62,12 @@ if ($do == 'display') {
 	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
-		$sql = "SELECT *, a.id as id FROM ". tablename('wechat_attachment') ." AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
+		$sql = "SELECT *, a.id as id FROM ". tablename('wechat_attachment') ." AS a RIGHT JOIN ". tablename('wechat_news') ." AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
 		if (! empty($search)) {
 			$sql .= ' AND (b.title LIKE :search OR b.author = :search OR b.digest LIKE :search)';
 			$conditions[':search'] = '%' . $search . '%';
 		}
-		$sql_total = "SELECT count(*) FROM ".tablename('wechat_attachment') ." AS a RIGHT JOIN `ims_wechat_news` AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
+		$sql_total = "SELECT count(*) FROM ".tablename('wechat_attachment') ." AS a RIGHT JOIN ". tablename('wechat_news') ." AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
 		$total = pdo_fetchcolumn($sql_total, $conditions);
 		$sql .= " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize;
 		$news_list = pdo_fetchall($sql, $conditions);
