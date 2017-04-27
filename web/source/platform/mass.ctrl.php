@@ -127,6 +127,15 @@ if ($do == 'post') {
 				$msgtype = substr($reply_k, 6);
 				switch($msgtype) {
 					case 'news':
+						$mass = ltrim($reply_val, '{');
+						$mass = rtrim($mass, '}');
+						$mass = explode('},{', $mass);
+						foreach ($mass as &$val) {
+							$val = json_decode(htmlspecialchars_decode('{'.$val.'}'), true);
+						}
+						unset($val);
+						$mass['mediaid'] = $mass[0]['mediaid'];
+						break;
 					case 'video':
 						$mass = json_decode(htmlspecialchars_decode($reply_val), true);
 						break;
