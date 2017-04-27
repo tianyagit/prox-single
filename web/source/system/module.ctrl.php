@@ -27,6 +27,7 @@ if ($do == 'get_upgrade_info') {
 	$module_info = module_fetch($module_name);
 	$cloud_m_upgrade_info = cloud_m_upgradeinfo($module_name);
 	$module = array(
+		'id' => $cloud_m_upgrade_info['id'],
 		'version' => $cloud_m_upgrade_info['version'],
 		'name' => $cloud_m_upgrade_info['name'],
 		'branches' => $cloud_m_upgrade_info['branches'],
@@ -36,6 +37,10 @@ if ($do == 'get_upgrade_info') {
 	$module['site_branch']['id'] = intval($module['site_branch']['id']);
 	if (!empty($module['branches'])) {
 		foreach ($module['branches'] as &$branch) {
+			if ($branch['displayorder'] < $module['site_branch']['displayorder'] || ($module['site_branch']['displayorder'] == $module['site_branch']['displayorder'] && $module['site_branch']['id'] > intval($branch['id']))) {
+				unset($module['branches'][$branch['id']]);
+				continue;
+			}
 			$branch['id'] = intval($branch['id']);
 			$branch['displayorder'] = intval($branch['displayorder']);
 			$branch['day'] = intval(date('d', $branch['version']['createtime']));
@@ -44,9 +49,7 @@ if ($do == 'get_upgrade_info') {
 		}
 		unset($branch);
 	}
-	if (ver_compare($module_info['version'], $module['site_branch']['version']['version']) != '-1') {
-		unset($module['branches'][$module['site_branch']['id']]);
-	}
+
 	iajax(0, $module, '');
 }
 
@@ -245,7 +248,8 @@ if ($do =='install') {
 	if (empty($_W['isfounder'])) {
 		itoast('您没有安装模块的权限', '', 'error');
 	}
-	if (module_fetch($module_name)) {
+	$module_exist = pdo_getcolumn('modules', array('name' => $module_name), 'name');
+	if (!empty($module_exist)) {
 		itoast('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);

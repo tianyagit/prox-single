@@ -32,7 +32,7 @@
 			<td>{$list['groupname']}</td>
 			<td>{php echo date('Y-m-d H:i', $list['sendtime']);}</td>
 			<td>{if $list['status'] == 0 || $list['status'] == 2}{php echo date('Y-m-d H:i', $list['finalsendtime']);}{else}---{/if}</td>
-			<td>{if $list['groupid'] == '-1'}全部粉丝{else}{$list['fansnum']}{/if}</td>
+			<td>{if $list['group'] == '-1'}全部粉丝{else}{$list['fansnum']}{/if}</td>
 			<td>
 				{if !$list['status']}
 					<span class="label label-success">已发送</span>

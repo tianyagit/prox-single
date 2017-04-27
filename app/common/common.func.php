@@ -83,7 +83,9 @@ function message($msg, $redirect = '', $type = '') {
 function checkauth() {
 	global $_W, $engine;
 	load()->model('mc');
-	if(!empty($_W['member']) && (!empty($_W['member']['mobile']) || !empty($_W['member']['email']))) {
+	$setting = uni_setting($_W['uniacid'], array('passport'),true);
+	$focusreg=$setting['passport']['focusreg'];//  模块验证用户身份，会员 手动（1）/自动（0） 注册
+	if(!empty($_W['member']) && (!empty($_W['member']['mobile']) || !empty($_W['member']['email'])) && $focusreg == 0) {
 		return true;
 	}
 	if(!empty($_W['openid'])) {
@@ -95,7 +97,7 @@ function checkauth() {
 				$fan = mc_fansinfo($fan['openid']);
 			}
 		}
-		if(_mc_login(array('uid' => intval($fan['uid'])))) {
+		if(_mc_login(array('uid' => intval($fan['uid']))) && $focusreg == 0) {
 			return true;
 		}
 		if (defined('IN_API')) {
@@ -112,7 +114,7 @@ function checkauth() {
 	} else {
 		header("location: " . url('auth/login', array('forward' => $forward)), true);
 	}
-	exit;
+	exit;	
 }
 
 function __buildSiteUrl($url) {

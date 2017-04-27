@@ -95,21 +95,22 @@ function material_news_set($data, $attach_id) {
 	global $_W;
 	$attach_id = intval($attach_id);
 	foreach ($data as $key => $news) {
-		if (empty($news['title']) || empty($news['content']) || (!empty($news['thumb']) && !parse_path($news['thumb'])) || (!empty($news['content_source_url']) && !parse_path($news['content_source_url']))){
+		if (empty($news['title']) || (!empty($news['thumb']) && !parse_path($news['thumb'])) || (!empty($news['url']) && !parse_path($news['url'])) || (!empty($news['content_source_url']) && !parse_path($news['content_source_url']))){
 			return error('-1', '参数有误');
 		}
 		$post_news[] = array(
-			'id'	=> isset($news['id'])? intval($news['id']) : '',
-			'uniacid' => $_W['uniacid'],
-			'thumb_media_id' => isset($news['media_id'])? addslashes($news['media_id']) : '',
-			'thumb_url' => $news['thumb'],
-			'title' => addslashes($news['title']),
-			'author' => addslashes($news['author']),
-			'digest' => addslashes($news['digest']),
-			'content' => htmlspecialchars_decode($news['content']),
+			'id'				=> isset($news['id'])? intval($news['id']) : '',
+			'uniacid' 			=> $_W['uniacid'],
+			'thumb_url' 		=> $news['thumb'],
+			'title' 			=> addslashes($news['title']),
+			'author' 			=> addslashes($news['author']),
+			'digest' 			=> addslashes($news['digest']),
+			'content' 			=> htmlspecialchars_decode($news['content']),
+			'url' 				=> $news['url'],
+			'show_cover_pic' 	=> $news['show_cover_pic'] ? 1 : 0,
+			'displayorder' 		=> $key,
+			'thumb_media_id' 	=> isset($news['media_id'])? addslashes($news['media_id']) : '',
 			'content_source_url' => $news['content_source_url'],
-			'show_cover_pic' => $news['show_cover_pic'] ? 1 : 0,
-			'displayorder' => $key
 		);
 	}
 	if ($attach_id > 0){
@@ -309,17 +310,24 @@ function material_local_news_upload($attach_id) {
 		return error('-1', '获取素材文件失败');
 	}
 	foreach ($material['news'] as $news) {
+		if (empty($news['content'])){
+			return error('-6', '素材内容不能为空');
+		}
 		$news['content'] = material_parse_content($news['content']);
 		if (is_error($news['content'])) {
 			return error('-2', $news['content']);
 		}
-		if (empty($news['thumb_media_id']) && !empty($news['thumb_url'])) {
-			$result = material_local_upload_by_url($news['thumb_url']);
-			if (is_error($result)){
-				return error('-3', $result['message']);
+		if (empty($news['thumb_media_id'])) {
+			if (empty($news['thumb_url'])){
+				return error('-7', '图文封面不能为空');
+			}else{
+				$result = material_local_upload_by_url($news['thumb_url']);
+				if (is_error($result)){
+					return error('-3', $result['message']);
+				}
+				$news['thumb_media_id'] = $result['media_id'];
+				$news['thumb_url'] = $result['url'];
 			}
-			$news['thumb_media_id'] = $result['media_id'];
-			$news['thumb_url'] = $result['url'];
 		}
 		pdo_update('wechat_news', $news, array(
 			'id' => $news['id']
