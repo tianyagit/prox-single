@@ -248,7 +248,8 @@ if ($do =='install') {
 	if (empty($_W['isfounder'])) {
 		itoast('您没有安装模块的权限', '', 'error');
 	}
-	if (module_fetch($module_name)) {
+	$module_exist = pdo_getcolumn('modules', array('name' => $module_name), 'name');
+	if (!empty($module_exist)) {
 		itoast('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
