@@ -179,11 +179,11 @@
 					{if $frame_section['title']}
 					<div class="panel-heading">
 						<span class="no-collapse">{$frame_section['title']}<i class="wi wi-appsetting pull-right setting"></i></span>
-						<span class="" data-toggle="collapse" data-target="#frame-{$frame_section_id}">{$frame_section['title']}<i class="wi wi-down-sign-s pull-right"></i></span>
+						<span class="" data-toggle="collapse" data-target="#frame-{$frame_section_id}" onclick="util.cookie.set('menu_fold_tag:{$frame_section_id}', util.cookie.get('menu_fold_tag:{$frame_section_id}') == 1 ? 0 : 1)">{$frame_section['title']}<i class="wi wi-down-sign-s pull-right"></i></span>
 					</div>
 					{/if}
 
-					<ul class="list-group collapse in" id="frame-{$frame_section_id}">
+					<ul class="list-group collapse {if !empty($_W['setting']['copyright']['skin']) && $_W['setting']['copyright']['skin'] == 'black'}{if $_GPC['menu_fold_tag:'.$frame_section_id] == 0}in{/if}{else}in{/if}" id="frame-{$frame_section_id}">
 						{loop $frame_section['menu'] $menu_id $menu}
 						{if !empty($menu['is_display'])}
 							{if $menu_id == 'platform_module_more'}

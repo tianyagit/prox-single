@@ -263,6 +263,7 @@ function buildframes($framename = ''){
 			}
 			foreach ($section['section'] as $section_id => $secion) {
 				$section_show = false;
+				$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
 				foreach ($secion['menu'] as $menu_id => $menu) {
 					if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
 						$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
