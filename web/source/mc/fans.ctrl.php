@@ -183,12 +183,22 @@ if ($do == 'edit_tagname') {
 if ($do == 'edit_fans_tag') {
 	$fanid = intval($_GPC['fanid']);
 	$tags = $_GPC['tags'];
-	if (empty($tags) || !is_array($tags)) {
-		iajax(1, '请选择标签', '');
-	}
+
 	$openid = pdo_getcolumn('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'fanid' => $fanid), 'openid');
 	$account_api = WeAccount::create();
-	$result = $account_api->fansTagTagging($openid, $tags);
+	if (empty($tags) || !is_array($tags)) {
+		$fans_tags =pdo_getall('mc_fans_tag_mapping', array('fanid' => $fanid), array(), 'tagid');
+		if (!empty($fans_tags)) {
+			foreach ($fans_tags as $tag) {
+				$account_api->fansTagBatchUntagging(array($openid), $tag['tagid']);
+			}
+		} else {
+			iajax(0);
+		}
+	} else {
+		$result = $account_api->fansTagTagging($openid, $tags);
+	}
+
 	if (!is_error($result)) {
 		pdo_delete('mc_fans_tag_mapping', array('fanid' => $fanid));
 		if (!empty($tags)) {
@@ -197,8 +207,8 @@ if ($do == 'edit_fans_tag') {
 			}
 			$tags = implode(',', $tags);
 			pdo_update('mc_mapping_fans', array('groupid' => $tags), array('fanid' => $fanid));
-			cache_build_fansinfo($openid);
 		}
+		cache_build_fansinfo($openid);
 	}
 	iajax(0, $result);
 }
