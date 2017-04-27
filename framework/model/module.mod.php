@@ -262,15 +262,12 @@ function module_build_privileges() {
 		}
 		$modules = array();
 		if (empty($groupid)) {
-			return true;
+			continue;
 		} elseif ($groupid == '-1') {
 			$modules = pdo_fetchall("SELECT name FROM " . tablename('modules') . ' WHERE issystem = 0', array(), 'name');
 		} else {
 			$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
 			$packageids = iunserializer($group['package']);
-			if(empty($packageids)) {
-				return true;
-			}
 			if (in_array('-1', $packageids)) {
 				$modules = pdo_fetchall("SELECT name FROM " . tablename('modules') . ' WHERE issystem = 0', array(), 'name');
 			} else {
