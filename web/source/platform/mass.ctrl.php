@@ -85,7 +85,7 @@ if ($do == 'post') {
 	$endtime = strtotime("+{$endtime} days", $time);
 	$massdata = pdo_fetch('SELECT id, `groupname`, `group`, `attach_id`, `media_id`, `sendtime` FROM '. tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime));
 	if (!empty($massdata)) {
-		$massdata['clock'] = date('H:m', $massdata['sendtime']);
+		$massdata['clock'] = date('H:i', $massdata['sendtime']);
 	} else {
 		$massdata['clock'] = '08:00';
 	}

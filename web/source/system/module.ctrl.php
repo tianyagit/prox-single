@@ -236,7 +236,7 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	cache_delete(cache_system_key("module_info:{$modulename}:"));
+	cache_delete(cache_system_key("module_info:{$modulename}"));
 
 	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
@@ -248,8 +248,8 @@ if ($do =='install') {
 	if (empty($_W['isfounder'])) {
 		itoast('您没有安装模块的权限', '', 'error');
 	}
-	$module_exist = pdo_getcolumn('modules', array('name' => $module_name), 'name');
-	if (!empty($module_exist)) {
+	$module_info = module_fetch($module_name);
+	if (!empty($module_info)) {
 		itoast('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
@@ -376,7 +376,6 @@ if ($do =='install') {
 		cache_delete(cache_system_key("user_modules:" . $_W['uid']));
 		cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:1"));
 		cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:"));
-		cache_delete(cache_system_key("module_info:{$module['name']}:"));
 
 		if (empty($module_subscribe_success)) {
 			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');

@@ -114,7 +114,7 @@ function material_news_set($data, $attach_id) {
 			'show_cover_pic' => intval($news['show_cover_pic']),
 			'displayorder' => $key,
 			'thumb_media_id' => addslashes($news['media_id']),
-			'content_source_url' => $news['content_source_url'],
+			'content_source_url' => preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $news['content_source_url']),
 		);
 	}
 	if (!empty($attach_id)){
@@ -173,7 +173,7 @@ function material_get($attach_id) {
 			$news = pdo_getall('wechat_news', array('attach_id' => $material['id']), array(), '', ' displayorder ASC');
 			if (!empty($news)) {
 				foreach ($news as &$news_row) {
-					$news_row['content_source_url'] = preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $news_row['content_source_url']);
+					$news_row['content_source_url'] = $news_row['content_source_url'];
 					$news_row['thumb_url'] = tomedia($news_row['thumb_url']);
 					preg_match_all('/src=[\'\"]?([^\'\"]*)[\'\"]?/i', $news_row['content'], $match);
 					if (!empty($match[1])) {
