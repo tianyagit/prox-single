@@ -205,4 +205,27 @@ class CoreModuleSite extends WeModuleSite {
 			exit();
 		}
 	}
+	public function doMobileDetail() {
+		global $_W, $_GPC;
+		$id = intval($_GPC['id']);
+		$sql = "SELECT * FROM " . tablename('news_reply') . " WHERE `id`=:id";
+		$row = pdo_fetch($sql, array(':id'=>$id));
+		if (!empty($row['url'])) {
+			header("Location: ".$row['url']);
+		}
+		//兼容0.8写法，在此回复新版1.0本地素材
+		if (!empty($row['media_id']) && intval($row['media_id']) != 0) {
+			$row = pdo_get('wechat_news', array('attach_id' => $row['media_id'], 'displayorder' => $row['displayorder']));
+		}
+		$row = istripslashes($row);
+		$title = $row['title'];
+		/*获取引导素材*/
+		if($_W['os'] == 'android' && $_W['container'] == 'wechat' && $_W['account']['account']) {
+			$subscribeurl = "weixin://profile/{$_W['account']['account']}";
+		} else {
+			$sql = 'SELECT `subscribeurl` FROM ' . tablename('account_wechats') . " WHERE `acid` = :acid";
+			$subscribeurl = pdo_fetchcolumn($sql, array(':acid' => intval($_W['acid'])));
+		}
+		include $this->template('detail');
+	}
 }
