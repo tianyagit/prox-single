@@ -38,15 +38,16 @@ if ($do == 'news') {
 			if (! empty($news_list)) {
 				foreach ($news_list as $key => &$row_news) {
 					$row_news = array(
-						'uniacid' => $_W['uniacid'],
+						'uniacid' 	=> $_W['uniacid'],
 						'thumb_url' => $row_news['thumb'],
-						'title' => $row_news['title'],
-						'author' => $row_news['author'],
-						'digest' => $row_news['description'],
-						'content_source_url' => preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $row_news['url']),
-						'content' => $row_news['content'],
+						'title' 	=> $row_news['title'],
+						'author' 	=> $row_news['author'],
+						'digest' 	=> $row_news['description'],
+						'content' 	=> $row_news['content'],
+						'url'		=> $row_news['url'],
+						'displayorder' => $key,
 						'show_cover_pic' => intval($row_news['incontent']),
-						'displayorder' => $key 
+						'content_source_url' => $row_news['content_source_url']
 					);
 				}
 			}

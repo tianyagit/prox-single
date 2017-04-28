@@ -27,6 +27,7 @@ if ($do == 'get_upgrade_info') {
 	$module_info = module_fetch($module_name);
 	$cloud_m_upgrade_info = cloud_m_upgradeinfo($module_name);
 	$module = array(
+		'id' => $cloud_m_upgrade_info['id'],
 		'version' => $cloud_m_upgrade_info['version'],
 		'name' => $cloud_m_upgrade_info['name'],
 		'branches' => $cloud_m_upgrade_info['branches'],
@@ -36,6 +37,10 @@ if ($do == 'get_upgrade_info') {
 	$module['site_branch']['id'] = intval($module['site_branch']['id']);
 	if (!empty($module['branches'])) {
 		foreach ($module['branches'] as &$branch) {
+			if ($branch['displayorder'] < $module['site_branch']['displayorder'] || ($module['site_branch']['displayorder'] == $module['site_branch']['displayorder'] && $module['site_branch']['id'] > intval($branch['id']))) {
+				unset($module['branches'][$branch['id']]);
+				continue;
+			}
 			$branch['id'] = intval($branch['id']);
 			$branch['displayorder'] = intval($branch['displayorder']);
 			$branch['day'] = intval(date('d', $branch['version']['createtime']));
@@ -44,9 +49,7 @@ if ($do == 'get_upgrade_info') {
 		}
 		unset($branch);
 	}
-	if (ver_compare($module_info['version'], $module['site_branch']['version']['version']) != '-1') {
-		unset($module['branches'][$module['site_branch']['id']]);
-	}
+
 	iajax(0, $module, '');
 }
 
@@ -233,7 +236,7 @@ if ($do == 'upgrade') {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	cache_delete(cache_system_key("module_info:{$modulename}:"));
+	cache_delete(cache_system_key("module_info:{$modulename}"));
 
 	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
@@ -245,7 +248,8 @@ if ($do =='install') {
 	if (empty($_W['isfounder'])) {
 		itoast('您没有安装模块的权限', '', 'error');
 	}
-	if (module_fetch($module_name)) {
+	$module_info = module_fetch($module_name);
+	if (!empty($module_info)) {
 		itoast('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
@@ -372,7 +376,6 @@ if ($do =='install') {
 		cache_delete(cache_system_key("user_modules:" . $_W['uid']));
 		cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:1"));
 		cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:"));
-		cache_delete(cache_system_key("module_info:{$module['name']}:"));
 
 		if (empty($module_subscribe_success)) {
 			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');

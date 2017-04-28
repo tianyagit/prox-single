@@ -41,20 +41,20 @@ class CoreModule extends WeModule {
 				if(!empty($rid) && $rid > 0) {
 					$isexists = pdo_get('mc_mass_record', array('id' => $rid), array('media_id', 'msgtype'));
 				}
-				if(!empty($isexists)) {
+				if(!empty($isexists['media_id']) && !empty($isexists['msgtype'])) {
 					switch($isexists['msgtype']) {
 						case 'news':
-							$news = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('id'));
-							$news_items = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $news['id']));
-							if(!empty($news_items)) {
-								foreach($news_items as &$item) {
+							$news_items = material_get($isexists['media_id']);
+							if(!empty($news_items['news'])) {
+								foreach($news_items['news'] as &$item) {
 									$item['thumb_url'] = tomedia($item['thumb_url']);
 									$item['media_id'] = $isexists['media_id'];
 									$item['attach_id'] = $item['attach_id'];
+									$item['perm'] = $news_items['model'];
 								}
+								unset($item);
 							}
-							$replies['news'] = $news_items;
-
+							$replies['news'] = $news_items['news'];
 							break;
 						case 'image':
 							$img = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('attachment'));

@@ -262,15 +262,12 @@ function module_build_privileges() {
 		}
 		$modules = array();
 		if (empty($groupid)) {
-			return true;
+			continue;
 		} elseif ($groupid == '-1') {
 			$modules = pdo_fetchall("SELECT name FROM " . tablename('modules') . ' WHERE issystem = 0', array(), 'name');
 		} else {
 			$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
 			$packageids = iunserializer($group['package']);
-			if(empty($packageids)) {
-				return true;
-			}
 			if (in_array('-1', $packageids)) {
 				$modules = pdo_fetchall("SELECT name FROM " . tablename('modules') . ' WHERE issystem = 0', array(), 'name');
 			} else {
@@ -481,7 +478,7 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	cache_delete(cache_system_key("user_modules:" . $_W['uid']));
 	cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:1"));
 	cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:"));
-	cache_delete(cache_system_key("module_info:{$module_name}:"));
+	cache_delete(cache_system_key("module_info:{$module_name}"));
 
 	return true;
 }
