@@ -1,23 +1,23 @@
 {template 'common/header'}
+<div class="we7-page-title">
+	素材管理
+</div>
+<ul class="we7-page-tab">
+	<li{if $type == 'news'} class="active"{/if}>
+	<a href="{php echo url('platform/material', array('type' => 'news'))}">图文消息</a>
+	</li>
+	<li{if $type == 'image'} class="active"{/if}>
+	<a href="{php echo url('platform/material', array('type' => 'image'))}">图片</a>
+	</li>
+	<li{if $type == 'voice'} class="active"{/if}>
+	<a href="{php echo url('platform/material', array('type' => 'voice'))}">语音</a>
+	</li>
+	<li{if $type == 'video'} class="active"{/if}>
+	<a href="{php echo url('platform/material', array('type' => 'video'))}">视频</a>
+	</li>
+</ul>
 <div id="main" ng-controller="materialDisplay" ng-cloak>
 	<div class="material">
-		<div class="we7-page-title">
-			素材管理
-		</div>
-		<ul class="we7-page-tab">
-			<li{if $type == 'news'} class="active"{/if}>
-				<a href="{php echo url('platform/material', array('type' => 'news'))}">图文消息</a>
-			</li>
-			<li{if $type == 'image'} class="active"{/if}>
-				<a href="{php echo url('platform/material', array('type' => 'image'))}">图片</a>
-			</li>
-			<li{if $type == 'voice'} class="active"{/if}>
-				<a href="{php echo url('platform/material', array('type' => 'voice'))}">语音</a>
-			</li>
-			<li{if $type == 'video'} class="active"{/if}>
-				<a href="{php echo url('platform/material', array('type' => 'video'))}">视频</a>
-			</li>
-		</ul>
 		{if $type == 'news'}
 		<div class="material-appmsg">
 			<div class="material-list-head clearfix">
