@@ -190,7 +190,7 @@ if ($do == 'edit_fans_tag') {
 		$fans_tags =pdo_getall('mc_fans_tag_mapping', array('fanid' => $fanid), array(), 'tagid');
 		if (!empty($fans_tags)) {
 			foreach ($fans_tags as $tag) {
-				$account_api->fansTagBatchUntagging(array($openid), $tag['tagid']);
+				$result = $account_api->fansTagBatchUntagging(array($openid), $tag['tagid']);
 			}
 		} else {
 			iajax(0);
@@ -206,8 +206,8 @@ if ($do == 'edit_fans_tag') {
 				pdo_insert('mc_fans_tag_mapping', array('fanid' => $fanid, 'tagid' => $tag));
 			}
 			$tags = implode(',', $tags);
-			pdo_update('mc_mapping_fans', array('groupid' => $tags), array('fanid' => $fanid));
 		}
+		pdo_update('mc_mapping_fans', array('groupid' => $tags), array('fanid' => $fanid));
 		cache_build_fansinfo($openid);
 	}
 	iajax(0, $result);
