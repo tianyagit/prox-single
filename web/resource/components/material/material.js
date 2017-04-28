@@ -45,6 +45,9 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 					case 'image':
 						$('#material-Modal').addClass('image');
 						break;
+					case 'keyword':
+						$('#material-Modal').addClass('keyword');
+						break;
 				}
 				$this.localPage(type, 1);
 				$(this).tab('show');
@@ -133,7 +136,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 							$this.localPage(type, 1, $(this).data('type'));
 							return false;
 						});
-					}	
+					}
 					$this.selectMedia();
 					$this.playaudio();
 					$this.modalobj.find('#material-list-pager').html(data.pager);
@@ -144,7 +147,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				} else {
 					$content.html('<div class="info text-center"><i class="wi wi-info-circle fa-lg"></i> 暂无数据</div>');
 				}
-			});				
+			});
 			$this.modalobj.find('#btn-select .btn-primary').unbind('click').click(function(){
 				var attachment = [];
 				$content.find('.checkedMedia').each(function(){
@@ -365,7 +368,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'</div>';
 
 			dialog['voiceDialog'] ='<table class="table table-hover we7-table" style="margin-bottom:0">'+
-				'						<col width=""/>'+	
+				'						<col width=""/>'+
 				'						<col width="150px"/>'+
 				'						<col width="180px"/>'+
 				'						<thead class="navbar-inner">'+
@@ -393,7 +396,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'					</table>';
 
 			dialog['videoDialog'] ='<table class="table table-hover we7-table" style="margin-bottom:0">'+
-				'						<col width=""/>'+	
+				'						<col width=""/>'+
 				'						<col width="150px"/>'+
 				'						<col width="180px"/>'+
 				'						<thead class="navbar-inner">'+
@@ -519,7 +522,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'<div class="checkMedia" data-name="<%=item.name%>" data-type="module">' +
 				'	<li class="img-item" style="padding:5px">\n' +
 				'		<div class="img-container">\n' +
-				'           <img src="<%=item.icon%>" width="48px" height="48px">\n' + 
+				'           <img src="<%=item.icon%>" width="48px" height="48px">\n' +
 				'			<div class="text-over"><%=item.title%></div>\n' +
 				'			<div class="select-status"><span></span></div>\n' +
 				'		</div>\n' +

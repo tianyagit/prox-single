@@ -140,6 +140,7 @@ class CoreModule extends WeModule {
 												$news_value['attach_id'] = $news_material['id'];
 												$news_value['model'] = $news_material['model'];
 												$news_value['thumb'] = tomedia($news_material['news'][0]['thumb_url']);
+												$news_value['isdeleted'] = is_error($news_material) ? 1 : 0;
 											} else {
 												$news_value['thumb'] = tomedia($news_value['thumb']);
 											}

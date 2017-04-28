@@ -329,7 +329,7 @@ function user_modules($uid) {
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
 		if (empty($uid) || in_array($uid, $founders)) {
-			$modules = pdo_getall('modules', array(), array('name'), 'name');
+			$modules = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
 			$modules = $system_modules;
 		} else {
@@ -341,7 +341,7 @@ function user_modules($uid) {
 			}
 			//如果套餐组中包含-1，则直接取全部权限，否则根据情况获取模块权限
 			if (!empty($packageids) && in_array('-1', $packageids)) {
-				$modules = pdo_getall('modules', array(), array('name'), 'name');
+				$modules = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 			} else {
 				//此处缺少公众号专属套餐
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
@@ -359,7 +359,7 @@ function user_modules($uid) {
 					}
 				}
 				$modules = pdo_fetchall("SELECT name FROM ".tablename('modules')." WHERE 
-										name IN ('" . implode("','", $package_group_module) . "') OR issystem = '1'", array(), 'name');
+										name IN ('" . implode("','", $package_group_module) . "') OR issystem = '1' ORDER BY mid DESC", array(), 'name');
 			}
 		}
 		$modules = array_keys($modules);

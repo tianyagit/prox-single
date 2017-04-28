@@ -3,14 +3,14 @@
 {if empty($data) && $_GPC['status'] == 'history'}
 <div class="alert alert-info">没有历史菜单</div>
 {else}
+<div class="we7-page-title">
+	自定义菜单
+</div>
+<ul class="we7-page-tab">
+	<li {if $type == '1'}class="active" {/if}><a href="{url 'platform/menu' array('type' => '1')}">默认菜单</a></li>
+	<li {if $type == '3'}class="active"{/if}><a href="{url 'platform/menu' array('type' => '3')}">个性化菜单</a></li>
+</ul>
 <div class="clearfix" ng-controller="menuDisplay">
-	<div class="we7-page-title">
-		自定义菜单
-	</div>
-	<ul class="we7-page-tab">
-		<li {if $type == '1'}class="active" {/if}><a href="{url 'platform/menu' array('type' => '1')}">默认菜单</a></li>
-		<li {if $type == '3'}class="active"{/if}><a href="{url 'platform/menu' array('type' => '3')}">个性化菜单</a></li>
-	</ul>
 	<div class="we7-padding-bottom clearfix">
 		<form action="./index.php" method="get" class="form-horizontal" role="form">
 			<div class="input-group pull-left col-sm-4">
@@ -256,7 +256,7 @@
 										<label for="radio-8">相册发图 </label>
 									</div>
 								</div>
-								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if}ng-show="context.activeItem.type == 'view';">
+								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if} ng-show="context.activeItem.type == 'view'">
 									<div class="form-group">
 										<p class="color-gray">订阅者点击该子菜单会跳转到以下链接</p>
 										<label for="" class="control-label col-sm-2">页面地址</label>
@@ -326,7 +326,7 @@
 									</div>
 									<div class="panel-body we7-padding">
 										<ul class="keywords-list">
-											<li ng-if="context.activeItem.material[0].type == 'keyword' || (context.activeItem.type == 'click' && context.activeItem.key)">
+											<li ng-if="(context.activeItem.material[0].type == 'keyword' || (context.activeItem.type == 'click' && context.activeItem.key)) && context.activeItem.forceHide == 0">
 												<div>
 													<div class="desc">
 														<div class="media-content">
@@ -337,7 +337,7 @@
 													</div>
 												</div>
 											</li>
-											<li ng-if="context.activeItem.material[0].type == 'news'">
+											<li ng-if="context.activeItem.material[0].type == 'news' && context.activeItem.forceHide == 0">
 												<div class="">
 													<div class="desc">
 														<div class="media-content">
@@ -352,7 +352,7 @@
 													</div>
 												</div>
 											</li>
-											<li ng-if="context.activeItem.material[0].type == 'image'">
+											<li ng-if="context.activeItem.material[0].type == 'image' && context.activeItem.forceHide == 0">
 												<div>
 													<div class="desc">
 														<div class="media-content">
@@ -366,7 +366,7 @@
 													</div>
 												</div>
 											</li>
-											<li ng-if="context.activeItem.material[0].type == 'voice'">
+											<li ng-if="context.activeItem.material[0].type == 'voice' && context.activeItem.forceHide == 0">
 												<div>
 													<div class="desc">
 														<div class="media-content">
@@ -382,7 +382,7 @@
 													</div>
 												</div>
 											</li>
-											<li ng-if="context.activeItem.material[0].type == 'video'">
+											<li ng-if="context.activeItem.material[0].type == 'video' && context.activeItem.forceHide == 0">
 												<div>
 													<div class="desc">
 														<div class="media-content">
