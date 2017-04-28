@@ -241,6 +241,16 @@ function module_fetch($name) {
 		$module = module_parse_info($module);
 		cache_write($cachekey, $module);
 	}
+	if (!empty($module)) {
+		$setting_cachekey = cache_system_key($_W['uniacid'] . "module_setting:" . $name);
+		$setting = cache_load($setting_cachekey);
+		if (empty($setting)) {
+			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));
+			cache_write($setting_cachekey, $setting);
+		}
+		$module['config'] = !empty($setting['settings']) ? iunserializer($setting['settings']) : array();
+		$module['enabled'] = $module['issystem'] || !isset($setting['enabled']) ? 1 : $setting['enabled'];
+	}
 	return $module;
 }
 
@@ -359,14 +369,6 @@ function module_parse_info($module_info) {
 	if (empty($module_info)) {
 		return array();
 	}
-	if ($module_info['issystem'] == 1) {
-		$module_info['enabled'] = 1;
-	} elseif (!isset($module_info['enabled'])) {
-		$module_info['enabled'] = 1;
-	}
-	if (empty($module_info['config'])) {
-		$module_info['config'] = array();
-	}
 	if (!empty($module_info['subscribes'])) {
 		$module_info['subscribes'] = iunserializer($module_info['subscribes']);
 	}
@@ -443,10 +445,9 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	cache_build_account_modules();
 	cache_build_module_subscribe_type();
 	cache_build_uninstalled_module();
-	cache_delete(cache_system_key("user_modules:" . $_W['uid']));
-	cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:1"));
-	cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:"));
-	cache_delete(cache_system_key("module_info:{$module_name}"));
+	cache_build_user_modules();
+	cache_build_uni_modules();
+	cache_build_module_info($module_name);
 
 	return true;
 }

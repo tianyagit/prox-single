@@ -426,3 +426,36 @@ function cache_build_proxy_wechatpay_account() {
 	cache_write(cache_system_key("proxy_wechatpay_account:"), $cache);
 	return $cache;
 }
+
+/**
+ * 更新用户模块列表
+ */
+function cache_build_user_modules() {
+	$user_list = pdo_getall('users', array(), array('uid'));
+	if (!empty($user_list)) {
+		foreach ($user_list as $user) {
+			cache_delete(cache_system_key ("user_modules:" . $user['uid']));
+		}
+	}
+}
+
+/**
+ * 更新公众号模块列表
+ */
+function cache_build_uni_modules() {
+	$account_list = pdo_getall('uni_account', array(), array('uniacid'));
+	if (!empty($account_list)) {
+		foreach ($account_list as $account) {
+			cache_delete(cache_system_key("unimodules:{$account['uniacid']}:1"));
+			cache_delete(cache_system_key("unimodules:{$account['uniacid']}:"));
+		}
+	}
+
+}
+
+/**
+ * 更新模块信息
+ */
+function cache_build_module_info($module_name) {
+	cache_delete(cache_system_key("module_info:{$module_name}"));
+}
