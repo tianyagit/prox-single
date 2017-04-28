@@ -99,18 +99,6 @@ if($do == 'base') {
 				}
 				$data = array('encodingaeskey' => trim($_GPC['request_data']));
 				break;
-			case 'endtime' :
-				if(intval($_GPC['endtype']) == 1) {
-					$endtime = 0;
-				}else {
-					$endtime = strtotime($_GPC['endtime']);
-				}
-				$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
-				if (empty($owneruid)) {
-					iajax(-1, '抱歉，该公众号未设置主管理员。请先设置主管理员后再行修改到期时间！', url('account/post-user/edit', array('uniacid' => $uniacid, 'acid' => $acid)));
-				}
-				$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $owneruid));
-				break;
 			case 'jointype':
 				$original_type = pdo_get('account', array('uniacid' => $uniacid), 'type');
 				if ($original_type['type'] == ACCOUNT_NORMAL_LOGIN) {
