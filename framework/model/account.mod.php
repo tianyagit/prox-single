@@ -144,9 +144,11 @@ function uni_modules($enabledOnly = true) {
 			}
 		}
 
-		if (!empty($module_list) && pdo_tableexists('modules_plugin')) {
+		if (!empty($module_list)) {
 			$modules = array();
-			$plugin_list = pdo_getall('modules_plugin', array('name' => array_keys($module_list)), array());
+			if (pdo_tableexists('modules_plugin')) {
+				$plugin_list = pdo_getall('modules_plugin', array('name' => array_keys($module_list)), array());
+			}
 			$have_plugin_module = array();
 			if (!empty($plugin_list)) {
 				foreach ($plugin_list as $plugin) {

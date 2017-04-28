@@ -366,9 +366,11 @@ function user_modules($uid) {
 		cache_write($cachekey, $modules);
 	}
 	
-	if (!empty($modules) && pdo_tableexists('modules_plugin')) {
-		$module_list = array();//加上模块插件后的模块列表
-		$plugin_list = pdo_getall('modules_plugin', array('name' => $modules), array());
+	if (!empty($modules)) {
+		$module_list = $plugin_list = array();//加上模块插件后的模块列表
+		if (pdo_tableexists('modules_plugin')) {
+			$plugin_list = pdo_getall('modules_plugin', array('name' => $modules), array());
+		}
 		$have_plugin_module = array();
 		if (!empty($plugin_list)) {
 			foreach ($plugin_list as $plugin) {
