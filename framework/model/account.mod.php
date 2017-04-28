@@ -163,7 +163,7 @@ function uni_modules($enabledOnly = true) {
 				}
 				$module = array(
 					'name' => $name,
-					'enable' => $my_modules[$name]['enabled']
+					'enabled' => $module_list[$name]['issystem'] ? 1 : $my_modules[$name]['enabled']
 				);
 				if (!empty($my_modules[$name]['settings'])) {
 					$module['config'] = iunserializer($my_modules[$name]['settings']);
@@ -181,6 +181,7 @@ function uni_modules($enabledOnly = true) {
 	}
 
 	$module_list = array();
+
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
 			$module_list[$name] = module_fetch($name);
