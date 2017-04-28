@@ -47,7 +47,7 @@ if ($do == 'news') {
 						'url'		=> $row_news['url'],
 						'displayorder' => $key,
 						'show_cover_pic' => intval($row_news['incontent']),
-						'content_source_url' => preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $row_news['content_source_url'])
+						'content_source_url' => $row_news['content_source_url']
 					);
 				}
 			}
