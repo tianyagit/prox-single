@@ -520,8 +520,20 @@ function material_url_check($str){
 	if (empty($str)){
 		return true;
 	}else{
-		$preg1 = "/(http|https):\/\/*/";
-		$preg2 = "/.\/index.php\?*/";
-		return preg_match($preg1, $str) || preg_match($preg2, $str);
+		//普通域名
+		$preg1 = '/^http[s]?:\/\/'.  
+		'(([0-9]{1,3}\.){3}[0-9]{1,3}'.
+		'|'.
+		'([0-9a-z_!~*\'()-]+\.)*'.
+		'([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'.
+		'[a-z]{2,6})'. 
+		'(:[0-9]{1,4})?'. 
+		'((\/\?)|'. 
+		'(\/[0-9a-zA-Z_!~\'\(\)\[\]\.;\?:@&=\+\$,%#-\/^\*\|]*)?)$/';
+		//内部域名
+		$preg2 = "/^\.\/index.php((\?)|(\/)|([0-9a-zA-Z_!~\'\(\)\[\]\.;\?:@&=\+\$,%#-\/^\*\|]*)?)$/";
+		//电话号码
+		$preg3 = "/^tel:(\(\d{3,4}\)|\d{3,4}-|\s)?(\d{7,14}|\d{3,4}-\d{3,4})$/";
+		return preg_match($preg1, $str) || preg_match($preg2, $str) || preg_match($preg3, $str);
 	}
 }
