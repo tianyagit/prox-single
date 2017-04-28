@@ -1,15 +1,14 @@
 {template 'common/header'}
 {if $do == 'display'}
+<div class="we7-page-title">
+	应用权限套餐
+</div>
+
+<ul class="we7-page-tab">
+	<li class="active"><a href="{php echo url('system/module-group/display') }">应用权限套餐列表  </a></li>
+</ul>
 <div class="js-system-module_group" ng-controller="moduleGroupCtrl" ng-cloak>
 	<div class="combo-list">
-		<div class="we7-page-title">
-			应用权限套餐
-		</div>
-
-		<ul class="we7-page-tab">
-			<li class="active"><a href="{php echo url('system/module-group/display') }">应用权限套餐列表  </a></li>
-		</ul>
-
 		<div class="we7-page-search clearfix">
 			{if $_W['role'] == 'founder'}
 			<div class="pull-right">
