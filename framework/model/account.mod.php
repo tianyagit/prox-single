@@ -160,15 +160,17 @@ function uni_modules($enabledOnly = true) {
 			$my_modules = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => array_keys($module_list)), array(), 'module', array('enabled DESC'));
 
 			foreach ($module_list as $name => $module) {
-				if ($enabledOnly && !$module_list[$name]['issystem'] && ($my_modules[$name]['enabled'] == 0 || empty($my_modules[$name]))) {
-					continue;
-				}
-				$module = array(
-					'name' => $name,
-					'enabled' => $module_list[$name]['issystem'] ? 1 : $my_modules[$name]['enabled']
-				);
-				if (!empty($my_modules[$name]['settings'])) {
-					$module['config'] = iunserializer($my_modules[$name]['settings']);
+				if (!empty($my_modules)) {
+					if ($enabledOnly && !$module_list[$name]['issystem'] && ($my_modules[$name]['enabled'] == 0 || empty($my_modules[$name]))) {
+						continue;
+					}
+					$module = array(
+						'name' => $name,
+						'enabled' => $module_list[$name]['issystem'] ? 1 : $my_modules[$name]['enabled']
+					);
+					if (!empty($my_modules[$name]['settings'])) {
+						$module['config'] = iunserializer($my_modules[$name]['settings']);
+					}
 				}
 				$modules[$name] = $module;
 				if (!empty($have_plugin_module[$name])) {
