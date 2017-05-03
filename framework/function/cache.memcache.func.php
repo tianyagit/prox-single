@@ -68,6 +68,8 @@ function cache_search($key) {
  * @return mixed
  */
 function cache_write($key, $value, $ttl = 0, $forcecache = false) {
+	$key = cache_namespace($key);
+	
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
@@ -91,6 +93,8 @@ function cache_write($key, $value, $ttl = 0, $forcecache = false) {
  * @return mixed 
  */
 function cache_delete($key) {
+	$key = cache_namespace($key);
+	
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
@@ -110,6 +114,10 @@ function cache_delete($key) {
  * @param string $prefix
  */
 function cache_clean($prefix = '') {
+	if (!empty($prefix)) {
+		cache_namespace($prefix);
+		return true;
+	}
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
@@ -121,6 +129,37 @@ function cache_clean($prefix = '') {
 	} else {
 		return false;
 	}
+}
+
+/**
+ * Memcache不支持按前缀删除缓存，自己实现一个
+ * @param string $key
+ * @return mixed
+ */
+function cache_namespace($key, $forcenew = false) {
+	$add_namespace = array(
+		cache_system_key('unimodules')
+	);
+	
+	$add_cache_namespace = false;
+	foreach ($add_namespace as $cache_key) {
+		if (strexists($key, $cache_key)) {
+			$add_cache_namespace = true;
+			break;
+		}
+	}
+	
+	if ($add_cache_namespace || $forcenew) {
+		//获取命名空间
+		$namespace_cache_key = cache_system_key('cachensl:' . md5($cache_key));
+		$namespace = pdo_getcolumn('core_cache', array('key' => $namespace_cache_key), 'value');
+		if (empty($namespace)) {
+			$namespace = random(3);
+			pdo_insert('core_cache', array('key' => $namespace_cache_key, 'value' => $namespace), true);
+		}
+		$key = str_replace($cache_key, "{$cache_key}:{$namespace}", $key);
+	}
+	return $key;
 }
 
 function cache_prefix($key) {
