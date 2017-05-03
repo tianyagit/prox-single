@@ -118,31 +118,15 @@ if ($do == 'post') {
 			$ids = implode(',', array_keys($records));
 			pdo_query('DELETE FROM ' . tablename('mc_mass_record') . " WHERE uniacid = :uniacid AND id IN ({$ids})", array(':uniacid' => $_W['uniacid']));
 		}
-
 		//提交数据
 		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
 		$mass = array();
 		foreach ($_GPC['reply'] as $reply_k => $reply_val) {
 			if ($reply_val) {
 				$msgtype = substr($reply_k, 6);
-				switch($msgtype) {
-					case 'news':
-						$mass = ltrim($reply_val, '{');
-						$mass = rtrim($mass, '}');
-						$mass = explode('},{', $mass);
-						foreach ($mass as &$val) {
-							$val = json_decode(htmlspecialchars_decode('{'.$val.'}'), true);
-						}
-						unset($val);
-						$mass['mediaid'] = $mass[0]['mediaid'];
-						break;
-					case 'video':
-						$mass = json_decode(htmlspecialchars_decode($reply_val), true);
-						break;
-					case 'image':
-					case 'voice':
-						$mass['mediaid'] = json_decode(htmlspecialchars_decode($reply_val), true);
-						break;
+				$mass['mediaid'] = trim($_GPC['reply']['reply_'.$msgtype]);
+				if (intval($mass['mediaid']) > 0) {
+					itoast('图文素材请选择微信素材', '', 'info');
 				}
 				$attachment = pdo_get('wechat_attachment', array('media_id' => $mass['mediaid']), array('id'));
 				$mass['id'] = $attachment['id'];

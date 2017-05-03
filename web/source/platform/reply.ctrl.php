@@ -410,10 +410,14 @@ if($do == 'delete') {
 			pdo_delete('stat_rule', array('rid' => $rid));
 			pdo_delete('stat_keyword', array('rid' => $rid));
 			//调用模块中的删除
-			if ($m == 'userapi') {
-				$reply_module = 'userapi';
+			if (!in_array($m, $sysmods)) {
+				$reply_module = $m;
 			} else {
-				$reply_module = 'reply';
+				if ($m == 'userapi') {
+					$reply_module = 'userapi';
+				}else {
+					$reply_module = 'reply';
+				}
 			}
 			$module = WeUtility::createModule($reply_module);
 			if (method_exists($module, 'ruleDeleted')) {
