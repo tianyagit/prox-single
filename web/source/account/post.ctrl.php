@@ -261,7 +261,9 @@ if($do == 'modules_tpl') {
 	}
 	$modules_tpl = $extend = array();
 
-	if ($_W['isfounder']) {
+	$founders = explode(',', $_W['config']['setting']['founder']);
+	$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
+	if (in_array($owner_uid, $founders)) {
 		$modules_tpl[] = array(
 			'id' => -1,
 			'name' => '所有服务',
@@ -305,11 +307,10 @@ if($do == 'modules_tpl') {
 				}
 			}
 		}
-		//附加权限
-		$modules = pdo_getall('modules', array('issystem !=' => 1), array('mid', 'name', 'title'), 'name');
-		$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
 	}
 
+	$modules = pdo_getall('modules', array('issystem !=' => 1), array('mid', 'name', 'title'), 'name');
+	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
 	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
 	$extend['modules'] = iunserializer($extend['modules']);
 	$extend['templates'] = iunserializer($extend['templates']);
