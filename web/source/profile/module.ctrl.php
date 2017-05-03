@@ -37,7 +37,6 @@ if($do == 'display') {
 			if (!empty($module_profile)) {
 				foreach ($module_profile as $name => $row) {
 					$modules[$name] = $modulelist[$name];
-					$modules[$name]['enabled'] = $row['enabled'];
 					$modules[$name]['shortcut'] = $row['shortcut'];
 				}
 			}
