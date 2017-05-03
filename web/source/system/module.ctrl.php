@@ -373,7 +373,6 @@ if ($do =='install') {
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
 		cache_build_user_modules();
-		cache_build_uni_modules();
 		cache_build_module_info($module_name);
 		module_build_privileges();
 

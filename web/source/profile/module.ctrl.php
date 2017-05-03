@@ -87,7 +87,7 @@ if($do == 'display') {
 		'module' => $modulename,
 		'uniacid' => $_W['uniacid']
 	));
-	cache_build_account_modules();
+	cache_build_module_info($modulename);
 	itoast('模块操作成功！', referer(), 'success');
 } elseif ($do == 'top') {
 	$modulename = $_GPC['modulename'];
