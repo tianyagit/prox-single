@@ -3,6 +3,7 @@
 	<div class="we7-page-title">我的账户</div>
 </ol>
 <div id="js-user-profile" ng-controller="UserProfileDisplay" ng-cloak>
+	{if !$_W['isfounder']}
 	<div class="user-head-info we7-padding-bottom" >
 		<img ng-src="{{profile.avatar}}" class="img-circle user-avatar pull-left">
 		<h3 class="pull-left" ng-bind="user.username"></h3>
@@ -12,6 +13,7 @@
 		<li role="presentation"><a href="#modules_tpl" aria-controls="modules_tpl" role="tab" data-toggle="tab">应用模板权限</a></li>
 		<li role="presentation"><a href="#account" aria-controls="account" role="tab" data-toggle="tab">使用账号列表</a></li>
 	</ul>
+	{/if}
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="base">
 			<table class="table we7-table table-hover table-form">
@@ -212,6 +214,7 @@
 				</div>
 			</div>
 		</div>
+		{if $_W['isfounder']}
 		<div role="tabpanel" class="tab-pane" id="modules_tpl">
 			<div class="panel we7-panel user-permission">
 				<div class="panel-heading">
@@ -328,6 +331,7 @@
 				</tr>
 			</table>
 		</div>
+		{/if}
 	</div>
 </div>
 <script>
