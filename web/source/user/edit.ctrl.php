@@ -23,12 +23,8 @@ if (empty($user)) {
 	if ($user['status'] == 3) itoast('访问错误，该用户已被禁用，请先启用再修改！', url('user/display/recycle_display'), 'error');
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
-$profile = pdo_fetch('SELECT * FROM '.tablename('users_profile').' WHERE `uid` = :uid LIMIT 1',array(':uid' => $uid));
+$profile = pdo_get('users_profile', array('uid' => $uid));
 if (!empty($profile)) $profile['avatar'] = tomedia($profile['avatar']);
-$avatar = file_fetch($profile['avatar']);
-if (is_error($avatar)) {
-	$profile['avatar'] = './resource/images/nopic-107.png';
-}
 
 //编辑用户基础信息
 if ($do == 'edit_base') {
