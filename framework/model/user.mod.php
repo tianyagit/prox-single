@@ -367,26 +367,9 @@ function user_modules($uid) {
 	}
 	
 	if (!empty($modules)) {
-		$module_list = $plugin_list = array();//加上模块插件后的模块列表
-		if (pdo_tableexists('modules_plugin')) {
-			$plugin_list = pdo_getall('modules_plugin', array('name' => $modules), array());
-		}
-		$have_plugin_module = array();
-		if (!empty($plugin_list)) {
-			foreach ($plugin_list as $plugin) {
-				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
-				$module_key = array_search($plugin['name'], $modules);
-				unset($modules[$module_key]);
-			}
-		}
-
+		$module_list = array();
 		foreach ($modules as $module) {
 			$module_list[$module] = module_fetch($module);
-			if (!empty($have_plugin_module[$module])) {
-				foreach ($have_plugin_module[$module] as $plugin) {
-					$module_list[$plugin] = module_fetch($plugin);
-				}
-			}
 		}
 	}
 	return $module_list;

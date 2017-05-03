@@ -106,17 +106,17 @@ function uni_fetch($uniacid = 0) {
 /**
  * 获取当前公号下所有安装模块及模块信息
  * 公众号的权限是owner所有套餐内的全部模块权限
- * @param boolean $enabledOnly 是否只显示可用模块
+ * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
  */
-function uni_modules($enabledOnly = true) {
+function uni_modules($enabled = true) {
 	global $_W;
 	load()->model('user');
 	load()->model('module');
 
-	$cachekey = cache_system_key("unimodules:{$_W['uniacid']}:{$enabledOnly}");
-	$modules = cache_load($cachekey);
-
+	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $_W['uniacid'], $enabled);
+	//$modules = cache_load($cachekey);
+	
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
@@ -143,52 +143,14 @@ function uni_modules($enabledOnly = true) {
 				$module_list = pdo_getall('modules', array('name' => $modules), array('name', 'issystem'), 'name', array('mid DESC'));
 			}
 		}
-
-		if (!empty($module_list)) {
-			$modules = array();
-			if (pdo_tableexists('modules_plugin')) {
-				$plugin_list = pdo_getall('modules_plugin', array('name' => array_keys($module_list)), array());
-			}
-			$have_plugin_module = array();
-			if (!empty($plugin_list)) {
-				foreach ($plugin_list as $plugin) {
-					$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
-					unset($module_list[$plugin['name']]);
-				}
-			}
-
-			$my_modules = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => array_keys($module_list)), array(), 'module', array('enabled DESC'));
-
-			foreach ($module_list as $name => $module) {
-				if ($enabledOnly && !$module_list[$name]['issystem'] && ($my_modules[$name]['enabled'] == 0 || empty($my_modules[$name]))) {
-					continue;
-				}
-				$module = array(
-					'name' => $name,
-					'enabled' => $module_list[$name]['issystem'] ? 1 : $my_modules[$name]['enabled']
-				);
-				if (!empty($my_modules[$name]['settings'])) {
-					$module['config'] = iunserializer($my_modules[$name]['settings']);
-				}
-				$modules[$name] = $module;
-				if (!empty($have_plugin_module[$name])) {
-					foreach ($have_plugin_module[$name] as $plugin) {
-						$modules[$plugin] = $plugin;
-					}
-				}
-			}
-			unset($module);
-		}
-		cache_write($cachekey, $modules);
+		cache_write($cachekey, $module_list);
+		$modules = $module_list;
 	}
-
+	
 	$module_list = array();
-
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
 			$module_list[$name] = module_fetch($name);
-			$module_list[$name]['config'] = empty($module['config']) ? array() : $module['config'];
-			$module_list[$name]['enabled'] = empty($module['enabled']) ? 0 : $module['enabled'];
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
