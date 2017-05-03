@@ -322,7 +322,7 @@ function user_modules($uid) {
 	load()->model('module');
 	$cachekey = cache_system_key("user_modules:" . $uid);
 	$modules = cache_load($cachekey);
-	if (!empty($modules)) {
+	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$user_info = user_single(array ('uid' => $uid));
 

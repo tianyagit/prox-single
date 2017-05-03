@@ -115,7 +115,7 @@ function uni_modules($enabled = true) {
 	load()->model('module');
 
 	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $_W['uniacid'], $enabled);
-	//$modules = cache_load($cachekey);
+	$modules = cache_load($cachekey);
 	
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
