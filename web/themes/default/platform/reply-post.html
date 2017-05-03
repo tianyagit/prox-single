@@ -117,13 +117,15 @@
 			</div>
 		</div>
 		</div>
-		{if $m ==  'userapi'}
-			{php echo module_build_form('userapi', $rid)}
-		{elseif in_array($m, $sysmods)}
-			{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
-		{else}
-			{php echo module_build_form($m, $rid)}
-		{/if}
+		<div class="form-group">
+			{if $m ==  'userapi'}
+				{php echo module_build_form('userapi', $rid)}
+			{elseif in_array($m, $sysmods)}
+				{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
+			{else}
+				{php echo module_build_form($m, $rid)}
+			{/if}
+		</div>
 		<div class="form-group we7-form">
 			<input type="hidden" name="token" value="{$_W['token']}">
 			<input type="submit" name="submit" value="发布" class="reply-form-submit hidden">
