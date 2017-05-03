@@ -83,15 +83,6 @@ function cache_build_memberinfo($uid) {
 	return true;
 }
 
-function cache_build_accesstoken() {
-	global $_W;
-	$uniacid_arr = pdo_fetchall("SELECT acid FROM " . tablename('account_wechats'));
-	foreach($uniacid_arr as $account){
-		cache_delete("accesstoken:{$account['acid']}");
-		cache_delete("jsticket:{$account['acid']}");
-		cache_delete("cardticket:{$account['acid']}");
-	}
-}
 /**
  * 更新会员个人信息字段
  * @return array
@@ -251,18 +242,7 @@ function cache_build_module_subscribe_type() {
 	return $subscribe;
 }
 
-function cache_build_platform() {
-	return pdo_query("DELETE FROM " . tablename('core_cache') . " WHERE `key` LIKE 'account%' AND `key` <> 'account:ticket';");
-}
 
-/*更新公众号关注人数*/
-function cache_build_stat_fans() {
-	global $_W;
-	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
-	foreach($uniacid_arr as $account){
-		cache_delete("stat:todaylock:{$account['uniacid']}");
-	}
-}
 /*更新流量主缓存*/
 function cache_build_cloud_ad() {
 	global $_W;
@@ -429,12 +409,8 @@ function cache_build_user_modules($uid) {
 	if (!empty($uid)) {
 		cache_delete(cache_system_key("user_modules:" . $uid));
 	} else {
-		$user_list = pdo_getall('users', array(), array('uid'));
-		if (!empty($user_list)) {
-			foreach ($user_list as $user) {
-				cache_delete(cache_system_key ("user_modules:" . $user['uid']));
-			}
-		}
+		//以前缀的形式删除缓存
+		cache_clean('user_modules');
 	}
 }
 
