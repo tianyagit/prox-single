@@ -766,7 +766,7 @@ class DB {
 		}
 		$tablename = str_replace($this->tablepre, '', $tablename);
 		//获取命名空间
-		$namespace = $this->getColumn('core_cache', array('key' => 'dbcache:namespace:'.$tablename), 'value');
+		$namespace = $this->getColumn('core_cache', array('key' => 'we7:dbkey:'.$tablename), 'value');
 		if (empty($namespace) || $forcenew) {
 			$namespace = random(8);
 			$this->delete('core_cache', array('key LIKE' => "%{$tablename}%", 'key !=' => 'dbkey:'.$tablename));
