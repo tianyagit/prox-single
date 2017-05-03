@@ -273,7 +273,9 @@ function module_fetch($name) {
 		$setting = cache_load($setting_cachekey);
 		if (empty($setting)) {
 			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));
-			cache_write($setting_cachekey, $setting);
+			if (!empty($setting)) {
+				cache_write($setting_cachekey, $setting);
+			}
 		}
 		$module['config'] = !empty($setting['settings']) ? iunserializer($setting['settings']) : array();
 		$module['enabled'] = $module['issystem'] || !isset($setting['enabled']) ? 1 : $setting['enabled'];

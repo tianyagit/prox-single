@@ -425,11 +425,15 @@ function cache_build_proxy_wechatpay_account() {
 /**
  * 更新用户模块列表
  */
-function cache_build_user_modules() {
-	$user_list = pdo_getall('users', array(), array('uid'));
-	if (!empty($user_list)) {
-		foreach ($user_list as $user) {
-			cache_delete(cache_system_key ("user_modules:" . $user['uid']));
+function cache_build_user_modules($uid) {
+	if (!empty($uid)) {
+		cache_delete(cache_system_key("user_modules:" . $uid));
+	} else {
+		$user_list = pdo_getall('users', array(), array('uid'));
+		if (!empty($user_list)) {
+			foreach ($user_list as $user) {
+				cache_delete(cache_system_key ("user_modules:" . $user['uid']));
+			}
 		}
 	}
 }

@@ -235,7 +235,7 @@
 										<span class="help-block">字数不超过4个汉字或8个字母</span>
 									</div>
 								</div>
-								<div class="form-group">
+								<div class="form-group" ng-show="context.activeItem.forceHide == 0">
 									<label for="" class="control-label col-sm-2">菜单内容</label>
 									<div class="form-controls col-sm-10">
 										<input id="radio-1" type="radio" name="ipt" ng-checked="context.activeItem.type == 'media_id' || context.activeItem.type == 'click'" ng-model="context.activeItem.type" value="click" ng-disabled="context.group.disabled">
@@ -256,7 +256,7 @@
 										<label for="radio-8">相册发图 </label>
 									</div>
 								</div>
-								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if} ng-show="context.activeItem.type == 'view'">
+								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if} ng-show="context.activeItem.type == 'view'  && context.activeItem.forceHide == 0">
 									<div class="form-group">
 										<p class="color-gray">订阅者点击该子菜单会跳转到以下链接</p>
 										<label for="" class="control-label col-sm-2">页面地址</label>
@@ -268,7 +268,7 @@
 									</div>
 								</div>
 								
-								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'" style="width:100%;">
+								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'  && context.activeItem.forceHide == 0" style="width:100%;">
 									<div class="panel-heading">
 										回复内容
 									</div>
@@ -320,13 +320,13 @@
 										</div>
 									</div>
 								</div>
-								<div class="panel we7-panel" style="width: 100%;" ng-show="context.activeItem.type == 'click'">
+								<div class="panel we7-panel" style="width: 100%;" ng-show="context.activeItem.type == 'click' && context.activeItem.forceHide == 0">
 									<div class="panel-heading">
 										回复内容
 									</div>
 									<div class="panel-body we7-padding">
 										<ul class="keywords-list">
-											<li ng-if="(context.activeItem.material[0].type == 'keyword' || (context.activeItem.type == 'click' && context.activeItem.key)) && context.activeItem.forceHide == 0">
+											<li ng-if="context.activeItem.material[0].type == 'keyword' || (context.activeItem.type == 'click' && context.activeItem.key)">
 												<div>
 													<div class="desc">
 														<div class="media-content">
@@ -337,7 +337,7 @@
 													</div>
 												</div>
 											</li>
-											<li ng-if="context.activeItem.material[0].type == 'news' && context.activeItem.forceHide == 0">
+											<li ng-if="context.activeItem.material[0].type == 'news'">
 												<div class="">
 													<div class="desc">
 														<div class="media-content">
@@ -352,7 +352,7 @@
 													</div>
 												</div>
 											</li>
-											<li ng-if="context.activeItem.material[0].type == 'image' && context.activeItem.forceHide == 0">
+											<li ng-if="context.activeItem.material[0].type == 'image'">
 												<div>
 													<div class="desc">
 														<div class="media-content">
@@ -366,7 +366,7 @@
 													</div>
 												</div>
 											</li>
-											<li ng-if="context.activeItem.material[0].type == 'voice' && context.activeItem.forceHide == 0">
+											<li ng-if="context.activeItem.material[0].type == 'voice'">
 												<div>
 													<div class="desc">
 														<div class="media-content">
@@ -382,7 +382,7 @@
 													</div>
 												</div>
 											</li>
-											<li ng-if="context.activeItem.material[0].type == 'video' && context.activeItem.forceHide == 0">
+											<li ng-if="context.activeItem.material[0].type == 'video'">
 												<div>
 													<div class="desc">
 														<div class="media-content">

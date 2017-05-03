@@ -311,7 +311,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 }
 
 /**
- * 无网页授权的公众号,通过借用授权定位 openid 和 uid
+ * 无网页授权的公众号,通过借用授权   定位 openid 和 uid
  * @param string $openid 粉丝唯一标志
  * @param int $acid 子公众号ID
  * @return array

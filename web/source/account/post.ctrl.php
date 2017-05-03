@@ -261,45 +261,54 @@ if($do == 'modules_tpl') {
 	}
 	$modules_tpl = $extend = array();
 
-	$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
-	$owner['group']['package'] = iunserializer($owner['group']['package']);
-	if(!empty($owner['group']['package'])){
-		foreach ($owner['group']['package'] as $package_value) {
-			if($package_value == -1){
-				$modules_tpl[] = array(
+	if ($_W['isfounder']) {
+		$modules_tpl[] = array(
+			'id' => -1,
+			'name' => '所有服务',
+			'modules' => array(array('name' => 'all', 'title' => '所有模块')),
+			'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+		);
+	} else {
+		$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
+		$owner['group']['package'] = iunserializer($owner['group']['package']);
+		if(!empty($owner['group']['package'])){
+			foreach ($owner['group']['package'] as $package_value) {
+				if($package_value == -1){
+					$modules_tpl[] = array(
 						'id' => -1,
 						'name' => '所有服务',
 						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
 					);
-			}elseif ($package_value == 0) {
-				
-			}else {
-				$modules_tpl[] = $unigroups[$package_value];
+				}elseif ($package_value == 0) {
+
+				}else {
+					$modules_tpl[] = $unigroups[$package_value];
+				}
 			}
 		}
-	}
-	//附加套餐
-	$extendpackage = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
-	if(!empty($extendpackage)) {
-		foreach ($extendpackage as $extendpackage_val) {
-			if($extendpackage_val['groupid'] == -1){
-				$modules_tpl[] = array(
+		//附加套餐
+		$extendpackage = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
+		if(!empty($extendpackage)) {
+			foreach ($extendpackage as $extendpackage_val) {
+				if($extendpackage_val['groupid'] == -1){
+					$modules_tpl[] = array(
 						'id' => -1,
 						'name' => '所有服务',
 						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
 					);
-			}elseif ($extendpackage_val['groupid'] == 0) {
-				
-			}else {
-				$modules_tpl[] = $unigroups[$extendpackage_val['groupid']];
+				}elseif ($extendpackage_val['groupid'] == 0) {
+
+				}else {
+					$modules_tpl[] = $unigroups[$extendpackage_val['groupid']];
+				}
 			}
 		}
+		//附加权限
+		$modules = pdo_getall('modules', array('issystem !=' => 1), array('mid', 'name', 'title'), 'name');
+		$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
 	}
-	//附加权限
-	$modules = pdo_getall('modules', array('issystem !=' => 1), array('mid', 'name', 'title'), 'name');
-	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
 
 	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
 	$extend['modules'] = iunserializer($extend['modules']);
