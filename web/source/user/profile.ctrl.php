@@ -156,10 +156,6 @@ if ($do == 'base') {
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
 	if (!empty($profile)) {
-		$avatar = file_fetch($profile['avatar']);
-		if (is_error($avatar)) {
-			$profile['avatar'] = './resource/images/nopic-107.png';
-		}
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
 			'city' => $profile['residecity'],

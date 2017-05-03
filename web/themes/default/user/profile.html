@@ -3,6 +3,10 @@
 	<div class="we7-page-title">我的账户</div>
 </ol>
 <div id="js-user-profile" ng-controller="UserProfileDisplay" ng-cloak>
+	<div class="user-head-info we7-padding-bottom" >
+		<img ng-src="{{profile.avatar}}" class="img-circle user-avatar pull-left">
+		<h3 class="pull-left" ng-bind="user.username"></h3>
+	</div>
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active"><a href="#base" aria-controls="base" role="tab" data-toggle="tab">基础信息</a></li>
 		<li role="presentation"><a href="#modules_tpl" aria-controls="modules_tpl" role="tab" data-toggle="tab">应用模板权限</a></li>
