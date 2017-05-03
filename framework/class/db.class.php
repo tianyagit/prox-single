@@ -250,6 +250,8 @@ class DB {
 	public function getall($tablename, $params = array(), $fields = array(), $keyfield = '', $orderby = array(), $limit = array()) {
 		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
+		$limitsql = '';
+		
 		if (!empty($limit)) {
 			if (is_array($limit)) {
 				if (count($limit) == 1) {

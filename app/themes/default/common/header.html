@@ -105,3 +105,8 @@
 	<h1 class="mui-title">{if !empty($title)}{$title}{elseif !empty($_W['page']['title'])}{$_W['page']['title']}{/if}</h1>
 </header>
 {/if}
+{php load()->app('tpl')}
+<div class="mui-input-row">
+	<label>出生日期</label>
+	{php echo tpl_app_fans_form('birth', array('year' => 1988, 'month' => 8, 'day' => 23), $mcFields['birthyear']['title']);exit;}
+</div>
