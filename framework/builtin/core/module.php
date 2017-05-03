@@ -137,10 +137,11 @@ class CoreModule extends WeModule {
 										foreach ($replies[$key] as &$news_value) {
 											if (!empty($news_value) && !empty($news_value['media_id'])) {
 												$news_material = material_get($news_value['media_id']);
-												$news_value['attach_id'] = $news_material['id'];
-												$news_value['model'] = $news_material['model'];
-												$news_value['thumb'] = tomedia($news_material['news'][0]['thumb_url']);
-												$news_value['isdeleted'] = is_error($news_material) ? 1 : 0;
+												if (!is_error($news_material)) {
+													$news_value['attach_id'] = $news_material['id'];
+													$news_value['model'] = $news_material['model'];
+													$news_value['thumb'] = tomedia($news_material['news'][0]['thumb_url']);
+												}
 											} else {
 												$news_value['thumb'] = tomedia($news_value['thumb']);
 											}
