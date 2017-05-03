@@ -33,11 +33,13 @@ function cache_build_account_modules($uniacid = 0) {
 	if (empty($uniacid)) {
 		//以前缀的形式删除缓存
 		cache_clean('unimodules');
+		cache_clean('user_modules');
 	} else {
 		cache_delete(cache_system_key("unimodules:{$uniacid}:1"));
 		cache_delete(cache_system_key("unimodules:{$uniacid}:"));
+		$owner_uid = pdo_getcolumn('uni_account_user', array('role' => 'owner'), 'uid');
+		cache_delete(cache_system_key("user_modules:" . $owner_uid));
 	}
-
 }
 /*
  * 重建公众号缓存
@@ -400,18 +402,6 @@ function cache_build_proxy_wechatpay_account() {
 	);
 	cache_write(cache_system_key("proxy_wechatpay_account:"), $cache);
 	return $cache;
-}
-
-/**
- * 更新用户模块列表
- */
-function cache_build_user_modules($uid) {
-	if (!empty($uid)) {
-		cache_delete(cache_system_key("user_modules:" . $uid));
-	} else {
-		//以前缀的形式删除缓存
-		cache_clean('user_modules');
-	}
 }
 
 /**
