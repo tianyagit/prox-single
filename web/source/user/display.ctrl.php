@@ -114,7 +114,6 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 				if (!empty($user_set_account)) {
 					foreach ($user_set_account as $account) {
 						cache_build_account_modules($account['uniacid']);
-						cache_build_user_modules($uid);
 					}
 				}
 				pdo_delete('uni_account_users', array('uid' => $uid));
