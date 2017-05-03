@@ -112,7 +112,7 @@ function checkauth() {
 	} else {
 		header("location: " . url('auth/login', array('forward' => $forward)), true);
 	}
-	exit;	
+	exit;
 }
 
 function __buildSiteUrl($url) {
