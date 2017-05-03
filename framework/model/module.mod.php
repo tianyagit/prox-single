@@ -234,15 +234,42 @@ function module_build_form($name, $rid, $option = array()) {
  */
 function module_fetch($name) {
 	global $_W;
-	$cachekey = cache_system_key('module_info:' .  $name);
+	$cachekey = cache_system_key(CACHE_KEY_MODULE_INFO, $name);
 	$module = cache_load($cachekey);
 	if (empty($module)) {
-		$module = pdo_get('modules', array('name' => $name));
-		$module = module_parse_info($module);
-		cache_write($cachekey, $module);
+		$module_info = pdo_get('modules', array('name' => $name));
+
+		if (!empty($module_info['subscribes'])) {
+			$module_info['subscribes'] = (array)unserialize($module_info['subscribes']);
+		}
+		if (!empty($module_info['handles'])) {
+			$module_info['handles'] = (array)unserialize($module_info['handles']);
+		}
+		$module_info['isdisplay'] = 1;
+
+		if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg')) {
+			$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg'). "?v=". time();
+		} else {
+			$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg'). "?v=". time();
+		}
+		
+		$module_info['main_module'] = pdo_getcolumn('modules_plugin', array('name' => $module_info['name']), 'main_module');
+		if (!empty($module_info['main_module'])) {
+			$main_module_info = module_fetch($module_info['main_module']);
+			$module_info['main_module_logo'] = $main_module_info['logo'];
+		} else {
+			$module_info['plugin_list'] = pdo_getall('modules_plugin', array('main_module' => $module_info['name']), array(), 'name');
+			if (!empty($module_info['plugin_list'])) {
+				$module_info['plugin_list'] = array_keys($module_info['plugin_list']);
+			}
+		}
+		
+		$module = $module_info;
+		cache_write($cachekey, $module_info);
 	}
-	if (!empty($module)) {
-		$setting_cachekey = cache_system_key($_W['uniacid'] . "module_setting:" . $name);
+	//有公众号时，附加模块配置信息
+	if (!empty($module) && !empty($_W['uniacid'])) {
+		$setting_cachekey = cache_system_key(CACHE_KEY_MODULE_SETTING, $_W['uniacid'], $name);
 		$setting = cache_load($setting_cachekey);
 		if (empty($setting)) {
 			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));
@@ -362,38 +389,6 @@ function module_permission_fetch($name) {
 }
 
 /**
- * 解析从数据库中取出的模块信息
- * @param array() $module_info 模块信息
- */
-function module_parse_info($module_info) {
-	if (empty($module_info)) {
-		return array();
-	}
-	if (!empty($module_info['subscribes'])) {
-		$module_info['subscribes'] = iunserializer($module_info['subscribes']);
-	}
-	if (!empty($module_info['handles'])) {
-		$module_info['handles'] = iunserializer($module_info['handles']);
-	}
-	$module_info['isdisplay'] = 1;
-	$module_info['main_module'] = pdo_getcolumn('modules_plugin', array('name' => $module_info['name']), 'main_module');
-	if (!empty($module_info['main_module'])) {
-		$main_module_info = module_fetch($module_info['main_module']);
-		$module_info['main_module_logo'] = $main_module_info['logo'];
-	}
-	$module_info['plugin_list'] = pdo_getall('modules_plugin', array('main_module' => $module_info['name']), array(), 'name');
-	$module_info['plugin_list'] = array_keys($module_info['plugin_list']);
-
-	if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg')) {
-		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg'). "?v=". time();
-	} else {
-		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg'). "?v=". time();
-	}
-	unset($module_info['description']);
-	return $module_info;
-}
-
-/**
  *  卸载模块
  * @param string $module_name 模块标识
  * @param bool $is_clean_rule 是否删除相关的统计数据和回复规则
@@ -446,7 +441,6 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	cache_build_module_subscribe_type();
 	cache_build_uninstalled_module();
 	cache_build_user_modules();
-	cache_build_uni_modules();
 	cache_build_module_info($module_name);
 
 	return true;
