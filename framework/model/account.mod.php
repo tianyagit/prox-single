@@ -145,8 +145,6 @@ function uni_modules($enabled = true) {
 		}
 		cache_write($cachekey, $module_list);
 		$modules = $module_list;
-				if (!empty($my_modules)) {
-					}
 	}
 	
 	$module_list = array();
