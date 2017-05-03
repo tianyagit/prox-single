@@ -158,7 +158,7 @@ function cache_namespace($key, $forcenew = false) {
 			$namespace_cache_key = $key1;
 		}
 	}
-	if (!in_array($namespace_cache_key, array('unimodules'))) {
+	if (!in_array($namespace_cache_key, array('unimodules', 'user_modules'))) {
 		return $key;
 	}
 	

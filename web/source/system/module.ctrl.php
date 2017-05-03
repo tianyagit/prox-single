@@ -230,7 +230,6 @@ if ($do == 'upgrade') {
 	}
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
-	cache_delete(cache_system_key("user_modules:" . $_W['uid']));
 	cache_build_uninstalled_module();
 	if (!empty($module['subscribes'])) {
 		ext_check_module_subscribe($module['name']);

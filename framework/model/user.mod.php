@@ -390,7 +390,10 @@ function user_modules($uid) {
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
-			$module_list[$module] = module_fetch($module);
+			$module_info = module_fetch($module);
+			if (!empty($module_info)) {
+				$module_list[$module] = $module_info;
+			}
 		}
 	}
 	return $module_list;
