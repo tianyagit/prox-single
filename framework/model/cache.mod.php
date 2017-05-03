@@ -31,16 +31,11 @@ function cache_build_setting() {
 function cache_build_account_modules($uniacid = 0) {
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
-		$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
-		foreach($uniacid_arr as $account){
-			cache_delete(cache_system_key("unimodules:{$account['uniacid']}:1"));
-			cache_delete(cache_system_key("unimodules:{$account['uniacid']}:"));
-			cache_delete(cache_system_key("unimodulesappbinding:{$account['uniacid']}"));
-		}
+		//以前缀的形式删除缓存
+		cache_clean('unimodules');
 	} else {
 		cache_delete(cache_system_key("unimodules:{$uniacid}:1"));
 		cache_delete(cache_system_key("unimodules:{$uniacid}:"));
-		cache_delete(cache_system_key("unimodulesappbinding:{$uniacid}"));
 	}
 
 }

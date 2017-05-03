@@ -115,8 +115,8 @@ function uni_modules($enabled = true) {
 	load()->model('module');
 
 	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $_W['uniacid'], $enabled);
-	//$modules = cache_load($cachekey);
-	
+	$modules = cache_load($cachekey);
+
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
@@ -145,8 +145,6 @@ function uni_modules($enabled = true) {
 		}
 		cache_write($cachekey, $module_list);
 		$modules = $module_list;
-				if (!empty($my_modules)) {
-					}
 	}
 	
 	$module_list = array();
