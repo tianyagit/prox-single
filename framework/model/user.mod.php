@@ -229,7 +229,7 @@ function user_level() {
  *获取某一用户组下详细信息
  *@param  number $groupid 用户组ID
  *@return array
-*/
+ */
 function user_group_detail_info($groupid = 0) {
 	$groupid = is_array($groupid) ? 0 : intval($groupid);
 	if(empty($groupid)) {
@@ -264,7 +264,7 @@ function user_group_detail_info($groupid = 0) {
 			}
 		}
 	}
-	return $group_info;	
+	return $group_info;
 }
 
 /**
@@ -275,7 +275,7 @@ function user_group_detail_info($groupid = 0) {
  */
 function user_account_detail_info($uid) {
 	$wxapps = $wechats = $account_lists = array();
-	
+
 	$sql = "SELECT b.uniacid, b.role, a.type FROM " . tablename('account'). " AS a LEFT JOIN ". tablename('uni_account_users') . " AS b ON a.uniacid = b.uniacid WHERE a.acid <> 0 AND a.isdeleted <> 1 AND b.uid = :uid";
 	$account_users_info = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
 	foreach ($account_users_info as $uniacid => $account) {
@@ -301,7 +301,7 @@ function user_account_detail_info($uid) {
 					if ($user_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 						$account_lists['wxapp'][$uniacid] = $account_val;
 					} elseif ($user_info['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $user_info['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-						$account_lists['wechat'][$uniacid] = $account_val;	
+						$account_lists['wechat'][$uniacid] = $account_val;
 					}
 				}
 			}
@@ -322,16 +322,15 @@ function user_modules($uid) {
 	load()->model('module');
 	$cachekey = cache_system_key("user_modules:" . $uid);
 	$modules = cache_load($cachekey);
-
-	if (empty($modules)) {
+	if (!empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
 		if (empty($uid) || in_array($uid, $founders)) {
-			$modules = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
+			$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
-			$modules = $system_modules;
+			$module_list = $system_modules;
 		} else {
 			$user_group_info = pdo_get('users_group', array ('id' => $user_info['groupid']));
 			if (!empty($user_group_info) && !empty($user_group_info['package'])) {
@@ -341,7 +340,7 @@ function user_modules($uid) {
 			}
 			//如果套餐组中包含-1，则直接取全部权限，否则根据情况获取模块权限
 			if (!empty($packageids) && in_array('-1', $packageids)) {
-				$modules = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
+				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 			} else {
 				//此处缺少公众号专属套餐
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
@@ -358,16 +357,38 @@ function user_modules($uid) {
 						}
 					}
 				}
-				$modules = pdo_fetchall("SELECT name FROM ".tablename('modules')." WHERE 
+				$module_list = pdo_fetchall("SELECT name FROM ".tablename('modules')." WHERE
 										name IN ('" . implode("','", $package_group_module) . "') OR issystem = '1' ORDER BY mid DESC", array(), 'name');
 			}
 		}
-		$modules = array_keys($modules);
+		$module_list = array_keys($module_list);
+		$plugin_list = $modules = array();
+		if (pdo_tableexists('modules_plugin')) {
+			$plugin_list = pdo_getall('modules_plugin', array('name' => $module_list), array());
+		}
+		$have_plugin_module = array();
+		if (!empty($plugin_list)) {
+			foreach ($plugin_list as $plugin) {
+				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
+				$module_key = array_search($plugin['name'], $module_list);
+				unset($module_list[$module_key]);
+			}
+		}
+		if (!empty($module_list)) {
+			foreach ($module_list as $module) {
+				$modules[] = $module;
+				if (!empty($have_plugin_module[$module])) {
+					foreach ($have_plugin_module[$module] as $plugin) {
+						$modules[] = $plugin;
+					}
+				}
+			}
+		}
 		cache_write($cachekey, $modules);
 	}
-	
+
+	$module_list = array();
 	if (!empty($modules)) {
-		$module_list = array();
 		foreach ($modules as $module) {
 			$module_list[$module] = module_fetch($module);
 		}
