@@ -368,7 +368,7 @@ function cache_build_uninstalled_module() {
 }
 
 /**
- * 更新未安装模块列表
+ * 构造可以借用支付和服务商支付的公众号的缓存
  */
 function cache_build_proxy_wechatpay_account() {
 	global $_W;
