@@ -766,11 +766,12 @@ class DB {
 		}
 		$tablename = str_replace($this->tablepre, '', $tablename);
 		//获取命名空间
-		$namespace = $this->getColumn('core_cache', array('key' => 'we7:dbkey:'.$tablename), 'value');
+		$db_cache_key = 'we7:dbkey:'.$tablename;
+		$namespace = $this->getColumn('core_cache', array('key' => $db_cache_key), 'value');
 		if (empty($namespace) || $forcenew) {
 			$namespace = random(8);
-			$this->delete('core_cache', array('key LIKE' => "%{$tablename}%", 'key !=' => 'dbkey:'.$tablename));
-			$this->insert('core_cache', array('key' => 'we7:dbkey:'.$tablename, 'value' => $namespace), true);
+			$this->delete('core_cache', array('key LIKE' => "%{$tablename}%", 'key !=' => $db_cache_key));
+			$this->insert('core_cache', array('key' => $db_cache_key, 'value' => $namespace), true);
 		}
 		return $tablename . ':' . $namespace;
 	}
