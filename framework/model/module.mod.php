@@ -238,30 +238,31 @@ function module_fetch($name) {
 	$module = cache_load($cachekey);
 	if (empty($module)) {
 		$module_info = pdo_get('modules', array('name' => $name));
-		if (!empty($module_info)) {
-			if (!empty($module_info['subscribes'])) {
-				$module_info['subscribes'] = (array)unserialize ($module_info['subscribes']);
-			}
-			if (!empty($module_info['handles'])) {
-				$module_info['handles'] = (array)unserialize ($module_info['handles']);
-			}
-			$module_info['isdisplay'] = 1;
+		if (empty($module_info)) {
+			return array();
+		}
+		if (!empty($module_info['subscribes'])) {
+			$module_info['subscribes'] = (array)unserialize ($module_info['subscribes']);
+		}
+		if (!empty($module_info['handles'])) {
+			$module_info['handles'] = (array)unserialize ($module_info['handles']);
+		}
+		$module_info['isdisplay'] = 1;
 
-			if (file_exists (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg')) {
-				$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg') . "?v=" . time ();
-			} else {
-				$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon.jpg') . "?v=" . time ();
-			}
+		if (file_exists (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg')) {
+			$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg') . "?v=" . time ();
+		} else {
+			$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon.jpg') . "?v=" . time ();
+		}
 
-			$module_info['main_module'] = pdo_getcolumn ('modules_plugin', array ('name' => $module_info['name']), 'main_module');
-			if (!empty($module_info['main_module'])) {
-				$main_module_info = module_fetch ($module_info['main_module']);
-				$module_info['main_module_logo'] = $main_module_info['logo'];
-			} else {
-				$module_info['plugin_list'] = pdo_getall ('modules_plugin', array ('main_module' => $module_info['name']), array (), 'name');
-				if (!empty($module_info['plugin_list'])) {
-					$module_info['plugin_list'] = array_keys ($module_info['plugin_list']);
-				}
+		$module_info['main_module'] = pdo_getcolumn ('modules_plugin', array ('name' => $module_info['name']), 'main_module');
+		if (!empty($module_info['main_module'])) {
+			$main_module_info = module_fetch ($module_info['main_module']);
+			$module_info['main_module_logo'] = $main_module_info['logo'];
+		} else {
+			$module_info['plugin_list'] = pdo_getall ('modules_plugin', array ('main_module' => $module_info['name']), array (), 'name');
+			if (!empty($module_info['plugin_list'])) {
+				$module_info['plugin_list'] = array_keys ($module_info['plugin_list']);
 			}
 		}
 		$module = $module_info;
