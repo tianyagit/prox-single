@@ -407,7 +407,7 @@ function cache_build_proxy_wechatpay_account() {
 	if (!empty($uniaccounts)) {
 		foreach ($uniaccounts as $uniaccount) {
 			$account = account_fetch($uniaccount['default_acid']);
-			$account_setting = pdo_get ('uni_settings', array ('uniacid' => $account['uniacid']));
+			$account_setting = pdo_get('uni_settings', array ('uniacid' => $account['uniacid']));
 			$payment = iunserializer($account_setting['payment']);
 			if (!empty($account['key']) && !empty($account['secret']) && in_array ($account['level'], array (4)) && !empty($payment) && intval ($payment['wechat']['switch']) == 1) {
 				if ((!is_bool ($payment['wechat']['switch']) && $payment['wechat']['switch'] != 4) || (is_bool ($payment['wechat']['switch']) && !empty($payment['wechat']['switch']))) {
@@ -440,22 +440,10 @@ function cache_build_user_modules() {
 }
 
 /**
- * 更新公众号模块列表
- */
-function cache_build_uni_modules() {
-	$account_list = pdo_getall('uni_account', array(), array('uniacid'));
-	if (!empty($account_list)) {
-		foreach ($account_list as $account) {
-			cache_delete(cache_system_key("unimodules:{$account['uniacid']}:1"));
-			cache_delete(cache_system_key("unimodules:{$account['uniacid']}:"));
-		}
-	}
-
-}
-
-/**
  * 更新模块信息
  */
 function cache_build_module_info($module_name) {
-	cache_delete(cache_system_key("module_info:{$module_name}"));
+	global $_W;
+	cache_delete(cache_system_key(CACHE_KEY_MODULE_INFO, $module_name));
+	cache_delete(cache_system_key(CACHE_KEY_MODULE_SETTING, $_W['uniacid'], $module_name));
 }
