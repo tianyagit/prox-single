@@ -76,7 +76,7 @@
 </div>
 <script>
 	angular.module('homeApp').value('config', {
-		notices: null,
+		notices: {php echo !empty($notices) ? json_encode($notices) : 'null'},
 	});
 	angular.bootstrap($('#js-home-welcome'), ['homeApp']);
 </script>
