@@ -265,7 +265,7 @@ function buildframes($framename = ''){
 				$section_show = false;
 				$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
 				foreach ($secion['menu'] as $menu_id => $menu) {
-					if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
+					if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module' && $_W['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
 						$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
 					} else {
 						$section_show = true;
