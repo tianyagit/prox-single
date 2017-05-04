@@ -18,6 +18,14 @@ if ($do == 'platform') {
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
 		itoast('公众号已到服务期限，请联系管理员并续费', url('account/manage'), 'info');
 	}
+	//公告
+	$notices = pdo_getall('article_notice', array('is_display' => 1), array('id', 'title', 'createtime'), '', 'createtime DESC', array(1,5));
+	if(!empty($notices)) {
+		foreach ($notices as $key => $notice_val) {
+			$notices[$key]['url'] = url('article/notice-show/detail', array('id' => $notice_val['id']));
+			$notices[$key]['createtime'] = date('Y-m-d', $notice_val['createtime']);
+		}
+	}
 
 	template('home/welcome');
 } elseif ($do == 'ext') {
