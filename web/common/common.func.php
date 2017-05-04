@@ -259,13 +259,19 @@ function buildframes($framename = ''){
 				continue;
 			}
 			foreach ($section['section'] as $section_id => $secion) {
-				if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module') {
-					$frames['account']['section'][$section_id]['is_display'] = false;
+				if ($nav_id == 'account') {
+					if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module' && uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OWNER) {
+						$frames['account']['section'][$section_id]['is_display'] = false;
+					} else {
+						if (in_array("account*", $user_permission)) {
+							continue;
+						}
+					}
 				}
 				$section_show = false;
 				$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
 				foreach ($secion['menu'] as $menu_id => $menu) {
-					if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module' && $_W['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
+					if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
 						$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
 					} else {
 						$section_show = true;
