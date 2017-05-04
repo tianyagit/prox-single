@@ -158,7 +158,10 @@ function uni_modules($enabled = true) {
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
-			$module_list[$name] = module_fetch($name);
+			$module_info = module_fetch($name);
+			if (!empty($module_info)) {
+				$module_list[$name] = $module_info;
+			}
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
