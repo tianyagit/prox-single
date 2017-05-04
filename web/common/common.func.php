@@ -173,7 +173,7 @@ function buildframes($framename = ''){
 		$module_permission = pdo_getall('users_permission', array('uid' => $_W['uid'], 'uniacid' => $_W['uniacid'], 'type !=' => 'system'), array('type'));
 		if (!empty($module_permission)) {
 			foreach ($module_permission as $module) {
-				if (!in_array($module['type'], $sysmodules)) {
+				if (!in_array($module['type'], $sysmodules) && empty($modules[$module['type']]['main_module'])) {
 					$module = $modules[$module['type']];
 					if (!empty($module)) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
@@ -198,7 +198,7 @@ function buildframes($framename = ''){
 			foreach ($account_module as $module) {
 				if (!in_array($module['module'], $sysmodules)) {
 					$module = module_fetch($module['module']);
-					if (!empty($module)) {
+					if (!empty($module) && !empty($modules[$module['name']]) && empty($module['main_module'])) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 							'title' => $module['title'],
 							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
@@ -259,13 +259,19 @@ function buildframes($framename = ''){
 				continue;
 			}
 			foreach ($section['section'] as $section_id => $secion) {
-				if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module') {
-					$frames['account']['section'][$section_id]['is_display'] = false;
+				if ($nav_id == 'account') {
+					if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module' && uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OWNER) {
+						$frames['account']['section'][$section_id]['is_display'] = false;
+					} else {
+						if (in_array("account*", $user_permission)) {
+							continue;
+						}
+					}
 				}
 				$section_show = false;
 				$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
 				foreach ($secion['menu'] as $menu_id => $menu) {
-					if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module' && $_W['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
+					if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
 						$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
 					} else {
 						$section_show = true;
@@ -400,12 +406,12 @@ function buildframes($framename = ''){
 				}
 			}
 		}
-		if (!empty($module['plugin']) || !empty($module['main_module'])) {
+		if (!empty($module['plugin_list']) || !empty($module['main_module'])) {
 			if (!empty($module['main_module'])) {
 				$main_module = module_fetch($module['main_module']);
-				$plugin_list = $main_module['plugin'];
+				$plugin_list = $main_module['plugin_list'];
 			} else {
-				$plugin_list = $module['plugin'];
+				$plugin_list = $module['plugin_list'];
 			}
 			$plugin_list = array_intersect($plugin_list, array_keys($modules));
 			if (!empty($plugin_list)) {
