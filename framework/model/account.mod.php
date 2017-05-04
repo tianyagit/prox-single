@@ -146,7 +146,15 @@ function uni_modules($enabled = true) {
 		cache_write($cachekey, $module_list);
 		$modules = $module_list;
 	}
-	
+
+	if (!empty($modules)) {
+		$condition = " WHERE a.name IN ('" . implode("','", array_keys($modules)) . "')";
+	} else {
+		$condition = " WHERE a.name = ''";
+	}
+	$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, a.mid DESC";
+	$modules = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'name');
+
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
