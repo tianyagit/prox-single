@@ -280,6 +280,7 @@ function module_fetch($name) {
 		}
 		$module['config'] = !empty($setting['settings']) ? iunserializer($setting['settings']) : array();
 		$module['enabled'] = $module['issystem'] || !isset($setting['enabled']) ? 1 : $setting['enabled'];
+		$module['shortcut'] = $setting['shortcut'];
 	}
 	return $module;
 }

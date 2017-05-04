@@ -31,19 +31,7 @@ if($do == 'display') {
 				continue;
 			}
 		}
-		$modules = array();
-		if (!empty($modulelist)) {
-			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array ('module', 'enabled', 'shortcut'), 'module', array('displayorder DESC'));
-			if (!empty($module_profile)) {
-				foreach ($module_profile as $name => $row) {
-					$modules[$name] = $modulelist[$name];
-					$modules[$name]['shortcut'] = $row['shortcut'];
-				}
-			}
-		}
-		$total = count($modules);
-		$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
-		$pager = pagination ($total, $pageindex, $pagesize);
+		$modules = $modulelist;
 	}
 	template ('profile/module');
 } elseif ($do == 'shortcut') {
