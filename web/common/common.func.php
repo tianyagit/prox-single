@@ -258,10 +258,10 @@ function buildframes($framename = ''){
 			if (empty($section['section'])) {
 				continue;
 			}
-			if (in_array("{$nav_id}*", $user_permission)) {
-				continue;
-			}
 			foreach ($section['section'] as $section_id => $secion) {
+				if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module') {
+					$frames['account']['section'][$section_id]['is_display'] = false;
+				}
 				$section_show = false;
 				$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
 				foreach ($secion['menu'] as $menu_id => $menu) {
