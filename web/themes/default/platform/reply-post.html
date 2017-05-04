@@ -118,6 +118,17 @@
 		</div>
 		</div>
 		<div class="form-group">
+			<nav class="navbar navbar-wxapp-bottom navbar-fixed-bottom" role="navigation">
+				<div class="container">
+					<div class="pager">
+						<input type="hidden" name="token" value="{$_W['token']}">
+						<input type="submit" name="submit" value="发布" class="reply-form-submit hidden">
+						<span value="发布" class="btn btn-primary" ng-click="submitForm()">发布</span>
+					</div>
+				</div>
+			</nav>
+		</div>
+		<div class="form-group">
 			{if $m ==  'userapi'}
 				{php echo module_build_form('userapi', $rid)}
 			{elseif in_array($m, $sysmods)}
@@ -125,11 +136,6 @@
 			{else}
 				{php echo module_build_form($m, $rid)}
 			{/if}
-		</div>
-		<div class="form-group we7-form">
-			<input type="hidden" name="token" value="{$_W['token']}">
-			<input type="submit" name="submit" value="发布" class="reply-form-submit hidden">
-			<span value="发布" class="btn btn-primary" ng-click="submitForm()">发布</span>
 		</div>
 	</form>
 	{/if}
