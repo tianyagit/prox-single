@@ -120,17 +120,14 @@ function uni_modules($enabled = true) {
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
+		$condition = "";
 
-		if (empty($owner_uid) || in_array($owner_uid, $founders)) {
-			$module_list = user_modules($owner_uid);
-		} else {
+		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
 
-			if (!empty($packageids) && in_array('-1', $packageids)) {
-				$module_list = pdo_getall('modules', array(), array('name', 'issystem'), 'name', array('issystem DESC', 'mid DESC'));
-			} else {
+			if (!in_array('-1', $packageids)) {
 				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$_W['uniacid']}'");
 				if (!empty($uni_groups)) {
 					foreach ($uni_groups as $group) {
@@ -140,20 +137,17 @@ function uni_modules($enabled = true) {
 				}
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
-				$module_list = pdo_getall('modules', array('name' => $modules), array('name', 'issystem'), 'name', array('mid DESC'));
+				if (!empty($modules)) {
+					$condition = " WHERE a.name IN ('" . implode("','", $modules) . "')";
+				} else {
+					$condition = " WHERE a.name = ''";
+				}
 			}
 		}
-		cache_write($cachekey, $module_list);
-		$modules = $module_list;
+		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, a.mid DESC";
+		$modules = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'name');
+		cache_write($cachekey, $modules);
 	}
-
-	if (!empty($modules)) {
-		$condition = " WHERE a.name IN ('" . implode("','", array_keys($modules)) . "')";
-	} else {
-		$condition = " WHERE a.name = ''";
-	}
-	$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, a.mid DESC";
-	$modules = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'name');
 
 	$module_list = array();
 	if (!empty($modules)) {
@@ -376,9 +370,9 @@ function uni_setting_load($name = '', $uniacid = 0) {
 	if (empty($unisetting)) {
 		$unisetting = pdo_get('uni_settings', array('uniacid' => $uniacid));
 		if (!empty($unisetting)) {
-			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify', 
-								'creditnames', 'default_message', 'creditbehaviors', 'payment', 
-								'recharge', 'tplnotice', 'mcplugin');
+			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify',
+				'creditnames', 'default_message', 'creditbehaviors', 'payment',
+				'recharge', 'tplnotice', 'mcplugin');
 			foreach ($unisetting as $key => &$row) {
 				if (in_array($key, $serialize) && !empty($row)) {
 					$row = (array)iunserializer($row);
@@ -589,7 +583,7 @@ function uni_user_module_permission_check($action = '', $module_name = '') {
 		if ($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
 			return false;
 		}
-	//模块其他业务菜单
+		//模块其他业务菜单
 	} elseif (!empty($do) && !empty($m)) {
 		$is_exist = pdo_get('modules_bindings', array('module' => $m, 'do' => $do, 'entry' => 'menu'), array('eid'));
 		if(empty($is_exist)) {
