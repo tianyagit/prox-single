@@ -440,6 +440,7 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 		}
 	}
 	pdo_insert('modules_recycle', array('modulename' => $module_name));
+	pdo_delete('uni_account_modules', array('module' => $module_name));
 	ext_module_clean($module_name, $is_clean_rule);
 	cache_build_module_subscribe_type();
 	cache_build_uninstalled_module();
