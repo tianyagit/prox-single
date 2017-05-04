@@ -14,8 +14,7 @@ load()->model('cloud');
 load()->classs('coupon');
 load()->func('file');
 
-$user_modules = user_modules(173);
-print_r($user_modules);exit;
+$_W['uniacid'] = 181;
 $modules = uni_modules(false);
 print_r($modules);exit;
 
