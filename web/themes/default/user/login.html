@@ -43,7 +43,7 @@
 					</div>
 					<div class="login-submit text-center">
 						<input type="submit" id="submit" name="submit" value="登录" class="btn btn-primary" />
-						{if !$_W['siteclose']}
+						{if !$_W['siteclose'] && $setting['register']['open']}
 						<a href="{url 'user/register'}" class="btn btn-default">注册</a>
 						{/if}
 						<input name="token" value="{$_W['token']}" type="hidden" />
