@@ -483,7 +483,7 @@ function material_news_delete($material_id){
  */
 function material_delete($material_id, $location){
 	global $_W;
-	if (empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
+	if (empty($_W['isfounder']) && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER))) {
 		return error('-1', '您没有权限删除该文件');
 	}
 	$material_id = intval($material_id);
