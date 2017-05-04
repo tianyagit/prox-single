@@ -57,6 +57,7 @@ if($do == 'display') {
 			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
 		);
 		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
+		cache_build_module_info($modulename);
 	}
 	if ($status) {
 		itoast('添加模块快捷操作成功！', referer(), 'success');
