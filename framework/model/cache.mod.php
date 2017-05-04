@@ -32,8 +32,8 @@ function cache_build_account_modules($uniacid = 0) {
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
 		//以前缀的形式删除缓存
-		cache_clean('unimodules');
-		cache_clean('user_modules');
+		cache_clean(cache_system_key('unimodules'));
+		cache_clean(cache_system_key('user_modules'));
 	} else {
 		cache_delete(cache_system_key("unimodules:{$uniacid}:1"));
 		cache_delete(cache_system_key("unimodules:{$uniacid}:"));
