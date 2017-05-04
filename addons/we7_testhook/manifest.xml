@@ -2,7 +2,7 @@
 <manifest xmlns="http://www.we7.cc" versionCode="0.52">
     <application setting="false">
         <name><![CDATA[微酒店]]></name>
-        <identifie><![CDATA[ewei_hotel]]></identifie>
+        <identifie><![CDATA[we7_testhook]]></identifie>
         <version><![CDATA[5.5.6]]></version>
         <type><![CDATA[business]]></type>
         <ability><![CDATA[酒店房间预定,单店版,多店版]]></ability>
