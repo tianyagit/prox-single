@@ -198,7 +198,7 @@ function buildframes($framename = ''){
 			foreach ($account_module as $module) {
 				if (!in_array($module['module'], $sysmodules)) {
 					$module = module_fetch($module['module']);
-					if (!empty($module) && in_array($module['name'], array_keys($modules)) && empty($module['main_module'])) {
+					if (!empty($module) && !empty($modules[$module['name']]) && empty($module['main_module'])) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 							'title' => $module['title'],
 							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
