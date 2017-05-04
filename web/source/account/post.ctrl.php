@@ -223,13 +223,13 @@ if($do == 'modules_tpl') {
 						));
 					}
 				}
-				cache_build_account_modules($uniacid);
-				cache_build_account($uniacid);
 				iajax(0, '修改成功！', '');
 			}else {
 				pdo_delete('uni_account_group', array('uniacid' => $uniacid));
 				iajax(0, '修改成功！', '');
 			}
+			cache_build_account_modules($uniacid);
+			cache_build_account($uniacid);
 		}
 
 		if($_GPC['type'] == 'extend') {
@@ -250,11 +250,11 @@ if($do == 'modules_tpl') {
 				} else {
 					pdo_update('uni_group', $data, array('id' => $id));
 				}
-				cache_build_account_modules($uniacid);
-				cache_build_account($uniacid);
 			} else {
 				pdo_delete('uni_group', array('uniacid' => $uniacid));
 			}
+			cache_build_account_modules($uniacid);
+			cache_build_account($uniacid);
 			iajax(0, '修改成功！', '');
 		}
 		iajax(40035, '参数错误！', '');

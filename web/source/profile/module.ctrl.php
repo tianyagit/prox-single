@@ -97,6 +97,7 @@ if($do == 'display') {
 			'shortcut' => STATUS_OFF,
 		));
 	}
+	cache_build_account_modules($_W['uniacid']);
 	itoast('模块置顶成功', referer(), 'success');
 } elseif ($do == 'setting') {
 	$modulename = $_GPC['m'];
