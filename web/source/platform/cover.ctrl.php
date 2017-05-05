@@ -123,7 +123,7 @@ if ($do == 'module') {
 			} else {
 				pdo_update('cover_reply', $entry, array('id' => $reply['id']));
 			}
-			itoast('封面保存成功！', 'refresh', 'success');
+			itoast('封面保存成功！', url('platform/cover', array('m' => $entry['module'])), 'success');
 		} else {
 			itoast('封面保存失败, 请联系网站管理员！', '', 'error');
 		}
