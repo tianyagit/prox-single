@@ -19,6 +19,7 @@ function ext_module_convert($manifest) {
 		}
 	} else {
 		$app_support = 2;
+		$wxapp_support = 1;
 	}
 	return array(
 		'name' => $manifest['application']['identifie'],

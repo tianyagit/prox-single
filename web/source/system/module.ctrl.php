@@ -548,7 +548,7 @@ if ($do == 'installed') {
 	$module_list = $all_modules = user_modules($_W['uid']);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
-			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] == 1) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] == 1)) {
+			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)) {
 				unset($module_list[$key]);
 			}
 			if (!empty($letter) && strlen($letter) == 1) {
