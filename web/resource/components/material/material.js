@@ -48,6 +48,9 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 					case 'keyword':
 						$('#material-Modal').addClass('keyword');
 						break;
+					case 'module':
+						$('#material-Modal').addClass('module');
+						break;
 				}
 				$this.localPage(type, 1);
 				$(this).tab('show');
@@ -145,7 +148,18 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 						return false;
 					});
 				} else {
-					$content.html('<div class="info text-center"><i class="wi wi-info-circle fa-lg"></i> 暂无数据</div>');
+					if (type == 'news') {
+						$('#news').html('<div role="tabpanel"><div class="tablepanel-top text-right"><button class="btn btn-primary" type="button"><a href="./index.php?c=platform&a=material-post" target="_blank">新建图文</a></button></div><div class="info text-center"><i class="wi wi-info-circle fa-lg"></i> 暂无数据</div></div>')
+					} else {
+						$content.html('<div class="info text-center"><i class="wi wi-info-circle fa-lg"></i> 暂无数据</div>');
+					}
+				}
+				if (type == 'news') {
+					$this.modalobj.find('.material-content .newsmodel-type').unbind('click').click(function(){
+						$(this).addClass('active').siblings().removeClass('active');
+						$this.localPage(type, 1, $(this).data('type'));
+						return false;
+					});
 				}
 			});
 			$this.modalobj.find('#btn-select .btn-primary').unbind('click').click(function(){
@@ -301,7 +315,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'					<div id="keyword" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="module" class="tab-pane history" role="tabpanel"></div>'+
 				'				</div>' +
-				'				<nav id="material-list-pager" class="text-right we7-margin-top">\n' +
+				'				<nav id="material-list-pager" class="text-right we7-margin-vertical we7-padding-right">\n' +
 				'				</nav>\n' +
 				'			</div>\n' +
 				'			<div class="modal-footer" id="material-footer" style="display: none">\n' +
