@@ -14,12 +14,32 @@ load()->model('user');
 load()->model('account');
 load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
-$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('check', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	itoast('无权限操作！', referer(), 'error');
+}
+
+if ($do == 'check') {
+	load()->classs('account');
+	$modulename = $_GPC['module_name'];
+	$obj = WeUtility::createModuleReceiver($modulename);
+	if (empty($obj)) {
+		exit('error');
+	}
+	$obj->uniacid = $_W['uniacid'];
+	$obj->acid = $_W['acid'];
+	$obj->message = array(
+		'event' => 'subscribe'
+	);
+	if(method_exists($obj, 'receive')) {
+		@$obj->receive();
+		iajax(0);
+	} else {
+		iajax(1);
+	}
 }
 
 if ($do == 'get_upgrade_info') {
