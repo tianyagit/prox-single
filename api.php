@@ -487,6 +487,20 @@ class WeEngine {
 					@$obj->receive();
 				}
 			}
+		} elseif (!empty($subscribe['user_del_card']) && $this->message['event'] == 'user_del_card') {
+			foreach($subscribe['user_del_card'] as $modulename) {
+				$obj = WeUtility::createModuleReceiver($modulename);
+				$obj->message = $this->message;
+				$obj->params = $par;
+				$obj->response = $response;
+				$obj->keyword = $keyword;
+				$obj->module = $modules[$modulename];
+				$obj->uniacid = $_W['uniacid'];
+				$obj->acid = $_W['acid'];
+				if(method_exists($obj, 'receive')) {
+					@$obj->receive();
+				}
+			}
 		} else {
 			$modules = $subscribe[$this->message['type']];
 			if (!empty($modules)) {
@@ -846,6 +860,7 @@ EOF;
 			$openid = trim($message['fromusername']);
 			$code = trim($message['usercardcode']);
 			pdo_update('coupon_record', array('status' => 4), array('card_id' => $card_id, 'openid' => $openid, 'code' => $code));
+			$this->receive();
 		} elseif ($message['event'] == 'user_consume_card') {
 			//核销卡券事件
 			$card_id = trim($message['cardid']);
