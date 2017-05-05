@@ -100,3 +100,4 @@ define('CACHE_EXPIRE_LONG', 3600);
 define('CACHE_KEY_MODULE_SETTING', 'module_setting:%s:%s');
 define('CACHE_KEY_MODULE_INFO', 'module_info:%s');
 define('CACHE_KEY_ACCOUNT_MODULES', 'unimodules:%s:%s');
+define('CACHE_KEY_ACCOUNT_MODULES_BINDING', 'unimodules:binding:%s');
