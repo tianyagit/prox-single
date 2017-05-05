@@ -164,7 +164,7 @@ function uni_modules($enabled = true) {
 
 function uni_modules_app_binding() {
 	global $_W;
-	$cachekey = "unimodulesappbinding:{$_W['uniacid']}";
+	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES_BINDING, $_W['uniacid']);
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
