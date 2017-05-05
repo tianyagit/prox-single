@@ -20,7 +20,7 @@ if($do == 'switch') {
 		itoast('操作失败, 非法访问.', '', 'error');
 	}
 	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
-	$cache_lastaccount = cache_load($cache_key);
+	$cache_lastaccount = (array)cache_load($cache_key);
 	$cache_lastaccount['account'] = $uniacid;
 	cache_write($cache_key, $cache_lastaccount);
 
