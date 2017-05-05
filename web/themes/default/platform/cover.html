@@ -123,7 +123,7 @@
 						</select>
 					</div>
 				</div>
-				<input type="text" class="keyword-input form-control" max="100" id="keyword-input-exact" ng-model="reply.keyword.exact" onblur="checkKeyWord($(this));" style="color: #555 !important;">
+				<input type="text" class="keyword-input form-control" max="100" id="keyword-input-exact" ng-model="reply.keyword.exact" ng-blur="checkKeyWord($event);" style="color: #555 !important;">
 				<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="keyword-emoji" ng-init="initEmotion();"><i class="fa fa-github-alt"></i> 表情</a></span>
 			</div>
 			<span class="help-block">多个关键字请使用逗号隔开，如天气，今日天气</span>
@@ -134,21 +134,21 @@
 				<div class="form-group">
 					<label for="" class="control-label col-sm-3">精准触发</label>
 					<div class="form-controls input-group col-sm-6">
-						<input type="text" class="keyword-input form-control" max="30" id="keyword-exact" ng-model="reply.keyword.exact" onblur="checkKeyWord($(this));" style="color: #555!important;">
+						<input type="text" class="keyword-input form-control" max="30" id="keyword-exact" ng-model="reply.keyword.exact" ng-blur="checkKeyWord($event);" style="color: #555!important;">
 						<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-exact" ng-init="initEmotion();"><i class="fa fa-github-alt"></i> 表情</a></span>
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="" class="control-label col-sm-3">包含关键字触发</label>
 					<div class="form-controls input-group col-sm-6">
-						<input type="text" class="keyword-input form-control" max="30" id="keyword-indistinct" ng-model="reply.keyword.contain" onblur="checkKeyWord($(this));">
+						<input type="text" class="keyword-input form-control" max="30" id="keyword-indistinct" ng-model="reply.keyword.contain" ng-blur="checkKeyWord($event);">
 						<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-indistinct"><i class="fa fa-github-alt"></i> 表情</a></span>
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="" class="control-label col-sm-3">正则匹配关键字触发</label>
 					<div class="form-controls input-group col-sm-6">
-						<input type="text" class="keyword-input form-control" max="30" id="keyword-regexp" ng-model="reply.keyword.regexp" onblur="checkKeyWord($(this));">
+						<input type="text" class="keyword-input form-control" max="30" id="keyword-regexp" ng-model="reply.keyword.regexp" ng-blur="checkKeyWord($event);">
 						<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-regexp"><i class="fa fa-github-alt"></i> 表情</a></span>
 					</div>
 				</div>
@@ -169,6 +169,17 @@
 		</div>
 	</div>
 	<div class="form-group">
+		<nav class="navbar navbar-wxapp-bottom navbar-fixed-bottom" role="navigation">
+			<div class="container">
+				<div class="pager">
+					<input type="hidden" name="token" value="{$_W['token']}">
+					<input type="submit" name="submit" value="发布" class="reply-form-submit hidden">
+					<span value="发布" class="btn btn-primary" ng-click="submitForm()">发布</span>
+				</div>
+			</div>
+		</nav>
+	</div>
+	<div class="form-group">
 		<label for="" class="control-label col-sm-2">封面</label>
 		<div class="form-controls col-sm-8">
 			{php echo tpl_form_field_image('thumb', $reply['thumb'], '', array('width' => 400));}
@@ -180,14 +191,11 @@
 			<textarea class="form-control" placeholder="添加图文消息的简短描述" name="description">{$reply['description']}</textarea>
 		</div>
 	</div>
-	<input type="hidden" name="token" value="{$_W['token']}" />
-	<input type="submit" name="submit" value="发布" class="btn btn-primary btn-submit"/>
 	</form>
 </div>
 {/if}
 </div>
 <script type="text/javascript">
-<!--
 	$(function() {
 		require(['jquery.qrcode'], function(){
 			$('.js-url-qrcode').each(function(){
@@ -212,11 +220,8 @@
 		angular.bootstrap($('#js-keyword-display'), ['replyFormApp']);
 	});
 
-	// 检测规则是否已经存在
-	window.checkKeyWord = function(key) {
-	}
 	window.validateReplyForm = function(key) {
+		return true;
 	}
-//-->
 </script>
 {template 'common/footer'}
