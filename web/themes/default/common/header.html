@@ -48,10 +48,10 @@
 		</div>
 	</nav>
 </div>
-{if empty($_COOKIE['check_setmeal']) && !empty($_W['account']['endtime']) && ($_W['account']['endtime'] - TIMESTAMP < (6*86400))}
+{if empty($_COOKIE['check_setmeal']) && !empty($_W['account']['endtime']) && ($_W['account']['endtime'] - TIMESTAMP < (6*86400))} 
 <div class="upgrade-tips we7-body-alert" id="setmeal-tips">
 	<div class="alert-info text-center">
-		<a href="{php echo url('user/edit', array('uid' => $_W['account']['uid']));}" target="_blank">
+		<a href="{if $_W['isfounder']}{php echo url('user/edit', array('uid' => $_W['account']['uid']));}{else}javascript:void(0);{/if}">
 			您的服务有效期限：{php echo date('Y-m-d', $_W['account']['starttime']);} ~ {php echo date('Y-m-d', $_W['account']['endtime']);}.
 			{if $_W['account']['endtime'] < TIMESTAMP}
 				目前已到期，请联系管理员续费
@@ -69,7 +69,7 @@
 		return false;
 	}
 </script>
-{/if}
+{/if} 
 <div class="main">
 {if !defined('IN_MESSAGE')}
 <div class="container">
