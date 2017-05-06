@@ -133,6 +133,8 @@ if($do == 'down') {
 				foreach($items as $item) {
 					$item['attach_id'] = $insert_id;
 					$item['uniacid'] = $_W['uniacid'];
+					unset($item['need_open_comment']);
+					unset($item['only_fans_can_comment']);
 					pdo_insert('wechat_news', $item);
 				}
 			}
