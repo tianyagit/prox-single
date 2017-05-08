@@ -73,7 +73,7 @@ if($do == 'list') {
 		}
 	}
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 30;
+	$psize = 21;
 	$current_module_list = array_slice($enable_modules, ($pindex - 1) * $psize, $psize);
 	$result = array(
 		'items' => $current_module_list,
