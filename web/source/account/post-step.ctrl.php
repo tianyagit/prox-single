@@ -179,7 +179,7 @@ if($step == 1) {
 		$groupid = intval($_GPC['groupid']);
 		if (!empty($uid)) {
 			//删除原所有者，删除现在所有者其他身份
-			$account_info = uni_user_account_permission();
+			$account_info = uni_user_account_permission($uid);
 			if ($account_info['uniacid_limit'] <= 0) {
 				itoast("您所设置的主管理员所在的用户组可添加的主公号数量已达上限，请选择其他人做主管理员！", referer(), 'error');
 			}
