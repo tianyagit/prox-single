@@ -122,6 +122,7 @@
 		</div>
 	<div class="panel-body clearfix main-panel-body">
 		<div class="left-menu">
+			<div class="left-menu-content">
 			{if empty($frames['section']['platform_module_menu']['plugin_menu'])}
 				<div class="left-menu-top skin-black">
 					{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
@@ -188,7 +189,7 @@
 						{if !empty($menu['is_display'])}
 							{if $menu_id == 'platform_module_more'}
 							<li class="list-group-item list-group-more">
-								<a href="{url 'profile/module'}"><span class="label label-more">更多应用</span></a>
+								<a href="{url 'profile/module'}" target="_blank"><span class="label label-more">更多应用</span></a>
 							</li>
 							{else}
 							<li class="list-group-item {if $menu['active']}active{/if}">
@@ -256,11 +257,11 @@
 									<li class="list-group-item {if $menu['active']}active{/if}">
 										<a href="{$menu['url']}" class="text-over" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
 										{if $menu['icon']}
-										{if $frame_section_id == 'platform_module'}
-										<img src="{$menu['icon']}"/>
-										{else}
-										<i class="{$menu['icon']}"></i>
-										{/if}
+											{if $frame_section_id == 'platform_module'}
+											<img src="{$menu['icon']}"/>
+											{else}
+											<i class="{$menu['icon']}"></i>
+											{/if}
 										{/if}
 										{$menu['title']}
 										</a>
@@ -276,6 +277,7 @@
 				</div>
 			{/if}
 		</div>
+	</div>
 	<div class="right-content">
 	{/if}
 {/if}
