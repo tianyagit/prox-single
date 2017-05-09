@@ -405,7 +405,7 @@ if ($do =='install') {
 }
 
 if ($do == 'change_receive_ban') {
-	$modulename = trim($_GPC['modulename']);
+	$module_name = trim($_GPC['modulename']);
 	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
 	if (empty($module_exist)) {
 		iajax(1, '模块不存在', '');

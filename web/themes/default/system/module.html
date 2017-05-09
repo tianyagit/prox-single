@@ -449,11 +449,11 @@
 		<tr>
 			<td class="text-left">{{ branch.id == upgradeInfo.site_branch.id ? '版本更新内容' : ''}}</td>
 			<td colspan="4" class="text-right">
-				<a class="color-default view-detail" ng-if="branch.id == upgradeInfo.site_branch.id && branch.version.version !=  moduleinfo.version" data-toggle="collapse" href="#version-detail-{{ branch.id }}" onclick="change($(this))">查看详情 <i class="wi wi-angle-down"></i></a>
+				<a class="color-default view-detail" ng-if="branch.id == upgradeInfo.site_branch.id && branch.version.version !=  moduleinfo.version" href="javascript:;" data-id="{{ branch.id }}" onclick="change($(this))">查看详情 <i class="wi wi-angle-down"></i></a>
 				<a href="http://s.we7.cc/module-{{upgradeInfo.id}}.html" ng-if="branch.displayorder > upgradeInfo.site_branch.displayorder || (branch.displayorder == upgradeInfo.site_branch.displayorder && branch.id > upgradeInfo.site_branch.id)" class="color-default view-detail" target="_blank">查看分支详情</a>
 			</td>
 		</tr>
-		<tr class="collapse" id="version-detail-{{ branch.id }}">
+		<tr id="version-detail-{{ branch.id }}" style="display:none">
 			<td colspan="5" class="details-versions">
 				<div class="js-version-lists">
 
@@ -670,12 +670,12 @@
 <script>
 	require(['fileUploader'], function() {
 		angular.module('moduleApp').value('config', {
-			'isFounder' : '{if $_W['isfounder']}1{else}2{/if}',
+			'isFounder' : "{if $_W['isfounder']}1{else}2{/if}",
 			'receive_ban' : "{$receive_ban}",
 			'show' : "{$_GPC['show']}",
 			'moduleInfo' : {php echo json_encode($module_info)},
-			'url' : '{php echo url('system/module/change_receive_ban')}',
-			'modulename' : '{$module_info['name']}',
+			'url' : "{php echo url('system/module/change_receive_ban')}",
+			'modulename' : "{$module_info['name']}",
 			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
 			'saveModuleUrl' : "{php echo url('system/module/save_module_info')}",
 			'checkReceiveUrl' : "{php echo url('system/module/check')}",
