@@ -15,8 +15,8 @@
 					</ol>
 				</div>
 				<div class="panel-body">
-					<ul class="nav nav-wxapp" role="tablist">
-						<li ng-class="{'active ban' : createStep == 1, 'finished ready' : createStep > 1}">
+					<ul class="nav nav-wxapp" role="tablist" ng-if="isDeveloper==0">
+						<li ng-class="{'active ban' : createStep == 1, 'finished ready' : createStep > 1}" >
 							<a href="javascript:void(0);">
 								<i class="num">1</i>
 								<div class="wxapp-step-name">
@@ -25,7 +25,7 @@
 								</div>
 							</a>
 						</li>
-						<li ng-class="{'active ban' : createStep == 2, 'finished ready' : createStep > 2}">
+						<li ng-class="{'active ban' : createStep == 2, 'finished ready' : createStep > 2}" >
 							<a href="javascript:void(0);">
 								<i class="num">2</i>
 								<div class="wxapp-step-name">
@@ -34,7 +34,7 @@
 								</div>
 							</a>
 						</li>
-						<li ng-class="{'active ban' : createStep == 3, 'finished ready' : createStep > 3}">
+						<li ng-class="{'active ban' : createStep == 3, 'finished ready' : createStep > 3}" >
 							<a href="javascript:void(0);">
 								<i class="num">3</i>
 								<div class="wxapp-step-name">
@@ -43,7 +43,7 @@
 								</div>
 							</a>
 						</li>
-						<li ng-class="{'active ban' : createStep == 4, 'finished ready' : createStep > 4}">
+						<li ng-class="{'active ban' : createStep == 4, 'finished ready' : createStep > 4}" >
 							<a href="javascript:void(0);">
 								<i class="num">4</i>
 								<div class="wxapp-step-name">
@@ -88,7 +88,7 @@
 									</div>
 								</div>
 								{/if}
-								<div class="form-group">
+								<div class="form-group" ng-if="isDeveloper==0">
 									<label class="control-label col-sm-2">版本号</label>
 									<div class="form-controls col-sm-1">
 										<input type="number" name="version0" min="0" max="100" value="{$version_nums[0]}" {if !empty($version_nums)}disabled{/if} class="form-control wxapp-version version0">
@@ -448,11 +448,14 @@
 
 	<nav class="navbar navbar-wxapp-bottom navbar-fixed-bottom" role="navigation">
 		<div class="container">
-			<div class="pager">
+			<div class="pager" ng-if="isDeveloper==0">
 				<a type="button" class="btn btn-primary" ng-show="createStep != 1" ng-click="prevStep()">上一步</a>
 				<a type="button" class="btn btn-primary" ng-show="createStep != 4" ng-click="nextStep()">下一步</a>
 				<a type="button" class="btn btn-danger" ng-show="createStep == 4" ng-click="package()">生成版本打包下载</a>
 				<!-- <a type="button" class="btn btn-default" ng-show="createStep == 4">首页预览</a> -->
+			</div>
+			<div class="pager" ng-if="isDeveloper==1">
+				<a type="button" class="btn btn-primary" ng-click="developer()">完成</a>
 			</div>
 		</div>
 	</nav>
@@ -462,7 +465,8 @@
 require(['fileUploader','underscore'], function(uploader){
 	angular.module('wxApp').value('config', {
 		'uniacid' : "{$uniacid}",
-		'getlink_url' : "{php echo url('wxapp/post/getlink')}"
+		'getlink_url' : "{php echo url('wxapp/post/getlink')}",
+		'isDeveloper' : "{$isDeveloper}",
 	});
 	angular.bootstrap($('#js-wxapp-create'), ['wxApp']);
 });

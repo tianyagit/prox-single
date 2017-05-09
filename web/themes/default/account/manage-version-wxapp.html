@@ -3,7 +3,9 @@
 	<!--版本管理-->
 	<div class="version-management">
 		<div class="text-right">
+			{if $wxapp_info['wxapp_type'] == 1}
 			<a href="{php echo url('wxapp/post', array('uniacid' => $uniacid))}" class="btn btn-primary">新建版本</a>
+			{/if}
 		</div>
 		<div class="wxapp-version-list clearfix">
 			{loop $wxapp_version_lists $list}

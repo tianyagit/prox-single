@@ -27,6 +27,7 @@ if ($do == 'display') {
 	$uniacid = intval($_GPC['uniacid']);
 	if (!empty($uniacid)) {
 		$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $uniacid));
+		$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
 	}
 	template('account/manage-version-wxapp');
 }
