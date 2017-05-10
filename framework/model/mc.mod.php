@@ -808,7 +808,7 @@ function _mc_login($member) {
  */
 function mc_fields() {
 	$fields = cache_load('usersfields');
-	if (!empty($fields)) {
+	if (empty($fields)) {
 		load()->model('cache');
 		cache_build_users_struct();
 		$fields = cache_load('usersfields');
@@ -940,7 +940,7 @@ function mc_openid2uid($openid) {
 	if (is_numeric($openid)) {
 		return $openid;
 	}
-	$cachekey = @cache_system_key("uid:{$openid}");
+	$cachekey = cache_system_key("uid:{$openid}");
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
