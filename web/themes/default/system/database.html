@@ -35,14 +35,14 @@
 					<th class="text-left">备份名称</th>
 					<th class="text-left">备份时间</th>
 					<th>分卷数量</th>
-					<th>操作</th>
+					<th class="text-right">操作</th>
 				</tr>
 				{loop $reduction $row}
 				<tr>
 					<td class="text-left">{$row['bakdir']}</td>
 					<td class="text-left">{php echo date('Y-m-d H:i:s', $row['time']);}</td>
 					<td>{$row['volume']}</td>
-					<td class="text-left">
+					<td>
 						<div class="link-group">
 							<a href="{php echo url('system/database/restore', array('restore_dirname' => $row['bakdir']));}" onclick="return confirm('确认要恢复这条备份记录吗? 当前数据库的数据将会被覆盖.');">还原此备份</a>
 							<a href="{php echo url('system/database/restore', array('delete_dirname' => $row['bakdir']));}" class="del" onclick="return confirm('确认要删除这条备份记录吗? ');">删除</a>

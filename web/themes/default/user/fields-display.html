@@ -36,7 +36,7 @@
 			<th>是否启用</th>
 			<th>注册页显示</th>
 			<th>是否必填</th>
-			<th class="text-left">操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		<tr ng-repeat="field in fields">
 			<td><input type="text" class="form-control" name="displayorder[{{field.id}}]" ng-model="field.displayorder"></td>
@@ -60,7 +60,7 @@
 					<label for="require-check-{{field.id}}">&nbsp;</label>
 				</div>
 			</td>
-			<td class="text-left">
+			<td>
 				<div class="link-group">
 					<a ng-href="{{links.fieldPost}}id={{field.id}}">编辑</a>
 				</div>

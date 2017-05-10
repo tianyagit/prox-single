@@ -24,7 +24,7 @@
 		<th class="text-left">排序</th>
 		<th class="text-left">分类名称</th>
 		<th>设为栏目</th>
-		<th>操作</th>
+		<th class="text-right">操作</th>
 	</tr>
 	{loop $category $row}
 		<tr>
@@ -41,7 +41,7 @@
 					<div class="switch switch{php echo $row['enabled'] ? 'On' : 'Off'}" onclick="changeStatus({$row['id']})"></div>
 				</label>
 			</td>
-			<td style="position: relative;" class="text-right">
+			<td style="position: relative;">
 				<div class="link-group">
 					{if empty($row['parentid'])}
 					<a href="{php echo url('site/category/post', array('parentid' => $row['id']))}" >&nbsp;+添加子分类</a>
