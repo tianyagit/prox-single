@@ -52,7 +52,8 @@ if ($do == 'get_upgrade_info') {
 		'name' => $cloud_m_upgrade_info['name'],
 		'branches' => $cloud_m_upgrade_info['branches'],
 		'site_branch' => $cloud_m_upgrade_info['branches'][$cloud_m_upgrade_info['version']['branch_id']],
-		'from' => 'cloud'
+		'from' => 'cloud',
+		'service_expire' => !emtpy($cloud_m_upgrade_info['service_expiretime']) &&  $cloud_m_upgrade_info['service_expiretime'] < time() ? true : false
 	);
 	$module['site_branch']['id'] = intval($module['site_branch']['id']);
 	if (!empty($module['branches'])) {
@@ -101,6 +102,9 @@ if ($do == 'check_upgrade') {
 		if (empty($manifest)) {
 			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
 				$cloud_m_info = $cloud_m_query_module[$module['name']];
+				if (!empty($cloud_m_info['service_expiretime'])) {
+					$module['service_expire'] = $cloud_m_info['service_expiretime'] > time() ? false : true;
+				}
 				$site_branch = $cloud_m_info['site_branch']['id'];
 				if (empty($site_branch)) {
 					$site_branch = $cloud_m_info['branch'];
@@ -171,7 +175,7 @@ if ($do == 'upgrade') {
 	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
-	
+
 	if (!empty($manifest['platform']['plugin_list'])) {
 		pdo_delete('modules_plugin', array('main_module' => $manifest['application']['identifie']));
 		foreach ($manifest['platform']['plugin_list'] as $plugin) {
@@ -180,7 +184,7 @@ if ($do == 'upgrade') {
 	}
 	//处理模块菜单
 	$module = ext_module_convert($manifest);
-	
+
 	unset($module['name']);
 	$bindings = array_elements(array_keys($points), $module, false);
 	foreach ($points as $point_name => $point_info) {
@@ -405,8 +409,8 @@ if ($do =='install') {
 }
 
 if ($do == 'change_receive_ban') {
-	$module_name = trim($_GPC['modulename']);
-	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
+	$modulename = trim($_GPC['modulename']);
+	$module_exist = pdo_get('modules', array('name' => $modulename), 'mid');
 	if (empty($module_exist)) {
 		iajax(1, '模块不存在', '');
 	}
