@@ -36,7 +36,8 @@
 			type : '{$type}',
 			appname : '{$m}',
 			is_upgrade : '{$is_upgrade}',
-			account_type : "{$_GPC['account_type']}"
+			account_type : "{$_GPC['account_type']}",
+			tasknum : '{$packet['task']}',
 		});
 		angular.bootstrap($('.js-processor'), ['cloudApp']);
 	</script>
