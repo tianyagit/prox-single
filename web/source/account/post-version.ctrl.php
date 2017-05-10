@@ -28,10 +28,10 @@ if ($do == 'display') {
 	if (is_error($account)) {
 		itoast($account['message'], url('account/manage', array('account_type' => 4)), 'error');
 	} else {
-		if ($account['wxapp_type'] == 1) {
+		if ($account['wxapp_type'] == WXAPP_MULTI) {
 			$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $account['uniacid']));
 			$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $account['uniacid']));
-		} elseif($account['wxapp_type'] == 2) {
+		} elseif($account['wxapp_type'] == WXAPP_SINGLE) {
 			$wxapp_version_lists = pdo_get('wxapp_versions', array('uniacid' => $account['uniacid']));
 			if (!empty($wxapp_version_lists['modules'])) {
 				$connect_module = array_keys(json_decode($wxapp_version_lists['modules'], true));
