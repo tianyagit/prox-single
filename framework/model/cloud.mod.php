@@ -212,6 +212,7 @@ function cloud_download($path, $type = '') {
 	$pars['path'] = $path;
 	$pars['type'] = $type;
 	$pars['gz'] = function_exists('gzcompress') && function_exists('gzuncompress') ? 'true' : 'false';
+	$pars['download'] = 'true';
 	$headers = array('content-type' => 'application/x-www-form-urlencoded');
 	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars, $headers, 300);
 	if(is_error($dat)) {
@@ -224,6 +225,29 @@ function cloud_download($path, $type = '') {
 	if(is_error($ret)) {
 		return $ret;
 	} else {
+		$post = $dat['content'];
+		$data = base64_decode($post);
+		if (base64_encode($data) !== $post) {
+			$data = $post;
+		}
+		$ret = iunserializer($data);
+		$gz = function_exists('gzcompress') && function_exists('gzuncompress');
+		$file = base64_decode($ret['file']);
+		if($gz) {
+			$file = gzuncompress($file);
+		}
+		$_W['setting']['site']['token'] = authcode(cache_load('cloud:transtoken'), 'DECODE');
+		$string = (md5($file) . $ret['path'] . $_W['setting']['site']['token']);
+		if(!empty($_W['setting']['site']['token']) && md5($string) === $ret['sign']) {
+			$path = IA_ROOT . $ret['path'];
+			load()->func('file');
+			@mkdirs(dirname($path));
+			file_put_contents($path, $file);
+			$sign = md5(md5_file($path) . $ret['path'] . $_W['setting']['site']['token']);
+			if($ret['sign'] === $sign) {
+				return true;
+			}
+		}
 		return error(-1, '写入失败');
 	}
 }
