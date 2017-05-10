@@ -33,7 +33,7 @@ if ($do == 'display') {
 			$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $account['uniacid']));
 		} elseif($account['wxapp_type'] == 2) {
 			$wxapp_version_lists = pdo_get('wxapp_versions', array('uniacid' => $account['uniacid']));
-			if (!empty($wxapp_version_lists)) {
+			if (!empty($wxapp_version_lists['modules'])) {
 				$connect_module = array_keys(json_decode($wxapp_version_lists['modules'], true));
 				$current_module_info = module_fetch($connect_module[0]);
 			} else {
