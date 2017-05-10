@@ -65,8 +65,8 @@
 				</td>
 				<td class="text-left">
 					<p>{{ module.title }}</p>
-					<p ng-if="module.service_expire">服务已到期</p>
 					<span>版本：{{ module.version }} </span><span class="color-red" ng-if="module.upgrade && isFounder == 1">发现新版本</span>
+					<span class="color-red" ng-if="module.service_expire">服务已到期</span>
 				</td>
 				<!--<td >{{ module.use_account }}</td>-->
 				<!--<td >{{ module.enabled_use_account }}</td>-->
