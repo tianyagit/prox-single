@@ -41,7 +41,7 @@
 				是否在微信生效
 				{if $type == '1'}<div class="color-gray">(只能生效一个默认菜单)</div>{/if}
 			</th>
-			<th class="text-left">操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		{loop $data $da}
 		<tr>
@@ -82,7 +82,7 @@
 					{/if}
 				</label>
 			</td>
-			<td class="text-left">
+			<td>
 				<div class="link-group">
 				{if $da['type'] == 1}
 					<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> 1));}" class="we7-margin-right">编辑</a>

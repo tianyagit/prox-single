@@ -64,7 +64,7 @@
 			<th>在首页显示</th>
 			<th>是否显示</th>
 			<th>添加时间</th>
-			<th class="text-left">操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		{loop $notices $notice}
 		<input type="hidden" name="ids[]" value="{$notice['id']}" />
@@ -94,7 +94,7 @@
 				{/if}
 			</td>
 			<td>{php echo date('Y-m-d H:i', $notice['createtime']);}</td>
-			<td class="text-left">
+			<td>
 				<div class="link-group">
 					<a href="{php echo url('article/notice/post', array('id' => $notice['id']));}">编辑</a>
 					<a href="{php echo url('article/notice/del', array('id' => $notice['id']));}" class="del" onclick="if(!confirm('确定删除吗')) return false;">删除</a>

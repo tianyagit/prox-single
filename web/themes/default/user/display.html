@@ -36,7 +36,7 @@
 		<th>使用公众号</th>
 		<th>应用</th>
 		<th>到期时间</th>
-		<th class="text-left">操作</th>
+		<th class="text-right">操作</th>
 	</tr>
 	<tr ng-repeat="user in users" ng-if="users">
 		<td class="text-left" ng-bind="user.username">{$user['username']}</td>
@@ -54,7 +54,7 @@
 		<td>
 			<span ng-bind="user.endtime"></span>
 		</td>
-		<td class="text-left">
+		<td>
 			<div class="link-group" ng-if="!user.founder">
 				<a ng-href="{{links.edit}}uid={{user.uid}}" ng-if="do == 'display'">编辑</a>
 				<a ng-href="{{links.deny}}uid={{user.uid}}" ng-if="do == 'display'" data-toggle="tooltip" data-placement="left" title="禁用后可在用户回收站查找到并重新启用。">禁用</a>

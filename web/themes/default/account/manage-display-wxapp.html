@@ -39,7 +39,7 @@
 	<tr>
 		<th colspan="2" class="text-left">小程序</th>
 		<th>有效期</th>
-		<th class="text-left">操作</th>
+		<th class="text-right">操作</th>
 	</tr>
 	<tr class="color-gray" ng-repeat="list in lists">
 		<td class="text-left">
@@ -51,7 +51,7 @@
 		<td>
 			<p ng-bind="list.setmeal.timelimit"></p>
 		</td>
-		<td class="text-left vertical-middle">
+		<td class="vertical-middle">
 			<div class="link-group">
 				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入小程序</a>
 				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER}

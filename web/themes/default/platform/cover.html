@@ -21,7 +21,7 @@
 				<th>二维码</th>
 				<th class="text-left">入口名称</th>
 				<th>关键字</th>
-				<th class="text-left">操作</th>
+				<th class="text-right">操作</th>
 			</tr>
 			{loop $entries['cover'] $menu}
 			<tr>
@@ -34,7 +34,7 @@
 					<span class="form-control-static keyword-tag" data-toggle="tooltip" data-placement="bottom" title="{if $kw['type']==1}等于{elseif $kw['type']==2}包含{elseif $kw['type']==3}正则{/if}">{$kw['content']}</span>&nbsp;
 					{/loop}
 				</td>
-				<td class="text-left">
+				<td>
 					<div class="link-group" style="position:relative;">
 						<a href="{url 'platform/cover/post' array('m' => $modulename, 'eid' => $menu['eid'])}" class="color-default we7-margin-right">编辑</a>
 						<a href="javascript:;" data-url="{$_W['siteroot']}app/{$menu['url']}" style="margin-right:0px;" class="color-default js-clip">复制链接</a>

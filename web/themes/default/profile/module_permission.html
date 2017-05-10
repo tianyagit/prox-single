@@ -11,7 +11,7 @@
 		<tr>
 			<th class="text-center" style="width:100px;">操作员名称</th>
 			<th class="text-center" style="width:150px">权限信息</th>
-			<th class="text-center" style="width:100px;">操作</th>
+			<th class="text-right" style="width:100px;">操作</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -24,7 +24,7 @@
 					<span class="label label-primary">{$permission}</span>
 					{/loop}
 				</td>
-				<td class="text-center" style="width:100px;">
+				<td style="width:100px;">
 					<div class="link-group" >
 						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op' =>'post', 'm' => $name));}">编辑</a>
 						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op'=>'delete', 'm' => $name));}" class="del">删除</a>

@@ -25,7 +25,7 @@
 		<tr>
 			<th colspan="2" class="text-left">可使用的公众号</th>
 			<th>角色</th>
-			<th class="text-center">操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		<tr ng-repeat="wechat in wechats" ng-if="wechats">
 			<td class="text-left"><img ng-src="{{wechat.thumb}}" class="img-responsive"/></td>
@@ -45,7 +45,7 @@
 				<span ng-if="wechat.role == 'operator'">操作员</span>
 				<span ng-if="wechat.role == 'clerk'">店员</span>
 			</td>
-			<td class="text-center">
+			<td>
 				<div class="link-group">
 					<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}&account_type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" class="color-default">公众号设置</a>
 					<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wechat.uniacid}}&acid={{wechat.acid}}&account_type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" class="color-default">操作员设置</a>
@@ -64,7 +64,7 @@
 		<tr>
 			<th colspan="2" class="text-left">可使用的小程序</th>
 			<th>角色</th>
-			<th class="text-center">操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		<tr ng-repeat="wxapp in wxapps" ng-if="wxapp">
 			<td class="text-left"><img ng-src="{{wxapp.thumb}}" class="img-responsive"/></td>
@@ -81,7 +81,7 @@
 				<span ng-if="wxapp.role == 'operator'">操作员</span>
 				<span ng-if="wxapp.role == 'clerk'">店员</span>
 			</td>
-			<td class="text-center">
+			<td>
 				<div class="link-group">
 					<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{wxapp.uniacid}}&acid={{wxapp.acid}}&account_type={ACCOUNT_TYPE_APP_NORMAL}" class="color-default">小程序设置</a>
 					<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{wxapp.uniacid}}&acid={{wxapp.acid}}&account_type={ACCOUNT_TYPE_APP_NORMAL}" class="color-default">操作员设置</a>

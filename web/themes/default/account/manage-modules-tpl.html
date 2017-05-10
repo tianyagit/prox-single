@@ -160,7 +160,7 @@
 						<table class="table we7-table table-hover">
 							<tr>
 								<th class="text-left bg-light-gray">应用权限组（各权限组均包含系统模块和微站默认模板）</th>
-								<th class="text-left bg-light-gray">操作</th>
+								<th class="text-right bg-light-gray">操作</th>
 							</tr>
 							<tr>
 								<td class="text-left">
@@ -195,7 +195,7 @@
 										<input id="check-{$package['id']}" type="checkbox" name="package[]" autocomplete="off" {if is_array($owner['group']['package']) && in_array($package['id'], $owner['group']['package'])}checked disabled{/if} {if is_array($extendpackage) && !empty($extendpackage[$package['id']])}checked {/if} value="{$package['id']}" />
 										<label for="check-{$package['id']}" class="we7-padding-left we7-margin-horizontal-none">{$package['name']}</label>
 									</td>
-									<td class="text-left">
+									<td>
 										<div class="link-group">
 											<a href="javascript:;" class="color-default js-unfold" data-toggle="collapse" data-target="#extend{$package['id']}" ng-click="changeText($event)">展开</a>
 										</div>
