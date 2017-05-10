@@ -629,6 +629,9 @@ function ext_module_msg_types() {
 	$mtypes['click'] = '点击菜单(模拟关键字)';
 	$mtypes['view'] = '点击菜单(链接)';
 	$mtypes['merchant_order'] = '微小店消息';
+	$mtypes['user_get_card'] = '用户领取卡券事件';
+	$mtypes['user_del_card'] = '用户删除卡券事件';
+	$mtypes['user_consume_card'] = '用户核销卡券事件';
 	return $mtypes;
 }
 
