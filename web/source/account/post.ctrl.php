@@ -202,8 +202,8 @@ if($do == 'sms') {
 
 if($do == 'modules_tpl') {
 	$unigroups = uni_groups();
-	$ownerid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
-	$ownerid = empty($ownerid) ? 1 : $ownerid; 
+	$ownerid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+	$ownerid = empty($ownerid) ? 1 : $ownerid;
 	$owner = user_single(array('uid' => $ownerid));
 
 	if($_W['isajax'] && $_W['ispost'] && ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER)) {
@@ -262,8 +262,7 @@ if($do == 'modules_tpl') {
 	$modules_tpl = $extend = array();
 
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
-	if (in_array($owner_uid, $founders)) {
+	if (in_array($ownerid, $founders)) {
 		$modules_tpl[] = array(
 			'id' => -1,
 			'name' => '所有服务',
