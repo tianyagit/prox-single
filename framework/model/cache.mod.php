@@ -326,9 +326,11 @@ function cache_build_uninstalled_module() {
 		foreach ($module_file as $modulepath) {
 			$modulepath = str_replace($path, '', $modulepath);
 			$manifest = ext_module_manifest($modulepath);
+
 			if (!is_array($manifest) || empty($manifest) || empty($manifest['application']['identifie'])) {
 				continue;
 			}
+
 			if (!in_array($manifest['application']['identifie'], $installed_module)) {
 				if (!empty($manifest['platform']['main_module'])) {
 					$plugin_exist = pdo_get('modules_plugin', array('name' => $manifest['application']['identifie']));
@@ -337,16 +339,15 @@ function cache_build_uninstalled_module() {
 					}
 				}
 				$manifest = ext_module_convert($manifest);
+
 				$module[$manifest['name']] = $manifest;
-				$app_support = empty($manifest['supports']) || in_array('app', $manifest['supports']) ? 2 : 1;
-				$wxapp_support = in_array('wxapp', (array)$manifest['supports']) ? 2 : 1;
 				$module_info = array(
 					'from' => 'local',
 					'name' => $manifest['name'],
 					'version' => $manifest['version'],
 					'title' => $manifest['title'],
-					'app_support' => $app_support,
-					'wxapp_support' => $wxapp_support,
+					'app_support' => $manifest['app_support'],
+					'wxapp_support' => $manifest['wxapp_support'],
 					'main_module' => empty($manifest['platform']['main_module']) ? '' : $manifest['platform']['main_module']
 				);
 				$module_type = in_array($manifest['name'], $recycle_modules) ? 'recycle' : 'uninstalled';

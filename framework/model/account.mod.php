@@ -230,6 +230,7 @@ function uni_groups($groupids = array()) {
 	}
 	if (!empty($list)) {
 		foreach ($list as $k=>&$row) {
+			$row['wxapp'] = array();
 			if (!empty($row['modules'])) {
 				$modules = iunserializer($row['modules']);
 				if (is_array($modules)) {
