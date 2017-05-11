@@ -18,7 +18,7 @@
 					<!--end头部信息-->
 				</div>
 				<div class="panel-body">
-					<div class="left-menu">
+					<div class="left-menu" style="margin-left:0px">
 						<!--菜单列表-->
 						{if $version_info['design_method'] == 2}
 						<div class="panel panel-menu">
@@ -44,7 +44,7 @@
 							</div>
 							<ul class="list-group">
 								{loop $module_connections $module}
-								<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'uniacid_source' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank" onclick="if(!confirm('您当前操作的公众号与该模块关联的公众号不一致，确定要切换并前往{$module['link_name']}公众号下的{$module['title']}模块')) return false;">
+								<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'uniacid_source' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank">
 								<li class="list-group-item">
 									<i class="fa fa-adjust"></i>{$module['title']}
 								</li>
@@ -465,7 +465,7 @@
 										</td>
 										<td class="text-left">
 											<div class="link-group">
-												<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" ng-click="showAccount('{$connection['link_name']}')">修改</a>
+												<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" ng-click="showAccount('{$module}')">修改</a>
 											</div>
 										</td>
 									</tr>

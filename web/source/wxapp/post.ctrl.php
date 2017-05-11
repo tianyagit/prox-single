@@ -32,7 +32,6 @@ if ($do == 'getlink') {
 }
 
 if($do == 'post') {
-	//print_r($_GPC);die;
 	$uniacid = intval($_GPC['uniacid']);
 	$isDeveloper = empty($_GPC['isDeveloper'])?0:1;//
 	$wxapp_version_info = pdo_fetch("SELECT version, uniacid, id, multiid FROM " . tablename('wxapp_versions') . " WHERE uniacid = :uniacid ORDER BY version DESC", array(':uniacid' => $uniacid));
