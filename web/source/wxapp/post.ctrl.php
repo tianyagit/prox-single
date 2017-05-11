@@ -171,18 +171,17 @@ if($do == 'post') {
 	template('wxapp/create-post');
 }
 if($do == 'getpackage') {
-	$uniacid = $_W['uniacid'];
-	$versionid = $_GPC['versionid'];
-	if(empty($uniacid) || !is_numeric($uniacid) || empty($versionid) || !is_numeric($versionid)) {
+	$versionid = intval($_GPC['versionid']);
+	if(empty($versionid)) {
 		itoast('参数错误！', '', '');
 	}
 	$request_cloud_data = array();
-	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
-	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
+	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $_W['uniacid']));
+	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $_W['uniacid'], 'id' => $versionid));
 	$request_cloud_data['name'] = $account_wxapp_info['name'];
 	$request_cloud_data['modules'] = json_decode($wxapp_version_info['modules'], true);
 	$request_cloud_data['siteInfo'] = array(
-			'uniacid' => $uniacid,
+			'uniacid' => $_W['uniacid'],
 			'acid' => $account_wxapp_info['acid'],
 			'multiid' => $wxapp_version_info['multiid'],
 			'version' => $wxapp_version_info['version'],
