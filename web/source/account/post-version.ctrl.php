@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('system');
 load()->model('wxapp');
 
-$dos = array('delete', 'display', 'editmodule', 'delmodule');
+$dos = array('delete', 'display', 'editmodule', 'delmodule', 'get_single_package');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $uniacid = intval($_GPC['uniacid']);
@@ -78,6 +78,33 @@ if ($do == 'delmodule') {
 		iajax(1, '删除失败，请稍候重试！');
 	}
 }
+
+if ($do == 'get_single_package') {
+	if(empty($uniacid) || !is_numeric($uniacid)) {
+		itoast('参数错误！', '', '');
+	}
+	$request_cloud_data = array();
+	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid));
+	$request_cloud_data['name'] = $account_wxapp_info['name'];
+	$request_cloud_data['modules'] = json_decode($wxapp_version_info['modules'], true);
+	$request_cloud_data['siteInfo'] = array(
+			'uniacid' => $uniacid,
+			'acid' => $account_wxapp_info['acid'],
+			'siteroot' => $_W['siteroot'].'app/index.php'
+		);
+	$result = wxapp_getpackage($request_cloud_data);
+
+	if(is_error($result)) {
+		itoast($result['message'], '', '');
+	}else {
+		header('content-type: application/zip');
+		header('content-disposition: attachment; filename="'.$request_cloud_data['name'].'.zip"');
+		echo $result;
+	}
+	exit;
+}
+
 if ($do == 'delete') {
 	$id = intval($_GPC['id']);
 	$version_info = pdo_get('wxapp_versions', array('id' => $id));
