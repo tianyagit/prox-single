@@ -40,39 +40,6 @@ function wxapp_account_create($uniacid, $account,$wxapp_type = 1) {
 	@return array
 */
 function wxapp_owned_moudles($uniacid) {
-	global $_W;
-
-	$modules_wxapp = array();
-
-	$uniacid = !empty(intval($uniacid)) ? intval($uniacid) : $_W['uniacid'];
-	$unigroups = uni_groups();
-	$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid', 1);
-	$ownerid = empty($ownerid) ? 1 : $ownerid; 
-	$owner = user_single($ownerid);
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($ownerid, $founders)) {
-		$modules_wxapp = wxapp_getall_modules();
-	} else {
-		$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
-		$owner['group']['package'] = iunserializer($owner['group']['package']);
-		if(!empty($owner['group']['package'])){
-			foreach ($owner['group']['package'] as $package_value) {
-				if($package_value == -1){
-					$modules_wxapp = wxapp_getall_modules();
-					break;
-				}elseif ($package_value != 0) {
-					$modules_wxapp = array_merge($unigroups[$package_value]['wxapp'], $modules_wxapp);
-				}
-			}
-		}
-	}
-	return $modules_wxapp;
-}
-/*
-	*获取所有小程序模块
-	@return array
-*/
-function wxapp_getall_modules() {
 	load()->model('module');
 
 	$wxapp_modules = array();

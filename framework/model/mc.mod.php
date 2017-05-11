@@ -201,7 +201,7 @@ function mc_fetch_one($uid) {
 	if (empty($uid)) {
 		return array();
 	}
-	$cachekey = cache_system_key("memberinfo:{$uid}");
+	$cachekey = cache_system_key(CACHE_KEY_MEMBER_INFO, $uid);
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
