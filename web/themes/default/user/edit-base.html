@@ -5,7 +5,8 @@
 	<li>编辑用户详情</li>
 </ol>
 <div id="js-user-edit-base" ng-controller="UserProfileDisplay" ng-cloak>
-	<div class="user-head-info we7-padding-bottom" >
+	<div class="user-head-info clearfix" >
+		<span class="icon pull-left"><i class="wi wi-user"></i></span>
 		<img ng-src="{{profile.avatar}}" class="img-circle user-avatar pull-left">
 		<h3 class="pull-left" ng-bind="user.username"></h3>
 		<div class="user-edit pull-right">
