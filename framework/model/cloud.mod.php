@@ -32,7 +32,7 @@ function cloud_prepare() {
 function cloud_m_prepare($name) {
 	$pars['method'] = 'module.check';
 	$pars['module'] = $name;
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	if (is_error($dat)) {
 		return $dat;
 	}
@@ -79,7 +79,7 @@ function cloud_m_build($modulename, $type = '') {
 		$pars['module_version'] = $module['version'];
 	}
 
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/module.build';
 	$ret = _cloud_shipping_parse($dat, $file);
 
@@ -129,7 +129,7 @@ function cloud_m_query() {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.query';
 	$pars['module'] = cloud_extra_module();
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/module.query';
 	$ret = _cloud_shipping_parse($dat, $file);
 	return $ret;
@@ -139,7 +139,7 @@ function cloud_m_info($name) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.info';
 	$pars['module'] = $name;
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/module.info';
 	$ret = _cloud_shipping_parse($dat, $file);
 	return $ret;
@@ -153,7 +153,7 @@ function cloud_m_upgradeinfo($name) {
 	$pars['module'] = $name;
 	$pars['curversion'] = $module['version'];
 	$pars['isupgrade'] = 1;
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/module.info';
 	$ret = _cloud_shipping_parse($dat, $file);
 	return $ret;
@@ -162,7 +162,7 @@ function cloud_m_upgradeinfo($name) {
 function cloud_t_prepare($name) {
 	$pars['method'] = 'theme.check';
 	$pars['theme'] = $name;
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	if (is_error($dat)) {
 		return $dat;
 	}
@@ -177,7 +177,7 @@ function cloud_t_query() {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'theme.query';
 	$pars['theme'] = cloud_extra_theme();
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/theme.query';
 	$ret = _cloud_shipping_parse($dat, $file);
 	return $ret;
@@ -187,7 +187,7 @@ function cloud_t_info($name) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'theme.info';
 	$pars['theme'] = $name;
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/theme.info';
 	$ret = _cloud_shipping_parse($dat, $file);
 	return $ret;
@@ -203,7 +203,7 @@ function cloud_t_build($name) {
 	if(!empty($theme)) {
 		$pars['themeversion'] = $theme['version'];
 	}
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/theme.build';
 	$ret = _cloud_shipping_parse($dat, $file);
 	if(!is_error($ret)) {
@@ -237,7 +237,7 @@ function cloud_t_upgradeinfo($name) {
 	$pars['theme'] = $theme['name'];
 	$pars['version'] = $theme['version'];
 	$pars['isupgrade'] = 1;
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/module.info';
 	$ret = _cloud_shipping_parse($dat, $file);
 	return $ret;
@@ -273,7 +273,7 @@ function cloud_sms_send($mobile, $content, $postdata = array()) {
 		$pars['content'] = "{$content} 【{$sign}】";
 	}
 	
-	$response = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$response = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	if (is_error($response)) {
 		return error($response['errno'], '短信发送失败, 原因:'.$response['message']);
 	}
@@ -300,7 +300,7 @@ function cloud_sms_info() {
 	
 	$pars = _cloud_build_params();
 	$pars['method'] = 'sms.info';
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	if ($dat['content'] == 'success') {
 		$setting_key = "sms.info";
 		$dat = setting_load($setting_key);
@@ -314,7 +314,7 @@ function cloud_build() {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'application.build2';
 	$pars['extra'] = cloud_extra_account();
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/application.build';
 	$ret = _cloud_shipping_parse($dat, $file);
 	if(!is_error($ret)) {
@@ -378,7 +378,7 @@ function cloud_build() {
 function cloud_schema() {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'application.schema';
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/application.schema';
 	$ret = _cloud_shipping_parse($dat, $file);
 	if(!is_error($ret)) {
@@ -412,7 +412,7 @@ function cloud_download($path, $type = '') {
 	$pars['type'] = $type;
 	$pars['gz'] = function_exists('gzcompress') && function_exists('gzuncompress') ? 'true' : 'false';
 	$headers = array('content-type' => 'application/x-www-form-urlencoded');
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, $headers, 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, $headers, 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -524,7 +524,7 @@ function cloud_cron_create($cron) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'cron.create';
 	$pars['cron'] = base64_encode(iserializer($cron));
-	$result = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$result = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	return _cloud_cron_parse($result);
 }
 
@@ -533,7 +533,7 @@ function cloud_cron_update($cron) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'cron.update';
 	$pars['cron'] = base64_encode(iserializer($cron));
-	$result = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$result = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	return _cloud_cron_parse($result);
 }
 
@@ -542,7 +542,7 @@ function cloud_cron_get($cron_id) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'cron.get';
 	$pars['cron_id'] = $cron_id;
-	$result = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$result = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	return _cloud_cron_parse($result);
 }
 
@@ -552,7 +552,7 @@ function cloud_cron_change_status($cron_id, $status) {
 	$pars['method'] = 'cron.status';
 	$pars['cron_id'] = $cron_id;
 	$pars['status'] = $status;
-	$result = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$result = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	return _cloud_cron_parse($result);
 }
 
@@ -561,7 +561,7 @@ function cloud_cron_remove($cron_id) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'cron.remove';
 	$pars['cron_id'] = $cron_id;
-	$result = cloud_request(CLOUD_GATEWAY_URL, $pars);
+	$result = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	return _cloud_cron_parse($result);
 }
 
@@ -725,7 +725,7 @@ function cloud_flow_master_post($flow_master) {
 		'id_card_photo' => $flow_master['id_card_photo'], 
 		'business_licence_photo' => $flow_master['business_licence_photo'],
 	);
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -743,7 +743,7 @@ function cloud_flow_master_get() {
 	}
 	$pars = _cloud_build_params();
 	$pars['method'] = 'flow.master_get';
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -767,7 +767,7 @@ function cloud_flow_uniaccount_post($uniaccount) {
 	isset($uniaccount['gh_type']) && $pars['uniaccount']['gh_type'] = $uniaccount['gh_type']; 
 	isset($uniaccount['ad_tags']) && $pars['uniaccount']['ad_tags'] = $uniaccount['ad_tags']; 
 	isset($uniaccount['enable']) && $pars['uniaccount']['enable'] = $uniaccount['enable']; 
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -789,7 +789,7 @@ function cloud_flow_uniaccount_get($uniacid) {
 		'uniacid' => $uniacid,
 	);
 	$pars['md5'] = md5(base64_encode(serialize($pars['uniaccount'])));
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -806,7 +806,7 @@ function cloud_flow_uniaccount_list_get() {
 	}
 	$pars = _cloud_build_params();
 	$pars['method'] = 'flow.uniaccount_list_get';
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -823,7 +823,7 @@ function cloud_flow_ad_tag_list() {
 	}
 	$pars = _cloud_build_params();
 	$pars['method'] = 'flow.ad_tag_list';
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -840,7 +840,7 @@ function cloud_flow_ad_type_list() {
 	}
 	$pars = _cloud_build_params();
 	$pars['method'] = 'flow.ad_type_list';
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -860,7 +860,7 @@ function cloud_flow_app_post($uniacid, $module_name, $enable = 0, $ad_types = nu
 		$pars['uniaccount_app']['enable'] = $enable; 	}
 	if (is_array($ad_types)) {
 		$pars['uniaccount_app']['ad_types'] = $ad_types; 	}
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -881,7 +881,7 @@ function cloud_flow_app_list_get($uniacid) {
 	$pars['uniaccount'] = array(
 		'uniacid' => $uniacid,
 	);
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -902,7 +902,7 @@ function cloud_flow_app_support_list($module_names) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'flow.app_support_list';
 	$pars['modules'] = $module_names;
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
@@ -925,7 +925,7 @@ function cloud_flow_site_stat_day($condition) {
 	$pars['condition']['page'] = $condition['page'];
 	$pars['condition']['size'] = $condition['size'];
 
-	$dat = cloud_request(CLOUD_GATEWAY_URL, $pars, array(), 300);
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}

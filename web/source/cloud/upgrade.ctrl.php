@@ -21,7 +21,7 @@ if ($do == 'upgrade') {
 		if (empty($cloudip) || !preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/', $cloudip)) {
 			message('云服务域名解析失败，请查看服务器DNS设置或是在“云服务诊断”中手动设置云服务IP', url('cloud/diagnose'), 'error');
 		}
-		setting_save(array('ip' => $cloudip, 'expire' => TIMESTAMP + 201600), 'cloudip');
+		setting_save(array('ip' => $cloudip, 'expire' => TIMESTAMP + 600), 'cloudip');
 	}
 	if (checksubmit('submit')) {
 		$upgrade = cloud_build();
