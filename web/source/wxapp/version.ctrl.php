@@ -132,17 +132,30 @@ if ($do == 'edit') {
 		}
 		unset($version);
 	}
+	//print_r($module_connections);
 	template('wxapp/wxapp-edit');
 }
 
 if ($do == 'account_list') {
-	$uni_account_modules = pdo_getall('uni_account_modules', array('module' => $_GPC['module'], 'enabled' => '1'), array('uniacid'), 'uniacid');
-	foreach ($uni_account_modules as $key=>$val) {
-		$accounts = uni_account_default($key);
-		if (!empty($accounts) && $accounts['isdeleted'] == 0 && $accounts['type'] != 4) {
-			$accounts['thumb'] = tomedia('headimg_'.$accounts['acid']. '.jpg').'?time='.time();
-			$account_list[$key] = $accounts;
+	//查询当前用户所有公众号
+	$sql = "SELECT * FROM ".tablename("account_wechats")." as a LEFT JOIN ".tablename("account")." as b 
+			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
+	if ($_W['isfounder']) {
+		$param =array();
+	} else {
+		$subsql="SELECT uniacid FROM ".tablename("uni_account_users")." where uid=:uid";
+		$sql.=" AND b.uniacid in ($subsql)";
+		$param[':uid'] = $_W['uid'];
+	}
+	$accounts = pdo_fetchall($sql, $param);
+	//筛选有模块权限的公众号
+	foreach($accounts as $key =>$val){
+		$account_module = pdo_get('uni_account_modules',array('module' => $_GPC['module'],'enabled' => '1','uniacid'=>$val['uniacid']),array('uniacid'), 'uniacid');
+		if(empty($account_module)){
+			continue;
 		}
+		$val['thumb'] = tomedia('headimg_'.$val['acid']. '.jpg').'?time='.time();
+		$account_list[]=$val;
 	}
 	iajax(0, $account_list, '');
 }
