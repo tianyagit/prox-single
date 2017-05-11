@@ -56,7 +56,24 @@ function uni_owned($uid = 0) {
 	
 	return $uniaccounts;
 }
-
+/**
+ * 获取当前用户可操作的所有公众号(不包括小程序)
+ * @return array
+ */
+function user_wechats() {
+	global $_W;
+	$sql = "SELECT * FROM ".tablename("account_wechats")." as a LEFT JOIN ".tablename("account")." as b
+			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
+	if ($_W['isfounder']) {
+		$param = array();
+	} else {
+		$subsql = "SELECT uniacid FROM ".tablename("uni_account_users")." where uid=:uid";
+		$sql.=" AND b.uniacid in ($subsql)";
+		$param[':uid'] = $_W['uid'];
+	}
+	$accounts = pdo_fetchall($sql, $param);
+	return $accounts;
+}
 /**
  * 获取某一公众号的主管理员信息
  * @param int $uniacid  指定的公众号
