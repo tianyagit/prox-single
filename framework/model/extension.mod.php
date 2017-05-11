@@ -11,9 +11,9 @@ defined('IN_IA') or exit('Access Denied');
  * @return array
  */
 function ext_module_convert($manifest) {
-	$app_support = empty($manifest['platform']['supports']['supports']) || in_array('app', $manifest['platform']['supports']['supports']) ? 2 : 1;
-	if (!empty($manifest['platform']['supports']['supports'])) {
-		$wxapp_support = in_array('wxapp', $manifest['platform']['supports']['supports']) ? 2 : 1;
+	if (!empty($manifest['platform']['supports'])) {
+		$app_support = in_array('app', $manifest['platform']['supports']) ? 2 : 1;
+		$wxapp_support = in_array('wxapp', $manifest['platform']['supports']) ? 2 : 1;
 		if ($app_support == 1 && $wxapp_support == 1) {
 			$app_support = 2;
 		}
@@ -21,6 +21,7 @@ function ext_module_convert($manifest) {
 		$app_support = 2;
 		$wxapp_support = 1;
 	}
+
 	return array(
 		'name' => $manifest['application']['identifie'],
 		'title' => $manifest['application']['name'],
