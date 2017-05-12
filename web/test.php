@@ -17,7 +17,6 @@ load()->func('file');
 $_W['uniacid'] = 181;
 $modules = uni_modules(false);
 print_r($modules);exit;
-echo 121;die;
 
 $old_path = IA_ROOT.'/data/old';
 $new_path = IA_ROOT.'/data/new';
