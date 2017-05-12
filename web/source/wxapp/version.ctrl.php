@@ -152,16 +152,24 @@ if ($do == 'account_list') {
 }
 
 if ($do == 'save_connection') {
-	$connection_info = pdo_get('wxapp_versions', array('id' => intval($_GPC['version_id'])), array('connection'));
+	$uniacid = intval($_GPC['uniacid']);
+	$version_id = intval($_GPC['version_id']);
+	$module = trim($_GPC['module']);
+	$connection_info = pdo_get('wxapp_versions', array('id' => $version_id));
+	$modules_info = json_decode($connection_info['modules'], true);
+	$modules = array_keys($modules_info);
+	if (!in_array($module, $modules)) {
+		iajax(-1, '模块参数错误！');
+	}
 	$connections = json_decode($connection_info['connection'], true);
-	$connections[$_GPC['module']] = intval($_GPC['uniacid']);
-	$result = pdo_update('wxapp_versions', array('connection' => json_encode($connections)), array('id' => intval($_GPC['version_id'])));
-	$account_info = uni_account_default($_GPC['uniacid']);
+	$connections[$module] = $uniacid;
+	$result = pdo_update('wxapp_versions', array('connection' => json_encode($connections)), array('id' => $version_id));
+	$account_info = uni_account_default($uniacid);
 	$account_info['thumb'] = tomedia('headimg_' . $account_info['acid'] . '.jpg') . '?time=' .time();
 	if (is_error($result)) {
-		iajax(-1, $result['message'], '');
+		iajax(-1, $result['message']);
 	}
-	iajax(0, $account_info, '');
+	iajax(0, $account_info, referer());
 }
 
 if ($do == 'switch_version') {
