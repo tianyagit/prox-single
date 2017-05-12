@@ -60,7 +60,7 @@
 				</td>
 				<td class="vertical-middle text-left">
 					<div class="link-group">
-						<a href="{php echo url('account/post-version/get_single_package', array('uniacid' => $account['uniacid']))}">下载</a>
+						<a href="{php echo url('wxapp/post/getpackage', array('uniacid' => $account['uniacid'], 'single' => true))}">下载</a>
 						<a href="javascript:;" ng-click="showWxModules()">修改</a>
 						<a href="javascript:;" class="del" ng-click="delWxModule()">删除</a>
 					</div>
@@ -113,8 +113,8 @@
 		'wxapp_modules' : {php echo !empty($wxapp_modules) ? json_encode($wxapp_modules) : 'null'},
 		'current_module_info': {php echo !empty($current_module_info) ? json_encode($current_module_info) : 'null'},
 		'links': {
-			'editmodule': "{php echo url('account/post-version/editmodule', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
-			'delmodule': "{php echo url('account/post-version/delmodule', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
+			'editmodule': "{php echo url('account/post-version/single_change_module', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
+			'delmodule': "{php echo url('account/post-version/single_del_module', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
 		},
 	});
 	angular.bootstrap($('#js-account-manage-wxapp'), ['accountApp']);

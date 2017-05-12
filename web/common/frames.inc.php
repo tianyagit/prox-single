@@ -186,13 +186,13 @@ $we7_system_menu['system'] = array(
 				'system_module' => array(
 					'title' => '我的应用管理',
 					'url' => url('system/module', array('account_type' => '1')),
-					'icon' => 'wi wi-appsetting',
+					'icon' => 'wi wi-apply',
 					'permission_name' => 'system_module',
 				),
 				'system_module_wxapp' => array(
 					'title' => '小程序功能管理',
 					'url' => url('system/module', array('account_type' => '4')),
-					'icon' => 'wi wi-appsetting',
+					'icon' => 'wi wi-wxapp-setting',
 					'permission_name' => 'system_module_wxapp',
 				),
 				'system_template' => array(

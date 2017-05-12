@@ -6,11 +6,19 @@
 defined('IN_IA') or exit('Access Denied');
 
 
-function wxapp_getpackage($data) {
-	$request_cloud_data = json_encode($data);
+function wxapp_getpackage($data, $if_single = false) {
+	if (empty($if_single)) {
+		$request_cloud_data = json_encode($data);
+	} else {
+		$request_cloud_data = $data;
+	}
 	load()->classs('cloudapi');
 	$api = new CloudApi();
-	$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
+	if (empty($if_single)) {
+		$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
+	} else {
+		$result = $api->post('wxapp', 'developer-download', array('wxapp' => $request_cloud_data), 'html');
+	}
 	if (is_error($result)) {
 			return error(-1, $result['message']);
 	} else {
@@ -34,45 +42,12 @@ function wxapp_account_create($uniacid, $account,$wxapp_type = 1) {
 	pdo_insert('account_wxapp', $account);
 	return $acid;
 }
-/*
-	*获取某一小程序拥有的小程序模块
-	@param  int $uniacid
-	@return array
-*/
+/**
+ * 获取某一小程序拥有的小程序模块
+ * @param int $uniacid
+ * @return array
+ */
 function wxapp_owned_moudles($uniacid) {
-	global $_W;
-
-	$modules_wxapp = array();
-
-	$uniacid = !empty(intval($uniacid)) ? intval($uniacid) : $_W['uniacid'];
-	$unigroups = uni_groups();
-	$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid', 1);
-	$ownerid = empty($ownerid) ? 1 : $ownerid; 
-	$owner = user_single($ownerid);
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($ownerid, $founders)) {
-		$modules_wxapp = wxapp_getall_modules();
-	} else {
-		$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
-		$owner['group']['package'] = iunserializer($owner['group']['package']);
-		if(!empty($owner['group']['package'])){
-			foreach ($owner['group']['package'] as $package_value) {
-				if($package_value == -1){
-					$modules_wxapp = wxapp_getall_modules();
-					break;
-				}elseif ($package_value != 0) {
-					$modules_wxapp = array_merge($unigroups[$package_value]['wxapp'], $modules_wxapp);
-				}
-			}
-		}
-	}
-	return $modules_wxapp;
-}
-/*
-	*获取所有小程序模块
-	@return array
-*/
-function wxapp_getall_modules() {
 	load()->model('module');
 
 	$wxapp_modules = array();
@@ -86,4 +61,42 @@ function wxapp_getall_modules() {
 		}
 	}
 	return $wxapp_modules;
+}
+/* 
+ 	* 获取小程序升级后的版本号
+ 	@return array  
+ */
+function wxapp_version_update($uniacid) {
+	$wxapp_version_info = pdo_get('wxapp_versions',array('uniacid'=>$uniacid),array('version','uniacid','id','multiid'));
+	$version_nums = array();
+	if (!empty($wxapp_version_info)) {
+		$version_nums = explode('.', $wxapp_version_info['version']);
+		if ($version_nums[2] < 9) {
+			$version_nums[2] += 1;
+		} else {
+			if ($version_nums[1] < 9) {
+				if ($version_nums[0] < 9) {
+					$version_nums[1] += 1;
+					$version_nums[2] = 0;
+				} else {
+					$version_nums[0] += 1;
+					$version_nums[1] = 0;
+					$version_nums[2] = 0;
+				}
+			} else {
+				$version_nums[0] += 1;
+				$version_nums[1] = 0;
+				$version_nums[2] = 0;
+			}
+		}
+	}
+	return $version_nums;
+}
+/*
+    * 获取小程序信息
+ 	@return array
+*/
+function wxapp_info($uniacid) {
+	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	return $wxapp_info;
 }
