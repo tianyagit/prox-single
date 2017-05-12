@@ -35,11 +35,10 @@ if($do == 'post' || $do == 'developer') {
 	$uniacid = intval($_GPC['uniacid']);
 	$is_developer = $do == 'developer';
 	$wxapp_info = wxapp_fetch($uniacid);
-	$old_version = $wxapp_info['versions'][0]['version'];
+	$old_version = $wxapp_info['version'];
 	$version_nums = array();
 	if(!empty($old_version)){
-		$old_version_arr = explode(".", $old_version);
-		$version_nums = wxapp_version_parser($old_version_arr[0],$old_version_arr[1],$old_version_arr[2]);
+		$version_nums = wxapp_version_parser($old_version[0],$old_version[1],$old_version[2]+1);
 	}
 	if(!empty($_GPC['wxappval'])) {
 		$submit_val = json_decode(ihtml_entity_decode($_GPC['wxappval']), true);
@@ -54,7 +53,8 @@ if($do == 'post' || $do == 'developer') {
 			$version_0 = intval($submit_val['version0']);
 			$version_1 = intval($submit_val['version1']);
 			$version_2 = intval($submit_val['version2']);
-			$new_version = sprintf("%u.%u.%u",$version_0,$version_1,$version_2);
+			$version = wxapp_version_parser($version_0, $version_1, $version_2);
+			$new_version = sprintf("%u.%u.%u",$version[0],$version[1],$version[2]);
 		}
 		$request_cloud_data = array();
 		//底部菜单

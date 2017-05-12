@@ -138,7 +138,7 @@ if ($do == 'edit') {
 
 if ($do == 'account_list') {
 	//查询当前用户所有公众号
-	$accounts = uni_owned($_W['uid'],true);
+	$accounts = uni_owned();
 	//筛选有模块权限的公众号
 	foreach($accounts as $key =>$val){
 		$account_module = pdo_get('uni_account_modules',array('module' => $_GPC['module'],'enabled' => '1','uniacid'=>$val['uniacid']),array('uniacid'), 'uniacid');
