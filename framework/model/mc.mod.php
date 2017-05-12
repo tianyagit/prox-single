@@ -986,6 +986,11 @@ function mc_uid2openid($uid) {
 		return $cache;
 	}
 
+	if (is_numeric($uid)) {
+		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
+		cache_write($cachekey, $fans_info['openid']);
+		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
+	}
 	if (is_string($uid)) {
 		$openid = trim($uid);
 		$openid_exist = pdo_get('mc_mapping_fans', array('openid' => $openid));
@@ -994,11 +999,6 @@ function mc_uid2openid($uid) {
 		} else {
 			return false;
 		}
-	}
-	if (is_numeric($uid)) {
-		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
-		cache_write($cachekey, $fans_info['openid']);
-		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
 	}
 	if (is_array($uid)) {
 		$openids = array();
