@@ -43,6 +43,6 @@
 	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $do == 'modules_tpl'} active{/if}">可用应用模块/模板</a>
 	{/if}
 	{if ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL}
-	<a href="{php echo url('account/post-version/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default {if $action == 'post-version' && $do == 'display'} active{/if}">{if $account['wxapp_type'] == WXAPP_MULTI}版本管理{else}可用小程序模块{/if}</a>
+	<a href="{php echo url('wxapp/manage-version/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default {if $action == 'manage-version' && $do == 'display'} active{/if}">{if $account['wxapp_type'] == WXAPP_MULTI}版本管理{else}可用小程序模块{/if}</a>
 	{/if}
 </div>
