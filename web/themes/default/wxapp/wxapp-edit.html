@@ -17,56 +17,60 @@
 					</div>
 					<!--end头部信息-->
 				</div>
-				<div class="panel-body">
-					<div class="left-menu" style="margin-left:0px">
-						<!--菜单列表-->
-						{if $version_info['design_method'] == 2}
-						<div class="panel panel-menu">
-							<div class="panel-heading">
-								首页设置<span class="fa fa-cog pull-right"></span>
+				<div class="panel-body clearfix main-panel-body">
+					<div class="left-menu">
+						<div class="left-menu-content">
+							<!--菜单列表-->
+							{if $version_info['design_method'] == 2}
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									<span class="no-collapse">首页设置<i class="wi wi-appsetting pull-right setting"></i></span>
+									<span class="" data-toggle="collapse" data-target="#frame-0">首页设置<i class="wi wi-down-sign-s pull-right"></i></span>
+								</div>
+								<ul class="list-group collapse in" id="frame-0">
+									<li class="list-group-item" ng-class="{active : wxapp == 'slide'}" ng-click="wxapp = 'slide'">
+										<a href="" class="text-over"><i class="wi wi-img"></i>幻灯片 </a>
+									</li>
+									<li class="list-group-item" ng-class="{active : wxapp == 'nav'}" ng-click="wxapp = 'nav'">
+										<a href="" class="text-over"><i class="wi wi-template"></i>导航图标</a>
+									</li>
+									<li class="list-group-item" ng-class="{active : wxapp == 'recommend'}" ng-click="wxapp = 'recommend'">
+										<a href="" class="text-over"><i class="wi wi-appmsg"></i>推荐图片</a>
+									</li>
+								</ul>
 							</div>
-							<ul class="list-group">
-								<li class="list-group-item" ng-class="{active : wxapp == 'slide'}" ng-click="wxapp = 'slide'">
-									<a href=""><i class="wi wi-img"></i>幻灯片 </a>
-								</li>
-								<li class="list-group-item" ng-class="{active : wxapp == 'nav'}" ng-click="wxapp = 'nav'">
-									<a href=""><i class="wi wi-template"></i>导航图标</a>
-								</li>
-								<li class="list-group-item" ng-class="{active : wxapp == 'recommend'}" ng-click="wxapp = 'recommend'">
-									<a href=""><i class="wi wi-appmsg"></i>推荐图片</a>
-								</li>
-							</ul>
-						</div>
-						{/if}
-						<div class="panel panel-menu">
-							<div class="panel-heading">
-								模块
+							{/if}
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									<span class="no-collapse">模块<i class="wi wi-appsetting pull-right setting"></i></span>
+									<span class="" data-toggle="collapse" data-target="#frame-1">模块<i class="wi wi-down-sign-s pull-right"></i></span>
+								</div>
+								<ul class="list-group collapse in" id="frame-1">
+									{loop $module_connections $module}
+									<li class="list-group-item">
+										<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'uniacid_source' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank">
+											<i class="fa fa-adjust"></i>{$module['title']}
+										</a>
+									</li>
+									{/loop}
+								</ul>
 							</div>
-							<ul class="list-group">
-								{loop $module_connections $module}
-								<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'uniacid_source' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank">
-								<li class="list-group-item">
-									<i class="fa fa-adjust"></i>{$module['title']}
-								</li>
-								</a>
-								{/loop}
-							</ul>
-						</div>
 						<!--end菜单列表-->
-						<div class="panel panel-menu">
-							<div class="panel-heading">
-								基础设置
+							<div class="panel panel-menu">
+								<div class="panel-heading">
+									<span class="no-collapse">基础设置<i class="wi wi-appsetting pull-right setting"></i></span>
+									<span class="" data-toggle="collapse" data-target="#frame-2">基础设置<i class="wi wi-down-sign-s pull-right"></i></span>
+								</div>
+								<ul class="list-group collapse in" id="frame-2">
+									<li class="list-group-item" ng-class="{active : wxapp == 'setting'}" ng-click="wxapp = 'setting'">
+										<a href="" class="text-over"><i class="wi wi-appsetting"></i>关联设置</a>
+									</li>
+								</ul>
 							</div>
-							<ul class="list-group">
-								<li class="list-group-item" ng-class="{active : wxapp == 'setting'}" ng-click="wxapp = 'setting'">
-									<i class="wi wi-appsetting"></i>关联设置
-								</li>
-								</a>
-							</ul>
 						</div>
 					</div>
 					<div class="right-content">
-						<div class="wxapp-slide-project">
+						<div class="wxapp-slide-project clearfix">
 							<!--预览-->
 							<div class="wxapp-phone" ng-show="wxapp != 'setting'">
 								<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
