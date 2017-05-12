@@ -34,44 +34,32 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 	}
 	return true;
 }
-
 /**
  * 获取当前用户可操作的所有公众号
  * @param int $uid 指定操作用户
+ * @param int $app_only 指定是否只获取公众号不获取小程序
  * @return array
  */
-function uni_owned($uid = 0) {
+function uni_owned($uid = 0,$app_only = false) {	
 	global $_W;
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
-	$uniaccounts = array();
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders)) {
-		$uniaccounts = pdo_fetchall("SELECT * FROM " . tablename('uni_account') . " ORDER BY `uniacid` DESC", array(), 'uniacid');
-	} else {
-		$uniacids = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account_users') . " WHERE uid = :uid", array(':uid' => $uid), 'uniacid');
-		if (!empty($uniacids)) {
-			$uniaccounts = pdo_fetchall("SELECT * FROM " . tablename('uni_account') . " WHERE uniacid IN (" . implode(',', array_keys($uniacids)) . ") ORDER BY `uniacid` DESC", array(), 'uniacid');
-		}
-	}
-	
-	return $uniaccounts;
-}
-/**
- * 获取当前用户可操作的所有公众号(不包括小程序)
- * @return array
- */
-function user_wechats() {
-	global $_W;
-	$sql = "SELECT * FROM ".tablename("account_wechats")." as a LEFT JOIN ".tablename("account")." as b
+	if ($app_only) {
+		$sql = "SELECT * FROM " . tablename(account_wechats) . " as a LEFT JOIN " . tablename("account") . " as b
 			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
-	if ($_W['isfounder']) {
-		$param = array();
 	} else {
-		$subsql = "SELECT uniacid FROM ".tablename("uni_account_users")." where uid=:uid";
-		$sql.=" AND b.uniacid in ($subsql)";
-		$param[':uid'] = $_W['uid'];
+		$sql = "SELECT * FROM " . tablename(uni_account) . " as b WHERE b.isdeleted=0";
 	}
-	$accounts = pdo_fetchall($sql, $param);
+	$orderby = " ORDER BY b.uniacid DESC";
+	if (in_array($uid, $founders)) {
+		$sql . = $orderby;
+		$accounts = pdo_fetchall($sql, array());
+	} else {
+		$subsql = "SELECT uniacid FROM " . tablename("uni_account_users")." as c where c.uid=:uid";
+		$sql . =" AND b.uniacid in ($subsql)" . $orderby;
+		$param[':uid'] = $_W['uid'];
+		$accounts = pdo_fetchall($sql, $param);
+	}
 	return $accounts;
 }
 /**

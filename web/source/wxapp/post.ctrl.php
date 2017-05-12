@@ -33,9 +33,14 @@ if ($do == 'getlink') {
 
 if($do == 'post' || $do == 'developer') {
 	$uniacid = intval($_GPC['uniacid']);
-	$is_developer = $do == 'developer' ? 1 : 0;
-	$wxapp_info = wxapp_info($uniacid);
-	$version_nums = wxapp_version_update($uniacid);
+	$is_developer = $do == 'developer';
+	$wxapp_info = wxapp_fetch($uniacid);
+	$old_version = $wxapp_info['versions'][0]['version'];
+	$version_nums = array();
+	if(!empty($old_version)){
+		$old_version_arr = explode(".", $old_version);
+		$version_nums = wxapp_version_parser($old_version_arr[0],$old_version_arr[1],$old_version_arr[2]);
+	}
 	if(!empty($_GPC['wxappval'])) {
 		$submit_val = json_decode(ihtml_entity_decode($_GPC['wxappval']), true);
 		if($submit_val['wxapp_type']){
@@ -44,12 +49,12 @@ if($do == 'post' || $do == 'developer') {
 			$wxapp_type = WXAPP_MULTI;
 		}
 		if($wxapp_type == WXAPP_SINGLE){
-			$version = "";
+			$new_version = "";
 		} else {
 			$version_0 = intval($submit_val['version0']);
 			$version_1 = intval($submit_val['version1']);
 			$version_2 = intval($submit_val['version2']);
-			$version = sprintf("%u.%u.%u",$version_0,$version_1,$version_2);
+			$new_version = sprintf("%u.%u.%u",$version_0,$version_1,$version_2);
 		}
 		$request_cloud_data = array();
 		//底部菜单
@@ -77,35 +82,37 @@ if($do == 'post' || $do == 'developer') {
 		//新建小程序公众号
 		if (empty($uniacid)) {
 			$name = trim($submit_val['name']);
-			$description = '微信小程序体验版';
-			$data = array(
+			$uni_account_data = array(
 				'name' => $name,
-				'description' => $description,
+				'description' => '微信小程序体验版',
 				'groupid' => 0,
 			);
-			if (!pdo_insert('uni_account', $data)) {
+			if (!pdo_insert('uni_account', $uni_account_data)) {
 				itoast('添加公众号失败', '', '');
 			}
 			$uniacid = pdo_insertid();
 			if($wxapp_type == WXAPP_MULTI){
-				$multi['uniacid'] = $uniacid;
-				$multi['title'] = $name;
-				$multi['styleid'] = 0;
-				pdo_insert('site_multi', $multi);
+				$multi_data = array(
+					'uniacid' => $uniacid,
+					'title' => $name,	
+					'styleid' => 0,	
+				);
+				pdo_insert('site_multi', $multi_data);
 				$multi_id = pdo_insertid();
 			} else {
 				$multi_id = "";
 			}
-
-			$update['name'] = $name;
-			$update['account'] = trim($submit_val['account']);
-			$update['original'] = trim($submit_val['original']);
-			$update['level'] = intval(1);
-			$update['key'] = trim($submit_val['key']);
-			$update['secret'] = trim($submit_val['secret']);
-			$update['type'] = ACCOUNT_TYPE_APP_NORMAL;
+			$account_wxapp_data = array(
+				'name' => $name,
+				'account' => trim($submit_val['account']),
+				'original' => trim($submit_val['original']),
+				'level' => 1,
+				'key' => trim($submit_val['key']),
+				'secret' => trim($submit_val['secret']),
+				'type' => ACCOUNT_TYPE_APP_NORMAL			
+			);
 			if (empty($acid)) {
-				$acid = wxapp_account_create($uniacid, $update, $wxapp_type);
+				$acid = wxapp_account_create($uniacid, $account_wxapp_data, $wxapp_type);
 				if(is_error($acid)) {
 					itoast('添加小程序信息失败', url('wxapp/post'), 'error');
 				}
@@ -117,15 +124,14 @@ if($do == 'post' || $do == 'developer') {
 		}
 		//关联了模块需生成小程序版本记录
 		if(is_array($submit_val['modules']) && !empty($submit_val['modules'][0])){
-			$multi_info = pdo_get('site_multi', array('uniacid' => $uniacid), array('id', 'uniacid'));
 			$request_cloud_data = array(
 				'name' => $submit_val['name'],
 				'modules' => $modules,
 				'siteInfo' => array(
 					'uniacid' => $uniacid,
 					'acid' => $acid,
-					'multiid'  => $multi_info['id'],
-					'version'  => $version,
+					'multiid'  => $multi_id,
+					'version'  => $new_version,
 					'siteroot' => $_W['siteroot'].'app/index.php'
 				),
 			);
@@ -138,14 +144,16 @@ if($do == 'post' || $do == 'developer') {
 					'list' => $bottom_menu
 				);
 			}
-			$wxapp_version['uniacid'] = $uniacid;
-			$wxapp_version['multiid'] = $multi_info['id'];
-			$wxapp_version['version'] = $version;
-			$wxapp_version['modules'] = json_encode($request_cloud_data['modules']);
-			$wxapp_version['connection'] = json_encode($modules_connection);
-			$wxapp_version['design_method'] = intval($submit_val['type']);
-			$wxapp_version['quickmenu'] = json_encode($request_cloud_data['tabBar']);
-			$wxapp_version['createtime'] = time();
+			$wxapp_version = array(
+				'uniacid' => $uniacid,
+				'multiid' => $multi_id,
+				'version' => $new_version,
+				'modules' => json_encode($request_cloud_data['modules']),
+				'connection' => json_encode($modules_connection),
+				'design_method' => intval($submit_val['type']),
+				'quickmenu' => json_encode($request_cloud_data['tabBar']),
+				'createtime' => time()
+			);
 			switch ($wxapp_version['design_method']) {
 				case 1:
 					break;
