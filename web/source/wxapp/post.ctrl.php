@@ -199,7 +199,7 @@ if($do == 'getpackage') {
 		$modulename = array_keys($moduleinfo);
 		$zipname = $modulename[0];
 		$request_cloud_data['module'] = array(
-			'name' => $modulename,
+			'name' => $modulename[0],
 			'zipname' => $account_wxapp_info['name'],
 		);
 		$request_cloud_data['siteInfo'] = array(
