@@ -375,6 +375,22 @@ function cloud_m_upgradeinfo($name) {
 	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 	$file = IA_ROOT . '/data/module.info';
 	$ret = _cloud_shipping_parse($dat, $file);
+	if (!empty($ret) && !is_error($ret)) {
+		$ret['site_branch'] = $ret['branches'][$ret['version']['branch_id']];
+		$ret['from'] = 'cloud';
+		foreach ($ret['branches'] as &$branch) {
+			if ($branch['displayorder'] < $ret['site_branch']['displayorder'] || ($ret['site_branch']['displayorder'] == $ret['site_branch']['displayorder'] && $ret['site_branch']['id'] > intval($branch['id']))) {
+				unset($module['branches'][$branch['id']]);
+				continue;
+			}
+			$branch['id'] = intval($branch['id']);
+			$branch['displayorder'] = intval($branch['displayorder']);
+			$branch['day'] = intval(date('d', $branch['version']['createtime']));
+			$branch['month'] = date('Y.m', $branch['version']['createtime']);
+			$branch['hour'] = date('H:i', $branch['version']['createtime']);
+		}
+		unset($branch);
+	}
 	return $ret;
 }
 
