@@ -75,6 +75,28 @@ function user_wechats() {
 	return $accounts;
 }
 /**
+ * 获取某一公众号的主管理员信息
+ * @param int $uniacid  指定的公众号
+ * @return array
+ */
+function account_owned($uniacid = 0) {
+	global $_W;
+	$uniacid = intval($uniacid);
+	if (empty($uniacid)) {
+		return array();
+	}
+	$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+	if (empty($ownerid)) {
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$ownerid = $founders[0];
+	}
+	$owner = user_single($ownerid);
+	if (empty($owner)) {
+		return array();
+	}
+	return $owner;
+}
+/**
  * 获取当前公号的所有子公众号
  * @param int $uniacid 公众号ID
  * @return array 当前公号下所有子公众号
@@ -120,9 +142,9 @@ function uni_fetch($uniacid = 0) {
 	return $account;
 }
 
-/**
- * 获取当前公号下所有有权限模块及模块信息
- * 公众号的权限是owner所有套餐内的全部模块权限
+/**  
+ * 获取当前公号下所有安装模块及模块信息 
+ * 公众号的权限是owner所有套餐内的全部模块权限 
  * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
  */
