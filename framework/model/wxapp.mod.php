@@ -62,41 +62,55 @@ function wxapp_owned_moudles($uniacid) {
 	}
 	return $wxapp_modules;
 }
-/* 
- 	* 获取小程序升级后的版本号
- 	@return array  
- */
-function wxapp_version_update($uniacid) {
-	$wxapp_version_info = pdo_get('wxapp_versions',array('uniacid'=>$uniacid),array('version','uniacid','id','multiid'));
-	$version_nums = array();
-	if (!empty($wxapp_version_info)) {
-		$version_nums = explode('.', $wxapp_version_info['version']);
-		if ($version_nums[2] < 9) {
-			$version_nums[2] += 1;
-		} else {
-			if ($version_nums[1] < 9) {
-				if ($version_nums[0] < 9) {
-					$version_nums[1] += 1;
-					$version_nums[2] = 0;
-				} else {
-					$version_nums[0] += 1;
-					$version_nums[1] = 0;
-					$version_nums[2] = 0;
-				}
+/*
+ * 获取小程序新版本号
+	@return array
+*/
+function wxapp_version_parser($pos1_val,$pos2_val,$pos3_val) {
+	$new_version = array(
+		0 => $pos1_val,	
+		1 => $pos2_val,
+		2 => $pos3_val	
+	);
+	if ($pos3_val < 9) {
+		$new_version[2] += 1;
+	} else {
+		if ($pos2_val < 9) {
+			if ($pos1_val < 9) {
+				$new_version[1] += 1;
+				$new_version[2] = 0;
 			} else {
-				$version_nums[0] += 1;
-				$version_nums[1] = 0;
-				$version_nums[2] = 0;
+				$new_version[0] += 1;
+				$new_version[1] = 0;
+				$new_version[2] = 0;
 			}
+		} else {
+			$new_version[0] += 1;
+			$new_version[1] = 0;
+			$new_version[2] = 0;
 		}
 	}
-	return $version_nums;
+	
+	return $new_version;
 }
 /*
-    * 获取小程序信息
+    * 获取小程序信息(包括版本信息)
+    @params int $uniacid
+    @params int $versionid 
  	@return array
 */
-function wxapp_info($uniacid) {
-	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+function wxapp_fetch($uniacid, $versionid = 0) {
+	$wxapp_account = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	$wxapp_version = array();
+	if ($versionid) {
+		$version = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
+		$wxapp_version[0] = $version;
+	} else {
+		$wxapp_version = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
+	}
+	$wxapp_info = array(
+		"account_wxapp" => $wxapp_account,
+		"versions" => $wxapp_version
+	);
 	return $wxapp_info;
 }
