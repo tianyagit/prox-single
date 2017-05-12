@@ -62,7 +62,7 @@ function mc_update($uid, $fields) {
 	$struct[] = 'residecity';
 	$struct[] = 'residedist';
 	$struct[] = 'groupid';
-	
+
 	if (isset($fields['birth']) && !is_array($fields['birth'])) {
 		$birth = explode('-', $fields['birth']);
 		$fields['birth'] = array(
@@ -141,26 +141,16 @@ function mc_update($uid, $fields) {
  * @return array
  * */
 function mc_fetch($uid, $fields = array()) {
-	global $_W;
-	$uid = mc_openid2uid($uid);
 	if (empty($uid)) {
 		return array();
 	}
-	$cachekey = cache_system_key("memberinfo:{$uid}");
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
-	}
 	$struct = mc_fields();
 	$struct = array_keys($struct);
-	if (empty($fields)) {
-		$select = '*';
-	} else {
+	if (!empty($fields)) {
 		foreach ($fields as $key => $field) {
 			if (!in_array($field, $struct)) {
 				unset($fields[$key]);
 			}
-
 			if ($field == 'birth') {
 				$fields[] = 'birthyear';
 				$fields[] = 'birthmonth';
@@ -173,66 +163,61 @@ function mc_fetch($uid, $fields = array()) {
 			}
 		}
 		unset($fields['birth'], $fields['reside']);
-		if (!empty($fields)) {
-			$select = '`uid`, `' . implode('`,`', $fields) . '`';
-		} else {
-			$select = '*';
-		}
 	}
+	$result = array();
 	if (is_array($uid)) {
-		$result = pdo_fetchall("SELECT $select FROM " . tablename('mc_members') . " WHERE uid IN ('" . implode("','", is_array($uid) ? $uid : array($uid)) . "')", array(), 'uid');
-		foreach ($result as &$row) {
-			if (isset($row['credit1'])) {
-				$row['credit1'] = floatval($row['credit1']);
-			}
-			if (isset($row['credit2'])) {
-				$row['credit2'] = floatval($row['credit2']);
-			}
-			if (isset($row['credit3'])) {
-				$row['credit3'] = floatval($row['credit3']);
-			}
-			if (isset($row['credit4'])) {
-				$row['credit4'] = floatval($row['credit4']);
-			}
-			if (isset($row['credit5'])) {
-				$row['credit5'] = floatval($row['credit5']);
-			}
-			if (isset($row['credit6'])) {
-				$row['credit6'] = floatval($row['credit6']);
-			}
-			if (isset($row['avatar']) && !empty($row['avatar'])) {
-				$row['avatar'] = tomedia($row['avatar']);
+		foreach ($uid as $id) {
+			$user_info = mc_fetch_one($id);
+			if (!empty($user_info) && !empty($fields)) {
+				foreach ($fields as $field) {
+					$result[$id][$field] = $user_info[$field];
+				}
+				$result[$id]['uid'] = $id;
+			} else {
+				$result[$id] = $user_info;
 			}
 		}
 	} else {
-		$result = pdo_fetch("SELECT $select FROM " . tablename('mc_members') . " WHERE `uid` = :uid", array(':uid' => $uid));
-		if (isset($result['avatar']) && !empty($result['avatar'])) {
-			$result['avatar'] = tomedia($result['avatar']);
-		}
-		if (isset($result['credit1'])) {
-			$result['credit1'] = floatval($result['credit1']);
-		}
-		if (isset($result['credit2'])) {
-			$result['credit2'] = floatval($result['credit2']);
-		}
-		if (isset($result['credit3'])) {
-			$result['credit3'] = floatval($result['credit3']);
-		}
-		if (isset($result['credit4'])) {
-			$result['credit4'] = floatval($result['credit4']);
-		}
-		if (isset($result['credit5'])) {
-			$result['credit5'] = floatval($result['credit5']);
-		}
-		if (isset($result['credit6'])) {
-			$result['credit6'] = floatval($result['credit6']);
+		$user_info = mc_fetch_one($uid);
+		if (!empty($user_info) && !empty($fields)) {
+			foreach ($fields as $field) {
+				$result[$field] = $user_info[$field];
+			}
+			$result['uid'] = $uid;
+		} else {
+			$result = $user_info;
 		}
 	}
-	cache_write($cachekey, $result);
 	return $result;
 }
 
+/**
+ * 获取一个会员所有信息
+ * @param mixed $uid 会员 uid
+ * @return array
+ * */
+function mc_fetch_one($uid) {
+	$uid = mc_openid2uid($uid);
+	if (empty($uid)) {
+		return array();
+	}
+	$cachekey = cache_system_key(CACHE_KEY_MEMBER_INFO, $uid);
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+	$result = pdo_get('mc_members', array('uid' => $uid));
+	$result['avatar'] = tomedia($result['avatar']);
+	$result['credit1'] = floatval($result['credit1']);
+	$result['credit2'] = floatval($result['credit2']);
+	$result['credit3'] = floatval($result['credit3']);
+	$result['credit4'] = floatval($result['credit4']);
+	$result['credit5'] = floatval($result['credit5']);
+	$result['credit6'] = floatval($result['credit6']);
 
+	cache_write($cachekey, $result);
+	return $result;
+}
 
 /**
  * 获取粉丝信息
@@ -311,7 +296,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 }
 
 /**
- * 无网页授权的公众号,通过借用授权定位 openid 和 uid
+ * 无网页授权的公众号,通过借用授权   定位 openid 和 uid
  * @param string $openid 粉丝唯一标志
  * @param int $acid 子公众号ID
  * @return array

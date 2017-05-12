@@ -6,12 +6,12 @@
 		<col width="230px"/>
 		<tr>
 			<th>剩余条数</th>
-			<th class="text-center">操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		<tr> 
 			<td ng-if="notify.sms"><span ng-bind="notify.sms.balance"></span>条</td>
 			<td ng-if="!notify.sms">0条</td>
-			<td class="text-center">
+			<td>
 				<div class="link-group">
 					<a href="javascript:;" data-toggle="modal" data-target="#balance" ng-click="editSms('balance', notify.sms.balance)">分配短信</a>
 					<a href="javascript:;" data-toggle="modal" data-target="#signature" ng-click="editSms('signature', notify.sms.signature)">设置短信签名</a>

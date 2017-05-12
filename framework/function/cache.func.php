@@ -52,12 +52,36 @@ function cache_load($key, $unserialize = false) {
 }
 
 /**
- * 统一系统缓存名称前缀
+ * 统一系统缓存名称前缀，支持缓存名称中包含占位符，最多不得超过5个
  * @param string $cache_key
  * @return string
  */
 function cache_system_key($cache_key) {
-	return 'we7:' . $cache_key;
+	$args = func_get_args();
+	switch (func_num_args()) {
+		case 1:
+			break;
+		case 2:
+			$cache_key = sprintf($cache_key, $args[1]);
+			break;
+		case 3:
+			$cache_key = sprintf($cache_key, $args[1], $args[2]);
+			break;
+		case 4:
+			$cache_key = sprintf($cache_key, $args[1], $args[2], $args[3]);
+			break;
+		case 5:
+			$cache_key = sprintf($cache_key, $args[1], $args[2], $args[3], $args[4]);
+			break;
+		case 6:
+			$cache_key = sprintf($cache_key, $args[1], $args[2], $args[3], $args[4], $args[5]);
+			break;
+	}
+	$cache_key = 'we7:' . $cache_key;
+	if (strlen($cache_key) > 50) {
+		trigger_error('Cache name is over the maximum length');
+	}
+	return $cache_key;
 }
 
 function &cache_global($key) {

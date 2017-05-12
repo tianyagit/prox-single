@@ -69,7 +69,7 @@ if ($do == 'display') {
 	if (!empty($_GPC['name'])) {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
 	}
-	$modules = user_modules();
+	$modules = user_modules($_W['uid']);
 	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as &$group) {

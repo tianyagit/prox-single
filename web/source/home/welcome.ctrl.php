@@ -18,6 +18,8 @@ if ($do == 'platform') {
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
 		itoast('公众号已到服务期限，请联系管理员并续费', url('account/manage'), 'info');
 	}
+	//公告
+	$notices = welcome_notices_get();
 
 	template('home/welcome');
 } elseif ($do == 'ext') {

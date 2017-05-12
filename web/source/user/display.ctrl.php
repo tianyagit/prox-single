@@ -110,7 +110,12 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 		case 'recycle_delete'://永久删除用户
 			if (pdo_delete('users', array('uid' => $uid)) === 1) {
 				//把该用户所属的公众号返给创始人
-				cache_build_account_modules();
+				$user_set_account = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
+				if (!empty($user_set_account)) {
+					foreach ($user_set_account as $account) {
+						cache_build_account_modules($account['uniacid']);
+					}
+				}
 				pdo_delete('uni_account_users', array('uid' => $uid));
 				pdo_delete('users_profile', array('uid' => $uid));
 				itoast('删除成功！', referer(), 'success');

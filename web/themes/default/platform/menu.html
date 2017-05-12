@@ -3,14 +3,14 @@
 {if empty($data) && $_GPC['status'] == 'history'}
 <div class="alert alert-info">没有历史菜单</div>
 {else}
+<div class="we7-page-title">
+	自定义菜单
+</div>
+<ul class="we7-page-tab">
+	<li {if $type == '1'}class="active" {/if}><a href="{url 'platform/menu' array('type' => '1')}">默认菜单</a></li>
+	<li {if $type == '3'}class="active"{/if}><a href="{url 'platform/menu' array('type' => '3')}">个性化菜单</a></li>
+</ul>
 <div class="clearfix" ng-controller="menuDisplay">
-	<div class="we7-page-title">
-		自定义菜单
-	</div>
-	<ul class="we7-page-tab">
-		<li {if $type == '1'}class="active" {/if}><a href="{url 'platform/menu' array('type' => '1')}">默认菜单</a></li>
-		<li {if $type == '3'}class="active"{/if}><a href="{url 'platform/menu' array('type' => '3')}">个性化菜单</a></li>
-	</ul>
 	<div class="we7-padding-bottom clearfix">
 		<form action="./index.php" method="get" class="form-horizontal" role="form">
 			<div class="input-group pull-left col-sm-4">
@@ -41,7 +41,7 @@
 				是否在微信生效
 				{if $type == '1'}<div class="color-gray">(只能生效一个默认菜单)</div>{/if}
 			</th>
-			<th class="text-left">操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		{loop $data $da}
 		<tr>
@@ -82,7 +82,7 @@
 					{/if}
 				</label>
 			</td>
-			<td class="text-left">
+			<td>
 				<div class="link-group">
 				{if $da['type'] == 1}
 					<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> 1));}" class="we7-margin-right">编辑</a>
@@ -235,7 +235,7 @@
 										<span class="help-block">字数不超过4个汉字或8个字母</span>
 									</div>
 								</div>
-								<div class="form-group">
+								<div class="form-group" ng-show="context.activeItem.forceHide == 0">
 									<label for="" class="control-label col-sm-2">菜单内容</label>
 									<div class="form-controls col-sm-10">
 										<input id="radio-1" type="radio" name="ipt" ng-checked="context.activeItem.type == 'media_id' || context.activeItem.type == 'click'" ng-model="context.activeItem.type" value="click" ng-disabled="context.group.disabled">
@@ -256,7 +256,7 @@
 										<label for="radio-8">相册发图 </label>
 									</div>
 								</div>
-								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if}ng-show="context.activeItem.type == 'view';">
+								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if} ng-show="context.activeItem.type == 'view'  && context.activeItem.forceHide == 0">
 									<div class="form-group">
 										<p class="color-gray">订阅者点击该子菜单会跳转到以下链接</p>
 										<label for="" class="control-label col-sm-2">页面地址</label>
@@ -268,7 +268,7 @@
 									</div>
 								</div>
 								
-								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'" style="width:100%;">
+								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'  && context.activeItem.forceHide == 0" style="width:100%;">
 									<div class="panel-heading">
 										回复内容
 									</div>
@@ -320,7 +320,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="panel we7-panel" style="width: 100%;" ng-show="context.activeItem.type == 'click'">
+								<div class="panel we7-panel" style="width: 100%;" ng-show="context.activeItem.type == 'click' && context.activeItem.forceHide == 0">
 									<div class="panel-heading">
 										回复内容
 									</div>

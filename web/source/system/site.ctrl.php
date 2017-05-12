@@ -1,10 +1,9 @@
-<?php 
+﻿<?php 
 /**
  * 站点相关操作
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
 $dos = array('copyright');
 $do = in_array($do, $dos) ? $do : 'copyright';
 $_W['page']['title'] = '站点设置 - 工具  - 系统管理';

@@ -85,7 +85,7 @@ if ($do == 'post') {
 	$endtime = strtotime("+{$endtime} days", $time);
 	$massdata = pdo_fetch('SELECT id, `groupname`, `group`, `attach_id`, `media_id`, `sendtime` FROM '. tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime));
 	if (!empty($massdata)) {
-		$massdata['clock'] = date('H:m', $massdata['sendtime']);
+		$massdata['clock'] = date('H:i', $massdata['sendtime']);
 	} else {
 		$massdata['clock'] = '08:00';
 	}
@@ -118,22 +118,15 @@ if ($do == 'post') {
 			$ids = implode(',', array_keys($records));
 			pdo_query('DELETE FROM ' . tablename('mc_mass_record') . " WHERE uniacid = :uniacid AND id IN ({$ids})", array(':uniacid' => $_W['uniacid']));
 		}
-
 		//提交数据
 		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
 		$mass = array();
 		foreach ($_GPC['reply'] as $reply_k => $reply_val) {
 			if ($reply_val) {
 				$msgtype = substr($reply_k, 6);
-				switch($msgtype) {
-					case 'news':
-					case 'video':
-						$mass = json_decode(htmlspecialchars_decode($reply_val), true);
-						break;
-					case 'image':
-					case 'voice':
-						$mass['mediaid'] = json_decode(htmlspecialchars_decode($reply_val), true);
-						break;
+				$mass['mediaid'] = trim($_GPC['reply']['reply_'.$msgtype]);
+				if (intval($mass['mediaid']) > 0) {
+					itoast('图文素材请选择微信素材', '', 'info');
 				}
 				$attachment = pdo_get('wechat_attachment', array('media_id' => $mass['mediaid']), array('id'));
 				$mass['id'] = $attachment['id'];

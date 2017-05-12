@@ -18,7 +18,7 @@
 			<th class="text-left">排序</th>
 			<th class="text-left">菜单名称</th>
 			<th>显示</th>
-			<th>操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		{loop $system_menu $permission_name $menu}
 			<tr>
@@ -53,7 +53,7 @@
 						<td>
 							<div class="switch" ng-init="displayStatus['{$sub_menu['permission_name']}'] = {php echo $sub_menu['is_display'] ? 'true' : 'false'}" ng-click="changeDisplay('{$sub_menu['permission_name']}')" ng-class="{'switchOn' : displayStatus['{$sub_menu['permission_name']}'], 'switchOff' : !displayStatus['{$sub_menu['permission_name']}']}"></div>
 						</td>
-						<td class="text-right we7-padding-right">
+						<td class="we7-padding-right">
 							<div class="link-group">
 								<a href="javascript:;" class="we7-margin-right-sm" ng-click="editItemPanel({displayorder: '{$sub_menu['displayorder']}', title : '{$sub_menu['title']}', url : '{$sub_menu['url']}', permissionName : '{$sub_menu['permission_name']}', isSystem : '{$sub_menu['is_system']}', id : '{$sub_menu['id']}', 'group' : '{$sub_menu['group']}'})">编辑</a>
 								{if empty($sub_menu['is_system'])}<a href="javascript:;" ng-click="removeSubItem('{$sub_permission_name}')" class="del">删除</a>{/if}

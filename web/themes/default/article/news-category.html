@@ -22,7 +22,7 @@
 						<tr>
 							<th>排序</th>
 							<th>分类名称</th>
-							<th class='text-left'>操作</th>
+							<th class='text-right'>操作</th>
 						</tr>
 
 					{loop $data $da}
@@ -30,7 +30,7 @@
 						<tr>
 							<td><input type="text" name="displayorder[]" value="{$da['displayorder']}" class="form-control"/></td>
 							<td><input type="text" name="title[]" value="{$da['title']}" class="form-control"/></td>
-							<td class="text-left">
+							<td>
 								<div class="link-group"><a href="{php echo url('article/news/category_del', array('id' => $da['id']));}" class="del" onclick="if(!confirm('删除分类后，该分类下新闻也会被删除，确定删除吗？')) return false;">删除</a></div>
 							</td>
 						</tr>

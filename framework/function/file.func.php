@@ -637,36 +637,36 @@ function file_image_crop($src, $desfile, $width = 400, $height = 300, $position 
 			$dst_y = 0;
 			break;
 		case 2 :
-			$dst_x = ($org_info[0] -$width) / 2;
+			$dst_x = ($org_info[0] - $width) / 2;
 			$dst_y = 0;
 			break;
 		case 3 :
-			$dst_x = $org_info[0] -$width;
+			$dst_x = $org_info[0] - $width;
 			$dst_y = 0;
 			break;
 		case 4 :
 			$dst_x = 0;
-			$dst_y = ($org_info[1] -$height) / 2;
+			$dst_y = ($org_info[1] - $height) / 2;
 			break;
 		case 5 :
-			$dst_x = ($org_info[0] -$width) / 2;
-			$dst_y = ($org_info[1] -$height) / 2;
+			$dst_x = ($org_info[0] - $width) / 2;
+			$dst_y = ($org_info[1] - $height) / 2;
 			break;
 		case 6 :
-			$dst_x = $org_info[0] -$width;
-			$dst_y = ($org_info[1] -$height) / 2;
+			$dst_x = $org_info[0] - $width;
+			$dst_y = ($org_info[1] - $height) / 2;
 			break;
 		case 7 :
 			$dst_x = 0;
-			$dst_y = $org_info[1] -$height;
+			$dst_y = $org_info[1] - $height;
 			break;
 		case 8 :
-			$dst_x = ($org_info[0] -$width) / 2;
-			$dst_y = $org_info[1] -$height;
+			$dst_x = ($org_info[0] - $width) / 2;
+			$dst_y = $org_info[1] - $height;
 			break;
 		case 9 :
-			$dst_x = $org_info[0] -$width;
-			$dst_y = $org_info[1] -$height;
+			$dst_x = $org_info[0] - $width;
+			$dst_y = $org_info[1] - $height;
 			break;
 		default :
 			$dst_x = 0;
@@ -742,7 +742,7 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
 }
 
 /**
- * 获取远程图片
+ * 获取远程素材
  *
  * @param string $url
  *        	文件地址
@@ -750,81 +750,88 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
  *        	文件大小限制（单位：KB）。默认为：系统的图片大小设置
  * @param string $path
  *        	文件保存路径。默认为：系统附件目录 "images/{$uniacid}/Y/m/文件名";
- * @param string $type
- *        	文件类型 默认为：image;
- * @param string $filename
- *        	文件名 默认为随机生成文件名;
  * @return string 文件path
  *        
  */
-function file_fetch($url, $limit = 0, $path = '', $type = 'image', $filename = '') {
+function file_fetch($url, $limit = 0, $path = '') {
 	global $_W;
 	$url = trim($url);
 	if (empty($url)) {
-		return error(-1, '文件地址不存在');
+		return error(- 1, '文件地址不存在');
 	}
-	if (!$limit) {
-		if ($type == 'image' || $type == 'thumb') {
+	load()->func('communication');
+	$resp = ihttp_get($url);
+	if (is_error($resp)) {
+		return error(-1, '提取文件失败, 错误信息: '.$resp['message']);
+	}
+	if (intval($resp['code']) != 200) {
+		return error(-1, '提取文件失败: 未找到该资源文件.');
+	}
+	$ext = $type = '';
+	switch ($resp['headers']['Content-Type']) {
+		case 'application/x-jpg' :
+		case 'image/jpeg' :
+			$ext = 'jpg';
+			$type = 'images';
+			break;
+		case 'image/png' :
+			$ext = 'png';
+			$type = 'images';
+			break;
+		case 'image/gif' :
+			$ext = 'gif';
+			$type = 'images';
+			break;
+		case 'video/mp4' :
+		case 'video/mpeg4' :
+			$ext = 'mp4';
+			$type = 'videos';
+			break;
+		case 'video/x-ms-wmv' :
+			$ext = 'wmv';
+			$type = 'videos';
+			break;
+		case 'audio/mpeg' :
+			$ext = 'mp3';
+			$type = 'audios';
+			break;
+		case 'audio/mp4' :
+			$ext = 'mp4';
+			$type = 'audios';
+			break;
+		case 'audio/x-ms-wma' :
+			$ext = 'wma';
+			$type = 'audios';
+			break;
+		default :
+			return error(- 1, '提取资源失败, 资源文件类型错误.');
+			break;
+	}
+	if (empty($path)) {
+		$path = $type . "/{$_W['uniacid']}/" . date('Y/m/');
+	}else{
+		$path = parse_path($path);
+	}
+	if (! $path){
+		return error(- 1, '提取文件失败: 上传路径配置有误.');
+	}
+	if (! file_exists(ATTACHMENT_ROOT . $path) && mkdir(ATTACHMENT_ROOT . $path, 0700, true)) {
+		return error(- 1, '提取文件失败: 权限不足.');
+	}
+	/* 文件大小过滤 */
+	if (! $limit) {
+		if ($type == 'images'){
 			$limit = $_W['setting']['upload']['image']['limit'] * 1024;
-		} else {
+		}else{
 			$limit = $_W['setting']['upload']['audio']['limit'] * 1024;
 		}
 	} else {
 		$limit = $limit * 1024;
 	}
-	if (empty($path)) {
-		$path = $type . "s/{$_W['uniacid']}/" . date('Y/m/');
-	}
-	if (!file_exists(ATTACHMENT_ROOT . $path) && mkdir(ATTACHMENT_ROOT . $path, 0700, true)) {
-		return error(-1, '提取文件失败: 权限不足.');
-	}
-	load()->func('communication');
-	$resp = ihttp_get($url);
-	if (is_error($resp)) {
-		return error(-1, '提取文件失败, 错误信息: ' . $resp['message']);
-	}
-	if (intval($resp['code']) != 200) {
-		return error(-1, '提取文件失败: 未找到该资源文件.');
-	}
-	$ext = '';
-	switch ($resp['headers']['Content-Type']) {
-		case 'application/x-jpg' :
-		case 'image/jpeg' :
-			$ext = 'jpg';
-			break;
-		case 'image/png' :
-			$ext = 'png';
-			break;
-		case 'image/gif' :
-			$ext = 'gif';
-			break;
-		case 'video/mp4' :
-		case 'video/mpeg4' :
-			$ext = 'mp4';
-			break;
-		case 'video/x-ms-wmv' :
-			$ext = 'wmv';
-			break;
-		case 'audio/mpeg' :
-			$ext = 'mp3';
-			break;
-		case 'audio/mp4' :
-			$ext = 'mp4';
-			break;
-		case 'audio/x-ms-wma' :
-			$ext = 'wma';
-			break;
-		default :
-			return error(-1, '提取资源失败, 资源文件类型错误.');
-			break;
-	}
-	/* 文件大小过滤 */
 	if (intval($resp['headers']['Content-Length']) > $limit) {
-		return error(-1, '上传的媒体文件过大(' . sizecount($resp['headers']['Content-Length']) . ' > ' . sizecount($limit));
+		return error(-1, '上传的媒体文件过大('.sizecount($resp['headers']['Content-Length']).' > '.sizecount($limit));
 	}
-	if ($filename == '') {
-		$filename = file_random_name(ATTACHMENT_ROOT . $path, $ext);
-	}
+	$filename = file_random_name(ATTACHMENT_ROOT . $path, $ext);
 	$pathname = $path . $filename;
 	$fullname = ATTACHMENT_ROOT . $pathname;
 	if (file_put_contents($fullname, $resp['content']) == false) {
@@ -836,32 +843,4 @@ function file_is_image($url) {
 	$pathinfo = pathinfo($url);
 	$extension = strtolower($pathinfo['extension']);
 	return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
-}
-
-/**
- * 获取后台设置上传文件大小限制
- *
- * @return array
- */
-function file_upload_limit() {
-	global $_W;
-	$default = 5 * 1024 * 1024;
-	$upload_limit = array(
-		'fileNumLimit' => '30',
-		'fileSingleImageSizeLimit' => $default,
-		'fileSingleVoiceSizeLimit' => $default,
-		'fileSingleVideoSizeLimit' => $default 
-	);
-	if (empty($_W['setting']['upload'])) {
-		$upload = $_W['config']['upload'];
-	} else {
-		$upload = $_W['setting']['upload'];
-	}
-	if (isset($upload['image']['limit']) && (bytecount($upload['image']['limit'].'kb')>0)){
-		$upload_limit['fileSingleImageSizeLimit'] = bytecount($upload['image']['limit'].'kb');
-	}
-	if (isset($upload['image']['limit']) && (bytecount($upload['audio']['limit'].'kb')>0)){
-		$upload_limit['fileSingleVoiceSizeLimit'] = $upload_limit['fileSingleVideoSizeLimit'] = bytecount($upload['audio']['limit'].'kb');
-	}
-	return $upload_limit;
 }

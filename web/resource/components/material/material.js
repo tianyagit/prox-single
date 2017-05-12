@@ -26,20 +26,31 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 			$this.modalobj = $('#material-Modal');
 			$this.modalobj.find('.modal-header .nav li a').click(function(){
 				var type = $(this).data('type');
-				if(type == 'basic'){
-					$('#material-Modal').addClass('basic');
-				}
-				if(type == 'news'){
-					$('#material-Modal').addClass('news');
-				}
-				if(type == 'music'){
-					$('#material-Modal').addClass('music');
-				}
-				if(type == 'voice'){
-					$('#material-Modal').addClass('voice');
-				}
-				if(type == 'video'){
-					$('#material-Modal').addClass('video');
+				switch(type) {
+					case 'basic':
+						$('#material-Modal').addClass('basic');
+						break;
+					case 'news':
+						$('#material-Modal').addClass('news');
+						break;
+					case 'music':
+						$('#material-Modal').addClass('music');
+						break;
+					case 'voice':
+						$('#material-Modal').addClass('voice');
+						break;
+					case 'video':
+						$('#material-Modal').addClass('video');
+						break;
+					case 'image':
+						$('#material-Modal').addClass('image');
+						break;
+					case 'keyword':
+						$('#material-Modal').addClass('keyword');
+						break;
+					case 'module':
+						$('#material-Modal').addClass('module');
+						break;
 				}
 				$this.localPage(type, 1);
 				$(this).tab('show');
@@ -124,12 +135,11 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 							});
 						}, 100);
 						$this.modalobj.find('.material-content .newsmodel-type').unbind('click').click(function(){
-							console.log('click');
 							$(this).addClass('active').siblings().removeClass('active');
 							$this.localPage(type, 1, $(this).data('type'));
 							return false;
 						});
-					}	
+					}
 					$this.selectMedia();
 					$this.playaudio();
 					$this.modalobj.find('#material-list-pager').html(data.pager);
@@ -138,9 +148,20 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 						return false;
 					});
 				} else {
-					$content.html('<div class="info text-center"><i class="wi wi-info-circle fa-lg"></i> 暂无数据</div>');
+					if (type == 'news') {
+						$('#news').html('<div role="tabpanel"><div class="tablepanel-top text-right"><button class="btn btn-primary" type="button"><a href="./index.php?c=platform&a=material-post" target="_blank">新建图文</a></button></div><div class="info text-center"><i class="wi wi-info-circle fa-lg"></i> 暂无数据</div></div>')
+					} else {
+						$content.html('<div class="info text-center"><i class="wi wi-info-circle fa-lg"></i> 暂无数据</div>');
+					}
 				}
-			});				
+				if (type == 'news') {
+					$this.modalobj.find('.material-content .newsmodel-type').unbind('click').click(function(){
+						$(this).addClass('active').siblings().removeClass('active');
+						$this.localPage(type, 1, $(this).data('type'));
+						return false;
+					});
+				}
+			});
 			$this.modalobj.find('#btn-select .btn-primary').unbind('click').click(function(){
 				var attachment = [];
 				$content.find('.checkedMedia').each(function(){
@@ -294,7 +315,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'					<div id="keyword" class="tab-pane" role="tabpanel"></div>'+
 				'					<div id="module" class="tab-pane history" role="tabpanel"></div>'+
 				'				</div>' +
-				'				<nav id="material-list-pager" class="text-right we7-margin-top">\n' +
+				'				<nav id="material-list-pager" class="text-right we7-margin-vertical we7-padding-right">\n' +
 				'				</nav>\n' +
 				'			</div>\n' +
 				'			<div class="modal-footer" id="material-footer" style="display: none">\n' +
@@ -361,7 +382,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'</div>';
 
 			dialog['voiceDialog'] ='<table class="table table-hover we7-table" style="margin-bottom:0">'+
-				'						<col width=""/>'+	
+				'						<col width=""/>'+
 				'						<col width="150px"/>'+
 				'						<col width="180px"/>'+
 				'						<thead class="navbar-inner">'+
@@ -389,7 +410,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'					</table>';
 
 			dialog['videoDialog'] ='<table class="table table-hover we7-table" style="margin-bottom:0">'+
-				'						<col width=""/>'+	
+				'						<col width=""/>'+
 				'						<col width="150px"/>'+
 				'						<col width="180px"/>'+
 				'						<thead class="navbar-inner">'+
@@ -515,7 +536,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'<div class="checkMedia" data-name="<%=item.name%>" data-type="module">' +
 				'	<li class="img-item" style="padding:5px">\n' +
 				'		<div class="img-container">\n' +
-				'           <img src="<%=item.icon%>" width="48px" height="48px">\n' + 
+				'           <img src="<%=item.icon%>" width="48px" height="48px">\n' +
 				'			<div class="text-over"><%=item.title%></div>\n' +
 				'			<div class="select-status"><span></span></div>\n' +
 				'		</div>\n' +

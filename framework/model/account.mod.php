@@ -56,7 +56,46 @@ function uni_owned($uid = 0) {
 	
 	return $uniaccounts;
 }
-
+/**
+ * 获取当前用户可操作的所有公众号(不包括小程序)
+ * @return array
+ */
+function user_wechats() {
+	global $_W;
+	$sql = "SELECT * FROM ".tablename("account_wechats")." as a LEFT JOIN ".tablename("account")." as b
+			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
+	if ($_W['isfounder']) {
+		$param = array();
+	} else {
+		$subsql = "SELECT uniacid FROM ".tablename("uni_account_users")." where uid=:uid";
+		$sql.=" AND b.uniacid in ($subsql)";
+		$param[':uid'] = $_W['uid'];
+	}
+	$accounts = pdo_fetchall($sql, $param);
+	return $accounts;
+}
+/**
+ * 获取某一公众号的主管理员信息
+ * @param int $uniacid  指定的公众号
+ * @return array
+ */
+function account_owned($uniacid = 0) {
+	global $_W;
+	$uniacid = intval($uniacid);
+	if (empty($uniacid)) {
+		return array();
+	}
+	$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+	if (empty($ownerid)) {
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$ownerid = $founders[0];
+	}
+	$owner = user_single($ownerid);
+	if (empty($owner)) {
+		return array();
+	}
+	return $owner;
+}
 /**
  * 获取当前公号的所有子公众号
  * @param int $uniacid 公众号ID
@@ -103,125 +142,68 @@ function uni_fetch($uniacid = 0) {
 	return $account;
 }
 
-/**
- * 获取当前公号下所有安装模块及模块信息
- * 公众号的权限是owner所有套餐内的全部模块权限
- * @param boolean $enabledOnly 是否只显示可用模块
+/**  
+ * 获取当前公号下所有安装模块及模块信息 
+ * 公众号的权限是owner所有套餐内的全部模块权限 
+ * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
  */
-function uni_modules($enabledOnly = true) {
+function uni_modules($enabled = true) {
 	global $_W;
 	load()->model('user');
 	load()->model('module');
-	$extend = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array(), 'groupid');
-	
-	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
-	$owner = user_single(array('uid' => $owneruid));
-		if (empty($owner)) {
-		$groupid = '-1';
-	} else {
-		$groupid = $owner['groupid'];
-	}
-	
-	if (!empty($extend)) {
-		$groupid = '-2';
-	}
-	if (empty($groupid)) {
-		$modules = pdo_getall('modules', array('issystem' => 1), array(), 'name', array('issystem DESC'));
-	} elseif ($groupid == '-1') {
-		$modules = pdo_getall('modules', array(), array(), 'name', array('issystem DESC', 'mid DESC'));
-	} else {
-		$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
-		if (!empty($group)) {
-			$packageids = iunserializer($group['package']);
-		} else {
-			$packageids = array();
-		}
-		if (!empty($extend)) {
-			foreach ($extend as $extend_packageid => $row) {
-				$packageids[] = $extend_packageid;
-			}
-		}
-		if (!empty($packageids) && in_array('-1', $packageids)) {
-			$modules = pdo_getall('modules', array(), array(), 'name', array('issystem DESC', 'mid DESC'));
-		} else {
-			$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . (!empty($packageids) ? "id IN ('".implode("','", $packageids)."') OR " : '') . " uniacid = '{$_W['uniacid']}'");
-			$ms = array();
-			$mssql = '';
-			if (!empty($wechatgroup)) {
-				foreach ($wechatgroup as $row) {
-					$row['modules'] = iunserializer($row['modules']);
-					if (!empty($row['modules'])) {
-						foreach ($row['modules'] as $modulename) {
-							$ms[$modulename] = $modulename;
-						}
+
+	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $_W['uniacid'], $enabled);
+	$modules = cache_load($cachekey);
+
+	if (empty($modules)) {
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
+		$condition = "";
+
+		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
+			$uni_modules = array();
+			$packageids = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array('groupid'), 'groupid');
+			$packageids = array_keys($packageids);
+
+			if (!in_array('-1', $packageids)) {
+				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$_W['uniacid']}'");
+				if (!empty($uni_groups)) {
+					foreach ($uni_groups as $group) {
+						$group_module = (array)iunserializer($group['modules']);
+						$uni_modules = array_merge($group_module, $uni_modules);
 					}
 				}
-				$mssql = " OR `name` IN ('".implode("','", $ms)."')";
-			}
-			$modules = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE issystem = 1{$mssql} ORDER BY issystem DESC, mid DESC", array(), 'name');
-		}
-	}
-	$focus_enable_modules = pdo_getall('modules', array('issystem' => 2));
-	if (!empty($focus_enable_modules)) {
-		foreach ($focus_enable_modules as $focus_enable_modules_row) {
-			$modules[$focus_enable_modules_row['name']] = $focus_enable_modules_row;
-		}
-	}
-	if (!empty($modules)) {
-		$ms = implode("','", array_keys($modules));
-		$ms = "'{$ms}'";
-		$mymodules = pdo_fetchall("SELECT `module`, `enabled`, `settings` FROM " . tablename('uni_account_modules') . " WHERE uniacid = '{$_W['uniacid']}' AND `module` IN ({$ms}) ORDER BY enabled DESC", array(), 'module');
-	}
-	if (!empty($mymodules)) {
-		foreach ($mymodules as $name => $row) {
-			if ($enabledOnly && !$modules[$name]['issystem']) {
-				if ($row['enabled'] == 0 || empty($modules[$name])) {
-					unset($modules[$name]);
-					continue;
+				$user_modules = user_modules($owner_uid);
+				$modules = array_merge(array_keys($user_modules), $uni_modules);
+				if (!empty($modules)) {
+					$condition = " WHERE a.name IN ('" . implode("','", $modules) . "')";
+				} else {
+					$condition = " WHERE a.name = ''";
 				}
 			}
-			if (!empty($row['settings'])) {
-				$modules[$name]['config'] = iunserializer($row['settings']);
-			}
-			$modules[$name]['enabled'] = $row['enabled'];
 		}
+		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, a.mid DESC";
+		$modules = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'name');
+		cache_write($cachekey, $modules);
 	}
+
+	$module_list = array();
 	if (!empty($modules)) {
-		$module_list = array();		$plugin_list = pdo_getall('modules_plugin', array(), array(), 'name');
-		$have_plugin_module = pdo_fetchall('SELECT GROUP_CONCAT(name) as plugin_list, main_module FROM ' . tablename('modules_plugin') . " GROUP BY main_module", array(), 'main_module');
-		foreach ($modules as $name => &$module) {
-			if (in_array($name, array_keys($plugin_list))) {
-				continue;
-			}
-			$module = module_parse_info($module);
-			$module['main_module'] = '';
-			$module_list[$name] = $module;
-			if (in_array($name, array_keys($have_plugin_module))) {
-				$module_plugin_list = explode(',', $have_plugin_module[$name]['plugin_list']);
-				$module_list[$name]['plugin'] = $module_plugin_list;
-				if (is_array($module_plugin_list) && !empty($module_plugin_list)) {
-					foreach ($module_plugin_list as $plugin) {
-						$plugin = $modules[$plugin];
-						if (empty($plugin)) {
-							continue;
-						}
-						$plugin['main_module'] = $name;
-						$plugin = module_parse_info($plugin);
-						$module_list[$plugin['name']] = $plugin;
-					}
-				}
+		foreach ($modules as $name => $module) {
+			$module_info = module_fetch($name);
+			if (!empty($module_info)) {
+				$module_list[$name] = $module_info;
 			}
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
-	cache_write($cachekey, $module_list);
 	return $module_list;
 }
 
 function uni_modules_app_binding() {
 	global $_W;
-	$cachekey = "unimodulesappbinding:{$_W['uniacid']}";
+	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES_BINDING, $_W['uniacid']);
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -287,6 +269,7 @@ function uni_groups($groupids = array()) {
 	}
 	if (!empty($list)) {
 		foreach ($list as $k=>&$row) {
+			$row['wxapp'] = array();
 			if (!empty($row['modules'])) {
 				$modules = iunserializer($row['modules']);
 				if (is_array($modules)) {
@@ -427,9 +410,9 @@ function uni_setting_load($name = '', $uniacid = 0) {
 	if (empty($unisetting)) {
 		$unisetting = pdo_get('uni_settings', array('uniacid' => $uniacid));
 		if (!empty($unisetting)) {
-			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify', 
-								'creditnames', 'default_message', 'creditbehaviors', 'payment', 
-								'recharge', 'tplnotice', 'mcplugin');
+			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify',
+				'creditnames', 'default_message', 'creditbehaviors', 'payment',
+				'recharge', 'tplnotice', 'mcplugin');
 			foreach ($unisetting as $key => &$row) {
 				if (in_array($key, $serialize) && !empty($row)) {
 					$row = (array)iunserializer($row);
@@ -640,7 +623,7 @@ function uni_user_module_permission_check($action = '', $module_name = '') {
 		if ($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
 			return false;
 		}
-	//模块其他业务菜单
+		//模块其他业务菜单
 	} elseif (!empty($do) && !empty($m)) {
 		$is_exist = pdo_get('modules_bindings', array('module' => $m, 'do' => $do, 'entry' => 'menu'), array('eid'));
 		if(empty($is_exist)) {
@@ -659,16 +642,24 @@ function uni_user_module_permission_check($action = '', $module_name = '') {
 
 /**
  * 获取某个用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
+ * $uid int 要查询的用户uid
  * */
-function uni_user_account_permission() {
+function uni_user_account_permission($uid = 0) {
 	global $_W;
-	$group = pdo_fetch('SELECT * FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $_W['user']['groupid']));
-	$uniacocunts = pdo_getall('uni_account_users', array('uid' => $_W['uid'], 'role' => 'owner'), array(), 'uniacid');
+	$uid = intval($uid);
+	if ($uid <= 0) {
+		$user = $_W['user'];
+	} else {
+		load()->model('user');
+		$user = user_single($uid);
+	}
+	$group = pdo_get('users_group', array('id' => $user['groupid']));
+	$uniacocunts = pdo_getall('uni_account_users', array('uid' => $user['uid'], 'role' => 'owner'), array(), 'uniacid');
 	if (empty($uniacocunts)) {
 		$uniacid_num = 0;
 	} else {
 		//再次判断公众号是否真实存在
-		$uniacid_num = pdo_fetchcolumn('SELECT COUNT(*) FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $_W['uid'], ':role' => 'owner'));
+		$uniacid_num = pdo_fetchcolumn('SELECT COUNT(*) FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $user['uid'], ':role' => 'owner'));
 	}
 	$data = array(
 		'group_name' => $group['name'],

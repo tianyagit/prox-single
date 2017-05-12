@@ -35,8 +35,7 @@
 						授权添加公众号
 					</div>
 					<div class="con">
-						使用授权登录需认证微信开放平台和全网发布，认证微信开放平台和全网发布教程：
-						<a href="http://bbs.we7.cc/forum.php?mod=viewthread&tid=14024&highlight=%CE%A2%D0%C5%BF%AA%B7%C5%C6%BD%CC%A8" class="color-default">点击查看</a>
+						使用授权登录需认证微信开放平台和全网发布，认证微信开放平台和全网发布教程.
 					</div>
 					<div>
 						<a href="{$authurl}" class="btn btn-primary">授权添加公众号</a>
@@ -246,14 +245,14 @@
 				</tr>
 				<tr>
 					<th class="text-left bg-light-gray">应用权限组</th>
-					<th class="text-left bg-light-gray">操作</th>
+					<th class="text-right bg-light-gray">操作</th>
 				</tr>
 				<tr>
 					<td class="text-left">
 						<input id="check-0" type="checkbox" name="package[]" autocomplete="off" value="-1" {if is_array($owner['group']['package']) && in_array('-1', $owner['group']['package'])}checked disabled{/if}{if is_array($extend['package']) && !empty($extend['package'][-1])}checked {/if} />
 						<label for="check-0" class="we7-padding-left we7-margin-horizontal-none">所有服务</label>
 					</td>
-					<td class="text-left">
+					<td>
 						<div class="link-group">
 							<a href="javascript:void(0);" class="js-unfold" data-toggle="collapse" data-target="#extend0" ng-click="changeText($event)">展开</a>
 						</div>

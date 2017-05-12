@@ -486,7 +486,7 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">所在会员组</label>
 					<div class="col-sm-9 col-xs-12">
-						<select name="groupid" class="form-control we7-select" disabled>
+						<select name="groupid" class="form-control we7-select">
 							{loop $groups $group}
 							<option value="{$group['groupid']}" {if $profile['groupid'] == $group['groupid']}selected{/if}>{$group['title']}</option>
 							{/loop}

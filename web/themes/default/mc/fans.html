@@ -175,7 +175,7 @@
 							<p><a href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="nick-name" data-fanid="{$fan['fanid']}" data-group="{$fan['groupid']}">{$fan['nickname']}</a></p>
 							<p class="remark-name"><a href="">{$fan['member']['realname']}</a> {if !empty($fan['member']['mobile'])}<i class="wi wi-iphone fans-tel"></i>{/if}</p>
 							<div class="fans-tag-area">
-								<span class="tag-list put-group get-fans-tag js-group" data-id="{$fan['fanid']}" data-toggle='popover'>
+								<span class="tag-list get-fans-tag js-group" data-id="{$fan['fanid']}" data-toggle='popover'>
 									{loop $fan['tag_show'] $k $tag_show}
 									{if $k == 0 && $tag_show == '无标签'}
 									无标签
@@ -183,7 +183,7 @@
 									<a href="javascript:;" class="label label-primary">{$tag_show}</a>
 									{/if}
 									{/loop}
-									<span class="tag-btn" >
+									<span class="tag-btn put-group" >
 										<i class="caret"></i>
 									</span>
 								</span>
@@ -279,8 +279,8 @@
 					{loop $fans_tag $tags}
 					'<div class="col-sm-4" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><input id="option{$tags['id']}" data-tag="{$tags['id']}" type="checkbox" name="tagname" value="{$tags['id']}" />' +
 					'<label for="option{$tags['id']}">{$tags['name']} </label>' +
-		'</div>' +
-		{/loop}
+					'</div>' +
+					{/loop}
 				'</div>' +
 			'</div>' +
 			'<div class="popover-btn we7-margin-top-sm">' +

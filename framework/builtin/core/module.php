@@ -41,20 +41,20 @@ class CoreModule extends WeModule {
 				if(!empty($rid) && $rid > 0) {
 					$isexists = pdo_get('mc_mass_record', array('id' => $rid), array('media_id', 'msgtype'));
 				}
-				if(!empty($isexists)) {
+				if(!empty($isexists['media_id']) && !empty($isexists['msgtype'])) {
 					switch($isexists['msgtype']) {
 						case 'news':
-							$news = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('id'));
-							$news_items = pdo_getall('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $news['id']));
-							if(!empty($news_items)) {
-								foreach($news_items as &$item) {
+							$news_items = material_get($isexists['media_id']);
+							if(!empty($news_items['news'])) {
+								foreach($news_items['news'] as &$item) {
 									$item['thumb_url'] = tomedia($item['thumb_url']);
 									$item['media_id'] = $isexists['media_id'];
 									$item['attach_id'] = $item['attach_id'];
+									$item['perm'] = $news_items['model'];
 								}
+								unset($item);
 							}
-							$replies['news'] = $news_items;
-
+							$replies['news'] = $news_items['news'];
 							break;
 						case 'image':
 							$img = pdo_get('wechat_attachment', array('media_id' => $isexists['media_id']), array('attachment'));
@@ -137,8 +137,11 @@ class CoreModule extends WeModule {
 										foreach ($replies[$key] as &$news_value) {
 											if (!empty($news_value) && !empty($news_value['media_id'])) {
 												$news_material = material_get($news_value['media_id']);
-												$news_value['attach_id'] = $news_material['id'];
-												$news_value['thumb'] = tomedia($news_material['news'][0]['thumb_url']);
+												if (!is_error($news_material)) {
+													$news_value['attach_id'] = $news_material['id'];
+													$news_value['model'] = $news_material['model'];
+													$news_value['thumb'] = tomedia($news_material['news'][0]['thumb_url']);
+												}
 											} else {
 												$news_value['thumb'] = tomedia($news_value['thumb']);
 											}
@@ -228,9 +231,21 @@ class CoreModule extends WeModule {
 					break;
 				case 'news':
 					if(!empty($replies)) {
-						$reply_news = array();
-						foreach ($replies as $reply) {
-							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => 0, 'title' => $reply['title'], 'thumb' => tomedia($reply['thumb']), 'createtime' => $reply['createtime'], 'media_id' => $reply['mediaid']));
+						$parent_id = 0;
+						$attach_id = 0;
+						foreach ($replies as $k=>$reply) {
+							if (!empty($attach_id) && $reply['attach_id'] == $attach_id) {
+								$reply['parent_id'] = $parent_id;
+							}
+							//本地素材则存attach_id
+							if ($reply['model'] == 'local') {
+								$reply['mediaid'] = $reply['attach_id'];
+							}
+							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => $reply['parent_id'], 'title' => $reply['title'], 'thumb' => tomedia($reply['thumb']), 'createtime' => $reply['createtime'], 'media_id' => $reply['mediaid'], 'displayorder' => $reply['displayorder']));
+							if (empty($attach_id) || $reply['attach_id'] != $attach_id) {
+								$parent_id = pdo_insertid();
+							}
+							$attach_id = $reply['attach_id'] ? $reply['attach_id'] : 0;
 						}
 					}
 					break;

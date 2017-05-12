@@ -19,19 +19,19 @@
 		</div>
 	</div>
 	<table class="table we7-table table-hover vertical-middle" id="js-qr-list" ng-controller="QrDisplay" ng-cloak>
-		<col width="85px"/>
-		<col width="180px" />
-		<col width="120px" />
-		<col width="180px" />
+		<col width="100px"/>
+		<col width="150px" />
+		<col width="140px" />
+		<col/>
 		<col width="180px"/>
-		<col width="210px">
+		<col>
 		<tr>
 			<th></th>
 			<th>二维码名称</th>
 			<th>对应关键字</th>
 			<th class="text-left">生成时间</th>
 			<th>到期时间</th>
-			<th class="text-left">操作</th>
+			<th class="text-right">操作</th>
 		</tr>
 		{loop $list $row}
 		<tr>
@@ -40,7 +40,7 @@
 			<td title="{$row['keyword']}">{php echo cutstr($row['keyword'], 8)}</td>
 			<td class="text-left">{php echo date('Y-m-d <br /> H:i:s', $row[createtime]);}</td>
 			<td>{$row[endtime]}</td>
-			<td class="text-left">
+			<td>
 				<div class="link-group">
 					<a href="{php echo url('platform/qr/down_qr', array('id' => $row['id']))}">下载</a>
 					<a href="{php echo url('platform/qr/post', array('id'=> $row['id']))}" >编辑</a>

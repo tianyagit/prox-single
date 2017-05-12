@@ -148,6 +148,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 
 //账号信息
 if ($do == 'base') {
+	//基础信息
 	$user = user_single($_W['uid']);
 	if (empty($user)) {
 		itoast('抱歉，用户不存在或是已经被删除！', url('user/profile'), 'error');
@@ -155,10 +156,6 @@ if ($do == 'base') {
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
 	if (!empty($profile)) {
-		$avatar = file_fetch($profile['avatar']);
-		if (is_error($avatar)) {
-			$profile['avatar'] = './resource/images/nopic-107.png';
-		}
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
 			'city' => $profile['residecity'],
@@ -174,5 +171,13 @@ if ($do == 'base') {
 
 		$profile['births'] = ($profile['birthyear'] ? $profile['birthyear'] : '--') . '年' . ($profile['birthmonth'] ? $profile['birthmonth'] : '--') . '月' . ($profile['birthday'] ? $profile['birthday'] : '--') .'日';
 	}
+
+	//应用模版权限
+	$groups = pdo_getall('users_group', array(), array('id', 'name'), 'id');
+	$group_info = user_group_detail_info($user['groupid']);
+
+	//使用帐号列表
+	$account_detail = user_account_detail_info($_W['uid']);
+
 	template('user/profile');
 }

@@ -29,7 +29,7 @@
 					<a href="javascript:void(0);" onclick="select_mediaid('basic');">&nbsp;<i class="wi wi-text"></i><span class="msg-tab-title">文字</span></a>
 				</li>
 				<li class="tab-nav tab-img {if $options['image']}hidden{/if}">
-					<a href="javascript:void(0);" onclick="select_mediaid('image');">&nbsp;<i class="wi wi-img"></i><span class="msg-tab-title">图片</span></a>
+					<a href="javascript:void(0);" onclick="select_mediaid('image');">&nbsp;<i class="wi wi-img"></i><span class="msg-tab-title">微信图片</span></a>
 				</li>
 				<li class="tab-nav tab-audio {if $options['music']}hidden{/if}">
 					<a href="javascript:void(0);" onclick="select_mediaid('music');">&nbsp;<i class="wi wi-notice"></i><span class="msg-tab-title">音乐</span></a>
@@ -188,7 +188,7 @@
 		util.material(function(material){
 			var replyVal = [];
 			$(':hidden[name="reply[reply_'+type+']"]').val() == '' ? '' : replyVal.push($(':hidden[name="reply[reply_'+type+']"]').val());
-			if(type == 'basic') {
+			if (type == 'basic') {
 				if (angular.isDefined(val)) {
 					var editmedia = $(".del-basic-media");
 					for (var i = 0; i < editmedia.length; i++) {
@@ -243,7 +243,7 @@
 						'</li>'
 					);
 				}
-			}else if(type == 'keyword') {
+			} else if(type == 'keyword') {
 				if($.trim(material.id).length == 0) {
 					return false;
 				}
@@ -271,7 +271,7 @@
 					'</li>'
 				);
 
-			}  else if(type == 'module') {
+			} else if(type == 'module') {
 				if($.trim(material.name).length == 0) {
 					return false;
 				}
@@ -297,7 +297,7 @@
 						'</li>'
 				);
 			} else {
-				if(type != 'music' && $.trim(material.media_id).length == 0) {
+				if(type != 'music' && $.trim(material.media_id).length == 0 && !(type == 'news' && material.model == 'local')) {
 					return false;
 				};
 				switch(type) {
@@ -334,10 +334,10 @@
 								content: newsV.content,
 								url: newsV.content_source_url,
 								createtime: material.createtime,
-								displayorder: 0,
-								incontent: 0,
-								parent_id: 0,
+								displayorder: newsV.displayorder ? newsV.displayorder : 0,
 								mediaid: material.media_id,
+								model: material.model,
+								attach_id: newsV.attach_id
 							}));
 						});
 						$('.keywords-list').append(
@@ -487,6 +487,7 @@
 	window.initReplyController = function($scope) {
 		$scope.context = {};
 		$scope.context.items = {php echo json_encode($replies)};
+		var newsMediaIds = [];
 		angular.forEach($scope.context.items, function(val, key){
 			var replyVal = [];
 			var type = key;
@@ -514,6 +515,7 @@
 					break;
 				case 'news':
 					angular.forEach(val, function(newsVal, newsKey) {
+						var index = _.indexOf(newsMediaIds, newsVal.media_id);
 						replyVal.push(angular.toJson({
 							title: newsVal.title,
 							author: newsVal.author,
@@ -525,29 +527,35 @@
 							displayorder: newsVal.displayorder ? newsVal.displayorder : 0,
 							incontent: newsVal.incontent ? newsVal.incontent : 0,
 							parent_id: newsVal.parent_id ? newsVal.parent_id : 0,
-							mediaid: newsVal.media_id
+							mediaid: newsVal.media_id,
+							attach_id: newsVal.attach_id,
+							model: newsVal.model
 						}));
-						$('.keywords-list').append(
-							'<li>'+
-							'<div class="del-'+type+'-media">'+
-							'	<div class="desc">'+
-							'		<div class="media-content">'+
-							'			<div class="appmsgSendedItem">'+
-							'				<a class="title-wrp" href="javascript:;">'+
-							'					<span class="icon cover" style="background-image:url('+(newsVal.thumb ? newsVal.thumb : newsVal.thumb_url)+');"></span>'+
-							'					<span class="title">[图文消息]'+newsVal.title+'</span>'+
-							'				</a>'+
-							'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(newsVal.description ? newsVal.description : '')+'</a></p>'+
-							'			</div>'+
-							'		</div>'+
-							'	</div>'+
-							'	<div class="opr">'+
-							'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+(newsVal.attach_id ? newsVal.attach_id : '')+'&reply_news_id='+newsVal.id+'" target="_blank" class="del-gray">编辑</a>'+
-							'		<a href="javascript:;" data-media="'+newsVal.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
-							'	</div>'+
-							'</div>'+
-							'</li>'
-						);
+						if (index == -1) {
+							$('.keywords-list').append(
+								'<li>'+
+								'<div class="del-'+type+'-media">'+
+								'	<div class="desc">'+
+								'		<div class="media-content">'+
+								'			<div class="appmsgSendedItem">'+
+								'				<a class="title-wrp" href="javascript:;">'+
+								'					<span class="icon cover" style="background-image:url('+(newsVal.thumb ? newsVal.thumb : newsVal.thumb_url)+');"></span>'+
+								'					<span class="title">[图文消息]'+newsVal.title+(newsVal.attach_id ? '<span class="color-red">（素材不存在或已被删除）</span>' : '')+
+								'					</span>'+
+								'				</a>'+
+								'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(newsVal.description ? newsVal.description : '')+'</a></p>'+
+								'			</div>'+
+								'		</div>'+
+								'	</div>'+
+								'	<div class="opr">'+
+								'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+(newsVal.attach_id ? newsVal.attach_id : '')+'&reply_news_id='+newsVal.id+'" target="_blank" class="del-gray">编辑</a>'+
+								'		<a href="javascript:;" data-media="'+newsVal.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+								'	</div>'+
+								'</div>'+
+								'</li>'
+							);
+							newsMediaIds.push(newsVal.media_id);
+						}
 					});
 					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					break;

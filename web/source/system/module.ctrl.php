@@ -14,7 +14,7 @@ load()->model('user');
 load()->model('account');
 load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
-$dos = array('check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('check', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
@@ -22,30 +22,55 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NA
 	itoast('无权限操作！', referer(), 'error');
 }
 
+if ($do == 'check') {
+	load()->classs('account');
+	$modulename = $_GPC['module_name'];
+	$obj = WeUtility::createModuleReceiver($modulename);
+	if (empty($obj)) {
+		exit('error');
+	}
+	$obj->uniacid = $_W['uniacid'];
+	$obj->acid = $_W['acid'];
+	$obj->message = array(
+		'event' => 'subscribe'
+	);
+	if(method_exists($obj, 'receive')) {
+		@$obj->receive();
+		iajax(0);
+	} else {
+		iajax(1);
+	}
+}
+
 if ($do == 'get_upgrade_info') {
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	$cloud_m_upgrade_info = cloud_m_upgradeinfo($module_name);
 	$module = array(
+		'id' => $cloud_m_upgrade_info['id'],
 		'version' => $cloud_m_upgrade_info['version'],
 		'name' => $cloud_m_upgrade_info['name'],
 		'branches' => $cloud_m_upgrade_info['branches'],
 		'site_branch' => $cloud_m_upgrade_info['branches'][$cloud_m_upgrade_info['version']['branch_id']],
-		'from' => 'cloud'
+		'from' => 'cloud',
+		'service_expire' => !emtpy($cloud_m_upgrade_info['service_expiretime']) &&  $cloud_m_upgrade_info['service_expiretime'] < time() ? true : false
 	);
 	$module['site_branch']['id'] = intval($module['site_branch']['id']);
 	if (!empty($module['branches'])) {
 		foreach ($module['branches'] as &$branch) {
+			if ($branch['displayorder'] < $module['site_branch']['displayorder'] || ($module['site_branch']['displayorder'] == $module['site_branch']['displayorder'] && $module['site_branch']['id'] > intval($branch['id']))) {
+				unset($module['branches'][$branch['id']]);
+				continue;
+			}
 			$branch['id'] = intval($branch['id']);
 			$branch['displayorder'] = intval($branch['displayorder']);
 			$branch['day'] = intval(date('d', $branch['version']['createtime']));
 			$branch['month'] = date('Y.m', $branch['version']['createtime']);
+			$branch['hour'] = date('H:i', $branch['version']['createtime']);
 		}
 		unset($branch);
 	}
-	if (ver_compare($module_info['version'], $module['site_branch']['version']['version']) != '-1') {
-		unset($module['branches'][$module['site_branch']['id']]);
-	}
+
 	iajax(0, $module, '');
 }
 
@@ -77,6 +102,9 @@ if ($do == 'check_upgrade') {
 		if (empty($manifest)) {
 			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
 				$cloud_m_info = $cloud_m_query_module[$module['name']];
+				if (!empty($cloud_m_info['service_expiretime'])) {
+					$module['service_expire'] = $cloud_m_info['service_expiretime'] > time() ? false : true;
+				}
 				$site_branch = $cloud_m_info['site_branch']['id'];
 				if (empty($site_branch)) {
 					$site_branch = $cloud_m_info['branch'];
@@ -147,7 +175,7 @@ if ($do == 'upgrade') {
 	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
-	
+
 	if (!empty($manifest['platform']['plugin_list'])) {
 		pdo_delete('modules_plugin', array('main_module' => $manifest['application']['identifie']));
 		foreach ($manifest['platform']['plugin_list'] as $plugin) {
@@ -156,7 +184,7 @@ if ($do == 'upgrade') {
 	}
 	//处理模块菜单
 	$module = ext_module_convert($manifest);
-	
+
 	unset($module['name']);
 	$bindings = array_elements(array_keys($points), $module, false);
 	foreach ($points as $point_name => $point_info) {
@@ -226,13 +254,12 @@ if ($do == 'upgrade') {
 	}
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
-	cache_delete(cache_system_key("user_modules:" . $_W['uid']));
 	cache_build_uninstalled_module();
 	if (!empty($module['subscribes'])) {
 		ext_check_module_subscribe($module['name']);
 	}
 	cache_delete('cloud:transtoken');
-	cache_delete(cache_system_key("module_info:{$modulename}:"));
+	cache_build_module_info($module['name']);
 
 	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
@@ -244,7 +271,8 @@ if ($do =='install') {
 	if (empty($_W['isfounder'])) {
 		itoast('您没有安装模块的权限', '', 'error');
 	}
-	if (module_fetch($module_name)) {
+	$module_info = module_fetch($module_name);
+	if (!empty($module_info)) {
 		itoast('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
 	$manifest = ext_module_manifest($module_name);
@@ -364,14 +392,11 @@ if ($do =='install') {
 			pdo_delete('modules_recycle', array('modulename' => $module_name));
 		}
 
-		module_build_privileges();
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
-		cache_delete(cache_system_key("user_modules:" . $_W['uid']));
-		cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:1"));
-		cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:"));
-		cache_delete(cache_system_key("module_info:{$module['name']}:"));
+		cache_build_module_info($module_name);
+		module_build_privileges();
 
 		if (empty($module_subscribe_success)) {
 			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
@@ -385,7 +410,7 @@ if ($do =='install') {
 
 if ($do == 'change_receive_ban') {
 	$modulename = trim($_GPC['modulename']);
-	$module_exist = pdo_get('modules', array('name' => $module_name), 'mid');
+	$module_exist = pdo_get('modules', array('name' => $modulename), 'mid');
 	if (empty($module_exist)) {
 		iajax(1, '模块不存在', '');
 	}
@@ -435,8 +460,8 @@ if ($do == 'module_detail') {
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}
-	if (!empty($module_info['plugin'])) {
-		foreach ($module_info['plugin'] as $key => &$plugin) {
+	if (!empty($module_info['plugin_list'])) {
+		foreach ($module_info['plugin_list'] as $key => &$plugin) {
 			$plugin = module_fetch($plugin);
 			if (empty($plugin)) {
 				unset($module_info['plugin'][$name]);
@@ -547,7 +572,7 @@ if ($do == 'installed') {
 	$module_list = $all_modules = user_modules($_W['uid']);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
-			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] == 1) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] == 1)) {
+			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)) {
 				unset($module_list[$key]);
 			}
 			if (!empty($letter) && strlen($letter) == 1) {

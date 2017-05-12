@@ -35,6 +35,11 @@ define('ACCOUNT_TYPE_OFFCIAL_AUTH', 3);
 //正常接入小程序
 define('ACCOUNT_TYPE_APP_NORMAL', 4);
 
+//多版小程序
+define('WXAPP_MULTI', 1);
+//单版小程序
+define('WXAPP_SINGLE', 2);
+
 //授权登录接入
 define('ACCOUNT_OAUTH_LOGIN', 3);
 //api接入
@@ -81,6 +86,14 @@ define('ATTACH_OSS', 2);//远程附件类型：阿里云
 define('ATTACH_QINIU', 3);//远程附件类型：七牛
 define('ATTACH_COS', 4);//远程附件类型：腾讯云对象存储
 
+define('ATTACH_TYPE_IMAGE', 1);
+define('ATTACH_TYPE_VOICE', 2);
+define('ATTACH_TYPE_VEDIO', 3);
+define('ATTACH_TYPE_NEWS', 4);
+
+define('ATTACH_SAVE_TYPE_FIXED', 1);
+define('ATTACH_SAVE_TYPE_TEMP', 2);
+
 define('STATUS_OFF', 0); //关闭状态
 define('STATUS_ON', 1); //开启状态
 define('STATUS_SUCCESS', 0); //ajax返回成功状态，增强语义
@@ -88,3 +101,9 @@ define('STATUS_SUCCESS', 0); //ajax返回成功状态，增强语义
 define('CACHE_EXPIRE_SHORT', 60);
 define('CACHE_EXPIRE_MIDDLE', 300);
 define('CACHE_EXPIRE_LONG', 3600);
+
+define('CACHE_KEY_MODULE_SETTING', 'module_setting:%s:%s');
+define('CACHE_KEY_MODULE_INFO', 'module_info:%s');
+define('CACHE_KEY_ACCOUNT_MODULES', 'unimodules:%s:%s');
+define('CACHE_KEY_ACCOUNT_MODULES_BINDING', 'unimodules:binding:%s');
+define('CACHE_KEY_MEMBER_INFO', 'memberinfo:%s');

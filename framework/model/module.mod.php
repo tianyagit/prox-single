@@ -234,12 +234,53 @@ function module_build_form($name, $rid, $option = array()) {
  */
 function module_fetch($name) {
 	global $_W;
-	$cachekey = cache_system_key('module_info:' .  $name);
+	$cachekey = cache_system_key(CACHE_KEY_MODULE_INFO, $name);
 	$module = cache_load($cachekey);
 	if (empty($module)) {
-		$module = pdo_get('modules', array('name' => $name));
-		$module = module_parse_info($module);
-		cache_write($cachekey, $module);
+		$module_info = pdo_get('modules', array('name' => $name));
+		if (empty($module_info)) {
+			return array();
+		}
+		if (!empty($module_info['subscribes'])) {
+			$module_info['subscribes'] = (array)unserialize ($module_info['subscribes']);
+		}
+		if (!empty($module_info['handles'])) {
+			$module_info['handles'] = (array)unserialize ($module_info['handles']);
+		}
+		$module_info['isdisplay'] = 1;
+
+		if (file_exists (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg')) {
+			$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg') . "?v=" . time ();
+		} else {
+			$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon.jpg') . "?v=" . time ();
+		}
+
+		$module_info['main_module'] = pdo_getcolumn ('modules_plugin', array ('name' => $module_info['name']), 'main_module');
+		if (!empty($module_info['main_module'])) {
+			$main_module_info = module_fetch ($module_info['main_module']);
+			$module_info['main_module_logo'] = $main_module_info['logo'];
+		} else {
+			$module_info['plugin_list'] = pdo_getall ('modules_plugin', array ('main_module' => $module_info['name']), array (), 'name');
+			if (!empty($module_info['plugin_list'])) {
+				$module_info['plugin_list'] = array_keys ($module_info['plugin_list']);
+			}
+		}
+		$module = $module_info;
+		cache_write($cachekey, $module_info);
+	}
+	//有公众号时，附加模块配置信息
+	if (!empty($module) && !empty($_W['uniacid'])) {
+		$setting_cachekey = cache_system_key(CACHE_KEY_MODULE_SETTING, $_W['uniacid'], $name);
+		$setting = cache_load($setting_cachekey);
+		if (empty($setting)) {
+			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));
+			if (!empty($setting)) {
+				cache_write($setting_cachekey, $setting);
+			}
+		}
+		$module['config'] = !empty($setting['settings']) ? iunserializer($setting['settings']) : array();
+		$module['enabled'] = $module['issystem'] || !isset($setting['enabled']) ? 1 : $setting['enabled'];
+		$module['shortcut'] = $setting['shortcut'];
 	}
 	return $module;
 }
@@ -249,53 +290,18 @@ function module_fetch($name) {
  * 安装模块或添加公众号时调用.
  */
 function module_build_privileges() {
+	load()->model('account');
 	$uniacid_arr = pdo_fetchall('SELECT uniacid FROM ' . tablename('uni_account'));
 	foreach($uniacid_arr as $row){
-		$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $row['uniacid']));
-		load()->model('user');
-		$owner = user_single(array('uid' => $owneruid));
-		//如果没有所有者，则取创始人权限
-		if (empty($owner)) {
-			$groupid = '-1';
-		} else {
-			$groupid = $owner['groupid'];
-		}
-		$modules = array();
-		if (empty($groupid)) {
-			return true;
-		} elseif ($groupid == '-1') {
-			$modules = pdo_fetchall("SELECT name FROM " . tablename('modules') . ' WHERE issystem = 0', array(), 'name');
-		} else {
-			$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
-			$packageids = iunserializer($group['package']);
-			if(empty($packageids)) {
-				return true;
-			}
-			if (in_array('-1', $packageids)) {
-				$modules = pdo_fetchall("SELECT name FROM " . tablename('modules') . ' WHERE issystem = 0', array(), 'name');
-			} else {
-				$wechatgroup = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE id IN ('".implode("','", $packageids)."') OR uniacid = '{$row['uniacid']}'");
-				if (!empty($wechatgroup)) {
-					foreach ($wechatgroup as $li) {
-						$li['modules'] = iunserializer($li['modules']);
-						if (!empty($li['modules'])) {
-							foreach ($li['modules'] as $modulename) {
-								$modules[$modulename] = $modulename;
-							}
-						}
-					}
-				}
-			}
-		}
-		$modules = array_keys($modules);
+		$modules = uni_modules(false);
 		//得到模块标识
-		$mymodules = pdo_fetchall("SELECT `module` FROM ".tablename('uni_account_modules')." WHERE uniacid = '{$row['uniacid']}' ORDER BY enabled DESC ", array(), 'module');
+		$mymodules = pdo_getall('uni_account_modules', array('uniacid' => $row['uniacid']), array('module'), 'module');
 		$mymodules = array_keys($mymodules);
 		foreach($modules as $module){
-			if(!in_array($module, $mymodules)) {
+			if(!in_array($module['name'], $mymodules) && empty($module['main_module']) && empty($module['issystem'])) {
 				$data = array();
 				$data['uniacid'] = $row['uniacid'];
-				$data['module'] = $module;
+				$data['module'] = $module['name'];
 				$data['enabled'] = 1;
 				$data['settings'] = '';
 				pdo_insert('uni_account_modules', $data);
@@ -387,42 +393,6 @@ function module_permission_fetch($name) {
 }
 
 /**
- * 解析从数据库中取出的模块信息
- * @param array() $module_info 模块信息
- */
-function module_parse_info($module_info) {
-	if (empty($module_info)) {
-		return array();
-	}
-	if ($module_info['issystem'] == 1) {
-		$module_info['enabled'] = 1;
-	} elseif (!isset($module_info['enabled'])) {
-		$module_info['enabled'] = 1;
-	}
-	if (empty($module_info['config'])) {
-		$module_info['config'] = array();
-	}
-	if (!empty($module_info['subscribes'])) {
-		$module_info['subscribes'] = iunserializer($module_info['subscribes']);
-	}
-	if (!empty($module_info['handles'])) {
-		$module_info['handles'] = iunserializer($module_info['handles']);
-	}
-	$module_info['isdisplay'] = 1;
-	$module_info['main_module'] = pdo_getcolumn('modules_plugin', array('name' => $module_info['name']), 'main_module');
-	$module_info['plugin_list'] = pdo_getall('modules_plugin', array('main_module' => $module_info['name']), array(), 'name');
-	$module_info['plugin_list'] = array_keys($module_info['plugin_list']);
-
-	if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg')) {
-		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg'). "?v=". time();
-	} else {
-		$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg'). "?v=". time();
-	}
-	unset($module_info['description']);
-	return $module_info;
-}
-
-/**
  *  卸载模块
  * @param string $module_name 模块标识
  * @param bool $is_clean_rule 是否删除相关的统计数据和回复规则
@@ -470,14 +440,11 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 		}
 	}
 	pdo_insert('modules_recycle', array('modulename' => $module_name));
+	pdo_delete('uni_account_modules', array('module' => $module_name));
 	ext_module_clean($module_name, $is_clean_rule);
-	cache_build_account_modules();
 	cache_build_module_subscribe_type();
 	cache_build_uninstalled_module();
-	cache_delete(cache_system_key("user_modules:" . $_W['uid']));
-	cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:1"));
-	cache_delete(cache_system_key("unimodules:{$_W['uniacid']}:"));
-	cache_delete(cache_system_key("module_info:{$module_name}:"));
+	cache_build_module_info($module_name);
 
 	return true;
 }

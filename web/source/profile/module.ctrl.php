@@ -23,27 +23,15 @@ if($do == 'display') {
 
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => &$row) {
+			if ($name == 'we7_coupon') {
+				$row['issystem'] = 0;
+			}
 			if (!empty($row['issystem']) || !empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
-				if ($name != 'we7_coupon') {
-					unset($modulelist[$name]);
-				}
+				unset($modulelist[$name]);
 				continue;
 			}
 		}
-		$modules = array();
-		if (!empty($modulelist)) {
-			$module_profile = pdo_getall('uni_account_modules', array('module' => array_keys($modulelist), 'uniacid' => $_W['uniacid']), array ('module', 'enabled', 'shortcut'), 'module');
-			if (!empty($module_profile)) {
-				foreach ($module_profile as $name => $row) {
-					$modules[$name] = $modulelist[$name];
-					$modules[$name]['enabled'] = $row['enabled'];
-					$modules[$name]['shortcut'] = $row['shortcut'];
-				}
-			}
-		}
-		$total = count($modules);
-		$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
-		$pager = pagination ($total, $pageindex, $pagesize);
+		$modules = $modulelist;
 	}
 	template ('profile/module');
 } elseif ($do == 'shortcut') {
@@ -69,6 +57,7 @@ if($do == 'display') {
 			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
 		);
 		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
+		cache_build_module_info($modulename);
 	}
 	if ($status) {
 		itoast('添加模块快捷操作成功！', referer(), 'success');
@@ -86,7 +75,7 @@ if($do == 'display') {
 		'module' => $modulename,
 		'uniacid' => $_W['uniacid']
 	));
-	cache_build_account_modules();
+	cache_build_module_info($modulename);
 	itoast('模块操作成功！', referer(), 'success');
 } elseif ($do == 'top') {
 	$modulename = $_GPC['modulename'];
@@ -108,6 +97,7 @@ if($do == 'display') {
 			'shortcut' => STATUS_OFF,
 		));
 	}
+	cache_build_account_modules($_W['uniacid']);
 	itoast('模块置顶成功', referer(), 'success');
 } elseif ($do == 'setting') {
 	$modulename = $_GPC['m'];

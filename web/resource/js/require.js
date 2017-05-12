@@ -72,6 +72,7 @@ require.config({
 		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
 		'jquery': '../lib/bootstrap.min', //兼容之前amd调用
 		'loadcss': '../lib/css.min', //加载CSS
+		'css': '../lib/css.min', //加载CSS
 		/*复制组件（部分浏览器不兼容flash）*/
 		'clipboard' : '../lib/clipboard.min',
 		/*单选多选组件 待完善*/

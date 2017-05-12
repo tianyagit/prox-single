@@ -67,7 +67,7 @@
 							</select>
 						</div>
 					</div>
-					<input type="text" class="keyword-input form-control" max="100" id="keyword-input-exact" ng-model="reply.keyword.exact" ng-blur="checkKeyWord($event);" data-type="keyword">
+					<input type="text" class="keyword-input form-control" max="100" id="keyword-input-exact" ng-model="reply.keyword.exact" ng-blur="checkKeyWord($event);" data-type="keyword" style="color: #555!important;">
 					<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="keyword-emoji" ng-init="initEmotion();"><i class="fa fa-github-alt"></i> 表情</a></span>
 				</div>
 				<span class="help-block">多个关键字请使用逗号隔开，如天气，今日天气</span>
@@ -117,18 +117,26 @@
 			</div>
 		</div>
 		</div>
-		{if $m ==  'userapi'}
-			{php echo module_build_form('userapi', $rid)}
-		{elseif in_array($m, $sysmods)}
-			{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
-		{else}
-			{php echo module_build_form($m, $rid)}
-		{/if}
-		<div class="form-group we7-form">
-			<input type="hidden" name="token" value="{$_W['token']}">
-			<input type="submit" name="submit" value="发布" class="reply-form-submit" ng-hide="1">
-			<span value="发布" class="btn btn-primary" ng-click="submitForm()">发布</span>
+		<div class="form-group">
+			<nav class="navbar navbar-wxapp-bottom navbar-fixed-bottom" role="navigation">
+				<div class="container">
+					<div class="pager">
+						<input type="submit" name="submit" value="发布" class="reply-form-submit hidden">
+						<span value="发布" class="btn btn-primary" ng-click="submitForm()">发布</span>
+					</div>
+				</div>
+			</nav>
 		</div>
+		<div class="form-group">
+			{if $m ==  'userapi'}
+				{php echo module_build_form('userapi', $rid)}
+			{elseif in_array($m, $sysmods)}
+				{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
+			{else}
+				{php echo module_build_form($m, $rid)}
+			{/if}
+		</div>
+		<input type="hidden" name="token" value="{$_W['token']}">
 	</form>
 	{/if}
 	{if $m == 'apply'}
