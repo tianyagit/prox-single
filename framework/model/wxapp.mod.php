@@ -17,7 +17,7 @@ function wxapp_getpackage($data, $if_single = false) {
 	if (empty($if_single)) {
 		$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
 	} else {
-		$result = $api->post('wxapp', 'developer-download', array('wxapp' => $data), 'html');
+		$result = $api->post('wxapp', 'developer-download', array('wxapp' => $request_cloud_data), 'html');
 	}
 	if (is_error($result)) {
 			return error(-1, $result['message']);
