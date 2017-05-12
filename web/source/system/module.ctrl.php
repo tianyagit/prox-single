@@ -45,17 +45,11 @@ if ($do == 'check') {
 if ($do == 'get_upgrade_info') {
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
-	$cloud_m_upgrade_info = cloud_m_upgradeinfo($module_name);
-	$module = array(
-		'id' => $cloud_m_upgrade_info['id'],
-		'version' => $cloud_m_upgrade_info['version'],
-		'name' => $cloud_m_upgrade_info['name'],
-		'branches' => $cloud_m_upgrade_info['branches'],
-		'site_branch' => $cloud_m_upgrade_info['branches'][$cloud_m_upgrade_info['version']['branch_id']],
-		'from' => 'cloud',
-		'service_expire' => !emtpy($cloud_m_upgrade_info['service_expiretime']) &&  $cloud_m_upgrade_info['service_expiretime'] < time() ? true : false
-	);
+	$module = cloud_m_upgradeinfo($module_name);
+	$module['site_branch'] = $module['branches'][$module['version']['branch_id']];
+	$module['from'] = 'cloud';
 	$module['site_branch']['id'] = intval($module['site_branch']['id']);
+	$module['service_expiretime'] = intval($module['service_expiretime']);
 	if (!empty($module['branches'])) {
 		foreach ($module['branches'] as &$branch) {
 			if ($branch['displayorder'] < $module['site_branch']['displayorder'] || ($module['site_branch']['displayorder'] == $module['site_branch']['displayorder'] && $module['site_branch']['id'] > intval($branch['id']))) {
@@ -70,7 +64,6 @@ if ($do == 'get_upgrade_info') {
 		}
 		unset($branch);
 	}
-
 	iajax(0, $module, '');
 }
 
@@ -410,7 +403,7 @@ if ($do =='install') {
 
 if ($do == 'change_receive_ban') {
 	$modulename = trim($_GPC['modulename']);
-	$module_exist = pdo_get('modules', array('name' => $modulename), 'mid');
+	$module_exist = module_fetch($modulename);
 	if (empty($module_exist)) {
 		iajax(1, '模块不存在', '');
 	}
