@@ -18,7 +18,7 @@ if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 }
 
 if ($do == 'save') {
-	$modules = empty($_GPC['modules']) ? array() : (array)array_keys($_GPC['modules']);
+	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)array_keys($_GPC['wxapp']);
 	$package_info = array(
 		'id' => intval($_GPC['id']),
@@ -27,7 +27,7 @@ if ($do == 'save') {
 		'templates' => $_GPC['templates'],
 	);
 	if (empty($package_info['name'])) {
-		iajax(1, '请输入套餐名', '');
+		iajax(1, '请输入套餐名');
 	}
 
 	if (!empty($package_info['modules'])) {
@@ -43,14 +43,14 @@ if ($do == 'save') {
 	if (!empty($package_info['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
-			iajax(1, '套餐名已存在', '');
+			iajax(1, '套餐名已存在');
 		}
 		$packageid = $package_info['id'];
 		unset($package_info['id']);
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
 		cache_build_account_modules();
 		module_build_privileges();
-		iajax(0, url('system/module-group'), '');
+		iajax(0, '', url('system/module-group'));
 	} else {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
@@ -58,7 +58,7 @@ if ($do == 'save') {
 		}
 		pdo_insert('uni_group', $package_info);
 		module_build_privileges();
-		iajax(0, url('system/module-group'), '');
+		iajax(0, '', url('system/module-group'));
 	}
 }
 

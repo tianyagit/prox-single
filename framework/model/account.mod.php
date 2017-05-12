@@ -34,29 +34,56 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 	}
 	return true;
 }
-
 /**
  * 获取当前用户可操作的所有公众号
  * @param int $uid 指定操作用户
+ * @param int $app_only 指定是否只获取公众号不获取小程序
  * @return array
  */
-function uni_owned($uid = 0) {
+function uni_owned($uid = 0,$app_only = false) {	
 	global $_W;
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
-	$uniaccounts = array();
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders)) {
-		$uniaccounts = pdo_fetchall("SELECT * FROM " . tablename('uni_account') . " ORDER BY `uniacid` DESC", array(), 'uniacid');
+	if ($app_only) {
+		$sql = "SELECT * FROM " . tablename(account_wechats) . " as a LEFT JOIN " . tablename("account") . " as b
+			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
 	} else {
-		$uniacids = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account_users') . " WHERE uid = :uid", array(':uid' => $uid), 'uniacid');
-		if (!empty($uniacids)) {
-			$uniaccounts = pdo_fetchall("SELECT * FROM " . tablename('uni_account') . " WHERE uniacid IN (" . implode(',', array_keys($uniacids)) . ") ORDER BY `uniacid` DESC", array(), 'uniacid');
-		}
+		$sql = "SELECT * FROM " . tablename(uni_account) . " as b WHERE b.isdeleted=0";
 	}
-	
-	return $uniaccounts;
+	$orderby = " ORDER BY b.uniacid DESC";
+	if (in_array($uid, $founders)) {
+		$sql.= $orderby;
+		$accounts = pdo_fetchall($sql, array());
+	} else {
+		$subsql = "SELECT uniacid FROM " . tablename("uni_account_users")." as c where c.uid=:uid";
+		$sql.= " AND b.uniacid in ($subsql)" . $orderby;
+		$param[':uid'] = $_W['uid'];
+		$accounts = pdo_fetchall($sql, $param);
+	}
+	return $accounts;
 }
-
+/**
+ * 获取某一公众号的主管理员信息
+ * @param int $uniacid  指定的公众号
+ * @return array
+ */
+function account_owner($uniacid = 0) {
+	global $_W;
+	$uniacid = intval($uniacid);
+	if (empty($uniacid)) {
+		return array();
+	}
+	$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+	if (empty($ownerid)) {
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$ownerid = $founders[0];
+	}
+	$owner = user_single($ownerid);
+	if (empty($owner)) {
+		return array();
+	}
+	return $owner;
+}
 /**
  * 获取当前公号的所有子公众号
  * @param int $uniacid 公众号ID
@@ -103,9 +130,9 @@ function uni_fetch($uniacid = 0) {
 	return $account;
 }
 
-/**
- * 获取当前公号下所有安装模块及模块信息
- * 公众号的权限是owner所有套餐内的全部模块权限
+/**  
+ * 获取当前公号下所有安装模块及模块信息 
+ * 公众号的权限是owner所有套餐内的全部模块权限 
  * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
  */
@@ -230,6 +257,7 @@ function uni_groups($groupids = array()) {
 	}
 	if (!empty($list)) {
 		foreach ($list as $k=>&$row) {
+			$row['wxapp'] = array();
 			if (!empty($row['modules'])) {
 				$modules = iunserializer($row['modules']);
 				if (is_array($modules)) {

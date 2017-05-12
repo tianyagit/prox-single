@@ -202,9 +202,7 @@ if($do == 'sms') {
 
 if($do == 'modules_tpl') {
 	$unigroups = uni_groups();
-	$ownerid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
-	$ownerid = empty($ownerid) ? 1 : $ownerid;
-	$owner = user_single(array('uid' => $ownerid));
+	$owner = account_owner($uniacid);
 
 	if($_W['isajax'] && $_W['ispost'] && ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER)) {
 		if($_GPC['type'] == 'group') {
@@ -262,7 +260,7 @@ if($do == 'modules_tpl') {
 	$modules_tpl = $extend = array();
 
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($ownerid, $founders)) {
+	if (in_array($owner['uid'], $founders)) {
 		$modules_tpl[] = array(
 			'id' => -1,
 			'name' => '所有服务',

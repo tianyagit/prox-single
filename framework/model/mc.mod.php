@@ -201,7 +201,7 @@ function mc_fetch_one($uid) {
 	if (empty($uid)) {
 		return array();
 	}
-	$cachekey = cache_system_key("memberinfo:{$uid}");
+	$cachekey = cache_system_key(CACHE_KEY_MEMBER_INFO, $uid);
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -808,7 +808,7 @@ function _mc_login($member) {
  */
 function mc_fields() {
 	$fields = cache_load('usersfields');
-	if (!empty($fields)) {
+	if (empty($fields)) {
 		load()->model('cache');
 		cache_build_users_struct();
 		$fields = cache_load('usersfields');
@@ -940,7 +940,7 @@ function mc_openid2uid($openid) {
 	if (is_numeric($openid)) {
 		return $openid;
 	}
-	$cachekey = @cache_system_key("uid:{$openid}");
+	$cachekey = cache_system_key("uid:{$openid}");
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -986,6 +986,11 @@ function mc_uid2openid($uid) {
 		return $cache;
 	}
 
+	if (is_numeric($uid)) {
+		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
+		cache_write($cachekey, $fans_info['openid']);
+		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
+	}
 	if (is_string($uid)) {
 		$openid = trim($uid);
 		$openid_exist = pdo_get('mc_mapping_fans', array('openid' => $openid));
@@ -994,11 +999,6 @@ function mc_uid2openid($uid) {
 		} else {
 			return false;
 		}
-	}
-	if (is_numeric($uid)) {
-		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
-		cache_write($cachekey, $fans_info['openid']);
-		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
 	}
 	if (is_array($uid)) {
 		$openids = array();
