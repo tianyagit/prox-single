@@ -202,7 +202,7 @@ if($do == 'sms') {
 
 if($do == 'modules_tpl') {
 	$unigroups = uni_groups();
-	$owner = account_owned($uniacid);
+	$owner = account_owner($uniacid);
 
 	if($_W['isajax'] && $_W['ispost'] && ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER)) {
 		if($_GPC['type'] == 'group') {
