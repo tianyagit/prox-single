@@ -196,8 +196,8 @@ if($do == 'getpackage') {
 	} else {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid));
 		$moduleinfo = json_decode($wxapp_version_info['modules'], true);
-		$modulename = array_keys($moduleinfo)[0];
-		$zipname = $modulename;
+		$modulename = array_keys($moduleinfo);
+		$zipname = $modulename[0];
 		$request_cloud_data['module'] = array(
 			'name' => $modulename,
 			'zipname' => $account_wxapp_info['name'],
