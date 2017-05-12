@@ -104,7 +104,7 @@ function uni_fetch($uniacid = 0) {
 }
 
 /**
- * 获取当前公号下所有安装模块及模块信息
+ * 获取当前公号下所有有权限模块及模块信息
  * 公众号的权限是owner所有套餐内的全部模块权限
  * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
