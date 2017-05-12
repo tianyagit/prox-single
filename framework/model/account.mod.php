@@ -79,7 +79,7 @@ function user_wechats() {
  * @param int $uniacid  指定的公众号
  * @return array
  */
-function account_owned($uniacid = 0) {
+function account_owner($uniacid = 0) {
 	global $_W;
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
