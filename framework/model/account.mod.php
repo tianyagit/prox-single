@@ -52,11 +52,11 @@ function uni_owned($uid = 0,$app_only = false) {
 	}
 	$orderby = " ORDER BY b.uniacid DESC";
 	if (in_array($uid, $founders)) {
-		$sql . = $orderby;
+		$sql.= $orderby;
 		$accounts = pdo_fetchall($sql, array());
 	} else {
 		$subsql = "SELECT uniacid FROM " . tablename("uni_account_users")." as c where c.uid=:uid";
-		$sql . =" AND b.uniacid in ($subsql)" . $orderby;
+		$sql.= " AND b.uniacid in ($subsql)" . $orderby;
 		$param[':uid'] = $_W['uid'];
 		$accounts = pdo_fetchall($sql, $param);
 	}
