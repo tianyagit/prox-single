@@ -159,7 +159,7 @@
 										暂无分组
 									{/if}
 								</a>
-								<ul class="dropdown-menu ul-add-hidden">
+								<ul class="dropdown-menu more-group">
 									{loop $_W['account']['groups'] $group}
 									{if $group ['groupid'] != $li['groupid']}
 									<li class="user-group" data-id="{$group['groupid']}" data-uid="{$li['uid']}"><a href="javascript:;">{$group['title']}</a></li>
@@ -219,7 +219,7 @@
 			});
 		});
 	});
-	$(".ul-add-hidden").each(function(){
+	$(".more-group").each(function(){
 		if($(this).children('li').length == 0){
 			$(this).append("<li><a href=\"javascript:;\">没有更多分组了</a></li>");
 		}
