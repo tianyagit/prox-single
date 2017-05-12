@@ -48,8 +48,6 @@ if ($do == 'get_upgrade_info') {
 	$module = cloud_m_upgradeinfo($module_name);
 	$module['site_branch'] = $module['branches'][$module['version']['branch_id']];
 	$module['from'] = 'cloud';
-	$module['site_branch']['id'] = intval($module['site_branch']['id']);
-	$module['service_expiretime'] = intval($module['service_expiretime']);
 	if (!empty($module['branches'])) {
 		foreach ($module['branches'] as &$branch) {
 			if ($branch['displayorder'] < $module['site_branch']['displayorder'] || ($module['site_branch']['displayorder'] == $module['site_branch']['displayorder'] && $module['site_branch']['id'] > intval($branch['id']))) {
