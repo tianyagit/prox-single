@@ -6,11 +6,19 @@
 defined('IN_IA') or exit('Access Denied');
 
 
-function wxapp_getpackage($data) {
-	$request_cloud_data = json_encode($data);
+function wxapp_getpackage($data, $if_single = false) {
+	if (empty($if_single)) {
+		$request_cloud_data = json_encode($data);
+	} else {
+		$request_cloud_data = $data;
+	}
 	load()->classs('cloudapi');
 	$api = new CloudApi();
-	$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
+	if (empty($if_single)) {
+		$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
+	} else {
+		$result = $api->post('wxapp', 'developer-download', array('wxapp' => $data), 'html');
+	}
 	if (is_error($result)) {
 			return error(-1, $result['message']);
 	} else {
@@ -34,11 +42,11 @@ function wxapp_account_create($uniacid, $account,$wxapp_type = 1) {
 	pdo_insert('account_wxapp', $account);
 	return $acid;
 }
-/*
-	*获取某一小程序拥有的小程序模块
-	@param  int $uniacid
-	@return array
-*/
+/**
+ * 获取某一小程序拥有的小程序模块
+ * @param int $uniacid
+ * @return array
+ */
 function wxapp_owned_moudles($uniacid) {
 	load()->model('module');
 

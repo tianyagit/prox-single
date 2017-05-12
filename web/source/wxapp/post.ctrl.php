@@ -164,34 +164,62 @@ if($do == 'post' || $do == 'developer') {
 	template('wxapp/create-post');
 }
 if($do == 'getpackage') {
-	$versionid = intval($_GPC['versionid']);
-	if(empty($versionid)) {
-		itoast('参数错误！', '', '');
+	if (empty($_GPC['single'])) {
+		$versionid = intval($_GPC['versionid']);
+		$uniacid = $_W['uniacid'];
+		if(empty($versionid)) {
+			itoast('参数错误！', '', '');
+		}
+	} else {
+		$uniacid = intval($_GPC['uniacid']);
+		if(empty($uniacid)) {
+			itoast('参数错误！', '', '');
+		}
 	}
+
 	$request_cloud_data = array();
-	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $_W['uniacid']));
-	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $_W['uniacid'], 'id' => $versionid));
-	$request_cloud_data['name'] = $account_wxapp_info['name'];
-	$request_cloud_data['modules'] = json_decode($wxapp_version_info['modules'], true);
-	$request_cloud_data['siteInfo'] = array(
-			'uniacid' => $_W['uniacid'],
-			'acid' => $account_wxapp_info['acid'],
-			'multiid' => $wxapp_version_info['multiid'],
-			'version' => $wxapp_version_info['version'],
-			'siteroot' => $_W['siteroot'].'app/index.php'
+	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	if (empty($_GPC['single'])) {
+		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
+		$request_cloud_data['name'] = $account_wxapp_info['name'];
+		$zipname = $request_cloud_data['name'];
+		$request_cloud_data['modules'] = json_decode($wxapp_version_info['modules'], true);
+		$request_cloud_data['siteInfo'] = array(
+				'uniacid' => $_W['uniacid'],
+				'acid' => $account_wxapp_info['acid'],
+				'multiid' => $wxapp_version_info['multiid'],
+				'version' => $wxapp_version_info['version'],
+				'siteroot' => $_W['siteroot'].'app/index.php'
+			);
+		$request_cloud_data['tabBar'] = json_decode($wxapp_version_info['quickmenu'], true);
+		$result = wxapp_getpackage($request_cloud_data);
+	} else {
+		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid));
+		$moduleinfo = json_decode($wxapp_version_info['modules'], true);
+		$modulename = array_keys($moduleinfo)[0];
+		$zipname = $modulename;
+		$request_cloud_data['module'] = array(
+			'name' => $modulename,
+			'zipname' => $account_wxapp_info['name'],
 		);
-	$request_cloud_data['tabBar'] = json_decode($wxapp_version_info['quickmenu'], true);
-	$result = wxapp_getpackage($request_cloud_data);
+		$request_cloud_data['siteInfo'] = array(
+				'uniacid' => $uniacid,
+				'acid' => $account_wxapp_info['acid'],
+				'siteroot' => $_W['siteroot'].'app/index.php'
+			);
+		$result = wxapp_getpackage($request_cloud_data, true);
+	}
 
 	if(is_error($result)) {
 		itoast($result['message'], '', '');
 	}else {
 		header('content-type: application/zip');
-		header('content-disposition: attachment; filename="'.$request_cloud_data['name'].'.zip"');
+		header('content-disposition: attachment; filename="'.$zipname.'.zip"');
 		echo $result;
 	}
 	exit;
 }
+
 if($do == 'getapps') {
 	$apps = array();
 	$apps = cache_load('packageapps');
