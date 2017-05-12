@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('system');
 load()->model('wxapp');
 
-$dos = array('delete', 'display', 'editmodule', 'delmodule', 'get_single_package');
+$dos = array('delete', 'display', 'single_change_module', 'single_del_module', 'get_single_package');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $uniacid = intval($_GPC['uniacid']);
@@ -45,7 +45,7 @@ if ($do == 'display') {
 	template('account/manage-version-wxapp');
 }
 
-if ($do == 'editmodule') {
+if ($do == 'single_change_module') {
 	if (empty($_GPC['module'])) {
 		iajax(1, '模块数据错误！');
 	}
@@ -70,7 +70,7 @@ if ($do == 'editmodule') {
 	}
 }
 
-if ($do == 'delmodule') {
+if ($do == 'single_del_module') {
 	$result = pdo_update('wxapp_versions', array('modules' => ''), array('uniacid' => $uniacid));
 	if (!empty($result)) {
 		iajax(0, '删除成功！');
@@ -80,9 +80,6 @@ if ($do == 'delmodule') {
 }
 
 if ($do == 'get_single_package') {
-	if(empty($uniacid) || !is_numeric($uniacid)) {
-		itoast('参数错误！', '', '');
-	}
 	$request_cloud_data = array();
 	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
 	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid));

@@ -138,16 +138,7 @@ if ($do == 'edit') {
 
 if ($do == 'account_list') {
 	//查询当前用户所有公众号
-	$sql = "SELECT * FROM ".tablename("account_wechats")." as a LEFT JOIN ".tablename("account")." as b 
-			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
-	if ($_W['isfounder']) {
-		$param =array();
-	} else {
-		$subsql="SELECT uniacid FROM ".tablename("uni_account_users")." where uid=:uid";
-		$sql.=" AND b.uniacid in ($subsql)";
-		$param[':uid'] = $_W['uid'];
-	}
-	$accounts = pdo_fetchall($sql, $param);
+	$accounts = user_wechats();
 	//筛选有模块权限的公众号
 	foreach($accounts as $key =>$val){
 		$account_module = pdo_get('uni_account_modules',array('module' => $_GPC['module'],'enabled' => '1','uniacid'=>$val['uniacid']),array('uniacid'), 'uniacid');
