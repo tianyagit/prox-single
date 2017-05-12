@@ -152,10 +152,14 @@
 							<a href="javascript:;" title="消费" class="modal-trade-consume" data-type="consume" data-uid="{$li['uid']}">消费</a>
 							<div class="btn-group">
 								<a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									{$_W['account']['groups'][$li['groupid']]['title']}
-									<span class="caret"></span>
+									{if count($_W['account']['groups']) > 0}
+										{$_W['account']['groups'][$li['groupid']]['title']}
+										<span class="caret"></span>
+									{else}
+										暂无分组
+									{/if}
 								</a>
-								<ul class="dropdown-menu">
+								<ul class="dropdown-menu more-group">
 									{loop $_W['account']['groups'] $group}
 									{if $group ['groupid'] != $li['groupid']}
 									<li class="user-group" data-id="{$group['groupid']}" data-uid="{$li['uid']}"><a href="javascript:;">{$group['title']}</a></li>
@@ -214,6 +218,11 @@
 				}
 			});
 		});
+	});
+	$(".more-group").each(function(){
+		if($(this).children('li').length == 0){
+			$(this).append("<li><a href=\"javascript:;\">没有更多分组了</a></li>");
+		}
 	});
 </script>
 {/if}
