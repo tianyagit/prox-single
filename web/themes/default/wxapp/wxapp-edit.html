@@ -46,7 +46,6 @@
 									<span class="" data-toggle="collapse" data-target="#frame-1">模块<i class="wi wi-down-sign-s pull-right"></i></span>
 								</div>
 								<ul class="list-group collapse in" id="frame-1">
-									{if !empty($module_connections)}
 									{loop $module_connections $module}
 									<li class="list-group-item">
 										<a href="{php echo url('home/welcome/ext', array('m' => $module['name'], 'uniacid_source' => 'wxapp', 'uniacid' => !empty($connection[$module['name']]) ? $connection[$module['name']] : $_GPC['uniacid']))}" target="_blank">
@@ -54,13 +53,6 @@
 										</a>
 									</li>
 									{/loop}
-									{else}
-									<li class="list-group-item">
-										<a href="javascript:void(0);">
-											暂无模块
-										</a>
-									</li>
-									{/if}
 								</ul>
 							</div>
 						<!--end菜单列表-->
@@ -482,11 +474,6 @@
 										</td>
 									</tr>
 									{/loop}
-									<tr >
-										<td colspan="3" class="we7-padding" ng-click="showWxModules()" ng-style="{'cursor': 'pointer'}">
-											<span class="font-lg">+</span>
-										</td>
-									</tr>
 								</table>
 								<div class="modal fade" id="show_account" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 									<div class="modal-dialog we7-modal-dialog" style="width:800px">
