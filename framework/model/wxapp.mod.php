@@ -90,20 +90,23 @@ function wxapp_version_parser($pos1_val,$pos2_val,$pos3_val) {
 */
 function wxapp_fetch($uniacid) {
 	$wxapp_info = array();
-	if (!empty($uniacid)) {
-		$account_wxapp = pdo_get('account_wxapp', array('uniacid' => $uniacid));
-		if (!empty($account_wxapp)) {
-			$wxapp_info['account_wxapp'] = $account_wxapp;
-			$sql ='SELECT * FROM ' . tablename('wxapp_versions') . ' WHERE `uniacid`=:uniacid ORDER BY `id` DESC';
-			$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
-			if (!empty($wxapp_version_info)) {
-				$wxapp_info['version_info'] = $wxapp_version_info;
-				$version_string = $wxapp_version_info['version'];
-				$version = explode('.', $version_string);
-				$wxapp_info['version'] = $version;
-			}
-		}
+	if (empty($uniacid)) {
+		return $wxapp_info;
 	}
+	
+	$account_wxapp = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	if (empty($account_wxapp)) {
+		return $wxapp_info;
+	}
+	$wxapp_info['account_wxapp'] = $account_wxapp;
+	
+	$sql ='SELECT * FROM ' . tablename('wxapp_versions') . ' WHERE `uniacid`=:uniacid ORDER BY `id` DESC';
+	$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+	if (!empty($wxapp_version_info)) {
+		$wxapp_info['last_version'] = $wxapp_version_info;
+		$wxapp_info['last_version_num'] = explode('.', $wxapp_version_info['version']);
+	}
+	
 	return  $wxapp_info;
 }
 /*  
