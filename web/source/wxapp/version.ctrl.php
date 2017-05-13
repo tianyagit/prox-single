@@ -132,7 +132,6 @@ if ($do == 'edit') {
 		}
 		unset($version);
 	}
-	//print_r($module_connections);
 	template('wxapp/wxapp-edit');
 }
 
