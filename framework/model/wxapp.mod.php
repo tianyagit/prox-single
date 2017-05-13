@@ -71,20 +71,15 @@ function wxapp_version_parser($pos1_val,$pos2_val,$pos3_val) {
 		0 => $pos1_val,	
 		1 => $pos2_val,
 		2 => $pos3_val	
-	);
-	if ($version[2] >= 10) {
+	);	
+	if($version[2] >= 10){
 		$version[1] += 1;
 		$version[2] = 0;
-		if ($version[1] >= 10) {
-			$version[1] = 0;
-			$version[0] += 1;
-		}
-	} else {
-		if($version[1] >= 10) {
-			$version[0] += 1;
-			$version[1] = 0;
-		} 
-	}	
+	}
+	if($version[1] >= 10) {
+		$version[0] += 1;
+		$version[1] = 0;
+	} 
 	return $version;
 }
 /*
@@ -94,24 +89,22 @@ function wxapp_version_parser($pos1_val,$pos2_val,$pos3_val) {
  	@return array
 */
 function wxapp_fetch($uniacid) {
-	$account_wxapp = pdo_get('account_wxapp', array('uniacid' => $uniacid));
-	if (is_array($account_wxapp)) {
-		$wxapp_info['account_wxapp'] = $account_wxapp;
-	} else {
-		$wxapp_info['account_wxapp'] = array();
+	$wxapp_info = array();
+	if (!empty($uniacid)) {
+		$account_wxapp = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+		if (!empty($account_wxapp)) {
+			$wxapp_info['account_wxapp'] = $account_wxapp;
+			$sql ='SELECT * FROM ' . tablename('wxapp_versions') . ' WHERE `uniacid`=:uniacid ORDER BY `id` DESC';
+			$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+			if (!empty($wxapp_version_info)) {
+				$wxapp_info['version_info'] = $wxapp_version_info;
+				$version_string = $wxapp_version_info['version'];
+				$version = explode('.', $version_string);
+				$wxapp_info['version'] = $version;
+			}
+		}
 	}
-	$sql = "SELECT * FROM " . tablename("wxapp_versions") . " WHERE uniacid=:uniacid ORDER BY id DESC";
-	$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
-	if (is_array($wxapp_version_info)) {
-		$wxapp_info['version_info'] = $wxapp_version_info;
-		$version_string = $wxapp_version_info['version'];
-		$version = explode(".", $version_string);
-		$wxapp_info['version'] = $version;
-	} else {
-		$wxapp_info['version'] =array();
-		$wxapp_info['version_info'] = array();
-	}
-	return $wxapp_info;
+	return  $wxapp_info;
 }
 /*  
  	* 获取小程序各版本
@@ -119,9 +112,9 @@ function wxapp_fetch($uniacid) {
  	@return array
 */
 function wxapp_versions($uniacid) {
-	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
-	if(!is_array($wxapp_versions)){
-		$wxapp_versions = array();
-	}
+	$wxapp_versions = array();
+	if(!empty($uniacid)) {
+ 		$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
+	}	
 	return $wxapp_versions;
 }
