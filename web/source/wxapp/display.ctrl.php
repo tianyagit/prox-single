@@ -8,9 +8,11 @@ define('IN_GW', true);
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank', 'home');
+$dos = array('display', 'switch', 'rank', 'home', 'create');
 $do = in_array($do, $dos) ? $do : 'display';
-
+if ($do == 'create') {
+	template('wxapp/create');
+}
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
