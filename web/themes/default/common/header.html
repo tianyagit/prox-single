@@ -120,7 +120,7 @@
 				<span class="font-lg"><i class="wi wi-ad"></i>广告联盟</span>
 			{/if}
 		</div>
-	<div class="panel-body clearfix main-panel-body menu-fixed">
+	<div class="panel-body clearfix main-panel-body {if !empty($_W['setting']['copyright']['leftmenufixed'])}menu-fixed{/if}">
 		<div class="left-menu">
 			<div class="left-menu-content">
 			{if empty($frames['section']['platform_module_menu']['plugin_menu'])}
