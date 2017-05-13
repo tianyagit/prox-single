@@ -327,7 +327,7 @@
 					<table class="table we7-table table-hover" ng-show="!addHomemenuStatus">
 						<col width="100px" />
 						<col width="70px" />
-						<col width="90px" />
+						<col width="85px" />
 						<col width="180px" />
 						<tr>
 							<th>标题</th>
@@ -336,7 +336,7 @@
 							<th>操作</th>
 						</tr>
 						<tr ng-repeat="menu in homeMenu">
-							<td class="title" ng-bind="menu.name"></td>
+							<td class="title" title="{{menu.name}}" ng-bind="menu.name"></td>
 							<td class="icon">
 								<img ng-src="{{attachurl + menu.icon}}" width="30px" ng-if="menu.icon">
 								<i class="fa fa-2x {{menu.css.icon.icon}}" ng-if="menu.icon == ''"></i>
