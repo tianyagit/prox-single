@@ -73,7 +73,10 @@ if ($do == 'display') {
 	$cache_lastaccount = cache_load($cache_key);
 	$cache_lastaccount['wxapp'] = $uniacid;
 	cache_write($cache_key, $cache_lastaccount);
-	header('Location: ' . url('wxapp/version/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
+	if (empty($version)) {
+		$left_menu_active = "setting"; 
+	}
+	header('Location: ' . url('wxapp/version/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'], 'wxapp' => $left_menu_active)));
 	exit;
 } elseif ($do == 'rank') {
 	$uniacid = intval($_GPC['uniacid']);
