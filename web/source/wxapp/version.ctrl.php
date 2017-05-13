@@ -138,7 +138,7 @@ if ($do == 'edit') {
 
 if ($do == 'account_list') {
 	//查询当前用户所有公众号
-	$accounts = uni_owned($_W['uid'],true);
+	$accounts = uni_owned();
 	//筛选有模块权限的公众号
 	foreach($accounts as $key =>$val){
 		$account_module = pdo_get('uni_account_modules',array('module' => $_GPC['module'],'enabled' => '1','uniacid'=>$val['uniacid']),array('uniacid'), 'uniacid');
@@ -152,16 +152,29 @@ if ($do == 'account_list') {
 }
 
 if ($do == 'save_connection') {
-	$connection_info = pdo_get('wxapp_versions', array('id' => intval($_GPC['version_id'])), array('connection'));
-	$connections = json_decode($connection_info['connection'], true);
-	$connections[$_GPC['module']] = intval($_GPC['uniacid']);
-	$result = pdo_update('wxapp_versions', array('connection' => json_encode($connections)), array('id' => intval($_GPC['version_id'])));
-	$account_info = uni_account_default($_GPC['uniacid']);
+	$uniacid = intval($_GPC['uniacid']);
+	$version_id = intval($_GPC['version_id']);
+	$module = trim($_GPC['module']);
+	if (empty($uniacid) || empty($version_id) || empty($module)) {
+		iajax(-1, '参数错误！');
+	}
+	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
+	$modules_info = json_decode($version_info['modules'], true);
+	$modules = array_keys($modules_info);
+	if (!in_array($module, $modules)) {
+		iajax(-1, '模块参数错误！');
+	}
+	if( !empty($version_info['connection'])) {
+		$connections = json_decode($version_info['connection'], true);
+	}
+	$connections[$module] = $uniacid;
+	$result = pdo_update('wxapp_versions', array('connection' => json_encode($connections)), array('id' => $version_id));
+	$account_info = uni_account_default($uniacid);
 	$account_info['thumb'] = tomedia('headimg_' . $account_info['acid'] . '.jpg') . '?time=' .time();
 	if (is_error($result)) {
-		iajax(-1, $result['message'], '');
+		iajax(-1, $result['message']);
 	}
-	iajax(0, $account_info, '');
+	iajax(0, $account_info, referer());
 }
 
 if ($do == 'switch_version') {

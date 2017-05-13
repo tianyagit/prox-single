@@ -4,7 +4,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
+define('FRAME', 'system');
 load()->model('system');
 load()->model('wxapp');
 
@@ -42,7 +42,7 @@ if ($do == 'display') {
 			$wxapp_modules = wxapp_owned_moudles($account['uniacid']);
 		}
 	}
-	template('account/manage-version-wxapp');
+	template('wxapp/manage-version');
 }
 
 if ($do == 'single_change_module') {

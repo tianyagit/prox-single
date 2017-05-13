@@ -63,7 +63,7 @@
 								</div>
 								<ul class="list-group collapse in" id="frame-2">
 									<li class="list-group-item" ng-class="{active : wxapp == 'setting'}" ng-click="wxapp = 'setting'">
-										<a href="" class="text-over"><i class="wi wi-appsetting"></i>关联设置</a>
+										<a href="javascript:;" class="text-over"><i class="wi wi-appsetting"></i>关联设置</a>
 									</li>
 								</ul>
 							</div>
@@ -446,8 +446,8 @@
 								<!--end列表-->
 							</div>
 							{/if}
-							<div class="we7-page-title" ng-show="wxapp != 'setting'">关联设置</div>
-							<div class="we7-padding" ng-show="wxapp != 'setting'">
+							<div class="we7-page-title" ng-show="wxapp == 'setting'">关联设置</div>
+							<div class="we7-padding" ng-show="wxapp == 'setting'">
 								<table class="table we7-table table-hover vertical-middle">
 									<col width="180px" />
 									<col width="140px"/>

@@ -37,26 +37,21 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 /**
  * 获取当前用户可操作的所有公众号
  * @param int $uid 指定操作用户
- * @param int $app_only 指定是否只获取公众号不获取小程序
  * @return array
  */
-function uni_owned($uid = 0,$app_only = false) {	
+function uni_owned($uid = 0) {	
 	global $_W;
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	if ($app_only) {
-		$sql = "SELECT * FROM " . tablename(account_wechats) . " as a LEFT JOIN " . tablename("account") . " as b
-			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
-	} else {
-		$sql = "SELECT * FROM " . tablename(uni_account) . " as b WHERE b.isdeleted=0";
-	}
-	$orderby = " ORDER BY b.uniacid DESC";
+	$sql = 'SELECT * FROM ' . tablename('account_wechats') . ' as `a` LEFT JOIN ' . tablename('account') . ' as `b`
+			ON `a`.`acid`=`b`.`acid` WHERE `b`.`type` in (' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ') AND `b`.`isdeleted`=0';
+	$orderby = ' ORDER BY `b`.`uniacid` DESC';
 	if (in_array($uid, $founders)) {
-		$sql.= $orderby;
+		$sql .= $orderby;
 		$accounts = pdo_fetchall($sql, array());
 	} else {
-		$subsql = "SELECT uniacid FROM " . tablename("uni_account_users")." as c where c.uid=:uid";
-		$sql.= " AND b.uniacid in ($subsql)" . $orderby;
+		$subsql = 'SELECT `uniacid` FROM ' . tablename('uni_account_users') . ' as `c` where `c`.`uid`=:uid';
+		$sql .= ' AND `b`.`uniacid` in ($subsql)' . $orderby;
 		$param[':uid'] = $_W['uid'];
 		$accounts = pdo_fetchall($sql, $param);
 	}
