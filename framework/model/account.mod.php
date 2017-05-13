@@ -43,20 +43,20 @@ function uni_owned($uid = 0) {
 	global $_W;
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	$sql = 'SELECT * FROM ' . tablename('account_wechats') . ' as `a` LEFT JOIN ' . tablename('account') . ' as `b`
-			ON `a`.`acid`=`b`.`acid` WHERE `b`.`type` in (' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ') AND `b`.`isdeleted`=0';
-	$orderby = ' ORDER BY `b`.`uniacid` DESC';
+	
+	$sql = "SELECT * FROM " . tablename('account_wechats') . " AS a LEFT JOIN " . tablename('account') . " AS b ON a.acid = b.acid
+			WHERE b.type IN (" . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ") AND b.isdeleted = 0";
+	
 	if (in_array($uid, $founders)) {
 		$sql .= $orderby;
 		$accounts = pdo_fetchall($sql, array());
 	} else {
-		$subsql = 'SELECT `uniacid` FROM ' . tablename('uni_account_users') . ' as `c` where `c`.`uid`=:uid';
-		$sql .= ' AND `b`.`uniacid` in ($subsql)' . $orderby;
-		$param[':uid'] = $_W['uid'];
-		$accounts = pdo_fetchall($sql, $param);
+		$sql .= " AND b.uniacid IN (SELECT `uniacid` FROM " . tablename('uni_account_users') . " AS c WHERE c.uid = :uid) ORDER BY b.uniacid DESC";
+		$accounts = pdo_fetchall($sql, array(':uid' => $_W['uid']));
 	}
 	return $accounts;
 }
+
 /**
  * 获取某一公众号的主管理员信息
  * @param int $uniacid  指定的公众号
