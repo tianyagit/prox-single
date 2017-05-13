@@ -158,13 +158,15 @@ if ($do == 'save_connection') {
 	if (empty($uniacid) || empty($version_id) || empty($module)) {
 		iajax(-1, '参数错误！');
 	}
-	$connection_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	$modules_info = json_decode($connection_info['modules'], true);
+	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
+	$modules_info = json_decode($version_info['modules'], true);
 	$modules = array_keys($modules_info);
 	if (!in_array($module, $modules)) {
 		iajax(-1, '模块参数错误！');
 	}
-	$connections = json_decode($connection_info['connection'], true);
+	if( !empty($version_info['connection'])) {
+		$connections = json_decode($version_info['connection'], true);
+	}
 	$connections[$module] = $uniacid;
 	$result = pdo_update('wxapp_versions', array('connection' => json_encode($connections)), array('id' => $version_id));
 	$account_info = uni_account_default($uniacid);
