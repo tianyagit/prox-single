@@ -43,15 +43,15 @@ function uni_owned($uid = 0) {
 	global $_W;
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	$sql = "SELECT * FROM " . tablename("account_wechats") . " as a LEFT JOIN " . tablename("account") . " as b
-			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
-	$orderby = " ORDER BY b.uniacid DESC";
+	$sql = 'SELECT * FROM ' . tablename('account_wechats') . ' as `a` LEFT JOIN ' . tablename('account') . ' as `b`
+			ON `a`.`acid`=`b`.`acid` WHERE `b`.`type` in (' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ') AND `b`.`isdeleted`=0';
+	$orderby = ' ORDER BY `b`.`uniacid` DESC';
 	if (in_array($uid, $founders)) {
 		$sql .= $orderby;
 		$accounts = pdo_fetchall($sql, array());
 	} else {
-		$subsql = "SELECT uniacid FROM " . tablename("uni_account_users")." as c where c.uid=:uid";
-		$sql .= " AND b.uniacid in ($subsql)" . $orderby;
+		$subsql = 'SELECT `uniacid` FROM ' . tablename('uni_account_users') . ' as `c` where `c`.`uid`=:uid';
+		$sql .= ' AND `b`.`uniacid` in ($subsql)' . $orderby;
 		$param[':uid'] = $_W['uid'];
 		$accounts = pdo_fetchall($sql, $param);
 	}
