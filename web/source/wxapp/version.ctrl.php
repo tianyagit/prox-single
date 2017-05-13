@@ -155,6 +155,9 @@ if ($do == 'save_connection') {
 	$uniacid = intval($_GPC['uniacid']);
 	$version_id = intval($_GPC['version_id']);
 	$module = trim($_GPC['module']);
+	if (empty($uniacid) || empty($version_id) || empty($module)) {
+		iajax(-1, '参数错误！');
+	}
 	$connection_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	$modules_info = json_decode($connection_info['modules'], true);
 	$modules = array_keys($modules_info);
