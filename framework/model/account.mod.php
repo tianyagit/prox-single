@@ -46,7 +46,7 @@ function uni_owned($uid = 0) {
 	
 	$sql = "SELECT * FROM " . tablename('account_wechats') . " AS a LEFT JOIN " . tablename('account') . " AS b ON a.acid = b.acid
 			WHERE b.type IN (" . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ") AND b.isdeleted = 0";
-	
+	$orderby = " ORDER BY `b`.`uniacid` DESC";
 	if (in_array($uid, $founders)) {
 		$sql .= $orderby;
 		$accounts = pdo_fetchall($sql, array());
