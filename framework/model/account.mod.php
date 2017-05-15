@@ -143,7 +143,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
-		$condition = "";
+		$condition = "WHERE 1 ";
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
@@ -161,14 +161,13 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
 				if (!empty($modules)) {
-					$condition = " WHERE a.name IN ('" . implode("','", $modules) . "')";
+					$condition = " AND a.name IN ('" . implode("','", $modules) . "')";
 				} else {
-					$condition = " WHERE a.name = ''";
+					$condition = " AND a.name = ''";
 				}
 			}
 		}
-		$connector = empty($condition) ? 'WHERE' : 'AND';
-		$condition .= $enabled ? $connector . " b.enabled = 1" : "";
+		$condition .= $enabled ?  " AND b.enabled = 1" : "";
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, a.mid DESC";
 		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
