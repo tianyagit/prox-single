@@ -7,18 +7,12 @@ defined('IN_IA') or exit('Access Denied');
 
 
 function wxapp_getpackage($data, $if_single = false) {
-	if (empty($if_single)) {
-		$request_cloud_data = json_encode($data);
-	} else {
-		$request_cloud_data = $data;
-	}
 	load()->classs('cloudapi');
+
+	$request_cloud_data = json_encode($data);
 	$api = new CloudApi();
-	if (empty($if_single)) {
-		$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
-	} else {
-		$result = $api->post('wxapp', 'developer-download', array('wxapp' => $request_cloud_data), 'html');
-	}
+	$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
+
 	if (is_error($result)) {
 			return error(-1, $result['message']);
 	} else {
@@ -51,7 +45,7 @@ function wxapp_owned_moudles($uniacid) {
 
 	$wxapp_modules = array();
 
-	$modules = uni_modules();
+	$modules = uni_modules_by_uniacid($uniacid);
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
 			if ($module['wxapp_support'] == 2) {
@@ -104,8 +98,8 @@ function wxapp_fetch($uniacid) {
 	if (!empty($wxapp_version_info)) {
 		$wxapp_info['last_version'] = $wxapp_version_info;
 		$wxapp_info['last_version_num'] = explode('.', $wxapp_version_info['version']);
+		$wxapp_info['all_versions'] = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', 'id DESC');
 	}
-	
 	return  $wxapp_info;
 }
 /*  
