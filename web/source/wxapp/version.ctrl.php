@@ -102,7 +102,6 @@ if ($do == 'edit') {
 	$recommends = pdo_getall('site_article', array('uniacid' => $_GPC['uniacid']));
 	$version_info = pdo_get('wxapp_versions', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'id' => $version_id), array('id', 'version', 'uniacid', 'connection', 'modules', 'design_method'));
 	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $version_info['uniacid']));
-	$wxapp_info['wxapp_type'] = wxapp_type($version_info['id']);
 	$versionid = $version_info['id'];
 	$modules = json_decode($version_info['modules'], true);
 	$connection = json_decode($version_info['connection'], true);

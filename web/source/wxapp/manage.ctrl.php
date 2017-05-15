@@ -29,11 +29,10 @@ if ($do == 'display') {
 		itoast($account['message'], url('account/manage', array('account_type' => 4)), 'error');
 	} else {
 		$wxapp_version_lists = pdo_get('wxapp_versions', array('uniacid' => $account['uniacid']));
-		$account['wxapp_type'] = wxapp_type($wxapp_version_lists['id']);
-		if ($account['wxapp_type'] == WXAPP_MULTI) {
+		if ($wxapp_version_lists['design_method'] != 3 || ((!empty($wxapp_version_lists['multiid']) || !empty($wxapp_version_lists['version']) || !empty($wxapp_version_lists['template']) || !empty($wxapp_version_lists['redirect']) || !empty($wxapp_version_lists['quickmenu'])) && $wxapp_version_lists['design_method'] == 3)) {
 			$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $account['uniacid']));
 			$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $account['uniacid']));
-		} elseif($account['wxapp_type'] == WXAPP_SINGLE) {
+		} else {
 			if (!empty($wxapp_version_lists['modules'])) {
 				$connect_module = array_keys(json_decode($wxapp_version_lists['modules'], true));
 				$current_module_info = module_fetch($connect_module[0]);
