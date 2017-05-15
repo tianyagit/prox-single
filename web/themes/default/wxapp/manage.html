@@ -15,17 +15,17 @@
 		</div>
 		{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER}
 		<div class="media-right media-middle">
-			<a href="{php echo url('account/manage/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'type' => ACCOUNT_TYPE))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
+			<a href="{php echo url('account/manage/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'type' => $_GPC['account_type']))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
 		</div>
 		{/if}
 	</div>
 	<div class="clearfix"></div>
 	<div class="btn-group we7-btn-group wechat-edit-group">
 		{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER}
-		<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $do == 'base'} active{/if}">基础信息</a>
+		<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $_GPC['account_type']))}" class="btn btn-default {if $do == 'base'} active{/if}">基础信息</a>
 		{/if}
 		<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $_GPC['account_type']))}" class="btn btn-default {if $action == 'post-user' && $do == 'edit'} active{/if}">使用者管理</a>
-		<a href="{php echo url('wxapp/manage-version/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default {if $action == 'manage-version' && $do == 'display'} active{/if}">{if $account['wxapp_type'] == WXAPP_MULTI}版本管理{else}可用小程序模块{/if}</a>
+		<a href="{php echo url('wxapp/manage/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default {if $action == 'manage' && $do == 'display'} active{/if}">{if $account['wxapp_type'] == WXAPP_MULTI}版本管理{else}可用小程序模块{/if}</a>
 	</div>
 	
 	<div id="js-account-manage-wxapp" ng-controller="AccountManageWxappCtrl" ng-cloak>
@@ -49,8 +49,8 @@
 						<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage">管理</a>
 						<a href="{php echo url('wxapp/version/download', array('uniacid' => $list['uniacid'], 'version_id' => $list['id']))}" class="manage-fa-down" title="下载"><i class="wi wi-down-sign"></i></a>
 						<a href="{php echo url('wxapp/version/download', array('uniacid' => $list['uniacid'], 'version_id' => $list['id']))}" class="manage-down" title="下载">下载</a>
-						<a href="{php echo url('wxapp/manage-version/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-fa-del"><i class="wi wi-delete2"></i></a>
-						<a href="{php echo url('wxapp/manage-version/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-del">删除</a>
+						<a href="{php echo url('wxapp/manage/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-fa-del"><i class="wi wi-delete2"></i></a>
+						<a href="{php echo url('wxapp/manage/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-del">删除</a>
 					</div>
 				</div>
 				{/loop}
@@ -141,8 +141,8 @@
 		'wxapp_modules' : {php echo !empty($wxapp_modules) ? json_encode($wxapp_modules) : 'null'},
 		'current_module_info': {php echo !empty($current_module_info) ? json_encode($current_module_info) : 'null'},
 		'links': {
-			'editmodule': "{php echo url('wxapp/manage-version/single_change_module', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
-			'delmodule': "{php echo url('wxapp/manage-version/single_del_module', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
+			'editmodule': "{php echo url('wxapp/manage/single_change_module', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
+			'delmodule': "{php echo url('wxapp/manage/single_del_module', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
 		},
 	});
 	angular.bootstrap($('#js-account-manage-wxapp'), ['accountApp']);

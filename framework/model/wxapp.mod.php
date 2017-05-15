@@ -29,7 +29,7 @@ function wxapp_getpackage($data, $if_single = false) {
 	return $result;
 }
 
-function wxapp_account_create($uniacid, $account,$wxapp_type = 1) {
+function wxapp_account_create($uniacid, $account) {
 	$accountdata = array('uniacid' => $uniacid, 'type' => $account['type'], 'hash' => random(8));
 	pdo_insert('account', $accountdata);
 	$acid = pdo_insertid();
@@ -37,7 +37,6 @@ function wxapp_account_create($uniacid, $account,$wxapp_type = 1) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
-	$account['wxapp_type'] = $wxapp_type;
 	unset($account['type']);
 	pdo_insert('account_wxapp', $account);
 	return $acid;
@@ -64,13 +63,13 @@ function wxapp_owned_moudles($uniacid) {
 }
 /*
  * 小程序版本号构造函数
-	@return array
+.* @return array
 */
-function wxapp_version_parser($pos1_val,$pos2_val,$pos3_val) {
+function wxapp_version_parser($first_value, $second_value, $third_value) {
 	$version = array(
-		0 => $pos1_val,	
-		1 => $pos2_val,
-		2 => $pos3_val	
+		0 => intval($first_value),	
+		1 => intval($second_value),
+		2 => intval($third_value)	
 	);	
 	if($version[2] >= 10){
 		$version[1] += 1;
@@ -83,38 +82,84 @@ function wxapp_version_parser($pos1_val,$pos2_val,$pos3_val) {
 	return $version;
 }
 /*
-    * 获取小程序信息(包括最新版本信息)
-    @params int $uniacid
-    @params int $versionid 
- 	@return array
+ * 获取小程序信息(包括最新版本信息)
+ * @params int $uniacid
+ * @params int $versionid 
+ * @return array
 */
 function wxapp_fetch($uniacid) {
 	$wxapp_info = array();
-	if (!empty($uniacid)) {
-		$account_wxapp = pdo_get('account_wxapp', array('uniacid' => $uniacid));
-		if (!empty($account_wxapp)) {
-			$wxapp_info['account_wxapp'] = $account_wxapp;
-			$sql ='SELECT * FROM ' . tablename('wxapp_versions') . ' WHERE `uniacid`=:uniacid ORDER BY `id` DESC';
-			$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
-			if (!empty($wxapp_version_info)) {
-				$wxapp_info['version_info'] = $wxapp_version_info;
-				$version_string = $wxapp_version_info['version'];
-				$version = explode('.', $version_string);
-				$wxapp_info['version'] = $version;
-			}
-		}
+	if (empty($uniacid)) {
+		return $wxapp_info;
 	}
+	
+	$account_wxapp = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	if (empty($account_wxapp)) {
+		return $wxapp_info;
+	}
+	$wxapp_info['account_wxapp'] = $account_wxapp;
+	
+	$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
+	$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+	if (!empty($wxapp_version_info)) {
+		$wxapp_info['last_version'] = $wxapp_version_info;
+		$wxapp_info['last_version_num'] = explode('.', $wxapp_version_info['version']);
+	}
+	
 	return  $wxapp_info;
 }
 /*  
- 	* 获取小程序各版本
-    @params int $uniacid
- 	@return array
+ * 获取小程序所有版本
+ * @params int $uniacid
+ * @return array
 */
-function wxapp_versions($uniacid) {
+function wxapp_version_all($uniacid) {
 	$wxapp_versions = array();
-	if(!empty($uniacid)) {
- 		$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
-	}	
+	if (empty($uniacid)) {
+		return $wxapp_versions;
+	}
+	
+	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
 	return $wxapp_versions;
+}
+
+/**
+ * 获取小程序单个版本
+ * @param unknown $version_id
+ */
+function wxapp_version($version_id) {
+	$version_id = intval($version_id);
+	if (empty($version_id)) {
+		return array();
+	}
+	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
+	print_r($version_info);exit;
+	$modules_info = json_decode($version_info['modules'], true);
+}
+
+/**
+ * 判断小程序是单版还是多版
+ * @param int id 小程序版本ID（wxapp_versions表ID）
+ * @return int
+ */
+function wxapp_type($id) {
+	$id = intval($id);
+	if (empty($id)) {
+		itoast('参数错误，请联系管理员！', '', 'error');
+	}
+	$version_info = pdo_get('wxapp_versions', array('id' => $id));
+	if (!empty($version_info)) {
+		if ($version_info['design_method'] != 3) {
+			$result = WXAPP_MULTI;
+		} else {
+			if (!empty($version_info['multiid']) || !empty($version_info['version']) || !empty($version_info['template']) || !empty($version_info['redirect']) || !empty($version_info['quickmenu'])) {
+				$result = WXAPP_MULTI;
+			} else {
+				$result = WXAPP_SINGLE;
+			}
+		}
+	} else {
+		itoast('此小程序不存在', '', 'error');
+	}
+	return $result;
 }
