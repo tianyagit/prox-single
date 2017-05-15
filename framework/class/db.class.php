@@ -299,7 +299,7 @@ class DB {
 		return $this->fetchall($sql, $condition['params'], $keyfield);
 	}
 	
-	public function getcolumn($tablename, $params = array(), $field) {
+	public function getcolumn($tablename, $params = array(), $field = '') {
 		$result = $this->get($tablename, $params, $field);
 		if (!empty($result)) {
 			if (strexists($field, '(')) {

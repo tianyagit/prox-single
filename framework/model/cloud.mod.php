@@ -243,10 +243,7 @@ function cloud_download($path, $type = '') {
 			load()->func('file');
 			@mkdirs(dirname($path));
 			file_put_contents($path, $file);
-			$sign = md5(md5_file($path) . $ret['path'] . $_W['setting']['site']['token']);
-			if($ret['sign'] === $sign) {
-				return true;
-			}
+			return true;
 		}
 		return error(-1, '写入失败');
 	}

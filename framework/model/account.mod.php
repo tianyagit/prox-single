@@ -39,24 +39,26 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
  * @param int $uid 指定操作用户
  * @return array
  */
-function uni_owned($uid = 0) {	
+function uni_owned($uid = 0) {
 	global $_W;
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
+	$uniaccounts = array();
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	$sql = 'SELECT * FROM ' . tablename('account_wechats') . ' as `a` LEFT JOIN ' . tablename('account') . ' as `b`
-			ON `a`.`acid`=`b`.`acid` WHERE `b`.`type` in (' . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ') AND `b`.`isdeleted`=0';
-	$orderby = ' ORDER BY `b`.`uniacid` DESC';
-	if (in_array($uid, $founders)) {
-		$sql .= $orderby;
-		$accounts = pdo_fetchall($sql, array());
-	} else {
-		$subsql = 'SELECT `uniacid` FROM ' . tablename('uni_account_users') . ' as `c` where `c`.`uid`=:uid';
-		$sql .= ' AND `b`.`uniacid` in ($subsql)' . $orderby;
-		$param[':uid'] = $_W['uid'];
-		$accounts = pdo_fetchall($sql, $param);
+	
+	$sql = "SELECT * FROM " . tablename('uni_account') . " AS a LEFT JOIN " . 
+			tablename('account') . " AS b ON a.uniacid = b.uniacid WHERE b.type IN (".ACCOUNT_TYPE_OFFCIAL_NORMAL.", ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
+	$orderby = " ORDER BY `b`.`uniacid` DESC";
+	if (!in_array($uid, $founders)) {
+		$uniacids = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account_users') . " WHERE uid = :uid", array(':uid' => $uid), 'uniacid');
+		if (!empty($uniacids)) {
+			$sql .= " AND a.uniacid IN (" . implode(',', array_keys($uniacids)) . ")";
+		}
 	}
-	return $accounts;
+	$uniaccounts = pdo_fetchall($sql);
+	
+	return $uniaccounts;
 }
+
 /**
  * 获取某一公众号的主管理员信息
  * @param int $uniacid  指定的公众号
