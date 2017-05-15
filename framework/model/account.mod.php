@@ -39,22 +39,24 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
  * @param int $uid 指定操作用户
  * @return array
  */
-function uni_owned($uid = 0) {	
+function uni_owned($uid = 0) {
 	global $_W;
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
+	$uniaccounts = array();
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	
-	$sql = "SELECT * FROM " . tablename('account_wechats') . " AS a LEFT JOIN " . tablename('account') . " AS b ON a.acid = b.acid
-			WHERE b.type IN (" . ACCOUNT_TYPE_OFFCIAL_NORMAL . ',' . ACCOUNT_TYPE_OFFCIAL_AUTH . ") AND b.isdeleted = 0";
+	$sql = "SELECT * FROM " . tablename('uni_account') . " AS a LEFT JOIN " . 
+			tablename('account') . " AS b ON a.uniacid = b.uniacid WHERE b.type IN (".ACCOUNT_TYPE_OFFCIAL_NORMAL.", ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
 	
-	if (in_array($uid, $founders)) {
-		$sql .= $orderby;
-		$accounts = pdo_fetchall($sql, array());
-	} else {
-		$sql .= " AND b.uniacid IN (SELECT `uniacid` FROM " . tablename('uni_account_users') . " AS c WHERE c.uid = :uid) ORDER BY b.uniacid DESC";
-		$accounts = pdo_fetchall($sql, array(':uid' => $_W['uid']));
+	if (!in_array($uid, $founders)) {
+		$uniacids = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account_users') . " WHERE uid = :uid", array(':uid' => $uid), 'uniacid');
+		if (!empty($uniacids)) {
+			$sql .= " AND a.uniacid IN (" . implode(',', array_keys($uniacids)) . ")";
+		}
 	}
-	return $accounts;
+	$uniaccounts = pdo_fetchall($sql);
+	
+	return $uniaccounts;
 }
 
 /**
@@ -143,7 +145,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
-		$condition = "";
+		$condition = " WHERE 1 ";
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();

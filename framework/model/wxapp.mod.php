@@ -110,11 +110,11 @@ function wxapp_fetch($uniacid) {
 	return  $wxapp_info;
 }
 /*  
- * 获取小程序各版本
+ * 获取小程序所有版本
  * @params int $uniacid
  * @return array
 */
-function wxapp_versions($uniacid) {
+function wxapp_version_all($uniacid) {
 	$wxapp_versions = array();
 	if (empty($uniacid)) {
 		return $wxapp_versions;
@@ -123,6 +123,21 @@ function wxapp_versions($uniacid) {
 	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
 	return $wxapp_versions;
 }
+
+/**
+ * 获取小程序单个版本
+ * @param unknown $version_id
+ */
+function wxapp_version($version_id) {
+	$version_id = intval($version_id);
+	if (empty($version_id)) {
+		return array();
+	}
+	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
+	print_r($version_info);exit;
+	$modules_info = json_decode($version_info['modules'], true);
+}
+
 /**
  * 判断小程序是单版还是多版
  * @param int id 小程序版本ID（wxapp_versions表ID）
