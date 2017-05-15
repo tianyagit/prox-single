@@ -35,8 +35,7 @@ if ($do == 'save') {
 	}
 	if (!empty($package_info['templates'])) {
 		foreach ($package_info['templates'] as $key => $template) {
-			$package_info['templates'][] = $template['id'];
-			unset($package_info['templates'][$key]);
+			$package_info['templates'][$key] = $template['title'];
 		}
 		$package_info['templates'] = iserializer($package_info['templates']);
 	}
@@ -48,6 +47,7 @@ if ($do == 'save') {
 		$packageid = $package_info['id'];
 		unset($package_info['id']);
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
+
 		cache_build_account_modules();
 		module_build_privileges();
 		iajax(0, '', url('system/module-group'));
