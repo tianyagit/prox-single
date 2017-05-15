@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('design_method', 'post', 'get_wxapp_modules', 'getpackage', 'getlink');
+$dos = array('design_method', 'post', 'get_wxapp_modules', 'getpackage', 'get_module_entries');
 $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
 
@@ -17,6 +17,7 @@ if ($do == 'design_method') {
 	template('wxapp/design_method');
 }
 
+if ($do == 'get_module_entries') {
 	if (!empty($_GPC['module'])) {
 		foreach ($_GPC['module'] as $key=>&$val) {
 			$eids .= ',' . $val['url'];
@@ -112,7 +113,9 @@ if($do == 'post') {
 	}
 	template('wxapp/create-post');
 }
+
 //获取所有支持小程序的模块
 if($do == 'get_wxapp_modules') {
 	$wxapp_modules = wxapp_supoort_wxapp_modules();
 	iajax(0, $wxapp_modules, '');
+}
