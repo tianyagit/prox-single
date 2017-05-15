@@ -408,8 +408,8 @@ require(['fileUploader','underscore'], function(uploader){
 	angular.module('wxApp').value('config', {
 		'uniacid' : "{$uniacid}",
 		'designMethod' : "{$design_method}",
+		'getlink_url' : "{php echo url('wxapp/post/get_module_entries')}",
 		'version' : {php echo json_encode($new_version)},
-		'getlink_url' : "{php echo url('wxapp/post/getlink')}",
 	});
 	angular.bootstrap($('#js-wxapp-create'), ['wxApp']);
 });
