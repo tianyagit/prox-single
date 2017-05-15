@@ -1,6 +1,6 @@
 <?php
 /**
- * 管理公众号--使用者管理
+ * 管理公众号
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
@@ -8,7 +8,7 @@ define('FRAME', 'system');
 load()->model('system');
 load()->model('wxapp');
 
-$dos = array('delete', 'display', 'single_change_module', 'single_del_module');
+$dos = array('delete', 'display', 'single_change_module', 'single_del_module', 'get_available_apps', 'getpackage');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $uniacid = intval($_GPC['uniacid']);
@@ -89,4 +89,44 @@ if ($do == 'delete') {
 		itoast('版本不存在', referer(), 'error');
 	}
 	itoast('删除成功', referer(), 'success');
+}
+
+if ($do == 'get_available_apps') {
+	$apps = wxapp_owned_moudles($uniacid);
+	iajax(0, $apps, '');
+}
+
+if($do == 'getpackage') {
+	$versionid = intval($_GPC['versionid']);
+	if(empty($versionid)) {
+		itoast('参数错误！', '', '');
+	}
+
+	$request_cloud_data = array();
+	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	if (empty($_GPC['single'])) {
+		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
+		$request_cloud_data['name'] = $account_wxapp_info['name'];
+		// @@todo 云服务参数
+		$zipname = $request_cloud_data['name'];
+		$request_cloud_data['modules'] = json_decode($wxapp_version_info['modules'], true);
+		$request_cloud_data['siteInfo'] = array(
+				'uniacid' => $_W['uniacid'],
+				'acid' => $account_wxapp_info['acid'],
+				'multiid' => $wxapp_version_info['multiid'],
+				'version' => $wxapp_version_info['version'],
+				'siteroot' => $_W['siteroot'].'app/index.php'
+			);
+		$request_cloud_data['tabBar'] = json_decode($wxapp_version_info['quickmenu'], true);
+		$result = wxapp_getpackage($request_cloud_data);
+	}
+
+	if(is_error($result)) {
+		itoast($result['message'], '', '');
+	}else {
+		header('content-type: application/zip');
+		header('content-disposition: attachment; filename="'.$zipname.'.zip"');
+		echo $result;
+	}
+	exit;
 }
