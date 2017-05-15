@@ -8,11 +8,9 @@ define('IN_GW', true);
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank', 'home' , 'create');
+$dos = array('display', 'switch', 'rank');
 $do = in_array($do, $dos) ? $do : 'display';
-if ($do == 'create') {
-	template('wxapp/create');
-}
+
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
@@ -89,19 +87,4 @@ if ($do == 'display') {
 		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	}
 	itoast('更新成功', '', '');
-} elseif ($do == 'home') {
-	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
-	$cache_lastaccount = cache_load($cache_key);
-	$uniacid = $cache_lastaccount['wxapp'];
-	if (!empty($uniacid)) {
-		$version = pdo_fetch("SELECT version, multiid, id, uniacid FROM " . tablename('wxapp_versions') . " WHERE uniacid = :uniacid ORDER BY version DESC", array(':uniacid' => $uniacid));
-		if (!empty($version)) {
-			header('Location: ' . url('wxapp/version/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
-		} else {
-			header('Location: ' . url('wxapp/display/display'));
-		}
-	} else {
-		header('Location: ' . url('wxapp/display/display'));
-	}
-	exit;
 }

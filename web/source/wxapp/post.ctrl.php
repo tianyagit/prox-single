@@ -8,10 +8,10 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('post', 'getapps', 'getpackage', 'getlink', 'developer');
+$dos = array('post', 'get_module_entries');
 $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
-if ($do == 'getlink') {
+if ($do == 'get_module_entries') {
 	if (!empty($_GPC['module'])) {
 		foreach ($_GPC['module'] as $key=>&$val) {
 			$eids .= ',' . $val['url'];
@@ -31,7 +31,7 @@ if ($do == 'getlink') {
 	iajax(0, $show_urls, '');
 }
 
-if($do == 'post' || $do == 'developer') {
+if($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$is_developer = $do == 'developer';
 	$wxapp_info = wxapp_fetch($uniacid);
@@ -167,108 +167,4 @@ if($do == 'post' || $do == 'developer') {
 		message('小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)), 'success');
 	}
 	template('wxapp/create-post');
-}
-if($do == 'getpackage') {
-	if (empty($_GPC['single'])) {
-		$versionid = intval($_GPC['versionid']);
-		$uniacid = $_W['uniacid'];
-		if(empty($versionid)) {
-			itoast('参数错误！', '', '');
-		}
-	} else {
-		$uniacid = intval($_GPC['uniacid']);
-		if(empty($uniacid)) {
-			itoast('参数错误！', '', '');
-		}
-	}
-
-	$request_cloud_data = array();
-	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
-	if (empty($_GPC['single'])) {
-		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
-		$request_cloud_data['name'] = $account_wxapp_info['name'];
-		$zipname = $request_cloud_data['name'];
-		$request_cloud_data['modules'] = json_decode($wxapp_version_info['modules'], true);
-		$request_cloud_data['siteInfo'] = array(
-				'uniacid' => $_W['uniacid'],
-				'acid' => $account_wxapp_info['acid'],
-				'multiid' => $wxapp_version_info['multiid'],
-				'version' => $wxapp_version_info['version'],
-				'siteroot' => $_W['siteroot'].'app/index.php'
-			);
-		$request_cloud_data['tabBar'] = json_decode($wxapp_version_info['quickmenu'], true);
-		$result = wxapp_getpackage($request_cloud_data);
-	} else {
-		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid));
-		$moduleinfo = json_decode($wxapp_version_info['modules'], true);
-		$modulename = array_keys($moduleinfo);
-		$zipname = $modulename[0];
-		$request_cloud_data['module'] = array(
-			'name' => $modulename[0],
-			'zipname' => $account_wxapp_info['name'],
-		);
-		$request_cloud_data['siteInfo'] = array(
-				'uniacid' => $uniacid,
-				'acid' => $account_wxapp_info['acid'],
-				'siteroot' => $_W['siteroot'].'app/index.php'
-			);
-		$result = wxapp_getpackage($request_cloud_data, true);
-	}
-
-	if(is_error($result)) {
-		itoast($result['message'], '', '');
-	}else {
-		header('content-type: application/zip');
-		header('content-disposition: attachment; filename="'.$zipname.'.zip"');
-		echo $result;
-	}
-	exit;
-}
-
-if($do == 'getapps') {
-	$apps = array();
-	$apps = cache_load('packageapps');
-	if(empty($apps)) {
-		$module_list = uni_modules();
-		foreach ($module_list as $key => $module) {
-			if($module['type'] != 'system' && !empty($module['version'])) {
-								if($module['issystem']) {
-					$path = '../framework/builtin/' . $module['name'];
-				} else {
-					$path = '../addons/' . $module['name'];
-				}
-				$cion = $path . '/icon-custom.jpg';
-				if(!file_exists($cion)) {
-					$cion = $path . '/icon.jpg';
-					if(!file_exists($cion)) {
-						$cion = './resource/images/nopic-small.jpg';
-					}
-				}
-				if ($module['wxapp_support'] == 2) {
-					$arr = pdo_getall('modules_bindings', array('module' => $module['name'], 'entry' => 'page'), array('module', 'title', 'url', 'eid'), 'eid');
-					$rst['bindings'] = array_keys($arr);
-					$rst['module'] = $module['name'];
-					$rst['module_title'] = $module['title'];
-					$rst['module_icon'] = $cion;
-					$rst['version'] = $module['version'];
-					$apps[] = $rst;
-				}
-				// $m = module_entries($module['name'], array('home'));
-				// if(!empty($m['home'])) {
-				// 	foreach($m['home'] as $val) {
-				// 		$rst = array();
-				// 		if(isset($val['eid']) && !empty($val['eid'])) {
-				// 			$rst = module_entry($val['eid']);
-				// 			$rst['module_title'] = $module['title'];
-				// 			$rst['module_icon'] = $cion;
-				// 			$rst['version'] = $module['version'];
-				// 			$apps[] = $rst;
-				// 		}
-				// 	}	
-				// }
-			}
-		}
-		cache_write('packageapps', $apps);				
-	}
-	iajax(0, $apps, '');
 }

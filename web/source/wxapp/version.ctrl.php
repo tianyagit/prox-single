@@ -8,14 +8,13 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version', 'download', 'account_list', 'save_connection');
+$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version', 'account_list', 'save_connection');
 $do = in_array($do, $dos) ? $do : 'edit';
 $_W['page']['title'] = '小程序 - 管理';
 
 if ($do == 'del_category') {
 	$id = $_GPC['id'];
 	$result = pdo_delete('site_category', array('id' => $id));
-
 }
 
 if ($do == 'get_categorys') {
@@ -183,41 +182,4 @@ if ($do == 'switch_version') {
 		$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $uniacid));
 	}
 	template('wxapp/switch-version');
-}
-
-if ($do == 'download') {
-	$version_id = intval($_GPC['version_id']);
-	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	$account_info = pdo_get('account_wxapp', array('uniacid' => $version_info['uniacid']));
-	if ($version_info['design_method'] == 3) {
-		$redirect_modules = json_decode(($version_info['redirect']), true);
-		$redirect_modules['url'] = explode(',', $redirect_modules['url']);
-		$bindings_lists = pdo_getall('modules_bindings', array('module' => $redirect_modules['module'], 'eid IN' => $redirect_modules['url']));
-	}
-	$package = array(
-		'name' => $account_info['name'],
-		'modules' => json_decode($version_info['modules'], true),
-		'app.js' => '',
-		'app.json' => '',
-		'app.wxss' => '',
-		'siteInfo' => array(
-			'uniacid' => $account_info['uniacid'],
-			'acid'    => $account_info['acid'],
-			'multiid' => $version_info['multiid'],
-			'version' => $version_info['version'],
-			'siteroot'=> $_W['siteroot'] . 'app/index.php',
-			'design_method' => $version_info['design_method'],
-			'redirect_module' => $bindings_lists[0]['url'],
-			'template' => $version_info['template'],
-		),
-		'tabBar' => json_decode($version_info['quickmenu'], true),
-	);
-	$result = wxapp_getpackage($package);
-	if (is_error($result)) {
-		itoast($result['message'], '', 'error');
-	}
-	header('content-type: application/zip');
-	header('content-disposition: attachment; filename="'.$package['name'].'v'.$version_info['version'].'.zip"');
-	echo $result;
-	exit;
 }
