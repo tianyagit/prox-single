@@ -29,7 +29,7 @@ function wxapp_getpackage($data, $if_single = false) {
 	return $result;
 }
 
-function wxapp_account_create($uniacid, $account,$wxapp_type = 1) {
+function wxapp_account_create($uniacid, $account) {
 	$accountdata = array('uniacid' => $uniacid, 'type' => $account['type'], 'hash' => random(8));
 	pdo_insert('account', $accountdata);
 	$acid = pdo_insertid();
@@ -37,7 +37,6 @@ function wxapp_account_create($uniacid, $account,$wxapp_type = 1) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
-	$account['wxapp_type'] = $wxapp_type;
 	unset($account['type']);
 	pdo_insert('account_wxapp', $account);
 	return $acid;

@@ -47,7 +47,7 @@ function uni_owned($uid = 0) {
 	
 	$sql = "SELECT * FROM " . tablename('uni_account') . " AS a LEFT JOIN " . 
 			tablename('account') . " AS b ON a.uniacid = b.uniacid WHERE b.type IN (".ACCOUNT_TYPE_OFFCIAL_NORMAL.", ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
-	
+	$orderby = " ORDER BY `b`.`uniacid` DESC";
 	if (!in_array($uid, $founders)) {
 		$uniacids = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account_users') . " WHERE uid = :uid", array(':uid' => $uid), 'uniacid');
 		if (!empty($uniacids)) {

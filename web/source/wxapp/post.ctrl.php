@@ -110,7 +110,7 @@ if($do == 'post' || $do == 'developer') {
 				'type' => ACCOUNT_TYPE_APP_NORMAL			
 			);
 			if (empty($acid)) {
-				$acid = wxapp_account_create($uniacid, $account_wxapp_data, $wxapp_type);
+				$acid = wxapp_account_create($uniacid, $account_wxapp_data);
 				if(is_error($acid)) {
 					itoast('添加小程序信息失败', url('wxapp/post'), 'error');
 				}
