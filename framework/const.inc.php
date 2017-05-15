@@ -35,10 +35,12 @@ define('ACCOUNT_TYPE_OFFCIAL_AUTH', 3);
 //正常接入小程序
 define('ACCOUNT_TYPE_APP_NORMAL', 4);
 
-//多版小程序
-define('WXAPP_MULTI', 1);
-//单版小程序
-define('WXAPP_SINGLE', 2);
+//DIY小程序
+define('WXAPP_DIY', 1);
+//选择模版小程序
+define('WXAPP_TEMPLATE', 2);
+//跳转模块小程序
+define('WXAPP_MODULE', 3);
 
 //授权登录接入
 define('ACCOUNT_OAUTH_LOGIN', 3);
