@@ -43,7 +43,7 @@ if ($do == 'display') {
 			$wxapp_modules = wxapp_owned_moudles($account['uniacid']);
 		}
 	}
-	template('wxapp/manage-version');
+	template('wxapp/manage');
 }
 
 if ($do == 'single_change_module') {
