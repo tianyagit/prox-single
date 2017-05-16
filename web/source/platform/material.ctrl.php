@@ -44,6 +44,7 @@ if ($do == 'send') {
 		'status' => 0,
 		'type' => 0,
 		'sendtime' => TIMESTAMP,
+		'finalsendtime' => TIMESTAMP,
 		'createtime' => TIMESTAMP,
 	);
 	pdo_insert('mc_mass_record', $record);
