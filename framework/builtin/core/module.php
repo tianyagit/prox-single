@@ -227,7 +227,6 @@ class CoreModule extends WeModule {
 				case 'basic':
 					if(!empty($replies)) {
 						foreach($replies as $reply) {
-							$reply = trim($reply, '"');
 							pdo_insert($tablename, array('rid' => $rid, 'content' => $reply));
 						}
 					}
