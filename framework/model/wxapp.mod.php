@@ -9,9 +9,8 @@ defined('IN_IA') or exit('Access Denied');
 function wxapp_getpackage($data, $if_single = false) {
 	load()->classs('cloudapi');
 
-	$request_cloud_data = json_encode($data);
 	$api = new CloudApi();
-	$result = $api->post('wxapp', 'download', $request_cloud_data, 'html');
+	$result = $api->post('wxapp', 'download', $data, 'html');
 
 	if (is_error($result)) {
 			return error(-1, $result['message']);

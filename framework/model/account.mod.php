@@ -300,7 +300,7 @@ function uni_groups($groupids = array()) {
 			if (!empty($row['templates'])) {
 				$templates = iunserializer($row['templates']);
 				if (is_array($templates)) {
-					$row['templates'] = pdo_fetchall("SELECT name, title FROM " . tablename('site_templates') . " WHERE id IN ('" . implode("','", $templates) . "')");
+					$row['templates'] = pdo_fetchall("SELECT name, title FROM " . tablename('site_templates') . " WHERE name IN ('" . implode("','", array_keys($templates)) . "')", array(), 'name');
 				}
 			}
 		}

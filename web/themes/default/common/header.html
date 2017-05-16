@@ -79,7 +79,7 @@
 		{/if}
 	<div class="panel panel-content main-panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
 		<div class="content-head panel-heading main-panel-heading">
-			{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
+			{if ($_GPC['c'] != 'cloud' && !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service'))) || defined('IN_MODULE')}
 				<a href="{php echo url('home/welcome/account')}" class="we7-head-back"><i class="wi wi-back-circle"></i></a>
 				<span class="we7-head-account"><a href="{php echo url('home/welcome/account')}">{$_W['account']['name']}</a></span>
 				{if file_exists(IA_ROOT. "/addons/". $_W['current_module']['name']. "/icon-custom.jpg")}

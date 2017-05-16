@@ -148,16 +148,15 @@ if($do == 'getpackage') {
 	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
 	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
 	$request_cloud_data['name'] = $account_wxapp_info['name'];
-	// @@todo 云服务参数
 	$zipname = $request_cloud_data['name'];
-	$request_cloud_data['modules'] = json_decode($wxapp_version_info['modules'], true);
+	$request_cloud_data['modules'] = iunserializer($wxapp_version_info['modules'], true);
 	$request_cloud_data['siteInfo'] = array(
 			'uniacid' => $account_wxapp_info['uniacid'],
 			'acid' => $account_wxapp_info['acid'],
 			'multiid' => $wxapp_version_info['multiid'],
 			'version' => $wxapp_version_info['version'],
 			'siteroot' => $_W['siteroot'].'app/index.php',
-			'design_method' => $wxapp_version_info['design_method'],
+			'design_method' => $wxapp_version_info['design_method']
 		);
 	$request_cloud_data['tabBar'] = json_decode($wxapp_version_info['quickmenu'], true);
 	$result = wxapp_getpackage($request_cloud_data);
