@@ -67,7 +67,7 @@
 				var middleVal = oldVal.split(',');
 				newVal = angular.copy(middleVal);
 				angular.forEach(middleVal, function(val, key) {
-					middleVal[key] = htmlEncode(val);
+					middleVal[key] = htmlEncode(angular.toJson(val));
 				});
 				var index = _.indexOf(middleVal, htmlEncode(angular.toJson(media)));
 				newVal = _.without(newVal, newVal[index]);
@@ -192,20 +192,17 @@
 				if (angular.isDefined(val)) {
 					var editmedia = $(".del-basic-media");
 					for (var i = 0; i < editmedia.length; i++) {
-						if ($(editmedia.get(i)).find('.edit-gray').data('media') == val) {
+						if (htmlEncode($(editmedia.get(i)).find('.edit-gray').data('media')) == htmlEncode(angular.toJson(val))) {
 							var inputVal = $(':hidden[name="reply[reply_'+type+']"]').val();
 							var inputValArr = inputVal.split(',');
+							var middleVal = angular.copy(inputValArr);
 							angular.forEach(inputValArr, function(val, key) {
 								inputValArr[key] = htmlEncode(val);
 							});
 							var index = _.indexOf(inputValArr, htmlEncode(angular.toJson(val)));
-							inputValArr[index] = angular.toJson(material.content);
-							angular.forEach(inputValArr, function(val, key) {
-								inputValArr[key] = htmlDecode(val);
-							});
-							replyVal = inputValArr.join(',');
+							middleVal[index] = angular.toJson(material.content);
+							replyVal = middleVal.join(',');
 							$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
-							$(editmedia.get(i)).find('.edit-gray').data('media', htmlEncode(material.content));
 							$(editmedia.get(i)).html(
 								'	<div class="desc">'+
 								'		<div class="media-content">'+
@@ -214,8 +211,8 @@
 								'		</div>'+
 								'	</div>'+
 								'	<div class="opr">'+
-								'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(material.content)+'\')">编辑</a>'+
-								'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+								'		<a href="javascript:;" data-media="'+htmlEncode(angular.toJson(material.content))+'" class="edit-gray" onclick="select_mediaid(\'basic\', '+htmlEncode(angular.toJson(material.content))+')">编辑</a>'+
+								'		<a href="javascript:;" data-media="'+htmlEncode(angular.toJson(material.content))+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 								'	</div>'
 							);
 							break;
@@ -236,8 +233,8 @@
 						'		</div>'+
 						'	</div>'+
 						'	<div class="opr">'+
-						'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(material.content)+'\')">编辑</a>'+
-						'		<a href="javascript:;" data-media="'+htmlEncode(material.content)+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+						'		<a href="javascript:;" data-media="'+htmlEncode(angular.toJson(material.content))+'" class="edit-gray" onclick="select_mediaid(\'basic\', '+htmlEncode(angular.toJson(material.content))+')">编辑</a>'+
+						'		<a href="javascript:;" data-media="'+htmlEncode(angular.toJson(material.content))+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 						'	</div>'+
 						'</div>'+
 						'</li>'
@@ -504,8 +501,8 @@
 							'		</div>'+
 							'	</div>'+
 							'	<div class="opr">'+
-							'		<a href="javascript:;" data-media="'+htmlEncode(basicVal.content)+'" class="edit-gray" onclick="select_mediaid(\'basic\', \''+htmlEncode(basicVal.content)+'\')">编辑</a>'+
-							'		<a href="javascript:;" data-media="'+htmlEncode(basicVal.content)+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+							'		<a href="javascript:;" data-media="'+htmlEncode(angular.toJson(basicVal.content))+'" class="edit-gray" onclick="select_mediaid(\'basic\', '+htmlEncode(angular.toJson(basicVal.content))+')">编辑</a>'+
+							'		<a href="javascript:;" data-media="'+htmlEncode(angular.toJson(basicVal.content))+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 							'	</div>'+
 							'</div>'+
 							'</li>'
@@ -786,7 +783,7 @@
 		}
 		return true;
 	};
-	function htmlEncode(str) { 
+	function htmlEncode(str) {
 		var s = "";
 		if(str.length == 0) return "";
 		s = str.replace(/&/g,"&amp;");
@@ -794,6 +791,7 @@
 		s = s.replace(/>/g,"&gt;");
 		s = s.replace(/\'/g,"&#039;");
 		s = s.replace(/\"/g,"&quot;");
+		s = s.replace(/\n/g, "\\n");
 		return s;
 	}
 	function htmlDecode(str) {
@@ -804,6 +802,7 @@
 		s = s.replace(/&gt;/g,">");
 		s = s.replace(/&#039;/g,"'");
 		s = s.replace(/&quot;/g,'"');
+		s = s.replace(/\\n/g,'\n');
 		return s;
 	}
     function cutStr(str, len) {
