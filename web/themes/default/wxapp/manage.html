@@ -25,12 +25,12 @@
 		<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $_GPC['account_type']))}" class="btn btn-default {if $do == 'base'} active{/if}">基础信息</a>
 		{/if}
 		<a href="{php echo url('account/post-user/edit', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => $_GPC['account_type']))}" class="btn btn-default {if $action == 'post-user' && $do == 'edit'} active{/if}">使用者管理</a>
-		<a href="{php echo url('wxapp/manage/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default {if $action == 'manage' && $do == 'display'} active{/if}">{if $account['wxapp_type'] == WXAPP_MULTI}版本管理{else}可用小程序模块{/if}</a>
+		<a href="{php echo url('wxapp/manage/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default {if $action == 'manage' && $do == 'display'} active{/if}">版本管理</a>
 	</div>
 	
 	<div id="js-account-manage-wxapp" ng-controller="AccountManageWxappCtrl" ng-cloak>
 		<!--版本管理-->
-		{if $account['wxapp_type'] == WXAPP_MULTI}
+		{if !empty($version_exist) && ($version_exist['design_method'] != 3 || ((!empty($version_exist['multiid']) || !empty($version_exist['template']) || !empty($version_exist['quickmenu'])) && $version_exist['design_method'] == 3))}
 		<div class="version-management">
 			<div class="text-right">
 				<a href="{php echo url('wxapp/post', array('uniacid' => $uniacid))}" class="btn btn-primary">新建版本</a>
@@ -47,8 +47,8 @@
 					<div class="cover-dark">
 						<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
 						<a href="{php echo url('wxapp/version/edit', array('uniacid' => $list['uniacid'], 'multiid' => $list['multiid'], 'version_id' => $list['id']))}" class="manage">管理</a>
-						<a href="{php echo url('wxapp/version/download', array('uniacid' => $list['uniacid'], 'version_id' => $list['id']))}" class="manage-fa-down" title="下载"><i class="wi wi-down-sign"></i></a>
-						<a href="{php echo url('wxapp/version/download', array('uniacid' => $list['uniacid'], 'version_id' => $list['id']))}" class="manage-down" title="下载">下载</a>
+						<a href="{php echo url('wxapp/manage/getpackage', array('uniacid' => $list['uniacid'], 'versionid' => $list['id']))}" class="manage-fa-down" title="下载"><i class="wi wi-down-sign"></i></a>
+						<a href="{php echo url('wxapp/manage/getpackage', array('uniacid' => $list['uniacid'], 'versionid' => $list['id']))}" class="manage-down" title="下载">下载</a>
 						<a href="{php echo url('wxapp/manage/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-fa-del"><i class="wi wi-delete2"></i></a>
 						<a href="{php echo url('wxapp/manage/delete', array('uniacid' => $list['uniacid'], 'id' => $list['id']))}" class="manage-del">删除</a>
 					</div>
@@ -56,47 +56,45 @@
 				{/loop}
 			</div>
 		</div>
-		{/if}
 		<!--end 版本管理-->
+		{else}
 		<!-- 可用小程序模块 -->
-		{if $account['wxapp_type'] == WXAPP_SINGLE}
+		<div class="text-right we7-margin-bottom">
+			<a href="javascript:;" class="btn btn-primary"  ng-click="showWxModules()">新建模块版本</a>
+		</div>
 		<table class="table we7-table table-hover">
 			<col width="80px"/>
 			<col width=""/>
 			<col width="170px"/>
-			<tr>
-				<th colspan="3" class="text-left we7-padding-right"><span>关联小程序模块</span></th>
-			</tr>
-			<tr ng-if="current_module_info">
+			<tr ng-if="version_exist" ng-repeat="version_info in wxapp_version_lists">
 				<td class="vertical-middle">
-					<img src="{{current_module_info.logo}}">
+					<img src="{{version_info.modules.module_info.logo}}">
 				</td>
 				<td class="text-left">
 					<div class="we7-form reply-item-keyword">
 						<div class="form-inline">
 							<label for="" class="control-label col-sm-2">模块名：</label>
 							<div class="form-controls form-control-static">
-								<span class="keyword-tag" ng-bind="current_module_info.title"></span>
+								<span class="keyword-tag" ng-bind="version_info.modules.module_info.title"></span>
 							</div>
 							<div class="form-inline">
 							<label for="" class="control-label col-sm-2">版本：</label>
 							<div class="form-controls form-control-static">
-								<span ng-bind="current_module_info.version"></span>
+								<span ng-bind="version_info.modules.module_info.version"></span>
 							</div>
 						</div>
 					</div>
 				</td>
 				<td class="vertical-middle text-left">
 					<div class="link-group">
-						<a href="{php echo url('wxapp/post/getpackage', array('uniacid' => $account['uniacid'], 'single' => true))}">下载</a>
-						<a href="javascript:;" ng-click="showWxModules()">修改</a>
-						<a href="javascript:;" class="del" ng-click="delWxModule()">删除</a>
+						<a ng-href="index.php?c=wxapp&a=manage&do=getpackage&uniacid={{version_info.uniacid}}&versionid={{version_info.id}}">下载</a>
+						<a href="javascript:;" class="del" ng-click="delWxModule(version_exist.id, version_info.modules.name)">删除</a>
 					</div>
 				</td>
 			</tr>
-			<tr ng-if="!current_module_info">
-				<td colspan="3" class="we7-padding" ng-click="showWxModules()" ng-style="{'cursor': 'pointer'}">
-					<span class="font-lg">+</span>
+			<tr ng-if="!version_exist">
+				<td colspan="3">
+					<span>暂无数据</span>
 				</td>
 			</tr>
 		</table>
@@ -135,16 +133,16 @@
 	</div>
 </div>
 <script>
-	angular.module('accountApp').value('config', {
+	angular.module('wxApp').value('config', {
 		'account': {php echo !empty($account) ? json_encode($account) : 'null'},
 		'wxapp_version_lists': {php echo !empty($wxapp_version_lists) ? json_encode($wxapp_version_lists) : 'null'},
 		'wxapp_modules' : {php echo !empty($wxapp_modules) ? json_encode($wxapp_modules) : 'null'},
-		'current_module_info': {php echo !empty($current_module_info) ? json_encode($current_module_info) : 'null'},
+		'version_exist': {php echo !empty($version_exist) ? json_encode($version_exist) : 'null'},
 		'links': {
-			'editmodule': "{php echo url('wxapp/manage/single_change_module', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
-			'delmodule': "{php echo url('wxapp/manage/single_del_module', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
+			'editmodule': "{php echo url('wxapp/manage/add_module_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
+			'delmodule': "{php echo url('wxapp/manage/del_module_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid']))}",
 		},
 	});
-	angular.bootstrap($('#js-account-manage-wxapp'), ['accountApp']);
+	angular.bootstrap($('#js-account-manage-wxapp'), ['wxApp']);
 </script>
 {template 'common/footer'}
