@@ -147,6 +147,9 @@ if($do == 'getpackage') {
 	$request_cloud_data = array();
 	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
 	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
+	if (empty($wxapp_version_info)) {
+		itoast('版本不存在！', referer(), 'error');
+	}
 	$request_cloud_data['name'] = $account_wxapp_info['name'];
 	$zipname = $request_cloud_data['name'];
 	$request_cloud_data['modules'] = iunserializer($wxapp_version_info['modules'], true);
