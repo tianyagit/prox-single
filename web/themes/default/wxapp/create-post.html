@@ -3,7 +3,7 @@
 <div id="js-wxapp-create" ng-controller="MainCtrl" ng-cloak>
 	<div class="container">
 		<div class="caret-wxapp">
-			<form action="" method="post" ng-submit="package()">
+			<form method="post" ng-submit="package()">
 				<input name="token" type="hidden" value="{$_W['token']}" />
 				<div class="panel panel-app">
 					<div class="panel-heading">
@@ -70,94 +70,65 @@
 									<div class="form-group">
 										<label for="" class="control-label col-sm-2">小程序名称</label>
 										<div class="form-controls col-sm-10">
-											<input type="text" name="name" value="{$wxapp_info['name']}" ng-model="name" class="form-control wxapp-name" placeholder="小程序名称">
+											<input type="text" name="name" ng-model="wxappinfo.name" class="form-control wxapp-name" placeholder="小程序名称">
 										</div>
 									</div>
 									{if empty($uniacid)}
 									<div class="form-group">
 										<label for="" class="control-label col-sm-2">小程序账号</label>
 										<div class="form-controls col-sm-10">
-											<input type="text" name="account" ng-model="account" class="form-control wxapp-name" placeholder="小程序账号">
+											<input type="text" name="account" ng-model="wxappinfo.account" class="form-control wxapp-name" placeholder="小程序账号">
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="" class="control-label col-sm-2">原始ID</label>
 										<div class="form-controls col-sm-10">
-											<input type="text" name="original" ng-model="original" value="" class="form-control wxapp-name" placeholder="原始ID">
+											<input type="text" name="original" ng-model="wxappinfo.original" value="" class="form-control wxapp-name" placeholder="原始ID">
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="" class="control-label col-sm-2">AppId</label>
 										<div class="form-controls col-sm-10">
-											<input type="text" name="key" value="" ng-model="appid" class="form-control wxapp-name" placeholder="AppId">
+											<input type="text" name="key" value="" ng-model="wxappinfo.appid" class="form-control wxapp-name" placeholder="AppId">
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="" class="control-label col-sm-2">AppSecret</label>
 										<div class="form-controls col-sm-10">
-											<input type="text" name="secret" value="" ng-model="appsecret" class="form-control wxapp-name" placeholder="AppSecret">
+											<input type="text" name="secret" value="" ng-model="wxappinfo.appsecret" class="form-control wxapp-name" placeholder="AppSecret">
 										</div>
 									</div>
 									{/if}
 									<div class="form-group">
 										<label class="control-label col-sm-2">版本号</label>
 										<div class="form-controls col-sm-1">
-											<input type="number" name="version0" min="0" max="100" ng-model="version[0]" class="form-control wxapp-version version0">
+											<input type="number" name="version0" min="0" max="100" ng-model="wxappinfo.version[0]" class="form-control wxapp-version version0">
 										</div>
 										<div class="form-controls pull-left">
 											<p class="form-control-static wxapp-version">.</p>
 										</div>
 										<div class="form-controls col-sm-1">
-											<input type="number" name="version1" min="0" max="100" ng-model="version[1]" class="form-control wxapp-version version1">
+											<input type="number" name="version1" min="0" max="100" ng-model="wxappinfo.version[1]" class="form-control wxapp-version version1">
 										</div>
 										<div class="form-controls pull-left">
 											<p class="form-control-static wxapp-version">.</p>
 										</div>
 										<div class="form-controls col-sm-1">
-											<input type="number" name="version2" min="0" max="100" ng-model="version[2]" class="form-control wxapp-version version2">
+											<input type="number" name="version2" min="0" max="100" ng-model="wxappinfo.version[2]" class="form-control wxapp-version version2">
 										</div>
 									</div>
 									<div class="form-group">
 										<input type="hidden" name="modules" value="">
 										<label class="control-label col-sm-2">添加应用</label>
 										<div class="form-controls col-sm-10">
-											<div we7-select-more we7-modules="selectModules" we7-selecte-single="true"></div>
+											<div we7-select-more we7-modules="wxappinfo.select.modules" we7-selecte-single="{php echo $design_method == WXAPP_MODULE}"></div>
 										</div>
 									</div>
 								</div>
 							</div>
 							<div id="home" ng-show="createStep == 2">
-								<div class="creat-wxapp-type" ng-show="type == 0">
-									<input type="hidden" name="type" value="">
-									<div class="type-heading">
-										选择设计类型
-									</div>
-									<ul class="type-list">
-										<li class="ban">
-											<i class="wi wi-select-diy"></i>
-											<p>DIY设计</p>
-										</li>
-										<li ng-click="selectType(2)">
-											<i class="wi wi-select-tem"></i>
-											<p>选择模板</p>
-										</li>
-									</ul>
-								</div>
 								<!-- 选择模板 -->
 								<div ng-if="designMethod == 2">
-									<div class="wxapp-type-cut">
-										<div class="dropdown dropdown-toggle">
-											<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-												 选择模板
-												<span class="caret"></a>
-											</a>
-											<ul class="dropdown-menu" aria-labelledby="dLabel">
-												<li><a href="" class="active">DIY设计</a></li>
-												<li ng-click="selectType(2)"><a href="" class="active">选择模板</a></li>
-												<li ng-click="selectType(3)"><a href="" class="active">直接跳转应用</a></li>
-											</ul>
-										</div>
-									</div>
 									<div class="wxapp-tem-preview">
 										<div class="wxapp-phone">
 											<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
@@ -184,7 +155,7 @@
 											</div>
 										</div>
 									</div>
-					
+									
 									<div class="creat-select-tem">
 										<div class="select-tem-heading">
 											选择模板
@@ -203,9 +174,9 @@
 											</div>
 										</div>
 										<div class="select-tem-list">
-											<input type="hidden" name="template" value="">
+											<input type="hidden" name="template" ng-model="wxappinfo.select.template" />
 											<ul>
-												<li class="select-tem-item" ng-click="selectTpl()">
+												<li class="select-tem-item" ng-class="{'active' : wxappinfo.select.template == '1'}" ng-click="selectTpl(1)">
 													<img src="./resource/images/wxapp-default-tpl0.jpg"/>
 													<a href="javascript:;" class="cover-dark">
 														<i class="fa fa-check cover-selected"></i>
@@ -221,11 +192,11 @@
 									<div class="wxapp-phone">
 										<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
 										<div class="wxapp-home-preview">
-											<div class="buttom-list-preview" ng-style="{'background-color': bottom.bgcolor}">
-												<ul ng-style="{'border-top': '1px solid'+bottom.boundary}">
-													<li ng-repeat="menu in menus">
+											<div class="buttom-list-preview" ng-style="{'background-color': wxappinfo.quickmenu.bottom.bgcolor}">
+												<ul ng-style="{'border-top': '1px solid'+wxappinfo.quickmenu.bottom.boundary}">
+													<li ng-repeat="menu in wxappinfo.quickmenu.menus">
 														<img ng-src="{{menu.defaultImage}}" class="buttom-preview-img"/>
-														<p class="buttom-preview-title" ng-bind="menu.name" ng-style="{'font-size':'12px', 'color': bottom.color}"></p>
+														<p class="buttom-preview-title" ng-bind="menu.name" ng-style="{'font-size':'12px', 'color': wxappinfo.quickmenu.bottom.color}"></p>
 													</li>
 												</ul>
 											</div>
@@ -240,33 +211,33 @@
 										<div class="form-group">
 											<label for="" class="control-label col-sm-3">是否显示</label>
 											<div class="form-controls col-sm-9">
-												<label><input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-												<div class="switch" ng-class="{'switchOn': ifShowMenu}" ng-click="showMenu()"></div>
+												<label><input name="" id="" class="form-control" type="checkbox" style="display: none;">
+												<div class="switch" ng-class="{'switchOn': wxappinfo.quickmenu.show}" ng-click="showMenu()"></div>
 												</label>
 											</div>
 										</div>
 										<div class="form-group buttom-bg-color">
 											<label for="" class="control-label col-sm-3">背景颜色</label>
 											<div class="form-controls col-sm-4" >
-												<div we7-colorpicker we7-my-color="bottom.bgcolor" we7-my-default-color="bottom.bgcolor"></div>
+												<div we7-colorpicker we7-form-name="wxappinfo.quickmenu.bottom.bgcolor" we7-my-color="wxappinfo.quickmenu.bottom.bgcolor" we7-my-default-color="bottom.bgcolor"></div>
 											</div>
 										</div>
 										<div class="form-group buttom-boundary-color">
 											<label for="" class="control-label col-sm-3">交界线颜色</label>
 											<div class="form-controls col-sm-4" >
-												<div we7-colorpicker we7-my-color="bottom.boundary" we7-my-default-color="bottom.boundary"></div>
+												<div we7-colorpicker we7-my-color="wxappinfo.quickmenu.bottom.boundary" we7-my-default-color="wxappinfo.quickmenu.bottom.boundary"></div>
 											</div>
 										</div>
 										<div class="form-group buttom-bg-color">
 											<label for="" class="control-label col-sm-3">文字默认颜色</label>
 											<div class="form-controls col-sm-4" >
-												<div we7-colorpicker we7-my-color="bottom.color" we7-my-default-color="bottom.color"></div>
+												<div we7-colorpicker we7-my-color="wxappinfo.quickmenu.bottom.color" we7-my-default-color="wxappinfo.quickmenu.bottom.color"></div>
 											</div>
 										</div>
 										<div class="form-group buttom-bg-color">
 											<label for="" class="control-label col-sm-3">文字选中颜色</label>
 											<div class="form-controls col-sm-4" >
-												<div we7-colorpicker we7-my-color="bottom.selectedColor" we7-my-default-color="bottom.selectedColor"></div>
+												<div we7-colorpicker we7-my-color="wxappinfo.quickmenu.bottom.selectedColor" we7-my-default-color="wxappinfo.quickmenu.bottom.selectedColor"></div>
 											</div>
 										</div>
 										<!-- <td>
@@ -294,7 +265,7 @@
 												<th>跳转到</th>
 												<th>操作</th>
 											</tr>
-											<tr ng-repeat="menu in menus" class="we7-form">
+											<tr ng-repeat="menu in wxappinfo.quickmenu.menus" class="we7-form">
 												<td>
 													<div class="nav-img-box">
 														<img ng-src="{{menu.defaultImage}}" >
@@ -314,7 +285,7 @@
 												</td>
 												
 												<td>
-													<select class="form-control" id="lineheight" ng-model="menu.module" ng-options="menu.title group by menu.module.title for menu in show_url">
+													<select class="form-control" id="lineheight" ng-model="menu.module" ng-options="menu.title group by menu.module for menu in moduleEntries">
 													</select>
 												</td>
 												<td>
@@ -333,20 +304,20 @@
 									<div class="form-group">
 										<label for="" class="control-label col-sm-2">小程序名称</label>
 										<div class="form-controls col-sm-10">
-											<p class="form-control-static" ng-bind="name"></p>
+											<p class="form-control-static" ng-bind="wxappinfo.name"></p>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label col-sm-2">版本号</label>
 										<div class="form-controls col-sm-10">
-											<p class="form-control-static">V {{version[0]}}.{{version[1]}}.{{version[2]}}</p>
+											<p class="form-control-static">V {{wxappinfo.version[0]}}.{{wxappinfo.version[1]}}.{{wxappinfo.version[2]}}</p>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label col-sm-2">打包应用</label>
 										<div class="form-controls col-sm-10">
 											<ul class="app-list">
-												<li class="select" ng-repeat="module in selectModules">
+												<li class="select" ng-repeat="module in wxappinfo.select.modules">
 													<div class="app-info">
 														<img ng-src="{{module.icon}}" />
 														<p>{{module.title}}</p>
@@ -408,8 +379,9 @@ require(['fileUploader','underscore'], function(uploader){
 	angular.module('wxApp').value('config', {
 		'uniacid' : "{$uniacid}",
 		'designMethod' : "{$design_method}",
-		'getlink_url' : "{php echo url('wxapp/post/get_module_entries')}",
+		'wxappPostUrl' : "{php echo url('wxapp/post', array('design_method' => $design_method))}",
 		'version' : {php echo json_encode($new_version)},
+		'token' : "{$_W['token']}",
 	});
 	angular.bootstrap($('#js-wxapp-create'), ['wxApp']);
 });

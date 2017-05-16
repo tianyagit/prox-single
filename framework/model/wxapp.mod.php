@@ -96,8 +96,17 @@ function wxapp_supoort_wxapp_modules() {
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
 			if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
-				$wxapp_modules[] = $module;
+				$wxapp_modules[$module['name']] = $module;
 			}
+		}
+	}
+	if (empty($wxapp_modules)) {
+		return array();
+	}
+	$bindings = pdo_getall('modules_bindings', array('module' => array_keys($wxapp_modules), 'entry' => 'page'));
+	if (!empty($bindings)) {
+		foreach ($bindings as $bind) {
+			$wxapp_modules[$bind['module']]['bindings'][] = array('title' => $bind['title'], 'do' => $bind['do']);
 		}
 	}
 	return $wxapp_modules;
