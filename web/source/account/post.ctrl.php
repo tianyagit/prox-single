@@ -31,12 +31,6 @@ $_W['page']['title'] = '管理设置 - 微信' . ACCOUNT_TYPE_NAME . '管理';
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
-if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-	$wxapp_version = pdo_get('wxapp_versions', array('uniacid' => $account['uniacid']));
-	if(!empty($wxapp_version)) {
-		$accpunt['wxapp_type'] = wxapp_type($wxapp_version['id']);
-	}
-}
 
 if($do == 'base') {
 	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
