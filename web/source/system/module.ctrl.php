@@ -223,7 +223,7 @@ if ($do == 'upgrade') {
 	} else {
 		$module['settings'] = empty($module['settings']) ? 0 : 1;
 	}
-	if ($modulename == 'we7_coupon') {
+	if ($module_name == 'we7_coupon') {
 		$module['issystem'] = 1;
 		$module['settings'] = 2;
 	}
@@ -231,10 +231,10 @@ if ($do == 'upgrade') {
 	cache_build_account_modules();
 	cache_build_uninstalled_module();
 	if (!empty($module['subscribes'])) {
-		ext_check_module_subscribe($module['name']);
+		ext_check_module_subscribe($module_name);
 	}
 	cache_delete('cloud:transtoken');
-	cache_build_module_info($module['name']);
+	cache_build_module_info($module_name);
 
 	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
