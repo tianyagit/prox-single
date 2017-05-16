@@ -26,7 +26,7 @@ function wxapp_getpackage($data, $if_single = false) {
 function wxapp_account_create($account) {
 	$uni_account_data = array(
 		'name' => $account['name'],
-		'description' => '',
+		'description' => $account['description'],
 		'groupid' => 0,
 	);
 	if (!pdo_insert('uni_account', $uni_account_data)) {
@@ -124,11 +124,10 @@ function wxapp_fetch($uniacid, $version_id = '') {
 		return $wxapp_info;
 	}
 	
-	$account_wxapp = pdo_get('account_wxapp', array('uniacid' => $uniacid));
-	if (empty($account_wxapp)) {
+	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	if (empty($wxapp_info)) {
 		return $wxapp_info;
 	}
-	$wxapp_info['account_wxapp'] = $account_wxapp;
 	
 	if (empty($version_id)) {
 		$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";

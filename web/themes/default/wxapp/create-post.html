@@ -1,7 +1,6 @@
 {template 'common/header'}
 <link rel="stylesheet" href="./resource/css/wxapp-icon.css">
 <div id="js-wxapp-create" ng-controller="MainCtrl" ng-cloak>
-{{wxappinfo}}
 	<div class="container">
 		<div class="caret-wxapp">
 			<form method="post" ng-submit="package()">
@@ -337,7 +336,7 @@
 									<div class="form-group" ng-if="designMethod == 2">
 										<label class="control-label col-sm-2">首页模板</label>
 										<div class="form-controls col-sm-10">
-											<p class="form-control-static" ng-bind="submit.template"></p>
+											<p class="form-control-static" ng-bind="wxappinfo.select.template"></p>
 										</div>
 									</div>
 									<div class="form-group" ng-if="designMethod == 2">
@@ -352,8 +351,8 @@
 													<td>菜单名字</td>
 													<td>菜单链接模块</td>
 												</tr>
-												<tr ng-repeat="menu in submit.menus">
-													<td>
+												<tr ng-repeat="menu in wxappinfo.quickmenu.menus">
+													<td ng-style="{'background-color' : wxappinfo.quickmenu.bottom.bgcolor}">
 														<img ng-src="{{menu.defaultImage}}" alt="" width="48px" height="48px"/>
 													</td>
 													<td ng-bind="menu.name"></td>
@@ -385,6 +384,9 @@
 
 require(['fileUploader','underscore'], function(uploader){
 	angular.module('wxApp').value('config', {
+		'wxappinfo' : {
+			'name' : '{$wxapp_info['name']}'
+		},
 		'uniacid' : "{$uniacid}",
 		'designMethod' : "{$design_method}",
 		'wxappPostUrl' : "{php echo url('wxapp/post', array('design_method' => $design_method))}",

@@ -14,6 +14,7 @@ $_W['page']['title'] = '小程序 - 新建版本';
 
 
 if ($do == 'design_method') {
+	$uniacid = intval($_GPC['uniacid']);
 	template('wxapp/design_method');
 }
 
@@ -32,6 +33,7 @@ if($do == 'post') {
 			}
 			$account_wxapp_data = array(
 				'name' => trim($_GPC['name']),
+				'description' => trim($_GPC['description']),
 				'account' => trim($_GPC['account']),
 				'original' => trim($_GPC['original']),
 				'level' => 1,
@@ -43,6 +45,11 @@ if($do == 'post') {
 			if(is_error($uniacid)) {
 				iajax(3, '添加小程序信息失败', url('wxapp/post'));
 			}
+		} else {
+			$wxapp_info = wxapp_fetch($uniacid);
+			if (empty($wxapp_info)) {
+				iajax(4, '小程序不存在或是已经被删除', url('wxapp/post'));
+			}
 		}
 		
 		//小程序版本信息，打包多模块时，每次更改需要重建版本
@@ -50,6 +57,7 @@ if($do == 'post') {
 		$wxapp_version = array(
 			'uniacid' => $uniacid,
 			'multiid' => '0',
+			'description' => trim($_GPC['description']),
 			'version' => $_GPC['version'],
 			'modules' => '',
 			'design_method' => $design_method,
