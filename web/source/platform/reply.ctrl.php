@@ -151,12 +151,10 @@ if ($do == 'display') {
 	}
 	template('platform/reply');
 }
-
 if ($do == 'post') {
 	if ($m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
-
 			$sql = 'SELECT `rid` FROM ' . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
 			$result = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':content' => $_GPC['keyword']));
 			if (!empty($result)) {
@@ -359,6 +357,9 @@ if ($do == 'post') {
 		}
 		unset($value);
 		foreach ($installedmodulelist as $name => $module) {
+			if (empty($module['isrulefields']) && $name != "core") {
+				continue;
+			}
 			$module['title_first_pinyin'] = $pinyin->get_first_char($module['title']);
 			if ($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];
@@ -373,7 +374,7 @@ if ($do == 'post') {
 				}
 			}
 			$module['icon'] = $cion;
-
+			
 			if ($module['enabled'] == 1) {
 				$enable_modules[$name] = $module;
 			} else {

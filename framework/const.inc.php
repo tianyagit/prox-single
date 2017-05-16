@@ -35,10 +35,6 @@ define('ACCOUNT_TYPE_OFFCIAL_AUTH', 3);
 //正常接入小程序
 define('ACCOUNT_TYPE_APP_NORMAL', 4);
 
-//多版小程序
-define('WXAPP_MULTI', 1);
-//单版小程序
-define('WXAPP_SINGLE', 2);
 //DIY小程序
 define('WXAPP_DIY', 1);
 //选择模版小程序
@@ -113,6 +109,7 @@ define('CACHE_KEY_MODULE_INFO', 'module_info:%s');
 define('CACHE_KEY_ACCOUNT_MODULES', 'unimodules:%s:%s');
 define('CACHE_KEY_ACCOUNT_MODULES_BINDING', 'unimodules:binding:%s');
 define('CACHE_KEY_MEMBER_INFO', 'memberinfo:%s');
+define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 
 define('MODULE_SUPPORT_WXAPP', 2);
 define('MODULE_SUPPORT_ACCOUNT', 2);
