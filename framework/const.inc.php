@@ -39,6 +39,12 @@ define('ACCOUNT_TYPE_APP_NORMAL', 4);
 define('WXAPP_MULTI', 1);
 //单版小程序
 define('WXAPP_SINGLE', 2);
+//DIY小程序
+define('WXAPP_DIY', 1);
+//选择模版小程序
+define('WXAPP_TEMPLATE', 2);
+//跳转模块小程序
+define('WXAPP_MODULE', 3);
 
 //授权登录接入
 define('ACCOUNT_OAUTH_LOGIN', 3);
@@ -107,3 +113,6 @@ define('CACHE_KEY_MODULE_INFO', 'module_info:%s');
 define('CACHE_KEY_ACCOUNT_MODULES', 'unimodules:%s:%s');
 define('CACHE_KEY_ACCOUNT_MODULES_BINDING', 'unimodules:binding:%s');
 define('CACHE_KEY_MEMBER_INFO', 'memberinfo:%s');
+
+define('MODULE_SUPPORT_WXAPP', 2);
+define('MODULE_SUPPORT_ACCOUNT', 2);

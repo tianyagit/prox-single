@@ -8,19 +8,22 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version', 'download', 'account_list', 'save_connection');
+$dos = array('edit', 'get_categorys', 'save_category', 'del_category', 'switch_version', 'account_list', 'save_connection');
 $do = in_array($do, $dos) ? $do : 'edit';
 $_W['page']['title'] = '小程序 - 管理';
+$uniacid = intval($_GPC['uniacid']);
+if (empty($uniacid)) {
+	itoast('请选择要操作的小程序', referer(), 'error');
+}
 
 if ($do == 'del_category') {
 	$id = $_GPC['id'];
 	$result = pdo_delete('site_category', array('id' => $id));
-
 }
 
 if ($do == 'get_categorys') {
 	$multiid = intval($_GPC['multiid']);
-	$categorys = pdo_getall('site_category', array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid));
+	$categorys = pdo_getall('site_category', array('uniacid' => $uniacid, 'multiid' => $multiid));
 	return iajax(1, $categorys, '');
 }
 
@@ -30,11 +33,11 @@ if ($do == 'save_category') {
 	foreach ($post as $category) {
 		if (!empty($category['id'])) {
 			$update = array('name' => $category['name'], 'displayorder' => $category['displayorder'], 'linkurl' => $category['linkurl']);
-			pdo_update('site_category', $update, array('uniacid' => $_GPC['uniacid'], 'id' => $category['id']));
+			pdo_update('site_category', $update, array('uniacid' => $uniacid, 'id' => $category['id']));
 		} else {
 			if (!empty($category['name'])) {
 				$insert = $category;
-				$insert['uniacid'] = $_GPC['uniacid'];
+				$insert['uniacid'] = $uniacid;
 				$insert['multiid'] = $multiid;
 				unset($insert['$$hashKey']);
 				pdo_insert('site_category', $insert);
@@ -52,7 +55,7 @@ if ($do == 'edit') {
 		$type = $_GPC['type'];
 		$id = intval($_GPC['id']);
 		pdo_delete('site_'.$type, array('id' => $id));
-		itoast('删除成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'version_id' => $version_id, 'wxapp' => $type)), 'success');
+		itoast('删除成功', url('wxapp/version/edit', array('multiid' => $multiid, 'uniacid' => $uniacid, 'version_id' => $version_id, 'wxapp' => $type)), 'success');
 	}
 	if (checksubmit('submit')) {
 		$slide = $_GPC['slide'];
@@ -93,45 +96,46 @@ if ($do == 'edit') {
 			}
 		}
 	}
-	$slides = pdo_getall('site_slide', array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid));
-	$navs = pdo_getall('site_nav', array('uniacid' => $_GPC['uniacid'], 'multiid' => $multiid));
+	$slides = pdo_getall('site_slide', array('uniacid' => $uniacid, 'multiid' => $multiid));
+	$navs = pdo_getall('site_nav', array('uniacid' => $uniacid, 'multiid' => $multiid));
 	if (!empty($navs)) {
 		foreach($navs as &$nav) {
 			$nav['css'] = iunserializer($nav['css']);
 		}
 	}
 	$recommends = pdo_getall('site_article', array('uniacid' => $_GPC['uniacid']));
-	$version_info = pdo_get('wxapp_versions', array('multiid' => $multiid, 'uniacid' => $_GPC['uniacid'], 'id' => $version_id), array('id', 'version', 'uniacid', 'connection', 'modules', 'design_method'));
-	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $version_info['uniacid']));
-	$wxapp_info['wxapp_type'] = wxapp_type($version_info['id']);
-	$versionid = $version_info['id'];
-	$modules = json_decode($version_info['modules'], true);
-	$connection = json_decode($version_info['connection'], true);
-	if (!empty($connection)) {
-		foreach ($connection as $module => $uniacid) {
-			if (!empty($uniacid)) {
-				$accounts = uni_account_default($uniacid);
-				if (!empty($accounts) && $accounts['isdeleted'] == 0 && $accounts['type'] != 4) {
-					$accounts['thumb'] = tomedia('headimg_'.$accounts['acid']. '.jpg').'?time='.time();
-					$account_list[$module] = $accounts;
+	
+	$wxapp_info = wxapp_fetch($uniacid, $version_id);
+	$version_info = $wxapp_info['version'];
+	
+	if (!empty($version_info['modules'])) {
+		$modules = iunserializer($version_info['modules']);
+		foreach ($modules as &$module_val) {
+			if (!empty($module_val['name'])) {
+				$module_info = module_fetch($module_val['name']);
+				$module_val['title'] = $module_info['title'];
+				if (file_exists(IA_ROOT.'/addons/'.$module_val['name'].'/icon-custom.jpg')) {
+					$module_val['modulelogo'] = tomedia(IA_ROOT.'/addons/'.$module_val['name'].'/icon-custom.jpg');
+				} else {
+					$module_val['modulelogo'] = tomedia(IA_ROOT.'/addons/'.$module_val['name'].'/icon.jpg');
 				}
 			}
-			
-		}
-	}
-	if (!empty($modules)) {
-		foreach ($modules as $module => &$version) {
-			$version = module_fetch($module);
-			if (file_exists(IA_ROOT.'/addons/'.$version['name'].'/icon-custom.jpg')) {
-				$version['logo'] = tomedia(IA_ROOT.'/addons/'.$version['name'].'/icon-custom.jpg');
+			if (!empty($module_val['connect_account'])) {
+				foreach ($module_val['connect_account'] as &$connect_account_info) {
+					if (!empty($connect_account_info)) {
+						$accounts = uni_account_default($connect_account_info);
+						if (!empty($accounts) && $accounts['isdeleted'] == 0 && $accounts['type'] != 4) {
+							$connect_account_info['thumb'] = tomedia('headimg_'.$accounts['acid']. '.jpg').'?time='.time();
+						}
+					}
+				}
 			} else {
-				$version['logo'] = tomedia(IA_ROOT.'/addons/'.$version['name'].'/icon.jpg');
+				$module_val['connect_account'] = array();
 			}
-			$module_connections[$module] = (array)$version;
-			$module_connections[$module]['connection'] = $account_list[$module];
-			$module_connections[$module]['link_name'] = !empty($module_connections[$module]['connection']) ? $module_connections[$module]['connection']['name'] : $wxapp_info['name'];
 		}
-		unset($version);
+		unset($module_val);
+		unset($connect_account_info);
+		$module_connections = $modules;
 	}
 	template('wxapp/wxapp-edit');
 }
@@ -152,72 +156,33 @@ if ($do == 'account_list') {
 }
 
 if ($do == 'save_connection') {
-	$uniacid = intval($_GPC['uniacid']);
 	$version_id = intval($_GPC['version_id']);
 	$module = trim($_GPC['module']);
-	if (empty($uniacid) || empty($version_id) || empty($module)) {
+	echo "<pre>";
+	print_r($_GPC);
+	echo "</pre>";
+	exit;
+	if (empty($version_id) || empty($module)) {
 		iajax(-1, '参数错误！');
 	}
 	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	$modules_info = json_decode($version_info['modules'], true);
-	$modules = array_keys($modules_info);
+	$modules = iunserializer($version_info['modules'], true);
 	if (!in_array($module, $modules)) {
 		iajax(-1, '模块参数错误！');
 	}
-	if( !empty($version_info['connection'])) {
-		$connections = json_decode($version_info['connection'], true);
+	if (!empty($modules['connect_account'])) {
+		$modules['connect_account'][] = $uniacid;
+	} else {
+		$moduels['connect_account'] = array($uniacid);
 	}
-	$connections[$module] = $uniacid;
-	$result = pdo_update('wxapp_versions', array('connection' => json_encode($connections)), array('id' => $version_id));
-	$account_info = uni_account_default($uniacid);
-	$account_info['thumb'] = tomedia('headimg_' . $account_info['acid'] . '.jpg') . '?time=' .time();
+	$result = pdo_update('wxapp_versions', array('connection' => iserializer($modules)), array('id' => $version_id));
 	if (is_error($result)) {
 		iajax(-1, $result['message']);
 	}
-	iajax(0, $account_info, referer());
+	iajax(0, '保存成功！', referer());
 }
 
 if ($do == 'switch_version') {
-	$uniacid = intval($_GPC['uniacid']);
-	if (!empty($uniacid)) {
-		$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $uniacid));
-	}
+	$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $uniacid));
 	template('wxapp/switch-version');
-}
-
-if ($do == 'download') {
-	$version_id = intval($_GPC['version_id']);
-	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	$account_info = pdo_get('account_wxapp', array('uniacid' => $version_info['uniacid']));
-	if ($version_info['design_method'] == 3) {
-		$redirect_modules = json_decode(($version_info['redirect']), true);
-		$redirect_modules['url'] = explode(',', $redirect_modules['url']);
-		$bindings_lists = pdo_getall('modules_bindings', array('module' => $redirect_modules['module'], 'eid IN' => $redirect_modules['url']));
-	}
-	$package = array(
-		'name' => $account_info['name'],
-		'modules' => json_decode($version_info['modules'], true),
-		'app.js' => '',
-		'app.json' => '',
-		'app.wxss' => '',
-		'siteInfo' => array(
-			'uniacid' => $account_info['uniacid'],
-			'acid'    => $account_info['acid'],
-			'multiid' => $version_info['multiid'],
-			'version' => $version_info['version'],
-			'siteroot'=> $_W['siteroot'] . 'app/index.php',
-			'design_method' => $version_info['design_method'],
-			'redirect_module' => $bindings_lists[0]['url'],
-			'template' => $version_info['template'],
-		),
-		'tabBar' => json_decode($version_info['quickmenu'], true),
-	);
-	$result = wxapp_getpackage($package);
-	if (is_error($result)) {
-		itoast($result['message'], '', 'error');
-	}
-	header('content-type: application/zip');
-	header('content-disposition: attachment; filename="'.$package['name'].'v'.$version_info['version'].'.zip"');
-	echo $result;
-	exit;
 }

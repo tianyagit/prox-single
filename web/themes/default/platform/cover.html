@@ -12,11 +12,10 @@
 {if $do == 'module'}
 	<div ng-controller="KeywordDisplay" ng-cloak>
 		<table class="table we7-table table-hover vertical-middle">
-			<col width="115px"/>
+			<col width="150px"/>
 			<col width="200px" />
 			<col width="" />
 			<col width="250px" />
-			<col />
 			<tr>
 				<th>二维码</th>
 				<th class="text-left">入口名称</th>
@@ -36,7 +35,7 @@
 				</td>
 				<td>
 					<div class="link-group" style="position:relative;">
-						<a href="{url 'platform/cover/post' array('m' => $modulename, 'eid' => $menu['eid'])}" class="color-default we7-margin-right">编辑</a>
+						<a href="{url 'platform/cover/post' array('m' => $modulename, 'eid' => $menu['eid'])}" class="color-default">编辑</a>
 						<a href="javascript:;" data-url="{$_W['siteroot']}app/{$menu['url']}" style="margin-right:0px;" class="color-default js-clip">复制链接</a>
 					</div>
 				</td>
