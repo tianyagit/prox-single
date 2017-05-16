@@ -4,13 +4,32 @@
  * [WeEngine System] Copyright (c) 2014 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-define('IN_GW', true);
+load()->model('wxapp');
+load()->model('account');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank');
+$dos = array('display', 'switch', 'rank', 'home');
 $do = in_array($do, $dos) ? $do : 'display';
 
+if ($do == 'rank' || $do == 'switch') {
+	$uniacid = intval($_GPC['uniacid']);
+	if (!empty($uniacid)) {
+		$wxapp_info = wxapp_fetch($uniacid);
+		if (empty($wxapp_info)) {
+			itoast('小程序不存在', referer(), 'error');
+		}
+	}
+}
+
+if ($do == 'home') {
+	if (empty($_W['uniacid'])) {
+		$do = 'display';
+	} else {
+		$uniacid = $_W['uniacid'];
+		$do = 'switch';
+	}
+}
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
@@ -64,27 +83,10 @@ if ($do == 'display') {
 	$pager = pagination($total, $pindex, $psize);
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
-	$uniacid = intval($_GPC['uniacid']);
-	$version = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array('version', 'multiid', 'id', 'uniacid'), '', 'version DESC', 1);
-	$version = $version[0];
-	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
-	$cache_lastaccount = cache_load($cache_key);
-	$cache_lastaccount['wxapp'] = $uniacid;
-	cache_write($cache_key, $cache_lastaccount);
-	header('Location: ' . url('wxapp/version/edit', array('multiid' => $version['multiid'], 'uniacid' => $uniacid, 'version_id' => $version['id'])));
+	wxapp_save_switch($uniacid);
+	header('Location: ' . url('wxapp/version/edit', array('multiid' => $wxapp_info['version']['multiid'], 'uniacid' => $uniacid, 'version_id' => $wxapp_info['version']['id'])));
 	exit;
 } elseif ($do == 'rank') {
-	$uniacid = intval($_GPC['uniacid']);
-	$exist = pdo_get('uni_account', array('uniacid' => $uniacid));
-	if (empty($exist)) {
-		itoast('公众号不存在', '', '');
-	}
-	if (!empty($_W['isfounder'])) {
-		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account'));
-		pdo_update('uni_account', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid));
-	}else {
-		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account_users'));
-		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
-	}
+	uni_account_rank_top($uniacid);
 	itoast('更新成功', '', '');
 }

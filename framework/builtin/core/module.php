@@ -132,6 +132,7 @@ class CoreModule extends WeModule {
 											$img = pdo_get('wechat_attachment', array('media_id' => $img_value['mediaid']), array('attachment'));
 											$img_value['img_url'] = tomedia($img['attachment'], true);
 										}
+										unset($img_value);
 										break;
 									case 'news' :
 										foreach ($replies[$key] as &$news_value) {
@@ -146,6 +147,7 @@ class CoreModule extends WeModule {
 												$news_value['thumb'] = tomedia($news_value['thumb']);
 											}
 										}
+										unset($news_value);
 										break;
 								}
 							}
@@ -207,6 +209,7 @@ class CoreModule extends WeModule {
 
 		foreach ($this->modules as $val) {
 			$replies = array();
+
 			$tablename = $this->tablename[$val];
 			if($this->replies[$val]) {
 				if(is_array($this->replies[$val])) {
@@ -224,7 +227,6 @@ class CoreModule extends WeModule {
 				case 'basic':
 					if(!empty($replies)) {
 						foreach($replies as $reply) {
-							$reply = trim($reply, '"');
 							pdo_insert($tablename, array('rid' => $rid, 'content' => $reply));
 						}
 					}

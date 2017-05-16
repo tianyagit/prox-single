@@ -84,7 +84,7 @@ if ($do == 'add_module_version') {
 			}
 		}
 		$wxapp_info = wxapp_fetch($uniacid);
-		$wxapp_info = $wxapp_info['last_version'];
+		$wxapp_info = $wxapp_info['version'];
 		$new_version = array();
 		if (!empty($wxapp_info['version'])) {
 			$wxapp_info['version'] = explode('.', $wxapp_info['version']);
@@ -147,17 +147,19 @@ if($do == 'getpackage') {
 	$request_cloud_data = array();
 	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
 	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
+	if (empty($wxapp_version_info)) {
+		itoast('版本不存在！', referer(), 'error');
+	}
 	$request_cloud_data['name'] = $account_wxapp_info['name'];
-	// @@todo 云服务参数
 	$zipname = $request_cloud_data['name'];
-	$request_cloud_data['modules'] = json_decode($wxapp_version_info['modules'], true);
+	$request_cloud_data['modules'] = iunserializer($wxapp_version_info['modules'], true);
 	$request_cloud_data['siteInfo'] = array(
 			'uniacid' => $account_wxapp_info['uniacid'],
 			'acid' => $account_wxapp_info['acid'],
 			'multiid' => $wxapp_version_info['multiid'],
 			'version' => $wxapp_version_info['version'],
 			'siteroot' => $_W['siteroot'].'app/index.php',
-			'design_method' => $wxapp_version_info['design_method'],
+			'design_method' => $wxapp_version_info['design_method']
 		);
 	$request_cloud_data['tabBar'] = json_decode($wxapp_version_info['quickmenu'], true);
 	$result = wxapp_getpackage($request_cloud_data);

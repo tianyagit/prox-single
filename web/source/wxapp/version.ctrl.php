@@ -104,9 +104,10 @@ if ($do == 'edit') {
 		}
 	}
 	$recommends = pdo_getall('site_article', array('uniacid' => $_GPC['uniacid']));
-	$version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $version_id), array('id', 'version', 'uniacid', 'modules', 'design_method'));
-	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $version_info['uniacid']));
-	$versionid = $version_info['id'];
+	
+	$wxapp_info = wxapp_fetch($uniacid, $version_id);
+	$version_info = $wxapp_info['version'];
+	
 	if (!empty($version_info['modules'])) {
 		$modules = iunserializer($version_info['modules']);
 		foreach ($modules as &$module_val) {

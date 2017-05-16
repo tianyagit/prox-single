@@ -28,23 +28,7 @@ if(is_array($session)) {
 unset($session);
 
 if(!empty($_GPC['__uniacid'])) {
-	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
-	$cache_lastaccount = (array)cache_load($cache_key);
-	if (in_array($controller, array('wxapp'))) {
-		$uniacid = $cache_lastaccount['wxapp'];
-	} else {
-		if ((!empty($_GPC['uniacid_source']) && $_GPC['uniacid_source'] == 'wxapp')) {
-			$uniacid = intval($_GPC['uniacid']);
-			if (!empty($uniacid)) {
-				isetcookie('__uniacid', $uniacid, 7 * 86400);
-				$cache_lastaccount['account'] = $uniacid;
-				cache_write($cache_key, $cache_lastaccount);
-			}
-		} else {
-			$uniacid = $cache_lastaccount['account'];
-		}
-	}
-	$_W['uniacid'] = $uniacid;
+	$_W['uniacid'] = uni_account_last_switch();
 	$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
 	$_W['acid'] = $_W['account']['acid'];
 	$_W['weid'] = $_W['uniacid'];

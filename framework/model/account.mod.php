@@ -300,7 +300,7 @@ function uni_groups($groupids = array()) {
 			if (!empty($row['templates'])) {
 				$templates = iunserializer($row['templates']);
 				if (is_array($templates)) {
-					$row['templates'] = pdo_fetchall("SELECT name, title FROM " . tablename('site_templates') . " WHERE id IN ('" . implode("','", $templates) . "')");
+					$row['templates'] = pdo_fetchall("SELECT name, title FROM " . tablename('site_templates') . " WHERE name IN ('" . implode("','", array_keys($templates)) . "')", array(), 'name');
 				}
 			}
 		}
@@ -725,6 +725,58 @@ function uni_update_week_stat() {
 		}
 	}
 	cache_write($cachekey, array('expire' => TIMESTAMP + 7200));
+	return true;
+}
+
+/**
+ * 将公众号置顶
+ * @param int $uniacid
+ * @param int $rank
+ */
+function uni_account_rank_top($uniacid) {
+	global $_W;
+	if (!empty($_W['isfounder'])) {
+		$max_rank = pdo_getcolumn('uni_account', array(), 'max(rank)');
+		pdo_update('uni_account', array('rank' => ($max_rank + 1)), array('uniacid' => $uniacid));
+	}else {
+		$max_rank = pdo_getcolumn('uni_account_users', array('uid' => $_W['uid']), 'max(rank)');
+		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank'] + 1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
+	}
+	return true;
+}
+
+function uni_account_last_switch() {
+	global $_W, $_GPC;
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = (array)cache_load($cache_key);
+	if (strexists($_W['siteurl'], 'c=wxapp')) {
+		$uniacid = $cache_lastaccount['wxapp'];
+	} else {
+		$uniacid = $cache_lastaccount['account'];
+	}
+	return $uniacid;
+}
+
+/**
+ * 切换公众号时，保留最后一次操作的小程序，以便点公众号时再切换回
+ */
+function uni_account_save_switch($uniacid) {
+	global $_W, $_GPC;
+	if (empty($_GPC['__switch'])) {
+		$_GPC['__switch'] = random(5);
+	}
+	
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = cache_load($cache_key);
+	if (empty($cache_lastaccount)) {
+		$cache_lastaccount = array(
+			'account' => $uniacid,
+		);
+	} else {
+		$cache_lastaccount['account'] = $uniacid;
+	}
+	cache_write($cache_key, $cache_lastaccount);
+	isetcookie('__switch', $_GPC['__switch']);
 	return true;
 }
 
