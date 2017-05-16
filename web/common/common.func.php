@@ -431,6 +431,33 @@ function buildframes($framename = ''){
 			}
 		}
 	}
+	
+	//进入小程序后的菜单
+	if (FRAME == 'wxapp') {
+		$version_id = intval($_GPC['version_id']);
+		$wxapp_version = wxapp_version($version_id);
+		if ($wxapp_version['design_method'] == WXAPP_MODULE) {
+		
+		}
+		if (!empty($wxapp_version['modules'])) {
+			$frames['wxapp']['section']['platform_module_menu']['title'] = '应用';
+			foreach ($wxapp_version['modules'] as $module) {
+				$frames['wxapp']['section']['platform_module_menu']['menu']['module_menu'.$module['mid']] = array(
+					'title' => "<i class='wi wi-appsetting'></i> {$module['title']}",
+					'url' => url('home/welcome/ext/', array('m' => $module['name'])),
+					'is_display' => 1,
+				);
+			}
+		}
+		if ($wxapp_version['design_method'] == WXAPP_MODULE) {
+			$frames['wxapp']['section']['platform_manage_menu']['title'] = '管理';
+			$frames['wxapp']['section']['platform_manage_menu']['menu']['module_link'] = array(
+				'title' => "<i class='wi wi-appsetting'></i> 模块关联",
+				'url' => url('wxapp/version/module_link_uniacid', array('version_id' => $version_id)),
+				'is_display' => 1,
+			);
+		}
+	}
 	foreach ($frames as $menuid => $menu) {
 		if (!empty($menu['founder']) && empty($_W['isfounder'])) {
 			continue;

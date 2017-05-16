@@ -73,7 +73,7 @@
 <div class="main">
 {if !defined('IN_MESSAGE')}
 <div class="container">
-	{if in_array(FRAME, array('account', 'system', 'adviertisement')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
+	{if in_array(FRAME, array('account', 'system', 'adviertisement', 'wxapp')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 		{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
 		<a href="javascript:;" class="js-big-main button-to-big color-gray" title="加宽">{if $_GPC['main-lg']}正常{else}宽屏{/if}</a>
 		{/if}
@@ -118,6 +118,9 @@
 			{/if}
 			{if FRAME == 'adviertisement'}
 				<span class="font-lg"><i class="wi wi-ad"></i>广告联盟</span>
+			{/if}
+			{if FRAME == 'wxapp'}
+				<span class="font-lg"><i class="wi wi-wxapp-pack"></i>小程序</span>
 			{/if}
 		</div>
 	<div class="panel-body clearfix main-panel-body {if !empty($_W['setting']['copyright']['leftmenufixed'])}menu-fixed{/if}">
@@ -171,6 +174,9 @@
 						<div class="font-lg title-setting"><i class="wi wi-setting"></i> 系统管理</div>
 					{/if}
 					{if FRAME == 'adviertisement'}
+						<div class="font-lg title-ad"><i class="wi wi-ad"></i>广告联盟</div>
+					{/if}
+					{if FRAME == 'wxapp'}
 						<div class="font-lg title-ad"><i class="wi wi-ad"></i>广告联盟</div>
 					{/if}
 				</div>
