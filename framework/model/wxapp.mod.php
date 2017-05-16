@@ -113,35 +113,12 @@ function wxapp_supoort_wxapp_modules() {
 }
 
 /*
- * 小程序版本号构造函数
-.* @return array
-*/
-function wxapp_version_parser($first_value, $second_value, $third_value) {
-	$version = array(
-		0 => intval($first_value),	
-		1 => intval($second_value),
-		2 => intval($third_value)	
-	);
-	if (empty($version[0]) && empty($version[1]) && empty($version[2])) {
-		return array(1, 0, 0);
-	}
-	if ($version[2] >= 10){
-		$version[1] += 1;
-		$version[2] = 0;
-	}
-	if ($version[1] >= 10) {
-		$version[0] += 1;
-		$version[1] = 0;
-	} 
-	return $version;
-}
-/*
  * 获取小程序信息(包括最新版本信息)
  * @params int $uniacid
- * @params int $versionid 
+ * @params int $versionid 不包含版本ID，默认获取最新版
  * @return array
 */
-function wxapp_fetch($uniacid) {
+function wxapp_fetch($uniacid, $version_id = '') {
 	$wxapp_info = array();
 	if (empty($uniacid)) {
 		return $wxapp_info;
@@ -153,12 +130,15 @@ function wxapp_fetch($uniacid) {
 	}
 	$wxapp_info['account_wxapp'] = $account_wxapp;
 	
-	$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
-	$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+	if (empty($version_id)) {
+		$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
+		$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+	} else {
+		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
+	}
 	if (!empty($wxapp_version_info)) {
-		$wxapp_info['last_version'] = $wxapp_version_info;
-		$wxapp_info['last_version_num'] = explode('.', $wxapp_version_info['version']);
-		$wxapp_info['all_versions'] = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', 'id DESC');
+		$wxapp_info['version'] = $wxapp_version_info;
+		$wxapp_info['version_num'] = explode('.', $wxapp_version_info['version']);
 	}
 	return  $wxapp_info;
 }

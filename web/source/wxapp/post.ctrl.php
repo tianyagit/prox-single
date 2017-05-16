@@ -22,14 +22,14 @@ if($do == 'post') {
 	$design_method = intval($_GPC['design_method']);
 	
 	if (checksubmit('submit')) {
-		if (empty($_GPC['name'])) {
-			iajax(1, '请填写小程序名称', url('wxapp/post'));
-		}
 		if ($design_method == WXAPP_TEMPLATE && empty($_GPC['select']['modules'])) {
 			iajax(2, '请选择要打包的模块应用', url('wxapp/post'));
 		}
 		//新建小程序公众号
 		if (empty($uniacid)) {
+			if (empty($_GPC['name'])) {
+				iajax(1, '请填写小程序名称', url('wxapp/post'));
+			}
 			$account_wxapp_data = array(
 				'name' => trim($_GPC['name']),
 				'account' => trim($_GPC['account']),
@@ -50,14 +50,13 @@ if($do == 'post') {
 		$wxapp_version = array(
 			'uniacid' => $uniacid,
 			'multiid' => '0',
-			'version' => implode('.', wxapp_version_parser($_GPC['version0'], $_GPC['version1'], $_GPC['version2'])),
+			'version' => $_GPC['version'],
 			'modules' => '',
 			'design_method' => $design_method,
 			'quickmenu' => '',
 			'createtime' => TIMESTAMP,
 			'template' => $design_method == WXAPP_TEMPLATE ? intval($_GPC['select']['template']) : 0,
 		);
-		
 		//多模块打包，每个版本对应一个微官网
 		if ($design_method == WXAPP_TEMPLATE) {
 			$multi_data = array(
@@ -107,13 +106,6 @@ if($do == 'post') {
 	}
 	if (!empty($uniacid)) {
 		$wxapp_info = wxapp_fetch($uniacid);
-
-		$new_version = array();
-		if(!empty($wxapp_info['version'])){
-			$new_version = wxapp_version_parser($wxapp_info['version'][0], $wxapp_info['version'][1], $wxapp_info['version'][2]+1);
-		}
-	} else {
-		$new_version = wxapp_version_parser(1, 0, 0);
 	}
 	template('wxapp/create-post');
 }

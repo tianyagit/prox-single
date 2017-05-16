@@ -84,7 +84,7 @@ if ($do == 'add_module_version') {
 			}
 		}
 		$wxapp_info = wxapp_fetch($uniacid);
-		$wxapp_info = $wxapp_info['last_version'];
+		$wxapp_info = $wxapp_info['version'];
 		$new_version = array();
 		if (!empty($wxapp_info['version'])) {
 			$wxapp_info['version'] = explode('.', $wxapp_info['version']);

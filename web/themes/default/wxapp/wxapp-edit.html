@@ -10,7 +10,7 @@
 					<span class="wxapp-version">{$version_info['version']}</span>
 					<div class="pull-right">
 						<a href="{php echo url('wxapp/version/switch_version', array('uniacid' => $_GPC['uniacid']))}" class="color-default"><i class="wi wi-cut"></i>切换版本</a>
-						<a href="{php echo url('wxapp/post', array('uniacid' => $_GPC['uniacid']))}" class="color-default"><i class="wi wi-text"></i>设计新版本</a>
+						<a href="{php echo url('wxapp/post/design_method', array('uniacid' => $_GPC['uniacid']))}" class="color-default"><i class="wi wi-text"></i>设计新版本</a>
 						<a href="{php echo url('wxapp/display/display')}" class="color-default"><i class="wi wi-small-routine"></i>切换小程序</a>
 					</div>
 					<!--end头部信息-->
@@ -522,13 +522,13 @@
 		wxapp : "{php echo $_GPC['wxapp']}" == '' ? 'slide' : "{php echo $_GPC['wxapp']}",
 		success_url : "{php echo url('wxapp/version/edit', array('multiid' => $_GPC['multiid'], 'uniacid' => $_GPC['uniacid'], 'version_id' => $_GPC['version_id']))}",
 		showAccount_url : "{php echo url('wxapp/version/account_list')}",
-		selectAccount_url : "{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}",
+		selectAccount_url : "{php echo url('wxapp/version/save_connection', array('version_id' => $version_id))}",
 		get_categorys_url : "{php echo url('wxapp/version/get_categorys')}",
 		del_category_url : "{php echo url('wxapp/version/del_category')}",
 		save_category_url : "{php echo url('wxapp/version/save_category')}",
 		links: {
 			accountList: "{php echo url('wxapp/version/account_list')}",
-			saveConnection: "{php echo url('wxapp/version/save_connection', array('version_id' => $versionid))}",
+			saveConnection: "{php echo url('wxapp/version/save_connection', array('version_id' => $version_id))}",
 			getCategorys: "{php echo url('wxapp/version/get_categorys')}",
 			delCategory: "{php echo url('wxapp/version/del_category')}",
 			saveCategory: "{php echo url('wxapp/version/save_category')}",

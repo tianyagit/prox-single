@@ -1,6 +1,7 @@
 {template 'common/header'}
 <link rel="stylesheet" href="./resource/css/wxapp-icon.css">
 <div id="js-wxapp-create" ng-controller="MainCtrl" ng-cloak>
+{{wxappinfo}}
 	<div class="container">
 		<div class="caret-wxapp">
 			<form method="post" ng-submit="package()">
@@ -67,13 +68,19 @@
 						<div class="wxapp-content tab-content">
 							<div id="select" ng-show="createStep == 1">
 								<div class="form-defalut we7-form">
+									{if empty($uniacid)}
 									<div class="form-group">
 										<label for="" class="control-label col-sm-2">小程序名称</label>
 										<div class="form-controls col-sm-10">
 											<input type="text" name="name" ng-model="wxappinfo.name" class="form-control wxapp-name" placeholder="小程序名称">
 										</div>
 									</div>
-									{if empty($uniacid)}
+									<div class="form-group">
+										<label for="" class="control-label col-sm-2">小程序描述</label>
+										<div class="form-controls col-sm-10">
+											<input type="text" name="description" ng-model="wxappinfo.description" class="form-control wxapp-name" placeholder="版本描述">
+										</div>
+									</div>
 									<div class="form-group">
 										<label for="" class="control-label col-sm-2">小程序账号</label>
 										<div class="form-controls col-sm-10">
@@ -98,23 +105,18 @@
 											<input type="text" name="secret" value="" ng-model="wxappinfo.appsecret" class="form-control wxapp-name" placeholder="AppSecret">
 										</div>
 									</div>
+									{else}
+									<div class="form-group">
+										<label for="" class="control-label col-sm-2">版本描述</label>
+										<div class="form-controls col-sm-10">
+											<input type="text" name="description" ng-model="wxappinfo.description" class="form-control wxapp-name" placeholder="版本描述">
+										</div>
+									</div>
 									{/if}
 									<div class="form-group">
-										<label class="control-label col-sm-2">版本号</label>
-										<div class="form-controls col-sm-1">
-											<input type="number" name="version0" min="0" max="100" ng-model="wxappinfo.version[0]" class="form-control wxapp-version version0">
-										</div>
-										<div class="form-controls pull-left">
-											<p class="form-control-static wxapp-version">.</p>
-										</div>
-										<div class="form-controls col-sm-1">
-											<input type="number" name="version1" min="0" max="100" ng-model="wxappinfo.version[1]" class="form-control wxapp-version version1">
-										</div>
-										<div class="form-controls pull-left">
-											<p class="form-control-static wxapp-version">.</p>
-										</div>
-										<div class="form-controls col-sm-1">
-											<input type="number" name="version2" min="0" max="100" ng-model="wxappinfo.version[2]" class="form-control wxapp-version version2">
+										<label for="" class="control-label col-sm-2">版本号</label>
+										<div class="form-controls col-sm-10">
+											<input type="text" name="version" ng-model="wxappinfo.version" class="form-control wxapp-name" placeholder="版本号，只能是字母、数字，例如: v1.0.1">
 										</div>
 									</div>
 									<div class="form-group">
@@ -308,9 +310,15 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="" class="control-label col-sm-2">描述</label>
+										<div class="form-controls col-sm-10">
+											<p class="form-control-static" ng-bind="wxappinfo.description"></p>
+										</div>
+									</div>
+									<div class="form-group">
 										<label class="control-label col-sm-2">版本号</label>
 										<div class="form-controls col-sm-10">
-											<p class="form-control-static">V {{wxappinfo.version[0]}}.{{wxappinfo.version[1]}}.{{wxappinfo.version[2]}}</p>
+											<p class="form-control-static">{{wxappinfo.version}}</p>
 										</div>
 									</div>
 									<div class="form-group">
@@ -380,7 +388,6 @@ require(['fileUploader','underscore'], function(uploader){
 		'uniacid' : "{$uniacid}",
 		'designMethod' : "{$design_method}",
 		'wxappPostUrl' : "{php echo url('wxapp/post', array('design_method' => $design_method))}",
-		'version' : {php echo json_encode($new_version)},
 		'token' : "{$_W['token']}",
 	});
 	angular.bootstrap($('#js-wxapp-create'), ['wxApp']);
