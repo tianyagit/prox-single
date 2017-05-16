@@ -113,6 +113,7 @@ define('CACHE_KEY_MODULE_INFO', 'module_info:%s');
 define('CACHE_KEY_ACCOUNT_MODULES', 'unimodules:%s:%s');
 define('CACHE_KEY_ACCOUNT_MODULES_BINDING', 'unimodules:binding:%s');
 define('CACHE_KEY_MEMBER_INFO', 'memberinfo:%s');
+define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 
 define('MODULE_SUPPORT_WXAPP', 2);
 define('MODULE_SUPPORT_ACCOUNT', 2);

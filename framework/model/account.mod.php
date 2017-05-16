@@ -745,6 +745,41 @@ function uni_account_rank_top($uniacid) {
 	return true;
 }
 
+function uni_account_last_switch() {
+	global $_W, $_GPC;
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = (array)cache_load($cache_key);
+	if (strexists($_W['siteurl'], 'c=wxapp')) {
+		$uniacid = $cache_lastaccount['wxapp'];
+	} else {
+		$uniacid = $cache_lastaccount['account'];
+	}
+	return $uniacid;
+}
+
+/**
+ * 切换公众号时，保留最后一次操作的小程序，以便点公众号时再切换回
+ */
+function uni_account_save_switch($uniacid) {
+	global $_W, $_GPC;
+	if (empty($_GPC['__switch'])) {
+		$_GPC['__switch'] = random(5);
+	}
+	
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = cache_load($cache_key);
+	if (empty($cache_lastaccount)) {
+		$cache_lastaccount = array(
+			'account' => $uniacid,
+		);
+	} else {
+		$cache_lastaccount['account'] = $uniacid;
+	}
+	cache_write($cache_key, $cache_lastaccount);
+	isetcookie('__switch', $_GPC['__switch']);
+	return true;
+}
+
 /**
  * 创建子公众号
  * @param int $uniacid 指定统一公号

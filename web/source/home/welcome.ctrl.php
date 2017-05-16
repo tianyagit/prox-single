@@ -28,7 +28,7 @@ if ($do == 'platform') {
 		$modules = uni_modules();
 		$_W['current_module'] = $modules[$modulename];
 	}
-    $site = WeUtility::createModule($modulename);
+	$site = WeUtility::createModule($modulename);
 	if (!is_error($site)) {
 		$method = 'welcomeDisplay';
 		if(method_exists($site, $method)){

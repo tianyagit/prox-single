@@ -19,10 +19,8 @@ if($do == 'switch') {
 	if(empty($role)) {
 		itoast('操作失败, 非法访问.', '', 'error');
 	}
-	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
-	$cache_lastaccount = (array)cache_load($cache_key);
-	$cache_lastaccount['account'] = $uniacid;
-	cache_write($cache_key, $cache_lastaccount);
+	
+	uni_account_save_switch($uniacid);
 
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);

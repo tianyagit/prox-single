@@ -199,11 +199,22 @@ function wxapp_type($id) {
 /**
  * 切换小程序，保留最后一次操作的公众号，以便点公众号时再切换回
  */
-function wxapp_save_switch_status($uniacid) {
-	global $_W;
-	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
+function wxapp_save_switch($uniacid) {
+	global $_W, $_GPC;
+	if (empty($_GPC['__switch'])) {
+		$_GPC['__switch'] = random(5);
+	}
+	
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = cache_load($cache_key);
-	$cache_lastaccount['wxapp'] = $uniacid;
+	if (empty($cache_lastaccount)) {
+		$cache_lastaccount = array(
+			'wxapp' => $uniacid,
+		);
+	} else {
+		$cache_lastaccount['wxapp'] = $uniacid;
+	}
 	cache_write($cache_key, $cache_lastaccount);
+	isetcookie('__switch', $_GPC['__switch']);
 	return true;
 }

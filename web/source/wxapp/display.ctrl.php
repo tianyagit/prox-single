@@ -9,17 +9,27 @@ load()->model('account');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank');
+$dos = array('display', 'switch', 'rank', 'home');
 $do = in_array($do, $dos) ? $do : 'display';
 
-$uniacid = intval($_GPC['uniacid']);
-if (!empty($uniacid)) {
-	$wxapp_info = wxapp_fetch($uniacid);
-	if (empty($wxapp_info)) {
-		itoast('小程序不存在', referer(), 'error');
+if ($do == 'rank' || $do == 'switch') {
+	$uniacid = intval($_GPC['uniacid']);
+	if (!empty($uniacid)) {
+		$wxapp_info = wxapp_fetch($uniacid);
+		if (empty($wxapp_info)) {
+			itoast('小程序不存在', referer(), 'error');
+		}
 	}
 }
 
+if ($do == 'home') {
+	if (empty($_W['uniacid'])) {
+		$do = 'display';
+	} else {
+		$uniacid = $_W['uniacid'];
+		$do = 'switch';
+	}
+}
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
@@ -73,7 +83,7 @@ if ($do == 'display') {
 	$pager = pagination($total, $pindex, $psize);
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
-	wxapp_save_switch_status($uniacid);
+	wxapp_save_switch($uniacid);
 	header('Location: ' . url('wxapp/version/edit', array('multiid' => $wxapp_info['version']['multiid'], 'uniacid' => $uniacid, 'version_id' => $wxapp_info['version']['id'])));
 	exit;
 } elseif ($do == 'rank') {
