@@ -38,13 +38,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 	if (empty($exist)) {
 		iajax(1, '公众号不存在', '');
 	}
-	if (!empty($_W['isfounder'])) {
-		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account'));
-		pdo_update('uni_account', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid));
-	}else {
-		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account_users'));
-		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
-	}
+	uni_account_rank_top($uniacid);
 	iajax(0, '更新成功！', '');
 }
 
