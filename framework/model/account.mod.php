@@ -729,6 +729,23 @@ function uni_update_week_stat() {
 }
 
 /**
+ * 将公众号置顶
+ * @param int $uniacid
+ * @param int $rank
+ */
+function uni_account_rank_top($uniacid) {
+	global $_W;
+	if (!empty($_W['isfounder'])) {
+		$max_rank = pdo_getcolumn('uni_account', array(), 'max(rank)');
+		pdo_update('uni_account', array('rank' => ($max_rank + 1)), array('uniacid' => $uniacid));
+	}else {
+		$max_rank = pdo_getcolumn('uni_account_users', array('uid' => $_W['uid']), 'max(rank)');
+		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank'] + 1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
+	}
+	return true;
+}
+
+/**
  * 创建子公众号
  * @param int $uniacid 指定统一公号
  * @param array $account 子公号信息

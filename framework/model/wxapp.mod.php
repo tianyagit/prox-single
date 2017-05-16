@@ -195,3 +195,15 @@ function wxapp_type($id) {
 	}
 	return $result;
 }
+
+/**
+ * 切换小程序，保留最后一次操作的公众号，以便点公众号时再切换回
+ */
+function wxapp_save_switch_status($uniacid) {
+	global $_W;
+	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
+	$cache_lastaccount = cache_load($cache_key);
+	$cache_lastaccount['wxapp'] = $uniacid;
+	cache_write($cache_key, $cache_lastaccount);
+	return true;
+}
