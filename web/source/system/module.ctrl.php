@@ -46,22 +46,6 @@ if ($do == 'get_upgrade_info') {
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	$module = cloud_m_upgradeinfo($module_name);
-	$module['site_branch'] = $module['branches'][$module['version']['branch_id']];
-	$module['from'] = 'cloud';
-	if (!empty($module['branches'])) {
-		foreach ($module['branches'] as &$branch) {
-			if ($branch['displayorder'] < $module['site_branch']['displayorder'] || ($module['site_branch']['displayorder'] == $module['site_branch']['displayorder'] && $module['site_branch']['id'] > intval($branch['id']))) {
-				unset($module['branches'][$branch['id']]);
-				continue;
-			}
-			$branch['id'] = intval($branch['id']);
-			$branch['displayorder'] = intval($branch['displayorder']);
-			$branch['day'] = intval(date('d', $branch['version']['createtime']));
-			$branch['month'] = date('Y.m', $branch['version']['createtime']);
-			$branch['hour'] = date('H:i', $branch['version']['createtime']);
-		}
-		unset($branch);
-	}
 	iajax(0, $module, '');
 }
 

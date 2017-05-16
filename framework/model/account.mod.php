@@ -37,31 +37,28 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 /**
  * 获取当前用户可操作的所有公众号
  * @param int $uid 指定操作用户
- * @param int $app_only 指定是否只获取公众号不获取小程序
  * @return array
  */
-function uni_owned($uid = 0,$app_only = false) {	
+function uni_owned($uid = 0) {
 	global $_W;
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
+	$uniaccounts = array();
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	if ($app_only) {
-		$sql = "SELECT * FROM " . tablename(account_wechats) . " as a LEFT JOIN " . tablename("account") . " as b
-			ON a.acid=b.acid WHERE b.type in (1,3) AND b.isdeleted=0";
-	} else {
-		$sql = "SELECT * FROM " . tablename(uni_account) . " as b WHERE b.isdeleted=0";
+	
+	$sql = "SELECT * FROM " . tablename('uni_account') . " AS a LEFT JOIN " . 
+			tablename('account') . " AS b ON a.uniacid = b.uniacid WHERE b.type IN (".ACCOUNT_TYPE_OFFCIAL_NORMAL.", ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
+	$orderby = " ORDER BY `b`.`uniacid` DESC";
+	if (!in_array($uid, $founders)) {
+		$uniacids = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account_users') . " WHERE uid = :uid", array(':uid' => $uid), 'uniacid');
+		if (!empty($uniacids)) {
+			$sql .= " AND a.uniacid IN (" . implode(',', array_keys($uniacids)) . ")";
+		}
 	}
-	$orderby = " ORDER BY b.uniacid DESC";
-	if (in_array($uid, $founders)) {
-		$sql.= $orderby;
-		$accounts = pdo_fetchall($sql, array());
-	} else {
-		$subsql = "SELECT uniacid FROM " . tablename("uni_account_users")." as c where c.uid=:uid";
-		$sql.= " AND b.uniacid in ($subsql)" . $orderby;
-		$param[':uid'] = $_W['uid'];
-		$accounts = pdo_fetchall($sql, $param);
-	}
-	return $accounts;
+	$uniaccounts = pdo_fetchall($sql);
+	
+	return $uniaccounts;
 }
+
 /**
  * 获取某一公众号的主管理员信息
  * @param int $uniacid  指定的公众号
@@ -130,32 +127,33 @@ function uni_fetch($uniacid = 0) {
 	return $account;
 }
 
-/**  
- * 获取当前公号下所有安装模块及模块信息 
- * 公众号的权限是owner所有套餐内的全部模块权限 
+/**
+ * 获取指定公号下所有安装模块及模块信息
+ * 公众号的权限是owner所有套餐内的全部模块权限
+ * @param int $uniacid 公众号id
  * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
  */
-function uni_modules($enabled = true) {
+
+function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	global $_W;
 	load()->model('user');
 	load()->model('module');
-
-	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $_W['uniacid'], $enabled);
+	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $uniacid, $enabled);
 	$modules = cache_load($cachekey);
 
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
-		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $_W['uniacid'], 'role' => 'owner'), 'uid');
-		$condition = "";
+		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+		$condition = "WHERE 1 ";
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
-			$packageids = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array('groupid'), 'groupid');
+			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
 
 			if (!in_array('-1', $packageids)) {
-				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$_W['uniacid']}'");
+				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$uniacid}'");
 				if (!empty($uni_groups)) {
 					foreach ($uni_groups as $group) {
 						$group_module = (array)iunserializer($group['modules']);
@@ -165,14 +163,15 @@ function uni_modules($enabled = true) {
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
 				if (!empty($modules)) {
-					$condition = " WHERE a.name IN ('" . implode("','", $modules) . "')";
+					$condition = " AND a.name IN ('" . implode("','", $modules) . "')";
 				} else {
-					$condition = " WHERE a.name = ''";
+					$condition = " AND a.name = ''";
 				}
 			}
 		}
+		$condition .= $enabled ?  " AND b.enabled = 1" : "";
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, a.mid DESC";
-		$modules = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'name');
+		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
 	}
 
@@ -187,6 +186,16 @@ function uni_modules($enabled = true) {
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
 	return $module_list;
+}
+
+/**
+ * 获取当前公号下所有安装模块及模块信息
+ * @param boolean $enabled 是否只显示可用模块
+ * @return array 模块列表
+ */
+function uni_modules($enabled = true) {
+	global $_W;
+	return uni_modules_by_uniacid($_W['uniacid'], $enabled);
 }
 
 function uni_modules_app_binding() {
