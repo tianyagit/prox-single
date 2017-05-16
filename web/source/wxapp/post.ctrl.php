@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('design_method', 'post', 'get_wxapp_modules', 'getpackage', 'get_module_entries');
+$dos = array('design_method', 'post', 'get_wxapp_modules', 'getpackage');
 $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
 
