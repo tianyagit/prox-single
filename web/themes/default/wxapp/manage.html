@@ -149,8 +149,8 @@ require(['underscore'], function() {
 		'wxapp_modules' : {php echo !empty($wxapp_modules) ? json_encode($wxapp_modules) : 'null'},
 		'version_exist': {php echo !empty($version_exist) ? json_encode($version_exist) : 'null'},
 		'links': {
-			'edit_version': "{php echo url('wxapp/manage/edit_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid'], 'account_type' => 4))}",
-			'del_version': "{php echo url('wxapp/manage/del_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid'], 'account_type' => 4))}",
+			'edit_version': "{php echo url('wxapp/manage/edit_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}",
+			'del_version': "{php echo url('wxapp/manage/del_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}",
 		},
 	});
 	angular.bootstrap($('#js-account-manage-wxapp'), ['wxApp']);

@@ -20,8 +20,8 @@
 		<ul class="keywords-list">
 		</ul>
 		<div class="we7-select-msg">
-			<ul class="tab-navs">
-				<li class="add"><i class="wi wi-registersite"></i>添加回复</li>
+			<div class="add" onclick="$(this).next('ul').removeClass('hide');"><i class="wi wi-registersite"></i>添加回复</div>
+			<ul class="tab-navs hide">
 				<li class="tab-nav tab-appmsg active {if $options['news']}hidden{/if}">
 					<a href="javascript:void(0);" onclick="select_mediaid('news');">&nbsp;<i class="wi wi-appmsg"></i><span class="msg-tab-title">图文</span></a>
 				</li>

@@ -68,9 +68,14 @@ if ($do == 'display') {
 			$params[':type'] = $m;
 		}
 		if (!empty($_GPC['keyword'])) {
-			if ($_GPC['searchType'] == 'keyword') {
+			if ($_GPC['search_type'] == 'keyword') {
+				//$rids = reply_keywords_search(" content LIKE '%{$_GPC['keyword']}%'",array());
 				$rids = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
-				$condition .= " AND id IN (" . implode(",",array_keys($rids)) . ")";
+				if (!empty($rids)) {
+					$condition .= " AND id IN (" . implode(",",array_keys($rids)) . ")";
+				} else {
+					$condition .= " AND 1=0";
+				}
 			} else {
 				$condition .= ' AND `name` LIKE :keyword';
 				$params[':keyword'] = "%{$_GPC['keyword']}%";

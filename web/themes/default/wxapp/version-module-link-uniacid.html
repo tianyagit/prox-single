@@ -47,7 +47,6 @@
 	</div>
 </div>
 <script type="text/javascript">
-<!--
 	$('.js-select-link-account').click(function(){
 		var modulename = $(this).data('module');
 		$.getJSON('./index.php?c=wxapp&a=version&do=search_link_account&module_name='+$(this).data('module'), function(data){
@@ -76,7 +75,5 @@
 			$('#show-account').modal();
 		});
 	});
-
-//-->
 </script>
 {template 'common/footer'}
