@@ -24,6 +24,10 @@ if ($do == 'platform') {
 	template('home/welcome');
 } elseif ($do == 'ext') {
 	$modulename = $_GPC['m'];
+	$cloud_m_info = cloud_m_info($modulename);
+	if (is_error($cloud_m_info)) {
+		setcookie('private_app_notice', $cloud_m_info['message']);
+	}
 	if (!empty($modulename)) {
 		$modules = uni_modules();
 		$_W['current_module'] = $modules[$modulename];
