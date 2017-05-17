@@ -36,6 +36,7 @@
 							<option value="keyword" {if $_GPC['search_type'] == 'keyword'}selected{/if}>关键字</option>
 							<option value="rule" {if $_GPC['search_type'] == 'rule'}selected{/if}>规则名</option>
 						</select>
+						<input name="type" type="hidden" value="{$_GPC['type']}">
 						<input class="form-control" name="keyword" type="text" value="{$_GPC['keyword']}" placeholder="输入规则名称或关键字名称">
 						<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 					</div>
