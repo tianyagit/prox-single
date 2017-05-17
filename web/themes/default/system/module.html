@@ -317,7 +317,7 @@
 		<a href="javascript:;" ng-click="changeShow('plugin')" class="btn " ng-class="{'active' : show == 'plugin'}" ng-show="moduleinfo.main_module == '' && moduleinfo.plugin_list != undefined && moduleinfo.plugin_list != ''">模块子应用</a>
 		<a href="javascript:;" ng-click="changeShow('group')" class="btn " ng-class="{'active' : show == 'group'}">应用权限组</a>
 		{if !empty($module_subscribes)}
-		<a href="javascript:;" ng-click="changeShow('subscribe')" class="btn " ng-class="{'active' : show == 'subscribe'}">公众平台消息处理选项</a>
+		<a href="javascript:;" ng-click="changeShow('subscribe')" class="btn " ng-class="{'active' : show == 'subscribe'}">订阅消息</a>
 		{/if}
 		<a href="javascript:;" ng-click="changeShow('upgrade')" class="btn " ng-class="{'active' : show == 'upgrade'}" ng-show="checkupgrade == 1">升级</a>
 	</div>
@@ -518,7 +518,7 @@
 		<div class="panel-body">
 			<ul>
 				{loop $module_subscribes $subscribe}
-				<li>{$mtypes[$subscribe]} <lable ng-if="subscribe == 2" class="label label-danger">通讯失败</lable>  </li>
+				<li>{$mtypes[$subscribe]} <label ng-if="subscribe == 2" class="label label-danger">通讯失败</label>  </li>
 				{/loop}
 			</ul>
 		</div>
