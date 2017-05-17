@@ -22,6 +22,10 @@ if($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$design_method = intval($_GPC['design_method']);
 	
+	if ($design_method == 2) {
+		itoast('拼命开发中。。。', referer(), 'info');
+	}
+	
 	if (checksubmit('submit')) {
 		if ($design_method == WXAPP_TEMPLATE && empty($_GPC['select']['modules'])) {
 			iajax(2, '请选择要打包的模块应用', url('wxapp/post'));
