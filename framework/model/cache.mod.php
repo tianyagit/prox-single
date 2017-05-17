@@ -413,3 +413,10 @@ function cache_build_module_info($module_name) {
 	cache_delete(cache_system_key(CACHE_KEY_MODULE_INFO, $module_name));
 	cache_delete(cache_system_key(CACHE_KEY_MODULE_SETTING, $_W['uniacid'], $module_name));
 }
+
+/**
+ * 更新功能权限组
+ */
+function cache_build_uni_group() {
+	cache_delete(cache_system_key(CACHE_KEY_UNI_GROUP));
+}
