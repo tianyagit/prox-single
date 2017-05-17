@@ -15,12 +15,16 @@ $_W['page']['title'] = '小程序 - 新建版本';
 
 if ($do == 'design_method') {
 	$uniacid = intval($_GPC['uniacid']);
-	template('wxapp/design_method');
+	template('wxapp/design-method');
 }
 
 if($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$design_method = intval($_GPC['design_method']);
+	
+	if ($design_method == 2) {
+		itoast('拼命开发中。。。', referer(), 'info');
+	}
 	
 	if (checksubmit('submit')) {
 		if ($design_method == WXAPP_TEMPLATE && empty($_GPC['select']['modules'])) {
@@ -83,7 +87,7 @@ if($do == 'post') {
 				if (empty($module) || $module['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
 					continue;
 				}
-				$select_modules[] = array('name' => $module['name'], 'version' => $module['version']);
+				$select_modules[$module['name']] = array('name' => $module['name'], 'version' => $module['version']);
 			}
 			$wxapp_version['modules'] = serialize($select_modules);
 		}
@@ -115,7 +119,7 @@ if($do == 'post') {
 	if (!empty($uniacid)) {
 		$wxapp_info = wxapp_fetch($uniacid);
 	}
-	template('wxapp/create-post');
+	template('wxapp/post');
 }
 
 //获取所有支持小程序的模块
