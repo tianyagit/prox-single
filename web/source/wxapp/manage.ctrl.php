@@ -25,25 +25,15 @@ if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER
 }
 
 if ($do == 'display') {
-	if (empty($acid)) {
-		itoast('参数错误！', referer(), 'error');
-	}
-	$account = account_fetch($acid);
+	$account = uni_fetch($uniacid);
 	if (is_error($account)) {
-		itoast($account['message'], url('account/manage', array('account_type' => 4)), 'error');
+		itoast($account['message'], url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL)), 'error');
 	} else {
 		$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $account['uniacid']));
 		$version_exist = wxapp_fetch($account['uniacid']);
 		if (!empty($version_exist)) {
 			$wxapp_version_lists = wxapp_version_all($account['uniacid']);
-			foreach ($wxapp_version_lists as &$modules_val) {
-				$modules_val['modules'] = iunserializer($modules_val['modules']);
-				foreach ($modules_val['modules'] as &$module_val) {
-					$module_val['module_info'] = module_fetch($module_val['name']);
-				}
-			}
-			unset($module_val, $modules_val);
-			$wxapp_modules = wxapp_supoort_wxapp_modules();
+			$wxapp_modules = wxapp_support_wxapp_modules();
 		}
 	}
 	template('wxapp/manage');
@@ -60,15 +50,12 @@ if ($do == 'edit_version') {
 	}
 
 	$have_permission = false;
-	$wxapp_modules = wxapp_supoort_wxapp_modules();
-	$modulename_arr = array();
+	$wxapp_modules = wxapp_support_wxapp_modules();
+	$supoort_modulenames = array_keys($wxapp_modules);
 	$new_module_data = array();
-	foreach ($wxapp_modules as $module) {
-		$modulename_arr[] = $module['name'];
-	}
-	if (intval($_GPC['version_info']['design_method']) == 2) {
+	if (intval($_GPC['version_info']['design_method']) == WXAPP_TEMPLATE) {
 		foreach ($_GPC['version_info']['modules'] as $module_val) {
-			if (!in_array($module_val['name'], $modulename_arr)) {
+			if (!in_array($module_val['name'], $supoort_modulenames)) {
 				iajax(1, '没有模块：' . $module_val['name'] . '的权限！');
 			} else {
 				$new_module_data[] = array(
@@ -78,10 +65,10 @@ if ($do == 'edit_version') {
 			}
 		}
 	}
-	if (intval($_GPC['version_info']['design_method']) == 3) {
+	if (intval($_GPC['version_info']['design_method']) == WXAPP_MODULE) {
 		$module_name = trim($_GPC['version_info']['modules'][0]['name']);
 		$module_version = trim($_GPC['version_info']['modules'][0]['version']);
-		$have_permission = in_array($module_name, $modulename_arr);
+		$have_permission = in_array($module_name, $supoort_modulenames);
 		if (!empty($have_permission)) {
 			$new_module_data[] = array(
 				'name' => $module_name,

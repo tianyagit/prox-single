@@ -13,6 +13,11 @@ $dos = array('platform', 'ext', 'get_fans_kpi', 'get_last_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'platform') {
+
+	$last_uniacid = uni_account_last_switch();
+	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
+		uni_account_switch($uniacid,  url('home/welcome'));
+	}
 	define('FRAME', 'account');
 
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
@@ -24,6 +29,10 @@ if ($do == 'platform') {
 	template('home/welcome');
 } elseif ($do == 'ext') {
 	$modulename = $_GPC['m'];
+	$cloud_m_info = cloud_m_info($modulename);
+	if (is_error($cloud_m_info)) {
+		setcookie('private_app_notice', $cloud_m_info['message']);
+	}
 	if (!empty($modulename)) {
 		$modules = uni_modules();
 		$_W['current_module'] = $modules[$modulename];

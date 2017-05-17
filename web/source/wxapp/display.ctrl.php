@@ -31,13 +31,14 @@ if ($do == 'display') {
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($_W['isfounder'])) {
-		$condition .= " WHERE a.default_acid <> 0 AND b.isdeleted <> 1 AND b.type = 4";
+		$condition .= " WHERE a.default_acid <> 0 AND b.isdeleted <> 1 AND b.type = " . ACCOUNT_TYPE_APP_NORMAL;
 		$order_by = " ORDER BY a.`rank` DESC";
 	} else {
-		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type = 4";
+		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type = " . ACCOUNT_TYPE_APP_NORMAL;
 		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC";
 	}
+
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
@@ -75,6 +76,17 @@ if ($do == 'display') {
 	$pager = pagination($total, $pindex, $psize);
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
+	$module_name = $_GPC['module'];
+	$version_id = intval($_GPC['version_id']);
+	
+	if (!empty($module_name) && !empty($version_id)) {
+		$version_info = wxapp_version($version_id);
+		if (empty($version_id) || empty($version_info['modules'][$module_name])) {
+			itoast('版本信息错误');
+		}
+		$uniacid = !empty($version_info['modules'][$module_name]['account']['uniacid']) ? $version_info['modules'][$module_name]['account']['uniacid'] : $version_info['uniacid'];
+		uni_account_switch($uniacid, url('home/welcome/ext/', array('m' => $module_name)));
+	}
 	wxapp_save_switch($uniacid);
 	header('Location: ' . url('wxapp/version/manage', array('version_id' => $wxapp_info['version']['id'])));
 	exit;

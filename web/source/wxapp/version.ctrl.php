@@ -13,6 +13,14 @@ $do = in_array($do, $dos) ? $do : 'edit';
 $_W['page']['title'] = '小程序 - 管理';
 
 $uniacid = intval($_GPC['uniacid']);
+$version_id = intval($_GPC['version_id']);
+if (!empty($uniacid)) {
+	$wxapp_info = wxapp_fetch($uniacid);
+}
+if (!empty($version_id)) {
+	$version_info = wxapp_version($version_id);
+	$wxapp_info = wxapp_fetch($version_info['uniacid']);
+}
 
 if ($do == 'display') {
 	$wxapp_version_list = wxapp_version_all($uniacid);
@@ -20,11 +28,6 @@ if ($do == 'display') {
 }
 
 if ($do == 'manage') {
-	$version_id = intval($_GPC['version_id']);
-	
-	$version_info = wxapp_version($version_id);
-	$wxapp_info = wxapp_fetch($version_info['uniacid']);
-	
 	if ($version_info['design_method'] == WXAPP_TEMPLATE) {
 		$version_site_info = wxapp_site_info($version_info['multiid']);
 	}
@@ -32,25 +35,8 @@ if ($do == 'manage') {
 	template('wxapp/version-manage');
 }
 
-if ($do == 'account_list') {
-	//查询当前用户所有公众号
-	$accounts = uni_owned();
-	//筛选有模块权限的公众号
-	foreach($accounts as $key =>$val){
-		$account_module = pdo_get('uni_account_modules',array('module' => $_GPC['module'],'enabled' => '1','uniacid'=>$val['uniacid']),array('uniacid'), 'uniacid');
-		if(empty($account_module)){
-			continue;
-		}
-		$val['thumb'] = tomedia('headimg_'.$val['acid']. '.jpg').'?time='.time();
-		$account_list[]=$val;
-	}
-	iajax(0, $account_list, '');
-}
-
 if ($do == 'module_link_uniacid') {
-	$version_id = intval($_GPC['version_id']);
 	$module_name = $_GPC['module_name'];
-	$uniacid = $_GPC['uniacid'];
 	
 	$version_info = wxapp_version($version_id);
 

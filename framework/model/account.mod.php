@@ -246,48 +246,42 @@ function uni_modules_app_binding() {
  */
 function uni_groups($groupids = array()) {
 	load()->model('module');
-	$condition = ' WHERE uniacid = 0';
-	if (!is_array($groupids)) {
-		$groupids = array($groupids);
-	}
-	if (!empty($groupids)) {
-		foreach ($groupids as $i => $row) {
-			$groupids[$i] = intval($row);
+	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
+	$list = cache_load($cachekey);
+	if (empty($list)) {
+		$condition = ' WHERE uniacid = 0';
+		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
+		if (in_array('-1', $groupids)) {
+			$list[-1] = array('id' => -1, 'name' => '所有服务');
 		}
-		unset($row);
-		$condition .= " AND id IN (" . implode(',', $groupids) . ")";
-	}
-	$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
-	if (in_array('-1', $groupids)) {
-		$list[-1] = array('id' => -1, 'name' => '所有服务');
-	}
-	if (in_array('0', $groupids)) {
-		$list[0] = array('id' => 0, 'name' => '基础服务');
-	}
-	if (!empty($list)) {
-		foreach ($list as $k=>&$row) {
-			$row['wxapp'] = array();
-			if (!empty($row['modules'])) {
-				$modules = iunserializer($row['modules']);
-				if (is_array($modules)) {
-					$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
-					$row['modules'] = array();
-					if (!empty($module_list)) {
-						foreach ($module_list as $key => &$module) {
-							$module = module_fetch($key);
-							if ($module['wxapp_support'] == 2) {
-								$row['wxapp'][$module['name']] = $module;
-							}
-							if ($module['app_support'] == 2) {
-								if (!empty($module['main_module'])) {
-									continue;
+		if (in_array('0', $groupids)) {
+			$list[0] = array('id' => 0, 'name' => '基础服务');
+		}
+		if (!empty($list)) {
+			foreach ($list as $k=>&$row) {
+				$row['wxapp'] = array();
+				if (!empty($row['modules'])) {
+					$modules = iunserializer($row['modules']);
+					if (is_array($modules)) {
+						$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
+						$row['modules'] = array();
+						if (!empty($module_list)) {
+							foreach ($module_list as $key => &$module) {
+								$module = module_fetch($key);
+								if ($module['wxapp_support'] == 2) {
+									$row['wxapp'][$module['name']] = $module;
 								}
-								$row['modules'][$module['name']] = $module;
-								if (!empty($module['plugin'])) {
-									$group_have_plugin = array_intersect($module['plugin'], array_keys($module_list));
-									if (!empty($group_have_plugin)) {
-										foreach ($group_have_plugin as $plugin) {
-											$row['modules'][$plugin] = module_fetch($plugin);
+								if ($module['app_support'] == 2) {
+									if (!empty($module['main_module'])) {
+										continue;
+									}
+									$row['modules'][$module['name']] = $module;
+									if (!empty($module['plugin'])) {
+										$group_have_plugin = array_intersect($module['plugin_list'], array_keys($module_list));
+										if (!empty($group_have_plugin)) {
+											foreach ($group_have_plugin as $plugin) {
+												$row['modules'][$plugin] = module_fetch($plugin);
+											}
 										}
 									}
 								}
@@ -295,17 +289,26 @@ function uni_groups($groupids = array()) {
 						}
 					}
 				}
-			}
 
-			if (!empty($row['templates'])) {
-				$templates = iunserializer($row['templates']);
-				if (is_array($templates)) {
-					$row['templates'] = pdo_fetchall("SELECT name, title FROM " . tablename('site_templates') . " WHERE name IN ('" . implode("','", array_keys($templates)) . "')", array(), 'name');
+				if (!empty($row['templates'])) {
+					$templates = iunserializer($row['templates']);
+					if (is_array($templates)) {
+						$row['templates'] = pdo_fetchall("SELECT name, title FROM " . tablename('site_templates') . " WHERE name IN ('" . implode("','", array_keys($templates)) . "')", array(), 'name');
+					}
 				}
 			}
 		}
+		cache_write($cachekey, $list);
 	}
-	return $list;
+	$group_list = array();
+	if (!empty($groupids)) {
+		foreach ($groupids as $id) {
+			$group_list[$id] = $list[$id];
+		}
+	} else {
+		$group_list = $list;
+	}
+	return $group_list;
 }
 
 /**
@@ -755,6 +758,16 @@ function uni_account_last_switch() {
 		$uniacid = $cache_lastaccount['account'];
 	}
 	return $uniacid;
+}
+
+function uni_account_switch($uniacid, $redirect = '') {
+	isetcookie('__uniacid', $uniacid, 7 * 86400);
+	isetcookie('__uid', $_W['uid'], 7 * 86400);
+	if (!empty($redirect)) {
+		header('Location: ' . $redirect);
+		exit;
+	}
+	return true;
 }
 
 /**

@@ -117,7 +117,7 @@ if($step == 1) {
 		$update['level'] = intval($_GPC['level']);
 		$update['key'] = trim($_GPC['key']);
 		$update['secret'] = trim($_GPC['secret']);
-		$update['type'] = 1;
+		$update['type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
 		$update['encodingaeskey'] = trim($_GPC['encodingaeskey']);
 		if (empty($acid)) {
 			$acid = account_create($uniacid, $update);
@@ -129,7 +129,7 @@ if($step == 1) {
 				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
 			}
 		} else {
-			pdo_update('account', array('type' => 1, 'hash' => ''), array('acid' => $acid, 'uniacid' => $uniacid));
+			pdo_update('account', array('type' => ACCOUNT_TYPE_OFFCIAL_NORMAL, 'hash' => ''), array('acid' => $acid, 'uniacid' => $uniacid));
 			unset($update['type']);
 			pdo_update('account_wechats', $update, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
@@ -141,7 +141,7 @@ if($step == 1) {
 		}
 		//当是认证服务号的时候设置权限到借用oauth中
 		$oauth = uni_setting($uniacid, array('oauth'));
-		if ($acid && !empty($update['key']) && !empty($update['secret']) && empty($oauth['oauth']['account']) && $update['level'] == 4) {
+		if ($acid && !empty($update['key']) && !empty($update['secret']) && empty($oauth['oauth']['account']) && $update['level'] == ACCOUNT_SERVICE_VERIFY) {
 			pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
 		}
 		cache_delete("unisetting:{$uniacid}");
