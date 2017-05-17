@@ -127,6 +127,6 @@ if($do == 'post') {
 
 //获取所有支持小程序的模块
 if($do == 'get_wxapp_modules') {
-	$wxapp_modules = wxapp_supoort_wxapp_modules();
+	$wxapp_modules = wxapp_support_wxapp_modules();
 	iajax(0, $wxapp_modules, '');
 }
