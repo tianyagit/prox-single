@@ -9,7 +9,7 @@ load()->model('account');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank', 'home');
+$dos = array('display', 'switch', 'rank');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'rank' || $do == 'switch') {
@@ -22,14 +22,6 @@ if ($do == 'rank' || $do == 'switch') {
 	}
 }
 
-if ($do == 'home') {
-	if (empty($_W['uniacid'])) {
-		$do = 'display';
-	} else {
-		$uniacid = $_W['uniacid'];
-		$do = 'switch';
-	}
-}
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
@@ -84,7 +76,7 @@ if ($do == 'display') {
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
 	wxapp_save_switch($uniacid);
-	header('Location: ' . url('wxapp/version/edit', array('multiid' => $wxapp_info['version']['multiid'], 'uniacid' => $uniacid, 'version_id' => $wxapp_info['version']['id'])));
+	header('Location: ' . url('wxapp/version/manage', array('version_id' => $wxapp_info['version']['id'])));
 	exit;
 } elseif ($do == 'rank') {
 	uni_account_rank_top($uniacid);

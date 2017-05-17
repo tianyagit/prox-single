@@ -140,13 +140,33 @@ function wxapp_version_all($uniacid) {
  * @param unknown $version_id
  */
 function wxapp_version($version_id) {
+	$version_info = array();
 	$version_id = intval($version_id);
+	
 	if (empty($version_id)) {
-		return array();
+		return $version_info;
 	}
+	
 	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	print_r($version_info);exit;
-	$modules_info = json_decode($version_info['modules'], true);
+	if (empty($version_info)) {
+		return $version_info;
+	}
+	if (!empty($version_info['modules'])) {
+		$version_info['modules'] = unserialize($version_info['modules']);
+		if (!empty($version_info['modules'])) {
+			foreach ($version_info['modules'] as $i => $module) {
+				if (!empty($module['uniacid'])) {
+					$account = uni_fetch($module['uniacid']);
+				}
+				$version_info['modules'][$i] = module_fetch($module['name']);
+				$version_info['modules'][$i]['account'] = $account;
+			}
+		}
+	}
+	if (!empty($version_info['quickmenu'])) {
+		$version_info['quickmenu'] = unserialize($version_info['quickmenu']);
+	}
+	return $version_info;
 }
 
 /**
@@ -170,4 +190,22 @@ function wxapp_save_switch($uniacid) {
 	cache_write($cache_key, $cache_lastaccount);
 	isetcookie('__switch', $_GPC['__switch']);
 	return true;
+}
+
+function wxapp_site_info($multiid) {
+	$site_info = array();
+	if (empty($multiid)) {
+		return array();
+	}
+	
+	$site_info['slide'] = pdo_getall('site_slide', array('multiid' => $multiid));
+	$site_info['nav'] = pdo_getall('site_nav', array('multiid' => $multiid));
+	if (!empty($site_info['nav'])) {
+		foreach($site_info['nav'] as &$nav) {
+			$nav['css'] = iunserializer($nav['css']);
+		}
+		unset($nav);
+	}
+	$site_info['recommend'] = pdo_getall('site_article', array('uniacid' => $_GPC['uniacid']));
+	return $site_info;
 }

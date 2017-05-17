@@ -9,7 +9,7 @@ define('FRAME', 'system');
 load()->model('system');
 load()->model('wxapp');
 
-$dos = array('delete', 'display', 'add_module_version', 'del_module_version', 'get_available_apps', 'getpackage');
+$dos = array('delete', 'display', 'edit_version', 'del_version', 'get_available_apps', 'getpackage');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $uniacid = intval($_GPC['uniacid']);
@@ -25,90 +25,83 @@ if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER
 }
 
 if ($do == 'display') {
+	if (empty($acid)) {
+		itoast('参数错误！', referer(), 'error');
+	}
 	$account = account_fetch($acid);
 	if (is_error($account)) {
 		itoast($account['message'], url('account/manage', array('account_type' => 4)), 'error');
 	} else {
-		$version_exist = pdo_get('wxapp_versions', array('uniacid' => $account['uniacid']));
-
-		if (!empty($version_exist) && ($version_exist['design_method'] != 3 || ((!empty($version_exist['multiid']) || !empty($version_exist['template']) || !empty($version_exist['quickmenu'])) && $version_exist['design_method'] == 3))) {
-			$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $account['uniacid']));
-			$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $account['uniacid']));
-		} else {
-			if (!empty($version_exist)) {
-				$wxapp_version_lists = pdo_getall('wxapp_versions', array('uniacid' => $account['uniacid']));
-				foreach ($wxapp_version_lists as &$module_val) {
-					$module_val['modules'] = iunserializer($module_val['modules']);
-					$module_val['modules'][0]['module_info'] = module_fetch($module_val['modules'][0]['name']);
-					$module_val['modules'] = $module_val['modules'][0];
+		$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $account['uniacid']));
+		$version_exist = wxapp_fetch($account['uniacid']);
+		if (!empty($version_exist)) {
+			$wxapp_version_lists = wxapp_version_all($account['uniacid']);
+			foreach ($wxapp_version_lists as &$modules_val) {
+				$modules_val['modules'] = iunserializer($modules_val['modules']);
+				foreach ($modules_val['modules'] as &$module_val) {
+					$module_val['module_info'] = module_fetch($module_val['name']);
 				}
-				unset($module_val);
-			} else {
-				$wxapp_version_lists = array();
 			}
+			unset($module_val, $modules_val);
 			$wxapp_modules = wxapp_supoort_wxapp_modules();
 		}
 	}
 	template('wxapp/manage');
 }
 
-if ($do == 'add_module_version') {
-	if (empty($_GPC['module']) || !is_array($_GPC['module'])) {
-		iajax(1, '模块数据错误！');
+if ($do == 'edit_version') {
+	if (empty($_GPC['version_info']) || !is_array($_GPC['version_info']) || empty($_GPC['version_info']['modules'])) {
+		iajax(1, '数据错误！');
 	}
+	$versionid = intval($_GPC['version_info']['id']);
+	$version_exist = wxapp_fetch($uniacid, $versionid);
+	if(empty($version_exist)) {
+		iajax(1, '版本不存在或已删除！');
+	}
+
 	$have_permission = false;
 	$wxapp_modules = wxapp_supoort_wxapp_modules();
 	$modulename_arr = array();
+	$new_module_data = array();
 	foreach ($wxapp_modules as $module) {
 		$modulename_arr[] = $module['name'];
 	}
-	$add_module = trim($_GPC['module']['name']);
-	$module_version = trim($_GPC['module']['version']);
-	$have_permission = in_array($add_module, $modulename_arr);
-	if (!empty($have_permission)) {
-		//判断该模块是否已存在
-		$wxapp_all_versions = wxapp_version_all($uniacid);
-		if (!empty($wxapp_all_versions)) {
-			foreach ($wxapp_all_versions as $version_val) {
-				if (!empty($version_val['modules'])) {
-					$have_modules = array();
-					$modules_info = iunserializer($version_val['modules']);
-					foreach ($modules_info as $info_val) {
-						if ($info_val['name'] == $add_module) {
-							iajax(1, '该模块版本已存在！或删除该模块版本后新建！');
-							break;
-						}
-					}
-					
-				}
+	if (intval($_GPC['version_info']['design_method']) == 2) {
+		foreach ($_GPC['version_info']['modules'] as $module_val) {
+			if (!in_array($module_val['name'], $modulename_arr)) {
+				iajax(1, '没有模块：' . $module_val['name'] . '的权限！');
+			} else {
+				$new_module_data[] = array(
+					'name' => $module_val['name'],
+					'version' => $module_val['version']
+				);
 			}
 		}
-		$wxapp_info = wxapp_fetch($uniacid);
-		$wxapp_info = $wxapp_info['version'];
-		$new_version = array();
-		if (!empty($wxapp_info['version'])) {
-			$wxapp_info['version'] = explode('.', $wxapp_info['version']);
-			$new_version = wxapp_version_parser($wxapp_info['version'][0], $wxapp_info['version'][1], $wxapp_info['version'][2]+1);
-		} else {
-			$new_version = wxapp_version_parser(1, 0, 0);
-		}
-		$new_version = implode('.', $new_version);
-		$new_module_data[] = array(
-			'name' => $add_module,
-			'version' => $module_version
-		);
-		$data = array('modules' => iserializer($new_module_data), 'uniacid' => $uniacid, 'createtime' => TIMESTAMP, 'version' => $new_version, 'design_method' => 3);
-		pdo_insert('wxapp_versions', $data);
-		iajax(0, '添加成功！', referer());
-	} else {
-		iajax(1, '没有此模块的权限！');
 	}
+	if (intval($_GPC['version_info']['design_method']) == 3) {
+		$module_name = trim($_GPC['version_info']['modules'][0]['name']);
+		$module_version = trim($_GPC['version_info']['modules'][0]['version']);
+		$have_permission = in_array($module_name, $modulename_arr);
+		if (!empty($have_permission)) {
+			$new_module_data[] = array(
+				'name' => $module_name,
+				'version' => $module_version
+			);
+		} else {
+			iajax(1, '没有此模块的权限！');
+		}
+	}
+	if (empty($new_module_data)) {
+		iajax(1, '数据错误！');
+	}
+	$data = array('modules' => iserializer($new_module_data), 'version' => trim($_GPC['version_info']['version']), 'description' => trim($_GPC['version_info']['description']));
+	pdo_update('wxapp_versions', $data, array('id' => $versionid));
+	iajax(0, '修改成功！', referer());
 }
 
-if ($do == 'del_module_version') {
+if ($do == 'del_version') {
 	$id = intval($_GPC['versionid']);
-	$modulename = trim($_GPC['modulename']);
-	if (empty($id) || empty($modulename)) {
+	if (empty($id)) {
 		iajax(1, '参数错误！');
 	}
 	$version_exist = pdo_get('wxapp_versions', array('id' => $id, 'uniacid' => $uniacid));
