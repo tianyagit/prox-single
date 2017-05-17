@@ -19,10 +19,8 @@ if($do == 'switch') {
 	if(empty($role)) {
 		itoast('操作失败, 非法访问.', '', 'error');
 	}
-	$cache_key = cache_system_key("{$_W['username']}:lastaccount");
-	$cache_lastaccount = (array)cache_load($cache_key);
-	$cache_lastaccount['account'] = $uniacid;
-	cache_write($cache_key, $cache_lastaccount);
+	
+	uni_account_save_switch($uniacid);
 
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
@@ -38,13 +36,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 	if (empty($exist)) {
 		iajax(1, '公众号不存在', '');
 	}
-	if (!empty($_W['isfounder'])) {
-		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account'));
-		pdo_update('uni_account', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid));
-	}else {
-		$max_rank= pdo_fetch("SELECT max(rank) as maxrank FROM ".tablename('uni_account_users'));
-		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank']+1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
-	}
+	uni_account_rank_top($uniacid);
 	iajax(0, '更新成功！', '');
 }
 

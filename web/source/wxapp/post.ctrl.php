@@ -14,12 +14,17 @@ $_W['page']['title'] = '小程序 - 新建版本';
 
 
 if ($do == 'design_method') {
-	template('wxapp/design_method');
+	$uniacid = intval($_GPC['uniacid']);
+	template('wxapp/design-method');
 }
 
 if($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$design_method = intval($_GPC['design_method']);
+	
+	if ($design_method == WXAPP_TEMPLATE) {
+		itoast('拼命开发中。。。', referer(), 'info');
+	}
 	
 	if (checksubmit('submit')) {
 		if ($design_method == WXAPP_TEMPLATE && empty($_GPC['select']['modules'])) {
@@ -32,6 +37,7 @@ if($do == 'post') {
 			}
 			$account_wxapp_data = array(
 				'name' => trim($_GPC['name']),
+				'description' => trim($_GPC['description']),
 				'account' => trim($_GPC['account']),
 				'original' => trim($_GPC['original']),
 				'level' => 1,
@@ -43,6 +49,11 @@ if($do == 'post') {
 			if(is_error($uniacid)) {
 				iajax(3, '添加小程序信息失败', url('wxapp/post'));
 			}
+		} else {
+			$wxapp_info = wxapp_fetch($uniacid);
+			if (empty($wxapp_info)) {
+				iajax(4, '小程序不存在或是已经被删除', url('wxapp/post'));
+			}
 		}
 		
 		//小程序版本信息，打包多模块时，每次更改需要重建版本
@@ -50,6 +61,7 @@ if($do == 'post') {
 		$wxapp_version = array(
 			'uniacid' => $uniacid,
 			'multiid' => '0',
+			'description' => trim($_GPC['description']),
 			'version' => $_GPC['version'],
 			'modules' => '',
 			'design_method' => $design_method,
@@ -75,7 +87,7 @@ if($do == 'post') {
 				if (empty($module) || $module['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
 					continue;
 				}
-				$select_modules[] = array('name' => $module['name'], 'version' => $module['version']);
+				$select_modules[$module['name']] = array('name' => $module['name'], 'version' => $module['version']);
 			}
 			$wxapp_version['modules'] = serialize($select_modules);
 		}
@@ -107,7 +119,7 @@ if($do == 'post') {
 	if (!empty($uniacid)) {
 		$wxapp_info = wxapp_fetch($uniacid);
 	}
-	template('wxapp/create-post');
+	template('wxapp/post');
 }
 
 //获取所有支持小程序的模块

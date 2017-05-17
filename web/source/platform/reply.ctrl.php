@@ -37,6 +37,7 @@ if ($m == 'special') {
 		'WifiConnected' => 'Wifi连接成功消息'
 	);
 }
+
 //功能模块用
 $sysmods = system_modules();
 
@@ -66,9 +67,14 @@ if ($do == 'display') {
 			$condition .= " AND `module` = :type";
 			$params[':type'] = $m;
 		}
-		if (isset($_GPC['keyword'])) {
-			$condition .= ' AND `name` LIKE :keyword';
-			$params[':keyword'] = "%{$_GPC['keyword']}%";
+		if (!empty($_GPC['keyword'])) {
+			if ($_GPC['keywordType'] == 'keyword') {
+				$rids = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
+				$condition .= " AND id IN (" . implode(",",array_keys($rids)) . ")";
+			} else {
+				$condition .= ' AND `name` LIKE :keyword';
+				$params[':keyword'] = "%{$_GPC['keyword']}%";
+			}
 		}
 		$replies = reply_search($condition, $params, $pindex, $psize, $total);
 		$pager = pagination($total, $pindex, $psize);
@@ -151,12 +157,10 @@ if ($do == 'display') {
 	}
 	template('platform/reply');
 }
-
 if ($do == 'post') {
 	if ($m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
-
 			$sql = 'SELECT `rid` FROM ' . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
 			$result = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':content' => $_GPC['keyword']));
 			if (!empty($result)) {
@@ -359,6 +363,9 @@ if ($do == 'post') {
 		}
 		unset($value);
 		foreach ($installedmodulelist as $name => $module) {
+			if (empty($module['isrulefields']) && $name != "core") {
+				continue;
+			}
 			$module['title_first_pinyin'] = $pinyin->get_first_char($module['title']);
 			if ($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];
@@ -373,7 +380,7 @@ if ($do == 'post') {
 				}
 			}
 			$module['icon'] = $cion;
-
+			
 			if ($module['enabled'] == 1) {
 				$enable_modules[$name] = $module;
 			} else {

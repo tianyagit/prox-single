@@ -31,8 +31,12 @@
 				<input type="hidden" name="m" value="{$_GPC['m']}" />
 				<input type="hidden" name="status" value="{$status}" />
 				<div class="keyword-list-head">
-					<div class="input-group col-sm-4 pull-left we7-margin-bottom">
-						<input class="form-control" name="keyword" type="text" value="{$_GPC['keyword']}" placeholder="输入规则名称">
+					<div class="input-group col-sm-4 pull-left we7-margin-bottom">		
+						<select class="we7-select" name="keywordType">
+							<option value="keyword" {if $_GPC['keywordType'] == 'keyword'}selected{/if}>关键字</option>
+							<option value="rule" {if $_GPC['keywordType'] == 'rule'}selected{/if}>规则名</option>
+						</select>
+						<input class="form-control" name="keyword" type="text" value="{$_GPC['keyword']}" placeholder="输入规则名称或关键字名称">
 						<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 					</div>
 					<div class="pull-right">

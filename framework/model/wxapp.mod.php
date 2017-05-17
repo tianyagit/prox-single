@@ -25,7 +25,7 @@ function wxapp_getpackage($data, $if_single = false) {
 function wxapp_account_create($account) {
 	$uni_account_data = array(
 		'name' => $account['name'],
-		'description' => '',
+		'description' => $account['description'],
 		'groupid' => 0,
 	);
 	if (!pdo_insert('uni_account', $uni_account_data)) {
@@ -62,26 +62,6 @@ function wxapp_account_create($account) {
 	pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 	
 	return $uniacid;
-}
-/**
- * 获取某一小程序拥有的小程序模块
- * @param int $uniacid
- * @return array
- */
-function wxapp_owned_moudles() {
-	load()->model('module');
-
-	$wxapp_modules = array();
-
-	$modules = uni_modules_by_uniacid($uniacid);
-	if (!empty($modules)) {
-		foreach ($modules as $module) {
-			if ($module['wxapp_support'] == 2) {
-				$wxapp_modules[] = $module;
-			}
-		}
-	}
-	return $wxapp_modules;
 }
 
 /**
@@ -123,11 +103,10 @@ function wxapp_fetch($uniacid, $version_id = '') {
 		return $wxapp_info;
 	}
 	
-	$account_wxapp = pdo_get('account_wxapp', array('uniacid' => $uniacid));
-	if (empty($account_wxapp)) {
+	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
+	if (empty($wxapp_info)) {
 		return $wxapp_info;
 	}
-	$wxapp_info['account_wxapp'] = $account_wxapp;
 	
 	if (empty($version_id)) {
 		$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
@@ -161,38 +140,72 @@ function wxapp_version_all($uniacid) {
  * @param unknown $version_id
  */
 function wxapp_version($version_id) {
+	$version_info = array();
 	$version_id = intval($version_id);
+	
 	if (empty($version_id)) {
-		return array();
+		return $version_info;
 	}
+	
 	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	print_r($version_info);exit;
-	$modules_info = json_decode($version_info['modules'], true);
+	if (empty($version_info)) {
+		return $version_info;
+	}
+	if (!empty($version_info['modules'])) {
+		$version_info['modules'] = unserialize($version_info['modules']);
+		if (!empty($version_info['modules'])) {
+			foreach ($version_info['modules'] as $i => $module) {
+				if (!empty($module['uniacid'])) {
+					$account = uni_fetch($module['uniacid']);
+				}
+				$version_info['modules'][$i] = module_fetch($module['name']);
+				$version_info['modules'][$i]['account'] = $account;
+			}
+		}
+	}
+	if (!empty($version_info['quickmenu'])) {
+		$version_info['quickmenu'] = unserialize($version_info['quickmenu']);
+	}
+	return $version_info;
 }
 
 /**
- * 判断小程序是单版还是多版
- * @param int id 小程序版本ID（wxapp_versions表ID）
- * @return int
+ * 切换小程序，保留最后一次操作的公众号，以便点公众号时再切换回
  */
-function wxapp_type($id) {
-	$id = intval($id);
-	if (empty($id)) {
-		itoast('参数错误，请联系管理员！', '', 'error');
+function wxapp_save_switch($uniacid) {
+	global $_W, $_GPC;
+	if (empty($_GPC['__switch'])) {
+		$_GPC['__switch'] = random(5);
 	}
-	$version_info = pdo_get('wxapp_versions', array('id' => $id));
-	if (!empty($version_info)) {
-		if ($version_info['design_method'] != 3) {
-			$result = WXAPP_MULTI;
-		} else {
-			if (!empty($version_info['multiid']) || !empty($version_info['version']) || !empty($version_info['template']) || !empty($version_info['redirect']) || !empty($version_info['quickmenu'])) {
-				$result = WXAPP_MULTI;
-			} else {
-				$result = WXAPP_SINGLE;
-			}
-		}
+	
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = cache_load($cache_key);
+	if (empty($cache_lastaccount)) {
+		$cache_lastaccount = array(
+			'wxapp' => $uniacid,
+		);
 	} else {
-		itoast('此小程序不存在', '', 'error');
+		$cache_lastaccount['wxapp'] = $uniacid;
 	}
-	return $result;
+	cache_write($cache_key, $cache_lastaccount);
+	isetcookie('__switch', $_GPC['__switch']);
+	return true;
+}
+
+function wxapp_site_info($multiid) {
+	$site_info = array();
+	if (empty($multiid)) {
+		return array();
+	}
+	
+	$site_info['slide'] = pdo_getall('site_slide', array('multiid' => $multiid));
+	$site_info['nav'] = pdo_getall('site_nav', array('multiid' => $multiid));
+	if (!empty($site_info['nav'])) {
+		foreach($site_info['nav'] as &$nav) {
+			$nav['css'] = iunserializer($nav['css']);
+		}
+		unset($nav);
+	}
+	$site_info['recommend'] = pdo_getall('site_article', array('uniacid' => $_GPC['uniacid']));
+	return $site_info;
 }
