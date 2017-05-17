@@ -518,7 +518,7 @@
 		<div class="panel-body">
 			<ul>
 				{loop $module_subscribes $subscribe}
-				<li>{$mtypes[$subscribe]} <lable ng-if="subscribe == 2" class="label label-danger">通讯失败</lable>  </li>
+				<li>{$mtypes[$subscribe]} <label ng-if="subscribe == 2" class="label label-danger">通讯失败</label>  </li>
 				{/loop}
 			</ul>
 		</div>
