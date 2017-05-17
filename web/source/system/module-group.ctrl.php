@@ -47,7 +47,7 @@ if ($do == 'save') {
 		$packageid = $package_info['id'];
 		unset($package_info['id']);
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
-
+		cache_build_uni_group();
 		cache_build_account_modules();
 		module_build_privileges();
 		iajax(0, '', url('system/module-group'));
@@ -57,6 +57,7 @@ if ($do == 'save') {
 			iajax(1, '套餐名已存在', '');
 		}
 		pdo_insert('uni_group', $package_info);
+		cache_build_uni_group();
 		module_build_privileges();
 		iajax(0, '', url('system/module-group'));
 	}
@@ -103,6 +104,7 @@ if ($do == 'delete') {
 	$id = intval($_GPC['id']);
 	if (!empty($id)) {
 		pdo_delete('uni_group', array('id' => $id));
+		cache_build_uni_group();
 		cache_build_account_modules();
 	}
 	itoast('删除成功！', referer(), 'success');
@@ -118,6 +120,7 @@ if ($do == 'post') {
 
 	if (!empty($group_id)) {
 		$uni_groups = uni_groups();
+
 		$module_group = $uni_groups[$group_id];
 		$group_have_module_app = empty($module_group['modules']) ? array() : $module_group['modules'];
 		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : $module_group['wxapp'];
