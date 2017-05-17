@@ -30,7 +30,7 @@ if ($do == 'display') {
 	}
 	$account = account_fetch($acid);
 	if (is_error($account)) {
-		itoast($account['message'], url('account/manage', array('account_type' => 4)), 'error');
+		itoast($account['message'], url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL)), 'error');
 	} else {
 		$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $account['uniacid']));
 		$version_exist = wxapp_fetch($account['uniacid']);
@@ -66,7 +66,7 @@ if ($do == 'edit_version') {
 	foreach ($wxapp_modules as $module) {
 		$modulename_arr[] = $module['name'];
 	}
-	if (intval($_GPC['version_info']['design_method']) == 2) {
+	if (intval($_GPC['version_info']['design_method']) == WXAPP_TEMPLATE) {
 		foreach ($_GPC['version_info']['modules'] as $module_val) {
 			if (!in_array($module_val['name'], $modulename_arr)) {
 				iajax(1, '没有模块：' . $module_val['name'] . '的权限！');
@@ -78,7 +78,7 @@ if ($do == 'edit_version') {
 			}
 		}
 	}
-	if (intval($_GPC['version_info']['design_method']) == 3) {
+	if (intval($_GPC['version_info']['design_method']) == WXAPP_MODULE) {
 		$module_name = trim($_GPC['version_info']['modules'][0]['name']);
 		$module_version = trim($_GPC['version_info']['modules'][0]['version']);
 		$have_permission = in_array($module_name, $modulename_arr);
