@@ -22,6 +22,9 @@ if($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$design_method = intval($_GPC['design_method']);
 	
+	if (empty($design_method)) {
+		itoast('请先选择要添加小程序类型', referer(), 'error');
+	}
 	if ($design_method == 2) {
 		itoast('拼命开发中。。。', referer(), 'info');
 	}
