@@ -68,7 +68,7 @@ if ($do == 'display') {
 			$params[':type'] = $m;
 		}
 		if (!empty($_GPC['keyword'])) {
-			if ($_GPC['keywordType'] == 'keyword') {
+			if ($_GPC['searchType'] == 'keyword') {
 				$rids = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
 				$condition .= " AND id IN (" . implode(",",array_keys($rids)) . ")";
 			} else {
