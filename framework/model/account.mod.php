@@ -760,6 +760,16 @@ function uni_account_last_switch() {
 	return $uniacid;
 }
 
+function uni_account_switch($uniacid, $redirect = '') {
+	isetcookie('__uniacid', $uniacid, 7 * 86400);
+	isetcookie('__uid', $_W['uid'], 7 * 86400);
+	if (!empty($redirect)) {
+		header('Location: ' . $redirect);
+		exit;
+	}
+	return true;
+}
+
 /**
  * 切换公众号时，保留最后一次操作的小程序，以便点公众号时再切换回
  */

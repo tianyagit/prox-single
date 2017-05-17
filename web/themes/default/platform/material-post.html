@@ -105,7 +105,7 @@
 												<input type="checkbox" ng-checked="{{ materialList[activeIndex].show_cover_pic }}" ng-click="updateSelection()" id="display-cover"/>
 												<label for="display-cover">在正文顶部显示封面图</label>
 											</div>
-											<image ng-src="{{ materialList[activeIndex].thumb }}" style="max-height: 200px;"></image>
+											<image ng-src="{{ materialList[activeIndex].thumb == '' ? './resource/images/nopic-203.png' :  materialList[activeIndex].thumb}}" style="max-height: 200px;"></image>
 										</div>
 									</div>
 									<div class="form-group">

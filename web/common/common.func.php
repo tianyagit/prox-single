@@ -444,7 +444,7 @@ function buildframes($framename = ''){
 			foreach ($wxapp_version['modules'] as $module) {
 				$frames['wxapp']['section']['platform_module_menu']['menu']['module_menu'.$module['mid']] = array(
 					'title' => "<i class='wi wi-appsetting'></i> {$module['title']}",
-					'url' => url('home/welcome/ext/', array('m' => $module['name'])),
+					'url' => url('wxapp/display/switch', array('module' => $module['name'], 'version_id' => $version_id)),
 					'is_display' => 1,
 				);
 			}

@@ -76,6 +76,17 @@ if ($do == 'display') {
 	$pager = pagination($total, $pindex, $psize);
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
+	$module_name = $_GPC['module'];
+	$version_id = intval($_GPC['version_id']);
+	
+	if (!empty($module_name) && !empty($version_id)) {
+		$version_info = wxapp_version($version_id);
+		if (empty($version_id) || empty($version_info['modules'][$module_name])) {
+			itoast('版本信息错误');
+		}
+		$uniacid = !empty($version_info['modules'][$module_name]['account']['uniacid']) ? $version_info['modules'][$module_name]['account']['uniacid'] : $version_info['uniacid'];
+		uni_account_switch($uniacid, url('home/welcome/ext/', array('m' => $module_name)));
+	}
 	wxapp_save_switch($uniacid);
 	header('Location: ' . url('wxapp/version/manage', array('version_id' => $wxapp_info['version']['id'])));
 	exit;
