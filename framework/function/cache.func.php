@@ -78,7 +78,7 @@ function cache_system_key($cache_key) {
 			break;
 	}
 	$cache_key = 'we7:' . $cache_key;
-	if (strlen($cache_key) > 100) {
+	if (strlen($cache_key) > CACHE_KEY_LENGTH) {
 		trigger_error('Cache name is over the maximum length');
 	}
 	return $cache_key;
