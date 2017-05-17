@@ -184,19 +184,19 @@ $we7_system_menu['system'] = array(
 			'title' => '应用模块',
 			'menu' => array(
 				'system_module' => array(
-					'title' => '我的应用管理',
+					'title' => '公众号应用管理',
 					'url' => url('system/module', array('account_type' => '1')),
 					'icon' => 'wi wi-apply',
 					'permission_name' => 'system_module',
 				),
 				'system_module_wxapp' => array(
-					'title' => '小程序功能管理',
+					'title' => '小程序应用管理',
 					'url' => url('system/module', array('account_type' => '4')),
 					'icon' => 'wi wi-wxapp-setting',
 					'permission_name' => 'system_module_wxapp',
 				),
 				'system_template' => array(
-					'title' => '我的模板管理',
+					'title' => '微官网模板管理',
 					'url' => url('system/template'),
 					'icon' => 'wi wi-template',
 					'permission_name' => 'system_template',
@@ -250,7 +250,7 @@ $we7_system_menu['system'] = array(
 			'title' => '权限管理',
 			'menu' => array(
 				'system_module_group' => array(
-					'title' => '功能权限组',
+					'title' => '应用权限组',
 					'url' => url('system/module-group'),
 					'icon' => 'wi wi-appjurisdiction',
 					'permission_name' => 'system_module_group',
@@ -277,9 +277,9 @@ $we7_system_menu['system'] = array(
 			'title' => '云服务',
 			'menu' => array(
 				'system_profile' => array(
-					'title' => '系统更新',
+					'title' => '系统升级',
 					'url' => url('cloud/upgrade'),
-					'icon' => 'wi wi-update',
+					'icon' => 'wi wi-cache',
 					'permission_name' => 'system_cloud_upgrade',
 				),
 				'system_cloud_register' => array(
@@ -325,7 +325,7 @@ $we7_system_menu['system'] = array(
 				'system_setting_updatecache' => array(
 					'title' => '更新缓存',
 					'url' => url('system/updatecache'),
-					'icon' => 'wi wi-cache',
+					'icon' => 'wi wi-update',
 					'permission_name' => 'system_setting_updatecache',
 				),
 				'system_setting_site' => array(
