@@ -25,7 +25,7 @@ if($do == 'post') {
 	if (empty($design_method)) {
 		itoast('请先选择要添加小程序类型', referer(), 'error');
 	}
-	if ($design_method == 2) {
+	if ($design_method == WXAPP_TEMPLATE) {
 		itoast('拼命开发中。。。', referer(), 'info');
 	}
 	
