@@ -37,7 +37,7 @@
 			<td >
 				{{ paysetting.delivery.switch === true ? '开启' : '关闭' }}
 			</td>
-			<td class="text-center ">
+			<td class="text-right">
 				<label>
 					<input name="" class="form-control" type="checkbox"  style="display: none;" ng-click="saveEdit('delivery')">
 					<div ng-class="paysetting.delivery.switch === true ? 'switch switchOn' : 'switch'"></div>
@@ -51,7 +51,7 @@
 			<td >
 				{{ paysetting.credit.switch === true ? '开启' : '关闭' }}
 			</td>
-			<td class="text-center">
+			<td class="text-right">
 				<label>
 					<input name="" class="form-control" type="checkbox"  style="display: none;" ng-click="saveEdit('credit')">
 					<div ng-class="paysetting.credit.switch === true ? 'switch switchOn' : 'switch'"></div>

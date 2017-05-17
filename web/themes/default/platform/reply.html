@@ -36,6 +36,7 @@
 							<option value="keyword" {if $_GPC['search_type'] == 'keyword'}selected{/if}>关键字</option>
 							<option value="rule" {if $_GPC['search_type'] == 'rule'}selected{/if}>规则名</option>
 						</select>
+						<input name="type" type="hidden" value="{$_GPC['type']}">
 						<input class="form-control" name="keyword" type="text" value="{$_GPC['keyword']}" placeholder="输入规则名称或关键字名称">
 						<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 					</div>
@@ -87,7 +88,7 @@
 								</span>
 							</th>
 							<th>是否开启</th>
-							<th class="text-left">操作</th>
+							<th class="text-right">操作</th>
 						</tr>
 						<tr>
 							{if !in_array($row['module'], $sysmods)}
@@ -129,7 +130,7 @@
 									<div class="switch {if $row['status']} switchOn{/if}" id="key-{$row['id']}" ng-click="changeStatus({$row[id]})"></div>
 								</label>
 							</td>
-							<td class="vertical-middle text-left">
+							<td class="vertical-middle text-right">
 								<div class="link-group">
 									{if in_array($row['module'], $sysmods)}
 									<a href="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $row['id']))}">编辑</a>

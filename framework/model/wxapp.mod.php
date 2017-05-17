@@ -67,7 +67,7 @@ function wxapp_account_create($account) {
 /**
  * 获取所有支持小程序的模块
  */
-function wxapp_supoort_wxapp_modules() {
+function wxapp_support_wxapp_modules() {
 	global $_W;
 	load()->model('user');
 	
@@ -126,12 +126,20 @@ function wxapp_fetch($uniacid, $version_id = '') {
  * @return array
 */
 function wxapp_version_all($uniacid) {
+	load()->model('module');
 	$wxapp_versions = array();
 	if (empty($uniacid)) {
 		return $wxapp_versions;
 	}
 	
 	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
+	foreach ($wxapp_versions as &$modules_val) {
+		$modules_val['modules'] = iunserializer($modules_val['modules']);
+		foreach ($modules_val['modules'] as &$module_val) {
+			$module_val['module_info'] = module_fetch($module_val['name']);
+		}
+	}
+	unset($module_val, $modules_val);
 	return $wxapp_versions;
 }
 
