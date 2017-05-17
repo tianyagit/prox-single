@@ -23,8 +23,6 @@ $state = uni_permission($_W['uid'], $uniacid);
 if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_MANAGER) {
 	itoast('无权限操作！', referer(), 'error');
 }
-$headimgsrc = tomedia('headimg_'.$acid.'.jpg');
-$qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 
 if ($do == 'display') {
 	$account = uni_fetch($uniacid);
