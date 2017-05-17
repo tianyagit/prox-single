@@ -25,10 +25,7 @@ if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER
 }
 
 if ($do == 'display') {
-	if (empty($acid)) {
-		itoast('参数错误！', referer(), 'error');
-	}
-	$account = account_fetch($acid);
+	$account = uni_fetch($uniacid);
 	if (is_error($account)) {
 		itoast($account['message'], url('account/manage', array('account_type' => 4)), 'error');
 	} else {
