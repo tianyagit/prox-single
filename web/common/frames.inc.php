@@ -68,7 +68,7 @@ $we7_system_menu['account'] = array(
 					'permission_name' => 'platform_material',
 				),
 				'platform_site' => array(
-					'title' => '微官网',
+					'title' => '微官网-文章',
 					'url' => url('site/multi/display'),
 					'icon' => 'wi wi-home',
 					'permission_name' => 'platform_site',
