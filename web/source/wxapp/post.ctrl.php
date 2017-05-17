@@ -22,7 +22,7 @@ if($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$design_method = intval($_GPC['design_method']);
 	
-	if ($design_method == 2) {
+	if ($design_method == WXAPP_TEMPLATE) {
 		itoast('拼命开发中。。。', referer(), 'info');
 	}
 	

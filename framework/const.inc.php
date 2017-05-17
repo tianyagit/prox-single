@@ -103,12 +103,14 @@ define('STATUS_SUCCESS', 0); //ajax返回成功状态，增强语义
 define('CACHE_EXPIRE_SHORT', 60);
 define('CACHE_EXPIRE_MIDDLE', 300);
 define('CACHE_EXPIRE_LONG', 3600);
+define('CACHE_KEY_LENGTH', 100); //缓存键的最大长度
 
 define('CACHE_KEY_MODULE_SETTING', 'module_setting:%s:%s');
 define('CACHE_KEY_MODULE_INFO', 'module_info:%s');
 define('CACHE_KEY_ACCOUNT_MODULES', 'unimodules:%s:%s');
 define('CACHE_KEY_ACCOUNT_MODULES_BINDING', 'unimodules:binding:%s');
 define('CACHE_KEY_MEMBER_INFO', 'memberinfo:%s');
+define('CACHE_KEY_UNI_GROUP', 'uni_group');
 define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 
 define('MODULE_SUPPORT_WXAPP', 2);

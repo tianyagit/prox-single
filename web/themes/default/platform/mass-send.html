@@ -17,7 +17,6 @@
 			<th>消息类型</th>
 			<th>接收用户组</th>
 			<th>预计发送时间</th>
-			<th>实际发送时间</th>
 			<th>发送人数</th>
 			<th>状态</th>
 			<th>操作</th>
@@ -31,7 +30,6 @@
 			</td>
 			<td>{$list['groupname']}</td>
 			<td>{php echo date('Y-m-d H:i', $list['sendtime']);}</td>
-			<td>{if $list['status'] == 0 || $list['status'] == 2}{php echo date('Y-m-d H:i', $list['finalsendtime']);}{else}---{/if}</td>
 			<td>{if $list['group'] == '-1'}全部粉丝{else}{$list['fansnum']}{/if}</td>
 			<td>
 				{if !$list['status']}
@@ -47,7 +45,6 @@
 					{if !$list['cron_id'] && $list['sendtime'] > TIMESTAMP}
 					<a href="{php echo url('platform/mass/cron', array('id' => $list['id']));}" class="btn btn-danger btn-sm">同步到云服务</a>
 					{/if}
-					<a href="javascript:;" id="{$list['id']}" class="btn btn-default mass-log" ng-mouseover="showLog({$list['id']})" ng-mouseleave="hideLog({$list['id']})">日志</a>
 				{/if}
 			</td>
 		</tr>
