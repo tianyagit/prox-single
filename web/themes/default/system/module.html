@@ -5,9 +5,9 @@
 </div>
 <div id="js-system-module" ng-controller="installedCtrl" ng-cloak>
 	<ul class="we7-page-tab">
-		<li class="active"><a href="{php echo url('system/module/installed')}">已安装应用  </a></li>
-		<li><a href="{php echo url('system/module/not_installed')}" ng-if="isFounder == 1">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-		<li><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}" ng-if="isFounder == 1">已停用应用</a></li>
+		<li class="active"><a href="{php echo url('system/module/installed')}">已安装公众号应用  </a></li>
+		<li><a href="{php echo url('system/module/not_installed')}" ng-if="isFounder == 1">未安装公众号应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
+		<li><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}" ng-if="isFounder == 1">已停用公众号应用</a></li>
 	</ul>
 	<div class="we7-page-search clearfix">
 		<form action="" method="get" class="row">
@@ -35,20 +35,38 @@
 			<col width="400px"/>
 			<col width="230px" />
 			<tr>
-				<th colspan="2" class="text-left">
+				<th colspan="2" class="text-left filter">
 					<div class="dropdown dropdown-toggle we7-dropdown">
 						<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							应用名
+							按照安装时间顺序
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="dLabel">
-							<li><a href="" class="active">应用名</a></li>
-							<li ng-click="selectType(2)"><a href="" class="active">应用名</a></li>
-							<li ng-click="selectType(3)"><a href="" class="active">应用名</a></li>
+							<li><a href="" class="active">按照安装时间顺序1</a></li>
+							<li><a href="" class="active">按照安装时间顺序2</a></li>
+							<li><a href="" class="active">按照安装时间顺序3</a></li>
 						</ul>
 					</div>
 				</th>
-				<th class="text-right">操作</th>
+				<th class="text-right">
+					<div class="we7-form">
+						<input type="checkbox" name="" id="filter-1" value="1">
+						<label class="checkbox-inline" for="filter-1">
+							新分支应用
+						</label>
+						<span class="we7-margin-right"></span>
+						<input type="checkbox" name="" id="filter-2" value="2">
+						<label class="checkbox-inline" for="filter-2">
+							有升级的应用
+						</label>
+					</div>
+				</th>
+			</tr>
+			<tr>
+				<th colspan="2" class="text-left bg-light-gray">
+					应用名/版本
+				</th>
+				<th class="text-right bg-light-gray">操作</th>
 			</tr>
 			<tr ng-repeat="module in module_list">
 				<td class="text-left module-img">
@@ -65,8 +83,8 @@
 				</td>
 				<td>
 					<div class="link-group">
-						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
-						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}&show=upgrade" class="color-red" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
+						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red del" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
+						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}&show=upgrade" class="color-red del" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}" ng-if="isFounder == 1">管理设置</a>
 						<!--<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>-->
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1" onclick="return confirm('确认要停用模块吗？')">停用</a>
