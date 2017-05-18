@@ -46,7 +46,6 @@ if (in_array($m, array('custom'))) {
 	$site_urls = $site->getTabUrls();
 }
 
-
 if ($do == 'display') {
 	if ($m == 'keyword' || !in_array($m, $sysmods)) {
 		$pindex = max(1, intval($_GPC['page']));
@@ -143,9 +142,18 @@ if ($do == 'display') {
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		$params[':module'] = 'userapi';
-		if(isset($_GPC['keyword'])) {
-			$condition .= ' AND `name` LIKE :keyword';
-			$params[':keyword'] = "%{$_GPC['keyword']}%";
+		if(!empty($_GPC['keyword'])) {
+			if ($_GPC['search_type'] == 'keyword') {
+				$rids = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
+				if (!empty($rids)) {
+					$condition .= " AND id IN (" . implode(",", array_keys($rids)) . ")";
+				} else {
+					$condition .= " AND 1=0";
+				}
+			} else {
+				$condition .= ' AND `name` LIKE :keyword';
+				$params[':keyword'] = "%{$_GPC['keyword']}%";
+			}	
 		}
 
 		$replies = reply_search($condition, $params, $pindex, $psize, $total);
