@@ -92,12 +92,26 @@
 									$(function(){
 										var url = "{url 'account/post' array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid'])}";
 										$('[data-toggle="popover"]').popover({
+											trigger: 'manual',
 											html: true,
 											placement: 'bottom',
 											content: '<i class="wi wi-warning-sign"></i>未接入微信公众号' +
 													'<a href="' +
 													url +
 													'">立即接入</a>'
+										}).on("mouseenter", function() {
+											var _this = this;
+											$(this).popover("show");
+											$(this).siblings(".popover").on("mouseleave", function() {
+												$(_this).popover('hide');
+											});
+										}).on("mouseleave", function() {
+											var _this = this;
+											setTimeout(function() {
+												if(!$(".popover:hover").length) {
+													$(_this).popover("hide")
+												}
+											}, 100);
 										});
 									});
 								</script>
