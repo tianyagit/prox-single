@@ -242,8 +242,11 @@ function cloud_download($path, $type = '') {
 			$path = IA_ROOT . $ret['path'];
 			load()->func('file');
 			@mkdirs(dirname($path));
-			file_put_contents($path, $file);
-			return true;
+			if (file_put_contents($path, $file)) {
+				return true;
+			} else {
+				return error(-1, '写入失败');
+			}
 		}
 		return error(-1, '写入失败');
 	}
