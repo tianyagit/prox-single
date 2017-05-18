@@ -146,7 +146,8 @@ function cache_build_users_struct() {
 		'taobao' => '阿里旺旺',
 		'site' => '主页',
 		'bio' => '自我介绍',
-		'interest' => '兴趣爱好'
+		'interest' => '兴趣爱好',
+		'password' => '密码',
 	);
 	cache_write('userbasefields', $base_fields);
 	$fields = pdo_getall('profile_fields', array(), array(), 'field');
