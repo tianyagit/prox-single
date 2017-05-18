@@ -282,6 +282,9 @@ function module_fetch($name) {
 		$module['enabled'] = $module['issystem'] || !isset($setting['enabled']) ? 1 : $setting['enabled'];
 		$module['shortcut'] = $setting['shortcut'];
 	}
+	$module_ban = module_ban();
+
+ 	$module['is_ban'] = in_array($name, $module_ban) ? true : false;
 	return $module;
 }
 
@@ -470,4 +473,17 @@ function module_get_plugin_list($module_name) {
 	} else {
 		return array();
 	}
+}
+
+/**
+ *  获取站点的盗版模块列表
+ * @return $list array()  模块标识
+ */
+function module_ban() {
+	$module_ban = setting_load('module_ban');
+	if (empty($module_ban) || $module_ban['last_time'] + 86400 < TIMESTAMP) {
+		cache_build_module_ban();
+		$module_ban = setting_load('module_ban');
+	}
+	return $module_ban['modules'];
 }

@@ -25,6 +25,18 @@ function cache_build_setting() {
 }
 
 /**
+ * 更新盗版模块数据及缓存
+ * @return mixed
+ */
+function cache_build_module_ban() {
+	load()->model('cloud');
+	$cloud_modules = cloud_m_query();
+	$module_ban['modules'] = is_array($cloud_modules['pirate_apps']) ? $cloud_modules['pirate_apps'] : array();
+	$module_ban['last_time'] = time();
+	setting_save($module_ban, 'module_ban');
+}
+
+/**
  * 重建公众号下可使用的模块
  * @param int $uniacid 要重建模块的公众号uniacid
  */
@@ -134,7 +146,8 @@ function cache_build_users_struct() {
 		'taobao' => '阿里旺旺',
 		'site' => '主页',
 		'bio' => '自我介绍',
-		'interest' => '兴趣爱好'
+		'interest' => '兴趣爱好',
+		'password' => '密码',
 	);
 	cache_write('userbasefields', $base_fields);
 	$fields = pdo_getall('profile_fields', array(), array(), 'field');
