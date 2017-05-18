@@ -163,9 +163,9 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
 				if (!empty($modules)) {
-					$condition = " AND a.name IN ('" . implode("','", $modules) . "')";
+					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
 				} else {
-					$condition = " AND a.name = ''";
+					$condition .= " AND a.name = ''";
 				}
 			}
 		}
