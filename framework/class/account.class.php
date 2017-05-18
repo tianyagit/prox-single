@@ -428,7 +428,7 @@ class WeUtility {
 	private static function defineConst($obj){
 		global $_W;
 		
-		if ($obj instanceof WeBase) {
+		if ($obj instanceof WeBase && $obj->modulename != 'core') {
 			if (!defined('MODULE_ROOT')) {
 				define('MODULE_ROOT', dirname($obj->__define));
 			}
