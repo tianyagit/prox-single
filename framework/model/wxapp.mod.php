@@ -166,8 +166,8 @@ function wxapp_version($version_id) {
 				if (!empty($module['uniacid'])) {
 					$account = uni_fetch($module['uniacid']);
 				}
-				$version_info['modules'][$i] = module_fetch($module['name']);
-				$version_info['modules'][$i]['account'] = $account;
+				$version_info['modules'][$module['name']] = module_fetch($module['name']);
+				$version_info['modules'][$module['name']]['account'] = $account;
 			}
 		}
 	}

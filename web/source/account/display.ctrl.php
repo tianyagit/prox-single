@@ -19,14 +19,9 @@ if($do == 'switch') {
 	if(empty($role)) {
 		itoast('操作失败, 非法访问.', '', 'error');
 	}
-	
-	uni_account_save_switch($uniacid);
 
-	isetcookie('__uniacid', $uniacid, 7 * 86400);
-	isetcookie('__uid', $_W['uid'], 7 * 86400);
-	
-	header('Location: ' . url('home/welcome'));
-	exit;
+	uni_account_save_switch($uniacid);
+	uni_account_switch($uniacid,  url('home/welcome'));
 }
 
 if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
