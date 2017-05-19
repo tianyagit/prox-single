@@ -42,36 +42,45 @@
 		<th>短信数(条)</th>
 		<th class="text-right">操作</th>
 	</tr>
-	<tr class="color-gray" ng-repeat="list in lists">
-		<td class="text-left">
-			<img ng-src="{{list.thumb}}" class="img-responsive" style="max-width: 39px;">
-		</td>
-		<td class="text-left">
-			<p class="color-dark" ng-bind="list.name"></p>
-			<span class="color-gray" ng-if="list.level == 1">类型：普通订阅号</span>
-			<span class="color-gray" ng-if="list.level == 2">类型：普通服务号</span>
-			<span class="color-gray" ng-if="list.level == 3">类型：认证订阅号</span>
-			<span class="color-gray" ng-if="list.level == 4" title="认证服务号/认证媒体/政府订阅号">类型：认证服务号</span>
-			<span class="color-red" ng-if="list.isconnect == 0" data-toggle="tooltip" data-placement="right" title="公众号接入状态显示“未接入”解决方案：进入微信公众平台，依次选择: 开发者中心 -> 修改配置，然后将对应公众号在平台的url和token复制到微信公众平台对应的选项，公众平台会自动进行检测"><i class="wi wi-error-sign"></i>未接入</span>
-			<span class="color-green" ng-if="list.isconnect == 1"><i class="wi wi-right-sign"></i>已接入</span>
-		</td>
-		<td>
-			<p ng-bind="list.setmeal.timelimit"></p>
-		</td>
-		<td><p ng-bind="list.sms"></p></td>
-		<td class="vertical-middle">
-			<div class="link-group">
-				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
-				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER}
+	<tbody ng-repeat="list in lists">
+		<tr class="color-gray" >
+			<td class="text-left">
+				<img ng-src="{{list.thumb}}" class="img-responsive" style="max-width: 39px;">
+			</td>
+			<td class="text-left">
+				<p class="color-dark" ng-bind="list.name"></p>
+				<span class="color-gray" ng-if="list.level == 1">类型：普通订阅号</span>
+				<span class="color-gray" ng-if="list.level == 2">类型：普通服务号</span>
+				<span class="color-gray" ng-if="list.level == 3">类型：认证订阅号</span>
+				<span class="color-gray" ng-if="list.level == 4" title="认证服务号/认证媒体/政府订阅号">类型：认证服务号</span>
+				<span class="color-red" ng-if="list.isconnect == 0" data-toggle="tooltip" data-placement="right" title="公众号接入状态显示“未接入”解决方案：进入微信公众平台，依次选择: 开发者中心 -> 修改配置，然后将对应公众号在平台的url和token复制到微信公众平台对应的选项，公众平台会自动进行检测"><i class="wi wi-error-sign"></i>未接入</span>
+				<span class="color-green" ng-if="list.isconnect == 1"><i class="wi wi-right-sign"></i>已接入</span>
+			</td>
+			<td>
+				<p ng-bind="list.setmeal.timelimit"></p>
+			</td>
+			<td><p ng-bind="list.sms"></p></td>
+			<td class="vertical-middle">
+				<div class="link-group">
+					<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
+					{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER}
 					<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder'">管理设置</a>
 					{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
 					<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
 					{/if}
-				{/if}
-			</div>
-		</td>
-	</tr>
-
+					{/if}
+				</div>
+			</td>
+		</tr>
+		<tr class="manage-option">
+			<td colspan="5" class="text-right">
+				<a href="javascript:;">基础信息</a>
+				<a href="javascript:;">短信信息</a>
+				<a href="javascript:;">使用者管理</a>
+				<a href="javascript:;">可用应用模块/模板</a>
+			</td>
+		</tr>
+	</tbody>
 </table>
 <div class="text-right">
 	{$pager}
