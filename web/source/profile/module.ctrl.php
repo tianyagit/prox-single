@@ -9,15 +9,47 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('account');
 load()->model('user');
+load()->model('cloud');
+load()->model('cache');
+load()->model('extension');
 
-$dos = array('display', 'setting', 'shortcut', 'enable', 'permissions');
+$dos = array('display', 'setting', 'shortcut', 'enable', 'permissions', 'check_status');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
 $modulelist = uni_modules(false);
 
+//检测模块更新和是否盗版
+if ($do == 'check_status') {
+	$modulename = $_GPC['module'];
+	$module = module_fetch($modulename);
+	if (!empty($module)) {
+		$info = cloud_m_info($modulename);
+		if (is_error($info)) {
+			iajax(1, $info);
+		}
+		if (module_ban($modulename)) {
+			iajax(1, array('message' => '此模块为盗版模块，请删除模块后联系客服'));
+		}
+		if (!empty($info) && !empty($info['version']['version'])) {
+			if (ver_compare($module['version'], $info['version']['version'])) {
+				$upgrade = array('name' => $module['title'], 'version' => $info['version']['version'], 'upgrade' => 1);
+				iajax(0, $upgrade);
+			}
+		} else {
+			$manifest = ext_module_manifest($modulename);
+			if (!empty($manifest)) {
+				if (ver_compare($module['version'], $manifest['application']['version'])) {
+					$upgrade = array('name' => $module['title'], 'version' => $manifest['application']['version'], 'upgrade' => 1);
+					iajax(0, $upgrade);
+				}
+			}
+		}
+	}
+	iajax(0, '', '');
+}
+
 if($do == 'display') {
 	$_W['page']['title'] = '公众号 - 应用模块 - 更多应用';
-	
 	$pageindex = max(1, intval($_GPC['page']));
 	$pagesize = 30;
 

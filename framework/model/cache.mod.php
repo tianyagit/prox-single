@@ -31,8 +31,14 @@ function cache_build_setting() {
 function cache_build_module_ban() {
 	load()->model('cloud');
 	$cloud_modules = cloud_m_query();
-	$module_ban['modules'] = is_array($cloud_modules['pirate_apps']) ? $cloud_modules['pirate_apps'] : array();
-	$module_ban['last_time'] = time();
+	$module_ban = is_array($cloud_modules['pirate_apps']) ? $cloud_modules['pirate_apps'] : array();
+	$local_module = setting_load('module_ban');
+	$update_modules = array_merge(array_diff($local_module, $module_ban), array_diff($module_ban, $local_module));
+	if (!empty($update_modules)) {
+		foreach ($update_modules as $module) {
+			cache_build_module_info($module);
+		}
+	}
 	setting_save($module_ban, 'module_ban');
 }
 
