@@ -132,7 +132,7 @@ if ($do == 'delete') {
 	$server = $_GPC['server'] == 'local' ? 'local' : 'wechat';
 	$type = trim($_GPC['type']);
 	$cron_record = pdo_get('mc_mass_record', array('uniacid' => $_W['uniacid'], 'attach_id' => $material_id), array('id'));
-	if ($cron_record) {
+	if (!empty($cron_record)) {
 		iajax('-1', '有群发消息未发送，不可删除');
 	}
 	if ($type == 'news'){
