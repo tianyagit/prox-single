@@ -296,7 +296,7 @@
 					<th class="text-left">功能说明</th>
 					<th>状态</th>
 				</tr>
-				<tr ng-repeat="(id, api) in service track by id">
+				<tr ng-repeat="(id, api) in userapi track by id">
 					<td class="text-left">
 						{{ api.name }}
 					</td>
@@ -315,7 +315,7 @@
 		$(function() {
 			angular.module('replyFormApp').value('config', {
 				'url' : "{php echo url('platform/reply/change_status')}",
-				'service' : "{php echo json_encode($userapi_list)}"
+				'service' : {php echo json_encode($userapi_list)}
 			});
 			angular.bootstrap($('#js-service-display'), ['replyFormApp']);
 		});
