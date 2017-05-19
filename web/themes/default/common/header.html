@@ -157,7 +157,7 @@
 						<span class="no-collapse">{$frame_section['title']}<i class="wi wi-appsetting pull-right setting"></i></span>
 					</div>
 					{/if}
-					<ul class="list-group collapse {if !empty($_W['setting']['copyright']['skin']) && $_W['setting']['copyright']['skin'] == 'black'}{if $_GPC['menu_fold_tag:'.$frame_section_id] == 0}in{/if}{else}in{/if}" id="frame-{$frame_section_id}">
+					<ul class="list-group">
 						{loop $frame_section['menu'] $menu_id $menu}
 						{if !empty($menu['is_display'])}
 							{if $menu_id == 'platform_module_more'}
@@ -218,7 +218,7 @@
 									<span class="no-collapse">{$frame_section['title']}<i class="wi wi-appsetting pull-right setting"></i></span>
 								</div>
 								{/if}
-								<ul class="list-group panel-collapse collapse in" id="frame0-{$frame_section_id}">
+								<ul class="list-group panel-collapse">
 									{loop $frame_section['menu'] $menu_id $menu}
 									{if !empty($menu['is_display'])}
 									{if $menu_id == 'platform_module_more'}
