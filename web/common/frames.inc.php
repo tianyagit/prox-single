@@ -311,7 +311,7 @@ $we7_system_menu['system'] = array(
 );
 
 $we7_system_menu['site'] = array(
-	'title' => '站点设置',
+	'title' => '站点管理',
 	'url' => url('system/site'),
 	'section' => array(
 		'setting' => array(
