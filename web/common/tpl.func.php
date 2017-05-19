@@ -138,7 +138,7 @@ function tpl_form_field_link($name, $value = '', $options = array()) {
 	}
 	$s .= '
 	<div class="input-group">
-		<input type="text" value="'.$value.'" name="'.$name.'" class="form-control" autocomplete="off" style="'.($options ? $options : 'width:500px').'">
+		<input type="text" value="'.$value.'" name="'.$name.'" class="form-control" autocomplete="off" style="'.($options ? $options : 'width:525px').'">
 		<span class="input-group-btn">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">选择链接 <span class="caret"></span></button>
 			<ul class="dropdown-menu">

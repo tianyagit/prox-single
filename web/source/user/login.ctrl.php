@@ -79,10 +79,14 @@ function _login($forward = '') {
 			$forward = $_GPC['forward'];
 		}
 		if (empty($forward)) {
-			if (!empty($_GPC['__uniacid'])) {
-				$forward = './index.php?c=home&a=welcome';
+			if (!empty($_W['isfounder'])) {
+				$forward = './index.php?c=account&a=manage';
 			} else {
-				$forward = './index.php?c=account&a=display';
+				if (!empty($_GPC['__uniacid'])) {
+					$forward = './index.php?c=home&a=welcome';
+				} else {
+					$forward = './index.php?c=account&a=display';
+				}
 			}
 		}
 		if ($record['uid'] != $_GPC['__uid']) {
