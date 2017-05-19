@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $we7_system_menu = array();
 $we7_system_menu['account'] = array(
-	'title' => '公众号',
+	'title' => '公众�,
 	'url' => url('home/welcome'),
 	'section' => array(
 		'platform_plus' => array(
@@ -20,7 +20,7 @@ $we7_system_menu['account'] = array(
 					'permission_name' => 'platform_reply',
 					'sub_permission' => array(
 						// array(
-						// 	'title' => '关键字自动回复 ',
+						// 	'title' => '关键字自动回�',
 						// 	'permission_name' => 'platform_reply_keyword',
 						// ),
 						// array(
@@ -34,19 +34,19 @@ $we7_system_menu['account'] = array(
 					),
 				),
 				'platform_menu' => array(
-					'title' => '自定义菜单',
+					'title' => '自定义菜�,
 					'url' => url('platform/menu'),
 					'icon' => 'wi wi-custommenu',
 					'permission_name' => 'platform_menu',
 				),
 				'platform_qr' => array(
-					'title' => '二维码/转化链接',
+					'title' => '二维�转化链接',
 					'url' => url('platform/qr'),
 					'icon' => 'wi wi-qrcode',
 					'permission_name' => 'platform_qr',
 					'sub_permission' => array(
 						// array(
-						// 	'title' => '二维码',
+						// 	'title' => '二维�,
 						// 	'permission_name' => 'platform_qr_qr',
 						// ),
 						// array(
@@ -62,13 +62,13 @@ $we7_system_menu['account'] = array(
 					'permission_name' => 'platform_mass_task',
 				),
 				'platform_material' => array(
-					'title' => '素材/编辑器',
+					'title' => '素材/编辑�,
 					'url' => url('platform/material'),
 					'icon' => 'wi wi-redact',
 					'permission_name' => 'platform_material',
 				),
 				'platform_site' => array(
-					'title' => '微官网-文章',
+					'title' => '微官�文章',
 					'url' => url('site/multi/display'),
 					'icon' => 'wi wi-home',
 					'permission_name' => 'platform_site',
@@ -121,7 +121,7 @@ $we7_system_menu['account'] = array(
 	),
 );
 $we7_system_menu['wxapp'] = array(
-	'title' => '小程序',
+	'title' => '小程�,
 	'url' => url('wxapp/display/home'),
 	'section' => array(
 	),
@@ -132,24 +132,25 @@ $we7_system_menu['system'] = array(
 	'url' => url('account/manage', array('account_type' => '1')),
 	'section' => array(
 		'wxplatform' => array(
-			'title' => '公众号',
+			'title' => '公众�,
+			'icon' => 'wi wi-wechat',
 			'menu' => array(
 				'system_account' => array(
-					'title' => ' 微信公众号',
+					'title' => ' 微信公众�,
 					'url' => url('account/manage', array('account_type' => '1')),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_account',
 					'sub_permission' => array(
 						array(
-							'title' => '公众号管理设置',
+							'title' => '公众号管理设�,
 							'permission_name' => 'system_account_manage',
 						),
 						array(
-							'title' => '添加公众号',
+							'title' => '添加公众�,
 							'permission_name' => 'system_account_post',
 						),
 						array(
-							'title' => '公众号停用',
+							'title' => '公众号停�,
 							'permission_name' => 'system_account_stop',
 						),
 						array(
@@ -157,29 +158,29 @@ $we7_system_menu['system'] = array(
 							'permission_name' => 'system_account_recycle',
 						),
 						array(
-							'title' => '公众号删除',
+							'title' => '公众号删�,
 							'permission_name' => 'system_account_delete',
 						),
 						array(
-							'title' => '公众号恢复',
+							'title' => '公众号恢�,
 							'permission_name' => 'system_account_recover',
 						),
 					),
 				),
 				'system_module' => array(
-					'title' => '公众号应用',
+					'title' => '公众号应�,
 					'url' => url('system/module', array('account_type' => '1')),
 					'icon' => 'wi wi-apply',
 					'permission_name' => 'system_module',
 				),
 				'system_template' => array(
-					'title' => '微官网模板',
+					'title' => '微官网模�,
 					'url' => url('system/template'),
 					'icon' => 'wi wi-template',
 					'permission_name' => 'system_template',
 				),
 				'system_platform' => array(
-					'title' => ' 微信开放平台设置',
+					'title' => ' 微信开放平台设�,
 					'url' => url('system/platform'),
 					'icon' => 'wi wi-exploitsetting',
 					'permission_name' => 'system_platform',
@@ -187,16 +188,17 @@ $we7_system_menu['system'] = array(
 			)
 		),
 		'module' => array(
-			'title' => '小程序',
+			'title' => '小程�,
+			'icon' => 'wi wi-small-routine',
 			'menu' => array(
 				'system_wxapp' => array(
-					'title' => '微信小程序',
+					'title' => '微信小程�,
 					'url' => url('account/manage', array('account_type' => '4')),
 					'icon' => 'wi wi-small-routine',
 					'permission_name' => 'system_wxapp',
 				),
 				'system_module_wxapp' => array(
-					'title' => '小程序应用',
+					'title' => '小程序应�,
 					'url' => url('system/module', array('account_type' => '4')),
 					'icon' => 'wi wi-wxapp-setting',
 					'permission_name' => 'system_module_wxapp',
@@ -205,6 +207,7 @@ $we7_system_menu['system'] = array(
 		),
 		'user' => array(
 			'title' => '用户',
+			'icon' => 'wi wi-user',
 			'menu' => array(
 				'system_my' => array(
 					'title' => '我的帐户',
@@ -227,15 +230,15 @@ $we7_system_menu['system'] = array(
 								'permission_name' => 'system_user_check',
 							),
 							array(
-								'title' => '用户回收站',
+								'title' => '用户回收�,
 								'permission_name' => 'system_user_recycle',
 							),
 							array(
-								'title' => '用户属性设置',
+								'title' => '用户属性设�,
 								'permission_name' => 'system_user_fields',
 							),
 							array(
-								'title' => '用户属性设置-编辑字段',
+								'title' => '用户属性设�编辑字段',
 								'permission_name' => 'system_user_fields_post',
 							),
 							array(
@@ -248,25 +251,26 @@ $we7_system_menu['system'] = array(
 		),
 		'permission' => array(
 			'title' => '权限',
+			'icon' => 'wi wi-appjurisdiction',
 			'menu' => array(
 				'system_module_group' => array(
-					'title' => '应用权限组',
+					'title' => '应用权限�,
 					'url' => url('system/module-group'),
 					'icon' => 'wi wi-appjurisdiction',
 					'permission_name' => 'system_module_group',
 				),
 				'system_user_group' => array(
-					'title' => '用户权限组',
+					'title' => '用户权限�,
 					'url' => url('user/group'),
 					'icon' => 'wi wi-userjurisdiction',
 					'permission_name' => 'system_user_group',
 					'sub_permission' => array(
 						array(
-							'title' => '编辑用户组',
+							'title' => '编辑用户�,
 							'permission_name' => 'system_user_group_post',
 						),
 						array(
-							'title' => '删除用户组',
+							'title' => '删除用户�,
 							'permission_name' => 'system_user_group_del',
 						),
 					),
@@ -275,6 +279,7 @@ $we7_system_menu['system'] = array(
 		),
 		'acticle' => array(
 			'title' => '公共',
+			'icon' => 'wi wi-article',
 			'menu' => array(
 				'system_article' => array(
 					'title' => '文章管理',
@@ -292,6 +297,7 @@ $we7_system_menu['system'] = array(
 		),
 		'cache' => array(
 			'title' => '缓存',
+			'icon' => 'wi wi-update',
 			'menu' => array(
 				'system_setting_updatecache' => array(
 					'title' => '更新缓存',
@@ -344,7 +350,7 @@ $we7_system_menu['site'] = array(
 			)
 		),
 		'cloud' => array(
-			'title' => '云服务',
+			'title' => '云服�,
 			'menu' => array(
 				'system_profile' => array(
 					'title' => '系统升级',
@@ -359,7 +365,7 @@ $we7_system_menu['site'] = array(
 					'permission_name' => 'system_cloud_register',
 				),
 				'system_cloud_diagnose' => array(
-					'title' => '云服务诊断',
+					'title' => '云服务诊�,
 					'url' => url('cloud/diagnose'),
 					'icon' => 'wi wi-diagnose',
 					'permission_name' => 'system_cloud_diagnose',
@@ -388,7 +394,7 @@ $we7_system_menu['site'] = array(
 					'permission_name' => 'system_utility_optimize',
 				),
 				'system_utility_database' => array(
-					'title' => '数据库',
+					'title' => '数据�,
 					'url' => url('system/database'),
 					'icon' => 'wi wi-sql',
 					'permission_name' => 'system_utility_database',
@@ -419,13 +425,13 @@ $we7_system_menu['adviertisement'] = array (
 			'title' => '常用系统工具',
 			'menu' => array(
 				'adviertisement-content-provider' => array(
-					'title' => '流量主',
+					'title' => '流量�,
 					'url' => url('adviertisement/content-provider/account_list'),
 					'icon' => 'wi wi-flow',
 					'permission_name' => 'adviertisement_content-use',
 				),
 				'adviertisement-content-create' => array(
-					'title' => '广告主',
+					'title' => '广告�,
 					'url' => url('adviertisement/content-provider/content_provider'),
 					'icon' => 'wi wi-adgroup',
 					'permission_name' => 'adviertisement_content-create',
