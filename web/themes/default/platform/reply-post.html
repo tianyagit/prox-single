@@ -11,10 +11,88 @@
 		</li>
 	</ol>
 	{if $m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)}
+	<table class="we7-table table-hover">
+		<col width="530px"/>
+		<col />
+		<col width="150px"/>
+		<tr>
+			<th>关键字</th>
+			<th></th>
+			<th class="text-right">操作</th>
+		</tr>
+		<tr>
+			<td>123</td>
+			<td>精准触发</td>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" data-toggle="modal" data-target="keyword-edit">修改</a>
+					<a href="javascript:;" class="del">删除</a>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" class="text-center" data-toggle="modal" data-target="#addkeywordsModal">
+				<a class="font-lg" href="javascript:;"><span class="color-default" style="font-size: 22px;">+</span>添加关键字</a>
+			</td>
+		</tr>
+	</table>
+	<div class="modal fade" id="addkeywordsModal" tabindex="-1" role="dialog" aria-labelledby="addkeywordsModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="addkeywordsModalLabel">添加关键字</h4>
+				</div>
+				<div class="modal-body">
+					<form action="" method="post" class="we7-form">
+						<div class="form-group">
+							<label class="control-label col-sm-3">触发关键字</label>
+							<div class="form-controls col-sm-8">
+								<input type="radio" id="radio1" name="radio" value="0"/>
+								<label for="radio1">精准触发</label>
+								<input type="radio" id="radio2" name="radio" value="1"/>
+								<label for="radio2">包含关键字触发</label>
+								<input type="radio" id="radio3" name="radio" value="2"/>
+								<label for="radio3">正则匹配关键字触发</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label col-sm-3"></label>
+							<div class="form-controls input-group col-sm-6">
+								<input type="text" class="keyword-input form-control" max="30" id="keyword-exact" ng-model="reply.keyword.exact" ng-blur="checkKeyWord($event);" data-type="keyword">
+								<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-exact" ng-init="initEmotion();"><i class="fa fa-github-alt" style="font-size:14px;"></i> 表情</a></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label col-sm-3"></label>
+							<div class="form-controls input-group col-sm-6">
+								<input type="text" class="keyword-input form-control" max="30" id="keyword-indistinct" ng-model="reply.keyword.contain" ng-blur="checkKeyWord($event);" data-type="keyword">
+								<span class="input-group-btn"><a href="javascript:;" class="btn btn-default" id="emoji-indistinct"><i class="fa fa-github-alt" style="font-size:14px;"></i> 表情</a></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="control-label col-sm-3"></label>
+							<div class="form-controls input-group col-sm-6">
+								<input type="text" class="keyword-input form-control" max="30" id="keyword-regexp" ng-model="reply.keyword.regexp" ng-blur="checkKeyWord($event);" data-type="keyword">
+								<span class="help-block">只支持一条正则</span>
+							</div>
+						</div>
+						<div class="form-controls col-sm-offset-3">
+							<span class="help-block">多个关键字请使用逗号隔开，如天气，今日天气</span>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<form id="reply-form" action="{php echo url('platform/reply/post', array('m' => $m, 'rid' => $rid))}" method="post" enctype="multipart/form-data" ng-controller="KeywordReply" ng-cloak>
 		<div class="we7-form">
 		<input type="hidden" name="rid" value="{$rid}" />
-		<div class="form-group">
+		<div class="form-group" ng-show="reply.showAdvance">
 			<label for="" class="control-label col-sm-2">规则名称</label>
 			<div class="form-controls col-sm-8">
 				<input type="text" class="form-control" placeholder="请输入回复规则的名称" name="rulename" value="{if empty($reply['name']) && !empty($_GPC['name'])}{$_GPC['name']}{else}{$reply['name']}{/if}">
@@ -40,13 +118,23 @@
 			</span>
 			</div>
 		</div>
+		<div class="form-group" ng-show="reply.showAdvance">
+			<label for="" class="control-label col-sm-2">是否开启</label>
+			<div class="form-controls col-sm-8">
+				<label>
+					<input name="status" class="form-control" ng-model="reply.status" ng-hide="1">
+					<div class="switch" ng-class="{'switchOn': reply.status}" ng-click="changeStatus()"></div>
+				</label>
+				<span class="help-block">您可以选择临时禁用这条回复.</span>
+			</div>
+		</div>
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">&nbsp;</label>
 			<div class="form-controls color-default col-sm-8">
 				<a href="javascript:void(0);" ng-click="changeShowAdvance()"><span ng-show="!reply.showAdvance">展开</span><span ng-show="reply.showAdvance">收起</span>高级设置<i class="fa fa-chevron-down" ng-class="{'fa-chevron-down': !reply.showAdvance, 'fa-chevron-up': reply.showAdvance}"></i></a>
 			</div>
 		</div>
-		<div class="form-group">
+		<div class="form-group hidden">
 			<input type="hidden" name="keywords">
 			<input type="hidden" name="reply_type">
 			<label class="control-label col-sm-2">触发关键字</label>
@@ -106,18 +194,9 @@
 			</div>				
 
 		</div>
-		<div class="form-group">
-			<label for="" class="control-label col-sm-2">是否开启</label>
-			<div class="form-controls col-sm-8">
-				<label>
-					<input name="status" class="form-control" ng-model="reply.status" ng-hide="1">
-					<div class="switch" ng-class="{'switchOn': reply.status}" ng-click="changeStatus()"></div>
-				</label>
-				<span class="help-block">您可以选择临时禁用这条回复.</span>
-			</div>
+
 		</div>
-		</div>
-		<div class="form-group">
+		<div>
 			<nav class="navbar navbar-wxapp-bottom navbar-fixed-bottom" role="navigation">
 				<div class="container">
 					<div class="pager">
