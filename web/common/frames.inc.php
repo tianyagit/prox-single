@@ -135,7 +135,7 @@ $we7_system_menu['system'] = array(
 			'title' => '公众号',
 			'menu' => array(
 				'system_account' => array(
-					'title' => ' 微信公众号管理',
+					'title' => ' 微信公众号',
 					'url' => url('account/manage', array('account_type' => '1')),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_account',
@@ -167,13 +167,13 @@ $we7_system_menu['system'] = array(
 					),
 				),
 				'system_module' => array(
-					'title' => '公众号应用管理',
+					'title' => '公众号应用',
 					'url' => url('system/module', array('account_type' => '1')),
 					'icon' => 'wi wi-apply',
 					'permission_name' => 'system_module',
 				),
 				'system_template' => array(
-					'title' => '微官网模板管理',
+					'title' => '微官网模板',
 					'url' => url('system/template'),
 					'icon' => 'wi wi-template',
 					'permission_name' => 'system_template',
@@ -190,13 +190,13 @@ $we7_system_menu['system'] = array(
 			'title' => '小程序',
 			'menu' => array(
 				'system_wxapp' => array(
-					'title' => '微信小程序管理',
+					'title' => '微信小程序',
 					'url' => url('account/manage', array('account_type' => '4')),
 					'icon' => 'wi wi-small-routine',
 					'permission_name' => 'system_wxapp',
 				),
 				'system_module_wxapp' => array(
-					'title' => '小程序应用管理',
+					'title' => '小程序应用',
 					'url' => url('system/module', array('account_type' => '4')),
 					'icon' => 'wi wi-wxapp-setting',
 					'permission_name' => 'system_module_wxapp',
@@ -204,7 +204,7 @@ $we7_system_menu['system'] = array(
 			)
 		),
 		'user' => array(
-			'title' => '帐户/用户',
+			'title' => '用户',
 			'menu' => array(
 				'system_my' => array(
 					'title' => '我的帐户',
@@ -247,7 +247,7 @@ $we7_system_menu['system'] = array(
 			)
 		),
 		'permission' => array(
-			'title' => '权限管理',
+			'title' => '权限',
 			'menu' => array(
 				'system_module_group' => array(
 					'title' => '应用权限组',
@@ -274,7 +274,7 @@ $we7_system_menu['system'] = array(
 			)
 		),
 		'acticle' => array(
-			'title' => '文章/公告',
+			'title' => '公共',
 			'menu' => array(
 				'system_article' => array(
 					'title' => '文章管理',
