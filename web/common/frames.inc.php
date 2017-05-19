@@ -133,6 +133,7 @@ $we7_system_menu['system'] = array(
 	'section' => array(
 		'wxplatform' => array(
 			'title' => '公众号',
+			'icon' => 'wi wi-wechat',
 			'menu' => array(
 				'system_account' => array(
 					'title' => ' 微信公众号管理',
@@ -188,6 +189,7 @@ $we7_system_menu['system'] = array(
 		),
 		'module' => array(
 			'title' => '小程序',
+			'icon' => 'wi wi-small-routine',
 			'menu' => array(
 				'system_wxapp' => array(
 					'title' => '微信小程序管理',
@@ -205,6 +207,7 @@ $we7_system_menu['system'] = array(
 		),
 		'user' => array(
 			'title' => '帐户/用户',
+			'icon' => 'wi wi-user',
 			'menu' => array(
 				'system_my' => array(
 					'title' => '我的帐户',
@@ -248,6 +251,7 @@ $we7_system_menu['system'] = array(
 		),
 		'permission' => array(
 			'title' => '权限管理',
+			'icon' => 'wi wi-appjurisdiction',
 			'menu' => array(
 				'system_module_group' => array(
 					'title' => '应用权限组',
@@ -275,6 +279,7 @@ $we7_system_menu['system'] = array(
 		),
 		'acticle' => array(
 			'title' => '文章/公告',
+			'icon' => 'wi wi-article',
 			'menu' => array(
 				'system_article' => array(
 					'title' => '文章管理',
@@ -292,6 +297,7 @@ $we7_system_menu['system'] = array(
 		),
 		'cache' => array(
 			'title' => '缓存',
+			'icon' => 'wi wi-update',
 			'menu' => array(
 				'system_setting_updatecache' => array(
 					'title' => '更新缓存',
