@@ -132,7 +132,7 @@ $we7_system_menu['system'] = array(
 	'url' => url('account/manage', array('account_type' => '1')),
 	'section' => array(
 		'wxplatform' => array(
-			'title' => '微信',
+			'title' => '公众号',
 			'menu' => array(
 				'system_account' => array(
 					'title' => ' 微信公众号管理',
@@ -166,40 +166,40 @@ $we7_system_menu['system'] = array(
 						),
 					),
 				),
-				'system_platform' => array(
-					'title' => ' 微信开放平台设置',
-					'url' => url('system/platform'),
-					'icon' => 'wi wi-exploitsetting',
-					'permission_name' => 'system_platform',
-				),
-				'system_wxapp' => array(
-					'title' => '微信小程序管理',
-					'url' => url('account/manage', array('account_type' => '4')),
-					'icon' => 'wi wi-small-routine',
-					'permission_name' => 'system_wxapp',
-				),
-			)
-		),
-		'module' => array(
-			'title' => '应用模块',
-			'menu' => array(
 				'system_module' => array(
 					'title' => '公众号应用管理',
 					'url' => url('system/module', array('account_type' => '1')),
 					'icon' => 'wi wi-apply',
 					'permission_name' => 'system_module',
 				),
-				'system_module_wxapp' => array(
-					'title' => '小程序应用管理',
-					'url' => url('system/module', array('account_type' => '4')),
-					'icon' => 'wi wi-wxapp-setting',
-					'permission_name' => 'system_module_wxapp',
-				),
 				'system_template' => array(
 					'title' => '微官网模板管理',
 					'url' => url('system/template'),
 					'icon' => 'wi wi-template',
 					'permission_name' => 'system_template',
+				),
+				'system_platform' => array(
+					'title' => ' 微信开放平台设置',
+					'url' => url('system/platform'),
+					'icon' => 'wi wi-exploitsetting',
+					'permission_name' => 'system_platform',
+				),
+			)
+		),
+		'module' => array(
+			'title' => '小程序',
+			'menu' => array(
+				'system_wxapp' => array(
+					'title' => '微信小程序管理',
+					'url' => url('account/manage', array('account_type' => '4')),
+					'icon' => 'wi wi-small-routine',
+					'permission_name' => 'system_wxapp',
+				),
+				'system_module_wxapp' => array(
+					'title' => '小程序应用管理',
+					'url' => url('system/module', array('account_type' => '4')),
+					'icon' => 'wi wi-wxapp-setting',
+					'permission_name' => 'system_module_wxapp',
 				),
 			)
 		),
