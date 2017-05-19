@@ -164,6 +164,7 @@ function cache_build_users_struct() {
 		$fields['credit5'] = '预留积分类型5';
 		$fields['credit6'] = '预留积分类型6';
 		$fields['createtime'] = '加入时间';
+		$fields['password'] = '用户密码';
 		cache_write('usersfields', $fields);
 	} else {
 		cache_write('usersfields', $base_fields);
