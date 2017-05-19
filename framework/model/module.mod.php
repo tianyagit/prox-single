@@ -282,7 +282,7 @@ function module_fetch($name) {
 		$module['enabled'] = $module['issystem'] || !isset($setting['enabled']) ? 1 : $setting['enabled'];
 		$module['shortcut'] = $setting['shortcut'];
 	}
-	$module_ban = module_ban();
+	$module_ban = (array)module_ban();
 
  	$module['is_ban'] = in_array($name, $module_ban) ? true : false;
 	return $module;
