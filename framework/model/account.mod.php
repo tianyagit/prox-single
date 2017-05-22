@@ -268,10 +268,10 @@ function uni_groups($groupids = array()) {
 						if (!empty($module_list)) {
 							foreach ($module_list as $key => &$module) {
 								$module = module_fetch($key);
-								if ($module['wxapp_support'] == 2) {
+								if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 									$row['wxapp'][$module['name']] = $module;
 								}
-								if ($module['app_support'] == 2) {
+								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 									if (!empty($module['main_module'])) {
 										continue;
 									}
