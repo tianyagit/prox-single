@@ -463,14 +463,12 @@ function module_uninstall($module_name, $is_clean_rule = false) {
  */
 function module_get_plugin_list($module_name) {
 	$module_info = module_fetch($module_name);
-	if (!empty($module_info['plugin'])) {
+	if (!empty($module_info['plugin_list']) && is_array($module_info['plugin_list'])) {
 		$plugin_list = array();
-		if (!empty($module_info['plugin']) && is_array($module_info['plugin'])) {
-			foreach ($module_info['plugin'] as $plugin) {
-				$plugin_info = module_fetch($plugin);
-				if (!empty($plugin_info)) {
-					$plugin_list[$plugin] = $plugin_info;
-				}
+		foreach ($module_info['plugin_list'] as $plugin) {
+			$plugin_info = module_fetch($plugin);
+			if (!empty($plugin_info)) {
+				$plugin_list[$plugin] = $plugin_info;
 			}
 		}
 		return $plugin_list;
