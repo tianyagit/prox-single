@@ -60,15 +60,19 @@ if ($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 		iajax(-1, '抱歉，请输入导航菜单的名称！', '');
 	}
 	$url = ((strexists($post['url'], 'http://') || strexists($post['url'], 'https://')) && !strexists($post['url'], '#wechat_redirect')) ? $post['url'] . '#wechat_redirect' : $post['url'];
-	if (intval($post['section']['num']) > 10) {
-		$post['section']['num'] = 10;
+	if (is_array($post['section'])) {
+		if (intval($post['section']['num']) > 10) {
+			$section_num = 10;
+		} else {
+			$section_num = intval($post['section']['num']);
+		}
 	} else {
-		$post['section']['num'] = intval($post['section']['num']);
+		$section_num = 0;
 	}
 	$data = array(
 		'uniacid' => $_W['uniacid'],
 		'multiid' => $multiid,
-		'section' => $post['section']['num'],
+		'section' => $section_num,
 		'name' => $post['name'],
 		'description' => $post['description'],
 		'displayorder' => intval($post['displayorder']),
