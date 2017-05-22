@@ -305,7 +305,7 @@ function module_build_privileges() {
 		$mymodules = pdo_getall('uni_account_modules', array('uniacid' => $row['uniacid']), array('module'), 'module');
 		$mymodules = array_keys($mymodules);
 		foreach($modules as $module){
-			if(!in_array($module['name'], $mymodules) && empty($module['main_module']) && empty($module['issystem'])) {
+			if(!in_array($module['name'], $mymodules) && empty($module['issystem'])) {
 				$data = array();
 				$data['uniacid'] = $row['uniacid'];
 				$data['module'] = $module['name'];
