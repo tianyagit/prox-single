@@ -193,7 +193,7 @@ function buildframes($framename = ''){
 		}
 	} else {
 		//创始人菜单
-		$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'shortcut' => STATUS_ON), array('module'), '', 'displayorder DESC');
+		$account_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid'], 'shortcut' => STATUS_ON), array('module'), '', 'displayorder DESC, id DESC');
 		if (!empty($account_module)) {
 			foreach ($account_module as $module) {
 				if (!in_array($module['module'], $sysmodules)) {
