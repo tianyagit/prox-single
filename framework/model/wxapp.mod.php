@@ -99,7 +99,7 @@ function wxapp_support_wxapp_modules() {
 */
 function wxapp_fetch($uniacid, $version_id = '') {
 	$wxapp_info = array();
-	$uniacid = intvla($uniacid);
+	$uniacid = intval($uniacid);
 	
 	if (empty($uniacid)) {
 		return $wxapp_info;
