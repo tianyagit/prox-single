@@ -171,7 +171,7 @@ function wxapp_version($version_id) {
 		return $version_info;
 	}
 	if (!empty($version_info['modules'])) {
-		$version_info['modules'] = iunserialize($version_info['modules']);
+		$version_info['modules'] = iunserializer($version_info['modules']);
 		if (!empty($version_info['modules'])) {
 			foreach ($version_info['modules'] as $i => $module) {
 				if (!empty($module['uniacid'])) {
@@ -183,7 +183,7 @@ function wxapp_version($version_id) {
 		}
 	}
 	if (!empty($version_info['quickmenu'])) {
-		$version_info['quickmenu'] = iunserialize($version_info['quickmenu']);
+		$version_info['quickmenu'] = iunserializer($version_info['quickmenu']);
 	}
 	return $version_info;
 }
