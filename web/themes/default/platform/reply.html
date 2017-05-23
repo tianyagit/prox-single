@@ -284,19 +284,23 @@
 		});
 	</script>
 {elseif $m == 'service'}
+	{if $import}
+	<div class="alert alert-info">
+		<a href="{php echo url('platform/reply/import')}">存在可用的服务, 点击这里快速导入</a>
+	</div>
+	{/if}
 	<div class="NoKeyword-list" id="js-service-display" ng-controller="serviceDisplay" ng-cloak>
 		<div class="table we7-tables">
 			<table class="table we7-table table-hover">
 				<col width="160px"/>
 				<col />
 				<col width="120px"/>
-				<col width="180px"/>
 				<tr>
 					<th class="text-left">服务名称</th>
 					<th class="text-left">功能说明</th>
 					<th>状态</th>
 				</tr>
-				<tr ng-repeat="(id, api) in service track by id">
+				<tr ng-repeat="(id, api) in service track by id" ng-if="service">
 					<td class="text-left">
 						{{ api.name }}
 					</td>
@@ -306,6 +310,11 @@
 						<label>
 							<div ng-class="api.switch == 'checked' ? 'switch switchOn' : 'switch'" ng-click="changeStatus(id)"></div>
 						</label>
+					</td>
+				</tr>
+				<tr ng-if="!service">
+					<td colspan="3" class="text-center">
+						暂无数据
 					</td>
 				</tr>
 			</table>

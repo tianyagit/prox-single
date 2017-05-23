@@ -7,11 +7,11 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('reply');
 load()->model('module');
 
-$dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_status');
+$dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_status', 'import');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
-if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service'))) {
+if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service', 'userapi'))) {
 	uni_user_permission_check('platform_reply');
 } else {
 	$modules = uni_modules();
@@ -133,6 +133,13 @@ if ($do == 'display') {
 				$userapi_list[$userapi['id']] = $userapi;
 			}
 		}
+		
+		$import = false;
+		$current_apiurls = reply_getall_current_apiurls();
+		$predefined_service = reply_predefined_service();
+		if (count($current_apiurls) != count($predefined_service)) {
+			$import = true;
+		}
 	}
 	if ($m == 'userapi') {
 		$pindex = max(1, intval($_GPC['page']));
@@ -142,7 +149,7 @@ if ($do == 'display') {
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		$params[':module'] = 'userapi';
-		if(!empty($_GPC['keyword'])) {
+		if (!empty($_GPC['keyword'])) {
 			if ($_GPC['search_type'] == 'keyword') {
 				$rids = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
 				if (!empty($rids)) {
@@ -153,13 +160,13 @@ if ($do == 'display') {
 			} else {
 				$condition .= ' AND `name` LIKE :keyword';
 				$params[':keyword'] = "%{$_GPC['keyword']}%";
-			}	
+			}
 		}
 
 		$replies = reply_search($condition, $params, $pindex, $psize, $total);
 		$pager = pagination($total, $pindex, $psize);
 		if (!empty($replies)) {
-			foreach($replies as &$item) {
+			foreach ($replies as &$item) {
 				$condition = '`rid`=:rid';
 				$params = array();
 				$params[':rid'] = $item['id'];
@@ -387,7 +394,7 @@ if ($do == 'post') {
 			$cion = $path . '/icon-custom.jpg';
 			if (!file_exists($cion)) {
 				$cion = $path . '/icon.jpg';
-				if(!file_exists($cion)) {
+				if (!file_exists($cion)) {
 					$cion = './resource/images/nopic-small.jpg';
 				}
 			}
@@ -408,12 +415,12 @@ if ($do == 'post') {
 	}
 }
 
-if($do == 'delete') {
+if ($do == 'delete') {
 	$rids = $_GPC['rid'];
 	if (!is_array($rids)) {
 		$rids = array($rids);
 	}
-	if(empty($rids)) {
+	if (empty($rids)) {
 		itoast('非法访问.', '', '');
 	}
 	foreach ($rids as $rid) {
@@ -434,7 +441,7 @@ if($do == 'delete') {
 			} else {
 				if ($m == 'userapi') {
 					$reply_module = 'userapi';
-				}else {
+				} else {
 					$reply_module = 'reply';
 				}
 			}
@@ -491,7 +498,7 @@ if ($do == 'change_keyword_status') {
 		if ($result['status'] == 1) {
 			$rule = pdo_update('rule', array('status' => 0), array('id' => $id));
 			$rule_keyword = pdo_update('rule_keyword', array('status' => 0), array('uniacid' => $_W['uniacid'], 'rid' => $id));
-		}else {
+		} else {
 			$rule = pdo_update('rule', array('status' => 1), array('id' => $id));
 			$rule_keyword = pdo_update('rule_keyword', array('status' => 1), array('uniacid' => $_W['uniacid'], 'rid' => $id));
 		}
@@ -502,4 +509,54 @@ if ($do == 'change_keyword_status') {
 		}
 	}
 	iajax(-1, '更新失败！', '');
+}
+
+if ($do == 'import') {
+	$current_apiurls = reply_getall_current_apiurls();
+	$predefined_service = reply_predefined_service();
+	$apiurls = array();
+	if (!empty($current_apiurls)) {
+		foreach ($current_apiurls as $url) {
+			$apiurls[] = $url['apiurl'];
+		}
+	}
+	if (!empty($predefined_service)) {
+		foreach ($predefined_service as $key => $service_val) {
+			if (!in_array($key, $apiurls)) {
+				$rule = array(
+						'uniacid' => 0,
+						'name' => $service_val['title'],
+						'module' => 'userapi',
+						'displayorder' => 255,
+						'status' => 1,
+				);
+				pdo_insert('rule', $rule);
+				$rid = pdo_insertid();
+				if (!empty($rid)) {
+					foreach ($service_val['keywords'] as $row) {
+						$data = array(
+								'content' => $row[1],
+								'type' => $row[0],
+								'rid' => $rid,
+								'uniacid' => 0,
+								'module' => 'userapi',
+								'status' => $rule['status'],
+								'displayorder' => $rule['displayorder'],
+						);
+						pdo_insert('rule_keyword', $data);
+					}
+					$reply = array(
+							'rid' => $rid,
+							'description' => htmlspecialchars($service_val['description']),
+							'apiurl' => $key,
+							'token' => '',
+							'default_text' => '',
+							'cachetime' => 0
+					);
+					pdo_insert('userapi_reply', $reply);
+				}
+			}
+		}
+	}
+	itoast('成功导入.', referer(), 'success');
 }
