@@ -27,7 +27,13 @@ if ($do == 'check_status') {
 		if (is_error($info)) {
 			iajax(1, $info);
 		}
-		if (module_ban($modulename)) {
+		if (!isset($_GPC['module_ban:' . $modulename])) {
+			$module_ban = module_ban($modulename) ? 1 : 0;
+			isetcookie('module_ban:' . $modulename, $module_ban, 1800);
+		} else {
+			$module_ban = $_GPC['module_ban:' . $modulename];
+		}
+		if ($module_ban) {
 			iajax(1, array('message' => '此模块为盗版模块，请删除模块后联系客服'));
 		}
 		if (!empty($info) && !empty($info['version']['version'])) {

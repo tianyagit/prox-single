@@ -145,7 +145,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
-		$condition = "WHERE 1 ";
+		$condition = "WHERE 1 OR a.issystem = 1";
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();

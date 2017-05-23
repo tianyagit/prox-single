@@ -49,33 +49,7 @@
 		</div>
 	</nav>
 </div>
-<!--系统提示-->
-{if defined('IN_MODULE')}
-<div class="system-tips we7-body-alert" style="display:none">
-	<div class="container text-right">
-		<span class="alert-info">
-			<a href="javascript:;" id="header_module_notice">
-			</a>
-		</span>
-	</div>
-</div>
-<script>
-	$.post("{php echo url('profile/module/check_status')}", {'module' : "{$_W['current_module']['name']}"}, function(data) {
-		var data = $.parseJSON(data);
-		if (data.message.errno != 0) {
-			$('#header_module_notice').parent().parent().parent().show();
-			$('#header_module_notice').html(data.message.message.message);
-		} else {
-			if (data.message.message.upgrade == 1) {
-				$('#header_module_notice').parent().parent().parent().show();
-				$('#header_module_notice').html('【' + data.message.message.name + '】检测最新版为' + data.message.message.version + '，请尽快更新！');
-			}
-		}
-	});
-</script>
-{/if}
-<!--end  系统提示-->
-{if empty($_COOKIE['check_setmeal']) && !empty($_W['account']['endtime']) && ($_W['account']['endtime'] - TIMESTAMP < (6*86400))} 
+{if empty($_COOKIE['check_setmeal']) && !empty($_W['account']['endtime']) && ($_W['account']['endtime'] - TIMESTAMP < (6*86400))}
 <div class="system-tips we7-body-alert" id="setmeal-tips">
 	<div class="container text-right">
 		<div class="alert-info">
