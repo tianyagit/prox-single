@@ -312,8 +312,37 @@ $we7_system_menu['system'] = array(
 
 $we7_system_menu['site'] = array(
 	'title' => '站点管理',
-	'url' => url('system/site'),
+	'url' => url('cloud/upgrade'),
 	'section' => array(
+		'cloud' => array(
+			'title' => '云服务',
+			'menu' => array(
+				'system_profile' => array(
+					'title' => '系统升级',
+					'url' => url('cloud/upgrade'),
+					'icon' => 'wi wi-cache',
+					'permission_name' => 'system_cloud_upgrade',
+				),
+				'system_cloud_register' => array(
+					'title' => '注册站点',
+					'url' => url('cloud/profile'),
+					'icon' => 'wi wi-registersite',
+					'permission_name' => 'system_cloud_register',
+				),
+				'system_cloud_diagnose' => array(
+					'title' => '云服务诊断',
+					'url' => url('cloud/diagnose'),
+					'icon' => 'wi wi-diagnose',
+					'permission_name' => 'system_cloud_diagnose',
+				),
+				'system_cloud_sms' => array(
+					'title' => '短信管理',
+					'url' => url('cloud/sms'),
+					'icon' => 'wi wi-message',
+					'permission_name' => 'system_cloud_sms',
+				),
+			)
+		),
 		'setting' => array(
 			'title' => '设置',
 			'menu' => array(
@@ -346,35 +375,6 @@ $we7_system_menu['site'] = array(
 					'url' => url('system/logs'),
 					'icon' => 'wi wi-log',
 					'permission_name' => 'system_setting_logs',
-				),
-			)
-		),
-		'cloud' => array(
-			'title' => '云服务',
-			'menu' => array(
-				'system_profile' => array(
-					'title' => '系统升级',
-					'url' => url('cloud/upgrade'),
-					'icon' => 'wi wi-cache',
-					'permission_name' => 'system_cloud_upgrade',
-				),
-				'system_cloud_register' => array(
-					'title' => '注册站点',
-					'url' => url('cloud/profile'),
-					'icon' => 'wi wi-registersite',
-					'permission_name' => 'system_cloud_register',
-				),
-				'system_cloud_diagnose' => array(
-					'title' => '云服务诊断',
-					'url' => url('cloud/diagnose'),
-					'icon' => 'wi wi-diagnose',
-					'permission_name' => 'system_cloud_diagnose',
-				),
-				'system_cloud_sms' => array(
-					'title' => '短信管理',
-					'url' => url('cloud/sms'),
-					'icon' => 'wi wi-message',
-					'permission_name' => 'system_cloud_sms',
 				),
 			)
 		),
