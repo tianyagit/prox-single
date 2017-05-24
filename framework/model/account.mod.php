@@ -145,7 +145,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
-		$condition = "WHERE 1 OR a.issystem = 1";
+		$condition = "WHERE 1 ";
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
@@ -169,7 +169,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				}
 			}
 		}
-		$condition .= $enabled ?  " AND b.enabled = 1" : "";
+		$condition .= $enabled ?  " AND b.enabled = 1 OR a.issystem = 1" : " OR a.issystem = 1";
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, a.mid DESC";
 		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
