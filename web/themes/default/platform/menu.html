@@ -253,22 +253,48 @@
 										<input id="radio-7" type="radio" name="ipt" ng-model="context.activeItem.type" value="pic_photo_or_album" ng-disabled="context.group.disabled">
 										<label for="radio-7">拍照相册</label>
 										<input id="radio-8" type="radio" name="ipt" ng-model="context.activeItem.type" value="pic_weixin" ng-disabled="context.group.disabled">
-										<label for="radio-8">相册发图 </label>
+										<label for="radio-8">相册发图 </label> 
+										<input id="radio-9" type="radio" name="ipt" ng-model="context.activeItem.type" value="miniprogram" ng-disabled="context.group.disabled">
+										<label for="radio-9">关联小程序</label>
 									</div>
 								</div>
-								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if} ng-show="context.activeItem.type == 'view'  && context.activeItem.forceHide == 0">
+								<div class="menu-content" {if $_W['account']['level'] == '1'}style="display:none;"{/if} ng-show="(context.activeItem.type == 'view' || context.activeItem.type == 'miniprogram')  && context.activeItem.forceHide == 0">
 									<div class="form-group">
-										<p class="color-gray">订阅者点击该子菜单会跳转到以下链接</p>
-										<label for="" class="control-label col-sm-2">页面地址</label>
-										<div class="form-controls col-sm-8">
+										<p class="color-gray" ng-show="context.activeItem.type == 'view'">订阅者点击该子菜单会跳转到以下链接</p>
+										<p class="color-gray" ng-show="context.activeItem.type == 'miniprogram'">点击该菜单跳转到关联的小程序</p>
+										<label for="" class="control-label col-sm-2" ng-show="context.activeItem.type == 'view'">页面地址</label>
+										<div class="form-controls col-sm-8" ng-show="context.activeItem.type == 'view'">
 											<input type="text" class="form-control" id="ipt-url" type="text" ng-model="context.activeItem.url" ng-disabled="context.group.disabled">
 											<span ng-if="!context.group.disabled" class="form-control-addon color-default" id="search" ng-click="context.select_link()">选择地址</span>
 											<span class="help-block">指定点击此菜单时要跳转的链接（注：链接需加http://）</span>
 										</div>
+										<!-- 小程序 -->
+										<div class="form-controls col-sm-12" ng-show="context.activeItem.type == 'miniprogram'">
+											<label for="ipt-url-appid" class="control-label col-sm-2">APPID</label>
+											<div class="form-controls col-sm-7">
+												<input type="text" class="form-control" id="ipt-url-appid" ng-model="context.activeItem.appid" ng-disabled="context.group.disabled" placeholder="请确保小程序与公众号已关联">
+												<span class="help-block">
+													<a href="http://weixiao.qq.com/notice/view?mid=0&cid=2&id=274" target="_blank">如何获取</a>
+												</span>
+											</div>
+										</div>	
+										<div class="form-controls col-sm-12" ng-show="context.activeItem.type == 'miniprogram'">
+											<label for="ipt-url-pagepath" class="control-label col-sm-2">页面</label>
+											<div class="form-controls col-sm-7">
+												<input type="text" class="form-control" id="ipt-url-pagepath" ng-model="context.activeItem.pagepath" ng-disabled="context.group.disabled" placeholder="请填写跳转页面的小程序访问路径">
+												<span class="help-block"><a href="http://weixiao.qq.com/notice/view?mid=0&cid=2&id=275" target="_blank">填写指引</a></span>
+											</div>
+										</div>
+										<div class="form-controls col-sm-12" ng-show="context.activeItem.type == 'miniprogram'">
+											<label for="ipt-url-url" class="control-label col-sm-2">备用网页</label>
+											<div class="form-controls col-sm-10">
+												<input type="text" class="form-control" id="ipt-url-url" ng-model="context.activeItem.url" ng-disabled="context.group.disabled" placeholder="旧版微信客户端不支持小程序，用户点击菜单时会打开该网页">
+											</div>
+										</div>
 									</div>
 								</div>
 								
-								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click'  && context.activeItem.forceHide == 0" style="width:100%;">
+								<div class="panel we7-panel" ng-show="context.activeItem.type != 'view' && context.activeItem.type != 'click' && context.activeItem.type != 'miniprogram' && context.activeItem.forceHide == 0" style="width:100%;">
 									<div class="panel-heading">
 										回复内容
 									</div>
