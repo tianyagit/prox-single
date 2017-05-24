@@ -99,8 +99,13 @@ function wxapp_support_wxapp_modules() {
 */
 function wxapp_fetch($uniacid, $version_id = '') {
 	$wxapp_info = array();
+	$uniacid = intval($uniacid);
+	
 	if (empty($uniacid)) {
 		return $wxapp_info;
+	}
+	if (!empty($version_id)) {
+		$version_id = intval($version_id);
 	}
 	
 	$wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
@@ -128,18 +133,24 @@ function wxapp_fetch($uniacid, $version_id = '') {
 function wxapp_version_all($uniacid) {
 	load()->model('module');
 	$wxapp_versions = array();
+	$uniacid = intval($uniacid);
+	
 	if (empty($uniacid)) {
 		return $wxapp_versions;
 	}
 	
 	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
-	foreach ($wxapp_versions as &$modules_val) {
-		$modules_val['modules'] = iunserializer($modules_val['modules']);
-		foreach ($modules_val['modules'] as &$module_val) {
-			$module_val['module_info'] = module_fetch($module_val['name']);
+	if (!empty($wxapp_versions)) {
+		foreach ($wxapp_versions as &$modules_val) {
+			$modules_val['modules'] = iunserializer($modules_val['modules']);
+			if (!empty($modules_val['modules'])) {
+				foreach ($modules_val['modules'] as &$module_val) {
+					$module_val['module_info'] = module_fetch($module_val['name']);
+				}
+			}
 		}
+		unset($module_val, $modules_val);
 	}
-	unset($module_val, $modules_val);
 	return $wxapp_versions;
 }
 
@@ -160,7 +171,7 @@ function wxapp_version($version_id) {
 		return $version_info;
 	}
 	if (!empty($version_info['modules'])) {
-		$version_info['modules'] = unserialize($version_info['modules']);
+		$version_info['modules'] = iunserializer($version_info['modules']);
 		if (!empty($version_info['modules'])) {
 			foreach ($version_info['modules'] as $i => $module) {
 				if (!empty($module['uniacid'])) {
@@ -172,7 +183,7 @@ function wxapp_version($version_id) {
 		}
 	}
 	if (!empty($version_info['quickmenu'])) {
-		$version_info['quickmenu'] = unserialize($version_info['quickmenu']);
+		$version_info['quickmenu'] = iunserializer($version_info['quickmenu']);
 	}
 	return $version_info;
 }
@@ -202,6 +213,9 @@ function wxapp_save_switch($uniacid) {
 
 function wxapp_site_info($multiid) {
 	$site_info = array();
+	$multiid = intval($multiid);
+	$uniacid = intval($_GPC['uniacid']);
+	
 	if (empty($multiid)) {
 		return array();
 	}
@@ -209,11 +223,11 @@ function wxapp_site_info($multiid) {
 	$site_info['slide'] = pdo_getall('site_slide', array('multiid' => $multiid));
 	$site_info['nav'] = pdo_getall('site_nav', array('multiid' => $multiid));
 	if (!empty($site_info['nav'])) {
-		foreach($site_info['nav'] as &$nav) {
+		foreach ($site_info['nav'] as &$nav) {
 			$nav['css'] = iunserializer($nav['css']);
 		}
 		unset($nav);
 	}
-	$site_info['recommend'] = pdo_getall('site_article', array('uniacid' => $_GPC['uniacid']));
+	$site_info['recommend'] = pdo_getall('site_article', array('uniacid' => $uniacid));
 	return $site_info;
 }

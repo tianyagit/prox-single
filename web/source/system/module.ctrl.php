@@ -14,7 +14,7 @@ load()->model('user');
 load()->model('account');
 load()->classs('account');
 include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
-$dos = array('check', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('filter', 'check', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
@@ -631,4 +631,69 @@ if ($do == 'not_installed') {
 	$pager = pagination($total, $pageindex, $pagesize);
 }
 
+if ($do == 'filter') {
+	$condition = $_GPC['condition'];
+	$module_list  = user_modules($_W['uid']);
+	$cloud_m_query_module = cloud_m_query();
+	$modules = array();
+	if (is_array($module_list) && !empty($module_list)) {
+		foreach ($module_list as $module) {
+			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
+				$cloud_m_info = $cloud_m_query_module[$module['name']];
+				$site_branch = $cloud_m_info['site_branch']['id'];
+				if (empty($site_branch)) {
+					$site_branch = $cloud_m_info['branch'];
+				}
+				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
+				if (!empty($cloud_m_info['branches'])) {
+					$best_branch_id = 0;
+					foreach ($cloud_m_info['branches'] as $branch) {
+						if ($best_branch_id == 0) {
+							$best_branch_id = $branch['id'];
+						} else {
+							if ($branch['displayorder'] > $cloud_m_info['branches'][$best_branch_id]['displayorder']) {
+								$best_branch_id = $branch['id'];
+							}
+						}
+					}
+				} else {
+					continue;
+				}
+				$best_branch = $cloud_m_info['branches'][$best_branch_id];
+				$empty_condition = empty($condition['upgrade_branch']) && empty($condition['new_branch']);
+				$new_branch_condition = ver_compare($module['version'], $cloud_branch_version) == -1 && !empty($condition['upgrade_branch']);
+				$upgrade_branch_condition = $cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($condition['new_branch']);
+				if ($empty_condition) {
+					if (ver_compare($module['version'], $cloud_branch_version) == -1 || $cloud_m_info['displayorder'] < $best_branch['displayorder']) {
+						$module['upgrade'] = true;
+					}
+					$module['from'] = 'cloud';
+					$modules[$module['name']] = $module;
+				} elseif ($new_branch_condition || $upgrade_branch_condition) {
+					$module['upgrade'] = true;
+					$module['from'] = 'cloud';
+					$modules[$module['name']] = $module;
+				}
+			} else {
+				$empty_condition = empty($condition['upgrade_branch']) && empty($condition['new_branch']);
+				$upgrade_branch_condition = ver_compare($module['version'], $manifest['application']['version']) == '-1' && !empty($condition['upgrade_branch']);
+				$manifest = ext_module_manifest($module['name']);
+				if (!empty($manifest)&& is_array($manifest)) {
+					if ($empty_condition) {
+						if (ver_compare($module['version'], $manifest['application']['version']) == '-1') {
+							$module['upgrade'] = true;
+						}
+						$module['from'] = 'local';
+						$modules[$module['name']] = $module;
+					} elseif ($upgrade_branch_condition) {
+						$module['from'] = 'local';
+						$module['upgrade'] = true;
+						$modules[$module['name']] = $module;
+					}
+				}
+			}
+		}
+	}
+	iajax(0, $modules);
+}
 template('system/module' . ACCOUNT_TYPE_TEMPLATE);
