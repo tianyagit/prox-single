@@ -69,8 +69,8 @@ require.config({
 		'angular': '../lib/angular.min',
 		'angular.sanitize': '../lib/angular-sanitize.min',
 		'angular.hotkeys': '../lib/angular.hotkeys',
-		'bootstrap': '../lib/bootstrap.min', //兼容之前amd调用
-		'jquery': '../lib/bootstrap.min', //兼容之前amd调用
+		'bootstrap': '../lib/compat.min', //兼容之前amd调用
+		'jquery': '../lib/compat.min', //兼容之前amd调用
 		'loadcss': '../lib/loadcss.min', //加载CSS
 		'css': '../lib/css.min', //加载CSS
 		/*复制组件（部分浏览器不兼容flash）*/
@@ -90,10 +90,6 @@ require.config({
 		'util' : {
 			exports: 'util',
 		},
-		'jquery' : {
-			exports: '$',
-			deps: ['../lib/jquery-1.11.1.min']
-		},
 		'daterangepicker': {
 			deps: ['moment', 'loadcss!../../components/daterangepicker/daterangepicker.css']
 		},
@@ -105,10 +101,6 @@ require.config({
 		},
 		'map': {
 			exports: 'BMap'
-		},
-		'bootstrap': {
-			deps: ['jquery'],
-			exports: '$'
 		},
 		'jquery.wookmark': {
 			exports: "$",

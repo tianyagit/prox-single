@@ -34,31 +34,19 @@
 	</ul>
 
 	<form action="" method="get">
-		<table class="table we7-table table-hover vertical-middle">
-			<col width="85px" />
-			<col width="400px"/>
+		<table class="table we7-table table-hover vertical-middle table-manage">
+			<col width="120px" />
+			<col width="350px"/>
 			<col width="230px" />
 			<tr>
-				<th colspan="2" class="text-left">
-					<div class="dropdown dropdown-toggle we7-dropdown">
-						<a id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							应用名
-							<span class="caret">
-						</a>
-						<ul class="dropdown-menu" aria-labelledby="dLabel">
-							<li><a href="" class="active">应用名</a></li>
-							<li ng-click="selectType(2)"><a href="" class="active">应用名</a></li>
-							<li ng-click="selectType(3)"><a href="" class="active">应用名</a></li>
-						</ul>
-					</div>
-				</th>
+				<th colspan="2" class="text-left">应用名</th>
 				<!--<th>公众号</th>-->
 				<!--<th>数量</th>-->
-				<th class="text-left">操作</th>
+				<th class="text-right">操作</th>
 			</tr>
 			<tr ng-repeat="module in module_list">
 				<td class="text-left">
-					<img style="width: 50px;height : 50px;" ng-src="{{ module.logo }}" class="img-responsive"/>
+					<img ng-src="{{ module.logo }}" class="img-responsive icon"/>
 				</td>
 				<td class="text-left">
 					<p>{{ module.title }}</p>
