@@ -62,17 +62,18 @@ if ($do == 'display') {
 	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
-		$sql = "SELECT *, a.id as id FROM ". tablename('wechat_attachment') ." AS a RIGHT JOIN ". tablename('wechat_news') ." AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
-		$sql_total = "SELECT count(*) FROM ".tablename('wechat_attachment') ." AS a RIGHT JOIN ". tablename('wechat_news') ." AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
+		$str = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
+		$list_sql = sprintf($str, "*, a.id as id");
+		$total_sql = sprintf($str, "count(*)");
 		if (! empty($search)) {
-			$str .= ' AND (b.title LIKE :search OR b.author = :search OR b.digest LIKE :search)';
-			$sql .= $str;
-			$sql_total .= $str;
+			$str = " AND (b.title LIKE :search OR b.author = :search OR b.digest LIKE :search)";
+			$list_sql .= $str;
+			$total_sql .= $str;
 			$conditions[':search'] = '%' . $search . '%';
 		}
-		$total = pdo_fetchcolumn($sql_total, $conditions);
-		$sql .= " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize;
-		$news_list = pdo_fetchall($sql, $conditions);
+		$total = pdo_fetchcolumn($total_sql, $conditions);
+		$list_sql .= " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize;
+		$news_list = pdo_fetchall($list_sql, $conditions);
 		if (! empty($news_list)) {
 			foreach ($news_list as $news){
 				if (isset($material_list[$news['attach_id']])){
