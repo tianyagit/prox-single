@@ -19,18 +19,18 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-reply',
 					'permission_name' => 'platform_reply',
 					'sub_permission' => array(
-// 						array(
-// 							'title' => '关键字自动回复 ',
-// 							'permission_name' => 'platform_reply_keyword',
-// 						),
-// 						array(
-// 							'title' => '非关键字自动回复 ',
-// 							'permission_name' => 'platform_reply_special',
-// 						),
-// 						array(
-// 							'title' => '欢迎/默认回复',
-// 							'permission_name' => 'platform_reply_system',
-// 						),
+						// array(
+						// 	'title' => '关键字自动回复 ',
+						// 	'permission_name' => 'platform_reply_keyword',
+						// ),
+						// array(
+						// 	'title' => '非关键字自动回复 ',
+						// 	'permission_name' => 'platform_reply_special',
+						// ),
+						// array(
+						// 	'title' => '欢迎/默认回复',
+						// 	'permission_name' => 'platform_reply_system',
+						// ),
 					),
 				),
 				'platform_menu' => array(
@@ -45,14 +45,14 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-qrcode',
 					'permission_name' => 'platform_qr',
 					'sub_permission' => array(
-// 						array(
-// 							'title' => '二维码',
-// 							'permission_name' => 'platform_qr_qr',
-// 						),
-// 						array(
-// 							'title' => '转化链接',
-// 							'permission_name' => 'platform_url2qr',
-// 						),
+						// array(
+						// 	'title' => '二维码',
+						// 	'permission_name' => 'platform_qr_qr',
+						// ),
+						// array(
+						// 	'title' => '转化链接',
+						// 	'permission_name' => 'platform_url2qr',
+						// ),
 					),
 				),
 				'platform_mass_task' => array(
@@ -73,14 +73,14 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-home',
 					'permission_name' => 'platform_site',
 					'sub_permission' => array(
-// 						array(
-// 							'title' => '添加/编辑',
-// 							'permission_name' => 'platform_site_post',
-// 						),
-// 						array(
-// 							'title' => '删除',
-// 							'permission_name' => 'platform_site_delete',
-// 						),
+						// array(
+						// 	'title' => '添加/编辑',
+						// 	'permission_name' => 'platform_site_post',
+						// ),
+						// array(
+						// 	'title' => '删除',
+						// 	'permission_name' => 'platform_site_delete',
+						// ),
 					),
 				)
 			),
@@ -132,7 +132,8 @@ $we7_system_menu['system'] = array(
 	'url' => url('account/manage', array('account_type' => '1')),
 	'section' => array(
 		'wxplatform' => array(
-			'title' => '微信',
+			'title' => '公众号',
+			'icon' => 'wi wi-wechat',
 			'menu' => array(
 				'system_account' => array(
 					'title' => ' 微信公众号管理',
@@ -166,34 +167,11 @@ $we7_system_menu['system'] = array(
 						),
 					),
 				),
-				'system_platform' => array(
-					'title' => ' 微信开放平台设置',
-					'url' => url('system/platform'),
-					'icon' => 'wi wi-exploitsetting',
-					'permission_name' => 'system_platform',
-				),
-				'system_wxapp' => array(
-					'title' => '微信小程序管理',
-					'url' => url('account/manage', array('account_type' => '4')),
-					'icon' => 'wi wi-small-routine',
-					'permission_name' => 'system_wxapp',
-				),
-			)
-		),
-		'module' => array(
-			'title' => '应用模块',
-			'menu' => array(
 				'system_module' => array(
 					'title' => '公众号应用管理',
 					'url' => url('system/module', array('account_type' => '1')),
 					'icon' => 'wi wi-apply',
 					'permission_name' => 'system_module',
-				),
-				'system_module_wxapp' => array(
-					'title' => '小程序应用管理',
-					'url' => url('system/module', array('account_type' => '4')),
-					'icon' => 'wi wi-wxapp-setting',
-					'permission_name' => 'system_module_wxapp',
 				),
 				'system_template' => array(
 					'title' => '微官网模板管理',
@@ -201,10 +179,35 @@ $we7_system_menu['system'] = array(
 					'icon' => 'wi wi-template',
 					'permission_name' => 'system_template',
 				),
+				'system_platform' => array(
+					'title' => ' 微信开放平台设置',
+					'url' => url('system/platform'),
+					'icon' => 'wi wi-exploitsetting',
+					'permission_name' => 'system_platform',
+				),
+			)
+		),
+		'module' => array(
+			'title' => '小程序',
+			'icon' => 'wi wi-small-routine',
+			'menu' => array(
+				'system_wxapp' => array(
+					'title' => '微信小程序管理',
+					'url' => url('account/manage', array('account_type' => '4')),
+					'icon' => 'wi wi-small-routine',
+					'permission_name' => 'system_wxapp',
+				),
+				'system_module_wxapp' => array(
+					'title' => '小程序应用管理',
+					'url' => url('system/module', array('account_type' => '4')),
+					'icon' => 'wi wi-wxapp-setting',
+					'permission_name' => 'system_module_wxapp',
+				),
 			)
 		),
 		'user' => array(
 			'title' => '帐户/用户',
+			'icon' => 'wi wi-user',
 			'menu' => array(
 				'system_my' => array(
 					'title' => '我的帐户',
@@ -248,6 +251,7 @@ $we7_system_menu['system'] = array(
 		),
 		'permission' => array(
 			'title' => '权限管理',
+			'icon' => 'wi wi-appjurisdiction',
 			'menu' => array(
 				'system_module_group' => array(
 					'title' => '应用权限组',
@@ -273,6 +277,43 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
+		'acticle' => array(
+			'title' => '文章/公告',
+			'icon' => 'wi wi-article',
+			'menu' => array(
+				'system_article' => array(
+					'title' => '文章管理',
+					'url' => url('article/news'),
+					'icon' => 'wi wi-article',
+					'permission_name' => 'system_article_news',
+				),
+				'system_article_notice' => array(
+					'title' => '公告管理',
+					'url' => url('article/notice'),
+					'icon' => 'wi wi-notice',
+					'permission_name' => 'system_article_notice',
+				)
+			)
+		),
+		'cache' => array(
+			'title' => '缓存',
+			'icon' => 'wi wi-update',
+			'menu' => array(
+				'system_setting_updatecache' => array(
+					'title' => '更新缓存',
+					'url' => url('system/updatecache'),
+					'icon' => 'wi wi-update',
+					'permission_name' => 'system_setting_updatecache',
+				),
+			),
+		),
+	),
+);
+
+$we7_system_menu['site'] = array(
+	'title' => '站点管理',
+	'url' => url('cloud/upgrade'),
+	'section' => array(
 		'cloud' => array(
 			'title' => '云服务',
 			'menu' => array(
@@ -302,32 +343,9 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
-		'acticle' => array(
-			'title' => '文章/公告',
-			'menu' => array(
-				'system_article' => array(
-					'title' => '文章管理',
-					'url' => url('article/news'),
-					'icon' => 'wi wi-article',
-					'permission_name' => 'system_article_news',
-				),
-				'system_article_notice' => array(
-					'title' => '公告管理',
-					'url' => url('article/notice'),
-					'icon' => 'wi wi-notice',
-					'permission_name' => 'system_article_notice',
-				)
-			)
-		),
 		'setting' => array(
 			'title' => '设置',
 			'menu' => array(
-				'system_setting_updatecache' => array(
-					'title' => '更新缓存',
-					'url' => url('system/updatecache'),
-					'icon' => 'wi wi-update',
-					'permission_name' => 'system_setting_updatecache',
-				),
 				'system_setting_site' => array(
 					'title' => '站点设置',
 					'url' => url('system/site'),
@@ -361,7 +379,7 @@ $we7_system_menu['system'] = array(
 			)
 		),
 		'utility' => array(
-			'title' => '常用系统工具',
+			'title' => '常用工具',
 			'menu' => array(
 				'system_utility_filecheck' => array(
 					'title' => '系统文件校验',
@@ -396,7 +414,9 @@ $we7_system_menu['system'] = array(
 			)
 		),
 	),
+	'founder' => true,
 );
+
 $we7_system_menu['adviertisement'] = array (
 	'title' => '广告联盟',
 	'url' => url('adviertisement/content-provider'),
@@ -429,5 +449,6 @@ $we7_system_menu['appmarket'] = array(
 	'blank' => true,
 	'founder' => true,
 );
+
 
 return $we7_system_menu;

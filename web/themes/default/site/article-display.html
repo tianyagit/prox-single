@@ -30,7 +30,7 @@
 			<col width="70px"/>
 			<col/>
 			<col width="120px"/>
-			<col width="200px"/>
+			<col width="200"/>
 			<tr>
 				<th></th>
 				<th>排序</th>
@@ -39,7 +39,7 @@
 				<th class="text-right">操作</th>
 			</tr>
 			<tr ng-if="!articleList">
-				<td colspan="4">暂无数据</td>
+				<td colspan="4" class="text-center">暂无数据</td>
 			</tr>
 			<tr ng-repeat="article in articleList" ng-if="articleList">
 				<td>
@@ -54,8 +54,8 @@
 				</td>
 				<td>
 					<div class="link-group">
-						<a href="javascript:;" id="copy-{{article.id}}" class="we7-margin-right" clipboard supported="supported" text="article.link" on-copied="success(article.id)">复制链接</a>
-						<a href="javascript:;" class="we7-margin-right" ng-click="editArticle(article.id)">编辑</a>
+						<a href="javascript:;" id="copy-{{article.id}}" clipboard supported="supported" text="article.link" on-copied="success(article.id)">复制链接</a>
+						<a href="javascript:;" ng-click="editArticle(article.id)">编辑</a>
 						<a href="javascript:;" class="del" ng-click="delArticle(article.id)">删除</a>
 					</div>
 				</td>

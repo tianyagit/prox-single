@@ -36,7 +36,7 @@ class DB {
 		if(empty($cfg)) {
 			exit("The master database is not found, Please checking 'data/config.php'");
 		}
-		$dsn = "mysql:dbname={$cfg['database']};host={$cfg['host']};port={$cfg['port']}";
+		$dsn = "mysql:dbname={$cfg['database']};host={$cfg['host']};port={$cfg['port']};charset={$cfg['charset']}";
 		$dbclass = '';
 		$options = array();
 		if (class_exists('PDO')) {
@@ -54,6 +54,8 @@ class DB {
 			$dbclass = 'PDO';
 		}
 		$this->pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
+		$this->pdo->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
+		
 		$sql = "SET NAMES '{$cfg['charset']}';";
 		$this->pdo->exec($sql);
 		$this->pdo->exec("SET sql_mode='';");

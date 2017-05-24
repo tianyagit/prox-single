@@ -4,7 +4,11 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-define('FRAME', 'system');
+if (in_array($action, array('site', 'menu', 'attachment', 'systeminfo', 'logs', 'filecheck', 'optimize', 'database', 'scan', 'bom'))) {
+	define('FRAME', 'site');
+} else {
+	define('FRAME', 'system');
+}
 
 $_GPC['account_type'] = !empty($_GPC['account_type']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
 if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {

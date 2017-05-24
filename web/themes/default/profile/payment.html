@@ -25,42 +25,44 @@
 <div class="js-profile-payment" ng-controller="paymentCtrl" ng-cloak>
 	<table class="table we7-table table-hover table-form">
 		<col width="140px " />
+		<col width="400px"/>
 		<col />
 		<col width="140px" />
 		<tr>
-			<th class="text-left" colspan="3">支付参数</th>
+			<th colspan="4" >支付参数</th>
 		</tr>
 		<tr>
-			<td >
+			<td colspan="2">
 				货到支付
 			</td>
-			<td >
-				{{ paysetting.delivery.switch === true ? '开启' : '关闭' }}
-			</td>
-			<td class="text-right">
+			<td>
 				<label>
 					<input name="" class="form-control" type="checkbox"  style="display: none;" ng-click="saveEdit('delivery')">
 					<div ng-class="paysetting.delivery.switch === true ? 'switch switchOn' : 'switch'"></div>
 				</label>
 			</td>
+			<td></td>
 		</tr>
 		<tr>
-			<td >
+			<td colspan="2">
 				余额支付
 			</td>
-			<td >
-				{{ paysetting.credit.switch === true ? '开启' : '关闭' }}
-			</td>
-			<td class="text-right">
+			<td>
 				<label>
 					<input name="" class="form-control" type="checkbox"  style="display: none;" ng-click="saveEdit('credit')">
 					<div ng-class="paysetting.credit.switch === true ? 'switch switchOn' : 'switch'"></div>
 				</label>
 			</td>
+			<td></td>
 		</tr>
 		<tr>
 			<td >
 				支付宝支付
+			</td>
+			<td>
+				<div class="related-info">
+					开启支付宝支付
+				</div>
 			</td>
 			<td >
 				{{  paysetting.alipay.switch === true ? '开启' : '关闭'  }}
@@ -70,8 +72,14 @@
 			</td>
 		</tr>
 		<tr>
-			<td >
+			<td>
 				微信支付
+			</td>
+			<td>
+				<div class="related-info">
+					<div>接口类型:新版(2014年9月之后申请的)</div>
+					<div>支付账号:微擎</div>
+				</div>
 			</td>
 			<td >
 				{{  paysetting.wechat.switch !== 4 && paysetting.wechat.switch !== false  ? '开启' : '关闭'  }}
@@ -84,6 +92,10 @@
 			<td>
 				银联支付
 			</td>
+			<td>
+				<div class="related-info">
+				</div>
+			</td>
 			<td >
 				{{  paysetting.unionpay.switch === true ? '开启' : '关闭'  }}
 			</td>
@@ -95,6 +107,9 @@
 			<td >
 				百度钱包支付
 			</td>
+			<td>
+				<div class="related-info"></div>
+			</td>
 			<td >
 				{{  paysetting.baifubao.switch === true ? '开启' : '关闭'  }}
 			</td>
@@ -105,6 +120,9 @@
 		<tr>
 			<td >
 				汇款支付
+			</td>
+			<td>
+				<div class="related-info"></div>
 			</td>
 			<td>
 				{{  paysetting.line.switch === true ? '开启' : '关闭'  }}

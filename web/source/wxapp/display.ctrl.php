@@ -9,7 +9,7 @@ load()->model('account');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank');
+$dos = array('display', 'switch', 'rank' , 'home');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'rank' || $do == 'switch') {
@@ -22,7 +22,20 @@ if ($do == 'rank' || $do == 'switch') {
 	}
 }
 
-if ($do == 'display') {
+if ($do == 'home') {
+	$last_uniacid = uni_account_last_switch();
+	if (empty($last_uniacid)) {
+		itoast('', url('wxapp/display'), 'info');
+	} else {
+		$last_version = wxapp_fetch($last_uniacid);
+		if (!empty($last_version)) {
+			header('Location: ' . url('wxapp/version/manage', array('version_id' => $last_version['version']['id'])));
+			exit;
+		} else {
+			itoast('', url('wxapp/display'), 'info');
+		}
+	}
+} elseif ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$start = ($pindex - 1) * $psize;
@@ -39,16 +52,16 @@ if ($do == 'display') {
 		$order_by = " ORDER BY c.`rank` DESC";
 	}
 
-	if(!empty($keyword)) {
+	if (!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
+	if (isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$letter = trim($_GPC['letter']);
-		if(!empty($letter)){
+		if (!empty($letter)) {
 			$condition .= " AND a.`title_initial` = :title_initial";
 			$param[':title_initial'] = $letter;
-		}else {
+		} else {
 			$condition .= " AND a.`title_initial` = ''";
 		}
 	}
@@ -56,12 +69,12 @@ if ($do == 'display') {
 	$sql = "SELECT * FROM ". tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$total = pdo_fetchcolumn($tsql, $param);
 	$wxapp_lists = pdo_fetchall($sql, $param, 'uniacid');
-	if(!empty($wxapp_lists)) {
-		foreach($wxapp_lists as &$account) {
+	if (!empty($wxapp_lists)) {
+		foreach ($wxapp_lists as &$account) {
 			$account['url'] = url('wxapp/display/switch', array('uniacid' => $account['uniacid']));
 			$account['details'] = uni_accounts($account['uniacid']);
-			if(!empty($account['details'])) {
-				foreach ($account['details'] as  &$account_val) {
+			if (!empty($account['details'])) {
+				foreach ($account['details'] as &$account_val) {
 					$account_val['thumb'] = tomedia('headimg_'.$account_val['acid']. '.jpg').'?time='.time();
 				}
 			}
@@ -76,7 +89,7 @@ if ($do == 'display') {
 	$pager = pagination($total, $pindex, $psize);
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
-	$module_name = $_GPC['module'];
+	$module_name = trim($_GPC['module']);
 	$version_id = intval($_GPC['version_id']);
 	
 	if (!empty($module_name) && !empty($version_id)) {

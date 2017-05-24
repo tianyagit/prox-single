@@ -17,14 +17,9 @@ if (!in_array($_GPC['m'], $system_modules)) {
 $modulename = $_GPC['m'];
 
 //微官网首页导航菜单：homemenu_display、homemenu_post、homemenu_del、homemenu_switch(切换开关状态)
-if ($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'homemenu_display') {
 	$multiid = intval($_GPC['multiid']);
-	$pars = array(
-		':uniacid' => $_W['uniacid'],
-		':multiid' => $multiid,
-	);
-	$sql = 'SELECT * FROM ' . tablename('site_nav') . ' WHERE `uniacid`=:uniacid AND `position`= 1 AND `multiid`=:multiid ORDER BY `displayorder` DESC, id ASC';
-	$navs = pdo_fetchall($sql, $pars);
+	$navs = pdo_getall('site_nav', array('uniacid' => $_W['uniacid'], 'position' => '1', 'multiid' => $multiid), array(), '', array('displayorder DESC', 'id ASC'));
 	$navigations = array();
 	if (!empty($navs)) {
 		foreach ($navs as $nav) {
@@ -53,24 +48,28 @@ if ($do == 'homemenu_display' && $_W['isajax'] && $_W['ispost']) {
 	}
 	iajax(0, $navigations, '');
 }
-if ($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'homemenu_post') {
 	$multiid = intval($_GPC['multiid']);
 	$post = $_GPC['menu_info'];
 	if (empty($post['name'])) {
 		iajax(-1, '抱歉，请输入导航菜单的名称！', '');
 	}
 	$url = ((strexists($post['url'], 'http://') || strexists($post['url'], 'https://')) && !strexists($post['url'], '#wechat_redirect')) ? $post['url'] . '#wechat_redirect' : $post['url'];
-	if (intval($post['section']['num']) > 10) {
-		$post['section']['num'] = 10;
+	if (is_array($post['section']) && !empty($post['section'])) {
+		if (intval($post['section']['num']) > 10) {
+			$section_num = 10;
+		} else {
+			$section_num = intval($post['section']['num']);
+		}
 	} else {
-		$post['section']['num'] = intval($post['section']['num']);
+		$section_num = 0;
 	}
 	$data = array(
 		'uniacid' => $_W['uniacid'],
 		'multiid' => $multiid,
-		'section' => $post['section']['num'],
-		'name' => $post['name'],
-		'description' => $post['description'],
+		'section' => $section_num,
+		'name' => trim($post['name']),
+		'description' => trim($post['description']),
 		'displayorder' => intval($post['displayorder']),
 		'url' => $url,
 		'status' => intval($post['status']),
@@ -104,15 +103,15 @@ if ($do == 'homemenu_post' && $_W['isajax'] && $_W['ispost']) {
 	iajax(0, '更新成功！', '');
 }
 
-if ($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'homemenu_del') {
 	$id = intval($_GPC['id']);
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
-	if (empty($nav_exist)){
+	if (empty($nav_exist)) {
 		//本公众号不存在该导航
 		iajax(-1, '本公众号不存在该导航！', '');
 	} else {
 		$nav_del = pdo_delete('site_nav', array('id' => $id));
-		if (!empty($nav_del)){
+		if (!empty($nav_del)) {
 			iajax(0, '删除成功！', '');
 		} else {
 			//删除失败
@@ -122,19 +121,17 @@ if ($do == 'homemenu_del' && $_W['isajax'] && $_W['ispost']) {
 	exit;
 }
 
-if ($do == 'homemenu_switch' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'homemenu_switch') {
 	$id = intval($_GPC['id']);
 	$nav_exist = pdo_get('site_nav', array('id' => $id, 'uniacid' => $_W['uniacid']));
-	if (empty($nav_exist)){
-		//本公众号不存在该导航
-		iajax(-1, '');
+	if (empty($nav_exist)) {
+		iajax(-1, '本公众号不存在该导航');
 	} else {
 		$status = $nav_exist['status'] == 1 ? 0 : 1;
 		$nav_update = pdo_update('site_nav', array('status' => $status), array('id' => $id));
-		if (!empty($nav_update)){
+		if (!empty($nav_update)) {
 			iajax(0, '更新成功！', '');
 		} else {
-			//更新失败
 			iajax(1, '更新失败！', '');
 		}
 	}

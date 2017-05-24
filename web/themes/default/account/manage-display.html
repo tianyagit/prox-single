@@ -30,10 +30,10 @@
 	</div>
 	{/if}
 </div>
-<table class="table we7-table table-hover vertical-middle" id="js-system-account-display" ng-controller="SystemAccountDisplay" ng-cloak>
-	<col width="85px" />
-	<col />
-	<col width="200px" />
+<table class="table we7-table table-hover vertical-middle table-manage" id="js-system-account-display" ng-controller="SystemAccountDisplay" ng-cloak>
+	<col width="120px" />
+	<col/>
+	<col width="200px"/>
 	<col width="100px"/>
 	<col width="260px" />
 	<tr>
@@ -44,7 +44,7 @@
 	</tr>
 	<tr class="color-gray" ng-repeat="list in lists">
 		<td class="text-left">
-			<img ng-src="{{list.thumb}}" class="img-responsive" style="max-width: 39px;">
+			<img ng-src="{{list.thumb}}" class="img-responsive icon">
 		</td>
 		<td class="text-left">
 			<p class="color-dark" ng-bind="list.name"></p>
@@ -63,15 +63,14 @@
 			<div class="link-group">
 				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
 				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER}
-					<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder'">管理设置</a>
-					{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
-					<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
-					{/if}
+				<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder'">管理设置</a>
+				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
+				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
+				{/if}
 				{/if}
 			</div>
 		</td>
 	</tr>
-
 </table>
 <div class="text-right">
 	{$pager}

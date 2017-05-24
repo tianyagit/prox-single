@@ -169,7 +169,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				}
 			}
 		}
-		$condition .= $enabled ?  " AND b.enabled = 1" : "";
+		$condition .= $enabled ?  " AND b.enabled = 1 OR a.issystem = 1" : " OR a.issystem = 1";
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, a.mid DESC";
 		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
@@ -268,10 +268,10 @@ function uni_groups($groupids = array()) {
 						if (!empty($module_list)) {
 							foreach ($module_list as $key => &$module) {
 								$module = module_fetch($key);
-								if ($module['wxapp_support'] == 2) {
+								if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 									$row['wxapp'][$module['name']] = $module;
 								}
-								if ($module['app_support'] == 2) {
+								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 									if (!empty($module['main_module'])) {
 										continue;
 									}

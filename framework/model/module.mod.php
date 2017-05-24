@@ -265,6 +265,13 @@ function module_fetch($name) {
 				$module_info['plugin_list'] = array_keys ($module_info['plugin_list']);
 			}
 		}
+		if ($module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2) {
+			$module_info['app_support'] = 2;
+		}
+		$module_ban = setting_load('module_ban');
+		if (in_array($name, $module_ban)) {
+			$module_info['is_ban'] = true;
+		}
 		$module = $module_info;
 		cache_write($cachekey, $module_info);
 	}
@@ -282,9 +289,6 @@ function module_fetch($name) {
 		$module['enabled'] = $module['issystem'] || !isset($setting['enabled']) ? 1 : $setting['enabled'];
 		$module['shortcut'] = $setting['shortcut'];
 	}
-	$module_ban = module_ban();
-
- 	$module['is_ban'] = in_array($name, $module_ban) ? true : false;
 	return $module;
 }
 
@@ -301,7 +305,7 @@ function module_build_privileges() {
 		$mymodules = pdo_getall('uni_account_modules', array('uniacid' => $row['uniacid']), array('module'), 'module');
 		$mymodules = array_keys($mymodules);
 		foreach($modules as $module){
-			if(!in_array($module['name'], $mymodules) && empty($module['main_module']) && empty($module['issystem'])) {
+			if(!in_array($module['name'], $mymodules) && empty($module['issystem'])) {
 				$data = array();
 				$data['uniacid'] = $row['uniacid'];
 				$data['module'] = $module['name'];
@@ -459,14 +463,12 @@ function module_uninstall($module_name, $is_clean_rule = false) {
  */
 function module_get_plugin_list($module_name) {
 	$module_info = module_fetch($module_name);
-	if (!empty($module_info['plugin'])) {
+	if (!empty($module_info['plugin_list']) && is_array($module_info['plugin_list'])) {
 		$plugin_list = array();
-		if (!empty($module_info['plugin']) && is_array($module_info['plugin'])) {
-			foreach ($module_info['plugin'] as $plugin) {
-				$plugin_info = module_fetch($plugin);
-				if (!empty($plugin_info)) {
-					$plugin_list[$plugin] = $plugin_info;
-				}
+		foreach ($module_info['plugin_list'] as $plugin) {
+			$plugin_info = module_fetch($plugin);
+			if (!empty($plugin_info)) {
+				$plugin_list[$plugin] = $plugin_info;
 			}
 		}
 		return $plugin_list;
@@ -476,14 +478,24 @@ function module_get_plugin_list($module_name) {
 }
 
 /**
- *  获取站点的盗版模块列表
- * @return $list array()  模块标识
+ *  判断模块是否为盗版模块
+ * @param string $module 模块标识
+ * @return bool
  */
-function module_ban() {
+function module_ban($module) {
+	load()->model('cloud');
+	$cloud_m_query = cloud_m_query(array($module));
 	$module_ban = setting_load('module_ban');
-	if (empty($module_ban) || $module_ban['last_time'] + 86400 < TIMESTAMP) {
-		cache_build_module_ban();
-		$module_ban = setting_load('module_ban');
+	if (!in_array($module, $module_ban) && !empty($cloud_m_query['pirate_apps'])) {
+		$module_ban[] = $module;
+		cache_build_module_info($module);
+		setting_save($module_ban, 'module_ban');
 	}
-	return $module_ban['modules'];
+	if (in_array($module, $module_ban) && empty($cloud_m_query['pirate_apps'])) {
+		$key = array_search($module, $module_ban);
+		unset($module_ban[$key]);
+		cache_build_module_info($module);
+		setting_save($module_ban, 'module_ban');
+	}
+	return in_array($module, $module_ban);
 }
