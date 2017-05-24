@@ -21,7 +21,8 @@
 		{if $_GPC['do'] == 'display' || $_GPC['do'] == ''}<a href="{url 'user/create'}" class="btn btn-primary">+添加用户</a>{/if}
 	</div>
 </div>
-<table class="table we7-table table-hover" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
+<table class="table we7-table table-hover table-manage vertical-middle" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
+	<col width="120px"/>
 	<col width="150px">
 	<col width="200px"/>
 	<col width="120px"/>
@@ -30,6 +31,7 @@
 	<col width="120px"/>
 	<col width="150px"/>
 	<tr>
+		<th></th>
 		<th class="text-left">用户名</th>
 		<th>用户权限组</th>
 		<th>创建公众号</th>
@@ -39,6 +41,7 @@
 		<th class="text-right">操作</th>
 	</tr>
 	<tr ng-repeat="user in users" ng-if="users">
+		<td><img ng-src="user.avatar" alt="" class="img-responsive icon"/></td>
 		<td class="text-left" ng-bind="user.username">{$user['username']}</td>
 		<td>
 			<span class="color-default" ng-if="user.founder">管理员</span>
