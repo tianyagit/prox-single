@@ -360,7 +360,6 @@ if($do == 'post') {
 		if (!empty($check_title_exist)) {
 			iajax(-1, '菜单组名称已存在，请重新命名！', '');
 		}
-		
 		$menu = array();
 		if(!empty($post['button'])) {
 			foreach($post['button'] as $key => &$button) {
@@ -385,6 +384,11 @@ if($do == 'post') {
 							$temp['type'] = 'click';
 							$temp['key'] = urlencode($button['key']);
 						}
+					} elseif ($button['type'] == 'miniprogram') {
+						$temp['type'] = 'miniprogram';
+						$temp['appid'] = trim($button['appid']);
+						$temp['pagepath'] = urlencode($button['pagepath']);
+						$temp['url'] = urlencode($button['url']);
 					} else {
 						$temp['key'] = urlencode($button['key']);
 					}
@@ -408,6 +412,11 @@ if($do == 'post') {
 								$sub_temp['type'] = 'click';
 								$sub_temp['key'] = urlencode($subbutton['key']);
 							}
+						} elseif ($subbutton['type'] == 'miniprogram') {
+							$sub_temp['type'] = 'miniprogram';
+							$sub_temp['appid'] = trim($subbutton['appid']);
+							$sub_temp['pagepath'] = urlencode($subbutton['pagepath']);
+							$sub_temp['url'] = urlencode($subbutton['url']);
 						} else {
 							$sub_temp['key'] = urlencode($subbutton['key']);
 						}
@@ -452,7 +461,6 @@ if($do == 'post') {
 				if($inarray === 1) $menu['matchrule']['language'] = $post['matchrule']['language'];
 			}
 		}
-
 		$account_api = WeAccount::create();
 		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
