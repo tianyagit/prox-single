@@ -24,6 +24,14 @@ if ($do == 'opcache') {
 				'title' => '更新缓存',
 			),
 		),
+		'redis' => array(
+			'support' => extension_loaded('redis'),
+			'status' => ($_W['config']['setting']['cache'] == 'redis'),
+			'clear' => array(
+					'url' => url('system/updatecache'),
+					'title' => '更新缓存',
+			),
+		),
 		'eAccelerator' => array(
 			'support' => function_exists('eaccelerator_optimizer'),
 			'status' => function_exists('eaccelerator_optimizer'),
@@ -47,9 +55,20 @@ if ($do == 'opcache') {
 			$status = $memobj->getExtendedStats();
 			if (!empty($status)) {
 				foreach ($status as $server => $row) {
-					$data_status[] = '已用：' . round($row['bytes'] / 1048567, 2) . ' M / 共：' . round($row['limit_maxbytes'] / 1048567) . ' M';
+					$data_status[] = '已用：' . round($row['bytes'] / 1048576, 2) . ' M / 共：' . round($row['limit_maxbytes'] / 1048576) . ' M';
 				}
 				$extensions['memcache']['extra'] = ', ' . implode(', ', $data_status);
+			}
+		}
+	}
+	if ($extensions['redis']['status']) {
+		$redisobj = cache_redis();
+		if (!empty($redisobj) && method_exists($redisobj, 'info')) {
+			//缓存服务器池中所有服务器统计信息
+			$status = $redisobj->info();
+			if (!empty($status)) {
+				$data_status[] = '消耗峰值：' . round($status['used_memory_peak'] / 1048576, 2) . ' M/ 内存总量：' . round($status['used_memory'] / 1048576, 2) . ' M';;
+				$extensions['redis']['extra'] = ', ' . implode(', ', $data_status);
 			}
 		}
 	}
