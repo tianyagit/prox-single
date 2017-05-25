@@ -121,12 +121,11 @@ function cache_clean($key = '') {
     if (is_error($redis)) {
         return $redis;
     }
-    if (!empty($prefix)) {
+    if (!empty($key)) {
         if ($keys = $redis->keys(cache_prefix($key) . "*")) {
-            return $redis->delete($keys);
+            unset($GLOBALS['_W']['cache']);
+            return $redis->delete($keys) ? true : false;
         }
-        unset($GLOBALS['_W']['cache']);
-        return true;
     }
     if ($redis->flushAll()) {
         unset($GLOBALS['_W']['cache']);
