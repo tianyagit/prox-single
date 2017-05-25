@@ -39,6 +39,8 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 	$pager = pagination($total, $pindex, $psize);
 	$system_module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system',':issystem' => 1));
 	foreach ($users as &$user) {
+		$avatar = pdo_getcolumn('users_profile', array('uid' => $user['uid']), 'avatar', 1);
+		$user['avatar'] = !empty($avatar) ? $avatar : './resource/images/nopic-user.png';
 		if (empty($user['endtime'])) {
 			$user['endtime'] = '永久有效';
 		} else {
@@ -73,7 +75,6 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 	}
 	unset($user);
 	$usergroups = pdo_getall('users_group', array(), array(), 'id');
-
 	template('user/display');
 }
 
@@ -119,7 +120,7 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 				pdo_delete('uni_account_users', array('uid' => $uid));
 				pdo_delete('users_profile', array('uid' => $uid));
 				itoast('删除成功！', referer(), 'success');
-			}else {
+			} else {
 				itoast('删除失败！', referer(), 'error');
 			}
 			break;
