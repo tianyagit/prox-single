@@ -60,7 +60,7 @@ if(DEVELOPMENT) {
 	error_reporting(0);
 }
 
-if(!in_array($_W['config']['setting']['cache'], array('mysql', 'memcache'))) {
+if(!in_array($_W['config']['setting']['cache'], array('mysql', 'memcache', 'redis'))) {
 	$_W['config']['setting']['cache'] = 'mysql';
 }
 load()->func('cache');

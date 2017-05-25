@@ -203,9 +203,10 @@ class CoreModule extends WeModule {
 		$delsql = '';
 		foreach ($this->modules as $k => $val) {
 			$tablename = $this->tablename[$val];
-			$delsql .= 'DELETE FROM '. tablename($tablename) . ' WHERE `rid`='.$rid.';';
+			if (!empty($tablename)) {
+				pdo_delete($tablename, array('rid' => $rid));
+			}
 		}
-		pdo_run($delsql);
 
 		foreach ($this->modules as $val) {
 			$replies = array();

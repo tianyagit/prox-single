@@ -6,14 +6,24 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+cache_type($_W['config']['setting']['cache']);
 
-if($_W['config']['setting']['cache'] == 'memcache') {
-	if (extension_loaded('memcache')) {
-		$config = $_W['config']['setting']['memcache'];
+/**
+ * 获取缓存类型
+ * @param $cache_type
+ */
+function cache_type($cache_type) {
+	global $_W;
+	if (extension_loaded($cache_type)) {
+		$config = $_W['config']['setting'][$cache_type];
 		if (!empty($config['server']) && !empty($config['port'])) {
-			$memcacheobj = new Memcache();
-			$connect = @$memcacheobj->connect($config['server'], $config['port'], 3);
-			if (empty($memcacheobj) || empty($connect)) {
+			if ($cache_type == 'memcache') {
+				$obj = new Memcache();
+			} else {
+				$obj = new Redis();
+			}
+			$connect = @$obj->connect($config['server'], $config['port']);
+			if (empty($obj) || empty($connect)) {
 				$_W['config']['setting']['cache'] = 'mysql';
 			}
 		} else {
@@ -24,6 +34,7 @@ if($_W['config']['setting']['cache'] == 'memcache') {
 	}
 }
 load()->func('cache.' . $_W['config']['setting']['cache']);
+
 /**
  * 读取缓存，并将缓存加载至 $_W 全局变量中
  * @param string $key 缓存键名
