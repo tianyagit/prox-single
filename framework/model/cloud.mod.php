@@ -340,10 +340,17 @@ function cloud_m_build($modulename, $type = '') {
  * 获取当前站点本地和云服务所有模块详细信息
  * @return array 应用或错误信息
  */
-function cloud_m_query() {
+function cloud_m_query($module) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.query';
-	$pars['module'] = cloud_extra_module();
+	if (empty($module)) {
+		$pars['module'] = cloud_extra_module();
+	} else {
+		if (!is_array($module)) {
+			$module = array($module);
+		}
+		$pars['module'] = base64_encode(iserializer($module));
+	}
 	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 	$file = IA_ROOT . '/data/module.query';
 	$ret = _cloud_shipping_parse($dat, $file);
