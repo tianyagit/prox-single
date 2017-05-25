@@ -20,7 +20,7 @@ if(!is_error($site)) {
 		}
 	}
 	if (!empty($_GPC['i'])) {
-		$version_info = pdo_get('wxapp_versions', array('uniacid' => $_GPC['i'], 'version' => $_GPC['v']), array('id', 'uniacid', 'redirect', 'template', 'connection'));
+		$version_info = pdo_get('wxapp_versions', array('uniacid' => $_GPC['i'], 'version' => $_GPC['v']), array('id', 'uniacid', 'template'));
 		$connection = json_decode($version_info['connection'], true);
 		$_W['uniacid'] = !empty($connection[$entry['module']]) ? $connection[$entry['module']] : $version_info['uniacid'];
 	}

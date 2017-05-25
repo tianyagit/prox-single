@@ -30,9 +30,9 @@
 	</ul>
 
 	<form action="" method="get">
-		<table class="table we7-table table-hover vertical-middle">
-			<col width="85px" />
-			<col width="400px"/>
+		<table class="table we7-table table-hover vertical-middle table-manage">
+			<col width="120px" />
+			<col width="350px"/>
 			<col width="230px" />
 			<tr>
 				<th colspan="2" class="text-left filter">
@@ -68,7 +68,7 @@
 			</tr>
 			<tr ng-repeat="module in module_list">
 				<td class="text-left module-img">
-					<img style="width: 50px;height : 50px;" ng-if="module.main_module == ''" ng-src="{{ module.logo }}" class="img-responsive"/>
+					<img ng-if="module.main_module == ''" ng-src="{{ module.logo }}" class="img-responsive icon"/>
 					<div class="img" ng-if="module.main_module != ''">
 						<img src="" alt="子应用icon" class="plugin-img" ng-src="{{ module.logo }}"/>
 						<img src="" alt="主应用icon" class="module-img" ng-src="{{ allModules[module.main_module].logo }}"/>
@@ -296,7 +296,7 @@
 		</tr>
 	</table>
 	</form>
-	<div class="pull-right">
+	<div class="text-right">
 		{$pager}
 	</div>
 </div>

@@ -68,42 +68,45 @@ if ($do == 'display') {
 		}
 		if (!empty($_GPC['keyword'])) {
 			if ($_GPC['search_type'] == 'keyword') {
-				$rids = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
-				if (!empty($rids)) {
-					$condition .= " AND id IN (" . implode(",", array_keys($rids)) . ")";
-				} else {
-					$condition .= " AND 1=0";
+				$rule_keyword_rid_list = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
+				if (!empty($rule_keyword_rid_list)) {
+					$condition .= " AND id IN (" . implode(",", array_keys($rule_keyword_rid_list)) . ")";
 				}
 			} else {
 				$condition .= ' AND `name` LIKE :keyword';
 				$params[':keyword'] = "%{$_GPC['keyword']}%";
 			}
 		}
-		$replies = reply_search($condition, $params, $pindex, $psize, $total);
-		$pager = pagination($total, $pindex, $psize);
-		if (!empty($replies)) {
-			foreach ($replies as &$item) {
-				$condition = '`rid`=:rid';
-				$params = array();
-				$params[':rid'] = $item['id'];
-				$item['keywords'] = reply_keywords_search($condition, $params);
-				$item['allreply'] = reply_contnet_search($item['id']);
-				$entries = module_entries($item['module'], array('rule'),$item['id']);
-				if (!empty($entries)) {
-					$item['options'] = $entries['rule'];
-				}
-				//若是模块，获取模块图片
-				if (!in_array($item['module'], array("basic", "news", "images", "voice", "video", "music", "wxcard", "reply"))) {
-					if (file_exists(IA_ROOT.'/addons/'.$item['module'].'/icon-custom.jpg')) {
-						$item['logo'] = tomedia(IA_ROOT.'/addons/'.$item['module'].'/icon-custom.jpg');
-					} elseif (file_exists(IA_ROOT.'/addons/'.$item['module'].'/icon.jpg')) {
-						$item['logo'] = tomedia(IA_ROOT.'/addons/'.$item['module'].'/icon.jpg');
-					} else {
-						$item['logo'] = './resource/images/11.png';
+		if (!empty($_GPC['keyword']) && $_GPC['search_type'] == 'keyword' && empty($rule_keyword_rid_list)) {
+			$replies = array();
+			$pager = '';
+		} else {
+			$replies = reply_search($condition, $params, $pindex, $psize, $total);
+			$pager = pagination($total, $pindex, $psize);
+			if (!empty($replies)) {
+				foreach ($replies as &$item) {
+					$condition = '`rid`=:rid';
+					$params = array();
+					$params[':rid'] = $item['id'];
+					$item['keywords'] = reply_keywords_search($condition, $params);
+					$item['allreply'] = reply_contnet_search($item['id']);
+					$entries = module_entries($item['module'], array('rule'),$item['id']);
+					if (!empty($entries)) {
+						$item['options'] = $entries['rule'];
+					}
+					//若是模块，获取模块图片
+					if (!in_array($item['module'], array("basic", "news", "images", "voice", "video", "music", "wxcard", "reply"))) {
+						if (file_exists(IA_ROOT.'/addons/'.$item['module'].'/icon-custom.jpg')) {
+							$item['logo'] = tomedia(IA_ROOT.'/addons/'.$item['module'].'/icon-custom.jpg');
+						} elseif (file_exists(IA_ROOT.'/addons/'.$item['module'].'/icon.jpg')) {
+							$item['logo'] = tomedia(IA_ROOT.'/addons/'.$item['module'].'/icon.jpg');
+						} else {
+							$item['logo'] = './resource/images/11.png';
+						}
 					}
 				}
+				unset($item);
 			}
-			unset($item);
 		}
 		$entries = module_entries($m, array('rule'));
 	}
@@ -151,26 +154,29 @@ if ($do == 'display') {
 		$params[':module'] = 'userapi';
 		if (!empty($_GPC['keyword'])) {
 			if ($_GPC['search_type'] == 'keyword') {
-				$rids = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
-				if (!empty($rids)) {
-					$condition .= " AND id IN (" . implode(",", array_keys($rids)) . ")";
-				} else {
-					$condition .= " AND 1=0";
+				$rule_keyword_rid_list = pdo_getall('rule_keyword',array('content LIKE' => "%{$_GPC['keyword']}%"),array('rid'),'rid',array('id DESC'));
+				if (!empty($rule_keyword_rid_list)) {
+					$condition .= " AND id IN (" . implode(",", array_keys($rule_keyword_rid_list)) . ")";
 				}
 			} else {
 				$condition .= ' AND `name` LIKE :keyword';
 				$params[':keyword'] = "%{$_GPC['keyword']}%";
 			}
-		}
-
-		$replies = reply_search($condition, $params, $pindex, $psize, $total);
-		$pager = pagination($total, $pindex, $psize);
-		if (!empty($replies)) {
-			foreach ($replies as &$item) {
-				$condition = '`rid`=:rid';
-				$params = array();
-				$params[':rid'] = $item['id'];
-				$item['keywords'] = reply_keywords_search($condition, $params);
+		}	
+		if (!empty($_GPC['keyword']) && $_GPC['search_type'] == 'keyword' && empty($rule_keyword_rid_list)) {
+			$replies = array();
+			$pager = '';
+		} else {
+			$replies = reply_search($condition, $params, $pindex, $psize, $total);
+			$pager = pagination($total, $pindex, $psize);
+			if (!empty($replies)) {
+				foreach ($replies as &$item) {
+					$condition = '`rid`=:rid';
+					$params = array();
+					$params[':rid'] = $item['id'];
+					$item['keywords'] = reply_keywords_search($condition, $params);
+				}
+				unset($item);
 			}
 		}
 	}

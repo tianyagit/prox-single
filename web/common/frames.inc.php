@@ -136,7 +136,7 @@ $we7_system_menu['system'] = array(
 			'icon' => 'wi wi-wechat',
 			'menu' => array(
 				'system_account' => array(
-					'title' => ' 微信公众号管理',
+					'title' => ' 微信公众号',
 					'url' => url('account/manage', array('account_type' => '1')),
 					'icon' => 'wi wi-wechat',
 					'permission_name' => 'system_account',
@@ -168,19 +168,19 @@ $we7_system_menu['system'] = array(
 					),
 				),
 				'system_module' => array(
-					'title' => '公众号应用管理',
+					'title' => '公众号应用',
 					'url' => url('system/module', array('account_type' => '1')),
 					'icon' => 'wi wi-apply',
 					'permission_name' => 'system_module',
 				),
 				'system_template' => array(
-					'title' => '微官网模板管理',
+					'title' => '微官网模板',
 					'url' => url('system/template'),
 					'icon' => 'wi wi-template',
 					'permission_name' => 'system_template',
 				),
 				'system_platform' => array(
-					'title' => ' 微信开放平台设置',
+					'title' => ' 微信开放平台',
 					'url' => url('system/platform'),
 					'icon' => 'wi wi-exploitsetting',
 					'permission_name' => 'system_platform',
@@ -192,13 +192,13 @@ $we7_system_menu['system'] = array(
 			'icon' => 'wi wi-small-routine',
 			'menu' => array(
 				'system_wxapp' => array(
-					'title' => '微信小程序管理',
+					'title' => '微信小程序',
 					'url' => url('account/manage', array('account_type' => '4')),
 					'icon' => 'wi wi-small-routine',
 					'permission_name' => 'system_wxapp',
 				),
 				'system_module_wxapp' => array(
-					'title' => '小程序应用管理',
+					'title' => '小程序应用',
 					'url' => url('system/module', array('account_type' => '4')),
 					'icon' => 'wi wi-wxapp-setting',
 					'permission_name' => 'system_module_wxapp',

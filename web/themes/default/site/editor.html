@@ -146,6 +146,7 @@
 				</div>
 			</div>
 			<div class="app-side">
+				<div>{{siteEntrance}}</div>
 				<div ng-init="editorPanel = ('widget-'+(activeItem['id'].toLowerCase())+'-editor.html'.toLowerCase())" ng-show="activeItem.id == editorid" ng-repeat="editorid in editors" ng-include="editorPanel" id="editor{{editorid}}" class="editor"></div>
 				<div ng-show="activeItem['id'] && activeItem['id'] != 'UCheader'" we7-style></div>
 			</div>
@@ -720,13 +721,13 @@
 
 			var activeItem = {php echo !empty($page['params']) ? $page['params'] : 'null'};
 			angular.module('quickMenuApp').value('config', {
-			'activeItem' : activeItem,
+				'activeItem' : activeItem,
+			});
+			angular.bootstrap(document, ['quickMenuApp']);
+			$('.app-content').click(function(){
+				return false;
+			});
 		});
-		angular.bootstrap(document, ['quickMenuApp']);
-		$('.app-content').click(function(){
-			return false;
-		});
-	});
 	});
 </script>
 {/if}
