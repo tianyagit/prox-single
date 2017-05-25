@@ -1,5 +1,5 @@
 {template 'common/header-base'}
-<div data-skin="default" class="skin-default {if $_GPC['main-lg']} main-lg-body {/if}" {if $controller == 'account' && $action == 'display'} when-scrolled="loadMore()" style="height:900px;overflow:auto" ng-controller="AccountDisplay" ng-cloak{/if}>
+<div data-skin="default" class="skin-default" {if $controller == 'account' && $action == 'display'} when-scrolled="loadMore()" style="height:900px;overflow:auto" ng-controller="AccountDisplay" ng-cloak{/if}>
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
