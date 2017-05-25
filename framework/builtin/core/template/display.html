@@ -23,7 +23,7 @@
 			<div class="add" onclick="$(this).addClass('hide').next('ul').removeClass('hide');"><i class="wi wi-registersite"></i>添加回复</div>
 			<ul class="tab-navs hide">
 				<li class="tab-nav tab-appmsg active {if $options['news']}hidden{/if}">
-					<a href="javascript:void(0);" onclick="select_mediaid('news');">&nbsp;<i class="wi wi-appmsg"></i><span class="msg-tab-title">图文</span></a>
+					<a href="javascript:void(0);"{if $_GPC['a'] == 'mass'} onclick="select_mediaid('news', 'wx')"{else} onclick="select_mediaid('news')"{/if}>&nbsp;<i class="wi wi-appmsg"></i><span class="msg-tab-title">图文</span></a>
 				</li>
 				<li class="tab-nav tab-text {if $options['basic']}hidden{/if}">
 					<a href="javascript:void(0);" onclick="select_mediaid('basic');">&nbsp;<i class="wi wi-text"></i><span class="msg-tab-title">文字</span></a>
@@ -166,10 +166,9 @@
 		$(ele).parent().parent('.del-'+type+'-media').parent('li').remove();
 	};
 
-	window.select_mediaid = function(type, val){
+	window.select_mediaid = function(type, otherVal){
 		var option = {
 			type: type,
-			typeVal: angular.isDefined(val) ? val : null,
 			ignore: {
 				basic: type === 'basic' ? false : true,
 				wxcard: type === 'wxcard' ? false : true,
@@ -180,6 +179,15 @@
 				voice: type === 'voice' ? false : true,
 				keyword: type === 'keyword' ? false : true,
 				module: type === 'module' ? false : true
+			},
+			others: {
+				basic: {
+					typeVal: angular.isDefined(otherVal) ? otherVal : null,
+				},
+				news: {
+					showwx: angular.isDefined(otherVal) ? otherVal === 'wx' ? true : false : true,
+					showlocal: angular.isDefined(otherVal) ? otherVal === 'local' ? true : false : true
+				}
 			}
 		};
 		if (type == 'module') {
@@ -189,17 +197,17 @@
 			var replyVal = [];
 			$(':hidden[name="reply[reply_'+type+']"]').val() == '' ? '' : replyVal.push($(':hidden[name="reply[reply_'+type+']"]').val());
 			if (type == 'basic') {
-				if (angular.isDefined(val)) {
+				if (angular.isDefined(otherVal)) {
 					var editmedia = $(".del-basic-media");
 					for (var i = 0; i < editmedia.length; i++) {
-						if (htmlEncode($(editmedia.get(i)).find('.edit-gray').data('media')) == htmlEncode(angular.toJson(val))) {
+						if (htmlEncode($(editmedia.get(i)).find('.edit-gray').data('media')) == htmlEncode(angular.toJson(otherVal))) {
 							var inputVal = $(':hidden[name="reply[reply_'+type+']"]').val();
 							var inputValArr = inputVal.split(',');
 							var middleVal = angular.copy(inputValArr);
 							angular.forEach(inputValArr, function(val, key) {
 								inputValArr[key] = htmlEncode(val);
 							});
-							var index = _.indexOf(inputValArr, htmlEncode(angular.toJson(val)));
+							var index = _.indexOf(inputValArr, htmlEncode(angular.toJson(otherVal)));
 							middleVal[index] = angular.toJson(material.content);
 							replyVal = middleVal.join(',');
 							$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
