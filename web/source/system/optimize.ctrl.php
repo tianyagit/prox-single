@@ -67,8 +67,7 @@ if ($do == 'opcache') {
 			//缓存服务器池中所有服务器统计信息
 			$status = $redisobj->info();
 			if (!empty($status)) {
-				$data_status[] = '消耗峰值：' . round($status['used_memory_peak'] / 1048576, 2) . ' M/ 内存总量：' . round($status['used_memory'] / 1048576, 2) . ' M';;
-				$extensions['redis']['extra'] = ', ' . implode(', ', $data_status);
+				$extensions['redis']['extra'] = '消耗峰值：' . round($status['used_memory_peak'] / 1048576, 2) . ' M/ 内存总量：' . round($status['used_memory'] / 1048576, 2) . ' M';
 			}
 		}
 	}

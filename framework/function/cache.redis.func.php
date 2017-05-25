@@ -136,15 +136,6 @@ function cache_clean($key = '') {
 }
 
 /**
- * 获取redis信息
- * @param $option
- * @return mixed
- */
-//function cache_info($option) {
-//    $redis = cache_redis();
-//    return $redis->info($option);
-//}
-/**
  * 前缀定义
  * @param $key
  * @return string
