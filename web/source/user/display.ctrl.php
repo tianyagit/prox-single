@@ -33,14 +33,13 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 		$condition .= " AND u.username LIKE :username";
 		$params[':username'] = "%{$_GPC['username']}%";
 	}
-	$sql = 'SELECT * FROM ' . tablename('users') .' AS u '. $condition . " LIMIT " . ($pindex - 1) * $psize .',' .$psize;
+	$sql = 'SELECT * FROM ' . tablename('users') .' AS u LEFT JOIN ' . tablename('users_profile') . ' AS p ON u.uid = p.uid '. $condition . " LIMIT " . ($pindex - 1) * $psize .',' .$psize;
 	$users = pdo_fetchall($sql, $params);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('users') .' AS u '. $condition, $params);
 	$pager = pagination($total, $pindex, $psize);
 	$system_module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system',':issystem' => 1));
 	foreach ($users as &$user) {
-		$avatar = pdo_getcolumn('users_profile', array('uid' => $user['uid']), 'avatar', 1);
-		$user['avatar'] = !empty($avatar) ? $avatar : './resource/images/nopic-user.png';
+		$user['avatar'] = !empty($user['avatar']) ? $user['avatar'] : './resource/images/nopic-user.png';
 		if (empty($user['endtime'])) {
 			$user['endtime'] = '永久有效';
 		} else {
