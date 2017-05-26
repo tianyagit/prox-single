@@ -358,6 +358,12 @@ function material_local_news_upload($attach_id) {
 		if (is_error($media_id)) {
 			return error('-5', $media_id, '');
 		}
+		$wechat_material = $account_api->getMaterial($media_id);
+		if (!is_error($wechat_material)) {
+			foreach ($wechat_material['news_item'] as $displayorder => $item) {
+				pdo_update('wechat_news', array('url' => $item['url']), array('attach_id' => $attach_id, 'displayorder' => $displayorder));
+			}
+		}
 		pdo_update('wechat_attachment', array(
 			'media_id' => $media_id,
 			'model' => 'perm'
