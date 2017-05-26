@@ -272,6 +272,10 @@ function module_fetch($name) {
 		if (in_array($name, $module_ban)) {
 			$module_info['is_ban'] = true;
 		}
+		$module_upgrade = setting_load('module_upgrade');
+		if (in_array($name, array_keys($module_upgrade))) {
+			$module_info['is_upgrade'] = true;
+		}
 		$module = $module_info;
 		cache_write($cachekey, $module_info);
 	}
@@ -478,24 +482,62 @@ function module_get_plugin_list($module_name) {
 }
 
 /**
- *  判断模块是否为盗版模块
+ *  返回模块的盗版信息与升级信息
  * @param string $module 模块标识
- * @return bool
+ * @return array
  */
-function module_ban($module) {
+function module_status($module) {
 	load()->model('cloud');
-	$cloud_m_query = cloud_m_query(array($module));
-	$module_ban = setting_load('module_ban');
-	if (!in_array($module, $module_ban) && !empty($cloud_m_query['pirate_apps'])) {
-		$module_ban[] = $module;
-		cache_build_module_info($module);
-		setting_save($module_ban, 'module_ban');
+	$module_status = array('upgrade' => array('upgrade' => 0), 'ban' => 0);
+
+	$cloud_m_query = cloud_m_query($module);
+	$module_status['ban'] = !empty($cloud_m_query['pirate_apps'][$module]) ? 1 : 0;
+
+	$cloud_m_info = cloud_m_info($module);
+	$module_info = module_fetch($module);
+	if (!empty($cloud_m_info) && !empty($cloud_m_info['version']['version'])) {
+		if (ver_compare($module_info['version'], $cloud_m_info['version']['version'])) {
+			$module_status['upgrade'] = array('name' => $module_info['title'], 'version' => $cloud_m_info['version']['version'], 'upgrade' => 1);
+		}
+	} else {
+		$manifest = ext_module_manifest($module);
+		if (!empty($manifest)) {
+			if (ver_compare($module_info['version'], $manifest['application']['version'])) {
+				$module_status['upgrade'] = array('name' => $module_info['title'], 'version' => $manifest['application']['version'], 'upgrade' => 1);
+			}
+		}
 	}
-	if (in_array($module, $module_ban) && empty($cloud_m_query['pirate_apps'])) {
-		$key = array_search($module, $module_ban);
-		unset($module_ban[$key]);
-		cache_build_module_info($module);
-		setting_save($module_ban, 'module_ban');
+
+	$cache_build_module = false;
+	$module_ban_setting = setting_load('module_ban');
+	$module_ban_setting = is_array($module_ban_setting) ? $module_ban_setting : array();
+	if (!in_array($module, $module_ban_setting) && !empty($module_status['ban'])) {
+		$module_ban_setting[] = $module;
+		$cache_build_module = true;
+		setting_save($module_ban_setting, 'module_ban');
 	}
-	return in_array($module, $module_ban);
+	if (in_array($module, $module_ban_setting) && empty($module_status['ban'])) {
+		$key = array_search($module, $module_ban_setting);
+		unset($module_ban_setting[$key]);
+		$cache_build_module = true;
+		setting_save($module_ban_setting, 'module_ban');
+	}
+
+	$module_upgrade_setting = setting_load('module_upgrade');
+	$module_upgrade_setting = is_array($module_upgrade_setting) ? $module_upgrade_setting : array();
+	if (!in_array($module, array_keys($module_upgrade_setting)) && !empty($module_status['upgrade']['upgrade'])) {
+		$module_upgrade_setting[$module] = $module_status['upgrade'];
+		$cache_build_module = true;
+		setting_save($module_upgrade_setting, 'module_upgrade');
+	}
+	if (in_array($module, array_keys($module_upgrade_setting)) && empty($module_status['upgrade']['upgrade'])) {
+		unset($module_upgrade_setting[$module]);
+		$cache_build_module = true;
+		setting_save($module_upgrade_setting, 'module_upgrade');
+	}
+
+	if ($cache_build_module) {
+		cache_build_module_info($module);
+	}
+	return $module_status;
 }

@@ -15,9 +15,9 @@ defined('IN_IA') or exit('Access Denied');
  */
 function reply_search($condition = '', $params = array(), $pindex = 0, $psize = 10, &$total = 0) {
 	if (!empty($condition)) {
-		$where = "WHERE {$condition}";
+		$where = " WHERE {$condition}";
 	}
-	$sql = 'SELECT * FROM ' . tablename('rule') . $where . " ORDER BY status DESC, displayorder DESC, id DESC";
+	$sql = "SELECT * FROM " . tablename('rule') . $where . " ORDER BY status DESC, displayorder DESC, id DESC";
 	if ($pindex > 0) {
 		// 需要分页
 		$start = ($pindex - 1) * $psize;
