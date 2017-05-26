@@ -49,6 +49,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 				break;
 		}
 	}
+
 	private function basic_respond() {
 		$sql = "SELECT * FROM " . tablename('basic_reply') . " WHERE `rid` IN ({$this->rule})  ORDER BY RAND() LIMIT 1";
 		$reply = pdo_fetch($sql);
@@ -61,6 +62,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		$reply['content'] = strip_tags($reply['content'], '<a>');
 		return $reply['content'];
 	}
+
 	private function image_respond() {
 		global $_W;
 		$rid = $this->rule;
@@ -71,6 +73,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		}
 		return $mediaid;
 	}
+
 	private function music_respond() {
 		global $_W;
 		$rid = $this->rule;
@@ -81,6 +84,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		}
 		return $item;
 	}
+
 	private function news_respond() {
 		global $_W;
 		load()->model('material');
@@ -94,7 +98,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 			if(empty($main['id'])) {
 				return false;
 			}
-			$sql = "SELECT * FROM " . tablename('news_reply') . " WHERE id = :id OR parent_id = :parent_id ORDER BY parent_id ASC, displayorder DESC, id ASC LIMIT 8";
+			$sql = "SELECT * FROM " . tablename('news_reply') . " WHERE id = :id OR parent_id = :parent_id ORDER BY displayorder ASC, id ASC LIMIT 8";
 			$commends = pdo_fetchall($sql, array(':id'=>$main['id'], ':parent_id'=>$main['id']));
 		}
 		if(empty($commends)) {
@@ -116,6 +120,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		}
 		return $news;
 	}
+
 	private function voice_respond() {
 		global $_W;
 		$rid = $this->rule;
@@ -126,6 +131,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 		}
 		return $mediaid;
 	}
+
 	private function video_respond() {
 		global $_W;
 		$rid = $this->rule;
