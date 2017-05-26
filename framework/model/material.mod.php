@@ -137,6 +137,7 @@ function material_news_set($data, $attach_id) {
 				'id' => $news['id']
 			));
 		}
+		cache_delete(cache_system_key('material_reply:' . $attach_id));
 	} else {
 		$wechat_attachment = array(
 			'uniacid' => $_W['uniacid'],
@@ -346,6 +347,7 @@ function material_local_news_upload($attach_id) {
 			$edit_attachment['index'] = $news['displayorder'];
 			$edit_attachment['articles'] = $news;
 			$result = $account_api->editMaterialNews($edit_attachment);
+			cache_delete(cache_system_key('material_reply:' . $material['media_id']));
 			if (is_error($result)){
 				return error('-4', $result['message']);
 			}
