@@ -135,7 +135,7 @@ $we7_system_menu['wxapp'] = array(
 					'icon' => 'wi wi-appsetting'
 				),
 				'profile' => array(
-					'title' => '参数配置',
+					'title' => '支付参数',
 					'url' => url('wxapp/payment'),
 					'is_display' => 1,
 					'icon' => 'wi wi-appsetting'

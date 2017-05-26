@@ -344,15 +344,19 @@ function user_modules($uid) {
 			} else {
 				//此处缺少公众号专属套餐
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
-				$package_group_module = array();
 				if (!empty($package_group)) {
 					foreach ($package_group as $row) {
 						if (!empty($row['modules'])) {
 							$row['modules'] = (array)unserialize($row['modules']);
 						}
+						$package_group_module = array();
 						if (!empty($row['modules'])) {
-							foreach ($row['modules'] as $modulename) {
-								$package_group_module[$modulename] = $modulename;
+							foreach ($row['modules'] as $modulename => $module) {
+								if (!is_array($module)) {
+									$modulename = $module;
+									$module = module_fetch($modulename);
+								}
+								$package_group_module[$modulename] = $module;
 							}
 						}
 					}
