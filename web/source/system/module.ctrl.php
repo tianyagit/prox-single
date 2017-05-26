@@ -632,6 +632,8 @@ if ($do == 'not_installed') {
 }
 
 if ($do == 'filter') {
+	$pageindex = max($_GPC['pageindex'], 1);
+	$pagesize = 20;
 	$condition = $_GPC['condition'];
 	$module_list  = user_modules($_W['uid']);
 	$cloud_m_query_module = cloud_m_query();
@@ -694,6 +696,9 @@ if ($do == 'filter') {
 			}
 		}
 	}
-	iajax(0, $modules);
+	$total = count($modules);
+	$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
+	$pager = pagination($total, $pageindex, $pagesize, '', array('before' => 5, 'after' => 4,'ajaxcallback' => true, 'callbackfuncname' => 'filter'));
+	iajax(0, array('modules' => $modules, 'pager' => $pager));
 }
 template('system/module' . ACCOUNT_TYPE_TEMPLATE);

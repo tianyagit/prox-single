@@ -40,7 +40,7 @@ if ($do == 'edit') {
 	foreach ($permissions as $v) {
 		$uids[] = $v['uid'];
 	}
-	template('account/manage-users' . ACCOUNT_TYPE_TEMPLATE);
+	template('account/manage-users');
 } elseif ($do == 'delete') {
 	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	if (empty($uid)) {
@@ -74,12 +74,11 @@ if ($do == 'edit') {
 		if (in_array($user['uid'], $founders)) {
 			iajax(1, '不可操作网站创始人！', '');
 		}
-		//添加/修改公众号操作员、管理员、主管理员时执行数量判断
-		if (is_error($permission = uni_create_permission($user['uid'], ACCOUNT_TYPE))) {
+		$addtype = intval($_GPC['addtype']);
+		//添加/修改公众号主管理员时执行数量判断
+		if (is_error($permission = uni_create_permission($user['uid'], ACCOUNT_TYPE)) && $addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
 			itoast(error(5, $permission['message']), '', 'error');
 		}
-
-		$addtype = intval($_GPC['addtype']);
 		$data = array(
 			'uniacid' => $uniacid,
 			'uid' => $user['uid'],
