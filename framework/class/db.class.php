@@ -788,8 +788,8 @@ class DB {
 class SqlChecker {
 	private static $checkcmd = array('SELECT', 'UPDATE', 'INSERT', 'REPLAC', 'DELETE');
 	private static $disable = array(
-		'function' => array('load_file', 'hex', 'substring', 'if', 'ord', 'char', 'updatexml'),
-		'action' => array('@', 'intooutfile', 'intodumpfile', 'unionselect', 'unionall', 'uniondistinct'),
+		'function' => array('load_file', 'floor', 'hex', 'substring', 'if', 'ord', 'char', 'pi', 'benchmark', 'reverse', 'strcmp', 'datadir', 'updatexml', 'extractvalue', 'name_const', 'multipoint', 'database', 'user'),
+		'action' => array('@', 'intooutfile', 'intodumpfile', 'unionselect', 'uniondistinct', 'information_schema', 'current_user', 'current_date'),
 		'note' => array('/*','*/','#','--'),
 	);
 
@@ -808,7 +808,7 @@ class SqlChecker {
 			if (is_array(self::$disable['function'])) {
 				foreach (self::$disable['function'] as $fun) {
 					if (strpos($cleansql, $fun . '(') !== false) {
-						return error(1, 'SQL中包含禁用函数');
+						return error(1, 'SQL中包含禁用函数 - ' . $fun);
 					}
 				}
 			}
@@ -816,7 +816,7 @@ class SqlChecker {
 			if (is_array(self::$disable['action'])) {
 				foreach (self::$disable['action'] as $action) {
 					if (strpos($cleansql, $action) !== false) {
-						return error(2, 'SQL中包含禁用操作符');
+						return error(2, 'SQL中包含禁用操作符 - ' . $action);
 					}
 				}
 			}
@@ -839,14 +839,6 @@ class SqlChecker {
 		for ($i = 0; $i < $len; $i++) {
 			$str = $sql[$i];
 			switch ($str) {
-				case '`':
-					if(!$mark) {
-						$mark = '`';
-						$clean .= $str;
-					} elseif ($mark == '`') {
-						$mark = '';
-					}
-					break;
 				case '\'':
 					if (!$mark) {
 						$mark = '\'';
