@@ -269,11 +269,11 @@ function module_fetch($name) {
 			$module_info['app_support'] = 2;
 		}
 		$module_ban = setting_load('module_ban');
-		if (in_array($name, $module_ban)) {
+		if (in_array($name, $module_ban['module_ban'])) {
 			$module_info['is_ban'] = true;
 		}
 		$module_upgrade = setting_load('module_upgrade');
-		if (in_array($name, array_keys($module_upgrade))) {
+		if (in_array($name, array_keys($module_upgrade['module_upgrade']))) {
 			$module_info['is_upgrade'] = true;
 		}
 		$module = $module_info;
@@ -510,7 +510,7 @@ function module_status($module) {
 
 	$cache_build_module = false;
 	$module_ban_setting = setting_load('module_ban');
-	$module_ban_setting = is_array($module_ban_setting) ? $module_ban_setting : array();
+	$module_ban_setting = is_array($module_ban_setting['module_ban']) ? $module_ban_setting['module_ban'] : array();
 	if (!in_array($module, $module_ban_setting) && !empty($module_status['ban'])) {
 		$module_ban_setting[] = $module;
 		$cache_build_module = true;
@@ -524,7 +524,7 @@ function module_status($module) {
 	}
 
 	$module_upgrade_setting = setting_load('module_upgrade');
-	$module_upgrade_setting = is_array($module_upgrade_setting) ? $module_upgrade_setting : array();
+	$module_upgrade_setting = is_array($module_upgrade_setting['module_upgrade']) ? $module_upgrade_setting['module_upgrade'] : array();
 	if (!in_array($module, array_keys($module_upgrade_setting)) && !empty($module_status['upgrade']['upgrade'])) {
 		$module_upgrade_setting[$module] = $module_status['upgrade'];
 		$cache_build_module = true;
