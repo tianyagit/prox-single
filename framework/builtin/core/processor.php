@@ -105,11 +105,15 @@ class CoreModuleProcessor extends WeModuleProcessor {
 			return false;
 		}
 		$news = array();
-		foreach($commends as $commend) {
+		if (!empty($commends[0]['media_id'])) {
+			$news = material_build_reply($commends[0]['media_id']);
+		}
+		foreach($commends as $key => $commend) {
 			$row = array();
-			if (!empty($commend['media_id']) && intval($commend['media_id']) == 0) {
-				$news = material_build_reply($commend['media_id']);
-				break;
+			if (!empty($commend['media_id'])) {
+				if (empty($news[$key]['url'])) {
+					$news[$key]['url'] = $this->createMobileUrl('detail', array('id' => $commend['id']));
+				}
 			} else {
 				$row['title'] = $commend['title'];
 				$row['description'] = $commend['description'];

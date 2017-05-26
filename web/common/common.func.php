@@ -449,14 +449,6 @@ function buildframes($framename = ''){
 				);
 			}
 		}
-		if ($wxapp_version['design_method'] == WXAPP_MODULE) {
-			$frames['wxapp']['section']['platform_manage_menu']['title'] = '管理';
-			$frames['wxapp']['section']['platform_manage_menu']['menu']['module_link'] = array(
-				'title' => "<i class='wi wi-appsetting'></i> 模块关联",
-				'url' => url('wxapp/version/module_link_uniacid', array('version_id' => $version_id)),
-				'is_display' => 1,
-			);
-		}
 	}
 	foreach ($frames as $menuid => $menu) {
 		if (!empty($menu['founder']) && empty($_W['isfounder'])) {

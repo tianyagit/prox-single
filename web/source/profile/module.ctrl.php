@@ -17,40 +17,20 @@ $dos = array('display', 'setting', 'shortcut', 'enable', 'permissions', 'check_s
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
 $modulelist = uni_modules(false);
-
 //检测模块更新和是否盗版
 if ($do == 'check_status') {
 	$modulename = $_GPC['module'];
-	$module = module_fetch($modulename);
-	if (!empty($module)) {
-		$info = cloud_m_info($modulename);
-		if (is_error($info)) {
-			iajax(1, $info, '');
+	if (!empty($modulename)) {
+		$module_status = module_status($modulename);
+		if (!empty($module_status)) {
+			isetcookie('module_status:' . $modulename, json_encode($module_status));
 		}
-		$module_ban = module_ban($modulename) ? 1 : 0;
-		isetcookie('module_ban:' . $modulename, $module_ban, 1800);
-		if ($module_ban) {
-			$return = array('errno' => 1, 'message' => '您的站点存在盗版模块，请删除文件后联系客服!');
+		if ($module_status['ban']) {
+			iajax(1, '您的站点存在盗版模块, 请删除文件后联系客服');
 		}
-		if (!empty($info) && !empty($info['version']['version'])) {
-			if (ver_compare($module['version'], $info['version']['version'])) {
-				$upgrade = array('name' => $module['title'], 'version' => $info['version']['version'], 'upgrade' => 1);
-				isetcookie('module_upgrade:' . $modulename, json_encode($upgrade), 1800);
-				$return = empty($return) ? array('errno' => 0, 'message' => $upgrade) : $return;
-			}
-		} else {
-			$manifest = ext_module_manifest($modulename);
-			if (!empty($manifest)) {
-				if (ver_compare($module['version'], $manifest['application']['version'])) {
-					$upgrade = array('name' => $module['title'], 'version' => $manifest['application']['version'], 'upgrade' => 1);
-					isetcookie('module_upgrade:' . $modulename, json_encode($upgrade), 1800);
-					$return = empty($return) ? array('errno' => 0, 'message' => $upgrade) : $return;
-				}
-			}
+		if ($module_status['upgrade']['upgrade']) {
+			iajax(1, $module_status['upgrade']['name'] . '检测最新版为' . $module_status['upgrade']['version'] . '，请尽快更新');
 		}
-		isetcookie('module_upgrade:' . $modulename, json_encode(array('upgrade' => 0)), 1800);
-		$return = empty($return) ? array('errno' => 0, 'message' => '') : $return;
-		iajax($return['errno'], $return['message'], '');
 	}
 	iajax(0, '', '');
 }

@@ -137,6 +137,7 @@ function material_news_set($data, $attach_id) {
 				'id' => $news['id']
 			));
 		}
+		cache_delete(cache_system_key('material_reply:' . $attach_id));
 	} else {
 		$wechat_attachment = array(
 			'uniacid' => $_W['uniacid'],
@@ -346,6 +347,7 @@ function material_local_news_upload($attach_id) {
 			$edit_attachment['index'] = $news['displayorder'];
 			$edit_attachment['articles'] = $news;
 			$result = $account_api->editMaterialNews($edit_attachment);
+			cache_delete(cache_system_key('material_reply:' . $material['media_id']));
 			if (is_error($result)){
 				return error('-4', $result['message']);
 			}
@@ -355,6 +357,12 @@ function material_local_news_upload($attach_id) {
 		$media_id = $account_api->addMatrialNews($articles);
 		if (is_error($media_id)) {
 			return error('-5', $media_id, '');
+		}
+		$wechat_material = $account_api->getMaterial($media_id);
+		if (!is_error($wechat_material)) {
+			foreach ($wechat_material['news_item'] as $displayorder => $item) {
+				pdo_update('wechat_news', array('url' => $item['url']), array('attach_id' => $attach_id, 'displayorder' => $displayorder));
+			}
 		}
 		pdo_update('wechat_attachment', array(
 			'media_id' => $media_id,
