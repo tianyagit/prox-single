@@ -51,19 +51,23 @@ if ($do == 'display') {
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 8;
 		$cids = $parentcates = $list =  array();
-		$condition = 'uniacid = :uniacid AND module != "cover" AND module != "userapi"';
+		$condition = "uniacid = :uniacid AND module != 'cover' AND module != 'userapi'";
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		if (isset($_GPC['type']) && !empty($_GPC['type'])) {
-			if ($_GPC['type'] == 'apply') {
-				$condition .= ' AND module NOT IN ("basic", "news", "images", "voice", "video", "music", "wxcard", "reply")';
+			$type = trim($_GPC['type']);
+			if ($type == 'apply') {
+				$condition .= " AND module NOT IN ('basic', 'news', 'images', 'voice', 'video', 'music', 'wxcard', 'reply')";
 			} else {
-				$condition .= " AND (FIND_IN_SET(:type, `containtype`) OR module = :type)";
-				$params[':type'] = $_GPC['type'];	
+				if (!in_array($type, array('basic', 'news', 'images', 'voice', 'video', 'music', 'wxcard'))) {
+					itoast('非法语句！', referer(), 'error');
+				}
+				$condition .= " AND (FIND_IN_SET('" . $type . "', `containtype`) OR module = :type)";
+				$params[':type'] = $type;
 			}
 		}
 		if (!in_array($m, $sysmods)) {
-			$condition .= " AND `module` = :type";
+			$condition .= ' AND `module` = :type';
 			$params[':type'] = $m;
 		}
 		if (!empty($_GPC['keyword'])) {
@@ -223,7 +227,8 @@ if ($do == 'post') {
 			$_GPC['reply'] = (array)$_GPC['reply'];
 			foreach ($_GPC['reply'] as $replykey => $replyval) {
 				if (!empty($replyval)) {
-					$containtype .= substr($replykey, 6).',';
+					$type = substr($replykey, 6);
+					$containtype .= $type == 'image' ? 'images' : $type .',';
 				}
 			}
 			$rule = array(
@@ -472,7 +477,7 @@ if ($do == 'change_status') {
 		$module_api->saveSettings($config);
 		iajax(0, '');
 	} else {
-		$type = $_GPC['type'];
+		$type = trim($_GPC['type']);
 		$setting = uni_setting_load('default_message', $_W['uniacid']);
 		$setting = $setting['default_message'] ? $setting['default_message'] : array();
 		if (empty($setting[$type]['type'])) {

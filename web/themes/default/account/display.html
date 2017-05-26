@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="panel panel-cut" id="js-account-display" >
+<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" ng-cloak>
 	<div class="panel-heading">
 		请选择您要操作的公众号
 	</div>
@@ -61,6 +61,9 @@
 				</li>
 			</span>
 		</ul>
+		<div class="text-right">
+			{$pager}
+		</div>
 		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
 	</div>
 	<div class="panel-footer"></div>
