@@ -3,7 +3,7 @@
 	<div class="panel-heading">
 		请选择您要操作的公众号
 	</div>
-	<div class="panel-body">
+	<div class="panel-body" >
 		{if !$_W['isfounder'] && !empty($account_info['uniacid_limit'])}
 			<div class="alert alert-warning">
 				温馨提示：
@@ -62,8 +62,8 @@
 			</span>
 		</ul>
 		<div class="text-right">
-            {$pager}
-        </div>
+			{$pager}
+		</div>
 		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
 	</div>
 	<div class="panel-footer"></div>
@@ -80,6 +80,6 @@
 		keyword : "{$keyword}",
 		letter : "{$letter}"
 	});
-	angular.bootstrap($('#js-account-display'), ['accountApp']);
+	angular.bootstrap(document, ['accountApp']);
 </script>
 {template 'common/footer'}
