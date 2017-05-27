@@ -146,7 +146,26 @@
 				</div>
 			</div>
 			<div class="app-side">
-				<div>{{siteEntrance}}</div>
+				<div class="editor ng-scope">
+					<div class="ng-scope">
+						<div class="app-header-setting">
+							<div class="app-header-setting-inner">
+								<div class="panel panel-default">
+									<div class="panel-body form-horizontal">
+										<!-- <div class="form-group">
+											<label class="col-xs-3 control-label"> aaaaaaaaa</label>
+											<div class="col-xs-9">sssssssss</div>
+										</div> -->
+										<p><a class="text-over" href="javascript:void(0);"><i class="wi wi-qrcode"></i></a></p>
+										<p>会员中心入口链接</p>
+										<p><span><a>{{siteEntrance}}</a></span></p>
+										<p><a href="javascript:;" on-copied="success(2)" id="copy-2" clipboard supported="supported" text="siteEntrance" type="button" class="btn btn-primary">复制链接</a></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div ng-init="editorPanel = ('widget-'+(activeItem['id'].toLowerCase())+'-editor.html'.toLowerCase())" ng-show="activeItem.id == editorid" ng-repeat="editorid in editors" ng-include="editorPanel" id="editor{{editorid}}" class="editor"></div>
 				<div ng-show="activeItem['id'] && activeItem['id'] != 'UCheader'" we7-style></div>
 			</div>
@@ -175,6 +194,9 @@
 			'activeModules' : activeModules,
 			'activeMenus' : activeMenus,
 			'siteroot' : siteroot,
+			'links' :{
+				'murl':"{php echo murl('home', array('t'=>1111111111), true, true)}"
+			}
 		});
 		angular.bootstrap(document, ['userCenterApp']);
 	});
