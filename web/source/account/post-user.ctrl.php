@@ -24,6 +24,10 @@ if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER
 $founders = explode(',', $_W['config']['setting']['founder']);
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $account = account_fetch($acid);
+if (is_error($account)) {
+	itoast($account['message']);
+}
+
 if ($do == 'edit') {
 	$permissions = pdo_fetchall("SELECT id, uid, role FROM ".tablename('uni_account_users')." WHERE uniacid = '$uniacid' and role != :role  ORDER BY uid ASC, role DESC", array(':role' => 'clerk'), 'uid');
 	$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), array('uid', 'id'));
@@ -79,6 +83,7 @@ if ($do == 'edit') {
 		if (is_error($permission = uni_create_permission($user['uid'], ACCOUNT_TYPE)) && $addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
 			itoast(error(5, $permission['message']), '', 'error');
 		}
+
 		$data = array(
 			'uniacid' => $uniacid,
 			'uid' => $user['uid'],
@@ -140,86 +145,51 @@ if ($do == 'edit') {
 		itoast('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！', '', '');
 	}
 	
-	//获取系统权限
-	$user_menu_permission = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => 'system'));
-	if (!empty($user_menu_permission['permission'])) {
-		$user_menu_permission['permission'] = explode('|', $user_menu_permission['permission']);
-	} else {
-		$user_menu_permission['permission'] = array();
+	if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+		//获取系统权限
+		$user_menu_permission_account = uni_user_menu_permission($uid, $uniacid, PERMISSION_ACCOUNT);
+		//获取模块权限
+		$module_permission = uni_getall_user_module_permission($uid, $uniacid);
+		$module_permission_keys = array_keys($module_permission);
+		$module = uni_modules();
+	} elseif ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+		//获取小程序权限
+		$user_menu_permission_wxapp = uni_user_menu_permission($uid, $uniacid, PERMISSION_WXAPP);
 	}
-	//获取模块权限
-	$module_permission = pdo_getall('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type !=' => 'system'), array(), 'type');
-	$module_permission_keys = array_keys($module_permission);
-	
+
 	$menus = system_menu_permission_list($role);
-	$module = uni_modules();
 	if (checksubmit('submit')) {
-		//系统权限
-		//获取全部系统permission_name，方便判断是否是系统菜单
-		$menu_permission = array();
-		if (!empty($menus)) {
-			foreach ($menus as $nav_id => $section) {
-				foreach ($section['section'] as $section_id => $section) {
-					foreach ($section['menu']  as $menu_id => $menu) {
-						$menu_permission[] = $menu['permission_name'];
-						if (!empty($menu['sub_permission'])) {
-							foreach ($menu['sub_permission'] as $sub_menu) {
-								$menu_permission[] = $sub_menu['permission_name'];
-							}
+		if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+			//公众号权限
+			uni_update_user_permission($uid, $uniacid, PERMISSION_ACCOUNT);
+			//模块权限
+			pdo_query("DELETE FROM " . tablename('users_permission') . " WHERE uniacid = :uniacid AND uid = :uid AND type != '" . PERMISSION_ACCOUNT . "' AND type != '" . PERMISSION_WXAPP . "'", array(':uniacid' => $uniacid, ':uid' => $uid));
+			if(!empty($_GPC['module'])) {
+				foreach($_GPC['module'] as $module_val) {
+					$insert = array(
+						'uniacid' => $uniacid,
+						'uid' => $uid,
+						'type' => $module_val,
+					);
+					if(empty($_GPC['module_'. $module_val]) || $_GPC[$module_val . '_select'] == 1) {
+						$insert['permission'] = 'all';
+						pdo_insert('users_permission', $insert);
+						continue;
+					} else {
+						$data = array();
+						foreach($_GPC['module_'. $module_val] as $v) {
+							$data[] = $v;
+						}
+						if(!empty($data)) {
+							$insert['permission'] = implode('|', $data);
+							pdo_insert('users_permission', $insert);
 						}
 					}
 				}
 			}
-		}
-		$user_menu_permission_new = array();
-		if (!empty($_GPC['system'])) {
-			foreach ($_GPC['system'] as $permission_name) {
-				if (in_array($permission_name, $menu_permission)) {
-					$user_menu_permission_new[] = $permission_name;
-				}
-			}
-			if (empty($user_menu_permission['id'])) {
-				$insert = array(
-					'uniacid' => $uniacid,
-					'uid' => $uid,
-					'type' => 'system',
-					'permission' => implode('|', $user_menu_permission_new),
-				);
-				pdo_insert('users_permission', $insert);
-			} else {
-				$update = array(
-					'permission' => implode('|', $user_menu_permission_new),
-				);
-				pdo_update('users_permission', $update, array('uniacid' => $uniacid, 'uid' => $uid));
-			}
-		} else {
-			pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $uid));
-		}
-
-		//模块权限
-		pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type !=' => 'system'));
-		if(!empty($_GPC['module'])) {
-			foreach($_GPC['module'] as $module_val) {
-				$insert = array(
-					'uniacid' => $uniacid,
-					'uid' => $uid,
-					'type' => $module_val,
-				);
-				if(empty($_GPC['module_'. $module_val]) || $_GPC[$module_val . '_select'] == 1) {
-					$insert['permission'] = 'all';
-					pdo_insert('users_permission', $insert);
-					continue;
-				} else {
-					$data = array();
-					foreach($_GPC['module_'. $module_val] as $v) {
-						$data[] = $v;
-					}
-					if(!empty($data)) {
-						$insert['permission'] = implode('|', $data);
-						pdo_insert('users_permission', $insert);
-					}
-				}
-			}
+		} elseif ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+			//小程序权限
+			uni_update_user_permission($uid, $uniacid, PERMISSION_WXAPP);
 		}
 		itoast('操作菜单权限成功！', referer(), 'success');
 	}
