@@ -120,25 +120,31 @@ $we7_system_menu['account'] = array(
 		),
 	),
 );
-
 $we7_system_menu['wxapp'] = array(
 	'title' => '小程序',
 	'url' => url('wxapp/display/home'),
 	'section' => array(
+		'wxapp_module' => array(
+			'title' => '应用',
+			'menu' => array(),
+			'is_display' => true,
+		),
 		'platform_manage_menu' => array(
 			'title' => '管理',
 			'menu' => array(
 				'module_link' => array(
-					'title' => "模块关联",
+					'title' => "模块关联公众号",
 					'url' => url('wxapp/version/module_link_uniacid', array('version_id' => $version_id)),
 					'is_display' => 1,
-					'icon' => 'wi wi-appsetting'
+					'icon' => 'wi wi-appsetting',
+					'permission_name' => 'wxapp_module_link_uniacid',
 				),
-				'profile' => array(
+				'wxapp_profile' => array(
 					'title' => '支付参数',
 					'url' => url('wxapp/payment'),
 					'is_display' => 1,
-					'icon' => 'wi wi-appsetting'
+					'icon' => 'wi wi-appsetting',
+					'permission_name' => 'wxapp_payment',
 				)
 			)
 		)
