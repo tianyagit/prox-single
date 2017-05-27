@@ -901,19 +901,19 @@ EOF;
 		global $_W;
 		$params = array();
 		$setting = uni_setting($_W['uniacid'], array('default_message'));
-		$df = $setting['default_message'];
-		if(is_array($df) && isset($df[$type])) {
-			if (!empty($df[$type]['type']) && $df[$type]['type'] == 'keyword') {
+		$default_message = $setting['default_message'];
+		if(is_array($default_message) && !empty($default_message[$type]['type'])) {
+			if ($default_message[$type]['type'] == 'keyword') {
 				$message = $this->message;
 				$message['type'] = 'text';
 				$message['redirection'] = true;
 				$message['source'] = $type;
-				$message['content'] = $df[$type]['keyword'];
+				$message['content'] = $default_message[$type]['keyword'];
 				return $this->analyzeText($message);
 			} else {
 				$params[] = array(
 					'message' => $this->message,
-					'module' => is_array($df[$type]) ? $df[$type]['module'] : $df[$type],
+					'module' => is_array($default_message[$type]) ? $default_message[$type]['module'] : $default_message[$type],
 					'rule' => '-1',
 				);
 				return $params;
