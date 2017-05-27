@@ -236,3 +236,14 @@ function wxapp_site_info($multiid) {
 	$site_info['recommend'] = pdo_getall('site_article', array('uniacid' => $uniacid));
 	return $site_info;
 }
+
+/**
+ * 获取小程序支付参数
+ * @return mixed
+ */
+function wxapp_payment_param() {
+	global $_W;
+	$setting = uni_setting_load('payment', $_W['uniacid']);
+	$pay_setting = $setting['payment'];
+	return $pay_setting;
+}
