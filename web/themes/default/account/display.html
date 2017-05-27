@@ -40,7 +40,7 @@
 				<a href="javascript:;" ng-bind="letter"></a>
 			</li>
 		</ul>
-		<ul class="cut-wechat-list" ng-if="accountList">
+		<!-- <ul class="cut-wechat-list" ng-if="accountList">
 			<span ng-repeat="account in accountList">
 				<li ng-repeat="detail in account.details">
 					<div class="cut-wechat-item">
@@ -60,7 +60,32 @@
 					</div>
 				</li>
 			</span>
-		</ul>
+		</ul> -->
+		
+		<div class="cut-list clearfix cut-wechat-list" ng-if="accountList">
+			<div ng-repeat="account in accountList">
+				<div ng-repeat="detail in account.details">
+					<div class="item">
+						<div class="content">
+							<img ng-src="{{detail.thumb}}" class="icon-account"/>
+							<div class="name">{{detail.name}}</div>
+							<div class="type" ng-if="detail.level == 1">类型：普通订阅号</div>
+							<div class="type" ng-if="detail.level == 2">类型：普通服务号</div>
+							<div class="type" ng-if="detail.level == 3">类型：认证订阅号</div>
+							<div class="type" ng-if="detail.level == 4">类型：认证服务号</div>
+						</div>
+						<div class="mask">
+							<a ng-href="{{account.url}}" class="entry">
+								<div>进入公众号 <i class="wi wi-angle-right"></i></div>
+							</a>
+							<a href="javascript:;" class="stick" title="置顶" ng-click="stick(detail.uniacid)">
+								<i class="wi wi-stick-sign"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
 	</div>
 	<div class="panel-footer"></div>
