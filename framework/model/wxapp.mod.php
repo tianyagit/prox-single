@@ -23,6 +23,7 @@ function wxapp_getpackage($data, $if_single = false) {
 }
 
 function wxapp_account_create($account) {
+	global $_W;
 	$uni_account_data = array(
 		'name' => $account['name'],
 		'description' => $account['description'],
@@ -144,9 +145,12 @@ function wxapp_version_all($uniacid) {
 		foreach ($wxapp_versions as &$modules_val) {
 			$modules_val['modules'] = iunserializer($modules_val['modules']);
 			if (!empty($modules_val['modules'])) {
-				foreach ($modules_val['modules'] as &$module_val) {
+				$module_array = array();
+				foreach ($modules_val['modules'] as $module_key => &$module_val) {
 					$module_val['module_info'] = module_fetch($module_val['name']);
+					$module_array[] = $modules_val['modules'][$module_key];
 				}
+				$modules_val['modules'] = $module_array;
 			}
 		}
 		unset($module_val, $modules_val);
@@ -198,7 +202,7 @@ function wxapp_save_switch($uniacid) {
 	}
 	
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
-	$cache_lastaccount = cache_load($cache_key);
+	$cache_lastaccount = (array)cache_load($cache_key);
 	if (empty($cache_lastaccount)) {
 		$cache_lastaccount = array(
 			'wxapp' => $uniacid,
@@ -212,6 +216,7 @@ function wxapp_save_switch($uniacid) {
 }
 
 function wxapp_site_info($multiid) {
+	global $_GPC;
 	$site_info = array();
 	$multiid = intval($multiid);
 	$uniacid = intval($_GPC['uniacid']);

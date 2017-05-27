@@ -29,6 +29,7 @@ if ($do == 'home') {
 	} else {
 		$last_version = wxapp_fetch($last_uniacid);
 		if (!empty($last_version)) {
+			uni_account_switch($last_uniacid);
 			header('Location: ' . url('wxapp/version/manage', array('version_id' => $last_version['version']['id'])));
 			exit;
 		} else {
@@ -36,6 +37,9 @@ if ($do == 'home') {
 		}
 	}
 } elseif ($do == 'display') {
+	//模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
+	$account_info = uni_user_account_permission();
+	
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$start = ($pindex - 1) * $psize;
