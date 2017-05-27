@@ -57,18 +57,6 @@ class WxappAccount extends WeAccount {
 		return array();
 	}
 	
-	/**
-	 * 调用系统的支付功能, 只能在 Mobile 端调用
-	 * @param array $params
-	 * $params['tid'] 支付订单编号, 应保证在同一模块内部唯一
-	 * $params['title'] 商家名称
-	 * $params['fee'] 总费用, 只能大于 0
-	 * $params['user'] 付款用户, 付款的用户名(选填项)
-	 */
-	public function pay($params = array()) {
-		
-	}
-	
 	public function errorCode($code, $errmsg = '未知错误') {
 		$errors = array(
 			'-1' => '系统繁忙',

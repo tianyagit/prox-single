@@ -1656,6 +1656,65 @@ abstract class WeModuleWxapp extends WeBase {
 			return false;
 		}
 	}
+	
+	protected function pay($order) {
+		global $_W, $_GPC;
+	
+		load()->model('payment');
+		load()->model('account');
+	
+		$moduels = uni_modules();
+		if(empty($order) || !array_key_exists($this->module['name'], $moduels)) {
+			return error(1, '模块不存在');
+		}
+		$moduleid = empty($this->module['mid']) ? '000000' : sprintf("%06d", $this->module['mid']);
+		$uniontid = date('YmdHis').$moduleid.random(8,1);
+	
+		$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => $this->module['name'], 'tid' => $order['tid']));
+		if (empty($paylog)) {
+			$paylog = array(
+				'uniacid' => $_W['uniacid'],
+				'acid' => $_W['acid'],
+				'openid' => $_W['openid'],
+				'module' => $this->module['name'],
+				'tid' => $order['tid'],
+				'uniontid' => $uniontid,
+				'fee' => floatval($order['fee']),
+				'card_fee' => floatval($order['fee']),
+				'status' => '0',
+				'is_usecard' => '0',
+				'tag' => iserializer(array('acid' => $_W['acid'], 'uid' => $_W['member']['uid']))
+			);
+			pdo_insert('core_paylog', $paylog);
+			$paylog['plid'] = pdo_insertid();
+		}
+		if(!empty($paylog) && $paylog['status'] != '0') {
+			return error(1, '这个订单已经支付成功, 不需要重复支付.');
+		}
+		if (!empty($paylog) && empty($paylog['uniontid'])) {
+			pdo_update('core_paylog', array(
+				'uniontid' => $uniontid,
+			), array('plid' => $paylog['plid']));
+		}
+	
+		$_W['uniacid'] = $paylog['uniacid'];
+		$_W['openid'] = $paylog['openid'];
+	
+		$params = array(
+			'tid' => $paylog['tid'],
+			'fee' => $paylog['card_fee'],
+			'user' => $paylog['openid'],
+			'uniontid' => $paylog['uniontid'],
+			'title' => $order['title'],
+		);
+		$wechat_payment = array(
+			'appid' => 'wxb4bf68b72dee1969',
+			'signkey' => '1c58296b76698f749e4a36b9138fcd52',
+			'mchid' => '1410357102',
+			'version' => 2,
+		);
+		return wechat_build($params, $wechat_payment);
+	}
 }
 
 /**
