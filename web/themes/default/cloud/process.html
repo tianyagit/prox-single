@@ -1,6 +1,7 @@
 {template 'common/header'}
 <script type="text/javascript">
 <!--
+	var packet = {php echo ($packet ? json_encode($packet) : 'null');};
 	angular.module('cloudApp', ['app']);
 	angular.module('cloudApp')
 	.controller('FileProcessorCtrl', function($scope, $http, config) {
@@ -53,6 +54,10 @@
 		}
 	})
 	.controller('SchemasProcessorCtrl', function($scope, $http, config){
+		if (packet && (packet.files.length > 0)) {
+			util.message('请先完成文件同步', './index.php?c=cloud&a=upgrade');
+			return false;
+		}
 		$scope.schemas = config.schemas;
 		$scope.fails = [];
 		var is_m_install = config.is_module_install;
@@ -130,6 +135,10 @@
 			}
 		});
 	}]).controller('processor', function($scope, $http){
+		if (packet && (packet.files.length > 0 || packet.files.schemas > 0)) {
+			util.message('请先完成文件或是数据库同步', './index.php?c=cloud&a=upgrade');
+			return false;
+		}
 		$scope.scripts = {php echo json_encode($scripts);};
 		$scope.fails = [];
 		
