@@ -144,9 +144,12 @@ function wxapp_version_all($uniacid) {
 		foreach ($wxapp_versions as &$modules_val) {
 			$modules_val['modules'] = iunserializer($modules_val['modules']);
 			if (!empty($modules_val['modules'])) {
-				foreach ($modules_val['modules'] as &$module_val) {
+				$module_array = array();
+				foreach ($modules_val['modules'] as $module_key => &$module_val) {
 					$module_val['module_info'] = module_fetch($module_val['name']);
+					$module_array[] = $modules_val['modules'][$module_key];
 				}
+				$modules_val['modules'] = $module_array;
 			}
 		}
 		unset($module_val, $modules_val);
