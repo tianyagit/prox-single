@@ -547,7 +547,7 @@ function uni_user_permission($type = 'system') {
 	if(!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
 	} else {
-		$user_permission = array('account*');
+		$user_permission = array('account*', 'wxapp*');
 	}
 	$permission_append = frames_menu_append();
 	//目前只有系统管理才有预设权限，公众号权限走数据库
@@ -555,6 +555,121 @@ function uni_user_permission($type = 'system') {
 		$user_permission = array_merge($user_permission, $permission_append[$_W['role']]);
 	}
 	return (array)$user_permission;
+}
+
+/**
+ * 获取某一用户对某个公众号的菜单操作权限（公众号、小程序、系统、某一模块）
+ * @param int $uid 用户uid
+ * @param int $uniacid 公众号uniacid
+ * @param string $type 权限类型
+ * @return array
+ */
+function uni_user_menu_permission($uid, $uniacid, $type) {
+	$user_menu_permission = array();
+	
+	$uid = intval($uid);
+	$uniacid = intval($uniacid);
+	$type = trim($type);
+	if (empty($uid) || empty($uniacid) || empty($type)) {
+		itoast('参数错误！');
+	}
+	
+	$user_menu_permission = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $type));
+	if (!empty($user_menu_permission['permission'])) {
+		$user_menu_permission['permission'] = explode('|', $user_menu_permission['permission']);
+	} else {
+		$user_menu_permission['permission'] = array();
+	}
+	
+	return $user_menu_permission;
+}
+
+/**
+ * 获取所有权限的permission_name
+ * @return array
+ */
+function uni_getall_permission_name() {
+	load()->model('system');
+	$menu_permission = array();
+	
+	$menu_list = system_menu_permission_list();
+	if (!empty($menu_list)) {
+		foreach ($menu_list as $nav_id => $section) {
+			foreach ($section['section'] as $section_id => $section) {
+				if (!empty($section['menu'])) {
+					foreach ($section['menu']  as $menu_id => $menu) {
+						$menu_permission[] = $menu['permission_name'];
+						if (!empty($menu['sub_permission'])) {
+							foreach ($menu['sub_permission'] as $sub_menu) {
+								$menu_permission[] = $sub_menu['permission_name'];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return $menu_permission;
+}
+
+/**
+ * 更新用户对某一公众号的权限（公众号、小程序、系统）
+ * @param int $uid 用户uid
+ * @param int $uniacid 公众号uniacid
+ * @param string $type 更新用户权限的类型
+ * @return boolean
+ */
+function uni_update_user_permission($uid, $uniacid, $type) {
+	global $_GPC;
+	$uid = intval($uid);
+	$uniacid = intval($uniacid);
+	if (empty($uid) || empty($uniacid) || !in_array($type, array(PERMISSION_ACCOUNT, PERMISSION_WXAPP, PERMISSION_SYSTEM))) {
+		itoast('参数错误！');
+	}
+	$all_menu_permission = uni_getall_permission_name();
+	$user_menu_permission = uni_user_menu_permission($uid, $uniacid, $type);
+	$user_menu_permission_new = array();
+	if (!empty($_GPC[$type])) {
+		foreach ($_GPC[$type] as $permission_name) {
+			if (in_array($permission_name, $all_menu_permission)) {
+				$user_menu_permission_new[] = $permission_name;
+			}
+		}
+		if (empty($user_menu_permission['id'])) {
+			$insert = array(
+				'uniacid' => $uniacid,
+				'uid' => $uid,
+				'type' => $type,
+				'permission' => implode('|', $user_menu_permission_new),
+			);
+			$result = pdo_insert('users_permission', $insert);
+		} else {
+			$update = array(
+				'permission' => implode('|', $user_menu_permission_new),
+			);
+			$result = pdo_update('users_permission', $update, array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $type));
+		}
+	} else {
+		$result = pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $type));
+	}
+	return $result;
+}
+
+/**
+ * 获取某一用户对某一公众号的所有模块权限
+ * @param int $uid
+ * @param int $uniacid
+ * @return array
+ */
+function uni_getall_user_module_permission($uid, $uniacid) {
+	$module_permission = array();
+	$uid = intval($uid);
+	$uniacid = intval($uniacid);
+	if (empty($uid) || empty($uniacid)) {
+		return array();
+	}
+	$module_permission = pdo_fetchall("SELECT * FROM " . tablename('users_permission') . " WHERE uniacid = :uniacid AND uid  = :uid AND type != '" . PERMISSION_ACCOUNT . "' AND type != '" . PERMISSION_WXAPP . "'", array(':uniacid' => $uniacid, ':uid' => $uid), 'type');
+	return $module_permission;
 }
 
 function uni_user_permission_check($permission_name, $show_message = true, $action = '') {
@@ -653,19 +768,29 @@ function uni_user_account_permission($uid = 0) {
 		load()->model('user');
 		$user = user_single($uid);
 	}
+	$account_num = $wxapp_num = 0;
 	$group = pdo_get('users_group', array('id' => $user['groupid']));
 	$uniacocunts = pdo_getall('uni_account_users', array('uid' => $user['uid'], 'role' => 'owner'), array(), 'uniacid');
-	if (empty($uniacocunts)) {
-		$uniacid_num = 0;
-	} else {
+	if (!empty($uniacocunts)) {
 		//再次判断公众号是否真实存在
-		$uniacid_num = pdo_fetchcolumn('SELECT COUNT(*) FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $user['uid'], ':role' => 'owner'));
+		$all_account = pdo_fetchall('SELECT * FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $user['uid'], ':role' => 'owner'));
+		foreach ($all_account as $account) {
+			if ($account['type'] == 1 || $account['type'] == 3) {
+				$account_num++;
+			}
+			if ($account['type'] == 4) {
+				$wxapp_num++;
+			}
+		}
 	}
 	$data = array(
 		'group_name' => $group['name'],
 		'maxaccount' => $group['maxaccount'],
-		'uniacid_num' => $uniacid_num,
-		'uniacid_limit' => max((intval($group['maxaccount']) - $uniacid_num), 0),
+		'uniacid_num' => $account_num,
+		'uniacid_limit' => max((intval($group['maxaccount']) - $account_num), 0),
+		'maxwxapp' => $group['maxwxapp'],
+		'wxapp_num' => $wxapp_num,
+		'wxapp_limit' => max((intval($group['maxwxapp']) - $wxapp_num), 0),
 	);
 	return $data;
 }

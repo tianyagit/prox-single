@@ -23,6 +23,7 @@ function wxapp_getpackage($data, $if_single = false) {
 }
 
 function wxapp_account_create($account) {
+	global $_W;
 	$uni_account_data = array(
 		'name' => $account['name'],
 		'description' => $account['description'],
@@ -201,7 +202,7 @@ function wxapp_save_switch($uniacid) {
 	}
 	
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
-	$cache_lastaccount = cache_load($cache_key);
+	$cache_lastaccount = (array)cache_load($cache_key);
 	if (empty($cache_lastaccount)) {
 		$cache_lastaccount = array(
 			'wxapp' => $uniacid,
@@ -215,6 +216,7 @@ function wxapp_save_switch($uniacid) {
 }
 
 function wxapp_site_info($multiid) {
+	global $_GPC;
 	$site_info = array();
 	$multiid = intval($multiid);
 	$uniacid = intval($_GPC['uniacid']);
