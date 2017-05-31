@@ -28,7 +28,7 @@ function cache_build_setting() {
  * 更新盗版模块数据及缓存
  * @return mixed
  */
-function cache_build_module_ban() {
+function cache_build_module_status() {
 	load()->model('cloud');
 	$cloud_modules = cloud_m_query();
 	$module_ban = is_array($cloud_modules['pirate_apps']) ? $cloud_modules['pirate_apps'] : array();
@@ -40,6 +40,7 @@ function cache_build_module_ban() {
 		}
 	}
 	setting_save($module_ban, 'module_ban');
+	setting_save(array(), 'module_upgrade');
 }
 
 /**

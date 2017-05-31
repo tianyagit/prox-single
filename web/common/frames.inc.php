@@ -157,7 +157,6 @@ $we7_system_menu['system'] = array(
 	'section' => array(
 		'wxplatform' => array(
 			'title' => '公众号',
-			'icon' => 'wi wi-wechat',
 			'menu' => array(
 				'system_account' => array(
 					'title' => ' 微信公众号',
@@ -194,13 +193,13 @@ $we7_system_menu['system'] = array(
 				'system_module' => array(
 					'title' => '公众号应用',
 					'url' => url('system/module', array('account_type' => '1')),
-					'icon' => 'wi wi-apply',
+					'icon' => 'wi wi-wx-apply',
 					'permission_name' => 'system_module',
 				),
 				'system_template' => array(
 					'title' => '微官网模板',
 					'url' => url('system/template'),
-					'icon' => 'wi wi-template',
+					'icon' => 'wi wi-wx-template',
 					'permission_name' => 'system_template',
 				),
 				'system_platform' => array(
@@ -213,25 +212,23 @@ $we7_system_menu['system'] = array(
 		),
 		'module' => array(
 			'title' => '小程序',
-			'icon' => 'wi wi-small-routine',
 			'menu' => array(
 				'system_wxapp' => array(
 					'title' => '微信小程序',
 					'url' => url('account/manage', array('account_type' => '4')),
-					'icon' => 'wi wi-small-routine',
+					'icon' => 'wi wi-wxapp',
 					'permission_name' => 'system_wxapp',
 				),
 				'system_module_wxapp' => array(
 					'title' => '小程序应用',
 					'url' => url('system/module', array('account_type' => '4')),
-					'icon' => 'wi wi-wxapp-setting',
+					'icon' => 'wi wi-wxapp-apply',
 					'permission_name' => 'system_module_wxapp',
 				),
 			)
 		),
 		'user' => array(
 			'title' => '帐户/用户',
-			'icon' => 'wi wi-user',
 			'menu' => array(
 				'system_my' => array(
 					'title' => '我的帐户',
@@ -275,7 +272,6 @@ $we7_system_menu['system'] = array(
 		),
 		'permission' => array(
 			'title' => '权限管理',
-			'icon' => 'wi wi-appjurisdiction',
 			'menu' => array(
 				'system_module_group' => array(
 					'title' => '应用权限组',
@@ -303,7 +299,6 @@ $we7_system_menu['system'] = array(
 		),
 		'acticle' => array(
 			'title' => '文章/公告',
-			'icon' => 'wi wi-article',
 			'menu' => array(
 				'system_article' => array(
 					'title' => '文章管理',
@@ -321,7 +316,6 @@ $we7_system_menu['system'] = array(
 		),
 		'cache' => array(
 			'title' => '缓存',
-			'icon' => 'wi wi-update',
 			'menu' => array(
 				'system_setting_updatecache' => array(
 					'title' => '更新缓存',

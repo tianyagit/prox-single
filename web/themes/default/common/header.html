@@ -147,7 +147,7 @@
 				<div class="panel panel-menu">
 					{if $frame_section['title']}
 					<div class="panel-heading">
-						<span class="no-collapse">{if FRAME == 'system'}<i class="{$frame_section['icon']}"></i>{/if}{$frame_section['title']}<i class="wi wi-appsetting pull-right setting"></i></span>
+						<span class="no-collapse">{$frame_section['title']}<i class="wi wi-appsetting pull-right setting"></i></span>
 					</div>
 					{/if}
 					<ul class="list-group">
@@ -159,11 +159,11 @@
 							</li>
 							{else}
 							<li class="list-group-item {if $menu['active']}active{/if}">
-								<a href="{$menu['url']}" class="text-over {if FRAME == 'system'}system{/if}" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
+								<a href="{$menu['url']}" class="text-over" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
 								{if $menu['icon']}
 								{if $frame_section_id == 'platform_module'}
 								<img src="{$menu['icon']}"/>
-								{else if FRAME != 'system'}
+								{else}
 								<i class="{$menu['icon']}"></i>
 								{/if}
 								{/if}
