@@ -145,3 +145,9 @@ require.config({
 		}
 	}
 });
+define('jquery', [], function() {
+	return jQuery;
+});
+define('bootstrap', [], function() {
+	return jQuery;
+});
