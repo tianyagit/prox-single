@@ -194,13 +194,13 @@ $we7_system_menu['system'] = array(
 				'system_module' => array(
 					'title' => '公众号应用',
 					'url' => url('system/module', array('account_type' => '1')),
-					'icon' => 'wi wi-apply',
+					'icon' => 'wi wi-wx-apply',
 					'permission_name' => 'system_module',
 				),
 				'system_template' => array(
 					'title' => '微官网模板',
 					'url' => url('system/template'),
-					'icon' => 'wi wi-template',
+					'icon' => 'wi wi-wx-template',
 					'permission_name' => 'system_template',
 				),
 				'system_platform' => array(
@@ -218,13 +218,13 @@ $we7_system_menu['system'] = array(
 				'system_wxapp' => array(
 					'title' => '微信小程序',
 					'url' => url('account/manage', array('account_type' => '4')),
-					'icon' => 'wi wi-small-routine',
+					'icon' => 'wi wi-wxapp',
 					'permission_name' => 'system_wxapp',
 				),
 				'system_module_wxapp' => array(
 					'title' => '小程序应用',
 					'url' => url('system/module', array('account_type' => '4')),
-					'icon' => 'wi wi-wxapp-setting',
+					'icon' => 'wi wi-wxapp-apply',
 					'permission_name' => 'system_module_wxapp',
 				),
 			)

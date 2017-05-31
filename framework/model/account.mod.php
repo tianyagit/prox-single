@@ -637,7 +637,7 @@ function uni_permission_name() {
  * 更新用户对某一公众号的权限（公众号、小程序、系统）
  * @param int $uid 用户uid
  * @param int $uniacid 公众号uniacid
- * @param string $type 更新用户权限的类型
+ * @param string $data 要更新的数据
  * @return boolean
  */
 function uni_update_user_permission($uid, $uniacid, $data) {
