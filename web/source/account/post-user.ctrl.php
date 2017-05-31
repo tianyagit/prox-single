@@ -153,7 +153,7 @@ if ($do == 'edit') {
 			itoast('参数错误！');
 		}
 		//获取模块权限
-		$module_permission = uni_user_menu_permission($uid, $uniacid, 'all_module');
+		$module_permission = uni_user_menu_permission($uid, $uniacid, 'modules');
 		$module_permission_keys = array_keys($module_permission);
 		$module = uni_modules_by_uniacid($uniacid);
 	} elseif ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
