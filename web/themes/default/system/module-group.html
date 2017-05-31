@@ -36,8 +36,8 @@
 			<col width="180px" />
 			<tr>
 				<th class="text-left">套餐名称</th>
-				<th>应用个数</th>
-				<th>小程序个数</th>
+				<th>公众号应用个数</th>
+				<th>小程序应用个数</th>
 				<th>模板个数</th>
 				<th class="text-right">操作</th>
 			</tr>
@@ -59,7 +59,7 @@
 			</tr>
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
 				<td colspan="5">
-					<div class="col-sm-1 color-gray text-left we7-padding-none">应用</div>
+					<div class="col-sm-1 color-gray text-left we7-padding-none">公众号应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['modules'] $module}
 						<div class="col-sm-3 text-left text-over">
@@ -80,7 +80,7 @@
 			</tr>
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
 				<td colspan="5">
-					<div class="col-sm-1 color-gray text-left we7-padding-none">小程序</div>
+					<div class="col-sm-1 color-gray text-left we7-padding-none">小程序应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['wxapp'] $wxapp}
 						<div class="col-sm-3 text-left text-over">
@@ -137,7 +137,7 @@
 		</div>
 		<div class="panel we7-panel">
 			<div class="panel-heading">
-				选择应用
+				选择公众号应用
 			</div>
 			<div class="panel-body we7-padding">
 				<div class="row">
@@ -162,7 +162,7 @@
 		</div>
 		<div class="panel we7-panel">
 			<div class="panel-heading">
-				选择小程序
+				选择小程序应用
 			</div>
 			<div class="panel-body we7-padding">
 				<div class="row">
