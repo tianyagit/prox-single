@@ -40,7 +40,7 @@
 				<a href="javascript:;" ng-bind="letter"></a>
 			</li>
 		</ul>
-		<!-- <ul class="cut-wechat-list" ng-if="accountList">
+		<ul class="cut-wechat-list" ng-if="accountList">
 			<span ng-repeat="account in accountList">
 				<li ng-repeat="detail in account.details">
 					<div class="cut-wechat-item">
@@ -60,9 +60,9 @@
 					</div>
 				</li>
 			</span>
-		</ul> -->
+		</ul>
 		
-		<div class="cut-list clearfix cut-wechat-list" ng-if="accountList">
+		<!-- <div class="cut-list clearfix cut-wechat-list" ng-if="accountList">
 			<div ng-repeat="account in accountList">
 				<div ng-repeat="detail in account.details">
 					<div class="item">
@@ -85,7 +85,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
 	</div>
 	<div class="panel-footer"></div>
