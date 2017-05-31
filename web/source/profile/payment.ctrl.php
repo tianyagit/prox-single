@@ -118,7 +118,7 @@ MFF/yA==
 	}
 	$pay_setting[$type] = $param;
 	$payment = iserializer($pay_setting);
-	if (!empty($setting)) {
+	if ($setting) {
 		pdo_update('uni_settings', array('payment' => $payment), array('uniacid' => $_W['uniacid']));
 	} else {
 		pdo_insert('uni_settings', array('payment' => $payment, 'uniacid' => $_W['uniacid']));

@@ -4,7 +4,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-//echo $_W['uniacid'];
+
 load()->model('account');
 load()->model('wxapp');
 $dos = array('get_setting', 'display');
