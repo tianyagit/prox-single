@@ -62,17 +62,21 @@ if ($do == 'display') {
 	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
-		$str = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''";
-		$list_sql = sprintf($str, "*, a.id as id");
-		$total_sql = sprintf($str, "count(*)");
+
+		$search_sql = '';
 		if (! empty($search)) {
-			$str = " AND (b.title LIKE :search OR b.author = :search OR b.digest LIKE :search)";
-			$list_sql .= $str;
-			$total_sql .= $str;
-			$conditions[':search'] = '%' . $search . '%';
+			$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";
+			$conditions[':search_title'] = "%{$search}%";
+			$conditions[':search_author'] = "%{$search}%";
+			$conditions[':search_digest'] = "%{$search}%";
 		}
+
+		$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
+
+		$list_sql = sprintf($select_sql, "*, a.id as id", " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize);
+		$total_sql = sprintf($select_sql, "count(*)", '');
+
 		$total = pdo_fetchcolumn($total_sql, $conditions);
-		$list_sql .= " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize;
 		$news_list = pdo_fetchall($list_sql, $conditions);
 		if (! empty($news_list)) {
 			foreach ($news_list as $news){
