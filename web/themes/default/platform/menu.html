@@ -85,13 +85,13 @@
 			<td>
 				<div class="link-group">
 				{if $da['type'] == 1}
-					<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> 1));}" class="we7-margin-right">编辑</a>
+					<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> 1));}">编辑</a>
 				{else}
-					<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> $da['type']));}" class="we7-margin-right">查看</a>
+					<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> $da['type']));}">查看</a>
 				{/if}
 				{if $da['type'] == 3}
 					{if $_GPC['status'] != 'history'}
-					<a href="{php echo url('platform/menu/copy', array('id' => $da['id']));}" class="we7-margin-right" onclick="if(!confirm('确定复制吗')) return false;">复制</a>
+					<a href="{php echo url('platform/menu/copy', array('id' => $da['id']));}" onclick="if(!confirm('确定复制吗')) return false;">复制</a>
 					{/if}
 				{/if}
 				{if $da['type'] != 1 || ($da['type'] == 1 && $da['status'] == '0')}
