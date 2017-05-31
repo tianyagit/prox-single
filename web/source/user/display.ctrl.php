@@ -39,6 +39,9 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 	$pager = pagination($total, $pindex, $psize);
 	$system_module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system',':issystem' => 1));
 	foreach ($users as &$user) {
+		if (empty($user['uid'])) {
+			$user['uid'] = pdo_getcolumn('users', array('username' => $user['username']), 'uid');
+		}
 		$user['avatar'] = !empty($user['avatar']) ? $user['avatar'] : './resource/images/nopic-user.png';
 		if (empty($user['endtime'])) {
 			$user['endtime'] = '永久有效';

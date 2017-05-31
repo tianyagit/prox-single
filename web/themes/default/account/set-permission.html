@@ -31,14 +31,14 @@
 						<td class="text-left " style="overflow:inherit;">
 							<div class="dropdown system-select-dropdown">
 								<span>
-									<input id="check-child-{$menu_id}" type="checkbox" we7-check-all="1" value="{$menu['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_account['permission'])}checked{/if} name="system[]" autocomplete="off" />
+									<input id="check-child-{$menu_id}" type="checkbox" we7-check-all="1" value="{$menu['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_account)}checked{/if} name="system[]" autocomplete="off" />
 									<label for="check-child-{$menu_id}" class="text-over we7-margin-horizontal-none" data-toggle="tooltip">{$menu['title']}</label>
 								</span>
 								{if $menu['sub_permission']}
 								<ul class="dropdown-menu">
 									{loop $menu['sub_permission'] $sub_permission}
 									<li class="text-left">
-										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$sub_permission['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission_account['permission'])}checked{/if} name="system[]">
+										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$sub_permission['permission_name']}" {if in_array($sub_permission['permission_name'], $user_menu_permission_account)}checked{/if} name="system[]">
 										<label class="we7-margin-horizontal-none">
 											{$sub_permission['title']}
 										</label>
@@ -85,14 +85,14 @@
 						<td class="text-left " style="overflow:inherit;">
 							<div class="dropdown system-select-dropdown">
 								<span>
-									<input id="check-child-{$menu_id}" type="checkbox" we7-check-all="1" value="{$menu['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_wxapp['permission'])}checked{/if} name="wxapp[]" autocomplete="off" />
+									<input id="check-child-{$menu_id}" type="checkbox" we7-check-all="1" value="{$menu['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_wxapp)}checked{/if} name="wxapp[]" autocomplete="off" />
 									<label for="check-child-{$menu_id}" class="text-over we7-margin-horizontal-none" data-toggle="tooltip">{$menu['title']}</label>
 								</span>
 								{if $menu['sub_permission']}
 								<ul class="dropdown-menu">
 									{loop $menu['sub_permission'] $sub_permission}
 									<li class="text-left">
-										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$sub_permission['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_wxapp['permission'])}checked{/if} name="wxapp[]">
+										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$sub_permission['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_wxapp)}checked{/if} name="wxapp[]">
 										<label class="we7-margin-horizontal-none">
 											{$sub_permission['title']}
 										</label>

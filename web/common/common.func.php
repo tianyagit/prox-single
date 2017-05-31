@@ -172,7 +172,7 @@ function buildframes($framename = ''){
 	$status = uni_user_permission_exist($_W['uid'], $_W['uniacid']);
 	//非创始人应用模块菜单
 	if (!$_W['isfounder'] && $status) {
-		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'all_module');
+		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'modules');
 		if (!empty($module_permission)) {
 			foreach ($module_permission as $module) {
 				if (!in_array($module['type'], $sysmodules) && empty($modules[$module['type']]['main_module'])) {
