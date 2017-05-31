@@ -10,6 +10,9 @@ load()->model('wxapp');
 
 $dos = array('display', 'manage', 'module_link_uniacid', 'search_link_account');
 $do = in_array($do, $dos) ? $do : 'edit';
+if ($do == 'module_link_uniacid') {
+	uni_user_permission_check('wxapp_module_link_uniacid', true, 'wxapp');
+}
 $_W['page']['title'] = '小程序 - 管理';
 
 $uniacid = intval($_GPC['uniacid']);
