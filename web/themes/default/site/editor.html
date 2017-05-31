@@ -8,7 +8,7 @@
 		<a href="{php echo url('mc/member')}">会员管理</a>
 	</li>
 	<li {if $_GPC['a'] == 'group'} class="active"{/if}>
-		<a href="{php echo url('mc/group')}">会员�/a>
+		<a href="{php echo url('mc/group')}">会员组</a>
 	</li>
 	<li{if $do == 'uc'} class="active"{/if}>
 	<a href="{php echo url('site/editor/uc')}">会员中心</a>
@@ -63,7 +63,7 @@
 								<div class="nav-action">
 									<a class="nav-action-list" href="javascript:;">
 										<img src="{php echo $_W['siteroot']}/web/resource/images/app/sum-recharge.png" alt=""/>
-										<span>余额充�/span>
+										<span>余额充值</span>
 									</a>
 									<a class="nav-action-list" href="javascript:;">
 										<img src="{php echo $_W['siteroot']}/web/resource/images/app/scan-pay.png" alt=""/>
@@ -80,7 +80,7 @@
 										</li>
 										<li>
 											<a class="mnav-box-list" href="javascript:;">
-												<span>会员�/span>
+												<span>会员卡</span>
 												<span class="pull-right"><i class="fa fa-angle-right"></i></span>
 											</a>
 										</li>
@@ -152,7 +152,7 @@
 							<div class="app-header-setting-inner">
 								<div class="panel panel-default">
 									<div class="panel-body form-horizontal">
-										<div data-toggle="tooltip" title="微信扫描，在手机上预� data-placement="bottom" style="width:30px;height:30px;line-height:30px;position:absolute;right:0px;top:0px;z-index:100"><a class="text-over" href="javascript:void(0);" id="ucQrcode"><i class="wi wi-qrcode"></i></a></div>
+										<div data-toggle="tooltip" title="微信扫描，在手机上预览" data-placement="bottom" style="width:30px;height:30px;line-height:30px;position:absolute;right:0px;top:0px;z-index:100"><a class="text-over" href="javascript:void(0);" id="ucQrcode"><i class="wi wi-qrcode"></i></a></div>
 										<p><img id="qrcode" style="width:100px;display:none" src="{php echo url('site/editor/qrcode',array('text' =>murl('mc', array(), true, true)))}"/></p>
 										<p>会员中心入口链接</p>
 										<p><span><a>{{siteEntrance}}</a></span></p>
@@ -212,7 +212,7 @@
 		<a href="{php echo url('mc/member')}">会员管理</a>
 	</li>
 	<li {if $_GPC['a'] == 'group'} class="active"{/if}>
-		<a href="{php echo url('mc/group')}">会员�/a>
+		<a href="{php echo url('mc/group')}">会员组</a>
 	</li>
 	{if $type == '4'}
 	<li><a href="{php echo url('site/editor/uc')}">会员中心</a></li>
@@ -238,7 +238,7 @@
 		<div class="well clearfix">
 			<div class="shopNav-info col-sm-8">
 				<h3>快捷导航</h3>
-				<div>微站的各个页面可以通过导航串联起来。通过精心设置的导航，方便访问者在页面或是栏目间快速切换，引导访问者前往您期望的页面�/div>
+				<div>微站的各个页面可以通过导航串联起来。通过精心设置的导航，方便访问者在页面或是栏目间快速切换，引导访问者前往您期望的页面。</div>
 			</div>
 			<div class="shopNav-switch col-sm-4 text-right">
 				<input name="status" class="form-control" value="{$page['status']}" style="display: none;">
@@ -372,14 +372,14 @@
 							<input type="checkbox" id="position-1" name="position" ng-model="activeItem.position.homepage" />
 							<label class="checkbox-inline" for="position-1">微站主页</label>
 							<input type="checkbox" id="position-2" name="position" ng-model="activeItem.position.page" />
-							<label class="checkbox-inline" for="position-2">微页�/label>
+							<label class="checkbox-inline" for="position-2">微页面</label>
 							<input type="checkbox" id="position-3" name="position" ng-model="activeItem.position.article" />
-							<label class="checkbox-inline" for="position-3"> 文章及分�/label>
+							<label class="checkbox-inline" for="position-3"> 文章及分类</label>
 						</div>
 						<div>将导航隐藏在以下模块: <a ng-click="showSearchModules()" href="javascript:;">选择模块</a></div>
 						<div>
 							<div class="form-control-static">
-								<label class="label label-warning" ng-show="!hasIgnoreModules">未设置，将在全部模块中显�/label>
+								<label class="label label-warning" ng-show="!hasIgnoreModules">未设置，将在全部模块中显示</label>
 								<label style="margin-right:5px;" class="label label-success" ng-show="hasIgnoreModules" ng-repeat="module in activeItem.ignoreModules">{{module.title}}</label>
 							</div>
 						</div>
@@ -405,7 +405,7 @@
 										</div>
 										<div class="nav-region">
 											<div class="first-nav">
-												<h3>一级导�/h3>
+												<h3>一级导航</h3>
 												<div class="alert">
 													<div class="form-group">
 														<label class="control-label col-xs-3">标题</label>
@@ -414,7 +414,7 @@
 														</div>
 													</div>
 													<div class="form-group">
-														<label class="control-label col-xs-3">链接�/label>
+														<label class="control-label col-xs-3">链接到</label>
 														<div class="col-xs-9 ">
 															<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 														</div>
@@ -434,19 +434,19 @@
 														</div>
 													</div>
 													<div class="form-group">
-														<label class="control-label col-xs-3">链接�/label>
+														<label class="control-label col-xs-3">链接到</label>
 														<div class="col-xs-9 ">
 															<div we7-linker we7-my-url="submenu.url" we7-my-title="submenu.title"></div>
 														</div>
 													</div>
 												</div>
 												<div ng-show="menu.submenus.length < 5" ng-click="menu.submenus.length >= 5 ? '' : addSubMenu(menu);" class="add-shopNav">+ 添加二级导航</div>
-												<!--最多可添加5�->
+												<!--最多可添加5个-->
 											</div>
 										</div>
 									</div>
-									<div ng-show="activeItem.menus.length < 3" class="add-shopNav text-center" ng-click="activeItem.menus.length >= 3 ? '' : addMenu();">+添加一级导�/div>
-									<!--最多添加三个导�->
+									<div ng-show="activeItem.menus.length < 3" class="add-shopNav text-center" ng-click="activeItem.menus.length >= 3 ? '' : addMenu();">+添加一级导航</div>
+									<!--最多添加三个导航-->
 								</div>
 								<!--end微信公众号自定义菜单模板-->
 								<!--APP导航样式:shopNav-app-->
@@ -468,7 +468,7 @@
 													<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
-													<p>高亮�/p>
+													<p>高亮：</p>
 													<div we7-iconer we7-my-image="menu.hoverimage" we7-my-icon="menu.hovericon">选择</div>
 												</div>
 											</div>
@@ -481,7 +481,7 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label col-xs-3">链接�/label>
+											<label class="control-label col-xs-3">链接到</label>
 											<div class="col-xs-9 ">
 												<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 											</div>
@@ -498,7 +498,7 @@
 											<div we7-colorpicker we7-my-color="activeItem.bgColor" we7-my-default-color="'#2B2D30'"></div>
 										</div>
 									</div>
-									<p>添加中间主图�/p>
+									<p>添加中间主图标</p>
 									<div class="card">
 										<div class="nav-img-group">
 											<div class="clearfix">
@@ -507,19 +507,19 @@
 													<div we7-iconer we7-my-image="activeItem.extend[0].image" we7-my-icon="activeItem.extend[0].icon" we7-my-icon-color="activeItem.extend[0].icon.color">选择</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
-													<p>高亮�/p>
+													<p>高亮：</p>
 													<div we7-iconer we7-my-image="activeItem.extend[0].hoverimage" we7-my-icon="activeItem.extend[0].hovericon">选择</div>
 												</div>
 											</div>
 											<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label col-xs-3">链接�/label>
+											<label class="control-label col-xs-3">链接到</label>
 											<div class="col-xs-9 "><div we7-linker we7-my-url="activeItem.extend[0].url" we7-my-title="activeItem.extend[0].title"></div></div>
 										</div>
 									</div>
 									<p>添加两侧图标</p>
-									<div class="help-block">此导航模板建议您用两个或者四个自定义图标效果图最佳哦�/div>
+									<div class="help-block">此导航模板建议您用两个或者四个自定义图标效果图最佳哦！</div>
 									<div class="card" ng-repeat="menu in activeItem.menus">
 										<div class="nav-img-group">
 											<div class="btns">
@@ -531,14 +531,14 @@
 													<div we7-iconer we7-my-image="menu.image" we7-my-icon="menu.icon" we7-my-icon-color="menu.icon.color">选择</div>
 												</div>
 												<div class="nav-img-highlight pull-left">
-													<p>高亮�/p>
+													<p>高亮：</p>
 													<div we7-iconer we7-my-image="menu.hoverimage" we7-my-icon="menu.hovericon">选择</div>
 												</div>
 											</div>
 											<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
 										</div>
 										<div class="form-group">
-											<label class="control-label col-xs-3">链接�/label>
+											<label class="control-label col-xs-3">链接到</label>
 											<div class="col-xs-9 ">
 												<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 											</div>
@@ -550,7 +550,7 @@
 								<!--Path展开形式导航模板-->
 								<div class="shopNav-path" ng-show="activeItem.navStyle == 4">
 									<form class="form-horizontal" action="" method="post">
-										<p class="help-block">此导航模板建议您用三个自定义图标效果最佳哦�/p>
+										<p class="help-block">此导航模板建议您用三个自定义图标效果最佳哦！</p>
 										<div class="card" ng-repeat="menu in activeItem.menus">
 											<div class="btns"><a href="javascript:;" ng-click="removeMenu(menu)"><i class="fa fa-times"></i></a></div>
 											<div class="nav-img-group">
@@ -563,19 +563,19 @@
 												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label col-xs-3">链接�/label>
+												<label class="control-label col-xs-3">链接到</label>
 												<div class="col-xs-9 "><div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div></div>
 											</div>
 										</div>
 										<div class="add-shopNav text-center" ng-show="activeItem.menus.length < 4" ng-click="activeItem.menus.length >= 4 ? '' : addMenu();">+添加导航</div>
-										<!--最多可添加4�->
+										<!--最多可添加4个-->
 									</form>
 								</div>
 								<!--end Path展开形式导航模板-->
 								<!--两侧展开导航模板-->
 								<div class="shopNav-sides" ng-show="activeItem.navStyle == 5">
 									<form class="form-horizontal" action="" method="post">
-										<p>添加两侧一级图�/p>
+										<p>添加两侧一级图标</p>
 										<div class="card">
 											<div class="nav-img-group">
 												<div class="clearfix">
@@ -587,7 +587,7 @@
 												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label col-xs-3">链接�/label>
+												<label class="control-label col-xs-3">链接到</label>
 												<div class="col-xs-9 ">
 													<div we7-linker we7-my-url="activeItem.extend[0].url" we7-my-title="activeItem.extend[0].title"></div>
 												</div>
@@ -604,14 +604,14 @@
 												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label col-xs-3">链接�/label>
+												<label class="control-label col-xs-3">链接到</label>
 												<div class="col-xs-9 ">
 													<div we7-linker we7-my-url="activeItem.extend[1].url" we7-my-title="activeItem.extend[1].title"></div>
 												</div>
 											</div>
 										</div>
 										<p>添加中间二级标题</p>
-										<p class="help-block">此导航模板建议您用四个自定义图标效果最佳哦�/p>
+										<p class="help-block">此导航模板建议您用四个自定义图标效果最佳哦！</p>
 										<div class="card" ng-repeat="menu in activeItem.menus">
 											<div class="btns">
 												<a href="javascript:;" ng-click="removeMenu(menu)"><i class="fa fa-times"></i></a>
@@ -626,14 +626,14 @@
 												<div class="help-block">图片尺寸要求：不大于128*100像素，支持PNG格式</div>
 											</div>
 											<div class="form-group">
-												<label class="control-label col-xs-3">链接�/label>
+												<label class="control-label col-xs-3">链接到</label>
 												<div class="col-xs-9 ">
 													<div we7-linker we7-my-url="menu.url" we7-my-title="menu.title"></div>
 												</div>
 											</div>
 										</div>
 										<div class="add-shopNav text-center" ng-show="activeItem.menus.length < 4" ng-click="activeItem.menus.length >= 4 ? '' : addMenu();">+添加导航</div>
-										<!--最多可添加4�->
+										<!--最多可添加4个-->
 									</form>
 								</div>
 								<!--end 两侧展开导航模板-->
@@ -668,7 +668,7 @@
 							</div>
 							<div class="alert">
 								<input type="radio" id="nav_style-1" name="nav_style" value="2" ng-checked="activeItem.navStyle == 2">
-								<label class="radio-inline" for="nav_style-1">APP导航模板1（图标及底色都可配置�/label>
+								<label class="radio-inline" for="nav_style-1">APP导航模板1（图标及底色都可配置）</label>
 								<div class="app-example"></div>
 							</div>
 							<div class="alert">
