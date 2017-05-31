@@ -544,7 +544,7 @@ function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 function uni_user_permission($type = 'system') {
 	global $_W;
 	$user_permission = pdo_getcolumn('users_permission', array('uid' => $_W['uid'], 'uniacid' => $_W['uniacid'], 'type' => $type), 'permission');
-	if(!empty($user_permission)) {
+	if (!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
 	} else {
 		$user_permission = array('account*', 'wxapp*');
@@ -682,20 +682,20 @@ function uni_user_permission_check($permission_name, $show_message = true, $acti
 	$do = trim($_GPC['do']);
 	$entry_id = intval($_GPC['eid']);
 	
-	if($action == 'reply') {
+	if ($action == 'reply') {
 		$system_modules = system_modules();
-		if(!empty($modulename) && !in_array($modulename, $system_modules)) {
+		if (!empty($modulename) && !in_array($modulename, $system_modules)) {
 			$permission_name = $modulename . '_rule';
 			$users_permission = uni_user_permission($modulename);
 		}
-	} elseif($action == 'cover' && $entry_id > 0) {
+	} elseif ($action == 'cover' && $entry_id > 0) {
 		load()->model('module');
 		$entry = module_entry($entry_id);
-		if(!empty($entry)) {
+		if (!empty($entry)) {
 			$permission_name = $entry['module'] . '_cover_' . trim($entry['do']);
 			$users_permission = uni_user_permission($entry['module']);
 		}
-	} elseif($action == 'nav') {
+	} elseif ($action == 'nav') {
 		//只对模块的导航进行权限判断，不对微站的导航判断
 		if(!empty($modulename)) {
 			$permission_name = "{$modulename}_{$do}";
@@ -703,14 +703,16 @@ function uni_user_permission_check($permission_name, $show_message = true, $acti
 		} else {
 			return true;
 		}
+	} elseif ($action == 'wxapp') {
+		$users_permission = uni_user_permission('wxapp');
 	} else {
 		$users_permission = uni_user_permission('system');
 	}
-	if(!isset($users_permission)) {
+	if (!isset($users_permission)) {
 		$users_permission = uni_user_permission('system');
 	}
-	if($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
-		if($show_message) {
+	if ($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
+		if ($show_message) {
 			itoast('您没有进行该操作的权限', referer(), 'error');
 		} else {
 			return false;
