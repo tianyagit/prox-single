@@ -152,11 +152,7 @@
 							<div class="app-header-setting-inner">
 								<div class="panel panel-default">
 									<div class="panel-body form-horizontal">
-										<!-- <div class="form-group">
-											<label class="col-xs-3 control-label"> aaaaaaaaa</label>
-											<div class="col-xs-9">sssssssss</div>
-										</div> -->
-										<p><a class="text-over" href="javascript:void(0);"><i class="wi wi-qrcode"></i></a></p>
+										<div data-toggle="tooltip" title="微信扫描，在手机上预览" data-placement="bottom" style="width:30px;height:30px;line-height:30px;position:absolute;right:0px;top:0px;z-index:100"><a class="text-over" href="{php echo url('site/editor/qrcode',array('text' =>murl('mc', array(), true, true)))}" target="_blank" ><i class="wi wi-qrcode"></i></a></div>
 										<p>会员中心入口链接</p>
 										<p><span><a>{{siteEntrance}}</a></span></p>
 										<p><a href="javascript:;" on-copied="success(2)" id="copy-2" clipboard supported="supported" text="siteEntrance" type="button" class="btn btn-primary">复制链接</a></p>
@@ -195,7 +191,7 @@
 			'activeMenus' : activeMenus,
 			'siteroot' : siteroot,
 			'links' :{
-				'murl':"{php echo murl('home', array('t'=>1111111111), true, true)}"
+				'murl':"{php echo murl('mc', array(), true, true)}"
 			}
 		});
 		angular.bootstrap(document, ['userCenterApp']);
