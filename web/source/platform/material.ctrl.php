@@ -62,7 +62,6 @@ if ($do == 'display') {
 	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
-
 		$search_sql = '';
 		if (! empty($search)) {
 			$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";
@@ -94,6 +93,12 @@ if ($do == 'display') {
 						'createtime' => $news['createtime'],
 						'items' => array($news['displayorder'] => $news),
 					);
+				}
+				//图文类型判断 图文编辑还是跳转链接
+				if (!empty($news['author']) && !empty($news['content'])) {
+					$material_list[$news['attach_id']]['new_type'] = "reply";
+				} else {
+					$material_list[$news['attach_id']]['new_type'] = "link";
 				}
 			}
 		}
