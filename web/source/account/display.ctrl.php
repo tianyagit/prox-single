@@ -84,7 +84,11 @@ if ($do == 'display') {
 		unset($account_val);
 		unset($account);
 	}
-	$pager = pagination($total, $pindex, $psize);
+	//$pager = pagination($total, $pindex, $psize);
+	$total_page = ceil($total / $psize);
+	if ($_W['isajax'] && $_W['ispost']) {
+		iajax(0, $list);
+	}
 }
 
 template('account/display');

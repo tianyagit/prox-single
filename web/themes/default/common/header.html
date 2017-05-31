@@ -1,5 +1,5 @@
 {template 'common/header-base'}
-<div data-skin="default" class="skin-default {if $_GPC['main-lg']} main-lg-body {/if}">
+<div data-skin="default" class="skin-default {if $_GPC['main-lg']} main-lg-body {/if}" id="scrollArea">
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
@@ -131,7 +131,7 @@
 				<span class="wxapp-version">{$version_info['version']}</span>
 				<div class="pull-right">
 					<a href="{php echo url('wxapp/version/display', array('uniacid' => $version_info['uniacid']))}" class="color-default"><i class="wi wi-cut"></i>切换版本</a>
-					{if in_array($role, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER))}
+					{if in_array($role, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER)) || $_W['isfounder']}
 					<a href="{php echo url('wxapp/manage/display', array('uniacid' => $version_info['uniacid']))}" class="color-default"><i class="wi wi-text"></i>管理</a>
 					{/if}
 					<a href="{php echo url('wxapp/display')}" class="color-default"><i class="wi wi-small-routine"></i>切换小程序</a>
