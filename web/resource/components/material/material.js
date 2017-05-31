@@ -3,6 +3,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 		'defaultoptions' : {
 			callback : null,
 			type : 'all',
+			typeVal: null,
 			multiple : false,
 			ignore : {
 				'basic' : false,
@@ -14,15 +15,6 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'voice' : false,
 				'keyword' : false,
 				'module' : false
-			},
-			others : {
-				'basic' : {
-					'typeVal' : ''
-				},
-				'news' : {
-					'showwx' : true,
-					'showlocal' : true
-				}
 			}
 		},
 		'init' : function(callback, options) {
@@ -302,10 +294,8 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'			<div class="modal-body material-content clearfix">\n' +
 								(this.options.ignore.news ? '' :
 				'				<ul class="nav nav-pills nav-stacked">'+
-									(this.options.others.news.showwx ?
-				'					<li role="presentation" data-type="wx" class="newsmodel-type active">微信</li>' : '') +
-									(this.options.others.news.showlocal ? 
-				'					<li role="presentation" data-type="local" class="newsmodel-type">服务器</li>' : '') +
+				'					<li role="presentation" data-type="wx" class="newsmodel-type active">微信</li>'+
+				'					<li role="presentation" data-type="local" class="newsmodel-type">服务器</li>'+
 				'				</ul>') +
 				'				<div class="material-head">'+
 				'					<a class="btn btn-primary active we7-margin-vertical-sm active pull-right ' + (this.options.ignore.image ? 'hide' : 'show') + '" href="./index.php?c=platform&a=material&type=image" target="_blank">上传图片</a>'+
@@ -338,7 +328,7 @@ define(['underscore', 'jquery.wookmark', 'jquery.jplayer'], function(_){
 				'	</div>\n' +
 				'</div>';
 
-			dialog['basicDialog'] = '<textarea id="basictext" cols="116" rows="10">'+ (this.options.others.basic.typeVal ? this.options.others.basic.typeVal : "") +'</textarea>'+
+			dialog['basicDialog'] = '<textarea id="basictext" cols="116" rows="10">'+ (this.options.typeVal ? this.options.typeVal : "") +'</textarea>'+
 				'						<div class="help-block">'+
 				'							您还可以使用表情和链接。'+
 				'							<a class="emotion-triggers" href="javascript:;" onclick="initSelectEmotion();"><i class="fa fa-github-alt"></i> 表情</a>'+
