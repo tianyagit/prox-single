@@ -573,7 +573,7 @@ function uni_user_menu_permission($uid, $uniacid, $type) {
 	if (empty($uid) || empty($uniacid) || empty($type)) {
 		return array();
 	}
-	if ($type == 'all_module') {
+	if ($type == 'modules') {
 		$user_menu_permission = pdo_fetchall("SELECT * FROM " . tablename('users_permission') . " WHERE uniacid = :uniacid AND uid  = :uid AND type != '" . PERMISSION_ACCOUNT . "' AND type != '" . PERMISSION_WXAPP . "'", array(':uniacid' => $uniacid, ':uid' => $uid), 'type');
 	} else {
 		$module = uni_modules_by_uniacid($uniacid);

@@ -163,7 +163,7 @@ if ($do == 'entry') {
 		);
 		$has_permission['system'] = uni_user_permission('system');
 		//获取用户的模块权限
-		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'all_module');
+		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'modules');
 		if(!empty($module_permission)) {
 			$has_permission['modules'] = array_keys($module_permission);
 			foreach($module_permission as $row) {
