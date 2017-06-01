@@ -210,6 +210,7 @@ class CoreModuleSite extends WeModuleSite {
 		$id = intval($_GPC['id']);
 		$sql = "SELECT * FROM " . tablename('news_reply') . " WHERE `id`=:id";
 		$row = pdo_fetch($sql, array(':id'=>$id));
+		$createtime = $row['createtime'];
 		if (!empty($row['url'])) {
 			header("Location: ".$row['url']);
 			exit;
@@ -217,6 +218,7 @@ class CoreModuleSite extends WeModuleSite {
 		//兼容0.8写法，在此回复新版1.0本地素材
 		if (!empty($row['media_id']) && intval($row['media_id']) != 0) {
 			$row = pdo_get('wechat_news', array('attach_id' => $row['media_id'], 'displayorder' => $row['displayorder']));
+			$row['createtime'] = $createtime;
 			if (!empty($row['content_source_url'])) {
 				header("Location: ".$row['content_source_url']);
 				exit;
