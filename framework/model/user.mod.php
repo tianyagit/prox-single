@@ -374,7 +374,9 @@ function user_modules($uid) {
 			foreach ($plugin_list as $plugin) {
 				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
 				$module_key = array_search($plugin['name'], $module_list);
-				unset($module_list[$module_key]);
+				if ($module_key !== false) {
+					unset($module_list[$module_key]);
+				}
 			}
 		}
 		if (!empty($module_list)) {
