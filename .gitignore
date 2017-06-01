@@ -29,7 +29,7 @@ local.properties
 
 data/**/*
 attachment/**/*
-!attachment/images/global/**/*
+!attachment/images/global/
 addons/**/*
 .tags
 deployment.properties
