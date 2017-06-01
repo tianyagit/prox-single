@@ -68,10 +68,10 @@ if ($do == 'news') {
 	}
 	if (!empty($news_list)) {
 		foreach ($news_list as $key => $row_news) {
-			if (!empty($row_news['author'] || !empty($row_news['content']))) {
-				$new_type = 'reply';
-			} else {
+			if (empty($row_news['author']) && empty($row_news['content'])) {
 				$new_type = 'link';
+			} else {
+				$new_type = 'reply';
 			}
 		}
 	}
