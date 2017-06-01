@@ -40,7 +40,6 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" ng-click="sync('{$type}')" class="btn btn-default">同步微信</a>
 					{/if}
-					<!-- <a href="{php echo url('platform/material-post')}" class="btn btn-primary we7-margin-left">原新建图文消息</a> -->
 					<a href="javascript:;" data-toggle="modal" data-target="#new_type" class="btn btn-primary we7-margin-left">新建图文消息</a>
 				</div>
 				<div class="modal fade" id="new_type" tabindex="-1" role="dialog" aria-hidden="true">
@@ -139,7 +138,7 @@
 							</li>
 							{/if}
 							<li class="appmsg-opr-item">
-								<a href="{php echo url('platform/material-post/news', array('newsid' => $material['id'], 'new_type' => $material['new_type']))}" class="" data-toggle="tooltip" data-placement="bottom" title="编辑">&nbsp;<i class="wi wi-text"></i></a>
+								<a href="{php echo url('platform/material-post/news', array('newsid' => $material['id']))}" class="" data-toggle="tooltip" data-placement="bottom" title="编辑">&nbsp;<i class="wi wi-text"></i></a>
 							</li>
 							<li class="appmsg-opr-item">
 								<a class="" href="javascript:void(0);" ng-click="del_material('{$type}', '{$material['id']}', 'wechat')" data-toggle="tooltip" data-placement="bottom" title="删除">&nbsp;<i class="wi wi-delete2"></i></a>
