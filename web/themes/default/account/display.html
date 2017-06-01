@@ -105,8 +105,8 @@
 	angular.bootstrap($("#js-account-display"), ['accountApp']);
 	$(function () {
 		var footHeight = $(".footer").outerHeight(true);
-		var offsetHeight = $("#scrollArea").get(0).offsetHeight;
-		$("#scrollArea").css('height',function(){
+		var offsetHeight = $(".skin-default").get(0).offsetHeight;
+		$(".skin-default").css('height',function(){
 			return footHeight + offsetHeight;
 		});
 	})
