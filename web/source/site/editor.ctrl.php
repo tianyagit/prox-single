@@ -165,8 +165,8 @@ if ($do == 'uc') {
 	itoast('删除微页面成功', referer(), 'success');
 } elseif ($do == 'qrcode') {
 	require_once(IA_ROOT.'/framework/library/qrcode/phpqrcode.php');
-	$errorCorrectionLevel = "L";
-	$matrixPointSize = "8";
+	$error_correction_level = "L";
+	$matrix_point_size = "8";
 	$text = trim($_GPC['text']);
-	QRcode::png($text, false, $errorCorrectionLevel, $matrixPointSize);
+	QRcode::png($text, false, $error_correction_level, $matrix_point_size);
 }
