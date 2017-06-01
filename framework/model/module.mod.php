@@ -541,3 +541,24 @@ function module_status($module) {
 	}
 	return $module_status;
 }
+
+/**
+ *  过滤传入的模块返回其中有更新的模块及模块信息
+ * @param array $module_list 模块标识
+ * @return array $modules 有升级的模块及升级信息
+ */
+function module_filter_upgrade($module_list) {
+	$all_upgrade_module = cache_load(cache_system_key('all_upgrade_module:'));
+	if (empty($all_upgrade_module)) {
+		$all_upgrade_module = cache_build_upgrade_module();
+	}
+	$modules = array();
+	if (!empty($module_list) && is_array($module_list)) {
+		foreach ($module_list as $module) {
+			if (!empty($all_upgrade_module[$module])) {
+				$modules[$module] = $all_upgrade_module[$module];
+			}
+		}
+	}
+	return $modules;
+}
