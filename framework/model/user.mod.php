@@ -354,9 +354,8 @@ function user_modules($uid) {
 							foreach ($row['modules'] as $modulename => $module) {
 								if (!is_array($module)) {
 									$modulename = $module;
-									$module = module_fetch($modulename);
 								}
-								$package_group_module[$modulename] = $module;
+								$package_group_module[$modulename] = $modulename;
 							}
 						}
 					}

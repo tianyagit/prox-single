@@ -21,6 +21,7 @@ if ($do == 'tomedia') {
 
 if ($do == 'news') {
 	$type = trim($_GPC['type']);
+	$new_type = trim($_GPC['new_type']);
 	$newsid = intval($_GPC['newsid']);
 	$upload_limit = material_upload_limit();
 	if (empty($newsid)) {

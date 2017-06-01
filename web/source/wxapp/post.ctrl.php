@@ -30,8 +30,8 @@ if($do == 'post') {
 	}
 	
 	if (checksubmit('submit')) {
-		if ($account_info['wxapp_limit'] <= 0 && empty($uniacid)) {
-			itoast('创建的小程序已达上限！');
+		if ($account_info['wxapp_limit'] <= 0 && empty($uniacid) && !$_W['isfounder']) {
+			iajax(-1, '创建的小程序已达上限！');
 		}
 		if ($design_method == WXAPP_TEMPLATE && empty($_GPC['select']['modules'])) {
 			iajax(2, '请选择要打包的模块应用', url('wxapp/post'));

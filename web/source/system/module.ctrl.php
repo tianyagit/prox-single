@@ -678,8 +678,8 @@ if ($do == 'filter') {
 				}
 			} else {
 				$empty_condition = empty($condition['upgrade_branch']) && empty($condition['new_branch']);
-				$upgrade_branch_condition = ver_compare($module['version'], $manifest['application']['version']) == '-1' && !empty($condition['upgrade_branch']);
 				$manifest = ext_module_manifest($module['name']);
+				$upgrade_branch_condition = ver_compare($module['version'], $manifest['application']['version']) == '-1' && !empty($condition['upgrade_branch']);
 				if (!empty($manifest)&& is_array($manifest)) {
 					if ($empty_condition) {
 						if (ver_compare($module['version'], $manifest['application']['version']) == '-1') {
