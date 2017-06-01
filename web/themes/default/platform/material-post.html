@@ -55,8 +55,7 @@
 						<div class="appmsg-input-area-content clearfix">
 							<!-- Tab panes -->
 							<div class="tab-content">
-								{if $new_type == 'reply'}
-								<div role="tabpanel" class="tab-pane active">
+								<div role="tabpanel" class="tab-pane active" ng-if="new_type == 'reply'">
 									<!--标题-->
 									<div class="appmsg-edit-item title">
 										<label for="title" class="" style="display:none">请在这里输入标题</label>
@@ -76,8 +75,7 @@
 										<textarea ></textarea>
 									</div>
 								</div>
-								{else}
-								<div role="tabpanel" class="tab-pane active">
+								<div role="tabpanel" class="tab-pane active" ng-if="new_type == 'link'">
 									<div class="appmsg-edit-function-area ">
 										<!-- 标题 -->
 										<div class="appmsg-edit-item title">
@@ -97,7 +95,6 @@
 										<!-- END 跳转链接 -->
 									</div>
 								</div>
-								{/if}
 							</div>
 
 							<div class="appmsg-edit-highlight-area">
@@ -143,9 +140,7 @@
 						<a type="button" class="btn btn-default">保存并群发</a>
 					</div>
 					<a type="button" class="btn btn-primary" ng-click="saveNews('local')">保存到本地</a>
-					{if $new_type == 'reply'}
 					<a id="savewechat" type="button" class="btn btn-primary" ng-click="saveNews('wechat')" ng-show="!hidenbutton">保存并上传到微信</a>
-					{/if}
 				</div>
 			</div>
 		</nav>
@@ -167,7 +162,8 @@
 			'num_limit' : "{$upload_limit['num']}",
 			'image_limit' : "{$upload_limit['image']}",
 			'voice_limit' : "{$upload_limit['voice']}",
-			'video_limit' : "{$upload_limit['video']}"
+			'video_limit' : "{$upload_limit['video']}",
+			'new_type' : "{$new_type}"
 		});
 		angular.bootstrap($('#main'), ['materialApp']);
 	});

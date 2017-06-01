@@ -94,12 +94,6 @@ if ($do == 'display') {
 						'items' => array($news['displayorder'] => $news),
 					);
 				}
-				//图文类型判断 图文编辑还是跳转链接
-				if (!empty($news['author']) && !empty($news['content'])) {
-					$material_list[$news['attach_id']]['new_type'] = "reply";
-				} else {
-					$material_list[$news['attach_id']]['new_type'] = "link";
-				}
 			}
 		}
 		unset($news_list);

@@ -21,7 +21,6 @@ if ($do == 'tomedia') {
 
 if ($do == 'news') {
 	$type = trim($_GPC['type']);
-	$new_type = trim($_GPC['new_type']);
 	$newsid = intval($_GPC['newsid']);
 	$upload_limit = material_upload_limit();
 	if (empty($newsid)) {
@@ -36,7 +35,7 @@ if ($do == 'news') {
 			$news_list = array_merge(array(
 				$news 
 			), $news_list);
-			if (! empty($news_list)) {
+			if (!empty($news_list)) {
 				foreach ($news_list as $key => &$row_news) {
 					$row_news = array(
 						'uniacid' 	=> $_W['uniacid'],
@@ -51,6 +50,7 @@ if ($do == 'news') {
 						'content_source_url' => $row_news['content_source_url']
 					);
 				}
+				unset($row_news);
 			}
 		}
 	} else {
@@ -58,7 +58,22 @@ if ($do == 'news') {
 		if (is_error($attachment)){
 			itoast('图文素材不存在，或已删除', url('platform/material'), 'warning');
 		}
-		$news_list = $attachment['news'];
+		$news_list = $attachment['news'];	
+	}
+	if (!empty($_GPC['new_type'])) {
+		$new_type = trim($_GPC['new_type']);
+		if (!in_array($new_type, array('reply', 'link'))) {
+			$new_type = 'reply';
+		}
+	}
+	if (!empty($news_list)) {
+		foreach ($news_list as $key => $row_news) {
+			if (empty($row_news['author']) && empty($row_news['content'])) {
+				$new_type = 'link';
+			} else {
+				$new_type = 'reply';
+			}
+		}
 	}
 	template('platform/material-post');
 }
