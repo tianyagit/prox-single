@@ -173,7 +173,7 @@ if ($do == 'display') {
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 8;
 		
-		$condition = 'uniacid = :uniacid AND `module`=:module';
+		$condition = "uniacid = :uniacid AND `module`=:module";
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		$params[':module'] = 'userapi';
@@ -184,7 +184,7 @@ if ($do == 'display') {
 					$condition .= " AND id IN (" . implode(",", array_keys($rule_keyword_rid_list)) . ")";
 				}
 			} else {
-				$condition .= ' AND `name` LIKE :keyword';
+				$condition .= " AND `name` LIKE :keyword";
 				$params[':keyword'] = "%{$_GPC['keyword']}%";
 			}
 		}	
@@ -211,7 +211,7 @@ if ($do == 'post') {
 	if ($m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
-			$sql = 'SELECT `rid` FROM ' . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
+			$sql = "SELECT `rid` FROM " . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
 			$result = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':content' => $_GPC['keyword']));
 			if (!empty($result)) {
 				$keywords = array();
@@ -219,7 +219,7 @@ if ($do == 'post') {
 					$keywords[] = $reply['rid'];
 				}
 				$rids = implode($keywords, ',');
-				$sql = 'SELECT `id`, `name` FROM ' . tablename('rule') . " WHERE `id` IN ($rids)";
+				$sql = "SELECT `id`, `name` FROM " . tablename('rule') . " WHERE `id` IN ($rids)";
 				$rules = pdo_fetchall($sql);
 				iajax(0, @json_encode($rules), '');
 			}
@@ -293,7 +293,7 @@ if ($do == 'post') {
 			}
 
 			if (!empty($rid)) {
-				$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `uniacid`=:uniacid';
+				$sql = "DELETE FROM " . tablename('rule_keyword') . " WHERE `rid`=:rid AND `uniacid`=:uniacid";
 				$pars = array();
 				$pars[':rid'] = $rid;
 				$pars[':uniacid'] = $_W['uniacid'];
@@ -368,7 +368,7 @@ if ($do == 'post') {
 			} else {
 				$settings = array('welcome' => '');
 			}
-			$item = pdo_fetch ('SELECT uniacid FROM ' . tablename ('uni_settings') . " WHERE uniacid=:uniacid", array (':uniacid' => $_W['uniacid']));
+			$item = pdo_fetch ("SELECT uniacid FROM " . tablename ('uni_settings') . " WHERE uniacid=:uniacid", array (':uniacid' => $_W['uniacid']));
 			if (!empty($item)) {
 				pdo_update ('uni_settings', $settings, array ('uniacid' => $_W['uniacid']));
 			} else {
@@ -390,7 +390,7 @@ if ($do == 'post') {
 			} else {
 				$settings = array('default' => '');
 			}
-			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
+			$item = pdo_fetch("SELECT uniacid FROM " . tablename('uni_settings') . " WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
 			if (!empty($item)){
 				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
 			} else {
