@@ -170,7 +170,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 			}
 		}
 		$condition .= $enabled ?  " AND b.enabled = 1 OR a.issystem = 1" : " OR a.issystem = 1";
-		if (strexists($condition, 'AND a.name')) {
+		if (!strexists($condition, 'AND a.name')) {
 			$condition .= ' OR b.enabled is NULL';
 		}
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
