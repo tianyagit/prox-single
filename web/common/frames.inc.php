@@ -134,7 +134,7 @@ $we7_system_menu['wxapp'] = array(
 			'menu' => array(
 				'module_link' => array(
 					'title' => "模块关联公众号",
-					'url' => url('wxapp/version/module_link_uniacid', array('version_id' => $version_id)),
+					'url' => url('wxapp/version/module_link_uniacid'),
 					'is_display' => 1,
 					'icon' => 'wi wi-appsetting',
 					'permission_name' => 'wxapp_module_link_uniacid',
