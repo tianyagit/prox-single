@@ -135,7 +135,7 @@ function wechat_build($params, $wechat) {
 		$package['time_expire'] = date('YmdHis', TIMESTAMP + 600);
 		$package['notify_url'] = $_W['siteroot'] . 'payment/wechat/notify.php';
 		$package['trade_type'] = 'JSAPI';
-		$package['openid'] = empty($wechat['openid']) ? $_W['fans']['from_user'] : $wechat['openid'];
+		$package['openid'] = empty($params['user']) ? $_W['fans']['from_user'] : $params['user'];
 		if (!empty($wechat['sub_mch_id'])) {
 			$package['sub_mch_id'] = $wechat['sub_mch_id'];
 		}
@@ -175,4 +175,23 @@ function wechat_build($params, $wechat) {
 		$wOpt['paySign'] = strtoupper(md5($string));
 		return $wOpt;
 	}
+}
+
+function payment_proxy_pay_account() {
+	global $_W;
+	$setting = uni_setting($_W['uniacid'], array('payment'));
+	$setting['payment']['wechat']['switch'] = intval($setting['payment']['wechat']['switch']);
+	
+	if ($setting['payment']['wechat']['switch'] == PAYMENT_WECHAT_TYPE_SERVICE) {
+		$uniacid = intval($setting['payment']['wechat']['service']);
+	} elseif ($setting['payment']['wechat']['switch'] == PAYMENT_WECHAT_TYPE_BORROW) {
+		$uniacid = intval($setting['payment']['wechat']['borrow']);
+	} else {
+		$uniacid = 0;
+	}
+	$pay_account = uni_fetch($uniacid);
+	if (empty($uniacid) || empty($pay_account)) {
+		return error(1);
+	}
+	return WeAccount::create($pay_account);
 }
