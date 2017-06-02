@@ -248,9 +248,11 @@
 									<p>维权通知URL: {$_W['siteroot']}payment/wechat/rights.php</p>
 									<p>警告通知URL: {$_W['siteroot']}payment/wechat/warning.php</p>
 								</div>
+								{if $accounts[$_W['acid']]['level'] > 2}
 								{if $accounts[$_W['acid']]['level'] == 4}
 								<input id='radio-11' type="radio" name='wechat[switch]' ng-checked='paysetting.wechat.switch == 1' ng-click="changeSwitch('wechat', 1)" value="1"/>
 								<label for="radio-11">微信支付  </label>
+								{/if}
 								{if !empty($proxy_wechatpay_account['borrow'])}
 								<input id='radio-12' type="radio" name='wechat[switch]' ng-checked='paysetting.wechat.switch == 2' ng-click="changeSwitch('wechat', 2)" value="2"/>
 								<label for="radio-12">借用支付  </label>
