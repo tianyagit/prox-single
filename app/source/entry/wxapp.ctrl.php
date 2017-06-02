@@ -19,10 +19,15 @@ if(!is_error($site)) {
 			message(error(1, '签名错误'), '', 'ajax');
 		}
 	}
-	if (!empty($_GPC['i'])) {
-		$version_info = pdo_get('wxapp_versions', array('uniacid' => $_GPC['i'], 'version' => $_GPC['v']), array('id', 'uniacid', 'template'));
-		$connection = json_decode($version_info['connection'], true);
-		$_W['uniacid'] = !empty($connection[$entry['module']]) ? $connection[$entry['module']] : $version_info['uniacid'];
+	if (!empty($_W['uniacid'])) {
+		$version = trim($_GPC['v']);
+		$version_info = pdo_get('wxapp_versions', array('uniacid' => $_W['uniacid'], 'version' => $version), array('id', 'uniacid', 'template', 'modules'));
+		if (!empty($version_info)) {
+			$connection = iunserializer($version_info['modules'], true);
+			$_W['uniacid'] = !empty($connection[$entry['module']]) ? $connection[$entry['module']]['uniacid'] : $version_info['uniacid'];
+		} else {
+			message('该小程序版本不存在！');
+		}
 	}
 	exit($site->$method());
 }
