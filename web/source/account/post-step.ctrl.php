@@ -50,7 +50,7 @@ if($step == 1) {
 	}
 	//添加公众号
 	if (checksubmit('submit')) {
-		if ($account_info['uniacid_limit'] <= 0) {
+		if ($account_info['uniacid_limit'] <= 0 && !$_W['isfounder']) {
 			itoast('创建公众号已达上限！');
 		}
 		$update = array();
