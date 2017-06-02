@@ -233,13 +233,13 @@ $we7_system_menu['system'] = array(
 				'system_my' => array(
 					'title' => '我的帐户',
 					'url' => url('user/profile'),
-					'icon' => 'wi wi-account',
+					'icon' => 'wi wi-user',
 					'permission_name' => 'system_my',
 				),
 				'system_user' => array(
 					'title' => '用户管理',
 					'url' => url('user/display'),
-					'icon' => 'wi wi-user',
+					'icon' => 'wi wi-user-group',
 					'permission_name' => 'system_user',
 					'sub_permission' => array(
 							array(
