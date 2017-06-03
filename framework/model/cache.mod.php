@@ -289,6 +289,7 @@ function cache_build_cloud_ad() {
 function cache_build_uninstalled_module() {
 	load()->model('cloud');
 	load()->classs('cloudapi');
+	load()->model('ext');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 	$all_module = pdo_getall('modules');
@@ -447,6 +448,7 @@ function cache_build_uni_group() {
  */
 function cache_build_upgrade_module() {
 	load()->model('cloud');
+	load()->model('extension');
 	$module_list = pdo_getall('modules', array(), array(), 'name');
 	$cloud_module = cloud_m_query();
 	$modules = array();

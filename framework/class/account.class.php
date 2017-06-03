@@ -1387,7 +1387,7 @@ abstract class WeModuleSite extends WeBase {
 		load()->model('module');
 		activity_coupon_type_init();
 		if(!$this->inMobile) {
-			itoast('支付功能只能在手机上使用', '', '');
+			message('支付功能只能在手机上使用', '', '');
 		}
 		$params['module'] = $this->module['name'];
 //		如果价格为0 直接执行模块支付回调方法
@@ -1419,11 +1419,11 @@ abstract class WeModuleSite extends WeBase {
 			pdo_insert('core_paylog', $log);
 		}
 		if($log['status'] == '1') {
-			itoast('这个订单已经支付成功, 不需要重复支付.', '', 'info');
+			message('这个订单已经支付成功, 不需要重复支付.', '', 'info');
 		}
 		$setting = uni_setting($_W['uniacid'], array('payment', 'creditbehaviors'));
 		if(!is_array($setting['payment'])) {
-			itoast('没有有效的支付方式, 请联系网站管理员.', '', 'error');
+			message('没有有效的支付方式, 请联系网站管理员.', '', 'error');
 		}
 		$pay = $setting['payment'];
 		$we7_coupon_info = module_fetch('we7_coupon');
@@ -1478,9 +1478,9 @@ abstract class WeModuleSite extends WeBase {
 		global $_W;
 		if($ret['from'] == 'return') {
 			if ($ret['type'] == 'credit2') {
-				itoast('已经成功支付', url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success');
+				message('已经成功支付', url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success');
 			} else {
-				itoast('已经成功支付', '../../' . url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success');
+				message('已经成功支付', '../../' . url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success');
 			}
 		}
 	}
