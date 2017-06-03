@@ -139,6 +139,10 @@ function wechat_build($params, $wechat) {
 		if (!empty($wechat['sub_mch_id'])) {
 			$package['sub_mch_id'] = $wechat['sub_mch_id'];
 		}
+		if (!empty($params['sub_user'])) {
+			$package['sub_openid'] = $params['sub_user'];
+			unset($package['openid']);
+		}
 		ksort($package, SORT_STRING);
 		$string1 = '';
 		foreach($package as $key => $v) {
