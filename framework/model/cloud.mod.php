@@ -4,7 +4,7 @@
  * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
-define('CLOUD_GATEWAY_URL', 'https://v2.addons.we7.cc/gateway.php');
+define('CLOUD_GATEWAY_URL', 'http://v2.addons.we7.cc/gateway.php');
 define('CLOUD_GATEWAY_URL_NORMAL', 'http://v2.addons.we7.cc/gateway.php');
 
 function cloud_client_define() {
@@ -608,7 +608,7 @@ function cloud_auth_url($forward, $data = array()){
 		$auth = array_merge($auth, $data);
 	}
 	$query = base64_encode(json_encode($auth));
-	$auth_url = 'https://s.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
+	$auth_url = 'http://s.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
 
 	return $auth_url;
 }
@@ -722,7 +722,7 @@ function cloud_flow_master_post($flow_master) {
 		'linkman' => $flow_master['linkman'],
 		'mobile' => $flow_master['mobile'],
 		'address' => $flow_master['address'],
-		'id_card_photo' => $flow_master['id_card_photo'], 
+		'id_card_photo' => $flow_master['id_card_photo'],
 		'business_licence_photo' => $flow_master['business_licence_photo'],
 	);
 	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
@@ -763,10 +763,10 @@ function cloud_flow_uniaccount_post($uniaccount) {
 		'uniacid' => $uniaccount['uniacid'],
 	);
 	isset($uniaccount['title']) && $pars['uniaccount']['title'] = $uniaccount['title'];
-	isset($uniaccount['original']) && $pars['uniaccount']['original'] = $uniaccount['original']; 
-	isset($uniaccount['gh_type']) && $pars['uniaccount']['gh_type'] = $uniaccount['gh_type']; 
-	isset($uniaccount['ad_tags']) && $pars['uniaccount']['ad_tags'] = $uniaccount['ad_tags']; 
-	isset($uniaccount['enable']) && $pars['uniaccount']['enable'] = $uniaccount['enable']; 
+	isset($uniaccount['original']) && $pars['uniaccount']['original'] = $uniaccount['original'];
+	isset($uniaccount['gh_type']) && $pars['uniaccount']['gh_type'] = $uniaccount['gh_type'];
+	isset($uniaccount['ad_tags']) && $pars['uniaccount']['ad_tags'] = $uniaccount['ad_tags'];
+	isset($uniaccount['enable']) && $pars['uniaccount']['enable'] = $uniaccount['enable'];
 	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
