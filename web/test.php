@@ -14,6 +14,9 @@ load()->model('cloud');
 load()->classs('coupon');
 load()->func('file');
 
+
+
+//测试拉取远程代码
 $_W['uniacid'] = 181;
 $modules = uni_modules(false);
 print_r($modules);exit;
