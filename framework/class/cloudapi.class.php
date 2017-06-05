@@ -14,6 +14,7 @@ class CloudApi {
 	private $development = false;
 	private $module = null;
 	private $sys_call = false;
+	private $default_token = '91ec1f9324753048c0096d036a694f86';
 	
 	const ACCESS_TOKEN_EXPIRE_IN = 7200;
 	
@@ -57,6 +58,10 @@ class CloudApi {
 	}
 	
 	private function moduleCerContent(){
+		if (empty($_W['setting']['site'])) {
+			return $this->default_token;
+		}
+		
 		$cer_filename = 'module.cer';
 		$cer_filepath = $this->cer_filepath($cer_filename);
 		
@@ -90,6 +95,10 @@ class CloudApi {
 	}
 	
 	private function systemCerContent(){
+		if (empty($_W['setting']['site'])) {
+			return $this->default_token;
+		}
+		
 		$cer_filename = 'module.cer';
 		$cer_filepath = IA_ROOT.'/framework/builtin/core/module.cer';
 		
