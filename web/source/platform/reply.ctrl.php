@@ -77,7 +77,7 @@ if ($do == 'display') {
 					$condition .= " AND id IN (" . implode(",", array_keys($rule_keyword_rid_list)) . ")";
 				}
 			} else {
-				$condition .= ' AND `name` LIKE :keyword';
+				$condition .= " AND `name` LIKE :keyword";
 				$params[':keyword'] = "%{$_GPC['keyword']}%";
 			}
 		}
@@ -129,19 +129,19 @@ if ($do == 'display') {
 	}
 	if ($m == 'service') {
 		//1:启用  2.禁用
-		$current_common_service = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
-		if (empty($current_common_service)) {
+		$rule_service = pdo_getall('rule', array('uniacid' => 0, 'module' => 'userapi', 'status' => 1), 'id');
+		if (empty($rule_service)) {
 			$predefined_service = reply_predefined_service();
 			$rule_settings = array();
 			if (!empty($predefined_service)) {
 				pdo_begin();
 				foreach ($predefined_service as $service_name => $service_detail) {
-					$rule_info = array('uniacid' => $_W['uniacid'], 'name' => $service_detail['title'], 'module' => 'userapi', 'displayorder' => 255, 'status' => 1);
+					$rule_info = array('uniacid' => 0, 'name' => $service_detail['title'], 'module' => 'userapi', 'displayorder' => 255, 'status' => 1);
 					pdo_insert('rule', $rule_info);
 					$rule_id = pdo_insertid();
 					$rule_settings[$rule_id] = 2;
 					foreach ($service_detail['keywords'] as $keyword_info) {
-						$rule_keyword_info = array('rid' => $rule_id, 'uniacid' => $_W['uniacid'], 'module' => 'userapi', 'content' => $keyword_info[1], 'type' => $keyword_info[0], 'displayorder' => $rule_info['displayorder'], 'status' => $rule_info['status']);
+						$rule_keyword_info = array('rid' => $rule_id, 'uniacid' => 0, 'module' => 'userapi', 'content' => $keyword_info[1], 'type' => $keyword_info[0], 'displayorder' => $rule_info['displayorder'], 'status' => $rule_info['status']);
 						pdo_insert('rule_keyword', $rule_keyword_info);
 					}
 					$userapi_reply = array('rid' => $rule_id, 'description' => htmlspecialchars($service_detail['description']), 'apiurl' => $service_name);
@@ -152,20 +152,34 @@ if ($do == 'display') {
 				pdo_commit();
 			}
 		}
-		$rule_setting_select = iunserializer($current_common_service);
-		$userapi = pdo_getall('rule', array('uniacid' => $_W['uniacid'], 'module' => 'userapi', 'status' => 1));
-		$userapi_list = array();
+		$current_common_service = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
+		if (empty($current_common_service)) {
+			$rule_switch = pdo_getall('rule', array('uniacid' => 0, 'module' => 'userapi', 'status' => 1), 'id');
+			$rule_setting = array();
+			if (!empty($rule_switch)) {
+				foreach ($rule_switch as $rule) {
+					$rule_setting[$rule['id']] = 2;
+				}
+				$account_modules_setting = array('uniacid' => $_W['uniacid'], 'module' => 'userapi', 'enabled' => 1, 'settings' => iserializer($rule_setting));
+				pdo_insert('uni_account_modules', $account_modules_setting);
+				$rule_setting_select = $rule_setting;
+			}
+		} else {
+			$rule_setting_select = iunserializer($current_common_service);
+		}
+		$userapi = pdo_getall('rule', array('uniacid' => 0, 'module' => 'userapi', 'status' => 1));
+		$service_list = array();
 		$rule_ids = array();
 		if (!empty($userapi)) {
 			foreach ($userapi as $rule_detail) {
 				$rule_ids[] = $rule_detail['id'];
-				$userapi_list[$rule_detail['id']] =$rule_detail;
+				$service_list[$rule_detail['id']] =$rule_detail;
 			}
 			$description_sql = "SELECT * FROM `ims_userapi_reply` WHERE `rid` IN (" . implode(',',$rule_ids) .")";
 			$all_description = pdo_fetchall($description_sql, array(), "rid, description");
 			foreach ($all_description as $description) {
-				$userapi_list[$description['rid']]['description'] = $description['description'];
-				$userapi_list[$description['rid']]['switch'] = $rule_setting_select[$description['rid']] == 1 ? 'checked' : '';
+				$service_list[$description['rid']]['description'] = $description['description'];
+				$service_list[$description['rid']]['switch'] = $rule_setting_select[$description['rid']] == 1 ? 'checked' : '';
 			}
 		}
 	}
