@@ -166,6 +166,13 @@
 		</div>
 	</form>
 </div>
+<script type="text/javascript">
+	angular.module('profileApp').value('config', {
+		'uc' : {php echo json_encode($uc)}
+	});
+	angular.bootstrap($('.js-profile-uc'), ['profileApp']);
+	//处理快速录入
+</script>
 {elseif $do == 'upload_file'}
 <div class="main">
 	<form id="form21" action="{php echo url('profile/common/upload_file')}" method="post" class="we7-form form" enctype="multipart/form-data">
@@ -220,12 +227,5 @@
 	</form>
 </div>
 {/if}
-<script type="text/javascript">
-	angular.module('profileApp').value('config', {
-		'uc' : {php echo json_encode($uc)}
-	});
-	angular.bootstrap($('.js-profile-uc'), ['profileApp']);
-	//处理快速录入
-</script>
 {template 'common/footer'}
 
