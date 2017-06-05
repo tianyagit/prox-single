@@ -284,6 +284,11 @@
 		});
 	</script>
 {elseif $m == 'service'}
+	{if $import}
+	<div class="alert alert-info">
+		<a href="{php echo url('platform/reply/import')}">存在可用的服务, 点击这里快速导入</a>
+	</div>
+	{/if}
 	<div class="NoKeyword-list" id="js-service-display" ng-controller="serviceDisplay" ng-cloak>
 		<div class="table we7-tables">
 			<table class="table we7-table table-hover">
@@ -319,7 +324,7 @@
 		$(function() {
 			angular.module('replyFormApp').value('config', {
 				'url' : "{php echo url('platform/reply/change_status')}",
-				'service' : {php echo !empty($service_list) ? json_encode($service_list) : 'null'}
+				'service' : {php echo !empty($userapi_list) ? json_encode($userapi_list) : 'null'}
 			});
 			angular.bootstrap($('#js-service-display'), ['replyFormApp']);
 		});
