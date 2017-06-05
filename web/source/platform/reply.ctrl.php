@@ -128,31 +128,52 @@ if ($do == 'display') {
 		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
 	}
 	if ($m == 'service') {
-		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
-		$userapi_config = iunserializer($userapi_config);
-		$userapi = reply_search("`uniacid` = 0 AND module = 'userapi' AND `status`=1");
-		$userapi_list = array();
-		if (!empty($userapi)) {
-			foreach ($userapi as $key => $userapi) {
-				$description = pdo_getcolumn('userapi_reply', array('rid' => $userapi['id']), 'description');
-				$userapi['description'] = $description ? $description : '';
-				$userapi['switch'] = $userapi_config[$userapi['id']] == 'checked' ? 'checked' : '';
-				$userapi_list[$userapi['id']] = $userapi;
+		//1:启用  2.禁用
+		$current_common_service = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
+		if (empty($current_common_service)) {
+			$predefined_service = reply_predefined_service();
+			$rule_settings = array();
+			if (!empty($predefined_service)) {
+				pdo_begin();
+				foreach ($predefined_service as $service_name => $service_detail) {
+					$rule_info = array('uniacid' => $_W['uniacid'], 'name' => $service_detail['title'], 'module' => 'userapi', 'displayorder' => 255, 'status' => 1);
+					pdo_insert('rule', $rule_info);
+					$rule_id = pdo_insertid();
+					$rule_settings[$rule_id] = 2;
+					foreach ($service_detail['keywords'] as $keyword_info) {
+						$rule_keyword_info = array('rid' => $rule_id, 'uniacid' => $_W['uniacid'], 'module' => 'userapi', 'content' => $keyword_info[1], 'type' => $keyword_info[0], 'displayorder' => $rule_info['displayorder'], 'status' => $rule_info['status']);
+						pdo_insert('rule_keyword', $rule_keyword_info);
+					}
+					$userapi_reply = array('rid' => $rule_id, 'description' => htmlspecialchars($service_detail['description']), 'apiurl' => $service_name);
+					pdo_insert('userapi_reply', $userapi_reply);
+				}
+				$account_modules_setting = array('uniacid' => $_W['uniacid'], 'module' => 'userapi', 'enabled' => 1, 'settings' => iserializer($rule_settings));
+				pdo_insert('uni_account_modules', $account_modules_setting);
+				pdo_commit();
 			}
 		}
-		
-		$import = false;
-		$current_apiurls = reply_getall_current_apiurls();
-		$predefined_service = reply_predefined_service();
-		if (count($current_apiurls) != count($predefined_service)) {
-			$import = true;
+		$rule_setting_select = iunserializer($current_common_service);
+		$userapi = pdo_getall('rule', array('uniacid' => $_W['uniacid'], 'module' => 'userapi', 'status' => 1));
+		$userapi_list = array();
+		$rule_ids = array();
+		if (!empty($userapi)) {
+			foreach ($userapi as $rule_detail) {
+				$rule_ids[] = $rule_detail['id'];
+				$userapi_list[$rule_detail['id']] =$rule_detail;
+			}
+			$description_sql = "SELECT * FROM `ims_userapi_reply` WHERE `rid` IN (" . implode(',',$rule_ids) .")";
+			$all_description = pdo_fetchall($description_sql, array(), "rid, description");
+			foreach ($all_description as $description) {
+				$userapi_list[$description['rid']]['description'] = $description['description'];
+				$userapi_list[$description['rid']]['switch'] = $rule_setting_select[$description['rid']] == 1 ? 'checked' : '';
+			}
 		}
 	}
 	if ($m == 'userapi') {
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 8;
 		
-		$condition = 'uniacid = :uniacid AND `module`=:module';
+		$condition = "uniacid = :uniacid AND `module`=:module";
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		$params[':module'] = 'userapi';
@@ -163,7 +184,7 @@ if ($do == 'display') {
 					$condition .= " AND id IN (" . implode(",", array_keys($rule_keyword_rid_list)) . ")";
 				}
 			} else {
-				$condition .= ' AND `name` LIKE :keyword';
+				$condition .= " AND `name` LIKE :keyword";
 				$params[':keyword'] = "%{$_GPC['keyword']}%";
 			}
 		}	
@@ -190,7 +211,7 @@ if ($do == 'post') {
 	if ($m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
-			$sql = 'SELECT `rid` FROM ' . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
+			$sql = "SELECT `rid` FROM " . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
 			$result = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':content' => $_GPC['keyword']));
 			if (!empty($result)) {
 				$keywords = array();
@@ -198,7 +219,7 @@ if ($do == 'post') {
 					$keywords[] = $reply['rid'];
 				}
 				$rids = implode($keywords, ',');
-				$sql = 'SELECT `id`, `name` FROM ' . tablename('rule') . " WHERE `id` IN ($rids)";
+				$sql = "SELECT `id`, `name` FROM " . tablename('rule') . " WHERE `id` IN ($rids)";
 				$rules = pdo_fetchall($sql);
 				iajax(0, @json_encode($rules), '');
 			}
@@ -272,7 +293,7 @@ if ($do == 'post') {
 			}
 
 			if (!empty($rid)) {
-				$sql = 'DELETE FROM '. tablename('rule_keyword') . ' WHERE `rid`=:rid AND `uniacid`=:uniacid';
+				$sql = "DELETE FROM " . tablename('rule_keyword') . " WHERE `rid`=:rid AND `uniacid`=:uniacid";
 				$pars = array();
 				$pars[':rid'] = $rid;
 				$pars[':uniacid'] = $_W['uniacid'];
@@ -347,7 +368,7 @@ if ($do == 'post') {
 			} else {
 				$settings = array('welcome' => '');
 			}
-			$item = pdo_fetch ('SELECT uniacid FROM ' . tablename ('uni_settings') . " WHERE uniacid=:uniacid", array (':uniacid' => $_W['uniacid']));
+			$item = pdo_fetch ("SELECT uniacid FROM " . tablename ('uni_settings') . " WHERE uniacid=:uniacid", array (':uniacid' => $_W['uniacid']));
 			if (!empty($item)) {
 				pdo_update ('uni_settings', $settings, array ('uniacid' => $_W['uniacid']));
 			} else {
@@ -369,7 +390,7 @@ if ($do == 'post') {
 			} else {
 				$settings = array('default' => '');
 			}
-			$item = pdo_fetch('SELECT uniacid FROM '.tablename('uni_settings')." WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
+			$item = pdo_fetch("SELECT uniacid FROM " . tablename('uni_settings') . " WHERE uniacid=:uniacid", array(':uniacid' => $_W['uniacid']));
 			if (!empty($item)){
 				pdo_update('uni_settings', $settings, array('uniacid' => $_W['uniacid']));
 			} else {
@@ -472,7 +493,7 @@ if ($do == 'change_status') {
 		$rid = intval($_GPC['rid']);
 		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
 		$config = iunserializer($userapi_config);
-		$config[$rid] = $config[$rid] ? false : true;
+		$config[$rid] = $config[$rid] == 1 ? 2 : 1;
 		$module_api = WeUtility::createModule('userapi');
 		$module_api->saveSettings($config);
 		iajax(0, '');
@@ -520,54 +541,4 @@ if ($do == 'change_keyword_status') {
 		}
 	}
 	iajax(-1, '更新失败！', '');
-}
-
-if ($do == 'import') {
-	$current_apiurls = reply_getall_current_apiurls();
-	$predefined_service = reply_predefined_service();
-	$apiurls = array();
-	if (!empty($current_apiurls)) {
-		foreach ($current_apiurls as $url) {
-			$apiurls[] = $url['apiurl'];
-		}
-	}
-	if (!empty($predefined_service)) {
-		foreach ($predefined_service as $key => $service_val) {
-			if (!in_array($key, $apiurls)) {
-				$rule = array(
-						'uniacid' => 0,
-						'name' => $service_val['title'],
-						'module' => 'userapi',
-						'displayorder' => 255,
-						'status' => 1,
-				);
-				pdo_insert('rule', $rule);
-				$rid = pdo_insertid();
-				if (!empty($rid)) {
-					foreach ($service_val['keywords'] as $row) {
-						$data = array(
-								'content' => $row[1],
-								'type' => $row[0],
-								'rid' => $rid,
-								'uniacid' => 0,
-								'module' => 'userapi',
-								'status' => $rule['status'],
-								'displayorder' => $rule['displayorder'],
-						);
-						pdo_insert('rule_keyword', $data);
-					}
-					$reply = array(
-							'rid' => $rid,
-							'description' => htmlspecialchars($service_val['description']),
-							'apiurl' => $key,
-							'token' => '',
-							'default_text' => '',
-							'cachetime' => 0
-					);
-					pdo_insert('userapi_reply', $reply);
-				}
-			}
-		}
-	}
-	itoast('成功导入.', referer(), 'success');
 }

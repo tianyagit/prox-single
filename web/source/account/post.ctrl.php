@@ -48,21 +48,13 @@ if($do == 'base') {
 			case 'headimgsrc':
 				if(!empty($_GPC['imgsrc'])) {
 					if(parse_path($_GPC['imgsrc'])) {
+						$img_parse = parse_url($_GPC['imgsrc']);
+						$img_absolute_path = IA_ROOT . $img_parse['path'];
 						if($type == 'qrcodeimgsrc') {
-							if(file_exists($qrcodeimgsrc)) {
-								unlink($qrcodeimgsrc);
-								$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
-							}else {
-								$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
-							}
+							$result = copy($img_absolute_path, IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
 						}
 						if($type == 'headimgsrc') {
-							if(file_exists($headimgsrc)) {
-								unlink($headimgsrc);
-								$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
-							}else {
-								$result = copy($_GPC['imgsrc'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
-							}
+							$result = copy($img_absolute_path, IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
 						}
 					}else {
 						iajax(40035, '参数错误！', '');
@@ -87,7 +79,7 @@ if($do == 'base') {
 			case 'token':
 				$oauth = (array)uni_setting($uniacid, array('oauth'));
 				if($oauth['oauth'] == $acid && $account['level'] != 4) {
-					$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
+					$acid = pdo_fetchcolumn("SELECT acid FROM " . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
 					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
 				}
 				$data = array('token' => trim($_GPC['request_data']));
@@ -95,7 +87,7 @@ if($do == 'base') {
 			case 'encodingaeskey':
 				$oauth = (array)uni_setting($uniacid, array('oauth'));
 				if($oauth['oauth'] == $acid && $account['level'] != 4) {
-					$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
+					$acid = pdo_fetchcolumn("SELECT acid FROM " . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
 					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
 				}
 				$data = array('encodingaeskey' => trim($_GPC['request_data']));
@@ -233,7 +225,6 @@ if($do == 'modules_tpl') {
 
 		if($_GPC['type'] == 'extend') {
 			//如果有附加的权限，则生成专属套餐组
-			
 			$module = $_GPC['module'];
 			$tpl = $_GPC['tpl'];
 			if (!empty($module) || !empty($tpl)) {
