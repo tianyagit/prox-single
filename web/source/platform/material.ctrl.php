@@ -62,7 +62,6 @@ if ($do == 'display') {
 	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
-
 		$search_sql = '';
 		if (! empty($search)) {
 			$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";

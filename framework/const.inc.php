@@ -120,3 +120,9 @@ define('MODULE_SUPPORT_ACCOUNT', 2);
 define('PERMISSION_ACCOUNT', 'system');
 define('PERMISSION_WXAPP', 'wxapp');
 define('PERMISSION_SYSTEM', 'site');
+
+//微信支付类型
+define('PAYMENT_WECHAT_TYPE_NORMAL', 1);
+define('PAYMENT_WECHAT_TYPE_BORROW', 2);
+define('PAYMENT_WECHAT_TYPE_SERVICE', 3);
+define('PAYMENT_WECHAT_TYPE_CLOSE', 4);

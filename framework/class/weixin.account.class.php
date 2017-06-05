@@ -757,7 +757,7 @@ class WeiXinAccount extends WeAccount {
 		$url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$this->account['key']}&secret={$this->account['secret']}";
 		$content = ihttp_get($url);
 		if(is_error($content)) {
-			itoast('获取微信公众号授权失败, 请稍后重试！错误详情: ' . $content['message'], '', 'error');
+			message('获取微信公众号授权失败, 请稍后重试！错误详情: ' . $content['message'], '', 'error');
 		}
 		if (empty($content['content'])) {
 			return error('-1', 'AccessToken获取失败，请检查appid和appsecret的值是否与微信公众平台一致！');
@@ -766,7 +766,7 @@ class WeiXinAccount extends WeAccount {
 		if(empty($token) || !is_array($token) || empty($token['access_token']) || empty($token['expires_in'])) {
 			$errorinfo = substr($content['meta'], strpos($content['meta'], '{'));
 			$errorinfo = @json_decode($errorinfo, true);
-			itoast('获取微信公众号授权失败, 请稍后重试！ 公众平台返回原始数据为: 错误代码-' . $errorinfo['errcode'] . '，错误信息-' . $errorinfo['errmsg'], '', 'error');
+			message('获取微信公众号授权失败, 请稍后重试！ 公众平台返回原始数据为: 错误代码-' . $errorinfo['errcode'] . '，错误信息-' . $errorinfo['errmsg'], '', 'error');
 		}
 		$record = array();
 		$record['token'] = $token['access_token'];

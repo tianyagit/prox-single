@@ -545,7 +545,7 @@
 								'			<div class="appmsgSendedItem">'+
 								'				<a class="title-wrp" href="javascript:;">'+
 								'					<span class="icon cover" style="background-image:url('+(newsVal.thumb ? newsVal.thumb : newsVal.thumb_url)+');"></span>'+
-								'					<span class="title">[图文消息]'+newsVal.title+(newsVal.attach_id ? '<span class="color-red">（素材不存在或已被删除）</span>' : '')+
+								'					<span class="title">[图文消息]'+newsVal.title+(!newsVal.attach_id ? '<span class="color-red">（素材不存在或已被删除）</span>' : '')+
 								'					</span>'+
 								'				</a>'+
 								'				<p class="desc"><a href="javascript:;" class="appmsg-desc">'+(newsVal.description ? newsVal.description : '')+'</a></p>'+
@@ -553,7 +553,7 @@
 								'		</div>'+
 								'	</div>'+
 								'	<div class="opr">'+
-								'		<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+(newsVal.attach_id ? newsVal.attach_id : '')+'&reply_news_id='+newsVal.id+'" target="_blank" class="del-gray">编辑</a>'+
+										(newsVal.attach_id ? '<a href="./index.php?c=platform&a=material-post&type=reply&newsid='+(newsVal.attach_id ? newsVal.attach_id : '')+'&reply_news_id='+newsVal.id+'" target="_blank" class="del-gray">编辑</a>' : '') +
 								'		<a href="javascript:;" data-media="'+newsVal.media_id+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 								'	</div>'+
 								'</div>'+

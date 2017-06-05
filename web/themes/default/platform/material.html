@@ -40,7 +40,30 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" ng-click="sync('{$type}')" class="btn btn-default">同步微信</a>
 					{/if}
-					<a href="{php echo url('platform/material-post')}" class="btn btn-primary we7-margin-left">新建图文消息</a>
+					<a href="javascript:;" data-toggle="modal" data-target="#new_type" class="btn btn-primary we7-margin-left">新建图文消息</a>
+				</div>
+				<div class="modal fade" id="new_type" tabindex="-1" role="dialog" aria-hidden="true">
+					<div class="we7-modal-dialog modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<div class="modal-title">选择图文类型</div>
+							</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<select class="we7-select" ng-model="new_type" ng-init="new_type = 'reply'">
+										<option value="reply" >图文编辑</option>
+										<option value="link">跳转链接</option>
+									</select>
+									<!-- <span class="help-block">{{new_type}}</span> -->
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="createNew(new_type)">确定</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="material-appmsg-list">
@@ -329,6 +352,7 @@
 			'del_url' : "{php echo url('platform/material/delete')}",
 			'sync_url' : "{php echo url('platform/material/sync')}",
 			'send_url' : "{php echo url('platform/material/send')}",
+			'create_new_url' : "{php echo url('platform/material-post')}",
 			'trans_url' : "{php echo url('platform/material-post/upload_material')}",
 			'postwechat_url' : "{php echo url('platform/material-post/upload_news')}",
 			'group' : {php echo json_encode($group)},

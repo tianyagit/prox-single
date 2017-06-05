@@ -321,7 +321,7 @@ function user_modules($uid) {
 	global $_W;
 	load()->model('module');
 	$cachekey = cache_system_key("user_modules:" . $uid);
-	$modules = cache_load($cachekey);
+	//$modules = cache_load($cachekey);
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$user_info = user_single(array ('uid' => $uid));
@@ -354,9 +354,8 @@ function user_modules($uid) {
 							foreach ($row['modules'] as $modulename => $module) {
 								if (!is_array($module)) {
 									$modulename = $module;
-									$module = module_fetch($modulename);
 								}
-								$package_group_module[$modulename] = $module;
+								$package_group_module[$modulename] = $modulename;
 							}
 						}
 					}
@@ -375,7 +374,9 @@ function user_modules($uid) {
 			foreach ($plugin_list as $plugin) {
 				$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
 				$module_key = array_search($plugin['name'], $module_list);
-				unset($module_list[$module_key]);
+				if ($module_key !== false) {
+					unset($module_list[$module_key]);
+				}
 			}
 		}
 		if (!empty($module_list)) {

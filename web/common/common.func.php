@@ -172,7 +172,7 @@ function buildframes($framename = ''){
 	$status = uni_user_permission_exist($_W['uid'], $_W['uniacid']);
 	//非创始人应用模块菜单
 	if (!$_W['isfounder'] && $status) {
-		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'all_module');
+		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'modules');
 		if (!empty($module_permission)) {
 			foreach ($module_permission as $module) {
 				if (!in_array($module['type'], $sysmodules) && empty($modules[$module['type']]['main_module'])) {
@@ -455,9 +455,12 @@ function buildframes($framename = ''){
 		if (!empty($frames['wxapp']['section'])) {
 			$wxapp_permission = uni_user_permission('wxapp');
 			foreach ($frames['wxapp']['section'] as $wxapp_section_id => $wxapp_section) {
-				if (!empty($wxapp_section['menu']) && !in_array("wxapp*", $wxapp_permission) && $wxapp_section_id != 'wxapp_module') {
+				if (!empty($wxapp_section['menu']) && $wxapp_section_id != 'wxapp_module') {
 					foreach ($wxapp_section['menu'] as $wxapp_menu_id => $wxapp_menu) {
-						if (!in_array($wxapp_menu['permission_name'], $wxapp_permission)) {
+						if ($wxapp_section_id == 'platform_manage_menu') {
+							$frames['wxapp']['section'][$wxapp_section_id]['menu'][$wxapp_menu_id]['url'] .= 'version_id=' . $version_id;
+						}
+						if (!in_array('wxapp*', $wxapp_permission) && !in_array($wxapp_menu['permission_name'], $wxapp_permission)) {
 							$frames['wxapp']['section'][$wxapp_section_id]['menu'][$wxapp_menu_id]['is_display'] = false;
 						}
 					}

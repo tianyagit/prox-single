@@ -163,13 +163,16 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
 				if (!empty($modules)) {
-					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
+					$condition .= " AND a.name IN ('" . implode("','", $modules) . "') OR (a.name IN ('" . implode("','", $modules) . "') AND b.enabled is NULL)";
 				} else {
 					$condition .= " AND a.name = ''";
 				}
 			}
 		}
-		$condition .= $enabled ?  " AND b.enabled = 1 OR a.issystem = 1 OR b.enabled is NULL" : " OR a.issystem = 1 OR b.enabled is NULL";
+		$condition .= $enabled ?  " AND b.enabled = 1 OR a.issystem = 1" : " OR a.issystem = 1";
+		if (!strexists($condition, 'AND a.name')) {
+			$condition .= ' OR b.enabled is NULL';
+		}
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
 		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
@@ -573,17 +576,15 @@ function uni_user_menu_permission($uid, $uniacid, $type) {
 	if (empty($uid) || empty($uniacid) || empty($type)) {
 		return array();
 	}
-	if ($type == 'all_module') {
+	if ($type == 'modules') {
 		$user_menu_permission = pdo_fetchall("SELECT * FROM " . tablename('users_permission') . " WHERE uniacid = :uniacid AND uid  = :uid AND type != '" . PERMISSION_ACCOUNT . "' AND type != '" . PERMISSION_WXAPP . "'", array(':uniacid' => $uniacid, ':uid' => $uid), 'type');
 	} else {
 		$module = uni_modules_by_uniacid($uniacid);
 		$module = array_keys($module);
 		if (in_array($type, $module) || in_array($type, array(PERMISSION_ACCOUNT, PERMISSION_WXAPP, PERMISSION_SYSTEM))) {
-			$user_menu_permission = pdo_get('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $type));
-			if (!empty($user_menu_permission['permission'])) {
-				$user_menu_permission['permission'] = explode('|', $user_menu_permission['permission']);
-			} else {
-				$user_menu_permission['permission'] = array();
+			$menu_permission = pdo_getcolumn('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $type), 'permission');
+			if (!empty($menu_permission)) {
+				$user_menu_permission = explode('|', $menu_permission);
 			}
 		}
 	}
@@ -652,7 +653,7 @@ function uni_update_user_permission($uid, $uniacid, $data) {
 		return error('-1', '参数错误！');
 	}
 	
-	if (empty($user_menu_permission['id'])) {
+	if (empty($user_menu_permission)) {
 		$insert = array(
 			'uniacid' => $uniacid,
 			'uid' => $uid,
@@ -885,6 +886,7 @@ function uni_account_last_switch() {
 }
 
 function uni_account_switch($uniacid, $redirect = '') {
+	global $_W;
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
 	if (!empty($redirect)) {

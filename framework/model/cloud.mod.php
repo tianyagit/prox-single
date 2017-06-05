@@ -59,6 +59,16 @@ function _cloud_shipping_parse($dat, $file) {
 		return error(-1, '抱歉，您的站点已被列入云服务黑名单，云服务一切业务已被禁止，请联系微擎客服！');
 	}
 	if (strlen($dat['content']) != 32) {
+		$dat['content'] = unserialize($dat['content']);
+		if (is_array($dat['content']) && isset($dat['content']['files'])) {
+			if (!empty($dat['content']['manifest'])) {
+				$dat['content']['manifest'] = base64_decode($dat['content']['manifest']);
+			}
+			if (!empty($dat['content']['scripts'])) {
+				$dat['content']['scripts'] = base64_decode($dat['content']['scripts']);
+			}
+			return $dat['content'];
+		}
 		return error(-1, '云服务平台向您的服务器传输数据过程中出现错误, 这个错误可能是由于您的通信密钥和云服务不一致, 请尝试诊断云服务参数(重置站点ID和通信密钥). 传输原始数据:' . $dat['meta']);
 	}
 	$data = @file_get_contents($file);
@@ -285,6 +295,7 @@ function cloud_m_build($modulename, $type = '') {
 	$pars['method'] = 'module.build';
 	$pars['module'] = $modulename;
 	$pars['type'] = $type;
+	$pars['token'] = cloud_build_transtoken();
 	if (!empty($module)) {
 		$pars['module_version'] = $module['version'];
 	}
@@ -1177,5 +1188,14 @@ function cloud_flow_site_stat_day($condition) {
 	$ret = @json_decode($dat['content'], true);
 	cache_write($cachekey, array('expire' => TIMESTAMP + 300, 'info' => $ret));
 	return $ret;
-	
+}
+
+function cloud_build_transtoken() {
+	$pars = _cloud_build_params();
+	$pars['method'] = 'application.token';
+	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
+	$file = IA_ROOT . '/data/application.build';
+	$ret = _cloud_shipping_parse($dat, $file);
+	cache_write('cloud:transtoken', authcode($ret['token'], 'ENCODE'));
+	return $ret['token'];
 }

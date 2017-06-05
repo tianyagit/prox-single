@@ -248,7 +248,7 @@
 									<p>维权通知URL: {$_W['siteroot']}payment/wechat/rights.php</p>
 									<p>警告通知URL: {$_W['siteroot']}payment/wechat/warning.php</p>
 								</div>
-								{if $accounts[$_W['acid']]['level'] > 2}
+								{if $accounts[$_W['acid']]['level'] == 4}
 								<input id='radio-11' type="radio" name='wechat[switch]' ng-checked='paysetting.wechat.switch == 1' ng-click="changeSwitch('wechat', 1)" value="1"/>
 								<label for="radio-11">微信支付  </label>
 								{if !empty($proxy_wechatpay_account['borrow'])}
@@ -361,6 +361,7 @@
 						{if !empty($proxy_wechatpay_account['borrow'])}
 						<div ng-show="paysetting.wechat.switch == 2">
 							<div class="form-group">
+							<label for="" class="control-label col-sm-2">借用公众号</label>
 								<div class="form-controls col-sm-10">
 									<select name="borrow" class="we7-select" ng-model="paysetting.wechat.borrow">
 										<option value="" ng-selected="paysetting.wechat.borrow == 0 || paysetting.wechat.borrow == '' || paysetting.wechat.borrow == undefined">请选择要借用的公众号</option>
