@@ -404,6 +404,8 @@ function cache_build_proxy_wechatpay_account() {
 	}
 	$sql = "SELECT * FROM " . tablename('uni_account') . $where;
 	$uniaccounts = pdo_fetchall($sql, $params);
+	$borrow = array();
+	$service = array();
 	if (!empty($uniaccounts)) {
 		foreach ($uniaccounts as $uniaccount) {
 			$account = account_fetch($uniaccount['default_acid']);
