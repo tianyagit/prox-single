@@ -25,8 +25,6 @@ if(!is_error($site)) {
 		if (!empty($version_info)) {
 			$connection = iunserializer($version_info['modules'], true);
 			$_W['uniacid'] = !empty($connection[$entry['module']]) ? $connection[$entry['module']]['uniacid'] : $version_info['uniacid'];
-		} else {
-			message('该小程序版本不存在！');
 		}
 	}
 	exit($site->$method());
