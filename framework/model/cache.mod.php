@@ -290,6 +290,7 @@ function cache_build_uninstalled_module() {
 	load()->model('cloud');
 	load()->classs('cloudapi');
 	load()->model('extension');
+	load()->func('file');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 	$all_module = pdo_getall('modules');
