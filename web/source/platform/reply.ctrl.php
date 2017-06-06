@@ -136,12 +136,12 @@ if ($do == 'display') {
 		$rule_ids = array();
 		$api_url = array();
 		if (!empty($exists_rule)) {
-			foreach($exists_rule as $rule_detail) {
+			foreach ($exists_rule as $rule_detail) {
 				$rule_ids[] = $rule_detail['id'];
 				$service_list[$rule_detail['id']] = $rule_detail;
 			}
 			$description_sql = "SELECT * FROM `ims_userapi_reply` WHERE `rid` IN (" . implode(',',$rule_ids) .")";
-			$all_description = pdo_fetchall($description_sql, array(), "rid, description");
+			$all_description = pdo_fetchall($description_sql);
 			foreach ($all_description as $description) {
 				$service_list[$description['rid']]['description'] = $description['description'];
 				$service_list[$description['rid']]['switch'] = isset($rule_setting_select[$description['rid']]) && $rule_setting_select[$description['rid']] ? 'checked' : '';
@@ -482,7 +482,7 @@ if ($do == 'delete') {
 if ($do == 'change_status') {
 	$m = $_GPC['m'];
 	if ($m == 'service') {
-		$rid = $_GPC['rid'];
+		$rid = intval($_GPC['rid']) > 0 ? intval($_GPC['rid']) : trim($_GPC['rid']);
 		if ($rid <= 0) {
 			$all_service = reply_predefined_service();
 			$all_url = array_keys($all_service);
@@ -493,8 +493,10 @@ if ($do == 'change_status') {
 			$rule_info = array('uniacid' => 0, 'name' => $all_service[$rid]['title'], 'module' => 'userapi', 'displayorder' => 255, 'status' => 1);
 			pdo_insert('rule', $rule_info);
 			$rule_id = pdo_insertid();
+			$rule_keyword_info = array('rid' => $rule_id, 'uniacid' => 0, 'module' => 'userapi', 'displayorder' => $rule_info['displayorder'], 'status' => $rule_info['status']);
 			foreach ($all_service[$rid]['keywords'] as $keyword_info) {
-				$rule_keyword_info = array('rid' => $rule_id, 'uniacid' => 0, 'module' => 'userapi', 'content' => $keyword_info[1], 'type' => $keyword_info[0], 'displayorder' => $rule_info['displayorder'], 'status' => $rule_info['status']);
+				$rule_keyword_info['content'] = $keyword_info[1];
+				$rule_keyword_info['type'] = $keyword_info[0];
 				pdo_insert('rule_keyword', $rule_keyword_info);
 			}
 			$userapi_reply = array('rid' => $rule_id, 'description' => htmlspecialchars($all_service[$rid]['description']), 'apiurl' => $rid);
