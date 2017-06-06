@@ -124,31 +124,31 @@ if($do == 'getpackage') {
 		itoast('参数错误！', '', '');
 	}
 
-	$request_cloud_data = array();
-	$account_wxapp_info = pdo_get('account_wxapp', array('uniacid' => $uniacid));
-	$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'id' => $versionid));
-	if (empty($wxapp_version_info)) {
+	$account_wxapp_info = wxapp_fetch($uniacid, $versionid);
+	if (empty($account_wxapp_info)) {
 		itoast('版本不存在！', referer(), 'error');
 	}
-	$request_cloud_data['name'] = $account_wxapp_info['name'];
-	$zipname = $request_cloud_data['name'];
-	$request_cloud_data['modules'] = iunserializer($wxapp_version_info['modules'], true);
-	$request_cloud_data['siteInfo'] = array(
+	$request_cloud_data = array(
+		'name' => $account_wxapp_info['name'],
+		'modules' => $account_wxapp_info['version']['modules'],
+		'siteInfo' => array(
 			'uniacid' => $account_wxapp_info['uniacid'],
 			'acid' => $account_wxapp_info['acid'],
-			'multiid' => $wxapp_version_info['multiid'],
-			'version' => $wxapp_version_info['version'],
+			'multiid' => $account_wxapp_info['version']['multiid'],
+			'version' => $account_wxapp_info['version']['version'],
 			'siteroot' => $_W['siteroot'].'app/index.php',
-			'design_method' => $wxapp_version_info['design_method']
-		);
-	$request_cloud_data['tabBar'] = json_decode($wxapp_version_info['quickmenu'], true);
+			'design_method' => $account_wxapp_info['version']['design_method']
+		),
+		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
+	);
+	print_r($request_cloud_data);exit;
 	$result = wxapp_getpackage($request_cloud_data);
 
 	if(is_error($result)) {
 		itoast($result['message'], '', '');
 	}else {
 		header('content-type: application/zip');
-		header('content-disposition: attachment; filename="'.$zipname.'.zip"');
+		header('content-disposition: attachment; filename="' . $request_cloud_data['name'] . '.zip"');
 		echo $result;
 	}
 	exit;
