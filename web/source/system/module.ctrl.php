@@ -46,7 +46,11 @@ if ($do == 'get_upgrade_info') {
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	$module = cloud_m_upgradeinfo($module_name);
-	iajax(0, $module, '');
+	if (is_error($module)) {
+		iajax(1, $module['message']);
+	} else {
+		iajax(0, $module, '');
+	}
 }
 
 if ($do == 'check_upgrade') {
