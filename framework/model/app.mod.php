@@ -29,19 +29,21 @@ function app_navs($type = 'home', $multiid = 0, $section = 0) {
 			if (!strexists($row['url'], 'tel:') && !strexists($row['url'], '://') && !strexists($row['url'], 'www') && !strexists($row['url'], 'i=')) {
 				$row['url'] .= strexists($row['url'], '?') ? "&i={$_W['uniacid']}" : "?i={$_W['uniacid']}";
 			}
-			if (is_serialized($row['css'])) {
-				$row['css'] = unserialize($row['css']);
-			}
-			if (empty($row['css']['icon']['icon'])) {
-				$row['css']['icon']['icon'] = 'fa fa-external-link';
-			}
-			if ($row['position'] == '3') {
-				if (!empty($row['css'])) {
-					unset($row['css']['icon']['font-size']);
+			if (!empty($row['css'])) {
+				if (is_serialized($row['css'])) {
+					$row['css'] = unserialize($row['css']);
 				}
+				if (empty($row['css']['icon']['icon'])) {
+					$row['css']['icon']['icon'] = 'fa fa-external-link';
+				}
+				if ($row['position'] == '3') {
+					if (!empty($row['css'])) {
+						unset($row['css']['icon']['font-size']);
+					}
+				}
+				$row['css']['icon']['style'] = "color:{$row['css']['icon']['color']};font-size:{$row['css']['icon']['font-size']}px;";
+				$row['css']['name'] = "color:{$row['css']['name']['color']};";
 			}
-			$row['css']['icon']['style'] = "color:{$row['css']['icon']['color']};font-size:{$row['css']['icon']['font-size']}px;";
-			$row['css']['name'] = "color:{$row['css']['name']['color']};";
 		}
 		unset($row);
 	}
