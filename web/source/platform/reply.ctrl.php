@@ -142,10 +142,12 @@ if ($do == 'display') {
 			}
 			$description_sql = "SELECT * FROM `ims_userapi_reply` WHERE `rid` IN (" . implode(',',$rule_ids) .")";
 			$all_description = pdo_fetchall($description_sql);
-			foreach ($all_description as $description) {
-				$service_list[$description['rid']]['description'] = $description['description'];
-				$service_list[$description['rid']]['switch'] = isset($rule_setting_select[$description['rid']]) && $rule_setting_select[$description['rid']] ? 'checked' : '';
-				$api_url[] = $description['apiurl'];
+			if (!empty($all_description)) {
+				foreach ($all_description as $description) {
+					$service_list[$description['rid']]['description'] = $description['description'];
+					$service_list[$description['rid']]['switch'] = isset($rule_setting_select[$description['rid']]) && $rule_setting_select[$description['rid']] ? 'checked' : '';
+					$api_url[] = $description['apiurl'];
+				}
 			}
 		}
 
@@ -394,8 +396,6 @@ if ($do == 'post') {
 		}
 	}
 	if ($m == 'apply') {
-		include IA_ROOT . '/framework/library/pinyin/pinyin.php';
-		$pinyin = new Pinyin_Pinyin();
 		$module['title'] = '应用关键字';
 		$installedmodulelist = uni_modules();
 		foreach ($installedmodulelist as $key => &$value) {
@@ -409,7 +409,7 @@ if ($do == 'post') {
 			if (empty($module['isrulefields']) && $name != "core") {
 				continue;
 			}
-			$module['title_first_pinyin'] = $pinyin->get_first_char($module['title']);
+			$module['title_first_pinyin'] = get_first_char($module['title']);
 			if ($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];
 			} else {
@@ -483,7 +483,7 @@ if ($do == 'change_status') {
 	$m = $_GPC['m'];
 	if ($m == 'service') {
 		$rid = intval($_GPC['rid']) > 0 ? intval($_GPC['rid']) : trim($_GPC['rid']);
-		if ($rid <= 0) {
+		if (intval($rid) <= 0) {
 			$all_service = reply_predefined_service();
 			$all_url = array_keys($all_service);
 			if (!in_array($rid, $all_url)) {
@@ -494,10 +494,12 @@ if ($do == 'change_status') {
 			pdo_insert('rule', $rule_info);
 			$rule_id = pdo_insertid();
 			$rule_keyword_info = array('rid' => $rule_id, 'uniacid' => 0, 'module' => 'userapi', 'displayorder' => $rule_info['displayorder'], 'status' => $rule_info['status']);
-			foreach ($all_service[$rid]['keywords'] as $keyword_info) {
-				$rule_keyword_info['content'] = $keyword_info[1];
-				$rule_keyword_info['type'] = $keyword_info[0];
-				pdo_insert('rule_keyword', $rule_keyword_info);
+			if (!empty($all_service[$rid]['keywords'])) {
+				foreach ($all_service[$rid]['keywords'] as $keyword_info) {
+					$rule_keyword_info['content'] = $keyword_info[1];
+					$rule_keyword_info['type'] = $keyword_info[0];
+					pdo_insert('rule_keyword', $rule_keyword_info);
+				}
 			}
 			$userapi_reply = array('rid' => $rule_id, 'description' => htmlspecialchars($all_service[$rid]['description']), 'apiurl' => $rid);
 			pdo_insert('userapi_reply', $userapi_reply);
