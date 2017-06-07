@@ -385,7 +385,7 @@ class WeEngine {
 				}
 				if(!empty($rec)){
 					pdo_update('mc_mapping_fans', $rec, array('openid' => $message['from']));
-					cache_build_fansinfo($message['form']);
+					cache_build_fansinfo($message['from']);
 				}
 			}
 		} else {
