@@ -72,7 +72,7 @@ if ($do == 'home') {
 	$tsql = "SELECT COUNT(*) FROM " . tablename('uni_account'). " as a LEFT JOIN ". tablename('account'). " as b ON a.default_acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
 	$sql = "SELECT * FROM ". tablename('uni_account'). " as a LEFT JOIN ". tablename('account'). " as b ON a.default_acid = b.acid  {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$total = pdo_fetchcolumn($tsql, $param);
-	$wxapp_lists = pdo_fetchall($sql, $param, 'uniacid');
+	$wxapp_lists = pdo_fetchall($sql, $param);
 	if (!empty($wxapp_lists)) {
 		foreach ($wxapp_lists as &$account) {
 			$account['thumb'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
@@ -93,10 +93,6 @@ if ($do == 'home') {
 		unset($account_val);
 		unset($account);
 	}
-// 	$wxapp_lists = array();
-// 	echo "<pre>";
-// 	print_r($wxapp_lists);
-// 	echo "</pre>";
 	$pager = pagination($total, $pindex, $psize);
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
