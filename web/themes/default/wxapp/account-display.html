@@ -61,7 +61,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="text-center we7-padding-vertical font-lg"  ng-if="!wxapp_lists">动动小手，点击右上角按钮，新建一个小程序吧！</div>
+			<div class="text-center we7-padding-vertical message-page"  ng-if="!wxapp_lists">
+				<div class="icon"><span class="wi wi-sad"></span></div>
+				<div class="message-state">您还没有创建小程序</div>
+				<div><a class="btn btn-primary" href="{php echo url('wxapp/post/design_method')}">新建小程序</a></div>
+			</div>
 		</div>
 		<div class="text-right">
 			{$pager}
