@@ -63,9 +63,12 @@ if($step == 1) {
 		if (empty($uniacid)) {
 			$name = trim($_GPC['cname']);
 			$description = trim($_GPC['description']);
+			require IA_ROOT . '/framework/library/pinyin/pinyin.php';
+			$pinyin = new Pinyin_Pinyin();
 			$data = array(
 				'name' => $name,
 				'description' => $description,
+				'title_initial' => $pinyin->get_first_char($name),
 				'groupid' => 0,
 			);
 			//检测新添加公众号名称是否存在

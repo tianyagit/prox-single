@@ -11,3 +11,16 @@ require '../../framework/bootstrap.inc.php';
 if(!pdo_fieldexists('wxapp_versions', 'last_use')) {
 	pdo_query("ALTER TABLE ". tablename('wxapp_versions') ." ADD `last_use` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '上一次使用：1、是；0、否';");
 }
+if (pdo_fieldexists('uni_account', 'title_initial')) {
+	require IA_ROOT . '/framework/library/pinyin/pinyin.php';
+	$pinyin = new Pinyin_Pinyin();
+	$accounts = pdo_getall('uni_account', array(), array('name', 'uniacid', 'default_acid', 'title_initial'));
+	if (!empty($accounts)) {
+		foreach ($accounts as $account) {
+			if (empty($account['title_initial'])) {
+				$first_char = $pinyin->get_first_char($account['name']);
+				pdo_update('uni_account', array('title_initial' => $first_char), array('uniacid' => $account['uniacid'], 'default_acid' => $account['default_acid']));
+			}
+		}
+	}
+}
