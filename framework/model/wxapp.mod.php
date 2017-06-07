@@ -159,6 +159,30 @@ function wxapp_version_all($uniacid) {
 }
 
 /**
+ * 获取某一小程序某一分页里所有版本信息
+ * @param int $uniacid
+ * @param int $page
+ * @param int $pagesize
+ * return array
+ */
+function wxapp_version_page($uniacid, $page = 1, $pagesize = 4) {
+	$version_page = array();
+	$uniacid = intval($uniacid);
+	$page = max(1, intval($page));
+	$pagesize = intval($pagesize) > 0 ? intval($pagesize) : 4;
+	if (empty($uniacid)) {
+		return $version_page;
+	}
+	$param = array(':uniacid' => $uniacid);
+	$start = ($page - 1) * $pagesize;
+	$tsql = "SELECT COUNT(*) FROM " . tablename('wxapp_versions'). " WHERE uniacid = :uniacid";
+	$sql = "SELECT * FROM ". tablename('wxapp_versions'). " WHERE uniacid = :uniacid LIMIT {$start}, {$pagesize}";
+	$total = pdo_fetchcolumn($tsql, $param);
+	$version_lists = pdo_fetchall($sql, $param);
+	return $version_lists;
+}
+
+/**
  * 获取小程序单个版本
  * @param unknown $version_id
  */
