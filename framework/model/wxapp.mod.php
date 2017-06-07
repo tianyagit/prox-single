@@ -11,7 +11,6 @@ function wxapp_getpackage($data, $if_single = false) {
 
 	$api = new CloudApi();
 	$result = $api->post('wxapp', 'download', $data, 'html');
-
 	if (is_error($result)) {
 			return error(-1, $result['message']);
 	} else {
@@ -99,6 +98,7 @@ function wxapp_support_wxapp_modules() {
  * @return array
 */
 function wxapp_fetch($uniacid, $version_id = '') {
+	load()->model('extension');
 	$wxapp_info = array();
 	$uniacid = intval($uniacid);
 	
@@ -121,6 +121,15 @@ function wxapp_fetch($uniacid, $version_id = '') {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
 	if (!empty($wxapp_version_info)) {
+		$wxapp_version_info['modules'] = unserialize($wxapp_version_info['modules']);
+		//如果是单模块版并且本地模块，应该是开发者开发小程序，则模块版本号本地最新的。
+		if ($wxapp_version_info['design_method'] == WXAPP_MODULE) {
+			$module = current($wxapp_version_info['modules']);
+			$manifest = ext_module_manifest($module['name']);
+			if (!empty($manifest)) {
+				$wxapp_version_info['modules'][$module['name']]['version'] = $manifest['application']['version'];
+			}
+		}
 		$wxapp_info['version'] = $wxapp_version_info;
 		$wxapp_info['version_num'] = explode('.', $wxapp_version_info['version']);
 	}
