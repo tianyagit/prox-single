@@ -24,12 +24,10 @@ function wxapp_getpackage($data, $if_single = false) {
 
 function wxapp_account_create($account) {
 	global $_W;
-	require IA_ROOT . '/framework/library/pinyin/pinyin.php';
-	$pinyin = new Pinyin_Pinyin();
 	$uni_account_data = array(
 		'name' => $account['name'],
 		'description' => $account['description'],
-		'title_initial' => $pinyin->get_first_char($account['name']),
+		'title_initial' => get_first_char($account['name']),
 		'groupid' => 0,
 	);
 	if (!pdo_insert('uni_account', $uni_account_data)) {
