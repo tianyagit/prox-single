@@ -9,7 +9,7 @@ load()->model('account');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank' , 'home');
+$dos = array('display', 'switch', 'rank' , 'home', 'version_page');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'rank' || $do == 'switch') {
@@ -43,7 +43,7 @@ if ($do == 'home') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$start = ($pindex - 1) * $psize;
-
+	
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
@@ -76,7 +76,7 @@ if ($do == 'home') {
 	if (!empty($wxapp_lists)) {
 		foreach ($wxapp_lists as &$account) {
 			$account['thumb'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
-			$account['versions'] = wxapp_version_all($account['uniacid']);
+			$account['versions'] = wxapp_version_page($account['uniacid'], 1);
 			$account['current_version'] = array();
 			if (!empty($account['versions'])) {
 				foreach ($account['versions'] as $version) {
@@ -118,4 +118,12 @@ if ($do == 'home') {
 } elseif ($do == 'rank') {
 	uni_account_rank_top($uniacid);
 	itoast('更新成功', '', '');
+} elseif ($do == 'version_page') {
+	$uniacid = intval($_GPC['uniacid']);
+	if (empty($uniacid)) {
+		iajax(-1, '参数错误！');
+	}
+	$page =max(1, intval($_GPC['page']));
+	$version_page = wxapp_version_page($uniacid, $page);
+	iajax(0, $version_page);
 }
