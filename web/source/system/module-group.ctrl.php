@@ -34,8 +34,8 @@ if ($do == 'save') {
 		$package_info['modules'] = iserializer($package_info['modules']);
 	}
 	if (!empty($package_info['templates'])) {
-		foreach ($package_info['templates'] as $key => $template) {
-			$package_info['templates'][$key] = $template['title'];
+		foreach ($package_info['templates'] as $template) {
+			$package_info['templates'][] = $template['id'];
 		}
 		$package_info['templates'] = iserializer($package_info['templates']);
 	}
@@ -65,7 +65,6 @@ if ($do == 'save') {
 
 if ($do == 'display') {
 	$_W['page']['title'] = '应用套餐列表';
-
 	$param = array('uniacid' => 0);
 	if (!empty($_GPC['name'])) {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
@@ -120,7 +119,6 @@ if ($do == 'post') {
 
 	if (!empty($group_id)) {
 		$uni_groups = uni_groups();
-
 		$module_group = $uni_groups[$group_id];
 		$group_have_module_app = empty($module_group['modules']) ? array() : $module_group['modules'];
 		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : $module_group['wxapp'];
