@@ -98,7 +98,7 @@ if ($do == 'display') {
 	$total_sql = sprintf($select_sql, "COUNT(DISTINCT f.`fanid`) ", '');
 	$total = pdo_fetchcolumn($total_sql, $param);
 	$pager = pagination($total, $pageindex, $pagesize);
-	$fans['total'] = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('mc_mapping_fans') . " WHERE uniacid = :uniacid AND acid = :acid AND follow = 1", array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
+	$fans['total'] = pdo_getcolumn("mc_mapping_fans", array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => 1), 'count(*)');
 }
 
 if ($do == 'add_tag') {
