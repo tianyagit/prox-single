@@ -337,7 +337,7 @@ if ($do =='install') {
 	if (!empty($module_info['version']['cloud_setting'])) {
 		$module['settings'] = 2;
 	}
-	$module['title_initial'] = get_first_char($module['title']);
+	$module['title_initial'] = get_first_pinyin($module['title']);
 	if (pdo_insert('modules', $module)) {
 		if (strexists($manifest['install'], '.php')) {
 			if (file_exists($module_path . $manifest['install'])) {
@@ -590,7 +590,7 @@ if ($do == 'not_installed') {
 	if (!empty($uninstallModules)) {
 		foreach($uninstallModules as $name => &$module) {
 			if (!empty($letter) && strlen($letter) == 1) {
-				$first_char = get_first_char($module['title']);
+				$first_char = get_first_pinyin($module['title']);
 				if ($letter != $first_char) {
 					unset($uninstallModules[$name]);
 					continue;

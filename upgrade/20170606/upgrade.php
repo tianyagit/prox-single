@@ -16,7 +16,7 @@ if (pdo_fieldexists('uni_account', 'title_initial')) {
 	if (!empty($accounts)) {
 		foreach ($accounts as $account) {
 			if (empty($account['title_initial'])) {
-				$first_char = get_first_char($account['name']);
+				$first_char = get_first_pinyin($account['name']);
 				pdo_update('uni_account', array('title_initial' => $first_char), array('uniacid' => $account['uniacid'], 'default_acid' => $account['default_acid']));
 			}
 		}

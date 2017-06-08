@@ -27,7 +27,7 @@ function wxapp_account_create($account) {
 	$uni_account_data = array(
 		'name' => $account['name'],
 		'description' => $account['description'],
-		'title_initial' => get_first_char($account['name']),
+		'title_initial' => get_first_pinyin($account['name']),
 		'groupid' => 0,
 	);
 	if (!pdo_insert('uni_account', $uni_account_data)) {

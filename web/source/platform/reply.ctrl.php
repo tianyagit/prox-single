@@ -409,7 +409,7 @@ if ($do == 'post') {
 			if (empty($module['isrulefields']) && $name != "core") {
 				continue;
 			}
-			$module['title_first_pinyin'] = get_first_char($module['title']);
+			$module['title_first_pinyin'] = get_first_pinyin($module['title']);
 			if ($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];
 			} else {
