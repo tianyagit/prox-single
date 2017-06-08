@@ -109,6 +109,7 @@ if ($do == 'home') {
 	}
 	uni_account_switch($uniacid);
 	wxapp_save_switch($uniacid);
+	wxapp_update_last_use_version($version_id);
 	header('Location: ' . url('wxapp/version/manage', array('version_id' => $version_id)));
 	exit;
 } elseif ($do == 'rank') {
