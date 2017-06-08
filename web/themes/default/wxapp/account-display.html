@@ -2,8 +2,13 @@
 <div class="panel panel-cut">
 	<div class="panel-heading">
 		选择小程序
+		<div class="pull-right font-default">
+			{if !empty($account_info['wxapp_limit']) || $_W['isfounder']}
+			<a href="{php echo url('wxapp/post/design_method')}" class="color-default"><i class="wi wi-registersite"></i>新建小程序</a>
+			{/if}
+		</div>
 	</div>
-	<div class="panel-body">
+	<div class="panel-body" id="js-wxapp-account-display" ng-controller="AccountDisplayWxappCtrl" ng-cloak>
 		{if !$_W['isfounder'] && !empty($account_info['wxapp_limit'])}
 			<div class="alert alert-warning">
 				温馨提示：
@@ -13,12 +18,25 @@
 				可创建 <span class="text-strong">{$account_info['maxwxapp']} </span>个小程序，已创建<span class="text-strong"> {$account_info['wxapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['wxapp_limit']} </span>个小程序。
 			</div>
 		{/if}
-		<div class="wxapp-manage">
-			{if !empty($account_info['wxapp_limit']) || $_W['isfounder']}
-			<a href="{php echo url('wxapp/post/design_method')}" class="color-default"><i class="wi wi-registersite"></i>新建小程序</a>
-			{/if}
+		<div class="cut-header">
+			<form action="./index.php" method="get">
+				<input type="hidden" name="c" value="wxapp">
+				<input type="hidden" name="a" value="display">
+				<input type="text" name="letter" ng-model="activeLetter" ng-style="{'display': 'none'}">
+				<div class="cut-search" style="margin-left: 60px;">
+					<div class="input-group pull-left">
+						<input class="form-control" name="keyword" value="{$_GPC['keyword']}" type="text" placeholder="请输入小程序名称" >
+						<span class="input-group-btn"><button class="btn btn-default button"><i class="fa fa-search"></i></button></span>
+					</div>
+				</div>
+			</form>
 		</div>
-		<div class="cut-list clearfix we7-margin-top" id="js-wxapp-account-display" ng-controller="AccountDisplayWxappCtrl" ng-cloak>
+		<ul class="letters-list cut-wechat-letters">
+			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
+				<a href="javascript:;" ng-bind="letter"></a>
+			</li>
+		</ul>
+		<div class="cut-list clearfix we7-margin-top">
 			<div class="item wxapp-list-item" ng-repeat="list in wxapp_lists" ng-if="wxapp_lists">
 				<div class="content">
 					<img ng-src="{{list.thumb}}" class="icon"/>
@@ -61,10 +79,15 @@
 					</div>
 				</div>
 			</div>
-			<div class="text-center we7-padding-vertical message-page"  ng-if="!wxapp_lists">
+			<div class="text-center we7-padding-vertical message-page"  ng-if="!wxapp_lists && !activeLetter">
 				<div class="icon"><span class="wi wi-sad"></span></div>
 				<div class="message-state">您还没有创建小程序</div>
+				{if !empty($account_info['wxapp_limit']) || $_W['isfounder']}
 				<div><a class="btn btn-primary" href="{php echo url('wxapp/post/design_method')}">新建小程序</a></div>
+				{/if}
+			</div>
+			<div class="text-center we7-padding-vertical" ng-if="!wxapp_lists && activeLetter">
+				暂无数据
 			</div>
 		</div>
 		<div class="text-right">
@@ -76,6 +99,7 @@
 require(['underscore'], function() {
 	angular.module('wxApp').value('config', {
 		'wxapp_lists': {php echo !empty($wxapp_lists) ? json_encode($wxapp_lists) : 'null'},
+		'activeLetter' : {php echo !empty($_GPC['letter']) ? json_encode($_GPC['letter']) : 'null'},
 		'links': {
 			'rank': "{php echo url('wxapp/display/rank')}",
 			'switch': "{php echo url('wxapp/display/switch')}",

@@ -28,11 +28,11 @@
 					{php $i=1;}
 					{loop $section['menu'] $menu_id $menu}
 						{if $i%4 == 1 || $i == 1}<tr>{/if}
-						<td class="text-left " style="overflow:inherit;">
+						<td class="text-left vertical-middle" style="overflow:inherit;">
 							<div class="dropdown system-select-dropdown">
 								<span>
 									<input id="check-child-{$menu_id}" type="checkbox" we7-check-all="1" value="{$menu['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_account)}checked{/if} name="system[]" autocomplete="off" />
-									<label for="check-child-{$menu_id}" class="text-over we7-margin-horizontal-none" data-toggle="tooltip">{$menu['title']}</label>
+									<label for="check-child-{$menu_id}" class="we7-margin-horizontal-none" data-toggle="tooltip">{$menu['title']}</label>
 								</span>
 								{if $menu['sub_permission']}
 								<ul class="dropdown-menu">
@@ -82,11 +82,11 @@
 					{php $i=1;}
 					{loop $section['menu'] $menu_id $menu}
 						{if $i%4 == 1 || $i == 1}<tr>{/if}
-						<td class="text-left " style="overflow:inherit;">
+						<td class="text-left vertical-middle" style="overflow:inherit;">
 							<div class="dropdown system-select-dropdown">
 								<span>
 									<input id="check-child-{$menu_id}" type="checkbox" we7-check-all="1" value="{$menu['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_wxapp)}checked{/if} name="wxapp[]" autocomplete="off" />
-									<label for="check-child-{$menu_id}" class="text-over we7-margin-horizontal-none" data-toggle="tooltip">{$menu['title']}</label>
+									<label for="check-child-{$menu_id}" class="we7-margin-horizontal-none" data-toggle="tooltip">{$menu['title']}</label>
 								</span>
 								{if $menu['sub_permission']}
 								<ul class="dropdown-menu">
@@ -123,13 +123,13 @@
 
 	{if !empty($module) && in_array($account['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))}
 	<table class="table we7-table table-hover vertical-middle we7-form">
-		<div class="we7-page-title">模块</div>
+		<div class="we7-page-title">应用</div>
 		<thead>
 			<tr>
 				<th colspan="4" class="text-left">
 					<div class="">
 						<!-- <input type="checkbox"  we7-check-all="1" name="module[]" onChange="selectall(this, 'module_select')"> -->
-						<label class=" we7-margin-horizontal-none">模块权限</label>
+						<label class=" we7-margin-horizontal-none">应用权限</label>
 					</div>
 				</th>
 			</tr>
@@ -139,11 +139,11 @@
 			{loop $module $k $m}
 				{if empty($m['issystem'])}
 				{if $i%4 == 1 || $i == 1}<tr>{/if}
-					<td  class="text-left text-over" style="overflow:inherit;width:25%">
+					<td  class="text-left vertical-middle" style="overflow:inherit;width:25%">
 						<div class="dropdown system-select-dropdown">
 							<span class="" data-id="{$k}">
 								<input id="check-module-{$k}" type="checkbox" value="{$k}" name="module[]" we7-check-all="1" {if in_array($k, $module_permission_keys)}checked{/if}>
-								<label for="check-module-{$k}" class="text-over" title="{$m['title']}" style="width: 128px;">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
+								<label for="check-module-{$k}" title="{$m['title']}">{php echo mb_substr($m['title'], 0, 12, 'utf-8')}</label>
 							</span>
 							<ul class="dropdown-menu" role="menu">
 							</ul>
