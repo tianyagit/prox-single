@@ -94,9 +94,9 @@ function wxapp_support_wxapp_modules() {
 }
 
 /*
- * 获取小程序信息(包括最新版本信息)
+ * 获取小程序信息(包括上一次使用版本的版本信息，若从未使用过任何版本则取最新版本信息)
  * @params int $uniacid
- * @params int $versionid 不包含版本ID，默认获取最新版
+ * @params int $versionid 不包含版本ID，默认获取上一次使用的版本，若从未使用过则取最新版本信息
  * @return array
 */
 function wxapp_fetch($uniacid, $version_id = '') {
@@ -116,8 +116,11 @@ function wxapp_fetch($uniacid, $version_id = '') {
 	}
 	
 	if (empty($version_id)) {
-		$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
-		$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'last_use' => 1));
+		if (empty($wxapp_version_info)) {
+			$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
+			$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+		}
 	} else {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
@@ -181,6 +184,30 @@ function wxapp_version_page($uniacid, $page = 1, $pagesize = 4) {
 	$total = pdo_fetchcolumn($tsql, $param);
 	$version_lists = pdo_fetchall($sql, $param);
 	return $version_lists;
+}
+
+/**
+ * 更新最新使用版本
+ * @param int $version_id
+ * return boolean
+ */
+function wxapp_update_last_use_version($version_id) {
+	$result = false;
+	$version_id = intval($version_id);
+	if (empty($version_id)) {
+		return $result;
+	}
+	$version_info = wxapp_version($version_id);
+	if (!empty($version_info)) {
+		if (empty($version_info['last_use'])) {
+			if (pdo_update('wxapp_versions', array('last_use' => 0), array('uniacid' => $version_info['uniacid']))) {
+				$result = pdo_update('wxapp_versions', array('last_use' => 1), array('id' => $version_id));
+			}
+		} else {
+			return true;
+		}
+	}
+	return $result;
 }
 
 /**
