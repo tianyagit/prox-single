@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('reply');
 load()->model('module');
 
-$dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_status', 'import');
+$dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_status');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
