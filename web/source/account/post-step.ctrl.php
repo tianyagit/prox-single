@@ -66,6 +66,7 @@ if($step == 1) {
 			$data = array(
 				'name' => $name,
 				'description' => $description,
+				'title_initial' => get_first_char($name),
 				'groupid' => 0,
 			);
 			//检测新添加公众号名称是否存在

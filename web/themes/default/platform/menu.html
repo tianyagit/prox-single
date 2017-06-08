@@ -190,14 +190,14 @@
 											{{but.name}}
 										</a>
 										<div class="sub-pre-menu-box">
-											<ul class="sub-pre-menu-list designer-y">
-												<li ng-repeat="subBut in but.sub_button">
+											<ul class="sub-pre-menu-list sub-designer-y">
+												<li ng-repeat="subBut in but.sub_button" class='sub-js-sortable'>
 													<input type="hidden" data-role="sub" data-hash="{{subBut.$$hashKey}}"/>
 													<span class="sub-pre-menu-inner" ng-click="context.editBut(subBut, but, {$id});">
 														<span>{{subBut.name}}</span>
 													</span>
 												</dd>
-												<li ng-if="but.sub_button.length < 5" ng-click="context.addSubBut(but);"><i class="fa fa-plus"></i></a>
+												<li ng-if="but.sub_button.length < 5" ng-click="context.addSubBut(but);" class="sub-js-not-sortable"><i class="fa fa-plus"></i></a>
 												</dd>
 											</ul>
 										</div>

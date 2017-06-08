@@ -296,7 +296,7 @@ function uni_groups($groupids = array()) {
 				if (!empty($row['templates'])) {
 					$templates = iunserializer($row['templates']);
 					if (is_array($templates)) {
-						$row['templates'] = pdo_fetchall("SELECT name, title FROM " . tablename('site_templates') . " WHERE name IN ('" . implode("','", array_keys($templates)) . "')", array(), 'name');
+						$row['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
 					}
 				}
 			}

@@ -13,7 +13,6 @@ load()->model('module');
 load()->model('user');
 load()->model('account');
 load()->classs('account');
-include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 $dos = array('filter', 'check', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
@@ -46,7 +45,11 @@ if ($do == 'get_upgrade_info') {
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	$module = cloud_m_upgradeinfo($module_name);
-	iajax(0, $module, '');
+	if (is_error($module)) {
+		iajax(1, $module['message']);
+	} else {
+		iajax(0, $module, '');
+	}
 }
 
 if ($do == 'check_upgrade') {
@@ -334,8 +337,7 @@ if ($do =='install') {
 	if (!empty($module_info['version']['cloud_setting'])) {
 		$module['settings'] = 2;
 	}
-	$pinyin = new Pinyin_Pinyin();
-	$module['title_initial'] = $pinyin->get_first_char($module['title']);
+	$module['title_initial'] = get_first_char($module['title']);
 	if (pdo_insert('modules', $module)) {
 		if (strexists($manifest['install'], '.php')) {
 			if (file_exists($module_path . $manifest['install'])) {
@@ -588,8 +590,7 @@ if ($do == 'not_installed') {
 	if (!empty($uninstallModules)) {
 		foreach($uninstallModules as $name => &$module) {
 			if (!empty($letter) && strlen($letter) == 1) {
-				$pinyin = new Pinyin_Pinyin();
-				$first_char = $pinyin->get_first_char($module['title']);
+				$first_char = get_first_char($module['title']);
 				if ($letter != $first_char) {
 					unset($uninstallModules[$name]);
 					continue;
