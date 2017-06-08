@@ -144,7 +144,6 @@ if($do == 'getpackage') {
 		),
 		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
 	);
-	print_r($request_cloud_data);exit;
 	$result = wxapp_getpackage($request_cloud_data);
 
 	if(is_error($result)) {
