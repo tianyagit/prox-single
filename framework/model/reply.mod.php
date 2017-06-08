@@ -110,70 +110,59 @@ function reply_contnet_search($rid = 0) {
  */
 function reply_predefined_service() {
 	$predefined_service = array(
-			'weather.php' => array(
-					'title' => '城市天气',
-					'description' => '"城市名+天气", 如: "北京天气"',
-					'keywords' => array(
-							array('3', '^.+天气$')
-					)
-			),
-			'baike.php' => array(
-					'title' => '百度百科',
-					'description' => '"百科+查询内容" 或 "定义+查询内容", 如: "百科姚明", "定义自行车"',
-					'keywords' => array(
-							array('3', '^百科.+$'),
-							array('3', '^定义.+$'),
-					)
-			),
-			'translate.php' => array(
-					'title' => '即时翻译',
-					'description' => '"@查询内容(中文或英文)"',
-					'keywords' => array(
-							array('3', '^@.+$'),
-					)
-			),
-			'calendar.php' => array(
-					'title' => '今日老黄历',
-					'description' => '"日历", "万年历", "黄历"或"几号"',
-					'keywords' => array(
-							array('1', '日历'),
-							array('1', '万年历'),
-							array('1', '黄历'),
-							array('1', '几号'),
-					)
-			),
-			'news.php' => array(
-					'title' => '看新闻',
-					'description' => '"新闻"',
-					'keywords' => array(
-							array('1', '新闻'),
-					)
-			),
-			'express.php' => array(
-					'title' => '快递查询',
-					'description' => '"快递+单号", 如: "申通1200041125"',
-					'keywords' => array(
-							array('3', '^(申通|圆通|中通|汇通|韵达|顺丰|EMS) *[a-z0-9]{1,}$')
-					)
-			),
+		'weather.php' => array(
+			'title' => '城市天气',
+			'description' => '"城市名+天气", 如: "北京天气"',
+			'keywords' => array(
+					array('3', '^.+天气$')
+			)
+		),
+		'baike.php' => array(
+			'title' => '百度百科',
+			'description' => '"百科+查询内容" 或 "定义+查询内容", 如: "百科姚明", "定义自行车"',
+			'keywords' => array(
+					array('3', '^百科.+$'),
+					array('3', '^定义.+$'),
+			)
+		),
+		'translate.php' => array(
+			'title' => '即时翻译',
+			'description' => '"@查询内容(中文或英文)"',
+			'keywords' => array(
+					array('3', '^@.+$'),
+			)
+		),
+		'calendar.php' => array(
+			'title' => '今日老黄历',
+			'description' => '"日历", "万年历", "黄历"或"几号"',
+			'keywords' => array(
+					array('1', '日历'),
+					array('1', '万年历'),
+					array('1', '黄历'),
+					array('1', '几号'),
+			)
+		),
+		'news.php' => array(
+			'title' => '看新闻',
+			'description' => '"新闻"',
+			'keywords' => array(
+					array('1', '新闻'),
+			)
+		),
+		'express.php' => array(
+			'title' => '快递查询',
+			'description' => '"快递+单号", 如: "申通1200041125"',
+			'keywords' => array(
+					array('3', '^(申通|圆通|中通|汇通|韵达|顺丰|EMS) *[a-z0-9]{1,}$')
+			)
+		),
 	);
 	return $predefined_service;
 }
 
-/**
- * 获取本站点当前存在的所有预定义常用服务的apiurl
- * @return array
- */
-function reply_getall_current_apiurls() {
-	$apiurls = array();
-	$predefined_service = reply_predefined_service();
-	$apis = implode('\',\'', array_keys($predefined_service));
-	$apis = "'{$apis}'";
-	$sql = 'SELECT DISTINCT `apiurl` FROM ' . tablename('userapi_reply') . ' AS `e` LEFT JOIN ' . tablename('rule') . " AS `r` ON (`e`.`rid`=`r`.`id`) WHERE `r`.`uniacid`='0' AND `apiurl` IN ({$apis})";
-	$apiurls = pdo_fetchall($sql);
-	return $apiurls;
-}
+function reply_getall_exists_rule() {
 
+}
 /**
  * 获取常用服务信息
  * @param $rule_setting_select
@@ -192,8 +181,7 @@ function reply_getall_common_service() {
 			$rule_ids[] = $rule_detail['id'];
 			$service_list[$rule_detail['id']] = $rule_detail;
 		}
-		$description_sql = "SELECT * FROM `ims_userapi_reply` WHERE `rid` IN (" . implode(',',$rule_ids) .")";
-		$all_description = pdo_fetchall($description_sql);
+		$all_description = pdo_getall('userapi_reply', array('rid' => $rule_ids));
 		if (!empty($all_description)) {
 			foreach ($all_description as $description) {
 				$service_list[$description['rid']]['description'] = $description['description'];
@@ -223,10 +211,14 @@ function reply_getall_common_service() {
  * @return int
  */
 function reply_insert_without_service($file) {
+	$rule_id = pdo_getcolumn('userapi_reply', array('apiurl' => $file), 'rid');
+	if (!empty($rule_id)) {
+		return $rule_id;
+	}
 	$all_service = reply_predefined_service();
 	$all_url = array_keys($all_service);
 	if (!in_array($file, $all_url)) {
-		iajax(1, '参数错误');
+		return false;
 	}
 	pdo_begin();
 	$rule_info = array('uniacid' => 0, 'name' => $all_service[$file]['title'], 'module' => 'userapi', 'displayorder' => 255, 'status' => 1);

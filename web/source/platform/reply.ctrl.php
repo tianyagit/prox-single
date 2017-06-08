@@ -451,8 +451,11 @@ if ($do == 'change_status') {
 	if ($m == 'service') {
 		$rid = intval($_GPC['rid']);
 		$file = trim($_GPC['file']);
-		if (intval($rid) == 0) {
+		if ($rid == 0) {
 			$rid = reply_insert_without_service($file);
+			if (empty($rid)) {
+				iajax(1, '参数错误');
+			}
 		}
 		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
 		$config = iunserializer($userapi_config);
