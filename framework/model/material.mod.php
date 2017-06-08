@@ -528,12 +528,11 @@ function material_delete($material_id, $location){
  * @param $str
  * @return boolean
  */
-function material_url_check($str) {
-	if (empty($str)) {
+function material_url_check($url) {
+	if (empty($url)) {
 		return true;
 	} else {
-		//普通域名
-		$preg = "/^(http|https|tel)?\:\/\/.*/i";
-		return preg_match($preg, $str);
+		$pattern = "/^(http|https|tel)?\:\/\/.*/i";
+		return preg_match($pattern, $url);
 	}
 }
