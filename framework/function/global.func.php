@@ -1239,7 +1239,7 @@ function dir_size($dir) {
  * @param unknown $str
  * @return string
  */
-function get_first_char($str) {
+function get_first_pinyin($str) {
 	$first_char = '';
 	$str = trim($str);
 	if(empty($str)) {
