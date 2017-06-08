@@ -173,3 +173,75 @@ function reply_getall_current_apiurls() {
 	$apiurls = pdo_fetchall($sql);
 	return $apiurls;
 }
+
+/**
+ * 获取常用服务信息
+ * @param $rule_setting_select
+ * @return array
+ */
+function reply_getall_common_service() {
+	global $_W;
+	$rule_setting_select = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
+	$rule_setting_select = iunserializer($rule_setting_select);
+	$exists_rule = pdo_getall('rule', array('uniacid' => 0, 'module' => 'userapi', 'status' => 1));
+	$service_list = array();
+	$rule_ids = array();
+	$api_url = array();
+	if (!empty($exists_rule)) {
+		foreach ($exists_rule as $rule_detail) {
+			$rule_ids[] = $rule_detail['id'];
+			$service_list[$rule_detail['id']] = $rule_detail;
+		}
+		$description_sql = "SELECT * FROM `ims_userapi_reply` WHERE `rid` IN (" . implode(',',$rule_ids) .")";
+		$all_description = pdo_fetchall($description_sql);
+		if (!empty($all_description)) {
+			foreach ($all_description as $description) {
+				$service_list[$description['rid']]['description'] = $description['description'];
+				$service_list[$description['rid']]['switch'] = isset($rule_setting_select[$description['rid']]) && $rule_setting_select[$description['rid']] ? 'checked' : '';
+				$api_url[] = $description['apiurl'];
+			}
+		}
+	}
+
+	$all_service = reply_predefined_service();
+	$all_url = array_keys($all_service);
+	$diff_url = array_diff($all_url, $api_url);
+	if (!empty($diff_url)) {
+		foreach ($diff_url as $url) {
+			$service_list[$url]['id'] = $all_service[$url];
+			$service_list[$url]['name'] = $all_service[$url]['title'];
+			$service_list[$url]['description'] = $all_service[$url]['description'];
+			$service_list[$url]['switch'] = '';
+		}
+	}
+	return $service_list;
+}
+
+/**
+ * 添加常用服务返回新增id
+ * @param $file
+ * @return int
+ */
+function reply_insert_without_service($file) {
+	$all_service = reply_predefined_service();
+	$all_url = array_keys($all_service);
+	if (!in_array($file, $all_url)) {
+		iajax(1, '参数错误');
+	}
+	pdo_begin();
+	$rule_info = array('uniacid' => 0, 'name' => $all_service[$file]['title'], 'module' => 'userapi', 'displayorder' => 255, 'status' => 1);
+	pdo_insert('rule', $rule_info);
+	$rule_id = pdo_insertid();
+	$rule_keyword_info = array('rid' => $rule_id, 'uniacid' => 0, 'module' => 'userapi', 'displayorder' => $rule_info['displayorder'], 'status' => $rule_info['status']);
+	if (!empty($all_service[$file]['keywords'])) {
+		foreach ($all_service[$file]['keywords'] as $keyword_info) {
+			$rule_keyword_info['content'] = $keyword_info[1];
+			$rule_keyword_info['type'] = $keyword_info[0];
+			pdo_insert('rule_keyword', $rule_keyword_info);
+		}
+	}
+	$userapi_reply = array('rid' => $rule_id, 'description' => htmlspecialchars($all_service[$file]['description']), 'apiurl' => $file);
+	pdo_insert('userapi_reply', $userapi_reply);
+	pdo_commit();
+	return $rule_id;
+}
