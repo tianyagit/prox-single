@@ -153,20 +153,11 @@ function wxapp_version_all($uniacid) {
 		return $wxapp_versions;
 	}
 	
-	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
+	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array('id'), '', array("id DESC"));
 	if (!empty($wxapp_versions)) {
-		foreach ($wxapp_versions as &$modules_val) {
-			$modules_val['modules'] = iunserializer($modules_val['modules']);
-			if (!empty($modules_val['modules'])) {
-				$module_array = array();
-				foreach ($modules_val['modules'] as $module_key => &$module_val) {
-					$module_val['module_info'] = module_fetch($module_val['name']);
-					$module_array[] = $modules_val['modules'][$module_key];
-				}
-				$modules_val['modules'] = $module_array;
-			}
+		foreach ($wxapp_versions as &$version) {
+			$version = wxapp_version($version['id']);
 		}
-		unset($module_val, $modules_val);
 	}
 	return $wxapp_versions;
 }
@@ -294,7 +285,8 @@ function wxapp_site_info($multiid) {
 		}
 		unset($nav);
 	}
-	$site_info['recommend'] = pdo_getall('site_article', array('uniacid' => $uniacid));
+	$recommend_sql = "SELECT a.name, b.* FROM " . tablename('site_category') . " AS a LEFT JOIN " . tablename('site_article') . " AS b ON a.id = b.pcate WHERE a.parentid = 0 AND a.multiid = :multiid";
+	$site_info['recommend'] = pdo_fetchall($recommend_sql, array(':multiid' => $multiid));
 	return $site_info;
 }
 
