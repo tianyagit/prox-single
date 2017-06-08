@@ -12,7 +12,7 @@ class Pinyin_Pinyin {
 	 * @param string $string
 	 * @return array
 	 **/
-	private static function splitString($string) {
+	private function splitString($string) {
 		$arrResult = array();
 
 		$intLen = mb_strlen($string);
@@ -30,7 +30,7 @@ class Pinyin_Pinyin {
 	 * @param array $arrStringList
 	 * @return array
 	 **/
-	private static function toPinyinList($arrStringList) {
+	private function toPinyinList($arrStringList) {
 		$arrResult = array();
 
 		if (!is_array($arrStringList)) {
@@ -67,7 +67,7 @@ class Pinyin_Pinyin {
 	 * @param boolean $isAll
 	 * @return mixed
 	 **/
-	public static function ChineseToPinyin($string, $isSimple = true, $isInitial = false, 
+	public function ChineseToPinyin($string, $isSimple = true, $isInitial = false, 
 		$isPolyphone = false, $isAll = false) {
 
 		$result = '';
@@ -157,7 +157,7 @@ class Pinyin_Pinyin {
 	/*
 		*获取字符串首个字符/首个汉字拼音大写
 	*/
-	public static function get_first_char($string){
+	public function get_first_char($string){
 		$first = '';
 		$pinyin = self::ChineseToPinyin($string);
 		if(!empty($pinyin)){
