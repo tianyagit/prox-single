@@ -238,7 +238,10 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 	} else {
 		$openid = $openidOruid;
 	}
-
+	
+	/**
+	暂时先把缓存注释，查看是否重复会员问题
+	**/
 	$params = array();
 	$condition = '`openid` = :openid';
 	$params[':openid'] = $openid;

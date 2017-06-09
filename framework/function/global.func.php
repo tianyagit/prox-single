@@ -1233,3 +1233,23 @@ function dir_size($dir) {
 	}
 	return $size;
 }
+
+/**
+ * 获取字符串的大写英文首字母
+ * @param unknown $str
+ * @return string
+ */
+function get_first_pinyin($str) {
+	$first_char = '';
+	$str = trim($str);
+	if(empty($str)) {
+		return $first_char;
+	}
+	include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
+	static $pinyin;
+	if (empty($pinyin)) {
+		$pinyin = new Pinyin_Pinyin();
+	}
+	$first_char = $pinyin->get_first_char($str);
+	return $first_char;
+}

@@ -40,8 +40,11 @@ if ($do == 'display') {
 }
 
 if ($do == 'edit_version') {
-	if (empty($_GPC['version_info']) || !is_array($_GPC['version_info']) || empty($_GPC['version_info']['modules'])) {
+	if (empty($_GPC['version_info']) || !is_array($_GPC['version_info'])) {
 		iajax(1, '数据错误！');
+	}
+	if (empty($_GPC['version_info']['modules'])) {
+		iajax(1, '应用模块不可为空！');
 	}
 	$versionid = intval($_GPC['version_info']['id']);
 	$version_exist = wxapp_fetch($uniacid, $versionid);
@@ -79,7 +82,7 @@ if ($do == 'edit_version') {
 		}
 	}
 	if (empty($new_module_data)) {
-		iajax(1, '数据错误！');
+		iajax(1, '应用模块不可为空！');
 	}
 	$data = array('modules' => iserializer($new_module_data), 'version' => trim($_GPC['version_info']['version']), 'description' => trim($_GPC['version_info']['description']));
 	pdo_update('wxapp_versions', $data, array('id' => $versionid));
@@ -141,7 +144,6 @@ if($do == 'getpackage') {
 		),
 		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
 	);
-	print_r($request_cloud_data);exit;
 	$result = wxapp_getpackage($request_cloud_data);
 
 	if(is_error($result)) {

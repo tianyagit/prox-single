@@ -26,6 +26,7 @@ function wxapp_account_create($account) {
 	$uni_account_data = array(
 		'name' => $account['name'],
 		'description' => $account['description'],
+		'title_initial' => get_first_pinyin($account['name']),
 		'groupid' => 0,
 	);
 	if (!pdo_insert('uni_account', $uni_account_data)) {
@@ -92,9 +93,9 @@ function wxapp_support_wxapp_modules() {
 }
 
 /*
- * 获取小程序信息(包括最新版本信息)
+ * 获取小程序信息(包括上一次使用版本的版本信息，若从未使用过任何版本则取最新版本信息)
  * @params int $uniacid
- * @params int $versionid 不包含版本ID，默认获取最新版
+ * @params int $versionid 不包含版本ID，默认获取上一次使用的版本，若从未使用过则取最新版本信息
  * @return array
 */
 function wxapp_fetch($uniacid, $version_id = '') {
@@ -115,8 +116,11 @@ function wxapp_fetch($uniacid, $version_id = '') {
 	}
 	
 	if (empty($version_id)) {
-		$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
-		$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'last_use' => 1));
+		if (empty($wxapp_version_info)) {
+			$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
+			$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+		}
 	} else {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
@@ -149,22 +153,61 @@ function wxapp_version_all($uniacid) {
 		return $wxapp_versions;
 	}
 	
-	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
+	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array('id'), '', array("id DESC"));
 	if (!empty($wxapp_versions)) {
-		foreach ($wxapp_versions as &$modules_val) {
-			$modules_val['modules'] = iunserializer($modules_val['modules']);
-			if (!empty($modules_val['modules'])) {
-				$module_array = array();
-				foreach ($modules_val['modules'] as $module_key => &$module_val) {
-					$module_val['module_info'] = module_fetch($module_val['name']);
-					$module_array[] = $modules_val['modules'][$module_key];
-				}
-				$modules_val['modules'] = $module_array;
-			}
+		foreach ($wxapp_versions as &$version) {
+			$version = wxapp_version($version['id']);
 		}
-		unset($module_val, $modules_val);
 	}
 	return $wxapp_versions;
+}
+
+/**
+ * 获取某一小程序某一分页里所有版本信息
+ * @param int $uniacid
+ * @param int $page
+ * @param int $pagesize
+ * return array
+ */
+function wxapp_version_page($uniacid, $page = 1, $pagesize = 4) {
+	$version_page = array();
+	$uniacid = intval($uniacid);
+	$page = max(1, intval($page));
+	$pagesize = intval($pagesize) > 0 ? intval($pagesize) : 4;
+	if (empty($uniacid)) {
+		return $version_page;
+	}
+	$param = array(':uniacid' => $uniacid);
+	$start = ($page - 1) * $pagesize;
+	$tsql = "SELECT COUNT(*) FROM " . tablename('wxapp_versions'). " WHERE uniacid = :uniacid";
+	$sql = "SELECT * FROM ". tablename('wxapp_versions'). " WHERE uniacid = :uniacid LIMIT {$start}, {$pagesize}";
+	$total = pdo_fetchcolumn($tsql, $param);
+	$version_lists = pdo_fetchall($sql, $param);
+	return $version_lists;
+}
+
+/**
+ * 更新最新使用版本
+ * @param int $version_id
+ * return boolean
+ */
+function wxapp_update_last_use_version($version_id) {
+	$result = false;
+	$version_id = intval($version_id);
+	if (empty($version_id)) {
+		return $result;
+	}
+	$version_info = wxapp_version($version_id);
+	if (!empty($version_info)) {
+		if (empty($version_info['last_use'])) {
+			if (pdo_update('wxapp_versions', array('last_use' => 0), array('uniacid' => $version_info['uniacid']))) {
+				$result = pdo_update('wxapp_versions', array('last_use' => 1), array('id' => $version_id));
+			}
+		} else {
+			return true;
+		}
+	}
+	return $result;
 }
 
 /**
@@ -225,10 +268,8 @@ function wxapp_save_switch($uniacid) {
 }
 
 function wxapp_site_info($multiid) {
-	global $_GPC;
 	$site_info = array();
 	$multiid = intval($multiid);
-	$uniacid = intval($_GPC['uniacid']);
 	
 	if (empty($multiid)) {
 		return array();
@@ -242,7 +283,8 @@ function wxapp_site_info($multiid) {
 		}
 		unset($nav);
 	}
-	$site_info['recommend'] = pdo_getall('site_article', array('uniacid' => $uniacid));
+	$recommend_sql = "SELECT a.name, b.* FROM " . tablename('site_category') . " AS a LEFT JOIN " . tablename('site_article') . " AS b ON a.id = b.pcate WHERE a.parentid = 0 AND a.multiid = :multiid";
+	$site_info['recommend'] = pdo_fetchall($recommend_sql, array(':multiid' => $multiid));
 	return $site_info;
 }
 

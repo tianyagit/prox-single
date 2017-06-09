@@ -51,7 +51,7 @@
 			<td class="we7-padding-right color-default"></td>
 		</tr>
 	</table>
-	{if !in_array($ownerid, $founders)}
+	{if !in_array($owner['uid'], $founders)}
 	<table class="table we7-table table-hover account-package-extra">
 		<tr>
 			<th colspan="6" class="text-left we7-padding-right"><span>附加权限</span></th>
@@ -84,7 +84,7 @@
 		</tr>
 	</table>
 	{/if}
-	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($ownerid, $founders)}
+	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders)}
 	<p>
 		<a href="javascript:;" class="btn btn-primary" data-toggle="modal" data-target="#change-group">修改套餐</a>
 		<a href="javascript:;" class="btn btn-primary" data-toggle="modal" data-target="#jurisdiction-add">修改附加权限</a>

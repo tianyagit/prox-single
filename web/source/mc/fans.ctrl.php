@@ -42,36 +42,22 @@ if ($do == 'display') {
 			$param[':openid'] = $nickname;
 		} else {
 			$condition .= " AND ((f.`nickname` LIKE :nickname) OR (f.`openid` LIKE :openid))";
-			$param[':nickname'] = "%".$nickname."%";
-			$param[':openid'] = "%".$nickname."%";
+			$param[':nickname'] = "%" . $nickname . "%";
+			$param[':openid'] = "%" . $nickname . "%";
 		}
 	}
-	if (!empty($_GPC['time']['start'])) {
-		$starttime = strtotime($_GPC['time']['start']);
-		$endtime = strtotime($_GPC['time']['end']) + 86399;
-	} else {
-		$starttime = strtotime('-3 month', time());
-		$endtime = time();
-	}
-	if (empty($tag)) {
-		$param[':starttime'] = $starttime;
-		$param[':endtime'] = $endtime;
-	}
+
 	$follow = intval($_GPC['follow']) ? intval($_GPC['follow']) : 1;
 	if ($follow == 1) {
 		$orderby = " ORDER BY f.`followtime` DESC";
 		$condition .= " AND f.`follow` = 1";
-		if (!empty($starttime) && empty($tag)) {
-			$condition .= " AND f.`followtime` >= :starttime AND f.`followtime` <= :endtime";
-		}
 	} elseif ($follow == 2) {
 		$orderby = " ORDER BY f.`unfollowtime` DESC";
 		$condition .= " AND f.`follow` = 0";
-		if (!empty($starttime) && empty($tag)) {
-			$condition .= " AND f.`unfollowtime` >= :starttime AND f.`unfollowtime` <= :endtime";
-		}
 	}
-	$fans_list = pdo_fetchall("SELECT f.* FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid`". $condition. " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize, $param);
+	$select_sql = "SELECT %s FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid` " . $condition ." %s";
+	$fans_list_sql = sprintf($select_sql, "f.* ", " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize);
+	$fans_list = pdo_fetchall($fans_list_sql, $param);
 	if (!empty($fans_list)) {
 		foreach ($fans_list as &$v) {
 			$v['tag_show'] = mc_show_tag($v['groupid']);
@@ -109,9 +95,10 @@ if ($do == 'display') {
 		unset($v);
 	}
 
-	$total = pdo_fetchcolumn("SELECT COUNT(DISTINCT f.`fanid`) FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping').' AS m ON m.`fanid` = f.`fanid`'.$condition, $param);
+	$total_sql = sprintf($select_sql, "COUNT(DISTINCT f.`fanid`) ", '');
+	$total = pdo_fetchcolumn($total_sql, $param);
 	$pager = pagination($total, $pageindex, $pagesize);
-	$fans['total'] = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('mc_mapping_fans') . ' WHERE uniacid = :uniacid AND acid = :acid AND follow = 1', array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
+	$fans['total'] = pdo_getcolumn("mc_mapping_fans", array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => 1), 'count(*)');
 }
 
 if ($do == 'add_tag') {
@@ -267,7 +254,7 @@ if ($do == 'download_fans') {
 			}
 			if (!empty($add_fans_sql)) {
 				$add_fans_sql = rtrim($add_fans_sql, ',');
-				$add_fans_sql = 'INSERT INTO ' . tablename('mc_mapping_fans') . ' (`acid`, `uniacid`, `uid`, `openid`, `salt`, `follow`, `followtime`, `tag`) VALUES ' . $add_fans_sql;
+				$add_fans_sql = "INSERT INTO " . tablename('mc_mapping_fans') . " (`acid`, `uniacid`, `uid`, `openid`, `salt`, `follow`, `followtime`, `tag`) VALUES " . $add_fans_sql;
 				$result = pdo_query($add_fans_sql);
 			}
 			pdo_update('mc_mapping_fans', array('follow' => 1), array('openid' => $wechat_fans));
