@@ -1164,3 +1164,18 @@ function account_wechatpay_proxy () {
 	unset($proxy_account['service'][$_W['uniacid']]);
 	return $proxy_account;
 }
+
+
+function account_remotefile_content($url)
+{
+	$ch = curl_init ();
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_URL, $url);
+	ob_start();
+	curl_exec( $ch );
+	$return_content = ob_get_contents();
+	ob_end_clean ();
+	$return_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	return $return_content;
+}
