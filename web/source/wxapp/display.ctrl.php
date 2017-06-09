@@ -106,10 +106,18 @@ if ($do == 'home') {
 	$version_id = !empty($_GPC['version_id']) ? intval($_GPC['version_id']) : $wxapp_info['version']['id'];
 	if (!empty($module_name) && !empty($version_id)) {
 		$version_info = wxapp_version($version_id);
-		if (empty($version_id) || empty($version_info['modules'][$module_name])) {
+		$module_info = array();
+		if (!empty($version_info['modules'])) {
+			foreach ($version_info['modules'] as $key => $module_val) {
+				if ($module_val['name'] == $module_name) {
+					$module_info = $module_val;
+				}
+			}
+		}
+		if (empty($version_id) || empty($module_info)) {
 			itoast('版本信息错误');
 		}
-		$uniacid = !empty($version_info['modules'][$module_name]['account']['uniacid']) ? $version_info['modules'][$module_name]['account']['uniacid'] : $version_info['uniacid'];
+		$uniacid = !empty($module_info['account']['uniacid']) ? $module_info['account']['uniacid'] : $version_info['uniacid'];
 		uni_account_switch($uniacid, url('home/welcome/ext/', array('m' => $module_name)));
 	}
 	uni_account_switch($uniacid);
