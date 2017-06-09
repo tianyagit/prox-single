@@ -134,7 +134,7 @@ function wxapp_fetch($uniacid, $version_id = '') {
 	} else {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
-	if (!empty($wxapp_version_info)) {
+	if (!empty($wxapp_version_info) && !empty($wxapp_version_info['modules'])) {
 		$wxapp_version_info['modules'] = unserialize($wxapp_version_info['modules']);
 		//如果是单模块版并且本地模块，应该是开发者开发小程序，则模块版本号本地最新的。
 		if ($wxapp_version_info['design_method'] == WXAPP_MODULE) {
