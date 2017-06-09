@@ -51,7 +51,6 @@ if ($do == 'edit_version') {
 	if(empty($version_exist)) {
 		iajax(1, '版本不存在或已删除！');
 	}
-
 	$have_permission = false;
 	$wxapp_modules = wxapp_support_wxapp_modules();
 	$supoort_modulenames = array_keys($wxapp_modules);
@@ -61,6 +60,7 @@ if ($do == 'edit_version') {
 			if (!in_array($module_val['name'], $supoort_modulenames)) {
 				iajax(1, '没有模块：' . $module_val['name'] . '的权限！');
 			} else {
+				// @@todo $new_module_data数组结构
 				$new_module_data[] = array(
 					'name' => $module_val['name'],
 					'version' => $module_val['version']
@@ -73,10 +73,12 @@ if ($do == 'edit_version') {
 		$module_version = trim($_GPC['version_info']['modules'][0]['version']);
 		$have_permission = in_array($module_name, $supoort_modulenames);
 		if (!empty($have_permission)) {
-			$new_module_data[] = array(
-				'name' => $module_name,
-				'version' => $module_version
-			);
+			$new_module_data = array(
+					$module_name => array(
+						'name' => $module_name,
+						'version' => $module_version
+					)
+				);
 		} else {
 			iajax(1, '没有此模块的权限！');
 		}

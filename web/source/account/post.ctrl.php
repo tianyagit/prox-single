@@ -49,12 +49,20 @@ if($do == 'base') {
 				if(!empty($_GPC['imgsrc'])) {
 					if(parse_path($_GPC['imgsrc'])) {
 						$img_parse = parse_url($_GPC['imgsrc']);
-						$img_absolute_path = IA_ROOT . $img_parse['path'];
-						if($type == 'qrcodeimgsrc') {
-							$result = copy($img_absolute_path, IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+						$new_pic_name = IA_ROOT . '%s'.$acid.'.jpg';
+						if ($type == 'qrcodeimgsrc') {
+							$filename = sprintf($new_pic_name, '/attachment/qrcode_');
 						}
-						if($type == 'headimgsrc') {
-							$result = copy($img_absolute_path, IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+						if ($type == 'headimgsrc') {
+							$filename = sprintf($new_pic_name, '/attachment/headimg_');
+						}
+						if ($img_parse['host'] != $_SERVER['HTTP_HOST']) {
+							$return_content = account_remotefile_content($_GPC['imgsrc']);
+							$fp= @fopen($filename,"w");
+							$result = fwrite($fp,$return_content);
+						} else {
+							$img_absolute_path = IA_ROOT . $img_parse['path'];
+							$result = copy($img_absolute_path, $filename);
 						}
 					}else {
 						iajax(40035, '参数错误！', '');
