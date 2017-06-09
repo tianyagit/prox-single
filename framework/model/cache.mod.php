@@ -83,17 +83,6 @@ function cache_build_account($uniacid = 0) {
 }
 
 /**
- * 重建粉丝缓存
- * @param string openid 要重建缓存的openid
- */
-function cache_build_fansinfo($openid) {
-	$openid = trim($openid);
-	$cachekey = cache_system_key("fansinfo:{$openid}");
-	cache_delete($cachekey);
-	return true;
-}
-
-/**
  * 重建会员缓存
  * @param int uid 要重建缓存的会员uid
  */
@@ -290,6 +279,7 @@ function cache_build_uninstalled_module() {
 	load()->model('cloud');
 	load()->classs('cloudapi');
 	load()->model('extension');
+	load()->func('file');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 	$all_module = pdo_getall('modules');
@@ -404,8 +394,8 @@ function cache_build_proxy_wechatpay_account() {
 	}
 	$sql = "SELECT * FROM " . tablename('uni_account') . $where;
 	$uniaccounts = pdo_fetchall($sql, $params);
-	$borrow = array();
 	$service = array();
+	$borrow = array();
 	if (!empty($uniaccounts)) {
 		foreach ($uniaccounts as $uniaccount) {
 			$account = account_fetch($uniaccount['default_acid']);

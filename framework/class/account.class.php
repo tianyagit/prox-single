@@ -1607,7 +1607,7 @@ abstract class WeModuleWxapp extends WeBase {
 	public $appid;
 	public $version;
 	
-	public function result($errno, $message, $data) {
+	public function result($errno, $message, $data = '') {
 		exit(json_encode(array(
 			'errno' => $errno,
 			'message' => $message,
@@ -1707,10 +1707,11 @@ abstract class WeModuleWxapp extends WeBase {
 			'uniontid' => $paylog['uniontid'],
 			'title' => $order['title'],
 		);
+		$setting = uni_setting($_W['uniacid'], array('payment'));
 		$wechat_payment = array(
-			'appid' => 'wxb4bf68b72dee1969',
-			'signkey' => '1c58296b76698f749e4a36b9138fcd52',
-			'mchid' => '1410357102',
+			'appid' => $_W['account']['key'],
+			'signkey' => $setting['payment']['wechat']['signkey'],
+			'mchid' => $setting['payment']['wechat']['mchid'],
 			'version' => 2,
 		);
 		return wechat_build($params, $wechat_payment);

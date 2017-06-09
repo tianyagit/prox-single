@@ -423,9 +423,6 @@ if ($do == 'delete') {
 		//删除回复，关键字及规则
 		if (pdo_delete('rule', array('id' => $rid))) {
 			pdo_delete('rule_keyword', array('rid' => $rid));
-			//删除统计相关数据
-			pdo_delete('stat_rule', array('rid' => $rid));
-			pdo_delete('stat_keyword', array('rid' => $rid));
 			//调用模块中的删除
 			if (!in_array($m, $sysmods)) {
 				$reply_module = $m;

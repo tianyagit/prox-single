@@ -356,7 +356,6 @@ class WeEngine {
 		if(!empty($fans)) {
 			if ($message['event'] == 'unsubscribe') {
 				pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('fanid' => $fans['fanid']));
-				cache_build_fansinfo($message['from']);
 				pdo_delete('mc_fans_tag_mapping', array('fanid' => $fans['fanid']));
 			} elseif ($message['event'] != 'ShakearoundUserShake' && $message['type'] != 'trace') {
 				$rec = array();
@@ -385,7 +384,6 @@ class WeEngine {
 				}
 				if(!empty($rec)){
 					pdo_update('mc_mapping_fans', $rec, array('openid' => $message['from']));
-					cache_build_fansinfo($message['from']);
 				}
 			}
 		} else {

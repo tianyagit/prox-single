@@ -11,7 +11,6 @@ function wxapp_getpackage($data, $if_single = false) {
 
 	$api = new CloudApi();
 	$result = $api->post('wxapp', 'download', $data, 'html');
-
 	if (is_error($result)) {
 			return error(-1, $result['message']);
 	} else {
@@ -100,7 +99,7 @@ function wxapp_support_wxapp_modules() {
  * @return array
 */
 function wxapp_fetch($uniacid, $version_id = '') {
-	global $_GPC;
+	load()->model('extension');
 	$wxapp_info = array();
 	$uniacid = intval($uniacid);
 	
@@ -136,6 +135,15 @@ function wxapp_fetch($uniacid, $version_id = '') {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
 	if (!empty($wxapp_version_info)) {
+		$wxapp_version_info['modules'] = unserialize($wxapp_version_info['modules']);
+		//如果是单模块版并且本地模块，应该是开发者开发小程序，则模块版本号本地最新的。
+		if ($wxapp_version_info['design_method'] == WXAPP_MODULE) {
+			$module = current($wxapp_version_info['modules']);
+			$manifest = ext_module_manifest($module['name']);
+			if (!empty($manifest)) {
+				$wxapp_version_info['modules'][$module['name']]['version'] = $manifest['application']['version'];
+			}
+		}
 		$wxapp_info['version'] = $wxapp_version_info;
 		$wxapp_info['version_num'] = explode('.', $wxapp_version_info['version']);
 	}
@@ -155,20 +163,11 @@ function wxapp_version_all($uniacid) {
 		return $wxapp_versions;
 	}
 	
-	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array(), '', array("id DESC"), array());
+	$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array('id'), '', array("id DESC"));
 	if (!empty($wxapp_versions)) {
-		foreach ($wxapp_versions as &$modules_val) {
-			$modules_val['modules'] = iunserializer($modules_val['modules']);
-			if (!empty($modules_val['modules'])) {
-				$module_array = array();
-				foreach ($modules_val['modules'] as $module_key => &$module_val) {
-					$module_val['module_info'] = module_fetch($module_val['name']);
-					$module_array[] = $modules_val['modules'][$module_key];
-				}
-				$modules_val['modules'] = $module_array;
-			}
+		foreach ($wxapp_versions as &$version) {
+			$version = wxapp_version($version['id']);
 		}
-		unset($module_val, $modules_val);
 	}
 	return $wxapp_versions;
 }
@@ -289,10 +288,8 @@ function wxapp_save_switch($uniacid) {
 }
 
 function wxapp_site_info($multiid) {
-	global $_GPC;
 	$site_info = array();
 	$multiid = intval($multiid);
-	$uniacid = intval($_GPC['uniacid']);
 	
 	if (empty($multiid)) {
 		return array();
@@ -306,7 +303,8 @@ function wxapp_site_info($multiid) {
 		}
 		unset($nav);
 	}
-	$site_info['recommend'] = pdo_getall('site_article', array('uniacid' => $uniacid));
+	$recommend_sql = "SELECT a.name, b.* FROM " . tablename('site_category') . " AS a LEFT JOIN " . tablename('site_article') . " AS b ON a.id = b.pcate WHERE a.parentid = 0 AND a.multiid = :multiid";
+	$site_info['recommend'] = pdo_fetchall($recommend_sql, array(':multiid' => $multiid));
 	return $site_info;
 }
 

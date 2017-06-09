@@ -135,7 +135,6 @@ if($do == 'register') {
 		$user['uid'] = pdo_insertid();
 		if (!empty($fan) && !empty($fan['fanid'])) {
 			pdo_update('mc_mapping_fans', array('uid'=>$user['uid']), array('fanid'=>$fan['fanid']));
-			cache_build_fansinfo($fan['openid']);
 		}
 		if(_mc_login($user)) {
 			message('注册成功！', referer(), 'success');

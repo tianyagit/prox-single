@@ -525,11 +525,11 @@ function material_delete($material_id, $location){
 
 /**
  * 验证输入内容是否为合法链接
- * @param $str
+ * @param $url
  * @return boolean
  */
-function material_url_check($url) {
-	if (empty($url)) {
+function material_url_check($url){
+	if (empty($url)){
 		return true;
 	} else {
 		$pattern = "/^(http|https|tel)?\:\/\/.*/i";
