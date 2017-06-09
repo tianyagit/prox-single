@@ -1,6 +1,6 @@
 {template 'common/header'}
 <div class="we7-page-title">
-	应用 
+	应用
 </div>
 
 <ul class="we7-page-tab">
@@ -29,14 +29,24 @@
 					禁用
 				{/if}
 			</span>
-			<div class="cover-dark">
-				<a href="{url 'home/welcome/ext'  array('m' => $row['name'])}" class="mange-goto"><i class="fa fa-angle-right"></i>进入应用</a>
+			<div class="mask">
+
+				<a href="{url 'home/welcome/ext'  array('m' => $row['name'])}" class="entry">
+					进入应用 <i class="wi wi-angle-right"></i>
+				</a>
 				{if $row['shortcut']}
-				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="wi wi-remove"></i> <span>移出菜单</span></a>
+				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="移出菜单">
+					<i class="wi wi-remove"></i>
+				</a>
 				{else}
-				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="manage-show"><i class="wi wi-eye"></i> <span>显示到菜单</span></a>
+				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="显示到菜单">
+					<i class="wi wi-eye"></i>
+				</a>
 				{/if}
-				<a href="{php echo url('profile/module/top', array('modulename' => $row['name']))}" class="manage-stick"><i class="wi wi-stick-sign"></i><span>置顶</span></a>
+				<a href="{php echo url('profile/module/top', array('modulename' => $row['name']))}" class="stick">
+					<i class="wi wi-stick-sign" title="置顶"></i>
+				</a>
+
 			</div>
 		</div>
 		{/loop}
