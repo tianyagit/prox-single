@@ -116,7 +116,17 @@ function wxapp_fetch($uniacid, $version_id = '') {
 	}
 	
 	if (empty($version_id)) {
-		$wxapp_version_info = pdo_get('wxapp_versions', array('uniacid' => $uniacid, 'last_use' => 1));
+		$wxapp_cookie_uniacids = array();
+		if (!empty($_GPC['__wxappversionids'])) {
+			$wxappversionids = json_decode(htmlspecialchars_decode($_GPC['__wxappversionids']), true);
+			foreach ($wxappversionids as $version_val) {
+				$wxapp_cookie_uniacids[] = $version_val['uniacid'];
+			}
+		}
+		if (in_array($uniacid, $wxapp_cookie_uniacids)) {
+			$wxapp_version_info = wxapp_version($wxappversionids[$uniacid]['version_id']);
+		}
+		
 		if (empty($wxapp_version_info)) {
 			$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
 			$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
@@ -163,27 +173,22 @@ function wxapp_version_all($uniacid) {
 }
 
 /**
- * 获取某一小程序某一分页里所有版本信息
+ * 获取某一小程序最新一些版本信息
  * @param int $uniacid
  * @param int $page
  * @param int $pagesize
  * return array
  */
-function wxapp_version_page($uniacid, $page = 1, $pagesize = 4) {
-	$version_page = array();
+function wxapp_get_some_lastversions($uniacid) {
+	$version_lasts = array();
 	$uniacid = intval($uniacid);
-	$page = max(1, intval($page));
-	$pagesize = intval($pagesize) > 0 ? intval($pagesize) : 4;
 	if (empty($uniacid)) {
-		return $version_page;
+		return $version_lasts;
 	}
 	$param = array(':uniacid' => $uniacid);
-	$start = ($page - 1) * $pagesize;
-	$tsql = "SELECT COUNT(*) FROM " . tablename('wxapp_versions'). " WHERE uniacid = :uniacid";
-	$sql = "SELECT * FROM ". tablename('wxapp_versions'). " WHERE uniacid = :uniacid LIMIT {$start}, {$pagesize}";
-	$total = pdo_fetchcolumn($tsql, $param);
-	$version_lists = pdo_fetchall($sql, $param);
-	return $version_lists;
+	$sql = "SELECT * FROM ". tablename('wxapp_versions'). " WHERE uniacid = :uniacid ORDER BY id DESC LIMIT 0, 4";
+	$version_lasts = pdo_fetchall($sql, $param);
+	return $version_lasts;
 }
 
 /**
@@ -191,23 +196,38 @@ function wxapp_version_page($uniacid, $page = 1, $pagesize = 4) {
  * @param int $version_id
  * return boolean
  */
-function wxapp_update_last_use_version($version_id) {
-	$result = false;
+function wxapp_update_last_use_version($uniacid, $version_id) {
+	global $_GPC;
+	$uniacid = intval($uniacid);
 	$version_id = intval($version_id);
-	if (empty($version_id)) {
-		return $result;
+	if (empty($uniacid) || empty($version_id)) {
+		return false;
 	}
-	$version_info = wxapp_version($version_id);
-	if (!empty($version_info)) {
-		if (empty($version_info['last_use'])) {
-			if (pdo_update('wxapp_versions', array('last_use' => 0), array('uniacid' => $version_info['uniacid']))) {
-				$result = pdo_update('wxapp_versions', array('last_use' => 1), array('id' => $version_id));
+	$cookie_val = array();
+	if (!empty($_GPC['__wxappversionids'])) {
+		$wxapp_uniacids = array();
+		$cookie_val = json_decode(htmlspecialchars_decode($_GPC['__wxappversionids']), true);
+		if (!empty($cookie_val)) {
+			foreach ($cookie_val as &$version) {
+				$wxapp_uniacids[] = $version['uniacid'];
+				if ($version['uniacid'] == $uniacid) {
+					$version['version_id'] = $version_id;
+					$wxapp_uniacids = array();
+					break;
+				}
 			}
-		} else {
-			return true;
+			unset($version);
 		}
+		if (!empty($wxapp_uniacids) && !in_array($uniacid, $wxapp_uniacids)) {
+			$cookie_val[$uniacid] = array('uniacid' => $uniacid,'version_id' => $version_id);
+		}
+	} else {
+		$cookie_val = array(
+				$uniacid => array('uniacid' => $uniacid,'version_id' => $version_id)
+			);
 	}
-	return $result;
+	isetcookie('__wxappversionids', json_encode($cookie_val));
+	return true;
 }
 
 /**
