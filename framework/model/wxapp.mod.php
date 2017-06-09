@@ -268,10 +268,8 @@ function wxapp_save_switch($uniacid) {
 }
 
 function wxapp_site_info($multiid) {
-	global $_GPC;
 	$site_info = array();
 	$multiid = intval($multiid);
-	$uniacid = intval($_GPC['uniacid']);
 	
 	if (empty($multiid)) {
 		return array();
