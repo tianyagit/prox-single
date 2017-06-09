@@ -160,9 +160,6 @@ function reply_predefined_service() {
 	return $predefined_service;
 }
 
-function reply_getall_exists_rule() {
-
-}
 /**
  * 获取常用服务信息
  * @param $rule_setting_select
