@@ -336,19 +336,11 @@ function ext_module_clean($modulename, $isCleanRule = false) {
 	pdo_query($sql, $pars);
 
 	if ($isCleanRule) {
-		$sql = 'DELETE FROM ' . tablename('stat_rule') . ' WHERE `rid` IN (SELECT `id` FROM ' . tablename('rule') . ' WHERE `module`=:module)';
-		pdo_query($sql, $pars);
-
-		$sql = 'DELETE FROM ' . tablename('stat_keyword') . ' WHERE `rid` IN (SELECT `id` FROM ' . tablename('rule') . ' WHERE `module`=:module)';
-		pdo_query($sql, $pars);
 
 		$sql = 'DELETE FROM ' . tablename('rule') . ' WHERE `module`=:module';
 		pdo_query($sql, $pars);
 
 		$sql = 'DELETE FROM ' . tablename('rule_keyword') . ' WHERE `module`=:module';
-		pdo_query($sql, $pars);
-
-		$sql = 'DELETE FROM ' . tablename('stat_msg_history') . ' WHERE `module`=:module';
 		pdo_query($sql, $pars);
 
 		$sql = 'SELECT rid FROM ' . tablename('cover_reply') . ' WHERE `module`=:module';

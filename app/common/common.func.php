@@ -71,6 +71,10 @@ function message($msg, $redirect = '', $type = '') {
 	exit();
 }
 
+function itoast($msg, $redirect = '', $type = '') {
+	return message($msg, $redirect, $type);
+}
+
 /**
  * 微站端用户身份验证
  * @return 
