@@ -1165,7 +1165,11 @@ function account_wechatpay_proxy () {
 	return $proxy_account;
 }
 
-
+/**
+ * curl获取图片内容
+ * @param $url
+ * @return string
+ */
 function account_remotefile_content($url)
 {
 	$ch = curl_init ();
