@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('reply');
 load()->model('module');
 
-$dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_status', 'import');
+$dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_status');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
@@ -128,40 +128,7 @@ if ($do == 'display') {
 		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
 	}
 	if ($m == 'service') {
-		$rule_setting_select = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
-		$rule_setting_select = iunserializer($rule_setting_select);
-		$exists_rule = pdo_getall('rule', array('uniacid' => 0, 'module' => 'userapi', 'status' => 1));
-
-		$service_list = array();
-		$rule_ids = array();
-		$api_url = array();
-		if (!empty($exists_rule)) {
-			foreach ($exists_rule as $rule_detail) {
-				$rule_ids[] = $rule_detail['id'];
-				$service_list[$rule_detail['id']] = $rule_detail;
-			}
-			$description_sql = "SELECT * FROM `ims_userapi_reply` WHERE `rid` IN (" . implode(',',$rule_ids) .")";
-			$all_description = pdo_fetchall($description_sql);
-			if (!empty($all_description)) {
-				foreach ($all_description as $description) {
-					$service_list[$description['rid']]['description'] = $description['description'];
-					$service_list[$description['rid']]['switch'] = isset($rule_setting_select[$description['rid']]) && $rule_setting_select[$description['rid']] ? 'checked' : '';
-					$api_url[] = $description['apiurl'];
-				}
-			}
-		}
-
-		$all_service = reply_predefined_service();
-		$all_url = array_keys($all_service);
-		$diff_url = array_diff($all_url, $api_url);
-		if (!empty($diff_url)) {
-			foreach ($diff_url as $url) {
-				$service_list[$url]['id'] = $all_service[$url];
-				$service_list[$url]['name'] = $all_service[$url]['title'];
-				$service_list[$url]['description'] = $all_service[$url]['description'];
-				$service_list[$url]['switch'] = 2;
-			}
-		}
+		$service_list = reply_getall_common_service();
 	}
 	if ($m == 'userapi') {
 		$pindex = max(1, intval($_GPC['page']));
@@ -409,7 +376,7 @@ if ($do == 'post') {
 			if (empty($module['isrulefields']) && $name != "core") {
 				continue;
 			}
-			$module['title_first_pinyin'] = get_first_char($module['title']);
+			$module['title_first_pinyin'] = get_first_pinyin($module['title']);
 			if ($module['issystem']) {
 				$path = '../framework/builtin/' . $module['name'];
 			} else {
@@ -482,29 +449,13 @@ if ($do == 'delete') {
 if ($do == 'change_status') {
 	$m = $_GPC['m'];
 	if ($m == 'service') {
-		$rid = intval($_GPC['rid']) > 0 ? intval($_GPC['rid']) : trim($_GPC['rid']);
-		if (intval($rid) <= 0) {
-			$all_service = reply_predefined_service();
-			$all_url = array_keys($all_service);
-			if (!in_array($rid, $all_url)) {
+		$rid = intval($_GPC['rid']);
+		$file = trim($_GPC['file']);
+		if ($rid == 0) {
+			$rid = reply_insert_without_service($file);
+			if (empty($rid)) {
 				iajax(1, '参数错误');
 			}
-			pdo_begin();
-			$rule_info = array('uniacid' => 0, 'name' => $all_service[$rid]['title'], 'module' => 'userapi', 'displayorder' => 255, 'status' => 1);
-			pdo_insert('rule', $rule_info);
-			$rule_id = pdo_insertid();
-			$rule_keyword_info = array('rid' => $rule_id, 'uniacid' => 0, 'module' => 'userapi', 'displayorder' => $rule_info['displayorder'], 'status' => $rule_info['status']);
-			if (!empty($all_service[$rid]['keywords'])) {
-				foreach ($all_service[$rid]['keywords'] as $keyword_info) {
-					$rule_keyword_info['content'] = $keyword_info[1];
-					$rule_keyword_info['type'] = $keyword_info[0];
-					pdo_insert('rule_keyword', $rule_keyword_info);
-				}
-			}
-			$userapi_reply = array('rid' => $rule_id, 'description' => htmlspecialchars($all_service[$rid]['description']), 'apiurl' => $rid);
-			pdo_insert('userapi_reply', $userapi_reply);
-			pdo_commit();
-			$rid = $rule_id;
 		}
 		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
 		$config = iunserializer($userapi_config);

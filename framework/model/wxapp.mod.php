@@ -27,7 +27,7 @@ function wxapp_account_create($account) {
 	$uni_account_data = array(
 		'name' => $account['name'],
 		'description' => $account['description'],
-		'title_initial' => get_first_char($account['name']),
+		'title_initial' => get_first_pinyin($account['name']),
 		'groupid' => 0,
 	);
 	if (!pdo_insert('uni_account', $uni_account_data)) {
@@ -94,12 +94,13 @@ function wxapp_support_wxapp_modules() {
 }
 
 /*
- * 获取小程序信息(包括最新版本信息)
+ * 获取小程序信息(包括上一次使用版本的版本信息，若从未使用过任何版本则取最新版本信息)
  * @params int $uniacid
- * @params int $versionid 不包含版本ID，默认获取最新版
+ * @params int $versionid 不包含版本ID，默认获取上一次使用的版本，若从未使用过则取最新版本信息
  * @return array
 */
 function wxapp_fetch($uniacid, $version_id = '') {
+	global $_GPC;
 	$wxapp_info = array();
 	$uniacid = intval($uniacid);
 	
@@ -116,8 +117,21 @@ function wxapp_fetch($uniacid, $version_id = '') {
 	}
 	
 	if (empty($version_id)) {
-		$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
-		$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+		$wxapp_cookie_uniacids = array();
+		if (!empty($_GPC['__wxappversionids'])) {
+			$wxappversionids = json_decode(htmlspecialchars_decode($_GPC['__wxappversionids']), true);
+			foreach ($wxappversionids as $version_val) {
+				$wxapp_cookie_uniacids[] = $version_val['uniacid'];
+			}
+		}
+		if (in_array($uniacid, $wxapp_cookie_uniacids)) {
+			$wxapp_version_info = wxapp_version($wxappversionids[$uniacid]['version_id']);
+		}
+		
+		if (empty($wxapp_version_info)) {
+			$sql ="SELECT * FROM " . tablename('wxapp_versions') . " WHERE `uniacid`=:uniacid ORDER BY `id` DESC";
+			$wxapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+		}
 	} else {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
@@ -160,27 +174,61 @@ function wxapp_version_all($uniacid) {
 }
 
 /**
- * 获取某一小程序某一分页里所有版本信息
+ * 获取某一小程序最新一些版本信息
  * @param int $uniacid
  * @param int $page
  * @param int $pagesize
  * return array
  */
-function wxapp_version_page($uniacid, $page = 1, $pagesize = 4) {
-	$version_page = array();
+function wxapp_get_some_lastversions($uniacid) {
+	$version_lasts = array();
 	$uniacid = intval($uniacid);
-	$page = max(1, intval($page));
-	$pagesize = intval($pagesize) > 0 ? intval($pagesize) : 4;
 	if (empty($uniacid)) {
-		return $version_page;
+		return $version_lasts;
 	}
 	$param = array(':uniacid' => $uniacid);
-	$start = ($page - 1) * $pagesize;
-	$tsql = "SELECT COUNT(*) FROM " . tablename('wxapp_versions'). " WHERE uniacid = :uniacid";
-	$sql = "SELECT * FROM ". tablename('wxapp_versions'). " WHERE uniacid = :uniacid LIMIT {$start}, {$pagesize}";
-	$total = pdo_fetchcolumn($tsql, $param);
-	$version_lists = pdo_fetchall($sql, $param);
-	return $version_lists;
+	$sql = "SELECT * FROM ". tablename('wxapp_versions'). " WHERE uniacid = :uniacid ORDER BY id DESC LIMIT 0, 4";
+	$version_lasts = pdo_fetchall($sql, $param);
+	return $version_lasts;
+}
+
+/**
+ * 更新最新使用版本
+ * @param int $version_id
+ * return boolean
+ */
+function wxapp_update_last_use_version($uniacid, $version_id) {
+	global $_GPC;
+	$uniacid = intval($uniacid);
+	$version_id = intval($version_id);
+	if (empty($uniacid) || empty($version_id)) {
+		return false;
+	}
+	$cookie_val = array();
+	if (!empty($_GPC['__wxappversionids'])) {
+		$wxapp_uniacids = array();
+		$cookie_val = json_decode(htmlspecialchars_decode($_GPC['__wxappversionids']), true);
+		if (!empty($cookie_val)) {
+			foreach ($cookie_val as &$version) {
+				$wxapp_uniacids[] = $version['uniacid'];
+				if ($version['uniacid'] == $uniacid) {
+					$version['version_id'] = $version_id;
+					$wxapp_uniacids = array();
+					break;
+				}
+			}
+			unset($version);
+		}
+		if (!empty($wxapp_uniacids) && !in_array($uniacid, $wxapp_uniacids)) {
+			$cookie_val[$uniacid] = array('uniacid' => $uniacid,'version_id' => $version_id);
+		}
+	} else {
+		$cookie_val = array(
+				$uniacid => array('uniacid' => $uniacid,'version_id' => $version_id)
+			);
+	}
+	isetcookie('__wxappversionids', json_encode($cookie_val));
+	return true;
 }
 
 /**

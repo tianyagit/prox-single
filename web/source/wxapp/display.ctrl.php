@@ -9,7 +9,7 @@ load()->model('account');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank' , 'home', 'version_page');
+$dos = array('display', 'switch', 'rank' , 'home');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'rank' || $do == 'switch') {
@@ -21,7 +21,6 @@ if ($do == 'rank' || $do == 'switch') {
 		}
 	}
 }
-
 if ($do == 'home') {
 	$last_uniacid = uni_account_last_switch();
 	if (empty($last_uniacid)) {
@@ -74,13 +73,20 @@ if ($do == 'home') {
 	$total = pdo_fetchcolumn($tsql, $param);
 	$wxapp_lists = pdo_fetchall($sql, $param);
 	if (!empty($wxapp_lists)) {
+		$wxapp_cookie_uniacids = array();
+		if (!empty($_GPC['__wxappversionids'])) {
+			$wxappversionids = json_decode(htmlspecialchars_decode($_GPC['__wxappversionids']), true);
+			foreach ($wxappversionids as $version_val) {
+				$wxapp_cookie_uniacids[] = $version_val['uniacid'];
+			}
+		}
 		foreach ($wxapp_lists as &$account) {
 			$account['thumb'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
-			$account['versions'] = wxapp_version_page($account['uniacid'], 1);
+			$account['versions'] = wxapp_get_some_lastversions($account['uniacid']);
 			$account['current_version'] = array();
 			if (!empty($account['versions'])) {
 				foreach ($account['versions'] as $version) {
-					if ($version['last_use'] == 1) {
+					if (!empty($wxapp_cookie_uniacids) && !empty($wxappversionids[$version['uniacid']]) && in_array($version['id'], $wxappversionids[$version['uniacid']])) {
 						$account['current_version'] = $version;
 						break;
 					}
@@ -97,8 +103,7 @@ if ($do == 'home') {
 	template('wxapp/account-display');
 } elseif ($do == 'switch') {
 	$module_name = trim($_GPC['module']);
-	$version_id = !empty($_GPC['version_id']) ?intval($_GPC['version_id']) : $wxapp_info['version']['id'];
-	
+	$version_id = !empty($_GPC['version_id']) ? intval($_GPC['version_id']) : $wxapp_info['version']['id'];
 	if (!empty($module_name) && !empty($version_id)) {
 		$version_info = wxapp_version($version_id);
 		if (empty($version_id) || empty($version_info['modules'][$module_name])) {
@@ -109,17 +114,10 @@ if ($do == 'home') {
 	}
 	uni_account_switch($uniacid);
 	wxapp_save_switch($uniacid);
+	wxapp_update_last_use_version($uniacid, $version_id);
 	header('Location: ' . url('wxapp/version/manage', array('version_id' => $version_id)));
 	exit;
 } elseif ($do == 'rank') {
 	uni_account_rank_top($uniacid);
 	itoast('更新成功', '', '');
-} elseif ($do == 'version_page') {
-	$uniacid = intval($_GPC['uniacid']);
-	if (empty($uniacid)) {
-		iajax(-1, '参数错误！');
-	}
-	$page =max(1, intval($_GPC['page']));
-	$version_page = wxapp_version_page($uniacid, $page);
-	iajax(0, $version_page);
 }
