@@ -23,7 +23,7 @@ if ($do == 'send') {
 	if (empty($media)) {
 		iajax(1, '素材不存在', '');
 	}
-	$media_id = trim($media['media_id']);
+	$group = $group > 0 ? $group : -1;
 	$account_api = WeAccount::create();
 	$result = $account_api->fansSendAll($group, $type, $media['media_id']);
 	if (is_error($result)) {
@@ -33,6 +33,14 @@ if ($do == 'send') {
 	if (!empty($groups)) {
 		$groups = iunserializer($groups['groups']);
 	}
+	if ($group == -1) {
+		$groups = array(
+				$group => array(
+						'name' => '全部粉丝',
+						'count' => 0
+				)
+		);
+	}
 	$record = array(
 		'uniacid' => $_W['uniacid'],
 		'acid' => $_W['acid'],
@@ -41,6 +49,7 @@ if ($do == 'send') {
 		'msgtype' => $type,
 		'group' => $group,
 		'attach_id' => $id,
+		'media_id' => $media['media_id'],
 		'status' => 0,
 		'type' => 0,
 		'sendtime' => TIMESTAMP,
