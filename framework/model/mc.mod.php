@@ -120,7 +120,6 @@ function mc_update($uid, $fields) {
 		$insert_id = pdo_insertid();
 		if (!empty($openid)) {
 			pdo_update('mc_mapping_fans', array('uid' => $insert_id), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
-			cache_build_fansinfo($openid);
 		}
 		return $insert_id;
 	} else {
@@ -240,11 +239,6 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 		$openid = $openidOruid;
 	}
 
-	$cachekey = cache_system_key("fansinfo:{$openid}");
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
-	}
 	$params = array();
 	$condition = '`openid` = :openid';
 	$params[':openid'] = $openid;
@@ -291,7 +285,6 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 			$fan['uid'] = $mc_oauth_fan['uid'];
 		}
 	}
-	cache_write($cachekey, $fan);
 	return $fan;
 }
 
@@ -349,7 +342,6 @@ function mc_oauth_userinfo($acid = 0) {
 					'tag' => base64_encode(iserializer($userinfo))
 				);
 				pdo_update('mc_mapping_fans', $record, array('openid' => $_SESSION['openid'], 'acid' => $_W['acid'], 'uniacid' => $_W['uniacid']));
-				cache_build_fansinfo($_SESSION['openid']);
 			} else {
 				$record = array();
 				$record['updatetime'] = TIMESTAMP;
@@ -538,7 +530,6 @@ function mc_require($uid, $fields, $pre = '') {
 			if (empty($uid)) {
 				pdo_update('mc_oauth_fans', array('uid' => $insertuid), array('oauth_openid' => $_W['openid']));
 				pdo_update('mc_mapping_fans', array('uid' => $insertuid), array('openid' => $_W['openid']));
-				cache_build_fansinfo($_W['openid']);
 			}
 			itoast('资料完善成功.', 'refresh', 'success');
 		}
@@ -1762,7 +1753,6 @@ function mc_init_fans_info($openid, $force_init_member = false){
 	//如果粉丝已经取消关注，则只更新状态
 	if (empty($fans['subscribe'])) {
 		pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('fanid' => $openid));
-		cache_build_fansinfo($openid);
 		return true;
 	}
 	$fans_mapping = mc_fansinfo($openid);
@@ -1815,7 +1805,6 @@ function mc_init_fans_info($openid, $force_init_member = false){
 
 	if (!empty($fans_mapping)) {
 		pdo_update('mc_mapping_fans', $fans_update_info, array('fanid' => $fans_mapping['fanid']));
-		cache_build_fansinfo($openid);
 	} else {
 		$fans_update_info['salt'] = random(8);
 		$fans_update_info['unfollowtime'] = 0;

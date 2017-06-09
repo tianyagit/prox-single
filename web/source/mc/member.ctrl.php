@@ -279,7 +279,6 @@ if($do == 'post') {
 				pdo_insert('mc_members', $_GPC);
 				$uid = pdo_insertid();
 				pdo_update('mc_mapping_fans', array('uid' => $uid), array('fanid' => $fanid, 'uniacid' => $_W['uniacid']));
-				cache_build_fansinfo($fan_info['openid']);
 				itoast('更新资料成功！', url('mc/member'), 'success');
 			} else {
 				$email_effective = intval($_GPC['email_effective']);

@@ -208,7 +208,6 @@ if ($do == 'edit_fans_tag') {
 			$tags = implode(',', $tags);
 		}
 		pdo_update('mc_mapping_fans', array('groupid' => $tags), array('fanid' => $fanid));
-		cache_build_fansinfo($openid);
 	}
 	iajax(0, $result);
 }
@@ -232,7 +231,6 @@ if ($do == 'batch_edit_fans_tag') {
 				pdo_insert('mc_fans_tag_mapping', array('fanid' => $fan_info['fanid'], 'tagid' => $tag));
 				$groupid = $fan_info['group'].",".$tag;
 				pdo_update('mc_mapping_fans', array('groupid' => $groupid), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
-				cache_build_fansinfo($openid);
 			}
 		} else {
 			iajax(0, $result);
