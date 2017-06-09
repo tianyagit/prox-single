@@ -491,7 +491,7 @@ function module_status($module) {
 	$module_status = array('upgrade' => array('upgrade' => 0), 'ban' => 0);
 
 	$cloud_m_query = cloud_m_query($module);
-	$module_status['ban'] = !empty($cloud_m_query['pirate_apps'][$module]) ? 1 : 0;
+	$module_status['ban'] = in_array($module, $cloud_m_query['pirate_apps']) ? 1 : 0;
 
 	$cloud_m_info = cloud_m_info($module);
 	$module_info = module_fetch($module);

@@ -111,7 +111,6 @@ if ($do == 'openid') {
 		}
 	}
 	pdo_update('mc_mapping_fans', $fans_update, array('fanid' => $fans['fanid']));
-	cache_build_fansinfo($fans['openid']);
 	$member = mc_fetch($fans['uid']);
 	unset($member['password']);
 	unset($member['salt']);

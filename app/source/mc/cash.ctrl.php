@@ -122,8 +122,8 @@ if(!empty($type)) {
 		'title' => $params['title'],
 	);
 	if ($type == 'alipay') {
-		if (!empty($plid)) {
-			pdo_update('core_paylog', array('openid' => $_W['member']['uid']), array('plid' => $plid));
+		if (!empty($log['plid'])) {
+			pdo_update('core_paylog', array('openid' => $_W['member']['uid']), array('plid' => $log['plid']));
 		}
 		$ret = alipay_build($ps, $setting['payment']['alipay']);
 		if($ret['url']) {
@@ -133,21 +133,21 @@ if(!empty($type)) {
 	}
 	
 	if ($type == 'wechat') {
-		if(!empty($plid)) {
+		if(!empty($log['plid'])) {
 			$tag = array();
 			$tag['acid'] = $_W['acid'];
 			$tag['uid'] = $_W['member']['uid'];
-			pdo_update('core_paylog', array('openid' => $_W['openid'], 'tag' => iserializer($tag)), array('plid' => $plid));
+			pdo_update('core_paylog', array('openid' => $_W['openid'], 'tag' => iserializer($tag)), array('plid' => $log['plid']));
 		}
 		$ps['title'] = urlencode($params['title']);
 		$sl = base64_encode(json_encode($ps));
 		$auth = sha1($sl . $_W['uniacid'] . $_W['config']['setting']['authkey']);
 		
-		$callback = urlencode($_W['siteroot'] . "payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}");
+		$callback = $_W['siteroot'] . "payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
 		//如果有借用支付，则需要通过网页授权附带用户Openid跳转至支付，否则直接跳转
 		$proxy_pay_account = payment_proxy_pay_account();
 		if (!is_error($proxy_pay_account)) {
-			$forward = $proxy_pay_account->getOauthCodeUrl($callback, 'we7sid-'.$_W['session_id']);
+			$forward = $proxy_pay_account->getOauthCodeUrl(urlencode($callback), 'we7sid-'.$_W['session_id']);
 			header('Location: ' . $forward);
 			exit;
 		}
