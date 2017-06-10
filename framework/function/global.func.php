@@ -1253,3 +1253,39 @@ function get_first_pinyin($str) {
 	$first_char = $pinyin->get_first_char($str);
 	return $first_char;
 }
+
+/**
+ * 过滤字符串中的emoji表情（微信昵称过滤）
+ */
+function strip_emoji ($str) {
+	$str = preg_replace_callback('/./u', function (array $match) {
+		return strlen($match[0]) >= 4 ? '' : $match[0];
+	}, $str);
+		return $str;
+}
+function strip_emoji($nickname) {
+	$clean_text = "";
+	// Match Emoticons
+	$regexEmoticons = '/[\x{1F600}-\x{1F64F}]/u';
+	$clean_text = preg_replace($regexEmoticons, '', $nickname);
+	// Match Miscellaneous Symbols and Pictographs
+	$regexSymbols = '/[\x{1F300}-\x{1F5FF}]/u';
+	$clean_text = preg_replace($regexSymbols, '', $clean_text);
+	// Match Transport And Map Symbols
+	$regexTransport = '/[\x{1F680}-\x{1F6FF}]/u';
+	$clean_text = preg_replace($regexTransport, '', $clean_text);
+	// Match Miscellaneous Symbols
+	$regexMisc = '/[\x{2600}-\x{26FF}]/u';
+	$clean_text = preg_replace($regexMisc, '', $clean_text);
+	// Match Dingbats
+	$regexDingbats = '/[\x{2700}-\x{27BF}]/u';
+	$clean_text = preg_replace($regexDingbats, '', $clean_text);
+	
+	$clean_text = str_replace("'",'',$clean_text);
+	$clean_text = str_replace('"','',$clean_text);
+	$clean_text = str_replace('“','',$clean_text);
+	$clean_text = str_replace('゛','',$clean_text);
+	$search = array(" ","　","\n","\r","\t");
+	$replace = array("","","","","");
+	return str_replace($search, $replace, $clean_text);
+}
