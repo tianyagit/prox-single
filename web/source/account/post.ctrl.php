@@ -57,9 +57,13 @@ if($do == 'base') {
 							$filename = sprintf($new_pic_name, '/attachment/headimg_');
 						}
 						if ($img_parse['host'] != $_SERVER['HTTP_HOST']) {
-							$return_content = account_remotefile_content($_GPC['imgsrc']);
-							$fp= @fopen($filename,"w");
-							$result = fwrite($fp,$return_content);
+							$return_content = ihttp_get($_GPC['imgsrc']);
+							if ($return_content['code'] == 200) {
+								$fp= @fopen($filename,"w");
+								$result = fwrite($fp,$return_content['content']);
+							} else {
+								$result = false;
+							}
 						} else {
 							$img_absolute_path = IA_ROOT . $img_parse['path'];
 							$result = copy($img_absolute_path, $filename);

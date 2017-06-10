@@ -99,6 +99,7 @@ function wxapp_support_wxapp_modules() {
  * @return array
 */
 function wxapp_fetch($uniacid, $version_id = '') {
+	global $_GPC;
 	load()->model('extension');
 	$wxapp_info = array();
 	$uniacid = intval($uniacid);
@@ -134,8 +135,8 @@ function wxapp_fetch($uniacid, $version_id = '') {
 	} else {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
-	if (!empty($wxapp_version_info)) {
-		$wxapp_version_info['modules'] = unserialize($wxapp_version_info['modules']);
+	if (!empty($wxapp_version_info) && !empty($wxapp_version_info['modules'])) {
+		$wxapp_version_info['modules'] = iunserializer($wxapp_version_info['modules']);
 		//如果是单模块版并且本地模块，应该是开发者开发小程序，则模块版本号本地最新的。
 		if ($wxapp_version_info['design_method'] == WXAPP_MODULE) {
 			$module = current($wxapp_version_info['modules']);
