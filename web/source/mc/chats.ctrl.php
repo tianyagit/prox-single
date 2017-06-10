@@ -68,7 +68,7 @@ if ($do == 'send') {
 	$account_api = WeAccount::create($_W['acid']);
 	$result = $account_api->sendCustomNotice($send);
 	if (is_error($result)) {
-		iajax(1, $result);
+		iajax(-1, $result['meaasge']);
 	} else {
 		//生成上下文
 		$account = account_fetch($_W['acid']);

@@ -80,6 +80,9 @@ if ($do == 'display') {
 				if (!empty($v['tag']['headimgurl'])) {
 					$v['tag']['avatar'] = tomedia($v['tag']['headimgurl']);
 				}
+				if (empty($v['nickname']) && !empty($v['tag']['nickname'])) {
+					$v['nickname'] = $v['tag']['nickname'];
+				}
 			}
 			if (empty($v['tag'])) {
 				$v['tag'] = array();
