@@ -10,6 +10,7 @@ load()->model('cloud');
 load()->model('cache');
 load()->classs('weixin.platform');
 load()->model('wxapp');
+load()->func('communication');
 
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
@@ -59,8 +60,7 @@ if($do == 'base') {
 						if ($img_parse['host'] != $_SERVER['HTTP_HOST']) {
 							$return_content = ihttp_get($_GPC['imgsrc']);
 							if ($return_content['code'] == 200) {
-								$fp= @fopen($filename,"w");
-								$result = fwrite($fp,$return_content['content']);
+								$result = file_put_contents($filename, $return_content['content']);
 							} else {
 								$result = false;
 							}
