@@ -34,10 +34,11 @@ if ($do == 'save') {
 		$package_info['modules'] = iserializer($package_info['modules']);
 	}
 	if (!empty($package_info['templates'])) {
+		$templates = array();
 		foreach ($package_info['templates'] as $template) {
-			$package_info['templates'][] = $template['id'];
+			$templates[] = $template['id'];
 		}
-		$package_info['templates'] = iserializer($package_info['templates']);
+		$package_info['templates'] = iserializer($templates);
 	}
 	if (!empty($package_info['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
