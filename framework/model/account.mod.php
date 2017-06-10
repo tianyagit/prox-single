@@ -460,6 +460,7 @@ function uni_account_default($uniacid = 0) {
 		$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
 		$account['type'] = $uni_account['type'];
 		$account['isconnect'] = $uni_account['isconnect'];
+		$account['isdeleted'] = $uni_account['isdeleted'];
 		return $account;
 	}
 }
