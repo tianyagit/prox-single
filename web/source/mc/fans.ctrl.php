@@ -88,7 +88,7 @@ if ($do == 'display') {
 				$v['tag'] = array();
 			}
 			if (empty($v['user']['nickname']) && !empty($v['tag']['nickname'])) {
-				$v['user']['nickname'] = $v['tag']['nickname'];
+				$v['user']['nickname'] = strip_emoji($v['tag']['nickname']);
 			}
 			if (empty($v['user']['avatar']) && !empty($v['tag']['avatar'])) {
 				$v['user']['avatar'] = $v['tag']['avatar'];
