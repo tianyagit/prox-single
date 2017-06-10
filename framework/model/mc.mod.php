@@ -267,7 +267,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 			if (is_array($fan['tag']) && !empty($fan['tag']['headimgurl'])) {
 				$fan['tag']['avatar'] = tomedia($fan['tag']['headimgurl']);
 				unset($fan['tag']['headimgurl']);
-				$fan['nickname'] = $fan['tag']['nickname'];
+//				$fan['nickname'] = $fan['tag']['nickname'];
 				$fan['gender'] = $fan['sex'] = $fan['tag']['sex'];
 				$fan['avatar'] = $fan['headimgurl'] = $fan['tag']['avatar'];
 			}
@@ -280,7 +280,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 		$fan['uid'] = 0;
 		$fan['openid'] = $fan['tag']['openid'];
 		$fan['follow'] = 0;
-		$fan['nickname'] = $fan['tag']['nickname'];
+//		$fan['nickname'] = $fan['tag']['nickname'];
 		$fan['gender'] = $fan['sex'] = $fan['tag']['sex'];
 		$fan['avatar'] = $fan['headimgurl'] = $fan['tag']['headimgurl'];
 		$mc_oauth_fan = mc_oauth_fans($fan['openid']);
@@ -1766,7 +1766,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 		'updatetime' => TIMESTAMP,
 		'followtime' => $fans['subscribe_time'],
 		'follow' => $fans['subscribe'],
-		'nickname' => stripcslashes($fans['nickname']),
+		'nickname' => filter_emoji(stripcslashes($fans['nickname'])),
 		'tag' => base64_encode(iserializer($fans)),
 		'unionid' => $fans['unionid'],
 		'groupid' => !empty($fans['tagid_list']) ? (','.join(',', $fans['tagid_list']).',') : '',
@@ -1958,4 +1958,15 @@ function mc_card_grant_credit($openid, $card_fee, $storeid = 0, $modulename) {
 	} else {
 		return error(-1, '');
 	}
+}
+
+/**
+ * 过滤表情
+ * @param $str
+ * @return mixed
+ */
+function filter_emoji($nickname) {
+	$nickname = json_encode($nickname);
+	$nickname = preg_replace("/(\\\u[ed][0-9a-f]{3})/i", '', $nickname);
+	return json_decode($nickname);
 }
