@@ -409,27 +409,25 @@ function user_modules($uid) {
  * @param string $forward 要跳转的地址
  * return string
  */
-function user_login_forward($forward) {
+function user_login_forward($forward = '') {
 	global $_W;
-	$login_forward = '';
+	$login_forward = trim($forward);
+	
 	if (!empty($forward)) {
-		$login_forward = trim($forward);
+		return $login_forward;
 	}
 	if (!empty($_W['isfounder'])) {
-		$login_forward = url('account/manage');
+		return url('account/manage');
 	}
-	if (empty($login_forward)) {
-		if (!empty($_W['uniacid']) && !empty($_W['account'])) {
-			if ($_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-				$login_forward = url('home/welcome');
-			} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-				$login_forward = url('wxapp/display/home');
-			} else {
-				$login_forward = url('account/display');
-			}
-		} else {
-			$login_forward = url('account/display');
+	
+	$login_forward = url('account/display');
+	if (!empty($_W['uniacid']) && !empty($_W['account'])) {
+		if ($_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+			$login_forward = url('home/welcome');
+		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+			$login_forward = url('wxapp/display/home');
 		}
 	}
+	
 	return $login_forward;
 }
