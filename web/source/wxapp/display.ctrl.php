@@ -11,7 +11,6 @@ $_W['page']['title'] = '小程序列表';
 
 $dos = array('display', 'switch', 'rank' , 'home');
 $do = in_array($do, $dos) ? $do : 'display';
-
 if ($do == 'rank' || $do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
 	if (!empty($uniacid)) {
@@ -23,8 +22,7 @@ if ($do == 'rank' || $do == 'switch') {
 }
 if ($do == 'home') {
 	$last_uniacid = uni_account_last_switch();
-	$account_info = uni_account_default($last_uniacid);
-	if (empty($last_uniacid) || $account_info['isdeleted'] == 1) {
+	if (empty($last_uniacid)) {
 		itoast('', url('wxapp/display'), 'info');
 	} else {
 		$last_version = wxapp_fetch($last_uniacid);
