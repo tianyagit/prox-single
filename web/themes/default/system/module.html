@@ -273,7 +273,7 @@
 		<li ng-repeat="letter in letters"><a href="javascript:;" ng-click="searchLetter(letter)">{{ letter }}</a></li>
 	</ul>
 
-	<table class="table we7-table table-hover vertical-middle">
+	<table class="table we7-table table-hover vertical-middle table-manage">
 		<tr>
 			<th colspan="2" class="text-left">公众号应用名</th>
 			<th class="text-right">操作</th>
@@ -282,8 +282,8 @@
 			<td class="text-left module-img">
 				<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;" ng-if="module.main_module == ''">
 				<div class="img" ng-if="module.main_module != ''">
-					<img ng-src="{{ module.logo }}" style="width:50px;height:50px;" alt="子应用icon" class="plugin-img"/>
-					<img ng-src="{{ module.main_module_logo }}" style="width:50px;height:50px;" alt="主应用icon" class="module-img"/>
+					<img ng-src="{{ module.logo }}" alt="子应用icon" class="plugin-img"/>
+					<img ng-src="{{ module.main_module_logo }}" alt="主应用icon" class="module-img"/>
 				</div>
 			</td>
 			<td class="text-left">
