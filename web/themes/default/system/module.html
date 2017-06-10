@@ -279,12 +279,12 @@
 			<th class="text-right">操作</th>
 		</tr>
 		<tr ng-repeat="module in module_list">
-			<td class="text-left">
+			<td class="text-left module-img">
 				<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;" ng-if="module.main_module == ''">
-				<span class="img" ng-if="module.main_module != ''">
+				<div class="img" ng-if="module.main_module != ''">
 					<img ng-src="{{ module.logo }}" style="width:50px;height:50px;" alt="子应用icon" class="plugin-img"/>
 					<img ng-src="{{ module.main_module_logo }}" style="width:50px;height:50px;" alt="主应用icon" class="module-img"/>
-				</span>
+				</div>
 			</td>
 			<td class="text-left">
 				<p>{{ module.title }}</p>

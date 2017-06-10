@@ -619,9 +619,9 @@ if ($do == 'not_installed') {
 						$module['main_module_logo'] = tomedia($uninstallModules[$module['main_module']]['thumb']);
 					} else {
 						if (file_exists(IA_ROOT.'/addons/'.$module['main_module'].'/icon-custom.jpg')) {
-							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
+							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['main_module'].'/icon-custom.jpg');
 						} elseif (file_exists(IA_ROOT.'/addons/'.$module['main_module'].'/icon.jpg')) {
-							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
+							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['main_module'].'/icon.jpg');
 						}
 					}
 				}
