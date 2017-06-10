@@ -577,3 +577,13 @@ EOF;
 	}
 	return '';
 }
+
+/*
+ * 过滤字符串中的emoji表情（微信昵称过滤）
+ */
+function filterEmoji ($str) {
+	$str = preg_replace_callback('/./u', function (array $match) {
+		return strlen($match[0]) >= 4 ? '' : $match[0];
+	}, $str);
+	return $str;
+}
