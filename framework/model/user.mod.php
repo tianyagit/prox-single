@@ -403,3 +403,33 @@ function user_modules($uid) {
 	}
 	return $module_list;
 }
+
+/**
+ * 获取用户登陆后要跳转的地址
+ * return string
+ */
+function user_login_forward() {
+	global $_GPC, $_W;
+	$login_forward = '';
+	if (!empty($_GPC['forward'])) {
+		$login_forward = $_GPC['forward'];
+	}
+	if (empty($login_forward)) {
+		if (!empty($_W['isfounder'])) {
+			$login_forward = './index.php?c=account&a=manage';
+		} else {
+			if (!empty($_W['uniacid']) && !empty($_W['account'])) {
+				if ($_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+					$login_forward = './index.php?c=home&a=welcome';
+				} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+					$login_forward = './index.php?c=wxapp&a=display&do=home';
+				} else {
+					$login_forward = './index.php?c=account&a=display';
+				}
+			} else {
+				$login_forward = './index.php?c=account&a=display';
+			}
+		}
+	}
+	return $login_forward;
+}

@@ -45,7 +45,7 @@ if($do == 'display') {
 			if ($name == 'we7_coupon') {
 				$row['issystem'] = 0;
 			}
-			if (!empty($row['issystem']) || $row['wxapp_support'] == 2 || !empty($row['main_module']) || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
+			if (!empty($row['issystem']) || $row['wxapp_support'] == 2 || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
 				unset($modulelist[$name]);
 				continue;
 			}

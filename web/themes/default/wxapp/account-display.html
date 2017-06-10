@@ -70,12 +70,7 @@
 						</a>
 					</div>
 					<div class="cut-select-pager">
-						<a href="javascript:;" class="pre" ng-click="prevPage(list.uniacid)">
-							<span class="wi wi-angle-up"></span>
-						</a>
-						<a href="javascript:;" class="next" ng-click="nextPage(list.uniacid)">
-							<span class="wi wi-angle-down"></span>
-						</a>
+						<a href="{{links.more_version}}&uniacid={{list.uniacid}}" class="more color-default">更多 >></a>
 					</div>
 				</div>
 			</div>
@@ -103,7 +98,7 @@ require(['underscore'], function() {
 		'links': {
 			'rank': "{php echo url('wxapp/display/rank')}",
 			'switch': "{php echo url('wxapp/display/switch')}",
-			'version_page' : "{php echo url('wxapp/display/version_page')}",
+			'more_version' : "{php echo url('wxapp/version/display')}",
 		},
 	});
 	angular.bootstrap($('#js-wxapp-account-display'), ['wxApp']);

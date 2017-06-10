@@ -49,12 +49,24 @@ if($do == 'base') {
 				if(!empty($_GPC['imgsrc'])) {
 					if(parse_path($_GPC['imgsrc'])) {
 						$img_parse = parse_url($_GPC['imgsrc']);
-						$img_absolute_path = IA_ROOT . $img_parse['path'];
-						if($type == 'qrcodeimgsrc') {
-							$result = copy($img_absolute_path, IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
+						$new_pic_name = IA_ROOT . '%s'.$acid.'.jpg';
+						if ($type == 'qrcodeimgsrc') {
+							$filename = sprintf($new_pic_name, '/attachment/qrcode_');
 						}
-						if($type == 'headimgsrc') {
-							$result = copy($img_absolute_path, IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
+						if ($type == 'headimgsrc') {
+							$filename = sprintf($new_pic_name, '/attachment/headimg_');
+						}
+						if ($img_parse['host'] != $_SERVER['HTTP_HOST']) {
+							$return_content = ihttp_get($_GPC['imgsrc']);
+							if ($return_content['code'] == 200) {
+								$fp= @fopen($filename,"w");
+								$result = fwrite($fp,$return_content['content']);
+							} else {
+								$result = false;
+							}
+						} else {
+							$img_absolute_path = IA_ROOT . $img_parse['path'];
+							$result = copy($img_absolute_path, $filename);
 						}
 					}else {
 						iajax(40035, '参数错误！', '');

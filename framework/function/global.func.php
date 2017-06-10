@@ -1240,14 +1240,14 @@ function dir_size($dir) {
  * @return string
  */
 function get_first_pinyin($str) {
+	static $pinyin;
 	$first_char = '';
 	$str = trim($str);
 	if(empty($str)) {
 		return $first_char;
 	}
-	include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
-	static $pinyin;
 	if (empty($pinyin)) {
+		include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
 		$pinyin = new Pinyin_Pinyin();
 	}
 	$first_char = $pinyin->get_first_char($str);
