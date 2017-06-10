@@ -76,18 +76,7 @@ function _login($forward = '') {
 			}
 		}
 		if (empty($forward)) {
-			$forward = $_GPC['forward'];
-		}
-		if (empty($forward)) {
-			if (!empty($_W['isfounder'])) {
-				$forward = './index.php?c=account&a=manage';
-			} else {
-				if (!empty($_GPC['__uniacid'])) {
-					$forward = './index.php?c=home&a=welcome';
-				} else {
-					$forward = './index.php?c=account&a=display';
-				}
-			}
+			$forward = user_login_forward();
 		}
 		if ($record['uid'] != $_GPC['__uid']) {
 			isetcookie('__uniacid', '', -7 * 86400);

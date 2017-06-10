@@ -23,7 +23,8 @@ if ($do == 'rank' || $do == 'switch') {
 }
 if ($do == 'home') {
 	$last_uniacid = uni_account_last_switch();
-	if (empty($last_uniacid)) {
+	$account_info = uni_account_default($last_uniacid);
+	if (empty($last_uniacid) || $account_info['isdeleted'] == 1) {
 		itoast('', url('wxapp/display'), 'info');
 	} else {
 		$last_version = wxapp_fetch($last_uniacid);

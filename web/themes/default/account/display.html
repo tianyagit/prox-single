@@ -2,6 +2,14 @@
 <div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" when-scrolled ="loadMore()" ng-cloak >
 	<div class="panel-heading">
 		请选择您要操作的公众号
+		<div class="font-default pull-right">
+			{if !empty($account_info['uniacid_limit'])}
+			<a href="./index.php?c=account&a=post-step" class="color-default"><i class="fa fa-plus"></i>新增公众号</a>
+			{/if}
+			{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_MANAGER}
+			<a href="./index.php?c=account&a=manage" class="color-default"><i class="wi wi-wechatstatistics"></i>公众号管理</a>
+			{/if}
+		</div>
 	</div>
 	<div class="panel-body" >
 		{if !$_W['isfounder'] && !empty($account_info['uniacid_limit'])}
@@ -25,14 +33,6 @@
 					</div>
 				</div>
 			</form>
-			<div class="cut-manage pull-right">
-				{if !empty($account_info['uniacid_limit'])}
-					<a href="./index.php?c=account&a=post-step" class="color-default"><i class="fa fa-plus"></i>新增公众号</a>
-				{/if}
-				{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_MANAGER}
-					<a href="./index.php?c=account&a=manage" class="color-default"><i class="wi wi-wechatstatistics"></i>公众号管理</a>
-				{/if}
-			</div>
 		</div>
 		<div class="clearfix"></div>
 		<ul class="letters-list cut-wechat-letters">
@@ -64,31 +64,6 @@
 				</div>
 			</div>
 		</div>
-		
-		<!-- <div class="cut-list clearfix cut-wechat-list" ng-if="accountList">
-			<div ng-repeat="account in accountList">
-				<div ng-repeat="detail in account.details">
-					<div class="item">
-						<div class="content">
-							<img ng-src="{{detail.thumb}}" class="icon-account"/>
-							<div class="name">{{detail.name}}</div>
-							<div class="type" ng-if="detail.level == 1">类型：普通订阅号</div>
-							<div class="type" ng-if="detail.level == 2">类型：普通服务号</div>
-							<div class="type" ng-if="detail.level == 3">类型：认证订阅号</div>
-							<div class="type" ng-if="detail.level == 4">类型：认证服务号</div>
-						</div>
-						<div class="mask">
-							<a ng-href="{{account.url}}" class="entry">
-								<div>进入公众号 <i class="wi wi-angle-right"></i></div>
-							</a>
-							<a href="javascript:;" class="stick" title="置顶" ng-click="stick(detail.uniacid)">
-								<i class="wi wi-stick-sign"></i>
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div> -->
 		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
 	</div>
 </div>
