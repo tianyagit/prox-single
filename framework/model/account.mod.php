@@ -163,16 +163,13 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
 				if (!empty($modules)) {
-					$condition .= " AND a.name IN ('" . implode("','", $modules) . "') OR (a.name IN ('" . implode("','", $modules) . "') AND b.enabled is NULL)";
+					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
 				} else {
 					$condition .= " AND a.name = ''";
 				}
 			}
 		}
-		$condition .= $enabled ?  " AND b.enabled = 1 OR a.issystem = 1" : " OR a.issystem = 1";
-		if (!strexists($condition, 'AND a.name')) {
-			$condition .= ' OR b.enabled is NULL';
-		}
+		$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
 		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
