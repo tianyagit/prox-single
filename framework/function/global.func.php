@@ -1257,12 +1257,6 @@ function get_first_pinyin($str) {
 /**
  * 过滤字符串中的emoji表情（微信昵称过滤）
  */
-function strip_emoji ($str) {
-	$str = preg_replace_callback('/./u', function (array $match) {
-		return strlen($match[0]) >= 4 ? '' : $match[0];
-	}, $str);
-		return $str;
-}
 function strip_emoji($nickname) {
 	$clean_text = "";
 	// Match Emoticons
