@@ -268,7 +268,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 				$fan['tag']['avatar'] = tomedia($fan['tag']['headimgurl']);
 				unset($fan['tag']['headimgurl']);
 				if (empty($fan['nickname']) && !empty($fan['tag']['nickname'])) {
-					$fan['nickname'] = $fan['tag']['nickname'];
+					$fan['nickname'] = strip_emoji($fan['tag']['nickname']);
 				}
 				$fan['gender'] = $fan['sex'] = $fan['tag']['sex'];
 				$fan['avatar'] = $fan['headimgurl'] = $fan['tag']['avatar'];
@@ -283,7 +283,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 		$fan['openid'] = $fan['tag']['openid'];
 		$fan['follow'] = 0;
 		if (empty($fan['nickname']) && !empty($fan['tag']['nickname'])) {
-			$fan['nickname'] = $fan['tag']['nickname'];
+			$fan['nickname'] = strip_emoji($fan['tag']['nickname']);
 		}
 		$fan['gender'] = $fan['sex'] = $fan['tag']['sex'];
 		$fan['avatar'] = $fan['headimgurl'] = $fan['tag']['headimgurl'];
