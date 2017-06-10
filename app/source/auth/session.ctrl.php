@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('mc');
 
-$dos = array('openid', 'userinfo');
+$dos = array('openid', 'userinfo', 'touch');
 $do = in_array($do, $dos) ? $do : 'openid';
 
 $account_api = WeAccount::create();
@@ -115,4 +115,9 @@ if ($do == 'openid') {
 	unset($member['password']);
 	unset($member['salt']);
 	$account_api->result(0, '', $member);
+} elseif ($do == 'touch') {
+	if (empty($_SESSION['openid'])) {
+		$account_api->result(1);
+	}
+	$account_api->result(0);
 }
