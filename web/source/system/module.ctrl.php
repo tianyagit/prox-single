@@ -282,6 +282,12 @@ if ($do =='install') {
 	if (empty($manifest)) {
 		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
 	}
+	if (!empty($manifest['platform']['main_module'])) {
+		$plugin_exist = pdo_get('modules_plugin', array('main_module' => $manifest['platform']['main_module'], 'name' => $manifest['application']['identifie']));
+		if (empty($plugin_exist)) {
+			itoast('请先更新主模块后再安装插件', url('system/modulet_installed'), 'error');
+		}
+	}
 	$check_manifest_result = manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
 		itoast($check_manifest_result['message'], '', 'error');
@@ -299,12 +305,6 @@ if ($do =='install') {
 	if (!empty($manifest['platform']['plugin_list'])) {
 		foreach ($manifest['platform']['plugin_list'] as $plugin) {
 			pdo_insert('modules_plugin', array('main_module' => $manifest['application']['identifie'], 'name' => $plugin));
-		}
-	}
-	if (!empty($manifest['platform']['main_module'])) {
-		$plugin_exist = pdo_get('modules_plugin', array('main_module' => $manifest['platform']['main_module'], 'name' => $manifest['application']['identifie']));
-		if (empty($plugin_exist)) {
-			itoast('请先更新主模块后再安装插件', url('system/modulet_installed'), 'error');
 		}
 	}
 	$post_groups = $_GPC['group'];
