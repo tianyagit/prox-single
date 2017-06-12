@@ -31,11 +31,13 @@
 				</div>
 			</form>
 		</div>
+		{if $total >= 10}
 		<ul class="letters-list cut-wechat-letters">
 			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
 				<a href="javascript:;" ng-bind="letter"></a>
 			</li>
 		</ul>
+		{/if}
 		<div class="cut-list clearfix we7-margin-top">
 			<div class="item wxapp-list-item" ng-repeat="list in wxapp_lists" ng-if="wxapp_lists">
 				<div class="content">

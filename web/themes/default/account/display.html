@@ -35,11 +35,13 @@
 			</form>
 		</div>
 		<div class="clearfix"></div>
+		{if $total >= 10}
 		<ul class="letters-list cut-wechat-letters">
 			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
 				<a href="javascript:;" ng-bind="letter"></a>
 			</li>
 		</ul>
+		{/if}
 		<div class="cut-list clearfix" ng-if="accountList">
 			<div ng-repeat="account in accountList">
 				<div class="item" ng-repeat="detail in account.details">
