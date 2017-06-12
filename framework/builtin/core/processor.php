@@ -18,7 +18,7 @@ class CoreModuleProcessor extends WeModuleProcessor {
 				$result = $this->basic_respond();
 				return $this->respText($result);
 				break;
-			case 'image':
+			case 'images':
 				$result = $this->image_respond();
 				return $this->respImage($result);
 				break;
