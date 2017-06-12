@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" when-scrolled ="loadMore()" ng-cloak >
+<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" ng-cloak >
 	<div class="panel-heading">
 		请选择您要操作的公众号
 		<div class="font-default pull-right">
@@ -68,6 +68,9 @@
 		</div>
 		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
 	</div>
+	<div class="text-right">
+		{$pager}
+	</div>
 </div>
 <script>
 	angular.module('accountApp').value('config', {
@@ -87,12 +90,6 @@
 		var offsetHeight = $(".skin-default").get(0).offsetHeight;
 		$(".skin-default").css('height',function(){
 			return footHeight + offsetHeight;
-		});
-		var accounts = $(".item");
-		//设置公众号列表div的最小高度 让滚动条显示出来
-		accounts.parent().parent().css('min-height',function(){
-			var minHeight = accounts.length > 0 ? $(accounts[0]).outerHeight(true) * 3 : 0;
-			return minHeight;
 		});
 	})
 </script>
