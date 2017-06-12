@@ -127,6 +127,7 @@
 				<span class="font-lg"><i class="wi wi-ad"></i>广告联盟</span>
 			{/if}
 			{if FRAME == 'wxapp'}
+				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo">
 				<span class="wxapp-name">{$wxapp_info['name']}</span>
 				<span class="wxapp-version">{$version_info['version']}</span>
 				<div class="pull-right">
