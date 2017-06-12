@@ -37,7 +37,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 12;
+	$psize = 8;
 	$start = ($pindex - 1) * $psize;
 
 	$condition = '';
