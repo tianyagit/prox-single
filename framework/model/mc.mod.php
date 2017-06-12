@@ -977,16 +977,8 @@ function mc_openid2uid($openid) {
 */
 function mc_uid2openid($uid) {
 	global $_W;
-
-	$cachekey = cache_system_key("openid:{$uid}");
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
-	}
-
 	if (is_numeric($uid)) {
 		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
-		cache_write($cachekey, $fans_info['openid']);
 		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
 	}
 	if (is_string($uid)) {
