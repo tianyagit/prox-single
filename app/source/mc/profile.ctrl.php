@@ -23,7 +23,6 @@ if(!empty($_W['openid'])) {
 			$map_fans = iunserializer($map_fans);
 		}
 		if(!empty($map_fans) && is_array($map_fans)) {
-			print_r($map_fans);die;
 			//如果用户的资料中有这些信息,以用户的信息为准
 			empty($profile['nickname']) ? ($data['nickname'] = strip_emoji($map_fans['nickname'])) : '';
 			empty($profile['gender']) ? ($data['gender'] = $map_fans['sex']) : '';
