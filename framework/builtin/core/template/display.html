@@ -208,6 +208,7 @@
 								inputValArr[key] = htmlEncode(val);
 							});
 							var index = _.indexOf(inputValArr, htmlEncode(angular.toJson(otherVal)));
+							material.content = material.content.replace(/,/g, '，');
 							middleVal[index] = angular.toJson(material.content);
 							replyVal = middleVal.join(',');
 							$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
@@ -230,6 +231,7 @@
 					if($.trim(material.content).length == 0) {
 						return false;
 					}
+					material.content = material.content.replace(/,/g, '，');
 					replyVal.push(angular.toJson(material.content));
 					$(':hidden[name="reply[reply_'+type+']"]').val(replyVal);
 					$('.keywords-list').append(
