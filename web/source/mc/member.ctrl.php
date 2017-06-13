@@ -10,7 +10,6 @@ uni_user_permission_check('mc_member');
 
 $dos = array('display', 'post','del', 'add', 'group', 'credit_record', 'credit_stat', 'register_setting', 'credit_setting', 'save_credit_setting', 'save_tactics_setting');
 $do = in_array($do, $dos) ? $do : 'display';
-
 if ($do == 'save_tactics_setting') {
 	$setting = $_GPC['setting'];
 	if (empty($setting)) {
@@ -123,6 +122,7 @@ if($do == 'display') {
 				$size = ceil(count($list) / 500);
 				for ($i = 0; $i < $size; $i++) {
 					$buffer = array_slice($list, $i * 500, 500);
+					$user = array();
 					foreach ($buffer as $row) {
 						if (strexists($row['email'], 'we7.cc')) {
 							$row['email'] = '';
@@ -135,7 +135,7 @@ if($do == 'display') {
 						$user[] = implode("\t ,", $data) . "\t ,";
 						unset($data);
 					}
-					$html .= implode("\n", $user);
+					$html .= implode("\n", $user) . "\n";
 				}
 			}
 		}
