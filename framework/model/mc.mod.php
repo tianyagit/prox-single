@@ -268,7 +268,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 				$fan['tag']['avatar'] = tomedia($fan['tag']['headimgurl']);
 				unset($fan['tag']['headimgurl']);
 				if (empty($fan['nickname']) && !empty($fan['tag']['nickname'])) {
-					$fan['nickname'] = $fan['tag']['nickname'];
+					$fan['nickname'] = strip_emoji($fan['tag']['nickname']);
 				}
 				$fan['gender'] = $fan['sex'] = $fan['tag']['sex'];
 				$fan['avatar'] = $fan['headimgurl'] = $fan['tag']['avatar'];
@@ -283,7 +283,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 		$fan['openid'] = $fan['tag']['openid'];
 		$fan['follow'] = 0;
 		if (empty($fan['nickname']) && !empty($fan['tag']['nickname'])) {
-			$fan['nickname'] = $fan['tag']['nickname'];
+			$fan['nickname'] = strip_emoji($fan['tag']['nickname']);
 		}
 		$fan['gender'] = $fan['sex'] = $fan['tag']['sex'];
 		$fan['avatar'] = $fan['headimgurl'] = $fan['tag']['headimgurl'];
@@ -977,16 +977,8 @@ function mc_openid2uid($openid) {
 */
 function mc_uid2openid($uid) {
 	global $_W;
-
-	$cachekey = cache_system_key("openid:{$uid}");
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
-	}
-
 	if (is_numeric($uid)) {
 		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'uid' => $uid), 'openid');
-		cache_write($cachekey, $fans_info['openid']);
 		return !empty($fans_info['openid']) ? $fans_info['openid'] : false;
 	}
 	if (is_string($uid)) {
@@ -1770,7 +1762,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 		'updatetime' => TIMESTAMP,
 		'followtime' => $fans['subscribe_time'],
 		'follow' => $fans['subscribe'],
-		'nickname' => filterEmoji(stripcslashes($fans['nickname'])),
+		'nickname' => strip_emoji(stripcslashes($fans['nickname'])),
 		'tag' => base64_encode(iserializer($fans)),
 		'unionid' => $fans['unionid'],
 		'groupid' => !empty($fans['tagid_list']) ? (','.join(',', $fans['tagid_list']).',') : '',

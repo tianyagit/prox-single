@@ -880,6 +880,12 @@ function uni_account_last_switch() {
 	} else {
 		$uniacid = $cache_lastaccount['account'];
 	}
+	if (!empty($uniacid)) {
+		$account_info = uni_fetch($uniacid);
+		if (!empty($account_info) && $account_info['isdeleted'] == 1) {
+			$uniacid = '';
+		}
+	}
 	return $uniacid;
 }
 

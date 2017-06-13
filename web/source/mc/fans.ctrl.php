@@ -81,14 +81,14 @@ if ($do == 'display') {
 					$v['tag']['avatar'] = tomedia($v['tag']['headimgurl']);
 				}
 				if (empty($v['nickname']) && !empty($v['tag']['nickname'])) {
-					$v['nickname'] = $v['tag']['nickname'];
+					$v['nickname'] = strip_emoji($v['tag']['nickname']);
 				}
 			}
 			if (empty($v['tag'])) {
 				$v['tag'] = array();
 			}
 			if (empty($v['user']['nickname']) && !empty($v['tag']['nickname'])) {
-				$v['user']['nickname'] = $v['tag']['nickname'];
+				$v['user']['nickname'] = strip_emoji($v['tag']['nickname']);
 			}
 			if (empty($v['user']['avatar']) && !empty($v['tag']['avatar'])) {
 				$v['user']['avatar'] = $v['tag']['avatar'];

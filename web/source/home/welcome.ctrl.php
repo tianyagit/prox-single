@@ -13,10 +13,8 @@ $dos = array('platform', 'ext', 'get_fans_kpi', 'get_last_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'platform') {
-
 	$last_uniacid = uni_account_last_switch();
-	$account_info = uni_account_default($last_uniacid);
-	if (empty($last_uniacid) || $account_info['isdeleted'] == 1) {
+	if (empty($last_uniacid)) {
 		itoast('', url('account/display'), 'info');
 	}
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {

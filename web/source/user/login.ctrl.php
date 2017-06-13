@@ -76,7 +76,7 @@ function _login($forward = '') {
 			}
 		}
 		if (empty($forward)) {
-			$forward = user_login_forward();
+			$forward = user_login_forward($_GPC['forward']);
 		}
 		if ($record['uid'] != $_GPC['__uid']) {
 			isetcookie('__uniacid', '', -7 * 86400);
