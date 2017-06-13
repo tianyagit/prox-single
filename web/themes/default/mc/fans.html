@@ -137,8 +137,9 @@
 					<col width="60px"/>
 					<col />
 					<col />
+					<col width="90px"/>
 					<tr>
-						<th class="text-left" colspan="4">
+						<th class="text-left" colspan="5">
 							<div class="we7-form">
 								<input id='checkall' type="checkbox" we7-check-all="1" name='openid[]' onclick="checkall()"/>
 
@@ -193,6 +194,9 @@
 							{else}
 							<p>关注：{php echo date('Y-m-d H:i:s', $fan['followtime'])}</p>
 							{/if}
+						</td>
+						<td>
+							<a href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="color-default">聊天</a>
 						</td>
 					</tr>
 					{/loop}
