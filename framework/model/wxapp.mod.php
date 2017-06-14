@@ -143,6 +143,9 @@ function wxapp_fetch($uniacid, $version_id = '') {
 			$manifest = ext_module_manifest($module['name']);
 			if (!empty($manifest)) {
 				$wxapp_version_info['modules'][$module['name']]['version'] = $manifest['application']['version'];
+			} else {
+				$last_install_module = module_fetch($module);
+				$wxapp_version_info['modules'][$module['name']]['version'] = $last_install_module['version'];
 			}
 		}
 		$wxapp_info['version'] = $wxapp_version_info;
