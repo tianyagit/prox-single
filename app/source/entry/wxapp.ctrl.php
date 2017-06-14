@@ -22,9 +22,12 @@ if(!is_error($site)) {
 	if (!empty($_W['uniacid'])) {
 		$version = trim($_GPC['v']);
 		$version_info = pdo_get('wxapp_versions', array('uniacid' => $_W['uniacid'], 'version' => $version), array('id', 'uniacid', 'template', 'modules'));
-		if (!empty($version_info)) {
+		if (!empty($version_info['modules'])) {
 			$connection = iunserializer($version_info['modules'], true);
-			$_W['uniacid'] = !empty($connection[$entry['module']]) ? $connection[$entry['module']]['uniacid'] : $version_info['uniacid'];
+			if (!empty($connection[$entry['module']])) {
+				$uniacid = intval($connection[$entry['module']]['uniacid']);
+				$uniacid && $_W['uniacid'] = $uniacid;
+			}
 		}
 	}
 	exit($site->$method());

@@ -14,7 +14,9 @@ load()->model('cloud');
 load()->classs('coupon');
 load()->func('file');
 
+$text = base64_decode('8J+YoyDwn5ijIPCfmKMg8J+YiiDwn5iKIPCfmIIg8J+YgiDwn5iA');
 
+print_r(emoji_unicode_encode($text));exit;
 
 //测试拉取远程代码
 ////我也试一下//我也试一下//我也试一下
