@@ -512,6 +512,7 @@
 			}
 		});
 	});
+	var alibucket = '{$_W['setting']['remote']['alioss']['bucket']}';
 	var buck =  function() {
 		var key = $(':text[name="alioss[key]"]').val();
 		var secret = $(':text[name="alioss[secret]"]').val();
@@ -540,7 +541,8 @@
 				bucket.empty();
 				var buckets = eval(data.message.message);
 				for (var i in buckets) {
-					bucket.append('<option value='+buckets[i]['name']+'@@'+buckets[i]['location']+'>'+buckets[i]['loca_name']+'</option>');
+					var selected = alibucket == buckets[i]['name'] || alibucket ==  buckets[i]['name'] + '@@' + buckets[i]['location'] ? 'selected' : '';
+					bucket.append('<option value="' + buckets[i]['name'] + '@@' + buckets[i]['location'] + '"' + selected + '>'+buckets[i]['loca_name'] + '</option>');
 				}
 			}
 		});
