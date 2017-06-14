@@ -16,6 +16,9 @@ defined('IN_IA') or exit('Access Denied');
  */
 function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 	$urlset = parse_url($url);
+	if (empty($urlset['scheme']) || !in_array($urlset['scheme'], array('http', 'https'))) {
+		return error(1, '只能使用 http 及 https 协议');
+	}
 	if (empty($urlset['path'])) {
 		$urlset['path'] = '/';
 	}
