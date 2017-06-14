@@ -166,12 +166,12 @@
 					var is_confirm = "{php echo $_GPC['is_confirm']}";
 					if(is_confirm == 1) {
 						if(confirm('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除')) {
-							location.href = '{url "system/database/trim"}';
+							location.href = '{url "cloud/upgrade"}';
 						} else {
 							location.href = '{url "cloud/upgrade"}';
 						}
 					} else {
-						util.message('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除.', '{url "system/database/trim"}');
+						util.message('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除.', '{url "cloud/upgrade"}');
 					}
 					return;
 				}
@@ -332,13 +332,13 @@
 			var is_confirm = "{php echo $_GPC['is_confirm']}";
 			if(is_confirm == 1) {
 				if(confirm('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除')) {
-					location.href = '{url "system/database/trim"}';
+					location.href = '{url "cloud/upgrade"}';
 				} else {
 					location.href = '{url "cloud/upgrade"}';
 				}
 			} else {
 				require(['util'], function(u){
-					u.message('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除.', '{url "system/database/trim"}');
+					u.message('已经成功执行升级操作! '+"\n"+' 由于数据库更新, 可能会产生多余的字段. 你可以按照需要删除.', '{url "cloud/upgrade"}');
 				});
 			}
 		</script>
