@@ -35,7 +35,7 @@
 			</form>
 		</div>
 		<div class="clearfix"></div>
-		{if $total >= 10}
+		{if !empty($pager)}
 		<ul class="letters-list cut-wechat-letters">
 			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
 				<a href="javascript:;" ng-bind="letter"></a>
