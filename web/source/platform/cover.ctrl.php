@@ -142,6 +142,15 @@ if ($do == 'module') {
 			$reply['src'] = tomedia($reply['thumb']);
 		}
 		$reply['rule'] = reply_single($reply['rid']);
+		if (empty($reply['rule']['reply_type']) && !empty($reply['rule']['keywords'])) {
+			foreach ($reply['rule']['keywords'] as $keyword) {
+				if ($keyword['type'] == 2 || $keyword['type'] == 3) {
+					$reply['rule']['reply_type'] = 1;
+					break;
+				}
+			}
+		}
+		$reply['rule']['reply_type'] = empty($reply['rule']['reply_type']) ? 2 : $reply['rule']['reply_type'];
 		$reply['url_show'] = $entry['url_show'];
 	} else {
 		$reply = array(
