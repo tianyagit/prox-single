@@ -22,17 +22,19 @@
 			</div>
 		{/if}
 		<div class="cut-header">
+			{if !empty($pager)}
 			<form action="./index.php" method="get">
 				<input type="hidden" name="c" value="account">
 				<input type="hidden" name="a" value="display">
 				<input type="text" name="letter" ng-model="activeLetter" ng-style="{'display': 'none'}">
-				<div class="cut-search" style="margin-left: 60px;">
+				<div class="cut-search">
 					<div class="input-group pull-left">
 						<input class="form-control" name="keyword" value="{$_GPC['keyword']}" type="text" placeholder="请输入微信公众号名称" >
 						<span class="input-group-btn"><button class="btn btn-default button"><i class="fa fa-search"></i></button></span>
 					</div>
 				</div>
 			</form>
+			{/if}
 		</div>
 		<div class="clearfix"></div>
 		{if !empty($pager)}
