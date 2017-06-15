@@ -1,15 +1,11 @@
 <?php
 /**
- * qrcode_stat 表数据记录达到auto_increment 默认的自增长最大值  需要调大此值
  * 更新reply_type字段的值（兼容0.8版本）
  */
 
 define('IN_SYS', true);
 require '../../framework/bootstrap.inc.php';
 
-if(pdo_fieldexists('qrcode_stat', 'id')) {
-	pdo_query("ALTER TABLE ".tablename('qrcode_stat')." AUTO_INCREMENT = 1000000;");
-}
 //更新reply_type字段的值
 $rules = pdo_getall('rule', array('reply_type' => 0));
 if (!empty($rules)) {
