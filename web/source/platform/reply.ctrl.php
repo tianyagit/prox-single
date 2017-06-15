@@ -191,19 +191,12 @@ if ($do == 'post') {
 			if (empty($reply) || $reply['uniacid'] != $_W['uniacid']) {
 				itoast('抱歉，您操作的规则不在存或是已经被删除！', url('platform/reply', array('m' => $m)), 'error');
 			}
-			if (empty($reply['reply_type']) && !empty($reply['keywords'])) {
+			if (!empty($reply['keywords'])) {
 				foreach ($reply['keywords'] as &$keyword) {
 					$keyword = array_elements(array('type', 'content'), $keyword);
 				}
 				unset($keyword);
-				foreach ($reply['keywords'] as $keyword) {
-					if ($keyword['type'] == 2 || $keyword['type'] == 3) {
-						$reply['reply_type'] = 1;
-						break;
-					}
-				}
 			}
-			$reply['reply_type'] = empty($reply['reply_type']) ? 2 : $reply['reply_type'];
 		}
 		if (checksubmit('submit')) {
 			if (empty($_GPC['rulename'])) {
