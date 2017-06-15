@@ -548,15 +548,30 @@ function module_status($module) {
  * @return array $modules 有升级的模块及升级信息
  */
 function module_filter_upgrade($module_list) {
-	$all_upgrade_module = cache_load(cache_system_key('all_upgrade_module:'));
-	if (empty($all_upgrade_module)) {
-		$all_upgrade_module = cache_build_upgrade_module();
-	}
 	$modules = array();
-	if (!empty($module_list) && is_array($module_list)) {
-		foreach ($module_list as $module) {
-			if (!empty($all_upgrade_module[$module])) {
-				$modules[$module] = $all_upgrade_module[$module];
+	$installed_module = pdo_getall('modules', array('name' => $module_list), array('version', 'name'), 'name');
+	$all_upgrade_cloud_module = cache_load(cache_system_key('all_cloud_upgrade_module:'));
+	if (empty($all_upgrade_cloud_module)) {
+		$all_upgrade_cloud_module = cache_build_cloud_upgrade_module();
+	}
+	if (!empty($module_list) && is_array($module_list) && !empty($installed_module)) {
+		foreach ($module_list as $key => $module) {
+			if (empty($installed_module[$module])) {
+				continue;
+			}
+			$manifest = ext_module_manifest($module);
+			if (!empty($manifest)&& is_array($manifest)) {
+				$module = array('name' => $module);
+				$module['from'] = 'local';
+				if (ver_compare($installed_module[$module['name']]['version'], $manifest['application']['version']) == '-1') {
+					$module['upgrade'] = true;
+					$module['upgrade_branch'] = true;
+					$modules[$module['name']] = $module;
+				}
+			} else {
+				if (is_array($all_upgrade_cloud_module) && !empty($all_upgrade_cloud_module[$module])) {
+					$modules[$module] = $all_upgrade_cloud_module[$module];
+				}
 			}
 		}
 	}

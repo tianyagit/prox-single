@@ -233,7 +233,7 @@ if ($do == 'upgrade') {
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
 	cache_build_uninstalled_module();
-	cache_build_upgrade_module();
+	cache_build_cloud_upgrade_module();
 	if (!empty($module['subscribes'])) {
 		ext_check_module_subscribe($module_name);
 	}
@@ -645,7 +645,7 @@ if ($do == 'filter') {
 		foreach ($module_list as $module) {
 			$new_branch_module = !empty($condition['new_branch']) && $upgrade_modules[$module['name']]['new_branch'];
 			$upgrade_branch_module = !empty($condition['upgrade_branch']) && $upgrade_modules[$module['name']]['upgrade_branch'];
-			if ($empty_condition || $new_branch_module || $upgrade_branch_module) {
+			if (($empty_condition && ($module['issystem'] != 1 || $module['name'] == 'we7_coupon')) || $new_branch_module || $upgrade_branch_module) {
 				$modules[$module['name']] = $module;
 				$modules[$module['name']]['upgrade'] = $upgrade_modules[$module['name']]['upgrade'];
 				$modules[$module['name']]['new_branch'] = $upgrade_modules[$module['name']]['new_branch'];
