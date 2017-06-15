@@ -10,35 +10,33 @@ if (!in_array($do, array('keyword'))) {
 }
 
 if($do == 'keyword') {
-	$type = trim($_GPC['type']) == 'all' ? '' : trim($_GPC['type']);
-	
-	if(!empty($type)) {
-		$condition = " WHERE uniacid = :uniacid AND status = 1 AND module = :module";
-		$params = array(':uniacid' => $_W['uniacid'], ':module' => $type);
-	}else {
-		$condition = " WHERE uniacid = :uniacid AND status = 1";
-		$params = array(':uniacid' => $_W['uniacid']);
+	$type = trim($_GPC['type']);
+
+	if($type == 'all') {
+		$condition_sql = " WHERE uniacid = :uniacid AND status = 1 ";
+		$condition = array(':uniacid' => $_W['uniacid']);
+	} else {
+		$condition_sql = " WHERE uniacid = :uniacid AND status = 1 AND module = :module ";
+		$condition = array(':uniacid' => $_W['uniacid'], ':module' => $type);
 	}
 
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 10;
-	$limit = " ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ", {$psize}";
+	$psize = 24;
 
-	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('rule') . $condition, $params);
-	$lists = pdo_fetchall('SELECT * FROM ' . tablename('rule') . $condition . $limit, $params, 'id');
-	if(!empty($lists)) {
-		foreach($lists as &$row) {
-			if(!empty($type)) {
-				$row['child_items'] = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $row['id'], 'status' => 1, 'module' => $type));
-			}else {
-				$row['child_items'] = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $row['id'], 'status' => 1));
-			}
+	$sql = "SELECT %s FROM " . tablename('rule_keyword') . $condition_sql . "%s";
+	$total_sql = sprintf($sql, 'COUNT(*)', '');
+	$list_sql = sprintf($sql, '*', " ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ", {$psize}");
+	$total = pdo_fetchcolumn($total_sql, $condition);
+	$lists = pdo_fetchall($list_sql, $condition);
+	$keyword_list = array();
+	if (!empty($lists)) {
+		foreach ($lists as $keyword) {
+			$keyword_list[$keyword['id']] = $keyword;
 		}
-		unset($row);
 	}
 	$result = array(
-		'items' => $lists,
-		'pager' => pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
+			'items' => $keyword_list,
+			'pager' => pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
 	);
 	iajax(0, $result);
 }

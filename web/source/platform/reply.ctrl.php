@@ -172,8 +172,7 @@ if ($do == 'post') {
 	if ($m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
-			$sql = "SELECT `rid` FROM " . tablename('rule_keyword') . " WHERE `uniacid` = :uniacid  AND `content` = :content";
-			$result = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':content' => $_GPC['keyword']));
+			$result = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => trim($_GPC['keyword'])), array('rid'));
 			if (!empty($result)) {
 				$keywords = array();
 				foreach ($result as $reply) {
@@ -192,10 +191,19 @@ if ($do == 'post') {
 			if (empty($reply) || $reply['uniacid'] != $_W['uniacid']) {
 				itoast('抱歉，您操作的规则不在存或是已经被删除！', url('platform/reply', array('m' => $m)), 'error');
 			}
-			foreach ($reply['keywords'] as &$kw) {
-				$kw = array_elements(array('type', 'content'), $kw);
+			if (empty($reply['reply_type']) && !empty($reply['keywords'])) {
+				foreach ($reply['keywords'] as &$keyword) {
+					$keyword = array_elements(array('type', 'content'), $keyword);
+				}
+				unset($keyword);
+				foreach ($reply['keywords'] as $keyword) {
+					if ($keyword['type'] == 2 || $keyword['type'] == 3) {
+						$reply['reply_type'] = 1;
+						break;
+					}
+				}
 			}
-			unset($kw);
+			$reply['reply_type'] = empty($reply['reply_type']) ? 2 : $reply['reply_type'];
 		}
 		if (checksubmit('submit')) {
 			if (empty($_GPC['rulename'])) {
