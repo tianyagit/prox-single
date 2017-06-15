@@ -19,6 +19,7 @@
 			</div>
 		{/if}
 		<div class="cut-header">
+			{if !empty($pager)}
 			<form action="./index.php" method="get">
 				<input type="hidden" name="c" value="wxapp">
 				<input type="hidden" name="a" value="display">
@@ -30,6 +31,7 @@
 					</div>
 				</div>
 			</form>
+			{/if}
 		</div>
 		{if !empty($pager)}
 		<ul class="letters-list cut-wechat-letters">
