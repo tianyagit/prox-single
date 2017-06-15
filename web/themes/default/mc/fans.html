@@ -137,7 +137,6 @@
 					<col width="60px"/>
 					<col />
 					<col />
-					<col width="90px"/>
 					<tr>
 						<th class="text-left" colspan="5">
 							<div class="we7-form">
@@ -188,15 +187,17 @@
 
 							</div>
 						</td>
-						<td>
+						<td class="text-right">
+							<div class="send-message">
+								<a  href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="color-default">
+									发送消息<span class="wi wi-angle-right"></span>
+								</a>
+							</div>
 							{if empty($fan['follow'])}
 							<p>取消关注：{php echo date('Y-m-d H:i:s', $fan['unfollowtime'])}</p>
 							{else}
 							<p>关注：{php echo date('Y-m-d H:i:s', $fan['followtime'])}</p>
 							{/if}
-						</td>
-						<td>
-							<a href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="color-default">聊天</a>
 						</td>
 					</tr>
 					{/loop}
