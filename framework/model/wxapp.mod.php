@@ -147,9 +147,9 @@ function wxapp_fetch($uniacid, $version_id = '') {
 				$wxapp_version_info['modules'][$module['name']]['version'] = $last_install_module['version'];
 			}
 		}
-		$wxapp_info['version'] = $wxapp_version_info;
-		$wxapp_info['version_num'] = explode('.', $wxapp_version_info['version']);
 	}
+	$wxapp_info['version'] = $wxapp_version_info;
+	$wxapp_info['version_num'] = explode('.', $wxapp_version_info['version']);
 	return  $wxapp_info;
 }
 /*  
