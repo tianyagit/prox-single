@@ -169,7 +169,7 @@
 							</div>
 							<a href="{php echo url('mc/member/post',array('uid' => $li['uid']))}" title="编辑" class="">编辑</a>
 							<a href="{php echo url('mc/member/credit_stat',array('uid' => $li['uid'], 'type' => 1))}" title="日志" class="">日志</a>
-							<!--<a href="">管理设置</a>-->
+							<!--<a href="javasctipt:;">管理设置</a>-->
 							<a href="{php echo url('mc/member/del',array('uid' => $li['uid']))}" onclick="return confirm('确定删除会员吗?')" title="删除" class="">删除</a>
 						</div>
 					</td>
@@ -978,6 +978,38 @@
 {/if}
 
 {if $do == 'credit_stat'}
+<table class="table we7-table table-form hidden">
+	<tr>
+		<th colspan="2">数据统计</th>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<span class="color-gray we7-margin-right">选择范围</span>
+			<a href="{php echo url('mc/member/credit_stat', array('uid' => $uid, type => 1));}" class="btn {if $_GPC['type'] == 1}btn-primary{else}btn-default{/if} btn-sm">今日</a>
+			<a href="{php echo url('mc/member/credit_stat', array('uid' => $uid, type => -1));}" class="btn {if $_GPC['type'] == -1}btn-primary{else}btn-default{/if} btn-sm">昨日</a>
+			<form class="" role="search" id="form1" style="display: inline;">
+				<input name="c" value="mc" type="hidden" />
+				<input name="a" value="member" type="hidden" />
+				<input name="do" value="credit_stat" type="hidden" />
+				<input name="uid" value="{$uid}" type="hidden" />
+				{php echo tpl_form_field_daterange('datelimit', array('start' => date('Y-m-d', $starttime),'end' => date('Y-m-d', $endtime)), '')}
+			</form>
+		</td>
+	</tr>
+	<tr>
+		{loop $credits $key $li}
+		<td class="text-center credits-count-data">
+			<div class="box">
+				<strong>{$li}</strong>
+				<div id="rule" class="stat">
+					<div>增加 <strong><span class="text-success">{$data[$key]['add']}</span></strong></div>
+					<div>减少 <strong><span class="text-danger">{$data[$key]['del']}</span></strong></div>
+				</div>
+			</div>
+		</td>
+		{/loop}
+	</tr>
+</table>
 <style>
 	.account-stat{overflow:hidden; color:#666;}
 	.account-stat .account-stat-btn{width:100%; overflow:hidden;}
