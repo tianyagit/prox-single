@@ -147,7 +147,6 @@ if ($do == 'module') {
 			'title' => $entry['title'],
 			'url_show' => $entry['url_show'],
 			'rule' => array(
-				'reply_type' => '2',
 				'displayorder' => '0',
 			)
 		);
