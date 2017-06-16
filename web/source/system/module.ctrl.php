@@ -136,7 +136,9 @@ if ($do == 'upgrade') {
 		if (is_error($module_info)) {
 			iajax(1, $module_info);
 		}
-		if (!empty($_GPC['flag'])) {
+		$uninstall_modules = module_get_all_unistalled('uninstalled');
+		$upgrade_support_module = $uninstall_modules['modules'][$module_name]['upgrade_support'];
+		if (!empty($_GPC['flag']) || $upgrade_support_module) {
 			define('ONLINE_MODULE', true);
 			$packet = cloud_m_build($module_name);
 			$manifest = ext_module_manifest_parse($packet['manifest']);
