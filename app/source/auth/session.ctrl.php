@@ -115,9 +115,4 @@ if ($do == 'openid') {
 	unset($member['password']);
 	unset($member['salt']);
 	$account_api->result(0, '', $member);
-} elseif ($do == 'touch') {
-	if (empty($_SESSION['openid'])) {
-		$account_api->result(1);
-	}
-	$account_api->result(0);
 }
