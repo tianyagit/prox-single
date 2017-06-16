@@ -201,17 +201,9 @@ if ($do == 'post') {
 		if (checksubmit('submit')) {
 			$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
 			if (empty($keywords)) {
-				itoast('必须填写有效的触发关键字.', '', '');
+				itoast('必须填写有效的触发关键字.');
 			}
-			if (empty($_GPC['rulename'])) {
-				$rulename = array();
-				foreach ($keywords as $keyword_val) {
-					$rulename[] = $keyword_val['content'];
-				}
-				$rulename = implode(',', $rulename);
-			} else {
-				$rulename = trim($_GPC['rulename']);
-			}
+			$rulename = trim($_GPC['rulename']);
 			$containtype = '';
 			$_GPC['reply'] = (array)$_GPC['reply'];
 			foreach ($_GPC['reply'] as $replykey => $replyval) {
@@ -219,6 +211,9 @@ if ($do == 'post') {
 					$type = substr($replykey, 6);
 					$containtype .= $type == 'image' ? 'images' : $type .',';
 				}
+			}
+			if (empty($containtype)) {
+				itoast('必须填写有效的回复内容！');
 			}
 			$rule = array(
 				'uniacid' => $_W['uniacid'],
