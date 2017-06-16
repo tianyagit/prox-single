@@ -196,15 +196,15 @@ if ($do == 'upgrade') {
 			}
 			//删除不存在的do和title
 			if (!empty($not_delete_do)) {
-				pdo_query('DELETE FROM ' . tablename('modules_bindings') . " WHERE module = :module AND entry = :entry AND `call` = '' AND do NOT IN ('" . implode("','", $not_delete_do) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
+				pdo_query("DELETE FROM " . tablename('modules_bindings') . " WHERE module = :module AND entry = :entry AND `call` = '' AND do NOT IN ('" . implode("','", $not_delete_do) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
 				unset($not_delete_do);
 			}
 			if (!empty($not_delete_title)) {
-				pdo_query('DELETE FROM ' . tablename('modules_bindings') . " WHERE module = :module AND entry = :entry AND `call` = '' AND title NOT IN ('" . implode("','", $not_delete_title) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
+				pdo_query("DELETE FROM " . tablename('modules_bindings') . " WHERE module = :module AND entry = :entry AND `call` = '' AND title NOT IN ('" . implode("','", $not_delete_title) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
 				unset($not_delete_title);
 			}
 			if (!empty($not_delete_call)) {
-				pdo_query('DELETE FROM ' . tablename('modules_bindings') . " WHERE module = :module AND  entry = :entry AND do = '' AND title = '' AND `call` NOT IN ('" . implode("','", $not_delete_call) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
+				pdo_query("DELETE FROM " . tablename('modules_bindings') . " WHERE module = :module AND  entry = :entry AND do = '' AND title = '' AND `call` NOT IN ('" . implode("','", $not_delete_call) . "')", array(':module' => $manifest['application']['identifie'], ':entry' => $point_name));
 				unset($not_delete_call);
 			}
 		}
@@ -430,6 +430,20 @@ if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
+	if (!empty($module_info['is_relation'])) {
+		$accoount_type = intval($_GET['account_type']) ? intval($_GET['account_type']) : '';
+		switch ($accoount_type) {
+			case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+			case ACCOUNT_TYPE_OFFCIAL_AUTH:
+				$module_info['relation_name'] = '小程序版';
+				$module_info['account_type'] = '';
+				break;
+			default:
+				$module_info['relation_name'] = '公众号版4';
+				$module_info['account_type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
+				break;
+		}
+	}
 	if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/preview-custom.jpg')) {
 		$module_info['preview'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/preview-custom.jpg');
 	} else {
