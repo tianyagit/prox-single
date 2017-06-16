@@ -107,7 +107,7 @@ if ($do == 'backup') {
 							'status'=>1
 						);
 						$current_series = $series-1;
-						itoast('正在导出数据, 请不要关闭浏览器, 当前第 ' . $current_series . ' 卷.', url('system/database/backup/',$current), 'info');
+						message('正在导出数据, 请不要关闭浏览器, 当前第 ' . $current_series . ' 卷.', url('system/database/backup/',$current), 'info');
 					}
 					
 				}
@@ -259,13 +259,11 @@ if ($do == 'trim') {
 		}
 		exit();
 	}
-/**
- * @@todo 没有该控制器
+	
 	$r = cloud_prepare();
 	if(is_error($r)) {
 		itoast($r['message'], url('cloud/profile'), 'error');
 	}
-	*/
 	
 	$upgrade = cloud_schema();
 	$schemas = $upgrade['schemas'];

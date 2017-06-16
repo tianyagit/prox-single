@@ -61,23 +61,8 @@ if($do == 'display') {
 		itoast('抱歉，你操作的模块不能被访问！', '', '');
 	}
 	
-	$module_status = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $_W['uniacid']), array('id', 'shortcut'));
-	if (empty($module_status)) {
-		$data = array(
-			'uniacid' => $_W['uniacid'],
-			'module' => $modulename,
-			'enabled' => STATUS_ON,
-			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
-			'settings' => '',
-		);
-		pdo_insert('uni_account_modules', $data);
-	} else {
-		$data = array(
-			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
-		);
-		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
-		cache_build_module_info($modulename);
-	}
+	$module_enabled = uni_account_module_shortcut_enabled($modulename, $_W['uniacid'], $status);
+	
 	if ($status) {
 		itoast('添加模块快捷操作成功！', referer(), 'success');
 	} else {

@@ -1160,3 +1160,35 @@ function account_wechatpay_proxy () {
 	unset($proxy_account['service'][$_W['uniacid']]);
 	return $proxy_account;
 }
+
+/**
+ * 设置模块是否在快捷菜单显示
+ */
+function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status = STATUS_ON) {
+	global $_W;
+	$module = module_fetch($modulename);
+	if(empty($module)) {
+		return error(1, '抱歉，你操作的模块不能被访问！');
+	}
+	$uniacid = intval($uniacid);
+	$uniacid = !empty($uniacid) ? $uniacid : $_W['uniacid'];
+	
+	$module_status = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $uniacid), array('id', 'shortcut'));
+	if (empty($module_status)) {
+		$data = array(
+			'uniacid' => $uniacid,
+			'module' => $modulename,
+			'enabled' => STATUS_ON,
+			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
+			'settings' => '',
+		);
+		pdo_insert('uni_account_modules', $data);
+	} else {
+		$data = array(
+			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
+		);
+		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
+		cache_build_module_info($modulename);
+	}
+	return true;
+}
