@@ -264,7 +264,8 @@
 				<span>版本：{{ module.version }} </span>
 			</td>
 			<td class="text-left">
-				<a href="{php echo url('system/module/install', array('account_type' => 4))}&module_name={{ module.name }}" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('system/module/upgrade', array('account_type' => 4))}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('system/module/install', array('account_type' => 4))}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">安装应用模块</a>
 			</td>
 		</tr>
 	</table>
