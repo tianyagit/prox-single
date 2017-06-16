@@ -107,7 +107,7 @@ if ($do == 'backup') {
 							'status'=>1
 						);
 						$current_series = $series-1;
-						itoast('正在导出数据, 请不要关闭浏览器, 当前第 ' . $current_series . ' 卷.', url('system/database/backup/',$current), 'info');
+						message('正在导出数据, 请不要关闭浏览器, 当前第 ' . $current_series . ' 卷.', url('system/database/backup/',$current), 'info');
 					}
 					
 				}

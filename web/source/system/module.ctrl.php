@@ -136,7 +136,9 @@ if ($do == 'upgrade') {
 		if (is_error($module_info)) {
 			iajax(1, $module_info);
 		}
-		if (!empty($_GPC['flag'])) {
+		$uninstall_modules = module_get_all_unistalled('uninstalled');
+		$upgrade_support_module = $uninstall_modules['modules'][$module_name]['upgrade_support'];
+		if (!empty($_GPC['flag']) || $upgrade_support_module) {
 			define('ONLINE_MODULE', true);
 			$packet = cloud_m_build($module_name);
 			$manifest = ext_module_manifest_parse($packet['manifest']);
@@ -431,16 +433,18 @@ if ($do == 'module_detail') {
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	if (!empty($module_info['is_relation'])) {
-		$accoount_type = intval($_GET['account_type']) ? intval($_GET['account_type']) : '';
-		switch ($accoount_type) {
+		$type = intval($_GPC['type']);
+		switch ($type) {
 			case ACCOUNT_TYPE_OFFCIAL_NORMAL:
 			case ACCOUNT_TYPE_OFFCIAL_AUTH:
 				$module_info['relation_name'] = '小程序版';
-				$module_info['account_type'] = '';
+				$module_info['account_type'] = 0;
+				$module_info['type'] = ACCOUNT_TYPE_APP_NORMAL;
 				break;
 			default:
-				$module_info['relation_name'] = '公众号版4';
+				$module_info['relation_name'] = '公众号版';
 				$module_info['account_type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
+				$module_info['type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
 				break;
 		}
 	}

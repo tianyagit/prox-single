@@ -182,12 +182,26 @@ $(function(){
 		if(!length) {
 			$.post("{php echo url('account/post-user/module')}", {'m' : m, 'uid' : uid, 'uniacid' : uniacid, 'acid' : acid}, function(data) {
 				console.log(data);
-				var html = '<li><label class="checkbox-inline info">已选0项</label></li>';
 				if(!data.message.errno) {
+					var li_nums = data.message.message.length;
+					var li_checked = 0;
+					var li_contents = '';
+					var html = '';
 					$.each(data.message.message, function(k, v){
-						var check = v.checked ? 'checked' : '';
+						var check = '';
+						if (v.checked) {
+							check = 'checked';
+							li_checked ++;
+						}
 						html += '<li><a href="javascript:;"><input id="check-moduledetail-'+m+'-'+k+'" we7-check-all="1"  type="checkbox" name="module_'+m+'[]" value="'+ v.permission +'" '+check+'/><label for="check-moduledetail-'+m+'-'+k+'" class="we7-padding-left we7-margin-horizontal-none checkbox-inline">'+ v.title +'</label></a></li>';
 					});
+					if (li_nums == li_checked) {
+						li_contents = '已全选';
+					} else {
+						li_contents = '已选' + li_checked + '项';
+					}
+					var _html = '<li><label class="checkbox-inline info">' + li_contents + '</label></li>';
+					html = _html + html;
 				}
 				_this.next().html(html);
 			}, 'json');
