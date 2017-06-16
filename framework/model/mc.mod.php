@@ -92,7 +92,7 @@ function mc_update($uid, $fields) {
 			$fields['avatar'] = str_replace($_W['attachurl'], '', $fields['avatar']);
 		}
 	}
-	$isexists = pdo_fetchcolumn("SELECT uid FROM " . tablename('mc_members') . " WHERE uid = :uid", array(':uid' => $uid));
+	$isexists = pdo_getcolumn('mc_members', array('uid' => $uid), 'uid');
 	$condition = '';
 	if (!empty($isexists)) {
 		$condition = ' AND uid != ' . $uid;
@@ -938,15 +938,8 @@ function mc_openid2uid($openid) {
 	if (is_numeric($openid)) {
 		return $openid;
 	}
-	$cachekey = cache_system_key("uid:{$openid}");
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
-	}
-
 	if (is_string($openid)) {
 		$fans_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'openid' => $openid), array('uid'));
-		cache_write($cachekey, $fans_info['uid']);
 		return !empty($fans_info) ? $fans_info['uid'] : false;
 	}
 	if (is_array($openid)) {
