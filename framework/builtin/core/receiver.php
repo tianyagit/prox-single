@@ -98,11 +98,12 @@ class CoreModuleReceiver extends WeModuleReceiver {
 				$userinfo['avatar'] = $userinfo['headimgurl'];
 				$fans = array(
 					'unionid' => $userinfo['unionid'],
-					'nickname' => $userinfo['nickname'],
+					'nickname' => strip_emoji($userinfo['nickname']),
 					'tag' => base64_encode(iserializer($userinfo)),
-				);
+				);				
 				pdo_update('mc_mapping_fans', $fans, array('openid' => $this->message['from']));
-				if (!empty($_W['member']['uid'])) {
+				$uid = !empty($_W['member']['uid']) ? $_W['member']['uid'] : $this->message['from'];
+				if (!empty($uid)) {
 					$member = array();
 					if (!empty($userinfo['nickname'])) {
 						$member['nickname'] = $fans['nickname'];
@@ -111,7 +112,7 @@ class CoreModuleReceiver extends WeModuleReceiver {
 						$member['avatar'] = $userinfo['headimgurl'];
 					}
 					load()->model('mc');
-					mc_update($_W['member']['uid'], $member);
+					mc_update($uid, $member);
 				}
 			}
 		}

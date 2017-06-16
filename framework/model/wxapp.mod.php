@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 function wxapp_getpackage($data, $if_single = false) {
 	load()->classs('cloudapi');
-
+	
 	$api = new CloudApi();
 	$result = $api->post('wxapp', 'download', $data, 'html');
 	if (is_error($result)) {
@@ -103,7 +103,6 @@ function wxapp_fetch($uniacid, $version_id = '') {
 	load()->model('extension');
 	$wxapp_info = array();
 	$uniacid = intval($uniacid);
-	
 	if (empty($uniacid)) {
 		return $wxapp_info;
 	}
@@ -144,13 +143,13 @@ function wxapp_fetch($uniacid, $version_id = '') {
 			if (!empty($manifest)) {
 				$wxapp_version_info['modules'][$module['name']]['version'] = $manifest['application']['version'];
 			} else {
-				$last_install_module = module_fetch($module);
+				$last_install_module = module_fetch($module['name']);
 				$wxapp_version_info['modules'][$module['name']]['version'] = $last_install_module['version'];
 			}
 		}
-		$wxapp_info['version'] = $wxapp_version_info;
-		$wxapp_info['version_num'] = explode('.', $wxapp_version_info['version']);
 	}
+	$wxapp_info['version'] = $wxapp_version_info;
+	$wxapp_info['version_num'] = explode('.', $wxapp_version_info['version']);
 	return  $wxapp_info;
 }
 /*  

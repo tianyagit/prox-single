@@ -123,6 +123,10 @@ function uni_fetch($uniacid = 0) {
 	load()->model('mc');
 	$account['groups'] = mc_groups($uniacid);
 	$account['grouplevel'] = pdo_fetchcolumn('SELECT grouplevel FROM ' . tablename('uni_settings') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
+	
+	$account['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
+	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
+	
 	cache_write($cachekey, $account);
 	return $account;
 }
@@ -453,6 +457,10 @@ function uni_account_default($uniacid = 0) {
 	global $_W;
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$uni_account = pdo_fetch("SELECT * FROM ".tablename('uni_account')." a LEFT JOIN ".tablename('account')." w ON a.default_acid = w.acid WHERE a.uniacid = :uniacid", array(':uniacid' => $uniacid), 'acid');
+	//如果没有指定default_acid，则直接取最新的一个acid
+	if (empty($uni_account)) {
+		$uni_account = pdo_fetch("SELECT * FROM ".tablename('uni_account')." a LEFT JOIN ".tablename('account')." w ON a.uniacid = w.uniacid WHERE a.uniacid = :uniacid ORDER BY w.acid DESC", array(':uniacid' => $uniacid), 'acid');
+	}
 	if (!empty($uni_account)) {
 		$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
 		$account['type'] = $uni_account['type'];
@@ -952,22 +960,7 @@ function account_fetch($acid) {
 	if (empty($account_info)) {
 		return error(-1, '公众号不存在');
 	}
-	$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename(uni_account_tablename($account_info['type'])) . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
-	if (empty($account)) {
-		return error(1, '公众号不存在');
-	}
-	$uniacid = $account['uniacid'];
-	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
-	load()->model('user');
-	$owner = user_single(array('uid' => $owneruid));
-	$account['uid'] = $owner['uid'];
-	$account['starttime'] = $owner['starttime'];
-	$account['endtime'] = $owner['endtime'];
-	$account['thumb'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
-	load()->model('mc');
-	$account['groups'] = mc_groups($uniacid);
-	$account['grouplevel'] = pdo_fetchcolumn('SELECT grouplevel FROM ' . tablename('uni_settings') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
-	return $account;
+	return uni_fetch($account_info['uniacid']);
 }
 
 /*

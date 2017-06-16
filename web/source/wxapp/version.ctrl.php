@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('display', 'manage', 'module_link_uniacid', 'search_link_account');
+$dos = array('display', 'manage', 'module_link_uniacid', 'search_link_account', 'module_unlink_uniacid');
 $do = in_array($do, $dos) ? $do : 'display';
 if ($do == 'module_link_uniacid') {
 	uni_user_permission_check('wxapp_module_link_uniacid', true, 'wxapp');
@@ -44,16 +44,38 @@ if ($do == 'module_link_uniacid') {
 	$version_info = wxapp_version($version_id);
 
 	if (checksubmit('submit')) {
-		if (!empty($module_name) && !empty($uniacid) && !empty($version_info['modules'][$module_name])) {
-			$module_update = array();
-			foreach ($version_info['modules'] as $module) {
-				$module_update[$module['name']] = array('name' => $module['name'], 'version' => $module['version'], 'uniacid' => $uniacid);
-			}
-			pdo_update('wxapp_versions', array('modules' => serialize($module_update)), array('id' => $version_id));
+		if (empty($module_name) || empty($uniacid)) {
+			iajax('1', '参数错误！');
 		}
+		$module = module_fetch($module_name);
+		if (empty($module)) {
+			iajax('1', '模块不存在！');
+		}
+		$module_update = array();
+		$module_update[$module['name']] = array('name' => $module['name'], 'version' => $module['version'], 'uniacid' => $uniacid);
+		pdo_update('wxapp_versions', array('modules' => serialize($module_update)), array('id' => $version_id));
 		iajax(0, '关联公众号成功');
 	}
 	template('wxapp/version-module-link-uniacid');
+}
+
+if ($do == 'module_unlink_uniacid') {
+	if (!empty($version_info)) {
+		$module = current($version_info['modules']);
+		$version_modules = array(
+				$module['name'] => array(
+					'name' => $module['name'],
+					'version' => $module['version']
+					)
+			);
+	}
+	$version_modules = serialize($version_modules);
+	$result = pdo_update('wxapp_versions', array('modules' => $version_modules), array('id' => $version_info['id']));
+	if ($result) {
+		itoast('删除成功！', referer(), 'success');
+	} else {
+		itoast('删除失败！', referer(), 'error');
+	}
 }
 
 if ($do == 'search_link_account') {
