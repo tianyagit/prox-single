@@ -40,16 +40,6 @@ function reply_single($id) {
 		return $result;
 	}
 	$result['keywords'] = pdo_getall('rule_keyword', array('rid' => $id));
-	if (empty($result['reply_type']) && !empty($result['keywords'])) {
-		foreach ($result['keywords'] as $keyword) {
-			if ($keyword['type'] == 2 || $keyword['type'] == 3) {
-				$result['reply_type'] = 1;
-				break;
-			}
-		}
-	}
-	$result['reply_type'] = empty($result['reply_type']) ? 2 : $result['reply_type'];
-	
 	return $result;
 }
 
