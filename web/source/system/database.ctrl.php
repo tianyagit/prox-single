@@ -259,13 +259,11 @@ if ($do == 'trim') {
 		}
 		exit();
 	}
-/**
- * @@todo 没有该控制器
+	
 	$r = cloud_prepare();
 	if(is_error($r)) {
 		itoast($r['message'], url('cloud/profile'), 'error');
 	}
-	*/
 	
 	$upgrade = cloud_schema();
 	$schemas = $upgrade['schemas'];
