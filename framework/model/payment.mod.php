@@ -122,6 +122,10 @@ function wechat_build($params, $wechat) {
 		$wOpt['paySign'] = sha1($string);
 		return $wOpt;
 	} else {
+		//当用户传过来UID时，需要转换一下Openid
+		if (!empty($params['user']) && is_numeric($params['user'])) {
+			$params['user'] = mc_uid2openid($params['user']);
+		}
 		$package = array();
 		$package['appid'] = $wechat['appid'];
 		$package['mch_id'] = $wechat['mchid'];
