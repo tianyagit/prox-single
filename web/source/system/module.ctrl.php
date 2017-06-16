@@ -433,15 +433,15 @@ if ($do == 'module_detail') {
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	if (!empty($module_info['is_relation'])) {
-		$accoount_type = intval($_GET['account_type']) ? intval($_GET['account_type']) : '';
+		$accoount_type = intval($_GET['account_type']);
 		switch ($accoount_type) {
 			case ACCOUNT_TYPE_OFFCIAL_NORMAL:
 			case ACCOUNT_TYPE_OFFCIAL_AUTH:
 				$module_info['relation_name'] = '小程序版';
-				$module_info['account_type'] = '';
+				$module_info['account_type'] = 0;
 				break;
 			default:
-				$module_info['relation_name'] = '公众号版4';
+				$module_info['relation_name'] = '公众号版';
 				$module_info['account_type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
 				break;
 		}
