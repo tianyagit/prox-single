@@ -1718,18 +1718,19 @@ abstract class WeModuleWxapp extends WeBase {
 	
 		load()->model('payment');
 		load()->model('account');
-	
+		
 		$moduels = uni_modules();
 		if(empty($order) || !array_key_exists($this->module['name'], $moduels)) {
 			return error(1, '模块不存在');
 		}
 		$moduleid = empty($this->module['mid']) ? '000000' : sprintf("%06d", $this->module['mid']);
 		$uniontid = date('YmdHis').$moduleid.random(8,1);
-	
-		$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => $this->module['name'], 'tid' => $order['tid']));
+		$wxapp_uniacid = intval($_W['account']['uniacid']);
+		
+		$paylog = pdo_get('core_paylog', array('uniacid' => $wxapp_uniacid, 'module' => $this->module['name'], 'tid' => $order['tid']));
 		if (empty($paylog)) {
 			$paylog = array(
-				'uniacid' => $_W['uniacid'],
+				'uniacid' => $wxapp_uniacid,
 				'acid' => $_W['acid'],
 				'openid' => $_W['openid'],
 				'module' => $this->module['name'],
@@ -1752,8 +1753,7 @@ abstract class WeModuleWxapp extends WeBase {
 				'uniontid' => $uniontid,
 			), array('plid' => $paylog['plid']));
 		}
-	
-		$_W['uniacid'] = $paylog['uniacid'];
+		
 		$_W['openid'] = $paylog['openid'];
 	
 		$params = array(
@@ -1763,7 +1763,7 @@ abstract class WeModuleWxapp extends WeBase {
 			'uniontid' => $paylog['uniontid'],
 			'title' => $order['title'],
 		);
-		$setting = uni_setting($_W['uniacid'], array('payment'));
+		$setting = uni_setting($wxapp_uniacid, array('payment'));
 		$wechat_payment = array(
 			'appid' => $_W['account']['key'],
 			'signkey' => $setting['payment']['wechat']['signkey'],
