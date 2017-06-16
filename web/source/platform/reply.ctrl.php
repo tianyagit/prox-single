@@ -199,12 +199,18 @@ if ($do == 'post') {
 			}
 		}
 		if (checksubmit('submit')) {
-			if (empty($_GPC['rulename'])) {
-				itoast('必须填写回复规则名称.', '', '');
-			}
 			$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
 			if (empty($keywords)) {
 				itoast('必须填写有效的触发关键字.', '', '');
+			}
+			if (empty($_GPC['rulename'])) {
+				$rulename = array();
+				foreach ($keywords as $keyword_val) {
+					$rulename[] = $keyword_val['content'];
+				}
+				$rulename = implode(',', $rulename);
+			} else {
+				$rulename = trim($_GPC['rulename']);
 			}
 			$containtype = '';
 			$_GPC['reply'] = (array)$_GPC['reply'];
@@ -216,10 +222,9 @@ if ($do == 'post') {
 			}
 			$rule = array(
 				'uniacid' => $_W['uniacid'],
-				'name' => $_GPC['rulename'],
+				'name' => $rulename,
 				'module' => $m == 'keyword' ? 'reply' : $m,
 				'containtype' => $containtype,
-				'reply_type' => intval($_GPC['reply_type']) == 2 ? 2 : 1,
 				'status' => $_GPC['status'] == 'true' ? 1 : 0,
 				'displayorder' => intval($_GPC['displayorder_rule']),
 			);
