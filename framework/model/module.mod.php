@@ -183,7 +183,7 @@ function module_app_entries($name, $types = array(), $args = null) {
 }
 
 function module_entry($eid) {
-	$sql = 'SELECT * FROM ' . tablename('modules_bindings') . ' WHERE `eid`=:eid';
+	$sql = "SELECT * FROM " . tablename('modules_bindings') . " WHERE `eid`=:eid";
 	$pars = array();
 	$pars[':eid'] = $eid;
 	$entry = pdo_fetch($sql, $pars);
@@ -268,6 +268,7 @@ function module_fetch($name) {
 		if ($module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2) {
 			$module_info['app_support'] = 2;
 		}
+		$module_info['is_relation'] = $module_info['app_support'] ==2 && $module_info['wxapp_support'] == 2 ? true : false;
 		$module_ban = setting_load('module_ban');
 		if (in_array($name, $module_ban['module_ban'])) {
 			$module_info['is_ban'] = true;
@@ -302,7 +303,7 @@ function module_fetch($name) {
  */
 function module_build_privileges() {
 	load()->model('account');
-	$uniacid_arr = pdo_fetchall('SELECT uniacid FROM ' . tablename('uni_account'));
+	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
 	foreach($uniacid_arr as $row){
 		$modules = uni_modules(false);
 		//得到模块标识

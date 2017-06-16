@@ -71,15 +71,12 @@ if($do == 'display') {
 
 	$condition = '';
 	$params = array(':uniacid' => $_W['uniacid']);
-	$starttime = empty($_GPC['createtime']['start']) ? strtotime('-90 days') : strtotime($_GPC['createtime']['start']);
-	$endtime = empty($_GPC['createtime']['end']) ? TIMESTAMP + 86399 : strtotime($_GPC['createtime']['end']) + 86399;
-	$condition .= " AND createtime >= {$starttime} AND createtime <= {$endtime}";
 	if (!empty($_GPC['username'])) {
 		if ($search_mod == 1) {
 			$condition .= " AND ((`uid` = :openid) OR ( `realname` = :username ) OR ( `nickname` = :username ) OR ( `mobile` = :username ))";
 			$params[':username'] = trim($_GPC['username']);
 			if (!is_numeric(trim($_GPC['username']))) {
-				$uid = pdo_fetchcolumn('SELECT `uid` FROM'. tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
+				$uid = pdo_fetchcolumn("SELECT `uid` FROM". tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
 				$uid = empty($uid) ? $uid : '';
 				$params[':openid'] = $uid;
 			} else {
@@ -89,7 +86,7 @@ if($do == 'display') {
 			$condition .= " AND ((`uid` = :openid) OR ( `realname` LIKE :username ) OR ( `nickname` LIKE :username ) OR ( `mobile` LIKE :username ))";
 			$params[':username'] =  '%'.trim($_GPC['username']).'%';
 			if (!is_numeric(trim($_GPC['username']))) {
-				$uid = pdo_fetchcolumn('SELECT `uid` FROM'. tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
+				$uid = pdo_fetchcolumn("SELECT `uid` FROM". tablename('mc_mapping_fans')." WHERE openid = :openid", array(':openid' => trim($_GPC['username'])));
 				$params[':openid'] =  empty($uid) ? "" : $uid;
 			} else {
 				$params[':openid'] =  "%". $_GPC['username']. "%";
