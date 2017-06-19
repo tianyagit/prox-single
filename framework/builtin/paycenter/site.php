@@ -249,5 +249,6 @@ class PaycenterModuleSite extends WeModuleSite {
 		global $_GPC, $_W;
 		$url = murl('entry', array('m' => 'we7_coupon', 'do' => 'consume', 'card_id' => trim($_GPC['card_id']), 'encrypt_code' => trim($_GPC['encrypt_code']), 'openid' => trim($_GPC['openid'])));
 		header("Location: $url");
+		exit;
 	}
 }
