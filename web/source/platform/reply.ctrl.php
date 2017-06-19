@@ -212,7 +212,7 @@ if ($do == 'post') {
 					$containtype .= $type == 'image' ? 'images' : $type .',';
 				}
 			}
-			if (empty($containtype)) {
+			if (empty($containtype) && in_array($m, $sysmods)) {
 				itoast('必须填写有效的回复内容！');
 			}
 			$rule = array(
