@@ -356,6 +356,7 @@
 				<div class="modal-body">
 					<select class="form-control" ng-model="group">
 						<option value="">请选择粉丝组</option>
+						<option value="-1">全部粉丝</option>
 						<option ng-repeat="group in groups" value="{{ group.id }}">{{ group.name }}({{ group.count }})</option>
 					</select>
 				</div>
