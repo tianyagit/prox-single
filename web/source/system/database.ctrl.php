@@ -222,7 +222,7 @@ if($do == 'restore') {
 						'restore_volume_prefix' => $restore_volume_prefix,
 						'restore_volume_sizes' => $restore_volume_sizes,
 					);
-					itoast('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore), 'success');
+					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore), 'success');
 				}
 			} else {
 				itoast('非法访问', '','error');
