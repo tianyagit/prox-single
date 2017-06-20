@@ -22,7 +22,7 @@ function welcome_get_last_modules() {
  * @return array
 */
 function welcome_notices_get() {
-	$notices = pdo_getall('article_notice', array('is_display' => 1), array('id', 'title', 'createtime'), '', 'createtime DESC', array(1,5));
+	$notices = pdo_getall('article_notice', array('is_display' => 1), array('id', 'title', 'createtime'), '', 'createtime DESC', array(1,10));
 	if(!empty($notices)) {
 		foreach ($notices as $key => $notice_val) {
 			$notices[$key]['url'] = url('article/notice-show/detail', array('id' => $notice_val['id']));
