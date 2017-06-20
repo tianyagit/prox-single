@@ -35,10 +35,10 @@ class WeSession {
 	 */
 	public static function start($uniacid, $openid, $expire = 3600) {
 		$cache_setting = $GLOBALS['_W']['config']['setting'];
-		if ($cache_setting['cache'] == 'memcache' && extension_loaded('memcache') && !empty($cache_setting['memcache']['server'])) {
+		if ($cache_setting['cache'] == 'memcache' && extension_loaded('memcache') && !empty($cache_setting['memcache']['server']) && !empty($cache_setting['memcache']['session'])) {
 			ini_set("session.save_handler", "memcache");
 			ini_set("session.save_path", "tcp://{$cache_setting['memcache']['server']}:{$cache_setting['memcache']['port']}");
-		} elseif ($cache_setting['cache'] == 'redis' && extension_loaded('redis') && !empty($cache_setting['redis']['server'])) {
+		} elseif ($cache_setting['cache'] == 'redis' && extension_loaded('redis') && !empty($cache_setting['redis']['server']) && !empty($cache_setting['redis']['session'])) {
 			ini_set("session.save_handler", "redis");
 			ini_set("session.save_path", "tcp://{$cache_setting['redis']['server']}:{$cache_setting['redis']['port']}");
 		} else {
