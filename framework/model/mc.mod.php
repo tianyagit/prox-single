@@ -769,10 +769,8 @@ function mc_fans_groups($force_update = false) {
  */
 function _mc_login($member) {
 	global $_W;
-
-	if (!empty($member) && !empty($member['uid'])) {
-		$sql = 'SELECT `uid`,`realname`,`mobile`,`email`,`groupid`,`credit1`,`credit2`,`credit6` FROM ' . tablename('mc_members') . ' WHERE `uid`=:uid AND `uniacid`=:uniacid';
-		$member = pdo_fetch($sql, array(':uid' => $member['uid'], ':uniacid' => $_W['uniacid']));
+	if (!empty($member) && !empty($member['uid'])) {	
+		$member = pdo_get('mc_members', array('uid' => $member['uid'], 'uniacid' => $_W['uniacid']), array('uid', 'realname', 'mobile', 'email', 'groupid', 'credit1', 'credit2', 'credit6'));
 		if (!empty($member) && (!empty($member['mobile']) || !empty($member['email']))) {
 			$_W['member'] = $member;
 			$_W['member']['groupname'] = $_W['uniaccount']['groups'][$member['groupid']]['title'];

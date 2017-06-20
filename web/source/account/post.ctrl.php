@@ -18,12 +18,15 @@ if (empty($uniacid) || empty($acid)) {
 	itoast('请选择要编辑的公众号', url('account/manager'), 'error');
 }
 $state = uni_permission($_W['uid'], $uniacid);
-
 $dos = array('base', 'sms', 'modules_tpl');
 if ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER) {
 	$do = in_array($do, $dos) ? $do : 'base';
 } elseif ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
-	$do = in_array($do, $dos) ? $do : 'modules_tpl';
+	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
+		itoast('', url('wxapp/manage/display', array('uniacid' => $uniacid, 'acid' => $acid)), 'success');
+	} else {
+		$do = in_array($do, $dos) ? $do : 'modules_tpl';
+	}
 } else {
 	itoast('您是该公众号的操作员，无权限操作！', url('account/manager'), 'error');
 }

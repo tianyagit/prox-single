@@ -371,7 +371,6 @@ if ($do =='install') {
 		if (!empty($is_recycle_module)) {
 			pdo_delete('modules_recycle', array('modulename' => $module_name));
 		}
-
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
@@ -379,7 +378,7 @@ if ($do =='install') {
 		module_build_privileges();
 
 		if (empty($module_subscribe_success)) {
-			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看 <div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/module_detail', array('name' => $module['name'])) . '">订阅管理</a> &nbsp;&nbsp;<a class="btn btn-default" href="' . url('system/module', array('account_type' => ACCOUNT_TYPE)) . '">返回模块列表</a></div>', '', 'tips');
+			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看', url('system/module/module_detail', array('name' => $module['name'])), 'tips');
 		} else {
 			itoast('模块安装成功!', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
 		}
