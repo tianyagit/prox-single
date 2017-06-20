@@ -450,7 +450,7 @@
 			</td>
 		</tr>
 	</table>
-	<table class="table we7-table table-hover vertical-middle" ng-show="show == 'upgrade'" ng-if="isFounder == 1 && upgradeInfo.from == 'cloud'" ng-repeat="branch in upgradeInfo.branches">
+	<table class="table we7-table table-hover vertical-middle" ng-show="show == 'upgrade'" ng-if="isFounder == 1 && upgradeInfo.from == 'cloud' && branch.displayorder >= upgradeInfo.site_branch.displayorder" ng-repeat="branch in upgradeInfo.branches">
 		<col width="300px"/>
 		<col />
 		<col />
@@ -464,7 +464,7 @@
 			<th class="text-right">操作</th>
 		</tr>
 		<tbody>
-		<tr ng-if="branch.displayorder >= upgradeInfo.site_branch.displayorder">
+		<tr>
 			<td class="text-left">{{ branch.name }}</td>
 			<td class="color-red">{{ branch.displayorder > upgradeInfo.site_branch.displayorder || (branch.displayorder == upgradeInfo.site_branch.displayorder && branch.id > upgradeInfo.site_branch.id) ? branch.upgrade_price : ''}}<span class="label label-success" ng-if="branch.id == upgradeInfo.site_branch.id">当前分支</span></td>
 			<td>{{ upgradeInfo.site_branch.id == branch.id ? moduleinfo.version : ''}}</td>
@@ -549,7 +549,7 @@
 		<div class="panel-heading ">
 			订阅详情
 			<div class="pull-right subscription-switch">
-				<span >禁用/开启</span>
+				<span >启用订阅</span>
 				<label>
 					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
 					<div class="switch" ng-class="{ 'switchOn' : receive_ban == 1}" ng-click="changeSwitch()"></div>
