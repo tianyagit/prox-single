@@ -1744,7 +1744,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 	}
 	//如果粉丝已经取消关注，则只更新状态
 	if (empty($fans['subscribe'])) {
-		pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('fanid' => $openid));
+		pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('openid' => $openid));
 		return true;
 	}
 	$fans_mapping = mc_fansinfo($openid);
