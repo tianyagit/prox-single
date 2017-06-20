@@ -418,7 +418,6 @@ if ($do == 'save_module_info') {
 	if (!empty($module_info['preview']) && $type == 'preview') {
 		$img = $module_info['preview'];
 	}
-	$img = !empty($module_info['logo']) ? $module_info['logo'] : $module_info['preview'];
 	if (!empty($img) && $type == 'logo' || !empty($img) && $type == 'preview') {
 		if(parse_path($img)) {
 			$img_parse = parse_url($img);
