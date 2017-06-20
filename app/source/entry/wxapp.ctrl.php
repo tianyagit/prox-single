@@ -30,7 +30,9 @@ if(!is_error($site)) {
 			$connection = iunserializer($version_info['modules'], true);
 			if (!empty($connection[$entry['module']])) {
 				$uniacid = intval($connection[$entry['module']]['uniacid']);
-				$uniacid && $_W['uniacid'] = $uniacid;
+				if (!empty($uniacid)) {
+					$_W['uniacid'] = $uniacid;
+				}
 			}
 		}
 	}
