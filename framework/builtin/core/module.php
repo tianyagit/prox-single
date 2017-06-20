@@ -118,13 +118,7 @@ class CoreModule extends WeModule {
 					//选择多种素材
 					if($_GPC['a'] == 'reply' && (!empty($_GPC['m']) && $_GPC['m'] == 'keyword')) {
 						foreach ($this->tablename as $key => $tablename) {
-							if ($key == 'keyword') {
-								// $replies['keyword'][0]['name'] = $isexists['name'];
-								// $keyword = pdo_fetchall("SELECT * FROM ".tablename('rule_keyword')." WHERE uniacid = :uniacid AND rid = :rid ORDER BY `id`", array(':uniacid' => $_W['uniacid'], ':rid' => $rid));
-								// foreach ($keyword as $val) {
-								// 	$replies['keyword'][0]['content'] .= $val['content'].'&nbsp;&nbsp;';
-								// }
-							} else {
+							if ($key != 'keyword') {
 								$replies[$key] = pdo_fetchall("SELECT * FROM ".tablename($tablename)." WHERE rid = :rid ORDER BY `id`", array(':rid' => $rid));
 								switch ($key) {
 									case 'image':
