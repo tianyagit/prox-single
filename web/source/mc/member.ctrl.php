@@ -46,14 +46,6 @@ if ($do == 'credit_setting') {
 	$_W['page']['title'] = '积分设置';
 	$credit_setting = uni_setting_load('creditnames');
 	$credit_setting = $credit_setting['creditnames'];
-	for ($i = 3; $i < 6; $i ++) {
-		if (empty($credit_setting['credit' . $i])) {
-			$credit_setting['credit' . $i] = array(
-				'enabled' => 0,
-				'title' => ''
-			);
-		}
-	}
 
 	$credit_tactics = uni_setting_load('creditbehaviors');
 	$credit_tactics = $credit_tactics['creditbehaviors'];
