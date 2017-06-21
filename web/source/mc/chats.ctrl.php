@@ -21,11 +21,13 @@ if ($do == 'chats') {
 	if (!empty($fans_info['uid'])) {
 		$fans_info['member_info'] = mc_fetch($fans_info['uid']);
 	}
-	$chat_record = pdo_getslice('mc_chats_record', array('uniacid' => $_W['uniacid'], 'openid' => $openid, 'flag' => 1), array('1', 20), $total, array(), '', 'createtime desc');
+	$chat_record = pdo_getslice('mc_chats_record', array('uniacid' => $_W['uniacid'], 'openid' => $openid), array('1', 20), $total, array(), '', 'createtime desc');
 	if (!empty($chat_record)) {
 		foreach ($chat_record as &$record) {
-			$record['content'] = iunserializer($record['content']);
-			$record['content'] = urldecode($record['content']['content']);
+			if ($record['flag'] == 1) {
+				$record['content'] = iunserializer($record['content']);
+				$record['content'] = urldecode($record['content']['content']);
+			}
 			$record['createtime'] = date('Y-m-d H:i', $record['createtime']);
 		}
 	}
