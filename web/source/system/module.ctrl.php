@@ -13,6 +13,7 @@ load()->model('module');
 load()->model('user');
 load()->model('account');
 load()->classs('account');
+load()->func('communication');
 $dos = array('filter', 'check', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
@@ -408,23 +409,50 @@ if ($do == 'change_receive_ban') {
 
 if ($do == 'save_module_info') {
 	$module_info = $_GPC['moduleinfo'];
-	$type = $_GPC['type'];
+	$type = trim($_GPC['type']);
+	$mid = intval($_GPC['mid']);
+	$name = trim($_GPC['name']);
 	if (!empty($module_info['logo']) && $type == 'logo') {
-		$image = file_get_contents(parse_path($module_info['logo']));
-		$result = file_put_contents(IA_ROOT . "/addons/" . $module_info['name'] . '/icon-custom.jpg', $image);
+		$img = $module_info['logo'];
 	}
 	if (!empty($module_info['preview']) && $type == 'preview') {
-		$image = file_get_contents(parse_path($module_info['preview']));
-		$result = file_put_contents(IA_ROOT."/addons/".$module_info['name'] . '/preview-custom.jpg', $image);
+		$img = $module_info['preview'];
 	}
-	$data = array(
-		'title' => $module_info['title'],
-		'ability' => $module_info['ability'],
-		'description' => $module_info['description'],
-	);
-	$result =  pdo_update('modules', $data, array('mid' => $module_info['mid']));
-	cache_delete(cache_system_key("module_info:" . $module_info['name']));
-	iajax(0, '');
+	if (!empty($img) && $type == 'logo' || !empty($img) && $type == 'preview') {
+		if(parse_path($img)) {
+			$img_parse = parse_url($img);
+			$new_pic_name = IA_ROOT . "/addons/" . $name . '%s';
+			if ($type == 'logo') {
+				$filename = sprintf($new_pic_name, '/icon-custom.jpg');
+			}
+			if ($type == 'preview') {
+				$filename = sprintf($new_pic_name, '/preview-custom.jpg');
+			}
+			if ($img_parse['host'] != $_SERVER['HTTP_HOST']) {
+				$return_content = ihttp_get($img);
+				if ($return_content['code'] == 200) {
+					$result = file_put_contents($filename, $return_content['content']);
+				} else {
+					$result = false;
+				}
+			} else {
+				$img_absolute_path = IA_ROOT . $img_parse['path'];
+				$result = copy($img_absolute_path, $filename);
+			}
+		} else {
+			iajax(1, '图片不合法！', '');
+		}
+	}
+
+	if (!in_array($type, array('logo', 'preview'))) {
+		$result =  pdo_update('modules', $module_info, array('mid' => $mid));
+	}
+	cache_delete(cache_system_key("module_info:" . $name));
+	if ($result) {
+		iajax(0, '');
+	} else {
+		iajax(1, '更新失败');
+	}
 }
 
 if ($do == 'module_detail') {
