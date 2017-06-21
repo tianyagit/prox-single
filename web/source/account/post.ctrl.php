@@ -23,7 +23,8 @@ if ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER
 	$do = in_array($do, $dos) ? $do : 'base';
 } elseif ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		itoast('', url('wxapp/manage/display', array('uniacid' => $uniacid, 'acid' => $acid)), 'success');
+		header('Location: ' . url('wxapp/manage/display', array('uniacid' => $uniacid, 'acid' => $acid)));
+		exit;
 	} else {
 		$do = in_array($do, $dos) ? $do : 'modules_tpl';
 	}
