@@ -89,7 +89,7 @@
 				<div class="panel-body">					
 					{if !empty($account_upgrade_module_list)}
 						{loop $account_upgrade_module_list $index $module}
-							<a href="{php echo url('system/module', array('account_type' => 1))}" class="apply-item">
+							<a href="{php echo url('system/module/module_detail', array('name' => $module[name], 'show' =>'upgrade'))}" class="apply-item">
 								<img src="{$module['logo']}" class="apply-img"/>
 								<span class="text-over">{$module['title']}</span>
 								<span class="color-red">升级</span>
