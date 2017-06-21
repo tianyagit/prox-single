@@ -229,10 +229,6 @@ if ($do == 'upgrade') {
 	} else {
 		$module['settings'] = empty($module['settings']) ? 0 : 1;
 	}
-	if ($module_name == 'we7_coupon') {
-		$module['issystem'] = 1;
-		$module['settings'] = 2;
-	}
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
 	cache_build_uninstalled_module();
@@ -595,7 +591,7 @@ if ($do == 'installed') {
 	$module_list = $all_modules = user_modules($_W['uid']);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
-			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)) {
+			if (!empty($module['issystem']) || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)) {
 				unset($module_list[$key]);
 			}
 			if (!empty($letter) && strlen($letter) == 1) {
@@ -690,7 +686,7 @@ if ($do == 'filter') {
 		foreach ($module_list as $module) {
 			$new_branch_module = !empty($condition['new_branch']) && $upgrade_modules[$module['name']]['new_branch'];
 			$upgrade_branch_module = !empty($condition['upgrade_branch']) && $upgrade_modules[$module['name']]['upgrade_branch'];
-			if (($empty_condition && ($module['issystem'] != 1 || $module['name'] == 'we7_coupon')) || $new_branch_module || $upgrade_branch_module) {
+			if (($empty_condition && $module['issystem'] != 1) || $new_branch_module || $upgrade_branch_module) {
 				$modules[$module['name']] = $module;
 				$modules[$module['name']]['upgrade'] = $upgrade_modules[$module['name']]['upgrade'];
 				$modules[$module['name']]['new_branch'] = $upgrade_modules[$module['name']]['new_branch'];
