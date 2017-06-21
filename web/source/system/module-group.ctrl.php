@@ -126,7 +126,7 @@ if ($do == 'post') {
 		$group_have_template = empty($module_group['templates']) ? array() : $module_group['templates'];
 	}
 
-	$module_list = pdo_fetchall("SELECT * FROM " . tablename('modules') . " WHERE issystem = 0 OR name = 'we7_coupon' ORDER BY mid DESC", array(), 'name');
+	$module_list = pdo_getall('modules', array('issystem' => 0), array(), 'name', 'mid DESC');
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
 	if (!empty($module_list)) {

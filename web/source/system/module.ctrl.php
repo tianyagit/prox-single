@@ -229,10 +229,6 @@ if ($do == 'upgrade') {
 	} else {
 		$module['settings'] = empty($module['settings']) ? 0 : 1;
 	}
-	if ($module_name == 'we7_coupon') {
-		$module['issystem'] = 1;
-		$module['settings'] = 2;
-	}
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
 	cache_build_uninstalled_module();
@@ -410,55 +406,57 @@ if ($do == 'change_receive_ban') {
 if ($do == 'save_module_info') {
 	$module_info = $_GPC['moduleinfo'];
 	$type = trim($_GPC['type']);
-	$module_id = intval($_GPC['moduleid']);
-	if ($module_id == 0) {
-		iajax(1, '数据非法');
-	}
-	$module_name = pdo_getcolumn('modules', array('mid' => $module_id), 'name');
+
+	$module_name = trim($_GPC['modulename']);
 	if (empty($module_name)) {
 		iajax(1, '数据非法');
 	}
+
+	$module = module_fetch($module_name);
+	if (empty($module)) {
+		iajax(1, '数据非法');
+	}
+
 	$module_icon_map = array(
 			'logo' => array(
-					'filename' => 'icon-custom.jpg',
-					'url' => trim($_GPC['moduleinfo']['logo'])
+				'filename' => 'icon-custom.jpg',
+				'url' => trim($_GPC['moduleinfo']['logo'])
 			),
 			'preview' => array(
-					'filename' => 'preview-custom.jpg',
-					'url' => trim($_GPC['moduleinfo']['preview'])
+				'filename' => 'preview-custom.jpg',
+				'url' => trim($_GPC['moduleinfo']['preview'])
 			),
 	);
 	$module_field = array('title', 'ability', 'description');
 	if (!in_array($type, array_keys($module_icon_map)) && !in_array($type, $module_field)) {
 		iajax(1, '数据非法');
 	}
-	$module_image = '';
+
 	if (in_array($type, $module_field)) {
 		$module_update = array($type => trim($module_info[$type]));
-		$result =  pdo_update('modules', $module_update, array('mid' => $module_id));
+		$result =  pdo_update('modules', $module_update, array('name' => $module_name));
 	} else {
 		$result = false;
 		if (!empty($module_icon_map[$type]['url'])) {
 			if(parse_path($module_icon_map[$type]['url'])) {
-				$img_parse = parse_url($module_icon_map[$type]['url']);
-				$image_path = "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
-				$file_destnation_path = IA_ROOT . $image_path;
-				$module_image = $_W['siteroot'] . $image_path;
-				if ($_W['siteroot'] != $img_parse['host']) {
+				$file_destnation_path = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
+				if (!strexists($module_icon_map[$type]['url'], $_W['siteroot'])) {
 					$image_content = ihttp_get($module_icon_map[$type]['url']);
 					if ($image_content['code'] == 200) {
 						$result = file_put_contents($file_destnation_path, $image_content['content']);
 					}
 				} else {
-					$img_source_path = IA_ROOT . $img_parse['path'];
+					$img_local_path = parse_url($module_icon_map[$type]['url'], PHP_URL_PATH);
+					$img_source_path = IA_ROOT . $img_local_path;
 					$result = copy($img_source_path, $file_destnation_path);
 				}
 			}
 		}
 	}
+
 	cache_delete(cache_system_key("module_info:" . $module_name));
-	if ($result) {
-		iajax(0, $module_image);
+	if (!empty($result)) {
+		iajax(0, '');
 	}
 	iajax(1, '更新失败');
 }
@@ -603,7 +601,7 @@ if ($do == 'installed') {
 	$module_list = $all_modules = user_modules($_W['uid']);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
-			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon') || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)) {
+			if (!empty($module['issystem']) || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)) {
 				unset($module_list[$key]);
 			}
 			if (!empty($letter) && strlen($letter) == 1) {
@@ -698,7 +696,7 @@ if ($do == 'filter') {
 		foreach ($module_list as $module) {
 			$new_branch_module = !empty($condition['new_branch']) && $upgrade_modules[$module['name']]['new_branch'];
 			$upgrade_branch_module = !empty($condition['upgrade_branch']) && $upgrade_modules[$module['name']]['upgrade_branch'];
-			if (($empty_condition && ($module['issystem'] != 1 || $module['name'] == 'we7_coupon')) || $new_branch_module || $upgrade_branch_module) {
+			if (($empty_condition && $module['issystem'] != 1) || $new_branch_module || $upgrade_branch_module) {
 				$modules[$module['name']] = $module;
 				$modules[$module['name']]['upgrade'] = $upgrade_modules[$module['name']]['upgrade'];
 				$modules[$module['name']]['new_branch'] = $upgrade_modules[$module['name']]['new_branch'];
