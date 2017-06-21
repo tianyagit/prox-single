@@ -137,7 +137,7 @@
 		<tbody class="module_select" >
 			{php $i=1;}
 			{loop $module $k $m}
-				{if empty($m['issystem']) || $m['name'] == 'we7_coupon'}
+				{if empty($m['issystem'])}
 				{if $i%4 == 1 || $i == 1}<tr>{/if}
 					<td  class="text-left vertical-middle" style="overflow:inherit;width:25%">
 						<div class="dropdown system-select-dropdown">
