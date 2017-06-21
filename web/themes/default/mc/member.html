@@ -1059,17 +1059,60 @@
 		<tr>
 			<th class="text-left" colspan="4">支付参数</th>
 		</tr>
-		<tr ng-repeat="(key, credit) in creditSetting  track by key">
-			<td >{{ key }}</td>
-			<td>{{ credit.title }}</td>
+		<tr>
+			<td >credit1</td>
+			<td>{{ creditSetting.credit1.title }}</td>
 			<td>
 				<label>
 					<input name="" class="form-control" type="checkbox"  style="display: none;">
-					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" ng-if="key != 'credit1' && key != 'credit2'"  ng-click="changeEnabled(key)"></div>
-					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" ng-if="key == 'credit1' || key == 'credit2'" style="opacity : 0.3"></div>
+					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" style="opacity : 0.3"></div>
 				</label>
 			</td>
 			<td class="pull-right"><div class="link-group"><a href="javascript:;" ng-click="editCreditName(key)">设置名称</a></div></td>
+		</tr>
+		<tr>
+			<td >credit2</td>
+			<td>{{ creditSetting.credit2.title }}</td>
+			<td>
+				<label>
+					<input name="" class="form-control" type="checkbox"  style="display: none;">
+					<div ng-class="credit.enabled == 1 ? 'switch switchOn' : 'switch'" style="opacity : 0.3"></div>
+				</label>
+			</td>
+			<td class="pull-right"><div class="link-group"><a href="javascript:;" ng-click="editCreditName(key)">设置名称</a></div></td>
+		</tr>
+		<tr>
+			<td >credit3</td>
+			<td>{{ creditSetting.credit3.title }}</td>
+			<td>
+				<label>
+					<input name="" class="form-control" type="checkbox"  style="display: none;">
+					<div ng-class="creditSetting.credit3.enabled == 1 ? 'switch switchOn' : 'switch'"  ng-click="changeEnabled('credit3')"></div>
+				</label>
+			</td>
+			<td class="pull-right"><div class="link-group"><a href="javascript:;" ng-click="editCreditName('credit3')">设置名称</a></div></td>
+		</tr>
+		<tr>
+			<td >credit4</td>
+			<td>{{ creditSetting.credit4.title }}</td>
+			<td>
+				<label>
+					<input name="" class="form-control" type="checkbox"  style="display: none;">
+					<div ng-class="creditSetting.credit4.enabled == 1 ? 'switch switchOn' : 'switch'"  ng-click="changeEnabled('credit4')"></div>
+				</label>
+			</td>
+			<td class="pull-right"><div class="link-group"><a href="javascript:;" ng-click="editCreditName('credit4')">设置名称</a></div></td>
+		</tr>
+		<tr>
+			<td >credit5</td>
+			<td>{{ creditSetting.credit5.title }}</td>
+			<td>
+				<label>
+					<input name="" class="form-control" type="checkbox"  style="display: none;">
+					<div ng-class="creditSetting.credit5.enabled == 1 ? 'switch switchOn' : 'switch'"  ng-click="changeEnabled('credit5')"></div>
+				</label>
+			</td>
+			<td class="pull-right"><div class="link-group"><a href="javascript:;" ng-click="editCreditName('credit5')">设置名称</a></div></td>
 		</tr>
 	</table>
 
