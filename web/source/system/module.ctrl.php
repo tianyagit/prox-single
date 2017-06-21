@@ -406,49 +406,59 @@ if ($do == 'change_receive_ban') {
 if ($do == 'save_module_info') {
 	$module_info = $_GPC['moduleinfo'];
 	$type = trim($_GPC['type']);
-	$mid = intval($_GPC['mid']);
-	$name = trim($_GPC['name']);
-	if (!empty($module_info['logo']) && $type == 'logo') {
-		$img = $module_info['logo'];
+
+	$module_name = trim($_GPC['modulename']);
+	if (empty($module_name)) {
+		iajax(1, '数据非法');
 	}
-	if (!empty($module_info['preview']) && $type == 'preview') {
-		$img = $module_info['preview'];
+
+	$module = module_fetch($module_name);
+	if (empty($module)) {
+		iajax(1, '数据非法');
 	}
-	if (!empty($img) && $type == 'logo' || !empty($img) && $type == 'preview') {
-		if(parse_path($img)) {
-			$img_parse = parse_url($img);
-			$new_pic_name = IA_ROOT . "/addons/" . $name . '%s';
-			if ($type == 'logo') {
-				$filename = sprintf($new_pic_name, '/icon-custom.jpg');
-			}
-			if ($type == 'preview') {
-				$filename = sprintf($new_pic_name, '/preview-custom.jpg');
-			}
-			if ($img_parse['host'] != $_SERVER['HTTP_HOST']) {
-				$return_content = ihttp_get($img);
-				if ($return_content['code'] == 200) {
-					$result = file_put_contents($filename, $return_content['content']);
+
+	$module_icon_map = array(
+			'logo' => array(
+				'filename' => 'icon-custom.jpg',
+				'url' => trim($_GPC['moduleinfo']['logo'])
+			),
+			'preview' => array(
+				'filename' => 'preview-custom.jpg',
+				'url' => trim($_GPC['moduleinfo']['preview'])
+			),
+	);
+	$module_field = array('title', 'ability', 'description');
+	if (!in_array($type, array_keys($module_icon_map)) && !in_array($type, $module_field)) {
+		iajax(1, '数据非法');
+	}
+
+	if (in_array($type, $module_field)) {
+		$module_update = array($type => trim($module_info[$type]));
+		$result =  pdo_update('modules', $module_update, array('name' => $module_name));
+	} else {
+		$result = false;
+		if (!empty($module_icon_map[$type]['url'])) {
+			if(parse_path($module_icon_map[$type]['url'])) {
+				$file_destnation_path = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
+				if (!strexists($module_icon_map[$type]['url'], $_W['siteroot'])) {
+					$image_content = ihttp_get($module_icon_map[$type]['url']);
+					if ($image_content['code'] == 200) {
+						$result = file_put_contents($file_destnation_path, $image_content['content']);
+					}
 				} else {
-					$result = false;
+					$img_local_path = parse_url($module_icon_map[$type]['url'], PHP_URL_PATH);
+					$img_source_path = IA_ROOT . $img_local_path;
+					$result = copy($img_source_path, $file_destnation_path);
 				}
-			} else {
-				$img_absolute_path = IA_ROOT . $img_parse['path'];
-				$result = copy($img_absolute_path, $filename);
 			}
-		} else {
-			iajax(1, '图片不合法！', '');
 		}
 	}
 
-	if (!in_array($type, array('logo', 'preview'))) {
-		$result =  pdo_update('modules', $module_info, array('mid' => $mid));
-	}
-	cache_delete(cache_system_key("module_info:" . $name));
-	if ($result) {
+	cache_delete(cache_system_key("module_info:" . $module_name));
+	if (!empty($result)) {
 		iajax(0, '');
-	} else {
-		iajax(1, '更新失败');
 	}
+	iajax(1, '更新失败');
 }
 
 if ($do == 'module_detail') {
