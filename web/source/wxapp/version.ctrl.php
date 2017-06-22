@@ -102,9 +102,12 @@ if ($do == 'search_link_account') {
 }
 
 if ($do == 'get_daily_visittrend') {
-	$a = wxapp_update_daily_visittrend();
+	wxapp_update_daily_visittrend();
 	//昨日指标
 	$yesterday = date('Ymd', strtotime('-1 days'));
 	$yesterday_stat = pdo_get('wxapp_general_analysis', array('uniacid' => $_W['uniacid'], 'type' => '2', 'ref_date' => $yesterday));
+	if (empty($yesterday_stat)) {
+		$yesterday_stat = array('session_cnt' => 0, 'visit_pv' => 0, 'visit_uv' => 0, 'visit_uv_new' => 0);
+	}
 	iajax(0, array('yesterday' => $yesterday_stat), '');
 }
