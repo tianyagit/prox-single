@@ -50,7 +50,7 @@
 								<div class="modal-title">新建图文消息</div>
 							</div>
 							<div class="modal-body">
-								<div class="reply hidden">
+								<div class="reply" ng-click="createNew('reply')">
 									<a href="javascript:;">
 										<img src="./resource/images/reply.png" alt="" />
 										<div class="content">
@@ -62,7 +62,7 @@
 										</div>
 									</a>
 								</div>
-								<div class="link hidden">
+								<div class="link" ng-click="createNew('link')">
 									<a href="javascript:;">
 										<img src="./resource/images/link.png" alt="" />
 										<div class="content">
@@ -74,17 +74,6 @@
 										</div>
 									</a>
 								</div>
-								<div class="form-group">
-									<select class="we7-select" ng-model="new_type" ng-init="new_type = 'reply'">
-										<option value="reply" >图文编辑</option>
-										<option value="link">跳转链接</option>
-									</select>
-									<!-- <span class="help-block">{{new_type}}</span> -->
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="createNew(new_type)">确定</button>
-								<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 							</div>
 						</div>
 					</div>
