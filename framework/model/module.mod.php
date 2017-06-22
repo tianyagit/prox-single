@@ -351,9 +351,11 @@ function module_get_all_unistalled($status)  {
 		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['wxapp'];
 		$uninstallModules['module_count'] = $uninstallModules['wxapp_count'];
 		return $uninstallModules;
-	} else {
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['app'];
 		$uninstallModules['module_count'] = $uninstallModules['app_count'];
+		return $uninstallModules;
+	} else {
 		return $uninstallModules;
 	}
 }

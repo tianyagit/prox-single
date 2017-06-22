@@ -1,0 +1,137 @@
+{template 'common/header'}
+<!--系统管理首页-->
+<div class="welcome-container js-system-welcome" ng-controller="WelcomeCtrl" ng-cloak>
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="panel we7-panel account-stat">
+				<div class="panel-heading">微信应用模块</div>
+				<div class="panel-body we7-padding-vertical">
+					<div class="col-sm-4 text-center">
+						<div class="title">未安装应用</div>
+						<div class="num">{$account_uninstall_modules_nums}</div>
+					</div>
+					<div class="col-sm-4 text-center">
+						<div class="title">可升级应用</div>
+						<div class="num">{$account_upgrade_module_nums}</div>
+					</div>
+					<div class="col-sm-4 text-center">
+						<div class="title">应用总数</div>
+						<div class="num">{$account_modules_total}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="panel we7-panel account-stat">
+				<div class="panel-heading">小程序应用模块</div>
+				<div class="panel-body we7-padding-vertical">
+					<div class="col-sm-4 text-center">
+						<div class="title">未安装应用</div>
+						<div class="num">{$wxapp_uninstall_modules_nums}</div>
+					</div>
+					<div class="col-sm-4 text-center">
+						<div class="title">可升级应用</div>
+						<div class="num">{$wxapp_upgrade_module_nums}</div>
+					</div>
+					<div class="col-sm-4 text-center">
+						<div class="title">应用总数</div>
+						<div class="num">{$wxapp_modules_total}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel we7-panel system-update">
+		<div class="panel-heading">
+			<span class="color-gray pull-right">当前版本：{IMS_FAMILY}{IMS_VERSION}（{IMS_RELEASE_DATE}）</span>
+			系统更新
+		</div>
+		<div class="panel-body clearfix">
+			<div class="col-sm-9">
+				<dl class="dl-horizontal">
+					<dt>最新版本</dt>
+					<dd>微擎 {$upgrade['family']}{$upgrade['version']}【{$upgrade['release']}】版</dd>
+					<dt>需要更新文件</dt>
+					<dd>{php echo count($upgrade['files'])} 个</dd>
+					<dt>需要更新数据库</dt>
+					<dd>{php echo count($upgrade['database'])} 项</dd>
+					<dt>需要更新脚本</dt>
+					<dd>{php echo count($upgrade['scripts'])} 项</dd>
+				</dl>
+			</div>
+			<div class="col-sm-3 text-right">
+				<a class="btn btn-danger" href="{php echo url('cloud/upgrade');}">一键更新</a>
+			</div>
+		</div>
+	</div>
+	<div class="panel we7-panel database">
+		<div class="panel-heading">
+			数据库备份提醒
+		</div>
+		<div class="panel-body clearfix">
+			<div class="col-sm-9">
+				<span class="day">{$backup_days}</span>
+				<span class="color-default">天</span>
+				没有备份数据库了,请及时备份!
+			</div>
+			<div class="col-sm-3 text-right">
+				<a class="btn btn-default" href="{php echo url('system/database');}">开始备份</a>
+			</div>
+		</div>
+	</div>
+	<div class="row apply-upgrade">
+		<div class="col-sm-6">
+			<div class="panel we7-panel">
+				<div class="panel-heading">
+					<a href="{php echo url('system/module', array('account_type' => 1))}" class="pull-right color-default">更多</a>
+					微信可升级应用
+				</div>
+				<div class="panel-body">					
+					{if !empty($account_upgrade_module_list)}
+						{loop $account_upgrade_module_list $index $module}
+							<a href="{php echo url('system/module/module_detail', array('name' => $module[name], 'show' =>'upgrade'))}" class="apply-item">
+								<img src="{$module['logo']}" class="apply-img"/>
+								<span class="text-over">{$module['title']}</span>
+								<span class="color-red">升级</span>
+							</a>
+						{/loop}	
+					{else}
+						<div class="text-center">
+							没有可升级的应用
+						</div>
+					{/if}			
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="panel we7-panel">
+				<div class="panel-heading">
+					<a href="{php echo url('system/module', array('account_type' => 4))}" class="pull-right color-default">更多</a>
+					小程序可升级应用
+				</div>
+				<div class="panel-body">					
+					{if !empty($wxapp_upgrade_module_list)}
+						{loop $wxapp_upgrade_module_list $index $module}
+							<a href="{php echo url('system/module', array('account_type' => 4))}" class="apply-item">
+								<img src="{$module['logo']}" class="apply-img"/>
+								<span class="text-over">{$module['title']}</span>
+								<span class="color-red">升级</span>
+							</a>
+						{/loop}	
+					{else}
+						<div class="text-center">
+							没有可升级的应用
+						</div>
+					{/if}			
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--end 系统管理首页-->
+<script type="text/javascript">
+	$(function(){
+		angular.bootstrap($('.js-system-welcome'), ['systemApp']);
+	});
+</script>	
+{template 'common/footer'}

@@ -94,6 +94,7 @@ $_W['acl'] = $acl = array(
 	'system' => array(
 		'direct' => array(),
 		'founder' => array(
+			'welcome',
 			'attachment',
 			'bom',
 			'database',
@@ -109,6 +110,7 @@ $_W['acl'] = $acl = array(
 			'updatecache' 
 		),
 		'manager' => array(
+			'welcome',
 			'account',
 			'module-group',
 			'platform',
