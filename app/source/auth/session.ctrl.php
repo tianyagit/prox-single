@@ -67,7 +67,7 @@ if ($do == 'openid') {
 		}
 		$account_api->result(0, '', array('sessionid' => $_W['session_id']));
 	} else {
-		$account_api->result(0, $oauth['message']);
+		$account_api->result(1, $oauth['message']);
 	}
 } elseif ($do == 'userinfo') {
 	$encrypt_data = $_GPC['encryptedData'];
@@ -104,6 +104,8 @@ if ($do == 'openid') {
 		$union_fans = pdo_get('mc_mapping_fans', array('unionid' => $userinfo['unionId'], 'openid !=' => $userinfo['openId']));
 		if (!empty($union_fans['uid'])) {
 			if (!empty($fans['uid'])) {
+				//合并积分数据
+				
 				pdo_delete('mc_members', array('uid' => $fans['uid']));
 			}
 			$fans_update['uid'] = $union_fans['uid'];

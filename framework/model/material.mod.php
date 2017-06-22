@@ -304,19 +304,30 @@ function material_parse_content($content) {
 	}
 	return $content;
 }
-
 /**
  * 根据附件ID将，本地图文上传至微信服务器
  * @param int $attach_id
- * 
+ * @param boolean $is_sendto_wechat
  */
-function material_local_news_upload($attach_id) {
+function material_local_news_upload($attach_id, $is_sendto_wechat = true) {
 	global $_W;
-	$account_api = WeAccount::create($_W['acid']);
 	$material = material_get($attach_id);
 	if (is_error($material)){
 		return error('-1', '获取素材文件失败');
 	}
+	if (!$is_sendto_wechat) {
+		foreach ($material['news'] as $news) {
+			if (empty($news['content'])){
+				return error('-6', '素材内容不能为空');
+			}
+			$news['content'] = material_parse_content($news['content']);
+			if (is_error($news['content'])) {
+				return error('-2', $news['content']);
+			}
+		}
+		return $material;
+	}
+	$account_api = WeAccount::create($_W['acid']);
 	foreach ($material['news'] as $news) {
 		if (empty($news['content'])){
 			return error('-6', '素材内容不能为空');

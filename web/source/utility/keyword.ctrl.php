@@ -11,32 +11,29 @@ if (!in_array($do, array('keyword'))) {
 
 if($do == 'keyword') {
 	$type = trim($_GPC['type']);
-	if ($type == 'all') {
-		$condition_sql = " WHERE uniacid = :uniacid AND status = 1 ";
-		$condition = array(':uniacid' => $_W['uniacid']);
-	} else {
-		$condition_sql = " WHERE uniacid = :uniacid AND status = 1 AND module = :module ";
-		$condition = array(':uniacid' => $_W['uniacid'], ':module' => $type);
+
+	$condition = array('uniacid' => $_W['uniacid'], 'status' => 1);
+	if ($type != 'all') {
+		$condition = array('uniacid' => $_W['uniacid'], 'status' => 1, 'module' => $type);
 	}
+
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 24;
-	$sql = "SELECT %s FROM " . tablename('rule') . $condition_sql . "%s";
-	$total_sql = sprintf($sql, 'COUNT(*)', '');
-	$list_sql = sprintf($sql, '*', " ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ", {$psize}");
-	$total = pdo_fetchcolumn($total_sql, $condition);
-	$lists = pdo_fetchall($list_sql, $condition, 'id');
-	if(!empty($lists)) {
-		foreach($lists as &$row) {
+	$rule_list = pdo_getslice('rule', $condition, array($pindex, 24), $total);
+
+	$keyword_lists = array();
+	if(!empty($rule_list)) {
+		foreach($rule_list as $row) {
 			if($type == 'all') {
 				$row['child_items'] = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $row['id'], 'status' => 1));
 			} else {
 				$row['child_items'] = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $row['id'], 'status' => 1, 'module' => $type));
 			}
+			$keyword_lists[$row['id']] = $row;
 		}
 		unset($row);
 	}
 	$result = array(
-			'items' => $lists,
+			'items' => $keyword_lists,
 			'pager' => pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
 	);
 	iajax(0, $result);

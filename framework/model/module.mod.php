@@ -73,7 +73,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 	} else {
 		$types = array_intersect($types, $ts);
 	}
-	$bindings = pdo_getall('modules_bindings', array('module' => $name, 'entry' => $types));
+	$bindings = pdo_getall('modules_bindings', array('module' => $name, 'entry' => $types), array(), '', 'eid ASC');
 	$entries = array();
 	foreach($bindings as $bind) {
 		if(!empty($bind['call'])) {
@@ -351,9 +351,11 @@ function module_get_all_unistalled($status)  {
 		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['wxapp'];
 		$uninstallModules['module_count'] = $uninstallModules['wxapp_count'];
 		return $uninstallModules;
-	} else {
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['app'];
 		$uninstallModules['module_count'] = $uninstallModules['app_count'];
+		return $uninstallModules;
+	} else {
 		return $uninstallModules;
 	}
 }

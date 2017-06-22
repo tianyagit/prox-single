@@ -1,55 +1,44 @@
 {template 'common/header'}
 <div class="welcome-container" id="js-home-welcome" ng-controller="WelcomeCtrl" ng-cloak>
 	<div class="welcome-container">
-		<div class="row">
-			<div class="col-sm-6">
-				<div class="panel we7-panel account-stat">
-					<div class="panel-heading">今日关键指标</div>
-					<div class="panel-body we7-padding-vertical">
-						<div class="col-sm-4 text-center">
-							<div class="title">新关注</div>
-							<div class="num" ng-init="0" ng-bind="fans_kpi.today.new"></div>
-						</div>
-						<div class="col-sm-4 text-center">
-							<div class="title">取消关注</div>
-							<div class="num" ng-init="0" ng-bind="fans_kpi.today.cancel"></div>
-						</div>
-						<div class="col-sm-4 text-center">
-							<div class="title">净增关注</div>
-							<div class="num" ng-init="0" ng-bind="fans_kpi.today.jing_num"></div>
-						</div>
-					</div>
-					<div class="panel-footer clearfix">
-						<div class="col-sm-6">累计关注</div>
-						<div class="col-sm-6 text-right" ng-init="0" ng-bind="fans_kpi.today.cumulate"></div>
+		<div class="panel we7-panel account-stat">
+			<div class="panel-heading">
+				今日关键指标/昨日关键指标
+			</div>
+			<div class="panel-body we7-padding-vertical">
+				<div class="col-sm-3 text-center">
+					<div class="title">新关注</div>
+					<div>
+						<span class="today" ng-init="0" ng-bind="fans_kpi.today.new"></span>
+						<span class="pipe">/</span>
+						<span class="yesterday" ng-init="0" ng-bind="fans_kpi.yesterday.new"></span>
 					</div>
 				</div>
-			</div>
-			<div class="col-sm-6">
-				<div class="panel we7-panel account-stat">
-					<div class="panel-heading">昨日关键指标</div>
-					<div class="panel-body we7-padding-vertical">
-						<div class="col-sm-4 text-center">
-							<div class="title">新关注</div>
-							<div class="num" ng-init="0" ng-bind="fans_kpi.yesterday.new"></div>
-						</div>
-						<div class="col-sm-4 text-center">
-							<div class="title">取消关注</div>
-							<div class="num" ng-init="0" ng-bind="fans_kpi.yesterday.cancel"></div>
-						</div>
-						<div class="col-sm-4 text-center">
-							<div class="title">净增关注</div>
-							<div class="num" ng-init="0" ng-bind="fans_kpi.yesterday.jing_num"></div>
-						</div>
+				<div class="col-sm-3 text-center">
+					<div class="title">取消关注</div>
+					<div>
+						<span class="today" ng-init="0" ng-bind="fans_kpi.today.cancel"></span>
+						<span class="pipe">/</span>
+						<span class="yesterday" ng-init="0" ng-bind="fans_kpi.yesterday.cancel"></span>
 					</div>
-					<div class="panel-footer clearfix">
-						<div class="col-sm-6">累计关注</div>
-						<div class="col-sm-6 text-right" ng-init="0" ng-bind="fans_kpi.yesterday.cumulate"></div>
+				</div>
+				<div class="col-sm-3 text-center">
+					<div class="title">净增关注</div>
+					<div>
+						<span class="today" ng-init="0" ng-bind="fans_kpi.today.jing_num"></span>
+						<span class="pipe">/</span>
+						<span class="yesterday" ng-init="0" ng-bind="fans_kpi.yesterday.jing_num"></span>
+					</div>
+				</div>
+				<div class="col-sm-3 text-center">
+					<div class="title">累计关注</div>
+					<div>
+						<span class="today" ng-init="0" ng-bind="fans_kpi.today.cumulate"></span>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="panel we7-panel notice">
+		<div class="panel we7-panel notice notice-tab">
 			<div class="panel-heading">
 				<a href="./index.php?c=article&a=notice-show" class="color-default pull-right">更多</a>
 				<div class="menu">
