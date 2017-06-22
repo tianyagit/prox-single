@@ -10,6 +10,7 @@ load()->func('db');
 load()->model('extension');
 load()->model('module');
 load()->model('user');
+load()->model('system');
 $r = cloud_prepare();
 if (is_error($r)) {
 	itoast($r['message'], url('cloud/profile'), 'error');
@@ -59,6 +60,7 @@ if ($do == 'display') {
 	$account_upgrade_module_nums = count($account_upgrade_modules);
 	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
 	$account_upgrade_module_list = array_slice($account_upgrade_modules, 0, 4);
+	$wxapp_upgrade_module_list = array_slice($wxapp_upgrade_modules, 0, 4);
 	foreach ($wxapp_upgrade_module_list as $key => &$module) {
 		$module_fetch = module_fetch($key);
 		$module['logo'] = $module_fetch['logo'];
@@ -69,6 +71,5 @@ if ($do == 'display') {
 		$module['logo'] = $module_fetch['logo'];
 	}
 	unset($module);
-	$wxapp_upgrade_module_list = array_slice($wxapp_upgrade_modules, 0, 4);
 	template('system/welcome');
 }
