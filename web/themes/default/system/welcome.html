@@ -46,21 +46,21 @@
 			<span class="color-gray pull-right">当前版本：{IMS_FAMILY}{IMS_VERSION}（{IMS_RELEASE_DATE}）</span>
 			系统更新
 		</div>
-		<div class="panel-body clearfix">
-			<div class="col-sm-9">
-				<dl class="dl-horizontal">
-					<dt>最新版本</dt>
-					<dd>微擎 {$upgrade['family']}{$upgrade['version']}【{$upgrade['release']}】版</dd>
-					<dt>需要更新文件</dt>
-					<dd>{php echo count($upgrade['files'])} 个</dd>
-					<dt>需要更新数据库</dt>
-					<dd>{php echo count($upgrade['database'])} 项</dd>
-					<dt>需要更新脚本</dt>
-					<dd>{php echo count($upgrade['scripts'])} 项</dd>
-				</dl>
+		<div class="panel-body we7-padding-vertical clearfix">
+			<div class="col-sm-3 text-center">
+				<div class="title">更新文件</div>
+				<div class="num">{php echo count($upgrade['files'])} 个</div>
 			</div>
-			<div class="col-sm-3 text-right">
-				<a class="btn btn-danger" href="{php echo url('cloud/upgrade');}">一键更新</a>
+			<div class="col-sm-3 text-center">
+				<div class="title">更新数据库</div>
+				<div class="num">{php echo count($upgrade['database'])} 项</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<div class="title">更新脚本</div>
+				<div class="num">{php echo count($upgrade['scripts'])} 项</div>
+			</div>
+			<div class="col-sm-3 text-center">
+				<a href="{php echo url('cloud/upgrade');}" class="btn btn-danger">去更新</a>
 			</div>
 		</div>
 	</div>
@@ -74,7 +74,7 @@
 				<span class="color-default">天</span>
 				没有备份数据库了,请及时备份!
 			</div>
-			<div class="col-sm-3 text-right">
+			<div class="col-sm-3 text-center">
 				<a class="btn btn-default" href="{php echo url('system/database');}">开始备份</a>
 			</div>
 		</div>
