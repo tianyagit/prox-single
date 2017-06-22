@@ -1,7 +1,7 @@
 <?php
 /**
  * 接口文件
- *test
+ *
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * $sn: pro/api.php : v 24db125c5a0f : 2015/09/14 10:42:33 : RenChao $
  */
