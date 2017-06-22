@@ -347,7 +347,7 @@ function wxapp_update_daily_visittrend() {
 				'session_cnt' => $wxapp_stat['session_cnt'],
 				'visit_pv' => $wxapp_stat['visit_pv'],
 				'visit_uv' => $wxapp_stat['visit_uv'],
-				'visit_uv_new' => $wxapp_stat['visit_uv'],
+				'visit_uv_new' => $wxapp_stat['visit_uv_new'],
 				'type' => 2,
 				'stay_time_uv' => $wxapp_stat['stay_time_uv'],
 				'stay_time_session' => $wxapp_stat['stay_time_session'],
