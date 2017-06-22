@@ -73,7 +73,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 	} else {
 		$types = array_intersect($types, $ts);
 	}
-	$bindings = pdo_getall('modules_bindings', array('module' => $name, 'entry' => $types));
+	$bindings = pdo_getall('modules_bindings', array('module' => $name, 'entry' => $types), array(), '', 'eid ASC');
 	$entries = array();
 	foreach($bindings as $bind) {
 		if(!empty($bind['call'])) {
