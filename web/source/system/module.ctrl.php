@@ -418,14 +418,14 @@ if ($do == 'save_module_info') {
 	}
 
 	$module_icon_map = array(
-			'logo' => array(
-				'filename' => 'icon-custom.jpg',
-				'url' => trim($_GPC['moduleinfo']['logo'])
-			),
-			'preview' => array(
-				'filename' => 'preview-custom.jpg',
-				'url' => trim($_GPC['moduleinfo']['preview'])
-			),
+		'logo' => array(
+			'filename' => 'icon-custom.jpg',
+			'url' => trim($_GPC['moduleinfo']['logo'])
+		),
+		'preview' => array(
+			'filename' => 'preview-custom.jpg',
+			'url' => trim($_GPC['moduleinfo']['preview'])
+		),
 	);
 	$module_field = array('title', 'ability', 'description');
 	if (!in_array($type, array_keys($module_icon_map)) && !in_array($type, $module_field)) {
