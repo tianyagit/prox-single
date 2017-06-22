@@ -89,7 +89,7 @@ if($do == 'post') {
 		if (!empty($_GPC['select']['modules'])) {
 			$select_modules = array();
 			foreach ($_GPC['select']['modules'] as $module) {
-				$module = module_fetch($module);
+				$module = module_fetch($module['module']);
 				if (empty($module) || $module['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
 					continue;
 				}

@@ -8,7 +8,7 @@ class PaycenterModuleSite extends WeModuleSite {
 	public function __construct() {
 		global $_W, $_GPC;
 		load()->model('paycenter');
-		if($_GPC['do'] != 'pay' || $_GPC['do'] != 'consume') {
+		if($_GPC['do'] != 'pay' && $_GPC['do'] != 'consume') {
 			$session = json_decode(base64_decode($_GPC['_pc_session']), true);
 			if(is_array($session)) {
 				load()->model('user');

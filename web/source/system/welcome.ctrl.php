@@ -15,6 +15,10 @@ $r = cloud_prepare();
 if (is_error($r)) {
 	itoast($r['message'], url('cloud/profile'), 'error');
 }
+if(!$_W['isfounder']){
+	header("location: " . url('account/manage', array('account_type' => 1)), true);
+	exit;
+}
 $_W['page']['title'] = '欢迎页 - 系统管理';
 $dos = array('display','upgrade');
 $do = in_array($do, $dos) ? $do : 'display';
