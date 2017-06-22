@@ -31,6 +31,7 @@ function system_menu_permission_list($role = '') {
  * @return array;
  */
 function database_reduction ($path) {
+	load()->func('file');
 	$reduction = array();
 	if (!is_dir($path)) {
 		return array();
