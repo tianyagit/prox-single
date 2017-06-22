@@ -22,10 +22,19 @@ if ($do == 'display') {
 	//数据备份信息
 	$path = IA_ROOT . '/data/backup/';
 	$reduction = database_reduction ($path);
+	//数据库最后一次备份时间
+	$max_backup_time = time();
 	if (!empty($reduction)) {
-		$last_reduction = array_pop($reduction);
+		$backups = array_values($reduction);
+		$max_backup_time = $backups[0]['time'];
+ 		foreach ($backups as $key => $backup) {
+			if ($backup['time'] <= $max_backup_time) {
+				continue;
+			}
+			$max_backup_time = $backup['time'];
+		}
 	}
-	$last_backup_time = !empty($last_reduction['time']) ? $last_reduction['time'] : time();
+	$last_backup_time = $max_backup_time;
 	$backup_days = floor((time() - $last_backup_time) / (3600 * 24));
 	//系统更新信息
 	$upgrade = cloud_build();
