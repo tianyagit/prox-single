@@ -10,7 +10,6 @@ load()->model('cloud');
 load()->model('cache');
 load()->classs('weixin.platform');
 load()->model('wxapp');
-load()->func('communication');
 load()->model('utility');
 
 $uniacid = intval($_GPC['uniacid']);
