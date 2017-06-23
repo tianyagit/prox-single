@@ -79,7 +79,7 @@ if ($do == 'news') {
 }
 
 if ($do == 'addnews') {
-$is_sendto_wechat = trim($_GPC['target']) == 'wechat' ? true : false;
+	$is_sendto_wechat = trim($_GPC['target']) == 'wechat' ? true : false;
 	$attach_id = intval($_GPC['attach_id']);
 	if (empty($_GPC['news'])) {
 		iajax(- 1, '提交内容参数有误');
