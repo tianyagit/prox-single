@@ -1,18 +1,19 @@
 {template 'common/header'}
-<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" when-scrolled ="loadMore()" ng-cloak >
+<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" when-scrolled="loadMore()" ng-cloak >
 	<div class="panel-heading">
 		请选择您要操作的公众号
 	</div>
 	<div class="panel-body" >
 		{if !$_W['isfounder'] && !empty($account_info['uniacid_limit'])}
 			<div class="alert alert-warning">
-				温馨提示：
+				温馨提示�
 				<i class="fa fa-info-circle"></i>
-				Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>，
-				账号有效期限：<span class="text-strong">{php echo date('Y-m-d', $_W['user']['starttime'])} ~~ {if empty($_W['user']['endtime'])}无限制{else}{php echo date('Y-m-d', $_W['user']['endtime'])}{/if}</span>，
-				可创建 <span class="text-strong">{$account_info['maxaccount']} </span>个公众号，已创建<span class="text-strong"> {$account_info['uniacid_num']} </span>个，还可创建 <span class="text-strong">{$account_info['uniacid_limit']} </span>个公众号。
+				Hi�span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>�
+				账号有效期限�span class="text-strong">{php echo date('Y-m-d', $_W['user']['starttime'])} ~~ {if empty($_W['user']['endtime'])}无限制{else}{php echo date('Y-m-d', $_W['user']['endtime'])}{/if}</span>�
+				可创�<span class="text-strong">{$account_info['maxaccount']} </span>个公众号，已创建<span class="text-strong"> {$account_info['uniacid_num']} </span>个，还可创建 <span class="text-strong">{$account_info['uniacid_limit']} </span>个公众号�
 			</div>
 		{/if}
+		{if $total_page > 1}
 		<div class="cut-header">
 			<form action="./index.php" method="get">
 				<input type="hidden" name="c" value="account">
@@ -27,14 +28,15 @@
 			</form>
 			<div class="cut-manage pull-right">
 				{if !empty($account_info['uniacid_limit'])}
-					<a href="./index.php?c=account&a=post-step" class="color-default"><i class="fa fa-plus"></i>新增公众号</a>
+					<a href="./index.php?c=account&a=post-step" class="color-default"><i class="fa fa-plus"></i>新增公众�/a>
 				{/if}
 				{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_MANAGER}
-					<a href="./index.php?c=account&a=manage" class="color-default"><i class="wi wi-wechatstatistics"></i>公众号管理</a>
+					<a href="./index.php?c=account&a=manage" class="color-default"><i class="wi wi-wechatstatistics"></i>公众号管�/a>
 				{/if}
 			</div>
 		</div>
 		<div class="clearfix"></div>
+		{if $total_page > 1}
 		<ul class="letters-list cut-wechat-letters">
 			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
 				<a href="javascript:;" ng-bind="letter"></a>
@@ -54,7 +56,7 @@
 						<span class="wechat-versions" ng-if="detail.level == 4">类型：认证服务号...</span>
 						<div class="cover-dark">
 							<a ng-href="{{account.url}}" class="manage-fa"><i class="fa fa-angle-right"></i></a>
-							<a ng-href="{{account.url}}" class="manage">进入公众号</a>
+							<a ng-href="{{account.url}}" class="manage">进入公众�/a>
 							<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)" title="置顶"><i class="wi wi-stick-sign"></i></a>
 						</div>
 					</div>
@@ -76,7 +78,7 @@
 						</div>
 						<div class="mask">
 							<a ng-href="{{account.url}}" class="entry">
-								<div>进入公众号 <i class="wi wi-angle-right"></i></div>
+								<div>进入公众�<i class="wi wi-angle-right"></i></div>
 							</a>
 							<a href="javascript:;" class="stick" title="置顶" ng-click="stick(detail.uniacid)">
 								<i class="wi wi-stick-sign"></i>
@@ -107,11 +109,16 @@
 	});
 	angular.bootstrap($("#js-account-display"), ['accountApp']);
 	$(function () {
-		var footHeight = $(".footer").outerHeight(true);
-		var offsetHeight = $(".skin-default").get(0).offsetHeight;
-		$(".skin-default").css('height',function(){
-			return footHeight + offsetHeight;
+		var footHeight = $(".footer").get(0).offsetHeight;
+		var bodyHeight = getViewPort();
+		bodyHeight = bodyHeight.height;
+		$(".skin-default").css('min-height',function(){
+			return bodyHeight - footHeight;
 		});
+		/* $(".skin-default").scroll(function(){
+			var scrollDivOffsetHeight = $("#js-account-display").get(0).offsetHeight;
+			$(".skin-default").css('height',scrollDivOffsetHeight + footHeight + "px");
+		}); */
 	})
 </script>
 {template 'common/footer'}
