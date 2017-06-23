@@ -60,10 +60,11 @@
 		var modulename = $(this).data('module');
 		$.getJSON('./index.php?c=wxapp&a=version&do=search_link_account&module_name='+$(this).data('module'), function(data){
 			if (data.message.message) {
+				$('.js-show-account-content').empty();
 				for (i in data.message.message) {
 					var html =  '<div class="col-sm-2 text-center we7-margin-bottom">'+
 								'	<a href="javascript:;" class="js-select-uniacid" data-module="'+modulename+'" data-uniacid="'+data.message.message[i].uniacid+'">'+
-								'		<img src="" alt="" style="width:50px;height:50px;">'+
+								'		<img src="'+data.message.message[i].head_img+'" alt="" style="width:50px;height:50px;">'+
 								'		<p class="text-over">'+data.message.message[i].name+'</p>'+
 								'	</a>'+
 								'</div>';
