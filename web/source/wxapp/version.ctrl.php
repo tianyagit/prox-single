@@ -87,6 +87,16 @@ if ($do == 'search_link_account') {
 		iajax(0, array());
 	}
 	$account_list = uni_owned();
+	if (!empty($account_list)) {
+		foreach ($account_list as &$account) {
+			if (file_exists(IA_ROOT . "/attachment/headimg_" . $account['acid'] . '.jpg')) {
+				$account['head_img'] = tomedia('headimg_' . $account['acid'] . '.jpg') . '?time=' . time();
+			} else {
+				$account['head_img'] = './resource/images/nopic-107.png' . '?time=' . time();
+			}
+		}
+	}
+
 	if ($_W['isfounder']) {
 		iajax(0, $account_list);
 	}

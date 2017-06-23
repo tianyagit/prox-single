@@ -166,6 +166,14 @@ if(!empty($type)) {
 		if($log['module'] == 'recharge') {
 			message('不能使用余额支付', referer(), 'error');
 		}
+		if (!is_numeric($log['openid'])) {
+			$uid = mc_openid2uid($log['openid']);
+			if (empty($uid)) {
+				$fans_info = mc_init_fans_info($log['openid']);
+				$uid = $fans_info['uid'];
+			}
+			$log['openid'] = $uid;
+		}
 		//如果是return返回的话，处理相应付款操作
 		if(empty($_GPC['notify'])) {
 			if(!empty($log) && $log['status'] == '0') {
