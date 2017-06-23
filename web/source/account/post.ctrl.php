@@ -11,6 +11,7 @@ load()->model('cache');
 load()->classs('weixin.platform');
 load()->model('wxapp');
 load()->func('communication');
+load()->model('utility');
 
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
@@ -51,31 +52,11 @@ if($do == 'base') {
 		switch ($type) {
 			case 'qrcodeimgsrc':
 			case 'headimgsrc':
-				if(!empty($_GPC['imgsrc'])) {
-					if(parse_path($_GPC['imgsrc'])) {
-						$img_parse = parse_url($_GPC['imgsrc']);
-						$new_pic_name = IA_ROOT . '%s'.$acid.'.jpg';
-						if ($type == 'qrcodeimgsrc') {
-							$filename = sprintf($new_pic_name, '/attachment/qrcode_');
-						}
-						if ($type == 'headimgsrc') {
-							$filename = sprintf($new_pic_name, '/attachment/headimg_');
-						}
-						if ($img_parse['host'] != $_SERVER['HTTP_HOST']) {
-							$return_content = ihttp_get($_GPC['imgsrc']);
-							if ($return_content['code'] == 200) {
-								$result = file_put_contents($filename, $return_content['content']);
-							} else {
-								$result = false;
-							}
-						} else {
-							$img_absolute_path = IA_ROOT . $img_parse['path'];
-							$result = copy($img_absolute_path, $filename);
-						}
-					}else {
-						iajax(40035, '参数错误！', '');
-					}
-				}
+				$image_type = array(
+					'qrcodeimgsrc' => ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg',
+					'headimgsrc' => ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg'
+				);
+				$result = image_rename($_GPC['imgsrc'], $image_type[$type]);
 				break;
 			case 'name':
 				$uni_account = pdo_update('uni_account', array('name' => trim($_GPC['request_data'])), array('uniacid' => $uniacid));
