@@ -85,7 +85,7 @@ if ($do == 'addnews') {
 		iajax(- 1, '提交内容参数有误');
 	}
 	$attach_id = material_news_set($_GPC['news'], $attach_id);
-	if (is_error($attach_id)){
+	if (is_error($attach_id)) {
 		iajax(-1, $attach_id['message']);
 	}
 	/* if ($is_sendto_wechat) {
@@ -113,7 +113,7 @@ if ($do == 'upload_news') {
 	$result = material_local_news_upload($material_id);
 	if (is_error($result)){
 		iajax(-1, $result['message']);
-	}else{
+	} else {
 		iajax(0, '转换成功');
 	}
 }
