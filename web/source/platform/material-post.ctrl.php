@@ -79,7 +79,7 @@ if ($do == 'news') {
 }
 
 if ($do == 'addnews') {
-	$is_sendto_wechat = trim($_GPC['target']) == 'wechat' ? true : false;
+$is_sendto_wechat = trim($_GPC['target']) == 'wechat' ? true : false;
 	$attach_id = intval($_GPC['attach_id']);
 	if (empty($_GPC['news'])) {
 		iajax(- 1, '提交内容参数有误');
@@ -88,12 +88,11 @@ if ($do == 'addnews') {
 	if (is_error($attach_id)) {
 		iajax(-1, $attach_id['message']);
 	}
-	/* if ($is_sendto_wechat) {
+	if ($is_sendto_wechat) {
 		$result = material_local_news_upload($attach_id);
-	}  */
-	$result = material_local_news_upload($attach_id, $is_sendto_wechat);
+	}
 	if (is_error($result)){
-		iajax(-1, $result);
+		iajax(-1, '提交微信素材失败');
 	}else{
 		iajax(0, '编辑图文素材成功');
 	}
