@@ -1752,6 +1752,7 @@ abstract class WeModuleWxapp extends WeBase {
 			pdo_update('core_paylog', array(
 				'uniontid' => $uniontid,
 			), array('plid' => $paylog['plid']));
+			$paylog['uniontid'] = $uniontid;
 		}
 		
 		$_W['openid'] = $paylog['openid'];
