@@ -255,6 +255,21 @@ function cloud_download($path, $type = '') {
 			load()->func('file');
 			@mkdirs(dirname($path));
 			if (file_put_contents($path, $file)) {
+				if (!empty($ret['extend'])) {
+					foreach ($ret['extend'] as $file) {
+						$path = base64_decode($file['path']);
+						$file = base64_decode($file['file']);
+						if (empty($path) || empty($file)) {
+							continue;
+						}
+						if($gz) {
+							$file = gzuncompress($file);
+						}
+						$path = IA_ROOT . $path;
+						@mkdirs(dirname($path));
+						file_put_contents($path, $file);
+					}
+				}
 				return true;
 			} else {
 				return error(-1, '写入失败');
