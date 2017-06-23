@@ -1727,10 +1727,10 @@ abstract class WeModuleWxapp extends WeBase {
 		$uniontid = date('YmdHis').$moduleid.random(8,1);
 		$wxapp_uniacid = intval($_W['account']['uniacid']);
 		
-		$paylog = pdo_get('core_paylog', array('uniacid' => $wxapp_uniacid, 'module' => $this->module['name'], 'tid' => $order['tid']));
+		$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => $this->module['name'], 'tid' => $order['tid']));
 		if (empty($paylog)) {
 			$paylog = array(
-				'uniacid' => $wxapp_uniacid,
+				'uniacid' => $_W['uniacid'],
 				'acid' => $_W['acid'],
 				'openid' => $_W['openid'],
 				'module' => $this->module['name'],
