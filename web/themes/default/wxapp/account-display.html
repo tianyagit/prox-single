@@ -18,8 +18,8 @@
 				可创建 <span class="text-strong">{$account_info['maxwxapp']} </span>个小程序，已创建<span class="text-strong"> {$account_info['wxapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['wxapp_limit']} </span>个小程序。
 			</div>
 		{/if}
+		{if !empty($pager)}
 		<div class="cut-header">
-			{if !empty($pager)}
 			<form action="./index.php" method="get">
 				<input type="hidden" name="c" value="wxapp">
 				<input type="hidden" name="a" value="display">
@@ -31,8 +31,8 @@
 					</div>
 				</div>
 			</form>
-			{/if}
 		</div>
+		{/if}
 		{if !empty($pager)}
 		<ul class="letters-list cut-wechat-letters">
 			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
@@ -40,7 +40,7 @@
 			</li>
 		</ul>
 		{/if}
-		<div class="cut-list clearfix we7-margin-top">
+		<div class="cut-list clearfix">
 			<div class="item wxapp-list-item" ng-repeat="list in wxapp_lists" ng-if="wxapp_lists">
 				<div class="content">
 					<img ng-src="{{list.thumb}}" class="icon" onerror="this.src='./resource/images/nopic-107.png'">
