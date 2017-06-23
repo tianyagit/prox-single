@@ -323,3 +323,38 @@ function wxapp_payment_param() {
 	$pay_setting = $setting['payment'];
 	return $pay_setting;
 }
+
+function wxapp_update_daily_visittrend() {
+	global $_W;
+	$cachekey = cache_system_key("visittrend:daily:{$_W['uniacid']}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache) && $cache['expire'] > TIMESTAMP) {
+		return true;
+	}
+	$yesterday = date('Ymd', strtotime('-1 days'));
+	$trend = pdo_get('wxapp_general_analysis', array('uniacid' => $_W['uniacid'], 'type' => '2', 'ref_date' => $yesterday));
+	if (!empty($trend)) {
+		cache_write($cachekey, array('expire' => TIMESTAMP + 7200));
+		return true;
+	}
+	$account_obj = WeAccount::create();
+	$wxapp_stat = $account_obj->getWxappDailyVisitTrend();
+	if(is_error($wxapp_stat) || empty($wxapp_stat)) {
+		return error(-1, '调用微信接口错误');
+	} else {
+		$update_stat = array(
+				'uniacid' => $_W['uniacid'],
+				'session_cnt' => $wxapp_stat['session_cnt'],
+				'visit_pv' => $wxapp_stat['visit_pv'],
+				'visit_uv' => $wxapp_stat['visit_uv'],
+				'visit_uv_new' => $wxapp_stat['visit_uv_new'],
+				'type' => 2,
+				'stay_time_uv' => $wxapp_stat['stay_time_uv'],
+				'stay_time_session' => $wxapp_stat['stay_time_session'],
+				'visit_depth' => $wxapp_stat['visit_depth'],
+				'ref_date' => $wxapp_stat['ref_date'],
+		);
+		pdo_insert('wxapp_general_analysis', $update_stat);
+	}
+	return true;
+}

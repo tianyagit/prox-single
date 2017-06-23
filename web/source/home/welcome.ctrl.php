@@ -58,7 +58,6 @@ if ($do == 'platform') {
 	template('home/welcome-ext');
 } elseif ($do == 'get_fans_kpi') {
 	uni_update_week_stat();
-	$_W['page']['title'] = '平台相关数据';
 	//今日昨日指标
 	$yesterday = date('Ymd', strtotime('-1 days'));
 	$yesterday_stat = pdo_get('stat_fans', array('date' => $yesterday, 'uniacid' => $_W['uniacid']));

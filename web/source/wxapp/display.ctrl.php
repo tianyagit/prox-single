@@ -28,7 +28,7 @@ if ($do == 'home') {
 		$last_version = wxapp_fetch($last_uniacid);
 		if (!empty($last_version)) {
 			uni_account_switch($last_uniacid);
-			header('Location: ' . url('wxapp/version/manage', array('version_id' => $last_version['version']['id'])));
+			header('Location: ' . url('wxapp/version/home', array('version_id' => $last_version['version']['id'])));
 			exit;
 		} else {
 			itoast('', url('wxapp/display'), 'info');
@@ -122,7 +122,7 @@ if ($do == 'home') {
 	uni_account_switch($uniacid);
 	wxapp_save_switch($uniacid);
 	wxapp_update_last_use_version($uniacid, $version_id);
-	header('Location: ' . url('wxapp/version/manage', array('version_id' => $version_id)));
+	header('Location: ' . url('wxapp/version/home', array('version_id' => $version_id)));
 	exit;
 } elseif ($do == 'rank') {
 	uni_account_rank_top($uniacid);

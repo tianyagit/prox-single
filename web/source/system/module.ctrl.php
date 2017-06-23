@@ -284,7 +284,7 @@ if ($do =='install') {
 	if (!empty($manifest['platform']['main_module'])) {
 		$plugin_exist = pdo_get('modules_plugin', array('main_module' => $manifest['platform']['main_module'], 'name' => $manifest['application']['identifie']));
 		if (empty($plugin_exist)) {
-			itoast('请先更新主模块后再安装插件', url('system/modulet_installed'), 'error');
+			itoast('请先更新主模块后再安装插件', url('system/module/installed'), 'error');
 		}
 	}
 	$check_manifest_result = manifest_check($module_name, $manifest);

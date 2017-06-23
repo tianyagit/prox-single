@@ -62,7 +62,7 @@ class WxappAccount extends WeAccount {
 		}
 		
 		if (empty($this->account['key']) || empty($this->account['secret'])) {
-			return error('-1', '未填写公众号的 appid 或 appsecret！');
+			return error('-1', '未填写小程序的 appid 或 appsecret！');
 		}
 		
 		$url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$this->account['key']}&secret={$this->account['secret']}";
@@ -256,5 +256,25 @@ class WxappAccount extends WeAccount {
 			'message' => $message,
 			'data' => $data,
 		)));
+	}
+	
+	public function getWxappDailyVisitTrend() {
+		global $_W;
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+		$url = "https://api.weixin.qq.com/datacube/getweanalysisappiddailyvisittrend?access_token={$token}";
+		$response = ihttp_request($url, '{"begin_date": "'.date('Y-m-d', strtotime('-1 days')).'", "end_date": "'.date('Y-m-d', strtotime('-1 days')).'"}');
+		if(is_error($response)) {
+			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
+		}
+		$daily_visit_trend = @json_decode($response['content'], true);
+		if(empty($daily_visit_trend)) {
+			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
+		} elseif (!empty($daily_visit_trend['errcode'])) {
+			return error(-1, "访问微信接口错误, 错误代码: {$daily_visit_trend['errcode']}, 错误信息: {$daily_visit_trend['errmsg']}");
+		}
+		return $daily_visit_trend['list'][0];
 	}
 }

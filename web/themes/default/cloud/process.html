@@ -1,4 +1,5 @@
 {template 'common/header'}
+{}
 <script type="text/javascript">
 <!--
 	var packet = {php echo ($packet ? json_encode($packet) : 'null');};
@@ -274,9 +275,9 @@
 		{else}
 		<script>
 			{if $_GPC['batch']}
-				location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade, "batch" => 1)}';
+				location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade, "batch" => 1, "account_type" => $_GPC["account_type"])}';
 			{else}
-				location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade)}';
+				location.href = '{url "cloud/process" array("step" => "scripts", "m" => $m, "is_upgrade" => $is_upgrade, "account_type" => $_GPC["account_type"])}';
 			{/if}
 		</script>
 		{/if}
@@ -323,7 +324,7 @@
 			</script>
 			{else}
 			<script>
-				location.href = '{url "system/module/upgrade" array("module_name" => $m, "flag" => 1)}';
+				location.href = '{url "system/module/upgrade" array("module_name" => $m, "flag" => 1, "account_type" => $_GPC["account_type"])}';
 			</script>
 			{/if}
 			

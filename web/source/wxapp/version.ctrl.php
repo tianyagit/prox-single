@@ -7,8 +7,9 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('module');
 load()->model('wxapp');
+load()->model('welcome');
 
-$dos = array('display', 'manage', 'module_link_uniacid', 'search_link_account', 'module_unlink_uniacid');
+$dos = array('display', 'home', 'module_link_uniacid', 'search_link_account', 'module_unlink_uniacid', 'get_daily_visittrend');
 $do = in_array($do, $dos) ? $do : 'display';
 if ($do == 'module_link_uniacid') {
 	uni_user_permission_check('wxapp_module_link_uniacid', true, 'wxapp');
@@ -30,12 +31,14 @@ if ($do == 'display') {
 	template('wxapp/version-display');
 }
 
-if ($do == 'manage') {
+if ($do == 'home') {
 	if ($version_info['design_method'] == WXAPP_TEMPLATE) {
 		$version_site_info = wxapp_site_info($version_info['multiid']);
 	}
 	$role = uni_permission($_W['uid'], $wxapp_info['uniacid']);
-	template('wxapp/version-manage');
+
+	$notices = welcome_notices_get();
+	template('wxapp/version-home');
 }
 
 if ($do == 'module_link_uniacid') {
@@ -96,4 +99,15 @@ if ($do == 'search_link_account') {
 		}
 	}
 	iajax(0, $account_list);
+}
+
+if ($do == 'get_daily_visittrend') {
+	wxapp_update_daily_visittrend();
+	//昨日指标
+	$yesterday = date('Ymd', strtotime('-1 days'));
+	$yesterday_stat = pdo_get('wxapp_general_analysis', array('uniacid' => $_W['uniacid'], 'type' => '2', 'ref_date' => $yesterday));
+	if (empty($yesterday_stat)) {
+		$yesterday_stat = array('session_cnt' => 0, 'visit_pv' => 0, 'visit_uv' => 0, 'visit_uv_new' => 0);
+	}
+	iajax(0, array('yesterday' => $yesterday_stat), '');
 }
