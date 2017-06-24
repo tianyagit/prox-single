@@ -495,7 +495,7 @@ function material_url_check($url) {
 	if (empty($url)){
 		return true;
 	} else {
-		$pattern ="/^(https?:\/\/|\.\/index.php|tel:(\/\/)?)[^\s]+/i";
+		$pattern ="/^((https|http|tel):\/\/|\.\/index.php)[^\s]+/i";
 		return preg_match($pattern, $url);
 	}
 }
