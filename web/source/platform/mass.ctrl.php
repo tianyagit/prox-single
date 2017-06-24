@@ -8,6 +8,8 @@ defined('IN_IA') or exit('Access Denied');
 load()->func('cron');
 load()->model('cloud');
 load()->model('module');
+load()->model('mc');
+load()->model('material');
 
 $dos = array('list', 'post', 'cron', 'send', 'del', 'preview');
 $do = in_array($do, $dos) ? $do : 'post';
@@ -74,50 +76,67 @@ if ($do == 'del') {
 }
 
 if ($do == 'post') {
-	$groups = pdo_get('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']));
-	$groups = (array)iunserializer($groups['groups']);
-
-	//数据库查出来的groups不包括全部粉丝，故在此添加上(ng-repeat使用方便)
-	array_unshift($groups, array('id' => -1, 'name' => '全部粉丝', 'count' => ''));
 	$id = intval($_GPC['id']);
 	$massdata = pdo_get('mc_mass_record', array('id' => $id));
 	if (empty($id)) {
 		$massdata['type'] = 0;
 	}
-
+	
+	$groups = mc_fans_groups($_W['uniacid']);
+	
 	if (checksubmit('submit')) {
 		$type = intval($_GPC['type']);
-		//提交数据
 		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
-		$mass = array();
-		if(!empty($_GPC['reply'])) {
-			foreach ($_GPC['reply'] as $reply_k => $reply_val) {
-				if (!empty($reply_val)) {
-					$msgtype = substr($reply_k, 6);
-					$mass['mediaid'] = trim($_GPC['reply']['reply_'.$msgtype]);
-					$attachment = pdo_get('wechat_attachment', array('media_id' => $mass['mediaid']), array('id', 'model'));
-					if ($attachment['model'] != 'perm') {
-						itoast('图文素材请选择微信素材', '', 'info');
-					}
-					$mass['id'] = $attachment['id'];
-					$mass['msgtype'] = $msgtype;
-					break;
-				}
+		
+		if (empty($_GPC['reply'])) {
+			itoast('请选择要群发的素材', '', 'error');
+		}
+		
+		$mass_record = array(
+			'uniacid' => $_W['uniacid'],
+			'acid' => $_W['acid'],
+			'groupname' => $group['name'],
+			'fansnum' => $group['count'],
+			'msgtype' => '',
+			'group' => $group['id'],
+			'attach_id' => '',
+			'media_id' => '',
+			'status' => 1,
+			'type' => $type,
+			'sendtime' => TIMESTAMP,
+			'createtime' => TIMESTAMP,
+			'cron_id' => 0,
+		);
+		foreach ($_GPC['reply'] as $material_type => $material) {
+			if (empty($material)) {
+				continue;
 			}
+			list($temp, $msgtype) = explode('_', $material_type);
+			$attachment = material_get($material);
+			if ($attachment['model'] == 'local') {
+				itoast('图文素材请选择微信素材', '', 'error');
+			}
+			$mass_record['media_id'] = $material;
+			$mass_record['attach_id'] = $attachment['id'];
+			$mass_record['msgtype'] = $msgtype;
+
+			break;
 		}
 
 		//定时发送
 		if ($type == 1) {
 			$cloud = cloud_prepare();
 			if (is_error($cloud)) {
-				iajax(0, $cloud, '');
+				itoast($cloud['message'], '', 'error');
 			}
 			set_time_limit(0);
+			
 			$starttime = strtotime(date('Y-m-d', strtotime($_GPC['sendtime'])));
 			$endtime = strtotime(date('Y-m-d', strtotime($_GPC['sendtime']))) + 86400;
-			$time_key = date('Y-m-d', strtotime($_GPC['sendtime']));
-			$mass['sendtime'] = strtotime($_GPC['sendtime']);
-
+			$cron_title  = date('Y-m-d', strtotime($_GPC['sendtime'])) . '微信群发任务';
+			
+			$mass_record['sendtime'] = strtotime($_GPC['sendtime']);
+			
 			$records = pdo_fetchall("SELECT id, cron_id FROM " . tablename('mc_mass_record') . ' WHERE uniacid = :uniacid AND sendtime BETWEEN :starttime AND :endtime AND status = 1 ORDER BY sendtime ASC LIMIT 8', array(':uniacid' => $_W['uniacid'], ':starttime' => $starttime, ':endtime' => $endtime), 'id');
 			if (!empty($records)) {
 				foreach ($records as $record) {
@@ -134,60 +153,34 @@ if ($do == 'post') {
 				}
 				pdo_delete('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => $ids));
 			}
-			$mass_record_data = array(
-					'uniacid' => $_W['uniacid'],
-					'acid' => $_W['acid'],
-					'groupname' => $group['name'],
-					'group' => $group['id'],
-					'attach_id' => $mass['id'],
-					'media_id' => $mass['mediaid'],
-					'fansnum' => $group['count'],
-					'msgtype' => $mass['msgtype'],
-					'sendtime' => $mass['sendtime'],
-					'createtime' => TIMESTAMP,
-					'type' => 1,
-					'status' => 1,
-					'cron_id' => 0,
-			);
-			pdo_insert('mc_mass_record', $mass_record_data);
-			$insert_id = pdo_insertid();
+			
+			pdo_insert('mc_mass_record', $mass_record);
+			$mass_record_id = pdo_insertid();
+			
 			$cron_data = array(
-					'uniacid' => $_W['uniacid'],
-					'name' => $time_key . "微信群发任务",
-					'filename' => 'mass',
-					'type' => 1,
-					'lastruntime' => $mass['sendtime'],
-					'extra' => $insert_id,
-					'module' => 'task',
-					'status' => 1,
+				'uniacid' => $_W['uniacid'],
+				'name' => $cron_title,
+				'filename' => 'mass',
+				'type' => 1,
+				'lastruntime' => $mass_record['sendtime'],
+				'extra' => $mass_record_id,
+				'module' => 'task',
+				'status' => 1,
 			);
 			$status = cron_add($cron_data);
 			if (is_error($status)) {
-				$message = "{$time_key}的群发任务同步到云服务失败,请手动同步<br>";
+				$message = "{$cron_title}同步到云服务失败,请手动同步<br>";
 				itoast($message, url('platform/mass/send'), 'info');
 			}
-			pdo_update('mc_mass_record', array('cron_id' => $status), array('id' => $insert_id));
+			
+			pdo_update('mc_mass_record', array('cron_id' => $status), array('id' => $mass_record_id));
 			itoast('定时群发设置成功', url('platform/mass/send'), 'success');
 		} else {
 			$account_api = WeAccount::create();
-			$result = $account_api->fansSendAll($group['id'], $msgtype, $mass['mediaid']);
+			$result = $account_api->fansSendAll($group['id'], $msgtype, $mass_record['attach_id']);
 			if (is_error($result)) {
 				itoast($result['message'], url('platform/mass/send'), 'info');
 			}
-			$record = array(
-					'uniacid' => $_W['uniacid'],
-					'acid' => $_W['acid'],
-					'groupname' => $group['name'],
-					'fansnum' => $group['count'],
-					'msgtype' => $mass['msgtype'],
-					'group' => $group['id'],
-					'attach_id' => $mass['id'],
-					'media_id' => $mass['mediaid'],
-					'status' => 0,
-					'type' => 0,
-					'sendtime' => TIMESTAMP,
-					'createtime' => TIMESTAMP,
-			);
 			pdo_insert('mc_mass_record', $record);
 			itoast('立即发送设置成功', url('platform/mass/send'), 'success');
 		}

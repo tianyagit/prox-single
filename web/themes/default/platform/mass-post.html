@@ -21,6 +21,7 @@
 				<div class="form-controls col-sm-8">
 					<input type="hidden" name="group" value="">
 					<select class="we7-select mass-group">
+						<option value="-1">全部粉丝</option>
 						<option ng-repeat="group in groups" ng-selected="group.name == massdata.groupname" ng-bind="group.name" ng-value="group.id"></option>
 					</select>
 					<span class="help-block"> 根据条件对群发对象进行筛选</span>
