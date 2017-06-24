@@ -59,7 +59,7 @@ function _login($forward = '') {
 		$cookie['lastvisit'] = $record['lastvisit'];
 		$cookie['lastip'] = $record['lastip'];
 		$cookie['hash'] = md5($record['password'] . $record['salt']);
-		$session = base64_encode(json_encode($cookie));
+		$session = authcode(json_encode($cookie), 'encode');
 		isetcookie('__session', $session, !empty($_GPC['rember']) ? 7 * 86400 : 0, true);
 		$status = array();
 		$status['uid'] = $record['uid'];
