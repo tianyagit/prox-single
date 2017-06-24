@@ -9,7 +9,7 @@ load()->model('account');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank' , 'home');
+$dos = array('display', 'switch', 'rank', 'home');
 $do = in_array($do, $dos) ? $do : 'display';
 if ($do == 'rank' || $do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);

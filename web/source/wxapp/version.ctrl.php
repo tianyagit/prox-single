@@ -87,16 +87,6 @@ if ($do == 'search_link_account') {
 		iajax(0, array());
 	}
 	$account_list = wxapp_search_link_account($module_name);
-	if (!empty($account_list)) {
-		foreach ($account_list as &$account) {
-			if (file_exists(IA_ROOT . "/attachment/headimg_" . $account['acid'] . '.jpg')) {
-				$account['head_img'] = tomedia('headimg_' . $account['acid'] . '.jpg') . '?time=' . time();
-			} else {
-				$account['head_img'] = './resource/images/nopic-107.png' . '?time=' . time();
-			}
-		}
-	}
-
 	iajax(0, $account_list);
 }
 

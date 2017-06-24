@@ -26,11 +26,11 @@ function system_menu_permission_list($role = '') {
 	return $system_menu;
 }
 /**
- * 数据库备份信息
- * @param string $path 备份文件路径
+ * 获得数据库备份目录下的数据库备份文件数组
  * @return array;
  */
-function database_reduction ($path) {
+function system_database_backup() {
+	$path = IA_ROOT . '/data/backup/'; 
 	load()->func('file');
 	$reduction = array();
 	if (!is_dir($path)) {

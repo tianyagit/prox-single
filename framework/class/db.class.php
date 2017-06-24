@@ -77,6 +77,12 @@ class DB {
 			return false;
 		}
 		$statement = $this->pdo->prepare($sql);
+		if(PDO_DEBUG) {
+			$info = array();
+			$info['sql'] = $sql;
+			$info['error'] = $this->pdo->errorInfo();
+			$this->debug(false, $info);
+		}
 		return $statement;
 	}
 	
@@ -525,11 +531,17 @@ class DB {
 		if (empty($orderby)) {
 			return $orderbysql;
 		}
-		if (is_array($orderby)) {
-			$orderbysql = implode(',', $orderby);
-		} else {
-			$orderbysql = $orderby;
+		
+		if (!is_array($orderby)) {
+			$orderby = explode(',', $orderby);
 		}
+		foreach ($orderby as $i => $row) {
+			$row = strtolower($row);
+			if (substr($row, -3) != 'asc' && substr($row, -4) != 'desc') {
+				unset($orderby[$i]);
+			}
+		}
+		$orderbysql = implode(',', $orderby);
 		return !empty($orderbysql) ? " ORDER BY $orderbysql " : '';
 	}
 	

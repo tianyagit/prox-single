@@ -268,7 +268,7 @@ class WxappAccount extends WeAccount {
 		$data = array(
 			'begin_date' => date('Y-m-d', strtotime('-1 days')),
 			'end_date' => date('Y-m-d', strtotime('-1 days'))
-			);
+		);
 
 		$response = $this->requestApi($url, json_encode($data));
 		if (is_error($response)) {

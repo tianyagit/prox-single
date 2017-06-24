@@ -102,10 +102,7 @@ function material_news_set($data, $attach_id) {
 		) {
 			return error('-1', '参数有误');
 		}
-		if ((!material_url_check($news['content_source_url']) && !preg_match("/^\.\/index.php\?.+/", $news['content_source_url'])) || 
-			!material_url_check($news['url']) || 
-			!material_url_check($news['thumb'])
-		) {
+		if (!material_url_check($news['content_source_url']) || !material_url_check($news['url']) || !material_url_check($news['thumb'])) {
 			return error('-3', '提交链接参数不合法');
 		}
 		$post_news[] = array(
@@ -136,9 +133,7 @@ function material_news_set($data, $attach_id) {
 			'id' => $attach_id
 		));
 		foreach ($post_news as $id => $news) {
-			pdo_update('wechat_news', $news, array(
-				'id' => $news['id']
-			));
+			pdo_update('wechat_news', $news, array('id' => $news['id']));
 		}
 		cache_delete(cache_system_key('material_reply:' . $attach_id));
 	} else {
@@ -338,9 +333,7 @@ function material_local_news_upload($attach_id) {
 				$news['thumb_url'] = $result['url'];
 			}
 		}
-		pdo_update('wechat_news', $news, array(
-				'id' => $news['id']
-		));
+		pdo_update('wechat_news', $news, array('id' => $news['id']));
 		if (empty($material['media_id'])){
 			$articles['articles'][] = $news;
 		} else {
@@ -359,19 +352,14 @@ function material_local_news_upload($attach_id) {
 			return error('-5', $media_id, '');
 		}
 		pdo_update('wechat_attachment', array(
-				'media_id' => $media_id,
-				'model' => 'perm'
+			'media_id' => $media_id,
+			'model' => 'perm'
 		), array(
-				'uniacid' => $_W['uniacid'],
-				'id' => $attach_id
+			'uniacid' => $_W['uniacid'],
+			'id' => $attach_id
 		));
 	} else {
-		pdo_update('wechat_attachment', array(
-				'model' => 'perm'
-		), array(
-				'uniacid' => $_W['uniacid'],
-				'id' => $attach_id
-		));
+		pdo_update('wechat_attachment', array('model' => 'perm'), array('uniacid' => $_W['uniacid'], 'id' => $attach_id));
 	}
 	return $material;
 }
@@ -406,10 +394,7 @@ function material_local_upload_by_url($url, $type='images') {
 function material_local_upload($material_id){
 	global $_W;
 	$type_arr = array('1' => 'images', '2' => 'voices', '3' => 'videos');
-	$material = pdo_get('core_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id
-	));
+	$material = pdo_get('core_attachment', array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	if (empty($material)) {
 		return error('-1', '同步素材不存在或已删除');
 	}
@@ -452,10 +437,7 @@ function material_news_delete($material_id){
 		return error('-1', '您没有权限删除该文件');
 	}
 	$material_id = intval($material_id);
-	$material = pdo_get('wechat_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id,
-	));
+	$material = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	if (empty($material)){
 		return error('-2', '素材文件不存在或已删除');
 	}
@@ -466,14 +448,8 @@ function material_news_delete($material_id){
 	if (is_error($result)){
 		return $result;
 	}
-	pdo_delete('wechat_news', array(
-			'uniacid' => $_W['uniacid'],
-			'attach_id' => $material_id
-	));
-	pdo_delete('wechat_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id
-	));
+	pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $material_id));
+	pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	return $result;
 }
 
@@ -489,10 +465,7 @@ function material_delete($material_id, $location){
 	}
 	$material_id = intval($material_id);
 	$table = $location == 'wechat' ? 'wechat_attachment' : 'core_attachment';
-	$material = pdo_get($table, array(
-					'uniacid' => $_W['uniacid'],
-					'id' => $material_id)
-				);
+	$material = pdo_get($table, array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	if (empty($material)){
 		return error('-2', '素材文件不存在或已删除');
 	}
@@ -509,10 +482,7 @@ function material_delete($material_id, $location){
 	if (is_error($result)) {
 		return error('-3', '删除文件操作发生错误');
 	}
-	pdo_delete($table, array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $material_id
-	));
+	pdo_delete($table, array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	return $result;
 }
 
@@ -521,11 +491,19 @@ function material_delete($material_id, $location){
  * @param $url
  * @return boolean
  */
-function material_url_check($url){
+function material_url_check($url) {
 	if (empty($url)){
 		return true;
 	} else {
-		$pattern = "/^(http|https|tel):\/\/.*/i";
+		$pattern ="/^((https|http|tel):\/\/|\.\/index.php)[^\s]+/i";
 		return preg_match($pattern, $url);
 	}
+}
+
+function material_news_list($type = '', $search = array(), $page = array()) {
+	
+}
+
+function material_list($type = '', $page = array()) {
+
 }
