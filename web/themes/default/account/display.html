@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" ng-cloak >
+<div class="panel panel-cut" id="js-account-display" {if empty($page_scroll)}ng-controller="AccountDisplay" ng-cloak{/if}>
 	<div class="panel-heading">
 		请选择您要操作的公众号
 		<div class="font-default pull-right">
@@ -21,7 +21,7 @@
 				可创建 <span class="text-strong">{$account_info['maxaccount']} </span>个公众号，已创建<span class="text-strong"> {$account_info['uniacid_num']} </span>个，还可创建 <span class="text-strong">{$account_info['uniacid_limit']} </span>个公众号。
 			</div>
 		{/if}
-		{if !empty($pager)}
+		{if $total_page > 1}
 		<div class="cut-header">
 			<form action="./index.php" method="get">
 				<input type="hidden" name="c" value="account">
@@ -37,7 +37,7 @@
 		</div>
 		{/if}
 		<div class="clearfix"></div>
-		{if !empty($pager)}
+		{if $total_page > 1}
 		<ul class="letters-list cut-wechat-letters">
 			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
 				<a href="javascript:;" ng-bind="letter"></a>
@@ -69,10 +69,12 @@
 			</div>
 		</div>
 		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
+	</div>
+	{if empty($page_scroll)}
 		<div class="text-right">
 			{$pager}
 		</div>
-	</div>
+	{/if}
 </div>
 <script>
 	angular.module('accountApp').value('config', {
@@ -86,13 +88,17 @@
 		keyword : "{$keyword}",
 		letter : "{$letter}"
 	});
-	angular.bootstrap($("#js-account-display"), ['accountApp']);
+	angular.bootstrap(document, ['accountApp']);
 	$(function () {
 		var footHeight = $(".footer").outerHeight(true);
-		var offsetHeight = $(".skin-default").get(0).offsetHeight;
-		$(".skin-default").css('height',function(){
-			return footHeight + offsetHeight;
+		var bodyHeight = getViewPort();
+		bodyHeight = bodyHeight.height;
+		$(".scroll").css('height',function(){
+			return bodyHeight;
 		});
-	})
+		$(".skin-default").css('min-height',function(){
+			return bodyHeight - footHeight + 20;
+		});
+	}) 
 </script>
 {template 'common/footer'}

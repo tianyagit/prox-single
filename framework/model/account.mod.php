@@ -491,6 +491,7 @@ function uni_account_tablename($type) {
  */
 function uni_permission($uid = 0, $uniacid = 0) {
 	global $_W;
+	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 	
 	$founders = explode(',', $_W['config']['setting']['founder']);
@@ -503,7 +504,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 			$role = ACCOUNT_MANAGE_NAME_OWNER;
 		} elseif ($role == ACCOUNT_MANAGE_NAME_MANAGER) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
-		} else {
+		} elseif ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
 	} else {
@@ -514,8 +515,6 @@ function uni_permission($uid = 0, $uniacid = 0) {
 		} elseif (in_array(ACCOUNT_MANAGE_NAME_MANAGER, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
 		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, $roles)) {
-			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
-		} else {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
 		}
 	}
