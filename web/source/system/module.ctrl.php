@@ -69,7 +69,7 @@ if ($do == 'check_upgrade') {
 	foreach ($module_list as &$module) {
 		$manifest = ext_module_manifest($module['name']);
 		if (!empty($manifest)&& is_array($manifest)) {
-			if (ver_compare($module['version'], $manifest['application']['version']) == '-1') {
+			if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
 				$module['best_version'] = $manifest['application']['version'];
 				$module['upgrade'] = true;
 			} else {
@@ -105,7 +105,7 @@ if ($do == 'check_upgrade') {
 					continue;
 				}
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
-				if (ver_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version']))) {
+				if (version_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version']))) {
 					$module['upgrade'] = true;
 				} else {
 					$module['upgrade'] = false;

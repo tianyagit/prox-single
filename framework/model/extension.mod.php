@@ -257,7 +257,7 @@ function ext_module_checkupdate($modulename) {
 		$version = $manifest['application']['version'];
 		load()->model('module');
 		$module = module_fetch($modulename);
-		if (ver_compare($version, $module['version']) == '1') {
+		if (version_compare($version, $module['version']) == '1') {
 			return true;
 		} else {
 			return false;
