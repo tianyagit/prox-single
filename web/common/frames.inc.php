@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $we7_system_menu = array();
 $we7_system_menu['account'] = array(
 	'title' => '公众号',
-	'url' => url('home/welcome'),
+	'url' => url('home/welcome/platform'),
 	'section' => array(
 		'platform_plus' => array(
 			'title' => '增强功能',
@@ -122,7 +122,7 @@ $we7_system_menu['account'] = array(
 );
 $we7_system_menu['wxapp'] = array(
 	'title' => '小程序',
-	'url' => url('wxapp/display/home'),
+	'url' => url('home/welcome/wxapp'),
 	'section' => array(
 		'wxapp_module' => array(
 			'title' => '应用',

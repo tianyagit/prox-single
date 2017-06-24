@@ -132,9 +132,9 @@ if($do == 'restore') {
 	$_W['page']['title'] = '还原 - 数据库 - 常用系统工具 - 系统管理';
 	$reduction = array();
 	$path = IA_ROOT . '/data/backup/';
-//获取备份数据
-	$reduction = database_reduction ($path);
-//还原备份
+	//获取备份目录下数据库备份数组
+	$reduction = backup_database_list();
+	//还原备份
 	if (!empty($_GPC['restore_dirname'])) {
 		$restore_dirname = $_GPC['restore_dirname'];
 		if ($reduction[$restore_dirname]) {

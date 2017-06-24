@@ -499,13 +499,13 @@ function module_status($module) {
 	$cloud_m_info = cloud_m_info($module);
 	$module_info = module_fetch($module);
 	if (!empty($cloud_m_info) && !empty($cloud_m_info['version']['version'])) {
-		if (ver_compare($module_info['version'], $cloud_m_info['version']['version'])) {
+		if (version_compare($module_info['version'], $cloud_m_info['version']['version'])) {
 			$module_status['upgrade'] = array('name' => $module_info['title'], 'version' => $cloud_m_info['version']['version'], 'upgrade' => 1);
 		}
 	} else {
 		$manifest = ext_module_manifest($module);
 		if (!empty($manifest)) {
-			if (ver_compare($module_info['version'], $manifest['application']['version'])) {
+			if (version_compare($module_info['version'], $manifest['application']['version'])) {
 				$module_status['upgrade'] = array('name' => $module_info['title'], 'version' => $manifest['application']['version'], 'upgrade' => 1);
 			}
 		}
@@ -566,7 +566,7 @@ function module_filter_upgrade($module_list) {
 			if (!empty($manifest)&& is_array($manifest)) {
 				$module = array('name' => $module);
 				$module['from'] = 'local';
-				if (ver_compare($installed_module[$module['name']]['version'], $manifest['application']['version']) == '-1') {
+				if (version_compare($installed_module[$module['name']]['version'], $manifest['application']['version']) == '-1') {
 					$module['upgrade'] = true;
 					$module['upgrade_branch'] = true;
 					$modules[$module['name']] = $module;

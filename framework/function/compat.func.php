@@ -90,3 +90,9 @@ if (!function_exists('hex2bin')) {
 		return $sbin;
 	}
 }
+
+if (!function_exists('mb_strlen')) {
+	function mb_strlen($string, $charset = '') {
+		return istrlen($string, $charset);
+	}
+}

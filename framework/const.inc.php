@@ -127,4 +127,9 @@ define('PAYMENT_WECHAT_TYPE_BORROW', 2);
 define('PAYMENT_WECHAT_TYPE_SERVICE', 3);
 define('PAYMENT_WECHAT_TYPE_CLOSE', 4);
 
+//页面滚动加载开关
 define('CHATS_MESSAGE_FROM_MANAGER', 1);//平台给粉丝发消息的类型
+define('PAGE_SCROLL_SWITCH', true);
+
+//小程序数据常规分析常量
+define('WXAPP_STATISTICS_DAILYVISITTREND', 2);

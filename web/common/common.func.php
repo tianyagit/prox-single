@@ -363,7 +363,7 @@ function buildframes($framename = ''){
 		if ($module['permissions']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_permissions'] = array(
 				'title' => "<i class='fa fa-cog'></i> 权限设置",
-				'url' => url('profile/module/permissions', array('m' => $modulename)),
+				'url' => url('profile/module-permission', array('m' => $modulename)),
 				'is_display' => 1,
 			);
 		}

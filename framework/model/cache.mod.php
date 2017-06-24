@@ -481,7 +481,7 @@ function cache_build_cloud_upgrade_module() {
 				$module['branches'] = $cloud_m_info['branches'];
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
 				$module['from'] = 'cloud';
-				if (ver_compare($module['version'], $cloud_branch_version) == -1) {
+				if (version_compare($module['version'], $cloud_branch_version) == -1) {
 					$module['upgrade_branch'] = true;
 					$module['upgrade'] = true;
 				}
