@@ -135,7 +135,11 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		itoast('', url('account/display'), 'info');
+		if (strexists($_W['siteurl'], 'do=wxapp')) {
+			itoast('', url('wxapp/display'), 'info');
+		} else {
+			itoast('', url('account/display'), 'info');
+		}
 	}
 }
 
