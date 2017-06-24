@@ -24,7 +24,7 @@ $dos = array('display','upgrade');
 $do = in_array($do, $dos) ? $do : 'display';
 if ($do == 'display') {
 	//数据备份信息
-	$reduction = backup_database_list();
+	$reduction = system_database_backup();
 	//数据库最后一次备份时间
 	$max_backup_time = time();
 	if (!empty($reduction)) {
