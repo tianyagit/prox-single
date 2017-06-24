@@ -37,9 +37,9 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 8;
+	$psize = 10;
 	$start = ($pindex - 1) * $psize;
-
+	$page_scroll = PAGE_SCROLL_SWITCH;
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
@@ -84,8 +84,8 @@ if ($do == 'display') {
 		unset($account_val);
 		unset($account);
 	}
-	$pager = pagination($total, $pindex, $psize);
 	$total_page = ceil($total / $psize);
+	$pager = pagination($total, $pindex, $psize);
 	if ($_W['isajax'] && $_W['ispost']) {
 		iajax(0, $list);
 	}
