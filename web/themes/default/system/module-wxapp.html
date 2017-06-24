@@ -3,12 +3,12 @@
 <div class="we7-page-title">
 	小程序管理
 </div>
-<ul class="we7-page-tab">
-	<li class="active"><a href="{php echo url('system/module/installed', array('account_type' => 4))}">已安装的小程序  </a></li>
-	<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" ng-if="isFounder == 1">未安装的小程序<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-	<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4, 'status' => 'recycle'))}" ng-if="isFounder == 1">已停用小程序</a></li>
-</ul>
 <div id="js-system-module" ng-controller="installedCtrl" ng-cloak>
+	<ul class="we7-page-tab">
+		<li class="active"><a href="{php echo url('system/module/installed', array('account_type' => 4))}">已安装的小程序  </a></li>
+		<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" ng-if="isFounder == 1">未安装的小程序<span class="color-red">  ({$total_uninstalled}) </span></a></li>
+		<li><a href="{php echo url('system/module/not_installed', array('account_type' => 4, 'status' => 'recycle'))}" ng-if="isFounder == 1">已停用小程序</a></li>
+	</ul>
 	<div class="we7-page-search clearfix">
 		<!--<div class="pull-right">-->
 		<!--<a href="添加.html" class="btn btn-danger">购买应用模块</a>-->
@@ -39,7 +39,7 @@
 			<col width="350px"/>
 			<col width="230px" />
 			<tr>
-				<th colspan="2" class="text-left">小程序应用名</th>
+				<th colspan="2" class="text-left">小程序应用</th>
 				<!--<th>公众号</th>-->
 				<!--<th>数量</th>-->
 				<th class="text-right">操作</th>
@@ -56,11 +56,11 @@
 				<!--<td >{{ module.enabled_use_account }}</td>-->
 				<td class="text-left">
 					<div class="link-group">
-						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}">管理设置</a>
+						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}&account_type={ACCOUNT_TYPE}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
+						<a href="javascript:;" class="del color-red" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
+						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}" ng-if="isFounder == 1">管理设置</a>
 						<!--<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>-->
 						<a href="{php echo url('system/module/uninstall', array('account_type' => 4))}&name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="isFounder == 1" class="del">停用</a>
-						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}&account_type={ACCOUNT_TYPE}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
-						<a href="javascript:;" class="del" ng-click="setUpgradeInfo(module.name)" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 					</div>
 				</td>
 			</tr>
@@ -183,8 +183,8 @@
 							<td class="text-right">
 								<div class="link-group">
 									<a tabindex="2" href="javascript:;" role="button" data-toggle="popover" title="{{ module_list[upgradeInfo.name].title }}升级说明" data-container="#upgrade-info" data-placement="bottom" data-trigger="focus" data-html="true" data-content="{{ branch.version.description }}">升级说明</a>
-									<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
-									<a ng-href="{{ './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' }}" ng-click="upgrade(branch.upgrade_price)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
+									<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}&account_type={ACCOUNT_TYPE}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
+									<a ng-href="{{ './index.php?c=cloud&a=redirect&do=buybranch&m='+upgradeInfo.name+'&branch='+branch.id+'&is_upgrade=1' }}&account_type={ACCOUNT_TYPE}" ng-click="upgrade(branch.upgrade_price)" ng-if="branch.id > upgradeInfo.site_branch.id">付费升级到【{{branch.name}}】最新版本</a>
 								</div>
 							</td>
 							<script>
@@ -250,9 +250,9 @@
 		<li ng-repeat="letter in letters"><a href="javascript:;" ng-click="searchLetter(letter)">{{ letter }}</a></li>
 	</ul>
 
-	<table class="table we7-table table-hover vertical-middle">
+	<table class="table we7-table table-hover vertical-middle table-manage">
 		<tr>
-			<th colspan="2" class="text-left">小程序应用名</th>
+			<th colspan="2" class="text-left">小程序应用</th>
 			<th class="text-left">操作</th>
 		</tr>
 		<tr ng-repeat="module in module_list">
@@ -264,7 +264,8 @@
 				<span>版本：{{ module.version }} </span>
 			</td>
 			<td class="text-left">
-				<a href="{php echo url('system/module/install', array('account_type' => 4))}&module_name={{ module.name }}" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('system/module/upgrade', array('account_type' => 4))}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('system/module/install', array('account_type' => 4))}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">安装应用模块</a>
 			</td>
 		</tr>
 	</table>

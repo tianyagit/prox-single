@@ -95,7 +95,6 @@ if ($do == 'post') {
 		if (is_error($cloud)) {
 			iajax(0, $cloud, '');
 		}
-
 		//删除提交日的群发任务
 		$starttime = strtotime("+{$_GPC['day']} days", $time);
 		$endtime = $_GPC['day']+1;
@@ -111,7 +110,7 @@ if ($do == 'post') {
 			}
 			if (!empty($corn_ids)) {
 				$status = cron_delete($corn_ids);
-				if(is_error($status)) {
+				if (is_error($status)) {
 					itoast('删除群发错误,请重新提交', referer());
 				}
 			}
@@ -121,17 +120,19 @@ if ($do == 'post') {
 		//提交数据
 		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
 		$mass = array();
-		foreach ($_GPC['reply'] as $reply_k => $reply_val) {
-			if ($reply_val) {
-				$msgtype = substr($reply_k, 6);
-				$mass['mediaid'] = trim($_GPC['reply']['reply_'.$msgtype]);
-				if (intval($mass['mediaid']) > 0) {
-					itoast('图文素材请选择微信素材', '', 'info');
+		if(!empty($_GPC['reply'])) {
+			foreach ($_GPC['reply'] as $reply_k => $reply_val) {
+				if (!empty($reply_val)) {
+					$msgtype = substr($reply_k, 6);
+					$mass['mediaid'] = trim($_GPC['reply']['reply_'.$msgtype]);
+					$attachment = pdo_get('wechat_attachment', array('media_id' => $mass['mediaid']), array('id', 'model'));
+					if ($attachment['model'] != 'perm') {
+						itoast('图文素材请选择微信素材', '', 'info');
+					}
+					$mass['id'] = $attachment['id'];
+					$mass['msgtype'] = $msgtype;
+					break;
 				}
-				$attachment = pdo_get('wechat_attachment', array('media_id' => $mass['mediaid']), array('id'));
-				$mass['id'] = $attachment['id'];
-				$mass['msgtype'] = $msgtype;
-				break;
 			}
 		}
 		$time_key = date('Y-m-d', strtotime("+{$_GPC['day']} days", $time));
@@ -227,7 +228,7 @@ if ($do == 'send') {
 	$params = array();
 	$params[':uniacid'] = $_W['uniacid'];
 	$params[':acid'] = $_W['acid'];
-	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('mc_mass_record').$condition, $params);
+	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('mc_mass_record') . $condition, $params);
 	$lists = pdo_getall('mc_mass_record', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']), array(), '', 'id DESC', 'LIMIT '.($pindex-1)* $psize.','.$psize);
 	$types = array('text' => '文本消息', 'image' => '图片消息', 'voice' => '语音消息', 'video' => '视频消息', 'news' => '图文消息', 'wxcard' => '微信卡券');
 	$pager = pagination($total, $pindex, $psize);

@@ -915,6 +915,62 @@ abstract class WeBase {
 		}
 		return $compile;
 	}
+	
+	/**
+	 * 保存一个流数据到本地
+	 * @param string $file_string 文件流
+	 * @param string $ext 要保存的文件扩展名
+	 * @return 保存的文件路径
+	 */
+	protected function fileSave($file_string, $type = 'jpg', $name = 'auto') {
+		global $_W;
+		load()->func('file');
+		
+		$allow_ext = array(
+			'images' => array('gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico'), 
+			'audios' => array('mp3', 'wma', 'wav', 'amr'),
+			'videos' => array('wmv', 'avi', 'mpg', 'mpeg', 'mp4'),
+		);
+		if (in_array($type, $allow_ext['images'])) {
+			$type_path = 'images';
+		} elseif (in_array($type, $allow_ext['audios'])) {
+			$type_path = 'audios';
+		} elseif (in_array($type, $allow_ext['videos'])) {
+			$type_path = 'videos';
+		}
+		
+		if (empty($type_path)) {
+			return error(1, '禁止保存文件类型');
+		}
+		
+		if (empty($name) || $name == 'auto') {
+			$uniacid = intval($_W['uniacid']);
+			$path = "{$type_path}/{$uniacid}/{$this->module['name']}/" . date('Y/m/');
+			mkdirs(ATTACHMENT_ROOT . '/' . $path);
+			
+			$filename = file_random_name(ATTACHMENT_ROOT . '/' . $path, $type);
+		} else {
+			$path = "{$type_path}/{$uniacid}/{$this->module['name']}/";
+			mkdirs(dirname(ATTACHMENT_ROOT . '/' . $path));
+			
+			$filename = $name;
+			if (!strexists($filename, $type)) {
+				$filename .= '.' . $type;
+			}
+		}
+		
+		if (file_put_contents(ATTACHMENT_ROOT . '/' . $path . $filename, $file_string)) {
+			file_remote_upload($path);
+			return $path . $filename;
+		} else {
+			return false;
+		}
+	}
+	
+	protected function fileUpload($file_string, $type = 'image') {
+		$types = array('image', 'video', 'audio');
+	
+	}
 }
 
 /**
@@ -1607,7 +1663,7 @@ abstract class WeModuleWxapp extends WeBase {
 	public $appid;
 	public $version;
 	
-	public function result($errno, $message, $data) {
+	public function result($errno, $message, $data = '') {
 		exit(json_encode(array(
 			'errno' => $errno,
 			'message' => $message,
@@ -1662,14 +1718,15 @@ abstract class WeModuleWxapp extends WeBase {
 	
 		load()->model('payment');
 		load()->model('account');
-	
+		
 		$moduels = uni_modules();
 		if(empty($order) || !array_key_exists($this->module['name'], $moduels)) {
 			return error(1, '模块不存在');
 		}
 		$moduleid = empty($this->module['mid']) ? '000000' : sprintf("%06d", $this->module['mid']);
 		$uniontid = date('YmdHis').$moduleid.random(8,1);
-	
+		$wxapp_uniacid = intval($_W['account']['uniacid']);
+		
 		$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => $this->module['name'], 'tid' => $order['tid']));
 		if (empty($paylog)) {
 			$paylog = array(
@@ -1695,9 +1752,9 @@ abstract class WeModuleWxapp extends WeBase {
 			pdo_update('core_paylog', array(
 				'uniontid' => $uniontid,
 			), array('plid' => $paylog['plid']));
+			$paylog['uniontid'] = $uniontid;
 		}
-	
-		$_W['uniacid'] = $paylog['uniacid'];
+		
 		$_W['openid'] = $paylog['openid'];
 	
 		$params = array(
@@ -1707,10 +1764,11 @@ abstract class WeModuleWxapp extends WeBase {
 			'uniontid' => $paylog['uniontid'],
 			'title' => $order['title'],
 		);
+		$setting = uni_setting($wxapp_uniacid, array('payment'));
 		$wechat_payment = array(
-			'appid' => 'wxb4bf68b72dee1969',
-			'signkey' => '1c58296b76698f749e4a36b9138fcd52',
-			'mchid' => '1410357102',
+			'appid' => $_W['account']['key'],
+			'signkey' => $setting['payment']['wechat']['signkey'],
+			'mchid' => $setting['payment']['wechat']['mchid'],
 			'version' => 2,
 		);
 		return wechat_build($params, $wechat_payment);

@@ -142,7 +142,6 @@ if($do == 'basic') {
 				$uid = pdo_insertid();
 				pdo_insert('mc_mapping_ucenter', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'centeruid' => $data[0]));
 				pdo_update('mc_mapping_fans', array('uid' => $uid), array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'openid' => $_SESSION['openid']));
-				cache_build_fansinfo($_SESSION['openid']);
 				$user['uid'] = $uid;
 				if (_mc_login($user)) {
 					exit('success');

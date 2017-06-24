@@ -102,7 +102,10 @@ function material_news_set($data, $attach_id) {
 		) {
 			return error('-1', '参数有误');
 		}
-		if (!material_url_check($news['content_source_url']) || !material_url_check($news['url']) || !material_url_check($news['thumb'])){
+		if ((!material_url_check($news['content_source_url']) && !preg_match("/^\.\/index.php\?.+/", $news['content_source_url'])) || 
+			!material_url_check($news['url']) || 
+			!material_url_check($news['thumb'])
+		) {
 			return error('-3', '提交链接参数不合法');
 		}
 		$post_news[] = array(
@@ -304,11 +307,9 @@ function material_parse_content($content) {
 	}
 	return $content;
 }
-
 /**
  * 根据附件ID将，本地图文上传至微信服务器
  * @param int $attach_id
- * 
  */
 function material_local_news_upload($attach_id) {
 	global $_W;
@@ -338,7 +339,7 @@ function material_local_news_upload($attach_id) {
 			}
 		}
 		pdo_update('wechat_news', $news, array(
-			'id' => $news['id']
+				'id' => $news['id']
 		));
 		if (empty($material['media_id'])){
 			$articles['articles'][] = $news;
@@ -347,7 +348,6 @@ function material_local_news_upload($attach_id) {
 			$edit_attachment['index'] = $news['displayorder'];
 			$edit_attachment['articles'] = $news;
 			$result = $account_api->editMaterialNews($edit_attachment);
-			cache_delete(cache_system_key('material_reply:' . $material['media_id']));
 			if (is_error($result)){
 				return error('-4', $result['message']);
 			}
@@ -358,30 +358,23 @@ function material_local_news_upload($attach_id) {
 		if (is_error($media_id)) {
 			return error('-5', $media_id, '');
 		}
-		$wechat_material = $account_api->getMaterial($media_id);
-		if (!is_error($wechat_material)) {
-			foreach ($wechat_material['news_item'] as $displayorder => $item) {
-				pdo_update('wechat_news', array('url' => $item['url']), array('attach_id' => $attach_id, 'displayorder' => $displayorder));
-			}
-		}
 		pdo_update('wechat_attachment', array(
-			'media_id' => $media_id,
-			'model' => 'perm'
+				'media_id' => $media_id,
+				'model' => 'perm'
 		), array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $attach_id
+				'uniacid' => $_W['uniacid'],
+				'id' => $attach_id
 		));
 	} else {
 		pdo_update('wechat_attachment', array(
-			'model' => 'perm'
+				'model' => 'perm'
 		), array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $attach_id
+				'uniacid' => $_W['uniacid'],
+				'id' => $attach_id
 		));
 	}
 	return $material;
 }
-
 /**
  * 目前图片、音频、视频素材上传都用这个方法
  * 上传素材文件到微信，获取mediaId
@@ -525,15 +518,14 @@ function material_delete($material_id, $location){
 
 /**
  * 验证输入内容是否为合法链接
- * @param $str
+ * @param $url
  * @return boolean
  */
-function material_url_check($str){
-	if (empty($str)){
+function material_url_check($url){
+	if (empty($url)){
 		return true;
-	}else{
-		//普通域名
-		$preg = "/^(http|https|tel)?\:\/\/.*/i";
-		return preg_match($preg, $str);
+	} else {
+		$pattern = "/^(http|https|tel):\/\/.*/i";
+		return preg_match($pattern, $url);
 	}
 }

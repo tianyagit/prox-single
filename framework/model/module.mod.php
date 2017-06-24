@@ -73,7 +73,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 	} else {
 		$types = array_intersect($types, $ts);
 	}
-	$bindings = pdo_getall('modules_bindings', array('module' => $name, 'entry' => $types));
+	$bindings = pdo_getall('modules_bindings', array('module' => $name, 'entry' => $types), array(), '', 'eid ASC');
 	$entries = array();
 	foreach($bindings as $bind) {
 		if(!empty($bind['call'])) {
@@ -183,7 +183,7 @@ function module_app_entries($name, $types = array(), $args = null) {
 }
 
 function module_entry($eid) {
-	$sql = 'SELECT * FROM ' . tablename('modules_bindings') . ' WHERE `eid`=:eid';
+	$sql = "SELECT * FROM " . tablename('modules_bindings') . " WHERE `eid`=:eid";
 	$pars = array();
 	$pars[':eid'] = $eid;
 	$entry = pdo_fetch($sql, $pars);
@@ -268,6 +268,7 @@ function module_fetch($name) {
 		if ($module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2) {
 			$module_info['app_support'] = 2;
 		}
+		$module_info['is_relation'] = $module_info['app_support'] ==2 && $module_info['wxapp_support'] == 2 ? true : false;
 		$module_ban = setting_load('module_ban');
 		if (in_array($name, $module_ban['module_ban'])) {
 			$module_info['is_ban'] = true;
@@ -302,7 +303,7 @@ function module_fetch($name) {
  */
 function module_build_privileges() {
 	load()->model('account');
-	$uniacid_arr = pdo_fetchall('SELECT uniacid FROM ' . tablename('uni_account'));
+	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
 	foreach($uniacid_arr as $row){
 		$modules = uni_modules(false);
 		//得到模块标识
@@ -350,9 +351,11 @@ function module_get_all_unistalled($status)  {
 		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['wxapp'];
 		$uninstallModules['module_count'] = $uninstallModules['wxapp_count'];
 		return $uninstallModules;
-	} else {
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['app'];
 		$uninstallModules['module_count'] = $uninstallModules['app_count'];
+		return $uninstallModules;
+	} else {
 		return $uninstallModules;
 	}
 }
@@ -422,7 +425,7 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	if (!empty($module['issystem'])) {
 		return error(1, '系统模块不能卸载！');
 	}
-	if (!empty($module['plugin'])) {
+	if (!empty($module['plugin_list'])) {
 		pdo_delete('modules_plugin', array('main_module' => $module_name));
 	}
 	$modulepath = IA_ROOT . '/addons/' . $module_name . '/';
@@ -491,18 +494,18 @@ function module_status($module) {
 	$module_status = array('upgrade' => array('upgrade' => 0), 'ban' => 0);
 
 	$cloud_m_query = cloud_m_query($module);
-	$module_status['ban'] = !empty($cloud_m_query['pirate_apps'][$module]) ? 1 : 0;
+	$module_status['ban'] = in_array($module, $cloud_m_query['pirate_apps']) ? 1 : 0;
 
 	$cloud_m_info = cloud_m_info($module);
 	$module_info = module_fetch($module);
 	if (!empty($cloud_m_info) && !empty($cloud_m_info['version']['version'])) {
-		if (ver_compare($module_info['version'], $cloud_m_info['version']['version'])) {
+		if (version_compare($module_info['version'], $cloud_m_info['version']['version'])) {
 			$module_status['upgrade'] = array('name' => $module_info['title'], 'version' => $cloud_m_info['version']['version'], 'upgrade' => 1);
 		}
 	} else {
 		$manifest = ext_module_manifest($module);
 		if (!empty($manifest)) {
-			if (ver_compare($module_info['version'], $manifest['application']['version'])) {
+			if (version_compare($module_info['version'], $manifest['application']['version'])) {
 				$module_status['upgrade'] = array('name' => $module_info['title'], 'version' => $manifest['application']['version'], 'upgrade' => 1);
 			}
 		}
@@ -548,15 +551,30 @@ function module_status($module) {
  * @return array $modules 有升级的模块及升级信息
  */
 function module_filter_upgrade($module_list) {
-	$all_upgrade_module = cache_load(cache_system_key('all_upgrade_module:'));
-	if (empty($all_upgrade_module)) {
-		$all_upgrade_module = cache_build_upgrade_module();
-	}
 	$modules = array();
-	if (!empty($module_list) && is_array($module_list)) {
-		foreach ($module_list as $module) {
-			if (!empty($all_upgrade_module[$module])) {
-				$modules[$module] = $all_upgrade_module[$module];
+	$installed_module = pdo_getall('modules', array('name' => $module_list), array('version', 'name'), 'name');
+	$all_upgrade_cloud_module = cache_load(cache_system_key('all_cloud_upgrade_module:'));
+	if (empty($all_upgrade_cloud_module)) {
+		$all_upgrade_cloud_module = cache_build_cloud_upgrade_module();
+	}
+	if (!empty($module_list) && is_array($module_list) && !empty($installed_module)) {
+		foreach ($module_list as $key => $module) {
+			if (empty($installed_module[$module])) {
+				continue;
+			}
+			$manifest = ext_module_manifest($module);
+			if (!empty($manifest)&& is_array($manifest)) {
+				$module = array('name' => $module);
+				$module['from'] = 'local';
+				if (version_compare($installed_module[$module['name']]['version'], $manifest['application']['version']) == '-1') {
+					$module['upgrade'] = true;
+					$module['upgrade_branch'] = true;
+					$modules[$module['name']] = $module;
+				}
+			} else {
+				if (is_array($all_upgrade_cloud_module) && !empty($all_upgrade_cloud_module[$module])) {
+					$modules[$module] = $all_upgrade_cloud_module[$module];
+				}
 			}
 		}
 	}

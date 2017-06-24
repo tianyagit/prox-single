@@ -77,13 +77,13 @@
 				<td class="text-left">
 					<p>{{ module.title }}</p>
 					<span>版本：{{ module.version }} </span><span class="color-red" ng-if="module.upgrade && isFounder == 1">发现新版本</span>
-					<span class="color-red" ng-if="module.service_expire">服务已到期</span>
+					<span class="color-red" ng-if="module.service_expire">升级服务到期</span>
 				</td>
 				<td>
 					<div class="link-group">
 						<a ng-href="{{ './index.php?c=system&a=module&do=upgrade&module_name='+module.name}}" class="color-red del" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
 						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}&show=upgrade" class="color-red del" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
-						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}" ng-if="isFounder == 1">管理设置</a>
+						<a href="{php echo url('system/module/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">管理设置</a>
 						<!--<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>-->
 						<a href="{php echo url('system/module/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1" onclick="return confirm('确认要停用模块吗？')">停用</a>
 					</div>
@@ -108,30 +108,30 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块标题</label>
 							<div class="col-sm-10">
-								<input type="text" name="title" ng-model="moduleinfo.title" class="form-control">
+								<input type="text" name="title" ng-model="moduleOriginal.title" class="form-control">
 								<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块简述</label>
 							<div class="col-sm-10">
-								<input type="text" name="ability" ng-model="moduleinfo.ability" class="form-control">
+								<input type="text" name="ability" ng-model="moduleOriginal.ability" class="form-control">
 								<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块介绍</label>
 							<div class="col-sm-10">
-								<textarea type="text" name="description" ng-model="moduleinfo.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
+								<textarea type="text" name="description" ng-model="moduleOriginal.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
 								<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块缩略图</label>
 							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
-									<img ng-src="{{ moduleinfo.logo }}" ng-if="moduleinfo.logo">
-									<a href="javascript:;" class="input-addon" ng-hide="moduleinfo.logo" ng-click="changePicture('logo')"><span>+</span></a>
+								<div class="we7-input-img" ng-class="{ 'active' : moduleOriginal.logo }" style="width: 100px;height: 100px;">
+									<img ng-src="{{ moduleOriginal.logo }}" ng-if="moduleOriginal.logo">
+									<a href="javascript:;" class="input-addon" ng-hide="moduleOriginal.logo" ng-click="changePicture('logo')"><span>+</span></a>
 									<input type="hidden" name="thumb">
 									<div class="cover-dark">
 										<a href="javascript:;" class="cut" ng-click="changePicture('logo')">更换</a>
@@ -144,8 +144,8 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"> 模块封面</label>
 							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.preview}"  style="width: 100px;height: 100px;">
-									<img ng-src="{{ moduleinfo.preview }}">
+								<div class="we7-input-img" ng-class="{ 'active' : moduleOriginal.preview}"  style="width: 100px;height: 100px;">
+									<img ng-src="{{ moduleOriginal.preview }}">
 									<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
 									<input type="hidden" name="thumb">
 									<div class="cover-dark">
@@ -273,25 +273,26 @@
 		<li ng-repeat="letter in letters"><a href="javascript:;" ng-click="searchLetter(letter)">{{ letter }}</a></li>
 	</ul>
 
-	<table class="table we7-table table-hover vertical-middle">
+	<table class="table we7-table table-hover vertical-middle table-manage">
 		<tr>
 			<th colspan="2" class="text-left">公众号应用名</th>
 			<th class="text-right">操作</th>
 		</tr>
 		<tr ng-repeat="module in module_list">
-			<td class="text-left">
+			<td class="text-left module-img">
 				<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;" ng-if="module.main_module == ''">
-				<span class="img" ng-if="module.main_module != ''">
-					<img ng-src="{{ module.logo }}" style="width:50px;height:50px;" alt="子应用icon" class="plugin-img"/>
-					<img ng-src="{{ module.main_module_logo }}" style="width:50px;height:50px;" alt="主应用icon" class="module-img"/>
-				</span>
+				<div class="img" ng-if="module.main_module != ''">
+					<img ng-src="{{ module.logo }}" alt="子应用icon" class="plugin-img"/>
+					<img ng-src="{{ module.main_module_logo }}" alt="主应用icon" class="module-img"/>
+				</div>
 			</td>
 			<td class="text-left">
 				<p>{{ module.title }}</p>
 				<span>版本：{{ module.version }} </span>
 			</td>
 			<td class="text-right">
-				<a href="{php echo url('system/module/install')}&module_name={{ module.name }}" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('system/module/upgrade')}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('system/module/install')}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">安装应用模块</a>
 			</td>
 		</tr>
 	</table>
@@ -319,8 +320,8 @@
 		</li>
 	</ol>
 	<div class="user-head-info we7-padding-bottom">
-		<span class="icon pull-left" ng-if="moduleinfo.app_support == 2"><i class="wi wi-apply"></i></span>
-		<span class="icon pull-left" ng-if="moduleinfo.wxapp_support == 2 && moduleinfo.app_support != 2"><i class="wi wi-wxapp-setting"></i></span>
+		<span class="icon pull-left" ng-if="moduleinfo.app_support == 2"><i class="wi wi-wx-apply"></i></span>
+		<span class="icon pull-left" ng-if="moduleinfo.wxapp_support == 2 && moduleinfo.app_support != 2"><i class="wi wi-wxapp-apply"></i></span>
 		<div class="img pull-left" ng-if="moduleinfo.main_module != ''">
 			<img alt="子应用icon" class="plugin-img" ng-src="{{ moduleinfo.logo }}"/>
 			<img alt="主应用icon" class="module-img" ng-src="{{ moduleinfo.main_module_logo }}"/>
@@ -349,7 +350,7 @@
 			<td class="table-label">模块标题</td>
 			<td>{{ moduleinfo.title }}</td>
 			<td class="text-right">
-				<div class="link-group"><a href="javascript:;" ng-click="editModule('title')">修改</a></div>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('title', moduleinfo.title)">修改</a></div>
 			</td>
 		</tr>
 		<tr>
@@ -364,31 +365,54 @@
 			<td class="table-label">模块简述</td>
 			<td>{{ moduleinfo.ability }}</td>
 			<td class="text-right">
-				<div class="link-group"><a href="javascript:;" ng-click="editModule('ability')">修改</a></div>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('ability', moduleinfo.ability)">修改</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块介绍</td>
 			<td>{{ moduleinfo.description }}</td>
 			<td class="text-right">
-				<div class="link-group"><a href="javascript:;" ng-click="editModule('description')">修改</a></div>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('description', moduleinfo.description)">修改</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块缩略图</td>
 			<td><img ng-src="{{ moduleinfo.logo }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
 			<td class="text-right">
-				<div class="link-group"><a href="javascript:;" ng-click="editModule('logo')">修改</a></div>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('logo', moduleinfo.logo)">修改</a></div>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">模块封面</td>
 			<td><img ng-src="{{ moduleinfo.preview }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
 			<td class="text-right">
-				<div class="link-group"><a href="javascript:;" ng-click="editModule('preview')">修改</a></div>
+				<div class="link-group"><a href="javascript:;" ng-click="editModule('preview', moduleinfo.preview)">修改</a></div>
 			</td>
 		</tr>
 	</table>
+	{if !empty($module_info['is_relation'])}
+	<table class="table we7-table table-hover vertical-middle table-manage">
+		<col width="150px"/>
+		<col />
+		<col />
+		<tr>
+			<th colspan="3" class="text-left">可关联</th>
+		</tr>
+		<tr>
+			<td class="text-left">
+				{{ moduleinfo.relation_name }}
+			</td>
+			<td class="text-left">
+				<img ng-src="{{ moduleinfo.logo }}" class="img-responsive pull-left" style="width: 50px;height: 50px; margin-right: 10px;"/>
+				<p>{{ moduleinfo.title }}</p>
+				<span class="color-gray">版本：{{ moduleinfo.version }} </span>
+			</td>
+			<td class="text-right">
+				<div class="link-group"><a href="{php echo url('system/module/module_detail')}name={{moduleinfo.name}}&account_type={{moduleinfo.account_type}}&type={{moduleinfo.type}}">查看</a></div>
+			</td>
+		</tr>
+	</table>
+	{/if}
 	<div class="panel we7-panel" ng-show="show == 'plugin' && moduleinfo.main_module == ''">
 		<div class="panel-heading">
 			模块子应用
@@ -426,7 +450,7 @@
 			</td>
 		</tr>
 	</table>
-	<table class="table we7-table table-hover vertical-middle" ng-show="show == 'upgrade'" ng-if="isFounder == 1 && upgradeInfo.from == 'cloud'" ng-repeat="branch in upgradeInfo.branches">
+	<table class="table we7-table table-hover vertical-middle" ng-show="show == 'upgrade'" ng-if="isFounder == 1 && upgradeInfo.from == 'cloud' && branch.displayorder >= upgradeInfo.site_branch.displayorder" ng-repeat="branch in upgradeInfo.branches">
 		<col width="300px"/>
 		<col />
 		<col />
@@ -440,7 +464,7 @@
 			<th class="text-right">操作</th>
 		</tr>
 		<tbody>
-		<tr ng-if="branch.displayorder >= upgradeInfo.site_branch.displayorder">
+		<tr>
 			<td class="text-left">{{ branch.name }}</td>
 			<td class="color-red">{{ branch.displayorder > upgradeInfo.site_branch.displayorder || (branch.displayorder == upgradeInfo.site_branch.displayorder && branch.id > upgradeInfo.site_branch.id) ? branch.upgrade_price : ''}}<span class="label label-success" ng-if="branch.id == upgradeInfo.site_branch.id">当前分支</span></td>
 			<td>{{ upgradeInfo.site_branch.id == branch.id ? moduleinfo.version : ''}}</td>
@@ -525,7 +549,7 @@
 		<div class="panel-heading ">
 			订阅详情
 			<div class="pull-right subscription-switch">
-				<span >禁用/开启</span>
+				<span >启用订阅</span>
 				<label>
 					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
 					<div class="switch" ng-class="{ 'switchOn' : receive_ban == 1}" ng-click="changeSwitch()"></div>
@@ -559,30 +583,30 @@
 					<div class="form-group" ng-show="editType == 'title'">
 						<label class="col-sm-2 control-label"> 模块标题</label>
 						<div class="col-sm-10">
-							<input type="text" name="title" ng-model="moduleinfo.title" class="form-control">
+							<input type="text" name="title" ng-model="moduleOriginal.title" class="form-control">
 							<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
 						</div>
 					</div>
 					<div class="form-group" ng-show="editType == 'ability'">
 						<label class="col-sm-2 control-label"> 模块简述</label>
 						<div class="col-sm-10">
-							<input type="text" name="ability" ng-model="moduleinfo.ability" class="form-control">
+							<input type="text" name="ability" ng-model="moduleOriginal.ability" class="form-control">
 							<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
 						</div>
 					</div>
 					<div class="form-group" ng-show="editType == 'description'">
 						<label class="col-sm-2 control-label"> 模块介绍</label>
 						<div class="col-sm-10">
-							<textarea type="text" name="description" ng-model="moduleinfo.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
+							<textarea type="text" name="description" ng-model="moduleOriginal.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
 							<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
 						</div>
 					</div>
 					<div class="form-group" ng-show="editType == 'logo'">
 						<label class="col-sm-2 control-label"> 模块缩略图</label>
 						<div class="col-sm-10">
-							<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.logo }" style="width: 100px;height: 100px;">
-								<img ng-src="{{ moduleinfo.logo }}" ng-if="moduleinfo.logo">
-								<a href="javascript:;" class="input-addon" ng-hide="moduleinfo.logo" ng-click="changePicture('logo')"><span>+</span></a>
+							<div class="we7-input-img" ng-class="{ 'active' : moduleOriginal.logo }" style="width: 100px;height: 100px;">
+								<img ng-src="{{ moduleOriginal.logo }}" ng-if="moduleOriginal.logo">
+								<a href="javascript:;" class="input-addon" ng-hide="moduleOriginal.logo" ng-click="changePicture('logo')"><span>+</span></a>
 								<input type="hidden" name="thumb">
 								<div class="cover-dark">
 									<a href="javascript:;" class="cut" ng-click="changePicture('logo')">更换</a>
@@ -595,8 +619,8 @@
 					<div class="form-group" ng-show="editType == 'preview'">
 						<label class="col-sm-2 control-label"> 模块封面</label>
 						<div class="col-sm-10">
-							<div class="we7-input-img" ng-class="{ 'active' : moduleinfo.preview}"  style="width: 100px;height: 100px;">
-								<img ng-src="{{ moduleinfo.preview }}">
+							<div class="we7-input-img" ng-class="{ 'active' : moduleOriginal.preview}"  style="width: 100px;height: 100px;">
+								<img ng-src="{{ moduleOriginal.preview }}">
 								<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
 								<input type="hidden" name="thumb">
 								<div class="cover-dark">
@@ -609,8 +633,8 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 					<button  class="btn btn-primary" type="text" name="submit" ng-click="save()" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 					<input type="hidden" name="token" value="c781f0df">
 				</div>
 			</div>

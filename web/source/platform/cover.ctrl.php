@@ -73,7 +73,6 @@ if ($do == 'module') {
 			'name' => $entry['title'],
 			'module' => 'cover',
 			'containtype' => '',
-			'reply_type' => intval($_GPC['reply_type']) == 2 ? 2 : 1,
 			'status' => $_GPC['status'] == 'true' ? 1 : 0,
 			'displayorder' => intval($_GPC['displayorder_rule']),
 		);
@@ -148,7 +147,6 @@ if ($do == 'module') {
 			'title' => $entry['title'],
 			'url_show' => $entry['url_show'],
 			'rule' => array(
-				'reply_type' => '2',
 				'displayorder' => '0',
 			)
 		);

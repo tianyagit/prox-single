@@ -23,7 +23,7 @@ if ($do == 'send') {
 	if (empty($media)) {
 		iajax(1, '素材不存在', '');
 	}
-	$media_id = trim($media['media_id']);
+	$group = $group > 0 ? $group : -1;
 	$account_api = WeAccount::create();
 	$result = $account_api->fansSendAll($group, $type, $media['media_id']);
 	if (is_error($result)) {
@@ -33,6 +33,14 @@ if ($do == 'send') {
 	if (!empty($groups)) {
 		$groups = iunserializer($groups['groups']);
 	}
+	if ($group == -1) {
+		$groups = array(
+				$group => array(
+						'name' => '全部粉丝',
+						'count' => 0
+				)
+		);
+	}
 	$record = array(
 		'uniacid' => $_W['uniacid'],
 		'acid' => $_W['acid'],
@@ -41,6 +49,7 @@ if ($do == 'send') {
 		'msgtype' => $type,
 		'group' => $group,
 		'attach_id' => $id,
+		'media_id' => $media['media_id'],
 		'status' => 0,
 		'type' => 0,
 		'sendtime' => TIMESTAMP,
@@ -52,7 +61,8 @@ if ($do == 'send') {
 
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-	$server = $_GPC['server'] == 'local' ? 'local' : 'wechat';
+	$server = trim($_GPC['server']) == 'local' ? 'local' : 'wechat';
+	$pic_position = in_array(trim($_GPC['pic_position']), array('perm', 'local')) ? trim($_GPC['pic_position']) : 'all';
 	$upload_limit = material_upload_limit();
 	$group = mc_fans_groups(true);
 	$pageindex = max(1, intval($_GPC['page']));
@@ -60,23 +70,29 @@ if ($do == 'display') {
 	$search = addslashes($_GPC['title']);
 	$material_list = $conditions = array();
 	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
+
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
+		$news_model_sql = '';
+		if ($pic_position != 'all') {
+			$news_model_sql = "a.model = :news_model AND";
+			$conditions[':news_model'] = $pic_position;
+		}
+
 		$search_sql = '';
-		if (! empty($search)) {
+		if (!empty($search)) {
 			$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";
 			$conditions[':search_title'] = "%{$search}%";
 			$conditions[':search_author'] = "%{$search}%";
 			$conditions[':search_digest'] = "%{$search}%";
 		}
 
-		$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
-
+		$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE  " . $news_model_sql . " a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
 		$list_sql = sprintf($select_sql, "*, a.id as id", " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize);
 		$total_sql = sprintf($select_sql, "count(*)", '');
-
 		$total = pdo_fetchcolumn($total_sql, $conditions);
 		$news_list = pdo_fetchall($list_sql, $conditions);
+
 		if (! empty($news_list)) {
 			foreach ($news_list as $news){
 				if (isset($material_list[$news['attach_id']])){

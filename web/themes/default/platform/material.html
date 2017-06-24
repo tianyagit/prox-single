@@ -4,7 +4,7 @@
 </div>
 <ul class="we7-page-tab">
 	<li{if $type == 'news'} class="active"{/if}>
-	<a href="{php echo url('platform/material', array('type' => 'news'))}">图文消息</a>
+	<a href="{php echo url('platform/material', array('type' => 'news'))}">微信图文</a>
 	</li>
 	<li{if $type == 'image'} class="active"{/if}>
 	<a href="{php echo url('platform/material', array('type' => 'image'))}">图片</a>
@@ -22,16 +22,20 @@
 		<div class="material-appmsg">
 			<div class="material-list-head clearfix">
 				<div class="info col-sm-6 we7-padding-none">
+					<div class="btn-group we7-btn-group">
+						<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if $pic_position != 'perm' && $pic_position != 'local'} active {/if}">全部</a>
+						<a href="{php echo url('platform/material', array('type' => $type, 'pic_position' => 'perm'))}" class="btn {if $pic_position == 'perm'} active {/if}">微信</a>
+						<a href="{php echo url('platform/material', array('type' => $type, 'pic_position' => 'local'))}" class="btn {if $pic_position == 'local'} active {/if}">服务器</a>
+					</div>
 					<div class="we7-form">
 						<div class="form-controls">
-							<form action="{php echo url('platform/material/list', array('type' => 'news'))}" method="post" >
+							<form action="{php echo url('platform/material/list', array('type' => 'news', 'pic_position' => $pic_position))}" method="post" >
 								<div class="input-group">
 									<input type="text" id="" name="title" class="form-control" size="40" value="{$_GPC['title']}" placeholder="标题/作者/摘要">
 									<span class="input-group-btn">
 										<button class="btn btn-default"><i class="fa fa-search"></i></button>
 									</span>
 								</div>
-								
 							</form>
 						</div>
 					</div>
@@ -47,20 +51,33 @@
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-								<div class="modal-title">选择图文类型</div>
+								<div class="modal-title">新建图文消息</div>
 							</div>
 							<div class="modal-body">
-								<div class="form-group">
-									<select class="we7-select" ng-model="new_type" ng-init="new_type = 'reply'">
-										<option value="reply" >图文编辑</option>
-										<option value="link">跳转链接</option>
-									</select>
-									<!-- <span class="help-block">{{new_type}}</span> -->
+								<div class="reply" ng-click="createNew('reply')">
+									<a href="javascript:;">
+										<img src="./resource/images/reply.png" alt="" />
+										<div class="content">
+											<div class="title">创建微信图文</div>
+											<div class="state">
+												微信图文消息会自动同步至微信素材库，
+												并可以直接群发给粉丝
+											</div>
+										</div>
+									</a>
 								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="createNew(new_type)">确定</button>
-								<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+								<div class="link" ng-click="createNew('link')">
+									<a href="javascript:;">
+										<img src="./resource/images/link.png" alt="" />
+										<div class="content">
+											<div class="title">创建图文链接</div>
+											<div class="state">
+												点击图文直接跳转至指定链接，可用于自动回复及认证号菜单
+												配置，不能同步至微信素材库。
+											</div>
+										</div>
+									</a>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -332,6 +349,7 @@
 				<div class="modal-body">
 					<select class="form-control" ng-model="group">
 						<option value="">请选择粉丝组</option>
+						<option value="-1">全部粉丝</option>
 						<option ng-repeat="group in groups" value="{{ group.id }}">{{ group.name }}({{ group.count }})</option>
 					</select>
 				</div>

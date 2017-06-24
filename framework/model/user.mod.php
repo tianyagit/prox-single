@@ -321,7 +321,7 @@ function user_modules($uid) {
 	global $_W;
 	load()->model('module');
 	$cachekey = cache_system_key("user_modules:" . $uid);
-	//$modules = cache_load($cachekey);
+	$modules = cache_load($cachekey);
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$user_info = user_single(array ('uid' => $uid));
@@ -402,4 +402,32 @@ function user_modules($uid) {
 		}
 	}
 	return $module_list;
+}
+
+/**
+ * 获取用户登陆后要跳转的地址
+ * @param string $forward 要跳转的地址
+ * return string
+ */
+function user_login_forward($forward = '') {
+	global $_W;
+	$login_forward = trim($forward);
+	
+	if (!empty($forward)) {
+		return $login_forward;
+	}
+	if (!empty($_W['isfounder'])) {
+		return url('account/manage');
+	}
+	
+	$login_forward = url('account/display');
+	if (!empty($_W['uniacid']) && !empty($_W['account'])) {
+		if ($_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+			$login_forward = url('home/welcome');
+		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+			$login_forward = url('wxapp/display/home');
+		}
+	}
+	
+	return $login_forward;
 }

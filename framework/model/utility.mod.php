@@ -19,3 +19,35 @@ function code_verify($uniacid, $receiver, $code) {
 	}
 	return true;
 }
+
+/**
+ * 把远程图片或者本地图片移动到新的位置重命名
+ * @param $image_source_url
+ * @param $image_destination_url
+ * @return bool
+ */
+function image_rename($image_source_url, $image_destination_url) {
+	global $_W;
+	load()->func('file');
+	$result = false;
+	if (empty($image_source_url)) {
+		return $result;
+	}
+	if (parse_path($image_source_url)) {
+		if (!strexists($image_source_url, $_W['siteroot'])) {
+			$img_local_path = file_fetch($image_source_url);
+			if (!is_error($img_local_path)) {
+				$img_source_path = ATTACHMENT_ROOT . $img_local_path;
+				$result = copy($img_source_path, $image_destination_url);
+			}
+		} else {
+			$img_local_path = parse_url($image_source_url, PHP_URL_PATH);
+			$img_path_params = explode('/', $img_local_path);
+			if ($img_path_params[1] == 'attachment') {
+				$img_source_path = IA_ROOT . $img_local_path;
+				$result = copy($img_source_path, $image_destination_url);
+			}
+		}
+	}
+	return $result;
+}

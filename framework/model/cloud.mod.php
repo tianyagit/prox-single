@@ -26,8 +26,10 @@ function _cloud_build_params() {
 	$pars['family'] = IMS_FAMILY;
 	$pars['version'] = IMS_VERSION;
 	$pars['release'] = IMS_RELEASE_DATE;
-	$pars['key'] = $_W['setting']['site']['key'];
-	$pars['password'] = md5($_W['setting']['site']['key'] . $_W['setting']['site']['token']);
+	if (!empty($_W['setting']['site'])) {
+		$pars['key'] = $_W['setting']['site']['key'];
+		$pars['password'] = md5($_W['setting']['site']['key'] . $_W['setting']['site']['token']);
+	}
 	$clients = cloud_client_define();
 	$string = '';
 	foreach($clients as $cli) {
@@ -253,6 +255,21 @@ function cloud_download($path, $type = '') {
 			load()->func('file');
 			@mkdirs(dirname($path));
 			if (file_put_contents($path, $file)) {
+				if (!empty($ret['extend'])) {
+					foreach ($ret['extend'] as $file) {
+						$path = base64_decode($file['path']);
+						$file = base64_decode($file['file']);
+						if (empty($path) || empty($file)) {
+							continue;
+						}
+						if($gz) {
+							$file = gzuncompress($file);
+						}
+						$path = IA_ROOT . $path;
+						@mkdirs(dirname($path));
+						file_put_contents($path, $file);
+					}
+				}
 				return true;
 			} else {
 				return error(-1, '写入失败');

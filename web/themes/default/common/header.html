@@ -7,7 +7,7 @@
 			<div class="navbar-header">
 				<a class="navbar-brand" href="{$_W['siteroot']}">
 					<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
-					<span class="version">{IMS_VERSION}</span>
+					<span class="version hidden">{IMS_VERSION}</span>
 				</a>
 			</div>
 			{if !empty($_W['uid'])}
@@ -127,6 +127,7 @@
 				<span class="font-lg"><i class="wi wi-ad"></i>广告联盟</span>
 			{/if}
 			{if FRAME == 'wxapp'}
+				<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo">
 				<span class="wxapp-name">{$wxapp_info['name']}</span>
 				<span class="wxapp-version">{$version_info['version']}</span>
 				<div class="pull-right">
@@ -140,8 +141,8 @@
 		</div>
 	<div class="panel-body clearfix main-panel-body {if !empty($_W['setting']['copyright']['leftmenufixed'])}menu-fixed{/if}">
 		<div class="left-menu">
-			<div class="left-menu-content">
 			{if empty($frames['section']['platform_module_menu']['plugin_menu'])}
+			<div class="left-menu-content">
 				{loop $frames['section'] $frame_section_id $frame_section}
 				{if !isset($frame_section['is_display']) || !empty($frame_section['is_display'])}
 				<div class="panel panel-menu">
@@ -177,11 +178,12 @@
 				</div>
 				{/if}
 				{/loop}
+			</div>
 			{else}
 				<div class="plugin-menu clearfix">
 					<div class="plugin-menu-main pull-left">
 						<ul class="list-group">
-							<li class="list-group-item{if $_GPC['m'] == ''} active{/if}">
+							<li class="list-group-item{if $_W['current_module']['name'] == $frames['section']['platform_module_menu']['plugin_menu']['main_module']} active{/if}">
 								<a href="{php echo url('home/welcome/ext', array('m' => $frames['section']['platform_module_menu']['plugin_menu']['main_module']))}">
 									<i class="wi wi-main-apply"></i>
 									<div>主应用</div>
@@ -191,7 +193,7 @@
 								<div>插件</div>
 							</li>
 							{loop $frames['section']['platform_module_menu']['plugin_menu']['menu'] $plugin_name $plugin}
-							<li class="list-group-item{if $_GPC['m'] == $plugin_name} active{/if}">
+							<li class="list-group-item{if $_W['current_module']['name'] == $plugin_name} active{/if}">
 								<a href="{php echo url('home/welcome/ext', array('m' => $plugin_name))}">
 									<img src="{$plugin['icon']}" alt="" class="img-icon" />
 									<div>{$plugin['title']}</div>
@@ -241,7 +243,6 @@
 					</div>
 				</div>
 			{/if}
-			</div>
 		</div>
 		<div class="right-content">
 	{/if}

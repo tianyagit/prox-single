@@ -123,6 +123,10 @@ function uni_fetch($uniacid = 0) {
 	load()->model('mc');
 	$account['groups'] = mc_groups($uniacid);
 	$account['grouplevel'] = pdo_fetchcolumn('SELECT grouplevel FROM ' . tablename('uni_settings') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
+	
+	$account['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
+	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
+	
 	cache_write($cachekey, $account);
 	return $account;
 }
@@ -163,16 +167,13 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules);
 				if (!empty($modules)) {
-					$condition .= " AND a.name IN ('" . implode("','", $modules) . "') OR (a.name IN ('" . implode("','", $modules) . "') AND b.enabled is NULL)";
+					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
 				} else {
 					$condition .= " AND a.name = ''";
 				}
 			}
 		}
-		$condition .= $enabled ?  " AND b.enabled = 1 OR a.issystem = 1" : " OR a.issystem = 1";
-		if (!strexists($condition, 'AND a.name')) {
-			$condition .= ' OR b.enabled is NULL';
-		}
+		$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
 		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
@@ -296,7 +297,7 @@ function uni_groups($groupids = array()) {
 				if (!empty($row['templates'])) {
 					$templates = iunserializer($row['templates']);
 					if (is_array($templates)) {
-						$row['templates'] = pdo_fetchall("SELECT name, title FROM " . tablename('site_templates') . " WHERE name IN ('" . implode("','", array_keys($templates)) . "')", array(), 'name');
+						$row['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
 					}
 				}
 			}
@@ -456,10 +457,15 @@ function uni_account_default($uniacid = 0) {
 	global $_W;
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$uni_account = pdo_fetch("SELECT * FROM ".tablename('uni_account')." a LEFT JOIN ".tablename('account')." w ON a.default_acid = w.acid WHERE a.uniacid = :uniacid", array(':uniacid' => $uniacid), 'acid');
+	//如果没有指定default_acid，则直接取最新的一个acid
+	if (empty($uni_account)) {
+		$uni_account = pdo_fetch("SELECT * FROM ".tablename('uni_account')." a LEFT JOIN ".tablename('account')." w ON a.uniacid = w.uniacid WHERE a.uniacid = :uniacid ORDER BY w.acid DESC", array(':uniacid' => $uniacid), 'acid');
+	}
 	if (!empty($uni_account)) {
 		$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
 		$account['type'] = $uni_account['type'];
 		$account['isconnect'] = $uni_account['isconnect'];
+		$account['isdeleted'] = $uni_account['isdeleted'];
 		return $account;
 	}
 }
@@ -882,6 +888,12 @@ function uni_account_last_switch() {
 	} else {
 		$uniacid = $cache_lastaccount['account'];
 	}
+	if (!empty($uniacid)) {
+		$account_info = uni_fetch($uniacid);
+		if (!empty($account_info) && $account_info['isdeleted'] == 1) {
+			$uniacid = '';
+		}
+	}
 	return $uniacid;
 }
 
@@ -948,22 +960,7 @@ function account_fetch($acid) {
 	if (empty($account_info)) {
 		return error(-1, '公众号不存在');
 	}
-	$account = pdo_fetch("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename(uni_account_tablename($account_info['type'])) . " w USING(acid) WHERE acid = :acid AND a.isdeleted = '0'", array(':acid' => $acid));
-	if (empty($account)) {
-		return error(1, '公众号不存在');
-	}
-	$uniacid = $account['uniacid'];
-	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
-	load()->model('user');
-	$owner = user_single(array('uid' => $owneruid));
-	$account['uid'] = $owner['uid'];
-	$account['starttime'] = $owner['starttime'];
-	$account['endtime'] = $owner['endtime'];
-	$account['thumb'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
-	load()->model('mc');
-	$account['groups'] = mc_groups($uniacid);
-	$account['grouplevel'] = pdo_fetchcolumn('SELECT grouplevel FROM ' . tablename('uni_settings') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
-	return $account;
+	return uni_fetch($account_info['uniacid']);
 }
 
 /*
@@ -1108,8 +1105,7 @@ function account_delete($acid) {
 			'mc_fans_groups','mc_groups','mc_handsel','mc_mapping_fans','mc_mapping_ucenter','mc_mass_record',
 			'mc_member_address','mc_member_fields','mc_members','menu_event',
 			'qrcode','qrcode_stat', 'rule','rule_keyword','site_article','site_category','site_multi','site_nav','site_slide',
-			'site_styles','site_styles_vars','stat_keyword','stat_msg_history',
-			'stat_rule','uni_account','uni_account_modules','uni_account_users','uni_settings', 'uni_group', 'uni_verifycode','users_permission',
+			'site_styles','site_styles_vars','stat_keyword', 'stat_rule','uni_account','uni_account_modules','uni_account_users','uni_settings', 'uni_group', 'uni_verifycode','users_permission',
 			'mc_member_fields',
 		);
 		if (!empty($tables)) {
@@ -1163,4 +1159,36 @@ function account_wechatpay_proxy () {
 	unset($proxy_account['borrow'][$_W['uniacid']]);
 	unset($proxy_account['service'][$_W['uniacid']]);
 	return $proxy_account;
+}
+
+/**
+ * 设置模块是否在快捷菜单显示
+ */
+function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status = STATUS_ON) {
+	global $_W;
+	$module = module_fetch($modulename);
+	if(empty($module)) {
+		return error(1, '抱歉，你操作的模块不能被访问！');
+	}
+	$uniacid = intval($uniacid);
+	$uniacid = !empty($uniacid) ? $uniacid : $_W['uniacid'];
+	
+	$module_status = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $uniacid), array('id', 'shortcut'));
+	if (empty($module_status)) {
+		$data = array(
+			'uniacid' => $uniacid,
+			'module' => $modulename,
+			'enabled' => STATUS_ON,
+			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
+			'settings' => '',
+		);
+		pdo_insert('uni_account_modules', $data);
+	} else {
+		$data = array(
+			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
+		);
+		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
+		cache_build_module_info($modulename);
+	}
+	return true;
 }

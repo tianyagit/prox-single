@@ -235,7 +235,7 @@ function _ext_module_manifest_entries($elm) {
 			$row = array(
 				'title' => $entry->getAttribute('title'),
 				'do' => $entry->getAttribute('do'),
-				'direct' => $entry->getAttribute('direct') == 'true',
+				'direct' => $entry->getAttribute('direct') ? true : false,
 				'state' => $entry->getAttribute('state')
 			);
 			if (!empty($row['title']) && !empty($row['do'])) {
@@ -257,7 +257,7 @@ function ext_module_checkupdate($modulename) {
 		$version = $manifest['application']['version'];
 		load()->model('module');
 		$module = module_fetch($modulename);
-		if (ver_compare($version, $module['version']) == '1') {
+		if (version_compare($version, $module['version']) == '1') {
 			return true;
 		} else {
 			return false;
@@ -336,19 +336,11 @@ function ext_module_clean($modulename, $isCleanRule = false) {
 	pdo_query($sql, $pars);
 
 	if ($isCleanRule) {
-		$sql = 'DELETE FROM ' . tablename('stat_rule') . ' WHERE `rid` IN (SELECT `id` FROM ' . tablename('rule') . ' WHERE `module`=:module)';
-		pdo_query($sql, $pars);
-
-		$sql = 'DELETE FROM ' . tablename('stat_keyword') . ' WHERE `rid` IN (SELECT `id` FROM ' . tablename('rule') . ' WHERE `module`=:module)';
-		pdo_query($sql, $pars);
 
 		$sql = 'DELETE FROM ' . tablename('rule') . ' WHERE `module`=:module';
 		pdo_query($sql, $pars);
 
 		$sql = 'DELETE FROM ' . tablename('rule_keyword') . ' WHERE `module`=:module';
-		pdo_query($sql, $pars);
-
-		$sql = 'DELETE FROM ' . tablename('stat_msg_history') . ' WHERE `module`=:module';
 		pdo_query($sql, $pars);
 
 		$sql = 'SELECT rid FROM ' . tablename('cover_reply') . ' WHERE `module`=:module';

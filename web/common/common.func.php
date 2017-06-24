@@ -443,7 +443,7 @@ function buildframes($framename = ''){
 		if (!empty($wxapp_version['modules'])) {
 			foreach ($wxapp_version['modules'] as $module) {
 				$frames['wxapp']['section']['wxapp_module']['menu']['module_menu'.$module['mid']] = array(
-					'title' => "<i class='wi wi-appsetting'></i> {$module['title']}",
+					'title' => "<img src='{$module['logo']}'> {$module['title']}",
 					'url' => url('wxapp/display/switch', array('module' => $module['name'], 'version_id' => $version_id)),
 					'is_display' => 1,
 				);
@@ -526,7 +526,6 @@ function frames_menu_append() {
 			'system_module',
 			'system_wxapp',
 			'system_module_wxapp',
-			'system_module_group',
 			'system_my',
 			'system_setting_updatecache',
 		),
@@ -535,7 +534,6 @@ function frames_menu_append() {
 			'system_module',
 			'system_wxapp',
 			'system_module_wxapp',
-			'system_module_group',
 			'system_my',
 			'system_setting_updatecache',
 		),

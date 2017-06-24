@@ -67,27 +67,16 @@ function _login($forward = '') {
 		$status['lastip'] = CLIENT_IP;
 		user_update($status);
 		if ($record['type'] == ACCOUNT_OPERATE_CLERK) {
-			$role = uni_permission($record['uid'], $record['uniacid']);
+// 			$role = uni_permission($record['uid'], $record['uniacid']);
 			isetcookie('__uniacid', $record['uniacid'], 7 * 86400);
 			isetcookie('__uid', $record['uid'], 7 * 86400);
-			
-			if ($_W['role'] == 'clerk' || $role == 'clerk') {
-				itoast('登陆成功', url('activity/desk', array('uniacid' => $record['uniacid'])), 'success');
-			}
+			itoast('登录成功！' ,url('site/entry/clerkdesk', array('uniacid' => $record['uniacid'], 'op' => 'index', 'm' => 'we7_coupon')), 'success');
+// 			if ($_W['role'] == 'clerk' || $role == 'clerk') {
+// 				itoast('登陆成功', url('activity/desk', array('uniacid' => $record['uniacid'])), 'success');
+// 			}
 		}
 		if (empty($forward)) {
-			$forward = $_GPC['forward'];
-		}
-		if (empty($forward)) {
-			if (!empty($_W['isfounder'])) {
-				$forward = './index.php?c=account&a=manage';
-			} else {
-				if (!empty($_GPC['__uniacid'])) {
-					$forward = './index.php?c=home&a=welcome';
-				} else {
-					$forward = './index.php?c=account&a=display';
-				}
-			}
+			$forward = user_login_forward($_GPC['forward']);
 		}
 		if ($record['uid'] != $_GPC['__uid']) {
 			isetcookie('__uniacid', '', -7 * 86400);

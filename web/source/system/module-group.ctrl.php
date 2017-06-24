@@ -34,10 +34,11 @@ if ($do == 'save') {
 		$package_info['modules'] = iserializer($package_info['modules']);
 	}
 	if (!empty($package_info['templates'])) {
-		foreach ($package_info['templates'] as $key => $template) {
-			$package_info['templates'][$key] = $template['title'];
+		$templates = array();
+		foreach ($package_info['templates'] as $template) {
+			$templates[] = $template['id'];
 		}
-		$package_info['templates'] = iserializer($package_info['templates']);
+		$package_info['templates'] = iserializer($templates);
 	}
 	if (!empty($package_info['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
@@ -65,7 +66,6 @@ if ($do == 'save') {
 
 if ($do == 'display') {
 	$_W['page']['title'] = '应用套餐列表';
-
 	$param = array('uniacid' => 0);
 	if (!empty($_GPC['name'])) {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
@@ -120,14 +120,13 @@ if ($do == 'post') {
 
 	if (!empty($group_id)) {
 		$uni_groups = uni_groups();
-
 		$module_group = $uni_groups[$group_id];
 		$group_have_module_app = empty($module_group['modules']) ? array() : $module_group['modules'];
 		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : $module_group['wxapp'];
 		$group_have_template = empty($module_group['templates']) ? array() : $module_group['templates'];
 	}
 
-	$module_list = pdo_getall('modules', array('issystem' => 0), array(), 'name', array('mid DESC'));
+	$module_list = pdo_getall('modules', array('issystem' => 0), array(), 'name', 'mid DESC');
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
 	if (!empty($module_list)) {

@@ -17,12 +17,21 @@
 			{$module['title']}
 		</td>
 		<td class="text-left">
-			<img src="{$module['account']}" style="width:50px;height:50px;">
-			<span>{$module['account']['name']}</span>
+			{if !empty($module['account'])}
+				<img src="{php echo tomedia('headimg_'.$module['account']['acid'].'.jpg')}?time={php echo time()}" style="width:50px;height:50px;">
+				<span>{$module['account']['name']}</span>
+			{else}
+				<span>暂无</span>
+			{/if}
 		</td>
 		<td>
 			<div class="link-group">
-				<a href="javascript:;" data-module="{$module['name']}" class="js-select-link-account">修改</a>
+				{if !empty($module['account'])}
+					<a href="javascript:;" data-module="{$module['name']}" class="js-select-link-account">修改</a>
+					<a href="{php echo url('wxapp/version/module_unlink_uniacid', array('version_id' => $version_info['id']))}">删除</a>
+				{else}
+					<a href="javascript:;" data-module="{$module['name']}" class="js-select-link-account">添加</a>
+				{/if}
 			</div>
 		</td>
 	</tr>
@@ -51,10 +60,11 @@
 		var modulename = $(this).data('module');
 		$.getJSON('./index.php?c=wxapp&a=version&do=search_link_account&module_name='+$(this).data('module'), function(data){
 			if (data.message.message) {
+				$('.js-show-account-content').empty();
 				for (i in data.message.message) {
 					var html =  '<div class="col-sm-2 text-center we7-margin-bottom">'+
 								'	<a href="javascript:;" class="js-select-uniacid" data-module="'+modulename+'" data-uniacid="'+data.message.message[i].uniacid+'">'+
-								'		<img src="" alt="" style="width:50px;height:50px;">'+
+								'		<img src="'+data.message.message[i].head_img+'" alt="" style="width:50px;height:50px;">'+
 								'		<p class="text-over">'+data.message.message[i].name+'</p>'+
 								'	</a>'+
 								'</div>';
@@ -69,8 +79,12 @@
 					'uniacid' : $(this).data('uniacid'),
 					'version_id' : '{$version_id}',
 				}, function(data){
-					util.message('关联成功', 'refresh', 'success')
-				});
+					if (data.message.errno == 0) {
+						util.message('关联成功', 'refresh', 'success')
+					} else {
+						util.message(data.message.message);
+					}
+				}, 'json');
 			});
 			$('#show-account').modal();
 		});
