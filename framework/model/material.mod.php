@@ -102,10 +102,7 @@ function material_news_set($data, $attach_id) {
 		) {
 			return error('-1', '参数有误');
 		}
-		if ((!material_url_check($news['content_source_url']) && !preg_match("/^\.\/index.php\?.+/", $news['content_source_url'])) || 
-			!material_url_check($news['url']) || 
-			!material_url_check($news['thumb'])
-		) {
+		if (!material_url_check($news['content_source_url']) || !material_url_check($news['url']) || !material_url_check($news['thumb'])) {
 			return error('-3', '提交链接参数不合法');
 		}
 		$post_news[] = array(
@@ -359,18 +356,18 @@ function material_local_news_upload($attach_id) {
 			return error('-5', $media_id, '');
 		}
 		pdo_update('wechat_attachment', array(
-				'media_id' => $media_id,
-				'model' => 'perm'
+			'media_id' => $media_id,
+			'model' => 'perm'
 		), array(
-				'uniacid' => $_W['uniacid'],
-				'id' => $attach_id
+			'uniacid' => $_W['uniacid'],
+			'id' => $attach_id
 		));
 	} else {
 		pdo_update('wechat_attachment', array(
-				'model' => 'perm'
+			'model' => 'perm'
 		), array(
-				'uniacid' => $_W['uniacid'],
-				'id' => $attach_id
+			'uniacid' => $_W['uniacid'],
+			'id' => $attach_id
 		));
 	}
 	return $material;
@@ -407,8 +404,8 @@ function material_local_upload($material_id){
 	global $_W;
 	$type_arr = array('1' => 'images', '2' => 'voices', '3' => 'videos');
 	$material = pdo_get('core_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id
+		'uniacid' => $_W['uniacid'],
+		'id' => $material_id
 	));
 	if (empty($material)) {
 		return error('-1', '同步素材不存在或已删除');
@@ -453,8 +450,8 @@ function material_news_delete($material_id){
 	}
 	$material_id = intval($material_id);
 	$material = pdo_get('wechat_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id,
+		'uniacid' => $_W['uniacid'],
+		'id' => $material_id,
 	));
 	if (empty($material)){
 		return error('-2', '素材文件不存在或已删除');
@@ -467,12 +464,12 @@ function material_news_delete($material_id){
 		return $result;
 	}
 	pdo_delete('wechat_news', array(
-			'uniacid' => $_W['uniacid'],
-			'attach_id' => $material_id
+		'uniacid' => $_W['uniacid'],
+		'attach_id' => $material_id
 	));
 	pdo_delete('wechat_attachment', array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $material_id
+		'uniacid' => $_W['uniacid'],
+		'id' => $material_id
 	));
 	return $result;
 }
@@ -489,10 +486,7 @@ function material_delete($material_id, $location){
 	}
 	$material_id = intval($material_id);
 	$table = $location == 'wechat' ? 'wechat_attachment' : 'core_attachment';
-	$material = pdo_get($table, array(
-					'uniacid' => $_W['uniacid'],
-					'id' => $material_id)
-				);
+	$material = pdo_get($table, array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	if (empty($material)){
 		return error('-2', '素材文件不存在或已删除');
 	}
@@ -521,11 +515,11 @@ function material_delete($material_id, $location){
  * @param $url
  * @return boolean
  */
-function material_url_check($url){
+function material_url_check($url) {
 	if (empty($url)){
 		return true;
 	} else {
-		$pattern = "/^(http|https|tel):\/\/.*/i";
+		$pattern ="/^((https?:\/\/|\.\/index.php\?)[^\s]*|tel:(\/\/)?\d{11})/i";
 		return preg_match($pattern, $url);
 	}
 }

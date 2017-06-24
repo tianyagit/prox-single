@@ -18,9 +18,12 @@
 						<a href="javascript:;" class="label label-success">系统模块</a>
 					</div>
 					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.modules">
-						<a href="javascript:;" class="label label-info" ng-bind="module.title"></a>
+						<div ng-if="module.name != 'all'">
+							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+							{{ module.title }}
+						</div>
+						<label class="label label-info" ng-if="module.name == 'all'">所有模块</label>
 					</div>
-					
 				</div>
 			</td>
 			<td class="we7-padding-right color-default"></td>
@@ -63,7 +66,11 @@
 				<div class="col-sm-1 color-gray text-left we7-padding-none">公众号应用</div>
 				<div class="col-sm-11 js-extra-modules">
 					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.modules" ng-if="extend.modules">
-						<a href="javascript:;" class="label label-info" ng-bind="module.title"></a>
+						<div ng-if="module.name != 'all'">
+							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+							{{ module.title }}
+						</div>
+						<label class="label label-info" ng-if="module.name == 'all'">所有模块</label>
 					</div>
 					<div class="col-sm-3 text-left we7-margin-bottom" ng-if="!extend.modules">
 						<a href="javascript:;">---</a>

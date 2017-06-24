@@ -77,6 +77,12 @@ class DB {
 			return false;
 		}
 		$statement = $this->pdo->prepare($sql);
+		if(PDO_DEBUG) {
+			$info = array();
+			$info['sql'] = $sql;
+			$info['error'] = $this->pdo->errorInfo();
+			$this->debug(false, $info);
+		}
 		return $statement;
 	}
 	
