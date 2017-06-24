@@ -86,3 +86,64 @@ function system_database_backup() {
 	}
 	return $reduction;
 }
+/**
+ * 还原数据库备份目录下的一个备份数据
+ * @return array;
+ */
+function system_database_restore($reduction, $restore) {
+	$path = IA_ROOT . '/data/backup/';
+	$restore_dirname = $restore['restore_dirname'];
+	if ($reduction[$restore_dirname]) {
+		$row = $reduction[$restore_dirname];
+		$dir = $path . $row['bakdir'];
+		//获取随机字符串
+		if ($handle1= opendir($dir)) {
+			while (false !== ($filename = readdir($handle1))) {
+				if ($filename == '.' || $filename == '..') {
+					continue;
+				}
+				if (preg_match('/^volume-(?P<prefix>[a-z\d]{10})-\d{1,}\.sql$/i', $filename, $match1)) {
+					$volume_prefix = $match1['prefix'];
+					break;
+				}
+			}
+		}
+		//还原备份文件的前缀
+		if (empty($restore['restore_volume_prefix'])) {
+			$restore_volume_prefix = $volume_prefix;
+		} else {
+			$restore_volume_prefix = $restore['restore_volume_prefix'];
+		}
+		//当前还原备份文件的卷数
+		$restore_volume_sizes = max(1, intval($restore['restore_volume_sizes']));
+		if ($reduction[$restore_dirname]) {
+			if ($reduction[$restore_dirname]['volume'] < $restore_volume_sizes) {
+				itoast('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'), 'success');
+			} else {
+				$sql = file_get_contents($path .$restore_dirname . "/volume-{$restore_volume_prefix}-{$restore_volume_sizes}.sql");
+				pdo_run($sql);
+				$volume_sizes = $restore_volume_sizes;
+				$restore_volume_sizes ++;
+				$restore = array (
+					'restore_dirname' => $restore_dirname,
+					'restore_volume_prefix' => $restore_volume_prefix,
+					'restore_volume_sizes' => $restore_volume_sizes,
+				);
+				message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore), 'success');
+			}
+		} else {
+			itoast('非法访问', '','error');
+		}
+	}
+}
+/**
+ * 删除数据库备份目录下的某个备份数据
+ * @return array;
+ */
+function system_database_delete($reduction, $delete_dirname) {
+	$path = IA_ROOT . '/data/backup/';
+	if ($reduction[$delete_dirname]) {
+		rmdirs($path . $delete_dirname);
+		itoast('删除备份成功.', url('system/database/restore'), 'success');
+	}
+}
