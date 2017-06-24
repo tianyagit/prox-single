@@ -135,11 +135,17 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		if (strexists($_W['siteurl'], 'do=wxapp')) {
-			itoast('', url('wxapp/display'), 'info');
-		} else {
-			itoast('', url('account/display'), 'info');
-		}
+		itoast('', url('account/display'), 'info');
+	}
+}
+
+/**
+ * 检查操作员是否已经选择一个小程序作为工作区域
+ */
+function checkwxapp() {
+	global $_W;
+	if (empty($_W['uniacid'])) {
+		itoast('', url('wxapp/display'), 'info');
 	}
 }
 
