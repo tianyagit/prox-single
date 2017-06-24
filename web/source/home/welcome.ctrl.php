@@ -1,11 +1,15 @@
 <?php
 /**
- * 公众号欢迎页，统计等信息
+ * 欢迎页，统计等信息
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 
-checkaccount();
+if ($do == 'wxapp') {
+	checkwxapp();
+} else {
+	checkaccount();
+}
 
 load()->model('welcome');
 load()->model('wxapp');
