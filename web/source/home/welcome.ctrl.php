@@ -129,7 +129,7 @@ if ($do == 'platform') {
 		$module['logo'] = $module_fetch['logo'];
 	}
 	unset($module);
-	template('home/system-welcome');
+	template('home/welcome-system');
 } elseif ($do == 'ext') {
 	$modulename = $_GPC['m'];
 	if (!empty($modulename)) {
