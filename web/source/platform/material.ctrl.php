@@ -62,6 +62,7 @@ if ($do == 'send') {
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
 	$server = trim($_GPC['server']) == 'local' ? 'local' : 'wechat';
+	$pic_position = in_array(trim($_GPC['pic_position']), array('perm', 'local')) ? trim($_GPC['pic_position']) : 'all';
 	$upload_limit = material_upload_limit();
 	$group = mc_fans_groups(true);
 	$pageindex = max(1, intval($_GPC['page']));
@@ -72,17 +73,21 @@ if ($do == 'display') {
 
 	if ($type == 'news') {
 		$conditions[':uniacid'] = $_W['uniacid'];
-		$conditions[':model'] = $server == 'wechat' ? 'perm' : 'local';
-		$search_sql = '';
+		$news_model_sql = '';
+		if ($pic_position != 'all') {
+			$news_model_sql = "a.model = :news_model AND";
+			$conditions[':news_model'] = $pic_position;
+		}
 
-		if (! empty($search)) {
+		$search_sql = '';
+		if (!empty($search)) {
 			$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";
 			$conditions[':search_title'] = "%{$search}%";
 			$conditions[':search_author'] = "%{$search}%";
 			$conditions[':search_digest'] = "%{$search}%";
 		}
 
-		$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE a.model = :model and a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
+		$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE  " . $news_model_sql . " a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
 		$list_sql = sprintf($select_sql, "*, a.id as id", " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize);
 		$total_sql = sprintf($select_sql, "count(*)", '');
 		$total = pdo_fetchcolumn($total_sql, $conditions);

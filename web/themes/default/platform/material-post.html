@@ -29,6 +29,7 @@
 											</h4>
 											<div class="appmsg-thumb" ng-style="{'background-image' : 'url('+material.thumb+')'}">
 											</div>
+											<a href="javascript:;" ng-if="$index == 0" ng-click="exportFromCms()">导入文章</a>
 											<div class="appmsg-edit-mask">
 												<a onclick="return false;" class="sort-up" href="javascript:;" ng-click="changeOrder('up', $index)" data-toggle="tooltip" data-placement="bottom" title="上移" ng-if="$index != 0"><i class="wi wi-stick-sign"></i></a>
 												<a onclick="return false;" class="sort-down" href="javascript:;" ng-click="changeOrder('down', $index)" data-toggle="tooltip" data-placement="bottom" title="下移" ng-if="$index != (materialList.length - 1)"><i class="wi wi-down-sign"></i></a>

@@ -3,11 +3,8 @@
 	素材管理
 </div>
 <ul class="we7-page-tab">
-	<li{if $type == 'news' && $server != 'local'} class="active"{/if}>
+	<li{if $type == 'news'} class="active"{/if}>
 	<a href="{php echo url('platform/material', array('type' => 'news'))}">微信图文</a>
-	</li>
-	<li{if $type == 'news' && $server == 'local'} class="active"{/if}>
-	<a href="{php echo url('platform/material', array('type' => 'news', 'server' => 'local'))}">微盟图文</a>
 	</li>
 	<li{if $type == 'image'} class="active"{/if}>
 	<a href="{php echo url('platform/material', array('type' => 'image'))}">图片</a>
@@ -25,16 +22,20 @@
 		<div class="material-appmsg">
 			<div class="material-list-head clearfix">
 				<div class="info col-sm-6 we7-padding-none">
+					<div class="btn-group we7-btn-group">
+						<a href="{php echo url('platform/material', array('type' => $type))}" class="btn {if $pic_position != 'perm' && $pic_position != 'local'} active {/if}">全部</a>
+						<a href="{php echo url('platform/material', array('type' => $type, 'pic_position' => 'perm'))}" class="btn {if $pic_position == 'perm'} active {/if}">微信</a>
+						<a href="{php echo url('platform/material', array('type' => $type, 'pic_position' => 'local'))}" class="btn {if $pic_position == 'local'} active {/if}">服务器</a>
+					</div>
 					<div class="we7-form">
 						<div class="form-controls">
-							<form action="{php echo url('platform/material/list', array('type' => 'news', 'server' => $server))}" method="post" >
+							<form action="{php echo url('platform/material/list', array('type' => 'news', 'pic_position' => $pic_position))}" method="post" >
 								<div class="input-group">
 									<input type="text" id="" name="title" class="form-control" size="40" value="{$_GPC['title']}" placeholder="标题/作者/摘要">
 									<span class="input-group-btn">
 										<button class="btn btn-default"><i class="fa fa-search"></i></button>
 									</span>
 								</div>
-								
 							</form>
 						</div>
 					</div>
