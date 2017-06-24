@@ -499,3 +499,7 @@ function material_url_check($url) {
 		return preg_match($pattern, $url);
 	}
 }
+
+function material_news_list($type = '', $search = array()) {
+	
+}
