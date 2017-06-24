@@ -58,7 +58,14 @@
 				<col width="835px" />
 				<tr class="permission-apply">
 					<td class="vertical-middle">应用</td>
-					<td><ul><li><span class="label label-success">系统模块</span></li><li ng-repeat="module in pack.modules"><span class="label label-info" ng-bind="module.title"></span></li></ul></td>
+					<td>
+						<ul>
+							<li ng-repeat="module in pack.modules" class="col-sm-2 text-over text-left">
+								<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+								{{ module.title }}
+							</li>
+						</ul>
+					</td>
 				</tr>
 				<tr class="permission-template">
 					<td class="vertical-middle">模板</td>

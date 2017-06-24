@@ -15,7 +15,7 @@
 				<div class="col-sm-1 color-gray text-left we7-padding-none">公众号应用</div>
 				<div class="col-sm-11">
 					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.modules">
-						<div ng-if="module.name != 'all'">
+						<div ng-if="module.name != 'all'" class="text-over text-left">
 							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 							{{ module.title }}
 						</div>
@@ -63,7 +63,7 @@
 				<div class="col-sm-1 color-gray text-left we7-padding-none">公众号应用</div>
 				<div class="col-sm-11 js-extra-modules">
 					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.modules" ng-if="extend.modules">
-						<div ng-if="module.name != 'all'">
+						<div ng-if="module.name != 'all'" class="text-over text-left">
 							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 							{{ module.title }}
 						</div>
