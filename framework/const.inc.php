@@ -131,4 +131,4 @@ define('PAYMENT_WECHAT_TYPE_CLOSE', 4);
 define('PAGE_SCROLL_SWITCH', true);
 
 //小程序数据常规分析常量
-define('DAILYVISITTREND', 2);
+define('WXAPP_STATISTICS_DAILYVISITTREND', 2);

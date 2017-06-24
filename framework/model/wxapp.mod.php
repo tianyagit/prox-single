@@ -327,7 +327,7 @@ function wxapp_payment_param() {
 function wxapp_update_daily_visittrend() {
 	global $_W;
 	$yesterday = date('Ymd', strtotime('-1 days'));
-	$trend = pdo_get('wxapp_general_analysis', array('uniacid' => $_W['uniacid'], 'type' => DAILYVISITTREND, 'ref_date' => $yesterday));
+	$trend = pdo_get('wxapp_general_analysis', array('uniacid' => $_W['uniacid'], 'type' => WXAPP_STATISTICS_DAILYVISITTREND, 'ref_date' => $yesterday));
 	if (!empty($trend)) {
 		return true;
 	}
@@ -342,7 +342,7 @@ function wxapp_update_daily_visittrend() {
 			'visit_pv' => $wxapp_stat['visit_pv'],
 			'visit_uv' => $wxapp_stat['visit_uv'],
 			'visit_uv_new' => $wxapp_stat['visit_uv_new'],
-			'type' => DAILYVISITTREND,
+			'type' => WXAPP_STATISTICS_DAILYVISITTREND,
 			'stay_time_uv' => $wxapp_stat['stay_time_uv'],
 			'stay_time_session' => $wxapp_stat['stay_time_session'],
 			'visit_depth' => $wxapp_stat['visit_depth'],
