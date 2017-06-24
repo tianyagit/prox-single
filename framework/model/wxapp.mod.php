@@ -338,7 +338,7 @@ function wxapp_update_daily_visittrend() {
 		return true;
 	}
 	$account_obj = WeAccount::create();
-	$wxapp_stat = $account_obj->getWxappDailyVisitTrend();
+	$wxapp_stat = $account_obj->getDailyVisitTrend();
 	if(is_error($wxapp_stat) || empty($wxapp_stat)) {
 		return error(-1, '调用微信接口错误');
 	} else {
