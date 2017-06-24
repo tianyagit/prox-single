@@ -131,7 +131,7 @@ define('PAYMENT_WECHAT_TYPE_CLOSE', 4);
 define('PAGE_SCROLL_SWITCH', true);
 
 //平台给粉丝发消息的类型
-define('CHATS_MESSAGE_FROM_MANAGER', 1);
+define('FANS_CHATS_FROM_SYSTEM', 1);
 
 //小程序数据常规分析常量
 define('WXAPP_STATISTICS_DAILYVISITTREND', 2);

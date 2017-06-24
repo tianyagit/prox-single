@@ -26,7 +26,7 @@ function code_verify($uniacid, $receiver, $code) {
  * @param $image_destination_url
  * @return bool
  */
-function image_rename($image_source_url, $image_destination_url) {
+function utility_image_rename($image_source_url, $image_destination_url) {
 	global $_W;
 	load()->func('file');
 	if (empty($image_source_url) || !parse_path($image_source_url)) {
