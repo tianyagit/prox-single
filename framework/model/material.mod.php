@@ -500,10 +500,86 @@ function material_url_check($url) {
 	}
 }
 
-function material_news_list($type = '', $search = array(), $page = array()) {
-	
+function material_news_list($server = '', $search = array('search' => ''), $page = array('page_index' => 1, 'page_size' => 24)) {
+	global $_W;
+	$conditions[':uniacid'] = $_W['uniacid'];
+	$news_model_sql = '';
+	if (!empty($server)) {
+		$news_model_sql = "a.model = :news_model AND";
+		$conditions[':news_model'] = $server;
+	}
+
+	$search_sql = '';
+	if (!empty($search)) {
+		$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";
+		$conditions[':search_title'] = "%{$search['search']}%";
+		$conditions[':search_author'] = "%{$search['search']}%";
+		$conditions[':search_digest'] = "%{$search['search']}%";
+	}
+
+	$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE  " . $news_model_sql . " a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
+	$list_sql = sprintf($select_sql, "*, a.id as id", " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($page['page_index'] - 1) * $page['page_size'] . ", " . $page['page_size']);
+	$total_sql = sprintf($select_sql, "count(*)", '');
+	$total = pdo_fetchcolumn($total_sql, $conditions);
+	$news_list = pdo_fetchall($list_sql, $conditions);
+	$material_list = array();
+	if (! empty($news_list)) {
+		foreach ($news_list as $news){
+			if (isset($material_list[$news['attach_id']])){
+				$material_list[$news['attach_id']]['items'][$news['displayorder']] = $news;
+			}else{
+				$material_list[$news['attach_id']] = array(
+						'id' => $news['id'],
+						'filename' => $news['filename'],
+						'attachment' => $news['attachment'],
+						'media_id' => $news['media_id'],
+						'type' => $news['type'],
+						'model' => $news['model'],
+						'tag' => $news['tag'],
+						'createtime' => $news['createtime'],
+						'items' => array($news['displayorder'] => $news),
+				);
+			}
+		}
+	}
+	unset($news_list);
+	$pager = pagination($total, $page['page_index'], $page['page_size']);
+	$material_news = array('material_list' => $material_list, 'page' => $pager);
+	return $material_news;
 }
 
-function material_list($type = '', $page = array()) {
-
+function material_list($type = '', $server = '', $page = array('page_index' => 1, 'page_size' => 24)) {
+	global $_W;
+	$tables = array('local' => 'core_attachment', 'perm' => 'wechat_attachment');
+	$conditions['uniacid'] = $_W['uniacid'];
+		$table = $tables[$server];
+		switch ($type) {
+			case 'image' :
+				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_IMAGE : 'image';
+				break;
+			case 'voice' :
+				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VOICE : 'voice';
+				break;
+			case 'video' :
+				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VEDIO : 'video';
+				break;
+			default :
+				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_IMAGE : 'image';
+				break;
+		}
+		if ($server == 'local') {
+			$material_list = pdo_getslice($table, $conditions, array($page['page_index'], $page['page_size']), $total, array(), '', 'createtime DESC');
+		} else {
+			$conditions['model'] = 'perm';
+			$material_list = pdo_getslice($table, $conditions, array($page['page_index'], $page['page_size']), $total, array(), '', 'createtime DESC');
+			if ($type == 'video'){
+				foreach ($material_list as &$row) {
+					$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
+				}
+				unset($row);
+			}
+		}
+		$pager = pagination($total, $page['page_index'], $page['page_size']);
+		$material_news = array('material_list' => $material_list, 'page' => $pager);
+		return $material_news;
 }

@@ -61,89 +61,20 @@ if ($do == 'send') {
 
 if ($do == 'display') {
 	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-	$server = trim($_GPC['server']) == 'local' ? 'local' : 'wechat';
-	$pic_position = in_array(trim($_GPC['pic_position']), array('perm', 'local')) ? trim($_GPC['pic_position']) : 'all';
-	$upload_limit = material_upload_limit();
+	$server = trim($_GPC['server']) ? trim($_GPC['server']) : '';
 	$group = mc_fans_groups(true);
-	$pageindex = max(1, intval($_GPC['page']));
-	$pagesize = 24;
+	$page_index = max(1, intval($_GPC['page']));
+	$page_size = 24;
 	$search = addslashes($_GPC['title']);
-	$material_list = $conditions = array();
-	$tables = array('local' => 'core_attachment', 'wechat' => 'wechat_attachment');
 
 	if ($type == 'news') {
-		$conditions[':uniacid'] = $_W['uniacid'];
-		$news_model_sql = '';
-		if ($pic_position != 'all') {
-			$news_model_sql = "a.model = :news_model AND";
-			$conditions[':news_model'] = $pic_position;
-		}
-
-		$search_sql = '';
-		if (!empty($search)) {
-			$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";
-			$conditions[':search_title'] = "%{$search}%";
-			$conditions[':search_author'] = "%{$search}%";
-			$conditions[':search_digest'] = "%{$search}%";
-		}
-
-		$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE  " . $news_model_sql . " a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
-		$list_sql = sprintf($select_sql, "*, a.id as id", " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($pageindex - 1) * $pagesize . ", " . $pagesize);
-		$total_sql = sprintf($select_sql, "count(*)", '');
-		$total = pdo_fetchcolumn($total_sql, $conditions);
-		$news_list = pdo_fetchall($list_sql, $conditions);
-
-		if (! empty($news_list)) {
-			foreach ($news_list as $news){
-				if (isset($material_list[$news['attach_id']])){
-					$material_list[$news['attach_id']]['items'][$news['displayorder']] = $news;
-				}else{
-					$material_list[$news['attach_id']] = array(
-						'id' => $news['id'],
-						'filename' => $news['filename'],
-						'attachment' => $news['attachment'],
-						'media_id' => $news['media_id'],
-						'type' => $news['type'],
-						'model' => $news['model'],
-						'tag' => $news['tag'],
-						'createtime' => $news['createtime'],
-						'items' => array($news['displayorder'] => $news),
-					);
-				}
-			}
-		}
-		unset($news_list);
-		$pager = pagination($total, $pageindex, $pagesize);
+		$material_news_list = material_news_list($server, array('search' => $search), array('page_index' => $page_index, 'page_size' => $page_size));
+		$material_list = $material_news_list['material_list'];
+		$pager = $material_news_list['page'];
 	} else {
-		$conditions['uniacid'] = $_W['uniacid'];
-		$table = $tables[$server];
-		switch ($type) {
-			case 'image' :
-				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_IMAGE : 'image';
-				break;
-			case 'voice' :
-				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VOICE : 'voice';
-				break;
-			case 'video' :
-				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VEDIO : 'video';
-				break;
-			default :
-				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_IMAGE : 'image';
-				break;
-		}
-		if ($server == 'local') {
-			$material_list = pdo_getslice($table, $conditions, array($pageindex, $pagesize), $total, array(), '', 'createtime DESC');
-		} else {
-			$conditions['model'] = 'perm';
-			$material_list = pdo_getslice($table, $conditions, array($pageindex, $pagesize), $total, array(), '', 'createtime DESC');
-			if ($type == 'video'){
-				foreach ($material_list as &$row) {
-					$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
-				}
-				unset($row);
-			}
-		}
-		$pager = pagination($total, $pageindex, $pagesize);
+		$material_news_list = material_list($type, $server, array('page_index' => $page_index, 'page_size' => $page_size));
+		$material_list = $material_news_list['material_list'];
+		$pager = $material_news_list['page'];
 	}
 }
 
