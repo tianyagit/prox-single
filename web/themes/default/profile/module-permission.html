@@ -1,9 +1,9 @@
 {template 'common/header'}
-{if $op == 'display'}
+{if $do == 'display'}
 <div class="clearfix">
 	<div class="we7-padding-bottom clearfix">
 		<div class="pull-right">
-			<a href="{php echo url('profile/module/permissions', array('op' => 'post', 'm' => $module['name']))}" class="btn btn-primary we7-padding-horizontal">添加操作员</a>
+			<a href="{php echo url('profile/module-permission/post', array('m' => $module_name))}" class="btn btn-primary we7-padding-horizontal">添加操作员</a>
 		</div>
 	</div>
 	<table class="table we7-table table-hover">
@@ -20,14 +20,14 @@
 			<tr>
 				<td class="text-center" style="width:50px;">{$item['user_info']['username']}</td>
 				<td class="text-center">
-					{loop $item['permission'] $k $permission}
+					{loop $item['permission'] $permission}
 					<span class="label label-primary">{$permission}</span>
 					{/loop}
 				</td>
 				<td style="width:100px;">
 					<div class="link-group" >
-						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op' =>'post', 'm' => $name));}">编辑</a>
-						<a href="{php echo url('profile/module/permissions', array('uid' => $item['uid'],'op'=>'delete', 'm' => $name));}" class="del">删除</a>
+						<a href="{php echo url('profile/module-permission/post', array('uid' => $item['uid'], 'm' => $module_name));}">编辑</a>
+						<a href="{php echo url('profile/module-permission/delete', array('uid' => $item['uid'], 'm' => $module_name));}" class="del">删除</a>
 					</div>
 				</td>
 			</tr>
@@ -41,7 +41,7 @@
 	</table>
 </div>
 {/if}
-{if $op == 'post'}
+{if $do == 'post'}
 <div class="clearfix">
 	<form action="" method="post" class="form-horizontal ajaxfrom we7-form" role="form" id="form-user">
 		<div class="form-group">
