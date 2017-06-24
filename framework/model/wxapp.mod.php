@@ -326,35 +326,55 @@ function wxapp_payment_param() {
 
 function wxapp_update_daily_visittrend() {
 	global $_W;
-	$cachekey = cache_system_key("visittrend:daily:{$_W['uniacid']}");
-	$cache = cache_load($cachekey);
-	if (!empty($cache) && $cache['expire'] > TIMESTAMP) {
-		return true;
-	}
 	$yesterday = date('Ymd', strtotime('-1 days'));
-	$trend = pdo_get('wxapp_general_analysis', array('uniacid' => $_W['uniacid'], 'type' => '2', 'ref_date' => $yesterday));
+	$trend = pdo_get('wxapp_general_analysis', array('uniacid' => $_W['uniacid'], 'type' => DAILYVISITTREND, 'ref_date' => $yesterday));
 	if (!empty($trend)) {
-		cache_write($cachekey, array('expire' => TIMESTAMP + 7200));
 		return true;
 	}
 	$account_obj = WeAccount::create();
-	$wxapp_stat = $account_obj->getWxappDailyVisitTrend();
+	$wxapp_stat = $account_obj->getDailyVisitTrend();
 	if(is_error($wxapp_stat) || empty($wxapp_stat)) {
 		return error(-1, '调用微信接口错误');
 	} else {
 		$update_stat = array(
-				'uniacid' => $_W['uniacid'],
-				'session_cnt' => $wxapp_stat['session_cnt'],
-				'visit_pv' => $wxapp_stat['visit_pv'],
-				'visit_uv' => $wxapp_stat['visit_uv'],
-				'visit_uv_new' => $wxapp_stat['visit_uv_new'],
-				'type' => 2,
-				'stay_time_uv' => $wxapp_stat['stay_time_uv'],
-				'stay_time_session' => $wxapp_stat['stay_time_session'],
-				'visit_depth' => $wxapp_stat['visit_depth'],
-				'ref_date' => $wxapp_stat['ref_date'],
+			'uniacid' => $_W['uniacid'],
+			'session_cnt' => $wxapp_stat['session_cnt'],
+			'visit_pv' => $wxapp_stat['visit_pv'],
+			'visit_uv' => $wxapp_stat['visit_uv'],
+			'visit_uv_new' => $wxapp_stat['visit_uv_new'],
+			'type' => DAILYVISITTREND,
+			'stay_time_uv' => $wxapp_stat['stay_time_uv'],
+			'stay_time_session' => $wxapp_stat['stay_time_session'],
+			'visit_depth' => $wxapp_stat['visit_depth'],
+			'ref_date' => $wxapp_stat['ref_date'],
 		);
 		pdo_insert('wxapp_general_analysis', $update_stat);
 	}
 	return true;
+}
+
+function wxapp_search_link_account($module_name = '') {
+	global $_W;
+	$module_name = trim($module_name);
+	if (empty($module_name)) {
+		return array();
+	}
+	$owned_account = uni_owned();
+	if (!empty($owned_account)) {
+		foreach ($owned_account as $key => $account) {
+			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
+			if (!in_array($account['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
+				unset($owned_account[$key]);
+			}
+		}
+		foreach ($owned_account as $key => $account) {
+			$account_modules = uni_modules_by_uniacid($account['uniacid']);
+			if (empty($account_modules[$module_name])) {
+				unset($owned_account[$key]);
+			} elseif ($account_modules[$module_name]['app_support'] != MODULE_SUPPORT_ACCOUNT) {
+				unset($owned_account[$key]);
+			}
+		}
+	}
+	return $owned_account;
 }
