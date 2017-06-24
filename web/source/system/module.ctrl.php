@@ -13,7 +13,7 @@ load()->model('module');
 load()->model('user');
 load()->model('account');
 load()->classs('account');
-load()->func('communication');
+load()->model('utility');
 $dos = array('filter', 'check', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
@@ -436,22 +436,8 @@ if ($do == 'save_module_info') {
 		$module_update = array($type => trim($module_info[$type]));
 		$result =  pdo_update('modules', $module_update, array('name' => $module_name));
 	} else {
-		$result = false;
-		if (!empty($module_icon_map[$type]['url'])) {
-			if(parse_path($module_icon_map[$type]['url'])) {
-				$file_destnation_path = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
-				if (!strexists($module_icon_map[$type]['url'], $_W['siteroot'])) {
-					$image_content = ihttp_get($module_icon_map[$type]['url']);
-					if ($image_content['code'] == 200) {
-						$result = file_put_contents($file_destnation_path, $image_content['content']);
-					}
-				} else {
-					$img_local_path = parse_url($module_icon_map[$type]['url'], PHP_URL_PATH);
-					$img_source_path = IA_ROOT . $img_local_path;
-					$result = copy($img_source_path, $file_destnation_path);
-				}
-			}
-		}
+		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
+		$result = image_rename($module_icon_map[$type]['url'], $image_destination_url);
 	}
 
 	cache_delete(cache_system_key("module_info:" . $module_name));
