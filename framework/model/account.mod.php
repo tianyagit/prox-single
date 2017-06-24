@@ -881,7 +881,7 @@ function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
-	if (strexists($_W['siteurl'], 'do=wxapp')) {
+	if (strexists($_W['siteurl'], 'c=wxapp')) {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];

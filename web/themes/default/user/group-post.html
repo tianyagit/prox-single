@@ -57,10 +57,10 @@
 							<td class="vertical-middle">公众号应用</td>
 							<td>
 								<ul>
-									<li>
+									<li class="col-sm-2 text-over text-left">
 										<span class="label label-success">系统模块</span>
 									</li>
-									<li ng-repeat="module in pack.modules">
+									<li ng-repeat="module in pack.modules" class="col-sm-2 text-over text-left">
 										<div ng-if="module.name != 'all'">
 											<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 											{{ module.title }}

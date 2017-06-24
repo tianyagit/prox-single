@@ -131,63 +131,21 @@ if ($do == 'backup') {
 if($do == 'restore') {
 	$_W['page']['title'] = '还原 - 数据库 - 常用系统工具 - 系统管理';
 	$reduction = array();
-	$path = IA_ROOT . '/data/backup/';
 	//获取备份目录下数据库备份数组
 	$reduction = system_database_backup();
-	//还原备份
+	//备份还原
 	if (!empty($_GPC['restore_dirname'])) {
-		$restore_dirname = $_GPC['restore_dirname'];
-		if ($reduction[$restore_dirname]) {
-			$row = $reduction[$restore_dirname];
-			$dir = $path . $row['bakdir'];
-			//获取随机字符串
-			if ($handle1= opendir($dir)) {
-				while (false !== ($filename = readdir($handle1))) {
-					if ($filename == '.' || $filename == '..') {
-						continue;
-					}
-					if (preg_match('/^volume-(?P<prefix>[a-z\d]{10})-\d{1,}\.sql$/i', $filename, $match1)) {
-						$volume_prefix = $match1['prefix'];
-						break;
-					}
-				}
-			}
-			//还原备份文件的前缀
-			if (empty($_GPC['restore_volume_prefix'])) {
-				$restore_volume_prefix = $volume_prefix;
-			} else {
-				$restore_volume_prefix = $_GPC['restore_volume_prefix'];
-			}
-			//当前还原备份文件的卷数
-			$restore_volume_sizes = max(1, intval($_GPC['restore_volume_sizes']));
-			if ($reduction[$restore_dirname]) {
-				if ($reduction[$restore_dirname]['volume'] < $restore_volume_sizes) {
-					itoast('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'), 'success');
-				} else {
-					$sql = file_get_contents($path .$restore_dirname . "/volume-{$restore_volume_prefix}-{$restore_volume_sizes}.sql");
-					pdo_run($sql);
-					$volume_sizes = $restore_volume_sizes;
-					$restore_volume_sizes ++;
-					$restore = array (
-						'restore_dirname' => $restore_dirname,
-						'restore_volume_prefix' => $restore_volume_prefix,
-						'restore_volume_sizes' => $restore_volume_sizes,
-					);
-					message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore), 'success');
-				}
-			} else {
-				itoast('非法访问', '','error');
-			}
-		}
+		$restore = array (
+				'restore_dirname' => $_GPC['restore_dirname'],
+				'restore_volume_prefix' => $_GPC['restore_volume_prefix'],
+				'restore_volume_sizes' => $_GPC['restore_volume_sizes'],
+		);
+		system_database_restore($reduction, $restore);
 	}
-
-//删除备份	
+	//删除备份	
 	if ($_GPC['delete_dirname']) {
 		$delete_dirname = $_GPC['delete_dirname'];
-		if ($reduction[$delete_dirname]) {
-			rmdirs($path . $delete_dirname);
-			itoast('删除备份成功.', url('system/database/restore'), 'success');
-		}
+		system_database_delete($reduction, $delete_dirname);
 	}
 }
 
