@@ -1856,38 +1856,31 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/datacube/getusersummary?access_token={$token}";
-		$response = ihttp_request($url, '{"begin_date": "'.date('Y-m-d', strtotime('-7 days')).'", "end_date": "'.date('Y-m-d', strtotime('-1 days')).'"}');
-		if(is_error($response)) {
-			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
+		$data = array(
+			'begin_date' => date('Y-m-d', strtotime('-7 days')),
+			'end_date' => date('Y-m-d', strtotime('-1 days'))
+		);
+		$summary_response = $this->requestApi($url, json_encode($data));
+		if (is_error($summary_response)) {
+			return $summary_response;
 		}
-		$summary = @json_decode($response['content'], true);
-		if(empty($summary)) {
-			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
-		} elseif (!empty($summary['errcode'])) {
-			return error(-1, "访问微信接口错误, 错误代码: {$summary['errcode']}, 错误信息: {$summary['errmsg']},信息详情：{$this->error_code($summary['errcode'])}");
-		}
+
 		$url = "https://api.weixin.qq.com/datacube/getusercumulate?access_token={$token}";
-		$response = ihttp_request($url, '{"begin_date": "'.date('Y-m-d', strtotime('-7 days')).'", "end_date": "'.date('Y-m-d', strtotime('-1 days')).'"}');
-	
-		if(is_error($response)) {
-			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
+		$cumulate_response = $this->requestApi($url, json_encode($data));
+		if(is_error($cumulate_response)) {
+			return $cumulate_response;
 		}
-		$cumulate = @json_decode($response['content'], true);
-		if(empty($cumulate)) {
-			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
-		} elseif(!empty($cumulate['errcode'])) {
-			return error(-1, "访问微信接口错误, 错误代码: {$cumulate['errcode']}, 错误信息: {$cumulate['errmsg']},信息详情：{$this->error_code($cumulate['errcode'])}");
-		}
+
 		$result = array();
-		if (!empty($summary['list'])) {
-			foreach ($summary['list'] as $row) {
+		if (!empty($summary_response['list'])) {
+			foreach ($summary_response['list'] as $row) {
 				$key = str_replace('-', '', $row['ref_date']);
 				$result[$key]['new'] = intval($result[$key]['new']) + $row['new_user'];
 				$result[$key]['cancel'] = intval($result[$key]['cancel']) + $row['cancel_user'];
 			}
 		}
-		if (!empty($cumulate['list'])) {
-			foreach ($cumulate['list'] as $row) {
+		if (!empty($cumulate_response['list'])) {
+			foreach ($cumulate_response['list'] as $row) {
 				$key = str_replace('-', '', $row['ref_date']);
 				$result[$key]['cumulate'] = $row['cumulate_user'];
 			}
