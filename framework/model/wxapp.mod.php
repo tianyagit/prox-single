@@ -358,3 +358,29 @@ function wxapp_update_daily_visittrend() {
 	}
 	return true;
 }
+
+function wxapp_search_link_account($module_name = '') {
+	global $_W;
+	$module_name = trim($module_name);
+	if (empty($module_name)) {
+		return array();
+	}
+	$owned_account = uni_owned();
+	if (!empty($owned_account)) {
+		foreach ($owned_account as $key => $account) {
+			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
+			if (!in_array($account['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
+				unset($owned_account[$key]);
+			}
+		}
+		foreach ($owned_account as $key => $account) {
+			$account_modules = uni_modules_by_uniacid($account['uniacid']);
+			if (empty($account_modules[$module_name])) {
+				unset($owned_account[$key]);
+			} elseif ($account_modules[$module_name]['app_support'] != MODULE_SUPPORT_ACCOUNT) {
+				unset($owned_account[$key]);
+			}
+		}
+	}
+	return $owned_account;
+}

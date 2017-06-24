@@ -86,7 +86,7 @@ if ($do == 'search_link_account') {
 	if (empty($module_name)) {
 		iajax(0, array());
 	}
-	$account_list = uni_owned();
+	$account_list = wxapp_search_link_account($module_name);
 	if (!empty($account_list)) {
 		foreach ($account_list as &$account) {
 			if (file_exists(IA_ROOT . "/attachment/headimg_" . $account['acid'] . '.jpg')) {
@@ -97,17 +97,6 @@ if ($do == 'search_link_account') {
 		}
 	}
 
-	if ($_W['isfounder']) {
-		iajax(0, $account_list);
-	}
-	if (!empty($account_list)) {
-		foreach ($account_list as $i => $account) {
-			$has_modules = uni_modules_by_uniacid($account['uniacid']);
-			if (empty($has_modules[$module_name])) {
-				unset($account_list[$i]);
-			}
-		}
-	}
 	iajax(0, $account_list);
 }
 
