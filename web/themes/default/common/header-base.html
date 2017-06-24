@@ -40,6 +40,9 @@
 	<script type="text/javascript" src="./resource/js/require.js?v=20170112"></script>
 </head>
 <body>
+	{if !empty($_GPC['scroll'])}
+	<div class="scroll" ng-controller="AccountDisplay" when-scrolled="loadMore()" ng-cloak>
+	{/if}
 	<div class="loader" style="display:none">
 		<div class="la-ball-clip-rotate">
 			<div></div>
