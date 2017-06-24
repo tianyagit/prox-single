@@ -45,17 +45,16 @@ function uni_owned($uid = 0) {
 	$uniaccounts = array();
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	
-	$sql = "SELECT * FROM " . tablename('uni_account') . " AS a LEFT JOIN " . 
-			tablename('account') . " AS b ON a.uniacid = b.uniacid WHERE b.type IN (".ACCOUNT_TYPE_OFFCIAL_NORMAL.", ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
-	$orderby = " ORDER BY `b`.`uniacid` DESC";
-	if (!in_array($uid, $founders)) {
-		$uniacids = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account_users') . " WHERE uid = :uid", array(':uid' => $uid), 'uniacid');
-		if (!empty($uniacids)) {
-			$sql .= " AND a.uniacid IN (" . implode(',', array_keys($uniacids)) . ")";
+	if (in_array($uid, $founders)) {
+		$account_uniacid = pdo_fetchall("SELECT uniacid FROM " . tablename('account') . " WHERE type IN (:type_1, :type_2) GROUP BY uniacid", array(':type_1' => ACCOUNT_TYPE_OFFCIAL_NORMAL, ':type_2' => ACCOUNT_TYPE_OFFCIAL_AUTH));
+	} else {
+		$account_uniacid = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'), 'uniacid');
+	}
+	if (!empty($account_uniacid)) {
+		foreach ($account_uniacid as $row) {
+			$uniaccounts[$row['uniacid']] = uni_fetch($row['uniacid']);
 		}
 	}
-	$uniaccounts = pdo_fetchall($sql);
-	
 	return $uniaccounts;
 }
 
@@ -882,7 +881,7 @@ function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
-	if (strexists($_W['siteurl'], 'c=wxapp')) {
+	if (strexists($_W['siteurl'], 'do=wxapp')) {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];

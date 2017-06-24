@@ -77,6 +77,12 @@ class DB {
 			return false;
 		}
 		$statement = $this->pdo->prepare($sql);
+		if(PDO_DEBUG) {
+			$info = array();
+			$info['sql'] = $sql;
+			$info['error'] = $this->pdo->errorInfo();
+			$this->debug(false, $info);
+		}
 		return $statement;
 	}
 	
@@ -242,52 +248,30 @@ class DB {
 		}
 	}
 	
-	public function get($tablename, $params = array(), $fields = array()) {
+	public function get($tablename, $params = array(), $fields = array(), $orderby = array()) {
 		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
-		$sql = "SELECT {$select} FROM " . $this->tablename($tablename) . (!empty($condition['fields']) ? " WHERE {$condition['fields']}" : '') . " LIMIT 1";
+		$orderbysql = $this->parseOrderby($orderby);
+		
+		$sql = "SELECT {$select} FROM " . $this->tablename($tablename) . (!empty($condition['fields']) ? " WHERE {$condition['fields']}" : '') . " $orderbysql LIMIT 1";
 		return $this->fetch($sql, $condition['params']);
 	}
 	
 	public function getall($tablename, $params = array(), $fields = array(), $keyfield = '', $orderby = array(), $limit = array()) {
 		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
-		$limitsql = '';
 		
-		if (!empty($limit)) {
-			if (is_array($limit)) {
-				if (count($limit) == 1) {
-					$limitsql = " LIMIT " . $limit[0];
-				} else {
-					$limitsql = " LIMIT " . ($limit[0] - 1) * $limit[1] . ', ' . $limit[1];
-				}
-			} else {
-				$limitsql = strexists(strtoupper($limit), 'LIMIT') ? " $limit " : " LIMIT $limit";
-			}
-		}
+		$limitsql = $this->parseLimit($limit);
+		$orderbysql = $this->parseOrderby($orderby);
 		
-		if (!empty($orderby)) {
-			if (is_array($orderby)) {
-				$orderbysql = implode(',', $orderby);
-			} else {
-				$orderbysql = $orderby;
-			}
-		}
-		
-		$sql = "SELECT {$select} FROM " .$this->tablename($tablename) . (!empty($condition['fields']) ? " WHERE {$condition['fields']}" : '') . (!empty($orderbysql) ? " ORDER BY $orderbysql " : '') . $limitsql;
+		$sql = "SELECT {$select} FROM " .$this->tablename($tablename) . (!empty($condition['fields']) ? " WHERE {$condition['fields']}" : '') . $orderbysql . $limitsql;
 		return $this->fetchall($sql, $condition['params'], $keyfield);
 	}
 	
 	public function getslice($tablename, $params = array(), $limit = array(), &$total = null, $fields = array(), $keyfield = '', $orderby = array()) {
 		$select = $this->parseSelect($fields);
 		$condition = $this->implode($params, 'AND');
-		if (!empty($limit)) {
-			if (is_array($limit)) {
-				$limitsql = " LIMIT " . ($limit[0] - 1) * $limit[1] . ', ' . $limit[1];
-			} else {
-				$limitsql = strexists(strtoupper($limit), 'LIMIT') ? " $limit " : " LIMIT $limit";
-			}
-		}
+		$limitsql = $this->parseLimit($limit);
 		
 		if (!empty($orderby)) {
 			if (is_array($orderby)) {
@@ -515,6 +499,44 @@ class DB {
 			$index++;
 		}
 		return implode(',', $select);
+	}
+	
+	private function parseLimit($limit) {
+		$limitsql = '';
+		if (empty($limit)) {
+			return $limitsql;
+		}
+		if (is_array($limit)) {
+			$limit[0] = intval($limit[0]);
+			$limit[1] = intval($limit[1]);
+	
+			if (empty($limit[0]) && empty($limit[1])) {
+				$limitsql = '';
+			} elseif (!empty($limit[0]) && empty($limit[1])) {
+				$limitsql = " LIMIT " . $limit[0];
+			} else {
+				$limitsql = " LIMIT " . ($limit[0] - 1) * $limit[1] . ', ' . $limit[1];
+			}
+		} else {
+			$limit = trim($limit);
+			if (preg_match('/^(?:limit)?[\s,0-9]+$/i', $limit)) {
+				$limitsql = strexists(strtoupper($limit), 'LIMIT') ? " $limit " : " LIMIT $limit";
+			}
+		}
+		return $limitsql;
+	}
+	
+	private function parseOrderby($orderby) {
+		$orderbysql = '';
+		if (empty($orderby)) {
+			return $orderbysql;
+		}
+		if (is_array($orderby)) {
+			$orderbysql = implode(',', $orderby);
+		} else {
+			$orderbysql = $orderby;
+		}
+		return !empty($orderbysql) ? " ORDER BY $orderbysql " : '';
 	}
 	
 	/**
