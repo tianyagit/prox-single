@@ -24,7 +24,7 @@ if ($do == 'chats') {
 	$chat_record = pdo_getslice('mc_chats_record', array('uniacid' => $_W['uniacid'], 'openid' => $openid), array('1', 20), $total, array(), '', 'createtime desc');
 	if (!empty($chat_record)) {
 		foreach ($chat_record as &$record) {
-			if ($record['flag'] == 1) {
+			if ($record['flag'] == CHATS_MESSAGE_FROM_MANAGER) {
 				$record['content'] = iunserializer($record['content']);
 				$record['content'] = urldecode($record['content']['content']);
 			}
