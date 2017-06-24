@@ -29,7 +29,7 @@ function system_menu_permission_list($role = '') {
  * 获得数据库备份目录下的数据库备份文件数组
  * @return array;
  */
-function backup_database_list() {
+function system_database_backup() {
 	$path = IA_ROOT . '/data/backup/'; 
 	load()->func('file');
 	$reduction = array();

@@ -133,7 +133,7 @@ if($do == 'restore') {
 	$reduction = array();
 	$path = IA_ROOT . '/data/backup/';
 	//获取备份目录下数据库备份数组
-	$reduction = backup_database_list();
+	$reduction = system_database_backup();
 	//还原备份
 	if (!empty($_GPC['restore_dirname'])) {
 		$restore_dirname = $_GPC['restore_dirname'];
