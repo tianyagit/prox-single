@@ -5,14 +5,11 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if ($do == 'wxapp') {
-	checkwxapp();
-} elseif ($do == 'platform' || $do == 'ext') {
+if ($do == 'platform' || $do == 'ext') {
 	checkaccount();
 }
 
 load()->model('welcome');
-load()->model('wxapp');
 load()->model('cloud');
 load()->func('communication');
 load()->func('db');
@@ -20,7 +17,7 @@ load()->model('extension');
 load()->model('module');
 load()->model('system');
 
-$dos = array('platform', 'wxapp', 'system', 'ext', 'get_fans_kpi', 'get_last_modules');
+$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'platform') {
@@ -40,20 +37,6 @@ if ($do == 'platform') {
 	$notices = welcome_notices_get();
 
 	template('home/welcome');
-} elseif ($do == 'wxapp') {
-	$last_uniacid = uni_account_last_switch();
-	if (empty($last_uniacid)) {
-		itoast('', url('wxapp/display'), 'info');
-	} else {
-		$last_version = wxapp_fetch($last_uniacid);
-		if (!empty($last_version)) {
-			uni_account_switch($last_uniacid);
-			header('Location: ' . url('wxapp/version/home', array('version_id' => $last_version['version']['id'])));
-			exit;
-		} else {
-			itoast('', url('wxapp/display'), 'info');
-		}
-	}
 } elseif ($do == 'system') {
 	define('FRAME', 'system');
 	$_W['page']['title'] = '欢迎页 - 系统管理';
