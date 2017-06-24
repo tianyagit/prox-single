@@ -258,23 +258,22 @@ class WxappAccount extends WeAccount {
 		)));
 	}
 	
-	public function getWxappDailyVisitTrend() {
+	public function getDailyVisitTrend() {
 		global $_W;
 		$token = $this->getAccessToken();
 		if (is_error($token)) {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/datacube/getweanalysisappiddailyvisittrend?access_token={$token}";
-		$response = ihttp_request($url, '{"begin_date": "'.date('Y-m-d', strtotime('-1 days')).'", "end_date": "'.date('Y-m-d', strtotime('-1 days')).'"}');
-		if(is_error($response)) {
-			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
+		$data = array(
+			'begin_date' => date('Y-m-d', strtotime('-1 days')),
+			'end_date' => date('Y-m-d', strtotime('-1 days'))
+			);
+
+		$response = $this->requestApi($url, json_encode($data));
+		if (is_error($response)) {
+			return $response;
 		}
-		$daily_visit_trend = @json_decode($response['content'], true);
-		if(empty($daily_visit_trend)) {
-			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
-		} elseif (!empty($daily_visit_trend['errcode'])) {
-			return error(-1, "访问微信接口错误, 错误代码: {$daily_visit_trend['errcode']}, 错误信息: {$daily_visit_trend['errmsg']}");
-		}
-		return $daily_visit_trend['list'][0];
+		return $response['list'][0];
 	}
 }

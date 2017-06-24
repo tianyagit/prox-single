@@ -129,3 +129,6 @@ define('PAYMENT_WECHAT_TYPE_CLOSE', 4);
 
 //页面滚动加载开关
 define('PAGE_SCROLL_SWITCH', true);
+
+//小程序数据常规分析常量
+define('DAILYVISITTREND', 2);
