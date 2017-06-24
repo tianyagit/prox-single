@@ -500,6 +500,10 @@ function material_url_check($url) {
 	}
 }
 
-function material_news_list($type = '', $search = array()) {
+function material_news_list($type = '', $search = array(), $page = array()) {
 	
+}
+
+function material_list($type = '', $page = array()) {
+
 }
