@@ -7,14 +7,20 @@ defined('IN_IA') or exit('Access Denied');
 
 if ($do == 'wxapp') {
 	checkwxapp();
-} else {
+} elseif ($do == 'platform' || $do == 'ext') {
 	checkaccount();
 }
 
 load()->model('welcome');
 load()->model('wxapp');
+load()->model('cloud');
+load()->func('communication');
+load()->func('db');
+load()->model('extension');
+load()->model('module');
+load()->model('system');
 
-$dos = array('platform', 'wxapp', 'ext', 'get_fans_kpi', 'get_last_modules');
+$dos = array('platform', 'wxapp', 'system', 'ext', 'get_fans_kpi', 'get_last_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'platform') {
@@ -48,6 +54,82 @@ if ($do == 'platform') {
 			itoast('', url('wxapp/display'), 'info');
 		}
 	}
+} elseif ($do == 'system') {
+	define('FRAME', 'system');
+	$_W['page']['title'] = '欢迎页 - 系统管理';
+	$cloud = cloud_prepare();
+	if (is_error($cloud)) {
+		itoast($cloud['message'], url('cloud/profile'), 'error');
+	}
+	if(!$_W['isfounder']){
+		header("location: " . url('account/manage', array('account_type' => 1)), true);
+		exit;
+	}
+	
+	//数据备份信息
+	$reduction = system_database_backup();
+	//数据库最后一次备份时间
+	$max_backup_time = time();
+	if (!empty($reduction)) {
+		$backups = array_values($reduction);
+		$max_backup_time = $backups[0]['time'];
+		foreach ($backups as $key => $backup) {
+			if ($backup['time'] <= $max_backup_time) {
+				continue;
+			}
+			$max_backup_time = $backup['time'];
+		}
+	}
+	$last_backup_time = $max_backup_time;
+	$backup_days = floor((time() - $last_backup_time) / (3600 * 24));
+	
+	//系统更新信息
+	$upgrade = cloud_build();
+	
+	//未安装应用
+	$uninstall_modules = module_get_all_unistalled('uninstalled');
+	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
+	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];
+	
+	$wxapp_modules = $account_modules = $module_list = user_modules($_W['uid']);
+	if (!empty($module_list)) {
+		foreach ($module_list as $key => &$module) {
+			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon')) {
+				unset($wxapp_modules[$key]);
+				unset($account_modules[$key]);
+			}
+			if ($module['wxapp_support'] != 2) {
+				unset($wxapp_modules[$key]);
+			}
+			if ($module['app_support'] != 2) {
+				unset($account_modules[$key]);
+			}
+		}
+		unset($module);
+		unset($module_list);
+	}
+	//应用总数
+	$account_modules_total = count($account_modules) + $account_uninstall_modules_nums;
+	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;
+	
+	//可升级应用
+	$account_upgrade_modules = module_filter_upgrade(array_keys($account_modules));
+	$wxapp_upgrade_modules = module_filter_upgrade(array_keys($wxapp_modules));
+	$account_upgrade_module_nums = count($account_upgrade_modules);
+	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
+	$account_upgrade_module_list = array_slice($account_upgrade_modules, 0, 4);
+	$wxapp_upgrade_module_list = array_slice($wxapp_upgrade_modules, 0, 4);
+	foreach ($wxapp_upgrade_module_list as $key => &$module) {
+		$module_fetch = module_fetch($key);
+		$module['logo'] = $module_fetch['logo'];
+	}
+	unset($module);
+	foreach ($account_upgrade_module_list as $key => &$module) {
+		$module_fetch = module_fetch($key);
+		$module['logo'] = $module_fetch['logo'];
+	}
+	unset($module);
+	template('home/system-welcome');
 } elseif ($do == 'ext') {
 	$modulename = $_GPC['m'];
 	if (!empty($modulename)) {
