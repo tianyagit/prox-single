@@ -77,8 +77,8 @@ if ($do == 'del') {
 
 if ($do == 'post') {
 	$id = intval($_GPC['id']);
-	$massdata = pdo_get('mc_mass_record', array('id' => $id));
-	$massdata['send_type'] = array('实时发送', '定时发送');
+	$mass_info = pdo_get('mc_mass_record', array('id' => $id));
+	$mass_info['send_type'] = array('实时发送', '定时发送');
 	$groups = mc_fans_groups();
 	
 	if (checksubmit('submit')) {

@@ -30,12 +30,12 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2">发送时间</label>
 				<div class="form-controls col-sm-8">
-					<select class="col-sm-3 mass-type" name="type">
-						<option value="-1" >请选择发送类型</option>
+					<select class="col-sm-3 mass-type" ng-model="massdata.type" name="type">
+						<option value="-1">请选择发送类型</option>
 						<option ng-repeat="(type_id, name) in massdata.send_type" ng-selected="massdata.type==type_id" ng-value="type_id" ng-bind="name"></option>
 					</select>
 					<div class="col-sm-6 sendtime" ng-if="massdata.type==1">
-						{php echo tpl_form_field_date('sendtime',$massdata['sendtime'],true)}
+						{php echo tpl_form_field_date('sendtime',$mass_info['sendtime'],true)}
 					</div>
 				</div>
 				<div class="form-controls col-sm-8 hide">
@@ -46,7 +46,7 @@
 					<span class="help-block text-danger">特别注意:发送时间不能小于当前时间.不要超过晚上11点</span>
 				</div>
 			</div>
-			{php echo module_build_form('core', $massdata['id'], array('news'=> false, 'image'=> false,'voice'=> false,'video'=> false))}
+			{php echo module_build_form('core', $mass_info['id'], array('news'=> false, 'image'=> false,'voice'=> false,'video'=> false))}
 			<input type="submit" name="submit" value="发布" class="btn btn-primary btn-submit"/>
 		</form>
 	</div>
@@ -54,7 +54,7 @@
 <script>
 require(['underscore', 'clockpicker'], function() {
 	angular.module('massApp').value('config', {
-		massdata: {php echo json_encode($massdata)},
+		massdata: {php echo json_encode($mass_info)},
 		groups: {php echo json_encode($groups)},
 		day: {php echo json_encode($_GPC['day'])}
 	});
