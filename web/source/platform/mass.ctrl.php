@@ -78,16 +78,17 @@ if ($do == 'del') {
 if ($do == 'post') {
 	$id = intval($_GPC['id']);
 	$massdata = pdo_get('mc_mass_record', array('id' => $id));
-	if (empty($id)) {
-		$massdata['type'] = 0;
-	}
-	
-	$groups = mc_fans_groups($_W['uniacid']);
+	$massdata['send_type'] = array('实时发送', '定时发送');
+	$groups = mc_fans_groups();
 	
 	if (checksubmit('submit')) {
 		$type = intval($_GPC['type']);
 		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
-		
+
+		if ($type < 0) {
+			itoast('请选择要发送的类型', '', 'error');
+		}
+
 		if (empty($_GPC['reply'])) {
 			itoast('请选择要群发的素材', '', 'error');
 		}
@@ -151,7 +152,8 @@ if ($do == 'post') {
 						itoast('删除群发错误,请重新提交', referer());
 					}
 				}
-				pdo_delete('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => $ids));
+				$ids = implode(',', array_keys($records));
+				pdo_delete('mc_mass_record', array('uniacid' => $_W['uniacid'], 'id' => array($ids)));
 			}
 			
 			pdo_insert('mc_mass_record', $mass_record);
@@ -177,11 +179,12 @@ if ($do == 'post') {
 			itoast('定时群发设置成功', url('platform/mass/send'), 'success');
 		} else {
 			$account_api = WeAccount::create();
-			$result = $account_api->fansSendAll($group['id'], $msgtype, $mass_record['attach_id']);
+			$result = $account_api->fansSendAll($group['id'], $msgtype, $mass_record['media_id']);
 			if (is_error($result)) {
 				itoast($result['message'], url('platform/mass/send'), 'info');
 			}
-			pdo_insert('mc_mass_record', $record);
+			$mass_record['status'] = 0;
+			pdo_insert('mc_mass_record', $mass_record);
 			itoast('立即发送设置成功', url('platform/mass/send'), 'success');
 		}
 	}
