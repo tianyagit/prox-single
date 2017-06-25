@@ -79,6 +79,7 @@ if ($do == 'display') {
 			}
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
+			
 		}
 		unset($account_val);
 		unset($account);

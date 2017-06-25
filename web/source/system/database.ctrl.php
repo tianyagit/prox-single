@@ -130,22 +130,49 @@ if ($do == 'backup') {
 //还原
 if($do == 'restore') {
 	$_W['page']['title'] = '还原 - 数据库 - 常用系统工具 - 系统管理';
-	$reduction = array();
 	//获取备份目录下数据库备份数组
 	$reduction = system_database_backup();
 	//备份还原
 	if (!empty($_GPC['restore_dirname'])) {
-		$restore = array (
-				'restore_dirname' => $_GPC['restore_dirname'],
-				'restore_volume_prefix' => $_GPC['restore_volume_prefix'],
-				'restore_volume_sizes' => $_GPC['restore_volume_sizes'],
-		);
-		system_database_restore($reduction, $restore);
+		//当前还原的目录
+		$restore_dirname = $_GPC['restore_dirname'];
+		//需要还原的目录列表
+		$restore_dirname_list = array_keys($reduction);
+		if (in_array($restore_dirname, $restore_dirname_list)) {
+			//该目录下所有的卷
+			$volume_list = $reduction[$restore_dirname]['volume_list'];		
+			//当前卷文件的路径
+			if (empty($_GPC['restore_volume_name'])) {
+				$restore_volume_name = $volume_list[0];
+			} else {
+				$restore_volume_name = $_GPC['restore_volume_name'];
+			}
+			//当前还原备份文件的卷数
+			$restore_volume_sizes = max(1, intval($_GPC['restore_volume_sizes']));
+			if ($reduction[$restore_dirname]['volume'] < $restore_volume_sizes) {
+				itoast('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'), 'success');
+			} else {
+				//还原当前卷得到下一卷的路径
+				$next_restore_volume_name = system_database_volumn_restore($restore_volume_name);
+				$volume_sizes = $restore_volume_sizes;
+				$restore_volume_sizes ++;
+				$restore = array (
+					'restore_volume_name' => $next_restore_volume_name,
+					'restore_volume_sizes' => $restore_volume_sizes,
+					'restore_dirname' => $restore_dirname
+				);
+				message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore), 'success');
+			}	
+		} else {
+			itoast('非法访问', '','error');
+		}
 	}
 	//删除备份	
 	if ($_GPC['delete_dirname']) {
 		$delete_dirname = $_GPC['delete_dirname'];
-		system_database_delete($reduction, $delete_dirname);
+		if(!empty($reduction[$delete_dirname]) && system_database_backup_delete($delete_dirname)) {
+			itoast('删除备份成功.', url('system/database/restore'), 'success');
+		}
 	}
 }
 

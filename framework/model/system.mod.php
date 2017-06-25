@@ -37,6 +37,7 @@ function system_database_backup() {
 		return array();
 	}
 	if ($handle = opendir($path)) {
+		//依次读取备份目录
 		while (false !== ($bakdir = readdir($handle))) {
 			if ($bakdir == '.' || $bakdir == '..') {
 				continue;
@@ -57,8 +58,12 @@ function system_database_backup() {
 						}
 					}
 				}
+				//卷名列表
+				$volume_list = array();
+				//获取卷文件名
 				for ($i = 1;;) {
 					$last = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
+					array_push($volume_list, $last); 
 					$i++;
 					$next = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
 					if (!is_file($next)) {
@@ -72,9 +77,10 @@ function system_database_backup() {
 					fclose($fp);
 					if ($end == '----WeEngine MySQL Dump End') {
 						$row = array(
-								'bakdir'=> $bakdir,
-								'time'=> $time,
-								'volume'=> $i - 1
+							'bakdir' => $bakdir,
+							'time' => $time,
+							'volume' => $i - 1,
+							'volume_list' => $volume_list,
 						);
 						$reduction[$bakdir] = $row;
 						continue;
@@ -87,63 +93,27 @@ function system_database_backup() {
 	return $reduction;
 }
 /**
- * 还原数据库备份目录下的一个备份数据
- * @return array;
+ * 还原数据库备份目录下的某个备份目录下的一卷数据
+ * @param string $volume_name 卷文件名
+ * @return string 下一卷卷名;
  */
-function system_database_restore($reduction, $restore) {
-	$path = IA_ROOT . '/data/backup/';
-	$restore_dirname = $restore['restore_dirname'];
-	if ($reduction[$restore_dirname]) {
-		$row = $reduction[$restore_dirname];
-		$dir = $path . $row['bakdir'];
-		//获取随机字符串
-		if ($handle1= opendir($dir)) {
-			while (false !== ($filename = readdir($handle1))) {
-				if ($filename == '.' || $filename == '..') {
-					continue;
-				}
-				if (preg_match('/^volume-(?P<prefix>[a-z\d]{10})-\d{1,}\.sql$/i', $filename, $match1)) {
-					$volume_prefix = $match1['prefix'];
-					break;
-				}
-			}
-		}
-		//还原备份文件的前缀
-		if (empty($restore['restore_volume_prefix'])) {
-			$restore_volume_prefix = $volume_prefix;
-		} else {
-			$restore_volume_prefix = $restore['restore_volume_prefix'];
-		}
-		//当前还原备份文件的卷数
-		$restore_volume_sizes = max(1, intval($restore['restore_volume_sizes']));
-		if ($reduction[$restore_dirname]) {
-			if ($reduction[$restore_dirname]['volume'] < $restore_volume_sizes) {
-				itoast('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'), 'success');
-			} else {
-				$sql = file_get_contents($path .$restore_dirname . "/volume-{$restore_volume_prefix}-{$restore_volume_sizes}.sql");
-				pdo_run($sql);
-				$volume_sizes = $restore_volume_sizes;
-				$restore_volume_sizes ++;
-				$restore = array (
-					'restore_dirname' => $restore_dirname,
-					'restore_volume_prefix' => $restore_volume_prefix,
-					'restore_volume_sizes' => $restore_volume_sizes,
-				);
-				message('正在恢复数据备份, 请不要关闭浏览器, 当前第 ' . $volume_sizes . ' 卷.', url('system/database/restore',$restore), 'success');
-			}
-		} else {
-			itoast('非法访问', '','error');
-		}
+function system_database_volumn_restore($volume_name) {
+	$sql = file_get_contents($volume_name);
+	pdo_run($sql);
+	$next_volume_name = '';
+	if (preg_match('/^([^\s]*volume-(?P<prefix>[a-z\d]{10})-)(\d{1,})\.sql$/i', $volume_name, $match)) {
+		$next_volume_num = $match[3] + 1;
+		$next_volume_name = $match[1] . $next_volume_num . ".sql";
 	}
+	return $next_volume_name;
 }
 /**
  * 删除数据库备份目录下的某个备份数据
- * @return array;
+ * @param string 备份目录
+ * @return boolean;
  */
-function system_database_delete($reduction, $delete_dirname) {
+function system_database_backup_delete($delete_dirname) {
 	$path = IA_ROOT . '/data/backup/';
-	if ($reduction[$delete_dirname]) {
-		rmdirs($path . $delete_dirname);
-		itoast('删除备份成功.', url('system/database/restore'), 'success');
-	}
+	return rmdirs($path . $delete_dirname);
+	
 }
