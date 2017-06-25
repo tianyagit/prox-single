@@ -44,7 +44,7 @@
 			</li>
 		</ul>
 		{/if}
-		<div class="cut-list clearfix" ng-if="accountList">
+		<div class="cut-list clearfix" ng-if="accountList" infinite-scroll='loadMore()' infinite-scroll-disabled='busy' infinite-scroll-distance='0' infinite-scroll-use-document-bottom="true">
 			<div ng-repeat="account in accountList">
 				<div class="item" ng-repeat="detail in account.details">
 					<div class="content">
@@ -86,6 +86,6 @@
 		keyword : "{$keyword}",
 		letter : "{$letter}"
 	});
-	angular.bootstrap(document, ['accountApp']);
+	angular.bootstrap($('#js-account-display'), ['accountApp']);
 </script>
 {template 'common/footer'}

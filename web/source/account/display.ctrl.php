@@ -81,9 +81,6 @@ if ($do == 'display') {
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
 			
 		}
-		$list = array_merge($list, $list);
-		$list = array_merge($list, $list);
-		$list = array_merge($list, $list);
 		unset($account_val);
 		unset($account);
 	}
