@@ -60,7 +60,7 @@ if ($do == 'send') {
 }
 
 if ($do == 'display') {
-	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
+	$type = in_array(trim($_GPC['type']), array('news', 'image', 'voice', 'video')) ? trim($_GPC['type']) : 'news';
 	$server = in_array(trim($_GPC['server']), array(MATERIAL_LOCAL, MATERIAL_WEXIN)) ? trim($_GPC['server']) : '';
 	$group = mc_fans_groups(true);
 	$page_index = max(1, intval($_GPC['page']));
