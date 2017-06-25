@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="panel panel-cut" id="js-account-display">
+<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" ng-cloak>
 	<div class="panel-heading">
 		请选择您要操作的公众号
 		<div class="font-default pull-right">
@@ -69,12 +69,10 @@
 			</div>
 		</div>
 		<ul ng-if="!accountList" style="text-align:center;width:100%"><span ng-if="!accountList">暂无数据</span></ul>
+	</div>	
+	<div class="text-right">
+		{$pager}
 	</div>
-	{if empty($page_scroll)}
-		<div class="text-right">
-			{$pager}
-		</div>
-	{/if}
 </div>
 <script>
 	angular.module('accountApp').value('config', {
@@ -89,16 +87,5 @@
 		letter : "{$letter}"
 	});
 	angular.bootstrap(document, ['accountApp']);
-	$(function () {
-		var footHeight = $(".footer").outerHeight(true);
-		var bodyHeight = getViewPort();
-		bodyHeight = bodyHeight.height;
-		$(".scroll").css('height',function(){
-			return bodyHeight;
-		});
-		$(".skin-default").css('min-height',function(){
-			return bodyHeight - footHeight + 20;
-		});
-	}) 
 </script>
 {template 'common/footer'}
