@@ -500,12 +500,12 @@ function material_url_check($url) {
 	}
 }
 
-function material_news_list($server = '', $search = array('search' => ''), $page = array('page_index' => 1, 'page_size' => 24)) {
+function material_news_list($server = '', $search ='', $page = array('page_index' => 1, 'page_size' => 24)) {
 	global $_W;
 	$conditions[':uniacid'] = $_W['uniacid'];
 	$news_model_sql = '';
 	if (!empty($server)) {
-		$news_model_sql = "a.model = :news_model AND";
+		$news_model_sql = " AND a.model = :news_model";
 		$conditions[':news_model'] = $server;
 	}
 
@@ -517,7 +517,7 @@ function material_news_list($server = '', $search = array('search' => ''), $page
 		$conditions[':search_digest'] = "%{$search}%";
 	}
 
-	$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE  " . $news_model_sql . " a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
+	$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE  a.uniacid = :uniacid AND a.type = 'news' AND a.id <> '' " . $news_model_sql . $search_sql . "%s";
 	$list_sql = sprintf($select_sql, "*, a.id as id", " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($page['page_index'] - 1) * $page['page_size'] . ", " . $page['page_size']);
 	$total_sql = sprintf($select_sql, "count(*)", '');
 	$total = pdo_fetchcolumn($total_sql, $conditions);
@@ -550,24 +550,24 @@ function material_news_list($server = '', $search = array('search' => ''), $page
 
 function material_list($type = '', $server = '', $page = array('page_index' => 1, 'page_size' => 24)) {
 	global $_W;
-	$tables = array('local' => 'core_attachment', 'perm' => 'wechat_attachment');
+	$tables = array(MATERIAL_LOCAL => 'core_attachment', MATERIAL_WEXIN => 'wechat_attachment');
 	$conditions['uniacid'] = $_W['uniacid'];
 		$table = $tables[$server];
 		switch ($type) {
 			case 'voice' :
-				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VOICE : 'voice';
+				$conditions['type'] = $server == MATERIAL_LOCAL ? ATTACH_TYPE_VOICE : 'voice';
 				break;
 			case 'video' :
-				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VEDIO : 'video';
+				$conditions['type'] = $server == MATERIAL_LOCAL ? ATTACH_TYPE_VEDIO : 'video';
 				break;
 			default :
-				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_IMAGE : 'image';
+				$conditions['type'] = $server == MATERIAL_LOCAL ? ATTACH_TYPE_IMAGE : 'image';
 				break;
 		}
 		if ($server == 'local') {
 			$material_list = pdo_getslice($table, $conditions, array($page['page_index'], $page['page_size']), $total, array(), '', 'createtime DESC');
 		} else {
-			$conditions['model'] = 'perm';
+			$conditions['model'] = MATERIAL_WEXIN;
 			$material_list = pdo_getslice($table, $conditions, array($page['page_index'], $page['page_size']), $total, array(), '', 'createtime DESC');
 			if ($type == 'video'){
 				foreach ($material_list as &$row) {

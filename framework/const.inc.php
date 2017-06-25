@@ -132,3 +132,7 @@ define('FANS_CHATS_FROM_SYSTEM', 1);
 
 //小程序数据常规分析常量
 define('WXAPP_STATISTICS_DAILYVISITTREND', 2);
+
+//素材类型
+define('MATERIAL_LOCAL', 'local');
+define('MATERIAL_WEXIN', 'perm');
