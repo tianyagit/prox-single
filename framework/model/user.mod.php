@@ -417,7 +417,7 @@ function user_login_forward($forward = '') {
 		return $login_forward;
 	}
 	if (!empty($_W['isfounder'])) {
-		return url('home/welcome/system', array('account_type' => 5));
+		return url('home/welcome/system');
 	}
 	
 	$login_forward = url('account/display');
