@@ -1,18 +1,22 @@
 {template 'common/header'}
-<ul class="we7-page-tab">
-	<li {if $_GPC['a'] == 'mass'  && $do == 'post'}class="active"{/if}>
-	<a href="{php echo url('platform/mass/post')}" >素材编辑</a>
-	</li>
-	<li {if $_GPC['a'] == 'mass' && $do == 'send'}class="active"{/if}>
-	<a href="{php echo url('platform/mass/send')}">群发记录</a>
-	</li>
-</ul>
+{if !$id}
+	<ul class="we7-page-tab">
+		<li {if $_GPC['a'] == 'mass'  && $do == 'post'}class="active"{/if}>
+		<a href="{php echo url('platform/mass/post')}" >素材编辑</a>
+		</li>
+		<li {if $_GPC['a'] == 'mass' && $do == 'send'}class="active"{/if}>
+		<a href="{php echo url('platform/mass/send')}">群发记录</a>
+		</li>
+	</ul>
+{/if}
 <div class="">
-	<ol class="breadcrumb we7-breadcrumb">
-		<a href="{php echo url('platform/mass/')}"><i class="wi wi-back-circle"></i> </a>
-		<li><a href="{php echo url('platform/mass/')}">素材定时群发</a></li>
-		<li><a href="{php echo url('platform/mass/post')}">编辑</a></li>
-	</ol>
+	{if $id}
+		<ol class="breadcrumb we7-breadcrumb">
+			<a href="{php echo url('platform/mass/send')}"><i class="wi wi-back-circle"></i> </a>
+			<li><a href="{php echo url('platform/mass/')}">素材定时群发</a></li>
+			<li><a href="{php echo url('platform/mass/post')}">编辑</a></li>
+		</ol>
+	{/if}
 	<div class="we7-form" id="js-mass-post" ng-controller="MassPost" ng-cloak>
 		<form action="" method="post" ng-submit="checkSubmit($event)">
 			<input type="hidden" name="token" value="{$_W['token']}">
