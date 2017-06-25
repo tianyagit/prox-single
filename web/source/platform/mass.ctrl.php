@@ -183,6 +183,7 @@ if ($do == 'post') {
 			if (is_error($result)) {
 				itoast($result['message'], url('platform/mass/send'), 'info');
 			}
+			$mass_record['status'] = 0;
 			pdo_insert('mc_mass_record', $mass_record);
 			itoast('立即发送设置成功', url('platform/mass/send'), 'success');
 		}
