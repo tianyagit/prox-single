@@ -68,14 +68,12 @@ if ($do == 'display') {
 	$search = addslashes($_GPC['title']);
 
 	if ($type == 'news') {
-		$material_news_list = material_news_list($server, array('search' => $search), array('page_index' => $page_index, 'page_size' => $page_size));
-		$material_list = $material_news_list['material_list'];
-		$pager = $material_news_list['page'];
+		$material_news_list = material_news_list($server, $search, array('page_index' => $page_index, 'page_size' => $page_size));
 	} else {
 		$material_news_list = material_list($type, $server, array('page_index' => $page_index, 'page_size' => $page_size));
-		$material_list = $material_news_list['material_list'];
-		$pager = $material_news_list['page'];
 	}
+	$material_list = $material_news_list['material_list'];
+	$pager = $material_news_list['page'];
 }
 
 if ($do == 'delete') {

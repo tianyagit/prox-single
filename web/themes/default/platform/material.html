@@ -29,7 +29,7 @@
 					</div>
 					<div class="we7-form">
 						<div class="form-controls">
-							<form action="{php echo url('platform/material/list', array('type' => 'news', 'pic_position' => $pic_position))}" method="post" >
+							<form action="{php echo url('platform/material/list', array('type' => 'news', 'server' => $server))}" method="post" >
 								<div class="input-group">
 									<input type="text" id="" name="title" class="form-control" size="40" value="{$_GPC['title']}" placeholder="标题/作者/摘要">
 									<span class="input-group-btn">

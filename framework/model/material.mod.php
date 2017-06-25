@@ -512,9 +512,9 @@ function material_news_list($server = '', $search = array('search' => ''), $page
 	$search_sql = '';
 	if (!empty($search)) {
 		$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";
-		$conditions[':search_title'] = "%{$search['search']}%";
-		$conditions[':search_author'] = "%{$search['search']}%";
-		$conditions[':search_digest'] = "%{$search['search']}%";
+		$conditions[':search_title'] = "%{$search}%";
+		$conditions[':search_author'] = "%{$search}%";
+		$conditions[':search_digest'] = "%{$search}%";
 	}
 
 	$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE  " . $news_model_sql . " a.uniacid = :uniacid AND a.type = 'news' AND a.id <> ''" . $search_sql . "%s";
@@ -554,9 +554,6 @@ function material_list($type = '', $server = '', $page = array('page_index' => 1
 	$conditions['uniacid'] = $_W['uniacid'];
 		$table = $tables[$server];
 		switch ($type) {
-			case 'image' :
-				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_IMAGE : 'image';
-				break;
 			case 'voice' :
 				$conditions['type'] = $server == 'local' ? ATTACH_TYPE_VOICE : 'voice';
 				break;
