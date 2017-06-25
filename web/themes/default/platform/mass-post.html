@@ -30,7 +30,7 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2">发送时间</label>
 				<div class="form-controls col-sm-8">
-					<select class="col-sm-3 mass-type" name="type">
+					<select class="col-sm-3 mass-type" ng-model="massdata.type" name="type">
 						<option value="-1" >请选择发送类型</option>
 						<option ng-repeat="(type_id, name) in massdata.send_type" ng-selected="massdata.type==type_id" ng-value="type_id" ng-bind="name"></option>
 					</select>
