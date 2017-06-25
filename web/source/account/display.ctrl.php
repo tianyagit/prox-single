@@ -39,7 +39,6 @@ if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 10;
 	$start = ($pindex - 1) * $psize;
-	$page_scroll = PAGE_SCROLL_SWITCH;
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
