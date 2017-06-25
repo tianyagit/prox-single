@@ -132,3 +132,6 @@ define('FANS_CHATS_FROM_SYSTEM', 1);
 
 //小程序数据常规分析常量
 define('WXAPP_STATISTICS_DAILYVISITTREND', 2);
+
+define('MATERIAL_LOCAL', 'local');//服务器素材类型
+define('MATERIAL_WEXIN', 'perm');//微信素材类型

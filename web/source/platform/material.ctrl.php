@@ -60,8 +60,8 @@ if ($do == 'send') {
 }
 
 if ($do == 'display') {
-	$type = trim($_GPC['type']) ? trim($_GPC['type']) : 'news';
-	$server = trim($_GPC['server']) ? trim($_GPC['server']) : '';
+	$type = in_array(trim($_GPC['type']), array('news', 'image', 'voice', 'video')) ? trim($_GPC['type']) : 'news';
+	$server = in_array(trim($_GPC['server']), array(MATERIAL_LOCAL, MATERIAL_WEXIN)) ? trim($_GPC['server']) : '';
 	$group = mc_fans_groups(true);
 	$page_index = max(1, intval($_GPC['page']));
 	$page_size = 24;
@@ -70,6 +70,9 @@ if ($do == 'display') {
 	if ($type == 'news') {
 		$material_news_list = material_news_list($server, $search, array('page_index' => $page_index, 'page_size' => $page_size));
 	} else {
+		if (empty($server)) {
+			$server = MATERIAL_WEXIN;
+		}
 		$material_news_list = material_list($type, $server, array('page_index' => $page_index, 'page_size' => $page_size));
 	}
 	$material_list = $material_news_list['material_list'];
