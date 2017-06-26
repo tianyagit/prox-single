@@ -45,7 +45,7 @@ if ($do == 'platform') {
 		itoast($cloud['message'], url('cloud/profile'), 'error');
 	}
 	if(!$_W['isfounder']){
-		header("location: " . url('account/manage', array('account_type' => 1)), true);
+		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
 		exit;
 	}
 	
@@ -68,7 +68,9 @@ if ($do == 'platform') {
 	
 	//系统更新信息
 	$upgrade = cloud_build();
-	
+	if (is_error($upgrade) || empty($upgrade['upgrade'])) {
+		$upgrade = array();
+	}
 	//未安装应用
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];

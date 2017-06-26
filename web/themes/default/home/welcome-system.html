@@ -41,6 +41,7 @@
 			</div>
 		</div>
 	</div>
+	{if !empty($upgrade)}
 	<div class="panel we7-panel system-update">
 		<div class="panel-heading">
 			<span class="color-gray pull-right">当前版本：{IMS_FAMILY}{IMS_VERSION}（{IMS_RELEASE_DATE}）</span>
@@ -64,6 +65,7 @@
 			</div>
 		</div>
 	</div>
+	{/if}
 	<div class="panel we7-panel database">
 		<div class="panel-heading">
 			数据库备份提醒
@@ -86,20 +88,20 @@
 					<a href="{php echo url('system/module', array('account_type' => 1))}" class="pull-right color-default">更多</a>
 					微信可升级应用
 				</div>
-				<div class="panel-body">					
+				<div class="panel-body">
 					{if !empty($account_upgrade_module_list)}
 						{loop $account_upgrade_module_list $index $module}
-							<a href="{php echo url('system/module/module_detail', array('name' => $module[name], 'show' =>'upgrade'))}" class="apply-item">
+							<a href="{php echo url('system/module/module_detail', array('name' => $module['name'], 'show' =>'upgrade'))}" class="apply-item">
 								<img src="{$module['logo']}" class="apply-img"/>
 								<span class="text-over">{$module['title']}</span>
 								<span class="color-red">升级</span>
 							</a>
-						{/loop}	
+						{/loop}
 					{else}
 						<div class="text-center">
 							没有可升级的应用
 						</div>
-					{/if}			
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -109,20 +111,20 @@
 					<a href="{php echo url('system/module', array('account_type' => 4))}" class="pull-right color-default">更多</a>
 					小程序可升级应用
 				</div>
-				<div class="panel-body">					
+				<div class="panel-body">
 					{if !empty($wxapp_upgrade_module_list)}
 						{loop $wxapp_upgrade_module_list $index $module}
-							<a href="{php echo url('system/module', array('account_type' => 4))}" class="apply-item">
+							<a href="{php echo url('system/module/module_detail', array('name' => $module['name'], 'show' => 'upgrade', 'account_type' => 4))}" class="apply-item">
 								<img src="{$module['logo']}" class="apply-img"/>
 								<span class="text-over">{$module['title']}</span>
 								<span class="color-red">升级</span>
 							</a>
-						{/loop}	
+						{/loop}
 					{else}
 						<div class="text-center">
 							没有可升级的应用
 						</div>
-					{/if}			
+					{/if}
 				</div>
 			</div>
 		</div>
