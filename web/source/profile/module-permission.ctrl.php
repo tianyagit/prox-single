@@ -77,7 +77,7 @@ if ($do == 'post') {
 				itoast('两次输入密码不一致');
 			}
 			unset($insert_user['repassword']);
-			$operator['uid'] = user_register($insert_user);
+			$uid = user_register($insert_user);
 			if (!$operator['uid']) {
 				itoast('注册账号失败', '', '');
 			}
@@ -105,16 +105,16 @@ if ($do == 'post') {
 			$permission = 'all';
 		}
 		if (empty($have_permission)) {
-			pdo_insert('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid'], 'type' => $module_name, 'permission' => $permission));
+			pdo_insert('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $module_name, 'permission' => $permission));
 		} else {
-			pdo_update('users_permission', array('permission' => $permission), array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid'], 'type' => $module_name));
+			pdo_update('users_permission', array('permission' => $permission), array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $module_name));
 		}
 
-		$role = uni_permission($operator['uid'], $_W['uniacid']);
+		$role = uni_permission($uid, $_W['uniacid']);
 		if (empty($role)) {
-			pdo_insert('uni_account_users', array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid'], 'role' => 'operator'));
+			pdo_insert('uni_account_users', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'role' => 'operator'));
 		} else {
-			pdo_update('uni_account_users', array('role' => 'operator'), array('uniacid' => $_W['uniacid'], 'uid' => $operator['uid']));
+			pdo_update('uni_account_users', array('role' => 'operator'), array('uniacid' => $_W['uniacid'], 'uid' => $uid));
 		}
 		itoast('编辑店员资料成功', url('profile/module-permission', array('m' => $module_name)), 'success');
 	}
