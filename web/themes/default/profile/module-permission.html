@@ -75,11 +75,11 @@
 		<div class="form-group">
 			<label class="col-xs-12 col-sm-2 col-md-2 col-lg-2 control-label">权限设置</label>
 			<div class="col-sm-10 col-lg-10 col-xs-12">
-				{loop $current_module_permission $permission}
+				{loop $current_module_permission $key $permission}
 				<div class="col-sm-4">
 					<div class="checkbox">
-						<input type="checkbox" value="{$permission['permission']}" name="module_permission[]" {if !empty($permission['checked'])}checked{/if}>
-						<label>{$permission['title']}</label>
+						<input id="check-child-{$key}" type="checkbox" value="{$permission['permission']}" name="module_permission[]" {if !empty($permission['checked'])}checked{/if}>
+						<label for="check-child-{$key}">{$permission['title']}</label>
 					</div>
 				</div>
 				{/loop}
