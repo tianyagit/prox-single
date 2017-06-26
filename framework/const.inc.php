@@ -35,12 +35,6 @@ define('ACCOUNT_TYPE_OFFCIAL_AUTH', 3);
 //正常接入小程序
 define('ACCOUNT_TYPE_APP_NORMAL', 4);
 
-//DIY小程序
-define('WXAPP_DIY', 1);
-//选择模版小程序
-define('WXAPP_TEMPLATE', 2);
-//跳转模块小程序
-define('WXAPP_MODULE', 3);
 
 //授权登录接入
 define('ACCOUNT_OAUTH_LOGIN', 3);
@@ -132,6 +126,16 @@ define('FANS_CHATS_FROM_SYSTEM', 1);
 
 //小程序数据常规分析常量
 define('WXAPP_STATISTICS_DAILYVISITTREND', 2);
+//DIY小程序
+define('WXAPP_DIY', 1);
+//选择模版小程序
+define('WXAPP_TEMPLATE', 2);
+//跳转模块小程序
+define('WXAPP_MODULE', 3);
 
 define('MATERIAL_LOCAL', 'local');//服务器素材类型
 define('MATERIAL_WEXIN', 'perm');//微信素材类型
+
+//自定义菜单类型
+define('MENU_CURRENTSELF', 1);
+define('MENU_CONDITIONAL', 3);
