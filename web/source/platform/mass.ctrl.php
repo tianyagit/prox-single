@@ -78,16 +78,11 @@ if ($do == 'del') {
 if ($do == 'post') {
 	$id = intval($_GPC['id']);
 	$mass_info = pdo_get('mc_mass_record', array('id' => $id));
-	$mass_info['send_type'] = array('实时发送', '定时发送');
 	$groups = mc_fans_groups();
 	
 	if (checksubmit('submit')) {
-		$type = intval($_GPC['type']);
+		$type = in_array(intval($_GPC['type']), array(0, 1)) ? intval($_GPC['type']) : 0;
 		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
-
-		if ($type < 0) {
-			itoast('请选择要发送的类型', '', 'error');
-		}
 
 		if (empty($_GPC['reply'])) {
 			itoast('请选择要群发的素材', '', 'error');

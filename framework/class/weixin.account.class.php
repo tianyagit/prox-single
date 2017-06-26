@@ -801,8 +801,16 @@ class WeiXinAccount extends WeAccount {
 	}
 	
 	public function clearAccessToken() {
-		$cachekey = "accesstoken:{$this->account['acid']}";
-		cache_delete($cachekey);
+		$access_token = $this->getAccessToken();
+		if(is_error($access_token)){
+			return $access_token;
+		}
+		$url = 'https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=' . $access_token;
+		$response = $this->requestApi($url);
+		if (is_error($response) && $response['errno'] == '40001') {
+			$cachekey = "accesstoken:{$this->account['acid']}";
+			cache_delete($cachekey);
+		}
 		return true;
 	}
 	
