@@ -1,5 +1,5 @@
 {template 'common/header'}
-{if !$id}
+{if empty($id)}
 	<ul class="we7-page-tab">
 		<li {if $_GPC['a'] == 'mass'  && $do == 'post'}class="active"{/if}>
 		<a href="{php echo url('platform/mass/post')}" >素材编辑</a>
@@ -10,7 +10,7 @@
 	</ul>
 {/if}
 <div class="">
-	{if $id}
+	{if !empty($id)}
 		<ol class="breadcrumb we7-breadcrumb">
 			<a href="{php echo url('platform/mass/send')}"><i class="wi wi-back-circle"></i> </a>
 			<li><a href="{php echo url('platform/mass/')}">素材定时群发</a></li>
