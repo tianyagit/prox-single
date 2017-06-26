@@ -156,23 +156,5 @@
 		angular.bootstrap($('#main'), ['materialApp']);
 	});
 	$('[data-toggle="tooltip"]').tooltip();
-/*	$(function(){
-		var top = $('.appmsg-edit-box').offset().top;
-		var pos = $('.appmsg-preview-area').css("position");
-		var screenH = $(window).height();
-		$(window).scroll(function(){
-			var scrolls = $(document).scrollTop();
-			if(scrolls > top){
-				$('.appmsg-preview-area').css({position: "fixed", top: 0, height: (screenH - 124)});
-				$('.appmsg-input-area').css({marginLeft: '250px'});
-			}else{
-				$('.appmsg-preview-area').css({position: pos, top: top});
-				$('.appmsg-input-area').css({margin: 0});
-			}
-		});
-
-
-	});
-*/
 </script>
 {template 'common/footer'}
