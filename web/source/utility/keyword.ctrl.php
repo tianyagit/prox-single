@@ -34,8 +34,8 @@ if($do == 'keyword') {
 		unset($row);
 	}
 	$result = array(
-			'items' => $keyword_lists,
-			'pager' => pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
+		'items' => $keyword_lists,
+		'pager' => pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null')),
 	);
 	iajax(0, $result);
 }
