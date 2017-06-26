@@ -114,7 +114,8 @@ function system_database_volume_restore($volume_name) {
 		return false;
 	}
 	$sql = file_get_contents($volume_name);
-	return pdo_run($sql);
+	pdo_run($sql);
+	return true;
 }
 /**
  * 删除数据库备份目录下的某个备份数据
@@ -123,8 +124,9 @@ function system_database_volume_restore($volume_name) {
  */
 function system_database_backup_delete($delete_dirname) {
 	$path = IA_ROOT . '/data/backup/';
-	if (empty($delete_dirname) || !is_dir($volume_name)) {
+	$dir = $path . $delete_dirname;
+	if (empty($delete_dirname) || !is_dir($dir)) {
 		return false;
 	}
-	return rmdirs($path . $delete_dirname);
+	return rmdirs($dir);
 }
