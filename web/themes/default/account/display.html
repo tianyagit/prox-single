@@ -21,7 +21,7 @@
 				可创建 <span class="text-strong">{$account_info['maxaccount']} </span>个公众号，已创建<span class="text-strong"> {$account_info['uniacid_num']} </span>个，还可创建 <span class="text-strong">{$account_info['uniacid_limit']} </span>个公众号。
 			</div>
 		{/if}
-		
+		{if $total_page > 1}
 		<div class="cut-header">
 			<form action="./index.php" method="get">
 				<input type="hidden" name="c" value="account">
@@ -35,15 +35,15 @@
 				</div>
 			</form>
 		</div>
-		
+		{/if}
 		<div class="clearfix"></div>
-		
+		{if $total_page > 1}
 		<ul class="letters-list cut-wechat-letters">
 			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
 				<a href="javascript:;" ng-bind="letter"></a>
 			</li>
 		</ul>
-	
+		{/if}
 		<div class="cut-list clearfix" ng-if="accountList" infinite-scroll='loadMore()' infinite-scroll-disabled='busy' infinite-scroll-distance='0' infinite-scroll-use-document-bottom="true">
 			<div ng-repeat="account in accountList">
 				<div class="item" ng-repeat="detail in account.details">
