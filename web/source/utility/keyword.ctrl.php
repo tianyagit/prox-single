@@ -18,7 +18,8 @@ if($do == 'keyword') {
 	}
 
 	$pindex = max(1, intval($_GPC['page']));
-	$rule_list = pdo_getslice('rule', $condition, array($pindex, 24), $total);
+	$psize = 24;
+	$rule_list = pdo_getslice('rule', $condition, array($pindex, $psize), $total);
 
 	$keyword_lists = array();
 	if(!empty($rule_list)) {
