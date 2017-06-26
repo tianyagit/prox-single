@@ -45,7 +45,7 @@ if ($do == 'platform') {
 		itoast($cloud['message'], url('cloud/profile'), 'error');
 	}
 	if(!$_W['isfounder']){
-		header("location: " . url('account/manage', array('account_type' => 1)), true);
+		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
 		exit;
 	}
 	
