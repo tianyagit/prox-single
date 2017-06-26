@@ -16,8 +16,9 @@
 			<div class="input-group pull-left col-sm-4">
 				<input type="hidden" name="c" value="platform">
 				<input type="hidden" name="a" value="menu">
+				<input type="hidden" name="type" value="{$_GPC['type']}">
 				<input type="hidden" name="token" value="{$_W['token']}"/>
-				<input type="text" name="keyword" id="" value="" class="form-control" placeholder="搜索关键字"/>
+				<input type="text" name="keyword" id="" value="{$_GPC['keyword']}" class="form-control" placeholder="搜索关键字"/>
 				<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 			</div>
 		</form>
