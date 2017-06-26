@@ -37,14 +37,12 @@ function system_database_backup() {
 		return array();
 	}
 	if ($handle = opendir($path)) {
-		//依次读取备份目录
 		while (false !== ($bakdir = readdir($handle))) {
 			if ($bakdir == '.' || $bakdir == '..') {
 				continue;
 			}
 			if (preg_match('/^(?P<time>\d{10})_[a-z\d]{8}$/i', $bakdir, $match)) {
 				$time = $match['time'];
-				//获取随机字符串
 				if ($handle1= opendir($path . $bakdir)) {
 					while (false !== ($filename = readdir($handle1))) {
 						if ($filename == '.' || $filename == '..') {
@@ -58,9 +56,7 @@ function system_database_backup() {
 						}
 					}
 				}
-				//卷名列表
 				$volume_list = array();
-				//获取卷文件名
 				for ($i = 1;;) {
 					$last = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
 					array_push($volume_list, $last); 
