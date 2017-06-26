@@ -114,7 +114,8 @@ function system_database_volume_restore($volume_name) {
 		return false;
 	}
 	$sql = file_get_contents($volume_name);
-	return pdo_run($sql);
+	pdo_run($sql);
+	return true;
 }
 /**
  * 删除数据库备份目录下的某个备份数据
