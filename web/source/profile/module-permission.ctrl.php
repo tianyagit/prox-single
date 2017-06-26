@@ -78,7 +78,7 @@ if ($do == 'post') {
 			}
 			unset($insert_user['repassword']);
 			$uid = user_register($insert_user);
-			if (!$operator['uid']) {
+			if (!$uid) {
 				itoast('注册账号失败', '', '');
 			}
 		} else {
