@@ -8,7 +8,7 @@
 				<div class="panel-body we7-padding-vertical">
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
-						<div class="num">{$account_uninstall_modules_nums}</div>
+						<div class="num"><a href="{php echo url('system/module/not_installed', array('account_type' => 1))}" class="color-default">{$account_uninstall_modules_nums}</a></div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">可升级应用</div>
@@ -16,7 +16,7 @@
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
-						<div class="num">{$account_modules_total}</div>
+						<div class="num"><a href="{php echo url('system/module/installed', array('account_type' => 1))}" class="color-default">{$account_modules_total}</a></div>
 					</div>
 				</div>
 			</div>
@@ -27,7 +27,7 @@
 				<div class="panel-body we7-padding-vertical">
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
-						<div class="num">{$wxapp_uninstall_modules_nums}</div>
+						<div class="num"><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" class="color-default">{$wxapp_uninstall_modules_nums}</a></div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">可升级应用</div>
@@ -35,7 +35,7 @@
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
-						<div class="num">{$wxapp_modules_total}</div>
+						<div class="num"><a href="{php echo url('system/module/installed', array('account_type' => 4))}" class="color-default">{$wxapp_modules_total}</a></div>
 					</div>
 				</div>
 			</div>

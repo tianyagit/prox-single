@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('mc');
-load()->model('platform');
+load()->model('menu');
 
 $dos = array('display', 'delete', 'refresh', 'post', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
@@ -20,104 +20,19 @@ if($_W['isajax']) {
 }
 
 if($do == 'display') {
-	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : 1;
 	set_time_limit(0);
-	$account_api = WeAccount::create();
-	$default_menu_info = $account_api->menuCurrentQuery();
-	if (is_error($default_menu_info)) {
-		itoast($default_menu_info['message'], '', 'error');
-	}
-	$default_menu = $default_menu_info['selfmenu_info'];
-	$default_menu['type'] = 1;
-	$default_menu['matchrule'] = array();
-	if (!empty($default_menu['button'])) {
-		foreach ($default_menu['button'] as $key=>&$button) {
-			$default_sub_button[$key] = $button['sub_button'];
-			ksort($button);
-		}
-		unset($button);
-	}
-	ksort($default_menu);
-	$wechat_menu_data = base64_encode(iserializer($default_menu));
-	$all_default_menus = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => 1), array('data', 'id'), 'id');
-	foreach ($all_default_menus as $k=>$menu_data) {
-		$single_menu_info = iunserializer(base64_decode($menu_data['data']));
-		if (is_array($single_menu_info)) {
-			$single_menu_info['type'] = 1;
-			$single_menu_info['matchrule'] = array();
-			if (!empty($single_menu_info['button'])) {
-				foreach ($single_menu_info['button'] as $key=>&$single_button) {
-					if (!empty($default_sub_button[$key])) {
-						$single_button['sub_button'] = $default_sub_button[$key];
-					} else {
-						unset($single_button['sub_button']);
-					}
-					ksort($single_button);
-				}
-				unset($single_button);
-				ksort($single_menu_info);
-			}
-			$local_menu_data = base64_encode(iserializer($single_menu_info));
-			if ($wechat_menu_data == $local_menu_data) {
-				$default_menu_id = $k;
-			}
-		}
+
+	$update_self_menu = menu_update_currentself();
+	if (is_error($update_self_menu)) {
+		itoast($update_self_menu['message'], '', 'error');
 	}
 
-	if (!empty($default_menu_id)) {
-		pdo_update('uni_account_menus', array('status' => 1), array('id' => $default_menu_id));
-		pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid'], 'type' => 1, 'id !=' => $default_menu_id));
-	} else {
-		$insert_data = array(
-			'uniacid' => $_W['uniacid'],
-			'type' => 1,
-			'group_id' => -1,
-			'sex' => 0,
-			'data' => $wechat_menu_data,
-			'client_platform_type' => 0,
-			'area' => '',
-			'menuid' => 0,
-			'status' => 1
-		);
-		pdo_insert('uni_account_menus', $insert_data);
-		$insert_id = pdo_insertid();
-		pdo_update('uni_account_menus', array('title' => '默认菜单_'.$insert_id), array('id' => $insert_id));
-		pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid'], 'type' => 1, 'id !=' => $insert_id));
+	$conditional_menu_info = menu_update_conditional();
+	if(is_error($conditional_menu_info)) {
+		itoast($conditional_menu_info['message'], '', 'error');
 	}
 
-	//拉取个性化菜单
-	$get_menu_info = $account_api->menuQuery();
-	if(is_error($get_menu_info)) {
-		itoast($get_menu_info['message'], '', 'error');
-	}
-	$condition_menus = $get_menu_info['conditionalmenu'];
-	pdo_update('uni_account_menus', array('status' => 0), array('uniacid' => $_W['uniacid'], 'type' => 3));
-	if (!empty($condition_menus)) {
-		foreach($condition_menus as $menu) {
-			$data = array(
-				'uniacid' => $_W['uniacid'],
-				'type' => 3,
-				'group_id' => isset($menu['matchrule']['tag_id']) ? $menu['matchrule']['tag_id'] : (isset($menu['matchrule']['group_id']) ? $menu['matchrule']['group_id'] : '-1'),
-				'sex' => $menu['matchrule']['sex'],
-				'client_platform_type' => $menu['matchrule']['client_platform_type'],
-				'area' => trim($menu['matchrule']['country']) . trim($menu['matchrule']['province']) . trim($menu['matchrule']['city']),
-				'data' => base64_encode(iserializer($menu)),
-				'menuid' => $menu['menuid'],
-				'status' => 1,
-			);
-			if (!empty($menu['matchrule'])) {
-				$menu_id = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'menuid' => $menu['menuid'], 'type' => 3), array('id'));
-			}
-			if(!empty($menu_id['id'])) {
-				$data['title'] = '个性化菜单_' . $menu_id['id'];
-				pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'id' => $menu_id['id']));
-			} else {
-				pdo_insert('uni_account_menus', $data);
-				$insert_id = pdo_insertid();
-				pdo_update('uni_account_menus', array('title' => '个性化菜单_'.$insert_id), array('id' => $insert_id));
-			}
-		}
-	}
+	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : MENU_CURRENTSELF;
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 	$condition = " WHERE uniacid = :uniacid";
@@ -133,20 +48,13 @@ if($do == 'display') {
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('uni_account_menus') . $condition, $params);
 	$data = pdo_fetchall("SELECT * FROM " . tablename('uni_account_menus') . $condition . " ORDER BY type ASC, status DESC,id DESC LIMIT " . ($pindex - 1) * $psize . "," . $psize, $params);
 	$pager = pagination($total, $pindex, $psize);
-	$names = array(
-		'sex' => array(
-			0 => '不限',
-			1 => '男',
-			2 => '女',
-		),
-		'client_platform_type' => array(
-			0 => '不限',
-			1 => '苹果',
-			2 => '安卓',
-			3 => '其他'
-		),
-	);
-	$groups = mc_fans_groups(true);
+	if ($type == MENU_CONDITIONAL) {
+		$names = array(
+			'sex' => array('不限', '男', '女'),
+			'client_platform_type' => array('不限', '苹果', '安卓', '其他')
+		);
+		$groups = mc_fans_groups(true);
+	}
 	template('platform/menu');
 }
 
@@ -339,7 +247,7 @@ if($do == 'post') {
 	}
 	$status = $params['status'];
 	$groups = mc_fans_groups();
-	$languages = platform_menu_languages();
+	$languages = menu_languages();
 	if($_W['isajax'] && $_W['ispost']) {
 		set_time_limit(0);
 		$_GPC['group']['title'] = trim($_GPC['group']['title']);
@@ -522,11 +430,11 @@ if($do == 'delete') {
 	}
 	$status =  $_GPC['status'];
 
-	if ($data['type'] == 3 && $data['status'] == 0) {
+	if (($data['type'] == 3 || $data['type'] == 1) && $data['status'] == 0) {
 		pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
 		itoast('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
 	}
-	if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0 && $data['status'] != 0)) {
+	if(($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0)) && $data['status'] != 0) {
 		$account_api = WeAccount::create($_W['acid']);
 		$result = $account_api->menuDelete($data['menuid']);
 		if(is_error($result) && empty($_GPC['f'])) {
