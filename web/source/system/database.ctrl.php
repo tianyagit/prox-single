@@ -20,15 +20,13 @@ if ($do == 'backup') {
 	if ($_GPC['status']) {
 		if (empty($_W['setting']['copyright']['status'])) {
 			itoast('为了保证备份数据完整请关闭站点后再进行此操作', url('system/site'), 'error');
-		}
-		
+		}	
 		//获取系统数据库中所有表
 		$sql = "SHOW TABLE STATUS LIKE '{$_W['config']['db']['tablepre']}%'";
 		$tables = pdo_fetchall($sql);
 		if (empty($tables)) {
 			itoast('数据已经备份完成', url('system/database/'), 'success');
-		}
-		
+		}	
 		//设置备份文件的卷数。
 		 $series = max(1, intval($_GPC['series']));
 		//设置备份文件名中随机数。
@@ -126,7 +124,6 @@ if ($do == 'backup') {
 		itoast('数据已经备份完成', url('system/database/'), 'success');	
 	}
 }
-
 //还原
 if($do == 'restore') {
 	$_W['page']['title'] = '还原 - 数据库 - 常用系统工具 - 系统管理';
@@ -152,9 +149,11 @@ if($do == 'restore') {
 			if ($reduction[$restore_dirname]['volume'] < $restore_volume_sizes) {
 				itoast('成功恢复数据备份. 可能还需要你更新缓存.', url('system/database/restore'), 'success');
 			} else {
-				//还原当前卷得到下一卷的路径
-				$next_restore_volume_name = system_database_volumn_restore($restore_volume_name);
 				$volume_sizes = $restore_volume_sizes;
+				//还原当前卷
+				system_database_volume_restore($restore_volume_name);
+				//下一卷
+				$next_restore_volume_name = system_database_volume_next($restore_volume_name);
 				$restore_volume_sizes ++;
 				$restore = array (
 					'restore_volume_name' => $next_restore_volume_name,

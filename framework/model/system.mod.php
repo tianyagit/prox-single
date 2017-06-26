@@ -14,7 +14,7 @@ function system_menu_permission_list($role = '') {
 		cache_build_frame_menu();
 		$system_menu = cache_load('system_frame');
 	}
-	//根本不同的角色得到不同的菜单权限
+	//根据不同的角色得到不同的菜单权限
 	if ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
 		unset($system_menu['appmarket']);
 		unset($system_menu['adviertisement']);
@@ -93,19 +93,29 @@ function system_database_backup() {
 	return $reduction;
 }
 /**
- * 还原数据库备份目录下的某个备份目录下的一卷数据
+ * 得到备份文件下一卷文件名
  * @param string $volume_name 卷文件名
- * @return string 下一卷卷名;
+ * @return mixed;
  */
-function system_database_volumn_restore($volume_name) {
-	$sql = file_get_contents($volume_name);
-	pdo_run($sql);
+function system_database_volume_next($volume_name) {
 	$next_volume_name = '';
-	if (preg_match('/^([^\s]*volume-(?P<prefix>[a-z\d]{10})-)(\d{1,})\.sql$/i', $volume_name, $match)) {
-		$next_volume_num = $match[3] + 1;
-		$next_volume_name = $match[1] . $next_volume_num . ".sql";
+	if (!empty($volume_name) && preg_match('/^([^\s]*volume-(?P<prefix>[a-z\d]{10})-)(\d{1,})\.sql$/i', $volume_name, $match)) {
+		$next_volume_name = $match[1] . ($match[3] + 1) . ".sql";
 	}
 	return $next_volume_name;
+}
+/**
+ * 还原数据库备份目录下的某个备份目录下的一卷数据
+ * @param string $volume_name 卷文件名
+ * @return bolean;
+ */
+function system_database_volume_restore($volume_name) {
+	if (empty($volume_name) || !is_file($volume_name)) {
+		return false;
+	}
+	$sql = file_get_contents($volume_name);
+	pdo_run($sql);
+	return true;
 }
 /**
  * 删除数据库备份目录下的某个备份数据
@@ -114,6 +124,9 @@ function system_database_volumn_restore($volume_name) {
  */
 function system_database_backup_delete($delete_dirname) {
 	$path = IA_ROOT . '/data/backup/';
-	return rmdirs($path . $delete_dirname);
-	
+	$dir = $path . $delete_dirname;
+	if (empty($delete_dirname) || !is_dir($dir)) {
+		return false;
+	}
+	return rmdirs($dir);
 }
