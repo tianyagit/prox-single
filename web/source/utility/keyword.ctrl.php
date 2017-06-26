@@ -24,11 +24,8 @@ if($do == 'keyword') {
 	$keyword_lists = array();
 	if(!empty($rule_list)) {
 		foreach($rule_list as $row) {
-			if($type == 'all') {
-				$row['child_items'] = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $row['id'], 'status' => 1));
-			} else {
-				$row['child_items'] = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'rid' => $row['id'], 'status' => 1, 'module' => $type));
-			}
+			$condition['rid'] = $row['id'];
+			$row['child_items'] = pdo_getall('rule_keyword', $condition);
 			$keyword_lists[$row['id']] = $row;
 		}
 		unset($row);
