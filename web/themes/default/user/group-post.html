@@ -57,9 +57,6 @@
 							<td class="vertical-middle">公众号应用</td>
 							<td>
 								<ul>
-									<li class="col-sm-2 text-over text-left">
-										<span class="label label-success">系统模块</span>
-									</li>
 									<li ng-repeat="module in pack.modules" class="col-sm-2 text-over text-left">
 										<div ng-if="module.name != 'all'">
 											<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
@@ -81,7 +78,7 @@
 						</tr>
 						<tr class="permission-template">
 							<td class="vertical-middle">模板</td>
-							<td><ul><li><span class="label label-success">系统默认模板</span></li><li ng-repeat="tpl in pack.templates"><span class="label label-info" ng-bind="tpl.title"></span></li></ul></td>
+							<td><ul><li ng-repeat="tpl in pack.templates"><span class="label label-info" ng-bind="tpl.title"></span></li></ul></td>
 						</tr>
 					</table>
 				</div>
