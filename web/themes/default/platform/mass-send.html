@@ -45,6 +45,8 @@
 					{if !$list['cron_id'] && $list['sendtime'] > TIMESTAMP}
 					<a href="{php echo url('platform/mass/cron', array('id' => $list['id']));}" class="btn btn-danger btn-sm">同步到云服务</a>
 					{/if}
+					<a href="{php echo url('platform/mass/post', array('id' => $list['id']));}" data-toggle="tooltip" data-placement="bottom">编辑</a>
+					<a href="{php echo url('platform/mass/del', array('id' => $list['id']));}" data-toggle="tooltip" data-placement="bottom">删除</a>
 				{/if}
 			</td>
 		</tr>

@@ -139,6 +139,16 @@ function checkaccount() {
 	}
 }
 
+/**
+ * 检查操作员是否已经选择一个小程序作为工作区域
+ */
+function checkwxapp() {
+	global $_W;
+	if (empty($_W['uniacid'])) {
+		itoast('', url('wxapp/display'), 'info');
+	}
+}
+
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;

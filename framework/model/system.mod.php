@@ -14,7 +14,7 @@ function system_menu_permission_list($role = '') {
 		cache_build_frame_menu();
 		$system_menu = cache_load('system_frame');
 	}
-	//根本不同的角色得到不同的菜单权限
+	//根据不同的角色得到不同的菜单权限
 	if ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
 		unset($system_menu['appmarket']);
 		unset($system_menu['adviertisement']);
@@ -29,7 +29,7 @@ function system_menu_permission_list($role = '') {
  * 获得数据库备份目录下的数据库备份文件数组
  * @return array;
  */
-function backup_database_list() {
+function system_database_backup() {
 	$path = IA_ROOT . '/data/backup/'; 
 	load()->func('file');
 	$reduction = array();
@@ -37,6 +37,7 @@ function backup_database_list() {
 		return array();
 	}
 	if ($handle = opendir($path)) {
+		//依次读取备份目录
 		while (false !== ($bakdir = readdir($handle))) {
 			if ($bakdir == '.' || $bakdir == '..') {
 				continue;
@@ -57,8 +58,12 @@ function backup_database_list() {
 						}
 					}
 				}
+				//卷名列表
+				$volume_list = array();
+				//获取卷文件名
 				for ($i = 1;;) {
 					$last = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
+					array_push($volume_list, $last); 
 					$i++;
 					$next = $path . $bakdir . "/volume-{$volume_prefix}-{$i}.sql";
 					if (!is_file($next)) {
@@ -72,9 +77,10 @@ function backup_database_list() {
 					fclose($fp);
 					if ($end == '----WeEngine MySQL Dump End') {
 						$row = array(
-								'bakdir'=> $bakdir,
-								'time'=> $time,
-								'volume'=> $i - 1
+							'bakdir' => $bakdir,
+							'time' => $time,
+							'volume' => $i - 1,
+							'volume_list' => $volume_list,
 						);
 						$reduction[$bakdir] = $row;
 						continue;
@@ -85,4 +91,42 @@ function backup_database_list() {
 		}
 	}
 	return $reduction;
+}
+/**
+ * 得到备份文件下一卷文件名
+ * @param string $volume_name 卷文件名
+ * @return mixed;
+ */
+function system_database_volume_next($volume_name) {
+	$next_volume_name = '';
+	if (!empty($volume_name) && preg_match('/^([^\s]*volume-(?P<prefix>[a-z\d]{10})-)(\d{1,})\.sql$/i', $volume_name, $match)) {
+		$next_volume_name = $match[1] . ($match[3] + 1) . ".sql";
+	}
+	return $next_volume_name;
+}
+/**
+ * 还原数据库备份目录下的某个备份目录下的一卷数据
+ * @param string $volume_name 卷文件名
+ * @return bolean;
+ */
+function system_database_volume_restore($volume_name) {
+	if (empty($volume_name) || !is_file($volume_name)) {
+		return false;
+	}
+	$sql = file_get_contents($volume_name);
+	pdo_run($sql);
+	return true;
+}
+/**
+ * 删除数据库备份目录下的某个备份数据
+ * @param string 备份目录
+ * @return boolean;
+ */
+function system_database_backup_delete($delete_dirname) {
+	$path = IA_ROOT . '/data/backup/';
+	$dir = $path . $delete_dirname;
+	if (empty($delete_dirname) || !is_dir($dir)) {
+		return false;
+	}
+	return rmdirs($dir);
 }

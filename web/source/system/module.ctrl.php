@@ -437,7 +437,7 @@ if ($do == 'save_module_info') {
 		$result =  pdo_update('modules', $module_update, array('name' => $module_name));
 	} else {
 		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
-		$result = image_rename($module_icon_map[$type]['url'], $image_destination_url);
+		$result = utility_image_rename($module_icon_map[$type]['url'], $image_destination_url);
 	}
 
 	cache_delete(cache_system_key("module_info:" . $module_name));

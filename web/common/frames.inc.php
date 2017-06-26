@@ -122,7 +122,7 @@ $we7_system_menu['account'] = array(
 );
 $we7_system_menu['wxapp'] = array(
 	'title' => '小程序',
-	'url' => url('home/welcome/wxapp'),
+	'url' => url('wxapp/display/home'),
 	'section' => array(
 		'wxapp_module' => array(
 			'title' => '应用',
@@ -153,7 +153,7 @@ $we7_system_menu['wxapp'] = array(
 
 $we7_system_menu['system'] = array(
 	'title' => '系统管理',
-	'url' => url('system/welcome', array('account_type' => '5')),
+	'url' => url('home/welcome/system'),
 	'section' => array(
 		'wxplatform' => array(
 			'title' => '公众号',

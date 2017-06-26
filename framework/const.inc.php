@@ -127,8 +127,11 @@ define('PAYMENT_WECHAT_TYPE_BORROW', 2);
 define('PAYMENT_WECHAT_TYPE_SERVICE', 3);
 define('PAYMENT_WECHAT_TYPE_CLOSE', 4);
 
-//页面滚动加载开关
-define('PAGE_SCROLL_SWITCH', true);
+//平台给粉丝发消息的类型
+define('FANS_CHATS_FROM_SYSTEM', 1);
 
 //小程序数据常规分析常量
 define('WXAPP_STATISTICS_DAILYVISITTREND', 2);
+
+define('MATERIAL_LOCAL', 'local');//服务器素材类型
+define('MATERIAL_WEXIN', 'perm');//微信素材类型

@@ -133,9 +133,7 @@ function material_news_set($data, $attach_id) {
 			'id' => $attach_id
 		));
 		foreach ($post_news as $id => $news) {
-			pdo_update('wechat_news', $news, array(
-				'id' => $news['id']
-			));
+			pdo_update('wechat_news', $news, array('id' => $news['id']));
 		}
 		cache_delete(cache_system_key('material_reply:' . $attach_id));
 	} else {
@@ -335,9 +333,7 @@ function material_local_news_upload($attach_id) {
 				$news['thumb_url'] = $result['url'];
 			}
 		}
-		pdo_update('wechat_news', $news, array(
-				'id' => $news['id']
-		));
+		pdo_update('wechat_news', $news, array('id' => $news['id']));
 		if (empty($material['media_id'])){
 			$articles['articles'][] = $news;
 		} else {
@@ -363,12 +359,7 @@ function material_local_news_upload($attach_id) {
 			'id' => $attach_id
 		));
 	} else {
-		pdo_update('wechat_attachment', array(
-			'model' => 'perm'
-		), array(
-			'uniacid' => $_W['uniacid'],
-			'id' => $attach_id
-		));
+		pdo_update('wechat_attachment', array('model' => 'perm'), array('uniacid' => $_W['uniacid'], 'id' => $attach_id));
 	}
 	return $material;
 }
@@ -403,10 +394,7 @@ function material_local_upload_by_url($url, $type='images') {
 function material_local_upload($material_id){
 	global $_W;
 	$type_arr = array('1' => 'images', '2' => 'voices', '3' => 'videos');
-	$material = pdo_get('core_attachment', array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $material_id
-	));
+	$material = pdo_get('core_attachment', array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	if (empty($material)) {
 		return error('-1', '同步素材不存在或已删除');
 	}
@@ -449,10 +437,7 @@ function material_news_delete($material_id){
 		return error('-1', '您没有权限删除该文件');
 	}
 	$material_id = intval($material_id);
-	$material = pdo_get('wechat_attachment', array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $material_id,
-	));
+	$material = pdo_get('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	if (empty($material)){
 		return error('-2', '素材文件不存在或已删除');
 	}
@@ -463,14 +448,8 @@ function material_news_delete($material_id){
 	if (is_error($result)){
 		return $result;
 	}
-	pdo_delete('wechat_news', array(
-		'uniacid' => $_W['uniacid'],
-		'attach_id' => $material_id
-	));
-	pdo_delete('wechat_attachment', array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $material_id
-	));
+	pdo_delete('wechat_news', array('uniacid' => $_W['uniacid'], 'attach_id' => $material_id));
+	pdo_delete('wechat_attachment', array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	return $result;
 }
 
@@ -503,10 +482,7 @@ function material_delete($material_id, $location){
 	if (is_error($result)) {
 		return error('-3', '删除文件操作发生错误');
 	}
-	pdo_delete($table, array(
-		'uniacid' => $_W['uniacid'],
-		'id' => $material_id
-	));
+	pdo_delete($table, array('uniacid' => $_W['uniacid'], 'id' => $material_id));
 	return $result;
 }
 
@@ -519,7 +495,88 @@ function material_url_check($url) {
 	if (empty($url)){
 		return true;
 	} else {
-		$pattern ="/^((https?:\/\/|\.\/index.php\?)[^\s]*|tel:(\/\/)?\d{11})/i";
+		$pattern ="/^((https|http|tel):\/\/|\.\/index.php)[^\s]+/i";
 		return preg_match($pattern, $url);
 	}
+}
+
+function material_news_list($server = '', $search ='', $page = array('page_index' => 1, 'page_size' => 24)) {
+	global $_W;
+	$conditions[':uniacid'] = $_W['uniacid'];
+	$news_model_sql = '';
+	if (!empty($server)) {
+		$news_model_sql = " AND a.model = :news_model";
+		$conditions[':news_model'] = $server;
+	}
+
+	$search_sql = '';
+	if (!empty($search)) {
+		$search_sql = " AND (b.title LIKE :search_title OR b.author = :search_author OR b.digest LIKE :search_digest)";
+		$conditions[':search_title'] = "%{$search}%";
+		$conditions[':search_author'] = "%{$search}%";
+		$conditions[':search_digest'] = "%{$search}%";
+	}
+
+	$select_sql = "SELECT  %s FROM " . tablename('wechat_attachment') . " AS a RIGHT JOIN " . tablename('wechat_news') . " AS b ON a.id = b.attach_id WHERE  a.uniacid = :uniacid AND a.type = 'news' AND a.id <> '' " . $news_model_sql . $search_sql . "%s";
+	$list_sql = sprintf($select_sql, "*, a.id as id", " ORDER BY a.createtime DESC, b.displayorder ASC LIMIT " . ($page['page_index'] - 1) * $page['page_size'] . ", " . $page['page_size']);
+	$total_sql = sprintf($select_sql, "count(*)", '');
+	$total = pdo_fetchcolumn($total_sql, $conditions);
+	$news_list = pdo_fetchall($list_sql, $conditions);
+	$material_list = array();
+	if (! empty($news_list)) {
+		foreach ($news_list as $news){
+			if (isset($material_list[$news['attach_id']])){
+				$material_list[$news['attach_id']]['items'][$news['displayorder']] = $news;
+			}else{
+				$material_list[$news['attach_id']] = array(
+						'id' => $news['id'],
+						'filename' => $news['filename'],
+						'attachment' => $news['attachment'],
+						'media_id' => $news['media_id'],
+						'type' => $news['type'],
+						'model' => $news['model'],
+						'tag' => $news['tag'],
+						'createtime' => $news['createtime'],
+						'items' => array($news['displayorder'] => $news),
+				);
+			}
+		}
+	}
+	unset($news_list);
+	$pager = pagination($total, $page['page_index'], $page['page_size']);
+	$material_news = array('material_list' => $material_list, 'page' => $pager);
+	return $material_news;
+}
+
+function material_list($type = '', $server = '', $page = array('page_index' => 1, 'page_size' => 24)) {
+	global $_W;
+	$tables = array(MATERIAL_LOCAL => 'core_attachment', MATERIAL_WEXIN => 'wechat_attachment');
+	$conditions['uniacid'] = $_W['uniacid'];
+		$table = $tables[$server];
+		switch ($type) {
+			case 'voice' :
+				$conditions['type'] = $server == MATERIAL_LOCAL ? ATTACH_TYPE_VOICE : 'voice';
+				break;
+			case 'video' :
+				$conditions['type'] = $server == MATERIAL_LOCAL ? ATTACH_TYPE_VEDIO : 'video';
+				break;
+			default :
+				$conditions['type'] = $server == MATERIAL_LOCAL ? ATTACH_TYPE_IMAGE : 'image';
+				break;
+		}
+		if ($server == 'local') {
+			$material_list = pdo_getslice($table, $conditions, array($page['page_index'], $page['page_size']), $total, array(), '', 'createtime DESC');
+		} else {
+			$conditions['model'] = MATERIAL_WEXIN;
+			$material_list = pdo_getslice($table, $conditions, array($page['page_index'], $page['page_size']), $total, array(), '', 'createtime DESC');
+			if ($type == 'video'){
+				foreach ($material_list as &$row) {
+					$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
+				}
+				unset($row);
+			}
+		}
+		$pager = pagination($total, $page['page_index'], $page['page_size']);
+		$material_news = array('material_list' => $material_list, 'page' => $pager);
+		return $material_news;
 }
