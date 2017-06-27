@@ -187,7 +187,7 @@ function menu_update_currentself() {
 			}
 		}
 	}
-	return $default_menu_id;
+
 	if (!empty($default_menu_id)) {
 		pdo_update('uni_account_menus', array('status' => STATUS_ON), array('id' => $default_menu_id));
 		pdo_update('uni_account_menus', array('status' => STATUS_OFF), array('uniacid' => $_W['uniacid'], 'type' => MENU_CURRENTSELF, 'id !=' => $default_menu_id));
