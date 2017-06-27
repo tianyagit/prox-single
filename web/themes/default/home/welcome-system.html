@@ -8,15 +8,15 @@
 				<div class="panel-body we7-padding-vertical">
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
-						<div class="num"><a href="{php echo url('system/module/not_installed', array('account_type' => 1))}" class="color-default">{$account_uninstall_modules_nums}</a></div>
+						<div class="num"><a href="{php echo url('system/module/not_installed', array('account_type' => 1))}" class="color-default">{{account_uninstall_modules_nums}}</a></div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">可升级应用</div>
-						<div class="num">{$account_upgrade_module_nums}</div>
+						<div class="num">{{account_upgrade_module_nums}}</div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
-						<div class="num"><a href="{php echo url('system/module/installed', array('account_type' => 1))}" class="color-default">{$account_modules_total}</a></div>
+						<div class="num"><a href="{php echo url('system/module/installed', array('account_type' => 1))}" class="color-default">{{account_modules_total}}</a></div>
 					</div>
 				</div>
 			</div>
@@ -27,15 +27,15 @@
 				<div class="panel-body we7-padding-vertical">
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
-						<div class="num"><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" class="color-default">{$wxapp_uninstall_modules_nums}</a></div>
+						<div class="num"><a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" class="color-default">{{wxapp_uninstall_modules_nums}}</a></div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">可升级应用</div>
-						<div class="num">{$wxapp_upgrade_module_nums}</div>
+						<div class="num">{{wxapp_upgrade_module_nums}}</div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
-						<div class="num"><a href="{php echo url('system/module/installed', array('account_type' => 4))}" class="color-default">{$wxapp_modules_total}</a></div>
+						<div class="num"><a href="{php echo url('system/module/installed', array('account_type' => 4))}" class="color-default">{{wxapp_modules_total}}</a></div>
 					</div>
 				</div>
 			</div>
@@ -89,19 +89,14 @@
 					微信可升级应用
 				</div>
 				<div class="panel-body">
-					{if !empty($account_upgrade_module_list)}
-						{loop $account_upgrade_module_list $index $module}
-							<a href="{php echo url('system/module/module_detail', array('name' => $module['name'], 'show' =>'upgrade'))}" class="apply-item">
-								<img src="{$module['logo']}" class="apply-img"/>
-								<span class="text-over">{$module['title']}</span>
-								<span class="color-red">升级</span>
-							</a>
-						{/loop}
-					{else}
-						<div class="text-center">
+						<a href="{{module.link}}" class="apply-item" ng-repeat="module in account_upgrade_module_list">
+							<img src="{{module.logo}}" class="apply-img"/>
+							<span class="text-over">{{module.title}}</span>
+							<span class="color-red">升级</span>
+						</a>
+						<div class="text-center" ng-if="account_upgrade_module_show = 0">
 							没有可升级的应用
 						</div>
-					{/if}
 				</div>
 			</div>
 		</div>
@@ -112,19 +107,14 @@
 					小程序可升级应用
 				</div>
 				<div class="panel-body">
-					{if !empty($wxapp_upgrade_module_list)}
-						{loop $wxapp_upgrade_module_list $index $module}
-							<a href="{php echo url('system/module/module_detail', array('name' => $module['name'], 'show' => 'upgrade', 'account_type' => 4))}" class="apply-item">
-								<img src="{$module['logo']}" class="apply-img"/>
-								<span class="text-over">{$module['title']}</span>
-								<span class="color-red">升级</span>
-							</a>
-						{/loop}
-					{else}
-						<div class="text-center">
-							没有可升级的应用
-						</div>
-					{/if}
+					<a href="{{module.link}}" class="apply-item" ng-repeat="module in wxapp_upgrade_module_list">
+						<img src="{{module.logo}}" class="apply-img"/>
+						<span class="text-over">{{module.title}}</span>
+						<span class="color-red">升级</span>
+					</a>		
+					<div class="text-center" ng-if='wxapp_upgrade_module_show = 0'>
+						没有可升级的应用
+					</div>
 				</div>
 			</div>
 		</div>
@@ -133,6 +123,10 @@
 <!--end 系统管理首页-->
 <script type="text/javascript">
 	$(function(){
+		angular.module('systemApp').value('config', {
+			notices: {php echo !empty($notices) ? json_encode($notices) : 'null'},
+			moduleStatisticsUrl : "{php echo url('home/welcome/get_module_statistics')}"
+		});
 		angular.bootstrap($('.js-system-welcome'), ['systemApp']);
 	});
 </script>	
