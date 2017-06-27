@@ -147,3 +147,29 @@ function menu_update_conditional() {
 	}
 	return true;
 }
+
+/**
+ * 删除菜单
+ * @param int $id
+ */
+function menu_delete($id) {
+	global $_W;
+	$id = intval($id);
+	if (empty($id)) {
+		return error(-1, '参数错误！');
+	}
+	$menu_info = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	if (empty($menu_info)) {
+		return error(-1, '菜单不存在或已经删除');
+	}
+	if ($menu_info['status'] == STATUS_OFF) {
+		pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+		return error(0, '删除菜单成功！');
+	}
+	if ($menu_info['type'] == MENU_CONDITIONAL && $menu_info['menuid'] > 0 && $menu_info['status'] != STATUS_OFF) {
+		$account_api = WeAccount::create($_W['acid']);
+		$result = $account_api->menuDelete($menu_info['menuid']);
+		pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	}
+	return true;
+}
