@@ -357,9 +357,9 @@
 		$.post("{php echo url('mc/fans/batch_edit_fans_tag')}", {'openid' : openid, 'tag' : checktags}, function(data) {
 			data = $.parseJSON(data);
 			if (data.message.errno == 0) {
-				util.message('修改成功', '{php echo url('mc/fans')}', 'success');
+				util.message('修改成功', "{php echo url('mc/fans')}", 'success');
 			} else {
-				util.message(data.message.message, '', 'info');
+				util.message(data.message.message.message, '', 'info');
 			}
 		});
 	}

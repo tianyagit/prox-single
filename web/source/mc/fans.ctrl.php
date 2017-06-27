@@ -213,19 +213,20 @@ if ($do == 'batch_edit_fans_tag') {
 	}
 
 	$account_api = WeAccount::create();
+	pdo_begin();
 	foreach ($tags as $tag) {
-		$result = $account_api->fansTagBatchTagging($openid_list, $tags[0]);
-		if (!is_error($result)) {
-			foreach ($openid_list as $openid) {
-				$fan_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'openid' => $openid));
-				pdo_insert('mc_fans_tag_mapping', array('fanid' => $fan_info['fanid'], 'tagid' => $tag));
-				$groupid = $fan_info['group'].",".$tag;
-				pdo_update('mc_mapping_fans', array('groupid' => $groupid), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
-			}
-		} else {
-			iajax(0, $result);
+		$result = $account_api->fansTagBatchTagging($openid_list, $tag);
+		if (is_error($result)) {
+			iajax(-1, $result);
+		}
+		foreach ($openid_list as $openid) {
+			$fan_info = pdo_get('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'openid' => $openid));
+			pdo_insert('mc_fans_tag_mapping', array('fanid' => $fan_info['fanid'], 'tagid' => $tag), true);
+			$groupid = $fan_info['group'].",".$tag;
+			pdo_update('mc_mapping_fans', array('groupid' => $groupid), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
 		}
 	}
+	pdo_commit();
 	iajax(0, '');
 }
 
