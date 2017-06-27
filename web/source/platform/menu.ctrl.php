@@ -424,44 +424,11 @@ if($do == 'post') {
 
 if($do == 'delete') {
 	$id = intval($_GPC['id']);
-	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-	if(empty($data)) {
-		itoast('菜单不存在或已经删除', referer(), 'error');
+	$result = menu_delete($id);
+	if (is_error($result)) {
+		itoast($result['message'], referer(), 'error');
 	}
-	$status =  $_GPC['status'];
-
-	if (($data['type'] == 3 || $data['type'] == 1) && $data['status'] == 0) {
-		pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-		itoast('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
-	}
-	if(($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0)) && $data['status'] != 0) {
-		$account_api = WeAccount::create($_W['acid']);
-		$result = $account_api->menuDelete($data['menuid']);
-		if(is_error($result) && empty($_GPC['f'])) {
-			if ($result['errno'] == '65301') {
-				pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-				itoast('删除菜单成功', referer(), 'success');
-			}
-			$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
-			$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
-			$message = "调用微信接口删除失败:{$result['message']}<br>";
-			itoast($message, '', 'error');
-		}
-	}
-	if ($status == 'history') {
-		if($data['type'] == 1) {
-			pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id, 'status' => '0'));
-		} else {
-			pdo_delete('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-		}
-	} else {
-		if($data['type'] == 1) {
-			pdo_update('uni_account_menus', array('isdeleted' => 1), array('uniacid' => $_W['uniacid']));
-		} else {
-			pdo_update('uni_account_menus', array('isdeleted' => 1), array('uniacid' => $_W['uniacid'], 'id' => $id));
-		}
-	}
-	itoast('删除菜单成功', url('platform/menu/display', array('type' => $data['type'])), 'success');
+	itoast('删除菜单成功', referer(), 'success');
 }
 
 if ($do == 'current_menu') {
