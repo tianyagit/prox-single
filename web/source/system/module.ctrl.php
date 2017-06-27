@@ -166,7 +166,7 @@ if ($do == 'upgrade') {
 	//处理模块菜单
 	$module = ext_module_convert($manifest);
 
-	unset($module['name']);
+	unset($module['name'], $module['title']);
 	$bindings = array_elements(array_keys($points), $module, false);
 	foreach ($points as $point_name => $point_info) {
 		unset($module[$point_name]);
@@ -489,7 +489,7 @@ if ($do == 'module_detail') {
 	if (!empty($module_group_list)) {
 		foreach ($module_group_list as $group) {
 			$group['modules'] = iunserializer($group['modules']);
-			if (in_array($module_name, $group['modules'])) {
+			if (is_array($group['modules']) && in_array($module_name, $group['modules'])) {
 				$module_group[] = $group;
 			}
 		}

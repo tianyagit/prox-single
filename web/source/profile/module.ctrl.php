@@ -29,7 +29,7 @@ if ($do == 'check_status') {
 			iajax(1, '您的站点存在盗版模块, 请删除文件后联系客服');
 		}
 		if ($module_status['upgrade']['upgrade']) {
-			iajax(1, $module_status['upgrade']['name'] . '检测最新版为' . $module_status['upgrade']['version'] . '，请尽快更新');
+			iajax(2, $module_status['upgrade']['name'] . '检测最新版为' . $module_status['upgrade']['version'] . '，请尽快更新');
 		}
 	}
 	iajax(0, '', '');
