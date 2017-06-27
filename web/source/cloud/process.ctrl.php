@@ -14,6 +14,12 @@ $steps = array('files', 'schemas', 'scripts');
 $step = in_array($step, $steps) ? $step : 'files';
 
 if ($step == 'files' && $_W['ispost']) {
+	$file = pathinfo($_GPC['path']);
+	$file_name = $file['basename'];
+	$ignore_files = array('icon.jpg', 'icon-custom.jpg', 'preview.jpg', 'preview-custom.jpg');
+	if (in_array($file_name, $ignore_files)) {
+		exit('success');
+	}
 	$ret = cloud_download($_GPC['path'], $_GPC['type']);
 	if (!is_error($ret)) {
 		exit('success');
