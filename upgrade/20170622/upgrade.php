@@ -6,7 +6,7 @@
 define('IN_SYS', true);
 require '../../framework/bootstrap.inc.php';
 
-pdo_query("CREATE TABLE IF NOT EXISTS `ims_wxapp_general_analysis2` (
+pdo_query("CREATE TABLE IF NOT EXISTS `ims_wxapp_general_analysis` (
 `id`  int(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
 `uniacid`  int(10) NOT NULL ,
 `session_cnt`  int(10) NOT NULL COMMENT '打开次数' ,
@@ -19,8 +19,5 @@ pdo_query("CREATE TABLE IF NOT EXISTS `ims_wxapp_general_analysis2` (
 `visit_depth` FLOAT(10,4) NOT NULL COMMENT '平均访问深度' ,
 `ref_date`  varchar(10) NOT NULL COMMENT '时间' ,
 PRIMARY KEY (`id`),
-INDEX `uniacid` (`uniacid`) USING BTREE ,
-INDEX `type` (`type`) USING BTREE 
-)
-COMMENT='小程序数据常规分析表'
-;");
+INDEX `uniacid` (`uniacid`) USING BTREE 
+);");
