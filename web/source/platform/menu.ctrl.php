@@ -61,7 +61,7 @@ if($do == 'display') {
 if($do == 'push') {
 	$id = intval($_GPC['id']);
 	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-	if(empty($data)) {
+	if (empty($data)) {
 		iajax(-1, '菜单不存在或已删除', referer());
 	}
 	if ($_GPC['status'] == 1) {
@@ -69,64 +69,9 @@ if($do == 'push') {
 		if(empty($post)) {
 			iajax(-1, '菜单数据错误', referer());
 		}
-		$menu = array();
-		if(!empty($post['button'])) {
-			foreach($post['button'] as &$button) {
-				$temp = array();
-				$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
-				$temp['name'] = urlencode($temp['name']);
-				if (empty($button['sub_button'])) {
-					$temp['type'] = $button['type'];
-					if($button['type'] == 'view') {
-						$temp['url'] = urlencode($button['url']);
-					} elseif ($button['type'] == 'media_id' || $button['type'] == 'view_limited') {
-						$temp['media_id'] = urlencode($button['media_id']);
-					} else {
-						$temp['key'] = urlencode($button['key']);
-					}
-				} else {
-					foreach($button['sub_button'] as &$subbutton) {
-						$sub_temp = array();
-						$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
-						$sub_temp['name'] = urlencode($sub_temp['name']);
-						$sub_temp['type'] = $subbutton['type'];
-						if($subbutton['type'] == 'view') {
-							$sub_temp['url'] = urlencode($subbutton['url']);
-						} elseif ($subbutton['type'] == 'media_id' || $subbutton['type'] == 'view_limited') {
-							$sub_temp['media_id'] = urlencode($subbutton['media_id']);
-						} else {
-							$sub_temp['key'] = urlencode($subbutton['key']);
-						}
-						$temp['sub_button'][] = $sub_temp;
-					}
-					unset($subbutton);
-				}
-				$menu['button'][] = $temp;
-			}
-			unset($button);
-		}
+		$is_conditional = (!empty($post['matchrule']) && $data['type'] == MENU_CONDITIONAL) ? true : false;
+		$menu = menu_construct_createmenu_data($post, $is_conditional);
 
-		if(!empty($post['matchrule'])) {
-			if($post['matchrule']['sex'] > 0) {
-				$menu['matchrule']['sex'] = $post['matchrule']['sex'];
-			}
-			if($post['matchrule']['group_id'] != -1) {
-				$menu['matchrule']['tag_id'] = $post['matchrule']['group_id']; 			// 微信用户组id，变为用户标签id
-			}
-			if($post['matchrule']['client_platform_type'] > 0) {
-				$menu['matchrule']['client_platform_type'] = $post['matchrule']['client_platform_type'];
-			}
-			if(!empty($post['matchrule']['province'])) {
-				$menu['matchrule']['country'] = urlencode('中国');
-				$menu['matchrule']['province'] = urlencode(rtrim($post['matchrule']['province'], '省'));
-				if(!empty($post['matchrule']['city'])) {
-					$menu['matchrule']['city'] = urlencode(rtrim($post['matchrule']['city'], '市'));
-				}
-			}
-		}
-		if ($data['type'] == 1) {
-			unset($menu['matchrule']);
-		}
 		$account_api = WeAccount::create($_W['acid']);
 		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
@@ -145,21 +90,18 @@ if($do == 'push') {
 			}
 			iajax(0, '推送成功', url('platform/menu/display', array('type' => $data['type'])));
 		}
-	} elseif ($_GPC['status'] == 2) {
-		$status =  $_GPC['status'];
-		if($data['type'] == 1 || ($data['type'] == 3 && $data['menuid'] > 0) && $status != 'history') {
+	}
+	if ($_GPC['status'] == 2) {
+		if($data['type'] == MENU_CONDITIONAL && $data['menuid'] > 0 && $data['status'] != STATUS_OFF) {
 			$account_api = WeAccount::create($_W['acid']);
 			$result = $account_api->menuDelete($data['menuid']);
-			if(is_error($result) && empty($_GPC['f'])) {
-				$url = url('platform/menu/delete', array('id' => $id, 'f' => 1));
-				$url_display = url('platform/menu/display', array('id' => $id, 'f' => 1));
-				$message = "调用微信接口删除失败:{$result['message']}<br>";
-				itoast(error(-1, $message), '', 'error');
+			if(is_error($result)) {
+				return error(-1, $result['message']);
 			} else {
-				pdo_update('uni_account_menus', array('status' => '0'), array('id' => $data['id']));
+				pdo_update('uni_account_menus', array('status' => STATUS_OFF), array('id' => $data['id']));
 				iajax(0, '关闭成功', url('platform/menu/display', array('type' => $data['type'])));
 			}
-		}
+		}	
 	}
 }
 
@@ -268,107 +210,32 @@ if($do == 'post') {
 		if (!empty($check_title_exist)) {
 			iajax(-1, '菜单组名称已存在，请重新命名！', '');
 		}
-		$menu = array();
-		if(!empty($post['button'])) {
-			foreach($post['button'] as $key => &$button) {
-				$temp = array();
-				$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
-				$temp['name'] = urlencode($temp['name']);
-				$keyword_exist = strexists($button['key'], 'keyword:');
-				if ($keyword_exist) {
-					$button['key'] = substr($button['key'], 8);
-				}
-				$state = 'we7sid-'.$_W['session_id'];
-
-				if (empty($button['sub_button'])) {
-					$temp['type'] = $button['type'];
-					if($button['type'] == 'view') {
-						$temp['url'] = urlencode($button['url']);
-					} elseif ($button['type'] == 'click') {
-						if (!empty($button['media_id']) && empty($button['key'])) {
-							$temp['media_id'] = urlencode($button['media_id']);
-							$temp['type'] = 'media_id';
-						} elseif (empty($button['media_id']) && !empty($button['key'])) {
-							$temp['type'] = 'click';
-							$temp['key'] = urlencode($button['key']);
-						}
-					} elseif ($button['type'] == 'miniprogram') {
-						$temp['type'] = 'miniprogram';
-						$temp['appid'] = trim($button['appid']);
-						$temp['pagepath'] = urlencode($button['pagepath']);
-						$temp['url'] = urlencode($button['url']);
-					} else {
-						$temp['key'] = urlencode($button['key']);
-					}
-				} else {
-					foreach($button['sub_button'] as &$subbutton) {
-						$sub_temp = array();
-						$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $subbutton['name']);
-						$sub_temp['name'] = urlencode($sub_temp['name']);
-						$sub_keyword_exist = strexists($subbutton['key'], 'keyword:');
-						if ($sub_keyword_exist) {
-							$subbutton['key'] = substr($subbutton['key'], 8);
-						}
-						$sub_temp['type'] = $subbutton['type'];
-						if($subbutton['type'] == 'view') {
-							$sub_temp['url'] = urlencode($subbutton['url']);
-						} elseif ($subbutton['type'] == 'click') {
-							if (!empty($subbutton['media_id']) && empty($subbutton['key'])) {
-								$sub_temp['media_id'] = urlencode($subbutton['media_id']);
-								$sub_temp['type'] = 'media_id';
-							} elseif (empty($subbutton['media_id']) && !empty($subbutton['key'])) {
-								$sub_temp['type'] = 'click';
-								$sub_temp['key'] = urlencode($subbutton['key']);
-							}
-						} elseif ($subbutton['type'] == 'miniprogram') {
-							$sub_temp['type'] = 'miniprogram';
-							$sub_temp['appid'] = trim($subbutton['appid']);
-							$sub_temp['pagepath'] = urlencode($subbutton['pagepath']);
-							$sub_temp['url'] = urlencode($subbutton['url']);
-						} else {
-							$sub_temp['key'] = urlencode($subbutton['key']);
-						}
-						$temp['sub_button'][] = $sub_temp;
-					}
-					unset($subbutton);
-				}
-				$menu['button'][] = $temp;
-			}
-			unset($button);
-		}
-
 		//判断是否有菜单显示对象提交,默认菜单和个性化菜单唯一区别就是有无菜单显示对象
 		if($post['type'] == 3 && empty($post['matchrule'])) {
 			iajax(-1, '请选择菜单显示对象', '');
 		}
-
-		if($post['type'] == 3 && !empty($post['matchrule'])) {
-			if($post['matchrule']['sex'] > 0) {
-				$menu['matchrule']['sex'] = $post['matchrule']['sex'];
-			}
-			if($post['matchrule']['group_id'] != -1) {
-				$menu['matchrule']['tag_id'] = $post['matchrule']['group_id'];		// 微信用户组id，变为用户标签id
-			}
-			if($post['matchrule']['client_platform_type'] > 0) {
-				$menu['matchrule']['client_platform_type'] = $post['matchrule']['client_platform_type'];
-			}
-
-			if(!empty($post['matchrule']['province'])) {
-				$menu['matchrule']['country'] = urlencode('中国');
-				$menu['matchrule']['province'] = urlencode(str_replace('省', '', $post['matchrule']['province']));
-				if(!empty($post['matchrule']['city'])) {
-					$menu['matchrule']['city'] = urlencode(str_replace('市', '', $post['matchrule']['city']));
+		if(!empty($post['button'])) {
+			foreach($post['button'] as $key => &$button) {
+				$keyword_exist = strexists($button['key'], 'keyword:');
+				if ($keyword_exist) {
+					$button['key'] = substr($button['key'], 8);
+				}
+				if (!empty($button['sub_button'])) {
+					foreach($button['sub_button'] as &$subbutton) {
+						$sub_keyword_exist = strexists($subbutton['key'], 'keyword:');
+						if ($sub_keyword_exist) {
+							$subbutton['key'] = substr($subbutton['key'], 8);
+						}
+					}
+					unset($subbutton);
 				}
 			}
-			if(!empty($post['matchrule']['language'])) {
-				$inarray = 0;
-				$languages = platform_menu_languages();
-				foreach ($languages as $key => $value) {
-					if(in_array($post['matchrule']['language'], $value, true)) $inarray = 1;
-				}
-				if($inarray === 1) $menu['matchrule']['language'] = $post['matchrule']['language'];
-			}
+			unset($button);
 		}
+
+		$is_conditional = $post['type'] == MENU_CONDITIONAL ? true : false;
+		$menu = menu_construct_createmenu_data($post, $is_conditional);
+
 		$account_api = WeAccount::create();
 		$result = $account_api->menuCreate($menu);
 		if(is_error($result)) {
@@ -380,9 +247,6 @@ if($do == 'post') {
 				unset($menu['matchrule']['tag_id']);
 			}
 			$menu = json_decode(urldecode(json_encode($menu)), true);
-			if(!isset($menu['matchrule'])) {
-				$menu['matchrule'] = array();
-			}
 			
 			$insert = array(
 				'uniacid' => $_W['uniacid'],
