@@ -1,5 +1,8 @@
 {template 'common/header'}
 {if empty($id)}
+	<div class="we7-page-title">
+		素材定时群发
+	</div>
 	<ul class="we7-page-tab">
 		<li {if $_GPC['a'] == 'mass'  && $do == 'post'}class="active"{/if}>
 		<a href="{php echo url('platform/mass/post')}" >素材编辑</a>
