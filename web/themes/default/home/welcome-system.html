@@ -81,45 +81,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="row apply-upgrade">
-		<div class="col-sm-6">
-			<div class="panel we7-panel">
-				<div class="panel-heading">
-					<a href="{php echo url('system/module', array('account_type' => 1))}" class="pull-right color-default">更多</a>
-					微信可升级应用
-				</div>
-				<div class="panel-body">
-						<a href="{{module.link}}" class="apply-item" ng-repeat="module in account_upgrade_module_list">
-							<img src="{{module.logo}}" class="apply-img"/>
-							<span class="text-over">{{module.title}}</span>
-							<span class="color-red">升级</span>
-						</a>
-						<div class="text-center" ng-if="account_upgrade_module_show = 0">
-							没有可升级的应用
-						</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-sm-6">
-			<div class="panel we7-panel">
-				<div class="panel-heading">
-					<a href="{php echo url('system/module', array('account_type' => 4))}" class="pull-right color-default">更多</a>
-					小程序可升级应用
-				</div>
-				<div class="panel-body">
-					<a href="{{module.link}}" class="apply-item" ng-repeat="module in wxapp_upgrade_module_list">
-						<img src="{{module.logo}}" class="apply-img"/>
-						<span class="text-over">{{module.title}}</span>
-						<span class="color-red">升级</span>
-					</a>		
-					<div class="text-center" ng-if='wxapp_upgrade_module_show = 0'>
-						没有可升级的应用
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="panel we7-panel apply-list hidden">
+	<div class="panel we7-panel apply-list">
 		<div class="panel-heading">
 			<span class="pull-right">
 				<a href="{php echo url('system/module', array('account_type' => 1))}" class="color-default">查看更多公众号应用</a>
@@ -129,11 +91,14 @@
 			可升级应用
 		</div>
 		<div class="panel-body text-center">
-			<a ng-href="{{module.url}}" target="_blank" class="apply-item" ng-if="last_modules && !module.wxapp && module.logo && $index+1 < 8" class="apply-item" ng-repeat="module in last_modules">
-				<img src="{$module['logo']}" class="apply-img"/>
-				<span class="text-over">{$module['title']}</span>
+			<a ng-href="{{module.link}}" target="_blank" class="apply-item" ng-if="last_modules && !module.wxapp && module.logo && $index+1 < 8" class="apply-item" ng-repeat="module in upgrade_module_list">
+				<img src="{{module.logo}}" class="apply-img"/>
+				<span class="text-over">{{module.title}}</span>
 				<span class="color-red">升级</span>
 			</a>
+			<div class="text-center" ng-if='upgrade_module_show = 0'>
+				没有可升级的应用
+			</div>
 		</div>
 	</div>
 </div>

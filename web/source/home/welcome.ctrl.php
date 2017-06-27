@@ -48,7 +48,11 @@ if ($do == 'platform') {
 		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
 		exit;
 	}
-	
+	//系统更新信息
+	$upgrade = cloud_build();
+	if (is_error($upgrade) || empty($upgrade['upgrade'])) {
+		$upgrade = array();
+	}
 	//数据备份信息
 	$reduction = system_database_backup();
 	//数据库最后一次备份时间
@@ -121,11 +125,6 @@ if ($do == 'platform') {
 		iajax(0, $last_modules, '');
 	}
 } elseif ($do = 'get_module_statistics') {
-	//系统更新信息
-	$upgrade = cloud_build();
-	if (is_error($upgrade) || empty($upgrade['upgrade'])) {
-		$upgrade = array();
-	}
 	//未安装应用
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
@@ -162,22 +161,19 @@ if ($do == 'platform') {
 	foreach ($wxapp_upgrade_module_list as $key => &$module) {
 		$module_fetch = module_fetch($key);
 		$module['logo'] = $module_fetch['logo'];
-		$module['link'] = url('system/module/module_detail', array('name' => $module['name'], 'show' =>'upgrade', 'account_type' => 1));
+		$module['link'] = url('system/module/module_detail', array('name' => $module['name'], 'show' =>'upgrade', 'account_type' => 4));
 	}
 	unset($module);
 	foreach ($account_upgrade_module_list as $key => &$module) {
 		$module_fetch = module_fetch($key);
 		$module['logo'] = $module_fetch['logo'];
-		$module['link'] = url('system/module/module_detail', array('name' => $module['name'], 'show' =>'upgrade', 'account_type' => 4));
+		$module['link'] = url('system/module/module_detail', array('name' => $module['name'], 'show' =>'upgrade', 'account_type' => 1));
 	}
 	unset($module);
-	$account_upgrade_module_show = 0;
-	if (count($account_upgrade_module_list) > 0) {
-		$account_upgrade_module_show = 1;
-	}
-	$wxapp_upgrade_module_show = 0;
-	if (count($wxapp_upgrade_module_list) > 0) {
-		$wxapp_upgrade_module_show = 1;
+	$upgrade_module_show = 0;
+	$upgrade_module_list = array_merge($account_upgrade_module_list, $wxapp_upgrade_module_list);
+	if (count($upgrade_module_list) > 0) {
+		$upgrade_module_show = 1;
 	}
 	$module_statistics = array(
 		'account_uninstall_modules_nums' => $account_uninstall_modules_nums,
@@ -186,10 +182,8 @@ if ($do == 'platform') {
 		'account_modules_total' => $account_modules_total,
 		'wxapp_modules_total' => $wxapp_modules_total,
 		'wxapp_upgrade_module_nums' => $wxapp_upgrade_module_nums,
-		'wxapp_upgrade_module_list' => $wxapp_upgrade_module_list,
-		'account_upgrade_module_list' => $account_upgrade_module_list,
-		'account_upgrade_module_show' => $account_upgrade_module_show,
-		'wxapp_upgrade_module_show' => $wxapp_upgrade_module_show
+		'upgrade_module_list' => $upgrade_module_list,
+		'upgrade_module_show' => $upgrade_module_show,
 	);
 	iajax(0, $module_statistics, '');
 }
