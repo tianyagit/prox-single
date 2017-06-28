@@ -5,10 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if ($do == 'platform' || $do == 'ext') {
-	checkaccount();
-}
-
 load()->model('welcome');
 load()->model('cloud');
 load()->func('communication');
@@ -19,6 +15,10 @@ load()->model('system');
 
 $dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
+
+if ($do == 'platform' || $do == 'ext') {
+	checkaccount();
+}
 
 if ($do == 'platform') {
 	$last_uniacid = uni_account_last_switch();
@@ -51,6 +51,7 @@ if ($do == 'platform') {
 		foreach ($reductions as $reduction) {
 			$time[] = $reduction['time'];
 		}
+		print_r($time);exit;
 		$backup_days = system_database_backup_days($time);
 	}
 	
@@ -129,7 +130,6 @@ if ($do == 'platform') {
 	} else {
 		$upgrade = $upgrade_cache['data'];
 	}
-	cache_delete('cloud:transtoken');
 	if (is_error($upgrade) || empty($upgrade['upgrade'])) {
 		$upgrade = array();
 	}
