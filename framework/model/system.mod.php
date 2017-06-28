@@ -93,7 +93,7 @@ function system_database_backup() {
 	foreach ($bakdirs as $key => $dir) {
 		$times[$key] = $dir['time'];
 	}
-	array_multisort($times,SORT_DESC,SORT_STRING, $reduction);
+	array_multisort($times, SORT_DESC, SORT_STRING, $reduction);
 	return $reduction;
 }
 /**
