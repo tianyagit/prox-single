@@ -432,21 +432,12 @@ function user_login_forward($forward = '') {
 	return $login_forward;
 }
 /**
- * 获取微信所有应用或者公众号所有应用
- * @param string $type 类型
+ * 获取公众号所有应用或者小程序所有应用
+ * @param string $type 模块类型(account/wxapp)
  * @return array $modules 模块信息
  */
-function user_module_by_type($type = 'account') {
+function user_module_by_account_type($type) {
 	global $_W;
-	$cachekey = cache_system_key("account_uninstall_modules:");
-	if ($type == 'wxapp') {
-		$cachekey = cache_system_key("wxapp_uninstall_modules:");
-	}
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		$module_list = iunserializer($cache);
-		return $module_list;
-	}
 	$module_list = user_modules($_W['uid']);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
@@ -462,6 +453,5 @@ function user_module_by_type($type = 'account') {
 		}
 		unset($module);
 	}
-	cache_write($cachekey, iserializer($module_list), 24*3600);
 	return $module_list;
 }

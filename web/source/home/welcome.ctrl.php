@@ -45,21 +45,15 @@ if ($do == 'platform') {
 		exit;
 	}
 	$reductions = system_database_backup();
-	$backup_days = 0;
-	if (!empty($reductions)) {
-		$time = array();
-		foreach ($reductions as $reduction) {
-			$time[] = $reduction['time'];
-		}
-		$backup_days = system_database_backup_days($time);
-	}
-	
+	$last_backup = array_shift($reductions);
+	$last_backup_time = $last_backup['time'];
+	$backup_days = system_database_backup_days($last_backup_time);
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];	
 	
-	$account_modules = user_module_by_type();
-	$wxapp_modules = user_module_by_type('wxapp');
+	$account_modules = user_module_by_account_type('account');
+	$wxapp_modules = user_module_by_account_type('wxapp');
 	
 	$account_modules_total = count($account_modules) + $account_uninstall_modules_nums;
 	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;	
