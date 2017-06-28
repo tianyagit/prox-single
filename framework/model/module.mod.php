@@ -588,9 +588,9 @@ function module_filter_upgrade($module_list) {
  */
 function module_upgrade_new($type = 'account') {
 	if ($type == 'wxapp') {
-		$module_list = user_module_by_type('wxapp');
+		$module_list = user_module_by_account_type('wxapp');
 	} else {
-		$module_list = user_module_by_type();
+		$module_list = user_module_by_account_type('account');
 	}
 	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
 	if (!empty($upgrade_modules)) {

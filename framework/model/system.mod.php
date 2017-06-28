@@ -37,10 +37,13 @@ function system_database_backup() {
 		return array();
 	}
 	if ($handle = opendir($path)) {
+		$j = 0;
 		while (false !== ($bakdir = readdir($handle))) {
 			if ($bakdir == '.' || $bakdir == '..') {
 				continue;
 			}
+			$bakdirs[$j]['time'] = date("Y-m-d H:i:s", filemtime($path.$bakdir));
+			$j++;
 			if (preg_match('/^(?P<time>\d{10})_[a-z\d]{8}$/i', $bakdir, $match)) {
 				$time = $match['time'];
 				if ($handle1= opendir($path . $bakdir)) {
@@ -85,7 +88,12 @@ function system_database_backup() {
 			}
 			rmdirs($path . $bakdir);
 		}
+		closedir($handle);
 	}
+	foreach ($bakdirs as $key => $dir) {
+		$times[$key] = $dir['time'];
+	}
+	array_multisort($times, SORT_DESC, SORT_STRING, $reduction);
 	return $reduction;
 }
 /**
@@ -125,33 +133,4 @@ function system_database_backup_delete($delete_dirname) {
 		return false;
 	}
 	return rmdirs($dir);
-}
-/**
- * 获取距离上次数据库备份间隔的天数
- * @param mixed 时间戳数组 /时间戳
- * @return integer 天数;
- */
-function system_database_backup_days($time) {
-	global $_W;
-	$cachekey = cache_system_key("back_days:");
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
-	}
-	$backup_days = 0;
-	if (is_array($time)) {
-		$max_backup_time = $time[0];
-		foreach ($time as $key => $backup_time) {
-			if ($backup_time <= $max_backup_time) {
-				continue;
-			}
-			$max_backup_time = $backup_time;
-		}
-		$backup_days = ceil((time() - $max_backup_time) / (3600 * 24));
-	}
-	if (is_numeric($time)) {
-		$backup_days = ceil((time() - $time) / (3600 * 24));
-	}
-	cache_write($cachekey, $backup_days, 24 * 3600);
-	return $backup_days;
 }
