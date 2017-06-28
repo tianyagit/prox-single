@@ -75,7 +75,7 @@ if ($do == 'push') {
 		$is_conditional = (!empty($post['matchrule']) && $data['type'] == MENU_CONDITIONAL) ? true : false;
 		$menu = menu_construct_createmenu_data($post, $is_conditional);
 
-		$account_api = WeAccount::create($_W['acid']);
+		$account_api = WeAccount::create();
 		$result = $account_api->menuCreate($menu);
 		if (is_error($result)) {
 			iajax(-1, $result['message'], '');
@@ -364,5 +364,5 @@ if ($do == 'current_menu') {
 			}
 		}
 	}
-	iajax(0, $material, '');
+	iajax(0, $material);
 }
