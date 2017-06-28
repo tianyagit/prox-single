@@ -48,7 +48,7 @@ if ($do == 'platform') {
 	$last_backup = array_shift($reductions);
 	$last_backup_time = $last_backup['time'];
 	$backup_days = welcome_database_backup_days($last_backup_time);
-		print_r($time);exit;
+
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];	
