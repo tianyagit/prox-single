@@ -412,23 +412,27 @@ function user_modules($uid) {
 function user_login_forward($forward = '') {
 	global $_W;
 	$login_forward = trim($forward);
-	
+
 	if (!empty($forward)) {
 		return $login_forward;
 	}
 	if (!empty($_W['isfounder'])) {
 		return url('home/welcome/system');
 	}
-	
+
 	$login_forward = url('account/display');
 	if (!empty($_W['uniacid']) && !empty($_W['account'])) {
+		$permission = uni_permission($_W['uid'], $_W['uniacid']);
+		if (empty($permission)) {
+			return $login_forward;
+		}
 		if ($_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $_W['account']['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			$login_forward = url('home/welcome');
 		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 			$login_forward = url('wxapp/display/home');
 		}
 	}
-	
+
 	return $login_forward;
 }
 /**
