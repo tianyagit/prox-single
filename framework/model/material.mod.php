@@ -433,7 +433,8 @@ function material_upload_limit() {
  */
 function material_news_delete($material_id){
 	global $_W;
-	if (empty($_W['isfounder']) && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER))) {
+	$permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'system');
+	if (empty($_W['isfounder']) && !empty($permission) && !in_array('platform_material', $permission)) {
 		return error('-1', '您没有权限删除该文件');
 	}
 	$material_id = intval($material_id);
