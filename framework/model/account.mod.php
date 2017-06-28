@@ -330,7 +330,7 @@ function uni_templates() {
 		$groupid = $owner['groupid'];
 	}
 	$extend = pdo_getall('uni_account_group', array('uniacid' => $_W['uniacid']), array(), 'groupid');
-	if (!empty($extend)) {
+	if (!empty($extend) && $groupid != '-1') {
 		$groupid = '-2';
 	}
 	if (empty($groupid)) {
