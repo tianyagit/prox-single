@@ -22,17 +22,20 @@ if($_W['isajax']) {
 if($do == 'display') {
 	set_time_limit(0);
 
-	$update_self_menu = menu_update_currentself();
-	if (is_error($update_self_menu)) {
-		itoast($update_self_menu['message'], '', 'error');
-	}
-
-	$conditional_menu_info = menu_update_conditional();
-	if(is_error($conditional_menu_info)) {
-		itoast($conditional_menu_info['message'], '', 'error');
-	}
-
 	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : MENU_CURRENTSELF;
+	if ($type == MENU_CURRENTSELF) {
+		$update_self_menu = menu_update_currentself();
+		if (is_error($update_self_menu)) {
+			itoast($update_self_menu['message'], '', 'error');
+		}
+	}
+	if ($type == MENU_CONDITIONAL) {
+		$update_conditional_menu = menu_update_conditional();
+		if(is_error($update_conditional_menu)) {
+			itoast($update_conditional_menu['message'], '', 'error');
+		}
+	}
+
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 	$condition = " WHERE uniacid = :uniacid";

@@ -15,10 +15,15 @@ $step = in_array($step, $steps) ? $step : 'files';
 
 if ($step == 'files' && $_W['ispost']) {
 	$file = pathinfo($_GPC['path']);
-	$file_name = $file['basename'];
-	$ignore_files = array('icon.jpg', 'icon-custom.jpg', 'preview.jpg', 'preview-custom.jpg');
-	if (in_array($file_name, $ignore_files)) {
-		exit('success');
+	$module_name = $_GPC['module'];
+	$module_info = module_fetch($module_name);
+	$module_installed = empty($module_info) ? false : true;
+	if ($module_installed) {
+		$file_name = $file['basename'];
+		$ignore_files = array('icon.jpg', 'icon-custom.jpg', 'preview.jpg', 'preview-custom.jpg');
+		if (in_array($file_name, $ignore_files)) {
+			exit('success');
+		}
 	}
 	$ret = cloud_download($_GPC['path'], $_GPC['type']);
 	if (!is_error($ret)) {
