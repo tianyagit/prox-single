@@ -547,7 +547,7 @@ function module_status($module) {
 }
 
 /**
- *  过滤传入的模块返回其中有更新的模块及模块信息
+ * 过滤传入的模块返回其中有更新的模块及模块信息
  * @param array $module_list 模块标识
  * @return array $modules 有升级的模块及升级信息
  */
@@ -580,4 +580,26 @@ function module_filter_upgrade($module_list) {
 		}
 	}
 	return $modules;
+}
+/**
+ * 得到最新可升级应用
+ * @param type account/wxapp
+ * @return array 升级的模块列表
+ */
+function module_upgrade_new($type = 'account') {
+	if ($type == 'wxapp') {
+		$module_list = user_module_by_type('wxapp');
+	} else {
+		$module_list = user_module_by_type();
+	}
+	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
+	if (!empty($upgrade_modules)) {
+		foreach ($upgrade_modules as $key => &$module) {
+			$module_fetch = module_fetch($key);
+			$module['logo'] = $module_fetch['logo'];
+			$module['link'] = url('system/module/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));
+		}
+		unset($module);
+	}
+	return $upgrade_modules;
 }

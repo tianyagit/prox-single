@@ -431,3 +431,37 @@ function user_login_forward($forward = '') {
 	
 	return $login_forward;
 }
+/**
+ * 获取微信所有应用或者公众号所有应用
+ * @param string $type 类型
+ * @return array $modules 模块信息
+ */
+function user_module_by_type($type = 'account') {
+	global $_W;
+	$cachekey = cache_system_key("account_uninstall_modules:");
+	if ($type == 'wxapp') {
+		$cachekey = cache_system_key("wxapp_uninstall_modules:");
+	}
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		$module_list = iunserializer($cache);
+		return $module_list;
+	}
+	$module_list = user_modules($_W['uid']);
+	if (!empty($module_list)) {
+		foreach ($module_list as $key => &$module) {
+			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon')) {
+				unset($module_list[$key]);
+			}
+			if ($module['wxapp_support'] != 2 && $type == 'wxapp') {
+				unset($module_list[$key]);
+			}
+			if ($module['app_support'] != 2 && $type == 'account') {
+				unset($module_list[$key]);
+			}
+		}
+		unset($module);
+	}
+	cache_write($cachekey, iserializer($module_list), 24*3600);
+	return $module_list;
+}

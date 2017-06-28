@@ -126,3 +126,32 @@ function system_database_backup_delete($delete_dirname) {
 	}
 	return rmdirs($dir);
 }
+/**
+ * 获取距离上次数据库备份间隔的天数
+ * @param mixed 时间戳数组 /时间戳
+ * @return integer 天数;
+ */
+function system_database_backup_days($time) {
+	global $_W;
+	$cachekey = cache_system_key("back_days:");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+	$backup_days = 0;
+	if (is_array($time)) {
+		$max_backup_time = $time[0];
+		foreach ($time as $key => $backup_time) {
+			if ($backup_time <= $max_backup_time) {
+				continue;
+			}
+			$max_backup_time = $backup_time;
+		}
+		$backup_days = ceil((time() - $max_backup_time) / (3600 * 24));
+	}
+	if (is_numeric($time)) {
+		$backup_days = ceil((time() - $time) / (3600 * 24));
+	}
+	cache_write($cachekey, $backup_days, 24 * 3600);
+	return $backup_days;
+}
