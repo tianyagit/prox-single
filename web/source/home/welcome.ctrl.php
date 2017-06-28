@@ -132,6 +132,5 @@ if ($do == 'platform') {
 			'wxapp_upgrade_module_nums' => $wxapp_upgrade_module_nums
 		)
 	);
-	print_r($upgrade_module);
 	iajax(0, $upgrade_module, '');
 }
