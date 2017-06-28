@@ -96,3 +96,7 @@ if (!function_exists('mb_strlen')) {
 		return istrlen($string, $charset);
 	}
 }
+
+if (!interface_exists('SessionHandlerInterface')) {
+	interface SessionHandlerInterface  {}
+}
