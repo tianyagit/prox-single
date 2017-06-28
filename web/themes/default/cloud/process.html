@@ -35,7 +35,7 @@
 			}
 			$scope.file = path;
 			$scope.pragress = i + '/' + total;
-			var params = {path: path, type : config.type};
+			var params = {path: path, type : config.type, module : config.appname};
 			$http.post(location.href, params).success(function(dat){
 				i++;
 				if(dat != 'success') {
