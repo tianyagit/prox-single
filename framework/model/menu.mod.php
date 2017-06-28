@@ -283,8 +283,49 @@ function menu_delete($id) {
 /**
  * 推送/关闭自定义菜单
  * @param int $id
- * @param int $edit_type 若等于1，则为推送；若等于2，则为关闭
  */
-function menu_push($id, $type) {
-	
+function menu_push($id) {
+	global $_W;
+	$id = intval($id);
+	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	if (empty($data)) {
+		return error(-1, '菜单不存在或已删除');
+	}
+	if ($data['status'] == STATUS_OFF) {
+		$post = iunserializer(base64_decode($data['data']));
+		if (empty($post)) {
+			return error(-1, '菜单数据错误');
+		}
+		$is_conditional = (!empty($post['matchrule']) && $data['type'] == MENU_CONDITIONAL) ? true : false;
+		$menu = menu_construct_createmenu_data($post, $is_conditional);
+
+		$account_api = WeAccount::create();
+		$result = $account_api->menuCreate($menu);
+		if (is_error($result)) {
+			return error(-1, $result['message']);
+		}
+		if ($data['type'] == MENU_CURRENTSELF) {
+			pdo_update('uni_account_menus', array('status' => '1'), array('id' => $data['id']));
+			pdo_update('uni_account_menus', array('status' => '0'), array('id !=' => $data['id'], 'uniacid' => $_W['uniacid'], 'type' => MENU_CURRENTSELF));
+		} elseif ($data['type'] == MENU_CONDITIONAL) {
+			// 将$menu中 tag_id 再转为 group_id
+			if ($post['matchrule']['group_id'] != -1) {
+				$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
+				unset($menu['matchrule']['tag_id']);
+			}
+			$status = pdo_update('uni_account_menus', array('status' => STATUS_ON, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
+		}
+		return true;
+	}
+	//只有个性化菜单才有关闭交互（默认菜单有且只有一个未开启状态，已在推送创建菜单中处理）
+	if ($data['status'] == STATUS_ON && $data['type'] == MENU_CONDITIONAL && $data['menuid'] > 0) {
+		$account_api = WeAccount::create();
+		$result = $account_api->menuDelete($data['menuid']);
+		if (is_error($result)) {
+			return error(-1, $result['message']);
+		} else {
+			pdo_update('uni_account_menus', array('status' => STATUS_OFF), array('id' => $data['id']));
+			return true;
+		}
+	}
 }

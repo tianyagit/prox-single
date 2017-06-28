@@ -63,48 +63,12 @@ if($do == 'display') {
 
 if ($do == 'push') {
 	$id = intval($_GPC['id']);
-	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-	if (empty($data)) {
-		iajax(-1, '菜单不存在或已删除', referer());
-	}
-	if ($_GPC['status'] == 1) {
-		$post = iunserializer(base64_decode($data['data']));
-		if (empty($post)) {
-			iajax(-1, '菜单数据错误', referer());
-		}
-		$is_conditional = (!empty($post['matchrule']) && $data['type'] == MENU_CONDITIONAL) ? true : false;
-		$menu = menu_construct_createmenu_data($post, $is_conditional);
-
-		$account_api = WeAccount::create();
-		$result = $account_api->menuCreate($menu);
-		if (is_error($result)) {
-			iajax(-1, $result['message'], '');
-		} else {
-			if ($data['type'] == MENU_CURRENTSELF) {
-				pdo_update('uni_account_menus', array('status' => '1'), array('id' => $data['id']));
-				pdo_update('uni_account_menus', array('status' => '0'), array('id !=' => $data['id'], 'uniacid' => $_W['uniacid'], 'type' => '1'));
-			} elseif ($data['type'] == MENU_CONDITIONAL) {
-				// 将$menu中 tag_id 再转为 group_id
-				if ($post['matchrule']['group_id'] != -1) {
-					$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
-					unset($menu['matchrule']['tag_id']);
-				}
-				$status = pdo_update('uni_account_menus', array('status' => STATUS_ON, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
-			}
-			iajax(0, '推送成功', url('platform/menu/display', array('type' => $data['type'])));
-		}
-	}
-	if ($_GPC['status'] == 2) {
-		if ($data['type'] == MENU_CONDITIONAL && $data['menuid'] > 0 && $data['status'] != STATUS_OFF) {
-			$account_api = WeAccount::create($_W['acid']);
-			$result = $account_api->menuDelete($data['menuid']);
-			if (is_error($result)) {
-				return error(-1, $result['message']);
-			} else {
-				pdo_update('uni_account_menus', array('status' => STATUS_OFF), array('id' => $data['id']));
-				iajax(0, '关闭成功', url('platform/menu/display', array('type' => $data['type'])));
-			}
-		}	
+	$result = menu_push($id);
+	
+	if (is_error($result)) {
+		iajax(-1, $result['message']);
+	} else {
+		iajax(0, '修改成功！', referer());
 	}
 }
 
