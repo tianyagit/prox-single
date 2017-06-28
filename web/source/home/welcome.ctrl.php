@@ -47,7 +47,7 @@ if ($do == 'platform') {
 	$reductions = system_database_backup();
 	$last_backup = array_shift($reductions);
 	$last_backup_time = $last_backup['time'];
-	$backup_days = system_database_backup_days($last_backup_time);
+	$backup_days = welcome_database_backup_days($last_backup_time);
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];	
@@ -114,32 +114,11 @@ if ($do == 'platform') {
 	}
 } elseif ($do == 'get_system_upgrade') {
 	//系统更新信息
-	cache_load('upgrade');
-	if (!empty($_W['cache']['upgrade'])) {
-		$upgrade_cache = $_W['cache']['upgrade'];
-	}
-	if (empty($upgrade_cache) || TIMESTAMP - $upgrade_cache['lastupdate'] >= 3600 * 24 || empty($upgrade_cache['data'])) {
-		$upgrade = cloud_build();
-	} else {
-		$upgrade = $upgrade_cache['data'];
-	}
-	cache_delete('cloud:transtoken');
-	if (is_error($upgrade) || empty($upgrade['upgrade'])) {
-		$upgrade = array();
-	}
-	if (!empty($upgrade['schemas'])) {
-		$upgrade['database'] = cloud_build_schemas($schems);
-	}
-	$file_nums = count($upgrade['files']);
-	$database_nums = count($upgrade['database']);
-	$script_nums = count($upgrade['scripts']);
-	$upgrade['file_nums'] = $file_nums;
-	$upgrade['database_nums'] = $database_nums;
-	$upgrade['script_nums'] = $script_nums;
+	$upgrade = welcome_get_cloud_upgrade();
 	iajax(0, $upgrade, '');	
 } elseif ($do == 'get_upgrade_modules') {
 	//可升级应用
-	$account_upgrade_modules = module_upgrade_new();
+	$account_upgrade_modules = module_upgrade_new('account');
 	$account_upgrade_module_nums = count($account_upgrade_modules);
 	$wxapp_upgrade_modules = module_upgrade_new('wxapp');
 	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
@@ -153,5 +132,6 @@ if ($do == 'platform') {
 			'wxapp_upgrade_module_nums' => $wxapp_upgrade_module_nums
 		)
 	);
+	print_r($upgrade_module);
 	iajax(0, $upgrade_module, '');
 }

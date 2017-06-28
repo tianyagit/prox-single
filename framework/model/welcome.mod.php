@@ -36,7 +36,7 @@ function welcome_notices_get() {
  * @param mixed 时间戳数组 /时间戳
  * @return integer 天数;
  */
-function system_database_backup_days($time) {
+function welcome_database_backup_days($time) {
 	global $_W;
 	$cachekey = cache_system_key("back_days:");
 	$cache = cache_load($cachekey);
@@ -59,4 +59,33 @@ function system_database_backup_days($time) {
 	}
 	cache_write($cachekey, $backup_days, 24 * 3600);
 	return $backup_days;
+}
+/**
+ * 获取云服务系统更新数据
+ * @return array() ;
+ */
+function welcome_get_cloud_upgrade() {
+	cache_load('upgrade');
+	if (!empty($_W['cache']['upgrade'])) {
+		$upgrade_cache = $_W['cache']['upgrade'];
+	}
+	if (empty($upgrade_cache) || TIMESTAMP - $upgrade_cache['lastupdate'] >= 3600 * 24 || empty($upgrade_cache['data'])) {
+		$upgrade = cloud_build();
+	} else {
+		$upgrade = $upgrade_cache['data'];
+	}
+	cache_delete('cloud:transtoken');
+	if (is_error($upgrade) || empty($upgrade['upgrade'])) {
+		$upgrade = array();
+	}
+	if (!empty($upgrade['schemas'])) {
+		$upgrade['database'] = cloud_build_schemas($schems);
+	}
+	$file_nums = count($upgrade['files']);
+	$database_nums = count($upgrade['database']);
+	$script_nums = count($upgrade['scripts']);
+	$upgrade['file_nums'] = $file_nums;
+	$upgrade['database_nums'] = $database_nums;
+	$upgrade['script_nums'] = $script_nums;
+	return $upgrade;
 }
