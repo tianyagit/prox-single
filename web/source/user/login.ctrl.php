@@ -44,6 +44,7 @@ function _login($forward = '') {
 		if ($record['status'] == 1) {
 			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', '', '');
 		}
+		$_W['uid'] = $record['uid'];
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$_W['isfounder'] = in_array($record['uid'], $founders);
 		if (empty($_W['isfounder'])) {

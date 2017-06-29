@@ -5,10 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if ($do == 'platform' || $do == 'ext') {
-	checkaccount();
-}
-
 load()->model('welcome');
 load()->model('cloud');
 load()->func('communication');
@@ -19,6 +15,10 @@ load()->model('system');
 
 $dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
+
+if ($do == 'platform' || $do == 'ext') {
+	checkaccount();
+}
 
 if ($do == 'platform') {
 	$last_uniacid = uni_account_last_switch();
@@ -45,21 +45,16 @@ if ($do == 'platform') {
 		exit;
 	}
 	$reductions = system_database_backup();
-	$backup_days = 0;
-	if (!empty($reductions)) {
-		$time = array();
-		foreach ($reductions as $reduction) {
-			$time[] = $reduction['time'];
-		}
-		$backup_days = system_database_backup_days($time);
-	}
-	
+	$last_backup = array_shift($reductions);
+	$last_backup_time = $last_backup['time'];
+	$backup_days = welcome_database_backup_days($last_backup_time);
+
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];	
 	
-	$account_modules = user_module_by_type();
-	$wxapp_modules = user_module_by_type('wxapp');
+	$account_modules = user_module_by_account_type('account');
+	$wxapp_modules = user_module_by_account_type('wxapp');
 	
 	$account_modules_total = count($account_modules) + $account_uninstall_modules_nums;
 	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;	
@@ -120,32 +115,11 @@ if ($do == 'platform') {
 	}
 } elseif ($do == 'get_system_upgrade') {
 	//系统更新信息
-	cache_load('upgrade');
-	if (!empty($_W['cache']['upgrade'])) {
-		$upgrade_cache = $_W['cache']['upgrade'];
-	}
-	if (empty($upgrade_cache) || TIMESTAMP - $upgrade_cache['lastupdate'] >= 3600 * 24 || empty($upgrade_cache['data'])) {
-		$upgrade = cloud_build();
-	} else {
-		$upgrade = $upgrade_cache['data'];
-	}
-	cache_delete('cloud:transtoken');
-	if (is_error($upgrade) || empty($upgrade['upgrade'])) {
-		$upgrade = array();
-	}
-	if (!empty($upgrade['schemas'])) {
-		$upgrade['database'] = cloud_build_schemas($schems);
-	}
-	$file_nums = count($upgrade['files']);
-	$database_nums = count($upgrade['database']);
-	$script_nums = count($upgrade['scripts']);
-	$upgrade['file_nums'] = $file_nums;
-	$upgrade['database_nums'] = $database_nums;
-	$upgrade['script_nums'] = $script_nums;
+	$upgrade = welcome_get_cloud_upgrade();
 	iajax(0, $upgrade, '');	
 } elseif ($do == 'get_upgrade_modules') {
 	//可升级应用
-	$account_upgrade_modules = module_upgrade_new();
+	$account_upgrade_modules = module_upgrade_new('account');
 	$account_upgrade_module_nums = count($account_upgrade_modules);
 	$wxapp_upgrade_modules = module_upgrade_new('wxapp');
 	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
