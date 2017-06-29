@@ -160,7 +160,9 @@ class Agent
 		// 如果via信息含有wap则一定是移动设备,部分服务商会屏蔽该信息
 		if (isset($_SERVER['HTTP_VIA'])) {
 			// 找不到为flase,否则为true
-			return stristr($_SERVER['HTTP_VIA'], "wap") ? true : false;
+			if (stristr($_SERVER['HTTP_VIA'], "wap")) {
+				return true;
+			}
 		}
 		// 脑残法，判断手机发送的客户端标志,兼容性有待提高
 		if (isset ($_SERVER['HTTP_USER_AGENT'])) {
