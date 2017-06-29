@@ -4,7 +4,6 @@
  * [WeEngine System] Copyright (c) 2013 we7.cc
  */
 $_W['page']['title'] = '模拟测试';
-
 $development = 1;
 $accounts = uni_owned();
 foreach($accounts as &$account) {
@@ -426,6 +425,7 @@ template('common/header');
 			buildRequest(curtype);
 			$('#svtext').hide();$('#svurlbox').hide();$('#svinfolist').hide();
 			$('div.mediaFooterbox', $('#demoSendBox')).show();
+			console.log($('#account').val());
 			$.ajax($('#account').val(), {
 				type : 'POST',
 				headers : {"Content-type" : "text/xml"},
@@ -495,6 +495,7 @@ template('common/header');
 							}
 						}
 					}
+					console.log(s);
 					$('#receive').text(s);
 				}else{
 					$('#receive').text('模拟取消关注成功');
