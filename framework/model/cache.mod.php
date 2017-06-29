@@ -288,8 +288,7 @@ function cache_build_uninstalled_module() {
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
 	$recycle_modules = array_keys($recycle_modules);
 	$cloud_module = cloud_m_query();
-	$cloud_module['ewei_shopping']['site_branch']['wxapp_support'] = 2;
-	unset($cloud_module['pirate_apps']);
+
 	if (!empty($cloud_module) && !is_error($cloud_module)) {
 		foreach ($cloud_module as $module) {
 			$upgrade_support_module = false;
