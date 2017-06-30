@@ -326,7 +326,7 @@ function menu_push($id) {
 				$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
 				unset($menu['matchrule']['tag_id']);
 			}
-			$status = pdo_update('uni_account_menus', array('status' => STATUS_ON, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
+			$status = pdo_update('uni_account_menus', array('status' => STATUS_ON, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $menu_info['id']));
 		}
 		return true;
 	}

@@ -41,7 +41,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="panel we7-panel system-update" ng-if="upgrade_show = 1">
+	<div class="panel we7-panel system-update" ng-if="upgrade_show == 1">
 		<div class="panel-heading">
 			<span class="color-gray pull-right">当前版本：{IMS_FAMILY}{IMS_VERSION}（{IMS_RELEASE_DATE}）</span>
 			系统更新
@@ -88,7 +88,7 @@
 			</span>
 			可升级应用
 		</div>
-		<div class="panel-body text-center">
+		<div class="panel-body">
 			<a href="{{module.link}}" target="_blank" class="apply-item" ng-repeat="module in upgrade_module_list">
 				<img src="{{module.logo}}" class="apply-img"/>
 				<span class="text-over">{{module.title|limitTo:4}}</span>
