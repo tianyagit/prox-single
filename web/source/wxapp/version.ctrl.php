@@ -82,7 +82,7 @@ if ($do == 'module_unlink_uniacid') {
 }
 
 if ($do == 'search_link_account') {
-	$module_name = $_GPC['module_name'];
+	$module_name = trim($_GPC['module_name']);
 	if (empty($module_name)) {
 		iajax(0, array());
 	}
