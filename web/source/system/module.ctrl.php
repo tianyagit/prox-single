@@ -217,9 +217,20 @@ if ($do == 'upgrade') {
 		if (strexists($manifest['upgrade'], '.php')) {
 			if (file_exists($module_path . $manifest['upgrade'])) {
 				include_once $module_path . $manifest['upgrade'];
+				if (ONLINE_MODULE) {
+					unlink($module_path . $manifest['upgrade']);
+				}
 			}
 		} else {
 			pdo_run($manifest['upgrade']);
+		}
+	}
+	if (ONLINE_MODULE) {
+		if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
+			unlink($module_path . $manifest['uninstall']);
+		}
+		if (strexists($manifest['install'], '.php') && file_exists($module_path . $manifest['install'])) {
+			unlink($module_path . $manifest['install']);
 		}
 	}
 
@@ -341,10 +352,22 @@ if ($do =='install') {
 		if (strexists($manifest['install'], '.php')) {
 			if (file_exists($module_path . $manifest['install'])) {
 				include_once $module_path . $manifest['install'];
+				if (ONLINE_MODULE) {
+					unlink ($module_path . $manifest['install']);
+				}
 			}
 		} else {
 			pdo_run($manifest['install']);
 		}
+		if (ONLINE_MODULE) {
+			if (strexists($manifest['upgrade'], '.php') && file_exists($module_path . $manifest['upgrade'])) {
+				unlink($module_path . $manifest['upgrade']);
+			}
+			if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
+				unlink($module_path . $manifest['uninstall']);
+			}
+		}
+
 		// 如果模块来自应用商城，删除对应文件
 		if (defined('ONLINE_MODULE')) {
 			ext_module_script_clean($module['name'], $manifest);

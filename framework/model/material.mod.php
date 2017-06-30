@@ -222,7 +222,7 @@ function material_build_reply($attach_id) {
 			foreach ($reply_material['news'] as $material) {
 				$reply[] = array(
 					'title' => $material['title'],
-					'description' => $material['description'],
+					'description' => $material['digest'],
 					'picurl' => $material['thumb_url'],
 					'url' => !empty($material['content_source_url']) ? $material['content_source_url'] : $material['url'],
 				);

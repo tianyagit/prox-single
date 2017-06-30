@@ -5,10 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if ($do == 'platform' || $do == 'ext') {
-	checkaccount();
-}
-
 load()->model('welcome');
 load()->model('cloud');
 load()->func('communication');
@@ -19,6 +15,10 @@ load()->model('system');
 
 $dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
+
+if ($do == 'platform' || $do == 'ext') {
+	checkaccount();
+}
 
 if ($do == 'platform') {
 	$last_uniacid = uni_account_last_switch();
@@ -48,6 +48,7 @@ if ($do == 'platform') {
 	$last_backup = array_shift($reductions);
 	$last_backup_time = $last_backup['time'];
 	$backup_days = welcome_database_backup_days($last_backup_time);
+
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];	
