@@ -36,6 +36,24 @@ function menu_languages() {
 }
 
 /**
+ * 获取当前公众号下某一条自定义菜单数据
+ * @param int $id
+ * @return array()
+ */
+function menu_get($id) {
+	global $_W;
+	$id = intval($id);
+	if (empty($id)) {
+		return array();
+	}
+	$menu_info = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	if (!empty($menu_info)) {
+		return $menu_info;
+	} else {
+		return array();
+	}
+}
+/**
  * 构造可直接请求自定义菜单创建接口的数据
  * @param array $data_array
  * @param int $is_conditional 是否是个性化菜单数据,默认为否
@@ -257,11 +275,7 @@ function menu_update_conditional() {
  */
 function menu_delete($id) {
 	global $_W;
-	$id = intval($id);
-	if (empty($id)) {
-		return error(-1, '参数错误！');
-	}
-	$menu_info = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	$menu_info = menu_get($id);
 	if (empty($menu_info)) {
 		return error(-1, '菜单不存在或已经删除');
 	}
@@ -286,17 +300,16 @@ function menu_delete($id) {
  */
 function menu_push($id) {
 	global $_W;
-	$id = intval($id);
-	$data = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-	if (empty($data)) {
+	$menu_info = menu_get($id);
+	if (empty($menu_info)) {
 		return error(-1, '菜单不存在或已删除');
 	}
-	if ($data['status'] == STATUS_OFF) {
-		$post = iunserializer(base64_decode($data['data']));
+	if ($menu_info['status'] == STATUS_OFF) {
+		$post = iunserializer(base64_decode($menu_info['data']));
 		if (empty($post)) {
 			return error(-1, '菜单数据错误');
 		}
-		$is_conditional = (!empty($post['matchrule']) && $data['type'] == MENU_CONDITIONAL) ? true : false;
+		$is_conditional = (!empty($post['matchrule']) && $menu_info['type'] == MENU_CONDITIONAL) ? true : false;
 		$menu = menu_construct_createmenu_data($post, $is_conditional);
 
 		$account_api = WeAccount::create();
@@ -304,27 +317,27 @@ function menu_push($id) {
 		if (is_error($result)) {
 			return error(-1, $result['message']);
 		}
-		if ($data['type'] == MENU_CURRENTSELF) {
-			pdo_update('uni_account_menus', array('status' => '1'), array('id' => $data['id']));
-			pdo_update('uni_account_menus', array('status' => '0'), array('id !=' => $data['id'], 'uniacid' => $_W['uniacid'], 'type' => MENU_CURRENTSELF));
-		} elseif ($data['type'] == MENU_CONDITIONAL) {
+		if ($menu_info['type'] == MENU_CURRENTSELF) {
+			pdo_update('uni_account_menus', array('status' => '1'), array('id' => $menu_info['id']));
+			pdo_update('uni_account_menus', array('status' => '0'), array('id !=' => $menu_info['id'], 'uniacid' => $_W['uniacid'], 'type' => MENU_CURRENTSELF));
+		} elseif ($menu_info['type'] == MENU_CONDITIONAL) {
 			// 将$menu中 tag_id 再转为 group_id
 			if ($post['matchrule']['group_id'] != -1) {
 				$menu['matchrule']['groupid'] = $menu['matchrule']['tag_id'];
 				unset($menu['matchrule']['tag_id']);
 			}
-			$status = pdo_update('uni_account_menus', array('status' => STATUS_ON, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $data['id']));
+			$status = pdo_update('uni_account_menus', array('status' => STATUS_ON, 'menuid' => $result), array('uniacid' => $_W['uniacid'], 'id' => $menu_info['id']));
 		}
 		return true;
 	}
 	//只有个性化菜单才有关闭交互（默认菜单有且只有一个未开启状态，已在推送创建菜单中处理）
-	if ($data['status'] == STATUS_ON && $data['type'] == MENU_CONDITIONAL && $data['menuid'] > 0) {
+	if ($menu_info['status'] == STATUS_ON && $menu_info['type'] == MENU_CONDITIONAL && $menu_info['menuid'] > 0) {
 		$account_api = WeAccount::create();
-		$result = $account_api->menuDelete($data['menuid']);
+		$result = $account_api->menuDelete($menu_info['menuid']);
 		if (is_error($result)) {
 			return error(-1, $result['message']);
 		} else {
-			pdo_update('uni_account_menus', array('status' => STATUS_OFF), array('id' => $data['id']));
+			pdo_update('uni_account_menus', array('status' => STATUS_OFF), array('id' => $menu_info['id']));
 			return true;
 		}
 	}

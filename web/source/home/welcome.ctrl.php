@@ -45,9 +45,13 @@ if ($do == 'platform') {
 		exit;
 	}
 	$reductions = system_database_backup();
-	$last_backup = array_shift($reductions);
-	$last_backup_time = $last_backup['time'];
-	$backup_days = welcome_database_backup_days($last_backup_time);
+	if (!empty($reductions)) {
+		$last_backup = array_shift($reductions);
+		$last_backup_time = $last_backup['time'];
+		$backup_days = welcome_database_backup_days($last_backup_time);
+	} else {
+		$backup_days = 0;
+	}
 
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];

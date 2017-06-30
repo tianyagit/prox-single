@@ -183,7 +183,7 @@ function buildframes($framename = ''){
 	//非创始人应用模块菜单
 	if (!$_W['isfounder'] && $status) {
 		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'modules');
-		if (!empty($module_permission)) {
+		if (!is_error($module_permission) && !empty($module_permission)) {
 			foreach ($module_permission as $module) {
 				if (!in_array($module['type'], $sysmodules) && empty($modules[$module['type']]['main_module'])) {
 					$module = $modules[$module['type']];
