@@ -4,7 +4,7 @@
  */
 
 define('IN_SYS', true);
-require '../framework/bootstrap.inc.php';
+require '../../framework/bootstrap.inc.php';
 
 $all_currentselfmenu = pdo_getall('uni_account_menus', array('type' => 3));
 foreach ($all_currentselfmenu as &$menu) {
