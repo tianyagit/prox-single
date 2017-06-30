@@ -274,10 +274,21 @@ function user_group_detail_info($groupid = 0) {
  *@return array
  */
 function user_account_detail_info($uid) {
-	$wxapps = $wechats = $account_lists = array();
-
-	$sql = "SELECT b.uniacid, b.role, a.type FROM " . tablename('account'). " AS a LEFT JOIN ". tablename('uni_account_users') . " AS b ON a.uniacid = b.uniacid WHERE a.acid <> 0 AND a.isdeleted <> 1 AND b.uid = :uid";
-	$account_users_info = pdo_fetchall($sql, array(':uid' => $uid), 'uniacid');
+	global $_W;
+	$account_lists = array();
+	$uid = intval($uid);
+	if (empty($uid)) {
+		return $account_lists;
+	}
+	
+	$sql = "SELECT b.uniacid, b.role, a.type FROM " . tablename('account'). " AS a LEFT JOIN ". tablename('uni_account_users') . " AS b ON a.uniacid = b.uniacid WHERE a.acid <> 0 AND a.isdeleted <> 1";
+	$param = array();
+	if (empty($_W['isfounder'])) {
+		$sql .= " AND b.uid = :uid";
+		$param[':uid'] = $uid;
+	}
+	$account_users_info = pdo_fetchall($sql, $param, 'uniacid');
+	
 	foreach ($account_users_info as $uniacid => $account) {
 		if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			$app_user_info[$uniacid] = $account;
@@ -285,6 +296,7 @@ function user_account_detail_info($uid) {
 			$wxapp_user_info[$uniacid] = $account;
 		}
 	}
+	$wxapps = $wechats = array();
 	if (!empty($wxapp_user_info)) {
 		$wxapps = pdo_fetchall("SELECT w.name, w.level, w.acid, a.* FROM " . tablename('uni_account') . " a INNER JOIN " . tablename(uni_account_tablename(ACCOUNT_TYPE_APP_NORMAL)) . " w USING(uniacid) WHERE a.uniacid IN (".implode(',', array_keys($wxapp_user_info)).") ORDER BY a.uniacid ASC", array(), 'acid');
 	}
@@ -310,7 +322,6 @@ function user_account_detail_info($uid) {
 	}
 	return $account_lists;
 }
-
 
 /**
  * 获取当前用户拥有的所有模块及小程序的标识
