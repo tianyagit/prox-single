@@ -37,13 +37,11 @@ function system_database_backup() {
 		return array();
 	}
 	if ($handle = opendir($path)) {
-		$j = 0;
 		while (false !== ($bakdir = readdir($handle))) {
 			if ($bakdir == '.' || $bakdir == '..') {
 				continue;
 			}
-			$bakdirs[$j]['time'] = date("Y-m-d H:i:s", filemtime($path.$bakdir));
-			$j++;
+			$times[] = date("Y-m-d H:i:s", filemtime($path.$bakdir));
 			if (preg_match('/^(?P<time>\d{10})_[a-z\d]{8}$/i', $bakdir, $match)) {
 				$time = $match['time'];
 				if ($handle1= opendir($path . $bakdir)) {
@@ -89,9 +87,6 @@ function system_database_backup() {
 			rmdirs($path . $bakdir);
 		}
 		closedir($handle);
-	}
-	foreach ($bakdirs as $key => $dir) {
-		$times[$key] = $dir['time'];
 	}
 	array_multisort($times, SORT_DESC, SORT_STRING, $reduction);
 	return $reduction;

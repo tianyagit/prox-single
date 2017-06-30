@@ -74,7 +74,7 @@ if ($do == 'push') {
 
 if ($do == 'copy') {
 	$id = intval($_GPC['id']);
-	$menu = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	$menu = menu_get($id);
 	if (empty($menu)) {
 		itoast('菜单不存在或已经删除', url('platform/menu/display'), 'error');
 	}
@@ -96,63 +96,64 @@ if ($do == 'post') {
 	$copy = intval($_GPC['copy']);
 	$params = array();
 	if ($id > 0) {
-		$menu = pdo_get('uni_account_menus', array('uniacid' => $_W['uniacid'], 'id' => $id));
-		if (!empty($menu)) {
-			$menu['data'] = iunserializer(base64_decode($menu['data']));
-			if (!empty($menu['data'])) {
-				if (!empty($menu['data']['button'])) {
-					foreach ($menu['data']['button'] as &$button) {
-						if (!empty($button['url'])) {
-							$button['url'] = preg_replace('/(.*)redirect_uri=(.*)&response_type(.*)wechat_redirect/', '$2', $button['url']);
-							$button['url'] = urldecode($button['url']);
-						}
-						if (empty($button['sub_button'])) {
-							if ($button['type'] == 'media_id') {
-								$button['type'] = 'click';
-							}
-							$button['sub_button'] = array();
-						} else {
-							$button['sub_button'] = !empty($button['sub_button']['list']) ? $button['sub_button']['list'] : $button['sub_button'];
-							foreach ($button['sub_button'] as &$subbutton) {
-								if (!empty($subbutton['url'])) {
-									$subbutton['url'] = preg_replace('/(.*)redirect_uri=(.*)&response_type(.*)wechat_redirect/', '$2', $subbutton['url']);
-									$subbutton['url'] = urldecode($subbutton['url']);
-								}
-								if ($subbutton['type'] == 'media_id') {
-									$subbutton['type'] = 'click';
-								}
-							}
-							unset($subbutton);
-						}
-					}
-					unset($button);
-				}
-				if (!empty($menu['data']['matchrule']['province'])) {
-					$menu['data']['matchrule']['province'] .= '省';
-				}
-				if (!empty($menu['data']['matchrule']['city'])) {
-					$menu['data']['matchrule']['city'] .= '市';
-				}
-				if (empty($menu['data']['matchrule']['sex'])) {
-					$menu['data']['matchrule']['sex'] = 0;
-				}
-				if (empty($menu['data']['matchrule']['group_id'])) {
-					$menu['data']['matchrule']['group_id'] = -1;
-				}
-				if (empty($menu['data']['matchrule']['client_platform_type'])) {
-					$menu['data']['matchrule']['client_platform_type'] = 0;
-				}
-				if (empty($menu['data']['matchrule']['language'])) {
-					$menu['data']['matchrule']['language'] = '';
-				}
-				$params = $menu['data'];
-				$params['title'] = $menu['title'];
-				$params['type'] = $menu['type'];
-				$params['id'] = $menu['id'];
-				$params['status'] = $menu['status'];
-			}
-			$type = $menu['type'];
+		$menu = menu_get($id);
+		if (empty($menu)) {
+			itoast('菜单不存在或已经删除', url('platform/menu/display'), 'error');
 		}
+		if (!empty($menu['data'])) {
+			$menu['data'] = iunserializer(base64_decode($menu['data']));
+			if (!empty($menu['data']['button'])) {
+				foreach ($menu['data']['button'] as &$button) {
+					if (!empty($button['url'])) {
+						$button['url'] = preg_replace('/(.*)redirect_uri=(.*)&response_type(.*)wechat_redirect/', '$2', $button['url']);
+						$button['url'] = urldecode($button['url']);
+					}
+					if (empty($button['sub_button'])) {
+						if ($button['type'] == 'media_id') {
+							$button['type'] = 'click';
+						}
+						$button['sub_button'] = array();
+					} else {
+						$button['sub_button'] = !empty($button['sub_button']['list']) ? $button['sub_button']['list'] : $button['sub_button'];
+						foreach ($button['sub_button'] as &$subbutton) {
+							if (!empty($subbutton['url'])) {
+								$subbutton['url'] = preg_replace('/(.*)redirect_uri=(.*)&response_type(.*)wechat_redirect/', '$2', $subbutton['url']);
+								$subbutton['url'] = urldecode($subbutton['url']);
+							}
+							if ($subbutton['type'] == 'media_id') {
+								$subbutton['type'] = 'click';
+							}
+						}
+						unset($subbutton);
+					}
+				}
+				unset($button);
+			}
+			if (!empty($menu['data']['matchrule']['province'])) {
+				$menu['data']['matchrule']['province'] .= '省';
+			}
+			if (!empty($menu['data']['matchrule']['city'])) {
+				$menu['data']['matchrule']['city'] .= '市';
+			}
+			if (empty($menu['data']['matchrule']['sex'])) {
+				$menu['data']['matchrule']['sex'] = 0;
+			}
+			if (empty($menu['data']['matchrule']['group_id'])) {
+				$menu['data']['matchrule']['group_id'] = -1;
+			}
+			if (empty($menu['data']['matchrule']['client_platform_type'])) {
+				$menu['data']['matchrule']['client_platform_type'] = 0;
+			}
+			if (empty($menu['data']['matchrule']['language'])) {
+				$menu['data']['matchrule']['language'] = '';
+			}
+			$params = $menu['data'];
+			$params['title'] = $menu['title'];
+			$params['type'] = $menu['type'];
+			$params['id'] = $menu['id'];
+			$params['status'] = $menu['status'];
+		}
+		$type = $menu['type'];
 	}
 	$status = $params['status'];
 	$groups = mc_fans_groups();

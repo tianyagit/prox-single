@@ -4,9 +4,9 @@
  */
 
 define('IN_SYS', true);
-require '../framework/bootstrap.inc.php';
+require '../../framework/bootstrap.inc.php';
 
-$all_currentselfmenu = pdo_getall('uni_account_menus', array('type' => 3));
+$all_currentselfmenu = pdo_getall('uni_account_menus', array('type' => 1));
 foreach ($all_currentselfmenu as &$menu) {
 	$menu['data'] = iunserializer(base64_decode($menu['data']));
 	if (isset($menu['data']['matchrule'])) {
