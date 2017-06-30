@@ -303,6 +303,11 @@ if($do == 'modules_tpl') {
 	$extend['templates'] = iunserializer($extend['templates']);
 	if (!empty($extend['modules'])) {
 		$extend['modules'] = pdo_getall('modules', array('name' => $extend['modules']), array('mid', 'title', 'name'));
+		if (!empty($extend['modules'])) {
+			foreach ($extend['modules'] as &$module_info) {
+				$module_info['logo'] = IA_ROOT . "/addons/" . $module_info['name'] . '/icon-custom.jpg';
+			}
+		}
 	}
 	if (!empty($extend['templates'])) {
 		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('id', 'name', 'title'));
