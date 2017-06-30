@@ -268,7 +268,7 @@ if ($do == 'download_fans') {
 		$return['next'] = $wechat_fans_list['next'];
 		iajax(0, $return, '');
 	} else {
-		iajax(1, $wechat_fans_list);
+		iajax(1, $wechat_fans_list['message']);
 	}
 }
 
