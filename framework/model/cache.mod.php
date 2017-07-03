@@ -292,8 +292,8 @@ function cache_build_uninstalled_module() {
 	if (!empty($cloud_module) && !is_error($cloud_module)) {
 		foreach ($cloud_module as $module) {
 			$upgrade_support_module = false;
-			$wxapp_support = !empty($module['site_branch']['wxapp_support']) ? $module['site_branch']['wxapp_support'] : 1;
-			$app_support = !empty($module['site_branch']['app_support']) ? $module['site_branch']['app_support'] : 2;
+			$wxapp_support = !empty($module['site_branch']['wxapp_support']) && in_array('wxapp', $module['site_branch']['bought']) ? $module['site_branch']['wxapp_support'] : 1;
+			$app_support = !empty($module['site_branch']['app_support']) && in_array('app', $module['site_branch']['bought']) ? $module['site_branch']['app_support'] : 2;
 			if ($wxapp_support ==  1 && $app_support == 1) {
 				$app_support = 2;
 			}
