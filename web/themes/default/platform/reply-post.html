@@ -116,16 +116,7 @@
 				</div>
 			</div>
 
-			<div>
-				{if $m ==  'userapi'}
-				{php echo module_build_form('userapi', $rid)}
-				{elseif in_array($m, $sysmods)}
-				{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
-				{else}
-				{php echo module_build_form($m, $rid)}
-				{/if}
-			</div>
-			<input type="hidden" name="token" value="{$_W['token']}">
+
 
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">&nbsp;</label>
@@ -184,6 +175,16 @@
 				</div>
 			</nav>
 		</div>
+		<div>
+			{if $m ==  'userapi'}
+			{php echo module_build_form('userapi', $rid)}
+			{elseif in_array($m, $sysmods)}
+			{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
+			{else}
+			{php echo module_build_form($m, $rid)}
+			{/if}
+		</div>
+		<input type="hidden" name="token" value="{$_W['token']}">
 	</form>
 	{/if}
 	{if $m == 'apply'}
