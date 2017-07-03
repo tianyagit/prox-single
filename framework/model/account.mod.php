@@ -337,7 +337,7 @@ function uni_templates() {
 		$templates = pdo_fetchall("SELECT * FROM " . tablename('site_templates') . " ORDER BY id ASC", array(), 'id');
 	} else {
 		$group = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $groupid));
-		$packageids = iunserializer($group['package']);
+		$packageids = (array)iunserializer($group['package']);
 		if (!empty($extend)) {
 			foreach ($extend as $extend_packageid => $row) {
 				$packageids[] = $extend_packageid;
