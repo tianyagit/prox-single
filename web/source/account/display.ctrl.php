@@ -19,9 +19,15 @@ if($do == 'switch') {
 	if(empty($role)) {
 		itoast('操作失败, 非法访问.', '', 'error');
 	}
-
 	uni_account_save_switch($uniacid);
-	uni_account_switch($uniacid,  url('home/welcome'));
+	$module_name = trim($_GPC['module']);
+	$version_id = intval($_GPC['version_id']);
+	if (empty($module_name)) {
+		$url = url('home/welcome');
+	} else {
+		$url = url('home/welcome/ext', array('m' => $module_name, 'version_id' => $version_id));
+	}
+	uni_account_switch($uniacid, $url);
 }
 
 if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {

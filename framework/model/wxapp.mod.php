@@ -288,7 +288,7 @@ function wxapp_save_switch($uniacid) {
 		$cache_lastaccount['wxapp'] = $uniacid;
 	}
 	cache_write($cache_key, $cache_lastaccount);
-	isetcookie('__switch', $_GPC['__switch']);
+	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;
 }
 
@@ -363,7 +363,7 @@ function wxapp_search_link_account($module_name = '') {
 	if (!empty($owned_account)) {
 		foreach ($owned_account as $key => $account) {
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
-			if (!in_array($account['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
+			if ($account['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
 				unset($owned_account[$key]);
 			}
 		}
@@ -371,7 +371,7 @@ function wxapp_search_link_account($module_name = '') {
 			$account_modules = uni_modules_by_uniacid($account['uniacid']);
 			if (empty($account_modules[$module_name])) {
 				unset($owned_account[$key]);
-			} elseif ($account_modules[$module_name]['app_support'] != MODULE_SUPPORT_ACCOUNT) {
+			} elseif ($account_modules[$module_name]['app_support'] != MODULE_SUPPORT_ACCOUNT || $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
 				unset($owned_account[$key]);
 			}
 		}

@@ -288,7 +288,6 @@ function user_account_detail_info($uid) {
 		$param[':uid'] = $uid;
 	}
 	$account_users_info = pdo_fetchall($sql, $param, 'uniacid');
-	
 	foreach ($account_users_info as $uniacid => $account) {
 		if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			$app_user_info[$uniacid] = $account;
@@ -310,6 +309,7 @@ function user_account_detail_info($uid) {
 			foreach ($account_users_info as $uniacid => $user_info) {
 				if ($account_val['uniacid'] == $uniacid) {
 					$account_val['role'] = $user_info['role'];
+					$account_val['type'] = $user_info['type'];
 					if ($user_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 						$account_lists['wxapp'][$uniacid] = $account_val;
 					} elseif ($user_info['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $user_info['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
