@@ -13,20 +13,6 @@ defined('IN_IA') or exit('Access Denied');
  * @return int
  */
 function ver_compare($version1, $version2) {
-	$version1 = str_replace('.', '', $version1);
-	$version2 = str_replace('.', '', $version2);
-	$oldLength = istrlen($version1);
-	$newLength = istrlen($version2);
-	if(is_numeric($version1) && is_numeric($version2)) {
-		if ($oldLength > $newLength) {
-			$version2 .= str_repeat('0', $oldLength - $newLength);
-		}
-		if ($newLength > $oldLength) {
-			$version1 .= str_repeat('0', $newLength - $oldLength);
-		}
-		$version1 = intval($version1);
-		$version2 = intval($version2);
-	}
 	return version_compare($version1, $version2);
 }
 
