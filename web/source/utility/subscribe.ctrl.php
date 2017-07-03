@@ -5,8 +5,42 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if(!empty($_W['uniacid'])) {
-		$sql = 'SELECT * FROM ' . tablename('core_queue') . ' WHERE `uniacid`=:uniacid AND type = 2 ORDER BY `qid` ASC LIMIT 15';
+$dos = array('receive', 'consume_code');
+$do = in_array($do, $dos) ? $do: 'consume_code';
+
+$_W['uniacid'] = intval($_GPC['i']);
+
+if (empty($_W['uniacid'])) {
+	iajax(1, '请先指定公众号');
+}
+
+if ($do == 'receive') {
+	ignore_user_abort(true);
+	set_time_limit(60);
+
+	$modulename = $_GPC['modulename'];
+	$request = json_decode(html_entity_decode($_GPC['request']), true);
+	$response = json_decode(html_entity_decode($_GPC['response']), true);
+	$message = json_decode(html_entity_decode($_GPC['message']), true);
+
+	$module = module_fetch($modulename);
+	sleep(10);
+	WeUtility::logging('test', $modulename . '--' .  var_export($message, true));
+	exit;
+	if (!empty($module)) {
+		$module_receiver = WeUtility::createModuleReceiver($modulename);
+		$module_receiver->message = $message;
+		$module_receiver->params = $request;
+		$module_receiver->response = $response;
+		$module_receiver->keyword = $request['keyword'];
+		$module_receiver->module = $module;
+		$module_receiver->uniacid = $_W['uniacid'];
+		if(method_exists($obj, 'receive')) {
+			@$obj->receive();
+		}
+	}
+} else {
+	$sql = 'SELECT * FROM ' . tablename('core_queue') . ' WHERE `uniacid`=:uniacid AND type = 2 ORDER BY `qid` ASC LIMIT 15';
 	$pars = array();
 	$pars[':uniacid'] = $_W['uniacid'];
 	$cards = pdo_fetchall($sql, $pars);
@@ -30,6 +64,9 @@ if(!empty($_W['uniacid'])) {
 			}
 		}
 	}
+}
+if(!empty($_W['uniacid'])) {
+	
 
 	$sql = 'SELECT * FROM ' . tablename('core_queue') . ' WHERE `uniacid`=:uniacid AND type = 1 ORDER BY `qid` ASC LIMIT 50';
 	$pars = array();
