@@ -17,6 +17,8 @@ defined('IN_IA') or exit('Access Denied');
  * @return array http响应封装信息或错误信息
  */
 function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
+	//timeout为0时，相当于是非阻塞异步请求
+	//curl不支持timeout为0的情况，需要使用fsockopen来处理
 	if (function_exists('curl_init') && function_exists('curl_exec') && $timeout > 0) {
 		$ch = ihttp_build_curl($url, $post, $extra, $timeout);
 		if (is_error($ch)) {
@@ -34,50 +36,19 @@ function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 		}
 	}
 	$urlset = ihttp_parse_url($url, true);
-	if (is_error($urlset)) {
-		return $urlset;
-	}
+	$body = ihttp_build_httpbody($url, $post, $extra);
 	
-	if (!empty($urlset['ip'])) {
-		$extra['ip'] = $urlset['ip'];
-	}
-	
-	$method = empty($post) ? 'GET' : 'POST';
-	$fdata = "{$method} {$urlset['path']}{$urlset['query']} HTTP/1.1\r\n";
-	$fdata .= "Host: {$urlset['host']}\r\n";
-	if (function_exists('gzdecode')) {
-		$fdata .= "Accept-Encoding: gzip, deflate\r\n";
-	}
-	$fdata .= "Connection: close\r\n";
-	if (!empty($extra) && is_array($extra)) {
-		foreach ($extra as $opt => $value) {
-			if (!strexists($opt, 'CURLOPT_')) {
-				$fdata .= "{$opt}: {$value}\r\n";
-			}
-		}
-	}
-	$body = '';
-	if ($post) {
-		if (is_array($post)) {
-			$body = http_build_query($post);
-		} else {
-			$body = urlencode($post);
-		}
-		$fdata .= 'Content-Length: ' . strlen($body) . "\r\n\r\n{$body}";
-	} else {
-		$fdata .= "\r\n";
-	}
 	if ($urlset['scheme'] == 'https') {
-		$fp = fsockopen('ssl://' . $urlset['host'], $urlset['port'], $errno, $error);
+		$fp = ihttp_socketopen('ssl://' . $urlset['host'], $urlset['port'], $errno, $error);
 	} else {
-		$fp = fsockopen($urlset['host'], $urlset['port'], $errno, $error);
+		$fp = ihttp_socketopen($urlset['host'], $urlset['port'], $errno, $error);
 	}
 	stream_set_blocking($fp, true);
 	stream_set_timeout($fp, $timeout);
 	if (!$fp) {
 		return error(1, $error);
 	} else {
-		fwrite($fp, $fdata);
+		fwrite($fp, $body);
 		if($timeout > 0) {
 			$content = '';
 			while (!feof($fp)) {
@@ -127,7 +98,7 @@ function ihttp_multi_request($urls, $posts = array(), $extra = array(), $timeout
 		return error(1, '请使用ihttp_request函数');
 	}
 	$curl_multi = curl_multi_init();
-	$curl_client = array();
+	$curl_client = $response = array();
 
 	foreach ($urls as $i => $url) {
 		if (isset($posts[$i]) && is_array($posts[$i])) {
@@ -162,7 +133,25 @@ function ihttp_multi_request($urls, $posts = array(), $extra = array(), $timeout
 			}
 		}
 	}
-	print_r($curl_client);exit;
+	
+	foreach ($curl_client as $i => $curl) {
+		$response[$i] = curl_multi_getcontent($curl);
+		curl_multi_remove_handle($curl_multi, $curl);
+	}
+	curl_multi_close($curl_multi);
+	return $response;
+}
+
+function ihttp_socketopen($hostname, $port = 80, &$errno, &$errstr, $timeout = 15) {
+	$fp = '';
+	if(function_exists('fsockopen')) {
+		$fp = @fsockopen($hostname, $port, $errno, $errstr, $timeout);
+	} elseif(function_exists('pfsockopen')) {
+		$fp = @pfsockopen($hostname, $port, $errno, $errstr, $timeout);
+	} elseif(function_exists('stream_socket_client')) {
+		$fp = @stream_socket_client($hostname.':'.$port, $errno, $errstr, $timeout);
+	}
+	return $fp;
 }
 
 /**
@@ -282,7 +271,7 @@ function ihttp_parse_url($url, $set_default_port = false) {
 		$current_url = parse_url($GLOBALS['_W']['siteroot']);
 		$urlset['host'] = $current_url['host'];
 		$urlset['scheme'] = $current_url['scheme'];
-		$urlset['path'] = '/web/' . $urlset['path'];
+		$urlset['path'] = '/web/' . str_replace('./', '', $urlset['path']);
 		$urlset['ip'] = '127.0.0.1';
 	}
 	
@@ -384,6 +373,69 @@ function ihttp_build_curl($url, $post, $extra, $timeout) {
 		}
 	}
 	return $ch;
+}
+
+function ihttp_build_httpbody($url, $post, $extra) {
+	$urlset = ihttp_parse_url($url, true);
+	if (is_error($urlset)) {
+		return $urlset;
+	}
+	
+	if (!empty($urlset['ip'])) {
+		$extra['ip'] = $urlset['ip'];
+	}
+	
+	$body = '';
+	if (!empty($post) && is_array($post)) {
+		$filepost = false;
+		$boundary = random(40);
+		foreach ($post as $name => &$value) {
+			if ((is_string($value) && substr($value, 0, 1) == '@') && file_exists(ltrim($value, '@'))) {
+				$filepost = true;
+				$file = ltrim($value, '@');
+	
+				$body .= "--$boundary\r\n";
+				$body .= 'Content-Disposition: form-data; name="'.$name.'"; filename="'.basename($file).'"; Content-Type: application/octet-stream'."\r\n\r\n";
+				$body .= file_get_contents($file)."\r\n";
+			} else {
+				$body .= "--$boundary\r\n";
+				$body .= 'Content-Disposition: form-data; name="'.$name.'"'."\r\n\r\n";
+				$body .= $value."\r\n";
+			}
+		}
+		if (!$filepost) {
+			$body = http_build_query($post, '', '&');
+		} else {
+			$body .= "--$boundary\r\n";
+		}
+	}
+	
+	$method = empty($post) ? 'GET' : 'POST';
+	$fdata = "{$method} {$urlset['path']}{$urlset['query']} HTTP/1.1\r\n";
+	$fdata .= "Accept: */*\r\n";
+	$fdata .= "Accept-Language: zh-cn\r\n";
+	if ($method == 'POST') {
+		$fdata .= empty($filepost) ? "Content-Type: application/x-www-form-urlencoded\r\n" : "Content-Type: multipart/form-data; boundary=$boundary\r\n";
+	}
+	$fdata .= "Host: {$urlset['host']}\r\n";
+	$fdata .= "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:9.0.1) Gecko/20100101 Firefox/9.0.1\r\n";
+	if (function_exists('gzdecode')) {
+		$fdata .= "Accept-Encoding: gzip, deflate\r\n";
+	}
+	$fdata .= "Connection: close\r\n";
+	if (!empty($extra) && is_array($extra)) {
+		foreach ($extra as $opt => $value) {
+			if (!strexists($opt, 'CURLOPT_')) {
+				$fdata .= "{$opt}: {$value}\r\n";
+			}
+		}
+	}
+	if ($body) {
+		$fdata .= 'Content-Length: ' . strlen($body) . "\r\n\r\n{$body}";
+	} else {
+		$fdata .= "\r\n";
+	}
+	return $fdata;
 }
 
 /**
