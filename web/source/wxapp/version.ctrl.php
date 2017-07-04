@@ -43,7 +43,7 @@ if ($do == 'home') {
 
 if ($do == 'module_link_uniacid') {
 	$module_name = $_GPC['module_name'];
-	
+
 	$version_info = wxapp_version($version_id);
 
 	if (checksubmit('submit')) {

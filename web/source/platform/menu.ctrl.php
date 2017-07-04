@@ -26,7 +26,7 @@ if($do == 'display') {
 	if ($type == MENU_CURRENTSELF) {
 		$update_self_menu = menu_update_currentself();
 		if (is_error($update_self_menu)) {
-			itoast($update_self_menu['message'], '', 'error');
+			itoast($update_self_menu['message'], '', 'info');
 		}
 	}
 	if ($type == MENU_CONDITIONAL) {
@@ -64,7 +64,7 @@ if($do == 'display') {
 if ($do == 'push') {
 	$id = intval($_GPC['id']);
 	$result = menu_push($id);
-	
+
 	if (is_error($result)) {
 		iajax(-1, $result['message']);
 	} else {
@@ -215,7 +215,7 @@ if ($do == 'post') {
 				unset($menu['matchrule']['tag_id']);
 			}
 			$menu = json_decode(urldecode(json_encode($menu)), true);
-			
+
 			$insert = array(
 				'uniacid' => $_W['uniacid'],
 				'menuid' => $result,
@@ -229,7 +229,7 @@ if ($do == 'post') {
 				'status' => STATUS_ON,
 				'createtime' => TIMESTAMP,
 			);
-			
+
 			if ($post['type'] == 1) {
 				if (!empty($_GPC['id'])) {
 					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => MENU_CURRENTSELF, 'id' => intval($_GPC['id'])));
