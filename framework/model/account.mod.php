@@ -44,7 +44,7 @@ function uni_owned($uid = 0) {
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 	$uniaccounts = array();
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	
+
 	if (in_array($uid, $founders)) {
 		$account_uniacid = pdo_fetchall("SELECT uniacid FROM " . tablename('account') . " WHERE type IN (:type_1, :type_2) GROUP BY uniacid", array(':type_1' => ACCOUNT_TYPE_OFFCIAL_NORMAL, ':type_2' => ACCOUNT_TYPE_OFFCIAL_AUTH));
 	} else {
@@ -122,10 +122,10 @@ function uni_fetch($uniacid = 0) {
 	load()->model('mc');
 	$account['groups'] = mc_groups($uniacid);
 	$account['grouplevel'] = pdo_fetchcolumn('SELECT grouplevel FROM ' . tablename('uni_settings') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
-	
+
 	$account['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
-	
+
 	cache_write($cachekey, $account);
 	return $account;
 }
@@ -492,7 +492,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	global $_W;
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
-	
+
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	if (in_array($uid, $founders)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
@@ -573,7 +573,7 @@ function uni_user_permission($type = 'system') {
  */
 function uni_user_menu_permission($uid, $uniacid, $type) {
 	$user_menu_permission = array();
-	
+
 	$uid = intval($uid);
 	$uniacid = intval($uniacid);
 	$type = trim($type);
@@ -596,7 +596,7 @@ function uni_user_menu_permission($uid, $uniacid, $type) {
 			}
 		}
 	}
-	
+
 	return $user_menu_permission;
 }
 
@@ -607,7 +607,7 @@ function uni_user_menu_permission($uid, $uniacid, $type) {
 function uni_permission_name() {
 	load()->model('system');
 	$menu_permission = array();
-	
+
 	$menu_list = system_menu_permission_list();
 	$middle_menu = array();
 	$middle_sub_menu = array();
@@ -631,7 +631,7 @@ function uni_permission_name() {
 			}
 		}
 	}
-	
+
 	if (!empty($middle_sub_menu)) {
 		foreach ($middle_sub_menu as $sub_menu) {
 			foreach ($sub_menu as $sub_menu_val) {
@@ -660,7 +660,7 @@ function uni_update_user_permission($uid, $uniacid, $data) {
 	if (is_error($user_menu_permission)) {
 		return error('-1', '参数错误！');
 	}
-	
+
 	if (empty($user_menu_permission)) {
 		$insert = array(
 			'uniacid' => $uniacid,
@@ -687,7 +687,7 @@ function uni_user_permission_check($permission_name, $show_message = true, $acti
 	$modulename = trim($_GPC['m']);
 	$do = trim($_GPC['do']);
 	$entry_id = intval($_GPC['eid']);
-	
+
 	if ($action == 'reply') {
 		$system_modules = system_modules();
 		if (!empty($modulename) && !in_array($modulename, $system_modules)) {
@@ -918,7 +918,7 @@ function uni_account_save_switch($uniacid) {
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
-	
+
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = cache_load($cache_key);
 	if (empty($cache_lastaccount)) {
@@ -1174,7 +1174,7 @@ function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status 
 	}
 	$uniacid = intval($uniacid);
 	$uniacid = !empty($uniacid) ? $uniacid : $_W['uniacid'];
-	
+
 	$module_status = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $uniacid), array('id', 'shortcut'));
 	if (empty($module_status)) {
 		$data = array(

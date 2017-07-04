@@ -88,7 +88,9 @@ function system_database_backup() {
 		}
 		closedir($handle);
 	}
-	array_multisort($times, SORT_DESC, SORT_STRING, $reduction);
+	if (!empty($times)) {
+		array_multisort($times, SORT_DESC, SORT_STRING, $reduction);
+	}
 	return $reduction;
 }
 /**
