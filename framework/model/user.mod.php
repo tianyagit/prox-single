@@ -416,7 +416,7 @@ function user_modules($uid) {
 }
 
 /**
- * 获取用户登陆后要跳转的地址
+ * 获取用户登录后要跳转的地址
  * @param string $forward 要跳转的地址
  * return string
  */

@@ -418,6 +418,8 @@ class WeEngine {
 
 	private function receive($par, $keyword, $response) {
 		global $_W;
+		fastcgi_finish_request();
+		
 		$subscribe = cache_load('module_receive_enable');
 		$modules = uni_modules();
 		$obj = WeUtility::createModuleReceiver('core');
@@ -431,96 +433,34 @@ class WeEngine {
 		if(method_exists($obj, 'receive')) {
 			@$obj->receive();
 		}
-		if (!empty($subscribe['subscribe']) && ($this->message['event'] == 'subscribe' || $this->message['type'] == 'subscribe')) {
-			foreach($subscribe['subscribe'] as $modulename) {
-				$obj = WeUtility::createModuleReceiver($modulename);
-				$obj->message = $this->message;
-				$obj->params = $par;
-				$obj->response = $response;
-				$obj->keyword = $keyword;
-				$obj->module = $modules[$modulename];
-				$obj->uniacid = $_W['uniacid'];
-				$obj->acid = $_W['acid'];
-				if(method_exists($obj, 'receive')) {
-					@$obj->receive();
+		if (!empty($subscribe[$this->message['type']])) {
+			foreach ($subscribe[$this->message['type']] as $modulename) {
+				//fsockipen可用时，设置timeout为0可以无需等待高效请求
+				//否则的话使用curl并发请求
+				load()->func('communication');
+				if (function_exists('fsockopen')) {
+					foreach($subscribe['subscribe'] as $modulename) {
+						$response = ihttp_request(wurl('utility/subscribe/receive'), array(
+							'i' => $GLOBALS['uniacid'], 
+							'modulename' => $modulename,
+							'request' => json_encode($par),
+							'response' => json_encode($response),
+							'message' => json_encode($this->message),
+						), array(), 0);
+					}
+				} else {
+					$urls = $posts = array();
+					foreach($subscribe['subscribe'] as $modulename) {
+						$urls[] = wurl('utility/subscribe/receive', array('modulename' => $modulename, 'i' => $GLOBALS['uniacid']));
+					}
+					if (!empty($urls)) {
+						ihttp_multi_request($urls, array(
+							'request' => json_encode($par),
+							'response' => json_encode($response),
+							'message' => json_encode($this->message),
+						), array(), 1);
+					}
 				}
-			}
-		} elseif (!empty($subscribe['unsubscribe']) && ($this->message['event'] == 'unsubscribe' || $this->message['type'] == 'unsubscribe')) {
-			foreach($subscribe['unsubscribe'] as $modulename) {
-				$obj = WeUtility::createModuleReceiver($modulename);
-				$obj->message = $this->message;
-				$obj->params = $par;
-				$obj->response = $response;
-				$obj->keyword = $keyword;
-				$obj->module = $modules[$modulename];
-				$obj->uniacid = $_W['uniacid'];
-				$obj->acid = $_W['acid'];
-				if(method_exists($obj, 'receive')) {
-					@$obj->receive();
-				}
-			}
-		} elseif (!empty($subscribe['user_get_card']) && $this->message['event'] == 'user_get_card') {
-			foreach($subscribe['user_get_card'] as $modulename) {
-				$obj = WeUtility::createModuleReceiver($modulename);
-				$obj->message = $this->message;
-				$obj->params = $par;
-				$obj->response = $response;
-				$obj->keyword = $keyword;
-				$obj->module = $modules[$modulename];
-				$obj->uniacid = $_W['uniacid'];
-				$obj->acid = $_W['acid'];
-				if(method_exists($obj, 'receive')) {
-					@$obj->receive();
-				}
-			}
-		} elseif (!empty($subscribe['user_consume_card']) && $this->message['event'] == 'user_consume_card') {
-			foreach($subscribe['user_consume_card'] as $modulename) {
-				$obj = WeUtility::createModuleReceiver($modulename);
-				$obj->message = $this->message;
-				$obj->params = $par;
-				$obj->response = $response;
-				$obj->keyword = $keyword;
-				$obj->module = $modules[$modulename];
-				$obj->uniacid = $_W['uniacid'];
-				$obj->acid = $_W['acid'];
-				if(method_exists($obj, 'receive')) {
-					@$obj->receive();
-				}
-			}
-		} elseif (!empty($subscribe['user_del_card']) && $this->message['event'] == 'user_del_card') {
-			foreach($subscribe['user_del_card'] as $modulename) {
-				$obj = WeUtility::createModuleReceiver($modulename);
-				$obj->message = $this->message;
-				$obj->params = $par;
-				$obj->response = $response;
-				$obj->keyword = $keyword;
-				$obj->module = $modules[$modulename];
-				$obj->uniacid = $_W['uniacid'];
-				$obj->acid = $_W['acid'];
-				if(method_exists($obj, 'receive')) {
-					@$obj->receive();
-				}
-			}
-		} else {
-			$modules = $subscribe[$this->message['type']];
-			if (!empty($modules)) {
-				foreach ($modules as $modulename) {
-					$row = array();
-					$row['uniacid'] = $_W['uniacid'];
-					$row['acid'] = $_W['acid'];
-					$row['dateline'] = $_W['timestamp'];
-					$row['message'] = iserializer($this->message);
-					$row['keyword'] = iserializer($keyword);
-					$row['params'] = iserializer($par);
-					$row['response'] = iserializer($response);
-					$row['module'] = $modulename;
-					$row['type'] = 1;
-					pdo_insert('core_queue', $row);
-				}
-			}
-			//清除一个月之前前的数据
-			if (date('N') == '1') {
-				pdo_query("DELETE FROM ".tablename('core_queue')." WHERE dateline < '".($_W['timestamp'] - 2592000)."'");
 			}
 		}
 	}
