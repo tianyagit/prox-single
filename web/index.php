@@ -183,7 +183,7 @@ $_W['page']['copyright'] = $_W['setting']['copyright'];
 // navs end;
 
 if (is_array($acl[$controller]['direct']) && in_array($action, $acl[$controller]['direct'])) {
-	// 如果这个目标被配置为不需要登陆直接访问, 则直接访问
+	// 如果这个目标被配置为不需要登录直接访问, 则直接访问
 	require _forward($controller, $action);
 	exit();
 }

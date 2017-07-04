@@ -73,7 +73,7 @@ function _login($forward = '') {
 			isetcookie('__uid', $record['uid'], 7 * 86400);
 			itoast('登录成功！' ,url('site/entry/clerkdesk', array('uniacid' => $record['uniacid'], 'op' => 'index', 'm' => 'we7_coupon')), 'success');
 // 			if ($_W['role'] == 'clerk' || $role == 'clerk') {
-// 				itoast('登陆成功', url('activity/desk', array('uniacid' => $record['uniacid'])), 'success');
+// 				itoast('登录成功', url('activity/desk', array('uniacid' => $record['uniacid'])), 'success');
 // 			}
 		}
 		if (empty($forward)) {
