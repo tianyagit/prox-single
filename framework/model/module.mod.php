@@ -697,10 +697,10 @@ function module_link_uniacid_fetch($uid, $module_name) {
 				}
 				if (!empty($version_value['modules'][0]['account']['uniacid'])) {
 					$accounts_link_result[$version_value['modules'][0]['account']['uniacid']][] = array(
-							'uniacid' => $key,
-							'version' => $version_value['version'],
-							'version_id' => $version_value['id'],
-							'name' => $account_value['name'],
+						'uniacid' => $key,
+						'version' => $version_value['version'],
+						'version_id' => $version_value['id'],
+						'name' => $account_value['name'],
 					);
 					unset($account_value['versions'][$version_key]);
 				}
@@ -722,30 +722,27 @@ function module_link_uniacid_fetch($uid, $module_name) {
 			if (in_array($link_value['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !empty($link_value['link_wxapp']) && is_array($link_value['link_wxapp'])) {
 				foreach ($link_value['link_wxapp'] as $value) {
 					$result[] = array(
-							'app_name' => $link_value['name'],
-							'wxapp_name' => $value['name'] . ' ' . $value['version'],
-							'uniacid' => $link_value['uniacid'],
-							'version_id' => $value['version_id'],
-							'linkurl' => url('account/display/switch', array('uniacid' => $link_value['uniacid'], 'module' => $module_name, 'version_id' => $value['version_id'])),
+						'app_name' => $link_value['name'],
+						'wxapp_name' => $value['name'] . ' ' . $value['version'],
+						'uniacid' => $link_value['uniacid'],
+						'version_id' => $value['version_id'],
 					);
 				}
 			} elseif ($link_value['type'] == ACCOUNT_TYPE_APP_NORMAL && !empty($link_value['versions']) && is_array($link_value['versions'])) {
 				foreach ($link_value['versions'] as $value) {
 					$result[] = array(
-							'app_name' => '',
-							'wxapp_name' => $link_value['name'] . ' ' . $value['version'],
-							'uniacid' => $link_value['uniacid'],
-							'version_id' => $value['id'],
-							'linkurl' => url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $value['id'])),
+						'app_name' => '',
+						'wxapp_name' => $link_value['name'] . ' ' . $value['version'],
+						'uniacid' => $link_value['uniacid'],
+						'version_id' => $value['id'],
 					);
 				}
 			} else {
 				$result[] = array(
-						'app_name' => $link_value['name'],
-						'wxapp_name' => '',
-						'uniacid' => $link_value['uniacid'],
-						'version_id' => '',
-						'linkurl' => url('account/display/switch', array('uniacid' => $link_value['uniacid'], 'module' => $module_name))
+					'app_name' => $link_value['name'],
+					'wxapp_name' => '',
+					'uniacid' => $link_value['uniacid'],
+					'version_id' => '',
 				);
 			}
 		}

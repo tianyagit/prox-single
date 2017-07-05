@@ -51,10 +51,10 @@ if ($do == 'switch') {
 	}
 	if (!empty($uniacid)) {
 		if (empty($version_id)) {
-			itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module' => $module_name)), 'success');
+			itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module_name' => $module_name)), 'success');
 		}
 		if ($version_info['uniacid'] != $uniacid) {
-			itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module' => $module_name, 'version_id' => $version_id)), 'success');
+			itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module_name' => $module_name, 'version_id' => $version_id)), 'success');
 		} else {
 			wxapp_save_switch($version_info['uniacid']);
 			itoast('', url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $version_id)), 'success');
