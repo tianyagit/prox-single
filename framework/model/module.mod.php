@@ -201,7 +201,7 @@ function module_entry($eid) {
 	if (!empty($entry['state'])) {
 		$querystring['state'] = $entry['state'];
 	}
-	
+
 	$entry['url'] = murl('entry', $querystring);
 	$entry['url_show'] = murl('entry', $querystring, true, true);
 	return $entry;
@@ -651,7 +651,7 @@ function module_get_user_account_list($uid, $module_name) {
 			}
 		}
 	}
-	
+
 	foreach ($accounts_list as $key => $account_value) {
 		if ($module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP && $module_info['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 			continue;
@@ -661,7 +661,7 @@ function module_get_user_account_list($uid, $module_name) {
 			unset($accounts_list[$key]);
 		}
 	}
-	
+
 	return $accounts_list;
 }
 
@@ -700,11 +700,11 @@ function module_link_uniacid_fetch($uid, $module_name) {
 							'uniacid' => $key,
 							'version' => $version_value['version'],
 							'version_id' => $version_value['id'],
-							'name' => $account_value['name'] . $version_value['version'],
+							'name' => $account_value['name'],
 					);
 					unset($account_value['versions'][$version_key]);
 				}
-	
+
 			}
 		}
 		if ($account_value['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account_value['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
@@ -750,6 +750,55 @@ function module_link_uniacid_fetch($uid, $module_name) {
 			}
 		}
 	}
-	
+
 	return $result;
+}
+
+/**
+ * 对某一模块，保留最后一次进入的小程序OR公众号，以便点进入列表页时可以默认进入
+ * @param unknown $uniacid
+ * @return boolean
+ */
+function module_save_switch($module_name, $uniacid = 0, $version_id = 0) {
+	global $_W, $_GPC;
+	if (empty($_GPC['__switch'])) {
+		$_GPC['__switch'] = random(5);
+	}
+
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = cache_load($cache_key);
+	if (empty($cache_lastaccount)) {
+		$cache_lastaccount = array(
+			$module_name => array(
+				'module_name' => $module_name,
+				'uniacid' => $uniacid,
+				'version_id' => $version_id
+			)
+		);
+	} else {
+		$cache_lastaccount[$module_name] = array(
+			'module_name' => $module_name,
+			'uniacid' => $uniacid,
+			'version_id' => $version_id
+		);
+	}
+	cache_write($cache_key, $cache_lastaccount);
+	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
+	return true;
+}
+
+
+
+/**
+ * 获取用户上一次进入模块的公众号OR小程序信息
+ */
+function module_last_switch($module_name) {
+	global $_GPC;
+	$module_name = trim($module_name);
+	if (empty($module_name)) {
+		return array();
+	}
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = (array)cache_load($cache_key);
+	return $cache_lastaccount[$module_name];
 }
