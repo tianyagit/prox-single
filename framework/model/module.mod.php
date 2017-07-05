@@ -305,7 +305,7 @@ function module_build_privileges() {
 	load()->model('account');
 	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
 	foreach($uniacid_arr as $row){
-		$modules = uni_modules(false);
+		$modules = uni_modules_by_uniacid($row['uniacid'], false);
 		//得到模块标识
 		$mymodules = pdo_getall('uni_account_modules', array('uniacid' => $row['uniacid']), array('module'), 'module');
 		$mymodules = array_keys($mymodules);
