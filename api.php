@@ -433,34 +433,19 @@ class WeEngine {
 		if(method_exists($obj, 'receive')) {
 			@$obj->receive();
 		}
+		load()->func('communication');
 		if (!empty($subscribe[$this->message['type']])) {
 			foreach ($subscribe[$this->message['type']] as $modulename) {
 				//fsockipen可用时，设置timeout为0可以无需等待高效请求
 				//否则的话使用curl并发请求
-				load()->func('communication');
-				if (function_exists('fsockopen')) {
-					foreach($subscribe['subscribe'] as $modulename) {
-						$response = ihttp_request(wurl('utility/subscribe/receive'), array(
-							'i' => $GLOBALS['uniacid'], 
-							'modulename' => $modulename,
-							'request' => json_encode($par),
-							'response' => json_encode($response),
-							'message' => json_encode($this->message),
-						), array(), 0);
-					}
-				} else {
-					$urls = $posts = array();
-					foreach($subscribe['subscribe'] as $modulename) {
-						$urls[] = wurl('utility/subscribe/receive', array('modulename' => $modulename, 'i' => $GLOBALS['uniacid']));
-					}
-					if (!empty($urls)) {
-						ihttp_multi_request($urls, array(
-							'request' => json_encode($par),
-							'response' => json_encode($response),
-							'message' => json_encode($this->message),
-						), array(), 1);
-					}
-				}
+				$response = ihttp_request(wurl('utility/subscribe/receive'), array(
+					'i' => $GLOBALS['uniacid'], 
+					'modulename' => $modulename,
+					'request' => json_encode($par),
+					'response' => json_encode($response),
+					'message' => json_encode($this->message),
+				), array());
+				print_r($response);
 			}
 		}
 	}

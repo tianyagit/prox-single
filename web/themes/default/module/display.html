@@ -33,7 +33,7 @@
 					</div>
 				</div>
 				<div class="mask">
-					<a ng-href="./index.php?c=home&a=welcome&do=ext&m={{list.name}}" class="entry">
+					<a ng-href="./index.php?c=module&a=display&do=switch&module_name={{list.name}}" class="entry">
 						<div>进入应用 <i class="wi wi-angle-right"></i></div>
 					</a>
 					<a href="javascript:;" class="cut-btn stick" ng-click="showAccounts($event, list.name)">
@@ -48,13 +48,8 @@
 					<div class="cut-item">
 						<a href="javascript:;">
 							<div class="detail" ng-repeat="account in list.accounts">
-								<div class="text-over">
-									<span class="wi wi-small-routine block"></span>
-									<span ng-if="account.app_name">{{account.app_name}}</span>
-									<span ng-if="account.app_name && account.wxapp_name">+</span>
-									<span ng-if="account.wxapp_name">{{account.wxapp_name}}</span>
-									<!-- <span class="wi wi-wechat block"></span> -->
-								</div>
+								<div class="text-over text-left" ng-if="account.app_name"><span class="wi wi-wechat"></span>{{account.app_name}}</div>
+								<div class="text-over text-left" ng-if="account.wxapp_name"><span class="wi wi-small-routine"></span>{{account.wxapp_name}}</div>
 								<a class="cut-select-mask" href="{{account.linkurl}}" target="_blank">
 									<div class="entry">选择进入 <i class="wi wi-angle-right"></i></div>
 								</a>

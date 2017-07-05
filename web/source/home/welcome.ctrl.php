@@ -13,9 +13,8 @@ load()->model('extension');
 load()->model('module');
 load()->model('system');
 
-$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules');
+$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics');
 $do = in_array($do, $dos) ? $do : 'platform';
-
 if ($do == 'platform' || $do == 'ext') {
 	checkaccount();
 }
@@ -52,17 +51,25 @@ if ($do == 'platform') {
 	} else {
 		$backup_days = 0;
 	}
-
+	template('home/welcome-system');
+} elseif ($do =='get_module_statistics') {
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
-	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];	
+	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];
 	
 	$account_modules = user_module_by_account_type('account');
 	$wxapp_modules = user_module_by_account_type('wxapp');
 	
 	$account_modules_total = count($account_modules) + $account_uninstall_modules_nums;
-	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;	
-	template('home/welcome-system');
+	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;
+	
+	$module_statistics = array(
+		'account_uninstall_modules_nums' => $account_uninstall_modules_nums,
+		'wxapp_uninstall_modules_nums' => $wxapp_uninstall_modules_nums,
+		'account_modules_total' => $account_modules_total,
+		'wxapp_modules_total' => $wxapp_modules_total
+	);
+	iajax(0, $module_statistics, '');
 } elseif ($do == 'ext') {
 	$modulename = $_GPC['m'];
 	if (!empty($modulename)) {
@@ -127,9 +134,11 @@ if ($do == 'platform') {
 	$account_upgrade_module_nums = count($account_upgrade_modules);
 	$wxapp_upgrade_modules = module_upgrade_new('wxapp');
 	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
+	
 	$account_upgrade_module_list = array_slice($account_upgrade_modules, 0, 4);
 	$wxapp_upgrade_module_list = array_slice($wxapp_upgrade_modules, 0, 4);
 	$upgrade_module_list = array_merge($account_upgrade_module_list, $wxapp_upgrade_module_list);
+	
 	$upgrade_module = array(
 		'upgrade_module_list' => $upgrade_module_list,
 		'upgrade_module_nums' => array(
