@@ -1,4 +1,5 @@
 {template 'common/header'}
+{if $do != 'front_download'}
 <div class="we7-page-title">关联设置</div>
 <table class="table we7-table table-hover vertical-middle">
 	<col width="180px" />
@@ -98,19 +99,19 @@
 		});
 	});
 </script>
+{else}
 <!--小程序前端下载-->
-<div class="hidden">
-<span class="wi wi-wxapp-download"></span>小程序前端下载<!--左侧菜单-->
+<div>
 <div class="media media-wechat-setting">
 	<div class="media-left color-default">
 		<span class="wi wi-wxapp-webpack" style="font-size: 55px;"></span>
 	</div>
 	<div class="media-body media-middle ">
-		<h4 class="media-heading color-dark">{$module['title']}</h4>
-		<div class="color-gray">版本: V1.3.1</div>
+		<h4 class="media-heading color-dark">{$wxapp_versions_info['modules'][0]['title']}</h4>
+		<div class="color-gray">版本: {$wxapp_versions_info['version']}</div>
 	</div>
 	<div class="media-right media-middle">
-		<a href="javascript:;" class="btn btn-primary">立即下载</a>
+		<a href="./index.php?c=wxapp&a=manage&do=getpackage&uniacid={$_W['uniacid']}&versionid={$wxapp_versions_info['id']}" class="btn btn-primary">立即下载</a>
 	</div>
 </div>
 <div class="wxapp-download-procedure">
@@ -144,5 +145,6 @@
 	<div class="step">6.微信官方审核通过即可使用</div>
 </div>
 </div>
+{/if}
 <!--小程序前端下载-->
 {template 'common/footer'}

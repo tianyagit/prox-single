@@ -9,6 +9,6 @@ if (!in_array($action, array('display', 'post'))) {
 	checkwxapp();
 }
 
-if (($action == 'version' && ($do == 'home' || $do == 'module_link_uniacid')) || ($action == 'payment')) {
+if (($action == 'version' && ($do == 'home' || $do == 'module_link_uniacid' || $do == 'front_download')) || ($action == 'payment')) {
 	define('FRAME', 'wxapp');
 }
