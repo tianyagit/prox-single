@@ -33,6 +33,9 @@ if ($do == 'switch') {
 		$current_account = current($accounts_list);
 		$uniacid = $current_account['uniacid'];
 		$version_id = $current_account['version_id'];
+	} else {
+		$uniacid = $last_module_info['uniacid'];
+		$version_id = $last_module_info['version_id'];
 	}
 	if (!empty($version_id)) {
 		$version_info = wxapp_version($version_id);
