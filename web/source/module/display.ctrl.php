@@ -67,12 +67,12 @@ if ($do == 'have_permission_uniacids') {
 if ($do == 'accounts_dropdown_menu') {
 	$module_name = trim($_GPC['module_name']);
 	if (empty($module_name)) {
-		iajax(0, '');
+		exit('');
 	}
 	$last_module_info = module_last_switch($module_name);
 	$accounts_list = module_link_uniacid_fetch($_W['uid'], $module_name);
 	if (empty($accounts_list)) {
-		iajax(0, '');
+		exit('');
 	}
 
 	$return_selected_html = '<span class="top-view">';
