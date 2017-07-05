@@ -103,5 +103,5 @@ if ($do == 'get_daily_visittrend') {
 
 if ($do == 'front_download') {
 	$wxapp_versions_info = wxapp_version($version_id);
-	template('wxapp/version-module-link-uniacid');
+	template('wxapp/version-front-download');
 }
