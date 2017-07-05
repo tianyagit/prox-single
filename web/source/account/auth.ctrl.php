@@ -31,13 +31,13 @@ if ($do == 'forward') {
 		echo "此为测试平台接入返回结果：<br/> 公众号名称：{$account_info['authorizer_info']['nick_name']} <br/> 接入状态：成功";
 		exit;
 	}
-	if ($account_info['authorizer_info']['service_type_info'] = '0' || $account_info['authorizer_info']['service_type_info'] == '1') {
+	if ($account_info['authorizer_info']['service_type_info']['id'] == '0' || $account_info['authorizer_info']['service_type_info']['id'] == '1') {
 		if ($account_info['authorizer_info']['verify_type_info']['id'] > '-1') {
 			$level = '3';
 		} else {
 			$level = '1';
 		}
-	} elseif ($account_info['authorizer_info']['service_type_info'] = '2') {
+	} elseif ($account_info['authorizer_info']['service_type_info']['id'] == '2') {
 		if ($account_info['authorizer_info']['verify_type_info']['id'] > '-1') {
 			$level = '4';
 		} else {
