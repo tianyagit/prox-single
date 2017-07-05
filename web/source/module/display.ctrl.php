@@ -81,18 +81,18 @@ if ($do == 'accounts_dropdown_menu') {
 			continue;
 		}
 		if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
-			$return_selected_html .= '<a href="' . url('account/display/switch', array('uniacid' => $_W['uniacid'])) . '"><i class="wi wi-wechat"></i>' .  $_W['account']['name'] . '</a>';
+			$return_selected_html .= '<a href="' . url('account/display/switch', array('uniacid' => $_W['uniacid'])) . '" title="' . $_W['account']['name'] . '"><i class="wi wi-wechat"></i>' .  $_W['account']['name'] . '</a>';
 			if (!empty($account['version_id'])) {
 				$version_info = wxapp_version($account['version_id']);
-				$return_selected_html .= '<a href="' . url('wxapp/display/switch', array('uniacid' => $version_info['uniacid'], 'version_id' => $account['version_id'])) . '"><i class="wi wi-wxapp"></i>' .  $account['wxapp_name'] . '</a>';
+				$return_selected_html .= '<a href="' . url('wxapp/display/switch', array('uniacid' => $version_info['uniacid'], 'version_id' => $account['version_id'])) . '" title="' . $account['wxapp_name'] . '"><i class="wi wi-wxapp"></i>' .  $account['wxapp_name'] . '</a>';
 			}
 			break;
 		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 			$version_info = wxapp_version($account['version_id']);
 			if ($version_info['uniacid'] != $account['uniacid']) {
-				$return_selected_html .= '<a href="' . url('account/display/switch', array('uniacid' => $account['uniacid'])) . '"><i class="wi wi-wechat"></i>' .  $_W['account']['name'] . '</a>';
+				$return_selected_html .= '<a href="' . url('account/display/switch', array('uniacid' => $account['uniacid'])) . '" title="' . $_W['account']['name'] . '"><i class="wi wi-wechat"></i>' .  $_W['account']['name'] . '</a>';
 			}
-			$return_selected_html .= '<a href="' . url('wxapp/display/switch', array('uniacid' => $version_info['uniacid'], 'version_id' => $account['version_id'])) . '"><i class="wi wi-wxapp"></i>' .  $account['wxapp_name'] . '</a>';
+			$return_selected_html .= '<a href="' . url('wxapp/display/switch', array('uniacid' => $version_info['uniacid'], 'version_id' => $account['version_id'])) . '" title="' . $account['wxapp_name'] . '"><i class="wi wi-wxapp"></i>' .  $account['wxapp_name'] . '</a>';
 			break;
 		}
 		
