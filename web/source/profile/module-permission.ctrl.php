@@ -52,7 +52,10 @@ if ($do == 'post') {
 	$uid = intval($_GPC['uid']);
 	$user = user_single($uid);
 	$have_permission = uni_user_menu_permission($uid, $_W['uniacid'], $module_name);
-
+	if (is_error($have_permission)) {
+		itoast($have_permission['message']);
+	}
+	
 	if (checksubmit()) {
 		$insert_user = array(
 				'username' => trim($_GPC['username']),

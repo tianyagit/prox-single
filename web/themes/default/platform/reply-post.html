@@ -39,7 +39,10 @@
 				</tr>
 				<tr>
 					<td colspan="3" class="text-left" ng-click="showAddkeywordModal()">
-						<a class="font-lg color-gray" href="javascript:;"><span class="add-icon"><i class="wi wi-plus"></i></span>添加关键字</a>
+						<a class="color-gray add-new-keyword" href="javascript:;">
+							<span class="add-icon"><i class="wi wi-plus"></i></span>
+							<span class="text">添加关键字</span>
+						</a>
 					</td>
 				</tr>
 			</table>
@@ -113,16 +116,7 @@
 				</div>
 			</div>
 
-			<div>
-				{if $m ==  'userapi'}
-				{php echo module_build_form('userapi', $rid)}
-				{elseif in_array($m, $sysmods)}
-				{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
-				{else}
-				{php echo module_build_form($m, $rid)}
-				{/if}
-			</div>
-			<input type="hidden" name="token" value="{$_W['token']}">
+
 
 			<div class="form-group">
 				<label for="" class="control-label col-sm-2">&nbsp;</label>
@@ -181,6 +175,16 @@
 				</div>
 			</nav>
 		</div>
+		<div>
+			{if $m ==  'userapi'}
+			{php echo module_build_form('userapi', $rid)}
+			{elseif in_array($m, $sysmods)}
+			{php echo module_build_form('core', $rid, array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false))}
+			{else}
+			{php echo module_build_form($m, $rid)}
+			{/if}
+		</div>
+		<input type="hidden" name="token" value="{$_W['token']}">
 	</form>
 	{/if}
 	{if $m == 'apply'}

@@ -42,6 +42,7 @@
 			<td>{$row[endtime]}</td>
 			<td>
 				<div class="link-group">
+					<a href="javascript:;" data-url="{$row['showurl']}" class="we7-margin-right-sm js-clip">复制链接</a>
 					<a href="{php echo url('platform/qr/down_qr', array('id' => $row['id']))}">下载</a>
 					<a href="{php echo url('platform/qr/post', array('id'=> $row['id']))}" >编辑</a>
 					{if $row['model'] == 2}

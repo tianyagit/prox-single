@@ -27,10 +27,14 @@
 		<td>
 			<div class="link-group">
 				{if !empty($module['account'])}
-					<a href="javascript:;" data-module="{$module['name']}" class="js-select-link-account">修改</a>
-					<a href="{php echo url('wxapp/version/module_unlink_uniacid', array('version_id' => $version_info['id']))}">删除</a>
+					{if $module['wxapp_support'] == 2 && $module['app_support'] == 2}
+						<a href="javascript:;" data-module="{$module['name']}" class="js-select-link-account">修改</a>
+					{/if}
+						<a href="{php echo url('wxapp/version/module_unlink_uniacid', array('version_id' => $version_info['id']))}">删除</a>
 				{else}
-					<a href="javascript:;" data-module="{$module['name']}" class="js-select-link-account">添加</a>
+					{if $module['wxapp_support'] == 2 && $module['app_support'] == 2}
+						<a href="javascript:;" data-module="{$module['name']}" class="js-select-link-account">添加</a>
+					{/if}
 				{/if}
 			</div>
 		</td>
@@ -48,7 +52,7 @@
 			<div class="modal-body">
 				<div class="panel-body we7-padding">
 					<div class="row js-show-account-content">
-						
+
 					</div>
 				</div>
 			</div>
@@ -69,6 +73,10 @@
 								'	</a>'+
 								'</div>';
 					$('.js-show-account-content').append(html);
+				}
+				if ($('.js-show-account-content').html()=='') {
+					var html = '没有可以关联的公众号';
+					$('.js-show-account-content').html(html);
 				}
 			}
 			$('.js-select-uniacid').click(function(){

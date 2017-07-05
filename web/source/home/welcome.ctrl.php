@@ -45,19 +45,23 @@ if ($do == 'platform') {
 		exit;
 	}
 	$reductions = system_database_backup();
-	$last_backup = array_shift($reductions);
-	$last_backup_time = $last_backup['time'];
-	$backup_days = welcome_database_backup_days($last_backup_time);
+	if (!empty($reductions)) {
+		$last_backup = array_shift($reductions);
+		$last_backup_time = $last_backup['time'];
+		$backup_days = welcome_database_backup_days($last_backup_time);
+	} else {
+		$backup_days = 0;
+	}
 
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
-	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];	
-	
+	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];
+
 	$account_modules = user_module_by_account_type('account');
 	$wxapp_modules = user_module_by_account_type('wxapp');
-	
+
 	$account_modules_total = count($account_modules) + $account_uninstall_modules_nums;
-	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;	
+	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;
 	template('home/welcome-system');
 } elseif ($do == 'ext') {
 	$modulename = $_GPC['m'];
@@ -116,7 +120,7 @@ if ($do == 'platform') {
 } elseif ($do == 'get_system_upgrade') {
 	//系统更新信息
 	$upgrade = welcome_get_cloud_upgrade();
-	iajax(0, $upgrade, '');	
+	iajax(0, $upgrade, '');
 } elseif ($do == 'get_upgrade_modules') {
 	//可升级应用
 	$account_upgrade_modules = module_upgrade_new('account');

@@ -22,18 +22,20 @@ if ($do == 'rank' || $do == 'switch') {
 }
 if ($do == 'home') {
 	$last_uniacid = uni_account_last_switch();
+	$url = url('wxapp/display');
 	if (empty($last_uniacid)) {
-		itoast('', url('wxapp/display'), 'info');
-	} else {
-		$last_version = wxapp_fetch($last_uniacid);
-		if (!empty($last_version)) {
-			uni_account_switch($last_uniacid);
-			header('Location: ' . url('wxapp/version/home', array('version_id' => $last_version['version']['id'])));
-			exit;
-		} else {
-			itoast('', url('wxapp/display'), 'info');
-		}
+		itoast('', $url, 'info');
 	}
+	$permission = uni_permission($_W['uid'], $last_uniacid);
+	if (empty($permission)) {
+		itoast('', $url, 'info');
+	}
+	$last_version = wxapp_fetch($last_uniacid);
+	if (!empty($last_version)) {
+		uni_account_switch($last_uniacid);
+		$url = url('wxapp/version/home', array('version_id' => $last_version['version']['id']));
+	}
+	itoast('', $url, 'info');
 } elseif ($do == 'display') {
 	//模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
 	$account_info = uni_user_account_permission();

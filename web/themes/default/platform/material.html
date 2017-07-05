@@ -174,7 +174,7 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('{$type}')">同步微信</a>
 					{/if}
-					{if $server == 'wechat'}
+					{if $server == MATERIAL_WEXIN}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('image', true, true)">上传微信图片</a>
 					{else}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('image', true, false)">上传服务器图片</a>
@@ -231,7 +231,7 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('voice')">同步微信</a>
 					{/if}
-					{if $server == 'wechat'}
+					{if $server == MATERIAL_WEXIN}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('voice', true, true)">上传微信语音</a>
 					{else}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('voice', true, false)">上传服务器语音</a>
@@ -290,7 +290,7 @@
 					{if $_W['account']['level'] > 2 && $_W['account']['isconnect'] = 1}
 					<a href="javascript:;" class="btn btn-default" ng-click="sync('video')">同步微信</a>
 					{/if}
-					{if $server == 'wechat'}
+					{if $server == MATERIAL_WEXIN}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('video', true, true)">上传微信视频</a>
 					{else}
 					<a href="javascript:;" class="btn btn-primary we7-margin-left" ng-click="upload('video', true, false)">上传服务器视频</a>
