@@ -81,8 +81,6 @@
 	<div class="panel panel-content main-panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
 		<div class="content-head panel-heading main-panel-heading">
 			{if ($_GPC['c'] != 'cloud' && !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service'))) || defined('IN_MODULE')}
-				<a href="{if $_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL}{php echo url('wxapp/display/home')}{else}{php echo url('home/welcome/platform')}{/if}" class="we7-head-back"><i class="wi wi-back-circle"></i></a>
-				<span class="we7-head-account"><a href="{if $_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL}{php echo url('wxapp/display/home')}{else}{php echo url('home/welcome/platform')}{/if}">{$_W['account']['name']}</a></span>
 				{if file_exists(IA_ROOT. "/addons/". $_W['current_module']['name']. "/icon-custom.jpg")}
 				<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon-custom.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">
 				{else}
@@ -90,61 +88,13 @@
 				{/if}
 				<span class="font-lg">{$_W['current_module']['title']}</span>
 
-				<div class="pull-right related-info hidden">
-					<span class="top-view">
-						<a href="#" target="_blank">
-							<i class="wi wi-wechat"></i>这是app
-						</a>
-						<a href="#" target="_blank">
-							<i class="wi wi-wechat"></i>公众号公众号
-						</a>
-						<a href="#" target="_blank">
-							<i class="wi wi-wxapp"></i>小程序小程序
-						</a>
-					</span>
-					<span class="dropdown">
-						<a href="javascript:;" class="dropdown-icon">
-							<i class="wi wi-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu dropdown-menu-right" role="menu">
-							<li>
-								<a href="javascript:;">
-									<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-									<span class="plus"><i class="wi wi-plus"></i></span>
-									<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-									<span class="plus"><i class="wi wi-plus"></i></span>
-									<span class=""><i class="wi wi-wxapp"></i>小程序小程序</span>
-								</a>
-							</li>
-							<li>
-								<a href="javascript:;">
-									<span class=""><i class="wi wi-wechat"></i>这是app</span>
-									<span class="plus"><i class="wi wi-plus"></i></span>
-									<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-								</a>
-							</li>
-							<li>
-								<a href="javascript:;">
-									<span class=""><i class="wi wi-wxapp"></i>小程序小程序</span>
-								</a>
-							</li>
-						</ul>
-					</span>
+				<div class="pull-right related-info module-related-info">
 				</div>
-
-			<script>
-				function dropdownOpen() {
-					var $dropdown = $('.main-panel-heading .dropdown');
-					$dropdown.mouseover(function() {
-						$(this).addClass('open');
-					}).mouseout(function() {
-						$(this).removeClass('open');
-					});
-				}
-				$(document).ready(function() {
-					dropdownOpen();
-				});
-			</script>
+				<script>
+					$.post('./index.php?c=module&a=display&do=accounts_dropdown_menu', {'module_name': "{php echo $_W['current_module']['name']}"}, function(data){
+						$('.module-related-info').html(data);
+					}, 'html');
+				</script>
 				<!-- 兼容历史性问题：模块内获取不到模块信息$module的问题-start -->
 				{if CRUMBS_NAV == 1}
 				{php global $module;}

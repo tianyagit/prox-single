@@ -20,7 +20,7 @@ if($do == 'switch') {
 		itoast('操作失败, 非法访问.', '', 'error');
 	}
 	uni_account_save_switch($uniacid);
-	$module_name = trim($_GPC['module']);
+	$module_name = trim($_GPC['module_name']);
 	$version_id = intval($_GPC['version_id']);
 	if (empty($module_name)) {
 		$url = url('home/welcome');
@@ -85,7 +85,7 @@ if ($do == 'display') {
 			}
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
-			
+
 		}
 		unset($account_val);
 		unset($account);

@@ -201,7 +201,7 @@ function module_entry($eid) {
 	if (!empty($entry['state'])) {
 		$querystring['state'] = $entry['state'];
 	}
-	
+
 	$entry['url'] = murl('entry', $querystring);
 	$entry['url_show'] = murl('entry', $querystring, true, true);
 	return $entry;
@@ -305,7 +305,7 @@ function module_build_privileges() {
 	load()->model('account');
 	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
 	foreach($uniacid_arr as $row){
-		$modules = uni_modules(false);
+		$modules = uni_modules_by_uniacid($row['uniacid'], false);
 		//得到模块标识
 		$mymodules = pdo_getall('uni_account_modules', array('uniacid' => $row['uniacid']), array('module'), 'module');
 		$mymodules = array_keys($mymodules);
@@ -651,7 +651,7 @@ function module_get_user_account_list($uid, $module_name) {
 			}
 		}
 	}
-	
+
 	foreach ($accounts_list as $key => $account_value) {
 		if ($module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP && $module_info['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 			continue;
@@ -661,7 +661,7 @@ function module_get_user_account_list($uid, $module_name) {
 			unset($accounts_list[$key]);
 		}
 	}
-	
+
 	return $accounts_list;
 }
 
@@ -697,14 +697,14 @@ function module_link_uniacid_fetch($uid, $module_name) {
 				}
 				if (!empty($version_value['modules'][0]['account']['uniacid'])) {
 					$accounts_link_result[$version_value['modules'][0]['account']['uniacid']][] = array(
-							'uniacid' => $key,
-							'version' => $version_value['version'],
-							'version_id' => $version_value['id'],
-							'name' => $account_value['name'] . $version_value['version'],
+						'uniacid' => $key,
+						'version' => $version_value['version'],
+						'version_id' => $version_value['id'],
+						'name' => $account_value['name'],
 					);
 					unset($account_value['versions'][$version_key]);
 				}
-	
+
 			}
 		}
 		if ($account_value['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account_value['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
@@ -722,34 +722,80 @@ function module_link_uniacid_fetch($uid, $module_name) {
 			if (in_array($link_value['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !empty($link_value['link_wxapp']) && is_array($link_value['link_wxapp'])) {
 				foreach ($link_value['link_wxapp'] as $value) {
 					$result[] = array(
-							'app_name' => $link_value['name'],
-							'wxapp_name' => $value['name'] . ' ' . $value['version'],
-							'uniacid' => $link_value['uniacid'],
-							'version_id' => $value['version_id'],
-							'linkurl' => url('account/display/switch', array('uniacid' => $link_value['uniacid'], 'module' => $module_name, 'version_id' => $value['version_id'])),
+						'app_name' => $link_value['name'],
+						'wxapp_name' => $value['name'] . ' ' . $value['version'],
+						'uniacid' => $link_value['uniacid'],
+						'version_id' => $value['version_id'],
 					);
 				}
 			} elseif ($link_value['type'] == ACCOUNT_TYPE_APP_NORMAL && !empty($link_value['versions']) && is_array($link_value['versions'])) {
 				foreach ($link_value['versions'] as $value) {
 					$result[] = array(
-							'app_name' => '',
-							'wxapp_name' => $link_value['name'] . ' ' . $value['version'],
-							'uniacid' => $link_value['uniacid'],
-							'version_id' => $value['id'],
-							'linkurl' => url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $value['id'])),
+						'app_name' => '',
+						'wxapp_name' => $link_value['name'] . ' ' . $value['version'],
+						'uniacid' => $link_value['uniacid'],
+						'version_id' => $value['id'],
 					);
 				}
 			} else {
 				$result[] = array(
-						'app_name' => $link_value['name'],
-						'wxapp_name' => '',
-						'uniacid' => $link_value['uniacid'],
-						'version_id' => '',
-						'linkurl' => url('account/display/switch', array('uniacid' => $link_value['uniacid'], 'module' => $module_name))
+					'app_name' => $link_value['name'],
+					'wxapp_name' => '',
+					'uniacid' => $link_value['uniacid'],
+					'version_id' => '',
 				);
 			}
 		}
 	}
-	
+
 	return $result;
+}
+
+/**
+ * 对某一模块，保留最后一次进入的小程序OR公众号，以便点进入列表页时可以默认进入
+ * @param unknown $uniacid
+ * @return boolean
+ */
+function module_save_switch($module_name, $uniacid = 0, $version_id = 0) {
+	global $_W, $_GPC;
+	if (empty($_GPC['__switch'])) {
+		$_GPC['__switch'] = random(5);
+	}
+
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = cache_load($cache_key);
+	if (empty($cache_lastaccount)) {
+		$cache_lastaccount = array(
+			$module_name => array(
+				'module_name' => $module_name,
+				'uniacid' => $uniacid,
+				'version_id' => $version_id
+			)
+		);
+	} else {
+		$cache_lastaccount[$module_name] = array(
+			'module_name' => $module_name,
+			'uniacid' => $uniacid,
+			'version_id' => $version_id
+		);
+	}
+	cache_write($cache_key, $cache_lastaccount);
+	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
+	return true;
+}
+
+
+
+/**
+ * 获取用户上一次进入模块的公众号OR小程序信息
+ */
+function module_last_switch($module_name) {
+	global $_GPC;
+	$module_name = trim($module_name);
+	if (empty($module_name)) {
+		return array();
+	}
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = (array)cache_load($cache_key);
+	return $cache_lastaccount[$module_name];
 }

@@ -133,7 +133,7 @@ $we7_system_menu['wxapp'] = array(
 			'title' => '管理',
 			'menu' => array(
 				'module_link' => array(
-					'title' => "模块关联公众号",
+					'title' => "数据同步",
 					'url' => url('wxapp/version/module_link_uniacid'),
 					'is_display' => 1,
 					'icon' => 'wi wi-appsetting',
@@ -145,6 +145,13 @@ $we7_system_menu['wxapp'] = array(
 					'is_display' => 1,
 					'icon' => 'wi wi-appsetting',
 					'permission_name' => 'wxapp_payment',
+				),
+				'front_download' => array(
+						'title' => '小程序前端下载',
+						'url' => url('wxapp/version/front_download'),
+						'is_display' => 1,
+						'icon' => 'wi wi-wxapp-download',
+						'permission_name' => 'wxapp_front_download',
 				)
 			)
 		)

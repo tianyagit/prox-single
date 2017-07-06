@@ -39,11 +39,11 @@ if ($do == 'home') {
 } elseif ($do == 'display') {
 	//模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
 	$account_info = uni_user_account_permission();
-	
+
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$start = ($pindex - 1) * $psize;
-	
+
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
@@ -119,7 +119,7 @@ if ($do == 'home') {
 			itoast('版本信息错误');
 		}
 		$uniacid = !empty($module_info['account']['uniacid']) ? $module_info['account']['uniacid'] : $version_info['uniacid'];
-		uni_account_switch($uniacid, url('home/welcome/ext/', array('m' => $module_name)));
+		uni_account_switch($uniacid, url('home/welcome/ext/', array('m' => $module_name, 'version_id' => $version_id)));
 	}
 	uni_account_switch($uniacid);
 	wxapp_save_switch($uniacid);
