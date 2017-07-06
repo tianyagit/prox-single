@@ -6,6 +6,7 @@
  */
 
 defined('IN_IA') or exit('Access Denied');
+load()->func('cache');
 
 $dos = array('opcache');
 $do = in_array($do, $dos) ? $do : 'index';
@@ -15,10 +16,11 @@ if ($do == 'opcache') {
 	opcache_reset();
 	itoast('清空缓存成功', url('system/optimize'), 'success');
 } else {
+	$cache_type = cache_type();
 	$extensions = array(
 		'memcache' => array(
 			'support' => extension_loaded('memcache'),
-			'status' => ($_W['config']['setting']['cache'] == 'memcache'),
+			'status' => ($cache_type == 'memcache'),
 			'clear' => array(
 				'url' => url('system/updatecache'),
 				'title' => '更新缓存',
@@ -26,7 +28,7 @@ if ($do == 'opcache') {
 		),
 		'redis' => array(
 			'support' => extension_loaded('redis'),
-			'status' => ($_W['config']['setting']['cache'] == 'redis'),
+			'status' => ($cache_type == 'redis'),
 			'clear' => array(
 					'url' => url('system/updatecache'),
 					'title' => '更新缓存',
