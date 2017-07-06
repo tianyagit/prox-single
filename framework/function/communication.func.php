@@ -1,6 +1,4 @@
 <?php
-use Qiniu\Http\Response;
-
 /**
  * Http协议
  * 
