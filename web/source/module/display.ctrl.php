@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * 应用列表
  * [WeEngine System] Copyright (c) 2013 WE7.CC
@@ -94,7 +94,7 @@ if ($do == 'getall_last_switch') {
 			$result[$module_value['name']] = array(
 				'app_name' => $account_info['name'],
 				'wxapp_name' => $account_wxapp_info['name']
-			);			
+			);
 		} else {
 			$result[$module_value['name']] = array(
 				'app_name' => $account_info['name'],
