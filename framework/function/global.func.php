@@ -1373,3 +1373,21 @@ function emoji_unicode_encode($string) {
 	preg_match_all('/' . implode('|', $ranges) . '/i', $string, $match);
 	print_r($match);exit;
 }
+
+/**
+ * 获取全局变量 $_W 中的值
+ * @param string $key
+ */
+function getglobal($key) {
+	global $_W;
+	$key = explode('/', $key);
+	
+	$v = &$_W;
+	foreach ($key as $k) {
+		if (!isset($v[$k])) {
+			return null;
+		}
+		$v = &$v[$k];
+	}
+	return $v;
+}
