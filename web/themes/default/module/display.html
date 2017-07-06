@@ -73,7 +73,7 @@
 		'activeLetter': {php echo !empty($_GPC['letter']) ? json_encode($_GPC['letter']) : 'null'},
 		'links': {
 			'moduleAccounts': "{php echo url('module/display/have_permission_uniacids')}",
-			'getLastSwitch': "{php echo url('module/display/get_last_switch')}",
+			'getallLastSwitch': "{php echo url('module/display/getall_last_switch')}",
 		}
 	});
 	angular.bootstrap($('#js-module-display'), ['moduleApp']);

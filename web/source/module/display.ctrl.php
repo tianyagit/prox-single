@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('display', 'switch', 'get_last_switch', 'have_permission_uniacids', 'accounts_dropdown_menu');
+$dos = array('display', 'switch', 'getall_last_switch', 'have_permission_uniacids', 'accounts_dropdown_menu');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
@@ -65,7 +65,7 @@ if ($do == 'switch') {
 	}
 }
 
-if ($do == 'get_last_switch') {
+if ($do == 'getall_last_switch') {
 	set_time_limit(0);
 	$user_module = user_modules($_W['uid']);
 	$result = array();
