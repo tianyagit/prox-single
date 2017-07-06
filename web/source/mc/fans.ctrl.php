@@ -213,7 +213,6 @@ if ($do == 'batch_edit_fans_tag') {
 	}
 
 	$account_api = WeAccount::create();
-	pdo_begin();
 	foreach ($tags as $tag) {
 		$result = $account_api->fansTagBatchTagging($openid_list, $tag);
 		if (is_error($result)) {
@@ -226,7 +225,6 @@ if ($do == 'batch_edit_fans_tag') {
 			pdo_update('mc_mapping_fans', array('groupid' => $groupid), array('uniacid' => $_W['uniacid'], 'openid' => $openid));
 		}
 	}
-	pdo_commit();
 	iajax(0, '');
 }
 

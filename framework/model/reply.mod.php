@@ -217,7 +217,6 @@ function reply_insert_without_service($file) {
 	if (!in_array($file, $all_url)) {
 		return false;
 	}
-	pdo_begin();
 	$rule_info = array('uniacid' => 0, 'name' => $all_service[$file]['title'], 'module' => 'userapi', 'displayorder' => 255, 'status' => 1);
 	pdo_insert('rule', $rule_info);
 	$rule_id = pdo_insertid();
@@ -231,6 +230,5 @@ function reply_insert_without_service($file) {
 	}
 	$userapi_reply = array('rid' => $rule_id, 'description' => htmlspecialchars($all_service[$file]['description']), 'apiurl' => $file);
 	pdo_insert('userapi_reply', $userapi_reply);
-	pdo_commit();
 	return $rule_id;
 }

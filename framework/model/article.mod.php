@@ -90,7 +90,6 @@ function article_category_delete($id) {
 	if (empty($category)) {
 		return false;
 	}
-	pdo_begin();
 	if ($category['parentid'] == 0) {
 		$children_cates = pdo_getall('site_category', array('parentid' => $id));
 		pdo_update('site_article', array('pcate' => 0), array('pcate' => $id));
@@ -109,7 +108,6 @@ function article_category_delete($id) {
 		pdo_query("DELETE FROM ".tablename('site_nav')." WHERE id IN (".implode(',', array_keys($navs)).")");
 	}
 	pdo_delete('site_category', array('id' => $id, 'parentid' => $id), 'OR');
-	pdo_commit();
 	return true;
 }
 
