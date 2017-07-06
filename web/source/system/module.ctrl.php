@@ -474,6 +474,9 @@ if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
+	$cloud_module = cloud_m_query();
+	$module_info['cloud_mid'] = !empty($cloud_module[$module_name]) ?  $cloud_module[$module_name]['id'] : '';
+
 	if (!empty($module_info['is_relation'])) {
 		$type = intval($_GPC['type']);
 		switch ($type) {
