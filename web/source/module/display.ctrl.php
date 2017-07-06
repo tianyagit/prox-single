@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('display', 'switch', 'have_permission_uniacids', 'accounts_dropdown_menu');
+$dos = array('display', 'switch', 'get_last_switch', 'have_permission_uniacids', 'accounts_dropdown_menu');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
@@ -42,11 +42,13 @@ if ($do == 'switch') {
 		}
 	}
 
+	module_save_switch($module_name, $uniacid, $version_id);
 	if (!empty($version_id)) {
 		$version_info = wxapp_version($version_id);
 	}
 	if (empty($uniacid) && !empty($version_id)) {
 		wxapp_save_switch($version_info['uniacid']);
+		wxapp_update_last_use_version($version_info['uniacid'], $version_id);
 		itoast('', url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $version_id)), 'success');
 	}
 	if (!empty($uniacid)) {
@@ -57,9 +59,50 @@ if ($do == 'switch') {
 			itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module_name' => $module_name, 'version_id' => $version_id)), 'success');
 		} else {
 			wxapp_save_switch($version_info['uniacid']);
+			wxapp_update_last_use_version($version_info['uniacid'], $version_id);
 			itoast('', url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $version_id)), 'success');
 		}
 	}
+}
+
+if ($do == 'get_last_switch') {
+	set_time_limit(0);
+	$user_module = user_modules($_W['uid']);
+	$result = array();
+	foreach ($user_module as $module_value) {
+		$last_module_info = module_last_switch($module_value['name']);
+		if (empty($last_module_info)) {
+			$accounts_list = module_link_uniacid_fetch($_W['uid'], $module_value['name']);
+			$current_account = current($accounts_list);
+			$result[$module_value['name']] = array(
+				'app_name' => $current_account['app_name'],
+				'wxapp_name' => $current_account['wxapp_name'],
+			);
+			continue;
+		}
+		$account_info = uni_fetch($last_module_info['uniacid']);
+		if ($account_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+			$result[$module_value['name']] = array(
+				'app_name' => '',
+				'wxapp_name' => $account_info['name']
+			);
+			continue;
+		}
+		if (!empty($last_module_info['version_id'])) {
+			$version_info = wxapp_version($last_module_info['version_id']);
+			$account_wxapp_info = wxapp_fetch($version_info['uniacid']);
+			$result[$module_value['name']] = array(
+				'app_name' => $account_info['name'],
+				'wxapp_name' => $account_wxapp_info['name']
+			);			
+		} else {
+			$result[$module_value['name']] = array(
+				'app_name' => $account_info['name'],
+				'wxapp_name' => ''
+			);
+		}
+	}
+	iajax(0, $result);
 }
 
 if ($do == 'have_permission_uniacids') {
@@ -67,6 +110,7 @@ if ($do == 'have_permission_uniacids') {
 	$accounts_list = module_link_uniacid_fetch($_W['uid'], $module_name);
 	iajax(0, $accounts_list);
 }
+
 if ($do == 'accounts_dropdown_menu') {
 	$module_name = trim($_GPC['module_name']);
 	if (empty($module_name)) {
