@@ -1,14 +1,17 @@
 {template 'common/header'}
-{if $do == 'installed'}
 <div class="we7-page-title">
 	应用管理
 </div>
+<ul class="we7-page-tab">
+	<li {if $do == 'installed'}class="active"{/if}><a href="{php echo url('system/module/installed')}">已安装公众号应用  </a></li>
+	{if $_W['isfounder']}
+	<li {if $do == 'not_installed' && $_GPC['status'] != 'recycle'}class="active"{/if}><a href="{php echo url('system/module/not_installed')}">未安装公众号应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
+	<li {if $do == 'not_installed' && $_GPC['status'] == 'recycle'}class="active"{/if}><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}">已停用公众号应用</a></li>
+	<li {if $do == 'subscribe'}class="active"{/if}><a href="{php echo url('system/module/subscribe')}">订阅管理</a></li>
+	{/if}
+</ul>
+{if $do == 'installed'}
 <div id="js-system-module" ng-controller="installedCtrl" ng-cloak>
-	<ul class="we7-page-tab">
-		<li class="active"><a href="{php echo url('system/module/installed')}">已安装公众号应用  </a></li>
-		<li><a href="{php echo url('system/module/not_installed')}" ng-if="isFounder == 1">未安装公众号应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-		<li><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}" ng-if="isFounder == 1">已停用公众号应用</a></li>
-	</ul>
 	<div class="we7-page-search clearfix">
 		<form action="" method="get" class="row">
 			<div class="form-group we7-margin-bottom  col-sm-4">
@@ -242,14 +245,6 @@
 	});
 </script>
 {elseif $do == 'not_installed'}
-<div class="we7-page-title">
-	应用管理
-</div>
-<ul class="we7-page-tab">
-	<li><a href="{php echo url('system/module/installed')}">已安装应用  </a></li>
-	<li {if $status == 'uninstalled'}class="active"{/if}><a href="{php echo url('system/module/not_installed')}">未安装的应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-	<li {if $status == 'recycle'}class="active"{/if}><a href="{php echo url('system/module/not_installed', array('status' => 'recycle'))}">已停用应用</a></li>
-</ul>
 <div id="js-system-module-not_installed" ng-controller="notInstalledCtrl" ng-cloak>
 	<div class="we7-page-search clearfix">
 		<form action="" method="get" class="row">
@@ -654,12 +649,50 @@
 			'modulename' : "{$module_info['name']}",
 			'editModuleUrl' : "{php echo url('system/module/get_module_info')}",
 			'saveModuleUrl' : "{php echo url('system/module/save_module_info')}",
-			'checkReceiveUrl' : "{php echo url('system/module/check')}",
+			'checkReceiveUrl' : "{php echo url('system/module/check_subscribe')}",
 			'checkUpgradeUrl' : "{php echo url('system/module/check_upgrade')}",
 			'get_upgrade_info_url' : "{php echo url('system/module/get_upgrade_info')}"
 	});
 	angular.bootstrap($('.js-system-module-detail'), ['moduleApp']);
 	});
+</script>
+{elseif $do == 'subscribe'}
+
+<ol class="breadcrumb">
+	<li><a href="./?refresh"><i class="fa fa-home"></i></a></li>
+	<li><a href="{url 'system/welcome'}">系统</a></li>
+	<li class="active">订阅管理</li>
+</ol>
+<div class="alert alert-info">
+	如果模块测试订阅消息失败，为了不影响系统整体通知，请禁用这些通知失败的模块
+</div>
+<div class="js-system-module-subscribe" ng-controller="subscribeCtrl" ng-cloak>
+ <div class="panel panel-default js-test" ng-repeat="(name, module) in subscribe_module track by name">
+	<div class="panel-heading clearfix">
+		<div class="pull-right">
+			<input class="js-flag" type="checkbox" ng-checked="module.receive_ban == 1" modulename="{{ module.name }}"/>
+		</div>
+		{{ module.title }}   ({{ module.name }})
+	</div>
+	<div class="panel-body clearfix">
+		<div class="col-md-3 col-sm-4 col-xs-6 item" style="line-height: 30px; cursor:pointer;" ng-repeat="subscribe in module.subscribe">
+			{{ types[subscribe] }}
+			<p class="pull-right">
+				<span class="label label-success" ng-if="module.subscribe_success == 1">正常</span>
+				<span class="label label-danger" ng-if="module.subscribe_success == 2">失败</span>
+			</p>
+		</div>
+	</div>
+</div>
+</div>
+<script type="text/javascript">
+	angular.module('moduleApp').value('config', {
+		'subscribe_module' : {php echo json_encode($subscribe_module)},
+		'types' : {php echo json_encode($subscribe_type)},
+		'change_ban_url' : "{php echo url('system/module/change_receive_ban')}",
+		'check_receive_url' : "{php echo url('system/module/check_subscribe')}"
+	});
+	angular.bootstrap($('.js-system-module-subscribe'), ['moduleApp']);
 </script>
 {/if}
 {template 'common/footer'}

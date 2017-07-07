@@ -14,7 +14,7 @@ load()->model('user');
 load()->model('account');
 load()->classs('account');
 load()->model('utility');
-$dos = array('filter', 'check', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
+$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
@@ -22,10 +22,31 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NA
 	itoast('无权限操作！', referer(), 'error');
 }
 
-if ($do == 'check') {
+if ($do == 'subscribe') {
+	$uninstallModules = module_get_all_unistalled($status);
+	$total_uninstalled = $uninstallModules['module_count'];
+
+	$module_list = user_modules($_W['uid']);
+	$subscribe_module = array();
+	$receive_ban = $_W['setting']['module_receive_ban'];
+	$subscribe_type = ext_module_msg_types();
+	if (is_array($module_list) && !empty($module_list)) {
+		foreach ($module_list as $module) {
+			if (!empty($module['subscribes']) && is_array($module['subscribes'])) {
+				$subscribe_module[$module['name']]['subscribe'] = $module['subscribes'];
+				$subscribe_module[$module['name']]['title'] = $module['title'];
+				$subscribe_module[$module['name']]['name'] = $module['name'];
+				$subscribe_module[$module['name']]['subscribe_success'] = 2;
+				$subscribe_module[$module['name']]['receive_ban'] = in_array($module['name'], $receive_ban) ? 1 : 2;
+			}
+		}
+	}
+}
+
+if ($do == 'check_subscribe') {
 	load()->classs('account');
-	$modulename = $_GPC['module_name'];
-	$obj = WeUtility::createModuleReceiver($modulename);
+	$module_name = $_GPC['module_name'];
+	$obj = WeUtility::createModuleReceiver($module_name);
 	if (empty($obj)) {
 		exit('error');
 	}
