@@ -530,7 +530,8 @@ function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	if ($_W['role'] == 'founder') {
+	$founders = explode(',', $_W['config']['setting']['founder']);
+	if (in_array($uid, $founders)) {
 		return false;
 	}
 	if (FRAME == 'system') {

@@ -91,6 +91,6 @@ if($do == 'delete') {
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		itoast('没有权限！', referer(), 'error');
 	}
-    account_delete($acid);
+	account_delete($acid);
 	itoast('删除成功！', referer(), 'success');
 }
