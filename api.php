@@ -437,15 +437,13 @@ class WeEngine {
 		if (!empty($subscribe[$this->message['type']])) {
 			foreach ($subscribe[$this->message['type']] as $modulename) {
 				//fsockipen可用时，设置timeout为0可以无需等待高效请求
-				//否则的话使用curl并发请求
 				$response = ihttp_request(wurl('utility/subscribe/receive'), array(
 					'i' => $GLOBALS['uniacid'], 
 					'modulename' => $modulename,
 					'request' => json_encode($par),
 					'response' => json_encode($response),
 					'message' => json_encode($this->message),
-				), array());
-				print_r($response);
+				), array(), 0);
 			}
 		}
 	}

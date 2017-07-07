@@ -133,10 +133,10 @@ $we7_system_menu['wxapp'] = array(
 			'title' => '管理',
 			'menu' => array(
 				'module_link' => array(
-					'title' => "模块关联公众号",
+					'title' => "数据同步",
 					'url' => url('wxapp/version/module_link_uniacid'),
 					'is_display' => 1,
-					'icon' => 'wi wi-appsetting',
+					'icon' => 'wi wi-data-synchro',
 					'permission_name' => 'wxapp_module_link_uniacid',
 				),
 				'wxapp_profile' => array(
@@ -147,7 +147,7 @@ $we7_system_menu['wxapp'] = array(
 					'permission_name' => 'wxapp_payment',
 				),
 				'front_download' => array(
-						'title' => '小程序前端下载',
+						'title' => '小程序下载',
 						'url' => url('wxapp/version/front_download'),
 						'is_display' => 1,
 						'icon' => 'wi wi-wxapp-download',
@@ -158,11 +158,12 @@ $we7_system_menu['wxapp'] = array(
 	),
 );
 
-$we7_system_menu['module'] = array(
-	'title' => '应用',
-	'url' => url('module/display'),
-	'section' => array()
-);
+// $we7_system_menu['module'] = array(
+// 	'title' => '应用',
+// 	'url' => url('module/display'),
+// 	'section' => array(),
+// 	'is_display' => 0
+// );
 $we7_system_menu['system'] = array(
 	'title' => '系统管理',
 	'url' => url('home/welcome/system'),

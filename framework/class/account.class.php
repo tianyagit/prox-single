@@ -778,13 +778,13 @@ class WeUtility {
  */
 abstract class WeBase {
 	/**
+	 * @var array 当前模块参数及配置信息
+	 */
+	private $module;
+	/**
 	 * @var string 当前模块名称 {identifie}
 	 */
 	public $modulename;
-	/**
-	 * @var array 当前模块参数及配置信息
-	 */
-	public $module;
 	/**
 	 * @var int 当前统一公众号编号
 	 */
@@ -1424,6 +1424,16 @@ abstract class WeModuleSite extends WeBase {
 		}
 		trigger_error("访问的方法 {$name} 不存在.", E_USER_WARNING);
 		return null;
+	}
+	
+	public function __get($name) {
+		if ($name == 'module') {
+			if (!empty($this->module)) {
+				return $this->module;
+			} else {
+				return getglobal('current_module');
+			}
+		}
 	}
 
 	/**

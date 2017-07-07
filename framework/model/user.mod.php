@@ -280,10 +280,11 @@ function user_account_detail_info($uid) {
 	if (empty($uid)) {
 		return $account_lists;
 	}
-	
+
 	$sql = "SELECT b.uniacid, b.role, a.type FROM " . tablename('account'). " AS a LEFT JOIN ". tablename('uni_account_users') . " AS b ON a.uniacid = b.uniacid WHERE a.acid <> 0 AND a.isdeleted <> 1";
 	$param = array();
-	if (empty($_W['isfounder'])) {
+	$founders = explode(',', $_W['config']['setting']['founder']);
+	if (!in_array($uid, $founders)) {
 		$sql .= " AND b.uid = :uid";
 		$param[':uid'] = $uid;
 	}
