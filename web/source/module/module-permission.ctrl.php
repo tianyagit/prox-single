@@ -51,11 +51,13 @@ if ($do == 'display') {
 if ($do == 'post') {
 	$uid = intval($_GPC['uid']);
 	$user = user_single($uid);
-	$have_permission = uni_user_menu_permission($uid, $_W['uniacid'], $module_name);
-	if (is_error($have_permission)) {
-		itoast($have_permission['message']);
+	if (!empty($uid)) {
+		$have_permission = uni_user_menu_permission($uid, $_W['uniacid'], $module_name);
+		if (is_error($have_permission)) {
+			itoast($have_permission['message']);
+		}
 	}
-	
+
 	if (checksubmit()) {
 		$insert_user = array(
 				'username' => trim($_GPC['username']),
@@ -67,7 +69,7 @@ if ($do == 'post') {
 		if (empty($insert_user['username'])) {
 			itoast('必须输入用户名，格式为 1-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。');
 		}
-		
+
 		$operator = array();
 		if (empty($uid)) {
 			if (user_check(array('username' => $insert_user['username']))) {
@@ -119,11 +121,10 @@ if ($do == 'post') {
 		} else {
 			pdo_update('uni_account_users', array('role' => 'operator'), array('uniacid' => $_W['uniacid'], 'uid' => $uid));
 		}
-		itoast('编辑店员资料成功', url('profile/module-permission', array('m' => $module_name)), 'success');
+		itoast('编辑店员资料成功', url('module/module-permission', array('m' => $module_name)), 'success');
 	}
-	
 	$current_module_permission = module_permission_fetch($module_name);
-	if (!empty($current_module_permission)) {
+	if (!empty($uid) && !empty($current_module_permission)) {
 		foreach ($current_module_permission as &$data) {
 			$data['checked'] = 0;
 			if (in_array($data['permission'], $have_permission) || in_array('all', $have_permission)) {
@@ -150,4 +151,4 @@ if ($do == 'delete') {
 		itoast('删除成功', referer(), 'success');
 	}
 }
-template('profile/module-permission');
+template('module/module-permission');
