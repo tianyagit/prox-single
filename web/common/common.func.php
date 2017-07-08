@@ -248,7 +248,7 @@ function buildframes($framename = ''){
 		if (array_diff(array_keys($modules), $sysmodules)) {
 			$frames['account']['section']['platform_module']['menu']['platform_module_more'] = array(
 				'title' => '更多应用',
-				'url' => url('profile/module'),
+				'url' => url('module/account-manage'),
 				'is_display' => 1,
 			);
 		} else {
@@ -367,7 +367,7 @@ function buildframes($framename = ''){
 		if($module['settings']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_settings'] = array(
 				'title' => "<i class='fa fa-cog'></i> 参数设置",
-				'url' => url('profile/module/setting', array('m' => $modulename, 'version_id' => $version_id)),
+				'url' => url('module/account-manage/setting', array('m' => $modulename, 'version_id' => $version_id)),
 				'is_display' => 1,
 			);
 		}

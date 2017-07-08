@@ -49,7 +49,7 @@ if($do == 'display') {
 		}
 		$modules = $modulelist;
 	}
-	template ('profile/module');
+	template ('module/account-manage');
 } elseif ($do == 'shortcut') {
 	$status = intval($_GPC['shortcut']);
 	$modulename = $_GPC['modulename'];
@@ -149,7 +149,7 @@ if($do == 'display') {
 		$module_simple['pro_attach_url'] = $pro_attach_url;
 		
 		$iframe = cloud_module_setting_prepare($module_simple, 'setting');
-		template('profile/module-setting');
+		template('module/account-manage-setting');
 		exit();
 	}
 	$obj = WeUtility::createModule($module['name']);
