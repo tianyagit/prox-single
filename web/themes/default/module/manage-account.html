@@ -29,15 +29,15 @@
 					进入应用 <i class="wi wi-angle-right"></i>
 				</a>
 				{if $row['shortcut']}
-				<a href="{php echo url('module/account-manage/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="移出菜单">
+				<a href="{php echo url('module/manage-account/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="移出菜单">
 					<i class="wi wi-remove"></i>
 				</a>
 				{else}
-				<a href="{php echo url('module/account-manage/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="显示到菜单">
+				<a href="{php echo url('module/manage-account/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="显示到菜单">
 					<i class="wi wi-eye"></i>
 				</a>
 				{/if}
-				<a href="{php echo url('module/account-manage/top', array('modulename' => $row['name']))}" class="stick">
+				<a href="{php echo url('module/manage-account/top', array('modulename' => $row['name']))}" class="stick">
 					<i class="wi wi-stick-sign" title="置顶"></i>
 				</a>
 
@@ -49,7 +49,7 @@
 </div>
 <script type="text/javascript">
 	angular.module('moduleApp').value('config', {
-		searchurl : "{php echo url('module/account-manage')}"
+		searchurl : "{php echo url('module/manage-account')}"
 	});
 	angular.bootstrap($('.js-module-display'), ['moduleApp']);
 </script>

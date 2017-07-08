@@ -205,7 +205,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module' => array(
 					'title' => '公众号应用',
-					'url' => url('system/module', array('account_type' => '1')),
+					'url' => url('module/manage-system', array('account_type' => '1')),
 					'icon' => 'wi wi-wx-apply',
 					'permission_name' => 'system_module',
 				),
@@ -234,7 +234,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module_wxapp' => array(
 					'title' => '小程序应用',
-					'url' => url('system/module', array('account_type' => '4')),
+					'url' => url('module/manage-system', array('account_type' => '4')),
 					'icon' => 'wi wi-wxapp-apply',
 					'permission_name' => 'system_module_wxapp',
 				),

@@ -271,7 +271,7 @@ if ($do == 'upgrade') {
 	cache_delete('cloud:transtoken');
 	cache_build_module_info($module_name);
 
-	itoast('模块更新成功！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
+	itoast('模块更新成功！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do =='install') {
@@ -289,7 +289,7 @@ if ($do =='install') {
 	if (!empty($manifest)) {
 		$result = cloud_m_prepare($module_name);
 		if (is_error($result)) {
-			itoast($result['message'], url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
+			itoast($result['message'], url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 	} else {
 		$result = cloud_prepare();
@@ -311,12 +311,12 @@ if ($do =='install') {
 		}
 	}
 	if (empty($manifest)) {
-		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('system/module/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
+		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
 	}
 	if (!empty($manifest['platform']['main_module'])) {
 		$plugin_exist = pdo_get('modules_plugin', array('main_module' => $manifest['platform']['main_module'], 'name' => $manifest['application']['identifie']));
 		if (empty($plugin_exist)) {
-			itoast('请先更新主模块后再安装插件', url('system/module/installed'), 'error');
+			itoast('请先更新主模块后再安装插件', url('module/manage-system/installed'), 'error');
 		}
 	}
 	$check_manifest_result = manifest_check($module_name, $manifest);
@@ -419,9 +419,9 @@ if ($do =='install') {
 		cache_build_module_info($module_name);
 
 		if (empty($module_subscribe_success)) {
-			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看', url('system/module/module_detail', array('name' => $module['name'])), 'tips');
+			itoast('模块安装成功！模块订阅消息有错误，系统已禁用该模块的订阅消息，详细信息请查看', url('module/manage-system/module_detail', array('name' => $module['name'])), 'tips');
 		} else {
-			itoast('模块安装成功!', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
+			itoast('模块安装成功!', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 		}
 	} else {
 		itoast('模块安装失败, 请联系模块开发者！');
@@ -602,9 +602,9 @@ if ($do == 'uninstall') {
 	}
 	if (!isset($_GPC['confirm'])) {
 		if ($module['isrulefields']) {
-			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('system/module/uninstall', array('name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('system/module/uninstall', array('account_type' => ACCOUNT_TYPE, 'name' => $name, 'confirm' => 0)) . '">否</a></div>';
+			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/uninstall', array('name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/uninstall', array('account_type' => ACCOUNT_TYPE, 'name' => $name, 'confirm' => 0)) . '">否</a></div>';
 		} elseif (!empty($plugin_list)) {
-			$message .= "<a href=" . url('system/module/uninstall', array('name' => $name,'confirm' => 0)) . " class='btn btn-info'>继续删除</a>";
+			$message .= "<a href=" . url('module/manage-system/uninstall', array('name' => $name,'confirm' => 0)) . " class='btn btn-info'>继续删除</a>";
 		}
 		if (!empty($message)) {
 			itoast($message, '', 'tips');
@@ -617,9 +617,9 @@ if ($do == 'uninstall') {
 	}
 	$uninstall_result = module_uninstall($module['name'], $_GPC['confirm'] == 1);
 	if (is_error($uninstall_result)) {
-		itoast($uninstall_result['message'], url('system/module'), 'error');
+		itoast($uninstall_result['message'], url('module/manage-system'), 'error');
 	}
-	itoast('模块已放入回收站！', url('system/module', array('account_type' => ACCOUNT_TYPE)), 'success');
+	itoast('模块已放入回收站！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do == 'installed') {
@@ -743,4 +743,4 @@ if ($do == 'filter') {
 	$pager = pagination($total, $pageindex, $pagesize, '', array('before' => 5, 'after' => 4,'ajaxcallback' => true, 'callbackfuncname' => 'filter'));
 	iajax(0, array('modules' => $modules, 'pager' => $pager));
 }
-template('system/module' . ACCOUNT_TYPE_TEMPLATE);
+template('module/manage-system' . ACCOUNT_TYPE_TEMPLATE);

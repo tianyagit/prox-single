@@ -9,7 +9,7 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
 						<div class="num">
-							<a href="{php echo url('system/module/not_installed', array('account_type' => 1))}" class="color-default">{{account_uninstall_modules_nums}}</a>
+							<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 1))}" class="color-default">{{account_uninstall_modules_nums}}</a>
 						</div>
 					</div>
 					<div class="col-sm-4 text-center">
@@ -21,7 +21,7 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
 						<div class="num">
-							<a href="{php echo url('system/module/installed', array('account_type' => 1))}" class="color-default">{{account_modules_total}}</a>
+							<a href="{php echo url('module/manage-system/installed', array('account_type' => 1))}" class="color-default">{{account_modules_total}}</a>
 						</div>
 					</div>
 				</div>
@@ -34,7 +34,7 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
 						<div class="num">
-							<a href="{php echo url('system/module/not_installed', array('account_type' => 4))}" class="color-default">{{wxapp_uninstall_modules_nums}}</a>
+							<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" class="color-default">{{wxapp_uninstall_modules_nums}}</a>
 						</div>
 					</div>
 					<div class="col-sm-4 text-center">
@@ -46,7 +46,7 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
 						<div class="num">
-							<a href="{php echo url('system/module/installed', array('account_type' => 4))}" class="color-default">{{wxapp_modules_total}}</a>
+							<a href="{php echo url('module/manage-system/installed', array('account_type' => 4))}" class="color-default">{{wxapp_modules_total}}</a>
 						</div>
 					</div>
 				</div>
@@ -99,9 +99,9 @@
 	<div class="panel we7-panel apply-list">
 		<div class="panel-heading">
 			<span class="pull-right">
-				<a href="{php echo url('system/module', array('account_type' => 1))}" class="color-default">查看更多公众号应用</a>
+				<a href="{php echo url('module/manage-system', array('account_type' => 1))}" class="color-default">查看更多公众号应用</a>
 				<span class="we7-padding-horizontal inline-block color-gray">|</span>
-				<a href="{php echo url('system/module', array('account_type' => 4))}" class="color-default">查看更多小程序应用</a>
+				<a href="{php echo url('module/manage-system', array('account_type' => 4))}" class="color-default">查看更多小程序应用</a>
 			</span>
 			可升级应用
 		</div>

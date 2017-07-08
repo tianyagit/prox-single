@@ -49,7 +49,7 @@ if($do == 'display') {
 		}
 		$modules = $modulelist;
 	}
-	template ('module/account-manage');
+	template ('module/manage-account');
 } elseif ($do == 'shortcut') {
 	$status = intval($_GPC['shortcut']);
 	$modulename = $_GPC['modulename'];
@@ -57,9 +57,9 @@ if($do == 'display') {
 	if(empty($module)) {
 		itoast('抱歉，你操作的模块不能被访问！', '', '');
 	}
-	
+
 	$module_enabled = uni_account_module_shortcut_enabled($modulename, $_W['uniacid'], $status);
-	
+
 	if ($status) {
 		itoast('添加模块快捷操作成功！', referer(), 'success');
 	} else {
@@ -85,7 +85,7 @@ if($do == 'display') {
 		itoast('抱歉，你操作的模块不能被访问！', '', '');
 	}
 	$max_displayorder = (int)pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid']), 'MAX(displayorder)');
-	
+
 	$module_profile = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $_W['uniacid']));
 	if (!empty($module_profile)) {
 		pdo_update('uni_account_modules', array('displayorder' => ++$max_displayorder), array('id' => $module_profile['id']));
@@ -103,7 +103,7 @@ if($do == 'display') {
 } elseif ($do == 'setting') {
 	$modulename = $_GPC['m'];
 	$module = $_W['current_module'] = $modulelist[$modulename];
-	
+
 	if(empty($module)) {
 		itoast('抱歉，你操作的模块不能被访问！', '', '');
 	}
@@ -111,30 +111,30 @@ if($do == 'display') {
 	if(!uni_user_module_permission_check($modulename.'_settings', $modulename)) {
 		itoast('您没有权限进行该操作', '', '');
 	}
-	
+
 	// 兼容历史性问题：模块内获取不到模块信息$module的问题
 	define('CRUMBS_NAV', 1);
-	
+
 	$config = $module['config'];
 	if (($module['settings'] == 2) && !is_file(IA_ROOT."/addons/{$module['name']}/developer.cer")) {
-		
+
 		if (empty($_W['setting']['site']['key']) || empty($_W['setting']['site']['token'])) {
 			itoast('站点未注册，请先注册站点。', url('cloud/profile'), 'info');
 		}
-		
+
 		if (empty($config)) {
 			$config = array();
 		}
-		
+
 		load()->model('cloud');
 		load()->func('communication');
-		
+
 		$pro_attach_url = tomedia('pro_attach_url');
 		$pro_attach_url = str_replace('pro_attach_url', '', $pro_attach_url);
-		
+
 		$module_simple = array_elements(array('name', 'type', 'title', 'version', 'settings'), $module);
 		$module_simple['pro_attach_url'] = $pro_attach_url;
-		
+
 		$iframe = cloud_module_setting_prepare($module_simple, 'setting');
 		$result = ihttp_post($iframe, array('inherit_setting' => base64_encode(iserializer($config))));
 		if (is_error($result)) {
@@ -144,12 +144,12 @@ if($do == 'display') {
 		if (is_error($result)) {
 			itoast($result['message'], '', '');
 		}
-		
+
 		$module_simple = array_elements(array('name', 'type', 'title', 'version', 'settings'), $module);
 		$module_simple['pro_attach_url'] = $pro_attach_url;
-		
+
 		$iframe = cloud_module_setting_prepare($module_simple, 'setting');
-		template('module/account-manage-setting');
+		template('module/manage-account-setting');
 		exit();
 	}
 	$obj = WeUtility::createModule($module['name']);
