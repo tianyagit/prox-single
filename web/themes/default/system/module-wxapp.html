@@ -495,7 +495,7 @@
 					应用权限组
 				</th>
 				<th class="text-right">
-					<a href="{php echo url('system/module-group')}" class="color-default">添加</a>
+					<a href="{php echo url('module/group')}" class="color-default">添加</a>
 				</th>
 			</tr>
 			<tr>
@@ -511,7 +511,7 @@
 					<span>{$group['name']}</span>
 				</td>
 				<td class="text-right">
-					<div class="link-group"><a href="{php echo url('system/module-group/post', array('id' => $group['id']))}">设置</a></div>
+					<div class="link-group"><a href="{php echo url('module/group/post', array('id' => $group['id']))}">设置</a></div>
 				</td>
 			</tr>
 			{/loop}

@@ -288,7 +288,7 @@ $we7_system_menu['system'] = array(
 			'menu' => array(
 				'system_module_group' => array(
 					'title' => '应用权限组',
-					'url' => url('system/module-group'),
+					'url' => url('module/group'),
 					'icon' => 'wi wi-appjurisdiction',
 					'permission_name' => 'system_module_group',
 				),
