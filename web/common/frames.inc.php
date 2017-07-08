@@ -147,11 +147,11 @@ $we7_system_menu['wxapp'] = array(
 					'permission_name' => 'wxapp_payment',
 				),
 				'front_download' => array(
-						'title' => '小程序下载',
-						'url' => url('wxapp/version/front_download'),
-						'is_display' => 1,
-						'icon' => 'wi wi-wxapp-download',
-						'permission_name' => 'wxapp_front_download',
+					'title' => '小程序下载',
+					'url' => url('wxapp/version/front_download'),
+					'is_display' => 1,
+					'icon' => 'wi wi-wxapp-download',
+					'permission_name' => 'wxapp_front_download',
 				)
 			)
 		)
