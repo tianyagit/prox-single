@@ -82,11 +82,12 @@ function article_notice_all($filter = array(), $pindex = 1, $psize = 10) {
  * @return bool
  */
 function article_category_delete($id) {
-	if (empty(intval($id))) {
+	$id = intval($id);
+	if (empty($id)) {
 		return false;
 	}
 	load()->func('file');
-	$category = pdo_fetch("SELECT id, parentid, nid FROM ".tablename('site_category')." WHERE id = '$id'");
+	$category = pdo_fetch("SELECT id, parentid, nid FROM " . tablename('site_category')." WHERE id = " . $id);
 	if (empty($category)) {
 		return false;
 	}

@@ -56,13 +56,13 @@ if ($do == 'platform') {
 	$uninstall_modules = module_get_all_unistalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];
-	
+
 	$account_modules = user_module_by_account_type('account');
 	$wxapp_modules = user_module_by_account_type('wxapp');
-	
+
 	$account_modules_total = count($account_modules) + $account_uninstall_modules_nums;
 	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;
-	
+
 	$module_statistics = array(
 		'account_uninstall_modules_nums' => $account_uninstall_modules_nums,
 		'wxapp_uninstall_modules_nums' => $wxapp_uninstall_modules_nums,
@@ -127,18 +127,18 @@ if ($do == 'platform') {
 } elseif ($do == 'get_system_upgrade') {
 	//系统更新信息
 	$upgrade = welcome_get_cloud_upgrade();
-	iajax(0, $upgrade, '');	
+	iajax(0, $upgrade, '');
 } elseif ($do == 'get_upgrade_modules') {
 	//可升级应用
 	$account_upgrade_modules = module_upgrade_new('account');
 	$account_upgrade_module_nums = count($account_upgrade_modules);
 	$wxapp_upgrade_modules = module_upgrade_new('wxapp');
 	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
-	
+
 	$account_upgrade_module_list = array_slice($account_upgrade_modules, 0, 4);
 	$wxapp_upgrade_module_list = array_slice($wxapp_upgrade_modules, 0, 4);
 	$upgrade_module_list = array_merge($account_upgrade_module_list, $wxapp_upgrade_module_list);
-	
+
 	$upgrade_module = array(
 		'upgrade_module_list' => $upgrade_module_list,
 		'upgrade_module_nums' => array(

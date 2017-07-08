@@ -28,10 +28,10 @@ function url($segment, $params = array()) {
  * @param string $type 提示类型
  * <pre>
  * success  成功
- * error    错误
- * info     提示(灯泡)
+ * error	错误
+ * info	 提示(灯泡)
  * warning  警告(叹号)
- * ajax     json
+ * ajax	 json
  * sql
  * </pre>
  * @param boolean $tips 是否是以tips形式展示（兼容1.0之前版本该函数的页面展示形式）
@@ -374,7 +374,7 @@ function buildframes($framename = ''){
 		if ($module['permissions']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_permissions'] = array(
 				'title' => "<i class='fa fa-cog'></i> 权限设置",
-				'url' => url('profile/module-permission', array('m' => $modulename, 'version_id' => $version_id)),
+				'url' => url('module/module-permission', array('m' => $modulename, 'version_id' => $version_id)),
 				'is_display' => 1,
 			);
 		}
@@ -571,15 +571,15 @@ function site_profile_perfect_tips(){
 			return <<<EOF
 $(function() {
 	var html =
-	    '<div class="we7-body-alert">'+
-            '<div class="container">'+
-                '<div class="alert alert-info">'+
-                    '<i class="wi wi-info-sign"></i>'+
-                    '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true" class="wi wi-error-sign"></span><span class="sr-only">Close</span></button>'+
-                    '<a href="{$url}" target="_blank">请尽快完善您在微擎云服务平台的站点注册信息。</a>'+
-                '</div>'+
-            '</div>'+
-        '</div>';
+		'<div class="we7-body-alert">'+
+			'<div class="container">'+
+				'<div class="alert alert-info">'+
+					'<i class="wi wi-info-sign"></i>'+
+					'<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true" class="wi wi-error-sign"></span><span class="sr-only">Close</span></button>'+
+					'<a href="{$url}" target="_blank">请尽快完善您在微擎云服务平台的站点注册信息。</a>'+
+				'</div>'+
+			'</div>'+
+		'</div>';
 	$('body').prepend(html);
 });
 EOF;

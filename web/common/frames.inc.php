@@ -158,11 +158,12 @@ $we7_system_menu['wxapp'] = array(
 	),
 );
 
-$we7_system_menu['module'] = array(
-	'title' => '应用',
-	'url' => url('module/display'),
-	'section' => array()
-);
+// $we7_system_menu['module'] = array(
+// 	'title' => '应用',
+// 	'url' => url('module/display'),
+// 	'section' => array(),
+// 	'is_display' => 0
+// );
 $we7_system_menu['system'] = array(
 	'title' => '系统管理',
 	'url' => url('home/welcome/system'),
