@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if ($action == 'module-permission') {
+if ($action == 'permission') {
 	define('FRAME', 'account');
 	checkaccount();
 }

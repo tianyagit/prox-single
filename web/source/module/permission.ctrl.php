@@ -121,7 +121,7 @@ if ($do == 'post') {
 		} else {
 			pdo_update('uni_account_users', array('role' => 'operator'), array('uniacid' => $_W['uniacid'], 'uid' => $uid));
 		}
-		itoast('编辑店员资料成功', url('module/module-permission', array('m' => $module_name)), 'success');
+		itoast('编辑店员资料成功', url('module/permission', array('m' => $module_name)), 'success');
 	}
 	$current_module_permission = module_permission_fetch($module_name);
 	if (!empty($uid) && !empty($current_module_permission)) {
@@ -151,4 +151,4 @@ if ($do == 'delete') {
 		itoast('删除成功', referer(), 'success');
 	}
 }
-template('module/module-permission');
+template('module/permission');
