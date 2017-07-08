@@ -448,24 +448,24 @@ $we7_system_menu['site'] = array(
 	'founder' => true,
 );
 
-$we7_system_menu['adviertisement'] = array (
+$we7_system_menu['advertisement'] = array (
 	'title' => '广告联盟',
-	'url' => url('adviertisement/content-provider'),
+	'url' => url('advertisement/content-provider'),
 	'section' => array(
-		'adviertisement' => array(
+		'advertisement' => array(
 			'title' => '常用系统工具',
 			'menu' => array(
-				'adviertisement-content-provider' => array(
+				'advertisement-content-provider' => array(
 					'title' => '流量主',
-					'url' => url('adviertisement/content-provider/account_list'),
+					'url' => url('advertisement/content-provider/account_list'),
 					'icon' => 'wi wi-flow',
-					'permission_name' => 'adviertisement_content-use',
+					'permission_name' => 'advertisement_content-use',
 				),
-				'adviertisement-content-create' => array(
+				'advertisement-content-create' => array(
 					'title' => '广告主',
-					'url' => url('adviertisement/content-provider/content_provider'),
+					'url' => url('advertisement/content-provider/content_provider'),
 					'icon' => 'wi wi-adgroup',
-					'permission_name' => 'adviertisement_content-create',
+					'permission_name' => 'advertisement_content-create',
 				),
 			)
 		),

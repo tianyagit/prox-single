@@ -27,14 +27,14 @@ if (is_error($status)) {
 }
 if ($do == 'display') {
 	if ($flow_master_info['status'] == 4 || IMS_FAMILY == 'v') {
-		header('Location:' . url('adviertisement/content-provider/account_list'));
+		header('Location:' . url('advertisement/content-provider/account_list'));
 		exit;
 	}
 }
 
 if ($do == 'register_flow') {
 	if (($flow_master_info['status'] == 4 || IMS_FAMILY == 'v') || $flow_master_info['status'] == 2) {
-		itoast('权限不足', url('adviertisement/content-provider/account_list'), 'error');
+		itoast('权限不足', url('advertisement/content-provider/account_list'), 'error');
 	}
 	if (checksubmit('submit')) {
 		$linkman = trim($_GPC['linkman']);
@@ -92,14 +92,14 @@ if ($do == 'register_flow') {
 		if (is_error($result)) {
 			itoast($result['message'], '', 'error');
 		} else {
-			itoast('提交成功，请等待审核', url('adviertisement/content-provider/display'), 'info');
+			itoast('提交成功，请等待审核', url('advertisement/content-provider/display'), 'info');
 		}
 	}
 }
 
 if ($do == 'account_list') {
 	if ($flow_master_info['status'] != 4 && IMS_FAMILY != 'v') {
-		header('Location:' . url('adviertisement/content-provider/display'));
+		header('Location:' . url('advertisement/content-provider/display'));
 		exit;
 	}
 	$pindex = max(1, intval($_GPC['page']));
@@ -164,7 +164,7 @@ if ($do == 'account_list') {
 
 if ($do == 'flow_control') {
 	if (empty($_GPC['uniacid'])) {
-		itoast('公众号id参数有误，请重新进入', url('adviertisement/content-provider/account_list'), 'error');
+		itoast('公众号id参数有误，请重新进入', url('advertisement/content-provider/account_list'), 'error');
 	}
 	$current_account = uni_fetch($_GPC['uniacid']);
 	load() -> model('account');
@@ -274,7 +274,7 @@ if ($do == 'ad_type_get') {
 
 if ($do == 'finance_info') {
 	if (empty($commission_show)) {
-		itoast('权限不足', url('adviertisement/content-provider/account_list'), 'error');
+		itoast('权限不足', url('advertisement/content-provider/account_list'), 'error');
 	}
 	$params = array(
 		'size' => '15',
@@ -310,4 +310,4 @@ if ($do == 'content_provider') {
 	$title = '广告主';
 }
 
-template('adviertisement/content-provider');
+template('advertisement/content-provider');
