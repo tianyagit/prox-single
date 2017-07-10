@@ -47,8 +47,8 @@ class We7_diyspecialModuleSite extends WeModuleSite {
 			}
 			$page = $params[0]['property'][0];
 			$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
-			$html = str_replace(array('<?', '<%', '<?php', '{php'), '', $html);
-			$html = preg_replace('/<\s*?script.*(src|language)+/i', '', $html);
+			$html = str_replace(array('<?', '<%', '<?php', '{php'), '_', $html);
+			$html = preg_replace('/<\s*?script.*(src|language)+/i', '_', $html);
 			$multipage = htmlspecialchars_decode($_GPC['wapeditor']['multipage'], ENT_QUOTES);
 			$data = array(
 				'uniacid' => $_W['uniacid'],
@@ -81,7 +81,7 @@ class We7_diyspecialModuleSite extends WeModuleSite {
 				);
 				site_cover($cover);
 			}
-			message('页面保存成功.', referer(), 'success');
+			message('页面保存成功.', url('site/entry/post', array('m' => 'we7_diyspecial', 'id' => $id)), 'success');
 		} else {
 			$page = pdo_fetch("SELECT * FROM ".tablename('site_page')." WHERE id = :id", array(':id' => $id));
 			$page['multipage'] = preg_replace('/<(\/)?script(.+)?>/U', '&lt;$1script$2&gt;', $page['multipage']);
