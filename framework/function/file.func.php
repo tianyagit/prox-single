@@ -754,7 +754,7 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
  * @return string 文件path
  *        
  */
-function file_fetch($url, $limit = 0, $path = '') {
+function file_remote_attach_fetch($url, $limit = 0, $path = '') {
 	global $_W;
 	$url = trim($url);
 	if (empty($url)) {
