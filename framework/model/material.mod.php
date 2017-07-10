@@ -1,5 +1,6 @@
 <?php
 defined('IN_IA') or exit('Access Denied');
+load()->func('file');
 
 /**
  * 同步微信素材
