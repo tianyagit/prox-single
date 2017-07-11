@@ -5,20 +5,20 @@
 </div>
 
 <ul class="we7-page-tab">
-	<li class="active"><a href="{php echo url('system/module-group/display') }">应用权限套餐列表  </a></li>
+	<li class="active"><a href="{php echo url('module/group/display') }">应用权限套餐列表  </a></li>
 </ul>
 <div class="js-system-module_group" ng-controller="moduleGroupCtrl" ng-cloak>
 	<div class="combo-list">
 		<div class="we7-page-search clearfix">
 			{if $_W['role'] == 'founder'}
 			<div class="pull-right">
-				<a href="{php echo url('system/module-group/post')}" class="btn btn-primary">+添加应用权限套餐</a>
+				<a href="{php echo url('module/group/post')}" class="btn btn-primary">+添加应用权限套餐</a>
 			</div>
 			{/if}
 			<form action="" method="get" class="we7-form row">
 				<div class="form-group we7-padding-none col-sm-4">
-					<input type="hidden" name="c" value="system">
-					<input type="hidden" name="a" value="module-group">
+					<input type="hidden" name="c" value="module">
+					<input type="hidden" name="a" value="group">
 					<input type="hidden" name="do" value="display">
 					<div class="input-group">
 						<input class="form-control" name="name" value="{$_GPC['name']}" type="text" placeholder="名称" >
@@ -51,8 +51,8 @@
 					<div class="link-group">
 						<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" data-target="toggle-{$module_group['id']}" ng-click="changeText($event)">展开</a>
 						{if $_W['role'] == 'founder'}
-						<a href="{php echo url('system/module-group/post', array('id' => $module_group['id']))}">编辑套餐</a>
-						<a href="{php echo url('system/module-group/delete', array('id' => $module_group['id']))}" class="del" onclick="return confirm('确定要删除套餐吗？')">删除</a>
+						<a href="{php echo url('module/group/post', array('id' => $module_group['id']))}">编辑套餐</a>
+						<a href="{php echo url('module/group/delete', array('id' => $module_group['id']))}" class="del" onclick="return confirm('确定要删除套餐吗？')">删除</a>
 						{/if}
 					</div>
 				</td>
@@ -120,9 +120,9 @@
 <div class="js-modulegroup-post" ng-controller="moduleGroupPostCtrl" ng-cloak>
 	<div class="combo-list-add">
 		<ol class="breadcrumb we7-breadcrumb">
-			<a href="{php echo url('system/module-group/')}"><i class="wi wi-back-circle"></i> </a>
+			<a href="{php echo url('module/group')}"><i class="wi wi-back-circle"></i> </a>
 			<li>
-				<a href="{php echo url('system/module-group/display') }">套餐应用列表</a>
+				<a href="{php echo url('module/group') }">套餐应用列表</a>
 			</li>
 			<li>
 				添加套餐应用列表
@@ -303,7 +303,7 @@ require(['underscore'], function() {
 		'groupNotHaveModuleWxapp' : {php echo json_encode($group_not_have_module_wxapp)},
 		'groupHaveTemplate' : {php echo json_encode($group_have_template)},
 		'groupNotHaveTemplate' : {php echo json_encode($group_not_have_template)},
-		'url' : "{php echo url('system/module-group/save')}"
+		'url' : "{php echo url('module/group/save')}"
 	});
 
 	angular.bootstrap($('.js-modulegroup-post'), ['moduleApp']);

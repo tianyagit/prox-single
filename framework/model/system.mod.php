@@ -17,11 +17,11 @@ function system_menu_permission_list($role = '') {
 	//根据不同的角色得到不同的菜单权限
 	if ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
 		unset($system_menu['appmarket']);
-		unset($system_menu['adviertisement']);
+		unset($system_menu['advertisement']);
 		unset($system_menu['system']);
 	} if ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
 		unset($system_menu['appmarket']);
-		unset($system_menu['adviertisement']);
+		unset($system_menu['advertisement']);
 	}
 	return $system_menu;
 }

@@ -248,7 +248,7 @@ function buildframes($framename = ''){
 		if (array_diff(array_keys($modules), $sysmodules)) {
 			$frames['account']['section']['platform_module']['menu']['platform_module_more'] = array(
 				'title' => '更多应用',
-				'url' => url('profile/module'),
+				'url' => url('module/manage-account'),
 				'is_display' => 1,
 			);
 		} else {
@@ -367,14 +367,14 @@ function buildframes($framename = ''){
 		if($module['settings']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_settings'] = array(
 				'title' => "<i class='fa fa-cog'></i> 参数设置",
-				'url' => url('profile/module/setting', array('m' => $modulename, 'version_id' => $version_id)),
+				'url' => url('module/manage-account/setting', array('m' => $modulename, 'version_id' => $version_id)),
 				'is_display' => 1,
 			);
 		}
 		if ($module['permissions']) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_permissions'] = array(
 				'title' => "<i class='fa fa-cog'></i> 权限设置",
-				'url' => url('module/module-permission', array('m' => $modulename, 'version_id' => $version_id)),
+				'url' => url('module/permission', array('m' => $modulename, 'version_id' => $version_id)),
 				'is_display' => 1,
 			);
 		}
@@ -488,6 +488,7 @@ function buildframes($framename = ''){
 			'name' => $menuid,
 			'url' => $menu['url'],
 			'blank' => $menu['blank'],
+			'icon' => $menu['icon'],
 		);
 	}
 	return !empty($framename) ? $frames[$framename] : $frames;

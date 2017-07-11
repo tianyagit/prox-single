@@ -597,7 +597,7 @@ function module_upgrade_new($type = 'account') {
 		foreach ($upgrade_modules as $key => &$module) {
 			$module_fetch = module_fetch($key);
 			$module['logo'] = $module_fetch['logo'];
-			$module['link'] = url('system/module/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));
+			$module['link'] = url('module/manage-system/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));
 		}
 		unset($module);
 	}

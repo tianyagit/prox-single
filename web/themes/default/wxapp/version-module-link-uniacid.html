@@ -38,6 +38,8 @@
 				{else}
 					{if $module['wxapp_support'] == 2 && $module['app_support'] == 2}
 						<a href="javascript:;" data-module="{$module['name']}" class="js-select-link-account">添加</a>
+					{else}
+						<a href="javascript:;" class="color-gray">---</a>
 					{/if}
 				{/if}
 			</div>

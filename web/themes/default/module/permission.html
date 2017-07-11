@@ -3,7 +3,7 @@
 <div class="clearfix">
 	<div class="we7-padding-bottom clearfix">
 		<div class="pull-right">
-			<a href="{php echo url('module/module-permission/post', array('m' => $module_name))}" class="btn btn-primary we7-padding-horizontal">添加操作员</a>
+			<a href="{php echo url('module/permission/post', array('m' => $module_name))}" class="btn btn-primary we7-padding-horizontal">添加操作员</a>
 		</div>
 	</div>
 	<table class="table we7-table table-hover">
@@ -26,8 +26,8 @@
 				</td>
 				<td style="width:100px;">
 					<div class="link-group" >
-						<a href="{php echo url('module/module-permission/post', array('uid' => $item['uid'], 'm' => $module_name));}">编辑</a>
-						<a href="{php echo url('module/module-permission/delete', array('uid' => $item['uid'], 'm' => $module_name));}" class="del">删除</a>
+						<a href="{php echo url('module/permission/post', array('uid' => $item['uid'], 'm' => $module_name));}">编辑</a>
+						<a href="{php echo url('module/permission/delete', array('uid' => $item['uid'], 'm' => $module_name));}" class="del">删除</a>
 					</div>
 				</td>
 			</tr>

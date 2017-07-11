@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $we7_system_menu = array();
 $we7_system_menu['account'] = array(
 	'title' => '公众号',
+	'icon' => 'wi wi-white-collar',
 	'url' => url('home/welcome/platform'),
 	'section' => array(
 		'platform_plus' => array(
@@ -122,6 +123,7 @@ $we7_system_menu['account'] = array(
 );
 $we7_system_menu['wxapp'] = array(
 	'title' => '小程序',
+	'icon' => 'wi wi-small-routine',
 	'url' => url('wxapp/display/home'),
 	'section' => array(
 		'wxapp_module' => array(
@@ -147,11 +149,11 @@ $we7_system_menu['wxapp'] = array(
 					'permission_name' => 'wxapp_payment',
 				),
 				'front_download' => array(
-						'title' => '小程序下载',
-						'url' => url('wxapp/version/front_download'),
-						'is_display' => 1,
-						'icon' => 'wi wi-wxapp-download',
-						'permission_name' => 'wxapp_front_download',
+					'title' => '小程序下载',
+					'url' => url('wxapp/version/front_download'),
+					'is_display' => 1,
+					'icon' => 'wi wi-wxapp-download',
+					'permission_name' => 'wxapp_front_download',
 				)
 			)
 		)
@@ -160,12 +162,14 @@ $we7_system_menu['wxapp'] = array(
 
 // $we7_system_menu['module'] = array(
 // 	'title' => '应用',
+//  'icon' => 'wi wi-apply',
 // 	'url' => url('module/display'),
 // 	'section' => array(),
 // 	'is_display' => 0
 // );
 $we7_system_menu['system'] = array(
 	'title' => '系统管理',
+	'icon' => 'wi wi-setting',
 	'url' => url('home/welcome/system'),
 	'section' => array(
 		'wxplatform' => array(
@@ -205,7 +209,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module' => array(
 					'title' => '公众号应用',
-					'url' => url('system/module', array('account_type' => '1')),
+					'url' => url('module/manage-system', array('account_type' => '1')),
 					'icon' => 'wi wi-wx-apply',
 					'permission_name' => 'system_module',
 				),
@@ -234,7 +238,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module_wxapp' => array(
 					'title' => '小程序应用',
-					'url' => url('system/module', array('account_type' => '4')),
+					'url' => url('module/manage-system', array('account_type' => '4')),
 					'icon' => 'wi wi-wxapp-apply',
 					'permission_name' => 'system_module_wxapp',
 				),
@@ -288,7 +292,7 @@ $we7_system_menu['system'] = array(
 			'menu' => array(
 				'system_module_group' => array(
 					'title' => '应用权限组',
-					'url' => url('system/module-group'),
+					'url' => url('module/group'),
 					'icon' => 'wi wi-appjurisdiction',
 					'permission_name' => 'system_module_group',
 				),
@@ -343,6 +347,7 @@ $we7_system_menu['system'] = array(
 
 $we7_system_menu['site'] = array(
 	'title' => '站点管理',
+	'icon' => 'wi wi-system-site',
 	'url' => url('cloud/upgrade'),
 	'section' => array(
 		'cloud' => array(
@@ -448,24 +453,25 @@ $we7_system_menu['site'] = array(
 	'founder' => true,
 );
 
-$we7_system_menu['adviertisement'] = array (
+$we7_system_menu['advertisement'] = array (
 	'title' => '广告联盟',
-	'url' => url('adviertisement/content-provider'),
+	'icon' => 'wi wi-advert',
+	'url' => url('advertisement/content-provider'),
 	'section' => array(
-		'adviertisement' => array(
+		'advertisement' => array(
 			'title' => '常用系统工具',
 			'menu' => array(
-				'adviertisement-content-provider' => array(
+				'advertisement-content-provider' => array(
 					'title' => '流量主',
-					'url' => url('adviertisement/content-provider/account_list'),
+					'url' => url('advertisement/content-provider/account_list'),
 					'icon' => 'wi wi-flow',
-					'permission_name' => 'adviertisement_content-use',
+					'permission_name' => 'advertisement_content-use',
 				),
-				'adviertisement-content-create' => array(
+				'advertisement-content-create' => array(
 					'title' => '广告主',
-					'url' => url('adviertisement/content-provider/content_provider'),
+					'url' => url('advertisement/content-provider/content_provider'),
 					'icon' => 'wi wi-adgroup',
-					'permission_name' => 'adviertisement_content-create',
+					'permission_name' => 'advertisement_content-create',
 				),
 			)
 		),
@@ -475,6 +481,7 @@ $we7_system_menu['adviertisement'] = array (
 
 $we7_system_menu['appmarket'] = array(
 	'title' => '应用市场',
+	'icon' => 'wi wi-market',
 	'url' => 'http://s.we7.cc',
 	'section' => array(),
 	'blank' => true,

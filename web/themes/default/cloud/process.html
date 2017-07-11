@@ -156,9 +156,9 @@
 				} else {
 					if(is_upgrade == 1) {
 						{if $_GPC['batch']}
-							location.href = '{url "system/module/upgrade" array("m" => $m, "flag" => 1, "batch_from_cloud" => 1)}';
+							location.href = '{url "module/manage-system/upgrade" array("m" => $m, "flag" => 1, "batch_from_cloud" => 1)}';
 						{else}
-							location.href = '{url "system/module/upgrade" array("m" => $m, "flag" => 1)}';
+							location.href = '{url "module/manage-system/upgrade" array("m" => $m, "flag" => 1)}';
 						{/if}
 						return;
 					}
@@ -245,7 +245,7 @@
 {if $step == 'schemas'}
 <div class="clearfix js-processor">
 	{if empty($packet['schemas'])}
-		<!-- 如果是安装模块,数据库操作完成后,不处理script,直接跳转到system/module/install -->
+		<!-- 如果是安装模块,数据库操作完成后,不处理script,直接跳转到module/manage-system/install -->
 		<!-- 安装 -->
 		{if !empty($packet['install'])}
 			{if $packet['type'] == 'theme'}
@@ -258,7 +258,7 @@
 			</script>
 			{else}
 			<script>
-				location.href = '{url "system/module/install" array("module_name" => $m, "flag" => 1, "account_type" => $_GPC["account_type"])}';
+				location.href = '{url "module/manage-system/install" array("module_name" => $m, "flag" => 1, "account_type" => $_GPC["account_type"])}';
 			</script>
 			{/if}
 		{/if}
@@ -311,7 +311,7 @@
 {if $step == 'scripts'}
 <div class="clearfix js-processor">
 	{if empty($packet['scripts']) || !empty($packet['type'])}
-		<!-- 如果是更新模块,跳转到system/module/upgrade -->
+		<!-- 如果是更新模块,跳转到module/manage-system/upgrade -->
 		{if $is_upgrade == 1}
 			{if $packet['type'] == 'theme'}
 			<script>
@@ -323,7 +323,7 @@
 			</script>
 			{else}
 			<script>
-				location.href = '{url "system/module/upgrade" array("module_name" => $m, "flag" => 1, "account_type" => $_GPC["account_type"])}';
+				location.href = '{url "module/manage-system/upgrade" array("module_name" => $m, "flag" => 1, "account_type" => $_GPC["account_type"])}';
 			</script>
 			{/if}
 			

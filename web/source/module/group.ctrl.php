@@ -14,7 +14,7 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NA
 	itoast('无权限操作！', referer(), 'error');
 }
 if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	itoast('您只有查看权限！', url('system/module-group'), 'error');
+	itoast('您只有查看权限！', url('module/group'), 'error');
 }
 
 if ($do == 'save') {
@@ -51,7 +51,7 @@ if ($do == 'save') {
 		cache_build_uni_group();
 		cache_build_account_modules();
 		module_build_privileges();
-		iajax(0, '', url('system/module-group'));
+		iajax(0, '', url('module/group'));
 	} else {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
@@ -60,7 +60,7 @@ if ($do == 'save') {
 		pdo_insert('uni_group', $package_info);
 		cache_build_uni_group();
 		module_build_privileges();
-		iajax(0, '', url('system/module-group'));
+		iajax(0, '', url('module/group'));
 	}
 }
 
@@ -170,4 +170,4 @@ if ($do == 'post') {
 	}
 }
 
-template('system/module-group');
+template('module/group');

@@ -6,8 +6,8 @@
  * Time: 16:28
  */
 defined('IN_IA') or exit('Access Denied');
-define('FRAME', 'adviertisement');
+define('FRAME', 'advertisement');
 if ($do == 'display') {
-	define('ACTIVE_FRAME_URL', url('adviertisement/content-provider/account_list'));
+	define('ACTIVE_FRAME_URL', url('advertisement/content-provider/account_list'));
 }
 
