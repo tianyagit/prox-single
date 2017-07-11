@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 $we7_system_menu = array();
 $we7_system_menu['account'] = array(
 	'title' => '公众号',
+	'icon' => 'wi wi-white-collar',
 	'url' => url('home/welcome/platform'),
 	'section' => array(
 		'platform_plus' => array(
@@ -122,6 +123,7 @@ $we7_system_menu['account'] = array(
 );
 $we7_system_menu['wxapp'] = array(
 	'title' => '小程序',
+	'icon' => 'wi wi-small-routine',
 	'url' => url('wxapp/display/home'),
 	'section' => array(
 		'wxapp_module' => array(
@@ -160,12 +162,14 @@ $we7_system_menu['wxapp'] = array(
 
 // $we7_system_menu['module'] = array(
 // 	'title' => '应用',
+//  'icon' => 'wi wi-apply',
 // 	'url' => url('module/display'),
 // 	'section' => array(),
 // 	'is_display' => 0
 // );
 $we7_system_menu['system'] = array(
 	'title' => '系统管理',
+	'icon' => 'wi wi-setting',
 	'url' => url('home/welcome/system'),
 	'section' => array(
 		'wxplatform' => array(
@@ -343,6 +347,7 @@ $we7_system_menu['system'] = array(
 
 $we7_system_menu['site'] = array(
 	'title' => '站点管理',
+	'icon' => 'wi wi-system-site',
 	'url' => url('cloud/upgrade'),
 	'section' => array(
 		'cloud' => array(
@@ -450,6 +455,7 @@ $we7_system_menu['site'] = array(
 
 $we7_system_menu['advertisement'] = array (
 	'title' => '广告联盟',
+	'icon' => 'wi wi-advert',
 	'url' => url('advertisement/content-provider'),
 	'section' => array(
 		'advertisement' => array(
@@ -475,6 +481,7 @@ $we7_system_menu['advertisement'] = array (
 
 $we7_system_menu['appmarket'] = array(
 	'title' => '应用市场',
+	'icon' => 'wi wi-market',
 	'url' => 'http://s.we7.cc',
 	'section' => array(),
 	'blank' => true,

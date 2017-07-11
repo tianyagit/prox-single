@@ -488,6 +488,7 @@ function buildframes($framename = ''){
 			'name' => $menuid,
 			'url' => $menu['url'],
 			'blank' => $menu['blank'],
+			'icon' => $menu['icon'],
 		);
 	}
 	return !empty($framename) ? $frames[$framename] : $frames;
