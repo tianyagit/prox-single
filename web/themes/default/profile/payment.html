@@ -1,5 +1,13 @@
 {template 'common/header'}
-{template 'profile/common'}
+<div class="we7-page-title">
+	支付参数设置
+</div>
+<ul class="we7-page-tab">
+	<li {if $do == 'display'} class="active"{/if}>
+		<a href="{php echo url('profile/payment/display')}">支付配置</a>
+	</li>
+</ul>
+{if $do == 'display'}
 <div class="js-profile-payment" ng-controller="paymentCtrl" ng-cloak>
 	<table class="table we7-table table-hover table-form">
 		<col width="140px " />
@@ -503,4 +511,5 @@
 	});
 	angular.bootstrap($('.js-profile-payment'), ['profileApp']);
 </script>
+{/if}
 {template 'common/footer'}
