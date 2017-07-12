@@ -38,6 +38,7 @@ function template($filename, $flag = TEMPLATE_DISPLAY) {
 
 	if(!is_file($source)) {
 		echo "template source '{$filename}' is not exist!";
+		return '';
 	}
 	if(DEVELOPMENT || !is_file($compile) || filemtime($source) > filemtime($compile)) {
 		template_compile($source, $compile);
