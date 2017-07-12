@@ -170,9 +170,7 @@
 						</td>
 						<td>
 							<p><a href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="nick-name" data-fanid="{$fan['fanid']}" data-group="{$fan['groupid']}">{$fan['nickname']}</a></p>
-							{if empty($fan['uid'])}
-							<a href="{php echo url('mc/member/post', array('uid' => $fan['uid'],'openid' => $fan['openid'], 'fanid' => $fan['fanid']));}" class="text-danger" title="该用户尚未注册会员，请为其手动注册！">[ 注册为会员 ]</a>
-							{else}
+							{if !empty($fan['uid'])}
 							<p class="remark-name"><a href="{php echo url('mc/member/post', array('uid' => $fan['uid']));}">
 								{if !empty($fan['member']['realname'])}
 								{$fan['member']['realname']}
@@ -199,6 +197,9 @@
 						</td>
 						<td class="text-right">
 							<div class="send-message">
+								{if empty($fan['uid'])}
+								<a href="{php echo url('mc/member/post', array('uid' => $fan['uid'],'openid' => $fan['openid'], 'fanid' => $fan['fanid']));}" class="color-default" title="该用户尚未注册会员，请为其手动注册！">注册为会员&nbsp;&nbsp;&nbsp;&nbsp;</a>
+								{/if}
 								<a  href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="color-default">
 									发送消息<span class="wi wi-angle-right"></span>
 								</a>
