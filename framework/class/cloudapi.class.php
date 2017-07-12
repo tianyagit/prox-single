@@ -30,7 +30,8 @@ class CloudApi {
 			$this->sys_call = false;
 			$this->module = pathinfo(MODULE_ROOT, PATHINFO_BASENAME);
 		}
-		$this->development = $development;
+		$dev_cer_content =$this->developerCerContent();
+		$this->development = !empty($dev_cer_content);
 	}
 	
 	private function getCerContent($file) {
