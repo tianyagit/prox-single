@@ -84,6 +84,7 @@ $_W['acl'] = $acl = array(
 		'direct' => array(
 			'verifycode',
 			'code',
+			'file',
 			'bindcall',
 			'subscribe',
 			'wxcode',
