@@ -181,7 +181,7 @@ function buildframes($framename = ''){
 	$sysmodules = system_modules();
 	$status = uni_user_permission_exist($_W['uid'], $_W['uniacid']);
 	//非创始人应用模块菜单
-	if (!$_W['isfounder'] && $status) {
+	if (!$_W['isfounder'] && $status && $_W['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
 		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'modules');
 		if (!is_error($module_permission) && !empty($module_permission)) {
 			foreach ($module_permission as $module) {
