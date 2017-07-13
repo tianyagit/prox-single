@@ -31,5 +31,8 @@ data/**/*
 attachment/**/*
 !attachment/images/global/**/*
 addons/**/*
-web/test.php
-framework/builtin/core/module.cer
+.tags
+deployment.properties
+.tags_sorted_by_file
+web/resource/components/**/*
+web/resource/js/**/*
