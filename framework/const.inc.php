@@ -60,6 +60,9 @@ define('ACCOUNT_MANAGE_TYPE_OWNER', 3);
 define('ACCOUNT_MANAGE_NAME_OWNER', 'owner');
 //创始人
 define('ACCOUNT_MANAGE_NAME_FOUNDER', 'founder');
+//副创始人
+define('ACCOUNT_MANAGE_TYPE_VICE_FOUNDER', 4);
+define('ACCOUNT_MANAGE_NAME_VICE_FOUNDER', 'vice_founder');
 //系统卡券
 define('SYSTEM_COUPON', 1);
 //微信卡券

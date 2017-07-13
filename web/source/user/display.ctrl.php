@@ -5,13 +5,13 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display', 'check_display', 'check_pass', 'recycle_display', 'recycle_delete','recycle_restore', 'recycle');
+$dos = array('display', 'check_display', 'check_pass', 'recycle_display', 'recycle_delete','recycle_restore', 'recycle', 'vice_founder');
 $do = in_array($do, $dos) ? $do: 'display';
 
 $_W['page']['title'] = '用户列表 - 用户管理';
 $founders = explode(',', $_W['config']['setting']['founder']);
 
-if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
+if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_founder'))) {
 	switch ($do) {
 		case 'check_display':
 			uni_user_permission_check('system_user_check');
@@ -21,10 +21,16 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 			uni_user_permission_check('system_user_recycle');
 			$condition = ' WHERE u.status = 3 ';
 			break;
+		case 'vice_founder':
+			$condition = ' WHERE u.is_vice_founder = 1 ';
+			break;
 		default:
 			uni_user_permission_check('system_user');
 			$condition = ' WHERE u.status = 2 ';
 			break;
+	}
+	if (empty($_W['founder']) && !empty($_W['is_vice_founder'])) {
+		$condition .= ' AND u.vice_founder_id = ' . $_W['uid'];
 	}
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
@@ -50,27 +56,30 @@ if (in_array($do, array('display', 'recycle_display', 'check_display'))) {
 			}
 		}
 
-		$user['founder'] = in_array($user['uid'], $founders);
 		$user['uniacid_num'] = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('uni_account_users')." WHERE uid = :uid", array(':uid' => $user['uid']));
-
-		$user['module_num'] =array();
-		$group = pdo_get('users_group', array('id' => $user['groupid']));
-		if (!empty($group)) {
-			$user['maxaccount'] = in_array($user['uid'], $founders) ? '不限' : $group['maxaccount'];
-			$user['groupname'] = $group['name'];
-			$package = iunserializer($group['package']);
-			$group['package'] = uni_groups($package);
-			foreach ($group['package'] as $modules) {
-				if (is_array($modules['modules'])) {
-					foreach ($modules['modules'] as  $module) {
-						$user['module_num'][] = $module['name'];
+		if (empty($user['is_vice_founder'])) {
+			$user['founder'] = in_array($user['uid'], $founders);
+			$user['module_num'] =array();
+			$group = pdo_get('users_group', array('id' => $user['groupid']));
+			if (!empty($group)) {
+				$user['maxaccount'] = in_array($user['uid'], $founders) ? '不限' : $group['maxaccount'];
+				$user['groupname'] = $group['name'];
+				$package = iunserializer($group['package']);
+				$group['package'] = uni_groups($package);
+				foreach ($group['package'] as $modules) {
+					if (is_array($modules['modules'])) {
+						foreach ($modules['modules'] as  $module) {
+							$user['module_num'][] = $module['name'];
+						}
 					}
 				}
 			}
-		}
 
-		$user['module_num'] = array_unique($user['module_num']);
-		$user['module_nums'] = count($user['module_num']) + $system_module_num;
+			$user['module_num'] = array_unique($user['module_num']);
+			$user['module_nums'] = count($user['module_num']) + $system_module_num;
+		} else {
+			$user['maxaccount'] = '不限';
+		}
 	}
 	unset($user);
 	$usergroups = pdo_getall('users_group', array(), array(), 'id');
@@ -108,6 +117,12 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 			itoast('更新成功！', referer(), 'success');
 			break;
 		case 'recycle_delete'://永久删除用户
+			$user_info = pdo_getcolumn('users', array('uid' => $uid), 'is_vice_founder');
+			if (!empty($user_info)) {
+				pdo_update('users', array('vice_founder_id' => 0), array('vice_founder_id' => $uid));
+				pdo_update('users_group', array('vice_founder_id' => 0), array('vice_founder_id' => $uid));
+				pdo_update('uni_group', array('vice_founder_id' => 0), array('vice_founder_id' => $uid));
+			}
 			if (pdo_delete('users', array('uid' => $uid)) === 1) {
 				//把该用户所属的公众号返给创始人
 				$user_set_account = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
