@@ -34,6 +34,7 @@ class WeSession implements SessionHandlerInterface {
 	 * @param int $expire 过期时间,单位秒.
 	 */
 	public static function start($uniacid, $openid, $expire = 3600) {
+		$cache_setting = $GLOBALS['config']['setting'];
 		//php7使用memcache session有bug，只能使用memcacehd,待修复
 		if (version_compare(PHP_VERSION, '7.0.0') < 0) {
 			if (extension_loaded('memcache') && !empty($cache_setting['memcache']['server']) && !empty($cache_setting['memcache']['session'])) {
