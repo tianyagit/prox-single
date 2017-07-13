@@ -46,9 +46,9 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$result = pdo_update('users_profile', array('avatar' => $_GPC['avatar']), array('uid' => $uid));
 			} else {
 				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'avatar' => $_GPC['avatar']
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					'avatar' => $_GPC['avatar']
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
@@ -99,9 +99,9 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$result = pdo_update('users_profile', array('realname' => trim($_GPC['realname'])), array('uid' => $uid));
 			} else {
 				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'realname' => trim($_GPC['realname'])
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					'realname' => trim($_GPC['realname'])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
@@ -111,11 +111,11 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$result = pdo_update('users_profile', array('birthyear' => intval($_GPC['year']), 'birthmonth' => intval($_GPC['month']), 'birthday' => intval($_GPC['day'])), array('uid' => $uid));
 			} else {
 				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'birthyear' => intval($_GPC['year']),
-						'birthmonth' => intval($_GPC['month']),
-						'birthday' => intval($_GPC['day'])
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					'birthyear' => intval($_GPC['year']),
+					'birthmonth' => intval($_GPC['month']),
+					'birthday' => intval($_GPC['day'])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
@@ -125,10 +125,22 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$result = pdo_update('users_profile', array('address' => trim($_GPC['address'])), array('uid' => $uid));
 			} else {
 				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'address' => trim($_GPC['address'])
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					'address' => trim($_GPC['address'])
 					);
+				$result = pdo_insert('users_profile', $data);
+			}
+			break;
+		case 'qq':
+			if ($users_profile_exist) {
+				$result = pdo_update('users_profile', array('qq' => trim($_GPC['qq'])), array('uid' => $uid));
+			} else {
+				$data = array(
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					'qq' => trim($_GPC['qq'])
+				);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
@@ -137,11 +149,11 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$result = pdo_update('users_profile', array('resideprovince' => $_GPC['province'], 'residecity' => $_GPC['city'], 'residedist' => $_GPC['district']), array('uid' => $uid));
 			} else {
 				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'resideprovince' => $_GPC['province'],
-						'residecity' => $_GPC['city'],
-						'residedist' => $_GPC['district']
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					'resideprovince' => $_GPC['province'],
+					'residecity' => $_GPC['city'],
+					'residedist' => $_GPC['district']
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
