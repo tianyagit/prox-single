@@ -416,7 +416,6 @@ if ($do =='install') {
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
-		module_build_privileges();
 		cache_build_module_info($module_name);
 
 		if (empty($module_subscribe_success)) {

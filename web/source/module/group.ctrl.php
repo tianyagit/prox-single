@@ -52,7 +52,7 @@ if ($do == 'save') {
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
 		cache_build_uni_group();
 		cache_build_account_modules();
-		module_build_privileges();
+
 		iajax(0, '', url('module/group'));
 	} else {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
@@ -61,7 +61,6 @@ if ($do == 'save') {
 		}
 		pdo_insert('uni_group', $package_info);
 		cache_build_uni_group();
-		module_build_privileges();
 		iajax(0, '', url('module/group'));
 	}
 }

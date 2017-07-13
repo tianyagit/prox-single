@@ -122,7 +122,6 @@ if($step == 1) {
 				pdo_insert('mc_member_fields', $data);
 			}
 			
-			module_build_privileges();
 		}
 		$update['account'] = trim($_GPC['account']);
 		$update['original'] = trim($_GPC['original']);
@@ -275,7 +274,7 @@ if($step == 1) {
 		cache_delete("accesstoken:{$acid}");
 		cache_delete("jsticket:{$acid}");
 		cache_delete("cardticket:{$acid}");
-		module_build_privileges();
+
 		if (!empty($_GPC['from'])) {
 			itoast('公众号权限修改成功', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 3, 'from' => 'list')), 'success');
 		} else {

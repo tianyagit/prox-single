@@ -15,4 +15,5 @@ load()->classs('coupon');
 load()->func('file');
 
 $result = pdo_getall('account', array('type !=' => ''), array('acid', 'uniacid'), 'uid', ' acid  xxxxx desc, uniacid desc', '   1    ,5');
+
 print_r($result);exit;
