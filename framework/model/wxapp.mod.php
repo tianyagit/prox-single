@@ -33,7 +33,14 @@ function wxapp_account_create($account) {
 		return error(1, '添加公众号失败');
 	}
 	$uniacid = pdo_insertid();
-	
+	if (!empty($_W['user']['vice_founder_id'])) {
+		$vice_account['uniacid'] = $uniacid;
+		$vice_account['uid'] = $_W['user']['vice_founder_id'];
+		$vice_account['role'] = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
+		if (!pdo_insert('uni_account_users', $vice_account)) {
+			return error(1, '添加创始人公众号失败');
+		}
+	}
 	$account_data = array(
 		'uniacid' => $uniacid, 
 		'type' => $account['type'], 

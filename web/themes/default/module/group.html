@@ -10,7 +10,7 @@
 <div class="js-system-module_group" ng-controller="moduleGroupCtrl" ng-cloak>
 	<div class="combo-list">
 		<div class="we7-page-search clearfix">
-			{if $_W['role'] == 'founder'}
+			{if $_W['role'] == 'founder' || $_W['role'] == 'vice_founder'}
 			<div class="pull-right">
 				<a href="{php echo url('module/group/post')}" class="btn btn-primary">+添加应用权限套餐</a>
 			</div>

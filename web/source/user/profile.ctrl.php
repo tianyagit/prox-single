@@ -14,7 +14,7 @@ $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$type = trim($_GPC['type']);
 
-	if ($_W['isfounder']) {
+	if ($_W['isfounder'] || $_W['is_vice_founder']) {
 		$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	} else {
 		$uid = $_W['uid'];
@@ -65,9 +65,16 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			$result = pdo_update('users', array('username' => $username), array('uid' => $uid));
 			break;
+		case 'vice_founder_name':
+			$vice_founder_id = user_get_uid_byname($_GPC['vice_founder_name']);
+			if (empty($vice_founder_id)) {
+				iajax(1, '创始人不存在', '');
+			}
+			$result = pdo_update('users', array('vice_founder_id' => $vice_founder_id), array('uid' => $uid));
+			break;
 		case 'password':
 			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) iajax(2, '两次密码不一致！', '');
-			if (!$_W['isfounder']) {
+			if (empty($_W['isfounder']) && empty($_W['is_vice_founder'])) {
 				$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
 				if ($pwd != $user['password']) iajax(3, '原密码不正确！', '');
 			}
