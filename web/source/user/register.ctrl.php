@@ -16,6 +16,7 @@ $extendfields = pdo_getall('profile_fields', array('available' => 1, 'showinregi
 if(checksubmit()) {
 	$member = array();
 	$member['username'] = trim($_GPC['username']);
+	$vice_founder_name = trim($_GPC['vice_founder_name']);
 	if(!preg_match(REGULAR_USERNAME, $member['username'])) {
 		itoast('必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。', '', '');
 	}
@@ -69,7 +70,11 @@ if(checksubmit()) {
 		$member['endtime'] = strtotime($timelimit . ' days');
 	}
 	$member['starttime'] = TIMESTAMP;
-	
+	$vice_founder_id = user_get_uid_byname($vice_founder_name);
+	if (empty($vice_founder_id)) {
+		itoast('推荐人不存在！', '', '');
+	}
+	$member['vice_founder_id'] = $vice_founder_id == ture ? 0 : $vice_founder_id;
 	$uid = user_register($member);
 	if($uid > 0) {
 		unset($member['password']);

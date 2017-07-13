@@ -34,6 +34,12 @@ class WeSession implements SessionHandlerInterface {
 	 * @param int $expire 过期时间,单位秒.
 	 */
 	public static function start($uniacid, $openid, $expire = 3600) {
+		WeSession::$uniacid = $uniacid;
+		WeSession::$openid = $openid;
+		WeSession::$expire = $expire;
+		$sess = new WeSession();
+		
+		$cache_setting = $GLOBALS['_W']['config']['setting'];
 		//php7使用memcache session有bug，只能使用memcacehd,待修复
 		if (version_compare(PHP_VERSION, '7.0.0') < 0) {
 			if (extension_loaded('memcache') && !empty($cache_setting['memcache']['server']) && !empty($cache_setting['memcache']['session'])) {
@@ -42,15 +48,24 @@ class WeSession implements SessionHandlerInterface {
 			} elseif (extension_loaded('redis') && !empty($cache_setting['redis']['server']) && !empty($cache_setting['redis']['session'])) {
 				ini_set("session.save_handler", "redis");
 				ini_set("session.save_path", "tcp://{$cache_setting['redis']['server']}:{$cache_setting['redis']['port']}");
+			} else {
+				if (version_compare(PHP_VERSION, '5.4') >= 0) {
+					session_set_save_handler($sess, true);
+				} else {
+					session_set_save_handler(
+						array(&$sess, 'open'),
+						array(&$sess, 'close'),
+						array(&$sess, 'read'),
+						array(&$sess, 'write'),
+						array(&$sess, 'destroy'),
+						array(&$sess, 'gc')
+					);
+				}
 			}
 		} elseif (extension_loaded('memcached') && !empty($cache_setting['memcache']['server']) && !empty($cache_setting['memcache']['session'])) {
 			ini_set("session.save_handler", "memcached");
 			ini_set("session.save_path", "{$cache_setting['memcache']['server']}:{$cache_setting['memcache']['port']}");
 		} else {
-			WeSession::$uniacid = $uniacid;
-			WeSession::$openid = $openid;
-			WeSession::$expire = $expire;
-			$sess = new WeSession();
 			if (version_compare(PHP_VERSION, '5.4') >= 0) {
 				session_set_save_handler($sess, true);
 			} else {

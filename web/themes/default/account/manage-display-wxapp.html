@@ -2,7 +2,7 @@
 <div class="we7-page-title">小程序管理</div>
 <ul class="we7-page-tab">
 	<li class="active"><a href="{php echo url ('account/manage', array('account_type' => '4'))}">小程序列表</a></li>
-	{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
+	{if in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))}
 	<li><a href="{php echo url ('account/recycle', array('account_type' => '4'))}">小程序回收站</a></li>
 	{/if}
 </ul>
@@ -25,7 +25,7 @@
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
 	</form>
-	{if !empty($account_info['uniacid_limit']) || $_W['isfounder']}
+	{if !empty($account_info['uniacid_limit']) || $_W['isfounder'] || $_W['is_vice_founder']}
 	<div class="pull-right">
 		<a href="{php echo url('wxapp/post/design_method')}" class="btn btn-primary we7-padding-horizontal">添加小程序</a>
 	</div>

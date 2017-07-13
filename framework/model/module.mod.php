@@ -298,33 +298,6 @@ function module_fetch($name) {
 }
 
 /**
- * 检验并完善公众号的模块设置信息
- * 安装模块或添加公众号时调用.
- */
-function module_build_privileges() {
-	load()->model('account');
-	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
-	foreach($uniacid_arr as $row){
-		$modules = uni_modules_by_uniacid($row['uniacid'], false);
-		//得到模块标识
-		$mymodules = pdo_getall('uni_account_modules', array('uniacid' => $row['uniacid']), array('module'), 'module');
-		$mymodules = array_keys($mymodules);
-		foreach($modules as $module){
-			if(!in_array($module['name'], $mymodules) && empty($module['issystem'])) {
-				$data = array();
-				$data['uniacid'] = $row['uniacid'];
-				$data['module'] = $module['name'];
-				$data['enabled'] = 1;
-				$data['settings'] = '';
-				pdo_insert('uni_account_modules', $data);
-			}
-		}
-	}
-	return true;
-}
-
-
-/**
  * 获取所有未安装的模块
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
  */

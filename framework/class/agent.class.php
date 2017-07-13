@@ -133,7 +133,7 @@ class Agent
 	{
 		$agent = self::getAgent($agent);
 		
-		if (stripos($agent, 'MicroMessenger') !== false) {
+		if (stripos($agent, 'MicroMessenger') !== false && stripos($agent, 'wechatdevtools') !== false) {
 			return self::MICRO_MESSAGE_YES;
 		} else {
 			return self::MICRO_MESSAGE_NOT;

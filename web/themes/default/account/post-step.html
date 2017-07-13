@@ -7,7 +7,7 @@
 			<li>新建公众号</li>
 		</ol>
 		<div class="panel we7-panel">
-			{if !$_W['isfounder']}
+			{if !$_W['isfounder'] && !$_W['is_vice_founder']}
 				<div class="alert alert-warning">
 					温馨提示：
 					<i class="fa fa-info-circle"></i>
@@ -58,7 +58,7 @@
 		<div class="we7-step">
 			<ul>
 				<li class="active">1 设置公众号信息</li>
-				{if !empty($_W['isfounder'])}
+				{if !empty($_W['isfounder']) || !empty($_W['is_vice_founder'])}
 				<li>2 设置权限</li>
 				<li>3 引导页面</li>
 				{else}
@@ -181,7 +181,7 @@
 		<div class="we7-step">
 			<ul>
 				<li>1 设置公众号信息</li>
-				{if !empty($_W['isfounder'])}
+				{if !empty($_W['isfounder']) || !empty($_W['is_vice_founder'])}
 				<li class="active">2 设置权限</li>
 				<li>3 引导页面</li>
 				{else}
@@ -437,7 +437,7 @@
 		<div class="we7-step">
 			<ul>
 				<li>1 设置公众号信息</li>
-				{if !empty($_W['isfounder'])}
+				{if !empty($_W['isfounder']) || !empty($_W['is_vice_founder'])}
 				<li>2 设置权限</li>
 				<li class="active">3 引导页面</li>
 				{else}
