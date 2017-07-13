@@ -37,7 +37,6 @@ class WeSession implements SessionHandlerInterface {
 		WeSession::$uniacid = $uniacid;
 		WeSession::$openid = $openid;
 		WeSession::$expire = $expire;
-		$sess = new WeSession();
 		
 		$cache_setting = $GLOBALS['_W']['config']['setting'];
 		//php7使用memcache session有bug，只能使用memcacehd,待修复
@@ -49,38 +48,33 @@ class WeSession implements SessionHandlerInterface {
 				ini_set("session.save_handler", "redis");
 				ini_set("session.save_path", "tcp://{$cache_setting['redis']['server']}:{$cache_setting['redis']['port']}");
 			} else {
-				if (version_compare(PHP_VERSION, '5.4') >= 0) {
-					session_set_save_handler($sess, true);
-				} else {
-					session_set_save_handler(
-						array(&$sess, 'open'),
-						array(&$sess, 'close'),
-						array(&$sess, 'read'),
-						array(&$sess, 'write'),
-						array(&$sess, 'destroy'),
-						array(&$sess, 'gc')
-					);
-				}
+				self::mysql_handler();
 			}
 		} elseif (extension_loaded('memcached') && !empty($cache_setting['memcache']['server']) && !empty($cache_setting['memcache']['session'])) {
 			ini_set("session.save_handler", "memcached");
 			ini_set("session.save_path", "{$cache_setting['memcache']['server']}:{$cache_setting['memcache']['port']}");
 		} else {
-			if (version_compare(PHP_VERSION, '5.4') >= 0) {
-				session_set_save_handler($sess, true);
-			} else {
-				session_set_save_handler(
-					array(&$sess, 'open'),
-					array(&$sess, 'close'),
-					array(&$sess, 'read'),
-					array(&$sess, 'write'),
-					array(&$sess, 'destroy'),
-					array(&$sess, 'gc')
-				);
-			}
+			self::mysql_handler();
 		}
 		register_shutdown_function('session_write_close');
 		session_start();
+	}
+	
+	public static function mysql_handler() {
+		$sess = new WeSession();
+		if (version_compare(PHP_VERSION, '5.4') >= 0) {
+			session_set_save_handler($sess, true);
+		} else {
+			session_set_save_handler(
+				array(&$sess, 'open'),
+				array(&$sess, 'close'),
+				array(&$sess, 'read'),
+				array(&$sess, 'write'),
+				array(&$sess, 'destroy'),
+				array(&$sess, 'gc')
+			);
+		}
+		return true;
 	}
 
 	public function open($save_path, $session_name) {
