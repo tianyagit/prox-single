@@ -43,7 +43,7 @@ if ($do == 'platform') {
 } elseif ($do == 'system') {
 	define('FRAME', 'system');
 	$_W['page']['title'] = '欢迎页 - 系统管理';
-	if(!$_W['isfounder'] && !$_W['is_vice_founder']){
+	if(!$_W['isfounder']){
 		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
 		exit;
 	}

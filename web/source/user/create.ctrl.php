@@ -10,7 +10,7 @@ load()->model('user');
 uni_user_permission_check('system_user_post');
 $_W['page']['title'] = '添加用户 - 用户管理';
 $state = uni_permission($_W['uid']);
-if (!in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
+if ($state != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	itoast('没有操作权限！', referer(), 'error');
 }
 
@@ -55,13 +55,13 @@ if (checksubmit()) {
 			itoast('推荐人不存在！', '', '');
 		}
 		$data['vice_founder_id'] = $vice_founder_id == ture ? 0 : $vice_founder_id;
-		if (!empty($_W['is_vice_founder'])) {
+		if (!empty($_W['founder_groupid'])) {
 			$data['vice_founder_id'] = $_W['uid'];
 		}
 	}
 
 	if ($do == ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
-		$data['is_vice_founder'] = 1;
+		$data['founder_groupid'] = ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
 	}
 
 	$uid = user_register($data);
@@ -72,7 +72,7 @@ if (checksubmit()) {
 	itoast('增加失败，请稍候重试或联系网站管理员解决！', '', '');
 }
 $group_condition = array();
-if (!empty($_W['is_vice_founder'])) {
+if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 	$group_condition['vice_founder_id'] = $_W['uid'];
 }
 $groups = pdo_getall('users_group', $group_condition, array('id', 'name'));

@@ -6,8 +6,8 @@
 
 define('IN_SYS', true);
 require '../../framework/bootstrap.inc.php';
-if (!pdo_fieldexists('users', 'is_vice_founder')) {
-	pdo_query("ALTER TABLE tablename('users') ADD COLUMN `is_vice_founder` TINYINT(1) NOT NULL DEFAULT 0  COMMENT '是否是副创始人 1:是 0:否' AFTER `groupid`;");
+if (!pdo_fieldexists('users', 'founder_groupid')) {
+	pdo_query("ALTER TABLE tablename('users') ADD COLUMN `founder_groupid` TINYINT(4) NOT NULL DEFAULT 0  COMMENT '管理组，1是创始人，2是副创始人' AFTER `groupid`;");
 }
 if (!pdo_fieldexists('users', 'vice_founder_id')) {
 	pdo_query("ALTER TABLE tablename('users') ADD COLUMN `vice_founder_id` int(10) NOT NULL DEFAULT 0 COMMENT '副创始人uid' AFTER `uid`;");

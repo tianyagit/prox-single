@@ -12,17 +12,12 @@ if(is_array($session)) {
 	if(is_array($user) && $session['hash'] == md5($user['password'] . $user['salt'])) {
 		$_W['uid'] = $user['uid'];
 		$_W['username'] = $user['username'];
-		$_W['is_vice_founder'] = $user['is_vice_founder'];
-		if (!empty($user['is_vice_founder'])) {
-			$_W['role'] = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-		}
 		$user['currentvisit'] = $user['lastvisit'];
 		$user['currentip'] = $user['lastip'];
 		$user['lastvisit'] = $session['lastvisit'];
 		$user['lastip'] = $session['lastip'];
 		$_W['user'] = $user;
-		$founders = explode(',', $_W['config']['setting']['founder']);
-		$_W['isfounder'] = in_array($_W['uid'], $founders);
+		$_W['isfounder'] = user_is_founder($_W['uid']);
 		unset($founders);
 	} else {
 		isetcookie('__session', false, -100);
