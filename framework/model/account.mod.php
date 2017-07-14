@@ -248,63 +248,11 @@ function uni_modules_app_binding() {
  * @return array uni_group 套餐信息列表
  */
 function uni_groups($groupids = array()) {
-	global $_W;
 	load()->model('module');
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
 	$list = cache_load($cachekey);
 	if (empty($list)) {
-		$condition = ' WHERE uniacid = 0';
-		if ($_W['role'] == 'vice_founder') {
-			$condition .= ' AND vice_founder_id = ' . $_W['uid'];
-		}
-		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
-		if (in_array('-1', $groupids)) {
-			$list[-1] = array('id' => -1, 'name' => '所有服务');
-		}
-		if (in_array('0', $groupids)) {
-			$list[0] = array('id' => 0, 'name' => '基础服务');
-		}
-		if (!empty($list)) {
-			foreach ($list as $k=>&$row) {
-				$row['wxapp'] = array();
-				if (!empty($row['modules'])) {
-					$modules = iunserializer($row['modules']);
-					if (is_array($modules)) {
-						$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
-						$row['modules'] = array();
-						if (!empty($module_list)) {
-							foreach ($module_list as $key => &$module) {
-								$module = module_fetch($key);
-								if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
-									$row['wxapp'][$module['name']] = $module;
-								}
-								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
-									if (!empty($module['main_module'])) {
-										continue;
-									}
-									$row['modules'][$module['name']] = $module;
-									if (!empty($module['plugin'])) {
-										$group_have_plugin = array_intersect($module['plugin_list'], array_keys($module_list));
-										if (!empty($group_have_plugin)) {
-											foreach ($group_have_plugin as $plugin) {
-												$row['modules'][$plugin] = module_fetch($plugin);
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-
-				if (!empty($row['templates'])) {
-					$templates = iunserializer($row['templates']);
-					if (is_array($templates)) {
-						$row['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
-					}
-				}
-			}
-		}
+		$list = uni_group_list(' WHERE uniacid = 0', $groupids);
 		cache_write($cachekey, $list);
 	}
 	$group_list = array();
@@ -318,6 +266,67 @@ function uni_groups($groupids = array()) {
 	return $group_list;
 }
 
+function uni_vice_founder_groups() {
+	global $_W;
+	if (empty($_W['isfounder']) || $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+		return array();
+	}
+	$condition = ' WHERE uniacid = 0 AND vice_founder_id = ' . $_W['uid'];
+	$list = uni_group_list($condition);
+	return $list;
+}
+
+function uni_group_list($condition = ' WHERE uniacid = 0', $groupids = array()) {
+	$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
+	if (in_array('-1', $groupids)) {
+		$list[-1] = array('id' => -1, 'name' => '所有服务');
+	}
+	if (in_array('0', $groupids)) {
+		$list[0] = array('id' => 0, 'name' => '基础服务');
+	}
+	if (!empty($list)) {
+		foreach ($list as $k=>&$row) {
+			$row['wxapp'] = array();
+			if (!empty($row['modules'])) {
+				$modules = iunserializer($row['modules']);
+				if (is_array($modules)) {
+					$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
+					$row['modules'] = array();
+					if (!empty($module_list)) {
+						foreach ($module_list as $key => &$module) {
+							$module = module_fetch($key);
+							if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+								$row['wxapp'][$module['name']] = $module;
+							}
+							if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
+								if (!empty($module['main_module'])) {
+									continue;
+								}
+								$row['modules'][$module['name']] = $module;
+								if (!empty($module['plugin'])) {
+									$group_have_plugin = array_intersect($module['plugin_list'], array_keys($module_list));
+									if (!empty($group_have_plugin)) {
+										foreach ($group_have_plugin as $plugin) {
+											$row['modules'][$plugin] = module_fetch($plugin);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (!empty($row['templates'])) {
+				$templates = iunserializer($row['templates']);
+				if (is_array($templates)) {
+					$row['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
+				}
+			}
+		}
+	}
+	return $list;
+}
 /**
  * 获取当前套餐可用微站模板
  * @return array 模板列表
@@ -495,16 +504,15 @@ function uni_account_tablename($type) {
  */
 function uni_permission($uid = 0, $uniacid = 0) {
 	global $_W;
+	load()->model('user');
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders)) {
+	$founders = user_founder_by_user_id($uid);
+	if (!empty($founders)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
-	if (!empty($_W['is_vice_founder'])){
-		return ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-	}
+
 	if (!empty($uniacid)) {
 		$role = pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'role');
 		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
@@ -536,10 +544,11 @@ function uni_permission($uid = 0, $uniacid = 0) {
  */
 function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
+	load()->model('user');
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders) || !empty($_W['is_vice_founder'])) {
+	$founders = user_founder_by_user_id($uid);
+	if (!empty($founders)) {
 		return false;
 	}
 	if (FRAME == 'system') {
@@ -721,7 +730,7 @@ function uni_user_permission_check($permission_name, $show_message = true, $acti
 	} elseif ($action == 'wxapp') {
 		$users_permission = uni_user_permission('wxapp');
 	} else {
-		$users_permission = uni_user_permission('system');
+		$users_permission = uni_user_permission('system');//var_dump($users_permission);exit;
 	}
 	if (!isset($users_permission)) {
 		$users_permission = uni_user_permission('system');
@@ -1076,8 +1085,7 @@ function account_delete($acid) {
 	if ($account) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
-		$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-		if(!in_array($state, $allow_role)) {
+		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			itoast('没有该公众号操作权限！', url('account/recycle'), 'error');
 		}
 		if($uniacid == $_W['uniacid']) {

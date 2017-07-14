@@ -9,6 +9,7 @@ $dos = array('display', 'check_display', 'check_pass', 'recycle_display', 'recyc
 $do = in_array($do, $dos) ? $do: 'display';
 
 $_W['page']['title'] = '用户列表 - 用户管理';
+load()->model('user');
 $founders = explode(',', $_W['config']['setting']['founder']);
 
 if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_founder'))) {
@@ -22,14 +23,14 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 			$condition = ' WHERE u.status = 3 ';
 			break;
 		case 'vice_founder':
-			$condition = ' WHERE u.is_vice_founder = 1 ';
+			$condition = ' WHERE u.founder_groupid = ' . ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
 			break;
 		default:
 			uni_user_permission_check('system_user');
 			$condition = ' WHERE u.status = 2 ';
 			break;
 	}
-	if (empty($_W['founder']) && !empty($_W['is_vice_founder'])) {
+	if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 		$condition .= ' AND u.vice_founder_id = ' . $_W['uid'];
 	}
 	$pindex = max(1, intval($_GPC['page']));
@@ -56,30 +57,30 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 			}
 		}
 
+		$user['founder'] = user_founder_by_user_id($user['uid']);
 		$user['uniacid_num'] = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('uni_account_users')." WHERE uid = :uid", array(':uid' => $user['uid']));
-		if (empty($user['is_vice_founder'])) {
-			$user['founder'] = in_array($user['uid'], $founders);
-			$user['module_num'] =array();
-			$group = pdo_get('users_group', array('id' => $user['groupid']));
-			if (!empty($group)) {
-				$user['maxaccount'] = in_array($user['uid'], $founders) ? '不限' : $group['maxaccount'];
-				$user['groupname'] = $group['name'];
-				$package = iunserializer($group['package']);
-				$group['package'] = uni_groups($package);
-				foreach ($group['package'] as $modules) {
-					if (is_array($modules['modules'])) {
-						foreach ($modules['modules'] as  $module) {
-							$user['module_num'][] = $module['name'];
-						}
+
+		$user['module_num'] =array();
+		$group = pdo_get('users_group', array('id' => $user['groupid']));
+		if (!empty($group)) {
+			$user['maxaccount'] = $user['founder'] ? '不限' : $group['maxaccount'];
+			$user['groupname'] = $group['name'];
+			$package = iunserializer($group['package']);
+			$group['package'] = uni_groups($package);
+			foreach ($group['package'] as $modules) {
+				if (is_array($modules['modules'])) {
+					foreach ($modules['modules'] as  $module) {
+						$user['module_num'][] = $module['name'];
 					}
 				}
 			}
+		}
 
-			$user['module_num'] = array_unique($user['module_num']);
-			$user['module_nums'] = count($user['module_num']) + $system_module_num;
-		} else {
+		if ($user['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 			$user['maxaccount'] = '不限';
 		}
+		$user['module_num'] = array_unique($user['module_num']);
+		$user['module_nums'] = count($user['module_num']) + $system_module_num;
 	}
 	unset($user);
 	$usergroups = pdo_getall('users_group', array(), array(), 'id');

@@ -38,7 +38,7 @@ if ($do == 'browser') {
 	$psize = 10;
 	$total = 0;
 
-	if (!empty($_W['is_vice_founder'])) {
+	if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 		$group_id = pdo_getall('users_group', array('vice_founder_id' => $_W['uid']), 'id', 'id');
 		$group_ids = implode(',', array_keys($group_id));
 		if (!empty($group_ids)) {

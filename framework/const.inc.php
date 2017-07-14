@@ -63,6 +63,7 @@ define('ACCOUNT_MANAGE_NAME_FOUNDER', 'founder');
 //副创始人
 define('ACCOUNT_MANAGE_TYPE_VICE_FOUNDER', 4);
 define('ACCOUNT_MANAGE_NAME_VICE_FOUNDER', 'vice_founder');
+define('ACCOUNT_MANAGE_GROUP_VICE_FOUNDER', 2);
 //系统卡券
 define('SYSTEM_COUPON', 1);
 //微信卡券

@@ -14,7 +14,7 @@ $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$type = trim($_GPC['type']);
 
-	if ($_W['isfounder'] || $_W['is_vice_founder']) {
+	if ($_W['isfounder']) {
 		$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	} else {
 		$uid = $_W['uid'];
@@ -77,7 +77,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'password':
 			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) iajax(2, '两次密码不一致！', '');
-			if (empty($_W['isfounder']) && empty($_W['is_vice_founder'])) {
+			if (!$_W['isfounder']) {
 				$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
 				if ($pwd != $user['password']) iajax(3, '原密码不正确！', '');
 			}
