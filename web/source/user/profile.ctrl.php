@@ -52,7 +52,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 					'uid' => $uid,
 					'createtime' => TIMESTAMP,
 					$type => trim($_GPC[$type])
-					);
+				);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
@@ -107,7 +107,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 					'birthyear' => intval($_GPC['year']),
 					'birthmonth' => intval($_GPC['month']),
 					'birthday' => intval($_GPC['day'])
-					);
+				);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
