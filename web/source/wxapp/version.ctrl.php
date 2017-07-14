@@ -16,8 +16,18 @@ if ($do == 'module_link_uniacid' || $do == 'front_download') {
 }
 $_W['page']['title'] = '小程序 - 管理';
 
-$uniacid = intval($_GPC['uniacid']);
-$version_id = intval($_GPC['version_id']);
+$last_uniacid = uni_account_last_switch();
+if (empty($last_uniacid)) {
+	$account = uni_site_account(ACCOUNT_TYPE_APP_NORMAL);
+	if (empty($account)) {
+		itoast('', url('wxapp/post/design_method'), 'info');
+	}
+	$last_uniacid = $account['uniacid'];
+}
+if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
+	uni_account_switch($last_uniacid);
+}
+$uniacid = $last_uniacid;
 if (!empty($uniacid)) {
 	$wxapp_info = wxapp_fetch($uniacid);
 }
