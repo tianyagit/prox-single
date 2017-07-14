@@ -240,11 +240,12 @@ function cache_build_module_subscribe_type() {
 			}
 		}
 	}
+
 	$module_ban = $_W['setting']['module_receive_ban'];
 	foreach ($subscribe as $event => $module_group) {
 		if (!empty($module_group)) {
 			foreach ($module_group as $index => $module) {
-				if (empty($module_ban[$module])) {
+				if (!empty($module_ban[$module])) {
 					unset($subscribe[$event][$index]);
 				}
 			}
