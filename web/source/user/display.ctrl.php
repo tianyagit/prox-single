@@ -118,8 +118,8 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 			itoast('更新成功！', referer(), 'success');
 			break;
 		case 'recycle_delete'://永久删除用户
-			$user_info = pdo_getcolumn('users', array('uid' => $uid), 'is_vice_founder');
-			if (!empty($user_info)) {
+			$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
+			if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 				pdo_update('users', array('vice_founder_id' => 0), array('vice_founder_id' => $uid));
 				pdo_update('users_group', array('vice_founder_id' => 0), array('vice_founder_id' => $uid));
 				pdo_update('uni_group', array('vice_founder_id' => 0), array('vice_founder_id' => $uid));
