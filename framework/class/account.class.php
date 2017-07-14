@@ -1526,6 +1526,21 @@ abstract class WeModuleSite extends WeBase {
 		include $this->template('common/paycenter');
 	}
 
+	protected function refund($params = array()) {
+		global $_W;
+		$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => $params['module'], 'tid' => $params['tid']));
+		if (empty($paylog)) {
+			message('订单不存在', '', 'info');
+		}
+		if ($paylog['type'] == 'wechat') {
+			$setting = uni_setting_load('payment', $_W['uniacid']);
+			$pay_setting = $setting['payment'];
+			if ($pay_setting['wechat_refund']['switch'] == 1) {
+				isetcookie('wechat_refund', base64_encode(json_encode(array('tid' => $paylog['plid']))), 30);
+				header('Location: ' . $_W['siteroot'] . "payment/wechat/refund.php");
+			}
+		}
+	}
 	/**
 	 * 这是一个回调方法, 当系统在支付完成时调用这个方法通知模块支付结果
 	 * @param array $ret
