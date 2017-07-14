@@ -661,6 +661,9 @@ function module_link_uniacid_fetch($uid, $module_name) {
 				continue;
 			}
 			foreach ($account_value['versions'] as $version_key => $version_value) {
+				if (empty($version_value['modules'])) {
+					continue;
+				}
 				if ($version_value['modules'][0]['name'] != $module_name) {
 					continue;
 				}
