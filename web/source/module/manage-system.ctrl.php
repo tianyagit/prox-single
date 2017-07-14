@@ -30,6 +30,7 @@ if ($do == 'subscribe') {
 	$subscribe_module = array();
 	$receive_ban = $_W['setting']['module_receive_ban'];
 	$subscribe_type = ext_module_msg_types();
+
 	if (is_array($module_list) && !empty($module_list)) {
 		foreach ($module_list as $module) {
 			if (!empty($module['subscribes']) && is_array($module['subscribes'])) {
@@ -37,7 +38,7 @@ if ($do == 'subscribe') {
 				$subscribe_module[$module['name']]['title'] = $module['title'];
 				$subscribe_module[$module['name']]['name'] = $module['name'];
 				$subscribe_module[$module['name']]['subscribe_success'] = 2;
-				$subscribe_module[$module['name']]['receive_ban'] = in_array($module['name'], $receive_ban) ? 1 : 2;
+				$subscribe_module[$module['name']]['receive_ban'] = in_array($module['name'], $receive_ban) ? 1 : 0;
 			}
 		}
 	}
@@ -557,7 +558,7 @@ if ($do == 'module_detail') {
 	if (!is_array($module_ban)) {
 		$module_ban = array();
 	}
-	$receive_ban = in_array($module_info['name'], $module_ban) ? 1 : 2;
+	$receive_ban = in_array($module_info['name'], $module_ban) ? 1 : 0;
 	$modulename = $_GPC['modulename'];
 
 

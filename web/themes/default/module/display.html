@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="panel panel-cut" id="js-module-display" ng-controller="userModuleDisplayCtrl" ng-cloak>
+<div class="panel panel-cut" id="js-module-display" ng-controller="userModuleDisplayCtrl2" ng-cloak>
 	<div class="panel-heading">
 		<i class="wi wi-apply" style="font-size: 24px; margin-right: 10px; vertical-align:middle;"></i>请选择您要操作的应用
 	</div>
@@ -47,7 +47,7 @@
 					<div class="arrow-left"></div>
 					<div class="cut-item">
 						<a href="javascript:;">
-							<div class="detail" ng-repeat="account in list.accounts">
+							<div class="detail" ng-repeat="account in list.accounts" ng-if="list.accounts">
 								<div class="text-over text-left" ng-if="account.app_name"><span class="wi wi-wechat"></span>{{account.app_name}}</div>
 								<div class="text-over text-left" ng-if="account.wxapp_name"><span class="wi wi-small-routine"></span>{{account.wxapp_name}}</div>
 								<a class="cut-select-mask" href="./index.php?c=module&a=display&do=switch&module_name={{list.name}}&uniacid={{account.uniacid}}&version_id={{account.version_id}}" ng-if="account.version_id">
@@ -56,6 +56,9 @@
 								<a class="cut-select-mask" href="./index.php?c=module&a=display&do=switch&module_name={{list.name}}&uniacid={{account.uniacid}}" ng-if="!account.version_id">
 									<div class="entry">选择进入 <i class="wi wi-angle-right"></i></div>
 								</a>
+							</div>
+							<div class="detail" ng-if="!list.accounts">
+								<div class="text-over text-center">暂无数据</div>
 							</div>
 						</a>
 					</div>
@@ -76,6 +79,71 @@
 			'getallLastSwitch': "{php echo url('module/display/getall_last_switch')}",
 		}
 	});
+
+angular.module('moduleApp').controller('userModuleDisplayCtrl2', ['$scope', '$http', 'config', function($scope, $http, config) {
+	$scope.userModule = config.userModule;
+	$scope.alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','全部'];
+	$scope.activeLetter = config.activeLetter;
+	$scope.searchKeyword = '';
+
+	$scope.showAccounts = function(ev, name) {
+		$http.post(config.links.moduleAccounts, {'module_name': name})
+			.success(function(data) {
+				$scope.userModule[name].accounts = data.message.message;
+			})
+		var cutSelect = $(ev.target).parents('.mask').next('.cut-select');
+		if (cutSelect.css('display') == 'none') {
+			cutSelect.css('display', 'block');
+			cutSelect.parent('.module-list-item').siblings().find('.cut-select').css('display', 'none');
+		} else {
+			cutSelect.css('display', 'none');
+		}
+	};
+
+	$scope.hideSelect = function(ev) {
+		$(ev.target).css('display', 'none');
+	};
+
+	$scope.searchKeywordModule = function() {
+		if ($scope.searchKeyword) {
+			$scope.keywordModule = [];
+			angular.forEach(config.userModule, function(val, key) {
+				if (val.title.match($scope.searchKeyword)) {
+					$scope.keywordModule.push(val);
+				}
+			});
+			$scope.userModule = $scope.keywordModule;
+		} else {
+			$scope.userModule = config.userModule;
+		}
+	};
+
+	$scope.searchLetterModule = function(letter) {
+		$scope.activeLetter = letter;
+		if ($scope.activeLetter == '全部') {
+			$scope.userModule = config.userModule;
+		} else {
+			$scope.letterModule = [];
+			angular.forEach(config.userModule, function(val, key) {
+				if (val.title_initial == $scope.activeLetter) {
+					$scope.letterModule.push(val);
+				}
+			});
+			$scope.userModule = $scope.letterModule;
+		}
+	};
+
+	$scope.getall_last_switch = function() {
+		$http.post(config.links.getall_last_switch)
+			.success(function(data) {
+				var last_switch = data.message.message;
+				angular.forEach(config.userModule, function(val, key) {
+					config.userModule[key].last_switch = last_switch[val.name];
+				})
+			})
+	};
+}]);
+
 	angular.bootstrap($('#js-module-display'), ['moduleApp']);
 </script>
 {template 'common/footer'}
