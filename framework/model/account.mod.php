@@ -6,6 +6,26 @@
 defined('IN_IA') or exit('Access Denied');
 
 /**
+ * 获取当前站点公众号OR小程序
+ */
+function uni_site_account($type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
+	$result = array();
+	if (in_array($type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
+		$condition = " WHERE a.default_acid <> 0 AND b.isdeleted <> 1 AND (b.type = ".ACCOUNT_TYPE_OFFCIAL_NORMAL." OR b.type = ".ACCOUNT_TYPE_OFFCIAL_AUTH.")";
+	}
+	if ($type == ACCOUNT_TYPE_APP_NORMAL) {
+		$condition = " WHERE a.default_acid <> 0 AND b.isdeleted <> 1 AND b.type = ". ACCOUNT_TYPE_APP_NORMAL;
+	}
+	$sql = "SELECT * FROM ". tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.uniacid = b.uniacid AND a.default_acid = b.acid {$condition} ORDER BY a.`uniacid` DESC LIMIT 1";
+	$site_account = pdo_fetch($sql);
+	if (!empty($site_account)) {
+		$result = $site_account;
+	}
+
+	return $result;
+}
+
+/**
  * 添加公众号时执行数量判断
  * @param int $uid 操作用户
  * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号; 4. 小程序)

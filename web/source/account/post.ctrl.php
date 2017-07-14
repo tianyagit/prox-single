@@ -12,11 +12,14 @@ load()->classs('weixin.platform');
 load()->model('wxapp');
 load()->model('utility');
 
-$uniacid = intval($_GPC['uniacid']);
-$acid = intval($_GPC['acid']);
-if (empty($uniacid) || empty($acid)) {
-	itoast('请选择要编辑的公众号', url('account/manager'), 'error');
+$account = uni_site_account(ACCOUNT_TYPE);
+if (empty($account)) {
+	$url = ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL ? url('wxapp/post/design_method') : url('account/post-step');
+	itoast('', $url, 'info');
 }
+$uniacid = intval($account['uniacid']);
+$acid = intval($account['acid']);
+
 $state = uni_permission($_W['uid'], $uniacid);
 $dos = array('base', 'sms', 'modules_tpl');
 $allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
