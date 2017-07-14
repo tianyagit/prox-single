@@ -70,7 +70,10 @@ $_W['acl'] = $acl = array(
 	),
 	'user' => array(
 		'default' => 'display',
-		'founder' => array(),
+		'founder' => array(
+			'edit',
+			'group'
+		),
 		'direct' => array(
 			'login',
 			'register',

@@ -248,15 +248,11 @@ function uni_modules_app_binding() {
  * @return array uni_group 套餐信息列表
  */
 function uni_groups($groupids = array()) {
-	global $_W;
 	load()->model('module');
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
 	$list = cache_load($cachekey);
 	if (empty($list)) {
 		$condition = ' WHERE uniacid = 0';
-		if ($_W['role'] == 'vice_founder') {
-			$condition .= ' AND vice_founder_id = ' . $_W['uid'];
-		}
 		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
 		if (in_array('-1', $groupids)) {
 			$list[-1] = array('id' => -1, 'name' => '所有服务');
@@ -495,16 +491,15 @@ function uni_account_tablename($type) {
  */
 function uni_permission($uid = 0, $uniacid = 0) {
 	global $_W;
+	load()->model('user');
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders)) {
+	$founders = user_is_founder($uid);
+	if (!empty($founders)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
-	if (!empty($_W['is_vice_founder'])){
-		return ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-	}
+
 	if (!empty($uniacid)) {
 		$role = pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'role');
 		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
@@ -536,10 +531,11 @@ function uni_permission($uid = 0, $uniacid = 0) {
  */
 function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
+	load()->model('user');
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders) || !empty($_W['is_vice_founder'])) {
+	$founders = user_is_founder($uid);
+	if (!empty($founders)) {
 		return false;
 	}
 	if (FRAME == 'system') {
@@ -721,7 +717,7 @@ function uni_user_permission_check($permission_name, $show_message = true, $acti
 	} elseif ($action == 'wxapp') {
 		$users_permission = uni_user_permission('wxapp');
 	} else {
-		$users_permission = uni_user_permission('system');
+		$users_permission = uni_user_permission('system');//var_dump($users_permission);exit;
 	}
 	if (!isset($users_permission)) {
 		$users_permission = uni_user_permission('system');
@@ -1076,8 +1072,7 @@ function account_delete($acid) {
 	if ($account) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
-		$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-		if(!in_array($state, $allow_role)) {
+		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			itoast('没有该公众号操作权限！', url('account/recycle'), 'error');
 		}
 		if($uniacid == $_W['uniacid']) {

@@ -31,7 +31,7 @@ if ($do == 'display') {
 	);
 	$type_condition_sql = "'".implode("','", $type_condition[ACCOUNT_TYPE])."'";
 	
-	if (!empty($_W['isfounder'])) {
+	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
 		$order_by = " ORDER BY a.`acid` DESC";
 	} else {
@@ -43,7 +43,7 @@ if ($do == 'display') {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-	$tsql = "SELECT COUNT(*) FROM " . tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
+	$tsql = "SELECT COUNT(*) FROM " . tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";//echo $tsql;exit;
 	$sql = "SELECT * FROM ". tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$total = pdo_fetchcolumn($tsql, $param);
 	$list = pdo_fetchall($sql, $param);
@@ -71,8 +71,7 @@ if ($do == 'delete') {
 	$type = intval($_GPC['type']);
 	//只有创始人、主管理员才有权限停用公众号
 	$state = uni_permission($uid, $uniacid);
-	$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-	if (!in_array($state, $allow_role)) {
+	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		itoast('无权限操作！', url('account/manage'), 'error');
 	}
 	if (!empty($acid) && empty($uniacid)) {
@@ -94,7 +93,7 @@ if ($do == 'delete') {
 			itoast('抱歉，帐号不存在或是已经被删除', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		$state = uni_permission($uid, $uniacid);
-		if (!in_array($state, $allow_role)) {
+		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			itoast('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));

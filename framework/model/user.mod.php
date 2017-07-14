@@ -77,14 +77,32 @@ function user_check($user) {
  * @param string $username
  * @return bool
  */
-function user_get_uid_byname ($username = '') {
+function user_get_uid_byname($username = '') {
 	$username = trim($username);
 	if (empty($username)) {
 		return true;
 	}
-	$uid = pdo_getcolumn('users', array('username' => $username, 'is_vice_founder' => 1), 'uid');
+	$uid = pdo_getcolumn('users', array('username' => $username, 'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER), 'uid');
 	return $uid;
 }
+
+/**
+ * 判断是否是创始人
+ */
+function user_is_founder($uid) {
+	global $_W;
+	$founders = explode(',', $_W['config']['setting']['founder']);
+	if (in_array($uid, $founders)) {
+		return true;
+	} else {
+		$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
+		if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+			return true;
+		}
+	}
+	return false;
+}
+
 /**
  * 获取单条用户信息，如果查询参数多于一个字段，则查询满足所有字段的用户
  * PS:密码字段不要加密
@@ -351,11 +369,11 @@ function user_modules($uid) {
 	$cachekey = cache_system_key("user_modules:" . $uid);
 	$modules = cache_load($cachekey);
 	if (empty($modules)) {
-		$founders = explode(',', $_W['config']['setting']['founder']);
+		$founders = user_is_founder($uid);
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
-		if (empty($uid) || in_array($uid, $founders) || !empty($_W['is_vice_founder'])) {
+		if (empty($uid) || $founders) {
 			$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
 			$module_list = $system_modules;
@@ -444,7 +462,7 @@ function user_login_forward($forward = '') {
 	if (!empty($forward)) {
 		return $login_forward;
 	}
-	if (!empty($_W['isfounder']) || !empty($_W['is_vice_founder'])) {
+	if (!empty($_W['isfounder'])) {
 		return url('home/welcome/system');
 	}
 

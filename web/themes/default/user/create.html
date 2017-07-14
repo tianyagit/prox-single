@@ -1,10 +1,18 @@
 {template 'common/header'}
 <div class="new-keyword">
-	<ol class="breadcrumb we7-breadcrumb">
-		<a href="{url 'user/display'}"><i class="wi wi-back-circle"></i> </a>
-		<li><a href="{url 'user/display'}">用户管理</a></li>
-		<li>添加用户</li>
-	</ol>
+	{if $_GPC['do'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
+		<ol class="breadcrumb we7-breadcrumb">
+			<a href="{url 'user/display'}"><i class="wi wi-back-circle"></i> </a>
+			<li><a href="{url 'user/display/vice_founder'}">副创始人管理</a></li>
+			<li>添加副创始人</li>
+		</ol>
+	{else}
+		<ol class="breadcrumb we7-breadcrumb">
+			<a href="{url 'user/display'}"><i class="wi wi-back-circle"></i> </a>
+			<li><a href="{url 'user/display'}">用户管理</a></li>
+			<li>添加用户</li>
+		</ol>
+	{/if}
 	<form action="" class="we7-form" method="post" id="js-user-create" ng-controller="UserCreate" ng-cloak>
 		
 		<div class="form-group">
@@ -29,6 +37,7 @@
 				<div class="help-block">重复输入密码，确认正确输入</div>
 			</div>
 		</div>
+		{if $_GPC['do'] != ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">所属用户组</label>
 			<div class="form-controls col-sm-8">
@@ -40,15 +49,25 @@
 				<span class="help-block"><strong class="text-danger">设置用户组后，系统会根据对应用户组的服务期限对用户的服务开始时间和结束时间进行初始化</strong></span>
 			</div>
 		</div>
+		{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && $_GPC['do'] != ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
+		<div class="form-group">
+			<label for="" class="control-label col-sm-2">推荐人</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" name="vice_founder_name" id="vice_founder" ng-style="{'width': '200px'}" class="form-control" ng-model="user.vice_founder_name" placeholder="" autocomplete="off">
+				<div class="help-block">请输入推荐人姓名</div>
+			</div>
+		</div>
+		{/if}
+		{/if}
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">备注</label>
 			<div class="form-controls col-sm-8">
 				<textarea name="remark" rows="6" class="form-control" ng-style="{'width': '600px'}" ng-bind="user.remark" placeholder="方便注明此用户的身份"></textarea>
 			</div>
 		</div>
-
 		<input type="submit" name="submit" id="" value="提交" class="btn btn-primary" ng-click="checkSubmit($event)" ng-style="{'padding': '6px 50px'}"/>
 		<input type="hidden" name="token" value="{$_W['token']}" />
+		<input type="hidden" name="do" value="{$_GPC['do']}" />
 	</form>
 </div>
 <script type="text/javascript">

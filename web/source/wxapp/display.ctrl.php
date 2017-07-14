@@ -47,7 +47,7 @@ if ($do == 'home') {
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
-	if (!empty($_W['isfounder'])) {
+	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 		$condition .= " WHERE a.default_acid <> 0 AND b.isdeleted <> 1 AND b.type = " . ACCOUNT_TYPE_APP_NORMAL;
 		$order_by = " ORDER BY a.`rank` DESC";
 	} else {

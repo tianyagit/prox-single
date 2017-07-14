@@ -10,11 +10,10 @@ load()->model('user');
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 //只有创始人、主管理员、管理员才有权限
-$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-if (!in_array($_W['role'], $allow_role)) {
+if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	itoast('无权限操作！', referer(), 'error');
 }
-if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER,ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
+if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	itoast('您只有查看权限！', url('module/group'), 'error');
 }
 
@@ -73,8 +72,15 @@ if ($do == 'display') {
 	}
 	$modules = user_modules($_W['uid']);
 	$modules_group_list = uni_groups();
+
 	if (!empty($modules_group_list)) {
-		foreach ($modules_group_list as &$group) {
+		foreach ($modules_group_list as $group_key => &$group) {
+			if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+				if ($group['vice_founder_id'] != $_W['uid']) {
+					unset($modules_group_list[$group_key]);
+					continue;
+				}
+			}
 			if (empty($group['modules'])) {
 				$group['modules'] = array();
 			}
