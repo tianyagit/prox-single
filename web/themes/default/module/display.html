@@ -17,7 +17,7 @@
 				<a href="javascript:;" ng-bind="letter"></a>
 			</li>
 		</ul>
-		<div class="cut-list">
+		<div class="cut-list" infinite-scroll='loadMore()'>
 			<!--应用-->
 			<div class="item module-list-item" ng-repeat="list in userModule" ng-if="userModule">
 				<div class="content">
