@@ -89,7 +89,7 @@ function user_get_uid_byname($username = '') {
 /**
  * 判断是否是创始人
  */
-function user_founder_by_user_id($uid) {
+function user_is_founder($uid) {
 	global $_W;
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	if (in_array($uid, $founders)) {
@@ -369,7 +369,7 @@ function user_modules($uid) {
 	$cachekey = cache_system_key("user_modules:" . $uid);
 	$modules = cache_load($cachekey);
 	if (empty($modules)) {
-		$founders = user_founder_by_user_id($uid);
+		$founders = user_is_founder($uid);
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');

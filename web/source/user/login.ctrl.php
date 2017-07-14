@@ -45,7 +45,7 @@ function _login($forward = '') {
 			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', '', '');
 		}
 		$_W['uid'] = $record['uid'];
-		$_W['isfounder'] = user_founder_by_user_id($record['uid']);
+		$_W['isfounder'] = user_is_founder($record['uid']);
 
 		if (empty($_W['isfounder'])) {
 			if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {

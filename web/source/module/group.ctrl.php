@@ -71,14 +71,16 @@ if ($do == 'display') {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
 	}
 	$modules = user_modules($_W['uid']);
-	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-		$modules_group_list = uni_groups();
-	} else {
-		$modules_group_list = uni_vice_founder_groups();
-	}
+	$modules_group_list = uni_groups();
 
 	if (!empty($modules_group_list)) {
-		foreach ($modules_group_list as &$group) {
+		foreach ($modules_group_list as $group_key => &$group) {
+			if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+				if ($group['vice_founder_id'] != $_W['uid']) {
+					unset($modules_group_list[$group_key]);
+					continue;
+				}
+			}
 			if (empty($group['modules'])) {
 				$group['modules'] = array();
 			}

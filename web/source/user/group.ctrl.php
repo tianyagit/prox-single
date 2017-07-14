@@ -18,7 +18,7 @@ if ($do == 'display') {
 		$params[':name'] = "%{$_GPC['name']}%";
 	}
 	if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-		$condition .= "WHERE vice_founder_id LIKE :vice_founder_id";
+		$condition .= "WHERE vice_founder_id = :vice_founder_id";
 		$params[':vice_founder_id'] = $_W['uid'];
 	}
 	if (checksubmit('submit')) {
@@ -69,13 +69,16 @@ if ($do == 'post') {
 		$group_info['package'] = iunserializer($group_info['package']);
 		if (!empty($group_info['package']) && in_array(-1, $group_info['package'])) $group_info['check_all'] = true;
 	}
-	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-		$packages = uni_groups();
-	} else {
-		$packages = uni_vice_founder_groups();
-	}
+
+	$packages = uni_groups();
 	if (!empty($packages)) {
 		foreach ($packages as $key => &$package_val) {
+			if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+				if ($package_val['vice_founder_id'] != $_W['uid']) {
+					unset($packages[$key]);
+					continue;
+				}
+			}
 			if (!empty($group_info['package']) && in_array($key, $group_info['package'])) {
 				$package_val['checked'] = true;
 			} else {

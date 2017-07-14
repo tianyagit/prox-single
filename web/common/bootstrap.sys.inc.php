@@ -17,7 +17,7 @@ if(is_array($session)) {
 		$user['lastvisit'] = $session['lastvisit'];
 		$user['lastip'] = $session['lastip'];
 		$_W['user'] = $user;
-		$_W['isfounder'] = user_founder_by_user_id($_W['uid']);
+		$_W['isfounder'] = user_is_founder($_W['uid']);
 		unset($founders);
 	} else {
 		isetcookie('__session', false, -100);

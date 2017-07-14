@@ -57,7 +57,7 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 			}
 		}
 
-		$user['founder'] = user_founder_by_user_id($user['uid']);
+		$user['founder'] = user_is_founder($user['uid']);
 		$user['uniacid_num'] = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('uni_account_users')." WHERE uid = :uid", array(':uid' => $user['uid']));
 
 		$user['module_num'] =array();

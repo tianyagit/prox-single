@@ -252,7 +252,55 @@ function uni_groups($groupids = array()) {
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
 	$list = cache_load($cachekey);
 	if (empty($list)) {
-		$list = uni_group_list(' WHERE uniacid = 0', $groupids);
+		$condition = ' WHERE uniacid = 0';
+		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
+		if (in_array('-1', $groupids)) {
+			$list[-1] = array('id' => -1, 'name' => '所有服务');
+		}
+		if (in_array('0', $groupids)) {
+			$list[0] = array('id' => 0, 'name' => '基础服务');
+		}
+		if (!empty($list)) {
+			foreach ($list as $k=>&$row) {
+				$row['wxapp'] = array();
+				if (!empty($row['modules'])) {
+					$modules = iunserializer($row['modules']);
+					if (is_array($modules)) {
+						$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
+						$row['modules'] = array();
+						if (!empty($module_list)) {
+							foreach ($module_list as $key => &$module) {
+								$module = module_fetch($key);
+								if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+									$row['wxapp'][$module['name']] = $module;
+								}
+								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
+									if (!empty($module['main_module'])) {
+										continue;
+									}
+									$row['modules'][$module['name']] = $module;
+									if (!empty($module['plugin'])) {
+										$group_have_plugin = array_intersect($module['plugin_list'], array_keys($module_list));
+										if (!empty($group_have_plugin)) {
+											foreach ($group_have_plugin as $plugin) {
+												$row['modules'][$plugin] = module_fetch($plugin);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				if (!empty($row['templates'])) {
+					$templates = iunserializer($row['templates']);
+					if (is_array($templates)) {
+						$row['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
+					}
+				}
+			}
+		}
 		cache_write($cachekey, $list);
 	}
 	$group_list = array();
@@ -266,67 +314,6 @@ function uni_groups($groupids = array()) {
 	return $group_list;
 }
 
-function uni_vice_founder_groups() {
-	global $_W;
-	if (empty($_W['isfounder']) || $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-		return array();
-	}
-	$condition = ' WHERE uniacid = 0 AND vice_founder_id = ' . $_W['uid'];
-	$list = uni_group_list($condition);
-	return $list;
-}
-
-function uni_group_list($condition = ' WHERE uniacid = 0', $groupids = array()) {
-	$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
-	if (in_array('-1', $groupids)) {
-		$list[-1] = array('id' => -1, 'name' => '所有服务');
-	}
-	if (in_array('0', $groupids)) {
-		$list[0] = array('id' => 0, 'name' => '基础服务');
-	}
-	if (!empty($list)) {
-		foreach ($list as $k=>&$row) {
-			$row['wxapp'] = array();
-			if (!empty($row['modules'])) {
-				$modules = iunserializer($row['modules']);
-				if (is_array($modules)) {
-					$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
-					$row['modules'] = array();
-					if (!empty($module_list)) {
-						foreach ($module_list as $key => &$module) {
-							$module = module_fetch($key);
-							if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
-								$row['wxapp'][$module['name']] = $module;
-							}
-							if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
-								if (!empty($module['main_module'])) {
-									continue;
-								}
-								$row['modules'][$module['name']] = $module;
-								if (!empty($module['plugin'])) {
-									$group_have_plugin = array_intersect($module['plugin_list'], array_keys($module_list));
-									if (!empty($group_have_plugin)) {
-										foreach ($group_have_plugin as $plugin) {
-											$row['modules'][$plugin] = module_fetch($plugin);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if (!empty($row['templates'])) {
-				$templates = iunserializer($row['templates']);
-				if (is_array($templates)) {
-					$row['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
-				}
-			}
-		}
-	}
-	return $list;
-}
 /**
  * 获取当前套餐可用微站模板
  * @return array 模板列表
@@ -508,7 +495,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 
-	$founders = user_founder_by_user_id($uid);
+	$founders = user_is_founder($uid);
 	if (!empty($founders)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
@@ -547,7 +534,7 @@ function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	load()->model('user');
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	$founders = user_founder_by_user_id($uid);
+	$founders = user_is_founder($uid);
 	if (!empty($founders)) {
 		return false;
 	}
