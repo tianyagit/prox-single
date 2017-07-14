@@ -75,8 +75,7 @@
 				<a ng-href="{{links.recycleRestore}}uid={{user.uid}}" ng-if="do == 'recycle_display'">启用</a>
 				<a ng-href="{{links.recycleDel}}uid={{user.uid}}" class="del" ng-if="do == 'recycle_display'">删除</a>
 			</div>
-			{/if}
-			{if $do == 'vice_founder'}
+			{else}
 			<div class="link-group" ng-if="user.founder">
 				<a ng-href="{{links.edit}}type=vice_founder&uid={{user.uid}}" ng-if="do == 'vice_founder'">编辑</a>
 				<a ng-href="{{links.recycleDel}}type=vice_founder&uid={{user.uid}}" class="del" ng-if="do == 'vice_founder'">删除</a>
