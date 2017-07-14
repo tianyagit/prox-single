@@ -49,6 +49,13 @@
 			<td ng-bind="user.end"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#endtime">修改</a></div></td>
 		</tr>
+		{if !empty($_W['isfounder']) && $user['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
+		<tr>
+			<td class="table-label">副创始人姓名</td>
+			<td ng-bind="user.vice_founder_name"></td>
+			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#vice_founder_name" ng-click="editInfo('vice_founder_name', user.vice_founder_name)">修改</a></div></td>
+		</tr>
+		{/if}
 	</table>
 	<div class="modal fade" id="name" role="dialog">
 		<div class="we7-modal-dialog modal-dialog">
@@ -260,6 +267,26 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" ng-click="httpChange('qq')">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="vice_founder_name" role="dialog">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改副创始人姓名</div>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<input type="text" ng-model="userOriginal.vice_founder_name" class="form-control" placeholder="副创始人姓名" />
+						<span class="help-block"></span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="httpChange('vice_founder_name')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
