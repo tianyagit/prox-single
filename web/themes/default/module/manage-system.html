@@ -547,7 +547,7 @@
 				<span >启用订阅</span>
 				<label>
 					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-					<div class="switch" ng-class="{ 'switchOn' : receive_ban == 1}" ng-click="changeSwitch()"></div>
+					<div class="switch" ng-class="{ 'switchOn' : receive_ban == 0}" ng-click="changeSwitch()"></div>
 				</label>
 			</div>
 		</div>
@@ -670,7 +670,7 @@
  <div class="panel panel-default js-test" ng-repeat="(name, module) in subscribe_module track by name">
 	<div class="panel-heading clearfix">
 		<div class="pull-right">
-			<input class="js-flag" type="checkbox" ng-checked="module.receive_ban == 1" modulename="{{ module.name }}"/>
+			<input class="js-flag" type="checkbox" ng-checked="module.receive_ban == 0" modulename="{{ module.name }}"/>
 		</div>
 		{{ module.title }}   ({{ module.name }})
 	</div>
