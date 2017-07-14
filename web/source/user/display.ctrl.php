@@ -63,7 +63,7 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 		$user['module_num'] =array();
 		$group = pdo_get('users_group', array('id' => $user['groupid']));
 		if (!empty($group)) {
-			$user['maxaccount'] = $user['founder'] ? '不限' : $group['maxaccount'];
+			$user['maxaccount'] = in_array($user['uid'], $founders) ? '不限' : $group['maxaccount'];
 			$user['groupname'] = $group['name'];
 			$package = iunserializer($group['package']);
 			$group['package'] = uni_groups($package);

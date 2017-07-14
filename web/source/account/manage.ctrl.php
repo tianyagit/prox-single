@@ -43,7 +43,7 @@ if ($do == 'display') {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
 	}
-	$tsql = "SELECT COUNT(*) FROM " . tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";//echo $tsql;exit;
+	$tsql = "SELECT COUNT(*) FROM " . tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC";
 	$sql = "SELECT * FROM ". tablename(uni_account_tablename(ACCOUNT_TYPE)). " as a LEFT JOIN". tablename('account'). " as b ON a.acid = b.acid {$condition} {$order_by}, a.`uniacid` DESC LIMIT {$start}, {$psize}";
 	$total = pdo_fetchcolumn($tsql, $param);
 	$list = pdo_fetchall($sql, $param);

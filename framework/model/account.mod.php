@@ -717,7 +717,7 @@ function uni_user_permission_check($permission_name, $show_message = true, $acti
 	} elseif ($action == 'wxapp') {
 		$users_permission = uni_user_permission('wxapp');
 	} else {
-		$users_permission = uni_user_permission('system');//var_dump($users_permission);exit;
+		$users_permission = uni_user_permission('system');
 	}
 	if (!isset($users_permission)) {
 		$users_permission = uni_user_permission('system');
