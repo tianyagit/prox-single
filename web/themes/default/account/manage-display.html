@@ -2,7 +2,7 @@
 <div class="we7-page-title">公众号管理</div>
 <ul class="we7-page-tab">
 	<li class="active"><a href="{url 'account/manage'}">公众号列表</a></li>
-	{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
+	{if in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))}
 	<li><a href="{url 'account/recycle'}">公众号回收站</a></li>
 	{/if}
 </ul>
@@ -24,7 +24,7 @@
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
 	</form>
-	{if !empty($account_info['uniacid_limit']) || $_W['isfounder']}
+	{if !empty($account_info['uniacid_limit']) || $_W['isfounder'] || $_W['is_vice_founder']}
 	<div class="pull-right">
 		<a href="{url 'account/post-step'}" class="btn btn-primary we7-padding-horizontal">添加公众号</a>
 	</div>
@@ -62,10 +62,10 @@
 		<td class="vertical-middle">
 			<div class="link-group">
 				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
-				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER}
-				<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder'">管理设置</a>
+				{if in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))}
+				<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder' || list.role == 'vice_founder'">管理设置</a>
 				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
-				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
+				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder' || list.role == 'vice_founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
 				{/if}
 				{/if}
 			</div>

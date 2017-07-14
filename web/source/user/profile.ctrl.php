@@ -14,7 +14,7 @@ $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	$type = trim($_GPC['type']);
 
-	if ($_W['isfounder']) {
+	if ($_W['isfounder'] || $_W['is_vice_founder']) {
 		$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	} else {
 		$uid = $_W['uid'];
@@ -42,13 +42,16 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	}
 	switch ($type) {
 		case 'avatar':
+		case 'realname':
+		case 'address':
+		case 'qq':
 			if ($users_profile_exist) {
-				$result = pdo_update('users_profile', array('avatar' => $_GPC['avatar']), array('uid' => $uid));
+				$result = pdo_update('users_profile', array($type => trim($_GPC[$type])), array('uid' => $uid));
 			} else {
 				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'avatar' => $_GPC['avatar']
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					$type => trim($_GPC[$type])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
@@ -65,9 +68,16 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			$result = pdo_update('users', array('username' => $username), array('uid' => $uid));
 			break;
+		case 'vice_founder_name':
+			$vice_founder_id = user_get_uid_byname($_GPC['vice_founder_name']);
+			if (empty($vice_founder_id)) {
+				iajax(1, '创始人不存在', '');
+			}
+			$result = pdo_update('users', array('vice_founder_id' => $vice_founder_id), array('uid' => $uid));
+			break;
 		case 'password':
 			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) iajax(2, '两次密码不一致！', '');
-			if (!$_W['isfounder']) {
+			if (empty($_W['isfounder']) && empty($_W['is_vice_founder'])) {
 				$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
 				if ($pwd != $user['password']) iajax(3, '原密码不正确！', '');
 			}
@@ -87,40 +97,16 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			$uni_account_user = pdo_get('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
 			cache_delete("uniaccount:{$uni_account_user['uniacid']}");
 			break;
-		case 'realname':
-			if ($users_profile_exist) {
-				$result = pdo_update('users_profile', array('realname' => trim($_GPC['realname'])), array('uid' => $uid));
-			} else {
-				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'realname' => trim($_GPC['realname'])
-					);
-				$result = pdo_insert('users_profile', $data);
-			}
-			break;
 		case 'birth':
 			if ($users_profile_exist) {
 				$result = pdo_update('users_profile', array('birthyear' => intval($_GPC['year']), 'birthmonth' => intval($_GPC['month']), 'birthday' => intval($_GPC['day'])), array('uid' => $uid));
 			} else {
 				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'birthyear' => intval($_GPC['year']),
-						'birthmonth' => intval($_GPC['month']),
-						'birthday' => intval($_GPC['day'])
-					);
-				$result = pdo_insert('users_profile', $data);
-			}
-			break;
-		case 'address':
-			if ($users_profile_exist) {
-				$result = pdo_update('users_profile', array('address' => trim($_GPC['address'])), array('uid' => $uid));
-			} else {
-				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'address' => trim($_GPC['address'])
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					'birthyear' => intval($_GPC['year']),
+					'birthmonth' => intval($_GPC['month']),
+					'birthday' => intval($_GPC['day'])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
@@ -130,11 +116,11 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$result = pdo_update('users_profile', array('resideprovince' => $_GPC['province'], 'residecity' => $_GPC['city'], 'residedist' => $_GPC['district']), array('uid' => $uid));
 			} else {
 				$data = array(
-						'uid' => $uid,
-						'createtime' => TIMESTAMP,
-						'resideprovince' => $_GPC['province'],
-						'residecity' => $_GPC['city'],
-						'residedist' => $_GPC['district']
+					'uid' => $uid,
+					'createtime' => TIMESTAMP,
+					'resideprovince' => $_GPC['province'],
+					'residecity' => $_GPC['city'],
+					'residedist' => $_GPC['district']
 					);
 				$result = pdo_insert('users_profile', $data);
 			}

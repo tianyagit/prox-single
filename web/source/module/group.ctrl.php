@@ -10,10 +10,11 @@ load()->model('user');
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 //只有创始人、主管理员、管理员才有权限
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+if (!in_array($_W['role'], $allow_role)) {
 	itoast('无权限操作！', referer(), 'error');
 }
-if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER,ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
 	itoast('您只有查看权限！', url('module/group'), 'error');
 }
 
@@ -25,6 +26,7 @@ if ($do == 'save') {
 		'name' => $_GPC['name'],
 		'modules' => array_merge($modules, $wxapp),
 		'templates' => $_GPC['templates'],
+		'vice_founder_id' => $_W['uid']
 	);
 	if (empty($package_info['name'])) {
 		iajax(1, '请输入套餐名');
@@ -50,7 +52,7 @@ if ($do == 'save') {
 		pdo_update('uni_group', $package_info, array('id' => $packageid));
 		cache_build_uni_group();
 		cache_build_account_modules();
-		module_build_privileges();
+
 		iajax(0, '', url('module/group'));
 	} else {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
@@ -59,7 +61,6 @@ if ($do == 'save') {
 		}
 		pdo_insert('uni_group', $package_info);
 		cache_build_uni_group();
-		module_build_privileges();
 		iajax(0, '', url('module/group'));
 	}
 }

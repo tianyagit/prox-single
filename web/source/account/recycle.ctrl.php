@@ -10,7 +10,8 @@ load()->model('account');
 $dos = array('display', 'recover', 'delete');
 $do = in_array($do, $dos) ? $do : 'display';
 //只有创始人、主管理员才有权限使用回收站功能
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+if (!in_array($_W['role'], $allow_role)) {
 	itoast('无权限操作！', referer(), 'error');
 }
 $_W['page']['title'] = $account_typename . '回收站 - ' . $account_typename;
@@ -67,7 +68,7 @@ if ($do == 'recover') {
 	$acid = intval($_GPC['acid']);
 	$uniacid = intval($_GPC['uniacid']);
 	$state = uni_permission($_W['uid'], $uniacid);
-	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
+	if(!in_array($state, $allow_role)) {
 		itoast('没有权限，请联系该公众号的主管理员或网站创始人进行恢复操作！', referer(), 'error');
 	}
 	$account_info = uni_user_account_permission();
@@ -88,7 +89,7 @@ if($do == 'delete') {
 	$uniacid = intval($_GPC['uniacid']);
 	$acid = intval($_GPC['acid']);
 	$state = uni_permission($_W['uid'], $uniacid);
-	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
+	if(!in_array($state, $allow_role)) {
 		itoast('没有权限！', referer(), 'error');
 	}
 	account_delete($acid);

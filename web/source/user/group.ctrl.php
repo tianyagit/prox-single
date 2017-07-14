@@ -17,6 +17,10 @@ if ($do == 'display') {
 		$condition .= "WHERE name LIKE :name";
 		$params[':name'] = "%{$_GPC['name']}%";
 	}
+	if ($_W['role'] == 'vice_founder') {
+		$condition .= "WHERE vice_founder_id LIKE :vice_founder_id";
+		$params[':vice_founder_id'] = $_W['uid'];
+	}
 	if (checksubmit('submit')) {
 		if (!empty($_GPC['delete'])) {
 			pdo_query("DELETE FROM ".tablename('users_group')." WHERE id IN ('".implode("','", $_GPC['delete'])."')");
@@ -90,6 +94,9 @@ if ($do == 'post') {
 			'maxwxapp' => intval($_GPC['maxwxapp']),
 			'timelimit' => intval($_GPC['timelimit'])
 		);
+		if (!empty($_W['is_vice_founder'])) {
+			$data['vice_founder_id'] = $_W['uid'];
+		}
 		if (empty($id)) {
 			pdo_insert('users_group', $data);
 		} else {

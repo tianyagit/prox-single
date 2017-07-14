@@ -18,7 +18,8 @@ $dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upg
 $do = in_array($do, $dos) ? $do : 'installed';
 
 //只有创始人、主管理员、管理员才有权限
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+	if (!in_array($_W['role'], $allow_role)) {
 	itoast('无权限操作！', referer(), 'error');
 }
 
@@ -415,7 +416,6 @@ if ($do =='install') {
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
-		module_build_privileges();
 		cache_build_module_info($module_name);
 
 		if (empty($module_subscribe_success)) {
