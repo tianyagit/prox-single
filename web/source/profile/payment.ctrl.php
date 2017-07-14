@@ -125,16 +125,23 @@ MFF/yA==
 		}
 	}
 	if ($type == 'wechat_refund') {
-		if ($param['switch'] == 1) {
-			if (empty($setting['cert']) && empty($_FILES['cert']['tmp_name'])) {
+		if (empty($_FILES['cert']['tmp_name'])) {
+			if (empty($setting['payment']['wechat_refund']['cert']) && $param['switch'] == 1) {
 				itoast('请上传apiclient_cert.pem证书', '', 'info');
 			}
-			if (empty($setting['key']) && empty($_FILES['key']['tmp_name'])) {
-				itoast ('请上传apiclient_key.pem证书', '', 'info');
-			}
-			$param['key'] = file_get_contents($_FILES['key']['tmp_name']);
+			$param['cert'] = $setting['payment']['wechat_refund']['cert'];
+		} else {
 			$param['cert'] = file_get_contents($_FILES['cert']['tmp_name']);
 		}
+		if (empty($_FILES['key']['tmp_name'])) {
+			if (empty($setting['payment']['wechat_refund']['key']) && $param['switch'] == 1) {
+				itoast ('请上传apiclient_key.pem证书', '', 'info');
+			}
+			$param['key'] = $setting['payment']['wechat_refund']['key'];
+		} else {
+			$param['key'] = file_get_contents($_FILES['key']['tmp_name']);
+		}
+
 	}
 	$pay_setting[$type] = $param;
 	$payment = iserializer($pay_setting);
