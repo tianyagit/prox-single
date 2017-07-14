@@ -71,7 +71,7 @@ if ($do == 'delete') {
 	$type = intval($_GPC['type']);
 	//只有创始人、主管理员才有权限停用公众号
 	$state = uni_permission($uid, $uniacid);
-	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
+	if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER) {
 		itoast('无权限操作！', url('account/manage'), 'error');
 	}
 	if (!empty($acid) && empty($uniacid)) {

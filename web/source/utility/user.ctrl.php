@@ -24,7 +24,7 @@ if ($do == 'browser') {
 		}
 		$uids = implode(',', $uidArr);
 	}
-	$where = " WHERE status = '2' and type != '".ACCOUNT_OPERATE_CLERK."' AND groupid <> 0";
+	$where = " WHERE status = '2' and type != '".ACCOUNT_OPERATE_CLERK."' AND founder_groupid != " . ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
 	if($mode == 'invisible' && !empty($uids)){
 		$where .= " AND uid not in ( {$uids} )";
 	}
