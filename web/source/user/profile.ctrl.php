@@ -42,13 +42,16 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 	}
 	switch ($type) {
 		case 'avatar':
+		case 'realname':
+		case 'address':
+		case 'qq':
 			if ($users_profile_exist) {
-				$result = pdo_update('users_profile', array('avatar' => $_GPC['avatar']), array('uid' => $uid));
+				$result = pdo_update('users_profile', array($type => trim($_GPC[$type])), array('uid' => $uid));
 			} else {
 				$data = array(
 					'uid' => $uid,
 					'createtime' => TIMESTAMP,
-					'avatar' => $_GPC['avatar']
+					$type => trim($_GPC[$type])
 					);
 				$result = pdo_insert('users_profile', $data);
 			}
@@ -94,18 +97,6 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			$uni_account_user = pdo_get('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
 			cache_delete("uniaccount:{$uni_account_user['uniacid']}");
 			break;
-		case 'realname':
-			if ($users_profile_exist) {
-				$result = pdo_update('users_profile', array('realname' => trim($_GPC['realname'])), array('uid' => $uid));
-			} else {
-				$data = array(
-					'uid' => $uid,
-					'createtime' => TIMESTAMP,
-					'realname' => trim($_GPC['realname'])
-					);
-				$result = pdo_insert('users_profile', $data);
-			}
-			break;
 		case 'birth':
 			if ($users_profile_exist) {
 				$result = pdo_update('users_profile', array('birthyear' => intval($_GPC['year']), 'birthmonth' => intval($_GPC['month']), 'birthday' => intval($_GPC['day'])), array('uid' => $uid));
@@ -117,30 +108,6 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 					'birthmonth' => intval($_GPC['month']),
 					'birthday' => intval($_GPC['day'])
 					);
-				$result = pdo_insert('users_profile', $data);
-			}
-			break;
-		case 'address':
-			if ($users_profile_exist) {
-				$result = pdo_update('users_profile', array('address' => trim($_GPC['address'])), array('uid' => $uid));
-			} else {
-				$data = array(
-					'uid' => $uid,
-					'createtime' => TIMESTAMP,
-					'address' => trim($_GPC['address'])
-					);
-				$result = pdo_insert('users_profile', $data);
-			}
-			break;
-		case 'qq':
-			if ($users_profile_exist) {
-				$result = pdo_update('users_profile', array('qq' => trim($_GPC['qq'])), array('uid' => $uid));
-			} else {
-				$data = array(
-					'uid' => $uid,
-					'createtime' => TIMESTAMP,
-					'qq' => trim($_GPC['qq'])
-				);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
