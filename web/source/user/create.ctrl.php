@@ -55,7 +55,7 @@ if (checksubmit()) {
 			itoast('推荐人不存在！', '', '');
 		}
 		$data['vice_founder_id'] = $vice_founder_id == ture ? 0 : $vice_founder_id;
-		if (!empty($_W['founder_groupid'])) {
+		if (!empty($_W['user']['founder_groupid'])) {
 			$data['vice_founder_id'] = $_W['uid'];
 		}
 	}
