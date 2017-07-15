@@ -121,7 +121,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 					'resideprovince' => $_GPC['province'],
 					'residecity' => $_GPC['city'],
 					'residedist' => $_GPC['district']
-					);
+				);
 				$result = pdo_insert('users_profile', $data);
 			}
 			break;
