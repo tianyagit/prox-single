@@ -1,73 +1,78 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
+ * $sn: pro/payment/wechat/notify.php : v a4b6a17a6d8a : 2015/09/14 08:41:00 : yanghf $
  */
-define('IN_MOBILE', true);
+
 require '../../framework/bootstrap.inc.php';
-require '../../app/common/bootstrap.app.inc.php';
-load()->app('common');
-load()->model('payment');
-load()->func('communication');
-global $_W;
-$params = json_decode(base64_decode($_COOKIE[$_W['config']['cookie']['pre'] . 'wechat_refund']), true);
-$log = pdo_get('core_paylog', array('plid' => $params['tid']));
-if(!empty($log) && $log['status'] == 4) {
-	exit('这个订单已经退款成功！');
-}
-$setting = uni_setting_load('payment', $log['uniacid']);
-if (empty($setting['payment']['wechat_refund']['key']) || empty($setting['payment']['wechat_refund']['cert'])) {
-	return error(1, '缺少微信证书！');
-}
-$acid = pdo_getcolumn('uni_account', array('uniacid' => $log['uniacid']), 'default_acid');
-$appid = pdo_getcolumn('account_wechats', array('acid' => $acid), 'key');
-$params = array(
-	'appid' => $appid,
-	'mch_id' => $setting['payment']['wechat']['mchid'],
-	'out_trade_no' => $log['uniontid'],
-	'out_refund_no' => $log['uniontid'],
-	'total_fee' => $log['card_fee'] * 100,
-	'refund_fee' => $log['card_fee'] * 100,
-	'nonce_str' => random(8)
-);
-ksort($params);
-$sign = '';
-foreach($params as $key => $v) {
-	if (empty($v)) {
-		continue;
+load()->web('common');
+$input = file_get_contents('php://input');
+
+if (!empty($input)) {
+	$obj = isimplexml_load_string($input, 'SimpleXMLElement', LIBXML_NOCDATA);
+	$wechat_data = json_decode(json_encode($obj), true);
+	if (empty($wechat_data)) {
+		$result = array(
+			'return_code' => 'FAIL',
+			'return_msg' => ''
+		);
+		echo array2xml($result);
+		exit;
 	}
-	$sign .= "{$key}={$v}&";
-}
-$sign .= "key={$setting['payment']['wechat']['signkey']}";
-$params['sign'] = strtoupper(md5($sign));
-file_put_contents(ATTACHMENT_ROOT . 'all.pem', $setting['payment']['wechat_refund']['cert'] . $setting['payment']['wechat_refund']['key']);
-$params = array2xml($params);
-$refund_result = ihttp_request('https://api.mch.weixin.qq.com/secapi/pay/refund', $params, array('CURLOPT_SSLCERT' => ATTACHMENT_ROOT . 'all.pem'));
-$result = json_decode(json_encode(isimplexml_load_string($refund_result['content'], 'SimpleXMLElement', LIBXML_NOCDATA)), true);
-if ($result['result_code'] == 'SUCCESS') {
-	pdo_update('core_paylog', array('status' => 4), array('plid' => $log['plid']));
-	$site = WeUtility::createModuleSite($log['module']);
-	if(!is_error($site)) {
-		$method = 'refundResult';
-		if (method_exists($site, $method)) {
-			$ret = array();
-			$ret['uniacid'] = $log['uniacid'];
-			$ret['result'] = 'success';
-			$ret['type'] = $log['type'];
-			$ret['from'] = 'return';
-			$ret['tid'] = $log['tid'];
-			$ret['uniontid'] = $log['uniontid'];
-			$ret['user'] = $log['openid'];
-			$ret['fee'] = $log['fee'];
-			$ret['tag'] = $tag;
-			$ret['is_usecard'] = $log['is_usecard'];
-			$ret['card_type'] = $log['card_type'];
-			$ret['card_fee'] = $log['card_fee'];
-			$ret['card_id'] = $log['card_id'];
-			exit($site->$method($ret));
-		}
+	if ($wechat_data['return_code'] != 'SUCCESS') {
+		$result = array(
+			'return_code' => 'FAIL',
+			'return_msg' => $wechat_data['return_msg']
+		);
+		exit;
 	}
 } else {
-	exit($result['return_msg']);
+	$result = array(
+		'return_code' => 'FAIL',
+		'return_msg' => ''
+	);
+	echo array2xml($result);
+	exit;
 }
-?>
+
+$account = pdo_get('account_wechats', array('key' => $wechat_data['appid']));
+$_W['uniacid'] = $account['uniacid'];
+
+$setting = uni_setting_load('payment', $_W['uniacid']);
+$pay_setting = $setting['payment']['wechat'];
+$pay_setting['signkey'] = $pay_setting['version'] == 1 ? $pay_setting['key'] : $pay_setting['signkey'];
+
+if(!empty($pay_setting['signkey'])) {
+	WeUtility::logging('refund', var_export($wechat_data, true));
+	$key = md5($pay_setting['signkey']);
+	$refund = aes_encode($wechat_data['req_info'], $pay_setting['signkey'], $wechat_data['appid']);
+	if(!empty($refund)) {
+		$pay_log = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'uniontid' => $refund['out_trade_no']));
+		$refund_log = pdo_get('core_refundlog', array('uniacid' => $_W['uniacid'], 'refund_uniontid' => $refund['out_refund_no'], 'uniontid' => $refund['out_trade_no']));
+		//此处判断微信请求消息金额必须与系统发起的金额一致
+		if(!empty($refund_log) && $refund_log['status'] == '0' && (($refund['total_fee'] / 100) == $refund_log['card_fee'])) {
+			pdo_update('core_refundlog', array('status' => 1), array('id' => $refund_log['id']));
+			$site = WeUtility::createModuleSite($pay_log['module']);
+			if(!is_error($site)) {
+				$method = 'payResult';
+				if (method_exists($site, $method)) {
+					$ret = array();
+					$ret['uniacid'] = $pay_log['uniacid'];
+					$ret['result'] = 'success';
+					$ret['type'] = $pay_log['type'];
+					$ret['from'] = 'refund';
+					$ret['tid'] = $pay_log['tid'];
+					$ret['uniontid'] = $pay_log['uniontid'];
+					$ret['refund_uniontid'] = $refund_log['refund_uniontid'];
+					$ret['user'] = $pay_log['openid'];
+					$ret['fee'] = $wechat_data['fee'];
+					if(!empty($wechat_data['success_time'])) {
+						$ret['refund_time'] = strtotime($wechat_data['time_end']);
+					}
+					$site->$method($ret);
+					exit('success');
+				}
+			}
+		}
+	}
+}
