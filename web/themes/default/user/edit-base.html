@@ -33,7 +33,7 @@
 	<table class="table we7-table table-hover table-form">
 		<col width="140px " />
 		<col />
-		<col width="100px" />
+		<col width="120px" />
 		<tr>
 			<th class="text-left" colspan="3">账户设置设置</th>
 		</tr>
@@ -68,7 +68,7 @@
 		<tr>
 			<td class="table-label">注册链接</td>
 			<td></td>
-			<td><a href="javascript:;" data-url="{$_W['siteroot']}{php echo url('user/register', array('uid' => $user['uid']));}" class="we7-margin-right-sm js-clip">复制链接</a></td>
+			<td><div class="link-group"><a href="javascript:;" data-url="{$_W['siteroot']}{php echo url('user/register', array('uid' => $user['uid']));}" class="js-clip">复制链接</a></div></td>
 		</tr>
 		{/if}
 	</table>
