@@ -6,13 +6,12 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('article');
-load()->model('user');
 
 $dos = array('category_post', 'category', 'category_del', 'list', 'post', 'batch_post', 'del');
 $do = in_array($do, $dos) ? $do : 'list';
 uni_user_permission_check('system_article_notice');
 
-if (user_is_vice_founder()) {
+if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 	itoast('无权限操作！', url('account/manage'), 'error');
 }
 //添加公告分类
