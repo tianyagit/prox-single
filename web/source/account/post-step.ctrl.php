@@ -80,7 +80,7 @@ if($step == 1) {
 			}
 			$uniacid = pdo_insertid();
 			if (user_is_vice_founder()) {
-				uni_user_account_role($uniacid, $_W['user']['vice_founder_id'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+				uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 			//获取默认模板的id
 			$template = pdo_fetch('SELECT id,title FROM ' . tablename('site_templates') . " WHERE name = 'default'");
@@ -134,6 +134,9 @@ if($step == 1) {
 			pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 			if (empty($_W['isfounder'])) {
 				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
+			}
+			if (!empty($_W['user']['vice_founder_id'])) {
+				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['user']['vice_founder_id'], 'role' => 'vice_founder'));
 			}
 		} else {
 			pdo_update('account', array('type' => ACCOUNT_TYPE_OFFCIAL_NORMAL, 'hash' => ''), array('acid' => $acid, 'uniacid' => $uniacid));
