@@ -482,6 +482,17 @@ function uni_account_tablename($type) {
 	}
 }
 
+function uni_user_account_role($uniacid, $uid, $role) {
+	$vice_account['uniacid'] = intval($uniacid);
+	$vice_account['uid'] = intval($uid);
+	$vice_account['role'] = trim($role);
+	$account_user = pdo_get('uni_account_users', $vice_account, array('id'));
+	if (!empty($account_user)) {
+		return false;
+	}
+	return pdo_insert('uni_account_users', $vice_account);
+}
+
 /**
  * 获取指定操作用户在指定的公众号所具有的操作权限
  * @param int $uid 操作用户
@@ -494,7 +505,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 
-	if (!empty(user_is_founder($uid))) {
+	if (user_is_founder($uid)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
 
@@ -532,8 +543,7 @@ function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	load()->model('user');
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	$founders = user_is_founder($uid);
-	if (!empty($founders)) {
+	if (user_is_founder($uid)) {
 		return false;
 	}
 	if (FRAME == 'system') {
