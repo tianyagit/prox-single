@@ -64,6 +64,13 @@
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#vice_founder_name" ng-click="editInfo('vice_founder_name', user.vice_founder_name)">修改</a></div></td>
 		</tr>
 		{/if}
+		{if !empty($user['founder_groupid'])}
+		<tr>
+			<td class="table-label">注册链接</td>
+			<td></td>
+			<td><a href="javascript:;" data-url="{$_W['siteroot']}{php echo url('user/register', array('uid' => $user['uid']));}" class="we7-margin-right-sm js-clip">复制链接</a></td>
+		</tr>
+		{/if}
 	</table>
 	<div class="modal fade" id="name" role="dialog">
 		<div class="we7-modal-dialog modal-dialog">
