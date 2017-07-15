@@ -54,9 +54,9 @@ if (checksubmit()) {
 		'endtime' => $timeadd,
 		'founder_groupid' => intval($_GPC['founder_groupid'])
 	);
-	$data['owner_id'] = user_get_uid_byname($vice_founder_name);
+	$data['owner_uid'] = user_get_uid_byname($vice_founder_name);
 	if (user_is_vice_founder()) {
-		$data['owner_id'] = $_W['uid'];
+		$data['owner_uid'] = $_W['uid'];
 	}
 
 	$uid = user_register($data);
@@ -68,7 +68,7 @@ if (checksubmit()) {
 }
 $group_condition = array();
 if (user_is_vice_founder()) {
-	$group_condition['owner_id'] = $_W['uid'];
+	$group_condition['owner_uid'] = $_W['uid'];
 }
 $groups = pdo_getall('users_group', $group_condition, array('id', 'name'));
 template('user/create');

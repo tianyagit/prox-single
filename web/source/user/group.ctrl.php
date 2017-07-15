@@ -20,8 +20,8 @@ if ($do == 'display') {
 		$params[':name'] = "%{$_GPC['name']}%";
 	}
 	if (user_is_vice_founder()) {
-		$condition .= "WHERE owner_id = :owner_id";
-		$params[':owner_id'] = $_W['uid'];
+		$condition .= "WHERE owner_uid = :owner_uid";
+		$params[':owner_uid'] = $_W['uid'];
 	}
 	if (checksubmit('submit')) {
 		if (!empty($_GPC['delete'])) {
@@ -76,7 +76,7 @@ if ($do == 'post') {
 	if (!empty($packages)) {
 		foreach ($packages as $key => &$package_val) {
 			if (user_is_vice_founder()) {
-				if ($package_val['owner_id'] != $_W['uid']) {
+				if ($package_val['owner_uid'] != $_W['uid']) {
 					unset($packages[$key]);
 					continue;
 				}
@@ -107,7 +107,7 @@ if ($do == 'post') {
 			'timelimit' => intval($_GPC['timelimit'])
 		);
 		if (user_is_vice_founder()) {
-			$data['owner_id'] = $_W['uid'];
+			$data['owner_uid'] = $_W['uid'];
 		}
 		if (empty($id)) {
 			pdo_insert('users_group', $data);

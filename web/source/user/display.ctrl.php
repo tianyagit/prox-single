@@ -32,7 +32,7 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 			break;
 	}
 	if (user_is_vice_founder()) {
-		$condition .= ' AND u.owner_id = ' . $_W['uid'];
+		$condition .= ' AND u.owner_uid = ' . $_W['uid'];
 	}
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
@@ -121,9 +121,9 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 		case 'recycle_delete'://永久删除用户
 			$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
 			if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-				pdo_update('users', array('owner_id' => 0), array('owner_id' => $uid));
-				pdo_update('users_group', array('owner_id' => 0), array('owner_id' => $uid));
-				pdo_update('uni_group', array('owner_id' => 0), array('owner_id' => $uid));
+				pdo_update('users', array('owner_uid' => 0), array('owner_uid' => $uid));
+				pdo_update('users_group', array('owner_uid' => 0), array('owner_uid' => $uid));
+				pdo_update('uni_group', array('owner_uid' => 0), array('owner_uid' => $uid));
 			}
 			if (pdo_delete('users', array('uid' => $uid)) === 1) {
 				//把该用户所属的公众号返给创始人

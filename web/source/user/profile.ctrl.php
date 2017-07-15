@@ -69,11 +69,11 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			$result = pdo_update('users', array('username' => $username), array('uid' => $uid));
 			break;
 		case 'vice_founder_name':
-			$owner_id = user_get_uid_byname($_GPC['vice_founder_name']);
-			if (empty($owner_id)) {
+			$owner_uid = user_get_uid_byname($_GPC['vice_founder_name']);
+			if (empty($owner_uid)) {
 				iajax(1, '创始人不存在', '');
 			}
-			$result = pdo_update('users', array('owner_id' => $owner_id), array('uid' => $uid));
+			$result = pdo_update('users', array('owner_uid' => $owner_uid), array('uid' => $uid));
 			break;
 		case 'password':
 			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) iajax(2, '两次密码不一致！', '');
