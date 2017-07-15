@@ -1205,13 +1205,15 @@ function aes_encode($message, $encodingaeskey = '', $appid = '') {
 function aes_pkcs7_decode($encrypt_data, $key, $iv = false) {
 	require_once IA_ROOT . '/framework/library/pkcs7/pkcs7Encoder.php';
 	$encrypt_data = base64_decode($encrypt_data);
-	$iv = base64_decode($iv);
+	if (!empty($iv)) {
+		$iv = base64_decode($iv);
+	}
 	$pc = new Prpcrypt($key);
 	$result = $pc->decrypt($encrypt_data, $iv);
 	if ($result[0] != 0) {
 		return error($result[0], '解密失败');
 	}
-	return $result;
+	return $result[1];
 }
 
 /*
