@@ -33,7 +33,7 @@
 	<table class="table we7-table table-hover table-form">
 		<col width="140px " />
 		<col />
-		<col width="100px" />
+		<col width="120px" />
 		<tr>
 			<th class="text-left" colspan="3">账户设置设置</th>
 		</tr>
@@ -62,6 +62,13 @@
 			<td class="table-label">副创始人姓名</td>
 			<td ng-bind="user.vice_founder_name"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#vice_founder_name" ng-click="editInfo('vice_founder_name', user.vice_founder_name)">修改</a></div></td>
+		</tr>
+		{/if}
+		{if !empty($user['founder_groupid'])}
+		<tr>
+			<td class="table-label">注册链接</td>
+			<td></td>
+			<td><div class="link-group"><a href="javascript:;" data-url="{$_W['siteroot']}{php echo url('user/register', array('uid' => $user['uid']));}" class="js-clip">复制链接</a></div></td>
 		</tr>
 		{/if}
 	</table>
