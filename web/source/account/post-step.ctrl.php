@@ -278,6 +278,14 @@ if($step == 1) {
 	}
 
 	$unigroups = uni_groups();
+	if (!empty($unigroups) && user_is_vice_founder()) {
+		foreach ($unigroups as $key => &$unigroup_info) {
+			if ($unigroup_info['vice_founder_id'] != $_W['uid']) {
+				unset($unigroups[$key]);
+				continue;
+			}
+		}
+	}
 	if(!empty($unigroups['modules'])) {
 		foreach ($unigroups['modules'] as $module_key => $module_val) {
 			if(file_exists(IA_ROOT.'/addons/'.$module_val['name'].'/icon-custom.jpg')) {
