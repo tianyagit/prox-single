@@ -32,7 +32,10 @@ class WxappAccount extends WeAccount {
 	public function pkcs7Encode($encrypt_data, $iv) {
 		$key = base64_decode($_SESSION['session_key']);
 		$result = aes_pkcs7_decode($encrypt_data, $key, $iv);
-		$result = json_decode($result[1], true);
+		if (is_error($result)) {
+			return error(1, '解密失败');
+		}
+		$result = json_decode($result, true);
 		if (empty($result)) {
 			return error(1, '解密失败');
 		}
