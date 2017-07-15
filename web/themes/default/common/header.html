@@ -15,9 +15,7 @@
 				<ul class="nav navbar-nav navbar-left">
 					{php global $top_nav}
 					{loop $top_nav $nav}
-					{if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) || ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER && $nav['name'] != 'site')}
 					<li{if FRAME == $nav['name']} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a></li>
-					{/if}
 					{/loop}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
