@@ -323,9 +323,8 @@ function uni_templates() {
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
 	load()->model('user');
 	//如果没有所有者，则取创始人权限
-	$founders = explode(',', $_W['config']['setting']['founder']);
 	$owner = user_single(array('uid' => $owneruid));
-	if (empty($owner) || in_array($owner['uid'], $founders)) {
+	if (empty($owner) || user_is_founder($owner['uid'])) {
 		$groupid = '-1';
 	} else {
 		$groupid = $owner['groupid'];
@@ -495,8 +494,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 
-	$founders = user_is_founder($uid);
-	if (!empty($founders)) {
+	if (!empty(user_is_founder($uid))) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
 

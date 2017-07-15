@@ -80,7 +80,7 @@ function user_check($user) {
 function user_get_uid_byname($username = '') {
 	$username = trim($username);
 	if (empty($username)) {
-		return true;
+		return false;
 	}
 	$uid = pdo_getcolumn('users', array('username' => $username, 'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER), 'uid');
 	return $uid;
@@ -369,11 +369,10 @@ function user_modules($uid) {
 	$cachekey = cache_system_key("user_modules:" . $uid);
 	$modules = cache_load($cachekey);
 	if (empty($modules)) {
-		$founders = user_is_founder($uid);
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
-		if (empty($uid) || $founders) {
+		if (empty($uid) || user_is_founder($uid)) {
 			$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
 			$module_list = $system_modules;

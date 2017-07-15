@@ -51,10 +51,9 @@ if (checksubmit()) {
 		}
 		$data['groupid'] = intval($_GPC['groupid']);
 		$vice_founder_id = user_get_uid_byname($vice_founder_name);
-		if (empty($vice_founder_id)) {
-			itoast('推荐人不存在！', '', '');
+		if (!empty($vice_founder_id)) {
+			$data['vice_founder_id'] = $vice_founder_id;
 		}
-		$data['vice_founder_id'] = $vice_founder_id == ture ? 0 : $vice_founder_id;
 		if (!empty($_W['user']['founder_groupid'])) {
 			$data['vice_founder_id'] = $_W['uid'];
 		}
