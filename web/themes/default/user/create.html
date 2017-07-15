@@ -49,7 +49,7 @@
 				<span class="help-block"><strong class="text-danger">设置用户组后，系统会根据对应用户组的服务期限对用户的服务开始时间和结束时间进行初始化</strong></span>
 			</div>
 		</div>
-		{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && $_GPC['do'] != ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
+		{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">所属副创始人</label>
 			<div class="form-controls col-sm-8">
@@ -60,6 +60,7 @@
 		{/if}
 		{else}
 		<input type="hidden" name="groupid" value="-1" />
+		<input type="hidden" name="founder_groupid" value="{ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}" />
 		{/if}
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">备注</label>
@@ -70,9 +71,6 @@
 		<input type="submit" name="submit" id="" value="提交" class="btn btn-primary" ng-click="checkSubmit($event)" ng-style="{'padding': '6px 50px'}"/>
 		<input type="hidden" name="token" value="{$_W['token']}" />
 		<input type="hidden" name="do" value="{$_GPC['do']}" />
-		{if $_GPC['do'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
-			<input type="hidden" name="founder_groupid" value="{ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}" />
-		{/if}
 	</form>
 </div>
 <script type="text/javascript">

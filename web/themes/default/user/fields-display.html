@@ -2,7 +2,7 @@
 <div class="we7-page-title">用户管理</div>
 <ul class="we7-page-tab">
 	<li><a href="{url 'user/display'}">用户管理</a></li>
-	{if $_W['isfounder'] && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
+	{if !empty($_W['isfounder']) && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
 	<li><a href="{url 'user/display/vice_founder'}">副创始人管理</a></li>
 	{/if}
 	<li><a href="{url 'user/display/check_display'}">审核用户</a></li>

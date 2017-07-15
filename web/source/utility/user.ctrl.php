@@ -38,6 +38,7 @@ if ($do == 'browser') {
 	$psize = 10;
 	$total = 0;
 
+	$group = array();
 	if (user_is_vice_founder()) {
 		$group_id = pdo_getall('users_group', array('vice_founder_id' => $_W['uid']), 'id', 'id');
 		$group_ids = implode(',', array_keys($group_id));
@@ -47,8 +48,6 @@ if ($do == 'browser') {
 			$where .= " AND  vice_founder_id = ".$_W['uid'];
 		}
 		$group['vice_founder_id'] = $_W['uid'];
-	} else {
-		$group = array();
 	}
 	$list = pdo_fetchall("SELECT uid, groupid, username, remark FROM ".tablename('users')." {$where} ORDER BY `uid` LIMIT ".(($pindex - 1) * $psize).",{$psize}", $params);
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('users'). $where , $params);

@@ -5,9 +5,10 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+load()->model('user');
+
 $dos = array('display', 'post', 'del');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
-load()->model('user');
 
 if ($do == 'display') {
 	uni_user_permission_check('system_user_group');

@@ -31,13 +31,13 @@ if ($do == 'display') {
 	);
 	$type_condition_sql = "'".implode("','", $type_condition[ACCOUNT_TYPE])."'";
 
-	if (user_is_real_founder()) {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
-		$order_by = " ORDER BY a.`acid` DESC";
-	} else {
+	if (empty($_W['isfounder']) || user_is_vice_founder()) {
 		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
 		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
+	} else {
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
+		$order_by = " ORDER BY a.`acid` DESC";
 	}
 
 	if(!empty($keyword)) {

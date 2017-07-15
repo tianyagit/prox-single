@@ -80,10 +80,7 @@ if($step == 1) {
 			}
 			$uniacid = pdo_insertid();
 			if (user_is_vice_founder()) {
-				$user_account_insert = uni_user_account_role($uniacid, $_W['user']['vice_founder_id'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-				if (empty($user_account_insert)) {
-					itoast('添加公众号失败', '', '');
-				}
+				uni_user_account_role($uniacid, $_W['user']['vice_founder_id'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 			//获取默认模板的id
 			$template = pdo_fetch('SELECT id,title FROM ' . tablename('site_templates') . " WHERE name = 'default'");
@@ -202,17 +199,11 @@ if($step == 1) {
 				pdo_insert('uni_account_users', $account_users);
 			}
 			if (user_is_vice_founder()) {
-				$user_account_insert = uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-				if (empty($user_account_insert)) {
-					itoast('添加公众号失败', '', '');
-				}
+				uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 			$user_vice_id = pdo_getcolumn('users', array('uid' => $uid), 'vice_founder_id');
 			if ($_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER && !empty($user_vice_id)) {
-				$user_account_insert = uni_user_account_role($uniacid, $user_vice_id, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-				if (empty($user_account_insert)) {
-					itoast('添加公众号失败', '', '');
-				}
+				uni_user_account_role($uniacid, $user_vice_id, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 		}
 		if (!empty($_GPC['signature'])) {

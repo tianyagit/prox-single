@@ -35,12 +35,6 @@ function wxapp_account_create($account) {
 		return error(1, '添加公众号失败');
 	}
 	$uniacid = pdo_insertid();
-	if (!empty($_W['user']['vice_founder_id'])) {
-		$user_account_insert = uni_user_account_role($uniacid, $_W['user']['vice_founder_id'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-		if (empty($user_account_insert)) {
-			return error(1, '添加创始人公众号失败');
-		}
-	}
 	$account_data = array(
 		'uniacid' => $uniacid, 
 		'type' => $account['type'], 
@@ -66,6 +60,9 @@ function wxapp_account_create($account) {
 	
 	if (empty($_W['isfounder']) || user_is_vice_founder()) {
 		pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
+	}
+	if (!empty($_W['user']['vice_founder_id'])) {
+		uni_user_account_role($uniacid, $_W['user']['vice_founder_id'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 	}
 	pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 	

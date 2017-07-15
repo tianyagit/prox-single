@@ -46,13 +46,13 @@ if (checksubmit()) {
 		$timeadd = strtotime($timelimit . ' days');
 	}
 	$data = array(
-			'username' => $username,
-			'password' => trim($_GPC['password']),
-			'remark' => $_GPC['remark'],
-			'groupid' => $group_id,
-			'starttime' => TIMESTAMP,
-			'endtime' => $timeadd,
-			'founder_groupid' => intval($_GPC['founder_groupid'])
+		'username' => $username,
+		'password' => trim($_GPC['password']),
+		'remark' => $_GPC['remark'],
+		'groupid' => $group_id,
+		'starttime' => TIMESTAMP,
+		'endtime' => $timeadd,
+		'founder_groupid' => intval($_GPC['founder_groupid'])
 	);
 	$data['vice_founder_id'] = user_get_uid_byname($vice_founder_name);
 	if (user_is_vice_founder()) {
