@@ -201,9 +201,6 @@ if($step == 1) {
 				$account_users = array('uniacid' => $uniacid, 'uid' => $uid, 'role' => 'owner');
 				pdo_insert('uni_account_users', $account_users);
 			}
-			if (user_is_vice_founder()) {
-				uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-			}
 			$user_vice_id = pdo_getcolumn('users', array('uid' => $uid), 'vice_founder_id');
 			if ($_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER && !empty($user_vice_id)) {
 				uni_user_account_role($uniacid, $user_vice_id, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
