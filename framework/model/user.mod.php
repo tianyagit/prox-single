@@ -163,8 +163,8 @@ function user_single($user_or_uid) {
 			return false;
 		}
 	}
-	if (!empty($record['vice_founder_id'])) {
-		$record['vice_founder_name'] = pdo_getcolumn('users', array('uid' => $record['vice_founder_id']), 'username');
+	if (!empty($record['owner_id'])) {
+		$record['vice_founder_name'] = pdo_getcolumn('users', array('uid' => $record['owner_id']), 'username');
 	}
 	if($record['type'] == ACCOUNT_OPERATE_CLERK) {
 		$clerk = pdo_get('activity_clerks', array('uid' => $record['uid']));

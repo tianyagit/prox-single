@@ -27,7 +27,7 @@ if ($do == 'save') {
 		'templates' => $_GPC['templates']
 	);
 	if (user_is_vice_founder()) {
-		$package_info['vice_founder_id'] = $_W['uid'];
+		$package_info['owner_id'] = $_W['uid'];
 	}
 	if (empty($package_info['name'])) {
 		iajax(1, '请输入套餐名');
@@ -78,7 +78,7 @@ if ($do == 'display') {
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
 			if (user_is_vice_founder()) {
-				if ($group['vice_founder_id'] != $_W['uid']) {
+				if ($group['owner_id'] != $_W['uid']) {
 					unset($modules_group_list[$group_key]);
 					continue;
 				}

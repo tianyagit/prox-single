@@ -40,8 +40,8 @@ if ($do == 'browser') {
 
 	$group = array();
 	if (user_is_vice_founder()) {
-		$where .= " AND  vice_founder_id = ".$_W['uid'];
-		$group['vice_founder_id'] = $_W['uid'];
+		$where .= " AND  owner_id = ".$_W['uid'];
+		$group['owner_id'] = $_W['uid'];
 	}
 	$list = pdo_fetchall("SELECT uid, groupid, username, remark FROM ".tablename('users')." {$where} ORDER BY `uid` LIMIT ".(($pindex - 1) * $psize).",{$psize}", $params);
 	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('users'). $where , $params);
