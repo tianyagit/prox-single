@@ -1202,6 +1202,10 @@ function aes_encode($message, $encodingaeskey = '', $appid = '') {
 	return $encrypt_msg;
 }
 
+function aes_pkcs7_decode() {
+	
+}
+
 /*
  * 重新封装 isimplexml_load_string 函数。解决安全问题
  * */
