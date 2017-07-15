@@ -40,13 +40,7 @@ if ($do == 'browser') {
 
 	$group = array();
 	if (user_is_vice_founder()) {
-		$group_id = pdo_getall('users_group', array('vice_founder_id' => $_W['uid']), 'id', 'id');
-		$group_ids = implode(',', array_keys($group_id));
-		if (!empty($group_ids)) {
-			$where .= " AND (`groupid` in ({$group_ids}) OR vice_founder_id = {$_W['uid']})";
-		} else {
-			$where .= " AND  vice_founder_id = ".$_W['uid'];
-		}
+		$where .= " AND  vice_founder_id = ".$_W['uid'];
 		$group['vice_founder_id'] = $_W['uid'];
 	}
 	$list = pdo_fetchall("SELECT uid, groupid, username, remark FROM ".tablename('users')." {$where} ORDER BY `uid` LIMIT ".(($pindex - 1) * $psize).",{$psize}", $params);

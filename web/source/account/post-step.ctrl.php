@@ -80,7 +80,7 @@ if($step == 1) {
 			}
 			$uniacid = pdo_insertid();
 			if (user_is_vice_founder()) {
-				uni_user_account_role($uniacid, $_W['user']['vice_founder_id'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+				uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 			//获取默认模板的id
 			$template = pdo_fetch('SELECT id,title FROM ' . tablename('site_templates') . " WHERE name = 'default'");
@@ -134,6 +134,9 @@ if($step == 1) {
 			pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 			if (empty($_W['isfounder'])) {
 				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
+			}
+			if (!empty($_W['user']['vice_founder_id'])) {
+				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['user']['vice_founder_id'], 'role' => 'vice_founder'));
 			}
 		} else {
 			pdo_update('account', array('type' => ACCOUNT_TYPE_OFFCIAL_NORMAL, 'hash' => ''), array('acid' => $acid, 'uniacid' => $uniacid));
@@ -197,9 +200,6 @@ if($step == 1) {
 			} else {
 				$account_users = array('uniacid' => $uniacid, 'uid' => $uid, 'role' => 'owner');
 				pdo_insert('uni_account_users', $account_users);
-			}
-			if (user_is_vice_founder()) {
-				uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 			$user_vice_id = pdo_getcolumn('users', array('uid' => $uid), 'vice_founder_id');
 			if ($_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER && !empty($user_vice_id)) {
@@ -278,6 +278,14 @@ if($step == 1) {
 	}
 
 	$unigroups = uni_groups();
+	if (!empty($unigroups) && user_is_vice_founder()) {
+		foreach ($unigroups as $key => &$unigroup_info) {
+			if ($unigroup_info['vice_founder_id'] != $_W['uid']) {
+				unset($unigroups[$key]);
+				continue;
+			}
+		}
+	}
 	if(!empty($unigroups['modules'])) {
 		foreach ($unigroups['modules'] as $module_key => $module_val) {
 			if(file_exists(IA_ROOT.'/addons/'.$module_val['name'].'/icon-custom.jpg')) {
