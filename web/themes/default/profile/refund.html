@@ -42,10 +42,16 @@
 					<div class="modal-body">
 						<div class="we7-form">
 							<div class="alert alert-warning">
+								证书:<br/>
 								使用微信退款功能需要上传双向证书。<br/>
 								证书下载方式:<br>
 								微信商户平台(pay.weixin.qq.com)-->账户中心-->账户设置-->API安全-->证书下载。<br>
-								我们仅用到apiclient_cert.pem 和 apiclient_key.pem这两个证书
+								我们仅用到apiclient_cert.pem 和 apiclient_key.pem这两个证书<br>
+
+							</div>
+							<div class="alert alert-warning">
+								接口:<br/>
+								支付回调URL: {$_W['siteroot']}payment/wechat/refund.php
 							</div>
 							<div class="form-group">
 								<label for="" class="control-label col-sm-3"><span class="pull-right">微信退款</span></label>

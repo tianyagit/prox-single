@@ -33,6 +33,10 @@ if ($do == 'save_setting') {
 			$param['cert'] = $setting['payment']['wechat_refund']['cert'];
 		} else {
 			$param['cert'] = file_get_contents($_FILES['cert']['tmp_name']);
+			if (strexists($param['cert'], '<?php') || substr($param['cert'], 0, 27) != '-----BEGIN CERTIFICATE-----' || substr($param['cert'], -24, 23) != '---END CERTIFICATE-----') {
+				itoast('apiclient_cert.pem证书内容不合法，请重新上传');
+			}
+			$param['cert'] = authcode($param['cert'], 'ENCODE');
 		}
 		if (empty($_FILES['key']['tmp_name'])) {
 			if (empty($setting['payment']['wechat_refund']['key']) && $param['switch'] == 1) {
@@ -41,6 +45,10 @@ if ($do == 'save_setting') {
 			$param['key'] = $setting['payment']['wechat_refund']['key'];
 		} else {
 			$param['key'] = file_get_contents($_FILES['key']['tmp_name']);
+			if (strexists($param['key'], '<?php') || substr($param['key'], 0, 27) != '-----BEGIN PRIVATE KEY-----' || substr($param['key'], -24, 23) != '---END PRIVATE KEY-----') {
+				itoast('apiclient_key.pem证书内容不合法，请重新上传');
+			}
+			$param['key'] = authcode($param['key'], 'ENCODE');
 		}
 	}
 	$pay_setting[$type] = $param;
