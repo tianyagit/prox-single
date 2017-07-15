@@ -41,8 +41,8 @@
 				{if !empty($user['founder_groupid'])}
 				<tr>
 					<td class="table-label">注册链接</td>
-					<td></td>
-					<td><div class="link-group"><a href="javascript:;" data-url="{$_W['siteroot']}{php echo url('user/register', array('uid' => $user['uid']));}" class="js-clip">复制链接</a></div></td>
+					<td>{$user['url']}</td>
+					<td><div class="link-group"><a href="javascript:;" data-url="{$user['url']}" class="js-clip">复制链接</a></div></td>
 				</tr>
 				{/if}
 			</table>
