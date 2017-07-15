@@ -24,9 +24,11 @@ if ($do == 'save') {
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
 		'modules' => array_merge($modules, $wxapp),
-		'templates' => $_GPC['templates'],
-		'vice_founder_id' => $_W['uid']
+		'templates' => $_GPC['templates']
 	);
+	if (user_is_vice_founder()) {
+		$package_info['vice_founder_id'] = $_W['uid'];
+	}
 	if (empty($package_info['name'])) {
 		iajax(1, '请输入套餐名');
 	}
