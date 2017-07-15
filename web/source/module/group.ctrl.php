@@ -75,7 +75,7 @@ if ($do == 'display') {
 
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
-			if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+			if (user_is_vice_founder()) {
 				if ($group['vice_founder_id'] != $_W['uid']) {
 					unset($modules_group_list[$group_key]);
 					continue;

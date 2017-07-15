@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('display', 'post', 'del');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
+load()->model('user');
 
 if ($do == 'display') {
 	uni_user_permission_check('system_user_group');
@@ -17,7 +18,7 @@ if ($do == 'display') {
 		$condition .= "WHERE name LIKE :name";
 		$params[':name'] = "%{$_GPC['name']}%";
 	}
-	if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+	if (user_is_vice_founder()) {
 		$condition .= "WHERE vice_founder_id = :vice_founder_id";
 		$params[':vice_founder_id'] = $_W['uid'];
 	}
@@ -73,7 +74,7 @@ if ($do == 'post') {
 	$packages = uni_groups();
 	if (!empty($packages)) {
 		foreach ($packages as $key => &$package_val) {
-			if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+			if (user_is_vice_founder()) {
 				if ($package_val['vice_founder_id'] != $_W['uid']) {
 					unset($packages[$key]);
 					continue;
@@ -104,7 +105,7 @@ if ($do == 'post') {
 			'maxwxapp' => intval($_GPC['maxwxapp']),
 			'timelimit' => intval($_GPC['timelimit'])
 		);
-		if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+		if (user_is_vice_founder()) {
 			$data['vice_founder_id'] = $_W['uid'];
 		}
 		if (empty($id)) {

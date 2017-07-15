@@ -66,7 +66,7 @@ if ($do == 'edit_modules_tpl') {
 		}
 	}
 	$where = array();
-	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+	if (user_is_vice_founder()) {
 		$where = array('vice_founder_id' => $_W['uid']);
 	}
 	$groups = pdo_getall('users_group', $where, array('id', 'name'), 'id');

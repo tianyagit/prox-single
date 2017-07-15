@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
 load()->model('module');
+load()->model('user');
 load()->classs('weixin.platform');
 
 $_W['page']['title'] = '添加/编辑公众号 - 公众号管理';
@@ -78,7 +79,7 @@ if($step == 1) {
 				itoast('添加公众号失败', '', '');
 			}
 			$uniacid = pdo_insertid();
-			if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+			if (user_is_vice_founder()) {
 				$user_account_insert = uni_user_account_role($uniacid, $_W['user']['vice_founder_id'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 				if (empty($user_account_insert)) {
 					itoast('添加公众号失败', '', '');
@@ -200,7 +201,7 @@ if($step == 1) {
 				$account_users = array('uniacid' => $uniacid, 'uid' => $uid, 'role' => 'owner');
 				pdo_insert('uni_account_users', $account_users);
 			}
-			if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+			if (user_is_vice_founder()) {
 				$user_account_insert = uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 				if (empty($user_account_insert)) {
 					itoast('添加公众号失败', '', '');
@@ -327,7 +328,7 @@ if($step == 1) {
 	}
 	$extend['package'] = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
 	$where = '';
-	if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+	if (user_is_vice_founder()) {
 		$user_own_groupids = pdo_getall('users', array('vice_founder_id' => $_W['uid']), 'groupid', 'groupid');
 		$user_own_groupids = implode(',', array_keys($user_own_groupids));
 		$where = " WHERE `vice_founder_id` = {$_W['uid']} OR `id` IN ({$user_own_groupids})";

@@ -483,9 +483,11 @@ function uni_account_tablename($type) {
 }
 
 function uni_user_account_role($uniacid, $uid, $role) {
-	$vice_account['uniacid'] = intval($uniacid);
-	$vice_account['uid'] = intval($uid);
-	$vice_account['role'] = trim($role);
+	$vice_account = array(
+		'uniacid' => intval($uniacid),
+		'uid' => intval($uid),
+		'role' => trim($role)
+	);
 	$account_user = pdo_get('uni_account_users', $vice_account, array('id'));
 	if (!empty($account_user)) {
 		return false;

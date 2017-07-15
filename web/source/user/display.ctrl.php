@@ -30,7 +30,7 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 			$condition = ' WHERE u.status = 2 ';
 			break;
 	}
-	if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+	if (user_is_vice_founder()) {
 		$condition .= ' AND u.vice_founder_id = ' . $_W['uid'];
 	}
 	$pindex = max(1, intval($_GPC['page']));

@@ -104,6 +104,28 @@ function user_is_founder($uid) {
 }
 
 /**
+ * 判断是否是副创始人
+ */
+function user_is_vice_founder() {
+	global $_W;
+	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * 判断是否是网站创始人(不包括副创始人)
+ */
+function user_is_real_founder() {
+	global $_W;
+	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+		return true;
+	}
+	return false;
+}
+
+/**
  * 获取单条用户信息，如果查询参数多于一个字段，则查询满足所有字段的用户
  * PS:密码字段不要加密
  * @param array $user_or_uid 要查询的用户字段，可以包括  uid, username, password, status
