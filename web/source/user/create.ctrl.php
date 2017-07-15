@@ -10,13 +10,14 @@ load()->model('user');
 uni_user_permission_check('system_user_post');
 $_W['page']['title'] = '添加用户 - 用户管理';
 $state = uni_permission($_W['uid']);
-if (!in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
+if ($state != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	itoast('没有操作权限！', referer(), 'error');
 }
 
 if (checksubmit()) {
 	$username = trim($_GPC['username']);
 	$vice_founder_name = trim($_GPC['vice_founder_name']);
+	$group_id = intval($_GPC['groupid']);
 	if (!preg_match(REGULAR_USERNAME, $username)) {
 		itoast('必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。', '', '');
 	}
@@ -29,39 +30,33 @@ if (checksubmit()) {
 	if (trim($_GPC['password']) !== trim($_GPC['repassword'])) {
 		itoast('两次密码不一致！', '', '');
 	}
+	if (!intval($_GPC['groupid'])) {
+		itoast('请选择所属用户组', '', '');
+	}
+	if ($group_id > 0) {
+		$group = pdo_fetch("SELECT id,timelimit FROM ".tablename('users_group')." WHERE id = :id", array(':id' => intval($_GPC['groupid'])));
+		if (empty($group)) {
+			itoast('会员组不存在', '', '');
+		}
+	}
+
 	$timelimit = intval($group['timelimit']);
 	$timeadd = 0;
 	if ($timelimit > 0) {
 		$timeadd = strtotime($timelimit . ' days');
 	}
 	$data = array(
-			'username' => $username,
-			'password' => trim($_GPC['password']),
-			'remark' => $_GPC['remark'],
-			'starttime' => TIMESTAMP,
-			'endtime' => $timeadd,
+		'username' => $username,
+		'password' => trim($_GPC['password']),
+		'remark' => $_GPC['remark'],
+		'groupid' => $group_id,
+		'starttime' => TIMESTAMP,
+		'endtime' => $timeadd,
+		'founder_groupid' => intval($_GPC['founder_groupid'])
 	);
-	if ($do != ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
-		if (!intval($_GPC['groupid'])) {
-			itoast('请选择所属用户组', '', '');
-		}
-		$group = pdo_fetch("SELECT id,timelimit FROM ".tablename('users_group')." WHERE id = :id", array(':id' => intval($_GPC['groupid'])));
-		if (empty($group)) {
-			itoast('会员组不存在', '', '');
-		}
-		$data['groupid'] = intval($_GPC['groupid']);
-		$vice_founder_id = user_get_uid_byname($vice_founder_name);
-		if (empty($vice_founder_id)) {
-			itoast('推荐人不存在！', '', '');
-		}
-		$data['vice_founder_id'] = $vice_founder_id == ture ? 0 : $vice_founder_id;
-		if (!empty($_W['is_vice_founder'])) {
-			$data['vice_founder_id'] = $_W['uid'];
-		}
-	}
-
-	if ($do == ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
-		$data['is_vice_founder'] = 1;
+	$data['vice_founder_id'] = user_get_uid_byname($vice_founder_name);
+	if (user_is_vice_founder()) {
+		$data['vice_founder_id'] = $_W['uid'];
 	}
 
 	$uid = user_register($data);
@@ -72,7 +67,7 @@ if (checksubmit()) {
 	itoast('增加失败，请稍候重试或联系网站管理员解决！', '', '');
 }
 $group_condition = array();
-if (!empty($_W['is_vice_founder'])) {
+if (user_is_vice_founder()) {
 	$group_condition['vice_founder_id'] = $_W['uid'];
 }
 $groups = pdo_getall('users_group', $group_condition, array('id', 'name'));

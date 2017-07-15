@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
 load()->model('module');
+load()->model('user');
 load()->classs('weixin.platform');
 
 $_W['page']['title'] = '添加/编辑公众号 - 公众号管理';
@@ -17,7 +18,7 @@ $account_info = uni_user_account_permission();
 
 if($step == 1) {
 	// 用户点击 '授权登录添加公众号'，判断公共号最大个数限制
-	if (!$_W['isfounder'] || !$_W['is_vice_founder']) {
+	if (!$_W['isfounder']) {
 		//当前用户可添加公众号数量判断
 		$max_tsql = "SELECT COUNT(*) FROM " . tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1";
 		$max_pars[':uid'] = $_W['uid'];
@@ -50,7 +51,7 @@ if($step == 1) {
 	}
 	//添加公众号
 	if (checksubmit('submit')) {
-		if ($account_info['uniacid_limit'] <= 0 && !$_W['isfounder'] && !$_W['is_vice_founder']) {
+		if ($account_info['uniacid_limit'] <= 0 && !$_W['isfounder']) {
 			itoast('创建公众号已达上限！');
 		}
 		$update = array();
@@ -78,13 +79,8 @@ if($step == 1) {
 				itoast('添加公众号失败', '', '');
 			}
 			$uniacid = pdo_insertid();
-			if (!empty($_W['user']['vice_founder_id'])) {
-				$vice_account['uniacid'] = $uniacid;
-				$vice_account['uid'] = $_W['user']['vice_founder_id'];
-				$vice_account['role'] = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-				if (!pdo_insert('uni_account_users', $vice_account)) {
-					itoast('添加创始人公众号失败', '', '');
-				}
+			if (user_is_vice_founder()) {
+				uni_user_account_role($uniacid, $_W['user']['vice_founder_id'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 			//获取默认模板的id
 			$template = pdo_fetch('SELECT id,title FROM ' . tablename('site_templates') . " WHERE name = 'default'");
@@ -136,7 +132,7 @@ if($step == 1) {
 				itoast('添加公众号信息失败', url('account/post-step/', array('uniacid' => $uniacid, 'step' => 2)), 'error');
 			}
 			pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
-			if (empty($_W['isfounder']) && empty($_W['is_vice_founder'])) {
+			if (empty($_W['isfounder'])) {
 				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
 			}
 		} else {
@@ -157,7 +153,7 @@ if($step == 1) {
 		}
 		cache_delete("unisetting:{$uniacid}");
 
-		if (!empty($_GPC['uniacid']) || (empty($_W['isfounder']) && empty($_W['is_vice_founder']))) {
+		if (!empty($_GPC['uniacid']) || empty($_W['isfounder'])) {
 			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 4)));
 		} else {
 			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 3)));
@@ -167,7 +163,7 @@ if($step == 1) {
 }elseif ($step == 3) {
 	$acid = intval($_GPC['acid']);
 	$uniacid = intval($_GPC['uniacid']);
-	if (empty($_W['isfounder']) && empty($_W['is_vice_founder'])) {
+	if (empty($_W['isfounder'])) {
 		itoast('您无权进行该操作！', '', '');
 	}
 	if ($_GPC['get_type'] == 'userinfo' && $_W['ispost']) {
@@ -202,14 +198,12 @@ if($step == 1) {
 				$account_users = array('uniacid' => $uniacid, 'uid' => $uid, 'role' => 'owner');
 				pdo_insert('uni_account_users', $account_users);
 			}
-			if (!empty($_W['is_vice_founder'])) {
-				$account_users = array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-				pdo_insert('uni_account_users', $account_users);
+			if (user_is_vice_founder()) {
+				uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 			$user_vice_id = pdo_getcolumn('users', array('uid' => $uid), 'vice_founder_id');
-			if (empty($_W['is_vice_founder']) && !empty($user_vice_id)) {
-				$account_users = array('uniacid' => $uniacid, 'uid' => $user_vice_id, 'role' => ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-				pdo_insert('uni_account_users', $account_users);
+			if ($_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER && !empty($user_vice_id)) {
+				uni_user_account_role($uniacid, $user_vice_id, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 		}
 		if (!empty($_GPC['signature'])) {
@@ -325,7 +319,7 @@ if($step == 1) {
 	}
 	$extend['package'] = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
 	$where = '';
-	if (!empty($_W['is_vice_founder'])) {
+	if (user_is_vice_founder()) {
 		$user_own_groupids = pdo_getall('users', array('vice_founder_id' => $_W['uid']), 'groupid', 'groupid');
 		$user_own_groupids = implode(',', array_keys($user_own_groupids));
 		$where = " WHERE `vice_founder_id` = {$_W['uid']} OR `id` IN ({$user_own_groupids})";

@@ -22,7 +22,7 @@ $_W['acl'] = $acl = array(
 		'operator' => array(
 			'display',
 			'manage' 
-		)
+		) 
 	),
 	'article' => array(
 		'direct' => array(
@@ -47,7 +47,7 @@ $_W['acl'] = $acl = array(
 			'upgrade',
 			'process',
 			'device' 
-		)
+		) 
 	),
 	'home' => array(
 		'default' => 'welcome',
@@ -66,19 +66,19 @@ $_W['acl'] = $acl = array(
 		'founder' => array(),
 		'direct' => array(
 			'entry' 
-		)
+		) 
 	),
 	'user' => array(
 		'default' => 'display',
-		'founder' => array(),
+		'founder' => array(
+			'edit',
+			'group' 
+		),
 		'direct' => array(
 			'login',
 			'register',
 			'logout' 
-		),
-		'vice_founder' => array(
-			'group'
-		)
+		) 
 	),
 	'utility' => array(
 		'direct' => array(
@@ -121,7 +121,7 @@ $_W['acl'] = $acl = array(
 			'platform',
 			'updatecache',
 			'module' 
-		)
+		) 
 	),
 	'cron' => array(
 		'direct' => array(

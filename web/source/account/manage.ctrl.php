@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
-
+load()->model('user');
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
@@ -30,15 +30,16 @@ if ($do == 'display') {
 		ACCOUNT_TYPE_OFFCIAL_AUTH => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
 	);
 	$type_condition_sql = "'".implode("','", $type_condition[ACCOUNT_TYPE])."'";
-	
-	if (!empty($_W['isfounder'])) {
-		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
-		$order_by = " ORDER BY a.`acid` DESC";
-	} else {
+
+	if (empty($_W['isfounder']) || user_is_vice_founder()) {
 		$condition .= "LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
 		$param[':uid'] = $_W['uid'];
 		$order_by = " ORDER BY c.`rank` DESC, a.`acid` DESC";
+	} else {
+		$condition .= " WHERE a.acid <> 0 AND b.isdeleted <> 1 AND b.type IN ($type_condition_sql)";
+		$order_by = " ORDER BY a.`acid` DESC";
 	}
+
 	if(!empty($keyword)) {
 		$condition .=" AND a.`name` LIKE :name";
 		$param[':name'] = "%{$keyword}%";
@@ -71,8 +72,7 @@ if ($do == 'delete') {
 	$type = intval($_GPC['type']);
 	//只有创始人、主管理员才有权限停用公众号
 	$state = uni_permission($uid, $uniacid);
-	$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-	if (!in_array($state, $allow_role)) {
+	if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER) {
 		itoast('无权限操作！', url('account/manage'), 'error');
 	}
 	if (!empty($acid) && empty($uniacid)) {
@@ -94,7 +94,7 @@ if ($do == 'delete') {
 			itoast('抱歉，帐号不存在或是已经被删除', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		$state = uni_permission($uid, $uniacid);
-		if (!in_array($state, $allow_role)) {
+		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			itoast('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));

@@ -19,8 +19,7 @@ if (empty($uniacid) || empty($acid)) {
 }
 $state = uni_permission($_W['uid'], $uniacid);
 $dos = array('base', 'sms', 'modules_tpl');
-$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-if (in_array($state, $allow_role)) {
+if ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER) {
 	$do = in_array($do, $dos) ? $do : 'base';
 } elseif ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
@@ -39,7 +38,7 @@ $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'base') {
-	if (!in_array($state, $allow_role)) {
+	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
 
@@ -140,7 +139,7 @@ if($do == 'base') {
 }
 
 if($do == 'sms') {
-	if (!in_array($state, $allow_role)) {
+	if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
 	$settings = uni_setting($uniacid, array('notify'));
@@ -194,7 +193,7 @@ if($do == 'modules_tpl') {
 	$unigroups = uni_groups();
 	$owner = account_owner($uniacid);
 
-	if($_W['isajax'] && $_W['ispost'] && (in_array($state, $allow_role))) {
+	if($_W['isajax'] && $_W['ispost'] && ($state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER)) {
 		if($_GPC['type'] == 'group') {
 			$groups = $_GPC['groupdata'];
 			if(!empty($groups)) {

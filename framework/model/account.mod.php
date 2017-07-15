@@ -248,15 +248,11 @@ function uni_modules_app_binding() {
  * @return array uni_group 套餐信息列表
  */
 function uni_groups($groupids = array()) {
-	global $_W;
 	load()->model('module');
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
 	$list = cache_load($cachekey);
 	if (empty($list)) {
 		$condition = ' WHERE uniacid = 0';
-		if ($_W['role'] == 'vice_founder') {
-			$condition .= ' AND vice_founder_id = ' . $_W['uid'];
-		}
 		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
 		if (in_array('-1', $groupids)) {
 			$list[-1] = array('id' => -1, 'name' => '所有服务');
@@ -327,9 +323,8 @@ function uni_templates() {
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
 	load()->model('user');
 	//如果没有所有者，则取创始人权限
-	$founders = explode(',', $_W['config']['setting']['founder']);
 	$owner = user_single(array('uid' => $owneruid));
-	if (empty($owner) || in_array($owner['uid'], $founders)) {
+	if (empty($owner) || user_is_founder($owner['uid'])) {
 		$groupid = '-1';
 	} else {
 		$groupid = $owner['groupid'];
@@ -487,6 +482,19 @@ function uni_account_tablename($type) {
 	}
 }
 
+function uni_user_account_role($uniacid, $uid, $role) {
+	$vice_account = array(
+		'uniacid' => intval($uniacid),
+		'uid' => intval($uid),
+		'role' => trim($role)
+	);
+	$account_user = pdo_get('uni_account_users', $vice_account, array('id'));
+	if (!empty($account_user)) {
+		return false;
+	}
+	return pdo_insert('uni_account_users', $vice_account);
+}
+
 /**
  * 获取指定操作用户在指定的公众号所具有的操作权限
  * @param int $uid 操作用户
@@ -495,16 +503,14 @@ function uni_account_tablename($type) {
  */
 function uni_permission($uid = 0, $uniacid = 0) {
 	global $_W;
+	load()->model('user');
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders)) {
+	if (user_is_founder($uid)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
-	if (!empty($_W['is_vice_founder'])){
-		return ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-	}
+
 	if (!empty($uniacid)) {
 		$role = pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'role');
 		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
@@ -536,10 +542,10 @@ function uni_permission($uid = 0, $uniacid = 0) {
  */
 function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
+	load()->model('user');
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($uid, $founders) || !empty($_W['is_vice_founder'])) {
+	if (user_is_founder($uid)) {
 		return false;
 	}
 	if (FRAME == 'system') {
@@ -1076,8 +1082,7 @@ function account_delete($acid) {
 	if ($account) {
 		$uniacid = $account['uniacid'];
 		$state = uni_permission($_W['uid'], $uniacid);
-		$allow_role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-		if(!in_array($state, $allow_role)) {
+		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			itoast('没有该公众号操作权限！', url('account/recycle'), 'error');
 		}
 		if($uniacid == $_W['uniacid']) {
