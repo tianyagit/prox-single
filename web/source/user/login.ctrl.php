@@ -45,8 +45,8 @@ function _login($forward = '') {
 			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', '', '');
 		}
 		$_W['uid'] = $record['uid'];
-		$_W['isfounder'] = user_is_founder($record['uid']);
-
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$_W['isfounder'] = in_array($record['uid'], $founders);
 		if (empty($_W['isfounder'])) {
 			if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
 				itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');

@@ -5,8 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->model('user');
-
 $dos = array('display', 'post', 'del');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
@@ -18,10 +16,6 @@ if ($do == 'display') {
 	if (!empty($_GPC['name'])) {
 		$condition .= "WHERE name LIKE :name";
 		$params[':name'] = "%{$_GPC['name']}%";
-	}
-	if (user_is_vice_founder()) {
-		$condition .= "WHERE owner_uid = :owner_uid";
-		$params[':owner_uid'] = $_W['uid'];
 	}
 	if (checksubmit('submit')) {
 		if (!empty($_GPC['delete'])) {
@@ -71,24 +65,14 @@ if ($do == 'post') {
 		$group_info['package'] = iunserializer($group_info['package']);
 		if (!empty($group_info['package']) && in_array(-1, $group_info['package'])) $group_info['check_all'] = true;
 	}
-
 	$packages = uni_groups();
-	if (!empty($packages)) {
-		foreach ($packages as $key => &$package_val) {
-			if (user_is_vice_founder()) {
-				if ($package_val['owner_uid'] != $_W['uid']) {
-					unset($packages[$key]);
-					continue;
-				}
-			}
-			if (!empty($group_info['package']) && in_array($key, $group_info['package'])) {
-				$package_val['checked'] = true;
-			} else {
-				$package_val['checked'] = false;
-			}
+	foreach ($packages as $key => &$package_val) {
+		if (!empty($group_info['package']) && in_array($key, $group_info['package'])) {
+			$package_val['checked'] = true;
+		} else {
+			$package_val['checked'] = false;
 		}
 	}
-
 	unset($package_val);
 	if (checksubmit('submit')) {
 		if (empty($_GPC['name'])) {
@@ -106,9 +90,6 @@ if ($do == 'post') {
 			'maxwxapp' => intval($_GPC['maxwxapp']),
 			'timelimit' => intval($_GPC['timelimit'])
 		);
-		if (user_is_vice_founder()) {
-			$data['owner_uid'] = $_W['uid'];
-		}
 		if (empty($id)) {
 			pdo_insert('users_group', $data);
 		} else {

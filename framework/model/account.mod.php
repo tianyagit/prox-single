@@ -322,9 +322,9 @@ function uni_templates() {
 	global $_W;
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $_W['uniacid']));
 	load()->model('user');
-	//如果没有所有者，则取创始人权限
 	$owner = user_single(array('uid' => $owneruid));
-	if (empty($owner) || user_is_founder($owner['uid'])) {
+	//如果没有所有者，则取创始人权限
+	if (empty($owner)) {
 		$groupid = '-1';
 	} else {
 		$groupid = $owner['groupid'];
@@ -503,14 +503,13 @@ function uni_user_account_role($uniacid, $uid, $role) {
  */
 function uni_permission($uid = 0, $uniacid = 0) {
 	global $_W;
-	load()->model('user');
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 
-	if (user_is_founder($uid)) {
+	$founders = explode(',', $_W['config']['setting']['founder']);
+	if (in_array($uid, $founders)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
-
 	if (!empty($uniacid)) {
 		$role = pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'role');
 		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
@@ -542,10 +541,10 @@ function uni_permission($uid = 0, $uniacid = 0) {
  */
 function uni_user_permission_exist($uid = 0, $uniacid = 0) {
 	global $_W;
-	load()->model('user');
 	$uid = intval($uid) > 0 ? $uid : $_W['uid'];
 	$uniacid = intval($uniacid) > 0 ? $uniacid : $_W['uniacid'];
-	if (user_is_founder($uid)) {
+	$founders = explode(',', $_W['config']['setting']['founder']);
+	if (in_array($uid, $founders)) {
 		return false;
 	}
 	if (FRAME == 'system') {

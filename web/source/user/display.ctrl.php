@@ -31,9 +31,6 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 			$condition = ' WHERE u.status = 2 ';
 			break;
 	}
-	if (user_is_vice_founder()) {
-		$condition .= ' AND u.owner_uid = ' . $_W['uid'];
-	}
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$params = array();

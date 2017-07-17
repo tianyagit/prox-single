@@ -1,17 +1,9 @@
 {template 'common/header'}
-{if empty($user['founder_groupid'])}
 <ol class="breadcrumb we7-breadcrumb">
 	<a href="{url 'user/display'}"><i class="wi wi-back-circle"></i> </a>
 	<li><a href="{url 'user/display'}">用户管理</a></li>
 	<li>编辑用户详情</li>
 </ol>
-{else}
-<ol class="breadcrumb we7-breadcrumb">
-	<a href="{url 'user/display/vice_founder'}"><i class="wi wi-back-circle"></i> </a>
-	<li><a href="{url 'user/display/vice_founder'}">副创始人管理</a></li>
-	<li>编辑创始人详情</li>
-</ol>
-{/if}
 <div id="js-user-edit-base" ng-controller="UserProfileDisplay" ng-cloak>
 	<div class="user-head-info clearfix" >
 		<span class="icon pull-left"><i class="wi wi-user"></i></span>
@@ -57,13 +49,6 @@
 			<td ng-bind="user.end"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#endtime">修改</a></div></td>
 		</tr>
-		{if !empty($_W['isfounder']) && $user['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
-		<tr>
-			<td class="table-label">副创始人姓名</td>
-			<td ng-bind="user.vice_founder_name"></td>
-			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#vice_founder_name" ng-click="editInfo('vice_founder_name', user.vice_founder_name)">修改</a></div></td>
-		</tr>
-		{/if}
 		{if !empty($user['founder_groupid'])}
 		<tr>
 			<td class="table-label">注册链接</td>
