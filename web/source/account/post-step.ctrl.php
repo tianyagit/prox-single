@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
 load()->model('module');
+load()->model('user');
 load()->classs('weixin.platform');
 
 $_W['page']['title'] = '添加/编辑公众号 - 公众号管理';
@@ -78,6 +79,9 @@ if($step == 1) {
 				itoast('添加公众号失败', '', '');
 			}
 			$uniacid = pdo_insertid();
+			if (user_is_vice_founder()) {
+				uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+			}
 			//获取默认模板的id
 			$template = pdo_fetch('SELECT id,title FROM ' . tablename('site_templates') . " WHERE name = 'default'");
 			$styles['uniacid'] = $uniacid;
@@ -270,6 +274,14 @@ if($step == 1) {
 	}
 
 	$unigroups = uni_groups();
+	if (!empty($unigroups) && user_is_vice_founder()) {
+		foreach ($unigroups as $key => &$unigroup_info) {
+			if ($unigroup_info['owner_uid'] != $_W['uid']) {
+				unset($unigroups[$key]);
+				continue;
+			}
+		}
+	}
 	if(!empty($unigroups['modules'])) {
 		foreach ($unigroups['modules'] as $module_key => $module_val) {
 			if(file_exists(IA_ROOT.'/addons/'.$module_val['name'].'/icon-custom.jpg')) {
@@ -310,8 +322,13 @@ if($step == 1) {
 		$owner['extend']['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']));
 	}
 	$extend['package'] = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
-
-	$groups = pdo_fetchall("SELECT id, name, package FROM ".tablename('users_group')." ORDER BY id ASC", array(), 'id');
+	$where = '';
+	if (user_is_vice_founder()) {
+		$user_own_groupids = pdo_getall('users', array('owner_uid' => $_W['uid']), 'groupid', 'groupid');
+		$user_own_groupids = implode(',', array_keys($user_own_groupids));
+		$where = " WHERE `owner_uid` = {$_W['uid']} OR `id` IN ({$user_own_groupids})";
+	}
+	$groups = pdo_fetchall("SELECT id, name, package FROM ".tablename('users_group') ." {$where}  ORDER BY id ASC", array(), 'id');
 	$modules = pdo_fetchall("SELECT mid, name, title FROM " . tablename('modules') . ' WHERE issystem != 1', array(), 'name');
 	$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
 } elseif($step == 4) {

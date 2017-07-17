@@ -53,6 +53,9 @@ if (checksubmit()) {
 		'starttime' => TIMESTAMP,
 		'endtime' => $timeadd,
 	);
+	if (user_is_vice_founder()) {
+		$data['owner_uid'] = $_W['uid'];
+	}
 	$uid = user_register($data);
 	if ($uid > 0) {
 		unset($data);
@@ -60,6 +63,9 @@ if (checksubmit()) {
 	}
 	itoast('增加失败，请稍候重试或联系网站管理员解决！', '', '');
 }
-$groups = pdo_fetchall("SELECT id, name FROM ".tablename('users_group')." ORDER BY id ASC");
-
+$group_condition = array();
+if (user_is_vice_founder()) {
+	$group_condition['owner_uid'] = $_W['uid'];
+}
+$groups = pdo_getall('users_group', $group_condition, array('id', 'name'));
 template('user/create');
