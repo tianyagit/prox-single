@@ -4,7 +4,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-load()->model('user');
+
 $dos = array('browser');
 $do = in_array($do, $dos) ? $do: 'browser';
 
@@ -24,7 +24,7 @@ if ($do == 'browser') {
 		}
 		$uids = implode(',', $uidArr);
 	}
-	$where = " WHERE status = '2' and type != '".ACCOUNT_OPERATE_CLERK."' AND founder_groupid != " . ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
+	$where = " WHERE status = '2' and type != '".ACCOUNT_OPERATE_CLERK."'";
 	if($mode == 'invisible' && !empty($uids)){
 		$where .= " AND uid not in ( {$uids} )";
 	}
