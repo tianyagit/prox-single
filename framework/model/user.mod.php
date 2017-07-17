@@ -94,11 +94,6 @@ function user_is_founder($uid) {
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	if (in_array($uid, $founders)) {
 		return true;
-	} else {
-		$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
-		if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-			return true;
-		}
 	}
 	return false;
 }
@@ -162,6 +157,9 @@ function user_single($user_or_uid) {
 		if ($password != $record['password']) {
 			return false;
 		}
+	}
+	if (!empty($record['owner_uid'])) {
+		$record['vice_founder_name'] = pdo_getcolumn('users', array('uid' => $record['owner_uid']), 'username');
 	}
 	if($record['type'] == ACCOUNT_OPERATE_CLERK) {
 		$clerk = pdo_get('activity_clerks', array('uid' => $record['uid']));
@@ -377,11 +375,10 @@ function user_modules($uid) {
 	$cachekey = cache_system_key("user_modules:" . $uid);
 	$modules = cache_load($cachekey);
 	if (empty($modules)) {
-		$founders = explode(',', $_W['config']['setting']['founder']);
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
-		if (empty($uid) || in_array($uid, $founders)) {
+		if (empty($uid) || user_is_founder($uid)) {
 			$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
 			$module_list = $system_modules;

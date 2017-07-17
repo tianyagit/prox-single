@@ -26,6 +26,9 @@ if ($do == 'save') {
 		'modules' => array_merge($modules, $wxapp),
 		'templates' => $_GPC['templates'],
 	);
+	if (user_is_vice_founder()) {
+		$package_info['owner_uid'] = $_W['uid'];
+	}
 	if (empty($package_info['name'])) {
 		iajax(1, '请输入套餐名');
 	}
@@ -73,7 +76,13 @@ if ($do == 'display') {
 	$modules_group_list = uni_groups();
 
 	if (!empty($modules_group_list)) {
-		foreach ($modules_group_list as &$group) {
+		foreach ($modules_group_list as $group_key => &$group) {
+			if (user_is_vice_founder()) {
+				if ($group['owner_uid'] != $_W['uid']) {
+					unset($modules_group_list[$group_key]);
+					continue;
+				}
+			}
 			if (empty($group['modules'])) {
 				$group['modules'] = array();
 			}
