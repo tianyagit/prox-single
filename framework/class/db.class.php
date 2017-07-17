@@ -53,15 +53,8 @@ class DB {
 			include IA_ROOT . '/framework/library/pdo/PDO.class.php';
 			$dbclass = 'PDO';
 		}
-        $pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
-		if (DEVELOPMENT&&false) {
-            $this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
-        } else {
-            $this->pdo = $pdo;
-        }
-        $this->pdo->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
-
-
+		$this->pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
+		$this->pdo->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
 		$sql = "SET NAMES '{$cfg['charset']}';";
 		$this->pdo->exec($sql);
 		$this->pdo->exec("SET sql_mode='';");
@@ -416,7 +409,6 @@ class DB {
 	 */
 	private function implode($params, $glue = ',') {
 		$result = array('fields' => ' 1 ', 'params' => array());
-//		dd($params);
 		$split = '';
 		$suffix = '';
 		$allow_operator = array('>', '<', '<>', '!=', '>=', '<=', '+=', '-=', 'LIKE', 'like');
@@ -466,15 +458,15 @@ class DB {
 					$result['fields'] .= $split . "`$fields` {$operator} (".implode(",", $insql).")";
 					$split = ' ' . $glue . ' ';
 				} else {
-                    $fieldsop="{$fields}";
-                    $fieldsparam=$fields;
-                    if(isset($fieldsops[$fieldsop])) {
-                        $fieldsnum=$fieldsops[$fieldsop]+1;
-                        $fieldsparam=$fieldsparam.'_o'.$fieldsnum;
-                    }else {
-                        $fieldsops[$fieldsop]=1;
-                        $fieldsparam=$fieldsparam.'_o1';
-                    }
+					$fieldsop="{$fields}";
+					$fieldsparam=$fields;
+					if(isset($fieldsops[$fieldsop])) {
+						$fieldsnum=$fieldsops[$fieldsop]+1;
+						$fieldsparam=$fieldsparam.'_o'.$fieldsnum;
+					}else {
+ 						$fieldsops[$fieldsop]=1;
+						$fieldsparam=$fieldsparam.'_o1';
+					}
 					$result['fields'] .= $split . "`$fields` {$operator}  :{$suffix}$fieldsparam";
 					$split = ' ' . $glue . ' ';
 					$result['params'][":{$suffix}$fieldsparam"] = is_null($value) || is_array($value) ? '' : $value;
@@ -686,7 +678,6 @@ class DB {
 		} else {
 			if (!empty($append['error'][1])) {
 				$traces = debug_backtrace();
-
 				$ts = '';
 				foreach($traces as $trace) {
 					$trace['file'] = str_replace('\\', '/', $trace['file']);
