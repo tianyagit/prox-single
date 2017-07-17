@@ -62,7 +62,7 @@ class WeSession implements SessionHandlerInterface {
 	
 	public static function mysql_handler() {
 		$sess = new WeSession();
-		if (version_compare(PHP_VERSION, '5.4') >= 0) {
+		if (version_compare(PHP_VERSION, '5.5') >= 0) {
 			session_set_save_handler($sess, true);
 		} else {
 			session_set_save_handler(
