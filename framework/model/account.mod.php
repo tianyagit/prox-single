@@ -315,6 +315,22 @@ function uni_groups($groupids = array()) {
 }
 
 /**
+ * 获取一个或多个公众号套餐信息
+ * @param array $groupids 公众号套餐ID
+ * @return array uni_vice_groups 副创始人套餐信息列表
+ */
+function uni_vice_groups($groupids = array()) {
+	global $_W;
+	$modules_group_list = uni_groups($groupids);
+	foreach ($modules_group_list as $group_key => &$group) {
+		if ($group['owner_uid'] != $_W['uid']) {
+			unset($modules_group_list[$group_key]);
+			continue;
+		}
+	}
+	return $modules_group_list;
+}
+/**
  * 获取当前套餐可用微站模板
  * @return array 模板列表
  */
