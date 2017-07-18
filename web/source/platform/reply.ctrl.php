@@ -125,7 +125,9 @@ if ($do == 'display') {
 	}
 	if ($m == 'default') {
 		$setting = uni_setting($_W['uniacid'], array('default'));
-		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
+		if (!empty($setting['default'])) {
+			$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
+		}
 	}
 	if ($m == 'service') {
 		$service_list = reply_getall_common_service();
