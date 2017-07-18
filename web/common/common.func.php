@@ -468,7 +468,7 @@ function buildframes($framename = ''){
 			foreach ($frames['wxapp']['section'] as $wxapp_section_id => $wxapp_section) {
 				if (!empty($wxapp_section['menu']) && $wxapp_section_id != 'wxapp_module') {
 					foreach ($wxapp_section['menu'] as $wxapp_menu_id => $wxapp_menu) {
-						if ($wxapp_section_id == 'platform_manage_menu') {
+						if ($wxapp_section_id == 'platform_manage_menu' || $wxapp_section_id == 'wxapp_entrance') {
 							$frames['wxapp']['section'][$wxapp_section_id]['menu'][$wxapp_menu_id]['url'] .= 'version_id=' . $version_id;
 						}
 						if (!in_array('wxapp*', $wxapp_permission) && !in_array($wxapp_menu['permission_name'], $wxapp_permission)) {

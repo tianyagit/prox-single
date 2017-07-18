@@ -132,6 +132,19 @@ $we7_system_menu['wxapp'] = array(
 	'icon' => 'wi wi-small-routine',
 	'url' => url('wxapp/display/home'),
 	'section' => array(
+		'wxapp_entrance' => array(
+			'title' => '小程序入口',
+			'menu' => array(
+				'module_link' => array(
+					'title' => "入口页面",
+					'url' => url('wxapp/version/module_entrance_link'),
+					'is_display' => 1,
+					'icon' => 'wi wi-data-synchro',
+					'permission_name' => 'wxapp_module_entrance_link',
+				),
+			),
+			'is_display' => true,
+		),
 		'wxapp_module' => array(
 			'title' => '应用',
 			'menu' => array(),
