@@ -950,19 +950,16 @@ function uni_account_save_switch($uniacid) {
 
 function uni_account_list($condition, $pager) {
 	global $_W;
-	$params = array(
-		':type_1' =>  ACCOUNT_TYPE_OFFCIAL_NORMAL,
-		':type_2' => ACCOUNT_TYPE_OFFCIAL_AUTH,
-	);
+
 	$sql = "SELECT %s FROM ". tablename('uni_account'). " as a LEFT JOIN " .
-			tablename('account'). " as b ON a.uniacid = b.uniacid AND a.default_acid = b.acid ";
+			tablename('account'). " as b ON a.uniacid = b.uniacid AND a.default_acid = b.acid AND b.isdeleted <> 1";
 	if (!empty($pager)) {
 		$limit = " LIMIT " . ($pager[0] - 1) * $pager[1] . ',' . $pager[1];
 	}
 	//副始人和普通用户一样儿取数据
 	if (empty($_W['isfounder']) || user_is_vice_founder()) {
 		$sql .= " LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid 
-				WHERE a.default_acid <> 0 AND c.uid = :uid";
+				WHERE a.default_acid <> 0 AND c.uid = :uid ";
 		$params[':uid'] = $_W['uid'];
 		
 		$order_by = " ORDER BY c.`rank` DESC";
@@ -971,8 +968,10 @@ function uni_account_list($condition, $pager) {
 		
 		$order_by = " ORDER BY a.`rank` DESC";
 	}
-	
-	$sql .= " AND b.isdeleted <> 1 AND (b.type = :type_1 OR b.type = :type_2)";
+
+	if (!empty($condition['type'])) {
+		$sql .= " AND b.type IN (" . implode(',', $condition['type']) . ")";
+	}
 	
 	if (!empty($condition['keyword'])) {
 		$sql .=" AND a.`name` LIKE :name";
@@ -987,21 +986,34 @@ function uni_account_list($condition, $pager) {
 			$sql .= " AND a.`title_initial` = ''";
 		}
 	}
-	
+	if (!empty($condition['order'])) {
+		$order_by .= $condition['order'];
+	}
 	$sql .= $order_by;
 	$sql .= ", a.`uniacid` DESC ";
 
 	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
-	
+	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'));
+
 	if (!empty($list)) {
 		foreach($list as &$account) {
+			$settings = uni_setting($account['uniacid'], array('notify'));
+			if(!empty($settings['notify'])) {
+				$account['sms'] = $settings['notify']['sms']['balance'];
+			}else {
+				$account['sms'] = 0;
+			}
 			$account = uni_fetch($account['uniacid']);
 			$account['url'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
 		}
 	}
-	return $list;
+	$account_lists = array(
+		'list' => $list,
+		'total' => $total
+	);
+	return $account_lists;
 }
 
 /**
