@@ -53,15 +53,13 @@ class DB {
 			include IA_ROOT . '/framework/library/pdo/PDO.class.php';
 			$dbclass = 'PDO';
 		}
-        $pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
-		if (DEVELOPMENT&&false) {
-            $this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
-        } else {
-            $this->pdo = $pdo;
-        }
-        $this->pdo->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
-
-
+		$pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
+		if (DEVELOPMENT) {
+			$this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
+		} else {
+			$this->pdo = $pdo;
+		}
+		$this->pdo->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
 		$sql = "SET NAMES '{$cfg['charset']}';";
 		$this->pdo->exec($sql);
 		$this->pdo->exec("SET sql_mode='';");
@@ -88,6 +86,7 @@ class DB {
 			$info['sql'] = $sql;
 			$info['error'] = $this->pdo->errorInfo();
 			$this->debug(false, $info);
+
 		}
 		return $statement;
 	}
@@ -416,7 +415,6 @@ class DB {
 	 */
 	private function implode($params, $glue = ',') {
 		$result = array('fields' => ' 1 ', 'params' => array());
-//		dd($params);
 		$split = '';
 		$suffix = '';
 		$allow_operator = array('>', '<', '<>', '!=', '>=', '<=', '+=', '-=', 'LIKE', 'like');
@@ -429,8 +427,9 @@ class DB {
 		}
 		if (is_array($params)) {
 			$result['fields'] = '';
-            $fieldsops = []; //字段 操作数组
+			$index = 0; //字段 操作数组
 			foreach ($params as $fields => $value) {
+				$index++;
 				$operator = '';
 				if (strpos($fields, ' ') !== FALSE) {
 					list($fields, $operator) = explode(' ', $fields, 2);
@@ -459,25 +458,17 @@ class DB {
 					$insql = array();
 					//忽略数组的键值，防止SQL注入
 					$value = array_values($value);
-					foreach ($value as $k => $v) {
-						$insql[] = ":{$suffix}{$fields}_{$k}";
-						$result['params'][":{$suffix}{$fields}_{$k}"] = is_null($v) ? '' : $v;
+					foreach ($value as $v) {
+						$insql[] = ":{$suffix}{$fields}_{$index}";
+						$result['params'][":{$suffix}{$fields}_{$index}"] = is_null($v) ? '' : $v;
+						$index++;
 					}
 					$result['fields'] .= $split . "`$fields` {$operator} (".implode(",", $insql).")";
 					$split = ' ' . $glue . ' ';
 				} else {
-                    $fieldsop="{$fields}";
-                    $fieldsparam=$fields;
-                    if(isset($fieldsops[$fieldsop])) {
-                        $fieldsnum=$fieldsops[$fieldsop]+1;
-                        $fieldsparam=$fieldsparam.'_o'.$fieldsnum;
-                    }else {
-                        $fieldsops[$fieldsop]=1;
-                        $fieldsparam=$fieldsparam.'_o1';
-                    }
-					$result['fields'] .= $split . "`$fields` {$operator}  :{$suffix}$fieldsparam";
+					$result['fields'] .= $split . "`$fields` {$operator}  :{$suffix}{$fields}_{$index}";
 					$split = ' ' . $glue . ' ';
-					$result['params'][":{$suffix}$fieldsparam"] = is_null($value) || is_array($value) ? '' : $value;
+					$result['params'][":{$suffix}{$fields}_{$index}"] = is_null($value) || is_array($value) ? '' : $value;
 				}
 			}
 		}
@@ -686,7 +677,6 @@ class DB {
 		} else {
 			if (!empty($append['error'][1])) {
 				$traces = debug_backtrace();
-
 				$ts = '';
 				foreach($traces as $trace) {
 					$trace['file'] = str_replace('\\', '/', $trace['file']);

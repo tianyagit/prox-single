@@ -24,7 +24,7 @@ if ($do == 'save') {
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
 		'modules' => array_merge($modules, $wxapp),
-		'templates' => $_GPC['templates']
+		'templates' => $_GPC['templates'],
 	);
 	if (user_is_vice_founder()) {
 		$package_info['owner_uid'] = $_W['uid'];

@@ -94,11 +94,6 @@ function user_is_founder($uid) {
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	if (in_array($uid, $founders)) {
 		return true;
-	} else {
-		$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
-		if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-			return true;
-		}
 	}
 	return false;
 }

@@ -71,7 +71,6 @@ if ($do == 'post') {
 		$group_info['package'] = iunserializer($group_info['package']);
 		if (!empty($group_info['package']) && in_array(-1, $group_info['package'])) $group_info['check_all'] = true;
 	}
-
 	$packages = uni_groups();
 	if (!empty($packages)) {
 		foreach ($packages as $key => &$package_val) {
@@ -88,7 +87,6 @@ if ($do == 'post') {
 			}
 		}
 	}
-
 	unset($package_val);
 	if (checksubmit('submit')) {
 		if (empty($_GPC['name'])) {

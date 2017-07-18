@@ -52,13 +52,10 @@ if (checksubmit()) {
 		'groupid' => $group_id,
 		'starttime' => TIMESTAMP,
 		'endtime' => $timeadd,
-		'founder_groupid' => intval($_GPC['founder_groupid'])
 	);
-	$data['owner_uid'] = user_get_uid_byname($vice_founder_name);
 	if (user_is_vice_founder()) {
 		$data['owner_uid'] = $_W['uid'];
 	}
-
 	$uid = user_register($data);
 	if ($uid > 0) {
 		unset($data);
