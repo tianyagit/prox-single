@@ -32,7 +32,7 @@ if ($do == 'display') {
 	);
 
 	$condition['type'] = $type_condition[ACCOUNT_TYPE];
-	$condition['order'] = " a.`acid` DESC";
+	$condition['order'] = ", a.`acid` DESC";
 
 	$account_lists = uni_account_list($condition, array($pindex, $psize));
 	$list = $account_lists['list'];
