@@ -991,10 +991,11 @@ function uni_account_list($condition, $pager) {
 	$sql .= $order_by;
 	$sql .= ", a.`uniacid` DESC ";
 
-	$list = pdo_fetchall(sprintf($sql, '*') . $limit, $params);
+	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
 	
 	if (!empty($list)) {
 		foreach($list as &$account) {
+			$account = uni_fetch($account['uniacid']);
 			$account['url'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);

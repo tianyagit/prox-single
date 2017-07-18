@@ -54,8 +54,10 @@ if ($do == 'display') {
 	}
 	
 	$account_list = uni_account_list($condition, array($pindex, $psize));
-	
-	iajax(0, $account_list);
+
+	if ($_W['isajax'] && $_W['ispost']) {
+		iajax(0, $account_list);
+	}
 }
 
 template('account/display');
