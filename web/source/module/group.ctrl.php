@@ -71,6 +71,7 @@ if ($do == 'display') {
 	} else {
 		$modules_group_list = uni_groups();
 	}
+	
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
 			if (empty($group['modules'])) {
