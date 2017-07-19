@@ -238,7 +238,7 @@ function module_save_group_package($package) {
 	if (user_is_vice_founder()) {
 		$package['owner_uid'] = $_W['uid'];
 	}
-	if (!empty($package_info['modules'])) {
+	if (!empty($package['modules'])) {
 		$package['modules'] = iserializer($package['modules']);
 	}
 
