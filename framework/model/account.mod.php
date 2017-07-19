@@ -1040,6 +1040,7 @@ function uni_account_list($condition, $pager) {
 	$sql .= ", a.`uniacid` DESC ";
 	
 	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
+	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'));
 
 	if (!empty($list)) {
 		foreach($list as &$account) {
