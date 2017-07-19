@@ -114,7 +114,12 @@ function user_is_vice_founder() {
  * @param $uid
  * @return bool
  */
-function user_permanent_delete($uid) {
+function user_delete($uid, $is_recycle = false) {
+	if (!empty($is_recycle)) {
+		pdo_update('users', array('status' => 3) , array('uid' => $uid));
+		return true;
+	}
+
 	load()->model('cache');
 	$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
 	if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {

@@ -117,12 +117,11 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 			itoast('更新成功！', referer(), 'success');
 			break;
 		case 'recycle'://删除用户到回收站
-			$data = array('status' => 3);
-			pdo_update('users', $data , array('uid' => $uid));
+			user_delete($uid, true);
 			itoast('更新成功！', referer(), 'success');
 			break;
 		case 'recycle_delete'://永久删除用户
-			$delete_user = user_permanent_delete($uid);
+			user_delete($uid);
 			itoast('删除成功！', referer(), 'success');
 			break;
 		case 'recycle_restore':
