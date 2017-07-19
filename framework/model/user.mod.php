@@ -279,9 +279,9 @@ function user_group() {
 }
 
 /**
- *获取某一用户组下详细信息
- *@param  number $groupid 用户组ID
- *@return array
+ * 获取某一用户组下详细信息
+ * @param  number $groupid 用户组ID
+ * @return array
  */
 function user_group_detail_info($groupid = 0) {
 	$groupid = is_array($groupid) ? 0 : intval($groupid);
