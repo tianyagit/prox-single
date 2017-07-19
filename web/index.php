@@ -232,8 +232,12 @@ function _forward($c, $a) {
 function _calc_current_frames(&$frames) {
 	global $controller, $action;
 	if (! empty($frames['section']) && is_array($frames['section'])) {
-		foreach ($frames['section'] as &$frame) {
+		foreach ($frames['section'] as $frame_section_id => &$frame) {
 			if (empty($frame['menu'])) {
+				continue;
+			}
+			if (user_is_vice_founder() && $frame_section_id == 'acticle') {
+				unset($frames['section'][$frame_section_id]);
 				continue;
 			}
 			foreach ($frame['menu'] as &$menu) {
