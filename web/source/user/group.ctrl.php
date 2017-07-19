@@ -74,12 +74,6 @@ if ($do == 'post') {
 	$packages = uni_groups();
 	if (!empty($packages)) {
 		foreach ($packages as $key => &$package_val) {
-			if (user_is_vice_founder()) {
-				if ($package_val['owner_uid'] != $_W['uid']) {
-					unset($packages[$key]);
-					continue;
-				}
-			}
 			if (!empty($group_info['package']) && in_array($key, $group_info['package'])) {
 				$package_val['checked'] = true;
 			} else {
