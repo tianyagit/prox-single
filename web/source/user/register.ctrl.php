@@ -71,7 +71,7 @@ if(checksubmit()) {
 		$member['endtime'] = strtotime($timelimit . ' days');
 	}
 	$member['starttime'] = TIMESTAMP;
-	
+	$member['owner_uid'] = pdo_getcolumn('users', array('uid' => $owner_uid), 'uid');
 	$uid = user_register($member);
 	if($uid > 0) {
 		unset($member['password']);

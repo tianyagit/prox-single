@@ -203,6 +203,10 @@ if($step == 1) {
 			} else {
 				uni_user_account_role($uniacid, $uid, ACCOUNT_MANAGE_NAME_OWNER);
 			}
+			$user_vice_id = pdo_getcolumn('users', array('uid' => $uid), 'owner_uid');
+			if ($_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER && !empty($user_vice_id)) {
+				uni_user_account_role($uniacid, $user_vice_id, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+			}
 		}
 		if (!empty($_GPC['signature'])) {
 			$signature = trim($_GPC['signature']);
