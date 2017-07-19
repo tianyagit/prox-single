@@ -31,7 +31,7 @@ if ($do == 'edit_base') {
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);
 	$user['endtype'] = $user['endtime'] == 0 ? 1 : 2;
-	$user['url'] = $_W['siteroot'] . 'index.php?c=user&a=register&uid=' . $uid;
+	$user['url'] = $_W['siteroot'] . 'index.php?c=user&a=register&owner_uid=' . $uid;
 	if (!empty($profile)) {
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
