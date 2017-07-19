@@ -64,7 +64,7 @@ class WeiXinPay extends pay{
 		if(!is_array($result)) {
 			return error(-1, 'xml结构错误');
 		}
-		if(isset($result['return_code']) && $result['return_code'] != 'SUCCESS') {
+		if((isset($result['return_code']) && $result['return_code'] != 'SUCCESS') || ($result['err_code'] == 'ERROR' && !empty($result['err_code_des']))) {
 			$msg = empty($result['return_msg']) ? $result['err_code_des'] : $result['return_msg'];
 			return error(-1, $msg);
 		}
