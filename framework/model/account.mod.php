@@ -258,10 +258,10 @@ function uni_groups($groupids = array()) {
 		$condition = ' WHERE uniacid = 0';
 		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
 		if (in_array('-1', $groupids)) {
-			$list[-1] = array('id' => -1, 'name' => '所有服务');
+			$list[-1] = array('id' => -1, 'name' => '所有服务', 'modules' => array('title' => '系统所有模块'), 'templates' => array('title' => '系统所有模板'));
 		}
 		if (in_array('0', $groupids)) {
-			$list[0] = array('id' => 0, 'name' => '基础服务');
+			$list[0] = array('id' => 0, 'name' => '基础服务', 'modules' => array('title' => '系统模块'), 'templates' => array('title' => '系统模板'));
 		}
 		if (!empty($list)) {
 			foreach ($list as $k=>&$row) {
@@ -1044,7 +1044,7 @@ function uni_account_list($condition, $pager) {
 	$sql .= ", a.`uniacid` DESC ";
 	
 	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
-	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'));
+	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'), $params);
 	
 	if (!empty($list)) {
 		foreach($list as &$account) {
