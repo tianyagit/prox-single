@@ -45,17 +45,18 @@ if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 	$condition = array();
-	$keyword = trim($_GPC['keyword']);
-
 	$condition['type'] = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH);
+	
+	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
-		$condition['name'] = trim($_GPC['keyword']);
+		$condition['name'] = $keyword;
 	}
+	
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$condition['letter'] = trim($_GPC['letter']);
 	}
 
-	$account_lists = uni_account_list($condition, array($pindex, $psize), 'account', 'uni_account');
+	$account_lists = uni_account_list($condition, array($pindex, $psize));
 	$account_list = $account_lists['list'];
 
 	if ($_W['isajax'] && $_W['ispost']) {

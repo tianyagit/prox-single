@@ -18,25 +18,26 @@ $account_info = uni_user_account_permission();
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
-	$start = ($pindex - 1) * $psize;
 
 	$condition = array();
-	$keyword = trim($_GPC['keyword']);
+	
 
 	$type_condition = array(
 		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL),
 		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
-		ACCOUNT_TYPE_OFFCIAL_AUTH => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
 	);
 	$condition['type'] = $type_condition[ACCOUNT_TYPE];
-
+	
+	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
 		$condition['name'] = trim($_GPC['keyword']);
 	}
+	
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$condition['letter'] = trim($_GPC['letter']);
 	}
-	$account_lists = uni_account_list($condition, array($pindex, $psize), 'manage', uni_account_tablename(ACCOUNT_TYPE));
+	
+	$account_lists = uni_account_list($condition, array($pindex, $psize));
 	$list = $account_lists['list'];
 	$total = $account_lists['total'];
 	$pager = pagination($total, $pindex, $psize);

@@ -6,6 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('user');
+load()->model('account');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
@@ -20,29 +21,19 @@ if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)array_keys($_GPC['wxapp']);
+
+	if (empty($_GPC['name'])) {
+		iajax(1, '请输入套餐名');
+	}
+
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
 		'modules' => array_merge($modules, $wxapp),
 		'templates' => $_GPC['templates'],
 	);
-	if (user_is_vice_founder()) {
-		$package_info['owner_uid'] = $_W['uid'];
-	}
-	if (empty($package_info['name'])) {
-		iajax(1, '请输入套餐名');
-	}
 
-	if (!empty($package_info['modules'])) {
-		$package_info['modules'] = iserializer($package_info['modules']);
-	}
-	if (!empty($package_info['templates'])) {
-		$templates = array();
-		foreach ($package_info['templates'] as $template) {
-			$templates[] = $template['id'];
-		}
-		$package_info['templates'] = iserializer($templates);
-	}
+	$package_info = uni_combination_package($package_info);
 
 	if (!empty($package_info['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
@@ -80,6 +71,7 @@ if ($do == 'display') {
 	} else {
 		$modules_group_list = uni_groups();
 	}
+	
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
 			if (empty($group['modules'])) {
