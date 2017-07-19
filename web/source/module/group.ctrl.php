@@ -22,10 +22,6 @@ if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)array_keys($_GPC['wxapp']);
 
-	if (empty($_GPC['name'])) {
-		iajax(1, '请输入套餐名');
-	}
-
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
@@ -35,8 +31,8 @@ if ($do == 'save') {
 
 	$package_info = module_save_group_package($package_info);
 
-	if (empty($package_info)) {
-		iajax(1, '套餐名已存在', '');
+	if (is_error($package_info)) {
+		iajax(1, $package_info['message'], '');
 	}
 	iajax(0, '', url('module/group'));
 }

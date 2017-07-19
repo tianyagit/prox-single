@@ -235,6 +235,11 @@ function module_save_group_package($package) {
 	global $_W;
 	load()->model('user');
 	load()->model('cache');
+
+	if (empty($package['name'])) {
+		return error(-1, '请输入套餐名');
+	}
+
 	if (user_is_vice_founder()) {
 		$package['owner_uid'] = $_W['uid'];
 	}
@@ -257,7 +262,7 @@ function module_save_group_package($package) {
 	}
 
 	if (!empty($name_exist)) {
-		return false;
+		return error(-1, '套餐名已存在');
 	}
 
 	if (!empty($package['id'])) {
@@ -268,7 +273,7 @@ function module_save_group_package($package) {
 	}
 
 	cache_build_uni_group();
-	return true;
+	return error(0, '添加成功');
 }
 /**
  * 获取指定模块及模块信息
