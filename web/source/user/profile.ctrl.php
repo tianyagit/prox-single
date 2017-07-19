@@ -163,7 +163,7 @@ if ($do == 'base') {
 	}
 
 	//应用模版权限
-	$groups = pdo_getall('users_group', array(), array('id', 'name'), 'id');
+	$groups = user_group();
 	$group_info = user_group_detail_info($user['groupid']);
 
 	//使用帐号列表
