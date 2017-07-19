@@ -63,9 +63,5 @@ if (checksubmit()) {
 	}
 	itoast('增加失败，请稍候重试或联系网站管理员解决！', '', '');
 }
-$group_condition = array();
-if (user_is_vice_founder()) {
-	$group_condition['owner_uid'] = $_W['uid'];
-}
-$groups = pdo_getall('users_group', $group_condition, array('id', 'name'));
+$groups = user_group();
 template('user/create');
