@@ -45,7 +45,7 @@ if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 	$condition = array();
-	
+
 	if (!empty($keyword)) {
 		$condition['name'] = trim($_GPC['keyword']);
 	}

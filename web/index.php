@@ -32,7 +32,11 @@ $_W['acl'] = $acl = array(
 		'founder' => array(
 			'news',
 			'notice' 
-		) 
+		),
+		'vice-founder' => array(
+			'notice-show',
+			'news-show' 
+		),
 	),
 	'cloud' => array(
 		'default' => 'touch',
@@ -194,12 +198,18 @@ if (is_array($acl[$controller]['direct']) && in_array($action, $acl[$controller]
 	require _forward($controller, $action);
 	exit();
 }
+
 if (is_array($acl[$controller]['founder']) && in_array($action, $acl[$controller]['founder'])) {
 	// 如果这个目标被配置为需要创始人权限, 则判断创始人权限
 	if (! $_W['isfounder']) {
 		message('不能访问, 需要创始人权限才能访问.');
 	}
 }
+//角色访问控制列表存在的，才可以访问
+if (user_is_vice_founder($_W['uid']) && is_array($acl[$controller]['vice-founder']) && !in_array($action, $acl[$controller]['vice-founder'])) {
+	message('不能访问, 需要相应的权限才能访问.');
+}
+
 checklogin();
 // 用户权限判断
 require _forward($controller, $action);
