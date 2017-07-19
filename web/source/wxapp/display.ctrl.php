@@ -54,9 +54,11 @@ if ($do == 'home') {
 		$condition['letter'] = trim($_GPC['letter']);
 	}
 
-	$wxapp_account_lists = uni_account_list($condition, array($pindex, $psize), 'wxapp', 'uni_account');
+	$wxapp_account_lists = uni_account_list($condition, array($pindex, $psize));
+	
 	$wxapp_lists = $wxapp_account_lists['list'];
 	$total = $wxapp_account_lists['total'];
+	
 	if (!empty($wxapp_lists)) {
 		$wxapp_cookie_uniacids = array();
 		if (!empty($_GPC['__wxappversionids'])) {
