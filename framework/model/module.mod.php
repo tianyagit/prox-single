@@ -242,10 +242,6 @@ function module_save_group_package($package) {
 		$package['modules'] = iserializer($package['modules']);
 	}
 
-	if (!empty($package['modules'])) {
-		$package['modules'] = iserializer($package['modules']);
-	}
-
 	if (!empty($package['templates'])) {
 		$templates = array();
 		foreach ($package['templates'] as $template) {
