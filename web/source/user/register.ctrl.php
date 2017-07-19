@@ -64,7 +64,8 @@ if(checksubmit()) {
 		$member['groupid'] = pdo_fetchcolumn('SELECT id FROM '.tablename('users_group').' ORDER BY id ASC LIMIT 1');
 		$member['groupid'] = intval($member['groupid']);
 	}
-	$group = pdo_fetch('SELECT * FROM '.tablename('users_group').' WHERE id = :id', array(':id' => $member['groupid']));
+	$group = user_group_detail_info($member['groupid']);
+	
 	$timelimit = intval($group['timelimit']);
 	if($timelimit > 0) {
 		$member['endtime'] = strtotime($timelimit . ' days');

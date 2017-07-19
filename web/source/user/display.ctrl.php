@@ -87,7 +87,7 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 		$user['module_nums'] = count($user['module_num']) + $system_module_num;
 	}
 	unset($user);
-	$usergroups = pdo_getall('users_group', array(), array(), 'id');
+	$usergroups = user_group();
 	template('user/display');
 }
 

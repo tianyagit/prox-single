@@ -34,7 +34,7 @@ if (checksubmit()) {
 		itoast('请选择所属用户组', '', '');
 	}
 	if ($group_id > 0) {
-		$group = pdo_fetch("SELECT id,timelimit FROM ".tablename('users_group')." WHERE id = :id", array(':id' => intval($_GPC['groupid'])));
+		$group = user_group_detail_info(intval($_GPC['groupid']));
 		if (empty($group)) {
 			itoast('会员组不存在', '', '');
 		}
