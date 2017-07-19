@@ -49,7 +49,7 @@ if ($do == 'display') {
 	
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
-		$condition['name'] = $keyword;
+		$condition['keyword'] = $keyword;
 	}
 	
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
