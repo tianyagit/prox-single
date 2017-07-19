@@ -23,6 +23,8 @@ if($step == 1) {
 		$max_tsql = "SELECT COUNT(*) FROM " . tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.default_acid = b.acid LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid WHERE a.default_acid <> 0 AND c.uid = :uid AND b.isdeleted <> 1";
 		$max_pars[':uid'] = $_W['uid'];
 		$max_total = pdo_fetchcolumn($max_tsql, $max_pars);
+
+
 		$maxaccount = pdo_fetchcolumn('SELECT `maxaccount` FROM '. tablename('users_group') .' WHERE id = :groupid', array(':groupid' => $_W['user']['groupid']));
 		if($max_total >= $maxaccount) {
 			$authurl = "javascript:alert('您所在会员组最多只能添加 {$maxaccount} 个公众号);";
@@ -33,7 +35,7 @@ if($step == 1) {
 		$account_platform = new WeiXinPlatform();
 		$authurl = $account_platform->getAuthLoginUrl();
 	}
-}elseif ($step == 2) {
+} elseif ($step == 2) {
 	if (!empty($uniacid)) {
 		$state = uni_permission($uid, $uniacid);
 		if ($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
@@ -178,7 +180,7 @@ if($step == 1) {
 		}
 		$result['username'] = $user['username'];
 		$result['uid'] = $user['uid'];
-		$result['group'] = pdo_fetch("SELECT id, name, package FROM ".tablename('users_group')." WHERE id = :id", array(':id' => $user['groupid']));
+		$result['group'] = user_group_detail_info($user['groupid']);
 		$result['package'] = iunserializer($result['group']['package']);
 		iajax(0, $result, '');
 		exit;
@@ -318,13 +320,7 @@ if($step == 1) {
 		$owner['extend']['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']));
 	}
 	$extend['package'] = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
-	$where = '';
-	if (user_is_vice_founder()) {
-		$user_own_groupids = pdo_getall('users', array('owner_uid' => $_W['uid']), 'groupid', 'groupid');
-		$user_own_groupids = implode(',', array_keys($user_own_groupids));
-		$where = " WHERE `owner_uid` = {$_W['uid']} OR `id` IN ({$user_own_groupids})";
-	}
-	$groups = pdo_fetchall("SELECT id, name, package FROM ".tablename('users_group') ." {$where}  ORDER BY id ASC", array(), 'id');
+	$groups = user_group();
 	$modules = pdo_fetchall("SELECT mid, name, title FROM " . tablename('modules') . ' WHERE issystem != 1', array(), 'name');
 	$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
 } elseif($step == 4) {
