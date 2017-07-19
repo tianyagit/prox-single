@@ -65,13 +65,8 @@ if ($do == 'display') {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
 	}
 	$modules = user_modules($_W['uid']);
-
-	if (user_is_vice_founder()) {
-		$modules_group_list = uni_vice_groups();
-	} else {
-		$modules_group_list = uni_groups();
-	}
 	
+	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
 			if (empty($group['modules'])) {
