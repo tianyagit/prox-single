@@ -63,8 +63,14 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 
 		$user['module_num'] =array();
 		$group = pdo_get('users_group', array('id' => $user['groupid']));
+		$user_role = user_is_founder($user['uid']);
+		if ($user_role) {
+			$user['maxaccount'] = '不限';
+		}
 		if (!empty($group)) {
-			$user['maxaccount'] = in_array($user['uid'], $founders) ? '不限' : $group['maxaccount'];
+			if (empty($user_role)) {
+				$user['maxaccount'] = $group['maxaccount'];
+			}
 			$user['groupname'] = $group['name'];
 			$package = iunserializer($group['package']);
 			$group['package'] = uni_groups($package);
@@ -77,9 +83,6 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 			}
 		}
 
-		if ($user['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-			$user['maxaccount'] = '不限';
-		}
 		$user['module_num'] = array_unique($user['module_num']);
 		$user['module_nums'] = count($user['module_num']) + $system_module_num;
 	}
