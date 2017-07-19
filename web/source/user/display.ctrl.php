@@ -28,7 +28,7 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 			break;
 		default:
 			uni_user_permission_check('system_user');
-			$condition = ' WHERE u.status = 2 ';
+			$condition = ' WHERE u.status = 2 AND u.founder_groupid = 0';
 			break;
 	}
 	if (user_is_vice_founder()) {
