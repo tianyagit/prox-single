@@ -122,26 +122,8 @@ if (in_array($do, array('recycle', 'recycle_delete', 'recycle_restore', 'check_p
 			itoast('更新成功！', referer(), 'success');
 			break;
 		case 'recycle_delete'://永久删除用户
-			$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
-			if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-				pdo_update('users', array('owner_uid' => 0), array('owner_uid' => $uid));
-				pdo_update('users_group', array('owner_uid' => 0), array('owner_uid' => $uid));
-				pdo_update('uni_group', array('owner_uid' => 0), array('owner_uid' => $uid));
-			}
-			if (pdo_delete('users', array('uid' => $uid)) === 1) {
-				//把该用户所属的公众号返给创始人
-				$user_set_account = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
-				if (!empty($user_set_account)) {
-					foreach ($user_set_account as $account) {
-						cache_build_account_modules($account['uniacid']);
-					}
-				}
-				pdo_delete('uni_account_users', array('uid' => $uid));
-				pdo_delete('users_profile', array('uid' => $uid));
-				itoast('删除成功！', referer(), 'success');
-			} else {
-				itoast('删除失败！', referer(), 'error');
-			}
+			$delete_user = user_permanent_delete($uid);
+			itoast('删除成功！', referer(), 'success');
 			break;
 		case 'recycle_restore':
 			$data = array('status' => 2);
