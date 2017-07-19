@@ -133,10 +133,10 @@ if($step == 1) {
 			}
 			pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
 			if (empty($_W['isfounder'])) {
-				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['uid'], 'role' => 'owner'));
+				uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
 			}
 			if (!empty($_W['user']['owner_uid'])) {
-				pdo_insert('uni_account_users', array('uniacid' => $uniacid, 'uid' => $_W['user']['owner_uid'], 'role' => 'vice_founder'));
+				uni_user_account_role($uniacid, $_W['user']['owner_uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 			}
 		} else {
 			pdo_update('account', array('type' => ACCOUNT_TYPE_OFFCIAL_NORMAL, 'hash' => ''), array('acid' => $acid, 'uniacid' => $uniacid));
@@ -198,8 +198,7 @@ if($step == 1) {
 			if (!empty($owner)) {
 				pdo_update('uni_account_users', array('uid' => $uid), array('uniacid' => $uniacid, 'role' => 'owner'));
 			} else {
-				$account_users = array('uniacid' => $uniacid, 'uid' => $uid, 'role' => 'owner');
-				pdo_insert('uni_account_users', $account_users);
+				uni_user_account_role($uniacid, $uid, ACCOUNT_MANAGE_NAME_OWNER);
 			}
 		}
 		if (!empty($_GPC['signature'])) {
