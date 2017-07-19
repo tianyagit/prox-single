@@ -1042,7 +1042,7 @@ function uni_account_list($condition, $pager) {
 
 	$sql .= $order_by;
 	$sql .= ", a.`uniacid` DESC ";
-	
+
 	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
 	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'), $params);
 	
