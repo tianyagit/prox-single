@@ -315,6 +315,22 @@ function uni_groups($groupids = array()) {
 }
 
 /**
+ * 获取一个或多个公众号套餐信息
+ * @param array $groupids 公众号套餐ID
+ * @return array uni_vice_groups 副创始人套餐信息列表
+ */
+function uni_vice_groups($groupids = array()) {
+	global $_W;
+	$modules_group_list = uni_groups($groupids);
+	foreach ($modules_group_list as $group_key => &$group) {
+		if ($group['owner_uid'] != $_W['uid']) {
+			unset($modules_group_list[$group_key]);
+			continue;
+		}
+	}
+	return $modules_group_list;
+}
+/**
  * 获取当前套餐可用微站模板
  * @return array 模板列表
  */
@@ -946,6 +962,62 @@ function uni_account_save_switch($uniacid) {
 	cache_write($cache_key, $cache_lastaccount);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;
+}
+
+function uni_account_list($condition, $pager) {
+	global $_W;
+	$params = array(
+		':type_1' =>  ACCOUNT_TYPE_OFFCIAL_NORMAL,
+		':type_2' => ACCOUNT_TYPE_OFFCIAL_AUTH,
+	);
+	$sql = "SELECT %s FROM ". tablename('uni_account'). " as a LEFT JOIN " .
+			tablename('account'). " as b ON a.uniacid = b.uniacid AND a.default_acid = b.acid ";
+	if (!empty($pager)) {
+		$limit = " LIMIT " . ($pager[0] - 1) * $pager[1] . ',' . $pager[1];
+	}
+	//副始人和普通用户一样儿取数据
+	if (empty($_W['isfounder']) || user_is_vice_founder()) {
+		$sql .= " LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid 
+				WHERE a.default_acid <> 0 AND c.uid = :uid";
+		$params[':uid'] = $_W['uid'];
+		
+		$order_by = " ORDER BY c.`rank` DESC";
+	} else {
+		$sql .= " WHERE a.default_acid <> 0";
+		
+		$order_by = " ORDER BY a.`rank` DESC";
+	}
+	
+	$sql .= " AND b.isdeleted <> 1 AND (b.type = :type_1 OR b.type = :type_2)";
+	
+	if (!empty($condition['keyword'])) {
+		$sql .=" AND a.`name` LIKE :name";
+		$params[':name'] = "%{$condition['keyword']}%";
+	}
+	
+	if(isset($condition['letter'])) {
+		if (!empty($condition['letter'])) {
+			$sql .= " AND a.`title_initial` = :title_initial";
+			$params[':title_initial'] = $condition['letter'];
+		} else {
+			$sql .= " AND a.`title_initial` = ''";
+		}
+	}
+	
+	$sql .= $order_by;
+	$sql .= ", a.`uniacid` DESC ";
+
+	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
+	
+	if (!empty($list)) {
+		foreach($list as &$account) {
+			$account = uni_fetch($account['uniacid']);
+			$account['url'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
+			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
+			$account['setmeal'] = uni_setmeal($account['uniacid']);
+		}
+	}
+	return $list;
 }
 
 /**

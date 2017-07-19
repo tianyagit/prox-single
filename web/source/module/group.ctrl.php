@@ -43,6 +43,7 @@ if ($do == 'save') {
 		}
 		$package_info['templates'] = iserializer($templates);
 	}
+
 	if (!empty($package_info['id'])) {
 		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
 		if (!empty($name_exist)) {
@@ -73,16 +74,14 @@ if ($do == 'display') {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
 	}
 	$modules = user_modules($_W['uid']);
-	$modules_group_list = uni_groups();
 
+	if (user_is_vice_founder()) {
+		$modules_group_list = uni_vice_groups();
+	} else {
+		$modules_group_list = uni_groups();
+	}
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
-			if (user_is_vice_founder()) {
-				if ($group['owner_uid'] != $_W['uid']) {
-					unset($modules_group_list[$group_key]);
-					continue;
-				}
-			}
 			if (empty($group['modules'])) {
 				$group['modules'] = array();
 			}
