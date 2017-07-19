@@ -319,13 +319,7 @@ if($step == 1) {
 		$owner['extend']['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']));
 	}
 	$extend['package'] = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
-	$where = '';
-	if (user_is_vice_founder()) {
-		$user_own_groupids = pdo_getall('users', array('owner_uid' => $_W['uid']), 'groupid', 'groupid');
-		$user_own_groupids = implode(',', array_keys($user_own_groupids));
-		$where = " WHERE `owner_uid` = {$_W['uid']} OR `id` IN ({$user_own_groupids})";
-	}
-	$groups = pdo_fetchall("SELECT id, name, package FROM ".tablename('users_group') ." {$where}  ORDER BY id ASC", array(), 'id');
+	$groups = user_group();
 	$modules = pdo_fetchall("SELECT mid, name, title FROM " . tablename('modules') . ' WHERE issystem != 1', array(), 'name');
 	$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
 } elseif($step == 4) {

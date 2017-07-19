@@ -266,6 +266,19 @@ function user_level() {
 }
 
 /**
+ * 获取当前用户可用的用户组
+ */
+function user_group() {
+	if (user_is_vice_founder()) {
+		$condition = array(
+			'owner_uid' => $_W['uid'],
+		);
+	}
+	$groups = pdo_getall('users_group', $condition, array('id', 'name', 'package'), 'id', 'id ASC');
+	return $groups;
+}
+
+/**
  *获取某一用户组下详细信息
  *@param  number $groupid 用户组ID
  *@return array
