@@ -330,6 +330,35 @@ function uni_vice_groups($groupids = array()) {
 	}
 	return $modules_group_list;
 }
+
+/**
+ * 要添加套餐的组合信息
+ * @param array $package
+ * @return array
+ */
+function uni_combination_package($package = array()) {
+	global $_W;
+	load()->model('user');
+	if (user_is_vice_founder()) {
+		$package['owner_uid'] = $_W['uid'];
+	}
+	if (!empty($package_info['modules'])) {
+		$package['modules'] = iserializer($package['modules']);
+	}
+
+	if (!empty($package['modules'])) {
+		$package['modules'] = iserializer($package['modules']);
+	}
+
+	if (!empty($package['templates'])) {
+		$templates = array();
+		foreach ($package['templates'] as $template) {
+			$templates[] = $template['id'];
+		}
+		$package['templates'] = iserializer($templates);
+	}
+	return $package;
+}
 /**
  * 获取当前套餐可用微站模板
  * @return array 模板列表
@@ -966,35 +995,34 @@ function uni_account_save_switch($uniacid) {
 
 function uni_account_list($condition, $pager) {
 	global $_W;
-	$params = array(
-		':type_1' =>  ACCOUNT_TYPE_OFFCIAL_NORMAL,
-		':type_2' => ACCOUNT_TYPE_OFFCIAL_AUTH,
-	);
+	
 	$sql = "SELECT %s FROM ". tablename('uni_account'). " as a LEFT JOIN " .
 			tablename('account'). " as b ON a.uniacid = b.uniacid AND a.default_acid = b.acid ";
+	
 	if (!empty($pager)) {
 		$limit = " LIMIT " . ($pager[0] - 1) * $pager[1] . ',' . $pager[1];
 	}
+	
 	//副始人和普通用户一样儿取数据
 	if (empty($_W['isfounder']) || user_is_vice_founder()) {
-		$sql .= " LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid 
-				WHERE a.default_acid <> 0 AND c.uid = :uid";
+		$sql .= " LEFT JOIN ". tablename('uni_account_users')." as c ON a.uniacid = c.uniacid
+		WHERE a.default_acid <> 0 AND c.uid = :uid";
 		$params[':uid'] = $_W['uid'];
-		
+
 		$order_by = " ORDER BY c.`rank` DESC";
 	} else {
 		$sql .= " WHERE a.default_acid <> 0";
-		
+
 		$order_by = " ORDER BY a.`rank` DESC";
 	}
-	
-	$sql .= " AND b.isdeleted <> 1 AND (b.type = :type_1 OR b.type = :type_2)";
-	
+
+	$sql .= " AND b.isdeleted <> 1 ";
+
 	if (!empty($condition['keyword'])) {
 		$sql .=" AND a.`name` LIKE :name";
 		$params[':name'] = "%{$condition['keyword']}%";
 	}
-	
+
 	if(isset($condition['letter'])) {
 		if (!empty($condition['letter'])) {
 			$sql .= " AND a.`title_initial` = :title_initial";
@@ -1004,11 +1032,15 @@ function uni_account_list($condition, $pager) {
 		}
 	}
 	
+	if (!empty($condition['type'])) {
+		$sql .= " AND b.type IN (" . implode(',', $condition['type']) . ")";
+	}
+
 	$sql .= $order_by;
 	$sql .= ", a.`uniacid` DESC ";
-
-	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
 	
+	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
+
 	if (!empty($list)) {
 		foreach($list as &$account) {
 			$account = uni_fetch($account['uniacid']);
@@ -1017,7 +1049,11 @@ function uni_account_list($condition, $pager) {
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
 		}
 	}
-	return $list;
+	$result = array(
+		'list' => $list,
+		'total' => $total
+	);
+	return $result;
 }
 
 /**
