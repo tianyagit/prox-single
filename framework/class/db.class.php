@@ -10,7 +10,7 @@ define('PDO_DEBUG', true);
 class DB {
 	protected $pdo;
 	protected $cfg;
-	protected $tablepre='';
+	protected $tablepre;
 	protected $result;
 	protected $statement;
 	protected $errors = array();
