@@ -10,7 +10,7 @@ define('PDO_DEBUG', true);
 class DB {
 	protected $pdo;
 	protected $cfg;
-	protected $tablepre='';
+	protected $tablepre;
 	protected $result;
 	protected $statement;
 	protected $errors = array();
@@ -53,12 +53,7 @@ class DB {
 			include IA_ROOT . '/framework/library/pdo/PDO.class.php';
 			$dbclass = 'PDO';
 		}
-		$pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
-		if (DEVELOPMENT) {
-			$this->pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
-		} else {
-			$this->pdo = $pdo;
-		}
+		$this->pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
 		$this->pdo->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
 		$sql = "SET NAMES '{$cfg['charset']}';";
 		$this->pdo->exec($sql);

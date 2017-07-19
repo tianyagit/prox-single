@@ -102,30 +102,33 @@ function uni_accounts($uniacid = 0) {
  */
 function uni_fetch($uniacid = 0) {
 	global $_W;
+	load()->model('mc');
+	load()->model('user');
+	
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$cachekey = "uniaccount:{$uniacid}";
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		if(!isset($cache['isconnect'])){
-			$cache['isconnect'] = pdo_fetchcolumn('SELECT isconnect FROM ' . tablename('account') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
 			cache_write($cachekey, $cache);
 		}
 		return $cache;
 	}
 	$account = uni_account_default($uniacid);
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
-	load()->model('user');
 	$owner = user_single(array('uid' => $owneruid));
 	$account['uid'] = $owner['uid'];
+	
 	$account['starttime'] = $owner['starttime'];
 	$account['endtime'] = $owner['endtime'];
-	load()->model('mc');
 	$account['groups'] = mc_groups($uniacid);
-	$account['grouplevel'] = pdo_fetchcolumn('SELECT grouplevel FROM ' . tablename('uni_settings') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
+	
+	$account['setting'] = uni_setting($uniacid);
+	$account['grouplevel'] = $account['setting']['grouplevel'];
 
 	$account['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
-
+	
 	cache_write($cachekey, $account);
 	return $account;
 }
@@ -995,6 +998,7 @@ function uni_account_save_switch($uniacid) {
 
 function uni_account_list($condition, $pager) {
 	global $_W;
+	load()->model('wxapp');
 	
 	$sql = "SELECT %s FROM ". tablename('uni_account'). " as a LEFT JOIN " .
 			tablename('account'). " as b ON a.uniacid = b.uniacid AND a.default_acid = b.acid ";
@@ -1041,13 +1045,35 @@ function uni_account_list($condition, $pager) {
 	
 	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
 	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'));
-
+	
 	if (!empty($list)) {
 		foreach($list as &$account) {
 			$account = uni_fetch($account['uniacid']);
 			$account['url'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
 			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);
+			
+			if (!empty($settings['notify'])) {
+				$account['sms'] = $account['setting']['notify']['sms']['balance'];
+			} else {
+				$account['sms'] = 0;
+			}
+			
+			if (in_array(ACCOUNT_TYPE_APP_NORMAL, $condition['type'])) {
+				$account['versions'] = wxapp_get_some_lastversions($account['uniacid']);
+				$account['current_version'] = array();
+				if (!empty($account['versions'])) {
+					foreach ($account['versions'] as $version) {
+						if (!empty($wxapp_cookie_uniacids) && !empty($wxappversionids[$version['uniacid']]) && in_array($version['id'], $wxappversionids[$version['uniacid']])) {
+							$account['current_version'] = $version;
+							break;
+						}
+					}
+					if (empty($account['current_version'])) {
+						$account['current_version'] = $account['versions'][0];
+					}
+				}
+			}
 		}
 	}
 	$result = array(
