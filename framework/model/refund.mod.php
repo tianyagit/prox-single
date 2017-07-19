@@ -6,6 +6,12 @@
 
 defined('IN_IA') or exit('Access Denied');
 
+/**
+ * 判断订单是否符合退款条件
+ * @params string $module  需要退款的模块
+ * @params string $tid 模块内订单id
+ * @return bool true 成功返回true，失败返回error结构错误
+ */
 function refund_order_can_refund($module, $tid) {
 	global $_W;
 	$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'tid' => $tid, 'module' => $module));
@@ -22,6 +28,14 @@ function refund_order_can_refund($module, $tid) {
 	return true;
 }
 
+/**
+ * 创建退款订单
+ * @params string $tid  模块内订单id
+ * @params string $module 需要退款的模块
+ * @params string $fee 退款金额
+ * @params string $reason 退款原因
+ * @return int  成功返回退款单id，失败返回error结构错误
+ */
 function refund_create_order($tid, $module, $fee = 0, $reason = '') {
 	load()->classs('pay');
 	load()->model('module');
@@ -46,6 +60,11 @@ function refund_create_order($tid, $module, $fee = 0, $reason = '') {
 	return pdo_insertid();
 }
 
+/**
+ * 退款
+ * @params int $refund_id  退款单id
+ * @return array  成功返回退款详情，失败返回error结构错误
+ */
 function refund($refund_id) {
 	global $_W;
 	$refundlog = pdo_get('core_refundlog', array('id' => $refund_id));
@@ -62,9 +81,14 @@ function refund($refund_id) {
 			return $response;
 		}
 	}
-	return false;
+	return error(1, '此订单退款方式不存在');
 }
 
+/**
+ * 构造微信退款参数
+ * @params int $refund_id  退款单id
+ * @return array  成功返回请求微信退款接口所需参数，失败返回error结构错误
+ */
 function reufnd_wechat_build($refund_id) {
 	global $_W;
 	$setting = uni_setting_load('payment', $_W['uniacid']);
