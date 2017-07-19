@@ -330,6 +330,35 @@ function uni_vice_groups($groupids = array()) {
 	}
 	return $modules_group_list;
 }
+
+/**
+ * 要添加套餐的组合信息
+ * @param array $package
+ * @return array
+ */
+function uni_combination_package($package = array()) {
+	global $_W;
+	load()->model('user');
+	if (user_is_vice_founder()) {
+		$package['owner_uid'] = $_W['uid'];
+	}
+	if (!empty($package_info['modules'])) {
+		$package['modules'] = iserializer($package['modules']);
+	}
+
+	if (!empty($package['modules'])) {
+		$package['modules'] = iserializer($package['modules']);
+	}
+
+	if (!empty($package['templates'])) {
+		$templates = array();
+		foreach ($package['templates'] as $template) {
+			$templates[] = $template['id'];
+		}
+		$package['templates'] = iserializer($templates);
+	}
+	return $package;
+}
 /**
  * 获取当前套餐可用微站模板
  * @return array 模板列表
