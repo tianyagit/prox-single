@@ -304,6 +304,7 @@ function user_level() {
  * 获取当前用户可用的用户组
  */
 function user_group() {
+	global $_W;
 	if (user_is_vice_founder()) {
 		$condition = array(
 			'owner_uid' => $_W['uid'],
