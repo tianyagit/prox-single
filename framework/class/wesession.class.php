@@ -40,17 +40,17 @@ class WeSession implements SessionHandlerInterface {
 		
 		$cache_setting = $GLOBALS['_W']['config']['setting'];
 		if (extension_loaded('memcache') && !empty($cache_setting['memcache']['server']) && !empty($cache_setting['memcache']['session'])) {
-			self::getHandler('memcache');
+			self::setHandler('memcache');
 		} elseif (extension_loaded('redis') && !empty($cache_setting['redis']['server']) && !empty($cache_setting['redis']['session'])) {
-			self::getHandler('redis');
+			self::setHandler('redis');
 		} else {
-			self::getHandler('mysql');
+			self::setHandler('mysql');
 		}
 		register_shutdown_function('session_write_close');
 		session_start();
 	}
 	
-	public static function getHandler($type = 'mysql') {
+	public static function setHandler($type = 'mysql') {
 		$classname = "WeSession{$type}";
 		if (class_exists($classname)) {
 			$sess = new $classname;
