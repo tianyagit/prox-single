@@ -281,10 +281,7 @@ function buildframes($framename = ''){
 						}
 					}
 				}
-				if ($nav_id == 'system' && $section_id == 'article' && user_is_vice_founder()) {
-					$frames['system']['section'][$section_id]['is_display'] = false;
-					continue;
-				}
+
 				if ($nav_id != 'wxapp') {
 					$section_show = false;
 					$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
@@ -300,6 +297,10 @@ function buildframes($framename = ''){
 					}
 				}
 			}
+		}
+	} else {
+		if (user_is_vice_founder()) {
+			$frames['system']['section']['article']['is_display'] = false;
 		}
 	}
 	//进入模块界面后权限
