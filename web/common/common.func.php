@@ -135,12 +135,7 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		$account = uni_site_account();
-		if (empty($account)) {
-			itoast('', url('account/post-step'), 'info');
-		}
-		uni_account_switch($account['uniacid']);
-		$_W['uniacid'] = $account['uniacid'];
+		itoast('', url('account/post-step'), 'info');
 	}
 }
 
@@ -150,12 +145,7 @@ function checkaccount() {
 function checkwxapp() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		$account = uni_site_account(ACCOUNT_TYPE_APP_NORMAL);
-		if (empty($account)) {
-			itoast('', url('wxapp/post/design_method'), 'info');
-		}
-		uni_account_switch($account['uniacid']);
-		$_W['uniacid'] = $account['uniacid'];
+		itoast('', url('wxapp/post/design_method'), 'info');
 	}
 }
 

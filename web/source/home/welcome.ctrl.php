@@ -20,17 +20,6 @@ if ($do == 'platform' || $do == 'ext') {
 }
 
 if ($do == 'platform') {
-	$last_uniacid = uni_account_last_switch();
-	if (empty($last_uniacid)) {
-		$account = uni_site_account();
-		if (empty($account)) {
-			itoast('', url('account/post-step'), 'info');
-		}
-		$last_uniacid = $account['uniacid'];
-	}
-	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
-		uni_account_switch($last_uniacid,  url('home/welcome'));
-	}
 	define('FRAME', 'account');
 
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
@@ -44,7 +33,7 @@ if ($do == 'platform') {
 	define('FRAME', 'system');
 	$_W['page']['title'] = '欢迎页 - 系统管理';
 	if(!$_W['isfounder']){
-		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
+		header('Location: ' . url('account/post', array('account_type' => 1)), true);
 		exit;
 	}
 	$reductions = system_database_backup();

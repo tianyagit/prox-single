@@ -6,7 +6,8 @@
 defined('IN_IA') or exit('Access Denied');
 
 /**
- * 获取当前站点公众号OR小程序
+ * 获取当前站点公众号OR小程序的uniacid
+ * @param boolean $all_info 是否获取详细信息
  */
 function uni_site_account($type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 	$result = array();
@@ -18,7 +19,7 @@ function uni_site_account($type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 	}
 	$sql = "SELECT * FROM ". tablename('uni_account'). " as a LEFT JOIN". tablename('account'). " as b ON a.uniacid = b.uniacid AND a.default_acid = b.acid {$condition} ORDER BY a.`uniacid` DESC LIMIT 1";
 	$site_account = pdo_fetch($sql);
-	if (!empty($site_account)) {
+	if (!empty($site_account) && !empty($site_account['uniacid'])) {
 		$result = $site_account;
 	}
 

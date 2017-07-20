@@ -17,55 +17,55 @@ $_W['acl'] = $acl = array(
 		'default' => '',
 		'direct' => array(
 			'auth',
-			'welcome' 
+			'welcome'
 		),
 		'operator' => array(
 			'display',
-			'manage' 
+			'manage'
 		)
 	),
 	'article' => array(
 		'direct' => array(
 			'notice-show',
-			'news-show' 
+			'news-show'
 		),
 		'founder' => array(
 			'news',
-			'notice' 
-		) 
+			'notice'
+		)
 	),
 	'cloud' => array(
 		'default' => 'touch',
 		'direct' => array(
 			'touch',
 			'dock',
-			'download' 
+			'download'
 		),
 		'founder' => array(
 			'diagnose',
 			'redirect',
 			'upgrade',
 			'process',
-			'device' 
+			'device'
 		)
 	),
 	'home' => array(
 		'default' => 'welcome',
 		'founder' => array(),
-		'direct' => array() 
+		'direct' => array()
 	),
 	'platform' => array(
 		'default' => 'reply',
 		'founder' => array(),
 		'direct' => array(
-			'link' 
-		) 
+			'link'
+		)
 	),
 	'site' => array(
 		'default' => '',
 		'founder' => array(),
 		'direct' => array(
-			'entry' 
+			'entry'
 		)
 	),
 	'user' => array(
@@ -77,7 +77,7 @@ $_W['acl'] = $acl = array(
 		'direct' => array(
 			'login',
 			'register',
-			'logout' 
+			'logout'
 		),
 		'vice_founder' => array(
 			'group'
@@ -91,8 +91,8 @@ $_W['acl'] = $acl = array(
 			'bindcall',
 			'subscribe',
 			'wxcode',
-			'modules' 
-		) 
+			'modules'
+		)
 	),
 	'module' => array(
 		'direct' => array(),
@@ -113,17 +113,17 @@ $_W['acl'] = $acl = array(
 			'menu',
 			'optimize',
 			'scan',
-			'site' 
+			'site'
 		),
 		'operator' => array(
 			'account',
-			'updatecache' 
+			'updatecache'
 		),
 		'manager' => array(
 			'account',
 			'platform',
 			'updatecache',
-			'module' 
+			'module'
 		)
 	),
 	'cron' => array(
@@ -217,7 +217,7 @@ if ((ENDTIME - STARTTIME) > $_W['config']['setting']['maxtimeurl']) {
 		'type' => '1',
 		'runtime' => ENDTIME - STARTTIME,
 		'runurl' => $_W['sitescheme'] . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-		'createtime' => TIMESTAMP 
+		'createtime' => TIMESTAMP
 	);
 	pdo_insert('core_performance', $data);
 }
