@@ -14,10 +14,6 @@ load()->model('module');
 load()->model('system');
 load()->model('user');
 
-if (user_is_vice_founder()) {
-	itoast("欢迎回来，{$_W['user']['username']}", url('account/manage', array('account_type' => 1)), 'success');
-}
-
 $dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics');
 $do = in_array($do, $dos) ? $do : 'platform';
 if ($do == 'platform' || $do == 'ext') {
@@ -44,6 +40,9 @@ if ($do == 'platform') {
 } elseif ($do == 'system') {
 	define('FRAME', 'system');
 	$_W['page']['title'] = '欢迎页 - 系统管理';
+	if (user_is_vice_founder()) {
+		itoast("欢迎回来，{$_W['user']['username']}", url('account/manage', array('account_type' => 1)), 'success');
+	}
 	if(!$_W['isfounder']){
 		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
 		exit;
