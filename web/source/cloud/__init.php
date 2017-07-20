@@ -17,8 +17,3 @@ if(in_array($action, array('profile', 'device', 'callback', 'appstore', 'sms')))
 if($action == 'touch') {
 	exit('success');
 }
-
-load()->model('user');
-if (user_is_vice_founder()) {
-	itoast('无权限操作！', url('account/manage'), 'error');
-}

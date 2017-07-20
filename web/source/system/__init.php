@@ -23,8 +23,3 @@ if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
 } else {
 	define('ACCOUNT_TYPE', $_GPC['account_type']);
 }
-
-load()->model('user');
-if (user_is_vice_founder() && !in_array($action, array('platform', 'template', 'updatecache'))) {
-	itoast('无权限操作！', url('account/manage'), 'error');
-}
