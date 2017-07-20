@@ -71,6 +71,7 @@
 	</div>
 </div>
 <script>
+require(['underscore'], function() {
 	angular.module('moduleApp').value('config', {
 		'userModule': {php echo !empty($user_module) ? json_encode($user_module) : 'null'},
 		'activeLetter': {php echo !empty($_GPC['letter']) ? json_encode($_GPC['letter']) : 'null'},
@@ -80,5 +81,6 @@
 		}
 	});
 	angular.bootstrap($('#js-module-display'), ['moduleApp']);
+});
 </script>
 {template 'common/footer'}
