@@ -279,11 +279,7 @@ if($step == 1) {
 		}
 	}
 
-	if (user_is_vice_founder()) {
-		$unigroups = uni_vice_groups();
-	} else {
-		$unigroups = uni_groups();
-	}
+	$unigroups = uni_groups();
 
 	if(!empty($unigroups['modules'])) {
 		foreach ($unigroups['modules'] as $module_key => $module_val) {
