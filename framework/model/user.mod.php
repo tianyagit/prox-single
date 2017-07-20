@@ -494,6 +494,9 @@ function user_login_forward($forward = '') {
 	if (!empty($forward)) {
 		return $login_forward;
 	}
+	if (user_is_vice_founder()) {
+		return url('account/manage', array('account_type' => 1));
+	}
 	if (!empty($_W['isfounder'])) {
 		return url('home/welcome/system');
 	}
