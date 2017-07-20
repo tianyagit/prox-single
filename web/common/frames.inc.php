@@ -334,7 +334,7 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
-		'acticle' => array(
+		'article' => array(
 			'title' => '文章/公告',
 			'menu' => array(
 				'system_article' => array(
