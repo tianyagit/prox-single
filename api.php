@@ -169,6 +169,7 @@ class WeEngine {
 			$row = array();
 			$row['isconnect'] = 1;
 			pdo_update('account', $row, array('acid' => $_W['acid']));
+			cache_delete("uniaccount:{$_W['uniacid']}");
 			exit(htmlspecialchars($_GET['echostr']));
 		}
 		if(strtolower($_SERVER['REQUEST_METHOD']) == 'post') {

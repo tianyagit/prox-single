@@ -94,6 +94,11 @@ function user_is_founder($uid) {
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	if (in_array($uid, $founders)) {
 		return true;
+	} else {
+		$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
+		if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -107,6 +112,36 @@ function user_is_vice_founder() {
 		return true;
 	}
 	return false;
+}
+
+/**
+ * 永久删除用户
+ * @param $uid
+ * @return bool
+ */
+function user_delete($uid, $is_recycle = false) {
+	if (!empty($is_recycle)) {
+		pdo_update('users', array('status' => 3) , array('uid' => $uid));
+		return true;
+	}
+
+	load()->model('cache');
+	$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
+	if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+		pdo_update('users', array('owner_uid' => 0), array('owner_uid' => $uid));
+		pdo_update('users_group', array('owner_uid' => 0), array('owner_uid' => $uid));
+		pdo_update('uni_group', array('owner_uid' => 0), array('owner_uid' => $uid));
+	}
+	pdo_delete('users', array('uid' => $uid));
+	$user_set_account = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
+	if (!empty($user_set_account)) {
+		foreach ($user_set_account as $account) {
+			cache_build_account_modules($account['uniacid']);
+		}
+	}
+	pdo_delete('uni_account_users', array('uid' => $uid));
+	pdo_delete('users_profile', array('uid' => $uid));
+	return true;
 }
 
 /**
@@ -266,43 +301,38 @@ function user_level() {
 }
 
 /**
- *获取某一用户组下详细信息
- *@param  number $groupid 用户组ID
- *@return array
+ * 获取当前用户可用的用户组
+ */
+function user_group() {
+	if (user_is_vice_founder()) {
+		$condition = array(
+			'owner_uid' => $_W['uid'],
+		);
+	}
+	$groups = pdo_getall('users_group', $condition, array('id', 'name', 'package'), 'id', 'id ASC');
+	return $groups;
+}
+
+/**
+ * 获取某一用户组下详细信息
+ * @param  number $groupid 用户组ID
+ * @return array
  */
 function user_group_detail_info($groupid = 0) {
+	$group_info = array();
+	
 	$groupid = is_array($groupid) ? 0 : intval($groupid);
 	if(empty($groupid)) {
-		return false;
+		return $group_info;
 	}
-	$group_info = array();
-	$packages = uni_groups();
 	$group_info = pdo_get('users_group', array('id' => $groupid));
-	if(!empty($group_info)) {
-		$group_info['package'] = (array)iunserializer($group_info['package']);
-		foreach ($packages as $packages_key => $packages_val) {
-			foreach ($group_info['package'] as $group_info_val) {
-				if($group_info_val == -1) {
-					$group_info['module_and_tpl'][-1] = array(
-						'id' => '-1',
-						'name' => '所有服务',
-						'modules' => array('title' => '系统所有模块'),
-						'templates' => array('title' => '系统所有模板'),
-					);
-					continue;
-				}
-				if($packages_key == $group_info_val) {
-					$group_info['module_and_tpl'][] = array(
-						'id' => $packages_val['id'],
-						'name' => $packages_val['name'],
-						'modules' => $packages_val['modules'],
-						'wxapp' => $packages_val['wxapp'],
-						'templates' => $packages_val['templates'],
-					);
-					continue;
-				}
-			}
-		}
+	if (empty($group_info)) {
+		return $group_info;
+	}
+	
+	$group_info['package'] = (array)iunserializer($group_info['package']);
+	if (!empty($group_info['package'])) {
+		$group_info['package_detail'] = uni_groups($group_info['package']);
 	}
 	return $group_info;
 }
@@ -383,12 +413,9 @@ function user_modules($uid) {
 		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
 			$module_list = $system_modules;
 		} else {
-			$user_group_info = pdo_get('users_group', array ('id' => $user_info['groupid']));
-			if (!empty($user_group_info) && !empty($user_group_info['package'])) {
-				$packageids = unserialize($user_group_info['package']);
-			} else {
-				$packageids = array();
-			}
+			$user_group_info = user_group_detail_info($user_info['groupid']);
+			$packageids = $user_group_info['package'];
+			
 			//如果套餐组中包含-1，则直接取全部权限，否则根据情况获取模块权限
 			if (!empty($packageids) && in_array('-1', $packageids)) {
 				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
@@ -509,4 +536,12 @@ function user_module_by_account_type($type) {
 		unset($module);
 	}
 	return $module_list;
+}
+
+function user_invite_register_url($uid = 0) {
+	global $_W;
+	if (empty($uid)) {
+		$uid = $_W['uid'];
+	}
+	return $_W['siteroot'] . '/index.php?c=user&a=register&owner_uid=' . $uid;
 }
