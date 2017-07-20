@@ -304,6 +304,7 @@ function user_level() {
  * 获取当前用户可用的用户组
  */
 function user_group() {
+	global $_W;
 	if (user_is_vice_founder()) {
 		$condition = array(
 			'owner_uid' => $_W['uid'],
@@ -493,6 +494,9 @@ function user_login_forward($forward = '') {
 
 	if (!empty($forward)) {
 		return $login_forward;
+	}
+	if (user_is_vice_founder()) {
+		return url('account/manage', array('account_type' => 1));
 	}
 	if (!empty($_W['isfounder'])) {
 		return url('home/welcome/system');

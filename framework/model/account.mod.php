@@ -252,6 +252,7 @@ function uni_modules_app_binding() {
  */
 function uni_groups($groupids = array()) {
 	load()->model('module');
+	global $_W;
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
 	$list = cache_load($cachekey);
 	if (empty($list)) {
