@@ -274,11 +274,16 @@ function buildframes($framename = ''){
 				if ($nav_id == 'account') {
 					if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module' && uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OWNER) {
 						$frames['account']['section'][$section_id]['is_display'] = false;
+						continue;
 					} else {
 						if (in_array("account*", $user_permission)) {
 							continue;
 						}
 					}
+				}
+				if ($nav_id == 'system' && $section_id == 'article' && user_is_vice_founder()) {
+					$frames['system']['section'][$section_id]['is_display'] = false;
+					continue;
 				}
 				if ($nav_id != 'wxapp') {
 					$section_show = false;
