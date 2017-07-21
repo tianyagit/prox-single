@@ -274,12 +274,14 @@ function buildframes($framename = ''){
 				if ($nav_id == 'account') {
 					if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module' && uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OWNER) {
 						$frames['account']['section'][$section_id]['is_display'] = false;
+						continue;
 					} else {
 						if (in_array("account*", $user_permission)) {
 							continue;
 						}
 					}
 				}
+
 				if ($nav_id != 'wxapp') {
 					$section_show = false;
 					$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
@@ -295,6 +297,10 @@ function buildframes($framename = ''){
 					}
 				}
 			}
+		}
+	} else {
+		if (user_is_vice_founder()) {
+			$frames['system']['section']['article']['is_display'] = false;
 		}
 	}
 	//进入模块界面后权限
@@ -480,7 +486,7 @@ function buildframes($framename = ''){
 		}
 	}
 	foreach ($frames as $menuid => $menu) {
-		if (!empty($menu['founder']) && empty($_W['isfounder'])) {
+		if (!empty($menu['founder']) && empty($_W['isfounder']) || user_is_vice_founder() && $menuid == 'site') {
 			continue;
 		}
 		$top_nav[] = array(
