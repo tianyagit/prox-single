@@ -363,7 +363,6 @@ class WeEngine {
 				if (empty($fans['follow'])) {
 					$rec['follow'] = 1;
 					$rec['followtime'] = $message['time'];
-					$rec['unfollowtime'] = 0;
 				}
 				$member = array();
 				if(!empty($fans['uid'])){
