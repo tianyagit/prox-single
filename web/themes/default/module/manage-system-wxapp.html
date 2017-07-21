@@ -499,7 +499,9 @@
 					应用权限组
 				</th>
 				<th class="text-right">
+					{if $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
 					<a href="{php echo url('module/group')}" class="color-default">添加</a>
+					{/if}
 				</th>
 			</tr>
 			<tr>
@@ -515,7 +517,9 @@
 					<span>{$group['name']}</span>
 				</td>
 				<td class="text-right">
+					{if $_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}
 					<div class="link-group"><a href="{php echo url('module/group/post', array('id' => $group['id']))}">设置</a></div>
+					{/if}
 				</td>
 			</tr>
 			{/loop}
