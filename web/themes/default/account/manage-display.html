@@ -59,15 +59,23 @@
 			<p ng-bind="list.setmeal.timelimit"></p>
 		</td>
 		<td><p ng-bind="list.sms"></p></td>
-		<td class="vertical-middle">
-			<div class="link-group">
-				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
-				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER}
-				<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder'">管理设置</a>
-				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
-				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
-				{/if}
-				{/if}
+		<td class="vertical-middle table-manage-td">
+			<div class="manage-container">
+				<div class="link-group">
+					<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
+					{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER}
+					<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder'">管理设置</a>
+					{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
+					<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
+					{/if}
+					{/if}
+				</div>
+				<div class="manage-option text-right">
+					<a href="javascript:;">基础信息</a>
+					<a href="javascript:;">短信信息</a>
+					<a href="javascript:;">使用者管理</a>
+					<a href="javascript:;">可用应用模板/模块</a>
+				</div>
 			</div>
 		</td>
 	</tr>
