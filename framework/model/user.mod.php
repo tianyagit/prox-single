@@ -549,3 +549,44 @@ function user_invite_register_url($uid = 0) {
 	}
 	return $_W['siteroot'] . '/index.php?c=user&a=register&owner_uid=' . $uid;
 }
+
+/**
+ * 添加用户组
+ * @param $group_info
+ * @return array
+ */
+function user_save_group($group_info) {
+	global $_W;
+	$name = trim($group_info['name']);
+	if (empty($name)) {
+		return error(-1, '用户权限组名不能为空');
+	}
+
+	if (!empty($group_info['id'])) {
+		$name_exist = pdo_get('users_group', array('id <>' => $group_info['id'], 'name' => $name));
+	} else {
+		$name_exist = pdo_get('users_group', array('name' => $name));
+	}
+
+	if (!empty($name_exist)) {
+		return error(-1, '用户权限组名已存在！');
+	}
+
+	if (!empty($group_info['package'])) {
+		foreach ($group_info['package'] as $value) {
+			$package[] = intval($value);
+		}
+	}
+	$group_info['package'] = iserializer($package);
+	if (user_is_vice_founder()) {
+		$group_info['owner_uid'] = $_W['uid'];
+	}
+
+	if (empty($group_info['id'])) {
+		pdo_insert('users_group', $group_info);
+	} else {
+		pdo_update('users_group', $group_info, array('id' => $group_info['id']));
+	}
+
+	return error(0, '添加成功');
+}
