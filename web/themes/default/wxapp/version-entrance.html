@@ -11,9 +11,9 @@
 		</tr>
 		<tr ng-repeat="module_info in moduleList">
 			<td colspan="3">{{module_info.title}}</td>
-			<td colspan="3">{{module_info.url}}</td>
+			<td colspan="3">{{module_info.do}}</td>
 			<td colspan="3">
-				<a href="javascript:;" id="copy-{{module_info.eid}}" class="color-default" clipboard supported="supported" text="module_info.url" on-copied="success(module_info.eid)">点击复制</a>
+				<a href="javascript:;" id="copy-{{module_info.eid}}" class="color-default" clipboard supported="supported" text="module_info.do" on-copied="success(module_info.eid)">点击复制</a>
 			</td>
 		</tr>
 	</table>

@@ -112,9 +112,6 @@ if ($do == 'module_entrance_link') {
 	if (!empty($wxapp_modules)) {
 		$module_info = iunserializer($wxapp_modules);
 		$module_info = pdo_getall('modules_bindings', array('module' => array_keys($module_info), 'entry' => 'page'));
-		foreach ($module_info as &$module) {
-			$module['url'] = $_W['siteroot'] . substr($module['do'], 1);
-		}
 	}
 	template('wxapp/version-entrance');
 }
