@@ -63,7 +63,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			$username = trim($_GPC['username']);
 			$name_exist = pdo_get('users', array('username' => $username));
-			if(!empty($name_exist)) {
+			if (!empty($name_exist)) {
 				iajax(2, '用户名已存在，请更换其他用户名！', '');
 			}
 			$result = pdo_update('users', array('username' => $username), array('uid' => $uid));
@@ -94,8 +94,12 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$endtime = strtotime($_GPC['endtime']);
 			}
 			$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $uid));
-			$uni_account_user = pdo_get('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
-			cache_delete("uniaccount:{$uni_account_user['uniacid']}");
+			$uni_account_user = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
+			if (!empty($uni_account_user)) {
+				foreach ($uni_account_user as $account) {
+					cache_delete("uniaccount:{$account['uniacid']}");
+				}
+			}
 			break;
 		case 'birth':
 			if ($users_profile_exist) {
@@ -143,7 +147,7 @@ if ($do == 'base') {
 	}
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$user['url'] = user_invite_register_url($_W['uid']);
-	
+
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
 	if (!empty($profile)) {
 		$profile['reside'] = array(

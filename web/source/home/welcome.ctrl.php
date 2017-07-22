@@ -40,10 +40,7 @@ if ($do == 'platform') {
 } elseif ($do == 'system') {
 	define('FRAME', 'system');
 	$_W['page']['title'] = '欢迎页 - 系统管理';
-	if (user_is_vice_founder()) {
-		itoast("欢迎回来，{$_W['user']['username']}", url('account/manage', array('account_type' => 1)), 'success');
-	}
-	if(!$_W['isfounder']){
+	if(!$_W['isfounder'] || user_is_vice_founder()){
 		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
 		exit;
 	}
