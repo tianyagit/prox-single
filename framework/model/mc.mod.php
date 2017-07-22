@@ -191,18 +191,6 @@ function mc_fetch_one($uid) {
 	return $result;
 }
 /**
- * 删除会员缓存信息
- * @param int $uid 会员uid
- * $return boolean
- */
-function mc_member_cache_delete($uid) {
-	if (empty($uid)) {
-		return false;
-	}
-	$cachekey = cache_system_key(CACHE_KEY_MEMBER_INFO, $uid);
-	return cache_delete($cachekey);
-}
-/**
  * 获取粉丝信息
  * @param mixed $openidOruid 粉丝或会员ID
  * @param int $acid 子公众号ID
