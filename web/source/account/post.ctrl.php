@@ -302,15 +302,8 @@ if($do == 'modules_tpl') {
 	$extend['modules'] = iunserializer($extend['modules']);
 	$extend['templates'] = iunserializer($extend['templates']);
 	if (!empty($extend['modules'])) {
-		$extend['modules'] = pdo_getall('modules', array('name' => $extend['modules']), array('mid', 'title', 'name'));
-		if (!empty($extend['modules'])) {
-			foreach ($extend['modules'] as &$module_info) {
-				if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg')) {
-					$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon-custom.jpg');
-				} else {
-					$module_info['logo'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/icon.jpg');
-				}
-			}
+		foreach ($extend['modules'] as $module_key => $module_val) {
+			$extend['modules'][$module_key] = module_fetch($module_val);
 		}
 	}
 	if (!empty($extend['templates'])) {
