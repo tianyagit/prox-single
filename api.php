@@ -356,6 +356,8 @@ class WeEngine {
 		}
 		if(!empty($fans)) {
 			if ($message['event'] == 'unsubscribe') {
+				//取消关注时需要删除会员缓存信息
+				mc_member_cache_delete($fans['uid']);
 				pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('fanid' => $fans['fanid']));
 				pdo_delete('mc_fans_tag_mapping', array('fanid' => $fans['fanid']));
 			} elseif ($message['event'] != 'ShakearoundUserShake' && $message['type'] != 'trace') {
