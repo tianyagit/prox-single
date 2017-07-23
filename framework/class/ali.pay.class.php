@@ -30,7 +30,7 @@ class AliPay{
 		$string = $this->array2url($params);
 		$prikey = authcode($this->setting['ali_refund']['private_key'], 'DECODE');
 		$res = openssl_get_privatekey($prikey);
-		openssl_sign($string, $sign, $res);
+		openssl_sign($string, $sign, $res, OPENSSL_ALGO_SHA256);
 		openssl_free_key($res);
 		$sign = base64_encode($sign);
 		return $sign;
