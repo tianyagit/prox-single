@@ -46,6 +46,7 @@ function _login($forward = '') {
 		}
 		$_W['uid'] = $record['uid'];
 		$_W['isfounder'] = user_is_founder($record['uid']);
+		$_W['user'] = $record;
 
 		if (empty($_W['isfounder'])) {
 			if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {

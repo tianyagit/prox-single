@@ -48,7 +48,7 @@ if ($do == 'home') {
 	$condition['type'] = array(ACCOUNT_TYPE_APP_NORMAL);
 
 	if (!empty($keyword)) {
-		$condition['name'] = trim($_GPC['keyword']);
+		$condition['keyword'] = trim($_GPC['keyword']);
 	}
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$condition['letter'] = trim($_GPC['letter']);

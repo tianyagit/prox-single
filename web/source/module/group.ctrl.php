@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('user');
-load()->model('account');
+load()->model('module');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
@@ -22,10 +22,6 @@ if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)array_keys($_GPC['wxapp']);
 
-	if (empty($_GPC['name'])) {
-		iajax(1, '请输入套餐名');
-	}
-
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
@@ -33,29 +29,12 @@ if ($do == 'save') {
 		'templates' => $_GPC['templates'],
 	);
 
-	$package_info = uni_combination_package($package_info);
+	$package_info = module_save_group_package($package_info);
 
-	if (!empty($package_info['id'])) {
-		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'id <>' => $package_info['id'], 'name' => $package_info['name']));
-		if (!empty($name_exist)) {
-			iajax(1, '套餐名已存在');
-		}
-		$packageid = $package_info['id'];
-		unset($package_info['id']);
-		pdo_update('uni_group', $package_info, array('id' => $packageid));
-		cache_build_uni_group();
-		cache_build_account_modules();
-
-		iajax(0, '', url('module/group'));
-	} else {
-		$name_exist = pdo_get('uni_group', array('uniacid' => 0, 'name' => $package_info['name']));
-		if (!empty($name_exist)) {
-			iajax(1, '套餐名已存在', '');
-		}
-		pdo_insert('uni_group', $package_info);
-		cache_build_uni_group();
-		iajax(0, '', url('module/group'));
+	if (is_error($package_info)) {
+		iajax(1, $package_info['message'], '');
 	}
+	iajax(0, '', url('module/group'));
 }
 
 if ($do == 'display') {
@@ -65,13 +44,8 @@ if ($do == 'display') {
 		$param['name like'] = "%". trim($_GPC['name']) ."%";
 	}
 	$modules = user_modules($_W['uid']);
-
-	if (user_is_vice_founder()) {
-		$modules_group_list = uni_vice_groups();
-	} else {
-		$modules_group_list = uni_groups();
-	}
 	
+	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
 			if (empty($group['modules'])) {

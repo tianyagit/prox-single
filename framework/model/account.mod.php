@@ -252,16 +252,17 @@ function uni_modules_app_binding() {
  */
 function uni_groups($groupids = array()) {
 	load()->model('module');
+	global $_W;
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
 	$list = cache_load($cachekey);
 	if (empty($list)) {
 		$condition = ' WHERE uniacid = 0';
 		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
 		if (in_array('-1', $groupids)) {
-			$list[-1] = array('id' => -1, 'name' => '所有服务');
+			$list[-1] = array('id' => -1, 'name' => '所有服务', 'modules' => array('title' => '系统所有模块'), 'templates' => array('title' => '系统所有模板'));
 		}
 		if (in_array('0', $groupids)) {
-			$list[0] = array('id' => 0, 'name' => '基础服务');
+			$list[0] = array('id' => 0, 'name' => '基础服务', 'modules' => array('title' => '系统模块'), 'templates' => array('title' => '系统模板'));
 		}
 		if (!empty($list)) {
 			foreach ($list as $k=>&$row) {
@@ -312,56 +313,19 @@ function uni_groups($groupids = array()) {
 			$group_list[$id] = $list[$id];
 		}
 	} else {
+		if (user_is_vice_founder()) {
+			foreach ($list as $group_key => $group) {
+				if ($group['owner_uid'] != $_W['uid']) {
+					unset($list[$group_key]);
+					continue;
+				}
+			}
+		}
 		$group_list = $list;
 	}
 	return $group_list;
 }
 
-/**
- * 获取一个或多个公众号套餐信息
- * @param array $groupids 公众号套餐ID
- * @return array uni_vice_groups 副创始人套餐信息列表
- */
-function uni_vice_groups($groupids = array()) {
-	global $_W;
-	$modules_group_list = uni_groups($groupids);
-	foreach ($modules_group_list as $group_key => &$group) {
-		if ($group['owner_uid'] != $_W['uid']) {
-			unset($modules_group_list[$group_key]);
-			continue;
-		}
-	}
-	return $modules_group_list;
-}
-
-/**
- * 要添加套餐的组合信息
- * @param array $package
- * @return array
- */
-function uni_combination_package($package = array()) {
-	global $_W;
-	load()->model('user');
-	if (user_is_vice_founder()) {
-		$package['owner_uid'] = $_W['uid'];
-	}
-	if (!empty($package_info['modules'])) {
-		$package['modules'] = iserializer($package['modules']);
-	}
-
-	if (!empty($package['modules'])) {
-		$package['modules'] = iserializer($package['modules']);
-	}
-
-	if (!empty($package['templates'])) {
-		$templates = array();
-		foreach ($package['templates'] as $template) {
-			$templates[] = $template['id'];
-		}
-		$package['templates'] = iserializer($templates);
-	}
-	return $package;
-}
 /**
  * 获取当前套餐可用微站模板
  * @return array 模板列表
@@ -1042,9 +1006,9 @@ function uni_account_list($condition, $pager) {
 
 	$sql .= $order_by;
 	$sql .= ", a.`uniacid` DESC ";
-	
+
 	$list = pdo_fetchall(sprintf($sql, 'a.uniacid') . $limit, $params);
-	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'));
+	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'), $params);
 	
 	if (!empty($list)) {
 		foreach($list as &$account) {
