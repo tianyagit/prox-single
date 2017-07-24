@@ -108,7 +108,11 @@
 							<div class="appmsg-thumb" style="background-image:url('{php echo tomedia($material['items']['0']['thumb_url'])}')">
 							</div>
 							<p class="appmsg-desc">{$material['items']['0']['digest']}</p>
+							{if $material['model'] == 'local'}
+							<a href="javascript:;" target="_blank" class="cover-dark">
+							{else}
 							<a href="javascript:;" data-toggle="modal" data-target="#modalWechatView" ng-click="choiceSendType('{$material['items']['0']['url']}', 'news', '{$material['media_id']}')" class="cover-dark">
+							{/if}
 								<div class="edit-mask-content">
 									{if $material['model'] == 'local'}
 									本地预览<span data-toggle="tooltip" data-placement="bottom" title="本地文章，不可以群发，可以转换成为微信文章."><i class="wi wi-explain-sign"></i></span>
@@ -380,7 +384,7 @@
 					</div>
 					<div id="weixin-dialog" class="wechat-view-telephone hidden">
 						<div class="nav">
-							<span class="wi wi-back-circle color-gray"></span>
+							<span class="wi wi-back-circle color-gray" ng-click="previewBack()"></span>
 							<a class="color-gray">微信预览</a>
 							<span class="color-gray">/</span>
 							<a href="javscript:;" class="color-default">输入微信号</a>
@@ -402,7 +406,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary btn-view" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-view" data-dismiss="modal" ng-click="previewBack()">取消</button>
 				</div>
 			</div>
 		</div>

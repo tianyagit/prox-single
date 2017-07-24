@@ -995,7 +995,7 @@ function mc_group_update($uid = 0) {
 	}
 	$groupid = $user['groupid'];
 	$credit = $user['credit1'] + $user['credit6'];
-	$groups = $_W['uniaccount']['groups'];
+	$groups = mc_groups();
 	if(empty($groups)) {
 		return false;
 	}
