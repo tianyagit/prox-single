@@ -190,13 +190,10 @@ function buildframes($framename = ''){
 					if (!empty($module)) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 							'title' => $module['title'],
-							'icon' =>  tomedia("addons/{$module['name']}/icon.jpg"),
+							'icon' =>  $module['logo'],
 							'url' => url('home/welcome/ext', array('m' => $module['name'])),
 							'is_display' => 1,
 						);
-					}
-					if (file_exists(IA_ROOT. "/addons/{$module['name']}/icon-custom.jpg")) {
-						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']]['icon'] = tomedia("addons/{$module['name']}/icon-custom.jpg");
 					}
 				}
 			}
