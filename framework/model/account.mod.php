@@ -702,8 +702,29 @@ function uni_update_user_permission($uid, $uniacid, $data) {
 	return $result;
 }
 
+/**
+ * 副创始人没有的权限
+ * @return array
+ */
+function uni_vice_founder_void_permission() {
+	$void_permission = array(
+		'system_add_vice_founder',
+		'system_edit_vice_founder',
+		'system_account_stop',
+		'system_wxapp_stop',
+		'system_module_group_add',
+		'system_module_group_post',
+		'system_user_recycle',
+		'system_see_more_info',
+	);
+	return $void_permission;
+}
+
 function uni_user_permission_check($permission_name, $show_message = true, $action = '') {
 	global $_W, $_GPC;
+	if (user_is_vice_founder() && in_array($permission_name, uni_vice_founder_void_permission())) {
+		return false;
+	}
 	$user_has_permission = uni_user_permission_exist();
 	if (empty($user_has_permission)) {
 		return true;
