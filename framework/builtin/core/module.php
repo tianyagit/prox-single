@@ -152,10 +152,10 @@ class CoreModule extends WeModule {
 						}
 					//只选择关键字
 					}else {
-						 $replies['keyword'][0]['name'] = $isexists['name'];
-						 $keyword = pdo_fetchall("SELECT content FROM ". tablename('rule_keyword') ." WHERE uniacid = :uniacid AND id = :id", array(':uniacid' => $_W['uniacid'], ':id' => $rid));
-						 $replies['keyword'][0]['id'] = $rid;
-						 $replies['keyword'][0]['content'] = $keyword[0]['content'];
+						$replies['keyword'][0]['name'] = $isexists['name'];
+						$keyword = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'id' => $rid), 'content');
+						$replies['keyword'][0]['id'] = $rid;
+						$replies['keyword'][0]['content'] = $keyword;
 					}
 				}
 				break;
