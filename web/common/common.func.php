@@ -292,6 +292,7 @@ function buildframes($framename = ''){
 	} else {
 		if (user_is_vice_founder()) {
 			$frames['system']['section']['article']['is_display'] = false;
+			$frames['system']['section']['wxplatform']['menu']['system_platform']['is_display'] = false;
 		}
 	}
 	//进入模块界面后权限
@@ -417,6 +418,13 @@ function buildframes($framename = ''){
 					);
 				}
 			}
+		}
+		if ($_W['role'] == ACCOUNT_MANAGE_NAME_CLERK) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_clerkdesk'] = array(
+				'title' => "<i class='fa fa-plane'></i> 店员工作台",
+				'url' => url('site/entry/clerkdesk', array('uniacid' => $_W['uniacid'], 'op' => 'index', 'm' => 'we7_coupon')),
+				'is_display' => 1,
+			);
 		}
 		if (!empty($module['plugin_list']) || !empty($module['main_module'])) {
 			if (!empty($module['main_module'])) {
