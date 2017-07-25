@@ -63,60 +63,18 @@ abstract class Resource
 
 class KeyWordResource extends Resource {
 
-	/**
-	 *  查询指定的关键字
-	 * @param $keyword
-	 * @return array
-	 */
-	private function searchByKeyWord($keyword)
-	{
-		$condition = array('uniacid' => $this->uniacid, 'status' => 1,'content like'=>'%'.$keyword.'%');
-		$rids=pdo_getcolumn('rule_keyword', $condition,'rid');
-		if($rids && !is_array($rids)) {
-			$rids=array($rids);
-		}
-		return $this->getKeyWords($rids);
-	}
-
-	/**
-	 *  查询所有关键字
-	 * @param array $rids
-	 * @return array
-	 */
-	private function getKeyWords($rids=array())
-	{
-		$condition = array('uniacid' => $this->uniacid, 'status' => 1);
-		if(is_array($rids)&&count($rids)>0)
-		{
-			$condition['id IN'] = $rids;
-		}
-		$pindex = $this->getCurrentPage();
-		$psize = 24;
-		$rule_list = pdo_getslice('rule', $condition, array($pindex, $psize), $total);
-
-		$keyword_lists = array();
-		if(!empty($rule_list)) {
-			foreach($rule_list as $row) {
-				$condition['rid'] = $row['id'];
-				unset($condition['id IN']);
-				$row['child_items'] = pdo_getall('rule_keyword', $condition);
-				$keyword_lists[$row['id']] = $row;
-			}
-			unset($row);
-		}
-		return array($total,$keyword_lists);
-	}
-
-
 	public function getResources() {
 		$keyword = addslashes($this->query('keyword',''));
 		$pindex = $this->getCurrentPage();
 		$psize = 24;
+
+		$condition = array('uniacid' => $this->uniacid, 'status' => 1);
 		if (!empty($keyword)) {
-			list($total,$keyword_lists) = $this->searchByKeyWord($keyword);
-		}else {
-			list($total,$keyword_lists) = $this->getKeyWords();
+			$condition['content like'] = '%'.$keyword.'%';
 		}
+
+		$keyword_lists = pdo_getslice('rule_keyword', $condition, array($pindex, $psize), $total, array(), 'id');
+
 		$result = array(
 			'items' => $keyword_lists,
 			'pager' => pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback'=>'null','isajax'=>1)),
