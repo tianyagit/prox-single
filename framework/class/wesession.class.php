@@ -128,8 +128,9 @@ class WeSessionMemcache extends WeSession {
 		
 		if (cache_type() != 'memcache') {
 			trigger_error('Memcache 扩展不可用或是服务未开启，请将 \$config[\'setting\'][\'memcache\'][\'session\'] 设置为0 ');
+			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	public function read($sessionid) {
@@ -162,8 +163,9 @@ class WeSessionRedis extends WeSessionMemcache {
 	
 		if (cache_type() != 'redis') {
 			trigger_error('Redis 扩展不可用或是服务未开启，请将 \$config[\'setting\'][\'redis\'][\'session\'] 设置为0 ');
+			return false;
 		}
-		return false;
+		return true;
 	}
 }
 
