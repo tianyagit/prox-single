@@ -121,12 +121,12 @@ if ($do == 'display') {
 	}
 	if ($m == 'welcome') {
 		$setting = uni_setting($_W['uniacid'], array('welcome'));
-		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['welcome']), 'rid');
+		$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['welcome']), 'id');
 	}
 	if ($m == 'default') {
 		$setting = uni_setting($_W['uniacid'], array('default'));
 		if (!empty($setting['default'])) {
-			$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'rid');
+			$ruleid = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting['default']), 'id');
 		}
 	}
 	if ($m == 'service') {
@@ -323,9 +323,9 @@ if ($do == 'post') {
 	}
 	if ($m == 'welcome') {
 		if (checksubmit('submit')) {
-			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
-			if (!empty($rule_id)) {
-				$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
+			$rule_keyword_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
+			if (!empty($rule_keyword_id)) {
+				$rule = pdo_get('rule_keyword', array('id' => $rule_keyword_id, 'uniacid' => $_W['uniacid']));
 				$settings = array(
 					'welcome' => $rule['content']
 				);
@@ -347,7 +347,7 @@ if ($do == 'post') {
 		if (checksubmit('submit')) {
 			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), "\""));
 			if (!empty($rule_id)) {
-				$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
+				$rule = pdo_get('rule_keyword', array('id' => $rule_id, 'uniacid' => $_W['uniacid']));
 				$settings = array(
 					'default' => $rule['content']
 				);
