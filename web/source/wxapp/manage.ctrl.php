@@ -6,6 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 define('FRAME', 'system');
+define('ACCOUNT_TYPE', ACCOUNT_TYPE_APP_NORMAL);
 load()->model('system');
 load()->model('wxapp');
 
