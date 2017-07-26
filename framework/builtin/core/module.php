@@ -9,15 +9,15 @@ defined('IN_IA') or exit('Access Denied');
 class CoreModule extends WeModule {
 	public $modules = array('basic', 'news', 'image', 'music', 'voice', 'video', 'wxcard', 'keyword', 'module');
 	public $tablename = array(
-			'basic' => 'basic_reply',
-			'news' => 'news_reply',
-			'image' => 'images_reply',
-			'music' => 'music_reply',
-			'voice' => 'voice_reply',
-			'video' => 'video_reply',
-			'wxcard' => 'wxcard_reply',
-			'keyword' => 'basic_reply'
-		);
+		'basic' => 'basic_reply',
+		'news' => 'news_reply',
+		'image' => 'images_reply',
+		'music' => 'music_reply',
+		'voice' => 'voice_reply',
+		'video' => 'video_reply',
+		'wxcard' => 'wxcard_reply',
+		'keyword' => 'basic_reply'
+	);
 	//对$modules,显示哪些,隐藏哪些,默认都隐藏
 	private $options = array(
 		'basic' => true,
