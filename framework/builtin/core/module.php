@@ -20,16 +20,16 @@ class CoreModule extends WeModule {
 		);
 	//对$modules,显示哪些,隐藏哪些,默认都隐藏
 	private $options = array(
-			'basic' => true,
-			'news' => true,
-			'image' => true,
-			'music' => true,
-			'voice' => true,
-			'video' => true,
-			'wxcard' => true,
-			'keyword' => true,
-			'module' => true,
-		);
+		'basic' => true,
+		'news' => true,
+		'image' => true,
+		'music' => true,
+		'voice' => true,
+		'video' => true,
+		'wxcard' => true,
+		'keyword' => true,
+		'module' => true,
+	);
 	private $replies = array();
 
 	public function fieldsFormDisplay($rid = 0, $option = array()) {
