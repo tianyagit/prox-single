@@ -425,7 +425,7 @@ function buildframes($framename = ''){
 		if ($_W['role'] == ACCOUNT_MANAGE_NAME_CLERK) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_clerkdesk'] = array(
 				'title' => "<i class='fa fa-plane'></i> 店员工作台",
-				'url' => url('site/entry/clerkdesk', array('uniacid' => $_W['uniacid'], 'op' => 'index', 'm' => 'we7_coupon')),
+				'url' => url('site/entry/' . $modulename . 'clerkdesk', array('uniacid' => $_W['uniacid'], 'op' => 'index', 'm' => $modulename)),
 				'is_display' => 1,
 			);
 		}
