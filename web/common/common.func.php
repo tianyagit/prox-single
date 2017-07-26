@@ -251,6 +251,9 @@ function buildframes($framename = ''){
 	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
 		$user_permission = uni_user_permission('system');
 	}
+	if (empty($_W['role']) && empty($_W['uniacid'])) {
+		$user_permission = uni_user_permission('system');
+	}
 	//@@todo 店员界面菜单
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
 
