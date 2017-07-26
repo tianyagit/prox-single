@@ -83,7 +83,13 @@ function refund($refund_id) {
 	} elseif ($paylog['type'] == 'alipay') {
 		$refund_param = reufnd_ali_build($refund_id);
 		$ali = Pay::create('alipay');
-		$response = $ali->refund($refund_param);
+		$response = $ali->refund($refund_param, $refund_id);
+		if (is_error($response)) {
+			pdo_update('core_refundlog', array('status' => '-1'), array('id' => $refund_id));
+			return $response;
+		} else {
+			return $response;
+		}
 	}
 	return error(1, '此订单退款方式不存在');
 }
