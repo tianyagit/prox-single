@@ -46,12 +46,12 @@ if ($do == 'display') {
 	$psize = 15;
 	$condition = array();
 	$condition['type'] = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH);
-	
+
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
 		$condition['keyword'] = $keyword;
 	}
-	
+
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$condition['letter'] = trim($_GPC['letter']);
 	}
