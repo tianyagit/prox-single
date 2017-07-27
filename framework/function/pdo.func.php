@@ -237,3 +237,43 @@ function pdo_fetchallfields($tablename){
 function pdo_tableexists($tablename){
 	return pdo()->tableexists($tablename);
 }
+
+
+function pdox() {
+	global $_W;
+	global $GLOBALS;
+	static $dbmanager;
+	if(!$dbmanager) {
+		$config = $_W['config']['db']['master'];
+		if(empty($config)) {
+			$config = $GLOBALS['_W']['config']['db'];
+		}
+
+		$database = [
+			'driver'    => 'mysql',
+			'host'      =>   $config['host'],
+			'database'  =>  $config['database'],
+			'username'  =>  $config['username'],
+			'password'  =>  $config['password'],
+			'charset'   => 'utf8',
+			'collation' => 'utf8_unicode_ci',
+			'prefix'    =>  $config['tablepre'],
+		];
+
+		$capsule = new \Illuminate\Database\Capsule\Manager;
+// 创建链接
+		$capsule->addConnection($database);
+// 设置全局静态可访问
+		$capsule->setAsGlobal();
+// 启动Eloquent
+		$capsule->bootEloquent();
+		$dbmanager = $capsule;
+		// 设置 分页
+		\Illuminate\Pagination\AbstractPaginator::currentPageResolver(function(){
+			global $_GPC;
+			return $_GPC['page'];
+		});
+	}
+	return $dbmanager;
+
+}
