@@ -133,8 +133,11 @@ function material_news_set($data, $attach_id) {
 		pdo_update('wechat_attachment', $wechat_attachment, array(
 			'id' => $attach_id
 		));
+		pdo_delete('wechat_news', array('attach_id' => $attach_id, 'uniacid' => $_W['uniacid']));
 		foreach ($post_news as $id => $news) {
-			pdo_update('wechat_news', $news, array('id' => $news['id']));
+			$news['attach_id'] = $attach_id;
+			unset($news['id']);
+			pdo_insert('wechat_news', $news);
 		}
 		cache_delete(cache_system_key('material_reply:' . $attach_id));
 	} else {
