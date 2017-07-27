@@ -7,9 +7,9 @@ load()->model('user');
 load()->func('tpl');
 $_W['token'] = token();
 $session = json_decode(authcode($_GPC['__session']), true);
-if(is_array($session)) {
+if (is_array($session)) {
 	$user = user_single(array('uid'=>$session['uid']));
-	if(is_array($user) && $session['hash'] == md5($user['password'] . $user['salt'])) {
+	if (is_array($user) && $session['hash'] == md5($user['password'] . $user['salt'])) {
 		$_W['uid'] = $user['uid'];
 		$_W['username'] = $user['username'];
 		$user['currentvisit'] = $user['lastvisit'];
@@ -26,7 +26,7 @@ if(is_array($session)) {
 }
 unset($session);
 
-if (strexists($_W['siteurl'], 'c=wxapp') || !empty($_GPC['version_id'])) {
+if (!empty($_GPC['__uniacid'])) {
 	$account = uni_site_account(ACCOUNT_TYPE_APP_NORMAL);
 } else {
 	$account = uni_site_account();
@@ -39,11 +39,8 @@ if (!empty($_W['uniacid'])) {
 	$_W['acid'] = $_W['account']['acid'];
 	$_W['weid'] = $_W['uniacid'];
 }
-if(!empty($_W['uid'])) {
+if (!empty($_W['uid'])) {
 	$_W['role'] = uni_permission($_W['uid']);
 }
-$_W['template'] = 'default';
-if(!empty($_W['setting']['basic']['template'])) {
-	$_W['template'] = $_W['setting']['basic']['template'];
-}
+$_W['template'] = !empty($_W['setting']['basic']['template']) ? $_W['setting']['basic']['template'] : 'default';
 load()->func('compat.biz');

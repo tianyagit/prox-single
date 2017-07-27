@@ -1,9 +1,17 @@
 {template 'common/header'}
+{if empty($user['founder_groupid'])}
 <ol class="breadcrumb we7-breadcrumb">
 	<a href="{url 'user/display'}"><i class="wi wi-back-circle"></i> </a>
 	<li><a href="{url 'user/display'}">用户管理</a></li>
 	<li>编辑用户详情</li>
 </ol>
+{else}
+<ol class="breadcrumb we7-breadcrumb">
+	<a href="{url 'user/display/vice_founder'}"><i class="wi wi-back-circle"></i> </a>
+	<li><a href="{url 'user/display/vice_founder'}">副创始人管理</a></li>
+	<li>编辑创始人详情</li>
+</ol>
+{/if}
 <div id="js-user-edit-base" ng-controller="UserProfileDisplay" ng-cloak>
 	<div class="user-head-info clearfix" >
 		<span class="icon pull-left"><i class="wi wi-user"></i></span>
@@ -25,7 +33,7 @@
 	<table class="table we7-table table-hover table-form">
 		<col width="140px " />
 		<col />
-		<col width="100px" />
+		<col width="120px" />
 		<tr>
 			<th class="text-left" colspan="3">账户设置设置</th>
 		</tr>
@@ -49,6 +57,13 @@
 			<td ng-bind="user.end"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#endtime">修改</a></div></td>
 		</tr>
+		{if !empty($user['founder_groupid'])}
+		<tr>
+			<td class="table-label">注册链接</td>
+			<td>{$user['url']}</td>
+			<td><div class="link-group"><a href="javascript:;" data-url="{$user['url']}" class="js-clip">复制链接</a></div></td>
+		</tr>
+		{/if}
 	</table>
 	<div class="modal fade" id="name" role="dialog">
 		<div class="we7-modal-dialog modal-dialog">
@@ -260,6 +275,26 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" ng-click="httpChange('qq')">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="vice_founder_name" role="dialog">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改副创始人姓名</div>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<input type="text" ng-model="userOriginal.vice_founder_name" class="form-control" placeholder="副创始人姓名" />
+						<span class="help-block"></span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="httpChange('vice_founder_name')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>

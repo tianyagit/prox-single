@@ -31,6 +31,8 @@ if ($do == 'edit_base') {
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);
 	$user['endtype'] = $user['endtime'] == 0 ? 1 : 2;
+	$user['url'] = user_invite_register_url($uid);
+	
 	if (!empty($profile)) {
 		$profile['reside'] = array(
 			'province' => $profile['resideprovince'],
@@ -65,11 +67,7 @@ if ($do == 'edit_modules_tpl') {
 			iajax(-1, '参数错误！', '');
 		}
 	}
-	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-		$groups = pdo_getall('users_group', array('vice_founder_id' => $_W['uid']), array('id', 'name'), 'id');
-	} else {
-		$groups = pdo_getall('users_group', array(), array('id', 'name'), 'id');
-	}
+	$groups = user_group();
 	$group_info = user_group_detail_info($user['groupid']);
 
 	template('user/edit-modules-tpl');

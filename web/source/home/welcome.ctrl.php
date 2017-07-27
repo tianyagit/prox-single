@@ -12,6 +12,7 @@ load()->func('db');
 load()->model('extension');
 load()->model('module');
 load()->model('system');
+load()->model('user');
 
 $dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics');
 $do = in_array($do, $dos) ? $do : 'platform';
@@ -20,6 +21,13 @@ if ($do == 'platform' || $do == 'ext') {
 }
 
 if ($do == 'platform') {
+	$last_uniacid = uni_account_last_switch();
+	if (empty($last_uniacid)) {
+		itoast('', url('account/display'), 'info');
+	}
+	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
+		uni_account_switch($last_uniacid,  url('home/welcome'));
+	}
 	define('FRAME', 'account');
 
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
@@ -32,8 +40,8 @@ if ($do == 'platform') {
 } elseif ($do == 'system') {
 	define('FRAME', 'system');
 	$_W['page']['title'] = '欢迎页 - 系统管理';
-	if(!$_W['isfounder']){
-		header('Location: ' . url('account/post', array('account_type' => 1)), true);
+	if(!$_W['isfounder'] || user_is_vice_founder()){
+		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
 		exit;
 	}
 	$reductions = system_database_backup();

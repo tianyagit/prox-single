@@ -4,7 +4,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-
+load()->model('user');
 $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';
@@ -42,19 +42,26 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 }
 
 if ($do == 'display') {
-	$account = uni_site_account();
-	if (empty($account)) {
-		itoast('', url('account/post-step'), 'info');
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 15;
+	$condition = array();
+	$condition['type'] = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH);
+
+	$keyword = trim($_GPC['keyword']);
+	if (!empty($keyword)) {
+		$condition['keyword'] = $keyword;
 	}
-	$account['url'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
-	$account['details'] = uni_accounts($account['uniacid']);
-	if(!empty($account['details'])) {
-		foreach ($account['details'] as  &$account_val) {
-			$account_val['thumb'] = tomedia('headimg_'.$account_val['acid']. '.jpg').'?time='.time();
-		}
+
+	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
+		$condition['letter'] = trim($_GPC['letter']);
 	}
-	$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
-	$account['setmeal'] = uni_setmeal($account['uniacid']);
+
+	$account_lists = uni_account_list($condition, array($pindex, $psize));
+	$account_list = $account_lists['list'];
+
+	if ($_W['isajax'] && $_W['ispost']) {
+		iajax(0, $account_list);
+	}
 }
 
 template('account/display');
