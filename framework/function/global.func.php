@@ -82,6 +82,7 @@ function isetcookie($key, $value, $expire = 0, $httponly = false) {
  */
 function getip() {
 	static $ip = '';
+	return '';
 	$ip = $_SERVER['REMOTE_ADDR'];
 	if(isset($_SERVER['HTTP_CDN_SRC_IP'])) {
 		$ip = $_SERVER['HTTP_CDN_SRC_IP'];
