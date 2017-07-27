@@ -5,9 +5,9 @@
  */
 defined('IN_IA') or exit('Access Denied');
 abstract class Pay {
-	public static function create($type = 'weixin') {
-		if($type == 'weixin') {
-			load()->classs('weixin.pay');
+	public static function create($type = 'wechat') {
+		if($type == 'wechat') {
+			load()->classs('wechat.pay');
 			return new WeiXinPay();
 		}
 		if($type == 'alipay') {

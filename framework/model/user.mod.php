@@ -321,7 +321,7 @@ function user_group() {
  */
 function user_group_detail_info($groupid = 0) {
 	$group_info = array();
-	
+
 	$groupid = is_array($groupid) ? 0 : intval($groupid);
 	if(empty($groupid)) {
 		return $group_info;
@@ -330,7 +330,7 @@ function user_group_detail_info($groupid = 0) {
 	if (empty($group_info)) {
 		return $group_info;
 	}
-	
+
 	$group_info['package'] = (array)iunserializer($group_info['package']);
 	if (!empty($group_info['package'])) {
 		$group_info['package_detail'] = uni_groups($group_info['package']);
@@ -411,12 +411,18 @@ function user_modules($uid) {
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
 		if (empty($uid) || user_is_founder($uid)) {
 			$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
+		} elseif (!empty($user_info) && $user_info['type'] == ACCOUNT_OPERATE_CLERK) {
+			$clerk_module = pdo_fetch("SELECT p.type FROM " . tablename('users_permission') . " p LEFT JOIN " . tablename('uni_account_users') . " u ON p.uid = u.uid AND p.uniacid = u.uniacid WHERE u.role = :role AND p.uid = :uid", array(':role' => ACCOUNT_MANAGE_NAME_CLERK, ':uid' => $uid));
+			if (empty($clerk_module)) {
+				return array();
+			}
+			$module_list = array($clerk_module['type'] => $clerk_module['type']);
 		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
 			$module_list = $system_modules;
 		} else {
 			$user_group_info = user_group_detail_info($user_info['groupid']);
 			$packageids = $user_group_info['package'];
-			
+
 			//如果套餐组中包含-1，则直接取全部权限，否则根据情况获取模块权限
 			if (!empty($packageids) && in_array('-1', $packageids)) {
 				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
@@ -500,6 +506,9 @@ function user_login_forward($forward = '') {
 	}
 	if (!empty($_W['isfounder'])) {
 		return url('home/welcome/system');
+	}
+	if ($_W['user']['type'] == ACCOUNT_OPERATE_CLERK) {
+		return url('module/display');
 	}
 
 	$login_forward = url('account/display');

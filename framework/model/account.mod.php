@@ -528,6 +528,8 @@ function uni_permission($uid = 0, $uniacid = 0) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
 		} elseif ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
+		} elseif ($role == ACCOUNT_MANAGE_NAME_CLERK) {
+			$role = ACCOUNT_MANAGE_NAME_CLERK;
 		}
 	} else {
 		$roles = pdo_getall('uni_account_users', array('uid' => $uid), array('role'), 'role');
@@ -538,6 +540,8 @@ function uni_permission($uid = 0, $uniacid = 0) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
 		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
+		} elseif (in_array(ACCOUNT_MANAGE_NAME_CLERK, $roles)) {
+			$role = ACCOUNT_MANAGE_NAME_CLERK;
 		}
 	}
 	return $role;
@@ -584,6 +588,10 @@ function uni_user_permission($type = 'system') {
 	//目前只有系统管理才有预设权限，公众号权限走数据库
 	if (!empty($permission_append[$_W['role']])) {
 		$user_permission = array_merge($user_permission, $permission_append[$_W['role']]);
+	}
+	//未分配公众号的新用户用户权限取操作员相同权限
+	if (empty($_W['role']) && empty($_W['uniacid'])) {
+		$user_permission = array_merge($user_permission, $permission_append['operator']);
 	}
 	return (array)$user_permission;
 }
