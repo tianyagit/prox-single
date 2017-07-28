@@ -357,7 +357,7 @@ function module_get_all_unistalled($status)  {
 	load()->classs('cloudapi');
 	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
 	$uninstallModules =  cache_load(cache_system_key('module:all_uninstall'));
-	if ($_GPC['c'] == 'system' && $_GPC['a'] == 'module' && $_GPC['do'] == 'not_installed' && $status == 'uninstalled') {
+	if ($_GPC['c'] == 'module' && $_GPC['a'] == 'manage-system' && $_GPC['do'] == 'not_installed' && $status == 'uninstalled') {
 		$cloud_api = new CloudApi();
 		$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 		$cloud_m_count = $get_cloud_m_count['module_quantity'];
