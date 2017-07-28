@@ -1334,3 +1334,30 @@ function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status 
 	}
 	return true;
 }
+
+
+/**
+ * 获取用户可操作的所有公众号
+ * @param int $uid 要查找的用户
+ * @return array()
+ */
+function uni_user_have_accounts($uid) {
+	global $_W;
+	$result = array();
+	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
+	$cachekey = cache_system_key("user_have_accounts:{$uid}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+	$where = '';
+	$params = array();
+	if(empty($_W['isfounder'])) {
+		$where .= " WHERE `uniacid` IN (SELECT `uniacid` FROM " . tablename('uni_account_users') . " WHERE `uid`=:uid)";
+		$params[':uid'] = $uid;
+	}
+	$sql = "SELECT w.acid, w.uniacid, w.key, w.secret, w.level, w.name FROM " . tablename('account') . " a," . tablename('account_wechats') . " w WHERE a.acid = w.acid AND a.uniacid = w.uniacid AND a.isdeleted <> 1" . $where;
+	$result = pdo_fetchall($sql, $params);
+	cache_write($cachekey, $result);
+	return $result;
+}
