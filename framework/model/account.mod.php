@@ -1361,3 +1361,39 @@ function uni_user_have_accounts($uid) {
 	cache_write($cachekey, $result);
 	return $result;
 }
+
+/**
+ * 获取某公众号下会员字段
+ * @param int $uniacid
+ * @return array 会员字段数组
+ */
+function uni_account_member_fields($uniacid) {
+	if (empty($uniacid)) {
+		return array();
+	}
+	$account_member_fields = pdo_getall('mc_member_fields', array('uniacid' => $uniacid), array(), 'fieldid');
+	$system_member_fields = pdo_getall('profile_fields', array(), array(), 'id');
+	$less_field_indexes = array_diff(array_keys($system_member_fields), array_keys($account_member_fields));
+	if (empty($less_field_indexes)) {
+		foreach ($account_member_fields as &$field) {
+			$field['field'] = $system_member_fields[$field['fieldid']]['field'];
+		}
+		unset($field);
+		return $account_member_fields;
+	}
+	
+	$account_member_add_fields = array('uniacid' => $uniacid);
+	foreach ($less_field_indexes as $field_index) {
+		$account_member_add_fields['fieldid'] = $system_member_fields[$field_index]['id'];
+		$account_member_add_fields['title'] = $system_member_fields[$field_index]['title'];
+		$account_member_add_fields['available'] = $system_member_fields[$field_index]['available'];
+		$account_member_add_fields['displayorder'] = $system_member_fields[$field_index]['displayorder'];
+		pdo_insert('mc_member_fields', $account_member_add_fields);
+		$insert_id = pdo_insertid();
+		$account_member_fields[$insert_id]['id'] = $insert_id;
+		$account_member_fields[$insert_id]['field'] = $system_member_fields[$field_index]['field'];
+		$account_member_fields[$insert_id]['fid'] = $system_member_fields[$field_index]['id'];
+		$account_member_fields[$insert_id] = array_merge($account_member_fields[$insert_id], $account_member_add_fields);
+	}
+	return $account_member_fields;
+}
