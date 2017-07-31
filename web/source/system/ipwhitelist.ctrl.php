@@ -1,6 +1,6 @@
 <?php
 /**
- * 系统信息
+ * ip白名单
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
