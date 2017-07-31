@@ -41,21 +41,72 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
  */
 function uni_owned($uid = 0) {
 	global $_W;
-	$uid = empty($uid) ? $_W['uid'] : intval($uid);
+	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
 	$uniaccounts = array();
-	$founders = explode(',', $_W['config']['setting']['founder']);
 
-	if (in_array($uid, $founders)) {
-		$account_uniacid = pdo_fetchall("SELECT uniacid FROM " . tablename('account') . " WHERE type IN (:type_1, :type_2) GROUP BY uniacid", array(':type_1' => ACCOUNT_TYPE_OFFCIAL_NORMAL, ':type_2' => ACCOUNT_TYPE_OFFCIAL_AUTH));
-	} else {
-		$account_uniacid = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'), 'uniacid');
+	$user_accounts = uni_user_accounts($uid);
+	if (empty($user_accounts)) {
+		return $uniaccounts;
 	}
-	if (!empty($account_uniacid)) {
-		foreach ($account_uniacid as $row) {
+
+	if (user_is_vice_founder($uid)) {
+		$user_type = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
+	} elseif (user_is_founder($uid)) {
+		$user_type = ACCOUNT_MANAGE_NAME_FOUNDER;
+	} else {
+		$user_type = ACCOUNT_MANAGE_NAME_OWNER;
+	}
+
+	foreach ($user_accounts as $key => $user_account) {
+		if ($user_type == ACCOUNT_MANAGE_NAME_FOUNDER) {
+			continue;
+		} elseif ($user_type == ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
+			if ($user_account['role'] != ACCOUNT_MANAGE_NAME_OWNER && $user_account['role'] != ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
+				unset($user_accounts[$key]);
+			}
+		} else {
+			if ($user_account['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
+				unset($user_accounts[$key]);
+			}
+		}
+	}
+
+	if (!empty($user_accounts)) {
+		foreach ($user_accounts as $row) {
 			$uniaccounts[$row['uniacid']] = uni_fetch($row['uniacid']);
 		}
 	}
 	return $uniaccounts;
+}
+
+/**
+ * 获取用户可操作的所有公众号
+ * @param int $uid 要查找的用户
+ * @return array()
+ */
+function uni_user_accounts($uid) {
+	global $_W;
+	$result = array();
+	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
+	$cachekey = cache_system_key("user_accounts:{$uid}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+	$field = '';
+	$where = '';
+	$params = array();
+	if (empty(user_is_founder($uid)) || user_is_vice_founder($uid)) {
+		$field .= ', u.role';
+		$where .= " LEFT JOIN " . tablename('uni_account_users') . " u ON u.uniacid = w.uniacid WHERE u.uid = :uid";
+		$params[':uid'] = $uid;
+	}
+	$where .= !empty($where) ? " AND a.isdeleted <> 1 AND u.role IS NOT NULL" : " WHERE a.isdeleted <> 1";
+
+	$sql = "SELECT w.acid, w.uniacid, w.key, w.secret, w.level, w.name" . $field . " FROM " . tablename('account_wechats') . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
+	$result = pdo_fetchall($sql, $params);
+	cache_write($cachekey, $result);
+	return $result;
 }
 
 /**
@@ -1335,33 +1386,6 @@ function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status 
 	return true;
 }
 
-
-/**
- * 获取用户可操作的所有公众号
- * @param int $uid 要查找的用户
- * @return array()
- */
-function uni_user_have_accounts($uid) {
-	global $_W;
-	$result = array();
-	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
-	$cachekey = cache_system_key("user_have_accounts:{$uid}");
-	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
-	}
-	$where = '';
-	$params = array();
-	if(empty($_W['isfounder'])) {
-		$where .= " WHERE `uniacid` IN (SELECT `uniacid` FROM " . tablename('uni_account_users') . " WHERE `uid`=:uid)";
-		$params[':uid'] = $uid;
-	}
-	$sql = "SELECT w.acid, w.uniacid, w.key, w.secret, w.level, w.name FROM " . tablename('account') . " a," . tablename('account_wechats') . " w WHERE a.acid = w.acid AND a.uniacid = w.uniacid AND a.isdeleted <> 1" . $where;
-	$result = pdo_fetchall($sql, $params);
-	cache_write($cachekey, $result);
-	return $result;
-}
-
 /**
  * 获取某公众号下会员字段
  * @param int $uniacid
@@ -1381,7 +1405,7 @@ function uni_account_member_fields($uniacid) {
 		unset($field);
 		return $account_member_fields;
 	}
-	
+
 	$account_member_add_fields = array('uniacid' => $uniacid);
 	foreach ($less_field_indexes as $field_index) {
 		$account_member_add_fields['fieldid'] = $system_member_fields[$field_index]['id'];
