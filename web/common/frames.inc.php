@@ -476,6 +476,12 @@ $we7_system_menu['site'] = array(
 					'icon' => 'wi wi-log',
 					'permission_name' => 'system_setting_logs',
 				),
+				'system_setting_ipwhitelist' => array(
+					'title' => 'IP白名单',
+					'url' => url('system/ipwhitelist'),
+					'icon' => 'wi wi-ip',
+					'permission_name' => 'system_setting_ipwhitelist',
+				),
 			)
 		),
 		'utility' => array(

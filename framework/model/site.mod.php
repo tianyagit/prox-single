@@ -84,3 +84,42 @@ function site_cover_delete($page_id) {
 	}
 	return true;
 }
+
+function site_ip_validate($ip) {
+	$ip = trim($ip);
+	if (empty($ip)) {
+		return error(-1, 'ip不能为空');
+	}
+	$ip_data = explode("\n", $ip);
+	foreach ($ip_data as $ip) {
+		if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+			return error(-1, $ip . '不合法');
+		}
+		if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+			return error(-1, $ip . '为内网ip,内网ip不可填');
+		}
+	}
+	return $ip_data;
+}
+
+function site_ip_add($ip = '') {
+	$ip_data = site_ip_validate($ip);
+	if (is_error($ip_data)) {
+		return error(-1, 'ip不能为空');
+	}
+	$ip_str = '';
+	foreach ($ip_data as $ip_item) {
+		$ip_str .= ',' . "'$ip_item'";
+	}
+	$ip_str = trim($ip_str, ',');
+	$ip_exists = pdo_fetchall("SELECT * FROM ims_ip_list WHERE ip IN ($ip_str)", array(), 'ip');
+	$ips_exists = implode(',', array_keys($ip_exists));
+	if (!empty($ip_exists)) {
+		return error(-1, $ips_exists . '已存在');
+	}
+
+	foreach ($ip_data as $ip_item) {
+		pdo_insert('ip_list', array('ip' => $ip_item));
+	}
+	return $ip_data;
+}
