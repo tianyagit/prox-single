@@ -112,7 +112,6 @@ class VideoResource extends Resource {
 		$page_index = $this->getCurrentPage();
 		$page_size = 10;
 		$material_news_list = material_list($this->type, $server, array('page_index' => $page_index, 'page_size' => $page_size),true);
-
 		$material_list = $material_news_list['material_list'];
 		$pager = $material_news_list['page'];
 		return array('items'=>$material_list,'pager'=>$pager);
@@ -146,9 +145,7 @@ class VoiceResource extends VideoResource {
 
 class ImageResource extends Resource {
 	protected $type = 'image';
-
 	private $pagesize = 24;
-
 
 	/**
 	 *  加载本地图

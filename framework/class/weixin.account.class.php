@@ -1453,8 +1453,13 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$token}&type={$type}";
+		$media = '@'.$path;
+		if(version_compare(PHP_VERSION,'5.6.0', '>')){
+			$media = new CURLFile($path);
+		}
 		$data = array(
-			'media' => '@' . $path,
+			'media' => $media,//'@' . $path,
+			'description'=>'{"title":"title", "introduction":"miaoshu"}'
 		);
 		return $this->requestApi($url, $data);
 	}
@@ -1899,6 +1904,7 @@ class WeiXinAccount extends WeAccount {
 	
 	protected function requestApi($url, $post = '') {
 		$response = ihttp_request($url, $post);
+
 		$result = @json_decode($response['content'], true);
 		if(is_error($response)) {
 			return error($result['errcode'], "访问公众平台接口失败, 错误详情: {$this->error_code($result['errcode'])}");

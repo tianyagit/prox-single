@@ -170,6 +170,7 @@ function material_get($attach_id) {
 	}
 	if (is_numeric($attach_id)) {
 		$material = pdo_get('wechat_attachment', array('id' => $attach_id));
+
 	} else {
 		$media_id = trim($attach_id);
 		$material = pdo_get('wechat_attachment', array('media_id' => $media_id)); 
@@ -197,6 +198,7 @@ function material_get($attach_id) {
 			}
 			$material['news'] = $news;
 		} elseif ($material['type'] == 'image') {
+			$material['url'] = ($material['attachment']);
 			$material['attachment'] = tomedia($material['attachment']);
 		}
 		return $material;
@@ -508,7 +510,7 @@ function material_url_check($url) {
 	}
 }
 
-function material_news_list($server = '', $search ='', $page = array('page_index' => 1, 'page_size' => 24), $isajax = false) {
+function material_news_list($server = '', $search ='', $page = array('page_index' => 1, 'page_size' => 24)) {
 	global $_W;
 	$conditions[':uniacid'] = $_W['uniacid'];
 	$news_model_sql = '';
@@ -551,12 +553,12 @@ function material_news_list($server = '', $search ='', $page = array('page_index
 		}
 	}
 	unset($news_list);
-	$pager = pagination($total, $page['page_index'], $page['page_size'],'',$context = array('before' => 5, 'after' => 4, 'isajax' => $isajax));
+	$pager = pagination($total, $page['page_index'], $page['page_size'],'',$context = array('before' => 5, 'after' => 4));
 	$material_news = array('material_list' => $material_list, 'page' => $pager);
 	return $material_news;
 }
 
-function material_list($type = '', $server = '', $page = array('page_index' => 1, 'page_size' => 24), $isajax = false) {
+function material_list($type = '', $server = '', $page = array('page_index' => 1, 'page_size' => 24)) {
 	global $_W;
 	$tables = array(MATERIAL_LOCAL => 'core_attachment', MATERIAL_WEXIN => 'wechat_attachment');
 	$conditions['uniacid'] = $_W['uniacid'];
