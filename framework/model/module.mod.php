@@ -87,7 +87,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 				continue;
 			}
 			$response = json_decode($response['content'], true);
-			$ret = $response['message'];
+			$ret = $response['message']['message'];
 			if(is_array($ret)) {
 				foreach($ret as $et) {
 					if (empty($et['url'])) {
