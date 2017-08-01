@@ -5,7 +5,7 @@
 {if $do != 'credit_record' && $do != 'credit_stat'}
 <div class="we7-page-title">会员管理</div>
 <ul class="we7-page-tab">
-	<li {if $do == 'display' || $do == 'post'} class="active"{/if}>
+	<li {if ($do == 'display' || $do == 'post') && $_GPC['a'] == 'member'} class="active"{/if}>
 	<a href="{php echo url('mc/member')}">会员管理</a>
 	</li>
 	<li {if $_GPC['a'] == 'group'} class="active"{/if}>
