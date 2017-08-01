@@ -810,8 +810,6 @@ function module_save_switch($module_name, $uniacid = 0, $version_id = 0) {
 	return true;
 }
 
-
-
 /**
  * 获取用户上一次进入模块的公众号OR小程序信息
  */
@@ -824,4 +822,27 @@ function module_last_switch($module_name) {
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
 	return $cache_lastaccount[$module_name];
+}
+
+/**
+ * 获取模块店员信息
+ */
+function module_clerk_info($module_name) {
+	$user_permissions = array();
+	$module_name = trim($module_name);
+	if (empty($module_name)) {
+		return $user_permissions;
+	}
+	$params = array(
+			':role' => ACCOUNT_MANAGE_NAME_CLERK,
+			':type' => $module_name,
+	);
+	$sql = "SELECT u.uid, p.permission FROM " . tablename('uni_account_users') . " u," . tablename('users_permission') . " p WHERE u.uid = p.uid AND u.uniacid = p.uniacid AND u.role = :role AND p.type = :type";
+	$user_permissions = pdo_fetchall($sql, $params, 'uid');
+	if (!empty($user_permissions)) {
+		foreach ($user_permissions as $key => $value) {
+			$user_permissions[$key]['user_info'] = user_single($value['uid']);
+		}
+	}
+	return $user_permissions;
 }
