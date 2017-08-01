@@ -15,7 +15,7 @@
 		{if $_GPC['do'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}<a href="{url 'user/create/vice_founder'}" class="btn btn-primary">+添加副创始人</a>{/if}
 	</div>
 </div>
-<table class="table we7-table table-hover table-manage vertical-middle" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
+<table class="table we7-table table-hover table-manage vertical-middle table-manage" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
 	<col width="120px"/>
 	<col width="150px">
 	{if $do != 'vice_founder'}
@@ -57,7 +57,7 @@
 		<td>
 			<span ng-bind="user.endtime"></span>
 		</td>
-		<td>
+		<td class="vertical-middle table-manage-td">
 			{if $do != 'vice_founder'}
 			<div class="link-group" ng-if="!user.founder">
 				<a ng-href="{{links.edit}}uid={{user.uid}}" ng-if="do == 'display'">编辑</a>
@@ -73,6 +73,11 @@
 				<a ng-href="{{links.recycleDel}}uid={{user.uid}}" class="del" ng-if="do == 'vice_founder'">删除</a>
 			</div>
 			{/if}
+			<div class="manage-option text-right" ng-if="!user.founder">
+				<a href="{{links.edit}}uid={{user.uid}}">基础信息</a>
+				<a href="{{links.edit}}&do=edit_modules_tpl&uid={{user.uid}}">应用模板权限</a>
+				<a href="{{links.edit}}&do=edit_account&uid={{user.uid}}">使用账号列表</a>
+			</div>
 		</td>
 	</tr>
 	<tr ng-if="!users">

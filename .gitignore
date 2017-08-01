@@ -37,3 +37,6 @@ deployment.properties
 web/resource/components/**/*
 web/resource/js/**/*
 framework/builtin/core/module.cer
+
+we7/**/*
+vendor/**/*
