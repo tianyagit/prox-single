@@ -57,7 +57,7 @@
 					<div class="we7-margin-bottom-sm">请输入有效IP地址 <span class="color-gray">(如: 183.184.176.181)</span></div>
 					<div class="panel panel-default">
 						<div class="panel-body">
-							<textarea name="ips" id="addips" rows="5" class="form-control" style="border: none; outline:none; box-shadow: none; resize:none; "></textarea>
+							<textarea ng-model="ips" name="ips" id="addips" rows="5" class="form-control" style="border: none; outline:none; box-shadow: none; resize:none; "></textarea>
 						</div>
 						<div class="panel-footer text-right color-gray">
 							按"回车"添加多个
@@ -74,7 +74,7 @@
 </div>
 <!--end ip白名单-->
 <script type="text/javascript">
-	angular.module('wesiteApp').value('config', {
+	angular.module('systemApp').value('config', {
 		'lists': {php echo !empty($lists) ? json_encode($lists) : 'null'},
 		'links' : {
 			'add_link_ips': "{php echo url('system/ipwhitelist/add')}",
@@ -82,6 +82,6 @@
 			'delete_link_ip': "{php echo url('system/ipwhitelist/delete')}",
 		},
 	});
-	angular.bootstrap($('.iplist'), ['wesiteApp']);
+	angular.bootstrap($('.iplist'), ['systemApp']);
 </script>
 {template 'common/footer'}
