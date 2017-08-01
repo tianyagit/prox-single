@@ -100,13 +100,7 @@ if ($do == 'display') {
 					}
 					//若是模块，获取模块图片
 					if (!in_array($item['module'], array("basic", "news", "images", "voice", "video", "music", "wxcard", "reply"))) {
-						if (file_exists(IA_ROOT.'/addons/'.$item['module'].'/icon-custom.jpg')) {
-							$item['logo'] = tomedia(IA_ROOT.'/addons/'.$item['module'].'/icon-custom.jpg');
-						} elseif (file_exists(IA_ROOT.'/addons/'.$item['module'].'/icon.jpg')) {
-							$item['logo'] = tomedia(IA_ROOT.'/addons/'.$item['module'].'/icon.jpg');
-						} else {
-							$item['logo'] = './resource/images/11.png';
-						}
+						$item['module_info'] = module_fetch($item['module']);
 					}
 				}
 				unset($item);
@@ -131,7 +125,7 @@ if ($do == 'display') {
 	if ($m == 'userapi') {
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 8;
-		
+
 		$condition = "uniacid = :uniacid AND `module`=:module";
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
@@ -146,7 +140,7 @@ if ($do == 'display') {
 				$condition .= " AND `name` LIKE :keyword" ;
 				$params[':keyword'] = "%{$_GPC['keyword']}%";
 			}
-		}	
+		}
 		if (!empty($_GPC['keyword']) && $_GPC['search_type'] == 'keyword' && empty($rule_keyword_rid_list)) {
 			$replies = array();
 			$pager = '';
@@ -367,7 +361,7 @@ if ($do == 'post') {
 				}
 			}
 			$module['icon'] = $cion;
-			
+
 			if ($module['enabled'] == 1) {
 				$enable_modules[$name] = $module;
 			} else {
