@@ -19,6 +19,9 @@
 	<li {if $do == 'register_setting'} class="active"{/if}>
 		<a href="{php echo url('mc/member/register_setting')}">注册设置</a>
 	</li>
+	<li {if $action == 'fields'} class="active"{/if}>
+		<a href="{php echo url('profile/fields')}">会员字段管理</a>
+	</li>
 </ul>
 <div class="alert we7-page-alert">
 	<p><strong class="text-danger"><i class="wi wi-info-sign"></i> 会员组的总积分是根据(积分+贡献)的值算出来的,管理员不能直接修改会员所在的会员组. 如果需要修改会员组,请通过设置积分或者贡献的值来影响总积分,系统会根据影响后的总积分自动算出对应的会员组</strong></p>

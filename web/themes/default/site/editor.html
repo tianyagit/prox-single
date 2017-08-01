@@ -22,6 +22,9 @@
 	<li {if $do == 'register_setting'} class="active"{/if}>
 	<a href="{php echo url('mc/member/register_setting')}">注册设置</a>
 	</li>
+	<li {if $action == 'fields'} class="active"{/if}>
+	<a href="{php echo url('profile/fields')}">会员字段管理</a>
+	</li>
 </ul>
 <!--<ul class="nav nav-tabs">
 	<li class="active"><a href="javascript:;">会员中心</a></li>
@@ -199,6 +202,9 @@
 	</li>
 	<li {if $do == 'register_setting'} class="active"{/if}>
 		<a href="{php echo url('mc/member/register_setting')}">注册设置</a>
+	</li>
+	<li {if $action == 'fields'} class="active"{/if}>
+		<a href="{php echo url('profile/fields')}">会员字段管理</a>
 	</li>
 </ul>
 <!--<ul class="nav nav-tabs">
