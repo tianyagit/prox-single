@@ -193,7 +193,7 @@ function file_upload($file, $type = 'image', $name = '') {
 		return error(-3, '不允许上传此类文件');
 	}
 	if (!empty($limit) && $limit * 1024 < filesize($file['tmp_name'])) {
-		return error(-4, "上传的文件超过大小限制，请上传小于 {$limit}k 的文件");
+//		return error(-4, "上传的文件超过大小限制，请上传小于 {$limit}k 的文件");
 	}
 	$result = array();
 	if (empty($name) || $name == 'auto') {

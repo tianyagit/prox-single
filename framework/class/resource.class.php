@@ -14,7 +14,7 @@ abstract class Resource
 	public function __construct() {
 		global $_W;
 		$this->uniacid = $_W['uniacid'];
-		$this->currentPage = $this->query('page',1);
+		$this->currentPage = max(1,$this->query('page',1));
 	}
 
 	/**
@@ -132,7 +132,7 @@ class NewsResource extends Resource {
 		$page_index = $this->getCurrentPage();
 		$page_size = 24;
 		$search = addslashes($this->query('keyword'));
-		$material_news_list = material_news_list($server, $search, array('page_index' => $page_index, 'page_size' => $page_size),true);
+		$material_news_list = material_news_list($server, $search, array('page_index' => $page_index, 'page_size' => $page_size));
 		$material_list = $material_news_list['material_list'];
 		$pager = $material_news_list['page'];
 		return array('items'=>$material_list,'pager'=>$pager);

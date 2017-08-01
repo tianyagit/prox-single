@@ -6,7 +6,7 @@
  */
 
 defined('IN_IA') or exit('Access Denied');
-error_reporting(0);
+//error_reporting(0);
 global $_W;
 load()->func('file');
 load()->func('communication');
@@ -133,10 +133,12 @@ if ($do == 'upload') {
 		$result['message'] = '上传失败, 请选择要上传的文件！';
 		die(json_encode($result));
 	}
+
 	if ($_FILES['file']['error'] != 0) {
 		$result['message'] = '上传失败, 请重试.';
 		die(json_encode($result));
 	}
+
 	$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
 	$ext = strtolower($ext);
 	$size = intval($_FILES['file']['size']);
