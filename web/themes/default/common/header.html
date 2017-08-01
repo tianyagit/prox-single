@@ -54,7 +54,7 @@
 	<div class="container text-right">
 		<div class="alert-info">
 			<a href="{if $_W['isfounder']}{php echo url('user/edit', array('uid' => $_W['account']['uid']));}{else}javascript:void(0);{/if}">
-				您的服务有效期限：{php echo date('Y-m-d', $_W['account']['starttime']);} ~ {php echo date('Y-m-d', $_W['account']['endtime']);}.
+				该公众号管理员服务有效期：{php echo date('Y-m-d', $_W['account']['starttime']);} ~ {php echo date('Y-m-d', $_W['account']['endtime']);}.
 				{if $_W['account']['endtime'] < TIMESTAMP}
 				目前已到期，请联系管理员续费
 				{else}

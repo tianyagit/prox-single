@@ -114,13 +114,13 @@ $we7_system_menu['account'] = array(
 				'profile' => array(
 					'title' => '参数配置',
 					'url' => url('profile/passport'),
-					'icon' => 'wi wi-parameter-stting',
+					'icon' => 'wi wi-parameter-setting',
 					'permission_name' => 'profile_setting',
 				),
 				'payment' => array(
 					'title' => '支付参数',
 					'url' => url('profile/payment'),
-					'icon' => 'wi wi-parameter-stting',
+					'icon' => 'wi wi-pay-setting',
 					'permission_name' => 'profile_setting',
 				),
 			),
@@ -305,30 +305,30 @@ $we7_system_menu['system'] = array(
 					'icon' => 'wi wi-user-group',
 					'permission_name' => 'system_user',
 					'sub_permission' => array(
-							array(
-								'title' => '编辑用户',
-								'permission_name' => 'system_user_post',
-							),
-							array(
-								'title' => '审核用户',
-								'permission_name' => 'system_user_check',
-							),
-							array(
-								'title' => '用户回收站',
-								'permission_name' => 'system_user_recycle',
-							),
-							array(
-								'title' => '用户属性设置',
-								'permission_name' => 'system_user_fields',
-							),
-							array(
-								'title' => '用户属性设置-编辑字段',
-								'permission_name' => 'system_user_fields_post',
-							),
-							array(
-								'title' => '用户注册设置',
-								'permission_name' => 'system_user_registerset',
-							),
+						array(
+							'title' => '编辑用户',
+							'permission_name' => 'system_user_post',
+						),
+						array(
+							'title' => '审核用户',
+							'permission_name' => 'system_user_check',
+						),
+						array(
+							'title' => '用户回收站',
+							'permission_name' => 'system_user_recycle',
+						),
+						array(
+							'title' => '用户属性设置',
+							'permission_name' => 'system_user_fields',
+						),
+						array(
+							'title' => '用户属性设置-编辑字段',
+							'permission_name' => 'system_user_fields_post',
+						),
+						array(
+							'title' => '用户注册设置',
+							'permission_name' => 'system_user_registerset',
+						),
 					),
 				),
 			)
