@@ -151,9 +151,10 @@ class CoreModule extends WeModule {
 					//只选择关键字
 					}else {
 						$replies['keyword'][0]['name'] = $isexists['name'];
-						$keyword = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'id' => $rid), 'content');
+						$keyword = pdo_get('rule_keyword', array('uniacid' => $_W['uniacid'], 'id' => $rid));
 						$replies['keyword'][0]['id'] = $rid;
-						$replies['keyword'][0]['content'] = $keyword;
+						$replies['keyword'][0]['rid'] = $keyword['rid'];
+						$replies['keyword'][0]['content'] = $keyword['content'];
 					}
 				}
 				break;

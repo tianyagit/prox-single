@@ -271,6 +271,7 @@
 					'		</div>'+
 					'	</div>'+
 					'	<div class="opr">'+
+					'<a href="./index.php?c=platform&a=reply&do=post&m=keyword&rid=' + material.rid + '" target="_blank" class="del-gray">编辑</a> '  +
 					'		<a href="javascript:;" data-media="'+material.content+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 					'	</div>'+
 					'</div>'+
@@ -684,7 +685,6 @@
 						replyVal.push(angular.toJson(keywordVal.id));
 						var keywords = '&nbsp;&nbsp;' + keywordVal.content;
 						$('.keywords-list').append(
-
 								'<li>'+
 								'<div class="del-'+type+'-media">'+
 								'	<div class="desc">'+
@@ -696,7 +696,8 @@
 								'		</div>'+
 								'	</div>'+
 								'	<div class="opr">'+
-								'		<a href="javascript:;" data-media="'+keywordVal.name+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
+								'<a href="./index.php?c=platform&a=reply&do=post&m=keyword&rid=' + keywordVal.rid + '" target="_blank" class="del-gray">编辑</a> '  +
+								'<a href="javascript:;" data-media="'+keywordVal.name+'" class="del-gray" onclick="delmedia(\''+type+'\', this)">删除</a>'+
 								'	</div>'+
 								'</div>'+
 								'</li>'
