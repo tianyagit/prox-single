@@ -96,7 +96,8 @@ function uni_user_accounts($uid) {
 	$field = '';
 	$where = '';
 	$params = array();
-	if (empty(user_is_founder($uid)) || user_is_vice_founder($uid)) {
+	$user_is_founder = user_is_founder($uid);
+	if (empty($user_is_founder) || user_is_vice_founder($uid)) {
 		$field .= ', u.role';
 		$where .= " LEFT JOIN " . tablename('uni_account_users') . " u ON u.uniacid = w.uniacid WHERE u.uid = :uid";
 		$params[':uid'] = $uid;
