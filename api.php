@@ -435,6 +435,9 @@ class WeEngine {
 			@$obj->receive();
 		}
 		load()->func('communication');
+		if (empty($subscribe[$this->message['type']])) {
+			$subscribe[$this->message['type']] = $subscribe[$this->message['event']];
+		}
 		if (!empty($subscribe[$this->message['type']])) {
 			foreach ($subscribe[$this->message['type']] as $modulename) {
 				//fsockipen可用时，设置timeout为0可以无需等待高效请求

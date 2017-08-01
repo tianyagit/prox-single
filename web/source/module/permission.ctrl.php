@@ -19,12 +19,17 @@ if(!uni_user_module_permission_check($module_name.'_permissions', $module_name))
 }
 
 if ($do == 'display') {
-	$entries = module_entries($module_name);
-	$user_permissions = pdo_getall('users_permission', array('uniacid' => $_W['uniacid'], 'type' => $module_name, 'uid <>' => ''), '', 'uid');
-	$uids = !empty($user_permissions) && is_array($user_permissions) ? array_keys($user_permissions) : array();
+	$params = array(
+		':role' => ACCOUNT_MANAGE_NAME_CLERK,
+		':type' => $module_name,
+	);
+	$sql = "SELECT u.uid, p.permission FROM " . tablename('uni_account_users') . " u," . tablename('users_permission') . " p WHERE u.uid = p.uid AND u.uniacid = p.uniacid AND u.role = :role AND p.type = :type";
+	$user_permissions = pdo_fetchall($sql, $params, 'uid');
 	$users_lists = array();
-	if (!empty($uids)) {
-		$users_lists = pdo_getall('users', array('uid' => $uids), '', 'uid');
+	if (!empty($user_permissions)) {
+		foreach ($user_permissions as $key => $value) {
+			$users_lists[$key] = user_single($value['uid']);
+		}
 	}
 	$current_module_permission = module_permission_fetch($module_name);
 	$permission_name = array();
