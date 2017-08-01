@@ -114,13 +114,13 @@ $we7_system_menu['account'] = array(
 				'profile' => array(
 					'title' => '参数配置',
 					'url' => url('profile/passport'),
-					'icon' => 'wi wi-parameter-stting',
+					'icon' => 'wi wi-parameter-setting',
 					'permission_name' => 'profile_setting',
 				),
 				'payment' => array(
 					'title' => '支付参数',
 					'url' => url('profile/payment'),
-					'icon' => 'wi wi-parameter-stting',
+					'icon' => 'wi wi-pay-setting',
 					'permission_name' => 'profile_setting',
 				),
 			),
