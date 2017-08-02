@@ -32,8 +32,8 @@
 			</td>
 			<td>
 				<div class="we7-form">
-					<input class='we7-toggle' type="checkbox" name='check-3' checked='checked' ng-if="list.status" ng-click="changeStatus(list.id)" />
-					<input class='we7-toggle' type="checkbox" name='check-3' ng-if="!list.status" ng-click="changeStatus(list.id)" />
+					<input class='we7-toggle' type="checkbox" name='check-3' checked='checked' ng-if="list.status==1" ng-click="changeStatus(list.id)"/>
+					<input class='we7-toggle' type="checkbox" name='check-3' ng-if="list.status==0" ng-click="changeStatus(list.id)"/>
 				</div>
 			</td>
 			<td>
