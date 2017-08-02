@@ -106,9 +106,12 @@ function user_is_founder($uid) {
 /**
  * 判断是否是副创始人
  */
-function user_is_vice_founder() {
+function user_is_vice_founder($uid = 0) {
 	global $_W;
-	if (!empty($_W['isfounder']) && $_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
+	$user_info = user_single($uid);
+
+	if (user_is_founder($uid) && $user_info['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 		return true;
 	}
 	return false;
