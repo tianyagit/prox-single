@@ -17,18 +17,18 @@ if (in_array($do, array('display', 'recycle_display', 'check_display', 'vice_fou
 	switch ($do) {
 		case 'check_display':
 			uni_user_permission_check('system_user_check');
-			$condition = ' WHERE u.status = 1 ';
+			$condition = " WHERE u.status = 1 ";
 			break;
 		case 'recycle_display':
 			uni_user_permission_check('system_user_recycle');
-			$condition = ' WHERE u.status = 3 ';
+			$condition = " WHERE u.status = 3 ";
 			break;
 		case 'vice_founder':
-			$condition = ' WHERE u.founder_groupid = ' . ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
+			$condition = " WHERE u.founder_groupid = " . ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
 			break;
 		default:
 			uni_user_permission_check('system_user');
-			$condition = ' WHERE u.status = 2 AND u.founder_groupid = 0';
+			$condition = " WHERE u.status = 2 AND u.founder_groupid != " . ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
 			break;
 	}
 	if (user_is_vice_founder()) {
