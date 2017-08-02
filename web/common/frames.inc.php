@@ -558,5 +558,14 @@ $we7_system_menu['appmarket'] = array(
 	'founder' => true,
 );
 
+$we7_system_menu['helpsystem'] = array(
+	'title' => '帮助系统',
+	'icon' => 'wi wi-market',
+	'url' => url('help/display'),
+	'section' => array(),
+	'blank' => true,
+	'founder' => true,
+);
+
 
 return $we7_system_menu;
