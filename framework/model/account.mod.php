@@ -62,21 +62,73 @@ function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
  */
 function uni_owned($uid = 0) {
 	global $_W;
-	$uid = empty($uid) ? $_W['uid'] : intval($uid);
+	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
 	$uniaccounts = array();
-	$founders = explode(',', $_W['config']['setting']['founder']);
 
-	if (in_array($uid, $founders)) {
-		$account_uniacid = pdo_fetchall("SELECT uniacid FROM " . tablename('account') . " WHERE type IN (:type_1, :type_2) GROUP BY uniacid", array(':type_1' => ACCOUNT_TYPE_OFFCIAL_NORMAL, ':type_2' => ACCOUNT_TYPE_OFFCIAL_AUTH));
-	} else {
-		$account_uniacid = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'), 'uniacid');
+	$user_accounts = uni_user_accounts($uid);
+	if (empty($user_accounts)) {
+		return $uniaccounts;
 	}
-	if (!empty($account_uniacid)) {
-		foreach ($account_uniacid as $row) {
+
+	if (user_is_vice_founder($uid)) {
+		$user_type = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
+	} elseif (user_is_founder($uid)) {
+		$user_type = ACCOUNT_MANAGE_NAME_FOUNDER;
+	} else {
+		$user_type = ACCOUNT_MANAGE_NAME_OWNER;
+	}
+
+	foreach ($user_accounts as $key => $user_account) {
+		if ($user_type == ACCOUNT_MANAGE_NAME_FOUNDER) {
+			continue;
+		} elseif ($user_type == ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
+			if ($user_account['role'] != ACCOUNT_MANAGE_NAME_OWNER && $user_account['role'] != ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
+				unset($user_accounts[$key]);
+			}
+		} else {
+			if ($user_account['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
+				unset($user_accounts[$key]);
+			}
+		}
+	}
+
+	if (!empty($user_accounts)) {
+		foreach ($user_accounts as $row) {
 			$uniaccounts[$row['uniacid']] = uni_fetch($row['uniacid']);
 		}
 	}
 	return $uniaccounts;
+}
+
+/**
+ * 获取用户可操作的所有公众号
+ * @param int $uid 要查找的用户
+ * @return array()
+ */
+function uni_user_accounts($uid) {
+	global $_W;
+	$result = array();
+	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
+	$cachekey = cache_system_key("user_accounts:{$uid}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+	$field = '';
+	$where = '';
+	$params = array();
+	$user_is_founder = user_is_founder($uid);
+	if (empty($user_is_founder) || user_is_vice_founder($uid)) {
+		$field .= ', u.role';
+		$where .= " LEFT JOIN " . tablename('uni_account_users') . " u ON u.uniacid = w.uniacid WHERE u.uid = :uid";
+		$params[':uid'] = $uid;
+	}
+	$where .= !empty($where) ? " AND a.isdeleted <> 1 AND u.role IS NOT NULL" : " WHERE a.isdeleted <> 1";
+
+	$sql = "SELECT w.acid, w.uniacid, w.key, w.secret, w.level, w.name" . $field . " FROM " . tablename('account_wechats') . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
+	$result = pdo_fetchall($sql, $params);
+	cache_write($cachekey, $result);
+	return $result;
 }
 
 /**
@@ -732,28 +784,23 @@ function uni_update_user_permission($uid, $uniacid, $data) {
 }
 
 /**
- * 副创始人没有的权限
- * @return array
+ * 用户可查看到的额外信息
+ * @param array $param
+ * @return boolean
  */
-function uni_vice_founder_void_permission() {
-	$void_permission = array(
-		'system_add_vice_founder',
-		'system_edit_vice_founder',
-		'system_account_stop',
-		'system_wxapp_stop',
-		'system_module_group_add',
-		'system_module_group_post',
-		'system_user_recycle',
-		'system_see_more_info',
-	);
-	return $void_permission;
+function uni_user_see_more_info($user_type, $see_more = false) {
+	if (empty($user_type) || empty($see_more)) {
+		return false;
+	}
+	if ($user_type == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && !empty($see_more)) {
+		return true;
+	}
+
+	return false;
 }
 
 function uni_user_permission_check($permission_name, $show_message = true, $action = '') {
 	global $_W, $_GPC;
-	if (user_is_vice_founder() && in_array($permission_name, uni_vice_founder_void_permission())) {
-		return false;
-	}
 	$user_has_permission = uni_user_permission_exist();
 	if (empty($user_has_permission)) {
 		return true;
@@ -1354,4 +1401,40 @@ function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status 
 		cache_build_module_info($modulename);
 	}
 	return true;
+}
+
+/**
+ * 获取某公众号下会员字段
+ * @param int $uniacid
+ * @return array 会员字段数组
+ */
+function uni_account_member_fields($uniacid) {
+	if (empty($uniacid)) {
+		return array();
+	}
+	$account_member_fields = pdo_getall('mc_member_fields', array('uniacid' => $uniacid), array(), 'fieldid');
+	$system_member_fields = pdo_getall('profile_fields', array(), array(), 'id');
+	$less_field_indexes = array_diff(array_keys($system_member_fields), array_keys($account_member_fields));
+	if (empty($less_field_indexes)) {
+		foreach ($account_member_fields as &$field) {
+			$field['field'] = $system_member_fields[$field['fieldid']]['field'];
+		}
+		unset($field);
+		return $account_member_fields;
+	}
+
+	$account_member_add_fields = array('uniacid' => $uniacid);
+	foreach ($less_field_indexes as $field_index) {
+		$account_member_add_fields['fieldid'] = $system_member_fields[$field_index]['id'];
+		$account_member_add_fields['title'] = $system_member_fields[$field_index]['title'];
+		$account_member_add_fields['available'] = $system_member_fields[$field_index]['available'];
+		$account_member_add_fields['displayorder'] = $system_member_fields[$field_index]['displayorder'];
+		pdo_insert('mc_member_fields', $account_member_add_fields);
+		$insert_id = pdo_insertid();
+		$account_member_fields[$insert_id]['id'] = $insert_id;
+		$account_member_fields[$insert_id]['field'] = $system_member_fields[$field_index]['field'];
+		$account_member_fields[$insert_id]['fid'] = $system_member_fields[$field_index]['id'];
+		$account_member_fields[$insert_id] = array_merge($account_member_fields[$insert_id], $account_member_add_fields);
+	}
+	return $account_member_fields;
 }
