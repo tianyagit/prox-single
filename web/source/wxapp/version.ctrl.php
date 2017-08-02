@@ -16,9 +16,8 @@ if (in_array($do, array('module_link_uniacid', 'front_download', 'module_entranc
 }
 $_W['page']['title'] = '小程序 - 管理';
 
-
-$uniacid = $_W['uniacid'];
-$version_id = $_GPC['version_id'];
+$uniacid = intval($_GPC['uniacid']);
+$version_id = intval($_GPC['version_id']);
 if (!empty($uniacid)) {
 	$wxapp_info = wxapp_fetch($uniacid);
 }

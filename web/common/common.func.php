@@ -135,7 +135,7 @@ function checklogin() {
 function checkaccount() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		itoast('', url('account/post-step'), 'info');
+		itoast('', url('account/display'), 'info');
 	}
 }
 
@@ -145,7 +145,7 @@ function checkaccount() {
 function checkwxapp() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		itoast('', url('wxapp/post/design_method'), 'info');
+		itoast('', url('wxapp/display'), 'info');
 	}
 }
 

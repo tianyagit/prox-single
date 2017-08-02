@@ -28,14 +28,6 @@ abstract class Resource
 	}
 
 	/**
-	 *  数据库路径转为绝对路径
-	 * @param $path
-	 */
-	protected function localPath($path) {
-
-	}
-
-	/**
 	 *  是否获取本地资源
 	 * @return bool
 	 */
@@ -52,21 +44,7 @@ abstract class Resource
 		return $this->currentPage;
 	}
 
-	protected function getResourceId() {
-		return $this->query('resourceid',0);//获取资源ID
-	}
-
 	public abstract function getResources();
-
-	//转为微信资源
-	public function toWx(){
-
-	}
-
-	//转为本地资源
-	public function toLocal(){
-
-	}
 
 	public static function getResource($key) {
 		$instance = null;
@@ -171,6 +149,7 @@ class ImageResource extends Resource {
 
 	private $pagesize = 24;
 
+
 	/**
 	 *  加载本地图
 	 */
@@ -182,17 +161,28 @@ class ImageResource extends Resource {
 		$condition = ' WHERE uniacid = :uniacid AND type = :type';
 		$params = array(':uniacid' => $this->uniacid, ':type' => 1);
 
-		$year = intval($this->query('year'),0);
-		$month = intval($this->query('month'),0);
-		if ($year > 0 && $month > 0) {
-			$starttime = strtotime("{$year}-{$month}-01");
-			$endtime = strtotime("+1 month", $starttime);
+		$year = intval($this->query('year'));
+		$month = intval($this->query('month'));
+		if ($year > 0 || $month > 0) {
+			if ($month > 0 && ! $year) {
+				$year = date('Y');
+				$starttime = strtotime("{$year}-{$month}-01");
+				$endtime = strtotime("+1 month", $starttime);
+			} elseif ($year > 0 && ! $month) {
+				$starttime = strtotime("{$year}-01-01");
+				$endtime = strtotime("+1 year", $starttime);
+			} elseif ($year > 0 && $month > 0) {
+				$year = date('Y');
+				$starttime = strtotime("{$year}-{$month}-01");
+				$endtime = strtotime("+1 month", $starttime);
+			}
 			$condition .= ' AND createtime >= :starttime AND createtime <= :endtime';
 			$params[':starttime'] = $starttime;
 			$params[':endtime'] = $endtime;
 		}
 
 		$sql = 'SELECT * FROM ' . tablename('core_attachment') . " {$condition} ORDER BY id DESC LIMIT " . (($page - 1) * $this->pagesize) . ',' . $this->pagesize;
+//		dd($sql);
 		$list = pdo_fetchall($sql, $params, 'id');
 		foreach ($list as &$item) {
 			$item['url'] = tomedia($item['attachment']);
@@ -233,22 +223,5 @@ class ImageResource extends Resource {
 			return $this->loadLocalImage();
 		}
 		return $this->loadWxImage();
-	}
-
-	// 转为微信资源
-	public function toWx() {
-
-		$resource_id = $this->getResourceId();
-		$attach = pdo_get('core_attachment',['id'=>$resource_id]);
-		if($attach)
-		{
-			$path = $attach['attachment'];
-			$real_path = $this->localPath($path);
-			Storage::driver('imagewx')->put($path);
-		}
-	}
-
-	public function toLocal() {
-
 	}
 }
