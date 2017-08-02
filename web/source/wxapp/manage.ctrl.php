@@ -12,11 +12,11 @@ load()->model('wxapp');
 $dos = array('delete', 'display', 'edit_version', 'del_version', 'get_available_apps', 'getpackage');
 $do = in_array($do, $dos) ? $do : 'display';
 
-$uniacid = intval($_GPC['uniacid']);
-$acid = intval($_GPC['acid']);
-if (empty($uniacid)) {
-	itoast('请选择要编辑的小程序', referer(), 'error');
+$account = uni_site_account(ACCOUNT_TYPE_APP_NORMAL);
+if (empty($account)) {
+	itoast('', url('wxapp/post/design_method'), 'info');
 }
+$uniacid = intval($account['uniacid']);
 
 $state = uni_permission($_W['uid'], $uniacid);
 //只有创始人、主管理员、管理员才有权限

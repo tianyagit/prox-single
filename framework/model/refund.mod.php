@@ -71,7 +71,7 @@ function refund($refund_id) {
 	$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'uniontid' => $refundlog['uniontid']));
 	if ($paylog['type'] == 'wechat') {
 		$refund_param = reufnd_wechat_build($refund_id);
-		$wechat = Pay::create('wechat');
+		$wechat = Pay::create('weixin');
 		$response = $wechat->refund($refund_param);
 		unlink(ATTACHMENT_ROOT . $_W['uniacid'] . '_wechat_refund_all.pem');
 		if (is_error($response)) {

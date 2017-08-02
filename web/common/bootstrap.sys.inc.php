@@ -27,10 +27,12 @@ if (is_array($session)) {
 unset($session);
 
 if (!empty($_GPC['__uniacid'])) {
-	$_W['uniacid'] = intval($_GPC['__uniacid']);
+	$account = uni_site_account(ACCOUNT_TYPE_APP_NORMAL);
 } else {
-	$_W['uniacid'] = uni_account_last_switch();
+	$account = uni_site_account();
 }
+$_W['uniacid'] = $account['uniacid'];
+unset($account);
 
 if (!empty($_W['uniacid'])) {
 	$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);

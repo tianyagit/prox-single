@@ -237,3 +237,4 @@ function pdo_fetchallfields($tablename){
 function pdo_tableexists($tablename){
 	return pdo()->tableexists($tablename);
 }
+
