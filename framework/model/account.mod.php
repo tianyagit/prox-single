@@ -589,7 +589,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	$role = '';
 	$uid = empty($uid) ? $_W['uid'] : intval($uid);
 
-	if (user_is_founder($uid)) {
+	if (user_is_founder($uid) && !user_is_vice_founder($uid)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
 	}
 
@@ -597,6 +597,8 @@ function uni_permission($uid = 0, $uniacid = 0) {
 		$role = pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'role');
 		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
 			$role = ACCOUNT_MANAGE_NAME_OWNER;
+		} elseif ($role == ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
+			$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
 		} elseif ($role == ACCOUNT_MANAGE_NAME_MANAGER) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
 		} elseif ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
@@ -607,7 +609,9 @@ function uni_permission($uid = 0, $uniacid = 0) {
 	} else {
 		$roles = pdo_getall('uni_account_users', array('uid' => $uid), array('role'), 'role');
 		$roles = array_keys($roles);
-		if (in_array(ACCOUNT_MANAGE_NAME_OWNER, $roles)) {
+		if (in_array(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, $roles)) {
+			$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
+		} elseif (in_array(ACCOUNT_MANAGE_NAME_OWNER, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_OWNER;
 		} elseif (in_array(ACCOUNT_MANAGE_NAME_MANAGER, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_MANAGER;
@@ -789,10 +793,11 @@ function uni_update_user_permission($uid, $uniacid, $data) {
  * @return boolean
  */
 function uni_user_see_more_info($user_type, $see_more = false) {
-	if (empty($user_type) || empty($see_more)) {
+	global $_W;
+	if (empty($user_type)) {
 		return false;
 	}
-	if ($user_type == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && !empty($see_more)) {
+	if ($user_type == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && !empty($see_more) || $_W['role'] != $user_type) {
 		return true;
 	}
 

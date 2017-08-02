@@ -60,14 +60,14 @@
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&show=upgrade&account_type={ACCOUNT_TYPE}" class="color-red del" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="isFounder == 1">管理设置</a>
 						<!--<a href="javascript:;" ng-if="isFounder == 1" ng-click="editModule(module.mid)">编辑</a>-->
-						{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
-						<a href="{php echo url('module/manage-system/uninstall', array('account_type' => 4))}&name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="isFounder == 1" class="del">停用</a>
-						{/if}
 					</div>
 					<div class="manage-option text-right">
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="isFounder == 1">基本信息</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&show=group" ng-if="isFounder == 1">应用权限组</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&show=subscribe" ng-if="isFounder == 1 && module.subscribes.length">订阅消息</a>
+						{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+						<a href="{php echo url('module/manage-system/uninstall', array('account_type' => 4))}&name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="isFounder == 1" class="del">停用</a>
+						{/if}
 					</div>
 				</td>
 			</tr>
