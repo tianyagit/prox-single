@@ -23,7 +23,6 @@ if ($do == 'tolocal' || $do == 'towechat') {
 // 转为本地图片
 if ($do == 'tolocal') {
 	$type = $_GPC['type'];
-
 	if (!in_array($type, array('news', 'image', 'video', 'voice'))) {
 		iajax(1, '转换类型不正确');
 	}
@@ -79,7 +78,7 @@ if ($do == 'tolocal') {
 [url] => http://mmbiz.qpic.cn/mmbiz_png/GiaZj7Tr2pg816UtmOWR2zUJ2d5q3DJsy0efpAL8aGRcBWkTW2aGIcfaN2icqqQ3CCrIicgHTlKLYm7LicUCQShMhw/0?wx_fmt=png
  */
 if ($do == 'towechat') {
-	$type = 'image';
+	$type = $_GPC['type'];
 	if (!in_array($type, array('news', 'image', 'video', 'voice'))) {
 		iajax(1, '转换类型不正确');
 	}
