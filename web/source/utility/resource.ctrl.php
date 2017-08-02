@@ -16,99 +16,83 @@ if (in_array($do, array('keyword', 'news', 'video', 'voice', 'module', 'image'))
 	iajax(0, $result);
 	return ;
 }
+
+
+$type = $_GPC['type'];
+$resourceid = intval($_GPC['resource_id']);
 $uniacid = intval($_W['uniacid']);
 $uid = intval($_W['uid']);
-if ($do == 'tolocal' || $do == 'towechat') {
-}
-// 转为本地图片
-if ($do == 'tolocal') {
-	$type = $_GPC['type'];
+$acid = intval($_W['acid']);
+$url = $_GPC['url'];
+$isnetwork_convert = !empty($url);
+
+/**
+ *  校验数据
+ */
+if($do == 'tolocal' || $do == 'towechat') {
 	if (!in_array($type, array('news', 'image', 'video', 'voice'))) {
 		iajax(1, '转换类型不正确');
-	}
-	$resourceid = $_GPC['resource_id'];
-
-	$material = material_get($resourceid);
-	if(is_error($material)) {
-		iajax(1, $material['message']);
 		return;
 	}
-
-
-	if($type != 'news') {
-		$path = file_remote_attach_fetch($material['url']); //网络转本地图片
-		if(is_error($path)) {
-			iajax(1 , $path['message']);
-			return;
-		}
-		$filetemp = explode('/',$path);
-		$filename = array_reverse($filetemp)[0];
-		$data = array('uniacid' => $uniacid, 'uid' => $uid,
-			'filename' => $filename,
-			'attachment' => $path,
-			'type' => $type == 'image' ? 1 : ($type == 'video'? 2 : 3),
-			'createtime'=>TIMESTAMP
-		);
-		pdo_insert('core_attachment', $data);
-		$id = pdo_insertid();
-		$data['id'] = $id;
-		iajax('0', $data);
-		return;
-	}
-	// 如果是 news 类型
-	$material = material_get($resourceid);
-	if(is_error($material)) {
-		iajax(1, $material['message']);
-		return;
-	}
-	$attach_id = material_news_set($material,$resourceid);
-	if(is_error($resource)) {
-		iajax(1, $attach_id['message']);
-		return;
-	}
-	iajax(0, $material);// 返回转换后的数据
-
-
-
 }
 
-// 转为微信资源
+/**
+ *  网络图转本地
+ */
+if ($do == 'networktolocal') {
+	$material = network_image_to_local($url, $uniacid, $uid);
+	if (is_error($material)) {
+		iajax(1, $material['message']);
+		return;
+	}
+	iajax(0, $material);
+}
+/**
+ *  转为本地图片
+ */
+if ($do == 'tolocal') {
+
+	if ($type == 'news') {
+		$material = news_to_local($resourceid); // 微信图文转到本地数据库
+	} else {
+		$material = material_to_local($resourceid, $uniacid, $uid, $type); // 微信素材转到本地数据库
+	}
+	if (is_error($material)) {
+		iajax(1, $material['message']);
+		return;
+	}
+	iajax(0, $material);
+}
+/**
+ *  网络图片转 wechat
+ */
+if ($do == 'networktowechat') {
+	$material = network_image_to_wechat($url, $uniacid, $uid, $acid); //网络图片转为 微信 图片
+	if (is_error($material)) {
+		iajax(1, $material['message']);
+		return;
+	}
+	iajax(0, $material);
+	return;
+}
+
 /*
- *   [media_id] => UgGyzOLsgOJs57hLpQ-Z3SC-2FIYLju7jar57w2WMnE
-[url] => http://mmbiz.qpic.cn/mmbiz_png/GiaZj7Tr2pg816UtmOWR2zUJ2d5q3DJsy0efpAL8aGRcBWkTW2aGIcfaN2icqqQ3CCrIicgHTlKLYm7LicUCQShMhw/0?wx_fmt=png
+ *   转为微信资源
  */
 if ($do == 'towechat') {
-	$type = $_GPC['type'];
-	if (!in_array($type, array('news', 'image', 'video', 'voice'))) {
-		iajax(1, '转换类型不正确');
-	}
-	$resourceid = $_GPC['resource_id'];
 	// 图片 视频 语音 传到微信 并保存数据库返回
+	$material = null;
 	if ($type != 'news') {
-		$result = material_local_upload($resourceid); //本地资源上传到服务器
-		if (is_error($result)) {
-			iajax(1, $result['message']);
-			return;
+		$material = material_to_wechat($resourceid, $uniacid, $uid, $acid, $type); // 本地素材 传到微信服务器
+	}else {
+		$material = material_local_news_upload($resourceid); 	// 本地图文到服务器
+		if (!is_error($material)) {
+			$material['items'] = $material['news']; //前台静态界面需要items;
 		}
-		$data = array('uniacid' => $uniacid, 'uid' => $uid, 'acid' => $acid,
-				'media_id' => $result['media_id'],
-				'attachment' => $result['url'],
-				'type' => $type,
-				'model' => 'perm',
-				'createtime'=>TIMESTAMP
-			);
-		pdo_insert('wechat_attachment', $data);
-		$id = pdo_insertid();
-		$data['url'] = tomedia($result['url']);
-		$data['id'] = $id;
-		iajax('0', $data);
+	}
+	if (is_error($material)) {
+		iajax(1, $material['message']);
 		return;
 	}
-	// 本地图文到服务器
-	$news = material_local_news_upload($resourceid);
-	if (is_error($news)) {
-		iajax(1, $news['message']);
-		return;
-	}
-	iajax(0, $news);
+	iajax(0, $material);
 }
