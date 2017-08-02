@@ -29,7 +29,10 @@ if ($do == 'change_status') {
 	$status = pdo_getcolumn('ip_list', array('id' => $id), 'status');
 	$status = empty($status) ? 1 : 0;
 	$update = pdo_update('ip_list', array('status' => $status), array('id' => $id));
-	iajax(0, '');
+	if ($update) {
+		iajax(0, '');
+	}
+	iajax(-1, '更新失败', url('system/ipwhitelist'));
 }
 
 if ($do == 'add') {
