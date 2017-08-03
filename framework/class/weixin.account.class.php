@@ -1422,7 +1422,7 @@ class WeiXinAccount extends WeAccount {
 		if(empty($path)) {
 			return error(-1, '参数错误');
 		}
-	if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios'))) {
+		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios'))) {
 			$path = ATTACHMENT_ROOT . ltrim($path, '/');
 		}
 		$token = $this->getAccessToken();
@@ -1454,12 +1454,12 @@ class WeiXinAccount extends WeAccount {
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$token}&type={$type}";
 		$media = '@'.$path;
-		if(version_compare(PHP_VERSION,'5.6.0', '>')){
+		if(version_compare(PHP_VERSION,'5.5.0', '>')){
 			$media = new CURLFile($path);
 		}
 		$data = array(
 			'media' => $media,//'@' . $path,
-			'description'=>'{"title":"title", "introduction":"miaoshu"}'
+			'description'=> '{\"title\":\"标题\",\"introduction\":\"是的\"}'//'{"title":"title", "introduction":"miaoshu"}'
 		);
 		return $this->requestApi($url, $data);
 	}

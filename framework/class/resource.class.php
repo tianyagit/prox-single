@@ -111,7 +111,7 @@ class VideoResource extends Resource {
 		$server = $this->isLocal()? MATERIAL_LOCAL:MATERIAL_WEXIN;
 		$page_index = $this->getCurrentPage();
 		$page_size = 10;
-		$material_news_list = material_list($this->type, $server, array('page_index' => $page_index, 'page_size' => $page_size),true);
+		$material_news_list = material_list($this->type, $server, array('page_index' => $page_index, 'page_size' => $page_size));
 		$material_list = $material_news_list['material_list'];
 		$pager = $material_news_list['page'];
 		return array('items'=>$material_list,'pager'=>$pager);
@@ -160,19 +160,10 @@ class ImageResource extends Resource {
 
 		$year = intval($this->query('year'));
 		$month = intval($this->query('month'));
+
 		if ($year > 0 || $month > 0) {
-			if ($month > 0 && ! $year) {
-				$year = date('Y');
-				$starttime = strtotime("{$year}-{$month}-01");
-				$endtime = strtotime("+1 month", $starttime);
-			} elseif ($year > 0 && ! $month) {
-				$starttime = strtotime("{$year}-01-01");
-				$endtime = strtotime("+1 year", $starttime);
-			} elseif ($year > 0 && $month > 0) {
-				$year = date('Y');
-				$starttime = strtotime("{$year}-{$month}-01");
-				$endtime = strtotime("+1 month", $starttime);
-			}
+			$starttime = strtotime("{$year}-{$month}-01");
+			$endtime = strtotime("+1 month", $starttime);
 			$condition .= ' AND createtime >= :starttime AND createtime <= :endtime';
 			$params[':starttime'] = $starttime;
 			$params[':endtime'] = $endtime;
@@ -180,7 +171,7 @@ class ImageResource extends Resource {
 
 		$sql = 'SELECT * FROM ' . tablename('core_attachment') . " {$condition} ORDER BY id DESC LIMIT " . (($page - 1) * $this->pagesize) . ',' . $this->pagesize;
 //		dd($sql);
-		$list = pdo_fetchall($sql, $params, 'id');
+		$list = pdo_fetchall($sql, $params);
 		foreach ($list as &$item) {
 			$item['url'] = tomedia($item['attachment']);
 			unset($item['uid']);

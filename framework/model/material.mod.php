@@ -655,6 +655,7 @@ function network_image_to_local($url, $uniacid, $uid) {
 	pdo_insert('core_attachment', $data);
 	$id = pdo_insertid();
 	$data['id'] = $id;
+	$data['url'] = tomedia($path);
 	return $data;
 }
 
