@@ -33,7 +33,15 @@ if ($do == 'display') {
 		$version_exist = wxapp_fetch($account['uniacid']);
 		if (!empty($version_exist)) {
 			$wxapp_version_lists = wxapp_version_all($account['uniacid']);
-			$wxapp_modules = wxapp_support_wxapp_modules();
+			$wxapp_modules_all = uni_modules();
+			$wxapp_modules = array();
+			if (!empty($wxapp_modules_all)) {
+				foreach ($wxapp_modules_all as $wxapp_module_name => $wxapp_module_info) {
+					if ($wxapp_module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+						$wxapp_modules[$wxapp_module_name] = $wxapp_module_info;
+					}
+				}
+			}
 		}
 	}
 	template('wxapp/manage');
