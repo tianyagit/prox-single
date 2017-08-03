@@ -296,7 +296,7 @@ if($do == 'modules_tpl') {
 		}
 	}
 
-	$modules = pdo_getall('modules', array('issystem !=' => 1), array('mid', 'name', 'title'), 'name');
+	$modules = pdo_getall('modules', array('issystem !=' => 1, ACCOUNT_TYPE_SUPPORT => 2), array('mid', 'name', 'title'), 'name');
 	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
 	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
 	$extend['modules'] = $current_module_names = iunserializer($extend['modules']);
