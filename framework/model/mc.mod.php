@@ -1963,7 +1963,7 @@ function mc_parse_profile($profile) {
 	return $profile;
 };
 /**
- * 将要导出的会员数组格式化
+ * 得到符合导出格式的会员信息字符串
  * @param unknown $members 会员数组
  * @return string 处理后的会员信息字符串
  */
