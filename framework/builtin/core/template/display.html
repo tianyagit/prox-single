@@ -182,13 +182,16 @@
 				module: type === 'module' ? false : true
 			},
 			others: {
-				basic: {
-					typeVal: angular.isDefined(otherVal) ? otherVal : null,
+				image: {
+					needType: 1
 				},
-				news: {
-					showwx: angular.isDefined(otherVal) ? otherVal === 'wx' ? true : false : true,
-					showlocal: angular.isDefined(otherVal) ? otherVal === 'local' ? true : false : true
+				video : {
+					needType : 1
+				},
+				voice : {
+					needType : 1
 				}
+
 			}
 		};
 		if (type == 'module') {
