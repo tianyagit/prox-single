@@ -224,16 +224,12 @@ function material_build_reply($attach_id) {
 	if ($reply_material['type'] == 'news') {
 		if (!empty($reply_material['news'])) {
 			foreach ($reply_material['news'] as $material) {
-				$reply_news = array(
+				$reply[] = array(
 					'title' => $material['title'],
 					'description' => $material['digest'],
 					'picurl' => $material['thumb_url'],
-					'url' => $material['url'],
+					'url' => !empty($material['content_source_url']) ? $material['content_source_url'] : $material['url'],
 				);
-				if (empty($material['content']) && !empty($material['content_source_url'])) {
-					$reply_news['url'] = $material['content_source_url'];
-				}
-				$reply[] = $reply_news;
 			}
 		}
 	}
@@ -354,8 +350,7 @@ function material_local_news_upload($attach_id) {
 			}
 		}
 	}
-	$media_id = $material['media_id'];
-	if (empty($media_id)){
+	if (empty($material['media_id'])){
 		$media_id = $account_api->addMatrialNews($articles);
 		if (is_error($media_id)) {
 			return error('-5', $media_id, '');
@@ -369,14 +364,6 @@ function material_local_news_upload($attach_id) {
 		));
 	} else {
 		pdo_update('wechat_attachment', array('model' => 'perm'), array('uniacid' => $_W['uniacid'], 'id' => $attach_id));
-	}
-
-	$account_api = WeAccount::create($_W['acid']);
-	$wechat_material = $account_api->getMaterial($media_id);
-	if (!is_error($wechat_material) && !empty($wechat_material['news_item']) && is_array($wechat_material['news_item'])) {
-		foreach ($material['news'] as $news) {
-			pdo_update('wechat_news', array('url' => $wechat_material['news_item'][$news['displayorder']]['url']), array('id' => $news['id']));
-		}
 	}
 	return $material;
 }

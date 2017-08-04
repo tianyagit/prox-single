@@ -6,7 +6,7 @@
  */
 
 defined('IN_IA') or exit('Access Denied');
-error_reporting(0);
+//error_reporting(0);
 global $_W;
 load()->func('file');
 load()->func('communication');
@@ -133,10 +133,12 @@ if ($do == 'upload') {
 		$result['message'] = '上传失败, 请选择要上传的文件！';
 		die(json_encode($result));
 	}
+
 	if ($_FILES['file']['error'] != 0) {
 		$result['message'] = '上传失败, 请重试.';
 		die(json_encode($result));
 	}
+
 	$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
 	$ext = strtolower($ext);
 	$size = intval($_FILES['file']['size']);
@@ -167,13 +169,17 @@ if ($do == 'upload') {
 	}
 	if($mode == 'perm' || $mode == 'temp') {
 		$sendapi = $apis[$mode]['add'] . "?access_token={$token}&type={$type}";
+		$media = '@'.$fullname;
+		if(version_compare(PHP_VERSION,'5.5.0', '>')){
+			$media = new CURLFile($fullname);
+		}
 		$data = array(
-			'media' => '@'.$fullname
+			'media' => $media
 		);
 		if($type == 'video') {
 			$description = array(
-				'title' => urlencode(trim($_GPC['title'])),
-				'introduction' => urlencode(trim($_GPC['introduction']))
+				'title' => '微擎视频',//urlencode(trim($_GPC['title'])),
+				'introduction' => '微擎视频'// urlencode(trim($_GPC['introduction']))
 			);
 			$data['description'] = urldecode(json_encode($description));
 		}

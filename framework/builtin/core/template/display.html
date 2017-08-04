@@ -168,6 +168,8 @@
 	window.select_mediaid = function(type, otherVal){
 		var option = {
 			type: type,
+			isWechat : true, // 默认显示微信
+			needType : 3, // 微信图片都可以资源
 			ignore: {
 				basic: type === 'basic' ? false : true,
 				wxcard: type === 'wxcard' ? false : true,
