@@ -1930,3 +1930,35 @@ function mc_current_real_uniacid() {
 		return $_W['uniacid'];
 	}
 }
+/**
+ * 会员字段调整
+ * @param $profile 字段信息数组
+ * @return array(); 格式化后的数组
+ */
+function mc_parse_profile($profile) {
+	global $_W;
+	if (empty($profile)) {
+		return array();
+	}
+	if (!empty($profile['avatar'])) {
+		$profile['avatar'] = tomedia($profile['avatar']);
+	} else {
+		$profile['avatar'] = './resource/images/nopic.jpg';
+	}
+	$profile['avatarUrl'] = $profile['avatar'];
+	$profile['birth'] = array(
+		'year' => $profile['birthyear'],
+		'month' => $profile['birthmonth'],
+		'day' => $profile['birthday'],
+	);
+	$profile['reside'] = array(
+		'province' => $profile['resideprovince'],
+		'city' => $profile['city'],
+		'district' => $profile['dist']
+	);
+	//邮箱无效不显示。
+	if(empty($profile['email']) || (!empty($profile['email']) && substr($profile['email'], -6) == 'we7.cc' && strlen($profile['email']) == 39)) {
+		$profile['email'] = '';
+	}
+	return $profile;
+};
