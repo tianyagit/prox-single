@@ -1962,3 +1962,50 @@ function mc_parse_profile($profile) {
 	}
 	return $profile;
 };
+/**
+ * 将要导出的会员数组格式化
+ * @param unknown $members 会员数组
+ * @return string 处理后的会员信息字符串
+ */
+function mc_member_export_parse($members){
+	if (empty($members)) {
+		return false;
+	}
+	$groups = mc_groups();
+	$header = array(
+		'uid' => 'UID', 'nickname' => '昵称', 'realname' => '姓名', 'groupid' => '会员组',
+		'mobile' => '手机', 'email' => '邮箱', 'credit1' => '积分', 'credit2' => '余额', 'createtime' => '注册时间',
+	);
+	$keys = array_keys($header);
+	$html = "\xEF\xBB\xBF";
+	foreach ($header as $li) {
+		$html .= $li . "\t ,";
+	}
+	$html .= "\n";
+	$count = count($members);
+	$pagesize = ceil($count/5000);
+	for ($j = 1; $j <= $pagesize; $j++) {
+		$list = array_slice($members, ($j-1) * 5000, 5000);
+		if (!empty($list)) {
+			$size = ceil(count($list) / 500);
+			for ($i = 0; $i < $size; $i++) {
+				$buffer = array_slice($list, $i * 500, 500);
+				$user = array();
+				foreach ($buffer as $row) {
+					if (strexists($row['email'], 'we7.cc')) {
+						$row['email'] = '';
+					}
+					$row['createtime'] = date('Y-m-d H:i:s', $row['createtime']);
+					$row['groupid'] = $groups[$row['groupid']]['title'];
+					foreach ($keys as $key) {
+						$data[] = $row[$key];
+					}
+					$user[] = implode("\t ,", $data) . "\t ,";
+					unset($data);
+				}
+				$html .= implode("\n", $user) . "\n";
+			}
+		}
+	}
+	return $html;
+}

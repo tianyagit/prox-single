@@ -71,8 +71,8 @@ if($do == 'display') {
 	$params = array(':uniacid' => $_W['uniacid']);
 	if (!empty($_GPC['username'])) {
 		if ($search_mod == 1) {
-			$condition .= " AND ((`uid` = :openid) OR (`realname` = :username1) OR (`nickname` = :username2) OR (`mobile` = :username3))";
-			$params[':username1'] =$params[':username2']= $params[':username3'] = trim($_GPC['username']);
+			$condition .= " AND ((`uid` = :openid) OR (`realname` = :realname) OR (`nickname` = :nickname) OR (`mobile` = :mobile))";
+			$params[':realname'] = $params[':nickname'] = $params[':mobile'] = trim($_GPC['username']);
 			if (!is_numeric(trim($_GPC['username']))) {
 				$uid = pdo_getcolumn('mc_mapping_fans', array('openid' => trim($_GPC['username'])), 'uid');
 				$params[':openid'] = empty($uid) ? "" : $uid;
@@ -80,8 +80,8 @@ if($do == 'display') {
 				$params[':openid'] =  trim($_GPC['username']);
 			}
 		} else {
-			$condition .= " AND ((`uid` = :openid) OR (`realname` LIKE :username) OR (`nickname` LIKE :username) OR (`mobile` LIKE :username))";
-			$params[':username'] = '%'.trim($_GPC['username']).'%';
+			$condition .= " AND ((`uid` = :openid) OR (`realname` LIKE :realname) OR (`nickname` LIKE :nickname) OR (`mobile` LIKE :mobile))";
+			$params[':realname'] = $params[':nickname'] = $params[':mobile'] = '%' . trim($_GPC['username']) . '%';
 			if (!is_numeric(trim($_GPC['username']))) {
 				$uid = pdo_getcolumn('mc_mapping_fans', array('openid' => trim($_GPC['username'])), 'uid');
 				$params[':openid'] = empty($uid) ? "" : $uid;
@@ -90,10 +90,6 @@ if($do == 'display') {
 			}
 		}
 	}
-	if (!empty($_GPC['uid'])) {
-		$condition .= " AND uid = :uid";
-		$params[':uid'] = $_GPC['uid'];
-	}
 	if (!empty($_GPC['datelimit'])) {
 		$starttime = strtotime($_GPC['datelimit']['start']);
 		$endtime = strtotime($_GPC['datelimit']['end']) + 86399;
@@ -101,45 +97,14 @@ if($do == 'display') {
 		$params[':start'] = $starttime;
 		$params[':end'] = $endtime;
 	}
-	$condition .= intval($_GPC['groupid']) > 0 ? " AND `groupid` = '".intval($_GPC['groupid'])."'" : '';
-	
+	if (intval($_GPC['groupid']) > 0) {
+		$condition .= " AND `groupid` = :groupid";
+		$params[':groupid'] = intval($_GPC['groupid']);
+	}
 	if(checksubmit('export_submit', true)) {
-		$count = pdo_fetchcolumn("SELECT COUNT(*) FROM". tablename('mc_members')." WHERE uniacid = :uniacid ".$condition, $params);
-		$pagesize = ceil($count/5000);
-		$header = array(
-				'uid' => 'UID', 'nickname' => '昵称', 'realname' => '姓名', 'groupid' => '会员组', 'mobile' => '手机', 'email' => '邮箱',
-				'credit1' => '积分', 'credit2' => '余额', 'createtime' => '注册时间',
-		);
-		$keys = array_keys($header);
-		$html = "\xEF\xBB\xBF";
-		foreach ($header as $li) {
-			$html .= $li . "\t ,";
-		}
-		$html .= "\n";
-		for ($j = 1; $j <= $pagesize; $j++) {
-			$sql = "SELECT uid, uniacid, groupid, realname, nickname, email, mobile, credit1, credit2, credit6, createtime  FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid " . $condition . " ORDER BY createtime limit " . ($j - 1) * 5000 . ",5000 ";
-			$list = pdo_fetchall($sql, $params);
-			if (!empty($list)) {
-				$size = ceil(count($list) / 500);
-				for ($i = 0; $i < $size; $i++) {
-					$buffer = array_slice($list, $i * 500, 500);
-					$user = array();
-					foreach ($buffer as $row) {
-						if (strexists($row['email'], 'we7.cc')) {
-							$row['email'] = '';
-						}
-						$row['createtime'] = date('Y-m-d H:i:s', $row['createtime']);
-						$row['groupid'] = $groups[$row['groupid']]['title'];
-						foreach ($keys as $key) {
-							$data[] = $row[$key];
-						}
-						$user[] = implode("\t ,", $data) . "\t ,";
-						unset($data);
-					}
-					$html .= implode("\n", $user) . "\n";
-				}
-			}
-		}
+		$sql = "SELECT `uid`, `uniacid`, `groupid`, `realname`, `nickname`, `email`, `mobile`, `credit1`, `credit2`, `credit6`, `createtime` FROM". tablename('mc_members') . " WHERE uniacid = :uniacid " . $condition;
+		$members = pdo_fetchall($sql, $params);
+		$html = mc_member_export_parse($members);
 		header("Content-type:text/csv");
 		header("Content-Disposition:attachment; filename=会员数据.csv");
 		echo $html;

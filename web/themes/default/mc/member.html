@@ -67,15 +67,9 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">会员编号</label>
-				<div class="col-sm-5">
-					<input type="text" class="form-control" name="uid" value="{$_GPC['uid']}" />
-				</div>
-			</div>
-			<div class="form-group">
 				<label class="col-sm-2 control-label">注册时间</label>
 				<div class="col-sm-5">
-					{php echo tpl_form_field_daterange('datelimit', array('start' => date('Y-m-d'),'end' => date('Y-m-d', TIMESTAMP)), false)}
+					{php echo tpl_form_field_daterange('datelimit', array('start' => $_GPC['datelimit']['start'],'end' => $_GPC['datelimit']['end']), false)}
 				</div>
 			</div>
 			<div class="form-group">
