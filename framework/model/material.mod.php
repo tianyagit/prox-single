@@ -197,7 +197,9 @@ function material_get($attach_id) {
 			}
 			$material['news'] = $news;
 		} elseif ($material['type'] == 'image') {
+			$material['url'] = $material['attachment'];
 			$material['attachment'] = tomedia($material['attachment']);
+
 		}
 		return $material;
 	} else {
@@ -642,7 +644,7 @@ function network_image_to_local($url, $uniacid, $uid) {
 	$data = array('uniacid' => $uniacid, 'uid' => $uid,
 		'filename' => $filename,
 		'attachment' => $path,
-		'type' => 'image',//$type == 'image' ? 1 : ($type == 'video'? 2 : 3),
+		'type' => 1,//$type == 'image' ? 1 : ($type == 'video'? 2 : 3),
 		'createtime'=>TIMESTAMP
 	);
 	pdo_insert('core_attachment', $data);
