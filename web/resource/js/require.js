@@ -49,7 +49,7 @@ var requireConfig = {
 		'moment': '../lib/moment',
 		'emoji' : '../../components/emoji/emoji',
 		'fontawesome' : '../../components/fontawesome/fontawesome',
-		'material' : '../../components/resource/resource', 
+		'material' : '../../components/resource/resource',
 		'trade' : '../../components/trade/trade',
 		'hammer' : '../lib/hammer.min',
 		'bootstrap.switch': '../../components/switch/bootstrap-switch.min',
@@ -61,7 +61,7 @@ var requireConfig = {
 		'jquery.zclip': '../../components/zclip/jquery.zclip.min',
 		'jquery.wookmark': '../lib/jquery.wookmark.min',
 		'jquery.qrcode': '../lib/jquery.qrcode.min',
-		'jquery.jplayer': '../../components/jplayer/jquery.jplayer.min',
+		'jquery.jplayer' : '../../components/jplayer/jquery.jplayer.min',
 		'underscore': '../lib/underscore-min',
 		'biz': '../lib/biz',
 		//兼容
