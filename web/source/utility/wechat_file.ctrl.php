@@ -6,7 +6,7 @@
  */
 
 defined('IN_IA') or exit('Access Denied');
-//error_reporting(0);
+error_reporting(0);
 global $_W;
 load()->func('file');
 load()->func('communication');
