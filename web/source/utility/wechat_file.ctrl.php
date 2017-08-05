@@ -178,8 +178,8 @@ if ($do == 'upload') {
 		);
 		if($type == 'video') {
 			$description = array(
-				'title' => '微擎视频',//urlencode(trim($_GPC['title'])),
-				'introduction' => '微擎视频'// urlencode(trim($_GPC['introduction']))
+				'title' => $filename,
+				'introduction' =>  $filename,
 			);
 			$data['description'] = urldecode(json_encode($description));
 		}

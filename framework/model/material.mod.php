@@ -597,7 +597,7 @@ function material_list($type = '', $server = '', $page = array('page_index' => 1
  * @param $resourceid
  * @return array|int
  */
-function news_to_local($attach_id) {
+function material_news_to_local($attach_id) {
 	// 如果是 news 类型
 	$material = material_get($attach_id);
 	if(is_error($material)) {
@@ -624,7 +624,7 @@ function material_to_local($resourceid, $uniacid, $uid, $type = 'image') {
 	if(is_error($material)) {
 		return $material;
 	}
-	return network_image_to_local($material['url'], $uniacid, $uid);
+	return material_network_image_to_local($material['url'], $uniacid, $uid);
 }
 
 /**
@@ -635,7 +635,7 @@ function material_to_local($resourceid, $uniacid, $uid, $type = 'image') {
  * @param int $type
  * @return array|string
  */
-function network_image_to_local($url, $uniacid, $uid) {
+function material_network_image_to_local($url, $uniacid, $uid) {
 	$path = file_remote_attach_fetch($url); //网络转本地图片路径
 	if(is_error($path)) {
 		return $path;
@@ -686,8 +686,8 @@ function material_to_wechat($attach_id, $uniacid, $uid, $acid, $type = 'image') 
 /**
  *  网络图片上传到微信
  */
-function network_image_to_wechat($url, $uniacid, $uid, $acid) {
-	$local = network_image_to_local($url,$uniacid,$uid); //网络图片先转为本地资源
+function material_network_image_to_wechat($url, $uniacid, $uid, $acid) {
+	$local = material_network_image_to_local($url,$uniacid,$uid); //网络图片先转为本地资源
 	if (is_error($local)) {
 		return $local;
 	}
