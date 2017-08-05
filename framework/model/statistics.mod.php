@@ -11,7 +11,7 @@ defined('IN_IA') or exit('Access Denied');
  * @param string $module 要统计的模块，为空则默认统计所有模块
  * @return array()
  */
-function statistics_visit_info($type, $module = '') {
+function stat_visit_info($type, $module = '') {
 	global $_W, $_GPC;
 	$result = array();
 	if (empty($type)) {
@@ -41,7 +41,7 @@ function statistics_visit_info($type, $module = '') {
 			$params['date <='] = date('Y-m-d', strtotime($_GPC['enddate']));
 			break;
 	}
-	$result = pdo_getall('visit_statistics', $params);
+	$result = pdo_getall('stat_visit', $params);
 
 	return $result;
 }
@@ -49,7 +49,7 @@ function statistics_visit_info($type, $module = '') {
 /**
  * 统计整体访问信息
  */
-function statistics_all_visit_statistics($data) {
+function stat_all_visit_statistics($data) {
 	$modules = uni_modules();
 	$modules_count = count($modules);
 	$result = array(
@@ -69,7 +69,3 @@ function statistics_all_visit_statistics($data) {
 	$result['visit_avg'] = round($result['visit_sum'] / $modules_count);
 	return $result;
 }
-
-/*
- *
- */

@@ -6,7 +6,7 @@
 define('IN_SYS', true);
 require '../../framework/bootstrap.inc.php';
 
-pdo_query("CREATE TABLE IF NOT EXISTS `ims_visit_statistics` (
+pdo_query("CREATE TABLE IF NOT EXISTS `ims_stat_visit` (
 `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 `uniacid` int(10) NOT NULL,
 `module` varchar(100) NOT NULL,

@@ -13,10 +13,10 @@ $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
 	$modules = uni_modules();
-	$today = statistics_visit_info('today');
-	$yesterday = statistics_visit_info('yesterday');
-	$today_module_api = statistics_all_visit_statistics($today);
-	$yesterday_module_api = statistics_all_visit_statistics($yesterday);
+	$today = stat_visit_info('today');
+	$yesterday = stat_visit_info('yesterday');
+	$today_module_api = stat_all_visit_statistics($today);
+	$yesterday_module_api = stat_all_visit_statistics($yesterday);
 	template('statistics/app-display');
 }
 

@@ -58,7 +58,7 @@ function app_update_today_visit($module_name) {
 		return false;
 	}
 	$today = date('Y-m-d');
-	$today_exist = pdo_get('visit_statistics', array('date' => $today, 'uniacid' => $_W['uniacid'], 'module' => $module_name));
+	$today_exist = pdo_get('stat_visit', array('date' => $today, 'uniacid' => $_W['uniacid'], 'module' => $module_name));
 	if (empty($today_exist)) {
 		$insert_data = array(
 			'uniacid' => $_W['uniacid'],
@@ -66,10 +66,10 @@ function app_update_today_visit($module_name) {
 			'date' => $today,
 			'count' => 1
 		);
-		pdo_insert('visit_statistics', $insert_data);
+		pdo_insert('stat_visit', $insert_data);
 	} else {
 		$data = array('count' => $today_exist['count'] + 1);
-		pdo_update('visit_statistics' , $data, array('id' => $today_exist['id']));
+		pdo_update('stat_visit' , $data, array('id' => $today_exist['id']));
 	}
 
 	return true;
