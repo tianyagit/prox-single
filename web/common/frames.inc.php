@@ -130,7 +130,7 @@ $we7_system_menu['account'] = array(
 			'menu' => array(
 				'app' => array(
 					'title' => '手机端访问',
-					'url' => url('statistics/app.ctrl.php'),
+					'url' => url('statistics/app'),
 					'icon' => 'wi wi-api',
 					'permission_name' => 'statistics_app',
 				),
