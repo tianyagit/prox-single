@@ -86,6 +86,9 @@ if(!empty($handle)) {
 if(!in_array($controller, $controllers)) {
 	$controller = 'home';
 }
+if (in_array($controller, array('auth', 'home', 'mc', 'site'))) {
+	app_update_today_visit('wesite');
+}
 $init = IA_ROOT . "/app/source/{$controller}/__init.php";
 if(is_file($init)) {
 	require $init;;
