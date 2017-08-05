@@ -852,7 +852,7 @@ class SqlPaser {
 	 */
 	public static function parseSelect($field = array(), $alias = '') {
 		if (empty($field)) {
-			return '*';
+			return ' SELECT *';
 		}
 		if (!is_array($field)) {
 			$field = array($field);
@@ -923,7 +923,7 @@ class SqlPaser {
 			if (substr($row, -3) != 'asc' && substr($row, -4) != 'desc') {
 				unset($orderby[$i]);
 			}
-			$row = (!empty($alias) ? "`{$alias}`." : '') . '`' . $row . '`';
+			$row = (!empty($alias) ? "`{$alias}`." : '') . $row;
 		}
 		$orderbysql = implode(',', $orderby);
 		return !empty($orderbysql) ? " ORDER BY $orderbysql " : '';
