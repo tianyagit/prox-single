@@ -1453,13 +1453,8 @@ class WeiXinAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$token}&type={$type}";
-		$media = '@'.$path;
-		if(version_compare(PHP_VERSION,'5.5.0', '>')){
-			$media = new CURLFile($path);
-		}
 		$data = array(
-			'media' => $media,//'@' . $path,
-			'description'=> '{\"title\":\"标题\",\"introduction\":\"是的\"}'//'{"title":"title", "introduction":"miaoshu"}'
+			'media' => '@' . $path
 		);
 		return $this->requestApi($url, $data);
 	}

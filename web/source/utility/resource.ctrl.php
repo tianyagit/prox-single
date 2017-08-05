@@ -40,7 +40,7 @@ if($do == 'tolocal' || $do == 'towechat') {
  *  网络图转本地
  */
 if ($do == 'networktolocal') {
-	$material = network_image_to_local($url, $uniacid, $uid);
+	$material = material_network_image_to_local($url, $uniacid, $uid);
 	if (is_error($material)) {
 		iajax(1, $material['message']);
 		return;
@@ -53,7 +53,7 @@ if ($do == 'networktolocal') {
 if ($do == 'tolocal') {
 
 	if ($type == 'news') {
-		$material = news_to_local($resourceid); // 微信图文转到本地数据库
+		$material = material_news_to_local($resourceid); // 微信图文转到本地数据库
 	} else {
 		$material = material_to_local($resourceid, $uniacid, $uid, $type); // 微信素材转到本地数据库
 	}
@@ -67,7 +67,7 @@ if ($do == 'tolocal') {
  *  网络图片转 wechat
  */
 if ($do == 'networktowechat') {
-	$material = network_image_to_wechat($url, $uniacid, $uid, $acid); //网络图片转为 微信 图片
+	$material = material_network_image_to_wechat($url, $uniacid, $uid, $acid); //网络图片转为 微信 图片
 	if (is_error($material)) {
 		iajax(1, $material['message']);
 		return;
