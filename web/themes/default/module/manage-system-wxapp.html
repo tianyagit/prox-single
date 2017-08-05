@@ -312,11 +312,7 @@
 
 	<div class="btn-group we7-btn-group we7-margin-bottom">
 		<a href="javascript:;" ng-click="changeShow('base')" class="btn " ng-class="{'active' : show == 'base' || show == ''}">基本信息</a>
-		<a href="javascript:;" ng-click="changeShow('plugin')" class="btn " ng-class="{'active' : show == 'plugin'}" ng-show="moduleinfo.main_module == '' && moduleinfo.plugin_list != undefined && moduleinfo.plugin_list != ''">模块子应用</a>
 		<a href="javascript:;" ng-click="changeShow('group')" class="btn " ng-class="{'active' : show == 'group'}">应用权限组</a>
-		{if !empty($module_subscribes)}
-		<a href="javascript:;" ng-click="changeShow('subscribe')" class="btn " ng-class="{'active' : show == 'subscribe'}">订阅消息</a>
-		{/if}
 		<a href="javascript:;" ng-click="changeShow('upgrade')" class="btn " ng-class="{'active' : show == 'upgrade'}" ng-show="checkupgrade == 1">升级</a>
 	</div>
 	<table class="table we7-table table-hover table-form" ng-show="show == 'base' || show == ''">
@@ -395,24 +391,6 @@
 		</tr>
 	</table>
 	{/if}
-	<div class="panel we7-panel" ng-show="show == 'plugin' && moduleinfo.main_module == ''">
-		<div class="panel-heading">
-			模块子应用
-		</div>
-		<div class="panel-body">
-			<div class="plugin-list clearfix">
-				<div class="item" ng-repeat="plugin in moduleinfo.plugin_list">
-					<a href="{php echo url('module/manage-system/module_detail')}name={{plugin.name}}" target="_blank">
-						<div class="img">
-							<img ng-src="{{ plugin.logo }}" alt="子应用icon" class="plugin-img"/>
-							<img ng-src="{{ moduleinfo.logo }}" alt="主应用icon" class="module-img"/>
-						</div>
-						<div class="name">{{ plugin.title }}</div>
-					</a>
-				</div>
-			</div>
-		</div>
-	</div>
 	<table class="table we7-table table-hover vertical-middle" ng-show="show == 'upgrade'" ng-if="isFounder == 1 && upgradeInfo.from == 'local'">
 		<col width="300px"/>
 		<col />
@@ -530,27 +508,6 @@
 			{/loop}
 		</table>
 	</div>
-	{if !empty($module_subscribes)}
-	<div class="panel we7-panel module-subscription" ng-if="isFounder == 1" ng-show="show == 'subscribe'">
-		<div class="panel-heading ">
-			订阅详情
-			<div class="pull-right subscription-switch">
-				<span >启用订阅</span>
-				<label>
-					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-					<div class="switch" ng-class="{ 'switchOn' : receive_ban == 1}" ng-click="changeSwitch()"></div>
-				</label>
-			</div>
-		</div>
-		<div class="panel-body">
-			<ul>
-				{loop $module_subscribes $subscribe}
-				<li>{$mtypes[$subscribe]} <label ng-if="subscribe == 2" class="label label-danger">通讯失败</label>  </li>
-				{/loop}
-			</ul>
-		</div>
-	</div>
-	{/if}
 	<table class="table we7-table table-hover" ng-if="isFounder == 1">
 		<col width="255px"/>
 		<col width="130px"/>
