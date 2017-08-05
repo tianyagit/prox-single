@@ -602,17 +602,3 @@ function user_save_group($group_info) {
 
 	return error(0, '添加成功');
 }
-
-function user_ip_validate() {
-	if (!filter_var(CLIENT_IP, FILTER_VALIDATE_IP)) {
-		return error(-1, 'ip不合法');
-	}
-	if (!filter_var(CLIENT_IP, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-		return error(0, '内网ip');
-	}
-	$ip_exists = pdo_getcolumn('ip_list', array('ip' => CLIENT_IP, 'status' => 1), 'ip');
-	if (empty($ip_exists)) {
-		return error(-1, 'ip受限或者未开启');
-	}
-	return error(0, 'ip合法');
-}

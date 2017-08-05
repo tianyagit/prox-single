@@ -198,6 +198,7 @@ if ($do == 'post') {
 			$rulename = trim($_GPC['rulename']);
 			$containtype = '';
 			$_GPC['reply'] = (array)$_GPC['reply'];
+
 			foreach ($_GPC['reply'] as $replykey => $replyval) {
 				if (!empty($replyval)) {
 					$type = substr($replykey, 6);

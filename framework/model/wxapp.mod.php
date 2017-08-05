@@ -96,6 +96,23 @@ function wxapp_support_wxapp_modules() {
 	return $wxapp_modules;
 }
 
+/**
+ * 获取当前公众号支持小程序的模块
+ * @return array
+ */
+function wxapp_support_uniacid_modules() {
+	$uni_modules = uni_modules();
+	$wxapp_modules = array();
+	if (!empty($uni_modules)) {
+		foreach ($uni_modules as $module_name => $module_info) {
+			if ($module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+				$wxapp_modules[$module_name] = $module_info;
+			}
+		}
+	}
+	return $wxapp_modules;
+}
+
 /*
  * 获取小程序信息(包括上一次使用版本的版本信息，若从未使用过任何版本则取最新版本信息)
  * @params int $uniacid

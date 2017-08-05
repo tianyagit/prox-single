@@ -504,7 +504,7 @@ if ($do == 'module_detail') {
 			case ACCOUNT_TYPE_OFFCIAL_NORMAL:
 			case ACCOUNT_TYPE_OFFCIAL_AUTH:
 				$module_info['relation_name'] = '小程序版';
-				$module_info['account_type'] = 0;
+				$module_info['account_type'] = ACCOUNT_TYPE_APP_NORMAL;
 				$module_info['type'] = ACCOUNT_TYPE_APP_NORMAL;
 				break;
 			default:

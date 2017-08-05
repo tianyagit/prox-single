@@ -1,0 +1,30 @@
+{template 'common/header'}
+<div class="api">
+	<div class="panel we7-panel api-target">
+		<div class="panel-heading">今日/昨日关键指标</div>
+		<div class="panel-body we7-padding-vertical">
+			<div class="col-sm-4 text-center">
+				<div class="title">应用总访问数</div>
+				<div>
+					<span class="today">{$today_module_api['visit_sum']}</span>
+					<span class="yesterday">/ {$yesterday_module_api['visit_sum']}</span>
+				</div>
+			</div>
+			<div class="col-sm-4 text-center">
+				<div class="title">应用平均访问数</div>
+				<div>
+					<span class="today">{$today_module_api['visit_avg']}</span>
+					<span class="yesterday">/ {$yesterday_module_api['visit_avg']}</span>
+				</div>
+			</div>
+			<div class="col-sm-4 text-center">
+				<div class="title">应用最高访问数</div>
+				<div>
+					<span class="today">{$today_module_api['visit_highest']}</span>
+					<span class="yesterday">/ {$yesterday_module_api['visit_highest']}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{template 'common/footer'}

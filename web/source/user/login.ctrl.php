@@ -17,11 +17,6 @@ function _login($forward = '') {
 	$member = array();
 	$username = trim($_GPC['username']);
 
-	$login_ip_validate = user_ip_validate();
-	if (is_error($login_ip_validate)) {
-		itoast($login_ip_validate['message'], '', '');
-	}
-
 	pdo_query('DELETE FROM'.tablename('users_failed_login'). ' WHERE lastupdate < :timestamp', array(':timestamp' => TIMESTAMP-300));
 	$failed = pdo_get('users_failed_login', array('username' => $username, 'ip' => CLIENT_IP));
 	if ($failed['count'] >= 5) {
