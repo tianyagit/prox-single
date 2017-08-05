@@ -106,12 +106,13 @@ function site_ip_add($ip = '') {
 	load()->model('setting');
 	$ip_data = site_ip_validate($ip);
 	if (is_error($ip_data)) {
-		return error(-1, 'ip不能为空');
+		return error(-1, $ip_data['message']);
 	}
 	$ip_data_format = setting_load('ip_white_list');
+	$ip_data_format = $ip_data_format['ip_white_list'];
 	foreach ($ip_data as $ip) {
-		$ip_data_format['ip_white_list'][$ip]['ip'] = $ip;
-		$ip_data_format['ip_white_list'][$ip]['status'] = 1;
+		$ip_data_format[$ip]['ip'] = $ip;
+		$ip_data_format[$ip]['status'] = 1;
 	}
-	return setting_save($ip_data_format['ip_white_list'], 'ip_white_list');
+	return setting_save($ip_data_format, 'ip_white_list');
 }
