@@ -6,6 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('site');
+load()->model('setting');
 
 $dos = array('display', 'change_status', 'add', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';

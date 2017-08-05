@@ -103,6 +103,7 @@ function site_ip_validate($ip) {
 }
 
 function site_ip_add($ip = '') {
+	load()->model('setting');
 	$ip_data = site_ip_validate($ip);
 	if (is_error($ip_data)) {
 		return error(-1, 'ip不能为空');
