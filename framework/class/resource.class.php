@@ -1,10 +1,10 @@
 <?php
 
+defined('IN_IA') or exit('Access Denied');
+
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2017/7/20
- * Time: 13:23.
+ *  弹出框文件资源管理器
+ * Class Resource
  */
 abstract class Resource {
 	protected $uniacid = 0;
