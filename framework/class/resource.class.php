@@ -92,6 +92,34 @@ class KeyWordResource extends Resource {
  */
 class ModuleResource extends Resource {
 	public function getResources() {
+		// 模块无法分页 使用 angular 自带筛选
+//		$keyword = addslashes($this->query('keyword', ''));
+		$enable_modules = array();
+		$installedmodulelist = uni_modules(false);
+		foreach ($installedmodulelist as $k => $value) {
+			$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
+		}
+		foreach($installedmodulelist as $name => $module) {
+			if($module['issystem']) {
+				$path = '/framework/builtin/' . $module['name'];
+			} else {
+				$path = '../addons/' . $module['name'];
+			}
+			$cion = $path . '/icon-custom.jpg';
+			if(!file_exists($cion)) {
+				$cion = $path . '/icon.jpg';
+				if(!file_exists($cion)) {
+					$cion = './resource/images/nopic-small.jpg';
+				}
+			}
+			$module['icon'] = $cion;
+			if($module['enabled'] == 1) {
+				$enable_modules[] = $module;
+			} else {
+				$unenable_modules[$name] = $module;
+			}
+		}
+		return array('items' => $enable_modules, 'pager' => '<div></div>');
 	}
 }
 

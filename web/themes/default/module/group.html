@@ -247,9 +247,17 @@
 				</div>
 
 				<div class="modal-body material-content clearfix">
+					<div class="material-head">
+						<form action="" method="get" class="form-horizontal clearfix form-inline" role="form">
+							<div class="input-group pull-left col-sm-4">
+								<input type="text" name="keyword" id="" ng-model='keyword' class="form-control" placeholder="搜索关键字"/>
+								<span class="input-group-btn"><button type="button" class="btn btn-default"><i class="wi wi-search"></i></button></span>
+							</div>
+						</form>
+					</div>
 					<div class="material-body">
 						<div class="row">
-							<div class="col-sm-2 select-module" ng-repeat="module in groupNotHaveModuleApp" ng-click="selectOrCancelModule(module, 'module')">
+							<div class="col-sm-2 select-module" ng-repeat="module in groupNotHaveModuleAppArray | filter:keyword" ng-click="selectOrCancelModule(module, 'module')">
 								<div class="item" ng-class="{true:'active',false:''}[module.selected]">
 									<img ng-src="{{ module.logo }}"  alt="" class="icon" ng-if="module.main_module == ''"/>
 									<div class="name">{{ module.title }}</div>
@@ -313,6 +321,7 @@ require(['underscore'], function() {
 		'groupHaveModuleApp' : {php echo json_encode($group_have_module_app)},
 		'groupHaveModuleWxapp' : {php echo json_encode($group_have_module_wxapp)},
 		'groupNotHaveModuleApp' : {php echo json_encode($group_not_have_module_app)},
+		'groupNotHaveModuleAppArray' : {php echo json_encode(array_values($group_not_have_module_app))}, // angular filter 只能数组
 		'groupNotHaveModuleWxapp' : {php echo json_encode($group_not_have_module_wxapp)},
 		'groupHaveTemplate' : {php echo json_encode($group_have_template)},
 		'groupNotHaveTemplate' : {php echo json_encode($group_not_have_template)},
