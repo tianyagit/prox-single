@@ -11,24 +11,27 @@ $dos = array('display', 'change_status', 'add', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 $_W['page']['title'] = '站点管理 - 设置  - IP白名单';
 
+$ip_lists = setting_load('ip_white_list');
+$ip_lists = $ip_lists['ip_white_list'];
 if ($do == 'display') {
 	$keyword = trim($_GPC['keyword']);
-	$condition = array();
+	$lists = $ip_lists;
 	if (!empty($keyword)) {
-		$condition['ip LIKE'] = "%" . $keyword . "%";
+		$lists = array();
+		foreach ($ip_lists as $ip => $ip_info) {
+			if (strexists($ip, $keyword)) {
+				$lists[$ip] = $ip_info;
+			}
+		}
 	}
-
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 10;
-	$lists = pdo_getslice('ip_list', $condition, array($pindex, $psize), $total, array(), '', array('id DESC'));
-	$pager = pagination($total, $pindex, $psize);
 }
 
 if ($do == 'change_status') {
-	$id = intval($_GPC['id']);
-	$status = pdo_getcolumn('ip_list', array('id' => $id), 'status');
+	$ip = trim($_GPC['ip']);
+	$status = $ip_lists[$ip]['status'];
 	$status = empty($status) ? 1 : 0;
-	$update = pdo_update('ip_list', array('status' => $status), array('id' => $id));
+	$ip_lists[$ip]['status'] = $status;
+	$update = setting_save($ip_lists, 'ip_white_list');
 	if ($update) {
 		iajax(0, '');
 	}
@@ -45,15 +48,12 @@ if ($do == 'add') {
 }
 
 if ($do == 'delete') {
-	$id = intval($_GPC['id']);
-	if (empty($id)) {
+	$ip = trim($_GPC['ip']);
+	if (empty($ip)) {
 		itoast('参数错误');
 	}
-	$id_exists = pdo_getcolumn('ip_list', array('id' => $id), 'id');
-	if (empty($id_exists)) {
-		itoast('此条记录不存在');
-	}
-	pdo_delete('ip_list', array('id' => $id));
+	unset($ip_lists[$ip]);
+	$update = setting_save($ip_lists, 'ip_white_list');
 	itoast('删除成功', url('system/ipwhitelist'));
 }
 template('system/ip-list');
