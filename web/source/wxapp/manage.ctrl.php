@@ -33,15 +33,7 @@ if ($do == 'display') {
 		$version_exist = wxapp_fetch($account['uniacid']);
 		if (!empty($version_exist)) {
 			$wxapp_version_lists = wxapp_version_all($account['uniacid']);
-			$uni_modules = uni_modules();
-			$wxapp_modules = array();
-			if (!empty($uni_modules)) {
-				foreach ($uni_modules as $module_name => $module_info) {
-					if ($module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
-						$wxapp_modules[$module_name] = $module_info;
-					}
-				}
-			}
+			$wxapp_modules = wxapp_support_uniacid_modules();
 		}
 	}
 	template('wxapp/manage');
