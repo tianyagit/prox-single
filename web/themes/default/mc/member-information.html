@@ -1342,7 +1342,7 @@ require(['trade'], function(trade){
 		custom_fields:{php echo !empty($custom_fields) ? json_encode($custom_fields) : 'null'},
 		all_fields:{php echo !empty($all_fields) ? json_encode($all_fields) : 'null'},
 		groups:{php echo !empty($groups) ? json_encode($groups) : 'null'},
-		addresses:{php echo !empty($addresses) ? json_encode($addresses) : 'null'},
+		addresses:{php echo json_encode($addresses)},
 		uid:{$uid},
 		links: {
 			basePost: "{php echo url('mc/member/base_information', array('uid' => $uid))}",
