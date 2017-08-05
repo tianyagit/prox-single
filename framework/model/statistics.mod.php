@@ -57,7 +57,7 @@ function stat_all_visit_statistics($data) {
 	$modules_count = count($modules);
 	$result = array(
 		'visit_sum' => 0,
-		'visit_hightest' => 0,
+		'visit_highest' => 0,
 		'visit_avg' => 0
 	);
 	if (empty($data)) {
