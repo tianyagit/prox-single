@@ -2,38 +2,7 @@
 <style>
 	.label{line-height: 1.8}
 </style>
-{if $do != 'credit_record' && $do != 'credit_stat'}
-<div class="we7-page-title">会员管理</div>
-<ul class="we7-page-tab">
-	<li {if ($do == 'display' || $do == 'post') && $_GPC['a'] == 'member'} class="active"{/if}>
-	<a href="{php echo url('mc/member')}">会员管理</a>
-	</li>
-	<li {if $_GPC['a'] == 'group'} class="active"{/if}>
-	<a href="{php echo url('mc/group')}">会员组</a>
-	</li>
-	<li{if $do == 'uc'} class="active"{/if}>
-	<a href="{php echo url('site/editor/uc')}">会员中心</a>
-	</li>
-	<li {if $do == 'quickmenu'} class="active"{/if}>
-	<a href="{php echo url('site/editor/quickmenu', array('type' => 4))}">快捷菜单</a>
-	</li>
-	<li {if $do == 'credit_setting'} class="active"{/if}>
-	<a href="{php echo url('mc/member/credit_setting')}">积分设置</a>
-	</li>
-	<li {if $do == 'register_setting'} class="active"{/if}>
-	<a href="{php echo url('mc/member/register_setting')}">注册设置</a>
-	</li>
-	<li {if $action == 'fields'} class="active"{/if}>
-	<a href="{php echo url('profile/fields')}">会员字段管理</a>
-	</li>
-</ul>
-{else}
-<ul class="nav nav-tabs">
-	<li {if $do  == 'credit_stat'} class="active"{/if}><a href="{php echo url('mc/member/credit_stat', array('type' => 1, 'uid' => $uid));}">数据概况</a></li>
-	<li {if $do  == 'credit_record' &&  $type == 'credit1'} class="active"{/if}><a href="{php echo url('mc/member/credit_record', array('type' => 'credit1', 'uid' => $uid));}">积分日志</a></li>
-	<li {if $do  == 'credit_record' &&  $type == 'credit2'} class="active"{/if}><a href="{php echo url('mc/member/credit_record', array('type' => 'credit2', 'uid' => $uid));}">余额日志</a></li>
-</ul>
-{/if}
+{template 'mc/common'}
 {if $do == 'display'}
 <div class="alert we7-page-alert">
 	<p><i class="wi wi-info-sign"></i> 当前会员总数:<strong class="text-danger">{$stat['total']}</strong>。今日新增会员:<strong class="text-danger">{$stat['today']}</strong>。昨日新增会员:<strong class="text-danger">{$stat['yesterday']}</strong>。<br></p>
