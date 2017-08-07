@@ -170,9 +170,6 @@ if ($do == 'upload') {
 	if($mode == 'perm' || $mode == 'temp') {
 		$sendapi = $apis[$mode]['add'] . "?access_token={$token}&type={$type}";
 		$media = '@'.$fullname;
-		if(version_compare(PHP_VERSION,'5.5.0', '>')){
-			$media = new CURLFile($fullname);
-		}
 		$data = array(
 			'media' => $media
 		);
