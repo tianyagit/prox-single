@@ -443,7 +443,7 @@ function material_news_delete($material_id){
 	if (is_error($permission)) {
 		return error(-1, $permission['message']);
 	}
-	if (empty($_W['isfounder']) && !empty($permission) && !in_array('platform_material', $permission)) {
+	if (empty($_W['isfounder']) && !empty($permission) && !in_array('platform_material', $permission) && !in_array('all', $permission)) {
 		return error('-1', '您没有权限删除该文件');
 	}
 	$material_id = intval($material_id);

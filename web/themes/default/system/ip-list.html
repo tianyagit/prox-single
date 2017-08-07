@@ -32,20 +32,17 @@
 			</td>
 			<td>
 				<div class="we7-form">
-					<input class='we7-toggle' type="checkbox" name='check-3' checked='checked' ng-if="list.status==1" ng-click="changeStatus(list.id)"/>
-					<input class='we7-toggle' type="checkbox" name='check-3' ng-if="list.status==0" ng-click="changeStatus(list.id)"/>
+					<input class='we7-toggle' type="checkbox" name='check-3' checked='checked' ng-if="list.status==1" ng-click="changeStatus(list.ip)"/>
+					<input class='we7-toggle' type="checkbox" name='check-3' ng-if="list.status==0" ng-click="changeStatus(list.ip)"/>
 				</div>
 			</td>
 			<td>
 				<div class="link-group">
-					<a href="{{links.delete_link_ip}}id={{list.id}}" class="del">删除</a>
+					<a href="{{links.delete_link_ip}}ip={{list.ip}}" class="del">删除</a>
 				</div>
 			</td>
 		</tr>
 	</table>
-	<div class="text-right we7-margin-top">
-		{$pager}
-	</div>
 	<div class="modal fade" id="myModalIp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel6">
 		<div class="modal-dialog">
 			<div class="modal-content">

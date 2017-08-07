@@ -37,18 +37,6 @@
 			</td>
 			<td class="we7-padding-right color-default"></td>
 		</tr>
-		<tr >
-			<td colspan="5">
-				<div class="col-sm-1 color-gray text-left we7-padding-none">模板</div>
-				<div class="col-sm-11">
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="tpl in module_tpl.templates">
-						<a href="javascript:;" class="label label-info" ng-bind="tpl.title"></a>
-					</div>
-
-				</div>
-			</td>
-			<td class="we7-padding-right color-default"></td>
-		</tr>
 	</table>
 	{if !in_array($owner['uid'], $founders)}
 	<table class="table we7-table table-hover account-package-extra">
@@ -72,19 +60,6 @@
 				</div>
 			</td>
 		</tr>
-		<tr>
-			<td colspan="5">
-				<div class="col-sm-1 color-gray text-left we7-padding-none">模板</div>
-				<div class="col-sm-11 js-extra-templates">
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.templates" ng-if="extend.templates">
-						<a href="javascript:;" class="label label-info" ng-bind="module.title"></a>
-					</div>
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-if="!extend.templates">
-						<a href="javascript:;">---</a>
-					</div>
-				</div>
-			</td>
-		</tr>
 	</table>
 	{/if}
 	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders)}
@@ -100,7 +75,6 @@
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					<ul role="tablist" class="nav nav-pills">
 						<li class="active"><a class="we7-padding-horizontal" data-toggle="tab" role="tab" aria-controls="content-modules" href="#content-modules">模块</a></li>
-						<li><a class="we7-padding-horizontal" data-toggle="tab" role="tab" aria-controls="content-templates" href="#content-templates">模板</a></li>
 					</ul>
 				</div>
 				<div class="modal-body">
@@ -120,25 +94,6 @@
 									<td>{$module['title']}{if $module['issystem']}<span class="label label-success">系统模块</span>{/if}</td>
 									<td>{$module['name']}</td>
 									<td><a class="btn btn-default js-btn-select {if is_array($current_module_names) && in_array($module_name, $current_module_names)}btn-primary{/if}" data-title="{$module['title']}" data-name="{$module['name']}" onclick="$(this).toggleClass('btn-primary')">选取</a></td>
-								</tr>
-								{/loop}
-							</table>
-						</div>
-						<div id="content-templates" class="tab-pane" role="tabpanel">
-							<table class="table we7-table table-hover vertical-middle">
-								<col width="280px">
-								<col width="220px">
-								<col />
-								<tr>
-									<th>模板名称</th>
-									<th>模板标识</th>
-									<th></th>
-								</tr>
-								{loop $templates $temp}
-								<tr>
-									<td>{$temp['title']}</td>
-									<td>{$temp['name']}</td>
-									<td><a class="btn btn-default js-btn-select {if is_array($extend['templates']) && in_array($temp, $extend['templates'])}btn-primary{/if}" data-title="{$temp['title']}" data-name="{$temp['name']}" data-id="{$temp['id']}" onclick="$(this).toggleClass('btn-primary')">选取</a></td>
 								</tr>
 								{/loop}
 							</table>

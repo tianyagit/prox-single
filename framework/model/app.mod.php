@@ -57,7 +57,7 @@ function app_update_today_visit($module_name) {
 	if (empty($module_name)) {
 		return false;
 	}
-	$today = date('Y-m-d');
+	$today = date('Ymd');
 	$today_exist = pdo_get('stat_visit', array('date' => $today, 'uniacid' => $_W['uniacid'], 'module' => $module_name));
 	if (empty($today_exist)) {
 		$insert_data = array(
