@@ -997,7 +997,8 @@ function uni_account_last_switch() {
 	}
 	if (!empty($uniacid)) {
 		$account_info = uni_fetch($uniacid);
-		if (!empty($account_info) && $account_info['isdeleted'] == 1) {
+		$role = uni_permission($_W['uid'], $uniacid);
+		if (!empty($account_info) && $account_info['isdeleted'] == 1 || empty($role)) {
 			$uniacid = '';
 		}
 	}

@@ -422,13 +422,6 @@ function buildframes($framename = ''){
 				}
 			}
 		}
-		if ($_W['role'] == ACCOUNT_MANAGE_NAME_CLERK) {
-			$frames['account']['section']['platform_module_common']['menu']['platform_module_clerkdesk'] = array(
-				'title' => "<i class='fa fa-plane'></i> 店员工作台",
-				'url' => url('site/entry/clerkdeskwelcome', array('uniacid' => $_W['uniacid'], 'op' => 'index', 'm' => $modulename)),
-				'is_display' => 1,
-			);
-		}
 		if (!empty($module['plugin_list']) || !empty($module['main_module'])) {
 			if (!empty($module['main_module'])) {
 				$main_module = module_fetch($module['main_module']);

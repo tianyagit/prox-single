@@ -168,8 +168,6 @@
 	window.select_mediaid = function(type, otherVal){
 		var option = {
 			type: type,
-			isWechat : true, // 默认显示微信
-			needType : 3, // 微信图片都可以资源
 			ignore: {
 				basic: type === 'basic' ? false : true,
 				wxcard: type === 'wxcard' ? false : true,
@@ -182,16 +180,13 @@
 				module: type === 'module' ? false : true
 			},
 			others: {
-				image: {
-					needType : 1
+				basic: {
+					typeVal: angular.isDefined(otherVal) ? otherVal : null,
 				},
-				video : {
-					needType : 1
-				},
-				voice : {
-					needType : 1
+				news: {
+					showwx: angular.isDefined(otherVal) ? otherVal === 'wx' ? true : false : true,
+					showlocal: angular.isDefined(otherVal) ? otherVal === 'local' ? true : false : true
 				}
-
 			}
 		};
 		if (type == 'module') {
