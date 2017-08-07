@@ -149,7 +149,7 @@ class WeSessionMemcache extends WeSession {
 		$row['data'] = $data;
 		$row['expiretime'] = TIMESTAMP + WeSession::$expire;
 		
-		return cache_write($this->key($sessionid), $row);;
+		return cache_write($this->key($sessionid), $row);
 	}
 	
 	public function destroy($sessionid) {
