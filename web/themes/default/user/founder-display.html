@@ -1,18 +1,16 @@
 {template 'common/header'}
-{template 'user/user-header'}
+{template 'user/founder-header'}
 <div class="keyword-list-head clearfix we7-margin-bottom">
 	<form action="" method="get">
 		<input type="hidden" name="c" value="user">
-		<input type="hidden" name="a" value="display">
-		<input type="hidden" name="do" value="{$_GPC['do']}">
-		<input type="hidden" name="type" value="{$_GPC['type']}">
+		<input type="hidden" name="a" value="founderdisplay">
 		<div class="input-group pull-left col-sm-4">
-			<input type="text" name="username" id="" value="{$_GPC['username']}" class="form-control"  placeholder="搜索用户名" />
+			<input type="text" name="username" id="" value="{$_GPC['username']}" class="form-control"  placeholder="搜索创始人" />
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
 	</form>
 	<div class="pull-right">
-		{if $_GPC['type'] == 'display' || $_GPC['type'] == ''}<a href="{url 'user/create'}" class="btn btn-primary">+添加用户</a>{/if}
+		<a href="{php echo url('user/foundercreate')}" class="btn btn-primary">+添加创始人</a>
 	</div>
 </div>
 <table class="table we7-table table-hover table-manage vertical-middle" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
@@ -54,11 +52,7 @@
 		<td class="vertical-middle table-manage-td">
 			<div class="link-group" ng-if="!user.founder">
 				<a ng-href="{{links.edit}}uid={{user.uid}}" ng-if="type == 'display'">编辑</a>
-				<a ng-href="{{links.deny}}&uid={{user.uid}}" ng-if="type == 'display'" data-toggle="tooltip" data-placement="left" title="禁用后可在用户回收站查找到并重新启用。">禁用</a>
-				<a ng-href="{{links.checkPass}}&uid={{user.uid}}" ng-if="type == 'check'">通过</a>
-				<a ng-href="{{links.deny}}&uid={{user.uid}}" ng-if="type == 'check'" data-toggle="tooltip" data-placement="left" title="拒绝后可在用户回收站查找到并启用。">拒绝</a>
-				<a ng-href="{{links.recycleRestore}}&uid={{user.uid}}" ng-if="type == 'recycle'">启用</a>
-				<a ng-href="{{links.recycleDel}}&uid={{user.uid}}" class="del" ng-if="type == 'recycle'">删除</a>
+				<a ng-href="{{links.recycleDel}}&uid={{user.uid}}" class="del" ng-if="type == 'display'">删除</a>
 			</div>
 			<div class="manage-option text-right" ng-if="!user.founder">
 				<a href="{{links.edit}}uid={{user.uid}}">基础信息</a>
@@ -83,10 +77,7 @@
 		users: {php echo !empty($users) ? json_encode($users) : 'null'},
 		usergroups: {php echo !empty($usergroups) ? json_encode($usergroups) : 'null'},
 		links: {
-			recycleDel: "{php echo url('user/display/operate', array('type' => 'recycle_delete'))}",
-			recycleRestore: "{php echo url('user/display/operate', array('type' => 'recycle_restore'))}",
-			checkPass: "{php echo url('user/display/operate', array('type' => 'check_pass'))}",
-			deny: "{php echo url('user/display/operate', array('type' => 'recycle'))}",
+			recycleDel: "{php echo url('user/founderdisplay/del')}",
 			edit: "{php echo url('user/edit')}",
 		},
 	});
