@@ -423,8 +423,7 @@ if ($do == 'address') {
 				iajax(0, '删除成功', '');
 			}else{
 				iajax(1, '删除失败', '');
-			}
-			
+			}	
 		}
 		if ($_GPC['op'] == 'isdefault') {
 			$id = intval($_GPC['id']);
