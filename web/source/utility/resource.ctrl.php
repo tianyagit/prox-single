@@ -18,9 +18,9 @@ $url = $_GPC['url'];
 $isnetwork_convert = !empty($url);
 $islocal = $_GPC['local'] == 'local'; //是否获取本地资源
 // 关键字查询
-if($do == 'keyword') {
+if ($do == 'keyword') {
 	$keyword = addslashes($_GPC['keyword']);
-	$pindex = max(1,$_GPC['page']);
+	$pindex = max(1, $_GPC['page']);
 	$psize = 24;
 	$condition = array('uniacid' => $uniacid, 'status' => 1);
 	if (!empty($keyword)) {
@@ -40,21 +40,21 @@ if ($do == 'module') {
 	foreach ($installedmodulelist as $k => $value) {
 		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 	}
-	foreach($installedmodulelist as $name => $module) {
-		if($module['issystem']) {
-			$path = '/framework/builtin/' . $module['name'];
+	foreach ($installedmodulelist as $name => $module) {
+		if ($module['issystem']) {
+			$path = '/framework/builtin/'.$module['name'];
 		} else {
-			$path = '../addons/' . $module['name'];
+			$path = '../addons/'.$module['name'];
 		}
-		$cion = $path . '/icon-custom.jpg';
-		if(!file_exists($cion)) {
-			$cion = $path . '/icon.jpg';
-			if(!file_exists($cion)) {
+		$cion = $path.'/icon-custom.jpg';
+		if (!file_exists($cion)) {
+			$cion = $path.'/icon.jpg';
+			if (!file_exists($cion)) {
 				$cion = './resource/images/nopic-small.jpg';
 			}
 		}
 		$module['icon'] = $cion;
-		if($module['enabled'] == 1) {
+		if ($module['enabled'] == 1) {
 			$enable_modules[] = $module;
 		} else {
 			$unenable_modules[$name] = $module;
@@ -66,7 +66,7 @@ if ($do == 'module') {
 // 视频语音查询
 if ($do == 'video' || $do == 'voice') {
 	$server = $islocal ? MATERIAL_LOCAL : MATERIAL_WEXIN;
-	$page_index = max(1,$_GPC['page']);
+	$page_index = max(1, $_GPC['page']);
 	$page_size = 10;
 	$material_news_list = material_list($do, $server, array('page_index' => $page_index, 'page_size' => $page_size));
 	$material_list = $material_news_list['material_list'];
@@ -78,7 +78,7 @@ if ($do == 'video' || $do == 'voice') {
 // 图文查询
 if ($do == 'news') {
 	$server = $islocal ? MATERIAL_LOCAL : MATERIAL_WEXIN;
-	$page_index = max(1,$_GPC['page']);
+	$page_index = max(1, $_GPC['page']);
 	$page_size = 24;
 	$search = addslashes($_GPC['keyword']);
 	$material_news_list = material_news_list($server, $search, array('page_index' => $page_index, 'page_size' => $page_size));
@@ -89,10 +89,8 @@ if ($do == 'news') {
 }
 // 图片查询
 if ($do == 'image') {
-
 	$page_size = 24;
 	if ($islocal) { // 如果读取本地图
-
 		$page = $_GPC['page'];
 		$page = max(1, $page);
 		$condition = ' WHERE uniacid = :uniacid AND type = :type';
@@ -120,7 +118,7 @@ if ($do == 'image') {
 		);
 	} else {
 		$page = $_GPC['page'];
-		$page_index =max(1, $page);
+		$page_index = max(1, $page);
 		$material_news_list = material_list('image', MATERIAL_WEXIN, array('page_index' => $page_index, 'page_size' => $page_size));
 		$material_list = $material_news_list['material_list'];
 		$pager = $material_news_list['page'];
@@ -130,38 +128,36 @@ if ($do == 'image') {
 		}
 		$result = array('items' => $material_list, 'pager' => $pager);
 	}
-	iajax(0 , $result);
+	iajax(0, $result);
 }
 
-
-
-
-/**
+/*
  *  校验数据
  */
-if($do == 'tolocal' || $do == 'towechat') {
+if ($do == 'tolocal' || $do == 'towechat') {
 	if (!in_array($type, array('news', 'image', 'video', 'voice'))) {
 		iajax(1, '转换类型不正确');
+
 		return;
 	}
 }
 
-/**
+/*
  *  网络图转本地
  */
 if ($do == 'networktolocal') {
 	$material = material_network_image_to_local($url, $uniacid, $uid);
 	if (is_error($material)) {
 		iajax(1, $material['message']);
+
 		return;
 	}
 	iajax(0, $material);
 }
-/**
+/*
  *  转为本地图片
  */
 if ($do == 'tolocal') {
-
 	if ($type == 'news') {
 		$material = material_news_to_local($resourceid); // 微信图文转到本地数据库
 	} else {
@@ -169,20 +165,23 @@ if ($do == 'tolocal') {
 	}
 	if (is_error($material)) {
 		iajax(1, $material['message']);
+
 		return;
 	}
 	iajax(0, $material);
 }
-/**
+/*
  *  网络图片转 wechat
  */
 if ($do == 'networktowechat') {
 	$material = material_network_image_to_wechat($url, $uniacid, $uid, $acid); //网络图片转为 微信 图片
 	if (is_error($material)) {
 		iajax(1, $material['message']);
+
 		return;
 	}
 	iajax(0, $material);
+
 	return;
 }
 
@@ -194,14 +193,15 @@ if ($do == 'towechat') {
 	$material = null;
 	if ($type != 'news') {
 		$material = material_to_wechat($resourceid, $uniacid, $uid, $acid, $type); // 本地素材 传到微信服务器
-	}else {
-		$material = material_local_news_upload($resourceid); 	// 本地图文到服务器
+	} else {
+		$material = material_local_news_upload($resourceid);	// 本地图文到服务器
 		if (!is_error($material)) {
 			$material['items'] = $material['news']; //前台静态界面需要items;
 		}
 	}
 	if (is_error($material)) {
 		iajax(1, $material['message']);
+
 		return;
 	}
 	iajax(0, $material);
