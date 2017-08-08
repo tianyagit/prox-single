@@ -156,7 +156,7 @@ class NewsResource extends Resource {
 		$page_size = 24;
 		$search = addslashes($this->query('keyword'));
 		$material_news_list = material_news_list($server, $search, array('page_index' => $page_index, 'page_size' => $page_size));
-		$material_list = $material_news_list['material_list'];
+		$material_list = array_values($material_news_list['material_list']);
 		$pager = $material_news_list['page'];
 
 		return array('items' => $material_list, 'pager' => $pager);

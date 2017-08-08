@@ -125,17 +125,6 @@ $we7_system_menu['account'] = array(
 				),
 			),
 		),
-		'statistics' => array(
-			'title' => '统计',
-			'menu' => array(
-				'app' => array(
-					'title' => '访问统计',
-					'url' => url('statistics/app'),
-					'icon' => 'wi wi-api',
-					'permission_name' => 'statistics_app',
-				),
-			),
-		),
 	),
 );
 $we7_system_menu['wxapp'] = array(
