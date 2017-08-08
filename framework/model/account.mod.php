@@ -319,7 +319,7 @@ function uni_modules_app_binding() {
  * @param array $groupids 公众号套餐ID
  * @return array uni_group 套餐信息列表
  */
-function uni_groups($groupids = array()) {
+function uni_groups($groupids = array(), $show_all = false) {
 	load()->model('module');
 	global $_W;
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
