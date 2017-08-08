@@ -651,10 +651,6 @@ EOF;
 			$message['content'] = strval($message['eventkey']);
 			return $this->analyzeClick($message);
 		}
-		if (in_array($message['event'], array('poi_check_notify', 'user_get_card', 'user_del_card', 'user_consume_card', 'card_pass_check', 'card_not_pass_check', 'user_gifting_card', 'user_view_card', 'user_pay_from_pay_cell', 'user_enter_session_from_card', 'update_member_card', 'card_sku_remind', 'card_pay_order', 'submit_membercard_user_info'))) {
-			$this->receive();
-			return 'success';
-		}
 		if (in_array($message['event'], array('pic_photo_or_album', 'pic_weixin', 'pic_sysphoto'))) {
 			pdo_query("DELETE FROM ".tablename('menu_event')." WHERE createtime < '".($GLOBALS['_W']['timestamp'] - 100)."' OR openid = '{$message['from']}'");
 			if (!empty($message['sendpicsinfo']['count'])) {
