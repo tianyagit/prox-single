@@ -374,20 +374,6 @@ function user_founder_group_detail_info($groupid = 0) {
 	return $group_info;
 }
 
-function user_group_and_group_detail($groupid, $foundergroupid) {
-	if ($foundergroupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-		$groups = user_founder_group();
-		$group_info = user_founder_group_detail_info($groupid);
-	} else {
-		$groups = user_group();
-		$group_info = user_group_detail_info($groupid);
-	}
-	return array(
-		'groups' => $groups,
-		'group_info' => $group_info
-	);
-}
-
 /**
  *获取某一用户可用公众号或小程序的详细信息
  *@param number $uid 用户ID
