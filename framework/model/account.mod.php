@@ -123,8 +123,11 @@ function account_owner($uniacid = 0) {
 	}
 	$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 	if (empty($ownerid)) {
-		$founders = explode(',', $_W['config']['setting']['founder']);
-		$ownerid = $founders[0];
+		$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'vice_founder'), 'uid');
+		if (empty($ownerid)) {
+			$founders = explode(',', $_W['config']['setting']['founder']);
+			$ownerid = $founders[0];
+		}
 	}
 	$owner = user_single($ownerid);
 	if (empty($owner)) {
@@ -570,6 +573,10 @@ function uni_permission($uid = 0, $uniacid = 0) {
 
 	if (user_is_founder($uid) && !user_is_vice_founder($uid)) {
 		return ACCOUNT_MANAGE_NAME_FOUNDER;
+	}
+
+	if (user_is_vice_founder($uid)) {
+		return ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
 	}
 
 	if (!empty($uniacid)) {
