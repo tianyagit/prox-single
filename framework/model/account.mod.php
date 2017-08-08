@@ -566,24 +566,11 @@ function uni_account_tablename($type) {
 }
 
 function uni_user_account_role($uniacid, $uid, $role) {
-	global $_W;
-	$uniacid = intval($uniacid);
 	$vice_account = array(
-		'uniacid' => $uniacid,
+		'uniacid' => intval($uniacid),
 		'uid' => intval($uid),
 		'role' => trim($role)
 	);
-	if (user_is_vice_founder()) {
-		$founder_account = array(
-			'uniacid' => $uniacid,
-			'uid' => $_W['uid'],
-			'role' => ACCOUNT_MANAGE_NAME_VICE_FOUNDER
-		);
-		$account_founder_user = pdo_get('uni_account_users', $founder_account, array('id'));
-		if (empty($account_founder_user)) {
-			pdo_insert('uni_account_users', $founder_account);
-		}
-	}
 	$account_user = pdo_get('uni_account_users', $vice_account, array('id'));
 	if (!empty($account_user)) {
 		return false;
@@ -963,7 +950,12 @@ function uni_user_account_permission($uid = 0) {
 	return $data;
 }
 
-
+/**
+ * 获取公众号和小程序真实数量
+ * @param $uid
+ * @param $role
+ * @return array
+ */
 function uni_owner_account_nums($uid, $role) {
 	$account_num = $wxapp_num = 0;
 	$condition = array('uid' => $uid, 'role' => $role);
@@ -985,7 +977,6 @@ function uni_owner_account_nums($uid, $role) {
 	);
 	return $num;
 }
-
 function uni_update_week_stat() {
 	global $_W;
 	$cachekey = "stat:todaylock:{$_W['uniacid']}";
