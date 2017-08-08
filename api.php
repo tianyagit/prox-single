@@ -651,9 +651,6 @@ EOF;
 			$message['content'] = strval($message['eventkey']);
 			return $this->analyzeClick($message);
 		}
-		if (strtolower($message['event']) == 'user_gifting_card') {
-			return $this->analyzeCoupon($message);
-		}
 		if (in_array($message['event'], array('pic_photo_or_album', 'pic_weixin', 'pic_sysphoto'))) {
 			pdo_query("DELETE FROM ".tablename('menu_event')." WHERE createtime < '".($GLOBALS['_W']['timestamp'] - 100)."' OR openid = '{$message['from']}'");
 			if (!empty($message['sendpicsinfo']['count'])) {
@@ -739,12 +736,6 @@ EOF;
 		} else {
 			return $params;
 		}
-	}
-	
-	public function analyzeCoupon(&$message) {
-		global $_W;
-		$this->receive();
-		exit('success');
 	}
 
 	/**
