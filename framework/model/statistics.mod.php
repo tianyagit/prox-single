@@ -72,3 +72,19 @@ function stat_all_visit_statistics($data) {
 	$result['visit_avg'] = round($result['visit_sum'] / $modules_count);
 	return $result;
 }
+
+/**
+ * 获取当前公号下除系统模块外的所有安装模块及模块信息
+ * @return array()
+ */
+function stat_modules_except_system() {
+	$modules = uni_modules();
+	if (!empty($modules)) {
+		foreach ($modules as $key => $module) {
+			if (!empty($module['issystem'])) {
+				unset($modules[$key]);
+			}
+		}
+	}
+	return $modules;
+}

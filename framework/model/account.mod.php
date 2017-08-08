@@ -256,23 +256,6 @@ function uni_modules($enabled = true) {
 	return uni_modules_by_uniacid($_W['uniacid'], $enabled);
 }
 
-/**
- * 获取当前公号下除系统模块外的所有安装模块及模块信息
- * @return array()
- */
-function uni_modules_except_system() {
-	$modules = uni_modules();
-	if (!empty($modules)) {
-		foreach ($modules as $key => $module) {
-			if (!empty($module['issystem'])) {
-				unset($modules[$key]);
-			}
-		}
-	}
-	return $modules;
-}
-
-
 function uni_modules_app_binding() {
 	global $_W;
 	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES_BINDING, $_W['uniacid']);
