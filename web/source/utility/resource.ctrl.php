@@ -9,22 +9,132 @@ load()->model('material');
 load()->model('mc');
 load()->func('file');
 
-load()->classs('resource');
-
-if (in_array($do, array('keyword', 'news', 'video', 'voice', 'module', 'image'))) {
-	$result = Resource::getResource($do)->getResources();
-	iajax(0, $result);
-	return ;
-}
-
-
-$type = $_GPC['type'];
-$resourceid = intval($_GPC['resource_id']);
+$type = $_GPC['type']; //资源转换 $type
+$resourceid = intval($_GPC['resource_id']); //资源ID
 $uniacid = intval($_W['uniacid']);
 $uid = intval($_W['uid']);
 $acid = intval($_W['acid']);
 $url = $_GPC['url'];
 $isnetwork_convert = !empty($url);
+$islocal = $_GPC['local'] == 'local'; //是否获取本地资源
+// 关键字查询
+if($do == 'keyword') {
+	$keyword = addslashes($_GPC['keyword']);
+	$pindex = max(1,$_GPC['page']);
+	$psize = 24;
+	$condition = array('uniacid' => $uniacid, 'status' => 1);
+	if (!empty($keyword)) {
+		$condition['content like'] = '%'.$keyword.'%';
+	}
+	$keyword_lists = pdo_getslice('rule_keyword', $condition, array($pindex, $psize), $total, array(), 'id');
+	$result = array(
+		'items' => $keyword_lists,
+		'pager' => pagination($total, $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback' => 'null', 'isajax' => 1)),
+	);
+	iajax(0, $result);
+}
+//模块查询
+if ($do == 'module') {
+	$enable_modules = array();
+	$installedmodulelist = uni_modules(false);
+	foreach ($installedmodulelist as $k => $value) {
+		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
+	}
+	foreach($installedmodulelist as $name => $module) {
+		if($module['issystem']) {
+			$path = '/framework/builtin/' . $module['name'];
+		} else {
+			$path = '../addons/' . $module['name'];
+		}
+		$cion = $path . '/icon-custom.jpg';
+		if(!file_exists($cion)) {
+			$cion = $path . '/icon.jpg';
+			if(!file_exists($cion)) {
+				$cion = './resource/images/nopic-small.jpg';
+			}
+		}
+		$module['icon'] = $cion;
+		if($module['enabled'] == 1) {
+			$enable_modules[] = $module;
+		} else {
+			$unenable_modules[$name] = $module;
+		}
+	}
+	$result = array('items' => $enable_modules, 'pager' => '');
+	iajax(0, $result);
+}
+// 视频语音查询
+if ($do == 'video' || $do == 'voice') {
+	$server = $islocal ? MATERIAL_LOCAL : MATERIAL_WEXIN;
+	$page_index = max(1,$_GPC['page']);
+	$page_size = 10;
+	$material_news_list = material_list($do, $server, array('page_index' => $page_index, 'page_size' => $page_size));
+	$material_list = $material_news_list['material_list'];
+	$pager = $material_news_list['page'];
+	$result = array('items' => $material_list, 'pager' => $pager);
+	iajax(0, $result);
+}
+
+// 图文查询
+if ($do == 'news') {
+	$server = $islocal ? MATERIAL_LOCAL : MATERIAL_WEXIN;
+	$page_index = max(1,$_GPC['page']);
+	$page_size = 24;
+	$search = addslashes($_GPC['keyword']);
+	$material_news_list = material_news_list($server, $search, array('page_index' => $page_index, 'page_size' => $page_size));
+	$material_list = array_values($material_news_list['material_list']);
+	$pager = $material_news_list['page'];
+	$result = array('items' => $material_list, 'pager' => $pager);
+	iajax(0, $result);
+}
+// 图片查询
+if ($do == 'image') {
+
+	$page_size = 24;
+	if ($islocal) { // 如果读取本地图
+
+		$page = $_GPC['page'];
+		$page = max(1, $page);
+		$condition = ' WHERE uniacid = :uniacid AND type = :type';
+		$params = array(':uniacid' => $uniacid, ':type' => 1);
+
+		$year = $_GPC['year'];
+		$month = $_GPC['month'];
+		if ($year > 0 || $month > 0) {
+			$starttime = strtotime("{$year}-{$month}-01");
+			$endtime = strtotime('+1 month', $starttime);
+			$condition .= ' AND createtime >= :starttime AND createtime <= :endtime';
+			$params[':starttime'] = $starttime;
+			$params[':endtime'] = $endtime;
+		}
+		$sql = 'SELECT * FROM '.tablename('core_attachment')." {$condition} ORDER BY id DESC LIMIT ".(($page - 1) * $page_size).','.$page_size;
+		$list = pdo_fetchall($sql, $params);
+		foreach ($list as &$item) {
+			$item['url'] = tomedia($item['attachment']);
+			unset($item['uid']);
+		}
+		$total = pdo_fetchcolumn('SELECT count(*) FROM '.tablename('core_attachment')." {$condition}", $params);
+		$result = array(
+			'items' => $list,
+			'pager' => pagination($total, $page, $page_size, '', array('before' => '2', 'after' => '3', 'ajaxcallback' => 'null')),
+		);
+	} else {
+		$page = $_GPC['page'];
+		$page_index =max(1, $page);
+		$material_news_list = material_list('image', MATERIAL_WEXIN, array('page_index' => $page_index, 'page_size' => $page_size));
+		$material_list = $material_news_list['material_list'];
+		$pager = $material_news_list['page'];
+		foreach ($material_list as &$meterial) {
+			$meterial['attach'] = tomedia($meterial['attachment'], true);
+			$meterial['url'] = $meterial['attach'];
+		}
+		$result = array('items' => $material_list, 'pager' => $pager);
+	}
+	iajax(0 , $result);
+}
+
+
+
 
 /**
  *  校验数据
