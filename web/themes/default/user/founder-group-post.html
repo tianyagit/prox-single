@@ -1,9 +1,9 @@
 {template 'common/header'}
-<div class="new-keyword" id="js-user-group-post" ng-controller="UserGroupPost" ng-cloak>
+<div class="new-keyword" id="js-vice-group-post" ng-controller="ViceGroupPost" ng-cloak>
 	<ol class="breadcrumb we7-breadcrumb">
-		<a href="{php echo url('user/group/display')}"><i class="wi wi-back-circle"></i> </a>
-		<li><a href="{php echo url('user/group/display')}">用户组管理</a></li>
-		<li>添加用户组</li>
+		<a href="{php echo url('user/vicefoundergroup/display')}"><i class="wi wi-back-circle"></i> </a>
+		<li><a href="{php echo url('user/vicefoundergroup/display')}">创始人组管理</a></li>
+		<li>添加创始人组</li>
 	</ol>
 	<form class="we7-form user-group-edit" method="post" action="">
 		<div class="form-group">
@@ -33,7 +33,7 @@
 					<input type="text" name="timelimit" class="form-control" ng-model="groupInfo.timelimit">
 					<span class="input-group-addon font-default">天</span>
 				</div>
-			<span class="help-block">设置用户组的有效期限。0为不限制期限。到期后，该用户下的所有公众号只能使用 "基础服务"</span>
+				<span class="help-block">设置副创始人组的有效期限。0为不限制期限。到期后，该副创始人下的所有公众号只能使用 "基础服务"</span>
 			</div>
 		</div>
 		<div class="panel we7-panel">
@@ -84,7 +84,6 @@
 						</table>
 					</div>
 				</div>
-				{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 				<div>
 					<div class="permission-heading">
 						<input id="checkbox-0" type="checkbox" value="-1" name='package[]' ng-checked="groupInfo.check_all">
@@ -108,7 +107,6 @@
 						</table>
 					</div>
 				</div>
-				{/if}
 			</div>
 		</div>
 		<input type="submit" name="submit" value="保存" class="btn btn-primary" ng-style="{'padding': '6px 50px'}" />
@@ -120,6 +118,6 @@
 		groupInfo: {php echo !empty($group_info) ? json_encode($group_info) : 'null'},
 		packages: {php echo !empty($packages) ? json_encode($packages) : 'null'},
 	});
-	angular.bootstrap($('#js-user-group-post'), ['userGroup']);
+	angular.bootstrap($('#js-vice-group-post'), ['userGroup']);
 </script>
 {template 'common/footer'}

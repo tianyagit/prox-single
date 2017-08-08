@@ -168,24 +168,17 @@
 	window.select_mediaid = function(type, otherVal){
 		var option = {
 			type: type,
-			ignore: {
-				basic: type === 'basic' ? false : true,
-				wxcard: type === 'wxcard' ? false : true,
-				image: type === 'image' ? false : true,
-				music: type === 'music' ? false : true,
-				news: type === 'news' ? false : true,
-				video: type === 'video' ? false : true,
-				voice: type === 'voice' ? false : true,
-				keyword: type === 'keyword' ? false : true,
-				module: type === 'module' ? false : true
-			},
+			isWechat : true, // 默认显示微信
+			needType : 3, //  除了图文 其他只能微信
 			others: {
-				basic: {
-					typeVal: angular.isDefined(otherVal) ? otherVal : null,
+				image: {
+					needType : 1
 				},
-				news: {
-					showwx: angular.isDefined(otherVal) ? otherVal === 'wx' ? true : false : true,
-					showlocal: angular.isDefined(otherVal) ? otherVal === 'local' ? true : false : true
+				video : {
+					needType : 1
+				},
+				voice : {
+					needType : 1
 				}
 			}
 		};

@@ -327,11 +327,13 @@ function uni_groups($groupids = array()) {
 	if (empty($list)) {
 		$condition = ' WHERE uniacid = 0';
 		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
-		if (in_array('-1', $groupids)) {
-			$list[-1] = array('id' => -1, 'name' => '所有服务', 'modules' => array('title' => '系统所有模块'), 'templates' => array('title' => '系统所有模板'));
-		}
-		if (in_array('0', $groupids)) {
-			$list[0] = array('id' => 0, 'name' => '基础服务', 'modules' => array('title' => '系统模块'), 'templates' => array('title' => '系统模板'));
+		if (!empty($groupids)) {
+			if (in_array('-1', $groupids)) {
+				$list[-1] = array('id' => -1, 'name' => '所有服务', 'modules' => array('title' => '系统所有模块'), 'templates' => array('title' => '系统所有模板'));
+			}
+			if (in_array('0', $groupids)) {
+				$list[0] = array('id' => 0, 'name' => '基础服务', 'modules' => array('title' => '系统模块'), 'templates' => array('title' => '系统模板'));
+			}
 		}
 		if (!empty($list)) {
 			foreach ($list as $k=>&$row) {
@@ -382,7 +384,7 @@ function uni_groups($groupids = array()) {
 			$group_list[$id] = $list[$id];
 		}
 	} else {
-		if (user_is_vice_founder()) {
+		if (user_is_vice_founder() && empty($show_all)) {
 			foreach ($list as $group_key => $group) {
 				if ($group['owner_uid'] != $_W['uid']) {
 					unset($list[$group_key]);
@@ -564,11 +566,24 @@ function uni_account_tablename($type) {
 }
 
 function uni_user_account_role($uniacid, $uid, $role) {
+	global $_W;
+	$uniacid = intval($uniacid);
 	$vice_account = array(
-		'uniacid' => intval($uniacid),
+		'uniacid' => $uniacid,
 		'uid' => intval($uid),
 		'role' => trim($role)
 	);
+	if (user_is_vice_founder()) {
+		$founder_account = array(
+			'uniacid' => $uniacid,
+			'uid' => $_W['uid'],
+			'role' => ACCOUNT_MANAGE_NAME_VICE_FOUNDER
+		);
+		$account_founder_user = pdo_get('uni_account_users', $founder_account, array('id'));
+		if (empty($account_founder_user)) {
+			pdo_insert('uni_account_users', $founder_account);
+		}
+	}
 	$account_user = pdo_get('uni_account_users', $vice_account, array('id'));
 	if (!empty($account_user)) {
 		return false;
@@ -905,12 +920,56 @@ function uni_user_account_permission($uid = 0) {
 		load()->model('user');
 		$user = user_single($uid);
 	}
+	if (user_is_vice_founder($user['uid']) && empty($uid)) {
+		$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
+		$group = pdo_get('users_founder_group', array('id' => $user['groupid']));
+		$group_num = uni_owner_account_nums($user['uid'], $role);
+		$uniacid_limit = max((intval($group['maxaccount']) - $group_num['account_num']), 0);
+		$wxapp_limit = max((intval($group['maxwxapp']) - $group_num['wxapp_num']), 0);
+	} else {
+		$role = ACCOUNT_MANAGE_NAME_OWNER;
+		$group = pdo_get('users_group', array('id' => $user['groupid']));
+		$group_num = uni_owner_account_nums($user['uid'], $role);
+		$uniacid_limit = max((intval($group['maxaccount']) - $group_num['account_num']), 0);
+		$wxapp_limit = max((intval($group['maxwxapp']) - $group_num['wxapp_num']), 0);
+		if (empty($_W['isfounder'])) {
+			if (!empty($user['owner_uid'])) {
+				$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
+				$group_id = pdo_getcolumn('users', array('uid' => $user['owner_uid']), 'groupid');
+				$group_vice = pdo_get('users_founder_group', array('id' => $group_id));
+				$account_vice_num = uni_owner_account_nums($user['owner_uid'], $role);
+
+				$uniacid_limit_vice = max((intval($group_vice['maxaccount']) - $account_vice_num['account_num']), 0);
+				$wxapp_limit_vice = max((intval($group_vice['maxwxapp']) - $account_vice_num['wxapp_num']), 0);
+
+				$uniacid_limit = min($uniacid_limit, $uniacid_limit_vice);
+				$wxapp_limit = min($wxapp_limit, $wxapp_limit_vice);
+
+				$group['maxaccount'] = min(intval($group['maxaccount']), intval($group_vice['maxaccount']));
+				$group['maxwxapp'] = min(intval($group['maxwxapp']), intval($group_vice['maxwxapp']));
+			}
+		}
+	}
+	$data = array(
+		'group_name' => $group['name'],
+		'vice_group_name' => $group_vice['name'],
+		'maxaccount' => $group['maxaccount'],
+		'uniacid_num' => $group_num['account_num'],
+		'uniacid_limit' => $uniacid_limit,
+		'maxwxapp' => $group['maxwxapp'],
+		'wxapp_num' => $group_num['wxapp_num'],
+		'wxapp_limit' => $wxapp_limit,
+	);
+	return $data;
+}
+
+
+function uni_owner_account_nums($uid, $role) {
 	$account_num = $wxapp_num = 0;
-	$group = pdo_get('users_group', array('id' => $user['groupid']));
-	$uniacocunts = pdo_getall('uni_account_users', array('uid' => $user['uid'], 'role' => 'owner'), array(), 'uniacid');
+	$condition = array('uid' => $uid, 'role' => $role);
+	$uniacocunts = pdo_getall('uni_account_users', $condition, array(), 'uniacid');
 	if (!empty($uniacocunts)) {
-		//再次判断公众号是否真实存在
-		$all_account = pdo_fetchall('SELECT * FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $user['uid'], ':role' => 'owner'));
+		$all_account = pdo_fetchall('SELECT * FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $uid, ':role' => $role));
 		foreach ($all_account as $account) {
 			if ($account['type'] == 1 || $account['type'] == 3) {
 				$account_num++;
@@ -920,16 +979,11 @@ function uni_user_account_permission($uid = 0) {
 			}
 		}
 	}
-	$data = array(
-		'group_name' => $group['name'],
-		'maxaccount' => $group['maxaccount'],
-		'uniacid_num' => $account_num,
-		'uniacid_limit' => max((intval($group['maxaccount']) - $account_num), 0),
-		'maxwxapp' => $group['maxwxapp'],
-		'wxapp_num' => $wxapp_num,
-		'wxapp_limit' => max((intval($group['maxwxapp']) - $wxapp_num), 0),
+	$num = array(
+		'account_num' => $account_num,
+		'wxapp_num' =>$wxapp_num
 	);
-	return $data;
+	return $num;
 }
 
 function uni_update_week_stat() {
