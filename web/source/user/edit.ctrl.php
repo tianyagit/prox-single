@@ -58,7 +58,8 @@ if ($do == 'edit_modules_tpl') {
 			$data['uid'] = $uid;
 			$data[$_GPC['type']] = intval($_GPC['groupid']);
 			if (user_update($data)) {
-				$group_info = user_group_detail_info($_GPC['groupid']);
+				$group_and_group_detail = user_group_and_group_detail($_GPC['groupid'], $_GPC['founder_groupid']);
+				$group_info = $group_and_group_detail['group_info'];
 				iajax(0, $group_info, '');
 			} else {
 				iajax(1, '更改失败！', '');
@@ -67,9 +68,9 @@ if ($do == 'edit_modules_tpl') {
 			iajax(-1, '参数错误！', '');
 		}
 	}
-	$groups = user_group();
-	$group_info = user_group_detail_info($user['groupid']);
-
+	$group_and_group_detail = user_group_and_group_detail($user['groupid'], $user['founder_groupid']);
+	$groups = $group_and_group_detail['groups'];
+	$group_info = $group_and_group_detail['group_info'];
 	template('user/edit-modules-tpl');
 }
 
