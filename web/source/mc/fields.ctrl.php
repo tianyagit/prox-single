@@ -8,7 +8,7 @@ uni_user_permission_check('profile_setting');
 $dos = array('display', 'post');
 $do = in_array($do, $dos) ? $do : 'display';
 if($do == 'display') {
-	$_W['page']['title'] = '字段管理 - 公众号 - 参数设置';
+	$_W['page']['title'] = '字段管理 - 会员 - 会员字段管理';
 	if (checksubmit('submit')) {
 		if (!empty($_GPC['displayorder'])) {
 			$field = array('uniacid' => $_W['uniacid']);
@@ -30,7 +30,7 @@ if($do == 'display') {
 	$account_member_fields = uni_account_member_fields($_W['uniacid']);
 }
 if ($do == 'post') {
-	$_W['page']['title'] = '字段编辑 - 公众号 - 参数设置';
+	$_W['page']['title'] = '字段管理 - 会员 - 会员字段管理';
 	$id = intval($_GPC['id']);
 	if (checksubmit('submit')) {
 		if (empty($_GPC['title'])) {
@@ -42,8 +42,8 @@ if ($do == 'post') {
 			'available' => intval($_GPC['available'])
 		);
 		pdo_update('mc_member_fields', $field, array('id' => $id));
-		message('会员字段更新成功！', url('profile/fields'), 'success');
+		message('会员字段更新成功！', url('mc/fields'), 'success');
 	}
 	$field = pdo_get('mc_member_fields', array('id' => $id));
 }
-template('profile/fields');
+template('mc/fields');

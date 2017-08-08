@@ -352,7 +352,6 @@ function module_fetch($name) {
  * @param string $cache 是否直接读取缓存数据;
  */
 function module_get_all_unistalled($status, $cache = true)  {
-	global $_GPC;
 	load()->func('communication');
 	load()->model('cloud');
 	load()->classs('cloudapi');
@@ -367,20 +366,20 @@ function module_get_all_unistalled($status, $cache = true)  {
 			$cloud_m_count = $uninstallModules['cloud_m_count'];
 		}
 	}
-	if (empty($uninstallModules['modules']) || intval($uninstallModules['cloud_m_count']) !== intval($cloud_m_count) || is_error($get_cloud_m_count)) {
+	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
+		$account_type = 'wxapp';
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
+		$account_type = 'app';
+	}
+	if (empty($uninstallModules['modules'][$status][$account_type]) || intval($uninstallModules['cloud_m_count']) !== intval($cloud_m_count) || is_error($get_cloud_m_count)) {
 		$uninstallModules = cache_build_uninstalled_module();
 	}
-	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['wxapp'];
-		$uninstallModules['module_count'] = $uninstallModules['wxapp_count'];
-		return $uninstallModules;
-	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status]['app'];
-		$uninstallModules['module_count'] = $uninstallModules['app_count'];
-		return $uninstallModules;
-	} else {
-		return $uninstallModules;
+
+	if (!empty($account_type)) {
+		$uninstallModules['modules'] = (array)$uninstallModules['modules'][$status][$account_type];
+		$uninstallModules['module_count'] = $uninstallModules[$account_type . '_count'];
 	}
+	return $uninstallModules;
 }
 
 /**

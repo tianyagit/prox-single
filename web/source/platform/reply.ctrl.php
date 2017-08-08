@@ -21,7 +21,6 @@ $_W['page']['title'] = '自动回复';
 if (empty($m)) {
 	itoast('错误访问.', '', '');
 }
-
 if ($m == 'special') {
 	$mtypes = array(
 		'image' => '图片消息',
@@ -45,7 +44,6 @@ if (in_array($m, array('custom'))) {
 	$site = WeUtility::createModuleSite('reply');
 	$site_urls = $site->getTabUrls();
 }
-
 if ($do == 'display') {
 	if ($m == 'keyword' || !in_array($m, $sysmods)) {
 		$pindex = max(1, intval($_GPC['page']));
@@ -116,7 +114,7 @@ if ($do == 'display') {
 	if ($m == 'default' || $m == 'welcome') {
 		$setting = uni_setting($_W['uniacid'], array($m));
 		if (!empty($setting[$m])) {
-			$rule_keyword_id = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting[$m]), 'id');
+			$rule_keyword_id = pdo_getcolumn('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => $setting[$m]), 'rid');
 		}
 	}
 	if ($m == 'service') {
@@ -198,6 +196,7 @@ if ($do == 'post') {
 			$rulename = trim($_GPC['rulename']);
 			$containtype = '';
 			$_GPC['reply'] = (array)$_GPC['reply'];
+
 			foreach ($_GPC['reply'] as $replykey => $replyval) {
 				if (!empty($replyval)) {
 					$type = substr($replykey, 6);

@@ -17,8 +17,7 @@ load()->model('utility');
 $dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban');
 $do = in_array($do, $dos) ? $do : 'installed';
 
-//只有创始人、主管理员、管理员才有权限
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
 	itoast('无权限操作！', referer(), 'error');
 }
 
@@ -504,7 +503,7 @@ if ($do == 'module_detail') {
 			case ACCOUNT_TYPE_OFFCIAL_NORMAL:
 			case ACCOUNT_TYPE_OFFCIAL_AUTH:
 				$module_info['relation_name'] = '小程序版';
-				$module_info['account_type'] = 0;
+				$module_info['account_type'] = ACCOUNT_TYPE_APP_NORMAL;
 				$module_info['type'] = ACCOUNT_TYPE_APP_NORMAL;
 				break;
 			default:
