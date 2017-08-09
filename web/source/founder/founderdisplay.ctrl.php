@@ -7,24 +7,24 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
 
-$dos = array('display', 'operate');
+$dos = array('display', 'del');
 $do = in_array($do, $dos) ? $do: 'display';
 
 $_W['page']['title'] = '用户列表 - 用户管理';
 $founders = explode(',', $_W['config']['setting']['founder']);
 
 if ($do == 'display') {
-	$condition = " WHERE u.founder_groupid = " . ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
-	$params = array();
+
+	$condition['founder_groupid'] = array(ACCOUNT_MANAGE_GROUP_VICE_FOUNDER);
 	if (!empty($_GPC['username'])) {
-		$condition .= " AND u.username LIKE :username";
-		$params[':username'] = "%{$_GPC['username']}%";
+		$condition['username'] = trim($_GPC['username']);
 	}
-	$sql = 'SELECT u.*, p.avatar FROM ' . tablename('users') .' AS u LEFT JOIN ' . tablename('users_profile') . ' AS p ON u.uid = p.uid '. $condition . " LIMIT " . ($pindex - 1) * $psize .',' .$psize;
-	$users = pdo_fetchall($sql, $params);
-	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('users') .' AS u '. $condition, $params);
+
+	$user_lists = user_list($condition, array($pindex, $psize));
+	$users = $user_lists['list'];
+	$total = $user_lists['total'];
 	$pager = pagination($total, $pindex, $psize);
 
 	$groups = user_group();
