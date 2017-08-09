@@ -777,6 +777,7 @@ class SqlPaser {
 	 * 		array['fields']是格式化后的字符串
 	 */
 	public static function parseParameter($params, $glue = ',', $alias = '') {
+		static $params_index = 0;
 		$result = array('fields' => ' 1 ', 'params' => array());
 		$split = '';
 		$suffix = '';
@@ -790,9 +791,8 @@ class SqlPaser {
 		}
 		if (is_array($params)) {
 			$result['fields'] = '';
-			$index = 0; //字段 操作数组
 			foreach ($params as $fields => $value) {
-				$index++;
+				$params_index++;
 				$operator = '';
 				if (strpos($fields, ' ') !== FALSE) {
 					list($fields, $operator) = explode(' ', $fields, 2);
@@ -829,16 +829,16 @@ class SqlPaser {
 					//忽略数组的键值，防止SQL注入
 					$value = array_values($value);
 					foreach ($value as $v) {
-						$insql[] = ":{$suffix}{$fields}_{$index}";
-						$result['params'][":{$suffix}{$fields}_{$index}"] = is_null($v) ? '' : $v;
-						$index++;
+						$insql[] = ":{$suffix}{$fields}_{$params_index}";
+						$result['params'][":{$suffix}{$fields}_{$params_index}"] = is_null($v) ? '' : $v;
+						$params_index++;
 					}
 					$result['fields'] .= $split . "$select_fields {$operator} (".implode(",", $insql).")";
 					$split = ' ' . $glue . ' ';
 				} else {
-					$result['fields'] .= $split . "$select_fields {$operator}  :{$suffix}{$fields}_{$index}";
+					$result['fields'] .= $split . "$select_fields {$operator}  :{$suffix}{$fields}_{$params_index}";
 					$split = ' ' . $glue . ' ';
-					$result['params'][":{$suffix}{$fields}_{$index}"] = is_null($value) || is_array($value) ? '' : $value;
+					$result['params'][":{$suffix}{$fields}_{$params_index}"] = is_null($value) || is_array($value) ? '' : $value;
 				}
 			}
 		}
@@ -851,7 +851,7 @@ class SqlPaser {
 	 * @param string $alias 表别名
 	 */
 	public static function parseSelect($field = array(), $alias = '') {
-		if (empty($field)) {
+		if (empty($field) || $field == '*') {
 			return ' SELECT *';
 		}
 		if (!is_array($field)) {
@@ -891,8 +891,7 @@ class SqlPaser {
 		}
 		if (is_array($limit)) {
 			$limit[0] = max(intval($limit[0]), 1);
-			$limit[1] = max(intval($limit[1]), 1);
-	
+			!empty($limit[1]) && $limit[1] = max(intval($limit[1]), 1);
 			if (empty($limit[0]) && empty($limit[1])) {
 				$limitsql = '';
 			} elseif (!empty($limit[0]) && empty($limit[1])) {
