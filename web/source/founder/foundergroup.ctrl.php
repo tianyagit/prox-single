@@ -14,7 +14,7 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 }
 
 if ($do == 'display') {
-	uni_user_permission_check('system_user_vice_group');
+	uni_user_permission_check('system_founder_manage');
 	$_W['page']['title'] = '副创始人组列表 - 副创始人组 - 副创始人管理';
 	$name = trim($_GPC['name']);
 	if (!empty($name)) {

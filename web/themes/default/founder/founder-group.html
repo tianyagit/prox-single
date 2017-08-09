@@ -1,8 +1,8 @@
 {template 'common/header'}
 <div class="we7-page-title">用户权限组管理</div>
 <ul class="we7-page-tab">
-	<li {if $action == 'founderdisplay'} class="active"{/if}><a href="{url 'founder/founderdisplay'}">创始人管理</a></li>
-	<li {if $action == 'foundergroup'} class="active"{/if}><a href="{url 'founder/foundergroup'}">创始人权限组</a></li>
+	<li {if $action == 'founderdisplay'} class="active"{/if}><a href="{url 'founder/founderdisplay'}">副创始人管理</a></li>
+	<li {if $action == 'foundergroup'} class="active"{/if}><a href="{url 'founder/foundergroup'}">副创始人权限组</a></li>
 </ul>
 <div class="clearfix we7-margin-bottom">
 	<form action="" method="get">
@@ -14,7 +14,7 @@
 		</div>
 	</form>
 	<div class="pull-right">
-		<a href="{php echo url('founder/foundergroup/post')}" class="btn btn-primary">+添加创始人组</a>
+		<a href="{php echo url('founder/foundergroup/post')}" class="btn btn-primary">+添加副创始人组</a>
 	</div>
 </div>
 <table class="table we7-table table-hover" id="js-vice-group-display" ng-controller="ViceGroupDisplay" ng-cloak>
