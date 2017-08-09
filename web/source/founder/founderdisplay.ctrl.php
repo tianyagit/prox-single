@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
 
-$dos = array('display', 'operate');
+$dos = array('display', 'del');
 $do = in_array($do, $dos) ? $do: 'display';
 
 $_W['page']['title'] = '用户列表 - 用户管理';
