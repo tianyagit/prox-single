@@ -82,6 +82,9 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			}
 			$result = pdo_update('users', array('owner_uid' => $owner_uid), array('uid' => $uid));
 			break;
+		case 'remark':
+			$result = pdo_update('users', array('remark' => trim($_GPC['remark'])), array('uid' => $uid));
+			break;
 		case 'password':
 			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) iajax(2, '两次密码不一致！', '');
 			if (!$_W['isfounder']) {
@@ -153,6 +156,7 @@ if ($do == 'base') {
 		itoast('抱歉，用户不存在或是已经被删除！', url('user/profile'), 'error');
 	}
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
+	$user['joindate'] = date('Y-m-d H:i:s', $user['joindate']);
 	$user['url'] = user_invite_register_url($_W['uid']);
 
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
