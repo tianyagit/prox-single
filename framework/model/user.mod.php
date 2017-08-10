@@ -374,20 +374,6 @@ function user_founder_group_detail_info($groupid = 0) {
 	return $group_info;
 }
 
-function user_group_and_group_detail($groupid, $foundergroupid) {
-	if ($foundergroupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-		$groups = user_founder_group();
-		$group_info = user_founder_group_detail_info($groupid);
-	} else {
-		$groups = user_group();
-		$group_info = user_group_detail_info($groupid);
-	}
-	return array(
-		'groups' => $groups,
-		'group_info' => $group_info
-	);
-}
-
 /**
  *获取某一用户可用公众号或小程序的详细信息
  *@param number $uid 用户ID
@@ -747,8 +733,9 @@ function user_group_format($lists) {
 	}
 	return $lists;
 }
+
 /**
- * 用户和副创始人列表
+ * 用户和副创始人列表数据格式化
  * @param $users
  * @param int $type
  * @return array
@@ -805,6 +792,12 @@ function user_list_format($users) {
 	return $users;
 }
 
+/**
+ * 添加用户和副创始人
+ * @param $user
+ * @param bool|false $is_founder_group
+ * @return array
+ */
 function user_info_save($user, $is_founder_group = false) {
 	global $_W;
 	if (!preg_match(REGULAR_USERNAME, $user['username'])) {
@@ -849,4 +842,42 @@ function user_info_save($user, $is_founder_group = false) {
 		return error(-1, '增加失败，请稍候重试或联系网站管理员解决！');
 	}
 	return array('uid' => $user_add_id);
+}
+
+/**
+ * 获取用户和副创始人列表数据
+ * @param array $condition
+ * @param array $paper
+ * @return array
+ */
+function user_list($condition = array(), $paper = array()) {
+	global $_W;
+	$sql = "SELECT %s FROM " . tablename('users') . "AS u LEFT JOIN " .tablename('users_profile') . "AS p ON u.uid = p.uid WHERE 1=1 ";
+	if (!empty($condition['status'])) {
+		$sql .= " AND u.status = :status";
+		$param[':status'] = $condition['status'];
+	}
+
+	if (!empty($condition['founder_groupid'])) {
+		$founder_groupid = implode(',' , $condition['founder_groupid']);
+		$sql .= " AND u.founder_groupid IN ($founder_groupid)";
+	}
+
+	if (!empty($condition['username'])) {
+		$sql .= " AND u.username LIKE :username";
+		$param[':username'] = "%{$condition['username']}%";
+	}
+
+	if (user_is_vice_founder()) {
+		$sql .= ' AND u.owner_uid = ' . $_W['uid'];
+	}
+	$limit = " LIMIT " . ($paper[0] - 1) * $paper[1] . "," . $paper[1];
+
+	$list = pdo_fetchall(sprintf($sql, 'u.*, p.avatar') . $limit, $param);
+	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'), $param);
+
+	return array(
+		'list' => $list,
+		'total' => $total,
+	);
 }
