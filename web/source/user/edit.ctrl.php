@@ -33,21 +33,8 @@ if ($do == 'edit_base') {
 	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);
 	$user['endtype'] = $user['endtime'] == 0 ? 1 : 2;
 	$user['url'] = user_invite_register_url($uid);
-	
-	if (!empty($profile)) {
-		$profile['reside'] = array(
-			'province' => $profile['resideprovince'],
-			'city' => $profile['residecity'],
-			'district' => $profile['residedist']
-		);
-		$profile['birth'] = array(
-			'year' => $profile['birthyear'],
-			'month' => $profile['birthmonth'],
-			'day' => $profile['birthday'],
-		);
-		$profile['resides'] = $profile['resideprovince'] . $profile['residecity'] . $profile['residedist'] ;
-		$profile['births'] =($profile['birthyear'] ? $profile['birthyear'] : '--') . '年' . ($profile['birthmonth'] ? $profile['birthmonth'] : '--') . '月' . ($profile['birthday'] ? $profile['birthday'] : '--') .'日';
-	}
+
+	$profile = user_detail_formate($profile);
 	template('user/edit-base');
 }
 if ($do == 'edit_modules_tpl') {

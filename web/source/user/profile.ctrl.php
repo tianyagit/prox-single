@@ -160,22 +160,8 @@ if ($do == 'base') {
 	$user['url'] = user_invite_register_url($_W['uid']);
 
 	$profile = pdo_get('users_profile', array('uid' => $_W['uid']));
-	if (!empty($profile)) {
-		$profile['reside'] = array(
-			'province' => $profile['resideprovince'],
-			'city' => $profile['residecity'],
-			'district' => $profile['residedist']
-		);
-		$profile['birth'] = array(
-			'year' => $profile['birthyear'],
-			'month' => $profile['birthmonth'],
-			'day' => $profile['birthday'],
-		);
-		$profile['avatar'] = tomedia($profile['avatar']);
-		$profile['resides'] = $profile['resideprovince'] .' '. $profile['residecity'] .' '. $profile['residedist'] ;
 
-		$profile['births'] = ($profile['birthyear'] ? $profile['birthyear'] : '--') . '年' . ($profile['birthmonth'] ? $profile['birthmonth'] : '--') . '月' . ($profile['birthday'] ? $profile['birthday'] : '--') .'日';
-	}
+	$profile = user_detail_formate($profile);
 
 	//应用模版权限
 	$groups = user_group();
