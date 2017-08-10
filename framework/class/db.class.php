@@ -777,7 +777,6 @@ class SqlPaser {
 	 * 		array['fields']是格式化后的字符串
 	 */
 	public static function parseParameter($params, $glue = ',', $alias = '') {
-		static $params_index = 0;
 		$result = array('fields' => ' 1 ', 'params' => array());
 		$split = '';
 		$suffix = '';
@@ -791,8 +790,9 @@ class SqlPaser {
 		}
 		if (is_array($params)) {
 			$result['fields'] = '';
+			$index = 0; //字段 操作数组
 			foreach ($params as $fields => $value) {
-				$params_index++;
+				$index++;
 				$operator = '';
 				if (strpos($fields, ' ') !== FALSE) {
 					list($fields, $operator) = explode(' ', $fields, 2);
@@ -804,6 +804,8 @@ class SqlPaser {
 					$fields = trim($fields);
 					if (is_array($value) && !empty($value)) {
 						$operator = 'IN';
+					} elseif ($value === null) {
+						$operator = 'IS';
 					} else {
 						$operator = '=';
 					}
@@ -815,34 +817,62 @@ class SqlPaser {
 					//如果是数组不等于情况，则转换为NOT IN
 					if (is_array($value) && !empty($value)) {
 						$operator = 'NOT IN';
+					} elseif ($value === null) {
+						$operator = 'IS NOT';
 					}
 				}
+				
 				//当条件为having时，可以使用聚合函数
-				if (strexists($fields, '(')) {
-					$select_fields = str_replace(array('(', ')'), array('(' . (!empty($alias) ? "`{$alias}`." : '') .'`',  '`)'), $fields);
-					$fields = str_replace(array('(', ')'), '_', $fields);
-				} else {
-					$select_fields = (!empty($alias) ? "`{$alias}`." : '') . "`$fields`";
-				}
+				$select_fields = self::parseFieldAlias($fields, $alias);
 				if (is_array($value) && !empty($value)) {
 					$insql = array();
 					//忽略数组的键值，防止SQL注入
 					$value = array_values($value);
 					foreach ($value as $v) {
-						$insql[] = ":{$suffix}{$fields}_{$params_index}";
-						$result['params'][":{$suffix}{$fields}_{$params_index}"] = is_null($v) ? '' : $v;
-						$params_index++;
+						$placeholder = self::parsePlaceholder($fields, $suffix);
+						$insql[] = $placeholder;
+						$result['params'][$placeholder] = is_null($v) ? '' : $v;
+						$index++;
 					}
 					$result['fields'] .= $split . "$select_fields {$operator} (".implode(",", $insql).")";
 					$split = ' ' . $glue . ' ';
 				} else {
-					$result['fields'] .= $split . "$select_fields {$operator}  :{$suffix}{$fields}_{$params_index}";
+					$placeholder = self::parsePlaceholder($fields, $suffix);
+					$result['fields'] .= $split . "$select_fields {$operator} " . (is_null($value) ? 'NULL' : $placeholder);
 					$split = ' ' . $glue . ' ';
-					$result['params'][":{$suffix}{$fields}_{$params_index}"] = is_null($value) || is_array($value) ? '' : $value;
+					if (!is_null($value)) {
+						$result['params'][$placeholder] = is_array($value) ? '' : $value;
+					}
 				}
 			}
 		}
 		return $result;
+	}
+	
+	/**
+	 * 处理字段占位符
+	 * @param string $field
+	 * @param string $suffix
+	 */
+	private static function parsePlaceholder($field, $suffix = '') {
+		static $params_index = 0;
+		$params_index++;
+	
+		$illegal_str = array('(', ')', '.', '*');
+		$placeholder = ":{$suffix}" . str_replace($illegal_str, '_', $field) . "_{$params_index}";
+		return $placeholder;
+	}
+	
+	private static function parseFieldAlias($field, $alias = '') {
+		if (strexists($field, '.') || strexists($field, '*')) {
+			return $field;
+		}
+		if (strexists($field, '(')) {
+			$select_fields = str_replace(array('(', ')'), array('(' . (!empty($alias) ? "`{$alias}`." : '') .'`',  '`)'), $field);
+		} else {
+			$select_fields = (!empty($alias) ? "`{$alias}`." : '') . "`$field`";
+		}
+		return $select_fields;
 	}
 	
 	/**
@@ -884,7 +914,7 @@ class SqlPaser {
 		return " SELECT " . implode(',', $select);
 	}
 	
-	public static function parseLimit($limit) {
+	public static function parseLimit($limit, $inpage = true) {
 		$limitsql = '';
 		if (empty($limit)) {
 			return $limitsql;
@@ -897,7 +927,7 @@ class SqlPaser {
 			} elseif (!empty($limit[0]) && empty($limit[1])) {
 				$limitsql = " LIMIT " . $limit[0];
 			} else {
-				$limitsql = " LIMIT " . ($limit[0] - 1) * $limit[1] . ', ' . $limit[1];
+				$limitsql = " LIMIT " . ($inpage ? ($limit[0] - 1) * $limit[1] : $limit[0]) . ', ' . $limit[1];
 			}
 		} else {
 			$limit = trim($limit);
