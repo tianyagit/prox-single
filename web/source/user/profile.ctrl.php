@@ -150,6 +150,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 
 //账号信息
 if ($do == 'base') {
+	$user_type = !empty($_GPC['user_type']) ? trim($_GPC['user_type']) : PERSONAL_BASE_TYPE;
 	//基础信息
 	$user = user_single($_W['uid']);
 	if (empty($user)) {
@@ -164,8 +165,13 @@ if ($do == 'base') {
 	$profile = user_detail_formate($profile);
 
 	//应用模版权限
-	$groups = user_group();
-	$group_info = user_group_detail_info($user['groupid']);
+	if ($_W['user']['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+		$groups = user_founder_group();
+		$group_info = user_founder_group_detail_info($user['groupid']);
+	} else {
+		$groups = user_group();
+		$group_info = user_group_detail_info($user['groupid']);
+	}
 
 	//使用帐号列表
 	$account_detail = user_account_detail_info($_W['uid']);
