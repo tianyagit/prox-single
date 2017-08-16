@@ -8,9 +8,9 @@
  */
 include './vendor/autoload.php';
 include __DIR__.'/framework/bootstrap.inc.php';
-
+include __DIR__.'/framework/bootstrap.inc.php';
 $update = new Upgrade();
-$update->getShaFiles();
+dump($update->getShaFiles());
 class Upgrade {
 
 	/**
@@ -31,13 +31,7 @@ class Upgrade {
 	 *
 	 */
 	public function getShaFiles() {
-		$directory = new \RecursiveDirectoryIterator(__DIR__.'/upgrade/');
-		$iterator = new \RecursiveIteratorIterator($directory);
-		foreach ($iterator as $object) {
-			if($object->getFilename()== 'upgrade.php') {
-				$sha = sha1_file($object->getRealPath());
-			}
-		}
+		return Sha1Util::getUpgradeSha1FileInfo();
 	}
 
 	/**
@@ -46,8 +40,35 @@ class Upgrade {
 	private function getRemoteShaFile() {
 
 	}
+}
 
+class Sha1Util {
+	/**
+	 *  获取当前 upgrade目录的 文件指纹
+	 *  return array('目录名'=>'sha1')
+	 */
+	public static function getUpgradeSha1FileInfo() {
+		$directory = new \RecursiveDirectoryIterator(__DIR__."\\upgrade");
+		$iterator = new \RecursiveIteratorIterator($directory);
+		$files  = array();
+		foreach ($iterator as $splfileinfo) {
+			if($splfileinfo->getFilename()== 'upgrade.php') {
+				$path = $splfileinfo->getPath();
+				$sha1 = sha1_file($splfileinfo->getRealPath());
+				$dirname = pathinfo($path, PATHINFO_BASENAME);
+				$files[$dirname] = $sha1;
+			}
+		}
+		return $files;
+	}
 
+	/**
+	 *  获取指定版本的 数据库文件指纹
+	 * @param $version
+	 */
+	public function getRemoteSha1FileInfo($version) {
+
+	}
 }
 
 
