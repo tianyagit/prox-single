@@ -154,3 +154,8 @@ define('MENU_CONDITIONAL', 3);
 define('USER_STATUS_CHECK', 1);
 define('USER_STATUS_NORMAL', 2);
 define('USER_STATUS_BAN', 3);
+
+//我的账户链接类型
+define('PERSONAL_BASE_TYPE', 1);
+define('PERSONAL_AUTH_TYPE', 2);
+define('PERSONAL_LIST_TYPE', 3);

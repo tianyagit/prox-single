@@ -3,18 +3,19 @@
 	<div class="we7-page-title">我的账户</div>
 </ol>
 <div id="js-user-profile" ng-controller="UserProfileDisplay" ng-cloak>
-	{if !$_W['isfounder']}
+	{if $_W['role'] != 'founder'}
 	<div class="user-head-info we7-padding-bottom" >
 		<span class="icon pull-left"><i class="wi wi-user"></i></span>
 		<img ng-src="{{profile.avatar}}" class="img-circle user-avatar pull-left">
 		<h3 class="pull-left" ng-bind="user.username"></h3>
 	</div>
 	<div class="btn-group we7-btn-group we7-padding-bottom">
-		<a href="#" class="btn btn-default active">基础信息</a>
-		<a href="#" class="btn btn-default">应用模板权限</a>
-		<a href="#" class="btn btn-default">使用账号列表</a>
+		<a href="{php echo url('user/profile/base', array('uid' => $user['uid'], 'user_type' => PERSONAL_BASE_TYPE))}" class="btn btn-default {if $user_type == '' || $user_type == PERSONAL_BASE_TYPE}active{/if}">基础信息</a>
+		<a href="{php echo url('user/profile/base', array('uid' => $user['uid'], 'user_type' => PERSONAL_AUTH_TYPE))}" class="btn btn-default {if $user_type == PERSONAL_AUTH_TYPE}active{/if}">应用模板权限</a>
+		<a href="{php echo url('user/profile/base', array('uid' => $user['uid'], 'user_type' => PERSONAL_LIST_TYPE))}" class="btn btn-default {if $user_type == PERSONAL_LIST_TYPE}active{/if}">使用账号列表</a>
 	</div>
 	{/if}
+	{if $user_type=='' || $user_type == PERSONAL_BASE_TYPE}
 	<div class="base">
 		<table class="table we7-table table-hover table-form">
 			<col width="140px " />
@@ -29,7 +30,7 @@
 				<td><div class="link-group"><a href="javascript:;" ng-click="changeAvatar()">修改</a></div></td>
 			</tr>
 			<tr>
-				<td class="table-label">用户名</td>
+				<td class="table-label">用户</td>
 				<td ng-bind="user.username"></td>
 				<td><div class="link-group"><a href="#name" data-toggle="modal" data-target="" ng-click="editInfo('username', user.username)">修改</a></div></td>
 			</tr>
@@ -55,7 +56,7 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<input type="text" ng-model="userOriginal.username" class="form-control" placeholder="用户名< />
+							<input type="text" ng-model="userOriginal.username" class="form-control" placeholder="用户名" />
 							<span class="help-block"></span>
 						</div>
 					</div>
@@ -281,6 +282,7 @@
 			</div>
 		</div>
 	</div>
+	{/if}
 	<div class="modal fade" id="mobile" role="dialog">
 		<div class="we7-modal-dialog modal-dialog">
 			<div class="modal-content">
@@ -301,7 +303,8 @@
 			</div>
 		</div>
 	</div>
-	{if !$_W['isfounder']}
+	{if $_W['role'] != 'founder'}
+	{if $user_type == PERSONAL_AUTH_TYPE}
 	<div class="modules_tpl">
 		<div class="panel we7-panel user-permission">
 			<div class="panel-heading">
@@ -341,6 +344,8 @@
 			</div>
 		</div>
 	</div>
+	{/if}
+	{if $user_type == PERSONAL_LIST_TYPE}
 	<div class="account">
 		<table class="table we7-table table-hover vertical-middle">
 			<col width="87px"/>
@@ -356,7 +361,7 @@
 				<td class="text-left"><img ng-src="{{wechat.thumb}}" class="img-responsive"/></td>
 				<td class="text-left">
 					<p ng-bind="wechat.name"></p>
-					<span class="color-gray">类型:
+					<span class="color-gray">类型：
 						<span ng-if="wechat.level == 1">普通订阅号</span>
 						<span ng-if="wechat.level == 2">普通服务号</span>
 						<span ng-if="wechat.level == 3">认证订阅号</span>
@@ -395,12 +400,13 @@
 				<td class="text-left"><img ng-src="{{wxapp.thumb}}" class="img-responsive"/></td>
 				<td class="text-left">
 					<p ng-bind="wxapp.name"></p>
-					<span class="color-gray">类型:
+					<span class="color-gray">类型：
 						<span>小程序</span>
 					</span>
 				</td>
 				<td>
 					<span ng-if="wxapp.role == 'founder'">创始人</span>
+					<span ng-if="wxapp.role == 'vice_founder'">副创始人</span>
 					<span ng-if="wxapp.role == 'owner'">主管理员</span>
 					<span ng-if="wxapp.role == 'manager'">管理员</span>
 					<span ng-if="wxapp.role == 'operator'">操作员</span>
@@ -419,6 +425,8 @@
 		</table>
 	</div>
 	{/if}
+	{/if}
+</div>
 <script>
 require(['underscore'], function(){
 	angular.module('userProfile').value('config', {
