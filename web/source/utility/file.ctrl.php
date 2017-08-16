@@ -626,7 +626,7 @@ if ($do == 'tolocal' || $do == 'towechat') {
  */
 if ($do == 'networktolocal') {
 	$type = $_GPC['type'];
-	if (!in_array('type',array('image','video'))) {
+	if (!in_array($type,array('image','video'))) {
 		$type = 'image';
 	}
 	$material = material_network_to_local($url, $uniacid, $uid, $type);
@@ -657,8 +657,9 @@ if ($do == 'tolocal') {
  *  网络图片转 wechat
  */
 if ($do == 'networktowechat') {
+
 	$type = $_GPC['type'];
-	if (!in_array('type',array('image','video'))) {
+	if (!in_array($type,array('image','video'))) {
 		$type = 'image';
 	}
 	$material = material_network_to_wechat($url, $uniacid, $uid, $acid, $type); //网络图片转为 微信 图片

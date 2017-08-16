@@ -688,10 +688,15 @@ function material_to_wechat($attach_id, $uniacid, $uid, $acid, $type = 'image') 
 	if (is_error($result)) {
 		return $result;
 	}
+	$tag = $result['url'];
+	if($type == 'video') {
+		$tag = serialize(array('title'=>'网络视频','description'=>'网络视频'));
+	}
 	$data = array('uniacid' => $uniacid, 'uid' => $uid, 'acid' => $acid,
 		'media_id' => $result['media_id'],
 		'attachment' => $result['url'],
 		'type' => $type,
+		'tag' => $tag,
 		'model' => 'perm',
 		'createtime'=>TIMESTAMP
 	);
