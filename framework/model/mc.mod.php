@@ -1748,7 +1748,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 			if (!empty($email_exists_member)) {
 				$uid = $email_exists_member;
 			} else {
-				$member_update_info['groupid'] = pdo_getcolumn('mc_groups', array('uniacid' => $_W['uniacid'], 'isdefault' => 1));
+				$member_update_info['groupid'] = pdo_getcolumn('mc_groups', array('uniacid' => $_W['uniacid'], 'isdefault' => 1), 'groupid');
 				$member_update_info['salt'] = random(8);
 				$member_update_info['email'] = $email;
 				$member_update_info['createtime'] = TIMESTAMP;
@@ -2005,40 +2005,4 @@ function mc_member_export_parse($members){
 		}
 	}
 	return $html;
-}
-
-/**
- * 从粉丝tag标签中获取会员部分信息
- * @param $tag
- * @return array
- */
-function mc_fans_has_member_info($tag) {
-	if (is_base64($tag)) {
-		$tag = base64_decode($tag);
-	}
-	if (is_serialized($tag)) {
-		$tag = iunserializer($tag);
-	}
-	$profile = array();
-	if (!empty($tag)) {
-		if(!empty($tag['nickname'])) {
-			$profile['nickname'] = $tag['nickname'];
-		}
-		if(!empty($tag['sex'])) {
-			$profile['gender'] =$tag['sex'];
-		}
-		if(!empty($tag['province'])) {
-			$profile['resideprovince'] = $tag['province'];
-		}
-		if(!empty($tag['city'])) {
-			$profile['residecity'] = $tag['city'];
-		}
-		if(!empty($tag['country'])) {
-			$profile['nationality'] = $tag['country'];
-		}
-		if(!empty($tag['headimgurl'])) {
-			$profile['avatar'] = rtrim($tag['headimgurl']);
-		}
-	}
-	return $profile;
 }
