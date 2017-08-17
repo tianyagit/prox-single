@@ -1782,12 +1782,13 @@ class WeiXinAccount extends WeAccount {
 		return @json_decode($response['content'], true);
 	}
 
-	public function getOauthInfo($code = '', $sitepath = '') {
+	public function getOauthInfo($code = '') {
 		global $_W, $_GPC;
 		if (!empty($_GPC['code'])) {
 			$code = $_GPC['code'];
 		}
 		if (empty($code)) {
+			$sitepath = substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
 			$unisetting = uni_setting_load();
 			$url = (!empty($unisetting['oauth']['host']) ? ($unisetting['oauth']['host'] . $sitepath . '/') : $_W['siteroot'] . 'app/') . "index.php?{$_SERVER['QUERY_STRING']}";
 			$forward = $this->getOauthCodeUrl(urlencode($url));
