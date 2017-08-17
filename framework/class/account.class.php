@@ -143,7 +143,6 @@ abstract class WeAccount {
 			switch ($packet['event']) {
 				case 'subscribe':
 					$packet['type'] = 'subscribe';
-					break;
 				case 'SCAN':
 					if ($packet['event'] == 'SCAN') {
 						$packet['type'] = 'qr';
