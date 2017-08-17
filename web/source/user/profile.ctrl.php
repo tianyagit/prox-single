@@ -45,6 +45,13 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 		case 'realname':
 		case 'address':
 		case 'qq':
+		case 'mobile':
+			if ($type == 'mobile') {
+				$match = preg_match(REGULAR_MOBILE, trim($_GPC[$type]));
+				if (empty($match)) {
+					iajax(-1, '手机号不正确', '');
+				}
+			}
 			if ($users_profile_exist) {
 				$result = pdo_update('users_profile', array($type => trim($_GPC[$type])), array('uid' => $uid));
 			} else {

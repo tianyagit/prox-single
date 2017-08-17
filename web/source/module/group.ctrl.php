@@ -10,11 +10,10 @@ load()->model('module');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
-//只有创始人、主管理员、管理员才有权限
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_OWNER && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
 	itoast('无权限操作！', referer(), 'error');
 }
-if ($do != 'display' && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
 	itoast('您只有查看权限！', url('module/group'), 'error');
 }
 
@@ -99,8 +98,7 @@ if ($do == 'post') {
 		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : $module_group['wxapp'];
 		$group_have_template = empty($module_group['templates']) ? array() : $module_group['templates'];
 	}
-
-	$module_list = pdo_getall('modules', array('issystem' => 0), array(), 'name', 'mid DESC');
+	$module_list = user_uniacid_modules($_W['uid']);
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
 	if (!empty($module_list)) {

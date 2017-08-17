@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->func('file');
 load()->model('module');
 load()->model('user');
+load()->model('account');
 load()->classs('weixin.platform');
 
 $_W['page']['title'] = '添加/编辑公众号 - 公众号管理';
@@ -322,7 +323,7 @@ if($step == 1) {
 	}
 	$extend['package'] = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
 	$groups = user_group();
-	$modules = pdo_fetchall("SELECT mid, name, title FROM " . tablename('modules') . ' WHERE issystem != 1', array(), 'name');
+	$modules = user_uniacid_modules($_W['uid']);
 	$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
 } elseif($step == 4) {
 	$uniacid = intval($_GPC['uniacid']);

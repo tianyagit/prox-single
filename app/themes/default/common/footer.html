@@ -3,7 +3,7 @@
 				{if !empty($_W['page']['footer'])}
 					{$_W['page']['footer']}
 				{else}
-					{if IMS_FAMILY != 'x'}<a href="http://www.we7.cc">关于微擎</a>&nbsp;&nbsp;<a href="http://bbs.we7.cc">微擎帮助</a>{/if}
+					{if IMS_FAMILY == 'v'}<a href="http://www.we7.cc">关于微擎</a>&nbsp;&nbsp;<a href="http://bbs.we7.cc">微擎帮助</a>{/if}
 				{/if}
 				&nbsp;&nbsp;{$_W['setting']['copyright']['statcode']}
 			</div>
@@ -89,6 +89,12 @@
 				$.post(url, function(dat){});
 			}
 		{/if}
+		{if !empty($_GPC['eid']) || !empty($_GPC['m'])}
+			var visit_url = "{php echo url('utility/visit/update', array('m' => $_W['current_module']['name']));}";
+		{else}
+			var visit_url = "{php echo url('utility/visit/update', array('m' => 'wesite'));}";
+		{/if}
+		$.post(visit_url, function(data){});
 		if ($('.js-quickmenu').size() > 0) {
 			var h = $('.js-quickmenu .nav-home').height()+20+'px';
 			$('body').css("padding-bottom",h);

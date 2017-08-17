@@ -69,7 +69,6 @@ if ($do == 'edit_modules_tpl') {
 	}
 	$groups = user_group();
 	$group_info = user_group_detail_info($user['groupid']);
-
 	template('user/edit-modules-tpl');
 }
 

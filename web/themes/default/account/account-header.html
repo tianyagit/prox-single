@@ -1,3 +1,8 @@
+<ol class="breadcrumb we7-breadcrumb">
+	<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE))}"><i class="wi wi-back-circle"></i> </a>
+	<li><a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE))}">{ACCOUNT_TYPE_NAME}管理</a></li>
+	<li>{ACCOUNT_TYPE_NAME}设置</li>
+</ol>
 <div class="media media-wechat-setting">
 	<a class="media-left">
 		<span class="icon">
@@ -21,13 +26,13 @@
 	</div>
 	{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER}
 	<div class="media-right media-middle">
-		<a href="{php echo url('account/recycle/delete', array('uniacid' => $uniacid, 'acid' => $acid, 'account_type' => ACCOUNT_TYPE))}" class="btn btn-primary" onclick="return confirm('确认删除吗？')">删除</a>
+		<a href="{php echo url('account/manage/delete', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-primary" onclick="return confirm('确认放入回收站吗？')">停  用</a>
 	</div>
 	{/if}
 </div>
 <div class="clearfix"></div>
 <div class="btn-group we7-btn-group wechat-edit-group">
-	{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER}
+	{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER || $state == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
 	<a href="{php echo url('account/post/base', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $do == 'base'} active{/if}">基础信息</a>
 	{if ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL}
 	<a href="{php echo url('account/post/sms', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $do == 'sms'} active{/if}">短信信息</a>
@@ -39,5 +44,8 @@
 	{/if}
 	{if ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL}
 	<a href="{php echo url('wxapp/manage/display', array('uniacid' => $_GPC['uniacid'], 'acid' => $_GPC['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default {if $action == 'manage' && $do == 'display'} active{/if}">版本管理</a>
+	{/if}
+	{if ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL}
+	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $account['uniacid'], 'acid' => $account['acid'], 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="btn btn-default {if $action == 'post' && $do == 'modules_tpl'} active{/if}">可用应用模板/模块</a>
 	{/if}
 </div>

@@ -8,7 +8,7 @@ require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 load()->web('common');
 load()->web('template');
 
-if (empty($_W['isfounder']) && ! empty($_W['user']) && $_W['user']['status'] == 1) {
+if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
 }
 $_W['acl'] = $acl = array(
@@ -16,21 +16,21 @@ $_W['acl'] = $acl = array(
 		'default' => '',
 		'direct' => array(
 			'auth',
-			'welcome' 
+			'welcome'
 		),
 		'operator' => array(
 			'display',
-			'manage' 
-		) 
+			'manage'
+		)
 	),
 	'article' => array(
 		'direct' => array(
 			'notice-show',
-			'news-show' 
+			'news-show'
 		),
 		'founder' => array(
 			'news',
-			'notice' 
+			'notice'
 		),
 		'vice-founder' => array(
 			'notice-show',
@@ -42,47 +42,47 @@ $_W['acl'] = $acl = array(
 		'direct' => array(
 			'touch',
 			'dock',
-			'download' 
+			'download'
 		),
 		'founder' => array(
 			'diagnose',
 			'redirect',
 			'upgrade',
 			'process',
-			'device' 
+			'device'
 		),
 		'vice-founder' => array(),
 	),
 	'home' => array(
 		'default' => 'welcome',
 		'founder' => array(),
-		'direct' => array() 
+		'direct' => array()
 	),
 	'platform' => array(
 		'default' => 'reply',
 		'founder' => array(),
 		'direct' => array(
-			'link' 
-		) 
+			'link'
+		)
 	),
 	'site' => array(
 		'default' => '',
 		'founder' => array(),
 		'direct' => array(
-			'entry' 
-		) 
+			'entry'
+		)
 	),
 	'user' => array(
 		'default' => 'display',
 		'founder' => array(
 			'edit',
-			'group' 
+			'group'
 		),
 		'direct' => array(
 			'login',
 			'register',
-			'logout' 
-		) 
+			'logout'
+		)
 	),
 	'utility' => array(
 		'direct' => array(
@@ -92,8 +92,8 @@ $_W['acl'] = $acl = array(
 			'bindcall',
 			'subscribe',
 			'wxcode',
-			'modules' 
-		) 
+			'modules'
+		)
 	),
 	'module' => array(
 		'direct' => array(),
@@ -114,17 +114,17 @@ $_W['acl'] = $acl = array(
 			'menu',
 			'optimize',
 			'scan',
-			'site' 
+			'site'
 		),
 		'operator' => array(
 			'account',
-			'updatecache' 
+			'updatecache'
 		),
 		'manager' => array(
 			'account',
 			'platform',
 			'updatecache',
-			'module' 
+			'module'
 		),
 		'vice-founder' => array(
 			'platform',
@@ -227,7 +227,7 @@ if ((ENDTIME - STARTTIME) > $_W['config']['setting']['maxtimeurl']) {
 		'type' => '1',
 		'runtime' => ENDTIME - STARTTIME,
 		'runurl' => $_W['sitescheme'] . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-		'createtime' => TIMESTAMP 
+		'createtime' => TIMESTAMP
 	);
 	pdo_insert('core_performance', $data);
 }

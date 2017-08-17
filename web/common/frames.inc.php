@@ -476,6 +476,12 @@ $we7_system_menu['site'] = array(
 					'icon' => 'wi wi-log',
 					'permission_name' => 'system_setting_logs',
 				),
+				'system_setting_ipwhitelist' => array(
+					'title' => 'IP白名单',
+					'url' => url('system/ipwhitelist'),
+					'icon' => 'wi wi-ip',
+					'permission_name' => 'system_setting_ipwhitelist',
+				),
 			)
 		),
 		'utility' => array(
@@ -550,6 +556,14 @@ $we7_system_menu['appmarket'] = array(
 	'section' => array(),
 	'blank' => true,
 	'founder' => true,
+);
+
+$we7_system_menu['help'] = array(
+	'title' => '帮助系统',
+	'icon' => 'wi wi-market',
+	'url' => url('help/display'),
+	'section' => array(),
+	'blank' => true
 );
 
 
