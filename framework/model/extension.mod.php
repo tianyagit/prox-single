@@ -135,7 +135,25 @@ function ext_module_manifest_parse($xml) {
 		//是否嵌入规则
 		$rule = $platform->getElementsByTagName('rule')->item(0);
 		if (!empty($rule) && $rule->getAttribute('embed') == 'true') {
-			$manifest['platform']['isrulefields'] = true;
+			$process = file_get_contents(IA_ROOT . '/addons/' . $manifest['application']['identifie'] . '/processor.php');
+			$process = token_get_all($process);
+			$respond_function_exist = false;
+			$return_data = false;
+			if (!empty($process) && is_array($process)) {
+				foreach ($process as $key) {
+					if ($key[0] == 308 && $key[1] = 'respond') {
+						$respond_function_exist = true;
+						continue;
+					}
+					if ($respond_function_exist && $key[0] == T_RETURN && $key[1] = 'return') {
+						$return_data = true;
+						break;
+					}
+				}
+			}
+			if ($return_data) {
+				$manifest['platform']['isrulefields'] = true;
+			}
 		}
 		//是否嵌入卡券
 		$card = $platform->getElementsByTagName('card')->item(0);
@@ -681,29 +699,8 @@ function manifest_check($module_name, $manifest) {
 	if(empty($manifest['application']['ability'])) {
 		return error(1, '模块功能简述未定义. ');
 	}
-	if($manifest['platform']['isrulefields']) {
-		if (!in_array('text', $manifest['platform']['handles'])) {
-			return error(1, '模块功能定义错误, 嵌入规则必须要能够处理文本类型消息.. ');
-		}
-		$process = file_get_contents(IA_ROOT . '/addons/' . $manifest['application']['identifie'] . '/processor.php');
-		$process = token_get_all($process);
-		$respond_function_exist = false;
-		$return_data = false;
-		if (!empty($process) && is_array($process)) {
-			foreach ($process as $key) {
-				if ($key[0] == 308 && $key[1] = 'respond') {
-					$respond_function_exist = true;
-					continue;
-				}
-				if ($respond_function_exist && $key[0] == T_RETURN && $key[1] = 'return') {
-					$return_data = true;
-					break;
-				}
-			}
-		}
-		if (!$return_data) {
-			return error(1, '模块功能定义错误, 嵌入规则processor.php文件的respond的方法必须有返回值');
-		}
+	if($manifest['platform']['isrulefields'] && !in_array('text', $manifest['platform']['handles'])) {
+		return error(1, '模块功能定义错误, 嵌入规则必须要能够处理文本类型消息.. ');
 	}
 	if((!empty($manifest['cover']) || !empty($manifest['rule'])) && !$manifest['platform']['isrulefields']) {
 		return error(1, '模块功能定义错误, 存在封面或规则功能入口绑定时, 必须要嵌入规则. ');
