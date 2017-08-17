@@ -1456,6 +1456,12 @@ class WeiXinAccount extends WeAccount {
 		$data = array(
 			'media' => '@' . $path
 		);
+		$filename = pathinfo($path, PATHINFO_FILENAME);
+		$description = array(
+			'title' => $filename,
+			'introduction' =>  $filename,
+		);
+		$data['description'] = urldecode(json_encode($description));
 		return $this->requestApi($url, $data);
 	}
 
