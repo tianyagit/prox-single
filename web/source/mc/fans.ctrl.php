@@ -313,31 +313,19 @@ if ($do == 'fans_sync_set') {
 
 if ($do == 'register') {
 	$open_id = trim($_GPC['openid']);
-	$fan_id = trim($_GPC['fanid']);
 	$password = trim($_GPC['password']);
 	$repassword = trim($_GPC['repassword']);
-	if (empty($open_id) || empty($fan_id) || empty($password) || empty($repassword)) {
+	if (empty($open_id) || empty($password) || empty($repassword)) {
 		iajax('-1', '参数错误', url('mc/fans/display'));
 	}
 	if ($password != $repassword) {
 		iajax('-1', '密码不一致', url('mc/fans/display'));
 	}
-	$fans_info = pdo_get('mc_mapping_fans', array('fanid' => $fan_id, 'openid' => $open_id), array('uid', 'uniacid', 'tag'));
-
-	if (!empty($fans_info['uid'])) {
-		iajax('0', '注册成功', url('mc/member/base_information', array('uid' => $fans_info['uid'])));
-	}
-
-	$member = mc_fans_has_member_info($fans_info['tag']);
-	$member['createtime'] = TIMESTAMP;
-	$member['uniacid'] = $fans_info['uniacid'];
-	$member['salt'] = random(8);
-	$member['password'] = md5($password . $member['salt'] . $_W['config']['setting']['authkey']);
-
-	pdo_insert('mc_members', $member);
-	$uid = pdo_insertid();
-	pdo_update('mc_mapping_fans', array('uid' => $uid), array('fanid' => $fan_id, 'uniacid' => $fans_info['uniacid']));
-	iajax('0', '注册成功', url('mc/member/base_information', array('uid' => $uid)));
+	$member_info = mc_init_fans_info($open_id, true);
+	$member_salt = pdo_getcolumn('mc_members', array('uid' => $member_info['uid']), 'salt');
+	$password = md5($password . $member_salt . $_W['config']['setting']['authkey']);
+	pdo_update('mc_members', array('password' => $password), array('uid' => $uid));
+	iajax('0', '注册成功', url('mc/member/base_information', array('uid' => $member_info['uid'])));
 }
 template('mc/fans');
 
