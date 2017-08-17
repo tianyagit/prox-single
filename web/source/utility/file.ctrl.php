@@ -550,6 +550,10 @@ if ($do == 'video' || $do == 'voice') {
 	$material_news_list = material_list($do, $server, array('page_index' => $page_index, 'page_size' => $page_size));
 	$material_list = $material_news_list['material_list'];
 	$pager = $material_news_list['page'];
+	foreach ($material_list as &$item) {
+		$item['url'] = tomedia($item['attachment']);
+		unset($item['uid']);
+	}
 	$result = array('items' => $material_list, 'pager' => $pager);
 	iajax(0, $result);
 }
