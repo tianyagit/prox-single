@@ -141,7 +141,7 @@ function ext_module_manifest_parse($xml) {
 			$return_data = false;
 			if (!empty($process) && is_array($process)) {
 				foreach ($process as $key) {
-					if ($key[0] == 308 && $key[1] = 'respond') {
+					if ($key[0] == 308 && $key[1] == 'respond') {
 						$respond_function_exist = true;
 						continue;
 					}
