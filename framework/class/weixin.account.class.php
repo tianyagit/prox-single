@@ -1782,7 +1782,7 @@ class WeiXinAccount extends WeAccount {
 		return @json_decode($response['content'], true);
 	}
 
-	public function getOauthInfo($code = '') {
+	public function getOauthInfo($code = '', $sitepath = '') {
 		global $_W, $_GPC;
 		if (!empty($_GPC['code'])) {
 			$code = $_GPC['code'];
