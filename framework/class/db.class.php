@@ -790,9 +790,7 @@ class SqlPaser {
 		}
 		if (is_array($params)) {
 			$result['fields'] = '';
-			$index = 0; //字段 操作数组
 			foreach ($params as $fields => $value) {
-				$index++;
 				$operator = '';
 				if (strpos($fields, ' ') !== FALSE) {
 					list($fields, $operator) = explode(' ', $fields, 2);
@@ -832,7 +830,6 @@ class SqlPaser {
 						$placeholder = self::parsePlaceholder($fields, $suffix);
 						$insql[] = $placeholder;
 						$result['params'][$placeholder] = is_null($v) ? '' : $v;
-						$index++;
 					}
 					$result['fields'] .= $split . "$select_fields {$operator} (".implode(",", $insql).")";
 					$split = ' ' . $glue . ' ';
