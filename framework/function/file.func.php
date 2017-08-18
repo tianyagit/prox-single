@@ -850,3 +850,30 @@ function file_is_image($url) {
 	$extension = strtolower($pathinfo['extension']);
 	return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
 }
+
+/**
+ *  判断文件是不是 指定公众号目录( 是不是指定uniacid 目录)
+ *  示例 http://localhost/attachment/images/281/2017/08/zkPdTr1sYRX0Zd5YnRpYTS85OS44Y5.jpg
+ *  创始人  自定义目录  images/global/**
+ *  普通用户 自定义目录  images/uniacid/自定义目录/**
+ * @param $url
+ * @param $type
+ */
+function file_is_exists($url, $type = 'images') {
+	global $_W;
+	if (!in_array($type,array('images','videos','audios'))) {
+		$type = 'images';
+	}
+	$parseData = parse_url($url);
+	$path = $parseData['path'];
+	$attachment = $_W['upload']['attachdir'];
+	if($_W['isfounder']) { //创始人 只判断 $type目录
+		return strpos($path,'/'.$attachment.'/'.$type)===0&&file_exists(IA_ROOT.$path);
+	}
+	$uniacid = $_W['uniacid'];
+	$prefix =  '/'.$attachment.'/'.$type.'/'.$uniacid;
+	if(strpos($path, $prefix) === 0) { //是否以$prefix 开头
+		return file_exists(IA_ROOT.$path);
+	}
+	return false;
+}

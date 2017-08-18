@@ -106,7 +106,7 @@ if ($do == 'display') {
 			'click' => intval($_GPC['click'])
 		);
 		if (!empty($_GPC['thumb'])) {
-			if (file_is_image($_GPC['thumb'])) {
+			if (file_is_image($_GPC['thumb'])&& file_is_exists($_GPC['thumb'],'images')) {
 				$data['thumb'] = $_GPC['thumb'];
 			}
 		} elseif (!empty($_GPC['autolitpic'])) {
@@ -218,7 +218,7 @@ if ($do == 'display') {
 				pdo_delete('rule_keyword', array('rid' => $row['rid'], 'uniacid' => $_W['uniacid']));
 				pdo_delete('news_reply', array('rid' => $row['rid']));
 			}
-			pdo_delete('site_article', array('id' => $id));
+			pdo_delete('site_article', array('id' => $id, 'uniacid'=>$_W['uniacid']));
 		}
 		itoast('批量删除成功！', referer(), 'success');
 	} else {
@@ -236,7 +236,7 @@ if ($do == 'display') {
 			pdo_delete('rule_keyword', array('rid' => $row['rid'], 'uniacid' => $_W['uniacid']));
 			pdo_delete('news_reply', array('rid' => $row['rid']));
 		}
-		if (pdo_delete('site_article', array('id' => $id))){
+		if (pdo_delete('site_article', array('id' => $id,'uniacid'=>$_W['uniacid']))){
 			itoast('删除成功！', referer(), 'success');
 		} else {
 			itoast('删除失败！', referer(), 'error');
