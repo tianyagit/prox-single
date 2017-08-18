@@ -314,6 +314,10 @@ $we7_system_menu['system'] = array(
 							'permission_name' => 'system_user_check',
 						),
 						array(
+							'title' => '店员管理',
+							'permission_name' => 'system_user_clerk',
+						),
+						array(
 							'title' => '用户回收站',
 							'permission_name' => 'system_user_recycle',
 						),
