@@ -155,6 +155,10 @@ define('USER_STATUS_CHECK', 1);
 define('USER_STATUS_NORMAL', 2);
 define('USER_STATUS_BAN', 3);
 
+//用户类型
+define('USER_TYPE_COMMON', 1);
+define('USER_TYPE_CLERK', 3);
+
 //我的账户链接类型
 define('PERSONAL_BASE_TYPE', 1);
 define('PERSONAL_AUTH_TYPE', 2);
