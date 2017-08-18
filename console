@@ -14,7 +14,6 @@ include __DIR__.'/framework/bootstrap.inc.php';
 $sapiname = php_sapi_name();
 if ($sapiname != 'cli') {
 	echo '只能在命令行下运行当前任务';
-
 	return;
 }
 
@@ -114,7 +113,6 @@ class Upgrade {
 	public function get_exits_upgrade_dir() {
 		$dirs = self::get_upgrade_dirs();
 		$self = $this;
-
 		return array_filter($dirs, function ($dir) use ($self) {
 			return !in_array($dir, $self->ignoreDir);
 		});
