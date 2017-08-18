@@ -791,6 +791,10 @@ class SqlPaser {
 		if (is_array($params)) {
 			$result['fields'] = '';
 			foreach ($params as $fields => $value) {
+				//update或是insert语句，值为null时按空处理
+				if ($glue == ',') {
+					$value = $value === null ? '' : $value;
+				}
 				$operator = '';
 				if (strpos($fields, ' ') !== FALSE) {
 					list($fields, $operator) = explode(' ', $fields, 2);
