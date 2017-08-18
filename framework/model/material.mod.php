@@ -665,7 +665,7 @@ function material_network_to_local($url, $uniacid, $uid, $type = 'image') {
 	$data = array('uniacid' => $uniacid, 'uid' => $uid,
 		'filename' => $filename,
 		'attachment' => $path,
-		'type' => $type == 'image' ? 1 : ($type == 'audio'||$type == 'voice' ? 2 : 3),
+		'type' => $type == 'image' ? ATTACH_TYPE_IMAGE : ($type == 'audio'||$type == 'voice' ? ATTACH_TYPE_VOICE : ATTACH_TYPE_VEDIO),
 		'createtime'=>TIMESTAMP
 	);
 	pdo_insert('core_attachment', $data);
