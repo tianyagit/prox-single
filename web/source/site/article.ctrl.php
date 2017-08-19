@@ -210,9 +210,7 @@ if ($do == 'display') {
 			if (empty($row)) {
 				itoast('抱歉，文章不存在或是已经被删除！', '', '');
 			}
-			if (!empty($row['thumb']) && file_is_image($row['thumb'])) {
-				file_delete($row['thumb']);
-			}
+
 			if (!empty($row['rid'])) {
 				pdo_delete('rule', array('id' => $row['rid'], 'uniacid' => $_W['uniacid']));
 				pdo_delete('rule_keyword', array('rid' => $row['rid'], 'uniacid' => $_W['uniacid']));
@@ -228,9 +226,7 @@ if ($do == 'display') {
 		if (empty($row)) {
 			itoast('抱歉，文章不存在或是已经被删除！', '', '');
 		}
-		if (!empty($row['thumb'])) {
-			file_delete($row['thumb']);
-		}
+
 		if (!empty($row['rid'])) {
 			pdo_delete('rule', array('id' => $row['rid'], 'uniacid' => $_W['uniacid']));
 			pdo_delete('rule_keyword', array('rid' => $row['rid'], 'uniacid' => $_W['uniacid']));
