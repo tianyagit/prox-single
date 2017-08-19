@@ -851,6 +851,8 @@ function file_is_image($url) {
 	return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
 }
 
+
+
 /**
  *  判断文件是不是 指定公众号目录( 是不是指定uniacid 目录)
  *  示例 http://localhost/attachment/images/281/2017/08/zkPdTr1sYRX0Zd5YnRpYTS85OS44Y5.jpg
