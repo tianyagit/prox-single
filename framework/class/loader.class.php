@@ -161,7 +161,7 @@ EOF;
 	}
 	
 	/**
-	 * 获取一个模型对象或是工具类单例对象
+	 * 获取一个服务单例，目录是在framework/class目录下
 	 * @param unknown $name
 	 */
 	function singleton($name) {
@@ -173,7 +173,7 @@ EOF;
 	}
 	
 	/**
-	 * 获取一个类对象
+	 * 获取一个服务对象，目录是在framework/class目录下
 	 * @param unknown $name
 	 */
 	function object($name) {
@@ -181,6 +181,23 @@ EOF;
 		if (class_exists($name)) {
 			return new $name();
 		} else {
+			return false;
+		}
+	}
+	
+	function table($name) {
+		global $_W;
+		if (isset($this->cache['table'][$name])) {
+			return $this->cache['table'][$name];
+		}
+		$file = IA_ROOT . '/framework/table/' . $name . '.table.php';
+		if (file_exists($file)) {
+			include $file;
+			$classname = "{$name}Table";
+			$this->cache['table'][$name] = new $classname();
+			return $this->cache['table'][$name];
+		} else {
+			trigger_error('Invalid Class /framework/table/' . $name . '.table.php', E_USER_ERROR);
 			return false;
 		}
 	}
