@@ -30,7 +30,7 @@ class Loader {
 		'qrcode' => 'qrcode/phpqrcode',
 		'ftp' => 'ftp/ftp',
 		'pinyin' => 'pinyin/pinyin',
-		'pkcs7' => 'pkcs7Encoder',
+		'pkcs7' => 'pkcs7/pkcs7Encoder',
 	);
 	
 	function func($name) {
@@ -119,13 +119,16 @@ class Loader {
 	 */
 	function library($name) {
 		global $_W;
+		if (in_array($name, array_values($this->library_map))) {
+			$name = array_search($name, $this->library_map);
+		}
 		if (isset($this->cache['library'][$name])) {
 			return true;
 		}
 		if (!empty($this->library_map[$name])) {
-			$name = $this->library_map[$name];
+			$library_name = $this->library_map[$name];
 		}
-		$file = IA_ROOT . '/framework/library/' . $name . '.php';
+		$file = IA_ROOT . '/framework/library/' . $library_name . '.php';
 		if (file_exists($file)) {
 			include $file;
 			$this->cache['library'][$name] = true;
