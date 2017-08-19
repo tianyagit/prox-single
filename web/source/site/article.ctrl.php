@@ -106,7 +106,7 @@ if ($do == 'display') {
 			'click' => intval($_GPC['click'])
 		);
 		if (!empty($_GPC['thumb'])) {
-			if (file_is_image($_GPC['thumb'])&& file_is_exists($_GPC['thumb'],'images')) {
+			if (file_is_image($_GPC['thumb'])) {
 				$data['thumb'] = $_GPC['thumb'];
 			}
 		} elseif (!empty($_GPC['autolitpic'])) {
