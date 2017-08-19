@@ -198,7 +198,7 @@
 						<td class="text-right">
 							<div class="send-message">
 								{if empty($fan['uid'])}
-								<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#register_member" ng-click="registerMember('{$fan['openid']}', '{$fan['fanid']}')">注册为会员</a>
+								<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#register_member" ng-click="registerMember('{$fan['openid']}')">注册为会员</a>
 								{/if}
 								<a  href="{php echo url('mc/chats', array('openid' => $fan['openid']))}" target="_blank" class="color-default">
 									发送消息<span class="wi wi-angle-right"></span>
@@ -251,7 +251,6 @@
 							</div>
 						</div>
 						<input class="form-control" type="hidden" ng-model="register.openid">
-						<input class="form-control" type="hidden" ng-model="register.fanid">
 						<div class="modal-footer">
 							<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="register()">注册</button>
 							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>

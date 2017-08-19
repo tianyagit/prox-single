@@ -27,6 +27,10 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 		iajax(-1, '用户不存在或已经被删除！', '');
 	}
 
+	if ($user['status'] == USER_STATUS_CHECK || $user['status'] == USER_STATUS_BAN) {
+		iajax(-1, '访问错误，该用户未审核或者已被禁用，请先修改用户状态！', '');
+	}
+
 	$users_profile_exist = pdo_get('users_profile', array('uid' => $uid));
 
 	if ($type == 'birth') {

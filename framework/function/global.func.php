@@ -1056,72 +1056,6 @@ function utf8_bytes($cp) {
 		return chr($cp);
 	}
 }
-/**
- * 将bytes转化为unicode码
- * @param bit $utf8
- */
-function bytes_utf8($utf8) {
-	$i = 0;
-	$l = strlen($utf8);
-	
-	$out = '';
-
-	while ($i < $l) {
-		if ((ord($utf8[$i]) & 0x80) === 0x00) {
-			// 0xxxxxxx
-			$n = ord($utf8[$i++]);
-		} elseif ((ord($utf8[$i]) & 0xE0) === 0xC0) {
-			// 110xxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x1F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} elseif ((ord($utf8[$i]) & 0xF0) === 0xE0) {
-			// 1110xxxx 10xxxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x0F) << 12) |
-			((ord($utf8[$i++]) & 0x3F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} elseif ((ord($utf8[$i]) & 0xF8) === 0xF0) {
-			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x07) << 18) |
-			((ord($utf8[$i++]) & 0x3F) << 12) |
-			((ord($utf8[$i++]) & 0x3F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} elseif ((ord($utf8[$i]) & 0xFC) === 0xF8) {
-			// 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x03) << 24) |
-			((ord($utf8[$i++]) & 0x3F) << 18) |
-			((ord($utf8[$i++]) & 0x3F) << 12) |
-			((ord($utf8[$i++]) & 0x3F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} elseif ((ord($utf8[$i]) & 0xFE) === 0xFC) {
-			// 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x01) << 30) |
-			((ord($utf8[$i++]) & 0x3F) << 24) |
-			((ord($utf8[$i++]) & 0x3F) << 18) |
-			((ord($utf8[$i++]) & 0x3F) << 12) |
-			((ord($utf8[$i++]) & 0x3F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} else {
-			return error(1, 'Invalid utf-8 code point');
-		}
-
-		$n = strtoupper(dechex($n));
-		$pad = strlen($n) <= 4 ? strlen($n) + strlen($n) %2 : 0;
-		$n = str_pad($n, $pad, "0", STR_PAD_LEFT);
-
-		$out .= sprintf("\u%s", $n);
-	}
-	return $out;
-}
 
 function media2local($media_id, $all = false){
 	global $_W;
@@ -1210,7 +1144,7 @@ function aes_encode($message, $encodingaeskey = '', $appid = '') {
  * @return array
  */
 function aes_pkcs7_decode($encrypt_data, $key, $iv = false) {
-	require_once IA_ROOT . '/framework/library/pkcs7/pkcs7Encoder.php';
+	load()->library('pkcs7');
 	$encrypt_data = base64_decode($encrypt_data);
 	if (!empty($iv)) {
 		$iv = base64_decode($iv);
@@ -1334,7 +1268,7 @@ function get_first_pinyin($str) {
 		return $first_char;
 	}
 	if (empty($pinyin)) {
-		include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
+		load()->library('pinyin');
 		$pinyin = new Pinyin_Pinyin();
 	}
 	$first_char = $pinyin->get_first_char($str);
