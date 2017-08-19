@@ -27,8 +27,8 @@ if($do == 'verifycode') {
 	header('Content-Type:image/jpg');
 	echo $content['content'];
 	exit();
-}  elseif($do == 'qrcode') {
-	require_once(IA_ROOT.'/framework/library/qrcode/phpqrcode.php');
+} elseif ($do == 'qrcode') {
+	load()->library('qrcode');
 	$errorCorrectionLevel = "L";
 	$matrixPointSize = "8";
 	$text = trim($_GPC['text']);

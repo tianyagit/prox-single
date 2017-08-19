@@ -1268,7 +1268,7 @@ function get_first_pinyin($str) {
 		return $first_char;
 	}
 	if (empty($pinyin)) {
-		include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
+		load()->library('pinyin');
 		$pinyin = new Pinyin_Pinyin();
 	}
 	$first_char = $pinyin->get_first_char($str);

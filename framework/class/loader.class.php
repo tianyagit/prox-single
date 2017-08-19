@@ -23,6 +23,15 @@ class Loader {
 	
 	private $cache = array();
 	private $singletonObject = array();
+	private $library_map = array(
+		'agent' => 'agent/agent.class',
+		'captcha' => 'captcha/captcha.class',
+		'pdo' => 'pdo/PDO.class',
+		'qrcode' => 'qrcode/phpqrcode',
+		'ftp' => 'ftp/ftp',
+		'pinyin' => 'pinyin/pinyin',
+		'pkcs7' => 'pkcs7Encoder',
+	);
 	
 	function func($name) {
 		global $_W;
@@ -100,6 +109,29 @@ class Loader {
 			return true;
 		} else {
 			trigger_error('Invalid App Function /app/common/' . $name . '.func.php', E_USER_ERROR);
+			return false;
+		}
+	}
+	
+	/**
+	 * 载入一下库文件
+	 * @param string $name path + name
+	 */
+	function library($name) {
+		global $_W;
+		if (isset($this->cache['library'][$name])) {
+			return true;
+		}
+		if (!empty($this->library_map[$name])) {
+			$name = $this->library_map[$name];
+		}
+		$file = IA_ROOT . '/framework/library/' . $name . '.php';
+		if (file_exists($file)) {
+			include $file;
+			$this->cache['library'][$name] = true;
+			return true;
+		} else {
+			trigger_error('Invalid Library /framework/library/' . $name . '.php', E_USER_ERROR);
 			return false;
 		}
 	}
