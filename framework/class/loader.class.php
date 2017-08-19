@@ -31,6 +31,8 @@ class Loader {
 		'ftp' => 'ftp/ftp',
 		'pinyin' => 'pinyin/pinyin',
 		'pkcs7' => 'pkcs7Encoder',
+		'json' => 'json/JSON',
+		'phpmailer' => 'PHPMailerAutoload',
 	);
 	
 	function func($name) {
