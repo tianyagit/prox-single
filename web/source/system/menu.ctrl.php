@@ -11,6 +11,7 @@ $do = in_array($do, $dos) ? $do : 'display';
 $_W['page']['title'] = '系统管理 - 菜单设置';
 
 $system_menu = cache_load('system_frame');
+$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement');
 if(empty($system_menu)) {
 	cache_build_frame_menu();
 	$system_menu = cache_load('system_frame');
@@ -20,6 +21,9 @@ if(empty($system_menu)) {
 $system_menu_permission = array();
 if (!empty($system_menu)) {
 	foreach ($system_menu as $menu_name => $menu) {
+		if (in_array($menu_name, $system_top_menu)) {
+			$system_menu_permission[] = $menu_name;
+		}
 		if (!empty($menu['section'])) {
 			foreach ($menu['section'] as $section_name => $section) {
 				if (!empty($section['menu'])) {
@@ -36,7 +40,6 @@ if (!empty($system_menu)) {
 
 if ($do == 'display') {
 	$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame', 'is_system <>' => 1), array('title', 'url', 'permission_name'));
-	$system_top_menu = pdo_getall('core_menu', array('group_name' => 'frame', 'is_system' => 1), array('title', 'url', 'permission_name'), 'permission_name');
 	if (!empty($add_top_nav)) {
 		foreach ($add_top_nav as $menu) {
 			$system_menu[$menu['permission_name']] = array(
@@ -105,7 +108,12 @@ if ($do == 'display') {
 	if (!empty($menu_db)) {
 		pdo_update('core_menu', array('is_display' => $status), array('permission_name' => $permission_name));
 	} else {
-		pdo_insert('core_menu',  array('is_display' => $status, 'permission_name' => $permission_name));
+		$menu_data = array('is_display' => $status, 'permission_name' => $permission_name);
+		if (in_array($permission_name, $system_top_menu)) {
+			$menu_data['is_system'] = 1;
+			$menu_data['group_name'] = 'frame';
+		}
+		pdo_insert('core_menu',  $menu_data);
 	}
 	cache_build_frame_menu();
 	iajax(0, '更新成功', referer());
