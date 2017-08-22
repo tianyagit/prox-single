@@ -6,31 +6,15 @@
  
 defined('IN_IA') or exit('Access Denied');
 
-class AccountTable extends Query {
-	
-	public function __construct() {
-		$this->from('uni_account', 'a');
-		return $this;
-	}
-	
+class AccountTable extends We7Table {
 	
 	public function searchAccountList() {
-		$this->leftjoin('account', 'b')->
-				on(array('a.uniacid' => 'b.uniacid', 'a.default_acid' => 'b.acid'));
-		return $this;
+		return $this->query->from('uni_account', 'a')->leftjoin('account', 'b')->
+				on(array('a.uniacid' => 'b.uniacid', 'a.default_acid' => 'b.acid'))->getall();
 	}
 	
-	public function needKeyword($title) {
-		$this->where('a.name LIKE', "%{$title}%");
+	public function searchKeyword($title) {
+		$this->query->where('a.name LIKE', "%{$title}%");
 		return $this;
 	}
-	
-	public function getUniAccountList() {
-		
-		return $this;
-	}
-}
-
-class WeixinAccountTable extends AccountTable {
-	
 }
