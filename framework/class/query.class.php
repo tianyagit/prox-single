@@ -252,13 +252,13 @@ class Query {
 	/**
 	 * 一般用于获取分页后总记录条数
 	 */
-	public function lastcount() {
-		$lastquery = $this->getlastsql();
+	public function getLastQueryTotal() {
+		$lastquery = $this->getLastQuery();
 		//替换SELECT XX 为 SELECT COUNT(*)
 		$countsql = str_replace(substr($lastquery[0], 0, strpos($lastquery[0], 'FROM')), 'SELECT COUNT(*) ', $lastquery[0]);
 		//删除掉Limit
 		$countsql = substr($countsql, 0, strpos($countsql, 'LIMIT'));
-		$result = pdo_fetchcolumn($countsql, $this->parameters, $keyfield);
+		$result = pdo_fetchcolumn($countsql, $this->lastparams, $keyfield);
 		return $result;
 	}
 	
@@ -376,7 +376,7 @@ class Query {
 		return \SqlPaser::parseGroupby($this->statements['GROUPBY'], $this->currentTableAlias);
 	}
 	
-	public function getlastsql() {
+	public function getLastQuery() {
 		return array($this->lastsql, $this->lastparams);
 	}
 }
