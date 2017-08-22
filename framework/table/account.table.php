@@ -6,7 +6,7 @@
  
 defined('IN_IA') or exit('Access Denied');
 
-class AccountService extends We7Service {
+class AccountTable extends We7Table {
 	
 	public function searchAccountList() {
 		return $this->query->from('uni_account', 'a')->leftjoin('account', 'b')->

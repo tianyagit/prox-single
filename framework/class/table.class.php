@@ -9,7 +9,7 @@ defined('IN_IA') or exit('Access Denied');
 /**
  * @property Query $query
  */
-abstract class We7Service {
+abstract class We7Table {
 	protected $query;
 	
 	public function __construct() {

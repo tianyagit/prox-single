@@ -19,13 +19,14 @@ function load() {
 /**
  * @param string $name 服务名称
  * @return AccountService
+ * @return UserService
  */
-function service($name) {
-	load()->classs('service');
-	load()->service($name);
+function table($name) {
+	load()->classs('table');
+	load()->table($name);
 	$service = false;
 	
-	$class_name = "{$name}Service";
+	$class_name = "{$name}Table";
 	if (class_exists($class_name)) {
 		$service = new $class_name();
 	}
@@ -63,7 +64,7 @@ class Loader {
 		'model' => '/framework/model/%s.mod.php',
 		'classs' => '/framework/class/%s.class.php',
 		'library' => '/framework/library/%s.php',
-		'service' => '/framework/service/%s.service.php',
+		'table' => '/framework/table/%s.table.php',
 		'web' => '/web/common/%s.func.php',
 		'app' => '/app/common/%s.func.php',
 	);
