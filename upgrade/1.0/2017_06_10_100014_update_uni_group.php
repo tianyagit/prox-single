@@ -5,7 +5,7 @@
  * Date: 2017/8/21
  * Time: 17:16.
  */
-namespace We7\v10;
+namespace We7\V10;
 
 defined('IN_IA') or exit('Access Denied');
 class UpdateUniGroup {
