@@ -75,7 +75,7 @@ function _login($forward = '') {
 		}
 		// 只能跳到本域名下
 		if(startsWith($forward,'http') && !startsWith($forward, $_W['siteroot'])) {
-			$redirect = $_W['siteroot'];
+			$forward = $_W['siteroot'];
 		}
 		if ($record['uid'] != $_GPC['__uid']) {
 			isetcookie('__uniacid', '', -7 * 86400);
