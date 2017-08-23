@@ -744,9 +744,7 @@ function user_list_format($users) {
 	if (empty($users)) {
 		return array();
 	}
-	$modules_table = table('modules');
 	$users_table = table('users');
-	$system_module_num = $modules_table->modulesCount();
 	$groups = $users_table->usersGroup();
 	$founder_groups = $users_table->usersFounderGroup();
 	foreach ($users as &$user) {
@@ -755,14 +753,8 @@ function user_list_format($users) {
 		if (empty($user['endtime'])) {
 			$user['endtime'] = '永久有效';
 		} else {
-			if ($user['endtime'] <= TIMESTAMP) {
-				$user['endtime'] = '服务已到期';
-			} else {
-				$user['endtime'] = date('Y-m-d', $user['endtime']);
-			}
+			$user['endtime'] = $user['endtime'] <= TIMESTAMP ? '服务已到期' : date('Y-m-d', $user['endtime']);
 		}
-
-		$user_role = $user['founder'] = $user['founder_groupid'] == 1 ? true : false;
 		$user['uniacid_num'] = $users_table->accountUsersNum($user['uid']);
 
 		$user['module_num'] =array();
@@ -771,28 +763,8 @@ function user_list_format($users) {
 		} else {
 			$group = $groups[$user['groupid']];
 		}
-		if ($user_role) {
-			$user['maxaccount'] = '不限';
-		}
-
-		if (empty($group)) {
-			continue;
-		}
-
-		if (empty($user_role)) {
-			$user['maxaccount'] = $group['maxaccount'];
-		}
+		$user['maxaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxaccount']);
 		$user['groupname'] = $group['name'];
-		$package = iunserializer($group['package']);
-		$group['package'] = uni_groups($package);
-		foreach ($group['package'] as $modules) {
-			if (is_array($modules['modules'])) {
-				foreach ($modules['modules'] as  $module) {
-					$user['module_num'][$module['name']] = $module['name'];
-				}
-			}
-		}
-		$user['module_nums'] = count($user['module_num']) + $system_module_num;
 		unset($user);
 	}
 	return $users;
