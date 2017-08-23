@@ -1400,3 +1400,4 @@ function startsWith($haystack, $needles)
 
 	return false;
 }
+

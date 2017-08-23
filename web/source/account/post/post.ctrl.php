@@ -18,6 +18,13 @@ $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
 	itoast('请选择要编辑的公众号', url('account/manager'), 'error');
 }
+$defaultaccount = uni_account_default($uniacid);
+if (!$defaultaccount) {
+	itoast('无效的acid', url('account/manager'), 'error');
+}
+$acid = $defaultaccount['acid']; //强制使用默认的acid
+
+
 $state = uni_permission($_W['uid'], $uniacid);
 $dos = array('base', 'sms', 'modules_tpl');
 $role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
