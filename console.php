@@ -171,6 +171,8 @@ class We7CreateUpgradeCommand extends We7Command {
 		$name = $this->toClassName($name);
 		$template = <<<EOT
 <?php
+
+defined('IN_IA') or exit('Access Denied');
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * Time: $time
