@@ -537,7 +537,7 @@ function filter_url($params) {
 	return './index.php?' . $query;
 }
 
-function get_url_params($url) {
+function url_params($url) {
 	$result = array();
 	if (empty($url)) {
 		return $result;
