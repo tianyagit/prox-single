@@ -181,6 +181,7 @@ function uni_fetch($uniacid = 0) {
 	$account['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
 
+
 	cache_write($cachekey, $account);
 	return $account;
 }
@@ -609,6 +610,7 @@ function uni_permission($uid = 0, $uniacid = 0) {
 			$role = ACCOUNT_MANAGE_NAME_CLERK;
 		}
 	}
+	$role = empty($role) ? ACCOUNT_MANAGE_NAME_OPERATOR : $role;
 	return $role;
 }
 
