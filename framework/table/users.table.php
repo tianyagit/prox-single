@@ -21,6 +21,14 @@ class UsersTable extends We7Table {
 		return $this->query->getall();
 	}
 
+	/**
+	 *  获取用户所能操作的所有公众号的uniacid
+	 */
+	public function userOwnedAccount($uid) {
+		$uniacid_list = $this->query->from('uni_account_users')->where('uid', $uid)->getall('uniacid');
+		return array_keys($uniacid_list);
+	}
+
 	public function searchWithStatus($status) {
 		$this->query->where('u.status', $status);
 		return $this;

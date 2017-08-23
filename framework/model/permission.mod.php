@@ -23,7 +23,7 @@ function permission_build() {
 		$we7_file_permission['site'][$_W['role']] = array('site*');
 		$we7_file_permission['mc'][$_W['role']] = array('mc*');
 		$we7_file_permission['profile'][$_W['role']] = array('profile*');
-		$we7_file_permission['module'][$_W['role']] = array('manage-account', 'diaplay');
+		$we7_file_permission['module'][$_W['role']] = array('manage-account', 'display');
 		$we7_file_permission['wxapp'][$_W['role']] = array('display', 'payment', 'post', 'version');
 		return $we7_file_permission;
 	}
