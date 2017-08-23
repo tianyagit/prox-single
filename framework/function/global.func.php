@@ -1223,7 +1223,7 @@ function strip_gpc($values, $type = 'g') {
  * @return boolean | string 正常返回路径，否则返回空
  */
 function parse_path($path) {
-	$danger_char = array('../', '{php', '<?php', '<%', '<?');
+	$danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\');
 	foreach ($danger_char as $char) {
 		if (strexists($path, $char)) {
 			return false;
@@ -1382,4 +1382,21 @@ function url_is_safe($url, array $allowscheme = array('http','https'), $allowpor
 	}
 
 	return true;
+}
+
+/**
+ *  指定开头的字符串
+ * @param $haystack
+ * @param $needles
+ * @return bool
+ */
+function startsWith($haystack, $needles)
+{
+	foreach ((array) $needles as $needle) {
+		if ($needle != '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+			return true;
+		}
+	}
+
+	return false;
 }

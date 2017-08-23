@@ -45,6 +45,11 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	if($redirect == 'referer') {
 		$redirect = referer();
 	}
+	// 只能跳转到本域名下
+	if(startsWith($redirect,'http') && !startsWith($redirect, $_W['siteroot'])) {
+		$redirect = $_W['siteroot'];
+	}
+
 	if($redirect == '') {
 		$type = in_array($type, array('success', 'error', 'info', 'warning', 'ajax', 'sql')) ? $type : 'info';
 	} else {
