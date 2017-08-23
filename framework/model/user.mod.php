@@ -744,7 +744,11 @@ function user_list_format($users) {
 	if (empty($users)) {
 		return array();
 	}
-	$system_module_num = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('modules') . "WHERE type = :type AND issystem = :issystem", array(':type' => 'system',':issystem' => 1));
+	$modules_table = table('modules');
+	$users_table = table('users');
+	$system_module_num = $modules_table->modulesCount();
+	$groups = $users_table->usersGroup();
+	$founder_groups = $users_table->usersFounderGroup();
 	foreach ($users as &$user) {
 		$user['avatar'] = !empty($user['avatar']) ? $user['avatar'] : './resource/images/nopic-user.png';
 		$user['joindate'] = date('Y-m-d', $user['joindate']);
@@ -759,37 +763,38 @@ function user_list_format($users) {
 		}
 
 		$user_role = $user['founder'] = $user['founder_groupid'] == 1 ? true : false;
-		$user['uniacid_num'] = pdo_fetchcolumn("SELECT COUNT(*) FROM ".tablename('uni_account_users')." WHERE uid = :uid", array(':uid' => $user['uid']));
+		$user['uniacid_num'] = $users_table->accountUsersNum($user['uid']);
 
 		$user['module_num'] =array();
 		if ($user['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-			$group = pdo_get('users_founder_group', array('id' => $user['groupid']));
+			$group = $founder_groups[$user['groupid']];
 		} else {
-			$group = pdo_get('users_group', array('id' => $user['groupid']));
+			$group = $groups[$user['groupid']];
 		}
 		if ($user_role) {
 			$user['maxaccount'] = '不限';
 		}
-		if (!empty($group)) {
-			if (empty($user_role)) {
-				$user['maxaccount'] = $group['maxaccount'];
-			}
-			$user['groupname'] = $group['name'];
-			$package = iunserializer($group['package']);
-			$group['package'] = uni_groups($package);
-			foreach ($group['package'] as $modules) {
-				if (is_array($modules['modules'])) {
-					foreach ($modules['modules'] as  $module) {
-						$user['module_num'][] = $module['name'];
-					}
+
+		if (empty($group)) {
+			continue;
+		}
+
+		if (empty($user_role)) {
+			$user['maxaccount'] = $group['maxaccount'];
+		}
+		$user['groupname'] = $group['name'];
+		$package = iunserializer($group['package']);
+		$group['package'] = uni_groups($package);
+		foreach ($group['package'] as $modules) {
+			if (is_array($modules['modules'])) {
+				foreach ($modules['modules'] as  $module) {
+					$user['module_num'][$module['name']] = $module['name'];
 				}
 			}
 		}
-
-		$user['module_num'] = array_unique($user['module_num']);
 		$user['module_nums'] = count($user['module_num']) + $system_module_num;
+		unset($user);
 	}
-	unset($user);
 	return $users;
 }
 

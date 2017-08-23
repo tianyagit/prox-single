@@ -14,7 +14,7 @@ abstract class We7Table {
 	
 	public function __construct() {
 		//实例化Query对象,并重置查询信息
-		$this->query = load()->singleton('Query');
+		$this->query = load()->object('Query');
 		$this->query->from('');
 	}
 	
