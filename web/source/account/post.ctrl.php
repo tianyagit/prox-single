@@ -43,7 +43,6 @@ if($do == 'base') {
 	if (!$role_permission) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
-
 	if($_W['ispost'] && $_W['isajax']) {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
@@ -57,7 +56,11 @@ if($do == 'base') {
 					'qrcodeimgsrc' => ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg',
 					'headimgsrc' => ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg'
 				);
-				$result = utility_image_rename($_GPC['imgsrc'], $image_type[$type]);
+				$imgsrc = $_GPC['imgsrc'];
+				if(!file_is_image($imgsrc)){
+					$result = '';
+				}
+				$result = utility_image_rename($imgsrc, $image_type[$type]);
 				break;
 			case 'name':
 				$uni_account = pdo_update('uni_account', array('name' => trim($_GPC['request_data'])), array('uniacid' => $uniacid));
