@@ -42,8 +42,7 @@ class UsersTable extends We7Table {
 	}
 
 	public function accountUsersNum($uid) {
-		$count = $this->query->from('uni_account_users')->select('COUNT(*) as total')->where('uid', $uid)->getall();
-		return $count[0]['total'];
+		return $this->query->from('uni_account_users')->where('uid', $uid)->count();
 	}
 
 	public function usersGroup() {

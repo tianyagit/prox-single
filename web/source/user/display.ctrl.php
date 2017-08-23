@@ -13,7 +13,6 @@ $do = in_array($do, $dos) ? $do: 'display';
 $_W['page']['title'] = '用户列表 - 用户管理';
 $founders = explode(',', $_W['config']['setting']['founder']);
 
-
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
@@ -41,8 +40,9 @@ if ($do == 'display') {
 				$users_table->searchWithFounder(array(ACCOUNT_MANAGE_GROUP_GENERAL, ACCOUNT_MANAGE_GROUP_FOUNDER));
 				break;
 		}
-		if (!empty($_GPC['username'])) {
-			$username = trim($_GPC['username']);
+
+		$username = trim($_GPC['username']);
+		if (!empty($username)) {
 			$users_table->searchWithName($username);
 		}
 
