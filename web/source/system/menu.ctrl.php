@@ -80,16 +80,16 @@ if ($do == 'display') {
 	} else {
 		$menu['group_name'] = $_GPC['group'];
 		$menu['is_system'] = 0;
-		
+
 		$menu_db = pdo_get('core_menu', array('permission_name' => $menu['permission_name']));
 		if (!empty($menu_db) && $menu_db['id'] != $id) {
 			iajax(-1, '菜单标识不得重复请更换', referer());
 		}
-		
+
 	}
 	$permission_name = $menu['permission_name'];
 	$menu_db = pdo_get('core_menu', array('permission_name' => $permission_name));
-	
+
 	if (!empty($menu_db)) {
 		unset($menu['permission_name']);
 		$menu['group_name'] = $menu_db['group_name'];
@@ -104,7 +104,7 @@ if ($do == 'display') {
 	$permission_name = $_GPC['permission_name'];
 	$status = intval($_GPC['status']);
 	$menu_db = pdo_get('core_menu', array('permission_name' => $permission_name));
-	
+
 	if (!empty($menu_db)) {
 		pdo_update('core_menu', array('is_display' => $status), array('permission_name' => $permission_name));
 	} else {
