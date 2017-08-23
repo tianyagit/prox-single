@@ -1223,7 +1223,7 @@ function strip_gpc($values, $type = 'g') {
  * @return boolean | string 正常返回路径，否则返回空
  */
 function parse_path($path) {
-	$danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\');
+	$danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\', '\\\\' ,'\\', '..\\\\');
 	foreach ($danger_char as $char) {
 		if (strexists($path, $char)) {
 			return false;
@@ -1353,7 +1353,9 @@ function getglobal($key) {
  * @param $url
  * @param array $scheme
  */
-function url_is_safe($url, array $allowscheme = array('http','https'), $allowport = array('80','443')) {
+function url_is_safe($url, array $allowscheme = array('http','https'),
+                     $allowport = array('80','443')) {
+	$url = str_replace(array("\0","%00","\r"),'',$url);
 	$parseData = parse_url($url);
 	if (!isset($parseData['scheme'])) {
 		return false;
