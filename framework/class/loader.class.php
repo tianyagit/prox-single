@@ -18,8 +18,7 @@ function load() {
 
 /**
  * @param string $name 服务名称
- * @return AccountService
- * @return UserService
+ * @return We7Table 表模型
  */
 function table($name) {
 	load()->classs('table');

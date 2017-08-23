@@ -1366,9 +1366,18 @@ function url_is_safe($url, array $allowscheme = array('http','https'), $allowpor
 	if(isset($parseData['port'])&&!in_array($parseData['port'], $allowport)) {
 		return false;
 	}
+
+	if(!isset($parseData['host'])) {
+		return false;
+	}
+
+	if(strexists($parseData['host'],'127.0.0') || strexists($parseData['host'], 'localhost')) {
+		return false;
+	}
+
 	// 10 172 192 开头都不允许
-	$pattern = "(10|172|192)\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})";
-	if (preg_match($pattern, $url)) {
+	$pattern = "(10|172|192|127)\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})";
+	if (preg_match($pattern, $parseData['host'])) {
 		return false;
 	}
 

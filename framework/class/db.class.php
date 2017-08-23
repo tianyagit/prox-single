@@ -907,7 +907,7 @@ class SqlPaser {
 					$field_row .= " AS '{$index}'";
 				}
 			} else {
-				$field_row = (!empty($alias) ? "`{$alias}`." : '') . '`'. $field_row. '`';
+				$field_row = self::parseFieldAlias($field_row, $alias);
 			}
 			$select[] = $field_row;
 			$index++;
@@ -950,10 +950,13 @@ class SqlPaser {
 		}
 		foreach ($orderby as $i => &$row) {
 			$row = strtolower($row);
-			if (substr($row, -3) != 'asc' && substr($row, -4) != 'desc') {
+			list($field, $orderbyrule) = explode(' ', $row);
+			
+			if ($orderbyrule != 'asc' && $orderbyrule != 'desc') {
 				unset($orderby[$i]);
 			}
-			$row = (!empty($alias) ? "`{$alias}`." : '') . $row;
+			$field = self::parseFieldAlias($field, $alias);
+			$row = "{$field} {$orderbyrule}";
 		}
 		$orderbysql = implode(',', $orderby);
 		return !empty($orderbysql) ? " ORDER BY $orderbysql " : '';
@@ -967,7 +970,7 @@ class SqlPaser {
 			$statement = explode(',', $statement);
 		}
 		foreach ($statement as $i => &$row) {
-			$row = (!empty($alias) ? "`{$alias}`." : '') . '`' . strtolower($row) . '`';
+			$row = self::parseFieldAlias($row, $alias);
 			if (strexists($row, ' ')) {
 				unset($statement[$i]);
 			}
