@@ -46,6 +46,10 @@ if ($do == 'display') {
 			$users_table->searchWithName($username);
 		}
 
+		if (user_is_vice_founder()) {
+			$users_table->searchWithOwnerUid($_W['uid']);
+		}
+
 		$users_table->searchWithPage($pindex, $psize);
 		$users = $users_table->searchUsersList();
 		$total = $users_table->getLastQueryTotal();

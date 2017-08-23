@@ -823,49 +823,6 @@ function user_info_save($user, $is_founder_group = false) {
 }
 
 /**
- * 获取用户和副创始人列表数据
- * @param array $condition
- * @param array $paper
- * @return array
- */
-function user_list($condition = array(), $paper = array()) {
-	global $_W;
-	$sql = "SELECT %s FROM " . tablename('users') . "AS u LEFT JOIN " .tablename('users_profile') . "AS p ON u.uid = p.uid WHERE 1=1 ";
-	if (!empty($condition['status'])) {
-		$sql .= " AND u.status = :status";
-		$param[':status'] = $condition['status'];
-	}
-
-	if (!empty($condition['type'])) {
-		$sql .= " AND u.type = :type";
-		$param[':type'] = $condition['type'];
-	}
-
-	if (!empty($condition['founder_groupid'])) {
-		$founder_groupid = implode(',' , $condition['founder_groupid']);
-		$sql .= " AND u.founder_groupid IN ($founder_groupid)";
-	}
-
-	if (!empty($condition['username'])) {
-		$sql .= " AND u.username LIKE :username";
-		$param[':username'] = "%{$condition['username']}%";
-	}
-
-	if (user_is_vice_founder()) {
-		$sql .= ' AND u.owner_uid = ' . $_W['uid'];
-	}
-	$limit = " ORDER BY uid DESC LIMIT " . ($paper[0] - 1) * $paper[1] . "," . $paper[1];
-
-	$list = pdo_fetchall(sprintf($sql, 'u.*, p.avatar') . $limit, $param);
-	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'), $param);
-
-	return array(
-		'list' => $list,
-		'total' => $total,
-	);
-}
-
-/**
  * 用户详情信息格式化
  * @param $profile
  * @return mixed
