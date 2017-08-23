@@ -227,7 +227,7 @@ function buildframes($framename = ''){
 			$new_modules = array_reverse($modules);
 			$i = 0;
 			foreach ($new_modules as $module) {
-				if (!empty($module['issystem'])) {
+				if (!empty($module['issystem']) || $module['wxapp_support'] == 2) {
 					continue;
 				}
 				if ($i == 5) {
