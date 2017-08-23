@@ -177,7 +177,7 @@ function cache_build_frame_menu() {
 
 			foreach ($menu['section'] as $section_name => $section) {
 				$displayorder = max(count($section['menu']), 1);
-				
+
 				//查询此节点下新增的菜单
 				if (empty($section['menu'])) {
 					$section['menu'] = array();

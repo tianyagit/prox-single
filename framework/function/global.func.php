@@ -1223,7 +1223,7 @@ function strip_gpc($values, $type = 'g') {
  * @return boolean | string 正常返回路径，否则返回空
  */
 function parse_path($path) {
-	$danger_char = array('../', '{php', '<?php', '<%', '<?');
+	$danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\');
 	foreach ($danger_char as $char) {
 		if (strexists($path, $char)) {
 			return false;
@@ -1366,11 +1366,37 @@ function url_is_safe($url, array $allowscheme = array('http','https'), $allowpor
 	if(isset($parseData['port'])&&!in_array($parseData['port'], $allowport)) {
 		return false;
 	}
+
+	if(!isset($parseData['host'])) {
+		return false;
+	}
+
+	if(strexists($parseData['host'],'127.0.0') || strexists($parseData['host'], 'localhost')) {
+		return false;
+	}
+
 	// 10 172 192 开头都不允许
-	$pattern = "(10|172|192)\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})";
-	if (preg_match($pattern, $url)) {
+	$pattern = "(10|172|192|127)\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})";
+	if (preg_match($pattern, $parseData['host'])) {
 		return false;
 	}
 
 	return true;
+}
+
+/**
+ *  指定开头的字符串
+ * @param $haystack
+ * @param $needles
+ * @return bool
+ */
+function startsWith($haystack, $needles)
+{
+	foreach ((array) $needles as $needle) {
+		if ($needle != '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+			return true;
+		}
+	}
+
+	return false;
 }

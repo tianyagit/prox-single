@@ -744,9 +744,7 @@ function user_list_format($users) {
 	if (empty($users)) {
 		return array();
 	}
-	$modules_table = table('modules');
 	$users_table = table('users');
-	$system_module_num = $modules_table->modulesCount();
 	$groups = $users_table->usersGroup();
 	$founder_groups = $users_table->usersFounderGroup();
 	foreach ($users as &$user) {
@@ -755,14 +753,8 @@ function user_list_format($users) {
 		if (empty($user['endtime'])) {
 			$user['endtime'] = '永久有效';
 		} else {
-			if ($user['endtime'] <= TIMESTAMP) {
-				$user['endtime'] = '服务已到期';
-			} else {
-				$user['endtime'] = date('Y-m-d', $user['endtime']);
-			}
+			$user['endtime'] = $user['endtime'] <= TIMESTAMP ? '服务已到期' : date('Y-m-d', $user['endtime']);
 		}
-
-		$user_role = $user['founder'] = $user['founder_groupid'] == 1 ? true : false;
 		$user['uniacid_num'] = $users_table->accountUsersNum($user['uid']);
 
 		$user['module_num'] =array();
@@ -771,28 +763,8 @@ function user_list_format($users) {
 		} else {
 			$group = $groups[$user['groupid']];
 		}
-		if ($user_role) {
-			$user['maxaccount'] = '不限';
-		}
-
-		if (empty($group)) {
-			continue;
-		}
-
-		if (empty($user_role)) {
-			$user['maxaccount'] = $group['maxaccount'];
-		}
+		$user['maxaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxaccount']);
 		$user['groupname'] = $group['name'];
-		$package = iunserializer($group['package']);
-		$group['package'] = uni_groups($package);
-		foreach ($group['package'] as $modules) {
-			if (is_array($modules['modules'])) {
-				foreach ($modules['modules'] as  $module) {
-					$user['module_num'][$module['name']] = $module['name'];
-				}
-			}
-		}
-		$user['module_nums'] = count($user['module_num']) + $system_module_num;
 		unset($user);
 	}
 	return $users;
@@ -848,49 +820,6 @@ function user_info_save($user, $is_founder_group = false) {
 		return error(-1, '增加失败，请稍候重试或联系网站管理员解决！');
 	}
 	return array('uid' => $user_add_id);
-}
-
-/**
- * 获取用户和副创始人列表数据
- * @param array $condition
- * @param array $paper
- * @return array
- */
-function user_list($condition = array(), $paper = array()) {
-	global $_W;
-	$sql = "SELECT %s FROM " . tablename('users') . "AS u LEFT JOIN " .tablename('users_profile') . "AS p ON u.uid = p.uid WHERE 1=1 ";
-	if (!empty($condition['status'])) {
-		$sql .= " AND u.status = :status";
-		$param[':status'] = $condition['status'];
-	}
-
-	if (!empty($condition['type'])) {
-		$sql .= " AND u.type = :type";
-		$param[':type'] = $condition['type'];
-	}
-
-	if (!empty($condition['founder_groupid'])) {
-		$founder_groupid = implode(',' , $condition['founder_groupid']);
-		$sql .= " AND u.founder_groupid IN ($founder_groupid)";
-	}
-
-	if (!empty($condition['username'])) {
-		$sql .= " AND u.username LIKE :username";
-		$param[':username'] = "%{$condition['username']}%";
-	}
-
-	if (user_is_vice_founder()) {
-		$sql .= ' AND u.owner_uid = ' . $_W['uid'];
-	}
-	$limit = " ORDER BY uid DESC LIMIT " . ($paper[0] - 1) * $paper[1] . "," . $paper[1];
-
-	$list = pdo_fetchall(sprintf($sql, 'u.*, p.avatar') . $limit, $param);
-	$total = pdo_fetchcolumn(sprintf($sql, 'COUNT(*)'), $param);
-
-	return array(
-		'list' => $list,
-		'total' => $total,
-	);
 }
 
 /**

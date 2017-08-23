@@ -9,15 +9,14 @@ namespace We7\V10;
 
 error_reporting(~E_WARNING || ~E_NOTICE);
 defined('IN_IA') or exit('Access Denied');
-require __DIR__.'/../../framework/library/pinyin/pinyin.php';
+
 class UpdateModule {
 
 	public $description = '更新模块首字母';
 	public function up() {
-		$pinyin = new \Pinyin_Pinyin();
 		$module_list = pdo_getall('modules', array('title_initial' => ''));
 		foreach ($module_list as $module) {
-			$title = $pinyin->get_first_char($module['title']);
+			$title = get_first_pinyin($module['title']);
 			pdo_update('modules', array('title_initial' => $title), array('mid' => $module['mid']));
 		}
 	}

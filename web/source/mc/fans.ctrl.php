@@ -11,7 +11,6 @@ load()->model('mc');
 
 $dos = array('display', 'add_tag', 'del_tag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'download_fans', 'sync', 'fans_sync_set', 'register');
 $do = in_array($do, $dos) ? $do : 'display';
-uni_user_permission_check('mc_fans');
 
 if ($do == 'display') {
 	$_W['page']['title'] = '粉丝列表';

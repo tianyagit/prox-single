@@ -45,6 +45,11 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	if($redirect == 'referer') {
 		$redirect = referer();
 	}
+	// 只能跳转到本域名下
+	if(startsWith($redirect,'http') && !startsWith($redirect, $_W['siteroot'])) {
+		$redirect = $_W['siteroot'];
+	}
+
 	if($redirect == '') {
 		$type = in_array($type, array('success', 'error', 'info', 'warning', 'ajax', 'sql')) ? $type : 'info';
 	} else {
@@ -451,6 +456,7 @@ function buildframes($framename = ''){
 
 	//进入小程序后的菜单
 	if (FRAME == 'wxapp') {
+		load()->model('wxapp');
 		$version_id = intval($_GPC['version_id']);
 		$wxapp_version = wxapp_version($version_id);
 		if (!empty($wxapp_version['modules'])) {
@@ -529,6 +535,22 @@ function filter_url($params) {
 	$query_arr['page'] = 1;
 	$query = http_build_query($query_arr);
 	return './index.php?' . $query;
+}
+
+function get_url_params($url) {
+	$result = array();
+	if (empty($url)) {
+		return $result;
+	}
+	$components = parse_url($url);
+	$params = explode('&',$components['query']);
+	foreach ($params as $param) {
+		if (!empty($param)) {
+			$param_array = explode('=',$param);
+			$result[$param_array[0]] = $param_array[1];
+		}
+	}
+	return $result;
 }
 /**
  * 系统菜单中预设的附加权限

@@ -41,9 +41,13 @@ class UsersTable extends We7Table {
 		return $this;
 	}
 
+	public function searchWithOwnerUid($owner_uid) {
+		$this->query->where('u.owner_uid', $owner_uid);
+		return $this;
+	}
+
 	public function accountUsersNum($uid) {
-		$count = $this->query->from('uni_account_users')->select('COUNT(*) as total')->where('uid', $uid)->getall();
-		return $count[0]['total'];
+		return $this->query->from('uni_account_users')->where('uid', $uid)->count();
 	}
 
 	public function usersGroup() {
