@@ -101,8 +101,14 @@ $we7_file_permission = array(
 		'direct' => array(),
 		'vice_founder' => array('mc*'),
 		'owner' => array('mc*'),
-		'manager' => array(),
-		'operator' => array(),
+		'manager' => array(
+			'chats',
+			'fields',
+		),
+		'operator' => array(
+			'chats',
+			'fields',
+		),
 		'clerk' => array()
 	),
 	'module' => array(
@@ -127,8 +133,12 @@ $we7_file_permission = array(
 		'direct' => array(),
 		'vice_founder' => array('platform*'),
 		'owner' => array('platform*'),
-		'manager' => array(),
-		'operator' => array(),
+		'manager' => array(
+			'material-post',
+		),
+		'operator' => array(
+			'material-post',
+		),
 		'clerk' => array()
 	),
 	'profile' => array(
