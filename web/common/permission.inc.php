@@ -104,10 +104,12 @@ $we7_file_permission = array(
 		'manager' => array(
 			'chats',
 			'fields',
+			'group',
 		),
 		'operator' => array(
 			'chats',
 			'fields',
+			'group',
 		),
 		'clerk' => array()
 	),
@@ -157,8 +159,12 @@ $we7_file_permission = array(
 		),
 		'vice_founder' => array('site*'),
 		'owner' => array('site*'),
-		'manager' => array(),
-		'operator' => array(),
+		'manager' => array(
+			'editor',
+		),
+		'operator' => array(
+			'editor',
+		),
 		'clerk' => array(
 			'entry',
 		)
