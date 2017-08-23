@@ -8,21 +8,17 @@
  *  创建更新文件 php console make:upgrade name=create_update_wxapp
  *  执行更新     php console upgrade.
  */
-
-error_reporting( 0);
+error_reporting(0);
 
 if (strtoupper(php_sapi_name()) != 'CLI') {
 	We7Command::line('只能在命令行执行');
 }
-
-
 
 include_once __DIR__.'/framework/bootstrap.inc.php';
 set_time_limit(0);
 @ini_set('memory_limit', '1356M');
 $path = dirname(__FILE__);
 chdir($path);
-
 
 We7Command::execute();
 
@@ -150,6 +146,7 @@ class We7CreateUpgradeCommand extends We7Command {
 
 	private function getPath() {
 		$dir = $this->getDir();
+
 		return 'upgrade'.DIRECTORY_SEPARATOR.$dir;
 	}
 
@@ -170,7 +167,7 @@ class We7CreateUpgradeCommand extends We7Command {
 	private function template($name) {
 		$time = time();
 		$version = $this->getVersion();
-		$namespace = 'We7\V'.str_replace('.','',$version);
+		$namespace = 'We7\V'.str_replace('.', '', $version);
 		$name = $this->toClassName($name);
 		$template = <<<EOT
 <?php
@@ -216,8 +213,9 @@ class We7UpgradeCommand extends We7Command {
 		$filename = $this->argument('filename');
 		$version = $this->argument('version');
 		// 强制执行单个文件更新
-		if(!empty($filename) && !empty($version)) {
-			$this->update_single_file($filename,$version);
+		if (!empty($filename) && !empty($version)) {
+			$this->update_single_file($filename, $version);
+
 			return;
 		}
 		//执行全部更新
@@ -227,12 +225,14 @@ class We7UpgradeCommand extends We7Command {
 	private function update_single_file($filename, $version) {
 		$filepath = 'upgrade'.DIRECTORY_SEPARATOR.$version.DIRECTORY_SEPARATOR.$filename.'.php';
 		$include = include_once $filepath;
-		if(!$include) {
+		if (!$include) {
 			self::line($filepath.'文件未找到');
+
 			return;
 		}
 		$batch = $this->get_max_batch();
 		$this->update_single($filename, $version, $batch);
+
 		return;
 	}
 
@@ -241,6 +241,7 @@ class We7UpgradeCommand extends We7Command {
 		$files = $this->diff_files();
 		if (count($files) == 0) {
 			$this->line('没有要更新的文件');
+
 			return;
 		}
 		if ($this->confirm('确认更新吗?')) {
@@ -261,6 +262,7 @@ class We7UpgradeCommand extends We7Command {
 	private function get_max_batch() {
 		$batch = pdo_fetch('SELECT MAX(batch) as batch FROM '.tablename('upgrade'));
 		$batch = $batch['batch'] + 1;
+
 		return $batch;
 	}
 
@@ -352,7 +354,7 @@ PRIMARY KEY (`id`)
 				$path = $file->getPath();
 				$version = pathinfo($path, PATHINFO_BASENAME);
 				$basename = $file->getBasename('.php');
-				if ($basename != 'upgrade' || $basename != 'upgrade_0.x_to_1.0') {
+				if ($basename != 'upgrade' && $basename != 'upgrade_0.x_to_1.0') {
 					$files[$basename] = $version;
 				}
 			}
