@@ -8,9 +8,10 @@
 会提示更新  输入Y 更新
 
 ##创建本地更新文件
+>创建本地更新文件只有微擎内部开发人员使用
 
 `php console.php make:upgrade name={name}`
 
 示例  
 
-`php console.php make:upgrade name= update_uniaccount`
+`php console.php make:upgrade name=update_uniaccount`
