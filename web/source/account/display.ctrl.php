@@ -5,7 +5,9 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+
 load()->model('user');
+
 $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';
@@ -43,6 +45,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 }
 
 if ($do == 'display') {
+	
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 	

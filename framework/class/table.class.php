@@ -32,6 +32,9 @@ abstract class We7Table {
 		return $this;
 	}
 	
+	/**
+	 * 获取上一次查询的除去Limit的条数
+	 */
 	public function getLastQueryTotal() {
 		return $this->query->getLastQueryTotal();
 	}

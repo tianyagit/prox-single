@@ -182,7 +182,7 @@ function uni_fetch($uniacid = 0) {
 	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
 	
 	//切换公号链接
-	$account['switchurl'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
+	$account['switchurl'] = wurl('account/display/switch', array('uniacid' => $account['uniacid']));
 	//公众号剩余短信
 	if (!empty($account['settings']['notify'])) {
 		$account['sms'] = $account['setting']['notify']['sms']['balance'];
