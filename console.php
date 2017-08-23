@@ -9,19 +9,16 @@
  *  执行更新     php console upgrade.
  */
 
-//error_reporting( 0);
+error_reporting( 0);
 
 if (strtoupper(php_sapi_name()) != 'CLI') {
 	We7Command::line('只能在命令行执行');
 }
-set_error_handler(function ($error) {
-	print_r($error);
-}, E_USER_ERROR);
 
-set_time_limit(0);
 
 
 include_once __DIR__.'/framework/bootstrap.inc.php';
+set_time_limit(0);
 @ini_set('memory_limit', '1356M');
 $path = dirname(__FILE__);
 chdir($path);
@@ -153,7 +150,6 @@ class We7CreateUpgradeCommand extends We7Command {
 
 	private function getPath() {
 		$dir = $this->getDir();
-
 		return 'upgrade'.DIRECTORY_SEPARATOR.$dir;
 	}
 
@@ -174,6 +170,7 @@ class We7CreateUpgradeCommand extends We7Command {
 	private function template($name) {
 		$time = time();
 		$version = $this->getVersion();
+		$namespace = 'We7\V'.str_replace('.','',$version);
 		$name = $this->toClassName($name);
 		$template = <<<EOT
 <?php
@@ -182,6 +179,8 @@ class We7CreateUpgradeCommand extends We7Command {
  * Time: $time
  * @version $version
  */
+namespace $namespace;
+
 class $name {
 
 	/**
@@ -255,15 +254,13 @@ class We7UpgradeCommand extends We7Command {
 	private function doUpgrade($files) {
 		$batch = $this->get_max_batch();
 		foreach ($files as $filename => $version) {
-			$batch = $batch + 1;
-			echo $filename;
 			$this->update_single($filename, $version, $batch);
 		}
 	}
 
 	private function get_max_batch() {
-		$batch = pdo_fetch("SELECT MAX('batch') as batch FROM ".tablename('upgrade'));
-		$batch = $batch['batch'];
+		$batch = pdo_fetch('SELECT MAX(batch) as batch FROM '.tablename('upgrade'));
+		$batch = $batch['batch'] + 1;
 		return $batch;
 	}
 
