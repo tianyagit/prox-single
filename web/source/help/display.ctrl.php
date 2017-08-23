@@ -8,4 +8,7 @@ global $_W;
 load()->model('user');
 
 $_W['page']['title'] = '帮助系统';
+if ($_SERVER['https'] == 'on') {
+	header("Content-Security-Policy: upgrade-insecure-requests");
+}
 template('help/display');
