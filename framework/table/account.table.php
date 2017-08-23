@@ -25,6 +25,19 @@ class AccountTable extends We7Table {
 		$list = $this->query->getall('a.uniacid');
 		return $list;
 	}
+
+	/**
+	 *  获取用户所能操作的所有公众号
+	 */
+	public function userOwnedAccount() {
+		global $_W;
+		if (!$_W['isfounder']) {
+			$users_table = table('users');
+			$uniacid_list = $users_table->userOwnedAccount($_W['uid']);
+			$this->where('uniacid', $uniacid_list);
+		}
+		return $this->from('uni_account')->getall('uniacid');
+	}
 	
 	public function searchWithKeyword($title) {
 		$this->query->where('a.name LIKE', "%{$title}%");
