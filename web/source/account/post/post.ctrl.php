@@ -18,6 +18,13 @@ $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
 	itoast('请选择要编辑的公众号', url('account/manager'), 'error');
 }
+$defaultaccount = uni_account_default($uniacid);
+if (!$defaultaccount) {
+	itoast('无效的acid', url('account/manager'), 'error');
+}
+$acid = $defaultaccount['acid']; //强制使用默认的acid
+
+
 $state = uni_permission($_W['uid'], $uniacid);
 $dos = array('base', 'sms', 'modules_tpl');
 $role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
@@ -43,7 +50,6 @@ if($do == 'base') {
 	if (!$role_permission) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
-
 	if($_W['ispost'] && $_W['isajax']) {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
@@ -57,7 +63,11 @@ if($do == 'base') {
 					'qrcodeimgsrc' => ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg',
 					'headimgsrc' => ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg'
 				);
-				$result = utility_image_rename($_GPC['imgsrc'], $image_type[$type]);
+				$imgsrc = $_GPC['imgsrc'];
+				if(!file_is_image($imgsrc)){
+					$result = '';
+				}
+				$result = utility_image_rename($imgsrc, $image_type[$type]);
 				break;
 			case 'name':
 				$uni_account = pdo_update('uni_account', array('name' => trim($_GPC['request_data'])), array('uniacid' => $uniacid));
