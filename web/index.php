@@ -14,7 +14,7 @@ load()->model('permission');
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
 }
-$_W['acl'] = $acl = require IA_ROOT . '/web/common/permission.inc.php';
+$acl = require IA_ROOT . '/web/common/permission.inc.php';
 if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $controller != 'cloud' && $controller != 'utility' && $controller != 'account') {
 	$_W['siteclose'] = true;
 	if ($controller == 'account' && $action == 'welcome') {
@@ -98,7 +98,7 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 			itoast('', url('wxapp/display'), 'info');
 		}
 	}
-	$_W['acl'] = $acl = permission_build();
+	$acl = permission_build();
 	if (empty($acl[$controller][$_W['role']]) || (!in_array($controller.'*', $acl[$controller][$_W['role']]) && !in_array($action, $acl[$controller][$_W['role']]))) {
 		message('不能访问, 需要相应的权限才能访问！');
 	}

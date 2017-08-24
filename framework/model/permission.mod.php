@@ -13,9 +13,14 @@ function permission_build() {
 	global $_W;
 	$we7_file_permission = require IA_ROOT . '/web/common/permission.inc.php';
 	$permission_frames = require IA_ROOT . '/web/common/frames.inc.php';
-
 	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OPERATOR, ACCOUNT_MANAGE_NAME_MANAGER)) || empty($_W['uniacid'])) {
 		return $we7_file_permission;
+	}
+
+	$cachekey = cache_system_key("permission:{$_W['uniacid']}:{$_W['uid']}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
 	}
 	$permission_exist = uni_user_permission_exist($_W['uid'], $_W['uniacid']);
 	if (empty($permission_exist)) {
@@ -23,8 +28,9 @@ function permission_build() {
 		$we7_file_permission['site'][$_W['role']] = array('site*');
 		$we7_file_permission['mc'][$_W['role']] = array('mc*');
 		$we7_file_permission['profile'][$_W['role']] = array('profile*');
-		$we7_file_permission['module'][$_W['role']] = array('manage-account', 'diaplay');
+		$we7_file_permission['module'][$_W['role']] = array('manage-account', 'display');
 		$we7_file_permission['wxapp'][$_W['role']] = array('display', 'payment', 'post', 'version');
+		cache_write($cachekey, $we7_file_permission);
 		return $we7_file_permission;
 	}
 	$user_account_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], PERMISSION_ACCOUNT);
@@ -55,6 +61,7 @@ function permission_build() {
 			$we7_file_permission[$permission_val['controller']][$_W['role']][] = $permission_val['action'];
 		}
 	}
+	cache_write($cachekey, $we7_file_permission);
 	return $we7_file_permission;
 }
 
@@ -71,7 +78,7 @@ function permission_get_nameandurl($permission) {
 			continue;
 		}
 		foreach ($menu as $permission_name) {
-			$url_query_array = get_url_params($permission_name['url']);
+			$url_query_array = url_params($permission_name['url']);
 			$result[] = array(
 				'url' => $permission_name['url'],
 				'controller' => $url_query_array['c'],

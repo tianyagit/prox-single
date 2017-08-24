@@ -239,6 +239,8 @@ if ($do == 'edit') {
 				pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => PERMISSION_WXAPP));
 			}
 		}
+		$cachekey = cache_system_key("permission:{$uniacid}:{$uid}");
+		cache_delete($cachekey);
 		itoast('操作菜单权限成功！', referer(), 'success');
 	}
 	template('account/set-permission');
