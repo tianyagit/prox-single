@@ -5,7 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-$we7_file_permission = array();
 $we7_file_permission = array(
 	'account' => array(
 		'default' => '',
