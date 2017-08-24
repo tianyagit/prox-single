@@ -71,11 +71,11 @@
 	<table c class="table we7-table table-hover" >
 		<tr>
 			<th colspan="5" class="text-left">
-				<span class="we7-padding-right">会员权限组： {{owner.group.name}}</span>
+				<span class="we7-padding-right">应用权限组</span>
 				<span></span>
 			</th>
 			{if canmodify}
-			<th class="text-right"><a href="{php echo url('module/group/post')}" class="color-default">添加套餐组</a></th>
+			<th class="text-right"><a class="color-default" data-toggle="modal" data-target="#change-group">修改</a></th>
 			{/if}
 		</tr>
 		<tbody ng-repeat="module_tpl in modules_tpl | filter:{'type':'extend'}">
@@ -87,10 +87,6 @@
 				<div class="link-group">
 					<a href="javascript:;" class="color-default" ng-show="module_tpl.show" ng-click="module_tpl.show = false">收起</a>
 					<a href="javascript:;" class="color-default" ng-show="!module_tpl.show" ng-click="module_tpl.show = true">展开</a>
-					<!--<a href="javascript:;" class="color-default">删除</a>-->
-					{if canmodify}
-					<a href="javascript:;" class="color-default" data-toggle="modal" data-target="#change-group">编辑/删除</a>
-					{/if}
 				</div>
 			</td><!--默认展开-->
 		</tr>
@@ -138,7 +134,13 @@
 	{if !in_array($owner['uid'], $founders)}
 	<table class="table we7-table table-hover account-package-extra">
 		<tr>
-			<th colspan="6" class="text-left we7-padding-right"><span>附加权限</span></th>
+			<th colspan="5" class="text-left">
+				<span class="we7-padding-right">附加权限</span>
+				<span></span>
+			</th>
+			{if canmodify}
+			<th class="text-right"><a class="color-default" data-toggle="modal" data-target="#jurisdiction-add">修改</a></th>
+			{/if}
 		</tr>
 		<tr>
 			<td colspan="5">
@@ -161,8 +163,7 @@
 	{/if}
 	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
 	<p>
-		<a href="javascript:;" class="btn btn-primary" data-toggle="modal" data-target="#change-group">修改套餐</a>
-		<a href="javascript:;" class="btn btn-primary" data-toggle="modal" data-target="#jurisdiction-add">修改附加权限</a>
+
 	</p>
 	<div  class="uploader-modal modal fade module" id="jurisdiction-add">
 		<div class="modal-dialog modal-lg">
@@ -209,47 +210,6 @@
 								</div>
 							</div>
 							{/loop}
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="addExtend()">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="modal" id="jurisdiction-add2">
-		<div class="modal-dialog we7-modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<ul role="tablist" class="nav nav-pills">
-						<li class="active"><a class="we7-padding-horizontal" data-toggle="tab" role="tab" aria-controls="content-modules" href="#content-modules">模块</a></li>
-					</ul>
-				</div>
-				<div class="modal-body">
-					<div class="tab-content">
-						<div id="content-modules" class="tab-pane active" role="tabpanel">
-							<table class="table we7-table table-hover vertical-middle">
-								<col width="280px">
-								<col width="220px">
-								<col />
-								<tr>
-									<th>模块名称</th>
-									<th>模块标识</th>
-									<th></th>
-								</tr>
-								{loop $modules $module_name $module}
-								{if empty($module['issystem']) && $module['wxapp_support'] == 2}
-								<tr>
-									<td>{$module['title']}{if $module['issystem']}<span class="label label-success">系统模块</span>{/if}</td>
-									<td>{$module['name']}</td>
-									<td><a class="btn btn-default js-btn-select {if is_array($current_module_names) && in_array($module_name, $current_module_names)}btn-primary{/if}" data-title="{$module['title']}" data-name="{$module['name']}" onclick="$(this).toggleClass('btn-primary')">选取</a></td>
-								</tr>
-								{/if}
-								{/loop}
-							</table>
 						</div>
 					</div>
 				</div>
