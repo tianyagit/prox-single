@@ -225,7 +225,7 @@ function array_elements($keys, $src, $default = FALSE) {
 
 /**
  * 根据键值对数组排序
- * 
+ *
  * @param array $array 需要排序的数组
  * @param string $keys 用来排序的键名
  * @param string $type 排序规则
@@ -273,7 +273,7 @@ function range_limit($num, $downline, $upline, $returnNear = true) {
 /**
  * JSON编码,加上转义操作,适合于JSON入库
  * @param string $value
- * @param int 	 $options 
+ * @param int 	 $options
  * @return mixed
  */
 function ijson_encode($value, $options = 0) {
@@ -284,7 +284,7 @@ function ijson_encode($value, $options = 0) {
 		$str = json_encode($value);
 		$json_str = preg_replace_callback("#\\\u([0-9a-f]{4})#i", function($matchs){
 			return iconv('UCS-2BE', 'UTF-8', pack('H4', $matchs[1]));
-			}, $str);
+		}, $str);
 	} else {
 		$json_str = json_encode($value, $options);
 	}
@@ -482,11 +482,11 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 	if ($context['ajaxcallback']) {
 		$context['isajax'] = true;
 	}
-	
+
 	if ($context['callbackfuncname']) {
 		$callbackfunc = $context['callbackfuncname'];
 	}
-	
+
 	$pdata['tcount'] = $total;
 	$pdata['tpage'] = (empty($pageSize) || $pageSize < 0) ? 1 : ceil($total / $pageSize);
 	if ($pdata['tpage'] <= 1) {
@@ -1039,18 +1039,18 @@ function utf8_bytes($cp) {
 	if ($cp > 0x10000){
 		# 4 bytes
 		return	chr(0xF0 | (($cp & 0x1C0000) >> 18)).
-		chr(0x80 | (($cp & 0x3F000) >> 12)).
-		chr(0x80 | (($cp & 0xFC0) >> 6)).
-		chr(0x80 | ($cp & 0x3F));
+			chr(0x80 | (($cp & 0x3F000) >> 12)).
+			chr(0x80 | (($cp & 0xFC0) >> 6)).
+			chr(0x80 | ($cp & 0x3F));
 	}else if ($cp > 0x800){
 		# 3 bytes
 		return	chr(0xE0 | (($cp & 0xF000) >> 12)).
-		chr(0x80 | (($cp & 0xFC0) >> 6)).
-		chr(0x80 | ($cp & 0x3F));
+			chr(0x80 | (($cp & 0xFC0) >> 6)).
+			chr(0x80 | ($cp & 0x3F));
 	}else if ($cp > 0x80){
 		# 2 bytes
 		return	chr(0xC0 | (($cp & 0x7C0) >> 6)).
-		chr(0x80 | ($cp & 0x3F));
+			chr(0x80 | ($cp & 0x3F));
 	}else{
 		# 1 byte
 		return chr($cp);
@@ -1223,7 +1223,8 @@ function strip_gpc($values, $type = 'g') {
  * @return boolean | string 正常返回路径，否则返回空
  */
 function parse_path($path) {
-	$danger_char = array('../', '{php', '<?php', '<%', '<?');
+	$path = str_replace(array("\0","%00","\r"),'',$path);
+	$danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\', '\\\\' ,'\\', '..\\\\');
 	foreach ($danger_char as $char) {
 		if (strexists($path, $char)) {
 			return false;
@@ -1295,7 +1296,7 @@ function strip_emoji($nickname) {
 	// Match Dingbats
 	$regexDingbats = '/[\x{2700}-\x{27BF}]/u';
 	$clean_text = preg_replace($regexDingbats, '', $clean_text);
-	
+
 	$clean_text = str_replace("'",'',$clean_text);
 	$clean_text = str_replace('"','',$clean_text);
 	$clean_text = str_replace('“','',$clean_text);
@@ -1336,7 +1337,7 @@ function emoji_unicode_encode($string) {
 function getglobal($key) {
 	global $_W;
 	$key = explode('/', $key);
-	
+
 	$v = &$_W;
 	foreach ($key as $k) {
 		if (!isset($v[$k])) {
@@ -1345,4 +1346,63 @@ function getglobal($key) {
 		$v = &$v[$k];
 	}
 	return $v;
+}
+
+
+/**
+ *  内网 端口 scheme验证
+ *  验证是否是安�url
+ * @param $url
+ * @param array $scheme
+ */
+function url_is_safe($url, array $allowscheme = array('http','https'),
+                     $allowport = array('80','443')) {
+	$url = str_replace(array("\0","%00","\r"),'',$url);
+	$parseData = parse_url($url);
+	if (!isset($parseData['scheme'])) {
+		return false;
+	}
+
+	if(!in_array($parseData['scheme'], $allowscheme)) {
+		return false;
+	}
+
+	if(isset($parseData['port'])&&!in_array($parseData['port'], $allowport)) {
+		return false;
+	}
+
+	if(!isset($parseData['host'])) {
+		return false;
+	}
+
+	if(!DEVELOPMENT) { //  开发模式才可以 访问127.0.0.*
+		if(strexists($parseData['host'],'127.0.0') || strexists($parseData['host'], 'localhost')) {
+			return false;
+		}
+	}
+
+	// 10 172 192 开头都不允�
+	$pattern = "(10|172|192|127)\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})";
+	if (preg_match($pattern, $parseData['host'])) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ *  指定开头的字符
+ * @param $haystack
+ * @param $needles
+ * @return bool
+ */
+function startsWith($haystack, $needles)
+{
+	foreach ((array) $needles as $needle) {
+		if ($needle != '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+			return true;
+		}
+	}
+
+	return false;
 }
