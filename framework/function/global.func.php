@@ -1223,6 +1223,7 @@ function strip_gpc($values, $type = 'g') {
  * @return boolean | string 正常返回路径，否则返回空
  */
 function parse_path($path) {
+	$path = str_replace(array("\0","%00","\r"),'',$path);
 	$danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\', '\\\\' ,'\\', '..\\\\');
 	foreach ($danger_char as $char) {
 		if (strexists($path, $char)) {
@@ -1373,8 +1374,10 @@ function url_is_safe($url, array $allowscheme = array('http','https'),
 		return false;
 	}
 
-	if(strexists($parseData['host'],'127.0.0') || strexists($parseData['host'], 'localhost')) {
-		return false;
+	if(!DEVELOPMENT) { //  开发模式才可以 访问127.0.0.*
+		if(strexists($parseData['host'],'127.0.0') || strexists($parseData['host'], 'localhost')) {
+			return false;
+		}
 	}
 
 	// 10 172 192 开头都不允许
