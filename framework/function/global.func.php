@@ -1351,7 +1351,7 @@ function getglobal($key) {
 
 /**
  *  内网 端口 scheme验证
- *  验证是否是安�url
+ *  验证是否是安全url
  * @param $url
  * @param array $scheme
  */
