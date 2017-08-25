@@ -300,7 +300,7 @@ function ihttp_allow_host($host) {
 	$pattern = "/^(10|172|192|127)/";
 	if (preg_match($pattern, $host) && isset($_W['setting']['ip_white_list'])) {
 		$ip_white_list = $_W['setting']['ip_white_list'];
-		if (isset($ip_white_list[$host]) && !$ip_white_list[$host]['status']) {
+		if ($ip_white_list && isset($ip_white_list[$host]) && !$ip_white_list[$host]['status']) {
 			return false;
 		}
 	}
