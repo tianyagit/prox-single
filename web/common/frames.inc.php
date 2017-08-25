@@ -121,7 +121,7 @@ $we7_system_menu['account'] = array(
 					'title' => '支付参数',
 					'url' => url('profile/payment'),
 					'icon' => 'wi wi-pay-setting',
-					'permission_name' => 'profile_setting',
+					'permission_name' => 'profile_pay_setting',
 				),
 			),
 		),
