@@ -18,6 +18,10 @@ if ($do == 'display') {
 		if (!empty($user_owned_account) && is_array($user_owned_account)) {
 			foreach ($user_owned_account as $uniacid => $role) {
 				$account_module = uni_modules_by_uniacid($uniacid);
+				$account_user_module = pdo_getall('users_permission', array('uniacid' => $uniacid, 'uid' => $_W['uid']), array(), 'type');
+				if (!empty($account_user_module) && is_array($account_user_module)) {
+					$account_module = array_intersect_key($account_module, $account_user_module);
+				}
 				$user_module = array_merge($user_module, $account_module);
 			}
 		}
