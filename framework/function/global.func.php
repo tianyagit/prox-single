@@ -1381,7 +1381,7 @@ function url_is_safe($url, array $allowscheme = array('http','https'),
 		}
 	}
 
-	// 10 172 192 开头都不允�
+	// 10 172 192 开头都不允许
 	$pattern = "(10|172|192|127)\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})\\.([0-1][0-9]{0,2}|[2][0-5]{0,2}|[3-9][0-9]{0,1})";
 	if (preg_match($pattern, $parseData['host'])) {
 		return false;
@@ -1391,7 +1391,7 @@ function url_is_safe($url, array $allowscheme = array('http','https'),
 }
 
 /**
- *  指定开头的字符
+ *  指定开头的字符串
  * @param $haystack
  * @param $needles
  * @return bool
