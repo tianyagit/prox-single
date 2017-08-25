@@ -13,6 +13,15 @@ $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
 	$user_module = user_modules($_W['uid']);
+	if (!$_W['isfounder']) {
+		$user_owned_account = pdo_getall('uni_account_users', array('uid' => $_W['uid']), array(), 'uniacid');
+		if (!empty($user_owned_account) && is_array($user_owned_account)) {
+			foreach ($user_owned_account as $uniacid => $role) {
+				$account_module = uni_modules_by_uniacid($uniacid);
+				$user_module = array_merge($user_module, $account_module);
+			}
+		}
+	}
 	foreach ($user_module as $key => $module_value) {
 		if (!empty($module_value['issystem'])) {
 			unset($user_module[$key]);
