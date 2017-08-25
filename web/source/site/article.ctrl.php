@@ -114,12 +114,10 @@ if ($do == 'display') {
 			preg_match('/&lt;img.*?src=&quot;?(.+\.(jpg|gif|bmp|bnp|png))&quot;/', $_GPC['content'], $match);
 			if (!empty($match[1])) {
 				$url = $match[1];
-				if(url_is_safe($url)) { // 防止 ssrf 漏洞
-					$file = file_remote_attach_fetch($url);
-					if (!is_error($file)) {
-						$data['thumb'] = $file;
-						file_remote_upload($file);
-					}
+				$file = file_remote_attach_fetch($url);
+				if (!is_error($file)) {
+					$data['thumb'] = $file;
+					file_remote_upload($file);
 				}
 			}
 		} else {

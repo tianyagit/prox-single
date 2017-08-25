@@ -6,7 +6,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 error_reporting(0);
-checklogin();// 验证登录
 global $_W;
 load()->func('file');
 load()->func('communication');
@@ -635,9 +634,6 @@ if ($do == 'networktolocal') {
 		$type = 'image';
 	}
 
-	if (! url_is_safe($url)) {
-		exit('Access Denied');
-	}
 
 	$material = material_network_to_local($url, $uniacid, $uid, $type);
 	if (is_error($material)) {
@@ -671,9 +667,7 @@ if ($do == 'networktowechat') {
 	if (!in_array($type,array('image','video'))) {
 		$type = 'image';
 	}
-	if (! url_is_safe($url)) {
-		exit('Access Denied');
-	}
+
 	$material = material_network_to_wechat($url, $uniacid, $uid, $acid, $type); //网络图片转为 微信 图片
 	if (is_error($material)) {
 		iajax(1, $material['message']);
