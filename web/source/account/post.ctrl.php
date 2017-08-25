@@ -43,7 +43,6 @@ if($do == 'base') {
 	if (!$role_permission) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
-
 	if($_W['ispost'] && $_W['isajax']) {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
@@ -57,7 +56,11 @@ if($do == 'base') {
 					'qrcodeimgsrc' => ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg',
 					'headimgsrc' => ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg'
 				);
-				$result = utility_image_rename($_GPC['imgsrc'], $image_type[$type]);
+				$imgsrc = $_GPC['imgsrc'];
+				if(!file_is_image($imgsrc)){
+					$result = '';
+				}
+				$result = utility_image_rename($imgsrc, $image_type[$type]);
 				break;
 			case 'name':
 				$uni_account = pdo_update('uni_account', array('name' => trim($_GPC['request_data'])), array('uniacid' => $uniacid));
@@ -258,6 +261,7 @@ if($do == 'modules_tpl') {
 			'name' => '所有服务',
 			'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 			'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+			'type' => 'default'
 		);
 	} else {
 		if ($owner['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
@@ -265,6 +269,7 @@ if($do == 'modules_tpl') {
 		} else {
 			$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
 		}
+
 		$owner['group']['package'] = iunserializer($owner['group']['package']);
 		if(!empty($owner['group']['package'])){
 			foreach ($owner['group']['package'] as $package_value) {
@@ -274,11 +279,14 @@ if($do == 'modules_tpl') {
 						'name' => '所有服务',
 						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+						'type' => 'default'
 					);
 				}elseif ($package_value == 0) {
 
 				}else {
-					$modules_tpl[] = $unigroups[$package_value];
+					$defaultmodule = $unigroups[$package_value];
+					$defaultmodule['type'] = 'default';
+					$modules_tpl[] = $defaultmodule;
 				}
 			}
 		}
@@ -292,11 +300,14 @@ if($do == 'modules_tpl') {
 						'name' => '所有服务',
 						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+						'type' => 'extend' //前台显示区分
 					);
 				}elseif ($extendpackage_val['groupid'] == 0) {
 
 				}else {
-					$modules_tpl[] = $unigroups[$extendpackage_val['groupid']];
+					$ex_module = $unigroups[$extendpackage_val['groupid']];
+					$ex_module['type'] = 'extend';
+					$modules_tpl[] = $ex_module;
 				}
 			}
 		}
@@ -307,6 +318,10 @@ if($do == 'modules_tpl') {
 	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
 	$extend['modules'] = $current_module_names = iunserializer($extend['modules']);
 	$extend['templates'] = iunserializer($extend['templates']);
+	$canmodify = false;
+	if ($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']) {
+		$canmodify = true;
+	}
 	if (!empty($extend['modules'])) {
 		foreach ($extend['modules'] as $module_key => $module_val) {
 			$extend['modules'][$module_key] = module_fetch($module_val);
@@ -315,6 +330,7 @@ if($do == 'modules_tpl') {
 	if (!empty($extend['templates'])) {
 		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('id', 'name', 'title'));
 	}
+
 
 	template('account/manage-modules-tpl' . ACCOUNT_TYPE_TEMPLATE);
 }
