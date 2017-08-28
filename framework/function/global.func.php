@@ -1347,18 +1347,3 @@ function getglobal($key) {
 	return $v;
 }
 
-/**
- *  指定开头的字符串
- * @param $haystack 原始字符串
- * @param $needles 开头字符串
- * @return bool
- */
-function starts_with($haystack, $needles)
-{
-	foreach ((array) $needles as $needle) {
-		if ($needle != '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
-			return true;
-		}
-	}
-	return false;
-}
