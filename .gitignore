@@ -40,3 +40,5 @@ framework/builtin/core/module.cer
 
 we7/**/*
 vendor/**/*
+/composer.json
+/.php_cs.cache
