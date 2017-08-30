@@ -61,8 +61,7 @@ if(DEVELOPMENT) {
 } else {
 	error_reporting(0);
 }
-include __DIR__.'/../vendor/autoload.php';
-we7debug();
+
 
 if(!in_array($_W['config']['setting']['cache'], array('mysql', 'memcache', 'redis'))) {
 	$_W['config']['setting']['cache'] = 'mysql';
