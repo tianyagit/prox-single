@@ -53,7 +53,11 @@ class DB {
 			load()->library('pdo');
 			$dbclass = 'PDO';
 		}
-		$this->pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
+		$pdo = new $dbclass($dsn, $cfg['username'], $cfg['password'], $options);
+		if(DEVELOPMENT && class_exists('\DebugBar\DataCollector\PDO\TraceablePDO')) {
+			$pdo = new \DebugBar\DataCollector\PDO\TraceablePDO($pdo);
+		}
+		$this->pdo = $pdo;
 		//$this->pdo->setAttribute(pdo::ATTR_EMULATE_PREPARES, false);
 		$sql = "SET NAMES '{$cfg['charset']}';";
 		$this->pdo->exec($sql);

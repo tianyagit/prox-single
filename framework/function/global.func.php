@@ -1354,13 +1354,17 @@ function getglobal($key) {
  * @param $needles 开头字符串
  * @return bool
  */
-function starts_with($haystack, $needles)
-{
-	foreach ((array) $needles as $needle) {
-		if ($needle != '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
-			return true;
+if(!function_exists('starts_with')) {
+	function starts_with($haystack, $needles)
+	{
+		foreach ((array) $needles as $needle) {
+			if ($needle != '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+				return true;
+			}
 		}
+		return false;
 	}
-	return false;
 }
+
+
 
