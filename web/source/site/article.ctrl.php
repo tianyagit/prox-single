@@ -16,7 +16,6 @@ $parent = array();
 $children = array();
 
 if (!empty($category)) {
-	$children = '';
 	foreach ($category as $cid => $cate) {
 		if (!empty($cate['parentid'])) {
 			$children[$cate['parentid']][] = $cate;
@@ -236,6 +235,6 @@ if ($do == 'display') {
 			itoast('删除成功！', referer(), 'success');
 		} else {
 			itoast('删除失败！', referer(), 'error');
-		}				
+		}
 	}
 }
