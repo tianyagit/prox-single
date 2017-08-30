@@ -294,6 +294,7 @@ class DB {
 		$params = array_merge($fields['params'], $condition['params']);
 		$sql = "UPDATE " . $this->tablename($table) . " SET {$fields['fields']}";
 		$sql .= $condition['fields'] ? ' WHERE '.$condition['fields'] : '';
+
 		return $this->query($sql, $params);
 	}
 

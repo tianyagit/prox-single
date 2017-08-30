@@ -1,0 +1,23 @@
+{template 'common/header'}
+<!--小程序前端下载-->
+<div>
+    <div class="media media-wechat-setting">
+        <div class="media-left color-default">
+            <span class="wi wi-wxapp-webpack" style="font-size: 55px;"></span>
+        </div>
+        <div class="media-body media-middle ">
+            <h4 class="media-heading color-dark">{$wxapp_versions_info['modules'][0]['title']}</h4>
+            <div class="color-gray">版本: {$wxapp_versions_info['version']}</div>
+        </div>
+        <div class="media-right media-middle">
+            <a href="./index.php?c=wxapp&a=manage&do=getpackage&uniacid={$_W['uniacid']}&versionid={$wxapp_versions_info['id']}" class="btn btn-primary">立即下载</a>
+        </div>
+    </div>
+    <div class="wxapp-download-procedure">
+        <div class="btn btn-default" href="/web/index.php?a=account&c=openwechat&do=redirect">授权</div>
+        {if $do == 'auth'}
+            <div></div>
+        {/if}
+    </div>
+</div>
+{template 'common/footer'}

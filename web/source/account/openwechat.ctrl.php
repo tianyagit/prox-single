@@ -6,8 +6,13 @@
  * Time: 14:01
  */
 defined('IN_IA') or exit('Access Denied');
-$dos = array('test', 'ticket');
-$do = in_array($_GPC['do'], $dos)? $do : 'ticket';
+
+load()->classs('wxapp/api/wxappauthapi');
+load()->classs('wxapp/wxappoauth');
+load()->func('communication');
+
+//$dos = array('test', 'ticket');
+//$do = in_array($_GPC['do'], $dos)? $do : 'ticket';
 
 if($do == 'ticket') {
 	$post = file_get_contents('php://input');
@@ -19,6 +24,6 @@ if($do == 'ticket') {
 }
 
 if($do == 'test') {
-	WeUtility::logging('debug', 'weapp-ticket' . 'hello');
+	template('account/temp');
 }
 

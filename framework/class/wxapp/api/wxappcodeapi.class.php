@@ -21,7 +21,7 @@
 86002	  小程序还未设置昵称、头像、简介。请先设置完后再重新提交。
  * Class WxAppCodeException
  */
-class WxAppCodeException extends Exception {
+class WxAppCodeApiException extends Exception {
 
 	const SYSTEM_ERROR = -1;
 	const NOT_THREE_ERROR = 86000; //不是由第三方代小程序进行调用
@@ -36,7 +36,7 @@ class WxAppCodeException extends Exception {
 	const NOT_NICKNAME_ERROR = 86002; // 小程序还未设置昵称、头像、简介。请先设置完后再重新提交。
 }
 
-class WxAppCode {
+class WxAppCodeApi {
 
 	const COMMIT_URL = 'https://api.weixin.qq.com/wxa/commit';
 	const GET_QRCODE_URL = 'https://api.weixin.qq.com/wxa/get_qrcode';
@@ -50,10 +50,13 @@ class WxAppCode {
 
 	private $access_token = null;
 
-	public function setAccessToken($access_token) {
+	public function __construct($access_token = null) {
 		$this->access_token = $access_token;
 	}
 
+	public function setAccessToken($access_token) {
+		$this->access_token = $access_token;
+	}
 	/**
 	 *  获取Access token
 	 * @return null
@@ -67,7 +70,10 @@ class WxAppCode {
 	}
 
 	private function post($url, $data) {
-		$response = ihttp_post($this->buildUrl($url), $data);
+		if(is_array($data)) {
+			$data = json_encode($data);
+		}
+		$response = ihttp_request($this->buildUrl($url), $data, array('Content-Type' => 'application/json'));
 		return $this->parseResponse($response);
 	}
 
@@ -80,22 +86,25 @@ class WxAppCode {
 	 */
 	private function parseResponse($response){
 		if(is_error($response)) {
-			throw new WxAppCodeException(WxAppCodeException::SYSTEM_ERROR);
+			throw new WxAppCodeApiException('系统错误',WxAppCodeApiException::SYSTEM_ERROR);
 		}
 		$content = $response['content'];
-		if($response['headers']['Content-Type'] == 'image/jpeg') {
-			return $content; //图片的话直接返回 否则直接解析json
-		}
-		$json = json_decode($content);
-		if($json['errcode'] != '0') {
-			throw new WxAppCodeException($json['errcode']);
+		$json = json_decode($content, JSON_UNESCAPED_UNICODE);
+		if(isset($json['errcode']) && $json['errcode'] != '0') {
+			var_dump($json);
+			throw new WxAppCodeApiException($json['errmsg'], $json['errcode']);
 		}
 		return $json;
 	}
 
 
 	public function commitCode($template_id, $ext_json, $user_version, $user_desc) {
-		$postdata = compact($template_id, $ext_json, $user_version, $user_desc);
+		$postdata = array(
+			'template_id'=>$template_id,
+			'ext_json'=>json_encode($ext_json),
+			'user_version'=>$user_version,
+			'user_desc'=>$user_desc);
+
 		return $this->post(self::COMMIT_URL, $postdata);
 	}
 
