@@ -23,7 +23,7 @@ $we7_file_permission = array(
 		'default' => '',
 		'direct' => array(
 			'auth',
-			'welcome'
+			'welcome', 'openwechat'
 		),
 		'vice_founder' => array('account*'),
 		'owner' => array('account*'),
