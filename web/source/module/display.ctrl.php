@@ -27,6 +27,7 @@ if ($do == 'display') {
 		}
 	} else {
 		$user_module = user_modules($_W['uid']);
+	}
 	if (!$_W['isfounder']) {
 		$account_table = table('users');
 		$user_owned_account = $account_table->userOwnedAccount($_W['uid']);
