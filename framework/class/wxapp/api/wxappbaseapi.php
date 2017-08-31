@@ -56,7 +56,7 @@ class WxAppBaseApi {
 	 */
 	protected function parseResponse($response){
 		if(is_error($response)) {
-			throw new WxAppAuthApiException('系统错误',WxAppAuthApiException::SYSTEM_ERROR);
+			$this->throwException('系统错误', WxApiException::SYSTEM_ERROR);
 		}
 		if($response['headers']['Content-Type'] == 'image/jpeg') {
 			return $response['content'];
@@ -64,8 +64,12 @@ class WxAppBaseApi {
 		$content = $response['content'];
 		$json = json_decode($content, JSON_UNESCAPED_UNICODE);
 		if(isset($json['errcode']) && $json['errcode'] != '0') {
-			throw new WxApiException($json['errmsg'], $json['errcode']);
+			$this->throwException($json['errmsg'], $json['errcode']);
 		}
 		return $json;
+	}
+
+	protected function throwException($errormsg, $errorcode) {
+		throw new WxApiException($errormsg, $errorcode);
 	}
 }

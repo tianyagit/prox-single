@@ -73,7 +73,3 @@ class WxAppAuthApi extends WxAppBaseApi {
 	}
 
 }
-
-class WxAppAuthApiException extends Exception {
-
-}
