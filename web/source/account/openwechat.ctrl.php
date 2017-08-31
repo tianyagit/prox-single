@@ -7,17 +7,18 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->classs('wxapp/api/wxappauthapi');
-load()->classs('wxapp/wxappoauth');
-load()->func('communication');
+
 
 //$dos = array('test', 'ticket');
 //$do = in_array($_GPC['do'], $dos)? $do : 'ticket';
+load()->classs('wxapp/wxappcloud');
+load()->func('communication');
 
 if($do == 'ticket') {
 	$post = file_get_contents('php://input');
 	pdo_insert('component_ticket', array('postdata'=>$post));
 	WeUtility::logging('debug', 'weapp-ticket' . $post);
+	WxAppCloud::updateThreePlatform($XML);
 	exit('success');
 
 

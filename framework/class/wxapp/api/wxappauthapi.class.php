@@ -41,7 +41,8 @@ class WxAppAuthApi {
 			'component_appsecret'=>$this->component_appsecret,
 			'component_verify_ticket'=> $this->component_verify_ticket);
 		$postdata = json_encode($postdata);
-		return $this->post(self::API_COMPONENT_TOKEN, $postdata);
+		$result =  $this->post(self::API_COMPONENT_TOKEN, $postdata);
+		return array($result['component_access_token'], $result['expires_in']);
 	}
 
 	/**

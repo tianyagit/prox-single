@@ -88,10 +88,12 @@ class WxAppCodeApi {
 		if(is_error($response)) {
 			throw new WxAppCodeApiException('系统错误',WxAppCodeApiException::SYSTEM_ERROR);
 		}
+		if($response['headers']['Content-Type'] == 'image/jpeg') {
+			return $response['content'];
+		}
 		$content = $response['content'];
 		$json = json_decode($content, JSON_UNESCAPED_UNICODE);
 		if(isset($json['errcode']) && $json['errcode'] != '0') {
-			var_dump($json);
 			throw new WxAppCodeApiException($json['errmsg'], $json['errcode']);
 		}
 		return $json;
@@ -145,7 +147,7 @@ class WxAppCodeApi {
 	third_id	三级类目的ID(同上)
 	title
 	 */
-	private function submitAudit($data) {
+	public function submitAudit($data) {
 		$data = $this->post(self::SUBMIT_AUDIT_URL, $data);
 		return $data['auditid'];
 	}

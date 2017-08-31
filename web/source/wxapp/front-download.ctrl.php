@@ -6,8 +6,10 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('wxapp');
+load()->classs('wxapp/wxappcloud');
+load()->func('communication');
 
-$dos = array('front_download');
+$dos = array('front_download','redirect','oauth','commitcode','qrcode','submit_audit');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -24,20 +26,52 @@ if (!empty($version_id)) {
 
 if ($do == 'front_download') {
 	$wxapp_versions_info = wxapp_version($version_id);
-	template('wxapp/wxapp-up');
+
 }
 
-$oauth = new WxAppOAuth('wx991ec14508b7d1e7',
-	'deba8d99fd614522bf6f9c074f7801c9',
-	'ticket@@@7CiP6eLB1jG1jG_MEQXDOi3dmWe2uBvOX_y-OsbxlPh9R0Ds9HtwApjNYutja0mtM5i5XdrOIFb4kl_uezA8_Q');
 
+$cloud = new WxAppCloud('wx991ec14508b7d1e7');
+$wxapp_id  = 'wxb0e582aaff9a169d';//
 if($do == 'redirect') {
 	$siteroot = $_W['siteroot'];
-	$redirect_uri = $oauth->redirect($siteroot.'web/index.php?c=account&a=openwechat&do=oauth');
+	$redirect_uri = $cloud->redirect($siteroot.'web/index.php?c=wxapp&a=front-download&do=oauth');
 	header('Location:'.$redirect_uri);
 }
 if ($do == 'oauth') {
 	$auth_code = $_GPC['auth_code'];
-	dump($oauth->authData($auth_code));
+	var_dump($cloud->authData($auth_code));
 	exit;
 }
+
+// 上传代码
+if($do == 'commitcode') {
+
+	if($_W['ispost']) {
+		$user_version = $_GPC['user_version'];
+		$user_desc = $_GPC['user_desc'];
+		$template_id = $_GPC['template_id'];
+		$cloud->commitCode($template_id,$wxapp_id, $user_version, $user_desc);
+		itoast('上传代码成功');
+	}
+
+}
+// 预览应用
+if($do == 'preview') {
+
+}
+
+if($do == 'qrcode') {
+	header('Content-Type: images/jpeg');
+	echo $cloud->getQrCode($wxapp_id);
+}
+
+// 可使用的分类
+if($do == 'category') {
+
+}
+// 提交审核
+if($do == 'submit_audit') {
+	$data = array();
+	$cloud->submitAudit($wxapp_id,$data);
+}
+template('wxapp/wxapp-up');

@@ -14,10 +14,61 @@
         </div>
     </div>
     <div class="wxapp-download-procedure">
-        <div class="btn btn-default" href="/web/index.php?a=account&c=openwechat&do=redirect">授权</div>
-        {if $do == 'auth'}
-            <div></div>
-        {/if}
+        <a class="btn btn-default" href="/web/index.php?c=wxapp&a=front-download&do=redirect">授权</a>
+        <div>
+            上传代码
+        </div>
+        <div>
+            <form action="/web/index.php?c=wxapp&a=front-download&do=commitcode" method="post">
+                版本: <input name="user_version" value="1"/>
+                版本说明: <input name="user_desc" value="1"/>
+                模板ID :
+                <select name="template_id">
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    <option>7</option>
+                    <option>8</option>
+                </select>
+                <input type="submit">
+            </form>
+        </div>
+
+        <div>
+            预览
+        </div>
+        <div>
+            <form action="/web/index.php?c=wxapp&a=front-download&do=preview">
+                微信用户名<input name="wx_username"/>
+                <input type="submit" value="生成预览">
+                <img src="/web/index.php?c=wxapp&a=front-download&do=qrcode">
+            </form>
+
+        </div>
+
+        <div>
+            发布审核
+        </div>
+        <div>
+            <form action="/web/index.php?c=wxapp&a=front-download&do=submit_audit">
+                功能页面<input name="page">
+                标题 :<input name="title">
+                所在服务类目:<select>
+                                <option>生活服务</option>
+                            </select>
+                <select>
+                    <option>综合生活服务</option>
+                </select>
+                标签:<input name="tag"/>
+                <input type="submit" value="提交审核">
+            </form>
+
+        </div>
+
     </div>
 </div>
 {template 'common/footer'}
