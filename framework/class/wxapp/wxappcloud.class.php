@@ -5,6 +5,7 @@
  * Date: 2017/8/31
  * Time: 9:27
  */
+load()->classs('wxapp/api/wxappbaseapi');
 load()->classs('wxapp/api/wxappauthapi');//授权权限API
 load()->classs('wxapp/api/wxappcodeapi'); //代码上传API
 load()->classs('wxapp/wxapprepository'); // token ticket存储获取仓库
@@ -113,6 +114,25 @@ class WxAppCloud {
 		$codeApi->release();
 	}
 
+	/**
+	 *  获取当前小程序的可选类目
+	 * @param $wxapp_id
+	 */
+	public function getCategory($wxapp_id) {
+		$codeApi = $this->getCodeApi($wxapp_id);
+		return $codeApi->getCategory();
+	}
+
+	/**
+	 *  获取当前小程序的可选类目
+	 * @param $wxapp_id
+	 */
+	public function getPage($wxapp_id) {
+		$codeApi = $this->getCodeApi($wxapp_id);
+		return $codeApi->getPage();
+	}
+
+
 	private function getCodeApi($wxapp_id) {
 		$token = $this->getAuthAppAccessToken($wxapp_id);
 		$codeApi = new WxAppCodeApi($token);
@@ -136,7 +156,7 @@ class WxAppCloud {
 	/**
 	 *  获取授权APP Access Token
 	 */
-	private function getAuthAppAccessToken($wxapp_id) {
+	public function getAuthAppAccessToken($wxapp_id) {
 		$wxapp = $this->repo->getAuthApp($wxapp_id);
 		return $wxapp['authorizer_access_token'];
 	}

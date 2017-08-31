@@ -9,7 +9,7 @@ load()->model('wxapp');
 load()->classs('wxapp/wxappcloud');
 load()->func('communication');
 
-$dos = array('front_download','redirect','oauth','commitcode','qrcode','submit_audit');
+$dos = array('front_download','redirect','oauth','commitcode','qrcode','submit_audit','category','getpage');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -67,7 +67,10 @@ if($do == 'qrcode') {
 
 // 可使用的分类
 if($do == 'category') {
-
+	dump($cloud->getCategory($wxapp_id));
+}
+if($do == 'getpage') {
+	dump($cloud->getPage($wxapp_id));
 }
 // 提交审核
 if($do == 'submit_audit') {

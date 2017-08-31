@@ -46,13 +46,13 @@ class WxAppCodeApi extends WxAppBaseApi {
 
 	protected function post($url, $data) {
 		$url = $this->buildUrl($url);
-		parent::post($url, $data);
+		return parent::post($url, $data);
 
 	}
 
 	protected function get($url) {
 		$url = $this->buildUrl($url);
-		parent::get($url);
+		return parent::get($url);
 	}
 
 
