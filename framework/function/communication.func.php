@@ -277,8 +277,6 @@ function ihttp_parse_url($url, $set_default_port = false) {
 		$urlset['ip'] = '127.0.0.1';
 	} else if (! ihttp_allow_host($urlset['host'])){
 		return error(1, 'host 非法');
-			return error(1, 'host非法');
-		}
 	}
 	
 	if ($set_default_port && empty($urlset['port'])) {
