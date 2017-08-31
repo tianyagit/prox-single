@@ -304,25 +304,6 @@ function ihttp_allow_host($host) {
 	}
 	return true;
 }
-/**
- *  是否允许指定host访问
- * @param $host
- * @return bool
- */
-function ihttp_allow_host($host) {
-	global $_W;
-	if (strexists($host, '@')) {
-		return false;
-	}
-	$pattern = "/^(10|172|192|127)/";
-	if (preg_match($pattern, $host) && isset($_W['setting']['ip_white_list'])) {
-		$ip_white_list = $_W['setting']['ip_white_list'];
-		if ($ip_white_list && isset($ip_white_list[$host]) && !$ip_white_list[$host]['status']) {
-			return false;
-		}
-	}
-	return true;
-}
 
 /**
  * 创建一个curl请求对象
