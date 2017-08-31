@@ -54,30 +54,17 @@ if ($do == 'home') {
 	$account_table->searchWithPage($pindex, $psize);
 	$wxapp_lists = $account_table->searchAccountList();
 	$total = $account_table->getLastQueryTotal();
-	
+
 	if (!empty($wxapp_lists)) {
-		
 		foreach ($wxapp_lists as &$account) {
+			$account = uni_fetch($account['uniacid']);
 			$account['versions'] = wxapp_get_some_lastversions($account['uniacid']);
-			$account['current_version'] = array();
 			if (!empty($account['versions'])) {
 				foreach ($account['versions'] as $version) {
-					if (!empty($wxapp_cookie_uniacids) && !empty($wxappversionids[$version['uniacid']]) && in_array($version['id'], $wxappversionids[$version['uniacid']])) {
+					if (!empty($version['current'])) {
 						$account['current_version'] = $version;
-						break;
 					}
 				}
-				if (empty($account['current_version'])) {
-					$account['current_version'] = $account['versions'][0];
-				}
-			}
-		}
-		
-		$wxapp_cookie_uniacids = array();
-		if (!empty($_GPC['__wxappversionids'])) {
-			$wxappversionids = json_decode(htmlspecialchars_decode($_GPC['__wxappversionids']), true);
-			foreach ($wxappversionids as $version_val) {
-				$wxapp_cookie_uniacids[] = $version_val['uniacid'];
 			}
 		}
 	}
