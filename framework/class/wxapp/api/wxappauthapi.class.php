@@ -6,7 +6,7 @@
  * Date: 2017/8/30
  * Time: 13:35
  */
-class WxAppAuthApi {
+class WxAppAuthApi extends WxAppBaseApi {
 	// 获取平台token
 	const API_COMPONENT_TOKEN = 'https://api.weixin.qq.com/cgi-bin/component/api_component_token';
 	//获取pre_auth_code
@@ -72,34 +72,6 @@ class WxAppAuthApi {
 		return $result;
 	}
 
-
-
-	private function post($url, $data) {
-		if(is_array($data)) {
-			$data = json_encode($data);
-		}
-		$response = ihttp_request($url, $data, array('Content-Type' => 'application/json'));
-		return $this->parseResponse($response);
-	}
-
-	private function get($url) {
-		$resp = ihttp_get($url);
-		return $this->parseResponse($resp);
-	}
-	/**
-	 *
-	 */
-	private function parseResponse($response){
-		if(is_error($response)) {
-			throw new WxAppAuthApiException('系统错误',WxAppAuthApiException::SYSTEM_ERROR);
-		}
-		$content = $response['content'];
-		$json = json_decode($content, JSON_UNESCAPED_UNICODE);
-		if(isset($json['errcode']) && $json['errcode'] != '0') {
-			throw new WxAppAuthApiException($json['errmsg'], $json['errcode']);
-		}
-		return $json;
-	}
 }
 
 class WxAppAuthApiException extends Exception {
