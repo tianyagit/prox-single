@@ -19,7 +19,12 @@ set_time_limit(0);
 @ini_set('memory_limit', '1356M');
 $path = dirname(__FILE__);
 chdir($path);
-
+if(! function_exists('pdos')){
+	function pdos() {
+		load()->classs('query');
+		return new Query();
+	}
+}
 We7Command::execute();
 
 abstract class We7Command {
