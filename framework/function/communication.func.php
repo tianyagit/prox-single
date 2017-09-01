@@ -282,7 +282,6 @@ function ihttp_parse_url($url, $set_default_port = false) {
 	if ($set_default_port && empty($urlset['port'])) {
 		$urlset['port'] = $urlset['scheme'] == 'https' ? '443' : '80';
 	}
-	
 	return $urlset;
 }
 

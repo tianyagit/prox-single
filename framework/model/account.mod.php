@@ -1071,7 +1071,7 @@ function uni_account_last_switch() {
 
 function uni_account_switch($uniacid, $redirect = '') {
 	global $_W;
-	isetcookie('__uniacid', $uniacid, 7 * 86400);
+	uni_account_save_switch($uniacid);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
 	if (!empty($redirect)) {
 		header('Location: ' . $redirect);
