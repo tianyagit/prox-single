@@ -69,6 +69,7 @@ if($do == 'qrcode') {
 if($do == 'category') {
 	dump($cloud->getCategory($wxapp_id));
 }
+// 代码所有页面
 if($do == 'getpage') {
 	dump($cloud->getPage($wxapp_id));
 }
