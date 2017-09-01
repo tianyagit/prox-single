@@ -12,27 +12,8 @@ defined('IN_IA') or exit('Access Denied');
  * @return array|boolean 错误原因或成功
  */
 function uni_create_permission($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-	$groupid = pdo_fetchcolumn('SELECT groupid FROM ' . tablename('users') . ' WHERE uid = :uid', array(':uid' => $uid));
-	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount, maxwxapp FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
-	$list = pdo_fetchall('SELECT d.type, count(*) AS count FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0 GROUP BY d.type', array(':uid' => $uid, ':role' => 'owner'));
-	foreach ($list as $item) {
-		if ($item['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-			$wxapp_num = $item['count'];
-		} else {
-			$account_num = $item['count'];
-		}
-	}
-	//添加主公号
-	if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-		if ($account_num >= $groupdata['maxaccount']) {
-			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxaccount'] . '个主公众号');
-		}
-	} elseif ($type == ACCOUNT_TYPE_APP_NORMAL) {
-		if ($wxapp_num >= $groupdata['maxwxapp']) {
-			return error('-1', '您所在的用户组最多只能创建' . $groupdata['maxwxapp'] . '个小程序');
-		}
-	}
-	return true;
+	$result = permission_create_account($uid, $type);
+	return $result;
 }
 /**
  * 获取当前用户可操作的所有公众号
@@ -180,7 +161,7 @@ function uni_fetch($uniacid = 0) {
 
 	$account['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
-	
+
 	//切换公号链接
 	$account['switchurl'] = wurl('account/display/switch', array('uniacid' => $account['uniacid']));
 	//公众号剩余短信
@@ -191,7 +172,7 @@ function uni_fetch($uniacid = 0) {
 	}
 	//公众号到期
 	$account['setmeal'] = uni_setmeal($account['uniacid']);
-	
+
 	cache_write($cachekey, $account);
 	return $account;
 }
@@ -579,49 +560,8 @@ function uni_user_account_role($uniacid, $uid, $role) {
  * @return string 操作用户的 role (manager|operator)
  */
 function uni_permission($uid = 0, $uniacid = 0) {
-	global $_W;
-	load()->model('user');
-	$role = '';
-	$uid = empty($uid) ? $_W['uid'] : intval($uid);
-
-	if (user_is_founder($uid) && !user_is_vice_founder($uid)) {
-		return ACCOUNT_MANAGE_NAME_FOUNDER;
-	}
-
-	if (user_is_vice_founder($uid)) {
-		return ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-	}
-
-	if (!empty($uniacid)) {
-		$role = pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'role');
-		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
-			$role = ACCOUNT_MANAGE_NAME_OWNER;
-		} elseif ($role == ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
-			$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-		} elseif ($role == ACCOUNT_MANAGE_NAME_MANAGER) {
-			$role = ACCOUNT_MANAGE_NAME_MANAGER;
-		} elseif ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
-			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
-		} elseif ($role == ACCOUNT_MANAGE_NAME_CLERK) {
-			$role = ACCOUNT_MANAGE_NAME_CLERK;
-		}
-	} else {
-		$roles = pdo_getall('uni_account_users', array('uid' => $uid), array('role'), 'role');
-		$roles = array_keys($roles);
-		if (in_array(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, $roles)) {
-			$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-		} elseif (in_array(ACCOUNT_MANAGE_NAME_OWNER, $roles)) {
-			$role = ACCOUNT_MANAGE_NAME_OWNER;
-		} elseif (in_array(ACCOUNT_MANAGE_NAME_MANAGER, $roles)) {
-			$role = ACCOUNT_MANAGE_NAME_MANAGER;
-		} elseif (in_array(ACCOUNT_MANAGE_NAME_OPERATOR, $roles)) {
-			$role = ACCOUNT_MANAGE_NAME_OPERATOR;
-		} elseif (in_array(ACCOUNT_MANAGE_NAME_CLERK, $roles)) {
-			$role = ACCOUNT_MANAGE_NAME_CLERK;
-		}
-	}
-	$role = empty($role) ? ACCOUNT_MANAGE_NAME_OPERATOR : $role;
-	return $role;
+	$result = permission_uni_role($uid, $uniacid);
+	return $result;
 }
 
 /**
