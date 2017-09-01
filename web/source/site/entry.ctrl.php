@@ -49,7 +49,7 @@ if (!$entry['direct']) {
 	define('CRUMBS_NAV', 1);
 
 	$_W['page']['title'] = $entry['title'];
-	define('ACTIVE_FRAME_URL', url('site/entry/', array('eid' => $entry['eid'])));
+	define('ACTIVE_FRAME_URL', url('site/entry/', array('eid' => $entry['eid'], 'version_id' => $_GPC['version_id'])));
 }
 
 if (!empty($entry['module']) && !empty($_W['founder'])) {
