@@ -42,7 +42,7 @@ if ($do == 'module') {
 	foreach ($replies as $replay){
 		$cover_keywords[$replay['do']][] = $replay;
 	}
-	$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], $modulename);
+	$module_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], $modulename);
 	foreach ($entries['cover'] as $key => &$cover){
 		$permission_name = $modulename . '_cover_' . trim($cover['do']);
 		if ($module_permission[0] != 'all' && !in_array($permission_name, $module_permission)) {

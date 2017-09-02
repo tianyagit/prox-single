@@ -22,7 +22,7 @@ function permission_build() {
 	if (!empty($cache)) {
 		return $cache;
 	}
-	$permission_exist = uni_user_permission_exist($_W['uid'], $_W['uniacid']);
+	$permission_exist = permission_account_user_permission_exist($_W['uid'], $_W['uniacid']);
 	if (empty($permission_exist)) {
 		$we7_file_permission['platform'][$_W['role']] = array('platform*');
 		$we7_file_permission['site'][$_W['role']] = array('site*');
@@ -33,8 +33,8 @@ function permission_build() {
 		cache_write($cachekey, $we7_file_permission);
 		return $we7_file_permission;
 	}
-	$user_account_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], PERMISSION_ACCOUNT);
-	$user_wxapp_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], PERMISSION_WXAPP);
+	$user_account_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], PERMISSION_ACCOUNT);
+	$user_wxapp_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], PERMISSION_WXAPP);
 	$user_permission = array_merge($user_account_permission, $user_wxapp_permission);
 
 	$permission_contain = array('account', 'wxapp', 'system');
@@ -241,7 +241,7 @@ function permission_account_user_menu($uid, $uniacid, $type) {
 	if (empty($uid) || empty($uniacid) || empty($type)) {
 		return error(-1, '参数错误！');
 	}
-	$permission_exist = uni_user_permission_exist($uid, $uniacid);
+	$permission_exist = permission_account_user_permission_exist($uid, $uniacid);
 	if (empty($permission_exist)) {
 		return array('all');
 	}
@@ -316,7 +316,7 @@ function permission_update_account_user($uid, $uniacid, $data) {
 	if (empty($uid) || empty($uniacid) || !in_array($data['type'], array(PERMISSION_ACCOUNT, PERMISSION_WXAPP, PERMISSION_SYSTEM))) {
 		return error('-1', '参数错误！');
 	}
-	$user_menu_permission = uni_user_menu_permission($uid, $uniacid, $data['type']);
+	$user_menu_permission = permission_account_user_menu($uid, $uniacid, $data['type']);
 	if (is_error($user_menu_permission)) {
 		return error('-1', '参数错误！');
 	}
@@ -340,7 +340,7 @@ function permission_update_account_user($uid, $uniacid, $data) {
 
 function permission_check_account_user($permission_name, $show_message = true, $action = '') {
 	global $_W, $_GPC;
-	$user_has_permission = uni_user_permission_exist();
+	$user_has_permission = permission_account_user_permission_exist();
 	if (empty($user_has_permission)) {
 		return true;
 	}
@@ -352,30 +352,30 @@ function permission_check_account_user($permission_name, $show_message = true, $
 		$system_modules = system_modules();
 		if (!empty($modulename) && !in_array($modulename, $system_modules)) {
 			$permission_name = $modulename . '_rule';
-			$users_permission = uni_user_permission($modulename);
+			$users_permission = permission_account_user($modulename);
 		}
 	} elseif ($action == 'cover' && $entry_id > 0) {
 		load()->model('module');
 		$entry = module_entry($entry_id);
 		if (!empty($entry)) {
 			$permission_name = $entry['module'] . '_cover_' . trim($entry['do']);
-			$users_permission = uni_user_permission($entry['module']);
+			$users_permission = permission_account_user($entry['module']);
 		}
 	} elseif ($action == 'nav') {
 		//只对模块的导航进行权限判断，不对微站的导航判断
 		if(!empty($modulename)) {
 			$permission_name = "{$modulename}_{$do}";
-			$users_permission = uni_user_permission($modulename);
+			$users_permission = permission_account_user($modulename);
 		} else {
 			return true;
 		}
 	} elseif ($action == 'wxapp') {
-		$users_permission = uni_user_permission('wxapp');
+		$users_permission = permission_account_user('wxapp');
 	} else {
-		$users_permission = uni_user_permission('system');
+		$users_permission = permission_account_user('system');
 	}
 	if (!isset($users_permission)) {
-		$users_permission = uni_user_permission('system');
+		$users_permission = permission_account_user('system');
 	}
 	if ($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
 		if ($show_message) {
@@ -392,7 +392,7 @@ function permission_check_account_user($permission_name, $show_message = true, $
  */
 function permission_check_account_user_module($action = '', $module_name = '') {
 	global $_GPC;
-	$status = uni_user_permission_exist();
+	$status = permission_account_user_permission_exist();
 	if(empty($status)) {
 		return true;
 	}
@@ -402,7 +402,7 @@ function permission_check_account_user_module($action = '', $module_name = '') {
 	//参数设置权限
 	if ($a == 'module' && $do == 'setting' && !empty($m)) {
 		$permission_name = $m . '_setting';
-		$users_permission = uni_user_permission($m);
+		$users_permission = permission_account_user($m);
 		if ($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
 			return false;
 		}
@@ -416,7 +416,7 @@ function permission_check_account_user_module($action = '', $module_name = '') {
 	if(empty($module_name)) {
 		$module_name = IN_MODULE;
 	}
-	$permission = uni_user_permission($module_name);
+	$permission = permission_account_user($module_name);
 	if(empty($permission) || ($permission[0] != 'all' && !empty($action) && !in_array($action, $permission))) {
 		return false;
 	}

@@ -439,7 +439,7 @@ function material_upload_limit() {
  */
 function material_news_delete($material_id){
 	global $_W;
-	$permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'system');
+	$permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], 'system');
 	if (is_error($permission)) {
 		return error(-1, $permission['message']);
 	}

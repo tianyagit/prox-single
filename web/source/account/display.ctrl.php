@@ -12,13 +12,13 @@ $dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';
 
-$state = uni_permission($_W['uid'], $_W['uniacid']);
+$state = permission_account_user_role($_W['uid'], $_W['uniacid']);
 //模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
-$account_info = uni_user_account_permission();
+$account_info = permission_user_account_num();
 
 if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
-	$role = uni_permission($_W['uid'], $uniacid);
+	$role = permission_account_user_role($_W['uid'], $uniacid);
 	if(empty($role)) {
 		itoast('操作失败, 非法访问.', '', 'error');
 	}
@@ -65,7 +65,7 @@ if ($do == 'display') {
 	
 	foreach($account_list as &$account) {
 		$account = uni_fetch($account['uniacid']);
-		$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
+		$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
 	}
 	
 	if ($_W['ispost']) {

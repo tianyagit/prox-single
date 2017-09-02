@@ -26,7 +26,7 @@ if ($do == 'home') {
 	if (empty($last_uniacid)) {
 		itoast('', $url, 'info');
 	}
-	$permission = uni_permission($_W['uid'], $last_uniacid);
+	$permission = permission_account_user_role($_W['uid'], $last_uniacid);
 	if (empty($permission)) {
 		itoast('', $url, 'info');
 	}
@@ -38,7 +38,7 @@ if ($do == 'home') {
 	itoast('', $url, 'info');
 } elseif ($do == 'display') {
 	//模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
-	$account_info = uni_user_account_permission();
+	$account_info = permission_user_account_num();
 	
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
