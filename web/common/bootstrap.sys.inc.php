@@ -5,6 +5,7 @@
  */
 load()->model('user');
 load()->func('tpl');
+load()->model('permission');
 $_W['token'] = token();
 $session = json_decode(authcode($_GPC['__session']), true);
 if (is_array($session)) {
