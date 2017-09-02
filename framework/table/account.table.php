@@ -34,9 +34,9 @@ class AccountTable extends We7Table {
 		if (!$_W['isfounder']) {
 			$users_table = table('users');
 			$uniacid_list = $users_table->userOwnedAccount($_W['uid']);
-			$this->where('uniacid', $uniacid_list);
+			$this->query->where('uniacid', $uniacid_list);
 		}
-		return $this->from('uni_account')->getall('uniacid');
+		return $this->query->from('uni_account')->getall('uniacid');
 	}
 	
 	public function searchWithKeyword($title) {
