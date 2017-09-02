@@ -45,8 +45,8 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	if($redirect == 'referer') {
 		$redirect = referer();
 	}
-	// 只能跳转到本域名下
-	if(starts_with($redirect,'http') && !starts_with($redirect, $_W['siteroot'])) {
+	// 跳转链接只能跳转本域名下 防止钓鱼 如: 用户可能正常从信任站点微擎登录 跳转到第三方网站 会误认为第三方网站也是安全的
+	if(starts_with($redirect, 'http') && !starts_with($redirect, $_W['siteroot'])) {
 		$redirect = $_W['siteroot'];
 	}
 
