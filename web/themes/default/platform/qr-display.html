@@ -25,6 +25,16 @@
 						</div>
 					</div>
 				</div>
+				<div class="pull-right"  id="qr-scan-statistics" ng-controller="QrStatistics">
+					<label class="control-label col-sm-6">开关</label>
+					<div class="form-controls col-sm-6">
+						<div class="input-group">
+							<lable>
+								<div class="switch {if $status} switchOn {/if}"  ng-click="changeStatus()"></div>
+							</lable>
+						</div>
+					</div>
+				</div>
 			</div>
 		</form>
 	</div>
@@ -55,7 +65,7 @@
 					{/if}
 				</a>
 			</td>
-			<td class="font-defalut">{$row['type']}</td>
+			<td class="font-defalut">{if $row['type'] ==1}关注{else}扫描{/if}</td>
 			<td class="font-sm">{php echo date('Y-m-d H:i:s', $row[createtime]);}</td>
 		</tr>
 		{/loop}
@@ -63,4 +73,12 @@
 	<div class="text-right">
 		{$pager}
 	</div>
+	<script type="text/javascript">
+		angular.module('qrApp').value('config', {
+			link: {
+				'changeStatus' : "{php echo url('platform/qr/change_status')}"
+			}
+		});
+		angular.bootstrap($('#qr-scan-statistics'), ['qrApp']);
+	</script>
 {template 'common/footer'}
