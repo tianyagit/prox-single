@@ -26,7 +26,7 @@ if (!$defaultaccount) {
 $acid = $defaultaccount['acid']; //强制使用默认的acid
 
 
-$state = uni_permission($_W['uid'], $uniacid);
+$state = permission_account_user_role($_W['uid'], $uniacid);
 $dos = array('base', 'sms', 'modules_tpl');
 $role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 if ($role_permission) {

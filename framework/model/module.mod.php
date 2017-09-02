@@ -651,7 +651,7 @@ function module_get_user_account_list($uid, $module_name) {
 			}
 			$wxapp_modules = uni_modules_by_uniacid($wxapp_value['uniacid']);
 			$wxapp_modules = array_keys($wxapp_modules);
-			$module_permission_exist = uni_user_menu_permission($uid, $wxapp_value['uniacid'], $module_name);
+			$module_permission_exist = permission_account_user_menu($uid, $wxapp_value['uniacid'], $module_name);
 			if (in_array($module_name, $wxapp_modules) && (in_array('all',$module_permission_exist) || !empty($module_permission_exist))) {
 				$accounts_list[$wxapp_value['uniacid']] = $wxapp_value;
 			}
@@ -664,7 +664,7 @@ function module_get_user_account_list($uid, $module_name) {
 			}
 			$wechat_modules = uni_modules_by_uniacid($wechat_value['uniacid']);
 			$wechat_modules = array_keys($wechat_modules);
-			$module_permission_exist = uni_user_menu_permission($uid, $wxapp_value['uniacid'], $module_name);
+			$module_permission_exist = permission_account_user_menu($uid, $wxapp_value['uniacid'], $module_name);
 			if (in_array($module_name, $wechat_modules) && (in_array('all',$module_permission_exist) || !empty($module_permission_exist))) {
 				$accounts_list[$wechat_value['uniacid']] = $wechat_value;
 			}

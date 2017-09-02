@@ -6,16 +6,6 @@
 defined('IN_IA') or exit('Access Denied');
 
 /**
- * 添加公众号时执行数量判断
- * @param int $uid 操作用户
- * @param int $type 公众号类型 (1. 主公众号; 2. 子公众号; 4. 小程序)
- * @return array|boolean 错误原因或成功
- */
-function uni_create_permission($uid = 0, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-	$result = permission_create_account($uid, $type);
-	return $result;
-}
-/**
  * 获取当前用户可操作的所有公众号
  * @param int $uid 指定操作用户
  * @return array
@@ -554,70 +544,6 @@ function uni_user_account_role($uniacid, $uid, $role) {
 }
 
 /**
- * 获取指定操作用户在指定的公众号所具有的操作权限
- * @param int $uid 操作用户
- * @param int $uniacid 指定统一公众号
- * @return string 操作用户的 role (manager|operator)
- */
-function uni_permission($uid = 0, $uniacid = 0) {
-	$result = permission_account_user_role($uid, $uniacid);
-	return $result;
-}
-
-/**
- * 判断某个用户在某个公众号是否配置过权限清单
- * @param number $uid
- * @param number $uniacid
- * @return boolean
- */
-function uni_user_permission_exist($uid = 0, $uniacid = 0) {
-	$result = permission_account_user_permission_exist($uid, $uniacid);
-	return $result;
-}
-
-/*
- * 默认获取当前操作员对于某个公众号的权限
-* $type => 'system' 获取系统菜单权限
-* */
-function uni_user_permission($type = 'system') {
-	$result = permission_account_user($type);
-	return $result;
-}
-
-/**
- * 获取某一用户对某个公众号的菜单操作权限
- * @param int $uid 用户uid
- * @param int $uniacid 公众号uniacid
- * @param string $type 权限类型（公众号、小程序、某一模块、所有模块）
- * @return array
- */
-function uni_user_menu_permission($uid = 0, $uniacid = 0, $type = '') {
-	$result = permission_account_user_menu($uid, $uniacid, $type);
-	return $result;
-}
-
-/**
- * 获取所有权限的permission_name
- * @return array
- */
-function uni_permission_name() {
-	$result = permission_menu_name();
-	return $result;
-}
-
-/**
- * 更新用户对某一公众号的权限（公众号、小程序、系统）
- * @param int $uid 用户uid
- * @param int $uniacid 公众号uniacid
- * @param array $data 要更新的数据
- * @return boolean
- */
-function uni_update_user_permission($uid = 0, $uniacid = 0, $data = array()) {
-	$result = permission_update_account_user($uid, $uniacid, $data);
-	return $result;
-}
-
-/**
  * 用户可查看到的额外信息
  * @param array $param
  * @return boolean
@@ -636,23 +562,6 @@ function uni_user_see_more_info($user_type, $see_more = false) {
 
 function uni_user_permission_check($permission_name = '', $show_message = true, $action = '') {
 	$result = permission_check_account_user($permission_name, $show_message, $action);
-	return $result;
-}
-
-/*
- * 判断操作员是否具有模块某个业务功能菜单的权限
- * */
-function uni_user_module_permission_check($action = '', $module_name = '') {
-	$result = permission_check_account_user_module($action, $module_name);
-	return $result;
-}
-
-/**
- * 获取某个用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
- * $uid int 要查询的用户uid
- * */
-function uni_user_account_permission($uid = 0) {
-	$result = permission_user_account_num($uid);
 	return $result;
 }
 
@@ -772,7 +681,7 @@ function uni_account_last_switch() {
 	}
 	if (!empty($uniacid)) {
 		$account_info = uni_fetch($uniacid);
-		$role = uni_permission($_W['uid'], $uniacid);
+		$role = permission_account_user_role($_W['uid'], $uniacid);
 		if (!empty($account_info) && $account_info['isdeleted'] == 1 || empty($role)) {
 			$uniacid = '';
 		}
@@ -947,7 +856,7 @@ function account_delete($acid) {
 	$account = pdo_get('uni_account', array('default_acid' => $acid));
 	if ($account) {
 		$uniacid = $account['uniacid'];
-		$state = uni_permission($_W['uid'], $uniacid);
+		$state = permission_account_user_role($_W['uid'], $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			itoast('没有该公众号操作权限！', url('account/recycle'), 'error');
 		}
@@ -1003,7 +912,7 @@ function account_delete($acid) {
 			itoast('子公众号不存在或是已经被删除', '', '');
 		}
 		$uniacid = $account['uniacid'];
-		$state = uni_permission($_W['uid'], $uniacid);
+		$state = permission_account_user_role($_W['uid'], $uniacid);
 		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 			itoast('没有该公众号操作权限！', url('account/recycle'), 'error');
 		}
