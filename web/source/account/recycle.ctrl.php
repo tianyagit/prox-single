@@ -66,11 +66,11 @@ if ($do == 'display') {
 if ($do == 'recover') {
 	$acid = intval($_GPC['acid']);
 	$uniacid = intval($_GPC['uniacid']);
-	$state = uni_permission($_W['uid'], $uniacid);
+	$state = permission_account_user_role($_W['uid'], $uniacid);
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		itoast('没有权限，请联系该公众号的主管理员或网站创始人进行恢复操作！', referer(), 'error');
 	}
-	$account_info = uni_user_account_permission();
+	$account_info = permission_user_account_num();
 	if ($account_info['uniacid_limit'] <= 0 && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 		itoast('您所在用户组可添加的主公号数量已达上限，请停用后再行恢复此公众号！', referer(), 'error');
 	}
@@ -87,7 +87,7 @@ if ($do == 'recover') {
 if($do == 'delete') {
 	$uniacid = intval($_GPC['uniacid']);
 	$acid = intval($_GPC['acid']);
-	$state = uni_permission($_W['uid'], $uniacid);
+	$state = permission_account_user_role($_W['uid'], $uniacid);
 	if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
 		itoast('没有权限！', referer(), 'error');
 	}

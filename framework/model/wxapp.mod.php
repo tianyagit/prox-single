@@ -393,7 +393,7 @@ function wxapp_search_link_account($module_name = '') {
 	$owned_account = uni_owned();
 	if (!empty($owned_account)) {
 		foreach ($owned_account as $key => $account) {
-			$account['role'] = uni_permission($_W['uid'], $account['uniacid']);
+			$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
 			if (!in_array($account['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
 				unset($owned_account[$key]);
 			}

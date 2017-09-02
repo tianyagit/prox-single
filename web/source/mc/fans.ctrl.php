@@ -299,7 +299,6 @@ if ($do == 'sync') {
 }
 
 if ($do == 'fans_sync_set') {
-	// uni_user_permission_check('mc_passport_sync');
 	$_W['page']['title'] = '更新粉丝信息 - 公众号选项';
 	$operate = $_GPC['operate'];
 	if ($operate == 'save_setting') {

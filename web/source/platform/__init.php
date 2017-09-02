@@ -11,7 +11,7 @@ if ($action != 'material-post') {
 	define('FRAME', 'account');
 }
 if ($action == 'qr') {
-	$platform_qr_permission =  uni_user_permission_check('platform_qr', false);
+	$platform_qr_permission = permission_check_account_user('platform_qr', false);
 	if ($platform_qr_permission ===  false) {
 		header("Location: ". url('platform/url2qr'));
 	}

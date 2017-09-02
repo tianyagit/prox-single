@@ -10,7 +10,7 @@ load()->model('wxapp');
 
 $dos = array('get_setting', 'display');
 $do = in_array($do, $dos) ? $do : 'display';
-uni_user_permission_check('wxapp_payment', true, 'wxapp');
+permission_check_account_user('wxapp_payment', true, 'wxapp');
 $_W['page']['title'] = '支付参数';
 
 $pay_setting = wxapp_payment_param();
