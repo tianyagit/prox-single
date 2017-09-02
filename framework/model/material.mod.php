@@ -386,7 +386,7 @@ function material_local_upload_by_url($url, $type='images') {
 		}
 		$filepath = ATTACHMENT_ROOT . $filepath;
 	} else {
-		if (strpos(parse_url($url, PHP_URL_PATH), 'attachment/')) {
+		if (strexists(parse_url($url, PHP_URL_PATH), '/attachment/')) {
 			$url = substr(parse_url($url, PHP_URL_PATH), strpos(parse_url($url, PHP_URL_PATH), '/attachment/') + strlen('/attachment/'));
 		}
 		$filepath = ATTACHMENT_ROOT . $url;
