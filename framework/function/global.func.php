@@ -307,7 +307,7 @@ function iserializer($value) {
  */
 function iunserializer($value) {
 	if (empty($value)) {
-		return '';
+		return array();
 	}
 	if (!is_serialized($value)) {
 		return $value;
@@ -318,8 +318,11 @@ function iunserializer($value) {
 			return 's:'.strlen($matchs[2]).':"'.$matchs[2].'";';
 		}, $value);
 		return unserialize($temp);
+	} elseif (!is_array($result)) {
+		return array();
+	} else {
+		return $result;
 	}
-	return $result;
 }
 
 /**
