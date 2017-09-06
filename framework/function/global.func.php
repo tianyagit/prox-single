@@ -422,43 +422,45 @@ function wurl($segment, $params = array()) {
 	return $url;
 }
 
-/**
- * 获取Mobile端URL地址
- * @param string $segment 路由参数
- * @param array $params 附加参数
- * @param boolean $noredirect 是否追加微信URl后缀
- */
-function murl($segment, $params = array(), $noredirect = true, $addhost = false) {
-	global $_W;
-	list($controller, $action, $do) = explode('/', $segment);
-	if (!empty($addhost)) {
-		$url = $_W['siteroot'] . 'app/';
-	} else {
-		$url = './';
-	}
-	$str = '';
-	if(uni_is_multi_acid()) {
-		$str = "&j={$_W['acid']}";
-	}
-	$url .= "index.php?i={$_W['uniacid']}{$str}&";
-	if (!empty($controller)) {
-		$url .= "c={$controller}&";
-	}
-	if (!empty($action)) {
-		$url .= "a={$action}&";
-	}
-	if (!empty($do)) {
-		$url .= "do={$do}&";
-	}
-	if (!empty($params)) {
-		$queryString = http_build_query($params, '', '&');
-		$url .= $queryString;
-		if ($noredirect === false) {
-			//加上后，表单提交无值
-			$url .= '&wxref=mp.weixin.qq.com#wechat_redirect';
+if (!function_exists('murl')) {
+	/**
+	 * 获取Mobile端URL地址
+	 * @param string $segment 路由参数
+	 * @param array $params 附加参数
+	 * @param boolean $noredirect 是否追加微信URl后缀
+	 */
+	function murl($segment, $params = array(), $noredirect = true, $addhost = false) {
+		global $_W;
+		list($controller, $action, $do) = explode('/', $segment);
+		if (!empty($addhost)) {
+			$url = $_W['siteroot'] . 'app/';
+		} else {
+			$url = './';
 		}
+		$str = '';
+		if(uni_is_multi_acid()) {
+			$str = "&j={$_W['acid']}";
+		}
+		$url .= "index.php?i={$_W['uniacid']}{$str}&";
+		if (!empty($controller)) {
+			$url .= "c={$controller}&";
+		}
+		if (!empty($action)) {
+			$url .= "a={$action}&";
+		}
+		if (!empty($do)) {
+			$url .= "do={$do}&";
+		}
+		if (!empty($params)) {
+			$queryString = http_build_query($params, '', '&');
+			$url .= $queryString;
+			if ($noredirect === false) {
+				//加上后，表单提交无值
+				$url .= '&wxref=mp.weixin.qq.com#wechat_redirect';
+			}
+		}
+		return $url;
 	}
-	return $url;
 }
 
 /**
@@ -1357,9 +1359,8 @@ function getglobal($key) {
  * @param $needles 开头字符串
  * @return bool
  */
-if(!function_exists('starts_with')) {
-	function starts_with($haystack, $needles)
-	{
+if (!function_exists('starts_with')) {
+	function starts_with($haystack, $needles) {
 		foreach ((array) $needles as $needle) {
 			if ($needle != '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
 				return true;
@@ -1375,7 +1376,7 @@ if(!function_exists('starts_with')) {
  * @param $redirect
  * @return string
  */
-function check_redirect($redirect) {
+function check_url_not_outside_link($redirect) {
 	global $_W;
 	if(starts_with($redirect, 'http') && !starts_with($redirect, $_W['siteroot'])) {
 		$redirect = $_W['siteroot'];
