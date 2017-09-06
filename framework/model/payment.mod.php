@@ -29,7 +29,7 @@ function alipay_build($params, $alipay = array()) {
 	if ($params['service'] == 'create_direct_pay_by_user') {
 		$set['service'] = 'create_direct_pay_by_user';
 		$set['seller_id'] = $alipay['partner'];
-		$set['notify_url'] = $_W['siteroot'] . 'payment/alipay/direct_notify.php';
+		$set['body'] = 'site_store';
 	} else {
 		$set['app_pay'] = 'Y';
 	}
