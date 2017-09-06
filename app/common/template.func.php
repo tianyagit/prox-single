@@ -158,8 +158,12 @@ function template_parse($str) {
 	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
 	$str = str_replace('{##', '{', $str);
 	$str = str_replace('##}', '}', $str);
+
+	$business_stat_script = $GLOBALS['_W']['current_module']['name'] ? "var we7_stats = document.createElement('script');we7_stats.src = '{$GLOBALS['_W']['siteroot']}app/index.php?i={$GLOBALS['_W']['uniacid']}&c=utility&a=visit&do=showjs&m={$GLOBALS['_W']['current_module']['name']}';var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(we7_stats, s);" : '';
 	if (!empty($GLOBALS['_W']['setting']['remote']['type'])) {
-		$str = str_replace('</body>', "<script>var imgs = document.getElementsByTagName('img');for(var i=0, len=imgs.length; i < len; i++){imgs[i].onerror = function() {if (!this.getAttribute('check-src') && (this.src.indexOf('http://') > -1 || this.src.indexOf('https://') > -1)) {this.src = this.src.indexOf('{$GLOBALS['_W']['attachurl_local']}') == -1 ? this.src.replace('{$GLOBALS['_W']['attachurl_remote']}', '{$GLOBALS['_W']['attachurl_local']}') : this.src.replace('{$GLOBALS['_W']['attachurl_local']}', '{$GLOBALS['_W']['attachurl_remote']}');this.setAttribute('check-src', true);}}}</script></body>", $str);
+		$str = str_replace('</body>', "<script>var imgs = document.getElementsByTagName('img');for(var i=0, len=imgs.length; i < len; i++){imgs[i].onerror = function() {if (!this.getAttribute('check-src') && (this.src.indexOf('http://') > -1 || this.src.indexOf('https://') > -1)) {this.src = this.src.indexOf('{$GLOBALS['_W']['attachurl_local']}') == -1 ? this.src.replace('{$GLOBALS['_W']['attachurl_remote']}', '{$GLOBALS['_W']['attachurl_local']}') : this.src.replace('{$GLOBALS['_W']['attachurl_local']}', '{$GLOBALS['_W']['attachurl_remote']}');this.setAttribute('check-src', true);}}};{$business_stat_script}</script></body>", $str);
+	} else {
+		$str = str_replace('</body>', "<script>;{$business_stat_script}</script></body>", $str);
 	}
 	$str = "<?php defined('IN_IA') or exit('Access Denied');?>" . $str;
 	return $str;
