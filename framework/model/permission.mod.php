@@ -101,8 +101,9 @@ function permission_create_account($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 	if (empty($uid)) {
 		return error(-1, '用户数据错误！');
 	}
-	$groupid = pdo_fetchcolumn('SELECT groupid FROM ' . tablename('users') . ' WHERE uid = :uid', array(':uid' => $uid));
-	$groupdata = pdo_fetch('SELECT maxaccount, maxsubaccount, maxwxapp FROM ' . tablename('users_group') . ' WHERE id = :id', array(':id' => $groupid));
+	$user_table = table('users');
+	$userinfo = $user_table->usersInfo($uid);
+	$groupdata = $user_table->usersGroupInfo($userinfo['groupid']);
 	$list = pdo_fetchall('SELECT d.type, count(*) AS count FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0 GROUP BY d.type', array(':uid' => $uid, ':role' => 'owner'));
 	foreach ($list as $item) {
 		if ($item['type'] == ACCOUNT_TYPE_APP_NORMAL) {
@@ -143,9 +144,9 @@ function permission_account_user_role($uid = 0, $uniacid = 0) {
 	if (user_is_vice_founder($uid)) {
 		return ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
 	}
-
+	$user_table = table('users');
 	if (!empty($uniacid)) {
-		$role = pdo_getcolumn('uni_account_users', array('uid' => $uid, 'uniacid' => $uniacid), 'role');
+		$role = $user_table->userOwnedAccountRole($uid, $uniacid);
 		if ($role == ACCOUNT_MANAGE_NAME_OWNER) {
 			$role = ACCOUNT_MANAGE_NAME_OWNER;
 		} elseif ($role == ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
@@ -158,8 +159,7 @@ function permission_account_user_role($uid = 0, $uniacid = 0) {
 			$role = ACCOUNT_MANAGE_NAME_CLERK;
 		}
 	} else {
-		$roles = pdo_getall('uni_account_users', array('uid' => $uid), array('role'), 'role');
-		$roles = array_keys($roles);
+		$roles = $user_table->userOwnedAccountRole($uid);
 		if (in_array(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, $roles)) {
 			$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
 		} elseif (in_array(ACCOUNT_MANAGE_NAME_OWNER, $roles)) {
@@ -193,7 +193,7 @@ function permission_account_user_permission_exist($uid = 0, $uniacid = 0) {
 	if (FRAME == 'system') {
 		return true;
 	}
-	$is_exist = pdo_get('users_permission', array('uid' => $uid, 'uniacid' => $uniacid), array('id'));
+	$is_exist = table('users')->userPermissionInfo($uid, $uniacid);
 	if(empty($is_exist)) {
 		return false;
 	} else {
@@ -207,7 +207,8 @@ function permission_account_user_permission_exist($uid = 0, $uniacid = 0) {
  */
 function permission_account_user($type = 'system') {
 	global $_W;
-	$user_permission = pdo_getcolumn('users_permission', array('uid' => $_W['uid'], 'uniacid' => $_W['uniacid'], 'type' => $type), 'permission');
+	$user_permission = table('users')->userPermissionInfo($_W['uid'], $_W['uniacid'], $type);
+	$user_permission = $user_permission['permission'];
 	if (!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
 	} else {
@@ -245,15 +246,16 @@ function permission_account_user_menu($uid, $uniacid, $type) {
 	if (empty($permission_exist)) {
 		return array('all');
 	}
+	$user_table = table('users');
 	if ($type == 'modules') {
-		$user_menu_permission = pdo_fetchall("SELECT * FROM " . tablename('users_permission') . " WHERE uniacid = :uniacid AND uid  = :uid AND type != '" . PERMISSION_ACCOUNT . "' AND type != '" . PERMISSION_WXAPP . "'", array(':uniacid' => $uniacid, ':uid' => $uid), 'type');
+		$user_menu_permission = $user_table->userModulesPermission($uid, $uniacid);
 	} else {
 		$module = uni_modules_by_uniacid($uniacid);
 		$module = array_keys($module);
 		if (in_array($type, $module) || in_array($type, array(PERMISSION_ACCOUNT, PERMISSION_WXAPP, PERMISSION_SYSTEM))) {
-			$menu_permission = pdo_getcolumn('users_permission', array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $type), 'permission');
-			if (!empty($menu_permission)) {
-				$user_menu_permission = explode('|', $menu_permission);
+			$menu_permission = $user_table->userPermissionInfo($uid, $uniacid, $type);
+			if (!empty($menu_permission['permission'])) {
+				$user_menu_permission = explode('|', $menu_permission['permission']);
 			}
 		}
 	}
@@ -408,7 +410,7 @@ function permission_check_account_user_module($action = '', $module_name = '') {
 		}
 		//模块其他业务菜单
 	} elseif (!empty($do) && !empty($m)) {
-		$is_exist = pdo_get('modules_bindings', array('module' => $m, 'do' => $do, 'entry' => 'menu'), array('eid'));
+		$is_exist = table('module')->moduleBindingsInfo($m, $do, 'menu');
 		if(empty($is_exist)) {
 			return true;
 		}
@@ -436,23 +438,24 @@ function permission_user_account_num($uid = 0) {
 		load()->model('user');
 		$user = user_single($uid);
 	}
+	$user_table = table('users');
 	if (user_is_vice_founder($user['uid']) && empty($uid)) {
 		$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-		$group = pdo_get('users_founder_group', array('id' => $user['groupid']));
+		$group = $user_table->userFounderGroupInfo($user['groupid']);
 		$group_num = uni_owner_account_nums($user['uid'], $role);
 		$uniacid_limit = max((intval($group['maxaccount']) - $group_num['account_num']), 0);
 		$wxapp_limit = max((intval($group['maxwxapp']) - $group_num['wxapp_num']), 0);
 	} else {
 		$role = ACCOUNT_MANAGE_NAME_OWNER;
-		$group = pdo_get('users_group', array('id' => $user['groupid']));
+		$group = $user_table->usersGroupInfo($user['groupid']);
 		$group_num = uni_owner_account_nums($user['uid'], $role);
 		$uniacid_limit = max((intval($group['maxaccount']) - $group_num['account_num']), 0);
 		$wxapp_limit = max((intval($group['maxwxapp']) - $group_num['wxapp_num']), 0);
 		if (empty($_W['isfounder'])) {
 			if (!empty($user['owner_uid'])) {
 				$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-				$group_id = pdo_getcolumn('users', array('uid' => $user['owner_uid']), 'groupid');
-				$group_vice = pdo_get('users_founder_group', array('id' => $group_id));
+				$owner_info = $user_table->usersInfo($user['owner_uid']);
+				$group_vice = $user_table->userFounderGroupInfo($owner_info['groupid']);
 				$account_vice_num = uni_owner_account_nums($user['owner_uid'], $role);
 
 				$uniacid_limit_vice = max((intval($group_vice['maxaccount']) - $account_vice_num['account_num']), 0);

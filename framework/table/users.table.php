@@ -29,6 +29,15 @@ class UsersTable extends We7Table {
 		return array_keys($uniacid_list);
 	}
 
+	public function userOwnedAccountRole($uid, $uniacid = 0) {
+		if (empty($uniacid)) {
+			$role = $this->query->from('uni_account_users')->where('uid', $uid)->getall('role');
+			return array_keys($role);
+		} else {
+			$role = $this->query->from('uni_account_users')->where(array('uid' => $uid, 'uniacid' => $uniacid))->get();
+			return $role['role'];
+		}
+	}
 	public function searchWithStatus($status) {
 		$this->query->where('u.status', $status);
 		return $this;
@@ -62,7 +71,36 @@ class UsersTable extends We7Table {
 		return $this->query->from('users_group')->getall('id');
 	}
 
+	public function usersGroupInfo($groupid) {
+		return $this->query->from('users_group')->where('id', $groupid)->get();
+	}
+
+	public function usersInfo($uid) {
+		return $this->query->from('users')->where('uid', $uid)->get();
+	}
+
 	public function usersFounderGroup() {
 		return $this->query->from('users_founder_group')->getall('id');
+	}
+
+	public function userPermissionInfo($uid, $uniacid, $type = '') {
+		$condition = array('uid' => $uid, 'uniacid' => $uniacid);
+		if (!empty($type)) {
+			$condition['type'] = $type;
+		}
+		return $this->query->from('users_permission')->where($condition)->get();
+	}
+
+	public function userModulesPermission($uid, $uniacid) {
+		$condition = array(
+			'uid'=> $uid,
+			'uniacid' => $uniacid,
+			'type !=' => array(PERMISSION_ACCOUNT, PERMISSION_WXAPP),
+		);
+		return $this->query->from('users_permission')->where($condition)->getall('type');
+	}
+
+	public function userFounderGroupInfo($uid) {
+		return $this->query->from('users_founder_group')->where('id', $uid)->get();
 	}
 }
