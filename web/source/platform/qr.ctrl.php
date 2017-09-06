@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('account');
 load()->func('communication');
+load()->model('setting');
 
 $dos = array('display', 'post', 'list', 'del', 'extend', 'SubDisplay', 'check_scene_str', 'down_qr', 'change_status');
 $do = !empty($_GPC['do']) && in_array($do, $dos) ? $do : 'list';
@@ -179,9 +180,8 @@ if ($do == 'extend') {
 }
 
 if ($do == 'display' || $do == 'change_status') {
-	$setting_table = table('settings');
-	$status = $setting_table->searchSetting('qr_status');
-	$status = iunserializer($status['value']);
+	$status_setting = setting_load('qr_status');
+	$status = $status_setting['qr_status']['status'];
 }
 
 if ($do == 'display') {
@@ -228,8 +228,8 @@ if ($do == 'down_qr') {
 }
 
 if ($do == 'change_status') {
-	$status = empty($status) ? 1 : 0;
-	$update = setting_save($status, 'qr_status');
+	$up_status['status'] = empty($status) ? 1 : 0;
+	$update = setting_save($up_status, 'qr_status');
 	if ($update) {
 		iajax(0, '');
 	}
