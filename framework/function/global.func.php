@@ -318,8 +318,6 @@ function iunserializer($value) {
 			return 's:'.strlen($matchs[2]).':"'.$matchs[2].'";';
 		}, $value);
 		return unserialize($temp);
-	} elseif (!is_array($result)) {
-		return array();
 	} else {
 		return $result;
 	}
