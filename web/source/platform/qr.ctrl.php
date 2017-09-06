@@ -179,7 +179,7 @@ if ($do == 'extend') {
 }
 
 if ($do == 'display' || $do == 'change_status') {
-	$setting_table = table('coresettings');
+	$setting_table = table('settings');
 	$status = $setting_table->searchSetting('qr_status');
 	$status = iunserializer($status['value']);
 }
@@ -209,7 +209,7 @@ if ($do == 'display') {
 			}
 		}
 		unset($qrcode);
-		$fans_table = table('mcmappingfans');
+		$fans_table = table('fans');
 		$nickname = $fans_table->fansAll($openid);
 	}
 	$pager = pagination($total, $pindex, $psize);
