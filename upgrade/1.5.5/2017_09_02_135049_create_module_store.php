@@ -13,9 +13,29 @@ class CreateModuleStore {
 	 *  执行更新
 	 */
 	public function up() {
+		 if (IMS_FAMILY != 'x') {
+			 return true;
+		 }
 		$store_menu_exist = pdo_get('core_menu', array('group_name' => 'frame', 'permission_name' => 'store', 'is_system' => 1));
 		if (empty($store_menu_exist)) {
 			pdo_insert('core_menu', array('group_name' => 'frame', 'type' => 'url', 'is_display' => 0, 'is_system' => 1, 'permission_name' => 'store'));
+		}
+		$store_module_exist = pdo_get('modules', array('name' => 'store'));
+		if (empty($store_module_exist)) {
+			$data = array(
+				'name' => 'store',
+				'type' => 'business',
+				'title' => '站内商城',
+				'title_initial' => 'Z',
+				'version' => '1.0',
+				'ability' => '站内商城',
+				'description' => '站内商城',
+				'author' => 'we7',
+				'issystem' => '1',
+				'wxapp_support' => '1',
+				'app_support' => '2',
+			);
+			pdo_insert('modules', $data);
 		}
 
 		pdo_query("
