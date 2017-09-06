@@ -16,7 +16,7 @@ if (is_error($r)) {
 
 $dos = array('upgrade');
 $do = in_array($do, $dos) ? $do : 'upgrade';
-uni_user_permission_check('system_cloud_upgrade');
+permission_check_account_user('system_cloud_upgrade');
 
 if (empty($_W['setting']['site']['profile_perfect'])) {
 	//itoast('请先完善云服务的站点注册信息!', url('cloud/profile'), 'warning');

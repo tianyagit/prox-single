@@ -12,7 +12,7 @@ $do = in_array($do, $dos) ? $do : 'module';
 
 $system_modules = system_modules();
 if (!in_array($_GPC['m'], $system_modules) && $do == 'post') {
-	uni_user_permission_check('', true, 'cover');
+	permission_check_account_user('', true, 'cover');
 }
 define('IN_MODULE', true);
 

@@ -18,13 +18,14 @@ $account_info = permission_user_account_num();
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
-	
-	
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 15;
-	
+
 	$account_table = table('account');
-	$account_table->searchWithType(array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH));
+	
+	$type_condition = array(
+		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL),
+		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
+	);
+	$account_table->searchWithType($type_condition[ACCOUNT_TYPE]);
 	
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {

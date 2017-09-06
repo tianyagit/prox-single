@@ -560,11 +560,6 @@ function uni_user_see_more_info($user_type, $see_more = false) {
 	return false;
 }
 
-function uni_user_permission_check($permission_name = '', $show_message = true, $action = '') {
-	$result = permission_check_account_user($permission_name, $show_message, $action);
-	return $result;
-}
-
 /**
  * 获取公众号和小程序真实数量
  * @param $uid

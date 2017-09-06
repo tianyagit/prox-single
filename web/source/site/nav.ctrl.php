@@ -12,7 +12,7 @@ $do = in_array($do, $dos) ? $do : 'home';
 
 $system_modules = system_modules();
 if (!in_array($_GPC['m'], $system_modules)) {
-	uni_user_permission_check('', true, 'nav');
+	permission_check_account_user('', true, 'nav');
 }
 $modulename = $_GPC['m'];
 
