@@ -163,3 +163,16 @@ define('USER_TYPE_CLERK', 3);
 define('PERSONAL_BASE_TYPE', 1);
 define('PERSONAL_AUTH_TYPE', 2);
 define('PERSONAL_LIST_TYPE', 3);
+
+//商品类型
+define('STORE_TYPE_MODULE', 1);
+define('STORE_TYPE_ACCOUNT', 2);
+define('STORE_TYPE_WXAPP', 3);
+//订单状态
+define('STORE_ORDER_PLACE', 1);
+define('STORE_ORDER_DELETE', 2);
+define('STORE_ORDER_FINISH', 3);
+
+define('STORE_GOODS_STATUS_OFFlINE', 0);
+define('STORE_GOODS_STATUS_ONLINE', 1);
+define('STORE_GOODS_STATUS_DELETE', 2);

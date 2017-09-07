@@ -237,7 +237,7 @@ if ($do == 'download_fans') {
 	//重复接入公众号处理机制
 	$same_account_exist = pdo_getall('account_wechats', array('key' => $_W['account']['key'], 'uniacid <>' => $_W['uniacid']), array(), 'uniacid');
 	if (!empty($same_account_exist)) {
-		pdo_update('mc_mapping_fans', array('uniacid' => $_W['uniacid']), array('uniacid' => array_keys($same_account_exist)));
+		pdo_update('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']), array('uniacid' => array_keys($same_account_exist)));
 	}
 
 	if (!is_error($wechat_fans_list)) {
@@ -299,7 +299,6 @@ if ($do == 'sync') {
 }
 
 if ($do == 'fans_sync_set') {
-	// uni_user_permission_check('mc_passport_sync');
 	$_W['page']['title'] = '更新粉丝信息 - 公众号选项';
 	$operate = $_GPC['operate'];
 	if ($operate == 'save_setting') {

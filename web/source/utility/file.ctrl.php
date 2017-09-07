@@ -315,9 +315,10 @@ if ($do == 'wechat_upload') {
 	if($type == 'image' || $type == 'thumb') {
 		$type = 'image';
 	}
-	if($type == 'voice' || $type == 'video') {
-		$type = 'video';
+	if( $type == 'audio') {
+		$type = 'voice';
 	}
+
 	$setting['folder'] = "{$type}s/{$_W['uniacid']}" . '/'.date('Y/m/');
 
 	$acid = $_W['acid'];

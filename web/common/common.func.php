@@ -45,10 +45,8 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	if($redirect == 'referer') {
 		$redirect = referer();
 	}
-	// 只能跳转到本域名下
-	if(starts_with($redirect,'http') && !starts_with($redirect, $_W['siteroot'])) {
-		$redirect = $_W['siteroot'];
-	}
+	// 跳转链接只能跳转本域名下 防止钓鱼 如: 用户可能正常从信任站点微擎登录 跳转到第三方网站 会误认为第三方网站也是安全的
+	$redirect = check_url_not_outside_link($redirect);
 
 	if($redirect == '') {
 		$type = in_array($type, array('success', 'error', 'info', 'warning', 'ajax', 'sql')) ? $type : 'info';
@@ -185,10 +183,10 @@ function buildframes($framename = ''){
 	//模块权限，创始人有所有模块权限
 	$modules = uni_modules(false);
 	$sysmodules = system_modules();
-	$status = uni_user_permission_exist($_W['uid'], $_W['uniacid']);
+	$status = permission_account_user_permission_exist($_W['uid'], $_W['uniacid']);
 	//非创始人应用模块菜单
 	if (!$_W['isfounder'] && $status && $_W['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
-		$module_permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'modules');
+		$module_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], 'modules');
 		if (!is_error($module_permission) && !empty($module_permission)) {
 			foreach ($module_permission as $module) {
 				if (!in_array($module['type'], $sysmodules) && empty($modules[$module['type']]['main_module']) && $modules[$module['type']]['app_support'] == 2) {
@@ -255,10 +253,10 @@ function buildframes($framename = ''){
 	//从数据库中获取用户权限，并附加上系统管理中的权限
 	//仅当系统管理时才使用预设权限
 	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
-		$user_permission = uni_user_permission('system');
+		$user_permission = permission_account_user('system');
 	}
 	if (empty($_W['role']) && empty($_W['uniacid'])) {
-		$user_permission = uni_user_permission('system');
+		$user_permission = permission_account_user('system');
 	}
 	//@@todo 店员界面菜单
 	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
@@ -272,7 +270,7 @@ function buildframes($framename = ''){
 			}
 			foreach ($section['section'] as $section_id => $secion) {
 				if ($nav_id == 'account') {
-					if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module' && uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OWNER) {
+					if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module' && permission_account_user_role($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OWNER) {
 						$frames['account']['section'][$section_id]['is_display'] = false;
 						continue;
 					} else {
@@ -472,7 +470,7 @@ function buildframes($framename = ''){
 		}
 
 		if (!empty($frames['wxapp']['section'])) {
-			$wxapp_permission = uni_user_permission('wxapp');
+			$wxapp_permission = permission_account_user('wxapp');
 			foreach ($frames['wxapp']['section'] as $wxapp_section_id => $wxapp_section) {
 				if (!empty($wxapp_section['menu']) && $wxapp_section_id != 'wxapp_module') {
 					foreach ($wxapp_section['menu'] as $wxapp_menu_id => $wxapp_menu) {

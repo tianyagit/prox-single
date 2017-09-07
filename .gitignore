@@ -42,5 +42,5 @@ we7/**/*
 vendor/**/*
 /.env
 /.php_cs.cache
-/composer.json
 /composer.lock
+

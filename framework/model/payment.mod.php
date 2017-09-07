@@ -26,7 +26,13 @@ function alipay_build($params, $alipay = array()) {
 	$set['seller_id'] = $alipay['account'];
 	$set['payment_type'] = 1;
 	$set['body'] = $_W['uniacid'];
-	$set['app_pay'] = 'Y';
+	if ($params['service'] == 'create_direct_pay_by_user') {
+		$set['service'] = 'create_direct_pay_by_user';
+		$set['seller_id'] = $alipay['partner'];
+		$set['body'] = 'site_store';
+	} else {
+		$set['app_pay'] = 'Y';
+	}
 	$prepares = array();
 	foreach($set as $key => $value) {
 		if($key != 'sign' && $key != 'sign_type') {

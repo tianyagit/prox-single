@@ -26,6 +26,9 @@ function user_register($user) {
 	if (empty($user['status'])) {
 		$user['status'] = 2;
 	}
+	if (empty($user['type'])) {
+		$user['type'] = USER_TYPE_COMMON;
+	}
 	$result = pdo_insert('users', $user);
 	if (!empty($result)) {
 		$user['uid'] = pdo_insertid();
@@ -575,7 +578,7 @@ function user_login_forward($forward = '') {
 
 	$login_forward = url('account/display');
 	if (!empty($_W['uniacid']) && !empty($_W['account'])) {
-		$permission = uni_permission($_W['uid'], $_W['uniacid']);
+		$permission = permission_account_user_role($_W['uid'], $_W['uniacid']);
 		if (empty($permission)) {
 			return $login_forward;
 		}
