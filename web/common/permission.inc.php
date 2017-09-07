@@ -136,6 +136,7 @@ $we7_file_permission = array(
 			'manage-account',
 			'manage-system',
 			'display',
+			'permission',
 		),
 		'manager' => array(
 			'display',
