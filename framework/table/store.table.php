@@ -83,7 +83,7 @@ class StoreTable extends We7Table {
 
 	public function searchHaveModule() {
 		$this->query->from('site_store_goods');
-		$result = $this->query->where('type', STORE_TYPE_MODULE)->getall('module');
+		$result = $this->query->where('type', STORE_TYPE_MODULE)->where('status !=', STORE_GOODS_STATUS_DELETE)->getall('module');
 		return $result;
 	}
 }
