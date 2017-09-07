@@ -18,7 +18,7 @@ class CreateModuleStore {
 		 }
 		$store_menu_exist = pdo_get('core_menu', array('group_name' => 'frame', 'permission_name' => 'store', 'is_system' => 1));
 		if (empty($store_menu_exist)) {
-			pdo_insert('core_menu', array('group_name' => 'frame', 'type' => 'url', 'is_display' => 0, 'is_system' => 1, 'permission_name' => 'store'));
+			pdo_insert('core_menu', array('group_name' => 'frame', 'type' => 'url', 'is_display' => 1, 'is_system' => 1, 'permission_name' => 'store'));
 		}
 		$store_module_exist = pdo_get('modules', array('name' => 'store'));
 		if (empty($store_module_exist)) {

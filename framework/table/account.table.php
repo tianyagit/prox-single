@@ -22,6 +22,7 @@ class AccountTable extends We7Table {
 		} else {
 			$this->query->where('a.default_acid !=', '0')->orderby('a.rank', 'desc');
 		}
+		$this->query->orderby('a.uniacid', 'desc');
 		$list = $this->query->getall('a.uniacid');
 		return $list;
 	}
