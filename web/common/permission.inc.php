@@ -184,6 +184,15 @@ $we7_file_permission = array(
 			'entry',
 		)
 	),
+	'statistics' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array('statistics*'),
+		'owner' => array('statistics*'),
+		'manager' => array(),
+		'operator' => array(),
+		'clerk' => array(),
+	),
 	'store' => array(
 		'default' => '',
 		'direct' => array(),
