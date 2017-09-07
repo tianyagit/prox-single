@@ -37,6 +37,7 @@ class CreateModuleStore {
 			);
 			pdo_insert('modules', $data);
 		}
+		setting_save(array('status' => STATUS_ON), 'store');
 
 		pdo_query("
 		CREATE TABLE IF NOT EXISTS `ims_site_store_goods` (
@@ -78,13 +79,12 @@ CREATE TABLE IF NOT EXISTS `ims_site_store_order` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='站内商城订单表';
 		");
 	}
-	
+
 	/**
 	 *  回滚更新
 	 */
 	public function down() {
-		
+
 
 	}
 }
-		

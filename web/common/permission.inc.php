@@ -136,6 +136,7 @@ $we7_file_permission = array(
 			'manage-account',
 			'manage-system',
 			'display',
+			'permission',
 		),
 		'manager' => array(
 			'display',
@@ -183,6 +184,15 @@ $we7_file_permission = array(
 		'clerk' => array(
 			'entry',
 		)
+	),
+	'statistics' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array('statistics*'),
+		'owner' => array('statistics*'),
+		'manager' => array(),
+		'operator' => array(),
+		'clerk' => array(),
 	),
 	'store' => array(
 		'default' => '',
