@@ -1,0 +1,186 @@
+{template 'common/header'}
+<!--小程序前端下载-->
+<div>
+    <div class="media media-wechat-setting">
+        <div class="media-left color-default">
+            <span class="wi wi-wxapp-webpack" style="font-size: 55px;"></span>
+        </div>
+        <div class="media-body media-middle ">
+            <h4 class="media-heading color-dark">{$wxapp_versions_info['modules'][0]['title']}</h4>
+            <div class="color-gray">版本: {$wxapp_versions_info['version']}</div>
+        </div>
+        <div class="media-right media-middle">
+            <a href="./index.php?c=wxapp&a=manage&do=getpackage&uniacid={$_W['uniacid']}&versionid={$wxapp_versions_info['id']}" class="btn btn-primary">立即下载</a>
+        </div>
+    </div>
+    <div class="wxapp-download-procedure">
+        <div>
+            <img id="qrcode"  style="width: 300px; height: 300px;"/>
+        </div>
+
+        <div>
+            <form id="codeform" method="post" class="form-horizontal" style="display: none;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        提交代码
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">APPID</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" name="appid" required id="appid"
+                                       value=""
+                                       placeholder="任意字符"/>
+                                <span class="help-block">
+						            第三方平台名称，应具有唯一标识性
+					            </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">用户版本</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="number" name="user_version" required
+                                       value="" id="user_version"
+                                       placeholder="请输入一个数字"/>
+                                <span class="help-block">
+                            用户版本号
+					</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">版本描述</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" name="user_desc" id="user_desc"
+                                       required="required" value="" placeholder="版本描述"/>
+                                <span class="help-block">
+						用户描述
+					</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-8">
+                                <input type="hidden" name="ticket" id="ticket"/>
+                                <input type="button" name="submit" class="btn btn-primary min-width" id="commit"
+                                       value="提交" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+<script>
+    $(function(){
+    	var UUIDURL = "{php echo url('wxapp/front-download/uuid')}";
+	    var QRCODEURL = "{php echo url('wxapp/front-download/qrcode')}";
+	    var CHECKSANURL = "{php echo url('wxapp/front-download/checkscan')}";
+	    var COMMITURL = "{php echo url('wxapp/front-download/commitcode')}";
+        var uuid = null;
+	    function ajax(url, data) {
+		    var def = $.Deferred();
+		    $.ajax({
+                'url':url,
+		    	'timeout':30000,
+                'data' : data,
+                'dataType':'json',
+                'success':function(data){
+	                def.resolve(data);
+                },
+                'error': function (error) {
+                    def.reject();
+                }
+            });
+            return def;
+        }
+        // 获取UUID
+    	var getUuid = function() {
+            return ajax(UUIDURL);
+	    }
+	    // 显示二维码
+	    function qrcode() {
+		    return getUuid().then(function(data){
+			    var def = $.Deferred();
+            	if(data.errno == 1) {
+            		window.location.reload();
+                }
+                uuid = data.data.uuid;
+            	$('#qrcode').attr('src', QRCODEURL+'&uuid='+uuid);
+            	def.resolve(uuid);
+            	return def;
+            })
+	    }
+
+        //
+	    /**
+	     * 408 超时
+	     * 404 已扫码
+	     * 403 已取消
+	     * 405 正常扫码  可以获取code
+	     * 402 500 都是错误
+	     *  扫码结果确认
+	     */
+	    // 获取扫码结果
+	    function checkscan(uuid, last) {
+	    	if(!last) {
+	    		last = 408;
+            }
+		    var url = CHECKSANURL+'&uuid='+uuid+'&last='+last;
+            return ajax(url).then(function(data){
+	            console.log('sdasdas');
+	            console.log(data);
+            	if(data.errno == 0) {
+            		var errcode = parseInt(data.data.errcode);
+                    switch (errcode) {
+                        case 408 : console.log('超时'); break;
+                        case 404 : console.log('已扫码'); break;
+                        case 403 : console.log('已取消'); break;
+                        case 405 :
+                        	    console.log('sdasdas');
+                        	    $('#codeform').show();
+                        	    $('#ticket').val(data.data.ticket);
+                        	    console.log('授权成功');
+                        	    console.log('ticket:'+ data.data.ticket);
+                                break;
+                    }
+                    if(errcode != 405) {
+                    	return checkscan(uuid, errcode);
+                    }
+                }
+            },function(error){
+            	//可能超时的处理
+	            console.log('timeout');
+            	return checkscan(uuid,last);
+            });
+        }
+
+        // 启动
+        function start() {
+            qrcode().then(function (uuid) {
+                return checkscan(uuid);
+            });
+
+            $('#commit').click(function(){
+            	var ticket = $('#ticket').val();
+            	var appid = $('#appid').val();
+	            var user_version = $('#user_version').val();
+	            var user_desc = $('#user_desc').val();
+	            var url = COMMITURL+'ticket='+ticket+'&appid='+appid+'&user_version='+user_version+'&user_desc='+user_desc;
+	            ajax(url).then(function(data){
+	            	if(data.errno == '0') {
+	            		alert('提交成功');
+                    }
+                })
+            })
+        }
+
+        start();
+
+
+
+    });
+</script>
+{template 'common/footer'}
