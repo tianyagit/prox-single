@@ -18,12 +18,13 @@ defined('IN_IA') or exit('Access Denied');
  *    'clerk'         代表  店员拥有的权限
  * 权限中带星号'*'指拥有该文件夹下所有权限
  */
+$we7_file_permission = array();
 $we7_file_permission = array(
 	'account' => array(
 		'default' => '',
 		'direct' => array(
 			'auth',
-			'welcome'
+			'welcome', 'openwechat'
 		),
 		'vice_founder' => array('account*'),
 		'owner' => array('account*'),
@@ -135,6 +136,7 @@ $we7_file_permission = array(
 			'manage-account',
 			'manage-system',
 			'display',
+			'permission',
 		),
 		'manager' => array(
 			'display',
@@ -175,13 +177,49 @@ $we7_file_permission = array(
 		'owner' => array('site*'),
 		'manager' => array(
 			'editor',
+			'article',
+			'category',
+			'style',
 		),
 		'operator' => array(
 			'editor',
+			'article',
+			'category',
+			'style',
 		),
 		'clerk' => array(
 			'entry',
 		)
+	),
+	'statistics' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array('statistics*'),
+		'owner' => array('statistics*'),
+		'manager' => array(),
+		'operator' => array(),
+		'clerk' => array(),
+	),
+	'store' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array(
+			'goods-buyer',
+			'orders',
+		),
+		'owner' => array(
+			'goods-buyer',
+			'orders',
+		),
+		'manager' => array(
+			'goods-buyer',
+			'orders',
+		),
+		'operator' => array(
+			'goods-buyer',
+			'orders',
+		),
+		'clerk' => array(),
 	),
 	'system' => array(
 		'default' => '',
@@ -247,7 +285,9 @@ $we7_file_permission = array(
 			'wxcode',
 			'modules',
 		),
-		'vice_founder' => array(),
+		'vice_founder' => array(
+			'user'
+		),
 		'owner' => array(),
 		'manager' => array(),
 		'operator' => array(),

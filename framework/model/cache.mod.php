@@ -62,7 +62,7 @@ function cache_build_account_modules($uniacid = 0) {
 }
 /*
  * 重建公众号缓存
- * @param int $uniacid 要重建缓存的公众号uniacid 
+ * @param int $uniacid 要重建缓存的公众号uniacid
  */
 function cache_build_account($uniacid = 0) {
 	global $_W;
@@ -169,7 +169,7 @@ function cache_build_users_struct() {
 
 function cache_build_frame_menu() {
 	$system_menu_db = pdo_getall('core_menu', array('permission_name !=' => ''), array(), 'permission_name');
-	$system_menu = require_once IA_ROOT . '/web/common/frames.inc.php';
+	$system_menu = require IA_ROOT . '/web/common/frames.inc.php';
 	if (!empty($system_menu) && is_array($system_menu)) {
 		$system_displayoser = 0;
 		foreach ($system_menu as $menu_name => $menu) {

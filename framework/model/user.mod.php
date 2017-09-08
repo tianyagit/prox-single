@@ -26,6 +26,9 @@ function user_register($user) {
 	if (empty($user['status'])) {
 		$user['status'] = 2;
 	}
+	if (empty($user['type'])) {
+		$user['type'] = USER_TYPE_COMMON;
+	}
 	$result = pdo_insert('users', $user);
 	if (!empty($result)) {
 		$user['uid'] = pdo_insertid();
