@@ -21,20 +21,20 @@ if ($do == 'display') {
 	if (in_array($type, array('display', 'check', 'recycle', 'clerk'))) {
 		switch ($type) {
 			case 'check':
-				uni_user_permission_check('system_user_check');
+				permission_check_account_user('system_user_check');
 				$users_table->searchWithStatus(USER_STATUS_CHECK);
 				break;
 			case 'recycle':
-				uni_user_permission_check('system_user_recycle');
+				permission_check_account_user('system_user_recycle');
 				$users_table->searchWithStatus(USER_STATUS_BAN);
 				break;
 			case 'clerk':
-				uni_user_permission_check('system_user_clerk');
+				permission_check_account_user('system_user_clerk');
 				$users_table->searchWithStatus(USER_STATUS_NORMAL);
 				$users_table->searchWithType(USER_TYPE_CLERK);
 				break;
 			default:
-				uni_user_permission_check('system_user');
+				permission_check_account_user('system_user');
 				$users_table->searchWithStatus(USER_STATUS_NORMAL);
 				$users_table->searchWithType(USER_TYPE_COMMON);
 				$users_table->searchWithFounder(array(ACCOUNT_MANAGE_GROUP_GENERAL, ACCOUNT_MANAGE_GROUP_FOUNDER));
@@ -67,12 +67,12 @@ if ($do == 'operate') {
 	}
 	switch ($type) {
 		case 'check_pass':
-			uni_user_permission_check('system_user_check');
+			permission_check_account_user('system_user_check');
 			break;
 		case 'recycle':
 		case 'recycle_delete':
 		case 'recycle_restore':
-			uni_user_permission_check('system_user_recycle');
+			permission_check_account_user('system_user_recycle');
 			break;
 	}
 	$uid = intval($_GPC['uid']);

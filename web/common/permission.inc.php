@@ -30,10 +30,12 @@ $we7_file_permission = array(
 		'manager' => array(
 			'display',
 			'manage',
+			'post-step',
 		),
 		'operator' => array(
 			'display',
 			'manage',
+			'post-step',
 		),
 		'clerk' => array()
 	),

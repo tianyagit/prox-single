@@ -386,7 +386,9 @@ function material_local_upload_by_url($url, $type='images') {
 		}
 		$filepath = ATTACHMENT_ROOT . $filepath;
 	} else {
-		$url = str_replace('/attachment/', '', parse_url($url, PHP_URL_PATH));
+		if (strexists(parse_url($url, PHP_URL_PATH), '/attachment/')) {
+			$url = substr(parse_url($url, PHP_URL_PATH), strpos(parse_url($url, PHP_URL_PATH), '/attachment/') + strlen('/attachment/'));
+		}
 		$filepath = ATTACHMENT_ROOT . $url;
 	}
 	return $account_api->uploadMediaFixed($filepath, $type);
@@ -439,7 +441,7 @@ function material_upload_limit() {
  */
 function material_news_delete($material_id){
 	global $_W;
-	$permission = uni_user_menu_permission($_W['uid'], $_W['uniacid'], 'system');
+	$permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], 'system');
 	if (is_error($permission)) {
 		return error(-1, $permission['message']);
 	}

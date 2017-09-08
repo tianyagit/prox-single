@@ -9,14 +9,13 @@ load()->func('file');
 $dos = array('display', 'post', 'del');
 $do = in_array($do, $dos) ? $do : 'display';
 
-uni_user_permission_check('platform_site');
+permission_check_account_user('platform_site');
 $_W['page']['title'] = '文章管理 - 微官网';
 $category = pdo_fetchall("SELECT id,parentid,name FROM ".tablename('site_category')." WHERE uniacid = '{$_W['uniacid']}' ORDER BY parentid ASC, displayorder ASC, id ASC ", array(), 'id');
 $parent = array();
 $children = array();
 
 if (!empty($category)) {
-	$children = '';
 	foreach ($category as $cid => $cate) {
 		if (!empty($cate['parentid'])) {
 			$children[$cate['parentid']][] = $cate;
@@ -236,6 +235,6 @@ if ($do == 'display') {
 			itoast('删除成功！', referer(), 'success');
 		} else {
 			itoast('删除失败！', referer(), 'error');
-		}				
+		}
 	}
 }

@@ -9,11 +9,13 @@ load()->app('common');
 load()->app('template');
 $_W['uniacid'] = $_W['weid'] = intval($_GET['body']);
 $setting = uni_setting($_W['uniacid'], array('payment'));
-if (!is_array($setting['payment'])) {
+$direct_pay = $_GET['exterface'] == 'create_direct_pay_by_user'? true : false;;
+
+if (!is_array($setting['payment']) && !$direct_pay) {
 	exit('request failed.');
 }
 $alipay = $setting['payment']['alipay'];
-if (empty($alipay)) {
+if (empty($alipay) && !$direct_pay) {
 	exit('request failed.');
 }
 $prepares = array();
@@ -82,6 +84,14 @@ if($sign == $_GET['sign']){
 				$ret['from'] = 'return';
 				$site->$method($ret);
 				exit;
+			}
+		} else {
+			$order = pdo_get('site_store_order', array('orderid' => $_GET['out_trade_no']));
+			if (!empty($order)) {
+				if ($order['type'] == 1) {
+					pdo_update('site_store_order', array('type' => 3), array('orderid' => $_GET['out_trade_no']));
+				}
+				header('Location: ' . $_W['siteroot'] . 'web/index.php?c=store&a=orders');
 			}
 		}
 	}
