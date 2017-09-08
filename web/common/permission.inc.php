@@ -153,9 +153,11 @@ $we7_file_permission = array(
 		'owner' => array('platform*'),
 		'manager' => array(
 			'material-post',
+			'cover'
 		),
 		'operator' => array(
 			'material-post',
+			'cover'
 		),
 		'clerk' => array()
 	),
