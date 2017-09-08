@@ -5,11 +5,11 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->model('wxapp');
-load()->classs('wxapp/wxappcloud');
-load()->func('communication');
 
-$dos = array('front_download','redirect','oauth','commitcode','qrcode','submit_audit','category','getpage');
+//load()->func('communication');
+load()->classs('cloudapi');
+
+$dos = array('front_download', 'uuid', 'qrcode', 'checkscan','commitcode');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -20,62 +20,53 @@ if (!empty($uniacid)) {
 	$wxapp_info = wxapp_fetch($uniacid);
 }
 if (!empty($version_id)) {
-	$version_info = wxapp_version($version_id);
-	$wxapp_info = wxapp_fetch($version_info['uniacid']);
+//	$version_info = wxapp_version($version_id);
+//	$wxapp_info = wxapp_fetch($version_info['uniacid']);
+	template('wxapp/wxapp-up');
+}
+$cloud_api = new CloudApi();
+if($do == 'uuid') {
+	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'uuid'));
+	echo json_encode($data);
 }
 
-if ($do == 'front_download') {
-	$wxapp_versions_info = wxapp_version($version_id);
-
+if($do == 'qrcode') {
+	$uuid = $_GPC['uuid'];
+	$cloud_api = new CloudApi();
+	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'qrcode',
+		'uuid'=>$uuid),
+		 'html');
+	echo $data;
 }
 
-
-$cloud = new WxAppCloud('wx991ec14508b7d1e7');
-$wxapp_id  = 'wxb0e582aaff9a169d';//
-if($do == 'redirect') {
-	$siteroot = $_W['siteroot'];
-	$redirect_uri = $cloud->redirect($siteroot.'web/index.php?c=wxapp&a=front-download&do=oauth');
-	header('Location:'.$redirect_uri);
-}
-if ($do == 'oauth') {
-	$auth_code = $_GPC['auth_code'];
-	var_dump($cloud->authData($auth_code));
-	exit;
+if($do == 'checkscan') {
+	$uuid = $_GPC['uuid'];
+	$last = $_GPC['last'];
+	$cloud_api = new CloudApi();
+	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'checkscan',
+		'uuid'=>$uuid,
+		'last'=>$last),
+		'json');
+	echo json_encode($data);
 }
 
 // 上传代码
 if($do == 'commitcode') {
+	$appid = $_GPC['appid'];
+	$user_version = $_GPC['user_version'];
+	$user_desc = $_GPC['user_desc'];
+	$ticket = $_GPC['ticket'];
 
-	if($_W['ispost']) {
-		$user_version = $_GPC['user_version'];
-		$user_desc = $_GPC['user_desc'];
-		$template_id = $_GPC['template_id'];
-		$cloud->commitCode($template_id,$wxapp_id, $user_version, $user_desc);
-		itoast('上传代码成功');
-	}
-
-}
-// 预览应用
-if($do == 'preview') {
-
-}
-
-if($do == 'qrcode') {
-	header('Content-Type: images/jpeg');
-	echo $cloud->getQrCode($wxapp_id);
+	$cloud_api = new CloudApi();
+	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'commitcode',
+		'appid' => $appid,
+		'user_version'=>$user_version,
+		'user_desc'=>$user_desc,
+		'ticket'=>$ticket),
+		'json');
+	echo json_encode($data);
 }
 
-// 可使用的分类
-if($do == 'category') {
-	dump($cloud->getCategory($wxapp_id));
-}
+
 // 代码所有页面
-if($do == 'getpage') {
-	dump($cloud->getPage($wxapp_id));
-}
-// 提交审核
-if($do == 'submit_audit') {
-	$data = array();
-	$cloud->submitAudit($wxapp_id,$data);
-}
-template('wxapp/wxapp-up');
+
