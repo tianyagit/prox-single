@@ -285,7 +285,9 @@ $we7_file_permission = array(
 			'wxcode',
 			'modules',
 		),
-		'vice_founder' => array(),
+		'vice_founder' => array(
+			'user'
+		),
 		'owner' => array(),
 		'manager' => array(),
 		'operator' => array(),
