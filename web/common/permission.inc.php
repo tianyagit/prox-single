@@ -177,9 +177,15 @@ $we7_file_permission = array(
 		'owner' => array('site*'),
 		'manager' => array(
 			'editor',
+			'article',
+			'category',
+			'style',
 		),
 		'operator' => array(
 			'editor',
+			'article',
+			'category',
+			'style',
 		),
 		'clerk' => array(
 			'entry',
