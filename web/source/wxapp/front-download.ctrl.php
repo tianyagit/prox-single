@@ -5,11 +5,10 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-
-//load()->func('communication');
+load()->model('wxapp');
 load()->classs('cloudapi');
 
-$dos = array('front_download', 'uuid', 'qrcode', 'checkscan','commitcode');
+$dos = array('front_download', 'set_domain', 'uuid', 'qrcode', 'checkscan', 'commitcode','download');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -20,10 +19,24 @@ if (!empty($uniacid)) {
 	$wxapp_info = wxapp_fetch($uniacid);
 }
 if (!empty($version_id)) {
-//	$version_info = wxapp_version($version_id);
-//	$wxapp_info = wxapp_fetch($version_info['uniacid']);
-	template('wxapp/wxapp-up');
+	$version_info = wxapp_version($version_id);
+	$wxapp_info = wxapp_fetch($version_info['uniacid']);
 }
+//91ec1f9324753048c0096d036a694f86
+if ($do == 'front_download') {
+	$appurl = $_W['siteroot'].'/app/index.php';
+	$uptype = $_GPC['uptype'] == 'auto'? 'auto':'';
+	$wxapp_versions_info = wxapp_version($version_id);
+	template('wxapp/version-front-download');
+}
+if($do == 'auto_upload') {
+	template('wxapp/version-front-download');
+}
+
+if($do == 'set_domain') {
+
+}
+
 $cloud_api = new CloudApi();
 if($do == 'uuid') {
 	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'uuid'));
@@ -35,7 +48,7 @@ if($do == 'qrcode') {
 	$cloud_api = new CloudApi();
 	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'qrcode',
 		'uuid'=>$uuid),
-		 'html');
+		'html');
 	echo $data;
 }
 
@@ -67,6 +80,4 @@ if($do == 'commitcode') {
 	echo json_encode($data);
 }
 
-
-// 代码所有页面
 

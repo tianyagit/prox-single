@@ -124,11 +124,11 @@ if ($do == 'delete') {
 }
 
 if($do == 'getpackage') {
+
 	$versionid = intval($_GPC['versionid']);
 	if(empty($versionid)) {
 		itoast('参数错误！', '', '');
 	}
-
 	$account_wxapp_info = wxapp_fetch($uniacid, $versionid);
 	if (empty($account_wxapp_info)) {
 		itoast('版本不存在！', referer(), 'error');
