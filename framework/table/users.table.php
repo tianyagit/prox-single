@@ -48,10 +48,6 @@ class UsersTable extends We7Table {
 		return $this;
 	}
 
-	public function userPermission($uid, $uniacid) {
-		return $this->query->from('users_permission')->where('uid', $uid)->where('uniacid', $uniacid)->getall('type');
-	}
-
 	public function searchWithType($type) {
 		$this->query->where('u.type', $type);
 		return $this;
