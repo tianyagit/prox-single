@@ -10,9 +10,6 @@ load()->model('app');
 $dos = array('showjs');
 $do = in_array($do, $dos) ? $do : 'showjs';
 if ($do == 'showjs') {
-	$module_name = empty($_GPC['m']) ? 'wesite' : trim($_GPC['m']);
-	$url = url('utility/visit/update', array('module_name' => $module_name));
-	$visitjs = '$.post("'. $url .'", function(data){})';
-	echo $visitjs;
+	echo '';
 	exit;
 }
