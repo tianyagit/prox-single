@@ -76,7 +76,6 @@ class DB {
 			return false;
 		}
 		$statement = $this->pdo->prepare($sql);
-		$this->logging($sql);
 		return $statement;
 	}
 
@@ -102,13 +101,13 @@ class DB {
 		$starttime = microtime();
 		if (empty($params)) {
 			$result = $this->pdo->exec($sql);
-			$this->logging($sql);
+			$this->logging($sql, array(), $this->pdo->errorInfo());
 			return $result;
 		}
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
 		
-		$this->logging($sql, $params);
+		$this->logging($sql, $params, $statement->errorInfo());
 		
 		$endtime = microtime();
 		$this->performance($sql, $endtime - $starttime);
@@ -136,7 +135,8 @@ class DB {
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
 		
-		$this->logging($sql, $params);
+		$this->logging($sql, $params, $statement->errorInfo());
+		
 		$endtime = microtime();
 		$this->performance($sql, $endtime - $starttime);
 		if (!$result) {
@@ -164,7 +164,7 @@ class DB {
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
 		
-		$this->logging($sql, $params);
+		$this->logging($sql, $params, $statement->errorInfo());
 		
 		$endtime = microtime();
 		$this->performance($sql, $endtime - $starttime);
@@ -192,8 +192,8 @@ class DB {
 		$starttime = microtime();
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
-		
-		$this->logging($sql, $params);
+
+		$this->logging($sql, $params, $statement->errorInfo());
 		
 		$endtime = microtime();
 		$this->performance($sql, $endtime - $starttime);
@@ -540,7 +540,7 @@ class DB {
 			$info = array();
 			$info['sql'] = $sql;
 			$info['params'] = $params;
-			$info['error'] = empty($message) ? $this->pdo->errorInfo() : '';
+			$info['error'] = empty($message) ? $this->pdo->errorInfo() : $message;
 			$this->debug(false, $info);
 		}
 		return true;

@@ -153,9 +153,13 @@ $we7_file_permission = array(
 		'owner' => array('platform*'),
 		'manager' => array(
 			'material-post',
+			'cover',
+			'reply'
 		),
 		'operator' => array(
 			'material-post',
+			'cover',
+			'reply'
 		),
 		'clerk' => array()
 	),
@@ -177,9 +181,15 @@ $we7_file_permission = array(
 		'owner' => array('site*'),
 		'manager' => array(
 			'editor',
+			'article',
+			'category',
+			'style',
 		),
 		'operator' => array(
 			'editor',
+			'article',
+			'category',
+			'style',
 		),
 		'clerk' => array(
 			'entry',
@@ -261,10 +271,12 @@ $we7_file_permission = array(
 		'manager' => array(
 			'display',
 			'version',
+			'post'
 		),
 		'operator' => array(
 			'display',
 			'version',
+			'post'
 		),
 		'clerk' => array()
 	),
@@ -279,7 +291,9 @@ $we7_file_permission = array(
 			'wxcode',
 			'modules',
 		),
-		'vice_founder' => array(),
+		'vice_founder' => array(
+			'user'
+		),
 		'owner' => array(),
 		'manager' => array(),
 		'operator' => array(),
