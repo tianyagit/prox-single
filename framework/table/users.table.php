@@ -29,9 +29,22 @@ class UsersTable extends We7Table {
 		return array_keys($uniacid_list);
 	}
 
+	public function userOwnedAccountRole($uid, $uniacid = 0) {
+		if (empty($uniacid)) {
+			$role = $this->query->from('uni_account_users')->where('uid', $uid)->getall('role');
+			return array_keys($role);
+		} else {
+			$role = $this->query->from('uni_account_users')->where(array('uid' => $uid, 'uniacid' => $uniacid))->get();
+			return $role['role'];
+		}
+	}
 	public function searchWithStatus($status) {
 		$this->query->where('u.status', $status);
 		return $this;
+	}
+
+	public function userPermission($uid, $uniacid) {
+		return $this->query->from('users_permission')->where('uid', $uid)->where('uniacid', $uniacid)->getall('type');
 	}
 
 	public function searchWithType($type) {
