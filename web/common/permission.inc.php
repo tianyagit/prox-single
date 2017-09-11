@@ -290,6 +290,7 @@ $we7_file_permission = array(
 			'subscribe',
 			'wxcode',
 			'modules',
+			'link',
 		),
 		'vice_founder' => array(
 			'user'
