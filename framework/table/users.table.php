@@ -38,6 +38,11 @@ class UsersTable extends We7Table {
 			return $role['role'];
 		}
 	}
+
+	public function userPermission($uid, $uniacid) {
+		return $this->query->from('users_permission')->where('uid', $uid)->where('uniacid', $uniacid)->getall('type');
+	}
+
 	public function searchWithStatus($status) {
 		$this->query->where('u.status', $status);
 		return $this;

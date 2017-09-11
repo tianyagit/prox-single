@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-class McmappingfansTable extends We7Table {
+class FansTable extends We7Table {
 	public function fansAll($openids) {
 		global $_W;
 		return $this->query->from('mc_mapping_fans')
