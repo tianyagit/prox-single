@@ -283,8 +283,4 @@ class CloudApi {
 
 		return $this->actionResult($response['content'], $dataType);
 	}
-
-	public function getnocookie() {
-
-	}
 }
