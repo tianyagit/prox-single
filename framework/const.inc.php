@@ -168,6 +168,9 @@ define('PERSONAL_LIST_TYPE', 3);
 define('STORE_TYPE_MODULE', 1);
 define('STORE_TYPE_ACCOUNT', 2);
 define('STORE_TYPE_WXAPP', 3);
+define('STORE_TYPE_WXAPP_MODULE', 4);
+define('STORE_TYPE_PACKAGE', 5);
+define('STORE_TYPE_API', 6);
 //订单状态
 define('STORE_ORDER_PLACE', 1);
 define('STORE_ORDER_DELETE', 2);
