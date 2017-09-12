@@ -10,7 +10,7 @@ load()->func('communication');
 
 class CloudApi {
 	
-	private $url = 'http://api.we7.cc/api/index.php?c=%s&a=%s&access_token=%s&';
+	private $url = 'http://api.we7.cc/index.php?c=%s&a=%s&access_token=%s&';
 	private $development = false;
 	private $module = null;
 	private $sys_call = false;
@@ -145,7 +145,6 @@ class CloudApi {
 	}
 	
 	private function getAccessToken(){
-		return $this->default_token;
 		global $_W;
 		if ($this->sys_call) {
 			$token = $this->systemCerContent();
