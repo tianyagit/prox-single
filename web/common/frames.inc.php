@@ -168,7 +168,7 @@ $we7_system_menu['wxapp'] = array(
 					'permission_name' => 'wxapp_payment',
 				),
 				'front_download' => array(
-					'title' => '小程序下载',
+					'title' => '提交微信',
 					'url' => url('wxapp/front-download'),
 					'is_display' => 1,
 					'icon' => 'wi wi-wxapp-download',
