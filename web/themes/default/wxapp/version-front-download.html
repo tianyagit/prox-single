@@ -2,7 +2,7 @@
 <!--小程序前端下载-->
 
     <ul class="we7-page-tab">
-        <li class="{if $do == 'front_download'}active{/if}"><a href="{php echo url('wxapp/front-download/front_download')}">小程序审核发布</a></li>
+        <li class="{if $do == 'front_download'}active{/if}"><a href="/web/index.php?c=wxapp&a=front-download&do=front_download&version_id={$version_id}">小程序审核发布</a></li>
         <li class="{if $do == 'domainset'}active{/if}"><a  href="/web/index.php?c=wxapp&a=front-download&do=domainset&version_id={$version_id}">小程序域名设置</a></li>
     </ul>
 {if $do == 'domainset'}
@@ -112,18 +112,9 @@
                 <div>请先扫描以上二维码，成功后再填写版本信息</div>
             </div>
         </div>
-        <div class="panel-footer bg-light-gray">
+        <div class="panel-footer bg-light-gray" id="codeform" style="display: none;">
             <div class="step">第<span class="num">2</span>步</div>
             <form action="" class="we7-form">
-                <div class="form-group">
-                    <label class="control-label col-sm-2">AppID</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="appid" name="appid">
-                        <span class="help-block">
-													请填写小程序的AppID
-												</span>
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <label class="control-label col-sm-2">版本号</label>
@@ -186,7 +177,6 @@
 		        }
 		        // 显示二维码
 		        function qrcode() {
-
 			        return getUuid().then(function(data){
 				        var def = $.Deferred();
 				        if(data.errno == 1) {
@@ -231,7 +221,6 @@
 						        case 404 : console.log('已扫码'); break;
 						        case 403 : console.log('已取消'); break;
                                 case 405 :
-							        console.log('ticket:'+ data.data.code);
 							        ticket(data.data.code);
 							        break;
 					        }
@@ -266,10 +255,10 @@
 				        var url = COMMITURL+'ticket='+ticket+'&appid='+appid+'&user_version='+user_version+'&user_desc='+user_desc+'&version_id='+version_id;
 				        ajax(url).then(function(data){
 					        if(data.errno == '0') {
-						        alert('提交成功');
+						        alert('代码上传成功');
 						        return;
 					        }
-					        alert(data.message);
+					        alert('代码上传失败');
 				        })
 			        })
 		        }
