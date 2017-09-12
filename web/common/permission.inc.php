@@ -153,11 +153,13 @@ $we7_file_permission = array(
 		'owner' => array('platform*'),
 		'manager' => array(
 			'material-post',
-			'cover'
+			'cover',
+			'reply'
 		),
 		'operator' => array(
 			'material-post',
-			'cover'
+			'cover',
+			'reply'
 		),
 		'clerk' => array()
 	),
@@ -288,6 +290,7 @@ $we7_file_permission = array(
 			'subscribe',
 			'wxcode',
 			'modules',
+			'link',
 		),
 		'vice_founder' => array(
 			'user'
