@@ -6,10 +6,9 @@ defined('IN_IA') or exit('Access Denied');
  * Time: 1505212727
  * @version 1.5.7
  */
-
-
 class UpdateAccountWxapp {
 
+	public $description = '小程序访问域名设置';
 	/**
 	 *  执行更新
 	 */
