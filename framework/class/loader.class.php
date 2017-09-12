@@ -56,7 +56,7 @@ class Loader {
 		'pinyin' => 'pinyin/pinyin',
 		'pkcs7' => 'pkcs7/pkcs7Encoder',
 		'json' => 'json/JSON',
-		'phpmailer' => 'PHPMailerAutoload',
+		'phpmailer' => 'phpmailer/PHPMailerAutoload',
 	);
 	private $loadTypeMap = array(
 		'func' => '/framework/function/%s.func.php',

@@ -89,7 +89,6 @@ if ($do == 'home') {
 		$uniacid = !empty($module_info['account']['uniacid']) ? $module_info['account']['uniacid'] : $version_info['uniacid'];
 		uni_account_switch($uniacid, url('home/welcome/ext/', array('m' => $module_name, 'version_id' => $version_id)));
 	}
-	uni_account_switch($uniacid);
 	wxapp_save_switch($uniacid);
 	wxapp_update_last_use_version($uniacid, $version_id);
 	header('Location: ' . url('wxapp/version/home', array('version_id' => $version_id)));
