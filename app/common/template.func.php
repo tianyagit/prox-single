@@ -282,14 +282,14 @@ function site_navs($params = array()) {
 		$condition['uniacid'] = $_W['uniacid'];
 		$condition['multiid'] = $multiid;
 		$fields = array('id', 'name', 'description', 'url', 'icon', 'css', 'position', 'module');
-		$navs = pdo_getall('site_nav', $condition, $fields, '', 'section ASC, displayorder DESC, id DESC');
+		$navs = pdo_getall('site_nav', $condition, $fields, '', array('section ASC', 'displayorder DESC', 'id DESC'));
 	} else {
 		$condition = array(
-					'parentid' => $cid,
-					'enabled' => 1,
-					'uniacid' => $_W['uniacid']
-				);
-		$navs = pdo_getall('site_category', $condition, array(), '', 'displayorder DESC, id DESC');
+			'parentid' => $cid,
+			'enabled' => 1,
+			'uniacid' => $_W['uniacid']
+		);
+		$navs = pdo_getall('site_category', $condition, array(), '', array('displayorder DESC', 'id DESC'));
 	}
 	if(!empty($navs)) {
 		foreach ($navs as &$row) {

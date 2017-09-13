@@ -50,9 +50,12 @@ class StoreTable extends We7Table {
 		return $this->query->get();
 	}
 
-	public function searchOrderList($pageindex, $pagesize) {
+	public function searchOrderList($pageindex = 0, $pagesize = 0) {
 		$this->query->from('site_store_order');
-		$lists = $this->searchWithPage($pageindex, $pagesize)->query->orderby('id', 'desc')->getall();
+		if (!empty($pageindex) && !empty($pagesize)) {
+			$this->searchWithPage($pageindex, $pagesize);
+		}
+		$lists = $this->query->orderby('id', 'desc')->getall();
 		return $lists;
 	}
 
@@ -81,9 +84,34 @@ class StoreTable extends We7Table {
 		return $this;
 	}
 
-	public function searchHaveModule() {
+	public function searchHaveModule($type = STORE_TYPE_MODULE) {
 		$this->query->from('site_store_goods');
-		$result = $this->query->where('type', STORE_TYPE_MODULE)->where('status !=', STORE_GOODS_STATUS_DELETE)->getall('module');
+		$result = $this->query->where('type', $type)->where('status !=', STORE_GOODS_STATUS_DELETE)->getall('module');
 		return $result;
+	}
+
+	public function apiOrderWithUniacid($uniacid)
+	{
+		$this->query->from ('site_store_order', 'r')->leftjoin ('site_store_goods', 'g')->select ('r.duration, g.api_num, g.price')
+			->on (array ('r.goodsid' => 'g.id'))->where ('g.type', STORE_TYPE_API)->where ('uniacid', $uniacid)->where ('type', STORE_ORDER_FINISH);
+		$list = $this->query->getall ();
+		return $list;
+	}
+
+	public function searchUserBuyAccount($uid) {
+		$sql = "SELECT COUNT(b.account_num) FROM " . tablename('site_store_order') . " as a left join " . tablename('site_store_goods') . " as b on a.goodsid = b.id WHERE a.buyerid = :buyerid AND a.type = 3 AND b.type = 2" ;
+		$count = pdo_fetchcolumn($sql, array(':buyerid' => $uid));
+		return $count;
+	}
+
+	public function searchUserBuyWxapp($uid) {
+		$sql = "SELECT COUNT(b.account_num) FROM " . tablename('site_store_order') . " as a left join " . tablename('site_store_goods') . " as b on a.goodsid = b.id WHERE a.buyerid = :buyerid AND a.type = 3 AND b.type = 3" ;
+		$count = pdo_fetchcolumn($sql, array(':buyerid' => $uid));
+		return $count;
+	}
+
+	public function searchUserBuyPackage($uniacid) {
+		$sql = "SELECT * FROM " . tablename('site_store_order') . " as a left join " . tablename('site_store_goods') . " as b on a.goodsid = b.id WHERE a.uniacid = :uniacid AND a.type = 3 AND b.type = 5" ;
+		return pdo_fetchall($sql, array(':uniacid' => $uniacid), 'module_group');
 	}
 }
