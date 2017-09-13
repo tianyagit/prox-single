@@ -10,7 +10,7 @@ function wxapp_getpackage($data, $if_single = false) {
 	load()->classs('cloudapi');
 	
 	$api = new CloudApi();
-	$result = $api->post('wxapp', 'upload', $data, 'html');
+	$result = $api->post('wxapp', 'download', $data, 'html');
 	if (is_error($result)) {
 			return error(-1, $result['message']);
 	} else {
