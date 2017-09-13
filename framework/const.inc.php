@@ -175,7 +175,7 @@ define('STORE_TYPE_API', 6);
 define('STORE_ORDER_PLACE', 1);
 define('STORE_ORDER_DELETE', 2);
 define('STORE_ORDER_FINISH', 3);
-
+//商品状态
 define('STORE_GOODS_STATUS_OFFlINE', 0);
 define('STORE_GOODS_STATUS_ONLINE', 1);
 define('STORE_GOODS_STATUS_DELETE', 2);
