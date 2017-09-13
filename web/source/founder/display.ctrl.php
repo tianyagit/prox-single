@@ -33,14 +33,20 @@ if ($do == 'display') {
 }
 
 if ($do == 'del') {
+	if (!$_W['isajax'] || !$_W['ispost']) {
+		iajax(-1, '非法操作！', url('founder/display'));
+	}
 	$uid = intval($_GPC['uid']);
 	$uid_user = user_single($uid);
 	if (in_array($uid, $founders)) {
-		itoast('访问错误, 无法操作站长.', url('founder/display'), 'error');
+		iajax(0,'访问错误, 无法操作站长.', url('founder/display'));
 	}
 	if (empty($uid_user)) {
-		exit('未指定用户,无法删除.');
+		iajax(0,'未指定用户,无法删除.', url('founder/display'));
+	}
+	if ($uid_user['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+		iajax(0,'非法操作！', url('founder/display'));
 	}
 	user_delete($uid);
-	itoast('删除成功！', referer(), 'success');
+	iajax(0,'删除成功！', referer());
 }
