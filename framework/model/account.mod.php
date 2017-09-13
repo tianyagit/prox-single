@@ -138,6 +138,9 @@ function uni_fetch($uniacid = 0) {
 		return $cache;
 	}
 	$account = uni_account_default($uniacid);
+	if (empty($account)) {
+		return array();
+	}
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 	$owner = user_single(array('uid' => $owneruid));
 	$account['uid'] = $owner['uid'];
@@ -858,7 +861,7 @@ function account_delete($acid) {
 		if($uniacid == $_W['uniacid']) {
 			isetcookie('__uniacid', '');
 		}
-		cache_delete("unicount:{$uniacid}");
+		cache_delete("uniaccount:{$uniacid}");
 		$modules = array();
 		//获取全部规则
 		$rules = pdo_fetchall("SELECT id, module FROM ".tablename('rule')." WHERE uniacid = '{$uniacid}'");
@@ -917,7 +920,7 @@ function account_delete($acid) {
 		}
 		pdo_delete('account', array('acid' => $acid));
 		pdo_delete('account_wechats', array('acid' => $acid, 'uniacid' => $uniacid));
-		cache_delete("unicount:{$uniacid}");
+		cache_delete("uniaccount:{$uniacid}");
 		cache_delete("unisetting:{$uniacid}");
 		cache_delete('account:auth:refreshtoken:'.$acid);
 		$oauth = uni_setting($uniacid, array('oauth'));
