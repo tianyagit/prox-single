@@ -140,9 +140,11 @@ $we7_file_permission = array(
 		),
 		'manager' => array(
 			'display',
+			'manage-account',
 		),
 		'operator' => array(
 			'display',
+			'manage-account',
 		),
 		'clerk' => array()
 	),
