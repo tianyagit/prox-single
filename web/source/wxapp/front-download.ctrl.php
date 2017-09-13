@@ -137,8 +137,8 @@ if ($do == 'commitcode') {
 	);
 
 	$cloud_api = new CloudApi();
-	$data = $cloud_api->get('wxapp', 'upload', $commit_data,
+	$data = $cloud_api->post('wxapp', 'upload', $commit_data,
 		'json', false);
-	//	echo $data;
+//		echo $data;
 	echo json_encode($data);
 }
