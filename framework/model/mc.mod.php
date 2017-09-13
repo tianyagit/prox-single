@@ -32,6 +32,7 @@ function mc_update($uid, $fields) {
 	$struct[] = 'residecity';
 	$struct[] = 'residedist';
 	$struct[] = 'groupid';
+	$struct[] = 'salt';
 
 	if (isset($fields['birth']) && !is_array($fields['birth'])) {
 		$birth = explode('-', $fields['birth']);
