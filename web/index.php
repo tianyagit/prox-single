@@ -16,7 +16,7 @@ if (!pdo_fieldexists('uni_settings', 'statistics')) {
 	pdo_query('ALTER TABLE ' . tablename('uni_settings') . " ADD `statistics` varchar(100) NOT NULL DEFAULT '';");
 }
 if (!pdo_fieldexists('site_store_goods', 'api_num')) {
-	pdo_query('ALTER TABLE ' . tablename('site_store_goods') . " ADD `api_num` int(100) NOT NULL DEFAULT 0;");
+	pdo_query('ALTER TABLE ' . tablename('site_store_goods') . " ADD `api_num` int(10) NOT NULL DEFAULT 0;");
 }
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
