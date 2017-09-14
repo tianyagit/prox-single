@@ -115,18 +115,8 @@ $we7_file_permission = array(
 		'direct' => array(),
 		'vice_founder' => array('mc*'),
 		'owner' => array('mc*'),
-		'manager' => array(
-			'chats',
-			'fields',
-			'group',
-			'trade'
-		),
-		'operator' => array(
-			'chats',
-			'fields',
-			'group',
-			'trade'
-		),
+		'manager' => array(),
+		'operator' => array(),
 		'clerk' => array()
 	),
 	'module' => array(
