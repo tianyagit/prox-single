@@ -159,7 +159,10 @@ $we7_file_permission = array(
 			'cover',
 			'reply'
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'reply',
+			'cover',
+		)
 	),
 	'profile' => array(
 		'default' => '',
