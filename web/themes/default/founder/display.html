@@ -27,7 +27,7 @@
 		<th class="text-left">用户名</th>
 		<th>用户权限组</th>
 		<th>创建公众号</th>
-		<th>使用公众号</th>
+		<th>创建小程序</th>
 		<th>注册时间</th>
 		<th>到期时间</th>
 		<th class="text-right">操作</th>
@@ -41,7 +41,7 @@
 			<span class="color-default" ng-if="!user.groupname && !user.founder">未分配</span>
 		</td>
 		<td class="color-default" ng-bind="user.maxaccount"></td>
-		<td class="color-default" ng-bind="user.uniacid_num"></td>
+		<td class="color-default" ng-bind="user.maxwxapp"></td>
 		<td>
 			<span ng-bind="user.joindate"></span>
 		</td>

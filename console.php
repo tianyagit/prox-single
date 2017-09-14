@@ -5,7 +5,7 @@
  * User: fanyk
  * Date: 2017/8/10
  * Time: 16:24.
- *  创建更新文件 php console make:upgrade name=create_update_wxapp
+ *  创建更新文件 php console.php make:upgrade name=create_update_wxapp
  *  执行更新     php console upgrade.
  */
 error_reporting(0);

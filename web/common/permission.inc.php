@@ -18,22 +18,22 @@ defined('IN_IA') or exit('Access Denied');
  *    'clerk'         代表  店员拥有的权限
  * 权限中带星号'*'指拥有该文件夹下所有权限
  */
+$we7_file_permission = array();
 $we7_file_permission = array(
 	'account' => array(
 		'default' => '',
 		'direct' => array(
+			'display',
 			'auth',
-			'welcome'
+			'welcome', 'openwechat'
 		),
 		'vice_founder' => array('account*'),
 		'owner' => array('account*'),
 		'manager' => array(
-			'display',
 			'manage',
 			'post-step',
 		),
 		'operator' => array(
-			'display',
 			'manage',
 			'post-step',
 		),
@@ -108,7 +108,7 @@ $we7_file_permission = array(
 		'owner' => array('home*'),
 		'manager' => array('home*'),
 		'operator' => array('home*'),
-		'clerk' => array()
+		'clerk' => array('welcome'),
 	),
 	'mc' => array(
 		'default' => '',
@@ -129,19 +129,19 @@ $we7_file_permission = array(
 	),
 	'module' => array(
 		'default' => '',
-		'direct' => array(),
+		'direct' => array(
+			'display',
+		),
 		'vice_founder' => array('module*'),
 		'owner' => array(
 			'manage-account',
 			'manage-system',
-			'display',
+			'permission',
 		),
-		'manager' => array(
-			'display',
-		),
-		'operator' => array(
-			'display',
-		),
+		'manager' => array(),
+		'operator' => array(),
+			'manage-account',
+			'manage-account',
 		'clerk' => array()
 	),
 	'platform' => array(
@@ -151,9 +151,13 @@ $we7_file_permission = array(
 		'owner' => array('platform*'),
 		'manager' => array(
 			'material-post',
+			'cover',
+			'reply'
 		),
 		'operator' => array(
 			'material-post',
+			'cover',
+			'reply'
 		),
 		'clerk' => array()
 	),
@@ -175,13 +179,53 @@ $we7_file_permission = array(
 		'owner' => array('site*'),
 		'manager' => array(
 			'editor',
+			'article',
+			'category',
+			'style',
+			'nav',
+			'slide',
 		),
 		'operator' => array(
 			'editor',
+			'article',
+			'category',
+			'style',
+			'nav',
+			'slide',
 		),
 		'clerk' => array(
 			'entry',
 		)
+	),
+	'statistics' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array('statistics*'),
+		'owner' => array('statistics*'),
+		'manager' => array(),
+		'operator' => array(),
+		'clerk' => array(),
+	),
+	'store' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array(
+			'goods-buyer',
+			'orders',
+		),
+		'owner' => array(
+			'goods-buyer',
+			'orders',
+		),
+		'manager' => array(
+			'goods-buyer',
+			'orders',
+		),
+		'operator' => array(
+			'goods-buyer',
+			'orders',
+		),
+		'clerk' => array(),
 	),
 	'system' => array(
 		'default' => '',
@@ -229,10 +273,12 @@ $we7_file_permission = array(
 		'manager' => array(
 			'display',
 			'version',
+			'post'
 		),
 		'operator' => array(
 			'display',
 			'version',
+			'post'
 		),
 		'clerk' => array()
 	),
@@ -246,8 +292,11 @@ $we7_file_permission = array(
 			'subscribe',
 			'wxcode',
 			'modules',
+			'link',
 		),
-		'vice_founder' => array(),
+		'vice_founder' => array(
+			'user'
+		),
 		'owner' => array(),
 		'manager' => array(),
 		'operator' => array(),
