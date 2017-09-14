@@ -11,7 +11,9 @@ $dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_statu
 $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
-if (!in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service', 'userapi'))) {
+if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service', 'userapi'))) {
+	permission_check_account_user('platform_reply');
+} else {
 	$modules = uni_modules();
 	$_W['current_module'] = $modules[$m];
 }

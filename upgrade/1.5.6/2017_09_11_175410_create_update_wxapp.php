@@ -21,16 +21,15 @@ class CreateUpdateWxapp {
 			pdo_query('ALTER TABLE ' . tablename('uni_settings') . " ADD `statistics` varchar(100) NOT NULL DEFAULT '';");
 		}
 		if (!pdo_fieldexists('site_store_goods', 'api_num')) {
-			pdo_query('ALTER TABLE ' . tablename('site_store_goods') . " ADD `api_num` int(100) NOT NULL DEFAULT 0;");
+			pdo_query('ALTER TABLE ' . tablename('site_store_goods') . " ADD `api_num` int(10) NOT NULL DEFAULT 0;");
 		}
 	}
-	
+
 	/**
 	 *  回滚更新
 	 */
 	public function down() {
-		
+
 
 	}
 }
-		

@@ -6,8 +6,8 @@
 defined('IN_IA') or exit('Access Denied');
 
 /**
-	* 从商城获取最新应用
-	* @return 	array
+ * 从商城获取最新应用
+ * @return 	array
 */
 function welcome_get_last_modules() {
 	load()->classs('cloudapi');
@@ -16,6 +16,19 @@ function welcome_get_last_modules() {
 	$last_modules = $api->get('store', 'app_fresh');
 	return $last_modules;
 }
+
+/**
+ * 从云商城获取广告
+ * @return array()
+ */
+function welcome_get_ads() {
+	load()->classs('cloudapi');
+	$result = array();
+	$api = new CloudApi();
+	$result = $api->get('store', 'we7_index_a');
+	return $result;
+}
+
 
 /**
  * 获取公告

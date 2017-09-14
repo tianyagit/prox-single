@@ -140,9 +140,11 @@ $we7_file_permission = array(
 		),
 		'manager' => array(
 			'display',
+			'manage-account',
 		),
 		'operator' => array(
 			'display',
+			'manage-account',
 		),
 		'clerk' => array()
 	),
@@ -184,12 +186,16 @@ $we7_file_permission = array(
 			'article',
 			'category',
 			'style',
+			'nav',
+			'slide',
 		),
 		'operator' => array(
 			'editor',
 			'article',
 			'category',
 			'style',
+			'nav',
+			'slide',
 		),
 		'clerk' => array(
 			'entry',
