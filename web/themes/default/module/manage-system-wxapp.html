@@ -6,8 +6,10 @@
 <div id="js-system-module" ng-controller="installedCtrl" ng-cloak>
 	<ul class="we7-page-tab">
 		<li class="active"><a href="{php echo url('module/manage-system/installed', array('account_type' => 4))}">已安装的小程序  </a></li>
+		{if $_W['isfounder'] && uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 		<li><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" ng-if="isFounder == 1">未安装的小程序<span class="color-red">  ({$total_uninstalled}) </span></a></li>
 		<li><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'recycle'))}" ng-if="isFounder == 1">已停用小程序</a></li>
+		{/if}
 	</ul>
 	<div class="we7-page-search clearfix">
 		<!--<div class="pull-right">-->

@@ -108,7 +108,7 @@ if ($do == 'post') {
 			pdo_update('users_permission', array('permission' => $permission), array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $module_name));
 		}
 
-		$role = permission_account_user_role($uid, $_W['uniacid']);
+		$role = table('users')->userOwnedAccountRole($uid, $_W['uniacid']);
 		if (empty($role)) {
 			pdo_insert('uni_account_users', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'role' => 'clerk'));
 		} else {

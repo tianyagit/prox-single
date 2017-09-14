@@ -466,7 +466,7 @@ function uni_setting_load($name = '', $uniacid = 0) {
 		if (!empty($unisetting)) {
 			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify',
 				'creditnames', 'default_message', 'creditbehaviors', 'payment',
-				'recharge', 'tplnotice', 'mcplugin');
+				'recharge', 'tplnotice', 'mcplugin', 'statistics');
 			foreach ($unisetting as $key => &$row) {
 				if (in_array($key, $serialize) && !empty($row)) {
 					$row = (array)iunserializer($row);
