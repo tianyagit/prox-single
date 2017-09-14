@@ -144,12 +144,10 @@ $we7_file_permission = array(
 		'vice_founder' => array('platform*'),
 		'owner' => array('platform*'),
 		'manager' => array(
-			'material-post',
 			'cover',
 			'reply'
 		),
 		'operator' => array(
-			'material-post',
 			'cover',
 			'reply'
 		),
