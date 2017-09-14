@@ -111,6 +111,9 @@ if($do == 'base') {
 				}
 				break;
 			case 'highest_visit':
+				if (user_is_vice_founder() || empty($_W['isfounder'])) {
+					iajax(1, '只有创始人可以修改！');
+				}
 				$statistics_setting = (array)uni_setting_load(array('statistics'), $uniacid);
 				if (!empty($statistics_setting['statistics'])) {
 					$highest_visit = $statistics_setting['statistics'];
