@@ -119,11 +119,13 @@ $we7_file_permission = array(
 			'chats',
 			'fields',
 			'group',
+			'trade'
 		),
 		'operator' => array(
 			'chats',
 			'fields',
 			'group',
+			'trade'
 		),
 		'clerk' => array()
 	),
