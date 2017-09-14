@@ -176,7 +176,8 @@ function material_get($attach_id) {
 	}
 	if (!empty($material)) {
 		if ($material['type'] == 'news') {
-			$news = pdo_getall('wechat_news', array('attach_id' => $material['id']), array(), '', ' displayorder ASC');
+			$material_table = table('material');
+			$news = $material_table->materialNewsList($material['id']);
 			if (!empty($news)) {
 				foreach ($news as &$news_row) {
 					$news_row['content_source_url'] = $news_row['content_source_url'];
