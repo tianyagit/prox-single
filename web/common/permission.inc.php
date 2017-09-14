@@ -130,10 +130,12 @@ $we7_file_permission = array(
 			'manage-system',
 			'permission',
 		),
-		'manager' => array(),
-		'operator' => array(),
+		'manager' => array(
 			'manage-account',
+		),
+		'operator' => array(
 			'manage-account',
+		),
 		'clerk' => array()
 	),
 	'platform' => array(
