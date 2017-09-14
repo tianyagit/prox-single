@@ -416,14 +416,14 @@ $we7_system_menu['system'] = array(
 $we7_system_menu['site'] = array(
 	'title' => '站点管理',
 	'icon' => 'wi wi-system-site',
-	'url' => url('cloud/upgrade'),
+	'url' => '../cloud.php',
 	'section' => array(
 		'cloud' => array(
 			'title' => '云服务',
 			'menu' => array(
 				'system_profile' => array(
 					'title' => '系统升级',
-					'url' => url('cloud/upgrade'),
+					'url' => '../cloud.php',
 					'icon' => 'wi wi-cache',
 					'permission_name' => 'system_cloud_upgrade',
 				),
