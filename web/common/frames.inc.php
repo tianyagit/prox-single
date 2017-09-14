@@ -567,7 +567,7 @@ $we7_system_menu['help'] = array(
 	'icon' => 'wi wi-market',
 	'url' => url('help/display'),
 	'section' => array(),
-	'blank' => true
+	'blank' => false
 );
 
 
