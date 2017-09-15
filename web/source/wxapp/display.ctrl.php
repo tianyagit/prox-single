@@ -32,25 +32,24 @@ if ($do == 'home') {
 	}
 	$last_version = wxapp_fetch($last_uniacid);
 	if (!empty($last_version)) {
-		uni_account_switch($last_uniacid);
 		$url = url('wxapp/version/home', array('version_id' => $last_version['version']['id']));
 	}
 	itoast('', $url, 'info');
 } elseif ($do == 'display') {
 	//模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
 	$account_info = permission_user_account_num();
-	
+
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
-	
+
 	$account_table = table('account');
 	$account_table->searchWithType(array(ACCOUNT_TYPE_APP_NORMAL));
-	
+
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
 		$account_table->searchWithKeyword($keyword);
 	}
-	
+
 	$account_table->searchWithPage($pindex, $psize);
 	$wxapp_lists = $account_table->searchAccountList();
 	$total = $account_table->getLastQueryTotal();
@@ -89,7 +88,6 @@ if ($do == 'home') {
 		$uniacid = !empty($module_info['account']['uniacid']) ? $module_info['account']['uniacid'] : $version_info['uniacid'];
 		uni_account_switch($uniacid, url('home/welcome/ext/', array('m' => $module_name, 'version_id' => $version_id)));
 	}
-	uni_account_switch($uniacid);
 	wxapp_save_switch($uniacid);
 	wxapp_update_last_use_version($uniacid, $version_id);
 	header('Location: ' . url('wxapp/version/home', array('version_id' => $version_id)));
