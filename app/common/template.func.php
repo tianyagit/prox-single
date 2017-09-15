@@ -338,8 +338,9 @@ function site_article($params = array()) {
 			$condition .= " AND ccate = :ccate ";
 			$pars[':ccate'] = $cid;
 		} else {
-			$condition .= " AND pcate = :pcate";
+			$condition .= " AND pcate = :pcate AND ccate = :ccate ";
 			$pars[':pcate'] = $cid;
+			$pars[':ccate'] = ARTICLE_CCATE;
 		}
 	}
 	if ($iscommend == 'true') {
