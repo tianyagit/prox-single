@@ -422,25 +422,7 @@ function wxapp_last_switch_version() {
 	return $wxapp_cookie_uniacids;
 }
 
-/**
- *  获取服务器小程序是否已经生成好了
- */
-function wxapp_check_code_isgen($account_wxapp_info) {
-	load()->classs('cloudapi');
-	$api = new CloudApi();
-	$code_uuid = $account_wxapp_info['code_uuid'];
-	if(empty($code_uuid)) {
-		return false;
-	}
-	$appid = $account_wxapp_info['appid'];
-	$data = $api->post('wxapp', 'upload', array('do'=>'check_gen',
-		'uuid'=>$code_uuid, 'appid'=>$appid),
-		'json', false);
-	if(is_error($data)) {
-		return false;
-	}
-	return $data['data']['is_gen'];
-}
+
 
 /**
  *   通知服务器生成小程序代码
@@ -468,21 +450,48 @@ function wxapp_code_generate($version_id) {
 		'siteroot' => $siteurl,
 		'design_method' => $account_wxapp_info['version']['design_method'],
 	);
-
+//
 	$commit_data = array('do' => 'generate',
 		'appid' => $appid,
 		'modules' => $account_wxapp_info['version']['modules'],
 		'siteInfo' => $siteInfo,
 		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
 	);
+//	$modules  = array(
+//		'modules' => array (
+//			'weihaom_wb' => array (
+//				'name' => 'weihaom_wb',
+//				'version' => '7.0.0',
+//			),
+//		)
+//	);
+//	$siteInfo = array();
+//	$appid = 'wxb0e582aaff9a169d';
+//	$tabBar = null;
+//	$commit_data = array('do' => 'generate',
+//		'appid' => $appid,
+//		'modules' => $modules,
+//		'siteInfo' => $siteInfo,
+//		'tabBar' => $tabBar,
+//	);
 
 	$data = $api->post('wxapp', 'upload', $commit_data,
 		'json', false);
 
-	if(!is_error($data)) {
-		 pdo_update('account_wxapp', array('code_uuid'=>$data['data']['code_uuid']),
-			array('uniacid'=>$version_info['uniacid']));
-	}
+	return $data;
+}
+
+/**
+ *  获取服务器小程序是否已经生成好了
+ * @param $code_uuid
+ * @return array(errno,$message,data[is_gen]= 1|0);
+ */
+function wxapp_check_code_isgen($code_uuid) {
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$data = $api->get('wxapp', 'upload', array('do'=>'check_gen',
+		'code_uuid'=>$code_uuid),
+		'json', false);
 	return $data;
 }
 
@@ -540,6 +549,7 @@ function wxapp_code_commit($code_uuid, $code_token, $user_version = 3, $user_des
 	$cloud_api = new CloudApi();
 
 	$commit_data =  array(
+		'do' => 'commitcode',
 		'code_uuid'=> $code_uuid,
 		'code_token' => $code_token,
 		'user_version' => $user_version,

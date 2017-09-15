@@ -226,6 +226,7 @@ class CloudApi {
 		}
 
 		$response = ihttp_get($url);
+
 		if (is_error($response)) {
 			return $response;
 		}
@@ -255,6 +256,7 @@ class CloudApi {
 	
 	public function post($api, $method, $post_params = array(), $dataType = 'json', $with_cookie = true) {
 		$url = $this->url($api, $method, array(), $dataType);
+
 		if (is_error($url)) {
 			return $url;
 		}
@@ -277,7 +279,6 @@ class CloudApi {
 				}
 			}
 		}
-
 		$response = ihttp_request($url, $post_params, $ihttp_options);
 		if (is_error($response)) {
 			return $response;

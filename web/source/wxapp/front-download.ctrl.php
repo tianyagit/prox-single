@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
 load()->classs('cloudapi');
 
-$dos = array('front_download', 'domainset', 'uuid', 'qrcode', 'checkscan', 'commitcode', 'download', 'ticket');
+$dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan', 'commitcode', 'download', 'ticket');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -65,11 +65,21 @@ if ($do == 'front_download') {
 	template('wxapp/version-front-download');
 }
 
+// 获取上传代码uuid
+if($do == 'code_uuid') {
+	$data = wxapp_code_generate($version_id);
+	echo json_encode($data);
+}
 
-$cloud_api = new CloudApi();
+if($do == 'code_gen') {
+	$code_uuid = $_GPC['code_uuid'];
+	$data = wxapp_check_code_isgen($code_uuid);
+	echo json_encode($data);
+}
+
 if ($do == 'code_token') {
-	$token = wxapp_code_token();
-
+	$tokendata = wxapp_code_token();
+	echo json_encode($tokendata);
 }
 
 if ($do == 'qrcode') {
@@ -80,64 +90,18 @@ if ($do == 'qrcode') {
 if ($do == 'checkscan') {
 	$code_token = $_GPC['code_token'];
 	$last = $_GPC['last'];
-	return wxapp_code_check_scan($code_token, $last);
+	$data = wxapp_code_check_scan($code_token, $last);
+	echo json_encode($data);
+}
 
-}
-if ($do == 'ticket') {
-	$code = $_GPC['code'];
-	$cloud_api = new CloudApi();
-	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'ticket',
-		'code' => $code, ),
-		'html', false);
-	echo $data;
-}
+
 // 上传代码
 if ($do == 'commitcode') {
 
 	$user_version = $_GPC['user_version'];
 	$user_desc = $_GPC['user_desc'];
-	$ticket = $_GPC['ticket'];
-
-	if (empty($version_id)) {
-		itoast('参数错误！', '', '');
-	}
-	$account_wxapp_info = wxapp_fetch($version_info['uniacid'], $version_id);
-	if (empty($account_wxapp_info)) {
-		itoast('版本不存在！', referer(), 'error');
-	}
-	$siteurl = $_W['siteroot'].'app/index.php';
-	if(!empty($account_wxapp_info['appdomain'])) {
-		$siteurl = $account_wxapp_info['appdomain'];
-	}
-	$appid = $account_wxapp_info['key'];
-	$appdata = array(
-		'name' => $account_wxapp_info['name'],
-		'modules' => $account_wxapp_info['version']['modules'],
-		'siteInfo' => array(
-			'name' => $account_wxapp_info['name'],
-			'uniacid' => $account_wxapp_info['uniacid'],
-			'acid' => $account_wxapp_info['acid'],
-			'multiid' => $account_wxapp_info['version']['multiid'],
-			'version' => $account_wxapp_info['version']['version'],
-			'siteroot' => $siteurl,
-			'design_method' => $account_wxapp_info['version']['design_method'],
-		),
-		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
-	);
-
-	$commit_data = array('do' => 'commitcode',
-		'appid' => $appid,
-		'user_version' => $user_version,
-		'user_desc' => $user_desc,
-		'ticket' => $ticket,
-		'modules' => $appdata['modules'],
-		'siteInfo' => $appdata['siteInfo'],
-		'tabBar' => $appdata['tabBar'],
-	);
-
-	$cloud_api = new CloudApi();
-	$data = $cloud_api->post('wxapp', 'upload', $commit_data,
-		'json', false);
-//		echo $data;
+	$code_token = $_GPC['code_token'];
+	$code_uuid = $_GPC['code_uuid'];
+	$data = wxapp_code_commit($code_uuid, $code_token, $user_version, $user_desc);
 	echo json_encode($data);
 }
