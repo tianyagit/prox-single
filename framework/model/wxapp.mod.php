@@ -421,3 +421,132 @@ function wxapp_last_switch_version() {
 	}
 	return $wxapp_cookie_uniacids;
 }
+
+/**
+ *  获取服务器小程序是否已经生成好了
+ */
+function wxapp_check_code_isgen($account_wxapp_info) {
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$code_uuid = $account_wxapp_info['code_uuid'];
+	if(empty($code_uuid)) {
+		return false;
+	}
+	$appid = $account_wxapp_info['appid'];
+	$data = $api->post('wxapp', 'upload', array('do'=>'check_gen',
+		'uuid'=>$code_uuid, 'appid'=>$appid),
+		'json', false);
+	if(is_error($data)) {
+		return false;
+	}
+	return $data['data']['is_gen'];
+}
+
+/**
+ *   通知服务器生成小程序代码
+ */
+function wxapp_code_generate($version_id) {
+	global $_W;
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$version_info = wxapp_version($version_id);
+	$account_wxapp_info = wxapp_fetch($version_info['uniacid'], $version_id);
+	if (empty($account_wxapp_info)) {
+		return error(1, '版本不存在');
+	}
+	$siteurl = $_W['siteroot'].'app/index.php';
+	if(!empty($account_wxapp_info['appdomain'])) {
+		$siteurl = $account_wxapp_info['appdomain'];
+	}
+	$appid = $account_wxapp_info['key'];
+	$siteInfo = array(
+		'name' => $account_wxapp_info['name'],
+		'uniacid' => $account_wxapp_info['uniacid'],
+		'acid' => $account_wxapp_info['acid'],
+		'multiid' => $account_wxapp_info['version']['multiid'],
+		'version' => $account_wxapp_info['version']['version'],
+		'siteroot' => $siteurl,
+		'design_method' => $account_wxapp_info['version']['design_method'],
+	);
+
+	$commit_data = array('do' => 'generate',
+		'appid' => $appid,
+		'modules' => $account_wxapp_info['version']['modules'],
+		'siteInfo' => $siteInfo,
+		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
+	);
+
+	$data = $api->post('wxapp', 'upload', $commit_data,
+		'json', false);
+
+	if(!is_error($data)) {
+		 pdo_update('account_wxapp', array('code_uuid'=>$data['data']['code_uuid']),
+			array('uniacid'=>$version_info['uniacid']));
+	}
+	return $data;
+}
+
+/**
+ *  开发者工具二维码 的UUID
+ * @return array|mixed|string array(errno=>0|1, $messge, data=>array('code_token'=>))
+ */
+function wxapp_code_token() {
+	global $_W;
+	load()->classs('cloudapi');
+	$cloud_api = new CloudApi();
+	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'code_token'), 'json', false);
+	return $data;
+}
+
+/**
+ *  开发者工具二维码
+ * @param $uuid  图片二进制数据
+ */
+function wxapp_code_qrcode($code_token) {
+
+	$cloud_api = new CloudApi();
+	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'qrcode',
+		'code_token' => $code_token),
+		'html', false);
+	return $data;
+}
+
+/**
+ *
+ * @param $uuid 微信UUID
+ * @param $last //微信返回的扫码状态
+ * @return array|mixed|string  array('errno'=>,'message', 'data'=>array('errcode'=>,'code_token'=>'上传代码凭证'))
+ *  errcode 408 超时 404 已扫码 403 已取消 405 已确认扫码
+ */
+function wxapp_code_check_scan($code_token, $last) {
+	$cloud_api = new CloudApi();
+	$data = $cloud_api->get('wxapp', 'upload',
+		array('do' => 'checkscan',
+			'code_token' => $code_token,
+			'last' => $last
+		),
+		'json', false);
+	return $data;
+}
+
+/**
+ * @param $code_uuid  服务器生成代码 返回的UUID
+ * @param $code_token  //开发工具调用凭据
+ * @param int $user_version //用户版本
+ * @param string $user_desc // 用户描述
+ * @return array('errno'=>0|1, $message=>'');
+ */
+function wxapp_code_commit($code_uuid, $code_token, $user_version = 3, $user_desc = '代码提交') {
+	$cloud_api = new CloudApi();
+
+	$commit_data =  array(
+		'code_uuid'=> $code_uuid,
+		'code_token' => $code_token,
+		'user_version' => $user_version,
+		'user_desc' => $user_desc,
+	);
+	$data = $cloud_api->post('wxapp', 'upload', $commit_data,
+		'json', false);
+
+	return $data;
+}

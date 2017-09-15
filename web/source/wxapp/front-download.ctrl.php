@@ -31,7 +31,6 @@ if ($do == 'domainset') {
 			$appurl = $wxapp['appdomain'];
 		}
 	}
-
 	if($_W['ispost']) {
 		$appurl = $_GPC['appurl'];
 		if(! starts_with($appurl, 'https')) {
@@ -52,37 +51,37 @@ if ($do == 'domainset') {
 if ($do == 'front_download') {
 	$appurl = $_W['siteroot'].'/app/index.php';
 	$uptype = $_GPC['uptype'];
+	$wxapp_versions_info = wxapp_version($version_id);
 	if(!in_array($uptype, array('auto','normal'))) {
 		$uptype = 'auto';
 	}
-	$wxapp_versions_info = wxapp_version($version_id);
+
+	if($wxapp_info) {
+		$code_uuid = $wxapp_info['code_uuid'];
+		if(! $code_uuid) {
+
+		}
+	}
 	template('wxapp/version-front-download');
 }
 
+
 $cloud_api = new CloudApi();
-if ($do == 'uuid') {
-	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'uuid'), 'json', false);
-	echo json_encode($data);
+if ($do == 'code_token') {
+	$token = wxapp_code_token();
+
 }
 
 if ($do == 'qrcode') {
-	$uuid = $_GPC['uuid'];
-	$cloud_api = new CloudApi();
-	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'qrcode',
-		'uuid' => $uuid, ),
-		'html', false);
-	echo $data;
+	$code_token = $_GPC['code_token'];
+	echo wxapp_code_qrcode($code_token);
 }
 
 if ($do == 'checkscan') {
-	$uuid = $_GPC['uuid'];
+	$code_token = $_GPC['code_token'];
 	$last = $_GPC['last'];
-	$cloud_api = new CloudApi();
-	$data = $cloud_api->get('wxapp', 'upload', array('do' => 'checkscan',
-		'uuid' => $uuid,
-		'last' => $last, ),
-		'json', false);
-	echo json_encode($data);
+	return wxapp_code_check_scan($code_token, $last);
+
 }
 if ($do == 'ticket') {
 	$code = $_GPC['code'];

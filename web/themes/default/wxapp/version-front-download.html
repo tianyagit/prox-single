@@ -114,6 +114,12 @@
 <div class="panel we7-panel wxapp-examine-self">
 	<div class="panel-heading">上传小程序代码</div>
 	<div class="panel-body">
+		<div class="waiting text-center">
+			<div><span class="wi wi-waiting"></span></div>
+			<div>正在获取二维码,请耐心等待,等待时间大约</div>
+			<div class="second">0秒</div>
+		</div>
+
 		<div class="step">第<span class="num">1</span>步</div>
 		<div class="text-center">
 			<img src="" alt="" class="qr-img" id="qrcode">
@@ -157,10 +163,9 @@
 {if $uptype == 'auto'}
 <script type="text/javascript">
 	$(function () {
-		var UUIDURL = "{php echo url('wxapp/front-download/uuid')}";
+		var UUIDURL = "{php echo url('wxapp/front-download/code_token')}";
 		var QRCODEURL = "{php echo url('wxapp/front-download/qrcode')}";
 		var CHECKSANURL = "{php echo url('wxapp/front-download/checkscan')}";
-		var TICKETURL = "{php echo url('wxapp/front-download/ticket')}";
 		var COMMITURL = "{php echo url('wxapp/front-download/commitcode')}";
 		var uuid = null;
 
@@ -179,6 +184,10 @@
 				}
 			});
 			return def;
+		}
+		// 检查代码是否已初始化好
+		function check_code() {
+
 		}
 
 		// 获取UUID
@@ -280,7 +289,7 @@
 				})
 			})
 		}
-		start();
+//		start();
 	});
 </script>
 {/if}
