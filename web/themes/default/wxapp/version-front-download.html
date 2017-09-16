@@ -117,7 +117,7 @@
 		<div class="waiting text-center" id="wait_code_token">
 			<div><span class="wi wi-waiting"></span></div>
 			<div>正在获取二维码,请耐心等待,等待时间大约</div>
-			<div class="second">30秒</div>
+			<div class="second" id="wait_sec">30秒</div>
 		</div>
 
 		<div class="step step1" style="display: none;">第<span class="num">1</span>步</div>
@@ -178,7 +178,16 @@
 				'dataType': 'json'
 			});
 		}
-
+		var sec = 30;
+		var interval = setInterval(function(){
+			sec--;
+			if(sec<=0)
+			{
+				sec = 0;
+				clearInterval(interval);
+			}
+			$('#wait_sec').text(sec+'秒');
+		},1000);
 		var codeupload = {
 			code_uuid : null,
 			code_token : null,
@@ -193,6 +202,7 @@
 						return;
 					}
 					def.reject('初始化失败');
+					clearInterval(interval);
 				});
 				return def.promise();
 			},
