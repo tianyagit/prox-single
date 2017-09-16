@@ -44,7 +44,7 @@
 		<div class="cut-list clearfix" ng-if="accountList" infinite-scroll='loadMore()' infinite-scroll-disabled='busy' infinite-scroll-distance='0' infinite-scroll-use-document-bottom="true">
 			<div class="item" ng-repeat="detail in accountList">
 				<div class="content">
-					<img ng-src="{{detail.logo}}" class="icon-account"/>
+					<img ng-src="{{detail.logo}}" class="icon-account" onerror="this.src='./resource/images/nopic-107.png'"/>
 					<div class="name" ng-bind="detail.name"></div>
 					<div class="type">
 						<span ng-if="detail.level == 1">类型：普通订阅号</span>
