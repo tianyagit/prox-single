@@ -185,20 +185,19 @@ if ($do == 'display' || $do == 'change_status') {
 }
 
 if ($do == 'display') {
+	load()->model('mc');
 	$_W['page']['title'] = '扫描统计 - 二维码管理 - 高级功能';
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 30;
 	$qrcode_table = table('qrcode');
 	$starttime = empty($_GPC['time']['start']) ? TIMESTAMP -  86399 * 30 : strtotime($_GPC['time']['start']);
-	$endtime = empty($_GPC['time']['end']) ? TIMESTAMP + 6*86400: strtotime($_GPC['time']['end']) + 86399;
-	$qrcode_table->searchTime($starttime, $endtime);
-	$keyword = trim($_GPC['keyword']);
-	if (!empty($keyword)) {
-		$qrcode_table->searchKeyword($keyword);
-	}
+	$endtime = empty($_GPC['time']['end']) ? TIMESTAMP + 6*86400 : strtotime($_GPC['time']['end']) + 86399;
 
+	$qrcode_table = mc_qrcode_condition($starttime, $endtime, $_GPC['keyword']);
 	$qrcode_table->searchWithPage($pindex, $psize);
 	$list = $qrcode_table->qrcodeStaticList($status);
+
+	$qrcode_table = mc_qrcode_condition($starttime, $endtime, $_GPC['keyword']);
 	$total = $count = $qrcode_table->qrcodeCount($status);
 
 	if (!empty($list)) {

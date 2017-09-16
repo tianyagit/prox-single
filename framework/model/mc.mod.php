@@ -2020,3 +2020,20 @@ function mc_fans_has_member_info($tag) {
 	}
 	return $profile;
 }
+
+/**
+ * 扫描二维码条件
+ * @param $starttime
+ * @param $endtime
+ * @param $keyword
+ * @return We7Table
+ */
+function mc_qrcode_condition($starttime, $endtime, $keyword) {
+	$qrcode_table = table('qrcode');
+	$qrcode_table->searchTime($starttime, $endtime);
+	$keyword = trim($keyword);
+	if (!empty($keyword)) {
+		$qrcode_table->searchKeyword($keyword);
+	}
+	return $qrcode_table;
+}
