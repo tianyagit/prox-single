@@ -86,7 +86,7 @@ if($do == 'base') {
 			case 'secret':
 				$data = array('secret' => trim($_GPC['request_data']));break;
 			case 'token':
-				$oauth = (array)uni_setting($uniacid, array('oauth'));
+				$oauth = (array)uni_setting_load(array('oauth'), $uniacid);
 				if($oauth['oauth'] == $acid && $account['level'] != 4) {
 					$acid = pdo_fetchcolumn("SELECT acid FROM " . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
 					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
@@ -94,7 +94,7 @@ if($do == 'base') {
 				$data = array('token' => trim($_GPC['request_data']));
 				break;
 			case 'encodingaeskey':
-				$oauth = (array)uni_setting($uniacid, array('oauth'));
+				$oauth = (array)uni_setting_load(array('oauth'), $uniacid);
 				if($oauth['oauth'] == $acid && $account['level'] != 4) {
 					$acid = pdo_fetchcolumn("SELECT acid FROM " . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
 					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
@@ -110,8 +110,21 @@ if($do == 'base') {
 					$result = $update_type ? true : false;
 				}
 				break;
+			case 'highest_visit':
+				if (user_is_vice_founder() || empty($_W['isfounder'])) {
+					iajax(1, '只有创始人可以修改！');
+				}
+				$statistics_setting = (array)uni_setting_load(array('statistics'), $uniacid);
+				if (!empty($statistics_setting['statistics'])) {
+					$highest_visit = $statistics_setting['statistics'];
+					$highest_visit['founder'] = intval($_GPC['request_data']);
+				} else {
+					$highest_visit = array('founder' => intval($_GPC['request_data']));
+				}
+				$result = pdo_update('uni_settings', array('statistics' => iserializer($highest_visit)), array('uniacid' => $uniacid));
+				break;
 		}
-		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime', 'jointype'))) {
+		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime', 'jointype', 'highest_visit'))) {
 			$result = pdo_update(uni_account_tablename(ACCOUNT_TYPE), $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
 		if($result) {
@@ -144,6 +157,8 @@ if($do == 'base') {
 	}
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
+	$statistics_setting = (array)uni_setting_load(array('statistics'), $uniacid);
+	$account['highest_visit'] = empty($statistics_setting['statistics']['founder']) ? 0 : $statistics_setting['statistics']['founder'];
 	$uniaccount = array();
 	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
 

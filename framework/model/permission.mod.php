@@ -469,15 +469,27 @@ function permission_user_account_num($uid = 0) {
 			}
 		}
 	}
+	$create_buy_account_num = 0;
+	if ($group_num['account_num'] > intval($group['maxaccount'])) {
+		$create_buy_account_num = abs(intval($group['maxaccount']) - $group_num['account_num']);
+	}
+	if ($group_num['wxapp_num'] > intval($group['maxwxapp'])) {
+		$create_buy_wxapp_num = abs($group_num['wxapp_num'] - intval($group['maxwxapp']));
+	}
+	$store_table = table('store');
+	$store_buy_account = $store_table->searchUserBuyAccount($_W['uid']);
+	$store_buy_wxapp = $store_table->searchUserBuyWxapp($_W['uid']);
+	$uniacid_limit = $uniacid_limit + intval($store_buy_account) - intval($create_buy_account_num);
+	$wxapp_limit = $wxapp_limit + intval($store_buy_wxapp) - intval($create_buy_wxapp_num);
 	$data = array(
-			'group_name' => $group['name'],
-			'vice_group_name' => $group_vice['name'],
-			'maxaccount' => $group['maxaccount'],
-			'uniacid_num' => $group_num['account_num'],
-			'uniacid_limit' => $uniacid_limit,
-			'maxwxapp' => $group['maxwxapp'],
-			'wxapp_num' => $group_num['wxapp_num'],
-			'wxapp_limit' => $wxapp_limit,
+		'group_name' => $group['name'],
+		'vice_group_name' => $group_vice['name'],
+		'maxaccount' => $group['maxaccount'],
+		'uniacid_num' => $group_num['account_num'],
+		'uniacid_limit' => $uniacid_limit,
+		'maxwxapp' => $group['maxwxapp'],
+		'wxapp_num' => $group_num['wxapp_num'],
+		'wxapp_limit' => $wxapp_limit,
 	);
 	return $data;
 }

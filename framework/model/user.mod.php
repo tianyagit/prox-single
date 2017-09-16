@@ -758,7 +758,6 @@ function user_list_format($users) {
 		} else {
 			$user['endtime'] = $user['endtime'] <= TIMESTAMP ? '服务已到期' : date('Y-m-d', $user['endtime']);
 		}
-		$user['uniacid_num'] = $users_table->accountUsersNum($user['uid']);
 
 		$user['module_num'] =array();
 		if ($user['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
@@ -767,6 +766,7 @@ function user_list_format($users) {
 			$group = $groups[$user['groupid']];
 		}
 		$user['maxaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxaccount']);
+		$user['maxwxapp'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwxapp']);
 		$user['groupname'] = $group['name'];
 		unset($user);
 	}

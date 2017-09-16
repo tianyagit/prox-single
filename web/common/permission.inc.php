@@ -23,18 +23,17 @@ $we7_file_permission = array(
 	'account' => array(
 		'default' => '',
 		'direct' => array(
+			'display',
 			'auth',
 			'welcome', 'openwechat'
 		),
 		'vice_founder' => array('account*'),
 		'owner' => array('account*'),
 		'manager' => array(
-			'display',
 			'manage',
 			'post-step',
 		),
 		'operator' => array(
-			'display',
 			'manage',
 			'post-step',
 		),
@@ -109,40 +108,33 @@ $we7_file_permission = array(
 		'owner' => array('home*'),
 		'manager' => array('home*'),
 		'operator' => array('home*'),
-		'clerk' => array()
+		'clerk' => array('welcome'),
 	),
 	'mc' => array(
 		'default' => '',
 		'direct' => array(),
 		'vice_founder' => array('mc*'),
 		'owner' => array('mc*'),
-		'manager' => array(
-			'chats',
-			'fields',
-			'group',
-		),
-		'operator' => array(
-			'chats',
-			'fields',
-			'group',
-		),
+		'manager' => array(),
+		'operator' => array(),
 		'clerk' => array()
 	),
 	'module' => array(
 		'default' => '',
-		'direct' => array(),
+		'direct' => array(
+			'display',
+		),
 		'vice_founder' => array('module*'),
 		'owner' => array(
 			'manage-account',
 			'manage-system',
-			'display',
 			'permission',
 		),
 		'manager' => array(
-			'display',
+			'manage-account',
 		),
 		'operator' => array(
-			'display',
+			'manage-account',
 		),
 		'clerk' => array()
 	),
@@ -152,14 +144,17 @@ $we7_file_permission = array(
 		'vice_founder' => array('platform*'),
 		'owner' => array('platform*'),
 		'manager' => array(
-			'material-post',
-			'cover'
+			'cover',
+			'reply'
 		),
 		'operator' => array(
-			'material-post',
-			'cover'
+			'cover',
+			'reply'
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'reply',
+			'cover',
+		)
 	),
 	'profile' => array(
 		'default' => '',
@@ -182,12 +177,16 @@ $we7_file_permission = array(
 			'article',
 			'category',
 			'style',
+			'nav',
+			'slide',
 		),
 		'operator' => array(
 			'editor',
 			'article',
 			'category',
 			'style',
+			'nav',
+			'slide',
 		),
 		'clerk' => array(
 			'entry',
@@ -288,6 +287,7 @@ $we7_file_permission = array(
 			'subscribe',
 			'wxcode',
 			'modules',
+			'link',
 		),
 		'vice_founder' => array(
 			'user'
