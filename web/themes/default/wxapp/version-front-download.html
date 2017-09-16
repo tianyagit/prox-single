@@ -235,7 +235,7 @@
 						def.resolve(self.code_uuid);
 						return;
 					}
-					def.reject('初始化失败');
+					def.reject('小程序应用数据异常，无法获取，请联系开发者');
 					clearInterval(interval);
 				});
 				return def.promise();
