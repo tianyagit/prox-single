@@ -176,6 +176,16 @@
 				</div>
 			</div>
 		</form>
+
+		<div class="success text-center step3" style="display: none;">
+			<div><span class="wi wi-right-sign"></span></div>
+			<div class="status-state">上传代码成功，请到微信开发平台小程序后台预览，提交审核应用。</div>
+			<div>微信开发平台小程序后台<a href="#" class="color-default">https://mp.weixin.qq.com/</a></div>
+			<div class="btns">
+				<a href="https://mp.weixin.qq.com/" class="btn btn-primary">去提交审核</a>
+				<a href="/web/index.php?c=wxapp&a=display" class="btn btn-default">小程序首页</a>
+			</div>
+		</div>
 	</div>
 </div>
 {/if}
@@ -404,10 +414,10 @@
 					return self.commitcode();//显示form表单
 				}).then(function(){
 					$('.step .three').addClass('active');
-					alert('上传代码成功,请到微信开放平台小程序后台预览 提交审核应用');
-					window.history.go(-1);
+					$('.step3').show();
+					$('#codeform').hide();
 				},function(e){
-					alert(e);
+					util.message(e);
 				})
 			}
 		};
