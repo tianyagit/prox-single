@@ -18,19 +18,19 @@
 <table class="table we7-table table-hover table-manage vertical-middle" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
 	<col width="120px"/>
 	<col width="150px">
-	<col width="200px"/>
-	<col width="120px"/>
-	<col width="120px"/>
-	<col width="100px"/>
-	<col width="120px"/>
+	<col width="180px"/>
+	<col width="140px"/>
+	<col width="140px"/>
+	<col width="160px"/>
+	<col width="150px"/>
 	<col width="150px"/>
 	<tr>
 		<th></th>
 		<th class="text-left">用户名</th>
 		<th>用户权限组</th>
 		<th>创建公众号</th>
-		<th>使用公众号</th>
-		<th>应用</th>
+		<th>创建小程序</th>
+		<th>注册时间</th>
 		<th>到期时间</th>
 		<th class="text-right">操作</th>
 	</tr>
@@ -43,18 +43,17 @@
 			<span class="color-default" ng-if="!user.groupname && !user.founder">未分配</span>
 		</td>
 		<td class="color-default" ng-bind="user.maxaccount"></td>
-		<td class="color-default" ng-bind="user.uniacid_num"></td>
-		<td class="color-default">
-			<span ng-if="!user.founder" ng-bind="user.module_nums"></span>
-			<span ng-if="user.founder">全部</span>
+		<td class="color-default" ng-bind="user.maxwxapp"></td>
+		<td>
+			<span ng-bind="user.joindate"></span>
 		</td>
 		<td>
 			<span ng-bind="user.endtime"></span>
 		</td>
 		<td class="vertical-middle table-manage-td">
 			<div class="link-group" ng-if="!user.founder">
-				<a ng-href="{{links.edit}}uid={{user.uid}}" ng-if="type == 'display'">编辑</a>
-				<a ng-href="{{links.deny}}&uid={{user.uid}}" ng-if="type == 'display'" data-toggle="tooltip" data-placement="left" title="禁用后可在用户回收站查找到并重新启用。">禁用</a>
+				<a ng-href="{{links.edit}}uid={{user.uid}}" ng-if="type == 'display' || type == 'clerk'">编辑</a>
+				<a ng-href="{{links.deny}}&uid={{user.uid}}" ng-if="type == 'display' || type == 'clerk'" data-toggle="tooltip" data-placement="left" title="禁用后可在用户回收站查找到并重新启用。">禁用</a>
 				<a ng-href="{{links.checkPass}}&uid={{user.uid}}" ng-if="type == 'check'">通过</a>
 				<a ng-href="{{links.deny}}&uid={{user.uid}}" ng-if="type == 'check'" data-toggle="tooltip" data-placement="left" title="拒绝后可在用户回收站查找到并启用。">拒绝</a>
 				<a ng-href="{{links.recycleRestore}}&uid={{user.uid}}" ng-if="type == 'recycle'">启用</a>

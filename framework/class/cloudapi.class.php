@@ -10,7 +10,7 @@ load()->func('communication');
 
 class CloudApi {
 	
-	private $url = 'http://api.we7.cc/index.php?c=%s&a=%s&access_token=%s&';
+	private $url = 'http://api.we7.cc/api/index.php?c=%s&a=%s&access_token=%s&';
 	private $development = false;
 	private $module = null;
 	private $sys_call = false;
@@ -30,7 +30,7 @@ class CloudApi {
 			$this->sys_call = false;
 			$this->module = pathinfo(MODULE_ROOT, PATHINFO_BASENAME);
 		}
-		$this->development = $development;
+		$this->development = !is_error($this->developerCerContent());
 	}
 	
 	private function getCerContent($file) {
@@ -145,6 +145,7 @@ class CloudApi {
 	}
 	
 	private function getAccessToken(){
+		return $this->default_token;
 		global $_W;
 		if ($this->sys_call) {
 			$token = $this->systemCerContent();
@@ -167,6 +168,7 @@ class CloudApi {
 			'token' => $token,
 			'module' => $this->module,
 		);
+		
 		return base64_encode(json_encode($access_token));
 	}
 	
@@ -199,7 +201,7 @@ class CloudApi {
 		if ($dataType == 'html') {
 			return $result;
 		}
-		
+
 		if ($dataType == 'json') {
 			$result = strval($result);
 			$json_result = json_decode($result, true);
@@ -223,7 +225,7 @@ class CloudApi {
 		if (is_error($url)) {
 			return $url;
 		}
-		
+
 		$response = ihttp_get($url);
 		if (is_error($response)) {
 			return $response;
@@ -245,8 +247,8 @@ class CloudApi {
 		if (is_error($response)) {
 			return $response;
 		}
+		WeUtility::logging('debug', 'test' . json_encode($response));
 		$result = $this->actionResult($response['content'], $dataType);
-
 		return $result;
 	}
 	
@@ -277,7 +279,7 @@ class CloudApi {
 		if (is_error($response)) {
 			return $response;
 		}
-		
+
 		return $this->actionResult($response['content'], $dataType);
 	}
 }

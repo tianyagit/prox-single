@@ -11,7 +11,7 @@ load()->func('communication');
 
 $dos = array('save_setting', 'display', 'test_alipay', 'get_setting');
 $do = in_array($do, $dos) ? $do : 'display';
-uni_user_permission_check('profile_setting');
+permission_check_account_user('profile_pay_setting');
 $_W['page']['title'] = '支付参数 - 公众号选项';
 
 if ($do == 'get_setting') {
@@ -129,7 +129,8 @@ MFF/yA==
 if ($do == 'display') {
 	$proxy_wechatpay_account = account_wechatpay_proxy();
 	$setting = uni_setting_load('payment', $_W['uniacid']);
-	$pay_setting = $setting['payment'];
+	$pay_setting = is_array($setting['payment']) ? $setting['payment'] : array();
+	
 	if (empty($pay_setting['delivery'])) {
 		$pay_setting['delivery'] = array('switch' => false);
 	}

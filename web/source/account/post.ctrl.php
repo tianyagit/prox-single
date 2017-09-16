@@ -12,13 +12,21 @@ load()->model('user');
 load()->classs('weixin.platform');
 load()->model('wxapp');
 load()->model('utility');
+load()->func('file');
 
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
 	itoast('请选择要编辑的公众号', url('account/manager'), 'error');
 }
-$state = uni_permission($_W['uid'], $uniacid);
+$defaultaccount = uni_account_default($uniacid);
+if (!$defaultaccount) {
+	itoast('无效的acid', url('account/manager'), 'error');
+}
+$acid = $defaultaccount['acid']; //强制使用默认的acid
+
+
+$state = permission_account_user_role($_W['uid'], $uniacid);
 $dos = array('base', 'sms', 'modules_tpl');
 $role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 if ($role_permission) {
@@ -43,7 +51,6 @@ if($do == 'base') {
 	if (!$role_permission) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
-
 	if($_W['ispost'] && $_W['isajax']) {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
@@ -57,7 +64,11 @@ if($do == 'base') {
 					'qrcodeimgsrc' => ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg',
 					'headimgsrc' => ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg'
 				);
-				$result = utility_image_rename($_GPC['imgsrc'], $image_type[$type]);
+				$imgsrc = $_GPC['imgsrc'];
+				if(!file_is_image($imgsrc)){
+					$result = '';
+				}
+				$result = utility_image_rename($imgsrc, $image_type[$type]);
 				break;
 			case 'name':
 				$uni_account = pdo_update('uni_account', array('name' => trim($_GPC['request_data'])), array('uniacid' => $uniacid));
@@ -75,7 +86,7 @@ if($do == 'base') {
 			case 'secret':
 				$data = array('secret' => trim($_GPC['request_data']));break;
 			case 'token':
-				$oauth = (array)uni_setting($uniacid, array('oauth'));
+				$oauth = (array)uni_setting_load(array('oauth'), $uniacid);
 				if($oauth['oauth'] == $acid && $account['level'] != 4) {
 					$acid = pdo_fetchcolumn("SELECT acid FROM " . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
 					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
@@ -83,7 +94,7 @@ if($do == 'base') {
 				$data = array('token' => trim($_GPC['request_data']));
 				break;
 			case 'encodingaeskey':
-				$oauth = (array)uni_setting($uniacid, array('oauth'));
+				$oauth = (array)uni_setting_load(array('oauth'), $uniacid);
 				if($oauth['oauth'] == $acid && $account['level'] != 4) {
 					$acid = pdo_fetchcolumn("SELECT acid FROM " . tablename('account_wechats') . " WHERE uniacid = :uniacid AND level = 4 AND secret != '' AND `key` != ''", array(':uniacid' => $uniacid));
 					pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
@@ -99,8 +110,21 @@ if($do == 'base') {
 					$result = $update_type ? true : false;
 				}
 				break;
+			case 'highest_visit':
+				if (user_is_vice_founder() || empty($_W['isfounder'])) {
+					iajax(1, '只有创始人可以修改！');
+				}
+				$statistics_setting = (array)uni_setting_load(array('statistics'), $uniacid);
+				if (!empty($statistics_setting['statistics'])) {
+					$highest_visit = $statistics_setting['statistics'];
+					$highest_visit['founder'] = intval($_GPC['request_data']);
+				} else {
+					$highest_visit = array('founder' => intval($_GPC['request_data']));
+				}
+				$result = pdo_update('uni_settings', array('statistics' => iserializer($highest_visit)), array('uniacid' => $uniacid));
+				break;
 		}
-		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime', 'jointype'))) {
+		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime', 'jointype', 'highest_visit'))) {
 			$result = pdo_update(uni_account_tablename(ACCOUNT_TYPE), $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
 		if($result) {
@@ -131,9 +155,10 @@ if($do == 'base') {
 			);
 		}
 	}
-	$socket_url = str_replace(array('https', 'http'), 'wss', $_W['siteroot']);
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
+	$statistics_setting = (array)uni_setting_load(array('statistics'), $uniacid);
+	$account['highest_visit'] = empty($statistics_setting['statistics']['founder']) ? 0 : $statistics_setting['statistics']['founder'];
 	$uniaccount = array();
 	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
 
@@ -259,6 +284,7 @@ if($do == 'modules_tpl') {
 			'name' => '所有服务',
 			'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 			'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+			'type' => 'default'
 		);
 	} else {
 		if ($owner['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
@@ -266,6 +292,7 @@ if($do == 'modules_tpl') {
 		} else {
 			$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
 		}
+
 		$owner['group']['package'] = iunserializer($owner['group']['package']);
 		if(!empty($owner['group']['package'])){
 			foreach ($owner['group']['package'] as $package_value) {
@@ -275,11 +302,14 @@ if($do == 'modules_tpl') {
 						'name' => '所有服务',
 						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+						'type' => 'default'
 					);
 				}elseif ($package_value == 0) {
 
 				}else {
-					$modules_tpl[] = $unigroups[$package_value];
+					$defaultmodule = $unigroups[$package_value];
+					$defaultmodule['type'] = 'default';
+					$modules_tpl[] = $defaultmodule;
 				}
 			}
 		}
@@ -293,11 +323,14 @@ if($do == 'modules_tpl') {
 						'name' => '所有服务',
 						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+						'type' => 'extend' //前台显示区分
 					);
 				}elseif ($extendpackage_val['groupid'] == 0) {
 
 				}else {
-					$modules_tpl[] = $unigroups[$extendpackage_val['groupid']];
+					$ex_module = $unigroups[$extendpackage_val['groupid']];
+					$ex_module['type'] = 'extend';
+					$modules_tpl[] = $ex_module;
 				}
 			}
 		}
@@ -308,6 +341,10 @@ if($do == 'modules_tpl') {
 	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
 	$extend['modules'] = $current_module_names = iunserializer($extend['modules']);
 	$extend['templates'] = iunserializer($extend['templates']);
+	$canmodify = false;
+	if ($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']) {
+		$canmodify = true;
+	}
 	if (!empty($extend['modules'])) {
 		foreach ($extend['modules'] as $module_key => $module_val) {
 			$extend['modules'][$module_key] = module_fetch($module_val);
@@ -316,6 +353,7 @@ if($do == 'modules_tpl') {
 	if (!empty($extend['templates'])) {
 		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('id', 'name', 'title'));
 	}
+
 
 	template('account/manage-modules-tpl' . ACCOUNT_TYPE_TEMPLATE);
 }

@@ -65,8 +65,12 @@ if ($do == 'check_subscribe') {
 
 if ($do == 'get_upgrade_info') {
 	$module_name = trim($_GPC['name']);
-	$module_info = module_fetch($module_name);
 	$module = cloud_m_upgradeinfo($module_name);
+	$module_info = module_fetch($module_name);
+	if (empty($module_info['site_branch_id'])) {
+		$module_info['site_branch_id'] = $module['site_branch']['id'];
+		cache_write(cache_system_key(CACHE_KEY_MODULE_INFO, $module_name), $module_info);
+	}
 	if (is_error($module)) {
 		iajax(1, $module['message']);
 	} else {
@@ -102,6 +106,7 @@ if ($do == 'check_upgrade') {
 		if (empty($manifest)) {
 			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
 				$cloud_m_info = $cloud_m_query_module[$module['name']];
+				$module_info = module_fetch($module['name']);
 				if (!empty($cloud_m_info['service_expiretime'])) {
 					$module['service_expire'] = $cloud_m_info['service_expiretime'] > time() ? false : true;
 				}
@@ -126,7 +131,7 @@ if ($do == 'check_upgrade') {
 					continue;
 				}
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
-				if (version_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version']))) {
+				if (version_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version'])) || (!empty($module_info['site_branch_id']) && $cloud_m_info['site_branch']['id'] > $module_info['site_branch_id'])) {
 					$module['upgrade'] = true;
 				} else {
 					$module['upgrade'] = false;
@@ -330,7 +335,7 @@ if ($do =='install') {
 	$module = ext_module_convert($manifest);
 	$module_group = uni_groups();
 	if (!$_W['ispost'] || empty($_GPC['flag'])) {
-		template('system/select-module-group');
+		template('system/module-group');
 		exit;
 	}
 	if (!empty($manifest['platform']['plugin_list'])) {
@@ -482,7 +487,6 @@ if ($do == 'save_module_info') {
 		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
 		$result = utility_image_rename($module_icon_map[$type]['url'], $image_destination_url);
 	}
-
 	cache_delete(cache_system_key("module_info:" . $module_name));
 	if (!empty($result)) {
 		iajax(0, '');

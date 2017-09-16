@@ -18,7 +18,7 @@ if (empty($uniacid)) {
 	itoast('请选择要编辑的小程序', referer(), 'error');
 }
 
-$state = uni_permission($_W['uid'], $uniacid);
+$state = permission_account_user_role($_W['uid'], $uniacid);
 $role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 if (!$role_permission) {
 	itoast('无权限操作！', referer(), 'error');
@@ -137,6 +137,7 @@ if($do == 'getpackage') {
 		'name' => $account_wxapp_info['name'],
 		'modules' => $account_wxapp_info['version']['modules'],
 		'siteInfo' => array(
+			'name' => $account_wxapp_info['name'],
 			'uniacid' => $account_wxapp_info['uniacid'],
 			'acid' => $account_wxapp_info['acid'],
 			'multiid' => $account_wxapp_info['version']['multiid'],

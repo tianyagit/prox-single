@@ -3,7 +3,7 @@
 	<div class="panel-heading">
 		<i class="wi wi-wechat" style="font-size: 24px; margin-right: 10px; vertical-align:middle;"></i>请选择您要操作的公众号
 		<div class="font-default pull-right">
-			{if !empty($account_info['uniacid_limit'])}
+			{if !empty($account_info['uniacid_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
 			<a href="./index.php?c=account&a=post-step" class="color-default"><i class="fa fa-plus"></i>新增公众号</a>
 			{/if}
 			{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_MANAGER}
@@ -54,7 +54,7 @@
 					</div>
 				</div>
 				<div class="mask">
-					<a ng-href="{{detail.url}}" class="entry">
+					<a ng-href="{{detail.switchurl}}" class="entry">
 						<div>进入公众号 <i class="wi wi-angle-right"></i></div>
 					</a>
 					<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)" title="置顶">

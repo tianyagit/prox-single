@@ -12,8 +12,9 @@ $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
 if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service', 'userapi'))) {
-	uni_user_permission_check('platform_reply');
+	permission_check_account_user('platform_reply');
 } else {
+	permission_check_account_user('', true, 'reply');
 	$modules = uni_modules();
 	$_W['current_module'] = $modules[$m];
 }

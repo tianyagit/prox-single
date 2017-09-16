@@ -5,6 +5,7 @@
  */
 load()->model('user');
 load()->func('tpl');
+load()->model('permission');
 $_W['token'] = token();
 $session = json_decode(authcode($_GPC['__session']), true);
 if (is_array($session)) {
@@ -26,19 +27,14 @@ if (is_array($session)) {
 }
 unset($session);
 
-if (!empty($_GPC['__uniacid'])) {
-	$_W['uniacid'] = intval($_GPC['__uniacid']);
-} else {
-	$_W['uniacid'] = uni_account_last_switch();
-}
-
+$_W['uniacid'] = uni_account_last_switch();
 if (!empty($_W['uniacid'])) {
 	$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
 	$_W['acid'] = $_W['account']['acid'];
 	$_W['weid'] = $_W['uniacid'];
 }
 if (!empty($_W['uid'])) {
-	$_W['role'] = uni_permission($_W['uid']);
+	$_W['role'] = permission_account_user_role($_W['uid']);
 }
 $_W['template'] = !empty($_W['setting']['basic']['template']) ? $_W['setting']['basic']['template'] : 'default';
 load()->func('compat.biz');

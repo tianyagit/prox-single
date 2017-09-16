@@ -14,7 +14,7 @@ $module = $_W['current_module'] = $modulelist[$module_name];
 if(empty($module)) {
 	itoast('抱歉，你操作的模块不能被访问！');
 }
-if(!uni_user_module_permission_check($module_name.'_permissions', $module_name)) {
+if(!permission_check_account_user_module($module_name.'_permissions', $module_name)) {
 	itoast('您没有权限进行该操作');
 }
 
@@ -45,7 +45,7 @@ if ($do == 'post') {
 	$uid = intval($_GPC['uid']);
 	$user = user_single($uid);
 	if (!empty($uid)) {
-		$have_permission = uni_user_menu_permission($uid, $_W['uniacid'], $module_name);
+		$have_permission = permission_account_user_menu($uid, $_W['uniacid'], $module_name);
 		if (is_error($have_permission)) {
 			itoast($have_permission['message']);
 		}
@@ -108,7 +108,7 @@ if ($do == 'post') {
 			pdo_update('users_permission', array('permission' => $permission), array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $module_name));
 		}
 
-		$role = uni_permission($uid, $_W['uniacid']);
+		$role = table('users')->userOwnedAccountRole($uid, $_W['uniacid']);
 		if (empty($role)) {
 			pdo_insert('uni_account_users', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'role' => 'clerk'));
 		} else {

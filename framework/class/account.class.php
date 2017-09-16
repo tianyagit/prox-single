@@ -595,8 +595,13 @@ class WeUtility {
 			restore_include_path();
 		}
 		if(!class_exists($classname)) {
-			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
-			return null;
+			list($namespace) = explode('_', $name);
+			if (class_exists("\\{$namespace}\\{$classname}")) {
+				$classname = "\\{$namespace}\\{$classname}";
+			} else {
+				trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
+				return null;
+			}
 		}
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
@@ -1097,6 +1102,7 @@ abstract class WeModuleProcessor extends WeBase {
 		unset($_SESSION['__contextexpire']);
 		unset($_SESSION['__contextpriority']);
 		unset($_SESSION);
+		$this->inContext = false;
 		session_destroy();
 	}
 	/**

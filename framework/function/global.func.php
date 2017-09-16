@@ -225,7 +225,7 @@ function array_elements($keys, $src, $default = FALSE) {
 
 /**
  * 根据键值对数组排序
- * 
+ *
  * @param array $array 需要排序的数组
  * @param string $keys 用来排序的键名
  * @param string $type 排序规则
@@ -273,7 +273,7 @@ function range_limit($num, $downline, $upline, $returnNear = true) {
 /**
  * JSON编码,加上转义操作,适合于JSON入库
  * @param string $value
- * @param int 	 $options 
+ * @param int 	 $options
  * @return mixed
  */
 function ijson_encode($value, $options = 0) {
@@ -284,7 +284,7 @@ function ijson_encode($value, $options = 0) {
 		$str = json_encode($value);
 		$json_str = preg_replace_callback("#\\\u([0-9a-f]{4})#i", function($matchs){
 			return iconv('UCS-2BE', 'UTF-8', pack('H4', $matchs[1]));
-			}, $str);
+		}, $str);
 	} else {
 		$json_str = json_encode($value, $options);
 	}
@@ -307,7 +307,7 @@ function iserializer($value) {
  */
 function iunserializer($value) {
 	if (empty($value)) {
-		return '';
+		return array();
 	}
 	if (!is_serialized($value)) {
 		return $value;
@@ -318,8 +318,9 @@ function iunserializer($value) {
 			return 's:'.strlen($matchs[2]).':"'.$matchs[2].'";';
 		}, $value);
 		return unserialize($temp);
+	} else {
+		return $result;
 	}
-	return $result;
 }
 
 /**
@@ -419,43 +420,45 @@ function wurl($segment, $params = array()) {
 	return $url;
 }
 
-/**
- * 获取Mobile端URL地址
- * @param string $segment 路由参数
- * @param array $params 附加参数
- * @param boolean $noredirect 是否追加微信URl后缀
- */
-function murl($segment, $params = array(), $noredirect = true, $addhost = false) {
-	global $_W;
-	list($controller, $action, $do) = explode('/', $segment);
-	if (!empty($addhost)) {
-		$url = $_W['siteroot'] . 'app/';
-	} else {
-		$url = './';
-	}
-	$str = '';
-	if(uni_is_multi_acid()) {
-		$str = "&j={$_W['acid']}";
-	}
-	$url .= "index.php?i={$_W['uniacid']}{$str}&";
-	if (!empty($controller)) {
-		$url .= "c={$controller}&";
-	}
-	if (!empty($action)) {
-		$url .= "a={$action}&";
-	}
-	if (!empty($do)) {
-		$url .= "do={$do}&";
-	}
-	if (!empty($params)) {
-		$queryString = http_build_query($params, '', '&');
-		$url .= $queryString;
-		if ($noredirect === false) {
-			//加上后，表单提交无值
-			$url .= '&wxref=mp.weixin.qq.com#wechat_redirect';
+if (!function_exists('murl')) {
+	/**
+	 * 获取Mobile端URL地址
+	 * @param string $segment 路由参数
+	 * @param array $params 附加参数
+	 * @param boolean $noredirect 是否追加微信URl后缀
+	 */
+	function murl($segment, $params = array(), $noredirect = true, $addhost = false) {
+		global $_W;
+		list($controller, $action, $do) = explode('/', $segment);
+		if (!empty($addhost)) {
+			$url = $_W['siteroot'] . 'app/';
+		} else {
+			$url = './';
 		}
+		$str = '';
+		if(uni_is_multi_acid()) {
+			$str = "&j={$_W['acid']}";
+		}
+		$url .= "index.php?i={$_W['uniacid']}{$str}&";
+		if (!empty($controller)) {
+			$url .= "c={$controller}&";
+		}
+		if (!empty($action)) {
+			$url .= "a={$action}&";
+		}
+		if (!empty($do)) {
+			$url .= "do={$do}&";
+		}
+		if (!empty($params)) {
+			$queryString = http_build_query($params, '', '&');
+			$url .= $queryString;
+			if ($noredirect === false) {
+				//加上后，表单提交无值
+				$url .= '&wxref=mp.weixin.qq.com#wechat_redirect';
+			}
+		}
+		return $url;
 	}
-	return $url;
 }
 
 /**
@@ -482,11 +485,11 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 	if ($context['ajaxcallback']) {
 		$context['isajax'] = true;
 	}
-	
+
 	if ($context['callbackfuncname']) {
 		$callbackfunc = $context['callbackfuncname'];
 	}
-	
+
 	$pdata['tcount'] = $total;
 	$pdata['tpage'] = (empty($pageSize) || $pageSize < 0) ? 1 : ceil($total / $pageSize);
 	if ($pdata['tpage'] <= 1) {
@@ -1039,88 +1042,22 @@ function utf8_bytes($cp) {
 	if ($cp > 0x10000){
 		# 4 bytes
 		return	chr(0xF0 | (($cp & 0x1C0000) >> 18)).
-		chr(0x80 | (($cp & 0x3F000) >> 12)).
-		chr(0x80 | (($cp & 0xFC0) >> 6)).
-		chr(0x80 | ($cp & 0x3F));
+			chr(0x80 | (($cp & 0x3F000) >> 12)).
+			chr(0x80 | (($cp & 0xFC0) >> 6)).
+			chr(0x80 | ($cp & 0x3F));
 	}else if ($cp > 0x800){
 		# 3 bytes
 		return	chr(0xE0 | (($cp & 0xF000) >> 12)).
-		chr(0x80 | (($cp & 0xFC0) >> 6)).
-		chr(0x80 | ($cp & 0x3F));
+			chr(0x80 | (($cp & 0xFC0) >> 6)).
+			chr(0x80 | ($cp & 0x3F));
 	}else if ($cp > 0x80){
 		# 2 bytes
 		return	chr(0xC0 | (($cp & 0x7C0) >> 6)).
-		chr(0x80 | ($cp & 0x3F));
+			chr(0x80 | ($cp & 0x3F));
 	}else{
 		# 1 byte
 		return chr($cp);
 	}
-}
-/**
- * 将bytes转化为unicode码
- * @param bit $utf8
- */
-function bytes_utf8($utf8) {
-	$i = 0;
-	$l = strlen($utf8);
-	
-	$out = '';
-
-	while ($i < $l) {
-		if ((ord($utf8[$i]) & 0x80) === 0x00) {
-			// 0xxxxxxx
-			$n = ord($utf8[$i++]);
-		} elseif ((ord($utf8[$i]) & 0xE0) === 0xC0) {
-			// 110xxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x1F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} elseif ((ord($utf8[$i]) & 0xF0) === 0xE0) {
-			// 1110xxxx 10xxxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x0F) << 12) |
-			((ord($utf8[$i++]) & 0x3F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} elseif ((ord($utf8[$i]) & 0xF8) === 0xF0) {
-			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x07) << 18) |
-			((ord($utf8[$i++]) & 0x3F) << 12) |
-			((ord($utf8[$i++]) & 0x3F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} elseif ((ord($utf8[$i]) & 0xFC) === 0xF8) {
-			// 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x03) << 24) |
-			((ord($utf8[$i++]) & 0x3F) << 18) |
-			((ord($utf8[$i++]) & 0x3F) << 12) |
-			((ord($utf8[$i++]) & 0x3F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} elseif ((ord($utf8[$i]) & 0xFE) === 0xFC) {
-			// 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
-			$n =
-			((ord($utf8[$i++]) & 0x01) << 30) |
-			((ord($utf8[$i++]) & 0x3F) << 24) |
-			((ord($utf8[$i++]) & 0x3F) << 18) |
-			((ord($utf8[$i++]) & 0x3F) << 12) |
-			((ord($utf8[$i++]) & 0x3F) <<  6) |
-			((ord($utf8[$i++]) & 0x3F) <<  0)
-			;
-		} else {
-			return error(1, 'Invalid utf-8 code point');
-		}
-
-		$n = strtoupper(dechex($n));
-		$pad = strlen($n) <= 4 ? strlen($n) + strlen($n) %2 : 0;
-		$n = str_pad($n, $pad, "0", STR_PAD_LEFT);
-
-		$out .= sprintf("\u%s", $n);
-	}
-	return $out;
 }
 
 function media2local($media_id, $all = false){
@@ -1210,7 +1147,7 @@ function aes_encode($message, $encodingaeskey = '', $appid = '') {
  * @return array
  */
 function aes_pkcs7_decode($encrypt_data, $key, $iv = false) {
-	require_once IA_ROOT . '/framework/library/pkcs7/pkcs7Encoder.php';
+	load()->library('pkcs7');
 	$encrypt_data = base64_decode($encrypt_data);
 	if (!empty($iv)) {
 		$iv = base64_decode($iv);
@@ -1289,7 +1226,7 @@ function strip_gpc($values, $type = 'g') {
  * @return boolean | string 正常返回路径，否则返回空
  */
 function parse_path($path) {
-	$danger_char = array('../', '{php', '<?php', '<%', '<?');
+	$danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\', '\\\\' ,'\\', '..\\\\', '%00', '\0', '\r');
 	foreach ($danger_char as $char) {
 		if (strexists($path, $char)) {
 			return false;
@@ -1334,7 +1271,7 @@ function get_first_pinyin($str) {
 		return $first_char;
 	}
 	if (empty($pinyin)) {
-		include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
+		load()->library('pinyin');
 		$pinyin = new Pinyin_Pinyin();
 	}
 	$first_char = $pinyin->get_first_char($str);
@@ -1361,7 +1298,7 @@ function strip_emoji($nickname) {
 	// Match Dingbats
 	$regexDingbats = '/[\x{2700}-\x{27BF}]/u';
 	$clean_text = preg_replace($regexDingbats, '', $clean_text);
-	
+
 	$clean_text = str_replace("'",'',$clean_text);
 	$clean_text = str_replace('"','',$clean_text);
 	$clean_text = str_replace('“','',$clean_text);
@@ -1402,7 +1339,7 @@ function emoji_unicode_encode($string) {
 function getglobal($key) {
 	global $_W;
 	$key = explode('/', $key);
-	
+
 	$v = &$_W;
 	foreach ($key as $k) {
 		if (!isset($v[$k])) {
@@ -1412,3 +1349,38 @@ function getglobal($key) {
 	}
 	return $v;
 }
+
+
+/**
+ *  指定开头的字符串
+ * @param $haystack 原始字符串
+ * @param $needles 开头字符串
+ * @return bool
+ */
+if (!function_exists('starts_with')) {
+	function starts_with($haystack, $needles) {
+		foreach ((array) $needles as $needle) {
+			if ($needle != '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+/**
+ *  只能跳转到本域名下
+ *  跳转链接只能跳转本域名下 防止钓鱼 如: 用户可能正常从信任站点微擎登录 跳转到第三方网站 会误认为第三方网站也是安全的
+ * @param $redirect
+ * @return string
+ */
+function check_url_not_outside_link($redirect) {
+	global $_W;
+	if(starts_with($redirect, 'http') && !starts_with($redirect, $_W['siteroot'])) {
+		$redirect = $_W['siteroot'];
+	}
+	return $redirect;
+}
+
+
+

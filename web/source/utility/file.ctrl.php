@@ -5,13 +5,13 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-error_reporting(0);
-global $_W;
+
 load()->func('file');
 load()->func('communication');
 load()->model('account');
 load()->model('material');
 load()->model('mc');
+
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'image' ,'module' ,'video', 'voice', 'news', 'keyword',
 	'networktowechat', 'networktolocal', 'towechat', 'tolocal','wechat_upload'))) {
 	exit('Access Denied');
@@ -22,6 +22,7 @@ $result = array(
 	'data' => '' 
 );
 
+error_reporting(0);
 $type  =  $_GPC['upload_type'];//$_COOKIE['__fileupload_type'];
 $type = in_array($type, array('image','audio','video')) ? $type : 'image';
 $option = array();
@@ -314,9 +315,10 @@ if ($do == 'wechat_upload') {
 	if($type == 'image' || $type == 'thumb') {
 		$type = 'image';
 	}
-	if($type == 'voice' || $type == 'video') {
-		$type = 'audio';
+	if( $type == 'audio') {
+		$type = 'voice';
 	}
+
 	$setting['folder'] = "{$type}s/{$_W['uniacid']}" . '/'.date('Y/m/');
 
 	$acid = $_W['acid'];
@@ -550,6 +552,10 @@ if ($do == 'video' || $do == 'voice') {
 	$material_news_list = material_list($do, $server, array('page_index' => $page_index, 'page_size' => $page_size));
 	$material_list = $material_news_list['material_list'];
 	$pager = $material_news_list['page'];
+	foreach ($material_list as &$item) {
+		$item['url'] = tomedia($item['attachment']);
+		unset($item['uid']);
+	}
 	$result = array('items' => $material_list, 'pager' => $pager);
 	iajax(0, $result);
 }
@@ -561,14 +567,7 @@ if ($do == 'news') {
 	$page_size = 24;
 	$search = addslashes($_GPC['keyword']);
 	$material_news_list = material_news_list($server, $search, array('page_index' => $page_index, 'page_size' => $page_size));
-	// 转换微信图片地址
-	foreach ($material_news_list['material_list'] as $key => &$news) {
-		if (isset($news['items']) && is_array($news['items'])) {
-			foreach ($news['items'] as &$item) {
-				$item['thumb_url'] = tomedia($item['thumb_url']);
-			}
-		}
-	}
+
 	$material_list = array_values($material_news_list['material_list']);
 	$pager = $material_news_list['page'];
 	$result = array('items' => $material_list, 'pager' => $pager);
@@ -624,7 +623,6 @@ if ($do == 'image') {
 if ($do == 'tolocal' || $do == 'towechat') {
 	if (!in_array($type, array('news', 'image', 'video', 'voice'))) {
 		iajax(1, '转换类型不正确');
-
 		return;
 	}
 }
@@ -633,7 +631,14 @@ if ($do == 'tolocal' || $do == 'towechat') {
  *  网络图转本地
  */
 if ($do == 'networktolocal') {
-	$material = material_network_image_to_local($url, $uniacid, $uid);
+	$type = $_GPC['type'];
+	if (!in_array($type,array('image','video'))) {
+		$type = 'image';
+	}
+
+
+
+	$material = material_network_to_local($url, $uniacid, $uid, $type);
 	if (is_error($material)) {
 		iajax(1, $material['message']);
 
@@ -652,7 +657,6 @@ if ($do == 'tolocal') {
 	}
 	if (is_error($material)) {
 		iajax(1, $material['message']);
-
 		return;
 	}
 	iajax(0, $material);
@@ -661,7 +665,13 @@ if ($do == 'tolocal') {
  *  网络图片转 wechat
  */
 if ($do == 'networktowechat') {
-	$material = material_network_image_to_wechat($url, $uniacid, $uid, $acid); //网络图片转为 微信 图片
+
+	$type = $_GPC['type'];
+	if (!in_array($type,array('image','video'))) {
+		$type = 'image';
+	}
+
+	$material = material_network_to_wechat($url, $uniacid, $uid, $acid, $type); //网络图片转为 微信 图片
 	if (is_error($material)) {
 		iajax(1, $material['message']);
 

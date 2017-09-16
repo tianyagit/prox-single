@@ -268,7 +268,7 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 		return false;
 	}
 	if ($_W['setting']['remote']['type'] == '1') {
-		require_once (IA_ROOT . '/framework/library/ftp/ftp.php');
+		load()->library('ftp');
 		$ftp_config = array(
 			'hostname' => $_W['setting']['remote']['ftp']['host'],
 			'username' => $_W['setting']['remote']['ftp']['username'],
@@ -399,7 +399,7 @@ function file_remote_delete($file) {
 		return true;
 	}
 	if ($_W['setting']['remote']['type'] == '1') {
-		require_once (IA_ROOT . '/framework/library/ftp/ftp.php');
+		load()->library('ftp');
 		$ftp_config = array(
 			'hostname' => $_W['setting']['remote']['ftp']['host'],
 			'username' => $_W['setting']['remote']['ftp']['username'],
@@ -762,6 +762,7 @@ function file_remote_attach_fetch($url, $limit = 0, $path = '') {
 	}
 	load()->func('communication');
 	$resp = ihttp_get($url);
+
 	if (is_error($resp)) {
 		return error(-1, '提取文件失败, 错误信息: '.$resp['message']);
 	}
@@ -849,3 +850,6 @@ function file_is_image($url) {
 	$extension = strtolower($pathinfo['extension']);
 	return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
 }
+
+
+
