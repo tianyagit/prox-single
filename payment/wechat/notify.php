@@ -39,8 +39,7 @@ $_W['acid'] = $_W['uniaccount']['acid'];
 $setting = uni_setting($_W['uniacid'], array('payment'));
 if ($get['trade_type'] == 'NATIVE') {
 	$setting = setting_load('store_pay');
-	$uniacid = pdo_getcolumn('account_wechats', array('acid' => $setting['store_pay']['wechat']['switch']), 'uniacid');
-	$setting = uni_setting($uniacid, 'payment');
+	$setting['payment']['wechat'] = $setting['store_pay']['wechat'];
 }
 if(is_array($setting['payment'])) {
 	$wechat = $setting['payment']['wechat'];
