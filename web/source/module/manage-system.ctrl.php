@@ -335,7 +335,7 @@ if ($do =='install') {
 	$module = ext_module_convert($manifest);
 	$module_group = uni_groups();
 	if (!$_W['ispost'] || empty($_GPC['flag'])) {
-		template('system/select-module-group');
+		template('system/module-group');
 		exit;
 	}
 	if (!empty($manifest['platform']['plugin_list'])) {

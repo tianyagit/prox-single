@@ -171,6 +171,27 @@ function uni_fetch($uniacid = 0) {
 }
 
 /**
+ * 获取指定公号在站内商城购买的模块
+ * @param int $uniacid 公众号id
+ * @return array 模块列表
+ */
+function uni_site_store_buy_module($uniacid) {
+	$cachekey = cache_system_key($uniacid . ':site_store_buy_modules');
+	$site_store_buy_modules = cache_load($cachekey);
+	if (!empty($site_store_buy_modules)) {
+		return $site_store_buy_modules;
+	}
+	$site_store_buy_modules = array();
+	$site_store_order = pdo_fetchall('SELECT * FROM ' . tablename('site_store_order') . " WHERE uniacid = :uniacid AND createtime + duration * 2592000 >= :times AND type = 3", array(':times' => time(), ':uniacid' => $uniacid), 'goodsid');
+	if (!empty($site_store_order) && is_array($site_store_order)) {
+		$site_store_buy_modules = pdo_getall('site_store_goods', array('id' => array_keys($site_store_order)), array(), 'module');
+		$site_store_buy_modules = array_keys($site_store_buy_modules);
+	}
+	cache_write($cachekey, $site_store_buy_modules);
+	return $site_store_buy_modules;
+}
+
+/**
  * 获取指定公号下所有安装模块及模块信息
  * 公众号的权限是owner所有套餐内的全部模块权限
  * @param int $uniacid 公众号id
@@ -194,6 +215,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
+
 
 			if (!in_array('-1', $packageids)) {
 				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$uniacid}'");

@@ -5,14 +5,13 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-error_reporting(0);
-checklogin();// 验证登录
-global $_W;
+
 load()->func('file');
 load()->func('communication');
 load()->model('account');
 load()->model('material');
 load()->model('mc');
+
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'image' ,'module' ,'video', 'voice', 'news', 'keyword',
 	'networktowechat', 'networktolocal', 'towechat', 'tolocal','wechat_upload'))) {
 	exit('Access Denied');
@@ -23,6 +22,7 @@ $result = array(
 	'data' => '' 
 );
 
+error_reporting(0);
 $type  =  $_GPC['upload_type'];//$_COOKIE['__fileupload_type'];
 $type = in_array($type, array('image','audio','video')) ? $type : 'image';
 $option = array();

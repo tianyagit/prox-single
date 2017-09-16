@@ -1224,7 +1224,7 @@ function cloud_build_transtoken() {
  */
 function cloud_build_schemas($schems) {
 	$database = array();
-	if (empty($schems)) {
+	if (empty($schems) || !is_array($schemas)) {
 		return $database;
 	}
 	foreach ($schemas as $remote) {
