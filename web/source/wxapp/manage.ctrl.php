@@ -124,15 +124,20 @@ if ($do == 'delete') {
 }
 
 if($do == 'getpackage') {
+
 	$versionid = intval($_GPC['versionid']);
 	if(empty($versionid)) {
 		itoast('参数错误！', '', '');
 	}
-
 	$account_wxapp_info = wxapp_fetch($uniacid, $versionid);
 	if (empty($account_wxapp_info)) {
 		itoast('版本不存在！', referer(), 'error');
 	}
+	$siteurl = $_W['siteroot'].'app/index.php';
+	if(!empty($account_wxapp_info['appdomain'])) {
+		$siteurl = $account_wxapp_info['appdomain'];
+	}
+
 	$request_cloud_data = array(
 		'name' => $account_wxapp_info['name'],
 		'modules' => $account_wxapp_info['version']['modules'],
@@ -142,7 +147,7 @@ if($do == 'getpackage') {
 			'acid' => $account_wxapp_info['acid'],
 			'multiid' => $account_wxapp_info['version']['multiid'],
 			'version' => $account_wxapp_info['version']['version'],
-			'siteroot' => $_W['siteroot'].'app/index.php',
+			'siteroot' => $siteurl,
 			'design_method' => $account_wxapp_info['version']['design_method']
 		),
 		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),

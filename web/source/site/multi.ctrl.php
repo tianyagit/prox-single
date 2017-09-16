@@ -216,7 +216,7 @@ if ($do == 'switch') {
 	}
 }
 //底部快捷菜单:quickmenu_display、quickmenu_post
-if ($do == 'quickmenu_display' && $_W['isajax'] && $_W['ispost']) {
+if ($do == 'quickmenu_display' && $_W['isajax'] && $_W['ispost'] && $_W['role'] != 'operator') {
 	$multiid = intval($_GPC['multiid']);
 	if($multiid > 0){
 		$page = pdo_get('site_page', array('multiid' => $multiid, 'type' => 2));

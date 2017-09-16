@@ -10,7 +10,7 @@ load()->func('communication');
 
 class CloudApi {
 	
-	private $url = 'http://api.we7.cc/api/index.php?c=%s&a=%s&access_token=%s&';
+	private $url = 'http://api.we7.cc/index.php?c=%s&a=%s&access_token=%s&';
 	private $development = false;
 	private $module = null;
 	private $sys_call = false;
@@ -145,7 +145,6 @@ class CloudApi {
 	}
 	
 	private function getAccessToken(){
-		return $this->default_token;
 		global $_W;
 		if ($this->sys_call) {
 			$token = $this->systemCerContent();
@@ -156,7 +155,7 @@ class CloudApi {
 				$token = $this->moduleCerContent();
 			}
 		}
-		
+//		$token = 'eyJ0b2tlbiI6IjA4NTA0NTQwNzcyRDQxRUZENjBCMEM0ODE5OEI3RUUzTU5aUjdOV1ZQMFVSUk5NUldXIiwibW9kdWxlIjoiY29yZSJ9';
 		if (empty($token)) {
 			return error(1, '错误的数字证书内容.');
 		}
@@ -189,7 +188,7 @@ class CloudApi {
 			$querystring = base64_encode(json_encode($params));
 			$url .= "&api_qs={$querystring}";
 		}
-		
+
 		if (strlen($url) > 2800) {
 			return error(1, 'url query string too long');
 		}
@@ -220,61 +219,66 @@ class CloudApi {
 		return $result;
 	}
 	
-	public function get($api, $method, $url_params = array(), $dataType = 'json') {
+	public function get($api, $method, $url_params = array(), $dataType = 'json', $with_cookie = true) {
 		$url = $this->url($api, $method, $url_params, $dataType);
 		if (is_error($url)) {
 			return $url;
 		}
 
 		$response = ihttp_get($url);
+
 		if (is_error($response)) {
 			return $response;
 		}
-		
-		$ihttp_options = array();
-		if ($response['headers'] && $response['headers']['Set-Cookie']) {
-			$cookiejar = $response['headers']['Set-Cookie'];
-		}
-		if (!empty($cookiejar)) {
-			if (is_array($cookiejar)) {
-				$ihttp_options['CURLOPT_COOKIE'] = implode('; ', $cookiejar);
-			} else {
-				$ihttp_options['CURLOPT_COOKIE'] = $cookiejar;
+
+		if($with_cookie) {
+			$ihttp_options = array();
+			if ($response['headers'] && $response['headers']['Set-Cookie']) {
+				$cookiejar = $response['headers']['Set-Cookie'];
 			}
-		}
-		
-		$response = ihttp_request($url, array(), $ihttp_options);
-		if (is_error($response)) {
-			return $response;
+			if (!empty($cookiejar)) {
+				if (is_array($cookiejar)) {
+					$ihttp_options['CURLOPT_COOKIE'] = implode('; ', $cookiejar);
+				} else {
+					$ihttp_options['CURLOPT_COOKIE'] = $cookiejar;
+				}
+			}
+
+			$response = ihttp_request($url, array(), $ihttp_options);
+			if (is_error($response)) {
+				return $response;
+			}
 		}
 		WeUtility::logging('debug', 'test' . json_encode($response));
 		$result = $this->actionResult($response['content'], $dataType);
 		return $result;
 	}
 	
-	public function post($api, $method, $post_params = array(), $dataType = 'json') {
+	public function post($api, $method, $post_params = array(), $dataType = 'json', $with_cookie = true) {
 		$url = $this->url($api, $method, array(), $dataType);
+
 		if (is_error($url)) {
 			return $url;
 		}
-		
-		$response = ihttp_get($url);
-		if (is_error($response)) {
-			return $response;
-		}
-		
 		$ihttp_options = array();
-		if ($response['headers'] && $response['headers']['Set-Cookie']) {
-			$cookiejar = $response['headers']['Set-Cookie'];
-		}
-		if (!empty($cookiejar)) {
-			if (is_array($cookiejar)) {
-				$ihttp_options['CURLOPT_COOKIE'] = implode('; ', $cookiejar);
-			} else {
-				$ihttp_options['CURLOPT_COOKIE'] = $cookiejar;
+
+		if($with_cookie) {
+			$response = ihttp_get($url);
+			if (is_error($response)) {
+				return $response;
+			}
+			$ihttp_options = array();
+			if ($response['headers'] && $response['headers']['Set-Cookie']) {
+				$cookiejar = $response['headers']['Set-Cookie'];
+			}
+			if (!empty($cookiejar)) {
+				if (is_array($cookiejar)) {
+					$ihttp_options['CURLOPT_COOKIE'] = implode('; ', $cookiejar);
+				} else {
+					$ihttp_options['CURLOPT_COOKIE'] = $cookiejar;
+				}
 			}
 		}
-		
 		$response = ihttp_request($url, $post_params, $ihttp_options);
 		if (is_error($response)) {
 			return $response;

@@ -1,47 +1,446 @@
 {template 'common/header'}
 <!--小程序前端下载-->
-<div>
-    <div class="media media-wechat-setting">
-        <div class="media-left color-default">
-            <span class="wi wi-wxapp-webpack" style="font-size: 55px;"></span>
-        </div>
-        <div class="media-body media-middle ">
-            <h4 class="media-heading color-dark">{$wxapp_versions_info['modules'][0]['title']}</h4>
-            <div class="color-gray">版本: {$wxapp_versions_info['version']}</div>
-        </div>
-        <div class="media-right media-middle">
-            <a href="./index.php?c=wxapp&a=manage&do=getpackage&uniacid={$_W['uniacid']}&versionid={$wxapp_versions_info['id']}" class="btn btn-primary">立即下载</a>
-        </div>
-    </div>
-    <div class="wxapp-download-procedure">
-        <div class="title color-gray">小程序前端下载后操作流程说明：</div>
-        <div class="step">1.进入微信小程序后台（mp.weixin.qq.com），添加小程序开发者（如已经是管理员或开发者则不需要添加）</div>
-        <div class="img">
-            <img src="./resource/images/wxapp/01.png" alt="" />
-            <img src="./resource/images/wxapp/02.png" alt="" />
-        </div>
-        <div class="step">2.进入小程序后台，点击设置，开发设置，修改服务器域名（设置自己的微擎域名，<span class="color-default">必须是https://</span>）</div>
-        <div class="img">
-            <img src="./resource/images/wxapp/03.png" alt="" />
-            <img src="./resource/images/wxapp/04.png" alt="" />
-        </div>
-        <div class="step">3.下载 微信web开发者工具（本帖会附上工具下载地址），更新到最新版后（切记），点击，填写小程序appid。将之前<span class="color-default">下载解压后的小程序插件上传</span></div>
-        <div class="img">
-            <img src="./resource/images/wxapp/05.png" alt="" />
-            <img src="./resource/images/wxapp/06.png" alt="" />
-            <img src="./resource/images/wxapp/07.png" alt="" />
-        </div>
-        <div class="step">4.点击项目，上传，并设置版本号和项目名称（项目名称自定义）</div>
-        <div class="img">
-            <img src="./resource/images/wxapp/08.png" alt="" />
-            <img src="./resource/images/wxapp/09.png" alt="" />
-        </div>
-        <div class="step">5.进入小程序后台（mp.weixin.qq.com），点击开发管理，提交审核，小程序<span class="color-default">管理员</span>（必须需要管理员扫描，小程序开发者不可）扫描即可</div>
-        <div class="img">
-            <img src="./resource/images/wxapp/10.png" alt="" />
-            <img src="./resource/images/wxapp/11.png" alt="" />
-        </div>
-        <div class="step">6.微信官方审核通过即可使用</div>
-    </div>
+
+<ul class="we7-page-tab">
+	<li class="{if $do == 'front_download'}active{/if}"><a
+			href="/web/index.php?c=wxapp&a=front-download&do=front_download&version_id={$version_id}">小程序上传</a></li>
+	<li class="{if $do == 'domainset'}active{/if}"><a
+			href="/web/index.php?c=wxapp&a=front-download&do=domainset&version_id={$version_id}">小程序域名设置</a></li>
+</ul>
+{if $do == 'domainset'}
+<div class="panel we7-panel">
+	<div class="panel-heading">设置小程序域名</div>
+	<div class="panel-body we7-padding">
+		<form action="./index.php?c=wxapp&a=front-download&do=domainset&version_id={$version_id}" class="we7-form"
+		      method="post">
+			<div class="form-group">
+				<label class="control-label col-sm-2">设置小程序URL</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="appurl" value="{$appurl}" placeholder="">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-2"></label>
+				<div class="col-sm-10">
+					<button class="btn btn-primary" type="submit">更新</button>
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
+<div class="wxapp-download-procedure">
+	<div class="title color-gray">设置小程序域名说明：</div>
+	<div class="step">1.设置链接域名，可以在微擎后台设置操作小程序。设置完成后到小程序审核发布里点击下载后，域名更新。</div>
+	<div class="step">2.设置后的生效页面（<a href="#" class="color-default">站点管理</a><span class="color-default"><i
+			class="wi wi-angle-right"></i></span> <a href="#" class="color-default">站点设置</a>）
+	</div>
+	<div class="img">
+		<img src="/web/resource/images/wxapp/12.png" alt="" class="img-responsive">
+	</div>
+</div>
+{/if}
+
+{if $do == 'front_download'}
+<div class="we7-flex wxapp-examine-tab">
+	<div class="{if $uptype == 'auto'} active {/if}">
+		<a
+		   href='/web/index.php?c=wxapp&a=front-download&do=front_download&uptype=auto&version_id={$version_id}'>
+			<div class="arrow-up"></div>
+			<span class="wi wi-wxapp-webpack"></span>直接提交微信
+		</a>
+	</div>
+	<div class="{if $uptype == 'normal'} active {/if}" >
+		<a
+		   href='/web/index.php?c=wxapp&a=front-download&do=front_download&uptype=normal&version_id={$version_id}'>
+			<div class="arrow-up"></div>
+			<span class="wi wi-wxapp-upload"></span>下载后提交微信
+		</a>
+	</div>
+</div>
+
+<!--在微信小程序后台提交审核-->
+{if $uptype == 'normal'}
+<div class="media media-wechat-setting">
+	<div class="media-left color-default">
+		<span class="wi wi-wxapp-webpack" style="font-size: 55px;"></span>
+	</div>
+	<div class="media-body media-middle ">
+		<h4 class="media-heading color-dark">{$wxapp_versions_info['modules'][0]['title']}</h4>
+		<div class="color-gray">版本: v{$wxapp_versions_info['version']}</div>
+	</div>
+	<div class="media-right media-middle">
+		<a href="./index.php?c=wxapp&a=manage&do=getpackage&uniacid={$_W['uniacid']}&versionid={$wxapp_versions_info['id']}"
+		   class="btn btn-primary">立即下载</a>
+	</div>
+</div>
+
+<div class="wxapp-download-procedure">
+	<div class="title color-gray">小程序前端下载后操作流程说明：</div>
+	<div class="step">1.进入微信小程序后台（mp.weixin.qq.com），添加小程序开发者（如已经是管理员或开发者则不需要添加）</div>
+	<div class="img">
+		<img src="./resource/images/wxapp/01.png" alt=""/>
+		<img src="./resource/images/wxapp/02.png" alt=""/>
+	</div>
+	<div class="step">2.进入小程序后台，点击设置，开发设置，修改服务器域名（设置自己的微擎域名，<span class="color-default">必须是https://</span>）</div>
+	<div class="img">
+		<img src="./resource/images/wxapp/03.png" alt=""/>
+		<img src="./resource/images/wxapp/04.png" alt=""/>
+	</div>
+	<div class="step">3.下载 微信web开发者工具（本帖会附上工具下载地址），更新到最新版后（切记），点击，填写小程序appid。将之前<span class="color-default">下载解压后的小程序插件上传</span>
+	</div>
+	<div class="img">
+		<img src="./resource/images/wxapp/05.png" alt=""/>
+		<img src="./resource/images/wxapp/06.png" alt=""/>
+		<img src="./resource/images/wxapp/07.png" alt=""/>
+	</div>
+	<div class="step">4.点击项目，上传，并设置版本号和项目名称（项目名称自定义）</div>
+	<div class="img">
+		<img src="./resource/images/wxapp/08.png" alt=""/>
+		<img src="./resource/images/wxapp/09.png" alt=""/>
+	</div>
+	<div class="step">5.进入小程序后台（mp.weixin.qq.com），点击开发管理，提交审核，小程序<span class="color-default">管理员</span>（必须需要管理员扫描，小程序开发者不可）扫描即可
+	</div>
+	<div class="img">
+		<img src="./resource/images/wxapp/10.png" alt=""/>
+		<img src="./resource/images/wxapp/11.png" alt=""/>
+	</div>
+	<div class="step">6.微信官方审核通过即可使用</div>
+</div>
+{/if}
+<!--end 在微信小程序后台提交审核-->
+
+<!--小程序可自行提交审核-->
+{if $uptype=='auto'}
+<div class="panel we7-panel wxapp-examine-self we7-margin-top">
+	<div class="panel-heading">上传小程序代码</div>
+	<div class="panel-body">
+		<div class="waiting text-center" id="wait_code_token">
+			<div><span class="wi wi-waiting"></span></div>
+			<div>正在获取二维码,请耐心等待,等待时间大约</div>
+			<div class="second" id="wait_sec">15秒</div>
+		</div>
+
+		<div class="step we7-flex" style="display: none;">
+			<div class="one active">
+				<span class="wi wi-one"></span>扫描二维码
+			</div>
+			<div class="arrow">
+				<span class="wi wi-step-arrows"></span>
+			</div>
+			<div class="two">
+				<span class="wi wi-two"></span>填写信息并上传代码
+			</div>
+			<div class="arrow">
+				<span class="wi wi-step-arrows"></span>
+			</div>
+			<div class="three">
+				<span class="wi wi-three"></span>上传成功
+			</div>
+		</div>
+
+	</div>
+	<div class="panel-footer bg-light-gray" id="readycommit" style="display: none;">
+		<div class="text-center step1" style="display: none;">
+			<img src="" alt="" class="qr-img" id="qrcode">
+			<div>请先扫描以上二维码，成功后再填写版本信息</div>
+		</div>
+
+		<div class="text-center preview" style="display: none;">
+			<img src="" alt="" class="qr-img" id="preview_img">
+			<div>微信扫码预览小程序</div>
+		</div>
+
+		<form action="" class="we7-form" id="codeform" style="display: none;">
+			<div class="form-group">
+				<label class="control-label col-sm-2">版本号</label>
+				<div class="col-sm-10">
+					<input type="number" class="form-control" id="user_version" name="user_version">
+					<span class="help-block">
+													版本号仅限字母、数字
+												</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-2">版本描述</label>
+				<div class="col-sm-10">
+					<textarea rows="3" class="form-control" id="user_desc" name="user_desc"></textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-2"></label>
+				<div class="col-sm-10">
+					<input type="hidden" name="ticket" id="ticket">
+					<input type="hidden" id="version_id" value="{$version_id}">
+					<button class="btn btn-primary" type="button" id="preview">预览</button>
+					<button class="btn btn-primary" type="button" id="commitcode">上传代码</button>
+				</div>
+			</div>
+		</form>
+
+		<div class="success text-center step3" style="display: none;">
+			<div><span class="wi wi-right-sign"></span></div>
+			<div class="status-state">上传代码成功，请到微信开发平台小程序后台预览，提交审核应用。</div>
+			<div>微信开发平台小程序后台<a href="#" class="color-default">https://mp.weixin.qq.com/</a></div>
+			<div class="btns">
+				<a href="https://mp.weixin.qq.com/" class="btn btn-primary">去提交审核</a>
+				<a href="/web/index.php?c=wxapp&a=display" class="btn btn-default">小程序首页</a>
+			</div>
+		</div>
+	</div>
+</div>
+{/if}
+<!--end 小程序可自行提交审核-->
+
+<!--end 小程序域名设置-->
+{if $uptype == 'auto'}
+<script type="text/javascript">
+	$(function () {
+		var UUIDURL = "{php echo url('wxapp/front-download/code_uuid')}";
+		var CODE_GEN_CHECK_URL = "{php echo url('wxapp/front-download/code_gen')}";
+		var CODE_TOKEN_URL = "{php echo url('wxapp/front-download/code_token')}";
+		var QRCODEURL = "{php echo url('wxapp/front-download/qrcode')}";
+		var CHECKSANURL = "{php echo url('wxapp/front-download/checkscan')}";
+		var PREVIEWURL = "{php echo url('wxapp/front-download/preview')}";
+		var COMMITURL = "{php echo url('wxapp/front-download/commitcode')}";
+
+		function ajax(url, data) {
+			return $.ajax({
+				'url': url,
+				'timeout': 30000,
+				'data': data,
+				'dataType': 'json'
+			});
+		}
+		var sec = 15;
+		var interval = setInterval(function(){
+			sec--;
+			if(sec<=0)
+			{
+				sec = 0;
+				clearInterval(interval);
+			}
+			$('#wait_sec').text(sec+'秒');
+		},1000);
+		var codeupload = {
+			code_uuid : null,
+			code_token : null,
+			qrcode_img : '',
+			version_id : '{$version_id}',
+			codeuid : function() {
+				var self = this;
+				var def = $.Deferred();
+				ajax(UUIDURL+'version_id='+self.version_id).then(function(data){
+					if(data.errno == '0') {
+						self.code_uuid = data.data.code_uuid;
+						def.resolve(self.code_uuid);
+						return;
+					}
+					def.reject('初始化失败');
+					clearInterval(interval);
+				});
+				return def.promise();
+			},
+
+			// 检查小程序代码是否已生成
+			codegen : function() {
+				var def = $.Deferred();
+				ajax(CODE_GEN_CHECK_URL+'code_uuid='+this.code_uuid).then(function(data){
+					if(data.errno == '0') {
+						var is_gen = data.data.is_gen;
+						def.resolve(is_gen);
+						return;
+					}
+					def.reject('no gen')
+				},function(error){
+					def.reject('no gen');
+				});
+				return def.promise();
+			},
+			// 5秒检查一次
+			retrycodegen : function() {
+				var def = $.Deferred();
+				var self = this;
+				setTimeout(function(){
+					self.codegen().then(function(is_gen){
+						if(is_gen){
+							def.resolve();
+							return;
+						}
+						return self.retrycodegen().then(function(){
+							def.resolve();
+						})
+					},function(){
+						return self.retrycodegen().then(function(){
+							def.resolve();
+						})
+					});
+				},5000);
+				return def.promise();
+			},
+
+			get_code_token : function() {
+				var def = $.Deferred();
+				var self = this;
+				ajax(CODE_TOKEN_URL).then(function(data){
+					if(data.errno == '0') {
+						self.code_token  = data.data.code_token;
+						def.resolve();
+						return;
+					}
+					def.reject();
+				});
+				return def.promise();
+			},
+			// 显示二维码
+			qrcode : function() {
+				var def = $.Deferred();
+				var self = this;
+				$('#qrcode').attr('src', QRCODEURL + '&code_token=' + this.code_token).load(function(){
+					$('#wait_code_token').hide();
+					$('.step').show();
+					$('.step1').show();
+
+					$('#readycommit').show();
+					def.resolve();
+				});
+				return def.promise();
+			},
+			//扫码检测
+			checkscan : function(token, last) {
+				var def = $.Deferred();
+				if (!last) {
+					last = 408;
+				}
+				var url = CHECKSANURL + '&code_token=' + token + '&last=' + last;
+				ajax(url).then(function (data) {
+					if (data.errno == 1) {
+						def.reject(token, last);
+						return;
+					}
+					if (data.errno == 0) {
+						var errcode = parseInt(data.data.errcode);
+						def.resolve(errcode, last, data.data.code_token);
+						return;
+					}
+				}, function (error) {
+					def.reject(last);
+				});
+				return def.promise();
+			},
+			retrychecksan : function(last) {
+				var def = $.Deferred();
+				var self = this;
+				self.checkscan(this.code_token, last).then(function(errcode, last, code_token){
+					if(errcode == 405) {
+						self.code_token = code_token;// 获取新的token
+						def.resolve();
+						return;
+					}
+//					404 console.log('已扫码');
+					if(errcode == 403) {
+						def.reject('已取消扫码');
+						return;
+					}
+					if(errcode == 666) {
+						def.reject('二维码已过期');
+					}
+					return self.retrychecksan(errcode).then(function(){
+						def.resolve();
+					})
+				},function(last){
+					return self.retrychecksan(last).then(function(){
+						def.resolve();
+					})
+				});
+				return def.promise();
+			},
+
+			preview : function() {
+				var def = $.Deferred();
+				var self = this;
+				var previewurl = PREVIEWURL + 'code_token=' + self.code_token + '&code_uuid=' + self.code_uuid;
+				ajax(previewurl).then(function(data){
+					if(data.errno == '0') {
+						self.qrcode_img = data.data.qrcode_img;
+						console.log(self.qrcode_img);
+						def.resolve(self.qrcode_img);
+					}
+					def.reject();
+				});
+				return def.promise();
+			},
+
+			commitcode : function() {
+				var def = $.Deferred();
+				var self = this;
+				$('.step1').hide();
+				$('#codeform').show();
+				$('.step .two').addClass('active');
+				$('#commitcode').removeAttr('disabled').unbind('click').click(function () {
+					var user_version = $('#user_version').val();
+					var user_desc  = $('#user_desc').val();
+					var url = COMMITURL + 'code_token=' + self.code_token + '&user_version=' + user_version + '&user_desc=' + user_desc + '&code_uuid=' + self.code_uuid;
+					ajax(url).then(function (data) {
+						if (data.errno == '0') {
+							def.resolve();
+							return;
+						}
+						def.reject('上传代码失败, 确保当前扫码用户有上传小程序的权限');
+					})
+				});
+				$('#preview').unbind('click').bind('click', function(){
+					self.preview().then(function(qrcode_img){
+						$('.preview').show();
+						var qrcode = 'data:image/jpg;base64,'+qrcode_img;
+						$('#preview').attr('disabled', 'disabled');
+						$('#preview_img').attr('src', qrcode);
+					});
+				});
+				return def.promise();
+
+			},
+
+			init : function() {
+				var self = this;
+				this.codeuid().then(function(){
+					return self.retrycodegen();// 检查代码是否已经准备好
+				}).then(function(){
+					return self.get_code_token();//获取token
+				}).then(function(){
+					return self.qrcode();// 显示二维码
+				}).then(function () {
+					return self.retrychecksan(); //不停获取扫码结果
+				}).then(function(){
+					return self.commitcode();//显示form表单
+				}).then(function(){
+					$('.step .three').addClass('active');
+					$('.step3').show();
+					$('#codeform').hide();
+				},function(e){
+					util.message(e);
+				})
+			}
+		};
+
+		codeupload.init();
+
+
+
+
+		//
+		/**
+		 * 408 超时
+		 * 404 已扫码
+		 * 403 已取消
+		 * 405 正常扫码  可以获取code
+		 * 402 500 都是错误
+		 *  扫码结果确认
+		 */
+		// 获取扫码结果
+		// 启动
+//		start();
+	});
+</script>
+{/if}
+{/if}
 {template 'common/footer'}

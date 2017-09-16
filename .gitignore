@@ -43,4 +43,5 @@ vendor/**/*
 /.env
 /.php_cs.cache
 /composer.lock
+./app/resource/
 

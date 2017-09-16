@@ -168,7 +168,7 @@ $we7_system_menu['wxapp'] = array(
 					'permission_name' => 'wxapp_payment',
 				),
 				'front_download' => array(
-					'title' => '小程序下载',
+					'title' => '小程序上传',
 					'url' => url('wxapp/front-download'),
 					'is_display' => 1,
 					'icon' => 'wi wi-wxapp-download',
@@ -416,14 +416,14 @@ $we7_system_menu['system'] = array(
 $we7_system_menu['site'] = array(
 	'title' => '站点管理',
 	'icon' => 'wi wi-system-site',
-	'url' => url('cloud/upgrade'),
+	'url' => '../cloud.php',
 	'section' => array(
 		'cloud' => array(
 			'title' => '云服务',
 			'menu' => array(
 				'system_profile' => array(
 					'title' => '系统升级',
-					'url' => url('cloud/upgrade'),
+					'url' => '../cloud.php',
 					'icon' => 'wi wi-cache',
 					'permission_name' => 'system_cloud_upgrade',
 				),
@@ -567,7 +567,7 @@ $we7_system_menu['help'] = array(
 	'icon' => 'wi wi-market',
 	'url' => url('help/display'),
 	'section' => array(),
-	'blank' => true
+	'blank' => false
 );
 
 

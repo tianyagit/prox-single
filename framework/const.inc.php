@@ -168,11 +168,18 @@ define('PERSONAL_LIST_TYPE', 3);
 define('STORE_TYPE_MODULE', 1);
 define('STORE_TYPE_ACCOUNT', 2);
 define('STORE_TYPE_WXAPP', 3);
+define('STORE_TYPE_WXAPP_MODULE', 4);
+define('STORE_TYPE_PACKAGE', 5);
+define('STORE_TYPE_API', 6);
 //订单状态
 define('STORE_ORDER_PLACE', 1);
 define('STORE_ORDER_DELETE', 2);
 define('STORE_ORDER_FINISH', 3);
-
+//商品状态
 define('STORE_GOODS_STATUS_OFFlINE', 0);
 define('STORE_GOODS_STATUS_ONLINE', 1);
 define('STORE_GOODS_STATUS_DELETE', 2);
+
+//文章分类 一级分类和二级分类为0
+define('ARTICLE_PCATE', 0);
+define('ARTICLE_CCATE', 0);

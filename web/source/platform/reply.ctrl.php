@@ -11,7 +11,10 @@ $dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_statu
 $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
-if (!in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service', 'userapi'))) {
+if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service', 'userapi'))) {
+	permission_check_account_user('platform_reply');
+} else {
+	permission_check_account_user('', true, 'reply');
 	$modules = uni_modules();
 	$_W['current_module'] = $modules[$m];
 }
@@ -187,6 +190,7 @@ if ($do == 'post') {
 			}
 		}
 		if (checksubmit('submit')) {
+
 			$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
 			if (empty($keywords)) {
 				itoast('必须填写有效的触发关键字.');
@@ -259,7 +263,7 @@ if ($do == 'post') {
 				foreach ($keywords as $kw) {
 					$krow = $rowtpl;
 					$krow['type'] = range_limit($kw['type'], 1, 4);
-					$krow['content'] = $kw['content'];
+					$krow['content'] = htmlspecialchars($kw['content']);
 					pdo_insert('rule_keyword', $krow);
 				}
 				$kid = pdo_insertid();

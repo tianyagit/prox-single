@@ -27,19 +27,4 @@ class QrcodeTable extends We7Table {
 		}
 		return $this->query->getall();
 	}
-
-	public function qrcodeCount($status) {
-		global $_W;
-		$this->query->from('qrcode_stat')->select('count(*) as count')->where('uniacid', $_W['uniacid'])->where('acid', $_W['acid']);
-		if (!empty($status)) {
-			$this->query->groupby('qid');
-			$this->query->groupby('openid');
-			$this->query->groupby('type');
-		}
-		$count = $this->query->getall();
-		if ($status) {
-			return count($count);
-		}
-		return $count[0]['count'];
-	}
 }
