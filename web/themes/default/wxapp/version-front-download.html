@@ -210,7 +210,7 @@
 			// 检查小程序代码是否已生成
 			codegen : function() {
 				var def = $.Deferred();
-				ajax(CODE_GEN_CHECK_URL+'code_uuid='+this.code_uuid+'&version_id='+self.version_id).then(function(data){
+				ajax(CODE_GEN_CHECK_URL+'code_uuid='+this.code_uuid).then(function(data){
 					if(data.errno == '0') {
 						var is_gen = data.data.is_gen;
 						def.resolve(is_gen);
@@ -329,7 +329,7 @@
 							def.resolve();
 							return;
 						}
-						def.reject();
+						def.reject('上传代码失败, 确保当前扫码用户有上传小程序的权限');
 					})
 				});
 				return def.promise();
@@ -349,8 +349,8 @@
 				}).then(function(){
 					return self.commitcode();//显示form表单
 				}).then(function(){
-					alert('上传代码成功');
-					window.location.go(-1);
+					alert('上传代码成功,请到微信开放平台小程序后台预览 提交审核应用');
+					window.history.go(-1);
 				},function(e){
 					alert(e);
 				})
