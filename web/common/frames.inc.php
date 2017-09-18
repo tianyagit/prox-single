@@ -171,7 +171,7 @@ $we7_system_menu['wxapp'] = array(
 					'title' => '上传微信审核',
 					'url' => url('wxapp/front-download'),
 					'is_display' => 1,
-					'icon' => 'wi wi-wxapp-download',
+					'icon' => 'wi wi-examine',
 					'permission_name' => 'wxapp_front_download',
 				)
 			)
