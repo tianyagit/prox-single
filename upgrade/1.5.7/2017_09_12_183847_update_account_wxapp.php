@@ -17,7 +17,7 @@ class UpdateAccountWxapp {
 		$table = tablename('account_wxapp');
 		if(!$exists) {
 			$sql = <<<EOT
-				ALTER TABLE $table ADD appdomain VARCHAR(255) DEFAULT '' COMMENT '小程序访问域名1'
+				ALTER TABLE $table ADD appdomain VARCHAR(255) DEFAULT '' COMMENT '小程序访问域名'
 EOT;
 			pdo_query($sql);
 		}
