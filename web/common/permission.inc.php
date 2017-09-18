@@ -23,21 +23,24 @@ $we7_file_permission = array(
 	'account' => array(
 		'default' => '',
 		'direct' => array(
-			'display',
 			'auth',
 			'welcome', 'openwechat'
 		),
 		'vice_founder' => array('account*'),
 		'owner' => array('account*'),
 		'manager' => array(
+			'display',
 			'manage',
 			'post-step',
 		),
 		'operator' => array(
+			'display',
 			'manage',
 			'post-step',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'display',
+		),
 	),
 	'advertisement' => array(
 		'default' => '',
