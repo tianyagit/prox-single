@@ -220,14 +220,12 @@ if ($do == 'quickmenu_display' && $_W['isajax'] && $_W['ispost'] && $_W['role'] 
 	$multiid = intval($_GPC['multiid']);
 	if($multiid > 0){
 		$page = pdo_get('site_page', array('multiid' => $multiid, 'type' => 2));
-		$params = !empty($page['params']) ? $page['params'] : 'null';
-		$status = $page['status'] == 1 ? 1 : 0;
-		$modules = uni_modules();
-		$modules = !empty($modules) ? $modules : 'null';
-		iajax(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules), '');
-	} else {
-		iajax(-1, '请求失败！', '');
 	}
+	$params = !empty($page['params']) ? $page['params'] : 'null';
+	$status = $page['status'] == 1 ? 1 : 0;
+	$modules = uni_modules();
+	$modules = !empty($modules) ? $modules : 'null';
+	iajax(0, array('params' => json_decode($params), 'status' => $status, 'modules' => $modules), '');
 }
 
 if ($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
