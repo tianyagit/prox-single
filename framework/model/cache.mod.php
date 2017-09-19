@@ -193,6 +193,7 @@ function cache_build_frame_menu() {
 						$section['menu'][$permission_name] = $menu;
 					}
 				}
+				$section_hidden_menu_count = 0;
 				foreach ($section['menu']  as $permission_name => $sub_menu) {
 					$sub_menu_db = $system_menu_db[$sub_menu['permission_name']];
 					$system_menu[$menu_name]['section'][$section_name]['menu'][$permission_name] = array(
@@ -208,6 +209,12 @@ function cache_build_frame_menu() {
 					);
 					$displayorder--;
 					$displayorder = max($displayorder, 0);
+					if (empty($system_menu[$menu_name]['section'][$section_name]['menu'][$permission_name]['is_display'])) {
+						$section_hidden_menu_count++;
+					}
+				}
+				if ($section_hidden_menu_count == count($section['menu']) && $section_name != 'platform_module') {
+					$system_menu[$menu_name]['section'][$section_name]['is_display'] = 0;
 				}
 				$system_menu[$menu_name]['section'][$section_name]['menu'] = iarray_sort($system_menu[$menu_name]['section'][$section_name]['menu'], 'displayorder', 'desc');
 			}
