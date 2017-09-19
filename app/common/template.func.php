@@ -338,7 +338,7 @@ function site_article($params = array()) {
 			$condition .= " AND ccate = :ccate ";
 			$pars[':ccate'] = $cid;
 		} else {
-			$condition .= " AND pcate = :pcate AND ccate = :ccate ";
+			$condition .= " AND pcate = :pcate AND (ccate = :ccate OR iscommend = '1')";
 			$pars[':pcate'] = $cid;
 			$pars[':ccate'] = ARTICLE_CCATE;
 		}
