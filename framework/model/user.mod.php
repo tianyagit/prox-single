@@ -391,14 +391,7 @@ function user_account_detail_info($uid) {
 		return $account_lists;
 	}
 
-	$sql = "SELECT b.uniacid, b.role, a.type FROM " . tablename('account'). " AS a LEFT JOIN ". tablename('uni_account_users') . " AS b ON a.uniacid = b.uniacid WHERE a.acid <> 0 AND a.isdeleted <> 1";
-	$param = array();
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (!in_array($uid, $founders)) {
-		$sql .= " AND b.uid = :uid";
-		$param[':uid'] = $uid;
-	}
-	$account_users_info = pdo_fetchall($sql, $param, 'uniacid');
+	$account_users_info = table('account')->userOwnedAccount($uid);
 	foreach ($account_users_info as $uniacid => $account) {
 		if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			$app_user_info[$uniacid] = $account;
@@ -462,7 +455,7 @@ function user_modules($uid) {
 			if ($user_info['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 				$user_group_info = user_founder_group_detail_info($user_info['groupid']);
 			} else {
-				$user_group_info = user_group_detail_info($user_info['groupid']);	
+				$user_group_info = user_group_detail_info($user_info['groupid']);
 			}
 			$packageids = $user_group_info['package'];
 
