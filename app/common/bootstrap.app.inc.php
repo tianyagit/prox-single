@@ -4,6 +4,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('mc');
+load()->model('app');
 $_W['uniacid'] = intval($_GPC['i']);
 if(empty($_W['uniacid'])) {
 	$_W['uniacid'] = intval($_GPC['weid']);
