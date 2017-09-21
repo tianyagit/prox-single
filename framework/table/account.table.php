@@ -32,9 +32,10 @@ class AccountTable extends We7Table {
 	 */
 	public function userOwnedAccount($uid = 0) {
 		global $_W;
+		$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
 		if (!$_W['isfounder']) {
 			$users_table = table('users');
-			$uniacid_list = $users_table->userOwnedAccount($_W['uid']);
+			$uniacid_list = $users_table->userOwnedAccount($uid);
 			$this->query->where('u.uniacid', $uniacid_list);
 		}
 		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('uniacid');

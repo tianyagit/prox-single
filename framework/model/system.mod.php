@@ -137,9 +137,9 @@ function system_database_backup_delete($delete_dirname) {
  */
 function system_template_ch_name() {
 	$result = array(
-			'default' => '白色',
-			'black' => '黑色',
-			'classical' => '经典',
+		'default' => '白色',
+		'black' => '黑色',
+		'classical' => '经典',
 	);
 	return $result;
 }
