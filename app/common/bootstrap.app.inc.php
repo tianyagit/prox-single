@@ -15,7 +15,9 @@ if(empty($_W['uniaccount'])) {
 if (!empty($_W['uniaccount']['endtime']) && TIMESTAMP > $_W['uniaccount']['endtime']) {
 	exit('抱歉，您的公众号服务已过期，请及时联系管理员');
 }
-
+if (app_pass_visit_limit()) {
+	exit('访问受限，请及时联系管理员！');
+}
 $_W['acid'] = $_W['uniaccount']['acid'];
 $isdel_account = pdo_get('account', array('isdeleted' => 1, 'acid' => $_W['acid']));
 if (!empty($isdel_account)) {
