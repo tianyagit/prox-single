@@ -1,13 +1,11 @@
 <?php
-
+namespace We7\V157;
 defined('IN_IA') or exit('Access Denied');
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * Time: 1505715277
  * @version 1.5.7
  */
-namespace We7\V157;
-
 class UpdateSiteStoreOrder {
 
 	/**

@@ -99,13 +99,13 @@ class StoreTable extends We7Table {
 	}
 
 	public function searchUserBuyAccount($uid) {
-		$sql = "SELECT COUNT(b.account_num) FROM " . tablename('site_store_order') . " as a left join " . tablename('site_store_goods') . " as b on a.goodsid = b.id WHERE a.buyerid = :buyerid AND a.type = 3 AND b.type = 2" ;
+		$sql = "SELECT SUM(b.account_num) FROM " . tablename('site_store_order') . " as a left join " . tablename('site_store_goods') . " as b on a.goodsid = b.id WHERE a.buyerid = :buyerid AND a.type = 3 AND b.type = 2" ;
 		$count = pdo_fetchcolumn($sql, array(':buyerid' => $uid));
 		return $count;
 	}
 
 	public function searchUserBuyWxapp($uid) {
-		$sql = "SELECT COUNT(b.account_num) FROM " . tablename('site_store_order') . " as a left join " . tablename('site_store_goods') . " as b on a.goodsid = b.id WHERE a.buyerid = :buyerid AND a.type = 3 AND b.type = 3" ;
+		$sql = "SELECT SUM(b.account_num) FROM " . tablename('site_store_order') . " as a left join " . tablename('site_store_goods') . " as b on a.goodsid = b.id WHERE a.buyerid = :buyerid AND a.type = 3 AND b.type = 3" ;
 		$count = pdo_fetchcolumn($sql, array(':buyerid' => $uid));
 		return $count;
 	}
