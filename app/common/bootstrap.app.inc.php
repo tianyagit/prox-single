@@ -10,7 +10,9 @@ if(empty($_W['uniacid'])) {
 }
 $_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
 if(empty($_W['uniaccount'])) {
-	exit('指定主公众号不存在。');
+	header('HTTP/1.1 404 Not Found');
+	header("status: 404 Not Found");
+	exit;
 }
 if (!empty($_W['uniaccount']['endtime']) && TIMESTAMP > $_W['uniaccount']['endtime']) {
 	exit('抱歉，您的公众号服务已过期，请及时联系管理员');

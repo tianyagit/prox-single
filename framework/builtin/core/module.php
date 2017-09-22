@@ -240,7 +240,7 @@ class CoreModule extends WeModule {
 							if ($reply['model'] == 'local') {
 								$reply['mediaid'] = $reply['attach_id'];
 							}
-							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => $reply['parent_id'], 'title' => $reply['title'], 'thumb' => tomedia($reply['thumb']), 'createtime' => $reply['createtime'], 'media_id' => $reply['mediaid'], 'displayorder' => $reply['displayorder'], 'description' => $reply['description']));
+							pdo_insert ($tablename, array ('rid' => $rid, 'parent_id' => $reply['parent_id'], 'title' => $reply['title'], 'thumb' => tomedia($reply['thumb']), 'createtime' => $reply['createtime'], 'media_id' => $reply['mediaid'], 'displayorder' => $reply['displayorder'], 'description' => $reply['description'], 'url' => $reply['url']));
 							if (empty($attach_id) || $reply['attach_id'] != $attach_id) {
 								$parent_id = pdo_insertid();
 							}
