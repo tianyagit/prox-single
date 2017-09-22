@@ -50,7 +50,6 @@ function wxapp_account_create($account) {
 		'encodingaeskey' => random(43),
 		'uniacid' => $uniacid,
 		'name' => $account['name'],
-		'account' => $account['account'],
 		'original' => $account['original'],
 		'level' => $account['level'],
 		'key' => $account['key'],
