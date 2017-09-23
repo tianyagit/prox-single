@@ -213,7 +213,7 @@ function cache_build_frame_menu() {
 						$section_hidden_menu_count++;
 					}
 				}
-				if ($section_hidden_menu_count == count($section['menu']) && $section_name != 'platform_module') {
+				if (empty($section['is_display']) && $section_hidden_menu_count == count($section['menu']) && $section_name != 'platform_module') {
 					$system_menu[$menu_name]['section'][$section_name]['is_display'] = 0;
 				}
 				$system_menu[$menu_name]['section'][$section_name]['menu'] = iarray_sort($system_menu[$menu_name]['section'][$section_name]['menu'], 'displayorder', 'desc');
