@@ -230,6 +230,7 @@ function cache_build_frame_menu() {
 		$system_menu = iarray_sort($system_menu, 'displayorder', 'asc');
 		cache_delete('system_frame');
 		cache_write('system_frame', $system_menu);
+		return $system_menu;
 	}
 }
 
