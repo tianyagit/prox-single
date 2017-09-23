@@ -233,6 +233,10 @@ if ($do == 'quickmenu_post' && $_W['isajax'] && $_W['ispost']) {
 	if (empty($params)) {
 		iajax(1, '请您先设计手机端页面.');
 	}
+	foreach ($params['position'] as &$val) {
+		$val = $val == 'true' ? 1 : 0;
+	}
+	unset($val);
 	$html = htmlspecialchars_decode($_GPC['postdata']['html'], ENT_QUOTES);
 	$html = preg_replace('/background\-image\:(\s)*url\(\"(.*)\"\)/U', 'background-image: url($2)', $html);
 	$data = array(
