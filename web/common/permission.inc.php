@@ -307,11 +307,18 @@ $we7_file_permission = array(
 			'link',
 		),
 		'vice_founder' => array(
-			'user'
+			'user',
+			'emulator'
 		),
-		'owner' => array(),
-		'manager' => array(),
-		'operator' => array(),
+		'owner' => array(
+			'emulator'
+		),
+		'manager' => array(
+			'emulator'
+		),
+		'operator' => array(
+			'emulator'
+		),
 	),
 	'append' => array('append*'),
 );
