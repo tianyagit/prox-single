@@ -70,11 +70,11 @@ class Loader {
 		'web' => '/web/common/%s.func.php',
 		'app' => '/app/common/%s.func.php',
 	);
-	
+
 	public function __call($type, $params) {
 		global $_W;
-		$name = array_shift($params);
-		if (!empty($this->cache[$type]) && isset($this->cache[$type][$name])) {
+		$name = $cachekey = array_shift($params);
+		if (!empty($this->cache[$type]) && isset($this->cache[$type][$cachekey])) {
 			return true;
 		}
 		if (empty($this->loadTypeMap[$type])) {
@@ -82,17 +82,12 @@ class Loader {
 		}
 		//第三方库文件因为命名差异，支持定义别名
 		if ($type == 'library' && !empty($this->libraryMap[$name])) {
-			$library_name = $name;
 			$name = $this->libraryMap[$name];
 		}
 		$file = sprintf($this->loadTypeMap[$type], $name);
 		if (file_exists(IA_ROOT . $file)) {
 			include IA_ROOT . $file;
-			if ($type == 'library') {
-				$this->cache[$type][$library_name] = true;
-			} else {
-				$this->cache[$type][$name] = true;
-			}
+			$this->cache[$type][$cachekey] = true;
 			return true;
 		} else {
 			trigger_error('Invalid ' . ucfirst($type) . $file, E_USER_ERROR);
