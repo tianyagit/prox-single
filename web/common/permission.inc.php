@@ -25,7 +25,7 @@ $we7_file_permission = array(
 		'direct' => array(
 			'display',
 			'auth',
-			'welcome', 'openwechat'
+			'welcome',
 		),
 		'vice_founder' => array('account*'),
 		'owner' => array('account*'),
@@ -224,7 +224,7 @@ $we7_file_permission = array(
 	),
 	'system' => array(
 		'default' => '',
-		'direct' => array(),
+		'direct' => array('workorder'),
 		'vice_founder' => array(
 			'template',
 			'updatecache',
