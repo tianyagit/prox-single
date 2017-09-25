@@ -23,21 +23,24 @@ $we7_file_permission = array(
 	'account' => array(
 		'default' => '',
 		'direct' => array(
-			'display',
 			'auth',
 			'welcome', 'openwechat'
 		),
 		'vice_founder' => array('account*'),
 		'owner' => array('account*'),
 		'manager' => array(
+			'display',
 			'manage',
 			'post-step',
 		),
 		'operator' => array(
+			'display',
 			'manage',
 			'post-step',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'display',
+		),
 	),
 	'advertisement' => array(
 		'default' => '',
@@ -115,8 +118,18 @@ $we7_file_permission = array(
 		'direct' => array(),
 		'vice_founder' => array('mc*'),
 		'owner' => array('mc*'),
-		'manager' => array(),
-		'operator' => array(),
+		'manager' => array(
+			'chats',
+			'fields',
+			'group',
+			'trade',
+		),
+		'operator' => array(
+			'chats',
+			'fields',
+			'group',
+			'trade',
+		),
 		'clerk' => array()
 	),
 	'module' => array(
@@ -145,11 +158,13 @@ $we7_file_permission = array(
 		'owner' => array('platform*'),
 		'manager' => array(
 			'cover',
-			'reply'
+			'reply',
+			'material-post',
 		),
 		'operator' => array(
 			'cover',
-			'reply'
+			'reply',
+			'material-post',
 		),
 		'clerk' => array(
 			'reply',

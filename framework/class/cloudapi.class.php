@@ -155,7 +155,6 @@ class CloudApi {
 				$token = $this->moduleCerContent();
 			}
 		}
-//		$token = 'eyJ0b2tlbiI6IjA4NTA0NTQwNzcyRDQxRUZENjBCMEM0ODE5OEI3RUUzTU5aUjdOV1ZQMFVSUk5NUldXIiwibW9kdWxlIjoiY29yZSJ9';
 		if (empty($token)) {
 			return error(1, '错误的数字证书内容.');
 		}
@@ -249,7 +248,6 @@ class CloudApi {
 				return $response;
 			}
 		}
-		WeUtility::logging('debug', 'test' . json_encode($response));
 		$result = $this->actionResult($response['content'], $dataType);
 		return $result;
 	}

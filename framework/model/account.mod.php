@@ -205,17 +205,20 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	load()->model('module');
 	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $uniacid, $enabled);
 	$modules = cache_load($cachekey);
-
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
+		$site_store_buy_modules = uni_site_store_buy_module($uniacid);
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
 
+			$store = table('store');
+			$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
+			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 
 			if (!in_array('-1', $packageids)) {
 				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$uniacid}'");
@@ -226,7 +229,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 					}
 				}
 				$user_modules = user_modules($owner_uid);
-				$modules = array_merge(array_keys($user_modules), $uni_modules);
+				$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_modules);
 				if (!empty($modules)) {
 					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
 				} else {
