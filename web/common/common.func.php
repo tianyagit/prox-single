@@ -176,8 +176,7 @@ function buildframes($framename = ''){
 	}
 	$frames = cache_load('system_frame');
 	if(empty($frames)) {
-		cache_build_frame_menu();
-		$frames = cache_load('system_frame');
+		$frames = cache_build_frame_menu();
 	}
 
 	//模块权限，创始人有所有模块权限

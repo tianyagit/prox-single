@@ -268,14 +268,16 @@ $we7_file_permission = array(
 		'manager' => array(
 			'display',
 			'version',
-			'post'
+			'post',
 		),
 		'operator' => array(
 			'display',
 			'version',
-			'post'
+			'post',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'display',
+		)
 	),
 	'utility' => array(
 		'default' => '',
