@@ -10,7 +10,7 @@ defined('IN_IA') or exit('Access Denied');
  * @param int $uid 指定操作用户
  * @return array
  */
-function uni_owned($uid = 0) {
+function uni_owned($uid = 0, $is_uni_fetch = true) {
 	global $_W;
 	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
 	$uniaccounts = array();
@@ -20,34 +20,12 @@ function uni_owned($uid = 0) {
 		return $uniaccounts;
 	}
 
-	if (user_is_vice_founder($uid)) {
-		$user_type = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-	} elseif (user_is_founder($uid)) {
-		$user_type = ACCOUNT_MANAGE_NAME_FOUNDER;
-	} else {
-		$user_type = ACCOUNT_MANAGE_NAME_OWNER;
-	}
-
-	foreach ($user_accounts as $key => $user_account) {
-		if ($user_type == ACCOUNT_MANAGE_NAME_FOUNDER) {
-			continue;
-		} elseif ($user_type == ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
-			if ($user_account['role'] != ACCOUNT_MANAGE_NAME_OWNER && $user_account['role'] != ACCOUNT_MANAGE_NAME_VICE_FOUNDER) {
-				unset($user_accounts[$key]);
-			}
-		} else {
-			if ($user_account['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
-				unset($user_accounts[$key]);
-			}
+	if (!empty($user_accounts) && !empty($is_uni_fetch)) {
+		foreach ($user_accounts as &$row) {
+			$row = uni_fetch($row['uniacid']);
 		}
 	}
-
-	if (!empty($user_accounts)) {
-		foreach ($user_accounts as $row) {
-			$uniaccounts[$row['uniacid']] = uni_fetch($row['uniacid']);
-		}
-	}
-	return $uniaccounts;
+	return $user_accounts;
 }
 
 /**
@@ -57,7 +35,6 @@ function uni_owned($uid = 0) {
  */
 function uni_user_accounts($uid) {
 	global $_W;
-	$result = array();
 	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
 	$cachekey = cache_system_key("user_accounts:{$uid}");
 	$cache = cache_load($cachekey);
@@ -70,13 +47,15 @@ function uni_user_accounts($uid) {
 	$user_is_founder = user_is_founder($uid);
 	if (empty($user_is_founder) || user_is_vice_founder($uid)) {
 		$field .= ', u.role';
-		$where .= " LEFT JOIN " . tablename('uni_account_users') . " u ON u.uniacid = w.uniacid WHERE u.uid = :uid";
+		$where .= " LEFT JOIN " . tablename('uni_account_users') . " u ON u.uniacid = w.uniacid WHERE u.uid = :uid AND u.role IN(:role1, :role2) ";
 		$params[':uid'] = $uid;
+		$params[':role1'] = ACCOUNT_MANAGE_NAME_OWNER;
+		$params[':role2'] = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
 	}
 	$where .= !empty($where) ? " AND a.isdeleted <> 1 AND u.role IS NOT NULL" : " WHERE a.isdeleted <> 1";
 
-	$sql = "SELECT w.acid, w.uniacid, w.key, w.secret, w.level, w.name" . $field . " FROM " . tablename('account_wechats') . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
-	$result = pdo_fetchall($sql, $params);
+	$sql = "SELECT w.acid, w.uniacid, w.key, w.secret, w.level, w.name, w.token" . $field . " FROM " . tablename('account_wechats') . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
+	$result = pdo_fetchall($sql, $params, 'uniacid');
 	cache_write($cachekey, $result);
 	return $result;
 }

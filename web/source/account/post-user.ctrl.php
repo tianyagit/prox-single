@@ -110,6 +110,7 @@ if ($do == 'edit') {
 					if ($result) {
 						//设置主管理员后，删除该用户在该公众号下设置的权限（即主管理员拥有该公众号所有权限）
 						pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $user['uid']));
+						cache_clean(cache_system_key("user_accounts"));
 						iajax(0, '修改成功！', '');
 					} else  {
 						iajax(1, '修改失败！', '');
@@ -130,6 +131,7 @@ if ($do == 'edit') {
 				if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
 					pdo_delete('users_permission', array('uniacid' => $uniacid, 'uid' => $user['uid']));
 				}
+				cache_clean(cache_system_key("user_accounts"));
 				iajax(0, '添加成功！', '');
 			} else  {
 				iajax(1, '添加失败！', '');
