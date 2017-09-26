@@ -176,16 +176,17 @@ function uni_fetch($uniacid = 0) {
  * @return array 模块列表
  */
 function uni_site_store_buy_module($uniacid) {
+	load()->model('store');
 	$cachekey = cache_system_key($uniacid . ':site_store_buy_modules');
 	$site_store_buy_modules = cache_load($cachekey);
 	if (!empty($site_store_buy_modules)) {
 		return $site_store_buy_modules;
 	}
 	$site_store_buy_modules = array();
-	$site_store_order = pdo_fetchall('SELECT * FROM ' . tablename('site_store_order') . " WHERE uniacid = :uniacid AND createtime + duration * 2592000 >= :times AND type = 3", array(':times' => time(), ':uniacid' => $uniacid), 'goodsid');
+	$site_store_order = pdo_getall('site_store_order', array('endtime >=' => time(), ':uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH), array(), 'goodsid');
 	if (!empty($site_store_order) && is_array($site_store_order)) {
-		$site_store_buy_modules = pdo_getall('site_store_goods', array('id' => array_keys($site_store_order)), array(), 'module');
-		$site_store_buy_modules = array_keys($site_store_buy_modules);
+		$site_store_buy_modules = pdo_getall('site_store_goods', array('id' => array_keys($site_store_order), 'type' => STORE_TYPE_MODULE), array(), 'module');
+		$site_store_buy_modules = array_unique(array_keys($site_store_buy_modules));
 	}
 	cache_write($cachekey, $site_store_buy_modules);
 	return $site_store_buy_modules;
@@ -697,7 +698,7 @@ function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
-	if (strexists($_W['siteurl'], 'c=wxapp')) {
+	if (strexists($_W['siteurl'], 'c=wxapp') || !empty($_GPC['version_id'])) {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];
