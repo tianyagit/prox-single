@@ -25,6 +25,7 @@ if ($do == 'display') {
 		$users_table->searchWithName($username);
 	}
 
+	$users_table->searchWithPage($pindex, $psize);
 	$users = $users_table->searchUsersList();
 	$total = $users_table->getLastQueryTotal();
 	$users = user_list_format($users);

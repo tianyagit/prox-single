@@ -170,8 +170,12 @@ function cloud_build() {
 
 		if (IMS_FAMILY != $ret['family']) {
 			load()->model('setting');
-			setting_upgrade_version($ret['family'], IMS_VERSION, IMS_RELEASE_DATE);
-			itoast('更新系统正在为您自动切换版本', 'refresh');
+			$update_version_success = setting_upgrade_version($ret['family'], IMS_VERSION, IMS_RELEASE_DATE);
+			if (empty($update_version_success)) {
+				message('切换版本失败，请修改 /framework/version.inc.php 文件权限为 User 可写或是 777', 'refresh', 'error');
+			} else {
+				message('更新系统正在为您自动切换版本', 'refresh');
+			}
 		}
 		$ret['upgrade'] = false;
 		if(!empty($ret['files']) || !empty($ret['schemas']) || !empty($ret['scripts'])) {

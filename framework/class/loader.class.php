@@ -57,6 +57,9 @@ class Loader {
 		'pkcs7' => 'pkcs7/pkcs7Encoder',
 		'json' => 'json/JSON',
 		'phpmailer' => 'phpmailer/PHPMailerAutoload',
+		'oss' => 'alioss/autoload',
+		'qiniu' => 'qiniu/autoload',
+		'cos' => 'cosv4.2/include',
 	);
 	private $loadTypeMap = array(
 		'func' => '/framework/function/%s.func.php',
@@ -79,12 +82,17 @@ class Loader {
 		}
 		//第三方库文件因为命名差异，支持定义别名
 		if ($type == 'library' && !empty($this->libraryMap[$name])) {
+			$library_name = $name;
 			$name = $this->libraryMap[$name];
 		}
 		$file = sprintf($this->loadTypeMap[$type], $name);
 		if (file_exists(IA_ROOT . $file)) {
 			include IA_ROOT . $file;
-			$this->cache[$type][$name] = true;
+			if ($type == 'library') {
+				$this->cache[$type][$library_name] = true;
+			} else {
+				$this->cache[$type][$name] = true;
+			}
 			return true;
 		} else {
 			trigger_error('Invalid ' . ucfirst($type) . $file, E_USER_ERROR);

@@ -210,7 +210,7 @@ function file_upload($file, $type = 'image', $name = '') {
 		}
 		$result['path'] = $name;
 	}
-	
+
 	if (!file_move($file['tmp_name'], ATTACHMENT_ROOT . '/' . $result['path'])) {
 		return error(-1, '保存上传文件失败');
 	}
@@ -294,7 +294,7 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 			return error(1, '远程附件上传失败，请检查配置并重新上传');
 		}
 	} elseif ($_W['setting']['remote']['type'] == '2') {
-		require_once (IA_ROOT . '/framework/library/alioss/autoload.php');
+		load()->library('oss');
 		load()->model('attachment');
 		$buckets = attachment_alioss_buctkets($_W['setting']['remote']['alioss']['key'], $_W['setting']['remote']['alioss']['secret']);
 		$endpoint = 'http://' . $buckets[$_W['setting']['remote']['alioss']['bucket']]['location'] . '.aliyuncs.com';

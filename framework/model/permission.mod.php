@@ -486,10 +486,10 @@ function permission_user_account_num($uid = 0) {
 		'vice_group_name' => $group_vice['name'],
 		'maxaccount' => $group['maxaccount'],
 		'uniacid_num' => $group_num['account_num'],
-		'uniacid_limit' => $uniacid_limit,
+		'uniacid_limit' => max($uniacid_limit, 0),
 		'maxwxapp' => $group['maxwxapp'],
 		'wxapp_num' => $group_num['wxapp_num'],
-		'wxapp_limit' => $wxapp_limit,
+		'wxapp_limit' => max($wxapp_limit, 0)
 	);
 	return $data;
 }

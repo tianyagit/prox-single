@@ -50,7 +50,6 @@ function wxapp_account_create($account) {
 		'encodingaeskey' => random(43),
 		'uniacid' => $uniacid,
 		'name' => $account['name'],
-		'account' => $account['account'],
 		'original' => $account['original'],
 		'level' => $account['level'],
 		'key' => $account['key'],
@@ -78,7 +77,6 @@ function wxapp_account_create($account) {
 function wxapp_support_wxapp_modules() {
 	global $_W;
 	load()->model('user');
-	
 	$modules = user_modules($_W['uid']);
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
@@ -441,7 +439,7 @@ function wxapp_code_generate($version_id) {
 		$siteurl = $account_wxapp_info['appdomain'];
 	}
 	$appid = $account_wxapp_info['key'];
-	$siteInfo = array(
+	$siteinfo = array(
 		'name' => $account_wxapp_info['name'],
 		'uniacid' => $account_wxapp_info['uniacid'],
 		'acid' => $account_wxapp_info['acid'],
@@ -454,27 +452,9 @@ function wxapp_code_generate($version_id) {
 	$commit_data = array('do' => 'generate',
 		'appid' => $appid,
 		'modules' => $account_wxapp_info['version']['modules'],
-		'siteInfo' => $siteInfo,
+		'siteinfo' => $siteinfo,
 		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
 	);
-//	$modules  = array(
-//		'modules' => array (
-//			'weihaom_wb' => array (
-//				'name' => 'weihaom_wb',
-//				'version' => '7.0.0',
-//			),
-//		)
-//	);
-//	$siteInfo = array();
-//	$appid = 'wxb0e582aaff9a169d';
-//	$tabBar = null;
-//	$commit_data = array('do' => 'generate',
-//		'appid' => $appid,
-//		'modules' => $modules,
-//		'siteInfo' => $siteInfo,
-//		'tabBar' => $tabBar,
-//	);
-
 	$data = $api->post('wxapp', 'upload', $commit_data,
 		'json', false);
 
@@ -538,6 +518,19 @@ function wxapp_code_check_scan($code_token, $last) {
 	return $data;
 }
 
+function wxapp_code_preview_qrcode($code_uuid, $code_token) {
+	$cloud_api = new CloudApi();
+
+	$commit_data =  array(
+		'do' => 'preview_qrcode',
+		'code_uuid'=> $code_uuid,
+		'code_token' => $code_token,
+	);
+	$data = $cloud_api->post('wxapp', 'upload', $commit_data,
+		'json', false);
+
+	return $data;
+}
 /**
  * @param $code_uuid  服务器生成代码 返回的UUID
  * @param $code_token  //开发工具调用凭据
