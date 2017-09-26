@@ -176,7 +176,6 @@ function uni_fetch($uniacid = 0) {
  * @return array 模块列表
  */
 function uni_site_store_buy_module($uniacid) {
-	load()->model('store');
 	$cachekey = cache_system_key($uniacid . ':site_store_buy_modules');
 	$site_store_buy_modules = cache_load($cachekey);
 	if (!empty($site_store_buy_modules)) {
