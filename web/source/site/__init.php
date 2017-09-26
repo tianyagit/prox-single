@@ -9,6 +9,6 @@ if ($action != 'entry') {
 	checkaccount();
 }
 
-if (!($action == 'multi' && $do == 'post' || $action == 'entry')) {
+if (!($action == 'multi' && $do == 'post')) {
 	define('FRAME', 'account');
 }

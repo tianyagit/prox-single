@@ -35,10 +35,8 @@ if (!$entry['direct']) {
 	}
 	if (!empty($_GPC['version_id'])) {
 		checkwxapp();
-		define('FRAME', 'wxapp');
 	} else {
 		checkaccount();
-		define('FRAME', 'account');
 	}
 
 	$module = module_fetch($entry['module']);
