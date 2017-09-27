@@ -7,7 +7,7 @@
 	{/if}
 </ul>
 <div class="clearfix we7-margin-bottom">
-	{if !$_W['isfounder'] && !empty($account_info['uniacid_limit']) || user_is_vice_founder()}
+	{if !$_W['isfounder'] && !empty($account_info['wxapp_limit']) || user_is_vice_founder()}
 		<div class="alert alert-warning">
 			温馨提示：
 			<i class="fa fa-info-circle"></i>
@@ -25,7 +25,7 @@
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
 	</form>
-	{if !empty($account_info['uniacid_limit']) || $_W['isfounder']  && !user_is_vice_founder()}
+	{if !empty($account_info['wxapp_limit']) || $_W['isfounder']  && !user_is_vice_founder()}
 	<div class="pull-right">
 		<a href="{php echo url('wxapp/post/design_method')}" class="btn btn-primary we7-padding-horizontal">添加小程序</a>
 	</div>

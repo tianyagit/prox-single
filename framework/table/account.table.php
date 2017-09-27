@@ -30,7 +30,7 @@ class AccountTable extends We7Table {
 	/**
 	 *  获取用户所能操作的所有公众号
 	 */
-	public function userOwnedAccount($uid) {
+	public function userOwnedAccount($uid = 0) {
 		global $_W;
 		$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
 		if (!$_W['isfounder']) {

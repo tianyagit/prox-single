@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
 load()->classs('cloudapi');
 
-$dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan', 'commitcode', 'download', 'ticket');
+$dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan', 'commitcode', 'preview', 'download');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -94,6 +94,13 @@ if ($do == 'checkscan') {
 	echo json_encode($data);
 }
 
+if($do == 'preview') {
+	$code_token = $_GPC['code_token'];
+	$code_uuid = $_GPC['code_uuid'];
+	$data = wxapp_code_preview_qrcode($code_uuid, $code_token);
+	echo json_encode($data);
+
+}
 
 // 上传代码
 if ($do == 'commitcode') {

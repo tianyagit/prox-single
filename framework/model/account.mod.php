@@ -182,10 +182,10 @@ function uni_site_store_buy_module($uniacid) {
 		return $site_store_buy_modules;
 	}
 	$site_store_buy_modules = array();
-	$site_store_order = pdo_fetchall('SELECT * FROM ' . tablename('site_store_order') . " WHERE uniacid = :uniacid AND createtime + duration * 2592000 >= :times AND type = 3", array(':times' => time(), ':uniacid' => $uniacid), 'goodsid');
+	$site_store_order = pdo_getall('site_store_order', array('endtime >=' => time(), ':uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH), array(), 'goodsid');
 	if (!empty($site_store_order) && is_array($site_store_order)) {
-		$site_store_buy_modules = pdo_getall('site_store_goods', array('id' => array_keys($site_store_order)), array(), 'module');
-		$site_store_buy_modules = array_keys($site_store_buy_modules);
+		$site_store_buy_modules = pdo_getall('site_store_goods', array('id' => array_keys($site_store_order), 'type' => STORE_TYPE_MODULE), array(), 'module');
+		$site_store_buy_modules = array_unique(array_keys($site_store_buy_modules));
 	}
 	cache_write($cachekey, $site_store_buy_modules);
 	return $site_store_buy_modules;
@@ -205,17 +205,20 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	load()->model('module');
 	$cachekey = cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $uniacid, $enabled);
 	$modules = cache_load($cachekey);
-
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
+		$site_store_buy_modules = uni_site_store_buy_module($uniacid);
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
 
+			$store = table('store');
+			$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
+			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 
 			if (!in_array('-1', $packageids)) {
 				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$uniacid}'");
@@ -226,7 +229,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 					}
 				}
 				$user_modules = user_modules($owner_uid);
-				$modules = array_merge(array_keys($user_modules), $uni_modules);
+				$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_modules);
 				if (!empty($modules)) {
 					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
 				} else {
@@ -694,7 +697,7 @@ function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
-	if (strexists($_W['siteurl'], 'c=wxapp')) {
+	if (strexists($_W['siteurl'], 'c=wxapp') || !empty($_GPC['version_id'])) {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];

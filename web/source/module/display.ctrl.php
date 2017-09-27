@@ -163,12 +163,12 @@ if ($do == 'accounts_dropdown_menu') {
 			break;
 		}
 	}
-
-	foreach ($accounts_list as $account) {
+	foreach ($accounts_list as $key => $account) {
 		$url = url('module/display/switch', array('uniacid' => $account['uniacid'], 'module_name' => $module_name));
 		if (!empty($account['version_id'])) {
 			$url .= '&version_id=' . $account['version_id'];
 		}
+		$accounts_list[$key]['url'] = $url;
 	}
 	echo template('module/dropdown-menu');
 	exit;
