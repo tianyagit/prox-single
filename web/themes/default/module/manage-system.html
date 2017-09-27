@@ -714,5 +714,58 @@
 	});
 	angular.bootstrap($('.js-system-module-subscribe'), ['moduleApp']);
 </script>
+{elseif $do == 'install_success'}
+<div class="steps">
+	<div class="steps-item steps-status-wait">
+		<div class="steps-line"><span class="steps-num">1</span></div>
+		<div class="steps-state">安装应用</div>
+	</div>
+	<div class="steps-item steps-status-wait">
+		<div class="steps-line"><span class="steps-num">2</span></div>
+		<div class="steps-state">分配应用权限</div>
+	</div>
+	<div class="steps-item steps-status-finish">
+		<div class="steps-line"><span class="steps-num">3</span></div>
+		<div class="steps-state">安装成功</div>
+	</div>
+</div>
+<div class="distribution-steps">
+	<div class="we7-margin-bottom-sm font-lg">应用分配到公众号使用的流程说明</div>
+	<div class="steps-container">
+		<div>
+			<div class="num">1</div>
+			<div class="title">
+				<span class="wi wi-appjurisdiction"></span>添加应用权限组
+			</div>
+			<div class="content">
+				设置应用权限组名称，选择需要添加的公众号应用、小程序应用、微站模板，保存提交。
+				<div><a href="{php echo url('module/group/post')}" class="color-default">去添加应用组 ></a></div>
+			</div>
+		</div>
+		<div>
+			<div class="num">2</div>
+			<div class="title">
+				<span class="wi wi-userjurisdiction"></span>添加用户权限组
+			</div>
+			<div class="content">
+				设置用户权限组名称，选择可以添加的的公众号，小程序数量、有效期并选择应用权限组，然后保存提交。
+				<div><a href="{php echo url('user/group/post')}" class="color-default">去添加用户权限组 ></a></div>
+			</div>
+		</div>
+		<div>
+			<div class="num">3</div>
+			<div class="title">
+				<span class="wi wi-user-group"></span>分配用户权限组
+			</div>
+			<div class="content">
+				改用户组权限，分配成功后此用户组即可使用该应用组的所有应用。
+				<div><a href="{php echo url('module/group')}" class="color-default">去分配用户组 ></a></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="we7-margin-bottom">
+	<button class="btn btn-primary"><a href="{php echo url('module/manage-system')}">返回已安装应用列表</a></button>
+</div>
 {/if}
 {template 'common/footer'}
