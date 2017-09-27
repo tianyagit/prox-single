@@ -60,6 +60,7 @@ class Loader {
 		'oss' => 'alioss/autoload',
 		'qiniu' => 'qiniu/autoload',
 		'cos' => 'cosv4.2/include',
+		'cosv3' => 'cos/include',
 	);
 	private $loadTypeMap = array(
 		'func' => '/framework/function/%s.func.php',
