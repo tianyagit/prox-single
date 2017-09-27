@@ -14,6 +14,7 @@ if(!empty($_POST)) {
 	if ($_POST['body'] == 'site_store') {
 		$setting['payment'] = setting_load('store_pay');
 		$setting['payment'] = $setting['payment']['store_pay'];
+		$_W['store']['from'] = 'payment';
 	}
 	if(is_array($setting['payment'])) {
 		$alipay = $setting['payment']['alipay'];
