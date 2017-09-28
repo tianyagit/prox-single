@@ -19,9 +19,6 @@ if ($do == 'display') {
 		$user_owned_account = $account_table->userOwnedAccount($_W['uid']);
 		if (!empty($user_owned_account) && is_array($user_owned_account)) {
 			foreach ($user_owned_account as $uniacid => $account) {
-				if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
-					continue;
-				}
 				$account_module = uni_modules_by_uniacid($uniacid);
 				$account_user_module = $user_table->userPermission($_W['uid'], $uniacid);
 				if (!empty($account_user_module) && is_array($account_user_module)) {
