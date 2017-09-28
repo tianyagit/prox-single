@@ -9,7 +9,7 @@ class UpgradeModulesBindings {
 	 */
 	public function up() {
 		if (pdo_fieldexists('modules_bindings', 'do')) {
-			pdo_query("ALTER TABLE " . tablename('modules_bindings') . " CHANGE `do` `do` VARCHAR(100) NOT NULL DEFAULT '';");
+			pdo_query("ALTER TABLE " . tablename('modules_bindings') . " CHANGE `do` `do` VARCHAR(120) NOT NULL DEFAULT '';");
 		}
 	}
 	
