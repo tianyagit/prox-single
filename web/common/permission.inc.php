@@ -134,22 +134,25 @@ $we7_file_permission = array(
 	),
 	'module' => array(
 		'default' => '',
-		'direct' => array(
-			'display',
-		),
+		'direct' => array(),
 		'vice_founder' => array('module*'),
 		'owner' => array(
 			'manage-account',
 			'manage-system',
 			'permission',
+			'display',
 		),
 		'manager' => array(
 			'manage-account',
+			'display',
 		),
 		'operator' => array(
 			'manage-account',
+			'display',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'display',
+		)
 	),
 	'platform' => array(
 		'default' => '',
@@ -203,9 +206,7 @@ $we7_file_permission = array(
 			'nav',
 			'slide',
 		),
-		'clerk' => array(
-			'entry',
-		)
+		'clerk' => array()
 	),
 	'statistics' => array(
 		'default' => '',
@@ -273,7 +274,9 @@ $we7_file_permission = array(
 		'operator' => array(
 			'profile',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'profile',
+		)
 	),
 	'wxapp' => array(
 		'default' => '',

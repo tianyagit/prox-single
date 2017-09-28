@@ -210,6 +210,9 @@ class CloudApi {
 				if ($json_result['errno'] == 10000) {
 					$this->deleteModuleCer();
 				};
+				if($json_result['errno'] == 1) {
+					$this->deleteCer();
+				}
 				return $json_result;
 			}
 			return $json_result;
@@ -227,6 +230,7 @@ class CloudApi {
 		$response = ihttp_get($url);
 
 		if (is_error($response)) {
+			$this->deleteCer();
 			return $response;
 		}
 
@@ -245,6 +249,7 @@ class CloudApi {
 
 			$response = ihttp_request($url, array(), $ihttp_options);
 			if (is_error($response)) {
+				$this->deleteCer();
 				return $response;
 			}
 		}
@@ -263,6 +268,7 @@ class CloudApi {
 		if($with_cookie) {
 			$response = ihttp_get($url);
 			if (is_error($response)) {
+				$this->deleteCer();
 				return $response;
 			}
 			$ihttp_options = array();
@@ -279,9 +285,20 @@ class CloudApi {
 		}
 		$response = ihttp_request($url, $post_params, $ihttp_options);
 		if (is_error($response)) {
+			$this->deleteCer();
 			return $response;
 		}
 
 		return $this->actionResult($response['content'], $dataType);
+	}
+
+	private function deleteCer() {
+		if($this->sys_call) {
+			$cer_filepath = IA_ROOT.'/framework/builtin/core/module.cer';
+			if (is_file($cer_filepath)) {
+				unlink($cer_filepath);
+			}
+		}
+
 	}
 }
