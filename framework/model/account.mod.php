@@ -182,7 +182,7 @@ function uni_site_store_buy_module($uniacid) {
 		return $site_store_buy_modules;
 	}
 	$site_store_buy_modules = array();
-	$site_store_order = pdo_getall('site_store_order', array('endtime >=' => time(), ':uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH), array(), 'goodsid');
+	$site_store_order = pdo_getall('site_store_order', array('endtime >=' => time(), 'uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH), array(), 'goodsid');
 	if (!empty($site_store_order) && is_array($site_store_order)) {
 		$site_store_buy_modules = pdo_getall('site_store_goods', array('id' => array_keys($site_store_order), 'type' => STORE_TYPE_MODULE), array(), 'module');
 		$site_store_buy_modules = array_unique(array_keys($site_store_buy_modules));
