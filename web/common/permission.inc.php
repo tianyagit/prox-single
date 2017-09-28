@@ -240,22 +240,28 @@ $we7_file_permission = array(
 	),
 	'system' => array(
 		'default' => '',
-		'direct' => array('workorder'),
+		'direct' => array(),
 		'vice_founder' => array(
 			'template',
 			'updatecache',
+			'workorder',
 		),
 		'owner' => array(
 			'updatecache',
+			'workorder',
 		),
 		'manager' => array(
 			'updatecache',
+			'workorder',
 		),
 		'operator' => array(
 			'account',
 			'updatecache',
+			'workorder',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'workorder',
+		)
 	),
 	'user' => array(
 		'default' => 'display',
