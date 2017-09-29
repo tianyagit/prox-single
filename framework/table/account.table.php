@@ -36,6 +36,7 @@ class AccountTable extends We7Table {
 		if (!$_W['isfounder']) {
 			$users_table = table('users');
 			$uniacid_list = $users_table->userOwnedAccount($uid);
+			$uniacid_list = empty($uniacid_list) ? '' : $uniacid_list;
 			$this->query->where('u.uniacid', $uniacid_list);
 		}
 		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('uniacid');

@@ -133,7 +133,8 @@ if($do == 'base') {
 			cache_delete("accesstoken:{$acid}");
 			cache_delete("jsticket:{$acid}");
 			cache_delete("cardticket:{$acid}");
-
+			$cachekey = cache_system_key("statistics:{$uniacid}");
+			cache_delete($cachekey);
 			iajax(0, '修改成功！', '');
 		}else {
 			iajax(1, '修改失败！', '');

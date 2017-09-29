@@ -85,12 +85,15 @@ if ($do == 'home') {
 		if (empty($version_id) || empty($module_info)) {
 			itoast('版本信息错误');
 		}
-		$uniacid = !empty($module_info['account']['uniacid']) ? $module_info['account']['uniacid'] : $version_info['uniacid'];
-		uni_account_switch($uniacid, url('home/welcome/ext/', array('m' => $module_name, 'version_id' => $version_id)));
+		$url = url('home/welcome/ext/', array('m' => $module_name, 'version_id' => $version_id));
+		if (!empty($module_info['account']['uniacid'])) {
+			uni_account_switch($module_info['account']['uniacid'], $url);
+		} else {
+			wxapp_switch($version_info['uniacid'], $url);
+		}
 	}
-	wxapp_save_switch($uniacid);
 	wxapp_update_last_use_version($uniacid, $version_id);
-	header('Location: ' . url('wxapp/version/home', array('version_id' => $version_id)));
+	wxapp_switch($uniacid, url('wxapp/version/home', array('version_id' => $version_id)));
 	exit;
 } elseif ($do == 'rank') {
 	uni_account_rank_top($uniacid);

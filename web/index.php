@@ -87,9 +87,6 @@ checklogin();
 // 判断非创始人是否拥有目标权限
 if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	if (empty($_W['uniacid'])) {
-		if ($_W['role'] == ACCOUNT_MANAGE_NAME_CLERK) {
-			itoast('', url('module/display'), 'info');
-		}
 		if (defined('FRAME') && FRAME == 'account') {
 			itoast('', url('account/display'), 'info');
 		}
