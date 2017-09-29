@@ -318,6 +318,7 @@ function wxapp_save_switch($uniacid) {
 		$cache_lastaccount['wxapp'] = $uniacid;
 	}
 	cache_write($cache_key, $cache_lastaccount);
+	isetcookie('__uniacid', $uniacid);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;
 }
