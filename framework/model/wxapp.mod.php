@@ -258,6 +258,7 @@ function wxapp_update_last_use_version($uniacid, $version_id) {
 				$uniacid => array('uniacid' => $uniacid,'version_id' => $version_id)
 			);
 	}
+	isetcookie('__uniacid', $uniacid);
 	isetcookie('__wxappversionids', json_encode($cookie_val));
 	return true;
 }

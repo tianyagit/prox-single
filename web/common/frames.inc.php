@@ -526,11 +526,11 @@ $we7_system_menu['site'] = array(
 		'workorder'=> array(
 			'title' => '工单系统',
 			'menu'=> array(
-				'workorder'=> array(
+				'system_workorder'=> array(
 					'title' => '工单系统',
 					'url' => url('system/workorder/display'),
 					'icon' => 'wi wi-system-work',
-					'permission_name' => 'system_workorder_display',
+					'permission_name' => 'system_workorder',
 				)
 			)
 		)
