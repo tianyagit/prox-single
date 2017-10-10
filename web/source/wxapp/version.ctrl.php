@@ -28,6 +28,13 @@ if ($do == 'display') {
 }
 
 if ($do == 'home') {
+	$last_uniacid = uni_account_last_switch();
+	if (empty($last_uniacid)) {
+		itoast('', url('wxapp/display'), 'info');
+	}
+	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
+		wxapp_switch($last_uniacid,  url('wxapp/version/home'));
+	}
 	if ($version_info['design_method'] == WXAPP_TEMPLATE) {
 		$version_site_info = wxapp_site_info($version_info['multiid']);
 	}
