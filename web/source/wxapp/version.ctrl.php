@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
 load()->model('welcome');
 
-$dos = array('display', 'home', 'get_daily_visittrend');
+$dos = array('display', 'home', 'get_daily_visittrend', 'setting_help');
 $do = in_array($do, $dos) ? $do : 'display';
 $_W['page']['title'] = '小程序 - 管理';
 
@@ -46,4 +46,8 @@ if ($do == 'get_daily_visittrend') {
 		$yesterday_stat = array('session_cnt' => 0, 'visit_pv' => 0, 'visit_uv' => 0, 'visit_uv_new' => 0);
 	}
 	iajax(0, array('yesterday' => $yesterday_stat), '');
+}
+
+if ($do == 'setting_help') {
+	template('wxapp/setting-help');
 }
