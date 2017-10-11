@@ -33,7 +33,7 @@ if ($do == 'home') {
 		itoast('', url('wxapp/display'), 'info');
 	}
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
-		wxapp_switch($last_uniacid,  url('wxapp/version/home'));
+		wxapp_switch($last_uniacid,  url('wxapp/display/home'));
 	}
 	if ($version_info['design_method'] == WXAPP_TEMPLATE) {
 		$version_site_info = wxapp_site_info($version_info['multiid']);
