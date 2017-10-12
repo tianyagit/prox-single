@@ -110,11 +110,13 @@
 	</div>
 </div>
 <script>
+require(['underscore'], function() {
 	angular.module('fansApp').value('config', {
 		'chatLogs' : {php echo json_encode($chat_record)},
 		'endurl' : "{php echo url('mc/chats/endchats', array('openid' => $openid))}",
 		'sendurl' : "{php echo url('mc/chats/send', array('openid' => $openid))}"
 	});
 	angular.bootstrap($('.notice-fans-list'), ['fansApp']);
+});
 </script>
 {template 'common/footer'}
