@@ -26,6 +26,9 @@ if ($do == 'home') {
 	if (empty($last_uniacid)) {
 		itoast('', $url, 'info');
 	}
+	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
+		wxapp_switch($last_uniacid);
+	}
 	$permission = permission_account_user_role($_W['uid'], $last_uniacid);
 	if (empty($permission)) {
 		itoast('', $url, 'info');
