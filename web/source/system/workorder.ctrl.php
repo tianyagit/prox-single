@@ -15,7 +15,7 @@ if($do == 'display') {
 	if(is_error($data)) {
 		itoast('无权限进入工单系统');
 	}
-	$iframe_url = $data['data']['url'].'&from='.$siteurl;
+	$iframe_url = $data['data']['url'].'&from='.urlencode($siteurl);
 	template('system/workorder');
 }
 
@@ -29,18 +29,20 @@ if($do == 'module') {
 	if(!$module) {
 		itoast('未找到模块');
 	}
-	$version = $module['version'];
+	$module_name = $name;
+	$module_version = $module['version'];
 	$issystem = $module['issystem'];
-	$type = 'module';
-	$siteurl = $_W['siteroot'];
-	$param = http_build_query(compact('name', 'version', 'type', 'siteurl'));
+	$module_type = 'module';
+	$from = ($_W['siteroot']);
+	$param = http_build_query(compact('module_name', 'module_version', 'module_type', 'from'));
 	$cloud = new CloudApi();
 	$data = $cloud->get('system','workorder', array('do'=>'siteworkorder'), 'json');
 	if(is_error($data)) {
-		itoast('无权限进入工单系统');
+		echo json_encode(array('errno'=>0, 'message'=>'无权限进入工单系统'));
 	}
 	$iframe_url = $data['data']['url'].'&'.$param;
-	template('system/workorder');
+	echo json_encode(array('errno'=>0, 'message'=>'', 'data'=> ['url'=>$iframe_url]));
+
 }
 
 
