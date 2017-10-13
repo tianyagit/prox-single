@@ -637,6 +637,7 @@ class WeiXinAccount extends WeAccount {
 			'40039' => '不合法的URL长度',
 			'40050' => '不合法的分组id',
 			'40051' => '分组名字不合法',
+			'40155' => '请勿添加其他公众号的主页链接',
 			'41001' => '缺少access_token参数',
 			'41002' => '缺少appid参数',
 			'41003' => '缺少refresh_token参数',
