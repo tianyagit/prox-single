@@ -14,6 +14,7 @@ permission_check_account_user('wxapp_payment', true, 'wxapp');
 $_W['page']['title'] = '支付参数';
 
 $pay_setting = wxapp_payment_param();
+
 $version_id = intval($_GPC['version_id']);
 if (!empty($version_id)) {
 	$version_info = wxapp_version($version_id);
@@ -25,7 +26,7 @@ if ($do == 'get_setting') {
 }
 
 if ($do == 'display') {
-	
+	$pay_setting['wechat'] = empty($pay_setting['wechat']) ? array() : $pay_setting['wechat'];
 }
 
 if ($do == 'save_setting') {
