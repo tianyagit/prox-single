@@ -124,7 +124,7 @@ if ($do == 'delete') {
 }
 
 if($do == 'getpackage') {
-
+	permission_check_account_user('wxapp_front_download');
 	$versionid = intval($_GPC['versionid']);
 	if(empty($versionid)) {
 		itoast('参数错误！', '', '');
