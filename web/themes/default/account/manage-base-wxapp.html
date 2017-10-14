@@ -340,7 +340,7 @@
 		qrcodeimgsrc: "{php echo $qrcodeimgsrc}",
 		links: {
 			basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid, 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}",
-			siteroot: "{php echo $_W['siteroot']}",
+			siteroot: "https://{php echo $_SERVER['SERVER_NAME']}",
 		},
 	});
 	angular.bootstrap($('#js-account-manage-base'), ['accountApp']);

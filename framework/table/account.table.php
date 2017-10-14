@@ -37,9 +37,12 @@ class AccountTable extends We7Table {
 		if (empty($is_founder) || user_is_vice_founder($uid)) {
 			$users_table = table('users');
 			$uniacid_list = $users_table->userOwnedAccount($uid);
+			if (empty($uniacid_list)) {
+				return array();
+			}
 			$this->query->where('u.uniacid', $uniacid_list);
 		}
-		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('uniacid');
+		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('u.uniacid');
 	}
 
 	public function searchWithKeyword($title) {
