@@ -81,6 +81,7 @@
 					<tbody class="system_{$section_id}">
 					{php $i=1;}
 					{loop $section['menu'] $menu_id $menu}
+						{if $menu_id == 'front_download'}{php continue;}{/if}
 						{if $i%4 == 1 || $i == 1}<tr>{/if}
 						<td class="text-left vertical-middle" style="overflow:inherit;">
 							<div class="dropdown system-select-dropdown">
