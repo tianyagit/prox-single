@@ -422,7 +422,9 @@ function cache_build_proxy_wechatpay_account() {
 			$account = account_fetch($uniaccount['default_acid']);
 			$account_setting = pdo_get('uni_settings', array ('uniacid' => $account['uniacid']));
 			$payment = iunserializer($account_setting['payment']);
-			if (!empty($account['key']) && !empty($account['secret']) && in_array ($account['level'], array (4)) && !empty($payment) && intval ($payment['wechat']['switch']) == 1) {
+			if (is_array($account) && !empty($account['key']) && !empty($account['secret']) && in_array($account['level'], array (4)) && 
+				is_array($payment) && !empty($payment) && intval($payment['wechat']['switch']) == 1) {
+					
 				if ((!is_bool ($payment['wechat']['switch']) && $payment['wechat']['switch'] != 4) || (is_bool ($payment['wechat']['switch']) && !empty($payment['wechat']['switch']))) {
 					$borrow[$account['uniacid']] = $account['name'];
 				}

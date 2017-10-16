@@ -151,7 +151,7 @@ function app_month_visit_till_today($uniacid = 0) {
 	}
 	$start = date('Ym01', strtotime(date("Ymd")));
 	$end = date('Ymd', strtotime('-1 day'));
-	$visit = pdo_getall('stat_visit', array('date >=' => $start, 'date <=' => $end));
+	$visit = pdo_getall('stat_visit', array('date >=' => $start, 'date <=' => $end, 'uniacid' => $uniacid));
 	if (!empty($visit)) {
 		foreach ($visit as $val) {
 			$result += $val['count'];
