@@ -240,22 +240,28 @@ $we7_file_permission = array(
 	),
 	'system' => array(
 		'default' => '',
-		'direct' => array('workorder'),
+		'direct' => array(),
 		'vice_founder' => array(
 			'template',
 			'updatecache',
+			'workorder',
 		),
 		'owner' => array(
 			'updatecache',
+			'workorder',
 		),
 		'manager' => array(
 			'updatecache',
+			'workorder',
 		),
 		'operator' => array(
 			'account',
 			'updatecache',
+			'workorder',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'workorder',
+		)
 	),
 	'user' => array(
 		'default' => 'display',
@@ -311,17 +317,20 @@ $we7_file_permission = array(
 		),
 		'vice_founder' => array(
 			'user',
-			'emulator'
+			'emulator',
 		),
 		'owner' => array(
-			'emulator'
+			'emulator',
 		),
 		'manager' => array(
-			'emulator'
+			'emulator',
 		),
 		'operator' => array(
-			'emulator'
+			'emulator',
 		),
+		'owner' => array(),
+		'manager' => array(),
+		'operator' => array(),
 	),
 	'append' => array('append*'),
 );

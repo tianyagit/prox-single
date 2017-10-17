@@ -33,13 +33,16 @@ class AccountTable extends We7Table {
 	public function userOwnedAccount($uid = 0) {
 		global $_W;
 		$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
-		if (!$_W['isfounder']) {
+		$is_founder = user_is_founder($uid);
+		if (empty($is_founder) || user_is_vice_founder($uid)) {
 			$users_table = table('users');
 			$uniacid_list = $users_table->userOwnedAccount($uid);
-			$uniacid_list = empty($uniacid_list) ? '' : $uniacid_list;
+			if (empty($uniacid_list)) {
+				return array();
+			}
 			$this->query->where('u.uniacid', $uniacid_list);
 		}
-		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('uniacid');
+		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('u.uniacid');
 	}
 
 	public function searchWithKeyword($title) {
