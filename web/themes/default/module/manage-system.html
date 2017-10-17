@@ -355,7 +355,7 @@
 	</div>
 	<div class="panel we7-panel" ng-show="show == 'workorder'">
 		<div class="panel-heading">
-			工单
+			工单系统
 		</div>
 		<div class="panel-body" id="iframepanel">
 			<iframe src="" frameborder="0" width="100%"  scrolling="no" id="workorderiframe">
@@ -763,7 +763,7 @@
 
 	if(window.addEventListener) {
 		window.addEventListener('message', function(e){
-			$('#workorderiframe').height(e.data.height); //选中图片导致高度又变高了
+			$('#workorderiframe').height(e.data.height+200); //选中图片导致高度又变高了
 		});
 	}
 	$.getJSON("{php echo url('system/workorder/module')}name={$module_info['name']}", function(data){
