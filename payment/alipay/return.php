@@ -12,7 +12,6 @@ $setting = uni_setting($_W['uniacid'], array('payment'));
 if ($_GET['exterface'] == 'create_direct_pay_by_user') {
 	$setting['payment'] = setting_load('store_pay');
 	$setting['payment'] = $setting['payment']['store_pay'];
-	$_W['store']['from'] = 'payment';
 }
 if (!is_array($setting['payment'])) {
 	exit('request failed.');

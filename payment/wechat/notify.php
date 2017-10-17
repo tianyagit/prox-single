@@ -40,7 +40,6 @@ $setting = uni_setting($_W['uniacid'], array('payment'));
 if ($get['trade_type'] == 'NATIVE') {
 	$setting = setting_load('store_pay');
 	$setting['payment']['wechat'] = $setting['store_pay']['wechat'];
-	$_W['store']['from'] = 'payment';
 }
 if(is_array($setting['payment'])) {
 	$wechat = $setting['payment']['wechat'];
