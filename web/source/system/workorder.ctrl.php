@@ -33,7 +33,7 @@ if($do == 'module') {
 	$module_version = $module['version'];
 	$issystem = $module['issystem'];
 	$module_type = 'module';
-	$from = ($_W['siteroot']);
+	$from = urlencode($_W['siteroot']);
 	$param = http_build_query(compact('module_name', 'module_version', 'module_type', 'from'));
 	$cloud = new CloudApi();
 	$data = $cloud->get('system','workorder', array('do'=>'siteworkorder'), 'json');
