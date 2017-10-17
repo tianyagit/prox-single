@@ -234,7 +234,6 @@ function cloud_download($path, $type = '') {
 	$pars['download'] = 'true';
 	$headers = array('content-type' => 'application/x-www-form-urlencoded');
 	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars, $headers, 300);
-	print_r($dat);exit;
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
