@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
 load()->classs('cloudapi');
 
-$dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan', 'commitcode', 'preview', 'download');
+$dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan', 'commitcode', 'preview', 'getpackage');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -47,7 +47,7 @@ if ($do == 'domainset') {
 	}
 	template('wxapp/version-front-download');
 }
-//91ec1f9324753048c0096d036a694f86
+
 if ($do == 'front_download') {
 	$appurl = $_W['siteroot'].'/app/index.php';
 	$uptype = $_GPC['uptype'];
@@ -111,4 +111,43 @@ if ($do == 'commitcode') {
 	$code_uuid = $_GPC['code_uuid'];
 	$data = wxapp_code_commit($code_uuid, $code_token, $user_version, $user_desc);
 	echo json_encode($data);
+}
+
+if($do == 'getpackage') {
+	if(empty($version_id)) {
+		itoast('参数错误！', '', '');
+	}
+	$account_wxapp_info = wxapp_fetch($uniacid, $version_id);
+	if (empty($account_wxapp_info)) {
+		itoast('版本不存在！', referer(), 'error');
+	}
+	$siteurl = $_W['siteroot'].'app/index.php';
+	if(!empty($account_wxapp_info['appdomain'])) {
+		$siteurl = $account_wxapp_info['appdomain'];
+	}
+
+	$request_cloud_data = array(
+			'name' => $account_wxapp_info['name'],
+			'modules' => $account_wxapp_info['version']['modules'],
+			'siteInfo' => array(
+					'name' => $account_wxapp_info['name'],
+					'uniacid' => $account_wxapp_info['uniacid'],
+					'acid' => $account_wxapp_info['acid'],
+					'multiid' => $account_wxapp_info['version']['multiid'],
+					'version' => $account_wxapp_info['version']['version'],
+					'siteroot' => $siteurl,
+					'design_method' => $account_wxapp_info['version']['design_method']
+			),
+			'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
+	);
+	$result = wxapp_getpackage($request_cloud_data);
+
+	if(is_error($result)) {
+		itoast($result['message'], '', '');
+	}else {
+		header('content-type: application/zip');
+		header('content-disposition: attachment; filename="' . $request_cloud_data['name'] . '.zip"');
+		echo $result;
+	}
+	exit;
 }

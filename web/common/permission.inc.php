@@ -24,7 +24,7 @@ $we7_file_permission = array(
 		'default' => '',
 		'direct' => array(
 			'auth',
-			'welcome', 'openwechat'
+			'welcome',
 		),
 		'vice_founder' => array('account*'),
 		'owner' => array('account*'),
@@ -134,22 +134,25 @@ $we7_file_permission = array(
 	),
 	'module' => array(
 		'default' => '',
-		'direct' => array(
-			'display',
-		),
+		'direct' => array(),
 		'vice_founder' => array('module*'),
 		'owner' => array(
 			'manage-account',
 			'manage-system',
 			'permission',
+			'display',
 		),
 		'manager' => array(
 			'manage-account',
+			'display',
 		),
 		'operator' => array(
 			'manage-account',
+			'display',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'display',
+		)
 	),
 	'platform' => array(
 		'default' => '',
@@ -203,9 +206,7 @@ $we7_file_permission = array(
 			'nav',
 			'slide',
 		),
-		'clerk' => array(
-			'entry',
-		)
+		'clerk' => array()
 	),
 	'statistics' => array(
 		'default' => '',
@@ -243,18 +244,24 @@ $we7_file_permission = array(
 		'vice_founder' => array(
 			'template',
 			'updatecache',
+			'workorder',
 		),
 		'owner' => array(
 			'updatecache',
+			'workorder',
 		),
 		'manager' => array(
 			'updatecache',
+			'workorder',
 		),
 		'operator' => array(
 			'account',
 			'updatecache',
+			'workorder',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'workorder',
+		)
 	),
 	'user' => array(
 		'default' => 'display',
@@ -273,7 +280,9 @@ $we7_file_permission = array(
 		'operator' => array(
 			'profile',
 		),
-		'clerk' => array()
+		'clerk' => array(
+			'profile',
+		)
 	),
 	'wxapp' => array(
 		'default' => '',
@@ -308,17 +317,20 @@ $we7_file_permission = array(
 		),
 		'vice_founder' => array(
 			'user',
-			'emulator'
+			'emulator',
 		),
 		'owner' => array(
-			'emulator'
+			'emulator',
 		),
 		'manager' => array(
-			'emulator'
+			'emulator',
 		),
 		'operator' => array(
-			'emulator'
+			'emulator',
 		),
+		'owner' => array(),
+		'manager' => array(),
+		'operator' => array(),
 	),
 	'append' => array('append*'),
 );

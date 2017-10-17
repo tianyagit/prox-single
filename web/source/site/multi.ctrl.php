@@ -41,12 +41,12 @@ if ($do == 'post') {
 			'styleid' => intval($_GPC['styleid']),
 			'status' => intval($_GPC['status']),
 			'site_info' => iserializer(array(
-				'thumb' => $_GPC['thumb'],
-				'keyword' => $_GPC['keyword'],
-				'description' => $_GPC['description'],
-				'footer' => htmlspecialchars_decode($_GPC['footer'])
+				'thumb' => trim($_GPC['thumb']),
+				'keyword' => trim($_GPC['keyword']),
+				'description' => trim($_GPC['description']),
+				'footer' => htmlspecialchars($_GPC['footer'])
 			)),
-			'bindhost' => $_GPC['bindhost'],
+			'bindhost' => trim($_GPC['bindhost']),
 		);
 		if (empty($data['title'])) {
 			itoast('请填写站点名称', referer(), 'error');
@@ -65,10 +65,10 @@ if ($do == 'post') {
 			$cover = array(
 				'uniacid' => $_W['uniacid'],
 				'title' => $data['title'],
-				'keyword' => $_GPC['keyword'],
+				'keyword' => trim($_GPC['keyword']),
 				'url' => url('home', array('i' => $_W['uniacid'], 't' => $id)),
-				'description' => $_GPC['description'],
-				'thumb' => $_GPC['thumb'],
+				'description' => trim($_GPC['description']),
+				'thumb' => trim($_GPC['thumb']),
 				'module' => 'site',
 				'multiid' => $id,
 			);
