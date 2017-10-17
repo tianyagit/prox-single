@@ -113,7 +113,7 @@ if ($do == 'openid') {
 		}
 	}
 	pdo_update('mc_mapping_fans', $fans_update, array('fanid' => $fans['fanid']));
-	pdo_update('mc_members', array('nickname' => $userinfo['nickName'], 'avatar' => $userinfo['avatarUrl']), array('uid' => $fans['uid']));
+	pdo_update('mc_members', array('nickname' => $userinfo['nickName'], 'avatar' => $userinfo['avatarUrl'], 'gender' => $userinfo['gender']), array('uid' => $fans['uid']));
 	$member = mc_fetch($fans['uid']);
 	unset($member['password']);
 	unset($member['salt']);
