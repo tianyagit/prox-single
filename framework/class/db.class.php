@@ -185,14 +185,6 @@ class DB {
 	 * @return mixed
 	 */
 	public function fetchall($sql, $params = array(), $keyfield = '') {
-		$cachekey = $this->cacheKey($sql, $params);
-		if (($cache = $this->cacheRead($cachekey)) !== false) {
-			$result = array();
-			if (!empty($keyfield) && !empty($cache['data'])) {
-				$result = array_elements_keyfield($cache['data'], $keyfield);
-			}
-			return $result;
-		}
 		$starttime = microtime();
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
@@ -210,7 +202,13 @@ class DB {
 				$temp = $statement->fetchAll(pdo::FETCH_ASSOC);
 				$result = array();
 				if (!empty($temp)) {
-					$result = array_elements_keyfield($temp, $keyfield);
+					foreach ($temp as $key => &$row) {
+						if (isset($row[$keyfield])) {
+							$result[$row[$keyfield]] = $row;
+						} else {
+							$result[] = $row;
+						}
+					}
 				}
 			}
 			$this->cacheWrite($cachekey, $result);

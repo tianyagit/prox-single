@@ -224,27 +224,6 @@ function array_elements($keys, $src, $default = FALSE) {
 }
 
 /**
- * 返回二维数组  二维数组中的键变成二维数组下面的键对应的值
- * @param $arr  二维数组
- * @param $keyfield  二维数组中一维数组的key
- * @return array 返回二维数组
- */
-function array_elements_keyfield($arr, $keyfield) {
-	$result = array();
-	if(!is_array($arr)) {
-		$arr = array($arr);
-	}
-	foreach($arr as $row) {
-		if (isset($row[$keyfield])) {
-			$result[$row[$keyfield]] = $row;
-		} else {
-			$result[] = $row;
-		}
-	}
-	unset($row);
-	return $result;
-}
-/**
  * 根据键值对数组排序
  *
  * @param array $array 需要排序的数组
