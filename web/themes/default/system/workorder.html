@@ -1,9 +1,7 @@
 {template 'common/header'}
 <script type="text/javascript" language="javascript">
 	if(window.addEventListener) {
-		console.log('addd');
 		window.addEventListener('message', function(e){
-			console.log(e.data);
 			$('#iframepage').height(e.data.height+200); //选中图片导致高度又变高了
 		});
 	}
