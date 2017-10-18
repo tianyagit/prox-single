@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 class AccountTable extends We7Table {
 
-	public function searchAccountList($order = '', $type = '') {
+	public function searchAccountList($order = 'desc', $type = '') {
 		global $_W;
 		$this->query->from('uni_account', 'a')->select('a.uniacid')->leftjoin('account', 'b')
 				->on(array('a.uniacid' => 'b.uniacid', 'a.default_acid' => 'b.acid'))
