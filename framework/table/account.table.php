@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 class AccountTable extends We7Table {
 
-	public function searchAccountList() {
+	public function searchAccountList($order, $type) {
 		global $_W;
 		$this->query->from('uni_account', 'a')->select('a.uniacid')->leftjoin('account', 'b')
 				->on(array('a.uniacid' => 'b.uniacid', 'a.default_acid' => 'b.acid'))
@@ -17,12 +17,25 @@ class AccountTable extends We7Table {
 		//普通用户和副站长查询时，要附加可操作公众条件
 		if (empty($_W['isfounder']) || user_is_vice_founder()) {
 			$this->query->leftjoin('uni_account_users', 'c')->on(array('a.uniacid' => 'c.uniacid'))
-						->where('a.default_acid !=', '0')->where('c.uid', $_W['uid'])
-						->orderby('c.rank', 'desc');
+						->where('a.default_acid !=', '0')->where('c.uid', $_W['uid']);
+
 		} else {
-			$this->query->where('a.default_acid !=', '0')->orderby('a.rank', 'desc');
+			$this->query->where('a.default_acid !=', '0');
+			if (!empty($type) && $type == 'expire') {
+				$this->query->leftjoin('uni_account_users', 'c')->on(array('a.uniacid' => 'c.uniacid'));
+			}
 		}
-		$this->query->orderby('a.uniacid', 'desc');
+
+		if (!empty($type) && $type == 'expire') {
+			$this->query->leftjoin('users', 'u')->on(array('c.uid' => 'u.uid'))
+					->where('c.role', 'owner')->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP);
+		}
+
+		if (!empty($type) && $type == 'isconnect') {
+			$this->query->where('b.isconnect =', '0');
+		}
+
+		$this->query->orderby('a.uniacid', $order);
 		$list = $this->query->getall('a.uniacid');
 		return $list;
 	}

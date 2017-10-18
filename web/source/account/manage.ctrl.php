@@ -35,9 +35,12 @@ if ($do == 'display') {
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$account_table->searchWithLetter($_GPC['letter']);
 	}
+
+	$order = trim($_GPC['order']) ? $_GPC['order'] : 'desc';
+	$type = trim($_GPC['type']);
 	$account_table->searchWithPage($pindex, $psize);
-	$list = $account_table->searchAccountList();
-	
+	$list = $account_table->searchAccountList($order, $type);
+
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);
 		$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);

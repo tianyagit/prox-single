@@ -36,7 +36,7 @@
 	<col width="200px"/>
 	<col width="100px"/>
 	<col width="260px" />
-	<tr class="hidden">
+	<tr>
 		<th colspan="5" class="text-left filter">
 			<div class="dropdown dropdown-toggle we7-dropdown">
 				<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -44,8 +44,8 @@
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" aria-labelledby="dLabel">
-					<li><a href="" class="active">创建时间正序</a></li>
-					<li><a href="">创建时间倒序</a></li>
+					<li><a href="{php echo filter_url('order:asc');}" class="active">创建时间正序</a></li>
+					<li><a href="{php echo filter_url('order:desc');}">创建时间倒序</a></li>
 				</ul>
 			</div>
 			<div class="dropdown dropdown-toggle we7-dropdown">
@@ -54,8 +54,8 @@
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" aria-labelledby="dLabel">
-					<li><a href="" class="active">公众号已到期</a></li>
-					<li><a href="" class="active">未接入公众号</a></li>
+					<li><a href="{php echo filter_url('type:expire');}" class="active">公众号已到期</a></li>
+					<li><a href="{php echo filter_url('type:isconnect');}" class="active">未接入公众号</a></li>
 				</ul>
 			</div>
 		</th>
