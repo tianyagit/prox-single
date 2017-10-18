@@ -41,6 +41,7 @@ if (is_array($session)) {
 	if (is_array($user) && $session['hash'] === md5($user['password'] . $user['salt'])) {
 		$_W['uid'] = $user['uid'];
 		$_W['username'] = $user['username'];
+		$_W['user'] = $user;
 	}
 	unset($user);
 }
@@ -58,6 +59,7 @@ $founders = explode(',', $_W['config']['setting']['founder']);
 if (empty($_W['uid']) || !in_array($_W['uid'], $founders, true)) {
 	message('请使用创始人帐号登录', url('user/login'), 'error');
 }
+$_W['isfounder'] = true;
 
 header('Content-Type: text/html; charset=' . $_W['charset']);
 
