@@ -41,6 +41,7 @@ if (is_array($session)) {
 	if (is_array($user) && $session['hash'] === md5($user['password'] . $user['salt'])) {
 		$_W['uid'] = $user['uid'];
 		$_W['username'] = $user['username'];
+		$_W['user'] = $user;
 	}
 	unset($user);
 }
@@ -58,6 +59,7 @@ $founders = explode(',', $_W['config']['setting']['founder']);
 if (empty($_W['uid']) || !in_array($_W['uid'], $founders, true)) {
 	message('请使用创始人帐号登录', url('user/login'), 'error');
 }
+$_W['isfounder'] = true;
 
 header('Content-Type: text/html; charset=' . $_W['charset']);
 
@@ -415,119 +417,6 @@ function template_addquote($matchs) {
 	$code = "<?php {$matchs[1]}?>";
 	$code = preg_replace('/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\](?![a-zA-Z0-9_\-\.\x7f-\xff\[\]]*[\'"])/s', "['$1']", $code);
 	return str_replace('\\\"', '\"', $code);
-}
-
-function buildframes($framename = ''){
-	global $_W, $_GPC, $top_nav;
-	$system_menu_db = pdo_getall('core_menu', array('permission_name !=' => ''), array(), 'permission_name');
-	$system_menu = require IA_ROOT . '/web/common/frames.inc.php';
-	
-	if (!empty($system_menu) && is_array($system_menu)) {
-		$system_displayoser = 0;
-		foreach ($system_menu as $menu_name => $menu) {
-			$system_menu[$menu_name]['is_system'] = true;
-			$system_menu[$menu_name]['is_display'] = empty($system_menu_db[$menu_name]) || !empty($system_menu_db[$menu_name]['is_display']) ? true : false;
-			$system_menu[$menu_name]['displayorder'] = ++$system_displayoser;
-
-			foreach ($menu['section'] as $section_name => $section) {
-				$displayorder = max(count($section['menu']), 1);
-
-				//查询此节点下新增的菜单
-				if (empty($section['menu'])) {
-					$section['menu'] = array();
-				}
-				$add_menu = pdo_getall('core_menu', array('group_name' => $section_name), array(
-					'id', 'title', 'url', 'is_display', 'is_system', 'permission_name', 'displayorder', 'icon',
-				), 'permission_name', 'displayorder DESC');
-				if (!empty($add_menu)) {
-					foreach ($add_menu as $permission_name => $menu) {
-						$menu['icon'] = !empty($menu['icon']) ? $menu['icon'] : 'wi wi-appsetting';
-						$section['menu'][$permission_name] = $menu;
-					}
-				}
-				$section_hidden_menu_count = 0;
-				foreach ($section['menu']  as $permission_name => $sub_menu) {
-					$sub_menu_db = $system_menu_db[$sub_menu['permission_name']];
-					$system_menu[$menu_name]['section'][$section_name]['menu'][$permission_name] = array(
-						'is_system' => isset($sub_menu['is_system']) ? $sub_menu['is_system'] : 1,
-						'is_display' => isset($sub_menu_db['is_display']) ? $sub_menu_db['is_display'] : 1,
-						'title' => !empty($sub_menu_db['title']) ? $sub_menu_db['title'] : $sub_menu['title'],
-						'url' => $sub_menu['url'],
-						'permission_name' => $sub_menu['permission_name'],
-						'icon' => $sub_menu['icon'],
-						'displayorder' => !empty($sub_menu_db['displayorder']) ? $sub_menu_db['displayorder'] : $displayorder,
-						'id' => $sub_menu['id'],
-						'sub_permission' => $sub_menu['sub_permission'],
-					);
-					$displayorder--;
-					$displayorder = max($displayorder, 0);
-					if (empty($system_menu[$menu_name]['section'][$section_name]['menu'][$permission_name]['is_display'])) {
-						$section_hidden_menu_count++;
-					}
-				}
-				if (empty($section['is_display']) && $section_hidden_menu_count == count($section['menu']) && $section_name != 'platform_module') {
-					$system_menu[$menu_name]['section'][$section_name]['is_display'] = 0;
-				}
-				$system_menu[$menu_name]['section'][$section_name]['menu'] = iarray_sort($system_menu[$menu_name]['section'][$section_name]['menu'], 'displayorder', 'desc');
-			}
-		}
-		$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame', 'is_system <>' => 1), array('title', 'url', 'permission_name', 'displayorder'));
-		if (!empty($add_top_nav)) {
-			foreach ($add_top_nav as $menu) {
-				$menu['blank'] = true;
-				$menu['is_display'] = true;
-				$system_menu[$menu['permission_name']] = $menu;
-			}
-		}
-		$system_menu = iarray_sort($system_menu, 'displayorder', 'asc');
-	}
-
-	foreach ($system_menu as $menuid => $menu) {
-		if (!empty($menu['founder']) && empty($_W['isfounder']) && in_array($menuid, array('site', 'advertisement', 'appmarket')) || $_W['role'] == ACCOUNT_MANAGE_NAME_CLERK && in_array($menuid, array('account', 'wxapp', 'system')) || !$menu['is_display']) {
-			continue;
-		}
-		$top_nav[] = array(
-			'title' => $menu['title'],
-			'name' => $menuid,
-			'url' => $menu['url'],
-			'blank' => $menu['blank'],
-			'icon' => $menu['icon'],
-		);
-	}
-	return !empty($framename) ? $system_menu[$framename] : $system_menu;
-}
-
-function _calc_current_frames(&$frames) {
-	global $controller, $action;
-	if (! empty($frames['section']) && is_array($frames['section'])) {
-		foreach ($frames['section'] as &$frame) {
-			if (empty($frame['menu'])) {
-				continue;
-			}
-			foreach ($frame['menu'] as &$menu) {
-				$query = parse_url($menu['url'], PHP_URL_QUERY);
-				parse_str($query, $urls);
-				if (empty($urls)) {
-					continue;
-				}
-				if (defined('ACTIVE_FRAME_URL')) {
-					$query = parse_url(ACTIVE_FRAME_URL, PHP_URL_QUERY);
-					parse_str($query, $get);
-				} else {
-					$get = $_GET;
-					$get['c'] = $controller;
-					$get['a'] = $action;
-				}
-				if (! empty($do)) {
-					$get['do'] = $do;
-				}
-				$diff = array_diff_assoc($urls, $get);
-				if (empty($diff)) {
-					$menu['active'] = ' active';
-				}
-			}
-		}
-	}
 }
 
 /**
