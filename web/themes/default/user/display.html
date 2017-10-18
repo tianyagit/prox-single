@@ -35,9 +35,9 @@
 		<th class="text-right">操作</th>
 	</tr>
 	<tr ng-repeat="user in users" ng-if="users">
-		<td>
+		<td class="td-link">
 			<a ng-href="{{links.edit}}uid={{user.uid}}">
-			<img src="{{user.avatar}}" alt="" class="img-responsive icon"/>
+				<img src="{{user.avatar}}" alt="" class="img-responsive icon"/>
 			</a>
 		</td>
 		<td class="text-left" ng-bind="user.username">{$user['username']}</td>

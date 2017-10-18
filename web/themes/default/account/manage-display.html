@@ -67,8 +67,14 @@
 		<th class="text-right">操作</th>
 	</tr>
 	<tr class="color-gray" ng-repeat="list in lists">
-		<td class="text-left">
-			<img ng-src="{{list.logo}}" class="img-responsive icon">
+		<td class="text-left td-link">
+			{if $role_type}
+			<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}">
+			{else}
+			<a href="javascript:;">
+			{/if}
+				<img ng-src="{{list.logo}}" class="img-responsive icon">
+			</a>
 		</td>
 		<td class="text-left">
 			<p class="color-dark" ng-bind="list.name"></p>
@@ -86,11 +92,11 @@
 		<td class="vertical-middle table-manage-td">
 			<div class="link-group">
 				<a ng-href="{{links.switch}}uniacid={{list.uniacid}}">进入公众号</a>
-				{if in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER))}
+				{if $role_type}
 				<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'manager' || list.role == 'owner' || list.role == 'founder'|| list.role == 'vice_founder'">管理设置</a>
 				{/if}
 			</div>
-			{if in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER))}
+			{if $role_type}
 			<div class="manage-option text-right">
 				<a href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}">基础信息</a>
 				<a href="{{links.post}}&do=sms&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">短信信息</a>
