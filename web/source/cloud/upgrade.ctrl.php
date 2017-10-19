@@ -11,7 +11,7 @@ load()->func('db');
 
 $cloud_ready = cloud_prepare();
 if (is_error($cloud_ready)) {
-	message($cloud_ready['message'], '', 'error');
+	message($cloud_ready['message'], url('cloud/profile'), 'error');
 }
 
 $dos = array('upgrade');
