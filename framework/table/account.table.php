@@ -55,7 +55,7 @@ class AccountTable extends We7Table {
 			}
 			$this->query->where('u.uniacid', $uniacid_list);
 		}
-		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('u.uniacid');
+		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('uniacid');
 	}
 
 	public function searchWithKeyword($title) {
