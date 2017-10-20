@@ -1,6 +1,6 @@
 {template 'common/header'}
 <div id="wechat_menu">
-	<div class="we7-page-title">自定义菜单</div>
+	<div class="we7-page-title hide">自定义菜单</div>
 	<ul class="we7-page-tab">
 		<li {if $type == MENU_CURRENTSELF}class="active" {/if}><a href="{url 'platform/menu/post'}">默认菜单</a></li>
 		<li {if $type == MENU_CONDITIONAL}class="active"{/if}><a href="{url 'platform/menu' array('type' => MENU_CONDITIONAL)}">个性化菜单</a></li>
@@ -111,7 +111,7 @@
 	{/if}
 
 	{if $do == 'post'}
-	{if $type != MENU_CONDITIONAL}
+	{if $type != MENU_CONDITIONAL && !empty($default_menu)}
 	<ul class="btn-group we7-btn-group we7-margin-bottom">
 		<a href="{url 'platform/menu/post'}" class="btn active">当前默认菜单</a>
 		<a href="{url 'platform/menu/display'}" class="btn">菜单列表</a>
@@ -120,6 +120,21 @@
 	{/if}
 	<div class="conditionMenu" ng-controller="conditionMenuDesigner" id="conditionMenuDesigner" ng-cloak>
 		<div class="new">
+			{if empty($default_menu)}
+			<ol class="breadcrumb we7-breadcrumb">
+				<a href="{php echo url('platform/menu', array('type' => $_GPC['type']))}"><i class="wi wi-back-circle"></i></a>
+				<li>
+					<a href="{php echo url('platform/menu', array('type' => $_GPC['type']))}">自定义菜单</a>
+				</li>
+				<li>
+					{if !empty($id)}
+					编辑菜单
+					{else}
+					新建菜单
+					{/if}
+				</li>
+			</ol>
+			{/if}
 			<div class="we7-form">
 				<div class="form-group">
 					<label for="" class="control-label col-sm-2">菜单组名称</label>
@@ -447,8 +462,11 @@
 					</div>
 				</div>
 				<div class="menu-submit">
-					<input type="submit" name="" id="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{php echo ($type == 1 || empty($id) || $copy == 1)}" ng-click="context.submit();"/>
-					<input type="button" name="" id="" value="预&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;览" class="btn btn-primary" style="padding: 6px 50px;" data-toggle="modal" data-target="#mobileDiv"/>
+					{if empty($default_menu) && $type == 1}
+					<input type="submit" name="" value="仅&nbsp;&nbsp;&nbsp;保&nbsp;&nbsp;&nbsp;存" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{php echo ($type == 1 || empty($id) || $copy == 1)}" ng-click="context.submit('save');"/>
+					{/if}
+					<input type="submit" name="" value="发&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;布" class="btn btn-primary" style="padding: 6px 50px;" ng-if="{php echo ($type == 1 || empty($id) || $copy == 1)}" ng-click="context.submit('publish');"/>
+					<input type="button" name="" value="预&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;览" class="btn btn-primary" style="padding: 6px 50px;" data-toggle="modal" data-target="#mobileDiv"/>
 				</div>
 				<div class="modal fade" id="mobileDiv" role="dialog" aria-hidden="true">
 					<div class="mobile-preview" >

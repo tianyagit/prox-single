@@ -8,34 +8,19 @@ defined('IN_IA') or exit('Access Denied');
 
 class AccountTable extends We7Table {
 
-	public function searchAccountList($order = '', $type = '') {
+	public function searchAccountList() {
 		global $_W;
 		$this->query->from('uni_account', 'a')->select('a.uniacid')->leftjoin('account', 'b')
 				->on(array('a.uniacid' => 'b.uniacid', 'a.default_acid' => 'b.acid'))
 				->where('b.isdeleted !=', '1');
 
 		//普通用户和副站长查询时，要附加可操作公众条件
-		if (empty($_W['isfounder']) || user_is_vice_founder()) {
+		if (!user_is_founder($_W['uid']) || user_is_vice_founder()) {
 			$this->query->leftjoin('uni_account_users', 'c')->on(array('a.uniacid' => 'c.uniacid'))
 						->where('a.default_acid !=', '0')->where('c.uid', $_W['uid']);
-
 		} else {
 			$this->query->where('a.default_acid !=', '0');
-			if (!empty($type) && $type == 'expire') {
-				$this->query->leftjoin('uni_account_users', 'c')->on(array('a.uniacid' => 'c.uniacid'));
-			}
 		}
-
-		if (!empty($type) && $type == 'expire') {
-			$this->query->leftjoin('users', 'u')->on(array('c.uid' => 'u.uid'))
-					->where('c.role', 'owner')->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP);
-		}
-
-		if (!empty($type) && $type == 'isconnect') {
-			$this->query->where('b.isconnect =', '0');
-		}
-
-		$this->query->orderby('a.uniacid', $order);
 		$list = $this->query->getall('a.uniacid');
 		return $list;
 	}
@@ -59,15 +44,32 @@ class AccountTable extends We7Table {
 	}
 
 	/**
-	 * 获取某用户拥有的公众号(小程序)详细信息
-	 * @param $type
+	 * 获取某用户拥有的公众号的详细信息
 	 * @param $uniacids
 	 * @param $uid
 	 * @return mixed
 	 */
-	public function accountUniInfo($type, $uniacids, $uid) {
+	public function accountWechatsInfo($uniacids, $uid) {
 		return $this->query->from('uni_account', 'a')
-				->leftjoin(uni_account_tablename($type), 'w')
+				->leftjoin(uni_account_tablename(ACCOUNT_TYPE_OFFCIAL_NORMAL), 'w')
+				->on(array('w.uniacid' => 'a.uniacid'))
+				->leftjoin('uni_account_users', 'au')
+				->on(array('a.uniacid' => 'au.uniacid'))
+				->where(array('a.uniacid' => $uniacids))
+				->where(array('au.uid' => $uid))
+				->orderby('a.uniacid', 'asc')
+				->getall('acid');
+	}
+
+	/**
+	 * 获取某用户拥有的小程序的详细信息
+	 * @param $uniacids
+	 * @param $uid
+	 * @return mixed
+	 */
+	public function accountWxappInfo($uniacids, $uid) {
+		return $this->query->from('uni_account', 'a')
+				->leftjoin(uni_account_tablename(ACCOUNT_TYPE_APP_NORMAL), 'w')
 				->on(array('w.uniacid' => 'a.uniacid'))
 				->leftjoin('uni_account_users', 'au')
 				->on(array('a.uniacid' => 'au.uniacid'))
@@ -93,6 +95,27 @@ class AccountTable extends We7Table {
 		} else {
 			$this->query->where('a.title_initial', '');
 		}
+		return $this;
+	}
+
+	public function accountUniacidOrder($order = 'desc') {
+		$order = !empty($order) ? $order : 'desc';
+		$this->query->orderby('a.uniacid', $order);
+		return $this;
+	}
+
+	public function searchWithNoconnect() {
+		$this->query->where('b.isconnect =', '0');
+		return $this;
+	}
+
+	public function searchWithExprie() {
+		global $_W;
+		if (user_is_founder($_W['uid']) && !user_is_vice_founder()) {
+			$this->query->leftjoin('uni_account_users', 'c')->on(array('a.uniacid' => 'c.uniacid'));
+		}
+		$this->query->leftjoin('users', 'u')->on(array('c.uid' => 'u.uid'))
+					->where('c.role', 'owner')->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP);
 		return $this;
 	}
 }
