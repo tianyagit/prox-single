@@ -18,7 +18,9 @@ $_W = $_GPC = array();
 $_W['config'] = $config;
 $_W['charset'] = $_W['config']['setting']['charset'];
 
-$_W['config']['setting']['cache'] = 'mysql';
+if(!in_array($_W['config']['setting']['cache'], array('mysql', 'memcache', 'redis'))) {
+	$_W['config']['setting']['cache'] = 'mysql';
+}
 load()->func('cache');
 
 $cplen = strlen($_W['config']['cookie']['pre']);
@@ -415,11 +417,6 @@ function uni_user_see_more_info() {
 	return true;
 }
 
-/**
- * 将模板文件编译为 PHP 文件
- * @param string $from 模板文件(HTML)路径
- * @param string $to 编译后的 PHP 文件路径
- */
 function template_compile($from, $to, $inmodule = false) {
 	$path = dirname($to);
 	if (!is_dir($path)) {

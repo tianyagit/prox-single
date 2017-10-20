@@ -29,14 +29,14 @@ if ($do == 'upgrade') {
 	if (checksubmit('submit')) {
 		$upgrade = cloud_build();
 		if (is_error($upgrade)) {
-			itoast($upgrade['message'], '', 'error');
+			message($upgrade['message'], '', 'error');
 		}
 		if ($upgrade['upgrade']) {
-			itoast("检测到新版本: <strong>{$upgrade['version']} (Release {$upgrade['release']})</strong>, 请立即更新.", 'refresh');
+			message("检测到新版本: <strong>{$upgrade['version']} (Release {$upgrade['release']})</strong>, 请立即更新.", 'refresh');
 		} else {
 			cache_delete('checkupgrade:system');
 			cache_delete('cloud:transtoken');
-			itoast('检查结果: 恭喜, 你的程序已经是最新版本. ', 'refresh');
+			message('检查结果: 恭喜, 你的程序已经是最新版本. ', 'refresh');
 		}
 	}
 	cache_load('upgrade');
