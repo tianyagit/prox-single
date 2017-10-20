@@ -15,10 +15,9 @@ class AccountTable extends We7Table {
 				->where('b.isdeleted !=', '1');
 
 		//普通用户和副站长查询时，要附加可操作公众条件
-		if (empty($_W['isfounder']) || user_is_vice_founder()) {
+		if (!user_is_founder($_W['uid']) || user_is_vice_founder()) {
 			$this->query->leftjoin('uni_account_users', 'c')->on(array('a.uniacid' => 'c.uniacid'))
 						->where('a.default_acid !=', '0')->where('c.uid', $_W['uid']);
-
 		} else {
 			$this->query->where('a.default_acid !=', '0');
 		}
@@ -112,7 +111,7 @@ class AccountTable extends We7Table {
 
 	public function searchWithExprie() {
 		global $_W;
-		if (!empty($_W['isfounder']) && !user_is_vice_founder()) {
+		if (user_is_founder($_W['uid']) && !user_is_vice_founder()) {
 			$this->query->leftjoin('uni_account_users', 'c')->on(array('a.uniacid' => 'c.uniacid'));
 		}
 		$this->query->leftjoin('users', 'u')->on(array('c.uid' => 'u.uid'))
