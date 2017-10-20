@@ -93,6 +93,15 @@ if ($do == 'post') {
 	$type = intval($_GPC['type']);
 	$id = intval($_GPC['id']);
 	$copy = intval($_GPC['copy']);
+	if (empty($type)) {
+		$update_self_menu = menu_update_currentself();
+		if (is_error($update_self_menu)) {
+			itoast($update_self_menu['message'], '', 'info');
+		}
+		$type = MENU_CURRENTSELF;
+		$default_menu = menu_default();
+		$id = $default_menu['id'];
+	}
 	$params = array();
 	if ($id > 0) {
 		$menu = menu_get($id);

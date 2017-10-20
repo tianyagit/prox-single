@@ -39,6 +39,9 @@ class MenuTable extends We7Table {
 		return $result;
 	}
 	public function accountDefaultMenuInfo() {
-
+		global $_W;
+		$this->query->from($this->account_menu_table)->where('uniacid', $_W['uniacid'])->where('type', MENU_CURRENTSELF)->where('status', STATUS_ON);
+		$result = $this->query->get();
+		return $result;
 	}
 }

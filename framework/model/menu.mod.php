@@ -54,6 +54,16 @@ function menu_get($id) {
 	}
 }
 
+/*
+ * 获取公众号当前生效的默认菜单
+ * @return array()
+ */
+function menu_default() {
+	$result = array();
+	$result = table('menu')->accountDefaultMenuInfo();
+	return $result;
+}
+
 /**
  * 构造可直接请求自定义菜单创建接口的数据
  * @param array $data_array

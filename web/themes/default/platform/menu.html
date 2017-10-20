@@ -1,14 +1,18 @@
 {template 'common/header'}
 <div id="wechat_menu">
-	{if $do == 'display'}
-	<div class="we7-page-title">
-		自定义菜单
-	</div>
+	<div class="we7-page-title">自定义菜单</div>
 	<ul class="we7-page-tab">
-		<li {if $type == '1'}class="active" {/if}><a href="{url 'platform/menu' array('type' => '1')}">默认菜单</a></li>
-		<li {if $type == '3'}class="active"{/if}><a href="{url 'platform/menu' array('type' => '3')}">个性化菜单</a></li>
+		<li {if $type == MENU_CURRENTSELF}class="active" {/if}><a href="{url 'platform/menu/post'}">默认菜单</a></li>
+		<li {if $type == MENU_CONDITIONAL}class="active"{/if}><a href="{url 'platform/menu' array('type' => MENU_CONDITIONAL)}">个性化菜单</a></li>
 	</ul>
+	{if $do == 'display'}
 	<div class="clearfix" ng-controller="menuDisplay" id="menuDisplay">
+		{if $type != MENU_CONDITIONAL}
+		<ul class="btn-group we7-btn-group we7-margin-bottom">
+			<a href="{url 'platform/menu/post'}" class="btn">当前默认菜单</a>
+			<a href="{url 'platform/menu/display'}" class="btn active">菜单列表</a>
+		</ul>
+		{/if}	
 		<div class="we7-padding-bottom clearfix">
 			<form action="./index.php" method="get" class="form-horizontal" role="form">
 				<div class="input-group pull-left col-sm-4">
@@ -21,10 +25,10 @@
 				</div>
 			</form>
 			<div class="pull-right">
-				{if $type == '1'}
-				<a href="{php echo url('platform/menu/post', array('type' => 1));}" class="btn btn-primary we7-padding-horizontal">+添加默认菜单</a>
-				{elseif $type == '3'}
-				<a href="{php echo url('platform/menu/post', array('type' => 3));}" class="btn btn-primary we7-padding-horizontal">+添加个性化菜单</a>
+				{if $type == MENU_CURRENTSELF}
+				<a href="{php echo url('platform/menu/post', array('type' => MENU_CURRENTSELF));}" class="btn btn-primary we7-padding-horizontal">+添加默认菜单</a>
+				{elseif $type == MENU_CONDITIONAL}
+				<a href="{php echo url('platform/menu/post', array('type' => MENU_CONDITIONAL));}" class="btn btn-primary we7-padding-horizontal">+添加个性化菜单</a>
 				{/if}
 			</div>
 		</div>
@@ -38,17 +42,18 @@
 				<th class="text-left">显示对象</th>
 				<th>
 					是否在微信生效
-					{if $type == '1'}<div class="color-gray">(只能生效一个默认菜单)</div>{/if}
+					{if $type == MENU_CURRENTSELF}<div class="color-gray">(只能生效一个默认菜单)</div>{/if}
 				</th>
 				<th class="text-right">操作</th>
 			</tr>
 			{loop $data $da}
+			{if $da['type'] == MENU_CURRENTSELF && $da['status'] == STATUS_ON}{php continue;}{/if}
 			<tr>
 				<td class="text-left">
 					{if empty($da['title'])}
-					{if $da['type'] == 1}
+					{if $da['type'] == MENU_CURRENTSELF}
 					默认菜单
-					{elseif $da['type'] == 2}
+					{elseif $da['type'] == MENU_HISTORY}
 					默认菜单(历史记录)
 					{else}
 					个性化菜单
@@ -58,7 +63,7 @@
 					{/if}
 				</td>
 				<td class="text-left">
-					{if $da['type'] == 3}
+					{if $da['type'] == MENU_CONDITIONAL}
 					{if $da['sex'] > 0}性别:{$names['sex'][$da['sex']]} ;{/if}
 					{if $da['group_id'] != -1}粉丝分组:{if $da['group_id'] == -1}不限{else}{$groups[$da['group_id']]['name']}{/if} ;{/if}
 					{if $da['client_platform_type'] > 0}客户端:{$names['client_platform_type'][$da['client_platform_type']]} ;{/if}
@@ -68,33 +73,31 @@
 					{/if}
 				</td>
 				<td>
-					{if $da['type'] == 1}
-					{if $da['status'] == 0}
-					<a href="javascript:;" class="js-switch-{$da['id']} color-default" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})">生效并置顶</a>
-					{else}
-					<span class="color-green">菜单生效中</span>
+					{if $da['type'] == MENU_CURRENTSELF}
+					{if $da['status'] == STATUS_OFF}
+					<a href="javascript:;" class="js-switch-{$da['id']} color-default" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})">点击生效</a>
 					{/if}
 					{else}
 					<label style="margin: 0; vertical-align: middle;">
 						<input name="js-checkbox-{$da['id']}" id="" class="form-control" type="checkbox"  style="display: none;" data-id="{$da['id']}" data-status="{$da['status']}" ng-click="changeStatus({$da['id']}, {$da['status']}, {$da['type']})">
-						<div class="switch js-switch-{$da['id']} {if intval($da['status'] == 1)}switchOn{/if}"></div>
-						{/if}
+						<div class="switch js-switch-{$da['id']} {if intval($da['status'] == STATUS_ON)}switchOn{/if}"></div>
+					{/if}
 					</label>
 				</td>
 				<td>
 					<div class="link-group">
-						{if $da['type'] == 1}
+						{if $da['type'] == MENU_CURRENTSELF}
 						<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> 1));}">编辑</a>
 						{else}
 						<a href="{php echo url('platform/menu/post', array('id' => $da['id'], 'type'=> $da['type']));}">查看</a>
 						{/if}
-						{if $da['type'] == 3}
+						{if $da['type'] == MENU_CONDITIONAL}
 						{if $_GPC['status'] != 'history'}
 						<a href="{php echo url('platform/menu/copy', array('id' => $da['id']));}" onclick="if(!confirm('确定复制吗')) return false;">复制</a>
 						{/if}
 						{/if}
-						{if $da['type'] != 1 || ($da['type'] == 1 && $da['status'] == '0')}
-						<a href="{php echo url('platform/menu/delete', array('id' => $da['id']));}" class="del" onclick="if(!confirm('{if $da['type'] == 1}删除默认菜单会清空所有菜单记录，确定吗？{else}确定删除菜单?{/if}')) return false;">删除</a>
+						{if $da['type'] != MENU_CURRENTSELF || ($da['type'] == MENU_CURRENTSELF && $da['status'] == STATUS_OFF)}
+						<a href="{php echo url('platform/menu/delete', array('id' => $da['id']));}" class="del" onclick="if(!confirm('{if $da['type'] == MENU_CURRENTSELF}删除默认菜单会清空所有菜单记录，确定吗？{else}确定删除菜单?{/if}')) return false;">删除</a>
 						{/if}
 					</div>
 				</td>
@@ -108,21 +111,15 @@
 	{/if}
 
 	{if $do == 'post'}
+	{if $type != MENU_CONDITIONAL}
+	<ul class="btn-group we7-btn-group we7-margin-bottom">
+		<a href="{url 'platform/menu/post'}" class="btn active">当前默认菜单</a>
+		<a href="{url 'platform/menu/display'}" class="btn">菜单列表</a>
+	</ul>
+	<button class="btn btn-primary pull-right"><span>+</span>添加默认菜单</button>
+	{/if}
 	<div class="conditionMenu" ng-controller="conditionMenuDesigner" id="conditionMenuDesigner" ng-cloak>
 		<div class="new">
-			<ol class="breadcrumb we7-breadcrumb">
-				<a href="{php echo url('platform/menu', array('type' => $_GPC['type']))}"><i class="wi wi-back-circle"></i></a>
-				<li>
-					<a href="{php echo url('platform/menu', array('type' => $_GPC['type']))}">自定义菜单</a>
-				</li>
-				<li>
-					{if !empty($id)}
-					编辑菜单
-					{else}
-					新建菜单
-					{/if}
-				</li>
-			</ol>
 			<div class="we7-form">
 				<div class="form-group">
 					<label for="" class="control-label col-sm-2">菜单组名称</label>
