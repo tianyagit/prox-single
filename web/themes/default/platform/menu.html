@@ -7,15 +7,22 @@
 	</ul>
 	{if $do == 'display'}
 	<div class="clearfix" ng-controller="menuDisplay" id="menuDisplay">
-		{if $type != MENU_CONDITIONAL}
-		<ul class="btn-group we7-btn-group we7-margin-bottom">
-			<a href="{url 'platform/menu/post'}" class="btn">当前默认菜单</a>
-			<a href="{url 'platform/menu/display'}" class="btn active">菜单列表</a>
-		</ul>
-		{/if}	
-		<div class="we7-padding-bottom clearfix">
-			<form action="./index.php" method="get" class="form-horizontal" role="form">
-				<div class="input-group pull-left col-sm-4">
+		<div class="we7-margin-bottom clearfix">
+			{if $type != MENU_CONDITIONAL}
+			<ul class="btn-group we7-btn-group" style="margin-bottom: 0;">
+				<a href="{url 'platform/menu/post'}" class="btn">当前默认菜单</a>
+				<a href="{url 'platform/menu/display'}" class="btn active">菜单列表</a>
+			</ul>
+			{/if}
+			<div class="pull-right">
+				{if $type == MENU_CURRENTSELF}
+				<a href="{php echo url('platform/menu/post', array('type' => MENU_CURRENTSELF));}" class="btn btn-primary we7-padding-horizontal">+添加默认菜单</a>
+				{elseif $type == MENU_CONDITIONAL}
+				<a href="{php echo url('platform/menu/post', array('type' => MENU_CONDITIONAL));}" class="btn btn-primary we7-padding-horizontal">+添加个性化菜单</a>
+				{/if}
+			</div>
+			<form action="./index.php" method="get" class="form-horizontal col-sm-4 pull-right" role="form">
+				<div class="input-group">
 					<input type="hidden" name="c" value="platform">
 					<input type="hidden" name="a" value="menu">
 					<input type="hidden" name="type" value="{$_GPC['type']}">
@@ -24,13 +31,6 @@
 					<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 				</div>
 			</form>
-			<div class="pull-right">
-				{if $type == MENU_CURRENTSELF}
-				<a href="{php echo url('platform/menu/post', array('type' => MENU_CURRENTSELF));}" class="btn btn-primary we7-padding-horizontal">+添加默认菜单</a>
-				{elseif $type == MENU_CONDITIONAL}
-				<a href="{php echo url('platform/menu/post', array('type' => MENU_CONDITIONAL));}" class="btn btn-primary we7-padding-horizontal">+添加个性化菜单</a>
-				{/if}
-			</div>
 		</div>
 		<table class="table we7-table table-hover vertical-middle we7-form">
 			<col width="200px"/>
