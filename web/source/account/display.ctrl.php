@@ -62,7 +62,7 @@ if ($do == 'display') {
 		$account_table->searchWithLetter($letter);
 	}
 
-	$account_table->accountUniacidOrder();
+	$account_table->accountRankOrder();
 	$account_table->searchWithPage($pindex, $psize);
 	$account_list = $account_table->searchAccountList();
 	
