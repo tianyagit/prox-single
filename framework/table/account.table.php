@@ -58,6 +58,25 @@ class AccountTable extends We7Table {
 		return $this->query->from('uni_account', 'u')->leftjoin('account', 'a')->on(array('u.default_acid' => 'a.acid'))->where('a.isdeleted', 0)->getall('uniacid');
 	}
 
+	/**
+	 * 获取某用户拥有的公众号(小程序)详细信息
+	 * @param $type
+	 * @param $uniacids
+	 * @param $uid
+	 * @return mixed
+	 */
+	public function accountUniInfo($type, $uniacids, $uid) {
+		return $this->query->from('uni_account', 'a')
+				->leftjoin(uni_account_tablename($type), 'w')
+				->on(array('w.uniacid' => 'a.uniacid'))
+				->leftjoin('uni_account_users', 'au')
+				->on(array('a.uniacid' => 'au.uniacid'))
+				->where(array('a.uniacid' => $uniacids))
+				->where(array('au.uid' => $uid))
+				->orderby('a.uniacid', 'asc')
+				->getall('acid');
+	}
+
 	public function searchWithKeyword($title) {
 		$this->query->where('a.name LIKE', "%{$title}%");
 		return $this;
