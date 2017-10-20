@@ -77,7 +77,7 @@ if(!empty($_W['config']['setting']['memory_limit']) && function_exists('ini_get'
 		@ini_set('memory_limit', $_W['config']['setting']['memory_limit']);
 	}
 }
-if (isset($_W['config']['setting']['https'])) {
+if (isset($_W['config']['setting']['https']) && $_W['config']['setting']['https'] == '1') {
 	$_W['ishttps'] = $_W['config']['setting']['https'];
 } else {
 	$_W['ishttps'] = $_SERVER['SERVER_PORT'] == 443 ||
