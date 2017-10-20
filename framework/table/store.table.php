@@ -23,6 +23,14 @@ class StoreTable extends We7Table {
 		return $goods_list;
 	}
 
+	public function searchWithOrderid($orderid) {
+		if (!empty($orderid)) {
+			$this->query->where('orderid', $orderid);
+			return $this;
+		}
+		return true;
+	}
+
 	public function searchWithKeyword($title) {
 		if (!empty($title)) {
 			$this->query->where('title LIKE', "%{$title}%");

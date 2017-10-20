@@ -34,6 +34,7 @@ $_GPC = ihtmlspecialchars($_GPC);
 
 $_W['isajax'] = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 $_W['ispost'] = $_SERVER['REQUEST_METHOD'] == 'POST';
+$_W['token'] = token();
 
 $session = json_decode(authcode($_GPC['__session']), true);
 if (is_array($session)) {
@@ -41,6 +42,7 @@ if (is_array($session)) {
 	if (is_array($user) && $session['hash'] === md5($user['password'] . $user['salt'])) {
 		$_W['uid'] = $user['uid'];
 		$_W['username'] = $user['username'];
+		$_W['user'] = $user;
 	}
 	unset($user);
 }
@@ -49,15 +51,17 @@ unset($session);
 $allow_actions = array(
 	'upgrade',
 	'process',
+	'login'
 );
 $controller = 'cloud';
 $action = !empty($_GPC['a']) && in_array($_GPC['a'], $allow_actions) ? $_GPC['a'] : 'upgrade';
 $do = !empty($_GPC['do']) ? $_GPC['do'] : '';
 
 $founders = explode(',', $_W['config']['setting']['founder']);
-if (empty($_W['uid']) || !in_array($_W['uid'], $founders, true)) {
-	message('请使用创始人帐号登录', url('user/login'), 'error');
+if ($action !== 'login' && (empty($_W['uid']) || !in_array($_W['uid'], $founders, true))) {
+	message('请使用创始人帐号登录', 'cloud.php?a=login', 'error');
 }
+$_W['isfounder'] = true;
 
 header('Content-Type: text/html; charset=' . $_W['charset']);
 
@@ -324,6 +328,20 @@ function tablename($table) {
 	return "`{$GLOBALS['_W']['config']['db']['master']['tablepre']}{$table}`";
 }
 
+function checkcaptcha($code) {
+	global $_W, $_GPC;
+	session_start();
+	$codehash = md5(strtolower($code) . $_W['config']['setting']['authkey']);
+	if (!empty($_GPC['__code']) && $codehash == $_SESSION['__code']) {
+		$return = true;
+	} else {
+		$return = false;
+	}
+	$_SESSION['__code'] = '';
+	isetcookie('__code', '');
+	return $return;
+}
+
 /**
  * @filesource web/template.func.php
  */
@@ -363,6 +381,38 @@ function template($filename, $flag = TEMPLATE_DISPLAY) {
 			return $compile;
 			break;
 	}
+}
+
+function token($specialadd = '') {
+	global $_W;
+	if(!defined('IN_MOBILE')) {
+		return substr(md5($_W['config']['setting']['authkey'] . $specialadd), 8, 8);
+	} else {
+		if(!empty($_SESSION['token'])) {
+			$count  = count($_SESSION['token']) - 5;
+			asort($_SESSION['token']);
+			foreach($_SESSION['token'] as $k => $v) {
+				if(TIMESTAMP - $v > 300 || $count > 0) {
+					unset($_SESSION['token'][$k]);
+					$count--;
+				}
+			}
+		}
+		$key = substr(random(20), 0, 4);
+		$_SESSION['token'][$key] = TIMESTAMP;
+		return $key;
+	}
+}
+
+function isetcookie($key, $value, $expire = 0, $httponly = false) {
+	global $_W;
+	$expire = $expire != 0 ? (TIMESTAMP + $expire) : 0;
+	$secure = $_SERVER['SERVER_PORT'] == 443 ? 1 : 0;
+	return setcookie($_W['config']['cookie']['pre'] . $key, $value, $expire, $_W['config']['cookie']['path'], $_W['config']['cookie']['domain'], $secure, $httponly);
+}
+
+function uni_user_see_more_info() {
+	return true;
 }
 
 /**
@@ -498,36 +548,7 @@ function buildframes($framename = ''){
 }
 
 function _calc_current_frames(&$frames) {
-	global $controller, $action;
-	if (! empty($frames['section']) && is_array($frames['section'])) {
-		foreach ($frames['section'] as &$frame) {
-			if (empty($frame['menu'])) {
-				continue;
-			}
-			foreach ($frame['menu'] as &$menu) {
-				$query = parse_url($menu['url'], PHP_URL_QUERY);
-				parse_str($query, $urls);
-				if (empty($urls)) {
-					continue;
-				}
-				if (defined('ACTIVE_FRAME_URL')) {
-					$query = parse_url(ACTIVE_FRAME_URL, PHP_URL_QUERY);
-					parse_str($query, $get);
-				} else {
-					$get = $_GET;
-					$get['c'] = $controller;
-					$get['a'] = $action;
-				}
-				if (! empty($do)) {
-					$get['do'] = $do;
-				}
-				$diff = array_diff_assoc($urls, $get);
-				if (empty($diff)) {
-					$menu['active'] = ' active';
-				}
-			}
-		}
-	}
+	
 }
 
 /**

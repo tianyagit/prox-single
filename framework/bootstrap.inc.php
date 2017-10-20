@@ -80,11 +80,11 @@ if(!empty($_W['config']['setting']['memory_limit']) && function_exists('ini_get'
 if (isset($_W['config']['setting']['https'])) {
 	$_W['ishttps'] = $_W['config']['setting']['https'];
 } else {
-	$_W['ishttps'] = $_SERVER['SERVER_PORT'] == 443 || 
-					(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') ||
-					strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https' ||
-					strtolower($_SERVER['HTTP_X_CLIENT_SCHEME']) == 'https' //阿里云判断方式
-					? true : false;
+	$_W['ishttps'] = $_SERVER['SERVER_PORT'] == 443 ||
+	(isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') ||
+	strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https' ||
+	strtolower($_SERVER['HTTP_X_CLIENT_SCHEME']) == 'https' //阿里云判断方式
+			? true : false;
 }
 
 $_W['isajax'] = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
