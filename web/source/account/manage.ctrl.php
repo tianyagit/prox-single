@@ -38,10 +38,20 @@ if ($do == 'display') {
 		$account_table->searchWithLetter($_GPC['letter']);
 	}
 
-	$order = trim($_GPC['order']) ? $_GPC['order'] : 'desc';
+	$order = trim($_GPC['order']);
+	$account_table->accountUniacidOrder($order);
+
 	$type = trim($_GPC['type']);
+	if ($type == 'noconnect') {
+		$account_table->searchWithNoconnect();
+	}
+
+	if ($type == 'expire') {
+		$account_table->searchWithExprie();
+	}
+
 	$account_table->searchWithPage($pindex, $psize);
-	$list = $account_table->searchAccountList($order, $type);
+	$list = $account_table->searchAccountList();
 
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);

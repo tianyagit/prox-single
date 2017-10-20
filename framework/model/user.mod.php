@@ -403,10 +403,10 @@ function user_account_detail_info($uid) {
 
 	$wxapps = $wechats = array();
 	if (!empty($wxapp_user_info)) {
-		$wxapps = table('account')->accountUniInfo(ACCOUNT_TYPE_APP_NORMAL, array_keys($wxapp_user_info), $uid);
+		$wxapps = table('account')->accountWxappInfo(array_keys($wxapp_user_info), $uid);
 	}
 	if (!empty($app_user_info)) {
-		$wechats = table('account')->accountUniInfo(ACCOUNT_TYPE_OFFCIAL_NORMAL, array_keys($app_user_info), $uid);
+		$wechats = table('account')->accountWechatsInfo(array_keys($app_user_info), $uid);
 	}
 	$accounts = array_merge($wxapps, $wechats);
 	if (!empty($accounts)) {
