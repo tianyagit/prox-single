@@ -199,6 +199,7 @@ if ($do == 'fetch' || $do == 'upload') {
 		'type' => $type == 'image' ? 1 : ($type == 'audio'||$type == 'voice' ? 2 : 3),
 		'createtime' => TIMESTAMP 
 	));
+	$info['state'] = 'SUCCESS';//兼容ueditor 拖动上传
 	die(json_encode($info));
 }
 
