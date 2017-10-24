@@ -186,7 +186,7 @@ function cloud_build() {
 		cache_write('upgrade', $upgrade);
 		cache_write('cloud:transtoken', authcode($ret['token'], 'ENCODE'));
 	}
-	
+
 	return $ret;
 }
 
@@ -472,7 +472,7 @@ function cloud_t_info($name) {
 function cloud_t_build($name) {
 	$sql = 'SELECT * FROM ' . tablename('site_templates') . ' WHERE `name`=:name';
 	$theme = pdo_fetch($sql, array(':name' => $name));
-	
+
 	$pars = _cloud_build_params();
 	$pars['method'] = 'theme.build';
 	$pars['theme'] = $name;
@@ -565,7 +565,7 @@ function cloud_w_info($name) {
 function cloud_w_build($name) {
 	$sql = 'SELECT * FROM ' . tablename('webtheme_homepages') . ' WHERE `name`=:name';
 	$webtheme = pdo_fetch($sql, array(':name' => $name));
-	
+
 	$pars = _cloud_build_params();
 	$pars['method'] = 'webtheme.build';
 	$pars['webtheme'] = $name;
@@ -620,17 +620,17 @@ function cloud_w_upgradeinfo($name) {
 
 function cloud_sms_send($mobile, $content, $postdata = array()) {
 	global $_W;
-	
+
 	if(!preg_match('/^1\d{10}$/', $mobile) || empty($content)) {
 		return error(1, '发送短信失败, 原因: 手机号错误或内容为空.');
 	}
-	
+
 	$row = pdo_get('uni_settings' , array('uniacid' => $_W['uniacid']), array('notify'));
 	$row['notify'] = @iunserializer($row['notify']);
 
 	$config = $row['notify']['sms'];
 	$balance = intval($config['balance']);
-	
+
 	$sign = $config['signature'];
 	if(empty($sign)) {
 		$sign = '涛盛微擎团队';
@@ -647,14 +647,14 @@ function cloud_sms_send($mobile, $content, $postdata = array()) {
 	} else {
 		$pars['content'] = "{$content} 【{$sign}】";
 	}
-	
+
 	$response = cloud_request('http://s.we7.cc/gateway.php', $pars);
 	if (is_error($response)) {
 		return error($response['errno'], '短信发送失败, 原因:'.$response['message']);
 	}
-	
+
 	$result = json_decode($response['content'], true);
-	
+
 	if (is_error($result)) {
 		return error($result['errno'], $result['message']);
 	}
@@ -674,7 +674,7 @@ function cloud_sms_send($mobile, $content, $postdata = array()) {
  */
 function cloud_sms_info() {
 	global $_W;
-	
+
 	$pars = _cloud_build_params();
 	$pars['method'] = 'sms.info';
 	$dat = cloud_request('http://s.we7.cc/gateway.php?', $pars);
@@ -683,7 +683,7 @@ function cloud_sms_info() {
 		$dat = setting_load($setting_key);
 		return $dat[$setting_key];
 	}
-	
+
 	return array();
 }
 
@@ -859,7 +859,7 @@ function cloud_auth_url($forward, $data = array()){
 		$auth = array_merge($auth, $data);
 	}
 	$query = base64_encode(json_encode($auth));
-	$auth_url = '//s.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
+	$auth_url = $_W['sitescheme'] . 's.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
 	return $auth_url;
 }
 
@@ -879,7 +879,7 @@ function cloud_module_setting_prepare($module, $binding) {
 		'module' => $module,
 	);
 	$iframe_auth_url = cloud_auth_url('module', $auth);
-	
+
 	return $iframe_auth_url;
 }
 
@@ -915,7 +915,7 @@ function cloud_resource_to_local($uniacid, $type, $url){
 	$fullname = ATTACHMENT_ROOT . $pathname;
 
 	mkdirs(dirname($fullname));
-	
+
 	load()->func('communication');
 	$response = ihttp_get($url);
 	if (is_error($response)) {
@@ -966,7 +966,7 @@ function cloud_bakup_files($files) {
 			}
 		}
 	}
-	
+
 	$path = IA_ROOT . '/data/patch/' . date('Ymd') . '/' . date('Hi') . '_' . $hash;
 	load()->func('file');
 	if (!is_dir($path) && mkdirs($path)) {
@@ -1006,7 +1006,7 @@ function cloud_flow_master_post($flow_master) {
 }
 
 /**
- * 
+ *
  * @param array $flow_master
  * @return array
  */
@@ -1041,7 +1041,7 @@ function cloud_flow_uniaccount_post($uniaccount) {
 	isset($uniaccount['original']) && $pars['uniaccount']['original'] = $uniaccount['original']; // 公众号账号
 	isset($uniaccount['gh_type']) && $pars['uniaccount']['gh_type'] = $uniaccount['gh_type']; // 公众号类型, 服务,认证等
 	isset($uniaccount['ad_tags']) && $pars['uniaccount']['ad_tags'] = $uniaccount['ad_tags']; // array(3 => '游戏', 4 => '地产')
-	isset($uniaccount['enable']) && $pars['uniaccount']['enable'] = $uniaccount['enable']; // 1. 停用, 2. 开启. 
+	isset($uniaccount['enable']) && $pars['uniaccount']['enable'] = $uniaccount['enable']; // 1. 停用, 2. 开启.
 	$dat = cloud_request('http://s.we7.cc/gateway.php', $pars, array(), 300);
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
