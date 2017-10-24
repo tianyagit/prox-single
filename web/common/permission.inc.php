@@ -32,6 +32,7 @@ $we7_file_permission = array(
 			'display',
 			'manage',
 			'post-step',
+			'post-user',
 		),
 		'operator' => array(
 			'display',
