@@ -98,6 +98,11 @@ class AccountTable extends We7Table {
 		return $this;
 	}
 
+	public function accountRankOrder() {
+		$this->query->orderby('a.rank', 'desc');
+		return $this;
+	}
+
 	public function accountUniacidOrder($order = 'desc') {
 		$order = !empty($order) ? $order : 'desc';
 		$this->query->orderby('a.uniacid', $order);
