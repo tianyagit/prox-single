@@ -76,7 +76,7 @@
 		</tr>
 		</tbody>
 	</table>
-	<table c class="table we7-table table-hover" >
+	<table class="table we7-table table-hover">
 		<tr>
 			<th colspan="5" class="text-left">
 				<span class="we7-padding-right">应用权限组</span>
@@ -142,7 +142,7 @@
 		</tbody>
 	</table>
 
-	<table class="table we7-table table-hover account-package-extra">
+	<table class="table we7-table table-hover account-package-extra" ng-show="extend.modules != ''">
 		<tr>
 			<th colspan="5" class="text-left">
 				<span class="we7-padding-right">附加权限</span>
@@ -211,6 +211,7 @@
 								<div class="item {if is_array($current_module_names) && in_array($module_name, $current_module_names)}active{/if}"
 								     data-title="{$module['title']}"
 								     data-name="{$module['name']}"
+								     ng-click="itemclick()"
 								     onclick="$(this).toggleClass('active')">
 									<img ng-src="{$module['logo']}" alt="" class="icon"/>
 									<div class="name">{$module['title']}</div>
@@ -238,6 +239,15 @@
 							{/loop}
 						</div>
 					</div>
+				</div>
+				<div class="material-pager text-right clearfix" ng-show="jurindex==0">
+					<div class="pull-left we7-form">
+						<input type="checkbox" id="selected-all" ng-model="allmodule" ng-change="allmodulechange(allmodule)">
+						<label for="selected-all">全选</label>
+					</div>
+					<ul class="pagination">
+
+					</ul>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" ng-click="addExtend()">确定</button>

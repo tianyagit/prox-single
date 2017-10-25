@@ -150,24 +150,25 @@ function uni_fetch($uniacid = 0) {
 }
 
 /**
- * 获取指定公号在站内商城购买的模块
+ * 获取指定公号在站内商城购买的指定类型商品
  * @param int $uniacid 公众号id
+ * @param string $type 物品类型
  * @return array 模块列表
  */
-function uni_site_store_buy_module($uniacid) {
-	$cachekey = cache_system_key($uniacid . ':site_store_buy_modules');
-	$site_store_buy_modules = cache_load($cachekey);
-	if (!empty($site_store_buy_modules)) {
-		return $site_store_buy_modules;
+function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
+	$cachekey = cache_system_key($uniacid . ':site_store_buy_' . $type);
+	$site_store_buy_goods = cache_load($cachekey);
+	if (!empty($site_store_buy_goods)) {
+		return $site_store_buy_goods;
 	}
-	$site_store_buy_modules = array();
-	$site_store_order = pdo_getall('site_store_order', array('endtime >=' => time(), 'uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH), array(), 'goodsid');
-	if (!empty($site_store_order) && is_array($site_store_order)) {
-		$site_store_buy_modules = pdo_getall('site_store_goods', array('id' => array_keys($site_store_order), 'type' => STORE_TYPE_MODULE), array(), 'module');
-		$site_store_buy_modules = array_unique(array_keys($site_store_buy_modules));
+	$store_table = table('store');
+	if ($type != STORE_TYPE_API) {
+		$store_table->searchWithEndtime();
 	}
-	cache_write($cachekey, $site_store_buy_modules);
-	return $site_store_buy_modules;
+	$site_store_buy_goods = $store_table->searchAccountBuyGoods($uniacid, $type);
+	$site_store_buy_goods = array_keys($site_store_buy_goods);
+	cache_write($cachekey, $site_store_buy_goods);
+	return $site_store_buy_goods;
 }
 
 /**
@@ -188,7 +189,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
-		$site_store_buy_modules = uni_site_store_buy_module($uniacid);
+		$site_store_buy_goods = uni_site_store_buy_goods($uniacid);
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
@@ -208,7 +209,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 					}
 				}
 				$user_modules = user_modules($owner_uid);
-				$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_modules);
+				$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_goods);
 				if (!empty($modules)) {
 					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
 				} else {

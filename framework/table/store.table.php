@@ -23,12 +23,23 @@ class StoreTable extends We7Table {
 		return $goods_list;
 	}
 
-	public function searchWithOrderid($orderid) {
-		if (!empty($orderid)) {
-			$this->query->where('orderid', $orderid);
-			return $this;
-		}
-		return true;
+	/**获取公众号在站内商城购买的物品
+	 * @param $uniacid string 1.指定的公众号
+	 * @param $type string 1.商品类型
+	 */
+	public function searchAccountBuyGoods($uniacid, $type) {
+		$type_name = array(
+			STORE_TYPE_MODULE => 'module',
+			STORE_TYPE_WXAPP_MODULE => 'module',
+			STORE_TYPE_PACKAGE => 'module_group',
+		);
+		$this->query->from('site_store_goods', 'g')->leftjoin('site_store_order', 'r')->on(array('g.id' => 'r.goodsid'))->where('r.uniacid', $uniacid)->where('g.type', $type)->where('r.type', STORE_ORDER_FINISH);
+		return  $this->query->getall($type_name[$type]);
+	}
+
+	public function searchWithEndtime() {
+		$this->query->where('r.endtime >=', time());
+		return $this;
 	}
 
 	public function searchWithKeyword($title) {
@@ -52,6 +63,14 @@ class StoreTable extends We7Table {
 		}
 	}
 
+	public function searchWithOrderid($orderid) {
+		if (!empty($orderid)) {
+			$this->query->where('orderid', $orderid);
+			return $this;
+		}
+		return true;
+	}
+
 	public function goodsInfo($id) {
 		$id = intval($id);
 		$this->query->from('site_store_goods')->where('id', $id);
@@ -59,7 +78,8 @@ class StoreTable extends We7Table {
 	}
 
 	public function searchOrderList($pageindex = 0, $pagesize = 0) {
-		$this->query->from('site_store_order');
+		$this->query->from('site_store_order')->orderby('type', 'DESC');
+
 		if (!empty($pageindex) && !empty($pagesize)) {
 			$this->searchWithPage($pageindex, $pagesize);
 		}
