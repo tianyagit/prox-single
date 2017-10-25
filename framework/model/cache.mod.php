@@ -171,11 +171,11 @@ function cache_build_frame_menu() {
 	$system_menu_db = pdo_getall('core_menu', array('permission_name !=' => ''), array(), 'permission_name');
 	$system_menu = require IA_ROOT . '/web/common/frames.inc.php';
 	if (!empty($system_menu) && is_array($system_menu)) {
-		$system_displayoser = 0;
+		$system_displayoder = 1;
 		foreach ($system_menu as $menu_name => $menu) {
 			$system_menu[$menu_name]['is_system'] = true;
 			$system_menu[$menu_name]['is_display'] = empty($system_menu_db[$menu_name]) || !empty($system_menu_db[$menu_name]['is_display']) ? true : false;
-			$system_menu[$menu_name]['displayorder'] = ++$system_displayoser;
+			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]['displayorder']) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
 
 			foreach ($menu['section'] as $section_name => $section) {
 				$displayorder = max(count($section['menu']), 1);
