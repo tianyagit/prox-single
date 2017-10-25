@@ -78,6 +78,11 @@ if ($do == 'display') {
 }
 
 if ($do == 'delete') {
+	if(isset($_GPC['uniacid'])) { //如果强制指定了uniacid
+		$requniacid = intval($_GPC['uniacid']);
+		reset_uniacid($requniacid);
+	}
+
 	$material_id = intval($_GPC['material_id']);
 	$server = $_GPC['server'] == 'local' ? 'local' : 'wechat';
 	$type = trim($_GPC['type']);

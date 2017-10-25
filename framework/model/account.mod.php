@@ -1024,3 +1024,18 @@ function uni_account_member_fields($uniacid) {
 	}
 	return $account_member_fields;
 }
+
+function reset_uniacid($uniacid) {
+	global $_W;
+	if($uniacid == 0) {
+		if($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER ) {
+			$_W['uniacid'] = 0;
+			return 0;
+		}
+	}else {
+		$accounts = uni_owned(0, false);
+		if(is_array($accounts) && isset($accounts[$uniacid])) {
+			$_W['uniacid'] = $uniacid;
+		}
+	}
+}

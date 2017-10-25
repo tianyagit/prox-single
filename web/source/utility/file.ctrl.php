@@ -47,18 +47,11 @@ if (preg_match('/^[a-zA-Z0-9_\/]{0,50}$/', $dest_dir, $out)) {
 
 $setting = $_W['setting']['upload'][$type];
 $uniacid = intval($_W['uniacid']);
-$requniacid = intval($_GPC['uniacid']);
-if($requniacid == 0) {
-	if($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER ) {
-		$uniacid = 0;
-		$_W['uniacid'] = 0;
-	}
-}else {
-	$accounts = uni_owned(0, false);
-	if(is_array($accounts) && isset($accounts[$requniacid])) {
-		$uniacid = $requniacid;
-		$_W['uniacid'] = $uniacid;
-	}
+
+if(isset($_GPC['uniacid'])) { //是否有强制指定uniacid
+	$requniacid = intval($_GPC['uniacid']);
+	reset_uniacid($requniacid);// 会改变$_W['uniacid'];
+	$uniacid = intval($_W['uniacid']);
 }
 
 
