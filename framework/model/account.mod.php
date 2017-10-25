@@ -1034,7 +1034,9 @@ function reset_uniacid($uniacid) {
 			return 0;
 		}
 	}else {
-		$accounts = uni_owned(0, false);
+		/* @var $account AccountTable*/
+		$account = table('account');
+		$accounts = $account->userOwnedAccount($_W['uid']);
 		if(is_array($accounts) && isset($accounts[$uniacid])) {
 			$_W['uniacid'] = $uniacid;
 		}
