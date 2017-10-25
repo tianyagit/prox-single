@@ -47,6 +47,20 @@ if (preg_match('/^[a-zA-Z0-9_\/]{0,50}$/', $dest_dir, $out)) {
 
 $setting = $_W['setting']['upload'][$type];
 $uniacid = intval($_W['uniacid']);
+$requniacid = intval($_GPC['uniacid']);
+if($requniacid == 0) {
+	if($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER ) {
+		$uniacid = 0;
+		$_W['uniacid'] = 0;
+	}
+}else {
+	$accounts = uni_owned(0, false);
+	if(is_array($accounts) && isset($accounts[$requniacid])) {
+		$uniacid = $requniacid;
+		$_W['uniacid'] = $uniacid;
+	}
+}
+
 
 // 设置多媒体上传目录
 if (!empty($option['global'])) {
@@ -493,7 +507,6 @@ if ($do == 'wechat_upload') {
 /*******************素材资源管理**********************/
 $type = $_GPC['type']; //资源转换 $type
 $resourceid = intval($_GPC['resource_id']); //资源ID
-$uniacid = intval($_W['uniacid']);
 $uid = intval($_W['uid']);
 $acid = intval($_W['acid']);
 $url = $_GPC['url'];
