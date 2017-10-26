@@ -114,12 +114,7 @@ function cloud_request($url, $post = '', $extra = array(), $timeout = 60) {
 
 function cloud_prepare() {
 	global $_W;
-	$setting = pdo_get('core_settings', array('key' => 'site'));
-	if (empty($setting)) {
-		$_W['setting']['site'] = array();
-	} else {
-		$_W['setting']['site'] = unserialize($setting['value']);
-	}
+	setting_load();
 	if(empty($_W['setting']['site']['key']) || empty($_W['setting']['site']['token'])) {
 		return error('-1', "您的站点只有在微擎云服务平台成功注册后，才能使用云服务的相应功能。");
 	}
@@ -864,7 +859,7 @@ function cloud_auth_url($forward, $data = array()){
 		$auth = array_merge($auth, $data);
 	}
 	$query = base64_encode(json_encode($auth));
-	$auth_url = $_W['sitescheme'] . 's.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
+	$auth_url = '//s.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
 	return $auth_url;
 }
 
