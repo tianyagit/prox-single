@@ -123,14 +123,16 @@ function uni_fetch($uniacid = 0) {
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 	$owner = user_single(array('uid' => $owneruid));
 	$account['uid'] = $owner['uid'];
-
 	$account['starttime'] = $owner['starttime'];
-	$account['endtime'] = $owner['endtime'];
-	$account['groups'] = mc_groups($uniacid);
+	if (!empty($account['endtime'])) {
+		$account['endtime'] = $account['endtime'] == '-1' ? 0 : $account['endtime'];
+	} else {
+		$account['endtime'] = $owner['endtime'];
+	}
 
+	$account['groups'] = mc_groups($uniacid);
 	$account['setting'] = uni_setting($uniacid);
 	$account['grouplevel'] = $account['setting']['grouplevel'];
-
 	$account['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
 
@@ -521,6 +523,7 @@ function uni_account_default($uniacid = 0) {
 		$account['type'] = $uni_account['type'];
 		$account['isconnect'] = $uni_account['isconnect'];
 		$account['isdeleted'] = $uni_account['isdeleted'];
+		$account['endtime'] = $uni_account['endtime'];
 		return $account;
 	}
 }
