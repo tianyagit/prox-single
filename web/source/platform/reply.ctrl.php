@@ -297,10 +297,11 @@ if ($do == 'post') {
 			if (is_error($result)) {
 				itoast($result['message'], '', 'info');
 			}
+
 			if ($reply_type == 'module') {
 				$setting[$type] = array('type' => 'module', 'module' => $module);
 			} else {
-				$rule = pdo_get('rule_keyword', array('id' => $rule_id, 'uniacid' => $_W['uniacid']));
+				$rule = pdo_get('rule_keyword', array('rid' => $rule_id, 'uniacid' => $_W['uniacid']));
 				$setting[$type] = array('type' => 'keyword', 'keyword' => $rule['content']);
 			}
 			uni_setting_save('default_message', $setting);
