@@ -26,6 +26,7 @@ if ($do == 'get_setting') {
 			'unionpay' => array('switch' => false),
 			'baifubao' => array('switch' => false),
 			'line' => array('switch' => false),
+			'oneqrcode' => array('switch' => false),
 		);
 	}
 	iajax(0, $pay_setting, '');
@@ -60,6 +61,9 @@ if ($do == 'save_setting') {
 	$pay_setting = $setting['payment'];
 	if ($type == 'credit' || $type == 'delivery') {
 		$param['switch'] = $param['switch'] == 'false' ? true : false;
+	}
+	if ($type == 'oneqrcode') {
+		$param['switch'] = $param['switch'] == 'true' ? true : false;
 	}
 	if ($type == 'alipay' || $type == 'baifubao' || $type == 'line') {
 		$param['switch'] = $param['switch'] == 'true' ? true : false;
@@ -151,6 +155,9 @@ if ($do == 'display') {
 	}
 	if (empty($pay_setting['line'])) {
 		$pay_setting['line'] = array('switch' => false);
+	}
+	if (empty($pay_setting['oneqrcode'])) {
+		$pay_setting['oneqrcode'] = array('switch' => false);
 	}
 	//废弃微信借用支付
 	if (empty($_W['isfounder'])) {
