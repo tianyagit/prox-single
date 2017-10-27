@@ -58,9 +58,8 @@ class UsersTable extends We7Table {
 		return $this;
 	}
 
-	/*到期用户提醒
 	public function searchWithEndtime() {
-		$this->query->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP);;
+		$this->query->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP + 86400);;
 		return $this;
 	}
 
@@ -72,7 +71,7 @@ class UsersTable extends We7Table {
 	public function searchWithSendStatus() {
 		$this->query->where('p.is_send_mobile_status', 0);;
 		return $this;
-	}*/
+	}
 
 	public function searchWithName($user_name) {
 		$this->query->where('u.username LIKE', "%{$user_name}%");
