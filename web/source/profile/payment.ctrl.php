@@ -134,7 +134,6 @@ if ($do == 'display') {
 	$proxy_wechatpay_account = account_wechatpay_proxy();
 	$setting = uni_setting_load('payment', $_W['uniacid']);
 	$pay_setting = is_array($setting['payment']) ? $setting['payment'] : array();
-	print_r($pay_setting);die;
 	if (empty($pay_setting['delivery'])) {
 		$pay_setting['delivery'] = array('switch' => false);
 	}
