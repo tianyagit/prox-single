@@ -26,7 +26,7 @@ if ($do == 'get_setting') {
 			'unionpay' => array('switch' => false),
 			'baifubao' => array('switch' => false),
 			'line' => array('switch' => false),
-			'oneqrcode' => array('switch' => false),
+			'jueqiymf' => array('switch' => false),
 		);
 	}
 	iajax(0, $pay_setting, '');
@@ -62,7 +62,7 @@ if ($do == 'save_setting') {
 	if ($type == 'credit' || $type == 'delivery') {
 		$param['switch'] = $param['switch'] == 'false' ? true : false;
 	}
-	if ($type == 'oneqrcode') {
+	if ($type == 'jueqiymf') {
 		$param['switch'] = $param['switch'] == 'true' ? true : false;
 	}
 	if ($type == 'alipay' || $type == 'baifubao' || $type == 'line') {
@@ -134,7 +134,7 @@ if ($do == 'display') {
 	$proxy_wechatpay_account = account_wechatpay_proxy();
 	$setting = uni_setting_load('payment', $_W['uniacid']);
 	$pay_setting = is_array($setting['payment']) ? $setting['payment'] : array();
-	
+	print_r($pay_setting);die;
 	if (empty($pay_setting['delivery'])) {
 		$pay_setting['delivery'] = array('switch' => false);
 	}
@@ -156,8 +156,8 @@ if ($do == 'display') {
 	if (empty($pay_setting['line'])) {
 		$pay_setting['line'] = array('switch' => false);
 	}
-	if (empty($pay_setting['oneqrcode'])) {
-		$pay_setting['oneqrcode'] = array('switch' => false);
+	if (empty($pay_setting['jueqiymf'])) {
+		$pay_setting['jueqiymf'] = array('switch' => false);
 	}
 	//废弃微信借用支付
 	if (empty($_W['isfounder'])) {

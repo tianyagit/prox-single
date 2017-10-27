@@ -85,10 +85,10 @@
 				</div>
 			</td>
 			<td >
-				{{  paysetting.oneqrcode.switch === true ? '开启' : '关闭'  }}
+				{{  paysetting.jueqiymf.switch === true ? '开启' : '关闭'  }}
 			</td>
 			<td class="text-center">
-				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#oneqrcode">修改</a></div>
+				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#jueqiymf">修改</a></div>
 			</td>
 		</tr>
 		<tr>
@@ -440,7 +440,7 @@
 	</div>
 
 
-	<div class="modal fade" id="oneqrcode" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal fade" id="jueqiymf" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="we7-modal-dialog modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -452,28 +452,28 @@
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">一码付</label>
 							<div class="form-controls col-sm-10">
-								<input id='radio-1225' type="radio" name='paysetting[oneqrcode][switch]' ng-checked='paysetting.oneqrcode.switch === true' ng-click="changeSwitch('oneqrcode', true)"/>
+								<input id='radio-1225' type="radio" name='paysetting[jueqiymf][switch]' ng-checked='paysetting.jueqiymf.switch === true' ng-click="changeSwitch('jueqiymf', true)"/>
 								<label for="radio-1225">开启 </label>
-								<input id='radio-21216' type="radio" name='paysetting[oneqrcode][switch]'  ng-checked='paysetting.oneqrcode.switch === false' ng-click="changeSwitch('oneqrcode', false)" />
+								<input id='radio-21216' type="radio" name='paysetting[jueqiymf][switch]'  ng-checked='paysetting.jueqiymf.switch === false' ng-click="changeSwitch('jueqiymf', false)" />
 								<label for="radio-21216">关闭 </label>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">一码付后台地址</label>
 							<div class="form-controls col-sm-10">
-								<input type="text"ng-model="paysetting.oneqrcode.url" name="" class="form-control" placeholder="">
+								<input type="text"ng-model="paysetting.jueqiymf.url" name="" class="form-control" placeholder="">
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="" class="control-label col-sm-2">商户号</label>
 							<div class="form-controls col-sm-10">
-								<input type="text"ng-model="paysetting.oneqrcode.mchid" name="" class="form-control" placeholder="">
+								<input type="text"ng-model="paysetting.jueqiymf.mchid" name="" class="form-control" placeholder="">
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="saveEdit('oneqrcode')">确定</button>
+					<button type="button" class="btn btn-primary" ng-click="saveEdit('jueqiymf')">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
