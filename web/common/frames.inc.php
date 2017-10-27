@@ -486,6 +486,12 @@ $we7_system_menu['site'] = array(
 					'icon' => 'wi wi-ip',
 					'permission_name' => 'system_setting_ipwhitelist',
 				),
+				'system_setting_sensitiveword' => array(
+					'title' => '敏感词过滤',
+					'url' => url('system/sensitiveword'),
+					'icon' => 'wi wi-ip',
+					'permission_name' => 'system_setting_sensitiveword',
+				),
 			)
 		),
 		'utility' => array(
