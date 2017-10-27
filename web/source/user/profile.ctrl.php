@@ -55,6 +55,10 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				if (empty($match)) {
 					iajax(-1, '手机号不正确', '');
 				}
+				$users_mobile = pdo_get('users_profile', array('mobile' => trim($_GPC[$type]), 'uid <>' => $uid));
+				if (!empty($users_mobile)) {
+					iajax(-1, '手机号已存在，请联系管理员', '');
+				}
 			}
 			if ($users_profile_exist) {
 				$result = pdo_update('users_profile', array($type => trim($_GPC[$type])), array('uid' => $uid));
@@ -108,6 +112,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$endtime = strtotime($_GPC['endtime']);
 			}
 			$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $uid));
+			pdo_update('users_profile', array('is_send_mobile_status' => 0), array('uid' => $uid));
 			$uni_account_user = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
 			if (!empty($uni_account_user)) {
 				foreach ($uni_account_user as $account) {
