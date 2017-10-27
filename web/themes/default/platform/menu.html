@@ -16,7 +16,7 @@
 			{/if}
 			<div class="pull-right">
 				{if $type == MENU_CURRENTSELF}
-				<a href="{php echo url('platform/menu/post', array('type' => MENU_CURRENTSELF));}" class="btn btn-primary we7-padding-horizontal">+添加默认菜单</a>
+				<a href="{php echo url('platform/menu/post', array('type' => MENU_CURRENTSELF));}" class="btn btn-primary we7-padding-horizontal">+添加新菜单</a>
 				{elseif $type == MENU_CONDITIONAL}
 				<a href="{php echo url('platform/menu/post', array('type' => MENU_CONDITIONAL));}" class="btn btn-primary we7-padding-horizontal">+添加个性化菜单</a>
 				{/if}
@@ -116,7 +116,7 @@
 		<a href="{url 'platform/menu/post'}" class="btn active">当前默认菜单</a>
 		<a href="{url 'platform/menu/display'}" class="btn">菜单列表</a>
 	</ul>
-	<button class="btn btn-primary pull-right"><span>+</span>添加默认菜单</button>
+	<a href="{php echo url('platform/menu/post', array('type' => MENU_CURRENTSELF));}" class="btn btn-primary pull-right"><span>+</span>添加新菜单</a>
 	{/if}
 	<div class="conditionMenu" ng-controller="conditionMenuDesigner" id="conditionMenuDesigner" ng-cloak>
 		<div class="new">
