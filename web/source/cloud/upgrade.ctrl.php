@@ -39,10 +39,8 @@ if ($do == 'upgrade') {
 			message('检查结果: 恭喜, 你的程序已经是最新版本. ', 'refresh');
 		}
 	}
-	cache_load('upgrade');
-	if (!empty($_W['cache']['upgrade'])) {
-		$upgrade_cache = $_W['cache']['upgrade'];
-	}
+	
+	$upgrade_cache = cache_load('upgrade');
 	if (empty($upgrade_cache) || TIMESTAMP - $upgrade_cache['lastupdate'] >= 3600 * 24 || empty($upgrade_cache['data'])) {
 		$upgrade = cloud_build();
 	} else {

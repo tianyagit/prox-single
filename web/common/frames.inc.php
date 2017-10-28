@@ -67,6 +67,16 @@ $we7_system_menu['account'] = array(
 					'url' => url('platform/material'),
 					'icon' => 'wi wi-redact',
 					'permission_name' => 'platform_material',
+					'sub_permission' => array(
+						array(
+							'title' => '添加/编辑',
+							'permission_name' => 'material_post',
+						),
+						array(
+							'title' => '删除',
+							'permission_name' => 'platform_material_delete',
+						),
+					),
 				),
 				'platform_site' => array(
 					'title' => '微官网-文章',
