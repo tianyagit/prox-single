@@ -73,9 +73,6 @@ if ($do == 'display') {
 	if (!preg_match('/^[a-zA-Z0-9_]+$/', $menu['permission_name'], $match)) {
 		iajax(-1, '菜单标识只能是数字、字母、下划线', referer());
 	}
-	if (empty($menu['is_system']) && substr($menu['url'], 0, 4) != 'http' && substr($menu['url'], 0, 2) != '//') {
-		iajax(-1, '请输入完整的链接', referer());
-	}
 	if (in_array($menu['permission_name'], $system_menu_permission)) {
 		$menu['is_system'] = 1;
 		unset($menu['url']);

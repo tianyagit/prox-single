@@ -168,6 +168,7 @@ function cache_build_users_struct() {
 }
 
 function cache_build_frame_menu() {
+	global $_W;
 	$system_menu_db = pdo_getall('core_menu', array('permission_name !=' => ''), array(), 'permission_name');
 	$system_menu = require IA_ROOT . '/web/common/frames.inc.php';
 	if (!empty($system_menu) && is_array($system_menu)) {
@@ -222,6 +223,7 @@ function cache_build_frame_menu() {
 		$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame', 'is_system <>' => 1), array('title', 'url', 'permission_name', 'displayorder'));
 		if (!empty($add_top_nav)) {
 			foreach ($add_top_nav as $menu) {
+				$menu['url'] = strexists($menu['url'], 'http') ?  $menu['url'] : $_W['siteroot'] . $menu['url'];
 				$menu['blank'] = true;
 				$menu['is_display'] = true;
 				$system_menu[$menu['permission_name']] = $menu;

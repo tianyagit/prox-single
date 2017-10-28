@@ -5,14 +5,12 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+load()->model('user');
+
 $dos = array('find_password', 'valid_mobile', 'valid_code', 'set_password', 'success');
 $do = in_array($do, $dos) ? $do : 'find_password';
 
-load()->model('user');
-
-
 $mobile = trim($_GPC['mobile']);
-
 if (in_array($do, array('valid_mobile', 'valid_code', 'set_password'))) {
 	if (empty($mobile)) {
 		iajax(-1, '手机号不能为空');

@@ -166,12 +166,18 @@ function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
 	$store_table = table('store');
 	if ($type != STORE_TYPE_API) {
 		$store_table->searchWithEndtime();
+		$site_store_buy_goods = $store_table->searchAccountBuyGoods($uniacid, $type);
+		$site_store_buy_goods = array_keys($site_store_buy_goods);
+	} else {
+		$site_store_buy_goods = $store_table->searchAccountBuyGoods($uniacid, $type);
+		$setting = uni_setting_load('statistics', $uniacid);
+		$use_number = intval($setting['statistics']['use']);
+		$site_store_buy_goods = $site_store_buy_goods - $use_number;
 	}
-	$site_store_buy_goods = $store_table->searchAccountBuyGoods($uniacid, $type);
-	$site_store_buy_goods = array_keys($site_store_buy_goods);
 	cache_write($cachekey, $site_store_buy_goods);
 	return $site_store_buy_goods;
 }
+
 
 /**
  * 获取指定公号下所有安装模块及模块信息

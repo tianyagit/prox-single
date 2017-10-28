@@ -33,7 +33,7 @@
 			<div class="help-block">182********</div>
 			<div class="form-inline">
 				<input type="text" class="form-control" ng-model="mobile">
-				<input type="button" class="btn btn-primary send-code" ng-click="sendMessage(mobile)" value="免费获取验证码">
+				<input type="button" class="btn btn-primary send-code" ng-click="sendMessage()" value="免费获取验证码">
 				<span class="js-timer"></span>
 			</div>
 			<div>输入手机短信验证码</div>
@@ -47,7 +47,7 @@
 			<div>请设置新密码</div>
 			<div class="form-inline">
 				<input type="password" class="form-control" ng-model = "password">
-				<!--<span class="text-error password"></span>-->
+				<span class="text-error password"></span>
 			</div>
 			<div>再次输入新密码</div>
 			<div class="form-inline">
@@ -75,6 +75,7 @@
 			'valid_mobile_link': "{php echo url('user/mobile-find-pwd/valid_mobile')}",
 			'valid_code_link': "{php echo url('user/mobile-find-pwd/valid_code')}",
 			'set_password_link': "{php echo url('user/mobile-find-pwd/set_password')}",
+			'send_code_link': "{php echo url('utility/verifycode')}",
 		},
 	});
 	angular.bootstrap($('#js-users-find-password'), ['userManageApp']);

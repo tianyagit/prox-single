@@ -981,7 +981,10 @@ function mc_uid2openid($uid) {
 function mc_group_update($uid = 0) {
 	global $_W;
 	if(!$_W['uniaccount']['grouplevel']) {
-		return true;
+		$_W['uniaccount']['grouplevel'] = pdo_getcolumn('uni_settings', array('uniacid' => $_W['uniacid']), 'grouplevel');
+		if (empty($_W['uniaccount']['grouplevel'])) {
+			return true;
+		}
 	}
 	$uid = intval($uid);
 	if($uid <= 0) {
