@@ -10,6 +10,7 @@ load()->func('file');
 load()->func('communication');
 load()->model('account');
 load()->model('material');
+load()->model('attachment');
 load()->model('mc');
 
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'image' ,'module' ,'video', 'voice', 'news', 'keyword',
@@ -51,12 +52,12 @@ if($dest_dir != '') {
 
 $setting = $_W['setting']['upload'][$type];
 $uniacid = intval($_W['uniacid']);
-if($uniacid == 0 && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+if(empty($uniacid) && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	exit('Access Denied');
 }
 if(isset($_GPC['uniacid'])) { //是否有强制指定uniacid
 	$requniacid = intval($_GPC['uniacid']);
-	reset_uniacid($requniacid);// 会改变$_W['uniacid'];
+	attachment_reset_uniacid($requniacid);// 会改变$_W['uniacid'];
 	$uniacid = intval($_W['uniacid']);
 }
 
