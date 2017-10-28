@@ -6,6 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('material');
 load()->model('mc');
+load()->model('account');
 load()->func('file');
 
 $dos = array('display', 'sync', 'delete', 'send');

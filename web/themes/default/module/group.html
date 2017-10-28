@@ -227,12 +227,20 @@
 						</div>
 					</div>
 					<!--注意全部有分页-->
-					<div class="material-pager text-right"></div>
+					<div class="material-pager text-right clearfix">
+						<div class="pull-left we7-form">
+							<input type="checkbox" id="selected-all2" ng-change= 'selecteAllTemplate(alltemplatesel)' ng-model='alltemplatesel'>
+							<label for="selected-all2">全选</label>
+						</div>
+						<ul class="pagination">
+
+						</ul>
+					</div>
 				</div>
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" ng-click="addHaveTemplate()">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-default" ng-click="cancel('add_template')">取消</button>
 				</div>
 			</div>
 		</div>
@@ -283,7 +291,7 @@
 				<div class="modal-footer">
 
 					<button type="button" class="btn btn-primary" ng-click="addHaveModule()">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-default" ng-click="cancel('add_module')">取消</button>
 				</div>
 			</div>
 		</div>
@@ -326,7 +334,7 @@
 				<div class="modal-footer">
 
 					<button type="button" class="btn btn-primary" ng-click="addHaveModuleWxapp()">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-default" ng-click="cancel('add_module_wxapp')">取消</button>
 				</div>
 			</div>
 		</div>

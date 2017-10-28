@@ -15,25 +15,25 @@ class UpgradeUsersProfile {
 	 *  执行更新
 	 */
 	public function up() {
-		if (!pdo_fieldexists('users_profile', 'is_send_mobile_status')) {
-			pdo_query('ALTER TABLE ' . tablename('users_profile') . " ADD `is_send_mobile_status` INT(11) NOT NULL DEFAULT 0 COMMENT '0没发短信，1已经发送信息';");
-		}
-
 		$sms_info = pdo_get('core_cron', array('filename' => 'sms'));
 		if (empty($sms_info)) {
 			load()->model('cloud');
-			$prepare = cloud_prepare();
-
 			$data = array(
 					'module' => 'task',
 					'type' => 2,
 					'name' => '用户到期发送短信任务',
 					'filename' => 'sms',
-					'day' => 1,
+					'day' => -1,
+					'hour' => 16,
+					'minute' => 30,
 					'status' => 1,
 					'createtime' =>TIMESTAMP
 			);
 			cron_add($data);
+		}
+
+		if (!pdo_fieldexists('users_profile', 'is_send_mobile_status')) {
+			pdo_query('ALTER TABLE ' . tablename('users_profile') . " ADD `is_send_mobile_status` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '0没发短信，1已经发送信息';");
 		}
 	}
 	
