@@ -1,5 +1,8 @@
 {template 'common/header'}
-<div class="modal-body">
+<ul class="we7-page-tab">
+	<li{if $do == 'display'} class="active"{/if}><a href="{php echo url('system/notice');}">用户到期提醒设置</a></li>
+</ul>
+<div class="body">
 	<form action="{php echo url('system/notice/post')}" method="post">
 		<div class="form-group">
 			{php echo tpl_form_field_clock('time', $value = $time);}

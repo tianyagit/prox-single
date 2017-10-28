@@ -9,6 +9,7 @@ load()->func('cron');
 
 $dos = array('display', 'post');
 $do = in_array($do, $dos) ? $do : 'display';
+$_W['page']['title'] = '站点管理 - 设置  - 到期提醒';
 
 $sms_info = pdo_get('core_cron', array('filename' => 'sms'));
 if ($do == 'display') {
