@@ -1,4 +1,5 @@
 <?php
+namespace We7\V161;
 
 defined('IN_IA') or exit('Access Denied');
 /**
@@ -6,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
  * Time: 1509009847
  * @version 1.6.1
  */
-namespace We7\V161;
+
 
 class AddEndtime {
 
