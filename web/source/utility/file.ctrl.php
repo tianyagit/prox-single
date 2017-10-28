@@ -492,7 +492,6 @@ if ($do == 'wechat_upload') {
 /*******************素材资源管理**********************/
 $type = $_GPC['type']; //资源转换 $type
 $resourceid = intval($_GPC['resource_id']); //资源ID
-$uniacid = intval($_W['uniacid']);
 $uid = intval($_W['uid']);
 $acid = intval($_W['acid']);
 $url = $_GPC['url'];
