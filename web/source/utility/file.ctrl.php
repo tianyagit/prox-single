@@ -52,7 +52,7 @@ if($dest_dir != '') {
 
 $setting = $_W['setting']['upload'][$type];
 $uniacid = intval($_W['uniacid']);
-if($uniacid == 0 && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
+if(empty($uniacid) && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	exit('Access Denied');
 }
 if(isset($_GPC['uniacid'])) { //是否有强制指定uniacid
