@@ -72,4 +72,4 @@ if ($do == 'set_password') {
 		iajax(0);
 	}
 }
-template('user/mobile-find-pwd');
+template('user/find-password');
