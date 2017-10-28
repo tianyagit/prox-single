@@ -13,9 +13,6 @@ function permission_build() {
 	global $_W;
 	$we7_file_permission = require IA_ROOT . '/web/common/permission.inc.php';
 	$permission_frames = require IA_ROOT . '/web/common/frames.inc.php';
-	if (defined('FRAME') && in_array(FRAME, array('account', 'wxapp'))) {
-		$_W['role'] = permission_account_user_role($_W['uid'], $_W['uniacid']);
-	}
 	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OPERATOR, ACCOUNT_MANAGE_NAME_MANAGER)) || empty($_W['uniacid'])) {
 		return $we7_file_permission;
 	}
