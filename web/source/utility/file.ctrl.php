@@ -44,6 +44,10 @@ if (preg_match('/^[a-zA-Z0-9_\/]{0,50}$/', $dest_dir, $out)) {
 } else {
 	$dest_dir = '';
 }
+$att_key = '';
+if($dest_dir != '') {
+	$att_key = sha1($dest_dir);
+}
 
 $setting = $_W['setting']['upload'][$type];
 $uniacid = intval($_W['uniacid']);
@@ -206,7 +210,8 @@ if ($do == 'fetch' || $do == 'upload') {
 		'filename' => $originname,
 		'attachment' => $pathname,
 		'type' => $type == 'image' ? 1 : ($type == 'audio'||$type == 'voice' ? 2 : 3),
-		'createtime' => TIMESTAMP 
+		'createtime' => TIMESTAMP,
+		'att_key' => $att_key
 	));
 	$info['state'] = 'SUCCESS';//兼容ueditor 拖动上传
 	die(json_encode($info));
@@ -463,7 +468,8 @@ if ($do == 'wechat_upload') {
 		'media_id' => $result['media_id'],
 		'type' => $type,
 		'model' => $mode,
-		'createtime' => TIMESTAMP
+		'createtime' => TIMESTAMP,
+		'att_key' => $att_key
 	);
 	if($type == 'image' || $type == 'thumb') {
 		$size = getimagesize($fullname);
@@ -588,8 +594,8 @@ if ($do == 'image') {
 	if ($islocal) { // 如果读取本地图
 		$page = $_GPC['page'];
 		$page = max(1, $page);
-		$condition = ' WHERE uniacid = :uniacid AND type = :type';
-		$params = array(':uniacid' => $uniacid, ':type' => 1);
+		$condition = ' WHERE uniacid = :uniacid AND type = :type AND att_key = :att_key';
+		$params = array(':uniacid' => $uniacid, ':type' => 1, ':att_key' => $att_key);
 
 		$year = $_GPC['year'];
 		$month = $_GPC['month'];
@@ -614,9 +620,13 @@ if ($do == 'image') {
 	} else {
 		$page = $_GPC['page'];
 		$page_index = max(1, $page);
-		$material_news_list = material_list('image', MATERIAL_WEXIN, array('page_index' => $page_index, 'page_size' => $page_size));
-		$material_list = $material_news_list['material_list'];
-		$pager = $material_news_list['page'];
+		$conditions['type'] = 'image';
+		$conditions['att_key'] = $att_key;
+		$material_list = pdo_getslice('wechat_attachment', $conditions, array($page_index, $page_size), $total, array(), '', 'createtime DESC');
+		$pager = pagination($total, $page_index, $page_size,'',$context = array('before' => 5, 'after' => 4, 'isajax' => $_W['isajax']));
+//		$material_news_list = material_list('image', MATERIAL_WEXIN, array('page_index' => $page_index, 'page_size' => $page_size));
+//		$material_list = $material_news_list['material_list'];
+//		$pager = $material_news_list['page'];
 		foreach ($material_list as &$meterial) {
 			$meterial['attach'] = tomedia($meterial['attachment'], true);
 			$meterial['url'] = $meterial['attach'];
