@@ -68,11 +68,6 @@ class UsersTable extends We7Table {
 		return $this;
 	}
 
-	public function searchWithSendStatus() {
-		$this->query->where('p.is_send_mobile_status', 0);;
-		return $this;
-	}
-
 	public function searchWithName($user_name) {
 		$this->query->where('u.username LIKE', "%{$user_name}%");
 		return $this;
