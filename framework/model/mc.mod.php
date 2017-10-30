@@ -918,9 +918,9 @@ function mc_openid2uid($openid) {
 		$uids = array();
 		foreach ($openid as $k => $v) {
 			if (is_numeric($v)) {
-				$uids[] = $v;
+				$uids[] = intval($v);
 			} elseif (is_string($v)) {
-				$fans[] = $v;
+				$fans[] = istripslashes(str_replace(' ', '', $v));
 			}
 		}
 		if (!empty($fans)) {
