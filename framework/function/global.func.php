@@ -640,6 +640,23 @@ function is_error($data) {
 }
 
 /**
+ * 检测敏感词
+ * @param $string
+ * @return bool
+ */
+function detect_sensitive_word($string) {
+	$setting = setting_load('sensitive_words');
+	if (empty($setting['sensitive_words'])) {
+		return false;
+	}
+	$sensitive_words = $setting['sensitive_words'];
+	$blacklist="/".implode("|",$sensitive_words)."/";
+	if(preg_match($blacklist, $string, $matches)){
+		return $matches[0];
+	}
+	return false;
+}
+/**
  * 获取引用页地址
  * @param string $default 默认地址
  * @return string
