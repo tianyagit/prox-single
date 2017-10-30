@@ -176,7 +176,7 @@ function cache_build_frame_menu() {
 		foreach ($system_menu as $menu_name => $menu) {
 			$system_menu[$menu_name]['is_system'] = true;
 			$system_menu[$menu_name]['is_display'] = empty($system_menu_db[$menu_name]) || !empty($system_menu_db[$menu_name]['is_display']) ? true : false;
-			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]['displayorder']) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
+			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
 
 			foreach ($menu['section'] as $section_name => $section) {
 				$displayorder = max(count($section['menu']), 1);
