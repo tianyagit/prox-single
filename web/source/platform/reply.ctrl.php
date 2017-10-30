@@ -167,7 +167,7 @@ if ($do == 'post') {
 
 			$sensitive_word = detect_sensitive_word($_GPC['keyword']);
 			if (!empty($sensitive_word)) {
-				iajax(-2, '含有敏感词' . $sensitive_word);
+				iajax(-2, '含有敏感词:' . $sensitive_word);
 			}
 			$result = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => trim($_GPC['keyword'])), array('rid'));
 			if (!empty($result)) {
