@@ -101,6 +101,21 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER && version_compare($_W['setting']
 	}
 }
 
+if (!pdo_fieldexists('account', 'endtime')) {
+	pdo_query('ALTER TABLE ' . tablename('account') . " ADD `endtime` int(20) NOT NULL DEFAULT 0;");
+}
+
+if (!pdo_fieldexists('users_profile', 'is_send_mobile_status')) {
+	pdo_query('ALTER TABLE ' . tablename('users_profile') . " ADD `is_send_mobile_status` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '0没发短信，1已经发送信息';");
+}
+
+if(!pdo_fieldexists('core_attachment', 'module_upload_dir')) {
+	pdo_query('ALTER TABLE ' . tablename('core_attachment') . " ADD `module_upload_dir` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '第三方应用传递的自定义上传目录hash值';");
+}
+
+if(!pdo_fieldexists('wechat_attachment', 'module_upload_dir')) {
+	pdo_query('ALTER TABLE ' . tablename('wechat_attachment') . " ADD `module_upload_dir` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '第三方应用传递的自定义上传目录hash值';");
+}
 // 用户权限判断
 require _forward($controller, $action);
 
