@@ -11,12 +11,12 @@ $do = in_array($do, $dos) ? $do : 'display';
 $_W['page']['title'] = '系统管理 - 菜单设置';
 
 $system_menu = cache_load('system_frame');
-$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement');
+$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site');
 
-if(empty($system_menu)) {
+//if(empty($system_menu)) {
 	cache_build_frame_menu();
 	$system_menu = cache_load('system_frame');
-}
+//}
 
 //获取全部permission_name，方便判断是否是系统菜单
 $system_menu_permission = array();
@@ -133,10 +133,11 @@ if ($do == 'display') {
 	if (empty($menu_db)) {
 		$menu = array(
 			'group_name' => 'frame',
-			'displayorder' => intval($_GPC['displayorder'])
+			'displayorder' => intval($_GPC['displayorder']),
+			'permission_name' => $_GPC['permission']
 		);
 		if (in_array($_GPC['permission'], $system_top_menu)) {
-			$menu_db['is_system'] = 1;
+			$menu['is_system'] = 1;
 		}
 		pdo_insert('core_menu', $menu);
 	} else {
