@@ -486,12 +486,6 @@ $we7_system_menu['site'] = array(
 					'icon' => 'wi wi-ip',
 					'permission_name' => 'system_setting_ipwhitelist',
 				),
-				'system_setting_notice' => array(
-					'title' => '提醒设置',
-					'url' => url('system/notice'),
-					'icon' => 'wi wi-message',
-					'permission_name' => 'system_setting_notice',
-				),
 			)
 		),
 		'utility' => array(
