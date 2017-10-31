@@ -750,7 +750,6 @@ function account_create($uniacid, $account) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
-	$account['createtime'] = TIMESTAMP;
 	unset($account['type']);
 	pdo_insert('account_wechats', $account);
 	return $acid;
