@@ -526,6 +526,10 @@ function uni_account_default($uniacid = 0) {
 	}
 	if (!empty($uni_account)) {
 		$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
+		if (empty($account)) {
+			$account['uniacid'] = $uni_account['uniacid'];
+			$account['acid'] = $uni_account['default_acid'];
+		}
 		$account['type'] = $uni_account['type'];
 		$account['isconnect'] = $uni_account['isconnect'];
 		$account['isdeleted'] = $uni_account['isdeleted'];
@@ -750,7 +754,6 @@ function account_create($uniacid, $account) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
-	$account['createtime'] = TIMESTAMP;
 	unset($account['type']);
 	pdo_insert('account_wechats', $account);
 	return $acid;
