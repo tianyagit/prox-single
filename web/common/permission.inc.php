@@ -270,7 +270,7 @@ $we7_file_permission = array(
 			'login',
 			'register',
 			'logout',
-			'mobile-find-pwd'
+			'find-password'
 		),
 		'vice_founder' => array('user*'),
 		'owner' => array(

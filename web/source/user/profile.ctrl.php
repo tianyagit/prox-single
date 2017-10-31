@@ -112,7 +112,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 				$endtime = strtotime($_GPC['endtime']);
 			}
 			$result = pdo_update('users', array('endtime' => $endtime), array('uid' => $uid));
-			pdo_update('users_profile', array('is_send_mobile_status' => 0), array('uid' => $uid));
+			pdo_update('users_profile', array('send_expire_status' => 0), array('uid' => $uid));
 			$uni_account_user = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
 			if (!empty($uni_account_user)) {
 				foreach ($uni_account_user as $account) {
