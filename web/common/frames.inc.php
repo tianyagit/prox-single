@@ -183,7 +183,12 @@ $we7_system_menu['wxapp'] = array(
 					'is_display' => 1,
 					'icon' => 'wi wi-examine',
 					'permission_name' => 'wxapp_front_download',
-				)
+				),
+				'platform_material_delete' => array(
+					'title' => '删除图片',
+					'is_display' => 0,
+					'permission_name' => 'platform_material_delete',
+				),
 			)
 		)
 	),
