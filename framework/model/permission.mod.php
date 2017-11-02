@@ -217,7 +217,7 @@ function permission_account_user($type = 'system') {
 	$permission_append = frames_menu_append();
 	//目前只有系统管理才有预设权限，公众号权限走数据库
 	if (!empty($permission_append[$_W['role']])) {
-		$user_permission = array_merge($user_permission, $permission_append[$_W['highest_role']]);
+		$user_permission = array_merge($user_permission, $permission_append[$_W['role']]);
 	}
 	//未分配公众号的新用户用户权限取操作员相同权限
 	if (empty($_W['role']) && empty($_W['uniacid'])) {
