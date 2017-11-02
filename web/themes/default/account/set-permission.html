@@ -94,7 +94,7 @@
 									{loop $menu['sub_permission'] $sub_permission}
 									<li class="text-left">
 										<input id="check-child-{$sub_permission['permission_name']}"  we7-check-all="1" type="checkbox" value="{$sub_permission['permission_name']}" {if in_array($menu['permission_name'], $user_menu_permission_wxapp)}checked{/if} name="wxapp[]">
-										<label class="we7-margin-horizontal-none">
+										<label class="we7-margin-horizontal-none" for="check-child-{$sub_permission['permission_name']}">
 											{$sub_permission['title']}
 										</label>
 									</li>
