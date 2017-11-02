@@ -496,6 +496,8 @@ if ($do == 'save_module_info') {
 
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
+	$uninstalled_module = module_get_all_unistalled('uninstalled');
+	$total_uninstalled = $uninstalled_module['module_count'];
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	$cloud_module = cloud_m_query();
