@@ -805,6 +805,9 @@ function user_info_save($user, $is_founder_group = false) {
 	if ($timelimit > 0) {
 		$timeadd = strtotime($timelimit . ' days');
 	}
+	if (user_is_vice_founder() && !empty($_W['user']['endtime'])) {
+		$timeadd = !empty($timeadd) ? min($timeadd, $_W['user']['endtime']) : $_W['user']['endtime'];
+	}
 	$user['endtime'] = $timeadd;
 	$user['owner_uid'] = user_get_uid_byname($user['vice_founder_name']);
 	if (user_is_vice_founder()) {
