@@ -22,6 +22,13 @@ if($do == 'switch') {
 	if(empty($role)) {
 		itoast('操作失败, 非法访问.', '', 'error');
 	}
+	if (empty($_W['isfounder'])) {
+		$account_endtime = uni_fetch($uniacid);
+		$account_endtime = $account_endtime['endtime'];
+		if ($account_endtime > 0 && TIMESTAMP > $account_endtime) {
+			itoast('公众号已到期。', '', 'error');
+		}
+	}
 	uni_account_save_switch($uniacid);
 	$module_name = trim($_GPC['module_name']);
 	$version_id = intval($_GPC['version_id']);
