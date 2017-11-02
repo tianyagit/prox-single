@@ -6,6 +6,7 @@
 			{if !empty($account_info['wxapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
 			<a href="{php echo url('wxapp/post/design_method')}" class="color-default"><i class="wi wi-registersite"></i>新建小程序</a>
 			{/if}
+			<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="color-default"><i class="wi wi-wechatstatistics"></i>小程序管理</a>
 		</div>
 	</div>
 	<div class="panel-body" id="js-wxapp-account-display" ng-controller="AccountDisplayWxappCtrl" ng-cloak>
