@@ -4,11 +4,9 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * User: fanyk
  * Date: 2017/10/28
- * Time: 14:58
+ * Time: 14:58.
  */
 class UploadedFile extends SplFileInfo {
-
-
 	/**
 	 * @var int[]
 	 */
@@ -53,7 +51,6 @@ class UploadedFile extends SplFileInfo {
 	 */
 	private $size;
 
-
 	public function __construct(
 		$streamOrFile,
 		$size,
@@ -72,16 +69,16 @@ class UploadedFile extends SplFileInfo {
 	}
 
 	/**
-	 * Depending on the value set file or stream variable
+	 * Depending on the value set file or stream variable.
 	 *
 	 * @param mixed $streamOrFile
+	 *
 	 * @throws InvalidArgumentException
 	 */
-	private function setStreamOrFile($streamOrFile)
-	{
+	private function setStreamOrFile($streamOrFile) {
 		if (is_string($streamOrFile)) {
 			$this->file = $streamOrFile;
-		}  else {
+		} else {
 			throw new InvalidArgumentException(
 				'Invalid stream or file provided for UploadedFile'
 			);
@@ -90,17 +87,17 @@ class UploadedFile extends SplFileInfo {
 
 	/**
 	 * @param int $error
+	 *
 	 * @throws InvalidArgumentException
 	 */
-	private function setError($error)
-	{
+	private function setError($error) {
 		if (false === is_int($error)) {
 			throw new InvalidArgumentException(
 				'Upload file error status must be an integer'
 			);
 		}
 
-		if (false === in_array($error, UploadedFile::$errors)) {
+		if (false === in_array($error, self::$errors)) {
 			throw new InvalidArgumentException(
 				'Invalid error status for UploadedFile'
 			);
@@ -111,10 +108,10 @@ class UploadedFile extends SplFileInfo {
 
 	/**
 	 * @param int $size
+	 *
 	 * @throws InvalidArgumentException
 	 */
-	private function setSize($size)
-	{
+	private function setSize($size) {
 		if (false === is_int($size)) {
 			throw new InvalidArgumentException(
 				'Upload file size must be an integer'
@@ -126,28 +123,28 @@ class UploadedFile extends SplFileInfo {
 
 	/**
 	 * @param mixed $param
+	 *
 	 * @return boolean
 	 */
-	private function isStringOrNull($param)
-	{
+	private function isStringOrNull($param) {
 		return in_array(gettype($param), array('string', 'NULL'));
 	}
 
 	/**
 	 * @param mixed $param
+	 *
 	 * @return boolean
 	 */
-	private function isStringNotEmpty($param)
-	{
+	private function isStringNotEmpty($param) {
 		return is_string($param) && false === empty($param);
 	}
 
 	/**
 	 * @param string|null $clientFilename
+	 *
 	 * @throws InvalidArgumentException
 	 */
-	private function setClientFilename($clientFilename)
-	{
+	private function setClientFilename($clientFilename) {
 		if (false === $this->isStringOrNull($clientFilename)) {
 			throw new InvalidArgumentException(
 				'Upload file client filename must be a string or null'
@@ -159,10 +156,10 @@ class UploadedFile extends SplFileInfo {
 
 	/**
 	 * @param string|null $clientMediaType
+	 *
 	 * @throws InvalidArgumentException
 	 */
-	private function setClientMediaType($clientMediaType)
-	{
+	private function setClientMediaType($clientMediaType) {
 		if (false === $this->isStringOrNull($clientMediaType)) {
 			throw new InvalidArgumentException(
 				'Upload file client media type must be a string or null'
@@ -173,28 +170,25 @@ class UploadedFile extends SplFileInfo {
 	}
 
 	/**
-	 * Return true if there is no upload error
+	 * Return true if there is no upload error.
 	 *
 	 * @return boolean
 	 */
-	private function isOk()
-	{
+	private function isOk() {
 		return $this->error === UPLOAD_ERR_OK;
 	}
 
 	/**
 	 * @return boolean
 	 */
-	public function isMoved()
-	{
+	public function isMoved() {
 		return $this->moved;
 	}
 
 	/**
 	 * @throws RuntimeException if is moved or not ok
 	 */
-	private function validateActive()
-	{
+	private function validateActive() {
 		if (false === $this->isOk()) {
 			throw new RuntimeException('Cannot retrieve stream due to upload error');
 		}
@@ -204,9 +198,7 @@ class UploadedFile extends SplFileInfo {
 		}
 	}
 
-
-	public function moveTo($targetPath)
-	{
+	public function moveTo($targetPath) {
 		$this->validateActive();
 
 		if (false === $this->isStringNotEmpty($targetPath)) {
@@ -233,7 +225,6 @@ class UploadedFile extends SplFileInfo {
 	 * @param string $driver
 	 */
 	public function put($targetPath, $driver = 'disk') {
-
 	}
 
 	/**
@@ -241,8 +232,7 @@ class UploadedFile extends SplFileInfo {
 	 *
 	 * @return int|null The file size in bytes or null if unknown.
 	 */
-	public function getSize()
-	{
+	public function getSize() {
 		return $this->size;
 	}
 
@@ -250,10 +240,10 @@ class UploadedFile extends SplFileInfo {
 	 * {@inheritdoc}
 	 *
 	 * @see http://php.net/manual/en/features.file-upload.errors.php
+	 *
 	 * @return int One of PHP's UPLOAD_ERR_XXX constants.
 	 */
-	public function getError()
-	{
+	public function getError() {
 		return $this->error;
 	}
 
@@ -261,50 +251,53 @@ class UploadedFile extends SplFileInfo {
 	 * {@inheritdoc}
 	 *
 	 * @return string|null The filename sent by the client or null if none
-	 *     was provided.
+	 *                     was provided.
 	 */
-	public function getClientFilename()
-	{
+	public function getClientFilename() {
 		return $this->clientFilename;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getClientMediaType()
-	{
+	public function getClientMediaType() {
 		return $this->clientMediaType;
 	}
 
 	public function isImage() {
-		return in_array($this->clientMediaType, array());
+		return $this->isOk() && in_array($this->clientMediaType, array());
 	}
-
 
 	public static function createFromGlobal() {
 		$files = array();
-		foreach ($_FILES as $key=>$file) {
+		foreach ($_FILES as $key => $file) {
 			$createFiles = static::create($file);
 			$files[$key] = $createFiles;
 		}
+
 		return $files;
 	}
 
 	/**
-	 *  从数组中创建文件
+	 *  从数组中创建文件.
+	 *
 	 * @param $file
+	 *
 	 * @return array|UploadedFile
 	 */
 	private static function create($file) {
-		if(is_array($file['tmp_name'])) {
+		if (is_array($file['tmp_name'])) {
 			return static::createArrayFile($file);
 		}
+
 		return static::createUploadedFile($file);
 	}
 
 	/**
-	 *  如果传的是多个文件
+	 *  如果传的是多个文件.
+	 *
 	 * @param $files
+	 *
 	 * @return array
 	 */
 	public static function createArrayFile($files) {
@@ -312,25 +305,26 @@ class UploadedFile extends SplFileInfo {
 		foreach (array_keys($files['tmp_name']) as $key) {
 			$file = array(
 				'tmp_name' => $files['tmp_name'][$key],
-				'size'     => $files['size'][$key],
-				'error'    => $files['error'][$key],
-				'name'     => $files['name'][$key],
-				'type'     => $files['type'][$key],
+				'size' => $files['size'][$key],
+				'error' => $files['error'][$key],
+				'name' => $files['name'][$key],
+				'type' => $files['type'][$key],
 			);
 			$data[$key] = self::createUploadedFile($file);
 		}
+
 		return $data;
 	}
 
 	private static function createUploadedFile($value) {
-		$upfile = new UploadedFile(
+		$upfile = new self(
 			$value['tmp_name'],
 			$value['size'],
 			$value['error'],
 			$value['name'],
 			$value['type']
 		);
+
 		return $upfile;
 	}
-
 }
