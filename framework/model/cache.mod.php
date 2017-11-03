@@ -176,7 +176,7 @@ function cache_build_frame_menu() {
 		foreach ($system_menu as $menu_name => $menu) {
 			$system_menu[$menu_name]['is_system'] = true;
 			$system_menu[$menu_name]['is_display'] = empty($system_menu_db[$menu_name]) || !empty($system_menu_db[$menu_name]['is_display']) ? true : false;
-			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]['displayorder']) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
+			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
 
 			foreach ($menu['section'] as $section_name => $section) {
 				$displayorder = max(count($section['menu']), 1);
@@ -199,7 +199,7 @@ function cache_build_frame_menu() {
 					$sub_menu_db = $system_menu_db[$sub_menu['permission_name']];
 					$system_menu[$menu_name]['section'][$section_name]['menu'][$permission_name] = array(
 						'is_system' => isset($sub_menu['is_system']) ? $sub_menu['is_system'] : 1,
-						'is_display' => isset($sub_menu_db['is_display']) ? $sub_menu_db['is_display'] : 1,
+						'is_display' => isset($sub_menu['is_display']) && empty($sub_menu['is_display']) ? 0 : (isset($sub_menu_db['is_display']) ? $sub_menu_db['is_display'] : 1),
 						'title' => !empty($sub_menu_db['title']) ? $sub_menu_db['title'] : $sub_menu['title'],
 						'url' => $sub_menu['url'],
 						'permission_name' => $sub_menu['permission_name'],

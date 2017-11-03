@@ -641,12 +641,12 @@ function module_exist_in_account($module_name, $uniacid) {
 	$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 	if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 		$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
+		$packageids = array_keys($packageids);
 		if ($_W['setting']['site']['family'] == 'x') {
 			$site_store_buy_goods = uni_site_store_buy_goods($uniacid);
 			$site_store_buy_package = table('store')->searchUserBuyPackage($uniacid);
 			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		}
-		$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		if (!in_array('-1', $packageids)) {
 			$uni_modules = array();
 			$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$uniacid}'");

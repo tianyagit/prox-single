@@ -67,6 +67,16 @@ $we7_system_menu['account'] = array(
 					'url' => url('platform/material'),
 					'icon' => 'wi wi-redact',
 					'permission_name' => 'platform_material',
+					'sub_permission' => array(
+						array(
+							'title' => '添加/编辑',
+							'permission_name' => 'material_post',
+						),
+						array(
+							'title' => '删除',
+							'permission_name' => 'platform_material_delete',
+						),
+					),
 				),
 				'platform_site' => array(
 					'title' => '微官网-文章',
@@ -173,7 +183,18 @@ $we7_system_menu['wxapp'] = array(
 					'is_display' => 1,
 					'icon' => 'wi wi-examine',
 					'permission_name' => 'wxapp_front_download',
-				)
+				),
+				'platform_material' => array(
+					'title' => '素材管理',
+					'is_display' => 0,
+					'permission_name' => 'platform_material',
+					'sub_permission' => array(
+						array(
+							'title' => '删除',
+							'permission_name' => 'platform_material_delete',
+						),
+					),
+				),
 			)
 		)
 	),
@@ -485,6 +506,12 @@ $we7_system_menu['site'] = array(
 					'url' => url('system/ipwhitelist'),
 					'icon' => 'wi wi-ip',
 					'permission_name' => 'system_setting_ipwhitelist',
+				)
+				'system_setting_notice' => array(
+					'title' => '提醒设置',
+					'url' => url('system/notice'),
+					'icon' => 'wi wi-message',
+					'permission_name' => 'system_setting_notice',
 				),
 				'system_setting_sensitiveword' => array(
 					'title' => '过滤敏感词',
