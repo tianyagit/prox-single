@@ -172,6 +172,8 @@ define('STORE_TYPE_WXAPP', 3);
 define('STORE_TYPE_WXAPP_MODULE', 4);
 define('STORE_TYPE_PACKAGE', 5);
 define('STORE_TYPE_API', 6);
+define('STORE_TYPE_ACCOUNT_RENEW', 7);
+define('STORE_TYPE_WXAPP_RENEW', 8);
 //订单状态
 define('STORE_ORDER_PLACE', 1);
 define('STORE_ORDER_DELETE', 2);
