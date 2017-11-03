@@ -163,12 +163,10 @@ $we7_file_permission = array(
 		'manager' => array(
 			'cover',
 			'reply',
-			'material-post',
 		),
 		'operator' => array(
 			'cover',
 			'reply',
-			'material-post',
 		),
 		'clerk' => array(
 			'reply',

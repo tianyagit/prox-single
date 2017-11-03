@@ -67,6 +67,16 @@ $we7_system_menu['account'] = array(
 					'url' => url('platform/material'),
 					'icon' => 'wi wi-redact',
 					'permission_name' => 'platform_material',
+					'sub_permission' => array(
+						array(
+							'title' => '添加/编辑',
+							'permission_name' => 'material_post',
+						),
+						array(
+							'title' => '删除',
+							'permission_name' => 'platform_material_delete',
+						),
+					),
 				),
 				'platform_site' => array(
 					'title' => '微官网-文章',
@@ -173,7 +183,18 @@ $we7_system_menu['wxapp'] = array(
 					'is_display' => 1,
 					'icon' => 'wi wi-examine',
 					'permission_name' => 'wxapp_front_download',
-				)
+				),
+				'platform_material' => array(
+					'title' => '素材管理',
+					'is_display' => 0,
+					'permission_name' => 'platform_material',
+					'sub_permission' => array(
+						array(
+							'title' => '删除',
+							'permission_name' => 'platform_material_delete',
+						),
+					),
+				),
 			)
 		)
 	),
