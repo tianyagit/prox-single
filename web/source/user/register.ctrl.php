@@ -83,8 +83,7 @@ if(checksubmit()) {
 			$profile['createtime'] = TIMESTAMP;
 			pdo_insert('users_profile', $profile);
 		}
-		pdo_update('users_invitation', array('inviteuid' => $uid), array('id' => $invite['id']));
-		itoast('注册成功'.(!empty($_W['setting']['register']['verify']) ? '，請等待管理员审核！' : '，请重新登录！'), url('user/login', array('uid' => $uid, 'username' => $member['username'])), 'success');
+		itoast('注册成功'.(!empty($_W['setting']['register']['verify']) ? '，请等待管理员审核！' : '，请重新登录！'), url('user/login', array('uid' => $uid, 'username' => $member['username'])), 'success');
 	}
 	itoast('增加用户失败，请稍候重试或联系网站管理员解决！', '', '');
 }
