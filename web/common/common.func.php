@@ -267,15 +267,11 @@ function buildframes($framename = ''){
 	}
 	//从数据库中获取用户权限，并附加上系统管理中的权限
 	//仅当系统管理时才使用预设权限
-	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
+	if (!empty($_W['role']) && !user_is_founder($_W['uid'])) {
 		$user_permission = permission_account_user('system');
 	}
 	if (empty($_W['role']) && empty($_W['uniacid'])) {
 		$user_permission = permission_account_user('system');
-	}
-	//@@todo 店员界面菜单
-	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
-
 	}
 	//系统公众号菜单权限
 	if (!empty($user_permission)) {
@@ -315,6 +311,7 @@ function buildframes($framename = ''){
 		if (user_is_vice_founder()) {
 			$frames['system']['section']['article']['is_display'] = false;
 			$frames['system']['section']['wxplatform']['menu']['system_platform']['is_display'] = false;
+			$frames['system']['section']['user']['menu']['system_user_founder_group']['is_display'] = false;
 		}
 	}
 	//进入模块界面后权限
@@ -602,7 +599,9 @@ function frames_menu_append() {
 			'system_my',
 			'system_setting_updatecache',
 		),
-		'clerk' => array(),
+		'clerk' => array(
+			'system_my',
+		),
 	);
 	return $system_menu_default_permission;
 }
