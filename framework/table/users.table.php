@@ -69,7 +69,7 @@ class UsersTable extends We7Table {
 	}
 
 	public function searchWithSendStatus() {
-		$this->query->where('p.is_send_mobile_status', 0);;
+		$this->query->where('p.send_expire_status', 0);;
 		return $this;
 	}
 

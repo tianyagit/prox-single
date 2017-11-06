@@ -164,6 +164,11 @@ if ($do == 'post') {
 	if ($m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
+
+			$sensitive_word = detect_sensitive_word($_GPC['keyword']);
+			if (!empty($sensitive_word)) {
+				iajax(-2, '含有敏感词:' . $sensitive_word);
+			}
 			$result = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => trim($_GPC['keyword'])), array('rid'));
 			if (!empty($result)) {
 				$keywords = array();
@@ -173,9 +178,9 @@ if ($do == 'post') {
 				$rids = implode($keywords, ',');
 				$sql = "SELECT `id`, `name` FROM " . tablename('rule') . " WHERE `id` IN ($rids)";
 				$rules = pdo_fetchall($sql);
-				iajax(0, @json_encode($rules), '');
+				iajax(-1, $rules, '');
 			}
-			iajax(-1, '');
+			iajax(0, '');
 		}
 		$rid = intval($_GPC['rid']);
 		if (!empty($rid)) {
@@ -193,9 +198,11 @@ if ($do == 'post') {
 		if (checksubmit('submit')) {
 
 			$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
+
 			if (empty($keywords)) {
 				itoast('必须填写有效的触发关键字.');
 			}
+
 			$rulename = trim($_GPC['rulename']);
 			$containtype = '';
 			$_GPC['reply'] = (array)$_GPC['reply'];

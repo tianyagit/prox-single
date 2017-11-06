@@ -805,6 +805,9 @@ function user_info_save($user, $is_founder_group = false) {
 	if ($timelimit > 0) {
 		$timeadd = strtotime($timelimit . ' days');
 	}
+	if (user_is_vice_founder() && !empty($_W['user']['endtime'])) {
+		$timeadd = !empty($timeadd) ? min($timeadd, $_W['user']['endtime']) : $_W['user']['endtime'];
+	}
 	$user['endtime'] = $timeadd;
 	$user['owner_uid'] = user_get_uid_byname($user['vice_founder_name']);
 	if (user_is_vice_founder()) {
@@ -841,4 +844,38 @@ function user_detail_formate($profile) {
 		$profile['births'] =($profile['birthyear'] ? $profile['birthyear'] : '--') . '年' . ($profile['birthmonth'] ? $profile['birthmonth'] : '--') . '月' . ($profile['birthday'] ? $profile['birthday'] : '--') .'日';
 	}
 	return $profile;
+}
+
+/**
+ * 用户到期提醒
+ * @return bool
+ */
+function user_expire_notice() {
+	load()->model('cloud');
+
+	$user_table = table('users');
+	$user_table->searchWithMobile();
+	$user_table->searchWithEndtime();
+	$user_table->searchWithSendStatus();
+	$users_expire = $user_table->searchUsersList();
+
+	if (empty($users_expire)) {
+		return true;
+	}
+	foreach ($users_expire as $v) {
+		if (empty($v['puid'])) {
+			continue;
+		}
+		if (!empty($v['mobile']) && preg_match(REGULAR_MOBILE, $v['mobile'])) {
+			$content = $v['username'] . "即将到期";
+			$result = cloud_sms_send($v['mobile'], $content);
+		}
+		if (is_error($result)) {
+			pdo_insert('core_sendsms_log', array('mobile' => $v['mobile'], 'content' => $content, 'result' => $result['errno'] . $result['message'], 'createtime' => TIMESTAMP));
+		}
+		if ($result) {
+			pdo_update('users_profile', array('is_send_mobile_status' => 1), array('uid' => $v['uid']));
+		}
+	}
+	return true;
 }

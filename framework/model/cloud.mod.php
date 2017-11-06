@@ -864,7 +864,7 @@ function cloud_auth_url($forward, $data = array()){
 		$auth = array_merge($auth, $data);
 	}
 	$query = base64_encode(json_encode($auth));
-	$auth_url = $_W['sitescheme'] . 's.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
+	$auth_url = 'https://s.we7.cc/index.php?c=auth&a=passport&__auth=' . $query;
 	return $auth_url;
 }
 

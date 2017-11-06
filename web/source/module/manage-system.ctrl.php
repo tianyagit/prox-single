@@ -118,6 +118,9 @@ if ($do == 'check_upgrade') {
 				if (!empty($cloud_m_info['branches'])) {
 					$best_branch_id = 0;
 					foreach ($cloud_m_info['branches'] as $branch) {
+						if (empty($branch['status']) || empty($branch['show'])) {
+							continue;
+						}
 						if ($best_branch_id == 0) {
 							$best_branch_id = $branch['id'];
 						} else {
@@ -321,7 +324,7 @@ if ($do =='install') {
 	if (!empty($manifest['platform']['main_module'])) {
 		$plugin_exist = pdo_get('modules_plugin', array('main_module' => $manifest['platform']['main_module'], 'name' => $manifest['application']['identifie']));
 		if (empty($plugin_exist)) {
-			itoast('请先更新主模块后再安装插件', url('module/manage-system/installed'), 'error');
+			itoast('请先更新主模块后再安装插件', url('module/manage-system/installed'), 'error', array(array('title' => '查看主程序', 'url' => url('module/manage-system/module_detail', array('name' => $manifest['platform']['main_module'])))));
 		}
 	}
 	$check_manifest_result = manifest_check($module_name, $manifest);
@@ -493,6 +496,8 @@ if ($do == 'save_module_info') {
 
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
+	$uninstalled_module = module_get_all_unistalled('uninstalled');
+	$total_uninstalled = $uninstalled_module['module_count'];
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	$cloud_module = cloud_m_query();

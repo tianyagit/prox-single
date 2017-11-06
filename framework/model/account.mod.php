@@ -197,17 +197,22 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
-		$site_store_buy_goods = uni_site_store_buy_goods($uniacid);
-
+		if ($_W['setting']['site']['family'] == 'x') {
+			$site_store_buy_goods = uni_site_store_buy_goods($uniacid);
+		} else {
+			$site_store_buy_goods = array();
+		}
+		
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
-
-			$store = table('store');
-			$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
-			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
-
+			
+			if ($_W['setting']['site']['family'] == 'x') {
+				$store = table('store');
+				$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
+				$packageids = array_merge($packageids, array_keys($site_store_buy_package));
+			}
 			if (!in_array('-1', $packageids)) {
 				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$uniacid}'");
 				if (!empty($uni_groups)) {
@@ -526,6 +531,10 @@ function uni_account_default($uniacid = 0) {
 	}
 	if (!empty($uni_account)) {
 		$account = pdo_get(uni_account_tablename($uni_account['type']), array('acid' => $uni_account['acid']));
+		if (empty($account)) {
+			$account['uniacid'] = $uni_account['uniacid'];
+			$account['acid'] = $uni_account['default_acid'];
+		}
 		$account['type'] = $uni_account['type'];
 		$account['isconnect'] = $uni_account['isconnect'];
 		$account['isdeleted'] = $uni_account['isdeleted'];
@@ -750,7 +759,6 @@ function account_create($uniacid, $account) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
-	$account['createtime'] = TIMESTAMP;
 	unset($account['type']);
 	pdo_insert('account_wechats', $account);
 	return $acid;
@@ -1035,19 +1043,3 @@ function uni_account_member_fields($uniacid) {
 	return $account_member_fields;
 }
 
-function reset_uniacid($uniacid) {
-	global $_W;
-	if($uniacid == 0) {
-		if($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER ) {
-			$_W['uniacid'] = 0;
-			return 0;
-		}
-	}else {
-		/* @var $account AccountTable*/
-		$account = table('account');
-		$accounts = $account->userOwnedAccount($_W['uid']);
-		if(is_array($accounts) && isset($accounts[$uniacid])) {
-			$_W['uniacid'] = $uniacid;
-		}
-	}
-}

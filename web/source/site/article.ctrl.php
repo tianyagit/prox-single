@@ -85,6 +85,16 @@ if ($do == 'display') {
 		if (empty($_GPC['title'])) {
 			itoast('标题不能为空，请输入标题！', '', '');
 		}
+		$sensitive_title = detect_sensitive_word($_GPC['title']);
+		if (!empty($sensitive_title)) {
+			itoast('不能使用敏感词:' . $sensitive_title, '', '');
+		}
+
+		$sensitive_content = detect_sensitive_word($_GPC['content']);
+		if (!empty($sensitive_content)) {
+			itoast('不能使用敏感词:' . $sensitive_content, '', '');
+		}
+
 		$data = array(
 			'uniacid' => $_W['uniacid'],
 			'iscommend' => intval($_GPC['option']['commend']),

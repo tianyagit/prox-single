@@ -35,8 +35,12 @@ function url($segment, $params = array()) {
  * sql
  * </pre>
  * @param boolean $tips 是否是以tips形式展示（兼容1.0之前版本该函数的页面展示形式）
+ *
+ * @param array $extend 扩展按钮,支持多按钮
+ * title string 扩展按钮名称
+ * url string 跳转链接
  */
-function message($msg, $redirect = '', $type = '', $tips = false) {
+function message($msg, $redirect = '', $type = '', $tips = false, $extend = array()) {
 	global $_W, $_GPC;
 
 	if($redirect == 'refresh') {
@@ -94,6 +98,17 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 		$message_cookie['type'] = $label;
 		$message_cookie['redirect'] = $redirect ? $redirect : referer();
 		$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
+		$extend_button = array();
+		if (!empty($extend) && is_array($extend)) {
+			foreach ($extend as $button) {
+				if (!empty($button['title']) && !empty($button['url'])) {
+					$button['url'] = check_url_not_outside_link($button['url']);
+					$button['title'] = rawurlencode($button['title']);
+					$extend_button[] = $button;
+				}
+			}
+		}
+		$message_cookie['extend'] = !empty($extend_button) ? $extend_button : '';
 
 		isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
 		if (!empty($message_cookie['redirect'])) {
@@ -111,8 +126,8 @@ function iajax($code = 0, $message = '', $redirect = '') {
 	message(error($code, $message), $redirect, 'ajax', false);
 }
 
-function itoast($message, $redirect = '', $type = '') {
-	message($message, $redirect, $type, true);
+function itoast($message, $redirect = '', $type = '', $extend = array()) {
+	message($message, $redirect, $type, true, $extend);
 }
 
 /**
@@ -252,15 +267,11 @@ function buildframes($framename = ''){
 	}
 	//从数据库中获取用户权限，并附加上系统管理中的权限
 	//仅当系统管理时才使用预设权限
-	if (!empty($_W['role']) && ($_W['role'] == ACCOUNT_MANAGE_NAME_OPERATOR || $_W['role'] == ACCOUNT_MANAGE_NAME_MANAGER || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
+	if (!empty($_W['role']) && !user_is_founder($_W['uid'])) {
 		$user_permission = permission_account_user('system');
 	}
 	if (empty($_W['role']) && empty($_W['uniacid'])) {
 		$user_permission = permission_account_user('system');
-	}
-	//@@todo 店员界面菜单
-	if (!empty($_W['role']) && $_W['role'] == 'clerk') {
-
 	}
 	//系统公众号菜单权限
 	if (!empty($user_permission)) {
@@ -587,7 +598,9 @@ function frames_menu_append() {
 			'system_my',
 			'system_setting_updatecache',
 		),
-		'clerk' => array(),
+		'clerk' => array(
+			'system_my',
+		),
 	);
 	return $system_menu_default_permission;
 }

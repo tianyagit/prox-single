@@ -15,12 +15,12 @@ class AlterAttachment {
 	 *  执行更新
 	 */
 	public function up() {
-		if(!pdo_fieldexists('core_attachment', 'att_key')) {
-			pdo_query('ALTER TABLE ' . tablename('core_attachment') . " ADD `att_key` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '第三方应用传递的自定义上传目录hash值';");
+		if(!pdo_fieldexists('core_attachment', 'module_upload_dir')) {
+			pdo_query('ALTER TABLE ' . tablename('core_attachment') . " ADD `module_upload_dir` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '第三方应用传递的自定义上传目录hash值';");
 		}
 
-		if(!pdo_fieldexists('wechat_attachment', 'att_key')) {
-			pdo_query('ALTER TABLE ' . tablename('wechat_attachment') . " ADD `att_key` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '第三方应用传递的自定义上传目录hash值';");
+		if(!pdo_fieldexists('wechat_attachment', 'module_upload_dir')) {
+			pdo_query('ALTER TABLE ' . tablename('wechat_attachment') . " ADD `module_upload_dir` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '第三方应用传递的自定义上传目录hash值';");
 		}
 	}
 	

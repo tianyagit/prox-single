@@ -71,7 +71,6 @@ if($step == 1) {
 				'name' => $name,
 				'description' => $description,
 				'title_initial' => get_first_pinyin($name),
-				'createtime' => TIMESTAMP,
 				'groupid' => 0,
 			);
 			//检测新添加公众号名称是否存在

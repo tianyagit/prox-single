@@ -25,6 +25,7 @@ function wxapp_account_create($account) {
 	global $_W;
 	load()->model('account');
 	load()->model('user');
+	load()->model('permission');
 	$uni_account_data = array(
 		'name' => $account['name'],
 		'description' => $account['description'],
@@ -58,7 +59,12 @@ function wxapp_account_create($account) {
 	pdo_insert('account_wxapp', $wxapp_data);
 
 	if (empty($_W['isfounder'])) {
+		$user_info = permission_user_account_num($_W['uid']);
 		uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
+		if (empty($user_info['usergroup_wxapp_limit'])) {
+			pdo_update('account', array('endtime' => strtotime('+1 month', time())), array('uniacid' => $uniacid));
+			pdo_insert('site_store_create_account', array('uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_APP_NORMAL));
+		}
 	}
 	if (user_is_vice_founder()) {
 		uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
