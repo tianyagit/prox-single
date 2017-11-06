@@ -13,7 +13,9 @@
 			<td ng-if="!notify.sms">0条</td>
 			<td>
 				<div class="link-group">
+					{if $_W['isfounder'] && uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 					<a href="javascript:;" data-toggle="modal" data-target="#balance" ng-click="editSms('balance', notify.sms.balance)">分配短信</a>
+					{/if}
 					<a href="javascript:;" data-toggle="modal" data-target="#signature" ng-click="editSms('signature', notify.sms.signature)">设置短信签名</a>
 				</div>
 			</td>
