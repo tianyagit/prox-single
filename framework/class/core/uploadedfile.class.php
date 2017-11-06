@@ -22,11 +22,13 @@ class UploadedFile extends SplFileInfo {
 	);
 
 	/**
+	 * 上传文件名
 	 * @var string
 	 */
 	private $clientFilename;
 
 	/**
+	 * //上传的mimeType
 	 * @var string
 	 */
 	private $clientMediaType;
@@ -264,6 +266,13 @@ class UploadedFile extends SplFileInfo {
 		return $this->clientMediaType;
 	}
 
+	/**
+	 *
+	 * 是否是图片
+	 * @return bool
+	 *
+	 * @since version
+	 */
 	public function isImage() {
 		return $this->isOk() && in_array($this->clientMediaType, array());
 	}
@@ -317,7 +326,7 @@ class UploadedFile extends SplFileInfo {
 	}
 
 	private static function createUploadedFile($value) {
-		$upfile = new self(
+		$upfile = new static(
 			$value['tmp_name'],
 			$value['size'],
 			$value['error'],

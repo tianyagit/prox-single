@@ -16,8 +16,9 @@
 
 /*
  * @example
-$file = __DIR__.'/test_1x.php';
-$validor = new Validator(
+$url = null;// 'https://www.baidu.com/&ssd=as&as=../asd../\asdad\\sdff..//asdas..sdf&script=123';
+	$file = __DIR__.'/test_1x.php';
+	$validor = new Validator(
 		array(
 			'data_url'=>$url,
 			'data_int'=>3232,
@@ -34,6 +35,7 @@ $validor = new Validator(
 			'data_after'=>'2017-11-20',
 			'data_before'=>'2017-11-23',
 			'data_bool'=>'2232',
+			'data_sms'=>'32'
 			),
 		array(
 		'data_url'=>'required|url',
@@ -50,12 +52,20 @@ $validor = new Validator(
 		'data_before'=>'before:data_date',
 		'data_in'=>'in:3,4,5',
 		'data_notin'=>array(array('name'=>'notin', 'params'=>array('3', '4', '7'))),
-		'data_bool'=>'bool'
+		'data_bool'=>'bool',
+		'data_sms' => 'required|sms|size:5',
 
 	),array(
 		'data_notin.notin'=>'字段内容必须不在 3,4,7 内',
-		'data_same'=>'data_same 必须和data_string字段一致'
+		'data_same'=>'字段必须和data_string字段一致',
+		'data_sms'=>'短信验证码不正确'
 	));
+	$validor->addRule('sms', function($key, $value, $params, $validor){
+		return false;
+
+	});
+	$validor->valid();
+	var_dump($validor->errors());
 */
 
 class Validator {
