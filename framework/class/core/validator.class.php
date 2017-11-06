@@ -66,6 +66,7 @@ class Validator {
 	private $defaults = array(
 		'required' => ':attribute 必须填写',
 		'integer' => ':attribute必须是整数',
+		'int' => ':attribute必须是整数',
 		'string' => ':attribute必须是字符串',
 		'json' => ':attribute 必须是json',
 		'array' => ':attribute必须是数组',
@@ -89,11 +90,14 @@ class Validator {
 		'same' => ':attribute 和 $s 不一致', //some:field
 		'bool'=> ':attribute 必须是bool值',
 	);
-	private $validates = array();
-
 	/**
-	 *  验证规则.
-	 *
+	 * 自定义校验
+	 * @var array
+	 * @since version
+	 */
+	private $custom = array();
+	/**
+	 *  验证规则
 	 * @var array
 	 */
 	private $rules = array();
@@ -116,6 +120,8 @@ class Validator {
 	private $errors = array();
 
 
+
+
 	public function __construct($data, $rules = array(), $messages = array()) {
 		$this->data = $data;
 		$this->rules = $this->parseRule($rules);
@@ -125,16 +131,19 @@ class Validator {
 	/**
 	 * 添加规则
 	 * @param $key
-	 * @param null $callable
+	 * @param string|array('name','params','callable'=>null)
 	 *
 	 *
 	 * @since version
 	 */
-	public function addRule($key, $callable = null) {
-		if (!$key) {
+	public function addRule($name, callable $callable) {
+		if (!$name) {
 			throw new InvalidArgumentException('无效的参数');
 		}
-		$this->rules[$key] = $this->parseSingleRule($callable);
+		if(!is_callable($callable)) {
+			throw new InvalidArgumentException('无效的callable 对象');
+		}
+		$this->custom[$name] = $callable;
 	}
 
 	/**
@@ -156,6 +165,10 @@ class Validator {
 		return $this->errors;
 	}
 
+	public function getData() {
+		return $this->data;
+	}
+
 
 	/**
 	 * 解析rule
@@ -163,7 +176,7 @@ class Validator {
 	 * @return array
 	 * @throws InvalidArgumentException
 	 */
-	protected function parseRule($rules) {
+	protected function parseRule(array $rules) {
 		$result = array();
 		if (count($rules) == 0) {
 			throw new InvalidArgumentException('无效的rules');
@@ -205,10 +218,10 @@ class Validator {
 		$this->errors = array();
 		foreach ($this->rules as $dataKey => $rules) {
 			$value = $this->getValue($dataKey);
-			if (is_array($rules)) {
-				foreach ($rules as $rule) {
-					$callback = $this->createCallback($rule);
-					$this->validSingle($callback, $dataKey, $value, $rule);
+			foreach ($rules as $rule) {
+				$isValid = $this->doValid($dataKey, $value, $rule);
+				if(! $isValid && $rule['name'] == 'required') { //required 不通过 后边的不再验证
+					break;
 				}
 			}
 		}
@@ -224,14 +237,32 @@ class Validator {
 	 * @param null $value
 	 * @param array $params
 	 */
-	private function validSingle($callback, $dataKey, $value = null, $rule) {
-		if(!is_callable($callback)) {
-			return;
-		}
+	private function doSingle($callback, $dataKey, $value, $rule) {
 		$valid = call_user_func($callback, $dataKey, $value, $rule['params']);
 		if (!$valid) {
 			$this->errors[$dataKey][] = $this->getMessage($dataKey, $rule);
+			return false;
 		}
+		return true;
+	}
+
+	/**
+	 *  自定义验证
+	 * @param $callback
+	 * @param $dataKey
+	 * @param $value
+	 * @param $rule
+	 *
+	 *
+	 * @since version
+	 */
+	private function doCustom($callback, $dataKey, $value, $rule) {
+		$valid = call_user_func($callback, $dataKey, $value, $rule['params'], $this);
+		if (!$valid) {
+			$this->errors[$dataKey][] = $this->getMessage($dataKey, $rule);
+			return false;
+		}
+		return true;
 	}
 
 	/***
@@ -242,15 +273,17 @@ class Validator {
 	 *
 	 * @since version
 	 */
-	private function createCallback($rule) {
-		if(isset($rule['callback'])) {
-			return $rule['callback'];
+	private function doValid($dataKey, $value, $rule) {
+		$ruleName = $rule['name'];
+		if (isset($this->defaults[$ruleName])) {
+			$callback = array($this, 'valid' . ucfirst($ruleName));
+			return $this->doSingle($callback, $dataKey, $value, $rule);
 		}
-		if (isset($this->defaults[$rule['name']])) {
-			return array($this, 'valid' . ucfirst($rule['name']));
+		if(isset($this->custom[$ruleName])) {
+			$callback = $this->custom[$ruleName];
+			return $this->doCustom($callback, $dataKey, $value, $rule, $this);
 		}
-
-		return null;
+		throw new InvalidArgumentException('valid'.$rule['name'].' 方法未定义');
 	}
 
 	/**
@@ -294,9 +327,7 @@ class Validator {
 	 * @return bool
 	 */
 	public function validRequired($key, $value, $params) {
-		if (!isset($this->data[$key])) {
-			return false;
-		}
+
 		if (is_null($value)) {
 			return false;
 		}
@@ -314,6 +345,10 @@ class Validator {
 
 
 	public function validInteger($key, $value, $params) {
+		return is_int($value);
+	}
+
+	public function validInt($key, $value, $params) {
 		return is_int($value);
 	}
 
@@ -575,7 +610,7 @@ class Validator {
 		} elseif (is_array($value)) {
 			return count($value);
 		} elseif(is_file($value)) {
-			return filesize($value) /1024;
+			return filesize($value) / 1024;
 		}elseif ($value instanceof SplFileInfo) {
 			return $value->getSize() / 1024;
 		}else if(is_string($value)) {
