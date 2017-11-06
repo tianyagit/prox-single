@@ -303,7 +303,7 @@ class UploadedFile extends SplFileInfo {
 	 * @return array
 	 */
 	public static function createArrayFile($files) {
-		$data = [];
+		$data = array();
 		foreach (array_keys($files['tmp_name']) as $key) {
 			$file = array(
 				'tmp_name' => $files['tmp_name'][$key],
