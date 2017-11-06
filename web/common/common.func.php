@@ -311,6 +311,7 @@ function buildframes($framename = ''){
 		if (user_is_vice_founder()) {
 			$frames['system']['section']['article']['is_display'] = false;
 			$frames['system']['section']['wxplatform']['menu']['system_platform']['is_display'] = false;
+			$frames['system']['section']['user']['menu']['system_user_founder_group']['is_display'] = false;
 		}
 	}
 	//进入模块界面后权限
