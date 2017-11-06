@@ -223,13 +223,6 @@ class UploadedFile extends SplFileInfo {
 	}
 
 	/**
-	 * @param $targetPath
-	 * @param string $driver
-	 */
-	public function put($targetPath, $driver = 'disk') {
-	}
-
-	/**
 	 * {@inheritdoc}
 	 *
 	 * @return int|null The file size in bytes or null if unknown.
@@ -240,7 +233,7 @@ class UploadedFile extends SplFileInfo {
 
 	/**
 	 * {@inheritdoc}
-	 *
+	 *  上传错误码
 	 * @see http://php.net/manual/en/features.file-upload.errors.php
 	 *
 	 * @return int One of PHP's UPLOAD_ERR_XXX constants.

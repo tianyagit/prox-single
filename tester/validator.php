@@ -3,7 +3,7 @@ use Testify\Testify;
 
 require '../framework/bootstrap.inc.php';
 require IA_ROOT . '/framework/library/testify/Testify.php';
-require IA_ROOT . '/framework/class/core/validator.class.php';
+load()->classs('validator');
 
 $tester = new \Testify\Testify('hello');
 
@@ -80,7 +80,8 @@ $tester->test('testValid', function(){
 		'sms'=>'验证码不正确',
 		'data_notin.notin'=>'字段内容必须不在 3,4,7 内',
 		'data_same'=>'字段必须和data_string字段一致',
-		'data_sms'=>'短信验证码不能多于5位'
+		'data_sms'=>'短信验证码不正确',
+		'data_before'=>'date_before不能大于data_date'
 	));
 	$validor->addRule('sms', function($key, $value, $params, $validor){
 		return false;
