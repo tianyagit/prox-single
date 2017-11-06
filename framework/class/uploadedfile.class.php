@@ -176,7 +176,7 @@ class UploadedFile extends SplFileInfo {
 	 *
 	 * @return boolean
 	 */
-	private function isOk() {
+	public function isOk() {
 		return $this->error === UPLOAD_ERR_OK;
 	}
 
