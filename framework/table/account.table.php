@@ -84,6 +84,11 @@ class AccountTable extends We7Table {
 		return $this;
 	}
 
+	public function searchWithTitle($title) {
+		$this->query->where('a.name', $title);
+		return $this;
+	}
+
 	public function searchWithType($types = array()) {
 		$this->query->where(array('b.type' => $types));
 		return $this;

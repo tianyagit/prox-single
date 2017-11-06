@@ -197,7 +197,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
-		if ($_W['setting']['site']['family'] == 'x') {
+		if (IMS_FAMILY == 'x') {
 			$site_store_buy_goods = uni_site_store_buy_goods($uniacid);
 		} else {
 			$site_store_buy_goods = array();
@@ -208,7 +208,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
 			
-			if ($_W['setting']['site']['family'] == 'x') {
+			if (IMS_FAMILY == 'x') {
 				$store = table('store');
 				$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
 				$packageids = array_merge($packageids, array_keys($site_store_buy_package));
