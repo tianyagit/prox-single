@@ -906,11 +906,11 @@ function user_qq_login($state, $code) {
 	$user_id = pdo_getcolumn('users', array('openid' => $openid), 'uid');
 	if (empty($user_id)) {
 		$status = !empty($_W['setting']['register']['verify']) ? 1 : 2;
-		pdo_insert('users', array('username' => random(13), 'type' => USER_TYPE_COMMON, 'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'login_type' => 'qq', 'access_token' => $qq_token['access_token'],'refresh_token' => $qq_token['refresh_token'], 'expires_time' => TIMESTAMP + $qq_token['expires_in'], 'openid' => $openid));
+		pdo_insert('users', array('type' => USER_TYPE_COMMON, 'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'register_type' => USER_REGISTER_TYPE_QQ, 'openid' => $openid));
 		$user_id = pdo_insertid();
+		pdo_update('users', array('username' => $user_id), array('uid' => $user_id));
 		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $qq_user_info['nickname'], 'avatar' => $qq_user_info['figureurl_qq_1'], 'gender' => $qq_user_info['gender'], 'resideprovince' => $qq_user_info['province'], 'residecity' => $qq_user_info['city'], 'birthyear' => $qq_user_info['year']));
 	} else {
-		pdo_update('users', array('access_token' => $qq_token['access_token'],'refresh_token' => $qq_token['refresh_token'], 'expires_time' => TIMESTAMP + $qq_token['expires_in']), array('openid' => $openid));
 		pdo_update('users_profile', array('nickname' => $qq_user_info['nickname'], 'avatar' => $qq_user_info['figureurl_qq_1'], 'gender' => $qq_user_info['gender'], 'resideprovince' => $qq_user_info['province'], 'residecity' => $qq_user_info['city'], 'birthyear' => $qq_user_info['year']), array('uid' => $user_id));
 	}
 	return $user_id;

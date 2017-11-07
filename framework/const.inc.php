@@ -186,3 +186,6 @@ define('STORE_GOODS_STATUS_DELETE', 2);
 //文章分类 一级分类和二级分类为0
 define('ARTICLE_PCATE', 0);
 define('ARTICLE_CCATE', 0);
+
+//用户注册方式
+define('USER_REGISTER_TYPE_QQ', 1);
