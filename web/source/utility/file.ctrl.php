@@ -24,6 +24,7 @@ $result = array(
 );
 
 error_reporting(0);
+$quality = intval($_GPC['quality']);
 $type  =  $_GPC['upload_type'];//$_COOKIE['__fileupload_type'];
 $type = in_array($type, array('image','audio','video')) ? $type : 'image';
 $option = array();
@@ -141,7 +142,7 @@ if ($do == 'upload') {
 	$size = intval($_FILES['file']['size']);
 	$originname = $_FILES['file']['name'];
 	$filename = file_random_name(ATTACHMENT_ROOT . '/' . $setting['folder'], $ext);
-	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename);
+	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename, $quality);
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
 		die(json_encode($result));
@@ -373,7 +374,7 @@ if ($do == 'wechat_upload') {
 	}
 
 	$filename = file_random_name(ATTACHMENT_ROOT .'/'. $setting['folder'], $ext);
-	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename);
+	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename, $quality);
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
 		die(json_encode($result));
