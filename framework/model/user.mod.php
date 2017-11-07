@@ -874,7 +874,7 @@ function user_expire_notice() {
 			pdo_insert('core_sendsms_log', array('mobile' => $v['mobile'], 'content' => $content, 'result' => $result['errno'] . $result['message'], 'createtime' => TIMESTAMP));
 		}
 		if ($result) {
-			pdo_update('users_profile', array('is_send_mobile_status' => 1), array('uid' => $v['uid']));
+			pdo_update('users_profile', array('send_expire_status' => 1), array('uid' => $v['uid']));
 		}
 	}
 	return true;
