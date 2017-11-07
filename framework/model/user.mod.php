@@ -879,3 +879,39 @@ function user_expire_notice() {
 	}
 	return true;
 }
+
+/**
+ * qq登录用户注册数据处理
+ * @param $state
+ * @param $code
+ * @return array|bool|int|mixed
+ */
+function user_qq_login($state, $code) {
+	global $_W;
+	load()->classs('qq.platform');
+	$qq = new QqPlatform();
+	$qq_token = $qq->getAccessToken($state, $code);
+	if (is_error($qq_token)) {
+		return error(-1, '请重新登录');
+	}
+	$openid = $qq->getOpenid($qq_token['access_token']);
+	if (is_error($openid)) {
+		return error(-1, '请重新登录!');
+	}
+	$qq_user_info = $qq->getUserInfo($openid, $qq_token['access_token']);
+	if (is_error($qq_user_info)) {
+		return error(-1, $qq_user_info['message']);
+	}
+
+	$user_id = pdo_getcolumn('users', array('openid' => $openid), 'uid');
+	if (empty($user_id)) {
+		$status = !empty($_W['setting']['register']['verify']) ? 1 : 2;
+		pdo_insert('users', array('username' => random(13), 'type' => USER_TYPE_COMMON, 'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'login_type' => 'qq', 'access_token' => $qq_token['access_token'],'refresh_token' => $qq_token['refresh_token'], 'expires_time' => TIMESTAMP + $qq_token['expires_in'], 'openid' => $openid));
+		$user_id = pdo_insertid();
+		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $qq_user_info['nickname'], 'avatar' => $qq_user_info['figureurl_qq_1'], 'gender' => $qq_user_info['gender'], 'resideprovince' => $qq_user_info['province'], 'residecity' => $qq_user_info['city'], 'birthyear' => $qq_user_info['year']));
+	} else {
+		pdo_update('users', array('access_token' => $qq_token['access_token'],'refresh_token' => $qq_token['refresh_token'], 'expires_time' => TIMESTAMP + $qq_token['expires_in']), array('openid' => $openid));
+		pdo_update('users_profile', array('nickname' => $qq_user_info['nickname'], 'avatar' => $qq_user_info['figureurl_qq_1'], 'gender' => $qq_user_info['gender'], 'resideprovince' => $qq_user_info['province'], 'residecity' => $qq_user_info['city'], 'birthyear' => $qq_user_info['year']), array('uid' => $user_id));
+	}
+	return $user_id;
+}

@@ -5,42 +5,59 @@
  */
 defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
+
+load()->classs('qq.platform');
+$qq = new QqPlatform();
+
 if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
+
+if ($_GPC['login_type'] == 'qq') {
+	_login($_GPC['referer'], 'qq', $_GPC['state'], $_GPC['code']);
+}
+
+$qq_login_url = $qq->getAuthLoginUrl();
 $setting = $_W['setting'];
 template('user/login');
 
-function _login($forward = '') {
+function _login($forward = '', $login_type = '', $state = '', $code = '') {
 	global $_GPC, $_W;
 	load()->model('user');
 	user_expire_notice();
 	$member = array();
-	$username = trim($_GPC['username']);
+	if (empty($login_type)) {
+		$username = trim($_GPC['username']);
+		pdo_query('DELETE FROM'.tablename('users_failed_login'). ' WHERE lastupdate < :timestamp', array(':timestamp' => TIMESTAMP-300));
+		$failed = pdo_get('users_failed_login', array('username' => $username, 'ip' => CLIENT_IP));
+		if ($failed['count'] >= 5) {
+			itoast('输入密码错误次数超过5次，请在5分钟后再登录',referer(), 'info');
+		}
+		if (!empty($_W['setting']['copyright']['verifycode'])) {
+			$verify = trim($_GPC['verify']);
+			if (empty($verify)) {
+				itoast('请输入验证码', '', '');
+			}
+			$result = checkcaptcha($verify);
+			if (empty($result)) {
+				itoast('输入验证码错误', '', '');
+			}
+		}
+		if (empty($username)) {
+			itoast('请输入要登录的用户名', '', '');
+		}
+		$member['username'] = $username;
+		$member['password'] = $_GPC['password'];
+		if (empty($member['password'])) {
+			itoast('请输入密码', '', '');
+		}
+	} elseif ($login_type == 'qq') {
+		$member = user_qq_login($state, $code);
+		if (is_error($member)) {
+			itoast($member['message'], '', '');
+		}
+	}
 
-	pdo_query('DELETE FROM'.tablename('users_failed_login'). ' WHERE lastupdate < :timestamp', array(':timestamp' => TIMESTAMP-300));
-	$failed = pdo_get('users_failed_login', array('username' => $username, 'ip' => CLIENT_IP));
-	if ($failed['count'] >= 5) {
-		itoast('输入密码错误次数超过5次，请在5分钟后再登录',referer(), 'info');
-	}
-	if (!empty($_W['setting']['copyright']['verifycode'])) {
-		$verify = trim($_GPC['verify']);
-		if (empty($verify)) {
-			itoast('请输入验证码', '', '');
-		}
-		$result = checkcaptcha($verify);
-		if (empty($result)) {
-			itoast('输入验证码错误', '', '');
-		}
-	}
-	if (empty($username)) {
-		itoast('请输入要登录的用户名', '', '');
-	}
-	$member['username'] = $username;
-	$member['password'] = $_GPC['password'];
-	if (empty($member['password'])) {
-		itoast('请输入密码', '', '');
-	}
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
