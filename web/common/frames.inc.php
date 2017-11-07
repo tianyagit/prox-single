@@ -513,11 +513,11 @@ $we7_system_menu['site'] = array(
 					'icon' => 'wi wi-sensitive',
 					'permission_name' => 'system_setting_sensitiveword',
 				),
-				'system_setting_qqplatform' => array(
+				'system_setting_thirdparty' => array(
 					'title' => '第三方登录配置',
-					'url' => url('system/qqplatform'),
+					'url' => url('system/thirdparty'),
 					'icon' => 'wi wi-sensitive',
-					'permission_name' => 'system_setting_qqplatform',
+					'permission_name' => 'system_setting_thirdparty',
 				),
 				'system_setting_oauth' => array(
 					'title' => 'oauth全局设置',
