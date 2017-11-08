@@ -73,7 +73,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'username':
 			$founders = explode(',', $_W['config']['setting']['founder']);
-			if (in_array($uid, $founders)) {
+			if (in_array($uid, $founders) && !in_array($_W['uid'], $founders)) {
 				iajax(1, '用户名不可与网站创始人同名！', '');
 			}
 			$username = trim($_GPC['username']);
