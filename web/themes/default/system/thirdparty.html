@@ -196,7 +196,7 @@
 </div>
 <script type="text/javascript">
 	angular.module('systemApp').value('config', {
-		'do' : {php echo !empty($do) ? json_encode($do): 'null'},
+		'do' : {php echo !empty($do) ? json_encode($do): 'qq_login'},
 		'qqPlatform' : {php echo !empty($_W['setting']['qq_platform']) ? json_encode($_W['setting']['qq_platform']) : 'null'},
 		'wechatPlatform' : {php echo !empty($_W['setting']['wechat_platform']) ? json_encode($_W['setting']['wechat_platform']) : 'null'},
 		'url': {php echo !empty($url) ? json_encode($url) : 'null'},
