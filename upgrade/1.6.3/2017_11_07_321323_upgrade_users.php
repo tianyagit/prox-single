@@ -19,7 +19,7 @@ class UpgradeUsers {
 			pdo_query('ALTER TABLE ' . tablename('users') . " ADD `register_type` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '用户来源类型：0网站注册，1qq, 2微信';");
 		}
 		if (!pdo_fieldexists('users', 'openid')) {
-			pdo_query('ALTER TABLE ' . tablename('users') . " ADD `openid` varchar(50) NOT NULL DEFAULT 0 COMMENT 'qq的openid';");
+			pdo_query('ALTER TABLE ' . tablename('users') . " ADD `openid` varchar(50) NOT NULL DEFAULT 0 COMMENT '第三方的openid';");
 		}
 	}
 	

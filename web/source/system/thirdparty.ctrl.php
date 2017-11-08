@@ -50,6 +50,6 @@ if ($do == 'wechat_login') {
 			'authstate' => 0
 		);
 		setting_save($_W['setting']['wechat_platform'], 'wechat_platform');
-	}	
+	}
 }
 template('system/thirdparty');

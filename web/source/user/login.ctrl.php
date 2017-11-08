@@ -52,7 +52,7 @@ function _login($forward = '', $login_type = '', $state = '', $code = '') {
 			itoast('请输入密码', '', '');
 		}
 	} elseif ($login_type == 'qq') {
-		$member = user_qq_login($state, $code);
+		$member = user_third_login($state, $code, $login_type);
 		if (is_error($member)) {
 			itoast($member['message'], '', '');
 		}
