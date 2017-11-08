@@ -171,7 +171,7 @@ function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
 	} else {
 		$site_store_buy_goods = $store_table->searchAccountBuyGoods($uniacid, $type);
 		$setting = uni_setting_load('statistics', $uniacid);
-		$use_number = intval($setting['statistics']['use']);
+		$use_number = intval(@$setting['statistics']['use']);
 		$site_store_buy_goods = $site_store_buy_goods - $use_number;
 	}
 	cache_write($cachekey, $site_store_buy_goods);
