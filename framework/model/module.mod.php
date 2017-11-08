@@ -432,7 +432,6 @@ function module_permission_fetch($name) {
  */
 function module_uninstall($module_name, $is_clean_rule = false) {
 	global $_W;
-	load()->model('cloud');
 	if (empty($_W['isfounder'])) {
 		return error(1, '您没有卸载模块的权限！');
 	}
@@ -447,12 +446,33 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	if (!empty($module['plugin_list'])) {
 		pdo_delete('modules_plugin', array('main_module' => $module_name));
 	}
+
+	pdo_insert('modules_recycle', array('modulename' => $module_name));
+	pdo_delete('uni_account_modules', array('module' => $module_name));
+	ext_module_clean($module_name, $is_clean_rule);
+	cache_build_module_subscribe_type();
+	cache_build_uninstalled_module();
+	cache_build_module_info($module_name);
+
+	return true;
+}
+
+/**
+ *  执行模块的卸载脚本
+ * @param string $module_name 模块标识
+ */
+function module_execute_uninstall_script($module_name) {
+	global $_W;
+	load()->model('cloud');
+	if (empty($_W['isfounder'])) {
+		return error(1, '您没有卸载模块的权限！');
+	}
 	$modulepath = IA_ROOT . '/addons/' . $module_name . '/';
 	$manifest = ext_module_manifest($module_name);
 	if (empty($manifest)) {
-		$r = cloud_prepare();
-		if (is_error($r)) {
-			itoast($r['message'], url('cloud/profile'), 'error');
+		$result = cloud_prepare();
+		if (is_error($result)) {
+			return error(1, $result['message']);
 		}
 		$packet = cloud_m_build($module_name, 'uninstall');
 		if ($packet['sql']) {
@@ -463,22 +483,19 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 			require($uninstall_file);
 			unlink($uninstall_file);
 		}
-	} elseif (!empty($manifest['uninstall'])) {
-		if (strexists($manifest['uninstall'], '.php')) {
-			if (file_exists($modulepath . $manifest['uninstall'])) {
-				require($modulepath . $manifest['uninstall']);
+	} else {
+		if (!empty($manifest['uninstall'])) {
+			if (strexists($manifest['uninstall'], '.php')) {
+				if (file_exists($modulepath . $manifest['uninstall'])) {
+					require($modulepath . $manifest['uninstall']);
+				}
+			} else {
+				pdo_run($manifest['uninstall']);
 			}
-		} else {
-			pdo_run($manifest['uninstall']);
 		}
 	}
-	pdo_insert('modules_recycle', array('modulename' => $module_name));
-	pdo_delete('uni_account_modules', array('module' => $module_name));
-	ext_module_clean($module_name, $is_clean_rule);
-	cache_build_module_subscribe_type();
-	cache_build_uninstalled_module();
-	cache_build_module_info($module_name);
-
+	pdo_delete('modules_recycle', array('modulename' => $module_name));
+	cache_delete(cache_system_key('module:all_uninstall'));
 	return true;
 }
 
