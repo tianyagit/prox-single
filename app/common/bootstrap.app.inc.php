@@ -151,6 +151,7 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' &
 		if(uni_is_multi_acid()) {
 			$str = "&j={$_W['acid']}";
 		}
+		$unisetting['oauth']['host'] = uni_account_global_oauth($unisetting['oauth']['host']);
 		if (!empty($unisetting['oauth']['host'])) {
 			$url = str_replace($_W['siteroot'], $unisetting['oauth']['host'].'/', $_W['siteurl']);
 		} else {

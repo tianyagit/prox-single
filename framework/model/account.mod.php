@@ -1043,3 +1043,18 @@ function uni_account_member_fields($uniacid) {
 	return $account_member_fields;
 }
 
+
+/**
+ * 获取公众号的oauth
+ * @param string $uni_host 当前公众号的oauth host
+ * @return string
+ */
+function uni_account_global_oauth($uni_host = '') {
+	if (!empty($uni_host)) {
+		return $uni_host;
+	}
+	$oauth = setting_load('global_oauth');
+	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : '';
+	$host = !empty($oauth) ? (empty($oauth['host']) ? '' : $oauth['host']) : '';
+	return $host;
+}

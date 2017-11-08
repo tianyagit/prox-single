@@ -144,6 +144,7 @@ if(!empty($type)) {
 		$auth = sha1($sl . $_W['uniacid'] . $_W['config']['setting']['authkey']);
 		
 		$callback = $_W['siteroot'] . "payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
+		$unisetting['oauth']['host'] = uni_account_global_oauth($unisetting['oauth']['host']);
 		if (!empty($unisetting['oauth']['host'])) {
 			$callback = str_replace($_W['siteroot'], $unisetting['oauth']['host'].'/', $callback);
 		}
