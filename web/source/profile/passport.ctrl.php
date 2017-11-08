@@ -44,7 +44,7 @@ if ($do == 'oauth') {
 				if (in_array($account['level'], array(4))) {
 					$oauth_accounts[$account['acid']] = $account['name'];
 				}
-				if (in_array($account['level'], array(3, 4))) {
+				if (in_array($account['level'], array(ACCOUNT_SUBSCRIPTION_VERIFY, ACCOUNT_SERVICE_VERIFY))) {
 					$jsoauth_accounts[$account['acid']] = $account['name'];
 				}
 			}
