@@ -189,3 +189,4 @@ define('ARTICLE_CCATE', 0);
 
 //用户注册方式
 define('USER_REGISTER_TYPE_QQ', 1);
+define('USER_REGISTER_TYPE_WECHAT', 2);

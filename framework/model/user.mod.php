@@ -884,26 +884,54 @@ function user_expire_notice() {
  * 第三方登录用户注册数据处理 qq  微信
  * @param $state
  * @param $code
+ * @param $login_type 登录方式
  * @return array|bool|int|mixed
  */
 function user_third_login($state, $code, $login_type) {
 	global $_W;
+	if (empty($state) || empty($code) || empty($login_type)) {
+		return error(-1, '参数错误！');
+	}
 	if ($login_type == 'qq') {
 		load()->classs('qq.platform');
-		$platform = new QqPlatform();
+		$platform_obj = new QqPlatform();
 		$register_type = USER_REGISTER_TYPE_QQ;
-	}
-	$token = $platform->getAccessToken($state, $code);
-	if (is_error($token)) {
-		return error(-1, '请重新登录');
-	}
-	$openid = $platform->getOpenid($token);
-	if (is_error($openid)) {
-		return error(-1, '请重新登录!');
-	}
-	$user_info = $platform->getUserInfo($openid, $token);
-	if (is_error($user_info)) {
-		return error(-1, $user_info['message']);
+		$token = $platform_obj->getAccessToken($state, $code);
+		if (is_error($token)) {
+			return error(-1, '请重新登录');
+		}
+		$openid = $platform_obj->getOpenid($token);
+		if (is_error($openid)) {
+			return error(-1, '请重新登录');
+		}
+		$user_info = $platform_obj->getUserInfo($openid, $token);
+		if (is_error($user_info)) {
+			return error(-1, $user_info['message']);
+		}
+		$user_info['avatar'] = $user_info['figureurl_qq_1'];
+	} elseif ($login_type == 'wechat') {
+		load()->classs('weixin.account');
+		$account = array(
+			'key' => $_W['setting']['wechat_platform']['appid'],
+			'secret' => $_W['setting']['wechat_platform']['appsecret'],
+		);
+		$account_obj = new WeiXinAccount($account);
+		$register_type = USER_REGISTER_TYPE_WECHAT;
+		$oauthinfo = $account_obj->getOauthInfo();
+		if (is_error($oauthinfo)) {
+			return error(-1, $oauthinfo['message']);
+		}
+		if (empty($oauthinfo['access_token']) || empty($oauthinfo['openid'])) {
+			return error(-1, '访问公众平台接口失败，请稍后重试！');
+		}
+		$openid = $oauthinfo['openid'];
+		$user_info = $account_obj->getOauthUserInfo($oauthinfo['access_token'], $openid);
+		if (is_error($user_info)) {
+			return error(-1, $user_info['message']);
+		}
+		$user_info['gender'] = $user_info['sex'];
+		$user_info['avatar'] = $user_info['headimgurl'];
+		$user_info['year'] = '';
 	}
 
 	$user_id = pdo_getcolumn('users', array('openid' => $openid), 'uid');
@@ -911,10 +939,10 @@ function user_third_login($state, $code, $login_type) {
 		$status = !empty($_W['setting']['register']['verify']) ? 1 : 2;
 		pdo_insert('users', array('type' => USER_TYPE_COMMON, 'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'register_type' => $register_type, 'openid' => $openid));
 		$user_id = pdo_insertid();
-		pdo_update('users', array('username' => $user_id), array('uid' => $user_id));
-		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $user_info['nickname'], 'avatar' => $user_info['figureurl_qq_1'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']));
+		pdo_update('users', array('username' => 'user_' . $user_id), array('uid' => $user_id));
+		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $user_info['nickname'], 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']));
 	} else {
-		pdo_update('users_profile', array('nickname' => $user_info['nickname'], 'avatar' => $user_info['figureurl_qq_1'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']), array('uid' => $user_id));
+		pdo_update('users_profile', array('nickname' => $user_info['nickname'], 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']), array('uid' => $user_id));
 	}
 	return $user_id;
 }

@@ -6,6 +6,8 @@
 defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
 
+load()->model('user');
+load()->classs('weixin.account');
 load()->classs('qq.platform');
 $qq = new QqPlatform();
 
@@ -19,11 +21,21 @@ if ($_GPC['login_type'] == 'qq') {
 
 $qq_login_url = $qq->getAuthLoginUrl();
 $setting = $_W['setting'];
+if(!empty($setting['wechat_platform']) && !empty($setting['wechat_platform']['authstate'])) {
+	if ($_GPC['login_type'] == 'wechat' && !empty($_GPC['code']) && $_GPC['state'] == $_W['token']) {
+		_login($_GPC['referer'], 'wechat', $_GPC['state'], $_GPC['code']);
+	}
+	$account = array(
+		'key' => $setting['wechat_platform']['appid'],
+		'secret' => $setting['wechat_platform']['appsecret'],
+	);
+	$account_obj = new WeiXinAccount($account);
+	$wechat_login_url = $account_obj->getWechatLoginUrl($_W['siteurl'] . 'login_type=wechat', $_W['token']);
+}
 template('user/login');
 
 function _login($forward = '', $login_type = '', $state = '', $code = '') {
 	global $_GPC, $_W;
-	load()->model('user');
 	user_expire_notice();
 	$member = array();
 	if (empty($login_type)) {
@@ -51,10 +63,10 @@ function _login($forward = '', $login_type = '', $state = '', $code = '') {
 		if (empty($member['password'])) {
 			itoast('请输入密码', '', '');
 		}
-	} elseif ($login_type == 'qq') {
+	} else {
 		$member = user_third_login($state, $code, $login_type);
 		if (is_error($member)) {
-			itoast($member['message'], '', '');
+			itoast($member['message']);
 		}
 	}
 
