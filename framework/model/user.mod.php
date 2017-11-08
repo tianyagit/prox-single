@@ -881,37 +881,40 @@ function user_expire_notice() {
 }
 
 /**
- * qq登录用户注册数据处理
+ * 第三方登录用户注册数据处理 qq  微信
  * @param $state
  * @param $code
  * @return array|bool|int|mixed
  */
-function user_qq_login($state, $code) {
+function user_third_login($state, $code, $login_type) {
 	global $_W;
-	load()->classs('qq.platform');
-	$qq = new QqPlatform();
-	$qq_token = $qq->getAccessToken($state, $code);
-	if (is_error($qq_token)) {
+	if ($login_type == 'qq') {
+		load()->classs('qq.platform');
+		$platform = new QqPlatform();
+		$register_type = USER_REGISTER_TYPE_QQ;
+	}
+	$token = $platform->getAccessToken($state, $code);
+	if (is_error($token)) {
 		return error(-1, '请重新登录');
 	}
-	$openid = $qq->getOpenid($qq_token['access_token']);
+	$openid = $platform->getOpenid($token);
 	if (is_error($openid)) {
 		return error(-1, '请重新登录!');
 	}
-	$qq_user_info = $qq->getUserInfo($openid, $qq_token['access_token']);
-	if (is_error($qq_user_info)) {
-		return error(-1, $qq_user_info['message']);
+	$user_info = $platform->getUserInfo($openid, $token);
+	if (is_error($user_info)) {
+		return error(-1, $user_info['message']);
 	}
 
 	$user_id = pdo_getcolumn('users', array('openid' => $openid), 'uid');
 	if (empty($user_id)) {
 		$status = !empty($_W['setting']['register']['verify']) ? 1 : 2;
-		pdo_insert('users', array('type' => USER_TYPE_COMMON, 'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'register_type' => USER_REGISTER_TYPE_QQ, 'openid' => $openid));
+		pdo_insert('users', array('type' => USER_TYPE_COMMON, 'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'register_type' => $register_type, 'openid' => $openid));
 		$user_id = pdo_insertid();
 		pdo_update('users', array('username' => $user_id), array('uid' => $user_id));
-		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $qq_user_info['nickname'], 'avatar' => $qq_user_info['figureurl_qq_1'], 'gender' => $qq_user_info['gender'], 'resideprovince' => $qq_user_info['province'], 'residecity' => $qq_user_info['city'], 'birthyear' => $qq_user_info['year']));
+		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $user_info['nickname'], 'avatar' => $user_info['figureurl_qq_1'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']));
 	} else {
-		pdo_update('users_profile', array('nickname' => $qq_user_info['nickname'], 'avatar' => $qq_user_info['figureurl_qq_1'], 'gender' => $qq_user_info['gender'], 'resideprovince' => $qq_user_info['province'], 'residecity' => $qq_user_info['city'], 'birthyear' => $qq_user_info['year']), array('uid' => $user_id));
+		pdo_update('users_profile', array('nickname' => $user_info['nickname'], 'avatar' => $user_info['figureurl_qq_1'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']), array('uid' => $user_id));
 	}
 	return $user_id;
 }

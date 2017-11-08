@@ -49,7 +49,7 @@ class QqPlatform {
 		}
 
 		parse_str($response['content'], $result);
-		return $result;
+		return $result['access_token'];
 	}
 
 	function getOpenid($token) {
