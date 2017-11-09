@@ -58,8 +58,8 @@ class UsersTable extends We7Table {
 		return $this;
 	}
 
-	public function searchWithEndtime() {
-		$this->query->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP + 86400);;
+	public function searchWithEndtime($day) {
+		$this->query->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP + 86400 * $day);
 		return $this;
 	}
 

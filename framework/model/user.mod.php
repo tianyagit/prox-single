@@ -436,8 +436,14 @@ function user_account_detail_info($uid) {
 function user_modules($uid) {
 	global $_W;
 	load()->model('module');
-	$cachekey = cache_system_key("user_modules:" . $uid);
-	$modules = cache_load($cachekey);
+	load()->object('cloudapi');
+	$cloud_api = new CloudApi();
+	$modules = $cloud_api->post('cache', 'get', array('key' => cache_system_key('user_modules:' . $uid)));
+	if (!is_error($modules)) {
+		$modules = $modules['data'];
+	} else {
+		return $modules;
+	}
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
@@ -460,11 +466,9 @@ function user_modules($uid) {
 			}
 			$packageids = $user_group_info['package'];
 
-			//如果套餐组中包含-1，则直接取全部权限，否则根据情况获取模块权限
 			if (!empty($packageids) && in_array('-1', $packageids)) {
 				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 			} else {
-				//此处缺少公众号专属套餐
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
 				if (!empty($package_group)) {
 					$package_group_module = array();
@@ -511,9 +515,8 @@ function user_modules($uid) {
 				}
 			}
 		}
-		cache_write($cachekey, $modules);
+		$cloud_api->post('cache', 'set', array('key' => cache_system_key('user_modules:' . $uid), 'value' => $modules));
 	}
-
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
@@ -852,10 +855,13 @@ function user_detail_formate($profile) {
  */
 function user_expire_notice() {
 	load()->model('cloud');
+	load()->model('setting');
+	$setting_sms_sign = setting_load('site_sms_sign');
+	$day = !empty($setting_sms_sign['site_sms_sign']['day']) ? $setting_sms_sign['site_sms_sign']['day'] : 1;
 
 	$user_table = table('users');
 	$user_table->searchWithMobile();
-	$user_table->searchWithEndtime();
+	$user_table->searchWithEndtime($day);
 	$user_table->searchWithSendStatus();
 	$users_expire = $user_table->searchUsersList();
 
@@ -894,17 +900,18 @@ function user_third_login($state, $code, $login_type) {
 	}
 	if ($login_type == 'qq') {
 		load()->classs('qq.platform');
-		$platform_obj = new QqPlatform();
+		$account = array(
+			'key' => $_W['setting']['qq_platform']['appid'],
+			'secret' => $_W['setting']['qq_platform']['appsecret'],
+		);
+		$platform_obj = new QqPlatform($account);
 		$register_type = USER_REGISTER_TYPE_QQ;
-		$token = $platform_obj->getAccessToken($state, $code);
-		if (is_error($token)) {
-			return error(-1, '请重新登录');
+		$oauth_info = $platform_obj->getOauthInfo();
+		if (is_error($oauth_info)) {
+			return error(-1, $oauth_info['message']);
 		}
-		$openid = $platform_obj->getOpenid($token);
-		if (is_error($openid)) {
-			return error(-1, '请重新登录');
-		}
-		$user_info = $platform_obj->getUserInfo($openid, $token);
+		$openid = $oauth_info['openid'];
+		$user_info = $platform_obj->getUserInfo($oauth_info['access_token'], $openid);
 		if (is_error($user_info)) {
 			return error(-1, $user_info['message']);
 		}
@@ -912,8 +919,8 @@ function user_third_login($state, $code, $login_type) {
 	} elseif ($login_type == 'wechat') {
 		load()->classs('weixin.account');
 		$account = array(
-			'key' => $_W['setting']['wechat_platform']['appid'],
-			'secret' => $_W['setting']['wechat_platform']['appsecret'],
+				'key' => $_W['setting']['wechat_platform']['appid'],
+				'secret' => $_W['setting']['wechat_platform']['appsecret'],
 		);
 		$account_obj = new WeiXinAccount($account);
 		$register_type = USER_REGISTER_TYPE_WECHAT;

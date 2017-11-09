@@ -6,10 +6,10 @@
  * Time: 9:27
  */
 define('IN_SYS', true);
+require '../framework/bootstrap.inc.php';
 
-$code = $_GET['code'];
-$state = $_GET['state'];
-
-$redirect = $_W['siteroot'] . "index.php?c=user&a=login&code=$code&state=$state&login_type=qq";
+$code = $_GPC['code'];
+$state = $_GPC['state'];
+$redirect = $_W['siteroot'] . "web/index.php?c=user&a=login&code=$code&state=$state&login_type=qq";
 
 header("Location:$redirect");

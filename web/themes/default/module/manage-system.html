@@ -377,9 +377,11 @@
 		<tr>
 			<td class="table-label">模块标题</td>
 			<td>{{ moduleinfo.title }}</td>
+			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('title', moduleinfo.title)">修改</a></div>
 			</td>
+			{/if}
 		</tr>
 		{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 		<tr>
@@ -394,30 +396,38 @@
 		<tr>
 			<td class="table-label">模块简述</td>
 			<td>{{ moduleinfo.ability }}</td>
+			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('ability', moduleinfo.ability)">修改</a></div>
 			</td>
+			{/if}
 		</tr>
 		<tr>
 			<td class="table-label">模块介绍</td>
 			<td>{{ moduleinfo.description }}</td>
+			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('description', moduleinfo.description)">修改</a></div>
 			</td>
+			{/if}
 		</tr>
 		<tr>
 			<td class="table-label">模块缩略图</td>
 			<td><img ng-src="{{ moduleinfo.logo }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
+			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('logo', moduleinfo.logo)">修改</a></div>
 			</td>
+			{/if}
 		</tr>
 		<tr>
 			<td class="table-label">模块封面</td>
 			<td><img ng-src="{{ moduleinfo.preview }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
+			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('preview', moduleinfo.preview)">修改</a></div>
 			</td>
+			{/if}
 		</tr>
 	</table>
 	<!--公众号列表-->
