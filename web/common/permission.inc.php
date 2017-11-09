@@ -333,6 +333,26 @@ $we7_file_permission = array(
 		'operator' => array(),
 	),
 	'append' => array('append*'),
+	'pc'=> array(
+		'default'=> '',
+		'vice_founder' => array(
+			'home',
+			'manage',
+		),
+		'owner' => array(
+			'home',
+			'manage',
+		),
+		'manager' => array(
+			'home',
+			'manage',
+		),
+		'operator' => array(
+			'home',
+			'manage',
+		),
+
+	)
 );
 
 return $we7_file_permission;

@@ -21,7 +21,7 @@ class PcTable extends We7Table {
 	 * @return bool
 	 * @since version
 	 */
-	public function create($attr) {
+	public function create($attr, $uid) {
 		$name = $attr['name'];
 		$description = $attr['description'];
 		$data = array(
@@ -34,17 +34,39 @@ class PcTable extends We7Table {
 			 return false;
 		}
 		$uniacid = pdo_insertid();
-		if($uniacid) {
-			$accountdata = array('uniacid' => $uniacid, 'type' => $this->PC_TYPE, 'hash' => random(8));
-			pdo_insert('account', $accountdata);
-			$acid = pdo_insertid();
-			pdo_update('uni_account', array('default_acid'=>$acid), array('uniacid'=>$uniacid));
-			pdo_insert('account_pc', array('uniacid'=>$uniacid, 'acid'=>$acid));
+		if(!$uniacid) {
+			return false;
 		}
-
+		$accountdata = array('uniacid' => $uniacid, 'type' => $this->PC_TYPE, 'hash' => random(8));
+		pdo_insert('account', $accountdata);
+		$acid = pdo_insertid();
+		pdo_update('uni_account', array('default_acid'=>$acid), array('uniacid'=>$uniacid));
+		pdo_insert('account_pc', array('uniacid'=>$uniacid, 'acid'=>$acid));
+		$this->createLog($uniacid, $uid);
 		return $uniacid;
 	}
 
+	/**
+	 *  创建记录
+	 * @param $uniacid
+	 * @param $uid
+	 *
+	 *
+	 * @since version
+	 */
+	private function createLog($uniacid, $uid) {
+		if (empty($_W['isfounder'])) {
+			$user_info = permission_user_account_num($uid);
+			uni_user_account_role($uniacid, $uid, ACCOUNT_MANAGE_NAME_OWNER);
+			if (empty($user_info['usergroup_pc_limit'])) {
+				pdo_update('account', array('endtime' => strtotime('+1 month', time())), array('uniacid' => $uniacid));
+				pdo_insert('site_store_create_account', array('uid' => $uid, 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_PC_NORMAL));
+			}
+		}
+		if (user_is_vice_founder()) {
+			uni_user_account_role($uniacid, $uid, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+		}
+	}
 	/**
 	 *  删除PC
 	 * @param $uniacid
@@ -53,11 +75,11 @@ class PcTable extends We7Table {
 	 * @since version
 	 */
 	public function delete($uniacid) {
-		if(is_array($uniacid)) {
-			return false;
-		}
-		pdo_delete(self::ACCOUNT_TABLE, array('uniacid'=>$uniacid));
-		pdo_delete(self::UNI_ACCOUNT_TABLE, array('uniacid'=>$uniacid));
+//		if(is_array($uniacid)) {
+//			return false;
+//		}
+//		pdo_delete(self::ACCOUNT_TABLE, array('uniacid'=>$uniacid));
+//		pdo_delete(self::UNI_ACCOUNT_TABLE, array('uniacid'=>$uniacid));
 	}
 
 	/** 修改pc

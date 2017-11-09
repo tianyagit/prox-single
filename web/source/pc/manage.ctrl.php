@@ -9,6 +9,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->classs('validator');
+load()->model('pc');
 //load()->classs('user');
 
 if($do == 'create') {
@@ -16,39 +17,26 @@ if($do == 'create') {
 		echo '非法提交';
 		return;
 	}
-
-
-	$isajax = $_W['isajax'];
-	$rule = array(
-		'name'=>'required',
-		'description'=>'required',
-	);
-	$message = array(
-		'name'=>'pc名称最大长度30',
-		'description.required'=>'描述太长',
-	);
-	$validtor = Validator::create($_GPC, $rule, $message);
-	$valid = $validtor->valid();
-	if(! $valid) {
-		if($isajax) {
-
-		}else {
-			$errors = $validtor->errors();
-			template('pc/create');
-			return;
-		}
-
+	if(! pc_can_create($_W['uid'])) {
+		itoast('创建PC个数已满', url('pc/manage/list'));
 	}
+	$data = array(
+		'name'=>$_GPC['name'],
+		'description'=>$_GPC['description']
+	);
+
 	/* @var $pc PcTable*/
 	$pc = table('pc');
-	$uniacid = $pc->create($_GPC);
+	$uniacid = $pc->create($data, $_W['uid']);
 	if($uniacid){
-		itoast('创建成功', url('pc/manage/display'));
+		itoast('创建成功', url('pc/manage/list'));
 	}
-
 }
 
 if($do == 'createview') {
+	if(!pc_can_create($_W['uid'])) { //没有权限创建
+		itoast('', url('pc/manage/list'));
+	}
 	template('pc/create');
 }
 

@@ -6,6 +6,7 @@ defined('IN_IA') or exit('Access Denied');
 
 function pc_save_last($uniacid) {
 	isetcookie('__pcuniacid', $uniacid, 7 * 86400);
+	isetcookie('__uniacid', $uniacid, 7 * 86400);
 }
 
 function pc_last_uniacid() {
@@ -47,4 +48,19 @@ function pc_get_pc_uniacid($uid = 0, $uniacid = 0) {
 	}
 	return 0;
 
+}
+
+/**
+ *  是否可创建PC
+ * @param $uid
+ *
+ *
+ * @since version
+ */
+function pc_can_create($uid) {
+	if(user_is_founder($uid)) { //创始人可以创建
+		return true;
+	}
+	$data = permission_user_account_num($uid);
+	return isset($data['pc_limit']) && $data['pc_limit'] > 0;
 }

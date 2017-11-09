@@ -165,7 +165,7 @@ class Validator {
 	 * @return bool
 	 */
 	public function isError() {
-		return !empty($this->errors);
+		return count($this->errors) != 0;
 	}
 
 	/**
@@ -242,8 +242,7 @@ class Validator {
 				}
 			}
 		}
-
-		return $this->isError();
+		return !$this->isError();
 	}
 
 	/**

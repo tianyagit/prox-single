@@ -761,6 +761,7 @@ function user_list_format($users) {
 		}
 		$user['maxaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxaccount']);
 		$user['maxwxapp'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwxapp']);
+		$user['maxpcaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxpcaccount']);
 		$user['groupname'] = $group['name'];
 		unset($user);
 	}
