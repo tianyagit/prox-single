@@ -724,6 +724,7 @@ function user_group_format($lists) {
 				$names[] = $modules['name'];
 				$lists[$key]['module_nums'] = count($modules['modules']);
 				$lists[$key]['wxapp_nums'] = count($modules['wxapp']);
+				$lists[$key]['pc_nums'] = count($modules['pc']);
 			}
 		}
 		$lists[$key]['packages'] = implode(',', $names);

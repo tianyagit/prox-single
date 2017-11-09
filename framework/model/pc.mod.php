@@ -30,13 +30,13 @@ function pc_can_apply($uid, $uniacid) {
 	if(user_is_founder($uid)) {
 		return true;
 	}
-	$accounts = uni_user_accounts($uniacid);
-	return is_array($accounts) && isset($account[$uniacid]);
+	$user = account_owner($uniacid);
+	return isset($user['uid']) && $uid == $user['uid'];
 }
 /*
  * 获取可操作的uniacid
  */
-function pc_get_pc_uniacid($uid = 0, $uniacid = 0) {
+function pc_get_uniacid($uid = 0, $uniacid = 0) {
 	if(!$uniacid) {
 		$uniacid = pc_last_uniacid();
 	}

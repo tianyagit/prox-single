@@ -10,7 +10,6 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->classs('validator');
 load()->model('pc');
-//load()->classs('user');
 
 if($do == 'create') {
 	if(!checksubmit()) {

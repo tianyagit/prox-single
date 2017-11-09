@@ -99,8 +99,8 @@ class PcTable extends We7Table {
 		$query = $this->createQuery($uid);
 		$query->page($pageindex, $pagesize);
 		$query->where(array('b.type' => array(ACCOUNT_TYPE_PC_NORMAL)));
-		$total =  $query->getLastQueryTotal();
 		$list = $query->getall();
+		$total =  $query->getLastQueryTotal();
 		return [$list, $total];
 	}
 

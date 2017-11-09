@@ -85,6 +85,16 @@
 									</ul>
 								</td>
 							</tr>
+							<tr class="permission-apply">
+								<td class="vertical-middle">PC应用</td>
+								<td>
+									<ul>
+										<li ng-repeat="pc in pack.pc">
+											<span class="label label-info" ng-bind="pc.title"></span>
+										</li>
+									</ul>
+								</td>
+							</tr>
 							<tr class="permission-template">
 								<td class="vertical-middle">模板</td>
 								<td><ul><li ng-repeat="tpl in pack.templates"><span class="label label-info" ng-bind="tpl.title"></span></li></ul></td>

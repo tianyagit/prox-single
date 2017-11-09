@@ -335,6 +335,11 @@ function uni_groups($groupids = array(), $show_all = false) {
 								if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 									$row['wxapp'][$module['name']] = $module;
 								}
+
+								if ($module['pc_support'] == MODULE_SUPPORT_PC) {
+									$row['pc'][$module['name']] = $module;
+								}
+
 								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 									if (!empty($module['main_module'])) {
 										continue;

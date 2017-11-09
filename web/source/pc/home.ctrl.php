@@ -14,7 +14,7 @@ load()->model('pc');
 
 if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
-	$uniacid = pc_get_pc_uniacid($_W['uid'], $uniacid);
+	$uniacid = pc_get_uniacid($_W['uid'], $uniacid);
 	if(!$uniacid) {
 		itoast('', url('pc/manage/list'), 'info');
 	}
@@ -25,7 +25,7 @@ if($do == 'switch') {
 if($do == 'display') {
 	define('FRAME', 'pc');
 	$uniacid = intval($_GPC['uniacid']);
-	$uniacid = pc_get_pc_uniacid($_W['uid'], $uniacid);
+	$uniacid = pc_get_uniacid($_W['uid'], $uniacid);
 	if(!$uniacid) {
 		itoast('', url('pc/manage/list'), 'info');
 	}
