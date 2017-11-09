@@ -897,17 +897,18 @@ function user_third_login($state, $code, $login_type) {
 	}
 	if ($login_type == 'qq') {
 		load()->classs('qq.platform');
-		$platform_obj = new QqPlatform();
+		$account = array(
+			'key' => $_W['setting']['qq_platform']['appid'],
+			'secret' => $_W['setting']['qq_platform']['appsecret'],
+		);
+		$platform_obj = new QqPlatform($account);
 		$register_type = USER_REGISTER_TYPE_QQ;
-		$token = $platform_obj->getAccessToken($state, $code);
-		if (is_error($token)) {
-			return error(-1, '请重新登录');
+		$oauth_info = $platform_obj->getOauthInfo();
+		if (is_error($oauth_info)) {
+			return error(-1, $oauth_info['message']);
 		}
-		$openid = $platform_obj->getOpenid($token);
-		if (is_error($openid)) {
-			return error(-1, '请重新登录');
-		}
-		$user_info = $platform_obj->getUserInfo($openid, $token);
+		$openid = $oauth_info['openid'];
+		$user_info = $platform_obj->getUserInfo($oauth_info['access_token'], $openid);
 		if (is_error($user_info)) {
 			return error(-1, $user_info['message']);
 		}
@@ -915,8 +916,8 @@ function user_third_login($state, $code, $login_type) {
 	} elseif ($login_type == 'wechat') {
 		load()->classs('weixin.account');
 		$account = array(
-			'key' => $_W['setting']['wechat_platform']['appid'],
-			'secret' => $_W['setting']['wechat_platform']['appsecret'],
+				'key' => $_W['setting']['wechat_platform']['appid'],
+				'secret' => $_W['setting']['wechat_platform']['appsecret'],
 		);
 		$account_obj = new WeiXinAccount($account);
 		$register_type = USER_REGISTER_TYPE_WECHAT;
