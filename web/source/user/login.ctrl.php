@@ -26,6 +26,7 @@ if(!empty($setting['wechat_platform']) && !empty($setting['wechat_platform']['au
 		_login($_GPC['referer'], 'wechat', $_GPC['state'], $_GPC['code']);
 	}
 	$account = array(
+		'acid' => 'invent',
 		'key' => $setting['wechat_platform']['appid'],
 		'secret' => $setting['wechat_platform']['appsecret'],
 	);
