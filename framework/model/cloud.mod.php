@@ -619,7 +619,7 @@ function cloud_w_upgradeinfo($name) {
 //-后台皮肤接口 end
 
 function cloud_sms_send($mobile, $content, $postdata = array()) {
-	global $_W;//error_reporting(E_ALL);
+	global $_W;
 	load()->model('setting');
 	if(!preg_match('/^1\d{10}$/', $mobile) || empty($content)) {
 		return error(1, '发送短信失败, 原因: 手机号错误或内容为空.');
