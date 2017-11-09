@@ -20,7 +20,7 @@ $role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MA
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
-
+	/* @var $account_table AccountTable*/
 	$account_table = table('account');
 	
 	$type_condition = array(

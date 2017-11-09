@@ -50,7 +50,7 @@
 			</div>
 			<div class="dropdown dropdown-toggle we7-dropdown">
 				<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					公众号筛选
+					PC筛选
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" aria-labelledby="dLabel">
@@ -93,9 +93,9 @@
 			{if $role_type}
 			<div class="manage-option text-right">
 				<a href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}">基础信息</a>
-				<a href="{{links.post}}&do=sms&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">短信信息</a>
+				<!--<a href="{{links.post}}&do=sms&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">短信信息</a>-->
 				<a href="{{links.postUser}}&do=edit&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">使用者管理</a>
-				<a href="{{links.post}}&do=modules_tpl&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">可用应用模板/模块</a>
+				<!--<a href="{{links.post}}&do=modules_tpl&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">可用应用模板/模块</a>-->
 				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
 				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
 				{/if}

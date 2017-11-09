@@ -28,7 +28,7 @@ if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
 }else if($_GPC['account_type'] == ACCOUNT_TYPE_PC_NORMAL) {
 	define('ACCOUNT_TYPE', ACCOUNT_TYPE_PC_NORMAL);
 	define('ACCOUNT_TYPE_OFFCIAL', 0);
-	define('ACCOUNT_TYPE_NAME', '公众号');
+	define('ACCOUNT_TYPE_NAME', 'PC');
 	define('ACCOUNT_TYPE_TEMPLATE', '-pc');
 	define('ACCOUNT_TYPE_SUPPORT', 'pc_support');
 
