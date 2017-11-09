@@ -1,0 +1,27 @@
+{template 'common/header'}
+{template 'user/user-header'}
+<form action="" method="post" class="we7-form" id="js-sms-sign" ng-controller="SmsSignCtrl" ng-cloak>
+	<div class="form-group">
+		<label for="" class="control-label col-sm-2"  style="width: 150px;">默认所属用户组</label>
+		<div class="form-controls col-sm-8">
+			<select class="we7-select" ng-model="site_sms_sign">
+				<option value="0">请选择短信签名</option>
+				<option ng-repeat="row in all_signatures" value="{{row}}" ng-bind="row" ng-selected="site_sms_sign == row"></option>
+			</select>
+
+			<span class="help-block">请填写短信签名。未审核签名可以通过云短信审核签名</span>
+		</div>
+	</div>
+	<button type="button" class="btn btn-primary" ng-click="saveSms()" ng-style="{'padding': '6px 50px'}">确定</button>
+</form>
+<script>
+	angular.module('userManageApp').value('config', {
+		'all_signatures' : {php echo !empty($cloud_sms_signs) ? json_encode($cloud_sms_signs) : 'null'},
+		'site_sms_sign' : {php echo !empty($setting_sms_sign) ? json_encode($setting_sms_sign) : 'null'},
+		'links' : {
+			'site_sms_sign_link' : "{php echo url('user/sms-sign/save_sms_sign')}"
+		}
+	});
+	angular.bootstrap($('#js-sms-sign'), ['userManageApp']);
+</script>
+{template 'common/footer'}
