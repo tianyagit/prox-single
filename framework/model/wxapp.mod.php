@@ -457,6 +457,11 @@ function wxapp_code_generate($version_id) {
 	if(!empty($account_wxapp_info['appdomain'])) {
 		$siteurl = $account_wxapp_info['appdomain'];
 	}
+
+	if(! starts_with($siteurl, 'https')) {
+		return error(1, '域名必须以https开头, 请先设置小程序域名');
+	}
+
 	$appid = $account_wxapp_info['key'];
 	$siteinfo = array(
 		'name' => $account_wxapp_info['name'],

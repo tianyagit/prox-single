@@ -639,9 +639,14 @@ if ($do == 'installed') {
 	$module_list = $all_modules = user_modules($_W['uid']);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
-			if (!empty($module['issystem']) || (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)) {
+			if (!empty($module['issystem'])
+				|| (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2)
+				|| (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)
+				|| (ACCOUNT_TYPE == ACCOUNT_TYPE_PC_NORMAL && $module['pc_support'] != 2)) {
 				unset($module_list[$key]);
 			}
+
+
 			if (!empty($letter) && strlen($letter) == 1) {
 				if ($module['title_initial'] != $letter){
 					unset($module_list[$key]);

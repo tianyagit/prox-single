@@ -28,6 +28,9 @@ if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
 } elseif ($_GPC['account_type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $_GPC['account_type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 	define('ACCOUNT_TYPE', ACCOUNT_TYPE_OFFCIAL_NORMAL);
 	define('ACCOUNT_TYPE_TEMPLATE', '');
+} elseif ($_GPC['account_type'] == ACCOUNT_TYPE_PC_NORMAL){
+	define('ACCOUNT_TYPE', ACCOUNT_TYPE_PC_NORMAL);
+	define('ACCOUNT_TYPE_TEMPLATE', '-pc');
 } else {
 	define('ACCOUNT_TYPE', $_GPC['account_type']);
 }

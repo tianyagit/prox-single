@@ -553,6 +553,8 @@ function uni_account_tablename($type) {
 			return 'account_wechats';
 		case ACCOUNT_TYPE_APP_NORMAL:
 			return 'account_wxapp';
+		case ACCOUNT_TYPE_PC_NORMAL:
+			return 'account_pc';
 	}
 }
 
@@ -593,7 +595,7 @@ function uni_user_see_more_info($user_type, $see_more = false) {
  * @return array
  */
 function uni_owner_account_nums($uid, $role) {
-	$account_num = $wxapp_num = 0;
+	$account_num = $wxapp_num = $pc_num = 0;
 	$condition = array('uid' => $uid, 'role' => $role);
 	$uniacocunts = pdo_getall('uni_account_users', $condition, array(), 'uniacid');
 	if (!empty($uniacocunts)) {
@@ -605,11 +607,15 @@ function uni_owner_account_nums($uid, $role) {
 			if ($account['type'] == 4) {
 				$wxapp_num++;
 			}
+			if ($account['type'] == ACCOUNT_TYPE_PC_NORMAL) {
+				$pc_num++;
+			}
 		}
 	}
 	$num = array(
 		'account_num' => $account_num,
-		'wxapp_num' =>$wxapp_num
+		'wxapp_num' =>$wxapp_num,
+		'pc_num'=>$pc_num
 	);
 	return $num;
 }

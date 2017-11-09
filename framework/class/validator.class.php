@@ -138,6 +138,9 @@ class Validator {
 		$this->messages = $messages;
 	}
 
+	public static function create($data, $rules, $messages) {
+		return new Validator($data, $rules, $messages);
+	}
 	/**
 	 * 添加规则
 	 * @param $key
@@ -172,6 +175,10 @@ class Validator {
 	 * @since version
 	 */
 	public function errors() {
+		return $this->errors;
+	}
+
+	public function messages() {
 		return $this->errors;
 	}
 
