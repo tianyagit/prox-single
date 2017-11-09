@@ -436,8 +436,14 @@ function user_account_detail_info($uid) {
 function user_modules($uid) {
 	global $_W;
 	load()->model('module');
-	$cachekey = cache_system_key("user_modules:" . $uid);
-	$modules = cache_load($cachekey);
+	load()->object('cloudapi');
+	$cloud_api = new CloudApi();
+	$modules = $cloud_api->post('cache', 'get', array('key' => cache_system_key('user_modules:' . $uid)));
+	if (!is_error($modules)) {
+		$modules = $modules['data'];
+	} else {
+		return $modules;
+	}
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
@@ -460,11 +466,9 @@ function user_modules($uid) {
 			}
 			$packageids = $user_group_info['package'];
 
-			//如果套餐组中包含-1，则直接取全部权限，否则根据情况获取模块权限
 			if (!empty($packageids) && in_array('-1', $packageids)) {
 				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 			} else {
-				//此处缺少公众号专属套餐
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
 				if (!empty($package_group)) {
 					$package_group_module = array();
@@ -511,9 +515,8 @@ function user_modules($uid) {
 				}
 			}
 		}
-		cache_write($cachekey, $modules);
+		$cloud_api->post('cache', 'set', array('key' => cache_system_key('user_modules:' . $uid), 'value' => $modules));
 	}
-
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
