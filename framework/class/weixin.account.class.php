@@ -1900,6 +1900,14 @@ class WeiXinAccount extends WeAccount {
 		}
 		return $result;
 	}
+
+	public function getWechatLoginUrl($redirect_uri, $state = '') {
+		global $_W;
+		$redirect_uri = urlencode($redirect_uri);
+		$state = !empty($state) ? $state : $_W['token'];
+		$result = "https://open.weixin.qq.com/connect/qrconnect?appid={$this->account['appid']}&redirect_uri=". $redirect_uri ."&response_type=code&scope=snsapi_login&state=". $state ."#wechat_redirect";
+		return $result;
+	}
 	
 	protected function requestApi($url, $post = '') {
 		$response = ihttp_request($url, $post);
