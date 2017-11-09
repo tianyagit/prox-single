@@ -41,7 +41,7 @@ class PcTable extends We7Table {
 		pdo_insert('account', $accountdata);
 		$acid = pdo_insertid();
 		pdo_update('uni_account', array('default_acid'=>$acid), array('uniacid'=>$uniacid));
-		pdo_insert('account_pc', array('uniacid'=>$uniacid, 'acid'=>$acid));
+		pdo_insert('account_pc', array('uniacid'=>$uniacid, 'acid'=>$acid, 'name'=>$name));
 		$this->createLog($uniacid, $uid);
 		return $uniacid;
 	}
