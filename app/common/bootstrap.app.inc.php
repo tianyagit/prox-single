@@ -140,7 +140,7 @@ if (!empty($_GPC['scope']) && $_GPC['scope'] == 'snsapi_base' && !empty($_GPC['c
 	$_SESSION['userinfo'] = $fans['tag'];
 }
 
-if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4') {
+if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' && empty($_W['isajax'])) {
 	if (($_W['container'] == 'wechat' && !$_GPC['logout'] && empty($_W['openid']) && ($controller != 'auth' || ($controller == 'auth' && !in_array($action, array('forward', 'oauth'))))) ||
 		($_W['container'] == 'wechat' && !$_GPC['logout'] && empty($_SESSION['oauth_openid']) && ($controller != 'auth'))) {
 		$state = 'we7sid-'.$_W['session_id'];

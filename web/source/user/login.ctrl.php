@@ -14,7 +14,9 @@ template('user/login');
 function _login($forward = '') {
 	global $_GPC, $_W;
 	load()->model('user');
-	user_expire_notice();
+	if (function_exists('user_expire_notice')) {
+		user_expire_notice();
+	}
 	$member = array();
 	$username = trim($_GPC['username']);
 

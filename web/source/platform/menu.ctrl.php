@@ -245,13 +245,9 @@ if ($do == 'post') {
 			);
 
 			if ($post['type'] == MENU_CURRENTSELF) {
-				if (!empty($_GPC['id'])) {
-					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => MENU_CURRENTSELF, 'id' => intval($_GPC['id'])));
+				if (!empty($id)) {
+					pdo_update('uni_account_menus', $insert, array('uniacid' => $_W['uniacid'], 'type' => MENU_CURRENTSELF, 'id' => $id));
 				} else {
-					$default_menu_ids = pdo_getall('uni_account_menus', array('uniacid' => $_W['uniacid'], 'type' => MENU_CURRENTSELF, 'status' => STATUS_ON), array('id'));
-					foreach ($default_menu_ids as $id) {
-						pdo_update('uni_account_menus', array('status' => STATUS_OFF), array('id' => $id));
-					}
 					pdo_insert('uni_account_menus', $insert);
 				}
 				iajax(0, '创建菜单成功', url('platform/menu/display'));
