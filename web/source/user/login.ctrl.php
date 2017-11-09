@@ -20,7 +20,12 @@ template('user/login');
 
 function _login($forward = '', $login_type = '', $state = '', $code = '') {
 	global $_GPC, $_W;
-	user_expire_notice();
+	load()->model('setting');
+	$setting_sms_sign = setting_load('site_sms_sign');
+	$status = !empty($setting_sms_sign['site_sms_sign']['status']) ? $setting_sms_sign['site_sms_sign']['status'] : '';
+	if (!empty($status)) {
+		user_expire_notice();
+	}
 	$member = array();
 	if (empty($login_type)) {
 		$username = trim($_GPC['username']);

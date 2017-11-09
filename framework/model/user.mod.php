@@ -855,10 +855,13 @@ function user_detail_formate($profile) {
  */
 function user_expire_notice() {
 	load()->model('cloud');
+	load()->model('setting');
+	$setting_sms_sign = setting_load('site_sms_sign');
+	$day = !empty($setting_sms_sign['site_sms_sign']['day']) ? $setting_sms_sign['site_sms_sign']['day'] : 1;
 
 	$user_table = table('users');
 	$user_table->searchWithMobile();
-	$user_table->searchWithEndtime();
+	$user_table->searchWithEndtime($day);
 	$user_table->searchWithSendStatus();
 	$users_expire = $user_table->searchUsersList();
 
