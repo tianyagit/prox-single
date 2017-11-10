@@ -42,4 +42,22 @@ if (!empty($_W['uid'])) {
 	$_W['role'] = permission_account_user_role($_W['uid'], $_W['uniacid']);
 }
 $_W['template'] = !empty($_W['setting']['basic']['template']) ? $_W['setting']['basic']['template'] : 'default';
+
+$_W['attachurl'] = $_W['attachurl_local'] = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/';
+if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
+	$remote = $_W['setting']['remote'][$_W['uniacid']];
+} else {
+	$remote = $_W['setting']['remote'];
+}
+if (!empty($remote['type'])) {
+	if ($remote['type'] == ATTACH_FTP) {
+		$_W['attachurl'] = $_W['attachurl_remote'] = $remote['ftp']['url'] . '/';
+	} elseif ($remote['type'] == ATTACH_OSS) {
+		$_W['attachurl'] = $_W['attachurl_remote'] = $remote['alioss']['url'] . '/';
+	} elseif ($remote['type'] == ATTACH_QINIU) {
+		$_W['attachurl'] = $_W['attachurl_remote'] = $remote['qiniu']['url'] . '/';
+	} elseif ($remote['type'] == ATTACH_COS) {
+		$_W['attachurl'] = $_W['attachurl_remote'] = $remote['cos']['url'] . '/';
+	}
+}
 load()->func('compat.biz');

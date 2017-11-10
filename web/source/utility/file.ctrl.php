@@ -61,7 +61,6 @@ if(isset($_GPC['uniacid'])) { //是否有强制指定uniacid
 	$uniacid = intval($_W['uniacid']);
 }
 
-
 // 设置多媒体上传目录
 if (!empty($option['global'])) {
 	$setting['folder'] = "{$type}s/global/";
@@ -140,8 +139,11 @@ if ($do == 'upload') {
 	$ext = strtolower($ext);
 	$size = intval($_FILES['file']['size']);
 	$originname = $_FILES['file']['name'];
+
 	$filename = file_random_name(ATTACHMENT_ROOT . '/' . $setting['folder'], $ext);
+
 	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename);
+
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
 		die(json_encode($result));
@@ -193,6 +195,9 @@ if ($do == 'fetch' || $do == 'upload') {
 	} else {
 		$size = filesize($fullname);
 		$info['size'] = sizecount($size);
+	}
+	if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
+		$_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
 	}
 	if (!empty($_W['setting']['remote']['type'])) {
 		$remotestatus = file_remote_upload($pathname);

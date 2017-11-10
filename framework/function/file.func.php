@@ -264,6 +264,9 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
  */
 function file_remote_upload($filename, $auto_delete_local = true) {
 	global $_W;
+	if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
+		$_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
+	}
 	if (empty($_W['setting']['remote']['type'])) {
 		return false;
 	}
@@ -397,6 +400,9 @@ function file_remote_delete($file) {
 	global $_W;
 	if (empty($file)) {
 		return true;
+	}
+	if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
+		$_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
 	}
 	if ($_W['setting']['remote']['type'] == '1') {
 		load()->library('ftp');
