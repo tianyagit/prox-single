@@ -44,16 +44,17 @@ if ($do == 'valid_code') {
 
 		$captcha = checkcaptcha($image_verify);
 		if (empty($captcha)) {
-			iajax(-1, '图形验证码错误');
+			iajax(-1, '图形验证码错误,请重新获取');
 		}
 
 		$user_table = table('users');
 		$code_info = $user_table->userVerifyCode($mobile, $code);
+		if ($code_info['createtime'] + 120 < TIMESTAMP) {
+			iajax(-1, '短信验证码已过期，请重新获取');
+		}
 		if (empty($code_info)) {
 			iajax(-1, '短信验证码不正确');
 		}
-
-
 
 		iajax(0, '');
 	} else {
