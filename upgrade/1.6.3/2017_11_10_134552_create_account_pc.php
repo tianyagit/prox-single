@@ -15,7 +15,7 @@ class CreateAccountPc {
 	 *  执行更新
 	 */
 	public function up() {
-		if(pdo_tableexists('account_pc')){
+		if(!pdo_tableexists('account_pc')){
 			$sql = <<<EOT
 				CREATE TABLE `ims_account_pc` (
   `acid` int(11) DEFAULT NULL,

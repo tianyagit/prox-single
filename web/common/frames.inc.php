@@ -30,17 +30,11 @@ $we7_system_menu['pc'] = array(
 		'profile' => array(
 			'title' => '配置',
 			'menu' => array(
-				'profile' => array(
-					'title' => '参数配置',
-					'url' => url('profile/passport'),
-					'icon' => 'wi wi-parameter-setting',
-					'permission_name' => 'profile_setting',
-				),
 				'payment' => array(
 					'title' => '支付参数',
 					'url' => url('profile/payment'),
 					'icon' => 'wi wi-pay-setting',
-					'permission_name' => 'profile1_pay_setting',
+					'permission_name' => 'pc_pay_setting',
 				),
 			),
 		),
