@@ -10,6 +10,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->classs('validator');
 load()->model('pc');
+$account_info = permission_user_account_num();
 
 if($do == 'create') {
 	if(!checksubmit()) {
@@ -41,7 +42,7 @@ if($do == 'createview') {
 
 /* pc 列表*/
 if($do == 'list') {
-	$account_info = permission_user_account_num();
+
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 	/* @var $pc PcTable*/
