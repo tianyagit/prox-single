@@ -41,6 +41,7 @@ if($do == 'createview') {
 
 /* pc 列表*/
 if($do == 'list') {
+	$account_info = permission_user_account_num();
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 	/* @var $pc PcTable*/
