@@ -9,35 +9,23 @@ define('IN_GW', true);
 load()->model('user');
 load()->classs('weixin.account');
 load()->classs('qq.platform');
-$qq = new QqPlatform();
 
 if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 
-if ($_GPC['login_type'] == 'qq') {
-	_login($_GPC['referer'], 'qq', $_GPC['state'], $_GPC['code']);
-}
-
-$qq_login_url = $qq->getAuthLoginUrl();
-$setting = $_W['setting'];
-if(!empty($setting['wechat_platform']) && !empty($setting['wechat_platform']['authstate'])) {
-	if ($_GPC['login_type'] == 'wechat' && !empty($_GPC['code']) && $_GPC['state'] == $_W['token']) {
-		_login($_GPC['referer'], 'wechat', $_GPC['state'], $_GPC['code']);
-	}
-	$account = array(
-		'acid' => 'invent',
-		'key' => $setting['wechat_platform']['appid'],
-		'secret' => $setting['wechat_platform']['appsecret'],
-	);
-	$account_obj = new WeiXinAccount($account);
-	$wechat_login_url = $account_obj->getWechatLoginUrl($_W['siteurl'] . 'login_type=wechat', $_W['token']);
-}
+$qq_login_url = get_login_url('qq');
+$wechat_login_url = get_login_url('wechat');
 template('user/login');
 
 function _login($forward = '', $login_type = '', $state = '', $code = '') {
 	global $_GPC, $_W;
-	user_expire_notice();
+	load()->model('setting');
+	$setting_sms_sign = setting_load('site_sms_sign');
+	$status = !empty($setting_sms_sign['site_sms_sign']['status']) ? $setting_sms_sign['site_sms_sign']['status'] : '';
+	if (!empty($status)) {
+		user_expire_notice();
+	}
 	$member = array();
 	if (empty($login_type)) {
 		$username = trim($_GPC['username']);
@@ -67,14 +55,14 @@ function _login($forward = '', $login_type = '', $state = '', $code = '') {
 	} else {
 		$member = user_third_login($state, $code, $login_type);
 		if (is_error($member)) {
-			itoast($member['message']);
+			itoast($member['message'], url('user/login'));
 		}
 	}
 
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
-			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', '', '');
+			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', url('user/login'), '');
 		}
 		$_W['uid'] = $record['uid'];
 		$_W['isfounder'] = user_is_founder($record['uid']);
@@ -121,4 +109,36 @@ function _login($forward = '', $login_type = '', $state = '', $code = '') {
 		}
 		itoast('登录失败，请检查您输入的用户名和密码！', '', '');
 	}
+}
+
+function get_login_url($login_type){
+	global $_GPC, $_W;
+	$setting = $_W['setting'];
+	$third_login_set = array(
+		'qq' => array('login_type' => 'qq', 'setting_name' => 'qq_platform', 'class_name' => 'QqPlatform'),
+		'wechat' => array('login_type' => 'wechat', 'setting_name' => 'wechat_platform', 'class_name' => 'WeiXinAccount')
+	);
+	if (!empty($setting[$third_login_set[$login_type]['setting_name']]) && !empty($setting[$third_login_set[$login_type]['setting_name']]['authstate'])) {
+		if ($_GPC['login_type'] == $login_type && !empty($_GPC['code']) && $_GPC['state'] == $_W['token']) {
+			_login($_GPC['referer'], $login_type, $_GPC['state'], $_GPC['code']);
+		}
+		$account = array(
+			'key' => $setting[$third_login_set[$login_type]['setting_name']]['appid'],
+			'secret' => $setting[$third_login_set[$login_type]['setting_name']]['appsecret'],
+		);
+		if ($login_type == 'wechat') {
+			$account['acid'] = 'invent';
+		}
+		$obj = new $third_login_set[$login_type]['class_name']($account);
+		if ($login_type == 'qq') {
+			$login_url = $obj->getQqLoginUrl();
+		}
+
+		if ($login_type == 'wechat') {
+			$login_url = $obj->getWechatLoginUrl($_W['siteurl'] . 'login_type=wechat', $_W['token']);
+		}
+
+		return $login_url;
+	}
+	return '';
 }
