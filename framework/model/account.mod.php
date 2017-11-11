@@ -449,7 +449,7 @@ function uni_templates() {
  * @param mixed $value
  * @return boolean
  */
-function uni_setting_save($name, $value) {
+function uni_setting_save($name, $value, $uniacid = 0) {
 	global $_W;
 	if (empty($name)) {
 		return false;
@@ -457,14 +457,17 @@ function uni_setting_save($name, $value) {
 	if (is_array($value)) {
 		$value = serialize($value);
 	}
-	$unisetting = pdo_get('uni_settings', array('uniacid' => $_W['uniacid']), array('uniacid'));
+	$uniacid = intval($uniacid) > 0 ? intval($uniacid) : $_W['uniacid'];
+	$unisetting = pdo_get('uni_settings', array('uniacid' => $uniacid), array('uniacid'));
 	if (!empty($unisetting)) {
-		pdo_update('uni_settings', array($name => $value), array('uniacid' => $_W['uniacid']));
+		pdo_update('uni_settings', array($name => $value), array('uniacid' => $uniacid));
 	} else {
-		pdo_insert('uni_settings', array($name => $value, 'uniacid' => $_W['uniacid']));
+		pdo_insert('uni_settings', array($name => $value, 'uniacid' => $uniacid));
 	}
-	$cachekey = "unisetting:{$_W['uniacid']}";
+	$cachekey = "unisetting:{$uniacid}";
+	$account_cachekey = "uniaccount:{$uniacid}";
 	cache_delete($cachekey);
+	cache_delete($account_cachekey);
 	return true;
 }
 
@@ -484,7 +487,7 @@ function uni_setting_load($name = '', $uniacid = 0) {
 		if (!empty($unisetting)) {
 			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify',
 				'creditnames', 'default_message', 'creditbehaviors', 'payment',
-				'recharge', 'tplnotice', 'mcplugin', 'statistics');
+				'recharge', 'tplnotice', 'mcplugin', 'statistics', 'bind_domain');
 			foreach ($unisetting as $key => &$row) {
 				if (in_array($key, $serialize) && !empty($row)) {
 					$row = (array)iunserializer($row);
