@@ -14,7 +14,7 @@ load()->model('user');
 load()->model('account');
 load()->classs('account');
 load()->model('utility');
-$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success');
+$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
@@ -182,7 +182,7 @@ if ($do == 'upgrade') {
 		itoast($check_manifest_result['message'], '', 'error');
 	}
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
-	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
+	if (empty($manifest['platform']['main_module']) && !file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 
@@ -332,7 +332,7 @@ if ($do =='install') {
 		itoast($check_manifest_result['message'], '', 'error');
 	}
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
-	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
+	if (empty($manifest['platform']['main_module']) && !file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 	$module = ext_module_convert($manifest);
@@ -594,7 +594,7 @@ if ($do == 'uninstall') {
 	$name = trim($_GPC['name']);
 	$message = '';
 	$module = module_fetch($name);
-	if (!empty($module['plugin'])) {
+	if (!empty($module['plugin_list'])) {
 		$plugin_list = module_get_plugin_list($module['name']);
 		if (!empty($plugin_list) && is_array($plugin_list)) {
 			$message .= '删除' . $module['title'] . '并删除' . $module['title'] .  '包含插件<ul>';
@@ -625,6 +625,15 @@ if ($do == 'uninstall') {
 		itoast($uninstall_result['message'], url('module/manage-system'), 'error');
 	}
 	itoast('模块已放入回收站！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
+}
+
+if ($do == 'recycle_uninstall') {
+	$name = trim($_GPC['module_name']);
+	$uninstall_result = module_execute_uninstall_script($name);
+	if (is_error($uninstall_result)) {
+		itoast($uninstall_result['message'], url('module/manage-system'), 'error');
+	}
+	itoast('模块已卸载！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do == 'installed') {

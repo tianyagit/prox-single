@@ -513,6 +513,18 @@ $we7_system_menu['site'] = array(
 					'icon' => 'wi wi-sensitive',
 					'permission_name' => 'system_setting_sensitiveword',
 				),
+				'system_setting_thirdparty' => array(
+					'title' => '第三方登录配置',
+					'url' => url('system/thirdparty'),
+					'icon' => 'wi wi-sensitive',
+					'permission_name' => 'system_setting_thirdparty',
+				),
+				'system_setting_oauth' => array(
+					'title' => 'oauth全局设置',
+					'url' => url('system/oauth'),
+					'icon' => 'wi wi-sensitive',
+					'permission_name' => 'system_setting_oauth',
+				),
 			)
 		),
 		'utility' => array(

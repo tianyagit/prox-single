@@ -197,7 +197,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
-		if ($_W['setting']['site']['family'] == 'x') {
+		if (IMS_FAMILY == 'x') {
 			$site_store_buy_goods = uni_site_store_buy_goods($uniacid);
 		} else {
 			$site_store_buy_goods = array();
@@ -208,7 +208,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
 			
-			if ($_W['setting']['site']['family'] == 'x') {
+			if (IMS_FAMILY == 'x') {
 				$store = table('store');
 				$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
 				$packageids = array_merge($packageids, array_keys($site_store_buy_package));
@@ -449,7 +449,7 @@ function uni_templates() {
  * @param mixed $value
  * @return boolean
  */
-function uni_setting_save($name, $value) {
+function uni_setting_save($name, $value, $uniacid = 0) {
 	global $_W;
 	if (empty($name)) {
 		return false;
@@ -457,14 +457,17 @@ function uni_setting_save($name, $value) {
 	if (is_array($value)) {
 		$value = serialize($value);
 	}
-	$unisetting = pdo_get('uni_settings', array('uniacid' => $_W['uniacid']), array('uniacid'));
+	$uniacid = intval($uniacid) > 0 ? intval($uniacid) : $_W['uniacid'];
+	$unisetting = pdo_get('uni_settings', array('uniacid' => $uniacid), array('uniacid'));
 	if (!empty($unisetting)) {
-		pdo_update('uni_settings', array($name => $value), array('uniacid' => $_W['uniacid']));
+		pdo_update('uni_settings', array($name => $value), array('uniacid' => $uniacid));
 	} else {
-		pdo_insert('uni_settings', array($name => $value, 'uniacid' => $_W['uniacid']));
+		pdo_insert('uni_settings', array($name => $value, 'uniacid' => $uniacid));
 	}
-	$cachekey = "unisetting:{$_W['uniacid']}";
+	$cachekey = "unisetting:{$uniacid}";
+	$account_cachekey = "uniaccount:{$uniacid}";
 	cache_delete($cachekey);
+	cache_delete($account_cachekey);
 	return true;
 }
 
@@ -484,7 +487,7 @@ function uni_setting_load($name = '', $uniacid = 0) {
 		if (!empty($unisetting)) {
 			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify',
 				'creditnames', 'default_message', 'creditbehaviors', 'payment',
-				'recharge', 'tplnotice', 'mcplugin', 'statistics');
+				'recharge', 'tplnotice', 'mcplugin', 'statistics', 'bind_domain');
 			foreach ($unisetting as $key => &$row) {
 				if (in_array($key, $serialize) && !empty($row)) {
 					$row = (array)iunserializer($row);
@@ -1043,3 +1046,18 @@ function uni_account_member_fields($uniacid) {
 	return $account_member_fields;
 }
 
+
+/**
+ * 获取公众号的oauth
+ * @param string $uni_host 当前公众号的oauth host
+ * @return string
+ */
+function uni_account_global_oauth($uni_host = '') {
+	if (!empty($uni_host)) {
+		return $uni_host;
+	}
+	$oauth = setting_load('global_oauth');
+	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : '';
+	$host = !empty($oauth) ? (empty($oauth['host']) ? '' : $oauth['host']) : '';
+	return $host;
+}

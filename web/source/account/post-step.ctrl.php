@@ -74,7 +74,10 @@ if($step == 1) {
 				'groupid' => 0,
 			);
 			//检测新添加公众号名称是否存在
-			$check_uniacname = pdo_get('uni_account', array('name' => $name), 'name');
+			$account_table = table('account');
+			$account_table->searchWithTitle($name);
+			$account_table->searchWithType(ACCOUNT_TYPE_OFFCIAL_NORMAL);
+			$check_uniacname = $account_table->searchAccountList();
 			if (!empty($check_uniacname)) {
 				itoast('该公众号名称已经存在', '', '');
 			}

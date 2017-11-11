@@ -1,0 +1,210 @@
+{template 'common/header'}
+<div class="we7-page-title">
+	第三方登录配置
+</div>
+<ul class="we7-page-tab">
+	<li {if $do == 'qq_login'}class="active"{/if}><a href="{url 'system/thirdparty/qq_login'}">QQ互联</a></li>
+	<li {if $do == 'wechat_login'}class="active"{/if}><a href="{url 'system/thirdparty/wechat_login'}">微信登录</a></li>
+</ul>
+<div id="js-system-thirdparty-login" ng-controller="SystemThirdpartyLogin" ng-cloak>
+{if $do == 'qq_login'}
+	<table class="table we7-table table-hover table-form we7-form">
+		<col width="220px " />
+		<col />
+		<col width="230px" />
+		<tr>
+			<th class="text-left" colspan="2">QQ互联管理中心开发信息</th>
+			<th class="we7-padding-right"></th>
+		</tr>
+		<tr>
+			<td class="table-label" colspan="2">是否启用qq登录授权</td>
+			<td>
+				<label>
+					<div class="switch" ng-class="{'switchOn' : qqPlatform.authstate}" ng-click="httpChange('authstate')"></div>
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">AppID</td>
+			<td>
+				<input type="text"  name="appid" ng-model="qqPlatform.appid" readonly class="form-control">
+				<div class="help-block">在QQ互联平台注册创建应用后可以获取到AppId</div>
+			</td>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" data-toggle="modal" data-target="#AppID">修改</a>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">AppSecret</td>
+			<td>
+				<input type="text" name="appsecret" ng-model="qqPlatform.appsecret" readonly class="form-control">
+				<div class="help-block">在QQ互联平台注册创建应用后可以获取到AppSecret</div>
+			</td>
+			<td>
+				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#AppSecret">修改</a></div>
+			</td>
+		</tr>
+	</table>
+	<div class="modal fade" id="AppID" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改AppID</div>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<input type="text" id="newappid" class="form-control" placeholder="请填写新的AppID" />
+						<span class="help-block">在QQ互联平台注册创建应用后可以获取到AppId</span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="httpChange('appid')">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="AppSecret" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改AppSecret</div>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<input type="text" id="newappsecret" class="form-control" placeholder="请填写新的AppSecret" />
+						<span class="help-block">在QQ互联平台注册创建应用后可以获取到AppSecret</span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="httpChange('appsecret')">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<table class="table we7-table table-hover table-form  we7-form">
+		<col width="220px " />
+		<col />
+		<col width="230px"/>
+		<tr>
+			<th class="text-left" colspan="3">QQ互联接入配置项</th>
+		</tr>
+		<tr>
+			<td class="table-label">网站地址:</td>
+			<td>
+				<span>{$url['host']}</span>
+			</td>
+			<td>
+				<div class="link-group"><a href="javascript:;" id="copy-0" clipboard supported="supported" text="url.host" on-copied="success('0')">点击复制</a></div>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">网站回调域:</td>
+			<td>
+				<span>{$_W['siteroot']}web/callback.php</span>
+			</td>
+			<td><div class="link-group"><a href="javascript:;" id="copy-1" clipboard supported="supported" text="siteroot+'web/callback.php'" on-copied="success('1')">点击复制</a></div></td>
+		</tr>
+	</table>
+{/if}
+{if $do == 'wechat_login'}
+	<table class="table we7-table table-hover table-form we7-form">
+		<col width="220px " />
+		<col />
+		<col width="230px" />
+		<tr>
+			<th class="text-left" colspan="2">微信登录配置信息</th>
+			<th class="we7-padding-right"></th>
+		</tr>
+		<tr>
+			<td class="table-label" colspan="2">是否启用微信登录</td>
+			<td>
+				<label>
+					<div class="switch" ng-class="{'switchOn' : wechatPlatform.authstate}" ng-click="httpChange('authstate')"></div>
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">AppID</td>
+			<td>
+				<input type="text"  name="appid" ng-model="wechatPlatform.appid" readonly class="form-control">
+				<div class="help-block">在微信开放平台注册创建网站应用后可以获取到AppId</div>
+			</td>
+			<td>
+				<div class="link-group">
+					<a href="javascript:;" data-toggle="modal" data-target="#AppID">修改</a>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">AppSecret</td>
+			<td>
+				<input type="text" name="appsecret" ng-model="wechatPlatform.appsecret" readonly class="form-control">
+				<div class="help-block">在微信开放平台注册创建网站应用后可以获取到AppSecret</div>
+			</td>
+			<td>
+				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#AppSecret">修改</a></div>
+			</td>
+		</tr>
+	</table>
+	<div class="modal fade" id="AppID" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改AppID</div>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<input type="text" id="newappid" class="form-control" placeholder="请填写新的AppID" />
+						<span class="help-block">在微信开放平台注册创建网站应用后可以获取到AppId</span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="httpChange('appid')">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="AppSecret" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改AppSecret</div>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<input type="text" id="newappsecret" class="form-control" placeholder="请填写新的AppSecret" />
+						<span class="help-block">在微信开放平台注册创建网站应用后可以获取到AppSecret</span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="httpChange('appsecret')">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+</div>
+<script type="text/javascript">
+	angular.module('systemApp').value('config', {
+		'do' : {php echo !empty($do) ? json_encode($do): 'qq_login'},
+		'qqPlatform' : {php echo !empty($_W['setting']['qq_platform']) ? json_encode($_W['setting']['qq_platform']) : 'null'},
+		'wechatPlatform' : {php echo !empty($_W['setting']['wechat_platform']) ? json_encode($_W['setting']['wechat_platform']) : 'null'},
+		'url': {php echo !empty($url) ? json_encode($url) : 'null'},
+		'siteroot': "{php echo $_W['siteroot']}",
+		'links': {
+			'platformPost': "{php echo url('system/thirdparty')}",
+		},
+	});
+	angular.bootstrap($('#js-system-thirdparty-login'), ['systemApp']);
+</script>
+{template 'common/footer'}

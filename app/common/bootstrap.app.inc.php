@@ -26,6 +26,9 @@ $isdel_account = pdo_get('account', array('isdeleted' => 1, 'acid' => $_W['acid'
 if (!empty($isdel_account)) {
 	exit('指定公众号已被删除');
 }
+if (!empty($_W['account']['setting']['bind_domain']) && !empty($_W['account']['setting']['bind_domain']['domain']) && strpos($_W['siteroot'], $_W['account']['setting']['bind_domain']['domain']) === false) {
+	itoast('', $_W['account']['setting']['bind_domain']['domain']. $_SERVER['REQUEST_URI']);
+}
 $_W['session_id'] = '';
 if (isset($_GPC['state']) && !empty($_GPC['state']) && strexists($_GPC['state'], 'we7sid-')) {
 	$pieces = explode('-', $_GPC['state']);
@@ -140,7 +143,7 @@ if (!empty($_GPC['scope']) && $_GPC['scope'] == 'snsapi_base' && !empty($_GPC['c
 	$_SESSION['userinfo'] = $fans['tag'];
 }
 
-if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4') {
+if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' && empty($_W['isajax'])) {
 	if (($_W['container'] == 'wechat' && !$_GPC['logout'] && empty($_W['openid']) && ($controller != 'auth' || ($controller == 'auth' && !in_array($action, array('forward', 'oauth'))))) ||
 		($_W['container'] == 'wechat' && !$_GPC['logout'] && empty($_SESSION['oauth_openid']) && ($controller != 'auth'))) {
 		$state = 'we7sid-'.$_W['session_id'];
@@ -151,6 +154,7 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4') 
 		if(uni_is_multi_acid()) {
 			$str = "&j={$_W['acid']}";
 		}
+		$unisetting['oauth']['host'] = uni_account_global_oauth($unisetting['oauth']['host']);
 		if (!empty($unisetting['oauth']['host'])) {
 			$url = str_replace($_W['siteroot'], $unisetting['oauth']['host'].'/', $_W['siteurl']);
 		} else {
@@ -185,5 +189,21 @@ if ($_W['container'] == 'wechat') {
 		}
 	}
 	unset($jsauth_acid, $account_api);
+}
+
+$_W['attachurl'] = $_W['attachurl_local'] = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/';
+if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
+	$_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
+}
+if (!empty($_W['setting']['remote']['type'])) {
+	if ($_W['setting']['remote']['type'] == ATTACH_FTP) {
+		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['ftp']['url'] . '/';
+	} elseif ($_W['setting']['remote']['type'] == ATTACH_OSS) {
+		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['alioss']['url'] . '/';
+	} elseif ($_W['setting']['remote']['type'] == ATTACH_QINIU) {
+		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['qiniu']['url'] . '/';
+	} elseif ($_W['setting']['remote']['type'] == ATTACH_COS) {
+		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['cos']['url'] . '/';
+	}
 }
 load()->func('compat.biz');
