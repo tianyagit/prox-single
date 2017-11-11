@@ -134,18 +134,7 @@ setting_load();
 if (empty($_W['setting']['upload'])) {
 	$_W['setting']['upload'] = array_merge($_W['config']['upload']);
 }
-$_W['attachurl'] = $_W['attachurl_local'] = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/';
-if (!empty($_W['setting']['remote']['type'])) {
-	if ($_W['setting']['remote']['type'] == ATTACH_FTP) {
-		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['ftp']['url'] . '/';
-	} elseif ($_W['setting']['remote']['type'] == ATTACH_OSS) {
-		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['alioss']['url'].'/';
-	} elseif ($_W['setting']['remote']['type'] == ATTACH_QINIU) {
-		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['qiniu']['url'].'/';
-	} elseif ($_W['setting']['remote']['type'] == ATTACH_COS) {
-		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['cos']['url'].'/';
-	}
-}
+
 $_W['os'] = Agent::deviceType();
 if($_W['os'] == Agent::DEVICE_MOBILE) {
 	$_W['os'] = 'mobile';

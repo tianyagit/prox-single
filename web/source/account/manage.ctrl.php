@@ -46,12 +46,13 @@ if ($do == 'display') {
 		$account_table->searchWithNoconnect();
 	}
 
+	$account_table->searchWithPage($pindex, $psize);
 	if ($type == 'expire') {
-		$account_table->searchWithExprie();
+		$list = $account_table->searchAccountList(true);
+	} else {
+		$list = $account_table->searchAccountList();
 	}
 
-	$account_table->searchWithPage($pindex, $psize);
-	$list = $account_table->searchAccountList();
 
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);

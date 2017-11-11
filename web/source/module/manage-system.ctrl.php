@@ -182,7 +182,7 @@ if ($do == 'upgrade') {
 		itoast($check_manifest_result['message'], '', 'error');
 	}
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
-	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
+	if (empty($manifest['platform']['main_module']) && !file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 
@@ -332,7 +332,7 @@ if ($do =='install') {
 		itoast($check_manifest_result['message'], '', 'error');
 	}
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
-	if (!file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
+	if (empty($manifest['platform']['main_module']) && !file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
 	$module = ext_module_convert($manifest);

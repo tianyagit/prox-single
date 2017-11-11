@@ -16,6 +16,7 @@ if (checksubmit() || $_W['isajax']) {
 
 $qq_login_url = get_login_url('qq');
 $wechat_login_url = get_login_url('wechat');
+$setting = $_W['setting'];
 template('user/login');
 
 function _login($forward = '', $login_type = '', $state = '', $code = '') {
@@ -115,16 +116,16 @@ function get_login_url($login_type){
 	global $_GPC, $_W;
 	$setting = $_W['setting'];
 	$third_login_set = array(
-			'qq' => array('login_type' => 'qq', 'setting_name' => 'qq_platform', 'class_name' => 'QqPlatform'),
-			'wechat' => array('login_type' => 'wechat', 'setting_name' => 'wechat_platform', 'class_name' => 'WeiXinAccount')
+		'qq' => array('login_type' => 'qq', 'setting_name' => 'qq_platform', 'class_name' => 'QqPlatform'),
+		'wechat' => array('login_type' => 'wechat', 'setting_name' => 'wechat_platform', 'class_name' => 'WeiXinAccount')
 	);
 	if (!empty($setting[$third_login_set[$login_type]['setting_name']]) && !empty($setting[$third_login_set[$login_type]['setting_name']]['authstate'])) {
 		if ($_GPC['login_type'] == $login_type && !empty($_GPC['code']) && $_GPC['state'] == $_W['token']) {
 			_login($_GPC['referer'], $login_type, $_GPC['state'], $_GPC['code']);
 		}
 		$account = array(
-				'key' => $setting[$third_login_set[$login_type]['setting_name']]['appid'],
-				'secret' => $setting[$third_login_set[$login_type]['setting_name']]['appsecret'],
+			'key' => $setting[$third_login_set[$login_type]['setting_name']]['appid'],
+			'secret' => $setting[$third_login_set[$login_type]['setting_name']]['appsecret'],
 		);
 		if ($login_type == 'wechat') {
 			$account['acid'] = 'invent';
