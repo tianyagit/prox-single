@@ -47,8 +47,8 @@
 			<div class="text-center">
 				<span class="color-gray">使用第三方账号登录</span>
 				<div class="form-control-static">
-					{if !empty($setting['thirdlogin']['QQ']['authstate'])}<a href="{$qq_login_url}"><img src="./resource/images/qqlogin.png" width="35px"></a>&nbsp;&nbsp;{/if}
-					{if !empty($setting['thirdlogin']['Wechat']['authstate'])}<a href="{$wechat_login_url}"><img src="./resource/images/wxlogin.png" width="35px"></a>{/if}
+					{if !empty($setting['thirdlogin']['QQ']['authstate'])}<a href="{$login_urls['QQ']}"><img src="./resource/images/qqlogin.png" width="35px"></a>&nbsp;&nbsp;{/if}
+					{if !empty($setting['thirdlogin']['Wechat']['authstate'])}<a href="{$login_urls['Wechat']}"><img src="./resource/images/wxlogin.png" width="35px"></a>{/if}
 				</div>
 			</div>
 			{/if}
