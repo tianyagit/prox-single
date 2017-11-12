@@ -9,6 +9,19 @@ require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 load()->web('common');
 load()->web('template');
 load()->func('file');
+load()->model('account');
+load()->model('setting');
+load()->model('user');
+
+$state = urldecode($_GPC['state']);
+if (!empty($state)) {
+	$login_type = explode('=', $state);
+	if (in_array($login_type[1], array('QQ', 'Wechat'))) {
+		$controller = 'user';
+		$action = 'login';
+		$_GPC['login_type'] = $login_type[1];
+	}
+}
 
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
