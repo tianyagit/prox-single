@@ -1052,12 +1052,9 @@ function uni_account_member_fields($uniacid) {
  * @param string $uni_host 当前公众号的oauth host
  * @return string
  */
-function uni_account_global_oauth($uni_host = '') {
-	if (!empty($uni_host)) {
-		return $uni_host;
-	}
+function uni_account_global_oauth() {
+	load()->model('setting');
 	$oauth = setting_load('global_oauth');
 	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : '';
-	$host = !empty($oauth) ? (empty($oauth['host']) ? '' : $oauth['host']) : '';
-	return $host;
+	return $oauth;
 }
