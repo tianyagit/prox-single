@@ -83,7 +83,10 @@ function wxapp_account_create($account) {
 function wxapp_support_wxapp_modules() {
 	global $_W;
 	load()->model('user');
+	load()->table('store');
+
 	$modules = user_modules($_W['uid']);
+	$wxapp_modules = array();
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
 			if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
@@ -91,6 +94,10 @@ function wxapp_support_wxapp_modules() {
 			}
 		}
 	}
+	$store_table = new StoreTable();
+	$store_table->searchWithEndtime();
+	$buy_wxapp_modules = $store_table->searchAccountBuyGoods($_W['uniacid'], STORE_TYPE_WXAPP_MODULE);
+	$wxapp_modules = array_merge($buy_wxapp_modules, $wxapp_modules);
 	if (empty($wxapp_modules)) {
 		return array();
 	}
@@ -102,6 +109,7 @@ function wxapp_support_wxapp_modules() {
 	}
 	return $wxapp_modules;
 }
+
 
 /**
  * 获取当前公众号支持小程序的模块
