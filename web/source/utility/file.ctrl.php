@@ -30,7 +30,8 @@ $option = array();
 $option = array_elements(array('uploadtype', 'global', 'dest_dir'), $_POST);
 $option['width'] = intval($option['width']);
 $option['global'] = $_GPC['global'];//!empty($_COOKIE['__fileupload_global']);
-$quality = intval($_GPC['quality']);
+
+
 if (!empty($option['global']) && empty($_W['isfounder'])) {
 	$result['message'] = '没有向 global 文件夹上传文件的权限.';
 	die(json_encode($result));
@@ -141,7 +142,7 @@ if ($do == 'upload') {
 
 	$filename = file_random_name(ATTACHMENT_ROOT . '/' . $setting['folder'], $ext);
 
-	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename, $quality);
+	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename);
 
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
@@ -377,7 +378,7 @@ if ($do == 'wechat_upload') {
 	}
 
 	$filename = file_random_name(ATTACHMENT_ROOT .'/'. $setting['folder'], $ext);
-	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename, $quality);
+	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename);
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
 		die(json_encode($result));
