@@ -21,7 +21,7 @@ if ($do == 'copyright') {
 		$data = array(
 			'status' => $_GPC['status'],
 			'reason' => $_GPC['reason'],
-			'icp' => $_GPC['icp'],
+			'icp' => strip_tags(htmlspecialchars_decode($_GPC['icp'])),
 		);
 		$test = setting_save($data, 'copyright');
 		itoast('更新设置成功！', url('system/site'), 'success');
