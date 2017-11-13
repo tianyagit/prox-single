@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
 
 load()->model('user');
-load()->classs('oauth2/OAuth2Client');
+load()->classs('oauth2/oauth2client');
 load()->model('setting');
 
 if (checksubmit() || $_W['isajax']) {
@@ -31,7 +31,7 @@ function _login($forward = '') {
 		user_expire_notice();
 	}
 	if (empty($_GPC['login_type'])) {
-		$_GPC['login_type'] = 'System';
+		$_GPC['login_type'] = 'system';
 	}
 
 	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->we7user();

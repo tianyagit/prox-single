@@ -16,7 +16,7 @@ load()->model('user');
 $state = urldecode($_GPC['state']);
 if (!empty($state)) {
 	$login_type = explode('=', $state);
-	if (in_array($login_type[1], array('QQ', 'Wechat'))) {
+	if (in_array($login_type[1], array('qq', 'wechat'))) {
 		$controller = 'user';
 		$action = 'login';
 		$_GPC['login_type'] = $login_type[1];

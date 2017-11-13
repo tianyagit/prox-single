@@ -1,9 +1,7 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2017/11/11
- * Time: 15:07
+ * 微信第三方登录
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 load()->func('communication');
 
@@ -23,7 +21,7 @@ class Wechat extends OAuth2Client {
 		global $_W;
 		$redirect_uri = urlencode($this->calback_url);
 		$state = !empty($state) ? $state : $_W['token'];
-		$state = $state . 'from=Wechat';
+		$state = $state . 'from=wechat';
 		return sprintf(Wechat_PLATFORM_API_OAUTH_LOGIN_URL, $this->ak, $redirect_uri, $state);
 	}
 
@@ -43,7 +41,7 @@ class Wechat extends OAuth2Client {
 		if (empty($state) || empty($code)) {
 			return error(-1, '参数错误');
 		}
-		if ($state != $_W['token'] . 'from=Wechat') {
+		if ($state != $_W['token'] . 'from=wechat') {
 			return error(-1, '重新登陆');
 		}
 		$access_url = sprintf(Wechat_PLATFORM_API_GET_ACCESS_TOKEN, $this->ak, $this->sk, $code, urlencode($this->calback_url));
