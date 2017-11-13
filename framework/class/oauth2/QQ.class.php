@@ -1,6 +1,6 @@
 <?php
 /**
- * qq第三方授权登录
+ * qq第三方授权qq登录
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
@@ -12,7 +12,7 @@ define('QQ_PLATFORM_API_GET_ACCESS_TOKEN', 'https://graph.qq.com/oauth2.0/token?
 define('QQ_PLATFORM_API_GET_OPENID', 'https://graph.qq.com/oauth2.0/me?access_token=%s');
 define('QQ_PLATFORM_API_GET_USERINFO', 'https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s');
 
-class QQ extends OAuth2Client {
+class Qq extends OAuth2Client {
 	private $calback_url;
 
 	public function __construct($ak, $sk, $calback_url = '') {
@@ -28,7 +28,7 @@ class QQ extends OAuth2Client {
 	public function showLoginUrl($calback_url = '') {
 		global $_W;
 		$state = !empty($state) ? $state : $_W['token'];
-		$state = $state . 'from=QQ';
+		$state = $state . 'from=qq';
 		return sprintf(QQ_PLATFORM_API_OAUTH_LOGIN_URL, $this->ak, $this->calback_url, $state);
 	}
 
@@ -37,7 +37,7 @@ class QQ extends OAuth2Client {
 		if (empty($state) || empty($code)) {
 			return error(-1, '参数错误');
 		}
-		if ($state != $_W['token'] . 'from=QQ') {
+		if ($state != $_W['token'] . 'from=qq') {
 			return error(-1, '重新登陆');
 		}
 		$access_url = sprintf(QQ_PLATFORM_API_GET_ACCESS_TOKEN, $this->ak, $this->sk, $code, urlencode($this->calback_url));

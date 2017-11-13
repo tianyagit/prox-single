@@ -1,9 +1,7 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2017/11/11
- * Time: 15:12
+ * 系统用户登录
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 
 class System extends OAuth2Client {

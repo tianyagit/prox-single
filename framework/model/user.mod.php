@@ -892,7 +892,7 @@ function user_expire_notice() {
  */
 function user_support_urls() {
 	global $_W;
-	load()->classs('oauth2/OAuth2Client');
+	load()->classs('oauth2/oauth2client');
 	$types = OAuth2Client::supportLoginType();
 	$login_urls = array();
 	foreach ($types as $type) {

@@ -3,12 +3,12 @@
 	第三方登录配置
 </div>
 <ul class="we7-page-tab">
-	<li {if $type == 'System'}class="active"{/if}><a href="{php echo url('system/thirdlogin', array('type' => 'System'))}">系统登录</a></li>
-	<li {if $type == 'QQ'}class="active"{/if}><a href="{php echo url('system/thirdlogin', array('type' => 'QQ'))}">QQ互联</a></li>
-	<li {if $type == 'Wechat'}class="active"{/if}><a href="{php echo url('system/thirdlogin', array('type' => 'Wechat'))}">微信登录</a></li>
+	<li {if $type == 'system'}class="active"{/if}><a href="{php echo url('system/thirdlogin', array('type' => 'system'))}">系统登录</a></li>
+	<li {if $type == 'qq'}class="active"{/if}><a href="{php echo url('system/thirdlogin', array('type' => 'qq'))}">QQ互联</a></li>
+	<li {if $type == 'wechat'}class="active"{/if}><a href="{php echo url('system/thirdlogin', array('type' => 'wechat'))}">微信登录</a></li>
 </ul>
 <div id="js-system-thirdparty-login" ng-controller="SystemThirdpartyLogin" ng-cloak>
-{if $type == 'System'}
+{if $type == 'system'}
 	<table class="table we7-table table-hover table-form we7-form">
 		<col width="220px " />
 		<col />
@@ -21,13 +21,13 @@
 			<td class="table-label" colspan="2">是否启用站点登录</td>
 			<td>
 				<label>
-					<div class="switch" ng-class="{'switchOn' : thirdlogin.System.authstate}" ng-click="httpChange('authstate')"></div>
+					<div class="switch" ng-class="{'switchOn' : thirdlogin.system.authstate}" ng-click="httpChange('authstate')"></div>
 				</label>
 			</td>
 		</tr>
 	</table>
 {/if}
-{if $type == 'QQ'}
+{if $type == 'qq'}
 	<table class="table we7-table table-hover table-form we7-form">
 		<col width="220px " />
 		<col />
@@ -40,14 +40,14 @@
 			<td class="table-label" colspan="2">是否启用qq登录授权</td>
 			<td>
 				<label>
-					<div class="switch" ng-class="{'switchOn' : thirdlogin.QQ.authstate}" ng-click="httpChange('authstate')"></div>
+					<div class="switch" ng-class="{'switchOn' : thirdlogin.qq.authstate}" ng-click="httpChange('authstate')"></div>
 				</label>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">AppID</td>
 			<td>
-				<input type="text"  name="appid" ng-model="thirdlogin.QQ.appid" readonly class="form-control">
+				<input type="text"  name="appid" ng-model="thirdlogin.qq.appid" readonly class="form-control">
 				<div class="help-block">在QQ互联平台注册创建应用后可以获取到AppId</div>
 			</td>
 			<td>
@@ -59,7 +59,7 @@
 		<tr>
 			<td class="table-label">AppSecret</td>
 			<td>
-				<input type="text" name="appsecret" ng-model="thirdlogin.QQ.appsecret" readonly class="form-control">
+				<input type="text" name="appsecret" ng-model="thirdlogin.qq.appsecret" readonly class="form-control">
 				<div class="help-block">在QQ互联平台注册创建应用后可以获取到AppSecret</div>
 			</td>
 			<td>
@@ -132,7 +132,7 @@
 		</tr>
 	</table>
 {/if}
-{if $type == 'Wechat'}
+{if $type == 'wechat'}
 	<table class="table we7-table table-hover table-form we7-form">
 		<col width="220px " />
 		<col />
@@ -145,14 +145,14 @@
 			<td class="table-label" colspan="2">是否启用微信登录</td>
 			<td>
 				<label>
-					<div class="switch" ng-class="{'switchOn' : thirdlogin.Wechat.authstate}" ng-click="httpChange('authstate')"></div>
+					<div class="switch" ng-class="{'switchOn' : thirdlogin.wechat.authstate}" ng-click="httpChange('authstate')"></div>
 				</label>
 			</td>
 		</tr>
 		<tr>
 			<td class="table-label">AppID</td>
 			<td>
-				<input type="text"  name="appid" ng-model="thirdlogin.Wechat.appid" readonly class="form-control">
+				<input type="text"  name="appid" ng-model="thirdlogin.wechat.appid" readonly class="form-control">
 				<div class="help-block">在微信开放平台注册创建网站应用后可以获取到AppId</div>
 			</td>
 			<td>
@@ -164,7 +164,7 @@
 		<tr>
 			<td class="table-label">AppSecret</td>
 			<td>
-				<input type="text" name="appsecret" ng-model="thirdlogin.Wechat.appsecret" readonly class="form-control">
+				<input type="text" name="appsecret" ng-model="thirdlogin.wechat.appsecret" readonly class="form-control">
 				<div class="help-block">在微信开放平台注册创建网站应用后可以获取到AppSecret</div>
 			</td>
 			<td>
