@@ -122,8 +122,12 @@ function cloud_prepare() {
 }
 
 function cloud_build() {
+	$error_file_list = array();
+	if (!cloud_file_permission_pass($error_file_list)) {
+		message('下列文件无读写权限，导致无法进行系统更新，请及时修复，如有疑问请提交工单或联系客服: <br />' . implode('; <br />', $error_file_list), '', 'error');
+	}
 	$pars = _cloud_build_params();
-	$pars['method'] = 'application.build2';
+	$pars['method'] = 'application.build3';
 	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 	$file = IA_ROOT . '/data/application.build';
 	$ret = _cloud_shipping_parse($dat, $file);
@@ -1307,7 +1311,7 @@ function cloud_file_permission_pass(&$error_file_list = array()) {
 		if (!empty($file_list)) {
 			foreach ($file_list as $file) {
 				if (!is_writable($file)) {
-					$error_file_list[] = $file;
+					$error_file_list[] = str_replace(IA_ROOT, '', $file);
 				}
 			}
 		}
@@ -1315,12 +1319,11 @@ function cloud_file_permission_pass(&$error_file_list = array()) {
 
 	foreach ($check_file as $file) {
 		if (!is_writable(IA_ROOT . $file)) {
-			$error_file_list[] = $file;
+			$error_file_list[] = str_replace(IA_ROOT, '', $file);;
 		}
 	}
 	return empty($error_file_list) ? true : false;
 }
-
 
 function cloud_file_tree($path, $include = array()) {
 	$files = array();
