@@ -4,7 +4,7 @@
 </div>
 <ul class="we7-page-tab">
 	<li {if $do == 'installed'}class="active"{/if}><a href="{php echo url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE))}">已安装公众号应用  </a></li>
-	{if $_W['isfounder'] && uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+	{if permission_check_account_user('see_module_manage_system_except_installed')}
 	<li {if $do == 'not_installed' && $_GPC['status'] != 'recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE))}">未安装公众号应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
 	<li {if $do == 'not_installed' && $_GPC['status'] == 'recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('status' => 'recycle', 'account_type' => ACCOUNT_TYPE))}">已停用公众号应用</a></li>
 	<li {if $do == 'subscribe'}class="active"{/if}><a href="{php echo url('module/manage-system/subscribe', array('account_type' => ACCOUNT_TYPE))}">订阅管理</a></li>
@@ -50,7 +50,7 @@
 					</div>
 				</th>
 				<th class="text-right">
-					{if user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])}
+					{if permission_check_account_user('see_module_manage_system_ugrade')}
 					<div class="we7-form">
 						<input type="checkbox" name="" onclick="filter('new_branch')" id="filter-1" value="1">
 						<label class="checkbox-inline" for="filter-1">
@@ -85,7 +85,7 @@
 				</td>
 				<td class="vertical-middle table-manage-td">
 					<div class="link-group">
-						{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+						{if permission_check_account_user('see_module_manage_system_ugrade')}
 						<a ng-href="{{ './index.php?c=module&a=manage-system&do=upgrade&module_name='+module.name}}" class="color-red del" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&show=upgrade" class="color-red del" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 						{/if}
@@ -97,7 +97,7 @@
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">基本信息</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=group" ng-if="isFounder == 1">应用权限组</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=subscribe" ng-if="isFounder == 1 && module.subscribes.length">订阅消息</a>
-						{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+						{if permission_check_account_user('see_module_manage_system_stop')}
 						<a href="{php echo url('module/manage-system/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1" onclick="return confirm('确认要停用模块吗？')">停用</a>
 						{/if}
 					</div>
@@ -297,7 +297,7 @@
 				<span>版本：{{ module.version }} </span>
 			</td>
 			<td class="text-right">
-				{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+				{if permission_check_account_user('see_module_manage_system_install')}
 				<a href="{php echo url('module/manage-system/upgrade')}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">安装应用模块</a>
 				<a href="{php echo url('module/manage-system/install')}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">安装应用模块</a>
 				{if $_GPC['status'] == 'recycle'}
@@ -340,7 +340,7 @@
 		</div>
 		<img ng-src="{{ moduleinfo.logo }}" class="user-avatar img-rounded pull-left" ng-if="moduleinfo.main_module == ''">
 		<h3 class="pull-left">{{ moduleinfo.title }}</h3>
-		{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+		{if permission_check_account_user('see_module_manage_system_shopinfo')}
 		<a ng-if="isFounder == 1 && moduleinfo.cloud_mid != ''" ng-href="{{ 'http://s.we7.cc/module-' + moduleinfo.cloud_mid + '.html' }}" target="_blank" class="btn btn-primary pull-right">查看商城详情</a>
 		{/if}
 	</div>
@@ -353,7 +353,7 @@
 		{if !empty($module_subscribes)}
 		<a href="javascript:;" ng-click="changeShow('subscribe')" class="btn " ng-class="{'active' : show == 'subscribe'}">订阅消息</a>
 		{/if}
-		{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+		{if permission_check_account_user('see_module_manage_system_ugrade')}
 		<a  href="javascript:;" ng-click="changeShow('upgrade')" class="btn " ng-class="{'active' : show == 'upgrade'}" ng-show="checkupgrade == 1">升级</a>
 		{/if}
 		<a  href="javascript:;" ng-click="changeShow('workorder')" ng-class="{'active' : show == 'workorder'}" class="btn">工单系统</a>
@@ -377,13 +377,13 @@
 		<tr>
 			<td class="table-label">模块标题</td>
 			<td>{{ moduleinfo.title }}</td>
-			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+			{if permission_check_account_user('see_module_manage_system_info_edit')}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('title', moduleinfo.title)">修改</a></div>
 			</td>
 			{/if}
 		</tr>
-		{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+		{if permission_check_account_user('see_module_manage_system_detailinfo')}
 		<tr>
 			<td class="table-label">模块作者</td>
 			<td colspan="2">{{ moduleinfo.author }}</td>
@@ -396,7 +396,7 @@
 		<tr>
 			<td class="table-label">模块简述</td>
 			<td>{{ moduleinfo.ability }}</td>
-			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+			{if permission_check_account_user('see_module_manage_system_info_edit')}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('ability', moduleinfo.ability)">修改</a></div>
 			</td>
@@ -405,7 +405,7 @@
 		<tr>
 			<td class="table-label">模块介绍</td>
 			<td>{{ moduleinfo.description }}</td>
-			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+			{if permission_check_account_user('see_module_manage_system_info_edit')}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('description', moduleinfo.description)">修改</a></div>
 			</td>
@@ -414,7 +414,7 @@
 		<tr>
 			<td class="table-label">模块缩略图</td>
 			<td><img ng-src="{{ moduleinfo.logo }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
-			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+			{if permission_check_account_user('see_module_manage_system_info_edit')}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('logo', moduleinfo.logo)">修改</a></div>
 			</td>
@@ -423,7 +423,7 @@
 		<tr>
 			<td class="table-label">模块封面</td>
 			<td><img ng-src="{{ moduleinfo.preview }}" alt="" style="width:65px; height:65px;" class="img-rounded"/></td>
-			{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+			{if permission_check_account_user('see_module_manage_system_info_edit')}
 			<td class="text-right">
 				<div class="link-group"><a href="javascript:;" ng-click="editModule('preview', moduleinfo.preview)">修改</a></div>
 			</td>
@@ -553,7 +553,7 @@
 			<td>{{ moduleinfo.version }}</td>
 			<td>{{ upgradeInfo.best_version }}</td>
 			<td class="text-right">
-				{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+				{if permission_check_account_user('see_module_manage_system_ugrade')}
 				<a href="{php echo url('module/manage-system/upgrade')}module_name={{ moduleinfo.name }}" class="btn btn-danger">升级</a>
 				{/if}
 			</td>
@@ -580,7 +580,7 @@
 			<td>{{ branch.version.version }}</td>
 			<td class="text-right">
 				<span class="text text-success" ng-if="branch.id == upgradeInfo.site_branch.id && branch.version.version ==  moduleinfo.version">无需升级</span>
-				{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+				{if permission_check_account_user('see_module_manage_system_ugrade')}
 				<a href="javascript:;" ng-click="notice(service_expire, upgradeInfo.id, upgradeInfo.name)" ng-if="branch.id == upgradeInfo.site_branch.id && branch.version.version !=  moduleinfo.version" class="btn btn-primary">升级</a>
 				{/if}
 				<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, upgradeInfo.id)" ng-if="branch.displayorder > upgradeInfo.site_branch.displayorder || (branch.displayorder == upgradeInfo.site_branch.displayorder && branch.id > upgradeInfo.site_branch.id)" class="btn btn-danger">购买</a>
@@ -633,7 +633,7 @@
 					应用权限组
 				</th>
 				<th class="text-right">
-					{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+					{if permission_check_account_user('see_module_manage_system_group_add')}
 					<a href="{php echo url('module/group')}" class="color-default">添加</a>
 					{/if}
 				</th>
@@ -651,7 +651,7 @@
 					<span>{$group['name']}</span>
 				</td>
 				<td class="text-right">
-					{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+					{if permission_check_account_user('see_module_manage_system_group_add')}
 					<div class="link-group"><a href="{php echo url('module/group/post', array('id' => $group['id']))}">设置</a></div>
 					{/if}
 				</td>

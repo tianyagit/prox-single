@@ -333,6 +333,30 @@ $we7_file_permission = array(
 		'operator' => array(),
 	),
 	'append' => array('append*'),
+	'see_more_info' => array(
+		'founder' => array(
+			'see_module_manage_system_except_installed',
+			'see_module_manage_system_ugrade',
+			'see_module_manage_system_stop',
+			'see_module_manage_system_install',
+			'see_module_manage_system_shopinfo',
+			'see_module_manage_system_info_edit',
+			'see_module_manage_system_detailinfo',
+			'see_module_manage_system_group_add',
+		),
+		'vice_founder' => array(
+
+		),
+		'owner' => array(
+
+		),
+		'manager' => array(
+
+		),
+		'operator' => array(
+
+		),
+	),
 );
 
 return $we7_file_permission;
