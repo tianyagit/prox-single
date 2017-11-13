@@ -927,7 +927,7 @@ function user_third_info_register($user_info) {
  * 当前用户拥有的可借用的公众号
  * @return array
  */
-function user_own_oauth() {
+function user_borrow_oauth_account_list() {
 	global $_W;
 	$user_have_accounts = uni_user_accounts($_W['uid']);
 	$oauth_accounts = array();
@@ -935,10 +935,10 @@ function user_own_oauth() {
 	if(!empty($user_have_accounts)) {
 		foreach($user_have_accounts as $account) {
 			if(!empty($account['key']) && !empty($account['secret'])) {
-				if (in_array($account['level'], array(4))) {
+				if (in_array($account['level'], array(ACCOUNT_SERVICE_VERIFY))) {
 					$oauth_accounts[$account['acid']] = $account['name'];
 				}
-				if (in_array($account['level'], array(3, 4))) {
+				if (in_array($account['level'], array(ACCOUNT_SUBSCRIPTION_VERIFY, ACCOUNT_SERVICE_VERIFY))) {
 					$jsoauth_accounts[$account['acid']] = $account['name'];
 				}
 			}

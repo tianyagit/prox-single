@@ -16,7 +16,7 @@ $oauth = setting_load('global_oauth');
 $oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : array();
 
 if ($do == 'display') {
-	$user_have_accounts = user_own_oauth();
+	$user_have_accounts = user_borrow_oauth_account_list();
 	$oauth_accounts = $user_have_accounts['oauth_accounts'];
 }
 
