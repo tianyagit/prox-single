@@ -10,8 +10,8 @@ defined('IN_IA') or exit('Access Denied');
  * @return boolean
  */
 function permission_build() {
-	global $_W;
-	$we7_file_permission = require IA_ROOT . '/web/common/permission.inc.php';
+	global $_W, $acl;
+	$we7_file_permission = $acl;
 	$permission_frames = require IA_ROOT . '/web/common/frames.inc.php';
 	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OPERATOR, ACCOUNT_MANAGE_NAME_MANAGER)) || empty($_W['uniacid'])) {
 		return $we7_file_permission;
