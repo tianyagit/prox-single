@@ -922,3 +922,30 @@ function user_third_info_register($user_info) {
 	}
 	return $user_id;
 }
+
+/**
+ * 当前用户拥有的可借用的公众号
+ * @return array
+ */
+function user_own_oauth() {
+	global $_W;
+	$user_have_accounts = uni_user_accounts($_W['uid']);
+	$oauth_accounts = array();
+	$jsoauth_accounts = array();
+	if(!empty($user_have_accounts)) {
+		foreach($user_have_accounts as $account) {
+			if(!empty($account['key']) && !empty($account['secret'])) {
+				if (in_array($account['level'], array(4))) {
+					$oauth_accounts[$account['acid']] = $account['name'];
+				}
+				if (in_array($account['level'], array(3, 4))) {
+					$jsoauth_accounts[$account['acid']] = $account['name'];
+				}
+			}
+		}
+	}
+	return array(
+		'oauth_accounts' => $oauth_accounts,
+		'jsoauth_accounts' => $jsoauth_accounts
+	);
+}

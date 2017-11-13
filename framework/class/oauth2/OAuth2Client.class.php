@@ -3,13 +3,11 @@
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
-abstract class OAuth2Client
-{
+abstract class OAuth2Client {
 	protected $ak;
 	protected $sk;
 
-	public function __construct($ak, $sk)
-	{
+	public function __construct($ak, $sk) {
 		$this->ak = $ak;
 		$this->sk = $sk;
 	}

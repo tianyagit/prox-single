@@ -13,9 +13,9 @@ if (checksubmit() || $_W['isajax']) {
 }
 
 $setting = $_W['setting'];
-$urls = user_support_urls();
+$login_urls = user_support_urls();
 
-if (in_array($_GPC['login_type'], array_keys($urls))) {
+if (!empty($login_urls[$_GPC['login_type']])) {
 	_login($_GPC['referer']);
 }
 

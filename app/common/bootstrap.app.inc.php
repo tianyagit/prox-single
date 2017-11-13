@@ -5,6 +5,7 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('mc');
 load()->model('app');
+load()->model('account');
 $_W['uniacid'] = intval($_GPC['i']);
 if(empty($_W['uniacid'])) {
 	$_W['uniacid'] = intval($_GPC['weid']);
@@ -97,6 +98,9 @@ if (empty($_W['openid']) && !empty($_SESSION['oauth_openid'])) {
 	);
 }
 $unisetting = uni_setting_load();
+if (empty($unisetting['oauth']['account'])) {
+	$unisetting = uni_account_global_oauth();
+}
 if (!empty($unisetting['oauth']['account'])) {
 	$oauth = account_fetch($unisetting['oauth']['account']);
 	if (!empty($oauth) && $_W['account']['level'] <= $oauth['level']) {
@@ -154,7 +158,8 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' &
 		if(uni_is_multi_acid()) {
 			$str = "&j={$_W['acid']}";
 		}
-		$unisetting['oauth']['host'] = uni_account_global_oauth($unisetting['oauth']['host']);
+		$global_unisetting = uni_account_global_oauth();
+		$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : $global_unisetting['oauth']['host'];
 		if (!empty($unisetting['oauth']['host'])) {
 			$url = str_replace($_W['siteroot'], $unisetting['oauth']['host'].'/', $_W['siteurl']);
 		} else {
