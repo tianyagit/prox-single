@@ -14,13 +14,13 @@ if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 
-$setting = $_W['setting'];
-$login_urls = user_support_urls();
-
-if (!empty($login_urls[$_GPC['login_type']])) {
+$support_login_types = OAuth2Client::supportLoginType();
+if (in_array($_GPC['login_type'], $support_login_types)) {
 	_login($_GPC['referer']);
 }
 
+$setting = $_W['setting'];
+$login_urls = user_support_urls();
 template('user/login');
 
 function _login($forward = '') {
