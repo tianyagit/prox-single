@@ -7,6 +7,8 @@ defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
 
 load()->model('user');
+load()->classs('oauth2/OAuth2Client');
+load()->model('setting');
 
 if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
@@ -23,8 +25,6 @@ template('user/login');
 
 function _login($forward = '') {
 	global $_GPC, $_W;
-	load()->classs('oauth2/OAuth2Client');
-	load()->model('setting');
 	$setting_sms_sign = setting_load('site_sms_sign');
 	$status = !empty($setting_sms_sign['site_sms_sign']['status']) ? $setting_sms_sign['site_sms_sign']['status'] : '';
 	if (!empty($status)) {

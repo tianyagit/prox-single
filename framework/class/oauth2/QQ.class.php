@@ -61,7 +61,7 @@ class QQ extends OAuth2Client {
 			$rpos = strrpos($response['content'], ")");
 			$content = substr($response['content'], $lpos + 1, $rpos - $lpos -1);
 		}
-		$result = json_decode($content, ture);
+		$result = json_decode($content, true);
 		if (isset($result->error)) {
 			return error(-1, $result['content']);
 		}

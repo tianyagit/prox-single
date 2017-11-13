@@ -449,7 +449,7 @@ function uni_templates() {
  * @param mixed $value
  * @return boolean
  */
-function uni_setting_save($name, $value, $uniacid = 0) {
+function uni_setting_save($name, $value) {
 	global $_W;
 	if (empty($name)) {
 		return false;
@@ -457,15 +457,14 @@ function uni_setting_save($name, $value, $uniacid = 0) {
 	if (is_array($value)) {
 		$value = serialize($value);
 	}
-	$uniacid = intval($uniacid) > 0 ? intval($uniacid) : $_W['uniacid'];
-	$unisetting = pdo_get('uni_settings', array('uniacid' => $uniacid), array('uniacid'));
+	$unisetting = pdo_get('uni_settings', array('uniacid' => $_W['uniacid']), array('uniacid'));
 	if (!empty($unisetting)) {
-		pdo_update('uni_settings', array($name => $value), array('uniacid' => $uniacid));
+		pdo_update('uni_settings', array($name => $value), array('uniacid' => $_W['uniacid']));
 	} else {
-		pdo_insert('uni_settings', array($name => $value, 'uniacid' => $uniacid));
+		pdo_insert('uni_settings', array($name => $value, 'uniacid' => $_W['uniacid']));
 	}
-	$cachekey = "unisetting:{$uniacid}";
-	$account_cachekey = "uniaccount:{$uniacid}";
+	$cachekey = "unisetting:{$_W['uniacid']}";
+	$account_cachekey = "uniaccount:{$_W['uniacid']}";
 	cache_delete($cachekey);
 	cache_delete($account_cachekey);
 	return true;
