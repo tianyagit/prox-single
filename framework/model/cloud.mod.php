@@ -253,6 +253,10 @@ function cloud_download($path, $type = '') {
 		$_W['setting']['site']['token'] = authcode(cache_load('cloud:transtoken'), 'DECODE');
 		$string = (md5($file) . $ret['path'] . $_W['setting']['site']['token']);
 		if(!empty($_W['setting']['site']['token']) && md5($string) === $ret['sign']) {
+			$error_file_list = array();
+			if (!cloud_file_permission_pass($error_file_list)) {
+				return error(-1, '请修复下列文件读写权限 : ' . implode('; ', $error_file_list));
+			}
 			$path = IA_ROOT . $ret['path'];
 			load()->func('file');
 			@mkdirs(dirname($path));
@@ -1272,4 +1276,71 @@ function cloud_build_schemas($schems) {
 		$database[] = $row;
 	}
 	return $database;
+}
+
+/**
+ * 检测网站关键文件是否有写入权限，从而判断是否执行更新操作
+ * @param array $error_file_list 存放权限有问题的文件名
+ * @return boolean 为
+ */
+function cloud_file_permission_pass(&$error_file_list = array()) {
+	$check_path = array(
+		'/web/common',
+		'/web/source',
+		'/web/themes',
+		'/framework/class',
+		'/framework/model',
+		'/framework/function',
+		'/framework/table',
+		'/framework/library/agent',
+	);
+
+	$check_file = array(
+		'/web/index.php',
+		'/framework/bootstrap.inc.php',
+		'/framework/version.inc.php',
+		'/framework/const.inc.php',
+	);
+
+	foreach ($check_path as $path) {
+		$file_list = cloud_file_tree(IA_ROOT . $path);
+		if (!empty($file_list)) {
+			foreach ($file_list as $file) {
+				if (!is_writable($file)) {
+					$error_file_list[] = $file;
+				}
+			}
+		}
+	}
+
+	foreach ($check_file as $file) {
+		if (!is_writable(IA_ROOT . $file)) {
+			$error_file_list[] = $file;
+		}
+	}
+	return empty($error_file_list) ? true : false;
+}
+
+
+function cloud_file_tree($path, $include = array()) {
+	$files = array();
+	if (!empty($include)) {
+		$ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
+	} else {
+		$ds = glob($path . '/*');
+	}
+	if (is_array($ds)) {
+		foreach ($ds as $entry) {
+			if (is_file($entry)) {
+				$files[] = $entry;
+			}
+			if (is_dir($entry)) {
+				$rs = file_tree($entry);
+				foreach ($rs as $f) {
+					$files[] = $f;
+				}
+			}
+		}
+	}
+	return $files;
 }

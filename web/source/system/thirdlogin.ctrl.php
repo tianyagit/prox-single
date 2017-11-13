@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('setting');
-load()->classs('oauth2/OAuth2Client');
+load()->classs('oauth2/oauth2client');
 $dos = array('display', 'save_setting');
 $do = in_array($do, $dos) ? $do : 'display';
 
@@ -16,7 +16,7 @@ $_W['page']['title'] = '登录配置';
 $types = OAuth2Client::supportLoginType();
 
 $type = trim($_GPC['type']);
-$type = !empty($type) && in_array($type, $types) ? $type : 'System';
+$type = !empty($type) && in_array($type, $types) ? $type : 'system';
 
 if ($do == 'save_setting') {
 	if ($_W['isajax'] && $_W['ispost']) {

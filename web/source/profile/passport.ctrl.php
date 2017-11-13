@@ -37,7 +37,7 @@ if ($do == 'save_oauth') {
 }
 
 if ($do == 'oauth') {
-	$user_have_accounts = user_own_oauth();
+	$user_have_accounts = user_borrow_oauth_account_list();
 	$oauth_accounts = $user_have_accounts['oauth_accounts'];
 	$jsoauth_accounts = $user_have_accounts['jsoauth_accounts'];
 //获取已保存的oauth信息
