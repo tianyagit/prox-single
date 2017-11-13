@@ -629,7 +629,6 @@ if ($do == 'image') {
 		$conditions['uniacid'] = $uniacid;
 		$conditions['type'] = 'image';
 		$conditions['module_upload_dir'] = $module_upload_dir;
-		$conditions['uniacid'] = $uniacid;
 		$material_list = pdo_getslice('wechat_attachment', $conditions, array($page_index, $page_size), $total, array(), '', 'createtime DESC');
 		$pager = pagination($total, $page_index, $page_size,'',$context = array('before' => 5, 'after' => 4, 'isajax' => $_W['isajax']));
 
