@@ -113,7 +113,6 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER && version_compare($_W['setting']
 		message('不能访问, 需要相应的权限才能访问！');
 	}
 }
-
 // 用户权限判断
 require _forward($controller, $action);
 
@@ -141,7 +140,7 @@ function _forward($c, $a) {
 }
 function _calc_current_frames(&$frames) {
 	global $controller, $action;
-	if (! empty($frames['section']) && is_array($frames['section'])) {
+	if (!empty($frames['section']) && is_array($frames['section'])) {
 		foreach ($frames['section'] as &$frame) {
 			if (empty($frame['menu'])) {
 				continue;
@@ -160,7 +159,7 @@ function _calc_current_frames(&$frames) {
 					$get['c'] = $controller;
 					$get['a'] = $action;
 				}
-				if (! empty($do)) {
+				if (!empty($do)) {
 					$get['do'] = $do;
 				}
 				$diff = array_diff_assoc($urls, $get);

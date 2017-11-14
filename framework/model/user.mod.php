@@ -949,3 +949,19 @@ function user_borrow_oauth_account_list() {
 		'jsoauth_accounts' => $jsoauth_accounts
 	);
 }
+
+/**
+ * 过期用户记录
+ * @return bool
+ */
+function user_expire_message_record() {
+	$expire_users = pdo_getall('users', array('expire_is_record' => USER_EXPIRE_NO_RECORD, 'endtime <>' => 0, 'endtime <' => TIMESTAMP));
+	if (empty($expire_users)) {
+		return true;
+	}
+	foreach ($expire_users as $user) {
+		pdo_insert('message_notice_log', array('message' => $user['username'] . '-用户过期', 'sign' => $user['uid'], 'type' => MESSAGE_EXPIRE_TYPE, 'create_time' => TIMESTAMP));
+		pdo_update('users', array('expire_is_record' => USER_EXPIRE_RECORD), array('uid' => $user['uid']));
+	}
+	return true;
+}

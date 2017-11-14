@@ -420,6 +420,17 @@ $we7_system_menu['system'] = array(
 				)
 			)
 		),
+		'message' => array(
+			'title' => '消息提醒',
+			'menu' => array(
+				'system_message' => array(
+					'title' => '消息提醒',
+					'url' => url('message/notice'),
+					'icon' => 'wi wi-article',
+					'permission_name' => 'system_message_notice',
+				)
+			)
+		),
 		'cache' => array(
 			'title' => '缓存',
 			'menu' => array(

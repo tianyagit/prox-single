@@ -190,3 +190,17 @@ define('ARTICLE_CCATE', 0);
 //用户注册方式
 define('USER_REGISTER_TYPE_QQ', 1);
 define('USER_REGISTER_TYPE_WECHAT', 2);
+
+//消息提醒类型
+define('MESSAGE_ORDER_TYPE', 1);
+define('MESSAGE_EXPIRE_TYPE', 2);
+define('MESSAGE_WORKORDER_TYPE', 3);
+define('MESSAGE_REGISTER_TYPE', 4);
+
+//消息是否读取 1未读  2已读
+define('MESSAGE_NOREAD', 1);
+define('MESSAGE_READ', 2);
+
+//用户过期是否记录
+define('USER_EXPIRE_NO_RECORD', 0);
+define('USER_EXPIRE_RECORD', 1);

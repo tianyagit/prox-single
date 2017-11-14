@@ -30,6 +30,7 @@ function _login($forward = '') {
 	if (!empty($status)) {
 		user_expire_notice();
 	}
+	user_expire_message_record();
 	if (empty($_GPC['login_type'])) {
 		$_GPC['login_type'] = 'system';
 	}
