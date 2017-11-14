@@ -1292,7 +1292,8 @@ function cloud_file_permission_pass(&$error_file_list = array()) {
 	$check_path = array(
 		'/web/common',
 		'/web/source',
-		'/web/themes',
+		'/web/themes/default',
+		'/web/themes/black',
 		'/framework/class',
 		'/framework/model',
 		'/framework/function',
