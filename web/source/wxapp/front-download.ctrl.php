@@ -55,13 +55,6 @@ if ($do == 'front_download') {
 	if(!in_array($uptype, array('auto','normal'))) {
 		$uptype = 'auto';
 	}
-
-	if($wxapp_info) {
-		$code_uuid = $wxapp_info['code_uuid'];
-		if(! $code_uuid) {
-
-		}
-	}
 	template('wxapp/version-front-download');
 }
 
@@ -84,7 +77,9 @@ if ($do == 'code_token') {
 
 if ($do == 'qrcode') {
 	$code_token = $_GPC['code_token'];
+	header('Content-type: image/jpg');//有的站必须指定content-type才能显示
 	echo wxapp_code_qrcode($code_token);
+	exit;
 }
 
 if ($do == 'checkscan') {
