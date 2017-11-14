@@ -298,7 +298,8 @@ function cache_build_uninstalled_module() {
 	load()->func('file');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-	$installed_module = pdo_getall('modules', array(), array(), 'name');
+	$sql = 'SELECT * FROM '. tablename('modules') . " as a LEFT JOIN" . tablename('modules_recycle') . " as b ON a.name = b.modulename WHERE b.modulename is NULL";
+	$installed_module = pdo_fetchall($sql, array(), 'name');
 
 	$uninstallModules = array('recycle' => array(), 'uninstalled' => array());
 	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
