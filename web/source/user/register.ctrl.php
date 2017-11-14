@@ -83,6 +83,14 @@ if(checksubmit()) {
 			$profile['createtime'] = TIMESTAMP;
 			pdo_insert('users_profile', $profile);
 		}
+		$message_notice_log = array(
+			'message' => $member['username'] . date("Y-m-d H:i:s") . '注册成功',
+			'sign' => $uid,
+			'type' => MESSAGE_REGISTER_TYPE,
+			'status' => $member['status'],
+			'create_time' => TIMESTAMP
+		);
+		pdo_insert('message_notice_log', $message_notice_log);
 		itoast('注册成功'.(!empty($_W['setting']['register']['verify']) ? '，请等待管理员审核！' : '，请重新登录！'), url('user/login', array('uid' => $uid, 'username' => $member['username'])), 'success');
 	}
 	itoast('增加用户失败，请稍候重试或联系网站管理员解决！', '', '');

@@ -15,70 +15,30 @@
 				<ul class="nav navbar-nav navbar-left">
 					{php global $top_nav}
 					{loop $top_nav $nav}
-					<li{if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a></li>
+					<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active"{/if}><a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a></li>
 					{/loop}
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li class="dropdown msg">
-						<a href="javascript:;" class="dropdown-toogle" data-toggle="dropdown"><span class="wi wi-bell"><span class="badge">30</span></span>消息提醒</a>
+						{php $message_notice = message_notice();}
+						<a href="javascript:;" class="dropdown-toogle" data-toggle="dropdown"><span class="wi wi-bell"><span class="badge">{$message_notice['total']}</span></span>消息提醒</a>
 						<div class="dropdown-menu">
-							<div class="clearfix top">消息提醒<a href="#" class="pull-right">查看更多</a></div>
+							<div class="clearfix top">消息提醒<a href="{php echo url('message/notice')}" class="pull-right">查看更多</a></div>
 							<div class="msg-list-container">
 								<div class="msg-list">
+									{loop $message_notice['lists'] $list}
 									<div class="item">
 										<div class="info clearifx">
-											<div class="pull-right date">2017-11-11 11:11:11</div>
-											来自 <span>订单消息</span>
+											<div class="pull-right date">{php echo date('Y-m-d H:i:s', $list['create_time'])}</div>
+											{if $list['type']==MESSAGE_ORDER_TYPE}来自 <span>订单消息</span>{/if}
+											{if $list['type']==MESSAGE_EXPIRE_TYPE}来自 <span>过期消息</span>{/if}
+											{if $list['type']==MESSAGE_REGISTER_TYPE}来自 <span>注册消息</span>{/if}
 										</div>
 										<div class="msg-content">
-											<a href="#">用户<span>****</span>,在2017-11-11 11:11:11购买了万能小店应用，付款金额5600元</a>
+											<a href="#">{$list['message']}</a>
 										</div>
 									</div>
-									<div class="item">
-										<div class="info clearifx">
-											<div class="pull-right date">2017-11-11 11:11:11</div>
-											来自 <span>订单消息</span>
-										</div>
-										<div class="msg-content">
-											<a href="#">用户<span>****</span>,在2017-11-11 11:11:11购买了万能小店应用，付款金额5600元</a>
-										</div>
-									</div>
-									<div class="item">
-										<div class="info clearifx">
-											<div class="pull-right date">2017-11-11 11:11:11</div>
-											来自 <span>订单消息</span>
-										</div>
-										<div class="msg-content">
-											<a href="#">用户<span>****</span>,在2017-11-11 11:11:11购买了万能小店应用，付款金额5600元</a>
-										</div>
-									</div>
-									<div class="item">
-										<div class="info clearifx">
-											<div class="pull-right date">2017-11-11 11:11:11</div>
-											来自 <span>订单消息</span>
-										</div>
-										<div class="msg-content">
-											<a href="#">用户<span>****</span>,在2017-11-11 11:11:11购买了万能小店应用，付款金额5600元</a>
-										</div>
-									</div>
-									<div class="item">
-										<div class="info clearifx">
-											<div class="pull-right date">2017-11-11 11:11:11</div>
-											来自 <span>订单消息</span>
-										</div>
-										<div class="msg-content">
-											<a href="#">用户<span>****</span>,在2017-11-11 11:11:11购买了万能小店应用，付款金额5600元</a>
-										</div>
-									</div>
-									<div class="item">
-										<div class="info clearifx">
-											<div class="pull-right date">2017-11-11 11:11:11</div>
-											来自 <span>订单消息</span>
-										</div>
-										<div class="msg-content">
-											<a href="#">用户<span>****</span>,在2017-11-11 11:11:11购买了万能小店应用，付款金额5600元</a>
-										</div>
-									</div>
+									{/loop}
 								</div>
 							</div>
 						</div>

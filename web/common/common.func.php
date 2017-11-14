@@ -635,3 +635,19 @@ EOF;
 	}
 	return '';
 }
+
+/**
+ * 过期消息
+ * @return array
+ */
+function message_notice() {
+	$message_table = table('message');
+	$message_table->searchWithIsRead(MESSAGE_NOREAD);
+	$message_table->searchWithPage(1, 10);
+	$lists = $message_table->messageList();
+	$total = $message_table->messageNoReadCount();
+	return array(
+		'lists' => $lists,
+		'total' => $total
+	);
+}
