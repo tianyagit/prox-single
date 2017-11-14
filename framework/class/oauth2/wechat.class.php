@@ -73,13 +73,13 @@ class Wechat extends OAuth2Client {
 		$response = ihttp_request($url, $post);
 
 		$result = @json_decode($response['content'], true);
-		if(is_error($response)) {
-			return error($result['errcode'], "访问公众平台接口失败, 错误详情: {$this->error_code($result['errcode'])}");
+		if(is_error($result)) {
+			return error($result['errcode'], "访问公众平台接口失败, 错误详情: {$result['errmsg']}");
 		}
 		if(empty($result)) {
 			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
 		} elseif(!empty($result['errcode'])) {
-			return error($result['errcode'], "访问公众平台接口失败, 错误: {$result['errmsg']},错误详情：{$this->error_code($result['errcode'])}");
+			return error($result['errcode'], "访问公众平台接口失败, 错误: {$result['errmsg']}");
 		}
 		return $result;
 	}
