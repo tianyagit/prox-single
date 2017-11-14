@@ -5,18 +5,18 @@ namespace We7\V163;
 defined('IN_IA') or exit('Access Denied');
 /**
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * Time: 1510208155
- * @version 1.6.2
+ * Time: 1510385348
+ * @version 1.6.3
  */
 
-class UpdateArticleNotice {
+class UpdateUniSettings {
 
 	/**
 	 *  执行更新
 	 */
 	public function up() {
-		if (!pdo_fieldexists('article_notice', 'style')) {
-			pdo_query('ALTER TABLE ' . tablename('article_notice') . " ADD `style` varchar(200) NOT NULL DEFAULT '';");
+		if (!pdo_fieldexists('uni_settings', 'bind_domain')) {
+			pdo_query("ALTER TABLE " . tablename('uni_settings') . " ADD `bind_domain` varchar(200) NOT NULL DEFAULT '';");
 		}
 	}
 	
