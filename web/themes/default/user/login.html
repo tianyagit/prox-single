@@ -11,7 +11,7 @@
 		{/if}
 	</div>
 	<div class="login-panel">
-		{if !empty($setting['thirdlogin']['system']['authstate'])}
+		{if !empty($login_urls['system']) || !empty($setting['thirdlogin']['system']['authstate'])}
 		<div class="title">账号密码登录</div>
 		<form action="" method="post" role="form" id="form1" onsubmit="return formcheck();" class="we7-form">
 			<div class="input-group-vertical">
@@ -43,7 +43,7 @@
 				<input name="token" value="{$_W['token']}" type="hidden" />
 			</div>
 			{/if}
-			{if !empty($setting['thirdlogin']['qq']['authstate']) || !empty($setting['thirdlogin']['wechat']['authstate'])}
+			{if !empty($login_urls['qq']) || !empty($login_urls['wechat'])}
 			<div class="text-center">
 				<span class="color-gray">使用第三方账号登录</span>
 				<div class="form-control-static">

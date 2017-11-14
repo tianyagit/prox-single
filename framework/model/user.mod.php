@@ -900,6 +900,9 @@ function user_support_urls() {
 			$login_urls[$type] = OAuth2Client::create($type, $_W['setting']['thirdlogin'][$type]['appid'], $_W['setting']['thirdlogin'][$type]['appsecret'])->showLoginUrl();
 		}
 	}
+	if (empty($login_urls)) {
+		$login_urls['system'] = true;
+	}
 	return $login_urls;
 }
 
