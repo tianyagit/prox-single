@@ -350,6 +350,7 @@ $we7_file_permission = array(
 			'see_system_manage_clerk',
 			'see_system_manage_user_setting',
 			'see_system_manage_vice_founder',
+			'see_system_add_vice_founder',
 		),
 		'vice_founder' => array(
 

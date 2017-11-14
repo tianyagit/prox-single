@@ -198,7 +198,6 @@ function buildframes($framename = ''){
 	$modules = uni_modules(false);
 	$sysmodules = system_modules();
 	$status = permission_account_user_permission_exist($_W['uid'], $_W['uniacid']);
-	$role = permission_account_user_role($_W['uid'], $_W['uniacid']);
 	//非创始人应用模块菜单
 	if (!$_W['isfounder'] && $status && $_W['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
 		$module_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], 'modules');
@@ -388,7 +387,7 @@ function buildframes($framename = ''){
 				'is_display' => 1,
 			);
 		}
-		if ($module['permissions'] && ($_W['isfounder'] || $role == ACCOUNT_MANAGE_NAME_OWNER)) {
+		if ($module['permissions'] && ($_W['isfounder'] || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_permissions'] = array(
 				'title' => "<i class='fa fa-cog'></i> 权限设置",
 				'url' => url('module/permission', array('m' => $modulename, 'version_id' => $version_id)),
