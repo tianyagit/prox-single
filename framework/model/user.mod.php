@@ -914,14 +914,18 @@ function user_support_urls() {
 function user_third_info_register($user_info) {
 	global $_W;
 	$user_id = pdo_getcolumn('users', array('openid' => $user_info['openid']), 'uid');
+	$username = strip_emoji($user_info['nickname']);
 	if (empty($user_id)) {
 		$status = !empty($_W['setting']['register']['verify']) ? 1 : 2;
-		pdo_insert('users', array('type' => USER_TYPE_COMMON, 'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'register_type' => $user_info['register_type'], 'openid' => $user_info['openid']));
+		$groupid = intval($_W['setting']['register']['groupid']);
+		$salt = random(8);
+		pdo_insert('users', array('groupid' => $groupid, 'type' => USER_TYPE_COMMON, 'salt' => $salt,'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'register_type' => $user_info['register_type'], 'openid' => $user_info['openid']));
 		$user_id = pdo_insertid();
-		pdo_update('users', array('username' => 'user_' . $user_id), array('uid' => $user_id));
-		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $user_info['nickname'], 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']));
+		pdo_update('users', array('username' => $username . $user_id . rand(999,99999), 'password' => user_hash('', $salt)), array('uid' => $user_id));
+		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']));
 	} else {
-		pdo_update('users_profile', array('nickname' => $user_info['nickname'], 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']), array('uid' => $user_id));
+		pdo_update('users', array('username' => $username . $user_id . rand(999,99999)), array('uid' => $user_id));
+		pdo_update('users_profile', array('nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']), array('uid' => $user_id));
 	}
 	return $user_id;
 }
