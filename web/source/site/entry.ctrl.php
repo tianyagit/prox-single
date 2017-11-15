@@ -30,7 +30,7 @@ if (empty($entry) || empty($entry['do'])) {
 if (!$entry['direct']) {
 	checklogin();
 	$referer = (url_params(referer()));
-	if (empty($_W['isajax']) && empty($_W['ispost']) && empty($_GPC['version_id']) && intval($referer['version_id']) > 0 && ($referer['c'] == 'wxapp' || $referer['c'] == 'site' && $referer['a'] == 'entry' || $referer['c'] == 'home' && $referer['a'] == 'welcome')) {
+	if (empty($_W['isajax']) && empty($_W['ispost']) && empty($_GPC['version_id']) && intval($referer['version_id']) > 0 && ($referer['c'] == 'wxapp' || $referer['c'] == 'site' && in_array($referer['a'], array('entry', 'nav')) || $referer['c'] == 'home' && $referer['a'] == 'welcome' || $referer['c'] == 'module' && in_aray($referer['a'], array('manage-account', 'permission')))) {
 		itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
 	if (!empty($_GPC['version_id'])) {
