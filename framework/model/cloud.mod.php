@@ -1349,7 +1349,7 @@ function cloud_file_tree($path, $include = array()) {
 				$files[] = $entry;
 			}
 			if (is_dir($entry)) {
-				$rs = file_tree($entry);
+				$rs = cloud_file_tree($entry);
 				foreach ($rs as $f) {
 					$files[] = $f;
 				}
