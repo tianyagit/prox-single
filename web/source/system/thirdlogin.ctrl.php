@@ -44,7 +44,7 @@ if ($do == 'display') {
 		foreach ($types as $login_type) {
 			$_W['setting']['thirdlogin'][$login_type]['appid'] = '';
 			$_W['setting']['thirdlogin'][$login_type]['appsecret'] = '';
-			$_W['setting']['thirdlogin'][$login_type]['authstate'] = $login_type == 'system' ? 1 : 0;
+			$_W['setting']['thirdlogin'][$login_type]['authstate'] = '';
 		}
 		setting_save($_W['setting']['thirdlogin'], 'thirdlogin');
 	}
