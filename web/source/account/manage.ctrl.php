@@ -70,7 +70,7 @@ if ($do == 'delete') {
 	$type = intval($_GPC['type']);
 	//只有创始人、主管理员才有权限停用公众号
 	$state = permission_account_user_role($uid, $uniacid);
-	if ($state != ACCOUNT_MANAGE_NAME_OWNER && $state != ACCOUNT_MANAGE_NAME_FOUNDER) {
+	if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
 		itoast('无权限操作！', url('account/manage'), 'error');
 	}
 	if (!empty($acid) && empty($uniacid)) {
@@ -92,7 +92,7 @@ if ($do == 'delete') {
 			itoast('抱歉，帐号不存在或是已经被删除', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		$state = permission_account_user_role($uid, $uniacid);
-		if($state != ACCOUNT_MANAGE_NAME_FOUNDER && $state != ACCOUNT_MANAGE_NAME_OWNER) {
+		if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
 			itoast('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
