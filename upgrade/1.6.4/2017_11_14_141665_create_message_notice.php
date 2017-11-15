@@ -21,6 +21,7 @@ class CreateMessageNotice {
 				  `status` tinyint(3) DEFAULT '0' COMMENT '是否需要审核 1、注册审核；2、正常',
 				  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '提交时间',
 				  `end_time` int(11) NOT NULL DEFAULT '0' COMMENT '到期时间',
+				  `account_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1公众号，3授权公众号，4小程序',
 				  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 			pdo_run($sql);

@@ -966,7 +966,8 @@ function user_account_expire_message_record() {
 		if ($account_detail['endtime'] > 0 && $account_detail['endtime'] < TIMESTAMP) {
 			$exist_record = pdo_get('message_notice_log', array('sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'end_time' => $account_detail['endtime']));
 			if (empty($exist_record)) {
-				pdo_insert('message_notice_log', array('message' => $account_detail['name'] . '-公众号过期', 'sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'create_time' => TIMESTAMP, 'end_time' => $account_detail['endtime']));
+				$account_name = $account_detail['type'] == ACCOUNT_TYPE_APP_NORMAL ? '-小程序过期' : '-公众号过期';
+				pdo_insert('message_notice_log', array('message' => $account_detail['name'] . $account_name, 'sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'create_time' => TIMESTAMP, 'end_time' => $account_detail['endtime'], 'account_type' => $account_detail['type']));
 			}
 		}
 	}

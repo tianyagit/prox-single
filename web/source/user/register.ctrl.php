@@ -85,7 +85,7 @@ if(checksubmit()) {
 		}
 		$message_notice_log = array(
 			'message' => $member['username'] . date("Y-m-d H:i:s") . '注册成功',
-			'sign' => $uid,
+			'uid' => $uid,
 			'type' => MESSAGE_REGISTER_TYPE,
 			'status' => $member['status'],
 			'create_time' => TIMESTAMP
