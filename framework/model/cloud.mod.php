@@ -1292,7 +1292,8 @@ function cloud_file_permission_pass(&$error_file_list = array()) {
 	$check_path = array(
 		'/web/common',
 		'/web/source',
-		'/web/themes',
+		'/web/themes/default',
+		'/web/themes/black',
 		'/framework/class',
 		'/framework/model',
 		'/framework/function',
@@ -1348,7 +1349,7 @@ function cloud_file_tree($path, $include = array()) {
 				$files[] = $entry;
 			}
 			if (is_dir($entry)) {
-				$rs = file_tree($entry);
+				$rs = cloud_file_tree($entry);
 				foreach ($rs as $f) {
 					$files[] = $f;
 				}

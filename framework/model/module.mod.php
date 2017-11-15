@@ -283,7 +283,8 @@ function module_fetch($name) {
 	$cachekey = cache_system_key(CACHE_KEY_MODULE_INFO, $name);
 	$module = cache_load($cachekey);
 	if (empty($module)) {
-		$module_info = pdo_get('modules', array('name' => $name));
+		$sql = 'SELECT * FROM '. tablename('modules') . " as a LEFT JOIN" . tablename('modules_recycle') . " as b ON a.name = b.modulename WHERE a.name = :name AND b.modulename is NULL";
+		$module_info = pdo_fetch($sql, array(':name' => $name));
 		if (empty($module_info)) {
 			return array();
 		}
@@ -441,7 +442,7 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 		return error(1, '您没有卸载模块的权限！');
 	}
 	$module_name = trim($module_name);
-	$module = module_fetch($module_name);
+	$module = pdo_get('modules', array('name' => $module_name));
 	if (empty($module)) {
 		return error(1, '模块已经被卸载或是不存在！');
 	}
@@ -451,8 +452,8 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	if (!empty($module['plugin_list'])) {
 		pdo_delete('modules_plugin', array('main_module' => $module_name));
 	}
+	pdo_delete('modules_recycle', array('modulename' => $module_name));
 
-	pdo_insert('modules_recycle', array('modulename' => $module_name));
 	pdo_delete('uni_account_modules', array('module' => $module_name));
 	ext_module_clean($module_name, $is_clean_rule);
 	cache_build_module_subscribe_type();
