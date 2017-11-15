@@ -35,7 +35,9 @@
 											{if $list['type']==MESSAGE_REGISTER_TYPE}来自 <span>注册消息</span>{/if}
 										</div>
 										<div class="msg-content">
-											<a href="#">{$list['message']}</a>
+											{if $list['type']==MESSAGE_ORDER_TYPE}<a href="{php echo url('site/entry/orders', array('m' => 'store', 'direct'=>1))}">{$list['message']}</a>{/if}
+											{if $list['type']==MESSAGE_EXPIRE_TYPE}<a href="{php echo url('user/display')}">{$list['message']}</a>{/if}
+											{if $list['type']==MESSAGE_REGISTER_TYPE}<a href="{php echo url('user/display', array('type' => 'check'))}">{$list['message']}</a>{/if}
 										</div>
 									</div>
 									{/loop}

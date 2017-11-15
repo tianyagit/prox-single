@@ -951,17 +951,24 @@ function user_borrow_oauth_account_list() {
 }
 
 /**
- * 过期用户记录
+ * 公众号过期记录
  * @return bool
  */
-function user_expire_message_record() {
-	$expire_users = pdo_getall('users', array('expire_is_record' => USER_EXPIRE_NO_RECORD, 'endtime <>' => 0, 'endtime <' => TIMESTAMP));
-	if (empty($expire_users)) {
+function user_account_expire_message_record() {
+	load()->model('account');
+	$account_table = table('account');
+	$expire_account_list = $account_table->searchAccountList(true);
+	if (empty($expire_account_list)) {
 		return true;
 	}
-	foreach ($expire_users as $user) {
-		pdo_insert('message_notice_log', array('message' => $user['username'] . '-用户过期', 'sign' => $user['uid'], 'type' => MESSAGE_EXPIRE_TYPE, 'create_time' => TIMESTAMP));
-		pdo_update('users', array('expire_is_record' => USER_EXPIRE_RECORD), array('uid' => $user['uid']));
+	foreach ($expire_account_list as $account) {
+		$account_detail = uni_fetch($account['uniacid']);
+		if ($account_detail['endtime'] > 0 && $account_detail['endtime'] < TIMESTAMP) {
+			$exist_record = pdo_get('message_notice_log', array('sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'end_time' => $account_detail['endtime']));
+			if (empty($exist_record)) {
+				pdo_insert('message_notice_log', array('message' => $account_detail['name'] . '-公众号过期', 'sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'create_time' => TIMESTAMP, 'end_time' => $account_detail['endtime']));
+			}
+		}
 	}
 	return true;
 }
