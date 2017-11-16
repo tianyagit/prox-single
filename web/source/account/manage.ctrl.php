@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
 load()->model('user');
+load()->model('system');
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
@@ -18,6 +19,9 @@ $account_info = permission_user_account_num();
 $role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
 
 if ($do == 'display') {
+	$message_id = $_GPC['message_id'];
+	system_message_notice_read($message_id);
+
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 
