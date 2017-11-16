@@ -24,6 +24,7 @@ class AccountTable extends We7Table {
 		if (!empty($expire)) {
 			$this->searchWithExprie();
 		}
+		$this->query->orderby('a.uniacid', 'desc');
 		$list = $this->query->getall('a.uniacid');
 		return $list;
 	}
