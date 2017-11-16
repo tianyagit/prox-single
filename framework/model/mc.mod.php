@@ -2062,3 +2062,66 @@ function mc_fans_chats_record_formate($chat_record) {
 	}
 	return $chat_record;
 }
+
+/**
+ * 后台给粉丝发送消息格式整理
+ * @param $data
+ * @return array
+ */
+function mc_send_content_formate($data) {
+	$type = addslashes($data['type']);
+	if ($type == 'image') {
+		$contents = explode(',', htmlspecialchars_decode($data['content']));
+		$get_content = array_rand($contents, 1);
+		$content = trim($contents[$get_content], '\"');
+	}
+	if ($type == 'text' || $type == 'voice') {
+		$contents = htmlspecialchars_decode($data['content']);
+		$contents = explode(',', $contents);
+		$get_content = array_rand($contents, 1);
+		$content = trim($contents[$get_content], '\"');
+	}
+	if ($type == 'news' || $type == 'music') {
+		$contents = htmlspecialchars_decode($data['content']);
+		$contents = json_decode('[' . $contents . ']', true);
+		$get_content = array_rand($contents, 1);
+		$content = $contents[$get_content];
+	}
+
+	$send['touser'] = trim($data['openid']);
+	$send['msgtype'] = $type;
+	if ($type == 'text') {
+		$send['text'] = array('content' => urlencode($content));
+	} elseif ($type == 'image') {
+		$send['image'] = array('media_id' => $content);
+		$material = material_get($content);
+		$content = $material['attachment'];
+	} elseif ($type == 'voice') {
+		$send['voice'] = array('media_id' => $content);
+	} elseif($type == 'video') {
+		$content = json_decode($content, true);
+		$send['video'] = array(
+			'media_id' => $content['mediaid'],
+			'thumb_media_id' => '',
+			'title' => urlencode($content['title']),
+			'description' => ''
+		);
+	}  elseif($type == 'music') {
+		$send['music'] = array(
+			'musicurl' => tomedia($content['url']),
+			'hqmusicurl' => tomedia($content['hqurl']),
+			'title' => urlencode($content['title']),
+			'description' => urlencode($content['description']),
+			'thumb_media_id' => $content['thumb_media_id'],
+		);
+	} elseif($type == 'news') {
+		$send['msgtype'] =  'mpnews';
+		$send['mpnews'] = array(
+			'media_id' => $content['mediaid']
+		);
+	}
+	return array(
+		'send' => $send,
+		'content' => $content
+	);
+}
