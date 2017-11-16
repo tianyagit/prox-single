@@ -1404,7 +1404,7 @@ function check_url_not_outside_link($redirect) {
  * @param $val $string 需处理的字符串
  */
 function remove_xss($val) {
-	$val = preg_replace('/([\x00-\x08,\x0b-\x0c,\x0e-\x19])/', '', $val);
+	$val = preg_replace('/([\x0e-\x19])/', '', $val);
 	$search = 'abcdefghijklmnopqrstuvwxyz';
 	$search .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	$search .= '1234567890!@#$%^&*()';
