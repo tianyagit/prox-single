@@ -957,12 +957,15 @@ function user_borrow_oauth_account_list() {
 function user_account_expire_message_record() {
 	load()->model('account');
 	$account_table = table('account');
-	$expire_account_list = $account_table->searchAccountList(true);
+	$expire_account_list = $account_table->searchAccountList();
 	if (empty($expire_account_list)) {
 		return true;
 	}
 	foreach ($expire_account_list as $account) {
 		$account_detail = uni_fetch($account['uniacid']);
+		if (empty($account_detail['uid'])) {
+			continue;
+		}
 		if ($account_detail['endtime'] > 0 && $account_detail['endtime'] < TIMESTAMP) {
 			$exist_record = pdo_get('message_notice_log', array('sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'end_time' => $account_detail['endtime']));
 			if (empty($exist_record)) {
