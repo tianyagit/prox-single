@@ -9,6 +9,10 @@ defined('IN_IA') or exit('Access Denied');
 class MessageTable extends We7Table {
 
 	public function messageList() {
+		global $_W;
+		if (!user_is_founder($_W['uid']) || user_is_vice_founder($_W['uid'])) {
+			$this->query->where('uid', $_W['uid']);
+		}
 		return $this->query->from('message_notice_log')->orderby('id', 'DESC')->getall();
 	}
 
@@ -23,6 +27,10 @@ class MessageTable extends We7Table {
 	}
 
 	public function messageNoReadCount() {
+		global $_W;
+		if (!user_is_founder($_W['uid']) || user_is_vice_founder($_W['uid'])) {
+			$this->query->where('uid', $_W['uid']);
+		}
 		return $this->query->from('message_notice_log')->where('is_read', MESSAGE_NOREAD)->count();
 	}
 }

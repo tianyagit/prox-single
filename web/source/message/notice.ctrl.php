@@ -15,7 +15,8 @@ if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 10;
 
-	$type = !empty($_GPC['type']) ? intval($_GPC['type']) : (IMS_FAMILY == 'x' ? MESSAGE_ORDER_TYPE : MESSAGE_EXPIRE_TYPE);
+	$type = !empty($_GPC['type']) ? intval($_GPC['type']) :
+			(IMS_FAMILY == 'x' && user_is_founder($_W['uid']) && !user_is_vice_founder() ? MESSAGE_ORDER_TYPE : MESSAGE_ACCOUNT_EXPIRE_TYPE);
 	$is_read = !empty($_GPC['is_read']) ? trim($_GPC['is_read']) : '';
 
 	$message_table = table('message');
@@ -26,7 +27,7 @@ if ($do == 'display') {
 
 	$message_table->searchWithType($type);
 	$message_table->searchWithPage($pindex, $psize);
-	$lists = $message_table->messageList();//print_r($lists);exit;
+	$lists = $message_table->messageList();
 
 	if (!empty($lists)) {
 		foreach($lists as &$list) {

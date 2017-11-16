@@ -64,6 +64,17 @@ $we7_file_permission = array(
 		'operator' => array(),
 		'clerk' => array()
 	),
+	'message' => array(
+		'default' => '',
+		'direct' => array(
+			'notice',
+		),
+		'vice_founder' => array(),
+		'owner' => array(),
+		'manager' => array(),
+		'operator' => array(),
+		'clerk' => array()
+	),
 	'cloud' => array(
 		'default' => 'touch',
 		'direct' => array(
