@@ -12,18 +12,7 @@ load()->func('file');
 load()->model('account');
 load()->model('setting');
 load()->model('user');
-if (!pdo_fieldexists('users', 'register_type')) {
-	pdo_query('ALTER TABLE ' . tablename('users') . " ADD `register_type` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '用户来源类型：0网站注册，1qq, 2微信';");
-}
-if (!pdo_fieldexists('users', 'openid')) {
-	pdo_query('ALTER TABLE ' . tablename('users') . " ADD `openid` varchar(50) NOT NULL DEFAULT 0 COMMENT '第三方的openid';");
-}
-if (!pdo_fieldexists('uni_settings', 'bind_domain')) {
-	pdo_query("ALTER TABLE " . tablename('uni_settings') . " ADD `bind_domain` varchar(200) NOT NULL DEFAULT '';");
-}
-if (!pdo_fieldexists('article_notice', 'style')) {
-	pdo_query('ALTER TABLE ' . tablename('article_notice') . " ADD `style` varchar(200) NOT NULL DEFAULT '';");
-}
+
 $state = urldecode($_GPC['state']);
 if (!empty($state)) {
 	$login_type = explode('=', $state);
