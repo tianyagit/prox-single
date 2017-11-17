@@ -327,7 +327,7 @@ function material_local_news_upload($attach_id) {
 		}
 		$news['content'] = material_parse_content($news['content']);
 		if (is_error($news['content'])) {
-			return error('-2', $news['content']);
+			return error('-2', $news['content']['message']);
 		}
 		if (empty($news['thumb_media_id'])) {
 			if (empty($news['thumb_url'])){
