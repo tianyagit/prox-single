@@ -5,7 +5,7 @@
 		<form action="" method="post">
 			<div class="form-group">
 				<div class="col-sm-12">
-					<input type="radio" name="type" id="type-0" value="0" onclick="$('.remote-close').show();$('.remote-qiniu').hide();$('.remote-alioss').hide();$('.remote-ftp').hide();$('.remote-close').show();$('.remote-cos').hide();" {if empty($remote[$_W['uniacid']]['type']) || $remote[$_W['uniacid']]['type'] == '0'} checked="checked" {/if}>
+					<input type="radio" name="type" id="type-0" value="0" onclick="$('.remote-close').show();$('.remote-qiniu').hide();$('.remote-alioss').hide();$('.remote-ftp').hide();$('.remote-close').show();$('.remote-cos').hide();" {if empty($remote['type']) || $remote['type'] == '0'} checked="checked" {/if}>
 					<label class="radio-inline" for="type-0">
 						关闭
 					</label>
@@ -17,7 +17,7 @@
 					<!--<label class="radio-inline" for="type-2">-->
 						<!--阿里云OSS <span class="label label-success">推荐，快速稳定</span>-->
 					<!--</label>-->
-					<input type="radio" name="type" id="type-3" value="3" onclick="$('.remote-qiniu').show();$('.remote-alioss').hide();$('.remote-ftp').hide();$('.remote-close').hide();$('.remote-cos').hide();" {if !empty($remote[$_W['uniacid']]['type']) && $remote[$_W['uniacid']]['type'] == '3'} checked="checked" {/if}>
+					<input type="radio" name="type" id="type-3" value="3" onclick="$('.remote-qiniu').show();$('.remote-alioss').hide();$('.remote-ftp').hide();$('.remote-close').hide();$('.remote-cos').hide();" {if !empty($remote['type']) && $remote['type'] == '3'} checked="checked" {/if}>
 					<label class="radio-inline" for="type-3">
 						七牛云存储 <span class="label label-success">推荐，快速稳定</span>
 					</label>
@@ -28,7 +28,7 @@
 					<!--<span class="help-block"></span>-->
 				</div>
 			</div>
-			<div class="remote-qiniu" {if $remote[$_W['uniacid']]['type'] != 3}style="display: none;"{/if}>
+			<div class="remote-qiniu" {if $remote['type'] != 3}style="display: none;"{/if}>
 				<div class="alert alert-info">
 					启用七牛云存储后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至七牛云存储, 相关工具：
 					<a href="https://portal.qiniu.com/signin">七牛云存储</a>
@@ -36,28 +36,28 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Accesskey</label>
 					<div class="col-sm-9">
-						<input type="text" name="qiniu[accesskey]" class="form-control" value="{$remote[$_W['uniacid']]['qiniu']['accesskey']}" placeholder="" />
+						<input type="text" name="qiniu[accesskey]" class="form-control" value="{$remote['qiniu']['accesskey']}" placeholder="" />
 						<span class="help-block">用于签名的公钥</span>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Secretkey</label>
 					<div class="col-sm-9">
-						<input type="text" name="qiniu[secretkey]" class="form-control encrypt" value="{$remote[$_W['uniacid']]['qiniu']['secretkey']}" placeholder="" />
+						<input type="text" name="qiniu[secretkey]" class="form-control encrypt" value="{$remote['qiniu']['secretkey']}" placeholder="" />
 						<span class="help-block">用于签名的私钥</span>
 					</div>
 				</div>
 				<div class="form-group" id="qiniubucket">
 					<label class="col-sm-2 control-label">Bucket</label>
 					<div class="col-sm-9">
-						<input type="text" name="qiniu[bucket]" class="form-control" value="{$remote[$_W['uniacid']]['qiniu']['bucket']}" placeholder="" />
+						<input type="text" name="qiniu[bucket]" class="form-control" value="{$remote['qiniu']['bucket']}" placeholder="" />
 						<span class="help-block">请保证bucket为可公共读取的</span>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Url</label>
 					<div class="col-sm-9">
-						<input type="text" name="qiniu[url]" class="form-control" value="{$remote[$_W['uniacid']]['qiniu']['url']}" placeholder="" />
+						<input type="text" name="qiniu[url]" class="form-control" value="{$remote['qiniu']['url']}" placeholder="" />
 						<span class="help-block">七牛支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com</span>
 					</div>
 				</div>
@@ -70,7 +70,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-group remote-close" {if !empty($remote[$_W['uniacid']]['type'])}style="display: none"{/if}>
+			<div class="form-group remote-close" {if !empty($remote['type'])}style="display: none"{/if}>
 				<div class="">
 					<button name="submit" class="btn btn-primary" value="submit">保存配置</button>
 					<input type="hidden" name="do" value="save" />

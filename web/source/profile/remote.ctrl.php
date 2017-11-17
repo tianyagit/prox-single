@@ -16,7 +16,7 @@ if ($do == 'save'){
 		'type' => $_GPC['type'],
 		'qiniu' => array(
 			'accesskey' => $_GPC['qiniu']['accesskey'],
-			'secretkey' => strexists($_GPC['qiniu']['secretkey'], '*') ? $remote[$_W['uniacid']]['qiniu']['secretkey'] : trim($_GPC['qiniu']['secretkey']),
+			'secretkey' => strexists($_GPC['qiniu']['secretkey'], '*') ? $remote['qiniu']['secretkey'] : trim($_GPC['qiniu']['secretkey']),
 			'bucket' => $_GPC['qiniu']['bucket'],
 			'url' => $_GPC['qiniu']['url'],
 		)
@@ -42,15 +42,15 @@ if ($do == 'save'){
 			itoast ($message, referer (), 'info');
 		}
 	}
-	$remote[$_W['uniacid']] = $remote_data;
-	setting_save($remote, 'remote');
+	$_W['setting']['remote_complete_info'][$_W['uniacid']] = $remote_data;
+	setting_save($_W['setting']['remote_complete_info'], 'remote');
 	itoast('保存成功', '', 'success');
 }
 
 if ($do == 'test_setting') {
 	$type = $_GPC['type'];
 	if ($type == ATTACH_QINIU) {
-		$_GPC['secretkey'] = strexists($_GPC['secretkey'], '*') ? $remote[$_W['uniacid']]['qiniu']['secretkey'] : $_GPC['secretkey'];
+		$_GPC['secretkey'] = strexists($_GPC['secretkey'], '*') ? $remote['qiniu']['secretkey'] : $_GPC['secretkey'];
 		$auth= attachment_qiniu_auth(trim($_GPC['accesskey']), trim($_GPC['secretkey']), trim($_GPC['bucket']));
 		if (is_error($auth)) {
 			iajax(-1, '配置失败，请检查配置。注：请检查存储区域是否选择的是和bucket对应<br/>的区域', '');

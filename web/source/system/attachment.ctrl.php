@@ -207,10 +207,15 @@ if ($do == 'remote') {
 				itoast($auth['message'], referer(), 'info');
 			}
 		}
-		setting_save($remote, 'remote');
+		$_W['setting']['remote_complete_info']['type'] = $remote['type'];
+		$_W['setting']['remote_complete_info']['alioss'] = $remote['alioss'];
+		$_W['setting']['remote_complete_info']['ftp'] = $remote['ftp'];
+		$_W['setting']['remote_complete_info']['qiniu'] = $remote['qiniu'];
+		$_W['setting']['remote_complete_info']['cos'] = $remote['cos'];
+		setting_save($_W['setting']['remote_complete_info'], 'remote');
 		itoast('远程附件配置信息更新成功！', url('system/attachment/remote'), 'success');
 	}
-	$remote = $_W['setting']['remote'];
+	$remote = $_W['setting']['remote_complete_info'];
 	$bucket_datacenter = attachment_alioss_datacenters();
 } 
 

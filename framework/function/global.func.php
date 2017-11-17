@@ -1442,5 +1442,26 @@ function remove_xss($val) {
 	return $val;
 }
 
+function set_attach_url() {
+	global $_W;
+	$_W['attachurl'] = $_W['attachurl_local'] = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/';
+	$_W['setting']['remote_complete_info'] = $_W['setting']['remote'];
+	if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
+		$_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
+	}
+	if (!empty($_W['setting']['remote']['type'])) {
+		if ($_W['setting']['remote']['type'] == ATTACH_FTP) {
+			$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['ftp']['url'] . '/';
+		} elseif ($_W['setting']['remote']['type'] == ATTACH_OSS) {
+			$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['alioss']['url'] . '/';
+		} elseif ($_W['setting']['remote']['type'] == ATTACH_QINIU) {
+			$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['qiniu']['url'] . '/';
+		} elseif ($_W['setting']['remote']['type'] == ATTACH_COS) {
+			$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['cos']['url'] . '/';
+		}
+	}
+	return true;
+}
+
 
 
