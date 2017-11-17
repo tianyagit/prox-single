@@ -538,6 +538,6 @@ function cache_build_cloud_upgrade_module() {
 function cache_build_cloudpost_uninstall_module() {
 	load()->object('cloudapi');
 	$cloud_api = new CloudApi();
-	$cloud_api->post('cache', 'delete', cache_system_key('module:all_uninstall'));
+	$cloud_api->post('cache', 'delete', array('key' => cache_system_key('module:all_uninstall')));
 	return true;
 }

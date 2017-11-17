@@ -20,6 +20,7 @@ if (checksubmit('submit', true)) {
 	cache_write('account:ticket', $account_ticket_cache);
 	unset($account_ticket_cache);
 
+	cache_build_user_modules();
 	cache_build_cloudpost_uninstall_module();
 	cache_build_template();
 	cache_build_users_struct();
