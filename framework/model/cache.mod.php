@@ -96,6 +96,22 @@ function cache_build_memberinfo($uid) {
 }
 
 /**
+ * 更新用户模块信息
+ * @return array
+ */
+function cache_build_user_modules() {
+	load()->object('cloudapi');
+	$cloud_api = new CloudApi();
+	$user_list = pdo_getall('users');
+	if (is_array($user_list) && !empty($user_list)) {
+		foreach ($user_list as $user) {
+			$cloud_api->post('cache', 'delete', array('key' => array(cache_system_key('user_modules:' . $user['uid']))));
+		}
+	}
+	return true;
+}
+
+/**
  * 更新会员个人信息字段
  * @return array
  */

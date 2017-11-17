@@ -292,6 +292,7 @@ if ($do =='install') {
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
 		cache_build_module_info($module_name);
+		cache_build_user_modules();
 		itoast('已恢复', url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE)), '', 'success');
 	}
 
@@ -430,7 +431,7 @@ if ($do =='install') {
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
 		cache_build_module_info($module_name);
-
+		cache_build_user_modules();
 		header('Location: ' . url('module/manage-system/install_success', array('account_type' => ACCOUNT_TYPE)));
 		exit;
 	} else {
