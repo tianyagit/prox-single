@@ -14,17 +14,13 @@ $_W['page']['title'] = '更新缓存 - 设置 - 系统管理';
 //清空缓存分为两种，一种为重建，一种为清空。
 //清空类的直接把缓存全部删除，不在一条一条的删除
 if (checksubmit('submit', true)) {
-	$cloud_api = new CloudApi();
-	$cloud_cache_key = array(
-		'key' => array(cache_system_key('module:all_uninstall'), cache_system_key('user_modules:' . $_W['uid']))
-	);
-	$cloud_api->post('cache', 'delete', $cloud_cache_key);
 	$account_ticket_cache = cache_read('account:ticket');
 	pdo_delete('core_cache');
 	cache_clean();
 	cache_write('account:ticket', $account_ticket_cache);
 	unset($account_ticket_cache);
 
+	cache_build_cloudpost_uninstall_module();
 	cache_build_template();
 	cache_build_users_struct();
 	cache_build_module_status();

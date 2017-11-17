@@ -534,3 +534,10 @@ function cache_build_cloud_upgrade_module() {
 	cache_write(cache_system_key('all_cloud_upgrade_module:'), $modules, 1800);
 	return $modules;
 }
+
+function cache_build_cloudpost_uninstall_module() {
+	load()->object('cloudapi');
+	$cloud_api = new CloudApi();
+	$cloud_api->post('cache', 'delete', cache_system_key('module:all_uninstall'));
+	return true;
+}
