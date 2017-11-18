@@ -48,18 +48,37 @@ function cache_build_module_status() {
  * @param int $uniacid 要重建模块的公众号uniacid
  */
 function cache_build_account_modules($uniacid = 0) {
+	load()->object('cloudapi');
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
 		//以前缀的形式删除缓存
 		cache_clean(cache_system_key('unimodules'));
-		cache_clean(cache_system_key('user_modules'));
+		cache_build_user_modules();
 	} else {
 		cache_delete(cache_system_key("unimodules:{$uniacid}:1"));
 		cache_delete(cache_system_key("unimodules:{$uniacid}:"));
 		$owner_uid = pdo_getcolumn('uni_account_users', array('role' => 'owner'), 'uid');
-		cache_delete(cache_system_key("user_modules:{$owner_uid}:"));
+		$cloud_api = new CloudApi();
+		$cloud_api->post('cache', 'delete', array('key' => cache_system_key("user_modules:" . $owner_uid)));
 	}
 }
+
+/**
+ * 更新全部用户模块信息
+ * @return array()
+ */
+function cache_build_user_modules() {
+	load()->object('cloudapi');
+	$cloud_api = new CloudApi();
+	$user_list = pdo_getall('users');
+	if (is_array($user_list) && !empty($user_list)) {
+		foreach ($user_list as $user) {
+			$cloud_api->post('cache', 'delete', array('key' => cache_system_key('user_modules:' . $user['uid'])));
+		}
+	}
+	return true;
+}
+
 /*
  * 重建公众号缓存
  * @param int $uniacid 要重建缓存的公众号uniacid
