@@ -435,13 +435,9 @@ function user_account_detail_info($uid) {
  */
 function user_modules($uid) {
 	global $_W;
+
 	load()->model('module');
 	$modules =cache_load(cache_system_key('user_modules:' . $uid));
-	if (!is_error($modules)) {
-		$modules = $modules['data'];
-	} else {
-		return $modules;
-	}
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
