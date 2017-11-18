@@ -48,7 +48,6 @@ function cache_build_module_status() {
  * @param int $uniacid 要重建模块的公众号uniacid
  */
 function cache_build_account_modules($uniacid = 0) {
-	load()->object('cloudapi');
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
 		//以前缀的形式删除缓存
@@ -58,8 +57,7 @@ function cache_build_account_modules($uniacid = 0) {
 		cache_delete(cache_system_key("unimodules:{$uniacid}:1"));
 		cache_delete(cache_system_key("unimodules:{$uniacid}:"));
 		$owner_uid = pdo_getcolumn('uni_account_users', array('role' => 'owner'), 'uid');
-		$cloud_api = new CloudApi();
-		$cloud_api->post('cache', 'delete', array('key' => cache_system_key("user_modules:" . $owner_uid)));
+		cache_delete(cache_system_key("user_modules:{$owner_uid}:"));
 	}
 }
 /*
@@ -92,22 +90,6 @@ function cache_build_memberinfo($uid) {
 	$uid = intval($uid);
 	$cachekey = cache_system_key(CACHE_KEY_MEMBER_INFO, $uid);
 	cache_delete($cachekey);
-	return true;
-}
-
-/**
- * 更新用户模块信息
- * @return array
- */
-function cache_build_user_modules() {
-	load()->object('cloudapi');
-	$cloud_api = new CloudApi();
-	$user_list = pdo_getall('users');
-	if (is_array($user_list) && !empty($user_list)) {
-		foreach ($user_list as $user) {
-			$cloud_api->post('cache', 'delete', array('key' => array(cache_system_key('user_modules:' . $user['uid']))));
-		}
-	}
 	return true;
 }
 
@@ -420,7 +402,7 @@ function cache_build_uninstalled_module() {
 		'app_count' => count($uninstallModules['uninstalled']['app']),
 		'wxapp_count' => count($uninstallModules['uninstalled']['wxapp'])
 	);
-	$cloud_api->post('cache', 'set', array('key' => cache_system_key('module:all_uninstall'), 'value' => $cache, CACHE_EXPIRE_LONG));
+	cache_write(cache_system_key('module:all_uninstall'), $cache, CACHE_EXPIRE_LONG);
 	return $cache;
 }
 
@@ -533,11 +515,4 @@ function cache_build_cloud_upgrade_module() {
 	}
 	cache_write(cache_system_key('all_cloud_upgrade_module:'), $modules, 1800);
 	return $modules;
-}
-
-function cache_build_cloudpost_uninstall_module() {
-	load()->object('cloudapi');
-	$cloud_api = new CloudApi();
-	$cloud_api->post('cache', 'delete', array('key' => cache_system_key('module:all_uninstall')));
-	return true;
 }
