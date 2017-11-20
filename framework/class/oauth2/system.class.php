@@ -16,7 +16,7 @@ class System extends OAuth2Client {
 	}
 
 	public function user() {
-		global $_GPC;
+		global $_GPC, $_W;
 		$username = trim($_GPC['username']);
 		pdo_query('DELETE FROM'.tablename('users_failed_login'). ' WHERE lastupdate < :timestamp', array(':timestamp' => TIMESTAMP-300));
 		$failed = pdo_get('users_failed_login', array('username' => $username, 'ip' => CLIENT_IP));
