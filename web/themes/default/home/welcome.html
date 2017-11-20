@@ -40,7 +40,7 @@
 		</div>
 		<div class="panel we7-panel notice notice-tab">
 			<div class="panel-heading">
-				<a href="./index.php?c=article&a=notice&do=post" class="color-default pull-right we7-margin-left">+新建</a>
+				{if permission_check_account_user('see_notice_post')}<a href="./index.php?c=article&a=notice&do=post" class="color-default pull-right we7-margin-left">+新建</a>{/if}
 				<a href="./index.php?c=article&a=notice-show" class="color-default pull-right">更多</a>
 				<div class="menu">
 					<span class="topic active notice">公告</span>
