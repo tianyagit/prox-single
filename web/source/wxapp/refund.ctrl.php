@@ -67,11 +67,10 @@ if ($do == 'save_setting') {
 	}
 
 	$pay_setting['wechat_refund'] = array('cert'=>$cert_content,
-		'key'=>$private_key_content, 'switch'=>$is_open);
+		'key'=>$private_key_content, 'switch'=>$is_open, 'version'=>1); //version 1 使用微信的退款refund.php接口
 
 	uni_setting_save('payment', $pay_setting);
-
-//	itoast('设置成功', 'refresh', 'success');
+	itoast('设置成功', '', 'success');
 }
 
 template('wxapp/refund');

@@ -17,6 +17,6 @@ if ($do == 'showjs') {
  *  https 站点校验是否能正常访问
  */
 if($do == 'health') {
-	echo json_encode(error(0, 'health'));
+	echo json_encode(error(0, '访问成功'));
 	exit;
 }
