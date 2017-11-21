@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('cache');
 load()->model('setting');
+load()->object('cloudapi');
 
 $_W['page']['title'] = '更新缓存 - 设置 - 系统管理';
 
@@ -18,6 +19,7 @@ if (checksubmit('submit', true)) {
 	cache_clean();
 	cache_write('account:ticket', $account_ticket_cache);
 	unset($account_ticket_cache);
+
 	cache_build_template();
 	cache_build_users_struct();
 	cache_build_module_status();

@@ -48,7 +48,6 @@ function cache_build_module_status() {
  * @param int $uniacid 要重建模块的公众号uniacid
  */
 function cache_build_account_modules($uniacid = 0) {
-	load()->object('cloudapi');
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
 		//以前缀的形式删除缓存
@@ -58,10 +57,10 @@ function cache_build_account_modules($uniacid = 0) {
 		cache_delete(cache_system_key("unimodules:{$uniacid}:1"));
 		cache_delete(cache_system_key("unimodules:{$uniacid}:"));
 		$owner_uid = pdo_getcolumn('uni_account_users', array('role' => 'owner'), 'uid');
-		$cloud_api = new CloudApi();
-		$cloud_api->post('cache', 'delete', array('key' => cache_system_key("user_modules:" . $owner_uid)));
+		cache_delete(cache_system_key("user_modules:{$owner_uid}:"));
 	}
 }
+
 /*
  * 重建公众号缓存
  * @param int $uniacid 要重建缓存的公众号uniacid
@@ -302,8 +301,8 @@ function cache_build_uninstalled_module() {
 	$installed_module = pdo_fetchall($sql, array(), 'name');
 
 	$uninstallModules = array('recycle' => array(), 'uninstalled' => array());
-	$recycle_modules = pdo_getall('modules_recycle', array(), array(), 'modulename');
-	$recycle_modules = array_keys($recycle_modules);
+	$recycle_modules = $cloud_api->post('cache', 'get', array('key' => cache_system_key('recycle_module:')));
+	$recycle_modules = !empty($recycle_modules['data']) ? $recycle_modules['data'] : array();
 	$cloud_module = cloud_m_query();
 
 	if (!empty($cloud_module) && !is_error($cloud_module)) {
@@ -318,7 +317,7 @@ function cache_build_uninstalled_module() {
 				$upgrade_support_module = true;
 			}
 			if (!in_array($module['name'], array_keys($installed_module)) || $upgrade_support_module) {
-				$status = in_array($module['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
+				$status = !empty($recycle_modules[$module['name']]) ? 'recycle' : 'uninstalled';
 				if (!empty($module['id'])) {
 					$cloud_module_info = array (
 						'from' => 'cloud',
@@ -404,7 +403,7 @@ function cache_build_uninstalled_module() {
 		'app_count' => count($uninstallModules['uninstalled']['app']),
 		'wxapp_count' => count($uninstallModules['uninstalled']['wxapp'])
 	);
-	$cloud_api->post('cache', 'set', array('key' => cache_system_key('module:all_uninstall'), 'value' => $cache, CACHE_EXPIRE_LONG));
+	cache_write(cache_system_key('module:all_uninstall'), $cache, CACHE_EXPIRE_LONG);
 	return $cache;
 }
 
