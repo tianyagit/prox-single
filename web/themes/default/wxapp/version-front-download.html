@@ -9,14 +9,23 @@
 </ul>
 {if $do == 'domainset'}
 <div class="panel we7-panel">
-	<div class="panel-heading">设置小程序域名</div>
+	<div class="panel-heading">小程序配置</div>
 	<div class="panel-body we7-padding">
-		<form action="./index.php?c=wxapp&a=front-download&do=domainset&version_id={$version_id}" class="we7-form"
+		<form
+		      action="./index.php?c=wxapp&a=front-download&do=domainset&version_id={$version_id}"
+		      class="we7-form" enctype="multipart/form-data"
 		      method="post">
 			<div class="form-group">
 				<label class="control-label col-sm-2">设置小程序URL</label>
 				<div class="col-sm-10">
 					<input type="text" class="form-control" name="appurl" value="{$appurl}" placeholder="">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-2">小程序业务域名校验文件</label>
+				<div class="col-sm-10">
+					<input type="file" class="form-control"
+					       name="file" value="" placeholder="没有可不传"/>
 				</div>
 			</div>
 			<div class="form-group">

@@ -13,3 +13,10 @@ if ($do == 'showjs') {
 	echo '';
 	exit;
 }
+/**
+ *  https 站点校验是否能正常访问
+ */
+if($do == 'health') {
+	echo json_encode(error(0, 'health'));
+	exit;
+}
