@@ -435,15 +435,9 @@ function user_account_detail_info($uid) {
  */
 function user_modules($uid) {
 	global $_W;
+
 	load()->model('module');
-	load()->object('cloudapi');
-	$cloud_api = new CloudApi();
-	$modules = $cloud_api->post('cache', 'get', array('key' => cache_system_key('user_modules:' . $uid)));
-	if (!is_error($modules)) {
-		$modules = $modules['data'];
-	} else {
-		return $modules;
-	}
+	$modules =cache_load(cache_system_key('user_modules:' . $uid));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
@@ -515,7 +509,7 @@ function user_modules($uid) {
 				}
 			}
 		}
-		$cloud_api->post('cache', 'set', array('key' => cache_system_key('user_modules:' . $uid), 'value' => $modules));
+		cache_write(cache_system_key('user_modules:' . $uid), $modules);
 	}
 	$module_list = array();
 	if (!empty($modules)) {
@@ -924,6 +918,7 @@ function user_third_info_register($user_info) {
 		pdo_update('users', array('username' => $username . $user_id . rand(999,99999), 'password' => user_hash('', $salt)), array('uid' => $user_id));
 		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']));
 	} else {
+		pdo_update('users', array('username' => $username . $user_id . rand(999,99999)), array('uid' => $user_id));
 		pdo_update('users_profile', array('nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']), array('uid' => $user_id));
 	}
 	return $user_id;

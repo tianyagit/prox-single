@@ -157,7 +157,7 @@ function rmdirs($path, $clean = false) {
  *        	保存的文件名,不含后缀.(未指定则自动生成文件名，指定则是从附件目录开始的完整相对路径)
  * @return array 错误信息 error 或 array('success' => bool，'path' => 保存路径（从附件目录开始的完整相对路径）)
  */
-function file_upload($file, $type = 'image', $name = '', $quality = 0) {
+function file_upload($file, $type = 'image', $name = '') {
 	$harmtype = array('asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi');
 	if (empty($file)) {
 		return error(-1, '没有上传内容');
@@ -197,7 +197,7 @@ function file_upload($file, $type = 'image', $name = '', $quality = 0) {
 	}
 
 	if($type == 'image') {
-		file_image_quality($file['tmp_name'], $file['tmp_name'], $quality, $ext);//设置清晰度
+		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);//设置清晰度
 	}
 
 	$result = array();
@@ -222,7 +222,7 @@ function file_upload($file, $type = 'image', $name = '', $quality = 0) {
 	$result['success'] = true;
 	return $result;
 }
-function file_wechat_upload($file, $type = 'image', $name = '', $quality = 0) {
+function file_wechat_upload($file, $type = 'image', $name = '') {
 	$harmtype = array('asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi');
 	if (empty($file)) {
 		return error(-1, '没有上传内容');
@@ -239,7 +239,7 @@ function file_wechat_upload($file, $type = 'image', $name = '', $quality = 0) {
 	}
 
 	if($type == 'image') {
-		file_image_quality($file['tmp_name'], $file['tmp_name'], $quality, $ext);//设置清晰度
+		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);//设置清晰度
 	}
 
 	$result = array();
@@ -870,21 +870,30 @@ function file_is_image($url) {
  *
  * @since version
  */
-function file_image_quality($src, $to_path, $quality = 0, $ext = 'jpg') {
-	if(!function_exists('gd_info') || $quality == 0 || $quality > 10) { //gd库未开启
+function file_image_quality($src, $to_path, $ext) {
+	global $_W;
+	if(!function_exists('gd_info')) { //gd库未开启
 		return;
 	}
+
+	$quality = intval($_W['setting']['upload']['image']['zip_percentage']);
+	if($quality <=0 || $quality >= 100) {
+		return ;//不压缩
+	}
+	if(filesize($src) > 5120) { //大于5M不压缩
+		return ;
+	}
+
 	/**
-	 *  imagejpeg 1-100 范围 默认值75
-	 *  imagepng  1-9 范围 默认6
+	 *  imagejpeg 1-100 范围 默认值75 数字 值越大越清晰
+	 *  imagepng  1-9 范围 默认6 值越小越清晰
 	 */
 	$resource = null;
 	switch ($ext) {
-		case 'jpg' : $quality = $quality*10; $resource = imagecreatefromjpeg($src);  imagejpeg($resource, $to_path, $quality);  break;
-		case 'jpeg': $quality = $quality*10; $resource = imagecreatefromjpeg($src); imagejpeg($resource, $to_path, $quality);  break;
-		case 'png' : $resource = imagecreatefrompng($src); imagepng($resource, $to_path, $quality); break;
+		case 'jpg' : $quality = intval(0.75*$quality); $resource = imagecreatefromjpeg($src);  imagejpeg($resource, $to_path, $quality);  break;
+		case 'jpeg': $quality = intval(0.75*$quality); $resource = imagecreatefromjpeg($src); imagejpeg($resource, $to_path, $quality);  break;
+		case 'png' : $quality = round(abs((100-$quality)/11.111111)); $resource = imagecreatefrompng($src); imagepng($resource, $to_path, $quality); break;
 	}
-
 	if($resource) {
 		imagedestroy($resource);
 	}

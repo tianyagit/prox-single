@@ -146,6 +146,7 @@
 					</div>
 					<div class="modal-body text-center">
 						<div class="we7-form" style="width: 450px; margin: 0 auto;">
+							{if empty($user['register_type'])}
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">原密码</label>
 								<div class="form-controls col-sm-10">
@@ -153,6 +154,7 @@
 
 								</div>
 							</div>
+							{/if}
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">新密码</label>
 								<div class="form-controls col-sm-10">
