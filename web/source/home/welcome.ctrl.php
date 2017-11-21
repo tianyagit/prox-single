@@ -13,6 +13,7 @@ load()->model('extension');
 load()->model('module');
 load()->model('system');
 load()->model('user');
+load()->model('wxapp');
 
 $dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads');
 $do = in_array($do, $dos) ? $do : 'platform';
