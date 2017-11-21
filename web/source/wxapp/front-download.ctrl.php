@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('wxapp');
 load()->classs('cloudapi');
+load()->classs('uploadedfile');
 
 $dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan', 'commitcode', 'preview', 'getpackage');
 $do = in_array($do, $dos) ? $do : 'front_download';
@@ -24,6 +25,7 @@ if (!empty($version_id)) {
 
 }
 if ($do == 'domainset') {
+
 	$appurl = $_W['siteroot'].'app/index.php';
 	if($version_info) {
 		$wxapp  = pdo_get('account_wxapp', array('uniacid'=>$version_info['uniacid']));
@@ -32,14 +34,24 @@ if ($do == 'domainset') {
 		}
 	}
 	if($_W['ispost']) {
+		$files = UploadedFile::createFromGlobal();
 		$appurl = $_GPC['appurl'];
 		if(! starts_with($appurl, 'https')) {
 			itoast('域名必须以https开头');
 			return;
 		}
+
+		/** @var  $file UploadedFile */
+		$file = isset($files['file']) ? $files['file'] : null;
+		if($file && $file->isOk() && $file->allowExt('txt')) {
+			$file->moveTo(IA_ROOT.'/'.$file->getClientFilename());//上传业务域名
+		}
+
 		if($version_info) {
-			$update = pdo_update('account_wxapp', array('appdomain'=>$appurl), array('uniacid'=>$version_info['uniacid']));
+			$update = pdo_update('account_wxapp', array('appdomain'=>$appurl),
+				array('uniacid'=>$version_info['uniacid']));
 			if($update) {
+
 				itoast('更新小程序域名成功');
 			}
 			itoast('更新小程序域名失败');
@@ -58,9 +70,6 @@ if ($do == 'front_download') {
 
 	if($wxapp_info) {
 		$code_uuid = $wxapp_info['code_uuid'];
-		if(! $code_uuid) {
-
-		}
 	}
 	template('wxapp/version-front-download');
 }
