@@ -18,6 +18,9 @@ $dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'g
 $do = in_array($do, $dos) ? $do : 'platform';
 if ($do == 'platform' || ($do == 'ext' && $_GPC['m'] != 'store')) {
 	if (!empty($_GPC['version_id'])) {
+		$version_info = wxapp_version($_GPC['version_id']);
+	}
+	if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
 		checkwxapp();
 	} else {
 		checkaccount();

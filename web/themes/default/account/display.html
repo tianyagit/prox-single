@@ -36,7 +36,7 @@
 			</form>
 		</div>
 		<div class="clearfix"></div>
-		<ul class="letters-list cut-wechat-letters" ng-if="alphabetShow">
+		<ul class="letters-list cut-wechat-letters" ng-if="searchShow">
 			<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)">
 				<a href="javascript:;" ng-bind="letter"></a>
 			</li>
