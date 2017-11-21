@@ -924,7 +924,6 @@ function user_third_info_register($user_info) {
 		pdo_update('users', array('username' => $username . $user_id . rand(999,99999), 'password' => user_hash('', $salt)), array('uid' => $user_id));
 		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']));
 	} else {
-		pdo_update('users', array('username' => $username . $user_id . rand(999,99999)), array('uid' => $user_id));
 		pdo_update('users_profile', array('nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']), array('uid' => $user_id));
 	}
 	return $user_id;
