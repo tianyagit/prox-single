@@ -32,9 +32,12 @@ if ($do == 'save_setting') {
 	$files = UploadedFile::createFromGlobal();
 	$cert = isset($files['cert']) ? $files['cert'] : null;//是否有上传证书
 	$private_key = isset($files['key']) ? $files['key'] : null;//是否有上传私钥
-	$cert_content = $setting['wechat_refund']['cert'];//是否已设置过证书
-	$private_key_content = $setting['wechat_refund']['key'];// 是否已设置过私钥
-	$open_or_close = !empty($setting['wechat_refund']['switch']);// 是否开启
+	$cert_content = $pay_setting['wechat_refund']['cert'];//是否已设置过证书
+	$private_key_content = $pay_setting['wechat_refund']['key'];// 是否已设置过私钥
+	$open_or_close = !empty($pay_setting['wechat_refund']['switch']);// 是否开启
+
+//	var_dump($pay_setting);
+//	exit;
 
 	/* @var $cert UploadedFile */
 	if($cert && $cert->isOk()) { //是否有上传公钥
@@ -55,11 +58,11 @@ if ($do == 'save_setting') {
 	}
 	if($is_open) {
 		if(! $cert_content) {
-//			itoast('请上传apiclient_cert.pem证书', '', 'info');
+			itoast('请上传apiclient_cert.pem证书', '', 'info');
 		}
 
 		if(! $private_key_content) {
-//			itoast ('请上传apiclient_key.pem证书', '', 'info');
+			itoast ('请上传apiclient_key.pem证书', '', 'info');
 		}
 	}
 
@@ -68,7 +71,7 @@ if ($do == 'save_setting') {
 
 	uni_setting_save('payment', $pay_setting);
 
-	itoast('设置成功', 'refresh', 'success');
+//	itoast('设置成功', 'refresh', 'success');
 }
 
 template('wxapp/refund');

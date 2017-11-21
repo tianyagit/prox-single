@@ -58,9 +58,9 @@
 							<div class="form-group">
 								<label for="" class="control-label col-sm-3"><span class="pull-right">微信退款</span></label>
 								<div class="form-controls col-sm-7 pull-right">
-									<input type="radio" id="radio-wechat-1" name="switch" value="1" {if $open_or_close} checked {/if}/>
+									<input type="radio" id="radio-wechat-1" name="switch" value="1" {if $open_or_close == true} checked {/if}/>
 									<label for="radio-wechat-1">开启 </label>
-									<input type="radio" id="raido-wechat-0" name="switch" value="0" {if $open_or_close} checked {/if}/>
+									<input type="radio" id="raido-wechat-0" name="switch" value="0" {if $open_or_close == false} checked {/if}/>
 									<label for="raido-wechat-0">关闭 </label>
 								</div>
 							</div>
