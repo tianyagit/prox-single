@@ -10,7 +10,7 @@ $response = array();
 
 $url = 'http://php.weather.sina.com.cn/xml.php?city=%s&password=DJOYnieT8234jlsK&day=0';
 $obj = weather_http_request($url, urlencode(iconv('utf-8', 'gb2312', $city)));
-if (!empty($obj)) {
+if (!empty($obj) && !empty($obj->Weather)) {
 	$data = $obj->Weather->city . '今日天气' . PHP_EOL .
 							'今天白天'.$obj->Weather->status1.'，'. $obj->Weather->temperature1 . '摄氏度。' . PHP_EOL .
 							$obj->Weather->direction1 . '，' . $obj->Weather->power1 . PHP_EOL .
