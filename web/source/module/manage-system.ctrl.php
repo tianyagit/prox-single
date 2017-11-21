@@ -14,6 +14,7 @@ load()->model('user');
 load()->model('account');
 load()->classs('account');
 load()->model('utility');
+load()->func('db');
 $dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall');
 $do = in_array($do, $dos) ? $do : 'installed';
 
@@ -253,7 +254,19 @@ if ($do == 'upgrade') {
 		} else {
 			pdo_run($manifest['upgrade']);
 		}
+	} else {
+		if ($packet['schemes']) {
+			foreach ($packet['schemes'] as $remote) {
+				$remote['tablename'] = trim(tablename($remote['tablename']), '`');
+				$local = db_table_schema(pdo(), $remote['tablename']);
+				$sqls = db_table_fix_sql($local, $remote);
+				foreach ($sqls as $sql) {
+					pdo_run($sql);
+				}
+			}
+		}
 	}
+
 	if (ONLINE_MODULE) {
 		if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
 			unlink($module_path . $manifest['uninstall']);
@@ -394,7 +407,18 @@ if ($do =='install') {
 			}
 		}
 	} else {
-		pdo_run($manifest['install']);
+		if (!empty($manifest['install'])) {
+			pdo_run($manifest['install']);
+		} elseif ($packet['schemes']){
+			foreach ($packet['schemes'] as $remote) {
+				$remote['tablename'] = trim(tablename($remote['tablename']), '`');
+				$local = db_table_schema(pdo(), $remote['tablename']);
+				$sqls = db_table_fix_sql($local, $remote);
+				foreach ($sqls as $sql) {
+					pdo_run($sql);
+				}
+			}
+		}
 	}
 	if (pdo_insert('modules', $module)) {
 		if (ONLINE_MODULE) {
