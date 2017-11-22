@@ -901,26 +901,32 @@ function user_support_urls() {
 }
 
 /**
- * 第三方登录后用户信息处理
+ * 第三方登录后用户信息处理  qq  wechat
  * @param $user_info
  * @return bool|int|mixed
  */
 function user_third_info_register($user_info) {
 	global $_W;
+	$user_table = table('users');
 	$user_id = pdo_getcolumn('users', array('openid' => $user_info['openid']), 'uid');
 	$username = strip_emoji($user_info['nickname']);
-	if (empty($user_id)) {
+	$user_bind_info = $user_table->userBindInfo($user_info['openid'], $user_info['register_type']);
+
+	if (empty($user_id) && empty($user_bind_info)) {
 		$status = !empty($_W['setting']['register']['verify']) ? 1 : 2;
 		$groupid = intval($_W['setting']['register']['groupid']);
 		$salt = random(8);
 		pdo_insert('users', array('groupid' => $groupid, 'type' => USER_TYPE_COMMON, 'salt' => $salt,'joindate' => TIMESTAMP, 'status' => $status, 'starttime' => TIMESTAMP, 'register_type' => $user_info['register_type'], 'openid' => $user_info['openid']));
 		$user_id = pdo_insertid();
 		pdo_update('users', array('username' => $username . $user_id . rand(999,99999), 'password' => user_hash('', $salt)), array('uid' => $user_id));
-		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']));
-	} else {
-		pdo_update('users', array('username' => $username . $user_id . rand(999,99999)), array('uid' => $user_id));
-		pdo_update('users_profile', array('nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year']), array('uid' => $user_id));
-	}
+		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year'], 'mobile' => $user_info['mobile']));
+		pdo_insert('users_bind', array('uid' => $user_id, 'bind_sign' => $user_info['openid'], 'third_type' => $user_info['register_type'], 'third_nickname' => $username));
+		} else if (empty($user_id) && !empty($user_bind_info)) {
+			$user_id = $user_bind_info['uid'];
+		} else if (!empty($user_id) && empty($user_bind_info)){
+			pdo_insert('users_bind', array('uid' => $user_id, 'bind_sign' => $user_info['openid'], 'third_type' => $user_info['register_type'], 'third_nickname' => $username));
+		}
+
 	return $user_id;
 }
 
@@ -976,4 +982,69 @@ function user_account_expire_message_record() {
 		}
 	}
 	return true;
+}
+
+/**
+ * 非第三方注册  system  mobile
+ * @param $register
+ * @return array
+ */
+function user_register_nothird($register) {
+	global $_GPC, $_W;
+	$member = $register['member'];
+	$profile = $register['profile'];
+	$member['password'] = $_GPC['password'];
+	$owner_uid = intval($_GPC['owner_uid']);
+
+	$register_type = $_GPC['register_type'];
+
+	if(istrlen($member['password']) < 8) {
+		return error(-1, '必须输入密码，且密码长度不得低于8位。');
+	}
+
+	if(!empty($_W['setting']['register']['code']) || $register_type == 'mobile') {
+		if (!checkcaptcha($_GPC['code'])) {
+			return error(-1, '你输入的验证码不正确, 请重新输入.');
+		}
+	}
+	$member['status'] = !empty($_W['setting']['register']['verify']) ? 1 : 2;
+	$member['remark'] = '';
+	$member['groupid'] = intval($_W['setting']['register']['groupid']);
+	if (empty($member['groupid'])) {
+		$member['groupid'] = pdo_fetchcolumn('SELECT id FROM '.tablename('users_group').' ORDER BY id ASC LIMIT 1');
+		$member['groupid'] = intval($member['groupid']);
+	}
+	$group = user_group_detail_info($member['groupid']);
+
+	$timelimit = intval($group['timelimit']);
+	if($timelimit > 0) {
+		$member['endtime'] = strtotime($timelimit . ' days');
+	}
+	$member['starttime'] = TIMESTAMP;
+	if (!empty($owner_uid)) {
+		$member['owner_uid'] = pdo_getcolumn('users', array('uid' => $owner_uid, 'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER), 'uid');
+	}
+	$user_id = user_register($member);
+	if($user_id > 0) {
+		unset($member['password']);
+		$member['uid'] = $user_id;
+		if (!empty($profile)) {
+			$profile['uid'] = $user_id;
+			$profile['createtime'] = TIMESTAMP;
+			pdo_insert('users_profile', $profile);
+		}
+		$message_notice_log = array(
+			'message' => $member['username'] . date("Y-m-d H:i:s") . '注册成功',
+			'uid' => $user_id,
+			'type' => MESSAGE_REGISTER_TYPE,
+			'status' => $member['status'],
+			'create_time' => TIMESTAMP
+		);
+		pdo_insert('message_notice_log', $message_notice_log);
+		if ($member['register_type'] == USER_REGISTER_TYPE_MOBILE) {
+			pdo_insert('users_bind', array('uid' => $user_id, 'bind_sign' => $member['openid'], 'third_type' => $member['register_type'], 'third_nickname' => $member['username']));
+		}
+		return error(0, '注册成功'.(!empty($_W['setting']['register']['verify']) ? '，请等待管理员审核！' : '，请重新登录！'));
+	}
+	return error(-1, '增加用户失败，请稍候重试或联系网站管理员解决！');
 }
