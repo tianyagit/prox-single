@@ -311,6 +311,18 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
+		'welcome' => array(
+			'title' => '系统',
+			'menu' => array(
+				'system_welcome' => array(
+					'title' => '系统',
+					'url' => url('module/manage-system', array('system_welcome' => 1)),
+					'icon' => 'wi wi-wxapp',
+					'permission_name' => 'system_welcome',
+				)
+			),
+			'founder' => true
+		),
 		'user' => array(
 			'title' => '帐户/用户',
 			'menu' => array(
