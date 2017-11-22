@@ -15,7 +15,7 @@ if (checksubmit() || $_W['isajax']) {
 }
 
 $support_login_types = OAuth2Client::supportLoginType();
-if (in_array($_GPC['login_type'], $support_login_types)) {
+if (in_array($_GPC['login_type'], array('qq', 'wechat'))) {
 	_login($_GPC['referer']);
 }
 
@@ -90,6 +90,6 @@ function _login($forward = '') {
 		} else {
 			pdo_update('users_failed_login', array('count' => $failed['count'] + 1, 'lastupdate' => TIMESTAMP), array('id' => $failed['id']));
 		}
-		itoast('登录失败，请检查您输入的用户名和密码！', '', '');
+		itoast('登录失败，请检查您输入的账号和密码！', '', '');
 	}
 }

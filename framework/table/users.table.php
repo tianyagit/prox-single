@@ -131,4 +131,12 @@ class UsersTable extends We7Table {
 	public function userVerifyCode($receiver, $verifycode) {
 		return $this->query->from('uni_verifycode')->where('receiver', $receiver)->where('verifycode', $verifycode)->where('uniacid', 0)->get();
 	}
+
+	public function userBindInfo($bind_sign, $third_type) {
+		return $this->query->from('users_bind')->where('bind_sign', $bind_sign)->where('third_type', $third_type)->get();
+	}
+
+	public function userProfileFields() {
+		return $this->query->from('profile_fields')->where('available', 1)->where('showinregister', 1)->orderby('displayorder', 'desc')->getall('field');
+	}
 }
