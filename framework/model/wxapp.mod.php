@@ -465,6 +465,9 @@ function wxapp_code_generate($version_id) {
 	if(!empty($account_wxapp_info['appdomain'])) {
 		$siteurl = $account_wxapp_info['appdomain'];
 	}
+	if(!starts_with($siteurl, 'https')) { //不是https 开头强制改为https开头
+		$siteurl = str_replace('http', 'https', $siteurl);
+	}
 	$appid = $account_wxapp_info['key'];
 	$siteinfo = array(
 		'name' => $account_wxapp_info['name'],
