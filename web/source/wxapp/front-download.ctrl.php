@@ -22,11 +22,16 @@ if (!empty($version_id)) {
 if ($do == 'domainset') {
 
 	$appurl = $_W['siteroot'].'app/index.php';
+	$uniacid = 0;
 	if($version_info) {
 		$wxapp  = pdo_get('account_wxapp', array('uniacid'=>$version_info['uniacid']));
 		if($wxapp && !empty($wxapp['appdomain'])) {
 			$appurl = $wxapp['appdomain'];
 		}
+		if(!starts_with($appurl, 'https')) { //不是https 开头强制改为https开头
+			$appurl = str_replace('http', 'https', $appurl);
+		}
+		$uniacid = $version_info['uniacid'];
 	}
 	if($_W['ispost']) {
 		$files = UploadedFile::createFromGlobal();
@@ -44,12 +49,8 @@ if ($do == 'domainset') {
 
 		if($version_info) {
 			$update = pdo_update('account_wxapp', array('appdomain'=>$appurl),
-				array('uniacid'=>$version_info['uniacid']));
-			if($update) {
-
-				itoast('更新小程序域名成功');
-			}
-			itoast('更新小程序域名失败');
+				array('uniacid'=>$uniacid));
+			itoast('更新小程序域名成功');//新 旧域名一样 返回$update 为0
 		}
 	}
 	template('wxapp/version-front-download');
