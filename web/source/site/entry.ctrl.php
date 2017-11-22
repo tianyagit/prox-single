@@ -37,10 +37,12 @@ if (!$entry['direct']) {
 		$referer['c'] == 'module' && in_array($referer['a'], array('manage-account', 'permission')))) {
 			itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
-	if (!empty($_GPC['version_id'])) {
-		checkwxapp();
-	} else {
-		checkaccount();
+	if (empty($_W['isajax']) && empty($_W['ispost'])) {
+		if (!empty($_GPC['version_id'])) {
+			checkwxapp();
+		} else {
+			checkaccount();
+		}
 	}
 
 	$module = module_fetch($entry['module']);
