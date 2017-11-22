@@ -8,6 +8,7 @@
 define('IN_API', true);
 require_once './framework/bootstrap.inc.php';
 load()->model('reply');
+load()->model('attachment');
 load()->app('common');
 load()->classs('wesession');
 $hash = $_GPC['hash'];
@@ -47,21 +48,7 @@ $_W['uniaccount'] = uni_fetch($_W['uniacid']);
 $_W['account']['groupid'] = $_W['uniaccount']['groupid'];
 $_W['account']['qrcode'] = $_W['attachurl'].'qrcode_'.$_W['acid'].'.jpg?time='.$_W['timestamp'];
 $_W['account']['avatar'] = $_W['attachurl'].'headimg_'.$_W['acid'].'.jpg?time='.$_W['timestamp'];
-set_attach_url();
-if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
-	$_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
-}
-if (!empty($_W['setting']['remote']['type'])) {
-	if ($_W['setting']['remote']['type'] == ATTACH_FTP) {
-		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['ftp']['url'] . '/';
-	} elseif ($_W['setting']['remote']['type'] == ATTACH_OSS) {
-		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['alioss']['url'] . '/';
-	} elseif ($_W['setting']['remote']['type'] == ATTACH_QINIU) {
-		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['qiniu']['url'] . '/';
-	} elseif ($_W['setting']['remote']['type'] == ATTACH_COS) {
-		$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['cos']['url'] . '/';
-	}
-}
+$_W['attachurl'] = attachment_set_attach_url();
 
 $engine = new WeEngine();
 if (!empty($_W['setting']['copyright']['status'])) {

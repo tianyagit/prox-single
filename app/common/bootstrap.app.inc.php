@@ -6,6 +6,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('mc');
 load()->model('app');
 load()->model('account');
+load()->model('attachment');
 $_W['uniacid'] = intval($_GPC['i']);
 if(empty($_W['uniacid'])) {
 	$_W['uniacid'] = intval($_GPC['weid']);
@@ -196,5 +197,5 @@ if ($_W['container'] == 'wechat') {
 	}
 	unset($jsauth_acid, $account_api);
 }
-set_attach_url();
+$_W['attachurl'] = attachment_set_attach_url();
 load()->func('compat.biz');
