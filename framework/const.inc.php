@@ -190,6 +190,7 @@ define('ARTICLE_CCATE', 0);
 //用户注册方式
 define('USER_REGISTER_TYPE_QQ', 1);
 define('USER_REGISTER_TYPE_WECHAT', 2);
+define('USER_REGISTER_TYPE_MOBILE', 3);
 
 //消息提醒类型
 define('MESSAGE_ORDER_TYPE', 1);

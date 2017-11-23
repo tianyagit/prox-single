@@ -117,4 +117,8 @@ class Qq extends OAuth2Client {
 		$user['birthyear'] = $user_info['year'];
 		return $user;
 	}
+
+	public function register() {
+
+	}
 }

@@ -18,10 +18,10 @@ abstract class OAuth2Client {
 	}
 
 	public static function supportLoginType(){
-		return array('system', 'qq', 'wechat');
+		return array('system', 'qq', 'wechat', 'mobile');
 	}
 
-	public static function create($type, $appid, $appsecret) {
+	public static function create($type, $appid = '', $appsecret = '') {
 		$types = self::supportLoginType();
 		if (in_array($type, $types)) {
 			load()->classs('oauth2/' . $type);
@@ -49,5 +49,19 @@ abstract class OAuth2Client {
 		return $user;
 	}
 
+	abstract function register();
+
+	public function registerNoThird() {
+		load()->model('user');
+		$register = array();
+		if (in_array($this->login_type, array('system', 'mobile'))) {
+			$register = $this->register();
+			if (is_error($register)) {
+				return $register;
+			}
+			$register = user_register_nothird($register);
+		}
+		return $register;
+	}
 
 }

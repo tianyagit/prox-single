@@ -10,7 +10,7 @@ $dos = array('display', 'save', 'test_setting');
 $do = in_array($do, $dos) ? $do : 'display';
 $_W['page']['title'] = '远程附件 - 公众号选项';
 
-$remote = $_W['setting']['remote'];
+$remote = $_W['setting']['remote_complete_info'][$_W['uniacid']];
 if ($do == 'save'){
 	$remote_data = array(
 		'type' => $_GPC['type'],
