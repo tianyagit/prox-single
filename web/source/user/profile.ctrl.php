@@ -6,8 +6,9 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('user');
 load()->func('file');
+load()->classs('oauth2/oauth2client');
 
-$dos = array('base', 'post');
+$dos = array('base', 'post', 'bind', 'validate_mobile', 'bind_mobile', 'unbind_third');
 $do = in_array($do, $dos) ? $do : 'base';
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
@@ -190,4 +191,151 @@ if ($do == 'base') {
 		$account_detail = user_account_detail_info($_W['uid']);
 	}
 	template('user/profile');
+}
+
+
+$user_table = table('users');
+$user = $user_table->usersInfo($_W['uid']);
+$user_profile = $user_table->userProfile($_W['uid']);
+
+if ($do == 'bind') {
+	$user_table->bindSearchWithUser($_W['uid']);
+	$bind_info = $user_table->userBind();
+
+	$signs = array_keys($bind_info);
+
+	if (!empty($user['openid']) && !in_array($user['openid'], $signs)) {
+		pdo_insert('users_bind', array('uid' => $user['uid'], 'bind_sign' => $user['openid'], 'third_type' => $user['register_type'], 'third_nickname' => $user_profile['nickname']));
+	}
+
+	if (!empty($user_profile['mobile']) && !in_array($user_profile['mobile'], $signs)) {
+		pdo_insert('users_bind', array('uid' => $user_profile['uid'], 'bind_sign' => $user_profile['mobile'], 'third_type' => USER_REGISTER_TYPE_MOBILE, 'third_nickname' => $user_profile['mobile']));
+	}
+
+	$user_table->bindSearchWithUser($_W['uid']);
+	$lists = $user_table->userBind();
+
+	$bind_qq = array();
+	$bind_wechat = array();
+	$bind_mobile = array();
+
+	if (!empty($lists)) {
+		foreach($lists as $list) {
+			switch($list['third_type']){
+				case USER_REGISTER_TYPE_QQ:
+					$bind_qq = $list;
+					break;
+				case USER_REGISTER_TYPE_WECHAT:
+					$bind_wechat = $list;
+					break;
+				case USER_REGISTER_TYPE_MOBILE:
+					$bind_mobile = $list;
+					break;
+			}
+		}
+	}
+
+	$support_login_urls = user_support_urls();
+
+	template('user/bind');
+}
+
+if (in_array($do, array('validate_mobile', 'bind_mobile'))) {
+	$mobile = trim($_GPC['mobile']);
+	$type = trim($_GPC['type']);
+	$user_table = table('users');
+
+	$mobile_exists = $user_table->userProfileMobile($mobile);
+	if (empty($mobile)) {
+		iajax(-1, '手机号不能为空');
+	}
+	if (!preg_match(REGULAR_MOBILE, $mobile)) {
+		iajax(-1, '手机号格式不正确');
+	}
+
+	if (!empty($type) && $mobile != $user_profile['mobile']) {
+		iajax(-1, '请输入已绑定的手机号');
+	}
+
+	if (empty($type) && !empty($mobile_exists)) {
+		iajax(-1, '手机号已存在');
+	}
+}
+if ($do == 'validate_mobile') {
+	iajax(0, '本地校验成功');
+}
+
+if ($do == 'bind_mobile') {
+	if ($_W['isajax'] && $_W['ispost']) {
+		$sms_code = trim($_GPC['smscode']);
+		$image_code =trim($_GPC['imagecode']);
+		$password = $_GPC['password'];
+		$repassword = $_GPC['repassword'];
+
+		if (empty($sms_code)) {
+			iajax(-1, '短信验证码不能为空');
+		}
+
+		if (empty($image_code)) {
+			iajax(-1, '图形验证码不能为空');
+		}
+
+		$captcha = checkcaptcha($image_code);
+		if (empty($captcha)) {
+			iajax(-1, '图形验证码错误,请重新获取');
+		}
+
+		if ((empty($password) || empty($repassword)) && empty($type)) {
+			iajax(-1, '密码不能为空');
+		}
+
+		if ($password != $repassword && empty($type)) {
+			iajax(-1, '两次密码不一致');
+		}
+
+		$code_info = $user_table->userVerifyCode($mobile, $sms_code);
+		if (empty($code_info)) {
+			iajax(-1, '短信验证码不正确');
+		}
+		if ($code_info['createtime'] + 120 < TIMESTAMP) {
+			iajax(-1, '短信验证码已过期，请重新获取');
+		}
+
+		if (!empty($type)) {
+			if ($user['register_type'] == USER_REGISTER_TYPE_MOBILE) {
+				pdo_update('users', array('openid' => ''), array('uid' => $_W['uid']));
+			}
+			pdo_update('users_profile', array('mobile' => ''), array('id' => $user_profile['id']));
+			pdo_delete('users_bind', array('uid' => $_W['uid'], 'bind_sign' => $mobile, 'third_type' => USER_REGISTER_TYPE_MOBILE));
+		}
+
+		if (empty($type)) {
+			pdo_update('users', array('password' => user_hash($password, $user['salt'])), array('uid' => $_W['uid']));
+			pdo_update('users_profile', array('mobile' => $mobile), array('id' => $user_profile['id']));
+			pdo_insert('users_bind', array('uid' => $_W['uid'], 'bind_sign' => $mobile, 'third_type' => USER_REGISTER_TYPE_MOBILE, 'third_nickname' => $mobile));
+		}
+		iajax(0, '成功', url('user/profile/bind'));
+	} else {
+		iajax(-1, '非法请求');
+	}
+}
+
+if ($do == 'unbind_third') {
+	$third_type = $_GPC['third_type'];
+	if (!in_array($third_type, array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT))) {
+		iajax(-1, '类型错误');
+	}
+	if ($_W['isajax'] && $_W['ispost']) {
+		$user_table->bindSearchWithUser($_W['uid']);
+		$user_table->bindSearchWithType($third_type);
+		$bind_info = $user_table->bindInfo();
+
+		if (empty($bind_info)) {
+			iajax(-1, '已经解除绑定');
+		}
+		pdo_update('users', array('openid' => ''), array('uid' => $_W['uid']));
+		pdo_delete('users_bind', array('uid' => $_W['uid'], 'third_type' => $third_type));
+		iajax(0, '解绑成功', url('user/profile/bind'));
+	}
+	iajax(-1, '非法请求');
 }

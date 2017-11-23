@@ -38,13 +38,18 @@ abstract class OAuth2Client {
 	abstract function user();
 
 	public function we7user() {
+		global $_W;
 		load()->model('user');
 		$user = $this->user();
 		if (is_error($user)) {
 			return $user;
 		}
 		if (in_array($this->login_type, array('qq', 'wechat'))) {
-			$user = user_third_info_register($user);
+			if (empty($_W['user'])) {
+				$user = user_third_info_register($user);
+			} else {
+				$user = user_third_info_bind($user);
+			}
 		}
 		return $user;
 	}
