@@ -1384,17 +1384,3 @@ if (!function_exists('starts_with')) {
 		return false;
 	}
 }
-
-/**
- *  只能跳转到本域名下
- *  跳转链接只能跳转本域名下 防止钓鱼 如: 用户可能正常从信任站点微擎登录 跳转到第三方网站 会误认为第三方网站也是安全的
- * @param $redirect
- * @return string
- */
-function check_url_not_outside_link($redirect) {
-	global $_W;
-	if(starts_with($redirect, 'http') && !starts_with($redirect, $_W['siteroot'])) {
-		$redirect = $_W['siteroot'];
-	}
-	return $redirect;
-}
