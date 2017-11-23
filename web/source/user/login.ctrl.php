@@ -75,7 +75,7 @@ function _login($forward = '') {
 			$forward = user_login_forward($_GPC['forward']);
 		}
 		// 只能跳到本域名下
-		$forward = check_url_not_outside_link($forward);
+		$forward = safe_url_not_outside($forward);
 
 		if ($record['uid'] != $_GPC['__uid']) {
 			isetcookie('__uniacid', '', -7 * 86400);
