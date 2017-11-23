@@ -1384,3 +1384,5 @@ if (!function_exists('starts_with')) {
 		return false;
 	}
 }
+load()->func('safe');
+load()->func('system');
