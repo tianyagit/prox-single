@@ -83,4 +83,8 @@ class Wechat extends OAuth2Client {
 		}
 		return $result;
 	}
+
+	public function register() {
+
+	}
 }

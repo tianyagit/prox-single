@@ -43,4 +43,55 @@ class System extends OAuth2Client {
 		}
 		return $member;
 	}
+
+	public function register(){
+		global $_GPC;
+		load()->model('user');
+		$member = array();
+		$profile = array();
+		$member['username'] = trim($_GPC['username']);
+
+		if(!preg_match(REGULAR_USERNAME, $member['username'])) {
+			return error(-1, '必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。');
+		}
+
+		if(user_check(array('username' => $member['username']))) {
+			return error(-1, '非常抱歉，此用户名已经被注册，你需要更换注册名称！');
+		}
+
+		$extendfields = $this->systemFields();
+		if (!empty($extendfields)) {
+			$fields = array_keys($extendfields);
+			if(in_array('birthyear', $fields)) {
+				$extendfields[] = array('field' => 'birthmonth', 'title' => '出生生日', 'required' => $extendfields['birthyear']['required']);
+				$extendfields[] = array('field' => 'birthday', 'title' => '出生生日', 'required' => $extendfields['birthyear']['required']);
+				$_GPC['birthyear'] = $_GPC['birth']['year'];
+				$_GPC['birthmonth'] = $_GPC['birth']['month'];
+				$_GPC['birthday'] = $_GPC['birth']['day'];
+			}
+			if(in_array('resideprovince', $fields)) {
+				$extendfields[] = array('field' => 'residecity', 'title' => '居住地址', 'required' => $extendfields['resideprovince']['required']);
+				$extendfields[] = array('field' => 'residedist', 'title' => '居住地址', 'required' => $extendfields['resideprovince']['required']);
+				$_GPC['resideprovince'] = $_GPC['reside']['province'];
+				$_GPC['residecity'] = $_GPC['reside']['city'];
+				$_GPC['residedist'] = $_GPC['reside']['district'];
+			}
+			foreach ($extendfields as $row) {
+				if (!empty($row['required']) && empty($_GPC[$row['field']])) {
+					return error(-1, '“'.$row['title'].'”此项为必填项，请返回填写完整！');
+				}
+				$profile[$row['field']] = $_GPC[$row['field']];
+			}
+		}
+
+		return array(
+			'member' => $member,
+			'profile' => $profile
+		);
+	}
+
+	public function systemFields() {
+		$user_table = table('users');
+		return $user_table->userProfileFields();
+	}
 }
