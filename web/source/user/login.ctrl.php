@@ -14,7 +14,6 @@ if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 
-$support_login_types = OAuth2Client::supportLoginType();
 if (in_array($_GPC['login_type'], array('qq', 'wechat'))) {
 	_login($_GPC['referer']);
 }
@@ -36,6 +35,14 @@ function _login($forward = '') {
 	}
 
 	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->we7user();
+
+	if (!empty($_W['user'])) {
+		if (is_error($member)) {
+			itoast($member['message'], url('user/profile/bind'), '');
+		} else {
+			itoast('绑定成功', url('user/profile/bind'), '');
+		}
+	}
 
 	if (is_error($member)) {
 		itoast($member['message'], url('user/login'), '');
@@ -75,7 +82,7 @@ function _login($forward = '') {
 			$forward = user_login_forward($_GPC['forward']);
 		}
 		// 只能跳到本域名下
-		$forward = check_url_not_outside_link($forward);
+		$forward = safe_url_not_outside($forward);
 
 		if ($record['uid'] != $_GPC['__uid']) {
 			isetcookie('__uniacid', '', -7 * 86400);

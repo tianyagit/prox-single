@@ -1025,6 +1025,9 @@ function user_register_nothird($register) {
 		$member['owner_uid'] = pdo_getcolumn('users', array('uid' => $owner_uid, 'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER), 'uid');
 	}
 	$user_id = user_register($member);
+	if ($register_type == 'mobile') {
+		pdo_update('users', array('username' => $member['username'] . $user_id . rand(100,999)), array('uid' => $user_id));
+	}
 	if($user_id > 0) {
 		unset($member['password']);
 		$member['uid'] = $user_id;
@@ -1047,4 +1050,21 @@ function user_register_nothird($register) {
 		return error(0, '注册成功'.(!empty($_W['setting']['register']['verify']) ? '，请等待管理员审核！' : '，请重新登录！'));
 	}
 	return error(-1, '增加用户失败，请稍候重试或联系网站管理员解决！');
+}
+
+/**
+ * 第三方账号绑定  绑定qq  wechat
+ * @param $user
+ */
+function user_third_info_bind($user_info) {
+	global $_W;
+	$user_table = table('users');
+	$user_id = pdo_getcolumn('users', array('openid' => $user_info['openid']), 'uid');
+	$user_bind_info = $user_table->userBindInfo($user_info['openid'], $user_info['register_type']);
+
+	if (!empty($user_id) || !empty($user_bind_info)) {
+		return error(-1, '已被其他用户绑定，请更换账号');
+	}
+	pdo_insert('users_bind', array('uid' => $_W['uid'], 'bind_sign' => $user_info['openid'], 'third_type' => $user_info['register_type'], 'third_nickname' => strip_emoji($user_info['nickname'])));
+	return true;
 }

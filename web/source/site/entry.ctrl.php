@@ -37,11 +37,11 @@ if (!$entry['direct']) {
 		$referer['c'] == 'module' && in_array($referer['a'], array('manage-account', 'permission')))) {
 			itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
-	if (empty($_W['isajax']) && empty($_W['ispost'])) {
+	if (empty($_W['uniacid'])) {
 		if (!empty($_GPC['version_id'])) {
-			checkwxapp();
+			itoast('', url('wxapp/display'));
 		} else {
-			checkaccount();
+			itoast('', url('account/display'));
 		}
 	}
 

@@ -85,10 +85,10 @@ class Mobile extends OAuth2Client {
 		$user_table = table('users');
 		$code_info = $user_table->userVerifyCode($mobile, $smscode);
 		if (empty($code_info)) {
-			itoast('短信验证码不正确', '', '');
+			return error(-1, '短信验证码不正确');
 		}
 		if ($code_info['createtime'] + 120 < TIMESTAMP) {
-			itoast('短信验证码已过期，请重新获取', '', '');
+			return error(-1, '短信验证码已过期，请重新获取');
 		}
 		$member['username'] = $mobile;
 		$member['openid'] = $mobile;
