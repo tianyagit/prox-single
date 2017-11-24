@@ -198,7 +198,9 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
 		if (IMS_FAMILY == 'x') {
-			$site_store_buy_goods = uni_site_store_buy_goods($uniacid);
+			$account_info = uni_fetch($_W['uniacid']);
+			$goods_type = $account_info['type'] == ACCOUNT_TYPE_APP_NORMAL ? STORE_TYPE_WXAPP_MODULE : STORE_TYPE_MODULE;
+			$site_store_buy_goods = uni_site_store_buy_goods($uniacid, $goods_type);
 		} else {
 			$site_store_buy_goods = array();
 		}
