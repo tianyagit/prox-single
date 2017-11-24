@@ -921,6 +921,15 @@ function user_third_info_register($user_info) {
 		pdo_update('users', array('username' => $username . $user_id . rand(999,99999), 'password' => user_hash('', $salt)), array('uid' => $user_id));
 		pdo_insert('users_profile', array('uid' => $user_id, 'createtime' => TIMESTAMP, 'nickname' => $username, 'avatar' => $user_info['avatar'], 'gender' => $user_info['gender'], 'resideprovince' => $user_info['province'], 'residecity' => $user_info['city'], 'birthyear' => $user_info['year'], 'mobile' => $user_info['mobile']));
 		pdo_insert('users_bind', array('uid' => $user_id, 'bind_sign' => $user_info['openid'], 'third_type' => $user_info['register_type'], 'third_nickname' => $username));
+		$message_notice_log = array(
+			'message' => $username . date("Y-m-d H:i:s") . '注册成功',
+			'uid' => $user_id,
+			'type' => MESSAGE_REGISTER_TYPE,
+			'status' => $status,
+			'create_time' => TIMESTAMP
+		);
+		pdo_insert('message_notice_log', $message_notice_log);
+
 		} else if (empty($user_id) && !empty($user_bind_info)) {
 			$user_id = $user_bind_info['uid'];
 		} else if (!empty($user_id) && empty($user_bind_info)){

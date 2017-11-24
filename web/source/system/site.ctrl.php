@@ -22,6 +22,8 @@ if ($do == 'copyright') {
 			'status' => $_GPC['status'],
 			'reason' => $_GPC['reason'],
 			'icp' => $_GPC['icp'],
+			'mobile_status' => $_GPC['mobile_status'],
+			'login_type' => $_GPC['login_type'],
 		);
 		$test = setting_save($data, 'copyright');
 		itoast('更新设置成功！', url('system/site'), 'success');
