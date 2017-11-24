@@ -19,7 +19,7 @@ if (in_array($_GPC['login_type'], array('qq', 'wechat'))) {
 }
 
 $setting = $_W['setting'];
-$_GPC['login_type'] = !empty($_W['setting']['copyright']['login_type']) ? 'mobile': 'system';
+$_GPC['login_type'] = !empty($_GPC['login_type']) ? $_GPC['login_type'] : (!empty($_W['setting']['copyright']['login_type']) ? 'mobile': 'system');
 $login_urls = user_support_urls();
 template('user/login');
 
