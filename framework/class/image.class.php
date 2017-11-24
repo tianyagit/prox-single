@@ -132,6 +132,7 @@ class Image {
 		$this->saveTo($filename);
 		$content = file_get_contents($filename);
 		$base64 = base64_encode($content);
+		unlink($filename);
 		return $prefix.$base64;
 	}
 
