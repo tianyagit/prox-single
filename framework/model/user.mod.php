@@ -480,8 +480,8 @@ function user_modules($uid) {
 						}
 					}
 				}
-				$module_list = pdo_fetchall("SELECT name FROM ".tablename('modules')." WHERE
-										name IN ('" . implode("','", $package_group_module) . "') OR issystem = '1' ORDER BY mid DESC", array(), 'name');
+				$module_table = table('module');
+				$module_list = $module_table->moduleLists($package_group_module);
 			}
 		}
 		$module_list = array_keys($module_list);
