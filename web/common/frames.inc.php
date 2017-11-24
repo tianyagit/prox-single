@@ -312,10 +312,10 @@ $we7_system_menu['system'] = array(
 			)
 		),
 		'welcome' => array(
-			'title' => '系统',
+			'title' => '系统首页',
 			'menu' => array(
 				'system_welcome' => array(
-					'title' => '系统',
+					'title' => '系统首页应用',
 					'url' => url('module/manage-system', array('system_welcome' => 1)),
 					'icon' => 'wi wi-wxapp',
 					'permission_name' => 'system_welcome',

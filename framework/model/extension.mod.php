@@ -14,14 +14,14 @@ function ext_module_convert($manifest) {
 	if (!empty($manifest['platform']['supports'])) {
 		$app_support = in_array('app', $manifest['platform']['supports']) ? 2 : 1;
 		$wxapp_support = in_array('wxapp', $manifest['platform']['supports']) ? 2 : 1;
-		if ($app_support == 1 && $wxapp_support == 1) {
+		$welcome_support = in_array('system_welcome', $manifest['platform']['supports']) ? 2 : 1;
+		if ($app_support == 1 && $wxapp_support == 1 && $welcome_support == 1) {
 			$app_support = 2;
 		}
 	} else {
 		$app_support = 2;
 		$wxapp_support = 1;
 	}
-
 	return array(
 		'name' => $manifest['application']['identifie'],
 		'title' => $manifest['application']['name'],
@@ -42,8 +42,10 @@ function ext_module_convert($manifest) {
 		'menu' => $manifest['bindings']['menu'],
 		'home' => $manifest['bindings']['home'],
 		'profile' => $manifest['bindings']['profile'],
+		'welcome' => $manifest['bindings']['welcome'],
 		'app_support' => $app_support,
 		'wxapp_support' => $wxapp_support,
+		'welcome_support' => $welcome_support,
 		'shortcut' => $manifest['bindings']['shortcut'],
 		'function' => $manifest['bindings']['function'],
 		'permissions' => $manifest['permissions'],
@@ -313,6 +315,11 @@ function ext_module_bindings() {
 			'name' => 'page',
 			'title' => '小程序入口',
 			'desc' => '用于小程序入口的链接'
+		),
+		'welcome' => array(
+			'name' => 'welcome',
+			'title' => '系统首页导航菜单',
+			'desc' => '系统首页导航菜单将会在管理中心生成一个导航入口, 用于对系统首页定义的内容进行管理.',
 		)
 	);
 	return $bindings;

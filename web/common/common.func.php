@@ -193,7 +193,6 @@ function buildframes($framename = ''){
 	if(empty($frames)) {
 		$frames = cache_build_frame_menu();
 	}
-
 	//模块权限，创始人有所有模块权限
 	$modules = uni_modules(false);
 	$sysmodules = system_modules();
@@ -318,8 +317,11 @@ function buildframes($framename = ''){
 	$eid = intval($_GPC['eid']);
 	$version_id = intval($_GPC['version_id']);
 	if ((!empty($modulename) || !empty($eid)) && !in_array($modulename, system_modules())) {
-		if(empty($modulename) && !empty($eid)) {
-			$modulename = pdo_getcolumn('modules_bindings', array('eid' => $eid), 'module');
+		if (!empty($eid)) {
+			$entry = pdo_get('modules_bindings', array('eid' => $eid));
+		}
+		if(empty($modulename)) {
+			$modulename = $entry['module'];
 		}
 		$module = module_fetch($modulename);
 		$entries = module_entries($modulename);
@@ -461,6 +463,17 @@ function buildframes($framename = ''){
 				}
 			}
 		}
+		if (!empty($entries['welcome']) && $_W['isfounder']) {
+			$frames['account']['section']['platform_module_welcome']['title'] = '';
+			foreach ($entries['welcome'] as $key => $row) {
+				if (empty($row)) continue;
+				$frames['account']['section']['platform_module_welcome']['menu']['platform_module_welcome' . $row['eid']] = array (
+					'title' => "<i class='wi wi-appsetting'></i> {$row['title']}",
+					'url' => $row['url'],
+					'is_display' => 1,
+				);
+			}
+		}
 	}
 
 	//进入小程序后的菜单
@@ -517,8 +530,15 @@ function buildframes($framename = ''){
 			'icon' => $menu['icon'],
 		);
 	}
-
-	return !empty($framename) ? $frames[$framename] : $frames;
+	if (!empty($framename)) {
+		if (($framename == 'system_welcome' || $entry['entry'] == 'welcome') && $_W['isfounder']) {
+			$frames = $frames['account'];
+			$frames['section'] = array('platform_module_welcome' => $frames['section']['platform_module_welcome']);
+		} else {
+			$frames = $frames[$framename];
+		}
+	}
+	return $frames;
 }
 
 function system_modules() {
