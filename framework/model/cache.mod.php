@@ -484,6 +484,9 @@ function cache_build_cloud_upgrade_module() {
 				if (!empty($cloud_m_info['branches'])) {
 					$best_branch_id = 0;
 					foreach ($cloud_m_info['branches'] as $branch) {
+						if (empty($branch['status']) || empty($branch['show'])) {
+							continue;
+						}
 						if ($best_branch_id == 0) {
 							$best_branch_id = $branch['id'];
 						} else {
