@@ -1002,11 +1002,11 @@ function user_register_info_handle($register) {
 			pdo_insert('users_profile', $profile);
 		}
 		$message_notice_log = array(
-				'message' => $member['username'] . date("Y-m-d H:i:s") . '注册成功',
-				'uid' => $user_id,
-				'type' => MESSAGE_REGISTER_TYPE,
-				'status' => $member['status'],
-				'create_time' => TIMESTAMP
+			'message' => $member['username'] . date("Y-m-d H:i:s") . '注册成功',
+			'uid' => $user_id,
+			'type' => MESSAGE_REGISTER_TYPE,
+			'status' => $member['status'],
+			'create_time' => TIMESTAMP
 		);
 		pdo_insert('message_notice_log', $message_notice_log);
 		if ($member['register_type'] == USER_REGISTER_TYPE_MOBILE) {
