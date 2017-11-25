@@ -22,7 +22,8 @@ if (!empty($version_id)) {
 }
 if ($do == 'custom') {
 	$type = $_GPC['type'];
-	$default_appjson = wxapp_code_default_appjson($version_id);
+
+	$default_appjson = wxapp_code_cloud_appjson($version_id);
 	$default_appjson = json_encode($default_appjson);
 	template('wxapp/version-front-download');
 }
