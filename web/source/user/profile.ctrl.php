@@ -240,7 +240,7 @@ if ($do == 'bind') {
 	template('user/bind');
 }
 
-if (in_array($do, array('validate_mobile', 'unbind'))) {
+if (in_array($do, array('validate_mobile', 'bind_mobile', 'unbind'))) {
 	$mobile = trim($_GPC['mobile']);
 	$type = trim($_GPC['type']);
 	$user_table = table('users');
