@@ -10,7 +10,7 @@ load()->classs('cloudapi');
 load()->classs('uploadedfile');
 
 $dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token',
-	'qrcode', 'checkscan', 'commitcode', 'preview', 'getpackage', 'custom', 'custom_save');
+	'qrcode', 'checkscan', 'commitcode', 'preview', 'getpackage', 'custom', 'custom_save', 'custom_default');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -23,10 +23,17 @@ if (!empty($version_id)) {
 if ($do == 'custom') {
 	$type = $_GPC['type'];
 
-	$default_appjson = wxapp_code_cloud_appjson($version_id);
+	$default_appjson = wxapp_code_current_appjson($version_id);
+//	var_dump($default_appjson);
+//	exit;
 	$default_appjson = json_encode($default_appjson);
 	template('wxapp/version-front-download');
 }
+if($do == 'custom_default') {
+	$result = wxapp_code_set_default_appjson($version_id);
+	echo json_encode($result);
+}
+
 if($do == 'custom_save') {
 	$json = $_GPC['json'];
 	$result = wxapp_code_save_appjson($version_id, $json);

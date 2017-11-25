@@ -126,7 +126,7 @@ class Image {
 	 *
 	 * @since version
 	 */
-	public function toBase64($prefix = 'data:image/%s,') {
+	public function toBase64($prefix = 'data:image/%s;base64,') {
 		$filename = tempnam('tmp', 'base64');
 		$prefix = sprintf($prefix, $this->ext);
 		$this->saveTo($filename);

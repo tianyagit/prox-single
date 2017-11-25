@@ -6,8 +6,8 @@
 			href="./index.php?c=wxapp&a=front-download&do=front_download&version_id={$version_id}">小程序上传</a></li>
 	<li class="{if $do == 'domainset'}active{/if}"><a
 			href="./index.php?c=wxapp&a=front-download&do=domainset&version_id={$version_id}">小程序域名设置</a></li>
-	<li class="{if $do == 'domainset'}active{/if}"><a
-			href="./index.php?c=wxapp&a=front-download&do=custom&version_id={$version_id}">小程序域名设置</a></li>
+	<li class="{if $do == 'custom'}active{/if}"><a
+			href="./index.php?c=wxapp&a=front-download&do=custom&version_id={$version_id}">定制主题<span style="color: red">(beta)</span></a></li>
 </ul>
 {if $do == 'custom'}
 <div ng-controller="code_appjson_ctrl" id="codeappjson" ng-controller="codeAppjsonCtrl">
@@ -95,8 +95,8 @@
 							<th>默认</th>
 							<th>选中</th>
 							<th>菜单名称</th>
-
 							<th class="text-center">跳转</th>
+							<th>操作</th>
 						</tr>
 						<tbody ng-repeat="tabitem in tabBar.list" ng-init="current = $index">
 						<tr >
@@ -120,6 +120,9 @@
 									<select ng-model="tabitem.pagePath" ng-options="tabitem.pagePath for page in pages" style="width:100px;"></select>
 								</div>
 							</td>
+							<td>
+								<button class="btn btn-primary" ng-click="del($index)">删除</button>
+							</td>
 						</tr>
 						</tbody>
 					</table>
@@ -138,12 +141,14 @@
 	angular.module('we7codeAppjsonApp').value('config',{
 		'version_id' : {$version_id},
 		'default_appjson' : '{$default_appjson}',
-		'save_url' : "{php echo url('wxapp/front-download/custom_save')}"
+		'save_url' : "{php echo url('wxapp/front-download/custom_save')}",
+		'default_url' : "{php echo url('wxapp/front-download/custom_default')}"
 	});
 	angular.module('we7codeAppjsonApp').controller('code_appjson_ctrl',
 		['$scope', '$q', 'config', '$http', function ($scope, $q, config, $http) {
 		var default_appjson = config.default_appjson;
 		var save_url = config.save_url;
+		var default_url = config.default_url;
 		if(angular.isString(default_appjson)) {
 			default_appjson = JSON.parse(default_appjson);
 		}
@@ -169,17 +174,25 @@
 			return json;
 		}
 		$scope.iconPath = function(item) {
-			console.log(item);
 			return item.iconPath;
 		};
 
 		$scope.save = function (item) {
 			var json = $scope.toJson();
 			$http.post(save_url, {json:json,'version_id':config.version_id}).then(function(){
-
+				alert('保存成功');
 			});
-//			console.log(JSON.stringify(json));
 		}
+		$scope.del = function(index) {
+			$scope.tabBar.list.splice(index,1);
+		}
+
+		$scope.default =  function() {
+			$http.post(default_url, {'version_id':config.version_id}).then(function(){
+				alert('保存成功');
+			});
+		}
+
 
 
 		util.colorpicker('.js-color', function(){});//回调不做任何处理
