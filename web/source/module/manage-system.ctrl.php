@@ -27,6 +27,12 @@ if ($do == 'set_site_welcome_module') {
 	if (!$_W['isfounder']) {
 		iajax(1, '非法操作');
 	}
+	if (!empty($_GPC['name'])) {
+		$site = WeUtility::createModuleSite($_GPC['name']);
+		if (!method_exists($site, 'systemWelcomeDisplay')) {
+			iajax(1, '应用未实现系统首页功能！');
+		}
+	}
 	setting_save(trim($_GPC['name']), 'site_welcome_module');
 	iajax(0);
 }

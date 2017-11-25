@@ -14,7 +14,7 @@ class CreateMessageNotice {
 			$sql = "CREATE TABLE IF NOT EXISTS " . tablename('message_notice_log') . " (
 				  `id` int(11) NOT NULL AUTO_INCREMENT,
 				  `message` varchar(255) NOT NULL DEFAULT '' COMMENT '消息内容',
-				  `is_read` char(1) NOT NULL DEFAULT '1' COMMENT '1未读，2已读',
+				  `is_read` tinyint(3) NOT NULL DEFAULT 1 COMMENT '1未读，2已读',
 				  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '用户的uid',
 				  `sign` varchar(22) NOT NULL DEFAULT '' COMMENT '订单id,公众号uniacid,工单的id,注册uid',
 				  `type` tinyint(3) NOT NULL DEFAULT 0 COMMENT '1订单，2到期，3工单，4注册',

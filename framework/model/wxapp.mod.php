@@ -83,8 +83,6 @@ function wxapp_account_create($account) {
 function wxapp_support_wxapp_modules() {
 	global $_W;
 	load()->model('user');
-	load()->table('store');
-
 	$modules = user_modules($_W['uid']);
 	$wxapp_modules = array();
 	if (!empty($modules)) {
@@ -94,7 +92,7 @@ function wxapp_support_wxapp_modules() {
 			}
 		}
 	}
-	$store_table = new StoreTable();
+	$store_table = table('store');
 	$store_table->searchWithEndtime();
 	$buy_wxapp_modules = $store_table->searchAccountBuyGoods($_W['uniacid'], STORE_TYPE_WXAPP_MODULE);
 	$wxapp_modules = array_merge($buy_wxapp_modules, $wxapp_modules);

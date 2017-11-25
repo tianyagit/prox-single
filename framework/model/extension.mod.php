@@ -36,6 +36,7 @@ function ext_module_convert($manifest) {
 		'handles' => iserializer(is_array($manifest['platform']['handles']) ? $manifest['platform']['handles'] : array()),
 		'isrulefields' => intval($manifest['platform']['isrulefields']),
 		'iscard' => intval($manifest['platform']['iscard']),
+		'oauth_type' => $manifest['platform']['oauth_type'],
 		'page' => $manifest['bindings']['page'],
 		'cover' => $manifest['bindings']['cover'],
 		'rule' => $manifest['bindings']['rule'],
@@ -111,6 +112,7 @@ function ext_module_manifest_parse($xml) {
 			'isrulefields' => false,
 			'iscard' => false,
 			'supports' => array(),
+			'oauth_type' => 'base',
 		);
 		//订阅信息
 		$subscribes = $platform->getElementsByTagName('subscribes')->item(0);
@@ -143,6 +145,10 @@ function ext_module_manifest_parse($xml) {
 		$card = $platform->getElementsByTagName('card')->item(0);
 		if (!empty($card) && $card->getAttribute('embed') == 'true') {
 			$manifest['platform']['iscard'] = true;
+		}
+		$oauth_type = $platform->getElementsByTagName('oauth')->item(0);
+		if (!empty($oauth_type) && $oauth_type->getAttribute('type') == 'userinfo') {
+			$manifest['platform']['oauth_type'] = 'userinfo';
 		}
 		$supports = $platform->getElementsByTagName('supports')->item(0);
 		if (!empty($supports)) {
