@@ -21,9 +21,9 @@
 				<ul class="nav navbar-nav navbar-right">
 					<li class="dropdown msg">
 						{php $message_notice = message_notice();}
-						<a href="javascript:;" class="dropdown-toogle" data-toggle="dropdown"><span class="wi wi-bell"><span class="badge">{$message_notice['total']}</span></span>消息提醒</a>
+						<a href="javascript:;" class="dropdown-toogle" data-toggle="dropdown"><span class="wi wi-bell">{if !empty($message_notice['total'])}<span class="badge">{$message_notice['total']}</span>{/if}</span>消息</a>
 						<div class="dropdown-menu">
-							<div class="clearfix top">消息提醒<a href="{php echo url('message/notice')}" class="pull-right">查看更多</a></div>
+							<div class="clearfix top">消息<a href="{php echo url('message/notice')}" class="pull-right">查看更多</a></div>
 							<div class="msg-list-container">
 								<div class="msg-list">
 									{loop $message_notice['lists'] $message_notice_list}

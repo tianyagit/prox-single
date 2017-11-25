@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $dos = array('display', 'change_read_status');
 $do = in_array($do, $dos) ? $do : 'display';
+load()->model('system');
 
 $_W['page']['title'] = '系统管理 - 消息提醒 - 消息提醒';
 
@@ -40,7 +41,7 @@ if ($do == 'display') {
 
 if ($do == 'change_read_status') {
 	$id = $_GPC['id'];
-	pdo_update('message_notice_log', array('is_read' => MESSAGE_READ), array('id' => $id));
+	system_message_notice_read($id);
 	iajax(0, '成功');
 }
 template('message/notice');

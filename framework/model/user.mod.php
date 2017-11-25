@@ -11,6 +11,7 @@ defined('IN_IA') or exit('Access Denied');
  * @return int 成功返回新增的用户编号，失败返回 0
  */
 function user_register($user) {
+	load()->model('system');
 	if (empty($user) || !is_array($user)) {
 		return 0;
 	}
@@ -33,7 +34,15 @@ function user_register($user) {
 	if (!empty($result)) {
 		$user['uid'] = pdo_insertid();
 	}
-	user_message_record($user['username'] . date("Y-m-d H:i:s") . '注册成功', $user['uid'], $user['uid'], $user['type'], $user['status']);
+	$message = array(
+		'message' => $user['username'] . date("Y-m-d H:i:s") . '注册成功',
+		'uid' => $user['uid'],
+		'sign' => $user['uid'],
+		'type' => MESSAGE_REGISTER_TYPE,
+		'status' => $user['status']
+	);
+	system_message_record($message);
+
 	return intval($user['uid']);
 }
 
@@ -944,6 +953,7 @@ function user_borrow_oauth_account_list() {
  */
 function user_account_expire_message_record() {
 	load()->model('account');
+	load()->model('system');
 	$account_table = table('account');
 	$expire_account_list = $account_table->searchAccountList();
 	if (empty($expire_account_list)) {
@@ -958,34 +968,18 @@ function user_account_expire_message_record() {
 			$exist_record = pdo_get('message_notice_log', array('sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'end_time' => $account_detail['endtime']));
 			if (empty($exist_record)) {
 				$account_name = $account_detail['type'] == ACCOUNT_TYPE_APP_NORMAL ? '-小程序过期' : '-公众号过期';
-				pdo_insert('message_notice_log', array('message' => $account_detail['name'] . $account_name, 'sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'create_time' => TIMESTAMP, 'end_time' => $account_detail['endtime'], 'account_type' => $account_detail['type']));
+				$message = array(
+					'message' => $account_detail['name'] . $account_name,
+					'sign' => $account_detail['uniacid'],
+					'uid' => $account_detail['uid'],
+					'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE,
+					'end_time' => $account_detail['endtime'],
+					'account_type' => $account_detail['type']
+				);
+				system_message_record($message);
 			}
 		}
 	}
 	return true;
 }
 
-/**
- * 消息提醒记录
- * @param string $message
- * @param int $uid
- * @param string $sign
- * @param $type
- * @param string $status
- * @param string $account_type
- * @return bool
- */
-function user_message_record($message = '', $uid = 0, $sign = '', $type, $status = '', $account_type = '', $end_time = '') {
-	$message_notice_log = array(
-		'message' => $message,
-		'uid' => $uid,
-		'sign' => $sign,
-		'type' => $type,
-		'status' => $status,
-		'account_type' => $account_type,
-		'create_time' => TIMESTAMP,
-		'end_time' => $end_time
-	);
-	pdo_insert('message_notice_log', $message_notice_log);
-	return true;
-}
