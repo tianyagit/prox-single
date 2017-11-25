@@ -8,7 +8,7 @@ load()->model('user');
 load()->func('file');
 load()->classs('oauth2/oauth2client');
 
-$dos = array('base', 'post', 'bind', 'validate_mobile', 'bind_mobile', 'unbind_third');
+$dos = array('base', 'post', 'bind', 'validate_mobile', 'bind_mobile', 'unbind');
 $do = in_array($do, $dos) ? $do : 'base';
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
@@ -240,7 +240,7 @@ if ($do == 'bind') {
 	template('user/bind');
 }
 
-if (in_array($do, array('validate_mobile', 'bind_mobile'))) {
+if (in_array($do, array('validate_mobile', 'unbind'))) {
 	$mobile = trim($_GPC['mobile']);
 	$type = trim($_GPC['type']);
 	$user_table = table('users');
@@ -267,74 +267,29 @@ if ($do == 'validate_mobile') {
 
 if ($do == 'bind_mobile') {
 	if ($_W['isajax'] && $_W['ispost']) {
-		$sms_code = trim($_GPC['smscode']);
-		$image_code =trim($_GPC['imagecode']);
-		$password = $_GPC['password'];
-		$repassword = $_GPC['repassword'];
+		$bind_info = OAuth2Client::create('mobile', $_W['setting']['thirdlogin'][$bind_type]['appid'], $_W['setting']['thirdlogin'][$bind_type]['appsecret'])->bind();
 
-		if (empty($sms_code)) {
-			iajax(-1, '短信验证码不能为空');
+		if (is_error($bind_info)) {
+			iajax(-1, $bind_info['message']);
 		}
-
-		if (empty($image_code)) {
-			iajax(-1, '图形验证码不能为空');
-		}
-
-		$captcha = checkcaptcha($image_code);
-		if (empty($captcha)) {
-			iajax(-1, '图形验证码错误,请重新获取');
-		}
-
-		if ((empty($password) || empty($repassword)) && empty($type)) {
-			iajax(-1, '密码不能为空');
-		}
-
-		if ($password != $repassword && empty($type)) {
-			iajax(-1, '两次密码不一致');
-		}
-
-		$code_info = $user_table->userVerifyCode($mobile, $sms_code);
-		if (empty($code_info)) {
-			iajax(-1, '短信验证码不正确');
-		}
-		if ($code_info['createtime'] + 120 < TIMESTAMP) {
-			iajax(-1, '短信验证码已过期，请重新获取');
-		}
-
-		if (!empty($type)) {
-			if ($user['register_type'] == USER_REGISTER_TYPE_MOBILE) {
-				pdo_update('users', array('openid' => ''), array('uid' => $_W['uid']));
-			}
-			pdo_update('users_profile', array('mobile' => ''), array('id' => $user_profile['id']));
-			pdo_delete('users_bind', array('uid' => $_W['uid'], 'bind_sign' => $mobile, 'third_type' => USER_REGISTER_TYPE_MOBILE));
-		}
-
-		if (empty($type)) {
-			pdo_update('users', array('password' => user_hash($password, $user['salt'])), array('uid' => $_W['uid']));
-			pdo_update('users_profile', array('mobile' => $mobile), array('id' => $user_profile['id']));
-			pdo_insert('users_bind', array('uid' => $_W['uid'], 'bind_sign' => $mobile, 'third_type' => USER_REGISTER_TYPE_MOBILE, 'third_nickname' => $mobile));
-		}
-		iajax(0, '成功', url('user/profile/bind'));
+		iajax(0, '解绑成功', url('user/profile/bind'));
 	} else {
 		iajax(-1, '非法请求');
 	}
 }
 
-if ($do == 'unbind_third') {
-	$third_type = $_GPC['third_type'];
-	if (!in_array($third_type, array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT))) {
+if ($do == 'unbind') {
+	$types = array(1 => 'qq', 2 => 'wechat', 3 => 'mobile');
+	if (!in_array($_GPC['bind_type'], array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT, USER_REGISTER_TYPE_MOBILE))) {
 		iajax(-1, '类型错误');
 	}
+	$bind_type = $types[$_GPC['bind_type']];
 	if ($_W['isajax'] && $_W['ispost']) {
-		$user_table->bindSearchWithUser($_W['uid']);
-		$user_table->bindSearchWithType($third_type);
-		$bind_info = $user_table->bindInfo();
+		$unbind_info = OAuth2Client::create($bind_type, $_W['setting']['thirdlogin'][$bind_type]['appid'], $_W['setting']['thirdlogin'][$bind_type]['appsecret'])->unbind();
 
-		if (empty($bind_info)) {
-			iajax(-1, '已经解除绑定');
+		if (is_error($unbind_info)) {
+			iajax(-1, $unbind_info['message']);
 		}
-		pdo_update('users', array('openid' => ''), array('uid' => $_W['uid']));
-		pdo_delete('users_bind', array('uid' => $_W['uid'], 'third_type' => $third_type));
 		iajax(0, '解绑成功', url('user/profile/bind'));
 	}
 	iajax(-1, '非法请求');
