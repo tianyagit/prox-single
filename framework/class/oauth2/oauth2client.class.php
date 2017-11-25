@@ -36,6 +36,8 @@ abstract class OAuth2Client {
 	abstract function showLoginUrl($calback_url = '');
 
 	abstract function user();
+	
+	abstract function login();
 
 	public function we7user() {
 		global $_W;
@@ -54,8 +56,9 @@ abstract class OAuth2Client {
 		return $user;
 	}
 
-	abstract function userBind($userInfo);
-
+	abstract function bind($userInfo);
+	abstract function unbind();
+	
 	abstract function register();
 
 	public function registerNoThird() {
