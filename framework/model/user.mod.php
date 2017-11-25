@@ -551,17 +551,26 @@ function user_uniacid_modules($uid) {
  * return string
  */
 function user_login_forward($forward = '') {
-	global $_W;
+	global $_W, $_GPC;
 	$login_forward = trim($forward);
 
+	$login_location = array(
+		'account' => url('account/display'),
+		'wxapp' => url('wxapp/display'),
+		'module' => url('module/display'),
+	);
 	if (!empty($forward)) {
 		return $login_forward;
 	}
+	if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
+		return url('home/welcome/system');
+	}
+	$visit_key = '__lastvisit_' . $_W['uid'];
+	if (!empty($_GPC[$visit_key]) && !empty($login_location[$_GPC[$visit_key]])) {
+		return $login_location[$_GPC[$visit_key]];
+	}
 	if (user_is_vice_founder()) {
 		return url('account/manage', array('account_type' => 1));
-	}
-	if (!empty($_W['isfounder'])) {
-		return url('home/welcome/system');
 	}
 	if ($_W['user']['type'] == ACCOUNT_OPERATE_CLERK) {
 		return url('module/display');
@@ -582,6 +591,7 @@ function user_login_forward($forward = '') {
 
 	return $login_forward;
 }
+
 /**
  * 获取公众号所有应用或者小程序所有应用
  * @param string $type 模块类型(account/wxapp)

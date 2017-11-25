@@ -94,6 +94,7 @@ if (!is_error($site)) {
 	if (in_array($m, $sysmodule)) {
 		$site_urls = $site->getTabUrls();
 	}
+	isetcookie('__lastvisit_' . $_W['uid'], 'module', 7 * 86400);
 	$do_function = $entry['entry'] == 'welcome' ? 'doSystem' : 'doWeb';
 	$method = $do_function . ucfirst($entry['do']);
 	exit($site->$method());
