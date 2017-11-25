@@ -84,14 +84,19 @@ class System extends OAuth2Client {
 			}
 		}
 
-		return array(
+		$register =  array(
 			'member' => $member,
 			'profile' => $profile
 		);
+		return parent::userRegisterNothird($register);
 	}
 
 	public function systemFields() {
 		$user_table = table('users');
 		return $user_table->userProfileFields();
+	}
+
+	public function userBind($userInfo) {
+
 	}
 }

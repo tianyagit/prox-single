@@ -96,9 +96,14 @@ class Mobile extends OAuth2Client {
 
 		$profile['mobile'] = $mobile;
 
-		return array(
+		$register =  array(
 			'member' => $member,
 			'profile' => $profile
 		);
+		return parent::userRegisterNothird($register);
+	}
+
+	public function userBind($userInfo) {
+
 	}
 }
