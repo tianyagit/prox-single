@@ -87,4 +87,8 @@ class Wechat extends OAuth2Client {
 	public function register() {
 
 	}
+
+	public function userBind($userInfo) {
+		return parent::userThirdInfoBind($userInfo);
+	}
 }

@@ -142,7 +142,7 @@ if ($do == 'upload') {
 
 	$filename = file_random_name(ATTACHMENT_ROOT . '/' . $setting['folder'], $ext);
 
-	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename);
+	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename, true);
 
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
@@ -378,7 +378,7 @@ if ($do == 'wechat_upload') {
 	}
 
 	$filename = file_random_name(ATTACHMENT_ROOT .'/'. $setting['folder'], $ext);
-	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename);
+	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename, true);
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
 		die(json_encode($result));

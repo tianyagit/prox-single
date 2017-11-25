@@ -204,12 +204,12 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		} else {
 			$site_store_buy_goods = array();
 		}
-		
+
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
-			
+
 			if (IMS_FAMILY == 'x') {
 				$store = table('store');
 				$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
@@ -494,6 +494,8 @@ function uni_setting_load($name = '', $uniacid = 0) {
 					$row = (array)iunserializer($row);
 				}
 			}
+		} else {
+			$unisetting = array();
 		}
 		cache_write($cachekey, $unisetting);
 	}

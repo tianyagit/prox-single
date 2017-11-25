@@ -463,8 +463,8 @@ function wxapp_code_generate($version_id) {
 	if(!empty($account_wxapp_info['appdomain'])) {
 		$siteurl = $account_wxapp_info['appdomain'];
 	}
-	if(!starts_with($siteurl, 'https')) { //不是https 开头强制改为https开头
-		$siteurl = str_replace('http', 'https', $siteurl);
+	if (!starts_with($siteurl, 'https')) { //不是https 开头强制改为https开头
+		return error(1, '小程序域名必须为https');
 	}
 	$appid = $account_wxapp_info['key'];
 	$siteinfo = array(

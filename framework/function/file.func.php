@@ -155,9 +155,10 @@ function rmdirs($path, $clean = false) {
  *        	文件保存类型
  * @param string $name
  *        	保存的文件名,不含后缀.(未指定则自动生成文件名，指定则是从附件目录开始的完整相对路径)
+ * @param string $compress 是否压缩
  * @return array 错误信息 error 或 array('success' => bool，'path' => 保存路径（从附件目录开始的完整相对路径）)
  */
-function file_upload($file, $type = 'image', $name = '') {
+function file_upload($file, $type = 'image', $name = '', $compress = false) {
 	$harmtype = array('asp', 'php', 'jsp', 'js', 'css', 'php3', 'php4', 'php5', 'ashx', 'aspx', 'exe', 'cgi');
 	if (empty($file)) {
 		return error(-1, '没有上传内容');
@@ -196,8 +197,9 @@ function file_upload($file, $type = 'image', $name = '') {
 		return error(-4, "上传的文件超过大小限制，请上传小于 {$limit}k 的文件");
 	}
 
-	if($type == 'image') {
-		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);//设置清晰度
+	if ($type == 'image' && $compress) {
+		//设置清晰度
+		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);
 	}
 
 	$result = array();
@@ -239,7 +241,8 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
 	}
 
 	if($type == 'image') {
-		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);//设置清晰度
+		//设置清晰度
+		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);
 	}
 
 	$result = array();
@@ -872,15 +875,18 @@ function file_is_image($url) {
  */
 function file_image_quality($src, $to_path, $ext) {
 	global $_W;
-	if(!function_exists('gd_info')) { //gd库未开启
+	//gd库未开启
+	if (!function_exists('gd_info')) {
 		return;
 	}
-
+	//不压缩
 	$quality = intval($_W['setting']['upload']['image']['zip_percentage']);
-	if($quality <=0 || $quality >= 100) {
-		return ;//不压缩
+	if ($quality <= 0 || $quality >= 100) {
+		return ;
 	}
-	if(filesize($src) > 5120) { //大于5M不压缩
+	
+	//大于5M不压缩
+	if (filesize($src) > 5120) {
 		return ;
 	}
 
@@ -894,10 +900,7 @@ function file_image_quality($src, $to_path, $ext) {
 		case 'jpeg': $quality = intval(0.75*$quality); $resource = imagecreatefromjpeg($src); imagejpeg($resource, $to_path, $quality);  break;
 		case 'png' : $quality = round(abs((100-$quality)/11.111111)); $resource = imagecreatefrompng($src); imagepng($resource, $to_path, $quality); break;
 	}
-	if($resource) {
+	if ($resource) {
 		imagedestroy($resource);
 	}
 }
-
-
-
