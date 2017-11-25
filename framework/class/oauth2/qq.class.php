@@ -147,7 +147,8 @@ class Qq extends OAuth2Client {
 			pdo_insert('users_bind', array('uid' => $user_id, 'bind_sign' => $user['member']['openid'], 'third_type' => $user['member']['register_type'], 'third_nickname' => $user['member']['username']));
 			return $user_id;
 		}
-		return user_register_info_handle($user);
+
+		return parent::user_register($user);
 	}
 
 	public function bind() {

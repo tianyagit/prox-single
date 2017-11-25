@@ -113,7 +113,7 @@ class Wechat extends OAuth2Client {
 			return $user_id;
 		}
 
-		return user_register_info_handle($user);
+		return parent::user_register($user);
 	}
 
 	public function bind() {

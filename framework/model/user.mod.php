@@ -33,6 +33,7 @@ function user_register($user) {
 	if (!empty($result)) {
 		$user['uid'] = pdo_insertid();
 	}
+	user_message_record($user['username'] . date("Y-m-d H:i:s") . '注册成功', $user['uid'], $user['uid'], $user['type'], $user['status']);
 	return intval($user['uid']);
 }
 
@@ -965,54 +966,26 @@ function user_account_expire_message_record() {
 }
 
 /**
- * 用户注册后信息处理
- * @param $register
- * @return array
+ * 消息提醒记录
+ * @param string $message
+ * @param int $uid
+ * @param string $sign
+ * @param $type
+ * @param string $status
+ * @param string $account_type
+ * @return bool
  */
-function user_register_info_handle($register) {
-	$member = $register['member'];
-	$profile = $register['profile'];
-	$member['status'] = !empty($_W['setting']['register']['verify']) ? 1 : 2;
-	$member['remark'] = '';
-	$member['groupid'] = intval($_W['setting']['register']['groupid']);
-	if (empty($member['groupid'])) {
-		$member['groupid'] = pdo_fetchcolumn('SELECT id FROM '.tablename('users_group').' ORDER BY id ASC LIMIT 1');
-		$member['groupid'] = intval($member['groupid']);
-	}
-	$group = user_group_detail_info($member['groupid']);
-
-	$timelimit = intval($group['timelimit']);
-	if($timelimit > 0) {
-		$member['endtime'] = strtotime($timelimit . ' days');
-	}
-	$member['starttime'] = TIMESTAMP;
-	if (!empty($owner_uid)) {
-		$member['owner_uid'] = pdo_getcolumn('users', array('uid' => $owner_uid, 'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER), 'uid');
-	}
-	$user_id = user_register($member);
-	if (in_array($member['register_type'], array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT, USER_REGISTER_TYPE_MOBILE))) {
-		pdo_update('users', array('username' => $member['username'] . $user_id . rand(100,999)), array('uid' => $user_id));
-	}
-	if($user_id > 0) {
-		unset($member['password']);
-		$member['uid'] = $user_id;
-		if (!empty($profile)) {
-			$profile['uid'] = $user_id;
-			$profile['createtime'] = TIMESTAMP;
-			pdo_insert('users_profile', $profile);
-		}
-		$message_notice_log = array(
-			'message' => $member['username'] . date("Y-m-d H:i:s") . '注册成功',
-			'uid' => $user_id,
-			'type' => MESSAGE_REGISTER_TYPE,
-			'status' => $member['status'],
-			'create_time' => TIMESTAMP
-		);
-		pdo_insert('message_notice_log', $message_notice_log);
-		if ($member['register_type'] == USER_REGISTER_TYPE_MOBILE) {
-			pdo_insert('users_bind', array('uid' => $user_id, 'bind_sign' => $member['openid'], 'third_type' => $member['register_type'], 'third_nickname' => $member['username']));
-		}
-		return error(0, '注册成功'.(!empty($_W['setting']['register']['verify']) ? '，请等待管理员审核！' : '，请重新登录！'));
-	}
-	return error(-1, '增加用户失败，请稍候重试或联系网站管理员解决！');
+function user_message_record($message = '', $uid = 0, $sign = '', $type, $status = '', $account_type = '', $end_time = '') {
+	$message_notice_log = array(
+		'message' => $message,
+		'uid' => $uid,
+		'sign' => $sign,
+		'type' => $type,
+		'status' => $status,
+		'account_type' => $account_type,
+		'create_time' => TIMESTAMP,
+		'end_time' => $end_time
+	);
+	pdo_insert('message_notice_log', $message_notice_log);
+	return true;
 }

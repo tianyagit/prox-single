@@ -43,4 +43,53 @@ abstract class OAuth2Client {
 	abstract function unbind();
 	
 	abstract function register();
+
+	public function user_register($register) {
+		global $_W;
+		load()->model('user');
+
+		if (is_error($register)) {
+			return $register;
+		}
+		$member = $register['member'];
+		$profile = $register['profile'];
+
+		$member['status'] = !empty($_W['setting']['register']['verify']) ? 1 : 2;
+		$member['remark'] = '';
+		$member['groupid'] = intval($_W['setting']['register']['groupid']);
+		if (empty($member['groupid'])) {
+			$member['groupid'] = pdo_fetchcolumn('SELECT id FROM '.tablename('users_group').' ORDER BY id ASC LIMIT 1');
+			$member['groupid'] = intval($member['groupid']);
+		}
+		$group = user_group_detail_info($member['groupid']);
+
+		$timelimit = intval($group['timelimit']);
+		if($timelimit > 0) {
+			$member['endtime'] = strtotime($timelimit . ' days');
+		}
+		$member['starttime'] = TIMESTAMP;
+		if (!empty($owner_uid)) {
+			$member['owner_uid'] = pdo_getcolumn('users', array('uid' => $owner_uid, 'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER), 'uid');
+		}
+
+		$user_id = user_register($member);
+		if (in_array($member['register_type'], array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT, USER_REGISTER_TYPE_MOBILE))) {
+			pdo_update('users', array('username' => $member['username'] . $user_id . rand(100,999)), array('uid' => $user_id));
+		}
+		if($user_id > 0) {
+			unset($member['password']);
+			$member['uid'] = $user_id;
+			if (!empty($profile)) {
+				$profile['uid'] = $user_id;
+				$profile['createtime'] = TIMESTAMP;
+				pdo_insert('users_profile', $profile);
+			}
+			if (in_array($member['register_type'], array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT, USER_REGISTER_TYPE_MOBILE))) {
+				pdo_insert('users_bind', array('uid' => $user_id, 'bind_sign' => $member['openid'], 'third_type' => $member['register_type'], 'third_nickname' => $member['username']));
+			}
+			return error(0, '注册成功'.(!empty($_W['setting']['register']['verify']) ? '，请等待管理员审核！' : '，请重新登录！'));
+		}
+
+		return error(-1, '增加用户失败，请稍候重试或联系网站管理员解决！');
+	}
 }

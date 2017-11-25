@@ -113,7 +113,7 @@ class Mobile extends OAuth2Client {
 			'member' => $member,
 			'profile' => $profile
 		);
-		return user_register_info_handle($register);
+		return parent::user_register($register);
 	}
 
 	public function login() {
@@ -129,7 +129,7 @@ class Mobile extends OAuth2Client {
 		$user = $user_table->usersInfo($_W['uid']);
 		$user_profile = $user_table->userProfile($_W['uid']);
 
-		$param_validate = $this->param_validate();
+		$param_validate = $this->paramValidate();
 
 		if (is_error($param_validate)) {
 			return $param_validate;
@@ -149,7 +149,7 @@ class Mobile extends OAuth2Client {
 
 		$user_profile = $user_table->userProfile($_W['uid']);
 
-		$param_validate = $this->param_validate();
+		$param_validate = $this->paramValidate();
 
 		if (is_error($param_validate)) {
 			return $param_validate;
@@ -162,7 +162,7 @@ class Mobile extends OAuth2Client {
 		return error(0, '解除绑定成功');
 	}
 
-	public function param_validate($type = false) {
+	public function paramValidate($type = false) {
 		global $_GPC;
 		$password = $_GPC['password'];
 		$repassword = $_GPC['repassword'];
