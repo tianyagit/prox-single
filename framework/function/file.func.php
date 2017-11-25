@@ -197,7 +197,8 @@ function file_upload($file, $type = 'image', $name = '') {
 	}
 
 	if($type == 'image') {
-		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);//设置清晰度
+		//设置清晰度
+		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);
 	}
 
 	$result = array();
@@ -239,7 +240,8 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
 	}
 
 	if($type == 'image') {
-		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);//设置清晰度
+		//设置清晰度
+		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);
 	}
 
 	$result = array();
@@ -872,15 +874,18 @@ function file_is_image($url) {
  */
 function file_image_quality($src, $to_path, $ext) {
 	global $_W;
-	if(!function_exists('gd_info')) { //gd库未开启
+	//gd库未开启
+	if (!function_exists('gd_info')) {
 		return;
 	}
-
+	//不压缩
 	$quality = intval($_W['setting']['upload']['image']['zip_percentage']);
-	if($quality <=0 || $quality >= 100) {
-		return ;//不压缩
+	if ($quality <= 0 || $quality >= 100) {
+		return ;
 	}
-	if(filesize($src) > 5120) { //大于5M不压缩
+	
+	//大于5M不压缩
+	if (filesize($src) > 5120) {
 		return ;
 	}
 
@@ -894,10 +899,7 @@ function file_image_quality($src, $to_path, $ext) {
 		case 'jpeg': $quality = intval(0.75*$quality); $resource = imagecreatefromjpeg($src); imagejpeg($resource, $to_path, $quality);  break;
 		case 'png' : $quality = round(abs((100-$quality)/11.111111)); $resource = imagecreatefrompng($src); imagepng($resource, $to_path, $quality); break;
 	}
-	if($resource) {
+	if ($resource) {
 		imagedestroy($resource);
 	}
 }
-
-
-
