@@ -38,14 +38,15 @@ if ($do == 'save') {
 if ($do == 'display') {
 	$_W['page']['title'] = '应用套餐列表';
 	$param = array('uniacid' => 0);
-	if (!empty($_GPC['name'])) {
-		$param['name like'] = "%". trim($_GPC['name']) ."%";
-	}
 	$modules = user_modules($_W['uid']);
 	
 	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
+			if (!empty($_GPC['name']) && !strexists($group['name'], $_GPC['name'])) {
+				unset($modules_group_list[$group_key]);
+				continue;
+			}
 			if (empty($group['modules'])) {
 				$group['modules'] = array();
 			}
