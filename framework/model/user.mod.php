@@ -556,8 +556,8 @@ function user_login_forward($forward = '') {
 	$login_forward = trim($forward);
 
 	$login_location = array(
-		'account' => url('account/display'),
-		'wxapp' => url('wxapp/display'),
+		'account' => url('home/welcome'),
+		'wxapp' => url('wxapp/display/home'),
 		'module' => url('module/display'),
 	);
 	if (!empty($forward)) {

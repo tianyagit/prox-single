@@ -746,7 +746,7 @@ function uni_account_save_switch($uniacid) {
 		$cache_lastaccount['account'] = $uniacid;
 	}
 	cache_write($cache_key, $cache_lastaccount);
-	isetcookie('__uniacid', $uniacid);
+	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;
 }
