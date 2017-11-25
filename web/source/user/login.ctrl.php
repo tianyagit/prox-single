@@ -35,14 +35,10 @@ function _login($forward = '') {
 		$_GPC['login_type'] = 'system';
 	}
 
-	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->we7user();
-
 	if (!empty($_W['user'])) {
-		if (is_error($member)) {
-			itoast($member['message'], url('user/profile/bind'), '');
-		} else {
-			itoast('绑定成功', url('user/profile/bind'), '');
-		}
+		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->bind();
+	} else {
+		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
 	}
 
 	if (is_error($member)) {

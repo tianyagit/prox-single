@@ -277,7 +277,7 @@ function wxapp_update_last_use_version($uniacid, $version_id) {
 
 /**
  * 获取小程序单个版本
- * @param unknown $version_id
+ * @param int $version_id
  */
 function wxapp_version($version_id) {
 	$version_info = array();
@@ -288,8 +288,30 @@ function wxapp_version($version_id) {
 	}
 
 	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	if (empty($version_info)) {
+	$version_info = wxapp_version_detail_info($version_info);
+	return $version_info;
+}
+
+/**
+ * 根据版本号获取当前小程序版本信息
+ * @param mixed $version
+ * @return array()
+ */
+function wxapp_version_by_version($version) {
+	global $_W;
+	$version_info = array();
+	$version = trim($version);
+	if (empty($version)) {
 		return $version_info;
+	}
+	$version_info = pdo_get('wxapp_versions', array('uniacid' => $_W['uniacid'], 'version' => $version));
+	$version_info = wxapp_version_detail_info($version_info);
+	return $version_info;
+}
+
+function wxapp_version_detail_info($version_info) {
+	if (empty($version_info)) {
+		return array();
 	}
 	if (!empty($version_info['modules'])) {
 		$version_info['modules'] = iunserializer($version_info['modules']);

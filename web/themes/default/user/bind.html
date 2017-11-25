@@ -74,7 +74,7 @@
 					{/if}
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="mobileBind(bindmobile.third_nickname)">确定</button>
+					<button type="button" class="btn btn-primary" ng-click="mobileBind(bindmobile.third_nickname, 3)">确定</button>
 					<button type="button" class="btn smscodebtn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
@@ -96,7 +96,7 @@
 			'send_code_link': "{php echo url('utility/verifycode')}",
 			'valid_mobile_link' : "{php echo url('user/profile/validate_mobile')}",
 			'bind_mobile_link' : "{php echo url('user/profile/bind_mobile')}",
-			'unbind_third_link' : "{php echo url('user/profile/unbind_third')}",
+			'unbind_third_link' : "{php echo url('user/profile/unbind')}",
 		},
 	});
 	angular.bootstrap($('.bind-account'), ['userProfile']);
