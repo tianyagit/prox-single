@@ -950,7 +950,7 @@ function user_borrow_oauth_account_list() {
  */
 function user_account_expire_message_record() {
 	load()->model('account');
-	load()->model('system');
+	load()->model('message');
 	$account_table = table('account');
 	$expire_account_list = $account_table->searchAccountList();
 	if (empty($expire_account_list)) {
@@ -962,18 +962,14 @@ function user_account_expire_message_record() {
 			continue;
 		}
 		if ($account_detail['endtime'] > 0 && $account_detail['endtime'] < TIMESTAMP) {
-			$exist_record = pdo_get('message_notice_log', array('sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE, 'end_time' => $account_detail['endtime']));
+			$type = $account_detail['type'] == ACCOUNT_TYPE_APP_NORMAL ? MESSAGE_WECHAT_EXPIRE_TYPE : MESSAGE_ACCOUNT_EXPIRE_TYPE;
+			$exist_record = pdo_get('message_notice_log', array('sign' => $account_detail['uniacid'], 'uid' => $account_detail['uid'], 'type' => $type, 'end_time' => $account_detail['endtime']));
 			if (empty($exist_record)) {
 				$account_name = $account_detail['type'] == ACCOUNT_TYPE_APP_NORMAL ? '-小程序过期' : '-公众号过期';
 				$message = array(
-					'message' => $account_detail['name'] . $account_name,
-					'sign' => $account_detail['uniacid'],
-					'uid' => $account_detail['uid'],
-					'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE,
-					'end_time' => $account_detail['endtime'],
-					'account_type' => $account_detail['type']
+					'end_time' => $account_detail['endtime']
 				);
-				system_message_record($message);
+				message_record($account_detail['name'] . $account_name, $account_detail['uid'], $account_detail['uniacid'], $type, $message);
 			}
 		}
 	}
