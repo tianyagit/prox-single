@@ -11,7 +11,7 @@ defined('IN_IA') or exit('Access Denied');
  * @return int 成功返回新增的用户编号，失败返回 0
  */
 function user_register($user) {
-	load()->model('system');
+	load()->model('message');
 	if (empty($user) || !is_array($user)) {
 		return 0;
 	}
@@ -34,14 +34,11 @@ function user_register($user) {
 	if (!empty($result)) {
 		$user['uid'] = pdo_insertid();
 	}
+	$content = $user['username'] . date("Y-m-d H:i:s") . '注册成功';
 	$message = array(
-		'message' => $user['username'] . date("Y-m-d H:i:s") . '注册成功',
-		'uid' => $user['uid'],
-		'sign' => $user['uid'],
-		'type' => MESSAGE_REGISTER_TYPE,
 		'status' => $user['status']
 	);
-	system_message_record($message);
+	message_record($content, $user['uid'], $user['uid'], MESSAGE_REGISTER_TYPE, $message);
 
 	return intval($user['uid']);
 }
