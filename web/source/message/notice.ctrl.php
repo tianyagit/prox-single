@@ -16,8 +16,18 @@ if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 10;
 
-	$types = $type = !empty($_GPC['type']) ? intval($_GPC['type']) :
-			(IMS_FAMILY == 'x' && user_is_founder($_W['uid']) && !user_is_vice_founder() ? MESSAGE_ORDER_TYPE : MESSAGE_ACCOUNT_EXPIRE_TYPE);
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$types = $type = !empty($_GPC['type']) ? intval($_GPC['type']) : MESSAGE_ACCOUNT_EXPIRE_TYPE;
+	}
+	/* xend */
+
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		$types = $type = !empty($_GPC['type']) ? intval($_GPC['type']) :
+		(user_is_founder($_W['uid']) && !user_is_vice_founder() ? MESSAGE_ORDER_TYPE : MESSAGE_ACCOUNT_EXPIRE_TYPE);
+	}
+	/* vend */
 
 	if ($type == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
 		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE);

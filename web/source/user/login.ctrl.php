@@ -54,11 +54,25 @@ function _login($forward = '') {
 		$_W['isfounder'] = user_is_founder($record['uid']);
 		$_W['user'] = $record;
 
-		if (empty($_W['isfounder']) || user_is_vice_founder()) {
-			if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
-				itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			if (empty($_W['isfounder']) || user_is_vice_founder()) {
+				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
+					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+				}
 			}
 		}
+		/* xend */
+
+		/* vstart */
+		if (IMS_FAMILY == 'v') {
+			if (empty($_W['isfounder'])) {
+				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
+					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+				}
+			}
+		}
+		/* vend */
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
 			itoast('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], '', '');
 		}
