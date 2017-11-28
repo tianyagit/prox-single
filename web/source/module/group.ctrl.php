@@ -10,13 +10,36 @@ load()->model('module');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
-if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
-	itoast('无权限操作！', referer(), 'error');
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
+		itoast('无权限操作！', referer(), 'error');
+	}
 }
-if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
-	itoast('您只有查看权限！', url('module/group'), 'error');
+/* xend */
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER))){
+		itoast('无权限操作！', referer(), 'error');
+	}
 }
+/* vend */
 
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
+		itoast('您只有查看权限！', url('module/group'), 'error');
+	}
+}
+/* xend */
+
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER))) {
+		itoast('您只有查看权限！', url('module/group'), 'error');
+	}
+}
+/* vend */
 if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)$_GPC['wxapp'];

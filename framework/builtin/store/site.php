@@ -416,7 +416,7 @@ class StoreModuleSite extends WeModuleSite {
 		global $_GPC, $_W;
 		load ()->model ('module');
 		load ()->model ('payment');
-		load ()->model ('system');
+		load ()->model ('message');
 		load ()->func ('communication');
 		load()->library('qrcode');
 		$operate = $_GPC['operate'];
@@ -558,13 +558,8 @@ class StoreModuleSite extends WeModuleSite {
 			pdo_insert ('site_store_order', $order);
 
 			$type_name = $this->getTypeName($goods_info['type']);
-			$message_log = array(
-				'message' => $_W['user']['username'] . date("Y-m-d H:i:s") . '在商城购买了' . $type_name . ', 支付金额' . $order['amount'],
-				'uid' => $_W['uid'],
-				'sign' => $orderid,
-				'type' => MESSAGE_ORDER_TYPE
-			);
-			system_message_record($message_log);
+			$content = $_W['user']['username'] . date("Y-m-d H:i:s") . '在商城购买了' . $type_name . ', 支付金额' . $order['amount'];
+			message_record($content, $_W['uid'], $orderid, MESSAGE_ORDER_TYPE);
 
 			$store_orderid = pdo_insertid();
 			$pay_log = array(
