@@ -9,13 +9,25 @@ load()->model('app');
 
 $dos = array('showjs', 'health');
 $do = in_array($do, $dos) ? $do : 'showjs';
-if ($do == 'showjs') {
-	echo '';
-	exit;
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	if ($do == 'showjs') {
+		echo '';
+		exit;
+	}
 }
-/**
- *  https 站点校验是否能正常访问
- */
+/* vend */
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if ($do == 'showjs') {
+		$module_name = !empty($_GPC['module_name']) ? $_GPC['module_name'] : 'wesite';
+		$uniacid = !empty($_GPC['uniacid']) ? intval($_GPC['uniacid']) : 0;
+		app_update_today_visit($module_name);
+	}
+}
+/* xend */
+
+// https 站点校验是否能正常访问
 if($do == 'health') {
 	echo json_encode(error(0, 'success'));
 	exit;

@@ -290,21 +290,42 @@ function buildframes($framename = ''){
 						}
 					}
 				}
-
-				if ($nav_id != 'wxapp') {
-					$section_show = false;
-					$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
-					foreach ($secion['menu'] as $menu_id => $menu) {
-						if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
-							$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
-						} else {
-							$section_show = true;
+				/* vstart */
+				if (IMS_FAMILY == 'v') {
+					if ($nav_id != 'wxapp') {
+						$section_show = false;
+						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
+						foreach ($secion['menu'] as $menu_id => $menu) {
+							if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
+								$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
+							} else {
+								$section_show = true;
+							}
+						}
+						if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
+							$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
 						}
 					}
-					if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
-						$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
+				}
+				/* vend */
+				/* xstart */
+				if (IMS_FAMILY == 'x') {
+					if ($nav_id != 'wxapp' && $nav_id != 'store') {
+						$section_show = false;
+						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
+						foreach ($secion['menu'] as $menu_id => $menu) {
+							if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
+								$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
+							} else {
+								$section_show = true;
+							}
+						}
+						if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
+							$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
+						}
 					}
 				}
+				/* xend */
 			}
 		}
 	} else {
@@ -525,9 +546,20 @@ function buildframes($framename = ''){
 		}
 	}
 	foreach ($frames as $menuid => $menu) {
-		if (!empty($menu['founder']) && empty($_W['isfounder']) || user_is_vice_founder() && in_array($menuid, array('site', 'advertisement', 'appmarket')) || $_W['role'] == ACCOUNT_MANAGE_NAME_CLERK && in_array($menuid, array('account', 'wxapp', 'system')) || !$menu['is_display']) {
-			continue;
+		/* vstart */
+		if (IMS_FAMILY == 'v') {
+			if (!empty($menu['founder']) && empty($_W['isfounder']) || user_is_vice_founder() && in_array($menuid, array('site', 'advertisement', 'appmarket')) || $_W['role'] == ACCOUNT_MANAGE_NAME_CLERK && in_array($menuid, array('account', 'wxapp', 'system')) || !$menu['is_display']) {
+				continue;
+			}
 		}
+		/* vend */
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			if (!empty($menu['founder']) && empty($_W['isfounder']) || user_is_vice_founder() && in_array($menuid, array('site', 'advertisement', 'appmarket')) || $_W['role'] == ACCOUNT_MANAGE_NAME_CLERK && in_array($menuid, array('account', 'wxapp', 'system')) || !$menu['is_display'] || $_W['setting']['store']['status'] == 1 && $menuid == 'store' && (!$_W['isfounder'] || user_is_vice_founder())) {
+				continue;
+			}
+		}
+		/* xend */
 		$top_nav[] = array(
 			'title' => $menu['title'],
 			'name' => $menuid,
