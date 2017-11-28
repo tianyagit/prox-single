@@ -12,14 +12,14 @@ class AttachmentTable extends We7Table {
 	public function local($local) {
 		$this->local = $local ? true : false;
 		if($local) {
-			$this->query->from(self::LOCAL);
+			$this->query->from(static::LOCAL);
 			return $this;
 		}
-		$this->query->from(self::WX);
+		$this->query->from(static::WX);
 		return $this;
 	}
 
 	public function getById($att_id, $type = 1) {
-		return $this->query->from($this->local)->where(array('id'=>$att_id, 'type'=>$type))->get();
+		return $this->query->where('id', $att_id)->where('type', $type)->get();
 	}
 }

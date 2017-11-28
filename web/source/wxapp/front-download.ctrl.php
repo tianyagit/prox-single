@@ -39,13 +39,11 @@ if($do == 'custom_save') {
 }
 
 if($do == 'custom_convert_img') {
-	$attchid = intval($_GPC['id']);
+	$attchid = intval($_GPC['att_id']);
+
 	/* @var  $attachment  AttachmentTable */
-	$att_table = table('attachment');
-	$attachment = $att_table->local(true)->getById($attchid);
-	if($attachment) {
-		$url = tomedia($attachment['attachment']);
-	}
+	$filename = wxapp_code_path_convert($attchid);
+	echo json_encode(error(0, $filename));
 }
 
 if ($do == 'domainset') {
