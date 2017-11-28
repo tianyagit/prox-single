@@ -23,6 +23,9 @@ if ($do == 'get_setting') {
 			'credit' => array('switch' => false),
 			'alipay' => array('switch' => false),
 			'wechat' => array('switch' => false),
+			/* xstart */
+			'wechat_facilitator' => array('switch' => false, 'mchid' => '', 'signkey' => ''),
+			/* xend */
 			'unionpay' => array('switch' => false),
 			'baifubao' => array('switch' => false),
 			'line' => array('switch' => false),
@@ -65,13 +68,26 @@ if ($do == 'save_setting') {
 	if ($type == 'jueqiymf') {
 		$param['switch'] = $param['switch'] == 'true' ? true : false;
 	}
-	if ($type == 'alipay' || $type == 'baifubao' || $type == 'line') {
-		$param['switch'] = $param['switch'] == 'true' ? true : false;
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		if ($type == 'alipay' || $type == 'baifubao' || $type == 'line') {
+			$param['switch'] = $param['switch'] == 'true' ? true : false;
+		}
 	}
+	/* vend */
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if ($type == 'alipay' || $type == 'wechat_facilitator' || $type == 'baifubao' || $type == 'line') {
+			$param['switch'] = $param['switch'] == 'true' ? true : false;
+		}
+	}
+	/* xend */
+
 	if ($type == 'wechat') {
 		$param['account'] = $_W['acid'];
 		$param['signkey'] = $param['version'] == 2 ? trim($param['apikey']) : trim($param['signkey']);
 	}
+
 	if ($type == 'unionpay') {
 		$unionpay = $_GPC['unionpay'];
 		if ($unionpay['switch'] && empty($_FILES['unionpay']['tmp_name']['signcertpath']) && !file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx')) {
@@ -123,6 +139,13 @@ MFF/yA==
 	$pay_setting[$type] = $param;
 	$payment = iserializer($pay_setting);
 	uni_setting_save('payment', $payment);
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if ($type == 'wechat_facilitator') {
+			cache_clean(cache_system_key('proxy_wechatpay_account:'));
+		}
+	}
+	/* xend */
 	if ($type == 'unionpay') {
 		header('LOCATION: '.url('profile/payment'));
 		exit();
@@ -158,6 +181,13 @@ if ($do == 'display') {
 	if (empty($pay_setting['jueqiymf'])) {
 		$pay_setting['jueqiymf'] = array('switch' => false);
 	}
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if (empty($pay_setting['wechat_facilitator'])) {
+			$pay_setting['wechat_facilitator'] = array('switch' => false, 'mchid' => '', 'signkey' => '');
+		}
+	}
+	/* xend */
 	//废弃微信借用支付
 	if (empty($_W['isfounder'])) {
 		$user_account_list = pdo_getall('uni_account_users', array('uid' => $_W['uid']), array(), 'uniacid');

@@ -18,10 +18,14 @@ if ($do == 'display') {
 		$condition .= "WHERE name LIKE :name";
 		$params[':name'] = "%{$_GPC['name']}%";
 	}
-	if (user_is_vice_founder()) {
-		$condition .= "WHERE owner_uid = :owner_uid";
-		$params[':owner_uid'] = $_W['uid'];
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if (user_is_vice_founder()) {
+			$condition .= "WHERE owner_uid = :owner_uid";
+			$params[':owner_uid'] = $_W['uid'];
+		}
 	}
+	/* xend */
 	$lists = pdo_fetchall("SELECT * FROM " . tablename('users_group').$condition, $params);
 	$lists = user_group_format($lists);
 	template('user/group-display');

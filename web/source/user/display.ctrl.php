@@ -50,9 +50,13 @@ if ($do == 'display') {
 			$users_table->searchWithName($username);
 		}
 
-		if (user_is_vice_founder()) {
-			$users_table->searchWithOwnerUid($_W['uid']);
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			if (user_is_vice_founder()) {
+				$users_table->searchWithOwnerUid($_W['uid']);
+			}
 		}
+		/* xend */
 
 		$users_table->searchWithPage($pindex, $psize);
 		$users = $users_table->searchUsersList();
@@ -90,9 +94,13 @@ if ($do == 'operate') {
 	if (empty($uid_user)) {
 		exit('未指定用户,无法删除.');
 	}
-	if ($uid_user['founder_groupid'] != ACCOUNT_MANAGE_GROUP_GENERAL) {
-		iajax(-1, '非法操作', referer());
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if ($uid_user['founder_groupid'] != ACCOUNT_MANAGE_GROUP_GENERAL) {
+			iajax(-1, '非法操作', referer());
+		}
 	}
+	/* xend */
 	switch ($type) {
 		case 'check_pass':
 			$data = array('status' => 2);
