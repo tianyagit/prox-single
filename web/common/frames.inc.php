@@ -6,10 +6,10 @@
 defined('IN_IA') or exit('Access Denied');
 
 $we7_system_menu = array();
-$we7_system_menu['pc'] = array(
+$we7_system_menu['webapp'] = array(
 	'title' => 'PC',
 	'icon' => 'wi wi-white-collar',
-	'url' => url('pc/home/display'),
+	'url' => url('webapp/home/display'),
 	'section' => array(
 		'platform_module' => array(
 			'title' => '应用模块',
@@ -34,7 +34,7 @@ $we7_system_menu['pc'] = array(
 					'title' => '支付参数',
 					'url' => url('profile/payment'),
 					'icon' => 'wi wi-pay-setting',
-					'permission_name' => 'pc_pay_setting',
+					'permission_name' => 'webapp_pay_setting',
 				),
 			),
 		),
@@ -345,7 +345,7 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
-		'pc' => array(
+		'webapp' => array(
 			'title' => 'PC',
 			'menu' => array(
 				'system_wxapp' => array(

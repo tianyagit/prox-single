@@ -20,7 +20,7 @@ if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER
 if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)array_keys($_GPC['wxapp']);
-	$pc = empty($_GPC['pc']) ? array() : (array)array_keys($_GPC['pc']);
+	$webapp = empty($_GPC['webapp']) ? array() : (array)array_keys($_GPC['webapp']);
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
@@ -90,7 +90,7 @@ if ($do == 'post') {
 	$group_have_module_app = array();
 	$group_have_module_wxapp = array();
 	$group_have_template = array();
-	$group_have_module_pc = array();
+	$group_have_module_webapp = array();
 
 	if (!empty($group_id)) {
 		$uni_groups = uni_groups();
@@ -98,12 +98,12 @@ if ($do == 'post') {
 		$group_have_module_app = empty($module_group['modules']) ? array() : $module_group['modules'];
 		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : $module_group['wxapp'];
 		$group_have_template = empty($module_group['templates']) ? array() : $module_group['templates'];
-		$group_have_module_pc = empty($module_group['pc']) ? array() : $module_group['pc'];
+		$group_have_module_webapp = empty($module_group['webapp']) ? array() : $module_group['webapp'];
 	}
 	$module_list = user_uniacid_modules($_W['uid']);
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
-	$group_not_have_module_pc = array();
+	$group_not_have_module_webapp = array();
 	if (!empty($module_list)) {
 		foreach ($module_list as $name => $module_info) {
 			$module_info = module_fetch($name);
@@ -130,8 +130,8 @@ if ($do == 'post') {
 				$group_not_have_module_wxapp[$name] = $module_info;
 			}
 
-			if ($module_info['pc_support'] == 2 && !in_array($name, array_keys($group_have_module_pc))) {
-				$group_not_have_module_pc[$name] = $module_info;
+			if ($module_info['webapp_support'] == 2 && !in_array($name, array_keys($group_have_module_webapp))) {
+				$group_not_have_module_webapp[$name] = $module_info;
 			}
 		}
 	}

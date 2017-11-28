@@ -724,7 +724,7 @@ function user_group_format($lists) {
 				$names[] = $modules['name'];
 				$lists[$key]['module_nums'] = count($modules['modules']);
 				$lists[$key]['wxapp_nums'] = count($modules['wxapp']);
-				$lists[$key]['pc_nums'] = count($modules['pc']);
+				$lists[$key]['webapp_nums'] = count($modules['webapp']);
 			}
 		}
 		$lists[$key]['packages'] = implode(',', $names);
@@ -762,7 +762,7 @@ function user_list_format($users) {
 		}
 		$user['maxaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxaccount']);
 		$user['maxwxapp'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwxapp']);
-		$user['maxpcaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxpcaccount']);
+		$user['maxwebappaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwebappaccount']);
 		$user['groupname'] = $group['name'];
 		unset($user);
 	}

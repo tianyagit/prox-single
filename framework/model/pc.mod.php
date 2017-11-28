@@ -36,7 +36,7 @@ function pc_can_apply($uid, $uniacid) {
 /*
  * 获取可操作的uniacid
  */
-function pc_get_uniacid($uid = 0, $uniacid = 0) {
+function webapp_get_uniacid($uid = 0, $uniacid = 0) {
 	if(!$uniacid) {
 		$uniacid = pc_last_uniacid();
 	}

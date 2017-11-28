@@ -454,7 +454,7 @@ function permission_user_account_num($uid = 0) {
 				$group_vice = $user_table->userFounderGroupInfo($owner_info['groupid']);
 				$group['maxaccount'] = min(intval($group['maxaccount']), intval($group_vice['maxaccount']));
 				$group['maxwxapp'] = min(intval($group['maxwxapp']), intval($group_vice['maxwxapp']));
-				$group['maxpcaccount'] = min(intval($group['maxpcaccount']), intval($group_vice['maxpcaccount']));
+				$group['maxwebappaccount'] = min(intval($group['maxwebappaccount']), intval($group_vice['maxwebappaccount']));
 			}
 		}
 	}
@@ -466,22 +466,22 @@ function permission_user_account_num($uid = 0) {
 	$store_buy_wxapp = $store_table->searchUserBuyWxapp($_W['uid']);
 	$uniacid_limit = max((intval($group['maxaccount']) + intval($store_buy_account) - $group_num['account_num']), 0);
 	$wxapp_limit = max((intval($group['maxwxapp']) + intval($store_buy_wxapp) - $group_num['wxapp_num']), 0);
-	$pc_limit = max(intval($group['maxpcaccount']) - $group_num['pc_num'], 0);
+	$webapp_limit = max(intval($group['maxwebappaccount']) - $group_num['webapp_num'], 0);
 	$data = array(
 		'group_name' => $group['name'],
 		'vice_group_name' => $group_vice['name'],
 		'maxaccount' => $group['maxaccount'] + $store_buy_account,
 		'usergroup_account_limit' => max($group['maxaccount'] - $group_num['account_num'] - $create_buy_account_num, 0),//用户组剩余创建公众号个数
 		'usergroup_wxapp_limit' => max($group['maxwxapp'] - $group_num['wxapp_num'] - $create_buy_wxapp_num, 0),//用户组剩余创建小程序个数
-		'usergroup_pc_limit' => max($group['maxpcaccount'] - $group_num['pc_num'], 0),//用户组剩余创建小程序个数
+		'usergroup_webapp_limit' => max($group['maxwebappaccount'] - $group_num['webapp_num'], 0),//用户组剩余创建小程序个数
 		'uniacid_num' => $group_num['account_num'],
 		'uniacid_limit' => max($uniacid_limit, 0),
 		'maxwxapp' => $group['maxwxapp'] + $store_buy_wxapp,
 		'wxapp_num' => $group_num['wxapp_num'],
 		'wxapp_limit' => max($wxapp_limit, 0),
-		'maxpcaccount'=>$group['maxpcaccount'],//pc 最大创建数量
-		'pc_limit'=> $pc_limit, //pc 剩余创建数量,
-		'pc_num'=> $group_num['pc_num'] //pc 已创建pc数量
+		'maxwebappaccount'=>$group['maxwebappaccount'],//pc 最大创建数量
+		'webapp_limit'=> $webapp_limit, //pc 剩余创建数量,
+		'webapp_num'=> $group_num['webapp_num'] //pc 已创建pc数量
 	);
 	return $data;
 }

@@ -48,7 +48,7 @@
 				<td>{php echo count($module_group['modules'])}</td>
 				<td>{php echo count($module_group['wxapp'])}</td>
 				<td>{php echo count($module_group['templates'])}</td>
-				<td>{php echo count($module_group['pc'])}</td>
+				<td>{php echo count($module_group['webapp'])}</td>
 				<td>
 					<div class="link-group">
 						<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" data-target="toggle-{$module_group['id']}" ng-click="changeText($event)">展开</a>
@@ -98,10 +98,10 @@
 				<td colspan="5">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">PC应用</div>
 					<div class="col-sm-11">
-						{loop $module_group['pc'] $pc}
+						{loop $module_group['webapp'] $webapp}
 						<div class="col-sm-3 text-left text-over">
-							<img src="{$pc['logo']}">
-							<a href="">{$pc['title']}</a>
+							<img src="{$webapp['logo']}">
+							<a href="">{$webapp['title']}</a>
 						</div>
 						{/loop}
 					</div>
@@ -425,9 +425,9 @@ require(['underscore'], function() {
 		'moduleGroup' : {php echo json_encode($module_group)},
 		'groupHaveModuleApp' : {php echo json_encode($group_have_module_app)},
 		'groupHaveModuleWxapp' : {php echo json_encode($group_have_module_wxapp)},
-		'groupHaveModulePc' : {php echo json_encode($group_have_module_pc)},
+		'groupHaveModulePc' : {php echo json_encode($group_have_module_webapp)},
 		'groupNotHaveModuleApp' : {php echo json_encode($group_not_have_module_app)},
-		'groupNotHaveModulePc' : {php echo json_encode(($group_not_have_module_pc))}, // angular filter 只能数组
+		'groupNotHaveModulePc' : {php echo json_encode(($group_not_have_module_webapp))}, // angular filter 只能数组
 		'groupNotHaveModuleWxapp' : {php echo json_encode($group_not_have_module_wxapp)},
 		'groupHaveTemplate' : {php echo json_encode($group_have_template)},
 		'groupNotHaveTemplate' : {php echo json_encode($group_not_have_template)},

@@ -3,22 +3,22 @@
 	<div class="panel-heading">
 		<i class="wi wi-wechat" style="font-size: 24px; margin-right: 10px; vertical-align:middle;"></i>请选择您要操作的PC
 		<div class="font-default pull-right">
-			{if !empty($account_info['pc_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
-			<a href="./index.php?c=pc&a=manage&do=createview" class="color-default"><i class="fa fa-plus"></i>新增PC</a>
+			{if !empty($account_info['webapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
+			<a href="./index.php?c=webapp&a=manage&do=createview" class="color-default"><i class="fa fa-plus"></i>新增PC</a>
 			{/if}
 			{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_MANAGER}
-			<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_PC_NORMAL))}" class="color-default"><i class="wi wi-wechatstatistics"></i>PC管理</a>
+			<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL))}" class="color-default"><i class="wi wi-wechatstatistics"></i>PC管理</a>
 			{/if}
 		</div>
 	</div>
 	<div class="panel-body" >
-		{if !$_W['isfounder'] && !empty($account_info['pc_limit'])}
+		{if !$_W['isfounder'] && !empty($account_info['webapp_limit'])}
 		<div class="alert alert-warning">
 			温馨提示：
 			<i class="fa fa-info-circle"></i>
 			Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>，{if !user_is_vice_founder() && !empty($account_info['vice_group_name'])}<span class="text-strong">{$account_info['vice_group_name']}，</span>{/if}
 			账号有效期限：<span class="text-strong">{php echo date('Y-m-d', $_W['user']['starttime'])} ~~ {if empty($_W['user']['endtime'])}无限制{else}{php echo date('Y-m-d', $_W['user']['endtime'])}{/if}</span>，
-			可创建 <span class="text-strong">{$account_info['maxpcaccount']} </span>个PC，已创建<span class="text-strong"> {$account_info['pc_num']} </span>个，还可创建 <span class="text-strong">{$account_info['pc_limit']} </span>个PC账号。
+			可创建 <span class="text-strong">{$account_info['maxwebappaccount']} </span>个PC，已创建<span class="text-strong"> {$account_info['webapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['webapp_limit']} </span>个PC账号。
 		</div>
 		{/if}
 

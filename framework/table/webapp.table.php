@@ -8,11 +8,11 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-class PcTable extends We7Table {
+class WebappTable extends We7Table {
 
 	const ACCOUNT_TABLE = 'account';
 	const UNI_ACCOUNT_TABLE = 'uni_account_table';
-	private $PC_TYPE = 5;
+	private $WEBAPP_TYPE = 5;
 
 
 	/**
@@ -37,11 +37,11 @@ class PcTable extends We7Table {
 		if(!$uniacid) {
 			return false;
 		}
-		$accountdata = array('uniacid' => $uniacid, 'type' => $this->PC_TYPE, 'hash' => random(8));
+		$accountdata = array('uniacid' => $uniacid, 'type' => $this->WEBAPP_TYPE, 'hash' => random(8));
 		pdo_insert('account', $accountdata);
 		$acid = pdo_insertid();
 		pdo_update('uni_account', array('default_acid'=>$acid), array('uniacid'=>$uniacid));
-		pdo_insert('account_pc', array('uniacid'=>$uniacid, 'acid'=>$acid, 'name'=>$name));
+		pdo_insert('account_webapp', array('uniacid'=>$uniacid, 'acid'=>$acid, 'name'=>$name));
 		$this->createLog($uniacid, $uid);
 		return $uniacid;
 	}
@@ -58,9 +58,9 @@ class PcTable extends We7Table {
 		if (empty($_W['isfounder'])) {
 			$user_info = permission_user_account_num($uid);
 			uni_user_account_role($uniacid, $uid, ACCOUNT_MANAGE_NAME_OWNER);
-			if (empty($user_info['usergroup_pc_limit'])) {
+			if (empty($user_info['usergroup_webapp_limit'])) {
 				pdo_update('account', array('endtime' => strtotime('+1 month', time())), array('uniacid' => $uniacid));
-				pdo_insert('site_store_create_account', array('uid' => $uid, 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_PC_NORMAL));
+				pdo_insert('site_store_create_account', array('uid' => $uid, 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_WEBAPP_NORMAL));
 			}
 		}
 		if (user_is_vice_founder()) {
@@ -95,10 +95,10 @@ class PcTable extends We7Table {
 	 * 查询所有PC
 	 * @since version
 	 */
-	public function pclist($uid, $pageindex = 1, $pagesize = 15) {
+	public function webapplist($uid, $pageindex = 1, $pagesize = 15) {
 		$query = $this->createQuery($uid);
 		$query->page($pageindex, $pagesize);
-		$query->where(array('b.type' => array(ACCOUNT_TYPE_PC_NORMAL)));
+		$query->where(array('b.type' => array(ACCOUNT_TYPE_WEBAPP_NORMAL)));
 		$list = $query->getall();
 		$total =  $query->getLastQueryTotal();
 		return [$list, $total];

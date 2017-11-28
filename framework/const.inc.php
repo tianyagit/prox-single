@@ -35,7 +35,7 @@ define('ACCOUNT_TYPE_OFFCIAL_AUTH', 3);
 //正常接入小程序
 define('ACCOUNT_TYPE_APP_NORMAL', 4);
 //正常接入PC
-define('ACCOUNT_TYPE_PC_NORMAL', 5);
+define('ACCOUNT_TYPE_WEBAPP_NORMAL', 5);
 
 
 //授权登录接入
@@ -121,7 +121,7 @@ define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 
 define('MODULE_SUPPORT_WXAPP', 2);
 define('MODULE_SUPPORT_ACCOUNT', 2);
-define('MODULE_SUPPORT_PC', 2);
+define('MODULE_SUPPORT_WEBAPP', 2);
 
 //权限类型
 define('PERMISSION_ACCOUNT', 'system');

@@ -10,7 +10,7 @@ load()->model('account');
 $tester = new Testify('微擎1.x测试用例');
 $tester->test('添加pc', function() {
 	/* @var $pc PcTable*/
-	$pc = table('pc');
+	$pc = table('webapp');
 	$uniacid = $pc->create(array('name'=>'pc2','description'=>'pc2'));
 
 });

@@ -9,7 +9,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->classs('validator');
-load()->model('pc');
+load()->model('webapp');
 $account_info = permission_user_account_num();
 
 if($do == 'create') {
@@ -17,8 +17,8 @@ if($do == 'create') {
 		echo '非法提交';
 		return;
 	}
-	if(! pc_can_create($_W['uid'])) {
-		itoast('创建PC个数已满', url('pc/manage/list'));
+	if (!webapp_can_create($_W['uid'])) {
+		itoast('创建PC个数已满', url('webapp/manage/list'));
 	}
 	$data = array(
 		'name'=>$_GPC['name'],
@@ -26,18 +26,18 @@ if($do == 'create') {
 	);
 
 	/* @var $pc PcTable*/
-	$pc = table('pc');
-	$uniacid = $pc->create($data, $_W['uid']);
+	$webapp = table('webapp');
+	$uniacid = $webapp->create($data, $_W['uid']);
 	if($uniacid){
-		itoast('创建成功', url('pc/manage/list'));
+		itoast('创建成功', url('webapp/manage/list'));
 	}
 }
 
 if($do == 'createview') {
-	if(!pc_can_create($_W['uid'])) { //没有权限创建
-		itoast('', url('pc/manage/list'));
+	if(!webapp_can_create($_W['uid'])) { //没有权限创建
+		itoast('', url('webapp/manage/list'));
 	}
-	template('pc/create');
+	template('webapp/create');
 }
 
 /* pc 列表*/
@@ -46,14 +46,14 @@ if($do == 'list') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 	/* @var $pc PcTable*/
-	$pc = table('pc');
-	list($list, $total) = $pc->pclist($_W['uid'], $pindex, $psize);
+	$webapp = table('webapp');
+	list($list, $total) = $webapp->webapplist($_W['uid'], $pindex, $psize);
 	$pager = pagination($total, $pindex, $psize);
 
 	foreach ($list as &$item) {
 
 		$item['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
-		$item['switchurl'] = wurl('pc/home/switch', array('uniacid' => $item['uniacid']));
+		$item['switchurl'] = wurl('webapp/home/switch', array('uniacid' => $item['uniacid']));
 	}
-	template('pc/list');
+	template('webapp/list');
 }

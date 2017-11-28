@@ -333,7 +333,7 @@ $we7_file_permission = array(
 		'operator' => array(),
 	),
 	'append' => array('append*'),
-	'pc'=> array(
+	'webapp'=> array(
 		'default'=> '',
 		'vice_founder' => array(
 			'home',
