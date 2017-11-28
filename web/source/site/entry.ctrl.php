@@ -114,7 +114,6 @@ if (!is_error($site)) {
 	if (in_array($m, $sysmodule)) {
 		$site_urls = $site->getTabUrls();
 	}
-	isetcookie('__lastvisit_' . $_W['uid'], 'module', 7 * 86400);
 	/* vstart */
 	if (IMS_FAMILY == 'v') {
 		$method = 'doWeb' . ucfirst($entry['do']);

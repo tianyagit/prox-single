@@ -155,7 +155,6 @@ function checkaccount() {
 	if (empty($_W['uniacid']) || (!empty($_W['account']) && !in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !defined('IN_MODULE'))) {
 		itoast('', url('account/display'), 'info');
 	}
-	isetcookie('__lastvisit_' . $_W['uid'], 'account', 7 * 86400);
 }
 
 /**
@@ -166,7 +165,6 @@ function checkwxapp() {
 	if (empty($_W['uniacid']) || (!empty($_W['account']) && $_W['account']['type'] != ACCOUNT_TYPE_APP_NORMAL)) {
 		itoast('', url('wxapp/display'), 'info');
 	}
-	isetcookie('__lastvisit_' . $_W['uid'], 'wxapp', 7 * 86400);
 }
 
 //新版buildframes
