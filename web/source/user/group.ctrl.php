@@ -54,7 +54,7 @@ if ($do == 'post') {
 			'package' => $_GPC['package'],
 			'maxaccount' => intval($_GPC['maxaccount']),
 			'maxwxapp' => intval($_GPC['maxwxapp']),
-			'maxwebappaccount' => intval($_GPC['maxwebappaccount']),
+			'maxwebapp' => intval($_GPC['maxwebapp']),
 			'timelimit' => intval($_GPC['timelimit'])
 		);
 

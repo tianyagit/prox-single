@@ -38,7 +38,7 @@
 		<td><span ng-if="list.timelimit != 0" ng-bind="list.timelimit+'天'"></span><span ng-if="list.timelimit == 0">永久有效</span></td>
 		<td><span ng-if="list.maxaccount == 0">无权限</span><span ng-if="list.maxaccount != 0" ng-bind="list.maxaccount"></span></td>
 		<td><span ng-if="list.maxwxapp == 0">无权限</span><span ng-if="list.maxwxapp != 0" ng-bind="list.maxwxapp"></span></td>
-		<td><span ng-if="list.maxpcaccount == 0">无权限</span><span ng-if="list.maxpcaccount != 0" ng-bind="list.maxpcaccount"></span></td>
+		<td><span ng-if="list.maxwebapp == 0">无权限</span><span ng-if="list.maxwebapp != 0" ng-bind="list.maxwebapp"></span></td>
 		<td>
 			<span ng-if="list.module_nums == -1">全部</span>
 			<span ng-if="list.package != 'N;'" class="color-default" ng-bind="list.packages"></span>
@@ -53,8 +53,8 @@
 			<span ng-if="list.wxapp_nums != -1" ng-bind="list.wxapp_nums"></span>
 		</td>
 		<td>
-			<span ng-if="list.pc_nums == -1">全部</span>
-			<span ng-if="list.pc_nums != -1" ng-bind="list.pc_nums"></span>
+			<span ng-if="list.webapp_nums == -1">全部</span>
+			<span ng-if="list.webapp_nums != -1" ng-bind="list.webapp_nums"></span>
 		</td>
 		<td>
 			<div class="link-group">

@@ -15,9 +15,9 @@ class CreateAccountPc {
 	 *  执行更新
 	 */
 	public function up() {
-		if(!pdo_tableexists('account_pc')){
+		if(!pdo_tableexists('account_webapp')){
 			$sql = <<<EOT
-				CREATE TABLE `ims_account_pc` (
+				CREATE TABLE `ims_account_webapp` (
   `acid` int(11) DEFAULT NULL,
   `uniacid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT ''

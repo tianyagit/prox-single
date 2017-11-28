@@ -4,14 +4,14 @@ defined('IN_IA') or exit('Access Denied');
 
 
 
-function pc_save_last($uniacid) {
-	isetcookie('__pcuniacid', $uniacid, 7 * 86400);
+function webapp_save_last($uniacid) {
+	isetcookie('__webappuniacid', $uniacid, 7 * 86400);
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 }
 
-function pc_last_uniacid() {
+function webapp_last_uniacid() {
 	global $_GPC;
-	return isset($_GPC['__pcuniacid']) ? intval($_GPC['__pcuniacid']) : 0;
+	return isset($_GPC['__webappuniacid']) ? intval($_GPC['__webappuniacid']) : 0;
 }
 
 /**
@@ -19,15 +19,15 @@ function pc_last_uniacid() {
  * @param $uniacid
 
  */
-function pc_can_apply($uid, $uniacid) {
+function webapp_can_apply($uid, $uniacid) {
 	if($uid == 0 || $uniacid == 0) {
 		return false;
 	}
 	$account = uni_account_default($uniacid);
-	if($account['type'] != ACCOUNT_TYPE_PC_NORMAL) {
+	if ($account['type'] != ACCOUNT_TYPE_WEBAPP_NORMAL) {
 		return false;
 	}
-	if(user_is_founder($uid)) {
+	if (user_is_founder($uid)) {
 		return true;
 	}
 	$user = account_owner($uniacid);
@@ -38,12 +38,12 @@ function pc_can_apply($uid, $uniacid) {
  */
 function webapp_get_uniacid($uid = 0, $uniacid = 0) {
 	if(!$uniacid) {
-		$uniacid = pc_last_uniacid();
+		$uniacid = webapp_last_uniacid();
 	}
 	if(!$uniacid) {
 		return 0;
 	}
-	if(pc_can_apply($uid, $uniacid)) {
+	if(webapp_can_apply($uid, $uniacid)) {
 		return $uniacid;
 	}
 	return 0;
@@ -57,10 +57,10 @@ function webapp_get_uniacid($uid = 0, $uniacid = 0) {
  *
  * @since version
  */
-function pc_can_create($uid) {
+function webapp_can_create($uid) {
 	if(user_is_founder($uid)) { //创始人可以创建
 		return true;
 	}
 	$data = permission_user_account_num($uid);
-	return isset($data['pc_limit']) && $data['pc_limit'] > 0;
+	return isset($data['webapp_limit']) && $data['webapp_limit'] > 0;
 }

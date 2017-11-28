@@ -26,18 +26,7 @@ $we7_system_menu['webapp'] = array(
 					'permission_name' => 'mc_member',
 				)
 			),
-		),
-		'profile' => array(
-			'title' => '配置',
-			'menu' => array(
-				'payment' => array(
-					'title' => '支付参数',
-					'url' => url('profile/payment'),
-					'icon' => 'wi wi-pay-setting',
-					'permission_name' => 'webapp_pay_setting',
-				),
-			),
-		),
+		)
 	),
 );
 $we7_system_menu['account'] = array(

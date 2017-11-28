@@ -711,11 +711,13 @@ function user_group_format($lists) {
 		if (empty($package)) {
 			$lists[$key]['module_nums'] = '系统默认';
 			$lists[$key]['wxapp_nums'] = '系统默认';
+			$lists[$key]['webapp_nums'] = '系统默认';
 			continue;
 		}
 		if (is_array($package) && in_array(-1, $package)) {
 			$lists[$key]['module_nums'] = -1;
 			$lists[$key]['wxapp_nums'] = -1;
+			$lists[$key]['webapp_nums'] = -1;
 			continue;
 		}
 		$names = array();
@@ -762,7 +764,7 @@ function user_list_format($users) {
 		}
 		$user['maxaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxaccount']);
 		$user['maxwxapp'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwxapp']);
-		$user['maxwebappaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwebappaccount']);
+		$user['maxwebapp'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwebapp']);
 		$user['groupname'] = $group['name'];
 		unset($user);
 	}
