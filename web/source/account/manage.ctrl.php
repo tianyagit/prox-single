@@ -25,7 +25,7 @@ if ($do == 'display') {
 	
 	$type_condition = array(
 		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL),
-		ACCOUNT_TYPE_PC_NORMAL => array(ACCOUNT_TYPE_PC_NORMAL),
+		ACCOUNT_TYPE_WEBAPP_NORMAL => array(ACCOUNT_TYPE_WEBAPP_NORMAL),
 		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
 	);
 	$account_table->searchWithType($type_condition[ACCOUNT_TYPE]);

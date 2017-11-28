@@ -173,7 +173,6 @@ if($do == 'base') {
 	$account['highest_visit'] = empty($statistics_setting['statistics']['founder']) ? 0 : $statistics_setting['statistics']['founder'];
 	$uniaccount = array();
 	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
-
 	template('account/manage-base' . ACCOUNT_TYPE_TEMPLATE);
 }
 

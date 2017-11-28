@@ -106,14 +106,14 @@
 </div>
 <script>
 	angular.module('accountApp').value('config', {
-			founder : {if $_W['isfounder']}true{else}false{/if},
+		founder : {if $_W['isfounder']}true{else}false{/if},
 		owner : {if $state == 'owner'}true{else}false{/if},
-	account: {php echo !empty($account) ? json_encode($account) : 'null'},
-	uniaccount: {php echo !empty($uniaccount) ? json_encode($uniaccount) : 'null'},
-	headimgsrc: "{php echo $headimgsrc}",
+		account: {php echo !empty($account) ? json_encode($account) : 'null'},
+		uniaccount: {php echo !empty($uniaccount) ? json_encode($uniaccount) : 'null'},
+		headimgsrc: "{php echo $headimgsrc}",
 		qrcodeimgsrc: "{php echo $qrcodeimgsrc}",
 		links: {
-		basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid, 'account_type' => ACCOUNT_TYPE_APP_NORMAL))}",
+			basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid, 'account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL))}",
 			siteroot: "{php echo str_replace('http://', 'https://', $_W['siteroot'])}",
 	},
 	});
