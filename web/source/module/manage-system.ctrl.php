@@ -23,19 +23,23 @@ if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_
 	itoast('无权限操作！', referer(), 'error');
 }
 
-if ($do == 'set_site_welcome_module') {
-	if (!$_W['isfounder']) {
-		iajax(1, '非法操作');
-	}
-	if (!empty($_GPC['name'])) {
-		$site = WeUtility::createModuleSite($_GPC['name']);
-		if (!method_exists($site, 'systemWelcomeDisplay')) {
-			iajax(1, '应用未实现系统首页功能！');
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if ($do == 'set_site_welcome_module') {
+		if (!$_W['isfounder']) {
+			iajax(1, '非法操作');
 		}
+		if (!empty($_GPC['name'])) {
+			$site = WeUtility::createModuleSite($_GPC['name']);
+			if (!method_exists($site, 'systemWelcomeDisplay')) {
+				iajax(1, '应用未实现系统首页功能！');
+			}
+		}
+		setting_save(trim($_GPC['name']), 'site_welcome_module');
+		iajax(0);
 	}
-	setting_save(trim($_GPC['name']), 'site_welcome_module');
-	iajax(0);
 }
+/* xend */
 
 if ($do == 'subscribe') {
 	$uninstallModules = module_get_all_unistalled($status);
