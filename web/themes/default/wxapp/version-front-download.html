@@ -142,7 +142,8 @@
 		'version_id' : {$version_id},
 		'default_appjson' : '{$default_appjson}',
 		'save_url' : "{php echo url('wxapp/front-download/custom_save')}",
-		'default_url' : "{php echo url('wxapp/front-download/custom_default')}"
+		'default_url' : "{php echo url('wxapp/front-download/custom_default')}",
+		'convert_img_url' : "{php echo url('wxapp/front-download/custom_convert_img')}",
 	});
 	angular.module('we7codeAppjsonApp').controller('code_appjson_ctrl',
 		['$scope', '$q', 'config', '$http', function ($scope, $q, config, $http) {
@@ -159,8 +160,8 @@
 		$('body').on('click', '.js-image', function(){
 			var index = $(this).data('index');
 			var pathname = $(this).data('selected') == '0' ? 'iconPath' : 'selectedIconPath';
-			console.log($(this));
 			util.image({}, function(item){
+				console.log(item);
 				$scope.tabBar.list[index][pathname] = item.url;
 				$scope.$digest();
 			});

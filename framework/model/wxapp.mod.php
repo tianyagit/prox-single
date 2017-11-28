@@ -485,7 +485,8 @@ function wxapp_code_generate($version_id, $default = true) {
 		'siteinfo' => $siteinfo,
 		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
 	);
-	$data = $api->post('wxapp', 'upload', $commit_data,
+
+	$data = $api->post('wxapp', 'upload2', $commit_data,
 		'json', false);
 
 	return $data;
@@ -722,6 +723,17 @@ function wxapp_code_custom_appjson_tobase64($version_id) {
 	return null;
 }
 
+function wxapp_code_path_convert($att_id) {
+	load()->classs('image');
+	$attchid = intval($att_id);
+	/* @var  $attachment  AttachmentTable */
+	$att_table = table('attachment');
+	$attachment = $att_table->local(true)->getById($attchid);
+	if($attachment) {
+		$url = tomedia($attachment['attachment']);
+		Image::create($url)->resize(81,81)->saveTo();
+	}
+}
 /**
  *  路径转base64 保存
  * @param $path 图片路径
