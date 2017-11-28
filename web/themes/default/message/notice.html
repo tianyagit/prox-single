@@ -41,8 +41,8 @@
 		<td>
 			<div class="link-group">
 				<a href="javascript:;" ng-click="operate(list.id, links.order_link)" ng-if="list.type==1">查看我的订单</a>
-				<a href="javascript:;" ng-click="operate(list.id, links.account_expire_link)" ng-if="list.type==2 && list.account_type == 1">查看公众号</a>
-				<a href="javascript:;" ng-click="operate(list.id, links.wechat_expire_link)" ng-if="list.type==2 && list.account_type == 4">查看小程序</a>
+				<a href="javascript:;" ng-click="operate(list.id, links.account_expire_link)" ng-if="list.type==2">查看公众号</a>
+				<a href="javascript:;" ng-click="operate(list.id, links.wechat_expire_link)" ng-if="list.type==5">查看小程序</a>
 				<a href="javascript:;" ng-click="operate(list.id, links.register_link)" ng-if="list.type==4 && list.status==1">查看我的待审核用户</a>
 			</div>
 		</td>

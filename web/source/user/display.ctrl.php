@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
-load()->model('system');
+load()->model('message');
 
 $dos = array('display', 'operate');
 $do = in_array($do, $dos) ? $do: 'display';
@@ -16,7 +16,7 @@ $founders = explode(',', $_W['config']['setting']['founder']);
 
 if ($do == 'display') {
 	$message_id = $_GPC['message_id'];
-	system_message_notice_read($message_id);
+	message_notice_read($message_id);
 
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
