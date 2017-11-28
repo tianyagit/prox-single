@@ -2,7 +2,7 @@
 <ul class="we7-page-tab">
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
-		{$_W['isfounder'] && uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+		{if $_W['isfounder'] && uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
 		<li {if $type == MESSAGE_ORDER_TYPE}class="active" {/if}><a href="{php echo url('message/notice', array('type' => MESSAGE_ORDER_TYPE))}">订单消息</a></li>
 		{/if}
 	{/if}
