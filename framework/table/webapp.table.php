@@ -42,6 +42,14 @@ class WebappTable extends We7Table {
 		$acid = pdo_insertid();
 		pdo_update('uni_account', array('default_acid'=>$acid), array('uniacid'=>$uniacid));
 		pdo_insert('account_webapp', array('uniacid'=>$uniacid, 'acid'=>$acid, 'name'=>$name));
+
+		$unisettings['creditnames'] = array('credit1' => array('title' => '积分', 'enabled' => 1), 'credit2' => array('title' => '余额', 'enabled' => 1));
+		$unisettings['creditnames'] = iserializer($unisettings['creditnames']);
+		$unisettings['creditbehaviors'] = array('activity' => 'credit1', 'currency' => 'credit2');
+		$unisettings['creditbehaviors'] = iserializer($unisettings['creditbehaviors']);
+		$unisettings['uniacid'] = $uniacid;
+		pdo_insert('uni_settings', $unisettings);
+
 		$this->createLog($uniacid, $uid);
 		return $uniacid;
 	}
