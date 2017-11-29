@@ -56,6 +56,20 @@
 				</div>
 			</td>
 		</tr>
+		<!-- xstart -->
+		{if IMS_FAMILY == 'x'}
+		<tr>
+			<td class="table-label">月访问总次数</td>
+			<td ng-if="account.highest_visit"><span ng-bind="account.highest_visit"></span><span class="color-gray"> 次 / 月</span></td>
+			<td ng-if="!account.highest_visit">不限次数</span></td>
+			<td>
+				{if user_is_founder($_W['uid'])}
+				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#visit" ng-click="editInfo('highest_visit', account.highest_visit)">修改</a></div>
+				{/if}
+			</td>
+		</tr>
+		{/if}
+		<!-- xend -->
 		<tr>
 			<td class="table-label">到期时间</td>
 			<td><span ng-bind="account.end"></span><span class="color-gray">（随该公众号主管理员的到期时间，未设置主管理员时默认为创始人）</span></td>
