@@ -51,10 +51,10 @@ function stat_visit_info($type, $module = '', $daterange = array()) {
 }
 
 /**
- * 统计整体访问信息
+ * 统计当前公众号整体访问信息
  */
 function stat_all_visit_statistics($data) {
-	$modules = uni_modules();
+	$modules = stat_modules_except_system();
 	$modules_count = count($modules);
 	$result = array(
 		'visit_sum' => 0,
