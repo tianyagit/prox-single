@@ -128,7 +128,7 @@
 		<div class="left-menu">
 			<div class="left-menu-content">
 				{loop $this->left_menus $key $menus}
-				{if $key == 'store_manage' && !($_W['isfounder'] && !user_is_vice_founder())}
+				{if ($key == 'store_manage' || $key == 'store_payments') && !($_W['isfounder'] && !user_is_vice_founder())}
 					{php continue;}
 				{/if}
 				<div class="panel panel-menu">

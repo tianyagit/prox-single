@@ -107,7 +107,7 @@ class StoreModuleSite extends WeModuleSite {
 		$this->storeIsOpen();
 		global $_GPC, $_W;
 		load()->model('module');
-		load()->model('system');
+		load()->model('message');
 
 		$operates = array('display', 'change_price', 'delete');
 		$operate = $_GPC['operate'];
@@ -125,7 +125,7 @@ class StoreModuleSite extends WeModuleSite {
 		if ($operate == 'display') {
 			if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
 				$message_id = $_GPC['message_id'];
-				system_message_notice_read($message_id);
+				message_notice_read($message_id);
 			}
 
 			$pindex = max(1, intval($_GPC['page']));
@@ -730,6 +730,17 @@ class StoreModuleSite extends WeModuleSite {
 					),
 				),
 			),
+			'store_payments' => array(
+				'title' => '收入明细',
+				'menu' => array(
+					'payments' => array (
+						'title' => '收入明细',
+						'url' => $this->createWebUrl('payments', array('direct' => 1)),
+						'icon' => 'wi wi-sale-record',
+						'type' => 'payments',
+					)
+				)
+			),
 		);
 		return $menu;
 	}
@@ -750,6 +761,17 @@ class StoreModuleSite extends WeModuleSite {
 				iajax(2);
 			}
 		}
+	}
+
+	public function doWebPayments() {
+		global $_W, $_GPC;
+		$pindex = max(1, $_GPC['page']);
+		$pagesize = 20;
+		$store_table = table('store');
+		$payments_list = $store_table->searchPaymentsOrder();
+		$pager = pagination(count($payments_list), $pindex, $pagesize);
+		$payments_list = array_slice($payments_list, ($pindex - 1) * $pagesize, $pagesize);
+		include $this->template ('goodspayments');
 	}
 
 }
