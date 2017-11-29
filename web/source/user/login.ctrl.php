@@ -40,8 +40,12 @@ function _login($forward = '') {
 		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
 	}
 
-	if (is_error($member)) {
-		itoast($member['message'], url('user/login'), '');
+	if (!empty($_W['user'])) {
+		if (is_error($member)) {
+			itoast($member['message'], url('user/profile/bind'), '');
+		} else {
+			itoast('绑定成功', url('user/profile/bind'), '');
+		}
 	}
 
 	$record = user_single($member);
