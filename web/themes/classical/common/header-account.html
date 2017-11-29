@@ -1,4 +1,4 @@
-<div class="menu-title">公众号</div>
+<div class="menu-title"><i class="wi wi-white-collar"></i>公众号</div>
 <div class="account-info">
 	<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo">
 	<div class="account-name">{$_W['account']['name']}</div>
@@ -19,14 +19,14 @@
 			{if $_W['account']['level'] == 4}已认证{/if}
 			{/if}
 		</span>
-		<span class="account-isconnect">
+		<div class="account-isconnect">
 			{if $_W['uniaccount']['isconnect'] == 0}
 			未接入
-			<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="text-danger">立即接入</a>
+			<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="text-danger"> 立即接入</a>
 			{else}
 			已接入
 			{/if}
-		</span>
+		</div>
 	</div>
 </div>
 <div class="account-operate">
