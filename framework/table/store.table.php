@@ -166,4 +166,6 @@ class StoreTable extends We7Table {
 	public function searchPaymentsOrder() {
 		return $this->query->from('site_store_order', 'a')->leftjoin('site_store_goods', 'b')->on('a.goodsid', 'b.id')->where('a.type', 3)->orderby('a.createtime', 'desc')->getall();
 	}
+		print_r($list);die;
+	}
 }
