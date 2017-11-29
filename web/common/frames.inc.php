@@ -21,7 +21,7 @@ $we7_system_menu['webapp'] = array(
 			'menu' => array(
 				'mc_member' => array(
 					'title' => '会员管理',
-					'url' => url('mc/member'),
+					'url' => url('mc/member', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
 					'icon' => 'wi wi-fans',
 					'permission_name' => 'mc_member',
 				)
