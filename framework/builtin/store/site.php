@@ -107,7 +107,7 @@ class StoreModuleSite extends WeModuleSite {
 		$this->storeIsOpen();
 		global $_GPC, $_W;
 		load()->model('module');
-		load()->model('system');
+		load()->model('message');
 
 		$operates = array('display', 'change_price', 'delete');
 		$operate = $_GPC['operate'];
@@ -125,7 +125,7 @@ class StoreModuleSite extends WeModuleSite {
 		if ($operate == 'display') {
 			if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
 				$message_id = $_GPC['message_id'];
-				system_message_notice_read($message_id);
+				message_notice_read($message_id);
 			}
 
 			$pindex = max(1, intval($_GPC['page']));
