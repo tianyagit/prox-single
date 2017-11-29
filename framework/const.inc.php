@@ -148,9 +148,11 @@ define('WXAPP_MODULE', 3);
 define('MATERIAL_LOCAL', 'local');//服务器素材类型
 define('MATERIAL_WEXIN', 'perm');//微信素材类型
 
-//自定义菜单类型
+//自定义菜单之默认菜单
 define('MENU_CURRENTSELF', 1);
+//自定义菜单之默认菜单的历史记录
 define('MENU_HISTORY', 2);
+//自定义菜单之个性化菜单
 define('MENU_CONDITIONAL', 3);
 
 //用户状态
