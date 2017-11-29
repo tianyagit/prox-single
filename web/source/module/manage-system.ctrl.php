@@ -642,7 +642,7 @@ if ($do == 'installed') {
 			if (!empty($module['issystem'])
 				|| (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2)
 				|| (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2)
-				|| (ACCOUNT_TYPE == ACCOUNT_TYPE_PC_NORMAL && $module['pc_support'] != 2)) {
+				|| (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL && $module['webapp_support'] != 2)) {
 				unset($module_list[$key]);
 			}
 
