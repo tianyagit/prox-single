@@ -47,7 +47,10 @@ function _login($forward = '') {
 			itoast('绑定成功', url('user/profile/bind'), '');
 		}
 	}
-
+	
+	if (is_error($member)) {
+		itoast($member['message'], url('user/login'), '');
+	}
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
