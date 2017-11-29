@@ -1,43 +1,5 @@
 {template 'common/header-base'}
 <div class="skin-classical" data-skin="classical">
-<div class="related-info-drop-right animated fadeInLeft hidden">
-	<ul>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wxapp"></i>小程序小程序</span>
-			</a>
-		</li>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wechat"></i>这是app</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-			</a>
-		</li>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wxapp"></i>小程序小程序</span>
-			</a>
-		</li>
-	</ul>
-	<script>
-		$(function(){
-			if($(".left-menu, .related-info").length == 2){
-				var top = $('.left-menu .related-info').offset().top;
-				var left = $('.left-menu .related-info').offset().left;
-				var width = $('.left-menu .related-info').outerWidth(true);
-				$('.related-info-drop-right').css({left: (left + width) + 'px', top: top + 'px'});
-				$('.left-menu .drop-menu-right').click(function(){
-					$('.related-info-drop-right').toggle();
-				});
-			}
-		});
-	</script>
-</div>
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 <div class="first-sidebar">
 		<div class="{if !empty($frames['section']['platform_module_menu']['plugin_menu'])}plugin-head{/if}">
@@ -57,9 +19,9 @@
 					{/loop}
 				</ul>
 				<ul class="user-info">
-					<li class="dropup">
-						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="wi wi-user"></i>{$_W['user']['username']}</a>
-						<ul class="dropdown-menu color-gray" role="menu">
+					<li class="dropdown">
+						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="wi wi-user"></i>{$_W['user']['username']}<span class="caret"></span></a>
+						<ul class="dropdown-menu color-gray dropdown-menu-right" role="menu">
 							<li>
 								<a href="{url 'user/profile'}" target="_blank"><i class="wi wi-account color-gray"></i> 我的账号</a>
 							</li>
@@ -84,78 +46,71 @@
 			{/if}
 		</div>
 </div>
-<!--帮助和服务-->
-<div class="right-sidebar">
-	<div class="help-service">
-		<!--<div class="right-sidebar-top">-->
-			<!--<span class="wi wi-explain-sign"></span>帮助和服务-->
-		<!--</div>-->
-		<!--<div class="right-sidebar-content">-->
-			<!--<div class="content">-->
-				<!--<div><a href="javascript:;"></a></div>-->
-			<!--</div>-->
-		<!--</div>-->
-	</div>
-</div>
-<!--end 帮助和服务-->
 <div class="main main-classical">
+	<div class="right-fixed-top"></div>
 {if !defined('IN_MESSAGE')}
 <div class="container">
 	{if in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 	<div class="panel panel-content main-panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
 	<div class="panel-body clearfix main-panel-body">
-		<div class="left-menu">
+		<div class="left-menu-container">
+			<div class="left-menu">
 				<div class="left-menu-top">
 					{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
-						<div class="apply-fixed-top">
-							{template 'common/header-module'}
-						</div>
+					<div class="apply-fixed-top">
+						{template 'common/header-module'}
+					</div>
 					{else}
-						<div class="left-menu-top-panel">
-							{template 'common/header-' . FRAME}
-						</div>
+					<div class="left-menu-top-panel">
+						{template 'common/header-' . FRAME}
+					</div>
 					{/if}
 				</div>
-			{if empty($frames['section']['platform_module_menu']['plugin_menu'])}
+				{if empty($frames['section']['platform_module_menu']['plugin_menu'])}
 				{loop $frames['section'] $frame_section_id $frame_section}
 				{if !isset($frame_section['is_display']) || !empty($frame_section['is_display'])}
 				<div class="panel panel-menu">
-					<ul class="list-group">
+					{if $frame_section['title']}
+					<div class="panel-heading">
+						<span class="" data-toggle="collapse" data-target="#frame-{$frame_section_id}" onclick="util.cookie.set('menu_fold_tag:{$frame_section_id}', util.cookie.get('menu_fold_tag:{$frame_section_id}') == 1 ? 0 : 1)">{$frame_section['title']}<i class="wi wi-down-sign-s pull-right"></i></span>
+					</div>
+					{/if}
+					<ul class="list-group collapse {if $_GPC['menu_fold_tag:'.$frame_section_id] == 0}in{/if}" id="frame-{$frame_section_id}" >
 						{loop $frame_section['menu'] $menu_id $menu}
 						{if !empty($menu['is_display'])}
-							{if $menu_id == 'platform_module_more'}
-							<li class="list-group-item">
-								<a href="{url 'module/manage-account'}" target="_blank">
-									<div class="icon-more"><span class="wi wi-plus"></span></div>
-									<div>更多应用</div>
-								</a>
-							</li>
+						{if $menu_id == 'platform_module_more'}
+						<li class="list-group-item">
+							<a href="{url 'module/manage-account'}" target="_blank" class="text-over">
+								<span class="icon-more"><i class="wi wi-plus"></i></span>
+								更多应用
+							</a>
+						</li>
+						{else}
+						<li class="list-group-item {if $menu['active']}active{/if}">
+							<a href="{$menu['url']}" class="text-over" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
+							{if $menu['icon']}
+							{if $frame_section_id == 'platform_module'}
+							<img src="{$menu['icon']}"/>
 							{else}
-							<li class="list-group-item {if $menu['active']}active{/if}">
-								<a href="{$menu['url']}" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
-								{if $menu['icon']}
-									{if $frame_section_id == 'platform_module'}
-									<img src="{$menu['icon']}"/>
-									{else}
-									<i class="{$menu['icon']}"></i>
-									{/if}
-								{/if}
-								<div class="text-over">{$menu['title']}</div>
-								</a>
-							</li>
+							<i class="{$menu['icon']}"></i>
 							{/if}
+							{/if}
+							{$menu['title']}
+							</a>
+						</li>
+						{/if}
 						{/if}
 						{/loop}
 					</ul>
 				</div>
 				{/if}
 				{/loop}
-			{else}
+				{else}
 				<div class="plugin-menu clearfix">
 					<div class="plugin-menu-main pull-left">
 						<ul class="list-group">
 							<li class="list-group-item{if $_W['current_module']['name'] == $frames['section']['platform_module_menu']['plugin_menu']['main_module']} active{/if}">
-								<a href="{php echo url('home/welcome/ext', array('m' => $frames['section']['platform_module_menu']['plugin_menu']['main_module'], 'version_id' => intval($_GPC['version_id'])))}">
+								<a href="{php echo url('home/welcome/ext', array('m' => $frames['section']['platform_module_menu']['plugin_menu']['main_module']))}">
 									<i class="wi wi-main-apply"></i>
 									<div>主应用</div>
 								</a>
@@ -165,7 +120,7 @@
 							</li>
 							{loop $frames['section']['platform_module_menu']['plugin_menu']['menu'] $plugin_name $plugin}
 							<li class="list-group-item{if $_W['current_module']['name'] == $plugin_name} active{/if}">
-								<a href="{php echo url('home/welcome/ext', array('m' => $plugin_name, 'version_id' => intval($_GPC['version_id'])))}">
+								<a href="{php echo url('home/welcome/ext', array('m' => $plugin_name))}">
 									<img src="{$plugin['icon']}" alt="" class="img-icon" />
 									<div>{$plugin['title']}</div>
 								</a>
@@ -176,35 +131,52 @@
 						{php unset($plugin);}
 					</div>
 					<div class="plugin-menu-sub pull-left">
+
 						{loop $frames['section'] $frame_section_id $frame_section}
-						{if !isset($frame_section['is_display']) || !empty($frame_section['is_display'])}
-							<div class="panel panel-menu">
-								<ul class="list-group>
-									{loop $frame_section['menu'] $menu_id $menu}
-									{if !empty($menu['is_display'])}
-									{if $menu_id == 'platform_module_more'}
-									<li class="list-group-item">
-										<a href="{url 'module/manage-account'}" target="_blank">
-											<div><span class="wi wi-plus"></span></div>
-											更多应用</a>
-									</li>
-									{else}
-									<li class="list-group-item {if $menu['active']}active{/if}">
-										<a href="{$menu['url']}" class="text-over" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
-										{$menu['title']}
-										</a>
-									</li>
+							{if !isset($frame_section['is_display']) || !empty($frame_section['is_display'])}
+								<div class="panel panel-menu">
+									{if $frame_section['title']}
+									<div class="panel-heading">
+										<span class="collapsed" data-toggle="collapse" data-target="#frame0-{$frame_section_id}" aria-expanded="true" aria-controls="frame0-{$frame_section_id}">{$frame_section['title']}<i class="wi wi-down-sign-s pull-right"></i></span>
+									</div>
 									{/if}
-									{/if}
-									{/loop}
-								</ul>
-							</div>
-						{/if}
+									<ul class="list-group panel-collapse collapse in" id="frame0-{$frame_section_id}">
+										{loop $frame_section['menu'] $menu_id $menu}
+											{if !empty($menu['is_display'])}
+												{if $menu_id == 'platform_module_more'}
+												<li class="list-group-item list-group-more">
+													<a href="{url 'module/manage-account'}" target="_blank"><span class="label label-more">更多应用</span></a>
+												</li>
+												{else}
+												<li class="list-group-item {if $menu['active']}active{/if}">
+													<a href="{$menu['url']}" class="text-over" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
+													{$menu['title']}
+													</a>
+												</li>
+												{/if}
+											{/if}
+										{/loop}
+									</ul>
+								</div>
+							{/if}
 						{/loop}
 					</div>
 				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
+		<script>
+			$(function(){
+				$('.left-menu-container').slimScroll({
+					width: '210px',
+					height: '100vh',
+					opacity: .4,
+					alwaysVisible: true,
+					color: '#aaa',
+				});
+			});
+		</script>
 		<div class="right-content">
 			<div class="content">
 	{/if}
