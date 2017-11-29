@@ -117,7 +117,9 @@ define('CACHE_KEY_MEMBER_INFO', 'memberinfo:%s');
 define('CACHE_KEY_UNI_GROUP', 'uni_group');
 define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 
+//模块是否支持小程序
 define('MODULE_SUPPORT_WXAPP', 2);
+//模块是否支持公众号应用
 define('MODULE_SUPPORT_ACCOUNT', 2);
 
 //权限类型
