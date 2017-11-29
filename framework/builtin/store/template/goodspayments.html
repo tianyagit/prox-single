@@ -1,0 +1,74 @@
+{template 'header'}
+<div id="js-goods-seller">
+	<table class="table we7-table vertical-middle">
+		<col width="105px"/>
+		<col/>
+		<col width="170px"/>
+		<col width="220px"/>
+		<tr>
+			<th colspan="2">订单号</th>
+			<th>日期</th>
+			<th class="text-right">类型</th>
+			<th class="text-right">商品</th>
+			<th class="text-right">金额</th>
+		</tr>
+		{if !empty($goods_list)}
+		{loop $goods_list $goods}
+		<tr>
+			<td>
+				{if $_GPC['type'] == STORE_TYPE_API}
+				<div class="icon icon-api"><span class="wi wi-api"></span></div>
+				{elseif in_array($_GPC['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))}
+				<div class="icon icon-api"><span class="wi wi-appjurisdiction"></span></div>
+				{else}
+				<img src="{$goods['module_info']['logo']}" alt="" width="60" height="60"/>
+				{/if}
+			</td>
+			<td>
+				<div class="we7-margin-bottom-sm">
+					{if $type == STORE_TYPE_PACKAGE}
+					{$groups[$goods['module_group']]['name']}
+					{elseif $type == STORE_TYPE_WXAPP}
+					创建{$goods['wxapp_num']}个小程序
+					{elseif $type == STORE_TYPE_ACCOUNT}
+					创建{$goods['account_num']}个公众号
+					{else}
+					{$goods['title']}
+					{/if}</div>
+				<div class="color-gray text-over" style="width:460px">{$good['description']}</div>
+			</td>
+			<td>
+				{$goods['price']}元 /
+				{if $goods['unit'] == 'month'}{if $type == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $type == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}月
+				{elseif $goods['unit'] == 'ten_thousand'}
+				{$goods['api_num']}万次
+				{elseif $goods['unit'] == 'day'}{if $type == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $type == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}天
+				{elseif $goods['unit'] == 'year'}{if $type == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $type == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}年
+				{/if}
+			</td>
+			<td ng-if="!status">
+				<div class="link-group">
+					<a href="{php echo $this->createWebUrl('goodspost', array('id' => $goods['id'], 'type' => $type, 'direct' => 1))}">编辑</a>
+					<a href="{php echo $this->createWebUrl('goodsseller', array('operate' => 'changestatus', 'id' => $goods['id'], 'direct' => 1))}">上架</a>
+					<a href="{php echo $this->createWebUrl('goodsseller', array('operate' => 'delete', 'id' => $goods['id'], 'direct' => 1))}" class="del">删除</a>
+				</div>
+			</td>
+			<td ng-if="status">
+				<div class="link-group">
+					<a href="{php echo $this->createWebUrl('goodspost', array('id' => $goods['id'], 'type' => $type, 'direct' => 1))}">编辑</a>
+					<a href="{php echo $this->createWebUrl('goodsseller', array('operate' => 'changestatus', 'id' => $goods['id'], 'direct' => 1))}">下架</a>
+				</div>
+			</td>
+		</tr>
+		{/loop}
+		{else}
+		<tr>
+			<td colspan="4" class="text-center">暂无数据</td>
+		</tr>
+		{/if}
+	</table>
+	<div class="pull-right">
+		{$pager}
+	</div>
+</div>
+{template 'common/footer'}

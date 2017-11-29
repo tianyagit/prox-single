@@ -162,4 +162,10 @@ class StoreTable extends We7Table {
 		$count = $this->query->from('site_store_create_account', 'a')->leftjoin('account', 'b')->on('a.uniacid', 'b.uniacid')->where('a.uid', $uid)->where('b.type', 4)->where('b.isdeleted', 0)->select('count(*) as count')->get('count');
 		return $count['count'];
 	}
+
+	public function searchPaymentsOrder() {
+//		$list = $this->query->from('site_store_order', 'a')->leftjoin('site_store_goods', 'b')->on(array('a.goodsid', 'b.id'))->where('a.type', 3)->getall();
+		$list = $this->query->from('site_store_order')->getall();
+		print_r($list);die;
+	}
 }

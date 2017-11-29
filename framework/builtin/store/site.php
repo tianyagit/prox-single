@@ -730,6 +730,17 @@ class StoreModuleSite extends WeModuleSite {
 					),
 				),
 			),
+			'store_payments' => array(
+				'title' => '收入明细',
+				'menu' => array(
+					'payments' => array (
+						'title' => '收入明细',
+						'url' => $this->createWebUrl('payments', array('direct' => 1)),
+						'icon' => 'wi wi-sale-record',
+						'type' => 'payments',
+					)
+				)
+			),
 		);
 		return $menu;
 	}
@@ -750,6 +761,13 @@ class StoreModuleSite extends WeModuleSite {
 				iajax(2);
 			}
 		}
+	}
+
+	public function doWebPayments() {
+		global $_W;
+		$store_table = table('store');
+		$payments_list = $store_table->searchPaymentsOrder();
+		include $this->template ('goodspayments');
 	}
 
 }
