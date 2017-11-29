@@ -296,7 +296,6 @@ if ($do == 'upgrade') {
 			}
 		}
 	}
-
 	if (ONLINE_MODULE) {
 		if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
 			unlink($module_path . $manifest['uninstall']);
