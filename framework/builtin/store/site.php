@@ -764,9 +764,13 @@ class StoreModuleSite extends WeModuleSite {
 	}
 
 	public function doWebPayments() {
-		global $_W;
+		global $_W, $_GPC;
+		$pindex = max(1, $_GPC['page']);
+		$pagesize = 20;
 		$store_table = table('store');
 		$payments_list = $store_table->searchPaymentsOrder();
+		$pager = pagination(count($payments_list), $pindex, $pagesize);
+		$payments_list = array_slice($payments_list, ($pindex - 1) * $pagesize, $pagesize);
 		include $this->template ('goodspayments');
 	}
 
