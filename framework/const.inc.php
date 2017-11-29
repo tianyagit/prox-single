@@ -117,7 +117,9 @@ define('CACHE_KEY_MEMBER_INFO', 'memberinfo:%s');
 define('CACHE_KEY_UNI_GROUP', 'uni_group');
 define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 
+//模块是否支持小程序
 define('MODULE_SUPPORT_WXAPP', 2);
+//模块是否支持公众号应用
 define('MODULE_SUPPORT_ACCOUNT', 2);
 
 //权限类型
@@ -195,6 +197,7 @@ define('USER_REGISTER_TYPE_MOBILE', 3);
 //消息提醒类型
 define('MESSAGE_ORDER_TYPE', 1);
 define('MESSAGE_ACCOUNT_EXPIRE_TYPE', 2);
+define('MESSAGE_WECHAT_EXPIRE_TYPE', 5);
 define('MESSAGE_WORKORDER_TYPE', 3);
 define('MESSAGE_REGISTER_TYPE', 4);
 

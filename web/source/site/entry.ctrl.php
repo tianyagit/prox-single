@@ -36,13 +36,28 @@ if (!$entry['direct']) {
 		$referer['c'] == 'module' && in_array($referer['a'], array('manage-account', 'permission')))) {
 			itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
-	if (empty($_W['uniacid']) && $entry['entry'] != 'welcome') {
-		if (!empty($_GPC['version_id'])) {
-			itoast('', url('wxapp/display'));
-		} else {
-			itoast('', url('account/display'));
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if (empty($_W['uniacid']) && $entry['entry'] != 'welcome') {
+			if (!empty($_GPC['version_id'])) {
+				itoast('', url('wxapp/display'));
+			} else {
+				itoast('', url('account/display'));
+			}
 		}
 	}
+	/* xend */
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		if (empty($_W['uniacid'])) {
+			if (!empty($_GPC['version_id'])) {
+				itoast('', url('wxapp/display'));
+			} else {
+				itoast('', url('account/display'));
+			}
+		}
+	}
+	/* vend */
 
 	$module = module_fetch($entry['module']);
 	if (empty($module)) {
@@ -82,9 +97,14 @@ $_W['current_module'] = $modules[$entry['module']];
 $site = WeUtility::createModuleSite($entry['module']);
 
 define('IN_MODULE', $entry['module']);
-if ($entry['entry'] == 'welcome') {
-	define('SYSTEM_WELCOME_MODULE', true);
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if ($entry['entry'] == 'welcome') {
+		define('SYSTEM_WELCOME_MODULE', true);
+	}
 }
+/* xend */
+
 
 if (!is_error($site)) {
 	if ($_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) {
@@ -94,8 +114,17 @@ if (!is_error($site)) {
 	if (in_array($m, $sysmodule)) {
 		$site_urls = $site->getTabUrls();
 	}
-	$do_function = $entry['entry'] == 'welcome' ? 'doSystem' : 'doWeb';
-	$method = $do_function . ucfirst($entry['do']);
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		$method = 'doWeb' . ucfirst($entry['do']);
+	}
+	/* vend */
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$do_function = $entry['entry'] == 'welcome' ? 'doSystem' : 'doWeb';
+		$method = $do_function . ucfirst($entry['do']);
+	}
+	/* xend */
 	exit($site->$method());
 }
 itoast("访问的方法 {$method} 不存在.", referer(), 'error');

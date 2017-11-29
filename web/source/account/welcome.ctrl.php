@@ -12,12 +12,16 @@ if (!empty($_W['uid'])) {
 
 /*获取站点配置信息*/
 $settings = $_W['setting'];
-if (!empty($settings['site_welcome_module'])) {
-	$site = WeUtility::createModuleSite($settings['site_welcome_module']);
-	if (!is_error($site)) {
-		exit($site->systemWelcomeDisplay());
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if (!empty($settings['site_welcome_module'])) {
+		$site = WeUtility::createModuleSite($settings['site_welcome_module']);
+		if (!is_error($site)) {
+			exit($site->systemWelcomeDisplay());
+		}
 	}
 }
+/* xend */
 $copyright = $settings['copyright'];
 $copyright['slides'] = iunserializer($copyright['slides']);
 if (isset($copyright['showhomepage']) && empty($copyright['showhomepage'])) {
