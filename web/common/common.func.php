@@ -173,7 +173,7 @@ function checkwxapp() {
 function checkwebapp() {
 	global $_W;
 	if (empty($_W['uniacid'])) {
-		itoast('', url('home/display'), 'info');
+		itoast('', url('webapp/home'), 'info');
 	}
 }
 
