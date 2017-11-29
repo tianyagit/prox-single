@@ -30,7 +30,6 @@ function _login($forward = '') {
 	if (!empty($status)) {
 		user_expire_notice();
 	}
-	user_account_expire_message_record();
 	if (empty($_GPC['login_type'])) {
 		$_GPC['login_type'] = 'system';
 	}
@@ -41,10 +40,17 @@ function _login($forward = '') {
 		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
 	}
 
+	if (!empty($_W['user'])) {
+		if (is_error($member)) {
+			itoast($member['message'], url('user/profile/bind'), '');
+		} else {
+			itoast('绑定成功', url('user/profile/bind'), '');
+		}
+	}
+	
 	if (is_error($member)) {
 		itoast($member['message'], url('user/login'), '');
 	}
-
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
@@ -101,6 +107,7 @@ function _login($forward = '') {
 		}
 		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
+		user_account_expire_message_record();
 		itoast("欢迎回来，{$record['username']}。", $forward, 'success');
 	} else {
 		if (empty($failed)) {

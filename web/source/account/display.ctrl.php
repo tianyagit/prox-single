@@ -15,7 +15,6 @@ $_W['page']['title'] = '公众号列表 - 公众号';
 $state = permission_account_user_role($_W['uid'], $_W['uniacid']);
 //模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
 $account_info = permission_user_account_num();
-isetcookie('__lastvisit_' . $_W['uid'], 'account', 7 * 86400);
 
 if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -71,6 +70,8 @@ if ($do == 'display') {
 	}
 
 	$account_table->accountRankOrder();
+	$total = $account_table->searchAccountList();
+	$total = count($total);
 	$account_table->searchWithPage($pindex, $psize);
 	$account_list = $account_table->searchAccountList();
 
