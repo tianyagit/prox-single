@@ -21,6 +21,10 @@ abstract class OAuth2Client {
 		return array('system', 'qq', 'wechat', 'mobile');
 	}
 
+	public static function supportThirdLoginType() {
+		return array('qq', 'wechat');
+	}
+
 	public static function create($type, $appid = '', $appsecret = '') {
 		$types = self::supportLoginType();
 		if (in_array($type, $types)) {
@@ -34,6 +38,15 @@ abstract class OAuth2Client {
 	}
 
 	abstract function showLoginUrl($calback_url = '');
+
+	public function handle($handle_type) {
+		if ($handle_type == 'login') {
+			return $this->login();
+		}
+		if ($handle_type == 'bind') {
+			return $this->bind();
+		}
+	}
 
 	abstract function user();
 	
