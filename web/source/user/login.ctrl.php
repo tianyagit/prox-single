@@ -14,7 +14,8 @@ if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 
-if (in_array($_GPC['login_type'], array('qq', 'wechat'))) {
+$support_login_types = OAuth2Client::supportThirdLoginType();
+if (in_array($_GPC['login_type'], $support_login_types)) {
 	_login($_GPC['referer']);
 }
 
@@ -34,11 +35,11 @@ function _login($forward = '') {
 		$_GPC['login_type'] = 'system';
 	}
 
-	if (!empty($_W['user']) && in_array($_GPC['login_type'], array('qq', 'wechat'))) {
-		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->bind();
-	} else {
-		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
+	if (empty($_GPC['handel_type'])) {
+		$_GPC['handle_type'] = 'login';
 	}
+
+	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->handle($_GPC['handle_type']);
 
 	if (!empty($_W['user'])) {
 		if (is_error($member)) {
