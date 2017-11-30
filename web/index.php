@@ -15,12 +15,14 @@ load()->model('user');
 
 $state = urldecode($_GPC['state']);
 if (!empty($state)) {
-	$login_type = explode('=', $state);
-	if (in_array($login_type[1], array('qq', 'wechat'))) {
-		$controller = 'user';
-		$action = 'login';
-		$_GPC['login_type'] = $login_type[1];
-	}
+	$controller = 'user';
+	$action = 'login';
+	$state = base64_decode($state);
+	$third_param = explode('|', $state);
+	$third_param[0] = explode('=', $third_param[0]);
+	$third_param[1] = explode('=', $third_param[1]);
+	$_GPC['login_type'] = $third_param[0][1];
+	$_GPC['handle_type'] = $third_param[1][1];
 }
 
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
