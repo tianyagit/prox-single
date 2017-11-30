@@ -30,7 +30,8 @@
 			</div>
 		</div>
 	</div>
-	<div class="panel we7-panel">
+	<div class="panel we7-panel" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl2" ng-cloak>
+		<span we7-daterange we7-date-start="20171111" we7-date-end="">11</span>
 		<div class="panel-heading tab">
 			<a href="javascript:;">关键指标详解</a>
 			<a href="javascript:;" class="active">总访问数</a>
@@ -41,22 +42,15 @@
 			<div class="tab-bar-time clearfrix">
 				<span class="we7-margin-right">时间</span>
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-default active" ng-click="getModuleApi('today')">今日统计</button>
-					<button type="button" class="btn btn-default hidden" ng-click="getModuleApi('week')">周统计</button>
-					<button type="button" class="btn btn-default hidden" ng-click="getModuleApi('month')">月统计</button>
-					<div class="btn-group hidden" role="group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							2017-07-01至2017-09-09
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li><a href="#">Dropdown link</a></li>
-							<li><a href="#">Dropdown link</a></li>
-						</ul>
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'today'}" ng-click="getModuleApi('today')">今日统计</button>
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'week'}" ng-click="getModuleApi('week')">周统计</button>
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'month'}" ng-click="getModuleApi('month')">月统计</button>
+					<div class="btn-group" role="group">
+						<!-- {php echo tpl_form_field_daterange('datelimit', array('start' => $_GPC['datelimit']['start'],'end' => $_GPC['datelimit']['end']), false)} -->
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-12" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl" ng-cloak>
+			<div class="col-sm-12">
 				<canvas class="chart chart-horizontal-bar " chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors" height="{{height}}"></canvas>
 				{if user_is_founder($_W['uid']) && !user_is_vice_founder()}
 				<div class="we7-margin-vertical text-right">
@@ -111,6 +105,100 @@ require(['angular-chart'], function() {
 			'moduleApi': "{php echo url('statistics/app/get_module_api')}",
 		},
 	});
+angular.module('we7app').directive('we7Daterange', function(){
+	var editor = {
+		scope: {
+			'start': '=we7DateStart',
+			'end': '=we7DateEnd',
+		},
+		transclude: true,
+		template: '<input name="datelimit[start]" type="hidden" ng-model="start" /><input name="datelimit[end]" type="hidden" ng-model="end" /><button class="btn btn-default daterange daterange-date" type="button"><span class="date-title">{{start}} 至 {{end}}</span> <i class="fa fa-calendar"></i></button>',
+		'link' : function ($scope, element, attr) {
+			var date = $scope.start;
+			console.log($scope.start);
+			console.log($scope.end);
+			var qdate = date.replace(/(\d{4}).(\d{1,2}).(\d{1,2})/mg, '$1-$2-$3');
+			console.log(qdate);
+			// console.log($scope.start.dateFormat('Y-m-d H:i:s'));
+			// console.log($scope.end.dateFormat('Y-m-d H:i:s'));
+			// $scope.selectIcon = function() {
+				require(['daterangepicker'], function(){
+					$(".daterange.daterange-date").each(function(){
+						var elm = this;
+						console.log(element);
+						$(this).daterangepicker({
+							startDate: $(elm).prev().prev().val(),
+							endDate: $(elm).prev().val(),
+							format: "YYYY-MM-DD HH:mm",
+							timePicker: true,
+							timePicker12Hour : false,
+							timePickerIncrement: 1,
+							minuteStep: 1
+						}, function(start, end){
+							$(elm).find(".date-title").html(start.toDateTimeStr() + " 至 " + end.toDateTimeStr());
+							$(elm).prev().prev().val(start.toDateTimeStr());
+							$(elm).prev().val(end.toDateTimeStr());
+						});
+					});
+				});
+			// };
+
+			$scope.removeIcon = function() {
+				$scope.image = '';
+				$scope.icon = {};
+			};
+		}
+	};
+	return editor;
+});
+angular.module('statisticsApp').controller('HorizontalBarCtrl2', ['$scope', '$http', 'serviceCommon', 'config', function($scope, $http, serviceCommon, config) {
+	$scope.labels = [];
+	$scope.data = [];
+	$scope.active = true;
+	$scope.height = 150;
+	$scope.code = "<script type=\"text\/javascript\" src=\"\{$_W['siteroot']\}app/index.php?i=\{$_W['uniacid']\}&c=utility&a=visit&do=showjs&m=\{$_W['current_module']['name']\}\"><\/script>";
+	$scope.show = true;
+	$scope.type = 'today';
+	$scope.datarange = {
+		'start': $('input[name="datelimit[start]"]').val(),
+		'end': $('input[name="datelimit[end]"]').val()
+	};
+	$scope.getModuleApi = function(type) {
+		$scope.type = type;
+		$http.post(config.links.moduleApi, {'type' : type})
+			.success(function(data) {
+				var count = data.message.message.modules.length;
+				switch(count) {
+					case 1:
+						$scope.height = 30;
+						break;
+					case 2:
+						$scope.height = 40;
+						break;
+					default:
+						$scope.height = parseInt(count) * 15;
+				}
+				$scope.labels = data.message.message.modules;
+				$scope.data = data.message.message.data;
+			})
+	};
+	$scope.getModuleApi('today');
+	$scope.success = function(id) {
+		var id = parseInt(id);
+		var obj = $('<span class="label label-success" style="position:absolute;z-index:10;width:90px;height:34px;line-height:28px;"><i class="fa fa-check-circle"></i> 复制成功</span>');
+		serviceCommon.copySuccess(id, obj);
+	};
+	$scope.changeStatus = function() {
+		$scope.show = $scope.show ? false : true;
+	};
+	$scope.$watch($('input[name="datelimit[start]"]').val(), function(newVal) {
+		if(newVal){
+			console.log(newVal);
+			console.log($scope.datarange);
+			// serviceSetStyle.setModulePositionStyle(newVal);
+		}
+	}, true);
+}]);
 	angular.bootstrap($('#js-statistics-app-display'), ['statisticsApp']);
 })
 </script>
