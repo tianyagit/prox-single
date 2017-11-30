@@ -224,3 +224,6 @@ define('MESSAGE_REGISTER_TYPE', 4);
 //消息是否读取 1未读  2已读
 define('MESSAGE_NOREAD', 1);
 define('MESSAGE_READ', 2);
+
+//上传图片uniacid -1
+define('FILE_NO_UNIACID', -1);
