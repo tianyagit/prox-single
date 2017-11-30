@@ -31,8 +31,9 @@ function message_record($content, $uid, $sign, $type, $extend_message = array())
 	$message['sign'] = $sign;
 	$message['type'] = $type;
 	$message['create_time'] = TIMESTAMP;
-	$message_notice_log = array_merge($message, $extend_message);
-	pdo_insert('message_notice_log', $message_notice_log);
+//	$message_notice_log = array_merge($message, $extend_message);
+	pdo_insert('message_notice_log', $message);
+	message_notify($type, $content, $uid, $sign, $extend_message);
 	return true;
 }
 
@@ -61,3 +62,44 @@ function message_notice() {
 		'total' => $total
 	);
 }
+
+function message_notify_data($type, $message, $uid, $sign, $ext = array()) {
+	$data = array();
+	$data['time'] = TIMESTAMP;
+	$data['remark'] = '进入系统查看';
+	switch ($type) {
+		case MESSAGE_REGISTER_TYPE :
+			$user = user_single($uid);
+			$data['first'] = $message;
+			$data['keyword1'] = $user['username'];
+			$data['notify_type'] = MESSAGE_REGISTER_TYPE;
+			break;
+		case MESSAGE_ORDER_TYPE : //创建订单
+			$data['first'] = $message;
+			$data['keyword1'] = $sign;
+			$data['keyword2'] = 1;
+			$data['keyword3'] = $ext['amount'];
+			$data['notify_type'] = MESSAGE_ORDER_TYPE;
+			$data['remark'] = $ext['product'];
+			break;
+	}
+	return $data;
+}
+
+/**
+ *  消息通知
+ * @param $type
+ * @param $message
+ * @param $uid
+ * @param $sign
+ * @param $ext
+ * @return array|mixed|string
+ */
+function message_notify($type, $message, $uid, $sign, $ext) {
+	load()->classs('cloudapi');
+	$data = message_notify_data($type, $message, $uid, $sign, $ext);
+	$api = new CloudApi();
+	$result = $api->post('system', 'notify', array('json'=>$data), 'html', false);
+	return $result;
+}
+
