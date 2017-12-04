@@ -367,6 +367,8 @@ function module_get_all_unistalled($status, $cache = true)  {
 		$account_type = 'wxapp';
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 		$account_type = 'app';
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+		$account_type = 'webapp';
 	}
 	if (!is_array($uninstallModules) || empty($uninstallModules['modules'][$status][$account_type]) || intval($uninstallModules['cloud_m_count']) !== intval($cloud_m_count) || is_error($get_cloud_m_count)) {
 		$uninstallModules = cache_build_uninstalled_module();
