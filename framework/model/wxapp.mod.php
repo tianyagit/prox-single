@@ -603,3 +603,13 @@ function wxapp_code_commit($code_uuid, $code_token, $user_version = 3, $user_des
 
 	return $data;
 }
+
+/**
+ *  更新普通模块 小程序的入口页
+ * @param $version_id
+ * @param $entry_id
+ * @return mixed
+ */
+function wxapp_update_entry($version_id, $entry_id) {
+	return pdo_update('wxapp_versions', array('entry_id'=>$entry_id), array('id'=>$version_id));
+}

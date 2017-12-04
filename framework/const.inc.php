@@ -149,6 +149,8 @@ define('WXAPP_DIY', 1);
 define('WXAPP_TEMPLATE', 2);
 //跳转模块小程序
 define('WXAPP_MODULE', 3);
+//打包普通应用
+define('WXAPP_CREATE_MODULE', 1);
 
 define('MATERIAL_LOCAL', 'local');//服务器素材类型
 define('MATERIAL_WEXIN', 'perm');//微信素材类型
