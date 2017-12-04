@@ -556,12 +556,12 @@ class StoreModuleSite extends WeModuleSite {
 				$order['uniacid'] = 0;
 			}
 			pdo_insert ('site_store_order', $order);
+			$store_orderid = pdo_insertid();
 
 			$type_name = $this->getTypeName($goods_info['type']);
 			$content = $_W['user']['username'] . date("Y-m-d H:i:s") . '在商城购买了' . $type_name . ', 支付金额' . $order['amount'];
 			message_record($content, $_W['uid'], $orderid, MESSAGE_ORDER_TYPE);
 
-			$store_orderid = pdo_insertid();
 			$pay_log = array(
 				'type' => $_GPC['type'],
 				'uniontid' => $orderid,
