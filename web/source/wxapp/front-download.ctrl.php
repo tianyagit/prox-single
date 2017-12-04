@@ -20,7 +20,6 @@ if (!empty($version_id)) {
 	$version_info = wxapp_version($version_id);
 }
 if ($do == 'domainset') {
-
 	$appurl = $_W['siteroot'].'app/index.php';
 	$uniacid = 0;
 	if($version_info) {

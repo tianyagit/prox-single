@@ -108,6 +108,7 @@ function _login($forward = '') {
 		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
 		user_account_expire_message_record();
+		message_load_in_notice($record['uid']);//加载工单未读消息
 		itoast("欢迎回来，{$record['username']}。", $forward, 'success');
 	} else {
 		if (empty($failed)) {

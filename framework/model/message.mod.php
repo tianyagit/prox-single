@@ -95,11 +95,51 @@ function message_notify_data($type, $message, $uid, $sign, $ext = array()) {
  * @param $ext
  * @return array|mixed|string
  */
-function message_notify($type, $message, $uid, $sign, $ext) {
+function message_notify($type, $message, $uid, $sign, $ext = array()) {
 	load()->classs('cloudapi');
 	$data = message_notify_data($type, $message, $uid, $sign, $ext);
 	$api = new CloudApi();
 	$result = $api->post('system', 'notify', array('json'=>$data), 'html', false);
 	return $result;
+}
+
+function message_load_workorder_notice_url($time) {
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$result = $api->get('system', 'workorder', array('do'=>'notload', 'time'=>$time), 'json', false);
+	return $result;
+}
+
+function message_load_in_notice($uid) {
+	global $_W;
+	load()->classs('query');
+	$query = new Query();
+	$message_log = $query->from('message_notice_log')->where('type', MESSAGE_WORKORDER_TYPE)
+		->orderby('create_time', 'desc')->get();
+	$time = 0;//strtotime('1970-01-01');
+	if($message_log && isset($message_log['create_time'])) {
+		$time = $message_log['create_time'];
+	}
+	$data_url =  message_load_workorder_notice_url($time);
+	if (is_error($data_url)) {
+		return;
+	}
+
+	$url = $data_url['data']['url'];//'http://127.0.0.1:8000/api/workorder/notesfromwe7?id=1&site_id=1';
+	$response = ihttp_get($url);
+
+	if($response['code'] == 200) {
+		$content = $response['content'];
+		$data = json_decode($content, JSON_OBJECT_AS_ARRAY);
+		//暂不做批量插入处理
+		foreach ($data['list'] as $item) {
+			pdo_insert('message_notice_log', array(
+				'message'=>$item['note'],
+				'create_time'=>strtotime($item['updated_at']),
+				'uid'=>$uid, 'sign'=>$item['uuid'],
+				'is_read'=>1,
+				'type'=>MESSAGE_WORKORDER_TYPE));
+		}
+	}
 }
 
