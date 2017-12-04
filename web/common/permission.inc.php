@@ -363,6 +363,7 @@ $we7_file_permission = array(
 			'see_system_manage_vice_founder',
 			'see_system_add_vice_founder',
 			'see_notice_post',
+			'see_module_manage_system_newversion'
 		),
 		'vice_founder' => array(
 
