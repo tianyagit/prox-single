@@ -125,7 +125,7 @@ function message_load_in_notice($uid) {
 		return;
 	}
 
-	$url = $data_url['data']['url'];//'http://127.0.0.1:8000/api/workorder/notesfromwe7?id=1&site_id=1';
+	$url = $data_url['data']['url'];
 	$response = ihttp_get($url);
 
 	if($response['code'] == 200) {
