@@ -46,7 +46,7 @@ function ext_module_convert($manifest) {
 		'profile' => $manifest['bindings']['profile'],
 		'app_support' => $app_support,
 		'wxapp_support' => $wxapp_support,
-		'webapp_support' => $wxapp_support,
+		'webapp_support' => $webapp_support,
 		'shortcut' => $manifest['bindings']['shortcut'],
 		'function' => $manifest['bindings']['function'],
 		'permissions' => $manifest['permissions'],
