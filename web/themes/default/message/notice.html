@@ -52,7 +52,7 @@
 	<tr ng-repeat="list in lists">
 		<td class="tip-before unread" ng-if ="list.is_read == 1" ng-bind="list.message"></td>
 		<td class="tip-before " ng-if ="list.is_read == 2" ng-bind="list.message"></td>
-		<td class="text-muted" ng-bind = "list.create_time"></td>
+		<td class="text-muted text-center" ng-bind = "list.create_time"></td>
 		<td>
 			<div class="link-group">
 				<!-- xstart -->
@@ -60,7 +60,7 @@
 				<a href="javascript:;" ng-click="operate(list.id, links.order_link)" ng-if="list.type==1">查看我的订单</a>
 				{/if}
 				<!-- xend -->
-				<a href="javascript:;" ng-click="operate(list.id, links.account_expire_link)" ng-if="list.type==3">无</a>
+				<a href="javascript:;" ng-if="list.type==3"></a>
 				<a href="javascript:;" ng-click="operate(list.id, links.account_expire_link)" ng-if="list.type==2">查看公众号</a>
 				<a href="javascript:;" ng-click="operate(list.id, links.wechat_expire_link)" ng-if="list.type==5">查看小程序</a>
 				<a href="javascript:;" ng-click="operate(list.id, links.register_link)" ng-if="list.type==4 && list.status==1">查看我的待审核用户</a>
