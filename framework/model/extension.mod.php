@@ -14,12 +14,14 @@ function ext_module_convert($manifest) {
 	if (!empty($manifest['platform']['supports'])) {
 		$app_support = in_array('app', $manifest['platform']['supports']) ? 2 : 1;
 		$wxapp_support = in_array('wxapp', $manifest['platform']['supports']) ? 2 : 1;
-		if ($app_support == 1 && $wxapp_support == 1) {
+		$webapp_support = in_array('webapp', $manifest['platform']['supports']) ? 2 : 1;
+		if ($app_support == 1 && $wxapp_support == 1 && $webapp_support == 1) {
 			$app_support = 2;
 		}
 	} else {
 		$app_support = 2;
 		$wxapp_support = 1;
+		$webapp_support = 1;
 	}
 
 	return array(
@@ -44,6 +46,7 @@ function ext_module_convert($manifest) {
 		'profile' => $manifest['bindings']['profile'],
 		'app_support' => $app_support,
 		'wxapp_support' => $wxapp_support,
+		'webapp_support' => $wxapp_support,
 		'shortcut' => $manifest['bindings']['shortcut'],
 		'function' => $manifest['bindings']['function'],
 		'permissions' => $manifest['permissions'],
