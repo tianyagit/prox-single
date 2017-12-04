@@ -65,9 +65,7 @@ if ($do == 'header_notice') {
 	}
 	$message_list = message_notice();
 	if (!empty($message_list['lists'])) {
-		foreach ($message_list['lists'] as &$message) {
-			$message['create_time'] = date('Y-m-d H:i:s', $message['create_time']);
-		}
+		$message_list['lists'] = message_record_formate($message_list['lists']);
 	}
 	iajax(0, $message_list);
 
