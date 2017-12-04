@@ -30,15 +30,29 @@ if ($do == 'get_module_api') {
 	foreach ($modules_info as $info) {
 		$modules[] = mb_substr($info['title'], 0, 5, 'utf-8');
 	}
-	$today = stat_visit_info('today');
-	if (empty($today)) {
+
+	$support_type = array('today', 'week', 'month', 'daterange');
+	$type = trim($_GPC['type']);
+	if (!in_array($type, $support_type)) {
+		iajax(-1, '参数错误！');
+	}
+	$daterange = array();
+	if (!empty($_GPC['daterange'])) {
+		$daterange = array(
+			'start' => date('Ymd', strtotime($_GPC['daterange']['startDate'])),
+			'end' => date('Ymd', strtotime($_GPC['daterange']['endDate'])),
+		);
+	}
+
+	$result = stat_visit_info($type, '', $daterange);
+	if (empty($result)) {
 		foreach ($modules_info as $module) {
 			$data[] = 0;
 		}
 	} else {
 		foreach ($modules_info as $module) {
 			$have_count = false;
-			foreach ($today as $val) {
+			foreach ($result as $val) {
 				if ($module['name'] == $val['module']) {
 					$data[] = $val['count'];
 					$have_count = true;

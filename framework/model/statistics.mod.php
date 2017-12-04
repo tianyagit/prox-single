@@ -45,8 +45,17 @@ function stat_visit_info($type, $module = '', $daterange = array()) {
 			$params['date <='] = date('Ymd', strtotime($daterange['end']));
 			break;
 	}
-	$result = pdo_getall('stat_visit', $params);
+	$visit_info = pdo_getall('stat_visit', $params, array('uniacid', 'module', 'count'));
+	foreach ($visit_info as $info) {
+		if (!empty($info['module'])) {
+			if ($result[$info['module']]['module'] == $info['module']) {
+				$result[$info['module']]['count'] += $info['count'];
+			} else {
+				$result[$info['module']] = $info;
+			}
 
+		}
+	}
 	return $result;
 }
 
