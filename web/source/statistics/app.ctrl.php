@@ -14,8 +14,8 @@ $do = in_array($do, $dos) ? $do : 'display';
 if ($do == 'display') {
 	$today = stat_visit_info('today');
 	$yesterday = stat_visit_info('yesterday');
-	$today_module_api = stat_all_visit_statistics($today);
-	$yesterday_module_api = stat_all_visit_statistics($yesterday);
+	$today_module_api = stat_all_visit_statistics('current_account', $today);
+	$yesterday_module_api = stat_all_visit_statistics('current_account', $yesterday);
 	template('statistics/display');
 }
 

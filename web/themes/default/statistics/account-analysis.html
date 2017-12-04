@@ -1,6 +1,6 @@
 {template 'common/header'}
 <ul class="we7-page-tab">
-	<li class="active"><a href="{url 'statistics/account-analysis'}">访问统计信息</a></li>
+	<li class="active"><a href="{url 'statistics/account-analysis'}">所有公众号访问统计</a></li>
 </ul>
 <div class="api">
 	<div class="panel we7-panel api-target">
@@ -40,10 +40,11 @@
 			<div class="tab-bar-time clearfrix">
 				<span class="we7-margin-right">时间</span>
 				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'today'}" ng-click="getModuleApi('today')">今日统计</button>
 					<button type="button" class="btn btn-default" ng-class="{'active': type == 'week'}" ng-click="getModuleApi('week')">周统计</button>
 					<button type="button" class="btn btn-default" ng-class="{'active': type == 'month'}" ng-click="getModuleApi('month')">月统计</button>
-					<div class="btn-group" role="group">
-						{php echo tpl_form_field_daterange('datelimit', array('start' => $_GPC['datelimit']['start'],'end' => $_GPC['datelimit']['end']), false)}
+					<div class="btn-group" role="group" ng-class="{'active': type == 'daterange'}">
+						<button class="btn btn-default daterange daterange-date" we7-date-range-picker ng-model="dateRange"><span>{{dateRange.startDate}} </span>至<span> {{dateRange.endDate}}</span> <i class="fa fa-calendar"></i></button>
 					</div>
 				</div>
 			</div>
@@ -54,21 +55,12 @@
 	</div>
 </div>
 <script>
-require(['angular-chart'], function() {
+require(['angular-chart', 'daterangepicker'], function() {
 	angular.module('statisticsApp').value('config', {
 		'links': {
-			'moduleApi': "{php echo url('statistics/app/get_module_api')}",
+			'moduleApi': "{php echo url('statistics/account-analysis/get_account_api')}",
 		},
 	});
-	angular.module('statisticsApp').controller('systemAccountAnalysisCtrl', ['$scope', '$http', 'config', function($scope, $http, config){
-		$scope.type = 'month';
-		$scope.getModuleApi = function(type) {
-			$scope.type = type;
-		};
-		$scope.httpRequest = function(argument) {
-			// body...
-		}
-	}])
 	angular.bootstrap($('#js-system-account-analysis'), ['statisticsApp']);
 })
 </script>
