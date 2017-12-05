@@ -41,7 +41,7 @@ function _login($forward = '') {
 
 	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->handle($_GPC['handle_type']);
 
-	if (!empty($_W['user'])) {
+	if (!empty($_W['user']) && !empty($_GPC['handle_type'])) {
 		if (is_error($member)) {
 			itoast($member['message'], url('user/profile/bind'), '');
 		} else {
