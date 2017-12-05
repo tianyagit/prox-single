@@ -72,7 +72,6 @@ if($do == 'custom_convert_img') {
 }
 
 if ($do == 'domainset') {
-
 	$appurl = $_W['siteroot'].'app/index.php';
 	$uniacid = 0;
 	if($version_info) {

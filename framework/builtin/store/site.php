@@ -107,7 +107,7 @@ class StoreModuleSite extends WeModuleSite {
 		$this->storeIsOpen();
 		global $_GPC, $_W;
 		load()->model('module');
-		load()->model('system');
+		load()->model('message');
 
 		$operates = array('display', 'change_price', 'delete');
 		$operate = $_GPC['operate'];
@@ -125,7 +125,7 @@ class StoreModuleSite extends WeModuleSite {
 		if ($operate == 'display') {
 			if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
 				$message_id = $_GPC['message_id'];
-				system_message_notice_read($message_id);
+				message_notice_read($message_id);
 			}
 
 			$pindex = max(1, intval($_GPC['page']));
@@ -560,7 +560,7 @@ class StoreModuleSite extends WeModuleSite {
 
 			$type_name = $this->getTypeName($goods_info['type']);
 			$content = $_W['user']['username'] . date("Y-m-d H:i:s") . '在商城购买了' . $type_name . ', 支付金额' . $order['amount'];
-			message_record($content, $_W['uid'], $orderid, MESSAGE_ORDER_TYPE);
+			message_notice_record($content, $_W['uid'], $orderid, MESSAGE_ORDER_TYPE);
 
 			$pay_log = array(
 				'type' => $_GPC['type'],

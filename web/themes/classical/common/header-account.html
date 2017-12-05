@@ -1,6 +1,8 @@
-<div class="menu-title">公众号</div>
+<div class="menu-title"><i class="wi wi-white-collar"></i>公众号</div>
 <div class="account-info">
-	<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo">
+	<span class="nav-icon" data-container="body" data-toggle="tooltip" data-placement="right" title="{$_W['account']['name']}">
+		<img src="{php echo tomedia('headimg_'.$_W['account']['acid'].'.jpg')}?time={php echo time()}" class="head-logo">
+	</span>
 	<div class="account-name">{$_W['account']['name']}</div>
 	<div class="account-type">
 		<span class="account-type">
@@ -19,20 +21,20 @@
 			{if $_W['account']['level'] == 4}已认证{/if}
 			{/if}
 		</span>
-		<span class="account-isconnect">
+		<div class="account-isconnect">
 			{if $_W['uniaccount']['isconnect'] == 0}
 			未接入
-			<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="text-danger">立即接入</a>
+			<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="text-danger"> 立即接入</a>
 			{else}
 			已接入
 			{/if}
-		</span>
+		</div>
 	</div>
 </div>
 <div class="account-operate">
-	<a href="{php echo url('account/display')}">切换</span></a>
+	<a href="{php echo url('utility/emulator');}" target="_blank" class="h"><i class="wi wi-iphone" data-toggle="tooltip" data-placement="bottom" title="模拟测试"></i></a>
 	{if uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OPERATOR}
-	<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}"><span>设置</span></a>
+	<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="h" data-toggle="tooltip" data-placement="bottom" title="公众号设置"><i class="wi wi-appsetting"></i></a>
 	{/if}
-	<a href="{php echo url('utility/emulator');}" target="_blank">模拟</span></a>
+	<a href="{php echo url('account/display')}"  data-toggle="tooltip" data-placement="bottom" title="切换公众号"><i class="wi wi-changing-over"></i></a>
 </div>
