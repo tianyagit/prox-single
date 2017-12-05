@@ -11,7 +11,9 @@ if (in_array($action, array('permission', 'manage-account'))) {
 	if (empty($_GPC['version_id']) && intval($referer['version_id']) > 0) {
 		itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
-	if (!empty($_GPC['version_id'])) {
+	if (!empty($_GPC['account_type']) && $_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL){
+		checkwebapp();
+	} elseif (!empty($_GPC['version_id'])) {
 		checkwxapp();
 	} else {
 		checkaccount();

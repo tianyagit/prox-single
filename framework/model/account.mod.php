@@ -713,7 +713,9 @@ function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
-	if (strexists($_W['siteurl'], 'c=wxapp') || !empty($_GPC['version_id'])) {
+	if (strexists($_W['siteurl'], 'c=webapp') || !empty($_GPC['account_type']) && $_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+		$uniacid = $cache_lastaccount['webapp'];
+	} else if (strexists($_W['siteurl'], 'c=wxapp') || !empty($_GPC['version_id'])) {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];

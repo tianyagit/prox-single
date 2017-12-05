@@ -3,51 +3,39 @@
 defined('IN_IA') or exit('Access Denied');
 
 
-
-function webapp_save_last($uniacid) {
-	isetcookie('__webappuniacid', $uniacid, 7 * 86400);
-	isetcookie('__uniacid', $uniacid, 7 * 86400);
-}
-
-function webapp_last_uniacid() {
-	global $_GPC;
-	return isset($_GPC['__webappuniacid']) ? intval($_GPC['__webappuniacid']) : 0;
+function webapp_switch($uniacid, $redirect = '') {
+	global $_W;
+	webapp_save_switch($uniacid);
+	isetcookie('__uid', $_W['uid'], 7 * 86400);
+	if (!empty($redirect)) {
+		header('Location: ' . $redirect);
+		exit;
+	}
+	return true;
 }
 
 /**
- *  是否可操作指定pc
- * @param $uniacid
-
+ * 切换pc时，保留最后一次操作的pc，以便点pc时再切换回
  */
-function webapp_can_apply($uid, $uniacid) {
-	if($uid == 0 || $uniacid == 0) {
-		return false;
+function webapp_save_switch($uniacid) {
+	global $_W, $_GPC;
+	if (empty($_GPC['__switch'])) {
+		$_GPC['__switch'] = random(5);
 	}
-	$account = uni_account_default($uniacid);
-	if ($account['type'] != ACCOUNT_TYPE_WEBAPP_NORMAL) {
-		return false;
-	}
-	if (user_is_founder($uid)) {
-		return true;
-	}
-	$user = account_owner($uniacid);
-	return isset($user['uid']) && $uid == $user['uid'];
-}
-/*
- * 获取可操作的uniacid
- */
-function webapp_get_uniacid($uid = 0, $uniacid = 0) {
-	if(!$uniacid) {
-		$uniacid = webapp_last_uniacid();
-	}
-	if(!$uniacid) {
-		return 0;
-	}
-	if(webapp_can_apply($uid, $uniacid)) {
-		return $uniacid;
-	}
-	return 0;
 
+	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_lastaccount = cache_load($cache_key);
+	if (empty($cache_lastaccount)) {
+		$cache_lastaccount = array(
+			'webapp' => $uniacid,
+		);
+	} else {
+		$cache_lastaccount['webapp'] = $uniacid;
+	}
+	cache_write($cache_key, $cache_lastaccount);
+	isetcookie('__uniacid', $uniacid, 7 * 86400);
+	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
+	return true;
 }
 
 /**

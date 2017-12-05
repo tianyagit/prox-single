@@ -45,7 +45,9 @@ if (IMS_FAMILY == 'v') {
 		if (!empty($_GPC['version_id'])) {
 			$version_info = wxapp_version($_GPC['version_id']);
 		}
-		if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
+		if ($_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+			checkwebapp();
+		} elseif (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
 			checkwxapp();
 		} else {
 			checkaccount();
@@ -59,7 +61,9 @@ if (IMS_FAMILY == 'x') {
 		if (!empty($_GPC['version_id'])) {
 			$version_info = wxapp_version($_GPC['version_id']);
 		}
-		if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
+		if ($_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+			checkwebapp();
+		} elseif (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
 			checkwxapp();
 		} else {
 			checkaccount();
@@ -136,6 +140,7 @@ if ($do == 'platform') {
 	}
 
 	define('FRAME', 'account');
+
 	define('IN_MODULE', $modulename);
 	if ($_GPC['system_welcome'] && $_W['isfounder']) {
 		$frames = buildframes('system_welcome');

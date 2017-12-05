@@ -1,10 +1,7 @@
 <?php
 /**
- * @package     ${NAMESPACE}
- * @subpackage
- *
- * @copyright   A copyright
- * @license     A "Slug" license name e.g. GPL2
+ * pc列表
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -25,7 +22,6 @@ if($do == 'create') {
 		'description'=>$_GPC['description']
 	);
 
-	/* @var $pc PcTable*/
 	$webapp = table('webapp');
 	$uniacid = $webapp->create($data, $_W['uid']);
 	if($uniacid){
@@ -45,13 +41,12 @@ if($do == 'list') {
 
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
-	/* @var $pc PcTable*/
+
 	$webapp = table('webapp');
 	list($list, $total) = $webapp->webapplist($_W['uid'], $pindex, $psize);
 	$pager = pagination($total, $pindex, $psize);
 
 	foreach ($list as &$item) {
-
 		$item['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 		$item['switchurl'] = wurl('webapp/home/switch', array('uniacid' => $item['uniacid']));
 	}

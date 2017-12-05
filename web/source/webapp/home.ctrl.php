@@ -1,34 +1,36 @@
 <?php
 
 /**
- * @package     web\source\pc
- * @subpackage
- *
- * @copyright   A copyright
- * @license     A "Slug" license name e.g. GPL2
+ * 切换pc
+ * @var AccountTable $account_table
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('webapp');
+$dos = array('switch', 'display');
+$do = in_array($do , $dos) ? $do : 'display';
 
 if($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
-	$uniacid = webapp_get_uniacid($_W['uid'], $uniacid);
-	if(!$uniacid) {
+	if (empty($uniacid)) {
 		itoast('', url('webapp/manage/list'), 'info');
 	}
-	webapp_save_last($uniacid);
+	webapp_save_switch($uniacid);
 	itoast('', url('webapp/home/display', array('uniacid'=>$uniacid)));
 }
 
 if($do == 'display') {
 	define('FRAME', 'webapp');
-	$uniacid = intval($_GPC['uniacid']);
-	$uniacid = webapp_get_uniacid($_W['uid'], $uniacid);
-	if(!$uniacid) {
+	$last_uniacid = uni_account_last_switch();
+	if (empty($last_uniacid)) {
 		itoast('', url('webapp/manage/list'), 'info');
 	}
-	$account = uni_fetch($uniacid);
+	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
+		webapp_switch($last_uniacid);
+	}
+
+	$account = uni_fetch($last_uniacid);
 	$modulelist = uni_modules(false);
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => &$row) {
