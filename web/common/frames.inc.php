@@ -369,6 +369,7 @@ $we7_system_menu['system'] = array(
 			),
 			'founder' => true
 		),
+		/* xend */
 		'webapp' => array(
 			'title' => 'PC',
 			'menu' => array(
@@ -412,7 +413,7 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
-		/* xend */
+
 		'user' => array(
 			'title' => '帐户/用户',
 			'menu' => array(
