@@ -68,11 +68,19 @@ if ($do == 'wxapp_web') {
 	load()->classs('query');
 	$version = trim($_GPC['v']);
 	$wxapp = Wxapp::createByVersion($_W['uniacid'], $version);
-	$url = 'https://wn.we7.cc/';// $wxapp->getModuleWxappUrl();
+	$url = $_GPC['url'];
+	if(empty($url)) {
+		$url = $wxapp->getModuleWxappUrl();//获取模块入口
+	}
 	if($url) {
 		setcookie(session_name(), $_W['session_id']);
 		header('Location:'.$url);
 		exit;
 	}
-	echo '请先配置小程序入口';
+	$error_url = murl('wxapp/home/wxapp_web_error');
+	header('Location:'.$error_url);
+}
+
+if ($do == 'wxapp_web_error') {
+	echo '找不到模块入口';
 }

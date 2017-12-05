@@ -504,9 +504,11 @@ function wxapp_code_generate($version_id) {
 		'modules' => $account_wxapp_info['version']['modules'],
 		'siteinfo' => $siteinfo,
 		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
+		// 小程序类型 如果是模块类型使用默认网页小程序
+		'wxapp_type'=> isset($version_info['type']) ? $version_info['type'] : 0
 	);
 
-	$do = 'upload';//稳定版
+	$do = 'upload2';
 	if ($version_info['use_default'] == 0) {
 		$appjson = wxapp_code_custom_appjson_tobase64($version_id);
 		if ($appjson) {
@@ -516,12 +518,11 @@ function wxapp_code_generate($version_id) {
 			$commit_data['appjson'] = $appjson;
 
 		}
-		$do = 'upload2';
 	}
 
 	$data = $api->post('wxapp', $do, $commit_data,
 		'json', false);
-
+//	var_dump($data);
 	return $data;
 }
 
