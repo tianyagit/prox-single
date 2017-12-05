@@ -5,6 +5,11 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if ($action != 'webapp' && $do != 'list') {
+if ($action == 'manage' && $do == 'createview') {
+	define('FRAME', 'system');
+}
+if ($action == 'manage' && $do == 'list') {
+	define('FRAME', '');
+} else {
 	define('FRAME', 'webapp');
 }
