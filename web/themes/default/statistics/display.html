@@ -30,7 +30,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="panel we7-panel">
+	<div class="panel we7-panel" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl" ng-cloak>
 		<div class="panel-heading tab">
 			<a href="javascript:;">关键指标详解</a>
 			<a href="javascript:;" class="active">总访问数</a>
@@ -41,22 +41,15 @@
 			<div class="tab-bar-time clearfrix">
 				<span class="we7-margin-right">时间</span>
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-default active" ng-click="getModuleApi('today')">今日统计</button>
-					<button type="button" class="btn btn-default hidden" ng-click="getModuleApi('week')">周统计</button>
-					<button type="button" class="btn btn-default hidden" ng-click="getModuleApi('month')">月统计</button>
-					<div class="btn-group hidden" role="group">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							2017-07-01至2017-09-09
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li><a href="#">Dropdown link</a></li>
-							<li><a href="#">Dropdown link</a></li>
-						</ul>
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'today'}" ng-click="getModuleApi('today')">今日统计</button>
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'week'}" ng-click="getModuleApi('week')">周统计</button>
+					<button type="button" class="btn btn-default" ng-class="{'active': type == 'month'}" ng-click="getModuleApi('month')">月统计</button>
+					<div class="btn-group" role="group" ng-class="{'active': type == 'daterange'}">
+						<button class="btn btn-default daterange daterange-date" we7-date-range-picker ng-model="dateRange"><span>{{dateRange.startDate}} </span>至<span> {{dateRange.endDate}}</span> <i class="fa fa-calendar"></i></button>
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-12" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl" ng-cloak>
+			<div class="col-sm-12">
 				<canvas class="chart chart-horizontal-bar " chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors" height="{{height}}"></canvas>
 				{if user_is_founder($_W['uid']) && !user_is_vice_founder()}
 				<div class="we7-margin-vertical text-right">
@@ -105,7 +98,7 @@
 	</div>
 </div>
 <script>
-require(['angular-chart'], function() {
+require(['angular-chart', 'daterangepicker'], function() {
 	angular.module('statisticsApp').value('config', {
 		'links': {
 			'moduleApi': "{php echo url('statistics/app/get_module_api')}",

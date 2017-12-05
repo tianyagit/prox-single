@@ -500,6 +500,19 @@ $we7_system_menu['system'] = array(
 				)
 			)
 		),
+		/* xstart */
+		'system_statistics' => array(
+			'title' => '统计',
+			'menu' => array(
+				'system_account_analysis' => array(
+					'title' => 	'访问统计',
+					'url' => url('statistics/account-analysis'),
+					'icon' => 'wi wi-article',
+					'permission_name' => 'system_account_analysis',
+				),
+			)
+		),
+		/* xend */
 		'cache' => array(
 			'title' => '缓存',
 			'menu' => array(
