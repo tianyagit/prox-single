@@ -10,7 +10,8 @@ load()->classs('cloudapi');
 load()->classs('uploadedfile');
 
 $dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan',
-	'commitcode', 'preview', 'getpackage', 'entrychoose', 'set_wxapp_entry');
+	'commitcode', 'preview', 'getpackage', 'entrychoose', 'set_wxapp_entry',
+	'custom', 'custom_save', 'custom_default', 'custom_convert_img');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -42,6 +43,32 @@ if($do == 'set_wxapp_entry') {
 	$result = wxapp_update_entry($version_id, $entry_id);
 	echo json_encode(error(0, '设置入口成功'));
 }
+
+if ($do == 'custom') {
+	$type = $_GPC['type'];
+	$default_appjson = wxapp_code_current_appjson($version_id);
+	$default_appjson = json_encode($default_appjson);
+	template('wxapp/version-front-download');
+}
+if($do == 'custom_default') {
+	$result = wxapp_code_set_default_appjson($version_id);
+	echo json_encode($result);
+}
+
+if($do == 'custom_save') {
+	$json = $_GPC['json'];
+	$result = wxapp_code_save_appjson($version_id, $json);
+	echo json_encode($result);
+}
+
+if($do == 'custom_convert_img') {
+	$attchid = intval($_GPC['att_id']);
+
+	/* @var  $attachment  AttachmentTable */
+	$filename = wxapp_code_path_convert($attchid);
+	echo json_encode(error(0, $filename));
+}
+
 if ($do == 'domainset') {
 
 	$appurl = $_W['siteroot'].'app/index.php';
