@@ -14,7 +14,8 @@ if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 
-if (in_array($_GPC['login_type'], array('qq', 'wechat'))) {
+$support_login_types = OAuth2Client::supportThirdLoginType();
+if (in_array($_GPC['login_type'], $support_login_types)) {
 	_login($_GPC['referer']);
 }
 
@@ -34,13 +35,18 @@ function _login($forward = '') {
 		$_GPC['login_type'] = 'system';
 	}
 
-	if (!empty($_W['user']) && in_array($_GPC['login_type'], array('qq', 'wechat'))) {
-		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->bind();
-	} else {
-		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
+	if (empty($_GPC['handle_type'])) {
+		$_GPC['handle_type'] = 'login';
 	}
 
-	if (!empty($_W['user'])) {
+
+	if ($_GPC['handle_type'] == 'login') {
+		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
+	} else {
+		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->bind();
+	}
+
+	if (!empty($_W['user']) && $_GPC['handle_type'] == 'bind') {
 		if (is_error($member)) {
 			itoast($member['message'], url('user/profile/bind'), '');
 		} else {
@@ -54,7 +60,7 @@ function _login($forward = '') {
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
-			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', url('user/login'), '');
+			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决?', url('user/login'), '');
 		}
 		$_W['uid'] = $record['uid'];
 		$_W['isfounder'] = user_is_founder($record['uid']);
@@ -64,7 +70,7 @@ function _login($forward = '') {
 		if (IMS_FAMILY == 'x') {
 			if (empty($_W['isfounder']) || user_is_vice_founder()) {
 				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
-					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+					itoast('您的账号有效期限已过,请联系网站管理员解决!', '', '');
 				}
 			}
 		}
@@ -80,7 +86,7 @@ function _login($forward = '') {
 		}
 		/* vend */
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
-			itoast('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], '', '');
+			itoast('站点已关闭，关闭原因:'. $_W['setting']['copyright']['reason'], '', '');
 		}
 		$cookie = array();
 		$cookie['uid'] = $record['uid'];
@@ -108,14 +114,13 @@ function _login($forward = '') {
 		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
 		user_account_expire_message_record();
-		message_load_in_notice($record['uid']);//加载工单未读消息
-		itoast("欢迎回来，{$record['username']}。", $forward, 'success');
+		itoast("欢迎回来，{$record['username']}", $forward, 'success');
 	} else {
 		if (empty($failed)) {
 			pdo_insert('users_failed_login', array('ip' => CLIENT_IP, 'username' => trim($_GPC['username']), 'count' => '1', 'lastupdate' => TIMESTAMP));
 		} else {
 			pdo_update('users_failed_login', array('count' => $failed['count'] + 1, 'lastupdate' => TIMESTAMP), array('id' => $failed['id']));
 		}
-		itoast('登录失败，请检查您输入的账号和密码！', '', '');
+		itoast('登录失败，请检查您输入的账号和密码', '', '');
 	}
 }
