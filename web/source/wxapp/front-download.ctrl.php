@@ -23,6 +23,7 @@ $is_module_wxapp =  false;
 if (!empty($version_id)) {
 	$version_info = wxapp_version($version_id);
 	$is_module_wxapp = ($version_info['type'] == WXAPP_CREATE_MODULE) ? 1 : 0;
+
 }
 
 if($do == 'entrychoose') {
