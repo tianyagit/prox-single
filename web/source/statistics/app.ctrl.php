@@ -12,8 +12,8 @@ $dos = array('display', 'get_account_api', 'get_module_api');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
-	$today = stat_visit_info('today');
-	$yesterday = stat_visit_info('yesterday');
+	$today = stat_visit_info_byuniacid('today');
+	$yesterday = stat_visit_info_byuniacid('yesterday');
 	$today_module_api = stat_all_visit_statistics('current_account', $today);
 	$yesterday_module_api = stat_all_visit_statistics('current_account', $yesterday);
 	template('statistics/display');
@@ -44,7 +44,7 @@ if ($do == 'get_module_api') {
 		);
 	}
 
-	$result = stat_visit_info($type, '', $daterange);
+	$result = stat_visit_info_byuniacid($type, '', $daterange);
 	if (empty($result)) {
 		foreach ($modules_info as $module) {
 			$data[] = 0;

@@ -5,7 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-
 /**
  * 获取昨日、最近一周、最近一个月内的访问信息数据
  * @param string $type 类型：today、yesterday、week、month、daterange
@@ -48,7 +47,25 @@ function stat_visit_info($type, $module = '', $daterange = array(), $is_system_s
 			$params['date <='] = date('Ymd', strtotime($daterange['end']));
 			break;
 	}
-	$visit_info = pdo_getall('stat_visit', $params, array('uniacid', 'module', 'count'));
+	$visit_info = pdo_getall('stat_visit', $params, array('uniacid', 'module', 'count', 'date'), '', 'date ASC');
+	if (!empty($visit_info)) {
+		$result = $visit_info;
+	}
+	return $result;
+}
+
+/**
+ * 根据公众号划分，获取昨日、最近一周、最近一个月内的访问信息数据
+ * @param string $type 类型：today、yesterday、week、month、daterange
+ * @param string $module 要统计的模块，为空则默认统计所有模块
+ * @return array()
+ */
+function stat_visit_info_byuniacid($type, $module = '', $daterange = array(), $is_system_stat = false) {
+	$result = array();
+	$visit_info = stat_visit_info($type, $module, $daterange, $is_system_stat);
+	if (empty($visit_info)) {
+		return $result;
+	}
 	foreach ($visit_info as $info) {
 		if ($is_system_stat) {
 			if (empty($info['uniacid'])) {
@@ -72,6 +89,33 @@ function stat_visit_info($type, $module = '', $daterange = array(), $is_system_s
 	}
 	return $result;
 }
+
+/**
+ * 根据日期划分，获取昨日、最近一周、最近一个月内的访问信息数据
+ * @param string $type 类型：today、yesterday、week、month、daterange
+ * @param string $module 要统计的模块，为空则默认统计所有模块
+ * @return array()
+ */
+function stat_visit_info_bydate($type, $module = '', $daterange = array(), $is_system_stat = false) {
+	$result = array();
+	$visit_info = stat_visit_info($type, $module, $daterange, $is_system_stat);
+	if (empty($visit_info)) {
+		return $result;
+	}
+	foreach ($visit_info as $info) {
+		if (empty($info['uniacid']) || empty($info['date'])) {
+			continue;
+		}
+		if ($result[$info['date']]['date'] == $info['date']) {
+			$result[$info['date']]['count'] += $info['count'];
+		} else {
+			unset($info['module'], $info['uniacid']);
+			$result[$info['date']] = $info;
+		}
+	}
+	return $result;
+}
+
 
 /**
  * 统计公众号整体访问信息
