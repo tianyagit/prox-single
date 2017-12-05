@@ -18,11 +18,9 @@ if (!empty($state)) {
 	$controller = 'user';
 	$action = 'login';
 	$state = base64_decode($state);
-	$third_param = explode('|', $state);
-	$third_param[0] = explode('=', $third_param[0]);
-	$third_param[1] = explode('=', $third_param[1]);
-	$_GPC['login_type'] = $third_param[0][1];
-	$_GPC['handle_type'] = $third_param[1][1];
+	parse_str($state, $third_param);
+	$_GPC['login_type'] = $third_param['from'];
+	$_GPC['handle_type'] = $third_param['mode'];
 }
 
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
@@ -101,7 +99,7 @@ if (is_array($acl[$controller]['direct']) && in_array($action, $acl[$controller]
 }
 checklogin();
 // 判断非创始人是否拥有目标权限
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER && version_compare($_W['setting']['site']['version'], '1.5.5', '>=')) {
+if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER && version_compare(IMS_VERSION, '1.5.5', '>=')) {
 	if (empty($_W['uniacid'])) {
 		if (defined('FRAME') && FRAME == 'account') {
 			itoast('', url('account/display'), 'info');

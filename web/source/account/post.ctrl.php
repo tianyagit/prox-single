@@ -183,6 +183,11 @@ if($do == 'base') {
 	$account['highest_visit'] = empty($statistics_setting['statistics']['founder']) ? 0 : $statistics_setting['statistics']['founder'];
 	$uniaccount = array();
 	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$account_api = uni_site_store_buy_goods($uniacid, STORE_TYPE_API);
+	}
+	/* xend */
 	template('account/manage-base' . ACCOUNT_TYPE_TEMPLATE);
 }
 
@@ -385,7 +390,39 @@ if($do == 'modules_tpl') {
 	if (!empty($extend['templates'])) {
 		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend['templates']), array('id', 'name', 'title'));
 	}
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$account_buy_modules = uni_site_store_buy_goods($uniacid);
+		if (!empty($account_buy_modules) && is_array($account_buy_modules)) {
+			foreach ($account_buy_modules as &$module) {
+				$module = module_fetch($module);
+				$module['goods_id'] = pdo_getcolumn('site_store_goods', array('module' => $module['name']), 'id');
+				$module['expire_time'] = pdo_getcolumn('site_store_order', array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'goodsid' => $module['goods_id']), 'max(endtime)');
+			}
+		}
 
+		unset($module);
+
+		$store = table('store');
+		$account_buy_group = uni_site_store_buy_goods($uniacid, STORE_TYPE_PACKAGE);
+		$account_buy_package = array();
+		if (is_array($account_buy_group) && !empty($account_buy_group)) {
+			foreach ($account_buy_group as $group) {
+				$account_buy_package[$group] = $uni_groups[$group];
+				$account_buy_package[$group]['goods_id'] = pdo_getcolumn('site_store_goods', array('module_group' => $group), 'id');
+				$account_buy_package[$group]['expire_time'] = pdo_getcolumn('site_store_order', array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'goodsid' => $account_buy_package[$group]['goods_id']), 'max(endtime)');
+				if (TIMESTAMP > $account_buy_package[$group]['expire_time']) {
+					$account_buy_package[$group]['expire'] = true;
+				} else {
+					$account_buy_package[$group]['expire'] = false;
+					$account_buy_package[$group]['near_expire'] = strtotime('-1 week', $account_buy_package[$group]['expire_time']) < time() ? true : false;
+				}
+				$account_buy_package[$group]['expire_time'] = date('Y-m-d', $account_buy_package[$group]['expire_time']);
+			}
+		}
+		unset($group);
+	}
+	/* xend */
 
 	template('account/manage-modules-tpl' . ACCOUNT_TYPE_TEMPLATE);
 }
