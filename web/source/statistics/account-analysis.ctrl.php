@@ -1,31 +1,32 @@
 <?php
 /**
- * app端访问统计
+ * app端所有公众号访问统计
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->model('module');
 load()->model('statistics');
 
-$dos = array('display', 'get_account_api', 'get_module_api');
+$dos = array('display', 'get_account_api');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
-	$today = stat_visit_info_byuniacid('today');
-	$yesterday = stat_visit_info_byuniacid('yesterday');
-	$today_module_api = stat_all_visit_statistics('current_account', $today);
-	$yesterday_module_api = stat_all_visit_statistics('current_account', $yesterday);
-	template('statistics/display');
+	$today = stat_visit_info_byuniacid('today', '', array(), true);
+	$yesterday = stat_visit_info_byuniacid('yesterday', '', array(), true);
+	$today_module_api = stat_all_visit_statistics('all_account', $today);
+	$yesterday_module_api = stat_all_visit_statistics('all_account', $yesterday);
 }
 
-if ($do == 'get_module_api') {
-	$modules = array();
+if ($do == 'get_account_api') {
+	$accounts = array();
 	$data = array();
-	$modules_info = stat_modules_except_system();
-	array_unshift($modules_info, array('name' => 'wesite', 'title' => '微站'));
-	foreach ($modules_info as $info) {
-		$modules[] = mb_substr($info['title'], 0, 5, 'utf-8');
+	$account_table = table('account');
+	$account_table->searchWithType(array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH));
+	$account_table->accountRankOrder();
+	$account_list = $account_table->searchAccountList();
+	foreach ($account_list as $key => $account) {
+		$account_list[$key] = uni_fetch($account['uniacid']);
+		$accounts[] = mb_substr($account_list[$key]['name'], 0, 5, 'utf-8');
 	}
 
 	$support_type = array(
@@ -45,16 +46,17 @@ if ($do == 'get_module_api') {
 		);
 	}
 	if ($divide_type == 'bydate') {
-		$result = stat_visit_info_bydate($type, '', $daterange);
+		$result = stat_visit_info_bydate($type, '', $daterange, true);
 	}
 	if ($divide_type == 'byuniacid') {
-		$result = stat_visit_info_byuniacid($type, '', $daterange);
+		$result = stat_visit_info_byuniacid($type, '', $daterange, true);
 	}
+
 	if (empty($result)) {
-		foreach ($modules_info as $module) {
+		foreach ($account_list as $account) {
 			$data[] = 0;
 		}
-		iajax(0, array('data_x' => $modules, 'data_y' => $data));
+		iajax(0, array('data_x' => $accounts, 'data_y' => $data));
 	}
 	if ($divide_type == 'bydate') {
 		foreach ($result as $val) {
@@ -64,10 +66,10 @@ if ($do == 'get_module_api') {
 		iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
 	}
 	if ($divide_type == 'byuniacid') {
-		foreach ($modules_info as $module) {
+		foreach ($account_list as $account) {
 			$have_count = false;
 			foreach ($result as $val) {
-				if ($module['name'] == $val['module']) {
+				if ($account['uniacid'] == $val['uniacid']) {
 					$data[] = $val['count'];
 					$have_count = true;
 				}
@@ -76,6 +78,8 @@ if ($do == 'get_module_api') {
 				$data[] = 0;
 			}
 		}
-		iajax(0, array('data_x' => $modules, 'data_y' => $data));
+		iajax(0, array('data_x' => $accounts, 'data_y' => $data));
 	}
 }
+
+template('statistics/account-analysis');

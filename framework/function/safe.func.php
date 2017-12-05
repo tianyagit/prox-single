@@ -10,16 +10,52 @@ defined('IN_IA') or exit('Access Denied');
  * @param unknown $value
  * @param string $default
  */
-function safe_gpc_int($value, $default = '0') {
+function safe_gpc_int($value, $default = 0) {
+	$value = intval($value);
+	$default = intval($default);
 	
+	if (empty($value) && $default != $value) {
+		$value = $default;
+	}
+	return $value;
 }
 
+/**
+ * 转换一个安全字符串
+ * @param mixed $value
+ * @param string $default
+ * @return string
+ */
 function safe_gpc_string($value, $default = '') {
+	$value = htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_QUOTES);
 	
+	$badstr = array("\0", "%00", "\r", "%3C", "%3E", '{php');
+	$newstr = array('', '', '', '&lt;', '&gt;', '');
+	$value  = str_replace($badstr, $newstr, $value);
+	
+	$value  = preg_replace('/&((#(\d{3,5}|x[a-fA-F0-9]{4}));)/', '&\\1', $value);
+	
+	if (empty($value) && $default != $value) {
+		$value = $default;
+	}
+	return $value;
 }
 
+/**
+ * 转换一个安全路径
+ * @param string $value
+ * @param string $default
+ * @return string
+ */
 function safe_gpc_path($value, $default = '') {
+	$path = safe_gpc_string($value);
+	$path = str_replace(array('..', '..\\', '\\\\' ,'\\', '..\\\\'), '', $path);
 	
+	if (empty($path) || $path != $value) {
+		$path = $default;
+	}
+	
+	return $path;
 }
 
 /**
@@ -71,22 +107,6 @@ function safe_url_not_outside($redirect) {
 	}
 	return $redirect;
 }
-
-/**
- * 过滤GET,POST传入的路径中的危险字符
- * @param string $path
- * @return boolean | string 正常返回路径，否则返回空
- */
-function safe_parse_path($path) {
-	$danger_char = array('../', '{php', '<?php', '<%', '<?', '..\\', '\\\\' ,'\\', '..\\\\', '%00', '\0', '\r');
-	foreach ($danger_char as $char) {
-		if (strexists($path, $char)) {
-			return false;
-		}
-	}
-	return $path;
-}
-
 
 /**
  *  去掉可能造成xss攻击的字符
