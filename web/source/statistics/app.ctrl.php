@@ -19,9 +19,6 @@ if ($do == 'display') {
 	template('statistics/display');
 }
 
-if ($do == 'get_account_api') {
-}
-
 if ($do == 'get_module_api') {
 	$modules = array();
 	$data = array();
@@ -31,9 +28,13 @@ if ($do == 'get_module_api') {
 		$modules[] = mb_substr($info['title'], 0, 5, 'utf-8');
 	}
 
-	$support_type = array('today', 'week', 'month', 'daterange');
-	$type = trim($_GPC['type']);
-	if (!in_array($type, $support_type)) {
+	$support_type = array(
+		'time' => array('today', 'week', 'month', 'daterange'),
+		'divide' => array('bydate', 'byuniacid'),
+	);
+	$type = trim($_GPC['time_type']);
+	$divide_type = trim($_GPC['divide_type']);
+	if (!in_array($type, $support_type['time']) || !in_array($divide_type, $support_type['divide'])) {
 		iajax(-1, '参数错误！');
 	}
 	$daterange = array();
@@ -43,13 +44,26 @@ if ($do == 'get_module_api') {
 			'end' => date('Ymd', strtotime($_GPC['daterange']['endDate'])),
 		);
 	}
-
-	$result = stat_visit_info_byuniacid($type, '', $daterange);
+	if ($divide_type == 'bydate') {
+		$result = stat_visit_info_bydate($type, '', $daterange);
+	}
+	if ($divide_type == 'byuniacid') {
+		$result = stat_visit_info_byuniacid($type, '', $daterange);
+	}
 	if (empty($result)) {
 		foreach ($modules_info as $module) {
 			$data[] = 0;
 		}
-	} else {
+		iajax(0, array('data_x' => $modules, 'data_y' => $data));
+	}
+	if ($divide_type == 'bydate') {
+		foreach ($result as $val) {
+			$data_x[] = $val['date'];
+			$data_y[] = $val['count'];
+		}
+		iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
+	}
+	if ($divide_type == 'byuniacid') {
 		foreach ($modules_info as $module) {
 			$have_count = false;
 			foreach ($result as $val) {
@@ -62,7 +76,6 @@ if ($do == 'get_module_api') {
 				$data[] = 0;
 			}
 		}
+		iajax(0, array('data_x' => $modules, 'data_y' => $data));
 	}
-
-	iajax(0, array('modules' => $modules, 'data' => $data));
 }
