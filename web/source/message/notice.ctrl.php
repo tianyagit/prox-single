@@ -63,11 +63,8 @@ if ($do == 'header_notice') {
 	if (!pdo_tableexists('message_notice_log')) {
 		iajax(-1);
 	}
-	$message_list = message_notice();
-	if (!empty($message_list['lists'])) {
-		$message_list['lists'] = message_record_formate($message_list['lists']);
-	}
-	iajax(0, $message_list);
+	$message = message_header_notice_list();
+	iajax(0, $message);
 
 }
 template('message/notice');

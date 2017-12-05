@@ -25,7 +25,7 @@ function message_notice_read($id) {
  * @param array $message_notice_log
  * @return bool
  */
-function message_record($content, $uid, $sign, $type, $extend_message = array()) {
+function message_notice_record($content, $uid, $sign, $type, $extend_message = array()) {
 	$message['message'] = $content;
 	$message['uid'] = $uid;
 	$message['sign'] = $sign;
@@ -40,7 +40,7 @@ function message_record($content, $uid, $sign, $type, $extend_message = array())
  * frame  顶部消息提醒获取
  * @return array
  */
-function message_notice() {
+function message_header_notice_list() {
 	load()->model('user');
 	global $_W;
 	$message_table = table('message');
@@ -57,42 +57,31 @@ function message_notice() {
 	$message_table->searchWithIsRead(MESSAGE_NOREAD);
 	$message_table->searchWithType($type);
 	$total = $message_table->messageNoReadCount();
+	if (!empty($lists)) {
+		foreach ($lists as &$message) {
+			$message['create_time'] = date('Y-m-d H:i:s', $message['create_time']);
+
+			if ($message['type'] == MESSAGE_ORDER_TYPE) {
+				$message['url'] = url('site/entry/orders', array('m' => 'store', 'direct'=>1, 'message_id' => $message['id']));
+			}
+			if ($message['type'] == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
+				$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL, 'message_id' => $message['id']));
+			}
+			if ($message['type'] == MESSAGE_WECHAT_EXPIRE_TYPE) {
+				$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL, 'message_id' => $message['id']));
+			}
+
+			if ($message['type']==MESSAGE_REGISTER_TYPE && $message['status']==USER_STATUS_CHECK) {
+				$message['url'] = url('user/display', array('type' => 'check', 'message_id' => $message['id']));
+			}
+
+			if ($message['type']==MESSAGE_REGISTER_TYPE && $message['status']==USER_STATUS_CHECK) {
+				$message['url'] = url('user/display', array('message_id' => $message['id']));
+			}
+		}
+	}
 	return array(
 		'lists' => $lists,
 		'total' => $total
 	);
-}
-
-/**
- * 消息内容格式化
- * @param $message_list
- * @return array
- */
-function message_record_formate ($message_list) {
-	if (empty($message_list)) {
-		return array();
-	}
-
-	foreach ($message_list as &$message) {
-		$message['create_time'] = date('Y-m-d H:i:s', $message['create_time']);
-
-		if ($message['type'] == MESSAGE_ORDER_TYPE) {
-			$message['url'] = url('site/entry/orders', array('m' => 'store', 'direct'=>1, 'message_id' => $message['id']));
-		}
-		if ($message['type'] == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
-			$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL, 'message_id' => $message['id']));
-		}
-		if ($message['type'] == MESSAGE_WECHAT_EXPIRE_TYPE) {
-			$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL, 'message_id' => $message['id']));
-		}
-
-		if ($message['type']==MESSAGE_REGISTER_TYPE && $message['status']==USER_STATUS_CHECK) {
-			$message['url'] = url('user/display', array('type' => 'check', 'message_id' => $message['id']));
-		}
-
-		if ($message['type']==MESSAGE_REGISTER_TYPE && $message['status']==USER_STATUS_CHECK) {
-			$message['url'] = url('user/display', array('message_id' => $message['id']));
-		}
-	}
-	return $message_list;
 }
