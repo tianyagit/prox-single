@@ -110,6 +110,9 @@ class Wechat extends OAuth2Client {
 	public function login() {
 		load()->model('user');
 		$user = $this->user();
+		if (is_error($user)) {
+			return $user;
+		}
 
 		if (is_error($user)) {
 			return $user;
