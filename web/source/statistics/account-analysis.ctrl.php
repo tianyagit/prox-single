@@ -56,7 +56,7 @@ if ($do == 'get_account_api') {
 		foreach ($account_list as $account) {
 			$data[] = 0;
 		}
-		iajax(0, array('account' => $accounts, 'data' => $data));
+		iajax(0, array('data_x' => $accounts, 'data_y' => $data));
 	}
 	if ($divide_type == 'bydate') {
 		foreach ($result as $val) {
