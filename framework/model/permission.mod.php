@@ -10,8 +10,8 @@ defined('IN_IA') or exit('Access Denied');
  * @return boolean
  */
 function permission_build() {
-	global $_W;
-	$we7_file_permission = require IA_ROOT . '/web/common/permission.inc.php';
+	global $_W, $acl;
+	$we7_file_permission = $acl;
 	$permission_frames = require IA_ROOT . '/web/common/frames.inc.php';
 	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OPERATOR, ACCOUNT_MANAGE_NAME_MANAGER)) || empty($_W['uniacid'])) {
 		return $we7_file_permission;
@@ -158,6 +158,7 @@ function permission_account_user_role($uid = 0, $uniacid = 0) {
 		} elseif ($role == ACCOUNT_MANAGE_NAME_CLERK) {
 			$role = ACCOUNT_MANAGE_NAME_CLERK;
 		}
+		return $role;
 	} else {
 		$roles = $user_table->userOwnedAccountRole($uid);
 		if (in_array(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, $roles)) {
@@ -340,8 +341,25 @@ function permission_update_account_user($uid, $uniacid, $data) {
 	return $result;
 }
 
+/*
+ * 判断用户是否有某一权限
+ * @param string $permission_name 权限名
+ * @param boolean $show_message 是否显示错误信息
+ * @param string $action
+ */
+
 function permission_check_account_user($permission_name, $show_message = true, $action = '') {
-	global $_W, $_GPC;
+	global $_W, $_GPC, $acl;
+	$see_more_info = $acl['see_more_info'];
+	if (strpos($permission_name, 'see_') === 0) {
+		$can_see_more = false;
+		if (defined('FRAME') && FRAME == 'system') {
+			$can_see_more = in_array($permission_name, $see_more_info[$_W['highest_role']]) ? true : false;
+		} else {
+			$can_see_more = in_array($permission_name, $see_more_info[$_W['role']]) ? true : false;
+		}
+		return $can_see_more;
+	}
 	$user_has_permission = permission_account_user_permission_exist();
 	if (empty($user_has_permission)) {
 		return true;

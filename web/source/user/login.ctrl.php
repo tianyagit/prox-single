@@ -5,56 +5,81 @@
  */
 defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
+
+load()->model('user');
+load()->classs('oauth2/oauth2client');
+load()->model('setting');
+
 if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
+
+$support_login_types = OAuth2Client::supportThirdLoginType();
+if (in_array($_GPC['login_type'], $support_login_types)) {
+	_login($_GPC['referer']);
+}
+
 $setting = $_W['setting'];
+$_GPC['login_type'] = !empty($_GPC['login_type']) ? $_GPC['login_type'] : (!empty($_W['setting']['copyright']['login_type']) ? 'mobile': 'system');
+$login_urls = user_support_urls();
 template('user/login');
 
 function _login($forward = '') {
 	global $_GPC, $_W;
-	load()->model('user');
-	user_expire_notice();
-	$member = array();
-	$username = trim($_GPC['username']);
+	$setting_sms_sign = setting_load('site_sms_sign');
+	$status = !empty($setting_sms_sign['site_sms_sign']['status']) ? $setting_sms_sign['site_sms_sign']['status'] : '';
+	if (!empty($status)) {
+		user_expire_notice();
+	}
+	if (empty($_GPC['login_type'])) {
+		$_GPC['login_type'] = 'system';
+	}
 
-	pdo_query('DELETE FROM'.tablename('users_failed_login'). ' WHERE lastupdate < :timestamp', array(':timestamp' => TIMESTAMP-300));
-	$failed = pdo_get('users_failed_login', array('username' => $username, 'ip' => CLIENT_IP));
-	if ($failed['count'] >= 5) {
-		itoast('输入密码错误次数超过5次，请在5分钟后再登录',referer(), 'info');
+	if (empty($_GPC['handel_type'])) {
+		$_GPC['handle_type'] = 'login';
 	}
-	if (!empty($_W['setting']['copyright']['verifycode'])) {
-		$verify = trim($_GPC['verify']);
-		if (empty($verify)) {
-			itoast('请输入验证码', '', '');
-		}
-		$result = checkcaptcha($verify);
-		if (empty($result)) {
-			itoast('输入验证码错误', '', '');
+
+	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->handle($_GPC['handle_type']);
+
+	if (!empty($_W['user']) && !empty($_GPC['handle_type'])) {
+		if (is_error($member)) {
+			itoast($member['message'], url('user/profile/bind'), '');
+		} else {
+			itoast('绑定成功', url('user/profile/bind'), '');
 		}
 	}
-	if (empty($username)) {
-		itoast('请输入要登录的用户名', '', '');
-	}
-	$member['username'] = $username;
-	$member['password'] = $_GPC['password'];
-	if (empty($member['password'])) {
-		itoast('请输入密码', '', '');
+	
+	if (is_error($member)) {
+		itoast($member['message'], url('user/login'), '');
 	}
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
-			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', '', '');
+			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', url('user/login'), '');
 		}
 		$_W['uid'] = $record['uid'];
 		$_W['isfounder'] = user_is_founder($record['uid']);
 		$_W['user'] = $record;
 
-		if (empty($_W['isfounder']) || user_is_vice_founder()) {
-			if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
-				itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			if (empty($_W['isfounder']) || user_is_vice_founder()) {
+				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
+					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+				}
 			}
 		}
+		/* xend */
+
+		/* vstart */
+		if (IMS_FAMILY == 'v') {
+			if (empty($_W['isfounder'])) {
+				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
+					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+				}
+			}
+		}
+		/* vend */
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
 			itoast('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], '', '');
 		}
@@ -75,20 +100,22 @@ function _login($forward = '') {
 			$forward = user_login_forward($_GPC['forward']);
 		}
 		// 只能跳到本域名下
-		$forward = check_url_not_outside_link($forward);
+		$forward = safe_url_not_outside($forward);
 
 		if ($record['uid'] != $_GPC['__uid']) {
 			isetcookie('__uniacid', '', -7 * 86400);
 			isetcookie('__uid', '', -7 * 86400);
 		}
+		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
+		user_account_expire_message_record();
 		itoast("欢迎回来，{$record['username']}。", $forward, 'success');
 	} else {
 		if (empty($failed)) {
-			pdo_insert('users_failed_login', array('ip' => CLIENT_IP, 'username' => $username, 'count' => '1', 'lastupdate' => TIMESTAMP));
+			pdo_insert('users_failed_login', array('ip' => CLIENT_IP, 'username' => trim($_GPC['username']), 'count' => '1', 'lastupdate' => TIMESTAMP));
 		} else {
 			pdo_update('users_failed_login', array('count' => $failed['count'] + 1, 'lastupdate' => TIMESTAMP), array('id' => $failed['id']));
 		}
-		itoast('登录失败，请检查您输入的用户名和密码！', '', '');
+		itoast('登录失败，请检查您输入的账号和密码！', '', '');
 	}
 }

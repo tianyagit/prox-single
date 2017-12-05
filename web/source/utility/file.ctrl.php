@@ -30,6 +30,8 @@ $option = array();
 $option = array_elements(array('uploadtype', 'global', 'dest_dir'), $_POST);
 $option['width'] = intval($option['width']);
 $option['global'] = $_GPC['global'];//!empty($_COOKIE['__fileupload_global']);
+
+
 if (!empty($option['global']) && empty($_W['isfounder'])) {
 	$result['message'] = '没有向 global 文件夹上传文件的权限.';
 	die(json_encode($result));
@@ -52,15 +54,12 @@ if($dest_dir != '') {
 
 $setting = $_W['setting']['upload'][$type];
 $uniacid = intval($_W['uniacid']);
-if(empty($uniacid) && $_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
-	exit('Access Denied');
-}
+
 if(isset($_GPC['uniacid'])) { //是否有强制指定uniacid
 	$requniacid = intval($_GPC['uniacid']);
 	attachment_reset_uniacid($requniacid);// 会改变$_W['uniacid'];
 	$uniacid = intval($_W['uniacid']);
 }
-
 
 // 设置多媒体上传目录
 if (!empty($option['global'])) {
@@ -140,8 +139,11 @@ if ($do == 'upload') {
 	$ext = strtolower($ext);
 	$size = intval($_FILES['file']['size']);
 	$originname = $_FILES['file']['name'];
+
 	$filename = file_random_name(ATTACHMENT_ROOT . '/' . $setting['folder'], $ext);
-	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename);
+
+	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename, true);
+
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
 		die(json_encode($result));
@@ -194,6 +196,9 @@ if ($do == 'fetch' || $do == 'upload') {
 		$size = filesize($fullname);
 		$info['size'] = sizecount($size);
 	}
+	if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
+		$_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
+	}
 	if (!empty($_W['setting']['remote']['type'])) {
 		$remotestatus = file_remote_upload($pathname);
 		if (is_error($remotestatus)) {
@@ -220,7 +225,7 @@ if ($do == 'fetch' || $do == 'upload') {
 
 if ($do == 'delete') {
 	$id = intval($_GPC['id']);
-	$media = pdo_get('core_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
+	$media = pdo_get('core_attachment', array('id' => $id));
 	if (empty($media)) {
 		exit('文件不存在或已经删除');
 	}
@@ -235,7 +240,7 @@ if ($do == 'delete') {
 	if (is_error($status)) {
 		exit($status['message']);
 	}
-	pdo_delete('core_attachment', array('uniacid' => $uniacid, 'id' => $id));
+	pdo_delete('core_attachment', array('id' => $id));
 	exit('success');
 }
 
@@ -373,7 +378,7 @@ if ($do == 'wechat_upload') {
 	}
 
 	$filename = file_random_name(ATTACHMENT_ROOT .'/'. $setting['folder'], $ext);
-	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename);
+	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename, true);
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
 		die(json_encode($result));
@@ -595,25 +600,27 @@ if ($do == 'image') {
 	if ($islocal) { // 如果读取本地图
 		$page = $_GPC['page'];
 		$page = max(1, $page);
-		$condition = ' WHERE uniacid = :uniacid AND type = :type AND module_upload_dir = :module_upload_dir';
-		$params = array(':uniacid' => $uniacid, ':type' => 1, ':module_upload_dir' => $module_upload_dir);
+		$condition = array('uniacid' => $uniacid, 'type' => 1, 'module_upload_dir' => $module_upload_dir);
+
+		if (empty($uniacid)) {
+			$condition['uid'] = $_W['uid'];
+		}
 
 		$year = $_GPC['year'];
 		$month = $_GPC['month'];
 		if ($year > 0 || $month > 0) {
 			$starttime = strtotime("{$year}-{$month}-01");
 			$endtime = strtotime('+1 month', $starttime);
-			$condition .= ' AND createtime >= :starttime AND createtime <= :endtime';
-			$params[':starttime'] = $starttime;
-			$params[':endtime'] = $endtime;
+			$condition['createtime >='] = $starttime;
+			$condition['createtime <='] = $endtime;
 		}
-		$sql = 'SELECT * FROM '.tablename('core_attachment')." {$condition} ORDER BY id DESC LIMIT ".(($page - 1) * $page_size).','.$page_size;
-		$list = pdo_fetchall($sql, $params);
+		$list = pdo_getslice('core_attachment', $condition, array($page, $page_size), $total, array(), '', 'createtime DESC');
+
 		foreach ($list as &$item) {
 			$item['url'] = tomedia($item['attachment']);
 			unset($item['uid']);
 		}
-		$total = pdo_fetchcolumn('SELECT count(*) FROM '.tablename('core_attachment')." {$condition}", $params);
+
 		$result = array(
 			'items' => $list,
 			'pager' => pagination($total, $page, $page_size, '', array('before' => '2', 'after' => '3', 'ajaxcallback' => 'null')),
@@ -621,8 +628,13 @@ if ($do == 'image') {
 	} else {
 		$page = $_GPC['page'];
 		$page_index = max(1, $page);
+		$conditions['uniacid'] = $uniacid;
 		$conditions['type'] = 'image';
 		$conditions['module_upload_dir'] = $module_upload_dir;
+
+		if (empty($uniacid)) {
+			$conditions['uid'] = $_W['uid'];
+		}
 		$material_list = pdo_getslice('wechat_attachment', $conditions, array($page_index, $page_size), $total, array(), '', 'createtime DESC');
 		$pager = pagination($total, $page_index, $page_size,'',$context = array('before' => 5, 'after' => 4, 'isajax' => $_W['isajax']));
 

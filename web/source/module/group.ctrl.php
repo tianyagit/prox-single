@@ -10,21 +10,43 @@ load()->model('module');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
-if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
-	itoast('无权限操作！', referer(), 'error');
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
+		itoast('无权限操作！', referer(), 'error');
+	}
 }
-if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
-	itoast('您只有查看权限！', url('module/group'), 'error');
+/* xend */
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER))){
+		itoast('无权限操作！', referer(), 'error');
+	}
 }
+/* vend */
 
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
+		itoast('您只有查看权限！', url('module/group'), 'error');
+	}
+}
+/* xend */
+
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER))) {
+		itoast('您只有查看权限！', url('module/group'), 'error');
+	}
+}
+/* vend */
 if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
-	$wxapp = empty($_GPC['wxapp']) ? array() : (array)array_keys($_GPC['wxapp']);
-	$webapp = empty($_GPC['webapp']) ? array() : (array)array_keys($_GPC['webapp']);
+	$wxapp = empty($_GPC['wxapp']) ? array() : (array)$_GPC['wxapp'];
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
-		'modules' => array_merge($modules, $wxapp, $pc),
+		'modules' => array_merge($modules, $wxapp),
 		'templates' => $_GPC['templates'],
 	);
 
@@ -39,14 +61,15 @@ if ($do == 'save') {
 if ($do == 'display') {
 	$_W['page']['title'] = '应用套餐列表';
 	$param = array('uniacid' => 0);
-	if (!empty($_GPC['name'])) {
-		$param['name like'] = "%". trim($_GPC['name']) ."%";
-	}
 	$modules = user_modules($_W['uid']);
 	
 	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
+			if (!empty($_GPC['name']) && !strexists($group['name'], $_GPC['name'])) {
+				unset($modules_group_list[$group_key]);
+				continue;
+			}
 			if (empty($group['modules'])) {
 				$group['modules'] = array();
 			}
@@ -90,7 +113,6 @@ if ($do == 'post') {
 	$group_have_module_app = array();
 	$group_have_module_wxapp = array();
 	$group_have_template = array();
-	$group_have_module_webapp = array();
 
 	if (!empty($group_id)) {
 		$uni_groups = uni_groups();
@@ -98,12 +120,10 @@ if ($do == 'post') {
 		$group_have_module_app = empty($module_group['modules']) ? array() : $module_group['modules'];
 		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : $module_group['wxapp'];
 		$group_have_template = empty($module_group['templates']) ? array() : $module_group['templates'];
-		$group_have_module_webapp = empty($module_group['webapp']) ? array() : $module_group['webapp'];
 	}
 	$module_list = user_uniacid_modules($_W['uid']);
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
-	$group_not_have_module_webapp = array();
 	if (!empty($module_list)) {
 		foreach ($module_list as $name => $module_info) {
 			$module_info = module_fetch($name);
@@ -128,10 +148,6 @@ if ($do == 'post') {
 			}
 			if ($module_info['wxapp_support'] == 2 && !in_array($name, array_keys($group_have_module_wxapp))) {
 				$group_not_have_module_wxapp[$name] = $module_info;
-			}
-
-			if ($module_info['webapp_support'] == 2 && !in_array($name, array_keys($group_have_module_webapp))) {
-				$group_not_have_module_webapp[$name] = $module_info;
 			}
 		}
 	}

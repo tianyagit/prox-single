@@ -84,7 +84,7 @@ class StoreTable extends We7Table {
 	}
 
 	public function searchOrderList($pageindex = 0, $pagesize = 0) {
-		$this->query->from('site_store_order')->orderby('type', 'DESC');
+		$this->query->from('site_store_order')->where('type <>', STORE_GOODS_STATUS_DELETE)->orderby('type', 'DESC');
 
 		if (!empty($pageindex) && !empty($pagesize)) {
 			$this->searchWithPage($pageindex, $pagesize);
@@ -161,5 +161,9 @@ class StoreTable extends We7Table {
 	public function searchUserCreateWxappNum($uid) {
 		$count = $this->query->from('site_store_create_account', 'a')->leftjoin('account', 'b')->on('a.uniacid', 'b.uniacid')->where('a.uid', $uid)->where('b.type', 4)->where('b.isdeleted', 0)->select('count(*) as count')->get('count');
 		return $count['count'];
+	}
+
+	public function searchPaymentsOrder() {
+		return $this->query->from('site_store_order', 'a')->leftjoin('site_store_goods', 'b')->on('a.goodsid', 'b.id')->where('a.type', 3)->orderby('a.createtime', 'desc')->getall();
 	}
 }

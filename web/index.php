@@ -9,6 +9,21 @@ require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 load()->web('common');
 load()->web('template');
 load()->func('file');
+load()->model('account');
+load()->model('setting');
+load()->model('user');
+
+$state = urldecode($_GPC['state']);
+if (!empty($state)) {
+	$controller = 'user';
+	$action = 'login';
+	$state = base64_decode($state);
+	$third_param = explode('|', $state);
+	$third_param[0] = explode('=', $third_param[0]);
+	$third_param[1] = explode('=', $third_param[1]);
+	$_GPC['login_type'] = $third_param[0][1];
+	$_GPC['handle_type'] = $third_param[1][1];
+}
 
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
@@ -100,7 +115,6 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER && version_compare($_W['setting']
 		message('不能访问, 需要相应的权限才能访问！');
 	}
 }
-
 // 用户权限判断
 require _forward($controller, $action);
 
@@ -128,7 +142,7 @@ function _forward($c, $a) {
 }
 function _calc_current_frames(&$frames) {
 	global $controller, $action;
-	if (! empty($frames['section']) && is_array($frames['section'])) {
+	if (!empty($frames['section']) && is_array($frames['section'])) {
 		foreach ($frames['section'] as &$frame) {
 			if (empty($frame['menu'])) {
 				continue;
@@ -147,7 +161,7 @@ function _calc_current_frames(&$frames) {
 					$get['c'] = $controller;
 					$get['a'] = $action;
 				}
-				if (! empty($do)) {
+				if (!empty($do)) {
 					$get['do'] = $do;
 				}
 				$diff = array_diff_assoc($urls, $get);
