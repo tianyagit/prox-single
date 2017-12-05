@@ -8,7 +8,6 @@
  * @license     A "Slug" license name e.g. GPL2
  */
 defined('IN_IA') or exit('Access Denied');
-define('FRAME', 'webapp');
 
 load()->model('webapp');
 
