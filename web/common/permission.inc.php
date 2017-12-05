@@ -339,9 +339,6 @@ $we7_file_permission = array(
 		'operator' => array(
 			'emulator',
 		),
-		'owner' => array(),
-		'manager' => array(),
-		'operator' => array(),
 	),
 	'append' => array('append*'),
 	'see_more_info' => array(
