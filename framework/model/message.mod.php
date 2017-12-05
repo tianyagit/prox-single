@@ -41,6 +41,7 @@ function message_record($content, $uid, $sign, $type, $extend_message = array())
  * @return array
  */
 function message_notice() {
+	load()->model('user');
 	global $_W;
 	$message_table = table('message');
 	$message_table->searchWithIsRead(MESSAGE_NOREAD);
