@@ -158,6 +158,7 @@ function permission_account_user_role($uid = 0, $uniacid = 0) {
 		} elseif ($role == ACCOUNT_MANAGE_NAME_CLERK) {
 			$role = ACCOUNT_MANAGE_NAME_CLERK;
 		}
+		return $role;
 	} else {
 		$roles = $user_table->userOwnedAccountRole($uid);
 		if (in_array(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, $roles)) {

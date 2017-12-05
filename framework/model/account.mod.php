@@ -197,17 +197,20 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
+		$site_store_buy_goods = array();
+		/* xstart */
 		if (IMS_FAMILY == 'x') {
-			$site_store_buy_goods = uni_site_store_buy_goods($uniacid);
-		} else {
-			$site_store_buy_goods = array();
+			$account_info = uni_fetch($_W['uniacid']);
+			$goods_type = $account_info['type'] == ACCOUNT_TYPE_APP_NORMAL ? STORE_TYPE_WXAPP_MODULE : STORE_TYPE_MODULE;
+			$site_store_buy_goods = uni_site_store_buy_goods($uniacid, $goods_type);
 		}
-		
+		/* xend */
+
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
 			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
 			$packageids = array_keys($packageids);
-			
+
 			if (IMS_FAMILY == 'x') {
 				$store = table('store');
 				$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
@@ -492,6 +495,8 @@ function uni_setting_load($name = '', $uniacid = 0) {
 					$row = (array)iunserializer($row);
 				}
 			}
+		} else {
+			$unisetting = array();
 		}
 		cache_write($cachekey, $unisetting);
 	}
@@ -742,7 +747,7 @@ function uni_account_save_switch($uniacid) {
 		$cache_lastaccount['account'] = $uniacid;
 	}
 	cache_write($cache_key, $cache_lastaccount);
-	isetcookie('__uniacid', $uniacid);
+	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;
 }

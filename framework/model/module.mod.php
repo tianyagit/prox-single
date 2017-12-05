@@ -69,7 +69,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 	load()->func('communication');
 
 	global $_W;
-	$ts = array('rule', 'cover', 'menu', 'home', 'profile', 'shortcut', 'function', 'mine');
+	$ts = array('rule', 'cover', 'menu', 'home', 'profile', 'shortcut', 'function', 'mine', 'welcome');
 	if(empty($types)) {
 		$types = $ts;
 	} else {
@@ -120,6 +120,10 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 			if($bind['entry'] == 'shortcut') {
 				$url = murl("entry", array('eid' => $bind['eid']));
 			}
+			if($bind['entry'] == 'welcome') {
+				$url = wurl("site/entry", array('eid' => $bind['eid']));
+			}
+
 			if(empty($bind['icon'])) {
 				$bind['icon'] = 'fa fa-puzzle-piece';
 			}

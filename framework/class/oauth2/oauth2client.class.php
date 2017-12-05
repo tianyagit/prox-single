@@ -21,6 +21,10 @@ abstract class OAuth2Client {
 		return array('system', 'qq', 'wechat', 'mobile');
 	}
 
+	public static function supportThirdLoginType() {
+		return array('qq', 'wechat');
+	}
+
 	public static function create($type, $appid = '', $appsecret = '') {
 		$types = self::supportLoginType();
 		if (in_array($type, $types)) {
@@ -35,33 +39,73 @@ abstract class OAuth2Client {
 
 	abstract function showLoginUrl($calback_url = '');
 
-	abstract function user();
-
-	public function we7user() {
-		load()->model('user');
-		$user = $this->user();
-		if (is_error($user)) {
-			return $user;
+	public function handle($handle_type) {
+		if ($handle_type == 'login') {
+			return $this->login();
 		}
-		if (in_array($this->login_type, array('qq', 'wechat'))) {
-			$user = user_third_info_register($user);
+		if ($handle_type == 'bind') {
+			return $this->bind();
 		}
-		return $user;
 	}
 
+	abstract function user();
+	
+	abstract function login();
+
+	abstract function bind();
+	abstract function unbind();
+	
 	abstract function register();
 
-	public function registerNoThird() {
+	public function user_register($register) {
+		global $_W;
 		load()->model('user');
-		$register = array();
-		if (in_array($this->login_type, array('system', 'mobile'))) {
-			$register = $this->register();
-			if (is_error($register)) {
-				return $register;
-			}
-			$register = user_register_nothird($register);
-		}
-		return $register;
-	}
 
+		if (is_error($register)) {
+			return $register;
+		}
+		$member = $register['member'];
+		$profile = $register['profile'];
+
+		$member['status'] = !empty($_W['setting']['register']['verify']) ? 1 : 2;
+		$member['remark'] = '';
+		$member['groupid'] = intval($_W['setting']['register']['groupid']);
+		if (empty($member['groupid'])) {
+			$member['groupid'] = pdo_fetchcolumn('SELECT id FROM '.tablename('users_group').' ORDER BY id ASC LIMIT 1');
+			$member['groupid'] = intval($member['groupid']);
+		}
+		$group = user_group_detail_info($member['groupid']);
+
+		$timelimit = intval($group['timelimit']);
+		if($timelimit > 0) {
+			$member['endtime'] = strtotime($timelimit . ' days');
+		}
+		$member['starttime'] = TIMESTAMP;
+		if (!empty($owner_uid)) {
+			$member['owner_uid'] = pdo_getcolumn('users', array('uid' => $owner_uid, 'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER), 'uid');
+		}
+
+		$user_id = user_register($member);
+		if (in_array($member['register_type'], array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT, USER_REGISTER_TYPE_MOBILE))) {
+			pdo_update('users', array('username' => $member['username'] . $user_id . rand(100,999)), array('uid' => $user_id));
+		}
+		if($user_id > 0) {
+			unset($member['password']);
+			$member['uid'] = $user_id;
+			if (!empty($profile)) {
+				$profile['uid'] = $user_id;
+				$profile['createtime'] = TIMESTAMP;
+				pdo_insert('users_profile', $profile);
+			}
+			if (in_array($member['register_type'], array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT, USER_REGISTER_TYPE_MOBILE))) {
+				pdo_insert('users_bind', array('uid' => $user_id, 'bind_sign' => $member['openid'], 'third_type' => $member['register_type'], 'third_nickname' => $member['username']));
+			}
+			if (in_array($member['register_type'], array(USER_REGISTER_TYPE_QQ, USER_REGISTER_TYPE_WECHAT))) {
+				return $user_id;
+			}
+			return error(0, '注册成功'.(!empty($_W['setting']['register']['verify']) ? '，请等待管理员审核！' : '，请重新登录！'));
+		}
+
+		return error(-1, '增加用户失败，请稍候重试或联系网站管理员解决！');
+	}
 }

@@ -109,15 +109,22 @@ define('CACHE_EXPIRE_MIDDLE', 300);
 define('CACHE_EXPIRE_LONG', 3600);
 define('CACHE_KEY_LENGTH', 100); //缓存键的最大长度
 
+//模块配置信息
 define('CACHE_KEY_MODULE_SETTING', 'module_setting:%s:%s');
+//模块详细信息，包含 CACHE_KEY_MODULE_SETTING
 define('CACHE_KEY_MODULE_INFO', 'module_info:%s');
+//当前公众号及所有者可用的模块
 define('CACHE_KEY_ACCOUNT_MODULES', 'unimodules:%s:%s');
+//模块所有注册菜单
 define('CACHE_KEY_ACCOUNT_MODULES_BINDING', 'unimodules:binding:%s');
+//用户信息
 define('CACHE_KEY_MEMBER_INFO', 'memberinfo:%s');
 define('CACHE_KEY_UNI_GROUP', 'uni_group');
 define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 
+//模块是否支持小程序
 define('MODULE_SUPPORT_WXAPP', 2);
+//模块是否支持公众号应用
 define('MODULE_SUPPORT_ACCOUNT', 2);
 
 //权限类型
@@ -146,18 +153,25 @@ define('WXAPP_MODULE', 3);
 define('MATERIAL_LOCAL', 'local');//服务器素材类型
 define('MATERIAL_WEXIN', 'perm');//微信素材类型
 
-//自定义菜单类型
+//自定义菜单之默认菜单
 define('MENU_CURRENTSELF', 1);
+//自定义菜单之默认菜单的历史记录
 define('MENU_HISTORY', 2);
+//自定义菜单之个性化菜单
 define('MENU_CONDITIONAL', 3);
 
 //用户状态
+//注册审核用户
 define('USER_STATUS_CHECK', 1);
+//正常用户
 define('USER_STATUS_NORMAL', 2);
+//禁用用户
 define('USER_STATUS_BAN', 3);
 
 //用户类型
+//普通用户
 define('USER_TYPE_COMMON', 1);
+//店员
 define('USER_TYPE_CLERK', 3);
 
 //我的账户链接类型
@@ -187,17 +201,29 @@ define('STORE_GOODS_STATUS_DELETE', 2);
 define('ARTICLE_PCATE', 0);
 define('ARTICLE_CCATE', 0);
 
-//用户注册方式
+//用户注册方式来源
+//qq注册
 define('USER_REGISTER_TYPE_QQ', 1);
+//微信注册
 define('USER_REGISTER_TYPE_WECHAT', 2);
+//手机注册
 define('USER_REGISTER_TYPE_MOBILE', 3);
 
 //消息提醒类型
+//订单消息类型
 define('MESSAGE_ORDER_TYPE', 1);
+//公众号过期消息类型
 define('MESSAGE_ACCOUNT_EXPIRE_TYPE', 2);
+//小程序过期消息类型
+define('MESSAGE_WECHAT_EXPIRE_TYPE', 5);
+//工单消息类型
 define('MESSAGE_WORKORDER_TYPE', 3);
+//注册消息类型
 define('MESSAGE_REGISTER_TYPE', 4);
 
 //消息是否读取 1未读  2已读
 define('MESSAGE_NOREAD', 1);
 define('MESSAGE_READ', 2);
+
+//上传图片uniacid -1
+define('FILE_NO_UNIACID', -1);

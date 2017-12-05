@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
 load()->model('user');
-load()->model('system');
+load()->model('message');
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
@@ -15,12 +15,20 @@ $do = in_array($_GPC['do'], $dos)? $do : 'display';
 $_W['page']['title'] = $account_typename . '列表 - ' . $account_typename;
 //模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
 $account_info = permission_user_account_num();
-
-$role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	$role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
+}
+/* xend */
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	$role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
+}
+/* vend */
 
 if ($do == 'display') {
 	$message_id = $_GPC['message_id'];
-	system_message_notice_read($message_id);
+	message_notice_read($message_id);
 
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
@@ -74,9 +82,22 @@ if ($do == 'delete') {
 	$type = intval($_GPC['type']);
 	//只有创始人、主管理员才有权限停用公众号
 	$state = permission_account_user_role($uid, $uniacid);
-	if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
-		itoast('无权限操作！', url('account/manage'), 'error');
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
+			itoast('无权限操作！', url('account/manage'), 'error');
+		}
 	}
+	/* xend */
+
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
+			itoast('无权限操作！', url('account/manage'), 'error');
+		}
+	}
+	/* vend */
+
 	if (!empty($acid) && empty($uniacid)) {
 		$account = account_fetch($acid);
 		if (empty($account)) {
@@ -96,9 +117,23 @@ if ($do == 'delete') {
 			itoast('抱歉，帐号不存在或是已经被删除', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 		}
 		$state = permission_account_user_role($uid, $uniacid);
-		if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
-			itoast('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
+
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
+				itoast('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
+			}
 		}
+		/* xend */
+
+		/* vstart */
+		if (IMS_FAMILY == 'v') {
+			if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
+				itoast('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
+			}
+		}
+		/* vend */
+
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 		if($_GPC['uniacid'] == $_W['uniacid']) {
 			isetcookie('__uniacid', '');

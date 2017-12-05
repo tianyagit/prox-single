@@ -14,12 +14,13 @@ if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 
-$support_login_types = OAuth2Client::supportLoginType();
-if (in_array($_GPC['login_type'], array('qq', 'wechat'))) {
+$support_login_types = OAuth2Client::supportThirdLoginType();
+if (in_array($_GPC['login_type'], $support_login_types)) {
 	_login($_GPC['referer']);
 }
 
 $setting = $_W['setting'];
+$_GPC['login_type'] = !empty($_GPC['login_type']) ? $_GPC['login_type'] : (!empty($_W['setting']['copyright']['login_type']) ? 'mobile': 'system');
 $login_urls = user_support_urls();
 template('user/login');
 
@@ -30,17 +31,27 @@ function _login($forward = '') {
 	if (!empty($status)) {
 		user_expire_notice();
 	}
-	user_account_expire_message_record();
 	if (empty($_GPC['login_type'])) {
 		$_GPC['login_type'] = 'system';
 	}
 
-	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->we7user();
+	if (empty($_GPC['handel_type'])) {
+		$_GPC['handle_type'] = 'login';
+	}
 
+	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->handle($_GPC['handle_type']);
+
+	if (!empty($_W['user']) && !empty($_GPC['handle_type'])) {
+		if (is_error($member)) {
+			itoast($member['message'], url('user/profile/bind'), '');
+		} else {
+			itoast('绑定成功', url('user/profile/bind'), '');
+		}
+	}
+	
 	if (is_error($member)) {
 		itoast($member['message'], url('user/login'), '');
 	}
-
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
@@ -50,11 +61,25 @@ function _login($forward = '') {
 		$_W['isfounder'] = user_is_founder($record['uid']);
 		$_W['user'] = $record;
 
-		if (empty($_W['isfounder']) || user_is_vice_founder()) {
-			if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
-				itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			if (empty($_W['isfounder']) || user_is_vice_founder()) {
+				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
+					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+				}
 			}
 		}
+		/* xend */
+
+		/* vstart */
+		if (IMS_FAMILY == 'v') {
+			if (empty($_W['isfounder'])) {
+				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
+					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+				}
+			}
+		}
+		/* vend */
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
 			itoast('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], '', '');
 		}
@@ -83,6 +108,7 @@ function _login($forward = '') {
 		}
 		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
+		user_account_expire_message_record();
 		itoast("欢迎回来，{$record['username']}。", $forward, 'success');
 	} else {
 		if (empty($failed)) {

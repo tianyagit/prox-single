@@ -17,11 +17,25 @@
 				<span class="we7-padding-right">会员权限组： {{owner.group.name}}</span>
 				<span></span>
 			</th>
-			{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
-			<th class="text-right"><a href="{php echo url('user/edit/edit_modules_tpl',array('uid'=>$owner['uid']))}" class="color-default">修改</a></th>
-			{else}
-			<th class="text-right"><a href="" class="color-default"></a></th>
+			<!-- xstart -->
+			{if IMS_FAMILY == 'x'}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
+				<th class="text-right"><a href="{php echo url('user/edit/edit_modules_tpl',array('uid'=>$owner['uid']))}" class="color-default">修改</a></th>
+				{else}
+				<th class="text-right"><a href="" class="color-default"></a></th>
+				{/if}
 			{/if}
+			<!-- xend -->
+			<!-- vstart -->
+			{if IMS_FAMILY == 'v'}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders)}
+				<th class="text-right"><a href="{php echo url('user/edit/edit_modules_tpl',array('uid'=>$owner['uid']))}" class="color-default">修改</a></th>
+				{else}
+				<th class="text-right"><a href="" class="color-default"></a></th>
+				{/if}
+			{/if}
+			<!-- vend -->
+
 		</tr>
 		<tbody ng-repeat="module_tpl in modules_tpl | filter:{'type':'default'}">
 			<tr>
@@ -83,9 +97,20 @@
 				<span class="we7-padding-right">应用权限组</span>
 				<span></span>
 			</th>
-			{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
+			<!-- xstart -->
+			{if IMS_FAMILY == 'x'}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
 				<th class="text-right"><a class="color-default" data-toggle="modal" data-target="#change-group">修改</a></th>
+				{/if}
 			{/if}
+			<!-- xend -->
+			<!-- vstart -->
+			{if IMS_FAMILY == 'v'}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders)}
+				<th class="text-right"><a class="color-default" data-toggle="modal" data-target="#change-group">修改</a></th>
+				{/if}
+			{/if}
+			<!-- vend -->
 		</tr>
 
 		<tbody ng-repeat="module_tpl in modules_tpl | filter:{'type':'extend'}">
@@ -149,9 +174,20 @@
 				<span class="we7-padding-right">附加权限</span>
 				<span></span>
 			</th>
-			{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
-			<th class="text-right"><a class="color-default" data-toggle="modal" data-target="#jurisdiction-add">修改</a></th>
+			<!-- xstart -->
+			{if IMS_FAMILY == 'x'}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
+				<th class="text-right"><a class="color-default" data-toggle="modal" data-target="#jurisdiction-add">修改</a></th>
+				{/if}
 			{/if}
+			<!-- xend -->
+			<!-- vstart -->
+			{if IMS_FAMILY == 'v'}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders)}
+				<th class="text-right"><a class="color-default" data-toggle="modal" data-target="#jurisdiction-add">修改</a></th>
+				{/if}
+			{/if}
+			<!-- vend -->
 		</tr>
 		{if !in_array($owner['uid'], $founders)}
 		<tr>
@@ -187,7 +223,17 @@
 		{/if}
 	</table>
 	{/if}
+	<!-- xstart -->
+	{if IMS_FAMILY == 'x'}
 	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
+	{/if}
+	<!-- xend -->
+	<!-- vstart -->
+	{if IMS_FAMILY == 'v'}
+	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders)}
+	{/if}
+	<!-- vend -->
+
 	<p>
 
 	</p>
