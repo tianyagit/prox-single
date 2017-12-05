@@ -56,6 +56,13 @@ class Wxapp {
 	}
 
 	/**
+	 *  是否是打包小程序
+	 */
+	public function isPackageApp() {
+		$version = $this->wxappVersion();
+		return isset($version['type']) ? $version['type'] == WXAPP_CREATE_MODULE : 0;
+	}
+	/**
 	 *  获取普通模块小程序的入口URL
 	 */
 	public function getModuleWxappUrl() {
