@@ -507,7 +507,7 @@ $we7_system_menu['system'] = array(
 			'menu' => array(
 				'system_account_analysis' => array(
 					'title' => 	'访问统计',
-					'url' => url('statistics/account-analysis'),
+					'url' => url('statistics/account'),
 					'icon' => 'wi wi-article',
 					'permission_name' => 'system_account_analysis',
 				),
