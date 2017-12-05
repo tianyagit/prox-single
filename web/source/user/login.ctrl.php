@@ -41,7 +41,7 @@ function _login($forward = '') {
 
 	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->handle($_GPC['handle_type']);
 
-	if (!empty($_W['user'])) {
+	if (!empty($_W['user']) && !empty($_GPC['handle_type'])) {
 		if (is_error($member)) {
 			itoast($member['message'], url('user/profile/bind'), '');
 		} else {
@@ -55,7 +55,7 @@ function _login($forward = '') {
 	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
-			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', url('user/login'), '');
+			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决?', url('user/login'), '');
 		}
 		$_W['uid'] = $record['uid'];
 		$_W['isfounder'] = user_is_founder($record['uid']);
@@ -65,7 +65,7 @@ function _login($forward = '') {
 		if (IMS_FAMILY == 'x') {
 			if (empty($_W['isfounder']) || user_is_vice_founder()) {
 				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
-					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
+					itoast('您的账号有效期限已过,请联系网站管理员解决!', '', '');
 				}
 			}
 		}
@@ -81,7 +81,7 @@ function _login($forward = '') {
 		}
 		/* vend */
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
-			itoast('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], '', '');
+			itoast('站点已关闭，关闭原因:'. $_W['setting']['copyright']['reason'], '', '');
 		}
 		$cookie = array();
 		$cookie['uid'] = $record['uid'];
@@ -109,13 +109,13 @@ function _login($forward = '') {
 		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
 		user_account_expire_message_record();
-		itoast("欢迎回来，{$record['username']}。", $forward, 'success');
+		itoast("欢迎回来，{$record['username']}", $forward, 'success');
 	} else {
 		if (empty($failed)) {
 			pdo_insert('users_failed_login', array('ip' => CLIENT_IP, 'username' => trim($_GPC['username']), 'count' => '1', 'lastupdate' => TIMESTAMP));
 		} else {
 			pdo_update('users_failed_login', array('count' => $failed['count'] + 1, 'lastupdate' => TIMESTAMP), array('id' => $failed['id']));
 		}
-		itoast('登录失败，请检查您输入的账号和密码！', '', '');
+		itoast('登录失败，请检查您输入的账号和密码', '', '');
 	}
 }
