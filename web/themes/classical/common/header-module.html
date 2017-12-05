@@ -1,6 +1,5 @@
-<span class="account-info-name">
-	<a href="{php echo url('home/welcome/account')}"><i class="wi wi-back-circle"></i></a>
-	<span class="account-name"><a href="{php echo url('home/welcome/account')}">{$_W['account']['name']}</a></span>
+<span class="menu-title">
+	<i class="wi wi-apply"></i>应用
 </span>
 <span class="module-info-name">
 	{if file_exists(IA_ROOT. "/addons/". $_W['current_module']['name']. "/icon-custom.jpg")}
@@ -10,7 +9,16 @@
 	{/if}
 	<span class="name">{$_W['current_module']['title']}</span>
 </span>
-<div class="related-info dropdown">
+
+<div class="related-info dropdown module-related-info">
+</div>
+<script>
+	$.post('./index.php?c=module&a=display&do=accounts_dropdown_menu', {'module_name': "{php echo $_W['current_module']['name']}", 'version_id': "{php echo $_GPC['version_id']}"}, function(data){
+		$('.module-related-info').html(data);
+	}, 'html');
+</script>
+
+<div class="related-info dropdown hidden">
 	<div class="dropdown-toggle top-view" id="dropdownMenu" data-toggle="dropdown"><a href="javascript:;">公众号公众号</a><span class="caret"></span></div>
 	<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
 		<li>
