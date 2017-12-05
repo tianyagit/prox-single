@@ -293,7 +293,6 @@ function wxapp_version($version_id) {
 	if (empty($version_info)) {
 		return $version_info;
 	}
-	$version_info = pdo_get('wxapp_versions', array('uniacid' => $_W['uniacid'], 'version' => $version));
 	$version_info = wxapp_version_detail_info($version_info);
 	return $version_info;
 }
