@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('nav', 'slide', 'commend');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -61,4 +61,19 @@ if ($do == 'nav') {
 		}
 	}
 	message(error(0, $category), '', 'ajax');
+}
+
+if ($do == 'wxapp_web') {
+	load()->classs('account/wxapp');
+	load()->classs('query');
+	$version = trim($_GPC['v']);
+	$wxapp = Wxapp::createByVersion($_W['uniacid'], $version);
+	$url = $wxapp->getModuleWxappUrl();
+	if($url) {
+		setcookie(session_name(), $_W['session_id']);
+		header('Location:'.$url);
+		exit;
+	}
+	echo '请先配置小程序入口';
+
 }
