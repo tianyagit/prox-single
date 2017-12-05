@@ -83,8 +83,6 @@ function wxapp_account_create($account) {
 function wxapp_support_wxapp_modules() {
 	global $_W;
 	load()->model('user');
-	load()->table('store');
-
 	$modules = user_modules($_W['uid']);
 	$wxapp_modules = array();
 	if (!empty($modules)) {
@@ -94,7 +92,7 @@ function wxapp_support_wxapp_modules() {
 			}
 		}
 	}
-	$store_table = new StoreTable();
+	$store_table = table('store');
 	$store_table->searchWithEndtime();
 	$buy_wxapp_modules = $store_table->searchAccountBuyGoods($_W['uniacid'], STORE_TYPE_WXAPP_MODULE);
 	$wxapp_modules = array_merge($buy_wxapp_modules, $wxapp_modules);
@@ -272,14 +270,14 @@ function wxapp_update_last_use_version($uniacid, $version_id) {
 				$uniacid => array('uniacid' => $uniacid,'version_id' => $version_id)
 			);
 	}
-	isetcookie('__uniacid', $uniacid);
-	isetcookie('__wxappversionids', json_encode($cookie_val));
+	isetcookie('__uniacid', $uniacid, 7 * 86400);
+	isetcookie('__wxappversionids', json_encode($cookie_val), 7 * 86400);
 	return true;
 }
 
 /**
  * 获取小程序单个版本
- * @param unknown $version_id
+ * @param int $version_id
  */
 function wxapp_version($version_id) {
 	$version_info = array();
@@ -290,9 +288,23 @@ function wxapp_version($version_id) {
 	}
 
 	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	if (empty($version_info)) {
+	$version_info = wxapp_version_detail_info($version_info);
+	return $version_info;
+}
+
+/**
+ * 根据版本号获取当前小程序版本信息
+ * @param mixed $version
+ * @return array()
+ */
+function wxapp_version_by_version($version) {
+	global $_W;
+	$version_info = array();
+	$version = trim($version);
+	if (empty($version)) {
 		return $version_info;
 	}
+	$version_info = pdo_get('wxapp_versions', array('uniacid' => $_W['uniacid'], 'version' => $version));
 	$version_info = wxapp_version_detail_info($version_info);
 	return $version_info;
 }
@@ -340,7 +352,7 @@ function wxapp_save_switch($uniacid) {
 		$cache_lastaccount['wxapp'] = $uniacid;
 	}
 	cache_write($cache_key, $cache_lastaccount);
-	isetcookie('__uniacid', $uniacid);
+	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;
 }
@@ -590,6 +602,16 @@ function wxapp_code_commit($code_uuid, $code_token, $user_version = 3, $user_des
 		'json', false);
 
 	return $data;
+}
+
+/**
+ *  更新普通模块 小程序的入口页
+ * @param $version_id
+ * @param $entry_id
+ * @return mixed
+ */
+function wxapp_update_entry($version_id, $entry_id) {
+	return pdo_update('wxapp_versions', array('entry_id'=>$entry_id), array('id'=>$version_id));
 }
 
 /**
