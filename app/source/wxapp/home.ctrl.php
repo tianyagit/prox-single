@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('nav', 'slide', 'commend', 'wxapp_web');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxapp_web_error');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -67,6 +67,7 @@ if ($do == 'wxapp_web') {
 	load()->classs('account/wxapp');
 	load()->classs('query');
 	$version = trim($_GPC['v']);
+
 	$wxapp = Wxapp::createByVersion($_W['uniacid'], $version);
 	$url = $_GPC['url'];
 	if(empty($url)) {
@@ -77,6 +78,7 @@ if ($do == 'wxapp_web') {
 		header('Location:'.$url);
 		exit;
 	}
+	//跳转到错误页面
 	$error_url = murl('wxapp/home/wxapp_web_error');
 	header('Location:'.$error_url);
 }
