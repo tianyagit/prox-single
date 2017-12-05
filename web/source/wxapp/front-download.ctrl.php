@@ -24,6 +24,7 @@ if (!empty($version_id)) {
 	$version_info = wxapp_version($version_id);
 	$is_module_wxapp = ($version_info['type'] == WXAPP_CREATE_MODULE) ? 1 : 0;
 
+
 }
 
 if($do == 'entrychoose') {
@@ -33,7 +34,7 @@ if($do == 'entrychoose') {
 	$modules = $version_info['modules'];
 	$entrys = array();
 	if(count($modules) > 0) {
-		$module_name = 'car';//$modules[0]['name'];
+		$module_name = $modules[0]['name'];
 		$entrys = module_entries($module_name, array('cover'));
 		$entrys = $entrys['cover'];
 	}

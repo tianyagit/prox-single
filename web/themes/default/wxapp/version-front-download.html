@@ -126,8 +126,8 @@
 						<label class="col-xs-3 control-label">tab类型</label>
 						<div class="col-xs-9">
 							<select ng-model="tabBar.isSystemTabBar">
-								<option value="true">系统</option>
-								<option value="false">开发者自定义</option>
+								<option value="1">系统</option>
+								<option value="0">开发者自定义</option>
 							</select>
 						</div>
 					</div>
@@ -213,7 +213,7 @@
 			tabBar.list = [];
 		}
 		if(tabBar && !tabBar.isSystemTabBar) {
-			tabBar.isSystemTabBar = true;
+			tabBar.isSystemTabBar = 1;
 		}
 		$scope.pages = default_appjson['pages'];
 		$scope.window = default_appjson['window'];

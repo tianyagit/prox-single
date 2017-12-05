@@ -505,7 +505,21 @@ function wxapp_code_generate($version_id) {
 		'siteinfo' => $siteinfo,
 		'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
 	);
-	$data = $api->post('wxapp', 'upload', $commit_data,
+
+	$do = 'upload';//稳定版
+	if ($version_info['use_default'] == 0) {
+		$appjson = wxapp_code_custom_appjson_tobase64($version_id);
+		if ($appjson) {
+			if (!isset($appjson['tabBar']['list'])) {
+				unset($appjson['tabBar']);
+			}
+			$commit_data['appjson'] = $appjson;
+
+		}
+		$do = 'upload2';
+	}
+
+	$data = $api->post('wxapp', $do, $commit_data,
 		'json', false);
 
 	return $data;
