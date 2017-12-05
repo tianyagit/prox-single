@@ -9,11 +9,11 @@ if ($action != 'entry' && empty($_GPC['account_type'])) {
 	checkaccount();
 }
 
-if ($action == 'editor' && !empty($_GPC['account_type'])) {
+if ($action == 'editor' && $_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 	checkwebapp();
 }
 
-if ($action == 'editor' && !empty($_GPC['account_type'])) {
+if ($action == 'editor' && $_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 	define('FRAME', 'webapp');
 }
 
