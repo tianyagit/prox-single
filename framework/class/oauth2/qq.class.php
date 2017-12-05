@@ -26,30 +26,29 @@ class Qq extends OAuth2Client {
 	 * @return string
 	 */
 	public function showLoginUrl($calback_url = '') {
-		global $_W;
-		$state = !empty($state) ? $state : $_W['token'];
-		$param = $this->stateParam();
-		$state = $state . $param;
+		$state = $this->stateParam();
 		return sprintf(QQ_PLATFORM_API_OAUTH_LOGIN_URL, $this->ak, $this->calback_url, base64_encode($state));
 	}
 
 	public function stateParam() {
 		global $_W;
+		$state = !empty($state) ? $state : $_W['token'];
+		$param['from'] = 'qq';
 		if (!empty($_W['user'])) {
-			return 'from=qq|mode=bind';
+			$param['mode'] = 'bind';
 		} else {
-			return 'from=qq|mode=login';
+			$param['mode'] = 'login';
 		}
+		return $state . '&' . http_build_query($param);
 	}
 
 	public function getAccessToken($state, $code) {
-		global $_W;
 		if (empty($state) || empty($code)) {
 			return error(-1, '参数错误');
 		}
 
-		$param = $this->stateParam();
-		if ($state != base64_encode($_W['token'] . $param)) {
+		$local_state = $this->stateParam();
+		if ($state != base64_encode($local_state)) {
 			return error(-1, '重新登陆');
 		}
 		$access_url = sprintf(QQ_PLATFORM_API_GET_ACCESS_TOKEN, $this->ak, $this->sk, $code, urlencode($this->calback_url));

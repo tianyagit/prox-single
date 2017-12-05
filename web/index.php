@@ -18,11 +18,9 @@ if (!empty($state)) {
 	$controller = 'user';
 	$action = 'login';
 	$state = base64_decode($state);
-	$third_param = explode('|', $state);
-	$third_param[0] = explode('=', $third_param[0]);
-	$third_param[1] = explode('=', $third_param[1]);
-	$_GPC['login_type'] = $third_param[0][1];
-	$_GPC['handle_type'] = $third_param[1][1];
+	parse_str($state, $third_param);
+	$_GPC['login_type'] = $third_param['from'];
+	$_GPC['handle_type'] = $third_param['mode'];
 }
 
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {

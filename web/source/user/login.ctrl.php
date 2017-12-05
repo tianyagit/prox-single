@@ -35,13 +35,18 @@ function _login($forward = '') {
 		$_GPC['login_type'] = 'system';
 	}
 
-	if (empty($_GPC['handel_type'])) {
+	if (empty($_GPC['handle_type'])) {
 		$_GPC['handle_type'] = 'login';
 	}
 
-	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->handle($_GPC['handle_type']);
 
-	if (!empty($_W['user']) && !empty($_GPC['handle_type'])) {
+	if ($_GPC['handle_type'] == 'login') {
+		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
+	} else {
+		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->bind();
+	}
+
+	if (!empty($_W['user']) && $_GPC['handle_type'] == 'bind') {
 		if (is_error($member)) {
 			itoast($member['message'], url('user/profile/bind'), '');
 		} else {

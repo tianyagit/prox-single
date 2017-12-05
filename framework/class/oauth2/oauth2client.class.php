@@ -39,15 +39,6 @@ abstract class OAuth2Client {
 
 	abstract function showLoginUrl($calback_url = '');
 
-	public function handle($handle_type) {
-		if ($handle_type == 'login') {
-			return $this->login();
-		}
-		if ($handle_type == 'bind') {
-			return $this->bind();
-		}
-	}
-
 	abstract function user();
 	
 	abstract function login();
