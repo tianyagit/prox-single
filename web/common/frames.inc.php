@@ -369,6 +369,49 @@ $we7_system_menu['system'] = array(
 			),
 			'founder' => true
 		),
+		'webapp' => array(
+			'title' => 'PC',
+			'menu' => array(
+				'system_wxapp' => array(
+					'title' => 'PC',
+					'url' => url('account/manage', array('account_type' => '5')),
+					'icon' => 'wi wi-wxapp',
+					'permission_name' => 'system_wxapp',
+					'sub_permission' => array(
+						array(
+							'title' => '小程序管理设置',
+							'permission_name' => 'system_wxapp_manage',
+						),
+						array(
+							'title' => '添加小程序',
+							'permission_name' => 'system_wxapp_post',
+						),
+						array(
+							'title' => '小程序停用',
+							'permission_name' => 'system_wxapp_stop',
+						),
+						array(
+							'title' => '小程序回收站',
+							'permission_name' => 'system_wxapp_recycle',
+						),
+						array(
+							'title' => '小程序删除',
+							'permission_name' => 'system_wxapp_delete',
+						),
+						array(
+							'title' => '小程序恢复',
+							'permission_name' => 'system_wxapp_recover',
+						),
+					),
+				),
+				'system_module_wxapp' => array(
+					'title' => 'PC应用',
+					'url' => url('module/manage-system', array('account_type' => '5')),
+					'icon' => 'wi wi-wxapp-apply',
+					'permission_name' => 'system_module_wxapp',
+				),
+			)
+		),
 		/* xend */
 		'user' => array(
 			'title' => '帐户/用户',
