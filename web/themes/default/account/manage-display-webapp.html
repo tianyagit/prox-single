@@ -109,7 +109,7 @@
 	$(function(){
 		$('[data-toggle="tooltip"]').tooltip();
 	});
-	switch_url = "{php echo url('pc/home/switch')}";
+	switch_url = "{php echo url('webapp/home/switch')}";
 	angular.module('accountApp').value('config', {
 		lists: {php echo !empty($list) ? json_encode($list) : 'null'},
 	links: {
