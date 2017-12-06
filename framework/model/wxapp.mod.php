@@ -737,7 +737,7 @@ function wxapp_code_current_appjson($version_id) {
  * @since version
  */
 function wxapp_code_base64_to_path($path, $version_id) {
-	global $config;
+	global $_W;
 	load()->classs('image');
 	if (starts_with($path, 'data:image')) { //data:image/png;base64,.....
 		list($pre, $base64) = explode(',', $path);
@@ -747,8 +747,8 @@ function wxapp_code_base64_to_path($path, $version_id) {
 		$content = base64_decode($base64);
 		$writepath = 'images/wxapp/'.$version_id.'/'.$filename.'.'.$ext;
 		file_write($writepath, $content);
-		$attachdir = $config['upload']['attachdir'];
-		$path = '/'.$attachdir.'/'.$writepath;
+		$attachdir = $_W['config']['upload']['attachdir'];
+		$path = $_W['siteroot'].''.$attachdir.'/'.$writepath;
 	}
 
 	return $path;
@@ -794,7 +794,7 @@ function wxapp_code_custom_appjson_tobase64($version_id) {
 }
 
 /**
- *  素材图片转为微信图片
+ *  素材图片转为小程序图片大小并保存
  * @param $att_id  素材ID
  * @return null|string
  */
@@ -805,7 +805,6 @@ function wxapp_code_path_convert($att_id) {
 
 	$attchid = intval($att_id);
 	global $_W;
-	global $config;
 	/* @var  $attachment  AttachmentTable */
 	$att_table = table('attachment');
 	$attachment = $att_table->local(true)->getById($attchid);
@@ -818,8 +817,8 @@ function wxapp_code_path_convert($att_id) {
 		mkdirs($path);
 		$filename = file_random_name(ATTACHMENT_ROOT.'/'.$path, $ext);
 		Image::create($url)->resize(81, 81)->saveTo(ATTACHMENT_ROOT.$path.$filename);
-		$attachdir = $config['upload']['attachdir'];
-		return '/'.$attachdir.'/'.$path.$filename;
+		$attachdir = $_W['config']['upload']['attachdir'];
+		return $_W['siteroot'].$attachdir.'/'.$path.$filename;
 	}
 
 	return null;
@@ -837,7 +836,7 @@ function wxapp_code_path_to_base64($path) {
 	global $_W;
 	load()->classs('image');
 	if (!starts_with($path, 'data:image')) {
-		$path = Image::create(IA_ROOT.'/'.$path)->resize(81, 81)->toBase64();
+		$path = Image::create($path)->resize(81, 81)->toBase64();
 	}
 
 	return $path;
