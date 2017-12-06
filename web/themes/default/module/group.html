@@ -236,13 +236,13 @@
 			</div>
 			<div class="panel-body we7-padding">
 				<div class="row">
-					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModulePc" style="overflow: hidden">
+					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleWebapp" style="overflow: hidden">
 						<img src="{{ module.logo }}" alt="" class="img">{{ module.title }}
-						<span class="del bg-default" ng-click="delHaveModulePc(module)">删除</span>
+						<span class="del bg-default" ng-click="delHaveModuleWebapp(module)">删除</span>
 					</div>
 					<div class="col-sm-2 add-more">
 						<div class="we7-input-img input-more input-img">
-							<a href="" class="input-addon" ng-click="addModulePc()">
+							<a href="" class="input-addon" ng-click="addModuleWebapp()">
 								<span class="color-gray"></span>
 							</a>
 						</div>
@@ -385,7 +385,7 @@
 		</div>
 	</div>
 
-	<div class="uploader-modal modal fade module" id="add_module_pc"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="uploader-modal modal fade module" id="add_module_webapp"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog we7-modal-dialog" >
 			<div class="modal-content">
 				<div class="modal-header">
@@ -396,7 +396,7 @@
 				<div class="modal-body material-content clearfix">
 					<div class="material-body">
 						<div class="row">
-							<div class="col-sm-2 select-module" ng-repeat="module in groupNotHaveModulePc" ng-click="selectOrCancelModule(module, 'module_pc')">
+							<div class="col-sm-2 select-module" ng-repeat="module in groupNotHaveModuleWebapp" ng-click="selectOrCancelModule(module, 'module_webapp')">
 								<div class="item" ng-class="{true:'active',false:''}[module.selected]">
 									<img ng-src="{{ module.logo }}"  alt="" class="icon"/>
 									<div class="name">{{ module.title }}</div>
@@ -410,7 +410,7 @@
 					<!--注意全部有分页-->
 					<div class="material-pager text-right clearfix">
 						<div class="pull-left we7-form">
-							<input type="checkbox" id="selected-all3" ng-change="selecteAllPc(allpcsel)" ng-model="allpcsel">
+							<input type="checkbox" id="selected-all3" ng-change="selecteAllWebapp(allwebappsel)" ng-model="allwebappsel">
 							<label for="selected-all3">全选</label>
 						</div>
 						<ul class="pagination">
@@ -421,8 +421,8 @@
 				</div>
 				<div class="modal-footer">
 
-					<button type="button" class="btn btn-primary" ng-click="addHaveModulePc()">确定</button>
-					<button type="button" class="btn btn-default" ng-click="cancel('add_module_pc')">取消</button>
+					<button type="button" class="btn btn-primary" ng-click="addHaveModuleWebapp()">确定</button>
+					<button type="button" class="btn btn-default" ng-click="cancel('add_module_webapp')">取消</button>
 				</div>
 			</div>
 		</div>
@@ -435,9 +435,9 @@ require(['underscore'], function() {
 		'moduleGroup' : {php echo json_encode($module_group)},
 		'groupHaveModuleApp' : {php echo json_encode($group_have_module_app)},
 		'groupHaveModuleWxapp' : {php echo json_encode($group_have_module_wxapp)},
-		'groupHaveModulePc' : {php echo json_encode($group_have_module_webapp)},
+		'groupHaveModuleWebapp' : {php echo json_encode($group_have_module_webapp)},
 		'groupNotHaveModuleApp' : {php echo json_encode($group_not_have_module_app)},
-		'groupNotHaveModulePc' : {php echo json_encode(($group_not_have_module_webapp))}, // angular filter 只能数组
+		'groupNotHaveModuleWebapp' : {php echo json_encode(($group_not_have_module_webapp))}, // angular filter 只能数组
 		'groupNotHaveModuleWxapp' : {php echo json_encode($group_not_have_module_wxapp)},
 		'groupHaveTemplate' : {php echo json_encode($group_have_template)},
 		'groupNotHaveTemplate' : {php echo json_encode($group_not_have_template)},
