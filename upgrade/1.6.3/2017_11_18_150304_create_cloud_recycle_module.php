@@ -15,10 +15,10 @@ class CreateCloudRecycleModule {
 	 *  执行更新
 	 */
 	public function up() {
-		load()->object('cloudapi');
-		$recycle_module = pdo_getall('modules_recycle', array(), array('modulename'), 'modulename');
-		$cloudapi = new CloudApi();
-		$cloudapi->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_module));
+//		load()->object('cloudapi');
+//		$recycle_module = pdo_getall('modules_recycle', array(), array('modulename'), 'modulename');
+//		$cloudapi = new CloudApi();
+//		$cloudapi->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_module));
 	}
 	
 	/**
