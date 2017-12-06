@@ -8,6 +8,7 @@ abstract class OAuth2Client {
 	protected $sk;
 	protected $login_type;
 	protected $stateParam = array(
+		'state' => '',
 		'from' => '',
 		'mode' => ''
 	);
@@ -19,13 +20,13 @@ abstract class OAuth2Client {
 
 	public function stateParam() {
 		global $_W;
-		$state = !empty($state) ? $state : $_W['token'];
+		$this->stateParam['state'] = $_W['token'];
 		if (!empty($_W['user'])) {
 			$this->stateParam['mode'] = 'bind';
 		} else {
 			$this->stateParam['mode'] = 'login';
 		}
-		return base64_encode($state . '&' . http_build_query($this->stateParam, '', '&'));
+		return base64_encode(http_build_query($this->stateParam, '', '&'));
 	}
 
 	public function getLoginType($login_type) {
@@ -44,9 +45,8 @@ abstract class OAuth2Client {
 		return array('bind', 'login');
 	}
 
-	public static function supportParams() {
-		global $_GPC;
-		$state = urldecode($_GPC['state']);
+	public static function supportParams($state) {
+		$state = urldecode($state);
 		$param = array();
 		if (!empty($state)) {
 			$state = base64_decode($state);

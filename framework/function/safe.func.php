@@ -144,14 +144,14 @@ function safe_gpc_sql($value, $operator = 'ENCODE', $default = '') {
  * @param string $default
  */
 function safe_gpc_url($value, $strict_domain = true, $default = '') {
+	global $_W;
 	if (empty($value) || !is_string($value)) {
 		return $default;
 	}
-	if (!starts_with($redirect, 'http')) {
-		if (defined('IN_SYS')) {
-			
-		}
+	if ($strict_domain && starts_with($value, 'http') && !starts_with($value, $_W['siteroot'])) {
+		$value = $_W['siteroot'];
 	}
+	return $value;
 }
 
 /**

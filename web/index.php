@@ -15,7 +15,7 @@ load()->model('user');
 load()->classs('oauth2/oauth2client');
 
 if (!empty($_GPC['state'])) {
-	$callbackParams = OAuth2Client::supportParams();
+	$callbackParams = OAuth2Client::supportParams($_GPC['state']);
 	if (!empty($callbackParams)) {
 		$controller = 'user';
 		$action = 'login';
