@@ -20,7 +20,7 @@ abstract class OAuth2Client {
 
 	public function stateParam() {
 		global $_W;
-		$this->stateParam['state'] = !empty($state) ? $state : $_W['token'];
+		$this->stateParam['state'] = $_W['token'];
 		if (!empty($_W['user'])) {
 			$this->stateParam['mode'] = 'bind';
 		} else {
