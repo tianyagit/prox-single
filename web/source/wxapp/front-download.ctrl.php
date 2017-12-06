@@ -45,18 +45,20 @@ if($do == 'set_wxapp_entry') {
 	$result = wxapp_update_entry($version_id, $entry_id);
 	echo json_encode(error(0, '设置入口成功'));
 }
-
+// 自定义appjson 入口
 if ($do == 'custom') {
 	$type = $_GPC['type'];
 	$default_appjson = wxapp_code_current_appjson($version_id);
 	$default_appjson = json_encode($default_appjson);
 	template('wxapp/version-front-download');
 }
+// 使用默认appjson
 if($do == 'custom_default') {
 	$result = wxapp_code_set_default_appjson($version_id);
 	echo json_encode($result);
 }
 
+// 保存自定义appjson
 if($do == 'custom_save') {
 	$json = $_GPC['json'];
 	$result = wxapp_code_save_appjson($version_id, $json);

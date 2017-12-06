@@ -583,6 +583,12 @@ function wxapp_code_check_scan($code_token, $last) {
 	return $data;
 }
 
+/**
+ *  获取预览二维码
+ * @param $code_uuid
+ * @param $code_token
+ * @return array|mixed|string
+ */
 function wxapp_code_preview_qrcode($code_uuid, $code_token) {
 	$cloud_api = new CloudApi();
 
@@ -653,6 +659,11 @@ function wxapp_code_cloud_appjson($version_id) {
 	return $data;
 }
 
+/**
+ * 获取小程序默认appjson
+ * @param $version_id
+ * @return mixed|null
+ */
 function wxapp_code_default_appjson($version_id) {
 	load()->classs('query');
 	$query = new Query();
@@ -697,6 +708,7 @@ function wxapp_code_convert_tablist(&$appjson, callable $convert) {
 }
 
 /**
+ *  获取当前appjson 函数内部判断默认还是自定义appjson
  * @param $version_id
  *
  * @return mixed
@@ -725,6 +737,7 @@ function wxapp_code_current_appjson($version_id) {
  * @since version
  */
 function wxapp_code_base64_to_path($path, $version_id) {
+	global $config;
 	load()->classs('image');
 	if (starts_with($path, 'data:image')) { //data:image/png;base64,.....
 		list($pre, $base64) = explode(',', $path);
@@ -734,7 +747,8 @@ function wxapp_code_base64_to_path($path, $version_id) {
 		$content = base64_decode($base64);
 		$writepath = 'images/wxapp/'.$version_id.'/'.$filename.'.'.$ext;
 		file_write($writepath, $content);
-		$path = '/attachment/'.$writepath;
+		$attachdir = $config['upload']['attachdir'];
+		$path = '/'.$attachdir.'/'.$writepath;
 	}
 
 	return $path;
@@ -764,6 +778,10 @@ function wxapp_code_custom_appjson($version_id) {
 	return null;
 }
 
+/** 自定义appjson 路径转base64
+ * @param $version_id
+ * @return array|null
+ */
 function wxapp_code_custom_appjson_tobase64($version_id) {
 	$appjson = wxapp_code_custom_appjson($version_id);
 	if ($appjson) {
@@ -775,12 +793,19 @@ function wxapp_code_custom_appjson_tobase64($version_id) {
 	return null;
 }
 
+/**
+ *  素材图片转为微信图片
+ * @param $att_id  素材ID
+ * @return null|string
+ */
 function wxapp_code_path_convert($att_id) {
 	load()->classs('image');
 	load()->func('file');
 	load()->func('system');
+
 	$attchid = intval($att_id);
 	global $_W;
+	global $config;
 	/* @var  $attachment  AttachmentTable */
 	$att_table = table('attachment');
 	$attachment = $att_table->local(true)->getById($attchid);
@@ -793,8 +818,8 @@ function wxapp_code_path_convert($att_id) {
 		mkdirs($path);
 		$filename = file_random_name(ATTACHMENT_ROOT.'/'.$path, $ext);
 		Image::create($url)->resize(81, 81)->saveTo(ATTACHMENT_ROOT.$path.$filename);
-
-		return '/'.ATTACHMENT_ROOT.'/'.$path.$filename;
+		$attachdir = $config['upload']['attachdir'];
+		return '/'.$attachdir.'/'.$path.$filename;
 	}
 
 	return null;
