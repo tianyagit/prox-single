@@ -30,14 +30,20 @@ function message_notice_record($content, $uid, $sign, $type, $extend_message = a
 	$message['uid'] = $uid;
 	$message['sign'] = $sign;
 	$message['type'] = $type;
-	$message['create_time'] = TIMESTAMP;
-	pdo_insert('message_notice_log', $message);
-	$message_exists = message_validate_exists($message);
+	$message_notice_log = array_merge($message, $extend_message);
+	$message_exists = message_validate_exists($message_notice_log);
 	if (!empty($message_exists)) {
 		return true;
 	}
-	$message_notice_log['create_time'] = TIMESTAMP;
-	message_notify($type, $content, $uid, $sign, $extend_message);
+	if (empty($message_notice_log['create_time'])) {
+		$message_notice_log['create_time'] = TIMESTAMP;
+	}
+	if (empty($message_notice_log['is_read'])) {
+		$message_notice_log['is_read'] = MESSAGE_NOREAD;
+	}
+	if (in_array($type, array(MESSAGE_ORDER_TYPE, MESSAGE_WORKORDER_TYPE, MESSAGE_REGISTER_TYPE))) {
+		message_notice_record_cloud($message_notice_log);
+	}
 	pdo_insert('message_notice_log', $message_notice_log);
 	return true;
 }
@@ -58,7 +64,7 @@ function message_validate_exists($message) {
  * frame  栏目小红点消息提醒获取
  * @return array
  */
-function message_header_notice_list() {
+function message_event_notice_list() {
 	load()->model('user');
 	global $_W;
 	$message_table = table('message');
@@ -137,83 +143,50 @@ function message_account_expire() {
 	return true;
 }
 
-function message_notify_data($type, $message, $uid, $sign, $ext = array()) {
-	$data = array();
-	$data['time'] = TIMESTAMP;
-	$data['remark'] = '进入系统查看';
-	switch ($type) {
-		case MESSAGE_REGISTER_TYPE :
-			$user = user_single($uid);
-			$data['first'] = $message;
-			$data['keyword1'] = $user['username'];
-			$data['notify_type'] = MESSAGE_REGISTER_TYPE;
-			break;
-		case MESSAGE_ORDER_TYPE : //创建订单
-			$data['first'] = $message;
-			$data['keyword1'] = $sign;
-			$data['keyword2'] = 1;
-			$data['keyword3'] = $ext['amount'];
-			$data['notify_type'] = MESSAGE_ORDER_TYPE;
-			$data['remark'] = $ext['product'];
-			break;
+/**
+ * 工单消息记录
+ */
+function message_notice_worker() {
+	global $_W;
+	load()->func('communication');
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$table = table('message');
+	$time = 0;
+	$table->searchWithType(MESSAGE_WORKORDER_TYPE);
+	$message_record = $table->messageRecord();
+
+	if (!empty($message_record)) {
+		$time = $message_record['create_time'];
 	}
-	return $data;
+	$api_url = $api->get('system', 'workorder', array('do' => 'notload', 'time' => $time), 'json', false);
+	if (is_error($api_url)) {
+		return true;
+	}
+
+	$request_url = $api['data']['url'];
+	$response = ihttp_get($request_url);
+	$uid = $_W['config']['setting']['founder'];
+	if ($response['code'] == 200) {
+		$content = $response['content'];
+		$worker_notice_lists = json_decode($content, JSON_OBJECT_AS_ARRAY);
+		if (!empty($worker_notice_lists)) {
+			foreach ($worker_notice_lists as $list) {
+				message_notice_record($list['note'], $uid, $list['uuid'], MESSAGE_WORKORDER_TYPE, array('create_time' => strtotime($list['updated_at'])));
+			}
+		}
+	}
+	return true;
 }
 
 /**
- *  消息通知
- * @param $type
+ * 把消息推送到云服务
  * @param $message
- * @param $uid
- * @param $sign
- * @param $ext
  * @return array|mixed|string
  */
-function message_notify($type, $message, $uid, $sign, $ext = array()) {
-	load()->classs('cloudapi');
-	$data = message_notify_data($type, $message, $uid, $sign, $ext);
-	$api = new CloudApi();
-	$result = $api->post('system', 'notify', array('json'=>$data), 'html', false);
-	return $result;
-}
-
-function message_load_workorder_notice_url($time) {
+function message_notice_record_cloud($message) {
 	load()->classs('cloudapi');
 	$api = new CloudApi();
-	$result = $api->get('system', 'workorder', array('do'=>'notload', 'time'=>$time), 'json', false);
+	$result = $api->post('system', 'notify', array('josn' => $message), 'html', false);
 	return $result;
 }
-
-function message_load_in_notice($uid) {
-	global $_W;
-	load()->classs('query');
-	$query = new Query();
-	$message_log = $query->from('message_notice_log')->where('type', MESSAGE_WORKORDER_TYPE)
-		->orderby('create_time', 'desc')->get();
-	$time = 0;//strtotime('1970-01-01');
-	if($message_log && isset($message_log['create_time'])) {
-		$time = $message_log['create_time'];
-	}
-	$data_url =  message_load_workorder_notice_url($time);
-	if (is_error($data_url)) {
-		return;
-	}
-
-	$url = $data_url['data']['url'];
-	$response = ihttp_get($url);
-
-	if($response['code'] == 200) {
-		$content = $response['content'];
-		$data = json_decode($content, JSON_OBJECT_AS_ARRAY);
-		//暂不做批量插入处理
-		foreach ($data['list'] as $item) {
-			pdo_insert('message_notice_log', array(
-				'message'=>$item['note'],
-				'create_time'=>strtotime($item['updated_at']),
-				'uid'=>$uid, 'sign'=>$item['uuid'],
-				'is_read'=>1,
-				'type'=>MESSAGE_WORKORDER_TYPE));
-		}
-	}
-}
-

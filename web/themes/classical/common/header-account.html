@@ -34,7 +34,7 @@
 <div class="account-operate">
 	<a href="{php echo url('utility/emulator');}" target="_blank" class="h"><i class="wi wi-iphone" data-toggle="tooltip" data-placement="bottom" title="模拟测试"></i></a>
 	{if uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OPERATOR}
-	<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="h" data-toggle="tooltip" data-placement="bottom" title="公众号设置"><i class="wi wi-appsetting"></i></a>
+	<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="h"><i class="wi wi-appsetting" data-toggle="tooltip" data-placement="bottom" title="公众号设置"></i></a>
 	{/if}
-	<a href="{php echo url('account/display')}"  data-toggle="tooltip" data-placement="bottom" title="切换公众号"><i class="wi wi-changing-over"></i></a>
+	<a href="{php echo url('account/display')}"><i class="wi wi-changing-over" data-toggle="tooltip" data-placement="bottom" title="切换公众号"></i></a>
 </div>
