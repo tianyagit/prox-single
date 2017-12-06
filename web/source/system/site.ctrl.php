@@ -4,6 +4,11 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	load()->model('system');
+}
+/* xend */
 $dos = array('copyright');
 $do = in_array($do, $dos) ? $do : 'copyright';
 $_W['page']['title'] = '站点设置 - 工具  - 系统管理';
@@ -32,6 +37,11 @@ if (IMS_FAMILY == 'x') {
 }
 /* xend */
 if ($do == 'copyright') {
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$template_ch_name = system_template_ch_name();
+	}
+	/* xend */
 	if (checksubmit('submit')) {
 		/* xstart */
 		if (IMS_FAMILY == 'x') {
@@ -70,11 +80,11 @@ if ($do == 'copyright') {
 		/* vstart */
 		if (IMS_FAMILY == 'v') {
 			$data = array(
-					'status' => $_GPC['status'],
-					'reason' => $_GPC['reason'],
-					'icp' => $_GPC['icp'],
-					'mobile_status' => $_GPC['mobile_status'],
-					'login_type' => $_GPC['login_type'],
+				'status' => $_GPC['status'],
+				'reason' => $_GPC['reason'],
+				'icp' => $_GPC['icp'],
+				'mobile_status' => $_GPC['mobile_status'],
+				'login_type' => $_GPC['login_type'],
 			);				
 		}
 		/* vend */
