@@ -794,7 +794,7 @@ function wxapp_code_path_convert($att_id) {
 		$filename = file_random_name(ATTACHMENT_ROOT.'/'.$path, $ext);
 		Image::create($url)->resize(81, 81)->saveTo(ATTACHMENT_ROOT.$path.$filename);
 
-		return '/'.config()->attchmentDir().'/'.$path.$filename;
+		return '/'.ATTACHMENT_ROOT.'/'.$path.$filename;
 	}
 
 	return null;
