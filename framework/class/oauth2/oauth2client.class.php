@@ -7,10 +7,25 @@ abstract class OAuth2Client {
 	protected $ak;
 	protected $sk;
 	protected $login_type;
+	protected $stateParam = array(
+		'from' => '',
+		'mode' => ''
+	);
 
 	public function __construct($ak, $sk) {
 		$this->ak = $ak;
 		$this->sk = $sk;
+	}
+
+	public function stateParam() {
+		global $_W;
+		$state = !empty($state) ? $state : $_W['token'];
+		if (!empty($_W['user'])) {
+			$this->stateParam['mode'] = 'bind';
+		} else {
+			$this->stateParam['mode'] = 'login';
+		}
+		return base64_encode($state . '&' . http_build_query($this->stateParam, '', '&'));
 	}
 
 	public function getLoginType($login_type) {
