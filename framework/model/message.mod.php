@@ -31,15 +31,13 @@ function message_notice_record($content, $uid, $sign, $type, $extend_message = a
 	$message['sign'] = $sign;
 	$message['type'] = $type;
 	$message['create_time'] = TIMESTAMP;
-//	$message_notice_log = array_merge($message, $extend_message);
 	pdo_insert('message_notice_log', $message);
-	message_notify($type, $content, $uid, $sign, $extend_message);
-	$message_notice_log = array_merge($message, $extend_message);
-	$message_exists = message_validate_exists($message_notice_log);
+	$message_exists = message_validate_exists($message);
 	if (!empty($message_exists)) {
 		return true;
 	}
 	$message_notice_log['create_time'] = TIMESTAMP;
+	message_notify($type, $content, $uid, $sign, $extend_message);
 	pdo_insert('message_notice_log', $message_notice_log);
 	return true;
 }
