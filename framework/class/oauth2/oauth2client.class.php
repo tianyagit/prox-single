@@ -45,9 +45,8 @@ abstract class OAuth2Client {
 		return array('bind', 'login');
 	}
 
-	public static function supportParams() {
-		global $_GPC;
-		$state = urldecode($_GPC['state']);
+	public static function supportParams($state) {
+		$state = urldecode($state);
 		$param = array();
 		if (!empty($state)) {
 			$state = base64_decode($state);
