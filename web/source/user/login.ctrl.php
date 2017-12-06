@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
 
 load()->model('user');
+load()->model('message');
 load()->classs('oauth2/oauth2client');
 load()->model('setting');
 
@@ -113,7 +114,7 @@ function _login($forward = '') {
 		}
 		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
-		user_account_expire_message_record();
+		message_account_expire();
 		itoast("欢迎回来，{$record['username']}", $forward, 'success');
 	} else {
 		if (empty($failed)) {

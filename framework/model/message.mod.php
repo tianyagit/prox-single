@@ -34,11 +34,30 @@ function message_notice_record($content, $uid, $sign, $type, $extend_message = a
 //	$message_notice_log = array_merge($message, $extend_message);
 	pdo_insert('message_notice_log', $message);
 	message_notify($type, $content, $uid, $sign, $extend_message);
+	$message_notice_log = array_merge($message, $extend_message);
+	$message_exists = message_validate_exists($message_notice_log);
+	if (!empty($message_exists)) {
+		return true;
+	}
+	$message_notice_log['create_time'] = TIMESTAMP;
+	pdo_insert('message_notice_log', $message_notice_log);
 	return true;
 }
 
 /**
- * frame  顶部消息提醒获取
+ * 检测消息记录是否已经插入数据库
+ */
+function message_validate_exists($message) {
+	$message_exists = pdo_get('message_notice_log', $message);
+	if (!empty($message_exists)) {
+		return true;
+	}
+	return false;
+}
+
+
+/**
+ * frame  栏目小红点消息提醒获取
  * @return array
  */
 function message_header_notice_list() {
@@ -85,6 +104,39 @@ function message_header_notice_list() {
 		'lists' => $lists,
 		'total' => $total
 	);
+}
+
+
+/**
+ * 公众号过期记录
+ * @return bool
+ */
+function message_account_expire() {
+	load()->model('account');
+	load()->model('message');
+	if (!pdo_tableexists('message_notice_log')) {
+		return true;
+	}
+	$account_table = table('account');
+	$expire_account_list = $account_table->searchAccountList();
+	if (empty($expire_account_list)) {
+		return true;
+	}
+	foreach ($expire_account_list as $account) {
+		$account_detail = uni_fetch($account['uniacid']);
+		if (empty($account_detail['uid'])) {
+			continue;
+		}
+		if ($account_detail['endtime'] > 0 && $account_detail['endtime'] < TIMESTAMP) {
+			$type = $account_detail['type'] == ACCOUNT_TYPE_APP_NORMAL ? MESSAGE_WECHAT_EXPIRE_TYPE : MESSAGE_ACCOUNT_EXPIRE_TYPE;
+			$account_name = $account_detail['type'] == ACCOUNT_TYPE_APP_NORMAL ? '-小程序过期' : '-公众号过期';
+			$message = array(
+				'end_time' => $account_detail['endtime']
+			);
+			message_notice_record($account_detail['name'] . $account_name, $account_detail['uid'], $account_detail['uniacid'], $type, $message);
+		}
+	}
+	return true;
 }
 
 function message_notify_data($type, $message, $uid, $sign, $ext = array()) {
