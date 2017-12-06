@@ -310,7 +310,7 @@ function cache_build_uninstalled_module() {
 			$upgrade_support_module = false;
 			$wxapp_support = !empty($module['site_branch']['wxapp_support']) && is_array($module['site_branch']['bought']) && in_array('wxapp', $module['site_branch']['bought']) ? $module['site_branch']['wxapp_support'] : 1;
 			$app_support = !empty($module['site_branch']['app_support']) && is_array($module['site_branch']['bought']) && in_array('app', $module['site_branch']['bought']) ? $module['site_branch']['app_support'] : 1;
-			$webapp_support = !empty($module['site_branch']['webapp_support']) && is_array($module['site_branch']['bought']) && in_array('webapp_support', $module['site_branch']['bought']) ? $module['site_branch']['webapp_support'] : 1;
+			$webapp_support = !empty($module['site_branch']['webapp_support']) && is_array($module['site_branch']['bought']) && in_array('webapp', $module['site_branch']['bought']) ? $module['site_branch']['webapp_support'] : 1;
 			if ($wxapp_support ==  1 && $app_support == 1 && $webapp_support == 1) {
 				$app_support = 2;
 			}
