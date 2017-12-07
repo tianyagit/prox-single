@@ -636,78 +636,6 @@ function wxapp_update_entry($version_id, $entry_id) {
 }
 
 /**
- *  获取appjson.
- *
- * @param $version_id
- *
- * @return mixed
- *
- * @since version
- */
-function wxapp_code_cloud_appjson($version_id) {
-	global $_W;
-	load()->classs('cloudapi');
-	$cloud_api = new CloudApi();
-	$version_info = wxapp_version($version_id);
-	$account_wxapp_info = wxapp_fetch($version_info['uniacid'], $version_id);
-	$commit_data = array('do' => 'appjson',
-		'modules' => $account_wxapp_info['version']['modules'],
-	);
-	$data = $cloud_api->get('wxapp', 'upload2', $commit_data,
-		'json', false);
-
-	return $data;
-}
-
-/**
- * 获取小程序默认appjson
- * @param $version_id
- * @return mixed|null
- */
-function wxapp_code_default_appjson($version_id) {
-	load()->classs('query');
-	$query = new Query();
-	$data = $query->from('wxapp_versions')->where(array('id' => $version_id))->get();
-	$appjson = $data['default_appjson'];
-	if ($appjson) {
-		return unserialize($appjson);
-	}
-	$appjson = null;
-	if (empty($appjson)) {
-		$cloud_appjson = wxapp_code_cloud_appjson($version_id);
-		if (is_error($cloud_appjson)) { //数据访问失败
-			return $cloud_appjson;
-		}
-		$appjson = $cloud_appjson['data']['appjson'];
-		pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)), array('id' => $version_id));
-
-		return $appjson;
-	}
-}
-
-/**
- *  小程序appjson 图片路径转为base64.
- *
- * @param $appjson
- * @param callable $convert
- *
- * @since version
- */
-function wxapp_code_convert_tablist(&$appjson, callable $convert) {
-	if (isset($appjson['tabBar']) && isset($appjson['tabBar']['list'])) {
-		$tablist = &$appjson['tabBar']['list'];
-		foreach ($tablist as &$item) {
-			if (isset($item['iconPath'])) {
-				$item['iconPath'] = call_user_func($convert, $item['selectedIconPath']);
-			}
-			if (isset($item['selectedIconPath'])) {
-				$item['selectedIconPath'] = call_user_func($convert, $item['selectedIconPath']);
-			}
-		}
-	}
-}
-
-/**
  *  获取当前appjson 函数内部判断默认还是自定义appjson
  * @param $version_id
  *
@@ -716,77 +644,75 @@ function wxapp_code_convert_tablist(&$appjson, callable $convert) {
  * @since version
  */
 function wxapp_code_current_appjson($version_id) {
+	load()->classs('cloudapi');
 	load()->classs('query');
-	$query = new Query();
-	$data = $query->from('wxapp_versions')->where(array('id' => $version_id))->get();
-	if ($data['use_default']) {
-		return wxapp_code_default_appjson($version_id);
+	$version = wxapp_version($version_id);
+	//默认appjson
+	if ($version['use_default']) {
+		$appjson = $version['default_appjson'];
+		if ($appjson) {
+			return unserialize($appjson);
+		}
+
+		// 从云中取
+		if (empty($appjson)) {
+
+			$cloud_api = new CloudApi();
+			$version_info = wxapp_version($version_id);
+			$account_wxapp_info = wxapp_fetch($version_info['uniacid'], $version_id);
+			$commit_data = array('do' => 'appjson',
+				'modules' => $account_wxapp_info['version']['modules'],
+			);
+			$cloud_appjson = $cloud_api->get('wxapp', 'upload2', $commit_data,
+				'json', false);
+			if (is_error($cloud_appjson)) { //数据访问失败
+				return null;
+			}
+			$appjson = $cloud_appjson['data']['appjson'];
+			pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)), 
+				array('id' => $version_id));
+			return $appjson;
+		}
 	}
-
-	return wxapp_code_custom_appjson($version_id);
-}
-
-/**
- *  服务器返回的base64图片写入本地路径.
- *
- * @param $path
- * @param $version_id
- *
- * @return mixed
- *
- * @since version
- */
-function wxapp_code_base64_to_path($path, $version_id) {
-	global $_W;
-	load()->classs('image');
-	if (starts_with($path, 'data:image')) { //data:image/png;base64,.....
-		list($pre, $base64) = explode(',', $path);
-		list(, $ext) = explode('/', $pre);
-		$ext = str_replace(';base64', '', $ext);
-		$filename = random(10);
-		$content = base64_decode($base64);
-		$writepath = 'images/wxapp/'.$version_id.'/'.$filename.'.'.$ext;
-		file_write($writepath, $content);
-		$attachdir = $_W['config']['upload']['attachdir'];
-		$path = $_W['siteroot'].''.$attachdir.'/'.$writepath;
+	//自定义appjson
+	if (isset($version['appjson'])) { 
+		return unserialize($version['appjson']);
 	}
-
-	return $path;
-}
-/**
- *  获取自定义appjson.
- *
- * @param $uniacid
- * @param $version_id
- * @param $json
- *
- * @return array
- *
- * @since version
- */
-function wxapp_code_custom_appjson($version_id) {
-	load()->classs('query');
-	$query = new Query();
-	$data = $query->from('wxapp_versions')->where(array('id' => $version_id))->get();
-
-	if (isset($data['appjson'])) {
-		$appjson = unserialize($data['appjson']);
-
-		return $appjson;
-	}
-
 	return null;
 }
+
+
+
 
 /** 自定义appjson 路径转base64
  * @param $version_id
  * @return array|null
  */
 function wxapp_code_custom_appjson_tobase64($version_id) {
-	$appjson = wxapp_code_custom_appjson($version_id);
+	load()->classs('image');
+	$version = wxapp_version($version_id);
+	
+	$appjson = unserialize($version['appjson']);
 	if ($appjson) {
-		wxapp_code_convert_tablist($appjson, 'wxapp_code_path_to_base64');
-
+		if (isset($appjson['tabBar']) && isset($appjson['tabBar']['list'])) {
+			$tablist = &$appjson['tabBar']['list'];
+			foreach ($tablist as &$item) {
+				
+				if (isset($item['iconPath'])) {
+					$icon_path = $item['iconPath'];
+					
+					if (!starts_with($icon_path, 'data:image')) {
+						$item['iconPath'] = Image::create($icon_path)->resize(81, 81)->toBase64();
+					}
+				}
+				if (isset($item['selectedIconPath'])) {
+					$selected_icon_path = $item['selectedIconPath'];
+					if (!starts_with($path, 'data:image')) {
+						$item['selectedIconPath'] = Image::create($selected_icon_path)->resize(81, 81)->toBase64();
+					}
+				}
+			}
+		}
 		return $appjson;
 	}
 
@@ -823,24 +749,7 @@ function wxapp_code_path_convert($att_id) {
 
 	return null;
 }
-/**
- *  路径转base64 保存.
- *
- * @param $path 图片路径
- *
- * @return string
- *
- * @since version
- */
-function wxapp_code_path_to_base64($path) {
-	global $_W;
-	load()->classs('image');
-	if (!starts_with($path, 'data:image')) {
-		$path = Image::create($path)->resize(81, 81)->toBase64();
-	}
 
-	return $path;
-}
 /**
  * 保存自定义appjson.
  *
