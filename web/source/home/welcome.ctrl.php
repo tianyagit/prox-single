@@ -45,11 +45,9 @@ if (IMS_FAMILY == 'v') {
 		if (!empty($_GPC['version_id'])) {
 			$version_info = wxapp_version($_GPC['version_id']);
 		}
-		if ($_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-			checkwebapp();
-		} elseif (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
+		if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
 			checkwxapp();
-		} else {
+		} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])){
 			checkaccount();
 		}
 	}
@@ -61,11 +59,9 @@ if (IMS_FAMILY == 'x') {
 		if (!empty($_GPC['version_id'])) {
 			$version_info = wxapp_version($_GPC['version_id']);
 		}
-		if ($_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-			checkwebapp();
-		} elseif (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
+		if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
 			checkwxapp();
-		} else {
+		} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])) {
 			checkaccount();
 		}
 	}
