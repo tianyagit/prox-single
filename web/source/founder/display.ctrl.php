@@ -48,6 +48,7 @@ if ($do == 'del') {
 	if ($uid_user['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 		iajax(0,'非法操作！', url('founder/display'));
 	}
-	user_delete($uid);
+	$users_table = table('users');
+	$users_table->userDelete($uid);
 	iajax(0,'删除成功！', referer());
 }
