@@ -128,37 +128,6 @@ function user_is_vice_founder($uid = 0) {
 }
 
 /**
- * 永久删除用户
- * @param $uid
- * @return bool
- */
-function user_delete($uid, $is_recycle = false) {
-	if (!empty($is_recycle)) {
-		pdo_update('users', array('status' => 3) , array('uid' => $uid));
-		return true;
-	}
-
-	load()->model('cache');
-	$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
-	if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
-		pdo_update('users', array('owner_uid' => 0), array('owner_uid' => $uid));
-		pdo_update('users_group', array('owner_uid' => 0), array('owner_uid' => $uid));
-		pdo_update('uni_group', array('owner_uid' => 0), array('owner_uid' => $uid));
-	}
-	pdo_delete('users', array('uid' => $uid));
-	$user_set_account = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
-	if (!empty($user_set_account)) {
-		foreach ($user_set_account as $account) {
-			cache_build_account_modules($account['uniacid']);
-		}
-	}
-	pdo_delete('uni_account_users', array('uid' => $uid));
-	pdo_delete('users_profile', array('uid' => $uid));
-	pdo_delete('users_bind', array('uid' => $uid));
-	return true;
-}
-
-/**
  * 获取单条用户信息，如果查询参数多于一个字段，则查询满足所有字段的用户
  * PS:密码字段不要加密
  * @param array $user_or_uid 要查询的用户字段，可以包括  uid, username, password, status

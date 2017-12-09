@@ -72,6 +72,9 @@ define('ACCOUNT_MANAGE_NAME_VICE_FOUNDER', 'vice_founder');
 define('ACCOUNT_MANAGE_GROUP_VICE_FOUNDER', 2);
 //普通用户
 define('ACCOUNT_MANAGE_GROUP_GENERAL', 0);
+//admin创建用户，用户组 owner_uid=0
+define('ACCOUNT_NO_OWNER_UID', 0);
+
 //系统卡券
 define('SYSTEM_COUPON', 1);
 //微信卡券
