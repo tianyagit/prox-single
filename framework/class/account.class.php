@@ -774,6 +774,44 @@ class WeUtility {
 	}
 
 	/**
+	 * 创建系统首页类
+	 * @param string $name
+	 */
+	public static function createModuleSystemWelcome($name) {
+		global $_W;
+		static $file;
+		$classname = "{$name}ModuleSystemWelcome";
+		if(!class_exists($classname)) {
+			$file = IA_ROOT . "/addons/{$name}/systemWelcome.php";
+			if(!is_file($file)) {
+				$file = IA_ROOT . "/framework/builtin/{$name}/systemWelcome.php";
+			}
+			if(!is_file($file)) {
+				trigger_error('ModuleSystemWelcome Definition File Not Found '.$file, E_USER_WARNING);
+				return null;
+			}
+			require $file;
+		}
+		if(!class_exists($classname)) {
+			trigger_error('ModuleSystemWelcome Definition Class Not Found', E_USER_WARNING);
+			return null;
+		}
+		$o = new $classname();
+		$o->uniacid = $o->weid = $_W['uniacid'];
+		$o->modulename = $name;
+		$o->module = module_fetch($name);
+		$o->__define = $file;
+		self::defineConst($o);
+		$o->inMobile = defined('IN_MOBILE');
+		if($o instanceof WeModuleSystemWelcome) {
+			return $o;
+		} else {
+			trigger_error('ModuleSystemWelcome Class Definition Error', E_USER_WARNING);
+			return null;
+		}
+	}
+
+	/**
 	 * 记录日志
 	 * @param string $level
 	 * @param string $message
@@ -1856,6 +1894,22 @@ abstract class WeModuleWebapp extends WeBase {
 	public function __call($name, $arguments) {
 		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/webapp';
 		$function_name = strtolower(substr($name, 6));
+		$file = "$dir/{$function_name}.inc.php";
+		if(file_exists($file)) {
+			require $file;
+			exit;
+		}
+		return null;
+	}
+}
+
+/**
+ *  模块系统首页
+ */
+abstract class WeModuleSystemWelcome extends WeBase {
+	public function __call($name, $arguments) {
+		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/systemWelcome';
+		$function_name = strtolower(substr($name, 5));
 		$file = "$dir/{$function_name}.inc.php";
 		if(file_exists($file)) {
 			require $file;
