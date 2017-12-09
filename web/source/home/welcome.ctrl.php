@@ -124,25 +124,24 @@ if ($do == 'platform') {
 	if (!empty($modulename)) {
 		$_W['current_module'] = module_fetch($modulename);
 	}
-	$site = WeUtility::createModule($modulename);
-	if (!is_error($site)) {
-		$method = 'welcomeDisplay';
-		if(method_exists($site, $method)){
-			define('FRAME', 'module_welcome');
-			$entries = module_entries($modulename, array('menu', 'home', 'profile', 'shortcut', 'cover', 'mine'));
-			$site->$method($entries);
-			exit;
-		}
-	}
-
 	define('FRAME', 'account');
-
 	define('IN_MODULE', $modulename);
 	if ($_GPC['system_welcome'] && $_W['isfounder']) {
 		$frames = buildframes('system_welcome');
 	} else {
+		$site = WeUtility::createModule($modulename);
+		if (!is_error($site)) {
+			$method = 'welcomeDisplay';
+			if(method_exists($site, $method)){
+				define('FRAME', 'module_welcome');
+				$entries = module_entries($modulename, array('menu', 'home', 'profile', 'shortcut', 'cover', 'mine'));
+				$site->$method($entries);
+				exit;
+			}
+		}
 		$frames = buildframes('account');
 	}
+	print_r($frames['section']);die;
 	foreach ($frames['section'] as $secion) {
 		foreach ($secion['menu'] as $menu) {
 			if (!empty($menu['url'])) {

@@ -131,11 +131,16 @@ define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 
 //模块是否支持小程序
 define('MODULE_SUPPORT_WXAPP', 2);
+define('MODULE_NONSUPPORT_WXAPP', 1);
 //模块是否支持公众号应用
 define('MODULE_SUPPORT_ACCOUNT', 2);
+define('MODULE_NONSUPPORT_ACCOUNT', 1);
 //是否支持pc 1不支持  2支持
 define('MODULE_NOSUPPORT_WEBAPP', 1);
 define('MODULE_SUPPORT_WEBAPP', 2);
+//是否支持系统首页 1不支持  2支持
+define('MODULE_SUPPORT_SYSTEMWELCOME', 2);
+define('MODULE_NONSUPPORT_SYSTEMWELCOME', 1);
 
 //权限类型
 define('PERMISSION_ACCOUNT', 'system');
@@ -243,7 +248,3 @@ define('FILE_NO_UNIACID', -1);
 //模块获取用户授权方式 1.静默授权 2.用户有感知授权
 define('OAUTH_TYPE_BASE', 1);
 define('OAUTH_TYPE_USERINFO', 2);
-
-//微擎统一常量表示是否支持 2：支持 1：不支持
-define('WE7_SUPPORT', 2);
-define('WE7_NONSUPPORT', 1);
