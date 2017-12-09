@@ -166,13 +166,12 @@ class UsersTable extends We7Table {
 		return $this;
 	}
 
-	public function userDelete($uid, $is_recycle = false) {
+	public function userAccountDelete($uid, $is_recycle = false) {
 		if (!empty($is_recycle)) {
 			pdo_update('users', array('status' => USER_STATUS_BAN) , array('uid' => $uid));
 			return true;
 		}
 
-		load()->model('cache');
 		$user_info = $this->usersInfo($uid);
 		if ($user_info['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 			pdo_update('users', array('owner_uid' => ACCOUNT_NO_OWNER_UID), array('owner_uid' => $uid));
@@ -180,16 +179,6 @@ class UsersTable extends We7Table {
 			pdo_update('uni_group', array('owner_uid' => ACCOUNT_NO_OWNER_UID), array('owner_uid' => $uid));
 		}
 		pdo_delete('users', array('uid' => $uid));
-		$this->userAccountRole(ACCOUNT_MANAGE_NAME_OWNER);
-		$user_set_account = $this->userOwnedAccount($uid);
-		if (!empty($user_set_account)) {
-			foreach ($user_set_account as $account) {
-				cache_build_account_modules($account['uniacid']);
-			}
-		}
-		pdo_delete('uni_account_users', array('uid' => $uid));
-		pdo_delete('users_profile', array('uid' => $uid));
-		pdo_delete('users_bind', array('uid' => $uid));
 		return true;
 	}
 }
