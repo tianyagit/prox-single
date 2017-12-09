@@ -101,6 +101,7 @@ if ($do == 'operate') {
 		}
 	}
 	/* xend */
+	$users_table = table('users');
 	switch ($type) {
 		case 'check_pass':
 			$data = array('status' => 2);
@@ -108,11 +109,11 @@ if ($do == 'operate') {
 			iajax(0, '更新成功', referer());
 			break;
 		case 'recycle'://删除用户到回收站
-			user_delete($uid, true);
+			$users_table->userDelete($uid, true);
 			iajax(0, '更新成功', referer());
 			break;
 		case 'recycle_delete'://永久删除用户
-			user_delete($uid);
+			$users_table->userDelete($uid);
 			iajax(0, '删除成功', referer());
 			break;
 		case 'recycle_restore':

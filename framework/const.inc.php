@@ -72,6 +72,9 @@ define('ACCOUNT_MANAGE_NAME_VICE_FOUNDER', 'vice_founder');
 define('ACCOUNT_MANAGE_GROUP_VICE_FOUNDER', 2);
 //普通用户
 define('ACCOUNT_MANAGE_GROUP_GENERAL', 0);
+//admin创建用户，用户组 owner_uid=0
+define('ACCOUNT_NO_OWNER_UID', 0);
+
 //系统卡券
 define('SYSTEM_COUPON', 1);
 //微信卡券
@@ -98,6 +101,8 @@ define('ATTACH_TYPE_IMAGE', 1);
 define('ATTACH_TYPE_VOICE', 2);
 define('ATTACH_TYPE_VEDIO', 3);
 define('ATTACH_TYPE_NEWS', 4);
+
+define('ATTACHMENT_IMAGE', 'image');
 
 define('ATTACH_SAVE_TYPE_FIXED', 1);
 define('ATTACH_SAVE_TYPE_TEMP', 2);
