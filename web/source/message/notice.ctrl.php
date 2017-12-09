@@ -64,6 +64,8 @@ if ($do == 'event_notice') {
 		iajax(-1);
 	}
 	$message = message_event_notice_list();
+	message_account_expire();
+	message_notice_worker();
 	iajax(0, $message);
 
 }

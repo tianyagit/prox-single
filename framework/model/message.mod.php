@@ -118,7 +118,6 @@ function message_event_notice_list() {
  */
 function message_account_expire() {
 	load()->model('account');
-	load()->model('message');
 	if (!pdo_tableexists('message_notice_log')) {
 		return true;
 	}
@@ -188,6 +187,6 @@ function message_notice_worker() {
 function message_notice_record_cloud($message) {
 	load()->classs('cloudapi');
 	$api = new CloudApi();
-	$result = $api->post('system', 'notify', array('josn' => $message), 'html', false);
+	$result = $api->post('system', 'notify', array('json' => $message), 'html', false);
 	return $result;
 }
