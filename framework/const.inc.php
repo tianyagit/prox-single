@@ -99,6 +99,8 @@ define('ATTACH_TYPE_VOICE', 2);
 define('ATTACH_TYPE_VEDIO', 3);
 define('ATTACH_TYPE_NEWS', 4);
 
+define('ATTACHMENT_IMAGE', 'image');
+
 define('ATTACH_SAVE_TYPE_FIXED', 1);
 define('ATTACH_SAVE_TYPE_TEMP', 2);
 

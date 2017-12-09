@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display', 'change_read_status', 'event_notice', 'account_expire', 'notice_worker');
+$dos = array('display', 'change_read_status', 'event_notice');
 $do = in_array($do, $dos) ? $do : 'display';
 load()->model('message');
 
@@ -64,15 +64,9 @@ if ($do == 'event_notice') {
 		iajax(-1);
 	}
 	$message = message_event_notice_list();
+	message_account_expire();
+	message_notice_worker();
 	iajax(0, $message);
 
-}
-
-if ($do == 'account_expire') {
-	message_account_expire();
-}
-
-if ($do == 'notice_worker') {
-	message_notice_worker();
 }
 template('message/notice');

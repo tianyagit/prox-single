@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
-$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxapp_web_error');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -77,16 +77,13 @@ if ($do == 'wxapp_web') {
 	}
 	$url = $_GPC['url'];
 	if (empty($url)) {
-		$wxapp = wxapp_fetch($uniacid, $version_info['id']);
-		$appdomain = $wxapp['appdomain'];
-		if (empty($appdomain)) {
-			$appdomain = $_W['siteroot'].'app/index.php';
-		}
-		$url = $appdomain.'?'.http_build_query(array('a' => 'entry', 'eid' => $version_info['entry_id'], 'i' => $_W['uniacid']));
+		//无需查询绑定域名 因为本do方法就是根据小程序域名访问的
+		$url = murl('entry', array('eid'=>$version_info['entry_id']), true, true);
+
 	}
 	if ($url) {
 		setcookie(session_name(), $_W['session_id']);
-		header('Location:'.$url);
+		header('Location:' . $url);
 		exit;
 	}
 	//跳转到错误页面
