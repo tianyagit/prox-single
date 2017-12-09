@@ -128,6 +128,27 @@ function user_is_vice_founder($uid = 0) {
 }
 
 /**
+ * 永久删除用户
+ * @param $uid
+ * @return bool
+ */
+function user_delete($uid, $is_recycle = false) {
+	load()->model('cache');
+	$user_table = table('users');
+	if (empty($is_recycle)) {
+		$user_table->userAccountRole(ACCOUNT_MANAGE_NAME_OWNER);
+		$user_accounts = $user_table->userOwnedAccount($uid);
+		if (!empty($user_accounts)) {
+			foreach ($user_accounts as $uniacid) {
+				cache_build_account_modules($uniacid);
+			}
+		}
+	}
+	$user_table->userAccountDelete($uid, $is_recycle);
+	return true;
+}
+
+/**
  * 获取单条用户信息，如果查询参数多于一个字段，则查询满足所有字段的用户
  * PS:密码字段不要加密
  * @param array $user_or_uid 要查询的用户字段，可以包括  uid, username, password, status

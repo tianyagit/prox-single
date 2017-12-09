@@ -109,11 +109,11 @@ if ($do == 'operate') {
 			iajax(0, '更新成功', referer());
 			break;
 		case 'recycle'://删除用户到回收站
-			$users_table->userDelete($uid, true);
+			user_delete($uid, true);
 			iajax(0, '更新成功', referer());
 			break;
 		case 'recycle_delete'://永久删除用户
-			$users_table->userDelete($uid);
+			user_delete($uid);
 			iajax(0, '删除成功', referer());
 			break;
 		case 'recycle_restore':
