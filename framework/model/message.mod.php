@@ -118,7 +118,6 @@ function message_event_notice_list() {
  */
 function message_account_expire() {
 	load()->model('account');
-	load()->model('message');
 	if (!pdo_tableexists('message_notice_log')) {
 		return true;
 	}
