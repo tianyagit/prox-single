@@ -48,6 +48,7 @@ if ($do == 'post') {
 			'package' => $_GPC['package'],
 			'maxaccount' => intval($_GPC['maxaccount']),
 			'maxwxapp' => intval($_GPC['maxwxapp']),
+			'maxwebapp' => intval($_GPC['maxwebapp']),
 			'timelimit' => intval($_GPC['timelimit'])
 		);
 		$user_group = user_save_founder_group($founder_user_group);

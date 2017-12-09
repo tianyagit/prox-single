@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
 
 load()->model('user');
+load()->model('message');
 load()->classs('oauth2/oauth2client');
 load()->model('setting');
 
@@ -35,13 +36,18 @@ function _login($forward = '') {
 		$_GPC['login_type'] = 'system';
 	}
 
-	if (empty($_GPC['handel_type'])) {
+	if (empty($_GPC['handle_type'])) {
 		$_GPC['handle_type'] = 'login';
 	}
 
-	$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->handle($_GPC['handle_type']);
 
-	if (!empty($_W['user']) && !empty($_GPC['handle_type'])) {
+	if ($_GPC['handle_type'] == 'login') {
+		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
+	} else {
+		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->bind();
+	}
+
+	if (!empty($_W['user']) && $_GPC['handle_type'] == 'bind') {
 		if (is_error($member)) {
 			itoast($member['message'], url('user/profile/bind'), '');
 		} else {
@@ -108,7 +114,8 @@ function _login($forward = '') {
 		}
 		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
-		user_account_expire_message_record();
+		message_account_expire();
+		message_notice_worker();
 		itoast("欢迎回来，{$record['username']}", $forward, 'success');
 	} else {
 		if (empty($failed)) {

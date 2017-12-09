@@ -82,4 +82,4 @@ if ($do == 'get_account_api') {
 	}
 }
 
-template('statistics/account-analysis');
+template('statistics/account');

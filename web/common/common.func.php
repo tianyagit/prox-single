@@ -167,6 +167,16 @@ function checkwxapp() {
 	}
 }
 
+/**
+ * 检查操作员是否已经选择一个pc作为工作区域
+ */
+function checkwebapp() {
+	global $_W;
+	if (empty($_W['uniacid']) || (!empty($_W['account']) && $_W['account']['type'] != ACCOUNT_TYPE_WEBAPP_NORMAL)) {
+		itoast('', url('webapp/home'), 'info');
+	}
+}
+
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;

@@ -47,7 +47,7 @@ if (IMS_FAMILY == 'v') {
 		}
 		if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
 			checkwxapp();
-		} else {
+		} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])){
 			checkaccount();
 		}
 	}
@@ -61,7 +61,7 @@ if (IMS_FAMILY == 'x') {
 		}
 		if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
 			checkwxapp();
-		} else {
+		} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])) {
 			checkaccount();
 		}
 	}
@@ -136,6 +136,7 @@ if ($do == 'platform') {
 	}
 
 	define('FRAME', 'account');
+
 	define('IN_MODULE', $modulename);
 	if ($_GPC['system_welcome'] && $_W['isfounder']) {
 		$frames = buildframes('system_welcome');

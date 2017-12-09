@@ -34,6 +34,8 @@ define('ACCOUNT_TYPE_OFFCIAL_NORMAL', 1);
 define('ACCOUNT_TYPE_OFFCIAL_AUTH', 3);
 //正常接入小程序
 define('ACCOUNT_TYPE_APP_NORMAL', 4);
+//正常接入PC
+define('ACCOUNT_TYPE_WEBAPP_NORMAL', 5);
 
 
 //授权登录接入
@@ -126,6 +128,9 @@ define('CACHE_KEY_ACCOUNT_SWITCH', 'lastaccount:%s');
 define('MODULE_SUPPORT_WXAPP', 2);
 //模块是否支持公众号应用
 define('MODULE_SUPPORT_ACCOUNT', 2);
+//是否支持pc 1不支持  2支持
+define('MODULE_NOSUPPORT_WEBAPP', 1);
+define('MODULE_SUPPORT_WEBAPP', 2);
 
 //权限类型
 define('PERMISSION_ACCOUNT', 'system');
@@ -149,6 +154,8 @@ define('WXAPP_DIY', 1);
 define('WXAPP_TEMPLATE', 2);
 //跳转模块小程序
 define('WXAPP_MODULE', 3);
+//打包普通应用
+define('WXAPP_CREATE_MODULE', 1);
 
 define('MATERIAL_LOCAL', 'local');//服务器素材类型
 define('MATERIAL_WEXIN', 'perm');//微信素材类型

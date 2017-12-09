@@ -6,6 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 $we7_system_menu = array();
+
 $we7_system_menu['account'] = array(
 	'title' => '公众号',
 	'icon' => 'wi wi-white-collar',
@@ -507,7 +508,7 @@ $we7_system_menu['system'] = array(
 			'menu' => array(
 				'system_account_analysis' => array(
 					'title' => 	'访问统计',
-					'url' => url('statistics/account-analysis'),
+					'url' => url('statistics/account'),
 					'icon' => 'wi wi-article',
 					'permission_name' => 'system_account_analysis',
 				),
@@ -722,5 +723,29 @@ if (IMS_FAMILY == 'x') {
 		'section' => array(),
 	);
 }
+
+$we7_system_menu['webapp'] = array(
+	'title' => 'PC',
+	'icon' => 'wi wi-white-collar',
+	'url' => url('webapp/home/display'),
+	'section' => array(
+		'platform_module' => array(
+			'title' => '应用模块',
+			'menu' => array(),
+			'is_display' => true,
+		),
+		'mc' => array(
+			'title' => '粉丝',
+			'menu' => array(
+				'mc_member' => array(
+					'title' => '会员管理',
+					'url' => url('mc/member'),
+					'icon' => 'wi wi-fans',
+					'permission_name' => 'mc_member',
+				)
+			),
+		)
+	),
+);
 /* xend */
 return $we7_system_menu;

@@ -13,7 +13,7 @@ if (in_array($action, array('permission', 'manage-account'))) {
 	}
 	if (!empty($_GPC['version_id'])) {
 		checkwxapp();
-	} else {
+	} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])){
 		checkaccount();
 	}
 }
@@ -39,6 +39,9 @@ if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
 } elseif ($_GPC['account_type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $_GPC['account_type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 	define('ACCOUNT_TYPE', ACCOUNT_TYPE_OFFCIAL_NORMAL);
 	define('ACCOUNT_TYPE_TEMPLATE', '');
+} elseif ($_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL){
+	define('ACCOUNT_TYPE', ACCOUNT_TYPE_WEBAPP_NORMAL);
+	define('ACCOUNT_TYPE_TEMPLATE', '-webapp');
 } else {
 	define('ACCOUNT_TYPE', $_GPC['account_type']);
 }
