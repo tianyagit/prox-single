@@ -41,7 +41,8 @@ function message_notice_record($content, $uid, $sign, $type, $extend_message = a
 	if (empty($message_notice_log['is_read'])) {
 		$message_notice_log['is_read'] = MESSAGE_NOREAD;
 	}
-	if (in_array($type, array(MESSAGE_ORDER_TYPE, MESSAGE_WORKORDER_TYPE, MESSAGE_REGISTER_TYPE))) {
+	$push_cloud_message_type = array(MESSAGE_ORDER_TYPE, MESSAGE_WORKORDER_TYPE, MESSAGE_REGISTER_TYPE);
+	if (in_array($type, $push_cloud_message_type)) {
 		message_notice_record_cloud($message_notice_log);
 	}
 	pdo_insert('message_notice_log', $message_notice_log);
@@ -117,7 +118,6 @@ function message_event_notice_list() {
  */
 function message_account_expire() {
 	load()->model('account');
-	load()->model('message');
 	if (!pdo_tableexists('message_notice_log')) {
 		return true;
 	}

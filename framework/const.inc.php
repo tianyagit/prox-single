@@ -238,3 +238,7 @@ define('FILE_NO_UNIACID', -1);
 //模块获取用户授权方式 1.静默授权 2.用户有感知授权
 define('OAUTH_TYPE_BASE', 1);
 define('OAUTH_TYPE_USERINFO', 2);
+
+//微擎统一常量表示是否支持 2：支持 1：不支持
+define('WE7_SUPPORT', 2);
+define('WE7_NONSUPPORT', 1);
