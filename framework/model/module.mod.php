@@ -912,7 +912,6 @@ function module_clerk_info($module_name) {
  */
 function module_rank_top($module_name) {
 	global $_W;
-	$module_table = table('module');
-	$max_rank = $module_table->moduleSetRankTop($module_name);
-	return empty($max_rank) ? true : false;
+	$result = table('module')->moduleSetRankTop($module_name);
+	return empty($result) ? true : false;
 }
