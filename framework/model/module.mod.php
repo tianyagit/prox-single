@@ -69,7 +69,16 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 	load()->func('communication');
 
 	global $_W;
-	$ts = array('rule', 'cover', 'menu', 'home', 'profile', 'shortcut', 'function', 'mine', 'welcome');
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$ts = array('rule', 'cover', 'menu', 'home', 'profile', 'shortcut', 'function', 'mine', 'system_welcome');
+	}
+	/* xend */
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		$ts = array('rule', 'cover', 'menu', 'home', 'profile', 'shortcut', 'function', 'mine');
+	}
+	/* vend */
 	if(empty($types)) {
 		$types = $ts;
 	} else {
@@ -120,7 +129,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 			if($bind['entry'] == 'shortcut') {
 				$url = murl("entry", array('eid' => $bind['eid']));
 			}
-			if($bind['entry'] == 'welcome') {
+			if($bind['entry'] == 'system_welcome') {
 				$url = wurl("site/entry", array('eid' => $bind['eid']));
 			}
 
