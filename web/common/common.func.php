@@ -584,7 +584,7 @@ function buildframes($framename = ''){
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
 		if (!empty($framename)) {
-			if (($framename == 'system_welcome' || $entry['entry'] == 'welcome') && $_W['isfounder']) {
+			if (($framename == 'system_welcome' || $entry['entry'] == 'system_welcome') && $_W['isfounder']) {
 				$frames = $frames['account'];
 				$frames['section'] = array('platform_module_welcome' => $frames['section']['platform_module_welcome']);
 			} else {
