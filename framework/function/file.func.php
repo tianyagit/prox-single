@@ -389,8 +389,7 @@ function file_dir_remote_upload($dir_path) {
 	if (is_array($local_attachment) && !empty($local_attachment)) {
 		foreach ($local_attachment as $attachment) {
 			$filename = str_replace(ATTACHMENT_ROOT, '', $attachment);
-			$file_account = explode('/', $filename);
-			$file_account = $file_account[1];
+			list($file_account) = explode('/', $filename);
 			if ($file_account == 'global') {
 				continue;
 			}

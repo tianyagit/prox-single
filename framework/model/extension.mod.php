@@ -12,16 +12,16 @@ defined('IN_IA') or exit('Access Denied');
  */
 function ext_module_convert($manifest) {
 	if (!empty($manifest['platform']['supports'])) {
-		$app_support = in_array('app', $manifest['platform']['supports']) ? 2 : 1;
-		$wxapp_support = in_array('wxapp', $manifest['platform']['supports']) ? 2 : 1;
-		$welcome_support = in_array('system_welcome', $manifest['platform']['supports']) ? 2 : 1;
-		$webapp_support = in_array('webapp', $manifest['platform']['supports']) ? 2 : 1;
-		if ($app_support == 1 && $wxapp_support == 1 && $welcome_support == 1 && $webapp_support == 1) {
-			$app_support = 2;
+		$app_support = in_array('app', $manifest['platform']['supports']) ? WE7_SUPPORT : WE7_NONSUPPORT;
+		$wxapp_support = in_array('wxapp', $manifest['platform']['supports']) ? WE7_SUPPORT : WE7_NONSUPPORT;
+		$welcome_support = in_array('system_welcome', $manifest['platform']['supports']) ? WE7_SUPPORT : WE7_NONSUPPORT;
+		$webapp_support = in_array('webapp', $manifest['platform']['supports']) ? WE7_SUPPORT : WE7_NONSUPPORT;
+		if ($app_support == WE7_NONSUPPORT && $wxapp_support == WE7_NONSUPPORT && $welcome_support == WE7_NONSUPPORT && $webapp_support == WE7_NONSUPPORT) {
+			$app_support = WE7_SUPPORT;
 		}
 	} else {
-		$app_support = 2;
-		$wxapp_support = 1;
+		$app_support = WE7_SUPPORT;
+		$wxapp_support = WE7_NONSUPPORT;
 	}
 	return array(
 		'name' => $manifest['application']['identifie'],
