@@ -41,7 +41,7 @@ if (IMS_FAMILY == 'x') {
 			iajax(1, '非法操作');
 		}
 		if (!empty($_GPC['name'])) {
-			$site = WeUtility::createModuleSite($_GPC['name']);
+			$site = WeUtility::createModuleSystemWelcome($_GPC['name']);
 			if (!method_exists($site, 'systemWelcomeDisplay')) {
 				iajax(1, '应用未实现系统首页功能！');
 			}
