@@ -428,7 +428,7 @@ if ($do == 'wechat_upload') {
 	}
 	if(!empty($content['errcode'])) {
 		$result['error'] = 0;
-		$result['message'] = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->error_code($content['errcode'])}";
+		$result['message'] = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->errorCode($content['errcode'])}";
 		die(json_encode($result));
 	}
 	if($mode == 'perm' || $mode == 'temp') {
