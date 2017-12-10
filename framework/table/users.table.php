@@ -171,7 +171,6 @@ class UsersTable extends We7Table {
 			pdo_update('users', array('status' => USER_STATUS_BAN) , array('uid' => $uid));
 			return true;
 		}
-
 		$user_info = $this->usersInfo($uid);
 		if ($user_info['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 			pdo_update('users', array('owner_uid' => ACCOUNT_NO_OWNER_UID), array('owner_uid' => $uid));
@@ -179,6 +178,9 @@ class UsersTable extends We7Table {
 			pdo_update('uni_group', array('owner_uid' => ACCOUNT_NO_OWNER_UID), array('owner_uid' => $uid));
 		}
 		pdo_delete('users', array('uid' => $uid));
+		pdo_delete('uni_account_users', array('uid' => $uid));
+		pdo_delete('users_profile', array('uid' => $uid));
+		pdo_delete('users_bind', array('uid' => $uid));
 		return true;
 	}
 }

@@ -141,7 +141,6 @@ if ($do == 'platform') {
 		}
 		$frames = buildframes('account');
 	}
-	print_r($frames['section']);die;
 	foreach ($frames['section'] as $secion) {
 		foreach ($secion['menu'] as $menu) {
 			if (!empty($menu['url'])) {

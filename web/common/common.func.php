@@ -496,9 +496,9 @@ function buildframes($framename = ''){
 		}
 		/* xstart */
 		if (IMS_FAMILY == 'x') {
-			if (!empty($entries['welcome']) && $_W['isfounder']) {
+			if (!empty($entries['system_welcome']) && $_W['isfounder']) {
 				$frames['account']['section']['platform_module_welcome']['title'] = '';
-				foreach ($entries['welcome'] as $key => $row) {
+				foreach ($entries['system_welcome'] as $key => $row) {
 					if (empty($row)) continue;
 					$frames['account']['section']['platform_module_welcome']['menu']['platform_module_welcome' . $row['eid']] = array (
 						'title' => "<i class='wi wi-appsetting'></i> {$row['title']}",
