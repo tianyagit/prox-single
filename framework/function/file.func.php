@@ -529,21 +529,11 @@ function file_remote_delete($file) {
  */
 function file_image_thumb($srcfile, $desfile = '', $width = 0) {
 	global $_W;
-	
-	if (!file_exists($srcfile)) {
-		return error('-1', '原图像不存在');
-	}
-	if (!file_is_image($srcfile)) {
-		return error('-1', '原图像不存在');
-	}
+	load()->classs('image');
 	if (intval($width) == 0) {
 		load()->model('setting');
 		$width = intval($_W['setting']['upload']['image']['width']);
 	}
-	if (intval($width) < 0) {
-		return error('-1', '缩放宽度无效');
-	}
-	
 	if (empty($desfile)) {
 		$ext = pathinfo($srcfile, PATHINFO_EXTENSION);
 		$srcdir = dirname($srcfile);
@@ -551,7 +541,7 @@ function file_image_thumb($srcfile, $desfile = '', $width = 0) {
 			$desfile = $srcdir . '/' . random(30) . ".{$ext}";
 		} while (file_exists($desfile));
 	}
-	
+
 	$des = dirname($desfile);
 	// 创建存放目录
 	if (!file_exists($des)) {
@@ -561,55 +551,8 @@ function file_image_thumb($srcfile, $desfile = '', $width = 0) {
 	} elseif (!is_writable($des)) {
 		return error('-1', '目录无法写入');
 	}
-	
-	// 原图像信息
-	$org_info = @getimagesize($srcfile);
-	if ($org_info) {
-		if ($width == 0 || $width > $org_info[0]) {
-			copy($srcfile, $desfile);
-			return str_replace(ATTACHMENT_ROOT . '/', '', $desfile);
-		}
-		if ($org_info[2] == 1) { // gif不处理
-			if (function_exists("imagecreatefromgif")) {
-				$img_org = imagecreatefromgif($srcfile);
-			}
-		} elseif ($org_info[2] == 2) {
-			if (function_exists("imagecreatefromjpeg")) {
-				$img_org = imagecreatefromjpeg($srcfile);
-			}
-		} elseif ($org_info[2] == 3) {
-			if (function_exists("imagecreatefrompng")) {
-				$img_org = imagecreatefrompng($srcfile);
-				imagesavealpha($img_org, true);
-			}
-		}
-	} else {
-		return error('-1', '获取原始图像信息失败');
-	}
-	// 源图像的宽高比
-	$scale_org = $org_info[0] / $org_info[1];
-	// 缩放后的高
-	$height = $width / $scale_org;
-	if (function_exists("imagecreatetruecolor") && function_exists("imagecopyresampled") && @$img_dst = imagecreatetruecolor($width, $height)) {
-		imagealphablending($img_dst, false);
-		imagesavealpha($img_dst, true);
-		imagecopyresampled($img_dst, $img_org, 0, 0, 0, 0, $width, $height, $org_info[0], $org_info[1]);
-	} else {
-		return error('-1', 'PHP环境不支持图片处理');
-	}
-	if ($org_info[2] == 2) {
-		if (function_exists('imagejpeg')) {
-			imagejpeg($img_dst, $desfile);
-		}
-	} else {
-		if (function_exists('imagepng')) {
-			imagepng($img_dst, $desfile);
-		}
-	}
-	
-	imagedestroy($img_dst);
-	imagedestroy($img_org);
-	
+
+	$desfile = Image::create($srcfile)->resize($width)->saveTo($desfile);
 	return str_replace(ATTACHMENT_ROOT . '/', '', $desfile);
 }
 
@@ -633,16 +576,7 @@ function file_image_thumb($srcfile, $desfile = '', $width = 0) {
  * @return boolean|array 指示裁切成功或裁切失败原因
  */
 function file_image_crop($src, $desfile, $width = 400, $height = 300, $position = 1) {
-	if (!file_exists($src)) {
-		return error('-1', '原图像不存在');
-	}
-	if (intval($width) <= 0 || intval($height) <= 0) {
-		return error('-1', '裁剪尺寸无效');
-	}
-	if (intval($position) > 9 || intval($position) < 1) {
-		return error('-1', '裁剪位置无效');
-	}
-	
+	load()->classs('image');
 	$des = dirname($desfile);
 	// 创建存放目录
 	if (!file_exists($des)) {
@@ -652,96 +586,9 @@ function file_image_crop($src, $desfile, $width = 400, $height = 300, $position 
 	} elseif (!is_writable($des)) {
 		return error('-1', '目录无法写入');
 	}
-	// 原图像信息
-	$org_info = @getimagesize($src);
-	if ($org_info) {
-		if ($org_info[2] == 1) { // gif不处理
-			if (function_exists("imagecreatefromgif")) {
-				$img_org = imagecreatefromgif($src);
-			}
-		} elseif ($org_info[2] == 2) {
-			if (function_exists("imagecreatefromjpeg")) {
-				$img_org = imagecreatefromjpeg($src);
-			}
-		} elseif ($org_info[2] == 3) {
-			if (function_exists("imagecreatefrompng")) {
-				$img_org = imagecreatefrompng($src);
-			}
-		}
-	} else {
-		return error('-1', '获取原始图像信息失败');
-	}
-	
-	// 处理裁剪的宽高
-	if ($width == '0' || $width > $org_info[0]) {
-		$width = $org_info[0];
-	}
-	if ($height == '0' || $height > $org_info[1]) {
-		$height = $org_info[1];
-	}
-	// 获取裁剪的起点坐标
-	switch ($position) {
-		case 0 :
-		case 1 :
-			$dst_x = 0;
-			$dst_y = 0;
-			break;
-		case 2 :
-			$dst_x = ($org_info[0] - $width) / 2;
-			$dst_y = 0;
-			break;
-		case 3 :
-			$dst_x = $org_info[0] - $width;
-			$dst_y = 0;
-			break;
-		case 4 :
-			$dst_x = 0;
-			$dst_y = ($org_info[1] - $height) / 2;
-			break;
-		case 5 :
-			$dst_x = ($org_info[0] - $width) / 2;
-			$dst_y = ($org_info[1] - $height) / 2;
-			break;
-		case 6 :
-			$dst_x = $org_info[0] - $width;
-			$dst_y = ($org_info[1] - $height) / 2;
-			break;
-		case 7 :
-			$dst_x = 0;
-			$dst_y = $org_info[1] - $height;
-			break;
-		case 8 :
-			$dst_x = ($org_info[0] - $width) / 2;
-			$dst_y = $org_info[1] - $height;
-			break;
-		case 9 :
-			$dst_x = $org_info[0] - $width;
-			$dst_y = $org_info[1] - $height;
-			break;
-		default :
-			$dst_x = 0;
-			$dst_y = 0;
-	}
-	if ($width == $org_info[0]) {
-		$dst_x = 0;
-	}
-	if ($height == $org_info[1]) {
-		$dst_y = 0;
-	}
-	
-	if (function_exists("imagecreatetruecolor") && function_exists("imagecopyresampled") && @$img_dst = imagecreatetruecolor($width, $height)) {
-		imagecopyresampled($img_dst, $img_org, 0, 0, $dst_x, $dst_y, $width, $height, $width, $height);
-	} else {
-		return error('-1', 'PHP环境不支持图片处理');
-	}
-	if (function_exists('imagejpeg')) {
-		imagejpeg($img_dst, $desfile);
-	} elseif (function_exists('imagepng')) {
-		imagepng($img_dst, $desfile);
-	}
-	imagedestroy($img_dst);
-	imagedestroy($img_org);
-	return true;
+	return Image::create($src)
+		->crop($width, $height, $position)
+		->saveTo($desfile);
 }
 
 /**
@@ -891,6 +738,7 @@ function file_remote_attach_fetch($url, $limit = 0, $path = '') {
 	}
 	return $pathname;
 }
+
 function file_is_image($url) {
 	if (!parse_path($url)) {
 		return false;
@@ -912,32 +760,15 @@ function file_is_image($url) {
  */
 function file_image_quality($src, $to_path, $ext) {
 	global $_W;
-	//gd库未开启
-	if (!function_exists('gd_info')) {
-		return;
-	}
 	//不压缩
 	$quality = intval($_W['setting']['upload']['image']['zip_percentage']);
 	if ($quality <= 0 || $quality >= 100) {
 		return ;
 	}
-	
-	//大于5M不压缩
+//	//大于5M不压缩
 	if (filesize($src) > 5120) {
 		return ;
 	}
 
-	/**
-	 *  imagejpeg 1-100 范围 默认值75 数字 值越大越清晰
-	 *  imagepng  1-9 范围 默认6 值越小越清晰
-	 */
-	$resource = null;
-	switch ($ext) {
-		case 'jpg' : $quality = intval(0.75*$quality); $resource = imagecreatefromjpeg($src);  imagejpeg($resource, $to_path, $quality);  break;
-		case 'jpeg': $quality = intval(0.75*$quality); $resource = imagecreatefromjpeg($src); imagejpeg($resource, $to_path, $quality);  break;
-		case 'png' : $quality = round(abs((100-$quality)/11.111111)); $resource = imagecreatefrompng($src); imagepng($resource, $to_path, $quality); break;
-	}
-	if ($resource) {
-		imagedestroy($resource);
-	}
+	return Image::create($src)->saveTo($to_path, $quality);
 }
