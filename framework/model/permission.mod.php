@@ -527,4 +527,5 @@ function permission_check_uniacid_availabel() {
 		$_W['uniacid'] = $_W['account'] = $_W['uniaccount'] = $_W['acid'] = $_W['weid'] = '';
 		$_W['role'] = ACCOUNT_MANAGE_NAME_OPERATOR;
 	}
+	return true;
 }
