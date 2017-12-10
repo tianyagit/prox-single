@@ -6,16 +6,20 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+/**
+ *  用法示例:
+ *  Image::create('/a.jpg')->resize(50, 50)->crop(10, 5, 4)->saveTo('/b.jpg')
+ * Class Image
+ */
 class Image {
 
 	private $src;
-	private $actions; //操作数组 支持resize crop
+	private $actions = array(); //操作数组 支持resize crop
 	// resize 数据
 	private $resize_width = 0;
 	private $resize_height = 0;
 
 	private $image = null;
-	private $new_image = null;
 	private $imageinfo = array();
 	//裁剪数据
 	//裁剪的宽度
@@ -90,16 +94,23 @@ class Image {
 	 * @since version
 	 */
 	public function saveTo($path, $quality = null) {
-		$this->handle();
+
+		$result = $this->handle();
+		if (!$result) {
+			return false;
+		}
 		$ext = $this->ext;
 		if($ext == 'jpg') {
 			$ext = 'jpeg';
 		}
 		$func = 'image'.$ext;
-		if(!$this->isGif()) {
+		$real_quality = $this->realQuality($quality);
+		if(is_null($real_quality)) {
 			$saved = $func($this->image(), $path);
 		} else {
-			$saved = $func($this->image(), $path, $this->realQuality($quality));
+			if(!$this->isGif()) {
+				$saved = $func($this->image(), $path, $real_quality);
+			}
 		}
 		$this->destroy();
 		return $saved ? $path : $saved;
@@ -126,12 +137,14 @@ class Image {
 	 *
 	 */
 	protected function handle() {
-		//gd库未开启
-		if (!function_exists('gd_info')) {
-			return null;
-		}
 		//创建资源
+		if (!function_exists('gd_info')) {
+			return false;
+		}
 		$this->image = $this->createResource();
+		if (!$this->image) {
+			return false;
+		}
 		$this->imageinfo = getimagesize($this->src);
 		$actions = array_unique($this->actions);
 		$src_image = $this->image;
@@ -139,7 +152,8 @@ class Image {
 			$method = 'do'.ucfirst($action);
 			$src_image = $this->{$method}($src_image);
 		}
-		$this->new_image = $src_image;
+		$this->image = $src_image;
+		return true;
 	}
 
 	/**
@@ -149,6 +163,7 @@ class Image {
 		list($dst_x, $dst_y) = $this->getCropDestPoint();
 		if(version_compare(PHP_VERSION, '5.5.0') >= 0) {
 			$new_image = imagecrop($src_image, array('x'=>$dst_x, 'y'=>$dst_y, 'width'=>$this->crop_width, 'height'=>$this->crop_height));
+			imagedestroy($src_image);
 		}else {
 			$new_image =  $this->modify($src_image, $this->crop_width,
 			    $this->crop_height, $this->crop_width, $this->crop_height, 0, 0, $dst_x, $dst_y);
@@ -191,24 +206,25 @@ class Image {
 		imagesavealpha($image, true);
 		imagecopyresampled($image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $width, $height,
 			$src_width, $src_height);
+		imagedestroy($src_image);
 		return $image;
 	}
 
 	private function image() {
-		return $this->new_image ? $this->new_image : $this->image;
+		return $this->image;
 	}
 
 	private function destroy() {
 		if($this->image) {
 			imagedestroy($this->image);
 		}
-		if($this->new_image) {
-			imagedestroy($this->new_image);
-		}
 	}
 
 
 	private function createResource() {
+		if(file_exists($this->src) && !is_readable($this->src)) {
+			return null;
+		}
 		if($this->isPng()) {
 			return imagecreatefrompng($this->src);
 		}
@@ -232,7 +248,10 @@ class Image {
 	public function toBase64($prefix = 'data:image/%s;base64,') {
 		$filename = tempnam('tmp', 'base64');
 		$prefix = sprintf($prefix, $this->ext);
-		$this->saveTo($filename);
+		$result = $this->saveTo($filename);
+		if (!$result) {
+			return false;
+		}
 		$content = file_get_contents($filename);
 		$base64 = base64_encode($content);
 		unlink($filename);

@@ -577,6 +577,15 @@ function file_image_thumb($srcfile, $desfile = '', $width = 0) {
  */
 function file_image_crop($src, $desfile, $width = 400, $height = 300, $position = 1) {
 	load()->classs('image');
+	$des = dirname($desfile);
+	// 创建存放目录
+	if (!file_exists($des)) {
+		if (!mkdirs($des)) {
+			return error('-1', '创建目录失败');
+		}
+	} elseif (!is_writable($des)) {
+		return error('-1', '目录无法写入');
+	}
 	return Image::create($src)
 		->crop($width, $height, $position)
 		->saveTo($desfile);
@@ -732,7 +741,7 @@ function file_remote_attach_fetch($url, $limit = 0, $path = '') {
 
 function file_is_image($url) {
 	if (!parse_path($url)) {
-//		return false;
+		return false;
 	}
 	$pathinfo = pathinfo($url);
 	$extension = strtolower($pathinfo['extension']);
@@ -756,7 +765,7 @@ function file_image_quality($src, $to_path, $ext) {
 	if ($quality <= 0 || $quality >= 100) {
 		return ;
 	}
-	//大于5M不压缩
+//	//大于5M不压缩
 	if (filesize($src) > 5120) {
 		return ;
 	}

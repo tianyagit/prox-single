@@ -3,6 +3,7 @@ use Testify\Testify;
 require '../framework/bootstrap.inc.php';
 require IA_ROOT . '/framework/library/testify/Testify.php';
 load()->func('file');
+load()->classs('image');
 define('CACHE_FILE_PATH', IA_ROOT . '/data/cache/');
 
 $tester = new Testify('测试file缓存函数');
@@ -23,21 +24,34 @@ $tester->test('测试读取', function(){
 	$filevalue = cache_read('statda');
 	$tester->assertEquals($filevalue, $arr);
 });
-
+//
 $tester->test('测试图片', function() {
-	load()->classs('image');
-	Image::create(__DIR__.'/a.jpg')->crop(100, 100, 4)->
-	saveTo(__DIR__.'/d.jpg');
+	Image::create(__DIR__.'/a.jpg')->resize(150, 150)->crop(10,50,4)
+		->saveTo(__DIR__.'/aaa.jpg', 15);
 });
-//$tester->test('测试删除数据', function(){
-//	global $tester;
-//	$filevalue = cache_delete('stat:todaylock:652');
-//	$tester->assertTrue($filevalue);
-//});
-//$tester->test('测试清空数据', function(){
-//	global $tester;
-//	cache_clean();
-//	$exist = file_tree(CACHE_FILE_PATH);
-//	$tester->assertFalse($exist);
-//});
+////
+$tester->test('测试thumb', function (){
+	file_image_thumb(__DIR__.'/a.jpg', '', 100);
+});
+//
+$tester->test('测试crop', function (){
+	file_image_crop(__DIR__.'/a.jpg', __DIR__.'/ccc.jpg', 100, 50, 4);
+});
+
+$tester->test('测试压缩', function (){
+
+	file_image_quality(__DIR__.'/a.jpg', __DIR__.'/ddd.jpg', 'jpg');
+
+});
+$tester->test('测试删除数据', function(){
+	global $tester;
+	$filevalue = cache_delete('stat:todaylock:652');
+	$tester->assertTrue($filevalue);
+});
+$tester->test('测试清空数据', function(){
+	global $tester;
+	cache_clean();
+	$exist = file_tree(CACHE_FILE_PATH);
+	$tester->assertFalse($exist);
+});
 $tester->run();
