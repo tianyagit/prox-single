@@ -124,7 +124,8 @@ if (!is_error($site)) {
 	/* vend */
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
-		$method = doWeb . ucfirst($entry['do']);
+		$do_function = defined('SYSTEM_WELCOME_MODULE') ? 'doPage' : 'doWeb';
+		$method = $do_function . ucfirst($entry['do']);
 	}
 	/* xend */
 	exit($site->$method());

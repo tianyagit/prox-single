@@ -651,19 +651,33 @@ function user_invite_register_url($uid = 0) {
  */
 function user_save_group($group_info) {
 	global $_W;
+	$group_table = table('group');
 	$name = trim($group_info['name']);
 	if (empty($name)) {
 		return error(-1, '用户权限组名不能为空');
 	}
 
+	$group_table->searchWithName($name);
 	if (!empty($group_info['id'])) {
-		$name_exist = pdo_get('users_group', array('id <>' => $group_info['id'], 'name' => $name));
-	} else {
-		$name_exist = pdo_get('users_group', array('name' => $name));
+		$group_table->searchWithNoId($group_info['id']);
 	}
-
+	$name_exist = $group_table->searchGroup();
 	if (!empty($name_exist)) {
 		return error(-1, '用户权限组名已存在！');
+	}
+
+	if (user_is_vice_founder()) {
+		$group_table->searchWithId($_W['user']['groupid']);
+		$founder_info = $group_table->searchGroup(true);
+		if ($group_info['maxaccount'] > $founder_info['maxaccount']) {
+			return error(-1, '当前用户组的公众号个数不能超过' . $founder_info['maxaccount'] . '个！');
+		}
+		if ($group_info['maxwxapp'] > $founder_info['maxwxapp']) {
+			return error(-1, '当前用户组的公众号个数不能超过' . $founder_info['maxwxapp'] . '个！');
+		}
+		if ($group_info['maxwebapp'] > $founder_info['maxwebapp']) {
+			return error(-1, '当前用户组的公众号个数不能超过' . $founder_info['maxwebapp'] . '个！');
+		}
 	}
 
 	if (!empty($group_info['package'])) {

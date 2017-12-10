@@ -93,7 +93,7 @@ if (is_array($acl[$controller]['direct']) && in_array($action, $acl[$controller]
 }
 checklogin();
 // 判断非创始人是否拥有目标权限
-if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER && version_compare(IMS_VERSION, '1.5.5', '>=')) {
+if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	if (empty($_W['uniacid'])) {
 		if (defined('FRAME') && FRAME == 'account') {
 			itoast('', url('account/display'), 'info');

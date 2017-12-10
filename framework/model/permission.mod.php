@@ -514,3 +514,18 @@ function permission_user_account_num($uid = 0) {
 	);
 	return $data;
 }
+
+/**
+ * 检测当前$_W['uniacid']是否可用
+ */
+function permission_check_uniacid_availabel() {
+	global $_W;
+	if (empty($_W['uniacid'])) {
+		return true;
+	}
+	if (!empty($_W['account']) && $_W['account']['isdeleted'] == 1 || empty($_W['role'])) {
+		$_W['uniacid'] = $_W['account'] = $_W['uniaccount'] = $_W['acid'] = $_W['weid'] = '';
+		$_W['role'] = ACCOUNT_MANAGE_NAME_OPERATOR;
+	}
+	return true;
+}
