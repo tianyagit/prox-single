@@ -23,6 +23,12 @@ $tester->test('测试读取', function(){
 	$filevalue = cache_read('statda');
 	$tester->assertEquals($filevalue, $arr);
 });
+
+$tester->test('测试图片', function() {
+	load()->classs('image');
+	Image::create(__DIR__.'/a.jpg')->crop(100, 100, 4)->
+	saveTo(__DIR__.'/d.jpg');
+});
 //$tester->test('测试删除数据', function(){
 //	global $tester;
 //	$filevalue = cache_delete('stat:todaylock:652');

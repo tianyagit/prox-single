@@ -9,12 +9,23 @@ defined('IN_IA') or exit('Access Denied');
 class Image {
 
 	private $src;
+	private $actions; //操作数组 支持resize crop
+	// resize 数据
 	private $resize_width = 0;
 	private $resize_height = 0;
-	private $resize = false;
+
 	private $image = null;
 	private $new_image = null;
-	private $imageinfo = array('width'=>0, 'height'=>0);
+	private $imageinfo = array();
+	//裁剪数据
+	//裁剪的宽度
+	private $crop_width = 0;
+	//裁剪的高度
+	private $crop_height = 0;
+	// 裁剪的位置 //9宫格
+	private $crop_position = 1;
+
+
 	private $ext = '';
 	public function __construct($src) {
 		$this->src = $src;
@@ -27,7 +38,7 @@ class Image {
 
 	public function resize($width = 0, $height = 0) {
 		if($width > 0 || $height > 0) {
-			$this->resize = true;
+			$this->actions[] = 'resize';
 		}
 		if($width > 0 && $height == 0) {
 			$height = $width;
@@ -40,8 +51,21 @@ class Image {
 		return $this;
 	}
 
-	public function crop() {
-		throw new Exception('未实现');
+	public function crop($width = 400, $height = 300, $position = 1) {
+		if($width > 0 || $height > 0) {
+			$this->actions[] = 'crop';
+		}
+		if($width > 0 && $height == 0) {
+			$height = $width;
+		}
+		if($height > 0 && $width == 0) {
+			$width = $height;
+		}
+		$this->crop_width = $width;
+		$this->crop_height = $height;
+		//9宫格裁剪
+		$this->crop_position = min(intval($position), 9);
+		return $this;
 	}
 
 	public function getExt() {
@@ -62,40 +86,119 @@ class Image {
 	/**
 	 *  保存
 	 * @param $path
+	 * @param $quality 0 不压缩 压缩比 0--100 gif 不压缩
 	 * @since version
 	 */
-	public function saveTo($path) {
+	public function saveTo($path, $quality = null) {
 		$this->handle();
 		$ext = $this->ext;
 		if($ext == 'jpg') {
 			$ext = 'jpeg';
 		}
 		$func = 'image'.$ext;
-		$saved = $func($this->image(), $path);
-		$this->destroy();
-		return $saved;
-	}
-
-	protected function handle() {
-		$this->image = $this->createResource();
-		if($this->resize) {
-			$this->doResize();
+		if(!$this->isGif()) {
+			$saved = $func($this->image(), $path);
+		} else {
+			$saved = $func($this->image(), $path, $this->realQuality($quality));
 		}
+		$this->destroy();
+		return $saved ? $path : $saved;
 	}
 
-	protected function doResize() {
+
+	private function realQuality($quality = null) {
+		if(is_null($quality)) {
+			return null;
+		}
+		// 不要让越界
+		$quality = min($quality, 100);
+		if($this->isJPEG()) {
+			return $quality * 0.75;
+		}
+		if($this->isPng()) {
+			return round(abs((100 - $quality) / 11.111111));
+		}
+		return null;
+	}
+
+
+	/**
+	 *
+	 */
+	protected function handle() {
+		//gd库未开启
+		if (!function_exists('gd_info')) {
+			return null;
+		}
+		//创建资源
+		$this->image = $this->createResource();
 		$this->imageinfo = getimagesize($this->src);
-		$this->new_image = imagecreatetruecolor($this->resize_width, $this->resize_height);
-		imagealphablending($this->new_image, false);
-		imagesavealpha($this->new_image, true);
-		imagecopyresampled($this->new_image, $this->image, 0, 0, 0, 0, $this->resize_width, $this->resize_height,
-		$this->imageinfo[0],$this->imageinfo[1]);
+		$actions = array_unique($this->actions);
+		$src_image = $this->image;
+		foreach ($actions as $action) {
+			$method = 'do'.ucfirst($action);
+			$src_image = $this->{$method}($src_image);
+		}
+		$this->new_image = $src_image;
+	}
+
+	/**
+	 * 裁剪图片
+	 */
+	protected function doCrop($src_image) {
+		list($dst_x, $dst_y) = $this->getCropDestPoint();
+		if(version_compare(PHP_VERSION, '5.5.0') >= 0) {
+			$new_image = imagecrop($src_image, array('x'=>$dst_x, 'y'=>$dst_y, 'width'=>$this->crop_width, 'height'=>$this->crop_height));
+		}else {
+			$new_image =  $this->modify($src_image, $this->crop_width,
+			    $this->crop_height, $this->crop_width, $this->crop_height, 0, 0, $dst_x, $dst_y);
+		}
+		$this->imageinfo[0] = $this->crop_width;
+		$this->imageinfo[1] = $this->crop_height;
+		return $new_image;
+	}
+
+	/**
+	 *  缩略图
+	 * @param $src_image
+	 * @return resource
+	 */
+	protected function doResize($src_image) {
+		$newimage = $this->modify($src_image, $this->resize_width, $this->resize_height,
+			$this->imageinfo[0], $this->imageinfo[1]);
+		$this->imageinfo[0] = $this->resize_width;
+		$this->imageinfo[1] = $this->resize_height;
+		return $newimage;
+	}
+
+	/**
+	 *  修改图片
+	 * @param $src_image
+	 * @param $width
+	 * @param $height
+	 * @param $src_width
+	 * @param $src_height
+	 * @param int $dst_x
+	 * @param int $dst_y
+	 * @param int $src_x
+	 * @param int $src_y
+	 * @return resource
+	 */
+	protected function modify($src_image, $width, $height, $src_width,
+	                          $src_height, $dst_x = 0, $dst_y = 0, $src_x = 0, $src_y = 0) {
+		$image = imagecreatetruecolor($width, $height);
+		imagealphablending($image, false);
+		imagesavealpha($image, true);
+		imagecopyresampled($image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $width, $height,
+			$src_width, $src_height);
+		return $image;
 	}
 
 	private function image() {
 		return $this->new_image ? $this->new_image : $this->image;
 	}
-	public function destroy() {
+
+	private function destroy() {
 		if($this->image) {
 			imagedestroy($this->image);
 		}
@@ -105,7 +208,7 @@ class Image {
 	}
 
 
-	protected function createResource() {
+	private function createResource() {
 		if($this->isPng()) {
 			return imagecreatefrompng($this->src);
 		}
@@ -136,7 +239,71 @@ class Image {
 		return $prefix.$base64;
 	}
 
-	public function __destruct() {
-//		$this->destroy();
+	/**
+	 * 获取元素裁剪 坐标
+	 * @return array
+	 */
+	private function getCropDestPoint() {
+		//图片的原始宽高
+		$s_width = $this->imageinfo[0];
+		$s_height = $this->imageinfo[1];
+		$dst_x = $dst_y = 0;
+		// 处理裁剪的宽高
+		if ($this->crop_width == '0' || $this->crop_width  > $s_width) {
+			$this->crop_width = $s_width;
+		}
+		if ($this->crop_height == '0' || $this->crop_height > $s_height) {
+			$this->crop_height = $s_height;
+		}
+		switch ($this->crop_position) {
+			case 0 :
+			case 1 :
+				$dst_x = 0;
+				$dst_y = 0;
+				break;
+			case 2 :
+				$dst_x = ($s_width - $this->crop_width) / 2;
+				$dst_y = 0;
+				break;
+			case 3 :
+				$dst_x = $s_width - $this->crop_width;
+				$dst_y = 0;
+				break;
+			case 4 :
+				$dst_x = 0;
+				$dst_y = ($s_height - $this->crop_height) / 2;
+				break;
+			case 5 :
+				$dst_x = ($s_width - $this->crop_width) / 2;
+				$dst_y = ($s_height - $this->crop_height) / 2;
+				break;
+			case 6 :
+				$dst_x = $s_width - $this->crop_width;
+				$dst_y = ($s_height - $this->crop_height) / 2;
+				break;
+			case 7 :
+				$dst_x = 0;
+				$dst_y = $s_height - $this->crop_height;
+				break;
+			case 8 :
+				$dst_x = ($s_width - $this->crop_width) / 2;
+				$dst_y = $s_height - $this->crop_height;
+				break;
+			case 9 :
+				$dst_x = $s_width - $this->crop_width;
+				$dst_y = $s_height - $this->crop_height;
+				break;
+			default :
+				$dst_x = 0;
+				$dst_y = 0;
+		}
+		if ($this->crop_width == $s_width) {
+			$dst_x = 0;
+		}
+		if ($this->crop_height == $s_height) {
+			$dst_y = 0;
+		}
+		return array(intval($dst_x), intval($dst_y));
 	}
+
 }
