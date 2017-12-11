@@ -94,11 +94,24 @@ $_GPC['do'] = $entry['do'];
 
 $modules = uni_modules();
 $_W['current_module'] = $modules[$entry['module']];
-if ($entry['entry'] == 'system_welcome') {
-	$site = WeUtility::createModuleSystemWelcome($entry['module']);
-} else {
+
+
+
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if ($entry['entry'] == 'system_welcome') {
+		$site = WeUtility::createModuleSystemWelcome($entry['module']);
+	} else {
+		$site = WeUtility::createModuleSite($entry['module']);
+	}
+}
+/* xend */
+
+/* vstart */
+if (IMS_FAMILY == 'v') {
 	$site = WeUtility::createModuleSite($entry['module']);
 }
+/* vend */
 
 define('IN_MODULE', $entry['module']);
 /* xstart */
