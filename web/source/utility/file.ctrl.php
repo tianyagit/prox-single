@@ -603,9 +603,6 @@ if ($do == 'image') {
 	$page = max(1, $page);
 	$is_local_image = $islocal == 'local' ? true : false;
 	$attachment_table = table('attachment');
-	if (!$is_local_image) {
-		$attachment_table = table('wechat_attachment');
-	}
 	$attachment_table->searchWithUniacid($uniacid);
 	$attachment_table->searchWithUploadDir($module_upload_dir);
 
@@ -624,7 +621,8 @@ if ($do == 'image') {
 		$attachment_table->searchWithType(ATTACHMENT_IMAGE);
 	}
 	$attachment_table->searchWithPage($page, $page_size);
-	$list = $attachment_table->searchAttachmentList();
+	$is_local_image = $islocal == 'local' ? true : false;
+	$list = $attachment_table->searchAttachmentList($is_local_image);
 	$total = $attachment_table->getLastQueryTotal();
 	if (!empty($list)) {
 		foreach ($list as &$meterial) {

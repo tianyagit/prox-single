@@ -6,15 +6,18 @@
  * Time: 9:34
  */
 class AttachmentTable extends We7Table {
+	const LOCAL = 'core_attachment';
+	const WX = 'wechat_attachment';
 
-	protected $attachment_table = 'core_attachment';
 
-	public function getById($att_id, $type = 1) {
-		return $this->query->where('id', $att_id)->where('type', $type)->get();
+	public function getById($att_id, $type = 1, $local = true) {
+		$table_name = $local ? static::LOCAL : static::WX;
+		return $this->query->from($table_name)->where('id', $att_id)->where('type', $type)->get();
 	}
 
-	public function searchAttachmentList() {
-		return $this->query->from($this->attachment_table)->orderby('createtime', 'desc')->getall();
+	public function searchAttachmentList($local = true) {
+		$table_name = $local ? static::LOCAL : static::WX;
+		return $this->query->from($table_name)->orderby('createtime', 'desc')->getall();
 	}
 
 	public function searchWithType($type) {
