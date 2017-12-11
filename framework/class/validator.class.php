@@ -7,8 +7,6 @@
  */
 
 /**
- *
- * @package
  * @see
  * @since 1.6.2
  * @since version
@@ -19,49 +17,49 @@
 $url = null;// 'https://www.baidu.com/&ssd=as&as=../asd../\asdad\\sdff..//asdas..sdf&script=123';
 	$file = __DIR__.'/test_1x.php';
 	$validor = new Validator(
-		array(
-			'data_url'=>$url,
-			'data_int'=>3232,
-			'data_file'=>$file,
-			'data_array'=>array(1,2,3),
-			'data_email'=>'sdjkd@qqcom',
-			'data_string'=>'3',
-			'data_ip'=> '1.25.55.55133',
-			'data_in'=> '2',
-			'data_notin'=>'4',
-			'data_between'=>3,
-			'data_same'=>'3',
-			'data_date'=>'2017-11-22',
-			'data_after'=>'2017-11-20',
-			'data_before'=>'2017-11-23',
-			'data_bool'=>'2232',
-			'data_sms'=>'32'
-			),
-		array(
-		'data_url'=>'required|url',
-		'data_int'=>'min:3233|max:90',
-		'data_file'=>'file|min:8|max:3',
-		'data_array'=>'array|size:3',
-		'data_email'=>'email',
-		'data_string'=>'required|string',
-		'data_ip'=>'ip',
-		'data_between'=>'between:5,10',
-		'data_same'=> 'same:data_string'	,
-		'data_date'=>'date',
-		'data_after'=>'after:2017-11-21',
-		'data_before'=>'before:data_date',
-		'data_in'=>'in:3,4,5',
-		'data_notin'=>array(array('name'=>'notin', 'params'=>array('3', '4', '7'))),
-		'data_bool'=>'bool',
-		'data_sms' => 'required|sms|size:5',
+	    array(
+	        'data_url'=>$url,
+	        'data_int'=>3232,
+	        'data_file'=>$file,
+	        'data_array'=>array(1,2,3),
+	        'data_email'=>'sdjkd@qqcom',
+	        'data_string'=>'3',
+	        'data_ip'=> '1.25.55.55133',
+	        'data_in'=> '2',
+	        'data_notin'=>'4',
+	        'data_between'=>3,
+	        'data_same'=>'3',
+	        'data_date'=>'2017-11-22',
+	        'data_after'=>'2017-11-20',
+	        'data_before'=>'2017-11-23',
+	        'data_bool'=>'2232',
+	        'data_sms'=>'32'
+	        ),
+	    array(
+	    'data_url'=>'required|url',
+	    'data_int'=>'min:3233|max:90',
+	    'data_file'=>'file|min:8|max:3',
+	    'data_array'=>'array|size:3',
+	    'data_email'=>'email',
+	    'data_string'=>'required|string',
+	    'data_ip'=>'ip',
+	    'data_between'=>'between:5,10',
+	    'data_same'=> 'same:data_string'	,
+	    'data_date'=>'date',
+	    'data_after'=>'after:2017-11-21',
+	    'data_before'=>'before:data_date',
+	    'data_in'=>'in:3,4,5',
+	    'data_notin'=>array(array('name'=>'notin', 'params'=>array('3', '4', '7'))),
+	    'data_bool'=>'bool',
+	    'data_sms' => 'required|sms|size:5',
 
 	),array(
-		'data_notin.notin'=>'字段内容必须不在 3,4,7 内',
-		'data_same'=>'字段必须和data_string字段一致',
-		'data_sms'=>'短信验证码不正确'
+	    'data_notin.notin'=>'字段内容必须不在 3,4,7 内',
+	    'data_same'=>'字段必须和data_string字段一致',
+	    'data_sms'=>'短信验证码不正确'
 	));
 	$validor->addRule('sms', function($key, $value, $params, $validor){
-		return false;
+	    return false;
 
 	});
 	$validor->valid();
@@ -69,9 +67,8 @@ $url = null;// 'https://www.baidu.com/&ssd=as&as=../asd../\asdad\\sdff..//asdas.
 */
 
 class Validator {
-	const IMG = 'jpg, jepg, png, gif, bmp';//常量只能是字符串
+	const IMG = 'jpg, jepg, png, gif, bmp'; //常量只能是字符串
 	const IMG_MIMETYPE = 'image/jpeg,image/jpeg,image/png,image/gif,image/bmp';
-
 
 	private $defaults = array(
 		'required' => ':attribute 必须填写',
@@ -82,7 +79,7 @@ class Validator {
 		'array' => ':attribute必须是数组',
 		'min' => ':attribute不能小于%s',
 		'max' => ':attribute不能大于%s',
-		'between'=> ':attribute 必须在 %s %s 范围内',
+		'between' => ':attribute 必须在 %s %s 范围内',
 		'size' => ':attribute 大小必须是 %s',
 		'url' => ':attribute不是有效的url', //url //不带参数默认过滤127 172 10开头的ip 预防ssrf
 		'email' => ':attribute不是有效的邮箱',
@@ -92,22 +89,25 @@ class Validator {
 		'ip' => ':attribute不是有效的ip',
 		'numeric' => ':attribute必须是数字',
 		'in' => ':attribute 必须在 %s 内',
-		'notin'=> ':attribute 不在 %s 内',
+		'notin' => ':attribute 不在 %s 内',
 		'date' => ':attribute 必须是有效的日期',
 		'after' => ':attribute 日期不能小于 %s',
-		'before'=> ':attribute 日期不能大于 %s',
+		'before' => ':attribute 日期不能大于 %s',
 		'regex' => ':attribute 不是有效的数据', //regex:pattern
 		'same' => ':attribute 和 $s 不一致', //some:field
-		'bool'=> ':attribute 必须是bool值',
+		'bool' => ':attribute 必须是bool值',
 	);
 	/**
-	 * 自定义校验
+	 * 自定义校验.
+	 *
 	 * @var array
+	 *
 	 * @since version
 	 */
 	private $custom = array();
 	/**
-	 *  验证规则
+	 *  验证规则.
+	 *
 	 * @var array
 	 */
 	private $rules = array();
@@ -119,18 +119,17 @@ class Validator {
 	private $messages = array();
 	/**
 	 * @var array 数据
+	 *
 	 * @since version
 	 */
 	private $data = array();
 
 	/** 所有的错误消息
 	 * @var array
+	 *
 	 * @since version
 	 */
 	private $errors = array();
-
-
-
 
 	public function __construct($data, $rules = array(), $messages = array()) {
 		$this->data = $data;
@@ -139,13 +138,14 @@ class Validator {
 	}
 
 	public static function create($data, $rules, $messages) {
-		return new Validator($data, $rules, $messages);
+		return new self($data, $rules, $messages);
 	}
+
 	/**
-	 * 添加规则
+	 * 添加规则.
+	 *
 	 * @param $key
 	 * @param string|array('name','params','callable'=>null)
-	 *
 	 *
 	 * @since version
 	 */
@@ -153,7 +153,7 @@ class Validator {
 		if (!$name) {
 			throw new InvalidArgumentException('无效的参数');
 		}
-		if(!is_callable($callable)) {
+		if (!is_callable($callable)) {
 			throw new InvalidArgumentException('无效的callable 对象');
 		}
 		$this->custom[$name] = $callable;
@@ -169,7 +169,8 @@ class Validator {
 	}
 
 	/**
-	 * 错误明细
+	 * 错误明细.
+	 *
 	 * @return array
 	 *
 	 * @since version
@@ -186,11 +187,13 @@ class Validator {
 		return $this->data;
 	}
 
-
 	/**
-	 * 解析rule
+	 * 解析rule.
+	 *
 	 * @param $rules
+	 *
 	 * @return array
+	 *
 	 * @throws InvalidArgumentException
 	 */
 	protected function parseRule(array $rules) {
@@ -204,6 +207,7 @@ class Validator {
 
 		return $result;
 	}
+
 	/**
 	 *  解析单个规则.
 	 *
@@ -221,8 +225,9 @@ class Validator {
 				if (count($kv) > 1) {
 					$params = explode(',', $kv[1]);
 				}
-				$result[] = array('name'=>$kv[0], 'params'=>$params);
+				$result[] = array('name' => $kv[0], 'params' => $params);
 			}
+
 			return $result;
 		}
 		if (is_array($value)) {
@@ -237,11 +242,12 @@ class Validator {
 			$value = $this->getValue($dataKey);
 			foreach ($rules as $rule) {
 				$isValid = $this->doValid($dataKey, $value, $rule);
-				if(! $isValid && $rule['name'] == 'required') { //required 不通过 后边的不再验证
+				if (!$isValid && $rule['name'] == 'required') { //required 不通过 后边的不再验证
 					break;
 				}
 			}
 		}
+
 		return !$this->isError();
 	}
 
@@ -250,25 +256,27 @@ class Validator {
 	 *
 	 * @param $callback
 	 * @param $key
-	 * @param null $value
+	 * @param null  $value
 	 * @param array $params
 	 */
 	private function doSingle($callback, $dataKey, $value, $rule) {
 		$valid = call_user_func($callback, $dataKey, $value, $rule['params']);
 		if (!$valid) {
 			$this->errors[$dataKey][] = $this->getMessage($dataKey, $rule);
+
 			return false;
 		}
+
 		return true;
 	}
 
 	/**
 	 *  自定义验证
+	 *
 	 * @param $callback
 	 * @param $dataKey
 	 * @param $value
 	 * @param $rule
-	 *
 	 *
 	 * @since version
 	 */
@@ -276,8 +284,10 @@ class Validator {
 		$valid = call_user_func($callback, $dataKey, $value, $rule['params'], $this);
 		if (!$valid) {
 			$this->errors[$dataKey][] = $this->getMessage($dataKey, $rule);
+
 			return false;
 		}
+
 		return true;
 	}
 
@@ -293,36 +303,40 @@ class Validator {
 		$ruleName = $rule['name'];
 		if (isset($this->defaults[$ruleName])) {
 			$callback = array($this, 'valid' . ucfirst($ruleName));
+
 			return $this->doSingle($callback, $dataKey, $value, $rule);
 		}
-		if(isset($this->custom[$ruleName])) {
+		if (isset($this->custom[$ruleName])) {
 			$callback = $this->custom[$ruleName];
+
 			return $this->doCustom($callback, $dataKey, $value, $rule, $this);
 		}
-		throw new InvalidArgumentException('valid'.$rule['name'].' 方法未定义');
+		throw new InvalidArgumentException('valid' . $rule['name'] . ' 方法未定义');
 	}
 
 	/**
 	 *  获取值
+	 *
 	 * @param $key
+	 *
 	 * @return mixed|null
 	 */
 	private function getValue($key) {
 		return isset($this->data[$key]) ? $this->data[$key] : null;
 	}
 
-
 	protected function getMessage($dataKey, $rule) {
 		$message = $this->getErrorMessage($dataKey, $rule['name']);
 		if ($message) {
 			$message = str_replace(':attribute', $dataKey, $message);
-			$message = vsprintf($message , $rule['params']);//sprintf($message, $rule['params']);
+			$message = vsprintf($message, $rule['params']); //sprintf($message, $rule['params']);
 		}
+
 		return $message;
 	}
 
 	protected function getErrorMessage($dataKey, $ruleName) {
-		$dr = $dataKey.'.'.$ruleName;
+		$dr = $dataKey . '.' . $ruleName;
 		if ($this->messages[$dr]) {
 			return $this->messages[$dr];
 		}
@@ -333,7 +347,6 @@ class Validator {
 		return isset($this->defaults[$ruleName]) ? $this->defaults[$ruleName] : '错误';
 	}
 
-
 	/**
 	 *  验证参数必须.
 	 *
@@ -343,7 +356,6 @@ class Validator {
 	 * @return bool
 	 */
 	public function validRequired($key, $value, $params) {
-
 		if (is_null($value)) {
 			return false;
 		}
@@ -358,7 +370,6 @@ class Validator {
 
 		return false;
 	}
-
 
 	public function validInteger($key, $value, $params) {
 		return is_int($value);
@@ -377,7 +388,7 @@ class Validator {
 	}
 
 	public function validJson($key, $value, $params) {
-		if (! is_scalar($value) && ! method_exists($value, '__toString')) {
+		if (!is_scalar($value) && !method_exists($value, '__toString')) {
 			return false;
 		}
 
@@ -387,7 +398,8 @@ class Validator {
 	}
 
 	/**
-	 *  校验数组
+	 *  校验数组.
+	 *
 	 * @param $key
 	 * @param $value
 	 *
@@ -400,7 +412,8 @@ class Validator {
 	}
 
 	/**
-	 *  校验文件
+	 *  校验文件.
+	 *
 	 * @param $key
 	 * @param $value
 	 *
@@ -435,6 +448,7 @@ class Validator {
 	 */
 	public function validRegex($key, $value, $params) {
 		$this->checkParams(1, $params, 'regex');
+
 		return preg_match($params[0], $value);
 	}
 
@@ -465,6 +479,7 @@ class Validator {
 	 */
 	public function validSize($key, $value, $params) {
 		$this->checkParams(1, $params, 'size');
+
 		return $this->getSize($key, $value) == $params[0];
 	}
 
@@ -476,6 +491,7 @@ class Validator {
 	public function validMax($key, $value, $params) {
 		$this->checkParams(1, $params, 'max');
 		$size = $this->getSize($key, $value);
+
 		return $size <= $params[0];
 	}
 
@@ -491,31 +507,32 @@ class Validator {
 	public function validMin($key, $value, $params) {
 		$this->checkParams(1, $params, 'min');
 		$size = $this->getSize($key, $value);
+
 		return $size >= $params[0];
 	}
 
 	public function validUrl($key, $value, $params) {
-		if(!filter_var($value, FILTER_VALIDATE_URL)) {
+		if (!filter_var($value, FILTER_VALIDATE_URL)) {
 			return false;
 		}
 		/**
-		 * @var $parseData array
+		 * @var array
 		 */
 		$parseData = parse_url($value);
 		$scheme = $parseData['scheme'];
 		$allowSchemes = array('http', 'https');
-		if(! in_array($scheme, $allowSchemes)) { //只能http https
+		if (!in_array($scheme, $allowSchemes)) { //只能http https
 			return false;
 		}
-		if(!isset($parseData['host'])) {
+		if (!isset($parseData['host'])) {
 			return false;
 		}
 		$host = $parseData['host'];
 		if (strexists($host, '@')) {
 			return false;
 		}
-		$pattern = "/^(10|172|192|127)/"; //不允许本机ip
-		if(preg_match($pattern, $host)) {
+		$pattern = '/^(10|172|192|127)/'; //不允许本机ip
+		if (preg_match($pattern, $host)) {
 			return false;
 		}
 
@@ -527,19 +544,20 @@ class Validator {
 	}
 
 	public function validIn($key, $value, $params) {
-		if(is_array($params)) {
+		if (is_array($params)) {
 			return in_array($value, $params, true);
 		}
+
 		return false;
 	}
-
 
 	public function validNotin($key, $value, $params) {
 		return !$this->validIn($key, $value, $params);
 	}
 
 	/**
-	 *  验证和另一个字段是否相等
+	 *  验证和另一个字段是否相等.
+	 *
 	 * @param $key
 	 * @param $value
 	 * @param $params
@@ -552,17 +570,20 @@ class Validator {
 		$this->checkParams(1, $params, 'same');
 		$otherField = $params[0];
 		$otherValue = isset($this->data[$otherField]) ? $this->data[$otherField] : null;
+
 		return (is_string($value) || is_numeric($value)) && $value === $otherValue;
 	}
 
 	public function validBetween($key, $value, $params) {
 		$this->checkParams(2, $params, 'between');
 		$size = $this->getSize($key, $value);
+
 		return $size >= $params[0] && $size <= $params[1];
 	}
 
 	/**
-	 *  在指定日期之后
+	 *  在指定日期之后.
+	 *
 	 * @param $key
 	 * @param $value
 	 * @param $params
@@ -578,7 +599,8 @@ class Validator {
 	}
 
 	/**
-	 * 在指定日期之前
+	 * 在指定日期之前.
+	 *
 	 * @param $key
 	 * @param $value
 	 * @param $params
@@ -593,70 +615,76 @@ class Validator {
 		return $this->compareDate($value, $date, '<');
 	}
 
-
 	private function compareDate($value, $param, $operator = '=') {
-		if(! $this->checkDate($param)) {
+		if (!$this->checkDate($param)) {
 			$param = $this->getValue($param);
 		}
-		if($this->checkDate($value) && $this->checkDate($param)) {
+		if ($this->checkDate($value) && $this->checkDate($param)) {
 			$currentTime = $this->getDateTimestamp($value);
-			$paramTime =  $this->getDateTimestamp($param);
+			$paramTime = $this->getDateTimestamp($param);
+
 			return $this->compare($currentTime, $paramTime, $operator);
 		}
+
 		return false;
 	}
 
 	/**
 	 * Validate that an attribute is a boolean.
 	 *
-	 * @param  string  $attribute
-	 * @param  mixed   $value
+	 * @param string $attribute
+	 * @param mixed  $value
+	 *
 	 * @return bool
 	 */
-	public function validBool($key, $value, $params)
-	{
+	public function validBool($key, $value, $params) {
 		$acceptable = array(true, false, 0, 1, '0', '1');
+
 		return in_array($value, $acceptable, true);
 	}
-
 
 	protected function getSize($key, $value) {
 		if (is_numeric($value)) {
 			return $value;
 		} elseif (is_array($value)) {
 			return count($value);
-		} elseif(is_file($value)) {
+		} elseif (is_file($value)) {
 			return filesize($value) / 1024;
-		}elseif ($value instanceof SplFileInfo) {
+		} elseif ($value instanceof SplFileInfo) {
 			return $value->getSize() / 1024;
-		}else if(is_string($value)) {
+		} elseif (is_string($value)) {
 			return mb_strlen($value);
 		}
+
 		return false;
 	}
 
 	private function isImage($value) {
-		if(is_file($value)) {
+		if (is_file($value)) {
 			$filename = $value;
-			if($value instanceof SplFileInfo) {
+			if ($value instanceof SplFileInfo) {
 				$filename = $value->getFilename();
 			}
-			if(is_string($filename)) {
+			if (is_string($filename)) {
 				$pathinfo = pathinfo($filename);
 				$extension = strtolower($pathinfo['extension']);
+
 				return !empty($extension) && in_array($extension, array('jpg', 'jpeg', 'gif', 'png'));
 			}
 		}
+
 		return false;
 	}
 
 	private function mimeTypeIsImage($mimeType) {
 		$imgMimeType = explode(',', static::IMG_MIMETYPE);
+
 		return in_array($mimeType, $imgMimeType);
 	}
 
 	/**
 	 *  检测是否是日期
+	 *
 	 * @param $date
 	 *
 	 * @return bool
@@ -664,19 +692,20 @@ class Validator {
 	 * @since version
 	 */
 	private function checkDate($value) {
-		if($value instanceof DateTimeInterface) {
+		if ($value instanceof DateTimeInterface) {
 			return true;
 		}
-		if ((! is_string($value) && ! is_numeric($value)) || strtotime($value) === false) {
+		if ((!is_string($value) && !is_numeric($value)) || strtotime($value) === false) {
 			return false;
 		}
 		$date = date_parse($value);
 
 		return checkdate($date['month'], $date['day'], $date['year']);
 	}
+
 	private function checkParams($count, $params, $ruleName) {
-		if(count($params) != $count) {
-			throw new InvalidArgumentException("$ruleName 参数个数必须为 $count 个" );
+		if (count($params) != $count) {
+			throw new InvalidArgumentException("$ruleName 参数个数必须为 $count 个");
 		}
 	}
 
@@ -687,13 +716,13 @@ class Validator {
 	/**
 	 * Determine if a comparison passes between the given values.
 	 *
-	 * @param  mixed  $first
-	 * @param  mixed  $second
-	 * @param  string  $operator
+	 * @param mixed  $first
+	 * @param mixed  $second
+	 * @param string $operator
+	 *
 	 * @return bool
 	 */
-	protected function compare($first, $second, $operator)
-	{
+	protected function compare($first, $second, $operator) {
 		switch ($operator) {
 			case '<':
 				return $first < $second;
@@ -706,7 +735,7 @@ class Validator {
 			case '=':
 				return $first == $second;
 			default:
-				throw new InvalidArgumentException;
+				throw new InvalidArgumentException();
 		}
 	}
 }
