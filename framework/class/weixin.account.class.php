@@ -43,7 +43,7 @@ class WeiXinAccount extends WeAccount {
 		$account['endtime'] = $this->uniaccount['endtime'];
 		return $account;
 	}
-	
+
 	/**
 	 * 微擎系统对来自微信公众平台请求的安全校验
 	 * @see WeAccount::checkSign()
@@ -68,7 +68,18 @@ class WeiXinAccount extends WeAccount {
 	}
 	
 	public function checkIntoManage() {
-		
+		if (empty($this->account) || (!empty($this->account['account']) && !in_array($this->account['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !defined('IN_MODULE'))) {
+			return array(
+				'errno' => -1,
+				'url' => url('account/display'),
+				'frame' => ''
+			);
+		}
+		return array(
+			'errno' => 0,
+			'url' => '',
+			'frame' => 'account'
+		);
 	}
 	
 	public function local_checkSignature($packet) {

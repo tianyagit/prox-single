@@ -14,6 +14,16 @@ class WxappAccount extends WeAccount {
 		}
 		$this->account = $account;
 	}
+
+	public function fetchAccountInfo() {
+		$account_table = table('account');
+		$account = $account_table->getWxappAccount($this->uniaccount['acid']);
+		$account['type'] = $this->uniaccount['type'];
+		$account['isconnect'] = $this->uniaccount['isconnect'];
+		$account['isdeleted'] = $this->uniaccount['isdeleted'];
+		$account['endtime'] = $this->uniaccount['endtime'];
+		return $account;
+	}
 	
 	public function getOauthInfo($code = '') {
 		global $_W, $_GPC;
@@ -59,7 +69,22 @@ class WxappAccount extends WeAccount {
 		unset($result['watermark']);
 		return $result;
 	}
-	
+
+	public function checkIntoManage() {
+		if (empty($this->account) || (!empty($this->account['account']) && $this->account['account'] != ACCOUNT_TYPE_APP_NORMAL && !defined('IN_MODULE'))) {
+			return array(
+					'errno' => -1,
+					'url' => url('wxapp/display'),
+					'frame' => ''
+			);
+		}
+		return array(
+				'errno' => 0,
+				'url' => '',
+				'frame' => 'wxapp'
+		);
+	}
+
 	public function getAccessToken() {
 		$cachekey = "accesstoken:{$this->account['key']}";
 		$cache = cache_load($cachekey);
