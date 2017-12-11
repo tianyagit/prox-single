@@ -12,6 +12,11 @@ class WxappAccount extends WeAccount {
 		$this->account = $account;
 		$this->accountDisplayUrl = url('wxapp/display');
 		$this->accountType = 'wxapp';
+		$this->accountManageType = ACCOUNT_TYPE_APP_NORMAL;
+		$this->accountTypeOffcial = 0;
+		$this->accountTypeName = '小程序';
+		$this->accountTypeTemplate = '-wxapp';
+		$this->accountTypeSupport = 'wxapp_support';
 	}
 
 	public function fetchAccountInfo() {
@@ -70,7 +75,8 @@ class WxappAccount extends WeAccount {
 	}
 
 	public function checkIntoManage() {
-		if (empty($this->account) || (!empty($this->uniaccount['account']) && $this->uniaccount['account'] != ACCOUNT_TYPE_APP_NORMAL && !defined('IN_MODULE'))) {
+		global $_GPC;
+		if (empty($this->account) || (!empty($this->uniaccount['account']) && $this->uniaccount['account'] != ACCOUNT_TYPE_APP_NORMAL && !defined('IN_MODULE')) || empty($_GPC['version_id'])) {
 			return false;
 		}
 		return true;

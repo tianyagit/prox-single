@@ -11,11 +11,7 @@ if (in_array($action, array('permission', 'manage-account'))) {
 	if (empty($_GPC['version_id']) && intval($referer['version_id']) > 0) {
 		itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
-	if (!empty($_GPC['version_id'])) {
-		$account_api = WeAccount::create(array('type' => ACCOUNT_TYPE_APP_NORMAL));
-	} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])){
-		$account_api = WeAccount::create(array('type' => ACCOUNT_SUBSCRIPTION));
-	}
+	$account_api = WeAccount::create();
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {
 		$account_display_url = $account_api->accountDisplayUrl();
@@ -25,6 +21,7 @@ if (in_array($action, array('permission', 'manage-account'))) {
 if (in_array($action, array('group', 'manage-system'))) {
 	define('FRAME', 'system');
 }
+
 /* xstart */
 if (IMS_FAMILY == 'x') {
 	$_GPC['account_type'] = !empty($_GPC['account_type']) || !empty($_GPC['system_welcome']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
@@ -38,15 +35,10 @@ if (IMS_FAMILY == 'v') {
 	$_GPC['account_type'] = !empty($_GPC['account_type']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
 }
 /* vend */
-if ($_GPC['account_type'] == ACCOUNT_TYPE_APP_NORMAL) {
-	define('ACCOUNT_TYPE', ACCOUNT_TYPE_APP_NORMAL);
-	define('ACCOUNT_TYPE_TEMPLATE', '-wxapp');
-} elseif ($_GPC['account_type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $_GPC['account_type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-	define('ACCOUNT_TYPE', ACCOUNT_TYPE_OFFCIAL_NORMAL);
-	define('ACCOUNT_TYPE_TEMPLATE', '');
-} elseif ($_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL){
-	define('ACCOUNT_TYPE', ACCOUNT_TYPE_WEBAPP_NORMAL);
-	define('ACCOUNT_TYPE_TEMPLATE', '-webapp');
-} else {
-	define('ACCOUNT_TYPE', $_GPC['account_type']);
+
+
+$account_api = WeAccount::create(array('type' => $_GPC['account_type']));
+define('ACCOUNT_TYPE', $account_api->accountManageType);
+if (empty($_GPC['system_welcome'])) {
+	define('ACCOUNT_TYPE_TEMPLATE', $account_api->accountTypeTemplate);
 }
