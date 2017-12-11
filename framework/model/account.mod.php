@@ -118,11 +118,14 @@ function uni_fetch($uniacid = 0) {
 	}
 
 	$account_api = WeAccount::create($uniacid);
+	if (is_error($account_api)) {
+		return $account_api;
+	}
 	$account = $account_api->fetchAccountInfo();
-
 	if (empty($account)) {
 		return array();
 	}
+	
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 	$owner = user_single(array('uid' => $owneruid));
 	$account['uid'] = $owner['uid'];

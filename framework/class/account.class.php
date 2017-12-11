@@ -26,6 +26,7 @@ abstract class WeAccount {
 			if (empty($account)) {
 				$account = $_W['uniacid'];
 			}
+			$account = intval($account);
 			$account = uni_account($account);
 		}
 		if (is_error($account)) {
@@ -36,7 +37,6 @@ abstract class WeAccount {
 		} else {
 			return error('-1', '公众号不存在或是已经被删除');
 		}
-		return null;
 	}
 	
 	static public function token($type = 1) {
