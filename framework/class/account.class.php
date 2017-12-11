@@ -42,34 +42,9 @@ abstract class WeAccount {
 		}
 	}
 
-	public static function createType($account_type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-		switch ($account_type) {
-			case ACCOUNT_TYPE_APP_NORMAL:
-				$result = array(
-					'account_type' => ACCOUNT_TYPE_APP_NORMAL,
-					'account_type_name' => '小程序',
-					'account_ype_template' => '-wxapp',
-					'account_type_support' => 'wxapp_support'
-				);
-				break;
-			case ACCOUNT_TYPE_WEBAPP_NORMAL:
-				$result = array(
-					'account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL,
-					'account_type_name' => 'PC',
-					'account_ype_template' => '-webapp',
-					'account_type_support' => 'webapp_support'
-				);
-				break;
-			default:
-				$result = array(
-						'account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL,
-						'account_type_name' => '公众号',
-						'account_ype_template' => '',
-						'account_type_support' => 'app_support'
-				);
-				break;
-		}
-		return $result;
+	public static function createByType($account_type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
+		$account_type = !empty($account_type) ? $account_type : ACCOUNT_TYPE_OFFCIAL_NORMAL;
+		return self::includes(array('type' => $account_type));
 	}
 	
 	static public function token($type = 1) {

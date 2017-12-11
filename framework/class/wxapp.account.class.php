@@ -12,6 +12,10 @@ class WxappAccount extends WeAccount {
 		$this->account = $account;
 		$this->accountDisplayUrl = url('wxapp/display');
 		$this->accountType = 'wxapp';
+		$this->accountManageType = ACCOUNT_TYPE_APP_NORMAL;
+		$this->accountTypeName = '小程序';
+		$this->accountTypeTemplate = '-wxapp';
+		$this->accountTypeSupport = 'wxapp_support';
 	}
 
 	public function fetchAccountInfo() {
