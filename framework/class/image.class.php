@@ -98,7 +98,6 @@ class Image {
 	 * @since version
 	 */
 	public function saveTo($path, $quality = null) {
-		load()->func('safe');
 		$path = safe_gpc_path($path);
 		if (empty($path)) {
 			return false;
