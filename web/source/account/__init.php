@@ -12,8 +12,8 @@ if ($controller == 'account' && $action == 'manage') {
 	}
 }
 
-$account_param = WeAccount::createType($_GPC['account_type']);
-define('ACCOUNT_TYPE', $account_param['account_type']);
-define('ACCOUNT_TYPE_NAME', $account_param['account_type_name']);
-define('ACCOUNT_TYPE_TEMPLATE', $account_param['account_ype_template']);
-define('ACCOUNT_TYPE_SUPPORT', $account_param['account_type_support']);
+$account_param = WeAccount::createByType($_GPC['account_type']);
+define('ACCOUNT_TYPE', $account_param->accountManageType);
+define('ACCOUNT_TYPE_NAME', $account_param->accountTypeName);
+define('ACCOUNT_TYPE_TEMPLATE', $account_param->accountTypeTemplate);
+define('ACCOUNT_TYPE_SUPPORT', $account_param->accountTypeSupport);
