@@ -31,8 +31,8 @@ class WeiXinAccount extends WeAccount {
 	);
 	
 	public function __construct($account = array()) {
-		$this->noCheckAccountUrl = url('account/display');
-		$this->checkFrame = 'account';
+		$this->accountDisplayUrl = url('account/display');
+		$this->accountType = 'account';
 	}
 	
 	public function fetchAccountInfo() {

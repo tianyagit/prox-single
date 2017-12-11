@@ -9,12 +9,12 @@ $check_manange = $account_api->checkIntoManage();
 
 if (!in_array($action, array('display', 'post', 'manage'))) {
 	if (is_error($check_manange)) {
-		$no_check_account_url = $account_api->noCheckAccountUrl();
-		itoast('', $no_check_account_url);
+		$account_display_url = $account_api->accountDisplayUrl();
+		itoast('', $account_display_url);
 	}
 }
 
 if (($action == 'version' && $do == 'home') || in_array($action, array('payment', 'refund', 'module-link-uniacid', 'entrance-link', 'front-download'))) {
-	$check_frame = $account_api->checkFrame();
-	define('FRAME', $check_frame);
+	$account_type = $account_api->accountType();
+	define('FRAME', $account_type);
 }

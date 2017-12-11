@@ -15,8 +15,8 @@ abstract class WeAccount {
 	public $account;
 	public $tablename = '';
 	public $uniacid = 0;
-	public $checkFrame;
-	public $noCheckAccountUrl;
+	public $accountType;
+	public $accountDisplayUrl;
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
@@ -95,15 +95,15 @@ abstract class WeAccount {
 	/**
 	 * 返回当前选中的frame
 	 */
-	public function checkFrame() {
-		return $this->checkFrame;
+	public function accountType() {
+		return $this->accountType;
 	}
 
 	/**
 	 * 没选中某个公众号，小程序，pc时，返回的url
 	 */
-	public function noCheckAccountUrl() {
-		return $this->noCheckAccountUrl;
+	public function accountDisplayUrl() {
+		return $this->accountDisplayUrl;
 	}
 
 	/**
