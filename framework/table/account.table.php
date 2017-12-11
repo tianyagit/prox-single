@@ -159,4 +159,15 @@ class AccountTable extends We7Table {
 			return array_merge($uniaccount, $subaccount);
 		}
 	}
+	
+	public function getAccountOwner($uniacid) {
+		if (empty($uniacid)) {
+			return array();
+		}
+		$owneruid = $this->query->from('uni_account_users')->where(array('uniacid' => $uniacid, 'role' => ACCOUNT_MANAGE_NAME_OPERATOR))->getcolumn('uid');
+		if (empty($owneruid)) {
+			return array();
+		}
+		return table('users')->usersInfo($owneruid);
+	}
 }
