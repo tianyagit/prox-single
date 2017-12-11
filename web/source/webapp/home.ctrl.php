@@ -17,7 +17,7 @@ if($do == 'switch') {
 		itoast('', url('webapp/manage/list'), 'info');
 	}
 	webapp_save_switch($uniacid);
-	itoast('', url('webapp/home/display', array('uniacid'=>$uniacid)));
+	itoast('', url('webapp/home/display'));
 }
 
 if($do == 'display') {
