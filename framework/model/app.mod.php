@@ -82,6 +82,9 @@ function app_update_today_visit($module_name) {
  */
 function app_pass_visit_limit($uniacid = 0) {
 	global $_W;
+	if ($_W['isajax'] || $_W['ispost'] || strpos($_W['siteurl'], 'c=utility&a=visit') !== false) {
+		return false;
+	}
 	$uniacid = intval($uniacid) > 0 ? intval($uniacid) : $_W['uniacid'];
 
 	$limit = uni_setting_load('statistics', $uniacid);
