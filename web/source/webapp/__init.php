@@ -11,5 +11,13 @@ if ($action == 'manage' && $do == 'createview') {
 if ($action == 'manage' && $do == 'list') {
 	define('FRAME', '');
 } else {
-	define('FRAME', 'webapp');
+	$account_api = WeAccount::create(array('type' => ACCOUNT_TYPE_WEBAPP_NORMAL));
+	$check_manange = $account_api->checkIntoManage();
+	if (is_error($check_manange)) {
+		$jump_url = $account_api->jumpCheckUrl();
+		itoast('', $jump_url);
+	} else {
+		$check_frame = $account_api->checkFrame();
+		define('FRAME', $check_frame);
+	}
 }

@@ -22,7 +22,7 @@ abstract class WeAccount {
 	 */
 	public static function create($account = array()) {
 		global $_W;
-		if (!is_array($account)) {
+		if (!is_array($account) || empty($account)) {
 			if (empty($account)) {
 				$account = $_W['uniacid'];
 			}
@@ -89,7 +89,21 @@ abstract class WeAccount {
 	public function queryAvailableMessages() {
 		return array();
 	}
-	
+
+	/**
+	 * 返回当前选中的frame
+	 */
+	public function checkFrame() {
+		return $this->checkFrame;
+	}
+
+	/**
+	 * 没选中某个公众号，小程序，pc时，返回的url
+	 */
+	public function jumpCheckUrl() {
+		return $this->jumpUrl;
+	}
+
 	/**
 	 * 查询当前公号支持的统一响应结构
 	 * 

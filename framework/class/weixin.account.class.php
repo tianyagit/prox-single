@@ -30,8 +30,9 @@ class WeiXinAccount extends WeAccount {
 		'pic_weixin', 'location_select', 'media_id', 'view_limited'
 	);
 	
-	public function __construct() {
-		
+	public function __construct($account = array()) {
+		$this->jumpUrl = url('account/display');
+		$this->checkFrame = 'account';
 	}
 	
 	public function fetchAccountInfo() {
@@ -68,18 +69,10 @@ class WeiXinAccount extends WeAccount {
 	}
 	
 	public function checkIntoManage() {
-		if (empty($this->account) || (!empty($this->account['account']) && !in_array($this->account['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !defined('IN_MODULE'))) {
-			return array(
-				'errno' => -1,
-				'url' => url('account/display'),
-				'frame' => ''
-			);
+		if (empty($this->uniaccount) || (!empty($this->uniaccount['account']) && !in_array($this->uniaccount['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !defined('IN_MODULE'))) {
+			return false;
 		}
-		return array(
-			'errno' => 0,
-			'url' => '',
-			'frame' => 'account'
-		);
+		return true;
 	}
 	
 	public function local_checkSignature($packet) {

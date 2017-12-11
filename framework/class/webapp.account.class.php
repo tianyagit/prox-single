@@ -8,25 +8,15 @@ defined('IN_IA') or exit('Access Denied');
 
 class WebappAccount extends WeAccount {
 	public function __construct($account = array()) {
-		if (empty($account)) {
-			return true;
-		}
-		$this->account = $account;
+		$this->jumpUrl = url('webapp/display');
+		$this->checkFrame = 'webapp';
 	}
 	
 	public function checkIntoManage() {
-		if (empty($this->account) || (!empty($this->account['account']) && $this->account['type'] != ACCOUNT_TYPE_WEBAPP_NORMAL && !defined('IN_MODULE'))) {
-			return array(
-				'errno' => -1,
-				'url' => url('webapp/home'),
-				'frame' => ''
-			);
+		if (empty($this->account) || (!empty($this->uniaccount['account']) && $this->uniaccount['type'] != ACCOUNT_TYPE_WEBAPP_NORMAL && !defined('IN_MODULE'))) {
+			return false;
 		}
-		return array(
-			'errno' => 0,
-			'url' => '',
-			'frame' => 'webapp'
-		);
+		return true;
 	}
 
 	public function fetchAccountInfo() {
