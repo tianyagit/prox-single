@@ -108,7 +108,7 @@ function uni_accounts($uniacid = 0) {
 function uni_fetch($uniacid = 0) {
 	global $_W;
 	load()->model('mc');
-	
+
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$cachekey = "uniaccount:{$uniacid}";
 	$cache = cache_load($cachekey);
@@ -121,12 +121,12 @@ function uni_fetch($uniacid = 0) {
 		return $account_api;
 	}
 	$account = $account_api->fetchAccountInfo();
-	if (empty($account)) {
+	if (empty($account) || $account['isdeleted'] == 1) {
 		return array();
 	}
-	
+
 	$owner = account_owner($uniacid);
-	
+
 	$account['uid'] = $owner['uid'];
 	$account['starttime'] = $owner['starttime'];
 	if (!empty($account['endtime'])) {
@@ -723,7 +723,7 @@ function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
-	
+
 	if (strexists($_W['siteurl'], 'c=webapp')) {
 		$uniacid = $cache_lastaccount['webapp'];
 	} else if (strexists($_W['siteurl'], 'c=wxapp')) {
@@ -731,7 +731,7 @@ function uni_account_last_switch() {
 	} else {
 		$uniacid = $cache_lastaccount['account'];
 	}
-	
+
 	return $uniacid;
 }
 

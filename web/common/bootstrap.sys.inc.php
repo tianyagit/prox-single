@@ -45,6 +45,9 @@ if (!empty($_GPC['__uniacid'])) {
 
 if (!empty($_W['uniacid'])) {
 	$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
+	if (empty($_W['account'])) {
+		unset($_W['uniacid']);
+	}
 	$_W['acid'] = $_W['account']['acid'];
 	$_W['weid'] = $_W['uniacid'];
 }
@@ -53,7 +56,6 @@ if (!empty($_W['uid'])) {
 	$_W['highest_role'] = permission_account_user_role($_W['uid']);
 	$_W['role'] = permission_account_user_role($_W['uid'], $_W['uniacid']);
 }
-permission_check_uniacid_availabel();
 $_W['template'] = !empty($_W['setting']['basic']['template']) ? $_W['setting']['basic']['template'] : 'default';
 $_W['attachurl'] = attachment_set_attach_url();
 load()->func('compat.biz');
