@@ -108,12 +108,7 @@ function app_pass_visit_limit($uniacid = 0) {
 		//本月累计大于（设定值+购买量-购买使用量）->返回true
 		$before_num = app_month_visit_till_today($uniacid);
 		$sum_num = intval($limit['founder']) + $order_num - intval($limit['use']);
-		if ($before_num > $sum_num) {
-			$data['limit'] = true;
-			cache_write($cachekey, $data);
-			return true;
-		}
-		if (($before_num + $today_num) > $sum_num) {
+		if ($sum_num <= 0) {
 			$data['limit'] = true;
 			cache_write($cachekey, $data);
 			return true;
