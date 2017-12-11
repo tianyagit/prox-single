@@ -26,12 +26,7 @@ if (!empty($version_id)) {
 }
 
 if ($do == 'entrychoose') {
-	$modules = $version_info['modules'];
-	$entrys = array();
-	if (count($modules) > 0) {
-		$module = current($modules);
-		$entrys = $module['cover_entrys'];
-	}
+	$entrys = $version_info['cover_entrys'];
 	template('wxapp/version-front-download');
 }
 if ($do == 'set_wxapp_entry') {
