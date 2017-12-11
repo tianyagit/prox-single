@@ -9,10 +9,9 @@ load()->func('communication');
 
 class WxappAccount extends WeAccount {
 	public function __construct($account = array()) {
-		if (empty($account)) {
-			return true;
-		}
 		$this->account = $account;
+		$this->noCheckAccountUrl = url('wxapp/display');
+		$this->checkFrame = 'wxapp';
 	}
 
 	public function fetchAccountInfo() {
@@ -71,18 +70,10 @@ class WxappAccount extends WeAccount {
 	}
 
 	public function checkIntoManage() {
-		if (empty($this->account) || (!empty($this->account['account']) && $this->account['account'] != ACCOUNT_TYPE_APP_NORMAL && !defined('IN_MODULE'))) {
-			return array(
-					'errno' => -1,
-					'url' => url('wxapp/display'),
-					'frame' => ''
-			);
+		if (empty($this->account) || (!empty($this->uniaccount['account']) && $this->uniaccount['account'] != ACCOUNT_TYPE_APP_NORMAL && !defined('IN_MODULE'))) {
+			return false;
 		}
-		return array(
-				'errno' => 0,
-				'url' => '',
-				'frame' => 'wxapp'
-		);
+		return true;
 	}
 
 	public function getAccessToken() {

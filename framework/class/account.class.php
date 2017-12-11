@@ -15,6 +15,8 @@ abstract class WeAccount {
 	public $account;
 	public $tablename = '';
 	public $uniacid = 0;
+	public $checkFrame;
+	public $noCheckAccountUrl;
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
@@ -22,7 +24,7 @@ abstract class WeAccount {
 	 */
 	public static function create($account = array()) {
 		global $_W;
-		if (!is_array($account)) {
+		if (!is_array($account) || empty($account)) {
 			if (empty($account)) {
 				$account = $_W['uniacid'];
 			}
@@ -89,7 +91,21 @@ abstract class WeAccount {
 	public function queryAvailableMessages() {
 		return array();
 	}
-	
+
+	/**
+	 * 返回当前选中的frame
+	 */
+	public function checkFrame() {
+		return $this->checkFrame;
+	}
+
+	/**
+	 * 没选中某个公众号，小程序，pc时，返回的url
+	 */
+	public function noCheckAccountUrl() {
+		return $this->noCheckAccountUrl;
+	}
+
 	/**
 	 * 查询当前公号支持的统一响应结构
 	 * 
@@ -968,7 +984,50 @@ abstract class WeBase {
 	
 	protected function fileUpload($file_string, $type = 'image') {
 		$types = array('image', 'video', 'audio');
-	
+	}
+
+	public function __call($name, $param) {
+		$module_type_map = array('systemwelcome', 'webapp', 'wxapp', 'cron', 'site');
+		$module_type = str_replace('wemodule', '', strtolower(get_parent_class($this)));
+		if (!in_array($module_type, $module_type_map)) {
+			trigger_error('模块方法' . $name . '不存在.具体原因:无效的模块类型', E_USER_WARNING);
+			return false;
+		}
+		if ($module_type == 'site') {
+			$module_type = stripos($name, 'doWeb') === 0 ? 'web' : 'mobile';
+			$function_name = $module_type == 'web' ? strtolower(substr($name, 5)) : strtolower(substr($name, 8));
+		} else {
+			$function_name = strtolower(substr($name, 6));
+		}
+		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/' . $module_type;
+		$file = "$dir/{$function_name}.inc.php";
+		if ($module_type == 'wxapp') {
+			$version_path_tree = glob("$dir/*");
+			usort($version_path_tree, function($version1, $version2) {
+				return -version_compare($version1, $version2);
+			});
+			if (!empty($version_path_tree)) {
+				foreach ($version_path_tree as $path) {
+					$file = "$path/{$function_name}.inc.php";
+					if (file_exists($file)) {
+						break;
+					}
+				}
+			}
+		}
+		if(file_exists($file)) {
+			require $file;
+			exit;
+		} else {
+			$dir = str_replace("addons", "framework/builtin", $dir);
+			$file = $dir . '/'. $function_name . '.inc.php';
+			if(file_exists($file)) {
+				require $file;
+				exit;
+			}
+		}
+		trigger_error('模块方法' . $name . '不存在.', E_USER_WARNING);
+		return null;
 	}
 }
 
@@ -1395,36 +1454,6 @@ abstract class WeModuleSite extends WeBase {
 	 * @var bool 预定义的数据, 是否在移动终端
 	 */
 	public $inMobile;
-
-	public function __call($name, $arguments) {
-		$isWeb = stripos($name, 'doWeb') === 0;
-		$isMobile = stripos($name, 'doMobile') === 0;
-		if($isWeb || $isMobile) {
-			$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/';
-			if($isWeb) {
-				$dir .= 'web/';
-				$fun = strtolower(substr($name, 5));
-			}
-			if($isMobile) {
-				$dir .= 'mobile/';
-				$fun = strtolower(substr($name, 8));
-			}
-			$file = $dir . $fun . '.inc.php';
-			if(file_exists($file)) {
-				require $file;
-				exit;
-			} else {
-				$dir = str_replace("addons", "framework/builtin", $dir);
-				$file = $dir . $fun . '.inc.php';
-				if(file_exists($file)) {
-					require $file;
-					exit;
-				}
-			}
-		}
-		trigger_error("访问的方法 {$name} 不存在.", E_USER_WARNING);
-		return null;
-	}
 	
 	public function __get($name) {
 		if ($name == 'module') {
@@ -1647,21 +1676,6 @@ EOF;
  * 模块计划任务
  */
 abstract class WeModuleCron extends WeBase {
-	public function __call($name, $arguments) {
-		if($this->modulename == 'task') {
-			$dir = IA_ROOT . '/framework/builtin/task/cron/';
-		} else {
-			$dir = IA_ROOT . '/addons/' . $this->modulename . '/cron/';
-		}
-		$fun = strtolower(substr($name, 6));
-		$file = $dir . $fun . '.inc.php';
-		if(file_exists($file)) {
-			require $file;
-			exit;
-		}
-		trigger_error("访问的方法 {$name} 不存在.", E_USER_WARNING);
-		return error(-1009, "访问的方法 {$name} 不存在.");
-	}
 
 	//记录触发记录
 	public function addCronLog($tid, $errno, $note) {
@@ -1696,33 +1710,7 @@ abstract class WeModuleWxapp extends WeBase {
 			'data' => $data,
 		)));
 	}
-	
-	public function __call($name, $arguments) {
-		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/wxapp';
-		$function_name = strtolower(substr($name, 6));
-		//版本号不存在相应的目录则直接使用最新版
-		$file = "$dir/{$this->version}/{$function_name}.inc.php";
-		if (!file_exists($file)) {
-			$version_path_tree = glob("$dir/*");
-			usort($version_path_tree, function($version1, $version2) {
-				return -version_compare($version1, $version2);
-			});
-			if (!empty($version_path_tree)) {
-				foreach ($version_path_tree as $path) {
-					$file = "$path/{$function_name}.inc.php";
-					if (file_exists($file)) {
-						break;
-					}
-				}
-			}
-		}
-		if(file_exists($file)) {
-			require $file;
-			exit;
-		}
-		return null;
-	}
-	
+
 	public function checkSign() {
 		global $_GPC;
 		if (!empty($_GET) && !empty($_GPC['sign'])) {
@@ -1809,30 +1797,10 @@ abstract class WeModuleHook extends WeBase {
 }
 
 abstract class WeModuleWebapp extends WeBase {
-	public function __call($name, $arguments) {
-		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/webapp';
-		$function_name = strtolower(substr($name, 6));
-		$file = "$dir/{$function_name}.inc.php";
-		if(file_exists($file)) {
-			require $file;
-			exit;
-		}
-		return null;
-	}
 }
 
 /**
  *  模块系统首页
  */
 abstract class WeModuleSystemWelcome extends WeBase {
-	public function __call($name, $arguments) {
-		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/systemWelcome';
-		$function_name = strtolower(substr($name, 5));
-		$file = "$dir/{$function_name}.inc.php";
-		if(file_exists($file)) {
-			require $file;
-			exit;
-		}
-		return null;
-	}
 }

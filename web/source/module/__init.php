@@ -12,9 +12,14 @@ if (in_array($action, array('permission', 'manage-account'))) {
 		itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
 	if (!empty($_GPC['version_id'])) {
-		checkwxapp();
+		$account_api = WeAccount::create(array('type' => ACCOUNT_TYPE_APP_NORMAL));
 	} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])){
-		checkaccount();
+		$account_api = WeAccount::create(array('type' => ACCOUNT_SUBSCRIPTION));
+	}
+	$check_manange = $account_api->checkIntoManage();
+	if (is_error($check_manange)) {
+		$no_check_account_url = $account_api->noCheckAccountUrl();
+		itoast('', $no_check_account_url);
 	}
 }
 if (in_array($action, array('group', 'manage-system'))) {
