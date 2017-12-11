@@ -29,9 +29,8 @@ if ($do == 'entrychoose') {
 	$modules = $version_info['modules'];
 	$entrys = array();
 	if (count($modules) > 0) {
-		$module_name = $modules[0]['name'];
-		$entrys = module_entries($module_name, array('cover'));
-		$entrys = $entrys['cover'];
+		$module = current($modules);
+		$entrys = $module['cover_entrys'];
 	}
 	template('wxapp/version-front-download');
 }
