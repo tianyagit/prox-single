@@ -9,8 +9,8 @@ $account_api = WeAccount::create();
 $check_manange = $account_api->checkIntoManage();
 
 if (!($action == 'material' && $do == 'delete') && empty($_GPC['version_id']) && empty($_GPC['account_type'])) {
-	$jump_url = $account_api->jumpCheckUrl();
-	itoast('', $jump_url);
+	$no_check_account_url = $account_api->noCheckAccountUrl();
+	itoast('', $no_check_account_url);
 }
 
 if ($action != 'material-post' && $_GPC['uniacid'] != FILE_NO_UNIACID) {
