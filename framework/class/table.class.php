@@ -9,7 +9,7 @@ defined('IN_IA') or exit('Access Denied');
 /**
  * @property Query $query
  */
-abstract class We7Table {
+abstract class We7Table implements ArrayAccess {
 	protected $query;
 	//表名
 	protected $table_name;
@@ -21,6 +21,13 @@ abstract class We7Table {
 	protected $exits = false;
 	//主键是否自增
 	protected $incrementing = true;
+	// 获取数据默认值
+	protected $default = array();
+	// 是否自定追加创建时间
+	public $timestamps = true;
+
+	protected $fillable = array();
+
 
 	public function __construct() {
 		//实例化Query对象,并重置查询信息
@@ -49,16 +56,29 @@ abstract class We7Table {
 		return $this->query->getLastQueryTotal();
 	}
 
+	protected function getPrimaryVal() {
+		return $this->getAttribute($this->primary_key);
+	}
+
 	private function getAttribute($key) {
 		return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
 	}
 
 	private function setAttribute($key, $value) {
-
+		if($this->canFill($key)) {
+			$this->attributes[$key] = $value;
+		}
 	}
 
-	private function fill($attributes) {
 
+	private function fill($attributes) {
+		foreach ($attributes as $key => $value) {
+			$this->setAttribute($key, $value);
+		}
+	}
+
+	protected function canFill($key) {
+		return isset($this->fillable[$key]);
 	}
 
 	/** 根据主键获取数据
@@ -86,25 +106,53 @@ abstract class We7Table {
 		if ($insert) {
 			$this->exits = true;
 			if($this->incrementing) {
-				$primary_id = pdo_insertid();
-				$this->attributes[$this->primary_key] = $primary_id;
+				$primary_value = pdo_insertid();
+				$this->attributes[$this->primary_key] = $primary_value;
 			}
 		}
 		return $insert ? $this : false;
 	}
 
-	public function update($attributes, $primary_key = null) {
-		$pkey = $this->getAttribute($this->primary_key);
+	public function update($attributes, $primary_val = null) {
+		$default_primary_val = $this->getPrimaryVal();
 		$this->fill($attributes);
 		if (! $this->exits) {
-			$pkey = $primary_key;
+			$default_primary_val = $primary_val;
 		}
-		return pdo_update($this->table_name, $this->attributes, array($this->primary_key=>$pkey));
+		return pdo_update($this->table_name, $this->attributes, array($this->primary_key=>$default_primary_val));
 	}
 
+	/**
+	 *  根据主键删除数据
+	 * @param null $id
+	 * @return mixed
+	 */
 	public function delete($id = null) {
-		if($this->exits) {
-			return pdo_delete($this->table_name, array($this->primary_key=>$this->getAttribute($this->primary_key)));
+		$pval = $this->getPrimaryVal();
+		if($id) {
+			$pval = $id;
 		}
+		$deleted = pdo_delete($this->table_name, array($this->primary_key => $pval));
+		if ($deleted) {
+			$this->exits = false;
+		}
+		return $deleted;
+	}
+
+
+	public function offsetExists($offset) {
+		return isset($this->attributes[$offset]);
+	}
+
+	public function offsetGet($offset) {
+		return $this->getAttribute($offset);
+	}
+
+	public function offsetSet($offset, $value) {
+		$this->setAttribute($offset, $value);
+	}
+
+	public function offsetUnset($offset) {
+		unset($this->attributes[$offset]);
 	}
 }
