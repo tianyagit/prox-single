@@ -621,7 +621,6 @@ if ($do == 'image') {
 		$attachment_table->searchWithType(ATTACHMENT_IMAGE);
 	}
 	$attachment_table->searchWithPage($page, $page_size);
-	$is_local_image = $islocal == 'local' ? true : false;
 	$list = $attachment_table->local($is_local_image)->searchAttachmentList($is_local_image);
 	$total = $attachment_table->getLastQueryTotal();
 	if (!empty($list)) {
