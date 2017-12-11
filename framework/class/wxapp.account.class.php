@@ -75,6 +75,7 @@ class WxappAccount extends WeAccount {
 	}
 
 	public function checkIntoManage() {
+		global $_GPC;
 		if (empty($this->account) || (!empty($this->uniaccount['account']) && $this->uniaccount['account'] != ACCOUNT_TYPE_APP_NORMAL && !defined('IN_MODULE')) || empty($_GPC['version_id'])) {
 			return false;
 		}
