@@ -21,8 +21,8 @@ if(!empty($_GPC['forward'])) {
 
 if($do == 'mobile_exist') {
 	if($_W['ispost'] && $_W['isajax']) {
-		$type = trim($_GPC['find_mode']);
-		$info = trim($_GPC['mobile']);
+		$type = safe_gpc_string($_GPC['find_mode']);
+		$info = safe_gpc_string($_GPC['mobile']);
 		$member_table = table('member');
 		switch ($type) {
 			case 'mobile':

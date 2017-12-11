@@ -67,6 +67,7 @@ function uni_user_accounts($uid) {
  */
 function account_owner($uniacid = 0) {
 	global $_W;
+	load()->model('user');
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
 		return array();

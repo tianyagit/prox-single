@@ -55,7 +55,7 @@ class AccountTable extends We7Table {
 	 */
 	public function accountWechatsInfo($uniacids, $uid) {
 		return $this->query->from('uni_account', 'a')
-				->leftjoin(uni_account_tablename(ACCOUNT_TYPE_OFFCIAL_NORMAL), 'w')
+				->leftjoin('account_wechats', 'w')
 				->on(array('w.uniacid' => 'a.uniacid'))
 				->leftjoin('uni_account_users', 'au')
 				->on(array('a.uniacid' => 'au.uniacid'))
