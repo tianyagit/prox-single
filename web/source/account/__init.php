@@ -12,11 +12,8 @@ if ($controller == 'account' && $action == 'manage') {
 	}
 }
 
-$_GPC['account_type'] = !empty($_GPC['account_type']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
-$account_api = WeAccount::create(array('type' => $_GPC['account_type']));
-
-define('ACCOUNT_TYPE', $account_api->accountManageType);
-define('ACCOUNT_TYPE_OFFCIAL', $account_api->accountTypeOffcial);
-define('ACCOUNT_TYPE_NAME', $account_api->accountTypeName);
-define('ACCOUNT_TYPE_TEMPLATE', $account_api->accountTypeTemplate);
-define('ACCOUNT_TYPE_SUPPORT', $account_api->accountTypeSupport);
+$account_param = WeAccount::createByType($_GPC['account_type']);
+define('ACCOUNT_TYPE', $account_param->accountManageType);
+define('ACCOUNT_TYPE_NAME', $account_param->accountTypeName);
+define('ACCOUNT_TYPE_TEMPLATE', $account_param->accountTypeTemplate);
+define('ACCOUNT_TYPE_SUPPORT', $account_param->accountTypeSupport);

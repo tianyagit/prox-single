@@ -17,11 +17,7 @@ abstract class WeAccount {
 	public $uniacid = 0;
 	public $accountType;
 	public $accountDisplayUrl;
-	public $accountManageType;
-	public $accountTypeOffcial;
-	public $accountTypeName;
-	public $accountTypeTemplate;
-	public $accountTypeSupport;
+
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
@@ -44,6 +40,11 @@ abstract class WeAccount {
 		} else {
 			return error('-1', '公众号不存在或是已经被删除');
 		}
+	}
+
+	public static function createByType($account_type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
+		$account_type = !empty($account_type) ? $account_type : ACCOUNT_TYPE_OFFCIAL_NORMAL;
+		return self::includes(array('type' => $account_type));
 	}
 	
 	static public function token($type = 1) {

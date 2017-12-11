@@ -323,7 +323,10 @@ function wxapp_version_detail_info($version_info) {
 				$module_info = module_fetch($module['name']);
 				$module_info['account'] = $account;
 				unset($version_info['modules'][$module['name']]);
+				//模块默认入口
+				$module_info['cover_entrys'] = module_entries($module['name'], array('cover'));
 				$version_info['modules'][] = $module_info;
+
 			}
 		}
 	}

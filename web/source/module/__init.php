@@ -22,6 +22,10 @@ if (in_array($action, array('group', 'manage-system'))) {
 	define('FRAME', 'system');
 }
 
+$account_param = WeAccount::createByType($_GPC['account_type']);
+define('ACCOUNT_TYPE', $account_param->accountManageType);
+define('ACCOUNT_TYPE_TEMPLATE', $account_param->accountTypeTemplate);
+
 /* xstart */
 if (IMS_FAMILY == 'x') {
 	$_GPC['account_type'] = !empty($_GPC['account_type']) || !empty($_GPC['system_welcome']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
@@ -35,10 +39,3 @@ if (IMS_FAMILY == 'v') {
 	$_GPC['account_type'] = !empty($_GPC['account_type']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
 }
 /* vend */
-
-
-$account_api = WeAccount::create(array('type' => $_GPC['account_type']));
-define('ACCOUNT_TYPE', $account_api->accountManageType);
-if (empty($_GPC['system_welcome'])) {
-	define('ACCOUNT_TYPE_TEMPLATE', $account_api->accountTypeTemplate);
-}

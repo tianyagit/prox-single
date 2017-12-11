@@ -11,7 +11,6 @@ class WebappAccount extends WeAccount {
 		$this->accountDisplayUrl = url('webapp/display');
 		$this->accountType = 'webapp';
 		$this->accountManageType = ACCOUNT_TYPE_WEBAPP_NORMAL;
-		$this->accountTypeOffcial = 0;
 		$this->accountTypeName = 'WEBAPP';
 		$this->accountTypeTemplate = '-webapp';
 		$this->accountTypeSupport = 'webapp_support';

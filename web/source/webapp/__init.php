@@ -11,7 +11,7 @@ if ($action == 'manage' && $do == 'createview') {
 if ($action == 'manage' && $do == 'list') {
 	define('FRAME', '');
 } else {
-	$account_api = WeAccount::create(array('type' => ACCOUNT_TYPE_WEBAPP_NORMAL));
+	$account_api = WeAccount::create();
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {
 		$account_display_url = $account_api->accountDisplayUrl();
