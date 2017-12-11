@@ -46,7 +46,7 @@ abstract class WeAccount {
 	
 	static public function includes($account) {
 		$type = $account['type'];
-		
+
 		if($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 			load()->classs('weixin.account');
 			$account_obj = new WeiXinAccount();
@@ -58,6 +58,10 @@ abstract class WeAccount {
 		if($type == ACCOUNT_TYPE_APP_NORMAL) {
 			load()->classs('wxapp.account');
 			$account_obj = new WxappAccount();
+		}
+		if($type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+			load()->classs('webapp.account');
+			$account_obj = new WebappAccount();
 		}
 		$account_obj->uniacid = $account['uniacid'];
 		$account_obj->uniaccount = $account;
