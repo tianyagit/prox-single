@@ -992,7 +992,7 @@ abstract class WeBase {
 	}
 
 
-	protected function get_function_file($name) {
+	protected function getFunctionFile($name) {
 		$module_type = str_replace('wemodule', '', strtolower(get_parent_class($this)));
 		if ($module_type == 'site') {
 			$module_type = stripos($name, 'doWeb') === 0 ? 'web' : 'mobile';
@@ -1009,13 +1009,13 @@ abstract class WeBase {
 	}
 
 	public function __call($name, $param) {
-		$file = $this->get_function_file($name);
+		$file = $this->getFunctionFile($name);
 		if(file_exists($file)) {
 			require $file;
 			exit;
 		}
 		trigger_error('模块方法' . $name . '不存在.', E_USER_WARNING);
-		return null;
+		return false;
 	}
 }
 
@@ -1692,7 +1692,7 @@ abstract class WeModuleWxapp extends WeBase {
 	public $version;
 
 	public function __call($name, $param) {
-		$file = $this->get_function_file($name);
+		$file = $this->getFunctionFile($name);
 		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/wxapp';
 		$version_path_tree = glob("$dir/*");
 		usort($version_path_tree, function($version1, $version2) {
@@ -1707,6 +1707,8 @@ abstract class WeModuleWxapp extends WeBase {
 				}
 			}
 		}
+		trigger_error('模块方法' . $name . '不存在.', E_USER_WARNING);
+		return false;
 	}
 
 	public function result($errno, $message, $data = '') {
