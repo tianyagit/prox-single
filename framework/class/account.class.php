@@ -986,45 +986,28 @@ abstract class WeBase {
 		$types = array('image', 'video', 'audio');
 	}
 
-	public function __call($name, $param) {
-		$module_type_map = array('systemwelcome', 'webapp', 'wxapp', 'cron', 'site');
+
+	protected function get_function_file($name) {
 		$module_type = str_replace('wemodule', '', strtolower(get_parent_class($this)));
-		if (!in_array($module_type, $module_type_map)) {
-			trigger_error('模块方法' . $name . '不存在.具体原因:无效的模块类型', E_USER_WARNING);
-			return false;
-		}
 		if ($module_type == 'site') {
 			$module_type = stripos($name, 'doWeb') === 0 ? 'web' : 'mobile';
 			$function_name = $module_type == 'web' ? strtolower(substr($name, 5)) : strtolower(substr($name, 8));
 		} else {
 			$function_name = strtolower(substr($name, 6));
 		}
-		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/' . $module_type;
+		$dir = IA_ROOT . '/framework/builtin/' . $this->modulename . '/inc/' . $module_type;
 		$file = "$dir/{$function_name}.inc.php";
-		if ($module_type == 'wxapp') {
-			$version_path_tree = glob("$dir/*");
-			usort($version_path_tree, function($version1, $version2) {
-				return -version_compare($version1, $version2);
-			});
-			if (!empty($version_path_tree)) {
-				foreach ($version_path_tree as $path) {
-					$file = "$path/{$function_name}.inc.php";
-					if (file_exists($file)) {
-						break;
-					}
-				}
-			}
+		if(!file_exists($file)) {
+			$file = str_replace("framework/builtin", "addons", $file);
 		}
+		return $file;
+	}
+
+	public function __call($name, $param) {
+		$file = $this->get_function_file($name);
 		if(file_exists($file)) {
 			require $file;
 			exit;
-		} else {
-			$dir = str_replace("addons", "framework/builtin", $dir);
-			$file = $dir . '/'. $function_name . '.inc.php';
-			if(file_exists($file)) {
-				require $file;
-				exit;
-			}
 		}
 		trigger_error('模块方法' . $name . '不存在.', E_USER_WARNING);
 		return null;
@@ -1702,7 +1685,25 @@ abstract class WeModuleCron extends WeBase {
 abstract class WeModuleWxapp extends WeBase {
 	public $appid;
 	public $version;
-	
+
+	public function __call($name, $param) {
+		$file = $this->get_function_file($name);
+		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/wxapp';
+		$version_path_tree = glob("$dir/*");
+		usort($version_path_tree, function($version1, $version2) {
+			return -version_compare($version1, $version2);
+		});
+		$function_name = substr($name, 6);
+		if (!empty($version_path_tree)) {
+			foreach ($version_path_tree as $path) {
+				$file = "$path/{$function_name}.inc.php";
+				if (file_exists($file)) {
+					break;
+				}
+			}
+		}
+	}
+
 	public function result($errno, $message, $data = '') {
 		exit(json_encode(array(
 			'errno' => $errno,
