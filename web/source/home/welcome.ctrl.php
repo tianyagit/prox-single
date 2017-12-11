@@ -46,9 +46,14 @@ if (IMS_FAMILY == 'v') {
 			$version_info = wxapp_version($_GPC['version_id']);
 		}
 		if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
-			checkwxapp();
+			$account_api = WeAccount::create(array('type' => ACCOUNT_TYPE_APP_NORMAL));
 		} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])){
-			checkaccount();
+			$account_api = WeAccount::create(array('type' => ACCOUNT_TYPE_OFFCIAL_NORMAL));
+		}
+		$check_manange = $account_api->checkIntoManage();
+		if (is_error($check_manange)) {
+			$no_check_account_url = $account_api->noCheckAccountJumpUrl();
+			itoast('', $no_check_account_url);
 		}
 	}
 }
@@ -60,9 +65,14 @@ if (IMS_FAMILY == 'x') {
 			$version_info = wxapp_version($_GPC['version_id']);
 		}
 		if (!empty($_GPC['version_id']) && !(!empty($version_info['modules']) && !empty($version_info['modules'][0]['account']) && !empty($version_info['modules'][0]['account']['uniacid']) && in_array($version_info['modules'][0]['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)))) {
-			checkwxapp();
+			$account_api = WeAccount::create(array('type' => ACCOUNT_TYPE_APP_NORMAL));
 		} elseif (empty($_W['uniacid']) || empty($_W['account']['type'])) {
-			checkaccount();
+			$account_api = WeAccount::create(array('type' => ACCOUNT_TYPE_OFFCIAL_NORMAL));
+		}
+		$check_manange = $account_api->checkIntoManage();
+		if (is_error($check_manange)) {
+			$no_check_account_url = $account_api->noCheckAccountUrl();
+			itoast('', $no_check_account_url);
 		}
 	}
 }

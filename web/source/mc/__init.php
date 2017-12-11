@@ -3,10 +3,13 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 
-$check_manange = WeAccount::create($_W['account'])->checkIntoManage();
+$account_api = WeAccount::create();
+$check_manange = $account_api->checkIntoManage();
 
 if (is_error($check_manange)) {
-	itoast('', $check_manange['url']);
+	$no_check_account_url = $account_api->noCheckAccountUrl();
+	itoast('', $no_check_account_url);
 } else {
-	define('FRAME', $check_manange['frame']);
+	$check_frame = $account_api->checkFrame();
+	define('FRAME', $check_frame);
 }

@@ -5,20 +5,13 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if ($action != 'entry') {
-	if (!empty($_W['account']) && $_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-		checkwebapp();
-	} else {
-		checkaccount();
-	}
-}
 
-if ($action == 'editor' && $_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-	define('FRAME', 'webapp');
-} else {
-	define('FRAME', 'account');
-}
+$account_api = WeAccount::create();
+$check_manange = $account_api->checkIntoManage();
 
-if (!($action == 'multi' && $do == 'post')) {
-	define('FRAME', 'account');
+if (is_error($check_manange)) {
+	$no_check_account_url = $account_api->noCheckAccountUrl();
+	itoast('', $no_check_account_url);
 }
+$check_frame = $account_api->checkFrame();
+define('FRAME', $check_frame);

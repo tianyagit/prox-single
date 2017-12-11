@@ -15,6 +15,8 @@ abstract class WeAccount {
 	public $account;
 	public $tablename = '';
 	public $uniacid = 0;
+	public $checkFrame;
+	public $noCheckAccountUrl;
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
@@ -22,7 +24,7 @@ abstract class WeAccount {
 	 */
 	public static function create($account = array()) {
 		global $_W;
-		if (!is_array($account)) {
+		if (!is_array($account) || empty($account)) {
 			if (empty($account)) {
 				$account = $_W['uniacid'];
 			}
@@ -89,7 +91,21 @@ abstract class WeAccount {
 	public function queryAvailableMessages() {
 		return array();
 	}
-	
+
+	/**
+	 * 返回当前选中的frame
+	 */
+	public function checkFrame() {
+		return $this->checkFrame;
+	}
+
+	/**
+	 * 没选中某个公众号，小程序，pc时，返回的url
+	 */
+	public function noCheckAccountUrl() {
+		return $this->noCheckAccountUrl;
+	}
+
 	/**
 	 * 查询当前公号支持的统一响应结构
 	 * 

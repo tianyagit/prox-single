@@ -21,7 +21,6 @@ if($do == 'switch') {
 }
 
 if($do == 'display') {
-	define('FRAME', 'webapp');
 	$last_uniacid = uni_account_last_switch();
 	if (empty($last_uniacid)) {
 		itoast('', url('webapp/manage/list'), 'info');
