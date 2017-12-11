@@ -133,4 +133,30 @@ class AccountTable extends We7Table {
 
 		return $this;
 	}
+	
+	public function getWechatappAccount($acid) {
+		return $this->query->from('account_wechats')->where('acid', $acid)->get();
+	}
+	
+	public function getWxappAccount($acid) {
+		return $this->query->from('account_wxapp')->where('acid', $acid)->get();
+	}
+	
+	public function getWebappAccount($acid) {
+		return $this->query->from('account_webapp')->where('acid', $acid)->get();
+	}
+	
+	public function getUniAccountByUniacid($uniacid) {
+		$uniaccount = $this->query->from('uni_account')->where('uniacid', $uniacid)->get();
+		if (!empty($uniaccount['default_acid'])) {
+			$subaccount = $this->query->from('account')->where('acid', $uniaccount['default_acid'])->get();
+		} else {
+			$subaccount = $this->query->from('account')->where('uniacid', $uniacid)->orderby('acid', 'desc')->get();
+		}
+		if (empty($subaccount)) {
+			return array();
+		} else {
+			return array_merge($uniaccount, $subaccount);
+		}
+	}
 }

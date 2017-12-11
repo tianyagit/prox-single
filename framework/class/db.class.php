@@ -23,6 +23,10 @@ class DB {
 	public function __construct($name = 'master') {
 		global $_W;
 		$this->cfg = $_W['config']['db'];
+		//unset掉敏感信息
+		unset($_W['config']['db']);
+		
+		$_W['config']['db']['tablepre'] = $this->cfg['tablepre'];
 		$this->connect($name);
 	}
 

@@ -114,12 +114,18 @@ function uni_fetch($uniacid = 0) {
 	$cachekey = "uniaccount:{$uniacid}";
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
-		return $cache;
+		//return $cache;
 	}
-	$account = uni_account_default($uniacid);
+
+	$account_api = WeAccount::create($uniacid);
+	if (is_error($account_api)) {
+		return $account_api;
+	}
+	$account = $account_api->fetchAccountInfo();
 	if (empty($account)) {
 		return array();
 	}
+	
 	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
 	$owner = user_single(array('uid' => $owneruid));
 	$account['uid'] = $owner['uid'];
@@ -709,24 +715,24 @@ function uni_account_rank_top($uniacid) {
 	return true;
 }
 
+/**
+ * 获取最后操作的uniacid，由于存在多个帐号类型
+ * 所以根据不同入口，获取相应的最后操作帐号
+ * @return intval $uniacid
+ */
 function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
-	if (strexists($_W['siteurl'], 'c=webapp') || !empty($_GPC['account_type']) && $_GPC['account_type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+	
+	if (strexists($_W['siteurl'], 'c=webapp')) {
 		$uniacid = $cache_lastaccount['webapp'];
-	} else if (strexists($_W['siteurl'], 'c=wxapp') || !empty($_GPC['version_id'])) {
+	} else if (strexists($_W['siteurl'], 'c=wxapp')) {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];
 	}
-	if (!empty($uniacid)) {
-		$account_info = uni_fetch($uniacid);
-		$role = permission_account_user_role($_W['uid'], $uniacid);
-		if (!empty($account_info) && $account_info['isdeleted'] == 1 || empty($role)) {
-			$uniacid = '';
-		}
-	}
+	
 	return $uniacid;
 }
 
@@ -1074,4 +1080,14 @@ function uni_account_global_oauth() {
 	$oauth = setting_load('global_oauth');
 	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : '';
 	return $oauth;
+}
+
+function uni_account($uniacid) {
+	$account_table = table('account');
+	$account = $account_table->getUniAccountByUniacid($uniacid);
+	if (!empty($account)) {
+		return $account;
+	} else {
+		return error(-1, '公众号不存在');
+	}
 }
