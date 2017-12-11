@@ -121,7 +121,6 @@ abstract class We7Table implements ArrayAccess {
 		}
 		return pdo_update($this->table_name, $this->attributes, array($this->primary_key=>$default_primary_val));
 	}
-
 	/**
 	 *  根据主键删除数据
 	 * @param null $id
