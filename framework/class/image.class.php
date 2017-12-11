@@ -74,19 +74,19 @@ class Image {
 	}
 
 	public function getExt() {
-		return $this->ext;
+		return in_array($this->ext, array('jpg', 'jpeg', 'png', 'gif')) ? $this->ext : 'jpeg';
 	}
 
 	public function isPng() {
-		return file_is_image($this->src) && $this->ext == 'png';
+		return file_is_image($this->src) && $this->getExt() == 'png';
 	}
 
 	public function isJPEG() {
-		return file_is_image($this->src) && in_array($this->ext, array('jpg', 'jpeg'));
+		return file_is_image($this->src) && in_array($this->getExt(), array('jpg', 'jpeg'));
 	}
 
 	public function isGif() {
-		return file_is_image($this->src) && $this->ext == 'gif';
+		return file_is_image($this->src) && $this->getExt() == 'gif';
 	}
 
 	/**
@@ -98,16 +98,21 @@ class Image {
 	 * @since version
 	 */
 	public function saveTo($path, $quality = null) {
+		$path = safe_gpc_path($path);
+		if (empty($path)) {
+			return false;
+		}
 		$result = $this->handle();
 		if (!$result) {
 			return false;
 		}
-		$ext = $this->ext;
+		$ext = $this->getExt();
 		if ($ext == 'jpg') {
 			$ext = 'jpeg';
 		}
 		$func = 'image' . $ext;
 		$real_quality = $this->realQuality($quality);
+		$saved = false;
 		if (is_null($real_quality)) {
 			$saved = $func($this->image(), $path);
 		} else {
@@ -256,7 +261,7 @@ class Image {
 	 */
 	public function toBase64($prefix = 'data:image/%s;base64,') {
 		$filename = tempnam('tmp', 'base64');
-		$prefix = sprintf($prefix, $this->ext);
+		$prefix = sprintf($prefix, $this->getExt());
 		$result = $this->saveTo($filename);
 		if (!$result) {
 			return false;

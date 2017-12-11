@@ -29,6 +29,10 @@ class YiXinAccount extends WeAccount {
 	public function fetchAccountInfo() {
 		return $this->account;
 	}
+
+	public function checkIntoManage() {
+
+	}
 	
 	public function queryAvailableMessages() {
 		$messages = array('text', 'image', 'voice', 'video', 'location', 'subscribe', 'unsubscribe');

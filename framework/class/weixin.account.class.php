@@ -30,8 +30,14 @@ class WeiXinAccount extends WeAccount {
 		'pic_weixin', 'location_select', 'media_id', 'view_limited'
 	);
 	
-	public function __construct() {
-		
+	public function __construct($account = array()) {
+		$this->accountDisplayUrl = url('account/display');
+		$this->accountType = 'account';
+		$this->accountManageType = ACCOUNT_TYPE_OFFCIAL_NORMAL;
+		$this->accountTypeOffcial = 0;
+		$this->accountTypeName = '公众号';
+		$this->accountTypeTemplate = '';
+		$this->accountTypeSupport = 'app_support';
 	}
 	
 	public function fetchAccountInfo() {
@@ -43,7 +49,7 @@ class WeiXinAccount extends WeAccount {
 		$account['endtime'] = $this->uniaccount['endtime'];
 		return $account;
 	}
-	
+
 	/**
 	 * 微擎系统对来自微信公众平台请求的安全校验
 	 * @see WeAccount::checkSign()
@@ -68,7 +74,10 @@ class WeiXinAccount extends WeAccount {
 	}
 	
 	public function checkIntoManage() {
-		
+		if (empty($this->uniaccount) || (!empty($this->uniaccount['account']) && !in_array($this->uniaccount['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !defined('IN_MODULE'))) {
+			return false;
+		}
+		return true;
 	}
 	
 	public function local_checkSignature($packet) {

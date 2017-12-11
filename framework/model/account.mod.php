@@ -108,23 +108,25 @@ function uni_accounts($uniacid = 0) {
 function uni_fetch($uniacid = 0) {
 	global $_W;
 	load()->model('mc');
-	load()->model('user');
-
+	
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$cachekey = "uniaccount:{$uniacid}";
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
-		//return $cache;
+		return $cache;
 	}
 
 	$account_api = WeAccount::create($uniacid);
+	if (is_error($account_api)) {
+		return $account_api;
+	}
 	$account = $account_api->fetchAccountInfo();
-
 	if (empty($account)) {
 		return array();
 	}
-	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
-	$owner = user_single(array('uid' => $owneruid));
+	
+	$owner = account_owner($uniacid);
+	
 	$account['uid'] = $owner['uid'];
 	$account['starttime'] = $owner['starttime'];
 	if (!empty($account['endtime'])) {

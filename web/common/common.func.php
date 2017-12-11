@@ -147,36 +147,6 @@ function checklogin() {
 	return true;
 }
 
-/**
- * 检查操作员是否已经选择一个公众号作为工作区域
- */
-function checkaccount() {
-	global $_W;
-	if (empty($_W['uniacid']) || (!empty($_W['account']) && !in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !defined('IN_MODULE'))) {
-		itoast('', url('account/display'), 'info');
-	}
-}
-
-/**
- * 检查操作员是否已经选择一个小程序作为工作区域
- */
-function checkwxapp() {
-	global $_W;
-	if (empty($_W['uniacid']) || (!empty($_W['account']) && $_W['account']['type'] != ACCOUNT_TYPE_APP_NORMAL)) {
-		itoast('', url('wxapp/display'), 'info');
-	}
-}
-
-/**
- * 检查操作员是否已经选择一个pc作为工作区域
- */
-function checkwebapp() {
-	global $_W;
-	if (empty($_W['uniacid']) || (!empty($_W['account']) && $_W['account']['type'] != ACCOUNT_TYPE_WEBAPP_NORMAL)) {
-		itoast('', url('webapp/home'), 'info');
-	}
-}
-
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;

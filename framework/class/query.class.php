@@ -241,9 +241,12 @@ class Query {
 	}
 	
 	public function getcolumn($field = '') {
+		if (!empty($field)) {
+			$this->select($field);
+		}
 		$this->lastsql = $this->buildQuery();
 		$this->lastparams = $this->parameters;
-		$result = pdo_fetchcolumn($this->lastsql, $this->parameters, $field);
+		$result = pdo_fetchcolumn($this->lastsql, $this->parameters);
 		
 		//查询完后，重置Query对象
 		$this->resetClause();

@@ -73,7 +73,7 @@ class AccountTable extends We7Table {
 	 */
 	public function accountWxappInfo($uniacids, $uid) {
 		return $this->query->from('uni_account', 'a')
-				->leftjoin(uni_account_tablename(ACCOUNT_TYPE_APP_NORMAL), 'w')
+				->leftjoin('account_wxapp', 'w')
 				->on(array('w.uniacid' => 'a.uniacid'))
 				->leftjoin('uni_account_users', 'au')
 				->on(array('a.uniacid' => 'au.uniacid'))
@@ -158,5 +158,16 @@ class AccountTable extends We7Table {
 		} else {
 			return array_merge($uniaccount, $subaccount);
 		}
+	}
+	
+	public function getAccountOwner($uniacid) {
+		if (empty($uniacid)) {
+			return array();
+		}
+		$owneruid = $this->query->from('uni_account_users')->where(array('uniacid' => $uniacid, 'role' => ACCOUNT_MANAGE_NAME_OPERATOR))->getcolumn('uid');
+		if (empty($owneruid)) {
+			return array();
+		}
+		return table('users')->usersInfo($owneruid);
 	}
 }

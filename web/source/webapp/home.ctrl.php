@@ -17,11 +17,10 @@ if($do == 'switch') {
 		itoast('', url('webapp/manage/list'), 'info');
 	}
 	webapp_save_switch($uniacid);
-	itoast('', url('webapp/home/display', array('uniacid'=>$uniacid)));
+	itoast('', url('webapp/home/display'));
 }
 
 if($do == 'display') {
-	define('FRAME', 'webapp');
 	$last_uniacid = uni_account_last_switch();
 	if (empty($last_uniacid)) {
 		itoast('', url('webapp/manage/list'), 'info');
