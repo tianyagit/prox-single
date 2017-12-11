@@ -1081,13 +1081,3 @@ function uni_account_global_oauth() {
 	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : '';
 	return $oauth;
 }
-
-function uni_account($uniacid) {
-	$account_table = table('account');
-	$account = $account_table->getUniAccountByUniacid($uniacid);
-	if (!empty($account)) {
-		return $account;
-	} else {
-		return error(-1, '公众号不存在');
-	}
-}
