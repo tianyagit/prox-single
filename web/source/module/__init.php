@@ -18,8 +18,8 @@ if (in_array($action, array('permission', 'manage-account'))) {
 	}
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {
-		$jump_url = $account_api->jumpCheckUrl();
-		itoast('', $jump_url);
+		$no_check_account_url = $account_api->noCheckAccountUrl();
+		itoast('', $no_check_account_url);
 	}
 }
 if (in_array($action, array('group', 'manage-system'))) {

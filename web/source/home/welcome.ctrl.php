@@ -52,8 +52,8 @@ if (IMS_FAMILY == 'v') {
 		}
 		$check_manange = $account_api->checkIntoManage();
 		if (is_error($check_manange)) {
-			$jump_url = $account_api->jumpCheckUrl();
-			itoast('', $jump_url);
+			$no_check_account_url = $account_api->noCheckAccountJumpUrl();
+			itoast('', $no_check_account_url);
 		}
 	}
 }
@@ -71,8 +71,8 @@ if (IMS_FAMILY == 'x') {
 		}
 		$check_manange = $account_api->checkIntoManage();
 		if (is_error($check_manange)) {
-			$jump_url = $account_api->jumpCheckUrl();
-			itoast('', $jump_url);
+			$no_check_account_url = $account_api->noCheckAccountUrl();
+			itoast('', $no_check_account_url);
 		}
 	}
 }

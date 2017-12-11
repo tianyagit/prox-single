@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 class WebappAccount extends WeAccount {
 	public function __construct($account = array()) {
-		$this->jumpUrl = url('webapp/display');
+		$this->noCheckAccountUrl = url('webapp/display');
 		$this->checkFrame = 'webapp';
 	}
 	
