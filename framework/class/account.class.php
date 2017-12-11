@@ -17,11 +17,7 @@ abstract class WeAccount {
 	public $uniacid = 0;
 	public $accountType;
 	public $accountDisplayUrl;
-	public $accountManageType;
-	public $accountTypeOffcial;
-	public $accountTypeName;
-	public $accountTypeTemplate;
-	public $accountTypeSupport;
+
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
@@ -44,6 +40,36 @@ abstract class WeAccount {
 		} else {
 			return error('-1', '公众号不存在或是已经被删除');
 		}
+	}
+
+	public static function createType($account_type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
+		switch ($account_type) {
+			case ACCOUNT_TYPE_APP_NORMAL:
+				$result = array(
+					'account_type' => ACCOUNT_TYPE_APP_NORMAL,
+					'account_type_name' => '小程序',
+					'account_ype_template' => '-wxapp',
+					'account_type_support' => 'wxapp_support'
+				);
+				break;
+			case ACCOUNT_TYPE_WEBAPP_NORMAL:
+				$result = array(
+					'account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL,
+					'account_type_name' => 'PC',
+					'account_ype_template' => '-webapp',
+					'account_type_support' => 'webapp_support'
+				);
+				break;
+			default:
+				$result = array(
+						'account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL,
+						'account_type_name' => '公众号',
+						'account_ype_template' => '',
+						'account_type_support' => 'app_support'
+				);
+				break;
+		}
+		return $result;
 	}
 	
 	static public function token($type = 1) {
