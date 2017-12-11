@@ -98,9 +98,7 @@ class Image {
 	 * @since version
 	 */
 	public function saveTo($path, $quality = null) {
-		if (!function_exists('safe_gpc_path')) {
-			load()->func('safe');
-		}
+		load()->func('safe');
 		$path = safe_gpc_path($path);
 		if (empty($path)) {
 			return false;
