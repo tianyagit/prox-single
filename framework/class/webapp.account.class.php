@@ -9,7 +9,7 @@ defined('IN_IA') or exit('Access Denied');
 class WebappAccount extends WeAccount {
 	public function __construct($account = array()) {
 		$this->accountDisplayUrl = url('webapp/display');
-		$this->frameType = 'webapp';
+		$this->accountType = 'webapp';
 	}
 	
 	public function checkIntoManage() {

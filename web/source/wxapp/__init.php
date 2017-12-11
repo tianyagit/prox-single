@@ -15,6 +15,6 @@ if (!in_array($action, array('display', 'post', 'manage'))) {
 }
 
 if (($action == 'version' && $do == 'home') || in_array($action, array('payment', 'refund', 'module-link-uniacid', 'entrance-link', 'front-download'))) {
-	$frame_type = $account_api->frameType();
-	define('FRAME', $frame_type);
+	$account_type = $account_api->accountType();
+	define('FRAME', $account_type);
 }

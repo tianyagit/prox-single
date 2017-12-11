@@ -11,7 +11,7 @@ class WxappAccount extends WeAccount {
 	public function __construct($account = array()) {
 		$this->account = $account;
 		$this->accountDisplayUrl = url('wxapp/display');
-		$this->frameType = 'wxapp';
+		$this->accountType = 'wxapp';
 	}
 
 	public function fetchAccountInfo() {

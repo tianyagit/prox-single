@@ -32,7 +32,7 @@ class WeiXinAccount extends WeAccount {
 	
 	public function __construct($account = array()) {
 		$this->accountDisplayUrl = url('account/display');
-		$this->frameType = 'account';
+		$this->accountType = 'account';
 	}
 	
 	public function fetchAccountInfo() {

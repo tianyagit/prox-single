@@ -17,7 +17,7 @@ if ($action == 'manage' && $do == 'list') {
 		$account_display_url = $account_api->accountDisplayUrl();
 		itoast('', $account_display_url);
 	} else {
-		$frame_type = $account_api->frameType();
-		define('FRAME', $frame_type);
+		$account_type = $account_api->accountType();
+		define('FRAME', $account_type);
 	}
 }

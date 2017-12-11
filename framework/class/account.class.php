@@ -15,7 +15,7 @@ abstract class WeAccount {
 	public $account;
 	public $tablename = '';
 	public $uniacid = 0;
-	public $frameType;
+	public $accountType;
 	public $accountDisplayUrl;
 	/**
 	 * 创建平台特定的公众号操作对象
@@ -95,8 +95,8 @@ abstract class WeAccount {
 	/**
 	 * 返回当前选中的frame
 	 */
-	public function frameType() {
-		return $this->frameType;
+	public function accountType() {
+		return $this->accountType;
 	}
 
 	/**
