@@ -10,8 +10,8 @@ load()->func('communication');
 class WxappAccount extends WeAccount {
 	public function __construct($account = array()) {
 		$this->account = $account;
-		$this->noCheckAccountUrl = url('wxapp/display');
-		$this->checkFrame = 'wxapp';
+		$this->accountDisplayUrl = url('wxapp/display');
+		$this->frameType = 'wxapp';
 	}
 
 	public function fetchAccountInfo() {
