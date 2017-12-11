@@ -10,6 +10,11 @@ class WebappAccount extends WeAccount {
 	public function __construct($account = array()) {
 		$this->accountDisplayUrl = url('webapp/display');
 		$this->accountType = 'webapp';
+		$this->accountManageType = ACCOUNT_TYPE_WEBAPP_NORMAL;
+		$this->accountTypeOffcial = 0;
+		$this->accountTypeName = 'WEBAPP';
+		$this->accountTypeTemplate = '-webapp';
+		$this->accountTypeSupport = 'webapp_support';
 	}
 	
 	public function checkIntoManage() {

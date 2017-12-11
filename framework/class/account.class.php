@@ -17,6 +17,11 @@ abstract class WeAccount {
 	public $uniacid = 0;
 	public $accountType;
 	public $accountDisplayUrl;
+	public $accountManageType;
+	public $accountTypeOffcial;
+	public $accountTypeName;
+	public $accountTypeTemplate;
+	public $accountTypeSupport;
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
