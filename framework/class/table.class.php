@@ -64,6 +64,10 @@ abstract class We7Table implements ArrayAccess {
 		return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
 	}
 
+	public function get() {
+
+	}
+
 	private function setAttribute($key, $value) {
 		if($this->canFill($key)) {
 			$this->attributes[$key] = $value;
