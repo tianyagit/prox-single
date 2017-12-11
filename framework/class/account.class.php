@@ -34,7 +34,7 @@ abstract class WeAccount {
 				$account = $_W['uniacid'];
 			}
 			$account = intval($account);
-			$account = uni_account($account);
+			$account = table('account')->getUniAccountByUniacid($account);
 		}
 		if (is_error($account)) {
 			$account = $_W['account'];
