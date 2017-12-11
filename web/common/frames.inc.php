@@ -348,25 +348,25 @@ $we7_system_menu['system'] = array(
 			'founder' => true
 		),
 		/* xend */
-			'webapp' => array(
-				'title' => 'PC',
-				'menu' => array(
-					'system_wxapp' => array(
-						'title' => 'PC',
-						'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
-						'icon' => 'wi wi-wxapp',
-						'permission_name' => 'system_webapp',
-						'sub_permission' => array(
-						),
+		'webapp' => array(
+			'title' => 'PC',
+			'menu' => array(
+				'system_wxapp' => array(
+					'title' => 'PC',
+					'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
+					'icon' => 'wi wi-wxapp',
+					'permission_name' => 'system_webapp',
+					'sub_permission' => array(
 					),
-					'system_module_wxapp' => array(
-						'title' => 'PC应用',
-						'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
-						'icon' => 'wi wi-wxapp-apply',
-						'permission_name' => 'system_module_wxapp',
-					),
-				)
-			),
+				),
+				'system_module_wxapp' => array(
+					'title' => 'PC应用',
+					'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
+					'icon' => 'wi wi-wxapp-apply',
+					'permission_name' => 'system_module_wxapp',
+				),
+			)
+		),
 		'user' => array(
 			'title' => '帐户/用户',
 			'menu' => array(
