@@ -313,6 +313,7 @@ function wxapp_version_detail_info($version_info) {
 	if (empty($version_info)) {
 		return array();
 	}
+	$version_info['cover_entrys'] = array();
 	if (!empty($version_info['modules'])) {
 		$version_info['modules'] = iunserializer($version_info['modules']);
 		if (!empty($version_info['modules'])) {
@@ -326,9 +327,11 @@ function wxapp_version_detail_info($version_info) {
 				//模块默认入口
 				$module_info['cover_entrys'] = module_entries($module['name'], array('cover'));
 				$version_info['modules'][] = $module_info;
-
 			}
 		}
+	}
+	if (count($version_info['modules']) > 0) {
+		$version_info['cover_entrys'] = $version_info['modules'][0]['cover_entrys'];
 	}
 	if (!empty($version_info['quickmenu'])) {
 		$version_info['quickmenu'] = iunserializer($version_info['quickmenu']);

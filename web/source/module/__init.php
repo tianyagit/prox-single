@@ -20,11 +20,11 @@ if (in_array($action, array('permission', 'manage-account'))) {
 }
 if (in_array($action, array('group', 'manage-system'))) {
 	define('FRAME', 'system');
+} else {
+	$account_param = WeAccount::createByType($_GPC['account_type']);
+	define('ACCOUNT_TYPE', $account_param->accountManageType);
+	define('ACCOUNT_TYPE_TEMPLATE', $account_param->accountTypeTemplate);
 }
-
-$account_param = WeAccount::createByType($_GPC['account_type']);
-define('ACCOUNT_TYPE', $account_param->accountManageType);
-define('ACCOUNT_TYPE_TEMPLATE', $account_param->accountTypeTemplate);
 
 /* xstart */
 if (IMS_FAMILY == 'x') {

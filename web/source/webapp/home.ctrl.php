@@ -8,6 +8,8 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('webapp');
+load()->model('account');
+
 $dos = array('switch', 'display');
 $do = in_array($do , $dos) ? $do : 'display';
 
