@@ -164,7 +164,7 @@ function message_notice_worker() {
 		return true;
 	}
 
-	$request_url = $api['data']['url'];
+	$request_url = $api_url['data']['url'];
 	$response = ihttp_get($request_url);
 	$uid = $_W['config']['setting']['founder'];
 	if ($response['code'] == 200) {
