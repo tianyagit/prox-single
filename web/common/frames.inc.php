@@ -742,7 +742,7 @@ if (IMS_FAMILY == 'x') {
 		'section' => array(),
 	);
 }
-
+/* xend */
 $we7_system_menu['webapp'] = array(
 	'title' => 'PC',
 	'icon' => 'wi wi-white-collar',
@@ -766,5 +766,5 @@ $we7_system_menu['webapp'] = array(
 		)
 	),
 );
-/* xend */
+
 return $we7_system_menu;
