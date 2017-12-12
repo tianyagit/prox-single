@@ -25,7 +25,7 @@ abstract class We7Table implements ArrayAccess {
 	protected $default = array();
 	// 是否自定追加创建时间
 	public $timestamps = true;
-
+	// 允许fill的字段
 	protected $fillable = array();
 
 
@@ -64,9 +64,6 @@ abstract class We7Table implements ArrayAccess {
 		return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
 	}
 
-	public function get() {
-
-	}
 
 	private function setAttribute($key, $value) {
 		if($this->canFill($key)) {
