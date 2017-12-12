@@ -514,6 +514,11 @@ function wxapp_code_generate($version_id) {
 	if (!starts_with($siteurl, 'https')) { //不是https 开头强制改为https开头
 		return error(1, '小程序域名必须为https');
 	}
+
+	if ($version_info['type'] == WXAPP_CREATE_MODULE && $version_info['entry_id'] <= 0) {
+		return error(1, '请先设置小程序入口');
+	}
+
 	$appid = $account_wxapp_info['key'];
 	$siteinfo = array(
 		'name' => $account_wxapp_info['name'],
