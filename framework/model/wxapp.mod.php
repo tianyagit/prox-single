@@ -331,7 +331,7 @@ function wxapp_version_detail_info($version_info) {
 		}
 	}
 	if (count($version_info['modules']) > 0) {
-		$version_info['cover_entrys'] = $version_info['modules'][0]['cover_entrys'];
+		$version_info['cover_entrys'] = $version_info['modules'][0]['cover_entrys']['cover'];
 	}
 	if (!empty($version_info['quickmenu'])) {
 		$version_info['quickmenu'] = iunserializer($version_info['quickmenu']);
@@ -653,8 +653,8 @@ function wxapp_code_current_appjson($version_id) {
 	load()->classs('cloudapi');
 	$version_info = wxapp_version($version_id);
 	//自定义appjson
-	if (!$version_info['use_default'] && isset($version['appjson'])) {
-		return unserialize($version['appjson']);
+	if (!$version_info['use_default'] && isset($version_info['appjson'])) {
+		return unserialize($version_info['appjson']);
 	}
 	//默认appjson
 	if ($version_info['use_default']) {
@@ -666,6 +666,7 @@ function wxapp_code_current_appjson($version_id) {
 		$cloud_api = new CloudApi();
 		$account_wxapp_info = wxapp_fetch($version_info['uniacid'], $version_id);
 		$commit_data = array('do' => 'appjson',
+			'wxapp_type'=> isset($version_info['type']) ? $version_info['type'] : 0,
 			'modules' => $account_wxapp_info['version']['modules'],
 		);
 		$cloud_appjson = $cloud_api->get('wxapp', 'upload2', $commit_data,
@@ -676,6 +677,7 @@ function wxapp_code_current_appjson($version_id) {
 		$appjson = $cloud_appjson['data']['appjson'];
 		pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)),
 			array('id' => $version_id));
+
 		return $appjson;
 	}
 }
@@ -719,7 +721,6 @@ function wxapp_code_custom_appjson_tobase64($version_id) {
 function wxapp_code_path_convert($attachment_id) {
 	load()->classs('image');
 	load()->func('file');
-	load()->func('system');
 
 	$attchid = intval($attachment_id);
 	global $_W;
