@@ -55,7 +55,6 @@ if ($do == 'custom_save') {
 
 if ($do == 'custom_convert_img') {
 	$attchid = intval($_GPC['att_id']);
-	/* @var  $attachment  AttachmentTable */
 	$filename = wxapp_code_path_convert($attchid);
 	iajax(0, $filename);
 }
