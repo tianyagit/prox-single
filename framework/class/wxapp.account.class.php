@@ -9,10 +9,13 @@ load()->func('communication');
 
 class WxappAccount extends WeAccount {
 	public function __construct($account = array()) {
-		if (empty($account)) {
-			return true;
-		}
 		$this->account = $account;
+		$this->accountDisplayUrl = url('wxapp/display');
+		$this->accountType = 'wxapp';
+		$this->accountManageType = ACCOUNT_TYPE_APP_NORMAL;
+		$this->accountTypeName = '小程序';
+		$this->accountTypeTemplate = '-wxapp';
+		$this->accountTypeSupport = 'wxapp_support';
 	}
 
 	public function fetchAccountInfo() {
@@ -71,18 +74,11 @@ class WxappAccount extends WeAccount {
 	}
 
 	public function checkIntoManage() {
-		if (empty($this->account) || (!empty($this->account['account']) && $this->account['account'] != ACCOUNT_TYPE_APP_NORMAL && !defined('IN_MODULE'))) {
-			return array(
-					'errno' => -1,
-					'url' => url('wxapp/display'),
-					'frame' => ''
-			);
+		global $_GPC;
+		if (empty($this->account) || (!empty($this->uniaccount['account']) && $this->uniaccount['account'] != ACCOUNT_TYPE_APP_NORMAL && !defined('IN_MODULE')) || empty($_GPC['version_id'])) {
+			return false;
 		}
-		return array(
-				'errno' => 0,
-				'url' => '',
-				'frame' => 'wxapp'
-		);
+		return true;
 	}
 
 	public function getAccessToken() {

@@ -313,6 +313,7 @@ function wxapp_version_detail_info($version_info) {
 	if (empty($version_info)) {
 		return array();
 	}
+	$version_info['cover_entrys'] = array();
 	if (!empty($version_info['modules'])) {
 		$version_info['modules'] = iunserializer($version_info['modules']);
 		if (!empty($version_info['modules'])) {
@@ -323,9 +324,14 @@ function wxapp_version_detail_info($version_info) {
 				$module_info = module_fetch($module['name']);
 				$module_info['account'] = $account;
 				unset($version_info['modules'][$module['name']]);
+				//模块默认入口
+				$module_info['cover_entrys'] = module_entries($module['name'], array('cover'));
 				$version_info['modules'][] = $module_info;
 			}
 		}
+	}
+	if (count($version_info['modules']) > 0) {
+		$version_info['cover_entrys'] = $version_info['modules'][0]['cover_entrys'];
 	}
 	if (!empty($version_info['quickmenu'])) {
 		$version_info['quickmenu'] = iunserializer($version_info['quickmenu']);
@@ -645,40 +651,33 @@ function wxapp_update_entry($version_id, $entry_id) {
  */
 function wxapp_code_current_appjson($version_id) {
 	load()->classs('cloudapi');
-	load()->classs('query');
-	$version = wxapp_version($version_id);
+	$version_info = wxapp_version($version_id);
+	//自定义appjson
+	if (!$version_info['use_default'] && isset($version['appjson'])) {
+		return unserialize($version['appjson']);
+	}
 	//默认appjson
-	if ($version['use_default']) {
-		$appjson = $version['default_appjson'];
+	if ($version_info['use_default']) {
+		$appjson = $version_info['default_appjson'];
 		if ($appjson) {
 			return unserialize($appjson);
 		}
-
 		// 从云中取
-		if (empty($appjson)) {
-
-			$cloud_api = new CloudApi();
-			$version_info = wxapp_version($version_id);
-			$account_wxapp_info = wxapp_fetch($version_info['uniacid'], $version_id);
-			$commit_data = array('do' => 'appjson',
-				'modules' => $account_wxapp_info['version']['modules'],
-			);
-			$cloud_appjson = $cloud_api->get('wxapp', 'upload2', $commit_data,
-				'json', false);
-			if (is_error($cloud_appjson)) { //数据访问失败
-				return null;
-			}
-			$appjson = $cloud_appjson['data']['appjson'];
-			pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)), 
-				array('id' => $version_id));
-			return $appjson;
+		$cloud_api = new CloudApi();
+		$account_wxapp_info = wxapp_fetch($version_info['uniacid'], $version_id);
+		$commit_data = array('do' => 'appjson',
+			'modules' => $account_wxapp_info['version']['modules'],
+		);
+		$cloud_appjson = $cloud_api->get('wxapp', 'upload2', $commit_data,
+			'json', false);
+		if (is_error($cloud_appjson)) { //数据访问失败
+			return null;
 		}
+		$appjson = $cloud_appjson['data']['appjson'];
+		pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)),
+			array('id' => $version_id));
+		return $appjson;
 	}
-	//自定义appjson
-	if (isset($version['appjson'])) { 
-		return unserialize($version['appjson']);
-	}
-	return null;
 }
 
 
@@ -690,33 +689,26 @@ function wxapp_code_current_appjson($version_id) {
  */
 function wxapp_code_custom_appjson_tobase64($version_id) {
 	load()->classs('image');
-	$version = wxapp_version($version_id);
-	
-	$appjson = unserialize($version['appjson']);
-	if ($appjson) {
-		if (isset($appjson['tabBar']) && isset($appjson['tabBar']['list'])) {
-			$tablist = &$appjson['tabBar']['list'];
-			foreach ($tablist as &$item) {
-				
-				if (isset($item['iconPath'])) {
-					$icon_path = $item['iconPath'];
-					
-					if (!starts_with($icon_path, 'data:image')) {
-						$item['iconPath'] = Image::create($icon_path)->resize(81, 81)->toBase64();
-					}
-				}
-				if (isset($item['selectedIconPath'])) {
-					$selected_icon_path = $item['selectedIconPath'];
-					if (!starts_with($path, 'data:image')) {
-						$item['selectedIconPath'] = Image::create($selected_icon_path)->resize(81, 81)->toBase64();
-					}
-				}
+	$version_info = wxapp_version($version_id);
+	$appjson = unserialize($version_info['appjson']);
+	if (!$appjson) {
+		return false;
+	}
+	if (isset($appjson['tabBar']) && isset($appjson['tabBar']['list'])) {
+		$tablist = &$appjson['tabBar']['list'];
+		foreach ($tablist as &$item) {
+			//判断默认图标和选中图片存在且不是base64编码的 进行base64编码
+			if (isset($item['iconPath']) && !starts_with($item['iconPath'], 'data:image')) {
+				$item['iconPath'] = Image::create($item['iconPath'])->resize(81, 81)->toBase64();
+			}
+			if (isset($item['selectedIconPath']) && !starts_with($item['selectedIconPath'], 'data:image')) {
+				$item['selectedIconPath'] = Image::create($item['selectedIconPath'])->resize(81, 81)->toBase64();
 			}
 		}
-		return $appjson;
 	}
+	return $appjson;
 
-	return null;
+
 }
 
 /**
@@ -724,16 +716,16 @@ function wxapp_code_custom_appjson_tobase64($version_id) {
  * @param $att_id  素材ID
  * @return null|string
  */
-function wxapp_code_path_convert($att_id) {
+function wxapp_code_path_convert($attachment_id) {
 	load()->classs('image');
 	load()->func('file');
 	load()->func('system');
 
-	$attchid = intval($att_id);
+	$attchid = intval($attachment_id);
 	global $_W;
-	/* @var  $attachment  AttachmentTable */
+	/* @var  $att_table  AttachmentTable */
 	$att_table = table('attachment');
-	$attachment = $att_table->local(true)->getById($attchid);
+	$attachment = $att_table->getById($attchid);
 	if ($attachment) {
 		$attach_path = $attachment['attachment'];
 		$ext = pathinfo($attach_path, PATHINFO_EXTENSION);
