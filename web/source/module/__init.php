@@ -5,14 +5,13 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-
-$account_api = WeAccount::create();
 if (in_array($action, array('permission', 'manage-account'))) {
 	define('FRAME', 'account');
 	$referer = (url_params(referer()));
 	if (empty($_GPC['version_id']) && intval($referer['version_id']) > 0) {
 		itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
+	$account_api = WeAccount::create();
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {
 		$account_display_url = $account_api->accountDisplayUrl();
