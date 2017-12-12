@@ -13,12 +13,12 @@ $_W['page']['title'] = '系统管理 - 菜单设置';
 $system_menu = cache_load('system_frame');
 /* vstart */
 if (IMS_FAMILY == 'v') {
-	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system');
+	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'pc');
 }
 /* vend */
 /* xstart */
 if (IMS_FAMILY == 'x') {
-	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'store');
+	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'store', 'pc');
 }
 /* xend */
 
