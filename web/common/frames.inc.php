@@ -232,7 +232,7 @@ $we7_system_menu['module'] = array(
 );
 
 $we7_system_menu['system'] = array(
-	'title' => '系统管理',
+	'title' => '系统',
 	'icon' => 'wi wi-setting',
 	'url' => url('home/welcome/system'),
 	'section' => array(
@@ -549,7 +549,7 @@ $we7_system_menu['system'] = array(
 );
 
 $we7_system_menu['site'] = array(
-	'title' => '站点管理',
+	'title' => '站点',
 	'icon' => 'wi wi-system-site',
 	'url' => url('cloud/profile'),
 	'section' => array(
@@ -718,7 +718,7 @@ $we7_system_menu['advertisement'] = array (
 );
 
 $we7_system_menu['appmarket'] = array(
-	'title' => '应用市场',
+	'title' => '市场',
 	'icon' => 'wi wi-market',
 	'url' => 'http://s.we7.cc',
 	'section' => array(),
@@ -727,7 +727,7 @@ $we7_system_menu['appmarket'] = array(
 );
 
 $we7_system_menu['help'] = array(
-	'title' => '帮助系统',
+	'title' => '帮助',
 	'icon' => 'wi wi-market',
 	'url' => url('help/display'),
 	'section' => array(),

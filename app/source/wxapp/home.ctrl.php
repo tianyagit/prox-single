@@ -5,7 +5,6 @@
  * $sn$.
 */
 defined('IN_IA') or exit('Access Denied');
-load()->func('safe');
 load()->model('wxapp');
 $dos = array('nav', 'slide', 'commend', 'wxapp_web');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';

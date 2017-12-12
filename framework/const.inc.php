@@ -235,6 +235,8 @@ define('MESSAGE_ORDER_TYPE', 1);
 define('MESSAGE_ACCOUNT_EXPIRE_TYPE', 2);
 //小程序过期消息类型
 define('MESSAGE_WECHAT_EXPIRE_TYPE', 5);
+//pc过期消息类型
+define('MESSAGE_WEBAPP_EXPIRE_TYPE', 6);
 //工单消息类型
 define('MESSAGE_WORKORDER_TYPE', 3);
 //注册消息类型

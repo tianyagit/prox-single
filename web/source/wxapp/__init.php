@@ -5,9 +5,9 @@
  */
 defined('IN_IA') or exit('Access Denied');
 $account_api = WeAccount::create();
-$check_manange = $account_api->checkIntoManage();
 
 if (!in_array($action, array('display', 'post', 'manage'))) {
+	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {
 		$account_display_url = $account_api->accountDisplayUrl();
 		itoast('', $account_display_url);
