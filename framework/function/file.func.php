@@ -407,7 +407,7 @@ function file_dir_remote_upload($dir_path) {
 	if (is_array($local_attachment) && !empty($local_attachment)) {
 		foreach ($local_attachment as $attachment) {
 			$filename = str_replace(ATTACHMENT_ROOT, '', $attachment);
-			list($file_account) = explode('/', $filename);
+			list($image_dir, $file_account) = explode('/', $filename);
 			if ($file_account == 'global') {
 				continue;
 			}
@@ -422,7 +422,6 @@ function file_dir_remote_upload($dir_path) {
 			}
 		}
 	}
-
 	return true;
 }
 
