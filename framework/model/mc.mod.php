@@ -708,7 +708,7 @@ function mc_fans_groups($force_update = false) {
 		$results = iunserializer($results);
 		return $results;
 	}
-	$account_api = WeAccount::create($_W['acid']);
+	$account_api = WeAccount::create($_W['uniacid']);
 	if (!$account_api->isTagSupported()) {
 		return array();
 	}
