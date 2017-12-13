@@ -580,6 +580,12 @@ $we7_system_menu['site'] = array(
 					'icon' => 'wi wi-message',
 					'permission_name' => 'system_cloud_sms',
 				),
+				'system_cloud_sms_sign' => array(
+					'title' => '短信签名',
+					'url' => url('cloud/sms-sign'),
+					'icon' => 'wi wi-message',
+					'permission_name' => 'system_cloud_sms_sign',
+				)
 			)
 		),
 		'setting' => array(

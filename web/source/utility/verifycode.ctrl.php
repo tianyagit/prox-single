@@ -3,6 +3,10 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
+
+load()->model('setting');
+$custom_sign = safe_gpc_string($_GPC['custom_sign']);
+
 $_W['uniacid'] = intval($_GPC['uniacid']);
 if (empty($_W['uniacid'])) {
 	$uniacid_arr = array(
@@ -66,7 +70,7 @@ if($receiver_type == 'email') {
 	}
 	$setting = uni_setting($_W['uniacid'], 'notify');
 	$content = "您的短信验证码为: {$code} 您正在使用{$uniacid_arr['name']}相关功能, 需要你进行身份确认. ".random(3);
-	$result = cloud_sms_send($receiver, $content);
+	$result = cloud_sms_send($receiver, $content, array(), $custom_sign);
 }
 
 if(is_error($result)) {
