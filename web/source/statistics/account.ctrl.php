@@ -31,7 +31,7 @@ if ($do == 'get_account_api') {
 
 	$support_type = array(
 		'time' => array('today', 'week', 'month', 'daterange'),
-		'divide' => array('bydate', 'byuniacid'),
+		'divide' => array('bysum', 'byavg', 'byhighest'),
 	);
 	$type = trim($_GPC['time_type']);
 	$divide_type = trim($_GPC['divide_type']);
@@ -45,41 +45,24 @@ if ($do == 'get_account_api') {
 			'end' => date('Ymd', strtotime($_GPC['daterange']['endDate'])),
 		);
 	}
-	if ($divide_type == 'bydate') {
-		$result = stat_visit_info_bydate($type, '', $daterange, true);
-	}
-	if ($divide_type == 'byuniacid') {
-		$result = stat_visit_info_byuniacid($type, '', $daterange, true);
-	}
-
+	$result = stat_visit_info_bydate($type, '', $daterange, true);
 	if (empty($result)) {
 		foreach ($account_list as $account) {
 			$data[] = 0;
 		}
 		iajax(0, array('data_x' => $accounts, 'data_y' => $data));
 	}
-	if ($divide_type == 'bydate') {
-		foreach ($result as $val) {
-			$data_x[] = $val['date'];
+	foreach ($result as $val) {
+		$data_x[] = $val['date'];
+		if ($divide_type == 'bysum') {
 			$data_y[] = $val['count'];
+		} elseif ($divide_type == 'byavg') {
+			$data_y[] = $val['avg'];
+		} elseif ($divide_type == 'byhighest') {
+			$data_y[] = $val['highest'];
 		}
-		iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
 	}
-	if ($divide_type == 'byuniacid') {
-		foreach ($account_list as $account) {
-			$have_count = false;
-			foreach ($result as $val) {
-				if ($account['uniacid'] == $val['uniacid']) {
-					$data[] = $val['count'];
-					$have_count = true;
-				}
-			}
-			if (empty($have_count)) {
-				$data[] = 0;
-			}
-		}
-		iajax(0, array('data_x' => $accounts, 'data_y' => $data));
-	}
+	iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
 }
 
 template('statistics/account');

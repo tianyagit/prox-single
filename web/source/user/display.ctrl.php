@@ -101,7 +101,6 @@ if ($do == 'operate') {
 		}
 	}
 	/* xend */
-	$users_table = table('users');
 	switch ($type) {
 		case 'check_pass':
 			$data = array('status' => 2);

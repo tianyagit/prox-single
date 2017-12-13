@@ -102,16 +102,25 @@ function stat_visit_info_bydate($type, $module = '', $daterange = array(), $is_s
 	if (empty($visit_info)) {
 		return $result;
 	}
+	$count = stat_account_count();
 	foreach ($visit_info as $info) {
 		if (empty($info['uniacid']) || empty($info['date'])) {
 			continue;
 		}
 		if ($result[$info['date']]['date'] == $info['date']) {
 			$result[$info['date']]['count'] += $info['count'];
+			$result[$info['date']]['highest'] = $result[$info['date']]['highest'] >= $info['count'] ? $result[$info['date']]['highest'] : $info['count'];
 		} else {
 			unset($info['module'], $info['uniacid']);
 			$result[$info['date']] = $info;
+			$result[$info['date']]['highest'] = $info['count'];
 		}
+	}
+	if (empty($result)) {
+		return $result;
+	}
+	foreach ($result as $key => $val) {
+		$result[$key]['avg'] = round($val['count'] / $count);
 	}
 	return $result;
 }
@@ -128,11 +137,7 @@ function stat_all_visit_statistics($type, $data) {
 		$modules = stat_modules_except_system();
 		$count = count($modules);
 	} elseif ($type == 'all_account') {
-		$account_table = table('account');
-		$account_table->searchWithType(array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH));
-		$account_table->accountRankOrder();
-		$account_list = $account_table->searchAccountList();
-		$count = count($account_list);
+		$count = stat_account_count();
 	}
 	$result = array(
 		'visit_sum' => 0,
@@ -167,4 +172,14 @@ function stat_modules_except_system() {
 		}
 	}
 	return $modules;
+}
+
+function stat_account_count() {
+	$count = 0;
+	$account_table = table('account');
+	$account_table->searchWithType(array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH));
+	$account_table->accountRankOrder();
+	$account_list = $account_table->searchAccountList();
+	$count = count($account_list);
+	return $count;
 }
