@@ -67,6 +67,7 @@ function uni_user_accounts($uid) {
  */
 function account_owner($uniacid = 0) {
 	global $_W;
+	load()->model('user');
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
 		return array();
@@ -108,7 +109,6 @@ function uni_accounts($uniacid = 0) {
 function uni_fetch($uniacid = 0) {
 	global $_W;
 	load()->model('mc');
-	load()->model('user');
 
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
 	$cachekey = "uniaccount:{$uniacid}";
@@ -116,12 +116,18 @@ function uni_fetch($uniacid = 0) {
 	if (!empty($cache)) {
 		return $cache;
 	}
-	$account = uni_account_default($uniacid);
-	if (empty($account)) {
+
+	$account_api = WeAccount::create($uniacid);
+	if (is_error($account_api)) {
+		return $account_api;
+	}
+	$account = $account_api->fetchAccountInfo();
+	if (empty($account) || $account['isdeleted'] == 1) {
 		return array();
 	}
-	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
-	$owner = user_single(array('uid' => $owneruid));
+
+	$owner = account_owner($uniacid);
+
 	$account['uid'] = $owner['uid'];
 	$account['starttime'] = $owner['starttime'];
 	if (!empty($account['endtime'])) {
@@ -338,6 +344,11 @@ function uni_groups($groupids = array(), $show_all = false) {
 								if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 									$row['wxapp'][$module['name']] = $module;
 								}
+
+								if ($module['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
+									$row['webapp'][$module['name']] = $module;
+								}
+
 								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 									if (!empty($module['main_module'])) {
 										continue;
@@ -560,6 +571,8 @@ function uni_account_tablename($type) {
 			return 'account_wechats';
 		case ACCOUNT_TYPE_APP_NORMAL:
 			return 'account_wxapp';
+		case ACCOUNT_TYPE_WEBAPP_NORMAL:
+			return 'account_webapp';
 	}
 }
 
@@ -600,7 +613,7 @@ function uni_user_see_more_info($user_type, $see_more = false) {
  * @return array
  */
 function uni_owner_account_nums($uid, $role) {
-	$account_num = $wxapp_num = 0;
+	$account_num = $wxapp_num = $webapp_num = 0;
 	$condition = array('uid' => $uid, 'role' => $role);
 	$uniacocunts = pdo_getall('uni_account_users', $condition, array(), 'uniacid');
 	if (!empty($uniacocunts)) {
@@ -612,11 +625,15 @@ function uni_owner_account_nums($uid, $role) {
 			if ($account['type'] == 4) {
 				$wxapp_num++;
 			}
+			if ($account['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+				$webapp_num++;
+			}
 		}
 	}
 	$num = array(
 		'account_num' => $account_num,
-		'wxapp_num' =>$wxapp_num
+		'wxapp_num' =>$wxapp_num,
+		'webapp_num'=>$webapp_num
 	);
 	return $num;
 }
@@ -698,22 +715,24 @@ function uni_account_rank_top($uniacid) {
 	return true;
 }
 
+/**
+ * 获取最后操作的uniacid，由于存在多个帐号类型
+ * 所以根据不同入口，获取相应的最后操作帐号
+ * @return intval $uniacid
+ */
 function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
 	$cache_lastaccount = (array)cache_load($cache_key);
-	if (strexists($_W['siteurl'], 'c=wxapp') || !empty($_GPC['version_id'])) {
+
+	if (strexists($_W['siteurl'], 'c=webapp')) {
+		$uniacid = $cache_lastaccount['webapp'];
+	} else if (strexists($_W['siteurl'], 'c=wxapp')) {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];
 	}
-	if (!empty($uniacid)) {
-		$account_info = uni_fetch($uniacid);
-		$role = permission_account_user_role($_W['uid'], $uniacid);
-		if (!empty($account_info) && $account_info['isdeleted'] == 1 || empty($role)) {
-			$uniacid = '';
-		}
-	}
+
 	return $uniacid;
 }
 

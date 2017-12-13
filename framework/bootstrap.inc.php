@@ -37,6 +37,7 @@ load()->classs('account');
 load()->model('cache');
 load()->model('account');
 load()->model('setting');
+load()->model('module');
 load()->library('agent');
 load()->classs('db');
 
@@ -62,8 +63,6 @@ if(DEVELOPMENT) {
 } else {
 	error_reporting(0);
 }
-//include __DIR__.'/../vendor/autoload.php';
-//we7debug();
 
 if(!in_array($_W['config']['setting']['cache'], array('mysql', 'memcache', 'redis'))) {
 	$_W['config']['setting']['cache'] = 'mysql';
@@ -164,4 +163,3 @@ $controller = $_GPC['c'];
 $action = $_GPC['a'];
 $do = $_GPC['do'];
 header('Content-Type: text/html; charset=' . $_W['charset']);
-

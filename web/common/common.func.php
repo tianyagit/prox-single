@@ -147,26 +147,6 @@ function checklogin() {
 	return true;
 }
 
-/**
- * 检查操作员是否已经选择一个公众号作为工作区域
- */
-function checkaccount() {
-	global $_W;
-	if (empty($_W['uniacid']) || (!empty($_W['account']) && !in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && !defined('IN_MODULE'))) {
-		itoast('', url('account/display'), 'info');
-	}
-}
-
-/**
- * 检查操作员是否已经选择一个小程序作为工作区域
- */
-function checkwxapp() {
-	global $_W;
-	if (empty($_W['uniacid']) || (!empty($_W['account']) && $_W['account']['type'] != ACCOUNT_TYPE_APP_NORMAL)) {
-		itoast('', url('wxapp/display'), 'info');
-	}
-}
-
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
@@ -486,9 +466,9 @@ function buildframes($framename = ''){
 		}
 		/* xstart */
 		if (IMS_FAMILY == 'x') {
-			if (!empty($entries['welcome']) && $_W['isfounder']) {
+			if (!empty($entries['system_welcome']) && $_W['isfounder']) {
 				$frames['account']['section']['platform_module_welcome']['title'] = '';
-				foreach ($entries['welcome'] as $key => $row) {
+				foreach ($entries['system_welcome'] as $key => $row) {
 					if (empty($row)) continue;
 					$frames['account']['section']['platform_module_welcome']['menu']['platform_module_welcome' . $row['eid']] = array (
 						'title' => "<i class='wi wi-appsetting'></i> {$row['title']}",
@@ -574,7 +554,7 @@ function buildframes($framename = ''){
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
 		if (!empty($framename)) {
-			if (($framename == 'system_welcome' || $entry['entry'] == 'welcome') && $_W['isfounder']) {
+			if (($framename == 'system_welcome' || $entry['entry'] == 'system_welcome') && $_W['isfounder']) {
 				$frames = $frames['account'];
 				$frames['section'] = array('platform_module_welcome' => $frames['section']['platform_module_welcome']);
 			} else {

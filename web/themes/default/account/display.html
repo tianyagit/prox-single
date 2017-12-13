@@ -1,7 +1,7 @@
 {template 'common/header'}
 <div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" ng-cloak>
 	<div class="panel-heading">
-		<i class="wi wi-wechat" style="font-size: 24px; margin-right: 10px; vertical-align:middle;"></i>请选择您要操作的公众号
+		<span class="panel-heading-left"><i class="wi wi-wechat" style="font-size: 24px; margin-right: 10px; vertical-align:middle;"></i>请选择您要操作的公众号</span>
 		<div class="font-default pull-right">
 			<!-- xstart -->
 			{if IMS_FAMILY == 'x'}
@@ -24,19 +24,10 @@
 	</div>
 	<div class="panel-body" >
 		{if !$_W['isfounder'] && !empty($account_info['uniacid_limit'])}
-			<div class="alert alert-warning">
+			<div class="alert alert-warning hidden">
 				温馨提示：
 				<i class="fa fa-info-circle"></i>
-				<!-- xstart -->
-				{if IMS_FAMILY == 'x'}
-				Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>，{if !user_is_vice_founder() && !empty($account_info['vice_group_name'])}<span class="text-strong">{$account_info['vice_group_name']}，</span>{/if}
-				{/if}
-				<!-- xend -->
-				<!-- vstart -->
-				{if IMS_FAMILY == 'v'}
 				Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>
-				{/if}
-				<!-- vend -->
 				账号有效期限：<span class="text-strong">{php echo date('Y-m-d', $_W['user']['starttime'])} ~~ {if empty($_W['user']['endtime'])}无限制{else}{php echo date('Y-m-d', $_W['user']['endtime'])}{/if}</span>，
 				可创建 <span class="text-strong">{$account_info['maxaccount']} </span>个公众号，已创建<span class="text-strong"> {$account_info['uniacid_num']} </span>个，还可创建 <span class="text-strong">{$account_info['uniacid_limit']} </span>个公众号。
 			</div>
@@ -90,7 +81,7 @@
 	angular.module('accountApp').value('config', {
 		accountList: {php echo !empty($account_list) ? json_encode($account_list) : 'null'},
 		accountTotal: "{$total}",
-		pagesize: "{$pagesize}",
+		pagesize: "{$psize}",
 		links: {
 			rank: "{php echo url('account/display/rank')}",
 			display: "{php echo url('account/display/display')}",

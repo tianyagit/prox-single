@@ -38,7 +38,7 @@ if (!$entry['direct']) {
 	}
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
-		if (empty($_W['uniacid']) && $entry['entry'] != 'welcome') {
+		if (empty($_W['uniacid']) && $entry['entry'] != 'system_welcome') {
 			if (!empty($_GPC['version_id'])) {
 				itoast('', url('wxapp/display'));
 			} else {
@@ -94,17 +94,33 @@ $_GPC['do'] = $entry['do'];
 
 $modules = uni_modules();
 $_W['current_module'] = $modules[$entry['module']];
-$site = WeUtility::createModuleSite($entry['module']);
 
-define('IN_MODULE', $entry['module']);
+
+
 /* xstart */
 if (IMS_FAMILY == 'x') {
-	if ($entry['entry'] == 'welcome') {
-		define('SYSTEM_WELCOME_MODULE', true);
+	if ($entry['entry'] == 'system_welcome') {
+		$site = WeUtility::createModuleSystemWelcome($entry['module']);
+	} else {
+		$site = WeUtility::createModuleSite($entry['module']);
 	}
 }
 /* xend */
 
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	$site = WeUtility::createModuleSite($entry['module']);
+}
+/* vend */
+
+define('IN_MODULE', $entry['module']);
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if ($entry['entry'] == 'system_welcome') {
+		define('SYSTEM_WELCOME_MODULE', true);
+	}
+}
+/* xend */
 
 if (!is_error($site)) {
 	if ($_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) {
@@ -121,7 +137,7 @@ if (!is_error($site)) {
 	/* vend */
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
-		$do_function = $entry['entry'] == 'welcome' ? 'doSystem' : 'doWeb';
+		$do_function = defined('SYSTEM_WELCOME_MODULE') ? 'doPage' : 'doWeb';
 		$method = $do_function . ucfirst($entry['do']);
 	}
 	/* xend */

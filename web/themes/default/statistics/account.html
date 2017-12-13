@@ -59,7 +59,7 @@
 require(['angular-chart', 'daterangepicker'], function() {
 	angular.module('statisticsApp').value('config', {
 		'links': {
-			'accountApi': "{php echo url('statistics/account-analysis/get_account_api')}",
+			'accountApi': "{php echo url('statistics/account/get_account_api')}",
 		},
 	});
 	angular.bootstrap($('#js-system-account-analysis'), ['statisticsApp']);

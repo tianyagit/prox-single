@@ -5,10 +5,13 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if ($action != 'entry') {
-	checkaccount();
-}
 
-if (!($action == 'multi' && $do == 'post')) {
-	define('FRAME', 'account');
+$account_api = WeAccount::create();
+$check_manange = $account_api->checkIntoManage();
+
+if (is_error($check_manange)) {
+	$account_display_url = $account_api->accountDisplayUrl();
+	itoast('', $account_display_url);
 }
+$account_type = $account_api->accountType();
+define('FRAME', $account_type);

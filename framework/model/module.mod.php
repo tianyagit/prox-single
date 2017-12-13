@@ -69,7 +69,16 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 	load()->func('communication');
 
 	global $_W;
-	$ts = array('rule', 'cover', 'menu', 'home', 'profile', 'shortcut', 'function', 'mine', 'welcome');
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$ts = array('rule', 'cover', 'menu', 'home', 'profile', 'shortcut', 'function', 'mine', 'system_welcome');
+	}
+	/* xend */
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		$ts = array('rule', 'cover', 'menu', 'home', 'profile', 'shortcut', 'function', 'mine');
+	}
+	/* vend */
 	if(empty($types)) {
 		$types = $ts;
 	} else {
@@ -120,7 +129,7 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 			if($bind['entry'] == 'shortcut') {
 				$url = murl("entry", array('eid' => $bind['eid']));
 			}
-			if($bind['entry'] == 'welcome') {
+			if($bind['entry'] == 'system_welcome') {
 				$url = wurl("site/entry", array('eid' => $bind['eid']));
 			}
 
@@ -373,6 +382,8 @@ function module_get_all_unistalled($status, $cache = true)  {
 		$account_type = 'wxapp';
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 		$account_type = 'app';
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+		$account_type = 'webapp';
 	}
 	if (!is_array($uninstallModules) || empty($uninstallModules['modules'][$status][$account_type]) || intval($uninstallModules['cloud_m_count']) !== intval($cloud_m_count) || is_error($get_cloud_m_count)) {
 		$uninstallModules = cache_build_uninstalled_module();
@@ -903,4 +914,13 @@ function module_clerk_info($module_name) {
 		}
 	}
 	return $user_permissions;
+}
+
+/**
+ * 将应用列表页的模块置顶
+ */
+function module_rank_top($module_name) {
+	global $_W;
+	$result = table('module')->moduleSetRankTop($module_name);
+	return empty($result) ? true : false;
 }

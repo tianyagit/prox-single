@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display', 'change_read_status');
+$dos = array('display', 'change_read_status', 'event_notice');
 $do = in_array($do, $dos) ? $do : 'display';
 load()->model('message');
 
@@ -30,7 +30,7 @@ if ($do == 'display') {
 	/* vend */
 
 	if ($type == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
-		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE);
+		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
 	}
 	$is_read = !empty($_GPC['is_read']) ? trim($_GPC['is_read']) : '';
 
@@ -57,5 +57,16 @@ if ($do == 'change_read_status') {
 	$id = $_GPC['id'];
 	message_notice_read($id);
 	iajax(0, '成功');
+}
+
+if ($do == 'event_notice') {
+	if (!pdo_tableexists('message_notice_log')) {
+		iajax(-1);
+	}
+	$message = message_event_notice_list();
+	message_account_expire();
+	message_notice_worker();
+	iajax(0, $message);
+
 }
 template('message/notice');

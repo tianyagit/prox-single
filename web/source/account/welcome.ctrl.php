@@ -15,7 +15,7 @@ $settings = $_W['setting'];
 /* xstart */
 if (IMS_FAMILY == 'x') {
 	if (!empty($settings['site_welcome_module'])) {
-		$site = WeUtility::createModuleSite($settings['site_welcome_module']);
+		$site = WeUtility::createModuleSystemWelcome($settings['site_welcome_module']);
 		if (!is_error($site)) {
 			exit($site->systemWelcomeDisplay());
 		}

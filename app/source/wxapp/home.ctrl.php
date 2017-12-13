@@ -2,23 +2,23 @@
 /**
  * 小程序的接口文件
  * [WeEngine System] Copyright (c) 2013 WE7.CC
- * $sn$
+ * $sn$.
 */
 defined('IN_IA') or exit('Access Denied');
-
-$dos = array('nav', 'slide', 'commend');
+load()->model('wxapp');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
 
 if ($do == 'nav') {
 	$navs = pdo_getall('site_nav', array(
-		'uniacid' => $_W['uniacid'], 
-		'multiid' => $multiid, 
-		'status' => 1, 
-		'icon !=' => ''
+		'uniacid' => $_W['uniacid'],
+		'multiid' => $multiid,
+		'status' => 1,
+		'icon !=' => '',
 	), array('url', 'name', 'icon'), '', 'displayorder DESC');
-	
+
 	if (!empty($navs)) {
 		foreach ($navs as $i => &$row) {
 			$row['icon'] = tomedia($row['icon']);
@@ -39,8 +39,8 @@ if ($do == 'nav') {
 } elseif ($do == 'commend') {
 	//获取一级分类
 	$category = pdo_getall('site_category', array(
-		'uniacid' => $_W['uniacid'], 
-		'multiid' => $multiid
+		'uniacid' => $_W['uniacid'],
+		'multiid' => $multiid,
 	), array('id', 'name', 'parentid'), '', 'displayorder DESC');
 	//一级分类不能添加文章，推荐时获取到其子类
 	if (!empty($category)) {
@@ -61,4 +61,21 @@ if ($do == 'nav') {
 		}
 	}
 	message(error(0, $category), '', 'ajax');
+}
+
+if ($do == 'wxapp_web') {
+	$version = trim($_GPC['v']);
+	$version_info = wxapp_version_by_version($version);
+	$url = safe_gpc_url($_GPC['url']);
+	if (empty($url)) {
+		//无需查询绑定域名 因为本do方法就是根据小程序域名访问的
+		$url = murl('entry', array('eid'=>$version_info['entry_id']), true, true);
+	}
+	if ($url) {
+		setcookie(session_name(), $_W['session_id']);
+		header('Location:' . $url);
+		exit;
+	}
+	//跳转到错误页面
+	message('找不到模块入口', 'refresh', 'error');
 }

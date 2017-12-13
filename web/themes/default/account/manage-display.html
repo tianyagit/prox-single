@@ -21,7 +21,7 @@
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
 		{if !$_W['isfounder'] && !empty($account_info['uniacid_limit']) || user_is_vice_founder()}
-		<div class="alert alert-warning">
+		<div class="alert alert-warning hidden">
 			温馨提示：
 			<i class="fa fa-info-circle"></i>
 			Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>，{if !user_is_vice_founder() && !empty($account_info['vice_group_name'])} <span class="text-strong">{$account_info['vice_group_name']}，</span>{/if}
@@ -34,7 +34,7 @@
 	<!-- vstart -->
 	{if IMS_FAMILY == 'v'}
 		{if !$_W['isfounder'] && !empty($account_info['uniacid_limit'])}
-		<div class="alert alert-warning">
+		<div class="alert alert-warning hidden">
 			温馨提示：
 			<i class="fa fa-info-circle"></i>
 			Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>
@@ -111,7 +111,7 @@
 	<tr class="color-gray" ng-repeat="list in lists">
 		<td class="text-left td-link">
 			{if $role_type}
-			<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}">
+			<a ng-href="{{links.post}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}"></a>
 			{else}
 			<a href="javascript:;">
 			{/if}

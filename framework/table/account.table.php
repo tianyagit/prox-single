@@ -55,7 +55,7 @@ class AccountTable extends We7Table {
 	 */
 	public function accountWechatsInfo($uniacids, $uid) {
 		return $this->query->from('uni_account', 'a')
-				->leftjoin(uni_account_tablename(ACCOUNT_TYPE_OFFCIAL_NORMAL), 'w')
+				->leftjoin('account_wechats', 'w')
 				->on(array('w.uniacid' => 'a.uniacid'))
 				->leftjoin('uni_account_users', 'au')
 				->on(array('a.uniacid' => 'au.uniacid'))
@@ -73,7 +73,7 @@ class AccountTable extends We7Table {
 	 */
 	public function accountWxappInfo($uniacids, $uid) {
 		return $this->query->from('uni_account', 'a')
-				->leftjoin(uni_account_tablename(ACCOUNT_TYPE_APP_NORMAL), 'w')
+				->leftjoin('account_wxapp', 'w')
 				->on(array('w.uniacid' => 'a.uniacid'))
 				->leftjoin('uni_account_users', 'au')
 				->on(array('a.uniacid' => 'au.uniacid'))
@@ -127,9 +127,47 @@ class AccountTable extends We7Table {
 		global $_W;
 		if (user_is_founder($_W['uid']) && !user_is_vice_founder()) {
 			$this->query->leftjoin('uni_account_users', 'c')->on(array('a.uniacid' => 'c.uniacid'));
+			$this->query->leftjoin('users', 'u')->on(array('c.uid' => 'u.uid'))
+				->where('c.role', 'owner')->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP);
 		}
-		$this->query->leftjoin('users', 'u')->on(array('c.uid' => 'u.uid'))
-					->where('c.role', 'owner')->where('u.endtime !=', 0)->where('u.endtime <', TIMESTAMP);
+
 		return $this;
+	}
+	
+	public function getWechatappAccount($acid) {
+		return $this->query->from('account_wechats')->where('acid', $acid)->get();
+	}
+	
+	public function getWxappAccount($acid) {
+		return $this->query->from('account_wxapp')->where('acid', $acid)->get();
+	}
+	
+	public function getWebappAccount($acid) {
+		return $this->query->from('account_webapp')->where('acid', $acid)->get();
+	}
+	
+	public function getUniAccountByUniacid($uniacid) {
+		$uniaccount = $this->query->from('uni_account')->where('uniacid', $uniacid)->get();
+		if (!empty($uniaccount['default_acid'])) {
+			$subaccount = $this->query->from('account')->where('acid', $uniaccount['default_acid'])->get();
+		} else {
+			$subaccount = $this->query->from('account')->where('uniacid', $uniacid)->orderby('acid', 'desc')->get();
+		}
+		if (empty($subaccount)) {
+			return array();
+		} else {
+			return array_merge($uniaccount, $subaccount);
+		}
+	}
+	
+	public function getAccountOwner($uniacid) {
+		if (empty($uniacid)) {
+			return array();
+		}
+		$owneruid = $this->query->from('uni_account_users')->where(array('uniacid' => $uniacid, 'role' => ACCOUNT_MANAGE_NAME_OPERATOR))->getcolumn('uid');
+		if (empty($owneruid)) {
+			return array();
+		}
+		return table('users')->usersInfo($owneruid);
 	}
 }

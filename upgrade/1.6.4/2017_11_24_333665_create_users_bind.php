@@ -18,7 +18,7 @@ class CreateUsersBind {
 				  `third_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '绑定类型 1:qq  2:weixin 3手机号',
 				  `third_nickname` varchar(255) NOT NULL DEFAULT '' COMMENT '第三方昵称',
 				  PRIMARY KEY (`id`),
-				  UNIQUE KEY `bind_sign` (`bind_sign`),
+				  KEY `bind_sign` (`bind_sign`),
 				  KEY `uid` (`uid`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 			pdo_run($sql);
