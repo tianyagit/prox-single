@@ -73,8 +73,10 @@ function stat_visit_info_byuniacid($type, $module = '', $daterange = array(), $i
 			}
 			if ($result[$info['uniacid']]['uniacid'] == $info['uniacid']) {
 				$result[$info['uniacid']]['count'] += $info['count'];
+				$result[$info['uniacid']]['highest'] = $result[$info['uniacid']]['highest'] >= $info['count'] ? $result[$info['uniacid']]['highest'] : $info['count'];
 			} else {
 				$result[$info['uniacid']] = $info;
+				$result[$info['uniacid']]['highest'] = $info['count'];
 			}
 		} else {
 			if (empty($info['module'])) {
@@ -82,10 +84,17 @@ function stat_visit_info_byuniacid($type, $module = '', $daterange = array(), $i
 			}
 			if ($result[$info['module']]['module'] == $info['module']) {
 				$result[$info['module']]['count'] += $info['count'];
+				$result[$info['module']]['highest'] = $result[$info['module']]['highest'] >= $info['count'] ? $result[$info['module']]['highest'] : $info['count'];
 			} else {
 				$result[$info['module']] = $info;
+				$result[$info['module']]['highest'] = $info['count'];
 			}
 		}
+	}
+	$modules = stat_modules_except_system();
+	$count = count($modules);
+	foreach ($result as $key => $val) {
+		$result[$key]['avg'] = round($val['count'] / $count);
 	}
 	return $result;
 }

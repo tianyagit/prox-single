@@ -59,10 +59,10 @@ if ($do == 'get_account_api') {
 		if ($type == 'daterange') {
 			$data_x = stat_date_range($daterange['start'], $daterange['end']);
 		}
-		foreach ($data_x as $account) {
-			$data[] = 0;
+		foreach ($data_x as $val) {
+			$data_y[] = 0;
 		}
-		iajax(0, array('data_x' => $data_x, 'data_y' => $data));
+		iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
 	}
 	foreach ($result as $val) {
 		$data_x[] = $val['date'];

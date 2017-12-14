@@ -3,7 +3,7 @@
 	<li class="active"><a href="{url 'statistics/app'}">访问统计信息</a></li>
 	<li><a href="{url 'statistics/setting'}">访问统计设置</a></li>
 </ul>
-<div class="api">
+<div class="api" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl2" ng-cloak>
 	<div class="panel we7-panel api-target">
 		<div class="panel-heading">今日/昨日关键指标</div>
 		<div class="panel-body we7-padding-vertical">
@@ -30,28 +30,53 @@
 			</div>
 		</div>
 	</div>
-	<div class="panel we7-panel" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl" ng-cloak>
+	<div class="we7-margin-vertical color-dark font-lg">公众号API访问统计</div>
+	<div class="panel we7-panel">
 		<div class="panel-heading tab">
-			<a href="javascript:;">总访问数</a>
-			<a href="javascript:;" ng-class="{'active': divideType == 'bydate'}" ng-click="changeDivideType('bydate')">按日期</a>
-			<a href="javascript:;" ng-class="{'active': divideType == 'byuniacid'}" ng-click="changeDivideType('byuniacid')">按模块</a>
-			<a href="javascript:;" class="hidden">最高访问数</a>
+			<a href="javascript:;">关键指标详解</a>
+			<a href="javascript:;" ng-class="{'active': accountDivideType == 'bysum'}" ng-click="changeDivideType('account', 'bysum')">公众号总访问数</a>
+			<a href="javascript:;" ng-class="{'active': accountDivideType == 'byavg'}" ng-click="changeDivideType('account', 'byavg')">公众号平均访问数</a>
+			<a href="javascript:;" ng-class="{'active': accountDivideType == 'byhighest'}" ng-click="changeDivideType('account', 'byhighest')">公众号最高访问数</a>
 		</div>
 		<div class="panel-body data-view">
 			<div class="tab-bar-time clearfrix">
 				<span class="we7-margin-right">时间</span>
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-default" ng-class="{'active': timeType == 'today'}" ng-click="getModuleApi('today')" ng-if="divideType == 'byuniacid'">今日统计</button>
-					<button type="button" class="btn btn-default" ng-class="{'active': timeType == 'week'}" ng-click="getModuleApi('week')">周统计</button>
-					<button type="button" class="btn btn-default" ng-class="{'active': timeType == 'month'}" ng-click="getModuleApi('month')">月统计</button>
-					<div class="btn-group" role="group" ng-class="{'active': timeType == 'daterange'}">
-						<button class="btn btn-default daterange daterange-date" we7-date-range-picker ng-model="dateRange"><span>{{dateRange.startDate}} </span>至<span> {{dateRange.endDate}}</span> <i class="fa fa-calendar"></i></button>
+					<button type="button" class="btn btn-default" ng-class="{'active': accountTimeType == 'today'}" ng-click="getModuleApi('account', 'today')">今日统计</button>
+					<button type="button" class="btn btn-default" ng-class="{'active': accountTimeType == 'week'}" ng-click="getModuleApi('account', 'week')">周统计</button>
+					<button type="button" class="btn btn-default" ng-class="{'active': accountTimeType == 'month'}" ng-click="getModuleApi('account', 'month')">月统计</button>
+					<div class="btn-group" role="group">
+						<button class="btn btn-default daterange daterange-date" we7-date-range-picker ng-model="accountDateRange"><span>{{accountDateRange.startDate}} </span>至<span> {{accountDateRange.endDate}}</span> <i class="fa fa-calendar"></i></button>
 					</div>
 				</div>
 			</div>
 			<div class="col-sm-12">
-				<canvas class="chart chart-horizontal-bar" chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors" height="{{height}}" ng-if="divideType == 'byuniacid'"></canvas>
-				<canvas class="chart chart-line" chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors" ng-if="divideType == 'bydate'"></canvas>
+				<canvas class="chart chart-line" chart-options="options" chart-data="accountData" chart-labels="accountLabels" chart-colors="colors"></canvas>
+			</div>
+		</div>
+	</div>
+	<div class="we7-margin-vertical color-dark font-lg">应用模块API统计</div>
+	<div class="panel we7-panel">
+		<div class="panel-heading tab">
+			<a href="javascript:;">关键指标详解</a>
+			<a href="javascript:;" ng-class="{'active': moduleDivideType == 'bysum'}" ng-click="changeDivideType('module', 'bysum')">总访问数</a>
+			<a href="javascript:;" ng-class="{'active': moduleDivideType == 'byavg'}" ng-click="changeDivideType('module', 'byavg')">平均访问数</a>
+			<a href="javascript:;" ng-class="{'active': moduleDivideType == 'byhighest'}" ng-click="changeDivideType('module', 'byhighest')">最高访问数</a>
+		</div>
+		<div class="panel-body data-view">
+			<div class="tab-bar-time clearfrix">
+				<span class="we7-margin-right">时间</span>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" ng-class="{'active': moduleTimeType == 'today'}" ng-click="getModuleApi('module', 'today')">今日统计</button>
+					<button type="button" class="btn btn-default" ng-class="{'active': moduleTimeType == 'week'}" ng-click="getModuleApi('module', 'week')">周统计</button>
+					<button type="button" class="btn btn-default" ng-class="{'active': moduleTimeType == 'month'}" ng-click="getModuleApi('module', 'month')">月统计</button>
+					<div class="btn-group" role="group">
+						<button class="btn btn-default daterange daterange-date" we7-date-range-picker ng-model="moduleDateRange"><span>{{moduleDateRange.startDate}} </span>至<span> {{moduleDateRange.endDate}}</span> <i class="fa fa-calendar"></i></button>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-12">
+				<canvas class="chart chart-horizontal-bar" chart-options="options" chart-data="moduleData" chart-labels="moduleLabels" chart-colors="colors" height="{{height}}"></canvas>
 				{if user_is_founder($_W['uid']) && !user_is_vice_founder()}
 				<div class="we7-margin-vertical text-right">
 					<a href="javascript:;" class="color-default" ng-click="changeStatus()">
@@ -88,7 +113,6 @@
 							</div>
 							<div class="content">
 								找到没有统计数据的应用，联系<span class="color-default">应用模块的开发者</span>，让开发者将代码更新提交后，则可生成模块的统计数据。
-								<!--<div><a href="#" class="color-default">联系开发者 ></a></div>-->
 							</div>
 						</div>
 					</div>
@@ -102,9 +126,99 @@
 require(['angular-chart', 'daterangepicker'], function() {
 	angular.module('statisticsApp').value('config', {
 		'links': {
+			'accountApi': "{php echo url('statistics/app/get_account_api')}",
 			'moduleApi': "{php echo url('statistics/app/get_module_api')}",
 		},
 	});
+angular.module('statisticsApp').controller('HorizontalBarCtrl2', ['$scope', '$http', 'serviceCommon', 'config', function($scope, $http, serviceCommon, config) {
+	$scope.active = true;
+	$scope.height = 150;
+	$scope.code = "<script type=\"text\/javascript\" src=\"\{$_W['siteroot']\}app/index.php?i=\{$_W['uniacid']\}&c=utility&a=visit&do=showjs&m=\{$_W['current_module']['name']\}\"><\/script>";
+	$scope.show = true;
+	$scope.accountDateRange = { startDate: moment().format('YYYY-MM-DD'), endDate: moment().format('YYYY-MM-DD')};
+	$scope.moduleDateRange = { startDate: moment().format('YYYY-MM-DD'), endDate: moment().format('YYYY-MM-DD')};
+	$scope.changeDivideType = function (accountOrModule, type) {
+		if (accountOrModule == 'account') {
+			$scope.accountDivideType = type;
+		}
+		if (accountOrModule == 'module') {
+			$scope.moduleDivideType = type;
+		}
+		$scope.getModuleApi(accountOrModule, 'week');
+	};
+	$scope.getModuleApi = function(accountOrModule, timeType) {
+		var link = '';
+		var divideType = '';
+		var dateRange = '';
+		if (accountOrModule == 'account') {
+			$scope.accountTimeType = timeType;
+			$scope.accountLabels = [];
+			$scope.accountData = [];
+			link = config.links.accountApi;
+			divideType = $scope.accountDivideType;
+			dateRange = $scope.accountDateRange;
+		}
+		if (accountOrModule == 'module') {
+			$scope.moduleTimeType = timeType;
+			$scope.moduleLabels = [];
+			$scope.moduleData = [];
+			link = config.links.moduleApi;
+			divideType = $scope.moduleDivideType;
+			dateRange = $scope.moduleDateRange;
+		}
+		$http.post(link, {'divide_type': divideType, 'time_type' : timeType, 'daterange': dateRange})
+			.success(function(data) {
+				console.log(data);
+				if (accountOrModule == 'account') {
+					$scope.accountLabels = data.message.message.data_x;
+					$scope.accountData = [data.message.message.data_y];
+				}
+				if (accountOrModule == 'module') {
+					var count = data.message.message.data_y.length;
+					switch(count) {
+						case 1:
+							$scope.height = 30;
+							break;
+						case 2:
+							$scope.height = 40;
+							break;
+						default:
+							$scope.height = parseInt(count) * 15;
+					}
+					$scope.moduleLabels = data.message.message.data_y;
+					$scope.moduleData = data.message.message.data_x;
+				}
+			})
+	};
+	$scope.accountDivideType = 'bysum';
+	$scope.moduleDivideType = 'bysum';
+	$scope.accountTimeType = 'week';
+	$scope.moduleTimeType = 'week';
+	$scope.getModuleApi('account', $scope.accountTimeType);
+	$scope.getModuleApi('module', $scope.moduleTimeType);
+	$scope.success = function(id) {
+		var id = parseInt(id);
+		var obj = $('<span class="label label-success" style="position:absolute;z-index:10;width:90px;height:34px;line-height:28px;"><i class="fa fa-check-circle"></i> 复制成功</span>');
+		serviceCommon.copySuccess(id, obj);
+	};
+	$scope.changeStatus = function() {
+		$scope.show = $scope.show ? false : true;
+	};
+	$scope.$watch('moduleDateRange', function(newVal, oldVal) {
+		if(newVal && newVal != oldVal){
+			$scope.moduleDateRange.startDate = moment(newVal.startDate).format("YYYY-MM-DD");
+			$scope.moduleDateRange.endDate = moment(newVal.endDate).format("YYYY-MM-DD");
+			$scope.getModuleApi('module', 'daterange');
+		}
+	}, true);
+	$scope.$watch('accountDateRange', function(newVal, oldVal) {
+		if(newVal && newVal != oldVal){
+			$scope.accountDateRange.startDate = moment(newVal.startDate).format("YYYY-MM-DD");
+			$scope.accountDateRange.endDate = moment(newVal.endDate).format("YYYY-MM-DD");
+			$scope.getModuleApi('account', 'daterange');
+		}
+	}, true);
+}]);
 	angular.bootstrap($('#js-statistics-app-display'), ['statisticsApp']);
 })
 </script>
