@@ -16,7 +16,6 @@ $setting_sms_sign = !empty($setting_sms_sign['site_sms_sign']) ? $setting_sms_si
 
 if ($do == 'display') {
 	$cloud_sms_info = cloud_sms_info();
-	$cloud_sms_info['sms_sign'] = array('11', '22', '33');
 	$cloud_sms_signs = $cloud_sms_info['sms_sign'];
 	$setting_sms_sign['register'] = !empty($setting_sms_sign['register']) ? $setting_sms_sign['register'] : '';
 	$setting_sms_sign['find_password'] = !empty($setting_sms_sign['find_password']) ? $setting_sms_sign['find_password'] : '';
