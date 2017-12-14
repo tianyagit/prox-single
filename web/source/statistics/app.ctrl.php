@@ -37,33 +37,40 @@ if ($do == 'get_account_api') {
 			'end' => date('Ymd', strtotime($_GPC['daterange']['endDate'])),
 		);
 	}
-	$result = stat_visit_info_byuniacid($type, '', $daterange);
+	$result = stat_visit_info_bydate($type, '', $daterange);
+	if ($type == 'today') {
+		$data_x = array(date('Ymd'));
+	}
+	if ($type == 'week') {
+		$data_x = stat_date_range(date('Ymd', strtotime('-7 days')), date('Ymd'));
+	}
+	if ($type == 'month') {
+		$data_x = stat_date_range(date('Ymd', strtotime('-30 days')), date('Ymd'));
+	}
+	if ($type == 'daterange') {
+		$data_x = stat_date_range($daterange['start'], $daterange['end']);
+	}
 	if (empty($result)) {
-		if ($type == 'today') {
-			$data_x = date('Ymd');
-		}
-		if ($type == 'week') {
-			$data_x = stat_date_range(date('Ymd', strtotime('-7 days')), date('Ymd'));
-		}
-		if ($type == 'month') {
-			$data_x = stat_date_range(date('Ymd', strtotime('-30 days')), date('Ymd'));
-		}
-		if ($type == 'daterange') {
-			$data_x = stat_date_range($daterange['start'], $daterange['end']);
-		}
 		foreach ($data_x as $val) {
 			$data_y[] = 0;
 		}
 		iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
 	}
-	foreach ($result as $val) {
-		$data_x[] = $val['date'];
-		if ($divide_type == 'bysum') {
-			$data_y[] = $val['count'];
-		} elseif ($divide_type == 'byavg') {
-			$data_y[] = $val['avg'];
-		} elseif ($divide_type == 'byhighest') {
-			$data_y[] = $val['highest'];
+	foreach ($data_x as $key => $data) {
+		foreach ($result as $val) {
+			if (strtotime($val['date']) != strtotime($data)) {
+				continue;
+			}
+			if ($divide_type == 'bysum') {
+				$data_y[$key] = $val['count'];
+			} elseif ($divide_type == 'byavg') {
+				$data_y[$key] = $val['avg'];
+			} elseif ($divide_type == 'byhighest') {
+				$data_y[$key] = $val['highest'];
+			}
+		}
+		if (empty($data_y[$key])) {
+			$data_y[$key] = 0;
 		}
 	}
 	iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
