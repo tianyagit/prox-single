@@ -74,6 +74,7 @@ class Validator {
 		'required' => ':attribute 必须填写',
 		'integer' => ':attribute必须是整数',
 		'int' => ':attribute必须是整数',
+		'numeric' => ':attribute必须是数字',
 		'string' => ':attribute必须是字符串',
 		'json' => ':attribute 必须是json',
 		'array' => ':attribute必须是数组',
@@ -87,7 +88,6 @@ class Validator {
 		'file' => ':attribute必须是一个文件',
 		'image' => ':attribute必须是一个图片',
 		'ip' => ':attribute不是有效的ip',
-		'numeric' => ':attribute必须是数字',
 		'in' => ':attribute 必须在 %s 内',
 		'notin' => ':attribute 不在 %s 内',
 		'date' => ':attribute 必须是有效的日期',
@@ -96,6 +96,7 @@ class Validator {
 		'regex' => ':attribute 不是有效的数据', //regex:pattern
 		'same' => ':attribute 和 $s 不一致', //some:field
 		'bool' => ':attribute 必须是bool值',
+		'path' => ':attribute 不是有效的路径'
 	);
 	/**
 	 * 自定义校验.
@@ -131,13 +132,13 @@ class Validator {
 	 */
 	private $errors = array();
 
-	public function __construct($data, $rules = array(), $messages = array()) {
+	private function __construct($data, $rules = array(), $messages = array()) {
 		$this->data = $data;
 		$this->rules = $this->parseRule($rules);
 		$this->messages = $messages;
 	}
 
-	public static function create($data, $rules, $messages) {
+	public static function create($data, $rules, array $messages = array()) {
 		return new self($data, $rules, $messages);
 	}
 
@@ -175,8 +176,12 @@ class Validator {
 	 *
 	 * @since version
 	 */
-	public function errors() {
-		return $this->errors;
+	public function error() {
+		$init = array();
+		$errmsg = array_reduce($this->messages(), function($result, $value){
+			return array_merge($result, array_values($value));
+		}, $init);
+		return error(1, implode(',' , array_values($errmsg)));
 	}
 
 	public function messages() {
@@ -236,19 +241,19 @@ class Validator {
 		throw new InvalidArgumentException('无效的rule配置项');
 	}
 
+
+	private function getRules($key) {
+		return isset($this->rules[$key]) ? $this->rules[$key] : array();
+	}
 	public function valid() {
 		$this->errors = array();
-		foreach ($this->rules as $dataKey => $rules) {
-			$value = $this->getValue($dataKey);
+		foreach ($this->data as $key => $value) {
+			$rules = $this->getRules($key);
 			foreach ($rules as $rule) {
-				$isValid = $this->doValid($dataKey, $value, $rule);
-				if (!$isValid && $rule['name'] == 'required') { //required 不通过 后边的不再验证
-					break;
-				}
+				$this->doValid($key, $value, $rule);
 			}
 		}
-
-		return !$this->isError();
+		return $this->isError() ? $this->error() : error(0);
 	}
 
 	/**
@@ -368,15 +373,15 @@ class Validator {
 			return $value !== '';
 		}
 
-		return false;
+		return true;
 	}
 
 	public function validInteger($key, $value, $params) {
-		return is_int($value);
+		return filter_var($value, FILTER_VALIDATE_INT) !== false;
 	}
 
 	public function validInt($key, $value, $params) {
-		return is_int($value);
+		return $this->validInteger($key, $value, $params);
 	}
 
 	public function validNumeric($key, $value, $params) {
@@ -575,6 +580,7 @@ class Validator {
 	}
 
 	public function validBetween($key, $value, $params) {
+
 		$this->checkParams(2, $params, 'between');
 		$size = $this->getSize($key, $value);
 
