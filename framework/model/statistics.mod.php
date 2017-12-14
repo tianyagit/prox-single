@@ -183,3 +183,24 @@ function stat_account_count() {
 	$count = count($account_list);
 	return $count;
 }
+
+/**
+ * 获取日期数组
+ * @param string start 开始日期
+ * @param string end 结束日期
+ * @return array()
+ */
+function stat_date_range($start, $end) {
+	$result = array();
+	if (empty($start) || empty($end)) {
+		return $result;
+	}
+	$start = strtotime($start);
+	$end = strtotime($end);
+	$i = 0;
+	while(strtotime(end($result)) < $end) {
+		$result[] = date('Ymd', $start + $i * 86400);
+		$i++;
+	}
+	return $result;
+}
