@@ -132,7 +132,7 @@ class Validator {
 	 */
 	private $errors = array();
 
-	private function __construct($data, $rules = array(), $messages = array()) {
+	public function __construct($data, $rules = array(), $messages = array()) {
 		$this->data = $data;
 		$this->rules = $this->parseRule($rules);
 		$this->messages = $messages;
@@ -170,22 +170,26 @@ class Validator {
 	}
 
 	/**
-	 * 错误明细.
+	 * 所有的错误.
 	 *
 	 * @return array
 	 *
 	 * @since version
 	 */
 	public function error() {
-		$init = array();
-		$errmsg = array_reduce($this->messages(), function($result, $value){
-			return array_merge($result, array_values($value));
-		}, $init);
-		return error(1, implode(',' , array_values($errmsg)));
+		return $this->errors;
 	}
 
-	public function messages() {
-		return $this->errors;
+	/**
+	 * 错误消息
+	 * @return string
+	 */
+	public function message() {
+		$init = array();
+		$errmsg = array_reduce($this->error(), function($result, $value){
+			return array_merge($result, array_values($value));
+		}, $init);
+		return implode(',' , array_values($errmsg));
 	}
 
 	public function getData() {
@@ -253,7 +257,7 @@ class Validator {
 				$this->doValid($key, $value, $rule);
 			}
 		}
-		return $this->isError() ? $this->error() : error(0);
+		return $this->isError() ? error(1, $this->message()) : error(0);
 	}
 
 	/**
@@ -267,7 +271,7 @@ class Validator {
 	private function doSingle($callback, $dataKey, $value, $rule) {
 		$valid = call_user_func($callback, $dataKey, $value, $rule['params']);
 		if (!$valid) {
-			$this->errors[$dataKey][] = $this->getMessage($dataKey, $rule);
+			$this->errors[$dataKey][$rule['name']] = $this->getMessage($dataKey, $rule);
 
 			return false;
 		}
@@ -288,7 +292,7 @@ class Validator {
 	private function doCustom($callback, $dataKey, $value, $rule) {
 		$valid = call_user_func($callback, $dataKey, $value, $rule['params'], $this);
 		if (!$valid) {
-			$this->errors[$dataKey][] = $this->getMessage($dataKey, $rule);
+			$this->errors[$dataKey][$rule['name']] = $this->getMessage($dataKey, $rule);
 
 			return false;
 		}
@@ -453,7 +457,6 @@ class Validator {
 	 */
 	public function validRegex($key, $value, $params) {
 		$this->checkParams(1, $params, 'regex');
-
 		return preg_match($params[0], $value);
 	}
 
@@ -647,6 +650,17 @@ class Validator {
 		$acceptable = array(true, false, 0, 1, '0', '1');
 
 		return in_array($value, $acceptable, true);
+	}
+
+	/**
+	 *  验证路径是否有非法字符
+	 * @param $key
+	 * @param $value
+	 * @param $params
+	 * @return bool|string
+	 */
+	public function validPath($key, $value, $params) {
+		return parse_path($value);
 	}
 
 	protected function getSize($key, $value) {
