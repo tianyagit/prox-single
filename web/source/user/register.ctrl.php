@@ -16,7 +16,9 @@ $_W['page']['title'] = '注册选项 - 用户设置 - 用户管理';
 if (empty($_W['setting']['register']['open'])) {
 	itoast('本站暂未开启注册功能，请联系管理员！', '', '');
 }
-$register_type = !empty($_GPC['register_type']) ? $_GPC['register_type'] : 'system';
+
+$register_type = safe_gpc_belong(trim($_GPC['register_type']), array('system', 'mobile'), 'system');
+
 if ($register_type == 'system') {
 	$extendfields = OAuth2Client::create($register_type)->systemFields();
 } else {
