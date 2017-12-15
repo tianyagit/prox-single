@@ -109,7 +109,7 @@ class WebappTable extends We7Table {
 		$query->where(array('b.type' => array(ACCOUNT_TYPE_WEBAPP_NORMAL)));
 		$list = $query->getall();
 		$total =  $query->getLastQueryTotal();
-		return [$list, $total];
+		return array('list' => $list, 'total' => $total);
 	}
 
 	/**

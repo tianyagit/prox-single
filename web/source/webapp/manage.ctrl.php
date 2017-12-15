@@ -43,12 +43,16 @@ if($do == 'list') {
 	$psize = 15;
 
 	$webapp = table('webapp');
-	list($list, $total) = $webapp->webapplist($_W['uid'], $pindex, $psize);
+	$webapp_list = $webapp->webapplist($_W['uid'], $pindex, $psize);
+	$list = $webapp_list['list'];
+	$total = $webapp_list['total'];
 	$pager = pagination($total, $pindex, $psize);
-
-	foreach ($list as &$item) {
-		$item['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
-		$item['switchurl'] = wurl('webapp/home/switch', array('uniacid' => $item['uniacid']));
+	if (!empty($list)) {
+		foreach ($list as &$item) {
+			$item['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
+			$item['switchurl'] = wurl('webapp/home/switch', array('uniacid' => $item['uniacid']));
+		}
 	}
+
 	template('webapp/list');
 }
