@@ -112,11 +112,7 @@ abstract class We7Table {
 			return $result;
 		}
 //
-		$result = pdo_insert($this->tableName, $this->attributes);
-		if ($result) {
-			$this->attributes[$this->primaryKey] = pdo_insertid();
-		}
-		return $result;
+		return $this->query->fill($this->attributes)->save();
 //		return $this->query->save();
 	}
 
