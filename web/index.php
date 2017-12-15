@@ -8,64 +8,61 @@ require '../framework/bootstrap.inc.php';
 require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 
 if (pdo_fieldexists('modules', 'oauth_type')) {
-	pdo_query('ALTER TABLE `ims_modules` CHANGE `oauth_type` `oauth_type` TINYINT(1) NOT NULL DEFAULT 1');
+	pdo_query("ALTER TABLE " . tablename('modules') . " CHANGE `oauth_type` `oauth_type` TINYINT(1) NOT NULL DEFAULT 1;");
 }
 
 if (!pdo_fieldexists('wxapp_versions', 'type')) {
 	$table = tablename('wxapp_versions');
-	pdo_query("ALTER TABLE $table ADD `type` int(2) NOT NULL DEFAULT 0 COMMENT '0 默认小程序 1 公众号应用'");
+	pdo_query("ALTER TABLE $table ADD `type` int(2) NOT NULL DEFAULT 0;");
 }
 
 if (!pdo_fieldexists('wxapp_versions', 'entry_id')) {
 	$table = tablename('wxapp_versions');
-	pdo_query("ALTER TABLE $table ADD `entry_id` int(11) NOT NULL DEFAULT 0 COMMENT '普通应用小程序入口ID'");
+	pdo_query("ALTER TABLE $table ADD `entry_id` int(11) NOT NULL DEFAULT 0;");
 }
 if (!pdo_fieldexists('wxapp_versions', 'appjson')) {
-	pdo_query('ALTER TABLE ' . tablename('wxapp_versions') . " ADD `appjson` text NOT NULL DEFAULT '' COMMENT '用户自定义appjson';");
+	pdo_query('ALTER TABLE ' . tablename('wxapp_versions') . " ADD `appjson` text NOT NULL DEFAULT '';");
 }
 
 if (!pdo_fieldexists('wxapp_versions', 'default_appjson')) {
-	pdo_query('ALTER TABLE ' . tablename('wxapp_versions') . " ADD `default_appjson` text NOT NULL DEFAULT '' COMMENT 'cloud_appjson 默认appjson';");
+	pdo_query('ALTER TABLE ' . tablename('wxapp_versions') . " ADD `default_appjson` text NOT NULL DEFAULT '';");
 }
 
 if (!pdo_fieldexists('wxapp_versions', 'use_default')) {
-	pdo_query('ALTER TABLE ' . tablename('wxapp_versions') . " ADD `use_default` tinyint(1) NOT NULL DEFAULT 1 COMMENT '使用默认app.json';");
+	pdo_query('ALTER TABLE ' . tablename('wxapp_versions') . " ADD `use_default` tinyint(1) NOT NULL DEFAULT 1;");
 }
 if (!pdo_tableexists('modules_rank')) {
 	$sql = "CREATE TABLE IF NOT EXISTS `ims_modules_rank` (
-					`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-					`module_name` varchar(100) NOT NULL,
-					`uid` int(10) NOT NULL,
-					`rank` int(10) NOT NULL,
-					PRIMARY KEY (`id`),
-					KEY `module_name` (`module_name`),
-					KEY `uid` (`uid`)
-					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+			`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+			`module_name` varchar(100) NOT NULL,
+			`uid` int(10) NOT NULL,
+			`rank` int(10) NOT NULL,
+			PRIMARY KEY (`id`),
+			KEY `module_name` (`module_name`),
+			KEY `uid` (`uid`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 	pdo_run($sql);
 }
 
 if(!pdo_fieldexists('users_group', 'maxwebapp')) {
-	pdo_query('ALTER TABLE ' . tablename('users_group') . " ADD `maxwebapp` INT(10) NOT NULL DEFAULT 0 COMMENT 'PC最大创建数量';");
+	pdo_query("ALTER TABLE " . tablename('users_group') . " ADD `maxwebapp` INT(10) NOT NULL DEFAULT 0;");
 }
 
 if(!pdo_fieldexists('users_founder_group', 'maxwebapp')) {
-	pdo_query('ALTER TABLE ' . tablename('users_founder_group') . " ADD `maxwebapp` INT(10) NOT NULL DEFAULT 0 COMMENT 'PC最大创建数量';");
+	pdo_query("ALTER TABLE " . tablename('users_founder_group') . " ADD `maxwebapp` INT(10) NOT NULL DEFAULT 0;");
 }
 
 if(!pdo_fieldexists('modules', 'webapp_support')) {
-	pdo_query('ALTER TABLE ' . tablename('modules') . " ADD `webapp_support` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否支持pc应用 1 不支持 2支持';");
+	pdo_query("ALTER TABLE " . tablename('modules') . " ADD `webapp_support` TINYINT(1) NOT NULL DEFAULT 1;");
 }
 
 if(!pdo_tableexists('account_webapp')){
-	$sql = <<<EOT
-				CREATE TABLE `ims_account_webapp` (
-  `acid` int(11) DEFAULT NULL,
-  `uniacid` int(11) DEFAULT NULL,
-  `name` varchar(255) DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-EOT;
-
-	pdo_query($sql);
+	$sql = "CREATE TABLE `ims_account_webapp` (
+  			`acid` int(11) DEFAULT NULL,
+  			`uniacid` int(11) DEFAULT NULL,
+ 			`name` varchar(255) DEFAULT ''
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+	pdo_run($sql);
 }
 if (!empty($_GPC['state'])) {
 	$login_callback_params = OAuth2Client::supportParams($_GPC['state']);
