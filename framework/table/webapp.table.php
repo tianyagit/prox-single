@@ -8,7 +8,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-class WebappTable extends We7Table {
+class WebappTable extends AccountTable {
 
 	/**
 	 *  创建PC
