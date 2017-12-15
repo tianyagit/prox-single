@@ -163,6 +163,7 @@
 	angular.module('userManageApp').value('config', {
 		'owner_uid': "{php echo !empty($_GPC['owner_uid']) ? $_GPC['owner_uid'] : 0}",
 		'register_type': "{php echo !empty($_GPC['register_type']) ? $_GPC['register_type'] : 0}",
+		'register_sign': "{php echo !empty($register_sign) ? $register_sign : 'null'}",
 		'image' : "{php echo url('utility/code')}",
 		'links' : {
 			'valid_mobile_link': "{php echo url('user/register/valid_mobile')}",

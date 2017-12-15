@@ -66,7 +66,7 @@ if ($do == 'nav') {
 if ($do == 'wxapp_web') {
 	$version = trim($_GPC['v']);
 	$version_info = wxapp_version_by_version($version);
-	$url = safe_gpc_url($_GPC['url']);
+	$url = $_GPC['url'];
 	if (empty($url)) {
 		//无需查询绑定域名 因为本do方法就是根据小程序域名访问的
 		$url = murl('entry', array('eid'=>$version_info['entry_id']), true, true);

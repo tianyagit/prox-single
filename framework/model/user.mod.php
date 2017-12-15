@@ -897,8 +897,15 @@ function user_detail_formate($profile) {
 function user_expire_notice() {
 	load()->model('cloud');
 	load()->model('setting');
+	$setting_user_expire = setting_load('user_expire');
+	if (empty($setting_user_expire['user_expire']['status'])) {
+		return true;
+	}
+
 	$setting_sms_sign = setting_load('site_sms_sign');
-	$day = !empty($setting_sms_sign['site_sms_sign']['day']) ? $setting_sms_sign['site_sms_sign']['day'] : 1;
+	$custom_sign = !empty($setting_sms_sign['site_sms_sign']['user_expire']) ? $setting_sms_sign['site_sms_sign']['user_expire'] : '';
+
+	$day = !empty($setting_user_expire['user_expire']['day']) ? $setting_user_expire['user_expire']['day'] : 1;
 
 	$user_table = table('users');
 	$user_table->searchWithMobile();
@@ -914,8 +921,8 @@ function user_expire_notice() {
 			continue;
 		}
 		if (!empty($v['mobile']) && preg_match(REGULAR_MOBILE, $v['mobile'])) {
-			$content = $v['username'] . "即将到期";
-			$result = cloud_sms_send($v['mobile'], $content);
+			$content = "您的用户名{$v['username']}即将过期。";
+			$result = cloud_sms_send($v['mobile'], $content, array(), $custom_sign);
 		}
 		if (is_error($result)) {
 			pdo_insert('core_sendsms_log', array('mobile' => $v['mobile'], 'content' => $content, 'result' => $result['errno'] . $result['message'], 'createtime' => TIMESTAMP));

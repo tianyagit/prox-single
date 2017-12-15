@@ -31,16 +31,15 @@
 	</div>
 	<div class="panel we7-panel" id="js-system-account-analysis" ng-controller="systemAccountAnalysisCtrl" ng-cloak>
 		<div class="panel-heading tab">
-			<a href="javascript:;">总访问数</a>
-			<a href="javascript:;" ng-class="{'active': divideType == 'bydate'}" ng-click="changeDivideType('bydate')">按日期</a>
-			<a href="javascript:;" ng-class="{'active': divideType == 'byuniacid'}" ng-click="changeDivideType('byuniacid')">按公众号</a>
-			<a href="javascript:;" class="hidden">最高访问数</a>
+			<a href="javascript:;">关键指标详解</a>
+			<a href="javascript:;" ng-class="{'active': divideType == 'bysum'}" ng-click="changeDivideType('bysum')">公众号总访问数</a>
+			<a href="javascript:;" ng-class="{'active': divideType == 'byavg'}" ng-click="changeDivideType('byavg')">公众号平均访问数</a>
+			<a href="javascript:;" ng-class="{'active': divideType == 'byhighest'}" ng-click="changeDivideType('byhighest')">公众号最高访问数</a>
 		</div>
 		<div class="panel-body data-view">
 			<div class="tab-bar-time clearfrix">
 				<span class="we7-margin-right">时间</span>
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-default" ng-class="{'active': timeType == 'today'}" ng-click="getAccountApi('today')" ng-if="divideType == 'byuniacid'">今日统计</button>
 					<button type="button" class="btn btn-default" ng-class="{'active': timeType == 'week'}" ng-click="getAccountApi('week')">周统计</button>
 					<button type="button" class="btn btn-default" ng-class="{'active': timeType == 'month'}" ng-click="getAccountApi('month')">月统计</button>
 					<div class="btn-group" role="group" ng-class="{'active': timeType == 'daterange'}">
@@ -49,8 +48,7 @@
 				</div>
 			</div>
 			<div class="col-sm-12">
-				<canvas class="chart chart-horizontal-bar" chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors" height="{{height}}" ng-if="divideType == 'byuniacid'"></canvas>
-				<canvas class="chart chart-line" chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors" ng-if="divideType == 'bydate'"></canvas>
+				<canvas class="chart chart-line" chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors"></canvas>
 			</div>
 		</div>
 	</div>
