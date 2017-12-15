@@ -810,7 +810,8 @@ class SqlPaser {
 		foreach ($field as $field_row) {
 			if (strexists($field_row, '*')) {
 				if (!strexists(strtolower($field_row), 'as')) {
-					$field_row .= " AS '{$index}'";
+					//此代码暂时注释，否则会造成 * AS 0 的问题，忘了是为什么要加
+					//$field_row .= " AS '{$index}'";
 				}
 			} elseif (strexists(strtolower($field_row), 'select')) {
 				//当前可能包含子查询，但不推荐此写法
