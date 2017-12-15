@@ -31,7 +31,7 @@ abstract class We7Table {
 		//实例化Query对象,并重置查询信息
 		load()->classs('validator');
 		$this->query = load()->object('Query');
-		$this->query->from('');
+		$this->query->from($this->tableName);
 	}
 
 	/**
@@ -56,9 +56,15 @@ abstract class We7Table {
 	}
 
 
-	public function fill($attributes) {
-		$this->attributes = array_merge($this->attributes, $attributes);
-//		$this->query->fill($this->attributes);
+	public function fill($field, $value = '') {
+		if (is_array($field)) {
+			foreach ($field as $column => $val) {
+				$this->attributes[$column] = $val;
+			}
+			return $this;
+		}
+		$this->attributes[$field] = $value;
+		$this->query->fill($field, $value);
 		return $this;
 	}
 
@@ -104,20 +110,17 @@ abstract class We7Table {
 	 *  创建对象
 	 * @param $attributes
 	 */
-	public function save(array $attributes = array()) {
-		$this->fill($attributes);
+	public function save() {
 		$this->appendDefauls();
 		$result = $this->valid($this->attributes);
 		if (is_error($result)) {
 			return $result;
 		}
-//
-		return $this->query->fill($this->attributes)->save();
-//		return $this->query->save();
-	}
 
-	public function update() {
-		return $this->query->save();
+		if($this->query->hasWhere()) {
+			return $this->query->update();
+		}
+		return $this->query->insert();
 	}
 
 	/** 删除数据
@@ -125,20 +128,23 @@ abstract class We7Table {
 	 * @return mixed
 	 */
 	public function delete() {
-		return $this->query->delete();
+		if ($this->query->hasWhere()) {
+			return $this->query->delete();
+		}
+		return false;
 	}
 
 	private function doWhere($field, $params) {
-		return $this->query->where(lcfirst($field), $params[0]);
-	}
-
-
-	public function __set($key, $value) {
-		$this->attributes[$key] = $value;
-	}
-
-	public function __get($key) {
-		return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
+		if ($params == 0) {
+			return $this;
+		}
+		$field = lcfirst($field);
+		$value = $params[0];
+		if (count($params) > 1) {
+			$field = $field.' '.$params[1];
+		}
+		$this->query->where($field, $value);
+		return $this;
 	}
 
 	/**
@@ -153,14 +159,23 @@ abstract class We7Table {
 			return call_user_func_array(array($this, $search_method), $params);
 		}
 
-		if(starts_with($method, 'updateWith')) {
-			return $this->doWhere(str_replace('updateWith', '', $method), $params);
+		if(starts_with($method, 'searchWith')) {
+			return $this->doWhere(str_replace('searchWith', '', $method), $params);
 		}
 
 		if(starts_with($method, 'deleteWith')) {
 			return $this->doWhere(str_replace('deleteWith', '', $method), $params);
 		}
 
-		return call_user_func_array(array($this->query, $method), $params);
+		if(starts_with($method, 'updateWith')) {
+			$field = lcfirst(str_replace('updateWith', '', $method));
+			$this->fill($field, $params[0]);
+			return $this;
+		}
+		$result = call_user_func_array(array($this->query, $method), $params);
+		if (in_array($method, array('get', 'getall'))) {
+			return $result;
+		}
+		return $this;
 	}
 }

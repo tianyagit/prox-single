@@ -242,6 +242,11 @@ class Query {
 		$this->values[$field] = $value;
 		return $this;
 	}
+
+	public function hasWhere() {
+
+		return count($this->statements['WHERE']) > 0;
+	}
 	
 	public function get() {
 		if (empty($this->statements['SELECT'])) {
@@ -347,6 +352,7 @@ class Query {
 		if (empty($where)) {
 			return error(-1, '未指定更新条件');
 		}
+
 		$result = pdo_update($this->statements['FROM'], $this->values, $where);
 		//查询完后，重置Query对象
 		$this->resetClause();
