@@ -20,6 +20,17 @@ function safe_gpc_int($value, $default = 0) {
 	return $value;
 }
 
+function safe_gpc_belong($value, $allow = array(), $default = '') {
+	if (empty($allow)) {
+		return $default;
+	}
+	if (in_array($value, $allow, true)) {
+		return $value;
+	} else {
+		return $default;
+	}
+}
+
 /**
  * 转换一个安全字符串
  * @param mixed $value
