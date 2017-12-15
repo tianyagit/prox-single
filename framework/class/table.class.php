@@ -133,7 +133,7 @@ abstract class We7Table {
 	}
 
 	private function doWhere($field, $params) {
-		return $this->query->where(lcfirst($field), $params);
+		return $this->query->where(lcfirst($field), $params[0]);
 	}
 
 
