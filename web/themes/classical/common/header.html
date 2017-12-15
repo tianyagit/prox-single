@@ -24,7 +24,7 @@
 					{/loop}
 				</ul>
 				<ul class="user-info">
-					<li class="dropdown">
+					<li class="dropdown user">
 						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="wi wi-user"></i>{$_W['user']['username']}<span class="caret"></span></a>
 						<ul class="dropdown-menu color-gray dropdown-menu-right" role="menu">
 							<li>
@@ -40,6 +40,9 @@
 								<a href="{url 'user/logout'}"><i class="fa fa-sign-out color-gray"></i> 退出系统</a>
 							</li>
 						</ul>
+					</li>
+					<li class="dropdown msg header-notice">
+
 					</li>
 				</ul>
 			</div>
@@ -216,8 +219,10 @@
 				$(function(){
 					$('.main-panel-content .icon-unfold').click(function(){
 						$('.main-panel-content').find('.main-panel-body').toggleClass('folded');
+						if($('.main-classical .folded').length == 0){
+							$('.nav-icon').attr('data-toggle',false);
+						}
 					});
-					$('.nav-icon').tooltip('hide');
 				});
 			</script>
 
