@@ -10,6 +10,9 @@ if ($action == 'manage' && $do == 'createview') {
 }
 
 $account_api = WeAccount::create();
+if (is_error($account_api)) {
+	message($account_api['message'], url('webapp/home/display'));
+}
 $check_manange = $account_api->checkIntoManage();
 if ($do != 'display') {
 	if (is_error($check_manange)) {

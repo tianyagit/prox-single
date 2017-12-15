@@ -13,12 +13,12 @@ $_W['page']['title'] = '系统管理 - 菜单设置';
 $system_menu = cache_load('system_frame');
 /* vstart */
 if (IMS_FAMILY == 'v') {
-	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'pc');
+	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'webapp', 'appmarket');
 }
 /* vend */
 /* xstart */
 if (IMS_FAMILY == 'x') {
-	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'store', 'pc');
+	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'store', 'webapp', 'appmarket');
 }
 /* xend */
 
@@ -47,7 +47,6 @@ if (!empty($system_menu)) {
 		}
 	}
 }
-
 if ($do == 'display') {
 	$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame', 'is_system <>' => 1), array('title', 'url', 'permission_name', 'displayorder'));
 	if (!empty($add_top_nav)) {
