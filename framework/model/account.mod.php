@@ -33,29 +33,18 @@ function uni_owned($uid = 0, $is_uni_fetch = true) {
  * @param int $uid 要查找的用户
  * @return array()
  */
-function uni_user_accounts($uid) {
+function uni_user_accounts($uid = 0) {
 	global $_W;
-	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
+	$uid = intval($uid) >0 ? intval($uid) : $_W['uid'];
 	$cachekey = cache_system_key("user_accounts:{$uid}");
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
 	}
-	$field = '';
-	$where = '';
-	$params = array();
-	$user_is_founder = user_is_founder($uid);
-	if (empty($user_is_founder) || user_is_vice_founder($uid)) {
-		$field .= ', u.role';
-		$where .= " LEFT JOIN " . tablename('uni_account_users') . " u ON u.uniacid = w.uniacid WHERE u.uid = :uid AND u.role IN(:role1, :role2) ";
-		$params[':uid'] = $uid;
-		$params[':role1'] = ACCOUNT_MANAGE_NAME_OWNER;
-		$params[':role2'] = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
-	}
-	$where .= !empty($where) ? " AND a.isdeleted <> 1 AND u.role IS NOT NULL" : " WHERE a.isdeleted <> 1";
 
-	$sql = "SELECT w.acid, w.uniacid, w.key, w.secret, w.level, w.name, w.token" . $field . " FROM " . tablename('account_wechats') . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
-	$result = pdo_fetchall($sql, $params, 'uniacid');
+	$account_table = table('account');
+	$role = array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+	$result = $account_table->getUserAccounts($uid, $role);
 	cache_write($cachekey, $result);
 	return $result;
 }
@@ -72,15 +61,14 @@ function account_owner($uniacid = 0) {
 	if (empty($uniacid)) {
 		return array();
 	}
-	$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+
+	$account_table = table('account');
+	$owner_id = $account_table->getAccountOwnerUidByUniacid($uniacid);
 	if (empty($ownerid)) {
-		$ownerid = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'vice_founder'), 'uid');
-		if (empty($ownerid)) {
-			$founders = explode(',', $_W['config']['setting']['founder']);
-			$ownerid = $founders[0];
-		}
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$owner_id = $founders[0];
 	}
-	$owner = user_single($ownerid);
+	$owner = user_single($owner_id);
 	if (empty($owner)) {
 		return array();
 	}
@@ -91,12 +79,14 @@ function account_owner($uniacid = 0) {
  * @param int $uniacid 公众号ID
  * @return array 当前公号下所有子公众号
  */
-function uni_accounts($uniacid = 0) {
+function uni_accounts($uniacid) {
 	global $_W;
-	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
-	$account_info = pdo_get('account', array('uniacid' => $uniacid));
+	$uniacid = empty($uniacid) ? $_W['uniacid'] :intval($uniacid);
+	$account_table = table('account');
+	$account_info = $account_table->getAccountByuniacid($uniacid);
+
 	if (!empty($account_info)) {
-		$accounts = pdo_fetchall("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename(uni_account_tablename($account_info['type'])) . " w USING(acid) WHERE a.uniacid = :uniacid AND a.isdeleted <> 1 ORDER BY a.acid ASC", array(':uniacid' => $uniacid), 'acid');
+		$accounts = $account_table->getUniAccounts($uniacid, $account_info['type']);
 	}
 	return !empty($accounts) ? $accounts : array();
 }
@@ -192,7 +182,6 @@ function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
  * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
  */
-
 function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	global $_W;
 	load()->model('user');
@@ -201,7 +190,8 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	$modules = cache_load($cachekey);
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
-		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+		$account_table = table('account');
+		$owner_uid = $account_table->getAccountOwnerUidByUniacid($uniacid);
 		$condition = "WHERE 1";
 		$site_store_buy_goods = array();
 		/* xstart */
@@ -214,7 +204,8 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			$uni_modules = array();
-			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
+			$group_table = table('group');
+			$packageids = $group_table->searchUniAccountGroup($uniacid);
 			$packageids = array_keys($packageids);
 
 			if (IMS_FAMILY == 'x') {
@@ -223,7 +214,8 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 			}
 			if (!in_array('-1', $packageids)) {
-				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$uniacid}'");
+				$group_table = table('group');
+				$uni_groups = $group_table->searchUniGroups($uniacid, $packageids);
 				if (!empty($uni_groups)) {
 					foreach ($uni_groups as $group) {
 						$group_module = (array)iunserializer($group['modules']);
@@ -320,8 +312,10 @@ function uni_groups($groupids = array(), $show_all = false) {
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
 	$list = cache_load($cachekey);
 	if (empty($list)) {
-		$condition = ' WHERE uniacid = 0';
-		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
+		$group_table = table('group');
+		$group_table->uniGroupOrderById('desc');
+		$group_table->searchGroupByUniacid(0);
+		$list = $group_table->searchUniGroupsList();
 		if (!empty($groupids)) {
 			if (in_array('-1', $groupids)) {
 				$list[-1] = array('id' => -1, 'name' => '所有服务', 'modules' => array('title' => '系统所有模块'), 'templates' => array('title' => '系统所有模板'));
@@ -336,7 +330,8 @@ function uni_groups($groupids = array(), $show_all = false) {
 				if (!empty($row['modules'])) {
 					$modules = iunserializer($row['modules']);
 					if (is_array($modules)) {
-						$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
+						$module_table = table('module');
+						$module_list = $module_table->searchModuleByName($modules);
 						$row['modules'] = array();
 						if (!empty($module_list)) {
 							foreach ($module_list as $key => &$module) {
@@ -371,7 +366,8 @@ function uni_groups($groupids = array(), $show_all = false) {
 				if (!empty($row['templates'])) {
 					$templates = iunserializer($row['templates']);
 					if (is_array($templates)) {
-						$row['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
+						$templates_table = table('site_templates');
+						$row['templates'] = $templates_table->getTemplatesById($templates, 'name');
 					}
 				}
 			}
@@ -416,6 +412,7 @@ function uni_templates() {
 	if (!empty($extend) && $groupid != '-1') {
 		$groupid = '-2';
 	}
+	$templates_table = table('site_templates');
 	if (empty($groupid)) {
 		$templates = pdo_fetchall("SELECT * FROM " . tablename('site_templates') . " WHERE name = 'default'", array(), 'id');
 	} elseif ($groupid == '-1') {
@@ -452,7 +449,7 @@ function uni_templates() {
 		}
 	}
 	if (empty($templates)) {
-		$templates = pdo_fetchall("SELECT * FROM " . tablename('site_templates') . " WHERE id = 1 ORDER BY id DESC", array(), 'id');
+		$templates = $templates_table->getTemplatesById(1, 'id');
 	}
 	return $templates;
 }
@@ -471,12 +468,8 @@ function uni_setting_save($name, $value) {
 	if (is_array($value)) {
 		$value = serialize($value);
 	}
-	$unisetting = pdo_get('uni_settings', array('uniacid' => $_W['uniacid']), array('uniacid'));
-	if (!empty($unisetting)) {
-		pdo_update('uni_settings', array($name => $value), array('uniacid' => $_W['uniacid']));
-	} else {
-		pdo_insert('uni_settings', array($name => $value, 'uniacid' => $_W['uniacid']));
-	}
+	$table = table('setting');
+	$table->uniSettingSave($_W['uniacid'], $name, $value);
 	$cachekey = "unisetting:{$_W['uniacid']}";
 	$account_cachekey = "uniaccount:{$_W['uniacid']}";
 	cache_delete($cachekey);
@@ -496,7 +489,8 @@ function uni_setting_load($name = '', $uniacid = 0) {
 	$cachekey = "unisetting:{$uniacid}";
 	$unisetting = cache_load($cachekey);
 	if (empty($unisetting)) {
-		$unisetting = pdo_get('uni_settings', array('uniacid' => $uniacid));
+		$setting_table = table('setting');
+		$unisetting = $setting_table->uniSetting($uniacid);
 		if (!empty($unisetting)) {
 			$serialize = array('site_info', 'stat', 'oauth', 'passport', 'uc', 'notify',
 				'creditnames', 'default_message', 'creditbehaviors', 'payment',
@@ -671,7 +665,6 @@ function uni_update_week_stat() {
 			if(is_error($weixin_stat) || empty($weixin_stat)) {
 				return error(-1, '调用微信接口错误');
 			} else {
-				$update_stat = array();
 				$update_stat = array(
 					'uniacid' => $_W['uniacid'],
 					'new' => $weixin_stat[$sevens]['new'],
@@ -682,7 +675,8 @@ function uni_update_week_stat() {
 			}
 		} else {
 			$update_stat = array();
-			$update_stat['cumulate'] = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('mc_mapping_fans') . " WHERE acid = :acid AND uniacid = :uniacid AND follow = :follow AND followtime < :endtime", array(':acid' => $_W['acid'], ':uniacid' => $_W['uniacid'], ':endtime' => strtotime($sevens)+86400, ':follow' => 1));
+			$fans_table = table('fans');
+			$update_stat['cumulate'] = $fans_table->fansVistCount(strtotime($sevens) + 86400, FANS_FOLLOW_STATUS);
 			$update_stat['date'] = $sevens;
 			$update_stat['new'] = $week_stat_fans[$sevens]['new'];
 			$update_stat['cancel'] = $week_stat_fans[$sevens]['cancel'];
@@ -704,14 +698,8 @@ function uni_update_week_stat() {
  * @param int $rank
  */
 function uni_account_rank_top($uniacid) {
-	global $_W;
-	if (!empty($_W['isfounder'])) {
-		$max_rank = pdo_getcolumn('uni_account', array(), 'max(rank)');
-		pdo_update('uni_account', array('rank' => ($max_rank + 1)), array('uniacid' => $uniacid));
-	}else {
-		$max_rank = pdo_getcolumn('uni_account_users', array('uid' => $_W['uid']), 'max(rank)');
-		pdo_update('uni_account_users', array('rank' => ($max_rank['maxrank'] + 1)), array('uniacid' => $uniacid, 'uid' => $_W['uid']));
-	}
+	$account_table = table('account');
+	$account_table->uniAccountRankTop($uniacid);
 	return true;
 }
 
@@ -778,15 +766,8 @@ function uni_account_save_switch($uniacid) {
  * @return int 新创建的子公号 acid
  */
 function account_create($uniacid, $account) {
-	$accountdata = array('uniacid' => $uniacid, 'type' => $account['type'], 'hash' => random(8));
-	pdo_insert('account', $accountdata);
-	$acid = pdo_insertid();
-	$account['acid'] = $acid;
-	$account['token'] = random(32);
-	$account['encodingaeskey'] = random(43);
-	$account['uniacid'] = $uniacid;
-	unset($account['type']);
-	pdo_insert('account_wechats', $account);
+	$account_table = table('account');
+	$acid = $account_table->createAccount($uniacid, $account);
 	return $acid;
 }
 
@@ -796,7 +777,8 @@ function account_create($uniacid, $account) {
  * @return array
  */
 function account_fetch($acid) {
-	$account_info = pdo_get('account', array('acid' => $acid));
+	$account_table = table('account');
+	$account_info = $account_table->getAccountByAcid($acid);
 	if (empty($account_info)) {
 		return error(-1, '公众号不存在');
 	}
@@ -808,10 +790,11 @@ function account_fetch($acid) {
  * */
 function uni_setmeal($uniacid = 0) {
 	global $_W;
-	if(!$uniacid) {
+	if (empty($uniacid)) {
 		$uniacid = $_W['uniacid'];
 	}
-	$owneruid = pdo_fetchcolumn("SELECT uid FROM ".tablename('uni_account_users')." WHERE uniacid = :uniacid AND role = 'owner'", array(':uniacid' => $uniacid));
+	$account_table = table('account');
+	$owneruid = $account_table->getAccountOwnerUidByUniacid($uniacid);
 	if(empty($owneruid)) {
 		$user = array(
 			'uid' => -1,
@@ -823,7 +806,8 @@ function uni_setmeal($uniacid = 0) {
 		return $user;
 	}
 	load()->model('user');
-	$groups = pdo_getall('users_group', array(), array('id', 'name'), 'id');
+	$table = table('group');
+	$groups = $table->searchGroups();
 	$owner = user_single(array('uid' => $owneruid));
 	$user = array(
 		'uid' => $owner['uid'],
@@ -842,22 +826,19 @@ function uni_setmeal($uniacid = 0) {
 			$day = 0;
 			$endtime = $owner['endtime'];
 			$time = strtotime('+1 year');
-			while ($endtime > $time)
-			{
+			while ($endtime > $time) {
 				$year = $year + 1;
 				$time = strtotime("+1 year", $time);
 			};
 			$time = strtotime("-1 year", $time);
 			$time = strtotime("+1 month", $time);
-			while($endtime > $time)
-			{
+			while($endtime > $time) {
 				$month = $month + 1;
 				$time = strtotime("+1 month", $time);
 			} ;
 			$time = strtotime("-1 month", $time);
 			$time = strtotime("+1 day", $time);
-			while($endtime > $time)
-			{
+			while($endtime > $time) {
 				$day = $day + 1;
 				$time = strtotime("+1 day", $time);
 			} ;
@@ -877,14 +858,15 @@ function uni_setmeal($uniacid = 0) {
  * */
 function uni_is_multi_acid($uniacid = 0) {
 	global $_W;
-	if(!$uniacid) {
+	if (empty($uniacid)) {
 		$uniacid = $_W['uniacid'];
 	}
 	$cachekey = "unicount:{$uniacid}";
 	$nums = cache_load($cachekey);
 	$nums = intval($nums);
 	if(!$nums) {
-		$nums = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('account_wechats') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
+		$account_table = table('account');
+		$nums = $account_table->getUniAccountNums($uniacid);
 		cache_write($cachekey, $nums);
 	}
 	if($nums == 1) {
@@ -901,7 +883,8 @@ function account_delete($acid) {
 	load()->func('file');
 	load()->model('module');
 	//判断是不是主公众号
-	$account = pdo_get('uni_account', array('default_acid' => $acid));
+	$account_table = table('account');
+	$account = $account_table->getUniAccountByAcid($acid);
 	if ($account) {
 		$uniacid = $account['uniacid'];
 		$state = permission_account_user_role($_W['uid'], $uniacid);
@@ -913,16 +896,11 @@ function account_delete($acid) {
 		}
 		cache_delete("uniaccount:{$uniacid}");
 		$modules = array();
-		//获取全部规则
-		$rules = pdo_fetchall("SELECT id, module FROM ".tablename('rule')." WHERE uniacid = '{$uniacid}'");
-		if (!empty($rules)) {
-			foreach ($rules as $index => $rule) {
-				$deleteid[] = $rule['id'];
-			}
-			pdo_delete('rule', "id IN ('".implode("','", $deleteid)."')");
-		}
 
-		$subaccount = pdo_fetchall("SELECT acid FROM ".tablename('account')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
+		//删除全部规则
+		pdo_delete('rule', array('uniacid' => $uniacid));
+
+		$subaccount = $account_table->getAccountsByUniacid($uniacid);
 		if (!empty($subaccount)) {
 			foreach ($subaccount as $account) {
 				@unlink(IA_ROOT . '/attachment/qrcode_'.$account['acid'].'.jpg');
@@ -973,11 +951,9 @@ function account_delete($acid) {
 		cache_delete("uniaccount:{$uniacid}");
 		cache_delete("unisetting:{$uniacid}");
 		cache_delete('account:auth:refreshtoken:'.$acid);
-		$oauth = uni_setting($uniacid, array('oauth'));
-		if($oauth['oauth']['account'] == $acid) {
-			$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . " WHERE uniacid = :id AND level = 4 AND secret != '' AND `key` != ''", array(':id' => $uniacid));
-			pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
-		}
+
+		table('setting')->uniSetttingUpdateOauth($uniacid, $acid);
+
 		@unlink(IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
 		@unlink(IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
 		file_remote_delete('qrcode_'.$acid.'.jpg');
@@ -1013,21 +989,10 @@ function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status 
 	$uniacid = intval($uniacid);
 	$uniacid = !empty($uniacid) ? $uniacid : $_W['uniacid'];
 
-	$module_status = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $uniacid), array('id', 'shortcut'));
-	if (empty($module_status)) {
-		$data = array(
-			'uniacid' => $uniacid,
-			'module' => $modulename,
-			'enabled' => STATUS_ON,
-			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
-			'settings' => '',
-		);
-		pdo_insert('uni_account_modules', $data);
-	} else {
-		$data = array(
-			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
-		);
-		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
+	$module_table = table('module');
+	$module_status = $module_table->moduleAccountStatus($modulename, $uniacid, $status);
+
+	if (!empty($module_status)) {
 		cache_build_module_info($modulename);
 	}
 	return true;
@@ -1042,8 +1007,13 @@ function uni_account_member_fields($uniacid) {
 	if (empty($uniacid)) {
 		return array();
 	}
-	$account_member_fields = pdo_getall('mc_member_fields', array('uniacid' => $uniacid), array(), 'fieldid');
-	$system_member_fields = pdo_getall('profile_fields', array(), array(), 'id');
+	$member_table = table('member');
+	$member_table->searchWithUniacid($uniacid);
+	$account_member_fields = $member_table->searchWithMemberField();
+
+	$profile_table = table('profile');
+	$system_member_fields = $profile_table->searchProfileField();
+
 	$less_field_indexes = array_diff(array_keys($system_member_fields), array_keys($account_member_fields));
 	if (empty($less_field_indexes)) {
 		foreach ($account_member_fields as &$field) {

@@ -48,4 +48,13 @@ class MemberTable extends We7Table {
 		$this->query->where('mobile', $info)->whereor('email', $info);
 		return $this;
 	}
+
+	public function searchWithMemberField() {
+		return $this->query->from('mc_member_fields')->getall('fieldid');
+	}
+
+	public function searchWithUniacid($uniacid) {
+		$this->query->where('uniacid', $uniacid);
+		return $this;
+	}
 }
