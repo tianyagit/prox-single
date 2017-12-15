@@ -40,7 +40,7 @@ if (!pdo_tableexists('modules_rank')) {
 			PRIMARY KEY (`id`),
 			KEY `module_name` (`module_name`),
 			KEY `uid` (`uid`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+			) DEFAULT CHARSET=utf8;";
 	pdo_run($sql);
 }
 
@@ -61,7 +61,7 @@ if(!pdo_tableexists('account_webapp')){
   			`acid` int(11) DEFAULT NULL,
   			`uniacid` int(11) DEFAULT NULL,
  			`name` varchar(255) DEFAULT ''
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+			)  DEFAULT CHARSET=utf8;";
 	pdo_run($sql);
 }
 if (!empty($_GPC['state'])) {
