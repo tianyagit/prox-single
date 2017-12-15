@@ -1,13 +1,13 @@
 <?php
 
-namespace We7\V163;
+namespace We7\V165;
 
 defined('IN_IA') or exit('Access Denied');
 /**
  * 修改pc 最多新建应用
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * Time: 1510121253
- * @version 1.6.3
+ * @version 1.6.5
  */
 
 class AlterPcMaxaccount {

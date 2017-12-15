@@ -10,8 +10,12 @@ if ($action == 'manage' && $do == 'createview') {
 }
 
 $account_api = WeAccount::create();
-$check_manange = $account_api->checkIntoManage();
-if ($do != 'display') {
+
+if ($action != 'manage' && $do != 'switch') {
+	if (is_error($account_api)) {
+		message($account_api['message'], url('webapp/manage/list'));
+	}
+	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {
 		$account_display_url = $account_api->accountDisplayUrl();
 		itoast('', $account_display_url);
