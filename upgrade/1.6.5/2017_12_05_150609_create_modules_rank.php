@@ -24,7 +24,7 @@ class CreateModulesRank {
 					PRIMARY KEY (`id`),
 					KEY `module_name` (`module_name`),
 					KEY `uid` (`uid`)
-					) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+					) DEFAULT CHARSET=utf8;";
 			pdo_run($sql);
 		}
 	}

@@ -17,11 +17,11 @@ class AlterPcMaxaccount {
 	 */
 	public function up() {
 		if(!pdo_fieldexists('users_group', 'maxwebapp')) {
-			pdo_query('ALTER TABLE ' . tablename('users_group') . " ADD `maxwebapp` INT(10) NOT NULL DEFAULT 0 COMMENT 'PC最大创建数量';");
+			pdo_query("ALTER TABLE " . tablename('users_group') . " ADD `maxwebapp` INT(10) NOT NULL DEFAULT 0 COMMENT 'PC最大创建数量';");
 		}
 
 		if(!pdo_fieldexists('users_founder_group', 'maxwebapp')) {
-			pdo_query('ALTER TABLE ' . tablename('users_founder_group') . " ADD `maxwebapp` INT(10) NOT NULL DEFAULT 0 COMMENT 'PC最大创建数量';");
+			pdo_query("ALTER TABLE " . tablename('users_founder_group') . " ADD `maxwebapp` INT(10) NOT NULL DEFAULT 0 COMMENT 'PC最大创建数量';");
 		}
 	}
 	

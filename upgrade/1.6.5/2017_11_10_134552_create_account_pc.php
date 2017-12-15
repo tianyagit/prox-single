@@ -21,7 +21,7 @@ class CreateAccountPc {
   `acid` int(11) DEFAULT NULL,
   `uniacid` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 EOT;
 
 			pdo_query($sql);
