@@ -708,7 +708,7 @@ function mc_fans_groups($force_update = false) {
 		$results = iunserializer($results);
 		return $results;
 	}
-	$account_api = WeAccount::create($_W['acid']);
+	$account_api = WeAccount::create($_W['uniacid']);
 	if (!$account_api->isTagSupported()) {
 		return array();
 	}
@@ -2035,29 +2035,32 @@ function mc_fans_chats_record_formate($chat_record) {
 		return array();
 	}
 	foreach ($chat_record as &$record) {
-		$record['content'] = iunserializer($record['content']);
-		if (isset($record['content']['media_id']) && !empty($record['content']['media_id'])) {
-			$material = material_get($record['content']['media_id']);
-			switch($record['msgtype']) {
-				case 'image':
-					$record['content'] = tomedia($material['attachment']);
-					break;
-				case 'mpnews':
-					$record['content'] = $material['news'][0]['thumb_url'];
-					break;
-				case 'music':
-					$record['content'] = $material['filename'];
-					break;
-				case 'voice':
-					$record['content'] = $material['filename'];
-					break;
-				case 'voice':
-					$record['content'] = $material['filename'];
-					break;
+		if ($record['flag'] == FANS_CHATS_FROM_SYSTEM) {
+			$record['content'] = iunserializer($record['content']);
+			if (isset($record['content']['media_id']) && !empty($record['content']['media_id'])) {
+				$material = material_get($record['content']['media_id']);
+				switch($record['msgtype']) {
+					case 'image':
+						$record['content'] = tomedia($material['attachment']);
+						break;
+					case 'mpnews':
+						$record['content'] = $material['news'][0]['thumb_url'];
+						break;
+					case 'music':
+						$record['content'] = $material['filename'];
+						break;
+					case 'voice':
+						$record['content'] = $material['filename'];
+						break;
+					case 'voice':
+						$record['content'] = $material['filename'];
+						break;
+				}
+			} else {
+				$record['content'] = urldecode($record['content']['content']);
 			}
-		} else {
-			$record['content'] = urldecode($record['content']['content']);
 		}
+
 		$record['createtime'] = date('Y-m-d H:i', $record['createtime']);
 	}
 	return $chat_record;

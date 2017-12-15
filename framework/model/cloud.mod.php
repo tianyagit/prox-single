@@ -626,9 +626,8 @@ function cloud_w_upgradeinfo($name) {
 }
 //-后台皮肤接口 end
 
-function cloud_sms_send($mobile, $content, $postdata = array()) {
+function cloud_sms_send($mobile, $content, $postdata = array(), $custom_sign = '') {
 	global $_W;
-	load()->model('setting');
 	if(!preg_match('/^1\d{10}$/', $mobile) || empty($content)) {
 		return error(1, '发送短信失败, 原因: 手机号错误或内容为空.');
 	}
@@ -636,9 +635,9 @@ function cloud_sms_send($mobile, $content, $postdata = array()) {
 	if (empty($_W['uniacid'])) {
 		$sms_info = cloud_sms_info();
 		$balance = empty($sms_info['sms_count']) ? 0 : $sms_info['sms_count'];
-
-		$setting_sms_sign = setting_load('site_sms_sign');
-		$sign = !empty($setting_sms_sign['site_sms_sign']['sign']) ? $setting_sms_sign['site_sms_sign']['sign'] : '';
+		if (!empty($custom_sign)) {
+			$sign = $custom_sign;
+		}
 	} else {
 		$row = pdo_get('uni_settings' , array('uniacid' => $_W['uniacid']), array('notify'));
 		$row['notify'] = @iunserializer($row['notify']);
@@ -675,12 +674,20 @@ function cloud_sms_send($mobile, $content, $postdata = array()) {
 		return error($result['errno'], $result['message']);
 	}
 	if (intval($result['errno']) != -1) {
-		$row['notify']['sms']['balance'] = $row['notify']['sms']['balance'] - 1;
-		if ($row['notify']['sms']['balance'] < 0) {
-			$row['notify']['sms']['balance'] = 0;
+		if (!empty($_W['uniacid'])) {
+			$row['notify']['sms']['balance'] = $row['notify']['sms']['balance'] - 1;
+			if ($row['notify']['sms']['balance'] < 0) {
+				$row['notify']['sms']['balance'] = 0;
+			}
+			pdo_update('uni_settings', array('notify' => iserializer($row['notify'])), array('uniacid' => $_W['uniacid']));
+			uni_setting_save('notify', $row['notify']);
+		} else {
+			$sms_info['sms_count'] = $sms_info['sms_count'] - 1;
+			if ($sms_info['sms_count'] < 0) {
+				$sms_info['sms_count'] = 0;
+			}
+			setting_save($sms_info, 'sms.info');
 		}
-		pdo_update('uni_settings', array('notify' => iserializer($row['notify'])), array('uniacid' => $_W['uniacid']));
-		uni_setting_save('notify', $row['notify']);
 	}
 	return true;
 }

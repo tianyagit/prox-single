@@ -47,10 +47,22 @@ if ($do == 'get_account_api') {
 	}
 	$result = stat_visit_info_bydate($type, '', $daterange, true);
 	if (empty($result)) {
-		foreach ($account_list as $account) {
-			$data[] = 0;
+		if ($type == 'today') {
+			$data_x = date('Ymd');
 		}
-		iajax(0, array('data_x' => $accounts, 'data_y' => $data));
+		if ($type == 'week') {
+			$data_x = stat_date_range(date('Ymd', strtotime('-7 days')), date('Ymd'));
+		}
+		if ($type == 'month') {
+			$data_x = stat_date_range(date('Ymd', strtotime('-30 days')), date('Ymd'));
+		}
+		if ($type == 'daterange') {
+			$data_x = stat_date_range($daterange['start'], $daterange['end']);
+		}
+		foreach ($data_x as $val) {
+			$data_y[] = 0;
+		}
+		iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
 	}
 	foreach ($result as $val) {
 		$data_x[] = $val['date'];

@@ -6,6 +6,9 @@
 defined('IN_IA') or exit('Access Denied');
 
 $account_api = WeAccount::create();
+if (is_error($account_api)) {
+	message($account_api['message'], url('account/display'));
+}
 $check_manange = $account_api->checkIntoManage();
 
 if (!($action == 'material' && $do == 'delete') && empty($_GPC['version_id'])) {
