@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-class WxappTable extends We7Table {
+class WxappTable extends AccountTable {
 	
 	private $version_table = 'wxapp_versions';
 	

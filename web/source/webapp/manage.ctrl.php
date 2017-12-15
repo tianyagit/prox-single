@@ -43,7 +43,7 @@ if($do == 'list') {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 15;
 
-	$account_table = table('account');
+	$account_table = table('webapp');
 	$account_table->searchWithType(array(ACCOUNT_TYPE_WEBAPP_NORMAL));
 
 	$keyword = trim($_GPC['keyword']);
