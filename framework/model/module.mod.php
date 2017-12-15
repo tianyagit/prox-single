@@ -326,7 +326,7 @@ function module_fetch($name) {
 				$module_info['plugin_list'] = array_keys ($module_info['plugin_list']);
 			}
 		}
-		if ($module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2) {
+		if ($module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['welcome_support'] != 2) {
 			$module_info['app_support'] = 2;
 		}
 		$module_info['is_relation'] = $module_info['app_support'] ==2 && $module_info['wxapp_support'] == 2 ? true : false;
