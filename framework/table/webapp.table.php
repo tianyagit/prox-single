@@ -7,7 +7,7 @@
  * @license     A "Slug" license name e.g. GPL2
  */
 defined('IN_IA') or exit('Access Denied');
-
+load()->table('account');
 class WebappTable extends AccountTable {
 
 	/**
