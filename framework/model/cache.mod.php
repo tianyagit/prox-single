@@ -390,7 +390,7 @@ function cache_build_uninstalled_module() {
 					'main_module' => $main_module,
 					'upgrade_support' => $upgrade_support_module
 				);
-				$module_type = in_array($manifest['name'], $recycle_modules) ? 'recycle' : 'uninstalled';
+				$module_type = !empty($recycle_modules[$manifest['name']]) ? 'recycle' : 'uninstalled';
 				if ($upgrade_support_module) {
 					if ($module_info['app_support'] == 2 && $installed_module[$module_info['name']]['app_support'] != 2) {
 						$uninstallModules['uninstalled']['app'][$manifest['name']] = $module_info;
