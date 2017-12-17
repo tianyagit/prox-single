@@ -809,7 +809,7 @@ function file_image_quality($src, $to_path, $ext) {
 	}
 
 	//	//大于5M不压缩
-	if (filesize($src)/1024 > 5120) {
+	if (filesize($src) / 1024 > 5120) {
 		return;
 	}
 
