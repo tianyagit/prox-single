@@ -27,6 +27,7 @@ abstract class We7Table {
 	protected $casts = array();
 
 
+
 	public function __construct() {
 		//实例化Query对象,并重置查询信息
 		load()->classs('validator');
@@ -141,6 +142,7 @@ abstract class We7Table {
 		$field = lcfirst($field);
 		$value = $params[0];
 		if (count($params) > 1) {
+			//params[1] 操作符
 			$field = $field.' '.$params[1];
 		}
 		$this->query->where($field, $value);
@@ -154,21 +156,17 @@ abstract class We7Table {
 	 * @return mixed
 	 */
 	public function __call($method, $params) {
-		$search_method = 'search'.ucfirst($method);
-		if(method_exists($this, $search_method)) {
-			return call_user_func_array(array($this, $search_method), $params);
-		}
 
 		if(starts_with($method, 'searchWith')) {
 			return $this->doWhere(str_replace('searchWith', '', $method), $params);
 		}
 
-		if(starts_with($method, 'deleteWith')) {
-			return $this->doWhere(str_replace('deleteWith', '', $method), $params);
+		if(starts_with($method, 'where')) {
+			return $this->doWhere(str_replace('where', '', $method), $params);
 		}
 
-		if(starts_with($method, 'updateWith')) {
-			$field = lcfirst(str_replace('updateWith', '', $method));
+		if(starts_with($method, 'update')) {
+			$field = lcfirst(str_replace('update', '', $method));
 			$this->fill($field, $params[0]);
 			return $this;
 		}
