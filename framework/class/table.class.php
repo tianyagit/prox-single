@@ -235,10 +235,11 @@ abstract class We7Table {
 	 * 
 	 */
 	public function __call($method, $params) {
+		//whereor 必须在where 前边 否则 whereorAge 或被替换成 where('or_age',1)
 		$actions = array(
 			'searchWith',
-			'where',
 			'whereor',
+			'where',
 			'fill'
 		);
 		foreach ($actions as $action) {
