@@ -142,6 +142,15 @@ abstract class We7Table {
 		$data = $this->query->getcolumn($field);
 		return $data;
 	}
+
+	public function where($condition, $parameters = array(), $operator = 'AND') {
+		$this->query->where($condition, $parameters, $operator);
+		return $this;
+	}
+
+	public function whereor($condition, $parameters = array()) {
+		return $this->where($condition, $parameters, 'OR');
+	}
 	/**
 	 *  创建对象
 	 */
@@ -178,7 +187,6 @@ abstract class We7Table {
 		if ($params == 0) {
 			return $this;
 		}
-		$field = $this->snake($field);
 		$value = $params[0];
 		if (count($params) > 1) {
 			//params[1] 操作符
@@ -227,24 +235,27 @@ abstract class We7Table {
 	 * 
 	 */
 	public function __call($method, $params) {
-
-
-		if(starts_with($method, 'searchWith')) {
-			return $this->doWhere(str_replace('searchWith', '', $method), $params);
-		}
-
-		// whereor 方法直接调用query->whereor whereorXXX 执行 doWhere
-		if (starts_with($method, 'whereor') && strlen($method) > 7) {
-			return $this->doWhere(str_replace('whereor', '', $method), $params, 'OR');
-		} else if (starts_with($method, 'where') && strlen($method) > 5) {
-			return $this->doWhere(str_replace('where', '', $method), $params, 'AND');
-		}
-
-		if(starts_with($method, 'update')) {
-			// 字段 HelloWord 转为 hello_word
-			$field = $this->snake(str_replace('update', '', $method));
-			$this->fill($field, $params[0]);
-			return $this;
+		$actions = array(
+			'searchWith',
+			'where',
+			'whereor',
+			'fill'
+		);
+		foreach ($actions as $action) {
+			$fields = explode($action, $method);
+			if (count($fields) > 1 && empty($fields[0])) {
+				$field = $this->snake($fields[1]);
+				switch ($action) {
+					case 'where' :
+					case 'searchWith' :
+						return $this->doWhere($field, $params);
+					case 'whereor':
+						return $this->doWhere($field, $params, 'OR');
+					case 'fill' :
+						$this->fill($field, $params[0]);
+						return $this;
+				}
+			}
 		}
 
 		call_user_func_array(array($this->query, $method), $params);
