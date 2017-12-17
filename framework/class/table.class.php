@@ -127,6 +127,21 @@ abstract class We7Table {
 		$result = $validator->valid();
 		return $result;
 	}
+
+	public function get() {
+		$data = $this->query->get();
+		return $data;
+	}
+
+	public function getall($keyfield = '') {
+		$data = $this->query->getall($keyfield);
+		return $data;
+	}
+
+	public function getCol($field = '') {
+		$data = $this->query->getcolumn($field);
+		return $data;
+	}
 	/**
 	 *  创建对象
 	 */
@@ -232,11 +247,7 @@ abstract class We7Table {
 			return $this;
 		}
 
-		$result = call_user_func_array(array($this->query, $method), $params);
-		if (in_array($method, array('get', 'getall'))) {
-			return $result;
-		}
-
+		call_user_func_array(array($this->query, $method), $params);
 		return $this;
 	}
 }
