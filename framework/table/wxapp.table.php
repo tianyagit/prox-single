@@ -5,7 +5,7 @@
  */
 
 defined('IN_IA') or exit('Access Denied');
-
+load()->table('account');
 class WxappTable extends AccountTable {
 	
 	private $version_table = 'wxapp_versions';

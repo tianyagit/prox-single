@@ -10,22 +10,27 @@ defined('IN_IA') or exit('Access Denied');
  * @property Query $query
  */
 abstract class We7Table {
-
+	
 	//表名
 	protected $tableName = '';
 	//主键
 	protected $primaryKey = 'id';
+	protected $field = array(
+		'username',
+		'uid',
+		'age',
+	);
+	// 字段验证规则
+	protected $rule = array();
+	// 字段默认值
+	protected $default = array(
+		'username' => 'xxx', 
+		'createtime'
+	);
+	
 	protected $query;
 	//数据库属性
-	protected $attributes = array();
-
-	// 字段验证规则
-	protected $rules = array();
-	// 字段默认值
-	protected $defaults = array();
-	// 字段类型
-	protected $casts = array();
-
+	protected $attribute = array();
 
 
 	public function __construct() {
@@ -154,6 +159,15 @@ abstract class We7Table {
 	 * @param $method
 	 * @param $params
 	 * @return mixed
+	 * 
+	 * 语法糖 -> where() fill()
+	 * whereUsername('test')->delete()  ->get()...;
+	 * searchWithUsername('test') ->get()
+	 * fillUsername('test')->update()   ->insert()
+	 * 
+	 * 业务方法
+	 * getByid()
+	 * 
 	 */
 	public function __call($method, $params) {
 
