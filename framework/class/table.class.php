@@ -243,7 +243,7 @@ abstract class We7Table {
 		);
 		foreach ($actions as $action) {
 			$fields = explode($action, $method);
-			if (count($fields) > 1 && empty($fields[0])) {
+			if (count($fields) > 1 && empty($fields[0]) && !empty($fields[1])) {
 				$field = $this->snake($fields[1]);
 				switch ($action) {
 					case 'where' :
