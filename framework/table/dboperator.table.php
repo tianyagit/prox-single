@@ -12,9 +12,10 @@ class DbOperatorTable extends We7Table {
 
 	protected $primaryKey = 'Id';
 
-	protected $field = array('name', 'age', 'is_delete', 'update_time');
+	protected $field = array('name', 'age', 'is_delete', 'update_time','type');
 
 	protected $default = array('age'=>5,
+		'type'=>'tabletest',
 		'name'=>'custom',
 		'is_delete'=>0,
 		'update_time'=> 'custom');
