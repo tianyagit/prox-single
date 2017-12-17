@@ -138,7 +138,7 @@ abstract class We7Table {
 		return $data;
 	}
 
-	public function getCol($field = '') {
+	public function getcolumn($field = '') {
 		$data = $this->query->getcolumn($field);
 		return $data;
 	}
@@ -246,19 +246,16 @@ abstract class We7Table {
 			if (count($fields) > 1 && empty($fields[0]) && !empty($fields[1])) {
 				$field = $this->snake($fields[1]);
 				switch ($action) {
-					case 'where' :
-					case 'searchWith' :
-						return $this->doWhere($field, $params);
 					case 'whereor':
 						return $this->doWhere($field, $params, 'OR');
 					case 'fill' :
 						$this->fill($field, $params[0]);
 						return $this;
+					default :
+						return $this->doWhere($field, $params);
 				}
 			}
 		}
-
-		call_user_func_array(array($this->query, $method), $params);
 		return $this;
 	}
 }
