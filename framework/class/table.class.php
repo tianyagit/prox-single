@@ -15,22 +15,15 @@ abstract class We7Table {
 	protected $tableName = '';
 	//主键
 	protected $primaryKey = 'id';
-	protected $field = array(
-		'username',
-		'uid',
-		'age',
-	);
+	protected $field = array();
 	// 字段验证规则
 	protected $rule = array();
 	// 字段默认值
-	protected $default = array(
-		'username' => 'xxx', 
-		'createtime'
-	);
+	protected $default = array();
 	
 	protected $query;
 	//数据库属性
-	protected $attribute = array();
+	private $attribute = array();
 
 
 	public function __construct() {
@@ -62,16 +55,34 @@ abstract class We7Table {
 	}
 
 
+	/**
+	 *  字段填充
+	 * @param $field
+	 * @param string $value
+	 * @return $this
+	 */
 	public function fill($field, $value = '') {
 		if (is_array($field)) {
 			foreach ($field as $column => $val) {
-				$this->attributes[$column] = $val;
+				$this->fillField($column, $val);
 			}
 			return $this;
 		}
-		$this->attributes[$field] = $value;
-		$this->query->fill($field, $value);
+		$this->fillField($field, $value);
 		return $this;
+	}
+
+	/**
+	 *  字段填充
+	 * @param $column
+	 * @param $val
+	 */
+	private function fillField($column, $val) {
+		if (in_array($column, $this->field)) {
+			$this->attribute[$column] = $val;
+			$this->query->fill($column, $val);
+
+		}
 	}
 
 	/**
@@ -89,13 +100,17 @@ abstract class We7Table {
 	/**
 	 * 追加默认数据
 	 */
-	private function appendDefauls() {
-		foreach ($this->defaults as $field => $value) {
-			if (! isset($this->attributes[$field])) {
-				if ($value instanceof Closure) {
-					$value = call_user_func($value, $this);
+	private function appendDefault() {
+		foreach ($this->default as $field => $value) {
+			if (! isset($this->attribute[$field])) {
+				if ($value === 'custom') {
+					$method = 'default'.$this->studly($field);
+					if (! method_exists($this, $method)) {
+						trigger_error($method.'方法未找到');
+					}
+					$value = call_user_func(array($this, $method));
 				}
-				$this->attributes[$field] = $value;
+				$this->fillField($field, $value);
 			}
 		}
 	}
@@ -104,27 +119,31 @@ abstract class We7Table {
 	 *  获取字段所有验证规则
 	 */
 	protected function valid($data) {
-		if (count($this->rules) <= 0) {
+		if (count($this->rule) <= 0) {
 			return error(0);
 		}
 
-		$validator = Validator::create($data, $this->rules);
+		$validator = Validator::create($data, $this->rule);
 		$result = $validator->valid();
 		return $result;
 	}
 	/**
 	 *  创建对象
-	 * @param $attributes
 	 */
 	public function save() {
-		$this->appendDefauls();
-		$result = $this->valid($this->attributes);
-		if (is_error($result)) {
-			return $result;
+		// 更新不处理默认值
+		if($this->query->hasWhere()) {
+			$result = $this->valid($this->attribute);
+			if (is_error($result)) {
+				return $result;
+			}
+			return $this->query->update();
 		}
 
-		if($this->query->hasWhere()) {
-			return $this->query->update();
+		$this->appendDefault();
+		$result = $this->valid($this->attribute);
+		if (is_error($result)) {
+			return $result;
 		}
 		return $this->query->insert();
 	}
@@ -140,18 +159,41 @@ abstract class We7Table {
 		return false;
 	}
 
-	private function doWhere($field, $params) {
+	private function doWhere($field, $params, $operator = 'AND') {
 		if ($params == 0) {
 			return $this;
 		}
-		$field = lcfirst($field);
+		$field = $this->snake($field);
 		$value = $params[0];
 		if (count($params) > 1) {
 			//params[1] 操作符
 			$field = $field.' '.$params[1];
 		}
-		$this->query->where($field, $value);
+		$this->query->where($field, $value, $operator);
 		return $this;
+	}
+
+	/**
+	 *  HelloWord 转 hello_word
+	 * @param $value
+	 * @return mixed|string
+	 */
+	private function snake($value) {
+		$delimiter = '_';
+		if (! ctype_lower($value)) {
+			$value = preg_replace('/\s+/u', '', ucwords($value));
+			$value = strtolower(preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $value));
+		}
+		return $value;
+	}
+
+	/**
+	 * hello_word 转HelloWord
+	 * @return mixed
+	 */
+	private function studly($value) {
+		$value = ucwords(str_replace(array('-', '_'), ' ', $value));
+		return str_replace(' ', '', $value);
 	}
 
 	/**
@@ -171,23 +213,30 @@ abstract class We7Table {
 	 */
 	public function __call($method, $params) {
 
+
 		if(starts_with($method, 'searchWith')) {
 			return $this->doWhere(str_replace('searchWith', '', $method), $params);
 		}
 
-		if(starts_with($method, 'where')) {
-			return $this->doWhere(str_replace('where', '', $method), $params);
+		// whereor 方法直接调用query->whereor whereorXXX 执行 doWhere
+		if (starts_with($method, 'whereor') && strlen($method) > 7) {
+			return $this->doWhere(str_replace('whereor', '', $method), $params, 'OR');
+		} else if (starts_with($method, 'where') && strlen($method) > 5) {
+			return $this->doWhere(str_replace('where', '', $method), $params, 'AND');
 		}
 
 		if(starts_with($method, 'update')) {
-			$field = lcfirst(str_replace('update', '', $method));
+			// 字段 HelloWord 转为 hello_word
+			$field = $this->snake(str_replace('update', '', $method));
 			$this->fill($field, $params[0]);
 			return $this;
 		}
+
 		$result = call_user_func_array(array($this->query, $method), $params);
 		if (in_array($method, array('get', 'getall'))) {
 			return $result;
 		}
+
 		return $this;
 	}
 }

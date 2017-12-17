@@ -12,18 +12,29 @@ class DbOperatorTable extends We7Table {
 
 	protected $primaryKey = 'Id';
 
-	protected $defaults = array('age'=>5);
+	protected $field = array('name', 'age', 'is_delete', 'update_time');
 
-	protected $rules = array(
+	protected $default = array('age'=>5,
+		'name'=>'custom',
+		'is_delete'=>0,
+		'update_time'=> 'custom');
+
+	protected $rule = array(
 		'age'=>'required|min:10|max:99',
 		'name'=>'required|min:1|max:6'
 	);
 
+
 	public function __construct() {
 		parent::__construct();
-		$this->defaults['name'] = function() {
-			return random(8);
-		};
+	}
+
+	public function defaultName() {
+		return random(5);
+	}
+
+	public function defaultUpdateTime() {
+		return time();
 	}
 
 }
