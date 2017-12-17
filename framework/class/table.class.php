@@ -90,7 +90,7 @@ abstract class We7Table {
 	 * @param $id
 	 * @return mixed
 	 */
-	public function findById($id) {
+	public function getById($id) {
 		$query = $this->query->from($this->tableName)->where($this->primaryKey, $id);
 		if (is_array($id)) {
 			return $query->getall();
