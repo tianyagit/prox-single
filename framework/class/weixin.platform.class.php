@@ -28,6 +28,12 @@ class WeiXinPlatform extends WeiXinAccount {
 
 	function __construct($account = array()) {
 		$setting = setting_load('platform');
+		$this->accountDisplayUrl = url('account/display');
+		$this->accountType = 'account';
+		$this->accountManageType = ACCOUNT_TYPE_OFFCIAL_AUTH;
+		$this->accountTypeName = '公众号';
+		$this->accountTypeTemplate = '';
+		$this->accountTypeSupport = 'app_support';
 		$this->appid = $setting['platform']['appid'];
 		$this->appsecret = $setting['platform']['appsecret'];
 		$this->token = $setting['platform']['token'];
@@ -189,7 +195,7 @@ class WeiXinPlatform extends WeiXinAccount {
 		cache_write('account:oauth:refreshtoken:'.$this->account['account_appid'], $response['refresh_token']);
 		return $response;
 	}
-	
+
 	public function getJsApiTicket(){
 		$cachekey = "jsticket:{$this->account['acid']}";
 		$js_ticket = cache_load($cachekey);
@@ -209,7 +215,7 @@ class WeiXinPlatform extends WeiXinAccount {
 		$this->account['jsapi_ticket'] = $js_ticket;
 		return $js_ticket['value'];
 	}
-	
+
 	public function getJssdkConfig($url = ''){
 		global $_W;
 		$jsapiTicket = $this->getJsApiTicket();

@@ -1,5 +1,11 @@
 {
     "require": {
-        "we7/devtool": "^0.0.5"
+        "we7/devtool": "^0.0.5",
+        "phpunit/phpunit": "5.*"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "MicroEngine\\": "tester/unit/"
+        }
     }
 }

@@ -209,10 +209,7 @@ function file_upload($file, $type = 'image', $name = '', $compress = false) {
 		return error(-4, "上传的文件超过大小限制，请上传小于 {$limit}k 的文件");
 	}
 
-	if ($type == 'image' && $compress) {
-		//设置清晰度
-		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);
-	}
+
 
 	$result = array();
 	if (empty($name) || $name == 'auto') {
@@ -230,9 +227,16 @@ function file_upload($file, $type = 'image', $name = '', $compress = false) {
 		$result['path'] = $name;
 	}
 
-	if (!file_move($file['tmp_name'], ATTACHMENT_ROOT . '/' . $result['path'])) {
+	$save_path = ATTACHMENT_ROOT . '/' . $result['path'];
+	if (!file_move($file['tmp_name'], $save_path)) {
 		return error(-1, '保存上传文件失败');
 	}
+
+	if ($type == 'image' && $compress) {
+		//设置清晰度
+		file_image_quality($save_path, $save_path, $ext);
+	}
+
 	$result['success'] = true;
 
 	return $result;
@@ -253,10 +257,7 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
 		return error(-3, '不允许上传此类文件');
 	}
 
-	if ($type == 'image') {
-		//设置清晰度
-		file_image_quality($file['tmp_name'], $file['tmp_name'], $ext);
-	}
+
 
 	$result = array();
 	if (empty($name) || $name == 'auto') {
@@ -272,9 +273,14 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
 		}
 		$result['path'] = $name;
 	}
-
-	if (!file_move($file['tmp_name'], ATTACHMENT_ROOT . '/' . $result['path'])) {
+	$save_path = ATTACHMENT_ROOT . '/' . $result['path'];
+	if (!file_move($file['tmp_name'], $save_path)) {
 		return error(-1, '保存上传文件失败');
+	}
+
+	if ($type == 'image') {
+		//设置清晰度
+		file_image_quality($save_path, $save_path, $ext);
 	}
 	$result['success'] = true;
 
@@ -794,16 +800,19 @@ function file_is_image($url) {
  * @since version
  */
 function file_image_quality($src, $to_path, $ext) {
+	load()->classs('image');
 	global $_W;
 	//不压缩
 	$quality = intval($_W['setting']['upload']['image']['zip_percentage']);
 	if ($quality <= 0 || $quality >= 100) {
 		return;
 	}
+
 	//	//大于5M不压缩
-	if (filesize($src) > 5120) {
+	if (filesize($src) / 1024 > 5120) {
 		return;
 	}
 
-	return Image::create($src)->saveTo($to_path, $quality);
+	$result = Image::create($src, $ext)->saveTo($to_path, $quality);
+	return $result;
 }

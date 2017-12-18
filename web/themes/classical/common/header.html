@@ -67,10 +67,12 @@
 	<div class="container">
 		{if in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 		<div class="panel panel-content main-panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
-		<div class="panel-body clearfix main-panel-body {if $_GPC['menu_fold_tag:classical'] == 1}folded{/if}">
+		<div class="panel-body clearfix main-panel-body {if $_GPC['menu_fold_tag:classical'] == 1 && !defined('IN_MODULE')}folded{/if}">
+			{if !defined('IN_MODULE')}
 			<div class="icon-unfold js-folded" onclick="util.cookie.set('menu_fold_tag:classical', util.cookie.get('menu_fold_tag:classical') == 1 ? 0 : 1)">
 				<span class="wi wi-folded"></span>
 			</div>
+			{/if}
 			<div class="left-menu-container">
 				<div class="left-menu">
 					<div class="left-menu-top">

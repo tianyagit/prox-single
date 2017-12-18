@@ -20,6 +20,17 @@ function safe_gpc_int($value, $default = 0) {
 	return $value;
 }
 
+function safe_gpc_belong($value, $allow = array(), $default = '') {
+	if (empty($allow)) {
+		return $default;
+	}
+	if (in_array($value, $allow, true)) {
+		return $value;
+	} else {
+		return $default;
+	}
+}
+
 /**
  * 转换一个安全字符串
  * @param mixed $value
@@ -178,9 +189,19 @@ function safe_remove_xss($val) {
 	$search .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	$search .= '1234567890!@#$%^&*()';
 	$search .= '~`";:?+/={}[]-_|\'\\';
+
 	for ($i = 0; $i < strlen($search); $i++) {
 		$val = preg_replace('/(&#[xX]0{0,8}'.dechex(ord($search[$i])).';?)/i', $search[$i], $val);
 		$val = preg_replace('/(&#0{0,8}'.ord($search[$i]).';?)/', $search[$i], $val);
+	}
+	preg_match_all('/href=[\'|\"](.*?)[\'|\"]|src=[\'|\"](.*?)[\'|\"]/i', $val, $matches);
+	$url_list = array_merge($matches[1], $matches[2]);
+	$encode_url_list = array();
+	if (!empty($url_list)) {
+		foreach ($url_list as $key => $url) {
+			$val = str_replace($url, 'we7_' . $key . '_we7placeholder', $val);
+			$encode_url_list[] = $url;
+		}
 	}
 	$ra1 = array('javascript', 'vbscript', 'expression', 'applet', 'meta', 'xml', 'blink', 'link', 'script', 'embed', 'object', 'frameset', 'ilayer', 'bgsound', 'title', 'base');
 	$ra2 = array('onabort', 'onactivate', 'onafterprint', 'onafterupdate', 'onbeforeactivate', 'onbeforecopy', 'onbeforecut', 'onbeforedeactivate', 'onbeforeeditfocus', 'onbeforepaste', 'onbeforeprint', 'onbeforeunload', 'onbeforeupdate', 'onblur', 'onbounce', 'oncellchange', 'onchange', 'onclick', 'oncontextmenu', 'oncontrolselect', 'oncopy', 'oncut', 'ondataavailable', 'ondatasetchanged', 'ondatasetcomplete', 'ondblclick', 'ondeactivate', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover', 'ondragstart', 'ondrop', 'onerror', 'onerrorupdate', 'onfilterchange', 'onfinish', 'onfocus', 'onfocusin', 'onfocusout', 'onhelp', 'onkeydown', 'onkeypress', 'onkeyup', 'onlayoutcomplete', 'onload', 'onlosecapture', 'onmousedown', 'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 'onmovestart', 'onpaste', 'onpropertychange', 'onreadystatechange', 'onreset', 'onresize', 'onresizeend', 'onresizestart', 'onrowenter', 'onrowexit', 'onrowsdelete', 'onrowsinserted', 'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 'onsubmit', 'onunload', 'import');
@@ -206,6 +227,11 @@ function safe_remove_xss($val) {
 			if ($val_before == $val) {
 				$found = false;
 			}
+		}
+	}
+	if (!empty($encode_url_list) && is_array($encode_url_list)) {
+		foreach ($encode_url_list as $key => $url) {
+			$val = str_replace('we7_' . $key . '_we7placeholder', $url, $val);
 		}
 	}
 	return $val;
