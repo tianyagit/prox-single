@@ -26,28 +26,4 @@ class GroupTable extends We7Table {
 		$this->query->where('id !=', $id);
 		return $this;
 	}
-
-	public function searchGroups() {
-		return $this->query->from('users_group')->getall('id');
-	}
-
-	public function uniGroupOrderById($order) {
-		return $this->query->orderby('id', $order);
-	}
-
-	public function searchGroupByUniacid($uniacid) {
-		return $this->query->where('uniacid', $uniacid);
-	}
-
-	public function searchUniGroupsList($keyword = '') {
-		return $this->query->from('uni_group')->getall($keyword);
-	}
-
-	public function searchUniAccountGroup($uniacid) {
-		return $this->query->from('uni_account_group')->where('uniacid', $uniacid)->getall('groupid');
-	}
-
-	public function searchUniGroups($uniacid, $id) {
-		return $this->query->from('uni_group')->where('uniacid', $uniacid)->whereor('id', $id)->getall();
-	}
 }

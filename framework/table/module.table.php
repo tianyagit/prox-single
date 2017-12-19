@@ -54,29 +54,4 @@ class ModuleTable extends We7Table {
 		}
 		return true;
 	}
-
-	public function moduleAccountStatus($modulename, $uniacid, $status) {
-		$module_status = $this->query->from('uni_account_modules')->select('id', 'shortcut')->where('module', $modulename)->where('uniacid', $uniacid)->get();
-
-		if (empty($module_status)) {
-			$data = array(
-				'uniacid' => $uniacid,
-				'module' => $modulename,
-				'enabled' => STATUS_ON,
-				'shortcut' => $status ? STATUS_ON : STATUS_OFF,
-				'settings' => '',
-			);
-			pdo_insert('uni_account_modules', $data);
-		} else {
-			$data = array(
-				'shortcut' => $status ? STATUS_ON : STATUS_OFF,
-			);
-			pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
-		}
-		return $module_status;
-	}
-
-	public function searchModuleByName($module_name) {
-		return $this->query->from('modules')->where('name', $module_name)->orderby('mid', 'desc')->getall('name');
-	}
 }

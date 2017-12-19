@@ -15,9 +15,4 @@ class FansTable extends We7Table {
 			->where('acid', $_W['acid'])
 			->getall('openid');
 	}
-
-	public function fansVistCount($endtime, $follow_status) {
-		global $_W;
-		return $this->query->from('mc_mapping_fans')->where('acid', $_W['acid'])->where('uniacid', $_W['uniacid'])->where('follow', $follow_status)->where('followtime <', $endtime)->count();
-	}
 }
