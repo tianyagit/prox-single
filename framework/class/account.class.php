@@ -866,6 +866,22 @@ abstract class WeBase {
 	}
 
 	/**
+	 * 构造dopage页面URL
+	 * @param $do string 要进入的操作名称对应当前模块的 doPageXXX 中的 XXX
+	 * @param array $query 附加的查询参数
+	 * @return string 返回的 URL
+	 */
+	protected function createPageUrl($do, $query = array()) {
+		global $_GPC;
+		$query['do'] = $do;
+		$query['m'] = strtolower($this->modulename);
+		if (trim($_GPC['module_type'] == 'system_welcome')) {
+			$query['module_type'] = 'system_welcome';
+		}
+		return wurl('site/entry', $query);
+	}
+
+	/**
 	 * <b>返回模板编译后的文件路径，需要 include 调用</b>
 	 * 
 	 * 使用说明: 
