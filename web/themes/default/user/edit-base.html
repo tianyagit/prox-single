@@ -76,6 +76,17 @@
 			<td ng-bind="user.end"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#endtime">修改</a></div></td>
 		</tr>
+		<!-- xstart -->
+		{if IMS_FAMILY == 'x'}
+			{if permission_check_account_user('see_user_edit_base_founder_name')}
+			<tr>
+				<td class="table-label">副创始人姓名</td>
+				<td ng-bind="user.vice_founder_name"></td>
+				<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#vice_founder_name" ng-click="editInfo('vice_founder_name', user.vice_founder_name)">修改</a></div></td>
+			</tr>
+			{/if}
+		{/if}
+		<!-- xend -->
 		{if !empty($user['founder_groupid'])}
 		<tr>
 			<td class="table-label">注册链接</td>
