@@ -32,7 +32,7 @@ class WeiXinAccount extends WeAccount {
 	
 	public function __construct($account = array()) {
 		$this->displayUrl = url('account/display');
-		$this->type = ACCOUNT_TYPE_OFFCIAL_NORMAL;
+		$this->accountDisplayUrl = url('account/display');
 		$this->typeName = '公众号';
 	}
 	
