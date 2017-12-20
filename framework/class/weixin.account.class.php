@@ -9,7 +9,7 @@ defined('IN_IA') or exit('Access Denied');
  * 微信平台公众号业务操作类
  */
 class WeiXinAccount extends WeAccount {
-	public $tablename = 'account_wechats';
+	
 	/**
 	 * 与公众平台访问的接口地址
 	 * 
@@ -31,12 +31,9 @@ class WeiXinAccount extends WeAccount {
 	);
 	
 	public function __construct($account = array()) {
-		$this->accountDisplayUrl = url('account/display');
-		$this->accountType = 'account';
-		$this->accountManageType = ACCOUNT_TYPE_OFFCIAL_NORMAL;
-		$this->accountTypeName = '公众号';
-		$this->accountTypeTemplate = '';
-		$this->accountTypeSupport = 'app_support';
+		$this->displayUrl = url('account/display');
+		$this->type = ACCOUNT_TYPE_OFFCIAL_NORMAL;
+		$this->typeName = '公众号';
 	}
 	
 	public function fetchAccountInfo() {
