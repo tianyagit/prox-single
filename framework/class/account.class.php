@@ -13,30 +13,39 @@ defined('IN_IA') or exit('Access Denied');
 abstract class WeAccount {
 	//当前公众号
 	public $account;
-	public $tablename = '';
 	public $uniacid = 0;
-	public $accountType;
-	public $accountDisplayUrl;
+	//当前菜单类型
+	public $menuFrame;
+	//帐号默认跳转地址
+	public $displayUrl;
+	//帐号类型
+	public $type;
+	//帐号类型中文名称
+	public $typeName;
+	//相应类型对应的模板后缀
+	public $typeTempalte;
 
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
 	 * @return WeAccount|NULL
 	 */
-	public static function create($account = array()) {
+	public static function create($uniacidOrAccount = array()) {
 		global $_W;
-		if (!is_array($account) || empty($account)) {
-			if (empty($account)) {
-				$account = $_W['uniacid'];
-			}
-			$account = intval($account);
-			$account = table('account')->getUniAccountByUniacid($account);
+		$uniaccount = array();
+		
+		if (is_array($uniacidOrAccount)) {
+			$uniaccount = $uniacidOrAccount;
+		} else {
+			$uniacidOrAccount = empty($uniacidOrAccount) ? $_W['uniacid'] : intval($uniacidOrAccount);
+			$uniaccount = table('account')->getUniAccountByUniacid($uniacidOrAccount);
 		}
-		if (is_error($account)) {
-			$account = $_W['account'];
+		if (is_error($uniaccount)) {
+			$uniaccount = $_W['account'];
 		}
-		if(!empty($account) && isset($account['type'])) {
-			return self::includes($account);
+		
+		if(!empty($uniaccount) && isset($uniaccount['type'])) {
+			return self::includes($uniaccount['type']);
 		} else {
 			return error('-1', '公众号不存在或是已经被删除');
 		}
@@ -52,8 +61,8 @@ abstract class WeAccount {
 		return $obj->fetch_available_token();
 	}
 	
-	static public function includes($account) {
-		$type = $account['type'];
+	static public function includes($uniaccount) {
+		$type = $uniaccount['type'];
 
 		if($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 			load()->classs('weixin.account');
@@ -71,8 +80,8 @@ abstract class WeAccount {
 			load()->classs('webapp.account');
 			$account_obj = new WebappAccount();
 		}
-		$account_obj->uniacid = $account['uniacid'];
-		$account_obj->uniaccount = $account;
+		$account_obj->uniacid = $uniaccount['uniacid'];
+		$account_obj->uniaccount = $uniaccount;
 		$account_obj->account = $account_obj->fetchAccountInfo();
 		
 		return $account_obj;
