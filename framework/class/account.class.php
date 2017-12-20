@@ -13,43 +13,30 @@ defined('IN_IA') or exit('Access Denied');
 abstract class WeAccount {
 	//当前公众号
 	public $account;
-	public $uniaccount;
+	public $tablename = '';
 	public $uniacid = 0;
-	
-	//当前菜单类型 
-	public $menuFrame;
-	//帐号默认跳转地址
-	public $displayUrl;
-	//帐号类型
-	public $type;
-	//帐号类型中文名称 
-	public $typeName;
-	//相应类型对应的模板后缀
-	public $typeTempalte;
+	public $accountType;
+	public $accountDisplayUrl;
 
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
 	 * @return WeAccount|NULL
 	 */
-	public static function create($uniacidOrAccount = array()) {
+	public static function create($account = array()) {
 		global $_W;
-		$uniaccount = array();
-		
-		if (is_array($uniacidOrAccount)) {
-			$uniaccount = $uniacidOrAccount;
-		} else {
-			$uniacidOrAccount = empty($uniacidOrAccount) ? $_W['uniacid'] : intval($uniacidOrAccount);
-			$uniaccount = table('account')->getUniAccountByUniacid($uniacidOrAccount);
+		if (!is_array($account) || empty($account)) {
+			if (empty($account)) {
+				$account = $_W['uniacid'];
+			}
+			$account = intval($account);
+			$account = table('account')->getUniAccountByUniacid($account);
 		}
-		
-		if (is_error($uniaccount)) {
-			$uniaccount = $_W['account'];
+		if (is_error($account)) {
+			$account = $_W['account'];
 		}
-		$this->uniaccount = $uniaccount;
-		
-		if(!empty($uniaccount) && isset($uniaccount['type'])) {
-			return self::includes($uniaccount['type']);
+		if(!empty($account) && isset($account['type'])) {
+			return self::includes($account);
 		} else {
 			return error('-1', '公众号不存在或是已经被删除');
 		}
@@ -57,15 +44,17 @@ abstract class WeAccount {
 
 	public static function createByType($account_type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 		$account_type = !empty($account_type) ? $account_type : ACCOUNT_TYPE_OFFCIAL_NORMAL;
-		return self::includes($account_type);
+		return self::includes(array('type' => $account_type));
 	}
 	
 	static public function token($type = 1) {
-		$obj = self::includes($type);
+		$obj = self::includes(array('type' => $type));
 		return $obj->fetch_available_token();
 	}
 	
-	static public function includes($type) {
+	static public function includes($account) {
+		$type = $account['type'];
+
 		if($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 			load()->classs('weixin.account');
 			$account_obj = new WeiXinAccount();
@@ -82,7 +71,8 @@ abstract class WeAccount {
 			load()->classs('webapp.account');
 			$account_obj = new WebappAccount();
 		}
-		$account_obj->uniacid = $uniaccount['uniacid'];
+		$account_obj->uniacid = $account['uniacid'];
+		$account_obj->uniaccount = $account;
 		$account_obj->account = $account_obj->fetchAccountInfo();
 		
 		return $account_obj;
@@ -872,22 +862,6 @@ abstract class WeBase {
 	protected function createWebUrl($do, $query = array()) {
 		$query['do'] = $do;
 		$query['m'] = strtolower($this->modulename);
-		return wurl('site/entry', $query);
-	}
-
-	/**
-	 * 构造dopage页面URL
-	 * @param $do string 要进入的操作名称对应当前模块的 doPageXXX 中的 XXX
-	 * @param array $query 附加的查询参数
-	 * @return string 返回的 URL
-	 */
-	protected function createPageUrl($do, $query = array()) {
-		global $_GPC;
-		$query['do'] = $do;
-		$query['m'] = strtolower($this->modulename);
-		if (trim($_GPC['module_type'] == 'system_welcome')) {
-			$query['module_type'] = 'system_welcome';
-		}
 		return wurl('site/entry', $query);
 	}
 

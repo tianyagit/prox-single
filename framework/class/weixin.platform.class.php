@@ -25,18 +25,20 @@ class WeiXinPlatform extends WeiXinAccount {
 	public $token;
 	public $refreshtoken;
 	public $account;
-	
-	public $accountManageType = ACCOUNT_TYPE_OFFCIAL_AUTH;
 
-	function __construct($uniaccount = array()) {
+	function __construct($account = array()) {
 		$setting = setting_load('platform');
-		
+		$this->accountDisplayUrl = url('account/display');
+		$this->accountType = 'account';
+		$this->accountManageType = ACCOUNT_TYPE_OFFCIAL_AUTH;
+		$this->accountTypeName = '公众号';
+		$this->accountTypeTemplate = '';
+		$this->accountTypeSupport = 'app_support';
 		$this->appid = $setting['platform']['appid'];
 		$this->appsecret = $setting['platform']['appsecret'];
 		$this->token = $setting['platform']['token'];
 		$this->encodingaeskey = $setting['platform']['encodingaeskey'];
-		
-		$this->account = $this->fetchAccountInfo();
+		$this->account = $account;
 		if ($this->account['key'] == 'wx570bc396a51b8ff8') {
 			$this->account['key'] = $this->appid;
 			$this->openPlatformTestCase();
