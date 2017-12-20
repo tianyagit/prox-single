@@ -563,6 +563,7 @@ function user_login_forward($forward = '') {
 		'account' => url('home/welcome'),
 		'wxapp' => url('wxapp/version/home'),
 		'module' => url('module/display'),
+		'webapp' => url('webapp/home'),
 	);
 	if (!empty($forward)) {
 		return $login_forward;
@@ -594,6 +595,9 @@ function user_login_forward($forward = '') {
 			if ($account_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 				return $login_location['wxapp'];
 			}
+			if ($account_info['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+				return $login_location['webapp'];
+			}
 		}
 	}
 	if (user_is_vice_founder()) {
@@ -612,6 +616,8 @@ function user_login_forward($forward = '') {
 			$login_forward = url('home/welcome');
 		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 			$login_forward = url('wxapp/display/home');
+		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+			$login_forward = url('webapp/home/display');
 		}
 	}
 
@@ -635,6 +641,9 @@ function user_module_by_account_type($type) {
 				unset($module_list[$key]);
 			}
 			if ($module['app_support'] != 2 && $type == 'account') {
+				unset($module_list[$key]);
+			}
+			if ($module['webapp_support'] != MODULE_SUPPORT_WEBAPP && $type == 'webapp') {
 				unset($module_list[$key]);
 			}
 		}
