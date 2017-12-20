@@ -83,6 +83,24 @@ class AccountTable extends We7Table {
 				->getall('acid');
 	}
 
+	/**
+	 * 获取某用户拥有的pc的详细信息
+	 * @param $uniacids
+	 * @param $uid
+	 * @return mixed
+	 */
+	public function accountWebappInfo($uniacids, $uid) {
+		return $this->query->from('uni_account', 'a')
+				->leftjoin('account_webapp', 'w')
+				->on(array('w.uniacid' => 'a.uniacid'))
+				->leftjoin('uni_account_users', 'au')
+				->on(array('a.uniacid' => 'au.uniacid'))
+				->where(array('a.uniacid' => $uniacids))
+				->where(array('au.uid' => $uid))
+				->orderby('a.uniacid', 'asc')
+				->getall('acid');
+	}
+
 	public function searchWithKeyword($title) {
 		$this->query->where('a.name LIKE', "%{$title}%");
 		return $this;
