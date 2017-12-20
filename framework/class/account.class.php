@@ -38,12 +38,12 @@ abstract class WeAccount {
 			$uniacidOrAccount = empty($uniacidOrAccount) ? $_W['uniacid'] : intval($uniacidOrAccount);
 			$uniaccount = table('account')->getUniAccountByUniacid($uniacidOrAccount);
 		}
-		if (is_error($uniaccount)) {
+		if (is_error($uniaccount) || empty($uniaccount)) {
 			$uniaccount = $_W['account'];
 		}
 		
 		if(!empty($uniaccount) && isset($uniaccount['type'])) {
-			return self::includes($uniaccount['type']);
+			return self::includes($uniaccount);
 		} else {
 			return error('-1', '公众号不存在或是已经被删除');
 		}
