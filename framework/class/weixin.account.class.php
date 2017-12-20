@@ -31,7 +31,9 @@ class WeiXinAccount extends WeAccount {
 	);
 	
 	public function __construct($account = array()) {
-		$this->accountDisplayUrl = url('account/display');
+		if (defined('IN_SYS')) {
+			$this->accountDisplayUrl = url('account/display');
+		}
 		$this->accountType = 'account';
 		$this->accountManageType = ACCOUNT_TYPE_OFFCIAL_NORMAL;
 		$this->accountTypeName = '公众号';
