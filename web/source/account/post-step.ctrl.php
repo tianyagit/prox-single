@@ -15,10 +15,10 @@ $_W['page']['title'] = '添加/编辑公众号 - 公众号管理';
 $uniacid = intval($_GPC['uniacid']);
 $step = intval($_GPC['step']) ? intval($_GPC['step']) : 1;
 //模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
-$account_info = permission_user_account_num();
+$user_create_account_info = permission_user_account_num();
 
 if($step == 1) {
-	if ($account_info['uniacid_limit'] <= 0 && !$_W['isfounder']) {
+	if ($user_create_account_info['uniacid_limit'] <= 0 && !$_W['isfounder']) {
 		$authurl = "javascript:alert('创建公众号已达上限！');";
 	}
 
@@ -44,7 +44,7 @@ if($step == 1) {
 	}
 	//添加公众号
 	if (checksubmit('submit')) {
-		if ($account_info['uniacid_limit'] <= 0 && !$_W['isfounder']) {
+		if ($user_create_account_info['uniacid_limit'] <= 0 && !$_W['isfounder']) {
 			itoast('创建公众号已达上限！');
 		}
 		$update = array();
@@ -195,8 +195,8 @@ if($step == 1) {
 		$groupid = intval($_GPC['groupid']);
 		if (!empty($uid)) {
 			//删除原所有者，删除现在所有者其他身份
-			$account_info = permission_user_account_num($uid);
-			if ($account_info['uniacid_limit'] <= 0) {
+			$create_account_info = permission_user_account_num($uid);
+			if ($cerate_account_info['uniacid_limit'] <= 0) {
 				itoast("您所设置的主管理员所在的用户组可添加的主公号数量已达上限，请选择其他人做主管理员！", referer(), 'error');
 			}
 			pdo_delete('uni_account_users', array('uniacid' => $uniacid, 'uid' => $uid));
