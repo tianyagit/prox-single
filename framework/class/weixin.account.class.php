@@ -31,14 +31,15 @@ class WeiXinAccount extends WeAccount {
 	);
 	
 	public function __construct($account = array()) {
-		$this->accountDisplayUrl = url('account/display');
-		$this->accountType = 'account';
-		$this->accountManageType = ACCOUNT_TYPE_OFFCIAL_NORMAL;
-		$this->accountTypeName = '公众号';
-		$this->accountTypeTemplate = '';
-		$this->accountTypeSupport = 'app_support';
+		$this->menuFrame = 'account';
+		$this->type = ACCOUNT_TYPE_OFFCIAL_NORMAL;
+		$this->typeName = '公众号';
 	}
-	
+
+	public function accountDisplayUrl() {
+		return url('account/display');
+	}
+
 	public function fetchAccountInfo() {
 		$account_table = table('account');
 		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);

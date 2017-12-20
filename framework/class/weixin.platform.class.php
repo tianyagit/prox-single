@@ -28,12 +28,9 @@ class WeiXinPlatform extends WeiXinAccount {
 
 	function __construct($account = array()) {
 		$setting = setting_load('platform');
-		$this->accountDisplayUrl = url('account/display');
-		$this->accountType = 'account';
-		$this->accountManageType = ACCOUNT_TYPE_OFFCIAL_AUTH;
-		$this->accountTypeName = '公众号';
-		$this->accountTypeTemplate = '';
-		$this->accountTypeSupport = 'app_support';
+		$this->menuFrame = 'account';
+		$this->type = ACCOUNT_TYPE_OFFCIAL_AUTH;
+		$this->typeName = '公众号';
 		$this->appid = $setting['platform']['appid'];
 		$this->appsecret = $setting['platform']['appsecret'];
 		$this->token = $setting['platform']['token'];
@@ -42,6 +39,10 @@ class WeiXinPlatform extends WeiXinAccount {
 			$this->account['key'] = $this->appid;
 			$this->openPlatformTestCase();
 		}
+	}
+
+	function accountDisplayUrl() {
+		return url('account/display');
 	}
 
 	function getComponentAccesstoken() {

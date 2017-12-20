@@ -10,14 +10,14 @@ load()->func('communication');
 class WxappAccount extends WeAccount {
 	public function __construct($account = array()) {
 		$this->account = $account;
-		if (defined('IN_SYS')) {
-			$this->accountDisplayUrl = url('wxapp/display');
-		}
-		$this->accountType = 'wxapp';
-		$this->accountManageType = ACCOUNT_TYPE_APP_NORMAL;
-		$this->accountTypeName = '小程序';
-		$this->accountTypeTemplate = '-wxapp';
-		$this->accountTypeSupport = 'wxapp_support';
+		$this->menuFrame = 'wxapp';
+		$this->type = ACCOUNT_TYPE_APP_NORMAL;
+		$this->typeName = '小程序';
+		$this->typeTempalte = '-wxapp';
+	}
+
+	public function accountDisplayUrl() {
+		return url('wxapp/display');
 	}
 
 	public function fetchAccountInfo() {

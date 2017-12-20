@@ -16,8 +16,6 @@ abstract class WeAccount {
 	public $uniacid = 0;
 	//当前菜单类型
 	public $menuFrame;
-	//帐号默认跳转地址
-	public $displayUrl;
 	//帐号类型
 	public $type;
 	//帐号类型中文名称
@@ -111,15 +109,13 @@ abstract class WeAccount {
 	 * 返回当前选中的frame
 	 */
 	public function accountType() {
-		return $this->accountType;
+		return $this->menuFrame;
 	}
 
 	/**
 	 * 没选中某个公众号，小程序，pc时，返回的url
 	 */
-	public function accountDisplayUrl() {
-		return $this->accountDisplayUrl;
-	}
+	abstract function accountDisplayUrl();
 
 	/**
 	 * 查询当前公号支持的统一响应结构
