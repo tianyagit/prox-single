@@ -106,13 +106,6 @@ abstract class WeAccount {
 	}
 
 	/**
-	 * 返回当前选中的frame
-	 */
-	public function accountType() {
-		return $this->menuFrame;
-	}
-
-	/**
 	 * 没选中某个公众号，小程序，pc时，返回的url
 	 */
 	abstract function accountDisplayUrl();
