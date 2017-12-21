@@ -1731,6 +1731,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 			} else {
 				$member_update_info['groupid'] = pdo_getcolumn('mc_groups', array('uniacid' => $_W['uniacid'], 'isdefault' => 1));
 				$member_update_info['salt'] = random(8);
+				$member_update_info['password'] = md5($openid . $member_update_info['salt'] . $_W['config']['setting']['authkey']);
 				$member_update_info['email'] = $email;
 				$member_update_info['createtime'] = TIMESTAMP;
 
@@ -1748,7 +1749,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 	} else {
 		$fans_update_info['salt'] = random(8);
 		$fans_update_info['unfollowtime'] = 0;
-		$fans_update_info['createtime'] = TIMESTAMP;
+		$fans_update_info['followtime'] = TIMESTAMP;
 
 		pdo_insert('mc_mapping_fans', $fans_update_info);
 		$fans_mapping['fanid'] = pdo_insertid();
