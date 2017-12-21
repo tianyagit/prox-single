@@ -693,7 +693,7 @@ class WeUtility {
 			require $file;
 		}
 		if(!class_exists($classname)) {
-			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
+			trigger_error('ModuleWebapp Definition Class Not Found', E_USER_WARNING);
 			return null;
 		}
 		$o = new $classname();
@@ -706,7 +706,7 @@ class WeUtility {
 		if($o instanceof WeModuleWebapp) {
 			return $o;
 		} else {
-			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
+			trigger_error('ModuleWebapp Class Definition Error', E_USER_WARNING);
 			return null;
 		}
 	}
