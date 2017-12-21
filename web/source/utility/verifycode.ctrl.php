@@ -10,7 +10,7 @@ $custom_sign = safe_gpc_string($_GPC['custom_sign']);
 $_W['uniacid'] = intval($_GPC['uniacid']);
 if (empty($_W['uniacid'])) {
 	$uniacid_arr = array(
-		'name' => $_W['setting']['copyright']['sitename'],
+		'name' => !empty($_W['setting']['copyright']['sitename']) ? $_W['setting']['copyright']['sitename'] : '短信验证码',
 	);
 } else {
 	$uniacid_arr = pdo_fetch('SELECT * FROM ' . tablename('uni_account') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
