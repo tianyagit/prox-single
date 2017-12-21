@@ -277,6 +277,7 @@ if($step == 1) {
 		cache_delete("accesstoken:{$acid}");
 		cache_delete("jsticket:{$acid}");
 		cache_delete("cardticket:{$acid}");
+		cache_delete(cache_system_key('proxy_wechatpay_account:'));
 		cache_clean(cache_system_key('user_accounts'));
 
 		if (!empty($_GPC['from'])) {
