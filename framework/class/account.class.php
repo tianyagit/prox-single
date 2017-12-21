@@ -68,7 +68,7 @@ abstract class WeAccount {
 		}
 		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			load()->classs('weixin.platform');
-			$account_obj = new WeiXinPlatform($uniaccount);
+			$account_obj = new WeiXinPlatform();
 		}
 		if($type == ACCOUNT_TYPE_APP_NORMAL) {
 			load()->classs('wxapp.account');
