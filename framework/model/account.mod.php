@@ -117,7 +117,11 @@ function uni_fetch($uniacid = 0) {
 		return $cache;
 	}
 
-	$account_api = WeAccount::create($uniacid);
+	$acid = table('account')->getAccountByUniacid($uniacid);
+	if (empty($acid)) {
+		return false;
+	}
+	$account_api = WeAccount::create($acid['acid']);
 	if (is_error($account_api)) {
 		return $account_api;
 	}

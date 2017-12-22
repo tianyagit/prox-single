@@ -187,4 +187,8 @@ class AccountTable extends We7Table {
 		}
 		return table('users')->usersInfo($owneruid);
 	}
+
+	public function getAccountByUniacid($uniacid) {
+		return $this->query->from('account')->where('uniacid', $uniacid)->get();
+	}
 }
