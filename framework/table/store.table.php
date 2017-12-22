@@ -84,7 +84,7 @@ class StoreTable extends We7Table {
 	}
 
 	public function searchOrderList($pageindex = 0, $pagesize = 0) {
-		$this->query->from('site_store_order')->where('type <>', STORE_GOODS_STATUS_DELETE)->orderby('type', 'DESC');
+		$this->query->from('site_store_order')->where('type <>', STORE_GOODS_STATUS_DELETE);
 
 		if (!empty($pageindex) && !empty($pagesize)) {
 			$this->searchWithPage($pageindex, $pagesize);
