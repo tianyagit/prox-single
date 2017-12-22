@@ -28,15 +28,14 @@ abstract class WeAccount {
 	 * @param int $acid 公众号编号
 	 * @return WeAccount|NULL
 	 */
-	public static function create($uniacidOrAccount = array()) {
+	public static function create($acidOrAccount = array()) {
 		global $_W;
 		$uniaccount = array();
-
-		if (is_array($uniacidOrAccount) && !empty($uniacidOrAccount)) {
-			$uniaccount = $uniacidOrAccount;
+		if (is_array($acidOrAccount) && !empty($acidOrAccount)) {
+			$uniaccount = $acidOrAccount;
 		} else {
-			$uniacidOrAccount = empty($uniacidOrAccount) ? $_W['uniacid'] : intval($uniacidOrAccount);
-			$uniaccount = table('account')->getUniAccountByUniacid($uniacidOrAccount);
+			$acidOrAccount = empty($acidOrAccount) ? $_W['account']['acid'] : intval($acidOrAccount);
+			$uniaccount = table('account')->getUniAccountByAcid($acidOrAccount);
 		}
 		if (is_error($uniaccount) || empty($uniaccount)) {
 			$uniaccount = $_W['account'];
