@@ -148,7 +148,7 @@ function material_news_set($data, $attach_id) {
 			'media_id' => '',
 			'type' => 'news',
 			'model' => 'local',
-			'createtime' => time()
+			'createtime' => TIMESTAMP
 		);
 		pdo_insert('wechat_attachment', $wechat_attachment);
 		$attach_id = pdo_insertid();
