@@ -40,10 +40,6 @@ class WeiXinPlatform extends WeiXinAccount {
 	function fetchAccountInfo() {
 		$account_table = table('account');
 		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
-		$account['type'] = $this->uniaccount['type'];
-		$account['isconnect'] = $this->uniaccount['isconnect'];
-		$account['isdeleted'] = $this->uniaccount['isdeleted'];
-		$account['endtime'] = $this->uniaccount['endtime'];
 		if ($account['key'] == 'wx570bc396a51b8ff8') {
 			$account['key'] = $this->appid;
 			$this->openPlatformTestCase();

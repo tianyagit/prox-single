@@ -125,7 +125,7 @@ function uni_fetch($uniacid = 0) {
 	if (is_error($account_api)) {
 		return $account_api;
 	}
-	$account = $account_api->fetchAccountInfo();
+	$account = $account_api->account;
 	if (empty($account) || $account['isdeleted'] == 1) {
 		return array();
 	}
