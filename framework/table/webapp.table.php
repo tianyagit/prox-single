@@ -32,7 +32,7 @@ class WebappTable extends AccountTable {
 		if(!$uniacid) {
 			return false;
 		}
-		$accountdata = array('uniacid' => $uniacid, 'type' => $this->WEBAPP_TYPE, 'hash' => random(8));
+		$accountdata = array('uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_WEBAPP_NORMAL, 'hash' => random(8));
 		pdo_insert('account', $accountdata);
 		$acid = pdo_insertid();
 		pdo_update('uni_account', array('default_acid'=>$acid), array('uniacid'=>$uniacid));
