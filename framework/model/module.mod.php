@@ -193,7 +193,6 @@ function module_app_entries($name, $types = array(), $args = null) {
 }
 
 function module_entry($eid) {
-	global $_W;
 	$sql = "SELECT * FROM " . tablename('modules_bindings') . " WHERE `eid`=:eid";
 	$pars = array();
 	$pars[':eid'] = $eid;
@@ -211,9 +210,6 @@ function module_entry($eid) {
 	);
 	if (!empty($entry['state'])) {
 		$querystring['state'] = $entry['state'];
-	}
-	if (!empty($_W['account']) && $_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-		$querystring['a'] = 'webapp';
 	}
 
 	$entry['url'] = murl('entry', $querystring);
