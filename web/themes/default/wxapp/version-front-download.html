@@ -8,7 +8,7 @@
 			href="./index.php?c=wxapp&a=front-download&do=domainset&version_id={$version_id}">小程序域名设置</a></li>
 	<li class="{if $do == 'custom'}active{/if}"><a
 			href="./index.php?c=wxapp&a=front-download&do=custom&version_id={$version_id}">定制主题<span style="color: red">(beta)</span></a></li>
-	{if $is_module_wxapp}
+	{if ($is_module_wxapp && $can_pack_wxapp)}
 	<li class="{if $do == 'entrychoose'}active{/if}"><a
 			href="./index.php?c=wxapp&a=front-download&do=entrychoose&version_id={$version_id}">小程序入口配置</a></li>
 	{/if}

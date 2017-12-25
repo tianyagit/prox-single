@@ -18,6 +18,18 @@ $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
 
 $version_id = intval($_GPC['version_id']);
 $wxapp_info = wxapp_fetch($_W['uniacid']);
+
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	$can_pack_wxapp = false;
+}
+/* vend */
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	$can_pack_wxapp = true;
+}
+/* xend */
+
 // 是否是模块打包小程序
 $is_module_wxapp = false;
 if (!empty($version_id)) {
