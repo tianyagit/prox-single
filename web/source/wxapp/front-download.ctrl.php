@@ -19,16 +19,6 @@ $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
 $version_id = intval($_GPC['version_id']);
 $wxapp_info = wxapp_fetch($_W['uniacid']);
 
-/* vstart */
-if (IMS_FAMILY == 'v') {
-	$can_pack_wxapp = false;
-}
-/* vend */
-/* xstart */
-if (IMS_FAMILY == 'x') {
-	$can_pack_wxapp = true;
-}
-/* xend */
 
 // 是否是模块打包小程序
 $is_module_wxapp = false;
@@ -37,15 +27,21 @@ if (!empty($version_id)) {
 	$is_module_wxapp = ($version_info['type'] == WXAPP_CREATE_MODULE) ? WXAPP_CREATE_MODULE : WXAPP_CREATE_DEFAULT;
 }
 
-if ($do == 'entrychoose') {
-	$entrys = $version_info['cover_entrys'];
-	template('wxapp/version-front-download');
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	if ($do == 'entrychoose') {
+		$entrys = $version_info['cover_entrys'];
+		template('wxapp/version-front-download');
+	}
+
+	if ($do == 'set_wxapp_entry') {
+		$entry_id = intval($_GPC['entry_id']);
+		$result = wxapp_update_entry($version_id, $entry_id);
+		iajax(0, '设置入口成功');
+	}
 }
-if ($do == 'set_wxapp_entry') {
-	$entry_id = intval($_GPC['entry_id']);
-	$result = wxapp_update_entry($version_id, $entry_id);
-	iajax(0, '设置入口成功');
-}
+/* xend */
+
 // 自定义appjson 入口
 if ($do == 'custom') {
 	$default_appjson = wxapp_code_current_appjson($version_id);

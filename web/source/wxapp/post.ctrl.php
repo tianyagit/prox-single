@@ -14,16 +14,7 @@ $_W['page']['title'] = '小程序 - 新建版本';
 $account_info = permission_user_account_num();
 
 if ($do == 'design_method') {
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
-		$can_pack_wxapp = false;
-	}
-	/* vend */
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
-		$can_pack_wxapp = true;
-	}
-	/* xend */
+
 	$uniacid = intval($_GPC['uniacid']);
 	template('wxapp/design-method');
 }
