@@ -34,6 +34,7 @@
 								<a href="{php echo url('wxapp/post/post', array('design_method' => WXAPP_MODULE, 'uniacid' => $uniacid))}" class="btn btn-primary">新建小程序</a>
 							</div>
 						</div>
+						{if $can_pack_wxapp}
 						<div class="col-sm-6">
 							<div class="title">
 								<span class="wi wi-wxapp-pack"></span>
@@ -46,6 +47,7 @@
 								<a href="{php echo url('wxapp/post/post', array('design_method' => WXAPP_MODULE, 'uniacid' => $uniacid, 'create_type'=>WXAPP_CREATE_MODULE))}" class="btn btn-primary">打包小程序</a>
 							</div>
 						</div>
+						{/if}
 					</div>
 
 				</div>

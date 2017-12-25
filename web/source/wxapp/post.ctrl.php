@@ -14,6 +14,16 @@ $_W['page']['title'] = '小程序 - 新建版本';
 $account_info = permission_user_account_num();
 
 if ($do == 'design_method') {
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		$can_pack_wxapp = false;
+	}
+	/* vend */
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$can_pack_wxapp = true;
+	}
+	/* xend */
 	$uniacid = intval($_GPC['uniacid']);
 	template('wxapp/design-method');
 }
@@ -78,8 +88,13 @@ if ($do == 'post') {
 			'createtime' => TIMESTAMP,
 			'template' => $design_method == WXAPP_TEMPLATE ? intval($_GPC['choose']['template']) : 0,
 			//是否公众号应用 1 是 0默认小程序
-			'type' => ($create_type == WXAPP_CREATE_MODULE) ? WXAPP_CREATE_MODULE : WXAPP_CREATE_DEFAULT,
+			'type' => 0
 		);
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			$wxapp_version['type'] = ($create_type == WXAPP_CREATE_MODULE) ? WXAPP_CREATE_MODULE : WXAPP_CREATE_DEFAULT;
+		}
+		/* xend */
 		//多模块打包，每个版本对应一个微官网
 		if ($design_method == WXAPP_TEMPLATE) {
 			$multi_data = array(
