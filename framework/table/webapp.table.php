@@ -67,5 +67,4 @@ class WebappTable extends AccountTable {
 			uni_user_account_role($uniacid, $uid, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 		}
 	}
-		return array($list, $total);
 }
