@@ -393,30 +393,12 @@ class WeEngine {
 			}
 		} else {
 			if ($message['event'] == 'subscribe' || $message['type'] == 'text' || $message['type'] == 'image') {
-				$rec = array();
-				$rec['acid'] = $_W['acid'];
-				$rec['uniacid'] = $_W['uniacid'];
-				$rec['uid'] = 0;
-				$rec['openid'] = $message['from'];
-				$rec['salt'] = random(8);
-				$rec['follow'] = 1;
-				$rec['followtime'] = $message['time'];
-				$rec['unfollowtime'] = 0;
-				//开启非强制注册后，系统自动为该粉丝插入会员数据。
+				load()->model('mc');
+				$force_init_member = false;
 				if (!isset($setting['passport']) || empty($setting['passport']['focusreg'])) {
-					//如果此处未开启强制注册，则系统插入一条注册信息。
-					$data = array(
-						'uniacid' => $_W['uniacid'],
-						'email' => md5($message['from']).'@we7.cc',
-						'salt' => random(8),
-						'groupid' => $default_groupid,
-						'createtime' => TIMESTAMP,
-					);
-					$data['password'] = md5($message['from'] . $data['salt'] . $_W['config']['setting']['authkey']);
-					pdo_insert('mc_members', $data);
-					$rec['uid'] = pdo_insertid();
+					$force_init_member = true;
 				}
-				pdo_insert('mc_mapping_fans', $rec);
+				mc_init_fans_info($message['from'], $force_init_member);
 			}
 		}
 	}

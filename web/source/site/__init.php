@@ -16,7 +16,7 @@ if ($action != 'entry') {
 		$account_display_url = $account_api->accountDisplayUrl();
 		itoast('', $account_display_url);
 	}
-	$account_type = $account_api->accountType();
+	$account_type = $account_api->menuFrame;
 	if (!($action == 'multi' && $do == 'post')) {
 		define('FRAME', $account_type);
 	}

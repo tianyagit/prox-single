@@ -378,11 +378,11 @@ function user_founder_group_detail_info($groupid = 0) {
 /**
  *获取某一用户可用公众号或小程序的详细信息
  *@param number $uid 用户ID
- *@param number $account_type账号类型，空是公众号，4是小程序
+ *@param number $account_type账号类型，空是公众号，4是小程序 5是pc
  *@return array
  */
 function user_account_detail_info($uid) {
-	$account_lists = $app_user_info = $wxapp_user_info = array();
+	$account_lists = $app_user_info = $wxapp_user_info = $webapp_user_info = array();
 	$uid = intval($uid);
 	if (empty($uid)) {
 		return $account_lists;
@@ -395,18 +395,23 @@ function user_account_detail_info($uid) {
 				$app_user_info[$uniacid] = $account;
 			} elseif ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 				$wxapp_user_info[$uniacid] = $account;
+			} elseif ($account['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+				$webapp_user_info[$uniacid] = $account;
 			}
 		}
 	}
 
-	$wxapps = $wechats = array();
+	$wxapps = $wechats = $webapps = array();
 	if (!empty($wxapp_user_info)) {
 		$wxapps = table('account')->accountWxappInfo(array_keys($wxapp_user_info), $uid);
 	}
 	if (!empty($app_user_info)) {
 		$wechats = table('account')->accountWechatsInfo(array_keys($app_user_info), $uid);
 	}
-	$accounts = array_merge($wxapps, $wechats);
+	if (!empty($webapp_user_info)) {
+		$webapps = table('account')->accountWebappInfo(array_keys($webapp_user_info), $uid);
+	}
+	$accounts = array_merge($wxapps, $wechats, $webapps);
 	if (!empty($accounts)) {
 		foreach ($accounts as &$account_val) {
 			$account_val['thumb'] = tomedia('headimg_'.$account_val['default_acid']. '.jpg');
@@ -417,6 +422,8 @@ function user_account_detail_info($uid) {
 						$account_lists['wxapp'][$uniacid] = $account_val;
 					} elseif ($user_info['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $user_info['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 						$account_lists['wechat'][$uniacid] = $account_val;
+					} elseif ($user_info['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+						$account_lists['webapp'][$uniacid] = $account_val;
 					}
 				}
 			}
@@ -556,6 +563,7 @@ function user_login_forward($forward = '') {
 		'account' => url('home/welcome'),
 		'wxapp' => url('wxapp/version/home'),
 		'module' => url('module/display'),
+		'webapp' => url('webapp/home'),
 	);
 	if (!empty($forward)) {
 		return $login_forward;
@@ -587,6 +595,9 @@ function user_login_forward($forward = '') {
 			if ($account_info['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 				return $login_location['wxapp'];
 			}
+			if ($account_info['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+				return $login_location['webapp'];
+			}
 		}
 	}
 	if (user_is_vice_founder()) {
@@ -605,6 +616,8 @@ function user_login_forward($forward = '') {
 			$login_forward = url('home/welcome');
 		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 			$login_forward = url('wxapp/display/home');
+		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+			$login_forward = url('webapp/home/display');
 		}
 	}
 
@@ -628,6 +641,9 @@ function user_module_by_account_type($type) {
 				unset($module_list[$key]);
 			}
 			if ($module['app_support'] != 2 && $type == 'account') {
+				unset($module_list[$key]);
+			}
+			if ($module['webapp_support'] != MODULE_SUPPORT_WEBAPP && $type == 'webapp') {
 				unset($module_list[$key]);
 			}
 		}

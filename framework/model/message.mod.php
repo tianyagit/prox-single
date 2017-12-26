@@ -100,11 +100,11 @@ function message_event_notice_list() {
 				$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL, 'message_id' => $message['id']));
 			}
 
-			if ($message['type']==MESSAGE_REGISTER_TYPE && $message['status']==USER_STATUS_CHECK) {
+			if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_CHECK) {
 				$message['url'] = url('user/display', array('type' => 'check', 'message_id' => $message['id']));
 			}
 
-			if ($message['type']==MESSAGE_REGISTER_TYPE && $message['status']==USER_STATUS_CHECK) {
+			if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_NORMAL) {
 				$message['url'] = url('user/display', array('message_id' => $message['id']));
 			}
 		}

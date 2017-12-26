@@ -33,8 +33,8 @@ if (IMS_FAMILY == 'x') {
 }
 /* xend */
 $account_param = WeAccount::createByType($_GPC['account_type']);
-define('ACCOUNT_TYPE', $account_param->accountManageType);
-define('ACCOUNT_TYPE_TEMPLATE', $account_param->accountTypeTemplate);
+define('ACCOUNT_TYPE', $account_param->type);
+define('ACCOUNT_TYPE_TEMPLATE', $account_param->typeTempalte);
 
 /* vstart */
 if (IMS_FAMILY == 'v') {

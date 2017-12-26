@@ -18,6 +18,6 @@ if (!in_array($action, array('display', 'post', 'manage'))) {
 }
 
 if (($action == 'version' && $do == 'home') || in_array($action, array('payment', 'refund', 'module-link-uniacid', 'entrance-link', 'front-download'))) {
-	$account_type = $account_api->accountType();
+	$account_type = $account_api->menuFrame;
 	define('FRAME', $account_type);
 }
