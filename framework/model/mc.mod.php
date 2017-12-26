@@ -302,7 +302,7 @@ function mc_oauth_userinfo($acid = 0) {
 	}
 	// 认证号, 静默获取用户信息, 不需要跳转到网页授权获取用户信息.
 	if (!empty($_SESSION['openid']) && intval($_W['account']['level']) >= 3) {
-		$oauth_account = WeAccount::create($_W['account']['oauth']);
+		$oauth_account = WeAccount::create();
 		$userinfo = $oauth_account->fansQueryInfo($_SESSION['openid']);
 		if (!is_error($userinfo) && !empty($userinfo) && is_array($userinfo) && !empty($userinfo['nickname'])) {
 			$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
