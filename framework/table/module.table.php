@@ -7,6 +7,9 @@
 defined('IN_IA') or exit('Access Denied');
 
 class ModuleTable extends We7Table {
+
+
+
 	public function moduleBindingsInfo($module, $do = '', $entry = '') {
 		$condition = array(
 			'module' => $module,

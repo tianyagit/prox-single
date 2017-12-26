@@ -10,7 +10,8 @@ defined('IN_IA') or exit('Access Denied');
  * @property Query $query
  */
 abstract class We7Table {
-	
+
+	const ONE_TO_ONE = 'ONE_TO_ONE';
 	//表名
 	protected $tableName = '';
 	//主键
@@ -24,6 +25,11 @@ abstract class We7Table {
 	protected $query;
 	//数据库属性
 	private $attribute = array();
+
+	/**
+	 *  关联关系
+	 */
+	protected $relation = array();
 
 
 	public function __construct() {
@@ -84,7 +90,6 @@ abstract class We7Table {
 
 		}
 	}
-
 	/**
 	 *  根据主键获取数据
 	 * @param $id
@@ -97,6 +102,81 @@ abstract class We7Table {
 		}
 		return $query->get();
 	}
+
+	private function doRelation($key) {
+		$relation_param = $this->relation[$key];
+		switch($relation_param['type']) {
+			case 'ONE_TO_MANY' : return $this->oneToMany($relation_param); break;
+			case 'ONE_TO_ONE' : return $this->oneToOne($relation_param); break;
+			case 'MANY_TO_ONE' : return $this->manyToOne($relation_param); break;
+			case 'MANY_TO_MANY' : return $this->manyTomany($relation_param);break;
+		}
+	}
+
+	/**
+	 *  执行 一对多
+	 */
+	private function oneToMany($param) {
+		$datas = $this->getall($this->primaryKey);
+		if (empty($datas)) {
+			return array();
+		}
+		$table = $param['table']; 
+		$foreign_key = $table['foreign_key'];
+		$table_instance = table($table);
+		return $table_instance->where($foreign_key, array_keys($datas))->getall();
+	}
+
+	/**
+	 *  一对一
+	 * @param $param
+	 * @return array|mixed
+	 */
+	private function oneToOne($param) {
+		$data = $this->get();
+		if (empty($data)) {
+			return array();
+		}
+		$owner_key = isset($param['owner_key']) ? $param['owner_key'] : $this->primaryKey;
+		$table = $param['table'];
+		$foreign_key = $param['foreign_key'];
+		$frieign_val = $data[$owner_key];
+		$table_instance = table($table);
+
+		return $table_instance->where($foreign_key, $frieign_val)->get();
+	}
+
+	/**
+	 *  执行 多对一
+	 */
+	private function manyToOne($param) {
+		$datas = $this->getall($this->primaryKey);
+		if (empty($datas)) {
+			return array();
+		}
+		$foreign_keys = array_unique(array_keys($datas));
+		$table = $param['table'];
+		// 外键
+		$foreign_key_field = $table['foreign_key'];
+		$table_instance = table($table);
+		return $table_instance->where($foreign_key_field, $foreign_keys)->getall();
+	}
+
+
+	private function manyToMany($param) {
+		$center_table = $param['center_table']; //中间表
+		return null;
+	}
+
+
+	public function __get($key) {
+
+		if (isset($this->relation[$key])) {
+			return $this->doRelation($key);
+		}
+	}
+
+	
 	/**
 	 * 追加默认数据
 	 */
