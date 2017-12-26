@@ -160,6 +160,7 @@ $we7_system_menu['account'] = array(
 		/* xend */
 	),
 );
+
 $we7_system_menu['wxapp'] = array(
 	'title' => '小程序',
 	'icon' => 'wi wi-small-routine',
@@ -219,6 +220,30 @@ $we7_system_menu['wxapp'] = array(
 					),
 				),
 			)
+		)
+	),
+);
+
+$we7_system_menu['webapp'] = array(
+	'title' => 'PC',
+	'icon' => 'wi wi-white-collar',
+	'url' => url('webapp/home/display'),
+	'section' => array(
+		'platform_module' => array(
+			'title' => '应用模块',
+			'menu' => array(),
+			'is_display' => true,
+		),
+		'mc' => array(
+			'title' => '粉丝',
+			'menu' => array(
+				'mc_member' => array(
+					'title' => '会员管理',
+					'url' => url('mc/member'),
+					'icon' => 'wi wi-fans',
+					'permission_name' => 'mc_member',
+				)
+			),
 		)
 	),
 );
@@ -739,6 +764,7 @@ $we7_system_menu['help'] = array(
 	'section' => array(),
 	'blank' => false
 );
+
 /* xstart */
 if (IMS_FAMILY == 'x') {
 	$we7_system_menu['store'] = array(
@@ -749,28 +775,5 @@ if (IMS_FAMILY == 'x') {
 	);
 }
 /* xend */
-$we7_system_menu['webapp'] = array(
-	'title' => 'PC',
-	'icon' => 'wi wi-white-collar',
-	'url' => url('webapp/home/display'),
-	'section' => array(
-		'platform_module' => array(
-			'title' => '应用模块',
-			'menu' => array(),
-			'is_display' => true,
-		),
-		'mc' => array(
-			'title' => '粉丝',
-			'menu' => array(
-				'mc_member' => array(
-					'title' => '会员管理',
-					'url' => url('mc/member'),
-					'icon' => 'wi wi-fans',
-					'permission_name' => 'mc_member',
-				)
-			),
-		)
-	),
-);
 
 return $we7_system_menu;
