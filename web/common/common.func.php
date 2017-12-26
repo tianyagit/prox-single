@@ -239,6 +239,11 @@ function buildframes($framename = ''){
 				'url' => url('module/manage-account'),
 				'is_display' => 1,
 			);
+			$frames['webapp']['section']['platform_module']['menu']['platform_module_more'] = array(
+				'title' => '更多应用',
+				'url' => url('webapp/home/display'),
+				'is_display' => 1,
+			);
 		} else {
 			$frames['account']['section']['platform_module']['is_display'] = false;
 		}
