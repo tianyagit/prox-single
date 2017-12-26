@@ -39,6 +39,7 @@ if ($do == 'display') {
 		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL),
 		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
 		ACCOUNT_TYPE_OFFCIAL_AUTH => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
+		ACCOUNT_TYPE_WEBAPP_NORMAL => array(ACCOUNT_TYPE_WEBAPP_NORMAL),
 	);
 	$type_condition_sql = "'".implode("','", $type_condition[ACCOUNT_TYPE])."'";
 	
@@ -96,6 +97,9 @@ if ($do == 'recover') {
 }
 
 if($do == 'delete') {
+	if (empty($_W['isajax']) || empty($_W['ispost'])) {
+		iajax(0, '非法操作！', referer());
+	}
 	$uniacid = intval($_GPC['uniacid']);
 	$acid = intval($_GPC['acid']);
 	$state = permission_account_user_role($_W['uid'], $uniacid);
@@ -114,5 +118,5 @@ if($do == 'delete') {
 	}
 	/* vend */
 	account_delete($acid);
-	itoast('删除成功！', referer(), 'success');
+	iajax(0, '删除成功！', referer());
 }

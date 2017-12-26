@@ -2,9 +2,22 @@
 <div class="we7-page-title">PC管理</div>
 <ul class="we7-page-tab">
 	<li class="active"><a href="{url 'account/manage'}">PC列表</a></li>
-	{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
-	<!--<li><a href="{url 'account/recycle'}">PC回收站</a></li>-->
+	<!-- xstart -->
+	{if IMS_FAMILY == 'x'}
+		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
+		<li><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL))}">PC回收站</a></li>
+		{/if}
 	{/if}
+	<!-- xend -->
+
+	<!-- vstart -->
+	{if IMS_FAMILY == 'v'}
+		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
+		<li><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL))}">PC回收站</a></li>
+		{/if}
+	{/if}
+	<!-- vend -->
+
 </ul>
 <div class="clearfix we7-margin-bottom">
 	{if !$_W['isfounder'] && !empty($account_info['pc_limit']) || user_is_vice_founder()}
@@ -96,7 +109,20 @@
 				<!--<a href="{{links.post}}&do=sms&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">短信信息</a>-->
 				<a href="{{links.postUser}}&do=edit&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">使用者管理</a>
 				<!--<a href="{{links.post}}&do=modules_tpl&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">可用应用模板/模块</a>-->
-				<!--<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>-->
+				<!-- xstart -->
+				{if IMS_FAMILY == 'x'}
+				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
+				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'owner' || list.role == 'founder' || list.role == 'vice_founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
+				{/if}
+				{/if}
+				<!-- xend -->
+				<!-- vstart -->
+				{if IMS_FAMILY == 'v'}
+				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
+				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'owner' || list.role == 'founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
+				{/if}
+				{/if}
+				<!-- vend -->
 			</div>
 			{/if}
 		</td>
