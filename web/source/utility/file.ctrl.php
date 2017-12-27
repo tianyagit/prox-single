@@ -544,8 +544,6 @@ if ($do == 'module') {
 	} else {
 		$installedmodulelist = uni_modules(false);
 	}
-
-
 	foreach ($installedmodulelist as $k => $value) {
 		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 	}
