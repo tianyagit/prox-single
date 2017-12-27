@@ -147,6 +147,7 @@ abstract class We7Table {
 	public function __get($key) {
 		//获取关联关系数据
 		if (isset($this->relationDefine[$key])) {
+
 			if (method_exists($this, $key)) {
 				$relation_define = call_user_func(array($this, $key));
 				return $this->getRelationData($relation_define);
@@ -248,19 +249,6 @@ abstract class We7Table {
 			trigger_error('不支持的关联类型');
 		}
 		return array($type, $table, $foreign_key, $owner_key);
-	}
-
-
-	/**
-	 *  获取关联参数
-	 * @param $name
-	 * @return bool|mixed
-	 */
-	private function getRelationParam($name) {
-		if (method_exists($this, $name)) {
-			return call_user_func(array($this, $name));
-		}
-		return false;
 	}
 
 	/**

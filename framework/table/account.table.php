@@ -10,14 +10,13 @@ class AccountTable extends We7Table {
 
 	protected $tableName = 'uni_account';
 	protected $primaryKey = 'acid';
-	protected $relation = array(
-		'baseaccount' => array(
-			'type' => self::ONE_TO_ONE,
-			'table'=> 'baseaccount',
-			'foreign_key'=>'acid',
-			'owner_key'=>'default_acid'
-		)
+	protected $relationDefine = array(
+		'baseaccount' => array()
 	);
+
+	public function baseaccount() {
+		return $this->hasOne('baseaccount', 'acid', 'default_acid');
+	}
 
 	public function searchAccountList($expire = false) {
 		global $_W;
