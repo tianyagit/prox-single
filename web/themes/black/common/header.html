@@ -1,41 +1,5 @@
 {template 'common/header-base'}
 <div class="skin-black" data-skin="black">
-<div class="related-info-drop-right animated fadeInLeft hidden">
-	<ul>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wxapp"></i>小程序小程序</span>
-			</a>
-		</li>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wechat"></i>这是app</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-			</a>
-		</li>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wxapp"></i>小程序小程序</span>
-			</a>
-		</li>
-	</ul>
-	<script>
-		$(function(){
-			var top = $('.left-menu .related-info').offset().top;
-			var left = $('.left-menu .related-info').offset().left;
-			var width = $('.left-menu .related-info').outerWidth(true);
-			$('.related-info-drop-right').css({left: (left + width) + 'px', top: top + 'px'});
-			$('.left-menu .drop-menu-right').click(function(){
-				$('.related-info-drop-right').toggle();
-			});
-		});
-	</script>
-</div>
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
