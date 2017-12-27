@@ -1,41 +1,5 @@
 {template 'common/header-base'}
 <div class="skin-black" data-skin="black">
-<div class="related-info-drop-right animated fadeInLeft hidden">
-	<ul>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wxapp"></i>小程序小程序</span>
-			</a>
-		</li>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wechat"></i>这是app</span>
-				<span class="plus"><i class="wi wi-plus"></i></span>
-				<span class=""><i class="wi wi-wechat"></i>公众号公众号</span>
-			</a>
-		</li>
-		<li>
-			<a href="javascript:;">
-				<span class=""><i class="wi wi-wxapp"></i>小程序小程序</span>
-			</a>
-		</li>
-	</ul>
-	<script>
-		$(function(){
-			var top = $('.left-menu .related-info').offset().top;
-			var left = $('.left-menu .related-info').offset().left;
-			var width = $('.left-menu .related-info').outerWidth(true);
-			$('.related-info-drop-right').css({left: (left + width) + 'px', top: top + 'px'});
-			$('.left-menu .drop-menu-right').click(function(){
-				$('.related-info-drop-right').toggle();
-			});
-		});
-	</script>
-</div>
 {php $frames = buildframes(FRAME);_calc_current_frames($frames);}
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
@@ -92,7 +56,7 @@
 <div class="main">
 {if !defined('IN_MESSAGE')}
 <div class="container">
-	{if in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
+	{if in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site', 'webapp')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 	<div class="panel panel-content main-panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
 	<div class="panel-body clearfix main-panel-body {if !empty($_W['setting']['copyright']['leftmenufixed'])}menu-fixed{/if}">
 		<div class="left-menu">
@@ -118,7 +82,7 @@
 						{if !empty($menu['is_display'])}
 							{if $menu_id == 'platform_module_more'}
 							<li class="list-group-item list-group-more">
-								<a href="{url 'module/manage-account'}" target="_blank"><span class="label label-more">更多应用</span></a>
+								<a href="{php echo $menu['url']}" {if FRAME != 'webapp'}target="_blank"{/if}><span class="label label-more">更多应用</span></a>
 							</li>
 							{else}
 							<li class="list-group-item {if $menu['active']}active{/if}">

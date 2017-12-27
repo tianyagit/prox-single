@@ -106,7 +106,7 @@
 										{if !empty($menu['is_display'])}
 											{if $menu_id == 'platform_module_more'}
 											<li class="list-group-item">
-												<a href="{url 'module/manage-account'}" target="_blank" class="text-over">
+												<a href="{php echo $menu['url']}" {if FRAME != 'webapp'}target="_blank"{/if} class="text-over">
 													<span class="nav-icon" data-container="body" data-toggle="tooltip" data-placement="right" title="更多应用"><span class="icon-more"><i class="wi wi-plus"></i></span></span>
 													<span class="nav-title">更多应用</span>
 												</a>

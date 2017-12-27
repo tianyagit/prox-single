@@ -414,26 +414,32 @@ class StoreModuleSite extends WeModuleSite {
 	public function doWebGoodsBuyer() {
 		$this->storeIsOpen();
 		global $_GPC, $_W;
-		load ()->model ('module');
-		load ()->model ('payment');
-		load ()->model ('message');
-		load ()->func ('communication');
+		load()->model('module');
+		load()->model('payment');
+		load()->model('message');
+		load()->func('communication');
 		load()->library('qrcode');
 		$operate = $_GPC['operate'];
 		$operates = array ('display', 'goods_info', 'get_expiretime', 'submit_order', 'pay_order');
-		$operate = in_array ($operate, $operates) ? $operate : 'display';
+		$operate = in_array($operate, $operates) ? $operate : 'display';
 		$_W['page']['title'] = '商品列表 - 商城';
 
 		if ($operate == 'display') {
-			$pageindex = max (intval ($_GPC['page']), 1);
+			$pageindex = max(intval($_GPC['page']), 1);
 			$pagesize = 24;
-			$type = !empty($_GPC['type']) ? $_GPC['type'] : 1;
+			$type = 0;
+			if (!empty($_GPC['type']) && in_array($_GPC['type'], array(STORE_TYPE_MODULE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_API, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))) {
+				$type = $_GPC['type'];
+			}
 			$store_table = table ('store');
 			$store_table->searchWithStatus (1);
 			$store_table = $store_table->searchGoodsList ($type, $pageindex, $pagesize);
 			$store_goods = $store_table['goods_list'];
-			if (in_array($type, array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE)) && is_array ($store_goods)) {
+			if ((empty($type) || in_array($type, array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE))) && is_array($store_goods)) {
 				foreach ($store_goods as $key => &$goods) {
+					if (empty($goods) || !in_array($goods['type'], array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE))) {
+						continue;
+					}
 					$goods['module'] = module_fetch ($goods['module']);
 				}
 				unset($goods);
