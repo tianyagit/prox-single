@@ -13,6 +13,9 @@ class MessageTable extends We7Table {
 		if (!user_is_founder($_W['uid']) || user_is_vice_founder($_W['uid'])) {
 			$this->query->where('uid', $_W['uid']);
 		}
+		if (user_is_founder($_W['uid']) && !user_is_vice_founder()) {
+			$this->query->where('type !=', MESSAGE_USER_EXPIRE_TYPE);
+		}
 		return $this->query->from('message_notice_log')->orderby('id', 'DESC')->getall();
 	}
 

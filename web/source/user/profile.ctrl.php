@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('user');
 load()->func('file');
 load()->classs('oauth2/oauth2client');
+load()->model('message');
 
 $dos = array('base', 'post', 'bind', 'validate_mobile', 'bind_mobile', 'unbind');
 $do = in_array($do, $dos) ? $do : 'base';
@@ -174,6 +175,9 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 
 //账号信息
 if ($do == 'base') {
+	$message_id = safe_gpc_int($_GPC['message_id']);
+	message_notice_read($message_id);
+
 	$user_type = !empty($_GPC['user_type']) ? trim($_GPC['user_type']) : PERSONAL_BASE_TYPE;
 	//基础信息
 	$user = user_single($_W['uid']);

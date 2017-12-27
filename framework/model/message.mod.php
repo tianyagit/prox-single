@@ -71,9 +71,9 @@ function message_event_notice_list() {
 	$message_table = table('message');
 	$message_table->searchWithIsRead(MESSAGE_NOREAD);
 	if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
-		$type = array(MESSAGE_ORDER_TYPE, MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_REGISTER_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE);
+		$type = array(MESSAGE_ORDER_TYPE, MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_REGISTER_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WORKORDER_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
 	} else {
-		$type = MESSAGE_ACCOUNT_EXPIRE_TYPE;
+		$type = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
 	}
 	$message_table->searchWithType($type);
 	$message_table->searchWithPage(1, 10);
@@ -106,6 +106,10 @@ function message_event_notice_list() {
 
 			if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_NORMAL) {
 				$message['url'] = url('user/display', array('message_id' => $message['id']));
+			}
+
+			if ($message['type'] == MESSAGE_USER_EXPIRE_TYPE) {
+				$message['url'] = url('user/profile');
 			}
 		}
 	}
@@ -234,6 +238,19 @@ function message_sms_expire_notice() {
 				pdo_update('users_profile', array('send_expire_status' => 1), array('uid' => $v['uid']));
 			}
 		}
+	}
+	return true;
+}
+
+/**
+ * 用户到期消息提醒
+ * @return bool
+ */
+function message_user_expire_notice() {
+	global $_W;
+	if (!empty($_W['user']['endtime']) && $_W['user']['endtime'] < strtotime('+7 days')) {
+		$content = $_W['user']['username'] . '即将过期';
+		message_notice_record($content, $_W['uid'], $_W['uid'], MESSAGE_USER_EXPIRE_TYPE, array('end_time' => $_W['user']['endtime']));
 	}
 	return true;
 }

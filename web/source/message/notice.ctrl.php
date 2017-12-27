@@ -13,34 +13,40 @@ load()->model('message');
 $_W['page']['title'] = '系统管理 - 消息提醒 - 消息提醒';
 
 if ($do == 'display') {
-	$pindex = max(1, intval($_GPC['page']));
+	$types = $type = safe_gpc_int($_GPC['type']);
+	$pindex = safe_gpc_int($_GPC['page'], 1);
 	$psize = 10;
 
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
-		$types = $type = !empty($_GPC['type']) ? intval($_GPC['type']) :
-				(user_is_founder($_W['uid']) && !user_is_vice_founder() ? MESSAGE_ORDER_TYPE : MESSAGE_ACCOUNT_EXPIRE_TYPE);
-	}
-	/* xend */
-
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
-		$types = $type = !empty($_GPC['type']) ? intval($_GPC['type']) : MESSAGE_ACCOUNT_EXPIRE_TYPE;
-	}
-	/* vend */
-
-	if ($type == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
-		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
-	}
-	$is_read = !empty($_GPC['is_read']) ? trim($_GPC['is_read']) : '';
-
 	$message_table = table('message');
+	$is_read = !empty($_GPC['is_read']) ? trim($_GPC['is_read']) : '';
 
 	if (!empty($is_read)) {
 		$message_table->searchWithIsRead($is_read);
 	}
 
-	$message_table->searchWithType($types);
+	if ($type == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
+		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
+	}
+
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if (empty($type) && (!user_is_founder($_W['uid']) || user_is_vice_founder())){
+			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE);
+		}
+	}
+	/* xend */
+
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		if (empty($type) && !user_is_founder($_W['uid'])){
+			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE);
+		}
+	}
+	/* vend */
+
+	if (!empty($types)) {
+		$message_table->searchWithType($types);
+	}
 	$message_table->searchWithPage($pindex, $psize);
 	$lists = $message_table->messageList();
 
@@ -67,6 +73,7 @@ if ($do == 'event_notice') {
 	message_account_expire();
 	message_notice_worker();
 	message_sms_expire_notice();
+	message_user_expire_notice();
 	iajax(0, $message);
 
 }
