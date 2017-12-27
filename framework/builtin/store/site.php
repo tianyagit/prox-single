@@ -427,7 +427,10 @@ class StoreModuleSite extends WeModuleSite {
 		if ($operate == 'display') {
 			$pageindex = max (intval ($_GPC['page']), 1);
 			$pagesize = 24;
-			$type = !empty($_GPC['type']) ? $_GPC['type'] : 1;
+			$type = 0;
+			if (!empty($_GPC['type']) && in_array($_GPC['type'], array(STORE_TYPE_MODULE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_API, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))) {
+				$type = $_GPC['type'];
+			}
 			$store_table = table ('store');
 			$store_table->searchWithStatus (1);
 			$store_table = $store_table->searchGoodsList ($type, $pageindex, $pagesize);
