@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->classs('validator');
+
 load()->model('webapp');
 $account_info = permission_user_account_num();
 

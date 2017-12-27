@@ -27,6 +27,6 @@ if ($action == 'manage' && $do == 'list' || $do != 'display') {
 } elseif ($do == 'display') {
 	define('FRAME', 'webapp');
 } else {
-	$account_type = $account_api->accountType();
+	$account_type = $account_api->menuFrame;
 	define('FRAME', $account_type);
 }
