@@ -24,7 +24,7 @@
 					{/loop}
 				</ul>
 				<ul class="user-info">
-					<li class="dropdown">
+					<li class="dropdown user">
 						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="wi wi-user"></i>{$_W['user']['username']}<span class="caret"></span></a>
 						<ul class="dropdown-menu color-gray dropdown-menu-right" role="menu">
 							<li>
@@ -40,6 +40,9 @@
 								<a href="{url 'user/logout'}"><i class="fa fa-sign-out color-gray"></i> 退出系统</a>
 							</li>
 						</ul>
+					</li>
+					<li class="dropdown msg header-notice">
+						<a href="javascript:;" class="dropdown-toogle" data-toggle="dropdown"><span class="wi wi-bell"><span class="badge"></span></span>消息</a>
 					</li>
 				</ul>
 			</div>
@@ -65,7 +68,7 @@
 	<div class="right-fixed-top"></div>
 	{if !defined('IN_MESSAGE')}
 	<div class="container">
-		{if in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
+		{if in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site', 'webapp')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 		<div class="panel panel-content main-panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
 		<div class="panel-body clearfix main-panel-body {if $_GPC['menu_fold_tag:classical'] == 1 && !defined('IN_MODULE')}folded{/if}">
 			{if !defined('IN_MODULE')}
@@ -103,7 +106,7 @@
 										{if !empty($menu['is_display'])}
 											{if $menu_id == 'platform_module_more'}
 											<li class="list-group-item">
-												<a href="{url 'module/manage-account'}" target="_blank" class="text-over">
+												<a href="{php echo $menu['url']}" {if FRAME != 'webapp'}target="_blank"{/if} class="text-over">
 													<span class="nav-icon" data-container="body" data-toggle="tooltip" data-placement="right" title="更多应用"><span class="icon-more"><i class="wi wi-plus"></i></span></span>
 													<span class="nav-title">更多应用</span>
 												</a>
@@ -216,8 +219,10 @@
 				$(function(){
 					$('.main-panel-content .icon-unfold').click(function(){
 						$('.main-panel-content').find('.main-panel-body').toggleClass('folded');
+						if($('.main-classical .folded').length == 0){
+							$('.nav-icon').attr('data-toggle',false);
+						}
 					});
-					$('.nav-icon').tooltip('hide');
 				});
 			</script>
 

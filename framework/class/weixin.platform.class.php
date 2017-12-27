@@ -28,23 +28,32 @@ class WeiXinPlatform extends WeiXinAccount {
 
 	function __construct($account = array()) {
 		$setting = setting_load('platform');
-		$this->accountDisplayUrl = url('account/display');
-		$this->accountType = 'account';
-		$this->accountManageType = ACCOUNT_TYPE_OFFCIAL_AUTH;
-		$this->accountTypeName = '公众号';
-		$this->accountTypeTemplate = '';
-		$this->accountTypeSupport = 'app_support';
+		$this->menuFrame = 'account';
+		$this->type = ACCOUNT_TYPE_OFFCIAL_AUTH;
+		$this->typeName = '公众号';
 		$this->appid = $setting['platform']['appid'];
 		$this->appsecret = $setting['platform']['appsecret'];
 		$this->token = $setting['platform']['token'];
 		$this->encodingaeskey = $setting['platform']['encodingaeskey'];
-		$this->account = $account;
-		if ($this->account['key'] == 'wx570bc396a51b8ff8') {
-			$this->account['key'] = $this->appid;
+	}
+
+	function fetchAccountInfo() {
+		$account_table = table('account');
+		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
+		if ($account['key'] == 'wx570bc396a51b8ff8') {
+			$account['key'] = $this->appid;
 			$this->openPlatformTestCase();
 		}
-		$this->account['account_appid'] = $this->account['key'];
-		$this->account['key'] = $this->appid;
+		//第三方平台appid与公众号appid都为key值.二者重新规划:公众号appid起名account_appid;第三方appid仍为key
+		//公众号的appid
+		$account['account_appid'] = $account['key'];
+		//第三方平台appid
+		$account['key'] = $this->appid;
+		return $account;
+	}
+
+	function accountDisplayUrl() {
+		return url('account/display');
 	}
 
 	function getComponentAccesstoken() {
@@ -192,7 +201,7 @@ class WeiXinPlatform extends WeiXinAccount {
 		if (is_error($response)) {
 			return $response;
 		}
-		cache_write('account:oauth:refreshtoken:'.$this->account['account_appid'], $response['refresh_token']);
+		cache_write('account:oauth:refreshtoken:'.$this->account['key'], $response['refresh_token']);
 		return $response;
 	}
 

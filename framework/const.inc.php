@@ -241,6 +241,8 @@ define('MESSAGE_WEBAPP_EXPIRE_TYPE', 6);
 define('MESSAGE_WORKORDER_TYPE', 3);
 //注册消息类型
 define('MESSAGE_REGISTER_TYPE', 4);
+//用户账号到期
+define('MESSAGE_USER_EXPIRE_TYPE', 7);
 
 //消息是否读取 1未读  2已读
 define('MESSAGE_NOREAD', 1);

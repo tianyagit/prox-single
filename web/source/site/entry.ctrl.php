@@ -38,7 +38,7 @@ if (!$entry['direct']) {
 	}
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
-		if (empty($_W['uniacid']) && $entry['entry'] != 'system_welcome') {
+		if (empty($_W['uniacid']) && $entry['entry'] != 'system_welcome' && $_GPC['module_type'] != 'system_welcom') {
 			if (!empty($_GPC['version_id'])) {
 				itoast('', url('wxapp/display'));
 			} else {
@@ -58,7 +58,6 @@ if (!$entry['direct']) {
 		}
 	}
 	/* vend */
-
 	$module = module_fetch($entry['module']);
 	if (empty($module)) {
 		itoast("访问非法, 没有操作权限. (module: {$entry['module']})", '', '');
@@ -95,12 +94,12 @@ $_GPC['do'] = $entry['do'];
 $modules = uni_modules();
 $_W['current_module'] = $modules[$entry['module']];
 
-
-
 /* xstart */
 if (IMS_FAMILY == 'x') {
-	if ($entry['entry'] == 'system_welcome') {
+	if ($entry['entry'] == 'system_welcome' || $_GPC['module_type'] == 'system_welcome') {
+		$_GPC['module_type'] = 'system_welcome';
 		$site = WeUtility::createModuleSystemWelcome($entry['module']);
+		define('SYSTEM_WELCOME_MODULE', true);
 	} else {
 		$site = WeUtility::createModuleSite($entry['module']);
 	}
@@ -114,13 +113,6 @@ if (IMS_FAMILY == 'v') {
 /* vend */
 
 define('IN_MODULE', $entry['module']);
-/* xstart */
-if (IMS_FAMILY == 'x') {
-	if ($entry['entry'] == 'system_welcome') {
-		define('SYSTEM_WELCOME_MODULE', true);
-	}
-}
-/* xend */
 
 if (!is_error($site)) {
 	if ($_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) {

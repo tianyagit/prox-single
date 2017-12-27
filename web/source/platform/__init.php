@@ -18,8 +18,7 @@ if (!($action == 'material' && $do == 'delete') && empty($_GPC['version_id'])) {
 }
 
 if ($action != 'material-post' && $_GPC['uniacid'] != FILE_NO_UNIACID) {
-	$account_type = $account_api->accountType();
-	define('FRAME', $account_type);
+	define('FRAME', 'account');
 }
 if ($action == 'qr') {
 	$platform_qr_permission = permission_check_account_user('platform_qr', false);

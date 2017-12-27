@@ -38,10 +38,8 @@ function safe_gpc_belong($value, $allow = array(), $default = '') {
  * @return string
  */
 function safe_gpc_string($value, $default = '') {
-	$value = htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_QUOTES);
-	
-	$badstr = array("\0", "%00", "\r", "%3C", "%3E", '{php');
-	$newstr = array('', '', '', '&lt;', '&gt;', '_');
+	$badstr = array("\0", "%00", "%3C", "%3E", '{php');
+	$newstr = array('', '', '&lt;', '&gt;', '_');
 	$value  = str_replace($badstr, $newstr, $value);
 	
 	$value  = preg_replace('/&((#(\d{3,5}|x[a-fA-F0-9]{4}));)/', '&\\1', $value);
