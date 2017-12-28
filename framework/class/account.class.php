@@ -28,15 +28,14 @@ abstract class WeAccount {
 	 * @param int $acid 公众号编号
 	 * @return WeAccount|NULL
 	 */
-	public static function create($uniacidOrAccount = array()) {
+	public static function create($acidOrAccount = array()) {
 		global $_W;
 		$uniaccount = array();
-
-		if (is_array($uniacidOrAccount) && !empty($uniacidOrAccount)) {
-			$uniaccount = $uniacidOrAccount;
+		if (is_array($acidOrAccount) && !empty($acidOrAccount)) {
+			$uniaccount = $acidOrAccount;
 		} else {
-			$uniacidOrAccount = empty($uniacidOrAccount) ? $_W['uniacid'] : intval($uniacidOrAccount);
-			$uniaccount = table('account')->getUniAccountByUniacid($uniacidOrAccount);
+			$acidOrAccount = empty($acidOrAccount) ? $_W['account']['acid'] : intval($acidOrAccount);
+			$uniaccount = table('account')->getUniAccountByAcid($acidOrAccount);
 		}
 		if (is_error($uniaccount) || empty($uniaccount)) {
 			$uniaccount = $_W['account'];
@@ -81,6 +80,10 @@ abstract class WeAccount {
 		$account_obj->uniacid = $uniaccount['uniacid'];
 		$account_obj->uniaccount = $uniaccount;
 		$account_obj->account = $account_obj->fetchAccountInfo();
+		$account_obj->account['type'] = $account_obj->uniaccount['type'];
+		$account_obj->account['isconnect'] = $account_obj->uniaccount['isconnect'];
+		$account_obj->account['isdeleted'] = $account_obj->uniaccount['isdeleted'];
+		$account_obj->account['endtime'] = $account_obj->uniaccount['endtime'];
 
 		return $account_obj;
 	}
@@ -693,7 +696,7 @@ class WeUtility {
 			require $file;
 		}
 		if(!class_exists($classname)) {
-			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
+			trigger_error('ModuleWebapp Definition Class Not Found', E_USER_WARNING);
 			return null;
 		}
 		$o = new $classname();
@@ -706,7 +709,7 @@ class WeUtility {
 		if($o instanceof WeModuleWebapp) {
 			return $o;
 		} else {
-			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
+			trigger_error('ModuleWebapp Class Definition Error', E_USER_WARNING);
 			return null;
 		}
 	}
