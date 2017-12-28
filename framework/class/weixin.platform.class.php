@@ -49,7 +49,7 @@ class WeiXinPlatform extends WeiXinAccount {
 		//公众号的appid
 		$account['account_appid'] = $account['key'];
 		//第三方平台appid
-		$account['key'] = $this->appid;
+		$account['encrypt_and_decrypt_key'] = $this->appid;
 		return $account;
 	}
 
