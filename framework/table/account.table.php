@@ -8,6 +8,16 @@ defined('IN_IA') or exit('Access Denied');
 
 class AccountTable extends We7Table {
 
+	protected $tableName = 'uni_account';
+	protected $primaryKey = 'acid';
+	protected $relationDefine = array(
+		'baseaccount'
+	);
+
+	public function baseaccount() {
+		return $this->hasOne('baseaccount', 'acid', 'default_acid');
+	}
+
 	public function searchAccountList($expire = false) {
 		global $_W;
 		$this->query->from('uni_account', 'a')->select('a.uniacid')->leftjoin('account', 'b')

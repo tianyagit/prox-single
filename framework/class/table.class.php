@@ -10,7 +10,11 @@ defined('IN_IA') or exit('Access Denied');
  * @property Query $query
  */
 abstract class We7Table {
-	
+
+	const ONE_TO_ONE = 'ONE_TO_ONE';
+	const ONE_TO_MANY = 'ONE_TO_MANY';
+	const BELONGS_TO = 'BELONGS_TO';
+
 	//表名
 	protected $tableName = '';
 	//主键
@@ -24,6 +28,12 @@ abstract class We7Table {
 	protected $query;
 	//数据库属性
 	private $attribute = array();
+
+	/**
+	 *  关联关系定义
+	 * @var array
+	 */
+	protected $relationDefine = array();
 
 
 	public function __construct() {
@@ -85,18 +95,69 @@ abstract class We7Table {
 		}
 	}
 
+
+	private function doRelation($relation_param) {
+		// 第0个表示 type 类型
+		switch(current($relation_param)) {
+			case self::ONE_TO_ONE :  return $this->oneToOne($relation_param); break;
+			case self::ONE_TO_MANY : return $this->oneToMany($relation_param); break;
+			case self::BELONGS_TO : return $this->belongTo($relation_param); break;
+		}
+	}
+
+
 	/**
-	 *  根据主键获取数据
-	 * @param $id
+	 *  一对一
+	 * @param $param
+	 * @return array|mixed
+	 */
+	private function oneToOne($relation_param) {
+		return $this->getRelationData($relation_param);
+	}
+
+	/**
+	 *  执行 一对多
+	 */
+	private function oneToMany($relation_param) {
+		return $this->getRelationData($relation_param);
+	}
+
+	/**
+	 * 反向关联
+	 * @param $relation_param
 	 * @return mixed
 	 */
-	public function getById($id) {
-		$query = $this->query->from($this->tableName)->where($this->primaryKey, $id);
-		if (is_array($id)) {
-			return $query->getall();
-		}
-		return $query->get();
+	private function belongTo($relation_param) {
+		return $this->getRelationData($relation_param);
 	}
+
+	/**
+	 *  获取关联数据
+	 * @param $relation_param
+	 * @return mixed
+	 */
+	private function getRelationData($relation_param) {
+		list($type, $table, $foreign_key, $owner_key) = $relation_param;
+		$datas = $this->getall($owner_key);
+		$foreign_val = array_keys($datas);
+		return table($table)->where($foreign_key, $foreign_val)->getall();
+	}
+
+
+	public function __get($key) {
+		//获取关联关系数据
+		if (in_array($key, $this->relationDefine)) {
+			if (method_exists($this, $key)) {
+				$relation_define = call_user_func(array($this, $key));
+				return $this->getRelationData($relation_define);
+			}
+		}
+	}
+
+	private function manyToMany($param) {
+		trigger_error('未实现');
+	}
+	
 	/**
 	 * 追加默认数据
 	 */
@@ -130,12 +191,76 @@ abstract class We7Table {
 
 	public function get() {
 		$data = $this->query->get();
+//		$data = $this->loadRelation($data);
 		return $data;
 	}
 
 	public function getall($keyfield = '') {
 		$data = $this->query->getall($keyfield);
+//		$data = $this->loadRelation($data, true);
 		return $data;
+	}
+	/**
+	 *  一对一
+	 * @param $table
+	 * @param $foreign_key
+	 * @param bool $owner_key
+	 */
+	protected function hasOne($table, $foreign_key, $owner_key = false) {
+		return $this->relationArray(self::ONE_TO_ONE, $table, $foreign_key, $owner_key);
+	}
+
+	/**
+	 *  一对多
+	 * @param $table
+	 * @param $foreign_key
+	 * @param bool $owner_key
+	 * @return array
+	 */
+	protected function hasMany($table, $foreign_key, $owner_key = false) {
+		return $this->relationArray(self::ONE_TO_MANY, $table, $foreign_key, $owner_key);
+	}
+
+	/**
+	 *  反向关联
+	 * @param $table
+	 * @param $foreign_key
+	 * @param bool $owner_key
+	 * @return array
+	 */
+	protected function belongsTo($table, $foreign_key, $owner_key = false) {
+		return $this->relationArray(self::BELONGS_TO, $table, $foreign_key, $owner_key);
+	}
+
+	/**
+	 *  定义关联数据
+	 * @param $type
+	 * @param $table
+	 * @param $foreign_key
+	 * @param $owner_key
+	 * @return array
+	 */
+	private function relationArray($type, $table, $foreign_key, $owner_key) {
+		if (! $owner_key) {
+			$owner_key = $this->primaryKey;
+		}
+		if (!in_array($type, array(self::ONE_TO_ONE, self::ONE_TO_MANY, self::BELONGS_TO), true)) {
+			trigger_error('不支持的关联类型');
+		}
+		return array($type, $table, $foreign_key, $owner_key);
+	}
+
+	/**
+	 *  根据主键获取数据
+	 * @param $id
+	 * @return mixed
+	 */
+	public function getById($id) {
+		$this->query->from($this->tableName)->where($this->primaryKey, $id);
+		if (is_array($id)) {
+			return $this->getall();
+		}
+		return $this->get();
 	}
 
 	public function getcolumn($field = '') {
@@ -143,11 +268,24 @@ abstract class We7Table {
 		return $data;
 	}
 
+	/**
+	 *  拦截where 条件
+	 * @param $condition
+	 * @param array $parameters
+	 * @param string $operator
+	 * @return $this
+	 */
 	public function where($condition, $parameters = array(), $operator = 'AND') {
 		$this->query->where($condition, $parameters, $operator);
 		return $this;
 	}
 
+	/**
+	 * where or
+	 * @param $condition
+	 * @param array $parameters
+	 * @return We7Table
+	 */
 	public function whereor($condition, $parameters = array()) {
 		return $this->where($condition, $parameters, 'OR');
 	}

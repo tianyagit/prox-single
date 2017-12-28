@@ -1,7 +1,7 @@
 {
     "require": {
         "we7/devtool": "^0.0.5",
-        "phpunit/phpunit": "5.*"
+        "phpunit/phpunit": "6.*"
     },
     "autoload" : {
         "psr-4" : {
