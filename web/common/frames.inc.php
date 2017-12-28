@@ -253,7 +253,6 @@ $we7_system_menu['module'] = array(
 	'icon' => 'wi wi-apply',
 	'url' => url('module/display'),
 	'section' => array(),
-	'is_display' => 0
 );
 
 $we7_system_menu['system'] = array(
@@ -758,11 +757,20 @@ $we7_system_menu['appmarket'] = array(
 );
 
 $we7_system_menu['help'] = array(
-	'title' => '帮助',
+	'title' => '系统帮助',
 	'icon' => 'wi wi-market',
 	'url' => url('help/display'),
 	'section' => array(),
 	'blank' => false
+);
+
+$we7_system_menu['custom_help'] = array(
+	'title' => '帮助',
+	'icon' => 'wi wi-market',
+	'url' => url('help/display/custom'),
+	'section' => array(),
+	'blank' => false,
+	'is_display' => 0
 );
 
 /* xstart */
