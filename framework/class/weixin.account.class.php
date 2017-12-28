@@ -43,6 +43,7 @@ class WeiXinAccount extends WeAccount {
 	public function fetchAccountInfo() {
 		$account_table = table('account');
 		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
+		$account['encrypt_key'] = $account['key'];
 		return $account;
 	}
 
