@@ -7,9 +7,6 @@
 defined('IN_IA') or exit('Access Denied');
 
 class ModuleTable extends We7Table {
-
-
-
 	public function moduleBindingsInfo($module, $do = '', $entry = '') {
 		$condition = array(
 			'module' => $module,
@@ -56,5 +53,9 @@ class ModuleTable extends We7Table {
 			pdo_insert('modules_rank', array('uid' => $_W['uid'], 'module_name' => $module_name, 'rank' => ($max_rank + 1)));
 		}
 		return true;
+	}
+
+	public function modulesWxappList() {
+		return $this->query->from('modules')->where('wxapp_support', MODULE_SUPPORT_WXAPP)->getall('mid');
 	}
 }

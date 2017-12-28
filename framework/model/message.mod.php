@@ -70,49 +70,22 @@ function message_event_notice_list() {
 	global $_W;
 	$message_table = table('message');
 	$message_table->searchWithIsRead(MESSAGE_NOREAD);
-	if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
-		$type = array(MESSAGE_ORDER_TYPE, MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_REGISTER_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WORKORDER_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
-	} else {
-		$type = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
+	$type = '';
+	if (user_is_vice_founder() || !user_is_founder($_W['uid'])) {
+		$type = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
+		$message_table->searchWithType($type);
 	}
-	$message_table->searchWithType($type);
+
 	$message_table->searchWithPage(1, 10);
 	$lists = $message_table->messageList();
 
 	$message_table->searchWithIsRead(MESSAGE_NOREAD);
-	$message_table->searchWithType($type);
-	$total = $message_table->messageNoReadCount();
-	if (!empty($lists)) {
-		foreach ($lists as &$message) {
-			$message['create_time'] = date('Y-m-d H:i:s', $message['create_time']);
-
-			if ($message['type'] == MESSAGE_ORDER_TYPE) {
-				$message['url'] = url('site/entry/orders', array('m' => 'store', 'direct'=>1, 'message_id' => $message['id']));
-			}
-			if ($message['type'] == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
-				$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL, 'message_id' => $message['id']));
-			}
-			if ($message['type'] == MESSAGE_WECHAT_EXPIRE_TYPE) {
-				$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL, 'message_id' => $message['id']));
-			}
-
-			if ($message['type'] == MESSAGE_WEBAPP_EXPIRE_TYPE) {
-				$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL, 'message_id' => $message['id']));
-			}
-
-			if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_CHECK) {
-				$message['url'] = url('user/display', array('type' => 'check', 'message_id' => $message['id']));
-			}
-
-			if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_NORMAL) {
-				$message['url'] = url('user/display', array('message_id' => $message['id']));
-			}
-
-			if ($message['type'] == MESSAGE_USER_EXPIRE_TYPE) {
-				$message['url'] = url('user/profile');
-			}
-		}
+	if (user_is_vice_founder() || !user_is_founder($_W['uid'])) {
+		$message_table->searchWithType($type);
 	}
+	$total = $message_table->messageNoReadCount();
+
+	$lists = message_list_detail($lists);
 	return array(
 		'lists' => $lists,
 		'total' => $total
@@ -265,4 +238,96 @@ function message_notice_record_cloud($message) {
 	$api = new CloudApi();
 	$result = $api->post('system', 'notify', array('json' => $message), 'html', false);
 	return $result;
+}
+
+/**
+ * 小程序拥有的应用有升级时,消息通知主管理员
+ * @return bool
+ */
+function message_wxapp_modules_version_upgrade() {
+	global $_W;
+	load()->model('wxapp');
+	load()->model('account');
+
+	$wxapp_table = table('wxapp');
+	$wxapp_table->searchWithType(array(ACCOUNT_TYPE_APP_NORMAL));
+	$uniacid_list = $wxapp_table->searchAccountList();
+
+	if (empty($uniacid_list)) {
+		return true;
+	}
+
+	$wxapp_list = $wxapp_table->wxappInfo(array_keys($uniacid_list));
+	$module_table = table('module');
+	$wxapp_modules = $module_table->modulesWxappList();
+
+	foreach ($uniacid_list as $uniacid_info) {
+		$account_owner = account_owner($uniacid_info['uniacid']);
+		if (empty($account_owner) || $account_owner['uid'] != $_W['uid']) {
+			continue;
+		}
+
+		$uniacid_modules = wxapp_version_all($uniacid_info['uniacid']);
+
+		if (empty($uniacid_modules[0]['modules'])) {
+			continue;
+		}
+
+		foreach ($uniacid_modules[0]['modules'] as $module) {
+			if ($module['version'] < $wxapp_modules[$module['mid']]['version']) {
+				$content = $wxapp_list[$uniacid_info['uniacid']]['name'] . '-' . '小程序中的' . $module['title'] . '应用有更新';
+				message_notice_record($content, $_W['uid'], $uniacid_info['uniacid'], MESSAGE_WXAPP_MODULE_UPGRADE);
+			}
+		}
+	}
+	return true;
+}
+
+/**
+ * 列表详情
+ * @param $lists
+ * @return mixed
+ */
+function message_list_detail($lists) {
+	if (empty($lists)) {
+		return $lists;
+	}
+	foreach ($lists as &$message) {
+		$message['create_time'] = date('Y-m-d H:i:s', $message['create_time']);
+
+		if ($message['type'] == MESSAGE_ORDER_TYPE) {
+			$message['url'] = url('site/entry/orders', array('m' => 'store', 'direct'=>1, 'message_id' => $message['id']));
+		}
+		if ($message['type'] == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
+			$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL, 'message_id' => $message['id']));
+		}
+		if ($message['type'] == MESSAGE_WECHAT_EXPIRE_TYPE) {
+			$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL, 'message_id' => $message['id']));
+		}
+
+		if ($message['type'] == MESSAGE_WEBAPP_EXPIRE_TYPE) {
+			$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL, 'message_id' => $message['id']));
+		}
+
+		if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_CHECK) {
+			$message['url'] = url('user/display', array('type' => 'check', 'message_id' => $message['id']));
+		}
+
+		if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_NORMAL) {
+			$message['url'] = url('user/display', array('message_id' => $message['id']));
+		}
+
+		if ($message['type'] == MESSAGE_USER_EXPIRE_TYPE) {
+			$message['url'] = url('user/profile');
+		}
+		if ($message['type'] == MESSAGE_WXAPP_MODULE_UPGRADE) {
+			$message['url'] = '#';
+		}
+
+		if ($message['type'] == MESSAGE_WORKORDER_TYPE) {
+			$message['url'] = url('system/workorder/display', array('uuid' => $message['sign'], 'message_id' => $message['id']));
+		}
+	}
+
+	return $lists;
 }
