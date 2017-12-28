@@ -11,7 +11,7 @@ class AccountTable extends We7Table {
 	protected $tableName = 'uni_account';
 	protected $primaryKey = 'acid';
 	protected $relationDefine = array(
-		'baseaccount' => array()
+		'baseaccount'
 	);
 
 	public function baseaccount() {

@@ -146,8 +146,7 @@ abstract class We7Table {
 
 	public function __get($key) {
 		//获取关联关系数据
-		if (isset($this->relationDefine[$key])) {
-
+		if (in_array($key, $this->relationDefine)) {
 			if (method_exists($this, $key)) {
 				$relation_define = call_user_func(array($this, $key));
 				return $this->getRelationData($relation_define);
