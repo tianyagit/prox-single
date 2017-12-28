@@ -388,7 +388,7 @@ if ($do == 'wechat_upload') {
 	$fullname = ATTACHMENT_ROOT  . '/' . $pathname;
 
 	// 上传到微信服务器
-	$acc = WeAccount::create($acid);
+	$acc = WeAccount::create();
 	$token = $acc->getAccessToken();
 	if (is_error($token)) {
 		$result['message'] = $token['message'];
