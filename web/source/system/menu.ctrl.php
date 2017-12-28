@@ -3,25 +3,20 @@
  * 后台菜单管理
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
- 
+
 defined('IN_IA') or exit('Access Denied');
 
 $dos = array('display', 'post', 'display_status', 'delete', 'change_displayorder');
 $do = in_array($do, $dos) ? $do : 'display';
 $_W['page']['title'] = '系统管理 - 菜单设置';
 
-$system_menu = cache_load('system_frame');
-/* vstart */
-if (IMS_FAMILY == 'v') {
-	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'webapp', 'appmarket');
-}
-/* vend */
+$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'webapp', 'appmarket');
 /* xstart */
 if (IMS_FAMILY == 'x') {
-	$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'store', 'webapp', 'appmarket');
+	array_push($system_top_menu, 'store', 'custom_help');
 }
 /* xend */
-
+$system_menu = cache_load('system_frame');
 if(empty($system_menu)) {
 	cache_build_frame_menu();
 	$system_menu = cache_load('system_frame');
@@ -127,7 +122,7 @@ if ($do == 'display') {
 } elseif ($do == 'delete') {
 	$permission_name = $_GPC['permission_name'];
 	$menu_db = pdo_get('core_menu', array('permission_name' => $permission_name));
-	
+
 	if (!empty($menu_db['is_system'])) {
 		iajax(-1, '系统菜单不能删除', referer());
 	}

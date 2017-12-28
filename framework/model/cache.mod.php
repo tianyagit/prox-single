@@ -176,9 +176,8 @@ function cache_build_frame_menu() {
 		$system_displayoder = 1;
 		foreach ($system_menu as $menu_name => $menu) {
 			$system_menu[$menu_name]['is_system'] = true;
-			$system_menu[$menu_name]['is_display'] = empty($system_menu_db[$menu_name]) || !empty($system_menu_db[$menu_name]['is_display']) ? true : false;
+			$system_menu[$menu_name]['is_display'] = !empty($system_menu_db[$menu_name]['is_display']) ? true : (isset($system_menu[$menu_name]['is_display']) && empty($system_menu[$menu_name]['is_display']) ? false : true);
 			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
-
 			foreach ($menu['section'] as $section_name => $section) {
 				$displayorder = max(count($section['menu']), 1);
 
@@ -445,9 +444,9 @@ function cache_build_proxy_wechatpay_account() {
 			$account = account_fetch($uniaccount['default_acid']);
 			$account_setting = pdo_get('uni_settings', array ('uniacid' => $account['uniacid']));
 			$payment = iunserializer($account_setting['payment']);
-			if (is_array($account) && !empty($account['key']) && !empty($account['secret']) && in_array($account['level'], array (4)) && 
+			if (is_array($account) && !empty($account['key']) && !empty($account['secret']) && in_array($account['level'], array (4)) &&
 				is_array($payment) && !empty($payment) && intval($payment['wechat']['switch']) == 1) {
-					
+
 				if ((!is_bool ($payment['wechat']['switch']) && $payment['wechat']['switch'] != 4) || (is_bool ($payment['wechat']['switch']) && !empty($payment['wechat']['switch']))) {
 					$borrow[$account['uniacid']] = $account['name'];
 				}
