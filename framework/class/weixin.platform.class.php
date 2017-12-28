@@ -38,12 +38,13 @@ class WeiXinPlatform extends WeiXinAccount {
 	}
 
 	function fetchAccountInfo() {
-		$account_table = table('account');
-		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
-		if ($account['key'] == 'wx570bc396a51b8ff8') {
-			$account['key'] = $this->appid;
+		if ($this->uniaccount['key'] == 'wx570bc396a51b8ff8') {
+			$this->uniaccount['key'] = $this->appid;
+			$this->account = $this->uniaccount;
 			$this->openPlatformTestCase();
 		}
+		$account_table = table('account');
+		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
 		//第三方平台appid与公众号appid都为key值.二者重新规划:公众号appid起名account_appid;第三方appid仍为key
 		//公众号的appid
 		$account['account_appid'] = $account['key'];
