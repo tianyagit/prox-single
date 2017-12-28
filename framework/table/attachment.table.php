@@ -9,11 +9,9 @@ class AttachmentTable extends We7Table {
 
 
 
-	protected $attachment_table_name = 'core_attachment';
-
 	public function local($local = true) {
 		if(! $local) {
-			return new WechatAttachmentTable();
+			$this->attachment_table_name = 'wechat_attachment';
 		}
 		return $this;
 	}
