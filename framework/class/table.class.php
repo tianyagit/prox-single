@@ -156,12 +156,18 @@ abstract class We7Table {
 
 	public function get() {
 		$data = $this->query->get();
+		if (! $data || empty($data)) {
+			return $data;
+		}
 		$this->loadRelation($data);
 		return $data;
 	}
 
 	public function getall($keyfield = '') {
 		$data = $this->query->getall($keyfield);
+		if (! $data || empty($data)) {
+			return $data;
+		}
 		$this->loadRelation($data, true);
 		return $data;
 	}
@@ -173,106 +179,122 @@ abstract class We7Table {
 	 */
 	private function loadRelation(array &$data, $muti = false) {
 		foreach ($this->relationDefine as $relation) {
-			if (! $muti) {
-				$this->loadOne($data, $relation);
-			} else {
-				$this->loadMuti($data, $relation);
-			}
-
+			$this->doload($relation, $data, $muti); //加载关联数据
 		}
 	}
 
-
-
 	/**
-	 * 加载一条数据
-	 * @param $data
+	 *  加载关联表数据
 	 * @param $relation
+	 * @param $data
+	 * @param bool $muti
 	 */
-	private function loadOne(&$data, $relation, $muti = false) {
+	private function doload($relation, &$data, $muti = false) {
 		if (method_exists($this, $relation)) {
 			$relation_param = call_user_func(array($this, $relation));
 			list($type, $table, $foreign_key, $owner_key) = $relation_param;
-			$getall = false;
-			switch ($type) {
-				case self::ONE_TO_ONE : break;
-				case self::ONE_TO_MANY : $getall = true; break;
-				case self::BELONGS_TO : $getall = false; break;
-			}
-			$foreign_val = $data[$owner_key];
-			$table_instance = table($table)->where($foreign_key, $foreign_val);
-			if ($getall) {
-				$data[$relation] = $table_instance->getall();
+			/**
+			 *  获取关联类型如果是单挑数据
+			 */
+			$single = $this->isGetSingle($type);
+			/**
+			 * 如果执行是 table->getall() muti是true
+			 * 获取所有的外键值
+			 */
+			$foreign_vals = $this->getForeignVal($data, $owner_key, $muti);
+			/**
+			 *  获取关联表的数据  $single 表示 只获取一条即可
+			 */
+			$second_table_data = $this->getSecondTableData($table, $foreign_key, $foreign_vals, $single);
+			if (! $muti) {
+				$data[$relation] = $second_table_data;
 				return;
 			}
-			$data[$relation] = $table_instance->get();
-
+			$second_table_data = $this->groupBy($foreign_key, $second_table_data);
+			foreach ($data as &$item) {
+				$item[$relation] = isset($second_table_data[$item[$owner_key]]) ? $second_table_data[$item[$owner_key]] : array();
+			}
 		}
 	}
 
 	/**
-	 * 加载多条数据 的对应关系
+	 *  是否获取单条数据
+	 * @param $type
+	 * @return bool
+	 */
+	private function isGetSingle($type) {
+		return in_array($type, array(self::ONE_TO_ONE, self::BELONGS_TO)) ? true : false;
+	}
+
+	/**
+	 *  获取所有外键值
 	 * @param $data
-	 * @param $relation
+	 * @param $owner_key
+	 * @param bool $muti
+	 * @return array
 	 */
-	private function loadMuti($data, $relation) {
-		if (method_exists($this, $relation)) {
-			$relation_param = call_user_func(array($this, $relation));
-			list($type, $table, $foreign_key, $owner_key) = $relation_param;
-			$foreign_vals = array_map(function($item) use ($owner_key){
-				return $item[$owner_key];
-			}, $data);
-
-			$table_instance = table($table)->where($foreign_key, $foreign_vals);
-			$foreign_datas = $table_instance->getall();
-
-
-			foreach ($foreign_datas as $foreign_data) {
-				$foreign_data[$foreign_key];
-			}
-
-			foreach ($data as $item) {
-
-
-			}
-
+	private function getForeignVal($data, $owner_key, $muti = false) {
+		if (! $muti) {
+			return $data[$owner_key];
 		}
-	}
-
-	private function doRelation($relation_param, $data) {
-		// 第0个表示 type 类型
-		switch(current($relation_param)) {
-			case self::ONE_TO_ONE :  return $this->oneToOne($relation_param, $data); break;
-			case self::ONE_TO_MANY : return $this->oneToMany($relation_param); break;
-			case self::BELONGS_TO : return $this->belongTo($relation_param); break;
-		}
-	}
-
-
-	/**
-	 *  一对一
-	 * @param $param
-	 * @return array|mixed
-	 */
-	private function oneToOne($relation_param) {
-		return $this->getRelationData($relation_param);
+		return array_map(function($item) use ($owner_key){
+			return $item[$owner_key];
+		}, $data);
 	}
 
 	/**
-	 *  执行 一对多
-	 */
-	private function oneToMany($relation_param) {
-		return $this->getRelationData($relation_param);
-	}
-
-	/**
-	 * 反向关联
-	 * @param $relation_param
+	 *  获取关联表数据
+	 * @param $table
+	 * @param $foreign_key
+	 * @param $foreign_vals
+	 * @param bool $single
 	 * @return mixed
 	 */
-	private function belongTo($relation_param) {
-		return $this->getRelationData($relation_param);
+	private function getSecondTableData($table, $foreign_key, $foreign_vals, $single = false) {
+		$table_instance = table($table)->where($foreign_key, $foreign_vals);
+		if ($single) {
+			return $table_instance->get();
+		}
+		return $table_instance->getall();
 	}
+
+
+
+	/**
+	 * [
+	['account_id' => 'account-x10', 'product' => 'Chair'],
+	['account_id' => 'account-x10', 'product' => 'Bookcase'],
+	['account_id' => 'account-x11', 'product' => 'Desk'],
+	]);
+
+	$grouped = $this->groupBy('account_id');
+	/*
+	[
+	'account-x10' => [
+	['account_id' => 'account-x10', 'product' => 'Chair'],
+	['account_id' => 'account-x10', 'product' => 'Bookcase'],
+	],
+	'account-x11' => [
+	['account_id' => 'account-x11', 'product' => 'Desk'],
+	],
+	]
+	 * @param $key
+	 * @param $array
+	 */
+	private function groupBy($key, $array) {
+		$result = array();
+
+		foreach ($array as $item) {
+			$val = $item[$key];
+			if (isset($result[$val])) {
+				$result[$val][] = $item;
+			} else {
+				$result[$val] = array($item);
+			}
+		}
+		return $result;
+	}
+
 	/**
 	 *  一对一
 	 * @param $table

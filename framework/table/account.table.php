@@ -11,11 +11,24 @@ class AccountTable extends We7Table {
 	protected $tableName = 'uni_account';
 	protected $primaryKey = 'acid';
 	protected $relationDefine = array(
-		'baseaccount'
+		'baseaccount',
+		'uniaccountgroup',
 	);
 
+	/**
+	 *  当前公众号的基本信息
+	 * @return array
+	 */
 	public function baseaccount() {
 		return $this->hasOne('baseaccount', 'acid', 'default_acid');
+	}
+
+	/**
+	 *  获取当前公众号属于哪个组
+	 * @return array
+	 */
+	public function uniaccountgroup() {
+		return $this->belongsTo('uniaccountgroup', 'acid', 'default_acid');
 	}
 
 	public function searchAccountList($expire = false) {
