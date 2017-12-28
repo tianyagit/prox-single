@@ -95,42 +95,6 @@ abstract class We7Table {
 		}
 	}
 
-
-	private function doRelation($relation_param) {
-		// 第0个表示 type 类型
-		switch(current($relation_param)) {
-			case self::ONE_TO_ONE :  return $this->oneToOne($relation_param); break;
-			case self::ONE_TO_MANY : return $this->oneToMany($relation_param); break;
-			case self::BELONGS_TO : return $this->belongTo($relation_param); break;
-		}
-	}
-
-
-	/**
-	 *  一对一
-	 * @param $param
-	 * @return array|mixed
-	 */
-	private function oneToOne($relation_param) {
-		return $this->getRelationData($relation_param);
-	}
-
-	/**
-	 *  执行 一对多
-	 */
-	private function oneToMany($relation_param) {
-		return $this->getRelationData($relation_param);
-	}
-
-	/**
-	 * 反向关联
-	 * @param $relation_param
-	 * @return mixed
-	 */
-	private function belongTo($relation_param) {
-		return $this->getRelationData($relation_param);
-	}
-
 	/**
 	 *  获取关联数据
 	 * @param $relation_param
@@ -140,7 +104,8 @@ abstract class We7Table {
 		list($type, $table, $foreign_key, $owner_key) = $relation_param;
 		$datas = $this->getall($owner_key);
 		$foreign_val = array_keys($datas);
-		return table($table)->where($foreign_key, $foreign_val)->getall();
+		$table_instance = table($table)->where($foreign_key, $foreign_val);
+		return $table_instance->getall();
 	}
 
 
@@ -191,14 +156,122 @@ abstract class We7Table {
 
 	public function get() {
 		$data = $this->query->get();
-//		$data = $this->loadRelation($data);
+		$this->loadRelation($data);
 		return $data;
 	}
 
 	public function getall($keyfield = '') {
 		$data = $this->query->getall($keyfield);
-//		$data = $this->loadRelation($data, true);
+		$this->loadRelation($data, true);
 		return $data;
+	}
+
+	/**
+	 *  加载关联关系
+	 * @param array $data 查询出来的文字
+	 * @param bool $muti 是否主查询是 多条记录
+	 */
+	private function loadRelation(array &$data, $muti = false) {
+		foreach ($this->relationDefine as $relation) {
+			if (! $muti) {
+				$this->loadOne($data, $relation);
+			} else {
+				$this->loadMuti($data, $relation);
+			}
+
+		}
+	}
+
+
+
+	/**
+	 * 加载一条数据
+	 * @param $data
+	 * @param $relation
+	 */
+	private function loadOne(&$data, $relation, $muti = false) {
+		if (method_exists($this, $relation)) {
+			$relation_param = call_user_func(array($this, $relation));
+			list($type, $table, $foreign_key, $owner_key) = $relation_param;
+			$getall = false;
+			switch ($type) {
+				case self::ONE_TO_ONE : break;
+				case self::ONE_TO_MANY : $getall = true; break;
+				case self::BELONGS_TO : $getall = false; break;
+			}
+			$foreign_val = $data[$owner_key];
+			$table_instance = table($table)->where($foreign_key, $foreign_val);
+			if ($getall) {
+				$data[$relation] = $table_instance->getall();
+				return;
+			}
+			$data[$relation] = $table_instance->get();
+
+		}
+	}
+
+	/**
+	 * 加载多条数据 的对应关系
+	 * @param $data
+	 * @param $relation
+	 */
+	private function loadMuti($data, $relation) {
+		if (method_exists($this, $relation)) {
+			$relation_param = call_user_func(array($this, $relation));
+			list($type, $table, $foreign_key, $owner_key) = $relation_param;
+			$foreign_vals = array_map(function($item) use ($owner_key){
+				return $item[$owner_key];
+			}, $data);
+
+			$table_instance = table($table)->where($foreign_key, $foreign_vals);
+			$foreign_datas = $table_instance->getall();
+
+
+			foreach ($foreign_datas as $foreign_data) {
+				$foreign_data[$foreign_key];
+			}
+
+			foreach ($data as $item) {
+
+
+			}
+
+		}
+	}
+
+	private function doRelation($relation_param, $data) {
+		// 第0个表示 type 类型
+		switch(current($relation_param)) {
+			case self::ONE_TO_ONE :  return $this->oneToOne($relation_param, $data); break;
+			case self::ONE_TO_MANY : return $this->oneToMany($relation_param); break;
+			case self::BELONGS_TO : return $this->belongTo($relation_param); break;
+		}
+	}
+
+
+	/**
+	 *  一对一
+	 * @param $param
+	 * @return array|mixed
+	 */
+	private function oneToOne($relation_param) {
+		return $this->getRelationData($relation_param);
+	}
+
+	/**
+	 *  执行 一对多
+	 */
+	private function oneToMany($relation_param) {
+		return $this->getRelationData($relation_param);
+	}
+
+	/**
+	 * 反向关联
+	 * @param $relation_param
+	 * @return mixed
+	 */
+	private function belongTo($relation_param) {
+		return $this->getRelationData($relation_param);
 	}
 	/**
 	 *  一对一
