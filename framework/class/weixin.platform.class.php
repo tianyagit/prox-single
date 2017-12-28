@@ -45,7 +45,7 @@ class WeiXinPlatform extends WeiXinAccount {
 		}
 		$account_table = table('account');
 		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
-		$account['encrypt_and_decrypt_key'] = $this->appid;
+		$account['encrypt_key'] = $this->appid;
 		return $account;
 	}
 
