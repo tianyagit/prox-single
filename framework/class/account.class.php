@@ -80,7 +80,7 @@ abstract class WeAccount {
 		$account_obj->uniacid = $uniaccount['uniacid'];
 		$account_obj->uniaccount = $uniaccount;
 		$account_obj->account = $account_obj->fetchAccountInfo();
-		$account_obj->account['encrypt_and_decrypt_key'] = !empty($account_obj->account['encrypt_and_decrypt_key']) ? $account_obj->account['encrypt_and_decrypt_key'] : $account_obj->account['key'];
+		$account_obj->account['encrypt_key'] = !empty($account_obj->account['encrypt_key']) ? $account_obj->account['encrypt_key'] : $account_obj->account['key'];
 		$account_obj->account['type'] = $account_obj->uniaccount['type'];
 		$account_obj->account['isconnect'] = $account_obj->uniaccount['isconnect'];
 		$account_obj->account['isdeleted'] = $account_obj->uniaccount['isdeleted'];
