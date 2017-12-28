@@ -31,7 +31,7 @@ if ($do == 'display') {
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
 		if (empty($type) && (!user_is_founder($_W['uid']) || user_is_vice_founder())){
-			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE);
+			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
 		}
 	}
 	/* xend */
@@ -39,7 +39,7 @@ if ($do == 'display') {
 	/* vstart */
 	if (IMS_FAMILY == 'v') {
 		if (empty($type) && !user_is_founder($_W['uid'])){
-			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE);
+			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
 		}
 	}
 	/* vend */
@@ -48,13 +48,10 @@ if ($do == 'display') {
 		$message_table->searchWithType($types);
 	}
 	$message_table->searchWithPage($pindex, $psize);
-	$lists = $message_table->messageList();
+	$lists = $message_table->messageList($type);
 
-	if (!empty($lists)) {
-		foreach($lists as &$list) {
-			$list['create_time'] = date('Y-m-d H:i:s', $list['create_time']);
-		}
-	}
+	$lists = message_list_detail($lists);
+
 	$total = $message_table->getLastQueryTotal();
 	$pager = pagination($total, $pindex, $psize);
 }
@@ -74,6 +71,7 @@ if ($do == 'event_notice') {
 	message_notice_worker();
 	message_sms_expire_notice();
 	message_user_expire_notice();
+	message_wxapp_modules_version_upgrade();
 	iajax(0, $message);
 
 }

@@ -31,5 +31,8 @@ class WxappTable extends AccountTable {
 			->orderby('id', 'desc')->limit(1)->get();
 	}
 
+	public function wxappInfo($uniacid) {
+		return $this->query->from('account_wxapp')->where('uniacid', $uniacid)->getall('uniacid');
+	}
 
 }

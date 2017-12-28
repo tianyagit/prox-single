@@ -43,6 +43,7 @@ class WeiXinAccount extends WeAccount {
 	public function fetchAccountInfo() {
 		$account_table = table('account');
 		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
+		$account['encrypt_key'] = $account['key'];
 		return $account;
 	}
 
@@ -94,7 +95,7 @@ class WeiXinAccount extends WeAccount {
 	public function local_decryptMsg($postData) {
 		$token = $this->account['token'];
 		$encodingaeskey = $this->account['encodingaeskey'];
-		$appid = $this->account['key'];
+		$appid = $this->account['encrypt_key'];
 
 		if(strlen($encodingaeskey) != 43) {
 			return error(-1, "微信公众平台返回接口错误. \n错误代码为: 40004 \n,错误描述为: " . $this->encryptErrorCode('40004'));
@@ -162,7 +163,7 @@ class WeiXinAccount extends WeAccount {
 	public function encryptMsg($text) {
 		$token = $this->account['token'];
 		$encodingaeskey = $this->account['encodingaeskey'];
-		$appid = $this->account['key'];
+		$appid = $this->account['encrypt_key'];
 
 		$key = base64_decode($encodingaeskey . '=');
 		$text = random(16) . pack("N", strlen($text)) . $text . $appid;
@@ -204,7 +205,7 @@ class WeiXinAccount extends WeAccount {
 	public function decryptMsg($postData) {
 		$token = $this->account['token'];
 		$encodingaeskey = $this->account['encodingaeskey'];
-		$appid = $this->account['key'];
+		$appid = $this->account['encrypt_key'];
 		$key = base64_decode($encodingaeskey . '=');
 
 		if(strlen($encodingaeskey) != 43) {
@@ -363,7 +364,7 @@ class WeiXinAccount extends WeAccount {
 		if(!empty($result['errcode'])) {
 			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->errorCode($result['errcode'])}");
 		}
-		return true;
+		return $result['menuid'];
 	}
 
 	public function menuDelete($menuid = 0) {

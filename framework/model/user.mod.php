@@ -765,9 +765,9 @@ function user_group_format($lists) {
 		$package = iunserializer($group['package']);
 		$group['package'] = uni_groups($package);
 		if (empty($package)) {
-			$lists[$key]['module_nums'] = '系统默认';
-			$lists[$key]['wxapp_nums'] = '系统默认';
-			$lists[$key]['webapp_nums'] = '系统默认';
+			$lists[$key]['module_nums'] = 0;
+			$lists[$key]['wxapp_nums'] = 0;
+			$lists[$key]['webapp_nums'] = 0;
 			continue;
 		}
 		if (is_array($package) && in_array(-1, $package)) {

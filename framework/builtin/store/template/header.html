@@ -53,19 +53,18 @@
 					<div class="left-menu-content">
 						<div class="left-menu-top skin-black">
 							<div class="account-info-name">
-								<a href="./index.php?c=home&a=welcome&do=account&"><i class="wi wi-back-circle"></i></a>
-								<span class="account-name"><a href="./index.php?c=home&a=welcome&do=account&">商城</a></span>
+								<span class="account-name"><i class="wi wi-store"></i><a href="./index.php?c=home&a=welcome&do=account&">商城</a></span>
 							</div>
 						</div>
 						{loop $this->left_menus $key $menus}
-						{if $key == 'store_manage' && !($_W['isfounder'] && !user_is_vice_founder())}
-							{php continue;}
+						{if (($key == 'store_manage' || $key == 'store_payments') && !($_W['isfounder'] && !user_is_vice_founder()))}
+						{php continue;}
 						{/if}
 						<div class="panel panel-menu">
 							<div class="panel-heading">
-								<span class="">{$menus['title']}</span>
+								<span class="" data-toggle="collapse" data-target="#frame-{$key}" onclick="util.cookie.set('menu_fold_tag:{$key}', util.cookie.get('menu_fold_tag:{$key}') == 1 ? 0 : 1)">{$menus['title']}<i class="wi wi-down-sign-s pull-right"></i></span>
 							</div>
-							<ul class="list-group">
+							<ul class="list-group collapse {if $_GPC['menu_fold_tag:'.$key] == 0}in{/if}" id="frame-{$key}">
 								{loop $menus['menu'] $menu_key $menu}
 								{if $key == 'store_goods' && !empty($_W['setting']['store'][$menu_key])}
 									{php continue;}
@@ -154,8 +153,8 @@
 			<div class="left-menu-container">
 				<div class="left-menu">
 					{loop $this->left_menus $key $menus}
-					{if ($key == 'store_manage' || $key == 'store_payments') && !($_W['isfounder'] && !user_is_vice_founder())}
-						{php continue;}
+					{if (($key == 'store_manage' || $key == 'store_payments') && !($_W['isfounder'] && !user_is_vice_founder()))}
+					{php continue;}
 					{/if}
 					<div class="panel panel-menu">
 						<div class="panel-heading">
@@ -247,7 +246,7 @@
 		<div class="left-menu">
 			<div class="left-menu-content">
 				{loop $this->left_menus $key $menus}
-				{if ($key == 'store_manage' || $key == 'store_payments') && !($_W['isfounder'] && !user_is_vice_founder())}
+				{if (($key == 'store_manage' || $key == 'store_payments') && !($_W['isfounder'] && !user_is_vice_founder()))}
 					{php continue;}
 				{/if}
 				<div class="panel panel-menu">

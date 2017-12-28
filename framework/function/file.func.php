@@ -581,8 +581,19 @@ function file_image_thumb($srcfile, $desfile = '', $width = 0) {
 	} elseif (!is_writable($des)) {
 		return error('-1', '目录无法写入');
 	}
-
-	$desfile = Image::create($srcfile)->resize($width)->saveTo($desfile);
+	// 缩略宽度 大于图片本身宽度 不进行缩略
+	$org_info = @getimagesize($srcfile);
+	if ($org_info) {
+		if ($width == 0 || $width > $org_info[0]) {
+			copy($srcfile, $desfile);
+			return str_replace(ATTACHMENT_ROOT . '/', '', $desfile);
+		}
+	}
+	// 源图像的宽高比
+	$scale_org = $org_info[0] / $org_info[1];
+	// 缩放后的高
+	$height = $width / $scale_org;
+	$desfile = Image::create($srcfile)->resize($width, $height)->saveTo($desfile);
 	if (!$desfile) {
 		return false;
 	}

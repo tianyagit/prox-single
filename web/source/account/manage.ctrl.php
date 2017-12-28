@@ -27,7 +27,7 @@ if (IMS_FAMILY == 'v') {
 /* vend */
 
 if ($do == 'display') {
-	$message_id = $_GPC['message_id'];
+	$message_id = safe_gpc_int($_GPC['message_id']);
 	message_notice_read($message_id);
 
 	$pindex = max(1, intval($_GPC['page']));
