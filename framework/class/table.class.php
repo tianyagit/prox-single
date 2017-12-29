@@ -14,6 +14,7 @@ abstract class We7Table {
 	const ONE_TO_ONE = 'ONE_TO_ONE';
 	const ONE_TO_MANY = 'ONE_TO_MANY';
 	const BELONGS_TO = 'BELONGS_TO';
+	const MANY_TO_MANY = 'MANY_TO_MANY';
 
 	//表名
 	protected $tableName = '';
@@ -119,9 +120,6 @@ abstract class We7Table {
 		}
 	}
 
-	private function manyToMany($param) {
-		trigger_error('未实现');
-	}
 	
 	/**
 	 * 追加默认数据
@@ -201,6 +199,10 @@ abstract class We7Table {
 		if (method_exists($this, $relation)) {
 			$relation_param = call_user_func(array($this, $relation));
 			list($type, $table, $foreign_key, $owner_key) = $relation_param;
+			if ($type == self::MANY_TO_MANY) {
+				$this->doManyToMany($relation, $relation_param, $data, $muti);
+				return;
+			}
 			/**
 			 *  获取关联类型如果是单挑数据
 			 */
@@ -218,10 +220,58 @@ abstract class We7Table {
 				$data[$relation] = $second_table_data;
 				return;
 			}
-			$second_table_data = $this->groupBy($foreign_key, $second_table_data);
-			foreach ($data as &$item) {
-				$item[$relation] = isset($second_table_data[$item[$owner_key]]) ? $second_table_data[$item[$owner_key]] : array();
+			if ($single) {
+				$second_table_data = array($second_table_data);
 			}
+			$second_table_data = $this->groupBy($foreign_key, $second_table_data);
+
+			foreach ($data as &$item) {
+				$relation_val = isset($second_table_data[$item[$owner_key]]) ? $second_table_data[$item[$owner_key]] : array();
+				if ($single) {
+					$relation_val = count($relation_val) > 0 ? current($relation_val) : array();
+				}
+				$item[$relation] =  $relation_val;
+			}
+		}
+	}
+
+	private function doManyToMany($relation, $relation_param, &$data, $muti = false) {
+		list($type, $table, $foreign_key, $owner_key, $center_table, $center_foreign_key, $center_owner_key)
+			= $relation_param;
+
+
+		$foreign_vals = $this->getForeignVal($data, $owner_key, $muti);
+		/**
+		 * 获取中间表的数据
+		 */
+		$query = new Query();
+		$center_table_data = $query->from($center_table)
+			->where($center_owner_key, $foreign_vals)->getall();
+
+		/**
+		 *  获取关联表的数据
+		 */
+		$second_table_data = table($table)->where($foreign_key, array_keys($center_table_data))->getall($foreign_key);
+		if (!$muti) {
+			$data[$relation] = $second_table_data;
+			return;
+		}
+
+		/**
+		 *  中间表分组
+		 */
+		$center_group_data = $this->groupBy($center_foreign_key, $center_table_data);
+
+		/**
+		 *  按组归类
+		 */
+		foreach ($data as &$item) {
+			$master_table_key = $item[$owner_key];
+			$center_val = isset($center_group_data[$master_table_key]) ? $center_group_data[$master_table_key] : array();
+			$item[$relation] = array_map(function($center_item) use ($center_foreign_key, $second_table_data){
+				$second_table_key = $center_item[$center_foreign_key];
+				return $second_table_data[$second_table_key];
+			}, $center_val);
 		}
 	}
 
@@ -327,12 +377,36 @@ abstract class We7Table {
 	/**
 	 *  反向关联
 	 * @param $table
-	 * @param $foreign_key
-	 * @param bool $owner_key
+	 * @param $foreign_key 关联表ID
+	 * @param bool $owner_key 不填默认主键
 	 * @return array
 	 */
 	protected function belongsTo($table, $foreign_key, $owner_key = false) {
 		return $this->relationArray(self::BELONGS_TO, $table, $foreign_key, $owner_key);
+	}
+
+
+	/**
+	 * @param $table
+	 * @param $center_table 中间表
+	 * @param $foreign_key 关联表的键
+	 * @param bool $owner_key 不填默认主键
+	 * @param bool $center_foreign_key 不填默认 关联表的建
+	 * @param bool $center_onwer_key  不填默认主键
+	 * @return array
+	 */
+	protected function belongsMany($table, $foreign_key, $owner_key, $center_table, $center_foreign_key = false,
+	                               $center_owner_key = false) {
+		if (! $owner_key) {
+			$owner_key = $this->primaryKey;
+		}
+		if (!$center_foreign_key) {
+			$center_foreign_key = $foreign_key;
+		}
+		if (!$center_owner_key) {
+			$center_owner_key = $owner_key;
+		}
+		return array(self::MANY_TO_MANY, $table, $foreign_key, $owner_key, $center_table, $center_foreign_key, $center_owner_key);
 	}
 
 	/**

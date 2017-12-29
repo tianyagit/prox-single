@@ -25,11 +25,19 @@ class AccountTable extends We7Table {
 	}
 
 	/**
-	 *  获取当前公众号属于哪个组
+	 *  当前公众号的所有菜单
 	 * @return array
 	 */
-	public function uniaccountgroup() {
-		return $this->belongsTo('uniaccountgroup', 'acid', 'default_acid');
+	public function menus() {
+		return $this->hasMany('menu', 'uniacid', 'uniacid');
+	}
+
+	/**
+	 *  获取当前公众号属于那些应用权限组里边
+	 * @return array
+	 */
+	public function unigroup() {
+		return $this->belongsMany('unigroup', 'id', 'uniacid', 'uni_account_group', 'groupid' ,'uniacid');
 	}
 
 	public function searchAccountList($expire = false) {
