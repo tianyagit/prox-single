@@ -10,10 +10,11 @@ class AccountTable extends We7Table {
 
 	protected $tableName = 'uni_account';
 	protected $primaryKey = 'acid';
-	protected $relationDefine = array(
-		'baseaccount',
-		'uniaccountgroup',
-	);
+	protected $relationDefine = array();
+//		array(
+//		'baseaccount',
+//		'uniaccountgroup',
+//	);
 
 	/**
 	 *  当前公众号的基本信息

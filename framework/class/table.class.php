@@ -173,6 +173,14 @@ abstract class We7Table {
 	}
 
 	/**
+	 *  确定加载哪个关联关系
+	 * @param $relation
+	 */
+	public function with($relation) {
+		$this->relationDefine[] = $relation;
+		return $this;
+	}
+	/**
 	 *  加载关联关系
 	 * @param array $data 查询出来的文字
 	 * @param bool $muti 是否主查询是 多条记录
