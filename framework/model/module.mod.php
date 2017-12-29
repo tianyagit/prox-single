@@ -403,9 +403,6 @@ function module_get_all_unistalled($status, $cache = true)  {
 function module_permission_fetch($name) {
 	$module = module_fetch($name);
 	$data = array();
-	if ($module['permissions']) {
-		$data[] = array('title' => '权限设置', 'permission' => $name.'_permissions');
-	}
 	if($module['settings']) {
 		$data[] = array('title' => '参数设置', 'permission' => $name.'_settings');
 	}
