@@ -248,10 +248,14 @@ abstract class We7Table {
 		$center_table_data = $query->from($center_table)
 			->where($center_owner_key, $foreign_vals)->getall();
 
+		//获取 第三个表的 键值
+		$center_keys = array_map(function($item) use ($center_foreign_key){
+			return $item[$center_foreign_key];
+		}, $center_table_data);
 		/**
 		 *  获取关联表的数据
 		 */
-		$second_table_data = table($table)->where($foreign_key, array_keys($center_table_data))->getall($foreign_key);
+		$second_table_data = table($table)->where($foreign_key, $center_keys)->getall($foreign_key);
 		if (!$muti) {
 			$data[$relation] = $second_table_data;
 			return;
@@ -260,7 +264,7 @@ abstract class We7Table {
 		/**
 		 *  中间表分组
 		 */
-		$center_group_data = $this->groupBy($center_foreign_key, $center_table_data);
+		$center_group_data = $this->groupBy($center_owner_key, $center_table_data);
 
 		/**
 		 *  按组归类
