@@ -274,7 +274,7 @@ abstract class We7Table {
 			$center_val = isset($center_group_data[$master_table_key]) ? $center_group_data[$master_table_key] : array();
 			$item[$relation] = array_map(function($center_item) use ($center_foreign_key, $second_table_data){
 				$second_table_key = $center_item[$center_foreign_key];
-				return $second_table_data[$second_table_key];
+				return isset($second_table_data[$second_table_key]) ? $second_table_data[$second_table_key] : array() ;
 			}, $center_val);
 		}
 	}
