@@ -5,13 +5,13 @@
 	系统首页应用
 </div>
 <div id="js-system-module" ng-controller="installedCtrl" ng-cloak>
-	<!--<ul class="we7-page-tab">-->
-		<!--<li class="active"><a href="{php echo url('module/manage-system/installed', array('account_type' => 4))}">已安装的小程序  </a></li>-->
-		<!--{if permission_check_account_user('see_module_manage_system_except_installed')}-->
-		<!--<li><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" ng-if="isFounder == 1">未安装的小程序<span class="color-red">  ({$total_uninstalled}) </span></a></li>-->
-		<!--<li><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'recycle'))}" ng-if="isFounder == 1">已停用小程序</a></li>-->
-		<!--{/if}-->
-	<!--</ul>-->
+	<ul class="we7-page-tab">
+		<li class="active"><a href="{php echo url('module/manage-system/installed', array('system_welcome' => 1))}">已安装  </a></li>
+		{if permission_check_account_user('see_module_manage_system_except_installed') && $_W['isfounder']}
+		<li><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1))}">未安装</a></li>
+		<li><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1, 'status' => 'recycle'))}">已停用</a></li>
+		{/if}
+	</ul>
 	<div class="we7-page-search clearfix">
 		<!--<div class="pull-right">-->
 		<!--<a href="添加.html" class="btn btn-danger">购买应用模块</a>-->
@@ -58,11 +58,10 @@
 				</td>
 				<td class="text-left vertical-middle">
 					<div class="link-group">
-						<!--{if permission_check_account_user('see_module_manage_system_ugrade')}-->
-						<!--<a ng-href="{{ './index.php?c=module&a=manage-system&do=upgrade&module_name='+module.name}}&account_type={ACCOUNT_TYPE}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>-->
-						<!--<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&show=upgrade&account_type={ACCOUNT_TYPE}" class="color-red del" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>-->
-						<!--{/if}-->
+						<a ng-href="{{ './index.php?c=module&a=manage-system&do=upgrade&module_name='+module.name}}&account_type={ACCOUNT_TYPE}" class="color-red" ng-if="module.upgrade && module.from != 'cloud' && isFounder == 1">升级</a>
+						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&show=upgrade&account_type={ACCOUNT_TYPE}" class="color-red del" ng-if="module.upgrade && module.from == 'cloud' && isFounder == 1">升级</a>
 						<a href="{php echo url('home/welcome/ext', array('system_welcome' => 1))}&m={{ module.name }}" ng-if="isFounder == 1">管理</a>
+						<a href="{php echo url('module/manage-system/uninstall')}&name={{ module.name }}" ng-if="isFounder == 1" onclick="return confirm('确认要停用模块吗？')">停用</a>
 					</div>
 				</td>
 			</tr>
@@ -225,9 +224,11 @@
 	应用管理
 </div>
 <ul class="we7-page-tab">
-	<li><a href="{php echo url('module/manage-system/installed', array('account_type' => 4))}">已安装的小程序  </a></li>
-	<li {if $status == 'uninstalled'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}">未安装的小程序<span class="color-red">  ({$total_uninstalled}) </span></a></li>
-	<li {if $status == 'recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'recycle'))}">已停用小程序</a></li>
+	<li><a href="{php echo url('module/manage-system/installed', array('system_welcome' => 1))}">已安装  </a></li>
+	{if permission_check_account_user('see_module_manage_system_except_installed') && $_W['isfounder']}
+	<li {if $_GPC['status'] == '' && $_GPC['do'] == 'not_installed'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1))}">未安装</a></li>
+	<li {if $_GPC['status'] == 'recycle' && $_GPC['do'] == 'not_installed'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1, 'status' => 'recycle'))}">已停用</a></li>
+	{/if}
 </ul>
 <div id="js-system-module-not_installed" ng-controller="notInstalledCtrl" ng-cloak>
 	<div class="we7-page-search clearfix">
