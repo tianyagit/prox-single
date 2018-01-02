@@ -268,11 +268,11 @@ function menu_update_conditional() {
 				'status' => STATUS_ON,
 			);
 			if (!empty($menu['matchrule'])) {
-				$menu_id = table('menu')->accountMenuInfo(array('uniacid' => $_W['uniacid'], 'menuid' => $menu['menuid'], 'type' => MENU_CONDITIONAL));
-				$menu_id = $menu_id['id'];
+				$menu_info = table('menu')->accountMenuInfo(array('uniacid' => $_W['uniacid'], 'menuid' => $menu['menuid'], 'type' => MENU_CONDITIONAL));
+				$menu_id = $menu_info['id'];
 			}
 			if (!empty($menu_id)) {
-				$data['title'] = '个性化菜单_' . $menu_id;
+				$data['title'] = !empty($menu_info['title']) ? $menu_info['title'] : '个性化菜单_' . $menu_id;
 				pdo_update('uni_account_menus', $data, array('uniacid' => $_W['uniacid'], 'id' => $menu_id));
 			} else {
 				pdo_insert('uni_account_menus', $data);
