@@ -97,28 +97,9 @@ abstract class We7Table {
 	}
 
 
-	/**
-	 *  获取关联数据
-	 * @param $relation_param
-	 * @return mixed
-	 */
-	private function getRelationData($relation_param) {
-		list($type, $table, $foreign_key, $owner_key) = $relation_param;
-		$datas = $this->getall($owner_key);
-		$foreign_val = array_keys($datas);
-		$table_instance = table($table)->where($foreign_key, $foreign_val);
-		return $table_instance->getall();
-	}
-
 
 	public function __get($key) {
-		//获取关联关系数据
-		if (in_array($key, $this->relationDefine)) {
-			if (method_exists($this, $key)) {
-				$relation_define = call_user_func(array($this, $key));
-				return $this->getRelationData($relation_define);
-			}
-		}
+
 	}
 
 	
@@ -292,7 +273,6 @@ abstract class We7Table {
 
 
 		$foreign_vals = $this->getForeignVal($data, $owner_key, $muti);
-
 
 //
 		/**

@@ -366,7 +366,8 @@ $we7_file_permission = array(
 			'see_system_add_vice_founder',
 			'see_notice_post',
 			'see_module_manage_system_newversion',
-			'see_user_edit_base_founder_name'
+			'see_user_edit_base_founder_name',
+			'see_user_create_own_vice_founder'
 		),
 		'vice_founder' => array(
 			'see_account_manage_users_adduser',
