@@ -25,18 +25,17 @@ abstract class We7Table {
 	protected $rule = array();
 	// 字段默认值
 	protected $default = array();
-
+	// 字段强转类型
 	protected $cast = array();
 	
 	protected $query;
 	//数据库属性
 	private $attribute = array();
-
 	/**
 	 *  关联关系定义
 	 * @var array
 	 */
-	protected $relationDefine = array();
+	private $relationDefine = array();
 
 
 	public function __construct() {
@@ -92,9 +91,44 @@ abstract class We7Table {
 	 */
 	private function fillField($column, $val) {
 		if (in_array($column, $this->field)) {
+			$val = $this->getColumnVal($column, $val);
 			$this->attribute[$column] = $val;
 			$this->query->fill($column, $val);
 		}
+	}
+
+	/**
+	 *  fill 填充前处理数据
+	 * @param $column
+	 * @param $val
+	 * @return bool|float|int|string
+	 */
+	private function getColumnVal($column, $val) {
+		$method = 'set'.$this->studly($column).'Field';
+		if (method_exists($this, $method)) {
+			return $this->{$method}($val);
+		}
+		return $this->cast($column, $val);
+	}
+
+
+	/**
+	 *  fill 字段前强转类型
+	 * @param $column
+	 * @param $val
+	 * @return bool|float|int|string
+	 */
+	private function cast($column, $val) {
+		if (isset($this->cast[$column])) {
+			switch ($this->cast[$column]) {
+				case 'int' : return intval($val); break;
+				case 'string' : return strval($val); break;
+				case 'float' : return floatval($val); break;
+				case 'double' : return doubleval($val); break;
+				case 'bool' : return boolval($val); break;
+			}
+		}
+		return $val;
 	}
 
 
