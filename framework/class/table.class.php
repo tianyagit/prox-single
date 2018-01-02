@@ -27,7 +27,7 @@ abstract class We7Table {
 	protected $default = array();
 	// 字段强转类型
 	protected $cast = array();
-	
+	// 底层query 对象
 	protected $query;
 	//数据库属性
 	private $attribute = array();
@@ -197,7 +197,14 @@ abstract class We7Table {
 	 * @param $relation
 	 */
 	public function with($relation) {
-		$this->relationDefine[] = $relation;
+		if (! is_array($relation)) {
+			$relation = func_get_args();
+		}
+		foreach ($relation as $item) {
+			if (! empty($item)) {
+				$this->relationDefine[] = $item;
+			}
+		}
 		return $this;
 	}
 	/**
