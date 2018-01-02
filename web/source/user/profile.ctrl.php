@@ -8,6 +8,7 @@ load()->model('user');
 load()->func('file');
 load()->classs('oauth2/oauth2client');
 load()->model('message');
+load()->model('setting');
 
 $dos = array('base', 'post', 'bind', 'validate_mobile', 'bind_mobile', 'unbind');
 $do = in_array($do, $dos) ? $do : 'base';
@@ -225,6 +226,9 @@ if ($do == 'base') {
 }
 
 if ($do == 'bind') {
+	$setting_sms_sign = setting_load('site_sms_sign');
+	$bind_sign = !empty($setting_sms_sign['site_sms_sign']['register']) ? $setting_sms_sign['site_sms_sign']['register'] : '';
+
 	$user_table = table('users');
 	$user = $user_table->usersInfo($_W['uid']);
 	$user_profile = $user_table->userProfile($_W['uid']);
