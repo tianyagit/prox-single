@@ -243,7 +243,12 @@ class Validator {
 			// 规范数据
 			$value = array_map(function($item) {
 				if(is_string($item)) {
-					return array('name'=>$item, 'params'=>array());
+					$name_params = explode(':', $item);
+					$params = array();
+					if (count($name_params) > 1) {
+						$params = explode(',', $name_params[1]);
+					}
+					return array('name'=>$name_params[0], 'params'=>$params);
 				}
 				if (!is_array($item)) {
 					throw new InvalidArgumentException('无效的rule参数');
