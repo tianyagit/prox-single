@@ -209,6 +209,19 @@ class AccountTable extends We7Table {
 		}
 	}
 
+	public function getUniAccountByUniacid($uniacid) {
+		$account = $this->getAccountByUniacid($uniacid);
+		$uniaccount = array();
+		if (!empty($account)) {
+			$uniaccount = $this->query->from('uni_account')->where('uniacid', $account['uniacid'])->get();
+		}
+		if (empty($account)) {
+			return array();
+		} else {
+			return array_merge($account, $uniaccount);
+		}
+	}
+
 	public function getAccountOwner($uniacid) {
 		if (empty($uniacid)) {
 			return array();
