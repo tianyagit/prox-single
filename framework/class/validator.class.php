@@ -240,6 +240,22 @@ class Validator {
 			return $result;
 		}
 		if (is_array($value)) {
+			// 规范数据
+			$value = array_map(function($item) {
+				if(is_string($item)) {
+					return array('name'=>$item, 'params'=>array());
+				}
+				if (!is_array($item)) {
+					throw new InvalidArgumentException('无效的rule参数');
+				}
+				$newitem = $item;
+				if (! isset($item['name'])) {
+					$newitem = array();
+					$newitem['name'] = $newitem[0];
+					$newitem['params'] =  count($item) > 1 ? $item[1] : array();
+				}
+				return $newitem;
+			}, $value);
 			return $value;
 		}
 		throw new InvalidArgumentException('无效的rule配置项');
