@@ -1298,7 +1298,7 @@ class WeiXinAccount extends WeAccount {
 		if(empty($path)) {
 			return error(-1, '参数错误');
 		}
-		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios'))) {
+		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
 			$path = ATTACHMENT_ROOT . ltrim($path, '/');
 		}
 		$token = $this->getAccessToken();
@@ -1321,7 +1321,7 @@ class WeiXinAccount extends WeAccount {
 		if(empty($path)) {
 			return error(-1, '参数错误');
 		}
-		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios'))) {
+		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
 			$path = ATTACHMENT_ROOT . ltrim($path, '/');
 		}
 		$token = $this->getAccessToken();
