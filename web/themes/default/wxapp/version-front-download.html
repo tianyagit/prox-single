@@ -155,7 +155,7 @@
 						<tr >
 							<td>
 								<div class="icon js-image"  data-index="{{current}}" data-selected="0">
-									<img ng-src="{{iconPath(tabitem)}}" onload="console.log(this);" />
+									<img ng-src="{{iconPath(tabitem)}}" />
 									<span class="replace ">更换</span>
 								</div>
 							</td>
@@ -170,7 +170,7 @@
 							</td>
 							<td>
 								<div>
-									<select ng-model="tabitem.pagePath" ng-options="tabitem.pagePath for page in pages" style="width:100px;"></select>
+									<select ng-model="tabitem.pagePath" ng-options="x for x in pages" style="width:100px;"></select>
 								</div>
 							</td>
 							<td>
