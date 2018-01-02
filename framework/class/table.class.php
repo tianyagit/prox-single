@@ -96,6 +96,7 @@ abstract class We7Table {
 		}
 	}
 
+
 	/**
 	 *  获取关联数据
 	 * @param $relation_param
@@ -146,7 +147,6 @@ abstract class We7Table {
 		if (count($this->rule) <= 0) {
 			return error(0);
 		}
-
 		$validator = Validator::create($data, $this->rule);
 		$result = $validator->valid();
 		return $result;
@@ -170,6 +170,17 @@ abstract class We7Table {
 		return $data;
 	}
 
+	/**
+	 *  多对多需要使用内部query 对象
+	 * @return Query
+	 */
+	public function getQuery() {
+		return $this->query;
+	}
+
+	public function getTableName() {
+		return $this->tableName;
+	}
 	/**
 	 *  确定加载哪个关联关系
 	 * @param $relation
@@ -204,7 +215,7 @@ abstract class We7Table {
 				return;
 			}
 			/**
-			 *  获取关联类型如果是单挑数据
+			 *  获取关联类型如果是单条数据
 			 */
 			$single = $this->isGetSingle($type);
 			/**
@@ -235,12 +246,55 @@ abstract class We7Table {
 		}
 	}
 
+	/**
+	 *  改为join 方式查询
+	 * @param $relation
+	 * @param $relation_param
+	 * @param $data
+	 * @param bool $muti
+	 */
+	private function doManyToMany2($relation, $relation_param, &$data, $muti = false) {
+		list($type, $table, $foreign_key, $owner_key, $center_table, $center_foreign_key, $center_owner_key)
+			= $relation_param;
+
+
+		$foreign_vals = $this->getForeignVal($data, $owner_key, $muti);
+		$three_table = table($table);
+		$nativeQuery = $three_table->getQuery();
+
+		$nativeQuery->from($three_table->getTableName(), 'three')
+			->join($center_table, 'center')
+			->on(array('center.'.$center_foreign_key => 'three.'.$foreign_key))
+			->select('center.*')
+			->where($center_owner_key, $foreign_vals);
+
+		$three_table_data = $three_table->getall(); //$three_table->getall();
+		if (!$muti) {
+			$data[$relation] = $three_table_data;
+			return;
+		}
+
+		$three_table_data = $this->groupBy($center_owner_key, $three_table_data);
+		/**
+		 *  按组归类
+		 */
+		foreach ($data as &$item) {
+			$three_val = isset($three_table_data[$item[$owner_key]]) ? $three_table_data[$item[$owner_key]] : array();
+			$item[$relation] = $three_val;
+		}
+
+
+	}
+
 	private function doManyToMany($relation, $relation_param, &$data, $muti = false) {
 		list($type, $table, $foreign_key, $owner_key, $center_table, $center_foreign_key, $center_owner_key)
 			= $relation_param;
 
 
 		$foreign_vals = $this->getForeignVal($data, $owner_key, $muti);
+
+
+//
 		/**
 		 * 获取中间表的数据
 		 */
