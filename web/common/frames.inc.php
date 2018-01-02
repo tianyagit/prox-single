@@ -208,14 +208,14 @@ $we7_system_menu['wxapp'] = array(
 					'icon' => 'wi wi-examine',
 					'permission_name' => 'wxapp_front_download',
 				),
-				'platform_material' => array(
+				'wxapp_platform_material' => array(
 					'title' => '素材管理',
 					'is_display' => 0,
-					'permission_name' => 'platform_material',
+					'permission_name' => 'wxapp_platform_material',
 					'sub_permission' => array(
 						array(
 							'title' => '删除',
-							'permission_name' => 'platform_material_delete',
+							'permission_name' => 'wxapp_platform_material_delete',
 						),
 					),
 				),
