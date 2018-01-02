@@ -125,7 +125,7 @@ foreach($_COOKIE as $key => $value) {
 }
 unset($cplen, $key, $value);
 
-$_GPC = array_merge($_POST, $_GPC);
+$_GPC = array_merge($_GPC, $_POST);
 $_GPC = ihtmlspecialchars($_GPC);
 
 $_W['siteurl'] = $urls['scheme'].'://'.$urls['host'].((!empty($urls['port']) && $urls['port']!='80') ? ':'.$urls['port'] : '') . $_W['script_name'] . '?' . http_build_query($_GET, '', '&');
