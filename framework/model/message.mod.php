@@ -153,6 +153,10 @@ function message_notice_worker() {
 		$time = $message_record['create_time'];
 	}
 
+	if (!empty($time) && TIMESTAMP - $time < 60 * 60 * 6) {
+		return true;
+	}
+
 	$api_url = $api->get('system', 'workorder', array('do' => 'notload', 'time' => $time), 'json', false);
 	if (is_error($api_url)) {
 		return true;
