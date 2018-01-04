@@ -777,13 +777,24 @@ function user_group_format($lists) {
 			continue;
 		}
 		$names = array();
+		$modules = array(
+			'modules' => array(),
+			'wxapp' => array(),
+			'webapp' => array()
+		);
 		if (!empty($group['package'])) {
-			foreach ($group['package'] as $modules) {
-				$names[] = $modules['name'];
-				$lists[$key]['module_nums'] = count($modules['modules']);
-				$lists[$key]['wxapp_nums'] = count($modules['wxapp']);
-				$lists[$key]['webapp_nums'] = count($modules['webapp']);
+			foreach ($group['package'] as $package) {
+				$names[] = $package['name'];
+				$package['modules'] = !empty($package['modules']) && is_array($package['modules']) ? array_keys($package['modules']) : array();
+				$package['wxapp'] = !empty($package['wxapp']) && is_array($package['wxapp']) ? array_keys($package['wxapp']) : array();
+				$package['webapp'] = !empty($package['webapp']) && is_array($package['webapp']) ? array_keys($package['webapp']) : array();
+				$modules['modules'] = array_unique(array_merge($modules['modules'], $package['modules']));
+				$modules['wxapp'] = array_unique(array_merge($modules['wxapp'], $package['wxapp']));
+				$modules['webapp'] = array_unique(array_merge($modules['webapp'], $package['webapp']));
 			}
+			$lists[$key]['module_nums'] = count($modules['modules']);
+			$lists[$key]['wxapp_nums'] = count($modules['wxapp']);
+			$lists[$key]['webapp_nums'] = count($modules['webapp']);
 		}
 		$lists[$key]['packages'] = implode(',', $names);
 	}
