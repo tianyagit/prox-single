@@ -212,7 +212,7 @@ class AccountTable extends We7Table {
 		if (empty($account)) {
 			return array();
 		} else {
-			return array_merge($account, $uniaccount);
+			return !empty($uniaccount) && is_array($uniaccount) ? array_merge($account, $uniaccount) : $account;
 		}
 	}
 
