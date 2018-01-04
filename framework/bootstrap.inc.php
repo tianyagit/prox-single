@@ -110,7 +110,10 @@ if(MAGIC_QUOTES_GPC) {
 }
 //全局过滤GET中的XSS
 foreach($_GET as $key => $value) {
-	$_GET[$key] = $_GPC[$key] = safe_gpc_string($value);
+	if (is_string($value)) {
+		$value = safe_gpc_string($value);
+	}
+	$_GET[$key] = $_GPC[$key] = $value;
 }
 $cplen = strlen($_W['config']['cookie']['pre']);
 foreach($_COOKIE as $key => $value) {
