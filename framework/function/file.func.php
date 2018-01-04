@@ -764,9 +764,14 @@ function file_remote_attach_fetch($url, $limit = 0, $path = '') {
 	if (!$path) {
 		return error(-1, '提取文件失败: 上传路径配置有误.');
 	}
-	if (!file_exists(ATTACHMENT_ROOT . $path) && !mkdirs(ATTACHMENT_ROOT . $path, 0700, true)) {
-		return error(-1, '提取文件失败: 权限不足.');
+
+	if (! is_dir(ATTACHMENT_ROOT . $path)) {
+		if (! mkdirs(ATTACHMENT_ROOT . $path, 0700, true)) {
+			return error(-1, '提取文件失败: 权限不足.');
+		}
 	}
+
+
 	/* 文件大小过滤 */
 	if (!$limit) {
 		if ($type == 'images') {
