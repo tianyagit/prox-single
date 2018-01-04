@@ -766,7 +766,7 @@ function file_remote_attach_fetch($url, $limit = 0, $path = '') {
 	}
 
 	if (! is_dir(ATTACHMENT_ROOT . $path)) {
-		if (!mkdirs(ATTACHMENT_ROOT . $path, 0700, true)) {
+		if (! mkdirs(ATTACHMENT_ROOT . $path, 0700, true)) {
 			return error(-1, '提取文件失败: 权限不足.');
 		}
 	}
