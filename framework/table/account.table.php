@@ -51,7 +51,7 @@ class AccountTable extends We7Table {
 			$this->searchWithExprie();
 		}
 		$this->accountUniacidOrder();
-		$list = $this->query->getall();
+		$list = $this->query->getall('uniacid');
 		return $list;
 	}
 
