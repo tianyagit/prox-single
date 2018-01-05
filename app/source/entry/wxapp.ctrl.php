@@ -26,7 +26,7 @@ if (!empty($_W['uniacid'])) {
 }
 $site = WeUtility::createModuleWxapp($entry['module']);
 $method = 'doPage' . ucfirst($entry['do']);
-if(!is_error($site) && method_exists($site, $method)) {
+if(!is_error($site)) {
 	$site->appid = $appid;
 	$site->version = $version;
 	if (!empty($site->token)) {
