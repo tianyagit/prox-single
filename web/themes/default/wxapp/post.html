@@ -119,9 +119,10 @@
 										<div class="form-controls col-sm-10">
 
 												<ul class="app-list" id="resource_module">
-													<div class="app-info">
-														<img ng-src="{{single_module.icon}}" />
-														<p>{{single_module.title}}</p>
+
+													<div class="app-info" ng-repeat="(key, value) in wxappinfo.choose.modules">
+														<img ng-src="{{value.icon}}" />
+														<p>{{value.title}}</p>
 													</div>
 													<li class="select select-more"></li>
 												</ul>
@@ -141,7 +142,7 @@
 							</div>
 							<div id="home" ng-show="createStep == 2">
 								<!-- 选择模板 -->
-								<div ng-if="designMethod == 2">
+								<div ng-if="designMethod == 3">
 									<div class="wxapp-tem-preview">
 										<div class="wxapp-phone">
 											<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />

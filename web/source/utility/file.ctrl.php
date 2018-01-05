@@ -540,7 +540,7 @@ if ($do == 'module') {
 			}
 		}
 		$module['icon'] = $cion;
-		if ($module['enabled'] == 1) {
+		if ($module['enabled'] == 1 || $is_user_module) {
 			$enable_modules[] = $module;
 		} else {
 			$unenable_modules[$name] = $module;

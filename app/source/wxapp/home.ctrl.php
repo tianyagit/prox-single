@@ -79,3 +79,4 @@ if ($do == 'wxapp_web') {
 	//跳转到错误页面
 	message('找不到模块入口', 'refresh', 'error');
 }
+
