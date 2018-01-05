@@ -25,16 +25,17 @@ abstract class We7Table {
 	protected $rule = array();
 	// 字段默认值
 	protected $default = array();
-	
+	// 字段强转类型
+	protected $cast = array();
+	// 底层query 对象
 	protected $query;
 	//数据库属性
 	private $attribute = array();
-
 	/**
 	 *  关联关系定义
 	 * @var array
 	 */
-	protected $relationDefine = array();
+	private $relationDefine = array();
 
 
 	public function __construct() {
@@ -90,35 +91,46 @@ abstract class We7Table {
 	 */
 	private function fillField($column, $val) {
 		if (in_array($column, $this->field)) {
+			$val = $this->getColumnVal($column, $val);
 			$this->attribute[$column] = $val;
 			$this->query->fill($column, $val);
-
 		}
 	}
 
 	/**
-	 *  获取关联数据
-	 * @param $relation_param
-	 * @return mixed
+	 *  fill 填充前处理数据
+	 * @param $column
+	 * @param $val
+	 * @return bool|float|int|string
 	 */
-	private function getRelationData($relation_param) {
-		list($type, $table, $foreign_key, $owner_key) = $relation_param;
-		$datas = $this->getall($owner_key);
-		$foreign_val = array_keys($datas);
-		$table_instance = table($table)->where($foreign_key, $foreign_val);
-		return $table_instance->getall();
+	private function getColumnVal($column, $val) {
+		$method = 'set'.$this->studly($column).'Field';
+		if (method_exists($this, $method)) {
+			return $this->{$method}($val);
+		}
+		return $this->cast($column, $val);
 	}
 
 
-	public function __get($key) {
-		//获取关联关系数据
-		if (in_array($key, $this->relationDefine)) {
-			if (method_exists($this, $key)) {
-				$relation_define = call_user_func(array($this, $key));
-				return $this->getRelationData($relation_define);
+	/**
+	 *  fill 字段前强转类型
+	 * @param $column
+	 * @param $val
+	 * @return bool|float|int|string
+	 */
+	private function cast($column, $val) {
+		if (isset($this->cast[$column])) {
+			switch ($this->cast[$column]) {
+				case 'int' : return intval($val); break;
+				case 'string' : return strval($val); break;
+				case 'float' : return floatval($val); break;
+				case 'double' : return doubleval($val); break;
+				case 'bool' : return boolval($val); break;
 			}
 		}
+		return $val;
 	}
+
 
 	
 	/**
@@ -146,7 +158,6 @@ abstract class We7Table {
 		if (count($this->rule) <= 0) {
 			return error(0);
 		}
-
 		$validator = Validator::create($data, $this->rule);
 		$result = $validator->valid();
 		return $result;
@@ -171,11 +182,29 @@ abstract class We7Table {
 	}
 
 	/**
+	 *  多对多需要使用内部query 对象
+	 * @return Query
+	 */
+	public function getQuery() {
+		return $this->query;
+	}
+
+	public function getTableName() {
+		return $this->tableName;
+	}
+	/**
 	 *  确定加载哪个关联关系
 	 * @param $relation
 	 */
 	public function with($relation) {
-		$this->relationDefine[] = $relation;
+		if (! is_array($relation)) {
+			$relation = func_get_args();
+		}
+		foreach ($relation as $item) {
+			if (! empty($item)) {
+				$this->relationDefine[] = $item;
+			}
+		}
 		return $this;
 	}
 	/**
@@ -204,7 +233,7 @@ abstract class We7Table {
 				return;
 			}
 			/**
-			 *  获取关联类型如果是单挑数据
+			 *  获取关联类型如果是单条数据
 			 */
 			$single = $this->isGetSingle($type);
 			/**
@@ -235,49 +264,47 @@ abstract class We7Table {
 		}
 	}
 
+	/**
+	 *  改为join 方式查询
+	 * @param $relation
+	 * @param $relation_param
+	 * @param $data
+	 * @param bool $muti
+	 */
 	private function doManyToMany($relation, $relation_param, &$data, $muti = false) {
 		list($type, $table, $foreign_key, $owner_key, $center_table, $center_foreign_key, $center_owner_key)
 			= $relation_param;
 
 
 		$foreign_vals = $this->getForeignVal($data, $owner_key, $muti);
-		/**
-		 * 获取中间表的数据
-		 */
-		$query = new Query();
-		$center_table_data = $query->from($center_table)
-			->where($center_owner_key, $foreign_vals)->getall();
+		$three_table = table($table);
+		$nativeQuery = $three_table->getQuery();
 
-		//获取 第三个表的 键值
-		$center_keys = array_map(function($item) use ($center_foreign_key){
-			return $item[$center_foreign_key];
-		}, $center_table_data);
-		/**
-		 *  获取关联表的数据
-		 */
-		$second_table_data = table($table)->where($foreign_key, $center_keys)->getall($foreign_key);
+		$nativeQuery->from($three_table->getTableName(), 'three')
+			->innerjoin($center_table, 'center')
+			->on(array('center.'.$center_foreign_key => 'three.'.$foreign_key))
+			->select('center.*')
+			->where('center.'.$center_owner_key, $foreign_vals);
+
+		$three_table_data = $three_table->getall(); //$three_table->getall();
 		if (!$muti) {
-			$data[$relation] = $second_table_data;
+			$data[$relation] = $three_table_data;
 			return;
 		}
 
-		/**
-		 *  中间表分组
-		 */
-		$center_group_data = $this->groupBy($center_owner_key, $center_table_data);
-
+		$three_table_data = $this->groupBy($center_owner_key, $three_table_data);
 		/**
 		 *  按组归类
 		 */
 		foreach ($data as &$item) {
-			$master_table_key = $item[$owner_key];
-			$center_val = isset($center_group_data[$master_table_key]) ? $center_group_data[$master_table_key] : array();
-			$item[$relation] = array_map(function($center_item) use ($center_foreign_key, $second_table_data){
-				$second_table_key = $center_item[$center_foreign_key];
-				return isset($second_table_data[$second_table_key]) ? $second_table_data[$second_table_key] : array() ;
-			}, $center_val);
+			$three_val = isset($three_table_data[$item[$owner_key]]) ? $three_table_data[$item[$owner_key]] : array();
+			$item[$relation] = $three_val;
 		}
+
+
 	}
+
+
 
 	/**
 	 *  是否获取单条数据

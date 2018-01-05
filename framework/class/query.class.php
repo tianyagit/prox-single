@@ -435,7 +435,7 @@ class Query {
 	}
 	
 	private function buildQueryInnerjoin() {
-		return $this->buildQueryLeftjoin('INNERJOIN');
+		return $this->buildQueryJoin('INNERJOIN');
 	}
 	
 	private function buildQueryJoin($clause) {

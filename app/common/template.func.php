@@ -358,7 +358,7 @@ function site_article($params = array()) {
 	$sql = "SELECT * FROM ".tablename('site_article'). $condition. ' ORDER BY displayorder DESC, id DESC LIMIT ' . ($pindex - 1) * $psize .',' .$psize;
 	$result['list'] = pdo_fetchall($sql, $pars);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_article') . $condition, $pars);
-	$result['pager'] = pagination($total, $pindex, $psize);
+	$result['pager'] = pagination($total, $pindex, $psize, '', array('before' => 0, 'after' => 0));
 	if (!empty($result['list'])) {
 		foreach ($result['list'] as &$row) {
 			if(empty($row['linkurl'])) {

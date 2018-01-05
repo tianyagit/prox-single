@@ -839,14 +839,19 @@ class SqlPaser {
 			return $limitsql;
 		}
 		if (is_array($limit)) {
-			$limit[0] = max(intval($limit[0]), 1);
-			!empty($limit[1]) && $limit[1] = max(intval($limit[1]), 1);
-			if (empty($limit[0]) && empty($limit[1])) {
-				$limitsql = '';
-			} elseif (!empty($limit[0]) && empty($limit[1])) {
-				$limitsql = " LIMIT " . $limit[0];
+			//兼容第一个值为0的写法
+			if (empty($limit[0]) && !empty($limit[1])) {
+				$limitsql = " LIMIT " . $limit[1];
 			} else {
-				$limitsql = " LIMIT " . ($inpage ? ($limit[0] - 1) * $limit[1] : $limit[0]) . ', ' . $limit[1];
+				$limit[0] = max(intval($limit[0]), 1);
+				!empty($limit[1]) && $limit[1] = max(intval($limit[1]), 1);
+				if (empty($limit[0]) && empty($limit[1])) {
+					$limitsql = '';
+				} elseif (!empty($limit[0]) && empty($limit[1])) {
+					$limitsql = " LIMIT " . $limit[0];
+				} else {
+					$limitsql = " LIMIT " . ($inpage ? ($limit[0] - 1) * $limit[1] : $limit[0]) . ', ' . $limit[1];
+				}
 			}
 		} else {
 			$limit = trim($limit);

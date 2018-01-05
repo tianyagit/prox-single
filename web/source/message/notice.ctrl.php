@@ -67,11 +67,14 @@ if ($do == 'event_notice') {
 		iajax(-1);
 	}
 	$message = message_event_notice_list();
-	message_account_expire();
-	message_notice_worker();
-	message_sms_expire_notice();
-	message_user_expire_notice();
-	message_wxapp_modules_version_upgrade();
+	$cookie_name = $_W['config']['cookie']['pre'] . 'notice';
+	if (empty($_COOKIE[$cookie_name]) || $_COOKIE[$cookie_name] < TIMESTAMP) {
+		message_account_expire();
+		message_notice_worker();
+		message_sms_expire_notice();
+		message_user_expire_notice();
+		message_wxapp_modules_version_upgrade();
+	}
 	iajax(0, $message);
 
 }

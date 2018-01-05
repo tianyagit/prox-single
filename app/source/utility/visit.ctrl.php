@@ -20,8 +20,7 @@ if (IMS_FAMILY == 'v') {
 /* xstart */
 if (IMS_FAMILY == 'x') {
 	if ($do == 'showjs') {
-		$module_name = !empty($_GPC['module_name']) ? $_GPC['module_name'] : 'wesite';
-		$uniacid = !empty($_GPC['uniacid']) ? intval($_GPC['uniacid']) : 0;
+		$module_name = !empty($_GPC['m']) ? $_GPC['m'] : 'wesite';
 		app_update_today_visit($module_name);
 	}
 }

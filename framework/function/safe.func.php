@@ -11,9 +11,16 @@ defined('IN_IA') or exit('Access Denied');
  * @param string $default
  */
 function safe_gpc_int($value, $default = 0) {
-	$value = intval($value);
-	$default = intval($default);
-	
+	//如果包含小数点，优先按float对待
+	//否则一律按int对待
+	if (strpos($value, '.') !== false) {
+		$value = floatval($value);
+		$default = floatval($default);
+	} else {
+		$value = intval($value);
+		$default = intval($default);
+	}
+
 	if (empty($value) && $default != $value) {
 		$value = $default;
 	}

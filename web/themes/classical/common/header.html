@@ -41,9 +41,7 @@
 							</li>
 						</ul>
 					</li>
-					<li class="dropdown msg header-notice">
-						<a href="javascript:;" class="dropdown-toogle" data-toggle="dropdown"><span class="wi wi-bell"><span class="badge"></span></span>消息</a>
-					</li>
+					{template 'common/header-notice'}
 				</ul>
 			</div>
 			{else}
@@ -135,7 +133,7 @@
 								$(function(){
 									$('.left-menu-container').slimScroll({
 										width: '210px',
-										height: '100vh',
+										height: 'calc(100vh - 51px)',
 										opacity: .4,
 										color: '#aaa',
 									});
@@ -149,7 +147,7 @@
 						$(function(){
 							$('.panel-content-plugin .left-menu-container').slimScroll({
 								width: '270px',
-								height: '100vh',
+								height: 'calc(100vh - 51px)',
 								opacity: .4,
 								color: '#aaa',
 							});

@@ -10,12 +10,6 @@ class AccountTable extends We7Table {
 
 	protected $tableName = 'uni_account';
 	protected $primaryKey = 'acid';
-	protected $relationDefine = array();
-//		array(
-//		'baseaccount',
-//		'uniaccountgroup',
-//	);
-
 	/**
 	 *  当前公众号的基本信息
 	 * @return array
@@ -206,6 +200,19 @@ class AccountTable extends We7Table {
 			return array();
 		} else {
 			return array_merge($account, $uniaccount);
+		}
+	}
+
+	public function getUniAccountByUniacid($uniacid) {
+		$account = $this->getAccountByUniacid($uniacid);
+		$uniaccount = array();
+		if (!empty($account)) {
+			$uniaccount = $this->query->from('uni_account')->where('uniacid', $account['uniacid'])->get();
+		}
+		if (empty($account)) {
+			return array();
+		} else {
+			return !empty($uniaccount) && is_array($uniaccount) ? array_merge($account, $uniaccount) : $account;
 		}
 	}
 
