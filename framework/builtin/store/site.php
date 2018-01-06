@@ -677,6 +677,7 @@ class StoreModuleSite extends WeModuleSite {
 			array_push($blacklist, $username);
 			$this->store_setting['blacklist'] = $blacklist;
 			setting_save($this->store_setting, 'store');
+			cache_build_frame_menu();
 			itoast('更新黑名单成功！');
 		}
 
@@ -695,6 +696,7 @@ class StoreModuleSite extends WeModuleSite {
 			}
 			$this->store_setting['blacklist'] = $blacklist;
 			setting_save($this->store_setting, 'store');
+			cache_build_frame_menu();
 			itoast('删除成功！');
 		}
 	}
