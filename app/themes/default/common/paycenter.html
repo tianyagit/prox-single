@@ -58,7 +58,7 @@
 		</li>
 	</ul>
 	<h5 class="mui-desc-title mui-pl10">选择支付方式</h5>
-	<ul class="mui-table-view mui-table-view-chevron">
+	<ul class="mui-table-view mui-table-view-chevron pay-style hide">
 		{if !empty($pay['credit']['switch'])}
 		<li class="mui-table-view-cell">
 			<a class="mui-navigate-right mui-media js-pay" href="javascript:;">
@@ -123,6 +123,20 @@
 			</a>
 		</li>
 		{/if}
+
+
+		<li class="mui-table-view-cell mui-disabled js-webwxapp-pay hide">
+			<a class="mui-navigate-right mui-media" href="javascript:;">
+
+				<img src="resource/images/wx-icon.png" alt="" class="mui-media-object mui-pull-left"/>
+				<span class="mui-media-body mui-block">
+					<span id="wetitle">微信支付123</span>
+					<span class="mui-block mui-text-muted mui-mt5">微信支付,安全快捷(必须使用微信内置浏览器)</span>
+				</span>
+			</a>
+		</li>
+
+
 		{if !empty($pay['jueqiymf']['switch'])}
 		<li class="mui-table-view-cell mui-disabled js-pay">
 			<a class="mui-navigate-right mui-media" href="javascript:;">
@@ -348,11 +362,26 @@
 </script>
 {/if}
 <script type="text/javascript">
+	if(window.__wxjs_environment === 'miniprogram') {
+		$('.pay-style').removeClass('hide');
+		$('.pay-style li').hide();
+		$('.js-webwxapp-pay').removeClass('hide');
+		$('.pay-style .js-webwxapp-pay').show();
+		$('.js-webwxapp-pay').click(function(){
+			wx.miniProgram.navigateTo({
+				url: "/wxapp_web/pages/view/pay?orderid={$params['tid']}&module_name={$params['module']}&title={$params['title']}"
+			})
+		});
+	} else {
+		$('.pay-style').removeClass('hide');
+		$('.pay-style').show();
+	}
 	document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
 		$('.js-wechat-pay').removeClass('mui-disabled');
 		$('.js-wechat-pay a').addClass('js-pay');
 		$('#wetitle').html('微信支付');
 	});
+
 	$(document).on('click', '.js-pay', function() {
 		$(this).prop('disabled', true);
 		$(this).find('form').submit();

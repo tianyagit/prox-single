@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
-$dos = array('nav', 'slide', 'commend', 'wxapp_web');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxappweb_pay', 'wxappweb_pay_result');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -78,4 +78,15 @@ if ($do == 'wxapp_web') {
 	}
 	//跳转到错误页面
 	message('找不到模块入口', 'refresh', 'error');
+}
+
+
+if ($do == 'wxappweb_pay') {
+	$site = WeUtility::createModuleWxapp('wxappweb');
+	$site->doPagePay();
+}
+
+if ($do == 'wxappweb_pay_result') {
+	$site = WeUtility::createModuleWxapp('wxappweb');
+	$site->doPagePayResult();
 }
