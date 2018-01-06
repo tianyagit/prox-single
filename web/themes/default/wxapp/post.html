@@ -119,10 +119,9 @@
 										<div class="form-controls col-sm-10">
 
 												<ul class="app-list" id="resource_module">
-
-													<div class="app-info" ng-repeat="(key, value) in wxappinfo.choose.modules">
-														<img ng-src="{{value.icon}}" />
-														<p>{{value.title}}</p>
+													<div class="app-info" ng-repeat="module in wxappinfo.choose.modules">
+														<img ng-src="{{module.icon}}" />
+														<p>{{module.title}}</p>
 													</div>
 													<li class="select select-more"></li>
 												</ul>
@@ -142,7 +141,7 @@
 							</div>
 							<div id="home" ng-show="createStep == 2">
 								<!-- 选择模板 -->
-								<div ng-if="designMethod == 3">
+								<div ng-if="designMethod == 2">
 									<div class="wxapp-tem-preview">
 										<div class="wxapp-phone">
 											<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
@@ -201,11 +200,21 @@
 									</div>
 								</div>
 							</div>
-							<div id="bottom" ng-show="createStep == 3">
+							<div id="bottom" ng-show="createStep == 1">
+
 								<div class="wxapp-tem-preview wxapp-buttom-preview">
 									<div class="wxapp-phone">
 										<img src="./resource/images/iphone6.png" alt="" class="wxapp-phone-bg" />
 										<div class="wxapp-home-preview">
+											<div class="box clearfix">
+												<div class="item pic" ng-repeat="module in wxappinfo.choose.modules">
+													<a href="javascript:void(0)">
+														<i style="background-image:url({{module.icon}});"></i>
+														<div class="name">{{module.title}}</div>
+													</a>
+												</div>
+
+											</div>
 											<div class="buttom-list-preview" ng-style="{'background-color': wxappinfo.quickmenu.bottom.bgcolor}">
 												<ul ng-style="{'border-top': '1px solid'+wxappinfo.quickmenu.bottom.boundary}">
 													<li ng-repeat="menu in wxappinfo.quickmenu.menus">
@@ -217,9 +226,10 @@
 										</div>
 									</div>
 								</div>
+
 								<div class="creat-buttom">
 									<div class="buttom-heading">
-										底部菜单
+										配置
 									</div>
 									<div class="creat-buttom-select form-defalut">
 										<div class="form-group">
@@ -254,16 +264,7 @@
 												<div we7-colorpicker we7-my-color="wxappinfo.quickmenu.bottom.selectedColor" we7-my-default-color="wxappinfo.quickmenu.bottom.selectedColor"></div>
 											</div>
 										</div>
-										<!-- <td>
-											<div class="buttom-default-color">
-												<div we7-colorpicker we7-my-color="menu.defaultColor" we7-my-default-color="menu.defaultColor"></div>
-											</div>
-										</td>
-										<td>
-											<div class="buttom-default-color">
-												<div we7-colorpicker we7-my-color="menu.selectedColor" we7-my-default-color="menu.selectedColor"></div>
-											</div>
-										</td> -->
+
 									</div>
 									<div class="buttom-list">
 										<table class="table we7-table buttom-list-table vertical-middle">
@@ -284,20 +285,20 @@
 													<div class="nav-img-box">
 														<img ng-src="{{menu.defaultImage}}" >
 														<div ng-click="addDefaultImg($index)" class="select">选择</div>
-														
+
 													</div>
 												</td>
 												<td>
 													<div class="nav-img-box">
 														<img ng-src="{{menu.selectedImage}}">
 														<div ng-click="addSelectedImg($index)" class="select">选择</div>
-														
+
 													</div>
 												</td>
 												<td>
 													<input type="text" name="menuname" ng-model="menu.name" class="form-control" />
 												</td>
-												
+
 												<td>
 													<select class="form-control" id="lineheight" ng-model="menu.module" ng-options="menu.title group by menu.module for menu in moduleEntries">
 													</select>
@@ -308,6 +309,37 @@
 											</tr>
 											<tr class="buttom-more">
 												<td colspan="5"><a href="javascript:;" class="buttom-add" ng-click="addMenu()">+</a></td>
+											</tr>
+										</table>
+									</div>
+									<div class="buttom-list">
+										<table class="table we7-table buttom-list-table vertical-middle">
+											<col width="70" />
+											<col width="70" />
+											<col width="120" />
+											<tr>
+												<th>默认</th>
+												<th>模块名</th>
+												<th>跳转到</th>
+											</tr>
+											<tr ng-repeat="module in wxappinfo.choose.modules" class="we7-form">
+												<td>
+													<div class="nav-img-box">
+														<img ng-src="{{module.icon}}" >
+														<div ng-click="changeMoudleImage($index)" class="select">选择</div>
+
+													</div>
+												</td>
+												<td>
+													<input type="text" name="modulename" ng-model="module.title" class="form-control" readonly />
+												</td>
+												<td>
+													<select class="form-control" id="lineheight1"
+													        ng-model="module.entry"
+													        ng-options="binding.eid for bingding module.bindings">
+													</select>
+												</td>
+
 											</tr>
 										</table>
 									</div>
