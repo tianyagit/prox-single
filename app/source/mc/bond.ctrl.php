@@ -257,7 +257,7 @@ if ($do == 'binding_account') {
 	$item = empty($setting['passport']['item']) ? 'random' : $setting['passport']['item'];
 	if ($_W['isajax'] && $_W['ispost']) {
 		$username = trim($_GPC['username']);
-		$password = trim($_GPC['password']);
+		$password = $_GPC['password'];
 		$data = array();
 		if (empty($_GPC['username'])) {
 			message('请输入您的账号', '', 'error');
@@ -299,7 +299,7 @@ if ($do == 'binding_account') {
 				message('抱歉，该账号已经被注册，请更换。', '', 'error');
 			}
 			$hash = md5($password . $profile['salt'] . $_W['config']['setting']['authkey']);
-			$data['salt'] = $salt;
+			$data['salt'] = $profile['salt'];
 			$data['password'] = $hash;
 			mc_update($profile['uid'], $data);
 			message('账号绑定成功', url('mc/home'), 'success');
