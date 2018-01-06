@@ -7,6 +7,12 @@
 defined('IN_IA') or exit('Access Denied');
 
 class GroupTable extends We7Table {
+	protected $tableName = 'users_group';
+
+	public function groupList() {
+		return $this->query->from($this->tableName)->getall();
+	}
+
 	public function searchGroup($is_vice_founder = false) {
 		$table_name = empty($is_vice_founder) ? 'users_group' : 'users_founder_group';
 		return $this->query->from($table_name)->get();

@@ -75,12 +75,24 @@ if ($do == 'post') {
 		);
 	} else {
 		$notice['style'] = iunserializer($notice['style']);
+		$notice['group'] = empty($notice['group']) ? array() : iunserializer($notice['group']);
 	}
+	$user_groups = table('group')->groupList();
 	if (checksubmit()) {
-		$title = trim($_GPC['title']) ? trim($_GPC['title']) : itoast('公告标题不能为空', '', 'error');
+		$title = trim($_GPC['title']) ? safe_gpc_string($_GPC['title']) : itoast('公告标题不能为空', '', 'error');
 		$cateid = intval($_GPC['cateid']) ? intval($_GPC['cateid']) : itoast('公告分类不能为空', '', 'error');
-		$content = trim($_GPC['content']) ? trim($_GPC['content']) : itoast('公告内容不能为空', '', 'error');
-		$style = array('color' => trim($_GPC['style']['color']), 'bold' => intval($_GPC['style']['bold']));
+		$content = trim($_GPC['content']) ? safe_gpc_string($_GPC['content']) : itoast('公告内容不能为空', '', 'error');
+		$style = array('color' => safe_gpc_string($_GPC['style']['color']), 'bold' => intval($_GPC['style']['bold']));
+		$group = array();
+		if (!empty($_GPC['group']) && is_array($_GPC['group'])) {
+			foreach ($_GPC['group'] as $value) {
+				if (!is_numeric($value)) {
+					itoast('参数错误！');
+				}
+				$group[] = intval($value);
+			}
+		}
+		$group = iserializer($group);
 		$data = array(
 			'title' => $title,
 			'cateid' => $cateid,
@@ -91,6 +103,7 @@ if ($do == 'post') {
 			'is_show_home' => intval($_GPC['is_show_home']),
 			'createtime' => TIMESTAMP,
 			'style' => iserializer($style),
+			'group' => $group,
 		);
 
 		if (!empty($notice['id'])) {
