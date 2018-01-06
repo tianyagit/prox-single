@@ -159,7 +159,22 @@ if ($do == 'post') {
 		}
 	}
 
-	$template_list = pdo_getall('site_templates', array(), array(), 'name');
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if (user_is_vice_founder($_W['uid'])) {
+			$template_list = user_founder_templates($_W['user']['groupid']);
+		} else {
+			$template_list = pdo_getall('site_templates', array(), array(), 'name');
+		}
+	}
+	/* xend */
+
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		$template_list = pdo_getall('site_templates', array(), array(), 'name');
+	}
+	/* vend */
+
 	$group_not_have_template = array();//套餐未拥有模板
 	if (!empty($template_list)) {
 		foreach ($template_list as $template) {

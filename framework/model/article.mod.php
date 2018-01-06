@@ -81,6 +81,10 @@ function article_notice_all($filter = array(), $pindex = 1, $psize = 10) {
 	$notice = pdo_fetchall("SELECT * FROM " . tablename('article_notice') . $condition . " ORDER BY " . $order . " DESC " . $limit, $params, 'id');
 	foreach ($notice as $key => $notice_val) {
 		$notice[$key]['style'] = iunserializer($notice_val['style']);
+		$notice[$key]['group'] = empty($notice_val['group']) ? array('vice_founder' => array(), 'normal' => array()) : iunserializer($notice_val['group']);
+		if (empty($_W['user']) && !empty($notice_val['group']) || !empty($_W['user']['groupid']) && !empty($notice_val['group']) && !in_array($_W['user']['groupid'], $notice[$key]['group']['vice_founder']) && !in_array($_W['user']['groupid'], $notice[$key]['group']['normal'])) {
+			unset($notice[$key]);
+		}
 	}
 	return array('total' => $total, 'notice' => $notice);
 }
