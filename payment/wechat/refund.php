@@ -43,10 +43,11 @@ $_W['uniacid'] = $account['uniacid'];
 if (!empty($wechat_data['sub_mch_id'])) {
 	$account_list = pdo_getall('account', array(), array('uniacid'));
 	if (is_array($account_list)) {
-		foreach ($account_list as $uniacid) {
-			$setting = uni_setting_load('payment', $_W['uniacid']);
+		foreach ($account_list as $sub_account) {
+			$setting = uni_setting_load('payment', $sub_account['uniacid']);
 			if ($setting['payment']['wechat']['switch'] == PAYMENT_WECHAT_TYPE_SERVICE && $wechat_data['sub_mch_id'] == $setting['payment']['wechat']['sub_mch_id']) {
-				$_W['uniacid'] = $uniacid;
+				$_W['uniacid'] = $sub_account['uniacid'];
+				break;
 			}
 		}
 	}
