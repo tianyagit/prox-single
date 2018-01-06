@@ -43,8 +43,8 @@ function welcome_notices_get() {
 			$notices[$key]['url'] = url('article/notice-show/detail', array('id' => $notice_val['id']));
 			$notices[$key]['createtime'] = date('Y-m-d', $notice_val['createtime']);
 			$notices[$key]['style'] = iunserializer($notice_val['style']);
-			$notices[$key]['group'] = empty($notice_val['group']) ? array() : iunserializer($notice_val['group']);
-			if (!empty($_W['user']['groupid']) && !empty($notices[$key]['group']) && !in_array($_W['user']['groupid'], $notices[$key]['group'])) {
+			$notices[$key]['group'] = empty($notice_val['group']) ? array('vice_founder' => array(), 'normal' => array()) : iunserializer($notice_val['group']);
+			if (!empty($_W['user']['groupid']) && !empty($notice_val['group']) && !in_array($_W['user']['groupid'], $notices[$key]['group']['vice_founder']) && !in_array($_W['user']['groupid'], $notices[$key]['group']['normal'])) {
 				unset($notices[$key]);
 			}
 		}

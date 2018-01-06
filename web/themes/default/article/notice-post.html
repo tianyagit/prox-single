@@ -17,13 +17,26 @@
 						{loop $user_groups $key $group}
 							<div class="col-sm-4">
 								<div class="checkbox">
-									<input id="check-child-{$key}" type="checkbox" value="{$group['id']}" name="group[]" {if in_array($group['id'], $notice['group'])}checked{/if}>
+									<input id="check-child-{$key}" type="checkbox" value="{$group['id']}" name="group[]" {if in_array($group['id'], $notice['group']['normal'])}checked{/if}>
 									<label for="check-child-{$key}">{$group['name']}</label>
 								</div>
 							</div>
 						{/loop}
+						<!-- xstart -->
+						{if IMS_FAMILY == 'x'}
+							<div class="col-sm-10 col-lg-10 col-xs-12 plugin-name">副创始人用户组</div>
+							{loop $user_vice_founder_groups $key $vice_founder_group}
+								<div class="col-sm-4">
+									<div class="checkbox">
+										<input id="check-child-{$key}-{$key}" type="checkbox" value="{$vice_founder_group['id']}" name="vice_founder_group[]" {if in_array($vice_founder_group['id'], $notice['group']['vice_founder'])}checked{/if}>
+										<label for="check-child-{$key}-{$key}">{$vice_founder_group['name']}</label>
+									</div>
+								</div>
+							{/loop}
+						{/if}
+						<!-- xend -->
 						<span class="help-block">请选择哪些用户组可见，不设置代表全部可见</span>
-					</div>	
+					</div>
 				</div>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">公告标题</label>
