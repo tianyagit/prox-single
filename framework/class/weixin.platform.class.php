@@ -198,7 +198,7 @@ class WeiXinPlatform extends WeiXinAccount {
 		if (is_error($response)) {
 			return $response;
 		}
-		cache_write('account:oauth:refreshtoken:'.$this->account['account_appid'], $response['refresh_token']);
+		cache_write('account:oauth:refreshtoken:'.$this->account['key'], $response['refresh_token']);
 		return $response;
 	}
 

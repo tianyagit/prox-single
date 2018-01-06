@@ -19,7 +19,7 @@ if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'image' ,'modul
 $result = array(
 	'error' => 1,
 	'message' => '',
-	'data' => '' 
+	'data' => ''
 );
 
 error_reporting(0);
@@ -105,7 +105,7 @@ if ($do == 'fetch') {
 		$result['message'] = '提取资源失败, 仅支持图片提取.';
 		die(json_encode($result));
 	}
-	
+
 	if (intval($resp['headers']['Content-Length']) > $setting['limit'] * 1024) {
 		$result['message'] = '上传的媒体文件过大(' . sizecount($size) . ' > ' . sizecount($setting['limit'] * 1024);
 		die(json_encode($result));
@@ -149,7 +149,7 @@ if ($do == 'upload') {
 
 if ($do == 'fetch' || $do == 'upload') {
 		if ($type == 'image') {
-		$thumb = empty($setting['thumb']) ? 0 : 1; 		$width = intval($setting['width']); 		
+		$thumb = empty($setting['thumb']) ? 0 : 1; 		$width = intval($setting['width']);
 		if (isset($option['thumb'])) {
 			$thumb = empty($option['thumb']) ? 0 : 1;
 		}
@@ -169,7 +169,7 @@ if ($do == 'fetch' || $do == 'upload') {
 			}
 		}
 	}
-	
+
 	$info = array(
 		'name' => $originname,
 		'ext' => $ext,
@@ -522,8 +522,12 @@ if ($do == 'module') {
 		$installedmodulelist = uni_modules(false);
 	}
 
-
+	$sysmods = system_modules();
 	foreach ($installedmodulelist as $k => $value) {
+		if ($value['type'] == 'system' || in_array($value['name'], $sysmods)) {
+			unset($installedmodulelist[$k]);
+			continue;
+		}
 		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 	}
 	foreach ($installedmodulelist as $name => $module) {
