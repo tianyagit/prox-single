@@ -148,10 +148,4 @@ if ($do == 'get_wxapp_modules') {
 	iajax(0, $wxapp_modules, '');
 }
 
-if ($do == 'module_binding') {
-	$modules = $_GPC['modules'];
 
-	$modules = table('module')->with(array('bindings' => function($query){
-		return $query->where('entry', 'cover');
-	}))->where('module', 'we7_community')->get();
-}
