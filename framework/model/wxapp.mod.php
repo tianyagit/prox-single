@@ -171,6 +171,7 @@ function wxapp_fetch($uniacid, $version_id = '') {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
 	if (!empty($wxapp_version_info) && !empty($wxapp_version_info['modules'])) {
+
 		$wxapp_version_info['modules'] = iunserializer($wxapp_version_info['modules']);
 		//如果是单模块版并且本地模块，应该是开发者开发小程序，则模块版本号本地最新的。
 		if ($wxapp_version_info['design_method'] == WXAPP_MODULE) {
@@ -339,6 +340,8 @@ function wxapp_version_detail_info($version_info) {
 				unset($version_info['modules'][$module['name']]);
 				//模块默认入口
 				$module_info['cover_entrys'] = module_entries($module['name'], array('cover'));
+				$module_info['defaultentry'] = $module['defaultentry'];
+				$module_info['newicon'] = $module['newicon'];
 				$version_info['modules'][] = $module_info;
 			}
 		}

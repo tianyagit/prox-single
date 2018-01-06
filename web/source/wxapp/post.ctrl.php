@@ -32,6 +32,7 @@ if ($do == 'post') {
 	}
 
 	if (checksubmit('submit')) {
+
 		if ($account_info['wxapp_limit'] <= 0 && empty($uniacid) && !$_W['isfounder']) {
 			iajax(-1, '创建的小程序已达上限！');
 		}
@@ -100,19 +101,21 @@ if ($do == 'post') {
 		//打包模块
 		if (!empty($_GPC['choose']['modules'])) {
 			$select_modules = array();
-			foreach ($_GPC['choose']['modules'] as $module) {
-				$module = module_fetch($module['module']);
+			foreach ($_GPC['choose']['modules'] as $post_module) {
+				$module = module_fetch($post_module['module']);
 				if (empty($module)) {
 					continue;
 				}
 
-				$select_modules[$module['name']] = array('name' => $module['name'], 'version' => $module['version']);
+				$select_modules[$module['name']] = array('name' => $module['name'],
+					'version' => $module['version'], 'defaultentry'=>$post_module['defaultentry']);
 			}
+
 			$wxapp_version['modules'] = serialize($select_modules);
 		}
 
 		//快捷菜单
-		if (!empty($_GPC['quickmenu']) && $design_method == WXAPP_TEMPLATE) {
+		if (!empty($_GPC['quickmenu'])) {
 			$quickmenu = array(
 				'color' => $_GPC['quickmenu']['bottom']['color'],
 				'selected_color' => $_GPC['quickmenu']['bottom']['selectedColor'],
@@ -121,13 +124,14 @@ if ($do == 'post') {
 				'menus' => array(),
 			);
 			if (!empty($_GPC['quickmenu']['menus'])) {
+
 				foreach ($_GPC['quickmenu']['menus'] as $row) {
 					$quickmenu['menus'][] = array(
 						'name' => $row['name'],
 						'icon' => $row['defaultImage'],
 						'selectedicon' => $row['selectedImage'],
 						'url' => $row['module']['url'],
-						'module' => $row['module']['module'],
+						'defaultentry' => $row['defaultentry']['eid'],
 					);
 				}
 			}
@@ -151,15 +155,22 @@ if ($do == 'get_wxapp_modules') {
 
 if ($do == 'module_binding') {
 	$modules = $_GPC['modules'];
-
-//	$modules = array_map(function($item) {
-//		return trim($item);
-//	}, $modules);
+	if (empty($modules)) {
+		iajax(1, '参数无效');
+		return;
+	}
+	$modules = explode(',', $modules);
+	$modules = array_map(function($item) {
+		return trim($item);
+	}, $modules);
 
 	$modules = table('module')->with(array('bindings' => function($query){
 		return $query->where('entry', 'cover');
-	}))->where('module', 'we7_community')->get();
+	}))->where('name', $modules)->getall();
 
+	$modules = array_filter($modules, function($module){
+		return count($module['bindings']) > 0;
+	});
 	iajax(0, $modules);
 }
 

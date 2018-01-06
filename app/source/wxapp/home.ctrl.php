@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
-$dos = array('nav', 'slide', 'commend', 'wxapp_web');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'package_app');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -69,7 +69,11 @@ if ($do == 'wxapp_web') {
 	$url = $_GPC['url'];
 	if (empty($url)) {
 		//无需查询绑定域名 因为本do方法就是根据小程序域名访问的
-		$url = murl('entry', array('eid'=>$version_info['entry_id']), true, true);
+		if (count($version_info['modules']) > 1) {
+			$url = murl('wxapp/home/package_app', array('v'=>$version));//多模块打包入口
+		} else {
+			$url = murl('entry', array('eid'=>$version_info['entry_id']), true, true);
+		}
 	}
 	if ($url) {
 		setcookie(session_name(), $_W['session_id']);
@@ -80,3 +84,22 @@ if ($do == 'wxapp_web') {
 	message('找不到模块入口', 'refresh', 'error');
 }
 
+
+if ($do == 'package_app') {
+	$version = trim($_GPC['v']);
+	$version = '1.01';
+	$version_info = wxapp_version_by_version($version);
+
+	$version_info['modules'] = array_map(function($module) {
+		 $module['url'] = murl('entry', array('eid'=>$module['defaultentry']), true, true);
+		 return $module;
+	}, $version_info['modules']);
+
+
+	$version_info['quickmenu']['menus'] = array_map(function($menu){
+		 $menu['url'] = murl('entry', array('eid'=>$menu['defaultentry']), true, true);
+		 return $menu;
+	}, $version_info['quickmenu']['menus']);
+
+	template('wxapp/wxapp');
+}
