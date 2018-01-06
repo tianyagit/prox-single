@@ -1953,7 +1953,7 @@ function mc_member_export_parse($members){
 	$groups = mc_groups();
 	$header = array(
 		'uid' => 'UID', 'nickname' => '昵称', 'realname' => '姓名', 'groupid' => '会员组',
-		'mobile' => '手机', 'email' => '邮箱', 'credit1' => '积分', 'credit2' => '余额', 'createtime' => '注册时间',
+		'mobile' => '手机', 'email' => '邮箱', 'birthday' => '生日', 'credit1' => '积分', 'credit2' => '余额', 'createtime' => '注册时间',
 	);
 	$keys = array_keys($header);
 	$html = "\xEF\xBB\xBF";
@@ -1976,6 +1976,11 @@ function mc_member_export_parse($members){
 					}
 					$row['createtime'] = date('Y-m-d H:i:s', $row['createtime']);
 					$row['groupid'] = $groups[$row['groupid']]['title'];
+					if (!empty($row['birthmonth']) && !empty($row['birthday'])) {
+						$row['birthday'] = $row['birthmonth'] . '月' . $row['birthday'] . '日';
+					} else {
+						$row['birthday'] = '';
+					}
 					foreach ($keys as $key) {
 						$data[] = $row[$key];
 					}

@@ -348,8 +348,9 @@ if ($do == 'post') {
 		$module['title'] = '应用关键字';
 		$installedmodulelist = uni_modules();
 		foreach ($installedmodulelist as $key => &$value) {
-			if ($value['type'] == 'system') {
+			if ($value['type'] == 'system' || in_array($value['name'], $sysmods)) {
 				unset($installedmodulelist[$key]);
+				continue;
 			}
 			$value['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 		}
