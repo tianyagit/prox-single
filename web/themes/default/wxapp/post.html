@@ -119,9 +119,9 @@
 										<div class="form-controls col-sm-10">
 
 												<ul class="app-list" id="resource_module">
-													<div class="app-info">
-														<img ng-src="{{single_module.icon}}" />
-														<p>{{single_module.title}}</p>
+													<div class="app-info" ng-repeat="module in wxappinfo.choose.modules">
+														<img ng-src="{{module.icon}}" />
+														<p>{{module.title}}</p>
 													</div>
 													<li class="select select-more"></li>
 												</ul>
@@ -307,6 +307,31 @@
 											</tr>
 											<tr class="buttom-more">
 												<td colspan="5"><a href="javascript:;" class="buttom-add" ng-click="addMenu()">+</a></td>
+											</tr>
+										</table>
+									</div>
+									<div class="buttom-list">
+										<table class="table we7-table buttom-list-table vertical-middle">
+											<col width="100" />
+											<col width="120" />
+											<tr>
+												<th>模块名</th>
+												<th>跳转到</th>
+											</tr>
+											<tr ng-repeat="module in wxappinfo.choose.modules" class="we7-form">
+												<td>
+													<input type="text" name="modulename" ng-model="module.name" class="form-control" readonly />
+												</td>
+												<td>
+													<select class="form-control" id="lineheight1"
+													        ng-model="module.entry"
+													        ng-options="binding.eid for bingding module.bindings">
+													</select>
+												</td>
+
+												<td>
+													<a href="javascript:;" class="buttom-del" ng-click="delMenu($index)"><i class="fa fa-times-circle"></i></a>
+												</td>
 											</tr>
 										</table>
 									</div>

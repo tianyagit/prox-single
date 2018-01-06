@@ -197,14 +197,11 @@ abstract class We7Table {
 	 * @param $relation
 	 */
 	public function with($relation) {
-		if (! is_array($relation)) {
-			$relation = func_get_args();
+		$relations = is_string($relation) ? func_get_args() : $relation;
+		foreach ($relations as $relation =>$val) {
+			$this->relationDefine[$relation] = $val;
 		}
-		foreach ($relation as $item) {
-			if (! empty($item)) {
-				$this->relationDefine[] = $item;
-			}
-		}
+
 		return $this;
 	}
 	/**
@@ -213,8 +210,8 @@ abstract class We7Table {
 	 * @param bool $muti 是否主查询是 多条记录
 	 */
 	private function loadRelation(array &$data, $muti = false) {
-		foreach ($this->relationDefine as $relation) {
-			$this->doload($relation, $data, $muti); //加载关联数据
+		foreach ($this->relationDefine as $relation => $closure) {
+			$this->doload($relation, $data, $muti, $closure); //加载关联数据
 		}
 	}
 
@@ -224,7 +221,7 @@ abstract class We7Table {
 	 * @param $data
 	 * @param bool $muti
 	 */
-	private function doload($relation, &$data, $muti = false) {
+	private function doload($relation, &$data, $muti = false, callable $closure = null) {
 		if (method_exists($this, $relation)) {
 			$relation_param = call_user_func(array($this, $relation));
 			list($type, $table, $foreign_key, $owner_key) = $relation_param;
@@ -244,7 +241,7 @@ abstract class We7Table {
 			/**
 			 *  获取关联表的数据  $single 表示 只获取一条即可
 			 */
-			$second_table_data = $this->getSecondTableData($table, $foreign_key, $foreign_vals, $single);
+			$second_table_data = $this->getSecondTableData($table, $foreign_key, $foreign_vals, $single, $closure);
 			if (! $muti) {
 				$data[$relation] = $second_table_data;
 				return;
@@ -339,8 +336,11 @@ abstract class We7Table {
 	 * @param bool $single
 	 * @return mixed
 	 */
-	private function getSecondTableData($table, $foreign_key, $foreign_vals, $single = false) {
+	private function getSecondTableData($table, $foreign_key, $foreign_vals, $single = false, $closure = null) {
 		$table_instance = table($table)->where($foreign_key, $foreign_vals);
+		if ($closure) {
+			call_user_func($closure, $table_instance->getQuery()); //给关联表附加查询条件
+		}
 		if ($single) {
 			return $table_instance->get();
 		}

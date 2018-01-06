@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 
-$dos = array('design_method', 'post', 'get_wxapp_modules');
+$dos = array('design_method', 'post', 'get_wxapp_modules', 'module_binding');
 $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
 $account_info = permission_user_account_num();
@@ -146,4 +146,12 @@ if ($do == 'post') {
 if ($do == 'get_wxapp_modules') {
 	$wxapp_modules = wxapp_support_wxapp_modules();
 	iajax(0, $wxapp_modules, '');
+}
+
+if ($do == 'module_binding') {
+	$modules = $_GPC['modules'];
+
+	$modules = table('module')->with(array('bindings' => function($query){
+		return $query->where('entry', 'cover');
+	}))->where('module', 'we7_community')->get();
 }
