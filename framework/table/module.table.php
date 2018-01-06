@@ -7,6 +7,15 @@
 defined('IN_IA') or exit('Access Denied');
 
 class ModuleTable extends We7Table {
+
+	protected $tableName = 'modules';
+	protected $primaryKey = 'mid';
+
+	public function bindings() {
+		return $this->hasMany('modulebinding', 'module', 'name');
+	}
+
+
 	public function moduleBindingsInfo($module, $do = '', $entry = '') {
 		$condition = array(
 			'module' => $module,
