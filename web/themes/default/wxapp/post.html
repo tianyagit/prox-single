@@ -325,8 +325,8 @@
 											<tr ng-repeat="module in wxappinfo.choose.modules" class="we7-form">
 												<td>
 													<div class="nav-img-box">
-														<img ng-src="{{module.icon}}" >
-														<div ng-click="changeMoudleImage($index)" class="select">选择</div>
+														<img ng-src="{{module.newicon ? module.newicon : module.icon}}" >
+														<div ng-click="addModuleImage(module)" class="select">选择</div>
 
 													</div>
 												</td>
@@ -434,6 +434,7 @@ require(['fileUploader','underscore'], function(uploader){
 		},
 		'uniacid' : "{$uniacid}",
 		'designMethod' : "{$design_method}",
+//		'bindingsUrl' : "{php echo url('wxapp/post/')"}",
 		'wxappPostUrl' : "{php echo url('wxapp/post', array('design_method' => $design_method, 'create_type'=>$create_type))}",
 		'token' : "{$_W['token']}",
 	});
