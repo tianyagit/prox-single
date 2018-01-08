@@ -45,6 +45,7 @@ if ($do == 'display') {
 			$wxapp_modules = wxapp_support_uniacid_modules();
 		}
 	}
+
 	template('wxapp/manage');
 }
 

@@ -23,7 +23,12 @@ if ($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$design_method = intval($_GPC['design_method']);
 	$create_type = intval($_GPC['create_type']);
-
+	$version_id  = intval($_GPC['version_id']);
+	$isedit  =  $version_id > 0 ? 1 : 0;
+	if ($isedit) {
+		$wxapp_version = wxapp_version($version_id);
+//		var_dump($wxapp_version['modules']);
+	}
 	if (empty($design_method)) {
 		itoast('请先选择要添加小程序类型', referer(), 'error');
 	}
@@ -137,8 +142,14 @@ if ($do == 'post') {
 			}
 			$wxapp_version['quickmenu'] = serialize($quickmenu);
 		}
-		pdo_insert('wxapp_versions', $wxapp_version);
-		iajax(0, '小程序创建成功！跳转后请自行下载打包程序', url('wxapp/display/switch', array('uniacid' => $uniacid)));
+		if ($isedit) {
+			$msg = '小程序修改成功';
+			pdo_update('wxapp_versions', $wxapp_version, array('id'=>$version_id, 'uniacid'=>$uniacid));
+		} else {
+			$msg = '小程序创建成功';
+			pdo_insert('wxapp_versions', $wxapp_version);
+		}
+		iajax(0, $msg, url('wxapp/display/switch', array('uniacid' => $uniacid)));
 	}
 	if (!empty($uniacid)) {
 		$wxapp_info = wxapp_fetch($uniacid);
