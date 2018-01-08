@@ -74,6 +74,7 @@ if ($do == 'copyright') {
 				'leftmenufixed' => (!empty($_GPC['leftmenu_fixed'])) ? 1 : 0,
 				'mobile_status' => $_GPC['mobile_status'],
 				'login_type' => $_GPC['login_type'],
+				'icp' => $_GPC['icp'],
 			);
 		}
 		/* xend */
