@@ -1,0 +1,15 @@
+{template 'common/header'}
+<div class="we7-page-title">数据字典</div>
+<table>
+	<span class="btn btn-primary">表总数：{$total_table} 个</span>
+	{loop $result $table $fields_info}
+	<div class="block">### {$table} {$fields_info['table_comment']}</div>
+	<div class="block">|字段名|数据类型|说明|</div>
+	<div class="block">| ------------ | ------------ |------------ |</div>
+		{loop $fields_info['fields'] $field}
+			<div class="block">|{$field['COLUMN_NAME']}|{$field['COLUMN_TYPE']}|{$field['COLUMN_COMMENT']}|</div>
+		{/loop}
+	<br>
+	{/loop}
+</table>
+{template 'common/footer'}
