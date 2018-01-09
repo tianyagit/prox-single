@@ -164,12 +164,14 @@ if ($do == 'post') {
 	if ($m == 'keyword' || $m == 'userapi' || !in_array($m, $sysmods)) {
 		$module['title'] = '关键字自动回复';
 		if ($_W['isajax'] && $_W['ispost']) {
-
-			$sensitive_word = detect_sensitive_word($_GPC['keyword']);
+			$keyword = safe_gpc_string($_GPC['keyword']);
+			$sensitive_word = detect_sensitive_word($keyword);
 			if (!empty($sensitive_word)) {
 				iajax(-2, '含有敏感词:' . $sensitive_word);
 			}
-			$result = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'content' => trim($_GPC['keyword'])), array('rid'));
+			$keyword = preg_replace('/，/', ',', $keyword);
+			$keyword_arr = explode(',', $keyword);
+			$result = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'content IN' => $keyword_arr), array('rid'));
 			if (!empty($result)) {
 				$keywords = array();
 				foreach ($result as $reply) {
