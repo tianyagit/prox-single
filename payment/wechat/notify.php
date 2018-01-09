@@ -65,6 +65,9 @@ if(is_array($setting['payment'])) {
 			$params = array();
 			$params[':uniontid'] = $get['out_trade_no'];
 			$log = pdo_fetch($sql, $params);
+			if (intval($wechat['switch']) == PAYMENT_WECHAT_TYPE_SERVICE) {
+				$get['openid'] = $log['openid'];
+			}
 			//此处判断微信请求消息金额必须与系统发起的金额一致
 			if(!empty($log) && $log['status'] == '0' && (($get['total_fee'] / 100) == $log['card_fee'])) {
 				$log['tag'] = iunserializer($log['tag']);
