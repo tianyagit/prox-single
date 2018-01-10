@@ -1,6 +1,6 @@
 <?php
 
-class WxappWebModuleWxapp extends WeModuleWxapp {
+class CoreModuleWxapp extends WeModuleWxapp {
 	public function doPagePay() {
 		global $_W, $_GPC;
 		$order_info = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => safe_gpc_string($_GPC['module_name']), 'tid' => safe_gpc_string($_GPC['orderid'])));

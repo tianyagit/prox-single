@@ -11,7 +11,7 @@ load()->classs('uploadedfile');
 
 $dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan',
 	'commitcode', 'preview', 'getpackage', 'entrychoose', 'set_wxapp_entry',
-	'custom', 'custom_save', 'custom_default', 'custom_convert_img', );
+	'custom', 'custom_save', 'custom_default', 'custom_convert_img');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -29,11 +29,12 @@ if (!empty($version_id)) {
 
 /* xstart */
 if (IMS_FAMILY == 'x') {
+	// 入口选择
 	if ($do == 'entrychoose') {
 		$entrys = $version_info['cover_entrys'];
 		template('wxapp/version-front-download');
 	}
-
+	// 设置入口
 	if ($do == 'set_wxapp_entry') {
 		$entry_id = intval($_GPC['entry_id']);
 		$result = wxapp_update_entry($version_id, $entry_id);

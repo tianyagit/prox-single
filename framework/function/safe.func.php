@@ -48,9 +48,9 @@ function safe_gpc_string($value, $default = '') {
 	$badstr = array("\0", "%00", "%3C", "%3E", '{php');
 	$newstr = array('', '', '&lt;', '&gt;', '_');
 	$value  = str_replace($badstr, $newstr, $value);
-	
+
 	$value  = preg_replace('/&((#(\d{3,5}|x[a-fA-F0-9]{4}));)/', '&\\1', $value);
-	
+
 	if (empty($value) && $default != $value) {
 		$value = $default;
 	}
@@ -66,11 +66,11 @@ function safe_gpc_string($value, $default = '') {
 function safe_gpc_path($value, $default = '') {
 	$path = safe_gpc_string($value);
 	$path = str_replace(array('..', '..\\', '\\\\' ,'\\', '..\\\\'), '', $path);
-	
+
 	if (empty($path) || $path != $value) {
 		$path = $default;
 	}
-	
+
 	return $path;
 }
 
@@ -105,7 +105,7 @@ function safe_gpc_boolean($value, $default = false) {
 }
 
 /**
- * 转换一个安全HTML数据 
+ * 转换一个安全HTML数据
  */
 function safe_gpc_html($value, $default = '') {
 	if (empty($value) || !is_string($value)) {
@@ -114,7 +114,7 @@ function safe_gpc_html($value, $default = '') {
 	$badstr = array("\0", "%00", "%3C", "%3E", '<?', '<%', '<?php', '{php');
 	$newstr = array('', '', '&lt;', '&gt;', '_', '_', '_', '_');
 	$value  = str_replace($badstr, $newstr, $value);
-	
+
 	$value = safe_remove_xss($value);
 	if (empty($value) && $value != $default) {
 		$value = $default;
@@ -127,7 +127,7 @@ function safe_gpc_sql($value, $operator = 'ENCODE', $default = '') {
 		return $default;
 	}
 	$value = trim(strtolower($value));
-	
+
 	$badstr = array(
 		'_', '%', "'", chr(39),
 		'select', 'join', 'union',
@@ -144,7 +144,7 @@ function safe_gpc_sql($value, $operator = 'ENCODE', $default = '') {
 		'cr&#101;ate', 'mod&#105;fy', 'ren&#097;me"',
 		'alt&#101;r', 'ca&#115;',
 	);
-	
+
 	if ($operator == 'ENCODE') {
 		$value  = str_replace($badstr, $newstr, $value);
 	} else {
@@ -164,10 +164,23 @@ function safe_gpc_url($value, $strict_domain = true, $default = '') {
 	if (empty($value) || !is_string($value)) {
 		return $default;
 	}
-	if ($strict_domain && starts_with($value, 'http') && !starts_with($value, $_W['siteroot'])) {
-		$value = $_W['siteroot'];
+	
+	if (starts_with($value, './')) {
+		return $value;
 	}
-	return $value;
+	
+	if ($strict_domain) {
+		if (starts_with($value, $_W['siteroot'])) {
+			return $value;
+		}
+		return $default;
+	}
+	
+	if (starts_with($value, 'http') || starts_with($value, '//')) {
+		return $value;
+	}
+	
+	return $default;
 }
 
 /**

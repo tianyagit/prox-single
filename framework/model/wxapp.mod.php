@@ -171,6 +171,7 @@ function wxapp_fetch($uniacid, $version_id = '') {
 		$wxapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
 	if (!empty($wxapp_version_info) && !empty($wxapp_version_info['modules'])) {
+
 		$wxapp_version_info['modules'] = iunserializer($wxapp_version_info['modules']);
 		//如果是单模块版并且本地模块，应该是开发者开发小程序，则模块版本号本地最新的。
 		if ($wxapp_version_info['design_method'] == WXAPP_MODULE) {
@@ -339,12 +340,15 @@ function wxapp_version_detail_info($version_info) {
 				unset($version_info['modules'][$module['name']]);
 				//模块默认入口
 				$module_info['cover_entrys'] = module_entries($module['name'], array('cover'));
+				$module_info['defaultentry'] = $module['defaultentry'];
+				$module_info['newicon'] = $module['newicon'];
 				$version_info['modules'][] = $module_info;
 			}
 		}
 	}
 	if (count($version_info['modules']) > 0) {
-		$version_info['cover_entrys'] = $version_info['modules'][0]['cover_entrys']['cover'];
+		$cover_entrys = $version_info['modules'][0]['cover_entrys'];
+		$version_info['cover_entrys'] = isset($cover_entrys['cover']) ? $cover_entrys['cover'] : array();
 	}
 	if (!empty($version_info['quickmenu'])) {
 		$version_info['quickmenu'] = iunserializer($version_info['quickmenu']);
@@ -518,7 +522,7 @@ function wxapp_code_generate($version_id) {
 		return error(1, '小程序域名必须为https');
 	}
 
-	if ($version_info['type'] == WXAPP_CREATE_MODULE && $version_info['entry_id'] <= 0) {
+	if ($version_info['type'] == WXAPP_CREATE_MODULE && count($account_wxapp_info['version']['modules'])==1 && $version_info['entry_id'] <= 0) {
 		return error(1, '请先设置小程序入口');
 	}
 
