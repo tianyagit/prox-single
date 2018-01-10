@@ -113,6 +113,7 @@ if ($do == 'post') {
 				}
 
 				$select_modules[$module['name']] = array('name' => $module['name'],
+					'newicon' => $post_module['newicon'],
 					'version' => $module['version'], 'defaultentry'=>$post_module['defaultentry']);
 			}
 
@@ -126,6 +127,7 @@ if ($do == 'post') {
 				'selected_color' => $_GPC['quickmenu']['bottom']['selectedColor'],
 				'boundary' => $_GPC['quickmenu']['bottom']['boundary'],
 				'bgcolor' => $_GPC['quickmenu']['bottom']['bgcolor'],
+				'show' => $_GPC['quickmenu']['show'] == 'true' ? 1 : 0,
 				'menus' => array(),
 			);
 			if (!empty($_GPC['quickmenu']['menus'])) {
@@ -140,6 +142,7 @@ if ($do == 'post') {
 					);
 				}
 			}
+
 			$wxapp_version['quickmenu'] = serialize($quickmenu);
 		}
 		if ($isedit) {

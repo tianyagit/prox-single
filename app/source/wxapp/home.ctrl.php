@@ -96,6 +96,7 @@ if ($do == 'package_app') {
 	}, $version_info['modules']);
 
 
+
 	$version_info['quickmenu']['menus'] = array_map(function($menu){
 		 $menu['url'] = murl('entry', array('eid'=>$menu['defaultentry']), true, true);
 		 return $menu;
