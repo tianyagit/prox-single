@@ -1,47 +1,28 @@
 {template 'common/header'}
-<link href="//cdn.bootcss.com/weui/1.1.2/style/weui.min.css" rel="stylesheet">
-<style>
-	.page {
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-	}
+<link href="./resource/css/wxapppack.min.css" rel="stylesheet">
 
-
-</style>
-<div>
-<div class="weui-cells">
+<div class="box clearfix">
 	{loop $version_info['modules'] $module}
-	<a class="weui-cell" href="{$module['url']}">
-		<div class="weui-cell__hd"><img src="{$module['newicon']}" alt="" style="width:20px;margin-right:5px;display:block"></div>
-		<div class="weui-cell__bd">
-			<p>{$module['title']}</p>
-		</div>
-		<div class="weui-cell__ft"></div>
-	</a>
-	{/loop}
-
-</div>
-<div class="page page__bd" style="height: 100%;">
-	<div class="weui-tab">
-		<div class="weui-tab__panel">
-
-		</div>
-		<div class="weui-tabbar">
-			{loop $version_info['quickmenu']['menus'] $menu}
-			<a href="{$menu['url']}" class="weui-tabbar__item">
-                    <span style="display: inline-block;position: relative;">
-                        <img src="{$menu['icon']}" alt="" class="weui-tabbar__icon">
-                    </span>
-				<p class="weui-tabbar__label">{$menu['name']}</p>
-			</a>
-			{/loop}
-		</div>
+	<div class="item pic">
+		<a href="{$module['url']}">
+			<i style="background-image:url({$module['newicon']});"></i>
+			<div class="name">{$module['title']}</div>
+		</a>
 	</div>
+	{/loop}
 </div>
+
+<div class="footer-nav">
+	{loop $version_info['quickmenu']['menus'] $menu}
+	<div class="item">
+		<a href="{$menu['url']}">
+			<img src="{$menu['icon']}" alt="" class="icon">
+			<div class="con">{$menu['name']}</div>
+		</a>
+	</div>
+	{/loop}
 </div>
+
 
 </div>
 </body>

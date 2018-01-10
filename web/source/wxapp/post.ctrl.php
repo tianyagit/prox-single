@@ -113,6 +113,7 @@ if ($do == 'post') {
 				}
 
 				$select_modules[$module['name']] = array('name' => $module['name'],
+					'newicon' => $post_module['newicon'],
 					'version' => $module['version'], 'defaultentry'=>$post_module['defaultentry']);
 			}
 
