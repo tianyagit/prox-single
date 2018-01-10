@@ -164,15 +164,23 @@ function safe_gpc_url($value, $strict_domain = true, $default = '') {
 	if (empty($value) || !is_string($value)) {
 		return $default;
 	}
-	if (!(starts_with($value, 'http') || starts_with($value, '//')) && !$strict_domain) {
+	
+	if (starts_with($value, './')) {
+		return $value;
+	}
+	
+	if ($strict_domain) {
+		if (starts_with($value, $_W['siteroot'])) {
+			return $value;
+		}
 		return $default;
 	}
-
-	if ($strict_domain && !(starts_with($value, $_W['siteroot']) || starts_with($value, './'))) {
-		$value = $_W['siteroot'];
+	
+	if (starts_with($value, 'http') || starts_with($value, '//')) {
+		return $value;
 	}
-
-	return $value;
+	
+	return $default;
 }
 
 /**
