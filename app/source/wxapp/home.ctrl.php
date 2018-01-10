@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
-$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxappweb_pay', 'wxappweb_pay_result');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxappweb_pay', 'wxappweb_pay_result', 'package_app');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
