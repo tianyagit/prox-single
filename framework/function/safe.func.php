@@ -164,9 +164,14 @@ function safe_gpc_url($value, $strict_domain = true, $default = '') {
 	if (empty($value) || !is_string($value)) {
 		return $default;
 	}
-	if ($strict_domain && starts_with($value, 'http') && !starts_with($value, $_W['siteroot'])) {
+	if (!starts_with($value, 'http')) {
+		return $default;
+	}
+	
+	if ($strict_domain && !starts_with($value, $_W['siteroot'])) {
 		$value = $_W['siteroot'];
 	}
+	
 	return $value;
 }
 
