@@ -6,7 +6,7 @@
 */
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
-$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'package_app');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxappweb_pay', 'wxappweb_pay_result');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -102,4 +102,15 @@ if ($do == 'package_app') {
 	}, $version_info['quickmenu']['menus']);
 
 	template('wxapp/wxapp');
+}
+
+
+if ($do == 'wxappweb_pay') {
+	$site = WeUtility::createModuleWxapp('wxappweb');
+	$site->doPagePay();
+}
+
+if ($do == 'wxappweb_pay_result') {
+	$site = WeUtility::createModuleWxapp('wxappweb');
+	$site->doPagePayResult();
 }

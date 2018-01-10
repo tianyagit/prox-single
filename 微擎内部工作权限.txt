@@ -64,31 +64,23 @@ ceshi.nd98.cn
 admin
 we7.cc
 
-we7.weixinsuzhou.cc
-admin
-123456
-
 47.94.97.31
 root
 Qq959570787
 
-
-ceshi.weixinsuzhou.cc
+https://ccceshi.w7.cc
 admin
-we7.cc
-
-
-47.94.97.31:8080
-root
-Qq959570787
-
+we7!@#
 
 115.159.77.66
 root
 Yang12~3
 
-if ($_SERVER['REMOTE_ADDR'] == '118.81.6.169') {
-	
+if ($_SERVER['REMOTE_ADDR'] == '221.205.138.108') {
+	echo "<pre>";
+	print_r();
+	echo "</pre>";
+	exit;
 }
 
 if (strexists($_SERVER['REMOTE_ADDR'], '140.207.54')) {

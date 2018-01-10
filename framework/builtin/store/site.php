@@ -10,14 +10,19 @@ class StoreModuleSite extends WeModuleSite {
 	private $left_menus;
 
 	public function __construct() {
+		global $_W;
 		load()->model('store');
+		$this->store_setting = (array)$_W['setting']['store'];
 		$this->left_menus = $this->leftMenu();
 	}
 
 	public function storeIsOpen() {
 		global $_W;
-		if ((!$_W['isfounder'] || user_is_vice_founder()) && $_W['setting']['store']['status'] == 1) {
+		if ((!$_W['isfounder'] || user_is_vice_founder()) && $this->store_setting['status'] == 1) {
 			itoast('商城已被创始人关闭！', referer(), 'error');
+		}
+		if (in_array($_W['username'], $this->store_setting['blacklist'])) {
+			itoast('您无权限进入商城，请联系管理员！', referer(), 'error');
 		}
 		return true;
 	}
@@ -210,8 +215,7 @@ class StoreModuleSite extends WeModuleSite {
 		$operate = in_array($operate, $operates) ? $operate : 'store_status';
 
 		$_W['page']['title'] = '商城设置 - 商城';
-
-		$settings = (array)$_W['setting']['store'];
+		$settings = $this->store_setting;
 		if ($operate == 'store_status') {
 			if (checksubmit('submit')) {
 				$status = intval($_GPC['status']) > 0 ? 1 : 0;
@@ -645,6 +649,58 @@ class StoreModuleSite extends WeModuleSite {
 		include $this->template ('goodsbuyer');
 	}
 
+	public function doWebBlacklist() {
+		global $_W, $_GPC;
+		$this->storeIsOpen();
+
+		$operation = trim($_GPC['operation']);
+		$operations = array('display', 'post', 'delete');
+		$operation = in_array($operation, $operations) ? $operation : 'display';
+
+		$blacklist = $this->store_setting['blacklist'];
+		if (empty($blacklist)) {
+			$blacklist = array();
+		}
+		if ($operation == 'display') {
+			include $this->template('blacklist');
+		}
+
+		if ($operation == 'post') {
+			$username = safe_gpc_string($_GPC['username']);
+			$user_exist = pdo_get('users', array('username' => $username));
+			if (empty($user_exist)) {
+				itoast('用户不存在！');
+			}
+			if (in_array($username, $blacklist)) {
+				itoast('用户已在黑名单中！');
+			}
+			array_push($blacklist, $username);
+			$this->store_setting['blacklist'] = $blacklist;
+			setting_save($this->store_setting, 'store');
+			cache_build_frame_menu();
+			itoast('更新黑名单成功！');
+		}
+
+		if ($operation == 'delete') {
+			$username = safe_gpc_string($_GPC['username']);
+			if (empty($username)) {
+				itoast('参数错误！');
+			}
+			if (!in_array($username, $blacklist)) {
+				itoast('用户不在黑名单中！');
+			}
+			foreach ($blacklist as $key => $val) {
+				if ($val == $username) {
+					unset($blacklist[$key]);
+				}
+			}
+			$this->store_setting['blacklist'] = $blacklist;
+			setting_save($this->store_setting, 'store');
+			cache_build_frame_menu();
+			itoast('删除成功！');
+		}
+	}
+
 	public function leftMenu() {
 		$this->storeIsOpen();
 		$menu = array(
@@ -722,6 +778,12 @@ class StoreModuleSite extends WeModuleSite {
 						'url' => $this->createWebUrl('paySetting', array('direct' => 1)),
 						'icon' => 'wi wi-account',
 						'type' => 'paySetting',
+					),
+					'store_manage_blacklist' => array(
+						'title' => '黑名单',
+						'url' => $this->createWebUrl('blacklist', array('direct' => 1)),
+						'icon' => 'wi wi-blacklist',
+						'type' => 'blacklist',
 					),
 				)
 			),

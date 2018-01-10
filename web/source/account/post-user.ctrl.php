@@ -47,6 +47,9 @@ if ($do == 'edit') {
 	}
 	template('account/manage-users');
 } elseif ($do == 'delete') {
+	if (!$_W['isajax'] || !$_W['ispost']) {
+		itoast('非法操作！', referer(), 'error');
+	}
 	$uid = is_array($_GPC['uid']) ? 0 : intval($_GPC['uid']);
 	if (empty($uid)) {
 		itoast('请选择要删除的用户！', referer(), 'error');

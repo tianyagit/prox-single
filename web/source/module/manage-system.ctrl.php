@@ -543,6 +543,9 @@ if ($do == 'save_module_info') {
 
 	if (in_array($type, $module_field)) {
 		$module_update = array($type => trim($module_info[$type]));
+		if ($type == 'title') {
+			$module_update['title_initial'] = get_first_pinyin($module_info['title']);
+		}
 		$result =  pdo_update('modules', $module_update, array('name' => $module_name));
 	} else {
 		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];

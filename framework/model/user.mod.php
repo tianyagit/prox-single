@@ -963,3 +963,24 @@ function user_borrow_oauth_account_list() {
 		'jsoauth_accounts' => $jsoauth_accounts
 	);
 }
+
+/**
+ * 根据管理组获取拥有的模板
+ * @param $founder_groupid
+ * @return array
+ */
+function user_founder_templates($founder_groupid) {
+	$group_detail_info = user_founder_group_detail_info($founder_groupid);
+
+	if (empty($group_detail_info) || empty($group_detail_info['package'])) {
+		return array();
+	}
+
+	$template_list = array();
+	foreach ($group_detail_info['package'] as $uni_group) {
+		if (!empty($group_detail_info['package_detail'][$uni_group]['templates'])) {
+			$template_list = array_merge($template_list, $group_detail_info['package_detail'][$uni_group]['templates']);
+		}
+	}
+	return $template_list;
+}
