@@ -107,11 +107,11 @@ if ($do == 'package_app') {
 
 
 if ($do == 'wxappweb_pay') {
-	$site = WeUtility::createModuleWxapp('wxappweb');
+	$site = WeUtility::createModuleWxapp('core');
 	$site->doPagePay();
 }
 
 if ($do == 'wxappweb_pay_result') {
-	$site = WeUtility::createModuleWxapp('wxappweb');
+	$site = WeUtility::createModuleWxapp('core');
 	$site->doPagePayResult();
 }
