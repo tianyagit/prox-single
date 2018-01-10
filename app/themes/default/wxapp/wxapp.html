@@ -1,6 +1,6 @@
 {template 'common/header'}
-<link href="./resource/css/wxapppack.min.css" rel="stylesheet">
 
+<div class="app-pack">
 <div class="box clearfix">
 	{loop $version_info['modules'] $module}
 	<div class="item pic">
@@ -23,6 +23,8 @@
 	{/loop}
 </div>
 {/if}
+</div>
+
 
 </div>
 </body>
