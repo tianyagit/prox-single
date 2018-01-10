@@ -11,7 +11,7 @@
 	</div>
 	{/loop}
 </div>
-
+{if $version_info['quickmenu']['show']}
 <div class="footer-nav">
 	{loop $version_info['quickmenu']['menus'] $menu}
 	<div class="item">
@@ -22,7 +22,7 @@
 	</div>
 	{/loop}
 </div>
-
+{/if}
 
 </div>
 </body>

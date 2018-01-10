@@ -127,6 +127,7 @@ if ($do == 'post') {
 				'selected_color' => $_GPC['quickmenu']['bottom']['selectedColor'],
 				'boundary' => $_GPC['quickmenu']['bottom']['boundary'],
 				'bgcolor' => $_GPC['quickmenu']['bottom']['bgcolor'],
+				'show' => $_GPC['quickmenu']['show'] == 'true' ? 1 : 0,
 				'menus' => array(),
 			);
 			if (!empty($_GPC['quickmenu']['menus'])) {
@@ -141,6 +142,7 @@ if ($do == 'post') {
 					);
 				}
 			}
+
 			$wxapp_version['quickmenu'] = serialize($quickmenu);
 		}
 		if ($isedit) {
