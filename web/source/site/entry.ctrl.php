@@ -38,7 +38,7 @@ if (!$entry['direct']) {
 	}
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
-		if (empty($_W['uniacid']) && $entry['entry'] != 'system_welcome' && $_GPC['module_type'] != 'system_welcom') {
+		if (empty($_W['uniacid']) && $entry['entry'] != 'system_welcome' && $_GPC['module_type'] != 'system_welcome') {
 			if (!empty($_GPC['version_id'])) {
 				itoast('', url('wxapp/display'));
 			} else {
