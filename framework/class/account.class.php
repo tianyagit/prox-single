@@ -941,6 +941,9 @@ abstract class WeBase {
 				$source = $defineDir . "/template/mobile/{$filename}.html";
 			}
 			if(!is_file($source)) {
+				$source = $defineDir . "/template/webapp/{$filename}.html";
+			}
+			if(!is_file($source)) {
 				$source = IA_ROOT . "/app/themes/{$_W['template']}/{$filename}.html";
 			}
 			if(!is_file($source)) {
