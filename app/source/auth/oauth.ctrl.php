@@ -69,7 +69,7 @@ if (intval($_W['account']['level']) == 4) {
 		if(!is_error($userinfo) && !empty($userinfo) && !empty($userinfo['subscribe'])) {
 			$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
 			if (!empty($userinfo['headimgurl'])) {
-				$userinfo['headimgurl'] = rtrim($userinfo['headimgurl'], '0') . 132;
+				$userinfo['headimgurl'] = preg_match('/\/0$/', $userinfo['headimgurl']) ? rtrim($userinfo['headimgurl'], '0') . 132 : $userinfo['headimgurl'];
 			}
 			$userinfo['avatar'] = $userinfo['headimgurl'];
 			$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
@@ -155,7 +155,7 @@ if ($scope == 'userinfo' || $scope == 'snsapi_userinfo') {
 	if (!is_error($userinfo)) {
 		$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
 		if (!empty($userinfo['headimgurl'])) {
-			$userinfo['headimgurl'] = rtrim($userinfo['headimgurl'], '0') . 132;
+			$userinfo['headimgurl'] = preg_match('/\/0$/', $userinfo['headimgurl']) ? rtrim($userinfo['headimgurl'], '0') . 132 : $userinfo['headimgurl'];
 		}
 		$userinfo['avatar'] = $userinfo['headimgurl'];
 		$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));

@@ -93,7 +93,8 @@ class CoreModuleReceiver extends WeModuleReceiver {
 			if(!is_error($userinfo) && !empty($userinfo) && !empty($userinfo['subscribe'])) {
 				$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
 				if (!empty($userinfo['headimgurl'])) {
-					$userinfo['headimgurl'] = rtrim($userinfo['headimgurl'], '0') . 132;
+
+					$userinfo['headimgurl'] = preg_match('/\/0$/', $userinfo['headimgurl']) ? rtrim($userinfo['headimgurl'], '0') . 132 : $userinfo['headimgurl'];
 				}
 				$userinfo['avatar'] = $userinfo['headimgurl'];
 				$fans = array(
