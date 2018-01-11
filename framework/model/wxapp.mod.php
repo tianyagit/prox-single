@@ -347,7 +347,8 @@ function wxapp_version_detail_info($version_info) {
 		}
 	}
 	if (count($version_info['modules']) > 0) {
-		$version_info['cover_entrys'] = $version_info['modules'][0]['cover_entrys']['cover'];
+		$cover_entrys = $version_info['modules'][0]['cover_entrys'];
+		$version_info['cover_entrys'] = isset($cover_entrys['cover']) ? $cover_entrys['cover'] : array();
 	}
 	if (!empty($version_info['quickmenu'])) {
 		$version_info['quickmenu'] = iunserializer($version_info['quickmenu']);

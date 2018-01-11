@@ -87,7 +87,6 @@ if ($do == 'wxapp_web') {
 
 if ($do == 'package_app') {
 	$version = trim($_GPC['v']);
-	$version = '1.01';
 	$version_info = wxapp_version_by_version($version);
 
 	$version_info['modules'] = array_map(function($module) {
