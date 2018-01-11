@@ -55,7 +55,7 @@ if($_GPC['__auth']) {
 									$record['nationality'] = $userinfo['country'];
 								}
 								if(empty($user['avatar']) && !empty($userinfo['headimgurl'])) {
-									$record['avatar'] = preg_match('/\/0$/', $userinfo['headimgurl']) ? rtrim($userinfo['headimgurl'], '0') . 132 : $userinfo['headimgurl'];;
+									$record['avatar'] = $userinfo['headimgurl'];
 								}
 								if(!empty($record)) {
 									mc_update($user['uid'], $record);
