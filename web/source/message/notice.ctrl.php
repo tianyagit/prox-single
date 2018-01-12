@@ -67,7 +67,7 @@ if ($do == 'event_notice') {
 		iajax(-1);
 	}
 	$message = message_event_notice_list();
-	$cookie_name = $_W['config']['cookie']['pre'] . 'notice';
+	$cookie_name = $_W['config']['cookie']['pre'] . '__notice';
 	if (empty($_COOKIE[$cookie_name]) || $_COOKIE[$cookie_name] < TIMESTAMP) {
 		message_account_expire();
 		message_notice_worker();
