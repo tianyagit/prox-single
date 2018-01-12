@@ -11,6 +11,7 @@ class StoreModuleSite extends WeModuleSite {
 
 	public function __construct() {
 		global $_W;
+		checklogin();
 		load()->model('store');
 		$this->store_setting = (array)$_W['setting']['store'];
 		$this->left_menus = $this->leftMenu();
@@ -21,7 +22,7 @@ class StoreModuleSite extends WeModuleSite {
 		if ((!$_W['isfounder'] || user_is_vice_founder()) && $this->store_setting['status'] == 1) {
 			itoast('商城已被创始人关闭！', referer(), 'error');
 		}
-		if (in_array($_W['username'], $this->store_setting['blacklist'])) {
+		if (in_array($_W['username'], (array)$this->store_setting['blacklist'])) {
 			itoast('您无权限进入商城，请联系管理员！', referer(), 'error');
 		}
 		return true;
