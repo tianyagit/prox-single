@@ -18,7 +18,6 @@ if ($do == 'design_method') {
 	$uniacid = intval($_GPC['uniacid']);
 	template('wxapp/design-method');
 }
-
 if ($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$design_method = intval($_GPC['design_method']);
