@@ -734,7 +734,12 @@ if ($do == 'change_group') {
 	$type = $is_local_image ? 0 : 1;
 	$name = trim($_GPC['name']);
 	$id = intval($_GPC['id']);
-	$updated = $table->where('uid', $_W['uid'])->where('type', $type)
+	if (empty($uniacid)) {
+		$table->where('uid', $_W['uid']);
+	} else {
+		$table->where('uniacid', $uniacid);
+	}
+	$updated = $table->where('type', $type)
 		->fill('name', $name)
 		->where('id', $id)->save();
 	iajax($updated ? 0 : 1, $updated ? '更新成功' : '更新失败');
