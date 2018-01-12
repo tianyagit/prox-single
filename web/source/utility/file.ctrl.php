@@ -13,7 +13,8 @@ load()->model('attachment');
 load()->model('mc');
 
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'image' ,'module' ,'video', 'voice', 'news', 'keyword',
-	'networktowechat', 'networktolocal', 'towechat', 'tolocal','wechat_upload', 'group_list', 'add_group'))) {
+	'networktowechat', 'networktolocal', 'towechat', 'tolocal','wechat_upload',
+	'group_list', 'add_group', 'change_group'))) {
 	exit('Access Denied');
 }
 $result = array(
@@ -702,7 +703,7 @@ $is_local_image = $islocal == 'local' ? true : false;
 /**
  *  图片分组列表
  */
-if ($do == 'image_group') {
+if ($do == 'group_list') {
 	$query = table('attachmentgroup')->where('type', $is_local_image ? 0 : 1);
 	if (empty($uniacid)) {
 		$query->where('uid', $_W['uid']);
@@ -728,15 +729,7 @@ if ($do == 'add_group') {
 	iajax(0, array('id'=>pdo_insertid()));
 }
 
-if ($do == 'del_group') {
-	$table = table('attachmentgroup');
-	$type = $is_local_image ? 0 : 1;
-	$id = intval($_GPC['id']);
-	$deleted = $table->where('uid', $_W['uid'])->where('type', $type)->where('id', $id)->delete();
-	iajax($deleted ? 0 : 1, $deleted ? '删除成功' : '删除失败');
-}
-
-if ($do == 'rename_group') {
+if ($do == 'change_group') {
 	$table = table('attachmentgroup');
 	$type = $is_local_image ? 0 : 1;
 	$name = trim($_GPC['name']);
@@ -746,6 +739,16 @@ if ($do == 'rename_group') {
 		->where('id', $id)->save();
 	iajax($updated ? 0 : 1, $updated ? '更新成功' : '更新失败');
 }
+
+if ($do == 'del_group') {
+	$table = table('attachmentgroup');
+	$type = $is_local_image ? 0 : 1;
+	$id = intval($_GPC['id']);
+	$deleted = $table->where('uid', $_W['uid'])->where('type', $type)->where('id', $id)->delete();
+	iajax($deleted ? 0 : 1, $deleted ? '删除成功' : '删除失败');
+}
+
+
 
 if ($do == 'move_to_group') {
 	$table = table('attachmentgroup');
