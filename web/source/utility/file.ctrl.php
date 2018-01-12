@@ -13,7 +13,7 @@ load()->model('attachment');
 load()->model('mc');
 
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'image' ,'module' ,'video', 'voice', 'news', 'keyword',
-	'networktowechat', 'networktolocal', 'towechat', 'tolocal','wechat_upload'))) {
+	'networktowechat', 'networktolocal', 'towechat', 'tolocal','wechat_upload', 'image_group'))) {
 	exit('Access Denied');
 }
 $result = array(
@@ -696,4 +696,64 @@ if ($do == 'towechat') {
 		return;
 	}
 	iajax(0, $material);
+}
+
+$is_local_image = $islocal == 'local' ? true : false;
+/**
+ *  图片分组列表
+ */
+if ($do == 'image_group') {
+	$list = table('attachmentgroup')
+		->where('uniacid', $uniacid)
+		->where('uid', $_W['uid'])
+		->where('type', $is_local_image ? 0 : 1)->getall();
+	iajax(0, $list);
+}
+
+if ($do == 'add_group') {
+	$table = table('attachmentgroup');
+	$table->fill(array(
+		'uid' => $_W['uid'],
+		'uniacid'=>$uniacid,
+		'name'=>trim($_GPC['name']),
+		'type'=>$is_local_image ? 0 : 1
+	));
+	$result = $table->save();
+	if (is_error($result)) {
+		iajax($result['errno'], $result['message']);
+	}
+	iajax(0, array('id'=>pdo_insertid()));
+}
+
+if ($do == 'del_group') {
+	$table = table('attachmentgroup');
+	$type = $is_local_image ? 0 : 1;
+	$id = intval($_GPC['id']);
+	$deleted = $table->where('uid', $_W['uid'])->where('type', $type)->where('id', $id)->delete();
+	iajax($deleted ? 0 : 1, $deleted ? '删除成功' : '删除失败');
+}
+
+if ($do == 'rename_group') {
+	$table = table('attachmentgroup');
+	$type = $is_local_image ? 0 : 1;
+	$name = trim($_GPC['name']);
+	$id = intval($_GPC['id']);
+	$updated = $table->where('uid', $_W['uid'])->where('type', $type)
+		->fill('name', $name)
+		->where('id', $id)->save();
+	iajax($updated ? 0 : 1, $updated ? '更新成功' : '更新失败');
+}
+
+if ($do == 'move_to_group') {
+	$table = table('attachmentgroup');
+	$group_id = intval($_GPC['groupid']);
+	$ids = $_GPC['ids'];
+	$ids = array_map(function($item){
+		return intval($item);
+	}, $ids);
+
+	$table = table('attachment')->local($is_local_image);
+	$updated = $table->where('id', $ids)->save();
+
+	iajax($updated ? 0 : 1, $updated ? '更新成功' : '更新失败');
 }

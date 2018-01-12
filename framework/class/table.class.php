@@ -199,6 +199,12 @@ abstract class We7Table {
 	public function with($relation) {
 		$relations = is_string($relation) ? func_get_args() : $relation;
 		foreach ($relations as $relation =>$val) {
+			if (is_numeric($relation)) {
+				$relation = $val;
+			}
+			if (!is_callable($val)) {
+				$val = null;
+			}
 			$this->relationDefine[$relation] = $val;
 		}
 
