@@ -20,7 +20,7 @@ abstract class We7Table {
 	protected $tableName = '';
 	//主键
 	protected $primaryKey = 'id';
-	protected $field = array();
+	protected $field = array('group_id');
 	// 字段验证规则
 	protected $rule = array();
 	// 字段默认值
