@@ -6,9 +6,9 @@
 		{loop $store_goods $goods}
 			<div class="item active">
 			<a href="{php echo $this->createWebUrl('goodsbuyer', array('operate' => 'goods_info', 'direct' => 1, 'goods' => $goods['id']))}">
-				{if $_GPC['type'] == STORE_TYPE_API}
+				{if $goods['type'] == STORE_TYPE_API}
 				<div class="icon icon-api"><span class="wi wi-api"></span></div>
-				{elseif in_array($_GPC['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))}
+				{elseif in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))}
 				<div class="icon icon-wi"><span class="wi wi-appjurisdiction"></span></div>
 				{else}
 				<img src="{$goods['module']['logo']}" alt="icon" class="icon" onerror="this.src='./resource/images/nopic-107.png'"/>
