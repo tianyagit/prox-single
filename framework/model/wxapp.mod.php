@@ -522,7 +522,7 @@ function wxapp_code_generate($version_id) {
 		return error(1, '小程序域名必须为https');
 	}
 
-	if ($version_info['type'] == WXAPP_CREATE_MODULE && count($account_wxapp_info['version']['modules'])==1 && $version_info['entry_id'] <= 0) {
+	if ($version_info['type'] == WXAPP_CREATE_MODULE && $version_info['entry_id'] <= 0) {
 		return error(1, '请先设置小程序入口');
 	}
 
