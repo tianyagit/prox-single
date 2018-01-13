@@ -165,7 +165,12 @@ if ($do == 'check_upgrade') {
 					continue;
 				}
 				$best_branch = $cloud_m_info['branches'][$best_branch_id];
-				if (version_compare($module['version'], $cloud_branch_version) == -1 || ($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version'])) || (!empty($module_info['site_branch_id']) && $cloud_m_info['site_branch']['id'] > $module_info['site_branch_id'])) {
+				if (($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version'])) || (!empty($module_info['site_branch_id']) && $cloud_m_info['site_branch']['id'] > $module_info['site_branch_id'])){
+					$module['new_branch'] = 1;
+				} else {
+					$module['new_branch'] = 0;
+				}
+				if (version_compare($module['version'], $cloud_branch_version) == -1) {
 					$module['upgrade'] = true;
 				} else {
 					$module['upgrade'] = false;
