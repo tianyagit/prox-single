@@ -29,14 +29,19 @@ function uni_owned($uid = 0, $is_uni_fetch = true) {
 }
 
 /**
- * 获取用户可操作的所有公众号
+ * 获取用户可操作的所有公众号或小程序或PC
  * @param int $uid 要查找的用户
+ * @param string $type 要查找的类型：公众号：app;小程序：wxapp;PC：webapp;
  * @return array()
  */
-function uni_user_accounts($uid) {
+function uni_user_accounts($uid = 0, $type = 'app') {
 	global $_W;
 	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
-	$cachekey = cache_system_key("user_accounts:{$uid}");
+	if (!in_array($type, array('app', 'wxapp', 'webapp'))) {
+		$type = 'app';
+	}
+	$type = $type == 'app' ? 'wechats' : $type;
+	$cachekey = cache_system_key("user_{$type}_accounts:{$uid}");
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -54,7 +59,7 @@ function uni_user_accounts($uid) {
 	}
 	$where .= !empty($where) ? " AND a.isdeleted <> 1 AND u.role IS NOT NULL" : " WHERE a.isdeleted <> 1";
 
-	$sql = "SELECT w.acid, w.uniacid, w.key, w.secret, w.level, w.name, w.token, a.type" . $field . " FROM " . tablename('account_wechats') . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
+	$sql = "SELECT w.*, a.type" . $field . " FROM " . tablename('account_' . $type) . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
 	$result = pdo_fetchall($sql, $params, 'uniacid');
 	cache_write($cachekey, $result);
 	return $result;
@@ -1084,4 +1089,48 @@ function uni_account_global_oauth() {
 	$oauth = setting_load('global_oauth');
 	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : '';
 	return $oauth;
+}
+
+function uni_search_link_account($module_name, $account_type) {
+	global $_W;
+	$module_name = trim($module_name);
+	if (empty($module_name) || empty($account_type) || !in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_WEBAPP_NORMAL))) {
+		return array();
+	}
+	if (in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
+		$owned_account = uni_user_accounts($_W['uid'], 'app');
+	} elseif ($account_type == ACCOUNT_TYPE_APP_NORMAL) {
+		$owned_account = uni_user_accounts($_W['uid'], 'wxapp');
+	} elseif ($account_type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+		$owned_account = uni_user_accounts($_W['uid'], 'webapp');
+	} else {
+		$owned_account = array();
+	}
+	if (!empty($owned_account)) {
+		foreach ($owned_account as $key => $account) {
+			if ($account['type'] != $account_type) {
+				unset($owned_account[$key]);
+				continue;
+			}
+			$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
+			if (!in_array($account['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
+				unset($owned_account[$key]);
+			}
+		}
+		foreach ($owned_account as $key => $account) {
+			$account_modules = uni_modules_by_uniacid($account['uniacid']);
+			if (empty($account_modules[$module_name])) {
+				unset($owned_account[$key]);
+				continue;
+			}
+			if (in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && $account_modules[$module_name]['app_support'] != MODULE_SUPPORT_ACCOUNT) {
+				unset($owned_account[$key]);
+			} elseif ($account_type == ACCOUNT_TYPE_APP_NORMAL && $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
+				unset($owned_account[$key]);
+			} elseif ($account_type == ACCOUNT_TYPE_WEBAPP_NORMAL && $account_modules[$module_name]['webapp_support'] != MODULE_SUPPORT_WEBAPP) {
+				unset($owned_account[$key]);
+			}
+		}
+	}
+	return $owned_account;
 }
