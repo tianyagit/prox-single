@@ -67,4 +67,21 @@ class ModuleTable extends We7Table {
 	public function modulesWxappList() {
 		return $this->query->from('modules')->where('wxapp_support', MODULE_SUPPORT_WXAPP)->getall('mid');
 	}
+
+	public function moduleLinkUniacidInfo($module_name) {
+		$result = array();
+		if (empty($module_name)) {
+			return $result;
+		}
+		$result = $this->query->from('uni_account_modules')->where('module', $module_name)->getall();
+		if (!empty($result)) {
+			foreach ($result as $key => $value) {
+				$result[$key]['settings'] = iunserializer($value['settings']);
+				if (empty($result[$key]['settings']) || empty($result[$key]['settings']['link_uniacid'])) {
+					unset($result[$key]);
+				}
+			}
+		}
+		return $result;
+	}
 }

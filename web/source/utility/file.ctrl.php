@@ -13,7 +13,8 @@ load()->model('attachment');
 load()->model('mc');
 
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'image' ,'module' ,'video', 'voice', 'news', 'keyword',
-	'networktowechat', 'networktolocal', 'towechat', 'tolocal','wechat_upload'))) {
+	'networktowechat', 'networktolocal', 'towechat', 'tolocal','wechat_upload',
+	'group_list', 'add_group', 'change_group', 'del_group', 'move_to_group'))) {
 	exit('Access Denied');
 }
 $result = array(
@@ -213,25 +214,43 @@ if ($do == 'fetch' || $do == 'upload') {
 	$info['state'] = 'SUCCESS';	die(json_encode($info));
 }
 
+
 if ($do == 'delete') {
-	$id = intval($_GPC['id']);
-	$media = pdo_get('core_attachment', array('id' => $id));
-	if (empty($media)) {
-		exit('文件不存在或已经删除');
-	}
+
 	if (empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER && $_W['role'] != ACCOUNT_MANAGE_NAME_OWNER) {
-		exit('您没有权限删除该文件');
+		iajax(1, '您没有权限删除文件');
 	}
-	if (!empty($_W['setting']['remote']['type'])) {
-		$status = file_remote_delete($media['attachment']);
+	$id = $_GPC['id'];
+	if (is_array($id)) {
+		$id = array_map(function($item) {
+			return intval($item);
+		}, $id);
 	} else {
-		$status = file_delete($media['attachment']);
+		$id = array(intval($id));
 	}
-	if (is_error($status)) {
-		exit($status['message']);
+	$table = table('attachment')->where('id', $id);
+	if (empty($uniacid)) {
+		$table->where('uid', $_W['uid']);
+	} else {
+		$table->where('uniacid', $uniacid);
 	}
-	pdo_delete('core_attachment', array('id' => $id));
-	exit('success');
+	$attachments = $table->getall();
+	$delete_ids = array();
+	foreach ($attachments as $media) {
+		if (!empty($_W['setting']['remote']['type'])) {
+			$status = file_remote_delete($media['attachment']);
+		} else {
+			$status = file_delete($media['attachment']);
+		}
+		if (is_error($status)) {
+			iajax(1, $status['message']);
+			exit;
+		}
+		$delete_ids[] = $media['id'];
+	}
+
+	pdo_delete('core_attachment', array('id' => $delete_ids));
+	iajax(0, '删除成功');
 }
 
 
@@ -586,6 +605,7 @@ if ($do == 'image') {
 	$year = $_GPC['year'];
 	$month = $_GPC['month'];
 	$page = intval($_GPC['page']);
+	$groupid = intval($_GPC['groupid']);
 	$page_size = 24;
 	$page = max(1, $page);
 	$is_local_image = $islocal == 'local' ? true : false;
@@ -596,6 +616,9 @@ if ($do == 'image') {
 
 	if (empty($uniacid)) {
 		$attachment_table->searchWithUid($_W['uid']);
+	}
+	if ($groupid >=0) {
+		$attachment_table->searchWithGroupId($groupid);
 	}
 
 	if ($year || $month) {
@@ -696,4 +719,79 @@ if ($do == 'towechat') {
 		return;
 	}
 	iajax(0, $material);
+}
+
+$is_local_image = $islocal == 'local' ? true : false;
+/**
+ *  图片分组列表
+ */
+if ($do == 'group_list') {
+	$query = table('attachmentgroup')->where('type', $is_local_image ? 0 : 1);
+	if (empty($uniacid)) {
+		$query->where('uid', $_W['uid']);
+	} else {
+		$query->where('uniacid', $uniacid);
+	}
+	$list = $query->getall();
+	iajax(0, $list);
+}
+
+if ($do == 'add_group') {
+	$table = table('attachmentgroup');
+	$table->fill(array(
+		'uid' => $_W['uid'],
+		'uniacid'=>$uniacid,
+		'name'=>trim($_GPC['name']),
+		'type'=>$is_local_image ? 0 : 1
+	));
+	$result = $table->save();
+	if (is_error($result)) {
+		iajax($result['errno'], $result['message']);
+	}
+	iajax(0, array('id'=>pdo_insertid()));
+}
+
+if ($do == 'change_group') {
+	$table = table('attachmentgroup');
+	$type = $is_local_image ? 0 : 1;
+	$name = trim($_GPC['name']);
+	$id = intval($_GPC['id']);
+	if (empty($uniacid)) {
+		$table->where('uid', $_W['uid']);
+	} else {
+		$table->where('uniacid', $uniacid);
+	}
+	$updated = $table->where('type', $type)
+		->fill('name', $name)
+		->where('id', $id)->save();
+	iajax($updated ? 0 : 1, $updated ? '更新成功' : '更新失败');
+}
+
+if ($do == 'del_group') {
+	$table = table('attachmentgroup');
+	$type = $is_local_image ? 0 : 1;
+	$id = intval($_GPC['id']);
+	if (empty($uniacid)) {
+		$table->where('uid', $_W['uid']);
+	} else {
+		$table->where('uniacid', $uniacid);
+	}
+	$deleted = $table->where('type', $type)->where('id', $id)->delete();
+	iajax($deleted ? 0 : 1, $deleted ? '删除成功' : '删除失败');
+}
+
+
+
+if ($do == 'move_to_group') {
+	$table = table('attachmentgroup');
+	$group_id = intval($_GPC['id']);
+	$ids = $_GPC['keys'];
+	$ids = array_map(function($item){
+		return intval($item);
+	}, $ids);
+
+	$table = table('attachment')->local($is_local_image);
+	$updated = $table->where('id', $ids)->fill('group_id', $group_id)->save();
+
+	iajax($updated ? 0 : 1, $updated ? '更新成功' : '更新失败');
 }

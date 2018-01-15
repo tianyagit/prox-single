@@ -135,6 +135,13 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-pay-setting',
 					'permission_name' => 'profile_pay_setting',
 				),
+				'app_module_link' => array(
+					'title' => "数据同步",
+					'url' => url('profile/module-link-uniacid'),
+					'is_display' => 1,
+					'icon' => 'wi wi-data-synchro',
+					'permission_name' => 'profile_app_module_link_uniacid',
+				),
 				/* xstart */
 				'bind_domain' => array(
 					'title' => '域名绑定',
@@ -184,17 +191,17 @@ $we7_system_menu['wxapp'] = array(
 			'menu' => array(),
 			'is_display' => true,
 		),
-		'platform_manage_menu' => array(
-			'title' => '管理',
+		'wxapp_profile' => array(
+			'title' => '配置',
 			'menu' => array(
-				'module_link' => array(
+				'wxapp_module_link' => array(
 					'title' => "数据同步",
 					'url' => url('wxapp/module-link-uniacid'),
 					'is_display' => 1,
 					'icon' => 'wi wi-data-synchro',
 					'permission_name' => 'wxapp_module_link_uniacid',
 				),
-				'wxapp_profile' => array(
+				'wxapp_payment' => array(
 					'title' => '支付参数',
 					'url' => url('wxapp/payment'),
 					'is_display' => 1,
@@ -244,7 +251,19 @@ $we7_system_menu['webapp'] = array(
 					'permission_name' => 'mc_member',
 				)
 			),
-		)
+		),
+		'webapp' => array(
+			'title' => '配置',
+			'menu' => array(
+				'webapp_module_link' => array(
+					'title' => "数据同步",
+					'url' => url('webapp/module-link-uniacid'),
+					'is_display' => 1,
+					'icon' => 'wi wi-data-synchro',
+					'permission_name' => 'webapp_module_link_uniacid',
+				),
+			),
+		),
 	),
 );
 

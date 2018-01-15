@@ -18,11 +18,11 @@ if ($do == 'design_method') {
 	$uniacid = intval($_GPC['uniacid']);
 	template('wxapp/design-method');
 }
-
 if ($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 	$design_method = intval($_GPC['design_method']);
 	$create_type = intval($_GPC['create_type']);
+
 	$version_id  = intval($_GPC['version_id']);
 	$isedit  =  $version_id > 0 ? 1 : 0;
 	if ($isedit) {
@@ -44,7 +44,7 @@ if ($do == 'post') {
 		if ($design_method == WXAPP_TEMPLATE && empty($_GPC['choose']['modules'])) {
 			iajax(2, '请选择要打包的模块应用', url('wxapp/post'));
 		}
-		if (!preg_match('/^[0-9]{1,2}\.[0-9]{1,2}$/', trim($_GPC['version']))) {
+		if (!preg_match('/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$/', trim($_GPC['version']))) {
 			iajax('-1', '版本号错误，只能是数字、点，数字最多两位，例如 1.01');
 		}
 		//新建小程序公众号
@@ -89,7 +89,10 @@ if ($do == 'post') {
 		);
 		/* xstart */
 		if (IMS_FAMILY == 'x') {
-			$wxapp_version['type'] = ($create_type == WXAPP_CREATE_MODULE) ? WXAPP_CREATE_MODULE : WXAPP_CREATE_DEFAULT;
+			if (!in_array($create_type, array(WXAPP_CREATE_DEFAULT, WXAPP_CREATE_MODULE, WXAPP_CREATE_MUTI_MODULE))) {
+				$create_type = WXAPP_CREATE_DEFAULT;
+			}
+			$wxapp_version['type'] = $create_type;
 		}
 		/* xend */
 		//多模块打包，每个版本对应一个微官网

@@ -10,7 +10,7 @@
 			href="./index.php?c=wxapp&a=front-download&do=custom&version_id={$version_id}">定制主题<span style="color: red">(beta)</span></a></li>
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
-		{if ($is_module_wxapp)}
+		{if ($is_single_module_wxapp)}
 		<li class="{if $do == 'entrychoose'}active{/if}"><a
 				href="./index.php?c=wxapp&a=front-download&do=entrychoose&version_id={$version_id}">小程序入口配置</a></li>
 		{/if}
@@ -342,7 +342,7 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2">版本号</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="user_version" ng-model="user_version" readonly>
+					<input type="text" class="form-control" id="user_version" ng-model="user_version">
 					<span class="help-block">
 													版本号仅限数字
 												</span>

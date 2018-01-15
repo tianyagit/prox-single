@@ -20,7 +20,7 @@ abstract class We7Table {
 	protected $tableName = '';
 	//主键
 	protected $primaryKey = 'id';
-	protected $field = array();
+	protected $field = array('group_id');
 	// 字段验证规则
 	protected $rule = array();
 	// 字段默认值
@@ -199,6 +199,12 @@ abstract class We7Table {
 	public function with($relation) {
 		$relations = is_string($relation) ? func_get_args() : $relation;
 		foreach ($relations as $relation =>$val) {
+			if (is_numeric($relation)) {
+				$relation = $val;
+			}
+			if (!is_callable($val)) {
+				$val = null;
+			}
 			$this->relationDefine[$relation] = $val;
 		}
 

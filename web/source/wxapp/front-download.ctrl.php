@@ -24,7 +24,7 @@ $wxapp_info = wxapp_fetch($_W['uniacid']);
 $is_module_wxapp = false;
 if (!empty($version_id)) {
 	$version_info = wxapp_version($version_id);
-	$is_module_wxapp = ($version_info['type'] == WXAPP_CREATE_MODULE) ? WXAPP_CREATE_MODULE : WXAPP_CREATE_DEFAULT;
+	$is_single_module_wxapp = $version_info['type'] == WXAPP_CREATE_MODULE; //是否单应用打包
 }
 
 /* xstart */
