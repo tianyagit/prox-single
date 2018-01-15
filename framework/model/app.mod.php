@@ -177,3 +177,26 @@ function app_today_visit($uniacid = 0) {
 	}
 	return $result;
 }
+
+/**
+ * 获取模块数据同步信息
+ * @param string $module_name
+ * @return number
+ */
+function app_link_uniaicd_info($module_name) {
+	global $_W;
+	$result = 0;
+	if (empty($module_name)) {
+		return $result;
+	}
+	$module_info = module_fetch($module_name);
+	if (empty($module_info)) {
+		return $result;
+	}
+	$account_module = pdo_get('uni_account_modules', array('module' => $module_name, 'uniacid' => $_W['uniacid']), array('id', 'settings'));
+	if (!empty($account_module)) {
+		$settings = (array)iunserializer($account_module['settings']);
+		$result = !empty($settings['link_uniacid']) ? intval($settings['link_uniacid']) : 0;
+	}
+	return $result;
+}
