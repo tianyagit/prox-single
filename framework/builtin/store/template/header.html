@@ -178,7 +178,7 @@
 				$(function(){
 					$('.left-menu-container').slimScroll({
 						width: '210px',
-						height: '100vh',
+						height: 'calc(100vh - 51px)',
 						opacity: .4,
 						color: '#aaa',
 					});
@@ -264,5 +264,5 @@
 				{/loop}
 			</div>
 		</div>
-		<div class="right-content">
+		<div class="right-content" style="overflow: hidden;">
 {/if}
