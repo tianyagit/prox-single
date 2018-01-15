@@ -44,8 +44,8 @@ if ($do == 'post') {
 		if ($design_method == WXAPP_TEMPLATE && empty($_GPC['choose']['modules'])) {
 			iajax(2, '请选择要打包的模块应用', url('wxapp/post'));
 		}
-		if (!preg_match('/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$/', trim($_GPC['version']))) {
-			iajax('-1', '版本号错误，只能是数字、点，数字最多两位，例如 1.01');
+		if (!preg_match('/^[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]{1,2})?$/', trim($_GPC['version']))) {
+			iajax('-1', '版本号错误，只能是数字、点，数字最多2位，例如 1.1.1 或1.2');
 		}
 		//新建小程序公众号
 		if (empty($uniacid)) {
