@@ -477,6 +477,15 @@ function permission_user_account_num($uid = 0) {
 		$role = ACCOUNT_MANAGE_NAME_OWNER;
 		$group = $user_table->usersGroupInfo($user['groupid']);
 		$group_num = uni_owner_account_nums($user['uid'], $role);
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			if (!empty($user['owner_uid'])) {
+				$founder = user_single($user['owner_uid']);
+				$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
+				$group_num = uni_owner_account_nums($founder['uid'], $role);
+			}
+		}
+		/* xend */
 		if (empty($_W['isfounder'])) {
 			if (!empty($user['owner_uid'])) {
 				$owner_info = $user_table->usersInfo($user['owner_uid']);
