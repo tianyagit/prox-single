@@ -13,7 +13,7 @@ if (in_array($action, array('permission', 'manage-account'))) {
 	}
 	$account_api = WeAccount::create();
 	if (is_error($account_api)) {
-		message($account_api['message'], url('module/display'));
+		itoast('', url('module/display'));
 	}
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {
