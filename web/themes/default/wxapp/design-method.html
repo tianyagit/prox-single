@@ -1,14 +1,12 @@
 {template 'common/header'}
-<link rel="stylesheet" href="./resource/css/wxapp-icon.css">
 <div id="js-wxapp-create">
 	<div class="container">
 		<div class="caret-wxapp">
 			<div class="panel panel-app">
 				<div class="panel-heading">
 					<ol class="breadcrumb we7-breadcrumb">
-						<a href="javascript:;" onclick="history.go(-1)" class="go-back">
-						<i class="wi wi-back-circle"></i></a>
-						<span class="font-lg">新建小程序</span>
+						<li><a href="{url 'wxapp/display'}">小程序列表</a></li>
+						<li>新建小程序</li>
 					</ol>
 				</div>
 				<div class="panel-body">
