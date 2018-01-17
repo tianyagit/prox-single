@@ -166,6 +166,21 @@ if ($do == 'post') {
 //获取所有支持小程序的模块
 if ($do == 'get_wxapp_modules') {
 	$wxapp_modules = wxapp_support_wxapp_modules();
+	foreach ($wxapp_modules as $name => $module) {
+		if ($module['issystem']) {
+			$path = '/framework/builtin/'.$module['name'];
+		} else {
+			$path = '../addons/'.$module['name'];
+		}
+		$icon = $path.'/icon-custom.jpg';
+		if (!file_exists($cion)) {
+			$icon = $path.'/icon.jpg';
+			if (!file_exists($icon)) {
+				$icon = './resource/images/nopic-small.jpg';
+			}
+		}
+		$module['logo'] = $icon;
+	}
 	iajax(0, $wxapp_modules, '');
 }
 
