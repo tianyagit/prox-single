@@ -55,7 +55,7 @@
 	</form>
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
-		{if !empty($account_info['wxapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
+		{if !empty($account_info['wxapp_limit']) && (!empty($account_info['founder_wxapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
 			<a href="{php echo url('wxapp/post/design_method')}" class="btn btn-primary we7-padding-horizontal">添加小程序</a>
 		</div>

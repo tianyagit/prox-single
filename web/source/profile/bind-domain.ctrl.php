@@ -14,6 +14,9 @@ $_W['page']['title'] = '域名绑定';
 if ($do == 'bind_domain') {
 	if (checksubmit('submit')) {
 		$bind_domain = trim($_GPC['bind_domain']);
+		if (!starts_with($bind_domain, 'http')) {
+			iajax(-1, '要绑定的域名请以http://或以https://开头');
+		}
 		$special_domain = array('.com.cn', '.net.cn', '.gov.cn', '.org.cn', '.com.hk', '.com.tw');
 		$bind_domain = str_replace($bind_domain, '.com', $bind_domain);
 		$domain_array = explode('.', $bind_domain);
