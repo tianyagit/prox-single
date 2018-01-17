@@ -36,7 +36,7 @@ if ($do == 'pay_password') {
 			message('设置成功', url('mc/bond/pay_password'));
 		} else {
 			mc_update($_W['member']['uid'], array('pay_password' => ''));
-			message('请先完善账号信息', url('mc/bond/pay_password'));
+			message('已关闭支付密码', url('mc/bond/pay_password'));
 		}
 	}
 }

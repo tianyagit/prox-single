@@ -376,6 +376,7 @@
 	$('.credit-js-pay').click(function() {
 		{if empty($credit_pay_setting)}
 			$(this).find('form').submit();
+			return true;
 			{/if}
 				mui.prompt('','','请输入6位数的密码',['<div id="submit_password">确定</div>'],function(){
 					$.post("{php echo url('mc/cash/check_password');}", {'password' : $(".mui-popup-input input").val()}, function(data) {
