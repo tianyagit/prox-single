@@ -9,11 +9,38 @@ load()->model('app');
 load()->func('tpl');
 load()->model('user');
 
-$dos = array('display', 'credits', 'address', 'card', 'mycard', 'record', 
-			'mobile', 'email', 'card_qrcode', 
-			'addressadd', 'settings', 'password', 'aboutus', 'binding_account');
+$dos = array('display', 'credits', 'address', 'card', 'mycard', 'record',
+			'mobile', 'email', 'card_qrcode',
+			'addressadd', 'settings', 'password', 'aboutus', 'binding_account', 'pay_password');
 $do = in_array($do, $dos) ? $do : 'display';
 $profile = mc_fetch($_W['member']['uid']);
+
+if ($do == 'pay_password') {
+	$user_info = mc_fetch($_W['member']['uid']);
+	$pay_password = $user_info['pay_password'];
+	if ($_W['isajax'] && $_W['ispost']) {
+		$password = safe_gpc_string($_GPC['pay_password']);
+		$repeat_password = safe_gpc_string($_GPC['repeat_pay_password']);
+		if ($_GPC['pay_password_open'] == 'on') {
+			if (empty($password) || empty($repeat_password)) {
+				message('请输入支付密码', '', 'error');
+			}
+			if ($password != $repeat_password) {
+				message('两次输入的密码不一致', '', 'error');
+			}
+			if (strlen($password) < 6) {
+				message('密码最小长度为6位', '', 'error');
+			}
+			$password = md5($password . $user_info['salt']);
+			mc_update($_W['member']['uid'], array('pay_password' => $password));
+			message('设置成功', url('mc/bond/pay_password'));
+		} else {
+			mc_update($_W['member']['uid'], array('pay_password' => ''));
+			message('请先完善账号信息', url('mc/bond/pay_password'));
+		}
+	}
+}
+
 /*积分记录*/
 if ($do == 'credits') {
 	$where = '';
@@ -60,7 +87,7 @@ if ($do == 'credits') {
 		}
 		$where .= " AND `credittype` = '{$_GPC['credittype']}'";
 	}
-	
+
 	/*获取总支出收入情况*/
 	$sql = 'SELECT `num` FROM ' . tablename('mc_credits_record') . " WHERE `uid` = :uid $where";
 	$nums = pdo_fetchall($sql, $params);
@@ -102,7 +129,7 @@ if ($do == 'credits') {
 		if (!empty($data)){
 			exit(json_encode($data));
 		} else {
-			exit(json_encode(array('state'=>'error'))); 
+			exit(json_encode(array('state'=>'error')));
 		}
 	}
 	$type = trim($_GPC['type']);
@@ -196,7 +223,7 @@ if ($do == 'password') {
 		message('请先完善账号信息', url('mc/bond/binding_account', array('type' => '1')), 'error');
 	}
 	if ($_W['isajax'] && $_W['ispost']) {
-		if (empty($reregister) && !empty($profile['password'])) {	
+		if (empty($reregister) && !empty($profile['password'])) {
 			$oldpassword = trim($_GPC['oldpassword']);
 			$oldpassword = md5($oldpassword . $profile['salt'] . $_W['config']['setting']['authkey']);
 			$correct = pdo_get('mc_members', array('uid' => $_W['member']['uid'], 'password' => $oldpassword), array('uid'));
@@ -294,7 +321,7 @@ if ($do == 'binding_account') {
 				$userexists = pdo_get('mc_members', array('mobile' => $data['mobile'], 'uniacid' => $_W['uniacid'], 'uid <>' => $_W['member']['uid']), array('uid'));
 				$data['email'] = '';
 			}
-			
+
 			if (!empty($userexists['uid'])) {
 				message('抱歉，该账号已经被注册，请更换。', '', 'error');
 			}

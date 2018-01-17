@@ -145,6 +145,7 @@ function cache_build_users_struct() {
 		'bio' => '自我介绍',
 		'interest' => '兴趣爱好',
 		'password' => '密码',
+		'pay_password' => '支付密码',
 	);
 	cache_write('userbasefields', $base_fields);
 	$fields = pdo_getall('profile_fields', array(), array(), 'field');
@@ -162,6 +163,7 @@ function cache_build_users_struct() {
 		$fields['credit6'] = '预留积分类型6';
 		$fields['createtime'] = '加入时间';
 		$fields['password'] = '用户密码';
+		$fields['pay_password'] = '支付密码';
 		cache_write('usersfields', $fields);
 	} else {
 		cache_write('usersfields', $base_fields);

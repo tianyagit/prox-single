@@ -69,8 +69,8 @@
 	<ul class="mui-table-view mui-table-view-chevron pay-style hide">
 		{if !empty($pay['credit']['switch'])}
 		<li class="mui-table-view-cell credit">
-			<a class="mui-navigate-right mui-media js-pay" href="javascript:;">
-				<form action="{php echo url('mc/cash/credit');}" method="post">
+			<a class="mui-navigate-right mui-media credit-js-pay" href="javascript:;">
+				<form action="{php echo url('mc/cash/credit');}" method="post" id="credit_pay">
 					<input type="hidden" name="params" value="{php echo base64_encode(json_encode($params));}" />
 					<input type="hidden" name="code" value="" />
 					<input type="hidden" name="coupon_id" value="" />
@@ -372,6 +372,27 @@
 </script>
 {/if}
 <script type="text/javascript">
+	check_password = '';
+	$('.credit-js-pay').click(function() {
+		{if empty($credit_pay_setting)}
+			$(this).find('form').submit();
+			{/if}
+				mui.prompt('','','请输入6位数的密码',['<div id="submit_password">确定</div>'],function(){
+					$.post("{php echo url('mc/cash/check_password');}", {'password' : $(".mui-popup-input input").val()}, function(data) {
+						data = $.parseJSON(data);
+						if (data.message == 0) {
+							check_password = 'pass';
+							$('#credit_pay').submit();
+							return false;
+						} else {
+							alert('密码输入错误');
+							return false;
+						}
+					});
+				},'div')
+				document.querySelector('.mui-popup-input input').type='password';
+				return false;
+			});
 		{if $pay['mix']['switch'] && $credtis[$setting['creditbehaviors']['currency']] > 0 && $credtis[$setting['creditbehaviors']['currency']] < $params['fee']}
 		$(function() {
 			$('[name="mix_pay"]').val(true);
