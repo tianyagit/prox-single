@@ -72,6 +72,14 @@ if ($do == 'wxapp_web') {
 		if (count($version_info['modules']) > 1) {
 			$url = murl('wxapp/home/package_app', array('v'=>$version));//多模块打包入口
 		} else {
+			if (!empty($version_info['modules'])) {
+				foreach ($version_info['modules'] as $module) {
+					if (!empty($module['account']) && intval($module['account']['uniacid']) > 0) {
+						$_W['uniacid'] = $module['account']['uniacid'];
+						$_W['account']['link_uniacid'] = $module['account']['uniacid'];
+					}
+				}
+			}
 			$url = murl('entry', array('eid'=>$version_info['entry_id']), true, true);
 		}
 	}

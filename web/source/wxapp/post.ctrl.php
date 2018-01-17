@@ -44,8 +44,8 @@ if ($do == 'post') {
 		if ($design_method == WXAPP_TEMPLATE && empty($_GPC['choose']['modules'])) {
 			iajax(2, '请选择要打包的模块应用', url('wxapp/post'));
 		}
-		if (!preg_match('/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$/', trim($_GPC['version']))) {
-			iajax('-1', '版本号错误，只能是数字、点，数字最多两位，例如 1.01');
+		if (!preg_match('/^[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]{1,2})?$/', trim($_GPC['version']))) {
+			iajax('-1', '版本号错误，只能是数字、点，数字最多2位，例如 1.1.1 或1.2');
 		}
 		//新建小程序公众号
 		if (empty($uniacid)) {
@@ -166,6 +166,21 @@ if ($do == 'post') {
 //获取所有支持小程序的模块
 if ($do == 'get_wxapp_modules') {
 	$wxapp_modules = wxapp_support_wxapp_modules();
+	foreach ($wxapp_modules as $name => $module) {
+		if ($module['issystem']) {
+			$path = '/framework/builtin/'.$module['name'];
+		} else {
+			$path = '../addons/'.$module['name'];
+		}
+		$icon = $path.'/icon-custom.jpg';
+		if (!file_exists($cion)) {
+			$icon = $path.'/icon.jpg';
+			if (!file_exists($icon)) {
+				$icon = './resource/images/nopic-small.jpg';
+			}
+		}
+		$module['logo'] = $icon;
+	}
 	iajax(0, $wxapp_modules, '');
 }
 

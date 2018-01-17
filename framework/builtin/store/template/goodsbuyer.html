@@ -62,7 +62,7 @@
 		</div>
 	</div>
 	{/if}
-	<div class="pull-right">
+	<div class="text-right">
 		{$pager}
 	</div>
 {elseif $operate == 'goods_info'}
@@ -76,7 +76,7 @@
 			{$goods['title']}
 		</li>
 	</ol>
-	<div class="store {if $goods['type'] == STORE_TYPE_PACKAGE}jurisdiction-detail{else}module-detail{/if}" style="width: 898px;">
+	<div class="store {if $goods['type'] == STORE_TYPE_PACKAGE}jurisdiction-detail{else}module-detail{/if}">
 		<div class="top">
 			{if $goods['type'] == STORE_TYPE_API}
 			<div class="icon"><span class="icon-box"><i class="wi wi-api"></i></span></div>

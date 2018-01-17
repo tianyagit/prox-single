@@ -37,11 +37,26 @@
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
 	</form>
-	{if !empty($account_info['pc_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
-	<div class="pull-right">
-		<a href="{url 'webapp/manage/create_display'}" class="btn btn-primary we7-padding-horizontal">添加PC</a>
-	</div>
+	<!-- xstart -->
+	{if IMS_FAMILY == 'x'}
+		{if !empty($account_info['webapp_limit']) && (!empty($account_info['founder_webapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+		<div class="pull-right">
+			<a href="{url 'webapp/manage/create_display'}" class="btn btn-primary we7-padding-horizontal">添加PC</a>
+		</div>
+		{/if}
 	{/if}
+	<!-- xend -->
+
+	<!-- vstart -->
+	{if IMS_FAMILY == 'v'}
+		{if !empty($account_info['webapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
+		<div class="pull-right">
+			<a href="{url 'webapp/manage/create_display'}" class="btn btn-primary we7-padding-horizontal">添加PC</a>
+		</div>
+		{/if}
+	{/if}
+	<!-- vend -->
+
 </div>
 <table class="table we7-table table-hover vertical-middle table-manage" id="js-system-account-display" ng-controller="SystemAccountDisplay" ng-cloak>
 	<col width="120px" />

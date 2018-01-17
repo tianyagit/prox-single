@@ -5,9 +5,21 @@
 			<i class="wi wi-small-routine" style="font-size: 24px; margin-right: 10px; vertical-align:middle;"></i>选择小程序
 		</span>
 		<div class="pull-right font-default">
-			{if !empty($account_info['wxapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
-			<a href="{php echo url('wxapp/post/design_method')}" class="color-default"><i class="wi wi-registersite"></i>新建小程序</a>
+			<!-- xstart -->
+			{if IMS_FAMILY == 'x'}
+				{if !empty($account_info['wxapp_limit']) && (!empty($account_info['founder_wxapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+				<a href="{php echo url('wxapp/post/design_method')}" class="color-default"><i class="wi wi-registersite"></i>新建小程序</a>
+				{/if}
 			{/if}
+			<!-- xend -->
+
+			<!-- vstart -->
+			{if IMS_FAMILY == 'v'}
+				{if !empty($account_info['wxapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
+				<a href="{php echo url('wxapp/post/design_method')}" class="color-default"><i class="wi wi-registersite"></i>新建小程序</a>
+				{/if}
+			{/if}
+			<!-- vend -->
 			<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="color-default"><i class="wi wi-wechatstatistics"></i>小程序管理</a>
 		</div>
 	</div>
@@ -86,7 +98,7 @@
 				<div class="message-state">您还没有创建小程序</div>
 				<!-- xstart -->
 				{if IMS_FAMILY == 'x'}
-				{if !empty($account_info['wxapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
+				{if !empty($account_info['wxapp_limit']) && (!empty($account_info['founder_wxapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 				<div><a class="btn btn-primary" href="{php echo url('wxapp/post/design_method')}">新建小程序</a></div>
 				{/if}
 				{/if}
