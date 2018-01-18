@@ -10,6 +10,17 @@ load()->model('module');
 load()->model('payment');
 load()->func('communication');
 
+if ($do == 'check_password') {
+	$password = safe_gpc_string($_GPC['password']);
+	$user_info = mc_fetch($_W['member']['uid']);
+	$password = md5($password . $user_info['salt']);
+	if ($password == $user_info['pay_password']) {
+		message(0, '', 'ajax');
+	} else {
+		message(1, '', 'ajax');
+	}
+}
+
 $moduels = uni_modules();
 $params = @json_decode(base64_decode($_GPC['params']), true);
 if(empty($params) || !array_key_exists($params['module'], $moduels)) {

@@ -230,4 +230,18 @@ class AccountTable extends We7Table {
 	public function getAccountByUniacid($uniacid) {
 		return $this->query->from('account')->where('uniacid', $uniacid)->get();
 	}
+
+	public function getAccountExtraPermission($uniacid) {
+		if (empty($uniacid)) {
+			return array();
+		}
+		$result = $this->query->from('uni_group')->where('uniacid', $uniacid)->get();
+		if (!empty($result)) {
+			$result['modules'] = iunserializer($result['modules']);
+			$result['templates'] = iunserializer($result['templates']);
+		} else {
+			$result = array();
+		}
+		return $result;
+	}
 }
