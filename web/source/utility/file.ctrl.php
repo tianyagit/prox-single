@@ -720,7 +720,7 @@ $is_local_image = $islocal == 'local' ? true : false;
  */
 if ($do == 'group_list') {
 	$query = table('attachmentgroup')->where('type', $is_local_image ? 0 : 1);
-	$table->searchWithUniacidOrUid($uniacid, $_W['uid']);
+	$query->searchWithUniacidOrUid($uniacid, $_W['uid']);
 	$list = $query->getall();
 	iajax(0, $list);
 }
