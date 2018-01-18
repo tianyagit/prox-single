@@ -173,8 +173,12 @@ if(!empty($type)) {
 		$ps['title'] = urlencode($params['title']);
 		$sl = base64_encode(json_encode($ps));
 		$auth = sha1($sl . $_W['uniacid'] . $_W['config']['setting']['authkey']);
-
-		$callback = $_W['siteroot'] . "payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
+		$oauth = uni_setting_load('oauth', $_W['uniacid']);
+		if (!empty($oauth['host'])) {
+			$callback = $oauth['host'] . "/payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
+		} else {
+			$callback = $_W['siteroot'] . "payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
+		}
 		$global_unisetting = uni_account_global_oauth();
 		$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : $global_unisetting['oauth']['host'];
 		if (!empty($unisetting['oauth']['host'])) {
