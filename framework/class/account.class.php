@@ -95,6 +95,10 @@ abstract class WeAccount {
 			load()->classs('webapp.account');
 			$account_obj = new WebappAccount();
 		}
+		if($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+			load()->classs('phoneapp.account');
+			$account_obj = new PhoneappAccount();
+		}
 		$account_obj->uniacid = $uniaccount['uniacid'];
 		$account_obj->uniaccount = $uniaccount;
 		$account_obj->account = $account_obj->fetchAccountInfo();
@@ -693,6 +697,44 @@ class WeUtility {
 		self::defineConst($o);
 		$o->inMobile = defined('IN_MOBILE');
 		if($o instanceof WeModuleWxapp) {
+			return $o;
+		} else {
+			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
+			return null;
+		}
+	}
+
+	/**
+	 * 创建模块APP类
+	 * @param string $name
+	 */
+	public static function createModulePhoneapp($name) {
+		global $_W;
+		static $file;
+		$classname = "{$name}ModulePhoneapp";
+		if(!class_exists($classname)) {
+			$file = IA_ROOT . "/addons/{$name}/phoneapp.php";
+			if(!is_file($file)) {
+				$file = IA_ROOT . "/framework/builtin/{$name}/phoneapp.php";
+			}
+			if(!is_file($file)) {
+				trigger_error('ModulePhoneapp Definition File Not Found '.$file, E_USER_WARNING);
+				return null;
+			}
+			require $file;
+		}
+		if(!class_exists($classname)) {
+			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
+			return null;
+		}
+		$o = new $classname();
+		$o->uniacid = $o->weid = $_W['uniacid'];
+		$o->modulename = $name;
+		$o->module = module_fetch($name);
+		$o->__define = $file;
+		self::defineConst($o);
+		$o->inMobile = defined('IN_MOBILE');
+		if($o instanceof WeModulePhoneapp) {
 			return $o;
 		} else {
 			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
@@ -1911,6 +1953,22 @@ abstract class WeModuleWebapp extends WeBase {
 		$function_name = strtolower(substr($name, 6));
 		$file = "$dir/{$function_name}.inc.php";
 		if(file_exists($file)) {
+			require $file;
+			exit;
+		}
+		return null;
+	}
+}
+
+
+abstract class WeModulePhoneapp extends webase {
+	public function __call($name, $arguments) {
+		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/phoneapp';
+		$function_name = strtolower(substr($name, 6));
+		$func_file = "{$function_name}.inc.php";
+
+		$file = "$dir/{$this->version}/{$function_name}.inc.php";
+		if (file_exists($file)) {
 			require $file;
 			exit;
 		}
