@@ -564,6 +564,7 @@ function user_login_forward($forward = '') {
 		'wxapp' => url('wxapp/version/home'),
 		'module' => url('module/display'),
 		'webapp' => url('webapp/home'),
+		'phoneapp' => url('phoneapp/home'),
 	);
 	if (!empty($forward)) {
 		return $login_forward;
@@ -598,6 +599,9 @@ function user_login_forward($forward = '') {
 			if ($account_info['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 				return $login_location['webapp'];
 			}
+			if ($account_info['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+				return $login_location['phoneapp'];
+			}
 		}
 	}
 	if (user_is_vice_founder()) {
@@ -618,6 +622,8 @@ function user_login_forward($forward = '') {
 			$login_forward = url('wxapp/display/home');
 		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 			$login_forward = url('webapp/home/display');
+		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+			$login_forward = url('phoneapp/home/display');
 		}
 	}
 

@@ -16,7 +16,8 @@ function ext_module_convert($manifest) {
 		$wxapp_support = in_array('wxapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_WXAPP : MODULE_NONSUPPORT_WXAPP;
 		$welcome_support = in_array('system_welcome', $manifest['platform']['supports']) ? MODULE_SUPPORT_SYSTEMWELCOME : MODULE_NONSUPPORT_SYSTEMWELCOME;
 		$webapp_support = in_array('webapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_WEBAPP : MODULE_NOSUPPORT_WEBAPP;
-		if ($app_support == MODULE_NONSUPPORT_ACCOUNT && $wxapp_support == MODULE_NONSUPPORT_WXAPP && $welcome_support == MODULE_NONSUPPORT_SYSTEMWELCOME && $webapp_support == MODULE_NOSUPPORT_WEBAPP) {
+		$phoneapp_support = in_array('phoneapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_PHONEAPP : MODULE_NOSUPPORT_PHONEAPP;
+		if ($app_support == MODULE_NONSUPPORT_ACCOUNT && $wxapp_support == MODULE_NONSUPPORT_WXAPP && $welcome_support == MODULE_NONSUPPORT_SYSTEMWELCOME && $webapp_support == MODULE_NOSUPPORT_WEBAPP && $phoneapp_support == MODULE_NOSUPPORT_PHONEAPP) {
 			$app_support = MODULE_SUPPORT_ACCOUNT;
 		}
 	} else {
@@ -48,6 +49,7 @@ function ext_module_convert($manifest) {
 		'app_support' => $app_support,
 		'wxapp_support' => $wxapp_support,
 		'webapp_support' => $webapp_support,
+		'phoneapp_support' => $phoneapp_support,
 		'welcome_support' => $welcome_support,
 		'shortcut' => $manifest['bindings']['shortcut'],
 		'function' => $manifest['bindings']['function'],

@@ -267,6 +267,31 @@ $we7_system_menu['webapp'] = array(
 	),
 );
 
+$we7_system_menu['phoneapp'] = array(
+	'title' => 'APP',
+	'icon' => 'wi wi-white-collar',
+	'url' => url('phoneapp/display/home'),
+	'section' => array(
+		'phoneapp_module' => array(
+			'title' => '应用',
+			'menu' => array(),
+			'is_display' => true,
+		),
+		'phoneapp_profile' => array(
+			'title' => '配置',
+			'menu' => array(
+				'front_download' => array(
+					'title' => '上传微信审核1',
+					'url' => url('phoneapp/front-download'),
+					'is_display' => 1,
+					'icon' => 'wi wi-examine',
+					'permission_name' => 'phoneapp_front_download',
+				)
+			)
+		)
+	),
+);
+
 $we7_system_menu['module'] = array(
 	'title' => '应用',
 	'icon' => 'wi wi-apply',
@@ -407,6 +432,25 @@ $we7_system_menu['system'] = array(
 					'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
 					'icon' => 'wi wi-wxapp-apply',
 					'permission_name' => 'system_module_wxapp',
+				),
+			)
+		),
+		'phoneapp' => array(
+			'title' => 'APP',
+			'menu' => array(
+				'system_phoneapp' => array(
+					'title' => 'APP',
+					'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL)),
+					'icon' => 'wi wi-wxapp',
+					'permission_name' => 'system_phoneapp',
+					'sub_permission' => array(
+					),
+				),
+				'system_module_phoneapp' => array(
+					'title' => 'APP应用',
+					'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL)),
+					'icon' => 'wi wi-wxapp-apply',
+					'permission_name' => 'system_module_phoneapp',
 				),
 			)
 		),
