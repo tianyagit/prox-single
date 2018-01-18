@@ -16,7 +16,7 @@ class AddPayPassword {
 	 */
 	public function up() {
 		if (!pdo_fieldexists('mc_members', 'pay_password')) {
-			pdo_query('ALTER TABLE ' . tablename('mc_members') . " ADD `pay_password` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '支付密码' ;");
+			pdo_query('ALTER TABLE ' . tablename('mc_members') . " ADD `pay_password` VARCHAR(30) NOT NULL DEFAULT '' COMMENT '支付密码' ;");
 		}
 	}
 	
