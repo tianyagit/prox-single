@@ -95,7 +95,13 @@ function wxapp_support_wxapp_modules() {
 	$store_table = table('store');
 	$store_table->searchWithEndtime();
 	$buy_wxapp_modules = $store_table->searchAccountBuyGoods($_W['uniacid'], STORE_TYPE_WXAPP_MODULE);
-	$wxapp_modules = array_merge($buy_wxapp_modules, $wxapp_modules);
+	$extra_permission = table('account')->getAccountExtraPermission($_W['uniacid']);
+	$extra_modules = empty($extra_permission['modules']) ? array() : $extra_permission['modules'];
+	foreach ($extra_modules as $key => $value) {
+		$extra_modules[$value] = module_fetch($value);
+		unset($extra_modules[$key]);
+	}
+	$wxapp_modules = array_merge($buy_wxapp_modules, $wxapp_modules, $extra_modules);
 	if (empty($wxapp_modules)) {
 		return array();
 	}

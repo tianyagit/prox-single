@@ -1597,6 +1597,8 @@ abstract class WeModuleSite extends WeBase {
 		}
 		if (!empty($pay['credit']['switch'])) {
 			$credtis = mc_credit_fetch($_W['member']['uid']);
+			$credit_pay_setting = mc_fetch($_W['member']['uid'], array('pay_password'));
+			$credit_pay_setting = $credit_pay_setting['pay_password'];
 		}
 		$you = 0;
 		include $this->template('common/paycenter');

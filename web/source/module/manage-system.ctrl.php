@@ -20,22 +20,10 @@ $dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upg
 $do = in_array($do, $dos) ? $do : 'installed';
 /* xstart */
 if (IMS_FAMILY == 'x') {
-	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
-		itoast('无权限操作！', referer(), 'error');
+	if (user_is_vice_founder() && !empty($_GPC['system_welcome'])){
+		itoast('无权限操作！');
 	}
-}
-/* xend */
-/* vstart */
-if (IMS_FAMILY == 'v') {
-	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER))){
-		itoast('无权限操作！', referer(), 'error');
-	}
-}
-/* vend */
 
-
-/* xstart */
-if (IMS_FAMILY == 'x') {
 	if ($do == 'set_site_welcome_module') {
 		if (!$_W['isfounder']) {
 			iajax(1, '非法操作');
