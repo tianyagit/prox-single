@@ -1,6 +1,6 @@
 <?php
 
-namespace We7\V168;
+namespace We7\V169;
 
 defined('IN_IA') or exit('Access Denied');
 
