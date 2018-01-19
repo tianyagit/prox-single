@@ -10,7 +10,23 @@ $do = safe_gpc_belong($do, array('create_display', 'list', 'save', 'display', 'd
 
 $uniacid = safe_gpc_int($_GPC['uniacid']);
 
+$state = permission_account_user_role($_W['uid'], $uniacid);
+/* xstart */
+if (IMS_FAMILY == 'x') {
+	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
+}
+/* xend */
+/* vstart */
+if (IMS_FAMILY == 'v') {
+	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER));
+}
+/* vend */
+if (!$role_permission) {
+	itoast('无权限操作！', referer(), 'error');
+}
+
 if ($do == 'save') {
+	$version_id = safe_gpc_int($_GPC['version_id']);
 	if (empty($uniacid) && empty($account_info['phoneapp_limit']) && !user_is_founder($_W['uid'])) {
 		iajax(-1, '创建APP个数已满', url('phoneapp/manage/create_display'));
 	}
@@ -24,9 +40,13 @@ if ($do == 'save') {
 		'createtime' => TIMESTAMP
 	);
 
-	if (empty($uniacid)) {
+	if (empty($uniacid) && empty($version_id)) {
 		$phoneapp_table = table('phoneapp');
 		$result = $phoneapp_table->createPhoneApp($data);
+	} else if (!empty($version_id)) {
+		unset($data['name']);
+		$result = pdo_update('phoneapp_versions', $data, array('id' => $version_id, 'uniacid' => $uniacid));
+		iajax(0, '修改成功', url('phoneapp/manage/display'), array('uniacid' => $uniacid));
 	} else {
 		unset($data['name']);
 		$result = pdo_insert('phoneapp_versions', $data);
@@ -95,7 +115,7 @@ if ($do == 'display') {
 }
 
 if ($do == 'del_version') {
-	$id = intval($_GPC['versionid']);
+	$id = intval($_GPC['version_id']);
 	if (empty($id)) {
 		iajax(1, '参数错误！');
 	}

@@ -7,11 +7,10 @@
 <div class="media media-wechat-setting">
 	<a class="media-left">
 		<span class="icon"><i class="wi wi-wxapp"></i></span>
-		<img src="{media 'headimg_'.$acid.'.jpg'}" class="wechat-img">
+		<img src="{php echo tomedia('headimg_'.$_GPC['acid'].'.jpg')}?time={php echo time()}" class="wechat-img">
 	</a>
 	<div class="media-body media-middle ">
 		<h4 class="media-heading color-dark">{$account['name']}</h4>
-		<span class="color-gray">APP</span>
 	</div>
 	{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER}
 	<div class="media-right media-middle">
