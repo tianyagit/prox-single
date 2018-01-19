@@ -1846,6 +1846,7 @@ abstract class WeModuleWxapp extends WeBase {
 			$paylog = array(
 				'uniacid' => $_W['uniacid'],
 				'acid' => $_W['acid'],
+				'type' => 'wxapp',
 				'openid' => $_W['openid'],
 				'module' => $this->module['name'],
 				'tid' => $order['tid'],
