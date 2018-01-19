@@ -1801,7 +1801,6 @@ abstract class WeModuleWxapp extends WeBase {
 					$file = current($dirs).'/'.$func_file;
 				} else if(count($files) > 0){
 					$file = current($files);
-
 				}
 			}
 		}
