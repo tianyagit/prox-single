@@ -358,6 +358,10 @@ function uni_groups($groupids = array(), $show_all = false) {
 									$row['webapp'][$module['name']] = $module;
 								}
 
+								if ($module['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP) {
+									$row['phoneapp'][$module['name']] = $module;
+								}
+
 								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 									if (!empty($module['main_module'])) {
 										continue;
