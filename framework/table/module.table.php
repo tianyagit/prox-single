@@ -69,9 +69,8 @@ class ModuleTable extends We7Table {
 	}
 
 	public function moduleLinkUniacidInfo($module_name) {
-		$result = array();
 		if (empty($module_name)) {
-			return $result;
+			return array();
 		}
 		$result = $this->query->from('uni_account_modules')->where('module', $module_name)->getall();
 		if (!empty($result)) {
@@ -81,7 +80,21 @@ class ModuleTable extends We7Table {
 					unset($result[$key]);
 				}
 			}
+			return $result;
 		}
-		return $result;
+		return array();
+	}
+
+	public function uniAccountModuleInfo($module_name) {
+		global $_W;
+		if (empty($module_name)) {
+			return array();
+		}
+		$result = $this->query->from('uni_account_modules')->where('module', $module_name)->where('uniacid', $_W['uniacid'])->get();
+		if (!empty($result)) {
+			$result['settings'] = iunserializer($result['settings']);
+			return $result;
+		}
+		return array();
 	}
 }
