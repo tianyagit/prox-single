@@ -1962,12 +1962,36 @@ abstract class WeModuleWebapp extends WeBase {
 
 
 abstract class WeModulePhoneapp extends webase {
+	public $version;
+
 	public function __call($name, $arguments) {
 		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/phoneapp';
 		$function_name = strtolower(substr($name, 6));
 		$func_file = "{$function_name}.inc.php";
-
 		$file = "$dir/{$this->version}/{$function_name}.inc.php";
+		if (!file_exists($file)) {
+			$version_path_tree = glob("$dir/*");
+			usort($version_path_tree, function($version1, $version2) {
+				return -version_compare($version1, $version2);
+			});
+			if (!empty($version_path_tree)) {
+				// 先过滤目录
+				$dirs = array_filter($version_path_tree, function($path) use ($func_file){
+					$file_path = "$path/$func_file";
+					return is_dir($path) && file_exists($file_path);
+				});
+				// 再过滤文件
+				$files = array_filter($version_path_tree, function($path) use ($func_file){
+					return is_file($path) && pathinfo($path, PATHINFO_BASENAME) == $func_file;
+				});
+
+				if (count($dirs) > 0) {
+					$file = $dirs[0].'/'.$func_file;
+				} else if(count($files) > 0){
+					$file = $files[0];
+				}
+			}
+		}
 		if (file_exists($file)) {
 			require $file;
 			exit;
