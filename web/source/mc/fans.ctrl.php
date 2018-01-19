@@ -281,6 +281,11 @@ if ($do == 'sync') {
 				mc_init_fans_info($fans['openid']);
 			}
 		}
+		if ($total == $pageindex) {
+			setcookie(cache_system_key('sync_fans_pindex:' . $_W['uniacid']), '', -1);
+		} else {
+			setcookie(cache_system_key('sync_fans_pindex:' . $_W['uniacid']), $pageindex);
+		}
 		iajax(0, array('pageindex' => $pageindex, 'total' => $total), '');
 	}
 	if ($type == 'check') {
