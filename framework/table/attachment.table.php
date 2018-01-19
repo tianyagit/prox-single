@@ -52,6 +52,15 @@ class AttachmentTable extends We7Table {
 		$this->query->where(array('group_id =' => $groupid));
 		return $this;
 	}
+
+	public function searchWithUniacidOrUid($uniacid, $uid) {
+		if (empty($uniacid)) {
+			$this->query->where('uid', $uid);
+		} else {
+			$this->query->where('uniacid', $uniacid);
+		}
+		return $this;
+	}
 }
 
 class WechatAttachmentTable extends AttachmentTable {
