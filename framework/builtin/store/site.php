@@ -352,7 +352,7 @@ class StoreModuleSite extends WeModuleSite {
 					'price' => is_numeric($_GPC['price']) ? floatval($_GPC['price']) : 0,
 					'slide' => !empty($_GPC['slide']) ? iserializer($_GPC['slide']) : '',
 					'api_num' => is_numeric($_GPC['api_num']) ? intval($_GPC['api_num']) : 0,
-					'description' => htmlspecialchars_decode(remove_xss($_GPC['description'])),
+					'description' => safe_gpc_html(htmlspecialchars_decode($_GPC['description'])),
 				);
 				if ($_GPC['type'] == STORE_TYPE_API) {
 					$data['title'] = '应用访问量';
