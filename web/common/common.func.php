@@ -147,6 +147,43 @@ function checklogin() {
 	return true;
 }
 
+function check_bind() {
+	global $_W, $_GPC;
+	if (!empty($_W['setting']['copyright']['bind'])) {
+		$complete_info = false;
+		switch($_W['setting']['copyright']['bind']) {
+			case 'qq' :
+				if (!empty($_W['user']['qq_openid'])) {
+					$complete_info = true;
+				}
+				break;
+			case 'mobile' :
+				if (!empty($_W['user']['mobile'])) {
+					$complete_info = true;
+				}
+				break;
+			case 'wechat' :
+				if (!empty($_W['user']['wechat_openid'])) {
+					$complete_info = true;
+				}
+				break;
+		}
+		$bind_url = array(
+			'user' => 'bind',
+			'utility' => 'verifycode',
+			'utility' => 'code',
+		);
+		$is_bind_url = true;
+		if (empty($bind_url[$_GPC['c']]) || $bind_url[$_GPC['c']] != $_GPC['a']) {
+			$is_bind_url = false;
+		}
+		if (!$is_bind_url && empty($_W['isfounder']) && !$complete_info) {
+			header("Location: " . url('user/bind'));
+		}
+	}
+	return true;
+}
+
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
