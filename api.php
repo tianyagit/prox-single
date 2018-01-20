@@ -50,7 +50,7 @@ $_W['account']['groupid'] = $_W['uniaccount']['groupid'];
 $_W['account']['qrcode'] = $_W['attachurl'].'qrcode_'.$_W['acid'].'.jpg?time='.$_W['timestamp'];
 $_W['account']['avatar'] = $_W['attachurl'].'headimg_'.$_W['acid'].'.jpg?time='.$_W['timestamp'];
 $_W['attachurl'] = attachment_set_attach_url();
-visit_update_today('account', 'we7_api');
+visit_update_today('web', 'we7_api');
 
 $engine = new WeEngine();
 if (!empty($_W['setting']['copyright']['status'])) {
