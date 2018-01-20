@@ -33,16 +33,13 @@
                     <label class="control-label col-sm-2">添加应用</label>
                     <div class="form-controls col-sm-10">
                         <ul class="app-list">
-                            <li class="select" ng-repeat="module in selectedModule">
-                                <!--<li class="select" ng-if="selected==true" ng-repeat="module in selectedModule">-->
-                                <div class="app-info" >
-                                    <img ng-src="{{module.logo}}" />
-                                    <p>{{module.title}}</p>
-                                </div>
+                            <li class="we7-input-img active" style="float:left;" ng-repeat="module in selectedModule">
+                                <img ng-src="{{module.logo}}" />
+                                <p>{{module.title}}</p>
                             </li>
-                            <div class="we7-input-img">
+                            <li class="we7-input-img" style="float:left;">
                                 <a href="javascript:;" class="input-addon" data-toggle="modal" data-target="#add_module"><span>+</span></a>
-                            </div>
+                            </li>
                         </ul>
                     </div>
                 </div>

@@ -1998,6 +1998,14 @@ abstract class WeModulePhoneapp extends webase {
 		}
 		return null;
 	}
+
+	public function result($errno, $message, $data = '') {
+		exit(json_encode(array(
+			'errno' => $errno,
+			'message' => $message,
+			'data' => $data,
+		)));
+	}
 }
 
 /**

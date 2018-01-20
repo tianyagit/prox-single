@@ -11,7 +11,6 @@ if (!empty($_W['uniacid'])) {
 		foreach ($version_info['modules'] as $module) {
 			if (!empty($module['account']) && intval($module['account']['uniacid']) > 0) {
 				$_W['uniacid'] = $module['account']['uniacid'];
-				$_W['account']['link_uniacid'] = $module['account']['uniacid'];
 			}
 		}
 	}
