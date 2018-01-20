@@ -156,6 +156,9 @@ function permission_account_user_role($uid = 0, $uniacid = 0) {
 	if (user_is_vice_founder($uid)) {
 		return ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
 	}
+	if (!user_is_bind()) {
+		return ACCOUNT_MANAGE_NAME_UNBIND_USER;
+	}
 	$user_table = table('users');
 	if (!empty($uniacid)) {
 		$role = $user_table->userOwnedAccountRole($uid, $uniacid);
