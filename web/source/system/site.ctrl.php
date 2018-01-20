@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 /**
  * 站点相关操作
  * [WeEngine System] Copyright (c) 2013 WE7.CC
@@ -75,6 +75,7 @@ if ($do == 'copyright') {
 				'mobile_status' => $_GPC['mobile_status'],
 				'login_type' => $_GPC['login_type'],
 				'icp' => safe_gpc_string($_GPC['icp']),
+				'bind' => $_GPC['bind']
 			);
 		}
 		/* xend */
@@ -86,6 +87,7 @@ if ($do == 'copyright') {
 				'icp' => safe_gpc_string($_GPC['icp']),
 				'mobile_status' => $_GPC['mobile_status'],
 				'login_type' => $_GPC['login_type'],
+				'bind' => $_GPC['bind']
 			);				
 		}
 		/* vend */
