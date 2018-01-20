@@ -11,8 +11,8 @@ $dos = array('display', 'get_account_api');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
-	$today = stat_visit_info_byuniacid('today', '', array(), true);
-	$yesterday = stat_visit_info_byuniacid('yesterday', '', array(), true);
+	$today = stat_visit_app_byuniacid('today', '', array(), true);
+	$yesterday = stat_visit_app_byuniacid('yesterday', '', array(), true);
 	$today_module_api = stat_all_visit_statistics('all_account', $today);
 	$yesterday_module_api = stat_all_visit_statistics('all_account', $yesterday);
 }
@@ -45,7 +45,7 @@ if ($do == 'get_account_api') {
 			'end' => date('Ymd', strtotime($_GPC['daterange']['endDate'])),
 		);
 	}
-	$result = stat_visit_info_bydate($type, '', $daterange, true);
+	$result = stat_visit_app_bydate($type, '', $daterange, true);
 	if (empty($result)) {
 		if ($type == 'today') {
 			$data_x = date('Ymd');
@@ -77,4 +77,4 @@ if ($do == 'get_account_api') {
 	iajax(0, array('data_x' => $data_x, 'data_y' => $data_y));
 }
 
-template('statistics/account');
+template('statistics/app-account');

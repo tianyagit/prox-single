@@ -30,6 +30,7 @@ function permission_build() {
 		$we7_file_permission['profile'][$_W['role']] = array('profile*');
 		$we7_file_permission['module'][$_W['role']] = array('manage-account', 'display');
 		$we7_file_permission['wxapp'][$_W['role']] = array('display', 'payment', 'post', 'version');
+		$we7_file_permission['webapp'][$_W['role']] = array('home', 'manage');
 		cache_write($cachekey, $we7_file_permission);
 		return $we7_file_permission;
 	}
@@ -422,7 +423,7 @@ function permission_check_account_user($permission_name, $show_message = true, $
  * 判断操作员是否具有模块某个业务功能菜单的权限
  */
 function permission_check_account_user_module($action = '', $module_name = '') {
-	global $_GPC;
+	global $_W, $_GPC;
 	$status = permission_account_user_permission_exist();
 	if(empty($status)) {
 		return true;
@@ -431,10 +432,15 @@ function permission_check_account_user_module($action = '', $module_name = '') {
 	$do = trim($_GPC['do']);
 	$m = trim($_GPC['m']);
 	//参数设置权限
-	if ($a == 'module' && $do == 'setting' && !empty($m)) {
+	if ($a == 'manage-account' && $do == 'setting' && !empty($m)) {
 		$permission_name = $m . '_setting';
 		$users_permission = permission_account_user($m);
 		if ($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
+			return false;
+		}
+		//默认入口设置权限
+	} elseif ($a == 'default-entry' && !empty($m)) {
+		if (!($_W['isfounder'] || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
 			return false;
 		}
 		//模块其他业务菜单
