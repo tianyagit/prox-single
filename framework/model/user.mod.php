@@ -994,7 +994,7 @@ function user_founder_templates($founder_groupid) {
  * @return bool
  */
 function user_is_bind() {
-	global $_W, $_GPC;
+	global $_W;
 	if (!empty($_W['setting']['copyright']['bind'])) {
 		$complete_info = false;
 		switch($_W['setting']['copyright']['bind']) {
@@ -1014,16 +1014,7 @@ function user_is_bind() {
 				}
 				break;
 		}
-		$bind_url = array(
-			'user' => 'bind',
-			'utility' => 'verifycode',
-			'utility' => 'code',
-		);
-		$is_bind_url = true;
-		if (empty($bind_url[$_GPC['c']]) || $bind_url[$_GPC['c']] != $_GPC['a']) {
-			$is_bind_url = false;
-		}
-		if (!$is_bind_url && empty($_W['isfounder']) && !$complete_info) {
+		if (empty($_W['isfounder']) && !$complete_info) {
 			return false;
 		}
 	}
