@@ -58,11 +58,12 @@ function app_update_today_visit($module_name) {
 		return false;
 	}
 	$today = date('Ymd');
-	$today_exist = pdo_get('stat_visit', array('date' => $today, 'uniacid' => $_W['uniacid'], 'module' => $module_name));
+	$today_exist = pdo_get('stat_visit', array('date' => $today, 'uniacid' => $_W['uniacid'], 'module' => $module_name, 'type' => 'app'));
 	if (empty($today_exist)) {
 		$insert_data = array(
 			'uniacid' => $_W['uniacid'],
 			'module' => $module_name,
+			'type' => 'app',
 			'date' => $today,
 			'count' => 1
 		);
@@ -149,7 +150,7 @@ function app_month_visit_till_today($uniacid = 0) {
 	}
 	$start = date('Ym01', strtotime(date("Ymd")));
 	$end = date('Ymd', strtotime('-1 day'));
-	$visit = pdo_getall('stat_visit', array('date >=' => $start, 'date <=' => $end, 'uniacid' => $uniacid));
+	$visit = pdo_getall('stat_visit', array('date >=' => $start, 'date <=' => $end, 'uniacid' => $uniacid, 'type' => 'app'));
 	if (!empty($visit)) {
 		foreach ($visit as $val) {
 			$result += $val['count'];
@@ -169,7 +170,7 @@ function app_today_visit($uniacid = 0) {
 	$result = 0;
 	$uniacid = intval($uniacid) > 0 ? intval($uniacid) : $_W['uniacid'];
 
-	$today = pdo_getall('stat_visit', array('date' => date('Ymd'), 'uniacid' => $uniacid));
+	$today = pdo_getall('stat_visit', array('date' => date('Ymd'), 'uniacid' => $uniacid, 'type' => 'app'));
 	if (!empty($today)) {
 		foreach ($today as $val) {
 			$result += $val['count'];

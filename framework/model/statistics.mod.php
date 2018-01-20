@@ -7,24 +7,30 @@ defined('IN_IA') or exit('Access Denied');
 
 /**
  * 获取昨日、最近一周、最近一个月内的访问信息数据
- * @param string $type 类型：today、yesterday、week、month、daterange
+ * @param string $type 类型：web:后端;app:手机端;api:微信API;all:包含web、app、api的所有统计信息
+ * @param string $time_type 时间类型：today、yesterday、week、month、daterange
  * @param string $module 要统计的模块，为空则默认统计所有模块
+ * @param array() $daterange 时间范围
+ * @param boolean 是否系统统计
  * @return array()
  */
-function stat_visit_info($type, $module = '', $daterange = array(), $is_system_stat = false) {
+function stat_visit_info($type, $time_type, $module = '', $daterange = array(), $is_system_stat = false) {
 	global $_W;
 	$result = array();
-	if (empty($type)) {
+	if (empty($type) || empty($time_type) || !empty($type) && !in_array($type, array('web', 'app', 'api', 'all'))) {
 		return $result;
 	}
 	$params = array();
+	if ($type != 'all') {
+		$params['type'] = $type;
+	}
 	if (empty($is_system_stat)) {
 		$params['uniacid'] = $_W['uniacid'];
 	}
 	if (!empty($module)) {
 		$params['module'] = $module;
 	}
-	switch ($type) {
+	switch ($time_type) {
 		case 'today':
 			$params['date'] = date('Ymd');
 			break;
@@ -41,7 +47,7 @@ function stat_visit_info($type, $module = '', $daterange = array(), $is_system_s
 			break;
 		case 'daterange':
 			if (empty($daterange)) {
-				return stat_visit_info('month', $module, array(), $is_system_stat);
+				return stat_visit_info($type, 'month', $module, array(), $is_system_stat);
 			}
 			$params['date >='] = date('Ymd', strtotime($daterange['start']));
 			$params['date <='] = date('Ymd', strtotime($daterange['end']));
@@ -56,13 +62,13 @@ function stat_visit_info($type, $module = '', $daterange = array(), $is_system_s
 
 /**
  * 根据公众号划分，获取昨日、最近一周、最近一个月内的访问信息数据
- * @param string $type 类型：today、yesterday、week、month、daterange
+ * @param string $time_type 类型：today、yesterday、week、month、daterange
  * @param string $module 要统计的模块，为空则默认统计所有模块
  * @return array()
  */
-function stat_visit_info_byuniacid($type, $module = '', $daterange = array(), $is_system_stat = false) {
+function stat_visit_app_byuniacid($time_type, $module = '', $daterange = array(), $is_system_stat = false) {
 	$result = array();
-	$visit_info = stat_visit_info($type, $module, $daterange, $is_system_stat);
+	$visit_info = stat_visit_info('app', $time_type, $module, $daterange, $is_system_stat);
 	if (empty($visit_info)) {
 		return $result;
 	}
@@ -101,13 +107,13 @@ function stat_visit_info_byuniacid($type, $module = '', $daterange = array(), $i
 
 /**
  * 根据日期划分，获取昨日、最近一周、最近一个月内的访问信息数据
- * @param string $type 类型：today、yesterday、week、month、daterange
+ * @param string $time_type 类型：today、yesterday、week、month、daterange
  * @param string $module 要统计的模块，为空则默认统计所有模块
  * @return array()
  */
-function stat_visit_info_bydate($type, $module = '', $daterange = array(), $is_system_stat = false) {
+function stat_visit_app_bydate($time_type, $module = '', $daterange = array(), $is_system_stat = false) {
 	$result = array();
-	$visit_info = stat_visit_info($type, $module, $daterange, $is_system_stat);
+	$visit_info = stat_visit_info('app', $time_type, $module, $daterange, $is_system_stat);
 	if (empty($visit_info)) {
 		return $result;
 	}
@@ -134,6 +140,25 @@ function stat_visit_info_bydate($type, $module = '', $daterange = array(), $is_s
 	return $result;
 }
 
+/**
+ * 获取昨日、最近一周、最近一个月内的所有$type总的访问信息数据
+ * @param string $time_type 时间类型：today、yesterday、week、month、daterange
+ * @param array() $daterange 时间范围
+ * @param boolean 是否系统统计
+ * @return array()
+ */
+function stat_visit_all_bydate($time_type, $daterange = array(), $is_system_stat = false) {
+	$result = array();
+	$visit_info = stat_visit_info('all', $time_type, '', $daterange, $is_system_stat);
+	if (empty($visit_info)) {
+		return $result;
+	} else {
+		foreach ($visit_info as $visit) {
+			$result[$visit['date']] += $visit['count'];
+		}
+	}
+	return $result;
+}
 
 /**
  * 统计公众号整体访问信息
