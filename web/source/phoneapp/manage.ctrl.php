@@ -85,7 +85,7 @@ if ($do == 'display') {
 }
 
 if ($do == 'del_version') {
-	$id = intval($_GPC['version_id']);
+	$id = safe_gpc_int($_GPC['version_id']);
 	if (empty($id)) {
 		iajax(1, '参数错误！');
 	}
