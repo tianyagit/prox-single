@@ -6,7 +6,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('phoneapp');
 $account_info = permission_user_account_num();
 
-$do = safe_gpc_belong($do, array('create_display', 'list', 'save', 'display', 'del_version'), 'list');
+$do = safe_gpc_belong($do, array('create_display', 'save', 'display', 'del_version'), 'display');
 
 $uniacid = safe_gpc_int($_GPC['uniacid']);
 
