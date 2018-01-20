@@ -1250,9 +1250,9 @@ function cloud_build_transtoken() {
  * @param $schems array 云服务返回的数据库信息
  * @return array 数据库更新信息
  */
-function cloud_build_schemas($schems) {
+function cloud_build_schemas($schemas) {
 	$database = array();
-	if (empty($schems) || !is_array($schemas)) {
+	if (empty($schemas) || !is_array($schemas)) {
 		return $database;
 	}
 	foreach ($schemas as $remote) {
