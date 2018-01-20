@@ -16,11 +16,11 @@ $support_type = array(
 );
 
 if ($do == 'display') {
-	$today = stat_visit_info_byuniacid('today');
-	$yesterday = stat_visit_info_byuniacid('yesterday');
+	$today = stat_visit_app_byuniacid('today');
+	$yesterday = stat_visit_app_byuniacid('yesterday');
 	$today_module_api = stat_all_visit_statistics('current_account', $today);
 	$yesterday_module_api = stat_all_visit_statistics('current_account', $yesterday);
-	template('statistics/display');
+	template('statistics/app-display');
 }
 
 if ($do == 'get_account_api') {
@@ -37,7 +37,7 @@ if ($do == 'get_account_api') {
 			'end' => date('Ymd', strtotime($_GPC['daterange']['endDate'])),
 		);
 	}
-	$result = stat_visit_info_bydate($type, '', $daterange);
+	$result = stat_visit_app_bydate($type, '', $daterange);
 	if ($type == 'today') {
 		$data_x = array(date('Ymd'));
 	}
@@ -98,7 +98,7 @@ if ($do == 'get_module_api') {
 		);
 	}
 
-	$result = stat_visit_info_byuniacid($type, '', $daterange);
+	$result = stat_visit_app_byuniacid($type, '', $daterange);
 	if (empty($result)) {
 		foreach ($modules_info as $module) {
 			$data[] = 0;

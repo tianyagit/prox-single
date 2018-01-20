@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-if (in_array($action, array('permission', 'manage-account'))) {
+if (in_array($action, array('permission', 'default-entry', 'manage-account'))) {
 	define('FRAME', 'account');
 	$referer = (url_params(referer()));
 	if (empty($_GPC['version_id']) && intval($referer['version_id']) > 0) {

@@ -282,7 +282,8 @@ $we7_file_permission = array(
 			'login',
 			'register',
 			'logout',
-			'find-password'
+			'find-password',
+			'bind'
 		),
 		'vice_founder' => array('user*'),
 		'owner' => array(
@@ -315,6 +316,23 @@ $we7_file_permission = array(
 		),
 		'clerk' => array(
 			'display',
+		)
+	),
+	'webapp' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array('webapp*'),
+		'owner' => array('webapp*'),
+		'manager' => array(
+			'home',
+			'manage',
+		),
+		'operator' => array(
+			'home',
+			'manage'
+		),
+		'clerk' => array(
+			'home'
 		)
 	),
 	'utility' => array(

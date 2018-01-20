@@ -147,6 +147,43 @@ function checklogin() {
 	return true;
 }
 
+function check_bind() {
+	global $_W, $_GPC;
+	if (!empty($_W['setting']['copyright']['bind'])) {
+		$complete_info = false;
+		switch($_W['setting']['copyright']['bind']) {
+			case 'qq' :
+				if (!empty($_W['user']['qq_openid'])) {
+					$complete_info = true;
+				}
+				break;
+			case 'mobile' :
+				if (!empty($_W['user']['mobile'])) {
+					$complete_info = true;
+				}
+				break;
+			case 'wechat' :
+				if (!empty($_W['user']['wechat_openid'])) {
+					$complete_info = true;
+				}
+				break;
+		}
+		$bind_url = array(
+			'user' => 'bind',
+			'utility' => 'verifycode',
+			'utility' => 'code',
+		);
+		$is_bind_url = true;
+		if (empty($bind_url[$_GPC['c']]) || $bind_url[$_GPC['c']] != $_GPC['a']) {
+			$is_bind_url = false;
+		}
+		if (!$is_bind_url && empty($_W['isfounder']) && !$complete_info) {
+			header("Location: " . url('user/bind'));
+		}
+	}
+	return true;
+}
+
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
@@ -215,6 +252,13 @@ function buildframes($framename = ''){
 				}
 			}
 		} elseif (!empty($modules)) {
+
+			if (user_is_vice_founder()) {
+				$modules = uni_modules_by_uniacid($_W['uniacid']);
+				$user_module = user_modules($_W['uid']);
+				$modules = array_intersect_assoc($modules, $user_module);
+			}
+
 			$new_modules = array_reverse($modules);
 			$i = 0;
 			foreach ($new_modules as $module) {
@@ -314,6 +358,7 @@ function buildframes($framename = ''){
 	} else {
 		if (user_is_vice_founder()) {
 			$frames['system']['section']['article']['is_display'] = false;
+			$frames['system']['section']['welcome']['is_display'] = false;
 			$frames['system']['section']['wxplatform']['menu']['system_platform']['is_display'] = false;
 			$frames['system']['section']['user']['menu']['system_user_founder_group']['is_display'] = false;
 		}
@@ -400,6 +445,13 @@ function buildframes($framename = ''){
 				'title' => "<i class='fa fa-cog'></i> 权限设置",
 				'url' => url('module/permission', array('m' => $modulename, 'version_id' => $version_id)),
 				'is_display' => 1,
+			);
+		}
+		if ($_W['isfounder'] || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_default_entry'] = array(
+					'title' => "<i class='fa fa-cog'></i> 默认入口",
+					'url' => url('module/default-entry', array('m' => $modulename, 'version_id' => $version_id)),
+					'is_display' => 1,
 			);
 		}
 		if($entries['home'] && !empty($_W['account']) && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
