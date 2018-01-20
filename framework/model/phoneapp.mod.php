@@ -126,8 +126,6 @@ function phoneapp_version($version_id) {
 
 	$version_info = pdo_get('phoneapp_versions', array('id' => $version_id));
 	$version_info['modules'] = iunserializer($version_info['modules']);
-//	$version_info = wxapp_version_detail_info($version_info);
-
 	return $version_info;
 }
 
@@ -149,7 +147,7 @@ function phoneapp_switch($uniacid, $redirect = '') {
  * 切换APP，保留最后一次操作的公众号，以便点公众号时再切换回.
  */
 function phoneapp_save_switch($uniacid) {
-	global $_W, $_GPC;
+	global $_GPC;
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
@@ -182,7 +180,6 @@ function phoneapp_update_last_use_version($uniacid, $version_id) {
 	if (empty($uniacid) || empty($version_id)) {
 		return false;
 	}
-	$cookie_val = array();
 	if (!empty($_GPC['__phoneappversionids'])) {
 		$phoneapp_uniacids = array();
 		$cookie_val = json_decode(htmlspecialchars_decode($_GPC['__phoneappversionids']), true);
