@@ -1,6 +1,6 @@
 {template 'common/header'}
 <ul class="we7-page-tab">
-	<li class="active"><a href="{url 'statistics/account-analysis'}">所有公众号访问统计</a></li>
+	<li class="active"><a href="{url 'statistics/account-analysis'}">所有公众号app端访问统计</a></li>
 </ul>
 <div class="api">
 	<div class="panel we7-panel api-target">
@@ -47,14 +47,12 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-12">
-				<canvas class="chart chart-line" chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors"></canvas>
-			</div>
+			<div class="col-sm-12" id="chart-line" style="height:500px"></div>
 		</div>
 	</div>
 </div>
 <script>
-require(['angular-chart', 'daterangepicker'], function() {
+require(['echarts', 'daterangepicker'], function(echarts) {
 	angular.module('statisticsApp').value('config', {
 		'links': {
 			'accountApi': "{php echo url('statistics/account/get_account_api')}",
