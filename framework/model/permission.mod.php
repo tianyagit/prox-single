@@ -30,6 +30,7 @@ function permission_build() {
 		$we7_file_permission['profile'][$_W['role']] = array('profile*');
 		$we7_file_permission['module'][$_W['role']] = array('manage-account', 'display');
 		$we7_file_permission['wxapp'][$_W['role']] = array('display', 'payment', 'post', 'version');
+		$we7_file_permission['webapp'][$_W['role']] = array('home', 'manage');
 		cache_write($cachekey, $we7_file_permission);
 		return $we7_file_permission;
 	}
