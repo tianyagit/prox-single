@@ -447,6 +447,13 @@ function buildframes($framename = ''){
 				'is_display' => 1,
 			);
 		}
+		if ($_W['isfounder'] || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) {
+			$frames['account']['section']['platform_module_common']['menu']['platform_module_default_entry'] = array(
+					'title' => "<i class='fa fa-cog'></i> 默认入口",
+					'url' => url('module/default-entry', array('m' => $modulename, 'version_id' => $version_id)),
+					'is_display' => 1,
+			);
+		}
 		if($entries['home'] && !empty($_W['account']) && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_home'] = array(
 				'title' => "<i class='fa fa-home'></i> 微站首页导航",

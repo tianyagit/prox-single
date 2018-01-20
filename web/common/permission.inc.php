@@ -318,6 +318,23 @@ $we7_file_permission = array(
 			'display',
 		)
 	),
+	'webapp' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array('webapp*'),
+		'owner' => array('webapp*'),
+		'manager' => array(
+			'home',
+			'manage',
+		),
+		'operator' => array(
+			'home',
+			'manage'
+		),
+		'clerk' => array(
+			'home'
+		)
+	),
 	'utility' => array(
 		'default' => '',
 		'direct' => array(
