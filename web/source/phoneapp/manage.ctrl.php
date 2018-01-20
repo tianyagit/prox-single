@@ -65,36 +65,6 @@ if($do == 'create_display') {
 	template('phoneapp/create');
 }
 
-if($do == 'list') {
-
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 15;
-
-	$account_table = table('phoneapp');
-	$account_table->searchWithType(array(ACCOUNT_TYPE_PHONEAPP_NORMAL));
-
-	$keyword = trim($_GPC['keyword']);
-	if (!empty($keyword)) {
-		$account_table->searchWithKeyword($keyword);
-	}
-
-	$account_table->accountRankOrder();
-	$account_table->searchWithPage($pindex, $psize);
-	$list = $account_table->searchAccountList();
-	$total = $account_table->getLastQueryTotal();
-
-	$pager = pagination($total, $pindex, $psize);
-
-	if (!empty($list)) {
-		foreach ($list as &$account) {
-			$account = uni_fetch($account['uniacid']);
-			$account['switchurl'] = url('phoneapp/home/switch', array('uniacid' => $account['uniacid']));
-		}
-	}
-
-	template('phoneapp/display');
-}
-
 if ($do == 'display') {
 	$account = uni_fetch($uniacid);
 	if (is_error($account)) {
