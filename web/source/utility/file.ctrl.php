@@ -179,6 +179,7 @@ if ($do == 'fetch' || $do == 'upload') {
 		'url' => tomedia($pathname),
 		'is_image' => $type == 'image' ? 1 : 0,
 		'filesize' => filesize($fullname),
+		'group_id' => intval($_GPC['group_id'])
 	);
 	if ($type == 'image') {
 		$size = getimagesize($fullname);
@@ -209,7 +210,8 @@ if ($do == 'fetch' || $do == 'upload') {
 		'attachment' => $pathname,
 		'type' => $type == 'image' ? 1 : ($type == 'audio'||$type == 'voice' ? 2 : 3),
 		'createtime' => TIMESTAMP,
-		'module_upload_dir' => $module_upload_dir
+		'module_upload_dir' => $module_upload_dir,
+		'group_id' => intval($_GPC['group_id'])
 	));
 	$info['state'] = 'SUCCESS';	die(json_encode($info));
 }
@@ -470,7 +472,8 @@ if ($do == 'wechat_upload') {
 		'type' => $type,
 		'model' => $mode,
 		'createtime' => TIMESTAMP,
-		'module_upload_dir' => $module_upload_dir
+		'module_upload_dir' => $module_upload_dir,
+		'group_id' => intval($_GPC['group_id'])
 	);
 	if($type == 'image' || $type == 'thumb') {
 		$size = getimagesize($fullname);
