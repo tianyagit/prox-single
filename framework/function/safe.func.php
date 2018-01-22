@@ -45,8 +45,8 @@ function safe_gpc_belong($value, $allow = array(), $default = '') {
  * @return string
  */
 function safe_gpc_string($value, $default = '') {
-	$badstr = array("\0", "%00", "%3C", "%3E", '{php');
-	$newstr = array('', '', '&lt;', '&gt;', '_');
+	$badstr = array("\0", "%00", "%3C", "%3E", '<?', '<%', '<?php', '{php');
+	$newstr = array('_', '_', '&lt;', '&gt;', '_', '_', '_', '_');
 	$value  = str_replace($badstr, $newstr, $value);
 
 	$value  = preg_replace('/&((#(\d{3,5}|x[a-fA-F0-9]{4}));)/', '&\\1', $value);
@@ -86,6 +86,8 @@ function safe_gpc_array($value, $default = array()) {
 	foreach ($value as &$row) {
 		if (is_numeric($row)) {
 			$row = safe_gpc_int($row);
+		} elseif (is_array($row)) {
+			$row = safe_gpc_array($row, $default);
 		} else {
 			$row = safe_gpc_string($row);
 		}
@@ -112,7 +114,7 @@ function safe_gpc_html($value, $default = '') {
 		return $default;
 	}
 	$badstr = array("\0", "%00", "%3C", "%3E", '<?', '<%', '<?php', '{php');
-	$newstr = array('', '', '&lt;', '&gt;', '_', '_', '_', '_');
+	$newstr = array('_', '_', '&lt;', '&gt;', '_', '_', '_', '_');
 	$value  = str_replace($badstr, $newstr, $value);
 
 	$value = safe_remove_xss($value);

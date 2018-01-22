@@ -988,3 +988,35 @@ function user_founder_templates($founder_groupid) {
 	}
 	return $template_list;
 }
+
+/**
+ * 判断用户是否绑定强制绑定信息
+ * @return bool
+ */
+function user_is_bind() {
+	global $_W;
+	if (!empty($_W['setting']['copyright']['bind'])) {
+		$complete_info = false;
+		switch($_W['setting']['copyright']['bind']) {
+			case 'qq' :
+				if (!empty($_W['user']['qq_openid'])) {
+					$complete_info = true;
+				}
+				break;
+			case 'mobile' :
+				if (!empty($_W['user']['mobile'])) {
+					$complete_info = true;
+				}
+				break;
+			case 'wechat' :
+				if (!empty($_W['user']['wechat_openid'])) {
+					$complete_info = true;
+				}
+				break;
+		}
+		if (empty($_W['isfounder']) && !$complete_info) {
+			return false;
+		}
+	}
+	return true;
+}

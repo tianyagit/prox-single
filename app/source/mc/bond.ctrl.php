@@ -85,7 +85,8 @@ if ($do == 'credits') {
 			template('mc/bond');
 			exit();
 		}
-		$where .= " AND `credittype` = '{$_GPC['credittype']}'";
+		$where .= " AND `credittype` = :credit_type";
+		$params[':credit_type'] = safe_gpc_string($_GPC['credittype']);
 	}
 
 	/*获取总支出收入情况*/
