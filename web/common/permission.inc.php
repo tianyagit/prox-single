@@ -300,7 +300,7 @@ $we7_file_permission = array(
 			'register',
 			'logout',
 			'find-password',
-			'bind'
+			'third-bind'
 		),
 		'vice_founder' => array('user*'),
 		'owner' => array(
