@@ -43,8 +43,8 @@ if ($do == 'bind_mobile') {
 }
 
 if ($do == 'display') {
-	$support_login_urls = user_support_urls();
+	$support_bind_urls = user_support_urls();
 	$setting_sms_sign = setting_load('site_sms_sign');
 	$bind_sign = !empty($setting_sms_sign['site_sms_sign']['register']) ? $setting_sms_sign['site_sms_sign']['register'] : '';
 }
-template('user/login_bind');
+template('user/third-bind');

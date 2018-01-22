@@ -8,7 +8,6 @@ defined('IN_IA') or exit('Access Denied');
 set_time_limit(60);
 
 load()->model('mc');
-load()->model('account');
 
 $dos = array('display', 'add_tag', 'del_tag', 'edit_tagname', 'edit_fans_tag', 'batch_edit_fans_tag', 'download_fans', 'sync', 'fans_sync_set', 'register');
 $do = in_array($do, $dos) ? $do : 'display';
@@ -272,12 +271,7 @@ if ($do == 'download_fans') {
 
 if ($do == 'sync') {
 	$type = $_GPC['type'] == 'all' ? 'all' : 'check';
-
-	$setting = uni_setting($_W['uniacid'], array('passport'));
-	$force_init_member = false;
-	if (!isset($setting['passport']) || empty($setting['passport']['focusreg'])) {
-		$force_init_member = true;
-	}
+	$force_init_member = empty(safe_gpc_int($_GPC['sync_member'])) ? false : true;
 
 	if ($type == 'all') {
 		$pageindex = $_GPC['pageindex'];

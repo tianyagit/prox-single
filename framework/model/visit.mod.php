@@ -27,11 +27,11 @@ function visit_update_today($type, $module_name = '') {
 	$today_exist = pdo_get('stat_visit', array('date' => $today, 'uniacid' => $_W['uniacid'], 'module' => $module_name, 'type' => $type));
 	if (empty($today_exist)) {
 		$insert_data = array(
-				'uniacid' => $_W['uniacid'],
-				'module' => $module_name,
-				'type' => $type,
-				'date' => $today,
-				'count' => 1
+			'uniacid' => $_W['uniacid'],
+			'module' => $module_name,
+			'type' => $type,
+			'date' => $today,
+			'count' => 1
 		);
 		pdo_insert('stat_visit', $insert_data);
 	} else {
