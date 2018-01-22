@@ -276,12 +276,11 @@ if ($do == 'sync') {
 	if ($type == 'all') {
 		$pageindex = $_GPC['pageindex'];
 		$pageindex++;
-		$sync_fans = pdo_getslice('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => '1'), array($pageindex, 5), $total, array(), '', 'fanid DESC');
-		$total = ceil($total/5);
+		$sync_fans = pdo_getslice('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'follow' => '1'), array($pageindex, 100), $total, array(), 'openid', 'fanid DESC');
+		$total = ceil($total/100);
+		$start = time();
 		if (!empty($sync_fans)) {
-			foreach ($sync_fans as $fans) {
-				mc_init_fans_info($fans['openid'], $force_init_member);
-			}
+			mc_init_fans_info(array_keys($sync_fans));
 		}
 		if ($total == $pageindex) {
 			setcookie(cache_system_key('sync_fans_pindex:' . $_W['uniacid']), '', -1);
