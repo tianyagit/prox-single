@@ -22,7 +22,11 @@ function cloud_client_define() {
 function _cloud_build_params() {
 	global $_W;
 	$pars = array();
-	$pars['host'] = $_SERVER['HTTP_HOST'];
+	if (is_array($_W['setting']['site']) && !empty($_W['setting']['site']['url'])) {
+		$pars['host'] = preg_replace('/^http:\/\/|^https:\/\//', '', $_W['setting']['site']['url']);
+	} else {
+		$pars['host'] = $_SERVER['HTTP_HOST'];
+	}
 	$pars['family'] = IMS_FAMILY;
 	$pars['version'] = IMS_VERSION;
 	$pars['release'] = IMS_RELEASE_DATE;
@@ -1295,7 +1299,7 @@ function cloud_build_schemas($schemas) {
  * @return boolean 为
  */
 function cloud_file_permission_pass(&$error_file_list = array()) {
-	
+
 	$check_path = array(
 		'/web/common',
 		'/web/source',
