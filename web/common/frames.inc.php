@@ -394,19 +394,19 @@ $we7_system_menu['system'] = array(
 		'webapp' => array(
 			'title' => 'PC',
 			'menu' => array(
-				'system_wxapp' => array(
+				'system_webapp' => array(
 					'title' => 'PC',
 					'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
-					'icon' => 'wi wi-wxapp',
+					'icon' => 'wi wi-webapp',
 					'permission_name' => 'system_webapp',
 					'sub_permission' => array(
 					),
 				),
-				'system_module_wxapp' => array(
+				'system_module_webapp' => array(
 					'title' => 'PC应用',
 					'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
-					'icon' => 'wi wi-wxapp-apply',
-					'permission_name' => 'system_module_wxapp',
+					'icon' => 'wi wi-webapp-apply',
+					'permission_name' => 'system_module_webapp',
 				),
 			)
 		),
