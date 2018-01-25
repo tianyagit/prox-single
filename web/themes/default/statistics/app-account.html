@@ -1,6 +1,7 @@
 {template 'common/header'}
 <ul class="we7-page-tab">
-	<li class="active"><a href="{url 'statistics/account-analysis'}">所有公众号app端访问统计</a></li>
+	<li><a href="{url 'statistics/account'}">所有公众号流量统计</a></li>
+	<li class="active"><a href="{url 'statistics/account/app_display'}">所有公众号app端访问统计</a></li>
 </ul>
 <div class="api">
 	<div class="panel we7-panel api-target">
@@ -29,7 +30,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="panel we7-panel" id="js-system-account-analysis" ng-controller="systemAccountAnalysisCtrl" ng-cloak>
+	<div class="panel we7-panel" id="js-system-account-app-analysis" ng-controller="systemAccountAppAnalysisCtrl" ng-cloak>
 		<div class="panel-heading tab">
 			<a href="javascript:;">关键指标详解</a>
 			<a href="javascript:;" ng-class="{'active': divideType == 'bysum'}" ng-click="changeDivideType('bysum')">公众号总访问数</a>
@@ -52,13 +53,13 @@
 	</div>
 </div>
 <script>
-require(['echarts', 'daterangepicker'], function(echarts) {
+require(['daterangepicker'], function() {
 	angular.module('statisticsApp').value('config', {
 		'links': {
-			'accountApi': "{php echo url('statistics/account/get_account_api')}",
+			'accountApi': "{php echo url('statistics/account/get_account_app_api')}",
 		},
 	});
-	angular.bootstrap($('#js-system-account-analysis'), ['statisticsApp']);
+	angular.bootstrap($('#js-system-account-app-analysis'), ['statisticsApp']);
 })
 </script>
 {template 'common/footer'}
