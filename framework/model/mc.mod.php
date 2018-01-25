@@ -63,45 +63,12 @@ function mc_update($uid, $fields) {
 			$fields['avatar'] = str_replace($_W['attachurl'], '', $fields['avatar']);
 		}
 	}
-	$isexists = pdo_getcolumn('mc_members', array('uid' => $uid), 'uid');
-	$condition = '';
-	if (!empty($isexists)) {
-		$condition = ' AND uid != ' . $uid;
+	$member_table = table('member');
+	$result = $member_table->updateMember($uid, $fields);
+	if (!empty($openid)) {
+		pdo_update('mc_mapping_fans', array('uid' => $result), array('uniacid' => mc_current_real_uniacid(), 'openid' => $openid));
 	}
-	//判断email,mobile是否唯一
-	if (!empty($fields['email'])) {
-		$emailexists = pdo_fetchcolumn("SELECT email FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND email = :email " . $condition, array(':uniacid' => mc_current_real_uniacid(), ':email' => trim($fields['email'])));
-		if ($emailexists) {
-			unset($fields['email']);
-		}
-	}
-	if (!empty($fields['mobile'])) {
-		$mobilexists = pdo_fetchcolumn("SELECT mobile FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND mobile = :mobile " . $condition, array(':uniacid' => mc_current_real_uniacid(), ':mobile' => trim($fields['mobile'])));
-		if ($mobilexists) {
-			unset($fields['mobile']);
-		}
-	}
-	if (empty($isexists)) {
-		if(empty($fields['mobile']) && empty($fields['email'])) {
-			return false;
-		}
-		$fields['uniacid'] = mc_current_real_uniacid();
-		$fields['createtime'] = TIMESTAMP;
-		pdo_insert('mc_members', $fields);
-		$insert_id = pdo_insertid();
-		if (!empty($openid)) {
-			pdo_update('mc_mapping_fans', array('uid' => $insert_id), array('uniacid' => mc_current_real_uniacid(), 'openid' => $openid));
-		}
-		return $insert_id;
-	} else {
-		if (!empty($fields)) {
-			$result = pdo_update('mc_members', $fields, array('uid' => $uid));
-			cache_build_memberinfo($uid);
-		} else {
-			$result = 0;
-		}
-		return $result > 0;
-	}
+	cache_build_memberinfo($uid);
 }
 
 /**
