@@ -323,10 +323,10 @@ function message_list_detail($lists) {
 		}
 
 		if ($message['type'] == MESSAGE_USER_EXPIRE_TYPE) {
-			$message['url'] = url('user/profile');
+			$message['url'] = url('user/profile', array('message_id' => $message['id']));
 		}
 		if ($message['type'] == MESSAGE_WXAPP_MODULE_UPGRADE) {
-			$message['url'] = '#';
+			$message['url'] = url('message/notice', array('message_id' => $message['id']));
 		}
 
 		if ($message['type'] == MESSAGE_WORKORDER_TYPE) {
