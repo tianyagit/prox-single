@@ -14,7 +14,7 @@ class MemberTable extends We7Table {
 			return false;
 		}
 		$this->query->from('mc_members')->where('uniacid', mc_current_real_uniacid())->where('email', trim($email));
-		if (!empty($member)) {
+		if (!empty($uid)) {
 			$this->query->where('uid <>', $uid);
 		}
 		$emailexists = $this->query->getcolumn('email');
@@ -31,7 +31,7 @@ class MemberTable extends We7Table {
 			return false;
 		}
 		$this->query->from('mc_members')->where('uniacid', mc_current_real_uniacid())->where('mobile', trim($mobile));
-		if (!empty($member)) {
+		if (!empty($uid)) {
 			$this->query->where('uid <>', $uid);
 		}
 		$mobilexists = $this->query->getcolumn('mobile');
@@ -44,7 +44,7 @@ class MemberTable extends We7Table {
 
 	public function updateMember($uid, $fields = array()) {
 		load()->model('mc');
-		$member = $this->query->from('mc_members')->where('uid', $uid);
+		$member = $this->query->from('mc_members')->where('uid', $uid)->get();
 		if (!empty($fields['email']) && $this->emailExist($uid, $fields['email'])) {
 			unset($fields['email']);
 		}
