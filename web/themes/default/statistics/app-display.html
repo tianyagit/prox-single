@@ -1,6 +1,7 @@
 {template 'common/header'}
 <ul class="we7-page-tab">
-	<li class="active"><a href="{url 'statistics/app'}">访问统计信息</a></li>
+	<li><a href="{url 'statistics/site/current_account'}">所有访问统计信息</a></li>
+	<li class="active"><a href="{url 'statistics/app'}">app端访问统计信息</a></li>
 	<li><a href="{url 'statistics/setting'}">访问统计设置</a></li>
 </ul>
 <div class="api" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl" ng-cloak>

@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 /**
  * 站点相关操作
  * [WeEngine System] Copyright (c) 2013 WE7.CC
@@ -51,9 +51,9 @@ if ($do == 'copyright') {
 				'reason' => trim($_GPC['reason']),
 				'sitename' => trim($_GPC['sitename']),
 				'url' => (strexists($_GPC['url'], 'http://') || strexists($_GPC['url'], 'https://')) ? $_GPC['url'] : "http://{$_GPC['url']}",
-				'statcode' => htmlspecialchars_decode($_GPC['statcode']),
-				'footerleft' => htmlspecialchars_decode($_GPC['footerleft']),
-				'footerright' => htmlspecialchars_decode($_GPC['footerright']),
+				'statcode' => safe_gpc_html(htmlspecialchars_decode($_GPC['statcode'])),
+				'footerleft' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerleft'])),
+				'footerright' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerright'])),
 				'icon' => trim($_GPC['icon']),
 				'flogo' => trim($_GPC['flogo']),
 				'background_img' => trim($_GPC['background_img']),
@@ -62,7 +62,7 @@ if ($do == 'copyright') {
 				'blogo' => trim($_GPC['blogo']),
 				'baidumap' => $_GPC['baidumap'],
 				'company' => trim($_GPC['company']),
-				'companyprofile' => htmlspecialchars_decode($_GPC['companyprofile']),
+				'companyprofile' => safe_gpc_html(htmlspecialchars_decode($_GPC['companyprofile'])),
 				'address' => trim($_GPC['address']),
 				'person' => trim($_GPC['person']),
 				'phone' => trim($_GPC['phone']),
@@ -75,6 +75,7 @@ if ($do == 'copyright') {
 				'mobile_status' => $_GPC['mobile_status'],
 				'login_type' => $_GPC['login_type'],
 				'icp' => safe_gpc_string($_GPC['icp']),
+				'bind' => $_GPC['bind']
 			);
 		}
 		/* xend */
@@ -86,6 +87,7 @@ if ($do == 'copyright') {
 				'icp' => safe_gpc_string($_GPC['icp']),
 				'mobile_status' => $_GPC['mobile_status'],
 				'login_type' => $_GPC['login_type'],
+				'bind' => $_GPC['bind']
 			);				
 		}
 		/* vend */

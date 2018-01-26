@@ -22,7 +22,11 @@ function cloud_client_define() {
 function _cloud_build_params() {
 	global $_W;
 	$pars = array();
-	$pars['host'] = $_SERVER['HTTP_HOST'];
+	if (is_array($_W['setting']['site']) && !empty($_W['setting']['site']['url'])) {
+		$pars['host'] = preg_replace('/^http:\/\/|^https:\/\//', '', $_W['setting']['site']['url']);
+	} else {
+		$pars['host'] = $_SERVER['HTTP_HOST'];
+	}
 	$pars['family'] = IMS_FAMILY;
 	$pars['version'] = IMS_VERSION;
 	$pars['release'] = IMS_RELEASE_DATE;
@@ -1250,9 +1254,9 @@ function cloud_build_transtoken() {
  * @param $schems array 云服务返回的数据库信息
  * @return array 数据库更新信息
  */
-function cloud_build_schemas($schems) {
+function cloud_build_schemas($schemas) {
 	$database = array();
-	if (empty($schems) || !is_array($schemas)) {
+	if (empty($schemas) || !is_array($schemas)) {
 		return $database;
 	}
 	foreach ($schemas as $remote) {
@@ -1295,7 +1299,7 @@ function cloud_build_schemas($schems) {
  * @return boolean 为
  */
 function cloud_file_permission_pass(&$error_file_list = array()) {
-	
+
 	$check_path = array(
 		'/web/common',
 		'/web/source',

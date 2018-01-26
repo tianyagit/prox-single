@@ -217,6 +217,10 @@ function user_single($user_or_uid) {
 		$record['store_id'] = 0;
 		$record['clerk_type'] = '2';
 	}
+	$third_info = pdo_getall('users_bind', array('uid' => $record['uid']), array(), 'third_type');
+	$record['qq_openid'] = $third_info[USER_REGISTER_TYPE_QQ]['bind_sign'];
+	$record['wechat_openid'] = $third_info[USER_REGISTER_TYPE_WECHAT]['bind_sign'];
+	$record['mobile'] = $third_info[USER_REGISTER_TYPE_MOBILE]['bind_sign'];
 	return $record;
 }
 
@@ -989,4 +993,36 @@ function user_founder_templates($founder_groupid) {
 		}
 	}
 	return $template_list;
+}
+
+/**
+ * 判断用户是否绑定强制绑定信息
+ * @return bool
+ */
+function user_is_bind() {
+	global $_W;
+	if (!empty($_W['setting']['copyright']['bind'])) {
+		$complete_info = false;
+		switch($_W['setting']['copyright']['bind']) {
+			case 'qq' :
+				if (!empty($_W['user']['qq_openid'])) {
+					$complete_info = true;
+				}
+				break;
+			case 'mobile' :
+				if (!empty($_W['user']['mobile'])) {
+					$complete_info = true;
+				}
+				break;
+			case 'wechat' :
+				if (!empty($_W['user']['wechat_openid'])) {
+					$complete_info = true;
+				}
+				break;
+		}
+		if (empty($_W['isfounder']) && !$complete_info) {
+			return false;
+		}
+	}
+	return true;
 }

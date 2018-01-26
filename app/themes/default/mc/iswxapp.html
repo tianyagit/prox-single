@@ -1,0 +1,9 @@
+{template 'common/header'}
+<script>
+    if(window.__wxjs_environment === 'miniprogram') {
+        wx.miniProgram.navigateTo({
+            url: "/wxapp_web/pages/view/index?url={$url}"
+        })
+    }
+</script>
+{template 'common/footer'}

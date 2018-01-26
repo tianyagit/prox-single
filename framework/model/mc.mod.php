@@ -63,45 +63,12 @@ function mc_update($uid, $fields) {
 			$fields['avatar'] = str_replace($_W['attachurl'], '', $fields['avatar']);
 		}
 	}
-	$isexists = pdo_getcolumn('mc_members', array('uid' => $uid), 'uid');
-	$condition = '';
-	if (!empty($isexists)) {
-		$condition = ' AND uid != ' . $uid;
+	$member_table = table('member');
+	$result = $member_table->updateMember($uid, $fields);
+	if (!empty($openid)) {
+		pdo_update('mc_mapping_fans', array('uid' => $result), array('uniacid' => mc_current_real_uniacid(), 'openid' => $openid));
 	}
-	//判断email,mobile是否唯一
-	if (!empty($fields['email'])) {
-		$emailexists = pdo_fetchcolumn("SELECT email FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND email = :email " . $condition, array(':uniacid' => mc_current_real_uniacid(), ':email' => trim($fields['email'])));
-		if ($emailexists) {
-			unset($fields['email']);
-		}
-	}
-	if (!empty($fields['mobile'])) {
-		$mobilexists = pdo_fetchcolumn("SELECT mobile FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND mobile = :mobile " . $condition, array(':uniacid' => mc_current_real_uniacid(), ':mobile' => trim($fields['mobile'])));
-		if ($mobilexists) {
-			unset($fields['mobile']);
-		}
-	}
-	if (empty($isexists)) {
-		if(empty($fields['mobile']) && empty($fields['email'])) {
-			return false;
-		}
-		$fields['uniacid'] = mc_current_real_uniacid();
-		$fields['createtime'] = TIMESTAMP;
-		pdo_insert('mc_members', $fields);
-		$insert_id = pdo_insertid();
-		if (!empty($openid)) {
-			pdo_update('mc_mapping_fans', array('uid' => $insert_id), array('uniacid' => mc_current_real_uniacid(), 'openid' => $openid));
-		}
-		return $insert_id;
-	} else {
-		if (!empty($fields)) {
-			$result = pdo_update('mc_members', $fields, array('uid' => $uid));
-			cache_build_memberinfo($uid);
-		} else {
-			$result = 0;
-		}
-		return $result > 0;
-	}
+	cache_build_memberinfo($uid);
 }
 
 /**
@@ -300,6 +267,13 @@ function mc_oauth_userinfo($acid = 0) {
 	if ($_W['container'] != 'wechat') {
 		return array();
 	}
+	$url = $_W['siteurl'];
+	template('mc/iswxapp');
+	return mc_oauth_account_userinfo();
+}
+
+function mc_oauth_account_userinfo() {
+	global $_W;
 	// 认证号, 静默获取用户信息, 不需要跳转到网页授权获取用户信息.
 	if (!empty($_SESSION['openid']) && intval($_W['account']['level']) >= 3) {
 		$oauth_account = WeAccount::create();
@@ -1683,78 +1657,89 @@ function mc_init_fans_info($openid, $force_init_member = false){
 	if (empty($account_api)) {
 		$account_api = WeAccount::create();
 	}
-	$fans = $account_api->fansQueryInfo($openid);
-	if (empty($fans) || is_error($fans)) {
+	if (is_array($openid)) {
+		$fans_list = $account_api->fansBatchQueryInfo($openid);
+	} else {
+		$fans_list = $account_api->fansQueryInfo($openid);
+	}
+	if (empty($fans_list) || is_error($fans_list)) {
 		return true;
 	}
-	//如果粉丝已经取消关注，则只更新状态
-	if (empty($fans['subscribe'])) {
-		pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('openid' => $openid));
-		return true;
+	if (!is_array($openid)) {
+		$fans_list = array($fans_list);
 	}
-	$fans_mapping = mc_fansinfo($openid);
-	$fans_update_info = array(
-		'openid' => $fans['openid'],
-		'acid' => $_W['acid'],
-		'uniacid' => $_W['uniacid'],
-		'updatetime' => TIMESTAMP,
-		'followtime' => $fans['subscribe_time'],
-		'follow' => $fans['subscribe'],
-		'nickname' => strip_emoji(stripcslashes($fans['nickname'])),
-		'tag' => base64_encode(iserializer($fans)),
-		'unionid' => $fans['unionid'],
-		'groupid' => !empty($fans['tagid_list']) ? (','.join(',', $fans['tagid_list']).',') : '',
-	);
-	//强制初始化会员信息
-	if ($force_init_member) {
-		$member_update_info = array(
+	foreach ($fans_list as $fans) {
+		if (empty($fans['subscribe'])) {
+			pdo_update('mc_mapping_fans', array('follow' => 0, 'unfollowtime' => TIMESTAMP), array('openid' => $fans['openid']));
+			continue;
+		}
+
+		$fans_mapping = mc_fansinfo($fans['openid']);
+		$fans_update_info = array(
+			'openid' => $fans['openid'],
+			'acid' => $_W['acid'],
 			'uniacid' => $_W['uniacid'],
-			'nickname' => $fans_update_info['nickname'],
-			'avatar' => $fans['headimgurl'],
-			'gender' => $fans['sex'],
-			'nationality' => $fans['country'],
-			'resideprovince' => $fans['province'] . '省',
-			'residecity' => $fans['city'] . '市',
+			'updatetime' => TIMESTAMP,
+			'followtime' => $fans['subscribe_time'],
+			'follow' => $fans['subscribe'],
+			'nickname' => strip_emoji(stripcslashes($fans['nickname'])),
+			'tag' => base64_encode(iserializer($fans)),
+			'unionid' => $fans['unionid'],
+			'groupid' => !empty($fans['tagid_list']) ? (','.join(',', $fans['tagid_list']).',') : '',
 		);
+		if ($force_init_member) {
+			$member_update_info = array(
+				'uniacid' => $_W['uniacid'],
+				'nickname' => $fans_update_info['nickname'],
+				'avatar' => $fans['headimgurl'],
+				'gender' => $fans['sex'],
+				'nationality' => $fans['country'],
+				'resideprovince' => $fans['province'] . '省',
+				'residecity' => $fans['city'] . '市',
+			);
 
-		if (empty($fans_mapping['uid'])) {
-			$email = md5($openid).'@we7.cc';
-			$email_exists_member = pdo_getcolumn('mc_members', array('email' => $email), 'uid');
-			if (!empty($email_exists_member)) {
-				$uid = $email_exists_member;
+			if (empty($fans_mapping['uid'])) {
+				$email = md5($openid).'@we7.cc';
+				$email_exists_member = pdo_getcolumn('mc_members', array('email' => $email), 'uid');
+				if (!empty($email_exists_member)) {
+					$uid = $email_exists_member;
+				} else {
+					$member_update_info['groupid'] = pdo_getcolumn('mc_groups', array('uniacid' => $_W['uniacid'], 'isdefault' => 1), 'groupid');
+					$member_update_info['salt'] = random(8);
+					$member_update_info['password'] = md5($fans['openid'] . $member_update_info['salt'] . $_W['config']['setting']['authkey']);
+					$member_update_info['email'] = $email;
+					$member_update_info['createtime'] = TIMESTAMP;
+
+					pdo_insert('mc_members', $member_update_info);
+					$uid = pdo_insertid();
+				}
+				$fans_update_info['uid'] = $uid;
 			} else {
-				$member_update_info['groupid'] = pdo_getcolumn('mc_groups', array('uniacid' => $_W['uniacid'], 'isdefault' => 1), 'groupid');
-				$member_update_info['salt'] = random(8);
-				$member_update_info['password'] = md5($openid . $member_update_info['salt'] . $_W['config']['setting']['authkey']);
-				$member_update_info['email'] = $email;
-				$member_update_info['createtime'] = TIMESTAMP;
-
-				pdo_insert('mc_members', $member_update_info);
-				$uid = pdo_insertid();
+				$fans_update_info['uid'] = $fans_mapping['uid'];
 			}
-			$fans_update_info['uid'] = $uid;
+		}
+
+		if (!empty($fans_mapping)) {
+			pdo_update('mc_mapping_fans', $fans_update_info, array('fanid' => $fans_mapping['fanid']));
 		} else {
-			$fans_update_info['uid'] = $fans_mapping['uid'];
+			$fans_update_info['salt'] = random(8);
+			$fans_update_info['unfollowtime'] = 0;
+			$fans_update_info['followtime'] = TIMESTAMP;
+
+			pdo_insert('mc_mapping_fans', $fans_update_info);
+			$fans_mapping['fanid'] = pdo_insertid();
+		}
+		if (!empty($fans['tagid_list'])) {
+			$groupid = $fans['tagid_list'];
+			@sort($groupid, SORT_NATURAL);
+			mc_insert_fanstag_mapping($fans_mapping['fanid'], $groupid);
 		}
 	}
-
-	if (!empty($fans_mapping)) {
-		pdo_update('mc_mapping_fans', $fans_update_info, array('fanid' => $fans_mapping['fanid']));
+	if (is_string($openid) && !empty($fans_update_info)) {
+		return $fans_update_info;
 	} else {
-		$fans_update_info['salt'] = random(8);
-		$fans_update_info['unfollowtime'] = 0;
-		$fans_update_info['followtime'] = TIMESTAMP;
-
-		pdo_insert('mc_mapping_fans', $fans_update_info);
-		$fans_mapping['fanid'] = pdo_insertid();
+		return true;
 	}
-	//初始化粉丝标签
-	if (!empty($fans['tagid_list'])) {
-		$groupid = $fans['tagid_list'];
-		@sort($groupid, SORT_NATURAL);
-		mc_insert_fanstag_mapping($fans_mapping['fanid'], $groupid);
-	}
-	return $fans_update_info;
 }
 
 /**

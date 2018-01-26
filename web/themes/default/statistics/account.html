@@ -1,30 +1,17 @@
 {template 'common/header'}
 <ul class="we7-page-tab">
-	<li class="active"><a href="{url 'statistics/account-analysis'}">所有公众号访问统计</a></li>
+	<li class="active"><a href="{url 'statistics/account'}">所有公众号流量统计</a></li>
+	<li><a href="{url 'statistics/account/app_display'}">所有公众号app端访问统计</a></li>
 </ul>
 <div class="api">
 	<div class="panel we7-panel api-target">
 		<div class="panel-heading">今日/昨日关键指标</div>
 		<div class="panel-body we7-padding-vertical">
 			<div class="col-sm-4 text-center">
-				<div class="title">公众号总访问数</div>
+				<div class="title">整站流量总访问值</div>
 				<div>
-					<span class="today">{$today_module_api['visit_sum']}</span>
-					<span class="yesterday">/ {$yesterday_module_api['visit_sum']}</span>
-				</div>
-			</div>
-			<div class="col-sm-4 text-center">
-				<div class="title">公众号平均访问数</div>
-				<div>
-					<span class="today">{$today_module_api['visit_avg']}</span>
-					<span class="yesterday">/ {$yesterday_module_api['visit_avg']}</span>
-				</div>
-			</div>
-			<div class="col-sm-4 text-center">
-				<div class="title">公众号最高访问数</div>
-				<div>
-					<span class="today">{$today_module_api['visit_highest']}</span>
-					<span class="yesterday">/ {$yesterday_module_api['visit_highest']}</span>
+					<span class="today">{$today}</span>
+					<span class="yesterday">/ {$yesterday}</span>
 				</div>
 			</div>
 		</div>
@@ -32,9 +19,7 @@
 	<div class="panel we7-panel" id="js-system-account-analysis" ng-controller="systemAccountAnalysisCtrl" ng-cloak>
 		<div class="panel-heading tab">
 			<a href="javascript:;">关键指标详解</a>
-			<a href="javascript:;" ng-class="{'active': divideType == 'bysum'}" ng-click="changeDivideType('bysum')">公众号总访问数</a>
-			<a href="javascript:;" ng-class="{'active': divideType == 'byavg'}" ng-click="changeDivideType('byavg')">公众号平均访问数</a>
-			<a href="javascript:;" ng-class="{'active': divideType == 'byhighest'}" ng-click="changeDivideType('byhighest')">公众号最高访问数</a>
+			<a href="javascript:;" class="active">所有公众号流量访问值</a>
 		</div>
 		<div class="panel-body data-view">
 			<div class="tab-bar-time clearfrix">
@@ -47,14 +32,12 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-12">
-				<canvas class="chart chart-line" chart-options="options" chart-data="data" chart-labels="labels" chart-colors="colors"></canvas>
-			</div>
+			<div class="col-sm-12" id="chart-line" style="height:500px"></div>
 		</div>
 	</div>
 </div>
 <script>
-require(['angular-chart', 'daterangepicker'], function() {
+require(['daterangepicker'], function() {
 	angular.module('statisticsApp').value('config', {
 		'links': {
 			'accountApi': "{php echo url('statistics/account/get_account_api')}",

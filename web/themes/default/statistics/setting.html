@@ -1,6 +1,7 @@
 {template 'common/header'}
 <ul class="we7-page-tab">
-	<li><a href="{url 'statistics/app'}">访问统计信息</a></li>
+	<li><a href="{url 'statistics/site/current_account'}">所有访问统计信息</a></li>
+	<li><a href="{url 'statistics/app'}">app端访问统计信息</a></li>
 	<li class="active"><a href="{url 'statistics/setting'}">访问统计设置</a></li>
 </ul>
 <div id="js-statistics-setting" ng-controller="statisticsSettingCtrl" ng-cloak>
@@ -77,7 +78,6 @@
 	</div>
 </div>
 <script>
-require(['angular-chart'], function() {
 	angular.module('statisticsApp').value('config', {
 		'highest_visit': {php echo !empty($highest_visit) ? json_encode($highest_visit) : 'null'},
 		'interval': {php echo !empty($interval) ? json_encode($interval) : 'null'},
@@ -86,6 +86,5 @@ require(['angular-chart'], function() {
 		},
 	});
 	angular.bootstrap($('#js-statistics-setting'), ['statisticsApp']);
-})
 </script>
 {template 'common/footer'}
