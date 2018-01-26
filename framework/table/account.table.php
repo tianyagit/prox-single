@@ -127,6 +127,18 @@ class AccountTable extends We7Table {
 				->getall('acid');
 	}
 
+	public function accountPhoneappInfo($uniacids, $uid) {
+		return $this->query->from('uni_account', 'a')
+				->leftjoin('account_phoneapp', 'w')
+				->on(array('w.uniacid' => 'a.uniacid'))
+				->leftjoin('uni_account_users', 'au')
+				->on(array('a.uniacid' => 'au.uniacid'))
+				->where(array('a.uniacid' => $uniacids))
+				->where(array('au.uid' => $uid))
+				->orderby('a.uniacid', 'asc')
+				->getall('acid');
+	}
+
 	public function searchWithKeyword($title) {
 		$this->query->where('a.name LIKE', "%{$title}%");
 		return $this;
@@ -188,6 +200,10 @@ class AccountTable extends We7Table {
 
 	public function getWebappAccount($acid) {
 		return $this->query->from('account_webapp')->where('acid', $acid)->get();
+	}
+
+	public function getPhoneappAccount($acid) {
+		return $this->query->from('account_phoneapp')->where('acid', $acid)->get();
 	}
 
 	public function getUniAccountByAcid($acid) {

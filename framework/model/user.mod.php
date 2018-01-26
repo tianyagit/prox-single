@@ -401,11 +401,13 @@ function user_account_detail_info($uid) {
 				$wxapp_user_info[$uniacid] = $account;
 			} elseif ($account['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 				$webapp_user_info[$uniacid] = $account;
+			} elseif ($account['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+				$phoneapp_user_info[$uniacid] = $account;
 			}
 		}
 	}
 
-	$wxapps = $wechats = $webapps = array();
+	$wxapps = $wechats = $webapps = $pohoneapp = array();
 	if (!empty($wxapp_user_info)) {
 		$wxapps = table('account')->accountWxappInfo(array_keys($wxapp_user_info), $uid);
 	}
@@ -414,6 +416,9 @@ function user_account_detail_info($uid) {
 	}
 	if (!empty($webapp_user_info)) {
 		$webapps = table('account')->accountWebappInfo(array_keys($webapp_user_info), $uid);
+	}
+	if (!empty($webapp_user_info)) {
+		$pohoneapp = table('account')->accountPhoneappInfo(array_keys($webapp_user_info), $uid);
 	}
 	$accounts = array_merge($wxapps, $wechats, $webapps);
 	if (!empty($accounts)) {
@@ -428,6 +433,8 @@ function user_account_detail_info($uid) {
 						$account_lists['wechat'][$uniacid] = $account_val;
 					} elseif ($user_info['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 						$account_lists['webapp'][$uniacid] = $account_val;
+					} elseif ($user_info['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+						$account_lists['phoneapp'][$uniacid] = $account_val;
 					}
 				}
 			}
@@ -568,6 +575,7 @@ function user_login_forward($forward = '') {
 		'wxapp' => url('wxapp/version/home'),
 		'module' => url('module/display'),
 		'webapp' => url('webapp/home'),
+		'phoneapp' => url('phoneapp/home'),
 	);
 	if (!empty($forward)) {
 		return $login_forward;
@@ -602,6 +610,9 @@ function user_login_forward($forward = '') {
 			if ($account_info['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 				return $login_location['webapp'];
 			}
+			if ($account_info['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+				return $login_location['phoneapp'];
+			}
 		}
 	}
 	if (user_is_vice_founder()) {
@@ -622,6 +633,8 @@ function user_login_forward($forward = '') {
 			$login_forward = url('wxapp/display/home');
 		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 			$login_forward = url('webapp/home/display');
+		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+			$login_forward = url('phoneapp/home/display');
 		}
 	}
 
@@ -772,19 +785,22 @@ function user_group_format($lists) {
 			$lists[$key]['module_nums'] = 0;
 			$lists[$key]['wxapp_nums'] = 0;
 			$lists[$key]['webapp_nums'] = 0;
+			$lists[$key]['phoneapp_nums'] = 0;
 			continue;
 		}
 		if (is_array($package) && in_array(-1, $package)) {
 			$lists[$key]['module_nums'] = -1;
 			$lists[$key]['wxapp_nums'] = -1;
 			$lists[$key]['webapp_nums'] = -1;
+			$lists[$key]['phoneapp_nums'] = -1;
 			continue;
 		}
 		$names = array();
 		$modules = array(
 			'modules' => array(),
 			'wxapp' => array(),
-			'webapp' => array()
+			'webapp' => array(),
+			'phoneapp' => array()
 		);
 		if (!empty($group['package'])) {
 			foreach ($group['package'] as $package) {
@@ -792,13 +808,16 @@ function user_group_format($lists) {
 				$package['modules'] = !empty($package['modules']) && is_array($package['modules']) ? array_keys($package['modules']) : array();
 				$package['wxapp'] = !empty($package['wxapp']) && is_array($package['wxapp']) ? array_keys($package['wxapp']) : array();
 				$package['webapp'] = !empty($package['webapp']) && is_array($package['webapp']) ? array_keys($package['webapp']) : array();
+				$package['phoneapp'] = !empty($package['phoneapp']) && is_array($package['phoneapp']) ? array_keys($package['phoneapp']) : array();
 				$modules['modules'] = array_unique(array_merge($modules['modules'], $package['modules']));
 				$modules['wxapp'] = array_unique(array_merge($modules['wxapp'], $package['wxapp']));
 				$modules['webapp'] = array_unique(array_merge($modules['webapp'], $package['webapp']));
+				$modules['phoneapp'] = array_unique(array_merge($modules['phoneapp'], $package['phoneapp']));
 			}
 			$lists[$key]['module_nums'] = count($modules['modules']);
 			$lists[$key]['wxapp_nums'] = count($modules['wxapp']);
 			$lists[$key]['webapp_nums'] = count($modules['webapp']);
+			$lists[$key]['phoneapp_nums'] = count($modules['phoneapp']);
 		}
 		$lists[$key]['packages'] = implode(',', $names);
 	}
@@ -836,6 +855,7 @@ function user_list_format($users) {
 		$user['maxaccount'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxaccount']);
 		$user['maxwxapp'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwxapp']);
 		$user['maxwebapp'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxwebapp']);
+		$user['maxphoneapp'] = $user['founder_groupid'] == 1 ? '不限' : (empty($group) ? 0 : $group['maxphoneapp']);
 		$user['groupname'] = $group['name'];
 		unset($user);
 	}

@@ -271,7 +271,8 @@ if ($do == 'download_fans') {
 
 if ($do == 'sync') {
 	$type = $_GPC['type'] == 'all' ? 'all' : 'check';
-	$force_init_member = empty(safe_gpc_int($_GPC['sync_member'])) ? false : true;
+	$sync_member = safe_gpc_int($_GPC['sync_member']);
+	$force_init_member = empty($sync_member) ? false : true;
 
 	if ($type == 'all') {
 		$pageindex = $_GPC['pageindex'];
