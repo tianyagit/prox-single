@@ -446,6 +446,9 @@ if (!function_exists('murl')) {
 		if (!empty($_W['account']) && $_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 			$str .= '&a=webapp';
 		}
+		if (!empty($_W['account']) && $_W['account']['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+			$str .= '&a=phoneapp';
+		}
 		$url .= "index.php?i={$_W['uniacid']}{$str}&";
 		if (!empty($controller)) {
 			$url .= "c={$controller}&";
