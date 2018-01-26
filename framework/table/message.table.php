@@ -16,10 +16,11 @@ class MessageTable extends We7Table {
 		}
 
 		if (user_is_founder($_W['uid']) && !user_is_vice_founder() && empty($type)) {
-			$this->query->where('type !=', array(MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE))->whereor('type', MESSAGE_WXAPP_MODULE_UPGRADE)->where('uid', $_W['uid']);
+			$this->query->where('type !=', array(MESSAGE_USER_EXPIRE_TYPE));
 		}
 
 		return $this->query->from('message_notice_log')->orderby('id', 'DESC')->getall();
+
 	}
 
 	public function messageRecord() {
@@ -42,7 +43,7 @@ class MessageTable extends We7Table {
 			$this->query->where('uid', $_W['uid']);
 		}
 		if (user_is_founder($_W['uid']) && !user_is_vice_founder()) {
-			$this->query->where('type !=', array(MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE))->whereor('type', MESSAGE_WXAPP_MODULE_UPGRADE)->where('uid', $_W['uid']);
+			$this->query->where('type !=', array(MESSAGE_USER_EXPIRE_TYPE));
 		}
 		$list =  $this->query->from('message_notice_log')->orderby('id', 'DESC')->getall();
 		return count($list);

@@ -13,12 +13,15 @@ load()->model('message');
 $_W['page']['title'] = '系统管理 - 消息提醒 - 消息提醒';
 
 if ($do == 'display') {
+	$message_id = safe_gpc_int($_GPC['message_id']);
+	message_notice_read($message_id);
+
 	$types = $type = safe_gpc_int($_GPC['type']);
 	$pindex = safe_gpc_int($_GPC['page'], 1);
 	$psize = 10;
 
 	$message_table = table('message');
-	$is_read = !empty($_GPC['is_read']) ? trim($_GPC['is_read']) : '';
+	$is_read = !empty($_GPC['is_read']) ? safe_gpc_int($_GPC['is_read']) : '';
 
 	if (!empty($is_read)) {
 		$message_table->searchWithIsRead($is_read);
