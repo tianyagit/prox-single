@@ -267,12 +267,11 @@ function mc_oauth_userinfo($acid = 0) {
 	if ($_W['container'] != 'wechat') {
 		return array();
 	}
-	$url = $_W['siteurl'];
-	template('mc/iswxapp');
-	return mc_oauth_account_userinfo();
+	include template('mc/iswxapp');
+	exit;
 }
 
-function mc_oauth_account_userinfo() {
+function mc_oauth_account_userinfo($url = '') {
 	global $_W;
 	// 认证号, 静默获取用户信息, 不需要跳转到网页授权获取用户信息.
 	if (!empty($_SESSION['openid']) && intval($_W['account']['level']) >= 3) {
@@ -351,6 +350,9 @@ function mc_oauth_account_userinfo() {
 
 	$state = 'we7sid-' . $_W['session_id'];
 	$_SESSION['dest_url'] = urlencode($_W['siteurl']);
+	if (!empty($url)) {
+		$_SESSION['dest_url'] = urlencode($url);
+	}
 
 	$unisetting = uni_setting($_W['uniacid']);
 	$str = '';
