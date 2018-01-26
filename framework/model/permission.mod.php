@@ -31,6 +31,7 @@ function permission_build() {
 		$we7_file_permission['module'][$_W['role']] = array('manage-account', 'display');
 		$we7_file_permission['wxapp'][$_W['role']] = array('display', 'payment', 'post', 'version');
 		$we7_file_permission['webapp'][$_W['role']] = array('home', 'manage');
+		$we7_file_permission['phoneapp'][$_W['role']] = array('display', 'manage');
 		cache_write($cachekey, $we7_file_permission);
 		return $we7_file_permission;
 	}
@@ -38,7 +39,7 @@ function permission_build() {
 	$user_wxapp_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], PERMISSION_WXAPP);
 	$user_permission = array_merge($user_account_permission, $user_wxapp_permission);
 
-	$permission_contain = array('account', 'wxapp', 'system');
+	$permission_contain = array('account', 'wxapp', 'system', 'phoneapp');
 	$section = array();
 	$permission_result = array();
 	foreach ($permission_frames as $key => $frames) {
