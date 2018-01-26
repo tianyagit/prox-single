@@ -385,6 +385,8 @@ function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
 		$account_type = 'app';
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 		$account_type = 'webapp';
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+		$account_type = 'phoneapp';
 	} else {
 		$account_type = 'system_welcome';
 	}

@@ -6,7 +6,8 @@
 */
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
-$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxappweb_pay', 'wxappweb_pay_result', 'package_app');
+load()->model('mc');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxappweb_pay', 'wxappweb_pay_result', 'package_app', 'go_paycenter', 'oauth');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -121,4 +122,16 @@ if ($do == 'wxappweb_pay') {
 if ($do == 'wxappweb_pay_result') {
 	$site = WeUtility::createModuleWxapp('core');
 	$site->doPagePayResult();
+}
+
+if ($do == 'go_paycenter') {
+	$plid = safe_gpc_int($_GPC['plid']);
+	$params = pdo_get('core_paylog', array('plid' => $plid));
+	$params['title'] = safe_gpc_string($_GPC['title']);
+	template('common/paycenter');
+}
+
+if ($do == 'oauth') {
+	$oauth_userinfo = mc_oauth_account_userinfo($_GPC['url']);
+	header('Location: ' . $_GPC['url']);
 }

@@ -356,6 +356,25 @@ $we7_file_permission = array(
 		),
 		'unbind_user' => array(),
 	),
+	'phoneapp' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array('phoneapp*'),
+		'owner' => array('phoneapp*'),
+		'manager' => array(
+			'display',
+			'manage',
+			'version'
+		),
+		'operator' => array(
+			'display',
+			'manage',
+			'version'
+		),
+		'clerk' => array(
+			'display'
+		),
+	),
 	'utility' => array(
 		'default' => '',
 		'direct' => array(

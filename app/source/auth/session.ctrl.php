@@ -81,6 +81,8 @@ if ($do == 'openid') {
 	}
 
 	$userinfo = $account_api->pkcs7Encode($encrypt_data, $iv);
+	$userinfo['nickname'] = $userinfo['nickName'];
+	$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
 
 	$fans = mc_fansinfo($userinfo['openId']);
 	$fans_update = array(
