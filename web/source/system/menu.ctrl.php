@@ -16,6 +16,7 @@ if (IMS_FAMILY == 'x') {
 	array_push($system_top_menu, 'store');
 }
 /* xend */
+
 $system_menu = cache_load('system_frame');
 if(empty($system_menu)) {
 	cache_build_frame_menu();
