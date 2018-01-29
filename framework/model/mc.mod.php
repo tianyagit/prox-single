@@ -179,23 +179,16 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 		$openid = $openidOruid;
 	}
 
-	/**
-	暂时先把缓存注释，查看是否重复会员问题
-	**/
-	$params = array();
-	$condition = '`openid` = :openid';
-	$params[':openid'] = $openid;
-
-	if (!empty($acid)) {
-		$params[':acid'] = $acid;
-		$condition .= " AND `acid` = :acid";
-	}
+	$fans_table = table('fans');
+	$fans_table->searchWithOpenid($openid);
 	if (!empty($uniacid)) {
-		$params[':uniacid'] = $uniacid;
-		$condition .= " AND `uniacid` = :uniacid";
+		$fans_table->searchWithUniacid($uniacid);
 	}
-	$sql = 'SELECT * FROM ' . tablename('mc_mapping_fans') . " WHERE $condition";
-	$fan = pdo_fetch($sql, $params);
+	if (!empty($acid)) {
+		$fans_table->searchWithAcid($acid);
+	}
+	$fan = $fans_table->fansInfo($openid);
+
 	if (!empty($fan)) {
 		if (!empty($fan['tag']) && is_string($fan['tag'])) {
 			if (is_base64($fan['tag'])) {
