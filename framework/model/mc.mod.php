@@ -520,7 +520,7 @@ function mc_credit_update($uid, $credittype, $creditval = 0, $log = array()) {
 	if (empty($creditval)) {
 		return true;
 	}
-	$value = pdo_fetchcolumn("SELECT $credittype FROM " . tablename('mc_members') . " WHERE `uid` = :uid", array(':uid' => $uid));
+	$value = pdo_getcolumn('mc_members', array('uid' => $uid), $credittype);
 	if ($creditval > 0 || ($value + $creditval >= 0) || $credittype == 'credit6') {
 		pdo_update('mc_members', array($credittype => $value + $creditval), array('uid' => $uid));
 		cache_build_memberinfo($uid);
@@ -597,7 +597,7 @@ function mc_account_change_operator($clerk_type, $store_id, $clerk_id) {
 	if($clerk_type == 1) {
 		$data['clerk_cn'] = '系统';
 	} elseif($clerk_type == 2) {
-		$data['clerk_cn'] = pdo_fetchcolumn('SELECT username FROM ' . tablename('users') . ' WHERE uid = :uid', array(':uid' => $clerk_id));
+		$data['clerk_cn'] = pdo_getcolumn('users', array('uid' => $clerk_id), 'username');
 	} elseif($clerk_type == 3) {
 		if (empty($clerk_id)) {
 			$data['clerk_cn'] = '本人操作';
@@ -622,7 +622,7 @@ function mc_account_change_operator($clerk_type, $store_id, $clerk_id) {
  */
 function mc_credit_fetch($uid, $types = array()) {
 	if (empty($types) || $types == '*') {
-		$select = 'credit1,credit2,credit3,credit4,credit5,credit6';
+		$select = array('credit1', 'credit2', 'credit3', 'credit4', 'credit5', 'credit6');
 	} else {
 		$struct = mc_credit_types();
 		foreach ($types as $key => $type) {
@@ -630,9 +630,9 @@ function mc_credit_fetch($uid, $types = array()) {
 				unset($types[$key]);
 			}
 		}
-		$select = '`' . implode('`,`', $types) . '`';
+		$select = $types;
 	}
-	return pdo_fetch("SELECT {$select} FROM ".tablename('mc_members').' WHERE uid = :uid LIMIT 1',array(':uid' => $uid));
+	return pdo_get('mc_members', array('uid' => $uid), $select);
 }
 
 /**
@@ -655,8 +655,7 @@ function mc_groups($uniacid = 0) {
 	if (empty($uniacid)) {
 		$uniacid = $_W['uniacid'];
 	}
-	$sql = "SELECT * FROM " . tablename('mc_groups') . ' WHERE `uniacid`=:uniacid ORDER BY credit';
-	return pdo_fetchall($sql, array(':uniacid' => $uniacid), 'groupid');
+	return pdo_getall('mc_groups', array('uniacid' => $uniacid), array(), 'groupid', 'credit');
 }
 
 /**
@@ -666,8 +665,7 @@ function mc_groups($uniacid = 0) {
 function mc_fans_groups($force_update = false) {
 	global $_W;
 
-	$sql = "SELECT `groups` FROM " . tablename('mc_fans_groups') . ' WHERE `uniacid` = :uniacid AND acid = :acid';
-	$results = pdo_fetchcolumn($sql, array(':uniacid' => $_W['uniacid'], ':acid' => $_W['acid']));
+	$results = pdo_getcolumn('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']), 'groups');
 
 	if(!empty($results) && !$force_update) {
 		$results = iunserializer($results);
@@ -760,12 +758,8 @@ function mc_acccount_fields($uniacid = 0, $is_available = true) {
 	if(!$uniacid) {
 		$uniacid = $_W['uniacid'];
 	}
-	$condition = ' WHERE a.uniacid = :uniacid';
-	$params = array(':uniacid' => $uniacid);
-	if($is_available) {
-		$condition .= ' AND a.available = 1';
-	}
-	$data = pdo_fetchall('SELECT a.title, b.field FROM ' . tablename('mc_member_fields') . ' AS a LEFT JOIN ' . tablename('profile_fields') . ' as b ON a.fieldid = b.id' . $condition, $params, 'field');
+	$member_table = table('member');
+	$data = $member_table->accountMemberFields($uniacid, $is_available);
 	$fields = array();
 	foreach($data as $row) {
 		$fields[$row['field']] = $row['title'];
@@ -889,9 +883,7 @@ function mc_openid2uid($openid) {
 			}
 		}
 		if (!empty($fans)) {
-			$sql = 'SELECT uid, openid FROM ' . tablename('mc_mapping_fans') . " WHERE `uniacid`=:uniacid AND `openid` IN ('" . implode("','", $fans) . "')";
-			$pars = array(':uniacid' => mc_current_real_uniacid());
-			$fans = pdo_fetchall($sql, $pars, 'uid');
+			$fans = pdo_getall('mc_mapping_fans', array('uniacid' => mc_current_real_uniacid(), 'openid' => $fans), array('uid', 'openid'), 'uid');
 			$fans = array_keys($fans);
 			$uids = array_merge((array)$uids, $fans);
 		}
@@ -930,9 +922,7 @@ function mc_uid2openid($uid) {
 			}
 		}
 		if (!empty($uids)) {
-			$sql = 'SELECT openid FROM ' . tablename('mc_mapping_fans') . " WHERE `uniacid`=:uniacid AND `uid` IN (" . implode(",", $uids) . ")";
-			$pars = array(':uniacid' => mc_current_real_uniacid());
-			$fans_info = pdo_fetchall($sql, $pars, 'openid');
+			$fans_info = pdo_getall('mc_mapping_fans', array('uniacid' => mc_current_real_uniacid(), 'uid' => $uids), array('uid', 'openid'), 'openid');
 			$fans_info = array_keys($fans_info);
 			$openids = array_merge($openids, $fans_info);
 		}

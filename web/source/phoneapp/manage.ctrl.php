@@ -10,20 +10,23 @@ $do = safe_gpc_belong($do, array('create_display', 'save', 'display', 'del_versi
 
 $uniacid = safe_gpc_int($_GPC['uniacid']);
 
-$state = permission_account_user_role($_W['uid'], $uniacid);
-/* xstart */
-if (IMS_FAMILY == 'x') {
-	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
+if (!empty($uniacid)) {
+	$state = permission_account_user_role($_W['uid'], $uniacid);
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
+	}
+	/* xend */
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER));
+	}
+	/* vend */
+	if (!$role_permission) {
+		itoast('无权限操作！', referer(), 'error');
+	}
 }
-/* xend */
-/* vstart */
-if (IMS_FAMILY == 'v') {
-	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER));
-}
-/* vend */
-if (!$role_permission) {
-	itoast('无权限操作！', referer(), 'error');
-}
+
 
 if ($do == 'save') {
 	$version_id = safe_gpc_int($_GPC['version_id']);

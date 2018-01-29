@@ -1834,10 +1834,13 @@ abstract class WeModuleWxapp extends WeBase {
 					$file_path = "$path/$func_file";
 					return is_dir($path) && file_exists($file_path);
 				});
+				$dirs = array_values($dirs);
+
 				// 再过滤文件
 				$files = array_filter($version_path_tree, function($path) use ($func_file){
 					return is_file($path) && pathinfo($path, PATHINFO_BASENAME) == $func_file;
 				});
+				$files = array_values($files);
 
 				if (count($dirs) > 0) {
 					$file = current($dirs).'/'.$func_file;
@@ -1980,10 +1983,13 @@ abstract class WeModulePhoneapp extends webase {
 					$file_path = "$path/$func_file";
 					return is_dir($path) && file_exists($file_path);
 				});
+				$dirs = array_values($dirs);
+
 				// 再过滤文件
 				$files = array_filter($version_path_tree, function($path) use ($func_file){
 					return is_file($path) && pathinfo($path, PATHINFO_BASENAME) == $func_file;
 				});
+				$files = array_values($files);
 
 				if (count($dirs) > 0) {
 					$file = $dirs[0].'/'.$func_file;

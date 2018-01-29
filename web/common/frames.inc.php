@@ -277,7 +277,7 @@ $we7_system_menu['phoneapp'] = array(
 			'menu' => array(),
 			'is_display' => true,
 		),
-		'phoneapp_profile' => array(
+		/*'phoneapp_profile' => array(
 			'title' => '配置',
 			'menu' => array(
 				'front_download' => array(
@@ -288,7 +288,7 @@ $we7_system_menu['phoneapp'] = array(
 					'permission_name' => 'phoneapp_front_download',
 				)
 			)
-		)
+		)*/
 	),
 );
 
