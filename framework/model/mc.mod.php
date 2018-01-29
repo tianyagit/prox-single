@@ -235,12 +235,11 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
  * @return array
  */
 function mc_oauth_fans($openid, $acid = 0){
-	$condition = array();
-	$condition['oauth_openid'] = $openid;
+	$fans_table = table('fans');
 	if (!empty($acid)) {
-		$condition['acid'] = $acid;
+		$fans_table->searchWithAcid($acid);
 	}
-	$fan = pdo_get('mc_oauth_fans', $condition, array('openid', 'uid'));
+	$fan = $fans_table->oauthFans($openid);
 	return $fan;
 }
 
