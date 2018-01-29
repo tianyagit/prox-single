@@ -233,7 +233,7 @@ $we7_system_menu['wxapp'] = array(
 
 $we7_system_menu['webapp'] = array(
 	'title' => 'PC',
-	'icon' => 'wi wi-white-collar',
+	'icon' => 'wi wi-pc',
 	'url' => url('webapp/home/display'),
 	'section' => array(
 		'platform_module' => array(
@@ -422,7 +422,7 @@ $we7_system_menu['system'] = array(
 				'system_webapp' => array(
 					'title' => 'PC',
 					'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
-					'icon' => 'wi wi-webapp',
+					'icon' => 'wi wi-pc',
 					'permission_name' => 'system_webapp',
 					'sub_permission' => array(
 					),
@@ -430,7 +430,7 @@ $we7_system_menu['system'] = array(
 				'system_module_webapp' => array(
 					'title' => 'PC应用',
 					'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
-					'icon' => 'wi wi-webapp-apply',
+					'icon' => 'wi wi-pc-apply',
 					'permission_name' => 'system_module_webapp',
 				),
 			)
