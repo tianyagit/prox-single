@@ -123,8 +123,8 @@ function phoneapp_version($version_id) {
 	if (empty($version_id)) {
 		return $version_info;
 	}
-
-	$version_info = pdo_get('phoneapp_versions', array('id' => $version_id));
+	$version_table = table('phoneappversions');
+	$version_info = $version_table->searchWithId($version_id)->getVersionInfo();
 	$version_info['modules'] = iunserializer($version_info['modules']);
 	return $version_info;
 }
