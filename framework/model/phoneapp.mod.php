@@ -79,7 +79,9 @@ function phoneapp_fetch($uniacid, $version_id = '') {
 		$version_id = safe_gpc_int($version_id);
 	}
 
-	$phoneapp_info = table('phoneapp')->phoneappAccountInfo($uniacid);
+	$phonaeapp_table = table('phoneapp');
+	$phoneapp_info = $phonaeapp_table->searchWithUniacid($uniacid)->phoneappAccountInfo();
+
 	if (empty($phoneapp_info)) {
 		return $phoneapp_info;
 	}
@@ -97,10 +99,10 @@ function phoneapp_fetch($uniacid, $version_id = '') {
 		}
 
 		if (empty($phoneapp_version_info)) {
-			$phoneapp_version_info = table('phoneapp')->phoneappVersionInfo($uniacid);
+			$phoneapp_version_info = $phonaeapp_table->searchWithUniacid($uniacid)->phoneappVersionInfo();
 		}
 	} else {
-		$phoneapp_version_info = table('phoneapp')->phoneappVersionInfoById($version_id);
+		$phoneapp_version_info = $phonaeapp_table->searchWithId($version_id)->phoneappVersionInfo();
 	}
 	if (!empty($phoneapp_version_info) && !empty($phoneapp_version_info['modules'])) {
 		$phoneapp_version_info['modules'] = iunserializer($phoneapp_version_info['modules']);
@@ -123,8 +125,8 @@ function phoneapp_version($version_id) {
 	if (empty($version_id)) {
 		return $version_info;
 	}
-	$version_table = table('phoneappversions');
-	$version_info = $version_table->searchWithId($version_id)->getVersionInfo();
+	$version_table = table('phoneapp');
+	$version_info = $version_table->searchWithId($version_id)->phoneappVersionInfo();
 	$version_info['modules'] = iunserializer($version_info['modules']);
 	return $version_info;
 }
