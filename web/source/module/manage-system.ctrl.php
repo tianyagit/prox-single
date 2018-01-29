@@ -712,7 +712,11 @@ if ($do == 'recycle_uninstall') {
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	$uninstalled_module = module_get_all_unistalled('uninstalled');
+	if (!empty($_GPC['system_welcome'])) {
+		$uninstallModules = module_get_all_unistalled('uninstalled', true, 'system_welcome');
+	} else {
+		$uninstallModules = module_get_all_unistalled('uninstalled');
+	}
 	$total_uninstalled = $uninstalled_module['module_count'];
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
