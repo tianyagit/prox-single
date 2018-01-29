@@ -358,6 +358,10 @@ function uni_groups($groupids = array(), $show_all = false) {
 									$row['webapp'][$module['name']] = $module;
 								}
 
+								if ($module['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP) {
+									$row['phoneapp'][$module['name']] = $module;
+								}
+
 								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 									if (!empty($module['main_module'])) {
 										continue;
@@ -582,6 +586,8 @@ function uni_account_tablename($type) {
 			return 'account_wxapp';
 		case ACCOUNT_TYPE_WEBAPP_NORMAL:
 			return 'account_webapp';
+		case ACCOUNT_TYPE_PHONEAPP_NORMAL:
+			return 'account_phoneapp';
 	}
 }
 
@@ -738,6 +744,8 @@ function uni_account_last_switch() {
 		$uniacid = $cache_lastaccount['webapp'];
 	} else if (strexists($_W['siteurl'], 'c=wxapp')) {
 		$uniacid = $cache_lastaccount['wxapp'];
+	} else if (strexists($_W['siteurl'], 'c=phoneapp')) {
+		$uniacid = $cache_lastaccount['phoneapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];
 	}
@@ -949,7 +957,7 @@ function account_delete($acid) {
 
 		//遍历全部表删除公众号数据
 		$tables = array(
-			'account','account_wechats', 'account_wxapp', 'wxapp_versions', 'core_attachment','core_paylog','core_queue','core_resource',
+			'account','account_wechats', 'account_wxapp', 'wxapp_versions', 'account_webapp', 'account_phoneapp', 'phoneapp_versions', 'core_attachment','core_paylog','core_queue','core_resource',
 			'wechat_attachment', 'cover_reply', 'mc_chats_record','mc_credits_recharge','mc_credits_record',
 			'mc_fans_groups','mc_groups','mc_handsel','mc_mapping_fans','mc_mapping_ucenter','mc_mass_record',
 			'mc_member_address','mc_member_fields','mc_members','menu_event',

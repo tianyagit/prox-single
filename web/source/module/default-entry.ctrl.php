@@ -35,7 +35,15 @@ if ($do == 'display') {
 		} else {
 			$data['default_entry'] = $default_entry;
 		}
-		pdo_update('uni_account_modules', array('settings' => iserializer($data)), array('uniacid' => $_W['uniacid'], 'module' => $module_name));
+		if (empty($uni_account_module_setting)) {
+			$insert_data['settings'] = iserializer($data);
+			$insert_data['uniacid'] = $_W['uniacid'];
+			$insert_data['module'] = $module_name;
+			$insert_data['enabled'] = 1;
+			pdo_insert('uni_account_modules', $insert_data);
+		} else {
+			pdo_update('uni_account_modules', array('settings' => iserializer($data)), array('uniacid' => $_W['uniacid'], 'module' => $module_name));
+		}
 		itoast('保存成功！');
 	}
 	template('module/default-entry');

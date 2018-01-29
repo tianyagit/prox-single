@@ -31,6 +31,7 @@ function permission_build() {
 		$we7_file_permission['module'][$_W['role']] = array('manage-account', 'display');
 		$we7_file_permission['wxapp'][$_W['role']] = array('display', 'payment', 'post', 'version');
 		$we7_file_permission['webapp'][$_W['role']] = array('home', 'manage');
+		$we7_file_permission['phoneapp'][$_W['role']] = array('display', 'manage');
 		cache_write($cachekey, $we7_file_permission);
 		return $we7_file_permission;
 	}
@@ -38,7 +39,7 @@ function permission_build() {
 	$user_wxapp_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], PERMISSION_WXAPP);
 	$user_permission = array_merge($user_account_permission, $user_wxapp_permission);
 
-	$permission_contain = array('account', 'wxapp', 'system');
+	$permission_contain = array('account', 'wxapp', 'system', 'phoneapp');
 	$section = array();
 	$permission_result = array();
 	foreach ($permission_frames as $key => $frames) {
@@ -228,7 +229,7 @@ function permission_account_user($type = 'system') {
 	if (!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
 	} else {
-		$user_permission = array('account*', 'wxapp*');
+		$user_permission = array('account*', 'wxapp*', 'phoneapp*');
 	}
 	$permission_append = frames_menu_append();
 	//目前只有系统管理才有预设权限，公众号权限走数据库
@@ -495,6 +496,7 @@ function permission_user_account_num($uid = 0) {
 				$group['maxaccount'] = min(intval($group['maxaccount']), intval($group_vice['maxaccount']));
 				$group['maxwxapp'] = min(intval($group['maxwxapp']), intval($group_vice['maxwxapp']));
 				$group['maxwebapp'] = min(intval($group['maxwebapp']), intval($group_vice['maxwebapp']));
+				$group['maxphoneapp'] = min(intval($group['maxphoneapp']), intval($group_vice['maxphoneapp']));
 			}
 		}
 	}
@@ -507,10 +509,12 @@ function permission_user_account_num($uid = 0) {
 	$uniacid_limit = max((intval($group['maxaccount']) + intval($store_buy_account) - $group_num['account_num']), 0);
 	$wxapp_limit = max((intval($group['maxwxapp']) + intval($store_buy_wxapp) - $group_num['wxapp_num']), 0);
 	$webapp_limit = max(intval($group['maxwebapp']) - $group_num['webapp_num'], 0);
+	$phoneapp_limit = max(intval($group['maxphoneapp']) - $group_num['phoneapp_num'], 0);
 
 	$founder_uniacid_limit = max((intval($group_vice['maxaccount']) + intval($store_buy_account) - $founder_group_num['account_num']), 0);
 	$founder_wxapp_limit = max((intval($group_vice['maxwxapp']) + intval($store_buy_wxapp) - $founder_group_num['wxapp_num']), 0);
 	$founder_webapp_limit = max(intval($group_vice['maxwebapp']) - $founder_group_num['webapp_num'], 0);
+	$founder_phoneapp_limit = max(intval($group_vice['maxphoneapp']) - $founder_group_num['phoneapp_num'], 0);
 	$data = array(
 		'group_name' => $group['name'],
 		'vice_group_name' => $group_vice['name'],
@@ -518,6 +522,7 @@ function permission_user_account_num($uid = 0) {
 		'usergroup_account_limit' => max($group['maxaccount'] - $group_num['account_num'] - $create_buy_account_num, 0),//用户组剩余创建公众号个数
 		'usergroup_wxapp_limit' => max($group['maxwxapp'] - $group_num['wxapp_num'] - $create_buy_wxapp_num, 0),//用户组剩余创建小程序个数
 		'usergroup_webapp_limit' => max($group['maxwebapp'] - $group_num['webapp_num'], 0),//用户组剩余创建PC个数
+		'usergroup_phoneapp_limit' => max($group['maxphoneapp'] - $group_num['phoneapp_num'], 0),//用户组剩余创建APP个数
 		'uniacid_num' => $group_num['account_num'],
 		'uniacid_limit' => max($uniacid_limit, 0),
 		'founder_uniacid_limit' => max($founder_uniacid_limit, 0),
@@ -529,6 +534,10 @@ function permission_user_account_num($uid = 0) {
 		'webapp_limit' => $webapp_limit, //pc 剩余创建数量,
 		'founder_webapp_limit' => max($founder_webapp_limit, 0),
 		'webapp_num'=> $group_num['webapp_num'], //pc 已创建pc数量
+		'maxphoneapp' => $group['maxphoneapp'],
+		'phoneapp_num' => $group_num['phoneapp_num'],
+		'phoneapp_limit' => $phoneapp_limit,
+		'founder_phoneapp_limit' => max($founder_phoneapp_limit, 0)
 	);
 	return $data;
 }

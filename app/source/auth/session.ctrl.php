@@ -75,12 +75,14 @@ if ($do == 'openid') {
 	if (empty($_SESSION['session_key']) || empty($encrypt_data) || empty($iv)) {
 		$account_api->result(1, '请先登录');
 	}
-	$sign = sha1(htmlspecialchars_decode($_GPC['rawData'], ENT_QUOTES).$_SESSION['session_key']);
+	$sign = sha1($_POST['rawData'].$_SESSION['session_key']);
 	if ($sign !== $_GPC['signature']) {
 		$account_api->result(1, '签名错误');
 	}
 
 	$userinfo = $account_api->pkcs7Encode($encrypt_data, $iv);
+	$userinfo['nickname'] = $userinfo['nickName'];
+	$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
 
 	$fans = mc_fansinfo($userinfo['openId']);
 	$fans_update = array(

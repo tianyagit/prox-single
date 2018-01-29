@@ -23,7 +23,7 @@
 				{{module.title}}
 			</td>
 			<td class="text-left" ng-if="module.account">
-				<img src="{php echo tomedia('headimg_'.$module['account']['acid'].'.jpg')}?time={php echo time()}" style="width:50px;height:50px;">
+				<img ng-src="{{module.account.logo}}" style="width:50px;height:50px;">
 				<span>{{module.account.name}}</span>
 			</td>
 			<td class="text-left" ng-if="!module.account && !module.other_link">

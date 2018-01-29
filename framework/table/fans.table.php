@@ -15,4 +15,12 @@ class FansTable extends We7Table {
 			->where('acid', $_W['acid'])
 			->getall('openid');
 	}
+
+	public function fansInfo($openid) {
+		return $this->query->from('mc_mapping_fans')->where('openid', $openid)->get();
+	}
+
+	public function oauthFans($oauth_openid) {
+		return $this->query->from('oauth_fans')->where('oauth_openid', $oauth_openid)->get();
+	}
 }

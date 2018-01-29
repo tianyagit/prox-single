@@ -385,6 +385,8 @@ function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
 		$account_type = 'app';
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 		$account_type = 'webapp';
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+		$account_type = 'phoneapp';
 	} else {
 		$account_type = 'system_welcome';
 	}
@@ -463,9 +465,7 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	if (!empty($module['issystem'])) {
 		return error(1, '系统模块不能卸载！');
 	}
-	if (!empty($module['plugin_list'])) {
-		pdo_delete('modules_plugin', array('main_module' => $module_name));
-	}
+	pdo_delete('modules_plugin', array('main_module' => $module_name));
 
 	pdo_delete('uni_account_modules', array('module' => $module_name));
 	cache_delete(cache_system_key('module:all_uninstall'));
