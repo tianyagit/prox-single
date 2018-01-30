@@ -14,8 +14,7 @@ function cache_build_template() {
  * @return mixed
  */
 function cache_build_setting() {
-	$sql = "SELECT * FROM " . tablename('core_settings');
-	$setting = pdo_fetchall($sql, array(), 'key');
+	$setting = table('coresetting')->getSettingList();
 	if (is_array($setting)) {
 		foreach ($setting as $k => $v) {
 			$setting[$v['key']] = iunserializer($v['value']);
@@ -69,7 +68,7 @@ function cache_build_account($uniacid = 0) {
 	global $_W;
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
-		$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
+		$uniacid_arr = table('account')->getUniAccountList();
 		foreach($uniacid_arr as $account){
 			cache_delete("uniaccount:{$account['uniacid']}");
 			cache_delete("unisetting:{$account['uniacid']}");
@@ -148,7 +147,7 @@ function cache_build_users_struct() {
 		'pay_password' => '支付密码',
 	);
 	cache_write('userbasefields', $base_fields);
-	$fields = pdo_getall('profile_fields', array(), array(), 'field');
+	$fields = table('profile')->getProfileFields();
 	if (!empty($fields)) {
 		foreach ($fields as &$field) {
 			$field = $field['title'];
@@ -172,7 +171,8 @@ function cache_build_users_struct() {
 
 function cache_build_frame_menu() {
 	global $_W;
-	$system_menu_db = pdo_getall('core_menu', array('permission_name !=' => ''), array(), 'permission_name');
+	$table_name = table('menu');
+	$system_menu_db = $table_name->getCoreMenuFillPermissionName();
 	$system_menu = require IA_ROOT . '/web/common/frames.inc.php';
 	if (!empty($system_menu) && is_array($system_menu)) {
 		$system_displayoder = 1;
@@ -187,9 +187,9 @@ function cache_build_frame_menu() {
 				if (empty($section['menu'])) {
 					$section['menu'] = array();
 				}
-				$add_menu = pdo_getall('core_menu', array('group_name' => $section_name), array(
-					'id', 'title', 'url', 'is_display', 'is_system', 'permission_name', 'displayorder', 'icon',
-				), 'permission_name', 'displayorder DESC');
+				$table_name->searchWithGroupName($section_name);
+				$table_name->coreMenuOrderByDisplayorder('DESC');
+				$add_menu = $table_name->getCoreMenuList();
 				if (!empty($add_menu)) {
 					foreach ($add_menu as $permission_name => $menu) {
 						$menu['icon'] = !empty($menu['icon']) ? $menu['icon'] : 'wi wi-appsetting';
@@ -222,7 +222,7 @@ function cache_build_frame_menu() {
 				$system_menu[$menu_name]['section'][$section_name]['menu'] = iarray_sort($system_menu[$menu_name]['section'][$section_name]['menu'], 'displayorder', 'desc');
 			}
 		}
-		$add_top_nav = pdo_getall('core_menu', array('group_name' => 'frame', 'is_system <>' => 1), array('title', 'url', 'permission_name', 'displayorder', 'icon'));
+		$add_top_nav = $table_name->searchWithGroupName('frame')->getTopMenu();
 		if (!empty($add_top_nav)) {
 			foreach ($add_top_nav as $menu) {
 				$menu['url'] = strexists($menu['url'], 'http') ?  $menu['url'] : $_W['siteroot'] . $menu['url'];
@@ -240,7 +240,7 @@ function cache_build_frame_menu() {
 
 function cache_build_module_subscribe_type() {
 	global $_W;
-	$modules = pdo_fetchall("SELECT name, subscribes FROM " . tablename('modules') . " WHERE subscribes <> ''");
+	$modules = table('module')->getSubscribesModules();
 	$subscribe = array();
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
@@ -274,7 +274,7 @@ function cache_build_module_subscribe_type() {
 /*更新流量主缓存*/
 function cache_build_cloud_ad() {
 	global $_W;
-	$uniacid_arr = pdo_fetchall("SELECT uniacid FROM " . tablename('uni_account'));
+	$uniacid_arr = table('account')->getUniAccountList();
 	foreach($uniacid_arr as $account){
 		cache_delete("stat:todaylock:{$account['uniacid']}");
 		cache_delete("cloud:ad:uniaccount:{$account['uniacid']}");
@@ -298,16 +298,20 @@ function cache_build_uninstalled_module() {
 	load()->func('file');
 	$cloud_api = new CloudApi();
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-	$sql = 'SELECT * FROM '. tablename('modules') . " as a LEFT JOIN" . tablename('modules_recycle') . " as b ON a.name = b.modulename WHERE b.modulename is NULL";
-	$installed_module = pdo_fetchall($sql, array(), 'name');
 
+	$module_table = table('module');
+	$installed_module = $module_table->getInstalledModuleList();
 	$uninstallModules = array('recycle' => array(), 'uninstalled' => array());
 	$recycle_modules = $cloud_api->post('cache', 'get', array('key' => cache_system_key('recycle_module:')));
 	$recycle_modules = !empty($recycle_modules['data']) ? $recycle_modules['data'] : array();
+
+
 	if (empty($recycle_modules)) {
-		$recycle_modules = pdo_getall('modules_recycle', array(), array('modulename'), 'modulename');
+		$recycle_modules = $module_table->getModuleRecycle();
 		$cloud_api->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_modules));
 	}
+
+
 	$bought_module = cloud_m_bought();
 	$bought_count_page = ceil(count($bought_module) / 10);
 	for ($i = 0; $i < $bought_count_page; $i++) {
@@ -465,18 +469,14 @@ function cache_build_uninstalled_module() {
 function cache_build_proxy_wechatpay_account() {
 	global $_W;
 	load()->model('account');
-	if(empty($_W['isfounder'])) {
-		$where = " WHERE `uniacid` IN (SELECT `uniacid` FROM " . tablename('uni_account_users') . " WHERE `uid`=:uid)";
-		$params[':uid'] = $_W['uid'];
-	}
-	$sql = "SELECT * FROM " . tablename('uni_account') . $where;
-	$uniaccounts = pdo_fetchall($sql, $params);
+	$account_table = table('account');
+	$uniaccounts = $account_table->userOwnedAccount($_W['uid']);
 	$service = array();
 	$borrow = array();
 	if (!empty($uniaccounts)) {
 		foreach ($uniaccounts as $uniaccount) {
 			$account = account_fetch($uniaccount['default_acid']);
-			$account_setting = pdo_get('uni_settings', array ('uniacid' => $account['uniacid']));
+			$account_setting = $account_table->searchWithUniacid($account['uniacid'])->getUniSetting();
 			$payment = iunserializer($account_setting['payment']);
 			if (is_array($account) && !empty($account['key']) && !empty($account['secret']) && in_array($account['level'], array (4)) &&
 				is_array($payment) && !empty($payment) && intval($payment['wechat']['switch']) == 1) {
@@ -520,8 +520,7 @@ function cache_build_uni_group() {
 function cache_build_cloud_upgrade_module() {
 	load()->model('cloud');
 	load()->model('extension');
-
-	$module_list = pdo_getall('modules', array(), array(), 'name');
+	$module_list = table('module')->getModulesList();
 	$cloud_module = cloud_m_query();
 	$modules = array();
 	if (is_array($module_list) && !empty($module_list)) {
