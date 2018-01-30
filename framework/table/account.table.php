@@ -11,6 +11,8 @@ class AccountTable extends We7Table {
 	protected $tableName = 'uni_account';
 	protected $primaryKey = 'acid';
 	protected $uni_verifycode = 'uni_verifycode';
+	protected $uniSettings = 'uni_settings';
+	protected $uniAccountUsers = 'uni_account_users';
 	/**
 	 *  当前公众号的基本信息
 	 * @return array
@@ -279,5 +281,13 @@ class AccountTable extends We7Table {
 		}
 
 		return $this->query->get();
+	}
+
+	public function getUniSetting() {
+		return $this->query->from($this->uniSettings)->get();
+	}
+
+	public function getUniAccountList() {
+		return $this->query->select('uniacid')->from($this->tableName)->getall();
 	}
 }

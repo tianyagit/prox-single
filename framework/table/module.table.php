@@ -10,6 +10,7 @@ class ModuleTable extends We7Table {
 
 	protected $tableName = 'modules';
 	protected $primaryKey = 'mid';
+	protected $modulesRecycle = 'modules_recycle';
 
 	public function bindings() {
 		return $this->hasMany('modulebinding', 'module', 'name');
@@ -96,5 +97,21 @@ class ModuleTable extends We7Table {
 			return $result;
 		}
 		return array();
+	}
+
+	public function getModulesList() {
+		return $this->query->from($this->tableName)->getall('name');
+	}
+
+	public function getInstalledModuleList() {
+		return $this->query->from($this->tableName, 'a')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.modulename'))->where('b.modulename', null)->getall('name');
+	}
+
+	public function getModuleRecycle() {
+		return $this->query->select('modulename')->from($this->modulesRecycle)->getall('modulename');
+	}
+
+	public function getSubscribesModules() {
+		return $this->query->select('name', 'subscribes')->from($this->tableName)->where('subscribes !=', '')->getall();
 	}
 }
