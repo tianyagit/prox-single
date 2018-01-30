@@ -1,0 +1,86 @@
+<?php
+/**
+ * 授权添加小程序
+ * [WeEngine System] Copyright (c) 2013 WE7.CC
+ */
+defined('IN_IA') or exit('Access Denied');
+
+load()->func('communication');
+load()->classs('weixin.platform');
+load()->model('wxapp');
+
+$account_platform = new WeiXinPlatform();
+$dos = array('forward');
+$do = in_array($do, $dos) ? $do : 'forward';
+
+$setting = setting_load('platform');
+if ($do == 'forward') {
+
+	if (empty($_GPC['auth_code'])) {
+		itoast('授权登录失败，请重试', url('wxapp/manage'), 'error');
+	}
+	$auth_info = $account_platform->getAuthInfo($_GPC['auth_code']);
+	if (is_error($auth_info)) {
+		itoast('授权登录新建小程序失败：' . $auth_info['message'], url('wxapp/manage'), 'error');
+	}
+	$auth_refresh_token = $auth_info['authorization_info']['authorizer_refresh_token'];
+	$auth_appid = $auth_info['authorization_info']['authorizer_appid'];
+
+	$account_info = $account_platform->getAccountInfo($auth_appid);
+	if (is_error($account_info)) {
+		itoast('授权登录新建小程序失败：' . $account_info['message'], url('wxapp/manage'), 'error');
+	}
+	if (!empty($_GPC['test'])) {
+		echo "此为测试平台接入返回结果：<br/> 公众号名称：{$account_info['authorizer_info']['nick_name']} <br/> 接入状态：成功";
+		exit;
+	}
+	if ($account_info['authorizer_info']['service_type_info']['id'] == '0' || $account_info['authorizer_info']['service_type_info']['id'] == '1') {
+		if ($account_info['authorizer_info']['verify_type_info']['id'] > '-1') {
+			$level = '3';
+		} else {
+			$level = '1';
+		}
+	} elseif ($account_info['authorizer_info']['service_type_info']['id'] == '2') {
+		if ($account_info['authorizer_info']['verify_type_info']['id'] > '-1') {
+			$level = '4';
+		} else {
+			$level = '2';
+		}
+	}
+//	if (!empty($account_info['authorizer_info']['user_name'])) {
+//		$account_found = pdo_get('account_wxapp', array('original' => $account_info['authorizer_info']['user_name']));
+//		if (!empty($account_found)) {
+//			message('小程序已经在系统中接入，是否要更改为授权接入方式？ <div><a class="btn btn-primary" href="' . url('account/auth/confirm', array('level' => $level, 'auth_refresh_token' => $auth_refresh_token, 'auth_appid' => $auth_appid, 'acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid'])) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" href="index.php">否</a></div>', '', 'tips');
+//		}
+//	}
+	$account_insert = array(
+		'name' => $account_info['authorizer_info']['nick_name'],
+		'description' => '',
+		'groupid' => 0,
+	);
+
+	$account_wxapp_data = array(
+		'name' => trim($account_info['authorizer_info']['nick_name']),
+		'description' => trim($_GPC['description']),
+		'original' => trim($account_info['authorizer_info']['user_name']),
+		'level' => 1,
+		'key' => trim($auth_appid),
+		'secret' => trim($_GPC['appsecret']),
+		'type' => ACCOUNT_TYPE_APP_NORMAL,
+		'encodingaeskey'=>$account_platform->encodingaeskey,
+		'auth_refresh_token'=>$auth_refresh_token,
+		'token' => $account_platform->token,
+	);
+	$uniacid = wxapp_account_create($account_wxapp_data);
+	if (!$uniacid) {
+		itoast('授权登录新建小程序失败，请重试', url('wxapp/manage'), 'error');
+	}
+
+	$headimg = ihttp_request($account_info['authorizer_info']['head_img']);
+	$qrcode = ihttp_request($account_info['authorizer_info']['qrcode_url']);
+	file_put_contents(IA_ROOT . '/attachment/headimg_' . $acid . '.jpg', $headimg['content']);
+	file_put_contents(IA_ROOT . '/attachment/qrcode_' . $acid . '.jpg', $qrcode['content']);
+
+	cache_build_account($uniacid);
+	itoast('授权登录成功', url('wxapp/post/design_method', array('uniacid' => $uniacid, 'choose_type'=>2)), 'success');
+}

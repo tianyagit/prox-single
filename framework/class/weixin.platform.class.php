@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 define('ACCOUNT_PLATFORM_API_ACCESSTOKEN', 'https://api.weixin.qq.com/cgi-bin/component/api_component_token');
 define('ACCOUNT_PLATFORM_API_PREAUTHCODE', 'https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token=');
-define('ACCOUNT_PLATFORM_API_LOGIN', 'https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=%s&pre_auth_code=%s&redirect_uri=%s');
+define('ACCOUNT_PLATFORM_API_LOGIN', 'https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=%s');
 define('ACCOUNT_PLATFORM_API_QUERY_AUTH_INFO', 'https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=');
 define('ACCOUNT_PLATFORM_API_ACCOUNT_INFO', 'https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=');
 define('ACCOUNT_PLATFORM_API_REFRESH_AUTH_ACCESSTOKEN', 'https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token=');
@@ -175,7 +175,18 @@ class WeiXinPlatform extends WeiXinAccount {
 		if (is_error($preauthcode)) {
 			$authurl = "javascript:alert('{$preauthcode['message']}');";
 		} else {
-			$authurl = sprintf(ACCOUNT_PLATFORM_API_LOGIN, $this->appid, $preauthcode, urlencode($GLOBALS['_W']['siteroot'] . 'index.php?c=account&a=auth&do=forward'));
+			$authurl = sprintf(ACCOUNT_PLATFORM_API_LOGIN, $this->appid,
+				$preauthcode, urlencode($GLOBALS['_W']['siteroot'] . 'index.php?c=account&a=auth&do=forward'), 1);
+		}
+		return $authurl;
+	}
+
+	public function getAuthWxappLoginUrl() {
+		$preauthcode = $this->getPreauthCode();
+		if (is_error($preauthcode)) {
+			$authurl = "javascript:alert('{$preauthcode['message']}');";
+		} else {
+			$authurl = sprintf(ACCOUNT_PLATFORM_API_LOGIN, $this->appid, $preauthcode, urlencode($GLOBALS['_W']['siteroot'] . 'index.php?c=wxapp&a=auth&do=forward'), 2);
 		}
 		return $authurl;
 	}

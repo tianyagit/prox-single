@@ -1,6 +1,7 @@
 {template 'common/header'}
 <div id="js-wxapp-create">
-	<div class="caret-wxapp">
+
+		<div class="caret-wxapp">
 			<div class="panel panel-app">
 				<div class="panel-heading">
 					<ol class="breadcrumb we7-breadcrumb">
@@ -22,50 +23,28 @@
 						<div class="col-sm-6">
 							<div class="title">
 								<span class="wi wi-small-routine"></span>
-								新建单个小程序
+								手动添加小程序
 							</div>
 							<div class="con">
-								打包生成小程序，仅针对开发者单个小程序插件.
-							</div>
-							<div>
-								<a href="{php echo url('wxapp/post/post', array('design_method' => WXAPP_MODULE, 'uniacid' => $uniacid))}" class="btn btn-primary">新建小程序</a>
-							</div>
-						</div>
-						<!-- xstart -->
-						{if IMS_FAMILY == 'x'}
-						<div class="col-sm-6">
-							<div class="title">
-								<span class="wi wi-wxapp-pack"></span>
-								打包普通应用为小程序
-							</div>
-							<div class="con">
-								打包生成小程序，选择一个公众号应用打包为小程序
-							</div>
-							<div>
-								<a href="{php echo url('wxapp/post/post', array('design_method' => WXAPP_MODULE, 'uniacid' => $uniacid, 'create_type'=>WXAPP_CREATE_MODULE))}" class="btn btn-primary">打包小程序</a>
-							</div>
-						</div>
-						{/if}
-						<!-- xend -->
-					</div>
 
-					<div class="wxapp-creat-select we7-padding clearfix">
-						<!-- xstart -->
-						{if IMS_FAMILY == 'x'}
+							</div>
+							<div>
+								<a href="{php echo url('wxapp/post/design_method', array('design_method' => WXAPP_MODULE, 'uniacid' => $uniacid, 'choose_type'=>1))}" class="btn btn-primary">新建小程序</a>
+							</div>
+						</div>
+
 						<div class="col-sm-6">
 							<div class="title">
 								<span class="wi wi-wxapp-pack"></span>
-								打包多个普通应用为小程序
+								授权添加小程序
 							</div>
 							<div class="con">
-								打包生成小程序，选择多个公众号应用打包为小程序
+
 							</div>
 							<div>
-								<a href="{php echo url('wxapp/post/post', array('design_method' => WXAPP_MODULE, 'uniacid' => $uniacid, 'create_type'=>WXAPP_CREATE_MUTI_MODULE, 'muti'=>1))}" class="btn btn-primary">打包小程序</a>
+								<a href="{$authurl}" class="btn btn-primary">授权添加小程序</a>
 							</div>
 						</div>
-						{/if}
-						<!-- xend -->
 
 					</div>
 
@@ -73,5 +52,6 @@
 			</div>
 
 		</div>
+
 </div>
 {template 'common/footer'}

@@ -1,10 +1,7 @@
 {template 'common/header'}
-<link rel="stylesheet" href="./resource/css/wxapp-icon.css">
 <div class="account-list-add-step">
-
 	<div id="js-wxapp-create" ng-controller="MainCtrl" ng-cloak>
-		<div class="container">
-			<div class="caret-wxapp">
+		<div class="caret-wxapp">
 				<form method="post" ng-submit="package()">
 					<input name="token" type="hidden" value="{$_W['token']}" />
 					<div class="panel panel-app">
@@ -23,7 +20,7 @@
 							</ul>
 						</div>
 						<div class="panel-body">
-							<div class="wxapp-content tab-content">
+							<div class="wxapp-content tab-content" style="width: 100%;">
 								<div id="select" ng-show="createStep == 1">
 									<div class="form-defalut we7-form">
 										{if empty($uniacid)}
@@ -382,7 +379,6 @@
 					</nav>
 				</form>
 			</div>
-		</div>
 	</div>
 </div>
 

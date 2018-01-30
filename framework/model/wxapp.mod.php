@@ -47,14 +47,15 @@ function wxapp_account_create($account) {
 
 	$wxapp_data = array(
 		'acid' => $acid,
-		'token' => random(32),
-		'encodingaeskey' => random(43),
+		'token' => isset($account['token']) ? $account['token'] : random(32),
+		'encodingaeskey' => isset($account['encodingaeskey']) ? $account['encodingaeskey'] : random(43),
 		'uniacid' => $uniacid,
 		'name' => $account['name'],
 		'original' => $account['original'],
 		'level' => $account['level'],
 		'key' => $account['key'],
 		'secret' => $account['secret'],
+//		'auth_refresh_token' => isset($account['auth_refresh_token']) ? $account['auth_refresh_token'] : ''
 	);
 	pdo_insert('account_wxapp', $wxapp_data);
 
