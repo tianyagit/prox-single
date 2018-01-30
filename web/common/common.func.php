@@ -562,7 +562,11 @@ function buildframes($framename = ''){
 				);
 			}
 		} else {
-			$frames['phoneapp']['section']['phoneapp_module']['is_display'] = false;
+			$frames['phoneapp']['section']['platform_module']['menu']['platform_module_more'] = array(
+				'title' => '更多应用',
+				'url' => url('phoneapp/description'),
+				'is_display' => 1,
+			);
 		}
 
 		if (!empty($frames['phoneapp']['section'])) {

@@ -41,16 +41,12 @@ class PhoneappTable extends AccountTable {
         return $this->query->from('phoneapp_versions')->where('uniacid', $uniacid)->orderby('id', 'desc')->limit(4)->getall('id');
     }
 
-    public function phoneappAccountInfo($uniacid) {
-        return $this->query->from('account_phoneapp')->where('uniacid', $uniacid)->get();
+    public function phoneappAccountInfo() {
+        return $this->query->from('account_phoneapp')->get();
     }
 
-    public function phoneappVersionInfo($uniacid) {
-        return $this->query->from('phoneapp_versions')->where('uniacid', $uniacid)->orderby('id', 'desc')->get();
-    }
-
-    public function phoneappVersionInfoById($id) {
-        return $this->query->from('phoneapp_versions')->where('id', $id)->get();
+    public function phoneappVersionInfo() {
+        return $this->query->from('phoneapp_versions')->orderby('id', 'desc')->get();
     }
 
     public function phoneappAllVersion($uniacid) {

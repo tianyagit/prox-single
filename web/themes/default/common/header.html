@@ -122,7 +122,7 @@
 								{else}
 									{if (in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER)) && $menu_id == 'front_download' || $menu_id != 'front_download') && !($menu_id == 'platform_menu' && $_W['account']['level'] == ACCOUNT_SUBSCRIPTION)}
 									<li class="list-group-item {if $menu['active']}active{/if}">
-										<a href="{$menu['url']}" class="text-over" {if $frame_section_id == 'platform_module' || $menu_id == 'system_profile'}target="_blank"{/if}>
+										<a href="{$menu['url']}" class="text-over" {if $frame_section_id == 'platform_module'}target="_blank"{/if}>
 										{if $menu['icon']}
 											{if $frame_section_id == 'platform_module'}
 												<img src="{$menu['icon']}"/>
