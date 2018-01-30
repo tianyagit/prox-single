@@ -30,7 +30,7 @@ if ($do == 'design_method') {
 			$account_platform = new WeiXinPlatform();
 			$authurl = $account_platform->getAuthWxappLoginUrl();
 		}
-		template('wxapp/create-type');
+		template('wxapp/choose-type');
 
 	}
 

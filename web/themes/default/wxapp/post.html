@@ -1,24 +1,24 @@
 {template 'common/header'}
-<div class="account-list-add-step">
-	<div id="js-wxapp-create" ng-controller="MainCtrl" ng-cloak>
-		<div class="caret-wxapp">
+<div class="account-list-add-step" id="js-wxapp-create" ng-controller="MainCtrl" ng-cloak>
+	<ol class="breadcrumb we7-breadcrumb">
+		<a href="{url 'wxapp/manage'}"><i class="wi wi-back-circle"></i></a>
+		<li><a href="{url 'wxapp/display'}">小程序列表</a></li>
+		<li>新建小程序</li>
+	</ol>
+	<div class="we7-step">
+		<ul>
+			<li ng-class="createStep == 1 ? 'active': ''">1 设置小程序信息</li>
+			<li ng-class="createStep == 3 ? 'active': ''" ng-show="create_type == 2">{{create_type == 2 ? 2 : ''}} 设计首页</li>
+			<li ng-class="createStep == 4 ? 'active': ''">{{create_type == 2 ? 3 : 2}} 生成版本</li>
+		</ul>
+	</div>
+	<div>
+
 				<form method="post" ng-submit="package()">
 					<input name="token" type="hidden" value="{$_W['token']}" />
 					<div class="panel panel-app">
-						<div class="panel-heading">
-							<ol class="breadcrumb we7-breadcrumb">
-								<a href="{url 'wxapp/display'}"><i class="wi wi-back-circle"></i> </a>
-								<li><a href="{url 'wxapp/display'}">小程序列表</a></li>
-								<li>新建小程序</li>
-							</ol>
-						</div>
-						<div class="we7-step">
-							<ul>
-								<li ng-class="createStep == 1 ? 'active': ''">1 设置小程序信息</li>
-								<li ng-class="createStep == 3 ? 'active': ''" ng-show="create_type == 2">{{create_type == 2 ? 2 : ''}} 设计首页</li>
-								<li ng-class="createStep == 4 ? 'active': ''">{{create_type == 2 ? 3 : 2}} 生成版本</li>
-							</ul>
-						</div>
+
+
 						<div class="panel-body">
 							<div class="wxapp-content tab-content" style="width: 100%;">
 								<div id="select" ng-show="createStep == 1">
@@ -378,7 +378,7 @@
 						</div>
 					</nav>
 				</form>
-			</div>
+
 	</div>
 </div>
 
