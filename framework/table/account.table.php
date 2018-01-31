@@ -290,4 +290,8 @@ class AccountTable extends We7Table {
 	public function getUniAccountList() {
 		return $this->query->select('uniacid')->from($this->tableName)->getall();
 	}
+
+	public function getOwnerUid() {
+		return $this->query->from($this->uniAccountUsers)->getcolumn('uid');
+	}
 }
