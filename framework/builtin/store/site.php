@@ -10,8 +10,10 @@ class StoreModuleSite extends WeModuleSite {
 	private $left_menus;
 
 	public function __construct() {
-		global $_W;
-		checklogin();
+		global $_W, $_GPC;
+		if ($_GPC['c'] == 'site') {
+			checklogin();
+		}
 		load()->model('store');
 		$this->store_setting = (array)$_W['setting']['store'];
 		$this->left_menus = $this->leftMenu();

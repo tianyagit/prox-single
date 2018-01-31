@@ -399,6 +399,15 @@ function cloud_m_query($module = array()) {
 	return $ret;
 }
 
+function cloud_m_bought() {
+	$pars = _cloud_build_params();
+	$pars['method'] = 'module.bought';
+	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
+	$file = IA_ROOT . '/data/module.bought';
+	$ret = _cloud_shipping_parse($dat, $file);
+	return $ret;
+}
+
 function cloud_m_info($name) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.info';
