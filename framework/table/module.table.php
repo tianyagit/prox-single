@@ -114,4 +114,28 @@ class ModuleTable extends We7Table {
 	public function getSubscribesModules() {
 		return $this->query->select('name', 'subscribes')->from($this->tableName)->where('subscribes !=', '')->getall();
 	}
+
+	public function cleanModuleInfo($modulename, $isCleanRule = false) {
+		$this->query->from('core_queue')->where('module', $modulename)->delete();
+		$this->query->from($this->tableName)->where('name', $modulename)->delete();
+		$this->query->from('modules_bindings')->where('module', $modulename)->delete();
+
+		if (!empty($isCleanRule)) {
+			$this->query->from('rule')->where('module', $modulename)->delete();
+			$this->query->from('rule_keyword')->where('module', $modulename)->delete();
+
+			$cover_rule = $this->query->from('cover_reply')->where('module', $modulename)->getall('rid');
+
+			if (!empty($cover_rule)) {
+				$rids = array_keys($cover_rule);
+				$this->query->from('rule_keyword')->where('module', 'cover')->where('rid', $rids)->delete();
+				$this->query->from('rule')->where('module', 'cover')->where('id', $rids)->delete();
+				$this->query->from('cover_reply')->where('module', $modulename)->delete();
+			}
+		}
+		$this->query->from('site_nav')->where('module', $modulename)->delete();
+		$this->query->from('uni_account_modules')->where('module', $modulename)->delete();
+
+		return true;
+	}
 }
