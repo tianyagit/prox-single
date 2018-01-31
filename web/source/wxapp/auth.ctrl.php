@@ -10,7 +10,7 @@ load()->classs('weixin.platform');
 load()->model('wxapp');
 
 $account_platform = new WeiXinPlatform();
-$dos = array('forward');
+$dos = array('forward', 'test');
 $do = in_array($do, $dos) ? $do : 'forward';
 
 $setting = setting_load('platform');
@@ -66,7 +66,7 @@ if ($do == 'forward') {
 		'level' => 1,
 		'key' => trim($auth_appid),
 		'secret' => trim($_GPC['appsecret']),
-		'type' => ACCOUNT_TYPE_APP_NORMAL,
+		'type' => ACCOUNT_TYPE_APP_AUTH,
 		'encodingaeskey'=>$account_platform->encodingaeskey,
 		'auth_refresh_token'=>$auth_refresh_token,
 		'token' => $account_platform->token,
@@ -82,5 +82,35 @@ if ($do == 'forward') {
 	file_put_contents(IA_ROOT . '/attachment/qrcode_' . $acid . '.jpg', $qrcode['content']);
 
 	cache_build_account($uniacid);
+	itoast('授权登录成功', url('wxapp/post/design_method', array('uniacid' => $uniacid, 'choose_type'=>2)), 'success');
+}
+
+if ($do == 'test') {
+	$auth_appid = '123';
+	$account_wxapp_data = array(
+				'name' => trim($_GPC['name']),
+				'description' => trim($_GPC['description']),
+				'original' => trim($_GPC['original']),
+				'level' => 1,
+				'key' => trim($_GPC['appid']),
+				'secret' => trim($_GPC['appsecret']),
+				'type' => ACCOUNT_TYPE_APP_NORMAL,
+			);
+	$account_wxapp_data = array(
+		'name' => '阿凡',
+		'description' => '123',
+		'original' => 'default',
+		'level' => 1,
+		'key' => trim($auth_appid),
+		'secret' => 'empty',
+		'type' => ACCOUNT_TYPE_APP_AUTH,
+		'encodingaeskey'=>'ak',
+		'auth_refresh_token'=>'authken',
+		'token' => 'token',//$account_platform->token,
+	);
+	$uniacid = wxapp_account_create($account_wxapp_data);
+	if (!$uniacid) {
+		itoast('授权登录新建小程序失败，请重试', url('wxapp/manage'), 'error');
+	}
 	itoast('授权登录成功', url('wxapp/post/design_method', array('uniacid' => $uniacid, 'choose_type'=>2)), 'success');
 }

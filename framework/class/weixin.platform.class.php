@@ -27,10 +27,11 @@ class WeiXinPlatform extends WeiXinAccount {
 	public $account;
 
 	function __construct($account = array()) {
+	
 		$setting = setting_load('platform');
-		$this->menuFrame = 'account';
-		$this->type = ACCOUNT_TYPE_OFFCIAL_AUTH;
-		$this->typeName = '公众号';
+		$this->menuFrame = isset($account['menuFrame']) ? $account['menuFrame'] : 'account';
+		$this->type = isset($account['type']) ? $account['type'] : ACCOUNT_TYPE_OFFCIAL_AUTH;
+		$this->typeName = isset($account['typeName']) ? $account['typeName'] : '公众号';
 		$this->appid = $setting['platform']['appid'];
 		$this->appsecret = $setting['platform']['appsecret'];
 		$this->token = $setting['platform']['token'];
@@ -44,7 +45,12 @@ class WeiXinPlatform extends WeiXinAccount {
 			$this->openPlatformTestCase();
 		}
 		$account_table = table('account');
-		$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
+		if ($this->type == ACCOUNT_TYPE_APP_AUTH) {
+			$account = $account_table->getWxappAccount($this->uniaccount['acid']);
+		} else {
+			$account = $account_table->getWechatappAccount($this->uniaccount['acid']);
+		}
+
 		$account['encrypt_key'] = $this->appid;
 		return $account;
 	}

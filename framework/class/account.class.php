@@ -83,9 +83,14 @@ abstract class WeAccount {
 			load()->classs('weixin.account');
 			$account_obj = new WeiXinAccount();
 		}
-		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+		// 授权公众号 授权小程序使用一个类
+		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH || $type == ACCOUNT_TYPE_APP_AUTH) {
 			load()->classs('weixin.platform');
-			$account_obj = new WeiXinPlatform();
+			$menuFrame = $type == ACCOUNT_TYPE_OFFCIAL_AUTH ? 'account' : 'wxapp';
+			$typeName = $type == ACCOUNT_TYPE_OFFCIAL_AUTH ? '公众号' : '小程序';
+			$account = array('type'=>$type, 'menuFrame'=>$menuFrame, 'typeName'=>$typeName);
+			
+			$account_obj = new WeiXinPlatform($account);
 		}
 		if($type == ACCOUNT_TYPE_APP_NORMAL) {
 			load()->classs('wxapp.account');
