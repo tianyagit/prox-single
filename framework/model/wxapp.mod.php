@@ -303,8 +303,15 @@ function wxapp_version($version_id) {
 		return $version_info;
 	}
 
+	$cachekey = cache_system_key("wxapp_version:{$version_id}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+
 	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	$version_info = wxapp_version_detail_info($version_info);
+	cache_write($cachekey, $version_info);
 
 	return $version_info;
 }
