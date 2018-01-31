@@ -56,8 +56,6 @@ function cache_build_account_modules($uniacid = 0) {
 		cache_delete(cache_system_key("unimodules:{$uniacid}:1"));
 		cache_delete(cache_system_key("unimodules:{$uniacid}:"));
 		$owner_uid = pdo_getcolumn('uni_account_users', array('role' => 'owner'), 'uid');
-
-		print_r($owner_uid);exit;
 		cache_delete(cache_system_key("user_modules:{$owner_uid}:"));
 	}
 }
