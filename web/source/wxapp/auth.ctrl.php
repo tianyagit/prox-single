@@ -7,9 +7,10 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->func('communication');
 load()->classs('weixin.platform');
+load()->classs('wxapp.platform');
 load()->model('wxapp');
 
-$account_platform = new WeiXinPlatform();
+$account_platform = new WxAppPlatform();
 $dos = array('forward', 'test');
 $do = in_array($do, $dos) ? $do : 'forward';
 

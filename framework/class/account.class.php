@@ -78,19 +78,20 @@ abstract class WeAccount {
 
 	static public function includes($uniaccount) {
 		$type = $uniaccount['type'];
-
 		if($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 			load()->classs('weixin.account');
 			$account_obj = new WeiXinAccount();
 		}
-		// 授权公众号 授权小程序使用一个类
-		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH || $type == ACCOUNT_TYPE_APP_AUTH) {
+		
+		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			load()->classs('weixin.platform');
-			$menuFrame = $type == ACCOUNT_TYPE_OFFCIAL_AUTH ? 'account' : 'wxapp';
-			$typeName = $type == ACCOUNT_TYPE_OFFCIAL_AUTH ? '公众号' : '小程序';
-			$account = array('type'=>$type, 'menuFrame'=>$menuFrame, 'typeName'=>$typeName);
-			
-			$account_obj = new WeiXinPlatform($account);
+			$account_obj = new WeiXinPlatform();
+		}
+		// 授权小程序
+		if ($type == ACCOUNT_TYPE_APP_AUTH) {
+			load()->classs('weixin.platform');
+			load()->classs('wxapp.platform');
+			$account_obj = new WxAppPlatform();
 		}
 		if($type == ACCOUNT_TYPE_APP_NORMAL) {
 			load()->classs('wxapp.account');

@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 load()->func('communication');
-load()->classs('weixin.platform');
+load()->classs('wxapp.platform');
 
 $dos = array('design_method', 'post', 'get_wxapp_modules', 'module_binding');
 $do = in_array($do, $dos) ? $do : 'post';
@@ -27,7 +27,7 @@ if ($do == 'design_method') {
 			$authurl = "javascript:alert('创建小程序已达上限！');";
 		}
 		if (empty($authurl) && !empty($_W['setting']['platform']['authstate'])) {
-			$account_platform = new WeiXinPlatform();
+			$account_platform = new WxAppPlatform();
 			$authurl = $account_platform->getAuthWxappLoginUrl();
 		}
 		template('wxapp/choose-type');

@@ -126,6 +126,7 @@ function uni_fetch($uniacid = 0) {
 	if (empty($acid)) {
 		return false;
 	}
+
 	$account_api = WeAccount::create($acid['acid']);
 	if (is_error($account_api)) {
 		return $account_api;
@@ -583,6 +584,7 @@ function uni_account_tablename($type) {
 		case ACCOUNT_TYPE_OFFCIAL_AUTH:
 			return 'account_wechats';
 		case ACCOUNT_TYPE_APP_NORMAL:
+		case ACCOUNT_TYPE_APP_AUTH:
 			return 'account_wxapp';
 		case ACCOUNT_TYPE_WEBAPP_NORMAL:
 			return 'account_webapp';
