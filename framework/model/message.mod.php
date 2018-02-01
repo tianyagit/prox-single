@@ -11,11 +11,11 @@ defined('IN_IA') or exit('Access Denied');
  * @return bool
  */
 function message_notice_read($id) {
-	$id = intval($id);
+	$id = safe_gpc_int($id);
 	if (empty($id)) {
 		return true;
 	}
-	pdo_update('message_notice_log', array('is_read' => MESSAGE_READ), array('id' => $id));
+	table('message')->fillIsRead(MESSAGE_READ)->whereId($id)->save();
 	return true;
 }
 
@@ -45,7 +45,7 @@ function message_notice_record($content, $uid, $sign, $type, $extend_message = a
 	if (in_array($type, $push_cloud_message_type)) {
 		message_notice_record_cloud($message_notice_log);
 	}
-	pdo_insert('message_notice_log', $message_notice_log);
+	table('message')->fill($message_notice_log)->save();
 	return true;
 }
 
@@ -53,7 +53,7 @@ function message_notice_record($content, $uid, $sign, $type, $extend_message = a
  * 检测消息记录是否已经插入数据库
  */
 function message_validate_exists($message) {
-	$message_exists = pdo_get('message_notice_log', $message);
+	$message_exists = table('message')->messageExists($message);
 	if (!empty($message_exists)) {
 		return true;
 	}
@@ -211,9 +211,11 @@ function message_sms_expire_notice() {
 			$result = cloud_sms_send($v['mobile'], '800015', array('username' => $v['username']), $custom_sign);
 			if (is_error($result)) {
 				$content = "您的用户名{$v['username']}即将过期。";
-				pdo_insert('core_sendsms_log', array('mobile' => $v['mobile'], 'content' => $content, 'result' => $result['errno'] . $result['message'], 'createtime' => TIMESTAMP));
+
+				$data = array('mobile' => $v['mobile'], 'content' => $content, 'result' => $result['errno'] . $result['message'], 'createtime' => TIMESTAMP);
+				table('coresendsmslog')->fill($data)->save();
 			} else {
-				pdo_update('users_profile', array('send_expire_status' => 1), array('uid' => $v['uid']));
+				table('usersprofile')->fill('send_expire_status', 1)->whereUid($v['uid'])->save();
 			}
 		}
 	}
