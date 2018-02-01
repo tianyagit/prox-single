@@ -23,4 +23,9 @@ class FansTable extends We7Table {
 	public function oauthFans($oauth_openid) {
 		return $this->query->from('oauth_fans')->where('oauth_openid', $oauth_openid)->get();
 	}
+
+	public function tagGroup($uniacid) {
+		$groups = $this->query->from('mc_fans_groups')->where('uniacid', $uniacid)->getcolumn('groups');
+		return !empty($groups) ? iunserializer($groups) : array();
+	}
 }

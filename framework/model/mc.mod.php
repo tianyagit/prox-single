@@ -665,10 +665,10 @@ function mc_groups($uniacid = 0) {
 function mc_fans_groups($force_update = false) {
 	global $_W;
 
-	$results = pdo_getcolumn('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']), 'groups');
+	$fans_table = table('fans');
+	$results = $fans_table->tagGroup($_W['uniacid']);
 
 	if(!empty($results) && !$force_update) {
-		$results = iunserializer($results);
 		return $results;
 	}
 	$account_api = WeAccount::create();
@@ -947,8 +947,8 @@ function mc_group_update($uid = 0) {
 		$user = $_W['member'];
 		$user['openid'] = $_W['openid'];
 	} else {
-		$user = pdo_fetch('SELECT uid, realname, credit1, credit6, groupid FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid AND uid = :uid', array(':uniacid' => $_W['uniacid'], ':uid' => $uid));
-		$user['openid'] = pdo_fetchcolumn('SELECT openid FROM ' . tablename('mc_mapping_fans') . ' WHERE acid = :acid AND uid = :uid', array(':acid' => $_W['acid'], ':uid' => $uid));
+		$user = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $uid), array('uid', ' realname', ' credit1', ' credit6', ' groupid'));
+		$user['openid'] = pdo_getcolumn('mc_mapping_fans', array('acid' => $_W['acid'], 'uid' => $uid), 'openid');
 	}
 	if(empty($user)) {
 		return false;
