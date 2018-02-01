@@ -330,11 +330,11 @@ function module_fetch($name) {
 			$module_info['app_support'] = MODULE_SUPPORT_ACCOUNT;
 		}
 		$module_info['is_relation'] = $module_info['app_support'] ==2 && $module_info['wxapp_support'] == 2 ? true : false;
-		$module_ban = setting_load('module_ban');
+		$module_ban = (array)setting_load('module_ban');
 		if (in_array($name, $module_ban['module_ban'])) {
 			$module_info['is_ban'] = true;
 		}
-		$module_upgrade = setting_load('module_upgrade');
+		$module_upgrade = (array)setting_load('module_upgrade');
 		if (in_array($name, array_keys($module_upgrade['module_upgrade']))) {
 			$module_info['is_upgrade'] = true;
 		}
