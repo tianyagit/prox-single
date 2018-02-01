@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('wxapp');
 load()->func('communication');
+load()->classs('weixin.platform');
 load()->classs('wxapp.platform');
 
 $dos = array('design_method', 'post', 'get_wxapp_modules', 'module_binding');
@@ -28,7 +29,7 @@ if ($do == 'design_method') {
 		}
 		if (empty($authurl) && !empty($_W['setting']['platform']['authstate'])) {
 			$account_platform = new WxAppPlatform();
-			$authurl = $account_platform->getAuthWxappLoginUrl();
+			$authurl = $account_platform->getAuthLoginUrl();
 		}
 		template('wxapp/choose-type');
 

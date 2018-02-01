@@ -11,7 +11,7 @@ load()->classs('wxapp.platform');
 load()->model('wxapp');
 
 $account_platform = new WxAppPlatform();
-$dos = array('forward', 'test');
+$dos = array('forward', 'confirm');
 $do = in_array($do, $dos) ? $do : 'forward';
 
 $setting = setting_load('platform');
@@ -48,12 +48,12 @@ if ($do == 'forward') {
 			$level = '2';
 		}
 	}
-//	if (!empty($account_info['authorizer_info']['user_name'])) {
-//		$account_found = pdo_get('account_wxapp', array('original' => $account_info['authorizer_info']['user_name']));
-//		if (!empty($account_found)) {
-//			message('小程序已经在系统中接入，是否要更改为授权接入方式？ <div><a class="btn btn-primary" href="' . url('account/auth/confirm', array('level' => $level, 'auth_refresh_token' => $auth_refresh_token, 'auth_appid' => $auth_appid, 'acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid'])) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" href="index.php">否</a></div>', '', 'tips');
-//		}
-//	}
+	if (!empty($account_info['authorizer_info']['user_name'])) {
+		$account_found = pdo_get('account_wxapp', array('original' => $account_info['authorizer_info']['user_name']));
+		if (!empty($account_found)) {
+			message('小程序已经在系统中接入，是否要更改为授权接入方式？ <div><a class="btn btn-primary" href="' . url('wxapp/auth/confirm', array('level' => $level, 'auth_refresh_token' => $auth_refresh_token, 'auth_appid' => $auth_appid, 'acid' => $account_found['acid'], 'uniacid' => $account_found['uniacid'])) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" href="index.php">否</a></div>', '', 'tips');
+		}
+	}
 	$account_insert = array(
 		'name' => $account_info['authorizer_info']['nick_name'],
 		'description' => '',
@@ -84,6 +84,34 @@ if ($do == 'forward') {
 
 	cache_build_account($uniacid);
 	itoast('授权登录成功', url('wxapp/post/design_method', array('uniacid' => $uniacid, 'choose_type'=>2)), 'success');
+}
+
+if ($do == 'confirm') {
+
+	$auth_refresh_token = $_GPC['auth_refresh_token'];
+	$auth_appid = $_GPC['auth_appid'];
+	$level = intval($_GPC['level']);
+	$acid = intval($_GPC['acid']);
+	$uniacid = intval($_GPC['uniacid']);
+
+	pdo_update('account_wxapp', array(
+		'auth_refresh_token' => $auth_refresh_token,
+		'encodingaeskey' => $account_platform->encodingaeskey,
+		'token' => $account_platform->token,
+		'level' => $level,
+		'key' => $auth_appid,
+	), array('acid' => $acid));
+	pdo_update('account', array('isconnect' => '1', 'type' => ACCOUNT_TYPE_APP_AUTH, 'isdeleted' => 0), array('acid' => $acid));
+
+	cache_delete("uniaccount:{$uniacid}");
+	cache_delete("unisetting:{$uniacid}");
+	cache_delete("accesstoken:{$acid}");
+	cache_delete("jsticket:{$acid}");
+	cache_delete("cardticket:{$acid}");
+	cache_delete("account:auth:refreshtoken:{$acid}");
+	$url = url('wxapp/post/design_method', array('acid' => $acid, 'uniacid' => $uniacid, 'choose_type'=>2));
+
+	itoast('更改小程序授权接入成功', $url, 'success');
 }
 
 if ($do == 'test') {
