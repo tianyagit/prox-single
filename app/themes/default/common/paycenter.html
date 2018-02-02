@@ -406,11 +406,11 @@
 		$('[name="mix"]').click(function() {
 			if ($(this).prop('checked') === true) {
 				$('[name="mix_pay"]').val(true);
-				fee = $('.js-need-pay').data('price') - "{$credtis[$setting['creditbehaviors']['currency']]}";
+				fee = $('.js-need-pay').data('price') - "{!empty($credtis[$setting['creditbehaviors']['currency']]) ? $credtis[$setting['creditbehaviors']['currency']] : 0}";
 				$('.credit').hide();
 			} else {
 				$('[name="mix_pay"]').val(false);
-				fee = parseFloat($('.js-need-pay').data('price')) + parseFloat("{$credtis[$setting['creditbehaviors']['currency']]}");
+				fee = parseFloat($('.js-need-pay').data('price')) + parseFloat("{!empty($credtis[$setting['creditbehaviors']['currency']]) ? $credtis[$setting['creditbehaviors']['currency']] : 0}");
 				$('.credit').show();
 			}
 			$('.js-need-pay').data('price', fee);
