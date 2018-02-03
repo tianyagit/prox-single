@@ -1001,7 +1001,7 @@ function user_founder_templates($founder_groupid) {
 	}
 
 	if (in_array(-1, $group_detail_info['package'])) {
-		$template_list = pdo_getall('site_templates', array(), array(), 'name');
+		$template_list = table('sitetemplates')->getAllTemplates();
 		return $template_list;
 	}
 
