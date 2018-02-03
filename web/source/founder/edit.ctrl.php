@@ -13,7 +13,7 @@ $do = in_array($do, $dos) ? $do: 'edit_base';
 
 $_W['page']['title'] = '编辑用户 - 用户管理';
 
-$uid = intval($_GPC['uid']);
+$uid = safe_gpc_int($_GPC['uid']);
 $user = user_single($uid);
 if (empty($user)) {
 	itoast('访问错误, 未找到该操作员.', url('user/display'), 'error');
@@ -50,12 +50,12 @@ if ($do == 'edit_base') {
 }
 if ($do == 'edit_modules_tpl') {
 	if ($_W['isajax'] && $_W['ispost']) {
-		if (intval($_GPC['groupid']) == $user['groupid']){
+		if (safe_gpc_int($_GPC['groupid']) == $user['groupid']){
 			iajax(2, '未做更改！');
 		}
 		if (!empty($_GPC['type']) && !empty($_GPC['groupid'])) {
 			$data['uid'] = $uid;
-			$data[$_GPC['type']] = intval($_GPC['groupid']);
+			$data[$_GPC['type']] = safe_gpc_int($_GPC['groupid']);
 			if (user_update($data)) {
 				$group_info = user_founder_group_detail_info($_GPC['groupid']);
 				iajax(0, $group_info, '');
