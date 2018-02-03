@@ -45,10 +45,7 @@ function safe_gpc_belong($value, $allow = array(), $default = '') {
  * @return string
  */
 function safe_gpc_string($value, $default = '') {
-	$badstr = array("\0", "%00", "%3C", "%3E", '<?', '<%', '<?php', '{php');
-	$newstr = array('_', '_', '&lt;', '&gt;', '_', '_', '_', '_');
-	$value  = str_replace($badstr, $newstr, $value);
-
+	$value = safe_bad_str_replace($value);
 	$value  = preg_replace('/&((#(\d{3,5}|x[a-fA-F0-9]{4}));)/', '&\\1', $value);
 
 	if (empty($value) && $default != $value) {
@@ -113,9 +110,7 @@ function safe_gpc_html($value, $default = '') {
 	if (empty($value) || !is_string($value)) {
 		return $default;
 	}
-	$badstr = array("\0", "%00", "%3C", "%3E", '<?', '<%', '<?php', '{php');
-	$newstr = array('_', '_', '&lt;', '&gt;', '_', '_', '_', '_');
-	$value  = str_replace($badstr, $newstr, $value);
+	$value = safe_bad_str_replace($value);
 
 	$value = safe_remove_xss($value);
 	if (empty($value) && $value != $default) {
@@ -186,20 +181,6 @@ function safe_gpc_url($value, $strict_domain = true, $default = '') {
 }
 
 /**
- * 只能跳转到本域名下
- * 跳转链接只能跳转本域名下 防止钓鱼 如: 用户可能正常从信任站点微擎登录 跳转到第三方网站 会误认为第三方网站也是安全的
- * @param $redirect
- * @return string
- */
-function safe_url_not_outside($redirect) {
-	global $_W;
-	if (starts_with($redirect, 'http') && !starts_with($redirect, $_W['siteroot'])) {
-		$redirect = $_W['siteroot'];
-	}
-	return $redirect;
-}
-
-/**
  *  去掉可能造成xss攻击的字符
  * @param $val $string 需处理的字符串
  */
@@ -255,4 +236,15 @@ function safe_remove_xss($val) {
 		}
 	}
 	return $val;
+}
+
+function safe_bad_str_replace($string) {
+	if (empty($string)) {
+		return '';
+	}
+	$badstr = array("\0", "%00", "%3C", "%3E", '<?', '<%', '<?php', '{php', '../');
+	$newstr = array('_', '_', '&lt;', '&gt;', '_', '_', '_', '_', '.._');
+	$string  = str_replace($badstr, $newstr, $string);
+	
+	return $string;
 }

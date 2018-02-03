@@ -1757,15 +1757,18 @@ function mc_insert_fanstag_mapping($fanid, $groupid_list){
  * @param 	array 		$tagid_list 		标签id列表
  */
 function mc_batch_insert_fanstag_mapping($fanid_list, $tagid_list){
-	$fanid_list = (array) $fanid_list;
-	$tagid_list = (array) $tagid_list;
+	if (!is_array($fanid_list) || !is_array($tagid_list)) {
+		return false;
+	}
 	$sql = '';
 	foreach ($fanid_list as $fanid) {
 		foreach ($tagid_list as $tagid) {
-			$sql .= "REPLACE INTO " . tablename('mc_fans_tag_mapping') . "(`fanid`, `tagid`) values('$fanid', '$tagid');";
+			$fanid = intval($fanid);
+			$tagid = intval($tagid);
+			pdo_insert('mc_fans_tag_mapping', array('fanid' => $fanid, 'tagid' => $tagid), true);
 		}
 	}
-	pdo_query($sql);
+	return true;
 }
 
 /**
