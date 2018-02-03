@@ -7,6 +7,8 @@
 defined('IN_IA') or exit('Access Denied');
 
 class FansTable extends We7Table {
+	protected $field = array('uid');
+	protected $tableName = 'mc_mapping_fans';
 	public function fansAll($openids) {
 		global $_W;
 		return $this->query->from('mc_mapping_fans')
