@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display','post');
+$dos = array('display', 'post');
 $do = in_array($do, $dos) ? $do : 'display';
 
 
@@ -86,7 +86,7 @@ if ($do == 'post') {
 	}
 
 	if (!empty($id)) {
-		$item = pdo_fetch("SELECT * FROM ".tablename('profile_fields')." WHERE id = :id", array(':id' => $id));
+		$item = pdo_get('profile_fields', array('id' => $id));
 	}
 	template('user/fields-post');
 }

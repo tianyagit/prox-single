@@ -457,14 +457,14 @@ function mc_require($uid, $fields, $pre = '') {
 			}
 			$condition = " AND uid != {$uid} ";
 			if (in_array('email', $fields)) {
-				$emailexists = pdo_fetchcolumn("SELECT email FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND email = :email " . $condition, array(':uniacid' => $_W['uniacid'], ':email' => trim($record['email'])));
-				if (!empty($emailexists)) {
+				$emailexists = table('member')->emailExist($uid, trim($record['email']));
+				if ($emailexists) {
 					itoast('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error');
 				}
 			}
 			if (in_array('mobile', $fields)) {
-				$mobilexists = pdo_fetchcolumn("SELECT mobile FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND mobile = :mobile " . $condition, array(':uniacid' => $_W['uniacid'], ':mobile' => trim($record['mobile'])));
-				if (!empty($mobilexists)) {
+				$mobilexists = table('member')->mobileExist($uid, trim($record['mobile']));
+				if ($mobilexists) {
 					itoast('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error');
 				}
 			}
@@ -1752,15 +1752,18 @@ function mc_insert_fanstag_mapping($fanid, $groupid_list){
  * @param 	array 		$tagid_list 		标签id列表
  */
 function mc_batch_insert_fanstag_mapping($fanid_list, $tagid_list){
-	$fanid_list = (array) $fanid_list;
-	$tagid_list = (array) $tagid_list;
+	if (!is_array($fanid_list) || !is_array($tagid_list)) {
+		return false;
+	}
 	$sql = '';
 	foreach ($fanid_list as $fanid) {
 		foreach ($tagid_list as $tagid) {
-			$sql .= "REPLACE INTO " . tablename('mc_fans_tag_mapping') . "(`fanid`, `tagid`) values('$fanid', '$tagid');";
+			$fanid = intval($fanid);
+			$tagid = intval($tagid);
+			pdo_insert('mc_fans_tag_mapping', array('fanid' => $fanid, 'tagid' => $tagid), true);
 		}
 	}
-	pdo_query($sql);
+	return true;
 }
 
 /**
