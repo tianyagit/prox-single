@@ -451,7 +451,7 @@ class StoreModuleSite extends WeModuleSite {
 				}
 				unset($goods);
 			}
-			if ($_GPC['type'] == STORE_TYPE_PACKAGE) {
+			if ($_GPC['type'] == STORE_TYPE_PACKAGE || empty($_GPC['type'])) {
 				$module_groups = uni_groups();
 			}
 			$pager = pagination ($store_table['total'], $pageindex, $pagesize);
