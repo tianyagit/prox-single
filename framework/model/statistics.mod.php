@@ -53,7 +53,7 @@ function stat_visit_info($type, $time_type, $module = '', $daterange = array(), 
 			$params['date <='] = date('Ymd', strtotime($daterange['end']));
 			break;
 	}
-	$visit_info = pdo_getall('stat_visit', $params, array('uniacid', 'module', 'count', 'date'), '', 'date ASC');
+	$visit_info = table('statistics')->visitList($params);
 	if (!empty($visit_info)) {
 		$result = $visit_info;
 	}

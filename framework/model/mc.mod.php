@@ -69,6 +69,7 @@ function mc_update($uid, $fields) {
 		table('fans')->fill(array('uid' => $result))->where(array('uniacid' => mc_current_real_uniacid(), 'openid' => $openid))->save();
 	}
 	cache_build_memberinfo($uid);
+	return true;
 }
 
 /**
