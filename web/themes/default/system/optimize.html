@@ -69,6 +69,8 @@
 						<td class="text-left">
 							{if $extensions['memcache']['status'] && $setting['memcache']['session'] == 1}
 							<span class="label label-danger">memcache</span>
+							{else if $extensions['redis']['status'] && $setting['redis']['session'] == 1}
+							<span class="label label-success">redis</span>
 							{else}
 							<span class="label label-success">mysql</span>
 							{/if}
