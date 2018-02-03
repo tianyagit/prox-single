@@ -457,14 +457,14 @@ function mc_require($uid, $fields, $pre = '') {
 			}
 			$condition = " AND uid != {$uid} ";
 			if (in_array('email', $fields)) {
-				$emailexists = pdo_fetchcolumn("SELECT email FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND email = :email " . $condition, array(':uniacid' => $_W['uniacid'], ':email' => trim($record['email'])));
-				if (!empty($emailexists)) {
+				$emailexists = table('member')->emailExist($uid, trim($record['email']));
+				if ($emailexists) {
 					itoast('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error');
 				}
 			}
 			if (in_array('mobile', $fields)) {
-				$mobilexists = pdo_fetchcolumn("SELECT mobile FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND mobile = :mobile " . $condition, array(':uniacid' => $_W['uniacid'], ':mobile' => trim($record['mobile'])));
-				if (!empty($mobilexists)) {
+				$mobilexists = table('member')->mobileExist($uid, trim($record['mobile']));
+				if ($mobilexists) {
 					itoast('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error');
 				}
 			}
