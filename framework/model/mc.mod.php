@@ -69,6 +69,7 @@ function mc_update($uid, $fields) {
 		pdo_update('mc_mapping_fans', array('uid' => $result), array('uniacid' => mc_current_real_uniacid(), 'openid' => $openid));
 	}
 	cache_build_memberinfo($uid);
+	return true;
 }
 
 /**
