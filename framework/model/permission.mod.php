@@ -210,7 +210,7 @@ function permission_account_user_permission_exist($uid = 0, $uniacid = 0) {
 	if (FRAME == 'system') {
 		return true;
 	}
-	$is_exist = table('users')->userPermissionInfo($uid, $uniacid);
+	$is_exist = table('userspermission')->userPermissionInfo($uid, $uniacid);
 	if(empty($is_exist)) {
 		return false;
 	} else {
@@ -224,7 +224,7 @@ function permission_account_user_permission_exist($uid = 0, $uniacid = 0) {
  */
 function permission_account_user($type = 'system') {
 	global $_W;
-	$user_permission = table('users')->userPermissionInfo($_W['uid'], $_W['uniacid'], $type);
+	$user_permission = table('userspermission')->userPermissionInfo($_W['uid'], $_W['uniacid'], $type);
 	$user_permission = $user_permission['permission'];
 	if (!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
@@ -263,14 +263,14 @@ function permission_account_user_menu($uid, $uniacid, $type) {
 	if (empty($permission_exist)) {
 		return array('all');
 	}
-	$user_table = table('users');
+	$user_permission_table = table('userspermission');
 	if ($type == 'modules') {
-		$user_menu_permission = $user_table->userModulesPermission($uid, $uniacid);
+		$user_menu_permission = $user_permission_table->userModulesPermission($uid, $uniacid);
 	} else {
 		$module = uni_modules_by_uniacid($uniacid);
 		$module = array_keys($module);
 		if (in_array($type, $module) || in_array($type, array(PERMISSION_ACCOUNT, PERMISSION_WXAPP, PERMISSION_SYSTEM))) {
-			$menu_permission = $user_table->userPermissionInfo($uid, $uniacid, $type);
+			$menu_permission = $user_permission_table->userPermissionInfo($uid, $uniacid, $type);
 			if (!empty($menu_permission['permission'])) {
 				$user_menu_permission = explode('|', $menu_permission['permission']);
 			}
