@@ -117,7 +117,7 @@ function permission_create_account($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 	$user_table = table('users');
 	$userinfo = $user_table->usersInfo($uid);
 	$groupdata = $user_table->usersGroupInfo($userinfo['groupid']);
-	$list = pdo_fetchall('SELECT d.type, count(*) AS count FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0 GROUP BY d.type', array(':uid' => $uid, ':role' => 'owner'));
+	$list = table('account')->getOwnedAccountCount($uid);
 	foreach ($list as $item) {
 		if ($item['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 			$wxapp_num = $item['count'];
@@ -347,12 +347,12 @@ function permission_update_account_user($uid, $uniacid, $data) {
 			'type' => $data['type'],
 			'permission' => $data['permission'],
 		);
-		$result = pdo_insert('users_permission', $insert);
+		$result = table('userspermission')->fill($insert)->save();
 	} else {
 		$update = array(
 			'permission' => $data['permission'],
 		);
-		$result = pdo_update('users_permission', $update, array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $data['type']));
+		$result = table('userspermission')->fill($update)->whereUniacid($uniacid)->whereUid($uid)->whereType($data['type'])->save();
 	}
 	return $result;
 }

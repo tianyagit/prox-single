@@ -9,6 +9,7 @@ defined('IN_IA') or exit('Access Denied');
 class UserspermissionTable extends We7Table {
 	protected $tableName = 'users_permission';
 	protected $primaryKey = 'id';
+	protected $field = array('id', 'uniacid', 'uid', 'type', 'permission', 'url');
 
 	public function userPermissionInfo($uid, $uniacid, $type = '') {
 		$condition = array('uid' => $uid, 'uniacid' => $uniacid);
