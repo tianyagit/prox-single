@@ -216,9 +216,9 @@
 		$http.post(config.links.getUpgradeInfo)
 			.success(function (data) {
 				$scope.showtext = '立即检查新版本';
+				$scope.submitDisabled = false;
 				if (data.message.errno == 0) {
 					$scope.upgrade = data.message.message;
-					$scope.submitDisabled = false;
 				} else {
 					util.message(data.message);
 				}
