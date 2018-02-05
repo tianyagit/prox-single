@@ -49,7 +49,8 @@ if ($do == 'category') {
 			itoast('修改分类成功', referer(), 'success');
 		}
 	}
-	$data = pdo_fetchall('SELECT * FROM ' . tablename('article_category') . ' WHERE type = :type ORDER BY displayorder DESC', array(':type' => 'news'));
+
+	$data = table('articlecategory')->getNewsCategoryLists();
 	template('article/news-category');
 }
 
@@ -114,33 +115,35 @@ if ($do == 'post') {
 //新闻列表
 if ($do == 'list') {
 	$_W['page']['title'] = '所有新闻-新闻列表';
-	$condition = ' WHERE 1';
-	$cateid = intval($_GPC['cateid']);
-	$createtime = intval($_GPC['createtime']);
-	$search_title = trim($_GPC['title']);
-	$params = array();
-	if ($cateid > 0) {
-		$condition .= ' AND cateid = :cateid';
-		$params[':cateid'] = $cateid;
+
+	$pindex = max(1, safe_gpc_int($_GPC['page']));
+	$psize = 20;
+
+	$article_table = table('articlenews');
+	$cateid = safe_gpc_int($_GPC['cateid']);
+	$createtime = safe_gpc_int($_GPC['createtime']);
+	$title = safe_gpc_string($_GPC['title']);
+
+	if (!empty($cateid)) {
+		$article_table->searchWithCateid($cateid);
 	}
-	if ($createtime > 0) {
-		$condition .= ' AND createtime >= :createtime';
-		$params[':createtime'] = strtotime("-{$createtime} days");
+
+	if (!empty($createtime)) {
+		$article_table->searchWithCreatetimeRange($createtime);
 	}
-	if(!empty($search_title)) {
-		$condition .= " AND title LIKE :title";
-		$params[':title'] = "%{$search_title}%";
+
+	if (!empty($title)) {
+		$article_table->searchWithTitle($title);
 	}
+
 	$order = !empty($_W['setting']['news_display']) ? $_W['setting']['news_display'] : 'displayorder';
 
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 20;
-	$sql = 'SELECT * FROM ' . tablename('article_news') . $condition . " ORDER BY " . $order . " DESC LIMIT " . ($pindex - 1) * $psize .',' .$psize;
-	$news = pdo_fetchall($sql, $params);
-	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('article_news') . $condition, $params);
+	$article_table->searchWithPage($pindex, $psize);
+	$news = $article_table->getArticleNewsLists($order);
+	$total = $article_table->getLastQueryTotal();
 	$pager = pagination($total, $pindex, $psize);
 
-	$categorys = pdo_fetchall('SELECT * FROM ' . tablename('article_category') . ' WHERE type = :type ORDER BY displayorder DESC', array(':type' => 'news'), 'id');
+	$categorys = table('articlecategory')->getNewsCategoryLists($order);
 	template('article/news');
 }
 
