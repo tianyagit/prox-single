@@ -57,6 +57,12 @@ class StoreModuleSite extends WeModuleSite {
 					$account_info = uni_fetch($order[$account_type]);
 					$account_endtime = strtotime('+' . $order['duration'] * $account_num . $goods['unit'], max(TIMESTAMP, $account_info['endtime']));
 					pdo_update('account', array('endtime' => $account_endtime), array('uniacid' => $order[$account_type]));
+					$store_create_account_info = table('store')->StoreCreateAccountInfo($order[$account_type]);
+					if (!empty($store_create_account_info)) {
+						$endtime = strtotime('+' . $order['duration'] * $account_num . $goods['unit'], max(TIMESTAMP, $store_create_account_info['endtime']));
+						pdo_update('site_store_create_account', array('endtime' => $endtime), array('uniacid' => $order[$account_type]));
+					}
+					pdo_update('account', array('endtime' => $account_endtime), array('uniacid' => $order[$account_type]));
 					cache_delete("uniaccount:{$order[$account_type]}");
 				}
 				cache_delete(cache_system_key($order['uniacid'] . ':site_store_buy_' . $goods['type']));

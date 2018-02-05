@@ -13,7 +13,6 @@ load()->classs('weixin.platform');
 load()->model('wxapp');
 load()->model('utility');
 load()->func('file');
-
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
@@ -138,9 +137,29 @@ if($do == 'base') {
 					$result = pdo_update('account', array('endtime' => -1), array('uniacid' => $uniacid));
 				} else {
 					$endtime = strtotime($_GPC['endtime']);
+					if ($_W['isfounder'] || user_is_vice_founder()) {
+						$result = pdo_update('account', array('endtime' => $endtime), array('uniacid' => $uniacid));
+						/* xstart */
+						if (IMS_FAMILY == 'x') {
+							$store_create_account_info = table('store')->StoreCreateAccountInfo($uniacid);
+							if (!empty($store_create_account_info)) {
+								pdo_update('site_store_create_account', array('endtime' => $endtime), array('uniacid' => $uniacid));
+							}
+						}
+						/* xend */
+						break;
+					}
 					$user_endtime = pdo_getcolumn('users', array('uid' => $_W['uid']), 'endtime');
+					/* xstart */
+					if (IMS_FAMILY == 'x') {
+						$store_create_account_info = table('store')->StoreCreateAccountInfo($uniacid);
+						if (!empty($store_create_account_info)) {
+							$user_endtime = max($user_endtime, $store_create_account_info['endtime']);
+						}
+					}
+					/* xend */
 					if ($user_endtime < $endtime && !empty($user_endtime) && $state == 'owner') {
-						iajax(1, '设置到期日期不能超过主管理员的到期日期');
+						iajax(1, '设置到期日期不能超过' . date('Y-m-d', $user_endtime));
 					}
 					$result = pdo_update('account', array('endtime' => $endtime), array('uniacid' => $uniacid));
 				}
