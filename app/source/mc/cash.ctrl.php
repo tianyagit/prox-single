@@ -180,7 +180,7 @@ if(!empty($type)) {
 			$callback = $_W['siteroot'] . "payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
 		}
 		$global_unisetting = uni_account_global_oauth();
-		$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : $global_unisetting['oauth']['host'];
+		$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : (!empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] : '');
 		if (!empty($unisetting['oauth']['host'])) {
 			$callback = str_replace($_W['siteroot'], $unisetting['oauth']['host'].'/', $callback);
 		}
