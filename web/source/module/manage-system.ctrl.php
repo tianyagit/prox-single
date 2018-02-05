@@ -717,7 +717,7 @@ if ($do == 'installed') {
 	} else {
 		$uninstallModules = module_get_all_unistalled('uninstalled');
 	}
-	$total_uninstalled = $uninstalled_module['module_count'];
+	$total_uninstalled = $uninstallModules['module_count'];
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
 	$letter = $_GPC['letter'];
