@@ -12,4 +12,8 @@ class ArticlecategoryTable extends We7Table {
 	public function getNewsCategoryLists() {
 		return $this->query->from($this->tableName)->where('type', 'news')->orderby('displayorder', 'DESC')->getall();
 	}
+
+	public function getNoticeCategoryLists() {
+		return $this->query->from($this->tableName)->where('type', 'notice')->orderby('displayorder', 'DESC')->getall('id');
+	}
 }
