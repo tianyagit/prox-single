@@ -4,11 +4,11 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-/* xstart */
-if (IMS_FAMILY == 'x') {
+/* sxstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	load()->model('system');
 }
-/* xend */
+/* sxend */
 $dos = array('copyright');
 $do = in_array($do, $dos) ? $do : 'copyright';
 $_W['page']['title'] = '站点设置 - 工具  - 系统管理';
@@ -20,8 +20,8 @@ if(empty($settings) || !is_array($settings)) {
 } else {
 	$settings['slides'] = iunserializer($settings['slides']);
 }
-/* xstart */
-if (IMS_FAMILY == 'x') {
+/* sxstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	$path = IA_ROOT . '/web/themes/';
 	if(is_dir($path)) {
 		if ($handle = opendir($path)) {
@@ -35,16 +35,16 @@ if (IMS_FAMILY == 'x') {
 		}
 	}		
 }
-/* xend */
+/* sxend */
 if ($do == 'copyright') {
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
+	/* sxstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		$template_ch_name = system_template_ch_name();
 	}
-	/* xend */
+	/* sxend */
 	if (checksubmit('submit')) {
-		/* xstart */
-		if (IMS_FAMILY == 'x') {
+		/* sxstart */
+		if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 			$data = array(
 				'status' => intval($_GPC['status']),
 				'verifycode' => intval($_GPC['verifycode']),
@@ -78,7 +78,7 @@ if ($do == 'copyright') {
 				'bind' => $_GPC['bind']
 			);
 		}
-		/* xend */
+		/* sxend */
 		/* vstart */
 		if (IMS_FAMILY == 'v') {
 			$data = array(
@@ -94,12 +94,12 @@ if ($do == 'copyright') {
 
 		$test = setting_save($data, 'copyright');
 
-		/* xstart */
-		if (IMS_FAMILY == 'x') {
+		/* sxstart */
+		if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 			$template = trim($_GPC['template']);
 			setting_save(array('template' => $template), 'basic');
 		}
-		/* xend */
+		/* sxend */
 
 		itoast('更新设置成功！', url('system/site'), 'success');
 	}
