@@ -13,7 +13,7 @@
 				{else}
 				<img src="{$goods['module']['logo']}" alt="icon" class="icon" onerror="this.src='./resource/images/nopic-107.png'"/>
 				{/if}
-				<div class="name text-over">{php echo $goods['title']}</div>
+				<div class="name text-over">{if $goods['type'] == STORE_TYPE_PACKAGE}{$module_groups[$goods['module_group']]['name']}{/if}{php echo $goods['title']}</div>
 				<div class="price">￥{$goods['price']}元 /
 					{if $goods['unit'] == 'month'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}月
 					{elseif $goods['unit'] == 'ten_thousand'} {$goods['api_num']}万次

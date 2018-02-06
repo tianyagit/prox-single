@@ -38,25 +38,13 @@ function refund_order_can_refund($module, $tid) {
  */
 function refund_create_order($tid, $module, $fee = 0, $reason = '') {
 	load()->model('module');
-	global $_W;
 	$order_can_refund = refund_order_can_refund($module, $tid);
 	if (is_error($order_can_refund)) {
 		return $order_can_refund;
 	}
 	$module_info = module_fetch($module);
 	$moduleid =  empty($module_info['mid']) ? '000000' : sprintf("%06d", $module_info['mid']);
-	$refund_uniontid = date('YmdHis') . $moduleid . random(8,1);
-	$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'tid' => $tid, 'module' => $module));
-	$refund = array (
-		'uniacid' => $_W['uniacid'],
-		'uniontid' => $paylog['uniontid'],
-		'fee' => empty($fee) ? $paylog['card_fee'] : $fee,
-		'status' => 0,
-		'refund_uniontid' => $refund_uniontid,
-		'reason' => $reason
-	);
-	pdo_insert('core_refundlog', $refund);
-	return pdo_insertid();
+	return table('refund')->createRefundLog($moduleid, $module, $tid, $fee, $reason);
 }
 
 /**

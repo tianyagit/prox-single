@@ -1095,7 +1095,7 @@ function uni_account_member_fields($uniacid) {
 function uni_account_global_oauth() {
 	load()->model('setting');
 	$oauth = setting_load('global_oauth');
-	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : '';
+	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : array();
 	return $oauth;
 }
 

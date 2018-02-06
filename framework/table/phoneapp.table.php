@@ -32,24 +32,7 @@ class PhoneappTable extends AccountTable {
         return true;
     }
 
-    /**
-     * 获取APP最新的4个版本
-     * @param $uniacid
-     * @return array|mixed
-     */
-    public function phoneappLatestVersion($uniacid) {
-        return $this->query->from('phoneapp_versions')->where('uniacid', $uniacid)->orderby('id', 'desc')->limit(4)->getall('id');
-    }
-
     public function phoneappAccountInfo() {
         return $this->query->from('account_phoneapp')->get();
-    }
-
-    public function phoneappVersionInfo() {
-        return $this->query->from('phoneapp_versions')->orderby('id', 'desc')->get();
-    }
-
-    public function phoneappAllVersion($uniacid) {
-        return $this->query->from('phoneapp_versions')->where('uniacid', $uniacid)->orderby('id', 'desc')->getall();
     }
 }

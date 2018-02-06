@@ -41,7 +41,16 @@ if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $
 		exit();
 	}
 	isetcookie('__session', '', - 10000);
-	message('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], url('account/welcome'), 'info');
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		message('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], url('user/login'), 'info');
+	}
+	/* vend */
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		message('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], url('account/welcome'), 'info');
+	}
+	/* xend */
 }
 
 $controllers = array();

@@ -147,6 +147,8 @@ class WeSessionMemcache extends WeSession {
 	public function write($sessionid, $data) {
 		$row = array();
 		$row['data'] = $data;
+		$row['uniacid'] = WeSession::$uniacid;
+		$row['openid'] = WeSession::$openid;
 		$row['expiretime'] = TIMESTAMP + WeSession::$expire;
 		
 		return cache_write($this->key($sessionid), $row);
