@@ -260,7 +260,7 @@ function mc_oauth_userinfo($acid = 0) {
 	if ($_W['container'] != 'wechat') {
 		return array();
 	}
-	include template('mc/iswxapp');
+	include template('mc/iswxapp', TEMPLATE_INCLUDEPATH);
 	exit;
 }
 
