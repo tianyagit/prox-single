@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * 站点相关操作
  * [WeEngine System] Copyright (c) 2013 WE7.CC
@@ -33,7 +33,7 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 				}
 			}
 		}
-	}		
+	}
 }
 /* sxend */
 if ($do == 'copyright') {
@@ -51,7 +51,7 @@ if ($do == 'copyright') {
 				'reason' => trim($_GPC['reason']),
 				'sitename' => trim($_GPC['sitename']),
 				'url' => (strexists($_GPC['url'], 'http://') || strexists($_GPC['url'], 'https://')) ? $_GPC['url'] : "http://{$_GPC['url']}",
-				'statcode' => safe_gpc_html(htmlspecialchars_decode($_GPC['statcode'])),
+				'statcode' => preg_match('/https\:\/\/hm\.baidu\.com\/hm\.js\?/', $_GPC['statcode']) ? htmlspecialchars_decode($_GPC['statcode']) : safe_gpc_html(htmlspecialchars_decode($_GPC['statcode'])),
 				'footerleft' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerleft'])),
 				'footerright' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerright'])),
 				'icon' => trim($_GPC['icon']),
@@ -88,7 +88,7 @@ if ($do == 'copyright') {
 				'mobile_status' => $_GPC['mobile_status'],
 				'login_type' => $_GPC['login_type'],
 				'bind' => $_GPC['bind']
-			);				
+			);
 		}
 		/* vend */
 
