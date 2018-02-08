@@ -134,5 +134,8 @@ if ($do == 'go_paycenter') {
 if ($do == 'oauth') {
 	$url = safe_gpc_url($_GPC['url'], false);
 	$oauth_userinfo = mc_oauth_account_userinfo($url);
+	if (is_error($oauth_userinfo)) {
+		message($oauth_userinfo['message'], $url, 'info');
+	}
 	header('Location: ' . $url);
 }

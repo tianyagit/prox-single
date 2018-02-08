@@ -320,8 +320,10 @@ function cloud_m_prepare($name) {
  */
 function cloud_m_build($modulename, $type = '') {
 	$type = in_array($type, array('uninstall')) ? $type : '';
-	$sql = 'SELECT * FROM ' . tablename('modules') . ' WHERE `name`=:name';
-	$module = pdo_fetch($sql, array(':name' => $modulename));
+	if (empty($modulename)) {
+		return array();
+	}
+	$module = table('module')->getModuleInfo(trim($modulename));
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.build';
 	$pars['module'] = $modulename;
@@ -424,7 +426,7 @@ function cloud_m_info($name) {
  * @return array|mixed|string
  */
 function cloud_m_upgradeinfo($name) {
-	$module = pdo_fetch("SELECT name, version FROM ".tablename('modules')." WHERE name = '{$name}'");
+	$module = table('module')->getModuleInfo(trim($name), array('name', 'version'));
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.info';
 	$pars['module'] = $name;
@@ -738,8 +740,7 @@ function cloud_extra_account() {
  * @return string 模块标识序列化
  */
 function cloud_extra_module() {
-	$sql = 'SELECT `name` FROM ' . tablename('modules') . ' WHERE `type` <> :type';
-	$modules = pdo_fetchall($sql, array(':type' => 'system'), 'name');
+	$modules = table('module')->searchWithType('system', '<>')->getModulesList();
 	if (!empty($modules)) {
 		return base64_encode(iserializer(array_keys($modules)));
 	} else {

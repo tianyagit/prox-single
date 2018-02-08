@@ -42,7 +42,6 @@ function wxapp_account_create($account) {
 		'hash' => random(8),
 	);
 	pdo_insert('account', $account_data);
-
 	$acid = pdo_insertid();
 
 	$wxapp_data = array(
@@ -63,7 +62,7 @@ function wxapp_account_create($account) {
 		uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
 		if (empty($user_info['usergroup_wxapp_limit'])) {
 			pdo_update('account', array('endtime' => strtotime('+1 month', time())), array('uniacid' => $uniacid));
-			pdo_insert('site_store_create_account', array('uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_APP_NORMAL));
+			pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_APP_NORMAL));
 		}
 	}
 	if (user_is_vice_founder()) {
