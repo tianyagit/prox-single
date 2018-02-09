@@ -139,6 +139,8 @@ if ($do == 'delete') {
 
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 		if($_GPC['uniacid'] == $_W['uniacid']) {
+			$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+			cache_delete($cache_key);
 			isetcookie('__uniacid', '');
 		}
 		cache_delete("uniaccount:{$uniacid}");
