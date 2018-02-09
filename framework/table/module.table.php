@@ -21,7 +21,7 @@ class ModuleTable extends We7Table {
 	}
 
 	public function getInstalledModuleInfo($module) {
-		return $this->query->from('modules', 'a')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.modulename'))->where('a.name', $module)->where('b.modulename', null)->get();
+		return $this->query->from('modules', 'a')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.modulename'))->where('a.name', $module)->where('b.modulename', 'NULL')->get();
 	}
 
 	public function moduleBindingsInfo($module, $do = '', $entry = '') {
