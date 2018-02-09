@@ -120,7 +120,7 @@ class ModuleTable extends We7Table {
 	}
 
 	public function getInstalledModuleList() {
-		return $this->query->from($this->tableName, 'a')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.modulename'))->where('b.modulename', null)->getall('name');
+		return $this->query->from($this->tableName, 'a')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.modulename'))->where('b.modulename', 'NULL')->getall('name');
 	}
 
 	public function getModuleRecycle() {
