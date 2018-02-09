@@ -1370,6 +1370,7 @@ abstract class WeModuleProcessor extends WeBase {
 		$response['ArticleCount'] = count($news);
 		$response['Articles'] = array();
 		foreach ($news as $row) {
+			$row = array_change_key_case($row);
 			$response['Articles'][] = array(
 				'Title' => $row['title'],
 				'Description' => ($response['ArticleCount'] > 1) ? '' : $row['description'],
