@@ -103,6 +103,15 @@ function checkauth() {
 				$fan = mc_fansinfo($fan['openid']);
 			}
 		}
+
+		if (empty($fan['uid'])) {
+			$setting = uni_setting($_W['uniacid'], array('passport'));
+			if (!isset($setting['passport']) || empty($setting['passport']['focusreg'])) {
+				$reg_members = mc_init_fans_info($_W['openid'], true);
+				$fan['uid'] = $reg_members['uid'];
+			}
+		}
+
 		if(_mc_login(array('uid' => safe_gpc_int($fan['uid'])))) {
 			return true;
 		}
