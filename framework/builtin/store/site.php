@@ -155,6 +155,12 @@ class StoreModuleSite extends WeModuleSite {
 				$store_table->searchOrderWithUid($_W['uid']);
 			}
 			$order_list = $store_table->searchOrderList($pindex, $psize);
+			if (is_array($order_list) && !empty($order_list)) {
+				foreach ($order_list as &$order) {
+					$order['account'] = uni_fetch($order['uniacid']);
+				}
+			}
+			unset($order);
 			$total = $store_table->getLastQueryTotal();
 			$pager = pagination($total, $pindex, $psize);
 			if (!empty($order_list)) {
