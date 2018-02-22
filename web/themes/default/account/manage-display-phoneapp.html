@@ -126,13 +126,13 @@
 				<a href="{{links.postUser}}&do=edit&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">使用者管理</a>
 				<a href="{{links.postVersion}}&do=display&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">版本管理</a>
 				<a href="{{links.post}}&do=modules_tpl&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">可用应用模板/模块</a>
-				<!-- xstart -->
-				{if IMS_FAMILY == 'x'}
+				<!-- sxstart -->
+				{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
 				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'owner' || list.role == 'founder' || list.role == 'vice_founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
 				{/if}
 				{/if}
-				<!-- xend -->
+				<!-- sxend -->
 				<!-- vstart -->
 				{if IMS_FAMILY == 'v'}
 				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}

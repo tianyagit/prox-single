@@ -12,8 +12,8 @@ if (!empty($_W['uid'])) {
 
 /*获取站点配置信息*/
 $settings = $_W['setting'];
-/* xstart */
-if (IMS_FAMILY == 'x') {
+/* sxstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if (!empty($settings['site_welcome_module'])) {
 		$site = WeUtility::createModuleSystemWelcome($settings['site_welcome_module']);
 		if (!is_error($site)) {
@@ -21,7 +21,7 @@ if (IMS_FAMILY == 'x') {
 		}
 	}
 }
-/* xend */
+/* sxend */
 $copyright = $settings['copyright'];
 $copyright['slides'] = iunserializer($copyright['slides']);
 if (isset($copyright['showhomepage']) && empty($copyright['showhomepage'])) {

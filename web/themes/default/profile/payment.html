@@ -93,8 +93,8 @@
 				<div class="link-group"><a href="javascript:;" ng-click="check_wechat()">修改</a></div>
 			</td>
 		</tr>
-		<!-- xstart -->
-		{if IMS_FAMILY == 'x'}
+		<!-- sxstart -->
+		{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 		<tr>
 			<td>
 				服务商支付
@@ -111,7 +111,7 @@
 			</td>
 		</tr>
 		{/if}
-		<!-- xend -->
+		<!-- sxend -->
 		<tr>
 			<td>
 				一码支付
@@ -296,14 +296,14 @@
 								<input id='radio-12' type="radio" name='wechat[switch]' ng-checked='paysetting.wechat.switch == 2' ng-click="changeSwitch('wechat', 2)" value="2"/>
 								<label for="radio-12">借用支付  </label>
 								{/if}
-								<!-- xstart -->
-								{if IMS_FAMILY == 'x'}
+								<!-- sxstart -->
+								{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 								{if !empty($proxy_wechatpay_account['service'])}
 								<input id='radio-13' type="radio" name='wechat[switch]' ng-checked='paysetting.wechat.switch == 3' ng-click="changeSwitch('wechat', 3)" value="3"/>
 								<label for="radio-13">服务商支付  </label>
 								{/if}
 								{/if}
-								<!-- xend -->
+								<!-- sxend -->
 								{/if}
 								<input id='radio-24' type="radio" name='wechat[switch]' ng-checked='paysetting.wechat.switch == 4 || paysetting.wechat.switch === false' ng-click="changeSwitch('wechat', 4)" value="4" checked=""/>
 								<label for="radio-24">关闭 </label>
@@ -421,8 +421,8 @@
 							</div>
 						</div>
 						{/if}
-						<!-- xstart -->
-						{if IMS_FAMILY == 'x'}
+						<!-- sxstart -->
+						{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 						{if !empty($proxy_wechatpay_account['service'])}
 						<div ng-show="paysetting.wechat.switch == 3">
 							<div class="form-group">
@@ -447,7 +447,7 @@
 						</div>
 						{/if}
 						{/if}
-						<!-- xend -->
+						<!-- sxend -->
 						{/if}
 					</div>
 				</div>
@@ -458,8 +458,8 @@
 			</div>
 		</div>
 	</div>
-	<!-- xstart -->
-	{if IMS_FAMILY == 'x'}
+	<!-- sxstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 	<div class="modal fade" id="wechat_fa" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="we7-modal-dialog modal-dialog">
 			<div class="modal-content">
@@ -503,7 +503,7 @@
 		</div>
 	</div>
 	{/if}
-	<!-- xend -->
+	<!-- sxend -->
 
 	<!--银联支付-->
 	<div class="modal fade" id="yinlian" tabindex="-1" role="dialog" aria-hidden="true">
@@ -680,11 +680,11 @@
 		'saveurl' : "{php echo url('profile/payment/save_setting')}",
 		'text_alipay_url' : "{php echo url('profile/payment/test_alipay')}",
 		'borrows' : {php echo json_encode($proxy_wechatpay_account['borrow'])},
-		<!-- xstart -->
-		{if IMS_FAMILY == 'x'}
+		<!-- sxstart -->
+		{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 		'services' : {php echo json_encode($proxy_wechatpay_account['service'])},
 		{/if}
-		<!-- xend -->
+		<!-- sxend -->
 		'get_setting_url' : "{php echo url('profile/payment/get_setting')}",
 		'account_level' : "{$accounts[$_W['acid']]['level']}"
 	});

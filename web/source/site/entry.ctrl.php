@@ -36,8 +36,8 @@ if (!$entry['direct']) {
 		$referer['c'] == 'module' && in_array($referer['a'], array('manage-account', 'permission')))) {
 			itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
+	/* sxstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		if (empty($_W['uniacid']) && $entry['entry'] != 'system_welcome' && $_GPC['module_type'] != 'system_welcome') {
 			if (!empty($_GPC['version_id'])) {
 				itoast('', url('wxapp/display'));
@@ -46,7 +46,7 @@ if (!$entry['direct']) {
 			}
 		}
 	}
-	/* xend */
+	/* sxend */
 	/* vstart */
 	if (IMS_FAMILY == 'v') {
 		if (empty($_W['uniacid'])) {
@@ -94,8 +94,8 @@ $_GPC['do'] = $entry['do'];
 $modules = uni_modules();
 $_W['current_module'] = $modules[$entry['module']];
 
-/* xstart */
-if (IMS_FAMILY == 'x') {
+/* sxstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if ($entry['entry'] == 'system_welcome' || $_GPC['module_type'] == 'system_welcome') {
 		$_GPC['module_type'] = 'system_welcome';
 		$site = WeUtility::createModuleSystemWelcome($entry['module']);
@@ -104,7 +104,7 @@ if (IMS_FAMILY == 'x') {
 		$site = WeUtility::createModuleSite($entry['module']);
 	}
 }
-/* xend */
+/* sxend */
 
 /* vstart */
 if (IMS_FAMILY == 'v') {
@@ -127,12 +127,12 @@ if (!is_error($site)) {
 		$method = 'doWeb' . ucfirst($entry['do']);
 	}
 	/* vend */
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
+	/* sxstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		$do_function = defined('SYSTEM_WELCOME_MODULE') ? 'doPage' : 'doWeb';
 		$method = $do_function . ucfirst($entry['do']);
 	}
-	/* xend */
+	/* sxend */
 	exit($site->$method());
 }
 itoast("访问的方法 {$method} 不存在.", referer(), 'error');

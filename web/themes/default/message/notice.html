@@ -57,11 +57,11 @@
 		<td class="text-muted text-center" ng-bind = "list.create_time"></td>
 		<td>
 			<div class="link-group">
-				<!-- xstart -->
-				{if IMS_FAMILY == 'x'}
+				<!-- sxstart -->
+				{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 				<a ng-href="{{list.url}}" ng-if="list.type==1">查看我的订单</a>
 				{/if}
-				<!-- xend -->
+				<!-- sxend -->
 				<a ng-href="{{list.url}}" ng-if="list.type==3">进入工单</a>
 				<a ng-href="{{list.url}}" ng-if="list.type==2">查看公众号</a>
 				<a ng-href="{{list.url}}" ng-if="list.type==5">查看小程序</a>
