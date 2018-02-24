@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="we7-page-title">附件设置</div>
+<div class="we7-page-title" xmlns="http://www.w3.org/1999/html">附件设置</div>
 <ul class="we7-page-tab">
 	<li {if $do == 'global'}class="active"{/if}><a href="{php echo url('system/attachment/global')}">全局设置</a></li>
 	<li {if $do == 'remote'}class="active"{/if}><a href="{php echo url('system/attachment/remote')}">远程附件</a></li>
@@ -219,7 +219,7 @@
 				<button name="submit" class="btn btn-primary" value="submit">保存配置</button>
 				<button name="button" type="button" class="btn btn-info js-checkremoteftp" value="check">测试配置（无需保存）</button>
 				{if !empty($_W['setting']['remote_complete_info']['type']) && !empty($local_attachment)}
-				<a name="button" class="btn btn-info" href="{php echo url('system/attachment/upload_remote')}">一键上传</a>
+				<a name="button" class="btn btn-info one-key" href="javascript:;">一键上传</a>
 				{/if}
 				<input type="hidden" name="token" value="{$_W['token']}" />
 			</div>
@@ -283,7 +283,7 @@
 				<button name="submit" class="btn btn-primary" value="submit">保存配置</button>
 				<button name="button" type="button" class="btn btn-info js-checkremoteoss" value="check">测试配置（无需保存）</button>
 				{if !empty($_W['setting']['remote_complete_info']['type']) && !empty($local_attachment)}
-				<a name="button" class="btn btn-info" href="{php echo url('system/attachment/upload_remote')}">一键上传</a>
+				<a name="button" class="btn btn-info one-key" href="javascript:;">一键上传</a>
 				{/if}
 				<input type="hidden" name="token" value="{$_W['token']}" />
 			</div>
@@ -329,7 +329,7 @@
 			<button name="submit" class="btn btn-primary" value="submit">保存配置</button>
 			<button name="button" type="button" class="btn btn-info js-checkremoteqiniu" value="check">测试配置（无需保存）</button>
 			{if !empty($_W['setting']['remote_complete_info']['type']) && !empty($local_attachment)}
-			<a name="button" class="btn btn-info" href="{php echo url('system/attachment/upload_remote')}">一键上传</a>
+			<a name="button" class="btn btn-info one-key" href="javascript:;">一键上传</a>
 			{/if}
 			<input type="hidden" name="token" value="{$_W['token']}" />
 		</div>
@@ -400,7 +400,7 @@
 			<button name="submit" class="btn btn-primary" value="submit">保存配置</button>
 			<button name="button" type="button" class="btn btn-info js-checkremotecos" value="check">测试配置（无需保存）</button>
 			{if !empty($_W['setting']['remote_complete_info']['type']) && !empty($local_attachment)}
-			<a name="button" class="btn btn-info" href="{php echo url('system/attachment/upload_remote')}">一键上传</a>
+			<a name="button" class="btn btn-info one-key" href="javascript:;">一键上传</a>
 			{/if}
 			<input type="hidden" name="token" value="{$_W['token']}" />
 		</div>
@@ -414,7 +414,19 @@
 			</div>
 		</div>
 	</div>
-
+	<div class="modal fade" id="name" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog we7-form">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">上传文件</div>
+				</div>
+				<div class="modal-body">
+					正在上传....
+				</div>
+			</div>
+		</div>
+	</div>
 </form>
 
 <script type="text/javascript">
@@ -449,6 +461,25 @@
 			}
 		});
 	});
+	$('.one-key').click(function() {
+        upload_remote();
+		return false;
+	});
+	var upload_remote = function() {
+        $('#name').modal('show');
+		$.post("{php echo url('system/attachment/upload_remote')}", {}, function(data) {
+			var data = $.parseJSON(data);
+			if (data.message.errno == 2) {
+				upload_remote();
+			}
+			if (data.message.errno == 0) {
+                util.message('上传完毕', location.reload(), 'success');
+            }
+            if (data.message.errno == 1) {
+                util.message(data.message.message, '', 'success');
+            }
+		});
+	}
 	$('.js-checkremoteoss').on('click', function(){
 		var bucket = $.trim($('select[name="alioss[bucket]"]').val());
 		if (bucket == '') {

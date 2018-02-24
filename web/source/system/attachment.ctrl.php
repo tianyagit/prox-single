@@ -15,12 +15,16 @@ if ($do == 'upload_remote') {
 	if (!empty($_W['setting']['remote_complete_info']['type'])) {
 		$result = file_dir_remote_upload(ATTACHMENT_ROOT . 'images');
 		if (is_error($result)) {
-			itoast($result['message'], url('system/attachment/remote'), 'info');
+			iajax(1, $result['message']);
 		} else {
-			itoast('上传成功!', url('system/attachment/remote'), 'success');
+			if (dir_exist_image(ATTACHMENT_ROOT . 'images')) {
+				iajax(2);
+			} else {
+				iajax(0);
+			}
 		}
 	} else {
-		itoast('请先填写并开启远程附件设置。', '', 'info');
+		iajax(1, '请先填写并开启远程附件设置');
 	}
 }
 
@@ -238,16 +242,7 @@ if ($do == 'remote') {
 	}
 	$remote = $_W['setting']['remote_complete_info'];
 	$bucket_datacenter = attachment_alioss_datacenters();
-	$local_attachment = file_tree(IA_ROOT . '/attachment/images');
-	if (is_array($local_attachment)) {
-		foreach ($local_attachment as $key => $attachment) {
-			$attachment = str_replace(ATTACHMENT_ROOT . 'images/', '', $attachment);
-			list($file_account) = explode('/', $attachment);
-			if ($file_account == 'global' || !file_is_image($attachment)) {
-				unset($local_attachment[$key]);
-			}
-		}
-	}
+	$local_attachment = dir_exist_image(ATTACHMENT_ROOT . 'images');
 }
 
 if ($do == 'buckets') {
