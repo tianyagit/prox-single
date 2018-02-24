@@ -13,13 +13,13 @@
 			{/if}
 			<!-- xend -->
 
-			<!-- vstart -->
-			{if IMS_FAMILY == 'v'}
+			<!-- svstart -->
+			{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 				{if !empty($account_info['phoneapp_limit']) || $_W['isfounder']}
 				<a href="{php echo url('phoneapp/manage/create_display')}" class="color-default"><i class="wi wi-registersite"></i>新建APP</a>
 				{/if}
 			{/if}
-			<!-- vend -->
+			<!-- svend -->
 
 			<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL))}" class="color-default"><i class="wi wi-wechatstatistics"></i>APP管理</a>
 		</div>
@@ -101,13 +101,13 @@
 				{/if}
 				{/if}
 				<!-- xend -->
-				<!-- vstart -->
-				{if IMS_FAMILY == 'v'}
+				<!-- svstart -->
+				{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 				{if !empty($account_info['phoneapp_limit']) || $_W['isfounder']}
 				<div><a class="btn btn-primary" href="{php echo url('phoneapp/manage/create_display')}">新建APP</a></div>
 				{/if}
 				{/if}
-				<!-- vend -->
+				<!-- svend -->
 
 			</div>
 			<div class="text-center we7-padding-vertical" ng-if="!phoneapp_lists && activeLetter">

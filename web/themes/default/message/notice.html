@@ -17,14 +17,14 @@
 	{/if}
 	{/if}
 	<!-- xend -->
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 	{if $_W['isfounder']}
 	<li {if $type == MESSAGE_REGISTER_TYPE}class="active" {/if}><a href="{php echo url('message/notice', array('type' => MESSAGE_REGISTER_TYPE))}">注册提醒</a></li>
 	<li {if $type == MESSAGE_WORKORDER_TYPE}class="active" {/if} ><a href="{php echo url('message/notice', array('type' => MESSAGE_WORKORDER_TYPE))}">工单提醒</a></li>
 	{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 </ul>
 
 <table class="table we7-table table-hover vertical-middle" id="message-notice"  ng-controller="messageNoticeCtrl" ng-cloak>

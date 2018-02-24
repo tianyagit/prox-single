@@ -42,8 +42,8 @@
 		{/if}
 	{/if}
 	<!-- xend -->
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_OWNER}
 		<a href="{php echo url('account/post/base', array('uniacid' => $account['uniacid'], 'acid' => $account['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $do == 'base'} active{/if}">基础信息</a>
 		{if ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL}
@@ -51,7 +51,7 @@
 		{/if}
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 	<a href="{php echo url('account/post-user/edit', array('uniacid' => $account['uniacid'], 'acid' => $account['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $action == 'post-user' && $do == 'edit'} active{/if}">使用者管理</a>
 	{if ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL}
 	<a href="{php echo url('wxapp/manage/display', array('uniacid' => $account['uniacid'], 'acid' => $account['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $action == 'manage' && $do == 'display'} active{/if}">版本管理</a>

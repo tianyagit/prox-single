@@ -41,12 +41,12 @@
 		{/if}
 		<!-- xend -->
 
-		<!-- vstart -->
-		{if IMS_FAMILY == 'v'}
+		<!-- svstart -->
+		{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 			<a href="{php echo url('user/edit/edit_modules_tpl', array('uid' => $_GPC['uid']))}" class="btn btn-default">应用模板权限</a>
 			<a href="{php echo url('user/edit/edit_account', array('uid' => $_GPC['uid']))}" class="btn btn-default">使用账号列表</a>
 		{/if}
-		<!-- vend -->
+		<!-- svend -->
 
 	</div>
 	<table class="table we7-table table-hover table-form">
@@ -233,8 +233,8 @@
 		{/if}
 		<!-- xend -->
 
-		<!-- vstart -->
-		{if IMS_FAMILY == 'v'}
+		<!-- svstart -->
+		{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 			{if $_W['isfounder']}
 			<tr>
 				<td class="table-label">备注</td>
@@ -243,7 +243,7 @@
 			</tr>
 			{/if}
 		{/if}
-		<!-- vend -->
+		<!-- svend -->
 
 	</table>
 	<div class="modal fade" id="realname" role="dialog">

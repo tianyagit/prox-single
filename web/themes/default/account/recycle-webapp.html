@@ -9,13 +9,13 @@
 		{/if}
 	{/if}
 	<!-- xend -->
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
 		<li class="active"><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL))}">PC回收站</a></li>
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 
 </ul>
 <div class="clearfix we7-margin-bottom">

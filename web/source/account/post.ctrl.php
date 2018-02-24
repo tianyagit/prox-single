@@ -33,11 +33,11 @@ if (IMS_FAMILY == 'x') {
 	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 }
 /* xend */
-/* vstart */
-if (IMS_FAMILY == 'v') {
+/* svstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER));
 }
-/* vend */
+/* svend */
 if ($role_permission) {
 	$do = in_array($do, $dos) ? $do : 'base';
 } elseif ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
@@ -394,13 +394,13 @@ if($do == 'modules_tpl') {
 		}
 	}
 	/* xend */
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 		if ($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders)) {
 			$canmodify = true;
 		}
 	}
-	/* vend */
+	/* svend */
 	if (!empty($extend['modules'])) {
 		foreach ($extend['modules'] as $module_key => $module_val) {
 			$extend['modules'][$module_key] = module_fetch($module_val);

@@ -39,13 +39,13 @@ if ($do == 'display') {
 	}
 	/* xend */
 
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 		if (empty($type) && !user_is_founder($_W['uid'])){
 			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
 		}
 	}
-	/* vend */
+	/* svend */
 
 	if (!empty($types)) {
 		$message_table->searchWithType($types);

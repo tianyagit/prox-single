@@ -280,8 +280,8 @@ function buildframes($framename = ''){
 						}
 					}
 				}
-				/* vstart */
-				if (IMS_FAMILY == 'v') {
+				/* svstart */
+				if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 					if ($nav_id != 'wxapp') {
 						$section_show = false;
 						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
@@ -297,7 +297,7 @@ function buildframes($framename = ''){
 						}
 					}
 				}
-				/* vend */
+				/* svend */
 				/* xstart */
 				if (IMS_FAMILY == 'x') {
 					if ($nav_id != 'wxapp' && $nav_id != 'store') {
@@ -590,13 +590,13 @@ function buildframes($framename = ''){
 		}
 	}
 	foreach ($frames as $menuid => $menu) {
-		/* vstart */
-		if (IMS_FAMILY == 'v') {
+		/* svstart */
+		if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 			if (!empty($menu['founder']) && empty($_W['isfounder']) || user_is_vice_founder() && in_array($menuid, array('site', 'advertisement', 'appmarket')) || $_W['role'] == ACCOUNT_MANAGE_NAME_CLERK && in_array($menuid, array('account', 'wxapp', 'system')) || !$menu['is_display']) {
 				continue;
 			}
 		}
-		/* vend */
+		/* svend */
 		/* xstart */
 		if (IMS_FAMILY == 'x') {
 			if (!empty($menu['founder']) && empty($_W['isfounder']) ||
