@@ -188,7 +188,7 @@
 								<label class="control-label col-sm-2">{if $goods['type'] == STORE_TYPE_WXAPP_MODULE}小程序{else}公众号{/if}</label>
 								<div class="col-sm-10">
 									<div class="clearfix" style="line-height: 34px;">
-										<select class="we7-select" style="width:150px;" ng-model="uniacid">
+										<select class="we7-select" style="width:150px;" ng-model="{if $goods['type'] == STORE_TYPE_WXAPP_MODULE}wxapp{else}uniacid{/if}">
 											<option value="{{ uniacid }}" ng-repeat="(uniacid, account) in account_list track by uniacid">{{ account.name }}</option>
 										</select>
 										<span class="text-error">注意!</span>请确认服务所需绑定的公众号,购买后不可更换.
