@@ -33,12 +33,12 @@
 		<a href="{php echo url('user/edit/edit_modules_tpl', array('uid' => $_GPC['uid']))}" class="btn btn-default">应用模板权限</a>
 		<a href="{php echo url('user/edit/edit_account', array('uid' => $_GPC['uid']))}" class="btn btn-default active">使用账号列表</a>
 		{else}
-		<!-- xstart -->
-		{if IMS_FAMILY == 'x'}
+		<!-- sxstart -->
+		{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 		<a href="{php echo url('founder/edit/edit_account', array('uid' => $_GPC['uid']))}" class="btn btn-default active">使用账号列表</a>
 		<a href="{php echo url('founder/edit/edit_modules_tpl', array('uid' => $_GPC['uid']))}" class="btn btn-default">应用模板权限</a>
 		{/if}
-		<!-- xend -->
+		<!-- sxend -->
 		{/if}
 	</div>
 	<table class="table we7-table table-hover vertical-middle">

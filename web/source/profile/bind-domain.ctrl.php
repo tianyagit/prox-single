@@ -1,6 +1,6 @@
 <?php
 /**
- * xall
+ * sxall
  * 域名绑定
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */

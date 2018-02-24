@@ -11,13 +11,13 @@
 			{/if}
 			<!-- xend -->
 
-			<!-- vstart -->
-			{if IMS_FAMILY == 'v'}
+			<!-- svstart -->
+			{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 				{if !empty($account_info['webapp_limit']) || $_W['isfounder']}
 				<a href="./index.php?c=webapp&a=manage&do=create_display" class="color-default"><i class="fa fa-plus"></i>新增PC</a>
 				{/if}
 			{/if}
-			<!-- vend -->
+			<!-- svend -->
 
 			{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_MANAGER}
 			<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL))}" class="color-default"><i class="wi wi-wechatstatistics"></i>PC管理</a>

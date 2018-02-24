@@ -112,7 +112,6 @@ function checkauth() {
 			}
 		}
 
-
 		if(_mc_login(array('uid' => safe_gpc_int($fan['uid'])))) {
 			return true;
 		}

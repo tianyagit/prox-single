@@ -17,11 +17,11 @@ if (!empty($uniacid)) {
 		$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 	}
 	/* xend */
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 		$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER));
 	}
-	/* vend */
+	/* svend */
 	if (!$role_permission) {
 		itoast('无权限操作！', referer(), 'error');
 	}

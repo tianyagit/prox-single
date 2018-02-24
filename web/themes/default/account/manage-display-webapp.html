@@ -10,13 +10,13 @@
 	{/if}
 	<!-- xend -->
 
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
 		<li><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL))}">PC回收站</a></li>
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 
 </ul>
 <div class="clearfix we7-margin-bottom">
@@ -47,15 +47,15 @@
 	{/if}
 	<!-- xend -->
 
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if !empty($account_info['webapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
 			<a href="{url 'webapp/manage/create_display'}" class="btn btn-primary we7-padding-horizontal">添加PC</a>
 		</div>
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 
 </div>
 <table class="table we7-table table-hover vertical-middle table-manage" id="js-system-account-display" ng-controller="SystemAccountDisplay" ng-cloak>

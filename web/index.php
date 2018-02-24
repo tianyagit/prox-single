@@ -46,11 +46,11 @@ if (($_W['setting']['copyright']['status'] == 1) && empty($_W['isfounder']) && $
 		message('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], url('user/login'), 'info');
 	}
 	/* vend */
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
+	/* sxstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		message('站点已关闭，关闭原因：' . $_W['setting']['copyright']['reason'], url('account/welcome'), 'info');
 	}
-	/* xend */
+	/* sxend */
 }
 
 $controllers = array();

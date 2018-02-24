@@ -13,13 +13,13 @@
 			{/if}
 			<!-- xend -->
 
-			<!-- vstart -->
-			{if IMS_FAMILY == 'v'}
+			<!-- svstart -->
+			{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 				{if !empty($account_info['wxapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
 				<a href="{php echo url('wxapp/post/design_method')}" class="color-default"><i class="wi wi-registersite"></i>新建小程序</a>
 				{/if}
 			{/if}
-			<!-- vend -->
+			<!-- svend -->
 			<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="color-default"><i class="wi wi-wechatstatistics"></i>小程序管理</a>
 		</div>
 	</div>
@@ -103,13 +103,13 @@
 				{/if}
 				{/if}
 				<!-- xend -->
-				<!-- vstart -->
-				{if IMS_FAMILY == 'v'}
+				<!-- svstart -->
+				{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 				{if !empty($account_info['wxapp_limit']) || $_W['isfounder']}
 				<div><a class="btn btn-primary" href="{php echo url('wxapp/post/design_method')}">新建小程序</a></div>
 				{/if}
 				{/if}
-				<!-- vend -->
+				<!-- svend -->
 
 			</div>
 			<div class="text-center we7-padding-vertical" ng-if="!wxapp_lists && activeLetter">

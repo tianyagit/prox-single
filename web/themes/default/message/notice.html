@@ -17,14 +17,14 @@
 	{/if}
 	{/if}
 	<!-- xend -->
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 	{if $_W['isfounder']}
 	<li {if $type == MESSAGE_REGISTER_TYPE}class="active" {/if}><a href="{php echo url('message/notice', array('type' => MESSAGE_REGISTER_TYPE))}">注册提醒</a></li>
 	<li {if $type == MESSAGE_WORKORDER_TYPE}class="active" {/if} ><a href="{php echo url('message/notice', array('type' => MESSAGE_WORKORDER_TYPE))}">工单提醒</a></li>
 	{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 </ul>
 
 <table class="table we7-table table-hover vertical-middle" id="message-notice"  ng-controller="messageNoticeCtrl" ng-cloak>
@@ -57,11 +57,11 @@
 		<td class="text-muted text-center" ng-bind = "list.create_time"></td>
 		<td>
 			<div class="link-group">
-				<!-- xstart -->
-				{if IMS_FAMILY == 'x'}
+				<!-- sxstart -->
+				{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 				<a ng-href="{{list.url}}" ng-if="list.type==1">查看我的订单</a>
 				{/if}
-				<!-- xend -->
+				<!-- sxend -->
 				<a ng-href="{{list.url}}" ng-if="list.type==3">进入工单</a>
 				<a ng-href="{{list.url}}" ng-if="list.type==2">查看公众号</a>
 				<a ng-href="{{list.url}}" ng-if="list.type==5">查看小程序</a>

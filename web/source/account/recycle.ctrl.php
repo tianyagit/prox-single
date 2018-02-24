@@ -17,13 +17,13 @@ if (IMS_FAMILY == 'x') {
 	}
 }
 /* xend */
-/* vstart */
-if (IMS_FAMILY == 'v') {
+/* svstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
 		itoast('无权限操作！', referer(), 'error');
 	}
 }
-/* vend */
+/* svend */
 $_W['page']['title'] = $account_typename . '回收站 - ' . $account_typename;
 
 if ($do == 'display') {
@@ -34,7 +34,7 @@ if ($do == 'display') {
 	$condition = '';
 	$param = array();
 	$keyword = trim($_GPC['keyword']);
-	
+
 	$type_condition = array(
 		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL),
 		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
@@ -43,7 +43,7 @@ if ($do == 'display') {
 		ACCOUNT_TYPE_PHONEAPP_NORMAL => array(ACCOUNT_TYPE_PHONEAPP_NORMAL),
 	);
 	$type_condition_sql = "'".implode("','", $type_condition[ACCOUNT_TYPE])."'";
-	
+
 	if (!empty($_W['isfounder'])) {
 		$condition .= " WHERE a.acid <> 0 AND b.isdeleted = 1 AND b.type IN ($type_condition_sql)";
 		$order_by = " ORDER BY a.`acid` DESC";
@@ -111,13 +111,13 @@ if($do == 'delete') {
 		}
 	}
 	/* xend */
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 		if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
 			itoast('没有权限！', referer(), 'error');
 		}
 	}
-	/* vend */
+	/* svend */
 	account_delete($acid);
 	iajax(0, '删除成功！', referer());
 }

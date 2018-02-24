@@ -49,7 +49,7 @@ function _login($forward = '') {
 			itoast('绑定成功', url('user/profile/bind'), '');
 		}
 	}
-	
+
 	if (is_error($member)) {
 		itoast($member['message'], url('user/login'), '');
 	}
@@ -72,15 +72,15 @@ function _login($forward = '') {
 		}
 		/* xend */
 
-		/* vstart */
-		if (IMS_FAMILY == 'v') {
+		/* svstart */
+		if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 			if (empty($_W['isfounder'])) {
 				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
 					itoast('您的账号有效期限已过，请联系网站管理员解决！', '', '');
 				}
 			}
 		}
-		/* vend */
+		/* svend */
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
 			itoast('站点已关闭，关闭原因:'. $_W['setting']['copyright']['reason'], '', '');
 		}

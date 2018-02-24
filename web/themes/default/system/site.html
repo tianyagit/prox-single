@@ -31,8 +31,8 @@
 				<input type="text" name="icp" class="form-control" value="{$settings['icp']}">
 			</div>
 		</div>
-		<!-- xstart -->
-		{if IMS_FAMILY == 'x'}
+		<!-- sxstart -->
+		{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 		<h5 class="page-header">登录站点</h5>
 		<div class="form-group">
 			<label class="col-sm-2 control-label" style="text-align:left;">是否开启验证码</label>
@@ -48,7 +48,7 @@
 			</div>
 		</div>
 		{/if}
-		<!-- xend -->
+		<!-- sxend -->
 		<div class="form-group">
 			<label class="col-sm-2 control-label" style="text-align:left;">是否开启手机登录</label>
 			<div class="col-sm-8 form-control-static">
@@ -96,8 +96,8 @@
 				</label>
 			</div>
 		</div>
-		<!-- xstart -->
-		{if IMS_FAMILY == 'x'}
+		<!-- sxstart -->
+		{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 		<h5 class="page-header">版权信息</h5>
 		<div class="form-group">
 			<label class="col-sm-2 control-label" style="text-align:left;">是否显示首页</label>
@@ -275,7 +275,7 @@
 			</div>
 		</div>
 		{/if}
-		<!-- xend -->
+		<!-- sxend -->
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-1 col-xs-12 col-sm-10 col-md-10 col-lg-11">
 				<input name="submit" type="submit" value="提交" class="btn btn-primary span3" />

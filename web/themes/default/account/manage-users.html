@@ -52,11 +52,11 @@
 					{/if}
 					<!-- xend -->
 
-					<!-- vstart -->
-					{if IMS_FAMILY == 'v'}
+					<!-- svstart -->
+					{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 					<a href="javascript:;" ng-if="permission.isfounder == 0 && (((state == 'founder' || state == 'owner') && (permission.role == 'manager' || permission.role == 'operator')) || (state == 'manager' && permission.role == 'operator') || (state == 'founder' && permission.role == 'owner'))" ng-click="delPermission(permission.uid)">删除 </a>
 					{/if}
-					<!-- vend -->
+					<!-- svend -->
 				</div>
 			</td>
 		</tr>

@@ -203,8 +203,8 @@ if ($do == 'base') {
 		}
 	}
 	/* xend */
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 		if (!$_W['isfounder']) {
 			//应用模版权限
 			$groups = user_group();
@@ -214,7 +214,7 @@ if ($do == 'base') {
 			$account_detail = user_account_detail_info($_W['uid']);
 		}
 	}
-	/* vend */
+	/* svend */
 	template('user/profile');
 }
 

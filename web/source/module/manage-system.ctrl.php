@@ -18,8 +18,8 @@ load()->model('utility');
 load()->func('db');
 $dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module');
 $do = in_array($do, $dos) ? $do : 'installed';
-/* xstart */
-if (IMS_FAMILY == 'x') {
+/* sxstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if (user_is_vice_founder() && !empty($_GPC['system_welcome'])){
 		itoast('无权限操作！');
 	}
@@ -38,7 +38,7 @@ if (IMS_FAMILY == 'x') {
 		iajax(0);
 	}
 }
-/* xend */
+/* sxend */
 
 if ($do == 'subscribe') {
 	$uninstallModules = module_get_all_unistalled($status);

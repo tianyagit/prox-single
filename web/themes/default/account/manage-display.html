@@ -9,13 +9,13 @@
 		{/if}
 	{/if}
 	<!-- xend -->
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
 		<li><a href="{url 'account/recycle'}">公众号回收站</a></li>
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 </ul>
 <div class="clearfix we7-margin-bottom">
 	<!-- xstart -->
@@ -31,8 +31,8 @@
 		{/if}
 	{/if}
 	<!-- xend -->
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if !$_W['isfounder'] && !empty($account_info['uniacid_limit'])}
 		<div class="alert alert-warning hidden">
 			温馨提示：
@@ -43,7 +43,7 @@
 		</div>
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 	<form action="" class="form-inline  pull-left" method="get">
 		<input type="hidden" name="c" value="account">
 		<input type="hidden" name="a" value="manage">
@@ -61,15 +61,15 @@
 	{/if}
 	{/if}
 	<!-- xend -->
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 	{if !empty($account_info['uniacid_limit']) || $_W['isfounder']}
 	<div class="pull-right">
 		<a href="{url 'account/post-step'}" class="btn btn-primary we7-padding-horizontal">添加公众号</a>
 	</div>
 	{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 </div>
 <table class="table we7-table table-hover vertical-middle table-manage" id="js-system-account-display" ng-controller="SystemAccountDisplay" ng-cloak>
 	<col width="120px" />
