@@ -628,27 +628,31 @@ function uni_user_see_more_info($user_type, $see_more = false) {
  * @return array
  */
 function uni_owner_account_nums($uid, $role) {
-	$account_num = $wxapp_num = $webapp_num = 0;
+	$account_num = $wxapp_num = $webapp_num = $phoneapp_num = 0;
 	$condition = array('uid' => $uid, 'role' => $role);
 	$uniacocunts = pdo_getall('uni_account_users', $condition, array(), 'uniacid');
 	if (!empty($uniacocunts)) {
 		$all_account = pdo_fetchall('SELECT * FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $uid, ':role' => $role));
 		foreach ($all_account as $account) {
-			if ($account['type'] == 1 || $account['type'] == 3) {
+			if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 				$account_num++;
 			}
-			if ($account['type'] == 4) {
+			if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 				$wxapp_num++;
 			}
 			if ($account['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 				$webapp_num++;
 			}
+			if ($account['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+				$phoneapp_num++;
+			}
 		}
 	}
 	$num = array(
 		'account_num' => $account_num,
-		'wxapp_num' =>$wxapp_num,
-		'webapp_num'=>$webapp_num
+		'wxapp_num' => $wxapp_num,
+		'webapp_num' => $webapp_num,
+		'phoneapp_num' => $phoneapp_num
 	);
 	return $num;
 }

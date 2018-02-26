@@ -281,7 +281,7 @@ if ($do == 'sync') {
 		$total = ceil($total/100);
 		$start = time();
 		if (!empty($sync_fans)) {
-			mc_init_fans_info(array_keys($sync_fans));
+			mc_init_fans_info(array_keys($sync_fans), $force_init_member);
 		}
 		if ($total == $pageindex) {
 			setcookie(cache_system_key('sync_fans_pindex:' . $_W['uniacid']), '', -1);
