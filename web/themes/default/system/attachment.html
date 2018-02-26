@@ -259,6 +259,22 @@
 				</span>
 			</div>
 		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">内网上传</label>
+			<div class="col-sm-9">
+				<input type="radio" name="alioss[internal]" id="type-12" value="1" {if $remote['alioss']['internal'] == 1}checked{/if}>
+				<label class="radio-inline" for="type-12">
+					是
+				</label>
+				<input type="radio" name="alioss[internal]" id="type-13" value="0" {if $remote['alioss']['internal'] != 1}checked{/if}>
+				<label class="radio-inline" for="type-13">
+					否
+				</label>
+				<span class="help-block">
+						如果此站点使用的是阿里云ecs服务器，并且服务器与bucket在同一地区（如：同在华北一区），您可以选择通过内网上传的方式上传附件，以加快上传速度、节省带宽。
+					</span>
+			</div>
+		</div>
 		<div class="form-group" id="bucket" {if empty($remote['alioss']['key'])}style="display: none;{/if}">
 			<label class="col-sm-2 control-label">Bucket选择</label>
 			<div class="col-sm-9">
@@ -489,9 +505,10 @@
 			'key' : $.trim($(':text[name="alioss[key]"]').val()),
 			'secret' : $.trim($(':text[name="alioss[secret]"]').val()),
 			'url'  : $.trim($(':text[name="custom[url]"]').val()),
-			'bucket' : bucket
-		};
-		$.post("{php echo url('system/attachment/oss')}",param, function(data) {
+			'bucket' : bucket,
+			'internal' : $('[name="alioss[internal]"]:checked').val()
+        };
+		$.post("{php echo url('system/attachment/oss')}", param, function(data) {
 			var data = $.parseJSON(data);
 			if(data.message.errno == 0) {
 				util.message('配置成功');

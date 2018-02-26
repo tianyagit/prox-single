@@ -135,6 +135,7 @@ if ($do == 'remote') {
 				'key' => $_GPC['alioss']['key'],
 				'secret' => strexists($_GPC['alioss']['secret'], '*') ? $_W['setting']['remote_complete_info']['alioss']['secret'] : $_GPC['alioss']['secret'],
 				'bucket' => $_GPC['alioss']['bucket'],
+				'internal' => $_GPC['alioss']['internal'],
 			),
 			'qiniu' => array(
 				'accesskey' => trim($_GPC['qiniu']['accesskey']),
@@ -308,7 +309,7 @@ if ($do == 'oss') {
 	$bucket = $_GPC['bucket'];
 	$buckets = attachment_alioss_buctkets($key, $secret);
 	list($bucket, $url) = explode('@@', $_GPC['bucket']);
-	$result = attachment_newalioss_auth($key, $secret, $bucket,$url);
+	$result = attachment_newalioss_auth($key, $secret, $bucket, $_GPC['internal']);
 	if (is_error($result)) {
 		iajax(-1, 'OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写');
 	}
