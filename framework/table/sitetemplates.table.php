@@ -11,4 +11,7 @@ class SitetemplatesTable extends We7Table {
 	public function getAllTemplates() {
 		return $this->query->getall('name');
 	}
+	public function getTemplateInfo($name) {
+		return $this->query->from($this->tableName)->where('name', $name)->get();
+	}
 }
