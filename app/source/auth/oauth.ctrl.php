@@ -236,5 +236,6 @@ if(uni_is_multi_acid()) {
 	$str = "&j={$_W['acid']}";
 }
 $forward = strexists($forward, 'i=') ? $forward : "{$forward}&i={$_W['uniacid']}{$str}";
-header('Location: ' . $forward . '&wxref=mp.weixin.qq.com#wechat_redirect');
+$forward = strexists($forward, '&wxref=mp.weixin.qq.com#wechat_redirect') ? $forward : $forward . '&wxref=mp.weixin.qq.com#wechat_redirect';
+header('Location: ' . $forward);
 exit;
