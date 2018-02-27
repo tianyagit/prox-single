@@ -24,7 +24,8 @@ function _cloud_build_params() {
 	$pars = array();
 	if (is_array($_W['setting']['site']) && !empty($_W['setting']['site']['url'])) {
 		$pars['host'] = parse_url($_W['setting']['site']['url'], PHP_URL_HOST);
-	} else {
+	}
+	if (empty($pars['host'])) {
 		$pars['host'] = $_SERVER['HTTP_HOST'];
 	}
 	$pars['family'] = IMS_FAMILY;
