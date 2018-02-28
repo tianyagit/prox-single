@@ -479,7 +479,7 @@ function permission_user_account_num($uid = 0) {
 	}
 	/** @var  $user_table  UsersTable*/
 	$user_table = table('users');
-	if (user_is_vice_founder($user['uid']) && empty($uid)) {
+	if (user_is_vice_founder($user['uid'])) {
 		$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
 		$group = $user_table->userFounderGroupInfo($user['groupid']);
 		$group_num = uni_owner_account_nums($user['uid'], $role);
