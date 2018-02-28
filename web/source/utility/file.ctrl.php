@@ -531,6 +531,7 @@ $islocal = $_GPC['local'] == 'local'; if ($do == 'keyword') {
 if ($do == 'module') {
 	$enable_modules = array();
 	$is_user_module = isset($_GPC['user_module']) ? intval($_GPC['user_module']) : 0;
+	$is_wxapp_module = intval($_GPC['mtype']);
 	if ($is_user_module) {
 		$installedmodulelist = user_modules($_W['uid']);
 	} else {
@@ -540,6 +541,10 @@ if ($do == 'module') {
 	$sysmods = system_modules();
 	foreach ($installedmodulelist as $k => $value) {
 		if ($value['type'] == 'system' || in_array($value['name'], $sysmods)) {
+			unset($installedmodulelist[$k]);
+			continue;
+		}
+		if ($is_wxapp_module == 1 && $value['wxapp_support'] != 2) {
 			unset($installedmodulelist[$k]);
 			continue;
 		}

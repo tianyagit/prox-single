@@ -71,7 +71,6 @@
 												<input type="text" name="version" ng-model="wxappinfo.version" class="form-control wxapp-name" placeholder="版本号，只能是数字、点，数字最多两位，例如 1.01 / 1.0.1">
 											</div>
 										</div>
-										{if $create_type == WXAPP_CREATE_MODULE || $create_type == WXAPP_CREATE_MUTI_MODULE}
 										<div class="form-group">
 											<input type="hidden" name="modules" value="">
 											<label class="control-label col-sm-2">添加应用</label>
@@ -87,15 +86,6 @@
 
 											</div>
 										</div>
-										{else}
-										<div class="form-group">
-											<input type="hidden" name="modules" value="">
-											<label class="control-label col-sm-2">添加应用</label>
-											<div class="form-controls col-sm-10">
-												<div we7-choose-more we7-modules="wxappinfo.choose.modules" we7-choose-single="{php echo $design_method == WXAPP_MODULE}"></div>
-											</div>
-										</div>
-										{/if}
 									</div>
 								</div>
 								<div id="home" ng-show="createStep == 2">
