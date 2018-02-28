@@ -127,22 +127,34 @@ if (intval($_W['account']['level']) == 4) {
 	}
 }
 if (intval($_W['account']['level']) != 4) {
-	$mc_oauth_fan = mc_oauth_fans($oauth['openid'], $_W['acid']);
-	if (empty($mc_oauth_fan) && (!empty($_SESSION['openid']) || !empty($_SESSION['uid']))) {
-		$data = array(
-			'acid' => $_W['acid'],
-			'oauth_openid' => $oauth['openid'],
-			'uid' => intval($_SESSION['uid']),
-			'openid' => $_SESSION['openid']
-		);
-		pdo_insert('mc_oauth_fans', $data);
-	}
-	if (!empty($mc_oauth_fan)) {
-		if (empty($_SESSION['uid']) && !empty($mc_oauth_fan['uid'])) {
-			$_SESSION['uid'] = intval($mc_oauth_fan['uid']);
+	if (!empty($oauth['unionid'])) {
+		$fan = pdo_get('mc_mapping_fans', array('unionid' => $oauth['unionid'], 'uniacid' => $_W['uniacid']));
+		if (!empty($fan)) {
+			if (empty($_SESSION['uid']) && !empty($fan['uid'])) {
+				$_SESSION['uid'] = intval($fan['uid']);
+			}
+			if (empty($_SESSION['openid']) && !empty($fan['openid'])) {
+				$_SESSION['openid'] = strval($fan['openid']);
+			}
 		}
-		if (empty($_SESSION['openid']) && !empty($mc_oauth_fan['openid'])) {
-			$_SESSION['openid'] = strval($mc_oauth_fan['openid']);
+	} else {
+		$mc_oauth_fan = mc_oauth_fans($oauth['openid'], $_W['acid']);
+		if (empty($mc_oauth_fan) && (!empty($_SESSION['openid']) || !empty($_SESSION['uid']))) {
+			$data = array(
+				'acid' => $_W['acid'],
+				'oauth_openid' => $oauth['openid'],
+				'uid' => intval($_SESSION['uid']),
+				'openid' => $_SESSION['openid']
+			);
+			pdo_insert('mc_oauth_fans', $data);
+		}
+		if (!empty($mc_oauth_fan)) {
+			if (empty($_SESSION['uid']) && !empty($mc_oauth_fan['uid'])) {
+				$_SESSION['uid'] = intval($mc_oauth_fan['uid']);
+			}
+			if (empty($_SESSION['openid']) && !empty($mc_oauth_fan['openid'])) {
+				$_SESSION['openid'] = strval($mc_oauth_fan['openid']);
+			}
 		}
 	}
 }
