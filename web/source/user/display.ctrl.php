@@ -45,9 +45,9 @@ if ($do == 'display') {
 				break;
 		}
 
-		$username = trim($_GPC['username']);
-		if (!empty($username)) {
-			$users_table->searchWithName($username);
+		$search = safe_gpc_string($_GPC['search']);
+		if (!empty($search)) {
+			$users_table->searchWithNameOrMobile($search);
 		}
 
 		/* xstart */
