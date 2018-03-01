@@ -636,10 +636,10 @@ function uni_owner_account_nums($uid, $role) {
 	if (!empty($uniacocunts)) {
 		$all_account = pdo_fetchall('SELECT * FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $uid, ':role' => $role));
 		foreach ($all_account as $account) {
-			if ($account['type'] == 1 || $account['type'] == 3) {
+			if ($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 				$account_num++;
 			}
-			if ($account['type'] == 4) {
+			if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL || $account['type'] == ACCOUNT_TYPE_APP_AUTH) {
 				$wxapp_num++;
 			}
 			if ($account['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
