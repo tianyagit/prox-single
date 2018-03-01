@@ -57,8 +57,8 @@ if (IMS_FAMILY == 'v') {
 	}
 }
 /* vend */
-/* xstart */
-if (IMS_FAMILY == 'x') {
+/* sxstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if ($do == 'ext' && $_GPC['m'] != 'store' && !$_GPC['system_welcome']) {
 		if (!empty($_GPC['version_id'])) {
 			$version_info = wxapp_version($_GPC['version_id']);
@@ -74,7 +74,7 @@ if (IMS_FAMILY == 'x') {
 		}
 	}
 }
-/* xend */
+/* sxend */
 
 
 if ($do == 'platform') {

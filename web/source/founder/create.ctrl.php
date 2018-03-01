@@ -11,13 +11,13 @@ $_W['page']['title'] = '添加创始人 - 创始人管理';
 
 if (checksubmit()) {
 	$user_founder = array(
-		'username' => trim($_GPC['username']),
-		'password' => trim($_GPC['password']),
-		'repassword' => trim($_GPC['repassword']),
-		'remark' => $_GPC['remark'],
-		'groupid' => intval($_GPC['groupid']),
+		'username' => safe_gpc_string($_GPC['username']),
+		'password' => $_GPC['password'],
+		'repassword' => $_GPC['repassword'],
+		'remark' => safe_gpc_string($_GPC['remark']),
+		'groupid' => safe_gpc_int($_GPC['groupid']),
 		'starttime' => TIMESTAMP,
-		'endtime' => intval($_GPC['timelimit']),
+		'endtime' => safe_gpc_int($_GPC['timelimit']),
 		'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER
 	);
 

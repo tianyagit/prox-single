@@ -43,7 +43,7 @@ function message($msg, $redirect = '', $type = '') {
 		$redirect = $_W['siteroot'] . 'app/index.php?' . $urls['query'];
 	} else {
 		// 跳转链接只能跳转本域名下 防止钓鱼 如: 用户可能正常从信任站点微擎登录 跳转到第三方网站 会误认为第三方网站也是安全的
-		$redirect = safe_url_not_outside($redirect);
+		$redirect = safe_gpc_url($redirect);
 	}
 	if($redirect == '') {
 		$type = in_array($type, array('success', 'error', 'info', 'warning', 'ajax', 'sql')) ? $type : 'info';
@@ -90,6 +90,7 @@ function itoast($msg, $redirect = '', $type = '') {
 function checkauth() {
 	global $_W, $engine;
 	load()->model('mc');
+	load()->model('account');
 	if(!empty($_W['member']) && (!empty($_W['member']['mobile']) || !empty($_W['member']['email']))) {
 		return true;
 	}
@@ -102,7 +103,16 @@ function checkauth() {
 				$fan = mc_fansinfo($fan['openid']);
 			}
 		}
-		if(_mc_login(array('uid' => intval($fan['uid'])))) {
+
+		if (empty($fan['uid'])) {
+			$setting = uni_setting($_W['uniacid'], array('passport'));
+			if (!isset($setting['passport']) || empty($setting['passport']['focusreg'])) {
+				$reg_members = mc_init_fans_info($_W['openid'], true);
+				$fan['uid'] = $reg_members['uid'];
+			}
+		}
+
+		if(_mc_login(array('uid' => safe_gpc_int($fan['uid'])))) {
 			return true;
 		}
 		if (defined('IN_API')) {

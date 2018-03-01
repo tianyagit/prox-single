@@ -60,15 +60,15 @@ function file_move($filename, $dest) {
 /**
  * 获取指定目录下所有文件路径.
  *
- * @param string $path
- *                        文件夹目录
- * @param array  $include
- *                        指定获取子目录
+ * @param string $path 文件夹目录
+ * @param array  $include 指定获取子目录
+ * @param array  $file_number 获取文件数量
  *
  * @return array
  */
-function file_tree($path, $include = array()) {
+function file_tree($path, $include = array(), $file_number = 0) {
 	$files = array();
+	$files_count = 0;
 	if (!empty($include)) {
 		$ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
 	} else {
@@ -78,17 +78,60 @@ function file_tree($path, $include = array()) {
 		foreach ($ds as $entry) {
 			if (is_file($entry)) {
 				$files[] = $entry;
+				$files_count++;
+				if ($file_number > 0 && $files_count >= $file_number) {
+					return $files;
+				}
 			}
 			if (is_dir($entry)) {
 				$rs = file_tree($entry);
 				foreach ($rs as $f) {
 					$files[] = $f;
+					$files_count++;
+					if ($file_number > 0 && $files_count >= $file_number) {
+						return $files;
+					}
 				}
 			}
 		}
 	}
-
 	return $files;
+}
+
+/**
+ * 判断指定目录下是否存在图片
+ *
+ * @param string $path
+ *                        文件夹目录
+ * @param array  $include
+ *                        指定获取子目录
+ *
+ * @return array
+ */
+function dir_exist_image($path, $include = array()) {
+	if (!empty($include)) {
+		$ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
+	} else {
+		$ds = glob($path . '/*');
+	}
+	if (is_array($ds)) {
+		foreach ($ds as $entry) {
+			if (is_file($entry) && file_is_image($entry)) {
+				if (strpos($path, ATTACHMENT_ROOT) === 0) {
+					$attachment = str_replace(ATTACHMENT_ROOT . 'images/', '', $entry);
+					list($file_account) = explode('/', $attachment);
+					if ($file_account == 'global') {
+						continue;
+					}
+				}
+				return true;
+			}
+			if (is_dir($entry) && dir_exist_image($entry)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /**
@@ -330,7 +373,8 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 		load()->library('oss');
 		load()->model('attachment');
 		$buckets = attachment_alioss_buctkets($_W['setting']['remote']['alioss']['key'], $_W['setting']['remote']['alioss']['secret']);
-		$endpoint = 'http://' . $buckets[$_W['setting']['remote']['alioss']['bucket']]['location'] . '.aliyuncs.com';
+		$host_name = $_W['setting']['remote']['alioss']['internal'] ? '-internal.aliyuncs.com' : '.aliyuncs.com';
+		$endpoint = 'http://' . $buckets[$_W['setting']['remote']['alioss']['bucket']]['location'] . $host_name;
 		try {
 			$ossClient = new \OSS\OssClient($_W['setting']['remote']['alioss']['key'], $_W['setting']['remote']['alioss']['secret'], $endpoint);
 			$ossClient->uploadFile($_W['setting']['remote']['alioss']['bucket'], $filename, ATTACHMENT_ROOT . $filename);
@@ -406,7 +450,7 @@ function file_dir_remote_upload($dir_path) {
 	}
 	$dir_path = safe_gpc_path($dir_path);
 	if (!empty($dir_path)) {
-		$local_attachment = file_tree($dir_path);
+		$local_attachment = file_tree($dir_path, '', 50);
 	} else {
 		$local_attachment = array();
 	}

@@ -10,6 +10,9 @@ class AccountTable extends We7Table {
 
 	protected $tableName = 'uni_account';
 	protected $primaryKey = 'acid';
+	protected $uni_verifycode = 'uni_verifycode';
+	protected $uniSettings = 'uni_settings';
+	protected $uniAccountUsers = 'uni_account_users';
 	/**
 	 *  当前公众号的基本信息
 	 * @return array
@@ -232,6 +235,27 @@ class AccountTable extends We7Table {
 		}
 	}
 
+	public function accountGroupModules($uniacid) {
+		$packageids = $this->query->from('uni_account_group')->where('uniacid', $uniacid)->select('groupid')->getall('groupid');
+		$uni_modules = array();
+		if (IMS_FAMILY == 'x') {
+			$site_store_buy_package = table('store')->searchUserBuyPackage($uniacid);
+			$packageids = array_merge($packageids, $site_store_buy_package);
+		}
+		if (in_array('-1', array_keys($packageids))) {
+			$modules = $this->query->from('modules')->select('name')->getall('name');
+			return array_keys($modules);
+		}
+		$uni_groups = $this->query->from('uni_group')->where('uniacid', $uniacid)->whereor('id', array_keys($packageids))->getall('modules');
+		if (!empty($uni_groups)) {
+			foreach ($uni_groups as $group) {
+				$group_module = (array)iunserializer($group['modules']);
+				$uni_modules = array_merge($group_module, $uni_modules);
+			}
+		}
+		return $uni_modules;
+	}
+
 	public function getAccountOwner($uniacid) {
 		if (empty($uniacid)) {
 			return array();
@@ -259,5 +283,42 @@ class AccountTable extends We7Table {
 			$result = array();
 		}
 		return $result;
+	}
+
+	public function getUniVerifycode($params) {
+		global $_W;
+		$this->query->from($this->uni_verifycode);
+		if (!empty($params['uniacid'])) {
+			$this->query->where('uniacid', $params['uniacid']);
+		}
+		if (!empty($params['receiver'])) {
+			$this->query->where('receiver', $params['receiver']);
+		}
+		if (!empty($params['createtime >'])) {
+			$this->query->where('createtime >', $params['createtime >']);
+		}
+		if (!empty($params['verifycode'])) {
+			$this->query->where('verifycode', $params['verifycode']);
+		}
+
+		return $this->query->get();
+	}
+
+	public function getUniSetting() {
+		return $this->query->from($this->uniSettings)->get();
+	}
+
+	public function getUniAccountList() {
+		return $this->query->select('uniacid')->from($this->tableName)->getall();
+	}
+
+	public function getOwnerUid() {
+		return $this->query->from($this->uniAccountUsers)->getcolumn('uid');
+	}
+
+	public function getOwnedAccountCount($uid) {
+		return $this->query->from($this->uniAccountUsers, 'u')->select('d.type, count(*) as count')->leftjoin($this->tableName, 'a')
+		->on(array('u.uniacid' => 'a.uniacid'))->leftjoin('account', 'd')->on(array('a.default_acid' => 'd.acid'))
+		->where('u.uid', $uid)->where('u.role', 'owner')->where('d.isdeleted', 0)->groupby('d.type')->getall();
 	}
 }

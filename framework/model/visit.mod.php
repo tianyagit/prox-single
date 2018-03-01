@@ -1,5 +1,6 @@
 <?php
 /**
+ * xall
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  * $sn$
  */
@@ -24,7 +25,8 @@ function visit_update_today($type, $module_name = '') {
 	}
 
 	$today = date('Ymd');
-	$today_exist = pdo_get('stat_visit', array('date' => $today, 'uniacid' => $_W['uniacid'], 'module' => $module_name, 'type' => $type));
+	$params = array('date' => $today, 'uniacid' => $_W['uniacid'], 'module' => $module_name, 'type' => $type);
+	$today_exist = table('statistics')->visitList($params, 'one');
 	if (empty($today_exist)) {
 		$insert_data = array(
 			'uniacid' => $_W['uniacid'],

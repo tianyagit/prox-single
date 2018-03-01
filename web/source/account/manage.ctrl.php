@@ -20,11 +20,11 @@ if (IMS_FAMILY == 'x') {
 	$role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
 }
 /* xend */
-/* vstart */
-if (IMS_FAMILY == 'v') {
+/* svstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 	$role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
 }
-/* vend */
+/* svend */
 
 if ($do == 'display') {
 	$message_id = safe_gpc_int($_GPC['message_id']);
@@ -34,7 +34,7 @@ if ($do == 'display') {
 	$psize = 20;
 	/* @var $account_table AccountTable*/
 	$account_table = table('account');
-	
+
 	$type_condition = array(
 		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH),
 		ACCOUNT_TYPE_WEBAPP_NORMAL => array(ACCOUNT_TYPE_WEBAPP_NORMAL),
@@ -42,12 +42,12 @@ if ($do == 'display') {
 		ACCOUNT_TYPE_PHONEAPP_NORMAL => array(ACCOUNT_TYPE_PHONEAPP_NORMAL),
 	);
 	$account_table->searchWithType($type_condition[ACCOUNT_TYPE]);
-	
+
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
 		$account_table->searchWithKeyword($keyword);
 	}
-	
+
 	if(isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 		$account_table->searchWithLetter($_GPC['letter']);
 	}
@@ -96,13 +96,13 @@ if ($do == 'delete') {
 	}
 	/* xend */
 
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 		if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
 			itoast('无权限操作！', url('account/manage'), 'error');
 		}
 	}
-	/* vend */
+	/* svend */
 
 	if (!empty($acid) && empty($uniacid)) {
 		$account = account_fetch($acid);
@@ -116,7 +116,7 @@ if ($do == 'delete') {
 		pdo_update('account', array('isdeleted' => 1), array('acid' => $acid));
 		itoast('删除子公众号成功！您可以在回收站中回复公众号', referer(), 'success');
 	}
-	
+
 	if (!empty($uniacid)) {
 		$account = pdo_get('uni_account', array('uniacid' => $uniacid));
 		if (empty($account)) {
@@ -132,16 +132,18 @@ if ($do == 'delete') {
 		}
 		/* xend */
 
-		/* vstart */
-		if (IMS_FAMILY == 'v') {
+		/* svstart */
+		if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 			if (!in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
 				itoast('没有该'. ACCOUNT_TYPE_NAME . '操作权限！', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'error');
 			}
 		}
-		/* vend */
+		/* svend */
 
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 		if($_GPC['uniacid'] == $_W['uniacid']) {
+			$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+			cache_delete($cache_key);
 			isetcookie('__uniacid', '');
 		}
 		cache_delete("uniaccount:{$uniacid}");

@@ -10,8 +10,10 @@ class StoreModuleSite extends WeModuleSite {
 	private $left_menus;
 
 	public function __construct() {
-		global $_W;
-		checklogin();
+		global $_W, $_GPC;
+		if ($_GPC['c'] == 'site') {
+			checklogin();
+		}
 		load()->model('store');
 		$this->store_setting = (array)$_W['setting']['store'];
 		$this->left_menus = $this->leftMenu();
@@ -54,6 +56,12 @@ class StoreModuleSite extends WeModuleSite {
 					$account_num = $goods['type'] == STORE_TYPE_ACCOUNT_RENEW ? $goods['account_num'] : $goods['wxapp_num'];
 					$account_info = uni_fetch($order[$account_type]);
 					$account_endtime = strtotime('+' . $order['duration'] * $account_num . $goods['unit'], max(TIMESTAMP, $account_info['endtime']));
+					pdo_update('account', array('endtime' => $account_endtime), array('uniacid' => $order[$account_type]));
+					$store_create_account_info = table('store')->StoreCreateAccountInfo($order[$account_type]);
+					if (!empty($store_create_account_info)) {
+						$endtime = strtotime('+' . $order['duration'] * $account_num . $goods['unit'], max(TIMESTAMP, $store_create_account_info['endtime']));
+						pdo_update('site_store_create_account', array('endtime' => $endtime), array('uniacid' => $order[$account_type]));
+					}
 					pdo_update('account', array('endtime' => $account_endtime), array('uniacid' => $order[$account_type]));
 					cache_delete("uniaccount:{$order[$account_type]}");
 				}
@@ -147,6 +155,12 @@ class StoreModuleSite extends WeModuleSite {
 				$store_table->searchOrderWithUid($_W['uid']);
 			}
 			$order_list = $store_table->searchOrderList($pindex, $psize);
+			if (is_array($order_list) && !empty($order_list)) {
+				foreach ($order_list as &$order) {
+					$order['account'] = uni_fetch($order['uniacid']);
+				}
+			}
+			unset($order);
 			$total = $store_table->getLastQueryTotal();
 			$pager = pagination($total, $pindex, $psize);
 			if (!empty($order_list)) {
@@ -449,7 +463,7 @@ class StoreModuleSite extends WeModuleSite {
 				}
 				unset($goods);
 			}
-			if ($_GPC['type'] == STORE_TYPE_PACKAGE) {
+			if ($_GPC['type'] == STORE_TYPE_PACKAGE || empty($_GPC['type'])) {
 				$module_groups = uni_groups();
 			}
 			$pager = pagination ($store_table['total'], $pageindex, $pagesize);

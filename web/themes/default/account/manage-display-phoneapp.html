@@ -10,13 +10,13 @@
 	{/if}
 	<!-- xend -->
 
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
 		<li><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL))}">APP回收站</a></li>
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 
 </ul>
 <div class="clearfix we7-margin-bottom">
@@ -48,15 +48,15 @@
 	{/if}
 	<!-- xend -->
 
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if !empty($account_info['phoneapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
 			<a href="{url 'phoneapp/manage/create_display'}" class="btn btn-primary we7-padding-horizontal">添加APP</a>
 		</div>
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 
 </div>
 <table class="table we7-table table-hover vertical-middle table-manage" id="js-system-account-display" ng-controller="SystemAccountDisplay" ng-cloak>
@@ -126,13 +126,13 @@
 				<a href="{{links.postUser}}&do=edit&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">使用者管理</a>
 				<a href="{{links.postVersion}}&do=display&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">版本管理</a>
 				<a href="{{links.post}}&do=modules_tpl&uniacid={{list.uniacid}}&acid={{list.acid}}&account_type={{list.type}}">可用应用模板/模块</a>
-				<!-- xstart -->
-				{if IMS_FAMILY == 'x'}
+				<!-- sxstart -->
+				{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
 				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}
 				<a ng-href="{{links.del}}&acid={{list.acid}}&uniacid={{list.uniacid}}&account_type={{list.type}}" ng-show="list.role == 'owner' || list.role == 'founder' || list.role == 'vice_founder'" onclick="if(!confirm('确认放入回收站吗？')) return false;" class="del">停用</a>
 				{/if}
 				{/if}
-				<!-- xend -->
+				<!-- sxend -->
 				<!-- vstart -->
 				{if IMS_FAMILY == 'v'}
 				{if $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER}

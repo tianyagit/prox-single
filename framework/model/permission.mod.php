@@ -117,7 +117,7 @@ function permission_create_account($uid, $type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 	$user_table = table('users');
 	$userinfo = $user_table->usersInfo($uid);
 	$groupdata = $user_table->usersGroupInfo($userinfo['groupid']);
-	$list = pdo_fetchall('SELECT d.type, count(*) AS count FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0 GROUP BY d.type', array(':uid' => $uid, ':role' => 'owner'));
+	$list = table('account')->getOwnedAccountCount($uid);
 	foreach ($list as $item) {
 		if ($item['type'] == ACCOUNT_TYPE_APP_NORMAL) {
 			$wxapp_num = $item['count'];
@@ -210,7 +210,7 @@ function permission_account_user_permission_exist($uid = 0, $uniacid = 0) {
 	if (FRAME == 'system') {
 		return true;
 	}
-	$is_exist = table('users')->userPermissionInfo($uid, $uniacid);
+	$is_exist = table('userspermission')->userPermissionInfo($uid, $uniacid);
 	if(empty($is_exist)) {
 		return false;
 	} else {
@@ -224,7 +224,7 @@ function permission_account_user_permission_exist($uid = 0, $uniacid = 0) {
  */
 function permission_account_user($type = 'system') {
 	global $_W;
-	$user_permission = table('users')->userPermissionInfo($_W['uid'], $_W['uniacid'], $type);
+	$user_permission = table('userspermission')->userPermissionInfo($_W['uid'], $_W['uniacid'], $type);
 	$user_permission = $user_permission['permission'];
 	if (!empty($user_permission)) {
 		$user_permission = explode('|', $user_permission);
@@ -263,14 +263,14 @@ function permission_account_user_menu($uid, $uniacid, $type) {
 	if (empty($permission_exist)) {
 		return array('all');
 	}
-	$user_table = table('users');
+	$user_permission_table = table('userspermission');
 	if ($type == 'modules') {
-		$user_menu_permission = $user_table->userModulesPermission($uid, $uniacid);
+		$user_menu_permission = $user_permission_table->userModulesPermission($uid, $uniacid);
 	} else {
 		$module = uni_modules_by_uniacid($uniacid);
 		$module = array_keys($module);
 		if (in_array($type, $module) || in_array($type, array(PERMISSION_ACCOUNT, PERMISSION_WXAPP, PERMISSION_SYSTEM))) {
-			$menu_permission = $user_table->userPermissionInfo($uid, $uniacid, $type);
+			$menu_permission = $user_permission_table->userPermissionInfo($uid, $uniacid, $type);
 			if (!empty($menu_permission['permission'])) {
 				$user_menu_permission = explode('|', $menu_permission['permission']);
 			}
@@ -347,12 +347,12 @@ function permission_update_account_user($uid, $uniacid, $data) {
 			'type' => $data['type'],
 			'permission' => $data['permission'],
 		);
-		$result = pdo_insert('users_permission', $insert);
+		$result = table('userspermission')->fill($insert)->save();
 	} else {
 		$update = array(
 			'permission' => $data['permission'],
 		);
-		$result = pdo_update('users_permission', $update, array('uniacid' => $uniacid, 'uid' => $uid, 'type' => $data['type']));
+		$result = table('userspermission')->fill($update)->whereUniacid($uniacid)->whereUid($uid)->whereType($data['type'])->save();
 	}
 	return $result;
 }
@@ -479,7 +479,7 @@ function permission_user_account_num($uid = 0) {
 	}
 	/** @var  $user_table  UsersTable*/
 	$user_table = table('users');
-	if (user_is_vice_founder($user['uid']) && empty($uid)) {
+	if (user_is_vice_founder($user['uid'])) {
 		$role = ACCOUNT_MANAGE_NAME_VICE_FOUNDER;
 		$group = $user_table->userFounderGroupInfo($user['groupid']);
 		$group_num = uni_owner_account_nums($user['uid'], $role);

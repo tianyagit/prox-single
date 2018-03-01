@@ -13,7 +13,6 @@ load()->classs('weixin.platform');
 load()->model('wxapp');
 load()->model('utility');
 load()->func('file');
-
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
@@ -34,11 +33,11 @@ if (IMS_FAMILY == 'x') {
 	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 }
 /* xend */
-/* vstart */
-if (IMS_FAMILY == 'v') {
+/* svstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER));
 }
-/* vend */
+/* svend */
 if ($role_permission) {
 	$do = in_array($do, $dos) ? $do : 'base';
 } elseif ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
@@ -138,9 +137,29 @@ if($do == 'base') {
 					$result = pdo_update('account', array('endtime' => -1), array('uniacid' => $uniacid));
 				} else {
 					$endtime = strtotime($_GPC['endtime']);
+					if ($_W['isfounder'] || user_is_vice_founder()) {
+						$result = pdo_update('account', array('endtime' => $endtime), array('uniacid' => $uniacid));
+						/* xstart */
+						if (IMS_FAMILY == 'x') {
+							$store_create_account_info = table('store')->StoreCreateAccountInfo($uniacid);
+							if (!empty($store_create_account_info)) {
+								pdo_update('site_store_create_account', array('endtime' => $endtime), array('uniacid' => $uniacid));
+							}
+						}
+						/* xend */
+						break;
+					}
 					$user_endtime = pdo_getcolumn('users', array('uid' => $_W['uid']), 'endtime');
+					/* xstart */
+					if (IMS_FAMILY == 'x') {
+						$store_create_account_info = table('store')->StoreCreateAccountInfo($uniacid);
+						if (!empty($store_create_account_info)) {
+							$user_endtime = max($user_endtime, $store_create_account_info['endtime']);
+						}
+					}
+					/* xend */
 					if ($user_endtime < $endtime && !empty($user_endtime) && $state == 'owner') {
-						iajax(1, '设置到期日期不能超过主管理员的到期日期');
+						iajax(1, '设置到期日期不能超过' . date('Y-m-d', $user_endtime));
 					}
 					$result = pdo_update('account', array('endtime' => $endtime), array('uniacid' => $uniacid));
 				}
@@ -375,13 +394,13 @@ if($do == 'modules_tpl') {
 		}
 	}
 	/* xend */
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 		if ($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders)) {
 			$canmodify = true;
 		}
 	}
-	/* vend */
+	/* svend */
 	if (!empty($extend['modules'])) {
 		foreach ($extend['modules'] as $module_key => $module_val) {
 			$extend['modules'][$module_key] = module_fetch($module_val);

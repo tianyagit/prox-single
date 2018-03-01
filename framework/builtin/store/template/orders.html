@@ -35,10 +35,11 @@
 		<col width="150px"/>
 		<col width="150px"/>
 		<col width="150px"/>
+		<col width="150px"/>
 		<col width="120px"/>
 		<col />
 		<tr>
-			<th colspan="6" class="color-gray bg-light-gray">
+			<th colspan="7" class="color-gray bg-light-gray">
 				<span class="we7-margin-right">创建时间：<span ng-bind="order.createtime"></span></span>
 				<span class="we7-margin-right" >订单号：<span ng-bind="order.orderid"></span></span>
 				<a class="color-default" ng-href="{{ './index.php?c=site&a=entry&do=goodsBuyer&m=store&operate=goods_info&direct=1&goods=' + order.goodsid}}">商品详情</a>
@@ -54,6 +55,7 @@
 				<div class="name" ng-bind="order.goods_info.title"></div>
 			</td>
 			<td ng-bind="order.buyer"></td>
+			<td ng-bind="order.account.name"></td>
 			<td class="text-center">
 				<div>￥<span ng-bind="order.abstract_amount"></span></div>
 				<div class="color-gray">{{order.goods_info.price}}元/

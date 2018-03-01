@@ -126,7 +126,6 @@ function uni_fetch($uniacid = 0) {
 	if (empty($acid)) {
 		return false;
 	}
-
 	$account_api = WeAccount::create($acid['acid']);
 	if (is_error($account_api)) {
 		return $account_api;
@@ -645,12 +644,16 @@ function uni_owner_account_nums($uid, $role) {
 			if ($account['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 				$webapp_num++;
 			}
+			if ($account['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+				$phoneapp_num++;
+			}
 		}
 	}
 	$num = array(
 		'account_num' => $account_num,
-		'wxapp_num' =>$wxapp_num,
-		'webapp_num'=>$webapp_num
+		'wxapp_num' => $wxapp_num,
+		'webapp_num' => $webapp_num,
+		'phoneapp_num' => $phoneapp_num
 	);
 	return $num;
 }
@@ -797,7 +800,13 @@ function uni_account_save_switch($uniacid) {
  * @return int 新创建的子公号 acid
  */
 function account_create($uniacid, $account) {
+	global $_W;
 	$accountdata = array('uniacid' => $uniacid, 'type' => $account['type'], 'hash' => random(8));
+	$user_create_account_info = permission_user_account_num();
+	if (empty($_W['isfounder']) && empty($user_create_account_info['usergroup_account_limit'])) {
+		$accountdata['endtime'] = strtotime('+1 month', time());
+		pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_OFFCIAL_NORMAL));
+	}
 	pdo_insert('account', $accountdata);
 	$acid = pdo_insertid();
 	$account['acid'] = $acid;
@@ -1097,7 +1106,7 @@ function uni_account_member_fields($uniacid) {
 function uni_account_global_oauth() {
 	load()->model('setting');
 	$oauth = setting_load('global_oauth');
-	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : '';
+	$oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : array();
 	return $oauth;
 }
 

@@ -830,6 +830,10 @@ class WeUtility {
 	 * @param string $message
 	 */
 	public static function logging($level = 'info', $message = '') {
+		global $_W;
+		if ($_W['setting']['copyright']['log_status'] != 1) {
+			return false;
+		}
 		$filename = IA_ROOT . '/data/logs/' . date('Ymd') . '.log';
 		load()->func('file');
 		mkdirs(dirname($filename));
@@ -1376,6 +1380,7 @@ abstract class WeModuleProcessor extends WeBase {
 		$response['ArticleCount'] = count($news);
 		$response['Articles'] = array();
 		foreach ($news as $row) {
+			$row = array_change_key_case($row);
 			$response['Articles'][] = array(
 				'Title' => $row['title'],
 				'Description' => ($response['ArticleCount'] > 1) ? '' : $row['description'],

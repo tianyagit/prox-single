@@ -17,13 +17,13 @@ if (IMS_FAMILY == 'x') {
 	}
 }
 /* xend */
-/* vstart */
-if (IMS_FAMILY == 'v') {
+/* svstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER))){
 		itoast('无权限操作！', referer(), 'error');
 	}
 }
-/* vend */
+/* svend */
 
 /* xstart */
 if (IMS_FAMILY == 'x') {
@@ -33,13 +33,13 @@ if (IMS_FAMILY == 'x') {
 }
 /* xend */
 
-/* vstart */
-if (IMS_FAMILY == 'v') {
+/* svstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 	if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER))) {
 		itoast('您只有查看权限！', url('module/group'), 'error');
 	}
 }
-/* vend */
+/* svend */
 if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)$_GPC['wxapp'];
@@ -63,7 +63,7 @@ if ($do == 'display') {
 	$_W['page']['title'] = '应用套餐列表';
 	$param = array('uniacid' => 0);
 	$modules = user_modules($_W['uid']);
-	
+
 	$modules_group_list = uni_groups();
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $group_key => &$group) {
@@ -176,11 +176,11 @@ if ($do == 'post') {
 	}
 	/* xend */
 
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 		$template_list = pdo_getall('site_templates', array(), array(), 'name');
 	}
-	/* vend */
+	/* svend */
 
 	$group_not_have_template = array();//套餐未拥有模板
 	if (!empty($template_list)) {

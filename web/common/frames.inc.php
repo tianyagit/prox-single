@@ -142,14 +142,14 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-data-synchro',
 					'permission_name' => 'profile_app_module_link_uniacid',
 				),
-				/* xstart */
+				/* sxstart */
 				'bind_domain' => array(
 					'title' => '域名绑定',
 					'url' => url('profile/bind-domain'),
 					'icon' => 'wi wi-parameter-setting',
 					'permission_name' => 'profile_bind_domain',
 				),
-				/* xend */
+				/* sxend */
 			),
 		),
 		/* xstart */
@@ -402,7 +402,7 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
-		/* xstart */
+		/* sxstart */
 		'welcome' => array(
 			'title' => '系统首页',
 			'menu' => array(
@@ -415,7 +415,7 @@ $we7_system_menu['system'] = array(
 			),
 			'founder' => true
 		),
-		/* xend */
+		/* sxend */
 		'webapp' => array(
 			'title' => 'PC',
 			'menu' => array(

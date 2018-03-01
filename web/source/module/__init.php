@@ -24,14 +24,14 @@ if (in_array($action, array('permission', 'default-entry', 'manage-account'))) {
 if (in_array($action, array('group', 'manage-system'))) {
 	define('FRAME', 'system');
 }
-/* xstart */
-if (IMS_FAMILY == 'x') {
+/* sxstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	$_GPC['account_type'] = !empty($_GPC['account_type']) || !empty($_GPC['system_welcome']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
 	if (!empty($_GPC['system_welcome'])) {
 		define('ACCOUNT_TYPE_TEMPLATE', '-welcome');
 	}
 }
-/* xend */
+/* sxend */
 $account_param = WeAccount::createByType($_GPC['account_type']);
 define('ACCOUNT_TYPE', $account_param->type);
 define('ACCOUNT_TYPE_TEMPLATE', $account_param->typeTempalte);

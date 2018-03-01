@@ -39,9 +39,6 @@ class UsersTable extends We7Table {
 		}
 	}
 
-	public function userPermission($uid, $uniacid) {
-		return $this->query->from('users_permission')->where('uid', $uid)->where('uniacid', $uniacid)->getall('type');
-	}
 
 	public function searchWithStatus($status) {
 		$this->query->where('u.status', $status);
@@ -101,23 +98,6 @@ class UsersTable extends We7Table {
 
 	public function usersFounderGroup() {
 		return $this->query->from('users_founder_group')->getall('id');
-	}
-
-	public function userPermissionInfo($uid, $uniacid, $type = '') {
-		$condition = array('uid' => $uid, 'uniacid' => $uniacid);
-		if (!empty($type)) {
-			$condition['type'] = $type;
-		}
-		return $this->query->from('users_permission')->where($condition)->get();
-	}
-
-	public function userModulesPermission($uid, $uniacid) {
-		$condition = array(
-			'uid'=> $uid,
-			'uniacid' => $uniacid,
-			'type !=' => array(PERMISSION_ACCOUNT, PERMISSION_WXAPP),
-		);
-		return $this->query->from('users_permission')->where($condition)->getall('type');
 	}
 
 	public function userFounderGroupInfo($groupid) {

@@ -65,10 +65,11 @@ function mc_update($uid, $fields) {
 	}
 	$member_table = table('member');
 	$result = $member_table->updateMember($uid, $fields);
-	if (!empty($openid)) {
-		pdo_update('mc_mapping_fans', array('uid' => $result), array('uniacid' => mc_current_real_uniacid(), 'openid' => $openid));
+	if (!empty($openid) && empty($uid)) {
+		table('fans')->fill(array('uid' => $result))->where(array('uniacid' => mc_current_real_uniacid(), 'openid' => $openid))->save();
 	}
 	cache_build_memberinfo($uid);
+	return true;
 }
 
 /**
@@ -260,7 +261,8 @@ function mc_oauth_userinfo($acid = 0) {
 	if ($_W['container'] != 'wechat') {
 		return array();
 	}
-	include template('mc/iswxapp');
+	load()->func('tpl');
+	include template('mc/iswxapp', TEMPLATE_INCLUDEPATH);
 	exit;
 }
 
@@ -404,14 +406,9 @@ function mc_require($uid, $fields, $pre = '') {
 		$profile = mc_fetch($uid, $fields);
 		$uniacid = $profile['uniacid'];
 	}
-
-	$sql = 'SELECT `f`.`field`, `f`.`id` AS `fid`, `mf`.* FROM ' . tablename('profile_fields') . " AS `f` LEFT JOIN " .
-		tablename('mc_member_fields') . " AS `mf` ON `f`.`id` = `mf`.`fieldid` WHERE `uniacid` = :uniacid ORDER BY
-			`displayorder` DESC";
-	$system_fields = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']), 'field');
+	$system_fields = table('member')->accountMemberFields($_W['uniacid'], false, array('b.field', 'b.id as fid', 'a.*'));
 	if (empty($system_fields)) {
-		$sql = 'SELECT `id`, `field`, `title` FROM ' . tablename('profile_fields');
-		$system_fields = pdo_fetchall($sql, array(), 'field');
+		$system_fields = pdo_getall('profile_fields', array(), array('id', 'field', 'title'), '');
 	}
 
 	$titles = array();
@@ -462,14 +459,14 @@ function mc_require($uid, $fields, $pre = '') {
 			}
 			$condition = " AND uid != {$uid} ";
 			if (in_array('email', $fields)) {
-				$emailexists = pdo_fetchcolumn("SELECT email FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND email = :email " . $condition, array(':uniacid' => $_W['uniacid'], ':email' => trim($record['email'])));
-				if (!empty($emailexists)) {
+				$emailexists = table('member')->emailExist($uid, trim($record['email']));
+				if ($emailexists) {
 					itoast('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error');
 				}
 			}
 			if (in_array('mobile', $fields)) {
-				$mobilexists = pdo_fetchcolumn("SELECT mobile FROM " . tablename('mc_members') . " WHERE uniacid = :uniacid AND mobile = :mobile " . $condition, array(':uniacid' => $_W['uniacid'], ':mobile' => trim($record['mobile'])));
-				if (!empty($mobilexists)) {
+				$mobilexists = table('member')->mobileExist($uid, trim($record['mobile']));
+				if ($mobilexists) {
 					itoast('抱歉，您填写的手机号已经被使用，请更新。', 'refresh', 'error');
 				}
 			}
@@ -666,10 +663,10 @@ function mc_groups($uniacid = 0) {
 function mc_fans_groups($force_update = false) {
 	global $_W;
 
-	$results = pdo_getcolumn('mc_fans_groups', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']), 'groups');
+	$fans_table = table('fans');
+	$results = $fans_table->tagGroup($_W['uniacid']);
 
 	if(!empty($results) && !$force_update) {
-		$results = iunserializer($results);
 		return $results;
 	}
 	$account_api = WeAccount::create();
@@ -829,9 +826,8 @@ function mc_handsel($touid, $fromuid, $handsel, $uniacid = '') {
 	}
 	$credit_value = intval($handsel['credit_value']);
 
-	$sql = 'SELECT id FROM ' . tablename('mc_handsel') . ' WHERE uniacid = :uniacid AND touid = :touid AND fromuid = :fromuid AND module = :module AND sign = :sign AND action = :action';
-	$parm = array(':uniacid' => $uniacid, ':touid' => $touid, ':fromuid' => $fromuid, ':module' => $handsel['module'], ':sign' => $handsel['sign'], ':action' => $handsel['action']);
-	$handsel_exists = pdo_fetch($sql, $parm);
+	$params = array('uniacid' => $uniacid, 'touid' => $touid, 'fromuid' => $fromuid, 'module' => $handsel['module'], 'sign' => $handsel['sign'], 'action' => $handsel['action']);
+	$handsel_exists = pdo_get('mc_handsel', $params);
 	if (!empty($handsel_exists)) {
 		return error(-1, '已经赠送过积分,每个用户只能赠送一次');
 	}
@@ -948,8 +944,8 @@ function mc_group_update($uid = 0) {
 		$user = $_W['member'];
 		$user['openid'] = $_W['openid'];
 	} else {
-		$user = pdo_fetch('SELECT uid, realname, credit1, credit6, groupid FROM ' . tablename('mc_members') . ' WHERE uniacid = :uniacid AND uid = :uid', array(':uniacid' => $_W['uniacid'], ':uid' => $uid));
-		$user['openid'] = pdo_fetchcolumn('SELECT openid FROM ' . tablename('mc_mapping_fans') . ' WHERE acid = :acid AND uid = :uid', array(':acid' => $_W['acid'], ':uid' => $uid));
+		$user = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $uid), array('uid', ' realname', ' credit1', ' credit6', ' groupid'));
+		$user['openid'] = pdo_getcolumn('mc_mapping_fans', array('acid' => $_W['acid'], 'uid' => $uid), 'openid');
 	}
 	if(empty($user)) {
 		return false;
@@ -1701,6 +1697,9 @@ function mc_init_fans_info($openid, $force_init_member = false){
 				$fans_update_info['uid'] = $uid;
 			} else {
 				$fans_update_info['uid'] = $fans_mapping['uid'];
+				pdo_update('mc_members', $member_update_info, array('uid' => $fans_mapping['uid']));
+				$cachekey = cache_system_key(CACHE_KEY_MEMBER_INFO, $fans_mapping['uid']);
+				cache_delete($cachekey);
 			}
 		}
 
@@ -1758,15 +1757,18 @@ function mc_insert_fanstag_mapping($fanid, $groupid_list){
  * @param 	array 		$tagid_list 		标签id列表
  */
 function mc_batch_insert_fanstag_mapping($fanid_list, $tagid_list){
-	$fanid_list = (array) $fanid_list;
-	$tagid_list = (array) $tagid_list;
+	if (!is_array($fanid_list) || !is_array($tagid_list)) {
+		return false;
+	}
 	$sql = '';
 	foreach ($fanid_list as $fanid) {
 		foreach ($tagid_list as $tagid) {
-			$sql .= "REPLACE INTO " . tablename('mc_fans_tag_mapping') . "(`fanid`, `tagid`) values('$fanid', '$tagid');";
+			$fanid = intval($fanid);
+			$tagid = intval($tagid);
+			pdo_insert('mc_fans_tag_mapping', array('fanid' => $fanid, 'tagid' => $tagid), true);
 		}
 	}
-	pdo_query($sql);
+	return true;
 }
 
 /**

@@ -13,13 +13,13 @@
 			{/if}
 			<!-- xend -->
 
-			<!-- vstart -->
-			{if IMS_FAMILY == 'v'}
+			<!-- svstart -->
+			{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 				{if !empty($account_info['phoneapp_limit']) || $_W['isfounder']}
 				<a href="{php echo url('phoneapp/manage/create_display')}" class="color-default"><i class="wi wi-registersite"></i>新建APP</a>
 				{/if}
 			{/if}
-			<!-- vend -->
+			<!-- svend -->
 
 			<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL))}" class="color-default"><i class="wi wi-wechatstatistics"></i>APP管理</a>
 		</div>
@@ -31,7 +31,7 @@
 			<i class="fa fa-info-circle"></i>
 			Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>，
 			账号有效期限：<span class="text-strong">{php echo date('Y-m-d', $_W['user']['starttime'])} ~~ {if empty($_W['user']['endtime'])}无限制{else}{php echo date('Y-m-d', $_W['user']['endtime'])}{/if}</span>，
-			可创建 <span class="text-strong">{$account_info['maxphoneapp']} </span>个小程序，已创建<span class="text-strong"> {$account_info['phoneapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['phoneapp_limit']} </span>个小程序。
+			可创建 <span class="text-strong">{$account_info['maxphoneapp']} </span>个APP，已创建<span class="text-strong"> {$account_info['phoneapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['phoneapp_limit']} </span>个APP。
 		</div>
 		{/if}
 		{if !empty($pager)}
@@ -42,7 +42,7 @@
 				<input type="text" name="letter" ng-model="activeLetter" ng-style="{'display': 'none'}">
 				<div class="cut-search">
 					<div class="input-group pull-left">
-						<input class="form-control" name="keyword" value="{$_GPC['keyword']}" type="text" placeholder="请输入小程序名称" >
+						<input class="form-control" name="keyword" value="{$_GPC['keyword']}" type="text" placeholder="请输入APP名称" >
 						<span class="input-group-btn"><button class="btn btn-default button"><i class="fa fa-search"></i></button></span>
 					</div>
 				</div>
@@ -68,7 +68,7 @@
 				</div>
 				<div class="mask">
 					<a ng-href="{{links.switch}}&uniacid={{list.uniacid}}&version_id={{list.current_version.id}}" class="entry">
-						<div>进入小程序 <i class="wi wi-angle-right"></i></div>
+						<div>进入APP <i class="wi wi-angle-right"></i></div>
 					</a>
 					<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)">
 						<i class="wi wi-changing-over"></i>
@@ -101,13 +101,13 @@
 				{/if}
 				{/if}
 				<!-- xend -->
-				<!-- vstart -->
-				{if IMS_FAMILY == 'v'}
+				<!-- svstart -->
+				{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 				{if !empty($account_info['phoneapp_limit']) || $_W['isfounder']}
 				<div><a class="btn btn-primary" href="{php echo url('phoneapp/manage/create_display')}">新建APP</a></div>
 				{/if}
 				{/if}
-				<!-- vend -->
+				<!-- svend -->
 
 			</div>
 			<div class="text-center we7-padding-vertical" ng-if="!phoneapp_lists && activeLetter">

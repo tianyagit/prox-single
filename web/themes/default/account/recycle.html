@@ -10,13 +10,13 @@
 	{/if}
 	<!-- xend -->
 
-	<!-- vstart -->
-	{if IMS_FAMILY == 'v'}
+	<!-- svstart -->
+	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
 		<li class="active"><a href="{url 'account/recycle'}">公众号回收站</a></li>
 		{/if}
 	{/if}
-	<!-- vend -->
+	<!-- svend -->
 </ul>
 <div class="clearfix we7-margin-bottom">
 	<form action="" class="form-inline  pull-left" method="get">

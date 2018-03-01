@@ -35,7 +35,7 @@
 			<col width="140px" />
 			<col width="140px" />
 			<col width="140px" />
-			<col width="220px" />
+			<col width="240px" />
 			<tr>
 				<th class="text-left">套餐名称</th>
 				<th>公众号应用个数</th>
@@ -64,14 +64,14 @@
 							{/if}
 						{/if}
 						<!-- xend -->
-						<!-- vstart -->
-						{if IMS_FAMILY == 'v'}
+						<!-- svstart -->
+						{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 							{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
 							<a href="{php echo url('module/group/post', array('id' => $module_group['id']))}">编辑套餐</a>
 							<a href="{php echo url('module/group/delete', array('id' => $module_group['id']))}" class="del" onclick="return confirm('确定要删除套餐吗？')">删除</a>
 							{/if}
 						{/if}
-						<!-- vend -->
+						<!-- svend -->
 
 					</div>
 				</td>

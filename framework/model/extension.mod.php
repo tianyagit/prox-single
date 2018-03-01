@@ -342,44 +342,7 @@ function ext_module_bindings() {
  * @return void
  */
 function ext_module_clean($modulename, $isCleanRule = false) {
-	$pars = array();
-	$pars[':module'] = $modulename;
-	$sql = 'DELETE FROM ' . tablename('core_queue') . ' WHERE `module`=:module';
-	pdo_query($sql, $pars);
-
-	$sql = 'DELETE FROM ' . tablename('modules') . ' WHERE `name`=:module';
-	pdo_query($sql, $pars);
-
-	$sql = 'DELETE FROM ' . tablename('modules_bindings') . ' WHERE `module`=:module';
-	pdo_query($sql, $pars);
-
-	if ($isCleanRule) {
-
-		$sql = 'DELETE FROM ' . tablename('rule') . ' WHERE `module`=:module';
-		pdo_query($sql, $pars);
-
-		$sql = 'DELETE FROM ' . tablename('rule_keyword') . ' WHERE `module`=:module';
-		pdo_query($sql, $pars);
-
-		$sql = 'SELECT rid FROM ' . tablename('cover_reply') . ' WHERE `module`=:module';
-		$data = pdo_fetchall($sql, $pars, 'rid');
-		if (!empty($data)) {
-			$rids = array_keys($data);
-			$ridstr = implode(',', $rids);
-			pdo_query('DELETE FROM ' . tablename('rule_keyword') . " WHERE module = 'cover' AND rid IN ({$ridstr})");
-			pdo_query('DELETE FROM ' . tablename('rule') . " WHERE module = 'cover' AND id IN ({$ridstr})");
-
-			$sql = 'DELETE FROM ' . tablename('cover_reply') . ' WHERE `module`=:module';
-			pdo_query($sql, $pars);
-		}
-	}
-
-	$sql = 'DELETE FROM ' . tablename('site_nav') . ' WHERE `module`=:module';
-	pdo_query($sql, $pars);
-
-	$sql = 'DELETE FROM ' . tablename('uni_account_modules') . ' WHERE `module`=:module';
-	pdo_query($sql, $pars);
-
+	table('module')->cleanModuleInfo($modulename, $isCleanRule);
 }
 
 /**

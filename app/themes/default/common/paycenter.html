@@ -140,7 +140,7 @@
 				<img src="resource/images/wx-icon.png" alt="" class="mui-media-object mui-pull-left"/>
 				<span class="mui-media-body mui-block">
 					<span id="wetitle">微信支付</span>
-					<span class="mui-block mui-text-muted mui-mt5">微信支付,安全快捷(必须使用微信内置浏览器)</span>
+					<span class="mui-block mui-text-muted mui-mt5">微信支付,安全快捷</span>
 				</span>
 			</a>
 		</li>
@@ -406,11 +406,11 @@
 		$('[name="mix"]').click(function() {
 			if ($(this).prop('checked') === true) {
 				$('[name="mix_pay"]').val(true);
-				fee = $('.js-need-pay').data('price') - "{$credtis[$setting['creditbehaviors']['currency']]}";
+				fee = $('.js-need-pay').data('price') - "{!empty($credtis[$setting['creditbehaviors']['currency']]) ? $credtis[$setting['creditbehaviors']['currency']] : 0}";
 				$('.credit').hide();
 			} else {
 				$('[name="mix_pay"]').val(false);
-				fee = parseFloat($('.js-need-pay').data('price')) + parseFloat("{$credtis[$setting['creditbehaviors']['currency']]}");
+				fee = parseFloat($('.js-need-pay').data('price')) + parseFloat("{!empty($credtis[$setting['creditbehaviors']['currency']]) ? $credtis[$setting['creditbehaviors']['currency']] : 0}");
 				$('.credit').show();
 			}
 			$('.js-need-pay').data('price', fee);

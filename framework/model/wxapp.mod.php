@@ -42,7 +42,6 @@ function wxapp_account_create($account) {
 		'hash' => random(8),
 	);
 	pdo_insert('account', $account_data);
-
 	$acid = pdo_insertid();
 
 	$wxapp_data = array(
@@ -64,7 +63,7 @@ function wxapp_account_create($account) {
 		uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
 		if (empty($user_info['usergroup_wxapp_limit'])) {
 			pdo_update('account', array('endtime' => strtotime('+1 month', time())), array('uniacid' => $uniacid));
-			pdo_insert('site_store_create_account', array('uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_APP_NORMAL));
+			pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_APP_NORMAL));
 		}
 	}
 	if (user_is_vice_founder()) {
@@ -304,8 +303,15 @@ function wxapp_version($version_id) {
 		return $version_info;
 	}
 
+	$cachekey = cache_system_key("wxapp_version:{$version_id}");
+	$cache = cache_load($cachekey);
+	if (!empty($cache)) {
+		return $cache;
+	}
+
 	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	$version_info = wxapp_version_detail_info($version_info);
+	cache_write($cachekey, $version_info);
 
 	return $version_info;
 }
@@ -331,9 +337,12 @@ function wxapp_version_by_version($version) {
 }
 
 function wxapp_version_detail_info($version_info) {
+	global $_W;
 	if (empty($version_info)) {
 		return array();
 	}
+	$uni_modules = uni_modules();
+	$uni_modules = array_keys($uni_modules);
 	$version_info['cover_entrys'] = array();
 	if (!empty($version_info['modules'])) {
 		$version_info['modules'] = iunserializer($version_info['modules']);
@@ -345,6 +354,9 @@ function wxapp_version_detail_info($version_info) {
 				$module_info = module_fetch($module['name']);
 				$module_info['account'] = $account;
 				unset($version_info['modules'][$module['name']]);
+				if (!in_array($module['name'], $uni_modules)) {
+					continue;
+				}
 				//模块默认入口
 				$module_info['cover_entrys'] = module_entries($module['name'], array('cover'));
 				$module_info['defaultentry'] = $module['defaultentry'];
@@ -354,8 +366,8 @@ function wxapp_version_detail_info($version_info) {
 		}
 	}
 	if (count($version_info['modules']) > 0) {
-		$cover_entrys = $version_info['modules'][0]['cover_entrys'];
-		$version_info['cover_entrys'] = isset($cover_entrys['cover']) ? $cover_entrys['cover'] : array();
+		$cover_entrys = !empty($version_info['modules'][0]['cover_entrys']) ? $version_info['modules'][0]['cover_entrys'] : array();
+		$version_info['cover_entrys'] = !empty($cover_entrys['cover']) ? $cover_entrys['cover'] : array();
 	}
 	if (!empty($version_info['quickmenu'])) {
 		$version_info['quickmenu'] = iunserializer($version_info['quickmenu']);

@@ -50,7 +50,7 @@ function message($msg, $redirect = '', $type = '', $tips = false, $extend = arra
 		$redirect = referer();
 	}
 	// 跳转链接只能跳转本域名下 防止钓鱼 如: 用户可能正常从信任站点微擎登录 跳转到第三方网站 会误认为第三方网站也是安全的
-	$redirect = safe_url_not_outside($redirect);
+	$redirect = safe_gpc_url($redirect);
 
 	if($redirect == '') {
 		$type = in_array($type, array('success', 'error', 'info', 'warning', 'ajax', 'sql')) ? $type : 'info';
@@ -102,7 +102,7 @@ function message($msg, $redirect = '', $type = '', $tips = false, $extend = arra
 		if (!empty($extend) && is_array($extend)) {
 			foreach ($extend as $button) {
 				if (!empty($button['title']) && !empty($button['url'])) {
-					$button['url'] = safe_url_not_outside($button['url']);
+					$button['url'] = safe_gpc_url($button['url']);
 					$button['title'] = rawurlencode($button['title']);
 					$extend_button[] = $button;
 				}
@@ -280,8 +280,8 @@ function buildframes($framename = ''){
 						}
 					}
 				}
-				/* vstart */
-				if (IMS_FAMILY == 'v') {
+				/* svstart */
+				if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 					if ($nav_id != 'wxapp') {
 						$section_show = false;
 						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
@@ -297,7 +297,7 @@ function buildframes($framename = ''){
 						}
 					}
 				}
-				/* vend */
+				/* svend */
 				/* xstart */
 				if (IMS_FAMILY == 'x') {
 					if ($nav_id != 'wxapp' && $nav_id != 'store') {
@@ -484,8 +484,8 @@ function buildframes($framename = ''){
 				}
 			}
 		}
-		/* xstart */
-		if (IMS_FAMILY == 'x') {
+		/* sxstart */
+		if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 			if (!empty($entries['system_welcome']) && $_W['isfounder']) {
 				$frames['account']['section']['platform_module_welcome']['title'] = '';
 				foreach ($entries['system_welcome'] as $key => $row) {
@@ -498,7 +498,7 @@ function buildframes($framename = ''){
 				}
 			}
 		}
-		/* xend */
+		/* sxend */
 	}
 
 	//进入小程序后的菜单
@@ -590,13 +590,13 @@ function buildframes($framename = ''){
 		}
 	}
 	foreach ($frames as $menuid => $menu) {
-		/* vstart */
-		if (IMS_FAMILY == 'v') {
+		/* svstart */
+		if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 			if (!empty($menu['founder']) && empty($_W['isfounder']) || user_is_vice_founder() && in_array($menuid, array('site', 'advertisement', 'appmarket')) || $_W['role'] == ACCOUNT_MANAGE_NAME_CLERK && in_array($menuid, array('account', 'wxapp', 'system')) || !$menu['is_display']) {
 				continue;
 			}
 		}
-		/* vend */
+		/* svend */
 		/* xstart */
 		if (IMS_FAMILY == 'x') {
 			if (!empty($menu['founder']) && empty($_W['isfounder']) ||
@@ -621,8 +621,8 @@ function buildframes($framename = ''){
 		return !empty($framename) ? $frames[$framename] : $frames;
 	}
 	/* vend */
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
+	/* sxstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		if (!empty($framename)) {
 			if (($framename == 'system_welcome' || $entry['entry'] == 'system_welcome') && $_W['isfounder']) {
 				$frames = $frames['account'];
@@ -633,7 +633,7 @@ function buildframes($framename = ''){
 		}
 		return $frames;
 	}
-	/* xend */
+	/* sxend */
 }
 
 function system_modules() {

@@ -15,12 +15,12 @@ if ($do == 'display') {
 	$user_module = array();
 	if (!$_W['isfounder']) {
 		$account_table = table('account');
-		$user_table = table('users');
+		$userspermission_table = table('userspermission');
 		$user_owned_account = $account_table->userOwnedAccount($_W['uid']);
 		if (!empty($user_owned_account) && is_array($user_owned_account)) {
 			foreach ($user_owned_account as $uniacid => $account) {
 				$account_module = uni_modules_by_uniacid($uniacid);
-				$account_user_module = $user_table->userPermission($_W['uid'], $uniacid);
+				$account_user_module = $userspermission_table->userPermission($_W['uid'], $uniacid);
 				if (!empty($account_user_module) && is_array($account_user_module)) {
 					$account_module = array_intersect_key($account_module, $account_user_module);
 				}
@@ -153,7 +153,6 @@ if ($do == 'accounts_dropdown_menu') {
 	if (empty($module_name)) {
 		exit();
 	}
-	$last_module_info = module_last_switch($module_name);
 	$accounts_list = module_link_uniacid_fetch($_W['uid'], $module_name);
 	if (empty($accounts_list)) {
 		exit();

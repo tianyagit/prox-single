@@ -29,10 +29,14 @@ $isdel_account = pdo_get('account', array('isdeleted' => 1, 'acid' => $_W['acid'
 if (!empty($isdel_account)) {
 	exit('指定公众号已被删除');
 }
-if (!empty($_W['account']['setting']['bind_domain']) && !empty($_W['account']['setting']['bind_domain']['domain']) && strpos($_W['siteroot'], $_W['account']['setting']['bind_domain']['domain']) === false) {
-	header('Location:' . $_W['account']['setting']['bind_domain']['domain']. $_SERVER['REQUEST_URI']);
-	exit;
+/* sxstart */
+if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
+	if (!empty($_W['account']['setting']['bind_domain']) && !empty($_W['account']['setting']['bind_domain']['domain']) && strpos($_W['siteroot'], $_W['account']['setting']['bind_domain']['domain']) === false) {
+		header('Location:' . $_W['account']['setting']['bind_domain']['domain']. $_SERVER['REQUEST_URI']);
+		exit;
+	}
 }
+/* sxend */
 $_W['session_id'] = '';
 if (isset($_GPC['state']) && !empty($_GPC['state']) && strexists($_GPC['state'], 'we7sid-')) {
 	$pieces = explode('-', $_GPC['state']);
@@ -168,7 +172,7 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' &
 			}
 		}
 		$global_unisetting = uni_account_global_oauth();
-		$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : $global_unisetting['oauth']['host'];
+		$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : (!empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] : '');
 		$url = (!empty($unisetting['oauth']['host']) ? ($unisetting['oauth']['host'] . $sitepath . '/') : $_W['siteroot'] . 'app/') . "index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
 		$callback = urlencode($url);
 		$oauth_account = WeAccount::create($_W['account']['oauth']);
