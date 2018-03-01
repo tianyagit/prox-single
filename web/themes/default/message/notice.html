@@ -27,25 +27,28 @@
 	<!-- svend -->
 </ul>
 
-<table class="table we7-table table-hover vertical-middle" id="message-notice"  ng-controller="messageNoticeCtrl" ng-cloak>
+<div id="message-notice"  ng-controller="messageNoticeCtrl" ng-cloak>
+	<div class="form-group">
+		<div class="form-controls col-sm-3">
+			<select class="we7-select form-control" ng-change="changeRead()" ng-model="is_read">
+				<option ng-selected="is_read == 0" ng-value="0">全部消息</option>
+				<option ng-selected="is_read == 2" ng-value="2">已读消息</option>
+				<option ng-selected="is_read == 1" ng-value="1">未读消息</option>
+
+				<!--<option value="0">全部消息</option>-->
+				<!--<option value="2">已读消息</option>-->
+				<!--<option value="1">未读消息</option>-->
+			</select>
+		</div>
+		<div class="btn-group we7-btn-group we7-padding-bottom" style="float: right;">
+			<a href="javascript:;" ng-click="allRead()" class="btn">已读所有消息</a>
+		</div>
+	</div>
+<table class="table we7-table table-hover vertical-middle" >
 	<col>
 	<col>
 	<col>
-	<tr>
-		<th colspan="3" class="text-left filter">
-			<div class="dropdown dropdown-toggle we7-dropdown">
-				<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					全部
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" aria-labelledby="dLabel">
-					<li><a href="{php echo filter_url('is_read:');}" class="active">全部</a></li>
-					<li><a href="{php echo filter_url('is_read:' . MESSAGE_READ);}" class="active">已读</a></li>
-					<li><a href="{php echo filter_url('is_read:' . MESSAGE_NOREAD);}" class="active">未读</a></li>
-				</ul>
-			</div>
-		</th>
-	</tr>
+
 	<tr>
 		<th>标题内容</th>
 		<th class="text-center">提交时间</th>
@@ -72,6 +75,8 @@
 		</td>
 	</tr>
 </table>
+
+</div>
 <div class="text-right we7-margin-top">
 	{$pager}
 </div>
@@ -79,6 +84,9 @@
 	angular.module('messageApp').value('config', {
 		'type' : '{php echo $type}',
 		'lists': {php echo !empty($lists) ? json_encode($lists) : 'null'},
+		'is_read' : "{$is_read}",
+		'read_url' : "{php echo url('message/notice/read_display')}",
+		'all_read_url' : "{php echo url('message/notice/all_read')}",
 	});
 	angular.bootstrap($('#message-notice'), ['messageApp']);
 </script>

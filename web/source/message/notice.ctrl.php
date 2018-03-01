@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display', 'change_read_status', 'event_notice');
+$dos = array('display', 'change_read_status', 'event_notice', 'all_read');
 $do = in_array($do, $dos) ? $do : 'display';
 load()->model('message');
 
@@ -59,6 +59,7 @@ if ($do == 'display') {
 	$pager = pagination($total, $pindex, $psize);
 }
 
+
 if ($do == 'change_read_status') {
 	$id = $_GPC['id'];
 	message_notice_read($id);
@@ -80,5 +81,31 @@ if ($do == 'event_notice') {
 	}
 	iajax(0, $message);
 
+}
+
+if ($do == 'all_read') {
+	$type = $types = safe_gpc_int($_GPC['type']);
+	if ($type == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
+		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
+	}
+
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if (empty($type) && (!user_is_founder($_W['uid']) || user_is_vice_founder())){
+			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
+		}
+	}
+	/* xend */
+
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
+		if (empty($type) && !user_is_founder($_W['uid'])){
+			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
+		}
+	}
+	/* svend */
+
+	message_notice_all_read($types);
+	iajax(0, '全部已读', url('message/notice', array('type' => $type)));
 }
 template('message/notice');
