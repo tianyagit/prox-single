@@ -20,9 +20,9 @@ if ($do == 'display') {
 	$users_table = table('users');
 	$users_table->searchWithFounder(ACCOUNT_MANAGE_GROUP_VICE_FOUNDER);
 
-	$username = safe_gpc_string($_GPC['username']);
-	if (!empty($username)) {
-		$users_table->searchWithName($username);
+	$search = safe_gpc_string($_GPC['search']);
+	if (!empty($search)) {
+		$users_table->searchWithNameOrMobile($search);
 	}
 
 	$users_table->searchWithPage($pindex, $psize);
