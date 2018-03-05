@@ -64,25 +64,26 @@ ceshi.nd98.cn
 admin
 we7.cc
 
-47.94.97.31
+101.132.154.186
 root
-Qq959570787
+aaa111...
 
 https://ccceshi.w7.cc
 admin
 we7!@#
+数据库： http://115.159.77.66/phpMyAdmin__/    root   root
 
 115.159.77.66
 root
 Yang12~3
 
-if ($_SERVER['REMOTE_ADDR'] == '221.205.138.108') {
+if ($_SERVER['REMOTE_ADDR'] == '118.81.6.85') {
 	echo "<pre>";
 	print_r();
 	echo "</pre>";
 	exit;
 }
 
-if (strexists($_SERVER['REMOTE_ADDR'], '140.207.54')) {
-	echo 333;exit; 
+if (strexists($_SERVER['REMOTE_ADDR'], '100.116.222')) {
+	echo 333;exit;
 }
