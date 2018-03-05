@@ -18,6 +18,7 @@ if ($do == 'display') {
 	$message_id = intval($_GPC['message_id']);
 	message_notice_read($message_id);
 
+	$user_groups = user_group();
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$users_table = table('users');
@@ -48,6 +49,11 @@ if ($do == 'display') {
 		$search = safe_gpc_string($_GPC['search']);
 		if (!empty($search)) {
 			$users_table->searchWithNameOrMobile($search);
+		}
+
+		$group_id = intval($_GPC['groupid']);
+		if (!empty($group_id)) {
+			$users_table->searchWithGroupId($group_id);
 		}
 
 		/* xstart */

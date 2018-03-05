@@ -4,6 +4,15 @@
 	<form action="" method="get">
 		<input type="hidden" name="c" value="founder">
 		<input type="hidden" name="a" value="display">
+		<label for="" class="col-sm-1 control-label">副创始人组</label>
+		<div class="input-controls col-sm-3">
+			<select name="groupid" class="we7-select form-control">
+				<option value="" selected="selected">不限</option>
+				{loop $founder_groups $group}
+				<option value="{$group['id']}"{if $group['id'] == $_GPC['groupid']} selected="selected"{/if}>{$group['name']}</option>
+				{/loop}
+			</select>
+		</div>
 		<div class="input-group pull-left col-sm-4">
 			<input type="text" name="search" id="" value="{$_GPC['search']}" class="form-control"  placeholder="搜索副创始人或手机号" />
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>

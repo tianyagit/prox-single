@@ -14,6 +14,8 @@ $_W['page']['title'] = '用户列表 - 用户管理';
 $founders = explode(',', $_W['config']['setting']['founder']);
 
 if ($do == 'display') {
+	$founder_groups = user_founder_group();
+
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 
@@ -23,6 +25,11 @@ if ($do == 'display') {
 	$search = safe_gpc_string($_GPC['search']);
 	if (!empty($search)) {
 		$users_table->searchWithNameOrMobile($search);
+	}
+
+	$group_id = intval($_GPC['groupid']);
+	if (!empty($group_id)) {
+		$users_table->searchWithGroupId($group_id);
 	}
 
 	$users_table->searchWithPage($pindex, $psize);
