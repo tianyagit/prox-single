@@ -125,7 +125,7 @@ if ($do == 'wxappweb_pay_result') {
 }
 
 if ($do == 'go_paycenter') {
-	$plid = safe_gpc_int($_GPC['plid']);
+	$plid = intval($_GPC['plid']);
 	$params = pdo_get('core_paylog', array('plid' => $plid));
 	$params['title'] = safe_gpc_string($_GPC['title']);
 	template('common/paycenter');

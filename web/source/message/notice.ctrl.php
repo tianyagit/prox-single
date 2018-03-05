@@ -13,7 +13,7 @@ load()->model('message');
 $_W['page']['title'] = '系统管理 - 消息提醒 - 消息提醒';
 
 if (in_array($do, array('display', 'all_read'))) {
-	$type = $types = safe_gpc_int($_GPC['type']);
+	$type = $types = intval($_GPC['type']);
 	if ($type == MESSAGE_ACCOUNT_EXPIRE_TYPE) {
 		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
 	}
@@ -36,14 +36,14 @@ if (in_array($do, array('display', 'all_read'))) {
 }
 
 if ($do == 'display') {
-	$message_id = safe_gpc_int($_GPC['message_id']);
+	$message_id = intval($_GPC['message_id']);
 	message_notice_read($message_id);
 
-	$pindex = safe_gpc_int($_GPC['page'], 1);
+	$pindex = intval($_GPC['page'], 1);
 	$psize = 10;
 
 	$message_table = table('message');
-	$is_read = !empty($_GPC['is_read']) ? safe_gpc_int($_GPC['is_read']) : '';
+	$is_read = !empty($_GPC['is_read']) ? intval($_GPC['is_read']) : '';
 
 	if (!empty($is_read)) {
 		$message_table->searchWithIsRead($is_read);
