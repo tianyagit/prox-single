@@ -11,7 +11,7 @@ class UsersTable extends We7Table {
 	public function searchUsersList() {
 		global $_W;
 		$this->query->from('users', 'u')
-				->select('u.*, p.avatar as avatar, p.mobile as mobile, p.uid as puid')
+				->select('u.*, p.avatar as avatar, p.mobile as mobile, p.uid as puid, p.mobile as mobile')
 				->leftjoin('users_profile', 'p')
 				->on(array('u.uid' => 'p.uid'))
 				->orderby('u.uid', 'DESC');
@@ -70,8 +70,10 @@ class UsersTable extends We7Table {
 		return $this;
 	}
 
-	public function searchWithName($user_name) {
-		$this->query->where('u.username LIKE', "%{$user_name}%");
+	public function searchWithNameOrMobile($search) {
+		$this->query->where(function($query) use ($search){
+			$query->where('u.username LIKE', "%{$search}%")->whereor('p.mobile LIKE', "%{$search}%");
+		});
 		return $this;
 	}
 

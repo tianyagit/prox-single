@@ -14,15 +14,15 @@ $_W['page']['title'] = '用户列表 - 用户管理';
 $founders = explode(',', $_W['config']['setting']['founder']);
 
 if ($do == 'display') {
-	$pindex = max(1, safe_gpc_int($_GPC['page']));
+	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 
 	$users_table = table('users');
 	$users_table->searchWithFounder(ACCOUNT_MANAGE_GROUP_VICE_FOUNDER);
 
-	$username = safe_gpc_string($_GPC['username']);
-	if (!empty($username)) {
-		$users_table->searchWithName($username);
+	$search = safe_gpc_string($_GPC['search']);
+	if (!empty($search)) {
+		$users_table->searchWithNameOrMobile($search);
 	}
 
 	$users_table->searchWithPage($pindex, $psize);
@@ -37,7 +37,7 @@ if ($do == 'del') {
 	if (!$_W['isajax'] || !$_W['ispost']) {
 		iajax(-1, '非法操作！', url('founder/display'));
 	}
-	$uid = safe_gpc_int($_GPC['uid']);
+	$uid = intval($_GPC['uid']);
 	$uid_user = user_single($uid);
 	if (in_array($uid, $founders)) {
 		iajax(0,'访问错误, 无法操作站长.', url('founder/display'));

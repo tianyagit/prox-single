@@ -14,7 +14,6 @@ $do = in_array($do, $dos) ? $do : 'copyright';
 $_W['page']['title'] = '站点设置 - 工具  - 系统管理';
 
 $settings = $_W['setting']['copyright'];
-
 if(empty($settings) || !is_array($settings)) {
 	$settings = array();
 } else {
@@ -74,6 +73,8 @@ if ($do == 'copyright') {
 				'leftmenufixed' => (!empty($_GPC['leftmenu_fixed'])) ? 1 : 0,
 				'mobile_status' => $_GPC['mobile_status'],
 				'login_type' => $_GPC['login_type'],
+				'log_status' => intval($_GPC['log_status']),
+				'develop_status' => intval($_GPC['develop_status']),
 				'icp' => safe_gpc_string($_GPC['icp']),
 				'bind' => $_GPC['bind']
 			);
@@ -87,6 +88,8 @@ if ($do == 'copyright') {
 				'icp' => safe_gpc_string($_GPC['icp']),
 				'mobile_status' => $_GPC['mobile_status'],
 				'login_type' => $_GPC['login_type'],
+				'log_status' => intval($_GPC['log_status']),
+				'develop_status' => intval($_GPC['develop_status']),
 				'bind' => $_GPC['bind']
 			);
 		}

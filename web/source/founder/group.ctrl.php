@@ -21,7 +21,7 @@ if ($do == 'display') {
 }
 
 if ($do == 'post') {
-	$id = safe_gpc_int($_GPC['id']);
+	$id = intval($_GPC['id']);
 	if (!empty($id)) {
 		$group_info = pdo_get('users_founder_group', array('id' => $id));
 		$group_info['package'] = iunserializer($group_info['package']);
@@ -43,14 +43,14 @@ if ($do == 'post') {
 
 	if (checksubmit('submit')) {
 		$founder_user_group = array(
-			'id' => safe_gpc_int($_GPC['id']),
+			'id' => intval($_GPC['id']),
 			'name' => safe_gpc_string($_GPC['name']),
 			'package' => safe_gpc_array($_GPC['package']),
-			'maxaccount' => safe_gpc_int($_GPC['maxaccount']),
-			'maxwxapp' => safe_gpc_int($_GPC['maxwxapp']),
-			'maxwebapp' => safe_gpc_int($_GPC['maxwebapp']),
-			'maxphoneapp' => safe_gpc_int($_GPC['maxphoneapp']),
-			'timelimit' => safe_gpc_int($_GPC['timelimit'])
+			'maxaccount' => intval($_GPC['maxaccount']),
+			'maxwxapp' => intval($_GPC['maxwxapp']),
+			'maxwebapp' => intval($_GPC['maxwebapp']),
+			'maxphoneapp' => intval($_GPC['maxphoneapp']),
+			'timelimit' => intval($_GPC['timelimit'])
 		);
 		$user_group = user_save_founder_group($founder_user_group);
 		if (is_error($user_group)) {
@@ -63,7 +63,7 @@ if ($do == 'post') {
 }
 
 if ($do == 'del') {
-	$id = safe_gpc_int($_GPC['id']);
+	$id = intval($_GPC['id']);
 	$result = pdo_delete('users_founder_group', array('id' => $id));
 	if(!empty($result)){
 		itoast('删除成功！', url('founder/group/'), 'success');

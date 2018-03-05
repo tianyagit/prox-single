@@ -27,7 +27,7 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 /* svend */
 
 if ($do == 'display') {
-	$message_id = safe_gpc_int($_GPC['message_id']);
+	$message_id = intval($_GPC['message_id']);
 	message_notice_read($message_id);
 
 	$pindex = max(1, intval($_GPC['page']));
@@ -36,7 +36,7 @@ if ($do == 'display') {
 	$account_table = table('account');
 
 	$type_condition = array(
-		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL),
+		ACCOUNT_TYPE_APP_NORMAL => array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH),
 		ACCOUNT_TYPE_WEBAPP_NORMAL => array(ACCOUNT_TYPE_WEBAPP_NORMAL),
 		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
 		ACCOUNT_TYPE_PHONEAPP_NORMAL => array(ACCOUNT_TYPE_PHONEAPP_NORMAL),
@@ -67,12 +67,15 @@ if ($do == 'display') {
 		$list = $account_table->searchAccountList();
 	}
 
+//	$account = uni_fetch(948);
 
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);
 		$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['starttime']) . '~'. date('Y-m-d', $account['endtime']);
 		$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
 	}
+
+
 
 	$total = $account_table->getLastQueryTotal();
 	$pager = pagination($total, $pindex, $psize);

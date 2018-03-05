@@ -1,7 +1,8 @@
 {
     "require": {
         "we7/devtool": "^0.0.5",
-        "phpunit/phpunit": "6.*"
+        "phpunit/phpunit": "6.*",
+        "nikic/fast-route": "^1.2"
     },
     "autoload" : {
         "psr-4" : {

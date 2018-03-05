@@ -1,29 +1,24 @@
 {template 'common/header'}
-<link rel="stylesheet" href="./resource/css/wxapp-icon.css">
-<div class="account-list-add-step">
+<div class="account-list-add-step" id="js-wxapp-create" ng-controller="MainCtrl" ng-cloak>
+	<ol class="breadcrumb we7-breadcrumb">
+		<a href="{url 'wxapp/manage'}"><i class="wi wi-back-circle"></i></a>
+		<li><a href="{url 'wxapp/display'}">小程序列表</a></li>
+		<li>新建小程序</li>
+	</ol>
+	<div class="we7-step">
+		<ul>
+			<li ng-class="createStep == 1 ? 'active': ''">1 设置小程序信息</li>
+			<li ng-class="createStep == 3 ? 'active': ''" ng-show="create_type == 2">{{create_type == 2 ? 2 : ''}} 设计首页</li>
+			<li ng-class="createStep == 4 ? 'active': ''">{{create_type == 2 ? 3 : 2}} 生成版本</li>
+		</ul>
+	</div>
+	<div>
 
-	<div id="js-wxapp-create" ng-controller="MainCtrl" ng-cloak>
-		<div class="container">
-			<div class="caret-wxapp">
 				<form method="post" ng-submit="package()">
 					<input name="token" type="hidden" value="{$_W['token']}" />
 					<div class="panel panel-app">
-						<div class="panel-heading">
-							<ol class="breadcrumb we7-breadcrumb">
-								<a href="{url 'wxapp/display'}"><i class="wi wi-back-circle"></i> </a>
-								<li><a href="{url 'wxapp/display'}">小程序列表</a></li>
-								<li>新建小程序</li>
-							</ol>
-						</div>
-						<div class="we7-step">
-							<ul>
-								<li ng-class="createStep == 1 ? 'active': ''">1 设置小程序信息</li>
-								<li ng-class="createStep == 3 ? 'active': ''" ng-show="create_type == 2">{{create_type == 2 ? 2 : ''}} 设计首页</li>
-								<li ng-class="createStep == 4 ? 'active': ''">{{create_type == 2 ? 3 : 2}} 生成版本</li>
-							</ul>
-						</div>
 						<div class="panel-body">
-							<div class="wxapp-content tab-content">
+							<div class="wxapp-content tab-content" style="width: 100%;">
 								<div id="select" ng-show="createStep == 1">
 									<div class="form-defalut we7-form">
 										{if empty($uniacid)}
@@ -71,7 +66,6 @@
 												<input type="text" name="version" ng-model="wxappinfo.version" class="form-control wxapp-name" placeholder="版本号，只能是数字、点，数字最多两位，例如 1.01 / 1.0.1">
 											</div>
 										</div>
-										{if $create_type == WXAPP_CREATE_MODULE || $create_type == WXAPP_CREATE_MUTI_MODULE}
 										<div class="form-group">
 											<input type="hidden" name="modules" value="">
 											<label class="control-label col-sm-2">添加应用</label>
@@ -87,15 +81,6 @@
 
 											</div>
 										</div>
-										{else}
-										<div class="form-group">
-											<input type="hidden" name="modules" value="">
-											<label class="control-label col-sm-2">添加应用</label>
-											<div class="form-controls col-sm-10">
-												<div we7-choose-more we7-modules="wxappinfo.choose.modules" we7-choose-single="{php echo $design_method == WXAPP_MODULE}"></div>
-											</div>
-										</div>
-										{/if}
 									</div>
 								</div>
 								<div id="home" ng-show="createStep == 2">
@@ -381,8 +366,7 @@
 						</div>
 					</nav>
 				</form>
-			</div>
-		</div>
+
 	</div>
 </div>
 

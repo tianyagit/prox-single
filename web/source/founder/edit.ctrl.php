@@ -13,7 +13,7 @@ $do = in_array($do, $dos) ? $do: 'edit_base';
 
 $_W['page']['title'] = '编辑用户 - 用户管理';
 
-$uid = safe_gpc_int($_GPC['uid']);
+$uid = intval($_GPC['uid']);
 $user = user_single($uid);
 if (empty($user)) {
 	itoast('访问错误, 未找到该操作员.', url('user/display'), 'error');
@@ -27,6 +27,7 @@ if (!empty($profile)) $profile['avatar'] = tomedia($profile['avatar']);
 
 //编辑用户基础信息
 if ($do == 'edit_base') {
+	$account_num = permission_user_account_num($uid);
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);
 	$user['endtype'] = $user['endtime'] == 0 ? 1 : 2;
@@ -50,12 +51,12 @@ if ($do == 'edit_base') {
 }
 if ($do == 'edit_modules_tpl') {
 	if ($_W['isajax'] && $_W['ispost']) {
-		if (safe_gpc_int($_GPC['groupid']) == $user['groupid']){
+		if (intval($_GPC['groupid']) == $user['groupid']){
 			iajax(2, '未做更改！');
 		}
 		if (!empty($_GPC['type']) && !empty($_GPC['groupid'])) {
 			$data['uid'] = $uid;
-			$data[$_GPC['type']] = safe_gpc_int($_GPC['groupid']);
+			$data[$_GPC['type']] = intval($_GPC['groupid']);
 			if (user_update($data)) {
 				$group_info = user_founder_group_detail_info($_GPC['groupid']);
 				iajax(0, $group_info, '');

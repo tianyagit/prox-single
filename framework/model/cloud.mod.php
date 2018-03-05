@@ -23,8 +23,9 @@ function _cloud_build_params() {
 	global $_W;
 	$pars = array();
 	if (is_array($_W['setting']['site']) && !empty($_W['setting']['site']['url'])) {
-		$pars['host'] = preg_replace('/^http:\/\/|^https:\/\//', '', $_W['setting']['site']['url']);
-	} else {
+		$pars['host'] = parse_url($_W['setting']['site']['url'], PHP_URL_HOST);
+	}
+	if (empty($pars['host'])) {
 		$pars['host'] = $_SERVER['HTTP_HOST'];
 	}
 	$pars['family'] = IMS_FAMILY;
@@ -493,9 +494,10 @@ function cloud_t_info($name) {
 }
 
 function cloud_t_build($name) {
-	$sql = 'SELECT * FROM ' . tablename('site_templates') . ' WHERE `name`=:name';
-	$theme = pdo_fetch($sql, array(':name' => $name));
-
+	if (empty($name)) {
+		return array();
+	}
+	$theme = table('sitetemplates')->getTemplateInfo(trim($name));
 	$pars = _cloud_build_params();
 	$pars['method'] = 'theme.build';
 	$pars['theme'] = $name;
@@ -534,8 +536,10 @@ function cloud_t_build($name) {
  * @return array|mixed|string
  */
 function cloud_t_upgradeinfo($name) {
-	$sql = 'SELECT `name`, `version` FROM ' . tablename('site_templates') . ' WHERE `name` = :name';
-	$theme = pdo_fetch($sql, array(':name' => $name));
+	if (empty($name)) {
+		return array();
+	}
+	$theme = table('sitetemplates')->getTemplateInfo(trim($name));
 	$pars = _cloud_build_params();
 	$pars['method'] = 'theme.upgrade';
 	$pars['theme'] = $theme['name'];
