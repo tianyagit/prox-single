@@ -164,7 +164,7 @@
 				</tr>
 			{/if}
 		</table>
-		{if !user_is_founder($_W['uid']) || user_is_vice_founder($_W['uid'])}
+		{if !permission_check_account_user('see_user_profile_account_num')}
 		<table class="table we7-table table-hover table-form">
 			<col />
 			<col />
