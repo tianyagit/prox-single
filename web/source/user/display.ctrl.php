@@ -15,10 +15,10 @@ $_W['page']['title'] = '用户列表 - 用户管理';
 $founders = explode(',', $_W['config']['setting']['founder']);
 
 if ($do == 'display') {
-	$message_id = safe_gpc_int($_GPC['message_id']);
+	$message_id = intval($_GPC['message_id']);
 	message_notice_read($message_id);
 
-	$pindex = max(1, safe_gpc_int($_GPC['page']));
+	$pindex = max(1, intval($_GPC['page']));
 	$psize = 20;
 	$users_table = table('users');
 	$type = empty($_GPC['type']) ? 'display' : $_GPC['type'];
@@ -86,7 +86,7 @@ if ($do == 'operate') {
 			permission_check_account_user('system_user_recycle');
 			break;
 	}
-	$uid = safe_gpc_int($_GPC['uid']);
+	$uid = intval($_GPC['uid']);
 	$uid_user = user_single($uid);
 	if (in_array($uid, $founders)) {
 		iajax(-1, '访问错误, 无法操作站长.', url('user/display'));

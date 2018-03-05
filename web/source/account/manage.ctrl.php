@@ -27,7 +27,7 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 /* svend */
 
 if ($do == 'display') {
-	$message_id = safe_gpc_int($_GPC['message_id']);
+	$message_id = intval($_GPC['message_id']);
 	message_notice_read($message_id);
 
 	$pindex = max(1, intval($_GPC['page']));
