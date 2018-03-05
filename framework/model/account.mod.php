@@ -37,7 +37,7 @@ function uni_owned($uid = 0, $is_uni_fetch = true) {
 function uni_user_accounts($uid = 0, $type = 'app') {
 	global $_W;
 	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
-	if (!in_array($type, array('app', 'wxapp', 'webapp'))) {
+	if (!in_array($type, array('app', 'wxapp', 'webapp', 'phoneapp'))) {
 		$type = 'app';
 	}
 	$type = $type == 'app' ? 'wechats' : $type;
