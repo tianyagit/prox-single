@@ -11,7 +11,7 @@ defined('IN_IA') or exit('Access Denied');
  * @return bool
  */
 function message_notice_read($id) {
-	$id = safe_gpc_int($id);
+	$id = intval($id);
 	if (empty($id)) {
 		return true;
 	}

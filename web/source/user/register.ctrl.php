@@ -60,10 +60,6 @@ if ($do == 'register') {
 	}
 }
 
-/*
- * 校验用户名是否存在
- * @lgl 20180302
- * */
 if ($do == 'check_username') {
     load()->model('user');
     $member['username'] = trim($_GPC['username']);
@@ -74,17 +70,13 @@ if ($do == 'check_username') {
     }
 }
 
-/*
- * 获取用户注册字段
- * @lgl 20180302
- * */
 if($do == 'get_extendfields'){
     $extendfields = OAuth2Client::create($register_type)->systemFields();
 
     // 给注册拓展字段添加 fieldErr 和 fieldMsg 属性 (前端验证提示)
     foreach($extendfields as $k => $v){
-        $extendfields[$k][$k.'Err'] = false;        # 错误显示
-        $extendfields[$k][$k.'Msg'] = '';           # 错误信息
+        $extendfields[$k][$k.'Err'] = false;
+        $extendfields[$k][$k.'Msg'] = '';
     }
 
     iajax(0,$extendfields);
