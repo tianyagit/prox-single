@@ -9,7 +9,7 @@ load()->model('user');
 load()->model('setting');
 load()->classs('oauth2/oauth2client');
 
-$dos = array('display', 'valid_mobile', 'register');
+$dos = array('display', 'valid_mobile', 'register','check_username','get_extendfields');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $_W['page']['title'] = '注册选项 - 用户设置 - 用户管理';
@@ -38,7 +38,9 @@ if ($do == 'valid_mobile') {
 }
 
 if ($do == 'register') {
+
 	if(checksubmit() || $_W['ispost'] && $_W['isajax']) {
+
 		$register_user = OAuth2Client::create($register_type)->register();
 		if ($register_type == 'system') {
 			if (is_error($register_user)) {
@@ -56,6 +58,36 @@ if ($do == 'register') {
 			}
 		}
 	}
+}
+
+/*
+ * 校验用户名是否存在
+ * @lgl 20180302
+ * */
+if ($do == 'check_username') {
+    load()->model('user');
+    $member['username'] = trim($_GPC['username']);
+    if(user_check(array('username' => $member['username']))) {
+        iajax(-1, '非常抱歉，此用户名已经被注册，你需要更换注册名称！');
+    }else{
+        iajax(0,'用户名未被注册');
+    }
+}
+
+/*
+ * 获取用户注册字段
+ * @lgl 20180302
+ * */
+if($do == 'get_extendfields'){
+    $extendfields = OAuth2Client::create($register_type)->systemFields();
+
+    // 给注册拓展字段添加 fieldErr 和 fieldMsg 属性 (前端验证提示)
+    foreach($extendfields as $k => $v){
+        $extendfields[$k][$k.'Err'] = false;        # 错误显示
+        $extendfields[$k][$k.'Msg'] = '';           # 错误信息
+    }
+
+    iajax(0,$extendfields);
 }
 
 template('user/register');
