@@ -25,6 +25,7 @@ if (!empty($profile)) $profile['avatar'] = tomedia($profile['avatar']);
 
 //编辑用户基础信息
 if ($do == 'edit_base') {
+	$account_num = permission_user_account_num($uid);
 	$user['last_visit'] = date('Y-m-d H:i:s', $user['lastvisit']);
 	$user['joindate'] = date('Y-m-d H:i:s', $user['joindate']);
 	$user['end'] = $user['endtime'] == 0 ? '永久' : date('Y-m-d', $user['endtime']);

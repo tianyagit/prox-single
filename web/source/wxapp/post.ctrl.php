@@ -7,16 +7,34 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('module');
 load()->model('wxapp');
+load()->func('communication');
+load()->classs('weixin.platform');
+load()->classs('wxapp.platform');
 
 $dos = array('design_method', 'post', 'get_wxapp_modules', 'module_binding');
 $do = in_array($do, $dos) ? $do : 'post';
 $_W['page']['title'] = '小程序 - 新建版本';
 $account_info = permission_user_account_num();
 
-if ($do == 'design_method') {
 
-	$uniacid = intval($_GPC['uniacid']);
-	template('wxapp/design-method');
+if ($do == 'design_method') {
+	// 1 普通小程序  2 授权小程序
+	$choose = isset($_GPC['choose_type']) ? intval($_GPC['choose_type']) : 0;
+	if ($choose) {
+		$uniacid = intval($_GPC['uniacid']);
+		template('wxapp/design-method');
+	} else {
+		if($account_info['wxapp_limit'] <= 0 && !$_W['isfounder']) {
+			$authurl = "javascript:alert('创建小程序已达上限！');";
+		}
+		if (empty($authurl) && !empty($_W['setting']['platform']['authstate'])) {
+			$account_platform = new WxAppPlatform();
+			$authurl = $account_platform->getAuthLoginUrl();
+		}
+		template('wxapp/choose-type');
+
+	}
+
 }
 if ($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
