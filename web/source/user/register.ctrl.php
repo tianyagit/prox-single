@@ -74,9 +74,9 @@ if ($do == 'check_username') {
 if ($do == 'get_extendfields') {
     $extendfields = OAuth2Client::create($register_type)->systemFields();
     // 给注册拓展字段添加 错误提示 属性 (前端验证提示)
-    foreach ($extendfields as $k => $v) {
-        $extendfields[$k][$k.'Err'] = false;
-        $extendfields[$k][$k.'Msg'] = '';
+    foreach ($extendfields as $field => $value) {
+        $extendfields[$field][$field . '_err'] = false;
+        $extendfields[$field][$field . '_msg'] = '';
     }
     iajax(0, $extendfields);
 }
