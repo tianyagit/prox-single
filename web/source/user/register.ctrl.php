@@ -73,16 +73,18 @@ if ($do == 'check_username') {
 if ($do == 'get_extendfields') {
 	$extendfields = OAuth2Client::create($register_type)->systemFields();
 	// 给注册拓展字段添加 错误提示 属性 (前端验证提示)
-	foreach ($extendfields as $field => $value) {
-		$extendfields[$field][$field . '_err'] = false;
-		$extendfields[$field][$field . '_msg'] = '';
+	if (!empty($extendfields)) {
+		foreach ($extendfields as $field => $value) {
+			$extendfields[$field][$field . '_err'] = false;
+			$extendfields[$field][$field . '_msg'] = '';
+		}
 	}
 	iajax(0, $extendfields);
 }
 
 if ($do == 'check_code') {
 	if (!empty($_W['setting']['register']['code'])) {
-		if (!checkcaptcha(safe_gpc_int($_GPC['code']))) {
+		if (!checkcaptcha(intval($_GPC['code']))) {
 			iajax(-1, '你输入的验证码不正确, 请重新输入.');
 		} else {
 			iajax(0, '验证码正确');
