@@ -20,6 +20,33 @@ if ($do == 'display') {
 	$yesterday = stat_visit_app_byuniacid('yesterday');
 	$today_module_api = stat_all_visit_statistics('current_account', $today);
 	$yesterday_module_api = stat_all_visit_statistics('current_account', $yesterday);
+
+	$statistics_setting = (array)uni_setting_load(array('statistics'), $_W['uniacid']);
+	$highest_visit = empty($statistics_setting['statistics']['founder']) ? 0 : $statistics_setting['statistics']['founder'];
+
+	$month_use = 0;
+	$condition = array(
+		'uniacid' => $_W['uniacid'],
+		'type' => 'app',
+		'date >=' => date('Y-m-01'),
+		'date <=' => date('Y-m-t')
+	);
+	$visit_list = table('statistics')->visitList($condition);
+	if (!empty($visit_list)) {
+		foreach ($visit_list as $key => $val) {
+			$month_use += $val['count'];
+		}
+	}
+
+	$order_num = 0;
+	$orders = table('store')->apiOrderWithUniacid($_W['uniacid']);
+	if (!empty($orders)) {
+		foreach ($orders as $order) {
+			$order_num += $order['duration'] * $order['api_num'] * 10000;
+		}
+	}
+	$api_remain_num = empty($statistics_setting['statistics']['use']) ? $order_num : ($order_num - $statistics_setting['statistics']['use']);
+
 	template('statistics/app-display');
 }
 
