@@ -62,33 +62,32 @@ if ($do == 'register') {
 }
 
 if ($do == 'check_username') {
-    load()->model('user');
-    $member['username'] = safe_gpc_string($_GPC['username']);
-    if (user_check(array('username' => $member['username']))) {
-        iajax(-1, '非常抱歉，此用户名已经被注册，你需要更换注册名称！');
-    } else {
-        iajax(0, '用户名未被注册');
-    }
+	$member['username'] = safe_gpc_string($_GPC['username']);
+	if (user_check(array('username' => $member['username']))) {
+		iajax(-1, '非常抱歉，此用户名已经被注册，你需要更换注册名称！');
+	} else {
+		iajax(0, '用户名未被注册');
+	}
 }
 
 if ($do == 'get_extendfields') {
-    $extendfields = OAuth2Client::create($register_type)->systemFields();
-    // 给注册拓展字段添加 错误提示 属性 (前端验证提示)
-    foreach ($extendfields as $field => $value) {
-        $extendfields[$field][$field . '_err'] = false;
-        $extendfields[$field][$field . '_msg'] = '';
-    }
-    iajax(0, $extendfields);
+	$extendfields = OAuth2Client::create($register_type)->systemFields();
+	// 给注册拓展字段添加 错误提示 属性 (前端验证提示)
+	foreach ($extendfields as $field => $value) {
+		$extendfields[$field][$field . '_err'] = false;
+		$extendfields[$field][$field . '_msg'] = '';
+	}
+	iajax(0, $extendfields);
 }
 
 if ($do == 'check_code') {
-    if (!empty($_W['setting']['register']['code'])) {
-        if (!checkcaptcha(safe_gpc_int($_GPC['code']))) {
-            iajax(-1, '你输入的验证码不正确, 请重新输入.');
-        } else {
-            iajax(0, '验证码正确');
-        }
-    }
+	if (!empty($_W['setting']['register']['code'])) {
+		if (!checkcaptcha(safe_gpc_int($_GPC['code']))) {
+			iajax(-1, '你输入的验证码不正确, 请重新输入.');
+		} else {
+			iajax(0, '验证码正确');
+		}
+	}
 }
 
 template('user/register');
