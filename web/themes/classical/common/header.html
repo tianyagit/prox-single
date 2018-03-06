@@ -16,7 +16,7 @@
 				<ul class="main-nav">
 					{php global $top_nav}
 					{loop $top_nav $nav}
-					<li{if FRAME == $nav['name']} class="active"{/if}>
+					<li{if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active"{/if}>
 						<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
 					<i class="{$nav['icon']}"></i>
 					{$nav['title']}</a>
