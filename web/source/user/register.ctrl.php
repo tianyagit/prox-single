@@ -93,8 +93,8 @@ if ($do == 'check_code') {
 }
 
 if ($do == 'check_mobile_code') {
-	$smscode = trim(intval($_GPC['smscode']));
-	$mobile = trim(safe_gpc_string($_GPC['mobile']));
+	$smscode = intval($_GPC['smscode']);
+	$mobile = safe_gpc_string($_GPC['mobile']);
 	$user_table = table('users');
 	$code_info = $user_table->userVerifyCode($mobile, $smscode);
 
