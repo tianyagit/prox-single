@@ -2,13 +2,25 @@
 <ul class="we7-page-tab">
 	<li class="active"><a href="{php echo $this->createWebUrl('blacklist', array('direct' => 1))}">黑名单设置</a></li>
 </ul>
-<div class="alert alert-info">
-	<p><i class="wi wi-info-sign">将用户放入黑名单，用户登录就无权限进入“商城”</i></p>
+<div class="we7-form blacklist-tab">
+		<input type="radio" id="1" name="4" checked>
+		<label for="1">黑名单设置 <span class="active"></span></label>
+		<input type="radio" id="2" name="4">
+		<label for="2">白名单设置<span></span></label>
+		<input type="radio" id="3" name="4">
+		<label for="3">关闭权限设置<span></span></label>
 </div>
-<div class="clearfix we7-margin-bottom">
-		<div class="pull-right">
-			<a href="#" class="btn btn-primary we7-padding-horizontal" data-toggle="modal" data-target="#balck">添加黑名单用户</a>
-		</div>
+<div class="alert we7-page-alert blacklist-alert">
+	<div class="info">
+		<p>开启黑名单</p>
+		<p class="color-default"><i class="wi wi-info-sign"></i><strong >将用户放入黑名单，用户登录就无权限进入“商城” </strong></p>
+	</div>
+	<div class="switch switchOn"></div>
+</div>
+<div class="we7-margin-bottom clearfix">
+	<div class="pull-right">
+		<a href="#" class="btn btn-primary we7-padding-horizontal" data-toggle="modal" data-target="#balck">添加黑名单用户</a>
+	</div>
 </div>
 <div>
 	<table class="table we7-table table-hover site-list">
