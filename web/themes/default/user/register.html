@@ -127,43 +127,53 @@
 							<label class="control-label col-sm-2">手机号:<span class="color-red">*</span></label>
 							<div class="col-sm-10">
 								<div class="input-group">
-									<input type="text" class="form-control" placeholder="请输入常用手机号" ng-model="mobile">
+									<input type="text" class="form-control" placeholder="请输入常用手机号" ng-model="mobile" ng-blur="checkMobile()">
 									<a href="javascript:;" class="input-group-btn">
 										<!--<button class="btn btn-primary">发送验证码</button>-->
 										<input type="button" class="btn btn-primary send-code" ng-disabled="isDisable" ng-click="sendMessage()" value="{{text}}">
 									</a>
 								</div>
+								<span ng-class="{true:'fa fa-times form-control-feedback color-red reg-mobile-valid',false:'fa fa-check form-control-feedback color-green reg-mobile-valid'}[mobileErr]" aria-hidden="true"></span>
+								<span ng-class="{true:'color-red',false:'sr-only'}[mobileErr]" ng-bind="mobileMsg"></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="control-label col-sm-2">输入验证码:<span class="color-red">*</span></label>
 							<div class="col-sm-10">
 								<div class="input-group">
-									<input ng-model="imagecode" type="text" class="form-control" placeholder="请输入图形验证码">
+									<input ng-model="imagecode" type="text" class="form-control" placeholder="请输入图形验证码" ng-blur="checkImagecode()">
 									<a href="javascript:;" class="input-group-btn imgverify" ng-click="changeVerify()"><img ng-src="{{image}}" style="height: 32px;"/></a>
 								</div>
+								<span ng-class="{true:'fa fa-times form-control-feedback color-red reg-mobile-valid',false:'fa fa-check form-control-feedback color-green reg-mobile-valid'}[imagecodeErr]" aria-hidden="true"></span>
+								<span ng-class="{true:'color-red',false:'sr-only'}[imagecodeErr]" ng-bind="imagecodeMsg"></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="control-label col-sm-2">输入验证码:<span class="color-red">*</span></label>
 							<div class="col-sm-10">
-								<input ng-model='smscode' type="text" class="form-control" placeholder="请输入手机验证码">
+								<input ng-model='smscode' type="text" class="form-control" placeholder="请输入手机验证码" ng-blur="checkMobileCode()">
+								<span ng-class="{true:'fa fa-times form-control-feedback color-red reg-system-valid',false:'fa fa-check form-control-feedback color-green reg-system-valid'}[smscodeErr]" aria-hidden="true"></span>
+								<span ng-class="{true:'color-red',false:'sr-only'}[smscodeErr]" ng-bind="smscodeMsg"></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="control-label col-sm-2">密码:<span class="color-red">*</span></label>
 							<div class="col-sm-10">
-								<input ng-model="password" type="password" class="form-control" placeholder="请输入不少于8位的密码">
+								<input ng-model="password" type="password" class="form-control" placeholder="请输入不少于8位的密码" ng-blur="checkPassword()">
+								<span ng-class="{true:'fa fa-times form-control-feedback color-red reg-system-valid',false:'fa fa-check form-control-feedback color-green reg-system-valid'}[passwordErr]" aria-hidden="true"></span>
+								<span ng-class="{true:'color-red',false:'sr-only'}[passwordErr]" ng-bind="passwordMsg"></span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="control-label col-sm-2">确认密码:<span class="color-red">*</span></label>
 							<div class="col-sm-10">
-								<input ng-model="repassword" type="password" class="form-control" placeholder="请再次输入密码">
+								<input ng-model="repassword" type="password" class="form-control" placeholder="请再次输入密码" ng-blur="checkRepassword()">
+								<span ng-class="{true:'fa fa-times form-control-feedback color-red reg-system-valid',false:'fa fa-check form-control-feedback color-green reg-system-valid'}[repasswordErr]" aria-hidden="true"></span>
+								<span ng-class="{true:'color-red',false:'sr-only'}[repasswordErr]" ng-bind="repasswordMsg"></span>
 							</div>
 						</div>
 						<div class="login-submit text-center">
-							<input type="submit" ng-click="register()" value="注册" class="btn btn-primary"/>
+							<input type="submit" ng-click="register()" value="注册" class="btn btn-primary" ng-disabled="mobleInvalid || smscodeInvalid || imageInvalid || passwordInvalid || repasswordInvalid" />
 							<a href="{url 'user/login'}" class="btn btn-default">登录</a>
 						</div>
 					</div>
@@ -187,10 +197,10 @@
 			'check_username_link': "{php echo url('user/register/check_username')}",
 			'get_extendfields_link': "{php echo url('user/register/get_extendfields')}",
 			'check_code_link': "{php echo url('user/register/check_code')}",
+			'check_mobile_code_link': "{php echo url('user/register/check_mobile_code')}",
 		},
 	});
 
 	angular.bootstrap($('.register-mobile'), ['userManageApp']);
-
 </script>
 {template 'common/footer-base'}

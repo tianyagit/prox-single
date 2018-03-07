@@ -9,7 +9,7 @@ load()->model('user');
 load()->model('setting');
 load()->classs('oauth2/oauth2client');
 
-$dos = array('display', 'valid_mobile', 'register', 'check_username', 'get_extendfields', 'check_code');
+$dos = array('display', 'valid_mobile', 'register', 'check_username', 'get_extendfields', 'check_code', 'check_mobile_code');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $_W['page']['title'] = '注册选项 - 用户设置 - 用户管理';
@@ -89,6 +89,21 @@ if ($do == 'check_code') {
 		} else {
 			iajax(0, '验证码正确');
 		}
+	}
+}
+
+if ($do == 'check_mobile_code') {
+	$smscode = trim(intval($_GPC['smscode']));
+	$mobile = trim(safe_gpc_string($_GPC['mobile']));
+	$user_table = table('users');
+	$code_info = $user_table->userVerifyCode($mobile, $smscode);
+
+	if (empty($code_info)) {
+		iajax(-1, '短信验证码不正确');
+	} else if ($code_info['createtime'] + 120 < TIMESTAMP) {
+		iajax(-1, '短信验证码已过期，请重新获取');
+	} else {
+		iajax(0, '短信验证码正确');
 	}
 }
 
