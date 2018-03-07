@@ -1656,6 +1656,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 		}
 
 		$fans_mapping = mc_fansinfo($fans['openid']);
+		unset($fans['tagid_list'], $fans['remark']);
 		$fans_update_info = array(
 			'openid' => $fans['openid'],
 			'acid' => $_W['acid'],

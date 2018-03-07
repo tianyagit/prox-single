@@ -448,6 +448,7 @@ class WeiXinAccount extends WeAccount {
 		$result['city'] = hex2bin(html_entity_decode($result['city']));
 		$result['province'] = hex2bin(html_entity_decode($result['province']));
 		$result['country'] = hex2bin(html_entity_decode($result['country']));
+		unset($result['tagid_list'], $result['remark']);
 		if(empty($result)) {
 			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
 		} elseif(!empty($result['errcode'])) {
