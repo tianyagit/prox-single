@@ -276,7 +276,6 @@ function mc_oauth_account_userinfo($url = '') {
 			$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
 			$userinfo['avatar'] = $userinfo['headimgurl'];
 			$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
-			unset($userinfo['tagid_list'], $userinfo['remark']);
 			$fan = mc_fansinfo($_SESSION['openid']);
 			if (!empty($fan)) {
 				$record = array(
@@ -1656,7 +1655,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 		}
 
 		$fans_mapping = mc_fansinfo($fans['openid']);
-		unset($fans['tagid_list'], $fans['remark']);
+		unset($fans['tagid_list'], $fans['remark'], $fans['subscribe_scene'], $fans['qr_scene'], $fans['qr_scene_str']);
 		$fans_update_info = array(
 			'openid' => $fans['openid'],
 			'acid' => $_W['acid'],

@@ -34,7 +34,6 @@ if($_GPC['__auth']) {
 							$record = array();
 							$record['updatetime'] = TIMESTAMP;
 							$record['nickname'] = stripslashes($userinfo['nickname']);
-							unset($userinfo['tagid_list'], $userinfo['remark']);
 							$record['tag'] = base64_encode(iserializer($userinfo));
 							pdo_update('mc_mapping_fans', $record, array('openid' => $fan['openid']));
 							if(!empty($fan['uid'])) {
