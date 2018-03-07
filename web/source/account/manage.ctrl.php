@@ -67,15 +67,11 @@ if ($do == 'display') {
 		$list = $account_table->searchAccountList();
 	}
 
-//	$account = uni_fetch(948);
-
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);
 		$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['starttime']) . '~'. date('Y-m-d', $account['endtime']);
 		$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
 	}
-
-
 
 	$total = $account_table->getLastQueryTotal();
 	$pager = pagination($total, $pindex, $psize);

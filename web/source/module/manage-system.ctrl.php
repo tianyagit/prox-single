@@ -41,8 +41,8 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 /* sxend */
 
 if ($do == 'subscribe') {
-	$uninstallModules = module_get_all_unistalled($status);
-	$total_uninstalled = $uninstallModules['module_count'];
+	$uninstall_modules = module_get_all_unistalled($status);
+	$total_uninstalled = $uninstall_modules['module_count'];
 
 	$module_list = user_modules($_W['uid']);
 	$subscribe_module = array();
@@ -713,11 +713,11 @@ if ($do == 'recycle_uninstall') {
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
 	if (!empty($_GPC['system_welcome'])) {
-		$uninstallModules = module_get_all_unistalled('uninstalled', true, 'system_welcome');
+		$uninstall_modules = module_get_all_unistalled('uninstalled', true, 'system_welcome');
 	} else {
-		$uninstallModules = module_get_all_unistalled('uninstalled');
+		$uninstall_modules = module_get_all_unistalled('uninstalled');
 	}
-	$total_uninstalled = $uninstallModules['module_count'];
+	$total_uninstalled = $uninstall_modules['module_count'];
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
 	$letter = $_GPC['letter'];
@@ -761,24 +761,24 @@ if ($do == 'not_installed') {
 	$pagesize = 20;
 
 	if (!empty($_GPC['system_welcome'])) {
-		$uninstallModules = module_get_all_unistalled($status, false, 'system_welcome');
+		$uninstall_modules = module_get_all_unistalled($status, false, 'system_welcome');
 	} else {
-		$uninstallModules = module_get_all_unistalled($status, false);
+		$uninstall_modules = module_get_all_unistalled($status, false);
 	}
-	$total_uninstalled = $uninstallModules['module_count'];
-	$uninstallModules = (array)$uninstallModules['modules'];
-	if (!empty($uninstallModules)) {
-		foreach($uninstallModules as $name => &$module) {
+	$total_uninstalled = $uninstall_modules['module_count'];
+	$uninstall_modules = (array)$uninstall_modules['modules'];
+	if (!empty($uninstall_modules)) {
+		foreach($uninstall_modules as $name => &$module) {
 			if (!empty($letter) && strlen($letter) == 1) {
 				$first_char = get_first_pinyin($module['title']);
 				if ($letter != $first_char) {
-					unset($uninstallModules[$name]);
+					unset($uninstall_modules[$name]);
 					continue;
 				}
 			}
 			if (!empty($title)) {
 				if (!strexists($module['title'], $title)) {
-					unset($uninstallModules[$name]);
+					unset($uninstall_modules[$name]);
 					continue;
 				}
 			}
@@ -796,7 +796,7 @@ if ($do == 'not_installed') {
 					$module['main_module_logo'] = $main_module_installed['logo'];
 				} else {
 					if ($module['from'] == 'cloud') {
-						$module['main_module_logo'] = tomedia($uninstallModules[$module['main_module']]['thumb']);
+						$module['main_module_logo'] = tomedia($uninstall_modules[$module['main_module']]['thumb']);
 					} else {
 						if (file_exists(IA_ROOT.'/addons/'.$module['main_module'].'/icon-custom.jpg')) {
 							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['main_module'].'/icon-custom.jpg');
@@ -808,8 +808,8 @@ if ($do == 'not_installed') {
 			}
 		}
 	}
-	$total = count($uninstallModules);
-	$uninstallModules = array_slice($uninstallModules, ($pageindex - 1)*$pagesize, $pagesize);
+	$total = count($uninstall_modules);
+	$uninstall_modules = array_slice($uninstall_modules, ($pageindex - 1)*$pagesize, $pagesize);
 	$pager = pagination($total, $pageindex, $pagesize);
 }
 

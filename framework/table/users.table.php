@@ -65,6 +65,11 @@ class UsersTable extends We7Table {
 		return $this;
 	}
 
+	public function searchWithGroupId($group_id) {
+		$this->query->where('u.groupid', $group_id);
+		return $this;
+	}
+
 	public function searchWithSendStatus() {
 		$this->query->where('p.send_expire_status', 0);;
 		return $this;
@@ -72,7 +77,7 @@ class UsersTable extends We7Table {
 
 	public function searchWithNameOrMobile($search) {
 		$this->query->where(function($query) use ($search){
-			$query->where('u.username LIKE', $search)->whereor('p.mobile LIKE', "%{$search}%");
+			$query->where('u.username LIKE', "%{$search}%")->whereor('p.mobile LIKE', "%{$search}%");
 		});
 		return $this;
 	}

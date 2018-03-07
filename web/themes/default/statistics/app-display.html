@@ -6,6 +6,23 @@
 </ul>
 <div class="api" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl" ng-cloak>
 	<div class="panel we7-panel api-target">
+		<div class="panel-heading">API余量</div>
+		<div class="panel-body we7-padding-vertical">
+			<div class="col-sm-4 text-center">
+				<div class="title"><span class="">月访问总次数</span><a href="{php echo url('account/post', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']))}" class="pull-right color-default font-default" target="_blank">去设置</a></div>
+				<div><span class="today">{$highest_visit}</span></div>
+			</div>
+			<div class="col-sm-4 text-center">
+				<div class="title">月访问API余量</div>
+				<div><span class="today">{php echo $highest_visit - $month_use}</span></div>
+			</div>
+			<div class="col-sm-4 text-center">
+				<div class="title">API总剩余量<a href="{php echo url('home/welcome/ext', array('m' => 'store'))}" class="pull-right color-default font-default" target="_blank">去购买</a></div>
+				<div><span class="today">{$api_remain_num}</span></div>
+			</div>
+		</div>
+	</div>
+	<div class="panel we7-panel api-target">
 		<div class="panel-heading">今日/昨日关键指标</div>
 		<div class="panel-body we7-padding-vertical">
 			<div class="col-sm-4 text-center">
