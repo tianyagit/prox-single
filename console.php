@@ -13,9 +13,10 @@ error_reporting(0);
 if (strtoupper(php_sapi_name()) != 'CLI') {
 	We7Command::line('只能在命令行执行');
 }
-set_exception_handler(function(Exception $ex){
-	echo $ex->getTraceAsString();
-//	echo $ex->getMessage();
+
+set_exception_handler(function(Error $ex){
+//	echo $ex->getTraceAsString();
+	echo $ex->getMessage();
 	return true;
 });
 set_error_handler(function($errno, $errstr, $errfile, $errline){
@@ -45,7 +46,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline){
 	return true;
 });
 
-
+$_W = array();
 set_time_limit(0);
 error_reporting(0);
 ini_set('display_errors', 1);
@@ -75,6 +76,7 @@ abstract class We7Command {
 	 *  安装脚本不能加载此文件 因config.php 文件不存在
 	 */
 	protected function init() {
+		global $_W;
 		error_reporting(0);
 		include_once __DIR__.'/framework/bootstrap.inc.php';
 		error_reporting(E_ALL);
