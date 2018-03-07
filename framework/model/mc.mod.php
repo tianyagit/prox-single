@@ -276,7 +276,7 @@ function mc_oauth_account_userinfo($url = '') {
 			$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
 			$userinfo['avatar'] = $userinfo['headimgurl'];
 			$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
-
+			unset($userinfo['tagid_list'], $userinfo['remark']);
 			$fan = mc_fansinfo($_SESSION['openid']);
 			if (!empty($fan)) {
 				$record = array(

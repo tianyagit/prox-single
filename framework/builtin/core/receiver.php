@@ -93,6 +93,7 @@ class CoreModuleReceiver extends WeModuleReceiver {
 			if(!is_error($userinfo) && !empty($userinfo) && !empty($userinfo['subscribe'])) {
 				$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
 				$userinfo['avatar'] = $userinfo['headimgurl'];
+				unset($userinfo['tagid_list'], $userinfo['remark']);
 				$fans = array(
 					'unionid' => $userinfo['unionid'],
 					'nickname' => strip_emoji($userinfo['nickname']),

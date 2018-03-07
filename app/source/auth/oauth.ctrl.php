@@ -70,6 +70,7 @@ if (intval($_W['account']['level']) == 4) {
 			$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
 			$userinfo['avatar'] = $userinfo['headimgurl'];
 			$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
+			unset($userinfo['tagid_list'], $userinfo['remark']);
 			$record = array(
 				'openid' => $userinfo['openid'],
 				'uid' => 0,
@@ -164,6 +165,7 @@ if ($scope == 'userinfo' || $scope == 'snsapi_userinfo') {
 		$userinfo['nickname'] = stripcslashes($userinfo['nickname']);
 		$userinfo['avatar'] = $userinfo['headimgurl'];
 		$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
+		unset($userinfo['tagid_list'], $userinfo['remark']);
 		$fan = pdo_get('mc_mapping_fans', array('openid' => $oauth['openid']));
 		if (!empty($fan)) {
 			$record = array();
