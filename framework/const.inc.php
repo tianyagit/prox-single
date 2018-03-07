@@ -266,3 +266,15 @@ define('FILE_NO_UNIACID', -1);
 //模块获取用户授权方式 1.静默授权 2.用户有感知授权
 define('OAUTH_TYPE_BASE', 1);
 define('OAUTH_TYPE_USERINFO', 2);
+
+//文章评论的父级id
+define('ARTICLE_COMMENT_DEFAULT', 0);
+//评论未回复
+define('ARTICLE_NOCOMMENT', 0);
+//评论已回复
+define('ARTICLE_COMMENT', 1);
+
+//开启登陆后的首页
+define('WELCOME_STATUS_ON', 1);
+//关闭登陆后的首页
+define('WELCOME_STATUS_OFF', 0);

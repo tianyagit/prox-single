@@ -127,4 +127,19 @@ function article_category_delete($id) {
 	return true;
 }
 
+/**
+ * 评论回复
+ * @param $data
+ */
+function article_comment_add($comment) {
+	if (empty($comment['content'])) {
+		return error(-1, '回复内容不能为空');
+	}
+	if (empty($comment['uid']) && empty($comment['openid'])) {
+		return error(-1, '用户信息不能为空');
+	}
 
+	$article_comment_table = table('sitearticlecomment');
+	$article_comment_table->articleCommentAdd($comment);
+	return true;
+}

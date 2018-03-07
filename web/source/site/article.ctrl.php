@@ -5,8 +5,10 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->func('file');
+load()->model('mc');
+load()->model('article');
 
-$dos = array('display', 'post', 'del');
+$dos = array('display', 'post', 'del', 'comment_list', 'add_comment');
 $do = in_array($do, $dos) ? $do : 'display';
 
 permission_check_account_user('platform_site');
@@ -247,4 +249,69 @@ if ($do == 'display') {
 			itoast('删除失败！', referer(), 'error');
 		}
 	}
+}
+
+if ($do == 'comment_list') {
+	$articleId = intval($_GPC['id']);
+	$uids = array();
+	$openids = array();
+
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 10;
+
+	$comment_table = table('sitearticlecomment');
+	$comment_table->searchWithUniacid($_W['uniacid']);
+	$comment_table->searchWithArticleid($articleId);
+	$comment_table->searchWithParentid(ARTICLE_COMMENT_DEFAULT);
+	$comment_table->searchWithPage($pindex, $psize);
+
+	$order = safe_gpc_string($_GPC['order']);
+	$comment_table->articleCommentOrder($order);
+
+	$is_comment = intval($_GPC['iscommend']);
+	if (!empty($is_comment)) {
+		$comment_table->searchWithIscomment($is_comment);
+	}
+
+	$article_lists = $comment_table->articleCommentList();
+
+	$uids = array_filter(array_column($article_lists, 'uid'));
+	$openids = array_filter(array_column($article_lists, 'openid'));
+
+	$parent_article_comment_ids = array_keys($article_lists);
+
+	$son_comment_lists = $comment_table->searchWithUniacid($_W['uniacid'])->searchWithParentid($parent_article_comment_ids)->articleCommentList();
+
+	$uids = array_unique(array_merge($uids, array_filter(array_column($son_comment_lists, 'uid'))));
+	$openids = array_unique(array_merge($openids, array_filter(array_column($son_comment_lists, 'openid'))));
+
+	$user_table = table('users');
+	$users = $user_table->searchWithUid($uids)->searchUsersList();
+
+	$fans_list = array();
+	if (!empty($openids)) {
+		foreach ($openids as $openid) {
+			$fans_list[$openid] = mc_fansinfo($openid);
+		}
+	}
+	$total = $comment_table->getLastQueryTotal();
+	$pager = pagination($total, $pindex, $psize);
+	template('site/article-commont-list');
+}
+
+if ($do == 'add_comment') {
+	$comment = array(
+		'uniacid' => $_W['uniacid'],
+		'articleid' => intval($_GPC['articleid']),
+		'parentid' => intval($_GPC['parentid']),
+		'uid' => $_W['uid'],
+		'content' => safe_gpc_html(htmlspecialchars_decode($_GPC['content']))
+	);
+	$comment_add = article_comment_add($comment);
+
+	if (is_error($comment_add)) {
+		iajax(-1, $comment_add['message']);
+	}
+
+	iajax(0, '回复成功');
 }
