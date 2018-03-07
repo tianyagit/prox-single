@@ -16,35 +16,21 @@ if (strtoupper(php_sapi_name()) != 'CLI') {
 
 set_exception_handler(function(Error $ex){
 //	echo $ex->getTraceAsString();
-	echo $ex->getMessage();
+//	echo $ex->getMessage();
 	return true;
 });
 set_error_handler(function($errno, $errstr, $errfile, $errline){
-	switch ($errno) {
-		case E_USER_ERROR:
-			echo "<b>My ERROR</b> [$errno] $errstr<br />\n";
-			echo "  Fatal error on line $errline in file $errfile";
-			echo ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br />\n";
-			echo "Aborting...<br />\n";
-			exit(1);
-			break;
-
-		case E_USER_WARNING:
-			echo "<b>My WARNING</b> [$errno] $errstr<br />\n";
-			break;
-
-		case E_USER_NOTICE:
-			echo "<b>My NOTICE</b> [$errno] $errstr<br />\n";
-			break;
-
-		default:
-			echo "Unknown error type: [$errno] $errstr<br />\n";
-			break;
-	}
-
-	/* Don't execute PHP internal error handler */
+//	echo $errno.':'.$errstr.'file:'.$errfile.':line'.$errline;
 	return true;
 });
+
+if(!function_exists('pdoQuery')) {
+	function pdoQuery() {
+		load()->classs('query');
+		return new Query();
+
+	}
+}
 
 $_W = array();
 set_time_limit(0);
@@ -63,13 +49,6 @@ abstract class We7Command {
 	public function __construct()
 	{
 		$this->init();
-		if(!function_exists('pdos')) {
-			function pdos() {
-				load()->classs('query');
-				return new Query();
-
-			}
-		}
 	}
 
 	/**
@@ -77,9 +56,9 @@ abstract class We7Command {
 	 */
 	protected function init() {
 		global $_W;
-		error_reporting(0);
-		include_once __DIR__.'/framework/bootstrap.inc.php';
+//		error_reporting(0);
 		error_reporting(E_ALL);
+		include_once __DIR__.'/framework/bootstrap.inc.php';
 	}
 
 	public static function execute() {
@@ -325,15 +304,18 @@ class We7UpgradeCommand extends We7Command {
 		return;
 	}
 
-	private function update() {
+	public function update() {
 		$this->check_table();
 		$files = $this->diff_files();
+		echo 'filecount'.count($files);
 		if (count($files) == 0) {
 			$this->line('没有要更新的文件');
 
 			return;
 		}
+		echo 'confirm';
 		if ($this->confirm('确认更新吗?')) {
+			echo 'doupdate';
 			$this->doUpgrade($files);
 		}
 	}
@@ -403,7 +385,7 @@ class We7UpgradeCommand extends We7Command {
 	 * @return array
 	 */
 	private function diff_files() {
-		$dbfiles = pdos()->from('upgrade')->getall('file'); //获取数据库目录
+		$dbfiles = pdoQuery()->from('upgrade')->getall('file'); //获取数据库目录
 		$dbfiles = array_keys($dbfiles); //数据库文件
 		$this->project_upgrade_files = $this->get_project_upgrade_files();
 		$files = array_keys($this->project_upgrade_files);
@@ -770,7 +752,7 @@ EOT;
 	private function updateTable() {
 		$this->line('开始数据库表结构更新: start update table schama....');
 		$command = new We7UpgradeCommand();
-		$command->handle();
+		$command->update();
 		$this->line('开始数据库表结构更新完成: end update table schama');
 	}
 

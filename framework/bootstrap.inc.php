@@ -54,6 +54,7 @@ $_W['clientip'] = CLIENT_IP;
 
 unset($configfile, $config);
 
+
 // 附件地址绝对路径
 define('ATTACHMENT_ROOT', IA_ROOT .'/attachment/');
 error_reporting(0);

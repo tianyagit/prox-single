@@ -139,3 +139,9 @@ if ($do == 'oauth') {
 	}
 	header('Location: ' . $url);
 }
+
+if ($do == 'pay') {
+	$tid = $_GPC['tid'];
+	//
+
+}
