@@ -221,7 +221,7 @@ if ($do == 'platform') {
 	}
 }
 
-if ($do == 'system-home') {
+if ($do == 'system-home') { 
 	define('FRAME', 'system');
 //	$account_num = permission_user_account_num();
 //
