@@ -15,7 +15,7 @@ load()->model('system');
 load()->model('user');
 load()->model('wxapp');
 
-$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules');
+$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system-home');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
@@ -219,4 +219,12 @@ if ($do == 'platform') {
 	} else {
 		iajax(0, $ads);
 	}
+}
+
+if ($do == 'system-home') {
+	define('FRAME', 'system');
+//	$account_num = permission_user_account_num();
+//
+//	$messages = table('message')->messageList();
+	template('home/welcome-system-home');
 }
