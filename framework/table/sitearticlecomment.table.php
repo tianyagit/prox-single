@@ -14,6 +14,7 @@ class SitearticlecommentTable extends We7Table {
 		return $this->query->from($this->tableName)->getall('id');
 	}
 
+
 	public function articleCommentOrder($order = 'DESC') {
 		$order = empty($order) ? 'DESC' : 'ASC';
 		return $this->query->orderby('createtime', $order);
@@ -21,10 +22,15 @@ class SitearticlecommentTable extends We7Table {
 
 	public function articleCommentAdd($comment) {
 		if (!empty($comment['parentid'])) {
-			$this->query->fill('iscomment', ARTICLE_COMMENT)->whereId($comment['parentid'])->save();
+			table('sitearticlecomment')->where('id', $comment['parentid'])->fill('iscomment', ARTICLE_COMMENT)->save();
 		}
 		$comment['createtime'] = TIMESTAMP;
-		$this->query->fill($comment)->save();
+		table('sitearticlecomment')->fill($comment)->save();
 		return true;
+	}
+
+	public function srticleCommentUnread($articleIds) {
+		global $_W;
+		return $this->query->from($this->tableName)->select('articleid, count(*) as count')->where('uniacid', $_W['uniacid'])->where('articleid', $articleIds)->where('is_read', ARTICLE_COMMENT_NOREAD)->groupby('articleid')->getall('articleid');
 	}
 }

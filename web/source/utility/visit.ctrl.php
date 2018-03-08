@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('visit');
 
-$dos = array('showjs');
+$dos = array('showjs', 'systemshowjs');
 $do = in_array($do, $dos) ? $do : 'showjs';
 /* vstart */
 if (IMS_FAMILY == 'v') {
@@ -30,3 +30,19 @@ if (IMS_FAMILY == 'x') {
 	}
 }
 /* xend */
+
+if ($do == 'systemshowjs') {
+	if (user_is_founder()) {
+//		return true;
+	}
+	$type = $_GPC['type'];
+	$types = array('account', 'wxapp', 'webapp', 'phoneapp');
+	if (in_array($type, $types)) {
+		$system_visit_info = array(
+			'uniacid' => $_W['uniacid'],
+			'uid' => $_W['uid']
+		);
+		system_visit_update($system_visit_info);
+	}
+	print_r($_GPC['type']);exit;
+}

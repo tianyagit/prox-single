@@ -598,7 +598,10 @@ function user_login_forward($forward = '') {
 				return $last_visit_url['a'] == 'display' ? url('wxapp/display') : $login_location['wxapp'];
 			}
 			$account_info = uni_fetch($last_visit_uniacid);
-			if (empty($account_info) || $last_visit_url['c'] == 'account' && $last_visit_url['a'] == 'display') {
+			if (empty($account_info)) {
+				return url('home/welcome/system-home');
+			}
+			if ($last_visit_url['c'] == 'account' && $last_visit_url['a'] == 'display') {
 				return $login_forward;
 			}
 			if (in_array($account_info['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
@@ -1043,5 +1046,19 @@ function user_is_bind() {
 			return false;
 		}
 	}
+	return true;
+}
+
+/**
+ * 修改用户登陆后首页是否开启
+ * @param $uid
+ * @return bool|int
+ */
+function user_change_welcome_status($uid, $welcome_status) {
+	if (empty($uid)) {
+		return true;
+	}
+	$user_table = table('users');
+	$user_table->fillWelcomeStatus($welcome_status)->whereUid($uid)->save();
 	return true;
 }

@@ -43,3 +43,18 @@ function visit_update_today($type, $module_name = '') {
 
 	return true;
 }
+
+/**
+ * 后台访问uniacid或者module的记录
+ * @param $system_stat_visit
+ * @return bool
+ */
+function system_visit_update($system_stat_visit) {
+	global $_W;
+	if (user_is_founder($_W['uid'])) {
+//		return true;
+	}
+	$system_stat_table = table('systemstatvisit');
+	$system_stat_table->systemStatUpdate($system_stat_visit);
+	return true;
+}

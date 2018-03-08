@@ -5,7 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->func('file');
-load()->model('mc');
 load()->model('article');
 
 $dos = array('display', 'post', 'del', 'comment_list', 'add_comment');
@@ -47,6 +46,9 @@ if ($do == 'display') {
 	$list = pdo_fetchall("SELECT * FROM ".tablename('site_article')." WHERE uniacid = '{$_W['uniacid']}' $condition ORDER BY displayorder DESC, edittime DESC, id DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_article') . " WHERE uniacid = '{$_W['uniacid']}'".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
+
+	$article_ids = array_column($list, 'id');
+	$article_comment = table('sitearticlecomment')->srticleCommentUnread($article_ids);
 	template('site/article-display');
 } elseif ($do == 'post') {
 	$id = intval($_GPC['id']);
@@ -274,28 +276,11 @@ if ($do == 'comment_list') {
 	}
 
 	$article_lists = $comment_table->articleCommentList();
-
-	$uids = array_filter(array_column($article_lists, 'uid'));
-	$openids = array_filter(array_column($article_lists, 'openid'));
-
-	$parent_article_comment_ids = array_keys($article_lists);
-
-	$son_comment_lists = $comment_table->searchWithUniacid($_W['uniacid'])->searchWithParentid($parent_article_comment_ids)->articleCommentList();
-
-	$uids = array_unique(array_merge($uids, array_filter(array_column($son_comment_lists, 'uid'))));
-	$openids = array_unique(array_merge($openids, array_filter(array_column($son_comment_lists, 'openid'))));
-
-	$user_table = table('users');
-	$users = $user_table->searchWithUid($uids)->searchUsersList();
-
-	$fans_list = array();
-	if (!empty($openids)) {
-		foreach ($openids as $openid) {
-			$fans_list[$openid] = mc_fansinfo($openid);
-		}
-	}
 	$total = $comment_table->getLastQueryTotal();
 	$pager = pagination($total, $pindex, $psize);
+
+	$article_lists = article_comment_detail($article_lists);
+
 	template('site/article-commont-list');
 }
 
@@ -312,6 +297,6 @@ if ($do == 'add_comment') {
 	if (is_error($comment_add)) {
 		iajax(-1, $comment_add['message']);
 	}
-
-	iajax(0, '回复成功');
+	$comment['username'] = $_W['username'];
+	iajax(0, $comment);
 }

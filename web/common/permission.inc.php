@@ -436,13 +436,13 @@ $we7_file_permission = array(
 			'see_module_manage_system_group_add',
 		),
 		'owner' => array(
-
+			'see_user_profile_account_num'
 		),
 		'manager' => array(
-
+			'see_user_profile_welcome'
 		),
 		'operator' => array(
-
+			'see_user_profile_welcome'
 		),
 	),
 );

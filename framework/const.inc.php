@@ -270,9 +270,14 @@ define('OAUTH_TYPE_USERINFO', 2);
 //文章评论的父级id
 define('ARTICLE_COMMENT_DEFAULT', 0);
 //评论未回复
-define('ARTICLE_NOCOMMENT', 0);
+define('ARTICLE_NOCOMMENT', 1);
 //评论已回复
-define('ARTICLE_COMMENT', 1);
+define('ARTICLE_COMMENT', 2);
+//评论未读
+define('ARTICLE_COMMENT_NOREAD', 1);
+//评论已读
+define('ARTICLE_COMMENT_READ', 2);
+
 
 //开启登陆后的首页
 define('WELCOME_STATUS_ON', 1);
