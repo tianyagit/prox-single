@@ -66,29 +66,30 @@ function file_move($filename, $dest) {
  *
  * @return array
  */
-	function file_tree($path, $include = array()) {
-		$files = array();
-		if (!empty($include)) {
-			$ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
-		} else {
-			$ds = glob($path . '/*');
-		}
-		if (is_array($ds)) {
-			foreach ($ds as $entry) {
-				if (is_file($entry)) {
-					$files[] = $entry;
-				}
-				if (is_dir($entry)) {
-					$rs = file_tree($entry);
-					foreach ($rs as $f) {
-						$files[] = $f;
-					}
+function file_tree($path, $include = array()) {
+	$files = array();
+	if (!empty($include)) {
+		$ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
+	} else {
+		$ds = glob($path . '/*');
+	}
+	if (is_array($ds)) {
+		foreach ($ds as $entry) {
+			if (is_file($entry)) {
+				$files[] = $entry;
+			}
+			if (is_dir($entry)) {
+				$rs = file_tree($entry);
+				foreach ($rs as $f) {
+					$files[] = $f;
 				}
 			}
 		}
-		
-		return $files;
 	}
+	
+	return $files;
+}
+
 /**
  * 获取指定目录下一定数量文件的文件路径.
  *

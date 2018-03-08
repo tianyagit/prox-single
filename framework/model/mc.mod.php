@@ -572,6 +572,7 @@ function mc_credit_update($uid, $credittype, $creditval = 0, $log = array()) {
 		'store_id' => intval($log[4]),
 		'clerk_type' => $clerk_type,
 		'remark' => $log[1],
+		'real_uniacid' => mc_current_real_uniacid()
 	);
 	pdo_insert('mc_credits_record', $data);
 
@@ -1664,7 +1665,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 		}
 
 		$fans_mapping = mc_fansinfo($fans['openid']);
-		unset($fans['tagid_list'], $fans['remark'], $fans['subscribe_scene'], $fans['qr_scene'], $fans['qr_scene_str']);
+		unset($fans['remark'], $fans['subscribe_scene'], $fans['qr_scene'], $fans['qr_scene_str']);
 		$fans_update_info = array(
 			'openid' => $fans['openid'],
 			'acid' => $_W['acid'],
