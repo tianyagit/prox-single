@@ -9,10 +9,12 @@ defined('IN_IA') or exit('Access Denied');
 
 class JobTable extends We7Table {
 
-	protected $field = array('type', 'payload', 'status', 'doing', 'uid', 'title', 'progress', 'create_time', 'end_time', 'update_time');
+	protected $tableName = 'job';
+	protected $field = array('type', 'payload', 'status', 'handled', 'uniacid', 'title', 'total', 'create_time', 'end_time', 'update_time');
 
-	protected $default = array('status'=>0, 'doing'=>0, 'progress'=>0, 'create_time'=>'custom', 'update_time'=>'custom');
+	protected $default = array('status'=>0, 'handed'=>0,'total'=>0, 'create_time'=>'custom', 'update_time'=>'custom');
 	const DELETE_ACCOUNT = 10;
+	const SYNC_FANS = 20;
 
 	/**
 	 *  使用默认创建时机
@@ -52,14 +54,48 @@ class JobTable extends We7Table {
 	}
 
 	/**
+	 *  是否有已存在的任务
+	 * @param $uniacid
+	 * @param $type
+	 */
+	public function exitsJob($uniacid, $type)
+	{
+		$result = table('job')->where('uniacid', $uniacid)->where('type', $type)->get();
+		return !empty($result);
+	}
+	/**
 	 *  创建一个删除公众号素材的任务
 	 * @param $uniacid
 	 */
-	public function createDeleteAccountJob($uniacid, $uid = 0)
+	public function createDeleteAccountJob($uniacid, $accountName, $total = 0)
 	{
+		// 任务已存在
+		if ($this->exitsJob($uniacid, self::DELETE_ACCOUNT)) {
+			return error(1, '任务已存在');
+		}
+
 		$data = array(
 			'type' => self::DELETE_ACCOUNT,
-			'title'=> "删除 uniacid $uniacid 的公众号数据",
+			'title'=> "删除{$accountName}的公众号数据",
+			'uniacid'=>$uniacid,
+			'total'=> $total
+		);
+		return $this->createJob($data);
+	}
+
+	/**
+	 *  创建同步粉丝任务
+	 * @param $uniacid
+	 */
+	public function createSyncFans($uniacid, $accountName, $total ) {
+		// 任务已存在
+		if ($this->exitsJob($uniacid, self::SYNC_FANS)) {
+			return error(1, '同步任务已存在');
+		}
+		$data = array(
+			'type' => self::SYNC_FANS,
+			'title'=> "同步 $accountName ($uniacid) 的公众号粉丝数据",
+			'uniacid'=>$uniacid,
 		);
 		return $this->createJob($data);
 	}
@@ -67,6 +103,7 @@ class JobTable extends We7Table {
 	private function createJob($data)
 	{
 		$this->fill($data);
-		$this->save();
+		$result = $this->save();
+		return $result;
 	}
 }

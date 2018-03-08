@@ -959,6 +959,7 @@ function account_delete($acid) {
 				file_remote_delete('headimg_'.$account['acid'].'.jpg');
 			}
 			if (!empty($acid)) {
+				
 				rmdirs(IA_ROOT . '/attachment/images/' . $uniacid);
 				@rmdir(IA_ROOT . '/attachment/images/' . $uniacid);
 				rmdirs(IA_ROOT . '/attachment/audios/' . $uniacid);

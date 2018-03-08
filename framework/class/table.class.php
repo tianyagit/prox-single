@@ -66,6 +66,14 @@ abstract class We7Table {
 		return $this->query->getLastQueryTotal();
 	}
 
+	/**
+	 *  总数
+	 */
+	public function count()
+	{
+		return $this->query->count();
+	}
+
 
 	/**
 	 *  字段填充

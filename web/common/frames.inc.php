@@ -779,6 +779,17 @@ $we7_system_menu['site'] = array(
 					'permission_name' => 'system_workorder',
 				)
 			)
+		),
+		'backjob'=> array(
+			'title' => '后台任务',
+			'menu'=> array(
+				'system_job'=> array(
+					'title' => '后台任务',
+					'url' => url('system/job/display'),
+					'icon' => 'wi wi-system-work',
+					'permission_name' => 'system_job',
+				)
+			)
 		)
 	),
 	'founder' => true,
