@@ -572,6 +572,7 @@ function mc_credit_update($uid, $credittype, $creditval = 0, $log = array()) {
 		'store_id' => intval($log[4]),
 		'clerk_type' => $clerk_type,
 		'remark' => $log[1],
+		'real_uniacid' => mc_current_real_uniacid()
 	);
 	pdo_insert('mc_credits_record', $data);
 

@@ -336,7 +336,7 @@ function payment_setting() {
 		if (in_array($type, $no_recharge_types)) {
 			$value['recharge_set'] = false;
 		}
-		if (!empty($value['pay_switch'] || !empty($value['recharge_switch']))) {
+		if (!empty($value['pay_switch']) || !empty($value['recharge_switch'])) {
 			$value['support_set'] = false;
 		}
 		foreach ($value as $key => $val) {
