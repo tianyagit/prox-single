@@ -1643,7 +1643,16 @@ function mc_init_fans_info($openid, $force_init_member = false){
 		$fans_list = $account_api->fansQueryInfo($openid);
 	}
 	if (empty($fans_list) || is_error($fans_list)) {
-		return true;
+		//未认证号没有获取用户信息权限，此处直接插入一个Openid空记录
+		if ($fans_list['errno'] == '48001') {
+			$fans_list = array(
+				'openid' => $openid,
+				'subscribe_time' => TIMESTAMP,
+				'subscribe' => 1,
+			);
+		} else {
+			return true;
+		}
 	}
 	if (!is_array($openid)) {
 		$fans_list = array($fans_list);

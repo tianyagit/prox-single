@@ -452,7 +452,7 @@ class WeiXinAccount extends WeAccount {
 		if(empty($result)) {
 			return error(-1, "接口调用失败, 元数据: {$response['meta']}");
 		} elseif(!empty($result['errcode'])) {
-			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->errorCode($result['errcode'])}");
+			return error($result['errcode'], "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},错误详情：{$this->errorCode($result['errcode'])}");
 		}
 		return $result;
 	}
