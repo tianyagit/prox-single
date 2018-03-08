@@ -12,6 +12,11 @@ if (!defined('IFRAME')) {
 }
 if ($do == 'display') {
 	$list = job_list();
+	array_walk($list, function(&$item){
+		$item['progress'] = $item['status'] ? 100 : intval($item['handled']/$item['total']*100);
+		$item['create_time'] = date('Y-m-d H:m:s', $item['create_time']);
+		return $item;
+	});
 	template('system/job');
 }
 
@@ -22,6 +27,7 @@ if ($do == 'execute') {
 		if (is_error($result)) {
 			iajax(1, $result['message']);
 		}
+
 		iajax(0,  $result['message']);
 
 	}

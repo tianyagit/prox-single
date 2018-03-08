@@ -28,14 +28,14 @@ function job_single($id) {
  * 创建一个删除素材的任务
  * @param $uniacid
  */
-function job_create_delete_account($uniacid) {
+function job_create_delete_account($uniacid, $accountName = '') {
 	global $_W;
 	/* @var $job JobTable */
 	$job = table('job');
 	$core_count = table('attachment')->where('uniacid', $uniacid)->count();
 	$wechat_count = table('attachment')->local(false)->where('uniacid', $uniacid)->count();
 	$total = $core_count + intval($wechat_count);
-	return $job->createDeleteAccountJob($uniacid, $uniacid, $total);
+	return $job->createDeleteAccountJob($uniacid, $accountName, $total);
 }
 /**
  *  执行任务
@@ -83,7 +83,7 @@ function job_execute_delete_account($job) {
 		$upjob = table('job')->where('id', $job['id']);
 		$upjob->fill('status', 1);//改为完成状态
 		$upjob->save();
-		return error(0,  array('finished'=>1, 'progress'=>100, 'id'=>$job['id']));
+		return error(0,  array('finished'=>1, 'progress'=>100, 'id'=>$job['id'], 'end_time'=>time()));
 	}
 
 

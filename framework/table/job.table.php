@@ -76,7 +76,7 @@ class JobTable extends We7Table {
 
 		$data = array(
 			'type' => self::DELETE_ACCOUNT,
-			'title'=> "删除{$accountName}的公众号数据",
+			'title'=> "删除{$accountName}的素材数据",
 			'uniacid'=>$uniacid,
 			'total'=> $total
 		);
