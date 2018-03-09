@@ -573,7 +573,7 @@ class StoreModuleSite extends WeModuleSite {
 				'wxapp' => intval($_GPC['wxapp'])
 			);
 			if (in_array($goods_info['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE))) {
-				$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid']), 'max(endtime)');
+				$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid), 'max(endtime)');
 				$order['endtime'] = strtotime('+' . $duration . $goods_info['unit'],  max($history_order_endtime, time()));
 			}
 			if (in_array($goods_info['type'], array(STORE_TYPE_WXAPP, STORE_TYPE_WXAPP_RENEW))) {
