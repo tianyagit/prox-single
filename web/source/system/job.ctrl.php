@@ -13,7 +13,8 @@ if (!defined('IFRAME')) {
 if ($do == 'display') {
 	$list = job_list();
 	array_walk($list, function(&$item){
-		$item['progress'] = $item['status'] ? 100 : intval($item['handled']/$item['total']*100);
+		$progress = $item['total'] > 0 ? $item['handled']/$item['total']*100 : 0;
+		$item['progress'] = $item['status'] ? 100 : intval($progress);
 		$item['create_time'] = date('Y-m-d H:m:s', $item['create_time']);
 		return $item;
 	});
