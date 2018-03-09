@@ -28,7 +28,7 @@
 		<div class="panel we7-panel article-list-panel">
 			<div class="panel-heading ">
 				是否开启留言功能
-				<span class="switch switchOn"></span>
+				<span ng-class="setting.comment_status == 1 ? 'switch switchOn' : 'switch'" ng-click="comment()"></span>
 			</div>
 			<div class="panel-body">
 				<table class="table we7-table table-hover article-list vertical-middle" style="table-layout: fixed;">
@@ -89,8 +89,10 @@
 		category: {php echo !empty($category) ? json_encode($category) : 'null'},
 		articleList: {php echo !empty($list) ? json_encode($list) : 'null'},
 		articleComment: {php echo !empty($article_comment) ? json_encode($article_comment) : 'null'},
+		setting: {php echo !empty($setting) ? json_encode($setting) : 'null'},
 		copyCommonLink: "{php echo murl('site/site/detail', array('id' => ''), true, true)}",
-		commentListLink: "{php echo url('site/article/comment_list')}"
+		commentListLink: "{php echo url('site/article/comment_list')}",
+		commentLink: "{php echo url('site/article/comment_status')}"
 	});
 	angular.bootstrap($('#js-wesite-article-display'), ['wesiteApp']);	
 </script>

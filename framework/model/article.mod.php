@@ -150,7 +150,7 @@ function article_comment_detail($article_lists) {
 	if (empty($article_lists)) {
 		return true;
 	}
-	$parent_article_comment_ids = array_keys($article_lists);
+	$parent_article_comment_ids = array_column($article_lists, 'id');
 
 	$comment_table = table('sitearticlecomment');
 	$comment_table->fill('is_read', ARTICLE_COMMENT_READ)->whereId($parent_article_comment_ids)->save();

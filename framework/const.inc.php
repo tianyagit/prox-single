@@ -283,3 +283,8 @@ define('ARTICLE_COMMENT_READ', 2);
 define('WELCOME_STATUS_ON', 1);
 //关闭登陆后的首页
 define('WELCOME_STATUS_OFF', 0);
+
+//关闭文章评论
+define('COMMENT_STATUS_OFF', 0);
+//开启文章评论
+define('COMMENT_STATUS_ON', 1);
