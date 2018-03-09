@@ -600,7 +600,8 @@ function buildframes($framename = ''){
 		/* xstart */
 		if (IMS_FAMILY == 'x') {
 			if (!empty($menu['founder']) && empty($_W['isfounder']) ||
-				is_array($_W['setting']['store']['blacklist']) && in_array($_W['username'], $_W['setting']['store']['blacklist']) && $menuid == 'store' ||
+				is_array($_W['setting']['store']['blacklist']) && in_array($_W['username'], $_W['setting']['store']['blacklist'])&& !empty($_W['setting']['store']['permission_status']) && $_W['setting']['store']['permission_status']['blacklist'] && $menuid == 'store' ||
+				is_array($_W['setting']['store']['whitelist']) && !in_array($_W['username'], $_W['setting']['store']['whitelist']) && !empty($_W['setting']['store']['permission_status']) && $_W['setting']['store']['permission_status']['whitelist'] && $menuid == 'store' ||
 				user_is_vice_founder() && in_array($menuid, array('site', 'advertisement', 'appmarket')) ||
 				$_W['role'] == ACCOUNT_MANAGE_NAME_CLERK && in_array($menuid, array('account', 'wxapp', 'system')) ||
 				!$menu['is_display'] || $_W['setting']['store']['status'] == 1 && $menuid == 'store' && (!$_W['isfounder'] || user_is_vice_founder())) {
