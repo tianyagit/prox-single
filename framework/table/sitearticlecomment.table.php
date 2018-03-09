@@ -8,16 +8,17 @@ defined('IN_IA') or exit('Access Denied');
 class SitearticlecommentTable extends We7Table {
 	protected $tableName = 'site_article_comment';
 	protected $primaryKey = 'id';
-	protected $field = array('id', 'uniacid', 'articleid', 'parentid', 'uid', 'openid', 'content', 'createtime');
+	protected $field = array('id', 'uniacid', 'articleid', 'parentid', 'uid', 'openid', 'content', 'is_read', 'iscomment', 'createtime');
 
 	public function articleCommentList() {
-		return $this->query->from($this->tableName)->getall('id');
+		global $_W;
+		return $this->query->from($this->tableName)->where('uniacid', $_W['uniacid'])->getall();
 	}
 
 
 	public function articleCommentOrder($order = 'DESC') {
-		$order = empty($order) ? 'DESC' : 'ASC';
-		return $this->query->orderby('createtime', $order);
+		$order = !empty($order) ? $order : 'DESC';
+		return $this->query->orderby('id', $order);
 	}
 
 	public function articleCommentAdd($comment) {
