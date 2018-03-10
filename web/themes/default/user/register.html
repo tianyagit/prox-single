@@ -87,7 +87,7 @@
 							<span class="color-red" ng-switch-when="1">*</span>
 						</label>
 						<div class="col-sm-11">
-							<input name="{{ item.field }} " id="{{ item.field }}" class="form-control col-sm-10" placeholder="{{ item.title }}" ng-blur="checkExtendfield(item.field)" required>
+							<input name="{{ item.field }} " id="{{ item.field }}" class="form-control col-sm-10" placeholder="{{ item.title }}" ng-blur="checkExtendfield(item.field)">
 							<span ng-class="{true:'fa fa-times form-control-feedback reg-system-valid',false:'fa fa-check form-control-feedback reg-system-valid'}[item.fieldErr]" aria-hidden="true"></span>
 							<span ng-class="{true:'color-red',false:'sr-only'}[item.fieldErr]" ng-bind="item.fieldMsg"></span>
 						</div>
@@ -99,7 +99,7 @@
 						<div class="col-sm-11">
 							<div class="input-group">
 								<input name="code" type="text" class="form-control" placeholder="请输入验证码" ng-blur="checkCode()" ng-model="code">
-								<a href="javascript:;" class="input-group-btn imgverify"><img src="{php echo url('utility/code');}" onclick="this.src='{php echo url('utility/code');}' + Math.random();" style="height: 32px;"/></a>
+								<a href="javascript:;" class="input-group-btn imgverify" ng-click="changeVerify()"><img ng-src="{{image}}" style="height: 32px;"/></a>
 							</div>
 							<span ng-class="{true:'color-red',false:'sr-only'}[codeErr]" ng-bind="codeMsg"></span>
 						</div>
@@ -107,7 +107,7 @@
 					{/if}
 
 					<div class="login-submit text-center">
-						<input type="submit" name="submit" value="注册" class="btn btn-primary" ng-disabled="usernameInvalid || passwordInvalid || repasswordInvalid || realnameInvalid || nicknameInvalid || qqInvalid || codeInvalid"/>
+						<input type="submit" name="submit" value="注册" class="btn btn-primary" ng-disabled="usernameInvalid || passwordInvalid || repasswordInvalid || codeInvalid"/>
 						<a href="{url 'user/login'}" class="btn btn-default">登录</a>
 						<input name="token" value="{$_W['token']}" type="hidden"/>
 						<input name="owner_uid" value="{$_GPC['owner_uid']}" type="hidden"/>
