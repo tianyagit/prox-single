@@ -142,14 +142,14 @@ $we7_system_menu['account'] = array(
 					'icon' => 'wi wi-data-synchro',
 					'permission_name' => 'profile_app_module_link_uniacid',
 				),
-				/* sxstart */
+				/* xstart */
 				'bind_domain' => array(
 					'title' => '域名绑定',
 					'url' => url('profile/bind-domain'),
 					'icon' => 'wi wi-parameter-setting',
 					'permission_name' => 'profile_bind_domain',
 				),
-				/* sxend */
+				/* xend */
 			),
 		),
 		/* xstart */
@@ -777,6 +777,17 @@ $we7_system_menu['site'] = array(
 					'url' => url('system/workorder/display'),
 					'icon' => 'wi wi-system-work',
 					'permission_name' => 'system_workorder',
+				)
+			)
+		),
+		'backjob'=> array(
+			'title' => '后台任务',
+			'menu'=> array(
+				'system_job'=> array(
+					'title' => '后台任务',
+					'url' => url('system/job/display'),
+					'icon' => 'wi wi-system-work',
+					'permission_name' => 'system_job',
 				)
 			)
 		)

@@ -7,8 +7,9 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('module');
 load()->model('wxapp');
+load()->model('visit');
 
-$dos = array('display', 'switch', 'getall_last_switch', 'have_permission_uniacids', 'accounts_dropdown_menu', 'rank');
+$dos = array('display', 'switch', 'getall_last_switch', 'have_permission_uniacids', 'accounts_dropdown_menu', 'rank', 'add_welcome');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
@@ -185,4 +186,9 @@ if ($do == 'accounts_dropdown_menu') {
 	}
 	echo template('module/dropdown-menu');
 	exit;
+}
+
+if ($do == 'add_welcome') {
+	visit_system_update(array('uid' => $_W['uid'], 'modulename' => safe_gpc_string($_GPC['module'])), true);
+	itoast(0, url('module/display'));
 }

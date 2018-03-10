@@ -43,3 +43,53 @@ function visit_update_today($type, $module_name = '') {
 
 	return true;
 }
+
+/**
+ * 访问uniacid或者module的记录或者自己设置置顶的功能($displayorder=true)
+ * @param $system_stat_visit
+ * @param bool $displayorder
+ * @return bool
+ */
+function visit_system_update($system_stat_visit, $displayorder = false) {
+	global $_W;
+	if (user_is_founder($_W['uid'])) {
+		return true;
+	}
+
+	if (empty($system_stat_visit['uniacid']) && empty($system_stat_visit['modulename'])) {
+		return true;
+	}
+	if (empty($system_stat_visit['uid'])) {
+		return true;
+	}
+	$condition['uid'] = $_W['uid'];
+	if (!empty($system_stat_visit['uniacid'])) {
+		$condition['uniacid'] = $system_stat_visit['uniacid'];
+	}
+
+	if (!empty($system_stat_visit['modulename'])) {
+		$condition['modulename'] = $system_stat_visit['modulename'];
+	}
+	$system_stat_info = pdo_get('system_stat_visit', $condition);
+
+	if (empty($system_stat_info['createtime'])) {
+		$system_stat_visit['createtime'] = TIMESTAMP;
+	}
+
+	if (empty($system_stat_visit['updatetime'])) {
+		$system_stat_visit['updatetime'] = TIMESTAMP;
+	}
+
+	if (!empty($displayorder)) {
+		$system_stat_max_order = pdo_fetchcolumn("SELECT MAX(displayorder) FROM " . tablename('system_stat_visit') . " WHERE uid = :uid", array(':uid' => $_W['uid']));
+		$system_stat_visit['displayorder'] = ++$system_stat_max_order;
+	}
+
+	if (empty($system_stat_info)) {
+		pdo_insert('system_stat_visit', $system_stat_visit);
+	} else {
+		$system_stat_visit['updatetime'] = TIMESTAMP;
+		pdo_update('system_stat_visit', $system_stat_visit, array('id' => $system_stat_info['id']));
+	}
+	return true;
+}

@@ -381,6 +381,7 @@ function wxapp_version_detail_info($version_info) {
  */
 function wxapp_save_switch($uniacid) {
 	global $_W, $_GPC;
+	load()->model('visit');
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
@@ -394,6 +395,7 @@ function wxapp_save_switch($uniacid) {
 	} else {
 		$cache_lastaccount['wxapp'] = $uniacid;
 	}
+	visit_system_update(array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	cache_write($cache_key, $cache_lastaccount);
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);

@@ -78,95 +78,48 @@ body > .tips{display:none;left:50%;padding:20px;position:fixed;text-align:center
 	<div class="text">
 		{$detail['content']}
 	</div>
+	{if !empty($setting['comment_status'])}
 	<div class="message">
 		<div class="message-head">
-			<a href="">写留言 <img src="{$_W['siteroot']}app/resource/images/reply.png" alt=""></a>
+			<a href="{php echo murl('site/site/comment', array('article_id' => $id))}">写留言 <img src="{$_W['siteroot']}app/resource/images/reply.png" alt=""></a>
 		</div>
+		{loop $article_lists $comment}
 		<div class="message-list">
 			<div content="message-item">
 				<div class="message-content">
 					<img src="http://prox/app/themes/default/preview.jpg" alt="" class="logo">
 					<div class="message-item-content">
-						<p class="name">用户EQ</p>
+						<p class="name">{php echo $comment['username']}</p>
 						<p class="content">
-							提高到多少了？
+							{php echo $comment['content']}
 						</p>
 						<p class="time">
-							2017-11-11  09:50:30
+							{php echo $comment['createtime']}
 						</p>
 					</div>
 				</div>
+				{loop $comment['son_comment'] $son_comment}
 				<div class="reply-list">
 					<div class="reply-item">
 						<div class="head">
 							作者回复
 						</div>
 						<p class="content">
-							个税起征点：从3500调整到7000
+							{php echo $comment['content']}
 						</p>
 						<p class="time">
-							2小时前
-						</p>
-					</div>
-					<div class="reply-item">
-						<div class="head">
-							作者回复
-						</div>
-						<p class="content">
-							个税起征点：从3500调整到7000
-						</p>
-						<p class="time">
-							2小时前
-						</p>
-					</div>
-					<div class="reply-item">
-						<div class="head">
-							作者回复
-						</div>
-						<p class="content">
-							个税起征点：从3500调整到7000
-						</p>
-						<p class="time">
-							2小时前
+							{php echo date('Y-m-d H:i:s', $son_comment['createtime']);}
 						</p>
 					</div>
 				</div>
-			</div>
-			<div content="message-item">
-				<div class="message-content">
-					<img src="http://prox/app/themes/default/preview.jpg" alt="" class="logo">
-					<div class="message-item-content">
-						<p class="name">用户EQ</p>
-						<p class="content">
-							提高到多少了？
-						</p>
-						<p class="time">
-							2017-11-11  09:50:30
-						</p>
-					</div>
-				</div>
-				<div class="reply-list"></div>
+				{/loop}
 			</div>
 		</div>
+		{/loop}
+		{$pager}
 	</div>
+	{/if}
 </div>
 </div>
-<style>
-	.message-editor {padding: 10px;}
-	.message-editor .title {color: #4c4c4c;font-size: 20px;line-height: 1.3;font-weight: 500;}
-	.message-editor .content {margin: 20px 0;}
-	.message-editor .content textarea {resize: none;border-color: #e7e7eb;border-radius: 0;border-bottom: 0;padding: 8px;}
-	.message-editor .content .emoij {border: 1px solid #e7e7eb;border-top: 0;margin-top: -6px;padding: 8px;}
-	.message-editor .content .emoij img{width: 30px;height: 30px;}
-</style>
-<div class="message-editor">
-	<div class="title">MySQL性能调优技巧MySQL性能调优技巧MySQL性能调优技巧MySQL性能调优技巧</div>
-	<div class="content">
-		<textarea name="" id="" cols="20" rows="3" placeholder="我也说两句"></textarea>
-		<div class="emoij">
-			<a href=""><img src="{$_W['siteroot']}app/resource/images/message-emoij.png" alt=""></a>
-		</div>
-	</div>
-	<button class="mui-btn mui-btn-success mui-btn-block js-check-mobile" uniacid="{$_W['uniacid']}">提交</button>
-</div>
+
 {template 'common/footer'}

@@ -5,10 +5,10 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->func('file');
-load()->model('mc');
 load()->model('article');
+load()->model('account');
 
-$dos = array('display', 'post', 'del', 'comment_list', 'add_comment');
+$dos = array('display', 'post', 'del', 'comment_list', 'add_comment', 'comment_status');
 $do = in_array($do, $dos) ? $do : 'display';
 
 permission_check_account_user('platform_site');
@@ -47,6 +47,11 @@ if ($do == 'display') {
 	$list = pdo_fetchall("SELECT * FROM ".tablename('site_article')." WHERE uniacid = '{$_W['uniacid']}' $condition ORDER BY displayorder DESC, edittime DESC, id DESC LIMIT ".($pindex - 1) * $psize.','.$psize, $params);
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_article') . " WHERE uniacid = '{$_W['uniacid']}'".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
+
+	$article_ids = array_column($list, 'id');
+	$article_comment = table('sitearticlecomment')->srticleCommentUnread($article_ids);
+
+	$setting = uni_setting($_W['uniacid']);
 	template('site/article-display');
 } elseif ($do == 'post') {
 	$id = intval($_GPC['id']);
@@ -253,20 +258,19 @@ if ($do == 'display') {
 
 if ($do == 'comment_list') {
 	$articleId = intval($_GPC['id']);
-	$uids = array();
-	$openids = array();
 
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 10;
 
 	$comment_table = table('sitearticlecomment');
-	$comment_table->searchWithUniacid($_W['uniacid']);
 	$comment_table->searchWithArticleid($articleId);
 	$comment_table->searchWithParentid(ARTICLE_COMMENT_DEFAULT);
 	$comment_table->searchWithPage($pindex, $psize);
 
-	$order = safe_gpc_string($_GPC['order']);
+	$order_sort = !empty($_GPC['order']) ? intval($_GPC['order']) : 2;
+	$order = $order_sort == 1 ? 'ASC' : 'DESC';
 	$comment_table->articleCommentOrder($order);
+
 
 	$is_comment = intval($_GPC['iscommend']);
 	if (!empty($is_comment)) {
@@ -274,28 +278,19 @@ if ($do == 'comment_list') {
 	}
 
 	$article_lists = $comment_table->articleCommentList();
-
-	$uids = array_filter(array_column($article_lists, 'uid'));
-	$openids = array_filter(array_column($article_lists, 'openid'));
-
-	$parent_article_comment_ids = array_keys($article_lists);
-
-	$son_comment_lists = $comment_table->searchWithUniacid($_W['uniacid'])->searchWithParentid($parent_article_comment_ids)->articleCommentList();
-
-	$uids = array_unique(array_merge($uids, array_filter(array_column($son_comment_lists, 'uid'))));
-	$openids = array_unique(array_merge($openids, array_filter(array_column($son_comment_lists, 'openid'))));
-
-	$user_table = table('users');
-	$users = $user_table->searchWithUid($uids)->searchUsersList();
-
-	$fans_list = array();
-	if (!empty($openids)) {
-		foreach ($openids as $openid) {
-			$fans_list[$openid] = mc_fansinfo($openid);
-		}
-	}
 	$total = $comment_table->getLastQueryTotal();
 	$pager = pagination($total, $pindex, $psize);
+	$article_lists = article_comment_detail($article_lists);
+
+	if (!empty($article_lists)) {
+		$parent_article_comment_ids = array_column($article_lists, 'id');
+		pdo_update('site_article_comment', array('is_read' => ARTICLE_COMMENT_READ), array('id' => $parent_article_comment_ids));
+	}
+
+
+	if ($_W['isajax']) {
+		iajax(0, $article_lists);
+	}
 	template('site/article-commont-list');
 }
 
@@ -305,6 +300,7 @@ if ($do == 'add_comment') {
 		'articleid' => intval($_GPC['articleid']),
 		'parentid' => intval($_GPC['parentid']),
 		'uid' => $_W['uid'],
+		'is_read' => ARTICLE_COMMENT_READ,
 		'content' => safe_gpc_html(htmlspecialchars_decode($_GPC['content']))
 	);
 	$comment_add = article_comment_add($comment);
@@ -312,6 +308,20 @@ if ($do == 'add_comment') {
 	if (is_error($comment_add)) {
 		iajax(-1, $comment_add['message']);
 	}
+	$comment['username'] = $_W['username'];
+	iajax(0, $comment);
+}
 
-	iajax(0, '回复成功');
+if ($do == 'comment_status') {
+	$setting = uni_setting($_W['uniacid']);
+	if (!empty($setting['comment_status'])) {
+		uni_setting_save('comment_status', COMMENT_STATUS_OFF);
+		iajax(0, COMMENT_STATUS_OFF);
+	} else {
+		if (empty($setting['oauth']['account']) && !in_array($_W['account']['level'], array(ACCOUNT_SUBSCRIPTION_VERIFY, ACCOUNT_SERVICE_VERIFY))) {
+			iajax(-1, '请升级认证号或者借权');
+		}
+		uni_setting_save('comment_status', COMMENT_STATUS_ON);
+		iajax(0, COMMENT_STATUS_ON);
+	}
 }

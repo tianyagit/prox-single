@@ -143,3 +143,39 @@ function article_comment_add($comment) {
 	$article_comment_table->articleCommentAdd($comment);
 	return true;
 }
+
+function article_comment_detail($article_lists) {
+	global $_W;
+	load()->model('mc');
+	if (empty($article_lists)) {
+		return true;
+	}
+	$parent_article_comment_ids = array_column($article_lists, 'id');
+
+	$comment_table = table('sitearticlecomment');
+	$comment_table->fill('is_read', ARTICLE_COMMENT_READ)->whereId($parent_article_comment_ids)->save();
+	$son_comment_lists = $comment_table->searchWithUniacid($_W['uniacid'])->searchWithParentid($parent_article_comment_ids)->articleCommentList();
+
+	$uids = array_unique(array_filter(array_column($son_comment_lists, 'uid')));
+
+	$user_table = table('users');
+	$users = $user_table->searchWithUid($uids)->searchUsersList();
+
+	foreach ($article_lists as &$list) {
+		$list['createtime'] = date('Y-m-d H:i:s', $list['createtime']);
+		$fans_info = mc_fansinfo($list['openid']);
+		$list['username'] = $fans_info['nickname'];
+		$list['avatar'] = $fans_info['avatar'];
+		if (empty($son_comment_lists)) {
+			continue;
+		}
+
+		foreach ($son_comment_lists as $son_comment) {
+			if ($son_comment['parentid'] == $list['id']) {
+				$son_comment['username'] = $users[$son_comment['uid']]['username'];
+				$list['son_comment'][] = $son_comment;
+			}
+		}
+	}
+	return $article_lists;
+}

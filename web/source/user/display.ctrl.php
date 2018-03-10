@@ -69,10 +69,6 @@ if ($do == 'display') {
 		$total = $users_table->getLastQueryTotal();
 		$users = user_list_format($users);
 		$pager = pagination($total, $pindex, $psize);
-
-		$str = '<ul class="pagination pagination-centered">';
-		$pos = stripos($pager, $str) + strlen($str);
-		$pager = substr($pager, 0, $pos) . "<li><a href='#' class='pager-nav'>共" . $total . "个</a></li>" . substr($pager, $pos);
 	}
 	template('user/display');
 }

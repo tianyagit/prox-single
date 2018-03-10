@@ -24,8 +24,11 @@ class StoreModuleSite extends WeModuleSite {
 		if ((!$_W['isfounder'] || user_is_vice_founder()) && $this->store_setting['status'] == 1) {
 			itoast('商城已被创始人关闭！', referer(), 'error');
 		}
-		if (in_array($_W['username'], (array)$this->store_setting['blacklist'])) {
-			itoast('您无权限进入商城，请联系管理员！', referer(), 'error');
+		if (!empty($this->store_setting['permission_status']) && empty($this->store_setting['permission_status']['close']) && !($_W['isfounder'] && !user_is_vice_founder())) {
+			if (!in_array($_W['username'], (array)$this->store_setting['whitelist']) && !empty($this->store_setting['permission_status']['whitelist']) ||
+				in_array($_W['username'], (array)$this->store_setting['blacklist']) && !empty($this->store_setting['permission_status']['blacklist']) && empty($this->store_setting['permission_status']['whitelist'])) {
+				itoast('您无权限进入商城，请联系管理员！', referer(), 'error');
+			}
 		}
 		return true;
 	}
@@ -573,7 +576,7 @@ class StoreModuleSite extends WeModuleSite {
 				'wxapp' => intval($_GPC['wxapp'])
 			);
 			if (in_array($goods_info['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE))) {
-				$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid']), 'max(endtime)');
+				$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid), 'max(endtime)');
 				$order['endtime'] = strtotime('+' . $duration . $goods_info['unit'],  max($history_order_endtime, time()));
 			}
 			if (in_array($goods_info['type'], array(STORE_TYPE_WXAPP, STORE_TYPE_WXAPP_RENEW))) {
@@ -664,55 +667,117 @@ class StoreModuleSite extends WeModuleSite {
 		include $this->template ('goodsbuyer');
 	}
 
-	public function doWebBlacklist() {
+	public function doWebPermission() {
 		global $_W, $_GPC;
 		$this->storeIsOpen();
 
 		$operation = trim($_GPC['operation']);
-		$operations = array('display', 'post', 'delete');
+		$operations = array('display', 'post', 'delete', 'change_status');
 		$operation = in_array($operation, $operations) ? $operation : 'display';
 
-		$blacklist = $this->store_setting['blacklist'];
-		if (empty($blacklist)) {
-			$blacklist = array();
-		}
+		$blacklist = (array)$this->store_setting['blacklist'];
+		$whitelist = (array)$this->store_setting['whitelist'];
+		$permission_status = (array)$this->store_setting['permission_status'];
+
 		if ($operation == 'display') {
-			include $this->template('blacklist');
+			include $this->template('permission');
 		}
 
 		if ($operation == 'post') {
 			$username = safe_gpc_string($_GPC['username']);
+			$type = in_array($_GPC['type'], array('black', 'white')) ? $_GPC['type'] : '';
+			if (empty($type)) {
+				message(error(-1, '参数错误！'), referer(), 'ajax');
+			}
 			$user_exist = pdo_get('users', array('username' => $username));
 			if (empty($user_exist)) {
-				itoast('用户不存在！');
+				message(error(-1, '用户不存在！'), $this->createWebUrl('permission', array('type' => $type, 'direct' =>1)), 'ajax');
 			}
 			if (in_array($username, $blacklist)) {
-				itoast('用户已在黑名单中！');
+				message(error(-1, '用户已在黑名单中！'), $this->createWebUrl('permission', array('type' => $type, 'direct' =>1)), 'ajax');
 			}
-			array_push($blacklist, $username);
-			$this->store_setting['blacklist'] = $blacklist;
+			if (in_array($username, $whitelist)) {
+				message(error(-1, '用户已在白名单中！'), $this->createWebUrl('permission', array('type' => $type, 'direct' =>1)), 'ajax');
+			}
+			if ($type == 'black') {
+				array_push($blacklist, $username);
+				$this->store_setting['blacklist'] = $blacklist;
+			}
+			if ($type == 'white') {
+				array_push($whitelist, $username);
+				$this->store_setting['whitelist'] = $whitelist;
+			}
 			setting_save($this->store_setting, 'store');
 			cache_build_frame_menu();
-			itoast('更新黑名单成功！');
+			message(error(0, '更新成功！'), $this->createWebUrl('permission', array('type' => $type, 'direct' =>1)), 'ajax');
+		}
+
+		if ($operation == 'change_status') {
+			$type = in_array($_GPC['type'], array('black', 'white', 'close')) ? $_GPC['type'] : '';
+			if (empty($type)) {
+				message(error(-1, '参数错误！'), referer(), 'ajax');
+			}
+			if ($type == 'black') {
+				$permission_status['blacklist'] = !$permission_status['blacklist'];
+				if (!empty($permission_status['blacklist'])) {
+					if (!empty($permission_status['whitelist'])) {
+						message(error(-1, '请先关闭白名单！'), referer(), 'ajax');
+					}
+					if (!empty($permission_status['close'])) {
+						$permission_status['close'] = false;
+					}
+				}
+			}
+			if ($type == 'white') {
+				$permission_status['whitelist'] = !$permission_status['whitelist'];
+				$permission_status['blacklist'] = !empty($permission_status['whitelist']) ? false : $permission_status['blacklist'];
+				if (!empty($permission_status['whitelist']) && !empty($permission_status['close'])) {
+					$permission_status['close'] = false;
+				}
+			}
+			if ($type == 'close') {
+				$permission_status['close'] = !$permission_status['close'];
+				if (!empty($permission_status['close'])) {
+					$permission_status['whitelist'] = $permission_status['blacklist'] = false;
+				}
+			}
+			$this->store_setting['permission_status'] = $permission_status;
+			setting_save($this->store_setting, 'store');
+			cache_build_frame_menu();
+			message(error(0, '更新成功！'), $this->createWebUrl('permission', array('type' => $type, 'direct' => 1), 'ajax'));
 		}
 
 		if ($operation == 'delete') {
 			$username = safe_gpc_string($_GPC['username']);
-			if (empty($username)) {
-				itoast('参数错误！');
+			$type = in_array($_GPC['type'], array('black', 'white')) ? $_GPC['type'] : '';
+			if (empty($username) || empty($type)) {
+				message(error(-1, '参数错误！'), referer(),'ajax');
 			}
-			if (!in_array($username, $blacklist)) {
-				itoast('用户不在黑名单中！');
-			}
-			foreach ($blacklist as $key => $val) {
-				if ($val == $username) {
-					unset($blacklist[$key]);
+			if ($type == 'white') {
+				if (!in_array($username, $whitelist)) {
+					message(error(-1, '用户不在白名单中！'), $this->createWebUrl('permission', array('type' => $type, 'direct' =>1)), 'ajax');
 				}
+				foreach ($whitelist as $key => $val) {
+					if ($val == $username) {
+						unset($whitelist[$key]);
+					}
+				}
+				$this->store_setting['whitelist'] = $whitelist;
 			}
-			$this->store_setting['blacklist'] = $blacklist;
+			if ($type == 'black') {
+				if (!in_array($username, $blacklist)) {
+					message(error(-1, '用户不在黑名单中！'), $this->createWebUrl('permission', array('type' => $type, 'direct' =>1)), 'ajax');
+				}
+				foreach ($blacklist as $key => $val) {
+					if ($val == $username) {
+						unset($blacklist[$key]);
+					}
+				}
+				$this->store_setting['blacklist'] = $blacklist;
+			}
 			setting_save($this->store_setting, 'store');
 			cache_build_frame_menu();
-			itoast('删除成功！');
+			message(error(0, '删除成功！'), $this->createWebUrl('permission', array('type' => $type, 'direct' =>1)), 'ajax');
 		}
 	}
 
@@ -794,9 +859,9 @@ class StoreModuleSite extends WeModuleSite {
 						'icon' => 'wi wi-account',
 						'type' => 'paySetting',
 					),
-					'store_manage_blacklist' => array(
-						'title' => '黑名单',
-						'url' => $this->createWebUrl('blacklist', array('direct' => 1)),
+					'store_manage_permission' => array(
+						'title' => '商城访问权限',
+						'url' => $this->createWebUrl('permission', array('direct' => 1)),
 						'icon' => 'wi wi-blacklist',
 						'type' => 'blacklist',
 					),

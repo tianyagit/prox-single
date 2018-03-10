@@ -774,6 +774,7 @@ function uni_account_switch($uniacid, $redirect = '') {
  */
 function uni_account_save_switch($uniacid) {
 	global $_W, $_GPC;
+	load()->model('visit');
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
@@ -787,6 +788,7 @@ function uni_account_save_switch($uniacid) {
 	} else {
 		$cache_lastaccount['account'] = $uniacid;
 	}
+	visit_system_update(array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	cache_write($cache_key, $cache_lastaccount);
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
@@ -928,6 +930,7 @@ function account_delete($acid) {
 	global $_W;
 	load()->func('file');
 	load()->model('module');
+	load()->model('job');
 	//判断是不是主公众号
 	$account = pdo_get('uni_account', array('default_acid' => $acid));
 	if ($account) {
@@ -952,29 +955,31 @@ function account_delete($acid) {
 
 		$subaccount = pdo_fetchall("SELECT acid FROM ".tablename('account')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
 		if (!empty($subaccount)) {
-			foreach ($subaccount as $account) {
-				@unlink(IA_ROOT . '/attachment/qrcode_'.$account['acid'].'.jpg');
-				@unlink(IA_ROOT . '/attachment/headimg_'.$account['acid'].'.jpg');
-				file_remote_delete('qrcode_'.$account['acid'].'.jpg');
-				file_remote_delete('headimg_'.$account['acid'].'.jpg');
+			foreach ($subaccount as $childaccount) {
+				@unlink(IA_ROOT . '/attachment/qrcode_'.$childaccount['acid'].'.jpg');
+				@unlink(IA_ROOT . '/attachment/headimg_'.$childaccount['acid'].'.jpg');
+				file_remote_delete('qrcode_'.$childaccount['acid'].'.jpg');
+				file_remote_delete('headimg_'.$childaccount['acid'].'.jpg');
 			}
 			if (!empty($acid)) {
-				rmdirs(IA_ROOT . '/attachment/images/' . $uniacid);
-				@rmdir(IA_ROOT . '/attachment/images/' . $uniacid);
-				rmdirs(IA_ROOT . '/attachment/audios/' . $uniacid);
-				@rmdir(IA_ROOT . '/attachment/audios/' . $uniacid);
+				job_create_delete_account($uniacid, $account['name']);
+//				rmdirs(IA_ROOT . '/attachment/images/' . $uniacid);
+//				@rmdir(IA_ROOT . '/attachment/images/' . $uniacid);
+//				rmdirs(IA_ROOT . '/attachment/audios/' . $uniacid);
+//				@rmdir(IA_ROOT . '/attachment/audios/' . $uniacid);
 			}
 		}
 
 		//遍历全部表删除公众号数据
 		$tables = array(
-			'account','account_wechats', 'account_wxapp', 'wxapp_versions', 'account_webapp', 'account_phoneapp', 'phoneapp_versions', 'core_attachment','core_paylog','core_queue','core_resource',
-			'wechat_attachment', 'cover_reply', 'mc_chats_record','mc_credits_recharge','mc_credits_record',
+			'account','account_wechats', 'account_wxapp', 'wxapp_versions', 'account_webapp', 'account_phoneapp',
+			'phoneapp_versions','core_paylog','core_queue','core_resource',
+			 'cover_reply', 'mc_chats_record','mc_credits_recharge','mc_credits_record',
 			'mc_fans_groups','mc_groups','mc_handsel','mc_mapping_fans','mc_mapping_ucenter','mc_mass_record',
 			'mc_member_address','mc_member_fields','mc_members','menu_event',
 			'qrcode','qrcode_stat', 'rule','rule_keyword','site_article','site_category','site_multi','site_nav','site_slide',
 			'site_styles','site_styles_vars','stat_keyword', 'stat_rule','uni_account','uni_account_modules','uni_account_users','uni_settings', 'uni_group', 'uni_verifycode','users_permission',
-			'mc_member_fields',
+			'mc_member_fields', 'wechat_news',
 		);
 		if (!empty($tables)) {
 			foreach ($tables as $table) {
