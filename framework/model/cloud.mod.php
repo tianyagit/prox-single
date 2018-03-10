@@ -395,8 +395,6 @@ function cloud_m_query($module = array()) {
 			$module = array($module);
 		}
 		$pars['module'] = base64_encode(iserializer($module));
-		$pars['page'] = 1;
-
 	}
 	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 	$file = IA_ROOT . '/data/module.query';
