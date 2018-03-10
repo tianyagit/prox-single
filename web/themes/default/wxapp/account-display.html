@@ -72,6 +72,9 @@
 					<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)">
 						<i class="wi wi-changing-over"></i>
 					</a>
+					<a ng-href="{{links.welcome}}uniacid={{list.uniacid}}" onclick="return ajaxopen(this.href);" class="cut-btn" title="添加到首页常用功能">
+						<i class="wi wi-eye"></i>
+					</a>
 					<a href="{{links.rank}}&uniacid={{list.uniacid}}" class="stick" title="置顶">
 						<i class="wi wi-stick-sign"></i>
 					</a>
@@ -129,6 +132,7 @@
 			'rank': "{php echo url('wxapp/display/rank')}",
 			'switch': "{php echo url('wxapp/display/switch')}",
 			'more_version' : "{php echo url('wxapp/version/display')}",
+			'welcome': "{php echo url('wxapp/display/add_welcome')}",
 		},
 	});
 	angular.bootstrap($('#js-wxapp-account-display'), ['wxApp']);

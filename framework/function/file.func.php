@@ -66,9 +66,8 @@ function file_move($filename, $dest) {
  *
  * @return array
  */
-function file_tree($path, $include = array(), $file_number = 0) {
+function file_tree($path, $include = array()) {
 	$files = array();
-	$files_count = 0;
 	if (!empty($include)) {
 		$ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
 	} else {
@@ -78,21 +77,57 @@ function file_tree($path, $include = array(), $file_number = 0) {
 		foreach ($ds as $entry) {
 			if (is_file($entry)) {
 				$files[] = $entry;
-				$files_count++;
-				if ($file_number > 0 && $files_count >= $file_number) {
-					return $files;
-				}
 			}
 			if (is_dir($entry)) {
 				$rs = file_tree($entry);
 				foreach ($rs as $f) {
 					$files[] = $f;
-					$files_count++;
-					if ($file_number > 0 && $files_count >= $file_number) {
+				}
+			}
+		}
+	}
+	
+	return $files;
+}
+
+/**
+ * 获取指定目录下一定数量文件的文件路径.
+ *
+ * @param string $path 文件夹目录
+ * @param array  $limit 获取文件数量
+ * @param array  $file_count 已获取文件数量
+ *
+ * @return array
+ */
+function file_tree_limit($path, $limit = 0, $acquired_files_count = 0) {
+	$files = array();
+	if (is_dir($path)){
+		if ($dir = opendir($path)){
+			while (($file = readdir($dir)) !== false){
+				if (in_array($file, array('.', '..'))) {
+					continue;
+				}
+				if (is_file($path . '/' . $file)) {
+					$files[] = $path . '/' . $file;
+					$acquired_files_count++;
+					if ($limit > 0 && $acquired_files_count >= $limit) {
+						closedir($dir);
 						return $files;
 					}
 				}
+				if (is_dir($path . '/' . $file)) {
+					$rs = file_tree_limit($path . '/' . $file, $limit, $acquired_files_count);
+					foreach ($rs as $f) {
+						$files[] = $f;
+						$acquired_files_count++;
+						if ($limit > 0 && $acquired_files_count >= $limit) {
+							closedir($dir);
+							return $files;
+						}
+					}
+				}
 			}
+			closedir($dir);
 		}
 	}
 	return $files;
@@ -101,34 +136,33 @@ function file_tree($path, $include = array(), $file_number = 0) {
 /**
  * 判断指定目录下是否存在图片
  *
- * @param string $path
- *                        文件夹目录
- * @param array  $include
- *                        指定获取子目录
- *
+ * @param string $path 文件夹目录
  * @return array
  */
-function dir_exist_image($path, $include = array()) {
-	if (!empty($include)) {
-		$ds = glob($path . '/{' . implode(',', $include) . '}', GLOB_BRACE);
-	} else {
-		$ds = glob($path . '/*');
-	}
-	if (is_array($ds)) {
-		foreach ($ds as $entry) {
-			if (is_file($entry) && file_is_image($entry)) {
-				if (strpos($path, ATTACHMENT_ROOT) === 0) {
-					$attachment = str_replace(ATTACHMENT_ROOT . 'images/', '', $entry);
-					list($file_account) = explode('/', $attachment);
-					if ($file_account == 'global') {
-						continue;
-					}
+function file_dir_exist_image($path) {
+	if (is_dir($path)){
+		if ($dir = opendir($path)){
+			while (($file = readdir($dir)) !== false){
+				if (in_array($file, array('.', '..'))) {
+					continue;
 				}
-				return true;
+				if (is_file($path . '/' . $file) && file_is_image($path . '/' . $file)) {
+					if (strpos($path, ATTACHMENT_ROOT) === 0) {
+						$attachment = str_replace(ATTACHMENT_ROOT . 'images/', '', $path . '/' .$file);
+						list($file_account) = explode('/', $attachment);
+						if ($file_account == 'global') {
+							continue;
+						}
+					}
+					closedir($dir);
+					return true;
+				}
+				if (is_dir($path . '/' . $file) && file_dir_exist_image($path . '/' . $file)) {
+					closedir($dir);
+					return true;
+				}
 			}
-			if (is_dir($entry) && dir_exist_image($entry)) {
-				return true;
-			}
+			closedir($dir);
 		}
 	}
 	return false;
@@ -437,20 +471,19 @@ function file_remote_upload($filename, $auto_delete_local = true) {
 }
 
 /**
- * 上传目录下的所有图片到远程服务器并删除本地图片.
- *
+ * 上传目录下的图片到远程服务器并删除本地图片.
  * @param string $dir_path 目录路径
- *
+ * @param string $limit 上传数量限制
  * @return true|error
  */
-function file_dir_remote_upload($dir_path) {
+function file_dir_remote_upload($dir_path, $limit = 50) {
 	global $_W;
 	if (empty($_W['setting']['remote']['type'])) {
 		return error(1, '未开启远程附件');
 	}
 	$dir_path = safe_gpc_path($dir_path);
 	if (!empty($dir_path)) {
-		$local_attachment = file_tree($dir_path, '', 50);
+		$local_attachment = file_tree_limit($dir_path, $limit);
 	} else {
 		$local_attachment = array();
 	}

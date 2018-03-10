@@ -583,6 +583,18 @@ function user_login_forward($forward = '') {
 	if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
 		return url('home/welcome/system');
 	}
+	if (user_is_vice_founder()) {
+		return url('account/manage', array('account_type' => 1));
+	}
+
+	if (!empty($_W['setting']['copyright']['welcome_status']) && !empty($_W['user']['welcome_status'])) {
+		if (!empty($_W['user']['welcome_link'])) {
+			return $_W['user']['welcome_link'];
+		}
+
+		return url('home/welcome/system_home');
+	}
+
 	$login_forward = url('account/display');
 	$visit_key = '__lastvisit_' . $_W['uid'];
 	if (!empty($_GPC[$visit_key])) {
@@ -615,9 +627,7 @@ function user_login_forward($forward = '') {
 			}
 		}
 	}
-	if (user_is_vice_founder()) {
-		return url('account/manage', array('account_type' => 1));
-	}
+
 	if ($_W['user']['type'] == ACCOUNT_OPERATE_CLERK) {
 		return url('module/display');
 	}
@@ -1043,5 +1053,19 @@ function user_is_bind() {
 			return false;
 		}
 	}
+	return true;
+}
+
+/**
+ * 修改用户登陆后首页是否开启
+ * @param $uid
+ * @return bool|int
+ */
+function user_change_welcome_status($uid, $welcome_status) {
+	if (empty($uid)) {
+		return true;
+	}
+	$user_table = table('users');
+	$user_table->fillWelcomeStatus($welcome_status)->whereUid($uid)->save();
 	return true;
 }

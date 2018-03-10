@@ -318,6 +318,26 @@ if($do == 'modules_tpl') {
 			cache_build_account($uniacid);
 			iajax(0, '修改成功！', '');
 		}
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			if ($_GPC['type'] == 'store_endtime' && user_is_founder($_W['uid']) && !user_is_vice_founder()) {
+				$order_id = intval($_GPC['order_id']);
+				$new_endtime = safe_gpc_string($_GPC['new_time']);
+				if (empty($order_id)) {
+					iajax(-1, '参数错误！');
+				}
+				$condition = array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'id' => $order_id);
+				$order_exist = pdo_get('site_store_order', $condition);
+				if (!empty($order_exist)) {
+					pdo_update('site_store_order', array('endtime' => strtotime($new_endtime)), $condition);
+				} else {
+					iajax(-1, '您未购买该权限组！');
+				}
+				iajax(0, '修改成功！', referer());
+			}
+		}
+		/* xend */
+
 		iajax(40035, '参数错误！', '');
 	}
 	$modules_tpl = $extend = array();
@@ -429,7 +449,9 @@ if($do == 'modules_tpl') {
 			foreach ($account_buy_group as $group) {
 				$account_buy_package[$group] = $uni_groups[$group];
 				$account_buy_package[$group]['goods_id'] = pdo_getcolumn('site_store_goods', array('module_group' => $group), 'id');
-				$account_buy_package[$group]['expire_time'] = pdo_getcolumn('site_store_order', array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'goodsid' => $account_buy_package[$group]['goods_id']), 'max(endtime)');
+				$order_info = pdo_get('site_store_order', array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'goodsid' => $account_buy_package[$group]['goods_id']), array('id', 'max(endtime) as endtime'));
+				$account_buy_package[$group]['order_id'] = $order_info['id'];
+				$account_buy_package[$group]['expire_time'] = $order_info['endtime'];
 				if (TIMESTAMP > $account_buy_package[$group]['expire_time']) {
 					$account_buy_package[$group]['expire'] = true;
 				} else {

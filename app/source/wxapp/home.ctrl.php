@@ -7,7 +7,7 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
 load()->model('mc');
-$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxappweb_pay', 'wxappweb_pay_result', 'package_app', 'go_paycenter', 'oauth');
+$dos = array('nav', 'slide', 'commend', 'wxapp_web', 'wxappweb_pay', 'wxappweb_pay_result', 'package_app', 'go_paycenter', 'oauth', 'credit_info');
 $do = in_array($_GPC['do'], $dos) ? $_GPC['do'] : 'nav';
 
 $multiid = intval($_GPC['t']);
@@ -140,8 +140,8 @@ if ($do == 'oauth') {
 	header('Location: ' . $url);
 }
 
-if ($do == 'pay') {
-	$tid = $_GPC['tid'];
-	//
-
+if ($do == 'credit_info') {
+	$member_info = mc_fetch($_W['member']['uid'], array('credit2'));
+	$credit2 = !empty($member_info['credit2']) ? $member_info['credit2'] : 0;
+	message(error(0, $credit2), '', 'ajax');
 }

@@ -4,9 +4,11 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-$do = in_array($do, array('list', 'detail', 'handsel')) ? $do : 'list';
+$do = in_array($do, array('list', 'detail', 'handsel', 'comment')) ? $do : 'list';
 load()->model('site');
 load()->model('mc');
+load()->model('article');
+load()->model('account');
 
 if ($do == 'list') {
 	$cid = intval($_GPC['cid']);
@@ -135,6 +137,23 @@ if ($do == 'list') {
 		'title' => $detail['title'],
 		'imgUrl' => $detail['thumb']
 	);
+
+	$setting = uni_setting($_W['uniacid']);
+	if (!empty($setting['comment_status'])) {
+		mc_oauth_userinfo();
+		$pindex = max(1, intval($_GPC['page']));
+		$psize = 10;
+		$comment_table = table('sitearticlecomment');
+		$comment_table->searchWithArticleid($id);
+		$comment_table->searchWithParentid(ARTICLE_COMMENT_DEFAULT);
+		$comment_table->searchWithPage($pindex, $psize);
+
+		$article_lists = $comment_table->articleCommentList();
+		$total = $comment_table->getLastQueryTotal();
+		$pager = pagination($total, $pindex, $psize);
+		$article_lists = article_comment_detail($article_lists);
+	}
+
 	template('site/detail');
 } elseif ($do == 'handsel') {
 	// 处理分享成功后的积分处理
@@ -198,4 +217,28 @@ if ($do == 'list') {
 			'非法操作'
 		)));
 	}
+}
+
+
+if ($do == 'comment') {
+	$article_id = intval($_GPC['article_id']);
+	$parent_id = intval($_GPC['parent_id']);
+	$article_info = pdo_get('site_article', array('id' => $article_id, 'uniacid' => $_W['uniacid']));
+
+	if ($_W['ispost']) {
+		$_W['openid'] = 'oPUOlw7dwHvi9QnHvRechQJK3iMY';
+		$comment = array(
+			'uniacid' => $_W['uniacid'],
+			'articleid' => intval($_GPC['article_id']),
+			'openid' => $_W['openid'],
+			'content' => safe_gpc_html(htmlspecialchars_decode($_GPC['content']))
+		);
+		$comment_add = article_comment_add($comment);
+		if (is_error($comment_add)) {
+			message($comment_add['message'], referer(), 'error');
+		}
+		header('Location: ' . murl('site/site/detail', array('id' => intval($_GPC['article_id']))));
+		exit();
+	}
+	template('site/comment');
 }

@@ -68,6 +68,9 @@
 					<a ng-href="{{detail.switchurl}}" class="entry">
 						<div>进入公众号 <i class="wi wi-angle-right"></i></div>
 					</a>
+					<a ng-href="{{links.welcome}}uniacid={{detail.uniacid}}" onclick="return ajaxopen(this.href);" class="cut-btn" title="添加到首页常用功能">
+						<i class="wi wi-eye"></i>
+					</a>
 					<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)" title="置顶">
 						<i class="wi wi-stick-sign"></i>
 					</a>
@@ -85,6 +88,7 @@
 		links: {
 			rank: "{php echo url('account/display/rank')}",
 			display: "{php echo url('account/display/display')}",
+			welcome: "{php echo url('account/display/add_welcome')}",
 		},
 		scrollUrl : "{php echo url('account/display')}",
 		keyword : "{$keyword}",

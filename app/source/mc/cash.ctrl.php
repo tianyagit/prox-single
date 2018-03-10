@@ -28,6 +28,13 @@ if(empty($params) || !array_key_exists($params['module'], $moduels)) {
 }
 
 $setting = uni_setting($_W['uniacid'], 'payment');
+if (empty($setting['payment'])) {
+	message('支付方式错误,请联系商家', '', 'error');
+}
+foreach ($setting['payment'] as &$value) {
+	$value['switch'] = $params['module'] == 'recharge' ? $value['recharge_switch'] : $value['pay_switch'];
+}
+unset($value);
 $dos = array();
 if(!empty($setting['payment']['credit']['switch'])) {
 	$dos[] = 'credit';

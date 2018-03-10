@@ -54,6 +54,9 @@
 					<!--<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)" title="置顶">-->
 						<!--<i class="wi wi-stick-sign"></i>-->
 					<!--</a>-->
+					<a href="{php echo url('webapp/manage/add_welcome', array('uniacid' => $item['uniacid']))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="添加到首页常用功能">
+						<i class="wi wi-eye"></i>
+					</a>
 				</div>
 			</div>
 			{/loop}

@@ -87,6 +87,9 @@ if ($do == 'event_notice') {
 
 if ($do == 'all_read') {
 	message_notice_all_read($types);
-	iajax(0, '全部已读', url('message/notice', array('type' => $type)));
+	if ($_W['isajax']) {
+		iajax(0, '全部已读', url('message/notice', array('type' => $type)));
+	}
+	itoast('', referer());
 }
 template('message/notice');
