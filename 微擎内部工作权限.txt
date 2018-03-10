@@ -59,6 +59,18 @@ open.we7team@qq.com   415598100
 		appid: wx02205dd3807c8bd7
 		appsecret: 33b7db068e0cda8d5d3d45203d20b458
 
+万能网页小程序
+
+wxd7363358da6c4160
+58c5daf9b58a7b66e457d3ba681034a8
+
+公司小程序
+1948277939@qq.com
+Qw123456
+小程序权限
+原始ID gh_3160dd6795f3
+AppID wx32363154ec0d52e8
+AppSecret cffeecc64a0342e586fdbf90d4a6a8fa
 
 ceshi.nd98.cn
 admin
@@ -72,6 +84,9 @@ https://ccceshi.w7.cc
 admin
 we7!@#
 数据库： http://115.159.77.66/phpMyAdmin__/    root   root
+
+
+
 
 115.159.77.66
 root
@@ -87,3 +102,5 @@ if ($_SERVER['REMOTE_ADDR'] == '118.81.6.85') {
 if (strexists($_SERVER['REMOTE_ADDR'], '100.116.222')) {
 	echo 333;exit;
 }
+
+

@@ -43,7 +43,7 @@
                         <p class="reply-time">{{comment.createtime}}</p>
                     </div>
                     <div class="media-right">
-                        <a href="javascript:;" ng-click="replyarticle(comment.id)" class="color-default">回复</a>
+                        <a href="javascript:;" ng-click="replyarticle(comment)" ng-show="!comment.replying" class="color-default">回复</a>
                     </div>
                 </div>
                 <div class="reply-list">
@@ -58,7 +58,7 @@
                     </div>
                 </div>
 
-                <div class="reply-editor hide" id = "reply-{{comment.id}}">
+                <div class="reply-editor" ng-show="comment.replying">
                     <div class="reply-editor-head">
                         回复该评论
                     </div>
@@ -69,8 +69,8 @@
                         </div>
                     </div>
                     <div class="reply-editor-action">
-                        <button class="btn btn-primary" ng-click="send(comment.id, content)">发送 </button>
-                        <button class="btn btn-default" ng-click="cancel(comment.id)">取消</button>
+                        <button class="btn btn-primary" ng-click="send(comment, content)">发送 </button>
+                        <button class="btn btn-default" ng-click="cancel(comment)">取消</button>
                     </div>
                 </div>
             </div>

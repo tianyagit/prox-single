@@ -3,10 +3,11 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('phoneapp');
 load()->model('account');
+load()->model('visit');
 
 $_W['page']['title'] = 'APP列表';
 
-$do = safe_gpc_belong($do, array('display', 'switch', 'home'), 'display');
+$do = safe_gpc_belong($do, array('display', 'switch', 'home', 'add_welcome'), 'display');
 
 if ($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -102,4 +103,9 @@ if ($do == 'display') {
 
 	$pager = pagination($total, $pindex, $psize);
 	template('phoneapp/display');
+}
+
+if ($do == 'add_welcome') {
+	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid'])), true);
+	itoast(0, url('webapp/manage/list'));
 }

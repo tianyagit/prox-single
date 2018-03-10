@@ -13,6 +13,10 @@ class We7_diyspecialModuleSite extends WeModuleSite {
 		load()->model('site');
 	}
 
+	public function doPagePay() {
+		$this->pay2(array('tid'=>'bddd', 'price'=>100));
+	}
+
 	public function doWebIndex() {
 		global $_W, $_GPC;
 			$_W['page']['title'] = '专题页面';

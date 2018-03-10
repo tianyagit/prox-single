@@ -14,8 +14,11 @@ load()->model('module');
 load()->model('system');
 load()->model('user');
 load()->model('wxapp');
+load()->model('account');
+load()->model('message');
+load()->model('visit');
 
-$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system-home');
+$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'welcome_status');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
@@ -221,10 +224,46 @@ if ($do == 'platform') {
 	}
 }
 
-if ($do == 'system-home') { 
-	define('FRAME', 'system');
-//	$account_num = permission_user_account_num();
-//
-//	$messages = table('message')->messageList();
+if ($do == 'system_home') {
+	$user_info = user_single($_W['uid']);
+	$account_num = permission_user_account_num();
+
+	$last_accounts_modules = pdo_getall('system_stat_visit', array('uid' => $_W['uid']), array(), '', array('displayorder desc', 'updatetime desc'), 20);
+
+	$modules = array_filter(array_column($last_accounts_modules, 'modulename'));
+
+	$module_list = pdo_getall('modules', array('name' => $mudules), array(), 'name');
+
+	if (!empty($last_accounts_modules)) {
+		foreach ($last_accounts_modules as &$info) {
+			if (!empty($info['uniacid'])) {
+				$info['account'] = uni_fetch($info['uniacid']);
+			}
+			if (!empty($info['modulename'])) {
+				$info['account'] = module_fetch($info['modulename']);
+				$info['account']['switchurl'] = url('module/display/switch', array('module_name' => $info['modulename']));
+				unset($info['account']['type']);
+			}
+		}
+	}
+
+	$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
+	$messages = pdo_getall('message_notice_log', array('uid' => $_W['uid'], 'type' => $types, 'is_read' => MESSAGE_NOREAD), array(), '', array('id desc'), 10);
+	$messages = message_list_detail($messages);
 	template('home/welcome-system-home');
+}
+
+
+if ($do == 'set_top') {
+	$id = intval($_GPC['id']);
+	$system_visit_info = pdo_get('system_stat_visit', array('id' => $id));
+	visit_system_update($system_visit_info, true);
+	iajax(0, '设置成功', referer());
+}
+
+if ($do == 'welcome_status') {
+	$user_info = user_single($_W['uid']);
+	$welcome_status = empty($user_info['welcome_status']) ? WELCOME_STATUS_ON : WELCOME_STATUS_OFF;
+	pdo_update('users', array('welcome_status' => $welcome_status), array('uid' => $_W['uid']));
+	iajax(0, $welcome_status, referer());
 }

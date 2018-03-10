@@ -7,9 +7,10 @@ defined('IN_IA') or exit('Access Denied');
 
 
 load()->model('webapp');
+load()->model('visit');
 $account_info = permission_user_account_num();
 
-$do = safe_gpc_belong($do, array('create', 'list', 'create_display'), 'list');
+$do = safe_gpc_belong($do, array('create', 'list', 'create_display', 'add_welcome'), 'list');
 
 if($do == 'create') {
 	if(!checksubmit()) {
@@ -66,4 +67,9 @@ if($do == 'list') {
 	}
 
 	template('webapp/list');
+}
+
+if ($do == 'add_welcome') {
+	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid'])), true);
+	itoast(0, url('webapp/manage/list'));
 }
