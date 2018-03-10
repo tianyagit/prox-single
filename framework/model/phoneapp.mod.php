@@ -149,7 +149,8 @@ function phoneapp_switch($uniacid, $redirect = '') {
  * 切换APP，保留最后一次操作的公众号，以便点公众号时再切换回.
  */
 function phoneapp_save_switch($uniacid) {
-	global $_GPC;
+	global $_W, $_GPC;
+	load()->model('visit');
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
@@ -163,6 +164,7 @@ function phoneapp_save_switch($uniacid) {
 	} else {
 		$cache_lastaccount['phoneapp'] = $uniacid;
 	}
+	visit_system_update(array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	cache_write($cache_key, $cache_lastaccount);
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);

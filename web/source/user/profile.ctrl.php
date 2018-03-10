@@ -340,7 +340,12 @@ if ($do == 'welcome_status') {
 	}
 	$user_table = table('users');
 	$user_info = $user_table->usersInfo($_W['uid']);
+
 	$welcome_status = empty($user_info['welcome_status']) ? WELCOME_STATUS_ON : WELCOME_STATUS_OFF;
+
+	if (empty($_W['setting']['copyright']['welcome_status']) && !empty($welcome_status)) {
+		iajax(-1, '请联系管理员从站点设置开启');
+	}
 	user_change_welcome_status($_W['uid'], $welcome_status);
 	iajax(0, $welcome_status);
 }

@@ -434,9 +434,10 @@ $we7_file_permission = array(
 		'vice_founder' => array(
 			'see_account_manage_users_adduser',
 			'see_module_manage_system_group_add',
+			'see_user_profile_account_num'
 		),
 		'owner' => array(
-			'see_user_profile_account_num'
+
 		),
 		'manager' => array(
 			'see_user_profile_welcome'

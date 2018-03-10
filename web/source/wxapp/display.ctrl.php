@@ -6,10 +6,11 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
 load()->model('account');
+load()->model('visit');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank', 'home');
+$dos = array('display', 'switch', 'rank', 'home', 'add_welcome');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'rank' || $do == 'switch') {
@@ -104,4 +105,9 @@ if ($do == 'home') {
 } elseif ($do == 'rank') {
 	uni_account_rank_top($uniacid);
 	itoast('更新成功', '', '');
+}
+
+if ($do == 'add_welcome') {
+	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid'])), true);
+	itoast(0, url('wxapp/display/home'));
 }

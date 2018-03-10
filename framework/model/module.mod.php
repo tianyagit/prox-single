@@ -837,6 +837,7 @@ function module_link_uniacid_fetch($uid, $module_name) {
  */
 function module_save_switch($module_name, $uniacid = 0, $version_id = 0) {
 	global $_W, $_GPC;
+	load()->model('visit');
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
@@ -858,6 +859,7 @@ function module_save_switch($module_name, $uniacid = 0, $version_id = 0) {
 			'version_id' => $version_id
 		);
 	}
+	visit_system_update(array('modulename' => $module_name, 'uid' => $_W['uid']));
 	cache_write($cache_key, $cache_lastaccount);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;

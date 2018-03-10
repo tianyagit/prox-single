@@ -583,6 +583,18 @@ function user_login_forward($forward = '') {
 	if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
 		return url('home/welcome/system');
 	}
+	if (user_is_vice_founder()) {
+		return url('account/manage', array('account_type' => 1));
+	}
+
+	if (!empty($_W['setting']['copyright']['welcome_status']) && !empty($_W['user']['welcome_status'])) {
+		if (!empty($_W['user']['welcome_link'])) {
+			return $_W['user']['welcome_link'];
+		}
+
+		return url('home/welcome/system_home');
+	}
+
 	$login_forward = url('account/display');
 	$visit_key = '__lastvisit_' . $_W['uid'];
 	if (!empty($_GPC[$visit_key])) {
@@ -598,10 +610,7 @@ function user_login_forward($forward = '') {
 				return $last_visit_url['a'] == 'display' ? url('wxapp/display') : $login_location['wxapp'];
 			}
 			$account_info = uni_fetch($last_visit_uniacid);
-			if (empty($account_info)) {
-				return url('home/welcome/system-home');
-			}
-			if ($last_visit_url['c'] == 'account' && $last_visit_url['a'] == 'display') {
+			if (empty($account_info) || $last_visit_url['c'] == 'account' && $last_visit_url['a'] == 'display') {
 				return $login_forward;
 			}
 			if (in_array($account_info['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
@@ -618,9 +627,7 @@ function user_login_forward($forward = '') {
 			}
 		}
 	}
-	if (user_is_vice_founder()) {
-		return url('account/manage', array('account_type' => 1));
-	}
+
 	if ($_W['user']['type'] == ACCOUNT_OPERATE_CLERK) {
 		return url('module/display');
 	}
