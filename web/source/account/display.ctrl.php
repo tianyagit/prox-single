@@ -7,9 +7,8 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
-load()->model('visit');
 
-$dos = array('rank', 'display', 'switch', 'add_welcome');
+$dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';
 
