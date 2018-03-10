@@ -61,7 +61,7 @@
 			{if empty($frames['section']['platform_module_menu']['plugin_menu'])}
 			<div class="left-menu-content">
 				<div class="left-menu-top skin-black">
-					{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service')) || defined('IN_MODULE')}
+					{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service', 'reply_setting')) || defined('IN_MODULE')}
 						{template 'common/header-module'}
 					{else}
 						{template 'common/header-' . FRAME}

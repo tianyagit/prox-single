@@ -11,7 +11,7 @@ $dos = array('display', 'post', 'delete', 'change_status', 'change_keyword_statu
 $do = in_array($do, $dos) ? $do : 'display';
 
 $m = empty($_GPC['m']) ? 'keyword' : trim($_GPC['m']);
-if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service', 'userapi'))) {
+if (in_array($m, array('keyword', 'special', 'welcome', 'default', 'apply', 'service', 'userapi', 'reply_setting'))) {
 	permission_check_account_user('platform_reply');
 } else {
 	permission_check_account_user('', true, 'reply');
@@ -160,6 +160,9 @@ if ($do == 'display') {
 				unset($item);
 			}
 		}
+	}
+	if ($m == 'reply_setting') {
+		$times = empty($_W['account']['setting']) ? 0 : intval($_W['account']['setting']['reply_setting']);
 	}
 	template('platform/reply');
 }
@@ -390,6 +393,13 @@ if ($do == 'post') {
 		}
 		$moudles = true;
 		template('platform/reply-post');
+	}
+	if ($m == 'reply_setting') {
+		if (checksubmit()) {
+			$new_times = intval($_GPC['times']);
+			uni_setting_save('reply_setting', $new_times);
+			itoast('保存成功！', referer(), 'success');
+		}
 	}
 }
 
