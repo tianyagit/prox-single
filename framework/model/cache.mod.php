@@ -313,9 +313,9 @@ function cache_build_uninstalled_module() {
 
 
 	$bought_module = cloud_m_bought();
-	$bought_count_page = ceil(count($bought_module) / 10);
+	$bought_count_page = ceil(count($bought_module) / 200);
 	for ($i = 0; $i < $bought_count_page; $i++) {
-		$cloud_bought_module = array_slice($bought_module, $i * 10, 10);
+		$cloud_bought_module = array_slice($bought_module, $i * 200, 200);
 		$cloud_module = cloud_m_query($cloud_bought_module);
 		if (!empty($cloud_module) && !is_error($cloud_module)) {
 			foreach ($cloud_module as $module) {
