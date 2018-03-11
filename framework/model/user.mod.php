@@ -587,12 +587,14 @@ function user_login_forward($forward = '') {
 		return url('account/manage', array('account_type' => 1));
 	}
 
-	if (!empty($_W['setting']['copyright']['welcome_status']) && !empty($_W['user']['welcome_status'])) {
-		if (!empty($_W['user']['welcome_link'])) {
-			return $_W['user']['welcome_link'];
+	if (!empty($_W['setting']['copyright']['welcome_status'])) {
+		if (!empty($_W['user']['welcome_status'])) {
+			if (!empty($_W['user']['welcome_link'])) {
+				return $_W['user']['welcome_link'];
+			}
+		} else {
+			return url('home/welcome/system_home');
 		}
-
-		return url('home/welcome/system_home');
 	}
 
 	$login_forward = url('account/display');
