@@ -212,10 +212,6 @@ class WeEngine {
 			WeSession::start($_W['uniacid'], $_W['openid']);
 
 			$_SESSION['openid'] = $_W['openid'];
-			$reply_times_info = iunserializer($_SESSION['__reply_times']);
-			if (!empty($_W['account']['setting']) && !empty($reply_times_info) && intval($_W['account']['setting']['reply_setting']) > 0 && strtotime($reply_times_info['date']) >= strtotime(date('Y-m-d')) && $reply_times_info['times'] >= $_W['account']['setting']['reply_setting']) {
-				exit('success');
-			}
 			$pars = $this->analyze($message);
 			$pars[] = array(
 				'message' => $message,
@@ -296,8 +292,9 @@ class WeEngine {
 				$resp = str_replace(array_keys($mapping), array_values($mapping), $resp);
 			}
 
+			$reply_times_info = iunserializer($_SESSION['__reply_times']);
 			$new_times = intval($reply_times_info['times']) + 1;
-			$_SESSION['__reply_times'] = iserializer(array('date' => date('Y-m-d'), 'times' => $new_times));
+			$_SESSION['__reply_times'] = iserializer(array('content' => $message['content'], 'date' => date('Y-m-d'), 'times' => $new_times));
 			ob_start();
 			echo $resp;
 			ob_start();
@@ -485,6 +482,7 @@ class WeEngine {
 	 * @return array 处理器列表
 	 */
 	private function analyze(&$message) {
+		global $_W;
 		$params = array();
 		if(in_array($message['type'], array('event', 'qr'))) {
 			$params = call_user_func_array(array($this, 'analyze' . $message['type']), array(&$message));
@@ -508,6 +506,10 @@ class WeEngine {
 			}
 		}
 
+		$reply_times_info = iunserializer($_SESSION['__reply_times']);
+		if (!empty($_W['account']['setting']) && !empty($reply_times_info) && intval($_W['account']['setting']['reply_setting']) > 0 && strtotime($reply_times_info['date']) >= strtotime(date('Y-m-d')) && $reply_times_info['times'] >= $_W['account']['setting']['reply_setting'] && $reply_times_info['content'] == $message['content']) {
+			exit('success');
+		}
 		if(method_exists($this, 'analyze' . $message['type'])) {
 			$temp = call_user_func_array(array($this, 'analyze' . $message['type']), array(&$message));
 			if(!empty($temp) && is_array($temp)){
