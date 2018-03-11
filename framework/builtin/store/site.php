@@ -24,7 +24,7 @@ class StoreModuleSite extends WeModuleSite {
 		if ((!$_W['isfounder'] || user_is_vice_founder()) && $this->store_setting['status'] == 1) {
 			itoast('商城已被创始人关闭！', referer(), 'error');
 		}
-		if (!empty($this->store_setting['permission_status']) && empty($this->store_setting['permission_status']['close']) && !($_W['isfounder'] && !user_is_vice_founder())) {
+		if (!empty($_W['username']) && !empty($this->store_setting['permission_status']) && empty($this->store_setting['permission_status']['close']) && !($_W['isfounder'] && !user_is_vice_founder())) {
 			if (!in_array($_W['username'], (array)$this->store_setting['whitelist']) && !empty($this->store_setting['permission_status']['whitelist']) ||
 				in_array($_W['username'], (array)$this->store_setting['blacklist']) && !empty($this->store_setting['permission_status']['blacklist']) && empty($this->store_setting['permission_status']['whitelist'])) {
 				itoast('您无权限进入商城，请联系管理员！', referer(), 'error');

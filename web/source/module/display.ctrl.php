@@ -85,7 +85,7 @@ if ($do == 'switch') {
 		$version_info = wxapp_version($version_id);
 	}
 	if (empty($uniacid) && !empty($version_id)) {
-		uni_account_save_switch($version_info['uniacid'], 'wxapp');
+		uni_account_save_switch($version_info['uniacid'], WXAPP_TYPE_SIGN);
 		wxapp_update_last_use_version($version_info['uniacid'], $version_id);
 		itoast('', url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $version_id)), 'success');
 	}
@@ -96,7 +96,7 @@ if ($do == 'switch') {
 		if ($version_info['uniacid'] != $uniacid) {
 			itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module_name' => $module_name, 'version_id' => $version_id)), 'success');
 		} else {
-			uni_account_save_switch($version_info['uniacid'], 'wxapp');
+			uni_account_save_switch($version_info['uniacid'], WXAPP_TYPE_SIGN);
 			wxapp_update_last_use_version($version_info['uniacid'], $version_id);
 			itoast('', url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $version_id)), 'success');
 		}

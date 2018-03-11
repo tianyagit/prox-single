@@ -8,7 +8,7 @@ load()->func('file');
 load()->model('article');
 load()->model('account');
 
-$dos = array('display', 'post', 'del', 'comment_list', 'add_comment', 'comment_status');
+$dos = array('display', 'post', 'del');
 $do = in_array($do, $dos) ? $do : 'display';
 
 permission_check_account_user('platform_site');

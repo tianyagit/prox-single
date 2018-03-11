@@ -758,9 +758,9 @@ function uni_account_last_switch() {
 	return $uniacid;
 }
 
-function uni_account_switch($uniacid, $redirect = '', $type = 'account') {
+function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN) {
 	global $_W;
-	if (!in_array($type, array('account', 'wxapp', 'webapp', 'phoneapp'))) {
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN))) {
 		return error(-1, '账号类型不合法');
 	}
 	uni_account_save_switch($uniacid, $type);
@@ -777,10 +777,10 @@ function uni_account_switch($uniacid, $redirect = '', $type = 'account') {
 /**
  * 切换公众号时，保留最后一次操作的小程序，以便点公众号时再切换回
  */
-function uni_account_save_switch($uniacid, $type = 'account') {
+function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 	global $_W, $_GPC;
 	load()->model('visit');
-	if (!in_array($type, array('account', 'wxapp', 'webapp', 'phoneapp'))) {
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN))) {
 		return error(-1, '账号类型不合法');
 	}
 
