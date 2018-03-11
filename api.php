@@ -293,7 +293,11 @@ class WeEngine {
 			}
 
 			$reply_times_info = iunserializer($_SESSION['__reply_times']);
-			$new_times = intval($reply_times_info['times']) + 1;
+			if ($reply_times_info['content'] == $message['content']) {
+				$new_times = intval($reply_times_info['times']) + 1;
+			} else {
+				$new_times = 1;
+			}
 			$_SESSION['__reply_times'] = iserializer(array('content' => $message['content'], 'date' => date('Y-m-d'), 'times' => $new_times));
 			ob_start();
 			echo $resp;
@@ -510,6 +514,7 @@ class WeEngine {
 		if (!empty($_W['account']['setting']) && !empty($reply_times_info) && intval($_W['account']['setting']['reply_setting']) > 0 && strtotime($reply_times_info['date']) >= strtotime(date('Y-m-d')) && $reply_times_info['times'] >= $_W['account']['setting']['reply_setting'] && $reply_times_info['content'] == $message['content']) {
 			exit('success');
 		}
+		
 		if(method_exists($this, 'analyze' . $message['type'])) {
 			$temp = call_user_func_array(array($this, 'analyze' . $message['type']), array(&$message));
 			if(!empty($temp) && is_array($temp)){
