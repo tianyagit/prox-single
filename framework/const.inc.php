@@ -41,6 +41,15 @@ define('ACCOUNT_TYPE_PHONEAPP_NORMAL', 6);
 //授权接入小程序
 define('ACCOUNT_TYPE_APP_AUTH', 7);
 
+//公众号
+define('ACCOUNT_TYPE_SIGN', 'account');
+//小程序
+define('WXAPP_TYPE_SIGN', 'wxapp');
+//PC
+define('WEBAPP_TYPE_SIGN', 'webapp');
+//APP
+define('PHONEAPP_TYPE_SIGN', 'phonaeapp');
+
 
 //授权登录接入
 define('ACCOUNT_OAUTH_LOGIN', 3);
