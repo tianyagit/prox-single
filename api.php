@@ -292,13 +292,13 @@ class WeEngine {
 				$resp = str_replace(array_keys($mapping), array_values($mapping), $resp);
 			}
 
-			$reply_times_info = iunserializer($_SESSION['__reply_times']);
+			$reply_times_info = (array)$_SESSION['__reply_times'];
 			if ($reply_times_info['content'] == $message['content']) {
 				$new_times = intval($reply_times_info['times']) + 1;
 			} else {
 				$new_times = 1;
 			}
-			$_SESSION['__reply_times'] = iserializer(array('content' => $message['content'], 'date' => date('Y-m-d'), 'times' => $new_times));
+			$_SESSION['__reply_times'] = array('content' => $message['content'], 'date' => date('Y-m-d'), 'times' => $new_times);
 			ob_start();
 			echo $resp;
 			ob_start();
@@ -510,7 +510,7 @@ class WeEngine {
 			}
 		}
 
-		$reply_times_info = iunserializer($_SESSION['__reply_times']);
+		$reply_times_info = (array)$_SESSION['__reply_times'];
 		if (!empty($_W['account']['setting']) && !empty($reply_times_info) && intval($_W['account']['setting']['reply_setting']) > 0 && strtotime($reply_times_info['date']) >= strtotime(date('Y-m-d')) && $reply_times_info['times'] >= $_W['account']['setting']['reply_setting'] && $reply_times_info['content'] == $message['content']) {
 			exit('success');
 		}
