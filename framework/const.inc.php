@@ -48,7 +48,7 @@ define('WXAPP_TYPE_SIGN', 'wxapp');
 //PC
 define('WEBAPP_TYPE_SIGN', 'webapp');
 //APP
-define('PHONEAPP_TYPE_SIGN', 'phonaeapp');
+define('PHONEAPP_TYPE_SIGN', 'phoneapp');
 
 
 //授权登录接入

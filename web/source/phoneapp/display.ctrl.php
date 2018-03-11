@@ -38,7 +38,7 @@ if ($do == 'switch') {
 			uni_account_switch($module_info['account']['uniacid'], $url);
 		} else {
 			$url .= '&version_id=' . $version_id;
-			uni_account_switch($version_info['uniacid'], $url, 'phoneapp');
+			uni_account_switch($version_info['uniacid'], $url, PHONEAPP_TYPE_SIGN);
 		}
 	}
 	phoneapp_update_last_use_version($uniacid, $version_id);
