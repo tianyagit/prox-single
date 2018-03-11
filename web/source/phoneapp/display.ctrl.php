@@ -38,11 +38,11 @@ if ($do == 'switch') {
 			uni_account_switch($module_info['account']['uniacid'], $url);
 		} else {
 			$url .= '&version_id=' . $version_id;
-			phoneapp_switch($version_info['uniacid'], $url);
+			uni_account_switch($version_info['uniacid'], $url, 'phoneapp');
 		}
 	}
 	phoneapp_update_last_use_version($uniacid, $version_id);
-	phoneapp_switch($uniacid, url('phoneapp/version/home', array('version_id' => $version_id)));
+	uni_account_switch($uniacid, url('phoneapp/version/home', array('version_id' => $version_id)), 'phoneapp');
 	exit;
 
 }
@@ -54,7 +54,7 @@ if ($do == 'home') {
 		itoast('', $url, 'info');
 	}
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
-		phoneapp_switch($last_uniacid);
+		uni_account_switch($last_uniacid, '', 'phoneapp');
 	}
 	$permission = permission_account_user_role($_W['uid'], $last_uniacid);
 	if (empty($permission)) {
