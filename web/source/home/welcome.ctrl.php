@@ -232,7 +232,7 @@ if ($do == 'system_home') {
 
 	$modules = array_filter(array_column($last_accounts_modules, 'modulename'));
 
-	$module_list = pdo_getall('modules', array('name' => $mudules), array(), 'name');
+	$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
 
 	if (!empty($last_accounts_modules)) {
 		foreach ($last_accounts_modules as &$info) {

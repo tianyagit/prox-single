@@ -87,8 +87,8 @@
 		is_comment:"{$is_comment}",
 		articleList: {php echo !empty($article_lists) ? json_encode($article_lists) : 'null'},
         links :{
-			reply: "{php echo url('site/article/add_comment')}",
-			display: "{php echo url('site/article/comment_list')}",
+			reply: "{php echo url('site/comment/add_comment')}",
+			display: "{php echo url('site/comment/comment_list')}",
         }
 	});
 	angular.bootstrap($('#js-wesite-article-comment-display'), ['wesiteApp']);

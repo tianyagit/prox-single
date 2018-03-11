@@ -85,9 +85,4 @@ if ($do == 'display') {
 		iajax(0, $account_list);
 	}
 }
-
-if ($do == 'add_welcome') {
-	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid'])), true);
-	itoast(0, url('account/display'));
-}
 template('account/display');

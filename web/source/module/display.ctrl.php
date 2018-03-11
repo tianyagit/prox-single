@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('module');
 load()->model('wxapp');
+load()->model('account');
 
 $dos = array('display', 'switch', 'getall_last_switch', 'have_permission_uniacids', 'accounts_dropdown_menu', 'rank');
 $do = in_array($do, $dos) ? $do : 'display';
@@ -84,7 +85,7 @@ if ($do == 'switch') {
 		$version_info = wxapp_version($version_id);
 	}
 	if (empty($uniacid) && !empty($version_id)) {
-		wxapp_save_switch($version_info['uniacid']);
+		uni_account_save_switch($version_info['uniacid'], WXAPP_TYPE_SIGN);
 		wxapp_update_last_use_version($version_info['uniacid'], $version_id);
 		itoast('', url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $version_id)), 'success');
 	}
@@ -95,7 +96,7 @@ if ($do == 'switch') {
 		if ($version_info['uniacid'] != $uniacid) {
 			itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module_name' => $module_name, 'version_id' => $version_id)), 'success');
 		} else {
-			wxapp_save_switch($version_info['uniacid']);
+			uni_account_save_switch($version_info['uniacid'], WXAPP_TYPE_SIGN);
 			wxapp_update_last_use_version($version_info['uniacid'], $version_id);
 			itoast('', url('wxapp/display/switch', array('module' => $module_name, 'version_id' => $version_id)), 'success');
 		}
@@ -185,9 +186,4 @@ if ($do == 'accounts_dropdown_menu') {
 	}
 	echo template('module/dropdown-menu');
 	exit;
-}
-
-if ($do == 'add_welcome') {
-	visit_system_update(array('uid' => $_W['uid'], 'modulename' => safe_gpc_string($_GPC['module'])), true);
-	itoast(0, url('module/display'));
 }

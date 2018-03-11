@@ -68,11 +68,11 @@
 					<a ng-href="{{detail.switchurl}}" class="entry">
 						<div>进入公众号 <i class="wi wi-angle-right"></i></div>
 					</a>
-
+					{if !permission_check_account_user('see_user_profile_account_num')}
 					<a ng-href="{{links.welcome}}uniacid={{detail.uniacid}}" onclick="return ajaxopen(this.href);" class="home-show" title="添加到首页常用功能">
 						<i class="wi wi-eye"></i>
 					</a>
-
+					{/if}
 					<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)" title="置顶">
 						<i class="wi wi-stick-sign"></i>
 					</a>
