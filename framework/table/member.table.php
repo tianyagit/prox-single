@@ -103,7 +103,8 @@ class MemberTable extends We7Table {
 	}
 
 	public function searchWithMember() {
-		return $this->query->from('mc_members')->get();
+		global $_W;
+		return $this->query->from('mc_members')->where('uniacid', $_W['uniacid'])->get();
 	}
 
 	public function searchWithMemberEmail($email) {
@@ -117,7 +118,9 @@ class MemberTable extends We7Table {
 	}
 
 	public function searchWithRandom($info) {
-		$this->query->where('mobile', $info)->whereor('email', $info);
+		$this->query->where(function($query) use ($info){
+			$query->where('mobile', $info)->whereor('email', $info);
+		});
 		return $this;
 	}
 
