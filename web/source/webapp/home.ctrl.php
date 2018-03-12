@@ -27,7 +27,7 @@ if($do == 'display') {
 		itoast('', url('webapp/manage/list'), 'info');
 	}
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
-		uni_account_switch($last_uniacid, '', WEBAPP_TYPE_SIGN);
+		uni_account_switch($last_uniacid, url('webapp/home'), WEBAPP_TYPE_SIGN);
 	}
 
 	$account = uni_fetch($last_uniacid);
