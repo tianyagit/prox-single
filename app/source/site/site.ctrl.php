@@ -164,6 +164,7 @@ if ($do == 'list') {
 			':id' => $id
 		));
 		$credit = iunserializer($article['credit']) ? iunserializer($article['credit']) : array();
+		$openid = pdo_fetchcolumn('SELECT openid FROM ' . tablename('mc_mapping_fans') . ' WHERE acid = :acid AND uid = :uid', array(':acid' => $_W['acid'], ':uid' => $_W['member']['uid']));
 		if (! empty($article) && $credit['status'] == 1) {
 			if ($_GPC['action'] == 'share') {
 				$touid = $_W['member']['uid'];
@@ -203,6 +204,12 @@ if ($do == 'list') {
 			if (is_error($status)) {
 				exit(json_encode($status));
 			} else {
+				if ($handsel['action'] == 'share') {
+					$send_msg = '分享文章,赠送积分';
+				}else if ($handsel['action'] == 'click') {
+					$send_msg = '分享的文章被阅读，赠送积分';
+				}
+				mc_notice_credit1($openid, $touid, $credit['share'], $send_msg);
 				exit('success');
 			}
 		} else {
