@@ -629,7 +629,7 @@ function uni_user_see_more_info($user_type, $see_more = false) {
  * @return array
  */
 function uni_owner_account_nums($uid, $role) {
-	$account_num = $wxapp_num = $webapp_num = 0;
+	$account_num = $wxapp_num = $webapp_num = $phoneapp_num = 0;
 	$condition = array('uid' => $uid, 'role' => $role);
 	$uniacocunts = pdo_getall('uni_account_users', $condition, array(), 'uniacid');
 	if (!empty($uniacocunts)) {
@@ -758,9 +758,12 @@ function uni_account_last_switch() {
 	return $uniacid;
 }
 
-function uni_account_switch($uniacid, $redirect = '') {
+function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN) {
 	global $_W;
-	uni_account_save_switch($uniacid);
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN))) {
+		return error(-1, '账号类型不合法');
+	}
+	uni_account_save_switch($uniacid, $type);
 	isetcookie('__uid', $_W['uid'], 7 * 86400);
 	if (!empty($redirect)) {
 		header('Location: ' . $redirect);
@@ -769,12 +772,18 @@ function uni_account_switch($uniacid, $redirect = '') {
 	return true;
 }
 
+
+
 /**
  * 切换公众号时，保留最后一次操作的小程序，以便点公众号时再切换回
  */
-function uni_account_save_switch($uniacid) {
+function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 	global $_W, $_GPC;
 	load()->model('visit');
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN))) {
+		return error(-1, '账号类型不合法');
+	}
+
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
@@ -783,10 +792,10 @@ function uni_account_save_switch($uniacid) {
 	$cache_lastaccount = cache_load($cache_key);
 	if (empty($cache_lastaccount)) {
 		$cache_lastaccount = array(
-			'account' => $uniacid,
+			$type => $uniacid,
 		);
 	} else {
-		$cache_lastaccount['account'] = $uniacid;
+		$cache_lastaccount[$type] = $uniacid;
 	}
 	visit_system_update(array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	cache_write($cache_key, $cache_lastaccount);

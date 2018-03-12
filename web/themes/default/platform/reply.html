@@ -10,7 +10,7 @@
 		<li {if $m == 'default'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'default')}">默认回复</a></li>
 		<li {if $m == 'service'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'service')}">常用服务</a></li>
 		<li {if $m == 'userapi'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'userapi')}">自定义接口回复</a></li>
-		<li {if $m == 'reply_setting'}class="active"{/if}><a href="{url 'platform/reply' array('m' => 'reply_setting')}">回复设置</a></li>
+		<li><a href="{url 'profile/reply-setting'}">回复设置</a></li>
 	</ul>
 {else}
 	<div class="we7-page-title">
@@ -325,25 +325,5 @@
 			angular.bootstrap($('#js-service-display'), ['replyFormApp']);
 		});
 	</script>
-{elseif $m == 'reply_setting'}
-	<form class="form-horizontal form" action="{php echo url('platform/reply/post', array('m' => $m))}" method="post" enctype="multipart/form-data">
-		<table class="table we7-table table-hover table-form  we7-form">
-			<col width="150px " />
-			<col />
-			<tr>
-				<th class="text-left" colspan="2">回复设置</th>
-			</tr>
-			<tr>
-				<td class="table-label">设置回复次数</td>
-				<td>
-					<input type="number" name="times" value="{$times}" class="form-control">
-					<span class="help-block"><i class="fa fa-exclamation-circle color-red"></i> 设置回复次数，则对于每一个用户，在当天内，回复超过设置次数后，自动回复失效。为0表示不限制。</span>
-				</td>
-			</tr>
-		</table>
-		<input type="submit" name="submit"  value="保存" class="btn btn-primary" style="padding: 6px 50px;"/>
-		<input type="hidden" name="token" value="{$_W['token']}">
-		<input type="hidden" name="m" value="{$m}">
-	</form>
 {/if}
 {template 'common/footer'}

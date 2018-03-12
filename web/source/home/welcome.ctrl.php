@@ -18,7 +18,7 @@ load()->model('account');
 load()->model('message');
 load()->model('visit');
 
-$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'welcome_status');
+$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'welcome_status', 'add_welcome');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
@@ -232,7 +232,7 @@ if ($do == 'system_home') {
 
 	$modules = array_filter(array_column($last_accounts_modules, 'modulename'));
 
-	$module_list = pdo_getall('modules', array('name' => $mudules), array(), 'name');
+	$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
 
 	if (!empty($last_accounts_modules)) {
 		foreach ($last_accounts_modules as &$info) {
@@ -266,4 +266,9 @@ if ($do == 'welcome_status') {
 	$welcome_status = empty($user_info['welcome_status']) ? WELCOME_STATUS_ON : WELCOME_STATUS_OFF;
 	pdo_update('users', array('welcome_status' => $welcome_status), array('uid' => $_W['uid']));
 	iajax(0, $welcome_status, referer());
+}
+
+if ($do == 'add_welcome') {
+	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid']), 'modulename' => safe_gpc_string($_GPC['module'])), true);
+	itoast(0, referer());
 }

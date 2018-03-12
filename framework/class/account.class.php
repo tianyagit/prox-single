@@ -1966,65 +1966,68 @@ abstract class WeModuleWxapp extends WeBase {
 		$credtis = mc_credit_fetch($_W['member']['uid']);
 		$paylog = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => $this->module['name'], 'tid' => $params['tid']));
 		if (empty($_GPC['notify'])) {
-			if (!empty($paylog) && $paylog['status'] == '0') {
-				if ($credtis['credit2'] < $params['fee']) {
-					return error(-1, '余额不足');
-				}
-				$fee = floatval($params['fee']);
-				$result = mc_credit_update($_W['member']['uid'], 'credit2', -$fee, array($_W['member']['uid'], '消费credit2:' . $fee));
-				if (is_error($result)) {
-					return error(-1, $result['message']);
-				}
-				pdo_update('core_paylog', array('status' => '1'), array('plid' => $paylog['plid']));
-				$site = WeUtility::createModuleWxapp($paylog['module']);
-				if (!is_error($site)) {
-					$site->weid = $_W['weid'];
-					$site->uniacid = $_W['uniacid'];
-					$site->inMobile = true;
-					$method = 'doPagePayResult';
-					if (method_exists($site, $method)) {
-						$ret = array();
-						$ret['result'] = 'success';
-						$ret['type'] = $paylog['type'];
-						$ret['from'] = 'return';
-						$ret['tid'] = $paylog['tid'];
-						$ret['user'] = $paylog['openid'];
-						$ret['fee'] = $paylog['fee'];
-						$ret['weid'] = $paylog['weid'];
-						$ret['uniacid'] = $paylog['uniacid'];
-						$ret['acid'] = $paylog['acid'];
-						$ret['is_usecard'] = $paylog['is_usecard'];
-						$ret['card_type'] = $paylog['card_type'];
-						$ret['card_fee'] = $paylog['card_fee'];
-						$ret['card_id'] = $paylog['card_id'];
-						$site->$method($ret);
-					}
-				}
+			if (!empty($paylog) && $paylog['status'] != '0') {
+				return error(-1, '该订单已支付');
+			}
+			if ($credtis['credit2'] < $params['fee']) {
+				return error(-1, '余额不足');
+			}
+			$fee = floatval($params['fee']);
+			$result = mc_credit_update($_W['member']['uid'], 'credit2', -$fee, array($_W['member']['uid'], '消费credit2:' . $fee));
+			if (is_error($result)) {
+				return error(-1, $result['message']);
+			}
+			pdo_update('core_paylog', array('status' => '1'), array('plid' => $paylog['plid']));
+			$site = WeUtility::createModuleWxapp($paylog['module']);
+			if (is_error($site)) {
+				return error(-1, '参数错误');
+			}
+			$site->weid = $_W['weid'];
+			$site->uniacid = $_W['uniacid'];
+			$site->inMobile = true;
+			$method = 'doPagePayResult';
+			if (method_exists($site, $method)) {
+				$ret = array();
+				$ret['result'] = 'success';
+				$ret['type'] = $paylog['type'];
+				$ret['from'] = 'return';
+				$ret['tid'] = $paylog['tid'];
+				$ret['user'] = $paylog['openid'];
+				$ret['fee'] = $paylog['fee'];
+				$ret['weid'] = $paylog['weid'];
+				$ret['uniacid'] = $paylog['uniacid'];
+				$ret['acid'] = $paylog['acid'];
+				$ret['is_usecard'] = $paylog['is_usecard'];
+				$ret['card_type'] = $paylog['card_type'];
+				$ret['card_fee'] = $paylog['card_fee'];
+				$ret['card_id'] = $paylog['card_id'];
+				$site->$method($ret);
 			}
 		} else {
 			$site = WeUtility::createModuleWxapp($paylog['module']);
-			if (!is_error($site)) {
-				$site->weid = $_W['weid'];
-				$site->uniacid = $_W['uniacid'];
-				$site->inMobile = true;
-				$method = 'doPagePayResult';
-				if (method_exists($site, $method)) {
-					$ret = array();
-					$ret['result'] = 'success';
-					$ret['type'] = $paylog['type'];
-					$ret['from'] = 'notify';
-					$ret['tid'] = $paylog['tid'];
-					$ret['user'] = $paylog['openid'];
-					$ret['fee'] = $paylog['fee'];
-					$ret['weid'] = $paylog['weid'];
-					$ret['uniacid'] = $paylog['uniacid'];
-					$ret['acid'] = $paylog['acid'];
-					$ret['is_usecard'] = $paylog['is_usecard'];
-					$ret['card_type'] = $paylog['card_type'];
-					$ret['card_fee'] = $paylog['card_fee'];
-					$ret['card_id'] = $paylog['card_id'];
-					$site->$method($ret);
-				}
+			if (is_error($site)) {
+				return error(-1, '参数错误');
+			}
+			$site->weid = $_W['weid'];
+			$site->uniacid = $_W['uniacid'];
+			$site->inMobile = true;
+			$method = 'doPagePayResult';
+			if (method_exists($site, $method)) {
+				$ret = array();
+				$ret['result'] = 'success';
+				$ret['type'] = $paylog['type'];
+				$ret['from'] = 'notify';
+				$ret['tid'] = $paylog['tid'];
+				$ret['user'] = $paylog['openid'];
+				$ret['fee'] = $paylog['fee'];
+				$ret['weid'] = $paylog['weid'];
+				$ret['uniacid'] = $paylog['uniacid'];
+				$ret['acid'] = $paylog['acid'];
+				$ret['is_usecard'] = $paylog['is_usecard'];
+				$ret['card_type'] = $paylog['card_type'];
+				$ret['card_fee'] = $paylog['card_fee'];
+				$ret['card_id'] = $paylog['card_id'];
+				$site->$method($ret);
 			}
 		}
 	}
