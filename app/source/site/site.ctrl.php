@@ -164,7 +164,7 @@ if ($do == 'list') {
 			':id' => $id
 		));
 		$credit = iunserializer($article['credit']) ? iunserializer($article['credit']) : array();
-		$openid = pdo_fetchcolumn('SELECT openid FROM ' . tablename('mc_mapping_fans') . ' WHERE acid = :acid AND uid = :uid', array(':acid' => $_W['acid'], ':uid' => $_W['member']['uid']));
+		$openid = pdo_getcolumn('mc_mapping_fans', array('acid' => $_W['acid'], 'uid' => $_W['member']['uid']), 'openid');
 		if (! empty($article) && $credit['status'] == 1) {
 			if ($_GPC['action'] == 'share') {
 				$touid = $_W['member']['uid'];
@@ -196,6 +196,7 @@ if ($do == 'list') {
 				':module' => 'article',
 				':sign' => $handsel['sign']
 			));
+
 			if (($total >= $credit['limit']) || (($total + $handsel['credit_value']) > $credit['limit'])) {
 				exit(json_encode(error(- 1, '赠送积分已达到上限')));
 			}
