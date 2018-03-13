@@ -11,6 +11,10 @@
 	<li><a href="{url 'platform/reply' array('m' => 'userapi')}">自定义接口回复</a></li>
 	<li class="active"><a href="{url 'profile/reply-setting'}">回复设置</a></li>
 </ul>
+<div class="alert alert-info">
+	<p><i class="fa fa-exclamation-circle"></i> 设置回复次数，则对于每一个用户，在当天内，某一个关键字连续并重复回复超过设置次数后，自动回复失效；</p>
+	<p><i class="fa fa-exclamation-circle"></i> 为0表示不限制，最大可设置50。</p>
+</div>
 <form class="form-horizontal form" action="{php echo url('profile/reply-setting/post', array('m' => $m))}" method="post" enctype="multipart/form-data">
 	<table class="table we7-table table-hover table-form  we7-form">
 		<col width="150px " />
@@ -21,8 +25,7 @@
 		<tr>
 			<td class="table-label">设置回复次数</td>
 			<td>
-				<input type="number" name="times" min="0" value="{$times}" class="form-control">
-				<span class="help-block"><i class="fa fa-exclamation-circle color-red"></i> 设置回复次数，则对于每一个用户，在当天内，回复超过设置次数后，自动回复失效。为0表示不限制。</span>
+				<input type="number" name="times" min="0" max="50" value="{$times}" class="form-control">
 			</td>
 		</tr>
 	</table>

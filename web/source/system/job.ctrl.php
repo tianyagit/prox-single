@@ -8,14 +8,15 @@ load()->model('job');
 $dos = array('list', 'execute', 'display', 'create');
 $do = in_array($do, $dos) ? $do : 'display';
 if (!defined('IFRAME')) {
-	define('IFRAME', 'system');
+	define('IFRAME', 'site');
 }
 if ($do == 'display') {
 	$list = job_list();
 	array_walk($list, function(&$item){
 		$progress = $item['total'] > 0 ? $item['handled']/$item['total']*100 : 0;
 		$item['progress'] = $item['status'] ? 100 : intval($progress);
-		$item['create_time'] = date('Y-m-d H:m:s', $item['create_time']);
+		$item['createtime'] = date('Y-m-d H:i:s', $item['createtime']);
+		$item['endtime'] = date('Y-m-d H:i:s', $item['endtime']);
 		return $item;
 	});
 	template('system/job');

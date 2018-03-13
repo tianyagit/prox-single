@@ -14,7 +14,7 @@ class AlterUnisetting {
 			pdo_query('ALTER TABLE ' . tablename('uni_settings') . " ADD `comment_status` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否开启留言共功能';");
 		}
 		if(!pdo_fieldexists('uni_settings', 'reply_setting')){
-			pdo_query('ALTER TABLE ' . tablename('uni_settings') . " ADD `reply_setting` int(10) NOT NULL DEFAULT 0;");
+			pdo_query('ALTER TABLE ' . tablename('uni_settings') . " ADD `reply_setting` TINYINT NOT NULL DEFAULT 0;");
 		}
 	}
 

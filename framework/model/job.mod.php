@@ -82,8 +82,9 @@ function job_execute_delete_account($job) {
 		table('attachmentgroup')->deleteByUniacid($uniacid);
 		$upjob = table('job')->where('id', $job['id']);
 		$upjob->fill('status', 1);//改为完成状态
+		$upjob->fill('endtime', TIMESTAMP);//加结束时间
 		$upjob->save();
-		return error(0,  array('finished'=>1, 'progress'=>100, 'id'=>$job['id'], 'end_time'=>time()));
+		return error(0,  array('finished'=>1, 'progress'=>100, 'id'=>$job['id'], 'endtime'=>time()));
 	}
 
 
@@ -101,7 +102,8 @@ function job_execute_delete_account($job) {
 	$handled = count($core_ids) + count($wechat_ids);
 	$all_handled = intval($job['handled']) + $handled;
 	$total = intval($job['total']);
-	table('job')->where('id', $job['id'])->fill('handled', $all_handled)->save();
+	table('job')->where('id', $job['id'])->fill('handled', $all_handled)
+		->fill('updatetime',TIMESTAMP)->save();
 	return error(0, array('finished'=>0, 'progress'=>intval($all_handled/$total*100), 'id'=>$job['id']));
 
 }

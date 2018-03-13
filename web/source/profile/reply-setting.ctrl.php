@@ -18,6 +18,9 @@ if ($do == 'display') {
 if ($do == 'post') {
 	if (checksubmit()) {
 		$new_times = intval($_GPC['times']);
+		if ($new_times > 50 || $new_times < 0) {
+			itoast('次数超过限制，请重新设置！');
+		}
 		uni_setting_save('reply_setting', $new_times);
 		itoast('保存成功！', referer(), 'success');
 	}
