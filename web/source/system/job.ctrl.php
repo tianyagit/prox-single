@@ -15,7 +15,8 @@ if ($do == 'display') {
 	array_walk($list, function(&$item){
 		$progress = $item['total'] > 0 ? $item['handled']/$item['total']*100 : 0;
 		$item['progress'] = $item['status'] ? 100 : intval($progress);
-		$item['create_time'] = date('Y-m-d H:m:s', $item['create_time']);
+		$item['createtime'] = date('Y-m-d H:m:s', $item['createtime']);
+		$item['endtime'] = date('Y-m-d H:m:s', $item['endtime']);
 		return $item;
 	});
 	template('system/job');
