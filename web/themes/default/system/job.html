@@ -36,45 +36,10 @@
 	</div>
 </div>
 <script type="text/javascript">
-	angular.module('we7job',['we7app']);
-	angular.module('we7job').controller('we7job-base-controller',
-		['$scope', '$http', 'config',
-			function($scope, $http, config) {
-				var list = config.list;
-				let jobWorker = new Worker('resource/components/job/job.js');
-				$scope.list = list;
-				$scope.start = function(job) {
-					job.start = !job.start;
-					jobWorker.postMessage(job);
-				}
-
-
-				jobWorker.onmessage = function(event) {
-					console.log(event.data);
-					let jobId = event.data.id;
-					$scope.list[jobId].progress = event.data.progress;
-					$scope.$apply();
-				}
-				$(window).on('message', function(event){
-					console.log(event);
-				});
-			}
-		]
-	);
 	angular.module('we7job').value('config',{
 		"list": {php echo json_encode($list)}
 	});
 	angular.bootstrap('#we7job', ['we7job']);
-
-
-
-
-
-
 </script>
-<script>
 
-
-	// console.log(response.then());
-</script>
 {template 'common/footer'}

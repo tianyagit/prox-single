@@ -34,10 +34,6 @@ if ($do == 'execute') {
 	}
 }
 
-if ($do == 'create') {
-	$result = job_create_delete_account(281);//创建一个删除任务
-	var_dump($result);
-}
 
 
 
