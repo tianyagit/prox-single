@@ -45,14 +45,6 @@ class JobTable extends We7Table {
 		return $this->getall();
 	}
 
-	/*
-	 *  设置正在处理中
-	 */
-	public function setDoing($id, $doing)
-	{
-		return table('job')->fill('doing', intval($doing) == 1 ? 1 : 0)->where('id', $id)->save();
-	}
-
 	/**
 	 *  是否有已存在的任务
 	 * @param $uniacid
