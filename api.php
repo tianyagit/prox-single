@@ -564,6 +564,9 @@ class WeEngine {
 		global $_W;
 		$params = array();
 		$params += $this->handler($message['type']);
+		if (!empty($params)) {
+			return $params;
+		}
 		$message['type'] = 'text';
 		$message['redirection'] = true;
 		if(!empty($message['scene'])) {
