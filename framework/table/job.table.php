@@ -12,7 +12,7 @@ class JobTable extends We7Table {
 	protected $tableName = 'job';
 	protected $field = array('type', 'payload', 'status', 'handled', 'uniacid', 'title', 'total', 'createtime', 'endtime', 'updatetime');
 
-	protected $default = array('status'=>0, 'handed'=>0,'total'=>0, 'createtime'=>'custom', 'updatetime'=>'custom');
+	protected $default = array('status'=>0, 'handled'=>0, 'total'=>0, 'createtime'=>'custom', 'updatetime'=>'custom');
 	const DELETE_ACCOUNT = 10;
 	const SYNC_FANS = 20;
 
