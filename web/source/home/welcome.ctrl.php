@@ -18,7 +18,7 @@ load()->model('account');
 load()->model('message');
 load()->model('visit');
 
-$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'welcome_status', 'add_welcome');
+$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'add_welcome');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
@@ -259,13 +259,6 @@ if ($do == 'set_top') {
 	$system_visit_info = pdo_get('system_stat_visit', array('id' => $id));
 	visit_system_update($system_visit_info, true);
 	iajax(0, '设置成功', referer());
-}
-
-if ($do == 'welcome_status') {
-	$user_info = user_single($_W['uid']);
-	$welcome_status = empty($user_info['welcome_status']) ? WELCOME_STATUS_ON : WELCOME_STATUS_OFF;
-	pdo_update('users', array('welcome_status' => $welcome_status), array('uid' => $_W['uid']));
-	iajax(0, $welcome_status, referer());
 }
 
 if ($do == 'add_welcome') {

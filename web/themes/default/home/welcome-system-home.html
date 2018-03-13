@@ -15,9 +15,8 @@
 			</div>
 			<div class="media-right media-middle">
 				<div class="right">
-					跳过首页
-					<span ng-class="user_info.welcome_status == 1 ? 'switch switchOn' : 'switch'" ng-click="welcomeStatus()"></span>
-					<i class="wi wi-info" data-container=".welcome-system-home" data-trigger=" click" data-toggle="popover" data-placement="bottom" data-html="true" data-content="开启后可指定页面直接跳转，可在我的账号-我的基本信息里设置开关和设置跳转页面  <a href='./index.php?c=user&a=profile' class='color-default'> 去设置> </a>"></i>
+					设置登录显示页面
+					<i class="wi wi-info" data-container=".welcome-system-home" data-trigger=" click" data-toggle="popover" data-placement="bottom" data-html="true" data-content="设置登录后，用户显示的页面。在我的账号-用户欢迎页设置里边更改设置"></i>
 					<span> <i class="wi wi-help"></i> 帮助系统</span>
 				</div>
 			</div>
@@ -121,7 +120,6 @@
 		user_info : {php echo !empty($user_info) ? json_encode($user_info) : 'null'},
 		links: {
 			'setTop' : "{php echo url('home/welcome/set_top')}",
-			'welcome_status' : "{php echo url('home/welcome/welcome_status')}",
 		},
 	});
 	angular.bootstrap($('.welcome-system-home'), ['homeApp']);

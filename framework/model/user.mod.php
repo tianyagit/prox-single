@@ -587,14 +587,10 @@ function user_login_forward($forward = '') {
 		return url('account/manage', array('account_type' => 1));
 	}
 
-	if (!empty($_W['setting']['copyright']['welcome_status'])) {
-		if (!empty($_W['user']['welcome_status'])) {
-			if (!empty($_W['user']['welcome_link'])) {
-				return $_W['user']['welcome_link'];
-			}
-		} else {
-			return url('home/welcome/system_home');
-		}
+	$url = user_after_login_link();
+
+	if (!empty($url)) {
+		return $url;
 	}
 
 	$login_forward = url('account/display');
@@ -1070,4 +1066,36 @@ function user_change_welcome_status($uid, $welcome_status) {
 	$user_table = table('users');
 	$user_table->fillWelcomeStatus($welcome_status)->whereUid($uid)->save();
 	return true;
+}
+
+/**
+ * 登陆之后跳转链接
+ * @return string
+ */
+function user_after_login_link() {
+	global $_W;
+	$type = $_W['user']['welcome_link'];
+
+	switch ($type) {
+		case WELCOME_DISPLAY_TYPE:
+			$url = url('home/welcome/system_home');
+			break;
+		case ACCOUNT_DISPLAY_TYPE:
+			$url = url('account/display');
+			break;
+		case WXAPP_DISPLAY_TYPE:
+			$url = url('wxapp/display');
+			break;
+		case WEBAPP_DISPLAY_TYPE:
+			$url = url('webapp/home');
+			break;
+		case PHONEAPP_DISPLAY_TYPE:
+			$url = url('phoneapp/display');
+			break;
+		default:
+			$url = '';
+			break;
+	}
+
+	return $url;
 }

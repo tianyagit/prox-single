@@ -173,18 +173,18 @@
 				<th class="text-left" colspan="3">用户首页设置</th>
 			</tr>
 			<tr>
-				<td class="table-label">跳过首页</td>
-				<td>关闭开关，登录后进入首页。开启开关，登录后直接跳转指定页面</td>
-				<td>
-					<label>
-						<div ng-class="user.welcome_status == 1 ? 'switch switchOn' : 'switch'" ng-click="changeWelcome()"></div>
-					</label>
-				</td>
-			</tr>
-			<tr>
 				<td class="table-label">登陆后跳转链接</td>
-				<td ng-bind="user.welcome_link"></td>
-				<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#welcomelink" ng-click="editInfo('welcome_link', user.welcome_link)">修改</a></div></td>
+				<td class="table-label">
+					<select class="form-control tpl-category-parent we7-select" id="category_parent" ng-model="user.welcome_link" ng-change="httpChange('welcome_link')">
+						<option ng-selected ="user.welcome_link == 0 || user.welcome_link == ''" ng-value="0">用户欢迎页</option>
+						<option ng-selected ="user.welcome_link == 1" ng-value="1" >上次登陆最后访问页面</option>
+						<option ng-selected ="user.welcome_link == 2" ng-value="2">直接跳转至公众号</option>
+						<option ng-selected ="user.welcome_link == 3" ng-value="3">直接跳转至小程序</option>
+						<option ng-selected ="user.welcome_link == 4" ng-value="4">直接跳转至PC</option>
+						<option ng-selected ="user.welcome_link == 5" ng-value="5">直接跳转至APP</option>
+					</select>
+				</td>
+				<td></td>
 			</tr>
 		</table>
 		{/if}
@@ -360,26 +360,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="modal fade" id="welcomelink" role="dialog">
-			<div class="we7-modal-dialog modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<div class="modal-title">修改首页链接</div>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<input type="text" ng-model="userOriginal.welcome_link" class="form-control" placeholder="首页链接" />
-							<span class="help-block"></span>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" ng-click="httpChange('welcome_link')" ng-click="editInfo('welcome_link', user.welcome_link)">确定</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 	{/if}
 	<div class="modal fade" id="mobile" role="dialog">
@@ -542,7 +522,6 @@ require(['underscore'], function(){
 		account_num: {php echo !empty($account_num) ? json_encode($account_num) : 'null'},
 		links: {
 			userPost: "{php echo url('user/profile/post')}",
-			welcomeLink: "{php echo url('user/profile/welcome_status')}",
 		},
 	});
 	angular.bootstrap($('#js-user-profile'), ['userProfile']);

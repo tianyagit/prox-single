@@ -287,13 +287,20 @@ define('ARTICLE_COMMENT_NOREAD', 1);
 //评论已读
 define('ARTICLE_COMMENT_READ', 2);
 
-
-//开启登陆后的首页
-define('WELCOME_STATUS_ON', 1);
-//关闭登陆后的首页
-define('WELCOME_STATUS_OFF', 0);
-
 //关闭文章评论
 define('COMMENT_STATUS_OFF', 0);
 //开启文章评论
 define('COMMENT_STATUS_ON', 1);
+
+//用户欢迎页
+define('WELCOME_DISPLAY_TYPE', 0);
+//上次登陆最后访问页面
+define('LASTVISIT_DISPLAY_TYPE', 1);
+//公众号列表
+define('ACCOUNT_DISPLAY_TYPE', 2);
+//小程序列表
+define('WXAPP_DISPLAY_TYPE', 3);
+//pc列表
+define('WEBAPP_DISPLAY_TYPE', 4);
+//app列表
+define('PHONEAPP_DISPLAY_TYPE', 5);

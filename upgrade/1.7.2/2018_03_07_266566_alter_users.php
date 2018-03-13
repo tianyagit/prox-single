@@ -10,11 +10,8 @@ class AlterUsers {
 	 *  执行更新
 	 */
 	public function up() {
-		if(!pdo_fieldexists('users', 'welcome_status')){
-			pdo_query('ALTER TABLE ' . tablename('users') . " ADD `welcome_status` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否开启首页';");
-		}
 		if(!pdo_fieldexists('users', 'welcome_link')){
-			pdo_query('ALTER TABLE ' . tablename('users') . " ADD `welcome_link` varchar(100) NOT NULL DEFAULT '' COMMENT '首页链接';");
+			pdo_query('ALTER TABLE ' . tablename('users') . " ADD `welcome_link` TINYINT(4) NOT NULL DEFAULT 0 COMMENT '登录后跳转的登陆页';");
 		}
 	}
 	
