@@ -563,7 +563,7 @@ class WeEngine {
 	private function analyzeQR(&$message) {
 		global $_W;
 		$params = array();
-		$params += $this->handler($message['type']);
+		$params = $this->handler($message['type']);
 		if (!empty($params)) {
 			return $params;
 		}
