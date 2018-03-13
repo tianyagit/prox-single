@@ -8,7 +8,7 @@ load()->model('job');
 $dos = array('list', 'execute', 'display', 'create');
 $do = in_array($do, $dos) ? $do : 'display';
 if (!defined('IFRAME')) {
-	define('IFRAME', 'system');
+	define('IFRAME', 'site');
 }
 if ($do == 'display') {
 	$list = job_list();
