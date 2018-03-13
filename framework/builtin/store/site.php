@@ -531,7 +531,6 @@ class StoreModuleSite extends WeModuleSite {
 			}
 		}
 
-
 		if ($operate == 'get_expiretime') {
 			$duration = intval ($_GPC['duration']);
 			$date = date ('Y-m-d', strtotime ('+' . $duration . $_GPC['unit'], time ()));
@@ -921,5 +920,19 @@ class StoreModuleSite extends WeModuleSite {
 		$payments_list = array_slice($payments_list, ($pindex - 1) * $pagesize, $pagesize);
 		include $this->template ('goodspayments');
 	}
+
+	public function doWebChangeOrderExpire() {
+		global $_GPC, $_W;
+		$uniacid = intval($_GPC['uniacid']);
+		$goodsid = intval($_GPC['goodsid']);
+		$duration = intval($_GPC['duration']);
+		$unit = safe_gpc_string($_GPC['unit']);
+
+		$endtime_old = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid), 'max(endtime)');
+		$endtime_new = strtotime('+' . $duration . $unit, max($endtime_old, time()));
+
+		iajax(0,date('Y-m-d H:i:s',$endtime_new));
+	}
+
 
 }
