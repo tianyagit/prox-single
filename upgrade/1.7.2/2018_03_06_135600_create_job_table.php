@@ -19,7 +19,7 @@ class CreateJobTable {
 			$table = tablename('job');
 			$sql = "CREATE TABLE IF NOT EXISTS $table (
 			  `id` int(11) NOT NULL AUTO_INCREMENT,
-			  `type` tinyint(11) NOT NULL DEFAULT 0 COMMENT '任务类型 10 删除公众号数据 20 同步粉丝 ',
+			  `type` tinyint(3) NOT NULL DEFAULT 0 COMMENT '任务类型 10 删除公众号数据 20 同步粉丝 ',
 			  `uniacid` int(11) NOT NULL DEFAULT 0 COMMENT 'uniacid',
 			  `payload` varchar(255) NOT NULL DEFAULT '' COMMENT '任务附加参数',
 			  `status` tinyint(3) NOT NULL DEFAULT '0' COMMENT '1 完成，0 新建  2 正在执行',
