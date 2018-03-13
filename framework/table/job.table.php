@@ -10,9 +10,9 @@ defined('IN_IA') or exit('Access Denied');
 class JobTable extends We7Table {
 
 	protected $tableName = 'job';
-	protected $field = array('type', 'payload', 'status', 'handled', 'uniacid', 'title', 'total', 'create_time', 'end_time', 'update_time');
+	protected $field = array('type', 'payload', 'status', 'handled', 'uniacid', 'title', 'total', 'createtime', 'endtime', 'updatetime');
 
-	protected $default = array('status'=>0, 'handed'=>0,'total'=>0, 'create_time'=>'custom', 'update_time'=>'custom');
+	protected $default = array('status'=>0, 'handed'=>0,'total'=>0, 'createtime'=>'custom', 'updatetime'=>'custom');
 	const DELETE_ACCOUNT = 10;
 	const SYNC_FANS = 20;
 
@@ -20,14 +20,14 @@ class JobTable extends We7Table {
 	 *  使用默认创建时机
 	 * @return int
 	 */
-	protected function defaultCreateTime() {
+	protected function defaultCreatetime() {
 		return TIMESTAMP;
 	}
 
 	/** 默认更新时间
 	 * @return int
 	 */
-	protected function defaultUpdateTime() {
+	protected function defaultUpdatetime() {
 		return TIMESTAMP;
 	}
 	/**
