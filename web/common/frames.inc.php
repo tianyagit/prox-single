@@ -146,7 +146,7 @@ $we7_system_menu['account'] = array(
 				'bind_domain' => array(
 					'title' => '域名绑定',
 					'url' => url('profile/bind-domain'),
-					'icon' => 'wi wi-parameter-setting',
+					'icon' => 'wi wi-bind-domain',
 					'permission_name' => 'profile_bind_domain',
 				),
 				/* xend */
@@ -159,7 +159,7 @@ $we7_system_menu['account'] = array(
 				'app' => array(
 					'title' => '访问统计',
 					'url' => url('statistics/app'),
-					'icon' => 'wi wi-api',
+					'icon' => 'wi wi-statistical',
 					'permission_name' => 'statistics_app',
 				),
 			),
@@ -441,7 +441,7 @@ $we7_system_menu['system'] = array(
 				'system_phoneapp' => array(
 					'title' => 'APP',
 					'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL)),
-					'icon' => 'wi wi-wxapp',
+					'icon' => 'wi wi-app',
 					'permission_name' => 'system_phoneapp',
 					'sub_permission' => array(
 					),
@@ -449,7 +449,7 @@ $we7_system_menu['system'] = array(
 				'system_module_phoneapp' => array(
 					'title' => 'APP应用',
 					'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL)),
-					'icon' => 'wi wi-wxapp-apply',
+					'icon' => 'wi wi-app-apply',
 					'permission_name' => 'system_module_phoneapp',
 				),
 			)
@@ -603,7 +603,7 @@ $we7_system_menu['system'] = array(
 				'system_message_notice' => array(
 					'title' => '消息提醒',
 					'url' => url('message/notice'),
-					'icon' => 'wi wi-article',
+					'icon' => 'wi wi-bell',
 					'permission_name' => 'system_message_notice',
 				)
 			)
@@ -615,7 +615,7 @@ $we7_system_menu['system'] = array(
 				'system_account_analysis' => array(
 					'title' => 	'访问统计',
 					'url' => url('statistics/account'),
-					'icon' => 'wi wi-article',
+					'icon' => 'wi wi-statistical',
 					'permission_name' => 'system_account_analysis',
 				),
 			)
@@ -664,13 +664,13 @@ $we7_system_menu['site'] = array(
 				'system_cloud_sms' => array(
 					'title' => '短信管理',
 					'url' => url('cloud/sms'),
-					'icon' => 'wi wi-message',
+					'icon' => 'wi wi-sms',
 					'permission_name' => 'system_cloud_sms',
 				),
 				'system_cloud_sms_sign' => array(
 					'title' => '短信签名',
 					'url' => url('cloud/sms-sign'),
-					'icon' => 'wi wi-message',
+					'icon' => 'wi wi-sms-sign',
 					'permission_name' => 'system_cloud_sms_sign',
 				)
 			)
@@ -723,13 +723,13 @@ $we7_system_menu['site'] = array(
 				'system_setting_thirdlogin' => array(
 					'title' => '第三方登录配置',
 					'url' => url('system/thirdlogin'),
-					'icon' => 'wi wi-sensitive',
+					'icon' => 'wi wi-thirdlogin',
 					'permission_name' => 'system_setting_thirdlogin',
 				),
 				'system_setting_oauth' => array(
 					'title' => 'oauth全局设置',
 					'url' => url('system/oauth'),
-					'icon' => 'wi wi-sensitive',
+					'icon' => 'wi wi-oauth',
 					'permission_name' => 'system_setting_oauth',
 				),
 			)
@@ -786,7 +786,7 @@ $we7_system_menu['site'] = array(
 				'system_job'=> array(
 					'title' => '后台任务',
 					'url' => url('system/job/display'),
-					'icon' => 'wi wi-system-work',
+					'icon' => 'wi wi-job',
 					'permission_name' => 'system_job',
 				)
 			)
