@@ -230,10 +230,6 @@ if ($do == 'system_home') {
 
 	$last_accounts_modules = pdo_getall('system_stat_visit', array('uid' => $_W['uid']), array(), '', array('displayorder desc', 'updatetime desc'), 20);
 
-	$modules = array_filter(array_column($last_accounts_modules, 'modulename'));
-
-	$module_list = pdo_getall('modules', array('name' => $modules), array(), 'name');
-
 	if (!empty($last_accounts_modules)) {
 		foreach ($last_accounts_modules as &$info) {
 			if (!empty($info['uniacid'])) {
