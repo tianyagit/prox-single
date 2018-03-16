@@ -412,6 +412,7 @@ if ($do =='install') {
 			}
 		}
 	}
+
 	$module['permissions'] = iserializer($module['permissions']);
 	$module_subscribe_success = true;
 	if (!empty($module['subscribes'])) {
@@ -474,7 +475,6 @@ if ($do =='install') {
 				pdo_update('uni_group', $group_info, array('id' => $groupid));
 			}
 		}
-
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
 		cache_build_uninstalled_module();
@@ -780,7 +780,10 @@ if ($do == 'founder_update_modules') {
 			$app_support = !empty($module['site_branch']['app_support']) && is_array($module['site_branch']['bought']) && in_array('app', $module['site_branch']['bought']) ? $module['site_branch']['app_support'] : 1;
 			$webapp_support = !empty($module['site_branch']['webapp_support']) && is_array($module['site_branch']['bought']) && in_array('webapp', $module['site_branch']['bought']) ? $module['site_branch']['webapp_support'] : MODULE_NOSUPPORT_WEBAPP;
 			$welcome_support = !empty($module['site_branch']['system_welcome_support']) && is_array($module['site_branch']['bought']) && in_array('system_welcome', $module['site_branch']['bought']) ? $module['site_branch']['system_welcome_support'] : MODULE_NONSUPPORT_SYSTEMWELCOME;
-			$phoneapp_support = !empty($module['site_branch']['phoneapp_support']) && is_array($module['site_branch']['bought']) && in_array('phoneapp', $module['site_branch']['bought']) ? $module['site_branch']['phoneapp_support'] : MODULE_NOSUPPORT_PHONEAPP;
+			$andriod_support = !empty($module['site_branch']['andriod_support']) && is_array($module['site_branch']['bought']) && in_array('andriod', $module['site_branch']['bought']) ? $module['site_branch']['andriod_support'] : MODULE_NOSUPPORT_ANDROID;
+			$ios_support = !empty($module['site_branch']['ios_support']) && is_array($module['site_branch']['bought']) && in_array('ios', $module['site_branch']['bought']) ? $module['site_branch']['ios_support'] : MODULE_NOSUPPORT_IOS;
+			$phoneapp_support = ($andriod_support == MODULE_SUPPORT_ANDROID || $ios_support == MODULE_SUPPORT_IOS) ? MODULE_SUPPORT_PHONEAPP : MODULE_NOSUPPORT_PHONEAPP;
+
 			if ($wxapp_support ==  MODULE_NONSUPPORT_WXAPP && $app_support == MODULE_NONSUPPORT_ACCOUNT && $webapp_support == MODULE_NOSUPPORT_WEBAPP && $welcome_support == MODULE_NONSUPPORT_SYSTEMWELCOME && $phoneapp_support == MODULE_NOSUPPORT_PHONEAPP) {
 				$app_support = MODULE_SUPPORT_ACCOUNT;
 			}
@@ -837,6 +840,8 @@ if ($do == 'founder_update_modules') {
 				'wxapp_support' => $wxapp_support,
 				'app_support' => $app_support,
 				'webapp_support' => $webapp_support,
+				'android_support' => $android_support,
+				'ios_support' => $ios_support,
 				'phoneapp_support' => $phoneapp_support,
 				'welcome_support' => $welcome_support,
 				'upgrade_support' => $upgrade_support_module,
