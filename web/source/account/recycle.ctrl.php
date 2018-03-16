@@ -118,6 +118,6 @@ if($do == 'delete') {
 		}
 	}
 	/* svend */
-	account_delete($acid);
-	iajax(0, '删除成功！', referer());
+	$jobid = account_delete($acid);
+	iajax(0, '删除成功！', url('system/job/display', array('jobid'=>$jobid)));
 }

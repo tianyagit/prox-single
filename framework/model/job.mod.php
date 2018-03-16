@@ -9,8 +9,13 @@ defined('IN_IA') or exit('Access Denied');
 /**
  *  任务列表
  */
-function job_list() {
-	return table('job')->getall('id');
+function job_list($uid, $isfounder = false) {
+	$table = table('job')->where('isdeleted',0);
+	if (!$isfounder) {
+		// 非创始人只能看到自己创建的任务
+		$table->where('uid', $uid);
+	}
+	return $table->getall('id');
 }
 
 
@@ -28,14 +33,14 @@ function job_single($id) {
  * 创建一个删除素材的任务
  * @param $uniacid
  */
-function job_create_delete_account($uniacid, $accountName = '') {
+function job_create_delete_account($uniacid, $accountName, $uid) {
 	global $_W;
 	/* @var $job JobTable */
 	$job = table('job');
 	$core_count = table('attachment')->where('uniacid', $uniacid)->count();
 	$wechat_count = table('attachment')->local(false)->where('uniacid', $uniacid)->count();
 	$total = $core_count + intval($wechat_count);
-	return $job->createDeleteAccountJob($uniacid, $accountName, $total);
+	return $job->createDeleteAccountJob($uniacid, $accountName, $total, $uid);
 }
 /**
  *  执行任务
@@ -45,7 +50,7 @@ function job_execute($id) {
 
 	$type = $job['type'];
 	if (intval($job['status']) == 1) {
-		return $job;
+		return error(1, '任务已结束');
 	}
 	$result = null;
 	switch ($type) {
@@ -106,4 +111,11 @@ function job_execute_delete_account($job) {
 		->fill('updatetime',TIMESTAMP)->save();
 	return error(0, array('finished'=>0, 'progress'=>intval($all_handled/$total*100), 'id'=>$job['id']));
 
+}
+
+/**
+ *  清除已完成任务
+ */
+function job_clear($uid, $isfounder = false) {
+	return table('job')->clear($uid, $isfounder);
 }

@@ -5,13 +5,14 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('job');
-$dos = array('list', 'execute', 'display', 'create');
+$dos = array('clear', 'execute', 'display');
 $do = in_array($do, $dos) ? $do : 'display';
 if (!defined('IFRAME')) {
 	define('IFRAME', 'site');
 }
 if ($do == 'display') {
-	$list = job_list();
+	$list = job_list($_W['uid'], $_W['isfounder']);
+	$jobid = intval($_GPC['jobid']);
 	array_walk($list, function(&$item){
 		$progress = $item['total'] > 0 ? $item['handled']/$item['total']*100 : 0;
 		$item['progress'] = $item['status'] ? 100 : intval($progress);
@@ -23,8 +24,10 @@ if ($do == 'display') {
 }
 
 if ($do == 'execute') {
-	if ($_W['isfounder']) {
-		$id = intval($_GPC['id']);
+	$id = intval($_GPC['id']);
+	$job = job_single($id);
+	// 创史人 可以执行所有人的任务, 非创史人只能执行自己创建的任务
+	if ($_W['isfounder'] || $job['uid'] == $_W['uid']) {
 		$result = job_execute($id);
 		if (is_error($result)) {
 			iajax(1, $result['message']);
@@ -33,6 +36,11 @@ if ($do == 'execute') {
 		iajax(0,  $result['message']);
 
 	}
+}
+
+if ($do == 'clear') {
+	$result = job_clear($uid, $_W['isfounder']);
+	itoast(0,  '清除成功', referer());
 }
 
 

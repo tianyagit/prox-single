@@ -940,6 +940,7 @@ function account_delete($acid) {
 	load()->func('file');
 	load()->model('module');
 	load()->model('job');
+	$jobid  = 0;
 	//判断是不是主公众号
 	$account = pdo_get('uni_account', array('default_acid' => $acid));
 	if ($account) {
@@ -971,7 +972,7 @@ function account_delete($acid) {
 				file_remote_delete('headimg_'.$childaccount['acid'].'.jpg');
 			}
 			if (!empty($acid)) {
-				job_create_delete_account($uniacid, $account['name']);
+				$jobid = job_create_delete_account($uniacid, $account['name'], $_W['uid']);
 //				rmdirs(IA_ROOT . '/attachment/images/' . $uniacid);
 //				@rmdir(IA_ROOT . '/attachment/images/' . $uniacid);
 //				rmdirs(IA_ROOT . '/attachment/audios/' . $uniacid);
@@ -1025,7 +1026,7 @@ function account_delete($acid) {
 		file_remote_delete('qrcode_'.$acid.'.jpg');
 		file_remote_delete('headimg_'.$acid.'.jpg');
 	}
-	return true;
+	return $jobid;
 }
 
 /**

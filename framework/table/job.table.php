@@ -10,9 +10,9 @@ defined('IN_IA') or exit('Access Denied');
 class JobTable extends We7Table {
 
 	protected $tableName = 'job';
-	protected $field = array('type', 'payload', 'status', 'handled', 'uniacid', 'title', 'total', 'createtime', 'endtime', 'updatetime');
+	protected $field = array('type', 'payload', 'status', 'handled', 'uniacid', 'title', 'total', 'createtime', 'endtime', 'updatetime', 'isdeleted', 'uid');
 
-	protected $default = array('status'=>0, 'handled'=>0, 'total'=>0, 'createtime'=>'custom', 'updatetime'=>'custom');
+	protected $default = array('status'=>0, 'handled'=>0, 'total'=>0, 'createtime'=>'custom', 'updatetime'=>'custom', 'isdeleted'=>0, 'uid'=>0);
 	const DELETE_ACCOUNT = 10;
 	const SYNC_FANS = 20;
 
@@ -59,7 +59,7 @@ class JobTable extends We7Table {
 	 *  创建一个删除公众号素材的任务
 	 * @param $uniacid
 	 */
-	public function createDeleteAccountJob($uniacid, $accountName, $total = 0)
+	public function createDeleteAccountJob($uniacid, $accountName, $total, $uid)
 	{
 		// 任务已存在
 		if ($this->exitsJob($uniacid, self::DELETE_ACCOUNT)) {
@@ -70,7 +70,8 @@ class JobTable extends We7Table {
 			'type' => self::DELETE_ACCOUNT,
 			'title'=> "删除{$accountName}的素材数据",
 			'uniacid'=>$uniacid,
-			'total'=> $total
+			'total'=> $total,
+			'uid'=>$uid
 		);
 		return $this->createJob($data);
 	}
@@ -96,6 +97,22 @@ class JobTable extends We7Table {
 	{
 		$this->fill($data);
 		$result = $this->save();
+		if ($result) {
+			return pdo_insertid();
+		}
 		return $result;
+	}
+
+	/**
+	 *  清除已完成任务
+	 */
+	public function clear($uid, $isfounder) {
+		$table = table('job')
+			->where('status', 1)
+			->fill('isdeleted', 1);
+		if (!$isfounder) {
+			$table->where('uid', $uid);
+		}
+		return $table->save();
 	}
 }
