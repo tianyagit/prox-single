@@ -234,7 +234,6 @@ if ($do == 'comment') {
 	$article_info = pdo_get('site_article', array('id' => $article_id, 'uniacid' => $_W['uniacid']));
 
 	if ($_W['ispost']) {
-		$_W['openid'] = 'oPUOlw7dwHvi9QnHvRechQJK3iMY';
 		$comment = array(
 			'uniacid' => $_W['uniacid'],
 			'articleid' => intval($_GPC['article_id']),

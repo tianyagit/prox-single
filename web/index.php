@@ -151,7 +151,7 @@ function _calc_current_frames(&$frames) {
 			if (empty($frame['menu'])) {
 				continue;
 			}
-			foreach ($frame['menu'] as &$menu) {
+			foreach ($frame['menu'] as $key => &$menu) {
 				$query = parse_url($menu['url'], PHP_URL_QUERY);
 				parse_str($query, $urls);
 				if (empty($urls)) {
@@ -169,7 +169,7 @@ function _calc_current_frames(&$frames) {
 					$get['do'] = $do;
 				}
 				$diff = array_diff_assoc($urls, $get);
-				if (empty($diff)) {
+				if (empty($diff) || $get['c'] == 'profile' && $get['a'] == 'reply-setting' && $key == 'platform_reply') {
 					$menu['active'] = ' active';
 				}
 			}

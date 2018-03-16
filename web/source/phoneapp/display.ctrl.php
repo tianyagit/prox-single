@@ -3,11 +3,10 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('phoneapp');
 load()->model('account');
-load()->model('visit');
 
 $_W['page']['title'] = 'APP列表';
 
-$do = safe_gpc_belong($do, array('display', 'switch', 'home', 'add_welcome'), 'display');
+$do = safe_gpc_belong($do, array('display', 'switch', 'home'), 'display');
 
 if ($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
@@ -39,11 +38,11 @@ if ($do == 'switch') {
 			uni_account_switch($module_info['account']['uniacid'], $url);
 		} else {
 			$url .= '&version_id=' . $version_id;
-			phoneapp_switch($version_info['uniacid'], $url);
+			uni_account_switch($version_info['uniacid'], $url, PHONEAPP_TYPE_SIGN);
 		}
 	}
 	phoneapp_update_last_use_version($uniacid, $version_id);
-	phoneapp_switch($uniacid, url('phoneapp/version/home', array('version_id' => $version_id)));
+	uni_account_switch($uniacid, url('phoneapp/version/home', array('version_id' => $version_id)), PHONEAPP_TYPE_SIGN);
 	exit;
 
 }
@@ -55,7 +54,7 @@ if ($do == 'home') {
 		itoast('', $url, 'info');
 	}
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
-		phoneapp_switch($last_uniacid);
+		uni_account_switch($last_uniacid, '', PHONEAPP_TYPE_SIGN);
 	}
 	$permission = permission_account_user_role($_W['uid'], $last_uniacid);
 	if (empty($permission)) {
@@ -103,9 +102,4 @@ if ($do == 'display') {
 
 	$pager = pagination($total, $pindex, $psize);
 	template('phoneapp/display');
-}
-
-if ($do == 'add_welcome') {
-	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid'])), true);
-	itoast(0, url('webapp/manage/list'));
 }

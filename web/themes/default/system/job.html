@@ -5,27 +5,33 @@
 
 </ul>
 <div class="clearfix" ng-controller="we7job-base-controller" id="we7job">
+
+	<div class="right" style="padding-bottom: 10px; float: right;">
+		<a class="btn btn-default" href="{php echo url('system/job/clear')}">清除已完成任务</a>
+	</div>
+
 	<table class="table we7-table table-hover">
 		<tr>
 			<th>任务ID</th>
 			<th>任务名称</th>
 			<th>任务进度</th>
-			<th>任务状态</th>
-			<th>任务开始时间</th>
-			<th>任务结束时间</th>
 			<th>操作</th>
 		</tr>
 
 		<tr ng-repeat="$item in list">
 			<td>{{$item.id}}</td>
 			<td>{{$item.title}}</td>
-			<td>{{$item.progress}}%</td>
-			<td>{{$item.status == 1 ? '处理完成': '新建'}}</td>
-			<td>{{$item.create_time}}</td>
-			<td>{{$item.end_time}}</td>
+			<td>
+				<div class="progress">
+					<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{$item.progress}}%;">
+						{{$item.progress}}%
+					</div>
+				</div>
+			</td>
 			<td>
 				<a type="button" class="button btn-primary" ng-click="start($item)">
 					<span ng-if="$item.status == 0">{{!$item.start ? '开始' : '暂停'}}</span>
+					<span ng-if="$item.status == 1">完成</span>
 				</a>
 			</td>
 		</tr>
@@ -36,45 +42,11 @@
 	</div>
 </div>
 <script type="text/javascript">
-	angular.module('we7job',['we7app']);
-	angular.module('we7job').controller('we7job-base-controller',
-		['$scope', '$http', 'config',
-			function($scope, $http, config) {
-				var list = config.list;
-				let jobWorker = new Worker('resource/components/job/job.js');
-				$scope.list = list;
-				$scope.start = function(job) {
-					job.start = !job.start;
-					jobWorker.postMessage(job);
-				}
-
-
-				jobWorker.onmessage = function(event) {
-					console.log(event.data);
-					let jobId = event.data.id;
-					$scope.list[jobId].progress = event.data.progress;
-					$scope.$apply();
-				}
-				$(window).on('message', function(event){
-					console.log(event);
-				});
-			}
-		]
-	);
 	angular.module('we7job').value('config',{
-		"list": {php echo json_encode($list)}
+		"list": {php echo json_encode($list)},
+		"jobid" : '{$jobid}',
 	});
 	angular.bootstrap('#we7job', ['we7job']);
-
-
-
-
-
-
 </script>
-<script>
 
-
-	// console.log(response.then());
-</script>
 {template 'common/footer'}

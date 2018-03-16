@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 class UsersTable extends We7Table {
 	protected $tableName = 'users';
-	protected $field = array('uid', 'welcome_status');
+	protected $field = array('uid');
 
 	public function searchUsersList() {
 		global $_W;

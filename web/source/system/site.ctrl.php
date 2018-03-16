@@ -76,8 +76,7 @@ if ($do == 'copyright') {
 				'log_status' => intval($_GPC['log_status']),
 				'develop_status' => intval($_GPC['develop_status']),
 				'icp' => safe_gpc_string($_GPC['icp']),
-				'bind' => $_GPC['bind'],
-				'welcome_status' => intval($_GPC['welcome_status'])
+				'bind' => $_GPC['bind']
 			);
 		}
 		/* sxend */
@@ -91,8 +90,7 @@ if ($do == 'copyright') {
 				'login_type' => $_GPC['login_type'],
 				'log_status' => intval($_GPC['log_status']),
 				'develop_status' => intval($_GPC['develop_status']),
-				'bind' => $_GPC['bind'],
-				'welcome_status' => intval($_GPC['welcome_status'])
+				'bind' => $_GPC['bind']
 			);
 		}
 		/* vend */

@@ -69,8 +69,7 @@ abstract class We7Table {
 	/**
 	 *  总数
 	 */
-	public function count()
-	{
+	public function count() {
 		return $this->query->count();
 	}
 

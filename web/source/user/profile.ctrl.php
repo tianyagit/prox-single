@@ -10,7 +10,7 @@ load()->classs('oauth2/oauth2client');
 load()->model('message');
 load()->model('setting');
 
-$dos = array('base', 'post', 'bind', 'validate_mobile', 'bind_mobile', 'unbind', 'welcome_status');
+$dos = array('base', 'post', 'bind', 'validate_mobile', 'bind_mobile', 'unbind');
 $do = in_array($do, $dos) ? $do : 'base';
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
@@ -98,10 +98,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'welcome_link':
 
-			$welcome_link = safe_gpc_url($_GPC['welcome_link'], true);
-			if (!empty($_GPC['welcome_link']) && empty($welcome_link)) {
-				iajax(1, '链接填写错误', '');
-			}
+			$welcome_link = intval($_GPC['welcome_link']);
 			$result = pdo_update('users', array('welcome_link' => $welcome_link), array('uid' => $uid));
 			break;
 		case 'password':
@@ -332,20 +329,4 @@ if ($do == 'unbind') {
 		iajax(0, '解绑成功', url('user/profile/bind'));
 	}
 	iajax(-1, '非法请求');
-}
-
-if ($do == 'welcome_status') {
-	if (empty($_W['ispost']) || empty($_W['isajax'])) {
-		iajax(-1, '非法请求');
-	}
-	$user_table = table('users');
-	$user_info = $user_table->usersInfo($_W['uid']);
-
-	$welcome_status = empty($user_info['welcome_status']) ? WELCOME_STATUS_ON : WELCOME_STATUS_OFF;
-
-	if (empty($_W['setting']['copyright']['welcome_status']) && !empty($welcome_status)) {
-		iajax(-1, '请联系管理员从站点设置开启');
-	}
-	user_change_welcome_status($_W['uid'], $welcome_status);
-	iajax(0, $welcome_status);
 }

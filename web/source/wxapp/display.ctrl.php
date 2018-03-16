@@ -6,11 +6,10 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
 load()->model('account');
-load()->model('visit');
 
 $_W['page']['title'] = '小程序列表';
 
-$dos = array('display', 'switch', 'rank', 'home', 'add_welcome');
+$dos = array('display', 'switch', 'rank', 'home');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'rank' || $do == 'switch') {
@@ -29,7 +28,7 @@ if ($do == 'home') {
 		itoast('', $url, 'info');
 	}
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
-		wxapp_switch($last_uniacid);
+		uni_account_switch($last_uniacid, '', WXAPP_TYPE_SIGN);
 	}
 	$permission = permission_account_user_role($_W['uid'], $last_uniacid);
 	if (empty($permission)) {
@@ -96,18 +95,13 @@ if ($do == 'home') {
 			uni_account_switch($module_info['account']['uniacid'], $url);
 		} else {
 			$url .= '&version_id=' . $version_id;
-			wxapp_switch($version_info['uniacid'], $url);
+			uni_account_switch($version_info['uniacid'], $url, WXAPP_TYPE_SIGN);
 		}
 	}
 	wxapp_update_last_use_version($uniacid, $version_id);
-	wxapp_switch($uniacid, url('wxapp/version/home', array('version_id' => $version_id)));
+	uni_account_switch($uniacid, url('wxapp/version/home', array('version_id' => $version_id)), WXAPP_TYPE_SIGN);
 	exit;
 } elseif ($do == 'rank') {
 	uni_account_rank_top($uniacid);
 	itoast('更新成功', '', '');
-}
-
-if ($do == 'add_welcome') {
-	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid'])), true);
-	itoast(0, url('wxapp/display/home'));
 }

@@ -150,13 +150,20 @@ function article_comment_detail($article_lists) {
 	if (empty($article_lists)) {
 		return true;
 	}
-	$parent_article_comment_ids = array_column($article_lists, 'id');
+
+	foreach ($article_lists as $list) {
+		$parent_article_comment_ids[] = $list['id'];
+	}
 
 	$comment_table = table('sitearticlecomment');
 	$comment_table->fill('is_read', ARTICLE_COMMENT_READ)->whereId($parent_article_comment_ids)->save();
 	$son_comment_lists = $comment_table->searchWithUniacid($_W['uniacid'])->searchWithParentid($parent_article_comment_ids)->articleCommentList();
 
-	$uids = array_unique(array_filter(array_column($son_comment_lists, 'uid')));
+	if (!empty($son_comment_lists)) {
+		foreach ($son_comment_lists as $list) {
+			$uids[$list['uid']] = $list['uid'];
+		}
+	}
 
 	$user_table = table('users');
 	$users = $user_table->searchWithUid($uids)->searchUsersList();
