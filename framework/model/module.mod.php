@@ -613,18 +613,16 @@ function module_status($module) {
  */
 function module_filter_upgrade($module_list) {
 	$modules = array();
+	$modules_table = table('module');
+	$modules_local = $modules_table->getModulesLocalList();
 	$installed_module = pdo_getall('modules', array('name' => $module_list), array('version', 'name'), 'name');
-	$all_upgrade_cloud_module = cache_load(cache_system_key('all_cloud_upgrade_module:'));
-	if (empty($all_upgrade_cloud_module)) {
-		$all_upgrade_cloud_module = cache_build_cloud_upgrade_module();
-	}
 	if (!empty($module_list) && is_array($module_list) && !empty($installed_module)) {
 		foreach ($module_list as $key => $module) {
 			if (empty($installed_module[$module])) {
 				continue;
 			}
 			$manifest = ext_module_manifest($module);
-			if (!empty($manifest)&& is_array($manifest)) {
+			if (!empty($manifest) && is_array($manifest)) {
 				$module = array('name' => $module);
 				$module['from'] = 'local';
 				if (version_compare($installed_module[$module['name']]['version'], $manifest['application']['version']) == '-1') {
@@ -633,8 +631,12 @@ function module_filter_upgrade($module_list) {
 					$modules[$module['name']] = $module;
 				}
 			} else {
-				if (is_array($all_upgrade_cloud_module) && !empty($all_upgrade_cloud_module[$module])) {
-					$modules[$module] = $all_upgrade_cloud_module[$module];
+				if (is_array($modules_local) && !empty($modules_local[$module])) {
+					$modules[$module]['new_branch'] = !empty($modules_local[$module]['has_new_branch']) ? true : false;
+					$modules[$module]['upgrade'] = !empty($modules_local[$module]['is_upgrade']) ? true : false;
+					$modules[$module]['upgrade_support'] = !empty($modules_local[$module]['upgrade_support']) ? true : false;
+					$modules[$module]['upgrade_branch'] = !empty($modules_local[$module]['upgrade_branch']) ? true : false;
+					$modules[$module]['from'] = 'cloud';
 				}
 			}
 		}
