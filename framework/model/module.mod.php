@@ -402,6 +402,55 @@ function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
 }
 
 /**
+ * 通过本地modules_local获取所有未安装的模块
+ * @param string $status 模块状态, unistalled : 未安装模块, recycle : 回收站模块;
+ * @param string $module_type 模块类型, wxapp,app,webapp,phoneapp,welcome;
+ * @return array $modules 未安装和回收站模块数据列表
+ */
+function module_get_all_uninstalled_by_local($status, $module_type = '')  {
+	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
+	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
+		$account_type = 'wxapp';
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
+		$account_type = 'app';
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+		$account_type = 'webapp';
+	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+		$account_type = 'phoneapp';
+	}
+	if (!empty($module_type)) {
+		$account_type = $module_type;
+	}
+	$modules_table = table('module');
+	$modules_local = $modules_table->getModulesLocalList();
+	$status_text = array('recycle', 'uninstalled');
+	if (!empty($modules_local) && is_array($modules_local)) {
+		foreach ($modules_local as $name => $value) {
+			foreach ($status_text as $text) {
+				if ($value['status'] != $text) {
+					continue;
+				}
+				if ($value[$account_type . '_support'] == 2) {
+					$all_modules[$text][$account_type][$name] = $value;
+				}
+			}
+			if ($value[$account_type . '_support'] == 2) {
+				$account_type_modules[$name] = $value;
+			}
+		}
+	}
+	$modules['cloud_m_count'] = count($account_type_modules);
+	$modules['modules'] = $all_modules[$status][$account_type];
+	$modules['app_count'] = count($all_modules[$status]['app']);
+	$modules['wxapp_count'] = count($all_modules[$status]['wxapp']);
+	$modules['webapp_count'] = count($all_modules[$status]['webapp']);
+	$modules['phoneapp_count'] = count($all_modules[$status]['phoneapp']);
+	$modules['welcome_count'] = count($all_modules[$status]['welcome']);
+	$modules['module_count'] = count($all_modules['uninstalled'][$account_type]);
+	return $modules;
+}
+
+/**
  * 获取某个模块的权限列表
  * @param string $name 模块标识
  */
