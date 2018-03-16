@@ -210,13 +210,13 @@
 		{php $nav_top_fold=array()}
 		{php $nav_top_tiled=array()}
 		{loop $top_nav $nav}
-			{if in_array($nav['title'], array('公众号', '小程序', 'PC', 'APP', '应用')) || in_array($nav['name'], array('account', 'wxapp', 'PC', 'APP', 'module'))}
+			{if in_array($nav['name'], array('account', 'wxapp', 'webapp', 'phoneapp', 'module'))}
 				{php $nav_top_fold[]=$nav}
-			{elseif in_array($nav['title'], array('站点', '系统')) || in_array($nav['name'], array('system', 'site'))}
+			{elseif in_array($nav['name'], array('system', 'site'))}
 				{php $nav_top_tiled_system[]=$nav}
-			{elseif in_array($nav['title'], array('市场', '商场')) || in_array($nav['name'], array('appmarket', 'store'))}
+			{elseif in_array($nav['name'], array('appmarket', 'store'))}
 				{php $nav_top_tiled_other[]=$nav}
-			{elseif $nav['title']=='帮助' || $nav['title']=='custom_help'}
+			{elseif $nav['name']=='custom_help'}
 				{php $nav_top_help=$nav}
 			{/if}
 		{/loop}

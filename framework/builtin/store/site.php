@@ -927,11 +927,12 @@ class StoreModuleSite extends WeModuleSite {
 		$goodsid = intval($_GPC['goodsid']);
 		$duration = intval($_GPC['duration']);
 		$unit = safe_gpc_string($_GPC['unit']);
-
+		if (empty($uniacid) || empty($goodsid) && empty($duration) && empty($unit)) {
+			iajax(-1, '提交数据不完整!');
+		}
 		$endtime_old = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid), 'max(endtime)');
 		$endtime_new = strtotime('+' . $duration . $unit, max($endtime_old, time()));
-
-		iajax(0,date('Y-m-d H:i:s',$endtime_new));
+		iajax(0, date('Y-m-d H:i:s', $endtime_new));
 	}
 
 
