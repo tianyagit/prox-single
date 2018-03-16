@@ -329,6 +329,18 @@ function payment_setting() {
 	$pay_setting['unionpay']['signcertexists'] = file_exists(IA_ROOT . '/attachment/unionpay/PM_'.$_W['uniacid'].'_acp.pfx');
 	$no_recharge_types = array('delivery', 'credit', 'mix', 'line');
 	$has_config_keys = array('pay_switch', 'recharge_switch', 'has_config', 'recharge_set', 'signcertexists', 'support_set');
+	if ($pay_setting['wechat']['switch'] == 1) {
+		if ($pay_setting['wechat']['version'] == 1) {
+			unset($pay_setting['wechat']['mchid'], $pay_setting['wechat']['apikey']);
+		} elseif ($pay_setting['wechat']['version'] == 2) {
+			unset($pay_setting['wechat']['partner'], $pay_setting['wechat']['key'], $pay_setting['wechat']['signkey']);
+		}
+		unset($pay_setting['wechat']['borrow'], $pay_setting['wechat']['sub_mch_id'], $pay_setting['wechat']['service']);
+	} elseif ($pay_setting['wechat']['switch'] == 2) {
+		unset($pay_setting['wechat']['mchid'], $pay_setting['wechat']['apikey'], $pay_setting['wechat']['partner'], $pay_setting['wechat']['key'], $pay_setting['wechat']['signkey'], $pay_setting['wechat']['sub_mch_id'], $pay_setting['wechat']['service']);
+	} elseif ($pay_setting['wechat']['switch'] == 3) {
+		unset($pay_setting['wechat']['mchid'], $pay_setting['wechat']['apikey'], $pay_setting['wechat']['partner'], $pay_setting['wechat']['key'], $pay_setting['wechat']['signkey'], $pay_setting['wechat']['borrow']);	
+	}
 	foreach ($pay_setting as $type => &$value) {
 		$value['has_config'] = true;
 		$value['recharge_set'] = true;
