@@ -18,7 +18,7 @@ load()->model('account');
 load()->model('message');
 load()->model('visit');
 
-$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'add_welcome');
+$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'add_welcome', 'ignore_update_module');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
@@ -260,4 +260,23 @@ if ($do == 'set_top') {
 if ($do == 'add_welcome') {
 	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid']), 'modulename' => safe_gpc_string($_GPC['module'])), true);
 	itoast(0, referer());
+}
+
+if ($do == 'ignore_update_module') {
+	if (empty($_GPC['name'])) {
+		iajax(1, '参数错误');
+	}
+	$module_info = module_fetch($_GPC['name']);
+	if (empty($module_info)) {
+		iajax(1, '参数错误');
+	}
+	pdo_delete('modules_ignore', array('name' => $_GPC['name']));
+	$modules_local = pdo_get('modules_local', array('name' => $_GPC['name']), array('name', 'version'));
+	$ignore_module = array(
+		'mid' => $module_info['mid'],
+		'name' => $module_info['name'],
+		'version' => $modules_local['version']
+	);
+	pdo_insert('modules_ignore', $ignore_module);
+	iajax(0, $_GPC);
 }

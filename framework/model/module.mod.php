@@ -716,11 +716,20 @@ function module_upgrade_new($type = 'account') {
 	} else {
 		$module_list = user_module_by_account_type('account');
 	}
+	$modules_table = table('module');
+	$modules_ignore = $modules_table->getModulesIgnoreList();
 	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
 	if (!empty($upgrade_modules)) {
 		foreach ($upgrade_modules as $key => &$module) {
 			if (empty($module['is_upgrade'])) {
 				unset($upgrade_modules[$key]);
+			}
+			if (!empty($modules_ignore[$key])) {
+				$ignore_version = $modules_ignore[$key]['version'];
+				$upgrade_version = $module['version'];
+				if (ver_compare($ignore_version, $upgrade_version) >= 0) {
+					unset($upgrade_modules[$key]);
+				}
 			}
 			$module_fetch = module_fetch($key);
 			$module['logo'] = $module_fetch['logo'];
