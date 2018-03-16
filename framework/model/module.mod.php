@@ -433,14 +433,31 @@ function module_get_all_uninstalled_by_local($status, $module_type = '')  {
 				if ($value[$account_type . '_support'] == 2) {
 					$all_modules[$text][$account_type][$name] = $value;
 				}
+				if (empty($account_type)) {
+					if ($value['app_support'] == 2) {
+						$all_modules[$text]['app'][$name] = $value;
+					}
+					if ($value['wxapp_support'] == 2) {
+						$all_modules[$text]['wxapp'][$name] = $value;
+					}
+					if ($value['webapp_support'] == 2) {
+						$all_modules[$text]['webapp'][$name] = $value;
+					}
+					if ($value['phoneapp_support'] == 2) {
+						$all_modules[$text]['phoneapp'][$name] = $value;
+					}
+					if ($value['welcome_support'] == 2) {
+						$all_modules[$text]['system_welcome'][$name] = $value;
+					}
+				}
 			}
-			if ($value[$account_type . '_support'] == 2) {
+			if (!empty($account_type) && $value[$account_type . '_support'] == 2) {
 				$account_type_modules[$name] = $value;
 			}
 		}
 	}
 	$modules['cloud_m_count'] = count($account_type_modules);
-	$modules['modules'] = $all_modules[$status][$account_type];
+	$modules['modules'] = !empty($account_type) ? $all_modules[$status][$account_type] : $all_modules;
 	$modules['app_count'] = count($all_modules[$status]['app']);
 	$modules['wxapp_count'] = count($all_modules[$status]['wxapp']);
 	$modules['webapp_count'] = count($all_modules[$status]['webapp']);
@@ -681,11 +698,7 @@ function module_filter_upgrade($module_list) {
 				}
 			} else {
 				if (is_array($modules_local) && !empty($modules_local[$module])) {
-					$modules[$module]['new_branch'] = !empty($modules_local[$module]['has_new_branch']) ? true : false;
-					$modules[$module]['upgrade'] = !empty($modules_local[$module]['is_upgrade']) ? true : false;
-					$modules[$module]['upgrade_support'] = !empty($modules_local[$module]['upgrade_support']) ? true : false;
-					$modules[$module]['upgrade_branch'] = !empty($modules_local[$module]['upgrade_branch']) ? true : false;
-					$modules[$module]['from'] = 'cloud';
+					$modules[$module] = $modules_local[$module];
 				}
 			}
 		}
@@ -706,6 +719,9 @@ function module_upgrade_new($type = 'account') {
 	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
 	if (!empty($upgrade_modules)) {
 		foreach ($upgrade_modules as $key => &$module) {
+			if (empty($module['is_upgrade'])) {
+				unset($upgrade_modules[$key]);
+			}
 			$module_fetch = module_fetch($key);
 			$module['logo'] = $module_fetch['logo'];
 			$module['link'] = url('module/manage-system/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));

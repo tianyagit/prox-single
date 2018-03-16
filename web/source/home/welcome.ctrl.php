@@ -23,10 +23,10 @@ $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
 	$data = array();
-	$not_installed_modules = module_get_all_unistalled('uninstalled', false);
+	$not_installed_modules = module_get_all_uninstalled_by_local('uninstalled');
 	$not_installed_modules = $not_installed_modules['modules']['uninstalled'];
 	$data['app_count'] = count($not_installed_modules['app']);
-	$data['wxapp_count'] = count($not_installed_modules['wxapp_count']);
+	$data['wxapp_count'] = count($not_installed_modules['wxapp']);
 	$not_installed_modules['app'] = is_array($not_installed_modules['app']) ? array_slice($not_installed_modules['app'], 0, 4) : array();
 	$not_installed_modules['wxapp'] = is_array($not_installed_modules['wxapp']) ? array_slice($not_installed_modules['wxapp'], 0, 4) : array();
 	$data['module'] = array_merge($not_installed_modules['app'], $not_installed_modules['wxapp']);

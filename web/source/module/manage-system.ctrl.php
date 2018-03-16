@@ -553,13 +553,13 @@ if ($do == 'save_module_info') {
 
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
-	$uninstalled_module = module_get_all_unistalled('uninstalled');
+	$uninstalled_module = module_get_all_uninstalled_by_local('uninstalled');
 	$total_uninstalled = $uninstalled_module['module_count'];
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
-	$cloud_module = cloud_m_query();
-	$module_info['cloud_mid'] = !empty($cloud_module[$module_name]) ?  $cloud_module[$module_name]['id'] : '';
-
+	$current_cloud_module = cloud_m_info($module_name);
+	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
+	
 	if (!empty($module_info['is_relation'])) {
 		$type = intval($_GPC['type']);
 		switch ($type) {
@@ -576,10 +576,10 @@ if ($do == 'module_detail') {
 				break;
 		}
 	}
-	if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/preview-custom.jpg')) {
-		$module_info['preview'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/preview-custom.jpg');
+	if (file_exists(IA_ROOT . '/addons/' . $module_info['name'] . '/preview-custom.jpg')) {
+		$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview-custom.jpg');
 	} else {
-		$module_info['preview'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/preview.jpg');
+		$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview.jpg');
 	}
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
@@ -713,9 +713,9 @@ if ($do == 'recycle_uninstall') {
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
 	if (!empty($_GPC['system_welcome'])) {
-		$uninstall_modules = module_get_all_unistalled('uninstalled', true, 'system_welcome');
+		$uninstall_modules = module_get_all_uninstalled_by_local('uninstalled', 'welcome');
 	} else {
-		$uninstall_modules = module_get_all_unistalled('uninstalled');
+		$uninstall_modules = module_get_all_uninstalled_by_local('uninstalled');
 	}
 	$total_uninstalled = $uninstall_modules['module_count'];
 	$pageindex = max($_GPC['page'], 1);
@@ -723,6 +723,8 @@ if ($do == 'installed') {
 	$letter = $_GPC['letter'];
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+	$modules_table = table('module');
+	$modules_local = $modules_table->getModulesLocalList();
 	$module_list = $all_modules = user_modules($_W['uid']);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
@@ -737,6 +739,11 @@ if ($do == 'installed') {
 			if (!empty($title) && !strexists($module['title'], $title)) {
 				unset($module_list[$key]);
 			}
+			$module['upgrade'] = !empty($modules_local[$module['name']]['is_upgrade']) ? true : false;
+			$module['new_branch'] = !empty($modules_local[$module['name']]['has_new_branch']) ? true : false;
+			$module['upgrade_support'] = $modules_local[$module['name']]['upgrade_support'];
+			$module['upgrade_branch'] = $modules_local[$module['name']]['upgrade_support'];
+			$module['from'] = 'cloud';
 		}
 		unset($module);
 	}
@@ -780,10 +787,7 @@ if ($do == 'founder_update_modules') {
 			$app_support = !empty($module['site_branch']['app_support']) && is_array($module['site_branch']['bought']) && in_array('app', $module['site_branch']['bought']) ? $module['site_branch']['app_support'] : 1;
 			$webapp_support = !empty($module['site_branch']['webapp_support']) && is_array($module['site_branch']['bought']) && in_array('webapp', $module['site_branch']['bought']) ? $module['site_branch']['webapp_support'] : MODULE_NOSUPPORT_WEBAPP;
 			$welcome_support = !empty($module['site_branch']['system_welcome_support']) && is_array($module['site_branch']['bought']) && in_array('system_welcome', $module['site_branch']['bought']) ? $module['site_branch']['system_welcome_support'] : MODULE_NONSUPPORT_SYSTEMWELCOME;
-			$andriod_support = !empty($module['site_branch']['andriod_support']) && is_array($module['site_branch']['bought']) && in_array('andriod', $module['site_branch']['bought']) ? $module['site_branch']['andriod_support'] : MODULE_NOSUPPORT_ANDROID;
-			$ios_support = !empty($module['site_branch']['ios_support']) && is_array($module['site_branch']['bought']) && in_array('ios', $module['site_branch']['bought']) ? $module['site_branch']['ios_support'] : MODULE_NOSUPPORT_IOS;
-			$phoneapp_support = ($andriod_support == MODULE_SUPPORT_ANDROID || $ios_support == MODULE_SUPPORT_IOS) ? MODULE_SUPPORT_PHONEAPP : MODULE_NOSUPPORT_PHONEAPP;
-
+			$phoneapp_support = !empty($module['site_branch']['phoneapp_support']) && is_array($module['site_branch']['bought']) && in_array('phoneapp', $module['site_branch']['bought']) ? $module['site_branch']['phoneapp_support'] : MODULE_NOSUPPORT_PHONEAPP;
 			if ($wxapp_support ==  MODULE_NONSUPPORT_WXAPP && $app_support == MODULE_NONSUPPORT_ACCOUNT && $webapp_support == MODULE_NOSUPPORT_WEBAPP && $welcome_support == MODULE_NONSUPPORT_SYSTEMWELCOME && $phoneapp_support == MODULE_NOSUPPORT_PHONEAPP) {
 				$app_support = MODULE_SUPPORT_ACCOUNT;
 			}
@@ -834,18 +838,19 @@ if ($do == 'founder_update_modules') {
 				'name' => $module['name'],
 				'title' => $module['title'],
 				'version' => $module['version'],
+				'thumb' => $module['thumb'],
+				'main_module' => $module['main_module'],
 				'has_new_branch' => $has_new_branch,
 				'is_installed' => 1,
 				'is_upgrade' => $is_upgrade,
 				'wxapp_support' => $wxapp_support,
 				'app_support' => $app_support,
 				'webapp_support' => $webapp_support,
-				'android_support' => $android_support,
-				'ios_support' => $ios_support,
 				'phoneapp_support' => $phoneapp_support,
 				'welcome_support' => $welcome_support,
 				'upgrade_support' => $upgrade_support_module,
-				'upgrade_branch' => $upgrade_branch
+				'upgrade_branch' => $is_upgrade,
+				'from' => 'cloud'
 			);
 			if (in_array($module['name'], array_keys($installed_module))) {
 				$module_local['status'] = 'installed';
@@ -881,11 +886,12 @@ if ($do == 'not_installed') {
 	$letter = $_GPC['letter'];
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
-
+	$module_table = table('module');
+	$modules_local = $module_table->getModulesLocalList();
 	if (!empty($_GPC['system_welcome'])) {
-		$uninstall_modules = module_get_all_unistalled($status, false, 'system_welcome');
+		$uninstall_modules = module_get_all_uninstalled_by_local($status, 'welcome');
 	} else {
-		$uninstall_modules = module_get_all_unistalled($status, false);
+		$uninstall_modules = module_get_all_uninstalled_by_local($status);
 	}
 	$total_uninstalled = $uninstall_modules['module_count'];
 	$uninstall_modules = (array)$uninstall_modules['modules'];
@@ -958,7 +964,7 @@ if ($do == 'filter') {
 	}
 	$total = count($modules);
 	$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
-	$pager = pagination($total, $pageindex, $pagesize, '', array('before' => 5, 'after' => 4,'ajaxcallback' => true, 'callbackfuncname' => 'filter'));
+	$pager = pagination($total, $pageindex, $pagesize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => true, 'callbackfuncname' => 'filter'));
 	iajax(0, array('modules' => $modules, 'pager' => $pager));
 }
 template('module/manage-system' . ACCOUNT_TYPE_TEMPLATE);
