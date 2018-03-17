@@ -724,11 +724,12 @@ function module_upgrade_new($type = 'account') {
 			if (empty($module['is_upgrade'])) {
 				unset($upgrade_modules[$key]);
 			}
+			$module['is_ignore'] = 0;
 			if (!empty($modules_ignore[$key])) {
 				$ignore_version = $modules_ignore[$key]['version'];
 				$upgrade_version = $module['version'];
 				if (ver_compare($ignore_version, $upgrade_version) >= 0) {
-					unset($upgrade_modules[$key]);
+					$module['is_ignore'] = 1;
 				}
 			}
 			$module_fetch = module_fetch($key);

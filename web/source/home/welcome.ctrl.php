@@ -201,12 +201,23 @@ if ($do == 'platform') {
 	$account_upgrade_modules = module_upgrade_new('account');
 	$account_upgrade_module_nums = count($account_upgrade_modules);
 	$wxapp_upgrade_modules = module_upgrade_new('wxapp');
+	if (!empty($account_upgrade_modules) && is_array($account_upgrade_modules)) {
+		foreach ($account_upgrade_modules as $key => $value) {
+			if (!empty($value['is_ignore'])) {
+				unset($account_upgrade_modules[$key]);
+			}
+		}
+	}
+	if (!empty($wxapp_upgrade_modules) && is_array($wxapp_upgrade_modules)) {
+		foreach ($wxapp_upgrade_modules as $k => $val) {
+			if (!empty($val['is_ignore'])) {
+				unset($wxapp_upgrade_modules[$k]);
+			}
+		}
+	}
 	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
-
-	$account_upgrade_module_list = array_slice($account_upgrade_modules, 0, 4);
-	$wxapp_upgrade_module_list = array_slice($wxapp_upgrade_modules, 0, 4);
-	$upgrade_module_list = array_merge($account_upgrade_module_list, $wxapp_upgrade_module_list);
-
+	$all_upgrade_module_list = array_merge($account_upgrade_modules, $wxapp_upgrade_modules);
+	$upgrade_module_list = array_slice($all_upgrade_module_list, 0, 8);
 	$upgrade_module = array(
 		'upgrade_module_list' => $upgrade_module_list,
 		'upgrade_module_nums' => array(
@@ -278,5 +289,5 @@ if ($do == 'ignore_update_module') {
 		'version' => $modules_local['version']
 	);
 	pdo_insert('modules_ignore', $ignore_module);
-	iajax(0, $_GPC);
+	iajax(0, '');
 }
