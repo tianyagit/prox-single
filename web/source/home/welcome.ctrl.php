@@ -113,7 +113,7 @@ if ($do == 'platform') {
 	}
 	template('home/welcome-system');
 } elseif ($do =='get_module_statistics') {
-	$uninstall_modules = module_get_all_unistalled('uninstalled');
+	$uninstall_modules = module_get_all_uninstalled_by_local('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];
 

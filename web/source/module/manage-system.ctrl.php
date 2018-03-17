@@ -41,9 +41,8 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 /* sxend */
 
 if ($do == 'subscribe') {
-	$uninstall_modules = module_get_all_unistalled($status);
+	$uninstall_modules = module_get_all_uninstalled_by_local('uninstalled');
 	$total_uninstalled = $uninstall_modules['module_count'];
-
 	$module_list = user_modules($_W['uid']);
 	$subscribe_module = array();
 	$receive_ban = $_W['setting']['module_receive_ban'];
