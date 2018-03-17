@@ -865,11 +865,10 @@ if ($do == 'founder_update_modules') {
 					$module_local['status'] = $status;
 				}
 			}
-			$arr[] = $module_local;
 			pdo_insert('modules_local', $module_local);
 		}
 	}
-	iajax(0, array('page' => ++$pageindex, 'total' => $bought_count_page, 'module' => $arr), '');
+	iajax(0, array('page' => ++$pageindex, 'total' => $bought_count_page), '');
 }
 
 
