@@ -365,19 +365,11 @@ function module_fetch($name) {
  * @param string $cache 模块类型;
  */
 function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
-	load()->func('communication');
-	load()->model('cloud');
-	load()->classs('cloudapi');
 	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
-	$cloud_api = new CloudApi();
-	$uninstall_modules = cache_load(cache_system_key('module:all_uninstall'));
-	if (!$cache && $status == 'uninstalled') {
-		$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-		$cloud_m_count = $get_cloud_m_count['module_quantity'];
+	if (!empty($cache)) {
+		$uninstall_modules = cache_load(cache_system_key('module:all_uninstall'));
 	} else {
-		if(is_array($uninstall_modules)){
-			$cloud_m_count = $uninstall_modules['cloud_m_count'];
-		}
+		$uninstall_modules = module_build_uninstalled_module_by_local();
 	}
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$account_type = 'wxapp';
@@ -391,7 +383,7 @@ function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
 	if (!empty($module_type)) {
 		$account_type = $module_type;
 	}
-	if (!is_array($uninstall_modules) || empty($uninstall_modules['modules'][$status][$account_type]) || intval($uninstall_modules['cloud_m_count']) !== intval($cloud_m_count) || is_error($get_cloud_m_count)) {
+	if (!is_array($uninstall_modules) || empty($uninstall_modules['modules'][$status][$account_type])) {
 		$uninstall_modules = cache_build_uninstalled_module();
 	}
 	if (!empty($account_type)) {
@@ -403,35 +395,21 @@ function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
 
 /**
  * 通过本地modules_local获取所有未安装的模块
- * @param string $status 模块状态, unistalled : 未安装模块, recycle : 回收站模块;
- * @param string $module_type 模块类型, wxapp,app,webapp,phoneapp,welcome;
  * @return array $modules 未安装和回收站模块数据列表
  */
-function module_get_all_uninstalled_by_local($status, $module_type = '')  {
-	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
-	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		$account_type = 'wxapp';
-	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-		$account_type = 'app';
-	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-		$account_type = 'webapp';
-	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-		$account_type = 'phoneapp';
-	}
-	if (!empty($module_type)) {
-		$account_type = $module_type;
-	}
+function module_build_uninstalled_module_by_local() {
+	load()->classs('cloudapi');
+	$cloud_api = new CloudApi();
+	$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 	$modules_table = table('module');
 	$modules_local = $modules_table->getModulesLocalList();
 	$status_text = array('recycle', 'uninstalled');
+	$all_modules = array();
 	if (!empty($modules_local) && is_array($modules_local)) {
 		foreach ($modules_local as $name => $value) {
 			foreach ($status_text as $text) {
 				if ($value['status'] != $text) {
 					continue;
-				}
-				if ($value[$account_type . '_support'] == 2) {
-					$all_modules[$text][$account_type][$name] = $value;
 				}
 				if (empty($account_type)) {
 					if ($value['app_support'] == 2) {
@@ -451,19 +429,15 @@ function module_get_all_uninstalled_by_local($status, $module_type = '')  {
 					}
 				}
 			}
-			if (!empty($account_type) && $value[$account_type . '_support'] == 2) {
-				$account_type_modules[$name] = $value;
-			}
 		}
 	}
-	$modules['cloud_m_count'] = count($account_type_modules);
-	$modules['modules'] = !empty($account_type) ? $all_modules[$status][$account_type] : $all_modules;
-	$modules['app_count'] = count($all_modules[$status]['app']);
-	$modules['wxapp_count'] = count($all_modules[$status]['wxapp']);
-	$modules['webapp_count'] = count($all_modules[$status]['webapp']);
-	$modules['phoneapp_count'] = count($all_modules[$status]['phoneapp']);
-	$modules['welcome_count'] = count($all_modules[$status]['welcome']);
-	$modules['module_count'] = count($all_modules['uninstalled'][$account_type]);
+	$modules['cloud_m_count'] = $get_cloud_m_count['module_quantity'];
+	$modules['modules'] = $all_modules;
+	$modules['app_count'] = count($all_modules['uninstalled']['app']);
+	$modules['wxapp_count'] = count($all_modules['uninstalled']['wxapp']);
+	$modules['webapp_count'] = count($all_modules['uninstalled']['webapp']);
+	$modules['phoneapp_count'] = count($all_modules['uninstalled']['phoneapp']);
+	$modules['welcome_count'] = count($all_modules['uninstalled']['welcome']);
 	return $modules;
 }
 
