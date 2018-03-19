@@ -361,16 +361,10 @@ function module_fetch($name) {
 /**
  * 获取所有未安装的模块
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
- * @param string $cache 是否直接读取缓存数据;
  * @param string $cache 模块类型;
  */
-function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
+function module_get_all_uninstalled($status, $module_type = '')  {
 	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
-	if (!empty($cache)) {
-		$uninstall_modules = cache_load(cache_system_key('module:all_uninstall'));
-	} else {
-		$uninstall_modules = module_build_uninstalled_module_by_local();
-	}
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$account_type = 'wxapp';
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
@@ -383,16 +377,52 @@ function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
 	if (!empty($module_type)) {
 		$account_type = $module_type;
 	}
-	if (!is_array($uninstall_modules) || empty($uninstall_modules['modules'][$status][$account_type])) {
-		$uninstall_modules = cache_build_uninstalled_module();
+	load()->classs('cloudapi');
+	$cloud_api = new CloudApi();
+	$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
+	$modules_table = table('module');
+	$modules_local = $modules_table->getModulesLocalList();
+	$status_text = array('recycle', 'uninstalled');
+	$all_modules = array();
+	if (!empty($modules_local) && is_array($modules_local)) {
+		foreach ($modules_local as $name => $value) {
+			foreach ($status_text as $text) {
+				if ($value['status'] != $text) {
+					continue;
+				}
+				if ($value['app_support'] == 2) {
+					$all_modules[$text]['app'][$name] = $value;
+				}
+				if ($value['wxapp_support'] == 2) {
+					$all_modules[$text]['wxapp'][$name] = $value;
+				}
+				if ($value['webapp_support'] == 2) {
+					$all_modules[$text]['webapp'][$name] = $value;
+				}
+				if ($value['phoneapp_support'] == 2) {
+					$all_modules[$text]['phoneapp'][$name] = $value;
+				}
+				if ($value['welcome_support'] == 2) {
+					$all_modules[$text]['system_welcome'][$name] = $value;
+				}
+			}
+		}
 	}
+	$uninstall_modules = array(
+		'cloud_m_count' => $get_cloud_m_count['module_quantity'],
+		'modules' => $all_modules,
+		'app_count' => count($all_modules['uninstalled']['app']),
+		'wxapp_count' => count($all_modules['uninstalled']['wxapp']),
+		'webapp_count' => count($all_modules['uninstalled']['webapp']),
+		'phoneapp_count' => count($all_modules['uninstalled']['phoneapp']),
+		'welcome_count' => count($all_modules['uninstalled']['welcome'])
+	);
 	if (!empty($account_type)) {
 		$uninstall_modules['modules'] = (array)$uninstall_modules['modules'][$status][$account_type];
 		$uninstall_modules['module_count'] = $uninstall_modules[$account_type . '_count'];
 	}
 	return $uninstall_modules;
 }
-
 /**
  * 通过本地modules_local获取所有未安装的模块
  * @return array $modules 未安装和回收站模块数据列表

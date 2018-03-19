@@ -23,7 +23,7 @@ $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
 	$data = array();
-	$not_installed_modules = module_get_all_uninstalled_by_local('uninstalled');
+	$not_installed_modules = module_get_all_uninstalled('uninstalled');
 	$not_installed_modules = $not_installed_modules['modules']['uninstalled'];
 	$data['app_count'] = count($not_installed_modules['app']);
 	$data['wxapp_count'] = count($not_installed_modules['wxapp']);
@@ -113,7 +113,7 @@ if ($do == 'platform') {
 	}
 	template('home/welcome-system');
 } elseif ($do =='get_module_statistics') {
-	$uninstall_modules = module_get_all_uninstalled_by_local('uninstalled');
+	$uninstall_modules = module_get_all_uninstalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];
 
