@@ -54,8 +54,6 @@ function ext_module_convert($manifest) {
 		'wxapp_support' => $wxapp_support,
 		'webapp_support' => $webapp_support,
 		'phoneapp_support' => $phoneapp_support,
-		'android_support' => $android_support,
-		'ios_support' => $ios_support,
 		'welcome_support' => $welcome_support,
 		'shortcut' => $manifest['bindings']['shortcut'],
 		'function' => $manifest['bindings']['function'],
