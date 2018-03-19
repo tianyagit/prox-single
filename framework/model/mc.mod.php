@@ -260,9 +260,14 @@ function mc_oauth_userinfo($acid = 0) {
 	if ($_W['container'] != 'wechat') {
 		return array();
 	}
-	load()->func('tpl');
-	include template('mc/iswxapp', TEMPLATE_INCLUDEPATH);
-	exit;
+	//公众号不能授权直接判断小程序是否可以授权
+	$result = mc_oauth_account_userinfo();
+	if (is_error($result)) {
+		load()->func('tpl');
+		include template('mc/iswxapp', TEMPLATE_INCLUDEPATH);
+		exit;
+	}
+	return $result;
 }
 
 function mc_oauth_account_userinfo($url = '') {
