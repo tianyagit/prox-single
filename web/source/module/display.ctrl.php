@@ -77,7 +77,7 @@ if ($do == 'switch') {
 		}
 	}
 	if (empty($uniacid) && empty($version_id)) {
-		itoast('该模块暂无可用的公众号或小程序，请先分配权限', url('module/display'), 'info');
+		itoast('该模块暂无可用的公众号或小程序，请先给公众号或小程序分配该应用的使用权限', url('module/display'), 'info');
 	}
 
 	module_save_switch($module_name, $uniacid, $version_id);
