@@ -302,7 +302,7 @@ function cache_build_uninstalled_module() {
 	$cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
 	$sql = 'SELECT * FROM '. tablename('modules') . " as a LEFT JOIN" . tablename('modules_recycle') . " as b ON a.name = b.modulename WHERE b.modulename is NULL";
 	$installed_module = pdo_fetchall($sql, array(), 'name');
-	if (!empty(installed_module) && is_array($installed_module)) {
+	if (!empty($installed_module) && is_array($installed_module)) {
 		foreach ($installed_module as &$value) {
 			$value['phoneapp_support'] = !empty($value['phoneapp_support']) ? $value['phoneapp_support'] : 1;
 		}
