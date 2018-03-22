@@ -18,7 +18,7 @@ if (!empty($_GPC['state'])) {
 }
 
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
-	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！');
+	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', url('user/login'), 'info');
 }
 $acl = require IA_ROOT . '/web/common/permission.inc.php';
 
