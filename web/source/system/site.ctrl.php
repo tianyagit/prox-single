@@ -50,7 +50,7 @@ if ($do == 'copyright') {
 				'reason' => trim($_GPC['reason']),
 				'sitename' => trim($_GPC['sitename']),
 				'url' => (strexists($_GPC['url'], 'http://') || strexists($_GPC['url'], 'https://')) ? $_GPC['url'] : "http://{$_GPC['url']}",
-				'statcode' => check_site_stats($_GPC['statcode']),
+				'statcode' => system_check_statcode($_GPC['statcode']),
 				'footerleft' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerleft'])),
 				'footerright' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerright'])),
 				'icon' => trim($_GPC['icon']),
