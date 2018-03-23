@@ -160,7 +160,7 @@ function system_site_info() {
  * @param $statcode
  * @return mixed|null|string|string[]
  */
-function check_site_stats($statcode) {
+function system_check_statcode($statcode) {
 	$allowed_stats = array(
 		'baidu' => array(
 			'enabled' => true,
