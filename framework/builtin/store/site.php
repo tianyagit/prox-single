@@ -24,7 +24,7 @@ class StoreModuleSite extends WeModuleSite {
 		if ((!$_W['isfounder'] || user_is_vice_founder()) && $this->store_setting['status'] == 1) {
 			itoast('商城已被创始人关闭！', referer(), 'error');
 		}
-		if (!empty($this->store_setting['permission_status']) && empty($this->store_setting['permission_status']['close']) && !($_W['isfounder'] && !user_is_vice_founder())) {
+		if (!empty($_W['username']) && !empty($this->store_setting['permission_status']) && empty($this->store_setting['permission_status']['close']) && !($_W['isfounder'] && !user_is_vice_founder())) {
 			if (!in_array($_W['username'], (array)$this->store_setting['whitelist']) && !empty($this->store_setting['permission_status']['whitelist']) ||
 				in_array($_W['username'], (array)$this->store_setting['blacklist']) && !empty($this->store_setting['permission_status']['blacklist']) && empty($this->store_setting['permission_status']['whitelist'])) {
 				itoast('您无权限进入商城，请联系管理员！', referer(), 'error');
@@ -927,11 +927,12 @@ class StoreModuleSite extends WeModuleSite {
 		$goodsid = intval($_GPC['goodsid']);
 		$duration = intval($_GPC['duration']);
 		$unit = safe_gpc_string($_GPC['unit']);
-
+		if (empty($uniacid) || empty($goodsid) && empty($duration) && empty($unit)) {
+			iajax(-1, '提交数据不完整!');
+		}
 		$endtime_old = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid), 'max(endtime)');
 		$endtime_new = strtotime('+' . $duration . $unit, max($endtime_old, time()));
-
-		iajax(0,date('Y-m-d H:i:s',$endtime_new));
+		iajax(0, date('Y-m-d H:i:s', $endtime_new));
 	}
 
 

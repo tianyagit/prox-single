@@ -361,24 +361,10 @@ function module_fetch($name) {
 /**
  * 获取所有未安装的模块
  * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
- * @param string $cache 是否直接读取缓存数据;
  * @param string $cache 模块类型;
  */
-function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
-	load()->func('communication');
-	load()->model('cloud');
-	load()->classs('cloudapi');
+function module_get_all_uninstalled($status, $module_type = '')  {
 	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
-	$cloud_api = new CloudApi();
-	$uninstall_modules = cache_load(cache_system_key('module:all_uninstall'));
-	if (!$cache && $status == 'uninstalled') {
-		$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-		$cloud_m_count = $get_cloud_m_count['module_quantity'];
-	} else {
-		if(is_array($uninstall_modules)){
-			$cloud_m_count = $uninstall_modules['cloud_m_count'];
-		}
-	}
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$account_type = 'wxapp';
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
@@ -391,14 +377,98 @@ function module_get_all_unistalled($status, $cache = true, $module_type = '')  {
 	if (!empty($module_type)) {
 		$account_type = $module_type;
 	}
-	if (!is_array($uninstall_modules) || empty($uninstall_modules['modules'][$status][$account_type]) || intval($uninstall_modules['cloud_m_count']) !== intval($cloud_m_count) || is_error($get_cloud_m_count)) {
-		$uninstall_modules = cache_build_uninstalled_module();
+	load()->classs('cloudapi');
+	$cloud_api = new CloudApi();
+	$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
+	$modules_table = table('module');
+	$modules_local = $modules_table->getModulesLocalList();
+	$status_text = array('recycle', 'uninstalled');
+	$all_modules = array();
+	if (!empty($modules_local) && is_array($modules_local)) {
+		foreach ($modules_local as $name => $value) {
+			foreach ($status_text as $text) {
+				if ($value['status'] != $text) {
+					continue;
+				}
+				if ($value['app_support'] == 2) {
+					$all_modules[$text]['app'][$name] = $value;
+				}
+				if ($value['wxapp_support'] == 2) {
+					$all_modules[$text]['wxapp'][$name] = $value;
+				}
+				if ($value['webapp_support'] == 2) {
+					$all_modules[$text]['webapp'][$name] = $value;
+				}
+				if ($value['phoneapp_support'] == 2) {
+					$all_modules[$text]['phoneapp'][$name] = $value;
+				}
+				if ($value['welcome_support'] == 2) {
+					$all_modules[$text]['system_welcome'][$name] = $value;
+				}
+			}
+		}
 	}
+	$uninstall_modules = array(
+		'cloud_m_count' => $get_cloud_m_count['module_quantity'],
+		'modules' => $all_modules,
+		'app_count' => count($all_modules['uninstalled']['app']),
+		'wxapp_count' => count($all_modules['uninstalled']['wxapp']),
+		'webapp_count' => count($all_modules['uninstalled']['webapp']),
+		'phoneapp_count' => count($all_modules['uninstalled']['phoneapp']),
+		'welcome_count' => count($all_modules['uninstalled']['welcome'])
+	);
 	if (!empty($account_type)) {
 		$uninstall_modules['modules'] = (array)$uninstall_modules['modules'][$status][$account_type];
 		$uninstall_modules['module_count'] = $uninstall_modules[$account_type . '_count'];
 	}
 	return $uninstall_modules;
+}
+/**
+ * 通过本地modules_local获取所有未安装的模块
+ * @return array $modules 未安装和回收站模块数据列表
+ */
+function module_build_uninstalled_module_by_local() {
+	load()->classs('cloudapi');
+	$cloud_api = new CloudApi();
+	$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
+	$modules_table = table('module');
+	$modules_local = $modules_table->getModulesLocalList();
+	$status_text = array('recycle', 'uninstalled');
+	$all_modules = array();
+	if (!empty($modules_local) && is_array($modules_local)) {
+		foreach ($modules_local as $name => $value) {
+			foreach ($status_text as $text) {
+				if ($value['status'] != $text) {
+					continue;
+				}
+				if (empty($account_type)) {
+					if ($value['app_support'] == 2) {
+						$all_modules[$text]['app'][$name] = $value;
+					}
+					if ($value['wxapp_support'] == 2) {
+						$all_modules[$text]['wxapp'][$name] = $value;
+					}
+					if ($value['webapp_support'] == 2) {
+						$all_modules[$text]['webapp'][$name] = $value;
+					}
+					if ($value['phoneapp_support'] == 2) {
+						$all_modules[$text]['phoneapp'][$name] = $value;
+					}
+					if ($value['welcome_support'] == 2) {
+						$all_modules[$text]['system_welcome'][$name] = $value;
+					}
+				}
+			}
+		}
+	}
+	$modules['cloud_m_count'] = $get_cloud_m_count['module_quantity'];
+	$modules['modules'] = $all_modules;
+	$modules['app_count'] = count($all_modules['uninstalled']['app']);
+	$modules['wxapp_count'] = count($all_modules['uninstalled']['wxapp']);
+	$modules['webapp_count'] = count($all_modules['uninstalled']['webapp']);
+	$modules['phoneapp_count'] = count($all_modules['uninstalled']['phoneapp']);
+	$modules['welcome_count'] = count($all_modules['uninstalled']['welcome']);
+	return $modules;
 }
 
 /**
@@ -613,18 +683,16 @@ function module_status($module) {
  */
 function module_filter_upgrade($module_list) {
 	$modules = array();
+	$modules_table = table('module');
+	$modules_local = $modules_table->getModulesLocalList();
 	$installed_module = pdo_getall('modules', array('name' => $module_list), array('version', 'name'), 'name');
-	$all_upgrade_cloud_module = cache_load(cache_system_key('all_cloud_upgrade_module:'));
-	if (empty($all_upgrade_cloud_module)) {
-		$all_upgrade_cloud_module = cache_build_cloud_upgrade_module();
-	}
 	if (!empty($module_list) && is_array($module_list) && !empty($installed_module)) {
 		foreach ($module_list as $key => $module) {
 			if (empty($installed_module[$module])) {
 				continue;
 			}
 			$manifest = ext_module_manifest($module);
-			if (!empty($manifest)&& is_array($manifest)) {
+			if (!empty($manifest) && is_array($manifest)) {
 				$module = array('name' => $module);
 				$module['from'] = 'local';
 				if (version_compare($installed_module[$module['name']]['version'], $manifest['application']['version']) == '-1') {
@@ -633,8 +701,8 @@ function module_filter_upgrade($module_list) {
 					$modules[$module['name']] = $module;
 				}
 			} else {
-				if (is_array($all_upgrade_cloud_module) && !empty($all_upgrade_cloud_module[$module])) {
-					$modules[$module] = $all_upgrade_cloud_module[$module];
+				if (is_array($modules_local) && !empty($modules_local[$module])) {
+					$modules[$module] = $modules_local[$module];
 				}
 			}
 		}
@@ -652,9 +720,22 @@ function module_upgrade_new($type = 'account') {
 	} else {
 		$module_list = user_module_by_account_type('account');
 	}
+	$modules_table = table('module');
+	$modules_ignore = $modules_table->getModulesIgnoreList();
 	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
 	if (!empty($upgrade_modules)) {
 		foreach ($upgrade_modules as $key => &$module) {
+			if (empty($module['is_upgrade'])) {
+				unset($upgrade_modules[$key]);
+			}
+			$module['is_ignore'] = 0;
+			if (!empty($modules_ignore[$key])) {
+				$ignore_version = $modules_ignore[$key]['version'];
+				$upgrade_version = $module['version'];
+				if (ver_compare($ignore_version, $upgrade_version) >= 0) {
+					$module['is_ignore'] = 1;
+				}
+			}
 			$module_fetch = module_fetch($key);
 			$module['logo'] = $module_fetch['logo'];
 			$module['link'] = url('module/manage-system/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));

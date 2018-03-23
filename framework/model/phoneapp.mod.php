@@ -131,47 +131,6 @@ function phoneapp_version($version_id) {
 	return $version_info;
 }
 
-
-function phoneapp_switch($uniacid, $redirect = '') {
-	global $_W;
-	phoneapp_save_switch($uniacid);
-	isetcookie('__uid', $_W['uid'], 7 * 86400);
-	if (!empty($redirect)) {
-		header('Location: ' . $redirect);
-		exit;
-	}
-
-	return true;
-}
-
-
-/**
- * 切换APP，保留最后一次操作的公众号，以便点公众号时再切换回.
- */
-function phoneapp_save_switch($uniacid) {
-	global $_W, $_GPC;
-	load()->model('visit');
-	if (empty($_GPC['__switch'])) {
-		$_GPC['__switch'] = random(5);
-	}
-
-	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
-	$cache_lastaccount = (array) cache_load($cache_key);
-	if (empty($cache_lastaccount)) {
-		$cache_lastaccount = array(
-			'phoneapp' => $uniacid,
-		);
-	} else {
-		$cache_lastaccount['phoneapp'] = $uniacid;
-	}
-	visit_system_update(array('uniacid' => $uniacid, 'uid' => $_W['uid']));
-	cache_write($cache_key, $cache_lastaccount);
-	isetcookie('__uniacid', $uniacid, 7 * 86400);
-	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
-
-	return true;
-}
-
 /**
  * 更新最新使用版本.
  * @param int $version_id

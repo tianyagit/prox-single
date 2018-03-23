@@ -30,7 +30,7 @@
             <span class="pull-right">操作</span>
         </div>
         <div class="panel-body">
-            <div class="article-reply-item" ng-repeat="comment in articleList">
+            <div class="article-reply-item icon-selection" ng-repeat="comment in articleList">
                 <div class="media ">
                     <div class="media-left">
                         <a href="javascript:;">
@@ -63,13 +63,13 @@
                         回复该评论
                     </div>
                     <div class="reply-editor-content">
-                        <textarea  ng-model="content" cols="30" rows="10" class="form-control"></textarea>
-                        <div class="reply-editor-emoji">
-                            <i class="fa fa-github-alt"> </i>
-                        </div>
+                        <textarea ng-model="comment.replycontent" cols="30" rows="10" class="form-control replaycontent" contenteditable></textarea>
+                        <!--<div class="reply-editor-emoji">-->
+                            <!--<i class="fa fa-github-alt emotion-triggers" ng-click="selectEmoji($event,comment)"> </i>-->
+                        <!--</div>-->
                     </div>
                     <div class="reply-editor-action">
-                        <button class="btn btn-primary" ng-click="send(comment, content)">发送 </button>
+                        <button class="btn btn-primary" ng-click="send(comment)">发送 </button>
                         <button class="btn btn-default" ng-click="cancel(comment)">取消</button>
                     </div>
                 </div>
@@ -87,8 +87,8 @@
 		is_comment:"{$is_comment}",
 		articleList: {php echo !empty($article_lists) ? json_encode($article_lists) : 'null'},
         links :{
-			reply: "{php echo url('site/article/add_comment')}",
-			display: "{php echo url('site/article/comment_list')}",
+			reply: "{php echo url('site/comment/post')}",
+			display: "{php echo url('site/comment/display')}",
         }
 	});
 	angular.bootstrap($('#js-wesite-article-comment-display'), ['wesiteApp']);

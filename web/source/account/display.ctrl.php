@@ -7,9 +7,8 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
-load()->model('visit');
 
-$dos = array('rank', 'display', 'switch', 'add_welcome');
+$dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos)? $do : 'display' ;
 $_W['page']['title'] = '公众号列表 - 公众号';
 
@@ -85,10 +84,5 @@ if ($do == 'display') {
 	if ($_W['ispost']) {
 		iajax(0, $account_list);
 	}
-}
-
-if ($do == 'add_welcome') {
-	visit_system_update(array('uid' => $_W['uid'], 'uniacid' => intval($_GPC['uniacid'])), true);
-	itoast(0, url('account/display'));
 }
 template('account/display');

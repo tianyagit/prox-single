@@ -15,6 +15,20 @@
 				<style>
 					.nav > li:hover .dropdown-menu {display: block;}
 				</style>
+				{php global $top_nav}
+				{php $nav_top_fold=array()}
+				{php $nav_top_tiled=array()}
+				{loop $top_nav $nav}
+					{if in_array($nav['name'], array('account', 'wxapp', 'webapp', 'phoneapp', 'module'))}
+						{php $nav_top_fold[]=$nav}
+					{elseif in_array($nav['name'], array('system', 'site'))}
+						{php $nav_top_tiled_system[]=$nav}
+					{elseif in_array($nav['name'], array('appmarket', 'store'))}
+						{php $nav_top_tiled_other[]=$nav}
+					{elseif $nav['name']=='custom_help'}
+						{php $nav_top_help=$nav}
+					{/if}
+				{/loop}
 				<ul class="nav navbar-nav  navbar-left">
 					<li class="dropdown">
 						<a href="" data-toggle="dropdown">
@@ -24,49 +38,33 @@
 						<div class="dropdown-menu head-dropdown-menu">
 							<div class="container">
 								<ul class="head-app-list">
-									<li class="head-app-item">
-										<a href="">
-											<i class="wi wi-wx-circle"></i>公众号
+									{loop $nav_top_fold $nav}
+									{if in_array($nav['title'], array('公众号', '小程序', 'PC', 'APP', '应用')) || in_array($nav['name'], array('account', 'wxapp', 'PC', 'APP', 'module'))}
+									<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="head-app-item active" {else} class="head-app-item" {/if}>
+										<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
+											<i class="{$nav['icon']}"></i>
+											{$nav['title']}
 										</a>
 									</li>
-									<li class="head-app-item">
-										<a href="">
-											<i class="wi wi-wxapp"></i>小程序
-										</a>
-									</li>
-									<li class="head-app-item">
-										<a href="">
-											<i class="wi wi-pc"></i>PC
-										</a>
-									</li>
-									<li class="head-app-item">
-										<a href="">
-											<i class="wi wi-app"></i>APP
-										</a>
-									</li>
-									<li class="head-app-item">
-										<a href="">
-											<i class="wi wi-main-apply"></i>应用模块
-										</a>
-									</li>
+									{/if}
+									{/loop}
 								</ul>
 							</div>
 						</div>
 					</li>
-					<li>
-						<a href="">系统</a>
+					{loop $nav_top_tiled_system $nav}
+					<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
+						<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a>
 					</li>
-					<li>
-						<a href="">站点</a>
-					</li>
+					{/loop}
 					<ul class="other nav navbar-nav navbar-left">
-						<li>
-							<a href=""> 商场 </a>
+						{loop $nav_top_tiled_other $nav}
+						<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
+							<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}> {$nav['title']} </a>
 						</li>
-						<li>
-							<a href="">市场</a>
-						</li>
+						{/loop}
 					</ul>
+
 				</ul>
 				<ul class="nav navbar-nav navbar-left hidden">
 					{php global $top_nav}
@@ -76,13 +74,18 @@
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li>
-						<a data-toggle="popover" data-placement="bottom"  data-trigger="hover" data-content="帮助">
+						<a href="{if empty($nav_top_help['url'])}{php echo url('home/welcome/' . $nav_top_help['name']);}{else}{$nav_top_help['url']}{/if}" data-toggle="popover" data-placement="bottom"  data-trigger="hover" data-content="帮助" {if !empty($nav_top_help['blank'])}target="_blank"{/if}>
 							<i class="wi wi-explain-sign" ></i>
 						</a>
 					</li>
+					{php $workorder_nav=$frames['section']['workorder']['menu']['system_workorder']}
+					{if empty($workorder_nav['url'])}
+						{php $frames_site = buildframes('site')}
+						{php $workorder_nav=$frames_site['section']['workorder']['menu']['system_workorder']}
+					{/if}
 					<li>
-						<a data-toggle="popover" data-placement="bottom"  data-trigger="hover" data-content="工单">
-							<i class="wi wi-order" ></i>
+						<a href="{if empty($workorder_nav['url'])}{php echo url('home/welcome/' . $workorder_nav['name']);}{else}{$workorder_nav['url']}{/if}" data-toggle="popover" data-placement="bottom"  data-trigger="hover" data-content="工单">
+							<i class="{$workorder_nav['icon']}" ></i>
 						</a>
 					</li>
 					{template 'common/header-notice'}

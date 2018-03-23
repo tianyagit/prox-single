@@ -168,25 +168,26 @@ function user_single($user_or_uid) {
 	$where = ' WHERE 1 ';
 	$params = array();
 	if (!empty($user['uid'])) {
-		$where .= ' AND `uid`=:uid';
+		$where .= ' AND u.`uid`=:uid';
 		$params[':uid'] = intval($user['uid']);
 	}
 	if (!empty($user['username'])) {
-		$where .= ' AND `username`=:username';
+		$where .= ' AND u.`username`=:username';
 		$params[':username'] = $user['username'];
 	}
 	if (!empty($user['email'])) {
-		$where .= ' AND `email`=:email';
+		$where .= ' AND u.`email`=:email';
 		$params[':email'] = $user['email'];
 	}
 	if (!empty($user['status'])) {
-		$where .= " AND `status`=:status";
+		$where .= " AND u.`status`=:status";
 		$params[':status'] = intval($user['status']);
 	}
 	if (empty($params)) {
 		return false;
 	}
-	$sql = 'SELECT * FROM ' . tablename('users') . " $where LIMIT 1";
+	$sql = 'SELECT u.*, p.avatar FROM ' . tablename('users') . ' AS u LEFT JOIN '. tablename('users_profile') . ' AS p ON u.uid = p.uid '. $where. ' LIMIT 1';
+
 	$record = pdo_fetch($sql, $params);
 	if (empty($record)) {
 		return false;
@@ -587,12 +588,10 @@ function user_login_forward($forward = '') {
 		return url('account/manage', array('account_type' => 1));
 	}
 
-	if (!empty($_W['setting']['copyright']['welcome_status']) && !empty($_W['user']['welcome_status'])) {
-		if (!empty($_W['user']['welcome_link'])) {
-			return $_W['user']['welcome_link'];
-		}
+	$url = user_after_login_link();
 
-		return url('home/welcome/system_home');
+	if (!empty($url)) {
+		return $url;
 	}
 
 	$login_forward = url('account/display');
@@ -1068,4 +1067,36 @@ function user_change_welcome_status($uid, $welcome_status) {
 	$user_table = table('users');
 	$user_table->fillWelcomeStatus($welcome_status)->whereUid($uid)->save();
 	return true;
+}
+
+/**
+ * 登陆之后跳转链接
+ * @return string
+ */
+function user_after_login_link() {
+	global $_W;
+	$type = $_W['user']['welcome_link'];
+
+	switch ($type) {
+		case WELCOME_DISPLAY_TYPE:
+			$url = url('home/welcome/system_home');
+			break;
+		case ACCOUNT_DISPLAY_TYPE:
+			$url = url('account/display');
+			break;
+		case WXAPP_DISPLAY_TYPE:
+			$url = url('wxapp/display');
+			break;
+		case WEBAPP_DISPLAY_TYPE:
+			$url = url('webapp/home');
+			break;
+		case PHONEAPP_DISPLAY_TYPE:
+			$url = url('phoneapp/display');
+			break;
+		default:
+			$url = '';
+			break;
+	}
+
+	return $url;
 }
