@@ -212,6 +212,16 @@ function phoneapp_update_last_use_version($uniacid, $version_id) {
 	return true;
 }
 
+function phoneapp_getpackage($data, $if_single = false) {
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$response = $api->post('phoneapp', 'download', $data, 'binary');
+	if ($response['code'] == 200) {
+		return error(0, $response['content']);
+	}
+	return error(1, $response['content']);
+}
+
 
 /**
  * 获取APP所有版本
