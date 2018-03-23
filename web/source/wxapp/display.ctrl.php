@@ -44,7 +44,7 @@ if ($do == 'home') {
 	$account_info = permission_user_account_num();
 
 	$pindex = max(1, intval($_GPC['page']));
-	$psize = 20;
+	$psize = 15;
 
 	$account_table = table('wxapp');
 	$account_table->searchWithType(array(ACCOUNT_TYPE_APP_NORMAL));
@@ -52,6 +52,10 @@ if ($do == 'home') {
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
 		$account_table->searchWithKeyword($keyword);
+	}
+	$letter = $_GPC['letter'];
+	if(isset($letter) && strlen($letter) == 1) {
+		$account_table->searchWithLetter($letter);
 	}
 
 	$account_table->accountRankOrder();
