@@ -71,7 +71,7 @@
 					</div>
 				</div>
 				<div class="mask">
-					<a ng-href="item.switchurl" class="entry">
+					<a ng-href="{{item.switchurl}}" class="entry">
 						<div>进入PC <i class="wi wi-angle-right"></i></div>
 					</a>
 					<!--<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)" title="置顶">-->
@@ -88,7 +88,7 @@
 		{if count($list)==0 }
 		<ul style="text-align:center;width:100%"><span>暂无数据</span></ul>
 		{/if}
-		<div>{$pager}</div>
+		<div class="text-right">{$pager}</div>
 	</div>
 </div>
 
