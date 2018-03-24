@@ -82,6 +82,11 @@ if ($do == 'display') {
 		$account_table->searchWithKeyword($keyword);
 	}
 
+	$letter = $_GPC['letter'];
+	if(isset($letter) && strlen($letter) == 1) {
+		$account_table->searchWithLetter($letter);
+	}
+
 	$account_table->searchWithPage($pindex, $psize);
 	$phoneapp_lists = $account_table->searchAccountList();
 	$total = $account_table->getLastQueryTotal();
