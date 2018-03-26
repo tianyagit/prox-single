@@ -338,10 +338,10 @@ function wxapp_version_by_version($version) {
 
 function wxapp_version_detail_info($version_info) {
 	global $_W;
-	if (empty($version_info)) {
+	if (empty($version_info) || empty($version_info['uniacid'])) {
 		return array();
 	}
-	$uni_modules = uni_modules();
+	$uni_modules = uni_modules_by_uniacid($version_info['uniacid']);
 	$uni_modules = array_keys($uni_modules);
 	$version_info['cover_entrys'] = array();
 	if (!empty($version_info['modules'])) {

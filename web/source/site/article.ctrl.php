@@ -48,7 +48,12 @@ if ($do == 'display') {
 	$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('site_article') . " WHERE uniacid = '{$_W['uniacid']}'".$condition, $params);
 	$pager = pagination($total, $pindex, $psize);
 
-	$article_ids = array_column($list, 'id');
+	$article_ids = array();
+	if (!empty($list)) {
+		foreach ($list as $item) {
+			$article_ids[] = $item['id'];
+		}
+	}
 	$article_comment = table('sitearticlecomment')->srticleCommentUnread($article_ids);
 
 	$setting = uni_setting($_W['uniacid']);

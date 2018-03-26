@@ -168,25 +168,26 @@ function user_single($user_or_uid) {
 	$where = ' WHERE 1 ';
 	$params = array();
 	if (!empty($user['uid'])) {
-		$where .= ' AND `uid`=:uid';
+		$where .= ' AND u.`uid`=:uid';
 		$params[':uid'] = intval($user['uid']);
 	}
 	if (!empty($user['username'])) {
-		$where .= ' AND `username`=:username';
+		$where .= ' AND u.`username`=:username';
 		$params[':username'] = $user['username'];
 	}
 	if (!empty($user['email'])) {
-		$where .= ' AND `email`=:email';
+		$where .= ' AND u.`email`=:email';
 		$params[':email'] = $user['email'];
 	}
 	if (!empty($user['status'])) {
-		$where .= " AND `status`=:status";
+		$where .= " AND u.`status`=:status";
 		$params[':status'] = intval($user['status']);
 	}
 	if (empty($params)) {
 		return false;
 	}
-	$sql = 'SELECT * FROM ' . tablename('users') . " $where LIMIT 1";
+	$sql = 'SELECT u.*, p.avatar FROM ' . tablename('users') . ' AS u LEFT JOIN '. tablename('users_profile') . ' AS p ON u.uid = p.uid '. $where. ' LIMIT 1';
+
 	$record = pdo_fetch($sql, $params);
 	if (empty($record)) {
 		return false;

@@ -105,7 +105,7 @@ if (empty($_W['openid']) && !empty($_SESSION['oauth_openid'])) {
 	);
 }
 $unisetting = uni_setting_load();
-if (empty($unisetting['oauth']['account'])) {
+if (empty($unisetting['oauth'])) {
 	$unisetting['oauth'] = uni_account_global_oauth();
 }
 if (!empty($unisetting['oauth']['account'])) {

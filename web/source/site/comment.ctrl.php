@@ -7,11 +7,11 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('article');
 load()->model('account');
 
-$dos = array('commont-list', 'add_comment', 'comment_status');
-$do = in_array($do, $dos) ? $do : 'commont-list';
+$dos = array('commont_list', 'add_comment', 'comment_status');
+$do = in_array($do, $dos) ? $do : 'commont_list';
 
 
-if ($do == 'commont-list') {
+if ($do == 'commont_list') {
 	$articleId = intval($_GPC['id']);
 
 	$pindex = max(1, intval($_GPC['page']));
@@ -38,7 +38,9 @@ if ($do == 'commont-list') {
 	$article_lists = article_comment_detail($article_lists);
 
 	if (!empty($article_lists)) {
-		$parent_article_comment_ids = array_column($article_lists, 'id');
+		foreach ($article_lists as $list) {
+			$parent_article_comment_ids[] = $list['id'];
+		}
 		pdo_update('site_article_comment', array('is_read' => ARTICLE_COMMENT_READ), array('id' => $parent_article_comment_ids));
 	}
 

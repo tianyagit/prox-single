@@ -724,6 +724,7 @@ if ($do == 'installed') {
 	$title = $_GPC['title'];
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 	$module_list = $all_modules = user_modules($_W['uid']);
+	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
 			if (!empty($module['issystem']) || (empty($_GPC['system_welcome']) && ((ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL && $module['webapp_support'] != MODULE_SUPPORT_WEBAPP) || (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL && $module['phoneapp_support'] != MODULE_SUPPORT_PHONEAPP))) || (!empty($_GPC['system_welcome']) && $module['welcome_support'] != 2)) {
@@ -733,6 +734,14 @@ if ($do == 'installed') {
 				if ($module['title_initial'] != $letter){
 					unset($module_list[$key]);
 				}
+			}
+			$new_branch_module = $upgrade_modules[$module['name']]['new_branch'];
+			$upgrade_branch_module = $upgrade_modules[$module['name']]['upgrade_branch'];
+			if ($new_branch_module || $upgrade_branch_module) {
+				$module_list[$module['name']]['upgrade'] = $upgrade_modules[$module['name']]['upgrade'];
+				$module_list[$module['name']]['new_branch'] = $upgrade_modules[$module['name']]['new_branch'];
+				$module_list[$module['name']]['upgrade_branch'] = $upgrade_modules[$module['name']]['upgrade_branch'];
+				$module_list[$module['name']]['from'] = $upgrade_modules[$module['name']]['from'];
 			}
 			if (!empty($title) && !strexists($module['title'], $title)) {
 				unset($module_list[$key]);
