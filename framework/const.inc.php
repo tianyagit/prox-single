@@ -158,6 +158,12 @@ define('MODULE_SUPPORT_PHONEAPP', 2);
 //是否支持系统首页 1不支持  2支持
 define('MODULE_SUPPORT_SYSTEMWELCOME', 2);
 define('MODULE_NONSUPPORT_SYSTEMWELCOME', 1);
+//是否支持安卓 不支持1 支持2
+define('MODULE_NOSUPPORT_ANDROID', 1);
+define('MODULE_SUPPORT_ANDROID', 2);
+//是否支持ios 不支持1 支持2
+define('MODULE_NOSUPPORT_IOS', 1);
+define('MODULE_SUPPORT_IOS', 2);
 
 //权限类型
 define('PERMISSION_ACCOUNT', 'system');
