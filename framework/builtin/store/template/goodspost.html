@@ -70,7 +70,7 @@
 				</div>
 			</div>
 		{else}
-			{if $type != STORE_TYPE_PACKAGE}
+			{if $type != STORE_TYPE_PACKAGE && $type != STORE_TYPE_USER_PACKAGE}
 			<div class="form-group">
 				<label class="control-label col-sm-2">商品名称</label>
 				<div class="col-sm-8">
@@ -169,6 +169,21 @@
 							<option value="{$group['id']}" {if !empty($goods_info) && $goods_info['module_group'] == $group['id']}selected{/if}>
 								{$group['name']}
 							</option>
+							{/loop}
+						</select>
+					</div>
+				</div>
+			</div>
+			{elseif $type == STORE_TYPE_USER_PACKAGE}
+			<div class="form-group">
+				<label class="control-label col-sm-2">用户权限组</label>
+				<div class="col-sm-8">
+					<div class="input-group">
+						<select class="we7-select" name="user_group">
+							{loop $user_groups $group}
+								<option value="{$group['id']}" {if !empty($goods_info) && $goods_info['user_group'] == $group['id']}selected{/if}>
+									{$group['name']}
+								</option>
 							{/loop}
 						</select>
 					</div>

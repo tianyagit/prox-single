@@ -78,13 +78,16 @@ function store_goods_post($data) {
 	$post['account_num'] = $data['account_num'];
 	$post['wxapp_num'] = $data['wxapp_num'];
 	$post['module_group'] = $data['module_group'];
+	$post['user_group'] = $data['user_group'];
 	if (!empty($data['id'])) {
 		$result = pdo_update('site_store_goods', $post, array('id' => $data['id']));
 	} else {
 		$post['type'] = $data['type'];
 		$post['createtime'] = TIMESTAMP;
 		$post['title_initial'] = get_first_pinyin($data['title']);
-		$post['unit'] = 'month';
+		if ($data['type'] != STORE_TYPE_USER_PACKAGE) {
+			$post['unit'] = 'month';
+		}
 		if ($data['type'] == STORE_TYPE_API) {
 			$post['unit'] = 'ten_thousand';
 		}

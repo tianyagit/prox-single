@@ -7,6 +7,7 @@
 		<li {if $type == STORE_TYPE_WXAPP}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_WXAPP,'direct' => '1'))}">小程序个数</a></li>
 		<li {if $type == STORE_TYPE_API}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_API,'direct' => '1'))}">API浏览次数</a></li>
 		<li {if $type == STORE_TYPE_PACKAGE}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_PACKAGE,'direct' => '1'))}">应用权限组</a></li>
+		<li {if $type == STORE_TYPE_USER_PACKAGE}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_USER_PACKAGE,'direct' => '1'))}">用户权限组</a></li>
 		<li {if $type == STORE_TYPE_ACCOUNT_RENEW}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_ACCOUNT_RENEW,'direct' => '1'))}">公众号续费</a></li>
 		<li {if $type == STORE_TYPE_WXAPP_RENEW}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_WXAPP_RENEW,'direct' => '1'))}">小程序续费</a></li>
 	</ul>
@@ -29,6 +30,8 @@
 	<a class="pull-right btn btn-primary" href="javascript:;" data-toggle="modal" data-target="#add_api">添加</a>
 	{elseif $_GPC['type'] == STORE_TYPE_PACKAGE}
 	<a class="pull-right btn btn-primary" href="{php echo $this->createWebUrl('goodspost', array('direct' => 1, 'type' => STORE_TYPE_PACKAGE))}">添加</a>
+	{elseif $_GPC['type'] == STORE_TYPE_USER_PACKAGE}
+	<a class="pull-right btn btn-primary" href="{php echo $this->createWebUrl('goodspost', array('direct' => 1, 'type' => STORE_TYPE_USER_PACKAGE))}">添加</a>
 	{else}
 	<a class="pull-right btn btn-primary" href="{php echo $this->createWebUrl('goodspost', array('direct' => 1, 'type' => $type))}">添加</a>
 	{/if}
@@ -54,6 +57,8 @@
 				<div class="icon icon-api"><span class="wi wi-api"></span></div>
 				{elseif in_array($_GPC['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))}
 				<div class="icon icon-api"><span class="wi wi-appjurisdiction"></span></div>
+				{elseif $_GPC['type'] == STORE_TYPE_USER_PACKAGE}
+				<div class="icon icon-api"><span class="wi wi-userjurisdiction"></span></div>
 				{else}
 				<img src="{$goods['module_info']['logo']}" alt="" width="60" height="60"/>
 				{/if}
@@ -62,6 +67,8 @@
 				<div class="we7-margin-bottom-sm">
 					{if $type == STORE_TYPE_PACKAGE}
 					{$groups[$goods['module_group']]['name']}
+					{elseif $type == STORE_TYPE_USER_PACKAGE}
+					{$user_groups[$goods['user_group']]['name']}
 					{elseif $type == STORE_TYPE_WXAPP}
 					创建{$goods['wxapp_num']}个小程序
 					{elseif $type == STORE_TYPE_ACCOUNT}

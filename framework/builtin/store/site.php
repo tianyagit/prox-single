@@ -312,6 +312,10 @@ class StoreModuleSite extends WeModuleSite {
 			if ($type == STORE_TYPE_PACKAGE) {
 				$groups = uni_groups();
 			}
+			if ($type == STORE_TYPE_USER_PACKAGE) {
+				$user_groups = pdo_fetchall("SELECT * FROM " . tablename('users_group'), array(), 'id');
+				$user_groups = user_group_format($user_groups);
+			}
 		}
 
 		if ($operate == 'changestatus' || $operate == 'delete') {
@@ -364,6 +368,7 @@ class StoreModuleSite extends WeModuleSite {
 					'account_num' => $_GPC['account_num'],
 					'wxapp_num' => $_GPC['wxapp_num'],
 					'module_group' => $_GPC['module_group'],
+					'user_group' => $_GPC['user_group'],
 					'type' => $_GPC['type'],
 					'title' => !empty($_GPC['title']) ? trim($_GPC['title']) : '',
 					'price' => is_numeric($_GPC['price']) ? floatval($_GPC['price']) : 0,
@@ -377,12 +382,16 @@ class StoreModuleSite extends WeModuleSite {
 				if ($_GPC['type'] == STORE_TYPE_PACKAGE) {
 					$data['title'] = '应用权限组';
 				}
+				if ($_GPC['type'] == STORE_TYPE_USER_PACKAGE) {
+					$data['title'] = '用户权限组';
+				}
 				if ($_GPC['submit'] == '保存并上架') {
 					$data['status'] = 1;
 				}
 				if (!empty($id)) {
 					$data['id'] = $id;
 				}
+
 				$result = store_goods_post($data);
 				if (!empty($result)) {
 					if (!empty($id)) {
@@ -402,6 +411,10 @@ class StoreModuleSite extends WeModuleSite {
 			}
 			if ($_GPC['type'] == STORE_TYPE_PACKAGE) {
 				$module_groups = uni_groups();
+			}
+			if ($_GPC['type'] == STORE_TYPE_USER_PACKAGE) {
+				$user_groups = pdo_fetchall("SELECT * FROM " . tablename('users_group'));
+				$user_groups = user_group_format($user_groups);
 			}
 		}
 		if ($operate == 'add') {
@@ -450,7 +463,7 @@ class StoreModuleSite extends WeModuleSite {
 			$pageindex = max(intval($_GPC['page']), 1);
 			$pagesize = 24;
 			$type = 0;
-			if (!empty($_GPC['type']) && in_array($_GPC['type'], array(STORE_TYPE_MODULE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_API, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))) {
+			if (!empty($_GPC['type']) && in_array($_GPC['type'], array(STORE_TYPE_MODULE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_API, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_USER_PACKAGE))) {
 				$type = $_GPC['type'];
 			}
 			$store_table = table ('store');
@@ -469,6 +482,10 @@ class StoreModuleSite extends WeModuleSite {
 			if ($_GPC['type'] == STORE_TYPE_PACKAGE || empty($_GPC['type'])) {
 				$module_groups = uni_groups();
 			}
+			if ($_GPC['type'] == STORE_TYPE_USER_PACKAGE) {
+				$user_groups = pdo_fetchall("SELECT * FROM " . tablename('users_group'), array(), 'id');
+				$user_groups = user_group_format($user_groups);
+			}
 			$pager = pagination ($store_table['total'], $pageindex, $pagesize);
 		}
 
@@ -478,6 +495,7 @@ class StoreModuleSite extends WeModuleSite {
 				itoast ('商品不存在', '', 'info');
 			}
 			$goods = pdo_get ('site_store_goods', array ('id' => $goods));
+
 			if (in_array($goods['type'], array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_API))) {
 				$goods['module'] = module_fetch ($goods['module']);
 				$goods['slide'] = iunserializer ($goods['slide']);
@@ -486,6 +504,22 @@ class StoreModuleSite extends WeModuleSite {
 				$goods['num'] = $goods['type'] == STORE_TYPE_ACCOUNT ? $goods['account_num'] : $goods['wxapp_num'];
 			} elseif ($goods['type'] == STORE_TYPE_PACKAGE) {
 				$module_groups = uni_groups();
+			} elseif ($goods['type'] == STORE_TYPE_USER_PACKAGE) {
+				$user_group_info = pdo_fetch("SELECT * FROM ".tablename('users_group') . " WHERE id = :id", array(':id' => $goods['user_group']));
+				$user_group_info['package'] = iunserializer($user_group_info['package']);
+				if (!empty($user_group_info['package']) && in_array(-1, $user_group_info['package'])) {
+					$user_group_info['package_all'] = true;
+				}
+				$module_groups = uni_groups();
+				if (!empty($module_groups)) {
+					foreach ($module_groups as $key => &$module) {
+						if (!empty($user_group_info['package']) && in_array($key, $user_group_info['package'])) {
+							$user_group_info['package_info'][] = $module;
+						}
+					}
+//					$user_group_info['package_info'] = json_encode($user_group_info['package_info']);
+				}
+
 			}
 			$account_table = table ('account');
 			$user_account = $account_table->userOwnedAccount();
@@ -821,6 +855,12 @@ class StoreModuleSite extends WeModuleSite {
 						'url' => $this->createWebUrl('goodsbuyer', array('direct' => 1,  'type' => STORE_TYPE_PACKAGE)),
 						'icon' => 'wi wi-appjurisdiction',
 						'type' => STORE_TYPE_PACKAGE,
+					),
+					'store_goods_users_package' => array(
+						'title' => '用户权限组',
+						'url' => $this->createWebUrl('goodsbuyer', array('direct' => 1, 'type' => STORE_TYPE_USER_PACKAGE)),
+						'icon' => 'wi wi-userjurisdiction',
+						'type' => STORE_TYPE_USER_PACKAGE,
 					),
 					'store_goods_account_renew' => array(
 						'title' => '公众号续费',
