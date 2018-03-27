@@ -133,7 +133,7 @@
 					{elseif in_array($goods['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP))}
 					创建{$goods['num']}个{$goods['title']}
 					{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE}
-					{$user_groups[$goods['user_group']]['name']} 套餐
+					{$user_group_info['name']} 套餐
 					{else}
 					{$module_groups[$goods['module_group']]['name']} 套餐
 					{/if}
@@ -164,7 +164,7 @@
 					{/if}
 				</div>
 				<div class="buy-btn">
-					{if in_array($goods['type'], array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))}
+					{if in_array($goods['type'], array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_USER_PACKAGE))}
 					<button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#myModalBuy">立即购买</button>
 					{elseif $goods['type'] == STORE_TYPE_API}
 					<button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#BuyApi">立即购买</button>
@@ -182,6 +182,8 @@
 						<h4 class="modal-title">
 							{if $goods['type'] == STORE_TYPE_PACKAGE}
 							购买应用套餐
+							{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE}
+							购买用户组权限套餐
 							{elseif $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
 							续费公众号
 							{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
@@ -528,80 +530,6 @@
 		goods : {php echo json_encode($goods)},
 		packages : {php echo !empty($user_group_info['package_info']) ? json_encode($user_group_info['package_info']) : 'null'},
 	});
-	angular.module('storeApp').controller('goodsBuyerCtrl', ['$scope', '$http', 'config', function($scope, $http, config) {
-		console.log(config);
-		$scope.duration = 1;
-		$scope.unit = config.unit;
-		$scope.expiretime = config.expiretime;
-		$scope.singlePrice = config.singlePrice;
-		$scope.price = config.singlePrice;
-		$scope.account_list = config.account_list;
-		$scope.wxapp = config.wxapp;
-		$scope.wxapp_account_list = config.wxapp_account_list;
-		$scope.uniacid = config.first_uniacid;
-		$scope.goods = config.goods;
-		$scope.pay_way_list = config.pay_way;
-		$scope.packages = config.packages;
-
-		if ($scope.pay_way_list.length == 0) {
-			$scope.pay_way = '';
-		} else {
-			$scope.pay_way = $scope.pay_way_list.alipay ? 'alipay' : 'wechat';
-		}
-
-		$scope.changePayWay = function(way) {
-			$scope.pay_way = way;
-		}
-
-		$scope.changeDuration = function(duration) {
-			$scope.duration = duration;
-		}
-
-		$scope.submit_order = function(submit_type) {
-			var order_data = {
-				uniacid : $scope.uniacid,
-				price : config.singlePrice,
-				goodsid : $scope.goods.id,
-				duration : $scope.duration,
-				'type' : $scope.pay_way,
-				'wxapp' : $scope.wxapp
-			}
-
-			$http.post('./index.php?c=site&a=entry&m=store&do=goodsbuyer&operate=submit_order&direct=1', order_data).success(function(data) {
-				if (data.message.errno == 0) {
-					location.href='./index.php?c=site&a=entry&m=store&do=goodsbuyer&operate=pay_order&direct=1&orderid=' + data.message.message;
-				} else {
-					util.message(data.message.message);
-					return false;
-				}
-				if (submit_type == 'order') {
-					location.href = './index.php?c=site&a=entry&m=store&do=orders&direct=1';
-				} else {
-					location.href = './index.php?c=site&a=entry&m=store&do=goodsbuyer&operate=pay_order&direct=1&orderid=' + data.message.message;
-				}
-			});
-		};
-
-		$scope.changeExpire = function(duration, uniacid) {
-			duration = duration == '' || duration == undefined ? $scope.duration : duration;
-			uniacid = uniacid == '' || uniacid == undefined ? $scope.uniacid : uniacid;
-
-			$http.post('./index.php?c=site&a=entry&operate=change_order_expire&direct=1&do=changeorderexpire&m=store', {'duration' : duration, 'unit' : $scope.unit, 'uniacid' : uniacid, 'goodsid' : $scope.goods.id}).success(function(data) {
-				if (data.message.errno == 0) {
-					$scope.expiretime = data.message.message;
-					$scope.price = $scope.singlePrice * duration;
-				}
-			});
-		};
-
-		$scope.$watch('duration', function(durationNew, durationOld, $scope) {
-			$scope.changeExpire(durationNew, '');
-		});
-
-		$scope.$watch('uniacid', function(uniacidNew, uniacidOld, $scope) {
-			$scope.changeExpire('', uniacidNew);
-		});
-	}]);
 	angular.bootstrap($('.js-goods-buyer'), ['storeApp']);
 	$(function() {
 		require(['swiper'], function () {
