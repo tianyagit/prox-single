@@ -1,6 +1,6 @@
 {template 'header'}
 {if $operate == 'display'}
-	{if $_GPC['type'] != STORE_TYPE_PACKAGE}
+	{if $_GPC['type'] != STORE_TYPE_PACKAGE && $_GPC['type'] != STORE_TYPE_USER_PACKAGE}
 	<div class="store module">
 		<div class="modules clearfix">
 		{loop $store_goods $goods}
@@ -31,37 +31,75 @@
 	</div>
 	{/if}
 	{if $_GPC['type'] == STORE_TYPE_PACKAGE}
-	<div><span class="wi wi-appjurisdiction">权限组</span></div>
+	<div><span class="wi wi-appjurisdiction">应用权限组</span></div>
 	<div class="store">
 		<div class="jurisdiction-list">
 			{loop $store_goods $goods}
-			<a href="{php echo $this->createWebUrl('goodsbuyer', array('operate' => 'goods_info', 'direct' => 1, 'goods' => $goods['id']))}">
-				<div class="item">
-					<div class="info">
-						<div class="icon icon-wi"><span class="wi wi-appjurisdiction"></span></div>
-						<div class="name">{$module_groups[$goods['module_group']]['name']}</div>
-						<div class="price">￥{$goods['price']}元</span>{if $goods['type'] != STORE_TYPE_API}/{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{/if}{/if}</div>
-					</div>
-					<div class="datas">
-						<div>
-							<div>公众号应用</div>
-							<div class="data">{php echo count($module_groups[$goods['module_group']]['modules'])}</div>
-						</div>
-						<div>
-							<div>小程序应用</div>
-							<div class="data">{php echo count($module_groups[$goods['module_group']]['wxapp'])}</div>
-						</div>
-						<div>
-							<div>模板</div>
-							<div class="data">{php echo count($module_groups[$goods['module_group']]['templates'])}</div>
-						</div>
-					</div>
+			<div class="panel we7-panel">
+				<div class="panel-body">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr class="group_menu">
+							<td class="td_1"><span class="head"><i class="wi wi-appjurisdiction"></i></span></td>
+							<td class="td_2"><span class="name">{$module_groups[$goods['module_group']]['name']}</span><span class="price">¥ {$goods['price']}元/{if $goods['type'] != STORE_TYPE_API}{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{/if}{/if}</span></td>
+							<td class="td_3">
+								<a href="{php echo $this->createWebUrl('goodsbuyer', array('operate' => 'goods_info', 'direct' => 1, 'goods' => $goods['id']))}" class="more">查看详情 >
+								</a>
+							</td>
+						</tr>
+						<tr class="submenu">
+							<td class="td_one" colspan="3">
+								<span class="tit">可使用模块</span>
+								<span class="icon">
+									<i class="wi wi-wechat"></i> {php echo count($module_groups[$goods['module_group']]['modules'])}
+									<i class="wi wi-wxapp" ></i> {php echo count($module_groups[$goods['module_group']]['wxapp'])}
+									<i class="wi wi-pc-circle"></i> {php echo count($module_groups[$goods['module_group']]['webapp'])}
+									<i class="wi wi-app"></i> {php echo count($module_groups[$goods['module_group']]['phoneapp'])}
+								</span>
+							</td>
+						</tr>
+					</table>
 				</div>
-			</a>
+			</div>
 			{/loop}
 		</div>
 	</div>
 	{/if}
+
+	{if $_GPC['type'] == STORE_TYPE_USER_PACKAGE}
+<div><span class="wi wi-userjurisdiction">应用权限组</span></div>
+<div class="store">
+	<div class="jurisdiction-list">
+		{loop $store_goods $goods}
+		<div class="panel we7-panel">
+			<div class="panel-body">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr class="group_menu">
+						<td class="td_1"><span class="head"><i class="wi wi-userjurisdiction"></i></span></td>
+						<td class="td_2"><span class="name">{$user_groups[$goods['user_group']]['name']}</span><span class="price">¥ {$goods['price']}元/{if $goods['type'] != STORE_TYPE_API}{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{/if}{/if}</span></td>
+						<td class="td_3">
+							<a href="{php echo $this->createWebUrl('goodsbuyer', array('operate' => 'goods_info', 'direct' => 1, 'goods' => $goods['id']))}" class="more">查看详情 >
+							</a>
+						</td>
+					</tr>
+					<tr class="submenu">
+						<td class="td_one" colspan="3">
+							<span class="tit">可创建</span>
+							<span class="icon">
+								<i class="wi wi-wechat"></i> {$user_groups[$goods['user_group']]['maxaccount']}
+								<i class="wi wi-wxapp" ></i> {$user_groups[$goods['user_group']]['maxwxapp']}
+								<i class="wi wi-pc-circle"></i> {$user_groups[$goods['user_group']]['maxwebapp']}
+								<i class="wi wi-app"></i> {$user_groups[$goods['user_group']]['maxphoneapp']}
+							</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		{/loop}
+	</div>
+</div>
+	{/if}
+
 	<div class="text-right">
 		{$pager}
 	</div>
@@ -82,6 +120,8 @@
 			<div class="icon"><span class="icon-box"><i class="wi wi-api"></i></span></div>
 			{elseif in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))}
 			<div class="icon"><span class="icon-box"><i class="wi wi-appjurisdiction"></i></span></div>
+			{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE}
+			<div class="icon"><span class="icon-box"><i class="wi wi-userjurisdiction"></i></span></div>
 			{else}
 			<div class="icon"><img src="{$goods['module']['logo']}" alt="icon" class="icon" onerror="this.src='./resource/images/nopic-107.png'"/></div>
 			{/if}
@@ -92,8 +132,10 @@
 					{$goods['title']}
 					{elseif in_array($goods['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP))}
 					创建{$goods['num']}个{$goods['title']}
+					{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE}
+					{$user_group_info['name']} 套餐
 					{else}
-					{$module_groups[$goods['module_group']]['name']}套餐
+					{$module_groups[$goods['module_group']]['name']} 套餐
 					{/if}
 				</div>
 				<div class="help-block">
@@ -122,7 +164,7 @@
 					{/if}
 				</div>
 				<div class="buy-btn">
-					{if in_array($goods['type'], array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))}
+					{if in_array($goods['type'], array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_USER_PACKAGE))}
 					<button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#myModalBuy">立即购买</button>
 					{elseif $goods['type'] == STORE_TYPE_API}
 					<button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#BuyApi">立即购买</button>
@@ -140,6 +182,8 @@
 						<h4 class="modal-title">
 							{if $goods['type'] == STORE_TYPE_PACKAGE}
 							购买应用套餐
+							{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE}
+							购买用户组权限套餐
 							{elseif $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
 							续费公众号
 							{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
@@ -360,6 +404,85 @@
 				{/if}
 			</div>
 		</div>
+		{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE}
+		<div class="bg-gray">
+			<div class="txt">
+				<p>购买商品后您将拥有相应的公众号应用，小程序应用，模板的使用权限，不受已有用户组的限制。 </p>
+			</div>
+			<div class="creat">
+				<h1>可创建数量</h1>
+				<ul class="clearfloat">
+					<li>
+						<div class="type"><div>公众号</div><i class="wi wi-wechat"></i></div>
+						<div class="num">{$user_group_info['maxaccount']}</div>
+					</li>
+					<li>
+						<div class="type"><div>子公众号</div><i class="wi wi-wechat"></i></div>
+						<div class="num">{$user_group_info['maxsubaccount']}</div>
+					</li>
+					<li>
+						<div class="type"><div>小程序</div><span><i class="wi wi-wxapp"></i></span></div>
+						<div class="num">{$user_group_info['maxwxapp']}</div>
+					</li>
+					<li>
+						<div class="type"><div>PC应用</div><i class="wi wi-pc"></i></div>
+						<div class="num">{$user_group_info['maxwebapp']}</div>
+					</li>
+					<li>
+						<div class="type"><div>APP</div><i class="wi wi-app"></i></div>
+						<div class="num">{$user_group_info['maxphoneapp']}</div>
+					</li>
+				</ul>
+			</div>
+			<div class="about" >
+				<h1>包含应用权限组</h1>
+				<div class="box" >
+					<div class="nav" ng-repeat="pack in packages">
+						<div class="menu">
+								<span class="pull-right link-group">
+									<a href="javascript:;" class="open color-default"  data-toggle="collapse" data-target="#demo-{{pack.id}}">展开</a>
+								</span>
+							{{ pack.name}}
+						</div>
+						<ul class="submenu" style="" id="demo-{{pack.id}}">
+							<li ng-if="pack.modules">
+								<span class="tit">公众号应用</span>
+								<ul>
+									<li ng-repeat="module in pack.modules">
+										<img class="head" ng-src="{{module.logo}}}" alt=""><span class="name" ng-bind=" module.title "></span>
+									</li>
+								</ul>
+							</li>
+							<li ng-if="pack.wxapp">
+								<span class="tit">小程序应用</span>
+								<ul>
+									<li ng-repeat="wxapp in pack.wxapp">
+										<img class="head" ng-src="{{wxapp.logo}}"><span class="name" ng-bind="wxapp.title"></span>
+									</li>
+								</ul>
+							</li>
+							<li ng-if="pack.webapp">
+								<span class="tit">PC应用</span>
+								<ul >
+									<li ng-repeat="webapp in pack.webapp">
+										<img class="head" ng-src="{{webapp.logo}}"><span class="name" ng-bind="webapp.title"> </span>
+									</li>
+								</ul>
+							</li>
+							<li ng-if="pack.phoneapp">
+								<span class="tit">APP应用</span>
+								<ul >
+									<li ng-repeat="phoneapp in pack.phoneapp">
+										<img class="head" ng-src="{{phoneapp.logo}}"><span class="name" ng-bind="phoneapp.title"> </span>
+									</li>
+								</ul>
+							</li>
+
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
 		{else}
 		<div class="summary">
 			<div class="color-gray">购买商品后您将拥有相应的公众号应用，小程序应用，模板的使用权限，不受已有用户组的限制。</div>
@@ -404,7 +527,8 @@
 		pay_way : {php echo json_encode($pay_way)},
 		expiretime : "{php echo date('Y-m-d', strtotime('+1 ' . $goods['unit'], time()))}",
 		first_uniacid : "{$default_account}",
-		goods : {php echo json_encode($goods)}
+		goods : {php echo json_encode($goods)},
+		packages : {php echo !empty($user_group_info['package_info']) ? json_encode($user_group_info['package_info']) : 'null'},
 	});
 	angular.bootstrap($('.js-goods-buyer'), ['storeApp']);
 	$(function() {
