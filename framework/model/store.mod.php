@@ -85,7 +85,9 @@ function store_goods_post($data) {
 		$post['type'] = $data['type'];
 		$post['createtime'] = TIMESTAMP;
 		$post['title_initial'] = get_first_pinyin($data['title']);
-		if ($data['type'] != STORE_TYPE_USER_PACKAGE) {
+		if ($data['type'] == STORE_TYPE_USER_PACKAGE && !empty($post['unit'])) {
+			$post['unit'] = $data['unit'];
+		} else {
 			$post['unit'] = 'month';
 		}
 		if ($data['type'] == STORE_TYPE_API) {
