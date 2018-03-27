@@ -16,14 +16,13 @@ load()->classs('account');
 load()->object('cloudapi');
 load()->model('utility');
 load()->func('db');
-$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 'founder_update_modules');
+$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 'founder_update_modules', 'uninstalled_recycle', 'uninstalled_reduction');
 $do = in_array($do, $dos) ? $do : 'installed';
 /* sxstart */
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if (user_is_vice_founder() && !empty($_GPC['system_welcome'])){
 		itoast('无权限操作！');
 	}
-
 	if ($do == 'set_site_welcome_module') {
 		if (!$_W['isfounder']) {
 			iajax(1, '非法操作');
@@ -558,7 +557,6 @@ if ($do == 'module_detail') {
 	$module_info = module_fetch($module_name);
 	$current_cloud_module = cloud_m_info($module_name);
 	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
-	
 	if (!empty($module_info['is_relation'])) {
 		$type = intval($_GPC['type']);
 		switch ($type) {
@@ -700,13 +698,25 @@ if ($do == 'recycle_uninstall') {
 			itoast($message, '', 'tips');
 		}
 	}
-
 	module_uninstall($name);
 	$uninstall_result = module_execute_uninstall_script($name, $_GPC['confirm']);
 	if (is_error($uninstall_result)) {
 		itoast($uninstall_result['message'], url('module/manage-system'), 'error');
 	}
 	itoast('模块已卸载！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
+}
+
+if ($do == 'uninstalled_recycle') {
+	$name = trim($_GPC['module_name']);
+	$opt = intval($_GPC['opt']);
+	if ($opt == 0) {
+		$msg = '模块已放入回收站!';
+		pdo_insert('modules_recycle', array('modulename' => $name, 'type' => 1));
+	} elseif ($opt == 1) {
+		$msg = '模块已已恢复!';
+		pdo_delete('modules_recycle', array('modulename' => $name, 'type' => 1));
+	}
+	itoast($msg, url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do == 'installed') {
@@ -767,8 +777,7 @@ if ($do == 'not_installed') {
 		itoast('非法访问！', referer(), 'info');
 	}
 	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
-
-	$status = $_GPC['status'] == 'recycle'? 'recycle' : 'uninstalled';
+	$status = $_GPC['status'] == 'recycle' ? 'recycle' : ($_GPC['status'] == 'uninstalled_recycle' ? 'uninstalled_recycle' : 'uninstalled');
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 	$title = $_GPC['title'];
 	$letter = $_GPC['letter'];
@@ -781,10 +790,12 @@ if ($do == 'not_installed') {
 	} else {
 		$uninstall_modules = module_get_all_uninstalled($status);
 	}
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
 	$total_uninstalled = $uninstall_modules['module_count'];
 	$uninstall_modules = (array)$uninstall_modules['modules'];
 	if (!empty($uninstall_modules)) {
 		foreach($uninstall_modules as $name => &$module) {
+			$module['is_delete'] = in_array($module['name'], $recycle_modules) ? true : false;
 			if (!empty($letter) && strlen($letter) == 1) {
 				$first_char = get_first_pinyin($module['title']);
 				if ($letter != $first_char) {
@@ -798,7 +809,6 @@ if ($do == 'not_installed') {
 					continue;
 				}
 			}
-
 			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
 				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
 			} elseif (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg')) {
