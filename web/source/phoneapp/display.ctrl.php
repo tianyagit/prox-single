@@ -19,7 +19,7 @@ if ($do == 'switch') {
 	}
 
 	$module_name = safe_gpc_string($_GPC['module']);
-	$version_id = !empty($_GPC['version_id']) ? intval($_GPC['version_id']) : $wxapp_info['version']['id'];
+	$version_id = !empty($_GPC['version_id']) ? intval($_GPC['version_id']) : $phoneapp_info['version']['id'];
 	if (!empty($module_name) && !empty($version_id)) {
 		$version_info = phoneapp_version($version_id);
 		$module_info = array();
