@@ -153,6 +153,7 @@ class StoreModuleSite extends WeModuleSite {
 				$order_type = intval($_GPC['type']);
 				$store_table->searchOrderType($order_type);
 			}
+
 			$store_table->searchWithOrderid($_GPC['orderid']);
 			if (empty($_W['isfounder']) || user_is_vice_founder()) {
 				$store_table->searchOrderWithUid($_W['uid']);
@@ -176,6 +177,11 @@ class StoreModuleSite extends WeModuleSite {
 					$order['abstract_amount'] = $order['duration'] * $order['goods_info']['price'];
 					if (!empty($order['goods_info']) && ($order['goods_info']['type'] == STORE_TYPE_MODULE || $order['goods_info']['type'] == STORE_TYPE_WXAPP_MODULE)) {
 						$order['goods_info']['module_info'] = module_fetch($order['goods_info']['module']);
+					}
+					if (!empty($order['goods_info']) && ($order['goods_info']['type'] == STORE_TYPE_USER_PACKAGE)) {
+						$user_group_id = $order['goods_info']['user_group'];
+						$user_group_info = pdo_fetch("SELECT * FROM ".tablename('users_group') . " WHERE id = :id", array(':id' => $user_group_id));
+						$order['goods_info']['user_group_name'] = $user_group_info['name'];
 					}
 				}
 				unset($order);
@@ -517,9 +523,7 @@ class StoreModuleSite extends WeModuleSite {
 							$user_group_info['package_info'][] = $module;
 						}
 					}
-//					$user_group_info['package_info'] = json_encode($user_group_info['package_info']);
 				}
-
 			}
 			$account_table = table ('account');
 			$user_account = $account_table->userOwnedAccount();
@@ -608,7 +612,7 @@ class StoreModuleSite extends WeModuleSite {
 				'uniacid' => $uniacid,
 				'wxapp' => intval($_GPC['wxapp'])
 			);
-			if (in_array($goods_info['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE))) {
+			if (in_array($goods_info['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_USER_PACKAGE))) {
 				$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid), 'max(endtime)');
 				$order['endtime'] = strtotime('+' . $duration . $goods_info['unit'],  max($history_order_endtime, time()));
 			}
@@ -657,13 +661,24 @@ class StoreModuleSite extends WeModuleSite {
 						pdo_update('account', array('endtime' => $account_endtime), array('uniacid' => $order[$account_type]));
 						cache_delete("uniaccount:{$order[$account_type]}");
 					}
+					if ($goods['type'] == STORE_TYPE_USER_PACKAGE) {
+						$data['uid'] = $_W['uid'];
+						$user = user_single($data['uid']);
+						if ($user['status'] == USER_STATUS_CHECK || $user['status'] == USER_STATUS_BAN) {
+							iajax(-1, '访问错误，该用户未审核或者已被禁用，请先修改用户状态！', '');
+						}
+						$data['groupid'] = $goods['user_group'];
+						$data['endtime'] = $order['endtime'];
+						if (!user_update($data)) {
+							iajax(1, '修改权限失败', '');
+						}
+					}
 					cache_delete(cache_system_key($order['uniacid'] . ':site_store_buy_modules'));
 					cache_build_account_modules($order['uniacid']);
 					itoast('支付成功!', $this->createWebUrl('orders', array('direct' => 1)), 'success');
 				}
 			}
 			$setting = setting_load ('store_pay');
-
 			$core_paylog = pdo_get('core_paylog', array('module' => 'store', 'status' => 0, 'module' => 'store', 'uniontid' => $order['orderid'], 'tid' => $order['id']));
 			if ($core_paylog['type'] == 'wechat') {
 				$wechat_setting = $setting['store_pay']['wechat'];
