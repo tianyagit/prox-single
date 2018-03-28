@@ -16,7 +16,7 @@ load()->classs('account');
 load()->object('cloudapi');
 load()->model('utility');
 load()->func('db');
-$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 'founder_update_modules', 'uninstalled_recycle', 'uninstalled_reduction');
+$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 'founder_update_modules', 'uninstalled_recycle');
 $do = in_array($do, $dos) ? $do : 'installed';
 /* sxstart */
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
@@ -40,9 +40,10 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 /* sxend */
 
 if ($do == 'subscribe') {
+	$type = !empty($_GPC['system_welcome']) ? 9 : intval($_GPC['account_type']);
 	$uninstall_modules = module_get_all_uninstalled('uninstalled');
 	$total_uninstalled = $uninstall_modules['module_count'];
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
 	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
 	$module_list = user_modules($_W['uid']);
 	$subscribe_module = array();
@@ -553,9 +554,10 @@ if ($do == 'save_module_info') {
 
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
+	$type = !empty($_GPC['system_welcome']) ? 9 : intval($_GPC['account_type']);
 	$uninstalled_module = module_get_all_uninstalled('uninstalled');
 	$total_uninstalled = $uninstalled_module['module_count'];
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
 	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
@@ -713,12 +715,17 @@ if ($do == 'recycle_uninstall') {
 if ($do == 'uninstalled_recycle') {
 	$name = trim($_GPC['module_name']);
 	$opt = intval($_GPC['opt']);
+	if (!empty($_GPC['type']) && intval($_GPC['type']) == 9) {
+		$type = intval($_GPC['type']);
+	} else {
+		$type = intval($_GPC['account_type']);
+	}
 	if ($opt == 0) {
 		$msg = '模块已放入回收站!';
-		pdo_insert('modules_recycle', array('modulename' => $name, 'type' => 1));
+		pdo_insert('modules_recycle', array('modulename' => $name, 'type' => $type));
 	} elseif ($opt == 1) {
 		$msg = '模块已已恢复!';
-		pdo_delete('modules_recycle', array('modulename' => $name, 'type' => 1));
+		pdo_delete('modules_recycle', array('modulename' => $name, 'type' => $type));
 	}
 	itoast($msg, url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
@@ -726,14 +733,17 @@ if ($do == 'uninstalled_recycle') {
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
 	if (!empty($_GPC['system_welcome'])) {
-		$uninstall_modules = module_get_all_uninstalled('uninstalled', 'welcome');
+		$type = 9;
+		$uninstall_modules = module_get_all_uninstalled($status, 'system_welcome');
 	} else {
-		$uninstall_modules = module_get_all_uninstalled('uninstalled');
+		$type = intval($_GPC['account_type']);
+		$uninstall_modules = module_get_all_uninstalled($status);
 	}
 	$total_uninstalled = $uninstall_modules['module_count'];
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
 	$total_uninstalled_recycle = count($recycle_modules);
 	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
+
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
 	$letter = $_GPC['letter'];
@@ -788,20 +798,23 @@ if ($do == 'not_installed') {
 	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
 	$title = $_GPC['title'];
 	$letter = $_GPC['letter'];
+
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
 	$module_table = table('module');
 	$modules_local = $module_table->getModulesLocalList();
 	if (!empty($_GPC['system_welcome'])) {
-		$uninstall_modules = module_get_all_uninstalled($status, 'welcome');
+		$type = 9;
+		$uninstall_modules = module_get_all_uninstalled($status, 'system_welcome');
 	} else {
+		$type = intval($_GPC['account_type']);
 		$uninstall_modules = module_get_all_uninstalled($status);
 	}
 
 	$total_uninstalled = $uninstall_modules['module_count'];
 	$uninstall_modules = (array)$uninstall_modules['modules'];
 
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
 	$total_uninstalled_recycle = count($recycle_modules);
 	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules, $status);
 
@@ -878,4 +891,5 @@ if ($do == 'filter') {
 	$pager = pagination($total, $pageindex, $pagesize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => true, 'callbackfuncname' => 'filter'));
 	iajax(0, array('modules' => $modules, 'pager' => $pager));
 }
+
 template('module/manage-system' . ACCOUNT_TYPE_TEMPLATE);

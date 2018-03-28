@@ -999,8 +999,11 @@ function recount_total_uninstalled($uninstall_modules, $recycle_modules, $status
 	if ($status == 'recycle') {
 		$uninstall_modules = module_get_all_uninstalled('uninstalled');
 	}
-	if (!empty($uninstall_modules['modules'])) {
+	if (array_key_exists('modules', $uninstall_modules)) {
 		$uninstall_modules_keys = array_keys($uninstall_modules['modules']);
+		if (count($uninstall_modules_keys) <= 0) {
+			return count($uninstall_modules_keys);
+		}
 	} else {
 		$uninstall_modules_keys = array_keys($uninstall_modules);
 	}

@@ -8,8 +8,9 @@
 	<ul class="we7-page-tab">
 		<li class="active"><a href="{php echo url('module/manage-system/installed', array('system_welcome' => 1))}">已安装  </a></li>
 		{if permission_check_account_user('see_module_manage_system_except_installed') && $_W['isfounder']}
-		<li><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1))}">未安装</a></li>
+		<li><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1))}">未安装<span class="color-red">  ({$total_uninstalled}) </span></a></li>
 		<li><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1, 'status' => 'recycle'))}">已停用</a></li>
+		<li><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1, 'status' => 'uninstalled_recycle'))}">已删除<span class="color-red">  ({$total_uninstalled_recycle}) </span></a></li>
 		{/if}
 	</ul>
 	<div class="we7-page-search clearfix">
@@ -227,8 +228,9 @@
 <ul class="we7-page-tab">
 	<li><a href="{php echo url('module/manage-system/installed', array('system_welcome' => 1))}">已安装  </a></li>
 	{if permission_check_account_user('see_module_manage_system_except_installed') && $_W['isfounder']}
-	<li {if $_GPC['status'] == '' && $_GPC['do'] == 'not_installed'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1))}">未安装</a></li>
+	<li {if $_GPC['status'] == '' && $_GPC['do'] == 'not_installed'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1))}">未安装<span class="color-red">  ({$total_uninstalled}) </span></a></li>
 	<li {if $_GPC['status'] == 'recycle' && $_GPC['do'] == 'not_installed'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1, 'status' => 'recycle'))}">已停用</a></li>
+	<li><a href="{php echo url('module/manage-system/not_installed', array('system_welcome' => 1, 'status' => 'uninstalled_recycle'))}">已删除<span class="color-red">  ({$total_uninstalled_recycle}) </span></a></li>
 	{/if}
 </ul>
 <div id="js-system-module-not_installed" ng-controller="notInstalledCtrl" ng-cloak>
@@ -262,7 +264,13 @@
 			<th colspan="2" class="text-left">小程序应用</th>
 			<th class="text-left">操作</th>
 		</tr>
+		{if $status == 'uninstalled'}
+		<tr ng-repeat="module in module_list" ng-show="!module.is_delete">
+			{elseif $status == 'uninstalled_recycle'}
+		<tr ng-repeat="module in module_list" ng-show="module.is_delete">
+			{elseif $status == 'recycle'}
 		<tr ng-repeat="module in module_list">
+		{/if}
 			<td class="text-left">
 				<img ng-src="{{ module.logo }}" class="img-responsive" style="width: 50px;height: 50px;"/>
 			</td>
@@ -274,6 +282,12 @@
 				{if permission_check_account_user('see_module_manage_system_install')}
 				<a href="{php echo url('module/manage-system/upgrade', array('account_type' => 4))}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">安装应用模块</a>
 				<a href="{php echo url('module/manage-system/install', array('account_type' => 4))}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">安装应用模块</a>
+				{if $status == 'uninstalled'}
+				<a href="{php echo url('module/manage-system/uninstalled_recycle', array('type' => 9))}&module_name={{ module.name }}&opt=0" class="btn btn-primary" onclick="return confirm('确认要删除模块吗？')">删除</a>
+				{/if}
+				{if $_GPC['status'] == 'uninstalled_recycle'}
+				<a href="{php echo url('module/manage-system/uninstalled_recycle', array('type' => 9))}&module_name={{ module.name }}&opt=1" class="btn btn-primary">恢复</a>
+				{/if}
 				{if $_GPC['status'] == 'recycle'}
 				<a href="{php echo url('module/manage-system/recycle_uninstall', array('account_type' => 4))}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">卸载模块</a>
 				{/if}
