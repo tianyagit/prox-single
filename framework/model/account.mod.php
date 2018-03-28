@@ -258,6 +258,9 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
 			$module_info = module_fetch($name);
+			if ($module_info['welcome_support'] == 2 && $module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
+				continue;
+			}
 			if (!empty($module_info)) {
 				$module_list[$name] = $module_info;
 			}
