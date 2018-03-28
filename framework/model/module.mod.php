@@ -365,6 +365,7 @@ function module_fetch($name) {
  */
 function module_get_all_uninstalled($status, $module_type = '')  {
 	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
+
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$account_type = 'wxapp';
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
@@ -380,6 +381,7 @@ function module_get_all_uninstalled($status, $module_type = '')  {
 	load()->classs('cloudapi');
 	$cloud_api = new CloudApi();
 	$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
+
 	$modules_table = table('module');
 	$modules_local = $modules_table->getModulesLocalList();
 	$status_text = array('recycle', 'uninstalled');
@@ -985,4 +987,23 @@ function module_rank_top($module_name) {
 	global $_W;
 	$result = table('module')->moduleSetRankTop($module_name);
 	return empty($result) ? true : false;
+}
+
+/**
+ * 重新计算 未安装小程序的数量
+ * @param $uninstall_modules
+ * @param $recycle_modules
+ * @return int
+ */
+function recount_total_uninstalled($uninstall_modules, $recycle_modules, $status = 'uninstalled') {
+	if ($status == 'recycle') {
+		$uninstall_modules = module_get_all_uninstalled('uninstalled');
+	}
+	if (!empty($uninstall_modules['modules'])) {
+		$uninstall_modules_keys = array_keys($uninstall_modules['modules']);
+	} else {
+		$uninstall_modules_keys = array_keys($uninstall_modules);
+	}
+	$dif_keys = array_diff($uninstall_modules_keys, $recycle_modules);
+	return count($dif_keys);
 }

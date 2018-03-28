@@ -273,8 +273,10 @@
 		</tr>
 		{if $status == 'uninstalled'}
 		<tr ng-repeat="module in module_list" ng-show="!module.is_delete">
-		{else}
+		{elseif $status == 'uninstalled_recycle'}
 		<tr ng-repeat="module in module_list" ng-show="module.is_delete">
+		{elseif $status == 'recycle'}
+		<tr ng-repeat="module in module_list">
 		{/if}
 			<td class="text-left">
 				<img ng-src="{{ module.logo }}" class="img-responsive" style="width: 50px;height: 50px;"/>

@@ -42,6 +42,8 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 if ($do == 'subscribe') {
 	$uninstall_modules = module_get_all_uninstalled('uninstalled');
 	$total_uninstalled = $uninstall_modules['module_count'];
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
 	$module_list = user_modules($_W['uid']);
 	$subscribe_module = array();
 	$receive_ban = $_W['setting']['module_receive_ban'];
@@ -401,7 +403,7 @@ if ($do =='install') {
 				foreach ($bindings[$name] as $entry) {
 					$entry['module'] = $manifest['application']['identifie'];
 					$entry['entry'] = $name;
-					if ($name == 'page' && !empty($wxapp_support)) {
+					if ($name == 'page' && !empty($wxapp_support)){
 						$entry['url'] = $entry['do'];
 						$entry['do'] = '';
 					}
@@ -553,6 +555,8 @@ if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 	$uninstalled_module = module_get_all_uninstalled('uninstalled');
 	$total_uninstalled = $uninstalled_module['module_count'];
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 	$current_cloud_module = cloud_m_info($module_name);
@@ -727,6 +731,8 @@ if ($do == 'installed') {
 		$uninstall_modules = module_get_all_uninstalled('uninstalled');
 	}
 	$total_uninstalled = $uninstall_modules['module_count'];
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
 	$letter = $_GPC['letter'];
@@ -742,7 +748,7 @@ if ($do == 'installed') {
 				unset($module_list[$key]);
 			}
 			if (!empty($letter) && strlen($letter) == 1) {
-				if ($module['title_initial'] != $letter){
+				if ($module['title_initial'] != $letter) {
 					unset($module_list[$key]);
 				}
 			}
@@ -790,9 +796,13 @@ if ($do == 'not_installed') {
 	} else {
 		$uninstall_modules = module_get_all_uninstalled($status);
 	}
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+
 	$total_uninstalled = $uninstall_modules['module_count'];
 	$uninstall_modules = (array)$uninstall_modules['modules'];
+
+	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules, $status);
+
 	if (!empty($uninstall_modules)) {
 		foreach($uninstall_modules as $name => &$module) {
 			$module['is_delete'] = in_array($module['name'], $recycle_modules) ? true : false;
@@ -836,6 +846,7 @@ if ($do == 'not_installed') {
 	}
 	$total = count($uninstall_modules);
 	$uninstall_modules = array_slice($uninstall_modules, ($pageindex - 1)*$pagesize, $pagesize);
+
 	$pager = pagination($total, $pageindex, $pagesize);
 }
 
