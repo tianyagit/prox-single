@@ -9,7 +9,7 @@
 		{if permission_check_account_user('see_module_manage_system_except_installed')}
 		<li><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" ng-if="isFounder == 1">未安装的小程序<span class="color-red">  ({$total_uninstalled}) </span></a></li>
 		<li><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'recycle'))}" ng-if="isFounder == 1">已停用小程序</a></li>
-		<li><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'uninstalled_recycle'))}" ng-if="isFounder == 1">小程序回收站</a></li>
+		<li {if $status == 'uninstalled_recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'uninstalled_recycle'))}" ng-if="isFounder == 1">小程序回收站<span class="color-red">  ({$total_uninstalled_recycle}) </span></a></li>
 		{/if}
 	</ul>
 	<div class="we7-page-search clearfix">
@@ -238,7 +238,7 @@
 	<li><a href="{php echo url('module/manage-system/installed', array('account_type' => 4))}">已安装的小程序  </a></li>
 	<li {if $status == 'uninstalled'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}">未安装的小程序<span class="color-red">  ({$total_uninstalled}) </span></a></li>
 	<li {if $status == 'recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'recycle'))}">已停用小程序</a></li>
-	<li {if $status == 'uninstalled_recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'uninstalled_recycle'))}" ng-if="isFounder == 1">小程序回收站</a></li>
+	<li {if $status == 'uninstalled_recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4, 'status' => 'uninstalled_recycle'))}" ng-if="isFounder == 1">小程序回收站<span class="color-red">  ({$total_uninstalled_recycle}) </span></a></li>
 </ul>
 <div id="js-system-module-not_installed" ng-controller="notInstalledCtrl" ng-cloak>
 	<div class="we7-page-search clearfix">

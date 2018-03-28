@@ -732,6 +732,7 @@ if ($do == 'installed') {
 	}
 	$total_uninstalled = $uninstall_modules['module_count'];
 	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$total_uninstalled_recycle = count($recycle_modules);
 	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
@@ -801,6 +802,7 @@ if ($do == 'not_installed') {
 	$uninstall_modules = (array)$uninstall_modules['modules'];
 
 	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => 1), 'modulename', 'modulename'));
+	$total_uninstalled_recycle = count($recycle_modules);
 	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules, $status);
 
 	if (!empty($uninstall_modules)) {
