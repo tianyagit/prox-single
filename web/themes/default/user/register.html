@@ -82,16 +82,17 @@
 						</div>
 					</div>
 
-					<div ng-repeat="item in extendfields" class="form-group" ng-class="{true:'has-error has-feedback',false:'has-success has-feedback'}[item.fieldErr]">
-						<label class="control-label col-sm-1" ng-switch="item.required">{{ item.title }}:
-							<span class="color-red" ng-switch-when="1">*</span>
-						</label>
-						<div class="col-sm-11">
-							<input name="{{ item.field }} " id="{{ item.field }}" class="form-control col-sm-10" placeholder="{{ item.title }}" ng-blur="checkExtendfield(item.field)">
-							<span ng-class="{true:'fa fa-times form-control-feedback reg-system-valid',false:'fa fa-check form-control-feedback reg-system-valid'}[item.fieldErr]" aria-hidden="true"></span>
-							<span ng-class="{true:'color-red',false:'sr-only'}[item.fieldErr]" ng-bind="item.fieldMsg"></span>
-						</div>
-					</div>
+					<!--用户注册拓展字段 end -->
+					{if $extendfields}
+						{loop $extendfields $item}
+							<div class="form-group">
+								<label class="control-label col-sm-1">{$item['title']}:{if $item['required']}<span class="color-red">*</span>{/if}</label>
+								<div class="col-sm-11">
+									{php echo tpl_fans_form($item['field'])}
+								</div>
+							</div>
+						{/loop}
+					{/if}
 
 					{if $_W['setting']['register']['code']}
 					<div class="form-group">
