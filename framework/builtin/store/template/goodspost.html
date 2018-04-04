@@ -107,14 +107,12 @@
 							<span ng-if="unit == 'day'">日</span>
 							<span ng-if="unit == 'month'">月</span>
 							<span ng-if="unit == 'year'">年</span>
-							{if !in_array($type, array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP))}
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu dropdown-menu-right" style="min-width: 60px;">
 								<li><a href="#" ng-click="changeUnit('day')">日</a></li>
 								<li><a href="#" ng-click="changeUnit('month')">月</a></li>
 								<li><a href="#" ng-click="changeUnit('year')">年</a></li>
 							</ul>
-							{/if}
 						</div>
 					</div>
 				</div>
