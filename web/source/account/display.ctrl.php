@@ -58,15 +58,23 @@ if ($do == 'display') {
 
 	$account_table = table('account');
 	$account_table->searchWithType(array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH));
+	$keyword = trim($_GPC['keyword']);
+	if (!empty($keyword)) {
+		$account_table->searchWithKeyword($keyword);
+	}
+	$letter = $_GPC['letter'];
+	if(isset($letter) && strlen($letter) == 1) {
+		$account_table->searchWithLetter($letter);
+	}
 	$account_count = $account_table->searchAccountList();
 	$total = count($account_count);
+
 	$account_table->searchWithType(array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH));
 
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
 		$account_table->searchWithKeyword($keyword);
 	}
-
 	$letter = $_GPC['letter'];
 	if(isset($letter) && strlen($letter) == 1) {
 		$account_table->searchWithLetter($letter);
