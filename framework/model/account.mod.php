@@ -1184,8 +1184,12 @@ function uni_bind_domain() {
 		} else {
 			return false;
 		}
-	} else {
-		return false;
 	}
 	/* sxend */
+
+	/* vstart */
+	if (IMS_FAMILY == 'v') {
+		return false;
+	}
+	/* vend */
 }
