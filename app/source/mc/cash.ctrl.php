@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('activity');
 load()->model('module');
 load()->model('payment');
+load()->model('account');
 load()->func('communication');
 
 if ($do == 'check_password') {
@@ -191,6 +192,10 @@ if(!empty($type)) {
 		if (!empty($unisetting['oauth']['host'])) {
 			$callback = str_replace($_W['siteroot'], $unisetting['oauth']['host'].'/', $callback);
 		}
+		$domain = uni_bind_domain();
+		if ($domain) {
+			$callback = $domain . "/payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
+		}
 		//如果有借用支付，则需要通过网页授权附带用户Openid跳转至支付，否则直接跳转
 		$proxy_pay_account = payment_proxy_pay_account();
 		if (!is_error($proxy_pay_account)) {
@@ -198,7 +203,6 @@ if(!empty($type)) {
 			header('Location: ' . $forward);
 			exit;
 		}
-
 		header("Location: $callback");
 		exit();
 	}

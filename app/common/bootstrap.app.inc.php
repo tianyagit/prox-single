@@ -173,7 +173,14 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' &
 		}
 		$global_unisetting = uni_account_global_oauth();
 		$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : (!empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] : '');
+
 		$url = (!empty($unisetting['oauth']['host']) ? ($unisetting['oauth']['host'] . $sitepath . '/') : $_W['siteroot'] . 'app/') . "index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
+		$domain = uni_bind_domain();
+		if ($domain) {
+			$url = $domain . $sitepath . '/' . "index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
+		} else {
+			$url = (!empty($unisetting['oauth']['host']) ? ($unisetting['oauth']['host'] . $sitepath . '/') : $_W['siteroot'] . 'app/') . "index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
+		}
 		$callback = urlencode($url);
 		$oauth_account = WeAccount::create($_W['account']['oauth']);
 		if ($oauth_type == 'snsapi_base') {

@@ -1679,7 +1679,13 @@ class WeiXinAccount extends WeAccount {
 			$unisetting = uni_setting_load();
 			$global_unisetting = uni_account_global_oauth();
 			$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : (!empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] : '');
-			$url = (!empty($unisetting['oauth']['host']) ? ($unisetting['oauth']['host'] . $sitepath . '/') : $_W['siteroot'] . 'app/') . "index.php?{$_SERVER['QUERY_STRING']}";
+			load()->model('account');
+			$domain = uni_bind_domain();
+			if ($domain) {
+				$url = $domain . $sitepath . '/' . "index.php?{$_SERVER['QUERY_STRING']}";
+			} else {
+				$url = (!empty($unisetting['oauth']['host']) ? ($unisetting['oauth']['host'] . $sitepath . '/') : $_W['siteroot'] . 'app/') . "index.php?{$_SERVER['QUERY_STRING']}";
+			}
 			$forward = $this->getOauthCodeUrl(urlencode($url));
 			header('Location: ' . $forward);
 			exit;

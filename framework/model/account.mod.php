@@ -1171,3 +1171,21 @@ function uni_search_link_account($module_name, $account_type) {
 	}
 	return $owned_account;
 }
+
+/**
+ * 获取公众号的绑定域名
+ * @return bool|string
+ */
+function uni_bind_domain() {
+	/* sxstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
+		if (!empty($_W['account']['setting']['bind_domain']) && !empty($_W['account']['setting']['bind_domain']['domain']) && strpos($_W['siteroot'], $_W['account']['setting']['bind_domain']['domain']) === false) {
+			return $_W['account']['setting']['bind_domain']['domain'];
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+	/* sxend */
+}
