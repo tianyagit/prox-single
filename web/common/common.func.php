@@ -508,7 +508,7 @@ function buildframes($framename = ''){
 	}
 
 	//进入小程序后的菜单
-	if (FRAME == 'wxapp') {
+	if (defined('FRAME') && FRAME == 'wxapp') {
 		load()->model('wxapp');
 		$version_id = intval($_GPC['version_id']);
 		$wxapp_version = wxapp_version($version_id);
@@ -550,7 +550,7 @@ function buildframes($framename = ''){
 		}
 	}
 
-	if (FRAME == 'phoneapp') {
+	if (defined('FRAME') && FRAME == 'phoneapp') {
 		load()->model('phoneapp');
 		$version_id = intval($_GPC['version_id']);
 		$phoneapp_version = phoneapp_version($version_id);
