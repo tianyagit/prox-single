@@ -359,7 +359,12 @@ function mc_oauth_account_userinfo($url = '') {
 	if(uni_is_multi_acid()) {
 		$str = "&j={$_W['acid']}";
 	}
-	$url = (!empty($unisetting['oauth']['host']) ? ($unisetting['oauth']['host'] . '/') : $_W['siteroot']) . "app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=userinfo";
+	$domain = uni_bind_domain();
+	if ($domain) {
+		$url =  $domain . '/' . "app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=userinfo";
+	} else {
+		$url = (!empty($unisetting['oauth']['host']) ? ($unisetting['oauth']['host'] . '/') : $_W['siteroot']) . "app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=userinfo";
+	}
 	$callback = urlencode($url);
 
 	$oauth_account = WeAccount::create($_W['account']['oauth']);
