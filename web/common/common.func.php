@@ -631,7 +631,7 @@ function buildframes($framename = ''){
 	/* sxstart */
 	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		if (!empty($framename)) {
-			if (($framename == 'system_welcome' || $entry['entry'] == 'system_welcome') && $_W['isfounder']) {
+			if (($framename == 'system_welcome' || $entry['entry'] == 'system_welcome' || $_GPC['module_type'] == 'system_welcome') && $_W['isfounder']) {
 				$frames = $frames['account'];
 				$frames['section'] = array('platform_module_welcome' => $frames['section']['platform_module_welcome']);
 			} else {
