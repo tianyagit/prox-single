@@ -69,7 +69,7 @@ class WeiXinPay extends pay{
 			$msg = empty($result['return_msg']) ? $result['err_code_des'] : $result['return_msg'];
 			return error(-1, $msg);
 		}
-		if($this->bulidsign($result) != $result['sign']) {
+		if(!empty($result['sign']) && $this->bulidsign($result) != $result['sign']) {
 			return error(-1, '验证签名出错');
 		}
 		return $result;
