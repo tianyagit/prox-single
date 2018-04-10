@@ -3,7 +3,7 @@
  * 
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
-if ($action != 'display') {
+if ($action != 'display' && $action != 'privileges') {
 	define('FRAME', 'system');
 } else {
 	//高版本php引用未定义常量报错，此处定义空值兼容高版本
