@@ -127,6 +127,9 @@ if ($do == 'post') {
 					pdo_delete('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $name));
 					continue;
 				}
+				if (empty($module_permission)) {
+					continue;
+				}
 				if (empty($have_permission[$name])) {
 					pdo_insert('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $name, 'permission' => $module_permission));
 				} else {
