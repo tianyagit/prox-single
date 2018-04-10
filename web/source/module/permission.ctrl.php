@@ -73,12 +73,12 @@ if ($do == 'post') {
 	}
 	if (checksubmit()) {
 		$insert_user = array(
-				'username' => trim($_GPC['username']),
-				'remark' => trim($_GPC['remark']),
-				'password' => trim($_GPC['password']),
-				'repassword' => trim($_GPC['repassword']),
-				'type' => ACCOUNT_OPERATE_CLERK
-			);
+			'username' => trim($_GPC['username']),
+			'remark' => trim($_GPC['remark']),
+			'password' => trim($_GPC['password']),
+			'repassword' => trim($_GPC['repassword']),
+			'type' => ACCOUNT_OPERATE_CLERK
+		);
 		if (empty($insert_user['username'])) {
 			itoast('必须输入用户名，格式为 1-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。');
 		}
