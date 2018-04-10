@@ -119,9 +119,13 @@ if ($do == 'post') {
 		if (!empty($permission) && is_array($permission)) {
 			foreach ($module_and_plugins as $name) {
 				if (empty($permission[$name])) {
-					$module_permission = 'all';
+					$module_permission = '';
 				} else {
 					$module_permission = implode('|', array_unique($permission[$name]));
+				}
+				if (empty($module_permission) && !empty($have_permission[$name])) {
+					pdo_delete('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $name));
+					continue;
 				}
 				if (empty($have_permission[$name])) {
 					pdo_insert('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $name, 'permission' => $module_permission));
@@ -130,12 +134,9 @@ if ($do == 'post') {
 				}
 			}
 		} else {
-			$permission = 'all';
 			foreach ($module_and_plugins as $name) {
-				if (empty($have_permission)) {
-					pdo_insert('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $name, 'permission' => $permission));
-				} else {
-					pdo_update('users_permission', array('permission' => $permission), array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $name));
+				if (!empty($have_permission[$name])) {
+					pdo_delete('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $uid, 'type' => $name));
 				}
 			}
 		}
