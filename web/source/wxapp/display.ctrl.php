@@ -47,7 +47,7 @@ if ($do == 'home') {
 	$psize = 20;
 
 	$account_table = table('wxapp');
-	$account_table->searchWithType(array(ACCOUNT_TYPE_APP_NORMAL));
+	$account_table->searchWithType(array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH));
 
 	$keyword = trim($_GPC['keyword']);
 	if (!empty($keyword)) {
