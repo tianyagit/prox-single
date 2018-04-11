@@ -33,7 +33,7 @@ class WxAppPlatform extends WeiXinPlatform {
 	}
  
 	function accountDisplayUrl() {
-		return url('account/privileges', array('type' => 'wxapp'));
+		return url('account/display', array('type' => 'wxapp'));
 	}
 
 	

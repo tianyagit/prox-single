@@ -6,5 +6,5 @@
 	{if in_array($role, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER)) || $_W['isfounder']}
 	<a href="{php echo url('wxapp/manage/display', array('uniacid' => $_W['uniacid']))}"><i class="wi wi-text" data-toggle="tooltip" data-placement="bottom" title="管理"></i></a>
 	{/if}
-	<a href="{php echo url('account/privileges', array('type' => 'wxapp'))}"><i class="wi wi-small-routine" data-toggle="tooltip" data-placement="bottom" title="切换小程序"></i></a>
+	<a href="{php echo url('account/display', array('type' => 'wxapp'))}"><i class="wi wi-small-routine" data-toggle="tooltip" data-placement="bottom" title="切换小程序"></i></a>
 </div>

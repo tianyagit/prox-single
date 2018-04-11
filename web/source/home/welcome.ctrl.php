@@ -50,7 +50,7 @@ if (IMS_FAMILY == 'v') {
 		}
 		$account_api = WeAccount::create();
 		if (is_error($account_api)) {
-			message($account_api['message'], url('account/privileges'));
+			message($account_api['message'], url('account/display'));
 		}
 		$check_manange = $account_api->checkIntoManage();
 		if (is_error($check_manange)) {
@@ -68,7 +68,7 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		}
 		$account_api = WeAccount::create();
 		if (is_error($account_api)) {
-			message($account_api['message'], url('account/privileges'));
+			message($account_api['message'], url('account/display'));
 		}
 		$check_manange = $account_api->checkIntoManage();
 		if (is_error($check_manange)) {
@@ -83,7 +83,7 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 if ($do == 'platform') {
 	$last_uniacid = uni_account_last_switch();
 	if (empty($last_uniacid)) {
-		itoast('', url('account/privileges'), 'info');
+		itoast('', url('account/display'), 'info');
 	}
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
 		uni_account_switch($last_uniacid,  url('home/welcome'));

@@ -9,7 +9,7 @@ $account_api = WeAccount::create();
 
 if (!in_array($action, array('display', 'manage'))) {
 	if (is_error($account_api)) {
-		message($account_api['message'], url('account/privileges', array('type' => 'phoneapp')));
+		message($account_api['message'], url('account/display', array('type' => 'phoneapp')));
 	}
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {

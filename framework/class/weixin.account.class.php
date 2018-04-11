@@ -37,7 +37,7 @@ class WeiXinAccount extends WeAccount {
 	}
 
 	public function accountDisplayUrl() {
-		return url('account/privileges');
+		return url('account/display');
 	}
 
 	public function fetchAccountInfo() {

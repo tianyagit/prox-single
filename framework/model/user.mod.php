@@ -597,7 +597,7 @@ function user_login_forward($forward = '') {
 		return $url;
 	}
 
-	$login_forward = url('account/privileges');
+	$login_forward = url('account/display');
 	$visit_key = '__lastvisit_' . $_W['uid'];
 	if (!empty($_GPC[$visit_key])) {
 		$last_visit = explode(',', $_GPC[$visit_key]);
@@ -609,7 +609,7 @@ function user_login_forward($forward = '') {
 			return $login_location['module'];
 		} else {
 			if ($last_visit_url['c'] == 'wxapp') {
-				return $last_visit_url['a'] == 'display' ? url('account/privileges', array('type' => 'wxapp')) : $login_location['wxapp'];
+				return $last_visit_url['a'] == 'display' ? url('account/display', array('type' => 'wxapp')) : $login_location['wxapp'];
 			}
 			$account_info = uni_fetch($last_visit_uniacid);
 			if (empty($account_info) || $last_visit_url['c'] == 'account' && $last_visit_url['a'] == 'display') {
@@ -1085,16 +1085,16 @@ function user_after_login_link() {
 			$url = url('home/welcome/system_home');
 			break;
 		case ACCOUNT_DISPLAY_TYPE:
-			$url = url('account/privileges', array('type' => 'account'));
+			$url = url('account/display', array('type' => 'account'));
 			break;
 		case WXAPP_DISPLAY_TYPE:
-			$url = url('account/privileges', array('type' => 'wxapp'));
+			$url = url('account/display', array('type' => 'wxapp'));
 			break;
 		case WEBAPP_DISPLAY_TYPE:
-			$url = url('account/privileges', array('type' => 'webapp'));
+			$url = url('account/display', array('type' => 'webapp'));
 			break;
 		case PHONEAPP_DISPLAY_TYPE:
-			$url = url('account/privileges', array('type' => 'phoneapp'));
+			$url = url('account/display', array('type' => 'phoneapp'));
 			break;
 		default:
 			$url = '';

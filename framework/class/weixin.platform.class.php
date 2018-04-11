@@ -52,7 +52,7 @@ class WeiXinPlatform extends WeiXinAccount {
 	}
 
 	function accountDisplayUrl() {
-		return url('account/privileges');
+		return url('account/display');
 	}
 
 	function getComponentAccesstoken() {
