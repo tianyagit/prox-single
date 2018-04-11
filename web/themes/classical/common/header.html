@@ -13,16 +13,45 @@
 			</a>
 			{if !empty($_W['uid'])}
 			<div class="nav">
+
 				<ul class="main-nav">
 					{php global $top_nav}
+					{php $nav_top_fold=array()}
+					{php $url=url('account/display')}
+					{php $nav_top_fold[] = array('name' => 'all', 'title'=>'全部', 'type' => 'all', 'url' => $url)}
+					{php $nav_top_tiled=array()}
 					{loop $top_nav $nav}
-					<li{if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active"{/if}>
-						<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
-					<i class="{$nav['icon']}"></i>
-					{$nav['title']}</a>
-					</li>
+						{if in_array($nav['name'], array('account', 'wxapp', 'webapp', 'phoneapp'))}
+							{php $nav_top_fold[]=$nav}
+						{elseif in_array($nav['name'], array('module', 'system', 'site'))}
+							{php $nav_top_tiled_system[]=$nav}
+						{elseif in_array($nav['name'], array('appmarket', 'store'))}
+							{php $nav_top_tiled_other[]=$nav}
+						{elseif $nav['name']=='custom_help'}
+							{php $nav_top_help=$nav}
+						{/if}
 					{/loop}
+
+					{if $_GPC['active'] == 'privileges' || in_array($_GPC['type'], array('account', 'wxapp', 'webapp', 'phone', 'all'))}
+						{php $privileges_active = true}
+					{/if}
+					<li {if $privileges_active} class="active" {/if}><a href="{php echo url('account/display', array('active' => 'privileges'))}">平台</a></li>
+
+					{loop $nav_top_tiled_system $nav}
+						<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
+							<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a>
+						</li>
+					{/loop}
+
+					{loop $nav_top_tiled_other $nav}
+						<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
+							<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}> {$nav['title']} </a>
+						</li>
+					{/loop}
+
 				</ul>
+
+
 				<ul class="user-info">
 					<li class="dropdown user">
 						<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="wi wi-user"></i>{$_W['user']['username']}<span class="caret"></span></a>
