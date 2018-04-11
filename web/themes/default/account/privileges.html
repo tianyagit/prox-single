@@ -1,7 +1,7 @@
 {template 'common/header'}
 
 <!--新建弹窗-->
-<div class="modal" id="owner-modal" style="display: none;top: -300px;" >
+<div class="modal" id="owner-modal">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -11,22 +11,21 @@
 			<div class="modal-body">
 				<div class="mask-creat">
 					<ul>
-						<li>
-							<i class="wi wi-wx-circle"></i><br/>
-							<a href="#" class="name" title="新建公众号"></a>
-						</li>
-						<li>
-							<i class="wi wi-wxapp"></i><br/>
-							<a href="#" class="name" title="新建小程序"></a>
-						</li>
-						<li>
-							<i class="wi wi-pc-circle"></i><br/>
-							<a href="#" class="name" title="新建PC"></a>
-						</li>
-						<li>
-							<i class="wi wi-app"></i><br/>
-							<a href="#" class="name" title="新建APP"></a>
-						</li>
+						{if !empty($account_info['uniacid_limit']) && (!empty($account_info['founder_uniacid_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						<li><i class="wi wi-wx-circle"></i><br/><a href="./index.php?c=account&a=post-step" class="name" title="新建公众号"></a></li>
+						{/if}
+
+						{if !empty($account_info['wxapp_limit']) && (!empty($account_info['founder_wxapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						<li><i class="wi wi-wxapp"></i><br/><a href="{php echo url('wxapp/post/design_method')}" class="name" title="新建小程序"></a></li>
+						{/if}
+
+						{if !empty($account_info['webapp_limit']) && (!empty($account_info['founder_webapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						<li><i class="wi wi-pc-circle"></i><br/><a href="./index.php?c=webapp&a=manage&do=create_display" class="name" title="新建PC"></a></li>
+						{/if}
+
+						{if !empty($account_info['phoneapp_limit']) && (!empty($account_info['founder_phoneapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						<li><i class="wi wi-app"></i><br/><a href="{php echo url('phoneapp/manage/create_display')}" class="name" title="新建APP"></a></li>
+						{/if}
 					</ul>
 				</div>
 			</div>
@@ -75,10 +74,11 @@
 				</div>
 
 				<div class="font-default pull-right">
-					<!--<a ng-if="type == 'all'" class="color-default"><i class="fa fa-plus"></i>新增应用</a>-->
 					<!-- xstart -->
 					{if IMS_FAMILY == 'x'}
 					<div class="creat" ng-switch="type">
+						<a href="javascript:;" data-toggle="modal" data-target="#owner-modal" class="color-default"><i class="wi wi-registersite"></i>新增应用</a>
+
 						{if !empty($account_info['uniacid_limit']) && (!empty($account_info['founder_uniacid_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 						<a ng-switch-when="account" href="./index.php?c=account&a=post-step" class="color-default">
 							<i class="fa fa-plus"></i>新增公众号
