@@ -75,6 +75,7 @@
 				</div>
 
 				<div class="font-default pull-right">
+					<!--<a ng-if="type == 'all'" class="color-default"><i class="fa fa-plus"></i>新增应用</a>-->
 					<!-- xstart -->
 					{if IMS_FAMILY == 'x'}
 					<div class="creat" ng-switch="type">
@@ -158,7 +159,8 @@
 			</div>
 
 			<!--首字母检索-->
-			<ul class="letters-list">
+			<div class="clearfix"></div>
+			<ul class="letters-list" ng-if="searchShow">
 				<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)" class="ng-scope">
 					<a href="javascript:;" ng-bind="letter" class="ng-binding"></a>
 				</li>
