@@ -77,7 +77,7 @@
 					<!-- xstart -->
 					{if IMS_FAMILY == 'x'}
 					<div class="creat" ng-switch="type">
-						<a href="javascript:;" data-toggle="modal" data-target="#owner-modal" class="color-default"><i class="wi wi-registersite"></i>新增应用</a>
+						<a ng-switch-when="all" href="javascript:;" data-toggle="modal" data-target="#owner-modal" class="color-default"><i class="wi wi-registersite"></i>新增应用</a>
 
 						{if !empty($account_info['uniacid_limit']) && (!empty($account_info['founder_uniacid_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 						<a ng-switch-when="account" href="./index.php?c=account&a=post-step" class="color-default">
@@ -133,7 +133,7 @@
 					<!-- svend -->
 
 					<div class="setting" ng-switch="type">
-						{if $state == ACCOUNT_MANAGE_NAME_FOUNDER || $state == ACCOUNT_MANAGE_NAME_MANAGER}
+						{if in_array($_W['highest_role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER,ACCOUNT_MANAGE_NAME_MANAGER))}
 						<a ng-switch-when="account" href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL))}" class="color-default">
 							<i class="wi wi-wechatstatistics"></i>
 							公众号管理
@@ -178,7 +178,8 @@
 							<div class="item-icon">
 								<i ng-if="detail.type == types.account_normal || detail.type == types.account_auth" class="wi wi-wechat"></i>
 								<i ng-if="detail.type == types.account_auth" class="wi wi-wechat"></i>
-								<i ng-if="detail.type == types.wxapp" class="wi wi-wxapp"></i>
+								<i ng-if="detail.type == types.wxapp_normal" class="wi wi-wxapp"></i>
+								<i ng-if="detail.type == types.wxapp_auth" class="wi wi-wxapp"></i>
 								<i ng-if="detail.type == types.webapp" class="wi wi-pc"></i>
 								<i ng-if="detail.type == types.phoneapp" class="wi wi-app"></i>
 							</div>
@@ -191,7 +192,7 @@
 									<span ng-if="detail.level == 4">类型：认证服务号</span>
 								</div>
 
-								<div class="type" ng-if="detail.type == types.wxapp || detail.type == types.phoneapp">
+								<div class="type" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth || detail.type == types.phoneapp">
 									<span>版本：{{detail.current_version.version}}</span>
 								</div>
 
@@ -212,7 +213,7 @@
 						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.webapp"><div>进入PC <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入小程序 -->
-						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&multiid={{detail.current_version.multiid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.wxapp"><div>进入小程序 <i class="wi wi-angle-right"></i></div></a>
+						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&multiid={{detail.current_version.multiid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth"><div>进入小程序 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入 APP -->
 						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.phoneapp">
@@ -220,7 +221,7 @@
 						</a>
 
 						<!-- 小程序/APP 查看版本 -->
-						<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)" ng-if="detail.type == types.wxapp || detail.type == types.phoneapp">
+						<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth || detail.type == types.phoneapp">
 							<i class="wi wi-changing-over"></i>
 						</a>
 
@@ -250,7 +251,7 @@
 							</a>
 						</div>
 						<div class="cut-select-pager">
-							<a href="{{links.wxapp_more_version}}&uniacid={{detail.uniacid}}" class="more color-default" ng-if="detail.type == types.wxapp">更多 >></a>
+							<a href="{{links.wxapp_more_version}}&uniacid={{detail.uniacid}}" class="more color-default" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth">更多 >></a>
 						</div>
 					</div>
 				</div>
@@ -263,7 +264,7 @@
 <script>
 	angular.module('accountApp').value('config', {
 		'list' : {php echo !empty($list) ? json_encode($list) : 'null'},
-	'type' : "{$type}",
+		'type' : "{$type}",
 		'title' : "{$title}",
 		'keyword' : "{$keyword}",
 		'letter' : "{$letter}",
@@ -277,9 +278,10 @@
 		'types' : {
 			'account_normal' : "{ACCOUNT_TYPE_OFFCIAL_NORMAL}",
 			'account_auth' : "{ACCOUNT_TYPE_OFFCIAL_AUTH}",
-			'wxapp' : "{ACCOUNT_TYPE_APP_NORMAL}",
+			'wxapp_normal' : "{ACCOUNT_TYPE_APP_NORMAL}",
+			'wxapp_auth' : "{ACCOUNT_TYPE_APP_AUTH}",
 			'webapp' : "{ACCOUNT_TYPE_WEBAPP_NORMAL}",
-			'phoneapp' : "{ACCOUNT_TYPE_PHONEAPP_NORMAL}",
+			'phoneapp' : "{ACCOUNT_TYPE_PHONEAPP_NORMAL}"
 		},
 		scrollUrl : "{php echo url('account/privileges', array('type'=>$type))}"
 	});
