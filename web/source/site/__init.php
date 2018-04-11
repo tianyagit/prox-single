@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 if ($action != 'entry') {
 	$account_api = WeAccount::create();
 	if (is_error($account_api)) {
-		itoast('', url('account/display'));
+		itoast('', url('account/privileges'));
 	}
 	$check_manange = $account_api->checkIntoManage();
 

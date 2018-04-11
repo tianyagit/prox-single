@@ -49,7 +49,7 @@ if ($do == 'switch') {
 
 if ($do == 'home') {
 	$last_uniacid = uni_account_last_switch();
-	$url = url('phoneapp/display');
+	$url = url('account/privileges', array('type' => 'phoneapp'));
 	if (empty($last_uniacid)) {
 		itoast('', $url, 'info');
 	}

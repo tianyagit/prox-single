@@ -23,7 +23,7 @@ if ($do == 'rank' || $do == 'switch') {
 }
 if ($do == 'home') {
 	$last_uniacid = uni_account_last_switch();
-	$url = url('wxapp/display');
+	$url = url('account/privileges', array('type' => 'wxapp'));
 	if (empty($last_uniacid)) {
 		itoast('', $url, 'info');
 	}

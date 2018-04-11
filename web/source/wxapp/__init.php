@@ -9,7 +9,7 @@ defined('IN_IA') or exit('Access Denied');
 if (!in_array($action, array('display', 'post', 'manage', 'auth'))) {
 	$account_api = WeAccount::create();
 	if (is_error($account_api)) {
-		itoast('', url('wxapp/display'));
+		itoast('', url('account/privileges', array('type' => 'wxapp')));
 	}
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {

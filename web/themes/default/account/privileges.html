@@ -61,7 +61,7 @@
 					<form action="./index.php" method="get">
 						<input type="hidden" name="c" value="account">
 						<input type="hidden" name="a" value="privileges">
-						<input type="hidden" name="do" value="display_all" ng-if="type == 'all'">
+						<input type="hidden" name="do" value="display" ng-if="type == 'all'">
 						<input type="hidden" name="type" value="{{type}}">
 						<input type="hidden" name="title" value="{{title}}">
 						<input type="text" name="letter" ng-model="activeLetter" ng-style="{'display': 'none'}">
@@ -204,18 +204,21 @@
 					<!--鼠标悬停遮罩效果-->
 					<div class="mask">
 						<!-- 进入公众号/PC -->
-						<a href="{{detail.switchurl}}" class="entry" ng-if="type == 'account' || type == 'webapp' "><div>进入{{ title }} <i class="wi wi-angle-right"></i></div></a>
+						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.account_normal || detail.type == types.account_auth"><div>进入 公众号 <i class="wi wi-angle-right"></i></div></a>
+
+						<!-- 进入PC -->
+						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.webapp"><div>进入PC <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入小程序 -->
-						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&multiid={{detail.current_version.multiid}}&version_id={{detail.current_version.id}}&type={{type}}" class="entry" ng-if="type == 'wxapp'"><div>进入小程序 <i class="wi wi-angle-right"></i></div></a>
+						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&multiid={{detail.current_version.multiid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.wxapp"><div>进入小程序 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入 APP -->
-						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&version_id={{detail.current_version.id}}&type={{type}}" class="entry" ng-if="type == 'phoneapp'">
+						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.phoneapp">
 							<div>进入APP <i class="wi wi-angle-right"></i></div>
 						</a>
 
 						<!-- 小程序/APP 查看版本 -->
-						<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)" ng-if="type == 'wxapp' || type == 'phoneapp'">
+						<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)" ng-if="detail.type == types.wxapp || detail.type == types.phoneapp">
 							<i class="wi wi-changing-over"></i>
 						</a>
 
@@ -227,7 +230,7 @@
 						{/if}
 
 						<!-- 置顶 -->
-						<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid)" title="置顶">
+						<a href="javascript:;" class="stick" ng-click="stick(detail.uniacid, detail.type)" title="置顶">
 							<i class="wi wi-stick-sign"></i>
 						</a>
 					</div>
@@ -238,14 +241,14 @@
 							<a href="javascript:;">
 								<div class="detail" ng-repeat="version in detail.versions">
 									<div class="text-over"><span class="wi wi-small-routine"></span>{{version.version}}</div>
-									<a class="cut-select-mask" href="{{links.switch}}&uniacid={{detail.uniacid}}&multiid={{version.multiid}}&version_id={{version.id}}&type={{type}}">
+									<a class="cut-select-mask" href="{{links.switch}}&uniacid={{detail.uniacid}}&multiid={{version.multiid}}&version_id={{version.id}}&type={{detail.type}}">
 										<div class="entry">选择进入 <i class="wi wi-angle-right"></i></div>
 									</a>
 								</div>
 							</a>
 						</div>
 						<div class="cut-select-pager">
-							<a href="{{links.wxapp_more_version}}&uniacid={{detail.uniacid}}" class="more color-default" ng-if="type == 'wxapp'">更多 >></a>
+							<a href="{{links.wxapp_more_version}}&uniacid={{detail.uniacid}}" class="more color-default" ng-if="detail.type == types.wxapp">更多 >></a>
 						</div>
 					</div>
 				</div>
@@ -321,11 +324,14 @@
 			}, 500);
 		}
 
-		$scope.stick = function(id) {
-			var uniacid = parseInt(id);
-			$http.post($scope.links.rank, {uniacid : uniacid, type : $scope.type}).success(function(data) {
+		$scope.stick = function(uniacid, type) {
+			var uniacid = parseInt(uniacid);
+			$http.post($scope.links.rank, {uniacid : uniacid, type : type}).success(function(data) {
 				if (data.message.errno == 0) {
 					location.reload();
+				} else {
+					console.log(data.message);
+					util.message(data.message.message);
 				}
 			})
 		}

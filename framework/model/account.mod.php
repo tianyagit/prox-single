@@ -1202,14 +1202,16 @@ function uni_bind_domain() {
 }
 
 /**
- * 检测应用是否存在
+ * 检测 account 账号是否存在
  * @param $type
  * @param $uniacid
  * @return array|bool
  */
 function account_not_exist($type, $uniacid) {
 	switch ($type) {
-		case ACCOUNT_TYPE_OFFCIAL_NORMAL : case ACCOUNT_TYPE_OFFCIAL_AUTH : case ACCOUNT_TYPE_WEBAPP_NORMAL :
+		case ACCOUNT_TYPE_OFFCIAL_NORMAL :
+		case ACCOUNT_TYPE_OFFCIAL_AUTH :
+		case ACCOUNT_TYPE_WEBAPP_NORMAL :
 			$exist = pdo_get('uni_account', array('uniacid' => $uniacid));
 			$msg = ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH) ? '公众号不存在' : 'PC不存在';
 			break;

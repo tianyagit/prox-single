@@ -108,10 +108,10 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	}
 	if (empty($_W['uniacid'])) {
 		if (defined('FRAME') && FRAME == 'account') {
-			itoast('', url('account/display'), 'info');
+			itoast('', url('account/privileges', array('type' => 'account')), 'info');
 		}
 		if (defined('FRAME') && FRAME == 'wxapp') {
-			itoast('', url('wxapp/display'), 'info');
+			itoast('', url('account/privileges', array('type' => 'wxapp')), 'info');
 		}
 	}
 	$acl = permission_build();

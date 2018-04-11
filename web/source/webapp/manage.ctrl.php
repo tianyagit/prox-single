@@ -17,7 +17,7 @@ if($do == 'create') {
 		return;
 	}
 	if (!webapp_can_create($_W['uid'])) {
-		itoast('创建PC个数已满', url('webapp/manage/list'));
+		itoast('创建PC个数已满', url('account/privileges', array('type' => 'webapp')));
 	}
 	$data = array(
 		'name' => safe_gpc_string($_GPC['name']),
@@ -27,13 +27,13 @@ if($do == 'create') {
 	$webapp = table('webapp');
 	$uniacid = $webapp->createWebappInfo($data, $_W['uid']);
 	if($uniacid){
-		itoast('创建成功', url('webapp/manage/list'));
+		itoast('创建成功', url('account/privileges', array('type' => 'webapp')));
 	}
 }
 
 if($do == 'create_display') {
 	if(!webapp_can_create($_W['uid'])) {
-		itoast('', url('webapp/manage/list'));
+		itoast('', url('account/privileges', array('type' => 'webapp')));
 	}
 	template('webapp/create');
 }

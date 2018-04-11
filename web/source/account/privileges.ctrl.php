@@ -13,20 +13,19 @@ load()->model('wxapp');
 load()->model('phoneapp');
 load()->model('account');
 
-$dos = array('rank', 'display', 'switch', 'display_all');
+$dos = array('rank', 'display', 'switch');
 $do = in_array($_GPC['do'], $dos) ? $do : 'display';
-$_W['page']['title'] = '公众号列表 - 公众号';
+$_W['page']['title'] = '所有权限';
 
 $state = permission_account_user_role($_W['uid'], $_W['uniacid']);
 $account_info = permission_user_account_num();
 
 if ($do == 'display') {
-
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 10;
 
 	$type = safe_gpc_string($_GPC['type']);
-	$type = !empty($type) ? $type : 'account';
+	$type = !empty($type) ? $type : 'all';
 	$title = safe_gpc_string($_GPC['title']);
 
 	switch ($type) {
@@ -110,93 +109,13 @@ if ($do == 'display') {
 	}
 }
 
-if ($do == 'display_all') {
-	$type = safe_gpc_string($_GPC['type']);
-	$title = safe_gpc_string($_GPC['title']);
-
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 10;
-
-	$tableName = ACCOUNT_TYPE_SIGN;
-	$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH,ACCOUNT_TYPE_APP_NORMAL,ACCOUNT_TYPE_WEBAPP_NORMAL,ACCOUNT_TYPE_PHONEAPP_NORMAL);
-
-	$table = table($tableName);
-	$table->searchWithType($condition);
-
-	$keyword = safe_gpc_string($_GPC['keyword']);
-	if (!empty($keyword)) {
-		$table->searchWithKeyword($keyword);
-	}
-
-	$letter = safe_gpc_string($_GPC['letter']);
-	if (isset($letter) && strlen($letter) == 1) {
-		$table->searchWithLetter($letter);
-	}
-
-	$table->accountRankOrder();
-	$table->searchWithPage($pindex, $psize);
-	$list = $table->searchAccountListFields();
-
-
-	foreach($list as &$account) {
-		$account = uni_fetch($account['uniacid']);
-		switch ($account['type']) {
-			case ACCOUNT_TYPE_OFFCIAL_NORMAL :case ACCOUNT_TYPE_OFFCIAL_AUTH :
-				$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
-				break;
-			case ACCOUNT_TYPE_APP_NORMAL :
-				$account['versions'] = wxapp_get_some_lastversions($account['uniacid']);
-				if (!empty($account['versions'])) {
-					foreach ($account['versions'] as $version) {
-						if (!empty($version['current'])) {
-							$account['current_version'] = $version;
-						}
-					}
-				}
-				break;
-			case ACCOUNT_TYPE_WEBAPP_NORMAL :
-				$account['switchurl'] = url('webapp/home/switch', array('uniacid' => $account['uniacid']));
-				break;
-			case ACCOUNT_TYPE_PHONEAPP_NORMAL :
-				$account['versions'] = phoneapp_get_some_lastversions($account['uniacid']);
-				if (!empty($account['versions'])) {
-					foreach ($account['versions'] as $version) {
-						if (!empty($version['current'])) {
-							$account['current_version'] = $version;
-						}
-					}
-				}
-				break;
-		}
-	}
-
-//	echo "<pre>";
-//	var_dump($table);
-
-
-}
-
 if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 	$uniacid = intval($_GPC['uniacid']);
-
+	$type = intval($_GPC['type']);
 	if (!empty($uniacid)) {
-		switch ($type) {
-			case 'account' :
-				$exist = pdo_get('uni_account', array('uniacid' => $uniacid));
-				if (empty($exist)) {
-					iajax(1, '公众号不存在', '');
-				}
-				break;
-			case 'wxapp' :
-				$wxapp_info = wxapp_fetch($uniacid);
-				if (empty($wxapp_info)) {
-					iajax(1, '小程序不存在', '');
-				}
-				break;
-			case 'webapp' :
-				break;
-			case 'phoneapp' :
-				break;
+		$info = account_not_exist($type, $uniacid);
+		if ($info) {
+			iajax(1, $info['msg']);
 		}
 	}
 	uni_account_rank_top($uniacid);
@@ -205,12 +124,12 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 
 if ($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
-	$type = safe_gpc_string($_GPC['type']);
+	$type = intval($_GPC['type']);
 	if (!empty($uniacid)) {
-		if ($type == 'wxapp' || $type == 'phoneapp') {
-			if ($type == 'wxapp') {
+		if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+			if ($type == ACCOUNT_TYPE_APP_NORMAL) {
 				$info = wxapp_fetch($uniacid);
-			} elseif ($type == 'phoneapp') {
+			} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 				$info = phoneapp_fetch($uniacid);
 			}
 
@@ -239,20 +158,18 @@ if ($do == 'switch') {
 					}
 				}
 
-				if ($type == 'wxapp') {
+				if ($type == ACCOUNT_TYPE_APP_NORMAL) {
 					wxapp_update_last_use_version($uniacid, $version_id);
 					uni_account_switch($uniacid, url('wxapp/version/home', array('version_id' => $version_id)), WXAPP_TYPE_SIGN);
-				} elseif ($type == 'phoneapp') {
+				} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 					phoneapp_update_last_use_version($uniacid, $version_id);
 					uni_account_switch($uniacid, url('phoneapp/version/home', array('version_id' => $version_id)), PHONEAPP_TYPE_SIGN);
 				}
-
-
 				exit;
 			} else {
-				if ($type == 'wxapp') {
+				if ($type == ACCOUNT_TYPE_APP_NORMAL) {
 					itoast('小程序不存在', referer(), 'error');
-				} elseif ($type == 'phoneapp') {
+				} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 					itoast('APP不存在', referer(), 'error');
 				}
 

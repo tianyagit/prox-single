@@ -32,7 +32,10 @@
 					{/if}
 				{/loop}
 				<ul class="nav navbar-nav  navbar-left">
-					<li><a href="{php echo url('account/privileges')}" class="color-default">全部权限</a></li>
+					{if $_GPC['active'] == 'privileges' || in_array($_GPC['type'], array('account', 'wxapp', 'webapp', 'phone'))}
+						{php $privileges_active = true}
+					{/if}
+					<li {if $privileges_active} class="active" {/if}><a href="{php echo url('account/privileges', array('active' => 'privileges'))}">全部权限</a></li>
 					{loop $nav_top_tiled_system $nav}
 					<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
 					<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a>
