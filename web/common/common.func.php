@@ -344,7 +344,11 @@ function buildframes($framename = ''){
 			$modulename = $entry['module'];
 		}
 		$module = module_fetch($modulename);
-		$entries = module_entries($modulename);
+		if (defined('SYSTEM_WELCOME_MODULE')) {
+			$entries = module_entries($modulename, array('system_welcome'));
+		} else {
+			$entries = module_entries($modulename);
+		}
 		if($status) {
 			$permission = pdo_get('users_permission', array('uniacid' => $_W['uniacid'], 'uid' => $_W['uid'], 'type' => $modulename), array('permission'));
 			if(!empty($permission)) {
@@ -409,14 +413,14 @@ function buildframes($framename = ''){
 				'is_display' => 1,
 			);
 		}
-		if ($module['permissions'] && ($_W['isfounder'] || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER)) {
+		if ($module['permissions'] && ($_W['isfounder'] || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) && !defined('SYSTEM_WELCOME_MODULE')) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_permissions'] = array(
 				'title' => "<i class='fa fa-cog'></i> 权限设置",
 				'url' => url('module/permission', array('m' => $modulename, 'version_id' => $version_id)),
 				'is_display' => 1,
 			);
 		}
-		if ($_W['isfounder'] || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) {
+		if (($_W['isfounder'] || $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER) && !defined('SYSTEM_WELCOME_MODULE')) {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_default_entry'] = array(
 					'title' => "<i class='fa fa-cog'></i> 默认入口",
 					'url' => url('module/default-entry', array('m' => $modulename, 'version_id' => $version_id)),
@@ -623,24 +627,7 @@ function buildframes($framename = ''){
 			'icon' => $menu['icon'],
 		);
 	}
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
-		return !empty($framename) ? $frames[$framename] : $frames;
-	}
-	/* vend */
-	/* sxstart */
-	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
-		if (!empty($framename)) {
-			if (($framename == 'system_welcome' || $entry['entry'] == 'system_welcome' || $_GPC['module_type'] == 'system_welcome') && $_W['isfounder']) {
-				$frames = $frames['account'];
-				$frames['section'] = array('platform_module_welcome' => $frames['section']['platform_module_welcome']);
-			} else {
-				$frames = $frames[$framename];
-			}
-		}
-		return $frames;
-	}
-	/* sxend */
+	return !empty($framename) ? ($framename == 'system_welcome' ? $frames['account'] : $frames[$framename]) : $frames;
 }
 
 function system_modules() {
