@@ -56,7 +56,7 @@
 			<!--搜索、新建、管理-->
 			<div class="we7-page-search cut-header">
 
-				<div class="cut-header" ng-if="searchShow">
+				<div ng-if="searchShow">
 					<form action="./index.php" method="get">
 						<input type="hidden" name="c" value="account">
 						<input type="hidden" name="a" value="privileges">
@@ -67,7 +67,7 @@
 						<div class="cut-search">
 							<div class="input-group pull-left">
 								<input type="text" class="form-control" name="keyword" value="{$_GPC['keyword']}" placeholder="请输入{{title}}名称">
-								<span class="input-group-btn"><button class="btn btn-default button"><i class="fa fa-search"></i></button></span>
+								<span class="input-group-btn"><button class="btn btn-default button"><i class="wi wi-search"></i></button></span>
 							</div>
 						</div>
 					</form>
@@ -168,7 +168,7 @@
 
 			<!--列表数据-->
 			<!--add-->
-			<div class="cut-list clearfix" ng-if="list" infinite-scroll='loadMore()' infinite-scroll-disabled='busy' infinite-scroll-distance='0' infinite-scroll-use-document-bottom="true">
+			<div class="mixMenu-list clearfix" ng-if="list" infinite-scroll='loadMore()' infinite-scroll-disabled='busy' infinite-scroll-distance='0' infinite-scroll-use-document-bottom="true">
 			<!--add-->
 				<div class="item module-list-item ng-scope" ng-repeat="detail in list" ng-if="list" style="">
 					<div class="content">
