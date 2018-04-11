@@ -98,8 +98,8 @@ $_W['current_module'] = $modules[$entry['module']];
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if ($entry['entry'] == 'system_welcome' || $_GPC['module_type'] == 'system_welcome') {
 		$_GPC['module_type'] = 'system_welcome';
-		$site = WeUtility::createModuleSystemWelcome($entry['module']);
 		define('SYSTEM_WELCOME_MODULE', true);
+		$site = WeUtility::createModuleSystemWelcome($entry['module']);
 	} else {
 		$site = WeUtility::createModuleSite($entry['module']);
 	}

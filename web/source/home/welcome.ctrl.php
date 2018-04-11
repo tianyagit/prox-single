@@ -138,6 +138,7 @@ if ($do == 'platform') {
 	define('FRAME', 'account');
 	define('IN_MODULE', $modulename);
 	if ($_GPC['system_welcome'] && $_W['isfounder']) {
+		define('SYSTEM_WELCOME_MODULE', true);
 		$frames = buildframes('system_welcome');
 	} else {
 		$site = WeUtility::createModule($modulename);
