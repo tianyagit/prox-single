@@ -37,7 +37,7 @@
 	</div>
 </div>
 
-<div class="panel panel-cut" id="js-account-display" ng-controller="privilegesDisplay" ng-cloak>
+<div class="panel panel-cut" id="js-account-privileges" ng-controller="privilegesDisplay" ng-cloak>
 	<!--选项卡-->
 	<div class="panel-heading mixMenu-panel-heading">
 		<ul class="navbar-nav">
@@ -281,78 +281,7 @@
 		},
 		scrollUrl : "{php echo url('account/privileges', array('type'=>$type))}"
 	});
-
-	angular.module('accountApp').controller('privilegesDisplay', ['$scope', '$http', '$timeout', 'config', function($scope, $http, $timeout, config){
-		$scope.list = config.list;
-		$scope.type = config.type;
-		$scope.title = config.title;
-		$scope.links = config.links;
-		$scope.types = config.types;
-		$scope.alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','#','全部'];
-		$scope.activeLetter = '';
-		$scope.keyword = config.keyword;
-		$scope.letter = config.letter;
-		$scope.searchShow = true;
-
-		$scope.currentPage = 1;
-		$scope.busy = false;
-		$scope.loadMore = function() {
-			if ($scope.busy) {
-				return false;
-			}
-			$scope.currentPage++;
-			$scope.busy = true;
-			$http.post(config.scrollUrl, {page : $scope.currentPage, keyword : config.keyword, letter : config.letter}).success(function(data) {
-				$scope.busy = false;
-				if (data.message.errno == 0) {
-					$scope.searchShow = true;
-					if (data.message.message.length == 0 && $scope.currentPage == 2) {
-						$scope.searchShow = false;
-					}
-					for (var i in data.message.message) {
-						$scope.list.push(data.message.message[i]);
-					}
-				}
-				$scope.busy = false;
-			})
-		}
-
-		$scope.searchModule = function(letter) {
-			$scope.activeLetter = letter;
-			$timeout(function() {
-				$('.button').click();
-			}, 500);
-		}
-
-		$scope.stick = function(uniacid, type) {
-			var uniacid = parseInt(uniacid);
-			$http.post($scope.links.rank, {uniacid : uniacid, type : type}).success(function(data) {
-				if (data.message.errno == 0) {
-					location.reload();
-				} else {
-					console.log(data.message);
-					util.message(data.message.message);
-				}
-			})
-		}
-
-		$scope.showVersions = function(ev) {
-			var cutSelect = $(ev.target).parents('.mask').next('.cut-select');
-			if (cutSelect.css('display') == 'none') {
-				cutSelect.css('display', 'block');
-				cutSelect.parent('.wxapp-list-item').siblings().find('.cut-select').css('display', 'none');
-			} else {
-				cutSelect.css('display', 'none');
-			}
-		}
-
-		$scope.hideSelect = function(ev) {
-			$(ev.target).css('display', 'none');
-		}
-
-	}]);
-
-	angular.bootstrap($('#js-account-display'), ['accountApp']);
+	angular.bootstrap($('#js-account-privileges'), ['accountApp']);
 </script>
 
 {template 'common/footer'}
