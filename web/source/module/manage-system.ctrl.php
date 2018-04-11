@@ -265,6 +265,16 @@ if ($do == 'upgrade') {
 		}
 	}
 	//执行模块更新文件
+	if ($packet['schemes']) {
+		foreach ($packet['schemes'] as $remote) {
+			$remote['tablename'] = trim($remote['tablename'], '`');
+			$local = db_table_schema(pdo(), $remote['tablename']);
+			$sqls = db_table_fix_sql($local, $remote);
+			foreach ($sqls as $sql) {
+				pdo_run($sql);
+			}
+		}
+	}
 	if (!empty($manifest['upgrade'])) {
 		if (strexists($manifest['upgrade'], '.php')) {
 			if (file_exists($module_path . $manifest['upgrade'])) {
@@ -276,18 +286,8 @@ if ($do == 'upgrade') {
 		} else {
 			pdo_run($manifest['upgrade']);
 		}
-	} else {
-		if ($packet['schemes']) {
-			foreach ($packet['schemes'] as $remote) {
-				$remote['tablename'] = trim(tablename($remote['tablename']), '`');
-				$local = db_table_schema(pdo(), $remote['tablename']);
-				$sqls = db_table_fix_sql($local, $remote);
-				foreach ($sqls as $sql) {
-					pdo_run($sql);
-				}
-			}
-		}
 	}
+
 	if (ONLINE_MODULE) {
 		if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
 			unlink($module_path . $manifest['uninstall']);
@@ -558,7 +558,7 @@ if ($do == 'module_detail') {
 	$module_info = module_fetch($module_name);
 	$current_cloud_module = cloud_m_info($module_name);
 	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
-	
+
 	if (!empty($module_info['is_relation'])) {
 		$type = intval($_GPC['type']);
 		switch ($type) {
