@@ -32,10 +32,10 @@
 					{/if}
 				{/loop}
 				<ul class="nav navbar-nav  navbar-left">
-					{if $_GPC['active'] == 'privileges' || in_array($_GPC['type'], array('account', 'wxapp', 'webapp', 'phone'))}
+					{if $_GPC['active'] == 'privileges' || in_array($_GPC['type'], array('account', 'wxapp', 'webapp', 'phone', 'all'))}
 						{php $privileges_active = true}
 					{/if}
-					<li {if $privileges_active} class="active" {/if}><a href="{php echo url('account/privileges', array('active' => 'privileges'))}">全部权限</a></li>
+					<li {if $privileges_active} class="active" {/if}><a href="{php echo url('account/privileges', array('active' => 'privileges'))}">平台</a></li>
 					{loop $nav_top_tiled_system $nav}
 					<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
 					<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a>
@@ -48,7 +48,6 @@
 						</li>
 						{/loop}
 					</ul>
-
 				</ul>
 				<ul class="nav navbar-nav navbar-left hidden">
 					{php global $top_nav}

@@ -28,6 +28,10 @@ if ($do == 'display') {
 	$type = !empty($type) ? $type : 'all';
 	$title = safe_gpc_string($_GPC['title']);
 
+	if ($type == 'all') {
+		$title = ' 公众号/小程序/PC/APP ';
+	}
+
 	switch ($type) {
 		case 'all':
 			$tableName = ACCOUNT_TYPE_SIGN;
