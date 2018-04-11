@@ -69,13 +69,12 @@ if ($do == 'display') {
 	$table->searchWithPage($pindex, $psize);
 	$list = $table->searchAccountListFields($fields);
 	$total = $table->getLastQueryTotal();
-
 	$list = array_values($list);
-
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);
 		switch ($account['type']) {
-			case ACCOUNT_TYPE_OFFCIAL_NORMAL :case ACCOUNT_TYPE_OFFCIAL_AUTH :
+			case ACCOUNT_TYPE_OFFCIAL_NORMAL :
+			case ACCOUNT_TYPE_OFFCIAL_AUTH :
 				$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
 				break;
 			case ACCOUNT_TYPE_APP_NORMAL :
@@ -115,7 +114,7 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 	if (!empty($uniacid)) {
 		$info = account_not_exist($type, $uniacid);
 		if ($info) {
-			iajax(1, $info['msg']);
+			iajax(1, $info['msg'], '');
 		}
 	}
 	uni_account_rank_top($uniacid);
@@ -172,15 +171,9 @@ if ($do == 'switch') {
 				} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 					itoast('APP不存在', referer(), 'error');
 				}
-
 			}
 		}
 	}
 }
 
-
-
-
-
 template('account/privileges');
-
