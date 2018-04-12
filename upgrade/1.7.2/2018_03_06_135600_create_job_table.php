@@ -15,8 +15,8 @@ class CreateJobTable {
 	 *  执行更新
 	 */
 	public function up() {
-		if (!pdo_tableexists('job')) {
-			$table = tablename('job');
+		if (!pdo_tableexists('core_job')) {
+			$table = tablename('core_job');
 			$sql = "CREATE TABLE IF NOT EXISTS $table (
 			  `id` int(11) NOT NULL AUTO_INCREMENT,
 			  `type` tinyint(3) NOT NULL DEFAULT 0 COMMENT '任务类型 10 删除公众号数据 20 同步粉丝 ',
