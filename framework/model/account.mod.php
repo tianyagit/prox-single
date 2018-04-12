@@ -1180,23 +1180,22 @@ function uni_search_link_account($module_name, $account_type) {
 }
 
 /**
- * 获取公众号的绑定域名
- * @return bool|string
+ * 获取公众号的有效的 oauth 域名
+ * @param $unisetting
  */
-function uni_bind_domain() {
-	/* sxstart */
-	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
-		if (!empty($_W['account']['setting']['bind_domain']) && !empty($_W['account']['setting']['bind_domain']['domain']) && strpos($_W['siteroot'], $_W['account']['setting']['bind_domain']['domain']) === false) {
-			return $_W['account']['setting']['bind_domain']['domain'];
+function uni_account_oauth_host() {
+	global $_W;
+	$oauth_url = $_W['siteroot'];
+	$unisetting = uni_setting_load();
+	if (!empty($unisetting['bind_domain']) && !empty($unisetting['bind_domain']['domain'])) {
+		$oauth_url = $unisetting['bind_domain']['domain'] . '/';
+	} else {
+		if (!empty($unisetting['oauth']['host'])) {
+			$oauth_url = $unisetting['oauth']['host'] . '/';
 		} else {
-			return false;
+			$global_unisetting = uni_account_global_oauth();
+			$oauth_url = !empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] . '/' : '';
 		}
 	}
-	/* sxend */
-
-	/* vstart */
-	if (IMS_FAMILY == 'v') {
-		return false;
-	}
-	/* vend */
+	return $oauth_url;
 }

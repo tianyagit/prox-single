@@ -180,21 +180,9 @@ if(!empty($type)) {
 		$ps['title'] = urlencode($params['title']);
 		$sl = base64_encode(json_encode($ps));
 		$auth = sha1($sl . $_W['uniacid'] . $_W['config']['setting']['authkey']);
-		$domain = uni_bind_domain();
-		if ($domain) {
-			$callback = $domain . "/payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
-		} else {
-			$oauth = uni_setting_load('oauth', $_W['uniacid']);
-			if (!empty($oauth['host'])) {
-				$callback = $oauth['host'] . "/payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
-			} else {
-				$callback = $_W['siteroot'] . "payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
-			}
-			$global_unisetting = uni_account_global_oauth();
-			$unisetting['oauth']['host'] = !empty($unisetting['oauth']['host']) ? $unisetting['oauth']['host'] : (!empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] : '');
-			if (!empty($unisetting['oauth']['host'])) {
-				$callback = str_replace($_W['siteroot'], $unisetting['oauth']['host'].'/', $callback);
-			}
+		$oauth_url = uni_account_oauth_host();
+		if (!empty($oauth_url)) {
+			$callback = $oauth_url . "payment/wechat/pay.php?i={$_W['uniacid']}&auth={$auth}&ps={$sl}";
 		}
 		//如果有借用支付，则需要通过网页授权附带用户Openid跳转至支付，否则直接跳转
 		$proxy_pay_account = payment_proxy_pay_account();
