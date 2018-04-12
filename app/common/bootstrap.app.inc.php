@@ -174,7 +174,7 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' &
 			}
 		}
 		$oauth_url = uni_account_oauth_host();
-		$url = $oauth_url . 'app/' . "index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
+		$url = $oauth_url . "app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
 		$callback = urlencode($url);
 		$oauth_account = WeAccount::create($_W['account']['oauth']);
 		if ($oauth_type == 'snsapi_base') {

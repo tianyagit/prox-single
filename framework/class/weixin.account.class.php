@@ -1688,7 +1688,7 @@ class WeiXinAccount extends WeAccount {
 		}
 		if (empty($code)) {
 			$oauth_url = uni_account_oauth_host();
-			$url = $oauth_url . 'app/' . "index.php?{$_SERVER['QUERY_STRING']}";
+			$url = $oauth_url . "app/index.php?{$_SERVER['QUERY_STRING']}";
 			$forward = $this->getOauthCodeUrl(urlencode($url));
 			header('Location: ' . $forward);
 			exit;
