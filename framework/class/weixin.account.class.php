@@ -1308,14 +1308,17 @@ class WeiXinAccount extends WeAccount {
 	 * $type => 文件类型
 	*/
 	public function uploadMedia($path, $type = 'image') {
-		if(empty($path)) {
+		if (empty($path)) {
 			return error(-1, '参数错误');
 		}
 		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
 			$path = ATTACHMENT_ROOT . ltrim($path, '/');
 		}
+		if (!file_exists($path)) {
+			return error(1, '文件不存在');
+		}
 		$token = $this->getAccessToken();
-		if(is_error($token)){
+		if (is_error($token)){
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$token}&type={$type}";
@@ -1331,14 +1334,17 @@ class WeiXinAccount extends WeAccount {
 	 * @param string $type 素材类型 image, voice, video, thumb
 	 */
 	public function uploadMediaFixed($path, $type = 'images') {
-		if(empty($path)) {
+		if (empty($path)) {
 			return error(-1, '参数错误');
 		}
 		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
 			$path = ATTACHMENT_ROOT . ltrim($path, '/');
 		}
+		if (!file_exists($path)) {
+			return error(1, '文件不存在');
+		}
 		$token = $this->getAccessToken();
-		if(is_error($token)){
+		if (is_error($token)){
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$token}&type={$type}";
@@ -1380,6 +1386,9 @@ class WeiXinAccount extends WeAccount {
 		if(is_error($token)){
 			return $token;
 		}
+		if (!file_exists($thumb)) {
+			return error(1, '文件不存在');
+		}
 		$data = array(
 			'media' => '@'. $thumb,
 		);
@@ -1393,14 +1402,17 @@ class WeiXinAccount extends WeAccount {
 	}
 
 	public function uploadVideoFixed($title, $description, $path) {
-		if(empty($path) || empty($title) || empty($description)) {
+		if (empty($path) || empty($title) || empty($description)) {
 			return error(-1, '参数错误');
 		}
 		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios'))) {
 			$path = ATTACHMENT_ROOT . ltrim($path, '/');
 		}
+		if (!file_exists($path)) {
+			return error(1, '文件不存在');
+		}
 		$token = $this->getAccessToken();
-		if(is_error($token)){
+		if (is_error($token)){
 			return $token;
 		}
 		$url = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={$token}&type=videos";
