@@ -213,10 +213,10 @@
 						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.webapp"><div>进入PC <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入小程序 -->
-						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&multiid={{detail.current_version.multiid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth"><div>进入小程序 <i class="wi wi-angle-right"></i></div></a>
+						<a ng-href="{{links.switch}}uniacid={{detail.uniacid}}&multiid={{detail.current_version.multiid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth"><div>进入小程序 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入 APP -->
-						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.phoneapp">
+						<a ng-href="{{links.switch}}uniacid={{detail.uniacid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.phoneapp">
 							<div>进入APP <i class="wi wi-angle-right"></i></div>
 						</a>
 
