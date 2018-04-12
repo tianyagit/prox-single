@@ -149,7 +149,7 @@ if ($do == 'switch') {
 			uni_account_switch($uniacid, $url);
 		}
 
-		if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+		if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH || $type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 			if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH) {
 				$info = wxapp_fetch($uniacid);
 			} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
