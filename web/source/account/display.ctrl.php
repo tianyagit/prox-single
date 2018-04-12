@@ -81,7 +81,7 @@ if ($do == 'display') {
 				}
 				break;
 			case ACCOUNT_TYPE_WEBAPP_NORMAL :
-				$account['switchurl'] = url('webapp/home/switch', array('uniacid' => $account['uniacid']));
+				$account['switchurl'] = url('account/display/switch', array('uniacid' => $account['uniacid'], 'type' => ACCOUNT_TYPE_WEBAPP_NORMAL));
 				break;
 			case ACCOUNT_TYPE_PHONEAPP_NORMAL :
 				$account['versions'] = phoneapp_get_some_lastversions($account['uniacid']);
@@ -143,6 +143,15 @@ if ($do == 'switch') {
 			uni_account_switch($uniacid, $url);
 		}
 
+		if ($type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+			$uniacid = intval($_GPC['uniacid']);
+			if (empty($uniacid)) {
+				itoast('', url('account/display', array('type' => WEBAPP_TYPE_SIGN)), 'info');
+			}
+			uni_account_save_switch($uniacid, WEBAPP_TYPE_SIGN);
+			itoast('', url('webapp/home/display'));
+		}
+
 		if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH || $type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 			if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH) {
 				$info = wxapp_fetch($uniacid);
@@ -171,7 +180,11 @@ if ($do == 'switch') {
 						uni_account_switch($module_info['account']['uniacid'], $url);
 					} else {
 						$url .= '&version_id=' . $version_id;
-						uni_account_switch($version_info['uniacid'], $url, WXAPP_TYPE_SIGN);
+						if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH) {
+							uni_account_switch($version_info['uniacid'], $url, WXAPP_TYPE_SIGN);
+						} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+							uni_account_switch($version_info['uniacid'], $url, PHONEAPP_TYPE_SIGN);
+						}
 					}
 				}
 
@@ -190,5 +203,7 @@ if ($do == 'switch') {
 				}
 			}
 		}
+
+
 	}
 }
