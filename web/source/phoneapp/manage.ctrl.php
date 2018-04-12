@@ -31,7 +31,7 @@ if (!empty($uniacid)) {
 if ($do == 'save') {
 	$version_id = intval($_GPC['version_id']);
 	if (empty($uniacid) && empty($account_info['phoneapp_limit']) && !user_is_founder($_W['uid'])) {
-		iajax(-1, '创建APP个数已满', url('account/display', array('type' => 'phoneapp')));
+		iajax(-1, '创建APP个数已满', url('account/display', array('type' => PHONEAPP_TYPE_SIGN)));
 	}
 
 	$data = array(
@@ -49,14 +49,14 @@ if ($do == 'save') {
 	} else if (!empty($version_id)) {
 		unset($data['name']);
 		$result = pdo_update('phoneapp_versions', $data, array('id' => $version_id, 'uniacid' => $uniacid));
-		iajax(0, '修改成功', url('account/display', array('type' => 'phoneapp')), array('uniacid' => $uniacid));
+		iajax(0, '修改成功', url('account/display', array('type' => PHONEAPP_TYPE_SIGN)), array('uniacid' => $uniacid));
 	} else {
 		unset($data['name']);
 		$result = pdo_insert('phoneapp_versions', $data);
 	}
 
 	if (!empty($result)) {
-		iajax(0, '创建成功', url('account/display', array('type' => 'phoneapp')));
+		iajax(0, '创建成功', url('account/display', array('type' => PHONEAPP_TYPE_SIGN)));
 	}
 	iajax(-1, '创建失败', url('phoneapp/manage/create_display'));
 }

@@ -40,7 +40,7 @@ if (!$entry['direct']) {
 	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		if (empty($_W['uniacid']) && $entry['entry'] != 'system_welcome' && $_GPC['module_type'] != 'system_welcome') {
 			if (!empty($_GPC['version_id'])) {
-				itoast('', url('account/display', array('type' => 'wxapp')));
+				itoast('', url('account/display', array('type' => WXAPP_TYPE_SIGN)));
 			} else {
 				itoast('', url('account/display'));
 			}
@@ -51,7 +51,7 @@ if (!$entry['direct']) {
 	if (IMS_FAMILY == 'v') {
 		if (empty($_W['uniacid'])) {
 			if (!empty($_GPC['version_id'])) {
-				itoast('', url('account/display', array('type' => 'wxapp')));
+				itoast('', url('account/display', array('type' => WXAPP_TYPE_SIGN)));
 			} else {
 				itoast('', url('account/display'));
 			}

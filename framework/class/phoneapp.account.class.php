@@ -28,6 +28,6 @@ class PhoneappAccount extends WeAccount {
 	}
 
 	public function accountDisplayUrl() {
-		return url('account/display', array('type' => 'phoneapp'));
+		return url('account/display', array('type' => PHONEAPP_TYPE_SIGN));
 	}
 }

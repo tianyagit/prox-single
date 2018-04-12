@@ -6,7 +6,7 @@ load()->model('account');
 
 if ($do == 'home') {
 	$last_uniacid = uni_account_last_switch();
-	$url = url('account/display', array('type' => 'phoneapp'));
+	$url = url('account/display', array('type' => PHONEAPP_TYPE_SIGN));
 	if (empty($last_uniacid)) {
 		itoast('', $url, 'info');
 	}
