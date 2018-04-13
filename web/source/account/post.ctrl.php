@@ -435,7 +435,7 @@ if($do == 'modules_tpl') {
 		if (!empty($account_buy_modules) && is_array($account_buy_modules)) {
 			foreach ($account_buy_modules as &$module) {
 				$module = module_fetch($module);
-				$module['goods_id'] = pdo_getcolumn('site_store_goods', array('module' => $module['name']), 'id');
+				$module['goods_id'] = pdo_getcolumn('site_store_goods', array('module' => $module['name'], 'status' => 1), 'id');
 				$module['expire_time'] = pdo_getcolumn('site_store_order', array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'goodsid' => $module['goods_id']), 'max(endtime)');
 			}
 		}
