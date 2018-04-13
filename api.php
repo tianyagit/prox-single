@@ -615,7 +615,7 @@ class WeEngine {
 			return $pars;
 		}
 		//关键字先查缓存有没有匹配规则，缓存超时为5分钟
-		$cachekey = 'we7:' . $_W['uniacid'] . ':keyword:' . md5($message['content']);
+		$cachekey = cache_system_key('keyword', md5($message['content']), $_W['uniacid']);
 		$keyword_cache = cache_load($cachekey);
 		if (!empty($keyword_cache) && $keyword_cache['expire'] > TIMESTAMP) {
 			return $keyword_cache['data'];
