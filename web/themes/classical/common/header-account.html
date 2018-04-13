@@ -36,5 +36,5 @@
 	{if uni_permission($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OPERATOR}
 	<a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid']))}" class="h"><i class="wi wi-appsetting" data-toggle="tooltip" data-placement="bottom" title="公众号设置"></i></a>
 	{/if}
-	<a href="{php echo url('account/display', array('type' => 'account'))}"><i class="wi wi-changing-over" data-toggle="tooltip" data-placement="bottom" title="切换公众号"></i></a>
+	<a href="{php echo url('account/display', array('type' => ACCOUNT_TYPE_SIGN))}"><i class="wi wi-changing-over" data-toggle="tooltip" data-placement="bottom" title="切换公众号"></i></a>
 </div>

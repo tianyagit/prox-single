@@ -15,8 +15,8 @@ class AlterJob {
 	 *  执行更新
 	 */
 	public function up() {
-		if (! pdo_fieldexists('job', 'uid')) {
-			$tableName = tablename('job');
+		if (! pdo_fieldexists('core_job', 'uid')) {
+			$tableName = tablename('core_job');
 			$sql = <<<EOT
 					ALTER TABLE $tableName ADD COLUMN uid int(11) DEFAULT 0;
 					ALTER TABLE $tableName ADD COLUMN isdeleted TINYINT(1) DEFAULT 0;
@@ -24,8 +24,8 @@ EOT;
 			pdo_run($sql);
 		}
 
-		if (! pdo_fieldexists('job', 'isdeleted')) {
-			$tableName = tablename('job');
+		if (! pdo_fieldexists('core_job', 'isdeleted')) {
+			$tableName = tablename('core_job');
 			$sql = <<<EOT
 					ALTER TABLE $tableName ADD COLUMN isdeleted TINYINT(1) DEFAULT 0;
 EOT;

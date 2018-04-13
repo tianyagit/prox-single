@@ -20,34 +20,28 @@ if ($do == 'display') {
 
 	$type = safe_gpc_string($_GPC['type']);
 	$title = safe_gpc_string($_GPC['title']);
-	$type = in_array($type, array('all', 'account', 'wxapp', 'webapp', 'phoneapp')) ? $type : 'all';
+	$type = in_array($type, array('all', ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN)) ? $type : 'all';
 
 	if ($type == 'all') {
 		$title = ' 公众号/小程序/PC/APP ';
 	}
 
-	switch ($type) {
-		case 'all':
-			$tableName = ACCOUNT_TYPE_SIGN;
-			$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_PHONEAPP_NORMAL);
-			$fields = 'a.uniacid,b.type';
-			break;
-		case 'account':
-			$tableName = ACCOUNT_TYPE_SIGN;
-			$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH);
-			break;
-		case 'wxapp':
-			$tableName = WXAPP_TYPE_SIGN;
-			$condition = array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH);
-			break;
-		case 'webapp':
-			$tableName = WEBAPP_TYPE_SIGN;
-			$condition = array(ACCOUNT_TYPE_WEBAPP_NORMAL);
-			break;
-		case 'phoneapp':
-			$tableName = PHONEAPP_TYPE_SIGN;
-			$condition = array(ACCOUNT_TYPE_PHONEAPP_NORMAL);
-			break;
+	if ($type == 'all') {
+		$tableName = ACCOUNT_TYPE_SIGN;
+		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_PHONEAPP_NORMAL);
+		$fields = 'a.uniacid,b.type';
+	} elseif ($type == ACCOUNT_TYPE_SIGN) {
+		$tableName = ACCOUNT_TYPE_SIGN;
+		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH);
+	} elseif ($type == WXAPP_TYPE_SIGN) {
+		$tableName = WXAPP_TYPE_SIGN;
+		$condition = array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH);
+	} elseif ($type == WEBAPP_TYPE_SIGN) {
+		$tableName = WEBAPP_TYPE_SIGN;
+		$condition = array(ACCOUNT_TYPE_WEBAPP_NORMAL);
+	} elseif ($type == PHONEAPP_TYPE_SIGN) {
+		$tableName = PHONEAPP_TYPE_SIGN;
+		$condition = array(ACCOUNT_TYPE_PHONEAPP_NORMAL);
 	}
 
 	$table = table($tableName);
@@ -87,7 +81,7 @@ if ($do == 'display') {
 				}
 				break;
 			case ACCOUNT_TYPE_WEBAPP_NORMAL :
-				$account['switchurl'] = url('webapp/home/switch', array('uniacid' => $account['uniacid']));
+				$account['switchurl'] = url('account/display/switch', array('uniacid' => $account['uniacid'], 'type' => ACCOUNT_TYPE_WEBAPP_NORMAL));
 				break;
 			case ACCOUNT_TYPE_PHONEAPP_NORMAL :
 				$account['versions'] = phoneapp_get_some_lastversions($account['uniacid']);
@@ -149,6 +143,15 @@ if ($do == 'switch') {
 			uni_account_switch($uniacid, $url);
 		}
 
+		if ($type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
+			$uniacid = intval($_GPC['uniacid']);
+			if (empty($uniacid)) {
+				itoast('', url('account/display', array('type' => WEBAPP_TYPE_SIGN)), 'info');
+			}
+			uni_account_save_switch($uniacid, WEBAPP_TYPE_SIGN);
+			itoast('', url('webapp/home/display'));
+		}
+
 		if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH || $type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 			if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH) {
 				$info = wxapp_fetch($uniacid);
@@ -177,7 +180,11 @@ if ($do == 'switch') {
 						uni_account_switch($module_info['account']['uniacid'], $url);
 					} else {
 						$url .= '&version_id=' . $version_id;
-						uni_account_switch($version_info['uniacid'], $url, WXAPP_TYPE_SIGN);
+						if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH) {
+							uni_account_switch($version_info['uniacid'], $url, WXAPP_TYPE_SIGN);
+						} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+							uni_account_switch($version_info['uniacid'], $url, PHONEAPP_TYPE_SIGN);
+						}
 					}
 				}
 
