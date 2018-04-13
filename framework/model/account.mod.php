@@ -173,7 +173,7 @@ function uni_fetch($uniacid = 0) {
  * @return array 模块列表
  */
 function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
-	$cachekey = cache_system_key($uniacid . ':site_store_buy_' . $type);
+	$cachekey = cache_system_key('site_store_buy_', $type, $uniacid);
 	$site_store_buy_goods = cache_load($cachekey);
 	if (!empty($site_store_buy_goods)) {
 		return $site_store_buy_goods;
@@ -258,6 +258,16 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
 			$module_info = module_fetch($name);
+			if ($module_info['welcome_support'] == MODULE_SUPPORT_SYSTEMWELCOME && $module_info['app_support'] != MODULE_SUPPORT_ACCOUNT && $module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && $module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && $module_info['phoneapp_support'] != MODULE_SUPPORT_PHONEAPP) {
+				continue;
+			}
+			if ($module_info['welcome_support'] != MODULE_SUPPORT_SYSTEMWELCOME &&
+				($module_info['app_support'] != MODULE_SUPPORT_ACCOUNT && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ||
+				$module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH)) ||
+				$module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_WEBAPP_NORMAL)) ||
+				$module_info['phoneapp_support'] != MODULE_SUPPORT_PHONEAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_PHONEAPP_NORMAL)))) {
+				continue;
+			}
 			if (!empty($module_info)) {
 				$module_list[$name] = $module_info;
 			}
@@ -1114,8 +1124,7 @@ function uni_account_member_fields($uniacid) {
 
 
 /**
- * 获取公众号的oauth
- * @param string $uni_host 当前公众号的oauth host
+ * 获取全局oauth信息
  * @return string
  */
 function uni_account_global_oauth() {
@@ -1167,4 +1176,25 @@ function uni_search_link_account($module_name, $account_type) {
 		}
 	}
 	return $owned_account;
+}
+
+/**
+ * 获取公众号的有效的 oauth 域名
+ * @param $unisetting
+ */
+function uni_account_oauth_host() {
+	global $_W;
+	$oauth_url = $_W['siteroot'];
+	$unisetting = uni_setting_load();
+	if (!empty($unisetting['bind_domain']) && !empty($unisetting['bind_domain']['domain'])) {
+		$oauth_url = $unisetting['bind_domain']['domain'] . '/';
+	} else {
+		if (!empty($unisetting['oauth']['host'])) {
+			$oauth_url = $unisetting['oauth']['host'] . '/';
+		} else {
+			$global_unisetting = uni_account_global_oauth();
+			$oauth_url = !empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] . '/' : '';
+		}
+	}
+	return $oauth_url;
 }

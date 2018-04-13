@@ -292,9 +292,13 @@ class CloudApi {
 			$this->deleteCer();
 			return $response;
 		}
-
+		if ($dataType == 'binary') {
+			return $response;
+		}
 		return $this->actionResult($response['content'], $dataType);
 	}
+
+
 
 	private function deleteCer() {
 		if($this->sys_call) {

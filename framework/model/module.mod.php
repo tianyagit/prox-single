@@ -136,6 +136,9 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 			if(empty($bind['icon'])) {
 				$bind['icon'] = 'fa fa-puzzle-piece';
 			}
+			if (!defined('SYSTEM_WELCOME_MODULE') && $bind['entry'] == 'system_welcome') {
+				continue;
+			}
 			$entries[$bind['entry']][] = array('eid' => $bind['eid'], 'title' => $bind['title'], 'do' => $bind['do'], 'url' => $url, 'from' => 'define', 'icon' => $bind['icon'], 'displayorder' => $bind['displayorder'], 'direct' => $bind['direct']);
 		}
 	}
@@ -343,7 +346,7 @@ function module_fetch($name) {
 	}
 	//有公众号时，附加模块配置信息
 	if (!empty($module) && !empty($_W['uniacid'])) {
-		$setting_cachekey = cache_system_key(CACHE_KEY_MODULE_SETTING, $_W['uniacid'], $name);
+		$setting_cachekey = cache_system_key(CACHE_KEY_MODULE_SETTING, $name, $_W['uniacid']);
 		$setting = cache_load($setting_cachekey);
 		if (empty($setting)) {
 			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));

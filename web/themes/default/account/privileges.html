@@ -36,15 +36,15 @@
 	</div>
 </div>
 
-<div class="panel panel-cut" id="js-account-display" ng-controller="AccountDisplay" ng-cloak>
+<div class="panel panel-cut" id="js-account-privileges" ng-controller="privilegesDisplay" ng-cloak>
 	<!--选项卡-->
 	<div class="panel-heading mixMenu-panel-heading">
 		<ul class="navbar-nav">
 			{loop $nav_top_fold $nav}
 			<li {if $type == $nav['name']} class="on-tab" {/if}>
-			<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{php echo url('account/display/', array('type'=>$nav['name'], 'title'=>$nav['title']))}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
-			{$nav['title']}
-			</a>
+				<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{php echo url('account/privileges/', array('type'=>$nav['name'], 'title'=>$nav['title']))}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
+					{$nav['title']}
+				</a>
 			</li>
 			{/loop}
 		</ul>
@@ -59,7 +59,7 @@
 				<div ng-if="searchShow">
 					<form action="./index.php" method="get">
 						<input type="hidden" name="c" value="account">
-						<input type="hidden" name="a" value="display">
+						<input type="hidden" name="a" value="privileges">
 						<input type="hidden" name="do" value="display" ng-if="type == 'all'">
 						<input type="hidden" name="type" value="{{type}}">
 						<input type="hidden" name="title" value="{{title}}">
@@ -169,7 +169,7 @@
 			<!--列表数据-->
 			<!--add-->
 			<div class="mixMenu-list clearfix" ng-if="list" infinite-scroll='loadMore()' infinite-scroll-disabled='busy' infinite-scroll-distance='0' infinite-scroll-use-document-bottom="true">
-				<!--add-->
+			<!--add-->
 				<div class="item module-list-item ng-scope" ng-repeat="detail in list" ng-if="list" style="">
 					<div class="content">
 						<img class="item-logo" ng-src="{{detail.logo}}" onerror="this.src='./resource/images/nopic-107.png'">
@@ -207,16 +207,16 @@
 					<!--鼠标悬停遮罩效果-->
 					<div class="mask">
 						<!-- 进入公众号/PC -->
-						<a href="{{detail.switchurl}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.account_normal || detail.type == types.account_auth"><div>进入 公众号 <i class="wi wi-angle-right"></i></div></a>
+						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.account_normal || detail.type == types.account_auth"><div>进入 公众号 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入PC -->
 						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.webapp"><div>进入PC <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入小程序 -->
-						<a ng-href="{{links.switch}}uniacid={{detail.uniacid}}&multiid={{detail.current_version.multiid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth"><div>进入小程序 <i class="wi wi-angle-right"></i></div></a>
+						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&multiid={{detail.current_version.multiid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth"><div>进入小程序 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入 APP -->
-						<a ng-href="{{links.switch}}uniacid={{detail.uniacid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.phoneapp">
+						<a ng-href="{{links.switch}}&uniacid={{detail.uniacid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.phoneapp">
 							<div>进入APP <i class="wi wi-angle-right"></i></div>
 						</a>
 
@@ -269,23 +269,23 @@
 		'keyword' : "{$keyword}",
 		'letter' : "{$letter}",
 		'links' : {
-		'rank' : "{php echo url('account/display/rank')}",
-			'switch' : "{php echo url('account/display/switch')}",
+			'rank' : "{php echo url('account/privileges/rank')}",
+			'switch' : "{php echo url('account/privileges/switch')}",
 			'welcome' : "{php echo url('home/welcome/add_welcome')}",
 			'wxapp_more_version' : "{php echo url('wxapp/version/display')}",
 			'phoneapp_more_version' : "{php echo url('phoneapp/version/display')}"
-	},
-	'types' : {
+		},
+		'types' : {
 			'account_normal' : "{ACCOUNT_TYPE_OFFCIAL_NORMAL}",
 			'account_auth' : "{ACCOUNT_TYPE_OFFCIAL_AUTH}",
 			'wxapp_normal' : "{ACCOUNT_TYPE_APP_NORMAL}",
 			'wxapp_auth' : "{ACCOUNT_TYPE_APP_AUTH}",
 			'webapp' : "{ACCOUNT_TYPE_WEBAPP_NORMAL}",
 			'phoneapp' : "{ACCOUNT_TYPE_PHONEAPP_NORMAL}"
-	},
-	scrollUrl : "{php echo url('account/display', array('type'=>$type))}"
+		},
+		scrollUrl : "{php echo url('account/privileges', array('type'=>$type))}"
 	});
-	angular.bootstrap($('#js-account-display'), ['accountApp']);
+	angular.bootstrap($('#js-account-privileges'), ['accountApp']);
 </script>
 
 {template 'common/footer'}

@@ -101,21 +101,14 @@ if ($do == 'openid') {
 		))),
 	);
 	//如果有unionid则查找相关粉丝，将会员数据同步
+	//如果有unionid则查找相关粉丝，将会员数据同步
 	if (!empty($userinfo['unionId'])) {
-		// 2000万粉丝卡死bug  openId!= 会导致全表扫描
-//		$union_fans = pdo_get('mc_mapping_fans', array('unionid' => $userinfo['unionId'], 'openid !=' => $userinfo['openId']));
-		$union_fans = pdo_getall('mc_mapping_fans', array('unionid' => $userinfo['unionId']));
-		$union_fans = array_filter($union_fans, function($fans) use ($userinfo){
-			return isset($fans['openid']) ? $fans['openid'] != $userinfo('openId') : false;
-		});
-		if (count($union_fans) > 0) {
-			$union_fans = current($union_fans);
-		}
+		$union_fans = pdo_get('mc_mapping_fans', array('unionid' => $userinfo['unionId'], 'openid !=' => $userinfo['openId']));
 		if (!empty($union_fans['uid'])) {
 			if (!empty($fans['uid'])) {
 				//合并积分数据
 
-				pdo_delete('mc_members', array('uid' => $fans['uid']));
+// 				pdo_delete('mc_members', array('uid' => $fans['uid']));
 			}
 			$fans_update['uid'] = $union_fans['uid'];
 			$_SESSION['uid'] = $union_fans['uid'];

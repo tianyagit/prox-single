@@ -277,18 +277,18 @@ $we7_system_menu['phoneapp'] = array(
 			'menu' => array(),
 			'is_display' => true,
 		),
-		/*'phoneapp_profile' => array(
+		'phoneapp_profile' => array(
 			'title' => '配置',
 			'menu' => array(
 				'front_download' => array(
-					'title' => '上传微信审核1',
+					'title' => '下载APP',
 					'url' => url('phoneapp/front-download'),
 					'is_display' => 1,
 					'icon' => 'wi wi-examine',
 					'permission_name' => 'phoneapp_front_download',
 				)
 			)
-		)*/
+		)
 	),
 );
 

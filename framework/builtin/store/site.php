@@ -68,7 +68,7 @@ class StoreModuleSite extends WeModuleSite {
 					pdo_update('account', array('endtime' => $account_endtime), array('uniacid' => $order[$account_type]));
 					cache_delete("uniaccount:{$order[$account_type]}");
 				}
-				cache_delete(cache_system_key($order['uniacid'] . ':site_store_buy_' . $goods['type']));
+				cache_delete(cache_system_key('site_store_buy_', $goods['type'], $order['uniacid']));
 				cache_build_account_modules($order['uniacid']);
 			}
 		}
@@ -673,7 +673,6 @@ class StoreModuleSite extends WeModuleSite {
 							iajax(1, '修改权限失败', '');
 						}
 					}
-					cache_delete(cache_system_key($order['uniacid'] . ':site_store_buy_modules'));
 					cache_build_account_modules($order['uniacid']);
 					itoast('支付成功!', $this->createWebUrl('orders', array('direct' => 1)), 'success');
 				}

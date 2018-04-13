@@ -74,6 +74,8 @@ function store_goods_post($data) {
 	}
 	if (!empty($data['unit'])) {
 		$post['unit'] = $data['unit'];
+	} else {
+		$post['unit'] = 'month';
 	}
 	$post['account_num'] = $data['account_num'];
 	$post['wxapp_num'] = $data['wxapp_num'];
