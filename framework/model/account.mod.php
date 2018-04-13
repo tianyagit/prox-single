@@ -1124,8 +1124,7 @@ function uni_account_member_fields($uniacid) {
 
 
 /**
- * 获取公众号的oauth
- * @param string $uni_host 当前公众号的oauth host
+ * 获取全局oauth信息
  * @return string
  */
 function uni_account_global_oauth() {
