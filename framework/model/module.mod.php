@@ -346,7 +346,7 @@ function module_fetch($name) {
 	}
 	//有公众号时，附加模块配置信息
 	if (!empty($module) && !empty($_W['uniacid'])) {
-		$setting_cachekey = cache_system_key(CACHE_KEY_MODULE_SETTING, $name, $_W['uniacid']);
+		$setting_cachekey = cache_system_key(CACHE_KEY_MODULE_SETTING, $_W['uniacid'], $name);
 		$setting = cache_load($setting_cachekey);
 		if (empty($setting)) {
 			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));
