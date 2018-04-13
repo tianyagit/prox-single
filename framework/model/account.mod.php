@@ -173,7 +173,7 @@ function uni_fetch($uniacid = 0) {
  * @return array 模块列表
  */
 function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
-	$cachekey = cache_system_key($uniacid . ':site_store_buy_' . $type);
+	$cachekey = cache_system_key('site_store_buy_', $type, $uniacid);
 	$site_store_buy_goods = cache_load($cachekey);
 	if (!empty($site_store_buy_goods)) {
 		return $site_store_buy_goods;
@@ -1124,8 +1124,7 @@ function uni_account_member_fields($uniacid) {
 
 
 /**
- * 获取公众号的oauth
- * @param string $uni_host 当前公众号的oauth host
+ * 获取全局oauth信息
  * @return string
  */
 function uni_account_global_oauth() {
