@@ -516,7 +516,7 @@ function cache_build_proxy_wechatpay_account() {
 function cache_build_module_info($module_name) {
 	global $_W;
 	cache_delete(cache_system_key(CACHE_KEY_MODULE_INFO, $module_name));
-	cache_delete(cache_system_key(CACHE_KEY_MODULE_SETTING, $module_name, $_W['uniacid']));
+	cache_delete(cache_system_key(CACHE_KEY_MODULE_SETTING, $_W['uniacid'], $module_name));
 }
 
 /**
