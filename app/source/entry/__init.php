@@ -21,8 +21,13 @@ if(!empty($eid)) {
 		'direct' => 0,
 	);
 }
-$moduels = uni_modules();
-if (empty($moduels[$entry['module']])) {
+$modules = uni_modules();
+if (!empty($_W['account']) && in_array($_W['account']['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
+	$account_owner = account_owner($_W['uniacid']);
+	$user_modules = user_modules($account_owner['uid']);
+	$modules = array_merge($modules, $user_modules);
+}
+if (empty($modules[$entry['module']])) {
 	message('您访问的功能模块不存在，请重新进入');
 }
 if(empty($entry) || empty($entry['do'])) {
@@ -35,5 +40,5 @@ $_GPC['state'] = $entry['state'];
 $_GPC['m'] = $entry['module'];
 $_GPC['do'] = $entry['do'];
 
-$_W['current_module'] = $moduels[$entry['module']];
+$_W['current_module'] = $modules[$entry['module']];
 define('IN_MODULE', $entry['module']);
