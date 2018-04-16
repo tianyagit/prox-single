@@ -45,6 +45,7 @@
 			<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{php echo url('account/display/', array('type'=>$nav['name'], 'title'=>$nav['title']))}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
 			{$nav['title']}
 			</a>
+
 			</li>
 			{/loop}
 		</ul>
@@ -176,7 +177,7 @@
 						<div class="item-footer">
 
 							<div class="item-icon">
-								<i ng-if="detail.type == types.account_normal || detail.type == types.account_auth" class="wi wi-wechat"></i>
+								<i ng-if="detail.type == types.account_normal" class="wi wi-wechat"></i>
 								<i ng-if="detail.type == types.account_auth" class="wi wi-wechat"></i>
 								<i ng-if="detail.type == types.wxapp_normal" class="wi wi-wxapp"></i>
 								<i ng-if="detail.type == types.wxapp_auth" class="wi wi-wxapp"></i>
