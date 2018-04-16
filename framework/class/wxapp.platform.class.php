@@ -17,6 +17,7 @@ class WxAppPlatform extends WeiXinPlatform {
 		$this->menuFrame = 'wxapp';
 		$this->type = ACCOUNT_TYPE_APP_AUTH;
 		$this->typeName =  '小程序';
+		$this->typeSign = WEBAPP_TYPE_SIGN;
 		
 	}
 

@@ -34,6 +34,7 @@ class WeiXinAccount extends WeAccount {
 		$this->menuFrame = 'account';
 		$this->type = ACCOUNT_TYPE_OFFCIAL_NORMAL;
 		$this->typeName = '公众号';
+		$this->typeSign = ACCOUNT_TYPE_SIGN;
 	}
 
 	public function accountDisplayUrl() {

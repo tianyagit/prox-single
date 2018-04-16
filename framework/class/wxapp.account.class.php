@@ -14,6 +14,7 @@ class WxappAccount extends WeAccount {
 		$this->type = ACCOUNT_TYPE_APP_NORMAL;
 		$this->typeName = '小程序';
 		$this->typeTempalte = '-wxapp';
+		$this->typeSign = WXAPP_TYPE_SIGN;
 	}
 
 	public function accountDisplayUrl() {
