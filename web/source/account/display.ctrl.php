@@ -9,10 +9,27 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
 load()->model('phoneapp');
 
-$dos = array('rank', 'display', 'switch');
+$dos = array('rank', 'display', 'switch', 'platform');
 $do = in_array($_GPC['do'], $dos) ? $do : 'display';
 $_W['page']['title'] = '所有权限';
 $account_info = permission_user_account_num();
+
+if ($do == 'platform') {
+	$cache_last_account_type = cache_load('we7:$cache_last_account_type');
+	if (!empty($cache_last_account_type)) {
+		if ($cache_last_account_type == ACCOUNT_TYPE_SIGN) {
+			header('Location:' . url('home/welcome'));
+		} elseif ($cache_last_account_type == WXAPP_TYPE_SIGN) {
+			header('Location:' . url('wxapp/display/home'));
+		} elseif ($cache_last_account_type == WEBAPP_TYPE_SIGN) {
+			header('Location:' . url('webapp/home/display'));
+		} elseif ($cache_last_account_type == PHONEAPP_TYPE_SIGN) {
+			header('Location:' . url('phoneapp/display/home'));
+		}
+	} else {
+		header('Location:' . url('account/display'));
+	}
+}
 
 if ($do == 'display') {
 	$pindex = max(1, intval($_GPC['page']));
@@ -119,7 +136,6 @@ if ($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
 	$type = intval($_GPC['type']);
 	if (!empty($uniacid)) {
-
 		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			$role = permission_account_user_role($_W['uid'], $uniacid);
 			if(empty($role)) {

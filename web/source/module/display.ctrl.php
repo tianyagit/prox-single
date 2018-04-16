@@ -98,7 +98,7 @@ if ($do == 'switch') {
 		} else {
 			uni_account_save_switch($version_info['uniacid'], WXAPP_TYPE_SIGN);
 			wxapp_update_last_use_version($version_info['uniacid'], $version_id);
-			itoast('', url('account/display/switch', array('module' => $module_name, 'version_id' => $version_id, 'type' => ACCOUNT_TYPE_APP_NORMAL)), 'success');
+			itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module' => $module_name, 'version_id' => $version_id, 'type' => ACCOUNT_TYPE_APP_NORMAL)), 'success');
 		}
 	}
 }
