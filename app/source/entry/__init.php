@@ -22,11 +22,6 @@ if(!empty($eid)) {
 	);
 }
 $modules = uni_modules();
-if (!empty($_W['account']) && in_array($_W['account']['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
-	$account_owner = account_owner($_W['uniacid']);
-	$user_modules = user_modules($account_owner['uid']);
-	$modules = array_merge($modules, $user_modules);
-}
 if (empty($modules[$entry['module']])) {
 	message('您访问的功能模块不存在，请重新进入');
 }
