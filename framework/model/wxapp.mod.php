@@ -703,7 +703,7 @@ function wxapp_code_current_appjson($version_id) {
 		$appjson = $cloud_appjson['data']['appjson'];
 		pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)),
 			array('id' => $version_id));
-
+		cache_delete(cache_system_key("wxapp_version:{$version_id}"));
 		return $appjson;
 	}
 }
