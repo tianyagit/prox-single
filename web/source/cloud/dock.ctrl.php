@@ -177,8 +177,7 @@ if ($do == 'module.setting.cloud') {
 	$_W['uniacid'] = $data['acid'];
 	$module = WeUtility::createModule($data['module']);
 	$module->saveSettings($setting);
-	cache_write("modulesetting:{$data['acid']}:{$data['module']}", $setting);
-	
+	cache_write("modulesetting:{$data['module']}:{$data['acid']}", $setting);
 	echo 'success';
 	exit;
 }
