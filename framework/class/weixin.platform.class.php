@@ -33,6 +33,8 @@ class WeiXinPlatform extends WeiXinAccount {
 		$this->menuFrame = 'account';
 		$this->type =  ACCOUNT_TYPE_OFFCIAL_AUTH;
 		$this->typeName =  '公众号';
+		$this->typeSign = ACCOUNT_TYPE_SIGN;
+		
 		$this->appid = $setting['platform']['appid'];
 		$this->appsecret = $setting['platform']['appsecret'];
 		$this->token = $setting['platform']['token'];

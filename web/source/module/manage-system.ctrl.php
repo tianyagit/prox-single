@@ -16,8 +16,12 @@ load()->classs('account');
 load()->object('cloudapi');
 load()->model('utility');
 load()->func('db');
-$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 'founder_update_modules', 'uninstalled_recycle');
+
+$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 
+			'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 
+			'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 'founder_update_modules', 'uninstalled_recycle');
 $do = in_array($do, $dos) ? $do : 'installed';
+
 /* sxstart */
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if (user_is_vice_founder() && !empty($_GPC['system_welcome'])){
@@ -99,77 +103,22 @@ if ($do == 'get_upgrade_info') {
 }
 
 if ($do == 'check_upgrade') {
-	$module_list = $_GPC['module_list'];//test
-	if (!empty($module_list) && is_array($module_list)) {
-		$module_list = pdo_getall('modules', array('name' => $module_list));
-	} else {
+	
+	$result = array();
+	$cloud_module_list = array();
+	
+	$module_list = safe_gpc_array($_GPC['module_list']);
+	if (empty($module_list) || !is_array($module_list)) {
 		iajax(0, '');
 	}
-
-	$cloud_prepare_result = cloud_prepare();
-	$cloud_m_query_module = cloud_m_query();
-	if (is_error($cloud_m_query_module)) {
-		$cloud_m_query_module = array();
+	
+	$module_upgrade = module_upgrade_info($module_list);
+	print_r($module_update);exit;
+	if (!empty($cloud_module_list)) {
+		$cloud_prepare_result = cloud_prepare();
+		$cloud_m_query_module = cloud_m_query($cloud_module_list);
 	}
-	foreach ($module_list as &$module) {
-		$manifest = ext_module_manifest($module['name']);
-		if (!empty($manifest)&& is_array($manifest)) {
-			if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
-				$module['best_version'] = $manifest['application']['version'];
-				$module['upgrade'] = true;
-			} else {
-				$module['upgrade'] = false;
-			}
-			$module['from'] = 'local';
-		}
-
-		if (empty($manifest)) {
-			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
-				$cloud_m_info = $cloud_m_query_module[$module['name']];
-				$module_info = module_fetch($module['name']);
-				if (!empty($cloud_m_info['service_expiretime'])) {
-					$module['service_expire'] = $cloud_m_info['service_expiretime'] > time() ? false : true;
-				}
-				$site_branch = $cloud_m_info['site_branch']['id'];
-				if (empty($site_branch)) {
-					$site_branch = $cloud_m_info['branch'];
-				}
-				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
-				if (!empty($cloud_m_info['branches'])) {
-					$best_branch_id = 0;
-					foreach ($cloud_m_info['branches'] as $branch) {
-						if (empty($branch['status']) || empty($branch['show'])) {
-							continue;
-						}
-						if ($best_branch_id == 0) {
-							$best_branch_id = $branch['id'];
-						} else {
-							if ($branch['displayorder'] > $cloud_m_info['branches'][$best_branch_id]['displayorder']) {
-								$best_branch_id = $branch['id'];
-							}
-						}
-					}
-				} else {
-					$module['upgrade'] = false;
-					continue;
-				}
-				$best_branch = $cloud_m_info['branches'][$best_branch_id];
-				if (($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version'])) || (!empty($module_info['site_branch_id']) && $cloud_m_info['site_branch']['id'] > $module_info['site_branch_id'])){
-					$module['new_branch'] = 1;
-				} else {
-					$module['new_branch'] = 0;
-				}
-				if (version_compare($module['version'], $cloud_branch_version) == -1) {
-					$module['upgrade'] = true;
-				} else {
-					$module['upgrade'] = false;
-				}
-				$module['from'] = 'cloud';
-			}
-		}
-	}
-	unset($module);
-	iajax(0, $module_list, '');
+	print_r($cloud_m_query_module);exit;
 }
 
 if ($do == 'upgrade') {
@@ -180,6 +129,7 @@ if ($do == 'upgrade') {
 	if (empty($module_exist)) {
 		itoast('模块已经被卸载或是不存在！', '', 'error');
 	}
+	
 	$manifest = ext_module_manifest($module_name);
 	// 应用商城下载的模块远程获取XML文件
 	if (empty($manifest)) {
@@ -735,6 +685,7 @@ if ($do == 'uninstalled_recycle') {
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
+	/**
 	if (!empty($_GPC['system_welcome'])) {
 		$type = 9;
 		$uninstall_modules = module_get_all_uninstalled($status, 'system_welcome');
@@ -743,22 +694,19 @@ if ($do == 'installed') {
 		$uninstall_modules = module_get_all_uninstalled($status);
 	}
 	$total_uninstalled = $uninstall_modules['module_count'];
+	
 	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
 	$total_uninstalled_recycle = count($recycle_modules);
 	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
-
-	$pageindex = max($_GPC['page'], 1);
-	$pagesize = 20;
-	$letter = $_GPC['letter'];
-	$title = $_GPC['title'];
-	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+	
 	$modules_table = table('module');
 	$modules_local = $modules_table->getModulesLocalList();
-	$module_list = $all_modules = user_modules($_W['uid']);
-	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
+	**/
+	$module_list = module_installed_list($account_base->typeSign);
+	
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
-			if (!empty($module['issystem']) || (empty($_GPC['system_welcome']) && ((ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL && $module['webapp_support'] != MODULE_SUPPORT_WEBAPP) || (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL && $module['phoneapp_support'] != MODULE_SUPPORT_PHONEAPP))) || (!empty($_GPC['system_welcome']) && $module['welcome_support'] != 2)) {
+			if (!empty($module['issystem'])) {
 				unset($module_list[$key]);
 			}
 			if (!empty($letter) && strlen($letter) == 1) {
@@ -766,30 +714,10 @@ if ($do == 'installed') {
 					unset($module_list[$key]);
 				}
 			}
-			$new_branch_module = $upgrade_modules[$module['name']]['new_branch'];
-			$upgrade_branch_module = $upgrade_modules[$module['name']]['upgrade_branch'];
-			if ($new_branch_module || $upgrade_branch_module) {
-				$module_list[$module['name']]['upgrade'] = $upgrade_modules[$module['name']]['upgrade'];
-				$module_list[$module['name']]['new_branch'] = $upgrade_modules[$module['name']]['new_branch'];
-				$module_list[$module['name']]['upgrade_branch'] = $upgrade_modules[$module['name']]['upgrade_branch'];
-				$module_list[$module['name']]['from'] = $upgrade_modules[$module['name']]['from'];
-			}
-			if (!empty($title) && !strexists($module['title'], $title)) {
-				unset($module_list[$key]);
-			}
-			$module['upgrade'] = !empty($modules_local[$module['name']]['is_upgrade']) ? true : false;
-			$module['new_branch'] = !empty($modules_local[$module['name']]['has_new_branch']) ? true : false;
-			$module['upgrade_support'] = $modules_local[$module['name']]['upgrade_support'];
-			$module['upgrade_branch'] = $modules_local[$module['name']]['upgrade_support'];
-			$module['from'] = 'cloud';
+			
 		}
 		unset($module);
 	}
-	$total = count($module_list);
-	if ($total > 0){
-		$module_list = array_slice($module_list, ($pageindex - 1) * $pagesize, $pagesize);
-	}
-	$pager = pagination($total, $pageindex, $pagesize);
 }
 
 if ($do == 'not_installed') {

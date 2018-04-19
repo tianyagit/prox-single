@@ -17,10 +17,18 @@ function load() {
 }
 
 /**
+ * 加载一个表抽象对象
  * @param string $name 服务名称
  * @return We7Table 表模型
  */
 function table($name) {
+	list($section, $table) = explode('_', $name);
+	$table_classname = "\\We7\\Table\\" . ucfirst($section) . "\\" . ucfirst($table);
+	
+	if (in_array($name, array('modules_cloud'))) {
+		return new $table_classname;
+	}
+	
 	load()->classs('table');
 	load()->table($name);
 	$service = false;
@@ -70,6 +78,38 @@ class Loader {
 		'web' => '/web/common/%s.func.php',
 		'app' => '/app/common/%s.func.php',
 	);
+	
+	public function __construct() {
+		$this->registerAutoload();
+	}
+	
+	public function registerAutoload() {
+		spl_autoload_register(array($this, 'autoload'));
+		//spl_autoload_register(array($this, 'autoloadBiz'));
+	}
+	
+	public function autoload($class) {
+		$section = array(
+			'Table' => '/framework/table/',
+		);
+		//兼容旧版load()方式加载类
+		$classmap = array(
+			'We7Table' => 'table',
+		);
+		if (isset($classmap[$class])) {
+			load()->classs($classmap[$class]);
+		} elseif (preg_match('/^[0-9a-zA-Z\-\\\\_]+$/', $class)
+			&& (stripos($class, 'We7') === 0 || stripos($class, '\We7') === 0)) {
+				$group = explode("\\", $class);
+				$path = IA_ROOT . $section[$group[1]];
+				unset($group[0]);
+				unset($group[1]);
+				$path .= implode('/', $group) . '.php';
+				if(is_file($path)) {
+					include $path;
+				}
+		}
+	}
 
 	public function __call($type, $params) {
 		global $_W;
