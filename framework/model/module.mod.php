@@ -295,7 +295,6 @@ function module_save_group_package($package) {
  * @return array 模块信息
  */
 function module_fetch($name) {
-	load()->object('cloudapi');
 	global $_W;
 	$cachekey = cache_system_key(CACHE_KEY_MODULE_INFO, $name);
 	$module = cache_load($cachekey);
@@ -1012,4 +1011,202 @@ function recount_total_uninstalled($uninstall_modules, $recycle_modules, $status
 	}
 	$dif_keys = array_diff($uninstall_modules_keys, $recycle_modules);
 	return count($dif_keys);
+}
+
+function module_installed_list($type = '') {
+	global $_W;
+	$module_list = array();
+	$user_has_module = user_modules($_W['uid']);
+	if (empty($user_has_module)) {
+		return $module_list;
+	}
+	//根据模块类型分类
+	$module_support_type = array(
+		'wxapp_support' => array(
+			'type' => WXAPP_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_WXAPP,
+		),
+		'account_support' => array(
+			'type' => ACCOUNT_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_ACCOUNT,
+		),
+		'welcome_support' => array(
+			'type' => WELCOMESYSTEM_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_SYSTEMWELCOME,
+		),
+		'webapp_support' => array(
+			'type' => WEBAPP_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_WEBAPP,
+		),
+		'phoneapp_support' => array(
+			'type' => PHONEAPP_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_PHONEAPP,
+		),
+	);
+	
+	foreach ($user_has_module as $modulename => $module) {
+		foreach ($module_support_type as $support_name => $support) {
+			
+			if ($module[$support_name] == $support['support']) {
+				$module_list[$support['type']][$modulename] = $module;
+			}
+		}
+	}
+	
+	if (!empty($type)) {
+		return $module_list[$type];
+	} else {
+		return $module_list;
+	}
+}
+
+/**
+ * 检查传入的模块是否有更新
+ * 优先检查本地是否包含Manifest.xml
+ * 否则通过modules_cloud表先查询模块云端缓存信息
+ * 如果记录过期则通过接口更新modules_cloud表中的数据
+ * @param array $modulelist
+ */
+function module_upgrade_info($modulelist) {
+	$result = $cloud_modulelist = array();
+	if (empty($modulelist)) {
+		return $result;
+	}
+	foreach ($modulelist as $modulename) {
+		$result[$modulename]['name'] = $modulename;
+	
+		$manifest = ext_module_manifest($modulename);
+		if (!empty($manifest)&& is_array($manifest)) {
+			$module = module_fetch($modulename);
+			if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
+				$result[$modulename]['upgrade'] = true;
+				$result[$modulename]['best_version'] = $manifest['application']['version'];
+			}
+			$result[$modulename]['from'] = 'local';
+		} else {
+			$cloud_modulelist[] = $modulename;
+		}
+	}
+	unset($modulename);
+	if (!empty($cloud_modulelist)) {
+		$cloud_module_check_upgrade = array();
+		$cloud_module_upgrade = table('modules_cloud')->getByName($cloud_modulelist);
+		//检查本地没有数据或是数据超时的
+		foreach ($cloud_modulelist as $modulename) {
+			if (empty($cloud_module_upgrade[$modulename]) || 
+				TIMESTAMP - $cloud_module_upgrade[$modulename]['lastupdatetime'] > 3600) {
+					
+				$cloud_module_check_upgrade[] = $modulename;
+			}
+		}
+	}
+	
+	if (!empty($cloud_module_check_upgrade)) {
+		cloud_prepare();
+		$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
+		$cloud_m_query_module = array (
+			'wn_storex' => array (
+				'id' => '3717',
+				'uid' => '157135',
+				'name' => 'wn_storex',
+				'title' => '万能小店',
+				'status' => '1',
+				'description' => '注意：万能小店模块售前咨询现已外包给微擎官方客服，咨询可以直接联系官方客服，技术问题请联系qq：2938226187万能小店现已与微擎官方合作，商业版用户可以免费使用万能小店模块（仅限公众号版本）；系...',
+				'plugin_pid' => '0',
+				'package_support' => '1',
+				'thumb' => '//cdn.w7.cc/images/2017/04/19/149258134458f6fbe08f2be_eN8ju0OaPbSb.jpg',
+				'author' => '万能君',
+				'trade' => 1,
+				'branch' => '4828',
+				'site_branch' => array (
+					'id' => '4828',
+					'name' => '普通版',
+					'aid' => '3717',
+					'displayorder' => 1,
+					'status' => 1,
+					'show' => 1,
+					'package_id' => '0',
+					'private' => '1',
+					'app_support' => '2',
+					'wxapp_support' => '2',
+					'webapp_support' => '1',
+					'system_welcome_support' => '1',
+					'android_support' => '1',
+					'ios_support' => '1',
+					'version' => '2.8.5',
+					'bought' => 
+					array (
+						0 => 'wxapp',
+					),
+				),
+				'version' => '2.8.6',
+				'package_version' => NULL,
+				'displayorder' => 1,
+				'branches' => array (
+					6288 => array (
+						'id' => '6288',
+						'name' => '系统卡券免费版',
+						'aid' => '3717',
+						'displayorder' => 0,
+						'status' => 1,
+						'show' => 1,
+						'package_id' => '0',
+						'private' => '1',
+						'app_support' => '2',
+						'wxapp_support' => '1',
+						'webapp_support' => '1',
+						'system_welcome_support' => '1',
+						'android_support' => '1',
+						'ios_support' => '1',
+						'version' => '2.8',
+					),
+					4828 => array (
+						'id' => '4828',
+						'name' => '普通版',
+						'aid' => '3717',
+						'displayorder' => 1,
+						'status' => 1,
+						'show' => 1,
+						'package_id' => '0',
+						'private' => '1',
+						'app_support' => '2',
+						'wxapp_support' => '2',
+						'webapp_support' => '1',
+						'system_welcome_support' => '1',
+						'android_support' => '1',
+						'ios_support' => '1',
+						'version' => '2.8.5',
+					),
+				),
+			),
+			'pirate_apps' => array (
+			),
+		);
+		if (!empty($cloud_m_query_module)) {
+			foreach ($cloud_m_query_module as $modulename => $module) {
+				$module_upgrade_data = array(
+					'name' => $modulename,
+					'lastupdatetime' => TIMESTAMP,
+				);
+				$module_installed = module_fetch($modulename);
+				if (version_compare($module_installed['version'], $module['version']) == '-1') {
+					$module_upgrade_data['has_new_version'] = 1;
+					
+					$result[$modulename]['upgrade'] = true;
+					$result[$modulename]['best_version'] = $module['version'];
+					$result[$modulename]['from'] = 'cloud';
+				}
+				if (!empty($module['branches'])) {
+					$module_upgrade_data['has_new_branch'] = 1;
+				}
+				if (empty($cloud_module_upgrade[$modulename])) {
+					table('modules_cloud')->fill($module_upgrade_data)->save();
+				} else {
+					table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
+				}
+			}
+		}
+	}
+	
+	return $result;
 }
