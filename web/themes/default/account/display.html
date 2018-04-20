@@ -136,22 +136,22 @@
 					<div class="setting" ng-switch="type">
 						{if in_array($_W['highest_role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER,ACCOUNT_MANAGE_NAME_MANAGER))}
 						<a ng-switch-when="account" href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL))}" class="color-default">
-							<i class="wi wi-wechatstatistics"></i>
+							<i class="wi wi-manage"></i>
 							公众号管理
 						</a>
 
 						<a ng-switch-when="webapp" href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL))}" class="color-default">
-							<i class="wi wi-wechatstatistics"></i>
+							<i class="wi wi-manage"></i>
 							PC管理
 						</a>
 						{/if}
 
 						<a ng-switch-when="wxapp" href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL))}" class="color-default">
-							<i class="wi wi-wechatstatistics"></i>小程序管理
+							<i class="wi wi-manage"></i>小程序管理
 						</a>
 
 						<a ng-switch-when="phoneapp" href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL))}" class="color-default">
-							<i class="wi wi-wechatstatistics"></i>
+							<i class="wi wi-manage"></i>
 							APP管理
 						</a>
 					</div>
