@@ -174,7 +174,7 @@ if ($do == 'post') {
 			$msg = '小程序创建成功';
 			pdo_insert('wxapp_versions', $wxapp_version);
 		}
-		iajax(0, $msg, url('wxapp/display/switch', array('uniacid' => $uniacid)));
+		iajax(0, $msg, url('account/display/switch', array('uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_APP_NORMAL)));
 	}
 	if (!empty($uniacid)) {
 		$wxapp_info = wxapp_fetch($uniacid);
