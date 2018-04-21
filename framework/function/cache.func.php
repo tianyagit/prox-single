@@ -100,22 +100,103 @@ function &cache_global($key) {
 }
 
 /**
- * 生成缓存键
+ * 根据参数构造缓存键
  * @param $cachekey
  * @param $params
  * @return mixed
  */
-function create_cache_key($cachekey, $params) {
-	foreach ($params as $key => $val) {
-		$cachekey = str_replace('%' . $key, $val, $cachekey);
+function create_cache_key($cachename, $params = array()) {
+	$cache_all = cache_all();
+	$cache_info = $cache_all['caches'][$cachename];
+
+	if (empty($cache_info)) {
+		message('缓存 ' . $cachename . ' 不存在!');
+	} else {
+		$cachekey = $cache_info['key'];
+	}
+
+	$arr = explode('%', $cachekey);
+	if (count($arr) > 1) {
+		unset($arr[0]);
+		$arr = explode(':', implode($arr));
+		$diff = array_diff($arr, array_keys($params));
+
+		if (!empty($diff)) {
+			message('缺少参数 : ' . implode($diff, ' 、'), '', '');
+			exit();
+		}
+
+		if (is_array($params)) {
+			foreach ($params as $key => $param) {
+				$cachekey = str_replace('%' . $key, $param, $cachekey);
+			}
+		} else {
+			message('参数格式不正确！');
+			exit();
+		}
 	}
 	return $cachekey;
 }
 
 /**
+ * 根据缓存名称删除关联的缓存
+ * @param $cachename
+ * @param $params
+ */
+function cache_delete_cache_name($cachename, $params = array()) {
+	$cache_all = cache_all();
+
+	if (empty($cache_all['caches'][$cachename])) {
+		message('缓存信息 ' . $cachename . '不存在');
+	}
+
+	$cache_info = $cache_all['caches'][$cachename];
+	$cache_relations = $cache_all['relations'];
+
+	if (!empty($cache_info['relation'])) {
+		$relation_keys = $cache_relations[$cache_info['relation']]['relations'];
+		$relation_params = $cache_relations[$cache_info['relation']]['relation_params'];
+
+		$diff = @array_diff($relation_params, array_keys($params));
+		if (!empty($diff)) {
+			message('缺少参数 : ' . implode($diff, ' 、'), '', '');
+			exit();
+		}
+
+		foreach ($relation_keys as $key => $val) {
+			$cache_key = $cache_all['caches'][$val]['key'];
+			foreach ($params as $key => $param) {
+				$cache_key = str_replace('%' . $key, $param, $cache_key);
+			}
+			cache_delete($cache_key);
+		}
+	} else {
+		$cache_key = $cache_info['key'];
+
+		$arr = explode('%', $cache_key);
+		if (count($arr) > 1) {
+			unset($arr[0]);
+			$arr = explode(':', implode($arr));
+			$diff = array_diff($arr, array_keys($params));
+
+			if (!empty($diff)) {
+				message('缺少参数 : ' . implode($diff, ' 、'), '', '');
+				exit();
+			}
+
+			foreach ($params as $key => $param) {
+				$cache_key = str_replace('%' . $key, $param, $cache_key);
+			}
+		}
+
+		cache_delete($cache_key);
+	}
+}
+
+/**
  * 获取所有缓存键及缓存键的关联信息
  * @key string 缓存键值
- * @relation string 关联关系组名称（对应到 $caches_all['relations']）
+ * @relation string 关联关系组名称
  * @relations array 关联关系组
  * @relation_params array 构建关联缓存键的参数
  * @return array
@@ -123,296 +204,360 @@ function create_cache_key($cachekey, $params) {
 function cache_all() {
 	$system = 'we7:';
 	$caches_all = array(
-		// 缓存键数组 (定义所有需要保存到缓存的键名，在添加缓存时，先把键名及相关信息添加到此数组中)
 		'caches' => array(
-			# -- module start --
-			// 模块详细信息
 			'module_info' => array(
-				'key' => $system . 'module_info:%module_name', # cache_system_key(CACHE_KEY_MODULE_INFO, $name)
+				// 模块详细信息
+				'key' => $system . 'module_info:%module_name',
 				'relation' => 'module',
 			),
-			// 模块配置信息
+
 			'module_setting' => array(
-				'key' => $system . 'module_setting:%module_name:%uniacid', # cache_system_key(CACHE_KEY_MODULE_SETTING, $module_name, $_W['uniacid'])
+				// 模块配置信息
+				'key' => $system . 'module_setting:%module_name:%uniacid',
 				'relation' => 'module',
 			),
-			// 对某一模块，保留最后一次进入的小程序OR公众号，以便点进入列表页时可以默认进入
+
 			'last_account' => array(
-				'key' => $system . 'lastaccount:%switch', # cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch'])
+				// 对某一模块，保留最后一次进入的小程序OR公众号，以便点进入列表页时可以默认进入
+				'key' => $system . 'lastaccount:%switch',
 				'relation' => 'module',
 			),
-			# -- module end --
 
-			'user' => array(
-				'key' => 'user:%user_name',
-				'relation' => 'user',
-			),
-
-			'company' => array(
-				'key' => 'company:%company_name',
-				'relation' => 'user',
-			),
-
-			'salary' => array(
-				'key' => 'salary:%month:%uid',
-				'relation' => 'user',
-			),
-
-			# -- user start --
-			//当前用户拥有的所有模块及小程序标识
 			'user_modules' => array(
-				'key' => $system . 'user_modules:%uid', # cache_system_key('user_modules:' . $uid)
+				//当前用户拥有的所有模块及小程序标识
+				'key' => $system . 'user_modules:%uid',
 				'relation' => '',
 			),
-			# -- user end --
 
-			# -- account start --
-			// 获取用户可操作的所有公众号或小程序或PC
 			'user_accounts' => array(
-				'key' => "user_%s_accounts:%uid", # cache_system_key("user_{$type}_accounts:{$uid}")
+				// 获取用户可操作的所有公众号或小程序或PC
+				'key' => $system . 'user:account:%type:%uid',
 				'relation' => '',
 			),
-			// 指定统一公众号下默认子号的信息
-			'uniaccount' => array(
-				'key' => "uniaccount:%uniacid", # "uniaccount:{$uniacid}"
-				'relation' => '',
-			),
-			// 当前公众号及所有者可用的模块(获取指定公号下所有安装模块及模块信息)
-			'unimodules' => array(
-				'key' => 'unimodules:%uniacid:%enabled', # cache_system_key(CACHE_KEY_ACCOUNT_MODULES, $uniacid, $enabled),
-				'relation' => '',
-			),
-			// 模块所有注册菜单
-			'unimodules_binding' => array(
-				'key' => 'unimodules:binding:%uniacid', # cache_system_key(CACHE_KEY_ACCOUNT_MODULES_BINDING, $_W['uniacid']),
-				'relation' => '',
-			),
-			// 一个或多个公众号套餐信息
-			'uni_groups' => array(
-				'key' => 'uni_group', # cache_system_key(CACHE_KEY_UNI_GROUP),
-				'relation' => '',
-			),
-			// 公众号的配置项
-			'uni_setting' => array(
-				'key' => "unisetting:%uniacid", # "unicount:{$uniacid}"
-				'relation' => '',
-			),
-			// 公众号下的子号的数量
-			'uni_count' => array(
-				'key' => 'unicount:%uniacid', # "unicount:{$uniacid}"
-				'relation' => '',
-			),
-			# -- account end --
 
-			# -- permission start --
-			// 管理员或操作员权限数据
-			'permission' => array(
-				'key' => 'permission:%uniacid:$uid', # cache_system_key("permission:{$_W['uniacid']}:{$_W['uid']}"),
+			'unimodules' => array(
+				// 当前公众号及所有者可用的模块(获取指定公号下所有安装模块及模块信息)
+				'key' => $system . 'unimodules:%uniacid:%enabled',
 				'relation' => '',
 			),
-			# -- permission end --
+
+			'unimodules_binding' => array(
+				// 模块所有注册菜单
+				'key' => $system . 'unimodules:binding:%uniacid',
+				'relation' => '',
+			),
+
+			'uni_groups' => array(
+				// 一个或多个公众号套餐信息
+				'key' => $system . 'uni_group',
+				'relation' => '',
+			),
+
+			'permission' => array(
+				// 管理员或操作员权限数据
+				'key' => $system . 'permission:%uniacid:%uid',
+				'relation' => '',
+			),
 
 			'memberinfo' => array(
-				'key' => $system . 'memberinfo:%uid', # cache_system_key(CACHE_KEY_MEMBER_INFO, $uid);
+				'key' => $system . 'memberinfo:%uid',
 				'relation' => '',
 			),
+
+			'statistics' => array(
+				'key' => $system . 'statistics:%uniacid',
+				'relation' => '',
+			),
+
+			'uniacid_visit' => array(
+				'key' => $system . 'uniacid_visit:%uniacid:%today',
+				'relation' => '',
+			),
+
+			'material_reply' => array(
+				// 构造素材回复消息结构(回复消息结构)
+				'key' => $system . 'material_reply:%attach_id',
+				'relation' => '',
+			),
+
+			'keyword' => array(
+				# conent 需要MD5 加密
+				'key' => $system . 'keyword:%content:%uniacid',
+				'relation' => '',
+			),
+
+			'back_days' => array(
+				'key' => $system . 'back_days:',
+				'relation' => '',
+			),
+
+			'wxapp_version' => array(
+				'key' => $system . 'wxapp_version:%version_id',
+				'relation' => '',
+			),
+
+			'site_store_buy' => array(
+				'key' => $system . 'site_store_buy:%type:%uniacid',
+				'relation' => '',
+			),
+
+			'proxy_wechatpay_account' => array(
+				'key' => $system . 'proxy_wechatpay_account:',
+				'relation' => '',
+			),
+
+			'recycle_module' => array(
+				'key' => $system . 'recycle_module:',
+				'relation' => '',
+			),
+
+			'all_cloud_upgrade_module' => array(
+				'key' => $system . 'all_cloud_upgrade_module:',
+				'relation' => '',
+			),
+
+			'module_all_uninstall' => array(
+				'key' => $system . 'module:all_uninstall',
+				'relation' => '',
+			),
+
+			'sync_fans_pindex' => array(
+				'key' => $system . 'sync_fans_pindex:%uniacid',
+				'relation' => '',
+			),
+
+			'uniaccount' => array(
+				// 指定统一公众号下默认子号的信息
+				'key' => "uniaccount:%uniacid",
+				'relation' => 'uniaccount',
+			),
+
+			'unisetting' => array(
+				// 公众号的配置项
+				'key' => "unisetting:%uniacid",
+				'relation' => 'uniaccount',
+			),
+
+			'defaultgroupid' => array(
+				'key' => 'defaultgroupid:%uniacid',
+				'relation' => 'uniaccount',
+			),
+
+			'uniaccount_type' => array(
+				'key' => "uniaccount:%account_type",
+				'relation' => '',
+			),
+
+			/* accesstoken */
+			'accesstoken' => array(
+				'key' => 'accesstoken:%acid',
+				'relation' => 'accesstoken',
+			),
+
+			'jsticket' => array(
+				'key' => $system . 'jsticket:%acid',
+				'relation' => 'accesstoken',
+			),
+
+			'cardticket' => array(
+				'key' => 'cardticket:%acid',
+				'relation' => 'accesstoken',
+			),
+			/* accesstoken */
+
+			'accesstoken_key' => array(
+				'key' => 'accesstoken:%key',
+				'relation' => '',
+			),
+
+			'account_auth_refreshtoken' => array(
+				'key' => 'account:auth:refreshtoken:%acid',
+				'relation' => '',
+			),
+
+			'unicount' => array(
+				// 公众号下的子号的数量
+				'key' => 'unicount:%uniacid',
+				'relation' => '',
+			),
+
 			'checkupgrade' => array(
 				'key' => 'checkupgrade:system',
 				'relation' => '',
 			),
-			'account_ticket' => array(
-				'key' => 'account:ticket',
-				'relation' => '',
-			),
-			'statistics' => array(
-				'key' => $system . 'statistics:%uniacid', # cache_system_key("statistics:{$uniacid}")
-				'relation' => '',
-			),
-			'uniacid_visit' => array(
-				'key' => $system . 'uniacid_visit:%uniacid:%today', # cache_system_key("uniacid_visit:{$uniacid}:{$today}")
-				'relation' => '',
-			),
-			'upgrade' => array(
-				'key' => 'upgrade',
-				'relation' => '',
-			),
+
 			'cloud_transtoken' => array(
 				'key' => 'cloud:transtoken',
 				'relation' => '',
 			),
-			'cloud_ad_uniaccount' => array(
-				'key' => 'cloud:ad:uniaccount:%uniacid', # $cachekey = "cloud:ad:uniaccount:{$uniacid}";
+
+			'upgrade' => array(
+				'key' => 'upgrade',
 				'relation' => '',
 			),
-			'cloud_ad_uniaccount_list' => array(
-				'key' => 'cloud:ad:uniaccount:list', # $cachekey = "cloud:ad:uniaccount:list";
+
+			'account_ticket' => array(
+				'key' => 'account:ticket',
 				'relation' => '',
 			),
-			'cloud_flow_master' => array(
-				'key' => 'cloud:flow:master', # $cachekey = "cloud:flow:master";
-				'relation' => '',
-			),
-			'cloud_ad_tags' => array(
-				'key' => 'cloud:ad:tags', # $cachekey = "cloud:ad:tags";
-				'relation' => '',
-			),
-			'cloud_ad_type_list' => array(
-				'key' => 'cloud:ad:type:list', # $cachekey = "cloud:ad:type:list";
-				'relation' => '',
-			),
-			'cloud_ad_app_list' => array(
-				'key' => 'cloud:ad:app:list:%uniacid', # $cachekey = "cloud:ad:app:list:{$uniacid}";
-				'relation' => '',
-			),
-			'cloud_ad_app_support_list' => array(
-				'key' => 'cloud:ad:app:support:list', # $cachekey = "cloud:ad:app:support:list";
-				'relation' => '',
-			),
-			'cloud_ad_site_finance' => array(
-				'key' => 'cloud:ad:site:finance', # $cachekey = "cloud:ad:site:finance";
-				'relation' => '',
-			),
-			'couponsync' => array(
-				'key' => 'couponsync:%uniacid}', # $cachekey = "couponsync:{$_W['uniacid']}";
-				'relation' => '',
-			),
-			'storesync' => array(
-				'key' => 'storesync:%uniacid}', # $cachekey = "storesync:{$_W['uniacid']}";
-				'relation' => '',
-			),
-			// 构造素材回复消息结构(回复消息结构)
-			'material_reply' => array(
-				'key' => 'material_reply:%attach_id', # $cachekey = cache_system_key('material_reply:' . $attach_id);
-				'relation' => '',
-			),
-			'defaultgroupid' => array(
-				'key' => 'defaultgroupid:%uniacid', # "defaultgroupid:{$_W['uniacid']}";
-				'relation' => '',
-			),
-			'keyword' => array(
-				# conent 需要MD5 加密
-				'key' => $system . 'keyword:%content:$uniacid', # $cachekey = 'we7:' . 'keyword:' . md5($message['content'] . ':' . $_W['uniacid']);
-				'relation' => '',
-			),
-			'cloud_auth_transfer' => array(
-				'key' => 'cloud:auth:transfer', # 'cloud:auth:transfer';
-				'relation' => '',
-			),
-			'modulesetting' => array(
-				'key' => 'modulesetting:%module:%acid', # "modulesetting:{$data['module']}:{$data['acid']}";
-				'relation' => '',
-			),
-			'account:ticket' => array(
-				'key' => 'account:ticket', # 'account:ticket';
-				'relation' => '',
-			),
+
 			'oauthaccesstoken' => array(
-				'key' => 'oauthaccesstoken:%acid', # $cachekey = "oauthaccesstoken:{$this->account['acid']}";;
+				'key' => 'oauthaccesstoken:%acid',
 				'relation' => '',
 			),
-			'cardticket' => array(
-				'key' => 'cardticket:%acid', # $cachekey = "cardticket:{$this->account['acid']}";
-				'relation' => '',
-			),
+
 			'account_component_assesstoken' => array(
-				'key' => 'account:component:assesstoken', # 'account:component:assesstoken';
+				'key' => 'account:component:assesstoken',
 				'relation' => '',
 			),
+
+			'cloud_ad_uniaccount' => array(
+				'key' => 'cloud:ad:uniaccount:%uniacid',
+				'relation' => '',
+				'rels' => 'cloud_ad_uniaccount_list'
+			),
+
+			'cloud_ad_uniaccount_list' => array(
+				'key' => 'cloud:ad:uniaccount:list',
+				'relation' => '',
+				'rels' => 'cloud_ad_uniaccount'
+			),
+
+			'cloud_flow_master' => array(
+				'key' => 'cloud:flow:master',
+				'relation' => '',
+			),
+
+			'cloud_ad_tags' => array(
+				'key' => 'cloud:ad:tags',
+				'relation' => '',
+			),
+
+			'cloud_ad_type_list' => array(
+				'key' => 'cloud:ad:type:list',
+				'relation' => '',
+			),
+
+			'cloud_ad_app_list' => array(
+				'key' => 'cloud:ad:app:list:%uniacid',
+				'relation' => '',
+			),
+
+			'cloud_ad_app_support_list' => array(
+				'key' => 'cloud:ad:app:support:list',
+				'relation' => '',
+			),
+
+			'cloud_ad_site_finance' => array(
+				'key' => 'cloud:ad:site:finance',
+				'relation' => '',
+			),
+
+			'couponsync' => array(
+				'key' => 'couponsync:%uniacid',
+				'relation' => '',
+			),
+
+			'storesync' => array(
+				'key' => 'storesync:%uniacid',
+				'relation' => '',
+			),
+
+			'cloud_auth_transfer' => array(
+				'key' => 'cloud:auth:transfer',
+				'relation' => '',
+			),
+
+			'modulesetting' => array(
+				'key' => 'modulesetting:%module:%acid',
+				'relation' => '',
+			),
+
 			'scan_config' => array(
-				'key' => 'scan:config', # scan:config;
-				'relation' => '',
+				'key' => 'scan:config',
+				'relation' => 'scan_file',
 			),
+
 			'scan_file' => array(
-				'key' => 'scan:file', # scan:config;
-				'relation' => '',
+				'key' => 'scan:file',
+				'relation' => 'scan_file',
 			),
+
 			'scan_badfile' => array(
-				'key' => 'scan:badfile', # scan:config;
-				'relation' => '',
+				'key' => 'scan:badfile',
+				'relation' => 'scan_file',
 			),
+
 			'bomtree' => array(
-				'key' => 'bomtree', # bomtree
+				'key' => 'bomtree',
 				'relation' => '',
 			),
-			'back_days' => array(
-				'key' => 'back_days:', # cache_system_key("back_days:");
-				'relation' => '',
-			),
+
 			'setting' => array(
-				'key' => 'setting', # $cachekey = "setting";
+				'key' => 'setting',
 				'relation' => '',
 			),
-			'accesstoken' => array(
-				'key' => 'accesstoken:%acid', # $cachekey = "accesstoken:{$this->account['acid']}";
-				'relation' => '',
-			),
-			'jsticket' => array(
-				'key' => 'jsticket:%s', # jsticket:{$this->account['acid']}
-				'relation' => '',
-				'params' => array('acid'),
-			),
-			'wxapp_version' => array(
-				'key' => 'wxapp_version:%version_id', # $cachekey = cache_system_key("wxapp_version:{$version_id}");
-				'relation' => '',
-			),
+
 			'stat_todaylock' => array(
-				'key' => 'stat:todaylock:%uniacid', # $cachekey = "stat:todaylock:{$_W['uniacid']}";
+				'key' => 'stat:todaylock:%uniacid',
 				'relation' => '',
 			),
-			'site_store_buy' => array(
-				'key' => 'site_store_buy_%type:%uniacid', # $cachekey = cache_system_key('site_store_buy_' . $type . ':' . $uniacid);
+
+			'account_preauthcode' => array(
+				'key' => 'account:preauthcode',
+				'relation' => '',
+			),
+
+			'account_auth_accesstoken' => array(
+				'key' => 'account:auth:accesstoken:%key',
+				'relation' => '',
+			),
+
+			'usersfields' => array(
+				'key' => 'usersfields',
+				'relation' => '',
+			),
+
+			'userbasefields' => array(
+				'key' => 'userbasefields',
+				'relation' => '',
+			),
+
+			'system_frame' => array(
+				'key' => 'system_frame',
+				'relation' => '',
+			),
+
+			'module_receive_enable' => array(
+				'key' => 'module_receive_enable',
 				'relation' => '',
 			),
 		),
 
-		// 缓存键关联关系数组 : 定义所有缓存键之间的关联关系，如果缓存有关联关系，需添加到此数组中，以便实现关联删除
+		// 缓存键关联关系数组
 		'relations' => array(
+
+			'uniaccount' => array(
+				'relations' => array('uniaccount', 'unisetting'),
+				'relation_params' => array('uniacid'),
+			),
+
+			'accesstoken' => array(
+				'relations' => array('accesstoken', 'jsticket', 'cardticket'),
+				'relation_params' => array('acid'),
+			),
+
+			'scan_file' => array(
+				'relations' => array('scan_file', 'scan_config', 'scan_badfile'),
+				'relation_params' => array(),
+			),
+
 			// '模块'
 			'module' => array(
 				'relations' => array('module_info', 'module_setting'),
 				'relation_params' => array('module_name', 'uniacid')
 			),
-			'user' => array(
-				'relations' => array('user', 'company', 'salary'),
-				'relation_params' => array('user_name', 'company_name', 'month', 'uid'),
-			)
 		),
 	);
 	return $caches_all;
-}
-
-
-/**
- * 缓存关联删除
- * @param $cachename $caches_all['caches'] 数组中定义的缓存名称
- * @param $params 构建缓存键需要的参数（此参数需要按照缓存关联数组 $caches_all['relations'] 中的 relation_params 的值来传入）
- */
-function cache_delete_relation($cachename, $params) {
-	$cache_all = cache_all();
-	$cache_relations = $cache_all['relations'];
-	$cache_info = $cache_all['caches'][$cachename];
-	$relation_info = $cache_relations[$cache_info['relation']];
-	$relation_params = $relation_info['relation_params'];
-
-	$diff = array_diff($relation_params, array_keys($params));
-	if (!empty($diff)) {
-		message('缺少参数 : ' . implode($diff, ' 、'), '', '');
-		exit();
-	}
-
-	$cache_key = $cache_info['key'];
-	foreach ($params as $key => $val) {
-		$cache_key = str_replace('%' . $key, $val, $cache_key);
-	}
-
-	cache_delete($cache_key);
-
-	if (!empty($relation_info['relations']) && in_array($cachename, $relation_info['relations'])) {
-		static $dig = -1;
-		$count = count($relation_info['relations']) - 1;
-		if ($dig++<$count) {
-			cache_delete_relation($relation_info['relations'][$dig], $params);
-		}
-	}
-
 }

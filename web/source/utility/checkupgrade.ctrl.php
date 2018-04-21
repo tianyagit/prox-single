@@ -15,18 +15,18 @@ if(is_error($r)) {
 
 $do = !empty($_GPC['do']) && in_array($do, array('module', 'system')) ? $_GPC['do'] : exit('Access Denied');
 if ($do == 'system') {
-	$lock = cache_load('checkupgrade:system');
+	$lock = cache_load(create_cache_key('checkupgrade'));
 	if (empty($lock) || (TIMESTAMP - 3600 > $lock['lastupdate'])) {
 		$upgrade = cloud_build();
 		if(!is_error($upgrade) && !empty($upgrade['upgrade'])) {
 			$upgrade = array('version' => $upgrade['version'], 'release' => $upgrade['release'], 'upgrade' => 1, 'lastupdate' => TIMESTAMP);
-			cache_write('checkupgrade:system', $upgrade);
-			cache_delete('cloud:transtoken');
+			cache_write(create_cache_key('checkupgrade'), $upgrade);
+			cache_delete_cache_name('cloud_transtoken');
 			iajax(0, $upgrade);
 		} else {
 			$upgrade = array('lastupdate' => TIMESTAMP);
-			cache_delete('cloud:transtoken');
-			cache_write('checkupgrade:system', $upgrade);
+			cache_delete_cache_name('cloud_transtoken');
+			cache_write(create_cache_key('checkupgrade'), $upgrade);
 		}
 	} else {
 		iajax(0, $lock);

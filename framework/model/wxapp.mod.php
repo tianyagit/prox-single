@@ -303,7 +303,7 @@ function wxapp_version($version_id) {
 		return $version_info;
 	}
 
-	$cachekey = cache_system_key("wxapp_version:{$version_id}");
+	$cachekey = create_cache_key('wxapp_version', array('version_id' => $version_id));
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;

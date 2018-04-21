@@ -93,7 +93,8 @@ if ($do == 'get_upgrade_info') {
 	$module_info = module_fetch($module_name);
 	if (empty($module_info['site_branch_id'])) {
 		$module_info['site_branch_id'] = $module['site_branch']['id'];
-		cache_write(cache_system_key(CACHE_KEY_MODULE_INFO, $module_name), $module_info);
+		$cache_key = create_cache_key('module_info', array('module_name' => $module_name));
+		cache_write($cache_key, $module_info);
 	}
 	if (is_error($module)) {
 		iajax(1, $module['message']);
@@ -262,7 +263,7 @@ if ($do == 'upgrade') {
 	if (!empty($module['subscribes'])) {
 		ext_check_module_subscribe($module_name);
 	}
-	cache_delete('cloud:transtoken');
+	cache_delete_cache_name('cloud_transtoken');
 	cache_build_module_info($module_name);
 
 	itoast('模块更新成功！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
@@ -270,12 +271,12 @@ if ($do == 'upgrade') {
 
 if ($do =='install') {
 	$cloudapi = new CloudApi();
-	$recycle_module = $cloudapi->post('cache', 'get', array('key' => cache_system_key('recycle_module:')));
+	$recycle_module = $cloudapi->post('cache', 'get', array('key' => create_cache_key('recycle_module')));
 	$recycle_module = !empty($recycle_module['data']) ? $recycle_module['data'] : array();
 	$module_name = trim($_GPC['module_name']);
 	if (!empty($recycle_module[$module_name])) {
 		unset($recycle_module[$module_name]);
-		$cloudapi->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_module));
+		$cloudapi->post('cache', 'set', array('key' => create_cache_key('recycle_module'), 'value' => $recycle_module));
 		pdo_delete('modules_recycle', array('modulename' => $module_name));
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
@@ -497,7 +498,7 @@ if ($do == 'save_module_info') {
 		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
 		$result = utility_image_rename($module_icon_map[$type]['url'], $image_destination_url);
 	}
-	cache_delete(cache_system_key("module_info:" . $module_name));
+	cache_delete_cache_name('module_info', array('module_name' => $module_name));
 	if (!empty($result)) {
 		iajax(0, '');
 	}
@@ -624,7 +625,7 @@ if ($do == 'uninstall') {
 	}
 
 	$cloudapi = new CloudApi();
-	$recycle_module = $cloudapi->post('cache', 'get', array('key' => cache_system_key('recycle_module:')));
+	$recycle_module = $cloudapi->post('cache', 'get', array('key' => create_cache_key('recycle_module')));
 	$recycle_module = !empty($recycle_module['data']) ? $recycle_module['data'] : array();
 	if (!empty($module['plugin_list']) && is_array($module['plugin_list'])) {
 		foreach ($module['plugin_list'] as $plugin) {
@@ -635,7 +636,7 @@ if ($do == 'uninstall') {
 	}
 	pdo_insert('modules_recycle', array('modulename' => $name));
 	$recycle_module[$name] = array('modulename' => $name);
-	$cloudapi->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_module));
+	$cloudapi->post('cache', 'set', array('key' => create_cache_key('recycle_module'), 'value' => $recycle_module));
 
 	cache_build_module_subscribe_type();
 	cache_build_uninstalled_module();

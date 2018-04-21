@@ -36,9 +36,8 @@ if ($do == 'edit_setting') {
 	}
 	$result = uni_setting_save('statistics', iserializer($highest_visit));
 	if (!empty($result)) {
-		cache_delete("unisetting:{$_W['uniacid']}");
-		$cachekey = cache_system_key("statistics:{$uniacid}");
-		cache_delete($cachekey);
+		cache_delete_cache_name('unisetting', array('uniacid' => $_W['uniacid']));
+		cache_delete_cache_name('statistics', array('uniacid' => $uniacid));
 		iajax(0, '修改成功！');
 	} else {
 		iajax(-1, '修改失败！');

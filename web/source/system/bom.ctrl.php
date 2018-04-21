@@ -31,12 +31,12 @@ if (checksubmit('submit')) {
 			}
 		}
 	}
-	cache_write('bomtree', $bomtree);
+	cache_write(create_cache_key('bomtree'), $bomtree);
 }
 
 //处理BOM异常
 if (checksubmit('dispose')) {
-	$trees = cache_load('bomtree');
+	$trees = cache_load(create_cache_key('bomtree'));
 	$path = IA_ROOT;
 	if (is_array($trees)) {
 		foreach ($trees as $tree) {
@@ -47,7 +47,7 @@ if (checksubmit('dispose')) {
 			@fclose($fp);
 		}
 	}
-	cache_delete('bomtree');
+	cache_delete_cache_name('bomtree');
 }
 
 template('system/bom');

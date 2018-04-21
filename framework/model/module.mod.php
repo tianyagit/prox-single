@@ -296,7 +296,7 @@ function module_save_group_package($package) {
  */
 function module_fetch($name) {
 	global $_W;
-	$cachekey = cache_system_key(CACHE_KEY_MODULE_INFO, $name);
+	$cachekey = create_cache_key('module_info', array('module_name' => $name));
 	$module = cache_load($cachekey);
 	if (empty($module)) {
 		$module_table = table('module');
@@ -345,7 +345,7 @@ function module_fetch($name) {
 	}
 	//有公众号时，附加模块配置信息
 	if (!empty($module) && !empty($_W['uniacid'])) {
-		$setting_cachekey = cache_system_key(CACHE_KEY_MODULE_SETTING, $name, $_W['uniacid']);
+		$setting_cachekey = create_cache_key('module_setting', array('module_name' => $name, 'uniacid' => $_W['uniacid']));
 		$setting = cache_load($setting_cachekey);
 		if (empty($setting)) {
 			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));
@@ -540,7 +540,7 @@ function module_uninstall($module_name, $is_clean_rule = false) {
 	pdo_delete('modules_plugin', array('main_module' => $module_name));
 
 	pdo_delete('uni_account_modules', array('module' => $module_name));
-	cache_delete(cache_system_key('module:all_uninstall'));
+	cache_delete_cache_name('module_all_uninstall');
 	ext_module_clean($module_name, $is_clean_rule);
 	cache_build_module_subscribe_type();
 	cache_build_uninstalled_module();
@@ -589,11 +589,11 @@ function module_execute_uninstall_script($module_name) {
 	}
 	pdo_delete('modules_recycle', array('modulename' => $module_name));
 	$cloudapi = new CloudApi();
-	$recycle_module = $cloudapi->post('cache', 'get', array('key' => cache_system_key('recycle_module:')));
+	$recycle_module = $cloudapi->post('cache', 'get', array('key' => create_cache_key('recycle_module')));
 	$recycle_module = !empty($recycle_module['data']) ? $recycle_module['data'] : array();
 	unset($recycle_module[$module_name]);
-	$cloudapi->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_module));
-	cache_delete(cache_system_key('module:all_uninstall'));
+	$cloudapi->post('cache', 'set', array('key' => create_cache_key('recycle_module'), 'value' => $recycle_module));
+	cache_delete_cache_name('module_all_uninstall');
 	return true;
 }
 
@@ -926,9 +926,8 @@ function module_save_switch($module_name, $uniacid = 0, $version_id = 0) {
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
-
-	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
-	$cache_lastaccount = cache_load($cache_key);
+	$cache_key = create_cache_key('last_account', array('switch' => $_GPC['__switch']));
+	$cache_lastaccount = (array)cache_load($cache_key);
 	if (empty($cache_lastaccount)) {
 		$cache_lastaccount = array(
 			$module_name => array(
@@ -959,7 +958,7 @@ function module_last_switch($module_name) {
 	if (empty($module_name)) {
 		return array();
 	}
-	$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+	$cache_key = create_cache_key('last_account', array('switch' => $_GPC['__switch']));
 	$cache_lastaccount = (array)cache_load($cache_key);
 	return $cache_lastaccount[$module_name];
 }
