@@ -263,7 +263,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 			}
 			if ($module_info['welcome_support'] != MODULE_SUPPORT_SYSTEMWELCOME &&
 				($module_info['app_support'] != MODULE_SUPPORT_ACCOUNT && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ||
-				$module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH)) ||
+				//$module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH)) ||
 				$module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_WEBAPP_NORMAL)) ||
 				$module_info['phoneapp_support'] != MODULE_SUPPORT_PHONEAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_PHONEAPP_NORMAL)))) {
 				continue;
@@ -807,8 +807,12 @@ function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 	} else {
 		$cache_lastaccount[$type] = $uniacid;
 	}
+
 	visit_system_update(array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	cache_write($cache_key, $cache_lastaccount);
+
+	cache_write('we7:$cache_last_account_type', $type);
+
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;
