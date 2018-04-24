@@ -18,9 +18,10 @@ if ($do == 'display') {
 
 	$condition = '' ;
 	$params = array();
-	if (!empty($_GPC['name'])) {
+	$name = safe_gpc_string($_GPC['name']);
+	if (!empty($name)) {
 		$condition .= "WHERE name LIKE :name";
-		$params[':name'] = "%{$_GPC['name']}%";
+		$params[':name'] = "%{$name}%";
 	}
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
