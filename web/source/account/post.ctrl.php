@@ -168,13 +168,9 @@ if($do == 'base') {
 			$result = pdo_update(uni_account_tablename(ACCOUNT_TYPE), $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
 		if($result) {
-			cache_delete("uniaccount:{$uniacid}");
-			cache_delete("unisetting:{$uniacid}");
-			cache_delete("accesstoken:{$acid}");
-			cache_delete("jsticket:{$acid}");
-			cache_delete("cardticket:{$acid}");
-			$cachekey = cache_system_key("statistics:{$uniacid}");
-			cache_delete($cachekey);
+			cache_delete_cache_name('uniaccount', array('uniacid' => $uniacid));
+			cache_delete_cache_name('accesstoken', array('acid' => $acid));
+			cache_delete_cache_name('statistics', array('uniacid' => $uniacid));
 			iajax(0, '修改成功！', '');
 		}else {
 			iajax(1, '修改失败！', '');

@@ -59,7 +59,7 @@ function welcome_notices_get() {
  */
 function welcome_database_backup_days($time) {
 	global $_W;
-	$cachekey = cache_system_key("back_days:");
+	$cachekey = create_cache_key('back_days');
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -86,13 +86,13 @@ function welcome_database_backup_days($time) {
  * @return array() ;
  */
 function welcome_get_cloud_upgrade() {
-	$upgrade_cache = cache_load('upgrade');
+	$upgrade_cache = cache_load(create_cache_key('upgrade'));
 	if (empty($upgrade_cache) || TIMESTAMP - $upgrade_cache['lastupdate'] >= 3600 * 24 || empty($upgrade_cache['data'])) {
 		$upgrade = cloud_build();
 	} else {
 		$upgrade = $upgrade_cache['data'];
 	}
-	cache_delete('cloud:transtoken');
+	cache_delete_cache_name('cloud_transtoken');
 	if (is_error($upgrade) || empty($upgrade['upgrade'])) {
 		$upgrade = array();
 	}

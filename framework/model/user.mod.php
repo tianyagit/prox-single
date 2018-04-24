@@ -454,7 +454,7 @@ function user_modules($uid) {
 	global $_W;
 
 	load()->model('module');
-	$modules =cache_load(cache_system_key('user_modules:' . $uid));
+	$modules = cache_load(create_cache_key('user_modules', array('uid' => $uid)));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
@@ -526,7 +526,7 @@ function user_modules($uid) {
 				}
 			}
 		}
-		cache_write(cache_system_key('user_modules:' . $uid), $modules);
+		cache_write(create_cache_key('user_modules', array('uid' => $uid)), $modules);
 	}
 	$module_list = array();
 	if (!empty($modules)) {

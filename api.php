@@ -183,7 +183,7 @@ class WeEngine {
 			$row = array();
 			$row['isconnect'] = 1;
 			pdo_update('account', $row, array('acid' => $_W['acid']));
-			cache_delete("uniaccount:{$_W['uniacid']}");
+			cache_delete_cache_name('uniaccount', array('uniacid' => $_W['uniacid']));
 			exit(htmlspecialchars($_GET['echostr']));
 		}
 		if(strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
@@ -376,10 +376,10 @@ class WeEngine {
 		load()->model('mc');
 		$setting = uni_setting($_W['uniacid'], array('passport'));
 		$fans = mc_fansinfo($message['from']);
-		$default_groupid = cache_load("defaultgroupid:{$_W['uniacid']}");
+		$default_groupid = cache_load(create_cache_key('defaultgroupid', array('uniacid' => $_W['uniacid'])));
 		if (empty($default_groupid)) {
 			$default_groupid = pdo_fetchcolumn('SELECT groupid FROM ' .tablename('mc_groups') . ' WHERE uniacid = :uniacid AND isdefault = 1', array(':uniacid' => $_W['uniacid']));
-			cache_write("defaultgroupid:{$_W['uniacid']}", $default_groupid);
+			cache_write(create_cache_key('defaultgroupid', array('uniacid' => $_W['uniacid'])), $default_groupid);
 		}
 		if(!empty($fans)) {
 			if ($message['event'] == 'unsubscribe') {
@@ -430,7 +430,7 @@ class WeEngine {
 		global $_W;
 		fastcgi_finish_request();
 
-		$subscribe = cache_load('module_receive_enable');
+		$subscribe = cache_load(create_cache_key('module_receive_enable'));
 		$modules = uni_modules();
 		$obj = WeUtility::createModuleReceiver('core');
 		$obj->message = $this->message;
@@ -615,7 +615,7 @@ class WeEngine {
 			return $pars;
 		}
 		//关键字先查缓存有没有匹配规则，缓存超时为5分钟
-		$cachekey = 'we7:' . 'keyword:' . md5($message['content'] . ':' . $_W['uniacid']);
+		$cachekey = create_cache_key('keyword', array('content' => md5($message['content']), 'uniacid' => $_W['uniacid']));
 		$keyword_cache = cache_load($cachekey);
 		if (!empty($keyword_cache) && $keyword_cache['expire'] > TIMESTAMP) {
 			return $keyword_cache['data'];

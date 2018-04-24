@@ -61,14 +61,15 @@ class WxAppPlatform extends WeiXinPlatform {
 		if (is_error($response)) {
 			return $response;
 		}
-		cache_write('account:oauth:refreshtoken:'.$this->account['key'], $response['refresh_token']);
+	
+		cache_write(create_cache_key('account_auth_accesstoken', array('key' => $this->account['key'])), $response['refresh_token']);
 		return $response;
 	}
 
 	protected function setAuthRefreshToken($token) {
 		$tablename = 'account_wxapp';
 		pdo_update($tablename, array('auth_refresh_token' => $token), array('acid' => $this->account['acid']));
-		cache_write('account:auth:refreshtoken:'.$this->account['acid'], $token);
+		cache_write(create_cache_key('account_auth_accesstoken', array('key' => $this->account['key'])), $token);
 	}
 
 	/**

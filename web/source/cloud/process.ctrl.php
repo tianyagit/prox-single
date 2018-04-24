@@ -126,8 +126,8 @@ DAT;
 	if (is_error($packet)) {
 		itoast($packet['message'], '', 'error');
 	} else {
-		cache_delete('checkupgrade:system');
-		cache_delete('cloud:transtoken');
+		cache_delete_cache_name('checkupgrade');
+		cache_delete_cache_name('cloud_transtoken');
 		itoast('更新已完成. ', url('cloud/upgrade'), 'info');
 	}
 }

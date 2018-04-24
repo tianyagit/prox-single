@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 /**
  * 构建管理员或操作员权限数据
- * @return boolean
+ * @return array|mixed
  */
 function permission_build() {
 	global $_W, $acl;
@@ -17,8 +17,9 @@ function permission_build() {
 		return $we7_file_permission;
 	}
 
-	$cachekey = cache_system_key("permission:{$_W['uniacid']}:{$_W['uid']}");
+	$cachekey = create_cache_key('permission', array('uniacid' => $_W['uniacid'], 'uid' => $_W['uid']));
 	$cache = cache_load($cachekey);
+
 	if (!empty($cache)) {
 		return $cache;
 	}

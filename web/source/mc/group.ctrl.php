@@ -26,7 +26,7 @@ if ($do == 'display') {
 if ($do == 'change_group_level') {
 	$group_level = intval($_GPC['group_level']);
 	pdo_update('uni_settings', array('grouplevel' => $group_level), array('uniacid' => $_W['uniacid']));
-	cache_delete("unisetting:{$_W['uniacid']}");
+	cache_delete_cache_name('unisetting', array('uniacid' =>$_W['uniacid']));
 	iajax(0, '');
 }
 

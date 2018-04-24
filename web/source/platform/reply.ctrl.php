@@ -343,8 +343,8 @@ if ($do == 'post') {
 				$settings['uniacid'] = $_W['uniacid'];
 				pdo_insert('uni_settings', $settings);
 			}
-			cache_delete("unisetting:{$_W['uniacid']}");
-			cache_delete('we7:' . 'keyword:' . md5($rule['content']) . ':' . $_W['uniacid']);
+			cache_delete_cache_name('unisetting', array('uniacid' => $_W['uniacid']));
+			cache_delete_cache_name('keyword', array('content' => md5($rule['content']), 'uniacid' => $_W['uniacid']));
 			itoast('系统回复更新成功！', url('platform/reply', array('m' => $m)), 'success');
 		}
 	}
