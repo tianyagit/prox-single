@@ -57,12 +57,12 @@
 				<th class="text-right">
 					{if permission_check_account_user('see_module_manage_system_ugrade')}
 					<div class="we7-form">
-						<input type="checkbox" name="" onclick="filter('new_branch')" id="filter-1" value="1">
+						<input type="checkbox" name="" ng-click="filter('new_branch')" id="filter-1" value="1">
 						<label class="checkbox-inline" for="filter-1">
 							新分支应用
 						</label>
 						<span class="we7-margin-right"></span>
-						<input type="checkbox" name="" onclick="filter('upgrade_branch')" id="filter-2" value="2">
+						<input type="checkbox" name="" ng-click="filter('upgrade_branch')" id="filter-2" value="2">
 						<label class="checkbox-inline" for="filter-2">
 							有升级的应用
 						</label>
@@ -78,10 +78,11 @@
 			</tr>
 			<tr ng-repeat="module in moduleList">
 				<td class="text-left module-img">
+				{{moduleList[module.main_module]}}
 					<img ng-if="module.main_module == ''" ng-src="{{ module.logo }}" class="img-responsive icon"/>
 					<div class="img" ng-if="module.main_module != ''">
 						<img src="" alt="子应用icon" class="plugin-img" ng-src="{{ module.logo }}"/>
-						<img src="" alt="主应用icon" class="module-img" ng-src="{{ allModules[module.main_module].logo }}"/>
+						<img src="" alt="主应用icon" class="module-img" ng-src="{{ module.main_module_logo }}"/>
 					</div>
 				</td>
 				<td class="text-left">

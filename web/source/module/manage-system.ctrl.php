@@ -17,9 +17,10 @@ load()->object('cloudapi');
 load()->model('utility');
 load()->func('db');
 
-$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 
+$dos = array('subscribe', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 
 			'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 
-			'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 'founder_update_modules', 'uninstalled_recycle');
+			'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 
+			'founder_update_modules', 'uninstalled_recycle');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 /* sxstart */
@@ -103,22 +104,11 @@ if ($do == 'get_upgrade_info') {
 }
 
 if ($do == 'check_upgrade') {
-	
 	$result = array();
 	$cloud_module_list = array();
 	
-	$module_list = safe_gpc_array($_GPC['module_list']);
-	if (empty($module_list) || !is_array($module_list)) {
-		iajax(0, '');
-	}
-	
-	$module_upgrade = module_upgrade_info($module_list);
-	print_r($module_update);exit;
-	if (!empty($cloud_module_list)) {
-		$cloud_prepare_result = cloud_prepare();
-		$cloud_m_query_module = cloud_m_query($cloud_module_list);
-	}
-	print_r($cloud_m_query_module);exit;
+	$module_upgrade = module_upgrade_info();
+	iajax(0, $module_upgrade);
 }
 
 if ($do == 'upgrade') {
@@ -685,23 +675,7 @@ if ($do == 'uninstalled_recycle') {
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	/**
-	if (!empty($_GPC['system_welcome'])) {
-		$type = 9;
-		$uninstall_modules = module_get_all_uninstalled($status, 'system_welcome');
-	} else {
-		$type = intval($_GPC['account_type']);
-		$uninstall_modules = module_get_all_uninstalled($status);
-	}
-	$total_uninstalled = $uninstall_modules['module_count'];
 	
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
-	$total_uninstalled_recycle = count($recycle_modules);
-	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
-	
-	$modules_table = table('module');
-	$modules_local = $modules_table->getModulesLocalList();
-	**/
 	$module_list = module_installed_list($account_base->typeSign);
 	
 	if (!empty($module_list)) {
@@ -794,33 +768,6 @@ if ($do == 'not_installed') {
 	$uninstall_modules = array_slice($uninstall_modules, ($pageindex - 1)*$pagesize, $pagesize);
 
 	$pager = pagination($total, $pageindex, $pagesize);
-}
-
-if ($do == 'filter') {
-	$pageindex = max($_GPC['pageindex'], 1);
-	$pagesize = 20;
-	$condition = $_GPC['condition'];
-	$module_list  = user_modules($_W['uid']);
-	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
-	$modules = array();
-	if (!empty($module_list) && is_array($module_list)) {
-		$empty_condition = empty($condition['new_branch']) && empty($condition['upgrade_branch']);
-		foreach ($module_list as $module) {
-			$new_branch_module = !empty($condition['new_branch']) && $upgrade_modules[$module['name']]['new_branch'];
-			$upgrade_branch_module = !empty($condition['upgrade_branch']) && $upgrade_modules[$module['name']]['upgrade_branch'];
-			if (($empty_condition && $module['issystem'] != 1) || $new_branch_module || $upgrade_branch_module) {
-				$modules[$module['name']] = $module;
-				$modules[$module['name']]['upgrade'] = $upgrade_modules[$module['name']]['upgrade'];
-				$modules[$module['name']]['new_branch'] = $upgrade_modules[$module['name']]['new_branch'];
-				$modules[$module['name']]['upgrade_branch'] = $upgrade_modules[$module['name']]['upgrade_branch'];
-				$modules[$module['name']]['from'] = $upgrade_modules[$module['name']]['from'];
-			}
-		}
-	}
-	$total = count($modules);
-	$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
-	$pager = pagination($total, $pageindex, $pagesize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => true, 'callbackfuncname' => 'filter'));
-	iajax(0, array('modules' => $modules, 'pager' => $pager));
 }
 
 template('module/manage-system' . ACCOUNT_TYPE_TEMPLATE);

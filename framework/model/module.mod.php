@@ -1067,37 +1067,40 @@ function module_installed_list($type = '') {
  * 如果记录过期则通过接口更新modules_cloud表中的数据
  * @param array $modulelist
  */
-function module_upgrade_info($modulelist) {
-	$result = $cloud_modulelist = array();
-	if (empty($modulelist)) {
-		return $result;
-	}
-	foreach ($modulelist as $modulename) {
-		$result[$modulename]['name'] = $modulename;
+function module_upgrade_info($modulelist = array()) {
+	$result = array();
 	
+	//没有指定查询模块列表，则获取全部模块查询
+	if (empty($modulelist)) {
+		$modulelist = table('modules')->getall('name');
+	}
+	foreach ($modulelist as $modulename => $module) {
+		if (!empty($module['issystem'])) {
+			continue;
+		}
 		$manifest = ext_module_manifest($modulename);
 		if (!empty($manifest)&& is_array($manifest)) {
-			$module = module_fetch($modulename);
+			$result[$modulename]['name'] = $modulename;
 			if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
 				$result[$modulename]['upgrade'] = true;
 				$result[$modulename]['best_version'] = $manifest['application']['version'];
 			}
 			$result[$modulename]['from'] = 'local';
-		} else {
-			$cloud_modulelist[] = $modulename;
 		}
 	}
 	unset($modulename);
-	if (!empty($cloud_modulelist)) {
-		$cloud_module_check_upgrade = array();
-		$cloud_module_upgrade = table('modules_cloud')->getByName($cloud_modulelist);
-		//检查本地没有数据或是数据超时的
-		foreach ($cloud_modulelist as $modulename) {
-			if (empty($cloud_module_upgrade[$modulename]) || 
-				TIMESTAMP - $cloud_module_upgrade[$modulename]['lastupdatetime'] > 3600) {
-					
-				$cloud_module_check_upgrade[] = $modulename;
-			}
+	
+	$cloud_module_check_upgrade = array();
+	$cloud_module_upgrade = table('modules_cloud')->getByName($cloud_modulelist);
+	//检查本地没有数据或是数据超时的
+	foreach ($cloud_modulelist as $modulename) {
+		if (empty($cloud_module_upgrade[$modulename]) || 
+			TIMESTAMP - $cloud_module_upgrade[$modulename]['lastupdatetime'] > 3600) {
+			$cloud_module_check_upgrade[] = $modulename;
+		} else {
+			$result[$modulename]['upgrade'] = $cloud_module_upgrade[$modulename]['has_new_version'];
+			$result[$modulename]['best_version'] = $module_cloud['version'];
+			$result[$modulename]['from'] = 'cloud';
 		}
 	}
 	
@@ -1183,26 +1186,35 @@ function module_upgrade_info($modulelist) {
 			),
 		);
 		if (!empty($cloud_m_query_module)) {
-			foreach ($cloud_m_query_module as $modulename => $module) {
+			foreach ($cloud_module_check_upgrade as $modulename) {
 				$module_upgrade_data = array(
 					'name' => $modulename,
+					'has_new_version' => 0,
+					'has_new_branch' => 0,
 					'lastupdatetime' => TIMESTAMP,
 				);
-				$module_installed = module_fetch($modulename);
-				if (version_compare($module_installed['version'], $module['version']) == '-1') {
-					$module_upgrade_data['has_new_version'] = 1;
-					
-					$result[$modulename]['upgrade'] = true;
-					$result[$modulename]['best_version'] = $module['version'];
-					$result[$modulename]['from'] = 'cloud';
-				}
-				if (!empty($module['branches'])) {
-					$module_upgrade_data['has_new_branch'] = 1;
-				}
-				if (empty($cloud_module_upgrade[$modulename])) {
+				//未在云服务查到信息的，存入记录缓存防止频繁请求接口
+				if (empty($cloud_m_query_module[$modulename])) {
 					table('modules_cloud')->fill($module_upgrade_data)->save();
 				} else {
-					table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
+					$module_installed = module_fetch($modulename);
+					$module_cloud = $cloud_m_query_module[$modulename];
+					
+					if (version_compare($module_installed['version'], $module_cloud['version']) == '-1') {
+						$module_upgrade_data['has_new_version'] = 1;
+							
+						$result[$modulename]['upgrade'] = true;
+						$result[$modulename]['best_version'] = $module_cloud['version'];
+						$result[$modulename]['from'] = 'cloud';
+					}
+					if (!empty($module_cloud['branches'])) {
+						$module_upgrade_data['has_new_branch'] = 1;
+					}
+					if (empty($cloud_module_upgrade[$modulename])) {
+						table('modules_cloud')->fill($module_upgrade_data)->save();
+					} else {
+						table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
+					}
 				}
 			}
 		}
