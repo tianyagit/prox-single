@@ -25,7 +25,7 @@
 						{php $nav_top_fold[]=$nav}
 					{elseif in_array($nav['name'], array('module', 'system', 'site'))}
 						{php $nav_top_tiled_system[]=$nav}
-					{elseif in_array($nav['name'], array('appmarket', 'store'))}
+					{elseif in_array($nav['name'], array('appmarket', 'store', 'help', 'advertisement'))}
 						{php $nav_top_tiled_other[]=$nav}
 					{elseif $nav['name']=='custom_help'}
 						{php $nav_top_help=$nav}

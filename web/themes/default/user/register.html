@@ -48,12 +48,12 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="title register-nav">
-					<a href="{php echo url('user/register', array('register_type' => 'system', 'owner_uid' => $_GPC['owner_uid']))}" {if $register_type == 'system' || empty($_GPC['register_type'])}class="active"{/if}>用户名密码</a>
+					<a href="{php echo url('user/register', array('register_type' => 'system', 'owner_uid' => $_GPC['owner_uid']))}" {if $_GPC['register_type'] == 'system' || empty($_GPC['register_type'])}class="active"{/if}>用户名密码</a>
 					{if !empty($_W['setting']['copyright']['mobile_status'])}
 					<a href="{php echo url('user/register', array('register_type' => 'mobile', 'owner_uid' => $_GPC['owner_uid']))}" {if $_GPC['register_type'] == 'mobile'}class="active"{/if}>手机注册</a>
 					{/if}
 				</div>
-				{if $register_type == 'system' || empty($_GPC['register_type'])}
+				{if $_GPC['register_type'] == 'system' || empty($_GPC['register_type'])}
 				<form action="" class="we7-form register-mobile" method="post" role="form" id="form1" ng-controller="UserRegisterSystem" ng-cloak>
 					<div class="form-group" ng-class="{true:'has-error has-feedback',false:'has-success has-feedback'}[usernameErr]">
 						<label class="control-label col-sm-1">用户名:<span class="color-red">*</span></label>
@@ -184,10 +184,11 @@
 		</div>
 	</div>
 </div>
+
 <script type="text/javascript">
 	angular.module('userManageApp').value('config', {
-		'owner_uid': "{php echo !empty($_GPC['owner_uid']) ? intval($_GPC['owner_uid']) : 0}",
-		'register_type': "{php echo $register_type}",
+		'owner_uid': "{php echo !empty($owner_uid) ? $owner_uid : 0}",
+		'register_type': "{php echo !empty($register_type) ? $register_type : 0}",
 		'register_sign': "{php echo !empty($register_sign) ? $register_sign : 'null'}",
 		'image': "{php echo url('utility/code')}",
 		'links': {
@@ -204,4 +205,5 @@
 
 	angular.bootstrap($('.register-mobile'), ['userManageApp']);
 </script>
+
 {template 'common/footer-base'}

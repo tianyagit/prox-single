@@ -18,17 +18,18 @@ if ($do == 'platform') {
 	$cache_last_account_type = cache_load('we7:$cache_last_account_type');
 	if (!empty($cache_last_account_type)) {
 		if ($cache_last_account_type == ACCOUNT_TYPE_SIGN) {
-			header('Location:' . url('home/welcome'));
+			header('Location: ' . url('home/welcome'));
 		} elseif ($cache_last_account_type == WXAPP_TYPE_SIGN) {
-			header('Location:' . url('wxapp/display/home'));
+			header('Location: ' . url('wxapp/display/home'));
 		} elseif ($cache_last_account_type == WEBAPP_TYPE_SIGN) {
-			header('Location:' . url('webapp/home/display'));
+			header('Location: ' . url('webapp/home/display'));
 		} elseif ($cache_last_account_type == PHONEAPP_TYPE_SIGN) {
-			header('Location:' . url('phoneapp/display/home'));
+			header('Location: ' . url('phoneapp/display/home'));
 		}
 	} else {
-		header('Location:' . url('account/display'));
+		header('Location: ' . url('account/display'));
 	}
+	exit();
 }
 
 if ($do == 'display') {
