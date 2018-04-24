@@ -525,7 +525,7 @@ function buildframes($framename = ''){
 				}
 				$frames['wxapp']['section']['wxapp_module']['menu']['module_menu'.$module['mid']] = array(
 					'title' => "<img src='{$module['logo']}'> {$module['title']}",
-					'url' => url('wxapp/display/switch', array('module' => $module['name'], 'version_id' => $version_id)),
+					'url' => url('account/display/switch', array('module' => $module['name'], 'version_id' => $version_id, 'uniacid' => $_W['uniacid'])),
 					'is_display' => 1,
 				);
 			}

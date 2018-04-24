@@ -450,10 +450,14 @@ function user_account_detail_info($uid) {
  * @param $uid string 用户id
  * @return array 模块列表
  */
-function user_modules($uid) {
+function user_modules($uid = 0) {
 	global $_W;
-
 	load()->model('module');
+	
+	if (empty($uid)) {
+		$uid = $_W['uid'];
+	}
+	
 	$modules =cache_load(cache_system_key('user_modules:' . $uid));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
