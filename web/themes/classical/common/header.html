@@ -35,7 +35,7 @@
 					{if $_GPC['active'] == 'privileges' || in_array($_GPC['type'], array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, 'all'))}
 						{php $privileges_active = true}
 					{/if}
-					<li {if $privileges_active} class="active" {/if}><a href="{php echo url('account/display', array('active' => 'privileges'))}">平台</a></li>
+					<li {if $privileges_active} class="active" {/if}><a href="{php echo url('account/display/platform', array('active' => 'privileges'))}">平台</a></li>
 
 					{loop $nav_top_tiled_system $nav}
 						<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
