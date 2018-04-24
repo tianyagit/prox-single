@@ -345,6 +345,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 			if (in_array('-1', $groupids)) {
 				$list[-1] = array('id' => -1, 'name' => '所有服务', 'modules' => array('title' => '系统所有模块'), 'templates' => array('title' => '系统所有模板'));
 			}
+
 			if (in_array('0', $groupids)) {
 				$list[0] = array('id' => 0, 'name' => '基础服务', 'modules' => array('title' => '系统模块'), 'templates' => array('title' => '系统模板'));
 			}
@@ -1197,7 +1198,7 @@ function uni_account_oauth_host() {
 			$oauth_url = $unisetting['oauth']['host'] . '/';
 		} else {
 			$global_unisetting = uni_account_global_oauth();
-			$oauth_url = !empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] . '/' : '';
+			$oauth_url = !empty($global_unisetting['oauth']['host']) ? $global_unisetting['oauth']['host'] . '/' : $oauth_url;
 		}
 	}
 	return $oauth_url;
