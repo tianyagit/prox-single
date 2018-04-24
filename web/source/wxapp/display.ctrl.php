@@ -5,7 +5,9 @@
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('wxapp');
-load()->model('account');
+
+$dos = array('home');
+$do = in_array($do, $dos) ? $do : 'home';
 
 if ($do == 'home') {
 	$last_uniacid = uni_account_last_switch();
