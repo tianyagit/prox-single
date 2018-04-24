@@ -99,7 +99,7 @@ if ($do == 'display') {
 				}
 				break;
 			case ACCOUNT_TYPE_WEBAPP_NORMAL :
-				$account['switchurl'] = url('account/display/switch', array('uniacid' => $account['uniacid'], 'type' => ACCOUNT_TYPE_WEBAPP_NORMAL));
+				$account['switchurl'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
 				break;
 			case ACCOUNT_TYPE_PHONEAPP_NORMAL :
 				$account['versions'] = phoneapp_get_some_lastversions($account['uniacid']);
@@ -135,8 +135,9 @@ if ($do == 'rank' && $_W['isajax'] && $_W['ispost']) {
 
 if ($do == 'switch') {
 	$uniacid = intval($_GPC['uniacid']);
-	$type = intval($_GPC['type']);
 	if (!empty($uniacid)) {
+		$account_info = uni_fetch($uniacid);
+		$type = $account_info['type'];
 		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			$role = permission_account_user_role($_W['uid'], $uniacid);
 			if(empty($role)) {
