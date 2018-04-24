@@ -27,6 +27,8 @@
 							{php $nav_top_tiled_other[]=$nav}
 						{elseif $nav['name']=='custom_help'}
 							{php $nav_top_help=$nav}
+						{else}
+							{php $nav_top_tiled_other[]=$nav}
 						{/if}
 					{/loop}
 
@@ -37,14 +39,18 @@
 
 					{loop $nav_top_tiled_system $nav}
 						<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
-							<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a>
+							<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
+								{$nav['title']}
+							</a>
 						</li>
 					{/loop}
 
 					<ul class="other nav navbar-nav navbar-left">
 						{loop $nav_top_tiled_other $nav}
 						<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
-							<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}> {$nav['title']} </a>
+							<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
+								{$nav['title']}
+							</a>
 						</li>
 						{/loop}
 					</ul>

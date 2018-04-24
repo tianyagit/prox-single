@@ -29,6 +29,8 @@
 						{php $nav_top_tiled_other[]=$nav}
 					{elseif $nav['name']=='custom_help'}
 						{php $nav_top_help=$nav}
+					{else}
+						{php $nav_top_tiled_other[]=$nav}
 					{/if}
 				{/loop}
 				<ul class="nav navbar-nav  navbar-left">
