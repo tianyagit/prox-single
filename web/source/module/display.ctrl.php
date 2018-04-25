@@ -34,8 +34,8 @@ if ($do == 'display') {
 	$module_table = table('module');
 	$module_rank = $module_table->moduleRank();
 	$rank = array();
-	foreach ($user_module as $key => $module_value) {
-		if (!empty($module_value['issystem'])) {
+	foreach ($user_module as $key => $module_info) {
+		if (!empty($module_info['issystem']) || $module_info['welcome_support'] == 2 && $module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
 			unset($user_module[$key]);
 		} else {
 			$rank[] = !empty($module_rank[$key]['rank']) ? $module_rank[$key]['rank'] : 0;
