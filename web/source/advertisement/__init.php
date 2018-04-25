@@ -6,6 +6,7 @@
  * Time: 16:28
  */
 itoast('访问链接已失效！', referer(), 'error');
+header('Location: ' . url('account/display'));
 defined('IN_IA') or exit('Access Denied');
 define('FRAME', 'advertisement');
 if ($do == 'display') {
