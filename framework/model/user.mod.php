@@ -453,11 +453,11 @@ function user_account_detail_info($uid) {
 function user_modules($uid = 0) {
 	global $_W;
 	load()->model('module');
-	
+
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
-	
+
 	$modules =cache_load(cache_system_key('user_modules:' . $uid));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
@@ -536,9 +536,6 @@ function user_modules($uid = 0) {
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
 			$module_info = module_fetch($module);
-			if ($module_info['welcome_support'] == 2 && $module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
-				continue;
-			}
 			if (!empty($module_info)) {
 				$module_list[$module] = $module_info;
 			}
