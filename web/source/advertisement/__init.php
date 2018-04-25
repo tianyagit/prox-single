@@ -5,6 +5,7 @@
  * Date: 2017/1/6
  * Time: 16:28
  */
+itoast('访问链接已失效！', referer(), 'error');
 defined('IN_IA') or exit('Access Denied');
 define('FRAME', 'advertisement');
 if ($do == 'display') {

@@ -795,7 +795,7 @@ $we7_system_menu['site'] = array(
 	'founder' => true,
 );
 
-$we7_system_menu['advertisement'] = array (
+/*$we7_system_menu['advertisement'] = array (
 	'title' => '广告联盟',
 	'icon' => 'wi wi-advert',
 	'url' => url('advertisement/content-provider'),
@@ -819,7 +819,7 @@ $we7_system_menu['advertisement'] = array (
 		),
 	),
 	'founder' => true,
-);
+);*/
 
 $we7_system_menu['appmarket'] = array(
 	'title' => '市场',
