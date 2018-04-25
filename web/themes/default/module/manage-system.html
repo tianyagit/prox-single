@@ -78,7 +78,6 @@
 			</tr>
 			<tr ng-repeat="module in moduleList">
 				<td class="text-left module-img">
-				{{moduleList[module.main_module]}}
 					<img ng-if="module.main_module == ''" ng-src="{{ module.logo }}" class="img-responsive icon"/>
 					<div class="img" ng-if="module.main_module != ''">
 						<img src="" alt="子应用icon" class="plugin-img" ng-src="{{ module.logo }}"/>
