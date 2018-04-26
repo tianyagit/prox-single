@@ -792,7 +792,7 @@ $we7_system_menu['site'] = array(
 			)
 		)
 	),
-//	'founder' => true,
+	'founder' => true,
 );
 
 /*$we7_system_menu['advertisement'] = array (
