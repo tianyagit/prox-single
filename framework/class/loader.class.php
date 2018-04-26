@@ -27,7 +27,6 @@ function table($name) {
 		$table = $section;
 	}
 	$table_classname = "\\We7\\Table\\" . ucfirst($section) . "\\" . ucfirst($table);
-	
 	if (in_array($name, array('modules_cloud', 'modules'))) {
 		return new $table_classname;
 	}
