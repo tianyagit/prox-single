@@ -20,7 +20,7 @@ load()->func('db');
 $dos = array('subscribe', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 
 			'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 
 			'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 
-			'founder_update_modules', 'uninstalled_recycle');
+			'founder_update_modules', 'uninstalled_recycle', 'filter');
 $do = in_array($do, $dos) ? $do : 'installed';
 
 /* sxstart */
@@ -105,9 +105,6 @@ if ($do == 'get_upgrade_info') {
 }
 
 if ($do == 'check_upgrade') {
-	$result = array();
-	$cloud_module_list = array();
-	
 	$module_upgrade = module_upgrade_info();
 	iajax(0, $module_upgrade);
 }
@@ -693,6 +690,14 @@ if ($do == 'installed') {
 		}
 		unset($module);
 	}
+}
+
+//获取有新版和新分支的应用
+if ($do == 'filter') {
+	$modulelist = array();
+	$modulelist = module_has_upgrade_list();
+	print_r($modulelist);exit;
+	iajax(0, $modulelist);
 }
 
 if ($do == 'not_installed') {
