@@ -692,14 +692,6 @@ if ($do == 'installed') {
 	}
 }
 
-//获取有新版和新分支的应用
-if ($do == 'filter') {
-	$modulelist = array();
-	$modulelist = module_has_upgrade_list();
-	print_r($modulelist);exit;
-	iajax(0, $modulelist);
-}
-
 if ($do == 'not_installed') {
 	if (empty($_W['isfounder'])) {
 		itoast('非法访问！', referer(), 'info');

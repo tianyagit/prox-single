@@ -1149,8 +1149,3 @@ function module_upgrade_info($modulelist = array()) {
 	
 	return $result;
 }
-
-function module_has_upgrade_list() {
-	table('modules_cloud')->getHasUpgradeModule();
-	return array();
-}

@@ -20,9 +20,4 @@ class Cloud extends \We7Table {
 		}
 		return $this->query->where('name', $name)->getall('name');
 	}
-	
-	public function getHasUpgradeModule() {
-		$list = $this->query->where('has_new_version', '1')->whereor('has_new_branch', '1')->getall('name');
-		print_r($list);exit;
-	}
 }
