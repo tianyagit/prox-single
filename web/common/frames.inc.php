@@ -792,7 +792,7 @@ $we7_system_menu['site'] = array(
 			)
 		)
 	),
-	'founder' => true,
+//	'founder' => true,
 );
 
 /*$we7_system_menu['advertisement'] = array (
@@ -835,7 +835,8 @@ $we7_system_menu['help'] = array(
 	'icon' => 'wi wi-market',
 	'url' => url('help/display'),
 	'section' => array(),
-	'blank' => false
+	'blank' => false,
+	'founder' => true,
 );
 
 $we7_system_menu['custom_help'] = array(
@@ -844,7 +845,8 @@ $we7_system_menu['custom_help'] = array(
 	'url' => url('help/display/custom'),
 	'section' => array(),
 	'blank' => false,
-	'is_display' => 0
+	'is_display' => 0,
+	'founder' => true,
 );
 
 /* xstart */
