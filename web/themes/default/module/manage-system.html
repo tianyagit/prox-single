@@ -57,12 +57,12 @@
 				<th class="text-right">
 					{if permission_check_account_user('see_module_manage_system_ugrade')}
 					<div class="we7-form">
-						<input type="checkbox" name="" ng-click="filter('new_branch')" id="filter-1" value="1">
+						<input type="checkbox" name="" ng-click="filter()"  ng-model="search.newBranch" id="filter-1" value="1">
 						<label class="checkbox-inline" for="filter-1">
 							新分支应用
 						</label>
 						<span class="we7-margin-right"></span>
-						<input type="checkbox" name="" ng-click="filter('new_version')" id="filter-2" value="2">
+						<input type="checkbox" name="" ng-click="filter()" ng-model="search.newVersion" id="filter-2" value="1">
 						<label class="checkbox-inline" for="filter-2">
 							有升级的应用
 						</label>
@@ -115,136 +115,7 @@
 			</div>
 		</div>
 	</form>
-
-	<div class="modal fade" id="module-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog we7-modal-dialog" style="width:800px">
-			<div class="modal-content">
-				<form action="" method="post" enctype="multipart/form-data" class="form-horizontal form" id="form-info">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						<h4 class="modal-title">编辑模块信息</h4>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块标题</label>
-							<div class="col-sm-10">
-								<input type="text" name="title" ng-model="moduleOriginal.title" class="form-control">
-								<span class="help-block">模块的名称, 显示在用户的模块列表中. 不要超过10个字符</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块简述</label>
-							<div class="col-sm-10">
-								<input type="text" name="ability" ng-model="moduleOriginal.ability" class="form-control">
-								<span class="help-block">模块功能描述, 使用简单的语言描述模块的作用, 来吸引用户</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块介绍</label>
-							<div class="col-sm-10">
-								<textarea type="text" name="description" ng-model="moduleOriginal.description" class="form-control" rows="5">{{ moduleinfo.description }}</textarea>
-								<span class="help-block">模块详细描述, 详细介绍模块的功能和使用方法</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块缩略图</label>
-							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleOriginal.logo }" style="width: 100px;height: 100px;">
-									<img ng-src="{{ moduleOriginal.logo }}" ng-if="moduleOriginal.logo">
-									<a href="javascript:;" class="input-addon" ng-hide="moduleOriginal.logo" ng-click="changePicture('logo')"><span>+</span></a>
-									<input type="hidden" name="thumb">
-									<div class="cover-dark">
-										<a href="javascript:;" class="cut" ng-click="changePicture('logo')">更换</a>
-										<a href="javascript:;" class="del" ng-click="delPicture('logo')"><i class="fa fa-times"></i></a>
-									</div>
-								</div>
-								<span class="help-block">用 48*48 的图片来让你的模块更吸引眼球吧。仅支持jpg格式</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"> 模块封面</label>
-							<div class="col-sm-10">
-								<div class="we7-input-img" ng-class="{ 'active' : moduleOriginal.preview}"  style="width: 100px;height: 100px;">
-									<img ng-src="{{ moduleOriginal.preview }}">
-									<a href="javascript:;" class="input-addon" ng-click="changePicture('preview')"><span>+</span></a>
-									<input type="hidden" name="thumb">
-									<div class="cover-dark">
-										<a href="javascript:;" class="cut" ng-click="changePicture('preview')">更换</a>
-										<a href="javascript:;" class="del" ng-click="delPicture('preview')"><i class="fa fa-times"></i></a>
-									</div>
-								</div>
-								<span class="help-block">模块封面, 大小为 600*350, 更好的设计将会获得官方推荐位置。仅支持jpg格式</span>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-						<button  class="btn btn-primary" type="text" name="submit" ng-click="save()" data-dismiss="modal">保存</button>
-						<input type="hidden" name="token" value="c781f0df">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="upgrade-info"  tabindex="-1" role="dialog" aria-labelledby="myModalLabels" aria-hidden="true">
-		<div class="modal-dialog we7-modal-dialog" style="width:800px">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">模块分支版本信息</h4>
-				</div>
-				<div class="modal-body">
-					<div style="margin:-30px -30px 30px;" class="modal-alert">
-						<div class="alert alert-info">
-							<p><i class="wi  wi-info-sign"></i> 应用分支按照等级顺序排列。</p>
-							<p><i class="wi  wi-info-sign"></i> 如果要升级到其它分支最新版本，需要花费对应分支价格数量的交易币。</p>
-							<p><i class="wi  wi-info-sign"></i> 已购买的模块分支可以免费升级到该分支的最新版本。</p>
-						</div>
-					</div>
-					<table class="table we7-table vertical-middle">
-						<col width="">
-						<col width="180px">
-						<col width="400px">
-						<tr>
-							<th colspan="3" class="text-left">{{ module_list[upgradeInfo.name].title }}---模块分支信息</th>
-						</tr>
-						<tr>
-							<td class="text-left">
-								分支名称
-							</td>
-							<td class="text-center">
-								升级价格
-							</td>
-							<td class="text-right">
-								操作
-							</td>
-						</tr>
-						<tr ng-repeat="branch in upgradeInfo.branches">
-							<td class="text-left">  {{ branch.name }}</td>
-							<td class="text-center">  {{  branch.displayorder > upgradeInfo.site_branch.displayorder ? branch.upgrade_price : 0 }}元</td>
-
-							<td>
-								<div class="link-group">
-									<a tabindex="2" href="javascript:;" role="button" data-toggle="popover" title="{{ module_list[upgradeInfo.name].title }}升级说明" data-container="#upgrade-info" data-placement="bottom" data-trigger="focus" data-html="true" data-content="{{ branch.version.description }}">升级说明</a>
-									<a ng-href="{{ './index.php?c=cloud&a=process&m='+upgradeInfo.name+'&is_upgrade=1' }}" onclick="return confirm('确定要升级到此分之的最新版吗？')" ng-if="branch.id == upgradeInfo.site_branch.id">免费升级到【{{branch.name}}】最新版本</a>
-									<a href="javascript:;" ng-click="upgrade(branch.upgrade_price, upgradeInfo.name, branch.id)" ng-if="branch.displayorder > upgradeInfo.site_branch.displayorder">付费升级到【{{branch.name}}】最新版本</a>
-								</div>
-							</td>
-							<script>
-								$('[data-toggle="popover"]').popover();
-							</script>
-						</tr>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-				</div>
-			</div>
-		</div>
-	</div>
 </div>
-
 <script>
 	require(['fileUploader'], function() {
 		angular.module('moduleApp').value('config', {

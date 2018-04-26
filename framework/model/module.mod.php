@@ -1086,7 +1086,7 @@ function module_upgrade_info($modulelist = array()) {
 		);
 		
 		$manifest = ext_module_manifest($modulename);
-		if (!empty($manifest)&& is_array($manifest)) {
+		if (!empty($manifest) && is_array($manifest)) {
 			if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
 				$module_upgrade_data['has_new_version'] = 1;
 				
