@@ -49,6 +49,5 @@ if ($do == 'display') {
 		setting_save($_W['setting']['thirdlogin'], 'thirdlogin');
 	}
 	$siteroot_parse_array = parse_url($_W['siteroot']);
-	$host = !empty($url['host']) ? $url['host'] : '';
 }
 template('system/thirdlogin');
