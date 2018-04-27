@@ -392,9 +392,9 @@ function uni_groups($groupids = array(), $show_all = false) {
 				}
 
 				if (!empty($row['templates'])) {
-					$templates = iunserializer($row['templates']);
-					if (is_array($templates)) {
-						$row['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
+					$row['templates'] = iunserializer($row['templates']);
+					if (is_array($row['templates']) && !empty($row['templates'])) {
+						$row['templates'] = pdo_getall('site_templates', array('id' => $row['templates']), array('id', 'name', 'title'), 'name');
 					}
 				}
 			}

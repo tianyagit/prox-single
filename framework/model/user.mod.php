@@ -219,9 +219,11 @@ function user_single($user_or_uid) {
 		$record['clerk_type'] = '2';
 	}
 	$third_info = pdo_getall('users_bind', array('uid' => $record['uid']), array(), 'third_type');
-	$record['qq_openid'] = $third_info[USER_REGISTER_TYPE_QQ]['bind_sign'];
-	$record['wechat_openid'] = $third_info[USER_REGISTER_TYPE_WECHAT]['bind_sign'];
-	$record['mobile'] = $third_info[USER_REGISTER_TYPE_MOBILE]['bind_sign'];
+	if (!empty($third_info) && is_array($third_info)) {
+		$record['qq_openid'] = $third_info[USER_REGISTER_TYPE_QQ]['bind_sign'];
+		$record['wechat_openid'] = $third_info[USER_REGISTER_TYPE_WECHAT]['bind_sign'];
+		$record['mobile'] = $third_info[USER_REGISTER_TYPE_MOBILE]['bind_sign'];
+	}
 	return $record;
 }
 
