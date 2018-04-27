@@ -331,7 +331,6 @@ $apis['file_upload'] = array(
 
 
 if ($do == 'wechat_upload') {
-
 	$type = trim($_GPC['upload_type']);
 	$mode = trim($_GPC['mode']);
 	if($type == 'image' || $type == 'thumb') {
@@ -402,7 +401,7 @@ if ($do == 'wechat_upload') {
 		if($type == 'video') {
 			$description = array(
 				'title' => $originname,
-				'introduction' =>  $originname,
+				'introduction' => $originname,
 			);
 			$data['description'] = urldecode(json_encode($description));
 		}
