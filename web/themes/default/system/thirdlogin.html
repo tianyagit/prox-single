@@ -117,7 +117,7 @@
 		<tr>
 			<td class="table-label">网站地址:</td>
 			<td>
-				<span>{$url['host']}</span>
+				<span>{$siteroot_parse_array['host']}</span>
 			</td>
 			<td>
 				<div class="link-group"><a href="javascript:;" id="copy-0" clipboard supported="supported" text="url.host" on-copied="success('0')">点击复制</a></div>
@@ -223,7 +223,7 @@
 			'save_setting': "{php echo url('system/thirdlogin/save_setting')}",
 		},
 		'url' : {
-			'host' : "{$url['host']}",
+			'host' : "{$siteroot_parse_array['host']}",
 		},
 	});
 	angular.bootstrap($('#js-system-thirdparty-login'), ['systemApp']);
