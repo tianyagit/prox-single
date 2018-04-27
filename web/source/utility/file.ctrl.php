@@ -401,8 +401,8 @@ if ($do == 'wechat_upload') {
 		);
 		if($type == 'video') {
 			$description = array(
-				'title' => $filename,
-				'introduction' =>  $filename,
+				'title' => $originname,
+				'introduction' =>  $originname,
 			);
 			$data['description'] = urldecode(json_encode($description));
 		}
@@ -505,9 +505,6 @@ if ($do == 'wechat_upload') {
 	$result['mode'] = $mode;
 	die(json_encode($result));
 }
-
-
-
 
 $type = $_GPC['type']; $resourceid = intval($_GPC['resource_id']); $uid = intval($_W['uid']);
 $acid = intval($_W['acid']);
