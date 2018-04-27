@@ -690,6 +690,8 @@ if ($do == 'installed') {
 		}
 		unset($module);
 	}
+	
+	$module_uninstall_total = 
 }
 
 if ($do == 'not_installed') {

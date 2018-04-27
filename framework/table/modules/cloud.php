@@ -11,7 +11,23 @@ class Cloud extends \We7Table {
 		'name',
 		'has_new_branch',
 		'has_new_version',
-		'lastupdatetime',
+		'install_status',
+		'account_support',
+		'wxapp_support',
+		'webapp_support',
+		'phoneapp_support',
+		'welcome_support',
+	);
+	protected $default = array(
+		'name' => '',
+		'has_new_branch' => 0,
+		'has_new_version' => 0,
+		'install_status' => 0,
+		'account_support' => 1,
+		'wxapp_support' => 1,
+		'webapp_support' => 1,
+		'phoneapp_support' => 1,
+		'welcome_support' => 1,
 	);
 	
 	public function getByName($name) {

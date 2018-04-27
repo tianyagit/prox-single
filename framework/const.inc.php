@@ -173,6 +173,16 @@ define('MODULE_SUPPORT_WEBAPP_NAME', 'webapp_support');
 define('MODULE_SUPPORT_PHONEAPP_NAME', 'phoneapp_support');
 define('MODULE_SUPPORT_SYSTEMWELCOME_NAME', 'welcome_support');
 
+//模块安装来源
+//本地安装 
+define('MODULE_LOCAL_INSTALL', '1');
+//本地未安装
+define('MODULE_LOCAL_UNINSTALL', '2');
+//线上安装
+define('MODULE_CLOUD_INSTALL', '3');
+//线上未安装 
+define('MODULE_CLOUD_UNINSTALL', '4');
+
 //权限类型
 define('PERMISSION_ACCOUNT', 'system');
 define('PERMISSION_WXAPP', 'wxapp');

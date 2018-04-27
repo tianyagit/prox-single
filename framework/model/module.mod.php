@@ -1073,23 +1073,55 @@ function module_upgrade_info($modulelist = array()) {
 	if (empty($modulelist)) {
 		$modulelist = table('modules')->getall('name');
 	}
+	
+	if (empty($modulelist)) {
+		return array();
+	}
+	
+	cloud_prepare();
+	$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
+	$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
+	
+	unset($cloud_m_query_module['pirate_apps']);
+	
 	foreach ($modulelist as $modulename => $module) {
 		if (!empty($module['issystem'])) {
 			unset($modulelist[$modulename]);
 			continue;
 		}
+		
 		$module_upgrade_data = array(
 			'name' => $modulename,
 			'has_new_version' => 0,
 			'has_new_branch' => 0,
-			'lastupdatetime' => TIMESTAMP,
 		);
 		
 		$manifest = ext_module_manifest($modulename);
-		if (!empty($manifest) && is_array($manifest)) {
+		if (!empty($manifest)) {
+			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
+		} elseif ($cloud_m_query_module[$modulename]) {
+				$manifest_cloud = $cloud_m_query_module[$modulename];
+				
+				$manifest = array(
+					'application' => array(
+						'version' => $manifest_cloud['version'],
+					),
+					'platform' => array(
+						'supports' => array(
+							
+						)
+					),
+				);
+				//云服务模块已在本地安装，unset后方便后面排查未安装模块
+				unset($cloud_m_query_module[$modulename]);
+				$module_upgrade_data['install_status'] = MODULE_CLOUD_INSTALL;
+			}
+		}
+		
+		if (!empty($manifest)) {
 			if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
 				$module_upgrade_data['has_new_version'] = 1;
-				
+			
 				$result[$modulename] = array(
 					'name' => $modulename,
 					'new_version' => 1,
@@ -1097,23 +1129,15 @@ function module_upgrade_info($modulelist = array()) {
 					'from' => 'local',
 				);
 			}
-			
-			$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
-			if (empty($module_cloud_upgrade)) {
-				table('modules_cloud')->fill($module_upgrade_data)->save();
-			} else {
-				table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
-			}
-			
-			//过滤掉本地存在manifest.xml的模块，剩余在通过cloud检测
-			unset($modulelist[$modulename]);
+		} else {
+			//本地安装模块，本地没有manifest，接口也不存在，默认为通过本地安装
+			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
 		}
+		
 	}
 	unset($modulename);
 
-	cloud_prepare();
-	$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
-	unset($cloud_m_query_module['pirate_apps']);
+	
 	
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $modulename => $module_local) {
@@ -1121,9 +1145,15 @@ function module_upgrade_info($modulelist = array()) {
 				'name' => $modulename,
 				'has_new_version' => 0,
 				'has_new_branch' => 0,
-				'lastupdatetime' => TIMESTAMP,
 			);
 			$module_cloud = $cloud_m_query_module[$modulename];
+			unset($cloud_m_query_module[$modulename]);
+			
+			if (!empty($module_cloud)) {
+				$module_upgrade_data['install_status'] = MODULE_CLOUD_INSTALL;
+			} else {
+				$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
+			}
 			
 			if (version_compare($module_local['version'], $module_cloud['version']) == '-1') {
 				$module_upgrade_data['has_new_version'] = 1;
@@ -1134,11 +1164,29 @@ function module_upgrade_info($modulelist = array()) {
 			}
 			if (!empty($module_cloud['branches'])) {
 				$module_upgrade_data['has_new_branch'] = 1;
+				
 				$result[$modulename]['new_branch'] = 1;
 			}
 			
 			$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
 			
+			if (empty($module_cloud_upgrade)) {
+				table('modules_cloud')->fill($module_upgrade_data)->save();
+			} else {
+				table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
+			}
+		}
+	}
+	
+	if (!empty($cloud_m_query_module)) {
+		foreach ($cloud_m_query_module as $modulename => $module) {
+			$module_upgrade_data = array(
+				'name' => $modulename,
+				'has_new_version' => 0,
+				'has_new_branch' => 0,
+				'install_status' => MODULE_CLOUD_UNINSTALL,
+			);
+			$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
 			if (empty($module_cloud_upgrade)) {
 				table('modules_cloud')->fill($module_upgrade_data)->save();
 			} else {
