@@ -22,7 +22,14 @@ if ($do == 'platform') {
 		} elseif ($cache_last_account_type == WXAPP_TYPE_SIGN) {
 			header('Location: ' . url('wxapp/display/home'));
 		} elseif ($cache_last_account_type == WEBAPP_TYPE_SIGN) {
-			header('Location: ' . url('webapp/home/display'));
+			$cache_key = cache_system_key(CACHE_KEY_ACCOUNT_SWITCH, $_GPC['__switch']);
+			$cache_lastaccount = cache_load($cache_key);
+			$webapp_info = table('account')->getUniAccountByUniacid($cache_lastaccount[WEBAPP_TYPE_SIGN]);
+			if (!empty($webapp_info)) {
+				header('Location: ' . url('webapp/home/display'));
+			} else {
+				header('Location: ' . url('account/display'));
+			}
 		} elseif ($cache_last_account_type == PHONEAPP_TYPE_SIGN) {
 			header('Location: ' . url('phoneapp/display/home'));
 		}
