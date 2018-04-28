@@ -44,6 +44,7 @@ load()->func('communication');
 
 
 
+
 define('CLIENT_IP', getip());
 
 $_W['config'] = $config;
@@ -146,18 +147,17 @@ if(DEVELOPMENT) {
 	ini_set('display_errors', '1');
 	error_reporting(E_ALL ^ E_NOTICE);
 }
-$sentry_file = dirname(__file__) . '/library/sentry/Raven/Autoloader.php';
-if ($_W['config']['setting']['development'] == 2 && file_exists($sentry_file)) {
-	error_reporting(E_ALL ^ E_NOTICE);
-	if (!class_exists('Raven_Autoloader')) {
-		require $sentry_file;
+if ($_W['config']['setting']['development'] == 2) {
+	load()->library('sentry');
+	if (class_exists('Raven_Autoloader')) {
+		error_reporting(E_ALL ^ E_NOTICE);
+		Raven_Autoloader::register();
+		$client = new Raven_Client('http://8d52c70dbbed4133b72e3b8916663ae3:0d84397f72204bf1a3f721edf9c782e1@sentry.w7.cc/6');
+		$error_handler = new Raven_ErrorHandler($client);
+		$error_handler->registerExceptionHandler();
+		$error_handler->registerErrorHandler();
+		$error_handler->registerShutdownFunction();
 	}
-	Raven_Autoloader::register();
-	$client = new Raven_Client('http://8d52c70dbbed4133b72e3b8916663ae3:0d84397f72204bf1a3f721edf9c782e1@sentry.w7.cc/6');
-	$error_handler = new Raven_ErrorHandler($client);
-	$error_handler->registerExceptionHandler();
-	$error_handler->registerErrorHandler();
-	$error_handler->registerShutdownFunction();
 }
 
 $_W['os'] = Agent::deviceType();
