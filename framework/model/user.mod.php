@@ -689,7 +689,7 @@ function user_invite_register_url($uid = 0) {
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
-	return $_W['siteroot'] . '/web/index.php?c=user&a=register&owner_uid=' . $uid;
+	return $_W['siteroot'] . 'web/index.php?c=user&a=register&owner_uid=' . $uid;
 }
 
 /**
