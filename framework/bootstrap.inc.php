@@ -148,16 +148,16 @@ if(DEVELOPMENT) {
 	error_reporting(E_ALL ^ E_NOTICE);
 }
 if ($_W['config']['setting']['development'] == 2) {
-	error_reporting(E_ALL ^ E_NOTICE);
-	if (!class_exists('Raven_Autoloader')) {
-		load()->library('sentry');
+	load()->library('sentry');
+	if (class_exists('Raven_Autoloader')) {
+		error_reporting(E_ALL ^ E_NOTICE);
+		Raven_Autoloader::register();
+		$client = new Raven_Client('http://8d52c70dbbed4133b72e3b8916663ae3:0d84397f72204bf1a3f721edf9c782e1@sentry.w7.cc/6');
+		$error_handler = new Raven_ErrorHandler($client);
+		$error_handler->registerExceptionHandler();
+		$error_handler->registerErrorHandler();
+		$error_handler->registerShutdownFunction();
 	}
-	Raven_Autoloader::register();
-	$client = new Raven_Client('http://8d52c70dbbed4133b72e3b8916663ae3:0d84397f72204bf1a3f721edf9c782e1@sentry.w7.cc/6');
-	$error_handler = new Raven_ErrorHandler($client);
-	$error_handler->registerExceptionHandler();
-	$error_handler->registerErrorHandler();
-	$error_handler->registerShutdownFunction();
 }
 
 $_W['os'] = Agent::deviceType();
