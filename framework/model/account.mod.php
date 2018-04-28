@@ -335,7 +335,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 	global $_W;
 	$cachekey = cache_system_key(CACHE_KEY_UNI_GROUP);
 	$list = cache_load($cachekey);
-	
+
 	if (empty($list)) {
 		$condition = ' WHERE uniacid = 0';
 		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
@@ -352,18 +352,21 @@ function uni_groups($groupids = array(), $show_all = false) {
 
 		if (!empty($list)) {
 			foreach ($list as $k => &$row) {
-				
+
 				if (!empty($row['modules'])) {
 					$modules = iunserializer($row['modules']);
 
 					$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = array();
-					
+
 					if (!is_array($modules)) {
 						continue;
 					}
-					
+
 					foreach ($modules as $modulename) {
 						$module = module_fetch($modulename);
+						if (empty($module)) {
+							continue;
+						}
 						if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 							$row['wxapp'][] = $modulename;
 						}
@@ -392,7 +395,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 				}
 
 				if (!empty($row['templates'])) {
-					$row['templates'] = iunserializer($row['templates']);
+					$row['templates'] = (array)iunserializer($row['templates']);
 					if (is_array($row['templates']) && !empty($row['templates'])) {
 						$row['templates'] = pdo_getall('site_templates', array('id' => $row['templates']), array('id', 'name', 'title'), 'name');
 					}
@@ -417,7 +420,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 		}
 		$group_list = $list;
 	}
-	
+
 	$module_section = array('modules', 'phoneapp', 'wxapp', 'webapp');
 	if (!empty($group_list)) {
 		foreach ($group_list as $id => $group) {
@@ -425,7 +428,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 				if (!empty($group_list[$id][$section])) {
 					$modules = $group_list[$id][$section];
 					$group_list[$id][$section] = array();
-						
+
 					foreach ($modules as $modulename) {
 						$group_list[$id][$section][$modulename] = module_fetch($modulename);
 					}
