@@ -41,6 +41,7 @@ load()->model('module');
 load()->library('agent');
 load()->classs('db');
 load()->func('communication');
+load()->library('sentry');
 
 
 
@@ -146,8 +147,7 @@ if(DEVELOPMENT) {
 	ini_set('display_errors', '1');
 	error_reporting(E_ALL ^ E_NOTICE);
 }
-$sentry_file = dirname(__file__) . '/library/sentry/Raven/Autoloader.php';
-if ($_W['config']['setting']['development'] == 2 && file_exists($sentry_file)) {
+if ($_W['config']['setting']['development'] == 2) {
 	error_reporting(E_ALL ^ E_NOTICE);
 	if (!class_exists('Raven_Autoloader')) {
 		require $sentry_file;
