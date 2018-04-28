@@ -41,7 +41,7 @@ load()->model('module');
 load()->library('agent');
 load()->classs('db');
 load()->func('communication');
-load()->library('sentry');
+
 
 
 
