@@ -339,12 +339,10 @@ function uni_groups($groupids = array(), $show_all = false) {
 	if (empty($list)) {
 		$condition = ' WHERE uniacid = 0';
 		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
-
 		if (!empty($groupids)) {
 			if (in_array('-1', $groupids)) {
 				$list[-1] = array('id' => -1, 'name' => '所有服务', 'modules' => array('title' => '系统所有模块'), 'templates' => array('title' => '系统所有模板'));
 			}
-
 			if (in_array('0', $groupids)) {
 				$list[0] = array('id' => 0, 'name' => '基础服务', 'modules' => array('title' => '系统模块'), 'templates' => array('title' => '系统模板'));
 			}
@@ -352,16 +350,12 @@ function uni_groups($groupids = array(), $show_all = false) {
 
 		if (!empty($list)) {
 			foreach ($list as $k => &$row) {
-
 				if (!empty($row['modules'])) {
-					$modules = iunserializer($row['modules']);
-
+					$modules = (array)iunserializer($row['modules']);
 					$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = array();
-
-					if (!is_array($modules)) {
+					if (empty($modules)) {
 						continue;
 					}
-
 					foreach ($modules as $modulename) {
 						$module = module_fetch($modulename);
 						if (empty($module)) {
@@ -370,21 +364,17 @@ function uni_groups($groupids = array(), $show_all = false) {
 						if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 							$row['wxapp'][] = $modulename;
 						}
-
 						if ($module['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
 							$row['webapp'][] = $modulename;
 						}
-
 						if ($module['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP) {
 							$row['phoneapp'][] = $modulename;
 						}
-
 						if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
 							if (!empty($module['main_module'])) {
 								continue;
 							}
 							$row['modules'][] = $modulename;
-
 							if (!empty($module['plugin_list'])) {
 								foreach ($module['plugin_list'] as $plugin) {
 									$row['modules'][] = $plugin;
@@ -396,7 +386,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 
 				if (!empty($row['templates'])) {
 					$row['templates'] = (array)iunserializer($row['templates']);
-					if (is_array($row['templates']) && !empty($row['templates'])) {
+					if (!empty($row['templates'])) {
 						$row['templates'] = pdo_getall('site_templates', array('id' => $row['templates']), array('id', 'name', 'title'), 'name');
 					}
 				}
