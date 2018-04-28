@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('mc');
 
-$dos = array('openid', 'userinfo', 'touch');
+$dos = array('openid', 'userinfo', 'check');
 $do = in_array($do, $dos) ? $do : 'openid';
 
 $account_api = WeAccount::create();
@@ -18,6 +18,10 @@ if ($do == 'openid') {
 	 */
 	$code = $_GPC['code'];
 	$openid = $_GPC['openid'];
+	
+	if (empty($openid) && !empty($_W['openid'])) {
+		$openid = $_W['openid'];
+	}
 	
 	if (empty($_W['account']['oauth']) || (empty($code) && empty($openid))) {
 		exit('通信错误，请在微信中重新发起请求');
@@ -134,4 +138,10 @@ if ($do == 'openid') {
 	unset($member['password']);
 	unset($member['salt']);
 	$account_api->result(0, '', $member);
+} elseif ($do == 'check') {
+	if (!empty($_W['openid'])) {
+		$account_api->result(0);
+	} else {
+		$account_api->result(1, 'session失效，请重新发起登录请求');
+	}
 }
