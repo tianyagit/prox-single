@@ -13,11 +13,25 @@ $do = in_array($do, $dos) ? $do : 'openid';
 
 $account_api = WeAccount::create();
 if ($do == 'openid') {
+	/**
+	 * 用户可通过code码或是Openid来获取用户信息
+	 */
 	$code = $_GPC['code'];
-	if (empty($_W['account']['oauth']) || empty($code)) {
+	$openid = $_GPC['openid'];
+	
+	if (empty($_W['account']['oauth']) || (empty($code) && empty($openid))) {
 		exit('通信错误，请在微信中重新发起请求');
 	}
-
+	
+	if (!empty($openid)) {
+		$_SESSION['openid'] = $oauth['openid'];
+		$fans = mc_fansinfo($openid);
+		if (!empty($fans)) {
+			$account_api->result(0, '', array('sessionid' => $_W['session_id'], 'userinfo' => $fans));
+		} else {
+			$account_api->result(1, 'openid不存在');
+		}
+	}
 	$oauth = $account_api->getOauthInfo($code);
 	if (!empty($oauth) && !is_error($oauth)) {
 		$_SESSION['openid'] = $oauth['openid'];
@@ -65,7 +79,7 @@ if ($do == 'openid') {
 			$_SESSION['uid'] = $uid;
 			pdo_insert('mc_mapping_fans', $record);
 		}
-		$account_api->result(0, '', array('sessionid' => $_W['session_id']));
+		$account_api->result(0, '', array('sessionid' => $_W['session_id'], 'userinfo' => $fans, 'openid' => $oauth['openid']));
 	} else {
 		$account_api->result(1, $oauth['message']);
 	}
