@@ -79,7 +79,7 @@ if ($do == 'openid') {
 			$_SESSION['uid'] = $uid;
 			pdo_insert('mc_mapping_fans', $record);
 		}
-		$account_api->result(0, '', array('sessionid' => $_W['session_id'], 'openid' => $oauth['openid']));
+		$account_api->result(0, '', array('sessionid' => $_W['session_id'], 'userinfo' => $fans, 'openid' => $oauth['openid']));
 	} else {
 		$account_api->result(1, $oauth['message']);
 	}
