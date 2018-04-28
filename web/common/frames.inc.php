@@ -7,6 +7,13 @@ defined('IN_IA') or exit('Access Denied');
 
 $we7_system_menu = array();
 
+$we7_system_menu['platform'] = array(
+	'title' => '平台',
+	'icon' => 'wi wi-platform',
+	'url' => url('account/display/platform'),
+	'section' => array(),
+);
+
 $we7_system_menu['account'] = array(
 	'title' => '公众号',
 	'icon' => 'wi wi-white-collar',
