@@ -451,7 +451,7 @@ class WeEngine {
 			foreach ($subscribe[$this->message['type']] as $modulename) {
 				//fsockipen可用时，设置timeout为0可以无需等待高效请求
 				//部分nginx+apache的服务器由于Nginx设置不支持为0的写法，故兼容为10秒
-				//发现部分用户请求127.0.0.1无法请求，报错误404，故再增加完整URL兼容写法
+				//发现部分用户请求127.0.0.1无法请求，报错误7或其他，故再增加完整URL兼容写法
 				$params = array(
 					'i' => $GLOBALS['uniacid'],
 					'modulename' => $modulename,
