@@ -18,6 +18,7 @@
 				{php global $top_nav}
 				{php $nav_top_fold=array()}
 				{php $nav_top_tiled=array()}
+				{php $nav_custom=array()}
 				{php $platform_url=url('account/display')}
 				{php $nav_top_fold[] = array('name' => 'all', 'title'=>'全部', 'type' => 'all', 'url' => $platform_url)}
 				{loop $top_nav $nav}
@@ -29,6 +30,8 @@
 						{php $nav_top_tiled_other[]=$nav}
 					{elseif $nav['name']=='custom_help'}
 						{php $nav_top_help=$nav}
+					{else}
+						{php $nav_top_tiled_other[]=$nav}
 					{/if}
 				{/loop}
 				<ul class="nav navbar-nav  navbar-left">

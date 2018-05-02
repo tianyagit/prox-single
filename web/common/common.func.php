@@ -625,6 +625,7 @@ function buildframes($framename = ''){
 			'url' => $menu['url'],
 			'blank' => $menu['blank'],
 			'icon' => $menu['icon'],
+			'is_display' => $menu['is_display'],
 		);
 	}
 	return !empty($framename) ? ($framename == 'system_welcome' ? $frames['account'] : $frames[$framename]) : $frames;
