@@ -53,7 +53,9 @@ class StoreModuleSite extends WeModuleSite {
 			$order = pdo_get('site_store_order', array('id' => $params['tid'], 'type' => 1));
 			if(!empty($order)) {
 				$goods = pdo_get('site_store_goods', array('id' => $order['goodsid']));
-				pdo_update('site_store_order', array('type' => 3), array('id' => $params['tid']));
+				$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goods['id'], 'buyerid' => $order['buyerid'], 'uniacid' => $order['uniacid'], 'type' => STORE_ORDER_FINISH), 'max(endtime)');
+				$endtime = strtotime('+' . $order['duration'] . $goods['unit'], max($history_order_endtime, time()));
+				pdo_update('site_store_order', array('type' => 3, 'endtime' => $endtime), array('id' => $params['tid']));
 				if (in_array($goods['type'], array(STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))) {
 					$account_type = $goods['type'] == STORE_TYPE_ACCOUNT_RENEW ? 'uniacid' : 'wxapp';
 					$account_num = $goods['type'] == STORE_TYPE_ACCOUNT_RENEW ? $goods['account_num'] : $goods['wxapp_num'];
@@ -575,8 +577,8 @@ class StoreModuleSite extends WeModuleSite {
 				'wxapp' => intval($_GPC['wxapp'])
 			);
 			if (in_array($goods_info['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE))) {
-				$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid), 'max(endtime)');
-				$order['endtime'] = strtotime('+' . $duration . $goods_info['unit'],  max($history_order_endtime, time()));
+				$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH), 'max(endtime)');
+				$order['endtime'] = strtotime('+' . $duration . $goods_info['unit'], max($history_order_endtime, time()));
 			}
 			if (in_array($goods_info['type'], array(STORE_TYPE_WXAPP, STORE_TYPE_WXAPP_RENEW))) {
 				$order['wxapp'] = $order['uniacid'];
@@ -613,7 +615,9 @@ class StoreModuleSite extends WeModuleSite {
 				itoast ($message, referer (), 'info');
 			} else {
 				if ($order['amount'] == 0) {
-					pdo_update('site_store_order', array('type' => 3), array('id' => $order['id']));
+					$history_order_endtime = pdo_getcolumn('site_store_order', array('goodsid' => $goods['id'], 'buyerid' => $_W['uid'], 'uniacid' => $order['uniacid'], 'type' => STORE_ORDER_FINISH), 'max(endtime)');
+					$endtime = strtotime('+' . $order['duration'] . $goods['unit'], max($history_order_endtime, time()));
+					pdo_update('site_store_order', array('type' => 3, 'endtime' => $endtime), array('id' => $order['id']));
 					pdo_update('core_paylog', array('status' => 1), array('uniontid' => $order['orderid']));
 					if (in_array($goods['type'], array(STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))) {
 						$account_type = $goods['type'] == STORE_TYPE_ACCOUNT_RENEW ? 'uniacid' : 'wxapp';
@@ -930,7 +934,7 @@ class StoreModuleSite extends WeModuleSite {
 		if (empty($uniacid) || empty($goodsid) && empty($duration) && empty($unit)) {
 			iajax(-1, '提交数据不完整!');
 		}
-		$endtime_old = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid), 'max(endtime)');
+		$endtime_old = pdo_getcolumn('site_store_order', array('goodsid' => $goodsid, 'buyerid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH), 'max(endtime)');
 		$endtime_new = strtotime('+' . $duration . $unit, max($endtime_old, time()));
 		iajax(0, date('Y-m-d H:i:s', $endtime_new));
 	}
