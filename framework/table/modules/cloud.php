@@ -36,4 +36,8 @@ class Cloud extends \We7Table {
 		}
 		return $this->query->where('name', $name)->getall('name');
 	}
+	
+	public function getUninstallTotal() {
+		
+	}
 }
