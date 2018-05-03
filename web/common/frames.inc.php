@@ -639,17 +639,6 @@ $we7_system_menu['system'] = array(
 				),
 			),
 		),
-		'workorder'=> array(
-			'title' => '工单系统',
-			'menu'=> array(
-				'system_workorder'=> array(
-					'title' => '工单系统',
-					'url' => url('system/workorder/display'),
-					'icon' => 'wi wi-system-work',
-					'permission_name' => 'system_workorder',
-				),
-			),
-		),
 	),
 );
 
@@ -786,6 +775,17 @@ $we7_system_menu['site'] = array(
 					'permission_name' => 'system_utility_bom',
 				),
 			)
+		),
+		'workorder'=> array(
+			'title' => '工单系统',
+			'menu'=> array(
+				'system_workorder'=> array(
+					'title' => '工单系统',
+					'url' => url('system/workorder/display'),
+					'icon' => 'wi wi-system-work',
+					'permission_name' => 'system_workorder',
+				),
+			),
 		),
 		'backjob'=> array(
 			'title' => '后台任务',
