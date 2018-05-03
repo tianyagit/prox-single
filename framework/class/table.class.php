@@ -510,6 +510,11 @@ abstract class We7Table {
 	public function whereor($condition, $parameters = array()) {
 		return $this->where($condition, $parameters, 'OR');
 	}
+	
+	public function orderby($field, $direction = 'ASC') {
+		return $this->query->orderby($field, $direction);
+	}
+	
 	/**
 	 *  创建对象
 	 */
