@@ -990,28 +990,6 @@ function module_rank_top($module_name) {
 	return empty($result) ? true : false;
 }
 
-/**
- * 重新计算 未安装小程序的数量
- * @param $uninstall_modules
- * @param $recycle_modules
- * @return int
- */
-function recount_total_uninstalled($uninstall_modules, $recycle_modules, $status = 'uninstalled') {
-	if ($status == 'recycle') {
-		$uninstall_modules = module_get_all_uninstalled('uninstalled');
-	}
-	if (array_key_exists('modules', $uninstall_modules)) {
-		$uninstall_modules_keys = array_keys($uninstall_modules['modules']);
-		if (count($uninstall_modules_keys) <= 0) {
-			return count($uninstall_modules_keys);
-		}
-	} else {
-		$uninstall_modules_keys = array_keys($uninstall_modules);
-	}
-	$dif_keys = array_diff($uninstall_modules_keys, $recycle_modules);
-	return count($dif_keys);
-}
-
 function module_installed_list($type = '') {
 	global $_W;
 	$module_list = array();
@@ -1060,6 +1038,56 @@ function module_installed_list($type = '') {
 }
 
 /**
+ * 更新本地模块到modules_cloud表
+ */
+function module_local_upgrade_info() {
+	$modulelist = table('modules')->getall('name');
+	
+	$module_root = IA_ROOT . '/addons/';
+	$module_path_list = glob($module_root . '/*');
+	if (empty($module_path_list)) {
+		return true;
+	}
+	
+	foreach ($module_path_list as $path) {
+		$modulename = pathinfo($path, PATHINFO_BASENAME);
+		if (!empty($modulelist[$modulename])) {
+			continue;
+		}
+		
+		if (!file_exists($path . '/manifest.xml')) {
+			continue;
+		}
+		
+		$module_upgrade_data = array(
+			'name' => $modulename,
+			'has_new_version' => 0,
+			'has_new_branch' => 0,
+			'install_status' => MODULE_LOCAL_UNINSTALL,
+		);
+		$manifest = ext_module_manifest($modulename);
+		if (!empty($manifest['platform']['supports'])) {
+			foreach (array('app', 'wxapp', 'webapp', 'phoneapp', 'system_welcome') as $support) {
+				if (in_array($support, $manifest['platform']['supports'])) {
+					//纠正支持类型名字，统一
+					if ($support == 'app') {
+						$support = 'account';
+					}
+					$module_upgrade_data["{$support}_support"] = MODULE_SUPPORT_ACCOUNT;
+				}
+			}
+		}
+		$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
+		
+		if (empty($module_cloud_upgrade)) {
+			table('modules_cloud')->fill($module_upgrade_data)->save();
+		} else {
+			table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
+		}
+	}
+	return true;
+}
+/**
  * 检查传入的模块是否有更新
  * 优先检查本地是否包含Manifest.xml
  * 否则通过modules_cloud表先查询模块云端缓存信息
@@ -1081,8 +1109,8 @@ function module_upgrade_info($modulelist = array()) {
 	cloud_prepare();
 	$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
 	$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
-	
 	unset($cloud_m_query_module['pirate_apps']);
+	
 	foreach ($modulelist as $modulename => $module) {
 		if (!empty($module['issystem'])) {
 			unset($modulelist[$modulename]);
@@ -1127,7 +1155,9 @@ function module_upgrade_info($modulelist = array()) {
 				$manifest['platform']['supports'][] = 'system_welcome';
 			}
 			$manifest['branches'] = !empty($manifest_cloud['branches']);
-			
+		} else {
+			//本地已安装没有manifest也没有cloud信息，默认为本地安装 
+			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
 		}
 		//云服务模块已在本地安装，unset后方便后面排查未安装模块
 		//云上模块，如果在本地有manifest.xml，以本地模块为主
@@ -1166,7 +1196,7 @@ function module_upgrade_info($modulelist = array()) {
 			table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
 		}
 	}
-
+		
 	if (!empty($cloud_m_query_module)) {
 		foreach ($cloud_m_query_module as $modulename => $module) {
 			$module_upgrade_data = array(
@@ -1196,4 +1226,12 @@ function module_upgrade_info($modulelist = array()) {
 		}
 	}
 	return $result;
+}
+
+function module_uninstall_total($type) {
+	$type_list = array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN);
+	if (!in_array($type, $type_list)) {
+		return 0;
+	}
+	return call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
 }

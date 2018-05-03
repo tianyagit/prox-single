@@ -5,7 +5,7 @@
 <ul class="we7-page-tab">
 	<li {if $do == 'installed'}class="active"{/if}><a href="{php echo url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE))}">已安装公众号应用  </a></li>
 	{if permission_check_account_user('see_module_manage_system_except_installed')}
-	<li {if $do == 'not_installed' && $_GPC['status'] != 'recycle' && $_GPC['status'] != 'uninstalled_recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE))}">未安装公众号应用<span class="color-red">  ({$total_uninstalled}) </span></a></li>
+	<li {if $do == 'not_installed' && $_GPC['status'] != 'recycle' && $_GPC['status'] != 'uninstalled_recycle'}class="active"{/if}><a href="{php echo url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE))}">未安装公众号应用<span class="color-red">  ({$module_uninstall_total}) </span></a></li>
 	<li {if $do == 'not_installed' && $_GPC['status'] == 'recycle'}class="active"{/if}>
 		<a href="{php echo url('module/manage-system/not_installed', array('status' => 'recycle', 'account_type' => ACCOUNT_TYPE))}">
 			已停用公众号应用
@@ -150,7 +150,7 @@
 	<div class="clearfix">	</div>
 
 	<ul class="letters-list">
-		<li ng-repeat="letter in letters"><a href="javascript:;" ng-click="searchLetter(letter)">{{ letter }}</a></li>
+		<li ng-class="activeLetter == letter ? 'active' : ''" ng-repeat="letter in letters"><a href="javascript:;" ng-click="searchLetter(letter)">{{ letter }}</a></li>
 	</ul>
 
 	<table class="table we7-table table-hover vertical-middle table-manage">
@@ -208,7 +208,6 @@
 </div>
 <script>
 	angular.module('moduleApp').value('config', {
-		'letters' : {php echo json_encode($letters)},
 		'module_list' : {php echo json_encode($uninstall_modules)}
 	});
 	angular.bootstrap($('#js-system-module-not_installed'), ['moduleApp']);

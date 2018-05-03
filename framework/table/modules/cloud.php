@@ -37,7 +37,19 @@ class Cloud extends \We7Table {
 		return $this->query->where('name', $name)->getall('name');
 	}
 	
-	public function getUninstallTotal() {
-		
+	public function getAccountUninstallTotal() {
+		return $this->query->where('account_support', MODULE_SUPPORT_ACCOUNT)->count();
+	}
+	
+	public function getWxappUninstallTotal() {
+		return $this->query->where('wxapp_support', MODULE_SUPPORT_ACCOUNT)->count();
+	}
+	
+	public function getWebappUninstallTotal() {
+		return $this->query->where('webapp_support', MODULE_SUPPORT_ACCOUNT)->count();
+	}
+	
+	public function getPhoneappUninstallTotal() {
+		return $this->query->where('phone_support', MODULE_SUPPORT_ACCOUNT)->count();
 	}
 }
