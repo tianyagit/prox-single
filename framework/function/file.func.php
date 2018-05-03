@@ -62,7 +62,6 @@ function file_move($filename, $dest) {
  *
  * @param string $path 文件夹目录
  * @param array  $include 指定获取子目录
- * @param array  $file_number 获取文件数量
  *
  * @return array
  */
