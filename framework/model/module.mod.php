@@ -1048,7 +1048,6 @@ function module_local_upgrade_info() {
 	if (empty($module_path_list)) {
 		return true;
 	}
-	
 	foreach ($module_path_list as $path) {
 		$modulename = pathinfo($path, PATHINFO_BASENAME);
 		if (!empty($modulelist[$modulename])) {
@@ -1059,13 +1058,19 @@ function module_local_upgrade_info() {
 			continue;
 		}
 		
+		$manifest = ext_module_manifest($modulename);
+		
 		$module_upgrade_data = array(
 			'name' => $modulename,
 			'has_new_version' => 0,
 			'has_new_branch' => 0,
 			'install_status' => MODULE_LOCAL_UNINSTALL,
+			'logo' => $manifest['application']['logo'],
+			'version' => $manifest['application']['version'],
+			'title' => $manifest['application']['name'],
+			'title_initial' => get_first_pinyin($manifest['application']['name']),
 		);
-		$manifest = ext_module_manifest($modulename);
+		
 		if (!empty($manifest['platform']['supports'])) {
 			foreach (array('app', 'wxapp', 'webapp', 'phoneapp', 'system_welcome') as $support) {
 				if (in_array($support, $manifest['platform']['supports'])) {
@@ -1107,7 +1112,7 @@ function module_upgrade_info($modulelist = array()) {
 	}
 	
 	cloud_prepare();
-	$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
+	//$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
 	$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
 	unset($cloud_m_query_module['pirate_apps']);
 	
@@ -1124,6 +1129,7 @@ function module_upgrade_info($modulelist = array()) {
 		);
 	
 		$manifest = ext_module_manifest($modulename);
+		
 		if (!empty($manifest)) {
 			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
 		} elseif ($cloud_m_query_module[$modulename]) {
@@ -1132,6 +1138,9 @@ function module_upgrade_info($modulelist = array()) {
 			$manifest = array(
 				'application' => array(
 					'name' => $modulename,
+					'title' => $manifest_cloud['title'],
+					'version' => $manifest_cloud['version'],
+					'logo' => $manifest_cloud['thumb'],
 					'version' => $manifest_cloud['version'],
 				),
 				'platform' => array(
@@ -1159,6 +1168,12 @@ function module_upgrade_info($modulelist = array()) {
 			//本地已安装没有manifest也没有cloud信息，默认为本地安装 
 			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
 		}
+		
+		$module_upgrade_data['logo'] = $manifest['application']['logo'];
+		$module_upgrade_data['version'] = $manifest['application']['version'];
+		$module_upgrade_data['title'] = $manifest['application']['name'];
+		$module_upgrade_data['title_initial'] = get_first_pinyin($manifest_cloud['title']);
+		
 		//云服务模块已在本地安装，unset后方便后面排查未安装模块
 		//云上模块，如果在本地有manifest.xml，以本地模块为主
 		unset($cloud_m_query_module[$modulename]);
@@ -1171,6 +1186,11 @@ function module_upgrade_info($modulelist = array()) {
 				'new_version' => 1,
 				'best_version' => $manifest['application']['version'],
 			);
+		}
+		
+		//本地已安装，没有更新的模块不入表，防止无用数据太多
+		if ($module_upgrade_data['install_status'] == MODULE_LOCAL_INSTALL && empty($module_upgrade_data['has_new_version'])) {
+			continue;
 		}
 		
 		if (!empty($manifest['branches'])) {
@@ -1204,6 +1224,10 @@ function module_upgrade_info($modulelist = array()) {
 				'has_new_version' => 0,
 				'has_new_branch' => 0,
 				'install_status' => MODULE_CLOUD_UNINSTALL,
+				'logo' => $module['thumb'],
+				'version' => $module['version'],
+				'title' => $module['title'],
+				'title_initial' => get_first_pinyin($module['title']),
 			);
 			foreach (array('app', 'wxapp', 'webapp', 'ios', 'android', 'system_welcome') as $support) {
 				if ($module['site_branch']["{$support}_support"] == MODULE_SUPPORT_ACCOUNT) {

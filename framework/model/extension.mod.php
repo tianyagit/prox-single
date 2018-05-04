@@ -225,12 +225,23 @@ function ext_module_manifest_parse($xml) {
  * @return array
  */
 function ext_module_manifest($modulename) {
-	$filename = IA_ROOT . '/addons/' . $modulename . '/manifest.xml';
+	$root = IA_ROOT . '/addons/' . $modulename;
+	$filename = $root . '/manifest.xml';
 	if (!file_exists($filename)) {
 		return array();
 	}
 	$xml = file_get_contents($filename);
-	return ext_module_manifest_parse($xml);
+	$xml = ext_module_manifest_parse($xml);
+	
+	if (!empty($xml)) {
+		$xml['application']['logo'] = tomedia($root . '/icon.jpg');
+		if (file_exists($root . '/preview-custom.jpg')) {
+			$xml['application']['preview'] = tomedia($root . '/preview-custom.jpg');
+		} else {
+			$xml['application']['preview'] = tomedia($root . '/preview.jpg');
+		}
+	}
+	return $xml;
 }
 
 /**

@@ -631,6 +631,7 @@ if ($do == 'uninstall') {
 	itoast('模块已放入回收站！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
+//卸载模块
 if ($do == 'recycle_uninstall') {
 	$name = trim($_GPC['module_name']);
 	$module = pdo_get('modules', array('name' => $name));
@@ -653,7 +654,8 @@ if ($do == 'recycle_uninstall') {
 	itoast('模块已卸载！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
-if ($do == 'uninstalled_recycle') {
+//删除未安装模块
+if ($do == 'delete_uninstall') {
 	$name = trim($_GPC['module_name']);
 	$opt = intval($_GPC['opt']);
 	if (!empty($_GPC['type']) && intval($_GPC['type']) == 9) {
@@ -693,12 +695,11 @@ if ($do == 'installed') {
 	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
 }
 
-if ($do == 'not_installed') {
+if ($do == 'not_installed' || $do == 'recycle') {
 	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
-	$status = $_GPC['status'] == 'recycle' ? 'recycle' : ($_GPC['status'] == 'uninstalled_recycle' ? 'uninstalled_recycle' : 'uninstalled');
 
-	$title = $_GPC['title'];
-	$letter = $_GPC['letter'];
+	$title = safe_gpc_string($_GPC['title']);
+	$letter = safe_gpc_string($_GPC['letter']);
 	
 	//本地模块更新至modules_cloud表
 	module_local_upgrade_info();
@@ -710,11 +711,20 @@ if ($do == 'not_installed') {
 	
 	$module_cloud_talbe->searchWithPage($pageindex, $pagesize);
 	
+	if (!empty($title)) {
+		$module_cloud_talbe->where('title LIKE', "%{$title}%");
+	}
+	if (!empty($letter) && strlen($letter) == 1) {
+		$module_cloud_talbe->where('title_initial', $letter);
+	}
 	$module_cloud_talbe->where('install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL));
 	$module_cloud_talbe->orderby('install_status', 'asc');
-	$uninstall_modules = $module_cloud_talbe->getall('name');
 	
+	$uninstall_modules = $module_cloud_talbe->getall('name');
+
 	$pager = pagination($module_cloud_talbe->getLastQueryTotal(), $pageindex, $pagesize);
+	
+	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
 }
 
 template('module/manage-system' . ACCOUNT_TYPE_TEMPLATE);

@@ -9,25 +9,37 @@ class Cloud extends \We7Table {
 	protected $primaryKey = 'id';
 	protected $field = array(
 		'name',
-		'has_new_branch',
-		'has_new_version',
+		'title',
+		'title_initial',
+		'logo',
+		'version',
 		'install_status',
 		'account_support',
 		'wxapp_support',
 		'webapp_support',
 		'phoneapp_support',
 		'welcome_support',
+		'main_module_name',
+		'main_module_logo',
+		'has_new_version',
+		'has_new_branch',
 	);
 	protected $default = array(
 		'name' => '',
-		'has_new_branch' => 0,
-		'has_new_version' => 0,
+		'title' => '',
+		'title_initial' => '',
+		'logo' => '',
+		'version' => '',
 		'install_status' => 0,
 		'account_support' => 1,
 		'wxapp_support' => 1,
 		'webapp_support' => 1,
 		'phoneapp_support' => 1,
 		'welcome_support' => 1,
+		'main_module_name' => '',
+		'main_module_logo' => '',
+		'has_new_version' => 0,
+		'has_new_branch' => 0,
 	);
 	
 	public function getByName($name) {
