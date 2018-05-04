@@ -85,25 +85,26 @@ if ($do == 'display') {
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $key => $value) {
 			$modules = (array)iunserializer($value['modules']);
+			$modules_group_list[$key]['account_num'] = $modules_group_list[$key]['wxapp_num'] = $modules_group_list[$key]['phoneapp_num'] = $modules_group_list[$key]['webapp_num'] = 0;
 			if (!empty($modules)) {
 				foreach ($modules as $module_name) {
 					$module_info = module_fetch($module_name);
 					if (empty($module_info)) {
 						continue;
 					}
-					if ($module_info['account_support'] == MODULE_SUPPORT_ACCOUNT || $module_info['app_support'] == MODULE_SUPPORT_ACCOUNT) {
+					if (($module_info['account_support'] == MODULE_SUPPORT_ACCOUNT || $module_info['app_support'] == MODULE_SUPPORT_ACCOUNT) && !in_array($module_info, $modules_group_list[$key]['account_modules'])) {
 						$modules_group_list[$key]['account_num'] = intval($modules_group_list[$key]['account_num']) > 0 ? (intval($modules_group_list[$key]['account_num']) + 1) : 1;
 						$modules_group_list[$key]['account_modules'][] = $module_info;
 					}
-					if ($module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+					if ($module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP && !in_array($module_info, $modules_group_list[$key]['wxapp_modules'])) {
 						$modules_group_list[$key]['wxapp_num'] = intval($modules_group_list[$key]['wxapp_num']) > 0 ? (intval($modules_group_list[$key]['wxapp_num']) + 1) : 1;
 						$modules_group_list[$key]['wxapp_modules'][] = $module_info;
 					}
-					if ($module_info['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP) {
+					if ($module_info['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP && !in_array($module_info, $modules_group_list[$key]['phoneapp_modules'])) {
 						$modules_group_list[$key]['phoneapp_num'] = intval($modules_group_list[$key]['phoneapp_num']) > 0 ? (intval($modules_group_list[$key]['phoneapp_num']) + 1) : 1;
 						$modules_group_list[$key]['phoneapp_modules'][] = $module_info;
 					}
-					if ($module_info['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
+					if ($module_info['webapp_support'] == MODULE_SUPPORT_WEBAPP && !in_array($module_info, $modules_group_list[$key]['webapp_modules'])) {
 						$modules_group_list[$key]['webapp_num'] = intval($modules_group_list[$key]['webapp_num']) > 0 ? (intval($modules_group_list[$key]['webapp_num']) + 1) : 1;
 						$modules_group_list[$key]['webapp_modules'][] = $module_info;
 					}
