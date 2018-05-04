@@ -82,7 +82,7 @@
 
 						{if !empty($account_info['uniacid_limit']) && (!empty($account_info['founder_uniacid_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 						<a ng-switch-when="account" href="./index.php?c=account&a=post-step" class="color-default">
-							<i class="fa fa-plus"></i>新增公众号
+							<i class="wi wi-registersite"></i>新增公众号
 						</a>
 						{/if}
 
@@ -92,7 +92,7 @@
 
 						{if !empty($account_info['webapp_limit']) && (!empty($account_info['founder_webapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 						<a ng-switch-when="webapp" href="./index.php?c=webapp&a=manage&do=create_display" class="color-default">
-							<i class="fa fa-plus"></i>新增PC
+							<i class="wi wi-registersite"></i>新增PC
 						</a>
 						{/if}
 
@@ -108,7 +108,7 @@
 					<div class="creat">
 						{if !empty($account_info['uniacid_limit']) || $_W['isfounder']}
 						<a href="./index.php?c=account&a=post-step" class="color-default" ng-if="type == 'account'">
-							<i class="fa fa-plus"></i>新增公众号
+							<i class="wi wi-registersite"></i>新增公众号
 						</a>
 						{/if}
 
@@ -120,7 +120,7 @@
 
 						{if !empty($account_info['webapp_limit']) || $_W['isfounder']}
 						<a href="./index.php?c=webapp&a=manage&do=create_display" class="color-default" ng-if="type == 'webapp'">
-							<i class="fa fa-plus"></i>新增PC
+							<i class="wi wi-registersite"></i>新增PC
 						</a>
 						{/if}
 
