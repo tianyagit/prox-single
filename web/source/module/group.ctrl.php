@@ -99,11 +99,11 @@ if ($do == 'display') {
 						$modules_group_list[$key]['wxapp_num'] = intval($modules_group_list[$key]['wxapp_num']) > 0 ? (intval($modules_group_list[$key]['wxapp_num']) + 1) : 1;
 						$modules_group_list[$key]['wxapp_modules'][] = $module_info;
 					}
-					if ($module_info['phoneapp_support'] == MODULE_NOSUPPORT_PHONEAPP) {
+					if ($module_info['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP) {
 						$modules_group_list[$key]['phoneapp_num'] = intval($modules_group_list[$key]['phoneapp_num']) > 0 ? (intval($modules_group_list[$key]['phoneapp_num']) + 1) : 1;
 						$modules_group_list[$key]['phoneapp_modules'][] = $module_info;
 					}
-					if ($module_info['webapp_support'] == MODULE_NOSUPPORT_WEBAPP) {
+					if ($module_info['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
 						$modules_group_list[$key]['webapp_num'] = intval($modules_group_list[$key]['webapp_num']) > 0 ? (intval($modules_group_list[$key]['webapp_num']) + 1) : 1;
 						$modules_group_list[$key]['webapp_modules'][] = $module_info;
 					}
