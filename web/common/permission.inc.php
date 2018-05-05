@@ -328,11 +328,13 @@ $we7_file_permission = array(
 			'display',
 			'version',
 			'post',
+			'auth',
 		),
 		'operator' => array(
 			'display',
 			'version',
 			'post',
+			'auth',
 		),
 		'clerk' => array(
 			'display',
