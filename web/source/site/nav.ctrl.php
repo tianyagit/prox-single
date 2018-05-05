@@ -54,7 +54,13 @@ if ($do == 'homemenu_post') {
 	if (empty($post['name'])) {
 		iajax(-1, '抱歉，请输入导航菜单的名称！', '');
 	}
-	$url = safe_gpc_url($post['url'], false);
+
+	if (strexists($post['url'], 'tel')) {
+		$url = safe_gpc_string($post['url'], false);
+	} else {
+		$url = safe_gpc_url($post['url'], false);
+	}
+
 	if (is_array($post['section']) && !empty($post['section'])) {
 		if (intval($post['section']['num']) > 10) {
 			$section_num = 10;

@@ -23,7 +23,7 @@ $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
 	$data = array();
-	$not_installed_modules = module_get_all_unistalled('uninstalled', false);
+	$not_installed_modules = module_get_all_unistalled('uninstalled');
 	$not_installed_modules = $not_installed_modules['modules']['uninstalled'];
 	$data['app_count'] = count($not_installed_modules['app']);
 	$data['wxapp_count'] = count($not_installed_modules['wxapp_count']);
@@ -226,6 +226,7 @@ if ($do == 'platform') {
 }
 
 if ($do == 'system_home') {
+	define('FRAME', '');
 	$user_info = user_single($_W['uid']);
 	$account_num = permission_user_account_num();
 

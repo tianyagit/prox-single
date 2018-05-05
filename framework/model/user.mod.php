@@ -219,9 +219,11 @@ function user_single($user_or_uid) {
 		$record['clerk_type'] = '2';
 	}
 	$third_info = pdo_getall('users_bind', array('uid' => $record['uid']), array(), 'third_type');
-	$record['qq_openid'] = $third_info[USER_REGISTER_TYPE_QQ]['bind_sign'];
-	$record['wechat_openid'] = $third_info[USER_REGISTER_TYPE_WECHAT]['bind_sign'];
-	$record['mobile'] = $third_info[USER_REGISTER_TYPE_MOBILE]['bind_sign'];
+	if (!empty($third_info) && is_array($third_info)) {
+		$record['qq_openid'] = $third_info[USER_REGISTER_TYPE_QQ]['bind_sign'];
+		$record['wechat_openid'] = $third_info[USER_REGISTER_TYPE_WECHAT]['bind_sign'];
+		$record['mobile'] = $third_info[USER_REGISTER_TYPE_MOBILE]['bind_sign'];
+	}
 	return $record;
 }
 
@@ -450,10 +452,14 @@ function user_account_detail_info($uid) {
  * @param $uid string 用户id
  * @return array 模块列表
  */
-function user_modules($uid) {
+function user_modules($uid = 0) {
 	global $_W;
-
 	load()->model('module');
+
+	if (empty($uid)) {
+		$uid = $_W['uid'];
+	}
+
 	$modules =cache_load(cache_system_key('user_modules:' . $uid));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
@@ -532,9 +538,6 @@ function user_modules($uid) {
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
 			$module_info = module_fetch($module);
-			if ($module_info['welcome_support'] == 2 && $module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
-				continue;
-			}
 			if (!empty($module_info)) {
 				$module_list[$module] = $module_info;
 			}
@@ -686,7 +689,7 @@ function user_invite_register_url($uid = 0) {
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
-	return $_W['siteroot'] . 'index.php?c=user&a=register&owner_uid=' . $uid;
+	return $_W['siteroot'] . 'web/index.php?c=user&a=register&owner_uid=' . $uid;
 }
 
 /**
