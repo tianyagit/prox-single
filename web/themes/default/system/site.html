@@ -96,6 +96,18 @@
 				</label>
 			</div>
 		</div>
+
+		<div class="form-group">
+			<label class="col-sm-2 control-label" style="text-align:left;">用户首页设置</label>
+			<div class="col-sm-8">
+				<select name="welcome_link" class="form-control">
+					<option value="{WELCOME_DISPLAY_TYPE}" {if $settings['welcome_link']==WELCOME_DISPLAY_TYPE}selected{/if}>用户欢迎页</option>
+					<option value="{PLATFORM_DISPLAY_TYPE}" {if $settings['welcome_link']==PLATFORM_DISPLAY_TYPE}selected{/if}>平台</option>
+				</select>
+				<div class="help-block">统一设置用户登录后跳转的页面，用户也可以自行设置，以用户设置的为准</div>
+			</div>
+		</div>
+
 		<h5 class="page-header">调试开关</h5>
 		<div class="form-group">
 			<label class="col-sm-2 control-label" style="text-align:left;">是否开启调试模式</label>

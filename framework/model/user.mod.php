@@ -582,7 +582,7 @@ function user_login_forward($forward = '') {
 		'wxapp' => url('wxapp/version/home'),
 		'module' => url('module/display'),
 		'webapp' => url('webapp/home'),
-		'phoneapp' => url('phoneapp/home'),
+		'phoneapp' => url('phoneapp/display/home'),
 	);
 	if (!empty($forward)) {
 		return $login_forward;
@@ -649,7 +649,7 @@ function user_login_forward($forward = '') {
 		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 			$login_forward = url('webapp/home/display');
 		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-			$login_forward = url('phoneapp/home/display');
+			$login_forward = url('phoneapp/display/home');
 		}
 	}
 
@@ -1081,23 +1081,23 @@ function user_change_welcome_status($uid, $welcome_status) {
  */
 function user_after_login_link() {
 	global $_W;
-	$type = $_W['user']['welcome_link'];
+
+	if (!empty($_W['user']['welcome_link'])) {
+		$type = $_W['user']['welcome_link'];
+	} else {
+		if (!empty($_W['setting']['copyright']['welcome_link'])) {
+			$type = $_W['setting']['copyright']['welcome_link'];
+		} else {
+			$type = WELCOME_DISPLAY_TYPE;
+		}
+	}
 
 	switch ($type) {
 		case WELCOME_DISPLAY_TYPE:
 			$url = url('home/welcome/system_home');
 			break;
-		case ACCOUNT_DISPLAY_TYPE:
-			$url = url('account/display', array('type' => ACCOUNT_TYPE_SIGN));
-			break;
-		case WXAPP_DISPLAY_TYPE:
-			$url = url('account/display', array('type' => WXAPP_TYPE_SIGN));
-			break;
-		case WEBAPP_DISPLAY_TYPE:
-			$url = url('account/display', array('type' => WEBAPP_TYPE_SIGN));
-			break;
-		case PHONEAPP_DISPLAY_TYPE:
-			$url = url('account/display', array('type' => PHONEAPP_TYPE_SIGN));
+		case PLATFORM_DISPLAY_TYPE:
+			$url = url('account/display/platform');
 			break;
 		default:
 			$url = '';

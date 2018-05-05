@@ -12,8 +12,8 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 $dos = array('copyright');
 $do = in_array($do, $dos) ? $do : 'copyright';
 $_W['page']['title'] = '站点设置 - 工具  - 系统管理';
-
 $settings = $_W['setting']['copyright'];
+
 if(empty($settings) || !is_array($settings)) {
 	$settings = array();
 } else {
@@ -76,7 +76,8 @@ if ($do == 'copyright') {
 				'log_status' => intval($_GPC['log_status']),
 				'develop_status' => intval($_GPC['develop_status']),
 				'icp' => safe_gpc_string($_GPC['icp']),
-				'bind' => $_GPC['bind']
+				'bind' => $_GPC['bind'],
+				'welcome_link' => intval($_GPC['welcome_link'])
 			);
 		}
 		/* sxend */
@@ -90,7 +91,8 @@ if ($do == 'copyright') {
 				'login_type' => $_GPC['login_type'],
 				'log_status' => intval($_GPC['log_status']),
 				'develop_status' => intval($_GPC['develop_status']),
-				'bind' => $_GPC['bind']
+				'bind' => $_GPC['bind'],
+				'welcome_link' => intval($_GPC['welcome_link'])
 			);
 		}
 		/* vend */

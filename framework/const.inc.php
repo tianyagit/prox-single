@@ -300,7 +300,7 @@ define('COMMENT_STATUS_OFF', 0);
 define('COMMENT_STATUS_ON', 1);
 
 //用户欢迎页
-define('WELCOME_DISPLAY_TYPE', 0);
+define('WELCOME_DISPLAY_TYPE', 9);
 //上次登陆最后访问页面
 define('LASTVISIT_DISPLAY_TYPE', 1);
 //公众号列表
@@ -311,3 +311,5 @@ define('WXAPP_DISPLAY_TYPE', 3);
 define('WEBAPP_DISPLAY_TYPE', 4);
 //app列表
 define('PHONEAPP_DISPLAY_TYPE', 5);
+//平台
+define('PLATFORM_DISPLAY_TYPE', 6);
