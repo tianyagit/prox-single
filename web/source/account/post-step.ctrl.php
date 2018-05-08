@@ -275,9 +275,10 @@ if($step == 1) {
 		cache_delete_cache_name('unimodules', array('uniacid' => $uniacid, 'enabled' => 1));
 		cache_delete_cache_name('unimodules', array('uniacid' => $uniacid, 'enabled' => ''));
 
-		cache_delete_cache_name('accesstoken', array('acid' => $acid))
+		cache_delete_cache_name('accesstoken', array('acid' => $acid));
 
 		cache_delete_cache_name('proxy_wechatpay_account');
+		
 		cache_clean(cache_system_key('user_accounts'));
 
 		if (!empty($_GPC['from'])) {
