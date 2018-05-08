@@ -40,7 +40,8 @@ define('ACCOUNT_TYPE_WEBAPP_NORMAL', 5);
 define('ACCOUNT_TYPE_PHONEAPP_NORMAL', 6);
 //授权接入小程序
 define('ACCOUNT_TYPE_APP_AUTH', 7);
-
+//正常接入企业小程序
+define('ACCOUNT_TYPE_WXAPP_WORK', 8);
 //公众号
 define('ACCOUNT_TYPE_SIGN', 'account');
 //小程序
