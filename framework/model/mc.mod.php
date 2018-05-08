@@ -132,9 +132,10 @@ function mc_fetch($uid, $fields = array()) {
 /**
  * 获取一个会员所有信息
  * @param mixed $uid 会员 uid
+ * @param int $uniacid 所属帐号uniacid
  * @return array
  * */
-function mc_fetch_one($uid) {
+function mc_fetch_one($uid, $uniacid = 0) {
 	$uid = mc_openid2uid($uid);
 	if (empty($uid)) {
 		return array();
@@ -144,6 +145,10 @@ function mc_fetch_one($uid) {
 
 	if (!empty($cache)) {
 		return $cache;
+	}
+	$params = array('uid' => $uid);
+	if (!empty($uniacid) && intval($uniacid) > 0) {
+		$params['uniacid'] = intval($uniacid);
 	}
 	$result = pdo_get('mc_members', array('uid' => $uid));
 	if (!empty($result)) {
