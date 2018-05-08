@@ -249,6 +249,7 @@
 					</td>
 				</tr>
 				{loop $account_buy_modules $module}
+				{if $module['goods_id']}
 				<tr>
 					<td>
 						<img src="{$module['logo']}" class="img-responsive icon" alt="" style="width:50px;height:50px;">
@@ -273,6 +274,7 @@
 						<a href="{php echo url('site/entry/goodsbuyer', array('direct' => 1, 'operate' => 'goods_info', 'm' => 'store', 'goods' => $module['goods_id']))}">续费</a>
 					</td>
 				</tr>
+				{/if}
 				{/loop}
 				</tbody>
 			</table>
