@@ -366,8 +366,32 @@ function ext_module_bindings() {
  * @param boolean $isCleanRule 是否删除相关规则
  * @return void
  */
-function ext_module_clean($modulename, $isCleanRule = false) {
-	table('module')->cleanModuleInfo($modulename, $isCleanRule);
+function ext_module_clean($modulename, $is_clean_rule = false) {
+	
+	pdo_delete('core_queue', array('module' => $modulename));
+
+	table('modules')->deleteByName($modulename);
+	table('modules_bindings')->deleteByName($modulename);
+
+	if ($is_clean_rule) {
+		pdo_delete('rule', array('module' => $modulename));
+		pdo_delete('rule_keyword', array('module' => $modulename));
+		
+		$cover_list = pdo_getall('cover_reply', array('module' => $modulename), array('rid'), 'rid');
+		if (!empty($cover_list)) {
+			$rids = array_keys($cover_list);
+			pdo_delete('rule_keyword', array('module' => 'cover', 'rid' => $rids));
+			pdo_delete('rule', array('module' => 'cover', 'id' => $rids));
+			pdo_delete('cover_reply', array('module' => $modulename));
+		}
+	}
+
+	pdo_delete('site_nav', array('module' => $modulename));
+	pdo_delete('uni_account_modules', array('module' => $modulename));
+	
+	//删除掉回收站数据
+	table('modules_recycle')->deleteByName($modulename);
+	return true;
 }
 
 /**
@@ -667,7 +691,7 @@ function ext_check_module_subscribe($modulename) {
  * @param $manifest array() 模块配置项;
  * @return array();
  */
-function manifest_check($module_name, $manifest) {
+function ext_manifest_check($module_name, $manifest) {
 	if(is_string($manifest)) {
 		return error(1, '模块配置项定义错误, 具体错误内容为: <br />' . $manifest);
 	}
@@ -716,4 +740,81 @@ function manifest_check($module_name, $manifest) {
 		return error(1, '兼容版本格式错误');
 	}
 	return error(0);
+}
+
+function ext_file_check($module_name, $manifest) {
+	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
+	if (empty($manifest['platform']['main_module']) && 
+		!file_exists($module_path . 'processor.php') && 
+		!file_exists($module_path . 'module.php') && 
+		!file_exists($module_path . 'site.php')) {
+		return error(1, '模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！');
+	}
+	return true;
+}
+
+/**
+ *  卸载模块
+ * @param string $module_name 模块标识
+ * @param bool $is_clean_rule 是否删除相关的统计数据和回复规则
+ */
+function ext_module_uninstall($modulename, $is_clean_rule = false) {
+	global $_W;
+	$modulename = trim($modulename);
+	if (empty($modulename)) {
+		return error(1, '模块已经被卸载或是不存在！');
+	}
+	$module = module_fetch($modulename, false);
+	if (empty($module)) {
+		return error(1, '模块已经被卸载或是不存在！');
+	}
+	if (!empty($module['issystem'])) {
+		return error(1, '系统模块不能卸载！');
+	}
+
+	ext_module_clean($modulename, $is_clean_rule);
+
+	cache_delete_cache_name('module_all_uninstall');
+
+	cache_build_module_subscribe_type();
+	cache_build_module_info($modulename);
+
+	return true;
+}
+
+/**
+ *  执行模块的卸载脚本
+ * @param string $module_name 模块标识
+ */
+function ext_execute_uninstall_script($module_name) {
+	global $_W;
+	load()->model('cloud');
+	$modulepath = IA_ROOT . '/addons/' . $module_name . '/';
+	$manifest = ext_module_manifest($module_name);
+	if (empty($manifest)) {
+		$result = cloud_prepare();
+		if (is_error($result)) {
+			return error(1, $result['message']);
+		}
+		$packet = cloud_m_build($module_name, 'uninstall');
+		if ($packet['sql']) {
+			pdo_run(base64_decode($packet['sql']));
+		} elseif ($packet['script']) {
+			$uninstall_file = $modulepath . TIMESTAMP . '.php';
+			file_put_contents($uninstall_file, base64_decode($packet['script']));
+			require($uninstall_file);
+			unlink($uninstall_file);
+		}
+	} else {
+		if (!empty($manifest['uninstall'])) {
+			if (strexists($manifest['uninstall'], '.php')) {
+				if (file_exists($modulepath . $manifest['uninstall'])) {
+					require($modulepath . $manifest['uninstall']);
+				}
+			} else {
+				pdo_run($manifest['uninstall']);
+			}
+		}
+	}
+	return true;
 }

@@ -182,6 +182,11 @@ define('MODULE_LOCAL_UNINSTALL', '2');
 define('MODULE_CLOUD_INSTALL', '3');
 //线上未安装 
 define('MODULE_CLOUD_UNINSTALL', '4');
+//模块卸载类型 
+//停用已安装
+define('MODULE_RECYCLE_INSTALL_DISABLED', '1');
+//忽略未安装
+define('MODULE_RECYCLE_UNINSTALL_IGNORE', '2');
 
 //权限类型
 define('PERMISSION_ACCOUNT', 'system');

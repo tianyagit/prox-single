@@ -294,13 +294,12 @@ function module_save_group_package($package) {
  * @param string $name 模块名称
  * @return array 模块信息
  */
-function module_fetch($name) {
+function module_fetch($name, $enabled = true) {
 	global $_W;
 	$cachekey = create_cache_key('module_info', array('module_name' => $name));
 	$module = cache_load($cachekey);
 	if (empty($module)) {
-		$module_table = table('module');
-		$module_info = $module_table->getInstalledModuleInfo($name);
+		$module_info = table('modules')->getByName($name);
 		if (empty($module_info)) {
 			return array();
 		}
@@ -342,6 +341,13 @@ function module_fetch($name) {
 		}
 		$module = $module_info;
 		cache_write($cachekey, $module_info);
+	}
+	//增加开启参数，可以获取放入回收站的模块
+	if (!empty($enabled)) {
+		$module_is_delete = table('modules_recycle')->getByName($name);
+		if (!empty($module_is_delete)) {
+			return array();
+		}
 	}
 	//有公众号时，附加模块配置信息
 	if (!empty($module) && !empty($_W['uniacid'])) {
@@ -518,84 +524,6 @@ function module_permission_fetch($name) {
 	return $data;
 }
 
-/**
- *  卸载模块
- * @param string $module_name 模块标识
- * @param bool $is_clean_rule 是否删除相关的统计数据和回复规则
- */
-function module_uninstall($module_name, $is_clean_rule = false) {
-	global $_W;
-	load()->object('cloudapi');
-	if (empty($_W['isfounder'])) {
-		return error(1, '您没有卸载模块的权限！');
-	}
-	$module_name = trim($module_name);
-	$module = pdo_get('modules', array('name' => $module_name));
-	if (empty($module)) {
-		return error(1, '模块已经被卸载或是不存在！');
-	}
-	if (!empty($module['issystem'])) {
-		return error(1, '系统模块不能卸载！');
-	}
-	pdo_delete('modules_plugin', array('main_module' => $module_name));
-
-	pdo_delete('uni_account_modules', array('module' => $module_name));
-	cache_delete_cache_name('module_all_uninstall');
-	ext_module_clean($module_name, $is_clean_rule);
-	cache_build_module_subscribe_type();
-	cache_build_uninstalled_module();
-	cache_build_module_info($module_name);
-
-	return true;
-}
-
-/**
- *  执行模块的卸载脚本
- * @param string $module_name 模块标识
- */
-function module_execute_uninstall_script($module_name) {
-	global $_W;
-	load()->object('cloudapi');
-	load()->model('cloud');
-	if (empty($_W['isfounder'])) {
-		return error(1, '您没有卸载模块的权限！');
-	}
-	$modulepath = IA_ROOT . '/addons/' . $module_name . '/';
-	$manifest = ext_module_manifest($module_name);
-	if (empty($manifest)) {
-		$result = cloud_prepare();
-		if (is_error($result)) {
-			return error(1, $result['message']);
-		}
-		$packet = cloud_m_build($module_name, 'uninstall');
-		if ($packet['sql']) {
-			pdo_run(base64_decode($packet['sql']));
-		} elseif ($packet['script']) {
-			$uninstall_file = $modulepath . TIMESTAMP . '.php';
-			file_put_contents($uninstall_file, base64_decode($packet['script']));
-			require($uninstall_file);
-			unlink($uninstall_file);
-		}
-	} else {
-		if (!empty($manifest['uninstall'])) {
-			if (strexists($manifest['uninstall'], '.php')) {
-				if (file_exists($modulepath . $manifest['uninstall'])) {
-					require($modulepath . $manifest['uninstall']);
-				}
-			} else {
-				pdo_run($manifest['uninstall']);
-			}
-		}
-	}
-	pdo_delete('modules_recycle', array('modulename' => $module_name));
-	$cloudapi = new CloudApi();
-	$recycle_module = $cloudapi->post('cache', 'get', array('key' => create_cache_key('recycle_module')));
-	$recycle_module = !empty($recycle_module['data']) ? $recycle_module['data'] : array();
-	unset($recycle_module[$module_name]);
-	$cloudapi->post('cache', 'set', array('key' => create_cache_key('recycle_module'), 'value' => $recycle_module));
-	cache_delete_cache_name('module_all_uninstall');
-	return true;
-}
 
 /**
  *  获取指定模块在当前公众号安装的插件
@@ -1257,5 +1185,10 @@ function module_uninstall_total($type) {
 	if (!in_array($type, $type_list)) {
 		return 0;
 	}
-	return call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
+	$total = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
+	return $total;
+}
+
+function module_recycle_fetch($modulename) {
+	return table('modules_recycle')->getByName($modulename);
 }

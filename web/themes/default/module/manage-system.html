@@ -5,8 +5,8 @@
 <ul class="we7-page-tab">
 	<li {if $do == 'installed'}class="active"{/if}><a href="{php echo url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE))}">已安装公众号应用  </a></li>
 	{if permission_check_account_user('see_module_manage_system_except_installed')}
-	<li {if $do == 'disabled'}class="active"{/if}>
-		<a href="{php echo url('module/manage-system/disabled', array('account_type' => ACCOUNT_TYPE))}">
+	<li {if $do == 'recycle' && $_GPC['type'] == '1'}class="active"{/if}>
+		<a href="{php echo url('module/manage-system/recycle', array('account_type' => ACCOUNT_TYPE, 'type' => 1))}">
 			已停用公众号应用
 		</a>
 	</li>
@@ -15,8 +15,8 @@
 			未安装公众号应用<span class="color-red">  ({$module_uninstall_total}) </span>
 		</a>
 	</li>
-	<li {if $do == 'recycle'}class="active"{/if}>
-		<a href="{php echo url('module/manage-system/recycle', array('account_type' => ACCOUNT_TYPE))}">
+	<li {if $do == 'recycle' && $_GPC['type'] == '2'}class="active"{/if}>
+		<a href="{php echo url('module/manage-system/recycle', array('account_type' => ACCOUNT_TYPE, 'type' => 2))}">
 			回收站
 		</a>
 	</li>
@@ -106,7 +106,7 @@
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=group" ng-if="isFounder == 1">应用权限组</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=subscribe" ng-if="isFounder == 1 && module.subscribes.length">订阅消息</a>
 						{if permission_check_account_user('see_module_manage_system_stop')}
-						<a href="{php echo url('module/manage-system/uninstall')}&name={{ module.name }}" onclick="return confirm('确认要停用模块吗？')">停用</a>
+						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('确认要停用模块吗？')">停用</a>
 						{/if}
 					</div>
 				</td>
@@ -132,7 +132,7 @@
 		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});
 </script>
-{elseif $do == 'not_installed'}
+{elseif $do == 'not_installed' || $do == 'recycle'}
 <div id="js-system-module-not_installed" ng-controller="notInstalledCtrl" ng-cloak>
 	<div class="we7-page-search clearfix">
 		<form action="" method="get" class="row">
@@ -170,20 +170,23 @@
 			</td>
 			<td class="text-right">
 				{if permission_check_account_user('see_module_manage_system_install')}
-					<a href="{php echo url('module/manage-system/upgrade')}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">
+					{if $do == 'recycle'}
+						{if permission_check_account_user('see_module_manage_system_stop')}
+						<a href="{php echo url('module/manage-system/recycle_post', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}" class="btn btn-primary">恢复</a>
+						{/if}
+						{if $type == MODULE_RECYCLE_INSTALL_DISABLED}
+						<a href="{php echo url('module/manage-system/uninstall', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}" class="btn btn-warning" onclick="return confirm('确认卸载该应用吗？')">卸载</a>
+						{/if}
+					{else}
+						<a href="{php echo url('module/manage-system/upgrade')}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">
 						{if $_GPC['status'] == 'recycle'}启用{else}安装应用模块{/if}
-					</a>
-
-					<a href="{php echo url('module/manage-system/install')}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">
-						{if $_GPC['status'] == 'recycle'}启用{else}安装应用模块{/if}
-					</a>
-
-					{if permission_check_account_user('see_module_manage_system_stop')}
-					<a href="{php echo url('module/manage-system/delete_uninstall', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}&opt=0" class="btn btn-primary" onclick="return confirm('确认要删除模块吗？')">删除</a>
-					{/if}
-
-					{if permission_check_account_user('see_module_manage_system_stop')}
-					<a href="{php echo url('module/manage-system/uninstalled_recycle', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}&opt=1" class="btn btn-primary">恢复</a>
+						</a>
+						<a href="{php echo url('module/manage-system/install')}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">
+							{if $_GPC['status'] == 'recycle'}启用{else}安装应用模块{/if}
+						</a>
+						{if permission_check_account_user('see_module_manage_system_stop')}
+						<a href="{php echo url('module/manage-system/recycle_post', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}" class="btn btn-primary" onclick="return confirm('确认要将应用放入回收站吗？')">删除</a>
+						{/if}
 					{/if}
 				{/if}
 			</td>
@@ -196,7 +199,7 @@
 </div>
 <script>
 	angular.module('moduleApp').value('config', {
-		'module_list' : {php echo json_encode($uninstall_modules)}
+		'module_list' : {php echo json_encode($modulelist)}
 	});
 	angular.bootstrap($('#js-system-module-not_installed'), ['moduleApp']);
 </script>

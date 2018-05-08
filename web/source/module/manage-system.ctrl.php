@@ -19,8 +19,9 @@ load()->func('db');
 
 $dos = array('subscribe', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 
 			'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 
-			'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 
-			'founder_update_modules', 'uninstalled_recycle', 'filter');
+			'change_receive_ban', 'install_success', 'set_site_welcome_module', 
+			'founder_update_modules', 'recycle', 'recycle_post',
+);
 $do = in_array($do, $dos) ? $do : 'installed';
 
 /* sxstart */
@@ -69,7 +70,7 @@ if ($do == 'subscribe') {
 }
 
 if ($do == 'check_subscribe') {
-	load()->classs('account');
+	
 	$module_name = $_GPC['module_name'];
 	$obj = WeUtility::createModuleReceiver($module_name);
 	if (empty($obj)) {
@@ -257,33 +258,20 @@ if ($do == 'upgrade') {
 }
 
 if ($do =='install') {
-	$cloudapi = new CloudApi();
-	$recycle_module = $cloudapi->post('cache', 'get', array('key' => create_cache_key('recycle_module')));
-	$recycle_module = !empty($recycle_module['data']) ? $recycle_module['data'] : array();
-	$module_name = trim($_GPC['module_name']);
-	if (!empty($recycle_module[$module_name])) {
-		unset($recycle_module[$module_name]);
-		$cloudapi->post('cache', 'set', array('key' => create_cache_key('recycle_module'), 'value' => $recycle_module));
-		pdo_delete('modules_recycle', array('modulename' => $module_name));
-		cache_build_module_subscribe_type();
-		cache_build_account_modules();
-		cache_build_uninstalled_module();
-		cache_build_module_info($module_name);
-		itoast('已恢复', url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE)), '', 'success');
-	}
-	$points = ext_module_bindings();
 	if (empty($_W['isfounder'])) {
 		itoast('您没有安装模块的权限', '', 'error');
 	}
+	$module_name = trim($_GPC['module_name']);
 	$module_info = module_fetch($module_name);
 	if (!empty($module_info)) {
 		itoast('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
+	
 	$manifest = ext_module_manifest($module_name);
 	if (!empty($manifest)) {
 		$result = cloud_m_prepare($module_name);
 		if (is_error($result)) {
-			itoast($result['message'], url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
+			itoast($result['message'], referer(), 'error');
 		}
 	} else {
 		$result = cloud_prepare();
@@ -305,25 +293,28 @@ if ($do =='install') {
 		}
 	}
 	if (empty($manifest)) {
-		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
+		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', referer(), 'error');
 	}
 	if (!empty($manifest['platform']['main_module'])) {
-		$plugin_exist = pdo_get('modules_plugin', array('main_module' => $manifest['platform']['main_module'], 'name' => $manifest['application']['identifie']));
+		$plugin_exist = table('modules_plugin')->getPluginExists($manifest['application']['identifie'], $manifest['platform']['main_module']);
 		if (empty($plugin_exist)) {
 			itoast('请先更新主模块后再安装插件', url('module/manage-system/installed'), 'error', array(array('title' => '查看主程序', 'url' => url('module/manage-system/module_detail', array('name' => $manifest['platform']['main_module'])))));
 		}
 	}
-	$check_manifest_result = manifest_check($module_name, $manifest);
+	
+	$check_manifest_result = ext_manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
 		itoast($check_manifest_result['message'], '', 'error');
 	}
-	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
-	if (empty($manifest['platform']['main_module']) && !file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
+	$check_file_result = ext_file_check($module_name, $manifest);
+	if (is_error($check_file_result)) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
+	
 	$module = ext_module_convert($manifest);
-	$module_group = uni_groups();
+	//选择安装到哪些用户组
 	if (!$_W['ispost'] || empty($_GPC['flag'])) {
+		$module_group = uni_groups();
 		template('system/module-group');
 		exit;
 	}
@@ -333,9 +324,9 @@ if ($do =='install') {
 		}
 	}
 	$post_groups = $_GPC['group'];
-	ext_module_clean($module_name);
-	$bindings = array_elements(array_keys($points), $module, false);
+	$points = ext_module_bindings();
 	if (!empty($points)) {
+		$bindings = array_elements(array_keys($points), $module, false);
 		foreach ($points as $name => $point) {
 			unset($module[$name]);
 			if (is_array($bindings[$name]) && !empty($bindings[$name])) {
@@ -346,13 +337,14 @@ if ($do =='install') {
 						$entry['url'] = $entry['do'];
 						$entry['do'] = '';
 					}
-					pdo_insert('modules_bindings', $entry);
+					table('modules_bindings')->fill($entry)->save();
 				}
 			}
 		}
 	}
 
 	$module['permissions'] = iserializer($module['permissions']);
+	
 	$module_subscribe_success = true;
 	if (!empty($module['subscribes'])) {
 		$subscribes = iunserializer($module['subscribes']);
@@ -360,10 +352,13 @@ if ($do =='install') {
 			$module_subscribe_success = ext_check_module_subscribe($module['name']);
 		}
 	}
+	
 	if (!empty($module_info['version']['cloud_setting'])) {
 		$module['settings'] = 2;
 	}
+	
 	$module['title_initial'] = get_first_pinyin($module['title']);
+	
 	//安装时先执行在线数据库，再执行模块文件
 	if ($packet['schemes']){
 		foreach ($packet['schemes'] as $remote) {
@@ -375,32 +370,26 @@ if ($do =='install') {
 			}
 		}
 	}
+	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
 	if (!empty($manifest['install'])) {
 		if (strexists($manifest['install'], '.php')) {
 			if (file_exists($module_path . $manifest['install'])) {
 				include_once $module_path . $manifest['install'];
-				if (ONLINE_MODULE) {
-					unlink ($module_path . $manifest['install']);
-				}
 			}
 		} else {
 			pdo_run($manifest['install']);
 		}
 	}
+	
 	if (pdo_insert('modules', $module)) {
-		if (ONLINE_MODULE) {
-			if (strexists($manifest['upgrade'], '.php') && file_exists($module_path . $manifest['upgrade'])) {
-				unlink($module_path . $manifest['upgrade']);
-			}
-			if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
-				unlink($module_path . $manifest['uninstall']);
-			}
-		}
-
+		//删除modules_cloud表中相关记录，以便重新检查更新及安装情况
+		table('modules_cloud')->deleteByName($module['name']);
+		
 		// 如果模块来自应用商城，删除对应文件
 		if (defined('ONLINE_MODULE')) {
 			ext_module_script_clean($module['name'], $manifest);
 		}
+		
 		if ($_GPC['flag'] && !empty($post_groups) && $module['name']) {
 			foreach ($post_groups as $groupid) {
 				$group_info = pdo_get('uni_group', array('id' => intval($groupid)), array('id', 'name', 'modules'));
@@ -418,10 +407,8 @@ if ($do =='install') {
 		}
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
-		cache_build_uninstalled_module();
 		cache_build_module_info($module_name);
-		header('Location: ' . url('module/manage-system/install_success', array('account_type' => ACCOUNT_TYPE)));
-		exit;
+		itoast('模块成功！', url('module/manage-system/install_success', array('account_type' => ACCOUNT_TYPE)), 'success');
 	} else {
 		itoast('模块安装失败, 请联系模块开发者！');
 	}
@@ -591,93 +578,90 @@ if ($do == 'module_detail') {
 	$pager = pagination($total, $pageindex, $pagesize);
 }
 
-if ($do == 'uninstall') {
-	$name = trim($_GPC['name']);
-	$module = module_fetch($name);
-
-	if (!empty($module['plugin_list']) && empty($_GPC['confirm'])) {
-		$plugin_list = module_get_plugin_list($module['name']);
-		$message = '';
-		if (!empty($plugin_list) && is_array($plugin_list)) {
-			$message .= '删除' . $module['title'] . '并删除' . $module['title'] .  '包含插件<ul>';
-			foreach ($plugin_list as $plugin) {
-				$message .= "<li>{$plugin['title']}</li>";
-			}
-			unset($plugin);
-			$message .= '<a class="btn btn-primary" href="' . url('module/manage-system/uninstall', array('confirm' => 1, 'name' => $name)) . '">停用模块及插件</a></ul>';
-		}
-		if (!empty($message)) {
-			itoast($message, '', 'tips');
-		}
-	}
-
-	$cloudapi = new CloudApi();
-	$recycle_module = $cloudapi->post('cache', 'get', array('key' => create_cache_key('recycle_module')));
-	$recycle_module = !empty($recycle_module['data']) ? $recycle_module['data'] : array();
-	if (!empty($module['plugin_list']) && is_array($module['plugin_list'])) {
-		foreach ($module['plugin_list'] as $plugin) {
-			pdo_insert('modules_recycle', array('modulename' => $plugin));
-			cache_build_module_info($plugin);
-			$recycle_module[$plugin] = $plugin;
-		}
-	}
-	pdo_insert('modules_recycle', array('modulename' => $name));
-	$recycle_module[$name] = array('modulename' => $name);
-	$cloudapi->post('cache', 'set', array('key' => create_cache_key('recycle_module'), 'value' => $recycle_module));
-
-	cache_build_module_subscribe_type();
-	cache_build_uninstalled_module();
-	cache_build_module_info($name);
-	itoast('模块已放入回收站！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
-}
-
 //卸载模块
-if ($do == 'recycle_uninstall') {
+if ($do == 'uninstall') {
+	if (empty($_W['isfounder'])) {
+		return error(1, '您没有卸载模块的权限！');
+	}
 	$name = trim($_GPC['module_name']);
-	$module = pdo_get('modules', array('name' => $name));
-	$module['plugin_list'] = pdo_getall('modules_plugin', array('main_module' => $name));
-
+	$module = module_fetch($name, false);
+	if (empty($module)) {
+		itoast('应用不存在或是已经卸载！', referer(), 'success');
+	}
 	if (!isset($_GPC['confirm'])) {
 		$message = '';
 		if ($module['isrulefields']) {
 			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/recycle_uninstall', array('module_name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/recycle_uninstall', array('account_type' => ACCOUNT_TYPE, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
 		}
 		if (!empty($message)) {
-			itoast($message, '', 'tips');
+			message($message, '', 'tips');
 		}
 	}
-	module_uninstall($name);
-	$uninstall_result = module_execute_uninstall_script($name, $_GPC['confirm']);
-	if (is_error($uninstall_result)) {
-		itoast($uninstall_result['message'], url('module/manage-system'), 'error');
-	}
-	itoast('模块已卸载！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
+	ext_module_uninstall($name, $_GPC['confirm']);
+	ext_execute_uninstall_script($name);
+	
+	itoast('模块已卸载！', referer(), 'success');
 }
 
 //删除未安装模块
-if ($do == 'delete_uninstall') {
+if ($do == 'recycle_post') {
 	$name = trim($_GPC['module_name']);
-	$opt = intval($_GPC['opt']);
-	if (!empty($_GPC['type']) && intval($_GPC['type']) == 9) {
-		$type = intval($_GPC['type']);
+	if (empty($name)) {
+		itoast('应用不存在或是已经被删除', referer(), 'error');
+	}
+	$module = module_fetch($name);
+	$module_recycle = module_recycle_fetch($name);
+
+	//如果模块已经安装，则先标记删除，在停用中显示 
+	//如果模块未安装或是卸载，则标记删除，在回收站中显示 
+	if (!empty($module)) {
+		if (empty($module_recycle)) {
+			$msg = '模块已停用!';
+			table('modules_recycle')->fill(array('name' => $name, 'type' => 1))->save();
+		} else {
+			$msg = '模块已已恢复!';
+			table('modules_recycle')->deleteByName($name);
+		}
 	} else {
-		$type = intval($_GPC['account_type']);
+		if (empty($module_recycle)) {
+			$msg = '模块已放入回收站!';
+			table('modules_recycle')->fill(array('name' => $name, 'type' => 2))->save();
+		} else {
+			$msg = '模块已已恢复!';
+			table('modules_recycle')->deleteByName($name);
+		}
 	}
-	if ($opt == 0) {
-		$msg = '模块已放入回收站!';
-		pdo_insert('modules_recycle', array('modulename' => $name, 'type' => $type));
-	} elseif ($opt == 1) {
-		$msg = '模块已已恢复!';
-		pdo_delete('modules_recycle', array('modulename' => $name, 'type' => $type));
+	itoast($msg, referer(), 'success');
+}
+
+if ($do == 'recycle') {
+	$type = intval($_GPC['type']);
+	
+	$pageindex = max($_GPC['page'], 1);
+	$pagesize = 20;
+	
+	$module_recycle_talbe = table('modules_recycle');
+	$module_recycle_talbe->searchWithPage($pageindex, $pagesize)->where('type', $type);
+	
+	$modulelist = $module_recycle_talbe->getall('name');
+	if (!empty($modulelist)) {
+		foreach ($modulelist as $modulename => &$module) {
+			$module = module_fetch($modulename, false);
+			if (empty($module)) {
+				$module = table('modules_cloud')->getByName($modulename);
+			}
+		}
+		unset($module);
+		$pager = pagination($module_recycle_talbe->getLastQueryTotal(), $pageindex, $pagesize);
 	}
-	itoast($msg, url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
+	
+	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
 }
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
 	
 	$module_list = module_installed_list($account_base->typeSign);
-	
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
 			if (!empty($module['issystem'])) {
@@ -695,7 +679,7 @@ if ($do == 'installed') {
 	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
 }
 
-if ($do == 'not_installed' || $do == 'recycle') {
+if ($do == 'not_installed') {
 	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
 
 	$title = safe_gpc_string($_GPC['title']);
@@ -708,19 +692,20 @@ if ($do == 'not_installed' || $do == 'recycle') {
 	$pagesize = 20;
 	
 	$module_cloud_talbe = table('modules_cloud');
-	
+	$module_cloud_talbe->searchWithoutRecycle();
 	$module_cloud_talbe->searchWithPage($pageindex, $pagesize);
 	
 	if (!empty($title)) {
-		$module_cloud_talbe->where('title LIKE', "%{$title}%");
+		$module_cloud_talbe->where('a.title LIKE', "%{$title}%");
 	}
 	if (!empty($letter) && strlen($letter) == 1) {
-		$module_cloud_talbe->where('title_initial', $letter);
+		$module_cloud_talbe->where('a.title_initial', $letter);
 	}
-	$module_cloud_talbe->where('install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL));
-	$module_cloud_talbe->orderby('install_status', 'asc');
+	$module_cloud_talbe->where('a.install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL));
+	$module_cloud_talbe->where("a.{$account_base->typeSign}_support", MODULE_SUPPORT_ACCOUNT);
+	$module_cloud_talbe->orderby('a.install_status', 'asc');
 	
-	$uninstall_modules = $module_cloud_talbe->getall('name');
+	$modulelist = $module_cloud_talbe->getall('name');
 
 	$pager = pagination($module_cloud_talbe->getLastQueryTotal(), $pageindex, $pagesize);
 	

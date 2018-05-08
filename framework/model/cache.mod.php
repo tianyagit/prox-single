@@ -237,18 +237,19 @@ function cache_build_frame_menu() {
 
 function cache_build_module_subscribe_type() {
 	global $_W;
-	$modules = table('module')->getSubscribesModules();
+	$modules = table('module')->getByHasSubscribes();
+	if (empty($modules)) {
+		return array();
+	}
 	$subscribe = array();
-	if (!empty($modules)) {
-		foreach ($modules as $module) {
-			$module['subscribes'] = unserialize($module['subscribes']);
-			if (!empty($module['subscribes'])) {
-				foreach ($module['subscribes'] as $event) {
-					if ($event == 'text') {
-						continue;
-					}
-					$subscribe[$event][] = $module['name'];
+	foreach ($modules as $module) {
+		$module['subscribes'] = unserialize($module['subscribes']);
+		if (!empty($module['subscribes'])) {
+			foreach ($module['subscribes'] as $event) {
+				if ($event == 'text') {
+					continue;
 				}
+				$subscribe[$event][] = $module['name'];
 			}
 		}
 	}
