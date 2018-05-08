@@ -979,6 +979,11 @@ function module_local_upgrade_info() {
 	foreach ($module_path_list as $path) {
 		$modulename = pathinfo($path, PATHINFO_BASENAME);
 		if (!empty($modulelist[$modulename])) {
+			//如果之前存入未安装，但是已经安装了，则更新数据
+			$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
+			if (!empty($module_cloud_upgrade)) {
+				table('modules_cloud')->deleteByName($modulename);
+			}
 			continue;
 		}
 		
@@ -987,7 +992,6 @@ function module_local_upgrade_info() {
 		}
 		
 		$manifest = ext_module_manifest($modulename);
-		
 		$module_upgrade_data = array(
 			'name' => $modulename,
 			'has_new_version' => 0,
