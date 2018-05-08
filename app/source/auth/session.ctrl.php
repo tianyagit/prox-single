@@ -12,6 +12,11 @@ $dos = array('openid', 'userinfo', 'touch');
 $do = in_array($do, $dos) ? $do : 'openid';
 
 $account_api = WeAccount::create();
+if (!empty($_GPC['wxwork'])) {
+	//如果是企业微信，实例化wxapp.work类，目前没有独立出来小程序企业号类型 先这样处理
+	$_W['account']['type'] = ACCOUNT_TYPE_WXAPP_WORK;
+	$account_api = WeAccount::includes($_W['account']);
+}
 if ($do == 'openid') {
 	$code = $_GPC['code'];
 	if (empty($_W['account']['oauth']) || empty($code)) {
