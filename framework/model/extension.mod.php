@@ -240,6 +240,9 @@ function ext_module_manifest($modulename) {
 		} else {
 			$xml['application']['preview'] = tomedia($root . '/preview.jpg');
 		}
+		if (empty($xml['platform']['supports'])) {
+			$xml['platform']['supports'][] = 'app';
+		}
 	}
 	return $xml;
 }
