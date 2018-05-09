@@ -89,7 +89,6 @@ if ($do == 'display') {
 				foreach ($modules as $module_name) {
 					$module_info = module_fetch($module_name);
 					if (empty($module_info)) {
-					if (empty($module_info)) {
 						continue;
 					}
 					if ($module_info['account_support'] == MODULE_SUPPORT_ACCOUNT || $module_info['app_support'] == MODULE_SUPPORT_ACCOUNT) {
@@ -217,5 +216,4 @@ if ($do == 'post') {
 		}
 	}
 }
-
 template('module/group');
