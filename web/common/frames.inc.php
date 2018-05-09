@@ -843,7 +843,6 @@ $we7_system_menu['help'] = array(
 	'url' => url('help/display'),
 	'section' => array(),
 	'blank' => false,
-	'founder' => true,
 );
 
 $we7_system_menu['custom_help'] = array(
