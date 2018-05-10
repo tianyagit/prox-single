@@ -69,8 +69,8 @@ if ($do == 'buybranch') {
 if($do == 'callback') {
 	$secret = $_GPC['token'];
 	if(strlen($secret) == 32) {
-		$cache = cache_read(create_cache_key('cloud_auth_transfer'));
-		cache_delete_cache_name('cloud_auth_transfer');
+		$cache = cache_read(cache_system_key('cloud_auth_transfer'));
+		cache_delete(cache_system_key('cloud_auth_transfer'));
 		if(!empty($cache) && $cache['secret'] == $secret) {
 			$site = $cache;
 			unset($site['secret']);

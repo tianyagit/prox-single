@@ -43,7 +43,7 @@ if($do == 'auth') {
 		exit;
 	}
 	$auth['secret'] = $secret;
-	cache_write(create_cache_key('cloud_auth_transfer'), $auth);
+	cache_write(cache_system_key('cloud_auth_transfer'), $auth);
 	exit($secret);
 }
 
@@ -83,7 +83,7 @@ if($do == 'download') {
 		$file = gzuncompress($file);
 	}
 	
-	$_W['setting']['site']['token'] = authcode(cache_load(create_cache_key('cloud_transtoken')), 'DECODE');
+	$_W['setting']['site']['token'] = authcode(cache_load(cache_system_key('cloud_transtoken')), 'DECODE');
 	$string = (md5($file) . $ret['path'] . $_W['setting']['site']['token']);
 	if(!empty($_W['setting']['site']['token']) && md5($string) === $ret['sign']) {
 		$path = IA_ROOT . $ret['path'];
@@ -177,7 +177,7 @@ if ($do == 'module.setting.cloud') {
 	$_W['uniacid'] = $data['acid'];
 	$module = WeUtility::createModule($data['module']);
 	$module->saveSettings($setting);
-	cache_write(create_cache_key('modulesetting', array('module' => $data['module'], 'acid' => $data['acid'])), $setting);
+	cache_write(cache_system_key('modulesetting', array('module' => $data['module'], 'acid' => $data['acid'])), $setting);
 	echo 'success';
 	exit;
 }

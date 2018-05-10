@@ -95,7 +95,7 @@ if ($do == 'get_upgrade_info') {
 	$module_info = module_fetch($module_name);
 	if (empty($module_info['site_branch_id'])) {
 		$module_info['site_branch_id'] = $module['site_branch']['id'];
-		$cache_key = create_cache_key('module_info', array('module_name' => $module_name));
+		$cache_key = cache_system_key('module_info', array('module_name' => $module_name));
 		cache_write($cache_key, $module_info);
 	}
 	if (is_error($module)) {
@@ -251,7 +251,7 @@ if ($do == 'upgrade') {
 	if (!empty($module['subscribes'])) {
 		ext_check_module_subscribe($module_name);
 	}
-	cache_delete_cache_name('cloud_transtoken');
+	cache_delete(cache_system_key('cloud_transtoken'));
 	cache_build_module_info($module_name);
 
 	itoast('模块更新成功！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
@@ -472,7 +472,7 @@ if ($do == 'save_module_info') {
 		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
 		$result = utility_image_rename($module_icon_map[$type]['url'], $image_destination_url);
 	}
-	cache_delete_cache_name('module_info', array('module_name' => $module_name));
+	cache_delete(cache_system_key('module_info', array('module_name' => $module_name)));
 	if (!empty($result)) {
 		iajax(0, '');
 	}

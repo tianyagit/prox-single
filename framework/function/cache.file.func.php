@@ -54,9 +54,22 @@ function cache_write($key, $data, $dir = '') {
  * @return boolean
  */
 function cache_delete($key, $dir = '') {
-	$key = str_replace(':', '@', $key);
-	$key = CACHE_FILE_PATH . $key;
-	return file_delete($key);
+
+	$cache_relation_keys = cache_relation_keys($key);
+	if (is_array($cache_relation_keys) && !empty($cache_relation_keys)) {
+		foreach ($cache_relation_keys as $key) {
+			$cache_info = cache_load($key);
+			if (!empty($cache_info)) {
+				$key = str_replace(':', '@', $key);
+				$key = CACHE_FILE_PATH . $key;
+				$result = file_delete($key);
+				if (!$result) {
+					return error(1, '缓存: ' . $key . ' 删除失败!');
+				}
+			}
+		}
+	}
+	return true;
 }
 
 /**

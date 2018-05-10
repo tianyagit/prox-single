@@ -140,7 +140,7 @@ function material_news_set($data, $attach_id) {
 			unset($news['id']);
 			pdo_insert('wechat_news', $news);
 		}
-		cache_delete_cache_name('material_reply', array('attach_id' => $attach_id));
+		cache_delete(cache_system_key('material_reply', array('attach_id' => $attach_id)));
 	} else {
 		$wechat_attachment = array(
 			'uniacid' => $_W['uniacid'],
@@ -218,7 +218,7 @@ function material_build_reply($attach_id) {
 	if (empty($attach_id)) {
 		return error(1, "素材id参数不能为空");
 	}
-	$cachekey = create_cache_key('material_reply', array('attach_id' => $attach_id));
+	$cachekey = cache_system_key('material_reply', array('attach_id' => $attach_id));
 	$reply = cache_load($cachekey);
 	if (!empty($reply)) {
 		return $reply;

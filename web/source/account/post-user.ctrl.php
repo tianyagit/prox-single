@@ -265,7 +265,7 @@ if ($do == 'edit') {
 				}
 			}
 		}
-		cache_delete_cache_name('permission', array('uniacid' => $uniacid, 'uid' => $uid));
+		cache_delete(cache_system_key('permission', array('uniacid' => $uniacid, 'uid' => $uid)));
 		itoast('操作菜单权限成功！', referer(), 'success');
 	}
 	template('account/set-permission');

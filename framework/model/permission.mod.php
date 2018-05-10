@@ -17,7 +17,7 @@ function permission_build() {
 		return $we7_file_permission;
 	}
 
-	$cachekey = create_cache_key('permission', array('uniacid' => $_W['uniacid'], 'uid' => $_W['uid']));
+	$cachekey = cache_system_key('permission', array('uniacid' => $_W['uniacid'], 'uid' => $_W['uid']));
 	$cache = cache_load($cachekey);
 
 	if (!empty($cache)) {

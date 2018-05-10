@@ -131,7 +131,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			$uni_account_user = pdo_getall('uni_account_users', array('uid' => $uid, 'role' => 'owner'));
 			if (!empty($uni_account_user)) {
 				foreach ($uni_account_user as $account) {
-					cache_delete_cache_name('uniaccount', array('uniacid' => $account['uniacid']));
+					cache_delete(cache_system_key('uniaccount', array('uniacid' => $account['uniacid'])));
 				}
 			}
 			break;

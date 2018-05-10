@@ -19,7 +19,7 @@ function cache_build_setting() {
 		foreach ($setting as $k => $v) {
 			$setting[$v['key']] = iunserializer($v['value']);
 		}
-		cache_write(create_cache_key('setting'), $setting);
+		cache_write(cache_system_key('setting'), $setting);
 	}
 }
 
@@ -53,10 +53,10 @@ function cache_build_account_modules($uniacid = 0) {
 		cache_clean(cache_system_key('unimodules'));
 		cache_clean(cache_system_key('user_modules'));
 	} else {
-		cache_delete_cache_name('unimodules', array('uniacid' => $uniacid, 'enabled' => 1));
-		cache_delete_cache_name('unimodules', array('uniacid' => $uniacid, 'enabled' => ''));
+		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => 1)));
+		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => '')));
 		$owner_uid = table('account')->searchWithUniacid($uniacid)->searchWithRole('owner')->getOwnerUid();
-		cache_delete_cache_name('user_modules', array('uid' => $owner_uid));
+		cache_delete(cache_system_key('user_modules', array('uid' => $owner_uid)));
 	}
 }
 
@@ -70,12 +70,12 @@ function cache_build_account($uniacid = 0) {
 	if (empty($uniacid)) {
 		$uniacid_arr = table('account')->getUniAccountList();
 		foreach($uniacid_arr as $account){
-			cache_delete_cache_name('uniaccount', array('uniacid' => $account['uniacid']));
-			cache_delete_cache_name('defaultgroupid', array('uniacid' => $account['uniacid']));
+			cache_delete(cache_system_key('uniaccount', array('uniacid' => $account['uniacid'])));
+			cache_delete(cache_system_key('defaultgroupid', array('uniacid' => $account['uniacid'])));
 		}
 	} else {
-		cache_delete_cache_name('uniaccount', array('uniacid' => $uniacid));
-		cache_delete_cache_name('defaultgroupid', array('uniacid' => $uniacid));
+		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
+		cache_delete(cache_system_key('defaultgroupid', array('uniacid' => $uniacid)));
 	}
 
 }
@@ -86,7 +86,7 @@ function cache_build_account($uniacid = 0) {
  */
 function cache_build_memberinfo($uid) {
 	$uid = intval($uid);
-	cache_delete_cache_name('memberinfo', array('uid' => $uid));
+	cache_delete(cache_system_key('memberinfo', array('uid' => $uid)));
 	return true;
 }
 
@@ -143,7 +143,7 @@ function cache_build_users_struct() {
 		'password' => '密码',
 		'pay_password' => '支付密码',
 	);
-	cache_write(create_cache_key('userbasefields'), $base_fields);
+	cache_write(cache_system_key('userbasefields'), $base_fields);
 	$fields = table('profile')->getProfileFields();
 	if (!empty($fields)) {
 		foreach ($fields as &$field) {
@@ -160,9 +160,9 @@ function cache_build_users_struct() {
 		$fields['createtime'] = '加入时间';
 		$fields['password'] = '用户密码';
 		$fields['pay_password'] = '支付密码';
-		cache_write(create_cache_key('usersfields'), $fields);
+		cache_write(cache_system_key('usersfields'), $fields);
 	} else {
-		cache_write(create_cache_key('usersfields'), $base_fields);
+		cache_write(cache_system_key('usersfields'), $base_fields);
 	}
 }
 
@@ -229,8 +229,8 @@ function cache_build_frame_menu() {
 			}
 		}
 		$system_menu = iarray_sort($system_menu, 'displayorder', 'asc');
-		cache_delete_cache_name('system_frame');
-		cache_write(create_cache_key('system_frame'), $system_menu);
+		cache_delete(cache_system_key('system_frame'));
+		cache_write(cache_system_key('system_frame'), $system_menu);
 		return $system_menu;
 	}
 }
@@ -264,7 +264,7 @@ function cache_build_module_subscribe_type() {
 			}
 		}
 	}
-	cache_write(create_cache_key('module_receive_enable'), $subscribe);
+	cache_write(cache_system_key('module_receive_enable'), $subscribe);
 	return $subscribe;
 }
 
@@ -274,16 +274,16 @@ function cache_build_cloud_ad() {
 	global $_W;
 	$uniacid_arr = table('account')->getUniAccountList();
 	foreach($uniacid_arr as $account){
-		cache_delete_cache_name('stat_todaylock', array('uniacid' => $account['uniacid']));
-		cache_delete_cache_name('cloud_ad_uniaccount', array('uniacid' => $account['uniacid']));
-		cache_delete_cache_name('cloud_ad_app_list', array('uniacid' => $account['uniacid']));
+		cache_delete(cache_system_key('stat_todaylock', array('uniacid' => $account['uniacid'])));
+		cache_delete(cache_system_key('cloud_ad_uniaccount', array('uniacid' => $account['uniacid'])));
+		cache_delete(cache_system_key('cloud_ad_app_list', array('uniacid' => $account['uniacid'])));
 	}
-	cache_delete_cache_name('cloud_flow_master');
-	cache_delete_cache_name('cloud_ad_uniaccount_list');
-	cache_delete_cache_name('cloud_ad_tags');
-	cache_delete_cache_name('cloud_ad_type_list');
-	cache_delete_cache_name('cloud_ad_app_support_list');
-	cache_delete_cache_name('cloud_ad_site_finance');
+	cache_delete(cache_system_key('cloud_flow_master'));
+	cache_delete(cache_system_key('cloud_ad_uniaccount_list'));
+	cache_delete(cache_system_key('cloud_ad_tags'));
+	cache_delete(cache_system_key('cloud_ad_type_list'));
+	cache_delete(cache_system_key('cloud_ad_app_support_list'));
+	cache_delete(cache_system_key('cloud_ad_site_finance'));
 }
 
 /**
@@ -308,11 +308,11 @@ function cache_build_uninstalled_module() {
 	}
 	$local_module_list = $module_table->getModulesLocalList();
 	$uninstallModules = array('recycle' => array(), 'uninstalled' => array());
-	$recycle_modules = $cloud_api->post('cache', 'get', array('key' => create_cache_key('recycle_module')));
+	$recycle_modules = $cloud_api->post('cache', 'get', array('key' => cache_system_key('recycle_module')));
 	$recycle_modules = !empty($recycle_modules['data']) ? $recycle_modules['data'] : array();
 	if (empty($recycle_modules)) {
 		$recycle_modules = pdo_getall('modules_recycle', array(), array('modulename'), 'modulename');
-		$cloud_api->post('cache', 'set', array('key' => create_cache_key('recycle_module'), 'value' => $recycle_modules));
+		$cloud_api->post('cache', 'set', array('key' => cache_system_key('recycle_module'), 'value' => $recycle_modules));
 	}
 	$cloud_module = cloud_m_query();
 	unset($cloud_module['pirate_apps']);
@@ -504,7 +504,7 @@ function cache_build_proxy_wechatpay_account() {
 		'service' => $service,
 		'borrow' => $borrow
 	);
-	cache_write(create_cache_key('proxy_wechatpay_account'), $cache);
+	cache_write(cache_system_key('proxy_wechatpay_account'), $cache);
 	return $cache;
 }
 
@@ -513,14 +513,14 @@ function cache_build_proxy_wechatpay_account() {
  */
 function cache_build_module_info($module_name) {
 	global $_W;
-	cache_delete_cache_name('module_info', array('module_name' => $module_name, 'uniacid' => $_W['uniacid']));
+	cache_delete(cache_system_key('module_info', array('module_name' => $module_name, 'uniacid' => $_W['uniacid'])));
 }
 
 /**
  * 更新功能权限组
  */
 function cache_build_uni_group() {
-	cache_delete_cache_name('uni_groups');
+	cache_delete(cache_system_key('uni_groups'));
 }
 
 /**
@@ -577,6 +577,6 @@ function cache_build_cloud_upgrade_module() {
 	} else {
 		return array();
 	}
-	cache_write(create_cache_key('all_cloud_upgrade_module'), $modules, 1800);
+	cache_write(cache_system_key('all_cloud_upgrade_module'), $modules, 1800);
 	return $modules;
 }

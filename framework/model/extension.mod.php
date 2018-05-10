@@ -777,7 +777,7 @@ function ext_module_uninstall($modulename, $is_clean_rule = false) {
 
 	ext_module_clean($modulename, $is_clean_rule);
 
-	cache_delete_cache_name('module_all_uninstall');
+	cache_delete(cache_system_key('module_all_uninstall'));
 
 	cache_build_module_subscribe_type();
 	cache_build_module_info($modulename);

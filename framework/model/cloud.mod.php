@@ -192,8 +192,8 @@ function cloud_build() {
 		$upgrade['upgrade'] = $ret['upgrade'];
 		$upgrade['data'] = $ret;
 		$upgrade['lastupdate'] = TIMESTAMP;
-		cache_write(create_cache_key('upgrade'), $upgrade);
-		cache_write(create_cache_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
+		cache_write(cache_system_key('upgrade'), $upgrade);
+		cache_write(cache_system_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
 	}
 
 	return $ret;
@@ -259,7 +259,7 @@ function cloud_download($path, $type = '') {
 		if($gz) {
 			$file = gzuncompress($file);
 		}
-		$_W['setting']['site']['token'] = authcode(cache_load(create_cache_key('cloud_transtoken')), 'DECODE');
+		$_W['setting']['site']['token'] = authcode(cache_load(cache_system_key('cloud_transtoken')), 'DECODE');
 		$string = (md5($file) . $ret['path'] . $_W['setting']['site']['token']);
 		if(!empty($_W['setting']['site']['token']) && md5($string) === $ret['sign']) {
 			$error_file_list = array();
@@ -376,7 +376,7 @@ function cloud_m_build($modulename, $type = '') {
 		if (empty($module)) {
 			$ret['install'] = 1;
 		}
-		cache_write(create_cache_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
+		cache_write(cache_system_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
 	}
 	return $ret;
 }
@@ -525,7 +525,7 @@ function cloud_t_build($name) {
 		if(empty($theme)) {
 			$ret['install'] = 1;
 		}
-		cache_write(create_cache_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
+		cache_write(cache_system_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
 	}
 	return $ret;
 }
@@ -620,7 +620,7 @@ function cloud_w_build($name) {
 		if(empty($webtheme)) {
 			$ret['install'] = 1;
 		}
-		cache_write(create_cache_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
+		cache_write(cache_system_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
 	}
 	return $ret;
 }
@@ -1041,7 +1041,7 @@ function cloud_flow_master_post($flow_master) {
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
-	cache_delete_cache_name('cloud_flow_master');
+	cache_delete(cache_system_key('cloud_flow_master'));
 	$ret = @json_decode($dat['content'], true);
 	return $ret;
 }
@@ -1052,7 +1052,7 @@ function cloud_flow_master_post($flow_master) {
  * @return array
  */
 function cloud_flow_master_get() {
-	$cachekey = create_cache_key('cloud_flow_master');
+	$cachekey = cache_system_key('cloud_flow_master');
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return $cache['setting'];
@@ -1087,14 +1087,14 @@ function cloud_flow_uniaccount_post($uniaccount) {
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
-	cache_delete_cache_name('cloud_ad_uniaccount', array('uniacid' => $uniaccount['uniacid']));
-	cache_delete_cache_name('cloud_ad_uniaccount_list');
+	cache_delete(cache_system_key('cloud_ad_uniaccount', array('uniacid' => $uniaccount['uniacid'])));
+	cache_delete(cache_system_key('cloud_ad_uniaccount_list'));
 	$ret = @json_decode($dat['content'], true);
 	return $ret;
 }
 
 function cloud_flow_uniaccount_get($uniacid) {
-	$cachekey = create_cache_key('cloud_ad_uniaccount', array('uniacid' => $uniacid));
+	$cachekey = cache_system_key('cloud_ad_uniaccount', array('uniacid' => $uniacid));
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return $cache['setting'];
@@ -1115,7 +1115,7 @@ function cloud_flow_uniaccount_get($uniacid) {
 }
 
 function cloud_flow_uniaccount_list_get() {
-	$cachekey = create_cache_key('cloud_ad_uniaccount_list');
+	$cachekey = cache_system_key('cloud_ad_uniaccount_list');
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return $cache['setting'];
@@ -1132,7 +1132,7 @@ function cloud_flow_uniaccount_list_get() {
 }
 
 function cloud_flow_ad_tag_list() {
-	$cachekey = create_cache_key('cloud_ad_tags');
+	$cachekey = cache_system_key('cloud_ad_tags');
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return $cache['items'];
@@ -1149,7 +1149,7 @@ function cloud_flow_ad_tag_list() {
 }
 
 function cloud_flow_ad_type_list() {
-	$cachekey = create_cache_key('cloud_ad_type_list');
+	$cachekey = cache_system_key('cloud_ad_type_list');
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return $cache['items'];
@@ -1182,7 +1182,7 @@ function cloud_flow_app_post($uniacid, $module_name, $enable = 0, $ad_types = nu
 	if(is_error($dat)) {
 		return error(-1, '网络存在错误， 请稍后重试。' . $dat['message']);
 	}
-	cache_delete_cache_name('cloud_ad_app_list', array('uniacid' => $uniacid));
+	cache_delete(cache_system_key('cloud_ad_app_list', array('uniacid' => $uniacid)));
 	$ret = @json_decode($dat['content'], true);
 	return $ret;
 }
@@ -1191,7 +1191,7 @@ function cloud_flow_app_post($uniacid, $module_name, $enable = 0, $ad_types = nu
  * 公众号下所有应用的设置
  */
 function cloud_flow_app_list_get($uniacid) {
-	$cachekey = create_cache_key('cloud_ad_app_list', array('uniacid' => $uniacid));
+	$cachekey = cache_system_key('cloud_ad_app_list', array('uniacid' => $uniacid));
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return $cache['setting'];
@@ -1214,7 +1214,7 @@ function cloud_flow_app_support_list($module_names) {
 	if (empty($module_names)) {
 		return array();
 	}
-	$cachekey = create_cache_key('cloud_ad_app_support_list');
+	$cachekey = cache_system_key('cloud_ad_app_support_list');
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return $cache['setting'];
@@ -1232,7 +1232,7 @@ function cloud_flow_app_support_list($module_names) {
 }
 
 function cloud_flow_site_stat_day($condition) {
-	$cachekey = create_cache_key('cloud_ad_site_finance');
+	$cachekey = cache_system_key('cloud_ad_site_finance');
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return $cache['info'];
@@ -1260,7 +1260,7 @@ function cloud_build_transtoken() {
 	$dat = cloud_request(CLOUD_GATEWAY_URL_NORMAL, $pars);
 	$file = IA_ROOT . '/data/application.build';
 	$ret = _cloud_shipping_parse($dat, $file);
-	cache_write(create_cache_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
+	cache_write(cache_system_key('cloud_transtoken'), authcode($ret['token'], 'ENCODE'));
 	return $ret['token'];
 }
 /**

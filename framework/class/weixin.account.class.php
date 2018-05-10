@@ -624,7 +624,7 @@ class WeiXinAccount extends WeAccount {
 	 * @return error | string accesstoken值
 	 */
 	public function getAccessToken() {
-		$cachekey = create_cache_key('accesstoken', array('acid' => $this->account['acid']));
+		$cachekey = cache_system_key('accesstoken', array('acid' => $this->account['acid']));
 		$cache = cache_load($cachekey);
 		if (!empty($cache) && !empty($cache['token']) && $cache['expire'] > TIMESTAMP) {
 			$this->account['access_token'] = $cache;
@@ -687,7 +687,7 @@ class WeiXinAccount extends WeAccount {
 		$url = 'https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=' . $access_token;
 		$response = $this->requestApi($url);
 		if (is_error($response) && $response['errno'] == '40001') {
-			cache_delete_cache_name('accesstoken', array('acid' => $this->account['acid']));
+			cache_delete(cache_system_key('accesstoken', array('acid' => $this->account['acid'])));
 		}
 		return true;
 	}
@@ -697,7 +697,7 @@ class WeiXinAccount extends WeAccount {
 	 * @return array
 	 */
 	public function getJsApiTicket(){
-		$cachekey = create_cache_key('jsticket', array('acid' => $this->account['acid']));
+		$cachekey = cache_system_key('jsticket', array('acid' => $this->account['acid']));
 		$cache = cache_load($cachekey);
 		if(!empty($cache) && !empty($cache['ticket']) && $cache['expire'] > TIMESTAMP) {
 			return $cache['ticket'];
@@ -1699,7 +1699,7 @@ class WeiXinAccount extends WeAccount {
 	}
 
 	public function getOauthAccessToken() {
-		$cachekey = create_cache_key('oauthaccesstoken', array('acid' => $this->account['acid']));
+		$cachekey = cache_system_key('oauthaccesstoken', array('acid' => $this->account['acid']));
 		$cache = cache_load($cachekey);
 		if (!empty($cache) && !empty($cache['token']) && $cache['expire'] > TIMESTAMP) {
 			return $cache['token'];

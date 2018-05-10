@@ -139,7 +139,7 @@ function mc_fetch_one($uid) {
 	if (empty($uid)) {
 		return array();
 	}
-	$cachekey = create_cache_key('memberinfo', array('uid' => $uid));
+	$cachekey = cache_system_key('memberinfo', array('uid' => $uid));
 	$cache = cache_load($cachekey);
 
 	if (!empty($cache)) {
@@ -743,11 +743,11 @@ function _mc_login($member) {
  * @return array
  */
 function mc_fields() {
-	$fields = cache_load(create_cache_key('usersfields'));
+	$fields = cache_load(cache_system_key('usersfields'));
 	if (empty($fields)) {
 		load()->model('cache');
 		cache_build_users_struct();
-		$fields = cache_load(create_cache_key('usersfields'));
+		$fields = cache_load(cache_system_key('usersfields'));
 	}
 	return $fields;
 }
@@ -1713,7 +1713,7 @@ function mc_init_fans_info($openid, $force_init_member = false){
 			} else {
 				$fans_update_info['uid'] = $fans_mapping['uid'];
 				pdo_update('mc_members', $member_update_info, array('uid' => $fans_mapping['uid']));
-				cache_delete_cache_name('memberinfo', array('uid' => $fans_mapping['uid']));
+				cache_delete(cache_system_key('memberinfo', array('uid' => $fans_mapping['uid'])));
 			}
 		}
 

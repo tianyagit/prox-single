@@ -380,7 +380,7 @@ abstract class WeAccount {
 		);
 		$code = strval($code);
 		if($code == '40001' || $code == '42001') {
-			cache_delete_cache_name('accesstoken', array('acid' => $this->account['acid']));
+			cache_delete(cache_system_key('accesstoken', array('acid' => $this->account['acid'])));
 			return '微信公众平台授权异常, 系统已修复这个错误, 请刷新页面重试.';
 		}
 		if($errors[$code]) {

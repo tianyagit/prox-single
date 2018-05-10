@@ -296,7 +296,7 @@ function module_save_group_package($package) {
  */
 function module_fetch($name, $enabled = true) {
 	global $_W;
-	$cachekey = create_cache_key('module_info', array('module_name' => $name));
+	$cachekey = cache_system_key('module_info', array('module_name' => $name));
 	$module = cache_load($cachekey);
 	if (empty($module)) {
 		$module_info = table('modules')->getByName($name);
@@ -351,7 +351,7 @@ function module_fetch($name, $enabled = true) {
 	}
 	//有公众号时，附加模块配置信息
 	if (!empty($module) && !empty($_W['uniacid'])) {
-		$setting_cachekey = create_cache_key('module_setting', array('module_name' => $name, 'uniacid' => $_W['uniacid']));
+		$setting_cachekey = cache_system_key('module_setting', array('module_name' => $name, 'uniacid' => $_W['uniacid']));
 		$setting = cache_load($setting_cachekey);
 		if (empty($setting)) {
 			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));
@@ -854,7 +854,7 @@ function module_save_switch($module_name, $uniacid = 0, $version_id = 0) {
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
-	$cache_key = create_cache_key('last_account', array('switch' => $_GPC['__switch']));
+	$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
 	$cache_lastaccount = (array)cache_load($cache_key);
 	if (empty($cache_lastaccount)) {
 		$cache_lastaccount = array(
@@ -886,7 +886,7 @@ function module_last_switch($module_name) {
 	if (empty($module_name)) {
 		return array();
 	}
-	$cache_key = create_cache_key('last_account', array('switch' => $_GPC['__switch']));
+	$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
 	$cache_lastaccount = (array)cache_load($cache_key);
 	return $cache_lastaccount[$module_name];
 }

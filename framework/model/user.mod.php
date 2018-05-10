@@ -219,6 +219,7 @@ function user_single($user_or_uid) {
 		$record['clerk_type'] = '2';
 	}
 	$third_info = pdo_getall('users_bind', array('uid' => $record['uid']), array(), 'third_type');
+
 	$record['qq_openid'] = $third_info[USER_REGISTER_TYPE_QQ]['bind_sign'];
 	$record['wechat_openid'] = $third_info[USER_REGISTER_TYPE_WECHAT]['bind_sign'];
 	$record['mobile'] = $third_info[USER_REGISTER_TYPE_MOBILE]['bind_sign'];
@@ -454,7 +455,7 @@ function user_modules($uid) {
 	global $_W;
 
 	load()->model('module');
-	$modules = cache_load(create_cache_key('user_modules', array('uid' => $uid)));
+	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
@@ -526,7 +527,7 @@ function user_modules($uid) {
 				}
 			}
 		}
-		cache_write(create_cache_key('user_modules', array('uid' => $uid)), $modules);
+		cache_write(cache_system_key('user_modules', array('uid' => $uid)), $modules);
 	}
 	$module_list = array();
 	if (!empty($modules)) {

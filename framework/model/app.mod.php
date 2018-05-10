@@ -119,7 +119,7 @@ function app_pass_visit_limit($uniacid = 0) {
 	if (empty($limit)) {
 		return false;
 	}
-	$cachekey = create_cache_key('statistics', array('uniacid' => $uniacid));
+	$cachekey = cache_system_key('statistics', array('uniacid' => $uniacid));
 	$cache = cache_load($cachekey);
 	if (!empty($cache) && ($cache['time'] + $limit['interval'] > TIMESTAMP)) {
 		return $cache['limit'];
@@ -169,7 +169,7 @@ function app_month_visit_till_today($uniacid = 0) {
 	$result = 0;
 	$uniacid = intval($uniacid) > 0 ? intval($uniacid) : $_W['uniacid'];
 	$today = date('Ymd');
-	$cachekey = create_cache_key('uniacid_visit', array('uniacid' => $uniacid, 'today' => $today));
+	$cachekey = cache_system_key('uniacid_visit', array('uniacid' => $uniacid, 'today' => $today));
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;

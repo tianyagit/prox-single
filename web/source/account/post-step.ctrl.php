@@ -160,7 +160,7 @@ if($step == 1) {
 		if ($acid && !empty($update['key']) && !empty($update['secret']) && empty($oauth['oauth']['account']) && $update['level'] == ACCOUNT_SERVICE_VERIFY) {
 			pdo_update('uni_settings', array('oauth' => iserializer(array('account' => $acid, 'host' => $oauth['oauth']['host']))), array('uniacid' => $uniacid));
 		}
-		cache_delete_cache_name('unisetting', array('uniacid' => $uniacid));
+		cache_delete(cache_system_key('unisetting', array('uniacid' => $uniacid)));
 		if (!empty($_GPC['uniacid']) || empty($_W['isfounder'])) {
 			header("Location: ".url('account/post-step/', array('uniacid' => $uniacid, 'acid' => $acid, 'step' => 4)));
 		} else {
@@ -270,14 +270,14 @@ if($step == 1) {
 			pdo_delete('uni_group', array('uniacid' => $uniacid));
 		}
 		
-		cache_delete_cache_name('uniaccount', array('uniacid' => $uniacid));
+		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 
-		cache_delete_cache_name('unimodules', array('uniacid' => $uniacid, 'enabled' => 1));
-		cache_delete_cache_name('unimodules', array('uniacid' => $uniacid, 'enabled' => ''));
+		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => 1)));
+		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => '')));
 
-		cache_delete_cache_name('accesstoken', array('acid' => $acid));
+		cache_delete(cache_system_key('accesstoken', array('acid' => $acid)));
 
-		cache_delete_cache_name('proxy_wechatpay_account');
+		cache_delete(cache_system_key('proxy_wechatpay_account'));
 		
 		cache_clean(cache_system_key('user_accounts'));
 

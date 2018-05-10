@@ -138,10 +138,10 @@ if ($do == 'delete') {
 
 		pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 		if($_GPC['uniacid'] == $_W['uniacid']) {
-			cache_delete_cache_name('last_account', array('switch' => $_GPC['__switch']));
+			cache_delete(cache_system_key('last_account', array('switch' => $_GPC['__switch'])));
 			isetcookie('__uniacid', '');
 		}
-		cache_delete_cache_name('uniaccount', array('uniacid' => $uniacid));
+		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 	}
 	itoast('停用成功！，您可以在回收站中恢复', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'success');
 }

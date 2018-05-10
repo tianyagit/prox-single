@@ -62,32 +62,36 @@ function cache_load($key, $unserialize = false) {
 	}
 }
 
+function &cache_global($key) {
+	
+}
+
 /**
- * 统一系统缓存名称前缀，支持缓存名称中包含占位符，最多不得超过5个
- * @param string $cache_key
- * @return string
+ * 获取缓存名称
+ * @param $cache_key
+ * @param array $params
+ * @return array|mixed|string
  */
-function cache_system_key($cache_key) {
-	$args = func_get_args();
-	switch (func_num_args()) {
-		case 1:
-			break;
-		case 2:
-			$cache_key = sprintf($cache_key, $args[1]);
-			break;
-		case 3:
-			$cache_key = sprintf($cache_key, $args[1], $args[2]);
-			break;
-		case 4:
-			$cache_key = sprintf($cache_key, $args[1], $args[2], $args[3]);
-			break;
-		case 5:
-			$cache_key = sprintf($cache_key, $args[1], $args[2], $args[3], $args[4]);
-			break;
-		case 6:
-			$cache_key = sprintf($cache_key, $args[1], $args[2], $args[3], $args[4], $args[5]);
-			break;
+function cache_system_key($cache_key, $params = array()) {
+	$cache_key_all = cache_key_all();
+	$cache_info = $cache_key_all['caches'][$cache_key];
+
+	if (empty($cache_info)) {
+		return error(2, '缓存 ' . $cache_key . ' 不存在!');
+	} else {
+		$cache_key = $cache_info['key'];
 	}
+
+	if (is_array($params) && !empty($params)) {
+		foreach ($params as $key => $param) {
+			$cache_key = str_replace('%' . $key, $param, $cache_key);
+		}
+
+		if (preg_match('/%/', $cache_key)) {
+			return error(1, '缺少缓存参数或参数不正确!');
+		}
+	}
+
 	$cache_key = 'we7:' . $cache_key;
 	if (strlen($cache_key) > CACHE_KEY_LENGTH) {
 		trigger_error('Cache name is over the maximum length');
@@ -95,102 +99,50 @@ function cache_system_key($cache_key) {
 	return $cache_key;
 }
 
-function &cache_global($key) {
-	
-}
+function cache_relation_keys($key) {
+	if (!is_string($key)) {
+		return $key;
+	}
+	$cache_param_values = explode(':', $key);
+	$cache_name = $cache_param_values[1];
+	unset($cache_param_values[0]);
+	unset($cache_param_values[1]);
 
-/**
- * 根据参数构造缓存键
- * @param $cachekey
- * @param $params
- * @return mixed
- */
-function create_cache_key($cachename, $params = array()) {
-	$cache_all = cache_all();
-	$cache_info = $cache_all['caches'][$cachename];
+	$cache_key_all = cache_key_all();
+	$cache_relations = $cache_key_all['groups'];
+	$cache_info = $cache_key_all['caches'][$cache_name];
 
 	if (empty($cache_info)) {
-		message('缓存 ' . $cachename . ' 不存在!');
-	} else {
-		$cachekey = $cache_info['key'];
+		return error(2, '缓存 ：' . $key . '不存在');
 	}
 
-	$arr = explode('%', $cachekey);
-	if (count($arr) > 1) {
-		unset($arr[0]);
-		$arr = explode(':', implode($arr));
-		$diff = array_diff($arr, array_keys($params));
-
-		if (!empty($diff)) {
-			message('缺少参数 : ' . implode($diff, ' 、'), '', '');
-			exit();
-		}
-
-		if (is_array($params)) {
-			foreach ($params as $key => $param) {
-				$cachekey = str_replace('%' . $key, $param, $cachekey);
-			}
-		} else {
-			message('参数格式不正确！');
-			exit();
-		}
-	}
-	return $cachekey;
-}
-
-/**
- * 根据缓存名称删除关联的缓存
- * @param $cachename
- * @param $params
- */
-function cache_delete_cache_name($cachename, $params = array()) {
-	$cache_all = cache_all();
-
-	if (empty($cache_all['caches'][$cachename])) {
-		message('缓存信息 ' . $cachename . '不存在');
+	$cache_key = $cache_info['key'];
+	$cache_param_keys = explode('%', $cache_key);
+	unset($cache_param_keys[0]);
+	if (is_array($cache_param_keys) && !empty($cache_param_keys)) {
+		$cache_param_keys = explode(':', implode($cache_param_keys));
 	}
 
-	$cache_info = $cache_all['caches'][$cachename];
-	$cache_relations = $cache_all['relations'];
+	$cache_key_params = array_combine($cache_param_keys, $cache_param_values);
+	if (!$cache_key_params) {
+		return error(1, '缺少参数');
+	}
 
-	if (!empty($cache_info['relation'])) {
-		$relation_keys = $cache_relations[$cache_info['relation']]['relations'];
-		$relation_params = $cache_relations[$cache_info['relation']]['relation_params'];
-
-		$diff = @array_diff($relation_params, array_keys($params));
-		if (!empty($diff)) {
-			message('缺少参数 : ' . implode($diff, ' 、'), '', '');
-			exit();
-		}
-
+	if (!empty($cache_info['group'])) {
+		$relation_keys = $cache_relations[$cache_info['group']]['relations'];
+		$cache_keys = array();
 		foreach ($relation_keys as $key => $val) {
-			$cache_key = $cache_all['caches'][$val]['key'];
-			foreach ($params as $key => $param) {
-				$cache_key = str_replace('%' . $key, $param, $cache_key);
+			$cache_key = cache_system_key($val, $cache_key_params);
+			if (!is_error($cache_key)) {
+				$cache_keys[] = $cache_key;
+			} else {
+				return error(1, $cache_key['message']);
 			}
-			cache_delete($cache_key);
 		}
 	} else {
-		$cache_key = $cache_info['key'];
-
-		$arr = explode('%', $cache_key);
-		if (count($arr) > 1) {
-			unset($arr[0]);
-			$arr = explode(':', implode($arr));
-			$diff = array_diff($arr, array_keys($params));
-
-			if (!empty($diff)) {
-				message('缺少参数 : ' . implode($diff, ' 、'), '', '');
-				exit();
-			}
-
-			foreach ($params as $key => $param) {
-				$cache_key = str_replace('%' . $key, $param, $cache_key);
-			}
-		}
-
-		cache_delete($cache_key);
+		$cache_keys[] = cache_system_key($cache_name, $cache_key_params);
 	}
+	return $cache_keys;
 }
 
 /**
@@ -201,361 +153,354 @@ function cache_delete_cache_name($cachename, $params = array()) {
  * @relation_params array 构建关联缓存键的参数
  * @return array
  */
-function cache_all() {
-	$system = 'we7:';
+function cache_key_all() {
 	$caches_all = array(
 		'caches' => array(
 			'module_info' => array(
 				// 模块详细信息
-				'key' => $system . 'module_info:%module_name',
-				'relation' => 'module',
+				'key' => 'module_info:%module_name',
+				'group' => 'module',
 			),
 
 			'module_setting' => array(
 				// 模块配置信息
-				'key' => $system . 'module_setting:%module_name:%uniacid',
-				'relation' => 'module',
+				'key' => 'module_setting:%module_name:%uniacid',
+				'group' => 'module',
 			),
 
 			'last_account' => array(
 				// 对某一模块，保留最后一次进入的小程序OR公众号，以便点进入列表页时可以默认进入
-				'key' => $system . 'lastaccount:%switch',
-				'relation' => 'module',
+				'key' => 'lastaccount:%switch',
+				'group' => 'module',
 			),
 
 			'user_modules' => array(
 				//当前用户拥有的所有模块及小程序标识
-				'key' => $system . 'user_modules:%uid',
-				'relation' => '',
+				'key' => 'user_modules:%uid',
+				'group' => '',
 			),
 
 			'user_accounts' => array(
 				// 获取用户可操作的所有公众号或小程序或PC
-				'key' => $system . 'user:account:%type:%uid',
-				'relation' => '',
+				'key' => 'user_accounts:%type:%uid',
+				'group' => '',
 			),
 
 			'unimodules' => array(
 				// 当前公众号及所有者可用的模块(获取指定公号下所有安装模块及模块信息)
-				'key' => $system . 'unimodules:%uniacid:%enabled',
-				'relation' => '',
+				'key' => 'unimodules:%uniacid:%enabled',
+				'group' => '',
 			),
 
 			'unimodules_binding' => array(
 				// 模块所有注册菜单
-				'key' => $system . 'unimodules:binding:%uniacid',
-				'relation' => '',
+				'key' => 'unimodules:binding:%uniacid',
+				'group' => '',
 			),
 
 			'uni_groups' => array(
 				// 一个或多个公众号套餐信息
-				'key' => $system . 'uni_group',
-				'relation' => '',
+				'key' => 'uni_group',
+				'group' => '',
 			),
 
 			'permission' => array(
 				// 管理员或操作员权限数据
-				'key' => $system . 'permission:%uniacid:%uid',
-				'relation' => '',
+				'key' => 'permission:%uniacid:%uid',
+				'group' => '',
 			),
 
 			'memberinfo' => array(
-				'key' => $system . 'memberinfo:%uid',
-				'relation' => '',
+				'key' => 'memberinfo:%uid',
+				'group' => '',
 			),
 
 			'statistics' => array(
-				'key' => $system . 'statistics:%uniacid',
-				'relation' => '',
+				'key' => 'statistics:%uniacid',
+				'group' => '',
 			),
 
 			'uniacid_visit' => array(
-				'key' => $system . 'uniacid_visit:%uniacid:%today',
-				'relation' => '',
+				'key' => 'uniacid_visit:%uniacid:%today',
+				'group' => '',
 			),
 
 			'material_reply' => array(
 				// 构造素材回复消息结构(回复消息结构)
-				'key' => $system . 'material_reply:%attach_id',
-				'relation' => '',
+				'key' => 'material_reply:%attach_id',
+				'group' => '',
 			),
 
 			'keyword' => array(
 				# conent 需要MD5 加密
-				'key' => $system . 'keyword:%content:%uniacid',
-				'relation' => '',
+				'key' => 'keyword:%content:%uniacid',
+				'group' => '',
 			),
 
 			'back_days' => array(
-				'key' => $system . 'back_days:',
-				'relation' => '',
+				'key' => 'back_days:',
+				'group' => '',
 			),
 
 			'wxapp_version' => array(
-				'key' => $system . 'wxapp_version:%version_id',
-				'relation' => '',
+				'key' => 'wxapp_version:%version_id',
+				'group' => '',
 			),
 
 			'site_store_buy' => array(
-				'key' => $system . 'site_store_buy:%type:%uniacid',
-				'relation' => '',
+				'key' => 'site_store_buy:%type:%uniacid',
+				'group' => '',
 			),
 
 			'proxy_wechatpay_account' => array(
-				'key' => $system . 'proxy_wechatpay_account:',
-				'relation' => '',
+				'key' => 'proxy_wechatpay_account:',
+				'group' => '',
 			),
 
 			'recycle_module' => array(
-				'key' => $system . 'recycle_module:',
-				'relation' => '',
+				'key' => 'recycle_module:',
+				'group' => '',
 			),
 
 			'all_cloud_upgrade_module' => array(
-				'key' => $system . 'all_cloud_upgrade_module:',
-				'relation' => '',
+				'key' => 'all_cloud_upgrade_module:',
+				'group' => '',
 			),
 
 			'module_all_uninstall' => array(
-				'key' => $system . 'module:all_uninstall',
-				'relation' => '',
+				'key' => 'module:all_uninstall',
+				'group' => '',
 			),
 
 			'sync_fans_pindex' => array(
-				'key' => $system . 'sync_fans_pindex:%uniacid',
-				'relation' => '',
+				'key' => 'sync_fans_pindex:%uniacid',
+				'group' => '',
 			),
 
 			'uniaccount' => array(
 				// 指定统一公众号下默认子号的信息
 				'key' => "uniaccount:%uniacid",
-				'relation' => 'uniaccount',
+				'group' => 'uniaccount',
 			),
 
 			'unisetting' => array(
 				// 公众号的配置项
 				'key' => "unisetting:%uniacid",
-				'relation' => 'uniaccount',
+				'group' => 'uniaccount',
 			),
 
 			'defaultgroupid' => array(
 				'key' => 'defaultgroupid:%uniacid',
-				'relation' => 'uniaccount',
+				'group' => 'uniaccount',
 			),
 
 			'uniaccount_type' => array(
 				'key' => "uniaccount:%account_type",
-				'relation' => '',
+				'group' => '',
 			),
 
 			/* accesstoken */
 			'accesstoken' => array(
 				'key' => 'accesstoken:%acid',
-				'relation' => 'accesstoken',
+				'group' => 'accesstoken',
 			),
 
 			'jsticket' => array(
-				'key' => $system . 'jsticket:%acid',
-				'relation' => 'accesstoken',
+				'key' => 'jsticket:%acid',
+				'group' => 'accesstoken',
 			),
 
 			'cardticket' => array(
 				'key' => 'cardticket:%acid',
-				'relation' => 'accesstoken',
+				'group' => 'accesstoken',
 			),
 			/* accesstoken */
 
 			'accesstoken_key' => array(
 				'key' => 'accesstoken:%key',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'account_auth_refreshtoken' => array(
 				'key' => 'account:auth:refreshtoken:%acid',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'unicount' => array(
 				// 公众号下的子号的数量
 				'key' => 'unicount:%uniacid',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'checkupgrade' => array(
 				'key' => 'checkupgrade:system',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'cloud_transtoken' => array(
 				'key' => 'cloud:transtoken',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'upgrade' => array(
 				'key' => 'upgrade',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'account_ticket' => array(
 				'key' => 'account:ticket',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'oauthaccesstoken' => array(
 				'key' => 'oauthaccesstoken:%acid',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'account_component_assesstoken' => array(
 				'key' => 'account:component:assesstoken',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'cloud_ad_uniaccount' => array(
 				'key' => 'cloud:ad:uniaccount:%uniacid',
-				'relation' => '',
+				'group' => '',
 				'rels' => 'cloud_ad_uniaccount_list'
 			),
 
 			'cloud_ad_uniaccount_list' => array(
 				'key' => 'cloud:ad:uniaccount:list',
-				'relation' => '',
+				'group' => '',
 				'rels' => 'cloud_ad_uniaccount'
 			),
 
 			'cloud_flow_master' => array(
 				'key' => 'cloud:flow:master',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'cloud_ad_tags' => array(
 				'key' => 'cloud:ad:tags',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'cloud_ad_type_list' => array(
 				'key' => 'cloud:ad:type:list',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'cloud_ad_app_list' => array(
 				'key' => 'cloud:ad:app:list:%uniacid',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'cloud_ad_app_support_list' => array(
 				'key' => 'cloud:ad:app:support:list',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'cloud_ad_site_finance' => array(
 				'key' => 'cloud:ad:site:finance',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'couponsync' => array(
 				'key' => 'couponsync:%uniacid',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'storesync' => array(
 				'key' => 'storesync:%uniacid',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'cloud_auth_transfer' => array(
 				'key' => 'cloud:auth:transfer',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'modulesetting' => array(
 				'key' => 'modulesetting:%module:%acid',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'scan_config' => array(
 				'key' => 'scan:config',
-				'relation' => 'scan_file',
+				'group' => 'scan_file',
 			),
 
 			'scan_file' => array(
 				'key' => 'scan:file',
-				'relation' => 'scan_file',
+				'group' => 'scan_file',
 			),
 
 			'scan_badfile' => array(
 				'key' => 'scan:badfile',
-				'relation' => 'scan_file',
+				'group' => 'scan_file',
 			),
 
 			'bomtree' => array(
 				'key' => 'bomtree',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'setting' => array(
 				'key' => 'setting',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'stat_todaylock' => array(
 				'key' => 'stat:todaylock:%uniacid',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'account_preauthcode' => array(
 				'key' => 'account:preauthcode',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'account_auth_accesstoken' => array(
 				'key' => 'account:auth:accesstoken:%key',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'usersfields' => array(
 				'key' => 'usersfields',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'userbasefields' => array(
 				'key' => 'userbasefields',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'system_frame' => array(
 				'key' => 'system_frame',
-				'relation' => '',
+				'group' => '',
 			),
 
 			'module_receive_enable' => array(
 				'key' => 'module_receive_enable',
-				'relation' => '',
+				'group' => '',
 			),
 		),
-
 		// 缓存键关联关系数组
-		'relations' => array(
-
+		'groups' => array(
 			'uniaccount' => array(
 				'relations' => array('uniaccount', 'unisetting'),
-				'relation_params' => array('uniacid'),
 			),
 
 			'accesstoken' => array(
 				'relations' => array('accesstoken', 'jsticket', 'cardticket'),
-				'relation_params' => array('acid'),
 			),
 
 			'scan_file' => array(
 				'relations' => array('scan_file', 'scan_config', 'scan_badfile'),
-				'relation_params' => array(),
 			),
 
 			// '模块'
 			'module' => array(
 				'relations' => array('module_info', 'module_setting'),
-				'relation_params' => array('module_name', 'uniacid')
 			),
 		),
 	);

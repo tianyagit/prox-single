@@ -41,7 +41,7 @@ function uni_user_accounts($uid = 0, $type = 'app') {
 		$type = 'app';
 	}
 	$type = $type == 'app' ? 'wechats' : $type;
-	$cachekey = create_cache_key('user_accounts', array('type' => $type, 'uid' => $uid));
+	$cachekey = cache_system_key('user_accounts', array('type' => $type, 'uid' => $uid));
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -116,7 +116,7 @@ function uni_fetch($uniacid = 0) {
 	load()->model('mc');
 
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : intval($uniacid);
-	$cachekey = create_cache_key('uniaccount', array('uniacid' => $uniacid));
+	$cachekey = cache_system_key('uniaccount', array('uniacid' => $uniacid));
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -173,7 +173,7 @@ function uni_fetch($uniacid = 0) {
  * @return array 模块列表
  */
 function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
-	$cachekey = create_cache_key('site_store_buy', array('type' => $type, 'uniacid' => $uniacid));
+	$cachekey = cache_system_key('site_store_buy', array('type' => $type, 'uniacid' => $uniacid));
 	$site_store_buy_goods = cache_load($cachekey);
 	if (!empty($site_store_buy_goods)) {
 		return $site_store_buy_goods;
@@ -206,7 +206,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	global $_W;
 	load()->model('user');
 	load()->model('module');
-	$cachekey = create_cache_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled));
+	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled));
 	$modules = cache_load($cachekey);
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
@@ -289,7 +289,7 @@ function uni_modules($enabled = true) {
 
 function uni_modules_app_binding() {
 	global $_W;
-	$cachekey = create_cache_key('unimodules_binding', array('uniacid' => $_W['uniacid']));
+	$cachekey = cache_system_key('unimodules_binding', array('uniacid' => $_W['uniacid']));
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -336,7 +336,7 @@ function uni_modules_app_binding() {
 function uni_groups($groupids = array(), $show_all = false) {
 	load()->model('module');
 	global $_W;
-	$cachekey = create_cache_key('uni_groups');
+	$cachekey = cache_system_key('uni_groups');
 	$list = cache_load($cachekey);
 	
 	if (empty($list)) {
@@ -501,7 +501,7 @@ function uni_setting_save($name, $value) {
 	} else {
 		pdo_insert('uni_settings', array($name => $value, 'uniacid' => $_W['uniacid']));
 	}
-	cache_delete_cache_name('uniaccount', array('uniacid' => $_W['uniacid']));
+	cache_delete(cache_system_key('uniaccount', array('uniacid' => $_W['uniacid'])));
 	return true;
 }
 
@@ -514,7 +514,7 @@ function uni_setting_save($name, $value) {
 function uni_setting_load($name = '', $uniacid = 0) {
 	global $_W;
 	$uniacid = empty($uniacid) ? $_W['uniacid'] : $uniacid;
-	$cachekey = create_cache_key('unisetting', array('uniacid' => $uniacid));
+	$cachekey = cache_system_key('unisetting', array('uniacid' => $uniacid));
 	$unisetting = cache_load($cachekey);
 	if (empty($unisetting)) {
 		$unisetting = pdo_get('uni_settings', array('uniacid' => $uniacid));
@@ -667,7 +667,7 @@ function uni_owner_account_nums($uid, $role) {
 }
 function uni_update_week_stat() {
 	global $_W;
-	$cachekey = create_cache_key('stat_todaylock', array('uniacid' => $_W['uniacid']));
+	$cachekey = cache_system_key('stat_todaylock', array('uniacid' => $_W['uniacid']));
 	$cache = cache_load($cachekey);
 	if(!empty($cache) && $cache['expire'] > TIMESTAMP) {
 		return true;
@@ -750,7 +750,7 @@ function uni_account_rank_top($uniacid) {
  */
 function uni_account_last_switch() {
 	global $_W, $_GPC;
-	$cache_key = create_cache_key('last_account', array('switch' => $_GPC['__switch']));
+	$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
 	$cache_lastaccount = (array)cache_load($cache_key);
 	if (strexists($_W['siteurl'], 'c=webapp')) {
 		$uniacid = $cache_lastaccount['webapp'];
@@ -793,7 +793,7 @@ function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 	if (empty($_GPC['__switch'])) {
 		$_GPC['__switch'] = random(5);
 	}
-	$cache_key = create_cache_key('last_account', array('switch' => $_GPC['__switch']));
+	$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
 	$cache_lastaccount = cache_load($cache_key);
 	if (empty($cache_lastaccount)) {
 		$cache_lastaccount = array(
@@ -924,7 +924,7 @@ function uni_is_multi_acid($uniacid = 0) {
 	if(!$uniacid) {
 		$uniacid = $_W['uniacid'];
 	}
-	$cachekey = create_cache_key('unicount', array('uniacid' => $uniacid));
+	$cachekey = cache_system_key('unicount', array('uniacid' => $uniacid));
 	$nums = cache_load($cachekey);
 	$nums = intval($nums);
 
@@ -958,7 +958,7 @@ function account_delete($acid) {
 		if($uniacid == $_W['uniacid']) {
 			isetcookie('__uniacid', '');
 		}
-		cache_delete_cache_name('uniaccount', array('uniacid' => $uniacid));
+		cache_deletee(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 		$modules = array();
 		//获取全部规则
 		$rules = pdo_fetchall("SELECT id, module FROM ".tablename('rule')." WHERE uniacid = '{$uniacid}'");
@@ -1019,8 +1019,8 @@ function account_delete($acid) {
 		}
 		pdo_delete('account', array('acid' => $acid));
 		pdo_delete('account_wechats', array('acid' => $acid, 'uniacid' => $uniacid));
-		cache_delete_cache_name('uniaccount', array('uniacid' => $uniacid));
-		cache_delete_cache_name('account_auth_refreshtoken', array('acid' => $acid));
+		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
+		cache_delete(cache_system_key('account_auth_refreshtoken', array('acid' => $acid)));
 		$oauth = uni_setting($uniacid, array('oauth'));
 		if($oauth['oauth']['account'] == $acid) {
 			$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . " WHERE uniacid = :id AND level = 4 AND secret != '' AND `key` != ''", array(':id' => $uniacid));
@@ -1040,7 +1040,7 @@ function account_delete($acid) {
  */
 function account_wechatpay_proxy () {
 	global $_W;
-	$proxy_account = cache_load(create_cache_key('proxy_wechatpay_account'));
+	$proxy_account = cache_load(cache_system_key('proxy_wechatpay_account'));
 	if (empty($proxy_account)) {
 		$proxy_account = cache_build_proxy_wechatpay_account();
 	}

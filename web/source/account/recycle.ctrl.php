@@ -89,7 +89,7 @@ if ($do == 'recover') {
 	}
 	if (!empty($uniacid)) {
 		pdo_update('account', array('isdeleted' => 0), array('uniacid' => $uniacid));
-		cache_delete_cache_name('uniaccount', array('uniacid' => $uniacid));
+		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 	} else {
 		pdo_update('account', array('isdeleted' => 0), array('acid' => $acid));
 	}
