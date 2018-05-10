@@ -74,7 +74,7 @@ function &cache_global($key) {
  */
 function cache_system_key($cache_key, $params = array()) {
 	$cache_key_all = cache_key_all();
-	$cache_info = $cache_key_all['caches'][$cache_key];
+	$cache_info = @$cache_key_all['caches'][$cache_key];
 
 	if (empty($cache_info)) {
 		return error(2, '缓存 ' . $cache_key . ' 不存在!');
@@ -87,7 +87,7 @@ function cache_system_key($cache_key, $params = array()) {
 			$cache_key = str_replace('%' . $key, $param, $cache_key);
 		}
 
-		if (preg_match('/%/', $cache_key)) {
+		if (strexists($cache_key, '%')) {
 			return error(1, '缺少缓存参数或参数不正确!');
 		}
 	}
@@ -99,7 +99,13 @@ function cache_system_key($cache_key, $params = array()) {
 	return $cache_key;
 }
 
+/**
+ * （根据缓存键）获取缓存的关联信息
+ * @param $key 传入的缓存键
+ * @return array|int|string
+ */
 function cache_relation_keys($key) {
+	// 将传入的缓存键的参数值取出 => we7:user:liuguilong:18
 	if (!is_string($key)) {
 		return $key;
 	}
@@ -116,18 +122,16 @@ function cache_relation_keys($key) {
 		return error(2, '缓存 ：' . $key . '不存在');
 	}
 
+	// 获取到 $cache_key_all 数组中保存的缓存键名，取出参数名称 => user:%name:%uid
 	$cache_key = $cache_info['key'];
-	$cache_param_keys = explode('%', $cache_key);
-	unset($cache_param_keys[0]);
-	if (is_array($cache_param_keys) && !empty($cache_param_keys)) {
-		$cache_param_keys = explode(':', implode($cache_param_keys));
-	}
+	preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key, $matches);
 
-	$cache_key_params = array_combine($cache_param_keys, $cache_param_values);
+	// 将参数名称 和 参数值进行拼接 array('name' => 'liuguilong', 'uid' => 18)
+	$cache_key_params = array_combine($matches[1], $cache_param_values);
+
 	if (!$cache_key_params) {
 		return error(1, '缺少参数');
 	}
-
 	if (!empty($cache_info['group'])) {
 		$relation_keys = $cache_relations[$cache_info['group']]['relations'];
 		$cache_keys = array();
@@ -365,13 +369,11 @@ function cache_key_all() {
 			'cloud_ad_uniaccount' => array(
 				'key' => 'cloud:ad:uniaccount:%uniacid',
 				'group' => '',
-				'rels' => 'cloud_ad_uniaccount_list'
 			),
 
 			'cloud_ad_uniaccount_list' => array(
 				'key' => 'cloud:ad:uniaccount:list',
 				'group' => '',
-				'rels' => 'cloud_ad_uniaccount'
 			),
 
 			'cloud_flow_master' => array(

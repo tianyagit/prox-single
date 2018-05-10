@@ -106,6 +106,9 @@ function cache_delete($key){
 	}
 
 	$cache_relation_keys = cache_relation_keys($key);
+	if (is_error($cache_relation_keys)) {
+		return $cache_relation_keys;
+	}
 	if (is_array($cache_relation_keys) && !empty($cache_relation_keys)) {
 		foreach ($cache_relation_keys as $key) {
 			$cache_info = cache_load($key);
