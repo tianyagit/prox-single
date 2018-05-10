@@ -334,7 +334,7 @@ function module_fetch($name, $enabled = true) {
 		if ($module_info['app_support'] != MODULE_SUPPORT_ACCOUNT && $module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && $module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && $module_info['welcome_support'] != MODULE_SUPPORT_SYSTEMWELCOME) {
 			$module_info['app_support'] = MODULE_SUPPORT_ACCOUNT;
 		}
-		$module_info['is_relation'] = $module_info['app_support'] ==2 && $module_info['wxapp_support'] == 2 ? true : false;
+		
 		$module_ban = (array)setting_load('module_ban');
 		if (in_array($name, $module_ban['module_ban'])) {
 			$module_info['is_ban'] = true;
@@ -346,6 +346,9 @@ function module_fetch($name, $enabled = true) {
 		$module = $module_info;
 		cache_write($cachekey, $module_info);
 	}
+	
+	unset($module['app_support']);
+	
 	//增加开启参数，可以获取放入回收站的模块
 	if (!empty($enabled)) {
 		$module_is_delete = table('modules_recycle')->getByName($name);
