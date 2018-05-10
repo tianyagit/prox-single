@@ -54,6 +54,7 @@ function _login($forward = '') {
 		itoast($member['message'], url('user/login'), '');
 	}
 	$record = user_single($member);
+
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
 			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决?', url('user/login'), '');
@@ -61,6 +62,13 @@ function _login($forward = '') {
 		$_W['uid'] = $record['uid'];
 		$_W['isfounder'] = user_is_founder($record['uid']);
 		$_W['user'] = $record;
+
+		if ($record['type'] == USER_REGISTER_TYPE_QQ || $record['type'] == USER_REGISTER_TYPE_WECHAT) {
+			if (!$record['is_bind']) {
+				message('您还没有注册微擎账号，请前往注册', url('user/third-bind/bind_oauth', array('uid' => $record['uid'])));
+				exit;
+			}
+		}
 
 		/* xstart */
 		if (IMS_FAMILY == 'x') {
