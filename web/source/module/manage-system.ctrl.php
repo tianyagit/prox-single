@@ -106,6 +106,8 @@ if ($do == 'get_upgrade_info') {
 }
 
 if ($do == 'check_upgrade') {
+	cache_build_uninstalled_module();
+	
 	$module_upgrade = module_upgrade_info();
 	iajax(0, $module_upgrade);
 }
@@ -246,8 +248,7 @@ if ($do == 'upgrade') {
 	}
 	pdo_update('modules', $module, array('name' => $module_name));
 	cache_build_account_modules();
-	cache_build_uninstalled_module();
-	cache_build_cloud_upgrade_module();
+
 	if (!empty($module['subscribes'])) {
 		ext_check_module_subscribe($module_name);
 	}
@@ -295,8 +296,9 @@ if ($do =='install') {
 	if (empty($manifest)) {
 		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', referer(), 'error');
 	}
+
 	if (!empty($manifest['platform']['main_module'])) {
-		$plugin_exist = table('modules_plugin')->getPluginExists($manifest['application']['identifie'], $manifest['platform']['main_module']);
+		$plugin_exist = table('modules_plugin')->getPluginExists($manifest['platform']['main_module'], $manifest['application']['identifie']);
 		if (empty($plugin_exist)) {
 			itoast('请先更新主模块后再安装插件', url('module/manage-system/installed'), 'error', array(array('title' => '查看主程序', 'url' => url('module/manage-system/module_detail', array('name' => $manifest['platform']['main_module'])))));
 		}
@@ -481,13 +483,12 @@ if ($do == 'save_module_info') {
 
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
+	
 	$type = !empty($_GPC['system_welcome']) ? 9 : intval($_GPC['account_type']);
-	$uninstalled_module = module_get_all_uninstalled('uninstalled');
-	$total_uninstalled = $uninstalled_module['module_count'];
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
-	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
+	
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
+
 	$current_cloud_module = cloud_m_info($module_name);
 	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
 
@@ -506,11 +507,6 @@ if ($do == 'module_detail') {
 				$module_info['type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
 				break;
 		}
-	}
-	if (file_exists(IA_ROOT . '/addons/' . $module_info['name'] . '/preview-custom.jpg')) {
-		$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview-custom.jpg');
-	} else {
-		$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview.jpg');
 	}
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
@@ -591,7 +587,7 @@ if ($do == 'uninstall') {
 	if (!isset($_GPC['confirm'])) {
 		$message = '';
 		if ($module['isrulefields']) {
-			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/recycle_uninstall', array('module_name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/recycle_uninstall', array('account_type' => ACCOUNT_TYPE, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
+			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/uninstall', array('module_name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/uninstall', array('account_type' => ACCOUNT_TYPE, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
 		}
 		if (!empty($message)) {
 			message($message, '', 'tips');
@@ -600,7 +596,7 @@ if ($do == 'uninstall') {
 	ext_module_uninstall($name, $_GPC['confirm']);
 	ext_execute_uninstall_script($name);
 	
-	itoast('模块已卸载！', referer(), 'success');
+	itoast('模块已卸载！', url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 //删除未安装模块
@@ -636,6 +632,12 @@ if ($do == 'recycle_post') {
 
 if ($do == 'recycle') {
 	$type = intval($_GPC['type']);
+	
+	if ($type == MODULE_RECYCLE_INSTALL_DISABLED) {
+		$_W['page']['title'] = '已停用模块列表';
+	} else {
+		$_W['page']['title'] = '模块回收站';
+	}
 	
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
@@ -680,13 +682,13 @@ if ($do == 'installed') {
 }
 
 if ($do == 'not_installed') {
-	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
-
+	$_W['page']['title'] = '安装模块';
+	
 	$title = safe_gpc_string($_GPC['title']);
 	$letter = safe_gpc_string($_GPC['letter']);
 	
 	//本地模块更新至modules_cloud表
-	module_local_upgrade_info();
+	cache_build_uninstalled_module();
 	
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;

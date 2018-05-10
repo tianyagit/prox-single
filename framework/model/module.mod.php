@@ -316,7 +316,11 @@ function module_fetch($name, $enabled = true) {
 		} else {
 			$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon.jpg') . "?v=" . time ();
 		}
-
+		if (file_exists(IA_ROOT . '/addons/' . $module_info['name'] . '/preview-custom.jpg')) {
+			$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview-custom.jpg');
+		} else {
+			$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview.jpg');
+		}
 		$module_info['main_module'] = pdo_getcolumn ('modules_plugin', array ('name' => $module_info['name']), 'main_module');
 		if (!empty($module_info['main_module'])) {
 			$main_module_info = module_fetch ($module_info['main_module']);
@@ -965,65 +969,6 @@ function module_installed_list($type = '') {
 	}
 }
 
-/**
- * 更新本地模块到modules_cloud表
- */
-function module_local_upgrade_info() {
-	$modulelist = table('modules')->getall('name');
-	
-	$module_root = IA_ROOT . '/addons/';
-	$module_path_list = glob($module_root . '/*');
-	if (empty($module_path_list)) {
-		return true;
-	}
-	foreach ($module_path_list as $path) {
-		$modulename = pathinfo($path, PATHINFO_BASENAME);
-		if (!empty($modulelist[$modulename])) {
-			//如果之前存入未安装，但是已经安装了，则更新数据
-			$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
-			if (!empty($module_cloud_upgrade)) {
-				table('modules_cloud')->deleteByName($modulename);
-			}
-			continue;
-		}
-		
-		if (!file_exists($path . '/manifest.xml')) {
-			continue;
-		}
-		
-		$manifest = ext_module_manifest($modulename);
-		$module_upgrade_data = array(
-			'name' => $modulename,
-			'has_new_version' => 0,
-			'has_new_branch' => 0,
-			'install_status' => MODULE_LOCAL_UNINSTALL,
-			'logo' => $manifest['application']['logo'],
-			'version' => $manifest['application']['version'],
-			'title' => $manifest['application']['name'],
-			'title_initial' => get_first_pinyin($manifest['application']['name']),
-		);
-		
-		if (!empty($manifest['platform']['supports'])) {
-			foreach (array('app', 'wxapp', 'webapp', 'phoneapp', 'system_welcome') as $support) {
-				if (in_array($support, $manifest['platform']['supports'])) {
-					//纠正支持类型名字，统一
-					if ($support == 'app') {
-						$support = 'account';
-					}
-					$module_upgrade_data["{$support}_support"] = MODULE_SUPPORT_ACCOUNT;
-				}
-			}
-		}
-		$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
-		
-		if (empty($module_cloud_upgrade)) {
-			table('modules_cloud')->fill($module_upgrade_data)->save();
-		} else {
-			table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
-		}
-	}
-	return true;
-}
 /**
  * 检查传入的模块是否有更新
  * 优先检查本地是否包含Manifest.xml
