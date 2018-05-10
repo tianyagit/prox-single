@@ -483,31 +483,21 @@ if ($do == 'save_module_info') {
 
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
-	
-	$type = !empty($_GPC['system_welcome']) ? 9 : intval($_GPC['account_type']);
+
 	
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
 
 	$current_cloud_module = cloud_m_info($module_name);
 	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
-
-	if (!empty($module_info['is_relation'])) {
-		$type = intval($_GPC['type']);
-		switch ($type) {
-			case ACCOUNT_TYPE_OFFCIAL_NORMAL:
-			case ACCOUNT_TYPE_OFFCIAL_AUTH:
-				$module_info['relation_name'] = '小程序版';
-				$module_info['account_type'] = ACCOUNT_TYPE_APP_NORMAL;
-				$module_info['type'] = ACCOUNT_TYPE_APP_NORMAL;
-				break;
-			default:
-				$module_info['relation_name'] = '公众号版';
-				$module_info['account_type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
-				$module_info['type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
-				break;
+	
+	//计算此模块除了当前支持，还支持哪些
+	foreach ($module_info as $key => $value) {
+		if ($key != $account_base->typeSign . '_support' && strexists($key, '_support') && $value == MODULE_SUPPORT_ACCOUNT) {
+			$module_info['relation'][] = $key;
 		}
 	}
+	
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}
@@ -530,48 +520,7 @@ if ($do == 'module_detail') {
 			}
 		}
 	}
-
-	//模块订阅消息
-	$module_subscribes = array();
-	$module['subscribes'] = iunserializer($module_info['subscribes']);
-	if (!empty($module['subscribes'])) {
-		foreach ($module['subscribes'] as $event) {
-			if ($event == 'text' || $event == 'enter') {
-				continue;
-			}
-			$module_subscribes = $module['subscribes'];
-		}
-	}
-	$mtypes = ext_module_msg_types();
-	$module_ban = $_W['setting']['module_receive_ban'];
-	if (!is_array($module_ban)) {
-		$module_ban = array();
-	}
-	$receive_ban = in_array($module_info['name'], $module_ban) ? 1 : 0;
-	$modulename = $_GPC['modulename'];
-
-
-	//验证订阅消息是否成功
-
-	//可以使用此模块的公众号
-	$pageindex = max(1, $_GPC['page']);
-	$pagesize = 20;
-	$use_module_account = array();
-	/*	$uniaccount_list = pdo_getall('uni_account');
-		if (!empty($uniaccount_list)) {
-			foreach($uniaccount_list as $uniaccount) {
-				$uniaccount_have_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid']), array(), 'module');
-				$uniaccount_have_module = array_keys($uniaccount_have_module);
-				if (in_array($module_info['name'], $uniaccount_have_module)) {
-					$uniaccount_info = account_fetch($uniaccount['default_acid']);
-					$use_module_account[] = $uniaccount_info;
-				}
-			}
-		}
-	*/
-	$total = count($use_module_account);
-	$use_module_account = array_slice($use_module_account, ($pageindex - 1) * $pagesize, $pagesize);
-	$pager = pagination($total, $pageindex, $pagesize);
+	$subscribes_type = ext_module_msg_types();
 }
 
 //卸载模块

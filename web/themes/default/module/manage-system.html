@@ -232,7 +232,7 @@
 		<a href="javascript:;" ng-click="changeShow('base')" class="btn " ng-class="{'active' : show == 'base' || show == ''}">基本信息</a>
 		<a href="javascript:;" ng-click="changeShow('plugin')" class="btn " ng-class="{'active' : show == 'plugin'}" ng-show="moduleinfo.main_module == '' && moduleinfo.plugin_list != undefined && moduleinfo.plugin_list != ''">模块子应用</a>
 		<a href="javascript:;" ng-click="changeShow('group')" class="btn " ng-class="{'active' : show == 'group'}">应用权限组</a>
-		{if !empty($module_subscribes)}
+		{if !empty($module_info['subscribes'])}
 		<a href="javascript:;" ng-click="changeShow('subscribe')" class="btn " ng-class="{'active' : show == 'subscribe'}">订阅消息</a>
 		{/if}
 		{if permission_check_account_user('see_module_manage_system_ugrade')}
@@ -312,17 +312,21 @@
 			{/if}
 		</tr>
 	</table>
-	{if !empty($module_info['is_relation'])}
-	<table class="table we7-table table-hover vertical-middle table-manage" ng-show="show != 'workorder'">
+	
+	<table class="table we7-table table-hover vertical-middle table-manage" ng-show="show != 'workorder' && moduleinfo.relation">
 		<col width="150px"/>
 		<col />
 		<col />
 		<tr>
 			<th colspan="3" class="text-left">可关联</th>
 		</tr>
-		<tr>
+		<tr ng-repeat="relation in moduleinfo.relation" ng-init="relationtype = {
+			wxapp_support : '小程序版', 
+			'account_support' : '公众号版', 
+			'webapp_support' : 'pc版', 
+			'phonesupport' : 'APP版'}">
 			<td class="text-left">
-				{{ moduleinfo.relation_name }}
+				{{ relationtype[relation] }}
 			</td>
 			<td class="text-left">
 				<img ng-src="{{ moduleinfo.logo }}" class="img-responsive pull-left" style="width: 50px;height: 50px; margin-right: 10px;"/>
@@ -334,7 +338,7 @@
 			</td>
 		</tr>
 	</table>
-	{/if}
+
 	<div class="panel we7-panel" ng-show="show == 'plugin' && moduleinfo.main_module == ''">
 		<div class="panel-heading">
 			模块子应用
@@ -474,7 +478,7 @@
 			{/loop}
 		</table>
 	</div>
-	{if !empty($module_subscribes)}
+	{if !empty($module_info['subscribes'])}
 	<div class="panel we7-panel module-subscription" ng-if="isFounder == 1" ng-show="show == 'subscribe'">
 		<div class="panel-heading ">
 			订阅详情
@@ -482,14 +486,14 @@
 				<span >启用订阅</span>
 				<label>
 					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-					<div class="switch" ng-class="{ 'switchOn' : receive_ban == 0}" ng-click="changeSwitch()"></div>
+					<div class="switch" ng-class="{ 'switchOn' : !moduleinfo.is_ban || moduleinfo.is_ban == 0}" ng-click="changeSwitch()"></div>
 				</label>
 			</div>
 		</div>
 		<div class="panel-body">
 			<ul>
-				{loop $module_subscribes $subscribe}
-				<li>{$mtypes[$subscribe]} <label ng-if="subscribe == 2" class="label label-danger">通讯失败</label>  </li>
+				{loop $module_info['subscribes'] $subscribe}
+				<li>{$subscribes_type[$subscribe]} <label ng-if="subscribe == 2" class="label label-danger">通讯失败</label>  </li>
 				{/loop}
 			</ul>
 		</div>
@@ -577,7 +581,6 @@
 	require(['fileUploader'], function() {
 		angular.module('moduleApp').value('config', {
 			'isFounder' : "{if $_W['isfounder']}1{else}2{/if}",
-			'receive_ban' : "{$receive_ban}",
 			'show' : "{$_GPC['show']}",
 			'moduleInfo' : {php echo json_encode($module_info)},
 			'url' : "{php echo url('module/manage-system/change_receive_ban')}",
