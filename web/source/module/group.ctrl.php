@@ -149,7 +149,10 @@ if ($do == 'post') {
 		$group_have_module_webapp = empty($module_group['webapp']) ? array() : array_filter($module_group['webapp']);
 		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : array_filter($module_group['phoneapp']);
 	}
-	$module_list = user_uniacid_modules($_W['uid']);
+	$module_list = user_modules($_W['uid']);
+	$module_list = array_filter($module_list, function($module) {
+		return empty($module['issystem']);
+	});
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
 	$group_not_have_module_webapp = array();

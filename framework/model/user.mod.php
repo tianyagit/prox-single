@@ -547,28 +547,6 @@ function user_modules($uid = 0) {
 }
 
 /**
- * 获取创始人、副创始人拥有的非系统模块
- * @param $uid
- * @return Ambigous|array
- */
-function user_uniacid_modules($uid) {
-	if (user_is_vice_founder($uid)) {
-		$module_list = user_modules($uid);
-		if (empty($module_list)) {
-			return $module_list;
-		}
-		foreach ($module_list as $module => $module_info) {
-			if (!empty($module_info['issystem'])) {
-				unset($module_list[$module]);
-			}
-		}
-	} else {
-		$module_list = pdo_getall('modules', array('issystem' => 0), array(), 'name', 'mid DESC');
-	}
-	return $module_list;
-}
-
-/**
  * 获取用户登录后要跳转的地址
  * @param string $forward 要跳转的地址
  * return string

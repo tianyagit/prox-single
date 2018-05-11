@@ -303,7 +303,10 @@ class StoreModuleSite extends WeModuleSite {
 			}
 			$module_list = array();
 			if (in_array($type, array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE))) {
-				$modules = user_uniacid_modules($_W['uid']);
+				$modules = user_modules($_W['uid']);
+				$modules = array_filter($modules, function($module) {
+					return empty($module['issystem']);
+				});
 				$have_module_goods = $store_table->searchHaveModule($type);
 				$have_module_goods = array_keys($have_module_goods);
 				$have_module_goods = array_unique($have_module_goods);

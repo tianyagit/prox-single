@@ -331,7 +331,10 @@ if($step == 1) {
 	}
 	$extend['package'] = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array(), 'groupid');
 	$groups = user_group();
-	$modules = user_uniacid_modules($_W['uid']);
+	$modules = user_modules($_W['uid']);
+	$modules = array_filter($modules, function($module) {
+		return empty($module['issystem']);
+	});
 	$templates  = pdo_fetchall("SELECT * FROM ".tablename('site_templates'));
 } elseif($step == 4) {
 	$uniacid = intval($_GPC['uniacid']);
