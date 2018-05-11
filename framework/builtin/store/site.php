@@ -315,7 +315,6 @@ class StoreModuleSite extends WeModuleSite {
 						if (in_array ($module['name'], $have_module_goods) || $type == STORE_TYPE_MODULE && $module['app_support'] != 2 || $type == STORE_TYPE_WXAPP_MODULE && $module['wxapp_support'] != 2) {
 							continue;
 						}
-						$module = module_fetch ($module['name']);
 						$module_list[] = $module;
 					}
 				}
