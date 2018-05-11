@@ -142,13 +142,12 @@ if ($do == 'post') {
 	$group_have_module_webapp = array();
 	$group_have_module_phoneapp = array();
 	if (!empty($group_id)) {
-		$uni_groups = uni_groups();
-		$module_group = $uni_groups[$group_id];
-		$group_have_module_app = empty($module_group['modules']) ? array() : $module_group['modules'];
-		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : $module_group['wxapp'];
-		$group_have_template = empty($module_group['templates']) ? array() : $module_group['templates'];
-		$group_have_module_webapp = empty($module_group['webapp']) ? array() : $module_group['webapp'];
-		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : $module_group['phoneapp'];
+		$module_group = current(uni_groups(array($group_id)));
+		$group_have_module_app = empty($module_group['modules']) ? array() : array_filter($module_group['modules']);
+		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : array_filter($module_group['wxapp']);
+		$group_have_template = empty($module_group['templates']) ? array() : array_filter($module_group['templates']);
+		$group_have_module_webapp = empty($module_group['webapp']) ? array() : array_filter($module_group['webapp']);
+		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : array_filter($module_group['phoneapp']);
 	}
 	$module_list = user_uniacid_modules($_W['uid']);
 	$group_not_have_module_app = array();
