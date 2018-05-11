@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 load()->model('user');
 $do = safe_gpc_string($_GPC['do']);
-$dos = array('display', 'validate_mobile', 'bind_mobile');
+$dos = array('display', 'validate_mobile', 'bind_mobile', 'bind_oauth');
 $do = in_array($do, $dos) ? $do : 'display';
 
 if (in_array($do, array('validate_mobile', 'bind_mobile'))) {
@@ -46,5 +46,72 @@ if ($do == 'display') {
 	$support_bind_urls = user_support_urls();
 	$setting_sms_sign = setting_load('site_sms_sign');
 	$bind_sign = !empty($setting_sms_sign['site_sms_sign']['register']) ? $setting_sms_sign['site_sms_sign']['register'] : '';
+}
+
+if ($do == 'bind_oauth') {
+	$uid = intval($_GPC['uid']);
+
+	$user_info = user_single($uid);
+	if ($user_info['is_bind']) {
+		itoast('账号已绑定!', url('user/login'), '');
+	}
+
+	if ($_W['ispost']) {
+		$member['username'] = trim($_GPC['username']);
+		$member['password'] = trim($_GPC['password']);
+		$member['repassword'] = trim($_GPC['repassword']);
+		$member['is_bind'] = 1;
+
+		$profile['nickname'] = safe_gpc_string($_GPC['nickname']);
+		$profile['realname'] = safe_gpc_string($_GPC['realname']);
+
+		$user = array(
+			'member' => $member,
+			'profile' => $profile,
+		);
+
+		if (empty($member['username']) || empty($member['password']) || empty($member['repassword']) || empty($profile['nickname']) || empty($profile['realname'])) {
+			itoast('请填写完整信息！',  referer(), '');
+		}
+
+		if(!preg_match(REGULAR_USERNAME, $member['username'])) {
+			itoast('必须输入用户名，格式为 3-15 位字符，可以包括汉字、字母（不区分大小写）、数字、下划线和句点。', referer(), '');
+		}
+
+		if (user_check(array('username' => $member['username']))) {
+			itoast('非常抱歉，此用户名已经被注册，你需要更换注册名称！', referer(), '');
+		}
+
+		if(istrlen($member['password']) < 8) {
+			itoast('必须输入密码，且密码长度不得低于8位。', referer(), '');
+		}
+
+		if ($member['password'] != $member['repassword']) {
+			itoast('两次秘密输入不一致', referer(), '');
+		}
+		unset($member['repassword']);
+
+		if (user_check(array('username' => $member['username']))) {
+			itoast('非常抱歉，此用户名已经被注册，你需要更换注册名称！', referer(), '');
+		}
+
+		if(!empty($_W['setting']['register']['code'])) {
+			if (!checkcaptcha($_GPC['imagecode'])) {
+				itoast('你输入的验证码不正确, 请重新输入.', referer(), '');
+			}
+		}
+
+		$member['salt'] = random(8);
+		$member['password'] = user_hash($member['password'], $member['salt']);
+		pdo_update('users_profile', $profile, array('uid' => $uid));
+		$result = pdo_update('users', $member, array('uid' => $uid));
+		
+		if ($result) {
+			itoast('注册绑定成功!', url('user/login'), '');
+		}
+	} else {
+		template('user/bind-oauth');
+		exit;
+	}
 }
 template('user/third-bind');
