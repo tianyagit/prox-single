@@ -70,11 +70,13 @@ if ($do == 'subscribe') {
 }
 
 if ($do == 'check_subscribe') {
-	
-	$module_name = $_GPC['module_name'];
-	$obj = WeUtility::createModuleReceiver($module_name);
+	$module = module_fetch($_GPC['module_name']);
+	if (empty($module)) {
+		iajax(1);
+	}
+	$obj = WeUtility::createModuleReceiver($module['name']);
 	if (empty($obj)) {
-		exit('error');
+		iajax(1);
 	}
 	$obj->uniacid = $_W['uniacid'];
 	$obj->acid = $_W['acid'];
@@ -432,6 +434,7 @@ if ($do == 'change_receive_ban') {
 	}
 	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
 	cache_build_module_subscribe_type();
+	cache_delete(cache_system_key('module_info', array('module_name' => $modulename)));
 	iajax(0, '');
 }
 
@@ -483,7 +486,6 @@ if ($do == 'module_detail') {
 	
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
-
 	$current_cloud_module = cloud_m_info($module_name);
 	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
 	

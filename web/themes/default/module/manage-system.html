@@ -486,7 +486,7 @@
 				<span >启用订阅</span>
 				<label>
 					<input name="" id="" class="form-control" type="checkbox"  style="display: none;">
-					<div class="switch" ng-class="{ 'switchOn' : !moduleinfo.is_ban || moduleinfo.is_ban == 0}" ng-click="changeSwitch()"></div>
+					<div class="switch" ng-class="{ 'switchOn' : !moduleinfo.is_receive_ban || moduleinfo.is_receive_ban == 0}" ng-click="changeSwitch()"></div>
 				</label>
 			</div>
 		</div>
@@ -583,8 +583,7 @@
 			'isFounder' : "{if $_W['isfounder']}1{else}2{/if}",
 			'show' : "{$_GPC['show']}",
 			'moduleInfo' : {php echo json_encode($module_info)},
-			'url' : "{php echo url('module/manage-system/change_receive_ban')}",
-			'modulename' : "{$module_info['name']}",
+			'receiveBanUrl' : "{php echo url('module/manage-system/change_receive_ban')}",
 			'editModuleUrl' : "{php echo url('module/manage-system/get_module_info')}",
 			'saveModuleUrl' : "{php echo url('module/manage-system/save_module_info')}",
 			'checkReceiveUrl' : "{php echo url('module/manage-system/check_subscribe')}",

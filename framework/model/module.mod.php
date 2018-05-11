@@ -335,10 +335,16 @@ function module_fetch($name, $enabled = true) {
 			$module_info['app_support'] = MODULE_SUPPORT_ACCOUNT;
 		}
 		
+		$module_receive_ban = (array)setting_load('module_receive_ban');
+		if (in_array($name, $module_receive_ban['module_receive_ban'])) {
+			$module_info['is_receive_ban'] = true;
+		}
+		//盗版模块
 		$module_ban = (array)setting_load('module_ban');
 		if (in_array($name, $module_ban['module_ban'])) {
 			$module_info['is_ban'] = true;
 		}
+		
 		$module_upgrade = (array)setting_load('module_upgrade');
 		if (in_array($name, array_keys($module_upgrade['module_upgrade']))) {
 			$module_info['is_upgrade'] = true;
