@@ -416,21 +416,27 @@
 			$('.js-need-pay').data('price', fee);
 			$('.js-need-pay').html(fee + '元');
 		});
-	if(window.__wxjs_environment === 'miniprogram') {
-		$('.pay-style').removeClass('hide');
-		$('.pay-style li').hide();
-		$('.js-webwxapp-pay').removeClass('hide');
-		$('.pay-style .js-webwxapp-pay').show();
-		$('.js-webwxapp-pay').click(function(){
-			wx.miniProgram.navigateTo({
-				url: "/wxapp_web/pages/view/pay?orderid={$params['tid']}&module_name={$params['module']}&title={$params['title']}"
-			})
-		});
-	} else {
-		$('.pay-style').removeClass('hide');
-		$('.pay-style').show();
-	}
 	document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+		var miniprogram_environment = false;
+		wx.miniProgram.getEnv(function(res) {
+			if (res.miniprogram) {
+				miniprogram_environment = true;
+			}
+		})
+		if(window.__wxjs_environment === 'miniprogram' || miniprogram_environment) {
+			$('.pay-style').removeClass('hide');
+			$('.pay-style li').hide();
+			$('.js-webwxapp-pay').removeClass('hide');
+			$('.pay-style .js-webwxapp-pay').show();
+			$('.js-webwxapp-pay').click(function(){
+				wx.miniProgram.navigateTo({
+					url: "/wxapp_web/pages/view/pay?orderid={$params['tid']}&module_name={$params['module']}&title={$params['title']}"
+				})
+			});
+		} else {
+			$('.pay-style').removeClass('hide');
+			$('.pay-style').show();
+		}
 		$('.js-wechat-pay').removeClass('mui-disabled');
 		$('.js-wechat-pay a').addClass('js-pay');
 		$('#wetitle').html('微信支付');
