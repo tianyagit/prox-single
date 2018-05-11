@@ -593,9 +593,11 @@ function user_login_forward($forward = '') {
 	if (user_is_vice_founder()) {
 		return url('account/manage', array('account_type' => 1));
 	}
+	if ($_W['user']['type'] == ACCOUNT_OPERATE_CLERK) {
+		return url('module/display');
+	}
 
 	$url = user_after_login_link();
-
 	if (!empty($url)) {
 		return $url;
 	}
