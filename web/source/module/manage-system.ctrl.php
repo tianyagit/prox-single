@@ -457,14 +457,13 @@ if ($do == 'save_module_info') {
 		),
 	);
 	$module_field = array('title', 'ability', 'description');
-	if (!isset($module_icon_map[$module_info_type]) && !isset($module_field[$module_info_type])) {
+	if (!isset($module_icon_map[$module_info_type]) && !in_array($module_info_type, $module_field)) {
 		iajax(1, '数据非法');
 	}
-
-	if (isset($module_field[$module_info_type])) {
-		$module_update = array($module_info_type => trim($module_info[$module_info_type]));
+	if (in_array($module_info_type, $module_field)) {
+		$module_update = array($module_info_type => trim($_GPC['moduleinfo'][$module_info_type]));
 		if ($module_info_type == 'title') {
-			$module_update['title_initial'] = get_first_pinyin($module_info['title']);
+			$module_update['title_initial'] = get_first_pinyin($_GPC['moduleinfo']['title']);
 		}
 		$result =  pdo_update('modules', $module_update, array('name' => $module_name));
 	} else {
@@ -472,7 +471,6 @@ if ($do == 'save_module_info') {
 		$result = utility_image_rename($module_icon_map[$module_info_type]['url'], $image_destination_url);
 	}
 	cache_delete(cache_system_key('module_info', array('module_name' => $module_name)));
-	cache_delete("module_info:{$module_name}");
 	if (!empty($result)) {
 		iajax(0, '');
 	}
