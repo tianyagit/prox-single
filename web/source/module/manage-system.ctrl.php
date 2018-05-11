@@ -436,19 +436,16 @@ if ($do == 'change_receive_ban') {
 }
 
 if ($do == 'save_module_info') {
-	$module_info = $_GPC['moduleinfo'];
-	$type = trim($_GPC['type']);
-
 	$module_name = trim($_GPC['modulename']);
 	if (empty($module_name)) {
 		iajax(1, '数据非法');
 	}
-
 	$module = module_fetch($module_name);
 	if (empty($module)) {
 		iajax(1, '数据非法');
 	}
-
+	$module_info_type = key($_GPC['moduleinfo']);
+	
 	$module_icon_map = array(
 		'logo' => array(
 			'filename' => 'icon-custom.jpg',
@@ -460,21 +457,22 @@ if ($do == 'save_module_info') {
 		),
 	);
 	$module_field = array('title', 'ability', 'description');
-	if (!in_array($type, array_keys($module_icon_map)) && !in_array($type, $module_field)) {
+	if (!isset($module_icon_map[$module_info_type]) && !isset($module_field[$module_info_type])) {
 		iajax(1, '数据非法');
 	}
 
-	if (in_array($type, $module_field)) {
-		$module_update = array($type => trim($module_info[$type]));
-		if ($type == 'title') {
+	if (isset($module_field[$module_info_type])) {
+		$module_update = array($module_info_type => trim($module_info[$module_info_type]));
+		if ($module_info_type == 'title') {
 			$module_update['title_initial'] = get_first_pinyin($module_info['title']);
 		}
 		$result =  pdo_update('modules', $module_update, array('name' => $module_name));
 	} else {
-		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
-		$result = utility_image_rename($module_icon_map[$type]['url'], $image_destination_url);
+		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$module_info_type]['filename'];
+		$result = utility_image_rename($module_icon_map[$module_info_type]['url'], $image_destination_url);
 	}
 	cache_delete(cache_system_key('module_info', array('module_name' => $module_name)));
+	cache_delete("module_info:{$module_name}");
 	if (!empty($result)) {
 		iajax(0, '');
 	}
