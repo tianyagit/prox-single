@@ -635,10 +635,6 @@ function user_login_forward($forward = '') {
 		}
 	}
 
-	if ($_W['user']['type'] == ACCOUNT_OPERATE_CLERK) {
-		return url('module/display');
-	}
-
 	if (!empty($_W['uniacid']) && !empty($_W['account'])) {
 		$permission = permission_account_user_role($_W['uid'], $_W['uniacid']);
 		if (empty($permission)) {
