@@ -74,12 +74,21 @@ function &cache_global($key) {
  */
 function cache_system_key($cache_key, $params = array()) {
 	$cache_key_all = cache_key_all();
-	$cache_info = @$cache_key_all['caches'][$cache_key];
+	$cache_info = $cache_key_all['caches'][$cache_key];
+	$cache_common_params = $cache_key_all['common_params'];
 
 	if (empty($cache_info)) {
 		return error(2, '缓存 ' . $cache_key . ' 不存在!');
 	} else {
 		$cache_key = $cache_info['key'];
+	}
+
+	// 如果缺少传入的参数，先从 common_params 中寻找并获取
+	foreach ($cache_common_params as $param_name => $param_val) {
+		preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key, $matches);
+		if (in_array($param_name, $matches[1]) && !in_array($param_name, $params)) {
+			$params[$param_name] = $cache_common_params[$param_name];
+		}
 	}
 
 	if (is_array($params) && !empty($params)) {
@@ -105,10 +114,10 @@ function cache_system_key($cache_key, $params = array()) {
  * @return array|int|string
  */
 function cache_relation_keys($key) {
-	// 将传入的缓存键的参数值取出 => we7:user:liuguilong:18
 	if (!is_string($key)) {
 		return $key;
 	}
+	// 将传入的缓存键的参数值取出 => we7:user:liuguilong:18
 	$cache_param_values = explode(':', $key);
 	$cache_name = $cache_param_values[1];
 	unset($cache_param_values[0]);
@@ -116,35 +125,47 @@ function cache_relation_keys($key) {
 
 	$cache_key_all = cache_key_all();
 	$cache_relations = $cache_key_all['groups'];
+	$cache_common_params = $cache_key_all['common_params'];
+
 	$cache_info = $cache_key_all['caches'][$cache_name];
 
 	if (empty($cache_info)) {
-		return error(2, '缓存 ：' . $key . '不存在');
+		return error(2, '缓存 : ' . $key . '不存在');
 	}
 
-	// 获取到 $cache_key_all 数组中保存的缓存键名，取出参数名称 => user:%name:%uid
-	$cache_key = $cache_info['key'];
-	preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key, $matches);
-
-	// 将参数名称 和 参数值进行拼接 array('name' => 'liuguilong', 'uid' => 18)
-	$cache_key_params = array_combine($matches[1], $cache_param_values);
-
-	if (!$cache_key_params) {
-		return error(1, '缺少参数');
-	}
 	if (!empty($cache_info['group'])) {
 		$relation_keys = $cache_relations[$cache_info['group']]['relations'];
 		$cache_keys = array();
 		foreach ($relation_keys as $key => $val) {
-			$cache_key = cache_system_key($val, $cache_key_params);
-			if (!is_error($cache_key)) {
-				$cache_keys[] = $cache_key;
+			// 获取到 $cache_key_all 数组中保存的缓存键名
+			if ($val == $cache_name) {
+				$relation_cache_key = $cache_key_all['caches'][$val]['key'];
 			} else {
-				return error(1, $cache_key['message']);
+				$relation_cache_key = $cache_key_all['caches'][$cache_name]['key'];
+			}
+
+			foreach ($cache_common_params as $param_name => $param_val) {
+				// 取出参数名称 => user:%name:%uid
+				preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $relation_cache_key, $matches);
+				if (in_array($param_name, $matches[1])) {
+					// 如果包含公共参数
+					$cache_key_params[$param_name] = $cache_common_params[$param_name];
+				}
+				// 将参数名称 和 参数值进行拼接 array('name' => 'liuguilong', 'uid' => 18)
+				$cache_key_params = array_combine($matches[1], $cache_param_values);
+			}
+
+			if ($cache_key_params) {
+				$cache_key = cache_system_key($val, $cache_key_params);
+				if (!is_error($cache_key)) {
+					$cache_keys[] = $cache_key;
+				} else {
+					return error(1, $cache_key['message']);
+				}
 			}
 		}
 	} else {
-		$cache_keys[] = cache_system_key($cache_name, $cache_key_params);
+		$cache_keys[] = $key;
 	}
 	return $cache_keys;
 }
@@ -158,7 +179,12 @@ function cache_relation_keys($key) {
  * @return array
  */
 function cache_key_all() {
+	global $_W;
 	$caches_all = array(
+		'common_params' => array(
+			'uniacid' => $_W['uniacid'],
+		),
+
 		'caches' => array(
 			'module_info' => array(
 				// 模块详细信息
