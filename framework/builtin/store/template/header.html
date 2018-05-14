@@ -57,17 +57,16 @@
 						</li>
 						{/if}
 
-						{php $workorder_nav=$frames['section']['workorder']['menu']['system_workorder']}
-						{if empty($workorder_nav['url'])}
 						{php $frames_site = buildframes('site')}
 						{php $workorder_nav=$frames_site['section']['workorder']['menu']['system_workorder']}
-						{/if}
-						{if !empty($workorder_nav) && $_W['isfounder']}
-						<li>
-							<a href="{if empty($workorder_nav['url'])}{php echo url('home/welcome/' . $workorder_nav['name']);}{else}{$workorder_nav['url']}{/if}" data-toggle="tooltip"  data-placement="bottom" title="工单">
-								<i class="{$workorder_nav['icon']} color-gray" ></i>
-							</a>
-						</li>
+						{if $workorder_nav['is_display']}
+							{if permission_check_account_user('see_workorder')}
+								<li>
+									<a href="{php echo url('system/workorder/display')}" data-toggle="tooltip"  data-placement="bottom" title="工单">
+										<i class="wi wi-system-work color-gray" ></i>
+									</a>
+								</li>
+							{/if}
 						{/if}
 
 						{template 'common/header-notice'}
@@ -339,15 +338,18 @@
 			</li>
 			{/if}
 
-			{php $frames_site = buildframes('site');}
+			{php $frames_site = buildframes('site')}
 			{php $workorder_nav=$frames_site['section']['workorder']['menu']['system_workorder']}
-			{if !empty($workorder_nav) && $_W['isfounder']}
-			<li>
-				<a href="{if empty($workorder_nav['url'])}{php echo url('home/welcome/' . $workorder_nav['name']);}{else}{$workorder_nav['url']}{/if}" data-toggle="popover" data-placement="bottom"  data-trigger="hover" data-content="工单">
-					<i class="{$workorder_nav['icon']}" ></i>
-				</a>
-			</li>
+			{if $workorder_nav['is_display']}
+				{if permission_check_account_user('see_workorder')}
+					<li>
+						<a href="{php echo url('system/workorder/display')}" data-toggle="tooltip"  data-placement="bottom" title="工单">
+							<i class="wi wi-system-work color-gray" ></i>
+						</a>
+					</li>
+				{/if}
 			{/if}
+
 			{template 'common/header-notice'}
 			<li class="dropdown">
 				<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"><i class="wi wi-user color-gray"></i>{php echo $_W['username']} <span class="caret"></span></a>
