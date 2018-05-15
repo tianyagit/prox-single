@@ -317,6 +317,9 @@
 				{if $_GPC['status'] == 'uninstalled_recycle' &&  permission_check_account_user('see_module_manage_system_stop')}
 				<a href="{php echo url('module/manage-system/uninstalled_recycle', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}&opt=1" class="btn btn-primary">恢复</a>
 				{/if}
+				{if $_GPC['status'] == 'recycle'}
+				<a href="{php echo url('module/manage-system/recycle_uninstall', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">卸载模块</a>
+				{/if}
 				{/if}
 			</td>
 		</tr>
