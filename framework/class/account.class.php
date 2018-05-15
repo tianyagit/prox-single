@@ -105,6 +105,10 @@ abstract class WeAccount {
 			load()->classs('phoneapp.account');
 			$account_obj = new PhoneappAccount();
 		}
+		if($type == ACCOUNT_TYPE_WXAPP_WORK) {
+			load()->classs('wxapp.work');
+			$account_obj = new WxappWork();
+		}
 		$account_obj->uniacid = $uniaccount['uniacid'];
 		$account_obj->uniaccount = $uniaccount;
 		$account_obj->account = $account_obj->fetchAccountInfo();

@@ -259,9 +259,7 @@ function mc_oauth_userinfo($acid = 0) {
 	global $_W;
 	if (isset($_SESSION['userinfo'])) {
 		$userinfo = unserialize(base64_decode($_SESSION['userinfo']));
-		if (!empty($userinfo['subscribe']) || !empty($userinfo['nickname'])) {
-			return $userinfo;
-		}
+		return $userinfo;
 	}
 	if ($_W['container'] != 'wechat') {
 		return array();

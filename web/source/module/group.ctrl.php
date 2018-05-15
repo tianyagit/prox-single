@@ -142,22 +142,23 @@ if ($do == 'post') {
 	$group_have_module_webapp = array();
 	$group_have_module_phoneapp = array();
 	if (!empty($group_id)) {
-		$uni_groups = uni_groups();
-		$module_group = $uni_groups[$group_id];
-		$group_have_module_app = empty($module_group['modules']) ? array() : $module_group['modules'];
-		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : $module_group['wxapp'];
-		$group_have_template = empty($module_group['templates']) ? array() : $module_group['templates'];
-		$group_have_module_webapp = empty($module_group['webapp']) ? array() : $module_group['webapp'];
-		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : $module_group['phoneapp'];
+		$module_group = current(uni_groups(array($group_id)));
+		$group_have_module_app = empty($module_group['modules']) ? array() : array_filter($module_group['modules']);
+		$group_have_module_wxapp = empty($module_group['wxapp']) ? array() : array_filter($module_group['wxapp']);
+		$group_have_template = empty($module_group['templates']) ? array() : array_filter($module_group['templates']);
+		$group_have_module_webapp = empty($module_group['webapp']) ? array() : array_filter($module_group['webapp']);
+		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : array_filter($module_group['phoneapp']);
 	}
-	$module_list = user_uniacid_modules($_W['uid']);
+	$module_list = user_modules($_W['uid']);
+	$module_list = array_filter($module_list, function($module) {
+		return empty($module['issystem']);
+	});
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
 	$group_not_have_module_webapp = array();
 	$group_not_have_module_phoneapp = array();
 	if (!empty($module_list)) {
 		foreach ($module_list as $name => $module_info) {
-			$module_info = module_fetch($name);
 			if ($module_info['app_support'] == MODULE_SUPPORT_WXAPP && !in_array($name, array_keys($group_have_module_app))) {
 				if (!empty($module_info['main_module'])) {
 					if (in_array($module_info['main_module'], array_keys($group_have_module_app))) {

@@ -66,7 +66,7 @@
 		</li>
 	</ul>
 	<h5 class="mui-desc-title mui-pl10">选择支付方式</h5>
-	<ul class="mui-table-view mui-table-view-chevron pay-style hide">
+	<ul class="mui-table-view mui-table-view-chevron pay-style">
 		{if !empty($pay['credit']['switch'])}
 		<li class="mui-table-view-cell credit">
 			<a class="mui-navigate-right mui-media credit-js-pay" href="javascript:;">
@@ -424,7 +424,6 @@
 			}
 		})
 		if(window.__wxjs_environment === 'miniprogram' || miniprogram_environment) {
-			$('.pay-style').removeClass('hide');
 			$('.pay-style li').hide();
 			$('.js-webwxapp-pay').removeClass('hide');
 			$('.pay-style .js-webwxapp-pay').show();
@@ -433,9 +432,6 @@
 					url: "/wxapp_web/pages/view/pay?orderid={$params['tid']}&module_name={$params['module']}&title={$params['title']}"
 				})
 			});
-		} else {
-			$('.pay-style').removeClass('hide');
-			$('.pay-style').show();
 		}
 		$('.js-wechat-pay').removeClass('mui-disabled');
 		$('.js-wechat-pay a').addClass('js-pay');
