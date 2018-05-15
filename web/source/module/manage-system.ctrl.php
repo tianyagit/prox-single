@@ -92,7 +92,16 @@ if ($do == 'check_subscribe') {
 }
 
 if ($do == 'get_upgrade_info') {
-	$module_name = trim($_GPC['name']);
+	$modulename = trim($_GPC['name']);
+	$module = module_fetch($modulename);
+	if (empty($module)) {
+		iajax(1);
+	}
+	//检查本地是否有更新，否则检查线上是否有更新，
+	//有更新，更新cloud表中的记录，返回更新信息
+	$manifest = ext_module_manifest($modulename);
+	
+	
 	$module = cloud_m_upgradeinfo($module_name);
 	$module_info = module_fetch($module_name);
 	if (empty($module_info['site_branch_id'])) {
