@@ -99,6 +99,11 @@ if ($do == 'platform') {
 } elseif ($do == 'system') {
 	define('FRAME', 'system');
 	$_W['page']['title'] = '欢迎页 - 系统管理';
+
+	if ($_W['role'] == ACCOUNT_MANAGE_NAME_EXPIRED) {
+		header('Location: ' . url('user/profile'));
+		exit;
+	}
 	if(!$_W['isfounder'] || user_is_vice_founder()){
 		header('Location: ' . url('account/manage', array('account_type' => 1)), true);
 		exit;

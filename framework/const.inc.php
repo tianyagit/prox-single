@@ -88,6 +88,8 @@ define('ACCOUNT_MANAGE_GROUP_GENERAL', 0);
 define('ACCOUNT_MANAGE_NAME_UNBIND_USER', 'unbind_user');
 //admin创建用户，用户组 owner_uid=0
 define('ACCOUNT_NO_OWNER_UID', 0);
+//到期用户
+define('ACCOUNT_MANAGE_NAME_EXPIRED', 'expired');
 
 //系统卡券
 define('SYSTEM_COUPON', 1);

@@ -134,6 +134,7 @@ $we7_file_permission = array(
 		'operator' => array('home*'),
 		'clerk' => array('welcome'),
 		'unbind_user' => array(),
+		'expired' => array('welcome'),
 	),
 	'mc' => array(
 		'default' => '',
@@ -268,6 +269,10 @@ $we7_file_permission = array(
 		),
 		'clerk' => array(),
 		'unbind_user' => array(),
+		'expired' => array(
+			'goods-buyer',
+			'orders',
+		)
 	),
 	'system' => array(
 		'default' => '',
@@ -294,6 +299,9 @@ $we7_file_permission = array(
 			'workorder',
 		),
 		'unbind_user' => array(),
+		'expired' => array(
+			'updatecache',
+		)
 	),
 	'user' => array(
 		'default' => 'display',
@@ -318,6 +326,9 @@ $we7_file_permission = array(
 			'profile',
 		),
 		'unbind_user' => array(),
+		'expired' => array(
+			'user*',
+		)
 	),
 	'wxapp' => array(
 		'default' => '',

@@ -55,7 +55,28 @@ if (!empty($_W['uniacid'])) {
 if (!empty($_W['uid'])) {
 	$_W['highest_role'] = permission_account_user_role($_W['uid']);
 	$_W['role'] = permission_account_user_role($_W['uid'], $_W['uniacid']);
+
+	/* xstart */
+	if (IMS_FAMILY == 'x') {
+		if (empty($_W['isfounder']) || user_is_vice_founder()) {
+			if (!empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
+				$_W['role'] = ACCOUNT_MANAGE_NAME_EXPIRED;
+			}
+		}
+	}
+	/* xend */
+
+	/* svstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
+		if (empty($_W['isfounder'])) {
+			if (!empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
+				$_W['role'] = ACCOUNT_MANAGE_NAME_EXPIRED;
+			}
+		}
+	}
+	/* svend */
 }
+
 $_W['template'] = !empty($_W['setting']['basic']['template']) ? $_W['setting']['basic']['template'] : 'default';
 $_W['attachurl'] = attachment_set_attach_url();
 load()->func('compat.biz');

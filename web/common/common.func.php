@@ -714,6 +714,10 @@ function frames_menu_append() {
 		'clerk' => array(
 			'system_my',
 		),
+		'expired' => array(
+			'system_my',
+			'system_setting_updatecache',
+		)
 	);
 	return $system_menu_default_permission;
 }

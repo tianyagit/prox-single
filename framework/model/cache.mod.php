@@ -179,7 +179,13 @@ function cache_build_frame_menu() {
 		foreach ($system_menu as $menu_name => $menu) {
 			$system_menu[$menu_name]['is_system'] = true;
 			$system_menu[$menu_name]['is_display'] = !empty($system_menu_db[$menu_name]['is_display']) ? true : ((isset($system_menu[$menu_name]['is_display']) && empty($system_menu[$menu_name]['is_display']) || !empty($system_menu_db[$menu_name])) ? false : true);
+
 			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
+
+			if ($_W['role'] == ACCOUNT_MANAGE_NAME_EXPIRED && $menu_name != 'store' && $menu_name != PERMISSION_ACCOUNT) {
+				$system_menu[$menu_name]['is_display'] = false;
+			}
+
 			foreach ($menu['section'] as $section_name => $section) {
 				$displayorder = max(count($section['menu']), 1);
 
@@ -228,6 +234,9 @@ function cache_build_frame_menu() {
 				$menu['url'] = strexists($menu['url'], 'http') ?  $menu['url'] : $_W['siteroot'] . $menu['url'];
 				$menu['blank'] = true;
 				$menu['is_display'] = $menu['is_display'] == 0 ? false : true;
+				if ($_W['role'] == ACCOUNT_MANAGE_NAME_EXPIRED) {
+					$menu['is_display'] = false;
+				}
 				$system_menu[$menu['permission_name']] = $menu;
 			}
 		}
