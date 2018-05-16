@@ -71,7 +71,7 @@ class StoreModuleSite extends WeModuleSite {
 					cache_delete("uniaccount:{$order[$account_type]}");
 				}
 				if ($goods['type'] == STORE_TYPE_USER_PACKAGE) {
-					cache_delete('system_frame');
+					cache_delete(cache_system_key('system_frame:' . $_W['uid']));
 				}
 				cache_delete(cache_system_key($order['uniacid'] . ':site_store_buy_' . $goods['type']));
 				cache_build_account_modules($order['uniacid']);
@@ -678,7 +678,7 @@ class StoreModuleSite extends WeModuleSite {
 						}
 						$data['groupid'] = $goods['user_group'];
 						$data['endtime'] = $order['endtime'];
-						cache_delete('system_frame');
+						cache_delete(cache_system_key('system_frame:' . $_W['uid']));
 						if (!user_update($data)) {
 							iajax(1, '修改权限失败', '');
 						}

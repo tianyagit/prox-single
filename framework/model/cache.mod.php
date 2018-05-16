@@ -182,7 +182,7 @@ function cache_build_frame_menu() {
 
 			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
 
-			if ($_W['role'] == ACCOUNT_MANAGE_NAME_EXPIRED && $menu_name != 'store' && $menu_name != PERMISSION_ACCOUNT) {
+			if ($_W['role'] == ACCOUNT_MANAGE_NAME_EXPIRED && $menu_name != 'store' && $menu_name != 'system') {
 				$system_menu[$menu_name]['is_display'] = false;
 			}
 
@@ -241,8 +241,9 @@ function cache_build_frame_menu() {
 			}
 		}
 		$system_menu = iarray_sort($system_menu, 'displayorder', 'asc');
-		cache_delete('system_frame');
-		cache_write('system_frame', $system_menu);
+		$cachekey = cache_system_key('system_frame:' . $_W['uid']);
+		cache_delete($cachekey);
+		cache_write($cachekey, $system_menu);
 		return $system_menu;
 	}
 }

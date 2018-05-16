@@ -35,7 +35,6 @@ function _login($forward = '') {
 		$_GPC['handle_type'] = 'login';
 	}
 
-
 	if ($_GPC['handle_type'] == 'login') {
 		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->login();
 	} else {
@@ -70,27 +69,6 @@ function _login($forward = '') {
 			}
 		}
 
-		/* xstart */
-		if (IMS_FAMILY == 'x') {
-			if (empty($_W['isfounder']) || user_is_vice_founder()) {
-				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
-					cache_delete('system_frame');
-					$forward = url('user/profile');
-				}
-			}
-		}
-		/* xend */
-
-		/* svstart */
-		if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
-			if (empty($_W['isfounder'])) {
-				if (!empty($record['endtime']) && $record['endtime'] < TIMESTAMP) {
-					cache_delete('system_frame');
-					$forward = url('user/profile');
-				}
-			}
-		}
-		/* svend */
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
 			itoast('站点已关闭，关闭原因:'. $_W['setting']['copyright']['reason'], '', '');
 		}

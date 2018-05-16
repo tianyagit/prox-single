@@ -565,6 +565,13 @@ function user_login_forward($forward = '') {
 	if (!empty($forward)) {
 		return $login_forward;
 	}
+
+	if (empty($_W['isfounder']) || user_is_vice_founder()) {
+		if (!empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
+			return url('user/profile');
+		}
+	}
+
 	if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
 		return url('home/welcome/system');
 	}

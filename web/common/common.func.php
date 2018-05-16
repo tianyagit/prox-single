@@ -169,7 +169,7 @@ function buildframes($framename = ''){
 		}
 		return $frames;
 	}
-	$frames = cache_load('system_frame');
+	$frames = cache_load(cache_system_key('system_frame:' . $_W['uid']));
 	if(empty($frames)) {
 		$frames = cache_build_frame_menu();
 	}
