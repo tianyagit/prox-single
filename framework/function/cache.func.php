@@ -215,17 +215,6 @@ function cache_key_all() {
 		),
 
 		'caches' => array(
-            'test1' => array(
-                // 模块详细信息
-                'key' => 'test1',
-                'group' => 'test',
-            ),
-            'test2' => array(
-                // 模块详细信息
-                'key' => 'test2',
-                'group' => 'test',
-            ),
-
 			'module_info' => array(
 				// 模块详细信息
 				'key' => 'module_info:%module_name',
@@ -554,9 +543,6 @@ function cache_key_all() {
 		),
 		// 缓存键关联关系数组
 		'groups' => array(
-		    'test' => array(
-		        'relations' => array('test1', 'test2'),
-            ),
 			'uniaccount' => array(
 				'relations' => array('uniaccount', 'unisetting'),
 			),
