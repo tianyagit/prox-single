@@ -176,6 +176,7 @@ $we7_file_permission = array(
 		),
 		'clerk' => array(
 			'display',
+			'manage-account'
 		),
 		'unbind_user' => array(),
 	),

@@ -439,7 +439,7 @@ function permission_check_account_user_module($action = '', $module_name = '') {
 	$m = trim($_GPC['m']);
 	//参数设置权限
 	if ($a == 'manage-account' && $do == 'setting' && !empty($m)) {
-		$permission_name = $m . '_setting';
+		$permission_name = $m . '_settings';
 		$users_permission = permission_account_user($m);
 		if ($users_permission[0] != 'all' && !in_array($permission_name, $users_permission)) {
 			return false;
