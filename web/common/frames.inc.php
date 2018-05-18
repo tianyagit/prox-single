@@ -843,7 +843,6 @@ $we7_system_menu['help'] = array(
 	'url' => url('help/display'),
 	'section' => array(),
 	'blank' => false,
-	'founder' => true,
 );
 
 $we7_system_menu['custom_help'] = array(
@@ -853,7 +852,6 @@ $we7_system_menu['custom_help'] = array(
 	'section' => array(),
 	'blank' => false,
 	'is_display' => 0,
-	'founder' => true,
 );
 
 /* xstart */
