@@ -452,51 +452,6 @@ function ext_template_manifest_parse($xml) {
 }
 
 /**
- * 获取后台皮肤配置信息
- * @param string $tpl 后台皮肤名称
- * @param boolean $cloud 是否从云服务读取配置信息(缺少配置文件情况下)
- * @return array
- */
-function ext_webtheme_manifest($tpl, $cloud = true) {
-	$filename = IA_ROOT . '/web/themes/' . $tpl . '/manifest.xml';
-	if (!file_exists($filename)) {
-		if ($cloud) {
-			load()->model('cloud');
-			$manifest = cloud_w_info($tpl);
-		}
-		return is_error($manifest) ? array() : $manifest;
-	}
-	$manifest = ext_template_manifest_parse(file_get_contents($filename));
-	if (empty($manifest['name']) || $manifest['name'] != $tpl) {
-		return array();
-	}
-	return $manifest;
-}
-
-/**
- * 将后台皮肤XML配置文件解析为数组
- * @param $xml 后台皮肤XML文件内容
- * @return array
- */
-function ext_webtheme_manifest_parse($xml) {
-	$xml = str_replace(array('&'), array('&amp;'), $xml);
-	$xml = @isimplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
-	if (empty($xml)) {
-		return array();
-	}
-	$manifest['name'] = strval($xml->identifie);
-	$manifest['title'] = strval($xml->title);
-	if (empty($manifest['title'])) {
-		return array();
-	}
-	$manifest['type'] = !empty($xml->type) ? strval($xml->type) : 'other';
-	$manifest['description'] = strval($xml->description);
-	$manifest['author'] = strval($xml->author);
-	$manifest['url'] = strval($xml->url);
-	return $manifest;
-}
-
-/**
  * 获取微站模板行业分类
  * @return array
  */
@@ -550,59 +505,6 @@ function ext_template_type() {
 	return $types;
 }
 
-/**
- * 获取后台皮肤行业分类
- * @return array
- */
-function ext_webtheme_type() {
-	static $types = array(
-		'often' => array(
-			'name' => 'often',
-			'title' => '常用模板',
-		),
-		'rummery' => array(
-			'name' => 'rummery',
-			'title' => '酒店',
-		),
-		'car' => array(
-			'name' => 'car',
-			'title' => '汽车',
-		),
-		'tourism' => array(
-			'name' => 'tourism',
-			'title' => '旅游',
-		),
-		'drink' => array(
-			'name' => 'drink',
-			'title' => '餐饮',
-		),
-		'realty' => array(
-			'name' => 'realty',
-			'title' => '房地产',
-		),
-		'medical' => array(
-			'name' => 'medical',
-			'title' => '医疗保健'
-		),
-		'education' => array(
-			'name' => 'education',
-			'title' => '教育'
-		),
-		'cosmetology' => array(
-			'name' => 'cosmetology',
-			'title' => '健身美容'
-		),
-		'shoot' => array(
-			'name' => 'shoot',
-			'title' => '婚纱摄影'
-		),
-		'other' => array(
-			'name' => 'other',
-			'title' => '其它行业'
-		)
-	);
-	return $types;
-}
 
 /**
  * 清除模块目录脚本文件
@@ -818,6 +720,29 @@ function ext_execute_uninstall_script($module_name) {
 				pdo_run($manifest['uninstall']);
 			}
 		}
+	}
+	return true;
+}
+
+function ext_module_run_script($modulename, $scripttype) {
+	if (!in_array($scripttype, array('install', 'upgrade'))) {
+		return false;
+	}
+	$manifest = ext_module_manifest($modulename);
+	$module_path = IA_ROOT . '/addons/' . $modulename . '/';
+	if (!empty($manifest[$scripttype])) {
+		if (strexists($manifest[$scripttype], '.php')) {
+			if (file_exists($module_path . $manifest[$scripttype])) {
+				include_once $module_path . $manifest[$scripttype];
+			}
+		} else {
+			pdo_run($manifest[$scripttype]);
+		}
+	}
+
+	if (defined('ONLINE_MODULE')) {
+		// 如果模块来自应用商城，删除对应文件
+		ext_module_script_clean($modulename, $manifest);
 	}
 	return true;
 }

@@ -35,4 +35,12 @@ class Bindings extends \We7Table {
 	public function deleteByName($modulename) {
 		return $this->query->where('module', $modulename)->delete();
 	}
+	
+	public function isEntryExists($modulename, $entry, $do) {
+		return $this->query->where('module', $modulename)->where('entry', $entry)->where('do', $do)->exists();
+	}
+	
+	public function isEntryExists($modulename, $entry, $call) {
+		return $this->query->where('module', $modulename)->where('entry', $entry)->where('call', $call)->exists();
+	}
 }

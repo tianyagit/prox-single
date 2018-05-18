@@ -426,33 +426,157 @@ function cloud_m_info($name) {
  * @param string $name 应用名称
  * @return array|mixed|string
  */
-function cloud_m_upgradeinfo($name) {
-	$module = table('module')->getModuleInfo(trim($name), array('name', 'version'));
+function cloud_m_upgradeinfo($modulename) {
+	load()->model('module');
+	
+	$module = module_fetch($modulename);
+	
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.info';
-	$pars['module'] = $name;
+	$pars['module'] = $modulename;
 	$pars['curversion'] = $module['version'];
 	$pars['isupgrade'] = 1;
-	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
+	//$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 	$file = IA_ROOT . '/data/module.info';
-	$ret = _cloud_shipping_parse($dat, $file);
-	if (!empty($ret) && !is_error($ret)) {
-		$ret['site_branch'] = $ret['branches'][$ret['version']['branch_id']];
-		$ret['from'] = 'cloud';
-		foreach ($ret['branches'] as &$branch) {
-			if ($branch['displayorder'] < $ret['site_branch']['displayorder'] || ($ret['site_branch']['displayorder'] == $ret['site_branch']['displayorder'] && $ret['site_branch']['id'] > intval($branch['id']))) {
-				unset($module['branches'][$branch['id']]);
-				continue;
-			}
-			$branch['id'] = intval($branch['id']);
-			$branch['version']['description'] = preg_replace('/\n/', '<br/>', $branch['version']['description']);
-			$branch['displayorder'] = intval($branch['displayorder']);
-			$branch['day'] = intval(date('d', $branch['version']['createtime']));
-			$branch['month'] = date('Y.m', $branch['version']['createtime']);
-			$branch['hour'] = date('H:i', $branch['version']['createtime']);
-		}
-		unset($branch);
+	//$ret = _cloud_shipping_parse($dat, $file);
+	$ret = array (
+		'id' => '3717',
+		'uid' => '157135',
+		'name' => 'wn_storex',
+		'title' => '万能小店',
+		'logo' => 'images/2017/04/19/149258134458f6fbe08f2be_eN8ju0OaPbSb.jpg',
+		'type' => '1',
+		'status' => '1',
+		'plugin_pid' => '0',
+		'install_dir' => '',
+		'description' => '&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;&lt;span style=&quot;font-size: 24px;&quot;&gt;',
+		'package' => '',
+		'package_support' => '1',
+		'plugin_support' => '2',
+		'bought' => true,
+		'is_expired' => false,
+		'branch_id' => '4828',
+		'member' => '万能君',
+		'version' =>
+		array (
+			'id' => '74829',
+			'branch_id' => '4828',
+			'version' => '3.0.9',
+			'description' => '1.修复添加商品并设置规格后，用该商品做限时活动时手机端没有图片的问题。
+	2.修复会员卡显示会员组错误的问题。',
+			'createtime' => '2018-05-17 15:34',
+			'cloud_setting' => '0',
+			'status' => '3',
+		),
+		'username' => '万能君',
+		'branches' =>
+		array (
+			4828 =>
+			array (
+				'id' => 4828,
+				'name' => '普通版',
+				'price' => '0',
+				'package_id' => '0',
+				'private' => '1',
+				'displayorder' => 1,
+				'show' => '1',
+				'status' => '1',
+				'app_support' => '2',
+				'upgrade_price' => 0,
+				'wxapp_support' => '2',
+				'webapp_support' => '1',
+				'system_welcome_support' => '1',
+				'android_support' => '1',
+				'ios_support' => '1',
+				'version' =>
+				array (
+					'id' => '74829',
+					'version' => '3.0.9',
+					'description' => '1.修复添加商品并设置规格后，用该商品做限时活动时手机端没有图片的问题。<br/>2.修复会员卡显示会员组错误的问题。',
+					'cloud_setting' => '0',
+					'createtime' => '1526542482',
+				),
+				'day' => 17,
+				'month' => '2018.05',
+				'hour' => '15:34',
+			),
+			6288 =>
+			array (
+				'id' => '6288',
+				'name' => '系统卡券免费版',
+				'price' => '0',
+				'package_id' => '0',
+				'private' => '1',
+				'displayorder' => '0',
+				'show' => '1',
+				'status' => '1',
+				'app_support' => '2',
+				'upgrade_price' => 0,
+				'wxapp_support' => '1',
+				'webapp_support' => '1',
+				'system_welcome_support' => '1',
+				'android_support' => '1',
+				'ios_support' => '1',
+				'version' =>
+				array (
+					'id' => '64820',
+					'version' => '2.8',
+					'description' => '用户权限修改优化。',
+					'cloud_setting' => '0',
+					'createtime' => '1521197440',
+				),
+			),
+		),
+		'site_branch' =>
+		array (
+			'id' => '4828',
+			'name' => '普通版',
+			'price' => '0',
+			'package_id' => '0',
+			'private' => '1',
+			'displayorder' => '1',
+			'show' => '1',
+			'status' => '1',
+			'app_support' => '2',
+			'upgrade_price' => 0,
+			'wxapp_support' => '2',
+			'webapp_support' => '1',
+			'system_welcome_support' => '1',
+			'android_support' => '1',
+			'ios_support' => '1',
+			'version' =>
+			array (
+				'id' => '74829',
+				'version' => '3.0.9',
+				'description' => '1.修复添加商品并设置规格后，用该商品做限时活动时手机端没有图片的问题。
+	2.修复会员卡显示会员组错误的问题。',
+				'cloud_setting' => '0',
+				'createtime' => '1526542482',
+			),
+		),
+		'from' => 'cloud',
+	);
+	if (empty($ret) || is_error($ret)) {
+		return array();
 	}
+	if (version_compare($ret['version']['version'], $module['version'], '>')) {
+		$ret['upgrade'] = true;
+	}
+	
+	$ret['site_branch'] = $ret['branches'][$ret['version']['branch_id']];
+	$ret['from'] = 'cloud';
+	foreach ($ret['branches'] as &$branch) {
+		if ($branch['displayorder'] > $ret['site_branch']['displayorder'] || ($branch['displayorder'] == $ret['site_branch']['displayorder'] && $ret['site_branch']['id'] < intval($branch['id']))) {
+			$ret['new_branch'] = true;
+		}
+		$branch['id'] = intval($branch['id']);
+		$branch['version']['description'] = preg_replace('/\n/', '<br/>', $branch['version']['description']);
+		$branch['displayorder'] = intval($branch['displayorder']);
+		$branch['day'] = intval(date('d', $branch['version']['createtime']));
+		$branch['month'] = date('Y.m', $branch['version']['createtime']);
+		$branch['hour'] = date('H:i', $branch['version']['createtime']);
+	}
+	unset($branch);
 	return $ret;
 }
 
