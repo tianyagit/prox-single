@@ -100,8 +100,96 @@ if ($do == 'get_upgrade_info') {
 	//检查本地是否有更新，否则检查线上是否有更新，
 	//有更新，更新cloud表中的记录，返回更新信息
 	$manifest = ext_module_manifest($modulename);
-	
-	
+	//$manifest_cloud = cloud_m_info($module_name);
+	$manifest_cloud = array (
+		'id' => '3717',
+		'uid' => '157135',
+		'name' => 'wn_storex',
+		'title' => '万能小店',
+		'logo' => 'images/2017/04/19/149258134458f6fbe08f2be_eN8ju0OaPbSb.jpg',
+		'type' => '1',
+		'status' => '1',
+		'plugin_pid' => '0',
+		'install_dir' => '',
+		'description' => '&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;&lt;span style=&quot;font-size: 24px;&quot;&gt;',
+		'package' => '',
+		'package_support' => '1',
+		'plugin_support' => '2',
+		'bought' => true,
+		'is_expired' => false,
+		'branch_id' => '4828',
+		'member' => '万能君',
+		'version' =>
+		array (
+			'id' => '74237',
+			'branch_id' => '4828',
+			'version' => '3.0.6',
+			'description' => '修复了一些bug',
+			'createtime' => '2018-05-15 18:47',
+			'cloud_setting' => '0',
+			'status' => '3',
+		),
+		'username' => '万能君',
+		'branches' =>
+		array (
+			4828 =>
+			array (
+				'id' => '4828',
+				'name' => '普通版',
+				'price' => '0',
+				'package_id' => '0',
+				'private' => '1',
+				'displayorder' => '1',
+				'show' => '1',
+				'status' => '1',
+				'app_support' => '2',
+				'upgrade_price' => 0,
+				'wxapp_support' => '2',
+				'webapp_support' => '1',
+				'system_welcome_support' => '1',
+				'android_support' => '1',
+				'ios_support' => '1',
+				'version' =>
+				array (
+					'id' => '74237',
+					'version' => '3.0.6',
+					'description' => '修复了一些bug',
+					'cloud_setting' => '0',
+					'createtime' => '1526381249',
+				),
+			),
+			6288 =>
+			array (
+				'id' => '6288',
+				'name' => '系统卡券免费版',
+				'price' => '0',
+				'package_id' => '0',
+				'private' => '1',
+				'displayorder' => '0',
+				'show' => '1',
+				'status' => '1',
+				'app_support' => '2',
+				'upgrade_price' => 0,
+				'wxapp_support' => '1',
+				'webapp_support' => '1',
+				'system_welcome_support' => '1',
+				'android_support' => '1',
+				'ios_support' => '1',
+				'version' =>
+				array (
+					'id' => '64820',
+					'version' => '2.8',
+					'description' => '用户权限修改优化。',
+					'cloud_setting' => '0',
+					'createtime' => '1521197440',
+				),
+			),
+		),
+	);
+	//本地如果有manifest并且版本号大于云端，则以本地为准，否则以云端为准
+	if (!empty($manifest) && version_compare($manifest['application']['version'], $manifest_cloud['version']['version'], '>')) {
+		$module['upgrade'] = 1;
+	}
 	$module = cloud_m_upgradeinfo($module_name);
 	$module_info = module_fetch($module_name);
 	if (empty($module_info['site_branch_id'])) {
@@ -492,9 +580,12 @@ if ($do == 'save_module_info') {
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
 
-	
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
+	if (empty($module_info)) {
+		itoast('模块不存在或是已经被删除', '', 'error');
+	}
+	
 	$current_cloud_module = cloud_m_info($module_name);
 	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
 	
