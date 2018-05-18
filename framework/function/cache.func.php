@@ -74,8 +74,29 @@ function &cache_global($key) {
  */
 function cache_system_key($cache_key, $params = array()) {
 	$cache_key_all = cache_key_all();
-	$cache_info = $cache_key_all['caches'][$cache_key];
-	$cache_common_params = $cache_key_all['common_params'];
+
+	// 如果是直接传入字符串缓存键（如module_info:wnstore:128），检查后直接返回
+	if (empty($params)) {
+	    $res = preg_match_all('/([a-zA-Z\_\-0-9]+):/', $cache_key, $matches);
+        if ($res) {
+            $key = count($matches[1]) > 0 ? $matches[1][0] : $matches[1];
+        } else {
+            $key = $cache_key;
+        }
+        if (empty($cache_key_all['caches'][$key])) {
+            return error(1, '缓存' . $key . ' 不存在!');
+        } else {
+            preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key_all['caches'][$key]['key'], $key_params);
+            preg_match_all('/\:([a-zA-Z\_\-0-9]+)/', $cache_key, $val_params);
+            if (count($key_params[1]) != count($val_params[1])) {
+                return error(3, $key . ' 缓存参数不正确');
+            }
+        }
+        return 'we7:' . $cache_key;
+    }
+
+    $cache_info = $cache_key_all['caches'][$cache_key];
+    $cache_common_params = $cache_key_all['common_params'];
 
 	if (empty($cache_info)) {
 		return error(2, '缓存 ' . $cache_key . ' 不存在!');
@@ -86,7 +107,7 @@ function cache_system_key($cache_key, $params = array()) {
 	// 如果缺少传入的参数，先从 common_params 中寻找并获取
 	foreach ($cache_common_params as $param_name => $param_val) {
 		preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key, $matches);
-		if (in_array($param_name, $matches[1]) && !in_array($param_name, $params)) {
+		if (in_array($param_name, $matches[1]) && !in_array($param_name, array_keys($params))) {
 			$params[$param_name] = $cache_common_params[$param_name];
 		}
 	}
@@ -117,11 +138,17 @@ function cache_relation_keys($key) {
 	if (!is_string($key)) {
 		return $key;
 	}
+
 	// 将传入的缓存键的参数值取出 => we7:user:liuguilong:18
 	$cache_param_values = explode(':', $key);
 	$cache_name = $cache_param_values[1];
 	unset($cache_param_values[0]);
 	unset($cache_param_values[1]);
+
+	if (empty($cache_param_values)) {
+        preg_match_all('/\:([a-zA-Z\_\-0-9]+)/', $key, $matches);
+        $cache_name = $matches[1][0];
+    }
 
 	$cache_key_all = cache_key_all();
 	$cache_relations = $cache_key_all['groups'];
@@ -134,8 +161,12 @@ function cache_relation_keys($key) {
 	}
 
 	if (!empty($cache_info['group'])) {
+	    if (empty($cache_relations[$cache_info['group']])) {
+            return error(1, '关联关系未定义');
+        }
 		$relation_keys = $cache_relations[$cache_info['group']]['relations'];
 		$cache_keys = array();
+
 		foreach ($relation_keys as $key => $val) {
 			// 获取到 $cache_key_all 数组中保存的缓存键名
 			if ($val == $cache_name) {
@@ -155,14 +186,12 @@ function cache_relation_keys($key) {
 				$cache_key_params = array_combine($matches[1], $cache_param_values);
 			}
 
-			if ($cache_key_params) {
-				$cache_key = cache_system_key($val, $cache_key_params);
-				if (!is_error($cache_key)) {
-					$cache_keys[] = $cache_key;
-				} else {
-					return error(1, $cache_key['message']);
-				}
-			}
+            $cache_key = cache_system_key($val, $cache_key_params);
+            if (!is_error($cache_key)) {
+                $cache_keys[] = $cache_key;
+            } else {
+                return error(1, $cache_key['message']);
+            }
 		}
 	} else {
 		$cache_keys[] = $key;
