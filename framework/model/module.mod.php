@@ -341,6 +341,7 @@ function module_fetch($name) {
 		if (in_array($name, array_keys($module_upgrade['module_upgrade']))) {
 			$module_info['is_upgrade'] = true;
 		}
+		$module_info['entries'] = module_entries($name);
 		$module = $module_info;
 		cache_write($cachekey, $module_info);
 	}
