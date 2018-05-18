@@ -527,7 +527,7 @@ $islocal = $_GPC['local'] == 'local'; if ($do == 'keyword') {
 if ($do == 'module') {
 	$enable_modules = array();
 	$is_user_module = isset($_GPC['user_module']) ? intval($_GPC['user_module']) : 0;
-	$have_cover = intval($_GPC['cover']);
+	$have_cover = $_GPC['cover'] == 'true' ? true : false;
 	$module_type = in_array($_GPC['mtype'], array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN)) ? $_GPC['mtype'] : '';
 	if ($is_user_module) {
 		$installedmodulelist = user_modules($_W['uid']);
