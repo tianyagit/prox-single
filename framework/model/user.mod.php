@@ -498,8 +498,7 @@ function user_modules($uid) {
 						}
 					}
 				}
-				$module_table = table('module');
-				$module_list = $module_table->moduleLists($package_group_module);
+				$module_list = table('modules')->getByNameList($package_group_module);
 			}
 		}
 		$module_list = array_keys($module_list);

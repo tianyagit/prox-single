@@ -31,14 +31,13 @@ if ($do == 'display') {
 	} else {
 		$user_module = user_modules($_W['uid']);
 	}
-	$module_table = table('module');
-	$module_rank = $module_table->moduleRank();
+	$module_rank = table('modules_rank')->getByModuleNameList(array_keys($user_module));
 	$rank = array();
-	foreach ($user_module as $key => $module_value) {
+	foreach ($user_module as $module_name => $module_value) {
 		if (!empty($module_value['issystem'])) {
-			unset($user_module[$key]);
+			unset($user_module[$module_name]);
 		} else {
-			$rank[] = !empty($module_rank[$key]['rank']) ? $module_rank[$key]['rank'] : 0;
+			$rank[] = !empty($module_rank[$module_name]['rank']) ? $module_rank[$module_name]['rank'] : 0;
 		}
 	}
 	array_multisort($rank, SORT_DESC, $user_module);

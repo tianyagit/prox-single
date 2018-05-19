@@ -41,11 +41,23 @@ class Modules extends \We7Table {
 		return $this->query->where('name', $modulename)->get();
 	}
 	
+	public function getByNameList($modulename_list, $get_system = false) {
+		$this->query->whereor('name', $modulename_list)->orderby('mid', 'desc');
+		if (!empty($get_system)) {
+			$this->whereor('issystem', 1);
+		}
+		return $this->query->getall('name');
+	}
+	
 	public function deleteByName($modulename) {
 		return $this->query->where('name', $modulename)->delete();
 	}
 	
 	public function getByHasSubscribes() {
 		return $this->query->select('name', 'subscribes')->where('subscribes !=', '')->getall();
+	}
+	
+	public function getSupportWxappList() {
+		return $this->query->where('wxapp_support', MODULE_SUPPORT_WXAPP)->getall('mid');
 	}
 }

@@ -324,7 +324,7 @@ function cloud_m_build($modulename, $type = '') {
 	if (empty($modulename)) {
 		return array();
 	}
-	$module = table('module')->getModuleInfo(trim($modulename));
+	$module = table('modules')->getByName($modulename);
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.build';
 	$pars['module'] = $modulename;

@@ -222,9 +222,8 @@ function app_link_uniaicd_info($module_name) {
 	if (empty($module_info)) {
 		return $result;
 	}
-	$account_module = table('module')->uniAccountModuleInfo($module_name);
-	if (!empty($account_module)) {
-		$settings = (array)$account_module['settings'];
+	if (!empty($module_info['config'])) {
+		$settings = (array)$module_info['config'];
 		$result = !empty($settings['link_uniacid']) ? intval($settings['link_uniacid']) : 0;
 	}
 	return $result;

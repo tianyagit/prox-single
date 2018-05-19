@@ -69,7 +69,7 @@ class Cloud extends \We7Table {
 	}
 	
 	public function getPhoneappUninstallTotal() {
-		return $this->query->where('phone_support', MODULE_SUPPORT_ACCOUNT)->count();
+		return $this->query->where('phoneapp_support', MODULE_SUPPORT_ACCOUNT)->count();
 	}
 	
 	public function deleteByName($modulename) {

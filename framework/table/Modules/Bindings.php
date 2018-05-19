@@ -40,7 +40,7 @@ class Bindings extends \We7Table {
 		return $this->query->where('module', $modulename)->where('entry', $entry)->where('do', $do)->exists();
 	}
 	
-	public function isEntryExists($modulename, $entry, $call) {
+	public function isCallExists($modulename, $entry, $call) {
 		return $this->query->where('module', $modulename)->where('entry', $entry)->where('call', $call)->exists();
 	}
 }
