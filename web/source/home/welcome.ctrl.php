@@ -113,6 +113,8 @@ if ($do == 'platform') {
 	}
 	template('home/welcome-system');
 } elseif ($do =='get_module_statistics') {
+	$module_uninstall_total = module_uninstall_total();
+
 	$uninstall_modules = module_get_all_uninstalled('uninstalled');
 	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
 	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];
@@ -153,11 +155,10 @@ if ($do == 'platform') {
 		}
 		$frames = buildframes('account');
 	}
-	$uni_account_module = table('module')->uniAccountModuleInfo($modulename);
 	foreach ($frames['section'] as $secion) {
 		foreach ($secion['menu'] as $menu) {
 			if (!empty($menu['url'])) {
-				if (!empty($uni_account_module['settings']['default_entry']) && !strpos($menu['url'], '&eid=' . $uni_account_module['settings']['default_entry'])) {
+				if (!empty($_W['current_module']['config']['default_entry']) && !strpos($menu['url'], '&eid=' . $_W['current_module']['config']['default_entry'])) {
 					continue;
 				}
 				header('Location: ' . $_W['siteroot'] . 'web/' . $menu['url']);

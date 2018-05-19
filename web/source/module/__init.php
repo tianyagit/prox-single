@@ -24,6 +24,10 @@ if (in_array($action, array('permission', 'default-entry', 'manage-account'))) {
 if (in_array($action, array('group', 'manage-system'))) {
 	define('FRAME', 'system');
 }
+
+if (in_array($action, array('display'))) {
+	define('FRAME', '');
+}
 /* sxstart */
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	$_GPC['account_type'] = !empty($_GPC['account_type']) || !empty($_GPC['system_welcome']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
