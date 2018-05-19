@@ -46,16 +46,14 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 /* sxend */
 
 if ($do == 'subscribe') {
-	$type = !empty($_GPC['system_welcome']) ? 9 : intval($_GPC['account_type']);
-	$uninstall_modules = module_get_all_uninstalled('uninstalled');
-	$total_uninstalled = $uninstall_modules['module_count'];
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
-	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
+	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
+	
 	$module_list = user_modules($_W['uid']);
+	$subscribe_type = ext_module_msg_types();
+	
 	$subscribe_module = array();
 	$receive_ban = $_W['setting']['module_receive_ban'];
-	$subscribe_type = ext_module_msg_types();
-
+	
 	if (is_array($module_list) && !empty($module_list)) {
 		foreach ($module_list as $module) {
 			if (!empty($module['subscribes']) && is_array($module['subscribes'])) {
@@ -492,14 +490,8 @@ if ($do == 'module_detail') {
 		$main_module = module_fetch($module_info['main_module']);
 	}
 	if (!empty($module_info['plugin_list'])) {
-		foreach ($module_info['plugin_list'] as $key => &$plugin) {
-			$plugin = module_fetch($plugin);
-			if (empty($plugin)) {
-				unset($module_info['plugin'][$name]);
-			}
-		}
+		$module_info['plugin_list'] = module_get_plugin_list($module_name);
 	}
-	unset($plugin);
 	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0));
 	$module_group = array();
 	if (!empty($module_group_list)) {
