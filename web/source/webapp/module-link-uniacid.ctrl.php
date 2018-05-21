@@ -43,8 +43,9 @@ if ($do == 'module_link_uniacid') {
 	}
 
 	$modules = uni_modules();
+	//1.过滤不支持关联的模块,2.获取已关联模块的uniacid信息,3.获取被关联模块的uniacid信息
 	foreach ($modules as $key => $value) {
-		if ($value['wxapp_support'] == MODULE_NONSUPPORT_WXAPP && $value['webapp_support'] == MODULE_NOSUPPORT_WEBAPP || !empty($value['issystem'])) {
+		if ($value['wxapp_support'] == MODULE_NONSUPPORT_WXAPP && $value['app_support'] == MODULE_NONSUPPORT_ACCOUNT || !empty($value['issystem'])) {
 			unset($modules[$key]);
 			continue;
 		}
