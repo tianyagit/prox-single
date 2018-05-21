@@ -382,12 +382,10 @@ function module_fetch($name, $enabled = true) {
 
 /**
  * 获取所有未安装的模块
- * @param string $status 模块状态，unistalled : 未安装模块, recycle : 回收站模块;
- * @param string $cache 模块类型;
+ * @param string $module_type 模块类型;
  */
-function module_get_all_uninstalled($status, $module_type = '')  {
-	$status = $status == 'recycle' ? 'recycle' : 'uninstalled';
-
+function module_uninstall()  {
+	
 	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
 		$account_type = 'wxapp';
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
@@ -397,9 +395,10 @@ function module_get_all_uninstalled($status, $module_type = '')  {
 	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 		$account_type = 'phoneapp';
 	}
-	if (!empty($module_type)) {
-		$account_type = $module_type;
-	}
+
+	$uninstall_modules = table('modules_cloud')->getUninstallModule();
+	print_r($uninstall_modules);exit;
+	
 	load()->classs('cloudapi');
 	$cloud_api = new CloudApi();
 	$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
@@ -576,71 +575,43 @@ function module_status($module) {
 }
 
 /**
- * 过滤传入的模块返回其中有更新的模块及模块信息
- * @param array $module_list 模块标识
- * @return array $modules 有升级的模块及升级信息
- */
-function module_filter_upgrade($module_list) {
-	$modules = array();
-	$modules_table = table('module');
-	$modules_local = $modules_table->getModulesLocalList();
-	$installed_module = pdo_getall('modules', array('name' => $module_list), array('version', 'name'), 'name');
-	if (!empty($module_list) && is_array($module_list) && !empty($installed_module)) {
-		foreach ($module_list as $key => $module) {
-			if (empty($installed_module[$module])) {
-				continue;
-			}
-			$manifest = ext_module_manifest($module);
-			if (!empty($manifest) && is_array($manifest)) {
-				$module = array('name' => $module);
-				$module['from'] = 'local';
-				if (version_compare($installed_module[$module['name']]['version'], $manifest['application']['version']) == '-1') {
-					$module['upgrade'] = true;
-					$module['upgrade_branch'] = true;
-					$modules[$module['name']] = $module;
-				}
-			} else {
-				if (is_array($modules_local) && !empty($modules_local[$module])) {
-					$modules[$module] = $modules_local[$module];
-				}
-			}
-		}
-	}
-	return $modules;
-}
-/**
  * 得到最新可升级应用
  * @param type account/wxapp
  * @return array 升级的模块列表
  */
 function module_upgrade_new($type = 'account') {
-	if ($type == 'wxapp') {
-		$module_list = user_module_by_account_type('wxapp');
-	} else {
-		$module_list = user_module_by_account_type('account');
+	$result = array();
+	$allow_type = array(
+		ACCOUNT_TYPE_SIGN,
+		WXAPP_TYPE_SIGN,
+		WEBAPP_TYPE_SIGN,
+		PHONEAPP_TYPE_SIGN,
+		WELCOMESYSTEM_TYPE_SIGN
+	);
+	if (!in_array($type, $allow_type)) {
+		return $result;
 	}
-	$modules_table = table('module');
-	$modules_ignore = $modules_table->getModulesIgnoreList();
-	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
-	if (!empty($upgrade_modules)) {
-		foreach ($upgrade_modules as $key => &$module) {
-			if (empty($module['is_upgrade'])) {
-				unset($upgrade_modules[$key]);
+	$module_list = user_modules($_W['uid']);
+	if (empty($module_list)) {
+		return $result;
+	}
+	
+	$upgrade_modules = table('modules_cloud')->getUpgradeModule(array_keys($module_list), $type);
+	
+	if (empty($upgrade_modules)) {
+		return $result;
+	}
+	$modules_ignore = table('modules_ignore')->where('name', array_keys($upgrade_modules))->getall('name');
+	
+	foreach ($upgrade_modules as $modulename => &$module) {
+		if (!empty($modules_ignore[$modulename])) {
+			if (ver_compare($modules_ignore[$modulename]['version'], $module['version']) >= 0) {
+				$module['is_ignore'] = 1;
 			}
-			$module['is_ignore'] = 0;
-			if (!empty($modules_ignore[$key])) {
-				$ignore_version = $modules_ignore[$key]['version'];
-				$upgrade_version = $module['version'];
-				if (ver_compare($ignore_version, $upgrade_version) >= 0) {
-					$module['is_ignore'] = 1;
-				}
-			}
-			$module_fetch = module_fetch($key);
-			$module['logo'] = $module_fetch['logo'];
-			$module['link'] = url('module/manage-system/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));
 		}
-		unset($module);
+		$module['link'] = url('module/manage-system/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));
 	}
+	unset($module);
 	return $upgrade_modules;
 }
 
@@ -947,7 +918,7 @@ function module_upgrade_info($modulelist = array()) {
 	
 	//没有指定查询模块列表，则获取全部模块查询
 	if (empty($modulelist)) {
-		$modulelist = table('modules')->getall('name');
+		$modulelist =table('modules')->searchWithType('system', '<>')->getall('name');
 	}
 	
 	if (empty($modulelist)) {

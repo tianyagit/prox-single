@@ -23,7 +23,7 @@ $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
 	$data = array();
-	$not_installed_modules = module_get_all_uninstalled('uninstalled');
+	$not_installed_modules = module_uninstall_list();
 	$not_installed_modules = $not_installed_modules['modules']['uninstalled'];
 	$data['app_count'] = count($not_installed_modules['app']);
 	$data['wxapp_count'] = count($not_installed_modules['wxapp']);
@@ -200,28 +200,18 @@ if ($do == 'platform') {
 	iajax(0, $upgrade, '');
 } elseif ($do == 'get_upgrade_modules') {
 	//可升级应用
+	module_upgrade_info();
+	
 	$account_upgrade_modules = module_upgrade_new('account');
 	$account_upgrade_module_nums = count($account_upgrade_modules);
+	
 	$wxapp_upgrade_modules = module_upgrade_new('wxapp');
-	if (!empty($account_upgrade_modules) && is_array($account_upgrade_modules)) {
-		foreach ($account_upgrade_modules as $key => $value) {
-			if (!empty($value['is_ignore'])) {
-				unset($account_upgrade_modules[$key]);
-			}
-		}
-	}
-	if (!empty($wxapp_upgrade_modules) && is_array($wxapp_upgrade_modules)) {
-		foreach ($wxapp_upgrade_modules as $k => $val) {
-			if (!empty($val['is_ignore'])) {
-				unset($wxapp_upgrade_modules[$k]);
-			}
-		}
-	}
 	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
+	
 	$all_upgrade_module_list = array_merge($account_upgrade_modules, $wxapp_upgrade_modules);
-	$upgrade_module_list = array_slice($all_upgrade_module_list, 0, 8);
+	
 	$upgrade_module = array(
-		'upgrade_module_list' => $upgrade_module_list,
+		'upgrade_module_list' => $all_upgrade_module_list,
 		'upgrade_module_nums' => array(
 			'account_upgrade_module_nums' => $account_upgrade_module_nums,
 			'wxapp_upgrade_module_nums' => $wxapp_upgrade_module_nums

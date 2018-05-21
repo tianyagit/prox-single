@@ -237,7 +237,7 @@ function cache_build_frame_menu() {
 
 function cache_build_module_subscribe_type() {
 	global $_W;
-	$modules = table('module')->getByHasSubscribes();
+	$modules = table('modules')->getByHasSubscribes();
 	if (empty($modules)) {
 		return array();
 	}

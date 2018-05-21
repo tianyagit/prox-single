@@ -99,9 +99,15 @@ function welcome_get_cloud_upgrade() {
 	if (!empty($upgrade['schemas'])) {
 		$upgrade['database'] = cloud_build_schemas($schems);
 	}
-	$file_nums = count($upgrade['files']);
-	$database_nums = count($upgrade['database']);
-	$script_nums = count($upgrade['scripts']);
+	if (!empty($upgrade['files'])) {
+		$file_nums = count($upgrade['files']);
+	}
+	if (!empty($upgrade['database'])) {
+		$database_nums = count($upgrade['database']);
+	}
+	if (!empty($upgrade['scripts'])) {
+		$script_nums = count($upgrade['scripts']);
+	}
 	$upgrade['file_nums'] = $file_nums;
 	$upgrade['database_nums'] = $database_nums;
 	$upgrade['script_nums'] = $script_nums;

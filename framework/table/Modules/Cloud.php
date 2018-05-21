@@ -49,6 +49,15 @@ class Cloud extends \We7Table {
 		return $this->query->where('name', $name)->get('name');
 	}
 	
+	public function getUpgradeModule($module_name_list, $account_type = ACCOUNT_TYPE_SIGN) {
+		if (empty($module_name_list)) {
+			return array();
+		}
+		return $this->query->where('name', $module_name_list)->where(function ($query){
+			$query->where('has_new_version', 1)->whereor('has_new_branch', 1);
+		})->where("{$account_type}_support", MODULE_SUPPORT_ACCOUNT)->getall('name');
+	}
+	
 	/**
 	 * 增加不在回收站的条件
 	 */
@@ -74,5 +83,11 @@ class Cloud extends \We7Table {
 	
 	public function deleteByName($modulename) {
 		return $this->query->where('name', $modulename)->delete();
+	}
+	
+	public function getUninstallModule() {
+		return $this->query->where(function ($query){
+			$query->where('install_status', MODULE_LOCAL_UNINSTALL)->whereor('install_status', MODULE_CLOUD_UNINSTALL);
+		})->getall('name');
 	}
 }

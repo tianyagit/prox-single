@@ -460,7 +460,7 @@ function user_modules($uid) {
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
-		if (empty($uid)  || user_is_founder($uid) && !user_is_vice_founder($uid)) {
+		if (empty($uid) || user_is_founder($uid) && !user_is_vice_founder($uid)) {
 			$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 		} elseif (!empty($user_info) && $user_info['type'] == ACCOUNT_OPERATE_CLERK) {
 			$clerk_module = pdo_fetch("SELECT p.type FROM " . tablename('users_permission') . " p LEFT JOIN " . tablename('uni_account_users') . " u ON p.uid = u.uid AND p.uniacid = u.uniacid WHERE u.role = :role AND p.uid = :uid", array(':role' => ACCOUNT_MANAGE_NAME_CLERK, ':uid' => $uid));
@@ -660,25 +660,33 @@ function user_login_forward($forward = '') {
  */
 function user_module_by_account_type($type) {
 	global $_W;
-	$module_list = user_modules($_W['uid']);
-	if (!empty($module_list)) {
-		foreach ($module_list as $key => &$module) {
-			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon')) {
-				unset($module_list[$key]);
-			}
-			if ($module['wxapp_support'] != 2 && $type == 'wxapp') {
-				unset($module_list[$key]);
-			}
-			if ($module['app_support'] != 2 && $type == 'account') {
-				unset($module_list[$key]);
-			}
-			if ($module['webapp_support'] != MODULE_SUPPORT_WEBAPP && $type == 'webapp') {
-				unset($module_list[$key]);
-			}
-		}
-		unset($module);
+	$allow_type = array(
+		ACCOUNT_TYPE_SIGN, 
+		WXAPP_TYPE_SIGN, 
+		WEBAPP_TYPE_SIGN,
+		PHONEAPP_TYPE_SIGN,
+		WELCOMESYSTEM_TYPE_SIGN
+	);
+	$result = array();
+	if (!in_array($type, $allow_type)) {
+		return $result;
 	}
-	return $module_list;
+	
+	$module_list = user_modules($_W['uid']);
+	if (empty($module_list)) {
+		return $result;
+	}
+	
+	foreach ($module_list as $key => $module) {
+		if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon')) {
+			continue;
+		}
+		
+		if ($module[$type . '_support'] == MODULE_SUPPORT_ACCOUNT) {
+			$result[$key] = $module;
+		}
+	}
+	return $result;
 }
 
 function user_invite_register_url($uid = 0) {

@@ -868,7 +868,7 @@ function cloud_extra_account() {
  * @return string 模块标识序列化
  */
 function cloud_extra_module() {
-	$modules = table('module')->searchWithType('system', '<>')->getModulesList();
+	$modules = table('modules')->searchWithType('system', '<>')->getall('name');
 	if (!empty($modules)) {
 		return base64_encode(iserializer(array_keys($modules)));
 	} else {

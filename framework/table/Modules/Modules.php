@@ -34,6 +34,10 @@ class Modules extends \We7Table {
 		'app_support',
 	);
 	
+	public function bindings() {
+		return $this->hasMany('We7\table\Modules\Bingdings', 'module', 'name');
+	}
+	
 	public function getByName($modulename) {
 		if (empty($modulename)) {
 			return array();
@@ -59,5 +63,14 @@ class Modules extends \We7Table {
 	
 	public function getSupportWxappList() {
 		return $this->query->where('wxapp_support', MODULE_SUPPORT_WXAPP)->getall('mid');
+	}
+	
+	public function searchWithType($type, $method = '=') {
+		if ($method == '=') {
+			$this->query->where('type', $type);
+		} else {
+			$this->query->where('type <>', $type);
+		}
+		return $this;
 	}
 }

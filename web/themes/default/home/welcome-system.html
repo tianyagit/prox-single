@@ -109,7 +109,7 @@
 			可升级应用
 		</div>
 		<div class="panel-body welcome-apple-list">
-			<div class="apply-item" ng-repeat="module in upgrade_module_list" ng-if="!module.is_ignore">
+			<div class="apply-item" ng-repeat="module in upgrade_module_list" ng-if="!module.is_ignore && $index+1 <= 8">
 				<a href="{{module.link}}" target="_blank"><img src="{{module.logo}}" class="apply-img"/></a>
 				<a href="{{module.link}}" target="_blank"><span class="text-over">{{module.title|limitTo:4}}</span></a>
 				<a href="{{module.link}}" target="_blank" class="color-red">升级</a>
