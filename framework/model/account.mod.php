@@ -59,7 +59,7 @@ function uni_user_accounts($uid = 0, $type = 'app') {
 	}
 	$where .= !empty($where) ? " AND a.isdeleted <> 1 AND u.role IS NOT NULL" : " WHERE a.isdeleted <> 1";
 
-	$sql = "SELECT w.*, a.type" . $field . " FROM " . tablename('account_' . $type) . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
+	$sql = "SELECT w.acid, w.uniacid, w.level, w.name, w.key, w.secret, a.type" . $field . " FROM " . tablename('account_' . $type) . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
 	$result = pdo_fetchall($sql, $params, 'uniacid');
 	cache_write($cachekey, $result);
 	return $result;
