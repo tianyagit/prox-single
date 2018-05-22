@@ -31,11 +31,10 @@ class Modules extends \We7Table {
 		'webapp_support',
 		'oauth_type',
 		'phoneapp_support',
-		'app_support',
 	);
 	
 	public function bindings() {
-		return $this->hasMany('We7\table\Modules\Bingdings', 'module', 'name');
+		return $this->hasMany('modules_bindings', 'module', 'name');
 	}
 	
 	public function getByName($modulename) {

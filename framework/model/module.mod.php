@@ -56,6 +56,33 @@ function module_types() {
 	return $types;
 }
 
+function module_support_type() {
+	//根据模块类型分类
+	$module_support_type = array(
+		'wxapp_support' => array(
+			'type' => WXAPP_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_WXAPP,
+		),
+		'account_support' => array(
+			'type' => ACCOUNT_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_ACCOUNT,
+		),
+		'welcome_support' => array(
+			'type' => WELCOMESYSTEM_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_SYSTEMWELCOME,
+		),
+		'webapp_support' => array(
+			'type' => WEBAPP_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_WEBAPP,
+		),
+		'phoneapp_support' => array(
+			'type' => PHONEAPP_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_PHONEAPP,
+		),
+	);
+	return $module_support_type;
+}
+
 /**
  * 获取指定模块的所有入口地址
  *
@@ -331,8 +358,8 @@ function module_fetch($name, $enabled = true) {
 				$module_info['plugin_list'] = array_keys ($module_info['plugin_list']);
 			}
 		}
-		if ($module_info['app_support'] != MODULE_SUPPORT_ACCOUNT && $module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && $module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && $module_info['welcome_support'] != MODULE_SUPPORT_SYSTEMWELCOME) {
-			$module_info['app_support'] = MODULE_SUPPORT_ACCOUNT;
+		if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT && $module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && $module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && $module_info['welcome_support'] != MODULE_SUPPORT_SYSTEMWELCOME) {
+			$module_info[MODULE_SUPPORT_ACCOUNT_NAME] = MODULE_SUPPORT_ACCOUNT;
 		}
 		
 		$module_receive_ban = (array)setting_load('module_receive_ban');
@@ -353,7 +380,7 @@ function module_fetch($name, $enabled = true) {
 		cache_write($cachekey, $module_info);
 	}
 	
-	unset($module['app_support']);
+	unset($module[MODULE_SUPPORT_ACCOUNT_NAME]);
 	
 	//增加开启参数，可以获取放入回收站的模块
 	if (!empty($enabled)) {
@@ -378,73 +405,6 @@ function module_fetch($name, $enabled = true) {
 		$module['shortcut'] = $setting['shortcut'];
 	}
 	return $module;
-}
-
-/**
- * 获取所有未安装的模块
- * @param string $module_type 模块类型;
- */
-function module_uninstall()  {
-	
-	if (ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL) {
-		$account_type = 'wxapp';
-	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-		$account_type = 'app';
-	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-		$account_type = 'webapp';
-	} elseif (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-		$account_type = 'phoneapp';
-	}
-
-	$uninstall_modules = table('modules_cloud')->getUninstallModule();
-	print_r($uninstall_modules);exit;
-	
-	load()->classs('cloudapi');
-	$cloud_api = new CloudApi();
-	$get_cloud_m_count = $cloud_api->get('site', 'stat', array('module_quantity' => 1), 'json');
-
-	$modules_table = table('module');
-	$modules_local = $modules_table->getModulesLocalList();
-	$status_text = array('recycle', 'uninstalled');
-	$all_modules = array();
-	if (!empty($modules_local) && is_array($modules_local)) {
-		foreach ($modules_local as $name => $value) {
-			foreach ($status_text as $text) {
-				if ($value['status'] != $text) {
-					continue;
-				}
-				if ($value['app_support'] == 2) {
-					$all_modules[$text]['app'][$name] = $value;
-				}
-				if ($value['wxapp_support'] == 2) {
-					$all_modules[$text]['wxapp'][$name] = $value;
-				}
-				if ($value['webapp_support'] == 2) {
-					$all_modules[$text]['webapp'][$name] = $value;
-				}
-				if ($value['phoneapp_support'] == 2) {
-					$all_modules[$text]['phoneapp'][$name] = $value;
-				}
-				if ($value['welcome_support'] == 2) {
-					$all_modules[$text]['system_welcome'][$name] = $value;
-				}
-			}
-		}
-	}
-	$uninstall_modules = array(
-		'cloud_m_count' => $get_cloud_m_count['module_quantity'],
-		'modules' => $all_modules,
-		'app_count' => count($all_modules['uninstalled']['app']),
-		'wxapp_count' => count($all_modules['uninstalled']['wxapp']),
-		'webapp_count' => count($all_modules['uninstalled']['webapp']),
-		'phoneapp_count' => count($all_modules['uninstalled']['phoneapp']),
-		'welcome_count' => count($all_modules['uninstalled']['welcome'])
-	);
-	if (!empty($account_type)) {
-		$uninstall_modules['modules'] = (array)$uninstall_modules['modules'][$status][$account_type];
-		$uninstall_modules['module_count'] = $uninstall_modules[$account_type . '_count'];
-	}
-	return $uninstall_modules;
 }
 
 /**
@@ -575,47 +535,6 @@ function module_status($module) {
 }
 
 /**
- * 得到最新可升级应用
- * @param type account/wxapp
- * @return array 升级的模块列表
- */
-function module_upgrade_new($type = 'account') {
-	$result = array();
-	$allow_type = array(
-		ACCOUNT_TYPE_SIGN,
-		WXAPP_TYPE_SIGN,
-		WEBAPP_TYPE_SIGN,
-		PHONEAPP_TYPE_SIGN,
-		WELCOMESYSTEM_TYPE_SIGN
-	);
-	if (!in_array($type, $allow_type)) {
-		return $result;
-	}
-	$module_list = user_modules($_W['uid']);
-	if (empty($module_list)) {
-		return $result;
-	}
-	
-	$upgrade_modules = table('modules_cloud')->getUpgradeModule(array_keys($module_list), $type);
-	
-	if (empty($upgrade_modules)) {
-		return $result;
-	}
-	$modules_ignore = table('modules_ignore')->where('name', array_keys($upgrade_modules))->getall('name');
-	
-	foreach ($upgrade_modules as $modulename => &$module) {
-		if (!empty($modules_ignore[$modulename])) {
-			if (ver_compare($modules_ignore[$modulename]['version'], $module['version']) >= 0) {
-				$module['is_ignore'] = 1;
-			}
-		}
-		$module['link'] = url('module/manage-system/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));
-	}
-	unset($module);
-	return $upgrade_modules;
-}
-
-/**
  * 判断某一模块是否在公众号模块权限内
  * @param string $module_name
  * @param int $uniacid
@@ -677,7 +596,7 @@ function module_get_user_account_list($uid, $module_name) {
 			continue;
 		}
 		$uniacid = 0;
-		if (($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) && $module_info['app_support'] == MODULE_SUPPORT_ACCOUNT) {
+		if (($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
 			$uniacid = $account['uniacid'];
 		} elseif ($account['type'] == ACCOUNT_TYPE_APP_NORMAL && $module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 			$uniacid = $account['uniacid'];
@@ -867,30 +786,12 @@ function module_installed_list($type = '') {
 		return $module_list;
 	}
 	//根据模块类型分类
-	$module_support_type = array(
-		'wxapp_support' => array(
-			'type' => WXAPP_TYPE_SIGN,
-			'support' => MODULE_SUPPORT_WXAPP,
-		),
-		'account_support' => array(
-			'type' => ACCOUNT_TYPE_SIGN,
-			'support' => MODULE_SUPPORT_ACCOUNT,
-		),
-		'welcome_support' => array(
-			'type' => WELCOMESYSTEM_TYPE_SIGN,
-			'support' => MODULE_SUPPORT_SYSTEMWELCOME,
-		),
-		'webapp_support' => array(
-			'type' => WEBAPP_TYPE_SIGN,
-			'support' => MODULE_SUPPORT_WEBAPP,
-		),
-		'phoneapp_support' => array(
-			'type' => PHONEAPP_TYPE_SIGN,
-			'support' => MODULE_SUPPORT_PHONEAPP,
-		),
-	);
+	$module_support_type = module_support_type();
 	
 	foreach ($user_has_module as $modulename => $module) {
+		if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon')) {
+			continue;
+		}
 		foreach ($module_support_type as $support_name => $support) {
 			
 			if ($module[$support_name] == $support['support']) {
@@ -907,6 +808,74 @@ function module_installed_list($type = '') {
 }
 
 /**
+ * 获取所有未安装的模块
+ * @param string $module_type 模块类型;
+ */
+function module_uninstall_list()  {
+	$uninstall_modules = table('modules_cloud')->getUninstallModule();
+	return $uninstall_modules;
+}
+
+/**
+ * 获取未安装模块数量
+ */
+function module_uninstall_total($type = 'all') {
+	$type_list = array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN);
+	if ($type == 'all') {
+		$total = array();
+		foreach ($type_list as $type) {
+			$total[$type] = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
+		}
+		return $total;
+	} else {
+		if (!in_array($type, $type_list)) {
+			return 0;
+		}
+		$total = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
+		return $total;
+	}
+}
+/**
+ * 得到最新可升级应用
+ * @param type account/wxapp
+ * @return array 升级的模块列表
+ */
+function module_upgrade_list() {
+	$result = array();
+	$module_list = user_modules($_W['uid']);
+	if (empty($module_list)) {
+		return $result;
+	}
+
+	$upgrade_modules = table('modules_cloud')->getUpgradeByModuleNameList(array_keys($module_list));
+	if (empty($upgrade_modules)) {
+		return $result;
+	}
+	
+	$modules_ignore = table('modules_ignore')->where('name', array_keys($upgrade_modules))->getall('name');
+	foreach ($upgrade_modules as $modulename => &$module) {
+		if (!empty($modules_ignore[$modulename])) {
+			if (ver_compare($modules_ignore[$modulename]['version'], $module['version']) >= 0) {
+				$module['is_ignore'] = 1;
+			}
+		}
+		$module['link'] = url('module/manage-system/module_detail', array('name' => $module['name'], 'show' => 'upgrade'));
+	}
+	unset($module);
+	return $upgrade_modules;
+}
+
+function module_upgrade_total($type) {
+	$type_list = module_support_type();
+
+	if (!isset($type_list["{$type}_support"])) {
+		return 0;
+	}
+	$total = table('modules_cloud')->getUpgradeTotalBySupportType($type);
+	return $total;
+}
+
+/**
  * 检查传入的模块是否有更新
  * 优先检查本地是否包含Manifest.xml
  * 否则通过modules_cloud表先查询模块云端缓存信息
@@ -914,11 +883,14 @@ function module_installed_list($type = '') {
  * @param array $modulelist
  */
 function module_upgrade_info($modulelist = array()) {
+	load()->model('cloud');
+	load()->model('extension');
+	
 	$result = array();
 	
 	//没有指定查询模块列表，则获取全部模块查询
 	if (empty($modulelist)) {
-		$modulelist =table('modules')->searchWithType('system', '<>')->getall('name');
+		$modulelist = table('modules')->searchWithType('system', '<>')->getall('name');
 	}
 	
 	if (empty($modulelist)) {
@@ -994,7 +966,7 @@ function module_upgrade_info($modulelist = array()) {
 		
 		if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
 			$module_upgrade_data['has_new_version'] = 1;
-		
+			$module_upgrade_data['lastupdatetime'] = TIMESTAMP;
 			$result[$modulename] = array(
 				'name' => $modulename,
 				'new_version' => 1,
@@ -1042,6 +1014,7 @@ function module_upgrade_info($modulelist = array()) {
 				'version' => $module['version'],
 				'title' => $module['title'],
 				'title_initial' => get_first_pinyin($module['title']),
+				'lastupdatetime' => $module['last_upgrade_time'],
 			);
 			foreach (array('app', 'wxapp', 'webapp', 'ios', 'android', 'system_welcome') as $support) {
 				if ($module['site_branch']["{$support}_support"] == MODULE_SUPPORT_ACCOUNT) {
@@ -1064,23 +1037,6 @@ function module_upgrade_info($modulelist = array()) {
 		}
 	}
 	return $result;
-}
-
-function module_uninstall_total($type = 'all') {
-	$type_list = array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN);
-	if ($type == 'all') {
-		$total = array();
-		foreach ($type_list as $type) {
-			$total[$type] = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
-		}
-		return $total;
-	} else {
-		if (!in_array($type, $type_list)) {
-			return 0;
-		}
-		$total = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
-		return $total;
-	}
 }
 
 function module_recycle_fetch($modulename) {

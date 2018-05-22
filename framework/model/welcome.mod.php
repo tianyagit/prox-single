@@ -86,6 +86,7 @@ function welcome_database_backup_days($time) {
  * @return array() ;
  */
 function welcome_get_cloud_upgrade() {
+	load()->model('cloud');
 	$upgrade_cache = cache_load(cache_system_key('upgrade'));
 	if (empty($upgrade_cache) || TIMESTAMP - $upgrade_cache['lastupdate'] >= 3600 * 24 || empty($upgrade_cache['data'])) {
 		$upgrade = cloud_build();

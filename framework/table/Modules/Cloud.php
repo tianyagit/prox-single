@@ -23,6 +23,7 @@ class Cloud extends \We7Table {
 		'main_module_logo',
 		'has_new_version',
 		'has_new_branch',
+		'lastupdatetime',
 	);
 	protected $default = array(
 		'name' => '',
@@ -40,6 +41,7 @@ class Cloud extends \We7Table {
 		'main_module_logo' => '',
 		'has_new_version' => 0,
 		'has_new_branch' => 0,
+		'lastupdatetime' => 0,
 	);
 	
 	public function getByName($name) {
@@ -49,13 +51,14 @@ class Cloud extends \We7Table {
 		return $this->query->where('name', $name)->get('name');
 	}
 	
-	public function getUpgradeModule($module_name_list, $account_type = ACCOUNT_TYPE_SIGN) {
+	public function getUpgradeByModuleNameList($module_name_list, $account_type = ACCOUNT_TYPE_SIGN) {
 		if (empty($module_name_list)) {
 			return array();
 		}
+		
 		return $this->query->where('name', $module_name_list)->where(function ($query){
 			$query->where('has_new_version', 1)->whereor('has_new_branch', 1);
-		})->where("{$account_type}_support", MODULE_SUPPORT_ACCOUNT)->getall('name');
+		})->orderby('lastupdatetime', 'desc')->getall('name');
 	}
 	
 	/**
@@ -73,6 +76,7 @@ class Cloud extends \We7Table {
 		return $this->query->where('wxapp_support', MODULE_SUPPORT_ACCOUNT)->count();
 	}
 	
+	
 	public function getWebappUninstallTotal() {
 		return $this->query->where('webapp_support', MODULE_SUPPORT_ACCOUNT)->count();
 	}
@@ -88,6 +92,12 @@ class Cloud extends \We7Table {
 	public function getUninstallModule() {
 		return $this->query->where(function ($query){
 			$query->where('install_status', MODULE_LOCAL_UNINSTALL)->whereor('install_status', MODULE_CLOUD_UNINSTALL);
-		})->getall('name');
+		})->orderby('lastupdatetime', 'desc')->getall('name');
+	}
+	
+	public function getUpgradeTotalBySupportType($support) {
+		return $this->searchWithoutRecycle()->where('a.' . $support. '_support', 2)->where(function ($query){
+			$query->where('a.has_new_version', 1)->whereor('a.has_new_branch', 1);
+		})->getcolumn('COUNT(*)');
 	}
 }

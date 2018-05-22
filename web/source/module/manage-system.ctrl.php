@@ -126,6 +126,7 @@ if ($do == 'check_upgrade') {
 	cache_build_uninstalled_module();
 	
 	$module_upgrade = module_upgrade_info();
+
 	iajax(0, $module_upgrade);
 }
 

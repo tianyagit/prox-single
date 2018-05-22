@@ -6,10 +6,6 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('welcome');
-load()->model('cloud');
-load()->func('communication');
-load()->func('db');
-load()->model('extension');
 load()->model('module');
 load()->model('system');
 load()->model('user');
@@ -22,24 +18,8 @@ $dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'g
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
-	$data = array();
 	$not_installed_modules = module_uninstall_list();
-	$not_installed_modules = $not_installed_modules['modules']['uninstalled'];
-	$data['app_count'] = count($not_installed_modules['app']);
-	$data['wxapp_count'] = count($not_installed_modules['wxapp']);
-	$not_installed_modules['app'] = is_array($not_installed_modules['app']) ? array_slice($not_installed_modules['app'], 0, 4) : array();
-	$not_installed_modules['wxapp'] = is_array($not_installed_modules['wxapp']) ? array_slice($not_installed_modules['wxapp'], 0, 4) : array();
-	$data['module'] = array_merge($not_installed_modules['app'], $not_installed_modules['wxapp']);
-	if (is_array($data['module']) && !empty($data['module'])) {
-		foreach ($data['module'] as &$module) {
-			if ($module['app_support'] == 2) {
-				$module['link'] = url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE_OFFCIAL_NORMAL));
-			} else {
-				$module['link'] = url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE_APP_NORMAL));
-			}
-		}
-	}
-	iajax(0, $data);
+	iajax(0, $not_installed_modules);
 }
 
 /* vstart */
@@ -96,7 +76,9 @@ if ($do == 'platform') {
 	$notices = welcome_notices_get();
 
 	template('home/welcome');
-} elseif ($do == 'system') {
+}
+
+if ($do == 'system') {
 	define('FRAME', 'system');
 	$_W['page']['title'] = '欢迎页 - 系统管理';
 	if(!$_W['isfounder'] || user_is_vice_founder()){
@@ -112,27 +94,35 @@ if ($do == 'platform') {
 		$backup_days = 0;
 	}
 	template('home/welcome-system');
-} elseif ($do =='get_module_statistics') {
-	$module_uninstall_total = module_uninstall_total();
-
-	$uninstall_modules = module_get_all_uninstalled('uninstalled');
-	$account_uninstall_modules_nums = $uninstall_modules['app_count'];
-	$wxapp_uninstall_modules_nums = $uninstall_modules['wxapp_count'];
-
-	$account_modules = user_module_by_account_type('account');
-	$wxapp_modules = user_module_by_account_type('wxapp');
-
-	$account_modules_total = count($account_modules) + $account_uninstall_modules_nums;
-	$wxapp_modules_total = count($wxapp_modules) + $wxapp_uninstall_modules_nums;
-
+}
+if ($do =='get_module_statistics') {
+	$install_modules = module_installed_list();
+	
 	$module_statistics = array(
-		'account_uninstall_modules_nums' => $account_uninstall_modules_nums,
-		'wxapp_uninstall_modules_nums' => $wxapp_uninstall_modules_nums,
-		'account_modules_total' => $account_modules_total,
-		'wxapp_modules_total' => $wxapp_modules_total
+		'account' => array(
+			'total' => array(
+				'uninstall' => module_uninstall_total('account'),
+				'upgrade' => module_upgrade_total('account'),
+				'all' => 0
+			),
+		),
+		'wxapp' => array(
+			'total' => array(
+				'uninstall' => module_uninstall_total('wxapp'),
+				'upgrade' => module_upgrade_total('wxapp'),
+				'all' => 0,
+			)
+		),
 	);
+	
+	//因权限问题，用户所分配的模块不同，所以此处直接count安装列表
+	$module_statistics['account']['total']['all'] = $module_statistics['account']['total']['uninstall'] + count($install_modules['account']);
+	$module_statistics['wxapp']['total']['all'] = $module_statistics['wxapp']['total']['uninstall'] + count($install_modules['wxapp']);
+	
 	iajax(0, $module_statistics, '');
-} elseif ($do == 'ext') {
+}
+
+if ($do == 'ext') {
 	$modulename = $_GPC['m'];
 	if (!empty($modulename)) {
 		$_W['current_module'] = module_fetch($modulename);
@@ -167,7 +157,9 @@ if ($do == 'platform') {
 		}
 	}
 	template('home/welcome-ext');
-} elseif ($do == 'get_fans_kpi') {
+}
+
+if ($do == 'get_fans_kpi') {
 	uni_update_week_stat();
 	//今日昨日指标
 	$yesterday = date('Ymd', strtotime('-1 days'));
@@ -186,7 +178,9 @@ if ($do == 'platform') {
 		$today_stat['cumulate'] = 0;
 	}
 	iajax(0, array('yesterday' => $yesterday_stat, 'today' => $today_stat), '');
-} elseif ($do == 'get_last_modules') {
+}
+
+if ($do == 'get_last_modules') {
 	//最新模块
 	$last_modules = welcome_get_last_modules();
 	if (is_error($last_modules)) {
@@ -194,31 +188,21 @@ if ($do == 'platform') {
 	} else {
 		iajax(0, $last_modules, '');
 	}
-} elseif ($do == 'get_system_upgrade') {
+}
+
+if ($do == 'get_system_upgrade') {
 	//系统更新信息
 	$upgrade = welcome_get_cloud_upgrade();
 	iajax(0, $upgrade, '');
 } elseif ($do == 'get_upgrade_modules') {
 	//可升级应用
 	module_upgrade_info();
+	$upgrade_modules = module_upgrade_list();
 	
-	$account_upgrade_modules = module_upgrade_new('account');
-	$account_upgrade_module_nums = count($account_upgrade_modules);
-	
-	$wxapp_upgrade_modules = module_upgrade_new('wxapp');
-	$wxapp_upgrade_module_nums = count($wxapp_upgrade_modules);
-	
-	$all_upgrade_module_list = array_merge($account_upgrade_modules, $wxapp_upgrade_modules);
-	
-	$upgrade_module = array(
-		'upgrade_module_list' => $all_upgrade_module_list,
-		'upgrade_module_nums' => array(
-			'account_upgrade_module_nums' => $account_upgrade_module_nums,
-			'wxapp_upgrade_module_nums' => $wxapp_upgrade_module_nums
-		)
-	);
-	iajax(0, $upgrade_module, '');
-} elseif ($do == 'get_ads') {
+	iajax(0, $upgrade_modules, '');
+}
+
+if ($do == 'get_ads') {
 	$ads = welcome_get_ads();
 	if (is_error($ads)) {
 		iajax(1, $ads['message']);
@@ -273,13 +257,9 @@ if ($do == 'ignore_update_module') {
 	if (empty($module_info)) {
 		iajax(1, '参数错误');
 	}
-	pdo_delete('modules_ignore', array('name' => $_GPC['name']));
-	$modules_local = pdo_get('modules_local', array('name' => $_GPC['name']), array('name', 'version'));
-	$ignore_module = array(
-		'mid' => $module_info['mid'],
-		'name' => $module_info['name'],
-		'version' => $modules_local['version']
-	);
-	pdo_insert('modules_ignore', $ignore_module);
+	
+	$upgrade_version = table('modules_cloud')->getByName($module_info['name']);
+	
+	table('modules_ignore')->add($module_info['name'], $upgrade_version['version']);
 	iajax(0, '');
 }
