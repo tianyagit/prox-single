@@ -12,19 +12,19 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
 						<div class="num">
-							<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 1))}" class="color-default">{{account_uninstall_modules_nums}}</a>
+							<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 1))}" class="color-default">{{module_statistics.account.total.uninstall}}</a>
 						</div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">可升级应用</div>
 						<div class="num">
-						{{upgrade_module_nums.account_upgrade_module_nums}}
+						{{module_statistics.account.total.upgrade}}
 						</div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
 						<div class="num">
-							<a href="{php echo url('module/manage-system/installed', array('account_type' => 1))}" class="color-default">{{account_modules_total}}</a>
+							<a href="{php echo url('module/manage-system/installed', array('account_type' => 1))}" class="color-default">{{module_statistics.account.total.all}}</a>
 						</div>
 					</div>
 				</div>
@@ -37,19 +37,19 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
 						<div class="num">
-							<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" class="color-default">{{wxapp_uninstall_modules_nums}}</a>
+							<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" class="color-default">{{module_statistics.wxapp.total.uninstall}}</a>
 						</div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">可升级应用</div>
 						<div class="num">
-						{{upgrade_module_nums.wxapp_upgrade_module_nums}}
+						{{module_statistics.wxapp.total.upgrade}}
 						</div>
 					</div>
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
 						<div class="num">
-							<a href="{php echo url('module/manage-system/installed', array('account_type' => 4))}" class="color-default">{{wxapp_modules_total}}</a>
+							<a href="{php echo url('module/manage-system/installed', array('account_type' => 4))}" class="color-default">{{module_statistics.wxapp.total.all}}</a>
 						</div>
 					</div>
 				</div>
@@ -123,15 +123,15 @@
 	<div class="panel we7-panel apply-list" ng-show="not_installed_show == 1">
 		<div class="panel-heading">
 			<span class="pull-right">
-				<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 1))}" class="color-default" ng-if="not_installed_module.app_count > 4">查看更多公众号应用</a>
-				<span class="we7-padding-horizontal inline-block color-gray" ng-if="module.app_count > 4 && module.wxapp_count > 4">|</span>
-				<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" class="color-default" ng-if="not_installed_module.wxapp_count > 4">查看更多小程序应用</a>
+				<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 1))}" class="color-default">查看更多公众号应用</a>
+				<span class="we7-padding-horizontal inline-block color-gray">|</span>
+				<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" class="color-default">查看更多小程序应用</a>
 			</span>
 			未安装应用
 		</div>
 		<div class="panel-body">
-			<a href="{{module.link}}" target="_blank" class="apply-item" ng-repeat="module in not_installed_module.module">
-				<img src="{{module.thumb}}" class="apply-img"/>
+			<a href="{{module.link}}" target="_blank" class="apply-item" ng-repeat="module in not_installed_module" ng-if="$index+1 <= 8">
+				<img src="{{module.logo}}" class="apply-img"/>
 				<span class="text-over">{{module.title|limitTo:4}}</span>
 				<span class="color-red">未安装</span>
 			</a>

@@ -77,26 +77,26 @@ function cache_system_key($cache_key, $params = array()) {
 
 	// 如果是直接传入字符串缓存键（如module_info:wnstore:128），检查后直接返回
 	if (empty($params)) {
-	    $res = preg_match_all('/([a-zA-Z\_\-0-9]+):/', $cache_key, $matches);
-        if ($res) {
-            $key = count($matches[1]) > 0 ? $matches[1][0] : $matches[1];
-        } else {
-            $key = $cache_key;
-        }
-        if (empty($cache_key_all['caches'][$key])) {
-            return error(1, '缓存' . $key . ' 不存在!');
-        } else {
-            preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key_all['caches'][$key]['key'], $key_params);
-            preg_match_all('/\:([a-zA-Z\_\-0-9]+)/', $cache_key, $val_params);
-            if (count($key_params[1]) != count($val_params[1])) {
-                return error(3, $key . ' 缓存参数不正确');
-            }
-        }
-        return 'we7:' . $cache_key;
-    }
+		$res = preg_match_all('/([a-zA-Z\_\-0-9]+):/', $cache_key, $matches);
+		if ($res) {
+			$key = count($matches[1]) > 0 ? $matches[1][0] : $matches[1];
+		} else {
+			$key = $cache_key;
+		}
+		if (empty($cache_key_all['caches'][$key])) {
+			return error(1, '缓存' . $key . ' 不存在!');
+		} else {
+			preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key_all['caches'][$key]['key'], $key_params);
+			preg_match_all('/\:([a-zA-Z\_\-0-9]+)/', $cache_key, $val_params);
+			if (count($key_params[1]) != count($val_params[1])) {
+				return error(3, $key . ' 缓存参数不正确');
+			}
+		}
+		return 'we7:' . $cache_key;
+	}
 
-    $cache_info = $cache_key_all['caches'][$cache_key];
-    $cache_common_params = $cache_key_all['common_params'];
+	$cache_info = $cache_key_all['caches'][$cache_key];
+	$cache_common_params = $cache_key_all['common_params'];
 
 	if (empty($cache_info)) {
 		return error(2, '缓存 ' . $cache_key . ' 不存在!');
@@ -146,9 +146,9 @@ function cache_relation_keys($key) {
 	unset($cache_param_values[1]);
 
 	if (empty($cache_param_values)) {
-        preg_match_all('/\:([a-zA-Z\_\-0-9]+)/', $key, $matches);
-        $cache_name = $matches[1][0];
-    }
+		preg_match_all('/\:([a-zA-Z\_\-0-9]+)/', $key, $matches);
+		$cache_name = $matches[1][0];
+	}
 
 	$cache_key_all = cache_key_all();
 	$cache_relations = $cache_key_all['groups'];
@@ -161,9 +161,9 @@ function cache_relation_keys($key) {
 	}
 
 	if (!empty($cache_info['group'])) {
-	    if (empty($cache_relations[$cache_info['group']])) {
-            return error(1, '关联关系未定义');
-        }
+		if (empty($cache_relations[$cache_info['group']])) {
+			return error(1, '关联关系未定义');
+		}
 		$relation_keys = $cache_relations[$cache_info['group']]['relations'];
 		$cache_keys = array();
 
@@ -186,12 +186,12 @@ function cache_relation_keys($key) {
 				$cache_key_params = array_combine($matches[1], $cache_param_values);
 			}
 
-            $cache_key = cache_system_key($val, $cache_key_params);
-            if (!is_error($cache_key)) {
-                $cache_keys[] = $cache_key;
-            } else {
-                return error(1, $cache_key['message']);
-            }
+			$cache_key = cache_system_key($val, $cache_key_params);
+			if (!is_error($cache_key)) {
+				$cache_keys[] = $cache_key;
+			} else {
+				return error(1, $cache_key['message']);
+			}
 		}
 	} else {
 		$cache_keys[] = $key;

@@ -207,7 +207,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	load()->model('user');
 	load()->model('module');
 	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled));
-	$modules = cache_load($cachekey);
+	//$modules = cache_load($cachekey);
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
@@ -258,14 +258,19 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
 			$module_info = module_fetch($name);
-			if ($module_info['welcome_support'] == MODULE_SUPPORT_SYSTEMWELCOME && $module_info['app_support'] != MODULE_SUPPORT_ACCOUNT && $module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && $module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && $module_info['phoneapp_support'] != MODULE_SUPPORT_PHONEAPP) {
+			if ($module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] == MODULE_SUPPORT_SYSTEMWELCOME && 
+				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT && 
+				$module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP && 
+				$module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP && 
+				$module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP) {
+				
 				continue;
 			}
-			if ($module_info['welcome_support'] != MODULE_SUPPORT_SYSTEMWELCOME &&
-				($module_info['app_support'] != MODULE_SUPPORT_ACCOUNT && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ||
-				$module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH)) ||
-				$module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_WEBAPP_NORMAL)) ||
-				$module_info['phoneapp_support'] != MODULE_SUPPORT_PHONEAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_PHONEAPP_NORMAL)))) {
+			if ($module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] != MODULE_SUPPORT_SYSTEMWELCOME &&
+				($module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ||
+				$module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH)) ||
+				$module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_WEBAPP_NORMAL)) ||
+				$module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP && in_array($_W['account']['type'], array(ACCOUNT_TYPE_PHONEAPP_NORMAL)))) {
 				continue;
 			}
 			if (!empty($module_info)) {
@@ -373,7 +378,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 									$row['phoneapp'][$module['name']] = $module;
 								}
 
-								if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
+								if ($module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
 									if (!empty($module['main_module'])) {
 										continue;
 									}
@@ -1161,7 +1166,7 @@ function uni_search_link_account($module_name, $account_type) {
 				unset($owned_account[$key]);
 				continue;
 			}
-			if (in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && $account_modules[$module_name]['app_support'] != MODULE_SUPPORT_ACCOUNT) {
+			if (in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && $account_modules[$module_name][MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT) {
 				unset($owned_account[$key]);
 			} elseif ($account_type == ACCOUNT_TYPE_APP_NORMAL && $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
 				unset($owned_account[$key]);

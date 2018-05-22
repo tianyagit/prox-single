@@ -532,7 +532,7 @@ function user_modules($uid) {
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
 			$module_info = module_fetch($module);
-			if ($module_info['welcome_support'] == 2 && $module_info['app_support'] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
+			if ($module_info['welcome_support'] == 2 && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
 				continue;
 			}
 			if (!empty($module_info)) {
@@ -651,42 +651,6 @@ function user_login_forward($forward = '') {
 	}
 
 	return $login_forward;
-}
-
-/**
- * 获取公众号所有应用或者小程序所有应用
- * @param string $type 模块类型(account/wxapp)
- * @return array $modules 模块信息
- */
-function user_module_by_account_type($type) {
-	global $_W;
-	$allow_type = array(
-		ACCOUNT_TYPE_SIGN, 
-		WXAPP_TYPE_SIGN, 
-		WEBAPP_TYPE_SIGN,
-		PHONEAPP_TYPE_SIGN,
-		WELCOMESYSTEM_TYPE_SIGN
-	);
-	$result = array();
-	if (!in_array($type, $allow_type)) {
-		return $result;
-	}
-	
-	$module_list = user_modules($_W['uid']);
-	if (empty($module_list)) {
-		return $result;
-	}
-	
-	foreach ($module_list as $key => $module) {
-		if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon')) {
-			continue;
-		}
-		
-		if ($module[$type . '_support'] == MODULE_SUPPORT_ACCOUNT) {
-			$result[$key] = $module;
-		}
-	}
-	return $result;
 }
 
 function user_invite_register_url($uid = 0) {

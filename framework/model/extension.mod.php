@@ -50,7 +50,7 @@ function ext_module_convert($manifest) {
 		'system_welcome' => $manifest['bindings']['system_welcome'],
 		'webapp' => $manifest['bindings']['webapp'],
 		'phoneapp' => $manifest['bindings']['phoneapp'],
-		'app_support' => $app_support,
+		MODULE_SUPPORT_ACCOUNT_NAME => $app_support,
 		'wxapp_support' => $wxapp_support,
 		'webapp_support' => $webapp_support,
 		'phoneapp_support' => $phoneapp_support,

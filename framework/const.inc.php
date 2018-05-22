@@ -169,7 +169,7 @@ define('MODULE_NOSUPPORT_IOS', 1);
 define('MODULE_SUPPORT_IOS', 2);
 
 define('MODULE_SUPPORT_WXAPP_NAME', 'wxapp_support');
-define('MODULE_SUPPORT_ACCOUNT_NAME', 'app_support');
+define('MODULE_SUPPORT_ACCOUNT_NAME', 'account_support');
 define('MODULE_SUPPORT_WEBAPP_NAME', 'webapp_support');
 define('MODULE_SUPPORT_PHONEAPP_NAME', 'phoneapp_support');
 define('MODULE_SUPPORT_SYSTEMWELCOME_NAME', 'welcome_support');

@@ -182,7 +182,7 @@ function buildframes($framename = ''){
 		$module_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], 'modules');
 		if (!is_error($module_permission) && !empty($module_permission)) {
 			foreach ($module_permission as $module) {
-				if (!in_array($module['type'], $sysmodules) && empty($modules[$module['type']]['main_module']) && $modules[$module['type']]['app_support'] == 2) {
+				if (!in_array($module['type'], $sysmodules) && empty($modules[$module['type']]['main_module']) && $modules[$module['type']][MODULE_SUPPORT_ACCOUNT_NAME] == 2) {
 					$module = $modules[$module['type']];
 					if (!empty($module)) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
@@ -204,7 +204,7 @@ function buildframes($framename = ''){
 			foreach ($account_module as $module) {
 				if (!in_array($module['module'], $sysmodules)) {
 					$module = module_fetch($module['module']);
-					if (!empty($module) && !empty($modules[$module['name']]) && empty($module['main_module']) && ($module['app_support'] == 2 || $module['webapp_support'] == 2)) {
+					if (!empty($module) && !empty($modules[$module['name']]) && empty($module['main_module']) && ($module[MODULE_SUPPORT_ACCOUNT_NAME] == 2 || $module['webapp_support'] == 2)) {
 						$frames['account']['section']['platform_module']['menu']['platform_' . $module['name']] = array(
 							'title' => $module['title'],
 							'icon' =>  $module['logo'],

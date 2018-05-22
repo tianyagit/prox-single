@@ -307,7 +307,7 @@ class StoreModuleSite extends WeModuleSite {
 				$have_module_goods = array_unique($have_module_goods);
 				if (!empty($modules)) {
 					foreach ($modules as $module) {
-						if (in_array ($module['name'], $have_module_goods) || $type == STORE_TYPE_MODULE && $module['app_support'] != 2 || $type == STORE_TYPE_WXAPP_MODULE && $module['wxapp_support'] != 2) {
+						if (in_array ($module['name'], $have_module_goods) || $type == STORE_TYPE_MODULE && $module[MODULE_SUPPORT_ACCOUNT_NAME] != 2 || $type == STORE_TYPE_WXAPP_MODULE && $module['wxapp_support'] != 2) {
 							continue;
 						}
 						$module = module_fetch ($module['name']);

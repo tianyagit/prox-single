@@ -171,7 +171,7 @@ if ($do == 'edit') {
 	$module = uni_modules_by_uniacid($uniacid);
 	if (!empty($module)) {
 		foreach ($module as $key => $value) {
-			if (in_array($account['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && $value['app_support'] != MODULE_SUPPORT_ACCOUNT) {
+			if (in_array($account['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && $value[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT) {
 				unset($module[$key]);
 			}
 			if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL && $value['wxapp_support'] != MODULE_SUPPORT_WXAPP) {

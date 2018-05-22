@@ -17,6 +17,7 @@ $dos = array('display', 'setting', 'shortcut', 'enable', 'check_status');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
 $modulelist = uni_modules(false);
+
 //检测模块更新和是否盗版
 if ($do == 'check_status') {
 	$modulename = $_GPC['module'];
@@ -45,16 +46,16 @@ if($do == 'display') {
 		$modules = user_modules($_W['uid']);
 		$modulelist = array_intersect_assoc($uni_modules, $modules);
 	}
-
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => &$row) {
-			if (!empty($row['issystem']) || $row['app_support'] != 2 || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
+			if (!empty($row['issystem']) || $row[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
 				unset($modulelist[$name]);
 				continue;
 			}
 		}
 		$modules = $modulelist;
 	}
+	
 	template ('module/manage-account');
 } elseif ($do == 'shortcut') {
 	$status = intval($_GPC['shortcut']);
