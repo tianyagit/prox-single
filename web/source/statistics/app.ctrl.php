@@ -28,8 +28,8 @@ if ($do == 'display') {
 	$condition = array(
 		'uniacid' => $_W['uniacid'],
 		'type' => 'app',
-		'date >=' => date('Y-m-01'),
-		'date <=' => date('Y-m-t')
+		'date >=' => date('Ym01'),
+		'date <=' => date('Ymt')
 	);
 	$visit_list = table('statistics')->visitList($condition);
 	if (!empty($visit_list)) {
@@ -46,6 +46,10 @@ if ($do == 'display') {
 		}
 	}
 	$api_remain_num = empty($statistics_setting['statistics']['use']) ? $order_num : ($order_num - $statistics_setting['statistics']['use']);
+
+	if ($api_remain_num < 0) {
+		$api_remain_num = 0;
+	}
 
 	template('statistics/app-display');
 }

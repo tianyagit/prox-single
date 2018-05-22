@@ -14,8 +14,11 @@
 			</div>
 			<div class="col-sm-4 text-center">
 				<div class="title">月访问API余量</div>
-				<div><span class="today">{php echo $highest_visit - $month_use}</span></div>
+				{php $month_remain = $highest_visit - $month_use}
+				<div><span class="today">{php echo $month_remain > 0 ? $month_remain : 0}</span></div>
 			</div>
+
+
 			<div class="col-sm-4 text-center">
 				<div class="title">API总剩余量<a href="{php echo url('home/welcome/ext', array('m' => 'store'))}" class="pull-right color-default font-default" target="_blank">去购买</a></div>
 				<div><span class="today">{$api_remain_num}</span></div>
