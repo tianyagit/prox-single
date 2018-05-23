@@ -43,6 +43,10 @@ function cache_type() {
 function cache_load($key, $unserialize = false) {
 	global $_W;
 	static $we7_cache;
+	if (is_error($key)) {
+		trigger_error($key['message']);
+		return false;
+	}
 	if (!empty($we7_cache[$key])) {
 		return $we7_cache[$key];
 	}
