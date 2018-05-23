@@ -116,8 +116,8 @@ if ($do =='get_module_statistics') {
 	);
 	
 	//因权限问题，用户所分配的模块不同，所以此处直接count安装列表
-	$module_statistics['account']['total']['all'] = $module_statistics['account']['total']['uninstall'] + count($install_modules['account']);
-	$module_statistics['wxapp']['total']['all'] = $module_statistics['wxapp']['total']['uninstall'] + count($install_modules['wxapp']);
+	$module_statistics['account']['total']['all'] = $module_statistics['account']['total']['uninstall'] + count((array)$install_modules['account']);
+	$module_statistics['wxapp']['total']['all'] = $module_statistics['wxapp']['total']['uninstall'] + count((array)$install_modules['wxapp']);
 	
 	iajax(0, $module_statistics, '');
 }
