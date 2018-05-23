@@ -390,7 +390,7 @@ class StoreModuleSite extends WeModuleSite {
 					'description' => safe_gpc_html(htmlspecialchars_decode($_GPC['description'])),
 				);
 				if ($_GPC['type'] == STORE_TYPE_API) {
-					$data['title'] = '应用访问量';
+					$data['title'] = '应用访问流量(API)';
 				}
 				if ($_GPC['type'] == STORE_TYPE_PACKAGE) {
 					$data['title'] = '应用权限组';

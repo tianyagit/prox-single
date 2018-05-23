@@ -70,7 +70,28 @@
 							</li>
 						</ul>
 					</li>
+
 					{template 'common/header-notice'}
+
+					{if !empty($nav_top_help)}
+					<li>
+						<a href="{if empty($nav_top_help['url'])}{php echo url('home/welcome/' . $nav_top_help['name']);}{else}{$nav_top_help['url']}{/if}" data-toggle="tooltip" data-placement="bottom" title="帮助" {if !empty($nav_top_help['blank'])}target="_blank"{/if}>
+						<i class="wi wi-explain-sign color-gray" ></i>
+						</a>
+					</li>
+					{/if}
+
+					{php $frames_site = buildframes('site')}
+					{php $workorder_nav=$frames_site['section']['workorder']['menu']['system_workorder']}
+					{if $workorder_nav['is_display']}
+					{if permission_check_account_user('see_workorder')}
+					<li>
+						<a href="{php echo url('system/workorder/display')}" data-toggle="tooltip"  data-placement="bottom" title="工单">
+							<i class="wi wi-system-work color-gray" ></i>
+						</a>
+					</li>
+					{/if}
+					{/if}
 				</ul>
 			</div>
 			{else}

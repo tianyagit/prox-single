@@ -852,7 +852,6 @@ $we7_system_menu['custom_help'] = array(
 	'section' => array(),
 	'blank' => false,
 	'is_display' => 0,
-	'founder' => true,
 );
 
 /* xstart */

@@ -308,8 +308,8 @@
 			</td>
 			<td class="text-right">
 				{if uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
-				<a href="{php echo url('module/manage-system/upgrade')}&module_name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="module.upgrade_support == true" class="btn btn-primary">安装应用模块</a>
-				<a href="{php echo url('module/manage-system/install')}&module_name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="module.upgrade_support != true" class="btn btn-primary">安装应用模块</a>
+				<a href="{php echo url('module/manage-system/upgrade')}&module_name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="module.upgrade_support == true" class="btn btn-primary">{if $_GPC['status'] == 'recycle'}启用{else}安装应用模块{/if}</a>
+				<a href="{php echo url('module/manage-system/install')}&module_name={{ module.name }}&account_type={ACCOUNT_TYPE}" ng-if="module.upgrade_support != true" class="btn btn-primary">{if $_GPC['status'] == 'recycle'}启用{else}安装应用模块{/if}</a>
 				{if $status == 'uninstalled' &&  permission_check_account_user('see_module_manage_system_stop')}
 				<a href="{php echo url('module/manage-system/uninstalled_recycle', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}&opt=0" class="btn btn-primary" onclick="return confirm('确认要删除模块吗？')">删除</a>
 				{/if}
