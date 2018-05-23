@@ -704,8 +704,8 @@ if ($do == 'recycle_uninstall') {
 			itoast($message, '', 'tips');
 		}
 	}
-	module_uninstall($name);
-	$uninstall_result = module_execute_uninstall_script($name, $_GPC['confirm']);
+	module_uninstall($name, $_GPC['confirm']);
+	$uninstall_result = module_execute_uninstall_script($name);
 	if (is_error($uninstall_result)) {
 		itoast($uninstall_result['message'], url('module/manage-system'), 'error');
 	}

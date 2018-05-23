@@ -527,7 +527,8 @@ $islocal = $_GPC['local'] == 'local'; if ($do == 'keyword') {
 if ($do == 'module') {
 	$enable_modules = array();
 	$is_user_module = isset($_GPC['user_module']) ? intval($_GPC['user_module']) : 0;
-	$is_wxapp_module = intval($_GPC['mtype']);
+	$have_cover = $_GPC['cover'] == 'true' ? true : false;
+	$module_type = in_array($_GPC['mtype'], array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN)) ? $_GPC['mtype'] : '';
 	if ($is_user_module) {
 		$installedmodulelist = user_modules($_W['uid']);
 	} else {
@@ -540,10 +541,18 @@ if ($do == 'module') {
 			unset($installedmodulelist[$k]);
 			continue;
 		}
-		if ($is_wxapp_module == 1 && $value['wxapp_support'] != 2) {
+		if ($module_type == ACCOUNT_TYPE_SIGN && $value['app_support'] != 2 ||
+			$module_type == WXAPP_TYPE_SIGN && $value['wxapp_support'] != 2 ||
+			$module_type == WEBAPP_TYPE_SIGN && $value['webapp_support'] != 2 ||
+			$module_type == PHONEAPP_TYPE_SIGN && $value['phoneapp_support'] != 2) {
 			unset($installedmodulelist[$k]);
 			continue;
 		}
+		if ($have_cover && (empty($value['entries']) || empty($value['entries']['cover']))) {
+			unset($installedmodulelist[$k]);
+			continue;
+		}
+
 		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
 	}
 	foreach ($installedmodulelist as $name => $module) {
