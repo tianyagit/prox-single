@@ -1207,3 +1207,38 @@ function uni_account_oauth_host() {
 	}
 	return $oauth_url;
 }
+
+/**
+ * 数据同步反向记录（比如某一模块的小程序A同步公众号B，则调用该函数，反向记录B被A同步）
+ */
+function uni_passive_link_uniacid($uniacid, $module_name) {
+	global $_W;
+	$uniacid = intval($uniacid);
+	$module_name = trim($module_name);
+	if (empty($uniacid) || empty($module_name)) {
+		return false;
+	}
+
+	$passive_link_module = pdo_get('uni_account_modules', array('module' => $module_name, 'uniacid' => $uniacid), array('id', 'settings'));
+	if (!empty($passive_link_module)) {
+		$passive_settings = (array)iunserializer($passive_link_module['settings']);
+		if (empty($passive_settings)) {
+			$passive_settings = array('passive_link_uniacid', $_W['uniacid']);
+		} elseif (!empty($passive_settings['passive_link_uniacid'])) {
+			array_push($passive_settings['passive_link_uniacid'], $_W['uniacid']);
+		} else {
+			$passive_settings['passive_link_uniacid'] = $_W['uniacid'];
+		}
+		pdo_update('uni_account_modules', array('settings' => iserializer($passive_settings)), array('id' => $passive_link_module['id']));
+	} else {
+		$passive_settings = array('passive_link_uniacid' => $_W['uniacid']);
+		$passive_data = array(
+				'settings' => iserializer($passive_settings),
+				'uniacid' => $uniacid,
+				'module' => $module_name,
+				'enabled' => STATUS_ON,
+		);
+		pdo_insert('uni_account_modules', $passive_data);
+	}
+	return true;
+}
