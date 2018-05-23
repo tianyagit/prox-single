@@ -783,21 +783,14 @@ function module_uninstall_list()  {
 /**
  * 获取未安装模块数量
  */
-function module_uninstall_total($type = 'all') {
-	$type_list = array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN);
-	if ($type == 'all') {
-		$total = array();
-		foreach ($type_list as $type) {
-			$total[$type] = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
-		}
-		return $total;
-	} else {
-		if (!in_array($type, $type_list)) {
-			return 0;
-		}
-		$total = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
-		return $total;
+function module_uninstall_total($type) {
+	$type_list = module_support_type();
+	if (!isset($type_list["{$type}_support"])) {
+		return 0;
 	}
+	
+	$total = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
+	return $total;
 }
 /**
  * 得到最新可升级应用

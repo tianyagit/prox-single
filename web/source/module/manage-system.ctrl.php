@@ -260,7 +260,7 @@ if ($do == 'upgrade') {
 	cache_delete(cache_system_key('cloud_transtoken'));
 	cache_build_module_info($module_name);
 
-	itoast('模块更新成功！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
+	itoast('模块更新成功！', url('module/manage-system', array('support' => $module_support_name)), 'success');
 }
 
 if ($do =='install') {
@@ -287,7 +287,7 @@ if ($do =='install') {
 		$module_info = cloud_m_info($module_name);
 		if (!is_error($module_info)) {
 			if (empty($_GPC['flag'])) {
-				header('location: ' . url('cloud/process', array('account_type' => ACCOUNT_TYPE, 'm' => $module_name)));
+				header('location: ' . url('cloud/process', array('support' => $module_support_name, 'm' => $module_name)));
 				exit;
 			} else {
 				define('ONLINE_MODULE', true);
@@ -400,7 +400,7 @@ if ($do =='install') {
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
 		cache_build_module_info($module_name);
-		itoast('模块成功！', url('module/manage-system/install_success', array('account_type' => ACCOUNT_TYPE)), 'success');
+		itoast('模块成功！', url('module/manage-system/install_success', array('support' => $module_support_name)), 'success');
 	} else {
 		itoast('模块安装失败, 请联系模块开发者！');
 	}
@@ -519,7 +519,7 @@ if ($do == 'uninstall') {
 	if (!isset($_GPC['confirm'])) {
 		$message = '';
 		if ($module['isrulefields']) {
-			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/uninstall', array('module_name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/uninstall', array('account_type' => ACCOUNT_TYPE, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
+			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/uninstall', array('module_name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/uninstall', array('support' => $module_support_name, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
 		}
 		if (!empty($message)) {
 			message($message, '', 'tips');
@@ -528,7 +528,7 @@ if ($do == 'uninstall') {
 	ext_module_uninstall($name, $_GPC['confirm']);
 	ext_execute_uninstall_script($name);
 	
-	itoast('模块已卸载！', url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE)), 'success');
+	itoast('模块已卸载！', url('module/manage-system/installed', array('support' => $module_support_name)), 'success');
 }
 
 //删除未安装模块
@@ -589,13 +589,14 @@ if ($do == 'recycle') {
 		$pager = pagination($module_recycle_talbe->getLastQueryTotal(), $pageindex, $pagesize);
 	}
 	
-	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
+	$module_uninstall_total = module_uninstall_total($module_support);
 }
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	
-	$module_list = module_installed_list($account_base->typeSign);
+
+	$module_list = module_installed_list($module_support);
+
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
 			if (!empty($module['issystem'])) {
@@ -610,11 +611,11 @@ if ($do == 'installed') {
 		}
 		unset($module);
 	}
-	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
+	$module_uninstall_total = module_uninstall_total($module_support);
 }
 
 if ($do == 'not_installed') {
-	$_W['page']['title'] = '安装模块';
+	$_W['page']['title'] = '未安装模块';
 	
 	$title = safe_gpc_string($_GPC['title']);
 	$letter = safe_gpc_string($_GPC['letter']);
@@ -636,14 +637,14 @@ if ($do == 'not_installed') {
 		$module_cloud_talbe->where('a.title_initial', $letter);
 	}
 	$module_cloud_talbe->where('a.install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL));
-	$module_cloud_talbe->where("a.{$account_base->typeSign}_support", MODULE_SUPPORT_ACCOUNT);
+	$module_cloud_talbe->where("a.{$module_support}_support", MODULE_SUPPORT_ACCOUNT);
 	$module_cloud_talbe->orderby('a.install_status', 'asc');
 	
 	$modulelist = $module_cloud_talbe->getall('name');
 
 	$pager = pagination($module_cloud_talbe->getLastQueryTotal(), $pageindex, $pagesize);
 	
-	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
+	$module_uninstall_total = module_uninstall_total($module_support);
 }
 
-template('module/manage-system' . ACCOUNT_TYPE_TEMPLATE);
+template('module/manage-system');

@@ -3,24 +3,26 @@
 	应用管理
 </div>
 <ul class="we7-page-tab">
-	<li {if $do == 'installed'}class="active"{/if}><a href="{php echo url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE))}">已安装公众号应用  </a></li>
+	<li {if $do == 'installed'}class="active"{/if}><a href="{php echo url('module/manage-system/installed', array('support' => $module_support_name))}">已安装应用  </a></li>
 	{if permission_check_account_user('see_module_manage_system_except_installed')}
-	<li {if $do == 'recycle' && $_GPC['type'] == '1'}class="active"{/if}>
-		<a href="{php echo url('module/manage-system/recycle', array('account_type' => ACCOUNT_TYPE, 'type' => 1))}">
-			已停用公众号应用
+	<li {if $do == 'recycle' && $_GPC['type'] == MODULE_RECYCLE_INSTALL_DISABLED}class="active"{/if}>
+		<a href="{php echo url('module/manage-system/recycle', array('support' => $module_support_name, 'type' => MODULE_RECYCLE_INSTALL_DISABLED))}">
+			已停用应用
 		</a>
 	</li>
 	<li {if $do == 'not_installed'}class="active"{/if}>
-		<a href="{php echo url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE))}">
-			未安装公众号应用<span class="color-red">  ({$module_uninstall_total}) </span>
+		<a href="{php echo url('module/manage-system/not_installed', array('support' => $module_support_name))}">
+			未安装应用<span class="color-red">  ({$module_uninstall_total}) </span>
 		</a>
 	</li>
-	<li {if $do == 'recycle' && $_GPC['type'] == '2'}class="active"{/if}>
-		<a href="{php echo url('module/manage-system/recycle', array('account_type' => ACCOUNT_TYPE, 'type' => 2))}">
+	<li {if $do == 'recycle' && $_GPC['type'] == MODULE_RECYCLE_UNINSTALL_IGNORE}class="active"{/if}>
+		<a href="{php echo url('module/manage-system/recycle', array('support' => $module_support_name, 'type' => MODULE_RECYCLE_UNINSTALL_IGNORE))}">
 			回收站
 		</a>
 	</li>
-	<li {if $do == 'subscribe'}class="active"{/if}><a href="{php echo url('module/manage-system/subscribe', array('account_type' => ACCOUNT_TYPE))}">订阅管理</a></li>
+	{if $module_support_name == MODULE_SUPPORT_ACCOUNT_NAME}
+		<li {if $do == 'subscribe'}class="active"{/if}><a href="{php echo url('module/manage-system/subscribe', array('support' => $module_support_name))}">订阅管理</a></li>
+	{/if}
 	{/if}
 </ul>
 {if $do == 'installed'}
@@ -74,7 +76,7 @@
 			</tr>
 			<tr>
 				<th colspan="2" class="text-left bg-light-gray">
-					公众号应用名/版本
+					应用名/版本
 				</th>
 				<th class="text-right bg-light-gray">操作</th>
 			</tr>
@@ -104,7 +106,9 @@
 					<div class="manage-option text-right">
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">基本信息</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=group" ng-if="isFounder == 1">应用权限组</a>
+						{if $module_support_name == MODULE_SUPPORT_ACCOUNT_NAME}
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=subscribe" ng-if="isFounder == 1 && module.subscribes.length">订阅消息</a>
+						{/if}
 						{if permission_check_account_user('see_module_manage_system_stop')}
 						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('确认要停用模块吗？')">停用</a>
 						{/if}

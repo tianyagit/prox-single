@@ -348,7 +348,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module' => array(
 					'title' => '公众号应用',
-					'url' => url('module/manage-system', array('account_type' => '1')),
+					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_ACCOUNT_NAME)),
 					'icon' => 'wi wi-wx-apply',
 					'permission_name' => 'system_module',
 				),
@@ -403,7 +403,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module_wxapp' => array(
 					'title' => '小程序应用',
-					'url' => url('module/manage-system', array('account_type' => '4')),
+					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_WXAPP_NAME)),
 					'icon' => 'wi wi-wxapp-apply',
 					'permission_name' => 'system_module_wxapp',
 				),
@@ -415,7 +415,7 @@ $we7_system_menu['system'] = array(
 			'menu' => array(
 				'system_welcome' => array(
 					'title' => '系统首页应用',
-					'url' => url('module/manage-system', array('system_welcome' => 1)),
+					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_SYSTEMWELCOME_NAME)),
 					'icon' => 'wi wi-wxapp',
 					'permission_name' => 'system_welcome',
 				)
@@ -436,7 +436,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module_webapp' => array(
 					'title' => 'PC应用',
-					'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL)),
+					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_WEBAPP_NAME)),
 					'icon' => 'wi wi-pc-apply',
 					'permission_name' => 'system_module_webapp',
 				),
@@ -455,7 +455,7 @@ $we7_system_menu['system'] = array(
 				),
 				'system_module_phoneapp' => array(
 					'title' => 'APP应用',
-					'url' => url('module/manage-system', array('account_type' => ACCOUNT_TYPE_PHONEAPP_NORMAL)),
+					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_PHONEAPP_NAME)),
 					'icon' => 'wi wi-app-apply',
 					'permission_name' => 'system_module_phoneapp',
 				),
