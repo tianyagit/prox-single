@@ -88,10 +88,15 @@ if ($do == 'openid') {
 			$_SESSION['uid'] = $uid;
 			pdo_insert('mc_mapping_fans', $record);
 		} else {
+			$userinfo = $fans['tag'];
 			$uid = $fans['uid'];
 		}
-		$member = mc_fetch($uid);
-		$_SESSION['userinfo'] = $member;
+		if (empty($userinfo)) {
+			$userinfo = array(
+				'openid' => $oauth['openid'],
+			);
+		}
+		$_SESSION['userinfo'] = base64_encode(iserializer($userinfo));
 		$account_api->result(0, '', array('sessionid' => $_W['session_id'], 'userinfo' => $fans, 'openid' => $oauth['openid']));
 	} else {
 		$account_api->result(1, $oauth['message']);
