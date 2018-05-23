@@ -11,10 +11,9 @@ defined('IN_IA') or exit('Access Denied');
 function system_menu_permission_list($role = '') {
 	global $_W;
 	$system_menu = cache_load(cache_system_key('system_frame'));
-	$system_menu = cache_load(cache_system_key('system_frame:' . $_W['uid']));
 	if(empty($system_menu)) {
 		cache_build_frame_menu();
-		$system_menu = cache_load(cache_system_key('system_frame:' . $_W['uid']));
+		$system_menu = cache_load(cache_system_key('system_frame'));
 	}
 	//根据不同的角色得到不同的菜单权限
 	if ($role == ACCOUNT_MANAGE_NAME_OPERATOR) {
