@@ -538,9 +538,11 @@ function user_modules($uid = 0) {
 		foreach ($modules as $module) {
 			$module_info = module_fetch($module);
 			if ($module_info['welcome_support'] == 2 && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
+				continue;
+			}
 			if (!empty($module_info)) {
 				$module_list[$module] = $module_info;
-			}
+			}	
 		}
 	}
 	return $module_list;
