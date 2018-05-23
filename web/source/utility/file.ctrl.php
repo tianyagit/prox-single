@@ -541,10 +541,10 @@ if ($do == 'module') {
 			unset($installedmodulelist[$k]);
 			continue;
 		}
-		if ($module_type == ACCOUNT_TYPE_SIGN && $value['app_support'] != 2 ||
-			$module_type == WXAPP_TYPE_SIGN && $value['wxapp_support'] != 2 ||
-			$module_type == WEBAPP_TYPE_SIGN && $value['webapp_support'] != 2 ||
-			$module_type == PHONEAPP_TYPE_SIGN && $value['phoneapp_support'] != 2) {
+		if ($module_type == ACCOUNT_TYPE_SIGN && $value[MODULE_SUPPORT_ACCOUNT_NAME] != 2 ||
+			$module_type == WXAPP_TYPE_SIGN && $value[MODULE_SUPPORT_WXAPP_NAME] != 2 ||
+			$module_type == WEBAPP_TYPE_SIGN && $value[MODULE_SUPPORT_WEBAPP_NAME] != 2 ||
+			$module_type == PHONEAPP_TYPE_SIGN && $value[MODULE_SUPPORT_PHONEAPP_NAME] != 2) {
 			unset($installedmodulelist[$k]);
 			continue;
 		}

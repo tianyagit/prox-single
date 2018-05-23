@@ -91,19 +91,19 @@ if ($do == 'display') {
 					if (empty($module_info)) {
 						continue;
 					}
-					if ($module_info['account_support'] == MODULE_SUPPORT_ACCOUNT || $module_info['app_support'] == MODULE_SUPPORT_ACCOUNT) {
+					if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT || $module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
 						$modules_group_list[$key]['account_num'] = intval($modules_group_list[$key]['account_num']) > 0 ? (intval($modules_group_list[$key]['account_num']) + 1) : 1;
 						$modules_group_list[$key]['account_modules'][] = $module_info;
 					}
-					if ($module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+					if ($module_info[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
 						$modules_group_list[$key]['wxapp_num'] = intval($modules_group_list[$key]['wxapp_num']) > 0 ? (intval($modules_group_list[$key]['wxapp_num']) + 1) : 1;
 						$modules_group_list[$key]['wxapp_modules'][] = $module_info;
 					}
-					if ($module_info['phoneapp_support'] == MODULE_NOSUPPORT_PHONEAPP) {
+					if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_NOSUPPORT_PHONEAPP) {
 						$modules_group_list[$key]['phoneapp_num'] = intval($modules_group_list[$key]['phoneapp_num']) > 0 ? (intval($modules_group_list[$key]['phoneapp_num']) + 1) : 1;
 						$modules_group_list[$key]['phoneapp_modules'][] = $module_info;
 					}
-					if ($module_info['webapp_support'] == MODULE_NOSUPPORT_WEBAPP) {
+					if ($module_info[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_NOSUPPORT_WEBAPP) {
 						$modules_group_list[$key]['webapp_num'] = intval($modules_group_list[$key]['webapp_num']) > 0 ? (intval($modules_group_list[$key]['webapp_num']) + 1) : 1;
 						$modules_group_list[$key]['webapp_modules'][] = $module_info;
 					}

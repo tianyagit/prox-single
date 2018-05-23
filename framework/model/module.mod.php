@@ -855,8 +855,8 @@ function module_upgrade_info($modulelist = array()) {
 	}
 	
 	cloud_prepare();
-	//$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
-	$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
+	$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
+	//$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
 	$pirate_apps = $cloud_m_query_module['pirate_apps'];
 	
 	unset($cloud_m_query_module['pirate_apps']);
