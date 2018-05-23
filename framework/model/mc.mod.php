@@ -150,7 +150,7 @@ function mc_fetch_one($uid, $uniacid = 0) {
 	if (!empty($uniacid) && intval($uniacid) > 0) {
 		$params['uniacid'] = intval($uniacid);
 	}
-	$result = pdo_get('mc_members', array('uid' => $uid));
+	$result = pdo_get('mc_members', $params);
 	if (!empty($result)) {
 		$result['avatar'] = tomedia($result['avatar']);
 		$result['credit1'] = floatval($result['credit1']);
