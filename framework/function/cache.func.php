@@ -43,6 +43,7 @@ function cache_type() {
 function cache_load($key, $unserialize = false) {
 	global $_W;
 	static $we7_cache;
+
 	if (is_error($key)) {
 		trigger_error($key['message'], E_USER_WARNING);
 		return false;
@@ -93,6 +94,11 @@ function cache_system_key($cache_key, $params = array()) {
 			preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key_all['caches'][$key]['key'], $key_params);
 			preg_match_all('/\:([a-zA-Z\_\-0-9]+)/', $cache_key, $val_params);
 			if (count($key_params[1]) != count($val_params[1])) {
+				foreach ($key_params[1] as $val) {
+					if (in_array($val, array_keys($cache_key_all['common_params']))) {
+						return 'we7:' . str_replace('%' . $val, $cache_key_all['common_params'][$val], $cache_key_all['caches'][$key]['key']);
+					}
+				}
 				return error(3, $key . ' 缓存参数不正确');
 			}
 		}
@@ -216,6 +222,7 @@ function cache_key_all() {
 	$caches_all = array(
 		'common_params' => array(
 			'uniacid' => $_W['uniacid'],
+			'uid' => $_W['uid'],
 		),
 
 		'caches' => array(
@@ -536,7 +543,7 @@ function cache_key_all() {
 			),
 
 			'system_frame' => array(
-				'key' => 'system_frame',
+				'key' => 'system_frame:%uid',
 				'group' => '',
 			),
 
