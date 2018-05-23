@@ -99,7 +99,7 @@ class DB {
 			trigger_error($sqlsafe['message'], E_USER_ERROR);
 			return false;
 		}
-		$starttime = microtime();
+		$starttime = microtime(true);
 		if (empty($params)) {
 			$result = $this->pdo->exec($sql);
 			$this->logging($sql, array(), $this->pdo->errorInfo());
@@ -110,7 +110,7 @@ class DB {
 
 		$this->logging($sql, $params, $statement->errorInfo());
 
-		$endtime = microtime();
+		$endtime = microtime(true);
 		$this->performance($sql, $endtime - $starttime);
 		if (!$result) {
 			return false;

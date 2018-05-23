@@ -89,31 +89,43 @@ function cache_write($key, $value, $ttl = 0, $forcecache = true) {
 	}
 }
 
+
+
 /**
  * 删除某个键的缓存数据
  * @param string $key
  * @return mixed 
  */
 function cache_delete($key, $forcecache = true) {
-	$origins_cache_key = $key;
-	$key = cache_namespace($key);
-	
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
 	}
-	
-	if (empty($forcecache)) {
-		pdo_delete('core_cache', array('key' => $key));
+
+	$cache_relation_keys = cache_relation_keys($key);
+	if (is_error($cache_relation_keys)) {
+		return $cache_relation_keys;
 	}
-	
-	if ($memcache->delete(cache_prefix($key))) {
-		unset($GLOBALS['_W']['cache'][$origins_cache_key]);
-		return true;
-	} else {
-		unset($GLOBALS['_W']['cache'][$origins_cache_key]);
-		return false;
+	if (is_array($cache_relation_keys) && !empty($cache_relation_keys)) {
+		foreach ($cache_relation_keys as $key) {
+			$cache_info = cache_load($key);
+			if (!empty($cache_info)) {
+				$origins_cache_key = $key;
+				$key = cache_namespace($key);
+
+				if (empty($forcecache)) {
+					pdo_delete('core_cache', array('key' => $key));
+				}
+
+				$result = $memcache->delete(cache_prefix($key));
+				unset($GLOBALS['_W']['cache'][$origins_cache_key]);
+				if (!$result) {
+					return error(1, '缓存: ' . $key . ' 删除失败！');
+				}
+			}
+		}
 	}
+	return true;
 }
 
 /**

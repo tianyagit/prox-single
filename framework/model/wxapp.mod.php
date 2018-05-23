@@ -303,7 +303,7 @@ function wxapp_version($version_id) {
 		return $version_info;
 	}
 
-	$cachekey = cache_system_key("wxapp_version:{$version_id}");
+	$cachekey = cache_system_key('wxapp_version', array('version_id' => $version_id));
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
@@ -462,7 +462,7 @@ function wxapp_search_link_account($module_name = '') {
 			$account_modules = uni_modules_by_uniacid($account['uniacid']);
 			if (empty($account_modules[$module_name])) {
 				unset($owned_account[$key]);
-			} elseif ($account_modules[$module_name]['app_support'] != MODULE_SUPPORT_ACCOUNT || $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
+			} elseif ($account_modules[$module_name][MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT || $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
 				unset($owned_account[$key]);
 			}
 		}

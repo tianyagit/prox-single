@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 /**
  * 构建管理员或操作员权限数据
- * @return boolean
+ * @return array|mixed
  */
 function permission_build() {
 	global $_W, $acl;
@@ -17,8 +17,9 @@ function permission_build() {
 		return $we7_file_permission;
 	}
 
-	$cachekey = cache_system_key("permission:{$_W['uniacid']}:{$_W['uid']}");
+	$cachekey = cache_system_key('permission', array('uniacid' => $_W['uniacid'], 'uid' => $_W['uid']));
 	$cache = cache_load($cachekey);
+
 	if (!empty($cache)) {
 		return $cache;
 	}
@@ -451,7 +452,7 @@ function permission_check_account_user_module($action = '', $module_name = '') {
 		}
 		//模块其他业务菜单
 	} elseif (!empty($do) && !empty($m)) {
-		$is_exist = table('module')->moduleBindingsInfo($m, $do, 'menu');
+		$is_exist = table('modules_binding')->isEntryExists($m, 'menu', $do);
 		if(empty($is_exist)) {
 			return true;
 		}

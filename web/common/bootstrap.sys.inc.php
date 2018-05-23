@@ -78,5 +78,6 @@ if (!empty($_W['uid'])) {
 }
 
 $_W['template'] = !empty($_W['setting']['basic']['template']) ? $_W['setting']['basic']['template'] : 'default';
+$_W['template'] = 'default';
 $_W['attachurl'] = attachment_set_attach_url();
 load()->func('compat.biz');

@@ -68,12 +68,12 @@ class StoreModuleSite extends WeModuleSite {
 						pdo_update('site_store_create_account', array('endtime' => $endtime), array('uniacid' => $order[$account_type]));
 					}
 					pdo_update('account', array('endtime' => $account_endtime), array('uniacid' => $order[$account_type]));
-					cache_delete("uniaccount:{$order[$account_type]}");
+					cache_delete(cache_system_key('uniaccount_type', array('account_type' => $order[$account_type])));
 				}
+				cache_delete(cache_system_key('site_store_buy', array('type' => $goods['type'], 'uniacid' => $order['uniacid'])));
 				if ($goods['type'] == STORE_TYPE_USER_PACKAGE) {
 					cache_delete(cache_system_key('system_frame:' . $_W['uid']));
 				}
-				cache_delete(cache_system_key($order['uniacid'] . ':site_store_buy_' . $goods['type']));
 				cache_build_account_modules($order['uniacid']);
 			}
 		}
@@ -315,7 +315,7 @@ class StoreModuleSite extends WeModuleSite {
 				$have_module_goods = array_unique($have_module_goods);
 				if (!empty($modules)) {
 					foreach ($modules as $module) {
-						if (in_array ($module['name'], $have_module_goods) || $type == STORE_TYPE_MODULE && $module['app_support'] != 2 || $type == STORE_TYPE_WXAPP_MODULE && $module['wxapp_support'] != 2) {
+						if (in_array ($module['name'], $have_module_goods) || $type == STORE_TYPE_MODULE && $module[MODULE_SUPPORT_ACCOUNT_NAME] != 2 || $type == STORE_TYPE_WXAPP_MODULE && $module['wxapp_support'] != 2) {
 							continue;
 						}
 						$module_list[] = $module;
@@ -668,7 +668,7 @@ class StoreModuleSite extends WeModuleSite {
 						$account_info = uni_fetch($order[$account_type]);
 						$account_endtime = strtotime('+' . $order['duration'] * $account_num . $goods['unit'], max(TIMESTAMP, $account_info['endtime']));
 						pdo_update('account', array('endtime' => $account_endtime), array('uniacid' => $order[$account_type]));
-						cache_delete("uniaccount:{$order[$account_type]}");
+						cache_delete(cache_system_key('uniaccount_type', array('account_type' => $order[$account_type])));
 					}
 					if ($goods['type'] == STORE_TYPE_USER_PACKAGE) {
 						$data['uid'] = $_W['uid'];

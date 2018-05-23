@@ -24,6 +24,10 @@ if (in_array($action, array('permission', 'default-entry', 'manage-account'))) {
 if (in_array($action, array('group', 'manage-system'))) {
 	define('FRAME', 'system');
 }
+
+if (in_array($action, array('display'))) {
+	define('FRAME', '');
+}
 /* sxstart */
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	$_GPC['account_type'] = !empty($_GPC['account_type']) || !empty($_GPC['system_welcome']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
@@ -32,13 +36,12 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	}
 }
 /* sxend */
-$account_param = WeAccount::createByType($_GPC['account_type']);
-define('ACCOUNT_TYPE', $account_param->type);
-define('ACCOUNT_TYPE_TEMPLATE', $account_param->typeTempalte);
+$account_base = WeAccount::createByType($_GPC['account_type']);
+define('ACCOUNT_TYPE', $account_base->type);
+define('ACCOUNT_TYPE_TEMPLATE', $account_base->typeTempalte);
 
 /* vstart */
 if (IMS_FAMILY == 'v') {
 	$_GPC['account_type'] = !empty($_GPC['account_type']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
 }
 /* vend */
-

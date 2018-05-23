@@ -16,12 +16,15 @@ abstract class WeAccount {
 	public $uniacid = 0;
 	//当前菜单类型
 	public $menuFrame;
-	//帐号类型
+	//帐号类型，数值
 	public $type;
 	//帐号类型中文名称
 	public $typeName;
+	//帐号对应的英文类型 
+	public $typeSign;
 	//相应类型对应的模板后缀
 	public $typeTempalte;
+	//当前公众号类型 
 
 	/**
 	 * 创建平台特定的公众号操作对象
@@ -381,8 +384,7 @@ abstract class WeAccount {
 		);
 		$code = strval($code);
 		if($code == '40001' || $code == '42001') {
-			$cachekey = "accesstoken:{$this->account['acid']}";
-			cache_delete($cachekey);
+			cache_delete(cache_system_key('accesstoken', array('acid' => $this->account['acid'])));
 			return '微信公众平台授权异常, 系统已修复这个错误, 请刷新页面重试.';
 		}
 		if($errors[$code]) {

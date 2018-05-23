@@ -294,7 +294,7 @@ if ($do == 'base_information') {
 	$uniacid_fields = $member_table->mcFieldsList($_W['uniacid']);
 	$all_fields = mc_fields();
 	$custom_fields = array();
-	$base_fields = cache_load('userbasefields');
+	$base_fields = cache_load(cache_system_key('userbasefields'));
 	$base_fields = array_keys($base_fields);
 	foreach ($all_fields as $field => $title) {
 		if (!in_array($field, $base_fields)) {

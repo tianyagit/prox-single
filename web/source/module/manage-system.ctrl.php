@@ -16,8 +16,14 @@ load()->classs('account');
 load()->object('cloudapi');
 load()->model('utility');
 load()->func('db');
-$dos = array('subscribe', 'filter', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 'change_receive_ban', 'install_success', 'recycle_uninstall', 'set_site_welcome_module', 'founder_update_modules', 'uninstalled_recycle');
+
+$dos = array('subscribe', 'check_subscribe', 'check_upgrade', 'get_upgrade_info', 'upgrade', 
+			'install', 'installed', 'not_installed', 'uninstall', 'save_module_info', 'module_detail', 
+			'change_receive_ban', 'install_success', 'set_site_welcome_module', 
+			'founder_update_modules', 'recycle', 'recycle_post',
+);
 $do = in_array($do, $dos) ? $do : 'installed';
+
 /* sxstart */
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if (user_is_vice_founder() && !empty($_GPC['system_welcome'])){
@@ -40,15 +46,14 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 /* sxend */
 
 if ($do == 'subscribe') {
-	$uninstall_modules = module_get_all_unistalled($status);
-	$total_uninstalled = $uninstall_modules['module_count'];
-
-	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
+	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
+	
 	$module_list = user_modules($_W['uid']);
+	$subscribe_type = ext_module_msg_types();
+	
 	$subscribe_module = array();
 	$receive_ban = $_W['setting']['module_receive_ban'];
-	$subscribe_type = ext_module_msg_types();
-
+	
 	if (is_array($module_list) && !empty($module_list)) {
 		foreach ($module_list as $module) {
 			if (!empty($module['subscribes']) && is_array($module['subscribes'])) {
@@ -63,11 +68,13 @@ if ($do == 'subscribe') {
 }
 
 if ($do == 'check_subscribe') {
-	load()->classs('account');
-	$module_name = $_GPC['module_name'];
-	$obj = WeUtility::createModuleReceiver($module_name);
+	$module = module_fetch($_GPC['module_name']);
+	if (empty($module)) {
+		iajax(1);
+	}
+	$obj = WeUtility::createModuleReceiver($module['name']);
 	if (empty($obj)) {
-		exit('error');
+		iajax(1);
 	}
 	$obj->uniacid = $_W['uniacid'];
 	$obj->acid = $_W['acid'];
@@ -83,103 +90,56 @@ if ($do == 'check_subscribe') {
 }
 
 if ($do == 'get_upgrade_info') {
-	$module_name = trim($_GPC['name']);
-	$module = cloud_m_upgradeinfo($module_name);
-	$module_info = module_fetch($module_name);
-	if (empty($module_info['site_branch_id'])) {
-		$module_info['site_branch_id'] = $module['site_branch']['id'];
-		cache_write(cache_system_key(CACHE_KEY_MODULE_INFO, $module_name), $module_info);
+	$modulename = trim($_GPC['name']);
+	$module = module_fetch($modulename);
+	if (empty($module)) {
+		iajax(1);
 	}
-	if (is_error($module)) {
-		iajax(1, $module['message']);
-	} else {
-		iajax(0, $module, '');
+	//检查本地是否有更新，否则检查线上是否有更新，
+	//有更新，更新cloud表中的记录，返回更新信息
+	$manifest = ext_module_manifest($modulename);
+	$manifest_cloud = cloud_m_upgradeinfo($modulename);
+	$result = array(
+		'name' => $modulename,
+		'upgrade' => $manifest_cloud['upgrade'],
+		'site_branch' => $manifest_cloud['site_branch'],
+		'branches' => $manifest_cloud['branches'],
+		'from' => 'cloud',
+	);
+	//本地如果有manifest并且版本号大于云端，则以本地为准，否则以云端为准
+	if (!empty($manifest) && version_compare($manifest['application']['version'], $manifest_cloud['version']['version'], '>')) {
+		$result = array(
+			'name' => $modulename,
+			'upgrade' => true,
+			'site_branch' => array(),
+			'branches' => array(),
+			'new_branch' => false,
+			'from' => 'local',
+			'best_version' => $manifest['application']['version'],
+		);
+		
 	}
+	iajax(0, $result);
 }
 
 if ($do == 'check_upgrade') {
-	$module_list = $_GPC['module_list'];//test
-	if (!empty($module_list) && is_array($module_list)) {
-		$module_list = pdo_getall('modules', array('name' => $module_list));
-	} else {
-		iajax(0, '');
-	}
+	cache_build_uninstalled_module();
+	
+	$module_upgrade = module_upgrade_info();
 
-	$cloud_prepare_result = cloud_prepare();
-	$cloud_m_query_module = cloud_m_query();
-	if (is_error($cloud_m_query_module)) {
-		$cloud_m_query_module = array();
-	}
-	foreach ($module_list as &$module) {
-		$manifest = ext_module_manifest($module['name']);
-		if (!empty($manifest)&& is_array($manifest)) {
-			if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
-				$module['best_version'] = $manifest['application']['version'];
-				$module['upgrade'] = true;
-			} else {
-				$module['upgrade'] = false;
-			}
-			$module['from'] = 'local';
-		}
-
-		if (empty($manifest)) {
-			if (in_array($module['name'], array_keys($cloud_m_query_module))) {
-				$cloud_m_info = $cloud_m_query_module[$module['name']];
-				$module_info = module_fetch($module['name']);
-				if (!empty($cloud_m_info['service_expiretime'])) {
-					$module['service_expire'] = $cloud_m_info['service_expiretime'] > time() ? false : true;
-				}
-				$site_branch = $cloud_m_info['site_branch']['id'];
-				if (empty($site_branch)) {
-					$site_branch = $cloud_m_info['branch'];
-				}
-				$cloud_branch_version = $cloud_m_info['branches'][$site_branch]['version'];
-				if (!empty($cloud_m_info['branches'])) {
-					$best_branch_id = 0;
-					foreach ($cloud_m_info['branches'] as $branch) {
-						if (empty($branch['status']) || empty($branch['show'])) {
-							continue;
-						}
-						if ($best_branch_id == 0) {
-							$best_branch_id = $branch['id'];
-						} else {
-							if ($branch['displayorder'] > $cloud_m_info['branches'][$best_branch_id]['displayorder']) {
-								$best_branch_id = $branch['id'];
-							}
-						}
-					}
-				} else {
-					$module['upgrade'] = false;
-					continue;
-				}
-				$best_branch = $cloud_m_info['branches'][$best_branch_id];
-				if (($cloud_m_info['displayorder'] < $best_branch['displayorder'] && !empty($cloud_m_info['version'])) || (!empty($module_info['site_branch_id']) && $cloud_m_info['site_branch']['id'] > $module_info['site_branch_id'])){
-					$module['new_branch'] = 1;
-				} else {
-					$module['new_branch'] = 0;
-				}
-				if (version_compare($module['version'], $cloud_branch_version) == -1) {
-					$module['upgrade'] = true;
-				} else {
-					$module['upgrade'] = false;
-				}
-				$module['from'] = 'cloud';
-			}
-		}
-	}
-	unset($module);
-	iajax(0, $module_list, '');
+	iajax(0, $module_upgrade);
 }
 
 if ($do == 'upgrade') {
-	$points = ext_module_bindings();
-	$module_name = addslashes($_GPC['module_name']);
+	$module_name = $_GPC['module_name'];
 	//判断模块相关配置和文件是否合法
-	$module_exist = module_fetch($module_name);
-	if (empty($module_exist)) {
+	$module = module_fetch($module_name);
+	if (empty($module)) {
 		itoast('模块已经被卸载或是不存在！', '', 'error');
 	}
+	
 	$manifest = ext_module_manifest($module_name);
+	
 	// 应用商城下载的模块远程获取XML文件
 	if (empty($manifest)) {
 		$cloud_prepare = cloud_prepare();
@@ -190,7 +150,7 @@ if ($do == 'upgrade') {
 		if (is_error($module_info)) {
 			iajax(1, $module_info);
 		}
-		$uninstall_modules = module_get_all_unistalled('uninstalled');
+		$uninstall_modules = module_get_all_uninstalled('uninstalled');
 		$upgrade_support_module = $uninstall_modules['modules'][$module_name]['upgrade_support'];
 		if (!empty($_GPC['flag']) || $upgrade_support_module) {
 			define('ONLINE_MODULE', true);
@@ -201,13 +161,14 @@ if ($do == 'upgrade') {
 	if (empty($manifest)) {
 		itoast('模块安装配置文件不存在或是格式不正确！', '', 'error');
 	}
-	$check_manifest_result = manifest_check($module_name, $manifest);
+	$check_manifest_result = ext_manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
 		itoast($check_manifest_result['message'], '', 'error');
 	}
-	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
-	if (empty($manifest['platform']['main_module']) && !file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
-		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
+	
+	$check_file_result = ext_file_check($module_name, $manifest);
+	if (is_error($check_file_result)) {
+		itoast($check_file_result['message'], '', 'error');
 	}
 
 	if (!empty($manifest['platform']['plugin_list'])) {
@@ -217,12 +178,14 @@ if ($do == 'upgrade') {
 		}
 	}
 	//处理模块菜单
-	$module = ext_module_convert($manifest);
-
-	unset($module['name'], $module['title']);
-	$bindings = array_elements(array_keys($points), $module, false);
+	$module_upgrade = ext_module_convert($manifest);
+	unset($module_upgrade['name'], $module_upgrade['title']);
+	
+	$points = ext_module_bindings();
+	$bindings = array_elements(array_keys($points), $module_upgrade, false);
+	
 	foreach ($points as $point_name => $point_info) {
-		unset($module[$point_name]);
+		unset($module_upgrade[$point_name]);
 		if (is_array($bindings[$point_name]) && !empty($bindings[$point_name])) {
 			foreach ($bindings[$point_name] as $entry) {
 				$entry['module'] = $manifest['application']['identifie'];
@@ -235,14 +198,17 @@ if ($do == 'upgrade') {
 					//保存xml里面包含的do和title,最后删除数据库中废弃的do和title
 					$not_delete_do[] = $entry['do'];
 					$not_delete_title[] = $entry['title'];
-					$module_binding = pdo_get('modules_bindings',array('module' => $manifest['application']['identifie'], 'entry' => $point_name, 'title' => $entry['title'], 'do' => $entry['do']));
+					
+					$module_binding = table('modules_binding')->isEntryExists($module_name, $point_name, $entry['do']);
 					if (!empty($module_binding)) {
 						pdo_update('modules_bindings', $entry, array('eid' => $module_binding['eid']));
 						continue;
 					}
+					
 				} elseif ($entry['call']) {
 					$not_delete_call[] = $entry['call'];
-					$module_binding = pdo_get('modules_bindings',array('module' => $manifest['application']['identifie'], 'entry' => $point_name, 'call' => $entry['call']));
+					
+					$module_binding = table('modules_binding')->isCallExists($module_name, $point_name, $entry['call']);
 					if (!empty($module_binding)) {
 						pdo_update('modules_bindings', $entry, array('eid' => $module_binding['eid']));
 						continue;
@@ -276,74 +242,42 @@ if ($do == 'upgrade') {
 			}
 		}
 	}
-	if (!empty($manifest['upgrade'])) {
-		if (strexists($manifest['upgrade'], '.php')) {
-			if (file_exists($module_path . $manifest['upgrade'])) {
-				include_once $module_path . $manifest['upgrade'];
-				if (ONLINE_MODULE) {
-					unlink($module_path . $manifest['upgrade']);
-				}
-			}
-		} else {
-			pdo_run($manifest['upgrade']);
-		}
-	}
-	if (ONLINE_MODULE) {
-		if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
-			unlink($module_path . $manifest['uninstall']);
-		}
-		if (strexists($manifest['install'], '.php') && file_exists($module_path . $manifest['install'])) {
-			unlink($module_path . $manifest['install']);
-		}
-	}
+	
+	ext_module_run_script($module_name, 'upgrade');
 
-	$module['permissions'] = iserializer($module['permissions']);
+	$module_upgrade['permissions'] = iserializer($module_upgrade['permissions']);
 	if (!empty($module_info['version']['cloud_setting'])) {
-		$module['settings'] = 2;
+		$module_upgrade['settings'] = 2;
 	} else {
-		$module['settings'] = empty($module['settings']) ? 0 : 1;
+		$module_upgrade['settings'] = empty($module_upgrade['settings']) ? 0 : 1;
 	}
-	pdo_update('modules', $module, array('name' => $module_name));
+	pdo_update('modules', $module_upgrade, array('name' => $module_name));
+	
 	cache_build_account_modules();
-	cache_build_uninstalled_module();
-	cache_build_cloud_upgrade_module();
-	if (!empty($module['subscribes'])) {
+	if (!empty($module_upgrade['subscribes'])) {
 		ext_check_module_subscribe($module_name);
 	}
-	cache_delete('cloud:transtoken');
+	cache_delete(cache_system_key('cloud_transtoken'));
 	cache_build_module_info($module_name);
 
 	itoast('模块更新成功！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
 if ($do =='install') {
-	$cloudapi = new CloudApi();
-	$recycle_module = $cloudapi->post('cache', 'get', array('key' => cache_system_key('recycle_module:')));
-	$recycle_module = !empty($recycle_module['data']) ? $recycle_module['data'] : array();
-	$module_name = trim($_GPC['module_name']);
-	if (!empty($recycle_module[$module_name])) {
-		unset($recycle_module[$module_name]);
-		$cloudapi->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_module));
-		pdo_delete('modules_recycle', array('modulename' => $module_name));
-		cache_build_module_subscribe_type();
-		cache_build_account_modules();
-		cache_build_uninstalled_module();
-		cache_build_module_info($module_name);
-		itoast('已恢复', url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE)), '', 'success');
-	}
-	$points = ext_module_bindings();
 	if (empty($_W['isfounder'])) {
 		itoast('您没有安装模块的权限', '', 'error');
 	}
+	$module_name = trim($_GPC['module_name']);
 	$module_info = module_fetch($module_name);
 	if (!empty($module_info)) {
 		itoast('模块已经安装或是唯一标识已存在！', '', 'error');
 	}
+	
 	$manifest = ext_module_manifest($module_name);
 	if (!empty($manifest)) {
 		$result = cloud_m_prepare($module_name);
 		if (is_error($result)) {
-			itoast($result['message'], url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
+			itoast($result['message'], referer(), 'error');
 		}
 	} else {
 		$result = cloud_prepare();
@@ -365,25 +299,29 @@ if ($do =='install') {
 		}
 	}
 	if (empty($manifest)) {
-		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', url('module/manage-system/not_installed', array('account_type' => ACCOUNT_TYPE)), 'error');
+		itoast('模块安装配置文件不存在或是格式不正确，请刷新重试！', referer(), 'error');
 	}
+
 	if (!empty($manifest['platform']['main_module'])) {
-		$plugin_exist = pdo_get('modules_plugin', array('main_module' => $manifest['platform']['main_module'], 'name' => $manifest['application']['identifie']));
+		$plugin_exist = table('modules_plugin')->getPluginExists($manifest['platform']['main_module'], $manifest['application']['identifie']);
 		if (empty($plugin_exist)) {
 			itoast('请先更新主模块后再安装插件', url('module/manage-system/installed'), 'error', array(array('title' => '查看主程序', 'url' => url('module/manage-system/module_detail', array('name' => $manifest['platform']['main_module'])))));
 		}
 	}
-	$check_manifest_result = manifest_check($module_name, $manifest);
+	
+	$check_manifest_result = ext_manifest_check($module_name, $manifest);
 	if (is_error($check_manifest_result)) {
 		itoast($check_manifest_result['message'], '', 'error');
 	}
-	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
-	if (empty($manifest['platform']['main_module']) && !file_exists($module_path . 'processor.php') && !file_exists($module_path . 'module.php') && !file_exists($module_path . 'receiver.php') && !file_exists($module_path . 'site.php')) {
+	$check_file_result = ext_file_check($module_name, $manifest);
+	if (is_error($check_file_result)) {
 		itoast('模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！', '', 'error');
 	}
+	
 	$module = ext_module_convert($manifest);
-	$module_group = uni_groups();
+	//选择安装到哪些用户组
 	if (!$_W['ispost'] || empty($_GPC['flag'])) {
+		$module_group = uni_groups();
 		template('system/module-group');
 		exit;
 	}
@@ -393,9 +331,9 @@ if ($do =='install') {
 		}
 	}
 	$post_groups = $_GPC['group'];
-	ext_module_clean($module_name);
-	$bindings = array_elements(array_keys($points), $module, false);
+	$points = ext_module_bindings();
 	if (!empty($points)) {
+		$bindings = array_elements(array_keys($points), $module, false);
 		foreach ($points as $name => $point) {
 			unset($module[$name]);
 			if (is_array($bindings[$name]) && !empty($bindings[$name])) {
@@ -406,13 +344,14 @@ if ($do =='install') {
 						$entry['url'] = $entry['do'];
 						$entry['do'] = '';
 					}
-					pdo_insert('modules_bindings', $entry);
+					table('modules_bindings')->fill($entry)->save();
 				}
 			}
 		}
 	}
 
 	$module['permissions'] = iserializer($module['permissions']);
+	
 	$module_subscribe_success = true;
 	if (!empty($module['subscribes'])) {
 		$subscribes = iunserializer($module['subscribes']);
@@ -420,10 +359,13 @@ if ($do =='install') {
 			$module_subscribe_success = ext_check_module_subscribe($module['name']);
 		}
 	}
+	
 	if (!empty($module_info['version']['cloud_setting'])) {
 		$module['settings'] = 2;
 	}
+	
 	$module['title_initial'] = get_first_pinyin($module['title']);
+	
 	//安装时先执行在线数据库，再执行模块文件
 	if ($packet['schemes']){
 		foreach ($packet['schemes'] as $remote) {
@@ -435,32 +377,11 @@ if ($do =='install') {
 			}
 		}
 	}
-	if (!empty($manifest['install'])) {
-		if (strexists($manifest['install'], '.php')) {
-			if (file_exists($module_path . $manifest['install'])) {
-				include_once $module_path . $manifest['install'];
-				if (ONLINE_MODULE) {
-					unlink ($module_path . $manifest['install']);
-				}
-			}
-		} else {
-			pdo_run($manifest['install']);
-		}
-	}
+	
+	ext_module_run_script($module_name, 'install');
+	
+	
 	if (pdo_insert('modules', $module)) {
-		if (ONLINE_MODULE) {
-			if (strexists($manifest['upgrade'], '.php') && file_exists($module_path . $manifest['upgrade'])) {
-				unlink($module_path . $manifest['upgrade']);
-			}
-			if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
-				unlink($module_path . $manifest['uninstall']);
-			}
-		}
-
-		// 如果模块来自应用商城，删除对应文件
-		if (defined('ONLINE_MODULE')) {
-			ext_module_script_clean($module['name'], $manifest);
-		}
 		if ($_GPC['flag'] && !empty($post_groups) && $module['name']) {
 			foreach ($post_groups as $groupid) {
 				$group_info = pdo_get('uni_group', array('id' => intval($groupid)), array('id', 'name', 'modules'));
@@ -478,10 +399,8 @@ if ($do =='install') {
 		}
 		cache_build_module_subscribe_type();
 		cache_build_account_modules();
-		cache_build_uninstalled_module();
 		cache_build_module_info($module_name);
-		header('Location: ' . url('module/manage-system/install_success', array('account_type' => ACCOUNT_TYPE)));
-		exit;
+		itoast('模块成功！', url('module/manage-system/install_success', array('account_type' => ACCOUNT_TYPE)), 'success');
 	} else {
 		itoast('模块安装失败, 请联系模块开发者！');
 	}
@@ -503,23 +422,21 @@ if ($do == 'change_receive_ban') {
 	}
 	setting_save($_W['setting']['module_receive_ban'], 'module_receive_ban');
 	cache_build_module_subscribe_type();
+	cache_build_module_info($module_name);
 	iajax(0, '');
 }
 
 if ($do == 'save_module_info') {
-	$module_info = $_GPC['moduleinfo'];
-	$type = trim($_GPC['type']);
-
 	$module_name = trim($_GPC['modulename']);
 	if (empty($module_name)) {
 		iajax(1, '数据非法');
 	}
-
 	$module = module_fetch($module_name);
 	if (empty($module)) {
 		iajax(1, '数据非法');
 	}
-
+	$module_info_type = key($_GPC['moduleinfo']);
+	
 	$module_icon_map = array(
 		'logo' => array(
 			'filename' => 'icon-custom.jpg',
@@ -531,21 +448,20 @@ if ($do == 'save_module_info') {
 		),
 	);
 	$module_field = array('title', 'ability', 'description');
-	if (!in_array($type, array_keys($module_icon_map)) && !in_array($type, $module_field)) {
+	if (!isset($module_icon_map[$module_info_type]) && !in_array($module_info_type, $module_field)) {
 		iajax(1, '数据非法');
 	}
-
-	if (in_array($type, $module_field)) {
-		$module_update = array($type => trim($module_info[$type]));
-		if ($type == 'title') {
-			$module_update['title_initial'] = get_first_pinyin($module_info['title']);
+	if (in_array($module_info_type, $module_field)) {
+		$module_update = array($module_info_type => trim($_GPC['moduleinfo'][$module_info_type]));
+		if ($module_info_type == 'title') {
+			$module_update['title_initial'] = get_first_pinyin($_GPC['moduleinfo']['title']);
 		}
 		$result =  pdo_update('modules', $module_update, array('name' => $module_name));
 	} else {
-		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$type]['filename'];
-		$result = utility_image_rename($module_icon_map[$type]['url'], $image_destination_url);
+		$image_destination_url = IA_ROOT . "/addons/" . $module_name . '/' . $module_icon_map[$module_info_type]['filename'];
+		$result = utility_image_rename($module_icon_map[$module_info_type]['url'], $image_destination_url);
 	}
-	cache_delete(cache_system_key("module_info:" . $module_name));
+	cache_build_module_info($module_name);
 	if (!empty($result)) {
 		iajax(0, '');
 	}
@@ -554,48 +470,29 @@ if ($do == 'save_module_info') {
 
 if ($do == 'module_detail') {
 	$_W['page']['title'] = '模块详情';
-	$uninstalled_module = module_get_all_unistalled('uninstalled');
-	$total_uninstalled = $uninstalled_module['module_count'];
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
-	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
+
 	$module_name = trim($_GPC['name']);
 	$module_info = module_fetch($module_name);
-	$cloud_module = cloud_m_query();
-	$module_info['cloud_mid'] = !empty($cloud_module[$module_name]) ?  $cloud_module[$module_name]['id'] : '';
-
-	if (!empty($module_info['is_relation'])) {
-		$type = intval($_GPC['type']);
-		switch ($type) {
-			case ACCOUNT_TYPE_OFFCIAL_NORMAL:
-			case ACCOUNT_TYPE_OFFCIAL_AUTH:
-				$module_info['relation_name'] = '小程序版';
-				$module_info['account_type'] = ACCOUNT_TYPE_APP_NORMAL;
-				$module_info['type'] = ACCOUNT_TYPE_APP_NORMAL;
-				break;
-			default:
-				$module_info['relation_name'] = '公众号版';
-				$module_info['account_type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
-				$module_info['type'] = ACCOUNT_TYPE_OFFCIAL_NORMAL;
-				break;
+	if (empty($module_info)) {
+		itoast('模块不存在或是已经被删除', '', 'error');
+	}
+	
+	$current_cloud_module = cloud_m_info($module_name);
+	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
+	
+	//计算此模块除了当前支持，还支持哪些
+	foreach ($module_info as $key => $value) {
+		if ($key != $account_base->typeSign . '_support' && strexists($key, '_support') && $value == MODULE_SUPPORT_ACCOUNT) {
+			$module_info['relation'][] = $key;
 		}
 	}
-	if (file_exists(IA_ROOT.'/addons/'.$module_info['name'].'/preview-custom.jpg')) {
-		$module_info['preview'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/preview-custom.jpg');
-	} else {
-		$module_info['preview'] = tomedia(IA_ROOT.'/addons/'.$module_info['name'].'/preview.jpg');
-	}
+	
 	if (!empty($module_info['main_module'])) {
 		$main_module = module_fetch($module_info['main_module']);
 	}
 	if (!empty($module_info['plugin_list'])) {
-		foreach ($module_info['plugin_list'] as $key => &$plugin) {
-			$plugin = module_fetch($plugin);
-			if (empty($plugin)) {
-				unset($module_info['plugin'][$name]);
-			}
-		}
+		$module_info['plugin_list'] = module_get_plugin_list($module_name);
 	}
-	unset($plugin);
 	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0));
 	$module_group = array();
 	if (!empty($module_group_list)) {
@@ -606,154 +503,102 @@ if ($do == 'module_detail') {
 			}
 		}
 	}
-
-	//模块订阅消息
-	$module_subscribes = array();
-	$module['subscribes'] = iunserializer($module_info['subscribes']);
-	if (!empty($module['subscribes'])) {
-		foreach ($module['subscribes'] as $event) {
-			if ($event == 'text' || $event == 'enter') {
-				continue;
-			}
-			$module_subscribes = $module['subscribes'];
-		}
-	}
-	$mtypes = ext_module_msg_types();
-	$module_ban = $_W['setting']['module_receive_ban'];
-	if (!is_array($module_ban)) {
-		$module_ban = array();
-	}
-	$receive_ban = in_array($module_info['name'], $module_ban) ? 1 : 0;
-	$modulename = $_GPC['modulename'];
-
-
-	//验证订阅消息是否成功
-
-	//可以使用此模块的公众号
-	$pageindex = max(1, $_GPC['page']);
-	$pagesize = 20;
-	$use_module_account = array();
-	/*	$uniaccount_list = pdo_getall('uni_account');
-		if (!empty($uniaccount_list)) {
-			foreach($uniaccount_list as $uniaccount) {
-				$uniaccount_have_module = pdo_getall('uni_account_modules', array('uniacid' => $_W['uniacid']), array(), 'module');
-				$uniaccount_have_module = array_keys($uniaccount_have_module);
-				if (in_array($module_info['name'], $uniaccount_have_module)) {
-					$uniaccount_info = account_fetch($uniaccount['default_acid']);
-					$use_module_account[] = $uniaccount_info;
-				}
-			}
-		}
-	*/
-	$total = count($use_module_account);
-	$use_module_account = array_slice($use_module_account, ($pageindex - 1) * $pagesize, $pagesize);
-	$pager = pagination($total, $pageindex, $pagesize);
+	$subscribes_type = ext_module_msg_types();
 }
 
+//卸载模块
 if ($do == 'uninstall') {
-	$name = trim($_GPC['name']);
-	$module = module_fetch($name);
-
-	if (!empty($module['plugin_list']) && empty($_GPC['confirm'])) {
-		$plugin_list = module_get_plugin_list($module['name']);
-		$message = '';
-		if (!empty($plugin_list) && is_array($plugin_list)) {
-			$message .= '删除' . $module['title'] . '并删除' . $module['title'] .  '包含插件<ul>';
-			foreach ($plugin_list as $plugin) {
-				$message .= "<li>{$plugin['title']}</li>";
-			}
-			unset($plugin);
-			$message .= '<a class="btn btn-primary" href="' . url('module/manage-system/uninstall', array('confirm' => 1, 'name' => $name)) . '">停用模块及插件</a></ul>';
-		}
-		if (!empty($message)) {
-			itoast($message, '', 'tips');
-		}
+	if (empty($_W['isfounder'])) {
+		return error(1, '您没有卸载模块的权限！');
 	}
-
-	$cloudapi = new CloudApi();
-	$recycle_module = $cloudapi->post('cache', 'get', array('key' => cache_system_key('recycle_module:')));
-	$recycle_module = !empty($recycle_module['data']) ? $recycle_module['data'] : array();
-	if (!empty($module['plugin_list']) && is_array($module['plugin_list'])) {
-		foreach ($module['plugin_list'] as $plugin) {
-			pdo_insert('modules_recycle', array('modulename' => $plugin));
-			cache_build_module_info($plugin);
-			$recycle_module[$plugin] = $plugin;
-		}
-	}
-	pdo_insert('modules_recycle', array('modulename' => $name));
-	$recycle_module[$name] = array('modulename' => $name);
-	$cloudapi->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_module));
-
-	cache_build_module_subscribe_type();
-	cache_build_uninstalled_module();
-	cache_build_module_info($name);
-	itoast('模块已放入回收站！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
-}
-
-if ($do == 'recycle_uninstall') {
 	$name = trim($_GPC['module_name']);
-	$module = pdo_get('modules', array('name' => $name));
-	$module['plugin_list'] = pdo_getall('modules_plugin', array('main_module' => $name));
-
+	$module = module_fetch($name, false);
+	if (empty($module)) {
+		itoast('应用不存在或是已经卸载！', referer(), 'success');
+	}
 	if (!isset($_GPC['confirm'])) {
 		$message = '';
 		if ($module['isrulefields']) {
-			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/recycle_uninstall', array('module_name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/recycle_uninstall', array('account_type' => ACCOUNT_TYPE, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
+			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/uninstall', array('module_name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/uninstall', array('account_type' => ACCOUNT_TYPE, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
 		}
 		if (!empty($message)) {
-			itoast($message, '', 'tips');
+			message($message, '', 'tips');
 		}
 	}
-	module_uninstall($name, $_GPC['confirm']);
-	$uninstall_result = module_execute_uninstall_script($name);
-	if (is_error($uninstall_result)) {
-		itoast($uninstall_result['message'], url('module/manage-system'), 'error');
-	}
-	itoast('模块已卸载！', url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
+	ext_module_uninstall($name, $_GPC['confirm']);
+	ext_execute_uninstall_script($name);
+	
+	itoast('模块已卸载！', url('module/manage-system/installed', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
-if ($do == 'uninstalled_recycle') {
+//删除未安装模块
+if ($do == 'recycle_post') {
 	$name = trim($_GPC['module_name']);
-	$opt = intval($_GPC['opt']);
-	if (!empty($_GPC['type']) && intval($_GPC['type']) == 9) {
-		$type = intval($_GPC['type']);
+	if (empty($name)) {
+		itoast('应用不存在或是已经被删除', referer(), 'error');
+	}
+	$module = module_fetch($name);
+	$module_recycle = module_recycle_fetch($name);
+
+	//如果模块已经安装，则先标记删除，在停用中显示 
+	//如果模块未安装或是卸载，则标记删除，在回收站中显示 
+	if (!empty($module)) {
+		if (empty($module_recycle)) {
+			$msg = '模块已停用!';
+			table('modules_recycle')->fill(array('name' => $name, 'type' => 1))->save();
+		} else {
+			$msg = '模块已已恢复!';
+			table('modules_recycle')->deleteByName($name);
+		}
 	} else {
-		$type = intval($_GPC['account_type']);
+		if (empty($module_recycle)) {
+			$msg = '模块已放入回收站!';
+			table('modules_recycle')->fill(array('name' => $name, 'type' => 2))->save();
+		} else {
+			$msg = '模块已已恢复!';
+			table('modules_recycle')->deleteByName($name);
+		}
 	}
-	if ($opt == 0) {
-		$msg = '模块已放入回收站!';
-		pdo_insert('modules_recycle', array('modulename' => $name, 'type' => $type));
-	} elseif ($opt == 1) {
-		$msg = '模块已已恢复!';
-		pdo_delete('modules_recycle', array('modulename' => $name, 'type' => $type));
+	itoast($msg, referer(), 'success');
+}
+
+if ($do == 'recycle') {
+	$type = intval($_GPC['type']);
+	
+	if ($type == MODULE_RECYCLE_INSTALL_DISABLED) {
+		$_W['page']['title'] = '已停用模块列表';
+	} else {
+		$_W['page']['title'] = '模块回收站';
 	}
-	itoast($msg, url('module/manage-system', array('account_type' => ACCOUNT_TYPE)), 'success');
+	
+	$pageindex = max($_GPC['page'], 1);
+	$pagesize = 20;
+	
+	$module_recycle_talbe = table('modules_recycle');
+	$module_recycle_talbe->searchWithPage($pageindex, $pagesize)->where('type', $type);
+	
+	$modulelist = $module_recycle_talbe->getall('name');
+	if (!empty($modulelist)) {
+		foreach ($modulelist as $modulename => &$module) {
+			$module = module_fetch($modulename, false);
+			if (empty($module)) {
+				$module = table('modules_cloud')->getByName($modulename);
+			}
+		}
+		unset($module);
+		$pager = pagination($module_recycle_talbe->getLastQueryTotal(), $pageindex, $pagesize);
+	}
+	
+	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
 }
 
 if ($do == 'installed') {
 	$_W['page']['title'] = '应用列表';
-	if (!empty($_GPC['system_welcome'])) {
-		$uninstall_modules = module_get_all_unistalled('uninstalled', true, 'system_welcome');
-		$uninstall_modules = module_get_all_uninstalled($status, 'system_welcome');
-	} else {
-		$uninstall_modules = module_get_all_unistalled('uninstalled');
-		$uninstall_modules = module_get_all_uninstalled($status);
-	}
-	$total_uninstalled = $uninstall_modules['module_count'];
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
-	$total_uninstalled_recycle = count($recycle_modules);
-	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules);
-
-	$pageindex = max($_GPC['page'], 1);
-	$pagesize = 20;
-	$letter = $_GPC['letter'];
-	$title = $_GPC['title'];
-	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
-	$module_list = $all_modules = user_modules($_W['uid']);
-	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
+	
+	$module_list = module_installed_list($account_base->typeSign);
 	if (!empty($module_list)) {
 		foreach ($module_list as $key => &$module) {
-			if (!empty($module['issystem']) || (empty($_GPC['system_welcome']) && ((ACCOUNT_TYPE == ACCOUNT_TYPE_APP_NORMAL && $module['wxapp_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_OFFCIAL_NORMAL && $module['app_support'] != 2) || (ACCOUNT_TYPE == ACCOUNT_TYPE_WEBAPP_NORMAL && $module['webapp_support'] != MODULE_SUPPORT_WEBAPP) || (ACCOUNT_TYPE == ACCOUNT_TYPE_PHONEAPP_NORMAL && $module['phoneapp_support'] != MODULE_SUPPORT_PHONEAPP))) || (!empty($_GPC['system_welcome']) && $module['welcome_support'] != 2)) {
+			if (!empty($module['issystem'])) {
 				unset($module_list[$key]);
 			}
 			if (!empty($letter) && strlen($letter) == 1) {
@@ -761,248 +606,44 @@ if ($do == 'installed') {
 					unset($module_list[$key]);
 				}
 			}
-			$new_branch_module = $upgrade_modules[$module['name']]['new_branch'];
-			$upgrade_branch_module = $upgrade_modules[$module['name']]['upgrade_branch'];
-			if ($new_branch_module || $upgrade_branch_module) {
-				$module_list[$module['name']]['upgrade'] = $upgrade_modules[$module['name']]['upgrade'];
-				$module_list[$module['name']]['new_branch'] = $upgrade_modules[$module['name']]['new_branch'];
-				$module_list[$module['name']]['upgrade_branch'] = $upgrade_modules[$module['name']]['upgrade_branch'];
-				$module_list[$module['name']]['from'] = $upgrade_modules[$module['name']]['from'];
-			}
-			if (!empty($title) && !strexists($module['title'], $title)) {
-				unset($module_list[$key]);
-			}
+			
 		}
 		unset($module);
 	}
-	$total = count($module_list);
-	if ($total > 0){
-		$module_list = array_slice($module_list, ($pageindex - 1) * $pagesize, $pagesize);
-	}
-	$pager = pagination($total, $pageindex, $pagesize);
+	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
 }
-
-if ($do == 'founder_update_modules') {
-	$pageindex = intval($_GPC['page']);
-	load()->classs('cloudapi');
-	$cloud_api = new CloudApi();
-	$module_table = table('module');
-	$all_modules = $module_table->getModulesList();
-	$installed_module = $module_table->getInstalledModuleList();
-	$recycle_modules = $cloud_api->post('cache', 'get', array('key' => cache_system_key('recycle_module:')));
-	$recycle_modules = !empty($recycle_modules['data']) ? $recycle_modules['data'] : array();
-	if (empty($recycle_modules)) {
-		$recycle_modules = $module_table->getModuleRecycle();
-		$cloud_api->post('cache', 'set', array('key' => cache_system_key('recycle_module:'), 'value' => $recycle_modules));
-	}
-	$bought_module = cloud_m_bought();
-	$bought_count_page = ceil(count($bought_module) / 5);
-	$cloud_bought_module = array_slice($bought_module, $pageindex * 5, 5);
-	$cloud_module = cloud_m_query($cloud_bought_module);
-	unset($cloud_module['pirate_apps']);
-	pdo_delete('modules_local', array('name' => $cloud_bought_module));
-	if (!empty($installed_module) && is_array($installed_module)) {
-		foreach ($installed_module as &$value) {
-			$value['phoneapp_support'] = !empty($value['phoneapp_support']) ? $value['phoneapp_support'] : 1;
-		}
-		unset($value);
-	}
-
-	if (!empty($cloud_module) && !is_error($cloud_module)) {
-		foreach ($cloud_module as $module) {
-			$upgrade_support_module = false;
-			$wxapp_support = !empty($module['site_branch']['wxapp_support']) && is_array($module['site_branch']['bought']) && in_array('wxapp', $module['site_branch']['bought']) ? $module['site_branch']['wxapp_support'] : 1;
-			$app_support = !empty($module['site_branch']['app_support']) && is_array($module['site_branch']['bought']) && in_array('app', $module['site_branch']['bought']) ? $module['site_branch']['app_support'] : 1;
-			$webapp_support = !empty($module['site_branch']['webapp_support']) && is_array($module['site_branch']['bought']) && in_array('webapp', $module['site_branch']['bought']) ? $module['site_branch']['webapp_support'] : MODULE_NOSUPPORT_WEBAPP;
-			$welcome_support = !empty($module['site_branch']['system_welcome_support']) && is_array($module['site_branch']['bought']) && in_array('system_welcome', $module['site_branch']['bought']) ? $module['site_branch']['system_welcome_support'] : MODULE_NONSUPPORT_SYSTEMWELCOME;
-			$andriod_support = !empty($module['site_branch']['andriod_support']) && is_array($module['site_branch']['bought']) && in_array('andriod', $module['site_branch']['bought']) ? $module['site_branch']['andriod_support'] : MODULE_NOSUPPORT_ANDROID;
-			$ios_support = !empty($module['site_branch']['ios_support']) && is_array($module['site_branch']['bought']) && in_array('ios', $module['site_branch']['bought']) ? $module['site_branch']['ios_support'] : MODULE_NOSUPPORT_IOS;
-			$phoneapp_support = ($andriod_support == MODULE_SUPPORT_ANDROID || $ios_support == MODULE_SUPPORT_IOS) ? MODULE_SUPPORT_PHONEAPP : MODULE_NOSUPPORT_PHONEAPP;
-
-			if ($wxapp_support ==  MODULE_NONSUPPORT_WXAPP && $app_support == MODULE_NONSUPPORT_ACCOUNT && $webapp_support == MODULE_NOSUPPORT_WEBAPP && $welcome_support == MODULE_NONSUPPORT_SYSTEMWELCOME && $phoneapp_support == MODULE_NOSUPPORT_PHONEAPP) {
-				$app_support = MODULE_SUPPORT_ACCOUNT;
-			}
-			if (!empty($installed_module[$module['name']]) && ($installed_module[$module['name']]['app_support'] != $app_support || $installed_module[$module['name']]['wxapp_support'] != $wxapp_support || $installed_module[$module['name']]['webapp_support'] != $webapp_support || $installed_module[$module['name']]['welcome_support'] != $welcome_support || $installed_module[$module['name']]['phoneapp_support'] != $phoneapp_support)) {
-				$upgrade_support_module = true;
-			}
-
-			$module_info = $installed_module[$module['name']];
-			if (!empty($module_info)) {
-				$site_branch = $module['site_branch']['id'];
-				$site_branch = !empty($site_branch) ? $site_branch : $module['branch'];
-				$cloud_branch_version = $module['branches'][$site_branch]['version'];
-				$upgrade_branch = false;
-				$is_upgrade = false;
-				$has_new_branch = false;
-				if (!empty($module['branches'])) {
-					$best_branch_id = 0;
-					foreach ($module['branches'] as $branch) {
-						if (empty($branch['status']) || empty($branch['show'])) {
-							continue;
-						}
-						if ($best_branch_id == 0) {
-							$best_branch_id = $branch['id'];
-						} else {
-							if ($branch['displayorder'] > $module['branches'][$best_branch_id]['displayorder']) {
-								$best_branch_id = $branch['id'];
-							}
-						}
-					}
-				} else {
-					$is_upgrade = false;
-					continue;
-				}
-				$best_branch = $module['branches'][$best_branch_id];
-				if (($module['displayorder'] < $best_branch['displayorder'] && !empty($module['version'])) || (!empty($module_info['site_branch_id']) && $cloud_m_info['site_branch']['id'] > $module_info['site_branch_id'])){
-					$has_new_branch = true;
-				} else {
-					$has_new_branch = false;
-				}
-				if (version_compare($module_info['version'], $cloud_branch_version) == -1) {
-					$is_upgrade = true;
-				} else {
-					$is_upgrade = false;
-				}
-			}
-			$module_local = array(
-				'mid' => $all_modules[$module['name']]['mid'],
-				'name' => $module['name'],
-				'title' => $module['title'],
-				'version' => $module['version'],
-				'has_new_branch' => $has_new_branch,
-				'is_installed' => 1,
-				'is_upgrade' => $is_upgrade,
-				'wxapp_support' => $wxapp_support,
-				'app_support' => $app_support,
-				'webapp_support' => $webapp_support,
-				'android_support' => $android_support,
-				'ios_support' => $ios_support,
-				'phoneapp_support' => $phoneapp_support,
-				'welcome_support' => $welcome_support,
-				'upgrade_support' => $upgrade_support_module,
-				'upgrade_branch' => $upgrade_branch
-			);
-			if (in_array($module['name'], array_keys($installed_module))) {
-				$module_local['status'] = 'installed';
-			}
-			if (!in_array($module['name'], array_keys($installed_module)) || $upgrade_support_module) {
-				if (!empty($recycle_modules[$module['name']])) {
-					$status = 'recycle';
-				}
-				if (empty($all_modules[$module['name']]['mid'])) {
-					$status = 'uninstalled';
-				}
-				if (!empty($module['id'])) {
-					$module_local['status'] = $status;
-				}
-			}
-			$arr[] = $module_local;
-			pdo_insert('modules_local', $module_local);
-		}
-	}
-	iajax(0, array('page' => ++$pageindex, 'total' => $bought_count_page, 'module' => $arr), '');
-}
-
 
 if ($do == 'not_installed') {
-	if (empty($_W['isfounder'])) {
-		itoast('非法访问！', referer(), 'info');
-	}
-	$_W['page']['title'] = '安装模块 - 模块 - 扩展';
-	$status = $_GPC['status'] == 'recycle' ? 'recycle' : ($_GPC['status'] == 'uninstalled_recycle' ? 'uninstalled_recycle' : 'uninstalled');
-	$letters = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
-	$title = $_GPC['title'];
-	$letter = $_GPC['letter'];
-
+	$_W['page']['title'] = '安装模块';
+	
+	$title = safe_gpc_string($_GPC['title']);
+	$letter = safe_gpc_string($_GPC['letter']);
+	
+	//本地模块更新至modules_cloud表
+	cache_build_uninstalled_module();
+	
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
-
-	if (!empty($_GPC['system_welcome'])) {
-		$uninstall_modules = module_get_all_unistalled($status, false, 'system_welcome');
-		$uninstall_modules = module_get_all_uninstalled($status, 'system_welcome');
-	} else {
-		$uninstall_modules = module_get_all_unistalled($status, false);
+	
+	$module_cloud_talbe = table('modules_cloud');
+	$module_cloud_talbe->searchWithoutRecycle();
+	$module_cloud_talbe->searchWithPage($pageindex, $pagesize);
+	
+	if (!empty($title)) {
+		$module_cloud_talbe->where('a.title LIKE', "%{$title}%");
 	}
-
-	$total_uninstalled = $uninstall_modules['module_count'];
-	$uninstall_modules = (array)$uninstall_modules['modules'];
-
-	$recycle_modules = array_keys(pdo_getall('modules_recycle', array('type' => $type), 'modulename', 'modulename'));
-	$total_uninstalled_recycle = count($recycle_modules);
-	$total_uninstalled = recount_total_uninstalled($uninstall_modules, $recycle_modules, $status);
-
-	if (!empty($uninstall_modules)) {
-		foreach($uninstall_modules as $name => &$module) {
-			$module['is_delete'] = in_array($module['name'], $recycle_modules) ? true : false;
-			if (!empty($letter) && strlen($letter) == 1) {
-				$first_char = get_first_pinyin($module['title']);
-				if ($letter != $first_char) {
-					unset($uninstall_modules[$name]);
-					continue;
-				}
-			}
-			if (!empty($title)) {
-				if (!strexists($module['title'], $title)) {
-					unset($uninstall_modules[$name]);
-					continue;
-				}
-			}
-			if (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg')) {
-				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon-custom.jpg');
-			} elseif (file_exists(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg')) {
-				$module['logo'] = tomedia(IA_ROOT.'/addons/'.$module['name'].'/icon.jpg');
-			} else {
-				$module['logo'] = tomedia($module['thumb']);
-			}
-			if (!empty($module['main_module'])) {
-				$main_module_installed = module_fetch($module['main_module']);
-				if ($main_module_installed) {
-					$module['main_module_logo'] = $main_module_installed['logo'];
-				} else {
-					if ($module['from'] == 'cloud') {
-						$module['main_module_logo'] = tomedia($uninstall_modules[$module['main_module']]['thumb']);
-					} else {
-						if (file_exists(IA_ROOT.'/addons/'.$module['main_module'].'/icon-custom.jpg')) {
-							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['main_module'].'/icon-custom.jpg');
-						} elseif (file_exists(IA_ROOT.'/addons/'.$module['main_module'].'/icon.jpg')) {
-							$module['main_module_logo'] = tomedia(IA_ROOT.'/addons/'.$module['main_module'].'/icon.jpg');
-						}
-					}
-				}
-			}
-		}
+	if (!empty($letter) && strlen($letter) == 1) {
+		$module_cloud_talbe->where('a.title_initial', $letter);
 	}
-	$total = count($uninstall_modules);
-	$uninstall_modules = array_slice($uninstall_modules, ($pageindex - 1)*$pagesize, $pagesize);
+	$module_cloud_talbe->where('a.install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL));
+	$module_cloud_talbe->where("a.{$account_base->typeSign}_support", MODULE_SUPPORT_ACCOUNT);
+	$module_cloud_talbe->orderby('a.install_status', 'asc');
+	
+	$modulelist = $module_cloud_talbe->getall('name');
 
-	$pager = pagination($total, $pageindex, $pagesize);
-}
-
-if ($do == 'filter') {
-	$pageindex = max($_GPC['pageindex'], 1);
-	$pagesize = 20;
-	$condition = $_GPC['condition'];
-	$module_list  = user_modules($_W['uid']);
-	$upgrade_modules = module_filter_upgrade(array_keys($module_list));
-	$modules = array();
-	if (!empty($module_list) && is_array($module_list)) {
-		$empty_condition = empty($condition['new_branch']) && empty($condition['upgrade_branch']);
-		foreach ($module_list as $module) {
-			$new_branch_module = !empty($condition['new_branch']) && $upgrade_modules[$module['name']]['new_branch'];
-			$upgrade_branch_module = !empty($condition['upgrade_branch']) && $upgrade_modules[$module['name']]['upgrade_branch'];
-			if (($empty_condition && $module['issystem'] != 1) || $new_branch_module || $upgrade_branch_module) {
-				$modules[$module['name']] = $module;
-				$modules[$module['name']]['upgrade'] = $upgrade_modules[$module['name']]['upgrade'];
-				$modules[$module['name']]['new_branch'] = $upgrade_modules[$module['name']]['new_branch'];
-				$modules[$module['name']]['upgrade_branch'] = $upgrade_modules[$module['name']]['upgrade_branch'];
-				$modules[$module['name']]['from'] = $upgrade_modules[$module['name']]['from'];
-			}
-		}
-	}
-	$total = count($modules);
-	$modules = array_slice($modules, ($pageindex - 1) * $pagesize, $pagesize);
-	$pager = pagination($total, $pageindex, $pagesize, '', array('before' => 5, 'after' => 4,'ajaxcallback' => true, 'callbackfuncname' => 'filter'));
-	iajax(0, array('modules' => $modules, 'pager' => $pager));
+	$pager = pagination($module_cloud_talbe->getLastQueryTotal(), $pageindex, $pagesize);
+	
+	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
 }
 
 template('module/manage-system' . ACCOUNT_TYPE_TEMPLATE);

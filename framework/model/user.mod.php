@@ -456,16 +456,16 @@ function user_modules($uid = 0) {
 	global $_W;
 	load()->model('module');
 
+	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
 
-	$modules =cache_load(cache_system_key('user_modules:' . $uid));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
-		if (empty($uid)  || user_is_founder($uid) && !user_is_vice_founder($uid)) {
+		if (empty($uid) || user_is_founder($uid) && !user_is_vice_founder($uid)) {
 			$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
 		} elseif (!empty($user_info) && $user_info['type'] == ACCOUNT_OPERATE_CLERK) {
 			$clerk_module = pdo_fetch("SELECT p.type FROM " . tablename('users_permission') . " p LEFT JOIN " . tablename('uni_account_users') . " u ON p.uid = u.uid AND p.uniacid = u.uniacid WHERE u.role = :role AND p.uid = :uid", array(':role' => ACCOUNT_MANAGE_NAME_CLERK, ':uid' => $uid));
@@ -503,8 +503,7 @@ function user_modules($uid = 0) {
 						}
 					}
 				}
-				$module_table = table('module');
-				$module_list = $module_table->moduleLists($package_group_module);
+				$module_list = table('modules')->getByNameList($package_group_module);
 			}
 		}
 		$module_list = array_keys($module_list);
@@ -532,12 +531,13 @@ function user_modules($uid = 0) {
 				}
 			}
 		}
-		cache_write(cache_system_key('user_modules:' . $uid), $modules);
+		cache_write(cache_system_key('user_modules', array('uid' => $uid)), $modules);
 	}
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
 			$module_info = module_fetch($module);
+			if ($module_info['welcome_support'] == 2 && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
 			if (!empty($module_info)) {
 				$module_list[$module] = $module_info;
 			}
@@ -637,34 +637,6 @@ function user_login_forward($forward = '') {
 	}
 
 	return $login_forward;
-}
-
-/**
- * 获取公众号所有应用或者小程序所有应用
- * @param string $type 模块类型(account/wxapp)
- * @return array $modules 模块信息
- */
-function user_module_by_account_type($type) {
-	global $_W;
-	$module_list = user_modules($_W['uid']);
-	if (!empty($module_list)) {
-		foreach ($module_list as $key => &$module) {
-			if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon')) {
-				unset($module_list[$key]);
-			}
-			if ($module['wxapp_support'] != 2 && $type == 'wxapp') {
-				unset($module_list[$key]);
-			}
-			if ($module['app_support'] != 2 && $type == 'account') {
-				unset($module_list[$key]);
-			}
-			if ($module['webapp_support'] != MODULE_SUPPORT_WEBAPP && $type == 'webapp') {
-				unset($module_list[$key]);
-			}
-		}
-		unset($module);
-	}
-	return $module_list;
 }
 
 function user_invite_register_url($uid = 0) {

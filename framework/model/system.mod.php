@@ -10,6 +10,7 @@ defined('IN_IA') or exit('Access Denied');
  */
 function system_menu_permission_list($role = '') {
 	global $_W;
+	$system_menu = cache_load(cache_system_key('system_frame'));
 	$system_menu = cache_load(cache_system_key('system_frame:' . $_W['uid']));
 	if(empty($system_menu)) {
 		cache_build_frame_menu();

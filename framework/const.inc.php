@@ -50,6 +50,8 @@ define('WXAPP_TYPE_SIGN', 'wxapp');
 define('WEBAPP_TYPE_SIGN', 'webapp');
 //APP
 define('PHONEAPP_TYPE_SIGN', 'phoneapp');
+//欢迎页
+define('WELCOMESYSTEM_TYPE_SIGN', 'welcome');
 
 
 //授权登录接入
@@ -167,6 +169,27 @@ define('MODULE_SUPPORT_ANDROID', 2);
 //是否支持ios 不支持1 支持2
 define('MODULE_NOSUPPORT_IOS', 1);
 define('MODULE_SUPPORT_IOS', 2);
+
+define('MODULE_SUPPORT_WXAPP_NAME', 'wxapp_support');
+define('MODULE_SUPPORT_ACCOUNT_NAME', 'account_support');
+define('MODULE_SUPPORT_WEBAPP_NAME', 'webapp_support');
+define('MODULE_SUPPORT_PHONEAPP_NAME', 'phoneapp_support');
+define('MODULE_SUPPORT_SYSTEMWELCOME_NAME', 'welcome_support');
+
+//模块安装来源
+//本地安装 
+define('MODULE_LOCAL_INSTALL', '1');
+//本地未安装
+define('MODULE_LOCAL_UNINSTALL', '2');
+//线上安装
+define('MODULE_CLOUD_INSTALL', '3');
+//线上未安装 
+define('MODULE_CLOUD_UNINSTALL', '4');
+//模块卸载类型 
+//停用已安装
+define('MODULE_RECYCLE_INSTALL_DISABLED', '1');
+//忽略未安装
+define('MODULE_RECYCLE_UNINSTALL_IGNORE', '2');
 
 //权限类型
 define('PERMISSION_ACCOUNT', 'system');

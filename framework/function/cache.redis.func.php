@@ -104,11 +104,25 @@ function cache_delete($key){
 	if (is_error($redis)) {
 		return $redis;
 	}
-	if($redis->delete(cache_prefix($key))) {
-		unset($GLOBALS['_W']['cache'][$key]);
-		return true;
+
+	$cache_relation_keys = cache_relation_keys($key);
+	if (is_error($cache_relation_keys)) {
+		return $cache_relation_keys;
 	}
-	return false;
+	if (is_array($cache_relation_keys) && !empty($cache_relation_keys)) {
+		foreach ($cache_relation_keys as $key) {
+			$cache_info = cache_load($key);
+			if (!empty($cache_info)) {
+				$result = $redis->delete(cache_prefix($key));
+				if ($result) {
+					unset($GLOBALS['_W']['cache'][$key]);
+				} else {
+					return error(1, '缓存：' . $key . ' 删除失败！');
+				}
+			}
+		}
+	}
+	return true;
 }
 
 /**
