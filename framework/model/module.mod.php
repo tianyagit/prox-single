@@ -380,8 +380,6 @@ function module_fetch($name, $enabled = true) {
 		cache_write($cachekey, $module_info);
 	}
 	
-	unset($module[MODULE_SUPPORT_ACCOUNT_NAME]);
-	
 	//增加开启参数，可以获取放入回收站的模块
 	if (!empty($enabled)) {
 		$module_is_delete = table('modules_recycle')->getByName($name);

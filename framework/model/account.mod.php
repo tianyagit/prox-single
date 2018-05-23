@@ -207,7 +207,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	load()->model('user');
 	load()->model('module');
 	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled));
-	//$modules = cache_load($cachekey);
+	$modules = cache_load($cachekey);
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
@@ -253,7 +253,6 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
 	}
-
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
