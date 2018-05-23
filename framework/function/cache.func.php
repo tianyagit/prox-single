@@ -96,7 +96,7 @@ function cache_system_key($cache_key, $params = array()) {
 			if (count($key_params[1]) != count($val_params[1])) {
 				foreach ($key_params[1] as $val) {
 					if (in_array($val, array_keys($cache_key_all['common_params']))) {
-						return str_replace('%' . $val, $cache_key_all['common_params'][$val], $cache_key_all['caches'][$key]['key']);
+						return 'we7:' . str_replace('%' . $val, $cache_key_all['common_params'][$val], $cache_key_all['caches'][$key]['key']);
 					}
 				}
 				return error(3, $key . ' 缓存参数不正确');
