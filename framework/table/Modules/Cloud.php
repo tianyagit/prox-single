@@ -23,6 +23,7 @@ class Cloud extends \We7Table {
 		'main_module_logo',
 		'has_new_version',
 		'has_new_branch',
+		'is_ban',
 		'lastupdatetime',
 	);
 	protected $default = array(
@@ -41,6 +42,7 @@ class Cloud extends \We7Table {
 		'main_module_logo' => '',
 		'has_new_version' => 0,
 		'has_new_branch' => 0,
+		'is_ban' => 0,
 		'lastupdatetime' => 0,
 	);
 	

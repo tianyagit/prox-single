@@ -477,59 +477,25 @@ function module_get_plugin_list($module_name) {
  */
 function module_status($module) {
 	load()->model('cloud');
-	$module_status = array('upgrade' => array('upgrade' => 0), 'ban' => 0);
+	$result = array(
+		'upgrade' => array(
+			'has_upgrade' => false,
+		), 
+		'ban' => false,
+	);
 
-	$cloud_m_query = cloud_m_query($module);
-	$cloud_m_query['pirate_apps'] = is_array($cloud_m_query['pirate_apps']) ? $cloud_m_query['pirate_apps'] : array();
-	$module_status['ban'] = in_array($module, $cloud_m_query['pirate_apps']) ? 1 : 0;
-
-	$cloud_m_info = cloud_m_info($module);
-	$module_info = module_fetch($module);
-	if (!empty($cloud_m_info) && !empty($cloud_m_info['version']['version'])) {
-		if (version_compare($module_info['version'], $cloud_m_info['version']['version'])) {
-			$module_status['upgrade'] = array('name' => $module_info['title'], 'version' => $cloud_m_info['version']['version'], 'upgrade' => 1);
-		}
-	} else {
-		$manifest = ext_module_manifest($module);
-		if (!empty($manifest)) {
-			if (version_compare($module_info['version'], $manifest['application']['version'])) {
-				$module_status['upgrade'] = array('name' => $module_info['title'], 'version' => $manifest['application']['version'], 'upgrade' => 1);
-			}
-		}
+	$module_cloud_info = table('modules_cloud')->getByName($module);
+	if (!empty($module_cloud_info['has_new_version']) || !empty($module_cloud_info['has_new_branch'])) {
+		$result['upgrade'] = array(
+			'has_upgrade' => true,
+			'name' => $module_cloud_info['title'],
+			'version' => $module_cloud_info['version'],
+		);
 	}
-
-	$cache_build_module = false;
-	$module_ban_setting = setting_load('module_ban');
-	$module_ban_setting = is_array($module_ban_setting['module_ban']) ? $module_ban_setting['module_ban'] : array();
-	if (!in_array($module, $module_ban_setting) && !empty($module_status['ban'])) {
-		$module_ban_setting[] = $module;
-		$cache_build_module = true;
-		setting_save($module_ban_setting, 'module_ban');
+	if (!empty($module_cloud_info['is_ban'])) {
+		$result['ban'] = true;
 	}
-	if (in_array($module, $module_ban_setting) && empty($module_status['ban'])) {
-		$key = array_search($module, $module_ban_setting);
-		unset($module_ban_setting[$key]);
-		$cache_build_module = true;
-		setting_save($module_ban_setting, 'module_ban');
-	}
-
-	$module_upgrade_setting = setting_load('module_upgrade');
-	$module_upgrade_setting = is_array($module_upgrade_setting['module_upgrade']) ? $module_upgrade_setting['module_upgrade'] : array();
-	if (!in_array($module, array_keys($module_upgrade_setting)) && !empty($module_status['upgrade']['upgrade'])) {
-		$module_upgrade_setting[$module] = $module_status['upgrade'];
-		$cache_build_module = true;
-		setting_save($module_upgrade_setting, 'module_upgrade');
-	}
-	if (in_array($module, array_keys($module_upgrade_setting)) && empty($module_status['upgrade']['upgrade'])) {
-		unset($module_upgrade_setting[$module]);
-		$cache_build_module = true;
-		setting_save($module_upgrade_setting, 'module_upgrade');
-	}
-
-	if ($cache_build_module) {
-		cache_build_module_info($module);
-	}
-	return $module_status;
+	return $result;
 }
 
 /**
@@ -898,6 +864,8 @@ function module_upgrade_info($modulelist = array()) {
 	cloud_prepare();
 	//$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
 	$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
+	$pirate_apps = $cloud_m_query_module['pirate_apps'];
+	
 	unset($cloud_m_query_module['pirate_apps']);
 	
 	foreach ($modulelist as $modulename => $module) {
@@ -912,6 +880,9 @@ function module_upgrade_info($modulelist = array()) {
 			'has_new_branch' => 0,
 		);
 	
+		if (in_array($modulename, $pirate_apps)) {
+			$module_upgrade_data['is_ban'] = 1;
+		}
 		$manifest = ext_module_manifest($modulename);
 		
 		if (!empty($manifest)) {

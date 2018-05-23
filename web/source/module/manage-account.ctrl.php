@@ -21,18 +21,22 @@ $modulelist = uni_modules(false);
 //检测模块更新和是否盗版
 if ($do == 'check_status') {
 	$modulename = $_GPC['module'];
-	if (!empty($modulename)) {
-		$module_status = module_status($modulename);
-		if (!empty($module_status)) {
-			isetcookie('module_status:' . $modulename, json_encode($module_status));
-		}
-		if ($module_status['ban']) {
-			iajax(1, '您的站点存在盗版模块, 请删除文件后联系客服');
-		}
-		if ($module_status['upgrade']['upgrade']) {
-			iajax(2, $module_status['upgrade']['name'] . '检测最新版为' . $module_status['upgrade']['version'] . '，请尽快更新');
-		}
+	
+	if (empty($modulename)) {
+		iajax(0, '', '');
 	}
+	
+	$module_status = module_status($modulename);
+	if (!empty($module_status)) {
+		isetcookie('module_status:' . $modulename, json_encode($module_status));
+	}
+	if ($module_status['ban']) {
+		iajax(1, '您的站点存在盗版模块, 请删除文件后联系客服');
+	}
+	if ($module_status['upgrade']['has_upgrade']) {
+		iajax(2, $module_status['upgrade']['name'] . '检测最新版为' . $module_status['upgrade']['version'] . '，请尽快更新');
+	}
+	
 	iajax(0, '', '');
 }
 
