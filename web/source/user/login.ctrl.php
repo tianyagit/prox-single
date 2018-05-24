@@ -71,6 +71,11 @@ function _login($forward = '') {
 			}
 		}
 
+		if (($_GPC['login_type'] == 'qq' || $_GPC['login_type'] == 'wechat') && !empty($_W['setting']['copyright']['oauth_bind']) && !$record['is_bind'] && empty($_W['isfounder']) && ($record['register_type'] == USER_REGISTER_TYPE_QQ || $record['register_type'] == USER_REGISTER_TYPE_WECHAT)) {
+			message('您还没有注册微擎账号，请前往注册', url('user/third-bind/bind_oauth', array('uid' => $record['uid'], 'type' => $record['type'])));
+			exit;
+		}
+
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
 			itoast('站点已关闭，关闭原因:'. $_W['setting']['copyright']['reason'], '', '');
 		}
