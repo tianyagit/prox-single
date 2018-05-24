@@ -96,6 +96,20 @@
 				</label>
 			</div>
 		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label" style="text-align:left;">第三方登录绑定</label>
+			<div class="col-sm-8 form-control-static">
+				<input type="radio" name="oauth_bind" id="oauth_bind-1" value="1" {if $settings['oauth_bind'] == 1}checked{/if} />
+				<label class="radio-inline" for="oauth_bind-1">
+					是
+				</label>
+				<input type="radio" name="oauth_bind" id="oauth_bind-0" value="0"  {if $settings['oauth_bind'] == 0}checked{/if}/>
+				<label class="radio-inline" for="oauth_bind-0">
+					否
+				</label>
+				<div class="help-block">用户使用微信或者ＱＱ等第三方登录后，是否强制用户注册绑定信息</div>
+			</div>
+		</div>
 
 		<div class="form-group">
 			<label class="col-sm-2 control-label" style="text-align:left;">用户首页设置</label>
