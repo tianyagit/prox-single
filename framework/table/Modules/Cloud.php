@@ -96,9 +96,9 @@ class Cloud extends \We7Table {
 	}
 	
 	public function getUninstallModule() {
-		return $this->query->where(function ($query){
-			$query->where('install_status', MODULE_LOCAL_UNINSTALL)->whereor('install_status', MODULE_CLOUD_UNINSTALL);
-		})->orderby('lastupdatetime', 'desc')->getall('name');
+		return $this->searchWithoutRecycle()->where(function ($query){
+			$query->where('a.install_status', MODULE_LOCAL_UNINSTALL)->whereor('a.install_status', MODULE_CLOUD_UNINSTALL);
+		})->orderby('a.lastupdatetime', 'desc')->getall('a.name');
 	}
 	
 	public function getUpgradeTotalBySupportType($support) {
