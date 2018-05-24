@@ -39,7 +39,6 @@ if ($do == 'copyright') {
 	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		$template_ch_name = system_template_ch_name();
 	}
-
 	/* sxend */
 	if (checksubmit('submit')) {
 		/* sxstart */
