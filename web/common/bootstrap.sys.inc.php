@@ -43,41 +43,15 @@ if (!empty($_GPC['__uniacid'])) {
 	$_W['uniacid'] = uni_account_last_switch();
 }
 
-if (!empty($_W['uniacid'])) {
-	$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
-	if (empty($_W['account'])) {
-		unset($_W['uniacid']);
-	}
-	$_W['acid'] = $_W['account']['acid'];
-	$_W['weid'] = $_W['uniacid'];
-}
-
 if (!empty($_W['uid'])) {
 	$_W['highest_role'] = permission_account_user_role($_W['uid']);
 	$_W['role'] = permission_account_user_role($_W['uid'], $_W['uniacid']);
 
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
-		if (empty($_W['isfounder']) || user_is_vice_founder()) {
-			if (!empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
-				$_W['role'] = ACCOUNT_MANAGE_NAME_EXPIRED;
-			}
-		}
+	if ((empty($_W['isfounder']) || user_is_vice_founder()) && !empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
+		$_W['role'] = ACCOUNT_MANAGE_NAME_EXPIRED;
 	}
-	/* xend */
-
-	/* svstart */
-	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
-		if (empty($_W['isfounder'])) {
-			if (!empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
-				$_W['role'] = ACCOUNT_MANAGE_NAME_EXPIRED;
-			}
-		}
-	}
-	/* svend */
 }
 
 $_W['template'] = !empty($_W['setting']['basic']['template']) ? $_W['setting']['basic']['template'] : 'default';
-$_W['template'] = 'default';
 $_W['attachurl'] = attachment_set_attach_url();
 load()->func('compat.biz');

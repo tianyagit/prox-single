@@ -11,7 +11,7 @@ if (in_array($action, array('permission', 'default-entry', 'manage-account'))) {
 	if (empty($_GPC['version_id']) && intval($referer['version_id']) > 0) {
 		itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
 	}
-	$account_api = WeAccount::create();
+	$account_api = WeAccount::createByUniacid($_W['uniacid']);
 	if (is_error($account_api)) {
 		itoast('', url('module/display'));
 	}

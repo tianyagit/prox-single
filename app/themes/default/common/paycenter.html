@@ -395,10 +395,12 @@
 				return false;
 			});
 		{if $pay['mix']['switch'] && $credtis[$setting['creditbehaviors']['currency']] > 0 && $credtis[$setting['creditbehaviors']['currency']] < $params['fee']}
+		var price = parseFloat($('.js-need-pay').data('price'));
+		var currency = parseFloat("{$credtis[$setting['creditbehaviors']['currency']]}");
 		$(function() {
 			$('[name="mix_pay"]').val(true);
 			$('.credit').hide();
-			fee = $('.js-need-pay').data('price') - "{$credtis[$setting['creditbehaviors']['currency']]}";
+			fee = (price * 100 - currency * 100)/100;
 			$('.js-need-pay').data('price', fee);
 			$('.js-need-pay').html(fee + '元');
 		})
@@ -406,11 +408,11 @@
 		$('[name="mix"]').click(function() {
 			if ($(this).prop('checked') === true) {
 				$('[name="mix_pay"]').val(true);
-				fee = $('.js-need-pay').data('price') - "{!empty($credtis[$setting['creditbehaviors']['currency']]) ? $credtis[$setting['creditbehaviors']['currency']] : 0}";
+				fee = (price * 100 - currency * 100)/100;
 				$('.credit').hide();
 			} else {
 				$('[name="mix_pay"]').val(false);
-				fee = parseFloat($('.js-need-pay').data('price')) + parseFloat("{!empty($credtis[$setting['creditbehaviors']['currency']]) ? $credtis[$setting['creditbehaviors']['currency']] : 0}");
+				fee = (price * 100 - currency * 100)/100;
 				$('.credit').show();
 			}
 			$('.js-need-pay').data('price', fee);

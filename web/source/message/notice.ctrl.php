@@ -18,21 +18,9 @@ if (in_array($do, array('display', 'all_read'))) {
 		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE);
 	}
 
-	/* xstart */
-	if (IMS_FAMILY == 'x') {
-		if (empty($type) && (!user_is_founder($_W['uid']) || user_is_vice_founder())){
-			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
-		}
+	if (empty($type) && (!user_is_founder($_W['uid']) || user_is_vice_founder())){
+		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
 	}
-	/* xend */
-
-	/* svstart */
-	if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
-		if (empty($type) && !user_is_founder($_W['uid'])){
-			$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
-		}
-	}
-	/* svend */
 }
 
 if ($do == 'display') {
