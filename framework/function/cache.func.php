@@ -332,16 +332,6 @@ function cache_key_all() {
 				'group' => '',
 			),
 
-			'all_cloud_upgrade_module' => array(
-				'key' => 'all_cloud_upgrade_module:',
-				'group' => '',
-			),
-
-			'module_all_uninstall' => array(
-				'key' => 'module:all_uninstall',
-				'group' => '',
-			),
-
 			'sync_fans_pindex' => array(
 				'key' => 'sync_fans_pindex:%uniacid',
 				'group' => '',
