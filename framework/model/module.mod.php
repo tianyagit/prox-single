@@ -361,7 +361,7 @@ function module_fetch($name, $enabled = true) {
 		if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT && $module_info['wxapp_support'] != MODULE_SUPPORT_WXAPP && $module_info['webapp_support'] != MODULE_SUPPORT_WEBAPP && $module_info['welcome_support'] != MODULE_SUPPORT_SYSTEMWELCOME) {
 			$module_info[MODULE_SUPPORT_ACCOUNT_NAME] = MODULE_SUPPORT_ACCOUNT;
 		}
-		
+
 		$module_receive_ban = (array)setting_load('module_receive_ban');
 		if (in_array($name, $module_receive_ban['module_receive_ban'])) {
 			$module_info['is_receive_ban'] = true;
@@ -371,7 +371,7 @@ function module_fetch($name, $enabled = true) {
 		if (in_array($name, $module_ban['module_ban'])) {
 			$module_info['is_ban'] = true;
 		}
-		
+
 		$module_upgrade = (array)setting_load('module_upgrade');
 		if (in_array($name, array_keys($module_upgrade['module_upgrade']))) {
 			$module_info['is_upgrade'] = true;
@@ -379,7 +379,7 @@ function module_fetch($name, $enabled = true) {
 		$module = $module_info;
 		cache_write($cachekey, $module_info);
 	}
-	
+
 	//增加开启参数，可以获取放入回收站的模块
 	if (!empty($enabled)) {
 		$module_is_delete = table('modules_recycle')->getByName($name);
@@ -480,7 +480,7 @@ function module_status($module) {
 	$result = array(
 		'upgrade' => array(
 			'has_upgrade' => false,
-		), 
+		),
 		'ban' => false,
 	);
 
@@ -751,19 +751,19 @@ function module_installed_list($type = '') {
 	}
 	//根据模块类型分类
 	$module_support_type = module_support_type();
-	
+
 	foreach ($user_has_module as $modulename => $module) {
 		if ((!empty($module['issystem']) && $module['name'] != 'we7_coupon')) {
 			continue;
 		}
 		foreach ($module_support_type as $support_name => $support) {
-			
+
 			if ($module[$support_name] == $support['support']) {
 				$module_list[$support['type']][$modulename] = $module;
 			}
 		}
 	}
-	
+
 	if (!empty($type)) {
 		return $module_list[$type];
 	} else {
@@ -788,7 +788,7 @@ function module_uninstall_total($type) {
 	if (!isset($type_list["{$type}_support"])) {
 		return 0;
 	}
-	
+
 	$total = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
 	return $total;
 }
@@ -808,7 +808,7 @@ function module_upgrade_list() {
 	if (empty($upgrade_modules)) {
 		return $result;
 	}
-	
+
 	$modules_ignore = table('modules_ignore')->where('name', array_keys($upgrade_modules))->getall('name');
 	foreach ($upgrade_modules as $modulename => &$module) {
 		if (!empty($modules_ignore[$modulename])) {
@@ -842,42 +842,42 @@ function module_upgrade_total($type) {
 function module_upgrade_info($modulelist = array()) {
 	load()->model('cloud');
 	load()->model('extension');
-	
+
 	$result = array();
-	
+
 	//没有指定查询模块列表，则获取全部模块查询
 	if (empty($modulelist)) {
 		$modulelist = table('modules')->searchWithType('system', '<>')->getall('name');
 	}
-	
+
 	if (empty($modulelist)) {
 		return array();
 	}
-	
+
 	cloud_prepare();
 	$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
 	//$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
 	$pirate_apps = $cloud_m_query_module['pirate_apps'];
-	
+
 	unset($cloud_m_query_module['pirate_apps']);
-	
+
 	foreach ($modulelist as $modulename => $module) {
 		if (!empty($module['issystem'])) {
 			unset($modulelist[$modulename]);
 			continue;
 		}
-	
+
 		$module_upgrade_data = array(
 			'name' => $modulename,
 			'has_new_version' => 0,
 			'has_new_branch' => 0,
 		);
-	
+
 		if (in_array($modulename, $pirate_apps)) {
 			$module_upgrade_data['is_ban'] = 1;
 		}
 		$manifest = ext_module_manifest($modulename);
-		
+
 		if (!empty($manifest)) {
 			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
 		} elseif ($cloud_m_query_module[$modulename]) {
@@ -913,19 +913,19 @@ function module_upgrade_info($modulelist = array()) {
 			}
 			$manifest['branches'] = !empty($manifest_cloud['branches']);
 		} else {
-			//本地已安装没有manifest也没有cloud信息，默认为本地安装 
+			//本地已安装没有manifest也没有cloud信息，默认为本地安装
 			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
 		}
-		
+
 		$module_upgrade_data['logo'] = $manifest['application']['logo'];
 		$module_upgrade_data['version'] = $manifest['application']['version'];
 		$module_upgrade_data['title'] = $manifest['application']['name'];
 		$module_upgrade_data['title_initial'] = get_first_pinyin($manifest_cloud['title']);
-		
+
 		//云服务模块已在本地安装，unset后方便后面排查未安装模块
 		//云上模块，如果在本地有manifest.xml，以本地模块为主
 		unset($cloud_m_query_module[$modulename]);
-		
+
 		if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
 			$module_upgrade_data['has_new_version'] = 1;
 			$module_upgrade_data['lastupdatetime'] = TIMESTAMP;
@@ -935,12 +935,12 @@ function module_upgrade_info($modulelist = array()) {
 				'best_version' => $manifest['application']['version'],
 			);
 		}
-		
+
 		//本地已安装，没有更新的模块不入表，防止无用数据太多
 		if ($module_upgrade_data['install_status'] == MODULE_LOCAL_INSTALL && empty($module_upgrade_data['has_new_version'])) {
 			continue;
 		}
-		
+
 		if (!empty($manifest['branches'])) {
 			$module_upgrade_data['has_new_branch'] = 1;
 			$result[$modulename]['new_branch'] = 1;
@@ -957,14 +957,14 @@ function module_upgrade_info($modulelist = array()) {
 			}
 		}
 		$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
-		
+
 		if (empty($module_cloud_upgrade)) {
 			table('modules_cloud')->fill($module_upgrade_data)->save();
 		} else {
 			table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
 		}
 	}
-		
+
 	if (!empty($cloud_m_query_module)) {
 		foreach ($cloud_m_query_module as $modulename => $module) {
 			$module_upgrade_data = array(

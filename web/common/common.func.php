@@ -150,6 +150,10 @@ function checklogin() {
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
+	//特定的控制器减少数据获取，减少出错的概率
+	if ($_GPC['c'] == 'cloud' && $_GPC['a'] == 'process') {
+		return array();
+	}
 	if (!empty($GLOBALS['frames']) && !empty($_GPC['m'])) {
 		$frames = array();
 		$globals_frames = (array)$GLOBALS['frames'];

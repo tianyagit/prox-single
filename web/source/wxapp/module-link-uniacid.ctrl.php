@@ -36,8 +36,9 @@ if ($do == 'module_link_uniacid') {
 		$module_update = array();
 		$module_update[$module['name']] = array('name' => $module['name'], 'version' => $module['version'], 'uniacid' => $uniacid);
 		pdo_update('wxapp_versions', array('modules' => serialize($module_update)), array('id' => $version_id));
+		uni_passive_link_uniacid($uniacid, $module_name);
 		cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
-		iajax(0, '关联公众号成功');
+		iajax(0, '关联成功');
 	}
 	if (!empty($version_info['modules'])) {
 		foreach ($version_info['modules'] as &$module_value) {

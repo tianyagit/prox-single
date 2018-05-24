@@ -25,7 +25,7 @@ if ($do == 'module_link_uniacid') {
 
 		$account_module = pdo_get('uni_account_modules', array('module' => $module_name, 'uniacid' => $_W['uniacid']), array('id', 'settings'));
 		if (!empty($account_module)) {
-			$settings = iunserializer($account_module['settings']);
+			$settings = (array)iunserializer($account_module['settings']);
 			$settings['link_uniacid'] = $uniacid;
 			pdo_update('uni_account_modules', array('settings' => iserializer($settings)), array('id' => $account_module['id']));
 		} else {
@@ -38,8 +38,9 @@ if ($do == 'module_link_uniacid') {
 			);
 			pdo_insert('uni_account_modules', $data);
 		}
+		uni_passive_link_uniacid($uniacid, $module_name);
 		cache_build_module_info($module_name);
-		iajax(0, '关联公众号成功');
+		iajax(0, '关联成功');
 	}
 
 	$modules = uni_modules();
@@ -53,16 +54,11 @@ if ($do == 'module_link_uniacid') {
 			$modules[$key]['link_uniacid_info'] = uni_fetch($value['config']['link_uniacid']);
 			continue;
 		}
-		$link_uniacid_info = $module_table->moduleLinkUniacidInfo($value['name']);
-		if (empty($link_uniacid_info)) {
-			continue;
-		}
-		foreach ($link_uniacid_info as $info) {
-			if ($info['settings']['link_uniacid'] == $_W['uniacid']) {
-				$modules[$key]['other_link'] = uni_fetch($info['uniacid']);
-			}
+		if (!empty($value['config']['passive_link_uniacid'])) {
+			$modules[$key]['other_link'] = uni_fetch($info['uniacid']);
 		}
 	}
+
 	template('profile/module-link-uniacid');
 }
 
