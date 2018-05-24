@@ -391,9 +391,7 @@ function cloud_m_build($modulename, $type = '') {
 function cloud_m_query($module = array()) {
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.query';
-	if (empty($module)) {
-		$pars['module'] = cloud_extra_module();
-	} else {
+	if (!empty($module)) {
 		if (!is_array($module)) {
 			$module = array($module);
 		}

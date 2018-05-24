@@ -32,7 +32,11 @@ function cache_build_account_modules($uniacid = 0, $uid = 0) {
 	if (empty($uniacid)) {
 		//以前缀的形式删除缓存
 		cache_clean(cache_system_key('unimodules'));
-		cache_clean(cache_system_key('user_modules'));
+		if (!empty($uid)) {
+			cache_delete(cache_system_key('user_modules', array('uid' => $uid)));
+		} else {
+			cache_clean(cache_system_key('user_modules'));
+		}
 	} else {
 		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => 1)));
 		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => '')));
