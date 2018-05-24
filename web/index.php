@@ -71,7 +71,7 @@ if (is_file($init)) {
 	require $init;
 }
 
-if (!(defined('FRAME') && (in_array(FRAME, array('site', 'system'))))) {
+if (!(defined('FRAME') && in_array(FRAME, array('site', 'system')))) {
 	if (!empty($_W['uniacid'])) {
 		$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
 		if (empty($_W['account'])) {
