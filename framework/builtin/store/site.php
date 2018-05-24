@@ -631,7 +631,7 @@ class StoreModuleSite extends WeModuleSite {
 			$store_orderid = pdo_insertid();
 
 			$type_name = $this->getTypeName($goods_info['type']);
-			$content = $_W['user']['username'] . date("Y-m-d H:i:s") . '在商城购买了' . $type_name . ', 支付金额' . $order['amount'];
+			$content = $_W['user']['username'] . date("Y-m-d H:i:s") . '在商城订购了' . $type_name . ', 商品金额　' . $order['amount'];
 			message_notice_record($content, $_W['uid'], $orderid, MESSAGE_ORDER_TYPE);
 
 			$pay_log = array(
