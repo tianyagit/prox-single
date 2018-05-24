@@ -845,25 +845,56 @@ function module_upgrade_info($modulelist = array()) {
 
 	$result = array();
 
-	//没有指定查询模块列表，则获取全部模块查询
-	if (empty($modulelist)) {
-		$modulelist = table('modules')->searchWithType('system', '<>')->getall('name');
-	}
-
-	if (empty($modulelist)) {
-		return array();
-	}
-
 	cloud_prepare();
-	$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
+	$cloud_m_query_module = cloud_m_query();
 	if (is_error($cloud_m_query_module)) {
 		return array();
 	}
 	//$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
 	$pirate_apps = $cloud_m_query_module['pirate_apps'];
-
 	unset($cloud_m_query_module['pirate_apps']);
 
+	//按照本地manifest整理接口数据 
+	$manifest_cloud_list = array();
+	foreach ($cloud_m_query_module as $modulename => $manifest_cloud) {
+		$manifest = array(
+			'application' => array(
+				'name' => $modulename,
+				'title' => $manifest_cloud['title'],
+				'version' => $manifest_cloud['version'],
+				'logo' => $manifest_cloud['thumb'],
+				'version' => $manifest_cloud['version'],
+				'last_upgrade_time' => $manifest_cloud['last_upgrade_time'],
+			),
+			'platform' => array(
+				'supports' => array()
+			),
+		);
+
+		if ($manifest_cloud['site_branch']['app_support'] == MODULE_SUPPORT_ACCOUNT) {
+			$manifest['platform']['supports'][] = 'account';
+		}
+		if ($manifest_cloud['site_branch']['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+			$manifest['platform']['supports'][] = 'wxapp';
+		}
+		if ($manifest_cloud['site_branch']['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
+			$manifest['platform']['supports'][] = 'webapp';
+		}
+		if ($manifest_cloud['site_branch']['android_support'] == MODULE_SUPPORT_PHONEAPP ||
+			$manifest_cloud['site_branch']['ios_aupport'] == MODULE_SUPPORT_PHONEAPP) {
+			$manifest['platform']['supports'][] = 'phoneapp';
+		}
+		if ($manifest_cloud['site_branch']['system_welcome_support'] == MODULE_SUPPORT_SYSTEMWELCOME) {
+			$manifest['platform']['supports'][] = 'welcome';
+		}
+		$manifest['branches'] = !empty($manifest_cloud['branches']);
+		$manifest_cloud_list[$modulename] = $manifest;
+	}
+	
+	//没有指定查询模块列表，则获取全部模块查询
+	if (empty($modulelist)) {
+		$modulelist = table('modules')->searchWithType('system', '<>')->getall('name');
+	}
 	foreach ($modulelist as $modulename => $module) {
 		if (!empty($module['issystem'])) {
 			unset($modulelist[$modulename]);
@@ -883,38 +914,9 @@ function module_upgrade_info($modulelist = array()) {
 
 		if (!empty($manifest)) {
 			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
-		} elseif ($cloud_m_query_module[$modulename]) {
+		} elseif ($manifest_cloud_list[$modulename]) {
 			$module_upgrade_data['install_status'] = MODULE_CLOUD_INSTALL;
-			$manifest_cloud = $cloud_m_query_module[$modulename];
-			$manifest = array(
-				'application' => array(
-					'name' => $modulename,
-					'title' => $manifest_cloud['title'],
-					'version' => $manifest_cloud['version'],
-					'logo' => $manifest_cloud['thumb'],
-					'version' => $manifest_cloud['version'],
-				),
-				'platform' => array(
-					'supports' => array()
-				),
-			);
-			if ($manifest_cloud['site_branch']['app_aupport'] == MODULE_SUPPORT_ACCOUNT) {
-				$manifest['platform']['supports'][] = 'app';
-			}
-			if ($manifest_cloud['site_branch']['wxapp_aupport'] == MODULE_SUPPORT_WXAPP) {
-				$manifest['platform']['supports'][] = 'wxapp';
-			}
-			if ($manifest_cloud['site_branch']['webapp_aupport'] == MODULE_SUPPORT_WEBAPP) {
-				$manifest['platform']['supports'][] = 'webapp';
-			}
-			if ($manifest_cloud['site_branch']['android_aupport'] == MODULE_SUPPORT_PHONEAPP ||
-				$manifest_cloud['site_branch']['ios_aupport'] == MODULE_SUPPORT_PHONEAPP) {
-				$manifest['platform']['supports'][] = 'phoneapp';
-			}
-			if ($manifest_cloud['site_branch']['system_welcome_support'] == MODULE_SUPPORT_SYSTEMWELCOME) {
-				$manifest['platform']['supports'][] = 'system_welcome';
-			}
-			$manifest['branches'] = !empty($manifest_cloud['branches']);
+			$manifest = $manifest_cloud_list[$modulename];
 		} else {
 			//本地已安装没有manifest也没有cloud信息，默认为本地安装
 			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
@@ -927,7 +929,7 @@ function module_upgrade_info($modulelist = array()) {
 
 		//云服务模块已在本地安装，unset后方便后面排查未安装模块
 		//云上模块，如果在本地有manifest.xml，以本地模块为主
-		unset($cloud_m_query_module[$modulename]);
+		unset($manifest_cloud_list[$modulename]);
 
 		if (version_compare($module['version'], $manifest['application']['version']) == '-1') {
 			$module_upgrade_data['has_new_version'] = 1;
@@ -948,56 +950,54 @@ function module_upgrade_info($modulelist = array()) {
 			$module_upgrade_data['has_new_branch'] = 1;
 			$result[$modulename]['new_branch'] = 1;
 		}
+		
 		if (!empty($manifest['platform']['supports'])) {
-			foreach (array('app', 'wxapp', 'webapp', 'phoneapp', 'system_welcome') as $support) {
+			foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome') as $support) {
 				if (in_array($support, $manifest['platform']['supports'])) {
-					//纠正支持类型名字，统一
-					if ($support == 'app') {
-						$support = 'account';
-					}
 					$module_upgrade_data["{$support}_support"] = MODULE_SUPPORT_ACCOUNT;
+				} else {
+					$module_upgrade_data["{$support}_support"] = MODULE_NONSUPPORT_ACCOUNT;
 				}
 			}
 		}
+		
 		$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
-
+		
 		if (empty($module_cloud_upgrade)) {
-			table('modules_cloud')->fill($module_upgrade_data)->save();
+			pdo_insert('modules_cloud', $module_upgrade_data);
 		} else {
-			table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
+			pdo_update('modules_cloud', $module_upgrade_data, array('name' => $modulename));
 		}
 	}
 
-	if (!empty($cloud_m_query_module)) {
-		foreach ($cloud_m_query_module as $modulename => $module) {
+	if (!empty($manifest_cloud_list)) {
+		foreach ($manifest_cloud_list as $modulename => $manifest) {
 			$module_upgrade_data = array(
 				'name' => $modulename,
 				'has_new_version' => 0,
 				'has_new_branch' => 0,
 				'install_status' => MODULE_CLOUD_UNINSTALL,
-				'logo' => $module['thumb'],
-				'version' => $module['version'],
-				'title' => $module['title'],
-				'title_initial' => get_first_pinyin($module['title']),
-				'lastupdatetime' => $module['last_upgrade_time'],
+				'logo' => $manifest['application']['logo'],
+				'version' => $manifest['application']['version'],
+				'title' => $manifest['application']['title'],
+				'title_initial' => get_first_pinyin($manifest['application']['title']),
+				'lastupdatetime' => $manifest['application']['last_upgrade_time'],
 			);
-			foreach (array('app', 'wxapp', 'webapp', 'ios', 'android', 'system_welcome') as $support) {
-				if ($module['site_branch']["{$support}_support"] == MODULE_SUPPORT_ACCOUNT) {
-					//纠正支持类型名字，统一
-					if ($support == 'app') {
-						$support = 'account';
+			if (!empty($manifest['platform']['supports'])) {
+				foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome') as $support) {
+					if (in_array($support, $manifest['platform']['supports'])) {
+						$module_upgrade_data["{$support}_support"] = MODULE_SUPPORT_ACCOUNT;
+					} else {
+						$module_upgrade_data["{$support}_support"] = MODULE_NONSUPPORT_ACCOUNT;
 					}
-					if ($support == 'ios' || $support == 'android') {
-						$support = 'phoneapp';
-					}
-					$module_upgrade_data["{$support}_support"] = MODULE_SUPPORT_ACCOUNT;
 				}
 			}
+			
 			$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
 			if (empty($module_cloud_upgrade)) {
-				table('modules_cloud')->fill($module_upgrade_data)->save();
+				pdo_insert('modules_cloud', $module_upgrade_data);
 			} else {
-				table('modules_cloud')->fill($module_upgrade_data)->where('name', $modulename)->save();
+				pdo_update('modules_cloud', $module_upgrade_data, array('name' => $modulename));
 			}
 		}
 	}
