@@ -12,7 +12,7 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
 						<div class="num">
-							<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 1))}" class="color-default">{{module_statistics.account.total.uninstall}}</a>
+							<a href="{php echo url('module/manage-system/not_installed', array('support' => MODULE_SUPPORT_ACCOUNT_NAME))}" class="color-default">{{module_statistics.account.total.uninstall}}</a>
 						</div>
 					</div>
 					<div class="col-sm-4 text-center">
@@ -24,7 +24,7 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
 						<div class="num">
-							<a href="{php echo url('module/manage-system/installed', array('account_type' => 1))}" class="color-default">{{module_statistics.account.total.all}}</a>
+							<a href="{php echo url('module/manage-system/installed', array('support' => MODULE_SUPPORT_ACCOUNT_NAME))}" class="color-default">{{module_statistics.account.total.all}}</a>
 						</div>
 					</div>
 				</div>
@@ -37,7 +37,7 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">未安装应用</div>
 						<div class="num">
-							<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" class="color-default">{{module_statistics.wxapp.total.uninstall}}</a>
+							<a href="{php echo url('module/manage-system/not_installed', array('support' => MODULE_SUPPORT_WXAPP_NAME))}" class="color-default">{{module_statistics.wxapp.total.uninstall}}</a>
 						</div>
 					</div>
 					<div class="col-sm-4 text-center">
@@ -49,7 +49,7 @@
 					<div class="col-sm-4 text-center">
 						<div class="title">应用总数</div>
 						<div class="num">
-							<a href="{php echo url('module/manage-system/installed', array('account_type' => 4))}" class="color-default">{{module_statistics.wxapp.total.all}}</a>
+							<a href="{php echo url('module/manage-system/installed', array('support' => MODULE_SUPPORT_WXAPP_NAME))}" class="color-default">{{module_statistics.wxapp.total.all}}</a>
 						</div>
 					</div>
 				</div>
@@ -102,9 +102,9 @@
 	<div class="panel we7-panel apply-list">
 		<div class="panel-heading">
 			<span class="pull-right">
-				<a href="{php echo url('module/manage-system', array('account_type' => 1))}" class="color-default">查看更多公众号应用</a>
+				<a href="{php echo url('module/manage-system', array('support' => MODULE_SUPPORT_ACCOUNT_NAME))}" class="color-default">查看更多公众号应用</a>
 				<span class="we7-padding-horizontal inline-block color-gray">|</span>
-				<a href="{php echo url('module/manage-system', array('account_type' => 4))}" class="color-default">查看更多小程序应用</a>
+				<a href="{php echo url('module/manage-system', array('support' => MODULE_SUPPORT_WXAPP_NAME))}" class="color-default">查看更多小程序应用</a>
 			</span>
 			可升级应用
 		</div>
@@ -123,9 +123,9 @@
 	<div class="panel we7-panel apply-list" ng-show="not_installed_show == 1">
 		<div class="panel-heading">
 			<span class="pull-right">
-				<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 1))}" class="color-default">查看更多公众号应用</a>
+				<a href="{php echo url('module/manage-system/not_installed', array('support' => MODULE_SUPPORT_ACCOUNT_NAME))}" class="color-default">查看更多公众号应用</a>
 				<span class="we7-padding-horizontal inline-block color-gray">|</span>
-				<a href="{php echo url('module/manage-system/not_installed', array('account_type' => 4))}" class="color-default">查看更多小程序应用</a>
+				<a href="{php echo url('module/manage-system/not_installed', array('support' => MODULE_SUPPORT_WXAPP_NAME))}" class="color-default">查看更多小程序应用</a>
 			</span>
 			未安装应用
 		</div>
