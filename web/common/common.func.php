@@ -611,6 +611,9 @@ function buildframes($framename = ''){
 
 function frames_top_menu($frames) {
 	global $_W, $top_nav;
+	if (empty($frames)) {
+		return array();
+	}
 	foreach ($frames as $menuid => $menu) {
 		/* svstart */
 		if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
