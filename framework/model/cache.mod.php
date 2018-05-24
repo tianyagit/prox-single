@@ -27,7 +27,7 @@ function cache_build_setting() {
  * 重建公众号下可使用的模块
  * @param int $uniacid 要重建模块的公众号uniacid
  */
-function cache_build_account_modules($uniacid = 0) {
+function cache_build_account_modules($uniacid = 0, $uid = 0) {
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
 		//以前缀的形式删除缓存
@@ -36,8 +36,10 @@ function cache_build_account_modules($uniacid = 0) {
 	} else {
 		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => 1)));
 		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => '')));
-		$owner_uid = table('account')->searchWithUniacid($uniacid)->searchWithRole('owner')->getOwnerUid();
-		cache_delete(cache_system_key('user_modules', array('uid' => $owner_uid)));
+		if (empty($uid)) {
+			$uid = table('account')->searchWithUniacid($uniacid)->searchWithRole('owner')->getOwnerUid();
+		}
+		cache_delete(cache_system_key('user_modules', array('uid' => $uid)));
 	}
 }
 

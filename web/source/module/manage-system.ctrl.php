@@ -398,7 +398,7 @@ if ($do =='install') {
 			}
 		}
 		cache_build_module_subscribe_type();
-		cache_build_account_modules();
+		cache_build_account_modules($_W['uniacid'], $_W['uid']);
 		cache_build_module_info($module_name);
 		itoast('模块成功！', url('module/manage-system/install_success', array('support' => $module_support_name)), 'success');
 	} else {
@@ -519,14 +519,17 @@ if ($do == 'uninstall') {
 	if (!isset($_GPC['confirm'])) {
 		$message = '';
 		if ($module['isrulefields']) {
-			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/uninstall', array('module_name' => $name, 'confirm' => 1)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/uninstall', array('support' => $module_support_name, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
+			$message .= '是否删除相关规则和统计分析数据<div><a class="btn btn-primary" style="width:80px;" href="' . url('module/manage-system/uninstall', array('module_name' => $name, 'confirm' => 1, 'support' => $module_support_name)) . '">是</a> &nbsp;&nbsp;<a class="btn btn-default" style="width:80px;" href="' . url('module/manage-system/uninstall', array('support' => $module_support_name, 'module_name' => $name, 'confirm' => 0)) . '">否</a></div>';
 		}
 		if (!empty($message)) {
 			message($message, '', 'tips');
 		}
 	}
 	ext_module_uninstall($name, $_GPC['confirm']);
-	ext_execute_uninstall_script($name);
+	
+	cache_build_account_modules($_W['uniacid'], $_W['uid']);
+	cache_build_module_subscribe_type();
+	cache_build_module_info($name);
 	
 	itoast('模块已卸载！', url('module/manage-system/installed', array('support' => $module_support_name)), 'success');
 }

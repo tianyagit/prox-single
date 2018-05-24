@@ -676,14 +676,9 @@ function ext_module_uninstall($modulename, $is_clean_rule = false) {
 	if (!empty($module['issystem'])) {
 		return error(1, '系统模块不能卸载！');
 	}
-
+	
 	ext_module_clean($modulename, $is_clean_rule);
-
-	cache_delete(cache_system_key('module_all_uninstall'));
-
-	cache_build_module_subscribe_type();
-	cache_build_module_info($modulename);
-
+	ext_execute_uninstall_script($modulename);
 	return true;
 }
 

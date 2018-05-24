@@ -176,20 +176,20 @@
 				{if permission_check_account_user('see_module_manage_system_install')}
 					{if $do == 'recycle'}
 						{if permission_check_account_user('see_module_manage_system_stop')}
-						<a href="{php echo url('module/manage-system/recycle_post', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}" class="btn btn-primary">恢复</a>
+						<a href="{php echo url('module/manage-system/recycle_post', array('support' => $module_support_name))}&module_name={{ module.name }}" class="btn btn-primary">恢复</a>
 						{/if}
 						{if $type == MODULE_RECYCLE_INSTALL_DISABLED}
-						<a href="{php echo url('module/manage-system/uninstall', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}" class="btn btn-warning" onclick="return confirm('确认卸载该应用吗？')">卸载</a>
+						<a href="{php echo url('module/manage-system/uninstall', array('support' => $module_support_name))}&module_name={{ module.name }}" class="btn btn-warning" onclick="return confirm('确认卸载该应用吗？')">卸载</a>
 						{/if}
 					{else}
-						<a href="{php echo url('module/manage-system/upgrade')}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">
+						<a href="{php echo url('module/manage-system/upgrade', array('support' => $module_support_name))}&module_name={{ module.name }}" ng-if="module.upgrade_support == true" class="btn btn-primary">
 						{if $_GPC['status'] == 'recycle'}启用{else}安装应用模块{/if}
 						</a>
-						<a href="{php echo url('module/manage-system/install')}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">
+						<a href="{php echo url('module/manage-system/install', array('support' => $module_support_name))}&module_name={{ module.name }}" ng-if="module.upgrade_support != true" class="btn btn-primary">
 							{if $_GPC['status'] == 'recycle'}启用{else}安装应用模块{/if}
 						</a>
 						{if permission_check_account_user('see_module_manage_system_stop')}
-						<a href="{php echo url('module/manage-system/recycle_post', array('account_type' => ACCOUNT_TYPE))}&module_name={{ module.name }}" class="btn btn-primary" onclick="return confirm('确认要将应用放入回收站吗？')">删除</a>
+						<a href="{php echo url('module/manage-system/recycle_post', array('support' => $module_support_name))}&module_name={{ module.name }}" class="btn btn-primary" onclick="return confirm('确认要将应用放入回收站吗？')">删除</a>
 						{/if}
 					{/if}
 				{/if}
@@ -689,7 +689,7 @@
 	</div>
 </div>
 <div class="we7-margin-bottom">
-	<a class="btn btn-primary" href="{php echo url('module/manage-system')}">返回已安装应用列表</a>
+	<a class="btn btn-primary" href="{php echo url('module/manage-system', array('support' => $module_support_name))}">返回已安装应用列表</a>
 </div>
 {/if}
 {template 'common/footer'}

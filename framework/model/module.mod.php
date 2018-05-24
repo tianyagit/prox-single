@@ -856,6 +856,9 @@ function module_upgrade_info($modulelist = array()) {
 
 	cloud_prepare();
 	$cloud_m_query_module = cloud_m_query($cloud_module_check_upgrade);
+	if (is_error($cloud_m_query_module)) {
+		return array();
+	}
 	//$cloud_m_query_module = include IA_ROOT . '/web/cloud.php';
 	$pirate_apps = $cloud_m_query_module['pirate_apps'];
 
@@ -873,7 +876,7 @@ function module_upgrade_info($modulelist = array()) {
 			'has_new_branch' => 0,
 		);
 
-		if (in_array($modulename, $pirate_apps)) {
+		if (!empty($pirate_apps) && in_array($modulename, $pirate_apps)) {
 			$module_upgrade_data['is_ban'] = 1;
 		}
 		$manifest = ext_module_manifest($modulename);
