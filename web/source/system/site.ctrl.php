@@ -13,7 +13,6 @@ $dos = array('copyright');
 $do = in_array($do, $dos) ? $do : 'copyright';
 $_W['page']['title'] = '站点设置 - 工具  - 系统管理';
 $settings = $_W['setting']['copyright'];
-
 if(empty($settings) || !is_array($settings)) {
 	$settings = array();
 } else {
@@ -40,6 +39,7 @@ if ($do == 'copyright') {
 	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		$template_ch_name = system_template_ch_name();
 	}
+
 	/* sxend */
 	if (checksubmit('submit')) {
 		/* sxstart */
@@ -77,7 +77,8 @@ if ($do == 'copyright') {
 				'develop_status' => intval($_GPC['develop_status']),
 				'icp' => safe_gpc_string($_GPC['icp']),
 				'bind' => $_GPC['bind'],
-				'welcome_link' => intval($_GPC['welcome_link'])
+				'welcome_link' => intval($_GPC['welcome_link']),
+				'oauth_bind' => intval($_GPC['oauth_bind']),
 			);
 		}
 		/* sxend */

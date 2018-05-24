@@ -62,10 +62,12 @@ function _login($forward = '') {
 		$_W['isfounder'] = user_is_founder($record['uid']);
 		$_W['user'] = $record;
 
-		if ($record['type'] == USER_REGISTER_TYPE_QQ || $record['type'] == USER_REGISTER_TYPE_WECHAT) {
-			if (!$record['is_bind'] && empty($_W['isfounder'])) {
-				message('您还没有注册微擎账号，请前往注册', url('user/third-bind/bind_oauth', array('uid' => $record['uid'], 'type' => $record['type'])));
-				exit;
+		if (!empty($_W['setting']['copyright']['oauth_bind'])) {
+			if ($record['register_type'] == USER_REGISTER_TYPE_QQ || $record['register_type'] == USER_REGISTER_TYPE_WECHAT) {
+				if (!$record['is_bind'] && empty($_W['isfounder'])) {
+					message('您还没有注册微擎账号，请前往注册', url('user/third-bind/bind_oauth', array('uid' => $record['uid'], 'type' => $record['type'])));
+					exit;
+				}
 			}
 		}
 
