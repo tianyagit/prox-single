@@ -41,7 +41,7 @@
 
 						<ul class="other nav navbar-nav navbar-left">
 							{loop $nav_top_tiled_other $nav}
-								<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
+								<li {if $nav['name'] == 'store'} class="active" {/if}>
 									<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}> {$nav['title']} </a>
 								</li>
 							{/loop}
@@ -175,7 +175,7 @@
 					{/loop}
 
 					{loop $nav_top_tiled_other $nav}
-						<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
+						<li {if $nav['name'] == 'store'} class="active" {/if}>
 							<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>
 							<i class="{$nav['icon']}"></i>{$nav['title']} </a>
 						</li>
@@ -339,7 +339,7 @@
 
 			<ul class="other nav navbar-nav navbar-left">
 				{loop $nav_top_tiled_other $nav}
-				<li {if FRAME == $nav['name'] && !defined('IN_MODULE')} class="active" {/if}>
+				<li {if $nav['name'] == 'store'} class="active" {/if}>
 				<a href="{if empty($nav['url'])}{php echo url('home/welcome/' . $nav['name']);}{else}{$nav['url']}{/if}" {if !empty($nav['blank'])}target="_blank"{/if}>{$nav['title']}</a>
 				</li>
 				{/loop}
