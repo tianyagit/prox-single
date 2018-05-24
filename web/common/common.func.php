@@ -150,10 +150,7 @@ function checklogin() {
 //新版buildframes
 function buildframes($framename = ''){
 	global $_W, $_GPC, $top_nav;
-	//特定的控制器减少数据获取，减少出错的概率
-	if ($_GPC['c'] == 'cloud' && $_GPC['a'] == 'process') {
-		return array();
-	}
+
 	if (!empty($GLOBALS['frames']) && !empty($_GPC['m'])) {
 		$frames = array();
 		$globals_frames = (array)$GLOBALS['frames'];
@@ -176,6 +173,11 @@ function buildframes($framename = ''){
 	$frames = cache_load(cache_system_key('system_frame'));
 	if(empty($frames)) {
 		$frames = cache_build_frame_menu();
+	}
+	//特定的控制器减少数据获取，减少出错的概率
+	if (defined('FRAME') && (in_array(FRAME, array('site', 'system')))) {
+		$frames = frames_top_menu($frames);
+		return $frames[FRAME];
 	}
 	//模块权限，创始人有所有模块权限
 	$modules = uni_modules(false);
@@ -603,6 +605,12 @@ function buildframes($framename = ''){
 			}
 		}
 	}
+	$frames = frames_top_menu($frames);
+	return !empty($framename) ? ($framename == 'system_welcome' ? $frames['account'] : $frames[$framename]) : $frames;
+}
+
+function frames_top_menu($frames) {
+	global $_W, $top_nav;
 	foreach ($frames as $menuid => $menu) {
 		/* svstart */
 		if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
@@ -632,7 +640,7 @@ function buildframes($framename = ''){
 			'is_display' => $menu['is_display'],
 		);
 	}
-	return !empty($framename) ? ($framename == 'system_welcome' ? $frames['account'] : $frames[$framename]) : $frames;
+	return $frames;
 }
 
 function system_modules() {
