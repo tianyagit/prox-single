@@ -623,8 +623,12 @@ if ($do == 'image') {
 	if (empty($uniacid)) {
 		$attachment_table->searchWithUid($_W['uid']);
 	}
-	if ($groupid >=0) {
+	if ($groupid > 0) {
 		$attachment_table->searchWithGroupId($groupid);
+	}
+
+	if ($groupid == 0) {
+		$attachment_table->searchWithGroupId(-1);
 	}
 
 	if ($year || $month) {
@@ -638,6 +642,7 @@ if ($do == 'image') {
 		$attachment_table->searchWithType(ATTACHMENT_IMAGE);
 	}
 	$attachment_table->searchWithPage($page, $page_size);
+
 	$list = $attachment_table->searchAttachmentList();
 	$total = $attachment_table->getLastQueryTotal();
 	if (!empty($list)) {
