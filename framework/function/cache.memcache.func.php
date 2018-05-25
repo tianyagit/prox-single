@@ -71,7 +71,6 @@ function cache_search($key) {
  */
 function cache_write($key, $value, $ttl = 0, $forcecache = true) {
 	$key = cache_namespace($key);
-	
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
@@ -89,8 +88,6 @@ function cache_write($key, $value, $ttl = 0, $forcecache = true) {
 	}
 }
 
-
-
 /**
  * 删除某个键的缓存数据
  * @param string $key
@@ -101,7 +98,6 @@ function cache_delete($key, $forcecache = true) {
 	if (is_error($memcache)) {
 		return $memcache;
 	}
-
 	$cache_relation_keys = cache_relation_keys($key);
 	if (is_error($cache_relation_keys)) {
 		return $cache_relation_keys;
@@ -112,11 +108,9 @@ function cache_delete($key, $forcecache = true) {
 			if (!empty($cache_info)) {
 				$origins_cache_key = $key;
 				$key = cache_namespace($key);
-
 				if (empty($forcecache)) {
 					pdo_delete('core_cache', array('key' => $key));
 				}
-
 				$result = $memcache->delete(cache_prefix($key));
 				unset($GLOBALS['_W']['cache'][$origins_cache_key]);
 				if (!$result) {
@@ -138,9 +132,9 @@ function cache_clean($prefix = '') {
 		if (is_error($cache_relation_keys)) {
 			return $cache_relation_keys;
 		}
-
 		if (is_array($cache_relation_keys) && !empty($cache_relation_keys)) {
 			foreach ($cache_relation_keys as $key) {
+				$cache_info = cache_load($key);
 				if (!empty($cache_info)) {
 					preg_match_all('/\:([a-zA-Z0-9\-\_]+)/', $key, $matches);
 					$cache_namespace = cache_namespace('we7:' . $matches[1][0], true);
@@ -151,7 +145,6 @@ function cache_clean($prefix = '') {
 		}
 		return true;
 	}
-
 	$memcache = cache_memcache();
 	if (is_error($memcache)) {
 		return $memcache;
