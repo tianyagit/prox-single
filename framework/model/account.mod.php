@@ -815,9 +815,7 @@ function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 
 	visit_system_update(array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	cache_write($cache_key, $cache_lastaccount);
-
-	cache_write('we7:$cache_last_account_type', $type);
-
+	cache_write(cache_system_key('last_account_type'), $type);
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
 	isetcookie('__switch', $_GPC['__switch'], 7 * 86400);
 	return true;

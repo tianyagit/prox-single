@@ -244,6 +244,11 @@ function cache_key_all() {
 				'group' => 'module',
 			),
 
+			'last_account_type' => array(
+				'key' => 'last_account_type',
+				'group' => '',
+			),
+
 			'user_modules' => array(
 				//当前用户拥有的所有模块及小程序标识
 				'key' => 'user_modules:%uid',
