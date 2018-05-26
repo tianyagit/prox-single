@@ -705,8 +705,13 @@ if ($do == 'networktowechat') {
 	if (!in_array($type,array('image','video'))) {
 		$type = 'image';
 	}
-
-	$material = material_network_to_wechat($url, $uniacid, $uid, $acid, $type); 	if (is_error($material)) {
+	$url_host =  parse_url($url, PHP_URL_HOST);
+	$is_ip = preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/', $url_host);
+	if ($is_ip) {
+		iajax(1, '网络链接不支持IP地址！');
+	}
+	$material = material_network_to_wechat($url, $uniacid, $uid, $acid, $type);
+	if (is_error($material)) {
 		iajax(1, $material['message']);
 
 		return;
