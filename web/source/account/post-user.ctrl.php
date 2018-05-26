@@ -76,7 +76,7 @@ if ($do == 'edit') {
 } elseif ($do == 'set_manager') {
 	$username = trim($_GPC['username']);
 	$user = user_single(array('username' => $username));
-	if (!empty($user)) {
+	if (!empty($user) && $_W['token'] == $_GPC['token']) {
 		if ($user['status'] != 2) {
 			iajax(3, '用户未通过审核或不存在！', '');
 		}
