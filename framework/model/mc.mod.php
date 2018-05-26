@@ -349,7 +349,7 @@ function mc_oauth_account_userinfo($url = '') {
 	if (empty($_W['account']['oauth']['key'])) {
 		return error(-2, '公众号未设置 appId 或 secret.');
 	}
-	if (intval($_W['account']['oauth']['level']) < 4) {
+	if (intval($_W['account']['oauth']['level']) < 4 && !in_array($_W['account']['oauth']['level'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WXAPP_WORK))) {
 		return error(-3, '公众号非认证服务号, 无法获取用户信息.');
 	}
 
