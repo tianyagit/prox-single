@@ -149,10 +149,10 @@ if($step == 1) {
 			unset($update['type']);
 			pdo_update('account_wechats', $update, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
-		if(parse_path($_GPC['qrcode'])) {
+		if(parse_path($_GPC['qrcode']) && in_array(pathinfo($_GPC['qrcode'], PATHINFO_EXTENSION), $_W['config']['upload']['image']['extentions'])) {
 			copy($_GPC['qrcode'], IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg');
 		}
-		if(parse_path($_GPC['headimg'])) {
+		if(parse_path($_GPC['headimg']) && in_array(pathinfo($_GPC['qrcode'], PATHINFO_EXTENSION), $_W['config']['upload']['image']['extentions'])) {
 			copy($_GPC['headimg'], IA_ROOT . '/attachment/headimg_'.$acid.'.jpg');
 		}
 		//当是认证服务号的时候设置权限到借用oauth中
@@ -269,7 +269,7 @@ if($step == 1) {
 		} else {
 			pdo_delete('uni_group', array('uniacid' => $uniacid));
 		}
-		
+
 		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 
 		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => 1)));
@@ -278,7 +278,7 @@ if($step == 1) {
 		cache_delete(cache_system_key('accesstoken', array('acid' => $acid)));
 
 		cache_delete(cache_system_key('proxy_wechatpay_account'));
-		
+
 		cache_clean(cache_system_key('user_accounts'));
 
 		if (!empty($_GPC['from'])) {
