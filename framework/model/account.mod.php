@@ -134,7 +134,8 @@ function uni_fetch($uniacid = 0) {
 	if (empty($account) || $account['isdeleted'] == 1) {
 		return array();
 	}
-
+	//删除关键信息
+	unset($account['key'], $account['secret'], $account['token'], $account['encodingaeskey']);
 	$owner = account_owner($uniacid);
 
 	$account['uid'] = $owner['uid'];

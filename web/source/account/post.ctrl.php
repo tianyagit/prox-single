@@ -57,6 +57,7 @@ $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'base') {
+	
 	if (!$role_permission) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
@@ -192,6 +193,10 @@ if($do == 'base') {
 			);
 		}
 	}
+	
+	$table_name = in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ? 'account_wechats' : 'account_' . ACCOUNT_TYPE;
+	$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), array('key', 'secret', 'token', 'encodingaeskey'));
+	$account = array_merge($account, $account_other_info);
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
 	$statistics_setting = (array)uni_setting_load(array('statistics'), $uniacid);

@@ -198,6 +198,8 @@ function user_single($user_or_uid) {
 			return false;
 		}
 	}
+	//删除关键信息
+	unset($record['password'], $record['salt']);
 	if (!empty($record['owner_uid'])) {
 		$record['vice_founder_name'] = pdo_getcolumn('users', array('uid' => $record['owner_uid']), 'username');
 	}
@@ -542,7 +544,7 @@ function user_modules($uid = 0) {
 			}
 			if (!empty($module_info)) {
 				$module_list[$module] = $module_info;
-			}	
+			}
 		}
 	}
 	return $module_list;
