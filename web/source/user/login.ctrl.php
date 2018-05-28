@@ -11,6 +11,9 @@ load()->model('message');
 load()->classs('oauth2/oauth2client');
 load()->model('setting');
 
+if (!empty($_W['uid'])) {
+	itoast('请先退出再登录！');
+}
 if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }

@@ -96,7 +96,6 @@ function message($msg, $redirect = '', $type = '', $tips = false, $extend = arra
 			$message_cookie['msg'] = $msg;
 		}
 		$message_cookie['type'] = $label;
-		$message_cookie['redirect'] = $redirect ? $redirect : referer();
 		$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
 		$extend_button = array();
 		if (!empty($extend) && is_array($extend)) {
