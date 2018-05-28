@@ -970,7 +970,7 @@ function account_delete($acid) {
 		if($uniacid == $_W['uniacid']) {
 			isetcookie('__uniacid', '');
 		}
-		cache_deletee(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
+		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 		$modules = array();
 		//获取全部规则
 		$rules = pdo_fetchall("SELECT id, module FROM ".tablename('rule')." WHERE uniacid = '{$uniacid}'");
