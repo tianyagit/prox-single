@@ -127,7 +127,7 @@ if ($_W['role'] != ACCOUNT_MANAGE_NAME_FOUNDER) {
 	}
 	$acl = permission_build();
 	if (empty($acl[$controller][$_W['role']]) || (!in_array($controller.'*', $acl[$controller][$_W['role']]) && !in_array($action, $acl[$controller][$_W['role']]))) {
-		itoast('不能访问, 需要相应的权限才能访问！', referer(), 'error');
+		message('不能访问, 需要相应的权限才能访问！');
 	}
 }
 // 用户权限判断

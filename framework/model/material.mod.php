@@ -500,7 +500,17 @@ function material_delete($material_id, $location){
 		$account_api = WeAccount::create($_W['acid']);
 		$result = $account_api->delMaterial($material['media_id']);
 	} else {
-		if (! empty($_W['setting']['remote']['type'])) {
+		//若素材归属某一账号，则主管理员以上权限才不判断是否有权限；
+		//若素材不归属某一账号，则判断素材是否是该uid所属
+		if (!empty($material['uniacid'])) {
+			$role = permission_account_user_role($_W['uid'], $material['uniacid']);
+			if (in_array($role, array(ACCOUNT_MANAGE_NAME_OPERATOR, ACCOUNT_MANAGE_NAME_MANAGER)) && $_W['uid'] != $material['uid']) {
+				return error('-1', '您没有权限删除该文件');
+			}
+		} elseif ($_W['uid'] != $material['uid']) {
+			return error('-1', '您没有权限删除该文件');
+		}
+		if (!empty($_W['setting']['remote']['type'])) {
 			$result = file_remote_delete($material['attachment']);
 		} else {
 			$result = file_delete($material['attachment']);
