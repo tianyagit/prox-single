@@ -947,8 +947,12 @@ function module_upgrade_info($modulelist = array()) {
 		}
 
 		if (!empty($manifest['branches'])) {
-			$module_upgrade_data['has_new_branch'] = 1;
-			$result[$modulename]['new_branch'] = 1;
+			foreach ($manifest['branches'] as &$branch) {
+				if ($branch['displayorder'] > $manifest['site_branch']['displayorder'] || ($branch['displayorder'] == $manifest['site_branch']['displayorder'] && $manifest['site_branch']['id'] < intval($branch['id']))) {
+					$module_upgrade_data['has_new_branch'] = 1;
+					$result[$modulename]['new_branch'] = 1;
+				}
+			}
 		}
 		
 		if (!empty($manifest['platform']['supports'])) {
