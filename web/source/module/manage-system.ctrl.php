@@ -103,8 +103,10 @@ if ($do == 'get_upgrade_info') {
 		'name' => $modulename,
 		'upgrade' => $manifest_cloud['upgrade'],
 		'site_branch' => $manifest_cloud['site_branch'],
+		'new_branch' => $manifest_cloud['new_branch'],
 		'branches' => $manifest_cloud['branches'],
 		'from' => 'cloud',
+		'id' => $manifest_cloud['id'],
 	);
 	//本地如果有manifest并且版本号大于云端，则以本地为准，否则以云端为准
 	if (!empty($manifest) && version_compare($manifest['application']['version'], $manifest_cloud['version']['version'], '>')) {
