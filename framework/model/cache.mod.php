@@ -378,7 +378,7 @@ function cache_build_module_info($module_name) {
 	global $_W;
 	//删除modules_cloud表中相关记录，以便重新检查更新及安装情况
 	table('modules_cloud')->deleteByName($module_name);
-	cache_delete(cache_system_key('module_info', array('module_name' => $modulename)));
+	cache_delete(cache_system_key('module_info', array('module_name' => $module_name)));
 }
 
 /**
