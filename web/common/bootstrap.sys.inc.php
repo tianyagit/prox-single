@@ -19,8 +19,9 @@ load()->classs('oauth2/oauth2client');
 $_W['token'] = token();
 $session = json_decode(authcode($_GPC['__session']), true);
 if (is_array($session)) {
-	$user = user_single(array('uid'=>$session['uid']), false);
-	if (is_array($user) && $session['hash'] === md5($user['password'] . $user['salt'])) {
+	$user = user_single(array('uid'=>$session['uid']));
+	//todo 1.7.5记得更新此if语句
+	if (is_array($user) && ($session['hash'] === md5($user['password'] . $user['salt']) || $session['hash'] == $user['hash'])) {
 		unset($user['password'], $user['salt']);
 		$_W['uid'] = $user['uid'];
 		$_W['username'] = $user['username'];
