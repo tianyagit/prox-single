@@ -110,7 +110,7 @@
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&account_type={ACCOUNT_TYPE}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=subscribe" ng-if="isFounder == 1 && module.subscribes.length">订阅消息</a>
 						{/if}
 						{if permission_check_account_user('see_module_manage_system_stop')}
-						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('确认要停用模块吗？')">停用</a>
+						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('关联的小程序等其它支持也会停用，确认要停用模块吗？')">停用</a>
 						{/if}
 					</div>
 				</td>
