@@ -154,7 +154,7 @@ function user_delete($uid, $is_recycle = false) {
  * @param array $user_or_uid 要查询的用户字段，可以包括  uid, username, password, status
  * @return array 完整的用户信息
  */
-function user_single($user_or_uid) {
+function user_single($user_or_uid, $delete_keypoint = true) {
 	$user = $user_or_uid;
 	if (empty($user)) {
 		return false;
@@ -198,8 +198,12 @@ function user_single($user_or_uid) {
 			return false;
 		}
 	}
+
 	//删除关键信息
-	unset($record['password'], $record['salt']);
+	if (!empty($delete_keypoint)) {
+		unset($record['password'], $record['salt']);
+	}
+
 	if (!empty($record['owner_uid'])) {
 		$record['vice_founder_name'] = pdo_getcolumn('users', array('uid' => $record['owner_uid']), 'username');
 	}
