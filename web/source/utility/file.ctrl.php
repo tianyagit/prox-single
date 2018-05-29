@@ -206,7 +206,7 @@ if ($do == 'fetch' || $do == 'upload') {
 	pdo_insert('core_attachment', array(
 		'uniacid' => $uniacid,
 		'uid' => $_W['uid'],
-		'filename' => htmlspecialchars($originname),
+		'filename' => safe_gpc_html(htmlspecialchars_decode($originname, ENT_QUOTES)),
 		'attachment' => $pathname,
 		'type' => $type == 'image' ? 1 : ($type == 'audio'||$type == 'voice' ? 2 : 3),
 		'createtime' => TIMESTAMP,
