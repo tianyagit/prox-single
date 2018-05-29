@@ -152,6 +152,7 @@ function user_delete($uid, $is_recycle = false) {
  * 获取单条用户信息，如果查询参数多于一个字段，则查询满足所有字段的用户
  * PS:密码字段不要加密
  * @param array $user_or_uid 要查询的用户字段，可以包括  uid, username, password, status
+ * @param boolean 是否删除关键信息（密码、加密盐等）
  * @return array 完整的用户信息
  */
 function user_single($user_or_uid, $delete_keypoint = true) {
