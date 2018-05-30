@@ -11,12 +11,20 @@ $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
 
 if ($do == 'display') {
 	$_W['page']['title'] = '副创始人组列表 - 副创始人组 - 副创始人管理';
-	$name = trim($_GPC['name']);
+	$pageindex = max(1, intval($_GPC['page']));
+	$pagesize = 10;
+
+	$condition = '' ;
+	$params = array();
+	$name = safe_gpc_string($_GPC['name']);
 	if (!empty($name)) {
-		$condition['name LIKE'] = "%{$name}%";
+		$condition .= "WHERE name LIKE :name";
+		$params[':name'] = "%{$name}%";
 	}
-	$lists = pdo_getall('users_founder_group', $condition);
+	$lists = pdo_fetchall("SELECT * FROM " . tablename('users_founder_group') . $condition . " LIMIT " . ($pageindex - 1) * $pagesize . "," . $pagesize, $params);
 	$lists = user_group_format($lists);
+	$total = pdo_fetchcolumn("SELECT COUNT(*) FROM " . tablename('users_founder_group') . $condition, $params);
+	$pager = pagination($total, $pageindex, $pagesize);
 	template('founder/group');
 }
 
