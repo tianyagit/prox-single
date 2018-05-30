@@ -2,6 +2,7 @@
 <div class="we7-page-title">
 	应用管理
 </div>
+{if $do != 'install_success'}
 <ul class="we7-page-tab">
 	<li {if $do == 'installed'}class="active"{/if}><a href="{php echo url('module/manage-system/installed', array('support' => $module_support_name))}">已安装应用  </a></li>
 	{if permission_check_account_user('see_module_manage_system_except_installed')}
@@ -25,6 +26,7 @@
 	{/if}
 	{/if}
 </ul>
+{/if}
 {if $do == 'installed'}
 <div id="js-system-module" ng-controller="installedCtrl" ng-cloak>
 	<div class="we7-page-search clearfix">
