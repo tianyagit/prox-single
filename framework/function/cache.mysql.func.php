@@ -124,7 +124,7 @@ function cache_clean($prefix = '') {
 					preg_match_all('/\:([a-zA-Z0-9\-\_]+)/', $key, $matches);
 					$sql = "DELETE FROM " . tablename('core_cache') . ' WHERE `key` LIKE :key';
 					$params = array();
-					$params[':key'] = "we7:{$matches[1][0]}:%";
+					$params[':key'] = "we7:{$matches[1][0]}%";
 					$result = pdo_query($sql, $params);
 					if (!$result) {
 						return error(-1, '缓存 ' . $key . '删除失败!');
