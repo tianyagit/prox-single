@@ -1,7 +1,9 @@
+{if !defined('SYSTEM_WELCOME_MODULE')}
 <div class="account-info-name">
 	<a href="{php echo url('home/welcome/account')}"><i class="wi wi-back-circle"></i></a>
 	<span class="account-name"><a href="{php echo url('home/welcome/account')}">{$_W['account']['name']}</a></span>
 </div>
+{/if}
 <div class="module-info-name">
 	{if file_exists(IA_ROOT. "/addons/". $_W['current_module']['name']. "/icon-custom.jpg")}
 		<img src="{php echo tomedia("addons/".$_W['current_module']['name']."/icon-custom.jpg")}" class="head-app-logo" onerror="this.src='./resource/images/gw-wx.gif'">

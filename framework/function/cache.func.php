@@ -79,7 +79,6 @@ function &cache_global($key) {
  */
 function cache_system_key($cache_key, $params = array()) {
 	$cache_key_all = cache_key_all();
-
 	// 如果是直接传入字符串缓存键（如module_info:wnstore:128），检查后直接返回
 	if (empty($params)) {
 		$res = preg_match_all('/([a-zA-Z\_\-0-9]+):/', $cache_key, $matches);
@@ -91,18 +90,37 @@ function cache_system_key($cache_key, $params = array()) {
 		if (empty($cache_key_all['caches'][$key])) {
 			return error(1, '缓存' . $key . ' 不存在!');
 		} else {
-			preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key_all['caches'][$key]['key'], $key_params);
+			$cache_info_key = $cache_key_all['caches'][$key]['key'];
+			preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_info_key, $key_params);
 			preg_match_all('/\:([a-zA-Z\_\-0-9]+)/', $cache_key, $val_params);
+
 			if (count($key_params[1]) != count($val_params[1])) {
-				foreach ($key_params[1] as $val) {
+				foreach ($key_params[1] as $key => $val) {
 					if (in_array($val, array_keys($cache_key_all['common_params']))) {
-						return 'we7:' . str_replace('%' . $val, $cache_key_all['common_params'][$val], $cache_key_all['caches'][$key]['key']);
+						$cache_info_key = str_replace('%' . $val, $cache_key_all['common_params'][$val], $cache_info_key);
+						unset($key_params[1][$key]);
 					}
 				}
-				return error(3, $key . ' 缓存参数不正确');
+
+				// 当传入的参数包含多个参数且同时包含公共参数和非公共参数时
+				if (count($key_params[1]) == count($val_params[1])) {
+					$arr = array_combine($key_params[1], $val_params[1]);
+					foreach ($arr as $key => $val) {
+						if (preg_match('/\%' . $key . '/', $cache_info_key)) {
+							$cache_info_key = str_replace('%' . $key, $val, $cache_info_key);
+						}
+					}
+				}
+
+				if (strexists($cache_info_key, '%')) {
+					return error(1, '缺少缓存参数或参数不正确!');
+				} else {
+					return 'we7:' . $cache_info_key;
+				}
+			} else  {
+				return 'we7:' . $cache_key;
 			}
 		}
-		return 'we7:' . $cache_key;
 	}
 
 	$cache_info = $cache_key_all['caches'][$cache_key];
@@ -240,8 +258,8 @@ function cache_key_all() {
 
 			'last_account' => array(
 				// 对某一模块，保留最后一次进入的小程序OR公众号，以便点进入列表页时可以默认进入
-				'key' => 'lastaccount:%switch',
-				'group' => 'module',
+				'key' => 'last_account:%switch',
+				'group' => '',
 			),
 
 			'last_account_type' => array(
@@ -269,13 +287,13 @@ function cache_key_all() {
 
 			'unimodules_binding' => array(
 				// 模块所有注册菜单
-				'key' => 'unimodules:binding:%uniacid',
+				'key' => 'unimodules_binding:%uniacid',
 				'group' => '',
 			),
 
 			'uni_groups' => array(
 				// 一个或多个公众号套餐信息
-				'key' => 'uni_group',
+				'key' => 'uni_groups',
 				'group' => '',
 			),
 
@@ -313,7 +331,7 @@ function cache_key_all() {
 			),
 
 			'back_days' => array(
-				'key' => 'back_days:',
+				'key' => 'back_days',
 				'group' => '',
 			),
 
@@ -328,12 +346,12 @@ function cache_key_all() {
 			),
 
 			'proxy_wechatpay_account' => array(
-				'key' => 'proxy_wechatpay_account:',
+				'key' => 'proxy_wechatpay_account',
 				'group' => '',
 			),
 
 			'recycle_module' => array(
-				'key' => 'recycle_module:',
+				'key' => 'recycle_module',
 				'group' => '',
 			),
 
@@ -360,7 +378,7 @@ function cache_key_all() {
 			),
 
 			'uniaccount_type' => array(
-				'key' => "uniaccount:%account_type",
+				'key' => "uniaccount_type:%account_type",
 				'group' => '',
 			),
 
@@ -382,12 +400,12 @@ function cache_key_all() {
 			/* accesstoken */
 
 			'accesstoken_key' => array(
-				'key' => 'accesstoken:%key',
+				'key' => 'accesstoken_key:%key',
 				'group' => '',
 			),
 
 			'account_auth_refreshtoken' => array(
-				'key' => 'account:auth:refreshtoken:%acid',
+				'key' => 'account_auth_refreshtoken:%acid',
 				'group' => '',
 			),
 
@@ -398,12 +416,12 @@ function cache_key_all() {
 			),
 
 			'checkupgrade' => array(
-				'key' => 'checkupgrade:system',
+				'key' => 'checkupgrade',
 				'group' => '',
 			),
 
 			'cloud_transtoken' => array(
-				'key' => 'cloud:transtoken',
+				'key' => 'cloud_transtoken',
 				'group' => '',
 			),
 
@@ -413,7 +431,7 @@ function cache_key_all() {
 			),
 
 			'account_ticket' => array(
-				'key' => 'account:ticket',
+				'key' => 'account_ticket',
 				'group' => '',
 			),
 
@@ -423,47 +441,47 @@ function cache_key_all() {
 			),
 
 			'account_component_assesstoken' => array(
-				'key' => 'account:component:assesstoken',
+				'key' => 'account_component_assesstoken',
 				'group' => '',
 			),
 
 			'cloud_ad_uniaccount' => array(
-				'key' => 'cloud:ad:uniaccount:%uniacid',
+				'key' => 'cloud_ad_uniaccount:%uniacid',
 				'group' => '',
 			),
 
 			'cloud_ad_uniaccount_list' => array(
-				'key' => 'cloud:ad:uniaccount:list',
+				'key' => 'cloud_ad_uniaccount_list',
 				'group' => '',
 			),
 
 			'cloud_flow_master' => array(
-				'key' => 'cloud:flow:master',
+				'key' => 'cloud_flow_master',
 				'group' => '',
 			),
 
 			'cloud_ad_tags' => array(
-				'key' => 'cloud:ad:tags',
+				'key' => 'cloud_ad_tags',
 				'group' => '',
 			),
 
 			'cloud_ad_type_list' => array(
-				'key' => 'cloud:ad:type:list',
+				'key' => 'cloud_ad_type_list',
 				'group' => '',
 			),
 
 			'cloud_ad_app_list' => array(
-				'key' => 'cloud:ad:app:list:%uniacid',
+				'key' => 'cloud_ad_app_list:%uniacid',
 				'group' => '',
 			),
 
 			'cloud_ad_app_support_list' => array(
-				'key' => 'cloud:ad:app:support:list',
+				'key' => 'cloud_ad_app_support_list',
 				'group' => '',
 			),
 
 			'cloud_ad_site_finance' => array(
-				'key' => 'cloud:ad:site:finance',
+				'key' => 'cloud_ad_site_finance',
 				'group' => '',
 			),
 
@@ -478,7 +496,7 @@ function cache_key_all() {
 			),
 
 			'cloud_auth_transfer' => array(
-				'key' => 'cloud:auth:transfer',
+				'key' => 'cloud_auth_transfer',
 				'group' => '',
 			),
 
@@ -488,17 +506,17 @@ function cache_key_all() {
 			),
 
 			'scan_config' => array(
-				'key' => 'scan:config',
+				'key' => 'scan_config',
 				'group' => 'scan_file',
 			),
 
 			'scan_file' => array(
-				'key' => 'scan:file',
+				'key' => 'scan_file',
 				'group' => 'scan_file',
 			),
 
 			'scan_badfile' => array(
-				'key' => 'scan:badfile',
+				'key' => 'scan_badfile',
 				'group' => 'scan_file',
 			),
 
@@ -513,17 +531,17 @@ function cache_key_all() {
 			),
 
 			'stat_todaylock' => array(
-				'key' => 'stat:todaylock:%uniacid',
+				'key' => 'stat_todaylock:%uniacid',
 				'group' => '',
 			),
 
 			'account_preauthcode' => array(
-				'key' => 'account:preauthcode',
+				'key' => 'account_preauthcode',
 				'group' => '',
 			),
 
 			'account_auth_accesstoken' => array(
-				'key' => 'account:auth:accesstoken:%key',
+				'key' => 'account_auth_accesstoken:%key',
 				'group' => '',
 			),
 
@@ -550,7 +568,7 @@ function cache_key_all() {
 		// 缓存键关联关系数组
 		'groups' => array(
 			'uniaccount' => array(
-				'relations' => array('uniaccount', 'unisetting'),
+				'relations' => array('uniaccount', 'unisetting', 'defaultgroupid'),
 			),
 
 			'accesstoken' => array(
