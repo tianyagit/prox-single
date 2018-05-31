@@ -373,16 +373,8 @@ function uni_groups($groupids = array(), $show_all = false) {
 						if ($module['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP) {
 							$row['phoneapp'][] = $modulename;
 						}
-								if ($module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
-							if (!empty($module['main_module'])) {
-								continue;
-							}
+						if ($module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
 							$row['modules'][] = $modulename;
-							if (!empty($module['plugin_list'])) {
-								foreach ($module['plugin_list'] as $plugin) {
-									$row['modules'][] = $plugin;
-								}
-							}
 						}
 					}
 				}
