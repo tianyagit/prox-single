@@ -41,7 +41,7 @@ if ($do == 'display') {
 }
 
 if ($do == 'del') {
-	if (!$_W['isajax'] || !$_W['ispost']) {
+	if (!$_W['isajax'] || !$_W['ispost'] || !in_array($_W['uid'], $founders)) {
 		iajax(-1, '非法操作！', url('founder/display'));
 	}
 	$uid = intval($_GPC['uid']);
