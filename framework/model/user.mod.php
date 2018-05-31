@@ -24,6 +24,12 @@ function user_register($user) {
 	$user['joindate'] = TIMESTAMP;
 	$user['lastip'] = CLIENT_IP;
 	$user['lastvisit'] = TIMESTAMP;
+	if (!empty($user['owner_uid'])) {
+		$vice_founder_info = user_single($user['owner_uid']);
+		if (empty($vice_founder_info) || !user_is_vice_founder($vice_founder_info['uid'])) {
+			$user['owner_uid'] = 0;
+		}
+	}
 	if (empty($user['status'])) {
 		$user['status'] = 2;
 	}
@@ -80,20 +86,6 @@ function user_check($user) {
 		return $password == $record['password'];
 	}
 	return true;
-}
-
-/**
- * 根据用户名获取副创始人的uid
- * @param string $username
- * @return bool
- */
-function user_get_uid_byname($username = '') {
-	$username = trim($username);
-	if (empty($username)) {
-		return false;
-	}
-	$uid = pdo_getcolumn('users', array('username' => $username, 'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER), 'uid');
-	return $uid;
 }
 
 /**
@@ -884,7 +876,6 @@ function user_info_save($user, $is_founder_group = false) {
 		$timeadd = !empty($timeadd) ? min($timeadd, $_W['user']['endtime']) : $_W['user']['endtime'];
 	}
 	$user['endtime'] = $timeadd;
-	$user['owner_uid'] = user_get_uid_byname($user['vice_founder_name']);
 	if (user_is_vice_founder()) {
 		$user['owner_uid'] = $_W['uid'];
 	}

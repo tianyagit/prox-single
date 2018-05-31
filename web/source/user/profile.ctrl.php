@@ -87,11 +87,11 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			$result = pdo_update('users', array('username' => $username), array('uid' => $uid));
 			break;
 		case 'vice_founder_name':
-			$owner_uid = user_get_uid_byname($_GPC['vice_founder_name']);
-			if (empty($owner_uid)) {
-				iajax(1, '创始人不存在', '');
+			$userinfo = user_single(array('username' => $_GPC['vice_founder_name']));
+			if (empty($userinfo) || user_is_vice_founder($userinfo['uid'])) {
+				iajax(1, '用户不存在或该用户不是副创始人', '');
 			}
-			$result = pdo_update('users', array('owner_uid' => $owner_uid), array('uid' => $uid));
+			$result = pdo_update('users', array('owner_uid' => $userinfo['uid']), array('uid' => $uid));
 			break;
 		case 'remark':
 			$result = pdo_update('users', array('remark' => trim($_GPC['remark'])), array('uid' => $uid));

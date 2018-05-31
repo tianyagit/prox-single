@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
 
-$_W['page']['title'] = '添加创始人 - 创始人管理';
+$_W['page']['title'] = '添加副创始人 - 副创始人管理';
 
 if (checksubmit()) {
 	$user_founder = array(
