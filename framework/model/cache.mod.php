@@ -214,7 +214,7 @@ function cache_build_frame_menu() {
 			foreach ($add_top_nav as $menu) {
 				$menu['url'] = strexists($menu['url'], 'http') ?  $menu['url'] : $_W['siteroot'] . $menu['url'];
 				$menu['blank'] = true;
-				$menu['is_display'] = true;
+				$menu['is_display'] = $menu['is_display'] == 0 ? false : true;;
 				$system_menu[$menu['permission_name']] = $menu;
 			}
 		}
