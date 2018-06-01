@@ -630,11 +630,11 @@ if ($do == 'not_installed') {
 	
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
-	
+
 	$module_cloud_talbe = table('modules_cloud');
 	$module_cloud_talbe->searchWithoutRecycle();
 	$module_cloud_talbe->searchWithPage($pageindex, $pagesize);
-	
+
 	if (!empty($title)) {
 		$module_cloud_talbe->where('a.title LIKE', "%{$title}%");
 	}
@@ -642,7 +642,10 @@ if ($do == 'not_installed') {
 		$module_cloud_talbe->where('a.title_initial', $letter);
 	}
 	$module_cloud_talbe->where('a.install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL));
-	$module_cloud_talbe->where("a.{$module_support}_support", MODULE_SUPPORT_ACCOUNT);
+	if (!empty(trim($_GPC['support']))) {
+		$module_support = $module_support . '_support';
+	}
+	$module_cloud_talbe->where("a.{$module_support}", MODULE_SUPPORT_ACCOUNT);
 	$module_cloud_talbe->orderby('a.install_status', 'asc');
 	
 	$modulelist = $module_cloud_talbe->getall('name');
