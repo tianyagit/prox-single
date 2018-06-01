@@ -42,7 +42,6 @@ if ($m == 'special') {
 
 //功能模块用
 $sysmods = system_modules();
-
 if (in_array($m, array('custom'))) {
 	$site = WeUtility::createModuleSite('reply');
 	$site_urls = $site->getTabUrls();
@@ -174,7 +173,7 @@ if ($do == 'post') {
 			}
 			$keyword = preg_replace('/，/', ',', $keyword);
 			$keyword_arr = explode(',', $keyword);
-			$result = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'content IN' => $keyword_arr), array('rid'));
+			$result = pdo_getall('rule_keyword', array('uniacid' => $_W['uniacid'], 'content IN' => $keyword_arr, 'status !=' => 1), array('rid'));
 			if (!empty($result)) {
 				$keywords = array();
 				foreach ($result as $reply) {
