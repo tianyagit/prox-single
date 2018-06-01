@@ -84,14 +84,14 @@ if ($do == 'display') {
 	$pager = pagination($total, $pageindex, $pagesize);
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $key => $value) {
-			$modules = (array)iunserializer($value['modules']);
+			$modules = array_unique((array)iunserializer($value['modules']));
 			if (!empty($modules)) {
 				foreach ($modules as $module_name) {
 					$module_info = module_fetch($module_name);
 					if (empty($module_info)) {
 						continue;
 					}
-					if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT || $module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
+					if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
 						$modules_group_list[$key]['account_num'] = intval($modules_group_list[$key]['account_num']) > 0 ? (intval($modules_group_list[$key]['account_num']) + 1) : 1;
 						$modules_group_list[$key]['account_modules'][] = $module_info;
 					}
