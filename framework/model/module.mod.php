@@ -131,10 +131,10 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 				}
 			}
 		} else {
-			if($bind['entry'] == 'cover') {
+			if (in_array($bind['entry'], array('cover', 'home', 'profile', 'shortcut'))) {
 				$url = murl('entry', array('eid' => $bind['eid']));
 			}
-			if($bind['entry'] == 'menu') {
+			if (in_array($bind['entry'], array('menu', 'system_welcome'))) {
 				$url = wurl("site/entry", array('eid' => $bind['eid']));
 			}
 			if($bind['entry'] == 'mine') {
@@ -146,18 +146,6 @@ function module_entries($name, $types = array(), $rid = 0, $args = null) {
 					$par['id'] = $rid;
 				}
 				$url = wurl("site/entry", $par);
-			}
-			if($bind['entry'] == 'home') {
-				$url = murl("entry", array('eid' => $bind['eid']));
-			}
-			if($bind['entry'] == 'profile') {
-				$url = murl("entry", array('eid' => $bind['eid']));
-			}
-			if($bind['entry'] == 'shortcut') {
-				$url = murl("entry", array('eid' => $bind['eid']));
-			}
-			if($bind['entry'] == 'system_welcome') {
-				$url = wurl("site/entry", array('eid' => $bind['eid']));
 			}
 
 			if(empty($bind['icon'])) {
