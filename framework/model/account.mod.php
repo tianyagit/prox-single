@@ -207,7 +207,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	global $_W;
 	load()->model('user');
 	load()->model('module');
-	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled));
+	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled == true ? 1 : ''));
 	$modules = cache_load($cachekey);
 	if (empty($modules)) {
 		$founders = explode(',', $_W['config']['setting']['founder']);
