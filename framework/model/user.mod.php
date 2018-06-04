@@ -110,10 +110,13 @@ function user_is_founder($uid) {
  */
 function user_is_vice_founder($uid = 0) {
 	global $_W;
-	$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
-	$user_info = user_single($uid);
-
-	if (user_is_founder($uid) && $user_info['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+	$uid = intval($uid);
+	if (empty($uid)) {
+		$user_info = $_W['user'];
+	} else {
+		$user_info = user_single($uid);
+	}
+	if ($user_info['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 		return true;
 	}
 	return false;
