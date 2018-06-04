@@ -26,7 +26,7 @@ if ($do == 'display') {
 	$menu_entries = module_entries($module_name, array('menu'));
 	$menu_entries = $menu_entries['menu'];
 	$default_entry_id = !empty($module['config']) ? intval($module['config']['default_entry']) : 0;
-	
+
 	if (checksubmit()) {
 		$default_entry = intval($_GPC['default_entry_id']);
 		$data = !empty($module['config']) ? $module['config'] : array();
@@ -35,17 +35,22 @@ if ($do == 'display') {
 		} else {
 			$data['default_entry'] = $default_entry;
 		}
-		if (empty($module['config'])) {
-			$insert_data['settings'] = iserializer($data);
-			$insert_data['uniacid'] = $_W['uniacid'];
-			$insert_data['module'] = $module_name;
+
+		$insert_data['settings'] = iserializer($data);
+		$insert_data['uniacid'] = $_W['uniacid'];
+		$insert_data['module'] = $module_name;
+
+		$setting_cachekey = cache_system_key('module_setting', array('module_name' => $module_name, 'uniacid' => $_W['uniacid']));
+		$setting = cache_load($setting_cachekey);
+
+		if (empty($setting)) {
 			$insert_data['enabled'] = 1;
 			pdo_insert('uni_account_modules', $insert_data);
 		} else {
 			pdo_update('uni_account_modules', array('settings' => iserializer($data)), array('uniacid' => $_W['uniacid'], 'module' => $module_name));
 		}
 		cache_build_module_info($module_name);
-		itoast('保存成功！');
+		itoast('保存成功！', '', 'success');
 	}
 	template('module/default-entry');
 }
