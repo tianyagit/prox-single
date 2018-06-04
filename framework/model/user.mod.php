@@ -753,9 +753,27 @@ function user_group_format($lists) {
 	if (empty($lists)) {
 		return $lists;
 	}
+	$all_package = array();
+	foreach ($lists as $key => $group) {
+		if (empty($group['package'])) {
+			continue;
+		}
+		$package = iunserializer($group['package']);
+		if (!is_array($package)) {
+			continue;
+		}
+		$all_package = array_merge($all_package, $package);
+	}
+	$group_package = uni_groups($all_package);
+	
 	foreach ($lists as $key => $group) {
 		$package = iunserializer($group['package']);
-		$group['package'] = uni_groups($package);
+		$group['package'] = array();
+		if (is_array($package)) {
+			foreach ($package as $packageid) {
+				$group['package'][$packageid] = $group_package[$packageid];
+			}
+		}
 		if (empty($package)) {
 			$lists[$key]['module_nums'] = 0;
 			$lists[$key]['wxapp_nums'] = 0;
