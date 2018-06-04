@@ -440,8 +440,8 @@ if ($do == 'change_status') {
 				iajax(1, '参数错误');
 			}
 		}
-		$userapi_config = pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => 'userapi'), 'settings');
-		$config = iunserializer($userapi_config);
+		$userapi_module = module_fetch('userapi');
+		$config = $userapi_module['config'];
 		$config[$rid] = isset($config[$rid]) && $config[$rid] ? false : true;
 		$module_api = WeUtility::createModule('userapi');
 		$module_api->saveSettings($config);

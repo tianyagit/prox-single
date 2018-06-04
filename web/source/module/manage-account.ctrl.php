@@ -69,7 +69,7 @@ if($do == 'display') {
 		itoast('抱歉，你操作的模块不能被访问！', '', '');
 	}
 
-	$module_enabled = uni_account_module_shortcut_enabled($modulename, $_W['uniacid'], $status);
+	$module_enabled = uni_account_module_shortcut_enabled($modulename, $status);
 
 	if ($status) {
 		itoast('添加模块快捷操作成功！', referer(), 'success');

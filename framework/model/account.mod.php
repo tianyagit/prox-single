@@ -1057,19 +1057,16 @@ function account_wechatpay_proxy () {
 /**
  * 设置模块是否在快捷菜单显示
  */
-function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status = STATUS_ON) {
+function uni_account_module_shortcut_enabled($modulename, $status = STATUS_ON) {
 	global $_W;
 	$module = module_fetch($modulename);
 	if(empty($module)) {
 		return error(1, '抱歉，你操作的模块不能被访问！');
 	}
-	$uniacid = intval($uniacid);
-	$uniacid = !empty($uniacid) ? $uniacid : $_W['uniacid'];
-
-	$module_status = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $uniacid), array('id', 'shortcut'));
-	if (empty($module_status)) {
+	
+	if (empty($module['config'])) {
 		$data = array(
-			'uniacid' => $uniacid,
+			'uniacid' => $_W['uniacid'],
 			'module' => $modulename,
 			'enabled' => STATUS_ON,
 			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
@@ -1081,8 +1078,8 @@ function uni_account_module_shortcut_enabled($modulename, $uniacid = 0, $status 
 			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
 		);
 		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
-		cache_build_module_info($modulename);
 	}
+	cache_build_module_info($modulename);
 	return true;
 }
 
@@ -1209,7 +1206,7 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 	if (empty($uniacid) || empty($module_name)) {
 		return false;
 	}
-
+	//此处没有使用module_fetch中的配置，因为可能设置的不是当前公众号
 	$passive_link_module = pdo_get('uni_account_modules', array('module' => $module_name, 'uniacid' => $uniacid), array('id', 'settings'));
 	if (!empty($passive_link_module)) {
 		$passive_settings = (array)iunserializer($passive_link_module['settings']);
@@ -1224,12 +1221,14 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 	} else {
 		$passive_settings = array('passive_link_uniacid' => $_W['uniacid']);
 		$passive_data = array(
-				'settings' => iserializer($passive_settings),
-				'uniacid' => $uniacid,
-				'module' => $module_name,
-				'enabled' => STATUS_ON,
+			'settings' => iserializer($passive_settings),
+			'uniacid' => $uniacid,
+			'module' => $module_name,
+			'enabled' => STATUS_ON,
 		);
 		pdo_insert('uni_account_modules', $passive_data);
 	}
+	//删除特定的公众号模块缓存
+	cache_delete(cache_system_key('module_setting', array('module_name' => $module_name, 'uniacid' => $uniacid)));
 	return true;
 }
