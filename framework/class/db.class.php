@@ -80,7 +80,7 @@ class DB {
 			trigger_error($sqlsafe['message'], E_USER_ERROR);
 			return false;
 		}
-		if ($GLOBALS['_W']['config']['setting']['development'] == 2) {
+		if ($GLOBALS['_W']['config']['setting']['development'] == 3) {
 			if ($GLOBALS['error_handler'] instanceof Raven_ErrorHandler) {
 				$GLOBALS['error_handler']->handleError(E_USER_ERROR, $sql);
 			}
