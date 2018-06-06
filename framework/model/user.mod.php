@@ -494,7 +494,7 @@ function user_modules($uid = 0) {
 					$package_group_module = array();
 					foreach ($package_group as $row) {
 						if (!empty($row['modules'])) {
-							$row['modules'] = (array)unserialize($row['modules']);
+							$row['modules'] = (array)iunserializer($row['modules']);
 						}
 						if (!empty($row['modules'])) {
 							foreach ($row['modules'] as $modulename => $module) {

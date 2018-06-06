@@ -112,7 +112,7 @@ if(in_array($do, array('module.query', 'module.bought', 'module.info', 'module.b
 
 if ($do == 'module.setting.cloud') {
 	$data = __secure_decode($post);
-	$data = unserialize($data);
+	$data = iunserializer($data);
 	$setting = $data['setting'];
 	$uniacid = $data['acid'];
 	

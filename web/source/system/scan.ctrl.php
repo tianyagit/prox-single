@@ -97,7 +97,7 @@ if ($do == 'filter_func') {
 if ($do == 'filter_code') {
 	$config = iunserializer(cache_read(cache_system_key('scan_config')));
 	$file = iunserializer(cache_read(cache_system_key('scan_file')));
-	$badfiles = unserialize(cache_read(cache_system_key('scan_badfile')));
+	$badfiles = iunserializer(cache_read(cache_system_key('scan_badfile')));
 	if (isset($config['code']) && !empty($config['code'])) {
 		foreach ($file as $key => $val) {
 			if (!empty($config['code'])) {
