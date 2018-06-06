@@ -402,6 +402,7 @@ if ($do =='install') {
 		cache_build_module_subscribe_type();
 		cache_build_account_modules($_W['uniacid'], $_W['uid']);
 		cache_build_module_info($module_name);
+		cache_build_uni_group();
 		itoast('模块成功！', url('module/manage-system/install_success', array('support' => $module_support_name)), 'success');
 	} else {
 		itoast('模块安装失败, 请联系模块开发者！');
