@@ -381,9 +381,8 @@ function module_fetch($name, $enabled = true) {
 		$setting = cache_load($setting_cachekey);
 		if (empty($setting)) {
 			$setting = pdo_get('uni_account_modules', array('module' => $name, 'uniacid' => $_W['uniacid']));
-			if (!empty($setting)) {
-				cache_write($setting_cachekey, $setting);
-			}
+			$setting = empty($setting) ? array('module' => $name) : $setting;
+			cache_write($setting_cachekey, $setting);
 		}
 		$module['config'] = !empty($setting['settings']) ? iunserializer($setting['settings']) : array();
 		$module['enabled'] = $module['issystem'] || !isset($setting['enabled']) ? 1 : $setting['enabled'];
@@ -842,7 +841,7 @@ function module_upgrade_info($modulelist = array()) {
 	$pirate_apps = $cloud_m_query_module['pirate_apps'];
 	unset($cloud_m_query_module['pirate_apps']);
 
-	//按照本地manifest整理接口数据 
+	//按照本地manifest整理接口数据
 	$manifest_cloud_list = array();
 	foreach ($cloud_m_query_module as $modulename => $manifest_cloud) {
 		$manifest = array(
@@ -878,7 +877,7 @@ function module_upgrade_info($modulelist = array()) {
 		$manifest['branches'] = !empty($manifest_cloud['branches']);
 		$manifest_cloud_list[$modulename] = $manifest;
 	}
-	
+
 	//没有指定查询模块列表，则获取全部模块查询
 	if (empty($modulelist)) {
 		$modulelist = table('modules')->searchWithType('system', '<>')->getall('name');
@@ -942,7 +941,7 @@ function module_upgrade_info($modulelist = array()) {
 				}
 			}
 		}
-		
+
 		if (!empty($manifest['platform']['supports'])) {
 			foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome') as $support) {
 				if (in_array($support, $manifest['platform']['supports'])) {
@@ -952,9 +951,9 @@ function module_upgrade_info($modulelist = array()) {
 				}
 			}
 		}
-		
+
 		$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
-		
+
 		if (empty($module_cloud_upgrade)) {
 			pdo_insert('modules_cloud', $module_upgrade_data);
 		} else {
@@ -984,7 +983,7 @@ function module_upgrade_info($modulelist = array()) {
 					}
 				}
 			}
-			
+
 			$module_cloud_upgrade = table('modules_cloud')->getByName($modulename);
 			if (empty($module_cloud_upgrade)) {
 				pdo_insert('modules_cloud', $module_upgrade_data);

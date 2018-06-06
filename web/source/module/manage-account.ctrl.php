@@ -109,6 +109,7 @@ if($do == 'display') {
 			'shortcut' => STATUS_OFF,
 		));
 	}
+	cache_build_module_info($modulename);
 	cache_build_account_modules($_W['uniacid']);
 	itoast('模块置顶成功', referer(), 'success');
 } elseif ($do == 'setting') {
