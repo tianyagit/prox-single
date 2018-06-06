@@ -230,6 +230,10 @@ class AccountTable extends We7Table {
 		return $this->query->from('account_phoneapp')->where('acid', $acid)->get();
 	}
 
+	public function getXiongzhangappAccount($acid) {
+		return $this->query->from('account_xiongzhangapp')->where('acid', $acid)->get();
+	}
+
 	public function getUniAccountByAcid($acid) {
 		$account = $this->query->from('account')->where('acid', $acid)->get();
 		$uniaccount = array();

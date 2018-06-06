@@ -42,6 +42,8 @@ define('ACCOUNT_TYPE_PHONEAPP_NORMAL', 6);
 define('ACCOUNT_TYPE_APP_AUTH', 7);
 //正常接入企业小程序
 define('ACCOUNT_TYPE_WXAPP_WORK', 8);
+//正常接入熊掌号
+define('ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL', 9);
 //公众号
 define('ACCOUNT_TYPE_SIGN', 'account');
 //小程序
@@ -52,6 +54,8 @@ define('WEBAPP_TYPE_SIGN', 'webapp');
 define('PHONEAPP_TYPE_SIGN', 'phoneapp');
 //欢迎页
 define('WELCOMESYSTEM_TYPE_SIGN', 'welcome');
+//熊掌号
+define('XIONGZHANGAPP_TYPE_SIGN', 'xiongzhangapp');
 
 
 //授权登录接入
@@ -156,12 +160,16 @@ define('MODULE_SUPPORT_ANDROID', 2);
 //是否支持ios 不支持1 支持2
 define('MODULE_NOSUPPORT_IOS', 1);
 define('MODULE_SUPPORT_IOS', 2);
+// 是否支持熊掌号 不支持1 支持2
+define('MODULE_SUPPORT_XIONGZHANGAPP', 2);
+define('MODULE_NOSUPPORT_XIONGZHANGAPP', 1);
 
 define('MODULE_SUPPORT_WXAPP_NAME', 'wxapp_support');
 define('MODULE_SUPPORT_ACCOUNT_NAME', 'account_support');
 define('MODULE_SUPPORT_WEBAPP_NAME', 'webapp_support');
 define('MODULE_SUPPORT_PHONEAPP_NAME', 'phoneapp_support');
 define('MODULE_SUPPORT_SYSTEMWELCOME_NAME', 'welcome_support');
+define('MODULE_SUPPORT_XIONGZHANGAPP_NAME', 'xiongzhangapp_support');
 
 //模块安装来源
 //本地安装 

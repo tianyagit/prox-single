@@ -600,6 +600,8 @@ function uni_account_tablename($type) {
 			return 'account_webapp';
 		case ACCOUNT_TYPE_PHONEAPP_NORMAL:
 			return 'account_phoneapp';
+		case ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL:
+			return 'account_xiongzhangapp';
 	}
 }
 
@@ -761,6 +763,8 @@ function uni_account_last_switch() {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else if (strexists($_W['siteurl'], 'c=phoneapp')) {
 		$uniacid = $cache_lastaccount['phoneapp'];
+	} else if (strexists($_W['siteurl'], 'c=xiongzhangapp')) {
+		$uniacid = $cache_lastaccount['xiongzhangapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];
 	}
@@ -770,7 +774,7 @@ function uni_account_last_switch() {
 
 function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN) {
 	global $_W;
-	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN))) {
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XIONGZHANGAPP_TYPE_SIGN))) {
 		return error(-1, '账号类型不合法');
 	}
 	uni_account_save_switch($uniacid, $type);
@@ -790,7 +794,7 @@ function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN)
 function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 	global $_W, $_GPC;
 	load()->model('visit');
-	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN))) {
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XIONGZHANGAPP_TYPE_SIGN))) {
 		return error(-1, '账号类型不合法');
 	}
 	if (empty($_GPC['__switch'])) {

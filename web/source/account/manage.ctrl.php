@@ -9,7 +9,7 @@ load()->func('file');
 load()->model('user');
 load()->model('message');
 load()->model('wxapp');
-$dos = array('display', 'delete');
+$dos = array('display', 'delete', 'create_xiongzhangapp');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
 
@@ -41,6 +41,7 @@ if ($do == 'display') {
 		ACCOUNT_TYPE_WEBAPP_NORMAL => array(ACCOUNT_TYPE_WEBAPP_NORMAL),
 		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
 		ACCOUNT_TYPE_PHONEAPP_NORMAL => array(ACCOUNT_TYPE_PHONEAPP_NORMAL),
+		ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL => array(ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL),
 	);
 	$account_table->searchWithType($type_condition[ACCOUNT_TYPE]);
 
@@ -152,4 +153,22 @@ if ($do == 'delete') {
 		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 	}
 	itoast('停用成功！，您可以在回收站中恢复', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'success');
+}
+
+if ($do == 'create_xiongzhangapp') {
+	if (checksubmit()) {
+		$data = array(
+			'name' => safe_gpc_string($_GPC['name']),
+			'description' => safe_gpc_string($_GPC['description'])
+		);
+
+		$xiongzhangapp = table('xiongzhangapp');
+		$uniacid = $xiongzhangapp->createXiongzhangappInfo($data, $_W['uid']);
+		if ($uniacid) {
+			itoast('创建成功', url('account/display', array('type' => XIONGZHANGAPP_TYPE_SIGN)));
+		} else {
+			itoast('创建失败', '', 'error');
+		}
+	}
+	template('xiongzhangapp/create');
 }

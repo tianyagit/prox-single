@@ -26,6 +26,9 @@
 						{if !empty($account_info['phoneapp_limit']) && (!empty($account_info['founder_phoneapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 						<li><i class="wi wi-app"></i><br/><a href="{php echo url('phoneapp/manage/create_display')}" class="name" title="新建APP"></a></li>
 						{/if}
+
+						<li><i class="wi wi-app"></i><br/><a href="{php echo url('account/manage/create_xiongzhangapp')}" class="name" title="新建熊掌号"></a></li>
+
 					</ul>
 				</div>
 			</div>
@@ -99,6 +102,9 @@
 						{if !empty($account_info['phoneapp_limit']) && (!empty($account_info['founder_phoneapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 						<a ng-switch-when="phoneapp" href="{php echo url('phoneapp/manage/create_display')}" class="color-default"><i class="wi wi-registersite"></i>新建APP</a>
 						{/if}
+
+						<a ng-switch-when="xiongzhangapp" href="{php echo url('account/manage/create_xiongzhangapp')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
+
 					</div>
 					{/if}
 					<!-- xend -->
@@ -129,6 +135,8 @@
 							<i class="wi wi-registersite"></i>新建APP
 						</a>
 						{/if}
+
+						<a ng-switch-when="xiongzhangapp" href="{php echo url('account/manage/create_xiongzhangapp')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
 					</div>
 					{/if}
 					<!-- svend -->
@@ -154,6 +162,12 @@
 							<i class="wi wi-manage"></i>
 							APP管理
 						</a>
+
+						<a ng-switch-when="xiongzhangapp" href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}" class="color-default">
+							<i class="wi wi-manage"></i>
+							熊掌号管理
+						</a>
+
 					</div>
 
 				</div>
@@ -183,6 +197,7 @@
 								<i ng-if="detail.type == types.wxapp_auth" class="wi wi-wxapp"></i>
 								<i ng-if="detail.type == types.webapp" class="wi wi-pc"></i>
 								<i ng-if="detail.type == types.phoneapp" class="wi wi-app"></i>
+								<i ng-if="detail.type == types.xiongzhangapp" class="wi wi-app"></i>
 							</div>
 							<div class="info">
 								<div class="name" ng-bind="detail.name"></div>
@@ -199,6 +214,11 @@
 
 								<div class="type" ng-if="detail.type == types.webapp">
 									<span>类型：PC应用</span>
+								</div>
+
+
+								<div class="type" ng-if="detail.type == types.xiongzhangapp">
+									<span>类型：熊掌号应用</span>
 								</div>
 
 							</div>
@@ -220,6 +240,9 @@
 						<a ng-href="{{links.switch}}uniacid={{detail.uniacid}}&version_id={{detail.current_version.id}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.phoneapp">
 							<div>进入APP <i class="wi wi-angle-right"></i></div>
 						</a>
+
+						<!-- 进入熊掌号 -->
+						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.xiongzhangapp"><div>进入熊掌号 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 小程序/APP 查看版本 -->
 						<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth || detail.type == types.phoneapp">
@@ -283,7 +306,8 @@
 			'wxapp_normal' : "{ACCOUNT_TYPE_APP_NORMAL}",
 			'wxapp_auth' : "{ACCOUNT_TYPE_APP_AUTH}",
 			'webapp' : "{ACCOUNT_TYPE_WEBAPP_NORMAL}",
-			'phoneapp' : "{ACCOUNT_TYPE_PHONEAPP_NORMAL}"
+			'phoneapp' : "{ACCOUNT_TYPE_PHONEAPP_NORMAL}",
+			'xiongzhangapp' : "{ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL}"
 	},
 	scrollUrl : "{php echo url('account/display', array('type'=>$type))}"
 	});

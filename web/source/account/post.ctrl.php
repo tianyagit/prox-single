@@ -57,14 +57,13 @@ $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'base') {
-	
 	if (!$role_permission) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
 	if($_W['ispost'] && $_W['isajax']) {
 		if(!empty($_GPC['type'])) {
 			$type = trim($_GPC['type']);
-		}else {
+		} else {
 			iajax(40035, '参数错误！', '');
 		}
 		switch ($type) {
@@ -165,6 +164,7 @@ if($do == 'base') {
 					$result = pdo_update('account', array('endtime' => $endtime), array('uniacid' => $uniacid));
 				}
 		}
+
 		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime', 'jointype', 'highest_visit'))) {
 			$result = pdo_update(uni_account_tablename(ACCOUNT_TYPE), $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
@@ -173,7 +173,7 @@ if($do == 'base') {
 			cache_delete(cache_system_key('accesstoken', array('acid' => $acid)));
 			cache_delete(cache_system_key('statistics', array('uniacid' => $uniacid)));
 			iajax(0, '修改成功！', '');
-		}else {
+		} else {
 			iajax(1, '修改失败！', '');
 		}
 	}
@@ -193,9 +193,29 @@ if($do == 'base') {
 			);
 		}
 	}
-	
-	$table_name = in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ? 'account_wechats' : 'account_' . ACCOUNT_TYPE;
-	$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), array('key', 'secret', 'token', 'encodingaeskey'));
+
+	$fields_oauth = array('key', 'secret', 'token', 'encodingaeskey');
+	$fields_normal = array('acid', 'uniacid', 'name');
+	if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
+		$table_name = 'account_wechats';
+		$fields = $fields_oauth;
+	} else if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
+		$table_name = 'account_' . WXAPP_TYPE_SIGN;
+		$fields = $fields_oauth;
+	} else if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_WEBAPP_NORMAL))) {
+		$table_name = 'account_' . WEBAPP_TYPE_SIGN;
+		$fields = $fields_normal;
+	} else if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_PHONEAPP_NORMAL))) {
+		$table_name = 'account_' . PHONEAPP_TYPE_SIGN;
+		$fields = $fields_normal;
+	}else if(in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))) {
+		$table_name = 'account_' . XIONGZHANGAPP_TYPE_SIGN;
+		$fields = $fields_normal;
+	} else {
+		$table_name = 'account_wechats';
+		$fields = $fields_oauth;
+	}
+	$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), $fields);
 	$account = array_merge($account, $account_other_info);
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
@@ -264,7 +284,6 @@ if($do == 'sms') {
 
 if($do == 'modules_tpl') {
 	$owner = account_owner($uniacid);
-
 	if($_W['isajax'] && $_W['ispost'] && ($role_permission)) {
 		if($_GPC['type'] == 'group') {
 			$groups = $_GPC['groupdata'];

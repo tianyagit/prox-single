@@ -90,7 +90,11 @@ class Cloud extends \We7Table {
 	public function getWelcomeUninstallTotal() {
 		return $this->query->where('welcome_support', MODULE_SUPPORT_ACCOUNT)->count();
 	}
-	
+
+	public function getXiongzhangappUninstallTotal() {
+		return $this->query->where('xiongzhangapp_support', MODULE_SUPPORT_XIONGZHANGAPP)->count();
+	}
+
 	public function deleteByName($modulename) {
 		return $this->query->where('name', $modulename)->delete();
 	}

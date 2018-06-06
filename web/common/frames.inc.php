@@ -299,6 +299,19 @@ $we7_system_menu['phoneapp'] = array(
 	),
 );
 
+$we7_system_menu['xiongzhangapp'] = array(
+	'title' => '熊掌号',
+	'icon' => 'wi wi-white-collar',
+	'url' => url('xiongzhangapp/display/home'),
+	'section' => array(
+		'platform_module' => array(
+			'title' => '应用模块',
+			'menu' => array(),
+			'is_display' => true,
+		),
+	),
+);
+
 $we7_system_menu['module'] = array(
 	'title' => '应用',
 	'icon' => 'wi wi-apply',
@@ -461,6 +474,26 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
+		'xiongzhangapp' => array(
+			'title' => '熊掌号',
+			'menu' => array(
+				'system_xiongzhangapp' => array(
+					'title' => '熊掌号',
+					'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL)),
+					'icon' => 'wi wi-pc',
+					'permission_name' => 'system_xiongzhangapp',
+					'sub_permission' => array(
+					),
+				),
+				'system_module_xiongzhangapp' => array(
+					'title' => '熊掌号应用',
+					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_XIONGZHANGAPP_NAME)),
+					'icon' => 'wi wi-pc-apply',
+					'permission_name' => 'system_module_xiongzhangapp',
+				),
+			)
+		),
+
 		'user' => array(
 			'title' => '帐户/用户',
 			'menu' => array(
