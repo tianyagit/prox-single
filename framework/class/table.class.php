@@ -42,6 +42,7 @@ abstract class We7Table {
 		//实例化Query对象,并重置查询信息
 		load()->classs('validator');
 		$this->query = load()->object('Query');
+		$this->query->fixTable = $this->tableName;
 		$this->query->from($this->tableName);
 	}
 
