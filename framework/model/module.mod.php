@@ -775,8 +775,7 @@ function module_uninstall_total($type) {
 	if (!isset($type_list["{$type}_support"])) {
 		return 0;
 	}
-
-	$total = call_user_func_array(array(table('modules_cloud'), "get{$type}UninstallTotal"), array());
+	$total = table('modules_cloud')->getUninstallTotalBySupportType($type);
 	return $total;
 }
 /**

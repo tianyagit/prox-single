@@ -90,18 +90,24 @@ function user_check($user) {
 
 /**
  * 判断是否是创始人
+ * @param int $uid
+ * @param boolean $only_main_founder 只判断只否是主创始人
+ * @return boolean
  */
-function user_is_founder($uid) {
+function user_is_founder($uid, $only_main_founder = false) {
 	global $_W;
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	if (in_array($uid, $founders)) {
 		return true;
-	} else {
+	}
+	
+	if (empty($only_main_founder)) {
 		$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
 		if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 			return true;
 		}
 	}
+	
 	return false;
 }
 
@@ -540,7 +546,14 @@ function user_modules($uid = 0) {
 	if (!empty($modules)) {
 		foreach ($modules as $module) {
 			$module_info = module_fetch($module);
-			if ($module_info['welcome_support'] == 2 && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] != 2 && $module_info['wxapp_support'] != 2 && $module_info['webapp_support'] != 2 && $module_info['phoneapp_support'] != 2) {
+			//欢迎模块只能创始人操作，如果当前非创始人，忽略欢迎模块
+			if (!user_is_founder($_W['uid'], true) && 
+				$module_info['welcome_support'] == 2 && 
+				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != 2 && 
+				$module_info['wxapp_support'] != 2 && 
+				$module_info['webapp_support'] != 2 && 
+				$module_info['phoneapp_support'] != 2) {
+					
 				continue;
 			}
 			if (!empty($module_info)) {
