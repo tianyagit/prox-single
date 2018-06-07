@@ -43,16 +43,18 @@
 				<th>模板个数</th>
 				<th>PC应用个数</th>
 				<th>APP应用个数</th>
+				<th>熊掌号应用个数</th>
 				<th class="text-right">操作</th>
 			</tr>
 			{loop $modules_group_list $module_group}
 			<tr >
 				<td class="text-left">{$module_group['name']}</td>
-				<td>{php echo $module_group['account_num']}</td>
-				<td>{php echo $module_group['wxapp_num']}</td>
-				<td>{php echo $module_group['template_num']}</td>
-				<td>{php echo $module_group['webapp_num']}</td>
-				<td>{php echo $module_group['phoneapp_num']}</td>
+				<td>{php echo intval($module_group['account_num'])}</td>
+				<td>{php echo intval($module_group['wxapp_num'])}</td>
+				<td>{php echo intval($module_group['template_num'])}</td>
+				<td>{php echo intval($module_group['webapp_num'])}</td>
+				<td>{php echo intval($module_group['phoneapp_num'])}</td>
+				<td>{php echo intval($module_group['xiongzhangapp_num'])}</td>
 				<td>
 					<div class="link-group">
 						<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" data-target="toggle-{$module_group['id']}" ng-click="changeText($event)">展开</a>
@@ -133,6 +135,20 @@
 						<div class="col-sm-3 text-left text-over">
 							<img src="{$phoneapp['logo']}">
 							<a href="">{$phoneapp['title']}</a>
+						</div>
+						{/loop}
+					</div>
+				</td>
+			</tr>
+
+			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
+				<td colspan="7">
+					<div class="col-sm-1 color-gray text-left we7-padding-none">熊掌号应用</div>
+					<div class="col-sm-11">
+						{loop $module_group['xiongzhangapp_modules'] $xiongzhangapp}
+						<div class="col-sm-3 text-left text-over">
+							<img src="{$xiongzhangapp['logo']}">
+							<a href="">{$xiongzhangapp['title']}</a>
 						</div>
 						{/loop}
 					</div>
@@ -285,6 +301,27 @@
 					<div class="col-sm-2 add-more">
 						<div class="we7-input-img input-more input-img">
 							<a href="" class="input-addon" ng-click="addModulePhoneapp()">
+								<span class="color-gray"></span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="panel we7-panel">
+			<div class="panel-heading">
+				选择熊掌号应用
+			</div>
+			<div class="panel-body we7-padding">
+				<div class="row">
+					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleXiongzhangapp" style="overflow: hidden">
+						<img src="{{ module.logo }}" alt="" class="img">{{ module.title }}
+						<span class="del bg-default" ng-click="delHaveModuleXiongzhangapp(module)">删除</span>
+					</div>
+					<div class="col-sm-2 add-more">
+						<div class="we7-input-img input-more input-img">
+							<a href="" class="input-addon" ng-click="addModuleXiongzhangapp()">
 								<span class="color-gray"></span>
 							</a>
 						</div>
@@ -512,6 +549,48 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="uploader-modal modal fade module" id="add_module_xiongzhangapp"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog we7-modal-dialog" >
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">添加熊掌号应用(点击添加)</h4>
+				</div>
+
+				<div class="modal-body material-content clearfix">
+					<div class="material-body">
+						<div class="row">
+							<div class="col-sm-2 select-module" ng-repeat="module in groupNotHaveModuleXiongzhangapp" ng-click="selectOrCancelModule(module, 'module_xiongzhangapp')">
+								<div class="item" ng-class="{true:'active',false:''}[module.selected]">
+									<img ng-src="{{ module.logo }}"  alt="" class="icon"/>
+									<div class="name">{{ module.title }}</div>
+									<div class="mask">
+										<span class="wi wi-right"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--注意全部有分页-->
+					<div class="material-pager text-right clearfix">
+						<div class="pull-left we7-form">
+							<input type="checkbox" id="selected-all5" ng-change="selecteAllXiongzhangapp(allxiongzhangappsel)" ng-model="allxiongzhangappsel">
+							<label for="selected-all5">全选</label>
+						</div>
+						<ul class="pagination">
+						</ul>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="addHaveModuleXiongzhangapp()">确定</button>
+					<button type="button" class="btn btn-default" ng-click="cancel('add_module_xiongzhangapp')">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<span class="btn btn-primary we7-padding-horizontal" ng-click="saveGroup()">提交</span>
 </div>
 <script>
@@ -522,16 +601,19 @@ require(['underscore'], function() {
 		'groupHaveModuleWxapp' : {php echo json_encode($group_have_module_wxapp)},
 		'groupHaveModuleWebapp' : {php echo json_encode($group_have_module_webapp)},
 		'groupHaveModulePhoneapp' : {php echo json_encode($group_have_module_phoneapp)},
+		'groupHaveModuleXiongzhangapp' : {php echo json_encode($group_have_module_xiongzhangapp)},
 		'groupNotHaveModuleApp' : {php echo json_encode($group_not_have_module_app)},
-		'groupNotHaveModuleWebapp' : {php echo json_encode(($group_not_have_module_webapp))}, // angular filter 只能数组
-		'groupNotHaveModulePhoneapp' : {php echo json_encode(($group_not_have_module_phoneapp))},
+		'groupNotHaveModuleWebapp' : {php echo json_encode($group_not_have_module_webapp)}, // angular filter 只能数组
+		'groupNotHaveModulePhoneapp' : {php echo json_encode($group_not_have_module_phoneapp)},
 		'groupNotHaveModuleWxapp' : {php echo json_encode($group_not_have_module_wxapp)},
+		'groupNotHaveModuleXiongzhangapp' : {php echo json_encode($group_not_have_module_xiongzhangapp)},
 		'groupHaveTemplate' : {php echo json_encode($group_have_template)},
 		'groupNotHaveTemplate' : {php echo json_encode($group_not_have_template)},
 		'url' : "{php echo url('module/group/save')}"
 	});
 
 	angular.bootstrap($('.js-modulegroup-post'), ['moduleApp']);
+
 	$('[data-toggle="table-collapse"]').on('click',function(){
 		var id = '[data-id="'+$(this).data('target')+'"]';
 		$(id).collapse('toggle');

@@ -42,6 +42,13 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label for="" class="control-label col-sm-2">创建熊掌号数量</label>
+			<div class="form-controls col-sm-8">
+				<input type="text" name="maxxiongzhangapp" class="form-control" ng-model="groupInfo.maxxiongzhangapp">
+				<span class="help-block">限制熊掌号的数量，为0则不允许添加。</span>
+			</div>
+		</div>
+		<div class="form-group">
 			<label for="" class="control-label col-sm-2">有效期</label>
 			<div class="form-controls col-sm-8">
 				<div class="input-group">
@@ -97,6 +104,16 @@
 								<td>
 									<ul>
 										<li ng-repeat="pc in pack.pc">
+											<span class="label label-info" ng-bind="pc.title"></span>
+										</li>
+									</ul>
+								</td>
+							</tr>
+							<tr class="permission-apply">
+								<td class="vertical-middle">熊掌号应用</td>
+								<td>
+									<ul>
+										<li ng-repeat="pc in pack.xiongzhangapp">
 											<span class="label label-info" ng-bind="pc.title"></span>
 										</li>
 									</ul>

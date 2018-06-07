@@ -59,7 +59,6 @@ if ($do == 'post') {
 	}
 	unset($package_val);
 	if (checksubmit('submit')) {
-
 		$user_group = array(
 			'id' => intval($_GPC['id']),
 			'name' => $_GPC['name'],
@@ -68,9 +67,9 @@ if ($do == 'post') {
 			'maxwxapp' => intval($_GPC['maxwxapp']),
 			'maxwebapp' => intval($_GPC['maxwebapp']),
 			'maxphoneapp' => intval($_GPC['maxphoneapp']),
+			'maxxiongzhangapp' => intval($_GPC['maxxiongzhangapp']),
 			'timelimit' => intval($_GPC['timelimit'])
 		);
-
 		$user_group_info = user_save_group($user_group);
 		if (is_error($user_group_info)) {
 			itoast($user_group_info['message'], '', '');

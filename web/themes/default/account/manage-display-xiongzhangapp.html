@@ -20,13 +20,13 @@
 
 </ul>
 <div class="clearfix we7-margin-bottom">
-	{if !$_W['isfounder'] && !empty($account_info['webapp_limit']) || user_is_vice_founder()}
+	{if !$_W['isfounder'] && !empty($account_info['xiongzhangapp_limit']) || user_is_vice_founder()}
 	<div class="alert alert-warning hidden">
 		温馨提示：
 		<i class="fa fa-info-circle"></i>
 		Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>，{if !user_is_vice_founder() && !empty($account_info['vice_group_name'])} <span class="text-strong">{$account_info['vice_group_name']}，</span>{/if}
 		账号有效期限：<span class="text-strong">{php echo date('Y-m-d', $_W['user']['starttime'])} ~~ {if empty($_W['user']['endtime'])}无限制{else}{php echo date('Y-m-d', $_W['user']['endtime'])}{/if}</span>，
-		可创建 <span class="text-strong">{$account_info['maxxiongzhangapp']} </span>个PC，已创建<span class="text-strong"> {$account_info['xiongzhangapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['xiongzhangapp_limit']} </span>个PC。
+		可创建 <span class="text-strong">{$account_info['maxxiongzhangapp']} </span>个熊掌号，已创建<span class="text-strong"> {$account_info['xiongzhangapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['xiongzhangapp_limit']} </span>个熊掌号。
 	</div>
 	{/if}
 	<form action="" class="form-inline  pull-left" method="get">
@@ -40,7 +40,7 @@
 	</form>
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
-		{if !empty($account_info['webapp_limit']) && (!empty($account_info['founder_webapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+		{if !empty($account_info['xiongzhangapp_limit']) && (!empty($account_info['founder_xiongzhangapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
 			<a href="{php echo url('account/manage/create_xiongzhangapp')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
 		</div>
@@ -50,7 +50,7 @@
 
 	<!-- svstart -->
 	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
-		{if !empty($account_info['webapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
+		{if !empty($account_info['xiongzhangapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
 			<a href="{php echo url('account/manage/create_xiongzhangapp')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
 		</div>

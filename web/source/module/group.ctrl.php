@@ -44,10 +44,12 @@ if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)$_GPC['wxapp'];
 	$webapp = empty($_GPC['webapp']) ? array() : (array)array_keys($_GPC['webapp']);
+	$xiongzhangapp = empty($_GPC['xiongzhangapp']) ? array() : (array)array_keys($_GPC['xiongzhangapp']);
+
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
-		'modules' => array_merge($modules, $wxapp, $webapp),
+		'modules' => array_merge($modules, $wxapp, $webapp, $xiongzhangapp),
 		'templates' => $_GPC['templates'],
 	);
 
@@ -109,6 +111,10 @@ if ($do == 'display') {
 						$modules_group_list[$key]['webapp_num'] = intval($modules_group_list[$key]['webapp_num']) > 0 ? (intval($modules_group_list[$key]['webapp_num']) + 1) : 1;
 						$modules_group_list[$key]['webapp_modules'][] = $module_info;
 					}
+					if ($module_info[MODULE_SUPPORT_XIONGZHANGAPP_NAME] == MODULE_SUPPORT_XIONGZHANGAPP) {
+						$modules_group_list[$key]['xiongzhangapp_num'] = intval($modules_group_list[$key]['xiongzhangapp_num']) > 0 ? (intval($modules_group_list[$key]['xiongzhangapp_num']) + 1) : 1;
+						$modules_group_list[$key]['xiongzhangapp_modules'][] = $module_info;
+					}
 				}
 			}
 
@@ -118,7 +124,6 @@ if ($do == 'display') {
 			$modules_group_list[$key]['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
 		}
 	}
-
 	//模版调用（主应用与插件）
 	$modules = user_modules($_W['uid']);
 }
@@ -139,9 +144,10 @@ if ($do == 'post') {
 
 	$group_have_module_app = array();
 	$group_have_module_wxapp = array();
-	$group_have_template = array();
 	$group_have_module_webapp = array();
 	$group_have_module_phoneapp = array();
+	$group_have_module_xiongzhangapp = array();
+	$group_have_template = array();
 	if (!empty($group_id)) {
 		$module_group = current(uni_groups(array($group_id)));
 		$group_have_module_app = empty($module_group['modules']) ? array() : array_filter($module_group['modules']);
@@ -150,14 +156,17 @@ if ($do == 'post') {
 		$group_have_module_webapp = empty($module_group['webapp']) ? array() : array_filter($module_group['webapp']);
 		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : array_filter($module_group['phoneapp']);
 	}
+
 	$module_list = user_modules($_W['uid']);
 	$module_list = array_filter($module_list, function($module) {
 		return empty($module['issystem']);
 	});
+
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();
 	$group_not_have_module_webapp = array();
 	$group_not_have_module_phoneapp = array();
+	$group_not_have_module_xiongzhangapp = array();
 	if (!empty($module_list)) {
 		foreach ($module_list as $name => $module_info) {
 			if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_WXAPP && !in_array($name, array_keys($group_have_module_app))) {
@@ -189,6 +198,10 @@ if ($do == 'post') {
 
 			if ($module_info['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP && !in_array($name, array_keys($group_have_module_phoneapp))) {
 				$group_not_have_module_phoneapp[$name] = $module_info;
+			}
+
+			if ($module_info['xiongzhangapp_support'] == MODULE_SUPPORT_XIONGZHANGAPP && !in_array($name, array_keys($group_have_module_xiongzhangapp))) {
+				$group_not_have_module_xiongzhangapp[$name] = $module_info;
 			}
 		}
 	}

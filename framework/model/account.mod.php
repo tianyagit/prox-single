@@ -338,7 +338,6 @@ function uni_groups($groupids = array(), $show_all = false) {
 	global $_W;
 	$cachekey = cache_system_key('uni_groups');
 	$list = cache_load($cachekey);
-
 	if (empty($list)) {
 		$condition = ' WHERE uniacid = 0';
 		$list = pdo_fetchall("SELECT * FROM " . tablename('uni_group') . $condition . " ORDER BY id DESC", array(), 'id');
@@ -355,7 +354,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 			foreach ($list as $k => &$row) {
 				if (!empty($row['modules'])) {
 					$modules = (array)iunserializer($row['modules']);
-					$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = array();
+					$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = $row['xiongzhangapp'] = array();
 					if (empty($modules)) {
 						continue;
 					}
@@ -364,17 +363,20 @@ function uni_groups($groupids = array(), $show_all = false) {
 						if (empty($module)) {
 							continue;
 						}
-						if ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+						if ($module[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
 							$row['wxapp'][] = $modulename;
 						}
-						if ($module['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
+						if ($module[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP) {
 							$row['webapp'][] = $modulename;
 						}
-						if ($module['phoneapp_support'] == MODULE_SUPPORT_PHONEAPP) {
+						if ($module[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP) {
 							$row['phoneapp'][] = $modulename;
 						}
 						if ($module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
 							$row['modules'][] = $modulename;
+						}
+						if ($module[MODULE_SUPPORT_XIONGZHANGAPP_NAME] == MODULE_SUPPORT_XIONGZHANGAPP) {
+							$row['xiongzhangapp'][] = $modulename;
 						}
 					}
 				}
@@ -387,6 +389,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 				}
 			}
 		}
+
 		cache_write($cachekey, $list);
 	}
 	$group_list = array();
@@ -406,7 +409,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 		$group_list = $list;
 	}
 
-	$module_section = array('modules', 'phoneapp', 'wxapp', 'webapp');
+	$module_section = array('modules', 'phoneapp', 'wxapp', 'webapp', 'xiongzhangapp');
 	if (!empty($group_list)) {
 		foreach ($group_list as $id => $group) {
 			foreach ($module_section as $section) {
@@ -642,9 +645,10 @@ function uni_user_see_more_info($user_type, $see_more = false) {
  * @return array
  */
 function uni_owner_account_nums($uid, $role) {
-	$account_num = $wxapp_num = $webapp_num = $phoneapp_num = 0;
+	$account_num = $wxapp_num = $webapp_num = $phoneapp_num = $xiongzhangapp_num = 0;
 	$condition = array('uid' => $uid, 'role' => $role);
 	$uniacocunts = pdo_getall('uni_account_users', $condition, array(), 'uniacid');
+
 	if (!empty($uniacocunts)) {
 		$all_account = pdo_fetchall('SELECT * FROM (SELECT u.uniacid, a.default_acid FROM ' . tablename('uni_account_users') . ' as u RIGHT JOIN '. tablename('uni_account').' as a  ON a.uniacid = u.uniacid  WHERE u.uid = :uid AND u.role = :role ) AS c LEFT JOIN '.tablename('account').' as d ON c.default_acid = d.acid WHERE d.isdeleted = 0', array(':uid' => $uid, ':role' => $role));
 		foreach ($all_account as $account) {
@@ -660,13 +664,17 @@ function uni_owner_account_nums($uid, $role) {
 			if ($account['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 				$phoneapp_num++;
 			}
+			if ($account['type'] == ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL) {
+				$xiongzhangapp_num++;
+			}
 		}
 	}
 	$num = array(
 		'account_num' => $account_num,
 		'wxapp_num' => $wxapp_num,
 		'webapp_num' => $webapp_num,
-		'phoneapp_num' => $phoneapp_num
+		'phoneapp_num' => $phoneapp_num,
+		'xiongzhangapp_num' => $xiongzhangapp_num,
 	);
 	return $num;
 }
