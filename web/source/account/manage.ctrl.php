@@ -82,6 +82,7 @@ if ($do == 'display') {
 			}
 		}
 	}
+	$list = array_values($list);
 	$total = $account_table->getLastQueryTotal();
 	$pager = pagination($total, $pindex, $psize);
 	template('account/manage-display' . ACCOUNT_TYPE_TEMPLATE);

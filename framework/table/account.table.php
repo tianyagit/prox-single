@@ -53,7 +53,6 @@ class AccountTable extends We7Table {
 		if (!empty($expire)) {
 			$this->searchWithExprie();
 		}
-		$this->accountUniacidOrder();
 		$list = $this->query->getall('uniacid');
 		return $list;
 	}
