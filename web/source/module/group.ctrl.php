@@ -155,6 +155,7 @@ if ($do == 'post') {
 		$group_have_template = empty($module_group['templates']) ? array() : array_filter($module_group['templates']);
 		$group_have_module_webapp = empty($module_group['webapp']) ? array() : array_filter($module_group['webapp']);
 		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : array_filter($module_group['phoneapp']);
+		$group_have_module_xiongzhangapp = empty($module_group['xiongzhangapp']) ? array() : array_filter($module_group['xiongzhangapp']);
 	}
 
 	$module_list = user_modules($_W['uid']);
