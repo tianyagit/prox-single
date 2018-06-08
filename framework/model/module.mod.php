@@ -874,6 +874,7 @@ function module_upgrade_info($modulelist = array()) {
 			$manifest['platform']['supports'][] = 'welcome';
 		}
 		$manifest['branches'] = $manifest_cloud['branches'];
+		$manifest['site_branch'] = $manifest_cloud['site_branch'];
 		$manifest_cloud_list[$modulename] = $manifest;
 	}
 
