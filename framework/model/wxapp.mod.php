@@ -120,8 +120,8 @@ function wxapp_support_wxapp_modules() {
  *
  * @return array
  */
-function wxapp_support_uniacid_modules() {
-	$uni_modules = uni_modules();
+function wxapp_support_uniacid_modules($uniacid) {
+	$uni_modules = uni_modules_by_uniacid($uniacid);
 	$wxapp_modules = array();
 	if (!empty($uni_modules)) {
 		foreach ($uni_modules as $module_name => $module_info) {
