@@ -173,6 +173,79 @@ function buildframes($framename = ''){
 	if(empty($frames)) {
 		$frames = cache_build_frame_menu();
 	}
+
+	//从数据库中获取用户权限，并附加上系统管理中的权限
+	//仅当系统管理时才使用预设权限
+	if (!empty($_W['role']) && empty($_W['isfounder'])) {
+		$user_permission = permission_account_user('system');
+	}
+	if (empty($_W['role']) && empty($_W['uniacid'])) {
+		$user_permission = permission_account_user('system');
+	}
+	//系统公众号菜单权限
+	if (!empty($user_permission)) {
+		foreach ($frames as $nav_id => $section) {
+			if (empty($section['section'])) {
+				continue;
+			}
+			foreach ($section['section'] as $section_id => $secion) {
+				if ($nav_id == 'account') {
+					if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module' && permission_account_user_role($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OWNER) {
+						$frames['account']['section'][$section_id]['is_display'] = false;
+						continue;
+					} else {
+						if (in_array("account*", $user_permission)) {
+							continue;
+						}
+					}
+				}
+				/* svstart */
+				if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
+					if ($nav_id != 'wxapp') {
+						$section_show = false;
+						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
+						foreach ($secion['menu'] as $menu_id => $menu) {
+							if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
+								$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
+							} else {
+								$section_show = true;
+							}
+						}
+						if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
+							$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
+						}
+					}
+				}
+				/* svend */
+				/* xstart */
+				if (IMS_FAMILY == 'x') {
+					if ($nav_id != 'wxapp' && $nav_id != 'store') {
+						$section_show = false;
+						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
+						foreach ($secion['menu'] as $menu_id => $menu) {
+							if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
+								$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
+							} else {
+								$section_show = true;
+							}
+						}
+						if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
+							$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
+						}
+					}
+				}
+				/* xend */
+			}
+		}
+	} else {
+		if (user_is_vice_founder()) {
+			$frames['system']['section']['article']['is_display'] = false;
+			$frames['system']['section']['welcome']['is_display'] = false;
+			$frames['system']['section']['wxplatform']['menu']['system_platform']['is_display'] = false;
+			$frames['system']['section']['user']['menu']['system_user_founder_group']['is_display'] = false;
+		}
+	}
+
 	//特定的控制器减少数据获取，减少出错的概率
 	if (defined('FRAME') && (in_array(FRAME, array('site', 'system')))) {
 		$frames = frames_top_menu($frames);
@@ -268,77 +341,7 @@ function buildframes($framename = ''){
 			}
 		}
 	}
-	//从数据库中获取用户权限，并附加上系统管理中的权限
-	//仅当系统管理时才使用预设权限
-	if (!empty($_W['role']) && !empty($_W['isfounder'])) {
-		$user_permission = permission_account_user('system');
-	}
-	if (empty($_W['role']) && empty($_W['uniacid'])) {
-		$user_permission = permission_account_user('system');
-	}
-	//系统公众号菜单权限
-	if (!empty($user_permission)) {
-		foreach ($frames as $nav_id => $section) {
-			if (empty($section['section'])) {
-				continue;
-			}
-			foreach ($section['section'] as $section_id => $secion) {
-				if ($nav_id == 'account') {
-					if ($status && !empty($module_permission) && in_array("account*", $user_permission) && $section_id != 'platform_module' && permission_account_user_role($_W['uid'], $_W['uniacid']) != ACCOUNT_MANAGE_NAME_OWNER) {
-						$frames['account']['section'][$section_id]['is_display'] = false;
-						continue;
-					} else {
-						if (in_array("account*", $user_permission)) {
-							continue;
-						}
-					}
-				}
-				/* svstart */
-				if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
-					if ($nav_id != 'wxapp') {
-						$section_show = false;
-						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
-						foreach ($secion['menu'] as $menu_id => $menu) {
-							if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
-								$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
-							} else {
-								$section_show = true;
-							}
-						}
-						if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
-							$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
-						}
-					}
-				}
-				/* svend */
-				/* xstart */
-				if (IMS_FAMILY == 'x') {
-					if ($nav_id != 'wxapp' && $nav_id != 'store') {
-						$section_show = false;
-						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:'.$section_id]) ? 1 : 0;
-						foreach ($secion['menu'] as $menu_id => $menu) {
-							if (!in_array($menu['permission_name'], $user_permission) && $section_id != 'platform_module') {
-								$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
-							} else {
-								$section_show = true;
-							}
-						}
-						if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
-							$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
-						}
-					}
-				}
-				/* xend */
-			}
-		}
-	} else {
-		if (user_is_vice_founder()) {
-			$frames['system']['section']['article']['is_display'] = false;
-			$frames['system']['section']['welcome']['is_display'] = false;
-			$frames['system']['section']['wxplatform']['menu']['system_platform']['is_display'] = false;
-			$frames['system']['section']['user']['menu']['system_user_founder_group']['is_display'] = false;
-		}
-	}
+
 	//进入模块界面后权限
 	$modulename = trim($_GPC['m']);
 	$eid = intval($_GPC['eid']);
