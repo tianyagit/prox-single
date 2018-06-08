@@ -764,6 +764,16 @@ function module_installed_list($type = '') {
  */
 function module_uninstall_list()  {
 	$uninstall_modules = table('modules_cloud')->getUninstallModule();
+	if (!empty($uninstall_modules)) {
+		array_walk($uninstall_modules, function(&$row, $key) {
+			if ($row[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
+				$support = MODULE_SUPPORT_WXAPP_NAME;
+			} else {
+				$support = MODULE_SUPPORT_ACCOUNT_NAME;
+			}
+			$row['link'] = url('module/manage-system/install', array('module_name' => $row['name'], 'support' => $support));
+		});
+	}
 	return $uninstall_modules;
 }
 
