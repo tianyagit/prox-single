@@ -764,6 +764,16 @@ function module_installed_list($type = '') {
  */
 function module_uninstall_list()  {
 	$uninstall_modules = table('modules_cloud')->getUninstallModule();
+	if (!empty($uninstall_modules)) {
+		array_walk($uninstall_modules, function(&$row, $key) {
+			if ($row[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
+				$support = MODULE_SUPPORT_WXAPP_NAME;
+			} else {
+				$support = MODULE_SUPPORT_ACCOUNT_NAME;
+			}
+			$row['link'] = url('module/manage-system/install', array('module_name' => $row['name'], 'support' => $support));
+		});
+	}
 	return $uninstall_modules;
 }
 
@@ -873,7 +883,8 @@ function module_upgrade_info($modulelist = array()) {
 		if ($manifest_cloud['site_branch']['system_welcome_support'] == MODULE_SUPPORT_SYSTEMWELCOME) {
 			$manifest['platform']['supports'][] = 'welcome';
 		}
-		$manifest['branches'] = !empty($manifest_cloud['branches']);
+		$manifest['branches'] = $manifest_cloud['branches'];
+		$manifest['site_branch'] = $manifest_cloud['site_branch'];
 		$manifest_cloud_list[$modulename] = $manifest;
 	}
 
