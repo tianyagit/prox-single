@@ -134,8 +134,8 @@ function uni_fetch($uniacid = 0) {
 	if (empty($account) || $account['isdeleted'] == 1) {
 		return array();
 	}
-	//删除关键信息
-	unset($account['key'], $account['secret'], $account['token'], $account['encodingaeskey']);
+	//删除关键信息(影响api.php，暂时屏蔽，后续处理)
+	//unset($account['key'], $account['secret'], $account['token'], $account['encodingaeskey']);
 	$owner = account_owner($uniacid);
 
 	$account['uid'] = $owner['uid'];
@@ -1063,7 +1063,7 @@ function uni_account_module_shortcut_enabled($modulename, $status = STATUS_ON) {
 	if(empty($module)) {
 		return error(1, '抱歉，你操作的模块不能被访问！');
 	}
-	
+
 	if (empty($module['config'])) {
 		$data = array(
 			'uniacid' => $_W['uniacid'],
