@@ -194,8 +194,11 @@ if($do == 'base') {
 		}
 	}
 
-	$table_name = in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ? 'account_wechats' : 'account_' . ACCOUNT_TYPE;
-	$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), array('key', 'secret', 'token', 'encodingaeskey'));
+	$table_name = in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ? 'account_wechats' : 'account_' . TYPE_SIGN;
+	if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
+		$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), array('key', 'secret', 'token', 'encodingaeskey'));
+	}
+	$account_other_info = (array)$account_other_info;
 	$account = array_merge($account, $account_other_info);
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
