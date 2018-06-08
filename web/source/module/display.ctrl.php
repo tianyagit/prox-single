@@ -33,7 +33,7 @@ if ($do == 'display') {
 	}
 	$module_rank = table('modules_rank')->getByModuleNameList(array_keys($user_module));
 	$rank = array();
-	foreach ($user_module as $module_name => $module_value) {
+	foreach ($user_module as $module_name => $module_info) {
 		if (!empty($module_info['issystem']) || ($module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] == MODULE_SUPPORT_SYSTEMWELCOME && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT && $module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP && $module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP && $module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP)) {
 			unset($user_module[$module_name]);
 		} else {
