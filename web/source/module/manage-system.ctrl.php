@@ -625,6 +625,7 @@ if ($do == 'installed') {
 		}
 		unset($module);
 	}
+	$pager = pagination(count($module_list), 1, 15, '', array('ajaxcallback' => true, 'callbackfuncname' => 'loadMore'));
 	$module_uninstall_total = module_uninstall_total($module_support);
 }
 

@@ -44,7 +44,7 @@
 	</ul>
 
 	<form action="" method="get">
-		<table class="table we7-table table-hover vertical-middle table-manage" infinite-scroll="loadMore()">
+		<table class="table we7-table table-hover vertical-middle table-manage">
 			<col width="120px" />
 			<col width="350px"/>
 			{if permission_check_account_user('see_module_manage_system_welcome_support') && $_GPC['support'] == 'welcome_support'}<col width="100px">{/if}
@@ -130,7 +130,8 @@
 			</tr>
 		</table>
 		<div class="select-all">
-			<div class="we7-form text-right" ng-bind-html="pager">
+			<div class="we7-form text-right js-pager">
+				{$pager}
 			</div>
 		</div>
 	</form>
