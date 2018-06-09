@@ -47,6 +47,7 @@
 		<table class="table we7-table table-hover vertical-middle table-manage" infinite-scroll="loadMore()">
 			<col width="120px" />
 			<col width="350px"/>
+			{if permission_check_account_user('see_module_manage_system_welcome_support') && $_GPC['support'] == 'welcome_support'}<col width="100px">{/if}
 			<col width="500px" />
 			<tr>
 				<th colspan="2" class="text-left filter">
@@ -60,6 +61,7 @@
 						</ul>
 					</div>
 				</th>
+				{if permission_check_account_user('see_module_manage_system_welcome_support') && $_GPC['support'] == 'welcome_support'}<th class="text-right"></th>{/if}
 				<th class="text-right">
 					{if permission_check_account_user('see_module_manage_system_ugrade')}
 					<div class="we7-form">
@@ -80,6 +82,7 @@
 				<th colspan="2" class="text-left bg-light-gray">
 					应用名/版本
 				</th>
+				{if permission_check_account_user('see_module_manage_system_welcome_support') && $_GPC['support'] == 'welcome_support'}<th>启用</th>{/if}
 				<th class="text-right bg-light-gray">操作</th>
 			</tr>
 			<tr ng-repeat="module in moduleList">
@@ -96,7 +99,10 @@
 					<span>版本：{{ module.version }} </span><span class="color-red" ng-if="module.new_version && isFounder == 1">发现新版本</span>
 					{/if}
 				</td>
-				<td class="vertical-middle table-manage-td">
+				{if permission_check_account_user('see_module_manage_system_welcome_support') && $_GPC['support'] == 'welcome_support'}
+				<td><div class="switch" ng-class="{'switchOn' : welcome_module == module.name}" ng-click="change_welcome_module(module.name)"></div></td>
+				{/if}
+				<td class="vertical-middle {if $_GPC['support'] != 'welcome_support'} table-manage-td {/if}">
 					<div class="link-group">
 						{if permission_check_account_user('see_module_manage_system_ugrade')}
 						<a ng-href="{{ './index.php?c=module&a=manage-system&do=upgrade&module_name='+module.name}}" class="color-red del" ng-if="module.new_version && module.from == 'local'">升级</a>
@@ -104,7 +110,11 @@
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&show=upgrade" class="color-red del" ng-if="module.new_version">升级</a>
 						{/if}
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&support={$module_support_name}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">管理设置</a>
+						{if permission_check_account_user('see_module_manage_system_stop') && $_GPC['support'] == 'welcome_support'}
+						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('关联的小程序等其它支持也会停用，确认要停用模块吗？')">停用</a>
+						{/if}
 					</div>
+					{if $_GPC['support'] != 'welcome_support'}
 					<div class="manage-option text-right">
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&support={$module_support_name}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">基本信息</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&support={$module_support_name}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=group" ng-if="isFounder == 1">应用权限组</a>
@@ -115,6 +125,7 @@
 						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('关联的小程序等其它支持也会停用，确认要停用模块吗？')">停用</a>
 						{/if}
 					</div>
+					{/if}
 				</td>
 			</tr>
 		</table>
@@ -133,7 +144,9 @@
 			'saveModuleUrl' :  "{php echo url('module/manage-system/save_module_info')}",
 			'checkUpgradeUrl' : "{php echo url('module/manage-system/check_upgrade')}",
 			'getUpgradeInfoUrl' : "{php echo url('module/manage-system/get_upgrade_info')}",
-			'filterUrl' : "{php echo url('module/manage-system/filter')}"
+			'filterUrl' : "{php echo url('module/manage-system/filter')}",
+			'welcome_module' : '{$_W['setting']['site_welcome_module']}',
+			'set_site_welcome_url' : "{php echo url('module/manage-system/set_site_welcome_module')}"
 		});
 		angular.bootstrap($('#js-system-module'), ['moduleApp']);
 	});
