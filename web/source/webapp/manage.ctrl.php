@@ -24,6 +24,15 @@ if($do == 'create') {
 		'description' => safe_gpc_string($_GPC['description'])
 	);
 
+	$account_table = table('account');
+	$account_table->searchWithTitle($data['name']);
+	$account_table->searchWithType(ACCOUNT_TYPE_WEBAPP_NORMAL);
+	$exists = $account_table->searchAccountList();
+
+	if (!empty($exists)) {
+		itoast('该PC名称已经存在！', url('account/display', array('type' => XIONGZHANGAPP_TYPE_SIGN)), 'error');
+	}
+
 	$webapp = table('webapp');
 	$uniacid = $webapp->createWebappInfo($data, $_W['uid']);
 	if($uniacid){
