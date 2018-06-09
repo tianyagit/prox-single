@@ -15,19 +15,24 @@ class Recycle extends \We7Table {
 		'name' => '',
 		'type' => 0,
 	);
-	
+
 	public function getByName($modulename) {
 		return $this->query->where('name', $modulename)->get();
 	}
-	
+
 	public function deleteByName($modulename) {
 		return $this->query->where('name', $modulename)->delete();
 	}
-	
+
 	public function addModule($modulename, $type = 1) {
 		return $this->fill(array(
 			'name' => $modulename,
 			'type' => $type,
 		))->save();
+	}
+
+	public function searchWithModules() {
+		return $this->query->from('modules', 'a')->select('a.*')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.name'));
+
 	}
 }

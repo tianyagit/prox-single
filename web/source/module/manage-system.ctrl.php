@@ -568,7 +568,9 @@ if ($do == 'recycle_post') {
 
 if ($do == 'recycle') {
 	$type = intval($_GPC['type']);
-
+	$title = safe_gpc_string($_GPC['title']);
+	$letter = safe_gpc_string($_GPC['letter']);
+	
 	if ($type == MODULE_RECYCLE_INSTALL_DISABLED) {
 		$_W['page']['title'] = '已停用模块列表';
 	} else {
@@ -578,10 +580,18 @@ if ($do == 'recycle') {
 	$pageindex = max($_GPC['page'], 1);
 	$pagesize = 20;
 
-	$module_recycle_talbe = table('modules_recycle');
-	$module_recycle_talbe->searchWithPage($pageindex, $pagesize)->where('type', $type);
+	$module_recycle_table = table('modules_recycle');
+	$module_recycle_table->searchWithModules();
+	$module_recycle_table->searchWithPage($pageindex, $pagesize)->where('b.type', $type);
+	if (!empty($title)) {
+		$module_recycle_table->where('a.title LIKE', "%{$title}%");
+	}
+	if (!empty($letter) && strlen($letter) == 1) {
+		$module_recycle_table->where('a.title_initial', $letter);
+	}
 
-	$modulelist = $module_recycle_talbe->getall('name');
+	$modulelist = $module_recycle_table->getall('name');
+
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $modulename => &$module) {
 			$module = module_fetch($modulename, false);
@@ -590,7 +600,7 @@ if ($do == 'recycle') {
 			}
 		}
 		unset($module);
-		$pager = pagination($module_recycle_talbe->getLastQueryTotal(), $pageindex, $pagesize);
+		$pager = pagination($module_recycle_table->getLastQueryTotal(), $pageindex, $pagesize);
 	}
 
 	$module_uninstall_total = module_uninstall_total($module_support);
