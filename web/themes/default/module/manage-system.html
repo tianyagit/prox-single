@@ -114,6 +114,7 @@
 						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('关联的小程序等其它支持也会停用，确认要停用模块吗？')">停用</a>
 						{/if}
 					</div>
+					{if $_GPC['support'] != 'welcome_support'}
 					<div class="manage-option text-right">
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&support={$module_support_name}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">基本信息</a>
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&support={$module_support_name}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}&show=group" ng-if="isFounder == 1">应用权限组</a>
@@ -124,6 +125,7 @@
 						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('关联的小程序等其它支持也会停用，确认要停用模块吗？')">停用</a>
 						{/if}
 					</div>
+					{/if}
 				</td>
 			</tr>
 		</table>
