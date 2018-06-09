@@ -9,9 +9,8 @@ load()->func('file');
 load()->model('user');
 load()->model('message');
 load()->model('wxapp');
-$dos = array('display', 'delete', 'create_xiongzhangapp');
+$dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
-
 
 $_W['page']['title'] = $account_typename . '列表 - ' . $account_typename;
 //模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
@@ -156,20 +155,3 @@ if ($do == 'delete') {
 	itoast('停用成功！，您可以在回收站中恢复', url('account/manage', array('account_type' => ACCOUNT_TYPE)), 'success');
 }
 
-if ($do == 'create_xiongzhangapp') {
-	if (checksubmit()) {
-		$data = array(
-			'name' => safe_gpc_string($_GPC['name']),
-			'description' => safe_gpc_string($_GPC['description'])
-		);
-
-		$xiongzhangapp = table('xiongzhangapp');
-		$uniacid = $xiongzhangapp->createXiongzhangappInfo($data, $_W['uid']);
-		if ($uniacid) {
-			itoast('创建成功', url('account/display', array('type' => XIONGZHANGAPP_TYPE_SIGN)));
-		} else {
-			itoast('创建失败', '', 'error');
-		}
-	}
-	template('xiongzhangapp/create');
-}

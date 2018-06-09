@@ -28,7 +28,7 @@
 						{/if}
 
 						{if !empty($account_info['xiongzhangapp_limit']) && (!empty($account_info['founder_xiongzhangapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
-						<li><i class="wi wi-app"></i><br/><a href="{php echo url('account/manage/create_xiongzhangapp')}" class="name" title="新建熊掌号"></a></li>
+						<li><i class="wi wi-app"></i><br/><a href="{php echo url('xiongzhangapp/manage/create')}" class="name" title="新建熊掌号"></a></li>
 						{/if}
 
 					</ul>
@@ -106,7 +106,7 @@
 						{/if}
 
 						{if !empty($account_info['xiongzhangapp_limit']) && (!empty($account_info['founder_xiongzhangapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
-						<a ng-switch-when="xiongzhangapp" href="{php echo url('account/manage/create_xiongzhangapp')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
+						<a ng-switch-when="xiongzhangapp" href="{php echo url('xiongzhangapp/manage/create')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
 						{/if}
 
 					</div>
@@ -141,7 +141,7 @@
 						{/if}
 
 						{if !empty($account_info['xiongzhangapp_limit']) || $_W['isfounder']}
-						<a ng-switch-when="xiongzhangapp" href="{php echo url('account/manage/create_xiongzhangapp')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
+						<a ng-switch-when="xiongzhangapp" href="{php echo url('xiongzhangapp/manage/create')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
 						{/if}
 					</div>
 					{/if}
