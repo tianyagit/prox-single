@@ -428,6 +428,7 @@ $we7_file_permission = array(
 			'see_module_manage_system_info_edit',
 			'see_module_manage_system_detailinfo',
 			'see_module_manage_system_group_add',
+			'see_module_manage_system_welcome_support',
 			'see_account_post_modules_tpl_edit_store_endtime',
 			'see_account_manage_module_tpl_all_permission',
 			'see_account_manage_sms_blance',

@@ -29,7 +29,7 @@ abstract class WeAccount {
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
-	 * @return WeAccount|NULL
+	 * @return WeiXinAccount
 	 */
 	public static function create($acidOrAccount = array()) {
 		global $_W;
@@ -895,7 +895,7 @@ abstract class WeBase {
 	/**
 	 * @var array 当前模块参数及配置信息
 	 */
-	private $module;
+	public $module;
 	/**
 	 * @var string 当前模块名称 {identifie}
 	 */

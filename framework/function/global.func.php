@@ -493,6 +493,13 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 		'lindex' => 0,
 		'options' => ''
 	);
+	if (empty($context['before'])) {
+		$context['before'] = 5;
+	}
+	if (empty($context['after'])) {
+		$context['after'] = 4;
+	}
+
 	if ($context['ajaxcallback']) {
 		$context['isajax'] = true;
 	}
@@ -519,10 +526,10 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 		if (empty($url)) {
 			$url = $_W['script_name'] . '?' . http_build_query($_GET);
 		}
-		$pdata['faa'] = 'href="javascript:;" page="' . $pdata['findex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['findex'] . '\', this);return false;"' : '');
-		$pdata['paa'] = 'href="javascript:;" page="' . $pdata['pindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['pindex'] . '\', this);return false;"' : '');
-		$pdata['naa'] = 'href="javascript:;" page="' . $pdata['nindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['nindex'] . '\', this);return false;"' : '');
-		$pdata['laa'] = 'href="javascript:;" page="' . $pdata['lindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['lindex'] . '\', this);return false;"' : '');
+		$pdata['faa'] = 'href="javascript:;" page="' . $pdata['findex'] . '" '. ($callbackfunc ? 'ng-click="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['findex'] . '\', this);"' : '');
+		$pdata['paa'] = 'href="javascript:;" page="' . $pdata['pindex'] . '" '. ($callbackfunc ? 'ng-click="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['pindex'] . '\', this);"' : '');
+		$pdata['naa'] = 'href="javascript:;" page="' . $pdata['nindex'] . '" '. ($callbackfunc ? 'ng-click="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['nindex'] . '\', this);"' : '');
+		$pdata['laa'] = 'href="javascript:;" page="' . $pdata['lindex'] . '" '. ($callbackfunc ? 'ng-click="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['lindex'] . '\', this);"' : '');
 	} else {
 		if ($url) {
 			$pdata['faa'] = 'href="?' . str_replace('*', $pdata['findex'], $url) . '"';
@@ -542,10 +549,9 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 	}
 
 	$html = '<div><ul class="pagination pagination-centered">';
-	if ($pdata['cindex'] > 1) {
-		$html .= "<li><a {$pdata['faa']} class=\"pager-nav\">首页</a></li>";
-		$html .= "<li><a {$pdata['paa']} class=\"pager-nav\">&laquo;上一页</a></li>";
-	}
+	$html .= "<li><a {$pdata['faa']} class=\"pager-nav\">首页</a></li>";
+	empty($callbackfunc) && $html .= "<li><a {$pdata['paa']} class=\"pager-nav\">&laquo;上一页</a></li>";
+
 	//页码算法：前5后4，不足10位补齐
 	if (!$context['before'] && $context['before'] != 0) {
 		$context['before'] = 5;
@@ -564,7 +570,7 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 		}
 		for ($i = $range['start']; $i <= $range['end']; $i++) {
 			if ($context['isajax']) {
-				$aa = 'href="javascript:;" page="' . $i . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $i . '\', this);return false;"' : '');
+				$aa = 'href="javascript:;" page="' . $i . '" '. ($callbackfunc ? 'ng-click="'.$callbackfunc.'(\'' . $url . '\', \'' . $i . '\', this);"' : '');
 			} else {
 				if ($url) {
 					$aa = 'href="?' . str_replace('*', $i, $url) . '"';
@@ -573,12 +579,16 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 					$aa = 'href="?' . http_build_query($_GET) . '"';
 				}
 			}
-			$html .= ($i == $pdata['cindex'] ? '<li class="active"><a href="javascript:;">' . $i . '</a></li>' : "<li><a {$aa}>" . $i . '</a></li>');
+			if (!empty($context['isajax'])) {
+				$html .= ($i == $pdata['cindex'] ? '<li class="active">' : '<li>') . "<a {$aa}>" . $i . '</a></li>';
+			} else {
+				$html .= ($i == $pdata['cindex'] ? '<li class="active"><a href="javascript:;">' . $i . '</a></li>' : "<li><a {$aa}>" . $i . '</a></li>');
+			}
 		}
 	}
 
 	if ($pdata['cindex'] < $pdata['tpage']) {
-		$html .= "<li><a {$pdata['naa']} class=\"pager-nav\">下一页&raquo;</a></li>";
+		empty($callbackfunc) && $html .= "<li><a {$pdata['naa']} class=\"pager-nav\">下一页&raquo;</a></li>";
 		$html .= "<li><a {$pdata['laa']} class=\"pager-nav\">尾页</a></li>";
 	}
 	$html .= '</ul></div>';
