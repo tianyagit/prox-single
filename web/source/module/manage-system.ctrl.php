@@ -498,6 +498,9 @@ if ($do == 'module_detail') {
 	$module_group = array();
 	if (!empty($module_group_list)) {
 		foreach ($module_group_list as $group) {
+			if (user_is_vice_founder() && $group['owner_uid'] != $_W['uid']) {
+				continue;
+			}
 			$group['modules'] = iunserializer($group['modules']);
 			if (is_array($group['modules']) && in_array($module_name, $group['modules'])) {
 				$module_group[] = $group;
@@ -570,7 +573,7 @@ if ($do == 'recycle') {
 	$type = intval($_GPC['type']);
 	$title = safe_gpc_string($_GPC['title']);
 	$letter = safe_gpc_string($_GPC['letter']);
-	
+
 	if ($type == MODULE_RECYCLE_INSTALL_DISABLED) {
 		$_W['page']['title'] = '已停用模块列表';
 	} else {
