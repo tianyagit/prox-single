@@ -584,7 +584,7 @@ if ($do == 'recycle') {
 	$pagesize = 20;
 
 	$module_recycle_table = table('modules_recycle');
-	$module_recycle_table->searchWithModules();
+	$module_recycle_table->searchWithModulesCloud();
 	$module_recycle_table->searchWithPage($pageindex, $pagesize)->where('b.type', $type);
 	if (!empty($title)) {
 		$module_recycle_table->where('a.title LIKE', "%{$title}%");
