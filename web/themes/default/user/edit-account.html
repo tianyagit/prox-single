@@ -203,25 +203,25 @@
 			<th>角色</th>
 			<th class="text-right">操作</th>
 		</tr>
-		<tr ng-repeat="xiongzhangapp in xiongzhangapps" ng-if="xiongzhangapps">
-			<td class="text-left"><img ng-src="{{xiongzhangapp.thumb}}" class="img-responsive"/></td>
+		<tr ng-repeat="xzapp in xzapps" ng-if="xzapps">
+			<td class="text-left"><img ng-src="{{xzapp.thumb}}" class="img-responsive"/></td>
 			<td class="text-left">
-				<p ng-bind="xiongzhangapp.name"></p>
+				<p ng-bind="xzapp.name"></p>
 				<span class="color-gray">类型：
 					<span>PC</span>
 				</span>
 			</td>
 			<td>
-				<span ng-if="xiongzhangapp.role == 'founder'">创始人</span>
-				<span ng-if="xiongzhangapp.role == 'owner'">主管理员</span>
-				<span ng-if="xiongzhangapp.role == 'manager'">管理员</span>
-				<span ng-if="xiongzhangapp.role == 'operator'">操作员</span>
-				<span ng-if="xiongzhangapp.role == 'clerk'">店员</span>
+				<span ng-if="xzapp.role == 'founder'">创始人</span>
+				<span ng-if="xzapp.role == 'owner'">主管理员</span>
+				<span ng-if="xzapp.role == 'manager'">管理员</span>
+				<span ng-if="xzapp.role == 'operator'">操作员</span>
+				<span ng-if="xzapp.role == 'clerk'">店员</span>
 			</td>
 			<td>
 				<div class="link-group">
-					<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{xiongzhangapp.uniacid}}&acid={{xiongzhangapp.acid}}&account_type={ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL}" class="color-default">熊掌号设置</a>
-					<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{xiongzhangapp.uniacid}}&acid={{xiongzhangapp.acid}}&account_type={ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL}" class="color-default">操作员设置</a>
+					<a ng-href="./index.php?c=account&a=post&do=base&uniacid={{xzapp.uniacid}}&acid={{xzapp.acid}}&account_type={ACCOUNT_TYPE_XZAPP_NORMAL}" class="color-default">熊掌号设置</a>
+					<a ng-href="./index.php?c=account&a=post-user&do=edit&uniacid={{xzapp.uniacid}}&acid={{xzapp.acid}}&account_type={ACCOUNT_TYPE_XZAPP_NORMAL}" class="color-default">操作员设置</a>
 				</div>
 			</td>
 		</tr>
@@ -237,7 +237,7 @@
 		wxapps: {php echo !empty($account_detail['wxapp']) ? json_encode($account_detail['wxapp']) : 'null'},
 		webapps: {php echo !empty($account_detail['webapp']) ? json_encode($account_detail['webapp']) : 'null'},
 		phoneapps: {php echo !empty($account_detail['phoneapp']) ? json_encode($account_detail['phoneapp']) : 'null'},
-		xiongzhangapps : {php echo !empty($account_detail['xiongzhangapp']) ? json_encode($account_detail['xiongzhangapp']) : 'null'},
+		xzapps : {php echo !empty($account_detail['xzapp']) ? json_encode($account_detail['xzapp']) : 'null'},
 
 		profile: {php echo !empty($profile) ? json_encode($profile) : 'null'},
 	});

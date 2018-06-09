@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
  * @param $uid
  * @return bool|int
  */
-function create_xiongzhangapp($attr, $uid) {
+function xzapp_create($attr, $uid) {
 	$name = $attr['name'];
 	$description = $attr['description'];
 	$data = array(
@@ -24,11 +24,11 @@ function create_xiongzhangapp($attr, $uid) {
 	if(!$uniacid) {
 		return false;
 	}
-	$accountdata = array('uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL, 'hash' => random(8));
+	$accountdata = array('uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_XZAPP_NORMAL, 'hash' => random(8));
 	pdo_insert('account', $accountdata);
 	$acid = pdo_insertid();
 	pdo_update('uni_account', array('default_acid'=>$acid), array('uniacid'=>$uniacid));
-	pdo_insert('account_xiongzhangapp', array('uniacid'=>$uniacid, 'acid'=>$acid, 'name'=>$name));
+	pdo_insert('account_xzapp', array('uniacid'=>$uniacid, 'acid'=>$acid, 'name'=>$name));
 
 	$unisettings['creditnames'] = array('credit1' => array('title' => '积分', 'enabled' => 1), 'credit2' => array('title' => '余额', 'enabled' => 1));
 	$unisettings['creditnames'] = iserializer($unisettings['creditnames']);

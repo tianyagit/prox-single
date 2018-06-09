@@ -46,3 +46,6 @@ vendor/**/*
 /composer.lock
 ./app/resource/
 
+/web/source/test
+/xiongzhang_api.php
+/xiongzhang_index.php

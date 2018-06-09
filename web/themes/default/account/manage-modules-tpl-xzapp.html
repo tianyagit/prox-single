@@ -48,7 +48,7 @@
 			<td colspan="5">
 				<div class="col-sm-1 color-gray text-left we7-padding-none">熊掌号应用</div>
 				<div class="col-sm-11">
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.xiongzhangapp">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.xzapp">
 						<div ng-if="module.name != 'all'" class="text-over text-left">
 							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 							{{ module.title }}
@@ -63,7 +63,7 @@
 			<td colspan="5">
 				<div class="col-sm-1 color-gray text-left we7-padding-none">熊掌号应用</div>
 				<div class="col-sm-11">
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.xiongzhangapp">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.xzapp">
 						<a href="javascript:;" class="label label-info" ng-bind="module.title"></a>
 					</div>
 
@@ -124,7 +124,7 @@
 			<td colspan="5">
 				<div class="col-sm-1 color-gray text-left we7-padding-none">熊掌号应用</div>
 				<div class="col-sm-11">
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.xiongzhangapp">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.xzapp">
 						<div ng-if="module.name != 'all'" class="text-over text-left">
 							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 							{{ module.title }}
@@ -139,7 +139,7 @@
 			<td colspan="5">
 				<div class="col-sm-1 color-gray text-left we7-padding-none">熊掌号应用</div>
 				<div class="col-sm-11">
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.xiongzhangapp">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in module_tpl.xzapp">
 						<a href="javascript:;" class="label label-info" ng-bind="module.title"></a>
 					</div>
 
@@ -225,7 +225,7 @@
 					<div class="material-body" ng-show="jurindex==0" id="content-modules">
 						<div class="row">
 							{loop $modules $module_name $module}
-							{if empty($module['issystem']) && $module['xiongzhangapp_support'] == 2}
+							{if empty($module['issystem']) && $module['xzapp_support'] == 2}
 							<div class="col-sm-2">
 								<div class="item {if is_array($current_module_names) && in_array($module_name, $current_module_names)}active{/if}"
 									 data-title="{$module['title']}"

@@ -1,18 +1,18 @@
 {template 'common/header'}
 <div class="we7-page-title">熊掌号管理</div>
 <ul class="we7-page-tab">
-	<li><a href="{php echo url ('account/manage', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}">熊掌号列表</a></li>
+	<li><a href="{php echo url ('account/manage', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL))}">熊掌号列表</a></li>
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
-		<li class="active"><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}">熊掌号回收站</a></li>
+		<li class="active"><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL))}">熊掌号回收站</a></li>
 		{/if}
 	{/if}
 	<!-- xend -->
 	<!-- svstart -->
 	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
-		<li class="active"><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}">熊掌号回收站</a></li>
+		<li class="active"><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL))}">熊掌号回收站</a></li>
 		{/if}
 	{/if}
 	<!-- svend -->
@@ -22,7 +22,7 @@
 	<form action="" class="form-inline  pull-left" method="get">
 		<input type="hidden" name="c" value="account">
 		<input type="hidden" name="a" value="recycle">
-		<input type="hidden" name="account_type" value="{ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL}">
+		<input type="hidden" name="account_type" value="{ACCOUNT_TYPE_XZAPP_NORMAL}">
 		<div class="input-group form-group" style="width: 400px;">
 			<input type="text" name="keyword" value="{$_GPC['keyword']}" class="form-control" placeholder="搜索关键字"/>
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
@@ -67,8 +67,8 @@
 	angular.module('accountApp').value('config', {
 		del_accounts: {php echo !empty($del_accounts) ? json_encode($del_accounts) : 'null'},
 		links: {
-			postRecover: "{php echo url('account/recycle/recover', array('type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}",
-			postDel: "{php echo url('account/recycle/delete', array('type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}",
+			postRecover: "{php echo url('account/recycle/recover', array('type' => ACCOUNT_TYPE_XZAPP_NORMAL))}",
+			postDel: "{php echo url('account/recycle/delete', array('type' => ACCOUNT_TYPE_XZAPP_NORMAL))}",
 		}
 	});
 	angular.bootstrap($('#js-system-account-recycle'), ['accountApp']);

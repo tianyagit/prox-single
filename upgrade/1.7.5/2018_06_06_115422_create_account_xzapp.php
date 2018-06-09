@@ -9,16 +9,16 @@ defined('IN_IA') or exit('Access Denied');
  * @version 1.7.5
  */
 
-class CreateAccountXiongzhangapp {
+class CreateAccountXzapp {
 
 	/**
 	 *  执行更新
 	 */
 	public function up() {
-		if (!pdo_tableexists('account_xiongzhangapp')) {
-			$table_name = tablename('account_xiongzhangapp');
+		if (!pdo_tableexists('account_xzapp')) {
+			$table_name = tablename('account_xzapp');
 			$sql = <<<EOF
-CREATE TABLE `ims_account_xiongzhangapp` (
+CREATE TABLE `ims_account_xzapp` (
 `acid` int(11) NOT NULL DEFAULT '0',
 `uniacid` int(11) DEFAULT NULL,
 `name` varchar(255) DEFAULT '',

@@ -162,9 +162,9 @@ class AccountTable extends We7Table {
 				->getall('acid');
 	}
 
-	public function accountXiongzhangappInfo($uniacids, $uid) {
+	public function accountXzappInfo($uniacids, $uid) {
 		return $this->query->from('uni_account', 'a')
-			->leftjoin('account_xiongzhangapp', 'w')
+			->leftjoin('account_xzapp', 'w')
 			->on(array('w.uniacid' => 'a.uniacid'))
 			->leftjoin('uni_account_users', 'au')
 			->on(array('a.uniacid' => 'au.uniacid'))
@@ -241,8 +241,8 @@ class AccountTable extends We7Table {
 		return $this->query->from('account_phoneapp')->where('acid', $acid)->get();
 	}
 
-	public function getXiongzhangappAccount($acid) {
-		return $this->query->from('account_xiongzhangapp')->where('acid', $acid)->get();
+	public function getXzappAccount($acid) {
+		return $this->query->from('account_xzapp')->where('acid', $acid)->get();
 	}
 
 	public function getUniAccountByAcid($acid) {

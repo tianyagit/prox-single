@@ -30,7 +30,7 @@ if($do == 'create') {
 	$exists = $account_table->searchAccountList();
 
 	if (!empty($exists)) {
-		itoast('该PC名称已经存在！', url('account/display', array('type' => XIONGZHANGAPP_TYPE_SIGN)), 'error');
+		itoast('该PC名称已经存在！', url('account/display', array('type' => XZAPP_TYPE_SIGN)), 'error');
 	}
 
 	$webapp = table('webapp');

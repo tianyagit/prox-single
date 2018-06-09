@@ -35,6 +35,7 @@ function table($name) {
 		'modules_recycle', 
 		'modules',
 		'modules_ignore',
+		'account_xzapp',
 	))) {
 		return new $table_classname;
 	}

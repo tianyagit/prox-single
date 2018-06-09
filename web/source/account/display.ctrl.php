@@ -32,8 +32,8 @@ if ($do == 'platform') {
 			}
 		} elseif ($cache_last_account_type == PHONEAPP_TYPE_SIGN) {
 			header('Location: ' . url('phoneapp/display/home'));
-		} elseif ($cache_last_account_type == XIONGZHANGAPP_TYPE_SIGN) {
-			header('Location: ' . url('xiongzhangapp/home/display'));
+		} elseif ($cache_last_account_type == XZAPP_TYPE_SIGN) {
+			header('Location: ' . url('xzapp/home/display'));
 		}
 	} else {
 		header('Location: ' . url('account/display'));
@@ -47,7 +47,7 @@ if ($do == 'display') {
 
 	$type = safe_gpc_string($_GPC['type']);
 	$title = safe_gpc_string($_GPC['title']);
-	$type = in_array($type, array('all', ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XIONGZHANGAPP_TYPE_SIGN)) ? $type : 'all';
+	$type = in_array($type, array('all', ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN)) ? $type : 'all';
 
 	if ($type == 'all') {
 		$title = ' 公众号/小程序/PC/APP/熊掌号 ';
@@ -55,7 +55,7 @@ if ($do == 'display') {
 
 	if ($type == 'all') {
 		$tableName = ACCOUNT_TYPE_SIGN;
-		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_PHONEAPP_NORMAL, ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL);
+		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_PHONEAPP_NORMAL, ACCOUNT_TYPE_XZAPP_NORMAL);
 		$fields = 'a.uniacid,b.type';
 	} elseif ($type == ACCOUNT_TYPE_SIGN) {
 		$tableName = ACCOUNT_TYPE_SIGN;
@@ -69,9 +69,9 @@ if ($do == 'display') {
 	} elseif ($type == PHONEAPP_TYPE_SIGN) {
 		$tableName = PHONEAPP_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_PHONEAPP_NORMAL);
-	} elseif ($type == XIONGZHANGAPP_TYPE_SIGN) {
-		$tableName = XIONGZHANGAPP_TYPE_SIGN;
-		$condition = array(ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL);
+	} elseif ($type == XZAPP_TYPE_SIGN) {
+		$tableName = 'account_' . XZAPP_TYPE_SIGN;
+		$condition = array(ACCOUNT_TYPE_XZAPP_NORMAL);
 	}
 
 	$table = table($tableName);
@@ -89,14 +89,16 @@ if ($do == 'display') {
 
 	$table->accountRankOrder();
 	$table->searchWithPage($pindex, $psize);
+
 	$list = $table->searchAccountListFields($fields);
 
 	$total = $table->getLastQueryTotal();
+
 	$list = array_values($list);
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);
 		switch ($account['type']) {
-			case ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL:
+			case ACCOUNT_TYPE_XZAPP_NORMAL:
 			case ACCOUNT_TYPE_OFFCIAL_NORMAL :
 			case ACCOUNT_TYPE_OFFCIAL_AUTH :
 				$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
@@ -127,6 +129,7 @@ if ($do == 'display') {
 				break;
 		}
 	}
+
 	if ($_W['ispost']) {
 		iajax(0, $list);
 	}
@@ -231,9 +234,9 @@ if ($do == 'switch') {
 			}
 		}
 
-		if ($type == ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL) {
-			uni_account_save_switch($uniacid, XIONGZHANGAPP_TYPE_SIGN);
-			itoast('', url('xiongzhangapp/home/display'));
+		if ($type == ACCOUNT_TYPE_XZAPP_NORMAL) {
+			uni_account_save_switch($uniacid, XZAPP_TYPE_SIGN);
+			itoast('', url('xzapp/home/display'));
 		}
 	}
 }

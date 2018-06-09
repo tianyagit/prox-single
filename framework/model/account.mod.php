@@ -371,7 +371,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 			foreach ($list as $k => &$row) {
 				if (!empty($row['modules'])) {
 					$modules = (array)iunserializer($row['modules']);
-					$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = $row['xiongzhangapp'] = array();
+					$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = $row['xzapp'] = array();
 					if (empty($modules)) {
 						continue;
 					}
@@ -392,8 +392,8 @@ function uni_groups($groupids = array(), $show_all = false) {
 						if ($module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
 							$row['modules'][] = $modulename;
 						}
-						if ($module[MODULE_SUPPORT_XIONGZHANGAPP_NAME] == MODULE_SUPPORT_XIONGZHANGAPP) {
-							$row['xiongzhangapp'][] = $modulename;
+						if ($module[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
+							$row['xzapp'][] = $modulename;
 						}
 					}
 				}
@@ -426,7 +426,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 		$group_list = $list;
 	}
 
-	$module_section = array('modules', 'phoneapp', 'wxapp', 'webapp', 'xiongzhangapp');
+	$module_section = array('modules', 'phoneapp', 'wxapp', 'webapp', 'xzapp');
 	if (!empty($group_list)) {
 		foreach ($group_list as $id => $group) {
 			foreach ($module_section as $section) {
@@ -620,8 +620,8 @@ function uni_account_tablename($type) {
 			return 'account_webapp';
 		case ACCOUNT_TYPE_PHONEAPP_NORMAL:
 			return 'account_phoneapp';
-		case ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL:
-			return 'account_xiongzhangapp';
+		case ACCOUNT_TYPE_XZAPP_NORMAL:
+			return 'account_xzapp';
 	}
 }
 
@@ -662,7 +662,7 @@ function uni_user_see_more_info($user_type, $see_more = false) {
  * @return array
  */
 function uni_owner_account_nums($uid, $role) {
-	$account_num = $wxapp_num = $webapp_num = $phoneapp_num = $xiongzhangapp_num = 0;
+	$account_num = $wxapp_num = $webapp_num = $phoneapp_num = $xzapp_num = 0;
 	$condition = array('uid' => $uid, 'role' => $role);
 	$uniacocunts = pdo_getall('uni_account_users', $condition, array(), 'uniacid');
 
@@ -681,8 +681,8 @@ function uni_owner_account_nums($uid, $role) {
 			if ($account['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 				$phoneapp_num++;
 			}
-			if ($account['type'] == ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL) {
-				$xiongzhangapp_num++;
+			if ($account['type'] == ACCOUNT_TYPE_XZAPP_NORMAL) {
+				$xzapp_num++;
 			}
 		}
 	}
@@ -691,7 +691,7 @@ function uni_owner_account_nums($uid, $role) {
 		'wxapp_num' => $wxapp_num,
 		'webapp_num' => $webapp_num,
 		'phoneapp_num' => $phoneapp_num,
-		'xiongzhangapp_num' => $xiongzhangapp_num,
+		'xzapp_num' => $xzapp_num,
 	);
 	return $num;
 }
@@ -788,8 +788,8 @@ function uni_account_last_switch() {
 		$uniacid = $cache_lastaccount['wxapp'];
 	} else if (strexists($_W['siteurl'], 'c=phoneapp')) {
 		$uniacid = $cache_lastaccount['phoneapp'];
-	} else if (strexists($_W['siteurl'], 'c=xiongzhangapp')) {
-		$uniacid = $cache_lastaccount['xiongzhangapp'];
+	} else if (strexists($_W['siteurl'], 'c=xzapp')) {
+		$uniacid = $cache_lastaccount['xzapp'];
 	} else {
 		$uniacid = $cache_lastaccount['account'];
 	}
@@ -799,7 +799,7 @@ function uni_account_last_switch() {
 
 function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN) {
 	global $_W;
-	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XIONGZHANGAPP_TYPE_SIGN))) {
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN))) {
 		return error(-1, '账号类型不合法');
 	}
 	uni_account_save_switch($uniacid, $type);
@@ -819,7 +819,7 @@ function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN)
 function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 	global $_W, $_GPC;
 	load()->model('visit');
-	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XIONGZHANGAPP_TYPE_SIGN))) {
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN))) {
 		return error(-1, '账号类型不合法');
 	}
 	if (empty($_GPC['__switch'])) {

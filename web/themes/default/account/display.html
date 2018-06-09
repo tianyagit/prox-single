@@ -27,8 +27,8 @@
 						<li><i class="wi wi-app"></i><br/><a href="{php echo url('phoneapp/manage/create_display')}" class="name" title="新建APP"></a></li>
 						{/if}
 
-						{if !empty($account_info['xiongzhangapp_limit']) && (!empty($account_info['founder_xiongzhangapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
-						<li><i class="wi wi-app"></i><br/><a href="{php echo url('xiongzhangapp/manage/create')}" class="name" title="新建熊掌号"></a></li>
+						{if !empty($account_info['xzapp_limit']) && (!empty($account_info['founder_xzapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						<li><i class="wi wi-app"></i><br/><a href="{php echo url('xzapp/manage/create')}" class="name" title="新建熊掌号"></a></li>
 						{/if}
 
 					</ul>
@@ -105,8 +105,8 @@
 						<a ng-switch-when="phoneapp" href="{php echo url('phoneapp/manage/create_display')}" class="color-default"><i class="wi wi-registersite"></i>新建APP</a>
 						{/if}
 
-						{if !empty($account_info['xiongzhangapp_limit']) && (!empty($account_info['founder_xiongzhangapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
-						<a ng-switch-when="xiongzhangapp" href="{php echo url('xiongzhangapp/manage/create')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
+						{if !empty($account_info['xzapp_limit']) && (!empty($account_info['founder_xzapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						<a ng-switch-when="xzapp" href="{php echo url('xzapp/manage/create')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
 						{/if}
 
 					</div>
@@ -140,8 +140,8 @@
 						</a>
 						{/if}
 
-						{if !empty($account_info['xiongzhangapp_limit']) || $_W['isfounder']}
-						<a ng-switch-when="xiongzhangapp" href="{php echo url('xiongzhangapp/manage/create')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
+						{if !empty($account_info['xzapp_limit']) || $_W['isfounder']}
+						<a ng-switch-when="xzapp" href="{php echo url('xzapp/manage/create')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
 						{/if}
 					</div>
 					{/if}
@@ -169,7 +169,7 @@
 							APP管理
 						</a>
 
-						<a ng-switch-when="xiongzhangapp" href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}" class="color-default">
+						<a ng-switch-when="xzapp" href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL))}" class="color-default">
 							<i class="wi wi-manage"></i>
 							熊掌号管理
 						</a>
@@ -203,7 +203,7 @@
 								<i ng-if="detail.type == types.wxapp_auth" class="wi wi-wxapp"></i>
 								<i ng-if="detail.type == types.webapp" class="wi wi-pc"></i>
 								<i ng-if="detail.type == types.phoneapp" class="wi wi-app"></i>
-								<i ng-if="detail.type == types.xiongzhangapp" class="wi wi-app"></i>
+								<i ng-if="detail.type == types.xzapp" class="wi wi-app"></i>
 							</div>
 							<div class="info">
 								<div class="name" ng-bind="detail.name"></div>
@@ -223,7 +223,7 @@
 								</div>
 
 
-								<div class="type" ng-if="detail.type == types.xiongzhangapp">
+								<div class="type" ng-if="detail.type == types.xzapp">
 									<span>类型：熊掌号</span>
 								</div>
 
@@ -248,7 +248,7 @@
 						</a>
 
 						<!-- 进入熊掌号 -->
-						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.xiongzhangapp"><div>进入熊掌号 <i class="wi wi-angle-right"></i></div></a>
+						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.xzapp"><div>进入熊掌号 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 小程序/APP 查看版本 -->
 						<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth || detail.type == types.phoneapp">
@@ -313,7 +313,7 @@
 			'wxapp_auth' : "{ACCOUNT_TYPE_APP_AUTH}",
 			'webapp' : "{ACCOUNT_TYPE_WEBAPP_NORMAL}",
 			'phoneapp' : "{ACCOUNT_TYPE_PHONEAPP_NORMAL}",
-			'xiongzhangapp' : "{ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL}"
+			'xzapp' : "{ACCOUNT_TYPE_XZAPP_NORMAL}"
 	},
 	scrollUrl : "{php echo url('account/display', array('type'=>$type))}"
 	});

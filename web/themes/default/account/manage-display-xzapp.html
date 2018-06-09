@@ -1,11 +1,11 @@
 {template 'common/header'}
 <div class="we7-page-title">熊掌号管理</div>
 <ul class="we7-page-tab">
-	<li class="active"><a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}">熊掌号列表</a></li>
+	<li class="active"><a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL))}">熊掌号列表</a></li>
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
-		<li><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}">熊掌号回收站</a></li>
+		<li><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL))}">熊掌号回收站</a></li>
 		{/if}
 	{/if}
 	<!-- xend -->
@@ -13,26 +13,26 @@
 	<!-- svstart -->
 	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
-		<li><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}">熊掌号回收站</a></li>
+		<li><a href="{php echo url ('account/recycle', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL))}">熊掌号回收站</a></li>
 		{/if}
 	{/if}
 	<!-- svend -->
 
 </ul>
 <div class="clearfix we7-margin-bottom">
-	{if !$_W['isfounder'] && !empty($account_info['xiongzhangapp_limit']) || user_is_vice_founder()}
+	{if !$_W['isfounder'] && !empty($account_info['xzapp_limit']) || user_is_vice_founder()}
 	<div class="alert alert-warning hidden">
 		温馨提示：
 		<i class="fa fa-info-circle"></i>
 		Hi，<span class="text-strong">{$_W['username']}</span>，您所在的会员组： <span class="text-strong">{$account_info['group_name']}</span>，{if !user_is_vice_founder() && !empty($account_info['vice_group_name'])} <span class="text-strong">{$account_info['vice_group_name']}，</span>{/if}
 		账号有效期限：<span class="text-strong">{php echo date('Y-m-d', $_W['user']['starttime'])} ~~ {if empty($_W['user']['endtime'])}无限制{else}{php echo date('Y-m-d', $_W['user']['endtime'])}{/if}</span>，
-		可创建 <span class="text-strong">{$account_info['maxxiongzhangapp']} </span>个熊掌号，已创建<span class="text-strong"> {$account_info['xiongzhangapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['xiongzhangapp_limit']} </span>个熊掌号。
+		可创建 <span class="text-strong">{$account_info['maxxzapp']} </span>个熊掌号，已创建<span class="text-strong"> {$account_info['xzapp_num']} </span>个，还可创建 <span class="text-strong">{$account_info['xzapp_limit']} </span>个熊掌号。
 	</div>
 	{/if}
 	<form action="" class="form-inline  pull-left" method="get">
 		<input type="hidden" name="c" value="account">
 		<input type="hidden" name="a" value="manage">
-		<input type="hidden" name="account_type" value="{ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL}">
+		<input type="hidden" name="account_type" value="{ACCOUNT_TYPE_XZAPP_NORMAL}">
 		<div class="input-group form-group" style="width: 400px;">
 			<input type="text" name="keyword" value="{$_GPC['keyword']}" class="form-control" placeholder="搜索关键字"/>
 			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
@@ -40,9 +40,9 @@
 	</form>
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
-		{if !empty($account_info['xiongzhangapp_limit']) && (!empty($account_info['founder_xiongzhangapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+		{if !empty($account_info['xzapp_limit']) && (!empty($account_info['founder_xzapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
-			<a href="{php echo url('xiongzhangapp/manage/create')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
+			<a href="{php echo url('xzapp/manage/create')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
 		</div>
 		{/if}
 	{/if}
@@ -50,9 +50,9 @@
 
 	<!-- svstart -->
 	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
-		{if !empty($account_info['xiongzhangapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
+		{if !empty($account_info['xzapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
-			<a href="{php echo url('xiongzhangapp/manage/create')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
+			<a href="{php echo url('xzapp/manage/create')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
 		</div>
 		{/if}
 	{/if}
@@ -138,7 +138,7 @@
 	$(function(){
 		$('[data-toggle="tooltip"]').tooltip();
 	});
-	switch_url = "{php echo url('account/display/switch', array('type' => ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))}";
+	switch_url = "{php echo url('account/display/switch', array('type' => ACCOUNT_TYPE_XZAPP_NORMAL))}";
 	angular.module('accountApp').value('config', {
 		lists: {php echo !empty($list) ? json_encode($list) : 'null'},
 	links: {

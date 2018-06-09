@@ -21,7 +21,7 @@
 					{php $platform_url=url('account/display')}
 					{php $nav_top_fold[] = array('name' => 'all', 'title'=>'全部', 'type' => 'all', 'url' => $platform_url)}
 					{loop $top_nav $nav}
-						{if in_array($nav['name'], array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XIONGZHANGAPP_TYPE_SIGN))}
+						{if in_array($nav['name'], array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN))}
 							{php $nav_top_fold[]=$nav}
 						{elseif in_array($nav['name'], array('platform', 'module', 'system', 'site'))}
 							{php $nav_top_tiled_system[]=$nav}
@@ -106,7 +106,7 @@
 	<div class="right-fixed-top"></div>
 	{if !defined('IN_MESSAGE')}
 	<div class="container">
-		{if in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site', 'webapp', 'phoneapp', 'xiongzhangapp')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
+		{if in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site', 'webapp', 'phoneapp', 'xzapp')) && !in_array($_GPC['a'], array('news-show', 'notice-show'))}
 		<div class="panel panel-content main-panel-content {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}panel-content-plugin{/if}">
 		<div class="panel-body clearfix main-panel-body {if $_GPC['menu_fold_tag:classical'] == 1 && !defined('IN_MODULE')}folded{/if}">
 			{if !defined('IN_MODULE')}

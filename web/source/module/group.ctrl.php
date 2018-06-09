@@ -44,12 +44,12 @@ if ($do == 'save') {
 	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
 	$wxapp = empty($_GPC['wxapp']) ? array() : (array)$_GPC['wxapp'];
 	$webapp = empty($_GPC['webapp']) ? array() : (array)array_keys($_GPC['webapp']);
-	$xiongzhangapp = empty($_GPC['xiongzhangapp']) ? array() : (array)array_keys($_GPC['xiongzhangapp']);
+	$xzapp = empty($_GPC['xzapp']) ? array() : (array)array_keys($_GPC['xzapp']);
 
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
-		'modules' => array_merge($modules, $wxapp, $webapp, $xiongzhangapp),
+		'modules' => array_merge($modules, $wxapp, $webapp, $xzapp),
 		'templates' => $_GPC['templates'],
 	);
 
@@ -111,9 +111,9 @@ if ($do == 'display') {
 						$modules_group_list[$key]['webapp_num'] = intval($modules_group_list[$key]['webapp_num']) > 0 ? (intval($modules_group_list[$key]['webapp_num']) + 1) : 1;
 						$modules_group_list[$key]['webapp_modules'][] = $module_info;
 					}
-					if ($module_info[MODULE_SUPPORT_XIONGZHANGAPP_NAME] == MODULE_SUPPORT_XIONGZHANGAPP) {
-						$modules_group_list[$key]['xiongzhangapp_num'] = intval($modules_group_list[$key]['xiongzhangapp_num']) > 0 ? (intval($modules_group_list[$key]['xiongzhangapp_num']) + 1) : 1;
-						$modules_group_list[$key]['xiongzhangapp_modules'][] = $module_info;
+					if ($module_info[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
+						$modules_group_list[$key]['xzapp_num'] = intval($modules_group_list[$key]['xzapp_num']) > 0 ? (intval($modules_group_list[$key]['xzapp_num']) + 1) : 1;
+						$modules_group_list[$key]['xzapp_modules'][] = $module_info;
 					}
 				}
 			}
@@ -146,7 +146,7 @@ if ($do == 'post') {
 	$group_have_module_wxapp = array();
 	$group_have_module_webapp = array();
 	$group_have_module_phoneapp = array();
-	$group_have_module_xiongzhangapp = array();
+	$group_have_module_xzapp = array();
 	$group_have_template = array();
 	if (!empty($group_id)) {
 		$module_group = current(uni_groups(array($group_id)));
@@ -155,7 +155,7 @@ if ($do == 'post') {
 		$group_have_template = empty($module_group['templates']) ? array() : array_filter($module_group['templates']);
 		$group_have_module_webapp = empty($module_group['webapp']) ? array() : array_filter($module_group['webapp']);
 		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : array_filter($module_group['phoneapp']);
-		$group_have_module_xiongzhangapp = empty($module_group['xiongzhangapp']) ? array() : array_filter($module_group['xiongzhangapp']);
+		$group_have_module_xzapp = empty($module_group['xzapp']) ? array() : array_filter($module_group['xzapp']);
 	}
 
 	$module_list = user_modules($_W['uid']);
@@ -167,7 +167,7 @@ if ($do == 'post') {
 	$group_not_have_module_wxapp = array();
 	$group_not_have_module_webapp = array();
 	$group_not_have_module_phoneapp = array();
-	$group_not_have_module_xiongzhangapp = array();
+	$group_not_have_module_xzapp = array();
 	if (!empty($module_list)) {
 		foreach ($module_list as $name => $module_info) {
 			if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_WXAPP && !in_array($name, array_keys($group_have_module_app))) {
@@ -201,8 +201,8 @@ if ($do == 'post') {
 				$group_not_have_module_phoneapp[$name] = $module_info;
 			}
 
-			if ($module_info['xiongzhangapp_support'] == MODULE_SUPPORT_XIONGZHANGAPP && !in_array($name, array_keys($group_have_module_xiongzhangapp))) {
-				$group_not_have_module_xiongzhangapp[$name] = $module_info;
+			if ($module_info['xzapp_support'] == MODULE_SUPPORT_XZAPP && !in_array($name, array_keys($group_have_module_xzapp))) {
+				$group_not_have_module_xzapp[$name] = $module_info;
 			}
 		}
 	}

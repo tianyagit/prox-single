@@ -79,9 +79,9 @@ function module_support_type() {
 			'type' => PHONEAPP_TYPE_SIGN,
 			'support' => MODULE_SUPPORT_PHONEAPP,
 		),
-		'xiongzhangapp_support' => array(
-			'type' => XIONGZHANGAPP_TYPE_SIGN,
-			'support' => MODULE_SUPPORT_XIONGZHANGAPP,
+		'xzapp_support' => array(
+			'type' => XZAPP_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_XZAPP,
 		)
 	);
 	return $module_support_type;

@@ -9,15 +9,15 @@ defined('IN_IA') or exit('Access Denied');
  * @version 1.7.5
  */
 
-class AlterUsersFounderGroupMaxxiongzhangapp {
+class AlterUsersFounderGroupMaxxzapp {
 
 	/**
 	 *  执行更新
 	 */
 	public function up() {
-		if (!pdo_exists('users_founder_group', 'maxxiongzhangapp')) {
+		if (!pdo_exists('users_founder_group', 'maxxzapp')) {
 			$table_name = tablename('users_founder_group');
-			$sql = "ALTER TABLE {$table_name} ADD maxxiongzhangapp int(10) DEFAULT 0 NOT NULL COMMENT '熊掌号最大创建数量'";
+			$sql = "ALTER TABLE {$table_name} ADD maxxzapp int(10) DEFAULT 0 NOT NULL COMMENT '熊掌号最大创建数量'";
 			pdo_run($sql);
 		}
 	}
