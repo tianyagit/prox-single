@@ -452,7 +452,7 @@ function permission_check_account_user_module($action = '', $module_name = '') {
 		}
 		//模块其他业务菜单
 	} elseif (!empty($do) && !empty($m)) {
-		$is_exist = table('modules_binding')->isEntryExists($m, 'menu', $do);
+		$is_exist = table('modules_bindings')->isEntryExists($m, 'menu', $do);
 		if(empty($is_exist)) {
 			return true;
 		}
@@ -505,10 +505,10 @@ function permission_user_account_num($uid = 0) {
 	}
 	/* @var $store_table StoreTable*/
 	$store_table = table('store');
-	$create_buy_account_num = $store_table->searchUserCreateAccountNum($_W['uid']);
-	$create_buy_wxapp_num = $store_table->searchUserCreateWxappNum($_W['uid']);
-	$store_buy_account = $store_table->searchUserBuyAccount($_W['uid']);
-	$store_buy_wxapp = $store_table->searchUserBuyWxapp($_W['uid']);
+	$create_buy_account_num = $store_table->searchUserCreateAccountNum($uid);
+	$create_buy_wxapp_num = $store_table->searchUserCreateWxappNum($uid);
+	$store_buy_account = $store_table->searchUserBuyAccount($uid);
+	$store_buy_wxapp = $store_table->searchUserBuyWxapp($uid);
 	$uniacid_limit = max((intval($group['maxaccount']) + intval($store_buy_account) - $group_num['account_num']), 0);
 	$wxapp_limit = max((intval($group['maxwxapp']) + intval($store_buy_wxapp) - $group_num['wxapp_num']), 0);
 	$webapp_limit = max(intval($group['maxwebapp']) - $group_num['webapp_num'], 0);
