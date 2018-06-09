@@ -200,23 +200,6 @@ if($do == 'base') {
 		$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), array('key', 'secret', 'token', 'encodingaeskey'));
 	}
 	$account_other_info = (array)$account_other_info;
-	} else if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
-		$table_name = 'account_' . WXAPP_TYPE_SIGN;
-		$fields = $fields_oauth;
-	} else if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_WEBAPP_NORMAL))) {
-		$table_name = 'account_' . WEBAPP_TYPE_SIGN;
-		$fields = $fields_normal;
-	} else if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_PHONEAPP_NORMAL))) {
-		$table_name = 'account_' . PHONEAPP_TYPE_SIGN;
-		$fields = $fields_normal;
-	}else if(in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_XIONGZHANGAPP_NORMAL))) {
-		$table_name = 'account_' . XIONGZHANGAPP_TYPE_SIGN;
-		$fields = $fields_normal;
-	} else {
-		$table_name = 'account_wechats';
-		$fields = $fields_oauth;
-	}
-	$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), $fields);
 	$account = array_merge($account, $account_other_info);
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;

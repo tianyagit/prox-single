@@ -45,33 +45,29 @@ class Cloud extends \We7Table {
 		'is_ban' => 0,
 		'lastupdatetime' => 0,
 	);
-	
+
 	public function getByName($name) {
 		if (empty($name)) {
 			return array();
 		}
 		return $this->query->where('name', $name)->get('name');
 	}
-	
+
 	public function getUpgradeByModuleNameList($module_name_list, $account_type = ACCOUNT_TYPE_SIGN) {
 		if (empty($module_name_list)) {
 			return array();
 		}
-		
+
 		return $this->query->where('name', $module_name_list)->where(function ($query){
 			$query->where('has_new_version', 1)->whereor('has_new_branch', 1);
 		})->orderby('lastupdatetime', 'desc')->getall('name');
 	}
-	
+
 	/**
 	 * 增加不在回收站的条件
 	 */
 	public function searchWithoutRecycle() {
 		return $this->query->from('modules_cloud', 'a')->select('a.*')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.name'))->where('b.name', 'NULL');
-	}
-	
-	public function getUninstallTotalBySupportType($support) {
-		return $this->searchWithoutRecycle()->where('a.' . $support. '_support', MODULE_SUPPORT_ACCOUNT)->where('install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL))->getcolumn('COUNT(*)');
 	}
 
 	public function getUninstallTotalBySupportType($support) {
@@ -81,13 +77,13 @@ class Cloud extends \We7Table {
 	public function deleteByName($modulename) {
 		return $this->query->where('name', $modulename)->delete();
 	}
-	
+
 	public function getUninstallModule() {
 		return $this->searchWithoutRecycle()->where(function ($query){
 			$query->where('a.install_status', MODULE_LOCAL_UNINSTALL)->whereor('a.install_status', MODULE_CLOUD_UNINSTALL);
 		})->orderby('a.lastupdatetime', 'desc')->getall('a.name');
 	}
-	
+
 	public function getUpgradeTotalBySupportType($support) {
 		return $this->searchWithoutRecycle()->where('a.' . $support. '_support', 2)->where(function ($query){
 			$query->where('a.has_new_version', 1)->whereor('a.has_new_branch', 1);
