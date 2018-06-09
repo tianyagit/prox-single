@@ -452,7 +452,7 @@ function permission_check_account_user_module($action = '', $module_name = '') {
 		}
 		//模块其他业务菜单
 	} elseif (!empty($do) && !empty($m)) {
-		$is_exist = table('modules_binding')->isEntryExists($m, 'menu', $do);
+		$is_exist = table('modules_bindings')->isEntryExists($m, 'menu', $do);
 		if(empty($is_exist)) {
 			return true;
 		}
