@@ -218,7 +218,7 @@ function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
 		}
 	}
 	if (empty($fan) && $openid == $_W['openid'] && !empty($_SESSION['userinfo'])) {
-		$fan['tag'] = unserialize(base64_decode($_SESSION['userinfo']));
+		$fan['tag'] = iunserializer(base64_decode($_SESSION['userinfo']));
 		$fan['uid'] = 0;
 		$fan['openid'] = $fan['tag']['openid'];
 		$fan['follow'] = 0;
@@ -258,7 +258,7 @@ function mc_oauth_fans($openid, $acid = 0){
 function mc_oauth_userinfo($acid = 0) {
 	global $_W;
 	if (isset($_SESSION['userinfo'])) {
-		$userinfo = unserialize(base64_decode($_SESSION['userinfo']));
+		$userinfo = iunserializer(base64_decode($_SESSION['userinfo']));
 		if (!empty($userinfo) || is_array($userinfo)) {
 			return $userinfo;
 		}

@@ -233,7 +233,7 @@ function cache_build_module_subscribe_type() {
 	}
 	$subscribe = array();
 	foreach ($modules as $module) {
-		$module['subscribes'] = unserialize($module['subscribes']);
+		$module['subscribes'] = iunserializer($module['subscribes']);
 		if (!empty($module['subscribes'])) {
 			foreach ($module['subscribes'] as $event) {
 				if ($event == 'text') {

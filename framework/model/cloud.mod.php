@@ -48,7 +48,7 @@ function _cloud_shipping_parse($dat, $file) {
 	if (is_error($dat)) {
 		return error(-1, '网络传输错误, 请检查您的cURL是否可用, 或者服务器网络是否正常. ' . $dat['message']);
 	}
-	$tmp = unserialize($dat['content']);
+	$tmp = iunserializer($dat['content']);
 	if (is_array($tmp) && is_error($tmp)) {
 		if ($tmp['errno'] == '-2') {
 			$data = file_get_contents(IA_ROOT . '/framework/version.inc.php');
@@ -66,7 +66,7 @@ function _cloud_shipping_parse($dat, $file) {
 		return error(-1, '抱歉，您的站点已被列入云服务黑名单，云服务一切业务已被禁止，请联系微擎客服！');
 	}
 	if (strlen($dat['content']) != 32) {
-		$dat['content'] = unserialize($dat['content']);
+		$dat['content'] = iunserializer($dat['content']);
 		if (is_array($dat['content']) && isset($dat['content']['files'])) {
 			if (!empty($dat['content']['manifest'])) {
 				$dat['content']['manifest'] = base64_decode($dat['content']['manifest']);

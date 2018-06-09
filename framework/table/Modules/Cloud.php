@@ -70,25 +70,8 @@ class Cloud extends \We7Table {
 		return $this->query->from('modules_cloud', 'a')->select('a.*')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.name'))->where('b.name', 'NULL');
 	}
 	
-	public function getAccountUninstallTotal() {
-		return $this->searchWithoutRecycle()->where('a.account_support', MODULE_SUPPORT_ACCOUNT)->where('install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL))->getcolumn('COUNT(*)');
-	}
-	
-	public function getWxappUninstallTotal() {
-		return $this->query->where('wxapp_support', MODULE_SUPPORT_ACCOUNT)->count();
-	}
-	
-	
-	public function getWebappUninstallTotal() {
-		return $this->query->where('webapp_support', MODULE_SUPPORT_ACCOUNT)->count();
-	}
-	
-	public function getPhoneappUninstallTotal() {
-		return $this->query->where('phoneapp_support', MODULE_SUPPORT_ACCOUNT)->count();
-	}
-	
-	public function getWelcomeUninstallTotal() {
-		return $this->query->where('welcome_support', MODULE_SUPPORT_ACCOUNT)->count();
+	public function getUninstallTotalBySupportType($support) {
+		return $this->searchWithoutRecycle()->where('a.' . $support. '_support', MODULE_SUPPORT_ACCOUNT)->where('install_status', array(MODULE_LOCAL_UNINSTALL, MODULE_CLOUD_UNINSTALL))->getcolumn('COUNT(*)');
 	}
 
 	public function getUninstallTotalBySupportType($support) {

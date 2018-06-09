@@ -35,7 +35,7 @@ function app_navs($type = 'home', $multiid = 0, $section = 0) {
 				$row['url'] .= strexists($row['url'], '?') ? "&i={$_W['uniacid']}" : "?i={$_W['uniacid']}";
 			}
 			if (is_serialized($row['css'])) {
-				$row['css'] = unserialize($row['css']);
+				$row['css'] = iunserializer($row['css']);
 			}
 			if (empty($row['css'])) {
 				$row['css'] = array(

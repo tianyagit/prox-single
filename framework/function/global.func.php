@@ -388,8 +388,9 @@ function is_serialized($data, $strict = true) {
 			}
 		// or else fall through
 		case 'a' :
-		case 'O' :
 			return (bool)preg_match("/^{$token}:[0-9]+:/s", $data);
+		case 'O' :
+			return false;
 		case 'b' :
 		case 'i' :
 		case 'd' :

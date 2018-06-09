@@ -41,7 +41,7 @@ define('ACCOUNT_TYPE', $account_base->type);
 define('ACCOUNT_TYPE_TEMPLATE', $account_base->typeTempalte);
 
 $module_all_support = module_support_type();
-$module_support = !empty($module_all_support[$_GPC['support']]) ? $module_all_support[$_GPC['support']]['type'] : MODULE_SUPPORT_ACCOUNT_NAME;
+$module_support = !empty($module_all_support[$_GPC['support']]) ? $module_all_support[$_GPC['support']]['type'] : ACCOUNT_TYPE_SIGN;
 $module_support_name = $_GPC['support'];
 /* vstart */
 if (IMS_FAMILY == 'v') {

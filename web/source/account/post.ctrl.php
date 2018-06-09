@@ -57,6 +57,7 @@ $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'base') {
+
 	if (!$role_permission) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
@@ -194,11 +195,11 @@ if($do == 'base') {
 		}
 	}
 
-	$fields_oauth = array('key', 'secret', 'token', 'encodingaeskey');
-	$fields_normal = array('acid', 'uniacid', 'name');
-	if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
-		$table_name = 'account_wechats';
-		$fields = $fields_oauth;
+	$table_name = in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ? 'account_wechats' : 'account_' . TYPE_SIGN;
+	if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
+		$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), array('key', 'secret', 'token', 'encodingaeskey'));
+	}
+	$account_other_info = (array)$account_other_info;
 	} else if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
 		$table_name = 'account_' . WXAPP_TYPE_SIGN;
 		$fields = $fields_oauth;
@@ -361,6 +362,9 @@ if($do == 'modules_tpl') {
 	$modules_tpl = $extend = array();
 
 	$founders = explode(',', $_W['config']['setting']['founder']);
+	if (in_array($_W['uid'], $founders)) {
+		$uni_groups = uni_groups();
+	}
 	if (in_array($owner['uid'], $founders)) {
 		$modules_tpl[] = array(
 			'id' => -1,
@@ -376,7 +380,7 @@ if($do == 'modules_tpl') {
 			$owner['group'] = pdo_get('users_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
 		}
 
-		$owner['group']['package'] = iunserializer($owner['group']['package']);
+		$owner['group']['package'] = (array)iunserializer($owner['group']['package']);
 		if(!empty($owner['group']['package'])){
 			foreach ($owner['group']['package'] as $package_value) {
 				if($package_value == -1){
