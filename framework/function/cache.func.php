@@ -564,16 +564,6 @@ function cache_key_all() {
 				'key' => 'module_receive_enable',
 				'group' => '',
 			),
-
-			'xz_accesstoken' => array(
-				'key' => 'xz_accesstoken',
-				'group' => '',
-			),
-
-			'xz_api_accesstoken' => array(
-				'key' => 'xz_api_accesstoken',
-				'group' => '',
-			),
 		),
 		// 缓存键关联关系数组
 		'groups' => array(
