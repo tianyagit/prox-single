@@ -112,6 +112,7 @@
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&support={$module_support_name}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">管理设置</a>
 						{if permission_check_account_user('see_module_manage_system_stop') && $_GPC['support'] == 'welcome_support'}
 						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('关联的小程序等其它支持也会停用，确认要停用模块吗？')">停用</a>
+						<a href="{php echo url('home/welcome/ext', array('system_welcome' => 1))}&m={{ module.name }}" ng-if="isFounder == 1">管理</a>
 						{/if}
 					</div>
 					{if $_GPC['support'] != 'welcome_support'}
