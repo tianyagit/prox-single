@@ -32,7 +32,7 @@
 	<div class="we7-page-search clearfix">
 		<div class="form-group we7-margin-bottom  col-sm-4">
 			<div class="input-group">
-				<input class="form-control" name="title" ng-model="moduleName"  ng-keyup="searchModuleName($event)" type="text" placeholder="名称" >
+				<input class="form-control" name="title" ng-model="search.moduleName"  ng-keyup="searchModuleName($event)" type="text" placeholder="名称" >
 				<span class="input-group-btn"><button ng-click="searchModuleName()" class="btn btn-default" id="search"><i class="fa fa-search"></i></button></span>
 			</div>
 		</div>
@@ -40,7 +40,7 @@
 	<div class="clearfix"></div>
 
 	<ul class="letters-list">
-		<li ng-class="activeLetter == letter ? 'active' : ''" ng-repeat="letter in letters"><a href="javascript:;" ng-click="searchLetter(letter)">{{ letter }}</a></li>
+		<li ng-class="search.letter == letter ? 'active' : ''" ng-repeat="letter in letters"><a href="javascript:;" ng-click="searchLetter(letter)">{{ letter }}</a></li>
 	</ul>
 
 	<form action="" method="get">
@@ -129,7 +129,7 @@
 				</td>
 			</tr>
 		</table>
-		<div class="select-all">
+		<div class="select-all" ng-hide="search.moduleName || (search.letter && search.letter != '全部')">
 			<div class="we7-form text-right js-pager">
 				{$pager}
 			</div>

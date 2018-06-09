@@ -190,7 +190,7 @@ function ext_module_manifest_parse($xml) {
 	//模块注册菜单
 	$bindings = $root->getElementsByTagName('bindings')->item(0);
 	if (!empty($bindings)) {
-		global $points;
+		$points = ext_module_bindings();
 		if (!empty($points)) {
 			$ps = array_keys($points);
 			$manifest['bindings'] = array();
