@@ -102,7 +102,7 @@
 				{if permission_check_account_user('see_module_manage_system_welcome_support') && $_GPC['support'] == 'welcome_support'}
 				<td><div class="switch" ng-class="{'switchOn' : welcome_module == module.name}" ng-click="change_welcome_module(module.name)"></div></td>
 				{/if}
-				<td class="vertical-middle">
+				<td class="vertical-middle {if $_GPC['support'] != 'welcome_support'} table-manage-td {/if}">
 					<div class="link-group">
 						{if permission_check_account_user('see_module_manage_system_ugrade')}
 						<a ng-href="{{ './index.php?c=module&a=manage-system&do=upgrade&module_name='+module.name}}" class="color-red del" ng-if="module.new_version && module.from == 'local'">升级</a>
@@ -110,6 +110,9 @@
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&show=upgrade" class="color-red del" ng-if="module.new_version">升级</a>
 						{/if}
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&support={$module_support_name}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">管理设置</a>
+						{if permission_check_account_user('see_module_manage_system_stop') && $_GPC['support'] == 'welcome_support'}
+						<a href="{php echo url('module/manage-system/recycle_post')}&module_name={{ module.name }}" onclick="return confirm('关联的小程序等其它支持也会停用，确认要停用模块吗？')">停用</a>
+						{/if}
 					</div>
 					<div class="manage-option text-right">
 						<a href="{php echo url('module/manage-system/module_detail')}&name={{ module.name }}&support={$module_support_name}&type={ACCOUNT_TYPE_OFFCIAL_NORMAL}" ng-if="isFounder == 1">基本信息</a>
