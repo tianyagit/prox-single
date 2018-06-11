@@ -162,7 +162,6 @@ function system_site_info() {
  * @return mixed|null|string|string[]
  */
 function system_check_statcode($statcode) {
-	header('X-XSS-Protection: 0');
 	$allowed_stats = array(
 		'baidu' => array(
 			'enabled' => true,

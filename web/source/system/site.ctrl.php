@@ -19,7 +19,6 @@ if(empty($settings) || !is_array($settings)) {
 } else {
 	$settings['slides'] = iunserializer($settings['slides']);
 }
-
 /* sxstart */
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	$path = IA_ROOT . '/web/themes/';
@@ -46,13 +45,14 @@ if ($do == 'copyright') {
 	if (checksubmit('submit')) {
 		/* sxstart */
 		if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
+			header('X-XSS-Protection: 0');
 			$data = array(
 				'status' => intval($_GPC['status']),
 				'verifycode' => intval($_GPC['verifycode']),
 				'reason' => trim($_GPC['reason']),
 				'sitename' => trim($_GPC['sitename']),
 				'url' => (strexists($_GPC['url'], 'http://') || strexists($_GPC['url'], 'https://')) ? $_GPC['url'] : "http://{$_GPC['url']}",
-				'statcode' => system_check_statcode(htmlspecialchars_decode($_GPC['statcode'])),
+				'statcode' => system_check_statcode($_GPC['statcode']),
 				'footerleft' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerleft'])),
 				'footerright' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerright'])),
 				'icon' => trim($_GPC['icon']),
