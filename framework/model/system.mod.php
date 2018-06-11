@@ -179,7 +179,8 @@ function system_check_statcode($statcode) {
 		if ($preg && $item['enabled']) {
 			return safe_gpc_html(htmlspecialchars_decode($statcode));
 		} else {
-			return safe_gpc_html(htmlspecialchars_decode($statcode));
+			continue;
 		}
 	}
+	return error(-1, '没有匹配的第三方代码');
 }

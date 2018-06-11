@@ -41,6 +41,14 @@ if ($do == 'copyright') {
 	}
 	/* sxend */
 	if (checksubmit('submit')) {
+		$statcode = !empty($_GPC['statcode']) ? $_GPC['statcode'] : '';
+		if (!empty($statcode)) {
+			$statcode = system_check_statcode($statcode);
+			if (is_error($statcode)) {
+				itoast($statcode['message'], url('system/site'), 'error');
+			}
+		}
+
 		/* sxstart */
 		if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 			$data = array(
@@ -49,7 +57,7 @@ if ($do == 'copyright') {
 				'reason' => trim($_GPC['reason']),
 				'sitename' => trim($_GPC['sitename']),
 				'url' => (strexists($_GPC['url'], 'http://') || strexists($_GPC['url'], 'https://')) ? $_GPC['url'] : "http://{$_GPC['url']}",
-				'statcode' => system_check_statcode($_GPC['statcode']),
+				'statcode' => $statcode,
 				'footerleft' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerleft'])),
 				'footerright' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerright'])),
 				'icon' => trim($_GPC['icon']),
