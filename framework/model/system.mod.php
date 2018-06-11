@@ -162,6 +162,7 @@ function system_site_info() {
  * @return mixed|null|string|string[]
  */
 function system_check_statcode($statcode) {
+	header('X-XSS-Protection: 0');
 	$allowed_stats = array(
 		'baidu' => array(
 			'enabled' => true,
@@ -173,14 +174,12 @@ function system_check_statcode($statcode) {
 			'reg' => '/(http[s]?\:)?\/\/tajs\.qq\.com/'
 		),
 	);
-
 	foreach($allowed_stats as $key => $item) {
 		$preg = preg_match($item['reg'], $statcode);
 		if ($preg && $item['enabled']) {
-			return safe_gpc_html(htmlspecialchars_decode($statcode));
+			return htmlspecialchars_decode($statcode);
 		} else {
-			continue;
+			return safe_gpc_html(htmlspecialchars_decode($statcode));
 		}
 	}
-	return error(-1, '没有匹配的第三方代码');
 }

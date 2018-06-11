@@ -13,11 +13,13 @@ $dos = array('copyright');
 $do = in_array($do, $dos) ? $do : 'copyright';
 $_W['page']['title'] = '站点设置 - 工具  - 系统管理';
 $settings = $_W['setting']['copyright'];
+
 if(empty($settings) || !is_array($settings)) {
 	$settings = array();
 } else {
 	$settings['slides'] = iunserializer($settings['slides']);
 }
+
 /* sxstart */
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	$path = IA_ROOT . '/web/themes/';
@@ -39,16 +41,9 @@ if ($do == 'copyright') {
 	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 		$template_ch_name = system_template_ch_name();
 	}
+
 	/* sxend */
 	if (checksubmit('submit')) {
-		$statcode = !empty($_GPC['statcode']) ? $_GPC['statcode'] : '';
-		if (!empty($statcode)) {
-			$statcode = system_check_statcode($statcode);
-			if (is_error($statcode)) {
-				itoast($statcode['message'], url('system/site'), 'error');
-			}
-		}
-
 		/* sxstart */
 		if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 			$data = array(
@@ -57,7 +52,7 @@ if ($do == 'copyright') {
 				'reason' => trim($_GPC['reason']),
 				'sitename' => trim($_GPC['sitename']),
 				'url' => (strexists($_GPC['url'], 'http://') || strexists($_GPC['url'], 'https://')) ? $_GPC['url'] : "http://{$_GPC['url']}",
-				'statcode' => $statcode,
+				'statcode' => system_check_statcode(htmlspecialchars_decode($_GPC['statcode'])),
 				'footerleft' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerleft'])),
 				'footerright' => safe_gpc_html(htmlspecialchars_decode($_GPC['footerright'])),
 				'icon' => trim($_GPC['icon']),
