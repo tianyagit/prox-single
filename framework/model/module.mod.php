@@ -926,7 +926,7 @@ function module_upgrade_info($modulelist = array()) {
 		$module_upgrade_data['logo'] = $manifest['application']['logo'];
 		$module_upgrade_data['version'] = $manifest['application']['version'];
 		$module_upgrade_data['title'] = $manifest['application']['title'];
-		$module_upgrade_data['title_initial'] = get_first_pinyin($manifest_cloud['title']);
+		$module_upgrade_data['title_initial'] = get_first_pinyin($manifest['application']['title']);
 
 		//云服务模块已在本地安装，unset后方便后面排查未安装模块
 		//云上模块，如果在本地有manifest.xml，以本地模块为主

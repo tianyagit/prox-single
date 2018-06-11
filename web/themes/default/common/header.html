@@ -90,10 +90,10 @@
 							{if permission_check_account_user('see_system_upgrade')}
 							<li><a href="{url 'cloud/upgrade'}" target="_blank"><i class="wi wi-update color-gray"></i> 自动更新</a></li>
 							{/if}
-
+							{if permission_check_account_user('see_system_updatecache')}
 							<li><a href="{url 'system/updatecache'}" target="_blank"><i class="wi wi-cache color-gray"></i> 更新缓存</a></li>
 							<li class="divider"></li>
-
+							{/if}
 							<li>
 								<a href="{url 'user/logout'}"><i class="fa fa-sign-out color-gray"></i> 退出系统</a>
 							</li>

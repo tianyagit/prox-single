@@ -436,6 +436,7 @@ $we7_file_permission = array(
 			'see_account_manage_users_adduser',
 			'see_account_manage_users_add_viceuser',
 			'see_system_upgrade',
+			'see_system_updatecache',
 			'see_system_manage_clerk',
 			'see_system_manage_user_setting',
 			'see_system_manage_vice_founder',
@@ -453,15 +454,18 @@ $we7_file_permission = array(
 			'see_account_manage_users_adduser',
 			'see_module_manage_system_group_add',
 			'see_user_add_welcome_account',
+			'see_system_updatecache',
 		),
 		'owner' => array(
-
+			'see_system_updatecache',
 		),
 		'manager' => array(
 			'see_user_profile_welcome',
+			'see_system_updatecache',
 		),
 		'operator' => array(
 			'see_user_profile_welcome',
+			'see_system_updatecache',
 		),
 		'clerk' => array(
 
