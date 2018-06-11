@@ -21,11 +21,11 @@ $modulelist = uni_modules(false);
 //检测模块更新和是否盗版
 if ($do == 'check_status') {
 	$modulename = $_GPC['module'];
-	
+
 	if (empty($modulename)) {
 		iajax(0, '', '');
 	}
-	
+
 	$module_status = module_status($modulename);
 	if (!empty($module_status)) {
 		isetcookie('module_status:' . $modulename, json_encode($module_status));
@@ -36,7 +36,7 @@ if ($do == 'check_status') {
 	if ($module_status['upgrade']['has_upgrade']) {
 		iajax(2, $module_status['upgrade']['name'] . '检测最新版为' . $module_status['upgrade']['version'] . '，请尽快更新');
 	}
-	
+
 	iajax(0, '', '');
 }
 
@@ -59,23 +59,17 @@ if($do == 'display') {
 		}
 		$modules = $modulelist;
 	}
-	
+
 	template ('module/manage-account');
 } elseif ($do == 'shortcut') {
 	$status = intval($_GPC['shortcut']);
 	$modulename = $_GPC['modulename'];
-	$module = module_fetch($modulename);
-	if(empty($module)) {
-		itoast('抱歉，你操作的模块不能被访问！', '', '');
-	}
 
 	$module_enabled = uni_account_module_shortcut_enabled($modulename, $status);
-
-	if ($status) {
-		itoast('添加模块快捷操作成功！', referer(), 'success');
-	} else {
-		itoast('取消模块快捷操作成功！', referer(), 'success');
+	if (is_error($module_enabled)) {
+		itoast($module_enabled['message'], referer(), 'error');
 	}
+	itoast(($status ? '添加' : '取消') . '添加模块快捷操作成功！', referer(), 'success');
 } elseif ($do == 'enable') {
 	$modulename = $_GPC['modulename'];
 	if(empty($modulelist[$modulename])) {
