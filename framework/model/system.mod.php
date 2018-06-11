@@ -177,7 +177,7 @@ function system_check_statcode($statcode) {
 	foreach($allowed_stats as $key => $item) {
 		$preg = preg_match($item['reg'], $statcode);
 		if ($preg && $item['enabled']) {
-			return htmlspecialchars_decode($statcode);
+			return safe_gpc_html(htmlspecialchars_decode($statcode));
 		} else {
 			return safe_gpc_html(htmlspecialchars_decode($statcode));
 		}
