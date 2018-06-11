@@ -166,12 +166,11 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $bucket_local = '') 
  */
 function attachment_reset_uniacid($uniacid) {
 	global $_W;
-	if (empty($uniacid) || intval($uniacid) < 0) {
-		if($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER ) {
+	if ($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER) {
+		if (empty($unacid)) {
 			$_W['uniacid'] = 0;
-			return 0;
 		}
-	}else {
+	} else {
 		/* @var $account AccountTable*/
 		$account = table('account');
 		$accounts = $account->userOwnedAccount($_W['uid']);
@@ -179,4 +178,5 @@ function attachment_reset_uniacid($uniacid) {
 			$_W['uniacid'] = $uniacid;
 		}
 	}
+	return true;
 }
