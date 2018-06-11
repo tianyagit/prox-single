@@ -60,7 +60,7 @@
 							<li><a href="{url 'cloud/upgrade'}" target="_blank"><i class="wi wi-update color-gray"></i> 自动更新</a></li>
 							{/if}
 
-							{if $_W['role'] != ACCOUNT_MANAGE_NAME_CLERK}
+							{if permission_check_account_user('see_system_updatecache')}
 							<li><a href="{url 'system/updatecache'}" target="_blank"><i class="wi wi-cache color-gray"></i> 更新缓存</a></li>
 							<li class="divider"></li>
 							{/if}
