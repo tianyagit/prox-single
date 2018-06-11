@@ -18,7 +18,7 @@ class CreateAccountXzapp {
 		if (!pdo_tableexists('account_xzapp')) {
 			$table_name = tablename('account_xzapp');
 			$sql = <<<EOF
-CREATE TABLE `ims_account_xzapp` (
+CREATE TABLE IF NOT EXISTS $table_name (
 `acid` int(11) NOT NULL DEFAULT '0',
 `uniacid` int(11) DEFAULT NULL,
 `name` varchar(255) DEFAULT '',
