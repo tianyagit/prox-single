@@ -199,7 +199,7 @@ if ($do == 'upgrade') {
 					$not_delete_do[] = $entry['do'];
 					$not_delete_title[] = $entry['title'];
 
-					$module_binding = table('modules_binding')->isEntryExists($module_name, $point_name, $entry['do']);
+					$module_binding = table('modules_bindings')->isEntryExists($module_name, $point_name, $entry['do']);
 					if (!empty($module_binding)) {
 						pdo_update('modules_bindings', $entry, array('eid' => $module_binding['eid']));
 						continue;
@@ -208,7 +208,7 @@ if ($do == 'upgrade') {
 				} elseif ($entry['call']) {
 					$not_delete_call[] = $entry['call'];
 
-					$module_binding = table('modules_binding')->isCallExists($module_name, $point_name, $entry['call']);
+					$module_binding = table('modules_bindings')->isCallExists($module_name, $point_name, $entry['call']);
 					if (!empty($module_binding)) {
 						pdo_update('modules_bindings', $entry, array('eid' => $module_binding['eid']));
 						continue;
