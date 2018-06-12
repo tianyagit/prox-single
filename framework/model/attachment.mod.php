@@ -167,7 +167,7 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $bucket_local = '') 
 function attachment_reset_uniacid($uniacid) {
 	global $_W;
 	if ($_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER) {
-		if (empty($unacid)) {
+		if (empty($uniacid)) {
 			$_W['uniacid'] = 0;
 		}
 	} else {
