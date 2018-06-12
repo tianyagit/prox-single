@@ -64,7 +64,7 @@
 				{if permission_check_account_user('see_module_manage_system_welcome_support') && $_GPC['support'] == 'welcome_support'}<th class="text-right"></th>{/if}
 				<th class="text-right">
 					{if permission_check_account_user('see_module_manage_system_ugrade')}
-					<div class="we7-form">
+					<div class="we7-form" ng-show="checkUpgradeSuccess">
 						<input type="checkbox" name="" ng-click="filter()"  ng-model="search.newBranch" id="filter-1" value="1">
 						<label class="checkbox-inline" for="filter-1">
 							新分支应用
