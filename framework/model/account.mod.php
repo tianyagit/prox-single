@@ -1093,8 +1093,7 @@ function uni_account_module_shortcut_enabled($modulename, $status = STATUS_ON) {
 		return error(1, '抱歉，你操作的模块不能被访问！');
 	}
 
-	$module_status = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $_W['uniacid']), array('id', 'shortcut'));
-	if (empty($module_status)) {
+	if (empty($module['shortcut'])) {
 		$data = array(
 			'uniacid' => $_W['uniacid'],
 			'module' => $modulename,
