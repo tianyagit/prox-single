@@ -1106,7 +1106,7 @@ function uni_account_module_shortcut_enabled($modulename, $status = STATUS_ON) {
 		$data = array(
 			'shortcut' => $status ? STATUS_ON : STATUS_OFF,
 		);
-		pdo_update('uni_account_modules', $data, array('id' => $module_status['id']));
+		pdo_update('uni_account_modules', $data, array('uniaicd' => $_W['uniacid'], 'module' => $modulename));
 	}
 	cache_build_module_info($modulename);
 	return true;
