@@ -367,9 +367,11 @@ if ($do =='install') {
 	$module['title_initial'] = get_first_pinyin($module['title']);
 
 	//安装时先执行在线数据库，再执行模块文件
-	if ($packet['schemes']){
+	if (!empty($manifest['install'])) {
+		pdo_run($manifest['install']);
+	} elseif ($packet['schemes']){
 		foreach ($packet['schemes'] as $remote) {
-			$remote['tablename'] = trim($remote['tablename'], '`');
+			$remote['tablename'] = trim(tablename($remote['tablename']), '`');
 			$local = db_table_schema(pdo(), $remote['tablename']);
 			$sqls = db_table_fix_sql($local, $remote);
 			foreach ($sqls as $sql) {
