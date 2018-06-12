@@ -130,7 +130,7 @@
 				</td>
 			</tr>
 		</table>
-		<div class="select-all" ng-hide="search.moduleName || (search.letter && search.letter != '全部')">
+		<div class="select-all" ng-hide="search.moduleName || (search.letter && search.letter != '全部') || search.newVersion || search.newBranch">
 			<div class="we7-form text-right js-pager">
 				{$pager}
 			</div>
