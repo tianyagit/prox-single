@@ -30,6 +30,8 @@ function _cloud_build_params() {
 	}
 	$pars['family'] = IMS_FAMILY;
 	$pars['version'] = IMS_VERSION;
+	$pars['php_version'] = PHP_VERSION;
+	$pars['current_host'] = $_SERVER['HTTP_HOST'];
 	$pars['release'] = IMS_RELEASE_DATE;
 	if (!empty($_W['setting']['site'])) {
 		$pars['key'] = $_W['setting']['site']['key'];
