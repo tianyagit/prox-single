@@ -231,10 +231,10 @@ if ($do == 'upgrade') {
 			}
 		}
 	}
-	//执行模块更新文件
+
 	if ($packet['schemes']) {
 		foreach ($packet['schemes'] as $remote) {
-			$remote['tablename'] = trim($remote['tablename'], '`');
+			$remote['tablename'] = trim(tablename($remote['tablename']), '`');
 			$local = db_table_schema(pdo(), $remote['tablename']);
 			$sqls = db_table_fix_sql($local, $remote);
 			foreach ($sqls as $sql) {
@@ -243,7 +243,16 @@ if ($do == 'upgrade') {
 		}
 	}
 
-	ext_module_run_script($module_name, 'upgrade');
+	ext_module_run_script($manifest, 'upgrade');
+
+	if (ONLINE_MODULE) {
+		if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
+			unlink($module_path . $manifest['uninstall']);
+		}
+		if (strexists($manifest['install'], '.php') && file_exists($module_path . $manifest['install'])) {
+			unlink($module_path . $manifest['install']);
+		}
+	}
 
 	$module_upgrade['permissions'] = iserializer($module_upgrade['permissions']);
 	if (!empty($module_info['version']['cloud_setting'])) {
@@ -366,10 +375,7 @@ if ($do =='install') {
 
 	$module['title_initial'] = get_first_pinyin($module['title']);
 
-	//安装时先执行在线数据库，再执行模块文件
-	if (!empty($manifest['install'])) {
-		pdo_run($manifest['install']);
-	} elseif ($packet['schemes']){
+	if ($packet['schemes']){
 		foreach ($packet['schemes'] as $remote) {
 			$remote['tablename'] = trim(tablename($remote['tablename']), '`');
 			$local = db_table_schema(pdo(), $remote['tablename']);
@@ -380,8 +386,7 @@ if ($do =='install') {
 		}
 	}
 
-	ext_module_run_script($module_name, 'install');
-
+	ext_module_run_script($manifest, 'install');
 
 	if (pdo_insert('modules', $module)) {
 		if ($_GPC['flag'] && !empty($post_groups) && $module['name']) {

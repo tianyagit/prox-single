@@ -719,11 +719,11 @@ function ext_execute_uninstall_script($module_name) {
 	return true;
 }
 
-function ext_module_run_script($modulename, $scripttype) {
+function ext_module_run_script($manifest, $scripttype) {
 	if (!in_array($scripttype, array('install', 'upgrade'))) {
 		return false;
 	}
-	$manifest = ext_module_manifest($modulename);
+	$modulename = $manifest['application']['identifie'];
 	$module_path = IA_ROOT . '/addons/' . $modulename . '/';
 	if (!empty($manifest[$scripttype])) {
 		if (strexists($manifest[$scripttype], '.php')) {
