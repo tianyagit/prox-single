@@ -14,7 +14,7 @@ $do = in_array($do, $dos) ? $do : 'display';
 
 if ($do == 'display') {
 	$user_module = array();
-	if (!$_W['isfounder']) {
+	if (!$_W['isfounder'] || user_is_vice_founder()) {
 		$account_table = table('account');
 		$userspermission_table = table('userspermission');
 		$user_owned_account = $account_table->userOwnedAccount($_W['uid']);
