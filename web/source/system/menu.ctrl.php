@@ -10,7 +10,7 @@ $dos = array('display', 'post', 'display_status', 'delete', 'change_displayorder
 $do = in_array($do, $dos) ? $do : 'display';
 $_W['page']['title'] = '系统管理 - 菜单设置';
 
-$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'webapp', 'appmarket', 'custom_help', 'phoneapp', 'platform');
+$system_top_menu = array('account', 'wxapp', 'module', 'help', 'advertisement', 'site', 'system', 'webapp', 'appmarket', 'custom_help', 'phoneapp', 'platform', 'xzapp');
 /* xstart */
 if (IMS_FAMILY == 'x') {
 	array_push($system_top_menu, 'store');
