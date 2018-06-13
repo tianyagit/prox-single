@@ -301,12 +301,6 @@ function buildframes($framename = ''){
 				}
 			} elseif (!empty($modules)) {
 
-				if (user_is_vice_founder()) {
-					$modules = uni_modules_by_uniacid($_W['uniacid']);
-					$user_module = user_modules($_W['uid']);
-					$modules = array_intersect_assoc($modules, $user_module);
-				}
-
 				$new_modules = array_reverse($modules);
 				$i = 0;
 				foreach ($new_modules as $module) {
