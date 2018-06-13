@@ -45,11 +45,6 @@ if($do == 'display') {
 	$pageindex = max(1, intval($_GPC['page']));
 	$pagesize = 30;
 
-	if (user_is_vice_founder()) {
-		$uni_modules = uni_modules_by_uniacid($_W['uniacid']);
-		$modules = user_modules($_W['uid']);
-		$modulelist = array_intersect_assoc($uni_modules, $modules);
-	}
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => &$row) {
 			if (!empty($row['issystem']) || $row[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
