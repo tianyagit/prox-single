@@ -23,11 +23,11 @@ function load() {
  */
 function table($name) {
 	$table_classname = "\\We7\\Table\\";
-	$explode_array = explode('_', $name);
-	if (count($explode_array) == 1) {
-		$table_classname .= ucfirst($explode_array[0]) . "\\" . ucfirst($explode_array[0]);
+	$subsection_name = explode('_', $name);
+	if (count($subsection_name) == 1) {
+		$table_classname .= ucfirst($subsection_name[0]) . "\\" . ucfirst($subsection_name[0]);
 	} else {
-		foreach ($explode_array as $key => $val) {
+		foreach ($subsection_name as $key => $val) {
 			if ($key == 0) {
 				$table_classname .= ucfirst($val) . '\\';
 			} else {

@@ -96,6 +96,7 @@ function message($msg, $redirect = '', $type = '', $tips = false, $extend = arra
 			$message_cookie['msg'] = $msg;
 		}
 		$message_cookie['type'] = $label;
+		$message_cookie['redirect'] = $redirect ? $redirect : referer();
 		$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
 		$extend_button = array();
 		if (!empty($extend) && is_array($extend)) {
@@ -110,11 +111,7 @@ function message($msg, $redirect = '', $type = '', $tips = false, $extend = arra
 		$message_cookie['extend'] = !empty($extend_button) ? $extend_button : '';
 
 		isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
-		if (!empty($message_cookie['redirect'])) {
-			header('Location: ' . $message_cookie['redirect']);
-		} else {
-			include template('common/message', TEMPLATE_INCLUDEPATH);
-		}
+		header('Location: ' . $message_cookie['redirect']);
 	} else {
 		include template('common/message', TEMPLATE_INCLUDEPATH);
 	}

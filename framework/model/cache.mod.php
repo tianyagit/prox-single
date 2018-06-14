@@ -167,6 +167,9 @@ function cache_build_frame_menu() {
 			if ($_W['role'] == ACCOUNT_MANAGE_NAME_EXPIRED && $menu_name != 'store' && $menu_name != 'system') {
 				$system_menu[$menu_name]['is_display'] = false;
 			}
+			if ($menu_name == 'appmarket') {
+				$system_menu[$menu_name]['is_display'] = true;
+			}
 			foreach ($menu['section'] as $section_name => $section) {
 				$displayorder = max(count($section['menu']), 1);
 
