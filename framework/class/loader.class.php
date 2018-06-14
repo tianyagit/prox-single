@@ -22,20 +22,20 @@ function load() {
  * @return We7Table 表模型
  */
 function table($name) {
-	list($section, $table, $morename) = explode('_', $name);
-	if (empty($table)) {
-		$table = $section;
-	}
-	if (!empty($morename)) {
-		$table = '';
-		$explode_array = explode('_', $name);
+	$table_classname = "\\We7\\Table\\";
+	$explode_array = explode('_', $name);
+	if (count($explode_array) == 1) {
+		$table_classname .= ucfirst($explode_array[0]) . "\\" . ucfirst($explode_array[0]);
+	} else {
 		foreach ($explode_array as $key => $val) {
-			if ($key != 0) {
-				$table .= ucfirst($val);
+			if ($key == 0) {
+				$table_classname .= ucfirst($val) . '\\';
+			} else {
+				$table_classname .= ucfirst($val);
 			}
 		}
 	}
-	$table_classname = "\\We7\\Table\\" . ucfirst($section) . "\\" . ucfirst($table);
+
 	if (in_array($name, array(
 		'modules_rank',
 		'modules_bindings',
