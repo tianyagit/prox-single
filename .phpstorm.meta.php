@@ -10,5 +10,6 @@ namespace PHPSTORM_META {
 	    'modules_modules' => \We7\Table\Modules\Modules::class,
 	    'modules_plugin' => \We7\Table\Modules\Plugin::class,
 	    'modules_rank' => \We7\Table\Modules\Rank::class,
+		'uni_account_modules' => \We7\Table\Uni\AccountModules::class,
     ]));
 }

@@ -14,8 +14,9 @@
 </div>
 {/if}
 <script>
+    var targetOrigin = "{php echo $_W['sitescheme']}" + 's.we7.cc';
     function _mainFrame() {
-        window.frames[0].postMessage('getHeight', 'http://s.we7.cc/');
+        window.frames[0].postMessage('getHeight', targetOrigin);
     }
     window.addEventListener('message',function(e) {
         var canvasHeight = e.data;

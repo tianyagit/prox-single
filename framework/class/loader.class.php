@@ -22,24 +22,34 @@ function load() {
  * @return We7Table 表模型
  */
 function table($name) {
-	list($section, $table) = explode('_', $name);
+	list($section, $table, $morename) = explode('_', $name);
 	if (empty($table)) {
 		$table = $section;
 	}
+	if (!empty($morename)) {
+		$table = '';
+		$explode_array = explode('_', $name);
+		foreach ($explode_array as $key => $val) {
+			if ($key != 0) {
+				$table .= ucfirst($val);
+			}
+		}
+	}
 	$table_classname = "\\We7\\Table\\" . ucfirst($section) . "\\" . ucfirst($table);
 	if (in_array($name, array(
-		'modules_rank', 
-		'modules_bindings', 
-		'modules_plugin',  
-		'modules_cloud', 
-		'modules_recycle', 
+		'modules_rank',
+		'modules_bindings',
+		'modules_plugin',
+		'modules_cloud',
+		'modules_recycle',
 		'modules',
 		'modules_ignore',
 		'account_xzapp',
+		'uni_account_modules',
 	))) {
 		return new $table_classname;
 	}
-	
+
 	load()->classs('table');
 	load()->table($name);
 	$service = false;
@@ -90,16 +100,16 @@ class Loader {
 		'web' => '/web/common/%s.func.php',
 		'app' => '/app/common/%s.func.php',
 	);
-	
+
 	public function __construct() {
 		$this->registerAutoload();
 	}
-	
+
 	public function registerAutoload() {
 		spl_autoload_register(array($this, 'autoload'));
 		//spl_autoload_register(array($this, 'autoloadBiz'));
 	}
-	
+
 	public function autoload($class) {
 		$section = array(
 			'Table' => '/framework/table/',

@@ -42,7 +42,7 @@ if ($do == 'module_link_uniacid') {
 	}
 	if (!empty($version_info['modules'])) {
 		foreach ($version_info['modules'] as &$module_value) {
-			$link_uniacid_info = $module_table->moduleLinkUniacidInfo($module_value['name']);
+			$link_uniacid_info = module_link_uniacid_info($module_value['name']);
 			if (!empty($link_uniacid_info)) {
 				foreach ($link_uniacid_info as $info) {
 					if ($info['settings']['link_uniacid'] == $_W['uniacid']) {

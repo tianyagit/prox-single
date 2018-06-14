@@ -355,17 +355,17 @@ function module_fetch($name, $enabled = true) {
 		}
 
 		$module_receive_ban = (array)setting_load('module_receive_ban');
-		if (in_array($name, $module_receive_ban['module_receive_ban'])) {
+		if (is_array($module_receive_ban['module_receive_ban']) && in_array($name, $module_receive_ban['module_receive_ban'])) {
 			$module_info['is_receive_ban'] = true;
 		}
 		//盗版模块
 		$module_ban = (array)setting_load('module_ban');
-		if (in_array($name, $module_ban['module_ban'])) {
+		if (is_array($module_ban['module_ban']) && in_array($name, $module_ban['module_ban'])) {
 			$module_info['is_ban'] = true;
 		}
 
 		$module_upgrade = (array)setting_load('module_upgrade');
-		if (in_array($name, array_keys($module_upgrade['module_upgrade']))) {
+		if (is_array($module_upgrade['module_upgrade']) && in_array($name, array_keys($module_upgrade['module_upgrade']))) {
 			$module_info['is_upgrade'] = true;
 		}
 		$module = $module_info;
@@ -653,6 +653,28 @@ function module_link_uniacid_fetch($uid, $module_name) {
 	}
 
 	return $result;
+}
+
+/**
+ * 获取某一模块所有关联uniacid的信息
+ * @param string $modle_name 模块名
+ * @return array
+ */
+function module_link_uniacid_info($module_name) {
+	if (empty($module_name)) {
+		return array();
+	}
+	$result = table('uni_account_modules')->where('module', $module_name)->getall();
+	if (!empty($result)) {
+		foreach ($result as $key => $value) {
+			$result[$key]['settings'] = iunserializer($value['settings']);
+			if (empty($result[$key]['settings']) || empty($result[$key]['settings']['link_uniacid'])) {
+				unset($result[$key]);
+			}
+		}
+		return $result;
+	}
+	return array();
 }
 
 /**
