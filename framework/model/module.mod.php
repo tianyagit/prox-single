@@ -656,6 +656,28 @@ function module_link_uniacid_fetch($uid, $module_name) {
 }
 
 /**
+ * 获取某一模块所有关联uniacid的信息
+ * @param string $modle_name 模块名
+ * @return array
+ */
+function module_link_uniacid_info($module_name) {
+	if (empty($module_name)) {
+		return array();
+	}
+	$result = table('uni_account_modules')->where('module', $module_name)->getall();
+	if (!empty($result)) {
+		foreach ($result as $key => $value) {
+			$result[$key]['settings'] = iunserializer($value['settings']);
+			if (empty($result[$key]['settings']) || empty($result[$key]['settings']['link_uniacid'])) {
+				unset($result[$key]);
+			}
+		}
+		return $result;
+	}
+	return array();
+}
+
+/**
  * 对某一模块，保留最后一次进入的小程序OR公众号，以便点进入列表页时可以默认进入
  * @param unknown $uniacid
  * @return boolean
