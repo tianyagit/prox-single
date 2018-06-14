@@ -97,7 +97,7 @@ if ($do == 'system') {
 }
 if ($do =='get_module_statistics') {
 	$install_modules = module_installed_list();
-	
+
 	$module_statistics = array(
 		'account' => array(
 			'total' => array(
@@ -114,11 +114,11 @@ if ($do =='get_module_statistics') {
 			)
 		),
 	);
-	
+
 	//因权限问题，用户所分配的模块不同，所以此处直接count安装列表
 	$module_statistics['account']['total']['all'] = $module_statistics['account']['total']['uninstall'] + count((array)$install_modules['account']);
 	$module_statistics['wxapp']['total']['all'] = $module_statistics['wxapp']['total']['uninstall'] + count((array)$install_modules['wxapp']);
-	
+
 	iajax(0, $module_statistics, '');
 }
 
@@ -198,7 +198,7 @@ if ($do == 'get_system_upgrade') {
 	//可升级应用
 	module_upgrade_info();
 	$upgrade_modules = module_upgrade_list();
-	
+
 	iajax(0, $upgrade_modules, '');
 }
 
@@ -228,6 +228,7 @@ if ($do == 'system_home') {
 				unset($info['account']['type']);
 			}
 		}
+		unset($info);
 	}
 
 	$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
@@ -257,9 +258,9 @@ if ($do == 'ignore_update_module') {
 	if (empty($module_info)) {
 		iajax(1, '参数错误');
 	}
-	
+
 	$upgrade_version = table('modules_cloud')->getByName($module_info['name']);
-	
+
 	table('modules_ignore')->add($module_info['name'], $upgrade_version['version']);
 	iajax(0, '');
 }

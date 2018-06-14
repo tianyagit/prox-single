@@ -63,16 +63,15 @@
 						<div class="type" ng-if="list.account.type == 4 || list.account.type == 7"><i class="wi wi-wxapp"></i></div>
 						<div class="type" ng-if="list.account.type == 5"><i class="wi wi-pc"></i></div>
 						<div class="type" ng-if="list.account.type == 6"><i class="wi wi-wxapp"></i></div>
-						<div class="type" ng-if="!list.account.type"><i class="wi wi-wxapp"></i></div>
+						<div class="type" ng-if="!list.account.type"><i class="wi wi-apply"></i></div>
 						<div class="info">
-							<div class="name text-over">
-								{{list.account.name}}
-							</div>
+							<div class="name text-over" ng-bind="list.account.name" ng-if="list.account.type"></div>
+							<div class="name text-over" ng-bind="list.account.title" ng-if="!list.account.type"></div>
 							<div class="version text-over" ng-if="list.account.type ==1 || list.account.type==3">类型：公众号</div>
 							<div class="version text-over" ng-if="list.account.type == 4 || list.account.type == 7">类型：小程序</div>
 							<div class="version text-over" ng-if="list.account.type == 5">类型：PC</div>
 							<div class="version text-over" ng-if="list.account.type == 6">类型：APP</div>
-							<div class="version" ng-if="!list.account.level">&nbsp;</div>
+							<div class="version" ng-if="!list.account.type">类型：应用</div>
 						</div>
 					</div>
 					<div class="mask">
