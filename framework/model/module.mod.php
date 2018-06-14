@@ -887,6 +887,9 @@ function module_upgrade_info($modulelist = array()) {
 		if ($manifest_cloud['site_branch']['system_welcome_support'] == MODULE_SUPPORT_SYSTEMWELCOME) {
 			$manifest['platform']['supports'][] = 'welcome';
 		}
+		if (empty($manifest['platform']['supports'])) {
+			continue;
+		}
 		$manifest['branches'] = $manifest_cloud['branches'];
 		$manifest['site_branch'] = $manifest_cloud['site_branch'];
 		$manifest_cloud_list[$modulename] = $manifest;
