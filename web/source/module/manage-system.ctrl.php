@@ -93,12 +93,15 @@ if ($do == 'get_upgrade_info') {
 	$modulename = trim($_GPC['name']);
 	$module = module_fetch($modulename);
 	if (empty($module)) {
-		iajax(1);
+		iajax(1, '模块不存在！');
 	}
 	//检查本地是否有更新，否则检查线上是否有更新，
 	//有更新，更新cloud表中的记录，返回更新信息
 	$manifest = ext_module_manifest($modulename);
 	$manifest_cloud = cloud_m_upgradeinfo($modulename);
+	if (is_error($manifest_cloud)) {
+		iajax(1, $manifest_cloud['message']);
+	}
 	$result = array(
 		'name' => $modulename,
 		'upgrade' => $manifest_cloud['upgrade'],
