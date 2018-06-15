@@ -9,7 +9,6 @@ $dos = array('module_link_uniacid', 'search_link_account', 'module_unlink_uniaci
 $do = in_array($do, $dos) ? $do : 'module_link_uniacid';
 
 $_W['page']['title'] = '数据同步 - PC - 管理';
-$module_table = table('module');
 
 if ($do == 'module_link_uniacid') {
 	if (checksubmit('submit')) {
@@ -104,7 +103,7 @@ if ($do == 'search_link_account') {
 	}
 	//该模块是否有其他关联
 	$have_link_uniacid = array();
-	$link_uniacid_info = $module_table->moduleLinkUniacidInfo($module_name);
+	$link_uniacid_info = module_link_uniacid_info($module_name);
 	if (!empty($link_uniacid_info)) {
 		foreach ($link_uniacid_info as $info) {
 			if (!empty($info['settings']['link_uniacid'])) {

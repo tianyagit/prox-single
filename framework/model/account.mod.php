@@ -46,12 +46,15 @@ function uni_user_accounts($uid = 0, $type = 'app') {
 	if (!empty($cache)) {
 		return $cache;
 	}
-	$field = '';
+	$select_fields = 'w.acid, w.uniacid, w.name, a.type';
+	if (in_array($type, array('wechats', 'wxapp', 'xzapp'))) {
+		$select_fields .= ', w.level, w.key, w.secret';
+	}
 	$where = '';
 	$params = array();
 	$user_is_founder = user_is_founder($uid);
 	if (empty($user_is_founder) || user_is_vice_founder($uid)) {
-		$field .= ', u.role';
+		$select_fields .= ', u.role';
 		$where .= " LEFT JOIN " . tablename('uni_account_users') . " u ON u.uniacid = w.uniacid WHERE u.uid = :uid AND u.role IN(:role1, :role2) ";
 		$params[':uid'] = $uid;
 		$params[':role1'] = ACCOUNT_MANAGE_NAME_OWNER;
@@ -59,7 +62,7 @@ function uni_user_accounts($uid = 0, $type = 'app') {
 	}
 	$where .= !empty($where) ? " AND a.isdeleted <> 1 AND u.role IS NOT NULL" : " WHERE a.isdeleted <> 1";
 
-	$sql = "SELECT w.acid, w.uniacid, w.level, w.name, w.key, w.secret, a.type" . $field . " FROM " . tablename('account_' . $type) . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
+	$sql = "SELECT " . $select_fields . " FROM " . tablename('account_' . $type) . " w LEFT JOIN " . tablename('account') . " a ON a.acid = w.acid AND a.uniacid = w.uniacid" . $where;
 	$result = pdo_fetchall($sql, $params, 'uniacid');
 	cache_write($cachekey, $result);
 	return $result;
