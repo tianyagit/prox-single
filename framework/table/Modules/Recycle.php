@@ -35,4 +35,9 @@ class Recycle extends \We7Table {
 		return $this->query->from('modules_cloud', 'a')->select('a.*')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.name'));
 
 	}
+
+	public function searchWithModules() {
+		return $this->query->from('modules', 'a')->select('a.*')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.name'));
+
+	}
 }
