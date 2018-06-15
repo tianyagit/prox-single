@@ -48,7 +48,7 @@ function uni_user_accounts($uid = 0, $type = 'app') {
 	}
 	$select_fields = 'w.acid, w.uniacid, w.name, a.type';
 	if (in_array($type, array('wechats', 'wxapp', 'xzapp'))) {
-		$select_fields .= ', w.level, w.key, w.secret';
+		$select_fields .= ', w.level, w.key, w.secret, w.token';
 	}
 	$where = '';
 	$params = array();
