@@ -167,6 +167,10 @@ function cache_relation_keys($key) {
 		return $key;
 	}
 
+	if (!strexists($key, 'we7:')) {
+		return array($key);
+	}
+
 	// 将传入的缓存键的参数值取出 => we7:user:liuguilong:18
 	$cache_param_values = explode(':', $key);
 	$cache_name = $cache_param_values[1];
