@@ -724,7 +724,7 @@
 				<label>
 					<input name="" class="form-control" type="checkbox" style="display: none;" ng-click="switchStatus(config.paytype, 'recharge_switch')" ng-if="paysetting[config.paytype].recharge_set === true">
 					<input name="" class="form-control" type="checkbox" style="display: none;" ng-else>
-					<div ng-class="paysetting[config.paytype].recharge_switch === true ? 'switch switchOn' : 'switch'"></div>
+					<div ng-class="paysetting[config.paytype].recharge_switch === true || paysetting[config.paytype].recharge_switch === 'true' ? 'switch switchOn' : 'switch'"></div>
 				</label>
 			</td>
 			<td colspan="2" ng-if="paysetting[config.paytype].recharge_set !== true">不可启用</td>
@@ -737,7 +737,7 @@
 			<td colspan="2">
 				<label>
 					<input name="" class="form-control" type="checkbox"  style="display: none;" ng-click="switchStatus(config.paytype, 'pay_switch')">
-					<div ng-class="paysetting[config.paytype].pay_switch === true ? 'switch switchOn' : 'switch'"></div>
+					<div ng-class="paysetting[config.paytype].pay_switch === true || paysetting[config.paytype].pay_switch === 'true' ? 'switch switchOn' : 'switch'"></div>
 				</label>
 			</td>
 			<td colspan="2"></td>
