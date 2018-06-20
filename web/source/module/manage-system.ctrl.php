@@ -576,6 +576,7 @@ if ($do == 'recycle_post') {
 			table('modules_recycle')->deleteByName($name);
 		}
 	}
+	cache_build_module_info($name);
 	itoast($msg, referer(), 'success');
 }
 

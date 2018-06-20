@@ -368,17 +368,24 @@ function module_fetch($name, $enabled = true) {
 		if (is_array($module_upgrade['module_upgrade']) && in_array($name, array_keys($module_upgrade['module_upgrade']))) {
 			$module_info['is_upgrade'] = true;
 		}
+
+		//是否放入回收站
+		$module_is_delete = table('modules_recycle')->getByName($name);
+		if (!empty($module_is_delete)) {
+			$module_info['is_delete'] = true;
+		}
+
 		$module = $module_info;
 		cache_write($cachekey, $module_info);
 	}
 
 	//增加开启参数，可以获取放入回收站的模块
 	if (!empty($enabled)) {
-		$module_is_delete = table('modules_recycle')->getByName($name);
-		if (!empty($module_is_delete)) {
+		if (!empty($module_info['is_delete'])) {
 			return array();
 		}
 	}
+
 	//有公众号时，附加模块配置信息
 	if (!empty($module) && !empty($_W['uniacid'])) {
 		$setting_cachekey = cache_system_key('module_setting', array('module_name' => $name, 'uniacid' => $_W['uniacid']));
