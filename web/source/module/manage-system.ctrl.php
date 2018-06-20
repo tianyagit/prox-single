@@ -182,7 +182,7 @@ if ($do == 'upgrade') {
 	}
 	//处理模块菜单
 	$module_upgrade = ext_module_convert($manifest);
-	unset($module_upgrade['name'], $module_upgrade['title']);
+	unset($module_upgrade['name'], $module_upgrade['title'], $module_upgrade['ability'], $module_upgrade['description']);
 
 	$points = ext_module_bindings();
 	$bindings = array_elements(array_keys($points), $module_upgrade, false);
