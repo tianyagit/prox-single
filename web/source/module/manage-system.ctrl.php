@@ -576,9 +576,9 @@ if ($do == 'recycle_post') {
 			table('modules_recycle')->deleteByName($name);
 		}
 	}
+	cache_build_module_info($name);
 	itoast($msg, referer(), 'success');
 }
-
 if ($do == 'recycle') {
 	$type = intval($_GPC['type']);
 	$title = safe_gpc_string($_GPC['title']);
