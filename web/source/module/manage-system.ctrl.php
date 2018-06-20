@@ -579,7 +579,6 @@ if ($do == 'recycle_post') {
 	cache_build_module_info($name);
 	itoast($msg, referer(), 'success');
 }
-
 if ($do == 'recycle') {
 	$type = intval($_GPC['type']);
 	$title = safe_gpc_string($_GPC['title']);
