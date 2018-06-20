@@ -137,7 +137,8 @@ if ($do == 'change_status') {
 	if ($type == 'credit' || $type == 'delivery' || $type == 'mix') {
 		$param['recharge_switch'] = false;
 	}
-	$pay_setting[$type] = $setting_data;
+	$pay_setting[$type]['pay_switch'] = $setting_data['pay_switch'];
+	$pay_setting[$type]['recharge_switch'] = $setting_data['recharge_switch'];
 	$payment = iserializer($pay_setting);
 	uni_setting_save('payment', $payment);
 	iajax(0, '设置成功！', referer());

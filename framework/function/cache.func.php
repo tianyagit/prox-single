@@ -77,8 +77,23 @@ function &cache_global($key) {
  * @param array $params
  * @return array|mixed|string
  */
-function cache_system_key($cache_key, $params = array()) {
+function cache_system_key($cache_key) {
 	$cache_key_all = cache_key_all();
+
+	// 兼容旧函数（字符串形式传入参数拼接缓存键）
+	$params = array();
+	$args = func_get_args();
+	if (!is_array($args[1])) {
+		$cache_key = $cache_key_all['caches'][$cache_key]['key'];
+		preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key, $matches);
+		for ($i = 0; $i < func_num_args()-1; $i++) {
+			$cache_key = str_replace($matches[0][$i], $args[$i+1], $cache_key);
+		}
+		return 'we7:' . $cache_key;
+	} else {
+		$params = $args[1];
+	}
+
 	// 如果是直接传入字符串缓存键（如module_info:wnstore:128），检查后直接返回
 	if (empty($params)) {
 		$res = preg_match_all('/([a-zA-Z\_\-0-9]+):/', $cache_key, $matches);
@@ -248,6 +263,13 @@ function cache_key_all() {
 		),
 
 		'caches' => array(
+
+			'test' => array(
+				// 模块详细信息
+				'key' => 'test:%name:%sex:%age',
+				'group' => '',
+			),
+
 			'module_info' => array(
 				// 模块详细信息
 				'key' => 'module_info:%module_name',
