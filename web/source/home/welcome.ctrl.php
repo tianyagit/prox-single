@@ -218,10 +218,15 @@ if ($do == 'system_home') {
 	$last_accounts_modules = pdo_getall('system_stat_visit', array('uid' => $_W['uid']), array(), '', array('displayorder desc', 'updatetime desc'), 20);
 
 	if (!empty($last_accounts_modules)) {
-		foreach ($last_accounts_modules as &$info) {
+		foreach ($last_accounts_modules as $key => &$info) {
 			if (!empty($info['uniacid'])) {
 				$info['account'] = uni_fetch($info['uniacid']);
 			}
+
+			if ($info['uniacid'] == 0) {
+				unset($last_accounts_modules[$key]);
+			}
+
 			if (!empty($info['modulename'])) {
 				$info['account'] = module_fetch($info['modulename']);
 				$info['account']['switchurl'] = url('module/display/switch', array('module_name' => $info['modulename']));
