@@ -730,7 +730,7 @@ function cloud_sms_info() {
 
 	$pars = _cloud_build_params();
 	$pars['method'] = 'sms.info';
-	$response = ihttp_request('http://api.w7.cc/we7Xapi/sms_info?', $pars);
+	$response = ihttp_request('http://api.w7.cc/sms/info?', $pars);
 	$result = @json_decode($response['content'], true);
 	if(is_error($result)) {
 		return error($result['error'], "错误详情: {$result['data']}");
