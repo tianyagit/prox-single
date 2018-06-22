@@ -586,7 +586,7 @@ class StoreModuleSite extends WeModuleSite {
 			$uniacid = intval ($_GPC['uniacid']);
 			$goodsid = intval($_GPC['goodsid']);
 
-			if ($_GPC['duration'] <= 0) {
+			if (intval($_GPC['duration']) <= 0) {
 				iajax(-1, '购买时长不合法，请重新填写！');
 			}
 
