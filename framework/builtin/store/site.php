@@ -585,6 +585,11 @@ class StoreModuleSite extends WeModuleSite {
 		if ($operate == 'submit_order') {
 			$uniacid = intval ($_GPC['uniacid']);
 			$goodsid = intval($_GPC['goodsid']);
+
+			if ($_GPC['duration'] <= 0) {
+				iajax(-1, '购买时长不合法，请重新填写！');
+			}
+
 			if (empty($_GPC['type'])) {
 				iajax(-1, '请选择支付方式。');
 			}
