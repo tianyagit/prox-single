@@ -301,7 +301,7 @@ function cache_build_uninstalled_module() {
 			continue;
 		}
 
-		if (!file_exists($path . '/manifest.xml')) {
+		if (!is_dir($path) || !file_exists($path . '/manifest.xml')) {
 			continue;
 		}
 
