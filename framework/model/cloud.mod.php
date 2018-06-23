@@ -431,9 +431,9 @@ function cloud_m_info($name) {
  */
 function cloud_m_upgradeinfo($modulename) {
 	load()->model('module');
-	
+
 	$module = module_fetch($modulename);
-	
+
 	$pars = _cloud_build_params();
 	$pars['method'] = 'module.info';
 	$pars['module'] = $modulename;
@@ -442,14 +442,14 @@ function cloud_m_upgradeinfo($modulename) {
 	$dat = cloud_request('http://v2.addons.we7.cc/gateway.php', $pars);
 	$file = IA_ROOT . '/data/module.info';
 	$ret = _cloud_shipping_parse($dat, $file);
-	
+
 	if (empty($ret) || is_error($ret)) {
 		return array();
 	}
 	if (version_compare($ret['version']['version'], $module['version'], '>')) {
 		$ret['upgrade'] = true;
 	}
-	
+
 	$ret['site_branch'] = $ret['branches'][$ret['version']['branch_id']];
 	$ret['from'] = 'cloud';
 	foreach ($ret['branches'] as &$branch) {
@@ -730,14 +730,15 @@ function cloud_sms_info() {
 
 	$pars = _cloud_build_params();
 	$pars['method'] = 'sms.info';
-	$dat = cloud_request('http://s.we7.cc/gateway.php?', $pars);
-	if ($dat['content'] == 'success') {
-		$setting_key = "sms.info";
-		$dat = setting_load($setting_key);
-		return $dat[$setting_key];
+	$response = ihttp_request('http://api.w7.cc/sms/info?', $pars);
+	$result = @json_decode($response['content'], true);
+	if(is_error($result)) {
+		return error($result['error'], "错误详情: {$result['data']}");
 	}
-
-	return array();
+	if (!empty($result['data'])) {
+		$result['data']['sms_sign'] = explode('、', $result['data']['sms_sign']);
+	}
+	return (array)$result['data'];
 }
 
 /**

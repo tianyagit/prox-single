@@ -519,7 +519,7 @@ function ihttp_email($to, $subject, $body, $global = false) {
 	}
 	if ($body) {
 		if (is_array($body)) {
-			$body = '';
+			$newbody = '';
 			foreach($body as $value) {
 				if (substr($value, 0, 1) == '@') {
 					if(!is_file($file = ltrim($value, '@'))){
@@ -527,9 +527,10 @@ function ihttp_email($to, $subject, $body, $global = false) {
 					}
 					$mailer->addAttachment($file);
 				} else {
-					$body .= $value . '\n';
+					$newbody .= $value . '\n';
 				}
 			}
+			$body = $newbody;
 		} else {
 			if (substr($body, 0, 1) == '@') {
 				$mailer->addAttachment(ltrim($body, '@'));
