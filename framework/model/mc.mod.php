@@ -513,6 +513,7 @@ function mc_require($uid, $fields, $pre = '') {
  */
 function mc_credit_update($uid, $credittype, $creditval = 0, $log = array()) {
 	global $_W;
+	$creditnames = uni_setting_load('creditnames')['creditnames'];
 	$credittype = trim($credittype);
 	$credittypes = mc_credit_types();
 	$clerk_types = array(
@@ -557,7 +558,7 @@ function mc_credit_update($uid, $credittype, $creditval = 0, $log = array()) {
 		}
 	}
 	if ($credittype == 'credit1') {
-		$credittype_name = '积分';
+		$credittype_name = $creditnames['credit1']['title'];
 	} elseif ($credittype == 'credit2') {
 		$credittype_name = '元';
 	}
