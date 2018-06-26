@@ -12,7 +12,7 @@ load()->model('phoneapp');
 $dos = array('rank', 'display', 'switch', 'platform');
 $do = in_array($_GPC['do'], $dos) ? $do : 'display';
 $_W['page']['title'] = '所有权限';
-$account_info = permission_user_account_num();
+$account_info = permission_user_account_num($_W['uid']);
 
 if ($do == 'platform') {
 	$cache_last_account_type = cache_load(cache_system_key('last_account_type'));
