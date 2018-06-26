@@ -32,18 +32,18 @@ class Modules extends \We7Table {
 		'oauth_type',
 		'phoneapp_support',
 	);
-	
+
 	public function bindings() {
 		return $this->hasMany('modules_bindings', 'module', 'name');
 	}
-	
+
 	public function getByName($modulename) {
 		if (empty($modulename)) {
 			return array();
 		}
 		return $this->query->where('name', $modulename)->get();
 	}
-	
+
 	public function getByNameList($modulename_list, $get_system = false) {
 		$this->query->whereor('name', $modulename_list)->orderby('mid', 'desc');
 		if (!empty($get_system)) {
@@ -51,19 +51,19 @@ class Modules extends \We7Table {
 		}
 		return $this->query->getall('name');
 	}
-	
+
 	public function deleteByName($modulename) {
 		return $this->query->where('name', $modulename)->delete();
 	}
-	
+
 	public function getByHasSubscribes() {
 		return $this->query->select('name', 'subscribes')->where('subscribes !=', '')->getall();
 	}
-	
+
 	public function getSupportWxappList() {
 		return $this->query->where('wxapp_support', MODULE_SUPPORT_WXAPP)->getall('mid');
 	}
-	
+
 	public function searchWithType($type, $method = '=') {
 		if ($method == '=') {
 			$this->query->where('type', $type);
@@ -71,5 +71,9 @@ class Modules extends \We7Table {
 			$this->query->where('type <>', $type);
 		}
 		return $this;
+	}
+
+	public function searchWithRecycle() {
+		return $this->query->from('modules', 'a')->select('a.*')->leftjoin('modules_recycle', 'b')->on(array('a.name' => 'b.name'))->where('b.name', 'NULL')->orderby('a.mid', 'DESC')->getall('name');
 	}
 }

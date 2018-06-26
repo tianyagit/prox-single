@@ -317,7 +317,7 @@ if ($do =='install') {
 	if (!empty($manifest['platform']['main_module'])) {
 		$plugin_exist = table('modules_plugin')->getPluginExists($manifest['platform']['main_module'], $manifest['application']['identifie']);
 		if (empty($plugin_exist)) {
-			itoast('请先更新主模块后再安装插件', url('module/manage-system/installed'), 'error', array(array('title' => '查看主程序', 'url' => url('module/manage-system/module_detail', array('name' => $manifest['platform']['main_module'])))));
+			itoast('请先更新或安装主模块后再安装插件', url('module/manage-system/installed'), 'error', array(array('title' => '查看主程序', 'url' => url('module/manage-system/module_detail', array('name' => $manifest['platform']['main_module'])))));
 		}
 	}
 

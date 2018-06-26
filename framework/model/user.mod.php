@@ -100,14 +100,14 @@ function user_is_founder($uid, $only_main_founder = false) {
 	if (in_array($uid, $founders)) {
 		return true;
 	}
-	
+
 	if (empty($only_main_founder)) {
 		$founder_groupid = pdo_getcolumn('users', array('uid' => $uid), 'founder_groupid');
 		if ($founder_groupid == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -474,7 +474,7 @@ function user_modules($uid = 0) {
 	global $_W;
 	load()->model('module');
 
-	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
+// 	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
@@ -483,8 +483,8 @@ function user_modules($uid = 0) {
 		$user_info = user_single(array ('uid' => $uid));
 
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
-		if (empty($uid) || user_is_founder($uid) && !user_is_vice_founder($uid)) {
-			$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
+		if (empty($uid) || user_is_founder($uid, true)) {
+			$module_list = table('modules')->searchWithRecycle();
 		} elseif (!empty($user_info) && $user_info['type'] == ACCOUNT_OPERATE_CLERK) {
 			$clerk_module = pdo_fetch("SELECT p.type FROM " . tablename('users_permission') . " p LEFT JOIN " . tablename('uni_account_users') . " u ON p.uid = u.uid AND p.uniacid = u.uniacid WHERE u.role = :role AND p.uid = :uid", array(':role' => ACCOUNT_MANAGE_NAME_CLERK, ':uid' => $uid));
 			if (empty($clerk_module)) {
@@ -502,7 +502,7 @@ function user_modules($uid = 0) {
 			$packageids = $user_group_info['package'];
 
 			if (!empty($packageids) && in_array('-1', $packageids)) {
-				$module_list = pdo_getall('modules', array(), array('name'), 'name', array('mid DESC'));
+				$module_list = table('modules')->searchWithRecycle();
 			} else {
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
 				if (!empty($package_group)) {
@@ -556,13 +556,13 @@ function user_modules($uid = 0) {
 		foreach ($modules as $module) {
 			$module_info = module_fetch($module);
 			//欢迎模块只能创始人操作，如果当前非创始人，忽略欢迎模块
-			if (!user_is_founder($_W['uid'], true) && 
-				$module_info['welcome_support'] == 2 && 
-				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != 2 && 
-				$module_info['wxapp_support'] != 2 && 
-				$module_info['webapp_support'] != 2 && 
+			if (!user_is_founder($_W['uid'], true) &&
+				$module_info['welcome_support'] == 2 &&
+				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != 2 &&
+				$module_info['wxapp_support'] != 2 &&
+				$module_info['webapp_support'] != 2 &&
 				$module_info['phoneapp_support'] != 2) {
-					
+
 				continue;
 			}
 			if (!empty($module_info)) {
@@ -787,7 +787,7 @@ function user_group_format($lists) {
 		$all_package = array_merge($all_package, $package);
 	}
 	$group_package = uni_groups($all_package);
-	
+
 	foreach ($lists as $key => $group) {
 		$package = iunserializer($group['package']);
 		$group['package'] = array();
