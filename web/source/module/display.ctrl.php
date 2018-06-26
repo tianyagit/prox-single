@@ -22,6 +22,24 @@ if ($do == 'display') {
 			foreach ($user_owned_account as $uniacid => $account) {
 				$account_module = uni_modules_by_uniacid($uniacid);
 				$account_user_module = $userspermission_table->userPermission($_W['uid'], $uniacid);
+
+				// 非管理员情况下，过滤掉没有添加到相关小程序（没有权限）的应用
+				if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL || $account['type'] == ACCOUNT_TYPE_APP_AUTH) {
+					$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), '');
+					if (is_array($wxapp_versions) && !empty($wxapp_versions)) {
+						$versions = array();
+						foreach($wxapp_versions as $version) {
+							$versions[] = array_keys((array)iunserializer($version['modules']))[0];
+						}
+						$diffs = array_diff(array_keys($account_module), $versions);
+						foreach($diffs as $diff) {
+							unset($account_module[$diff]);
+						}
+					} else {
+						$account_module = array();
+					}
+				}
+
 				if (!empty($account_user_module) && is_array($account_user_module)) {
 					$account_module = array_intersect_key($account_module, $account_user_module);
 				}
