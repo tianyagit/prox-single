@@ -474,7 +474,7 @@ function user_modules($uid = 0) {
 	global $_W;
 	load()->model('module');
 
-// 	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
+	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
