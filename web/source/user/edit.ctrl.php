@@ -54,6 +54,7 @@ if ($do == 'edit_modules_tpl') {
 				$data['endtime'] = 0;
 			}
 			if (user_update($data)) {
+				pdo_delete('system_stat_visit', array('uid' => $uid, 'uniacid' => 0));
 				iajax(0, $group_info, '');
 			} else {
 				iajax(1, '更改失败！', '');
