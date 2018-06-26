@@ -212,8 +212,8 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	load()->model('module');
 	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled == true ? 1 : ''));
 	$modules = cache_load($cachekey);
+	$account_info = uni_fetch($uniacid);
 	if (empty($modules)) {
-		$account_info = uni_fetch($uniacid);
 
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
@@ -277,6 +277,12 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 
 			if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP &&
 				in_array($account_info['type'], array(ACCOUNT_TYPE_PHONEAPP_NORMAL))) {
+				continue;
+			}
+
+			if ($module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP &&
+				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
+				in_array($account_info['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
 				continue;
 			}
 
