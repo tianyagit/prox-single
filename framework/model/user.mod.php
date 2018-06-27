@@ -906,20 +906,20 @@ function user_info_save($user, $is_founder_group = false) {
 	if (trim($user['password']) !== trim($user['repassword'])) {
 		return error(-1, '两次密码不一致！');
 	}
-	if (!intval($user['groupid'])) {
-		return error(-1, '请选择所属用户组');
-	}
-
-	if ($is_founder_group) {
-		$group = user_founder_group_detail_info($user['groupid']);
+	if (intval($user['groupid'])) {
+		if ($is_founder_group) {
+			$group = user_founder_group_detail_info($user['groupid']);
+		} else {
+			$group = user_group_detail_info($user['groupid']);
+		}
+		if (empty($group)) {
+			return error(-1, '会员组不存在');
+		}
+		$timelimit = intval($group['timelimit']);
 	} else {
-		$group = user_group_detail_info($user['groupid']);
-	}
-	if (empty($group)) {
-		return error(-1, '会员组不存在');
+		$timelimit = 0;
 	}
 
-	$timelimit = intval($group['timelimit']);
 	$timeadd = 0;
 	if ($timelimit > 0) {
 		$timeadd = strtotime($timelimit . ' days');
