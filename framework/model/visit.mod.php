@@ -51,6 +51,7 @@ function visit_update_today($type, $module_name = '') {
  */
 function visit_system_update($system_stat_visit, $displayorder = false) {
 	global $_W;
+	load()->model('user');
 	if (user_is_founder($_W['uid'])) {
 		return true;
 	}
@@ -61,12 +62,22 @@ function visit_system_update($system_stat_visit, $displayorder = false) {
 	if (empty($system_stat_visit['uid'])) {
 		return true;
 	}
+
 	$condition['uid'] = $_W['uid'];
 	if (!empty($system_stat_visit['uniacid'])) {
+		$is_exist = table('users')->userIsHasUniacid($_W['uid'], $system_stat_visit['uniacid']);
+		if (empty($is_exist)) {
+			return true;
+		}
 		$condition['uniacid'] = $system_stat_visit['uniacid'];
 	}
 
 	if (!empty($system_stat_visit['modulename'])) {
+		$user_modules = user_modules($_W['uid']);
+		$modules = !empty($user_modules) ? array_keys($user_modules) : array();
+		if (empty($modules) || !in_array($system_stat_visit['modulename'], $modules)) {
+			return true;
+		}
 		$condition['modulename'] = $system_stat_visit['modulename'];
 	}
 	$system_stat_info = pdo_get('system_stat_visit', $condition);
