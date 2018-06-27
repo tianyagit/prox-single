@@ -246,7 +246,7 @@ function buildframes($framename = ''){
 	//特定的控制器减少数据获取，减少出错的概率
 	if (defined('FRAME') && (in_array(FRAME, array('site', 'system')))) {
 		$frames = frames_top_menu($frames);
-		return $frames[FRAME];
+		return $frames[$framename];
 	}
 	//模块权限，创始人有所有模块权限
 	$modules = uni_modules(false);
