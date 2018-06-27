@@ -7,6 +7,8 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
 load()->func('file');
+load()->func('cache');
+load()->model('visit');
 
 $dos = array('edit_base', 'edit_modules_tpl', 'edit_account');
 $do = in_array($do, $dos) ? $do: 'edit_base';
@@ -54,7 +56,8 @@ if ($do == 'edit_modules_tpl') {
 				$data['endtime'] = 0;
 			}
 			if (user_update($data)) {
-				pdo_delete('system_stat_visit', array('uid' => $uid, 'uniacid' => 0));
+				cache_delete(cache_system_key('user_modules', array('uid' => $uid)));
+				visit_system_delete($uid);
 				iajax(0, $group_info, '');
 			} else {
 				iajax(1, '更改失败！', '');
