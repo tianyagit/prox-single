@@ -41,10 +41,6 @@ class UsersTable extends We7Table {
 		}
 	}
 
-	public function userIsHasUniacid($uid, $uniacid) {
-		return $this->query->from('uni_account_users')->where(array('uid' => $uid, 'uniacid' => $uniacid))->get();
-	}
-
 
 	public function searchWithStatus($status) {
 		$this->query->where('u.status', $status);

@@ -52,6 +52,7 @@ function visit_update_today($type, $module_name = '') {
 function visit_system_update($system_stat_visit, $displayorder = false) {
 	global $_W;
 	load()->model('user');
+	load()->model('account');
 	if (user_is_founder($_W['uid'])) {
 		return true;
 	}
@@ -65,8 +66,9 @@ function visit_system_update($system_stat_visit, $displayorder = false) {
 
 	$condition['uid'] = $_W['uid'];
 	if (!empty($system_stat_visit['uniacid'])) {
-		$is_exist = table('users')->userIsHasUniacid($_W['uid'], $system_stat_visit['uniacid']);
-		if (empty($is_exist)) {
+		$own_uniacid = uni_owned($_W['uid'], false);
+		$uniacids = !empty($own_uniacid) ? array_keys($own_uniacid) : array();
+		if (empty($uniacids) || !in_array($system_stat_visit['uniacid'], $uniacids)) {
 			return true;
 		}
 		$condition['uniacid'] = $system_stat_visit['uniacid'];
@@ -101,5 +103,32 @@ function visit_system_update($system_stat_visit, $displayorder = false) {
 		$system_stat_visit['updatetime'] = TIMESTAMP;
 		pdo_update('system_stat_visit', $system_stat_visit, array('id' => $system_stat_info['id']));
 	}
+	return true;
+}
+
+
+/**
+ * 根据uid删除用户没有权限的访问统计模块
+ * @param $uid
+ * @return bool
+ */
+function visit_system_delete($uid) {
+	load()->model('user');
+	$user_modules = user_modules($uid);
+	$modules = !empty($user_modules) ? array_keys($user_modules) : array();
+
+	$old_modules = table('system_stat_visit')->getVistedModule($uid);
+	if (empty($old_modules)) {
+		return true;
+	}
+
+	$old_modules = array_column($old_modules, 'modulename');
+	$delete_modules = array_diff($old_modules, $modules);
+
+	if (!empty($modules)) {
+		table('system_stat_visit')->deleteVisitRecord($uid, $delete_modules);
+		return true;
+	}
+	table('system_stat_visit')->deleteVisitRecord($uid);
 	return true;
 }
