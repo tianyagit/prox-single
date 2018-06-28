@@ -10,7 +10,7 @@ load()->func('file');
 load()->func('cache');
 load()->model('visit');
 
-$dos = array('edit_base', 'edit_modules_tpl', 'edit_account');
+$dos = array('edit_base', 'edit_modules_tpl', 'edit_account', 'edit_users_permission');
 $do = in_array($do, $dos) ? $do: 'edit_base';
 
 $_W['page']['title'] = '编辑用户 - 用户管理';
@@ -66,12 +66,58 @@ if ($do == 'edit_modules_tpl') {
 			iajax(-1, '参数错误！', '');
 		}
 	}
+
+	$modules = user_modules($_W['uid']);
+	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
+
 	$groups = user_group();
 	$group_info = user_group_detail_info($user['groupid']);
+
+	$extend_permission = pdo_get('users_permission', array('uid' => $uid, 'uniacid' => 0));
+	$extend_permission['modules'] = $current_module_names = (array)iunserializer($extend_permission['modules']);
+	$extend_permission['templates'] = (array)iunserializer($extend_permission['templates']);
+	$extend = array();
+	if (!empty($extend_permission['modules'])) {
+		foreach ($extend_permission['modules'] as $key => $val) {
+			$extend['modules'][$val] = module_fetch($val);
+		}
+	}
+	if (!empty($extend_permission['templates'])) {
+		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend_permission['templates']), array('id', 'name', 'title'));
+	}
 	template('user/edit-modules-tpl');
 }
 
 if ($do == 'edit_account') {
 	$account_detail = user_account_detail_info($uid);
 	template('user/edit-account');
+}
+
+if ($do == 'edit_users_permission') {
+	if ($_W['isajax'] && $_W['ispost']) {
+		$module = $_GPC['module'];
+		$tpl = $_GPC['tpl'];
+
+		if (!empty($module) || !empty($tpl)) {
+			$data = array(
+				'modules' => iserializer($module),
+				'templates' => iserializer($tpl),
+				'uid' => $uid,
+				'uniacid' => 0,
+			);
+			$id = pdo_fetchcolumn("SELECT id FROM " . tablename('users_permission') . " WHERE uid=:uid and uniacid=:uniacid", array(":uniacid" => 0, ":uid" => $uid));
+			if (empty($id)) {
+				$res = pdo_insert('users_permission', $data);
+			} else {
+				$res = pdo_update('users_permission', $data, array('id' => $id));
+			}
+		} else {
+			$res = pdo_delete('users_permission', array('uid' => $uid, 'uniacid' => 0));
+		}
+		if ($res) {
+			iajax(0, '修改成功', '');
+		} else {
+			iajax(-1, '修改失败', '');
+		}
+	}
 }
