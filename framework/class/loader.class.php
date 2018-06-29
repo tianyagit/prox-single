@@ -121,7 +121,8 @@ class Loader {
 		if (isset($classmap[$class])) {
 			load()->classs($classmap[$class]);
 		} elseif (preg_match('/^[0-9a-zA-Z\-\\\\_]+$/', $class)
-			&& (stripos($class, 'We7') === 0 || stripos($class, '\We7') === 0)) {
+			&& (stripos($class, 'We7') === 0 || stripos($class, '\We7') === 0)
+			&& stripos($class, "\\") !== false) {
 				$group = explode("\\", $class);
 				$path = IA_ROOT . $section[$group[1]];
 				unset($group[0]);
