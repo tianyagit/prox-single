@@ -675,7 +675,7 @@ function module_link_uniacid_info($module_name) {
 	if (!empty($result)) {
 		foreach ($result as $key => $value) {
 			$result[$key]['settings'] = iunserializer($value['settings']);
-			if (empty($result[$key]['settings']) || empty($result[$key]['settings']['link_uniacid'])) {
+			if (empty($result[$key]['settings']) || (empty($result[$key]['settings']['link_uniacid']) && empty($result[$key]['settings']['passive_link_uniacid']))) {
 				unset($result[$key]);
 			}
 		}

@@ -1260,7 +1260,7 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 	if (!empty($passive_link_module)) {
 		$passive_settings = (array)iunserializer($passive_link_module['settings']);
 		if (empty($passive_settings)) {
-			$passive_settings = array('passive_link_uniacid', $_W['uniacid']);
+			$passive_settings = array('passive_link_uniacid' => $_W['uniacid']);
 		} elseif (!empty($passive_settings['passive_link_uniacid']) && !in_array($_W['uniacid'], $passive_settings['passive_link_uniacid'])) {
 			array_push($passive_settings['passive_link_uniacid'], $_W['uniacid']);
 		}
