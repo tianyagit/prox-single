@@ -381,7 +381,7 @@ if ($do == 'cos') {
 	$auth= attachment_cos_auth(trim($_GPC['bucket']), trim($_GPC['appid']), trim($_GPC['secretid']), trim($_GPC['secretkey']), $_GPC['local']);
 
 	if (is_error($auth)) {
-		iajax(-1, '配置失败，请检查配置', '');
+		iajax(-1, '配置失败，请检查配置' . $auth['message'], '');
 	}
 	load()->func('communication');
 	$url = strexists($url, 'http') ? trim($url, '/') : 'http://'.trim($url, '/');
