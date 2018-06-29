@@ -44,7 +44,8 @@ if ($do == 'module_link_uniacid') {
 			$link_uniacid_info = module_link_uniacid_info($module_value['name']);
 			if (!empty($link_uniacid_info)) {
 				foreach ($link_uniacid_info as $info) {
-					if ($info['settings']['link_uniacid'] == $_W['uniacid']) {
+					if ($info['settings']['link_uniacid'] == $_W['uniacid'] ||
+						!empty($info['settings']['passive_link_uniacid']) && $info['uniacid'] == $_W['uniacid']) {
 						$module_value['other_link'] = uni_fetch($info['uniacid']);
 					}
 				}
