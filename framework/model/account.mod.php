@@ -1173,12 +1173,12 @@ function uni_account_global_oauth() {
 function uni_search_link_account($module_name, $account_type) {
 	global $_W;
 	$module_name = trim($module_name);
-	if (empty($module_name) || empty($account_type) || !in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_WEBAPP_NORMAL))) {
+	if (empty($module_name) || empty($account_type) || !in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL))) {
 		return array();
 	}
 	if (in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
 		$owned_account = uni_user_accounts($_W['uid'], 'app');
-	} elseif ($account_type == ACCOUNT_TYPE_APP_NORMAL) {
+	} elseif (in_array($account_type, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
 		$owned_account = uni_user_accounts($_W['uid'], 'wxapp');
 	} elseif ($account_type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 		$owned_account = uni_user_accounts($_W['uid'], 'webapp');
@@ -1187,12 +1187,12 @@ function uni_search_link_account($module_name, $account_type) {
 	}
 	if (!empty($owned_account)) {
 		foreach ($owned_account as $key => $account) {
-			if ($account['type'] != $account_type) {
+			if ($account['type'] != $account_type || $account['uniacid'] == $_W['uniacid']) {
 				unset($owned_account[$key]);
 				continue;
 			}
 			$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
-			if (!in_array($account['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
+			if (!in_array($account['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_FOUNDER))) {
 				unset($owned_account[$key]);
 			}
 		}
@@ -1251,10 +1251,8 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 		$passive_settings = (array)iunserializer($passive_link_module['settings']);
 		if (empty($passive_settings)) {
 			$passive_settings = array('passive_link_uniacid', $_W['uniacid']);
-		} elseif (!empty($passive_settings['passive_link_uniacid'])) {
+		} elseif (!empty($passive_settings['passive_link_uniacid']) && !in_array($_W['uniacid'], $passive_settings['passive_link_uniacid'])) {
 			array_push($passive_settings['passive_link_uniacid'], $_W['uniacid']);
-		} else {
-			$passive_settings['passive_link_uniacid'] = $_W['uniacid'];
 		}
 		pdo_update('uni_account_modules', array('settings' => iserializer($passive_settings)), array('id' => $passive_link_module['id']));
 	} else {

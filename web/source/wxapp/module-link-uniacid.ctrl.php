@@ -84,7 +84,7 @@ if ($do == 'search_link_account') {
 	if (empty($module)) {
 		iajax(0, array());
 	}
-	if (!in_array($account_type, array(ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_OFFCIAL_NORMAL))) {
+	if (!in_array($account_type, array(ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_APP_NORMAL))) {
 		iajax(0, array());
 	}
 	//该模块是否有其他关联
@@ -102,6 +102,10 @@ if ($do == 'search_link_account') {
 		$account_normal_list = uni_search_link_account($module_name, ACCOUNT_TYPE_OFFCIAL_NORMAL);
 		$account_auth_list = uni_search_link_account($module_name, ACCOUNT_TYPE_OFFCIAL_AUTH);
 		$account_list = array_merge($account_normal_list, $account_auth_list);
+	} elseif ($account_type == ACCOUNT_TYPE_APP_NORMAL) {
+		$account_normal_list = uni_search_link_account($module_name, ACCOUNT_TYPE_APP_NORMAL);
+		$account_auth_list = uni_search_link_account($module_name, ACCOUNT_TYPE_APP_AUTH);
+		$account_list = array_merge($account_normal_list, $account_auth_list);
 	} else {
 		$account_list = uni_search_link_account($module_name, $account_type);
 	}
@@ -110,6 +114,13 @@ if ($do == 'search_link_account') {
 			if (in_array($account['uniacid'], $have_link_uniacid)) {
 				unset($account_list[$key]);
 				continue;
+			}
+			if ($account_type == ACCOUNT_TYPE_APP_NORMAL) {
+				$last_version = (array)wxapp_fetch($account['uniacid']);
+				if (empty($last_version['version']) || empty($last_version['version']['modules']) || current((array)array_keys($last_version['version']['modules'])) != $module_name) {
+					unset($account_list[$key]);
+					continue;
+				}
 			}
 			$account_list[$key]['logo'] = is_file(IA_ROOT . '/attachment/headimg_' . $account['acid'] . '.jpg') ? tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time() : './resource/images/nopic-107.png';
 		}
