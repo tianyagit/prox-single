@@ -54,7 +54,7 @@ if ($do == 'module_link_uniacid') {
 			continue;
 		}
 		if (!empty($value['config']['passive_link_uniacid'])) {
-			$modules[$key]['other_link'] = uni_fetch($info['uniacid']);
+			$modules[$key]['other_link'] = uni_fetch($value['config']['passive_link_uniacid']);
 		}
 	}
 	template('webapp/module-link-uniacid');
