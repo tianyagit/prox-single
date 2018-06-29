@@ -18,11 +18,11 @@ if ($do == 'display') {
 		$account_table = table('account');
 		$userspermission_table = table('userspermission');
 		$user_owned_account = $account_table->userOwnedAccount($_W['uid']);
+
 		if (!empty($user_owned_account) && is_array($user_owned_account)) {
 			foreach ($user_owned_account as $uniacid => $account) {
-				$account_module = uni_modules_by_uniacid($uniacid);
+				$account_module = uni_modules_by_uniacid($uniacid, true, $account['type']);
 				$account_user_module = $userspermission_table->userPermission($_W['uid'], $uniacid);
-
 				// 非管理员情况下，过滤掉没有添加到相关小程序（没有权限）的应用
 				if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL || $account['type'] == ACCOUNT_TYPE_APP_AUTH) {
 					$wxapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), '');
@@ -50,6 +50,7 @@ if ($do == 'display') {
 		$user_module = user_modules($_W['uid']);
 	}
 	$module_rank = table('modules_rank')->getByModuleNameList(array_keys($user_module));
+
 	$rank = array();
 	foreach ($user_module as $module_name => $module_info) {
 		if (!empty($module_info['issystem']) || ($module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] == MODULE_SUPPORT_SYSTEMWELCOME && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT && $module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP && $module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP && $module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP)) {

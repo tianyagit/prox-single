@@ -25,6 +25,7 @@ if (in_array($_GPC['login_type'], $support_login_types)) {
 
 $setting = $_W['setting'];
 $_GPC['login_type'] = !empty($_GPC['login_type']) ? $_GPC['login_type'] : (!empty($_W['setting']['copyright']['login_type']) ? 'mobile': 'system');
+
 $login_urls = user_support_urls();
 template('user/login');
 
@@ -55,8 +56,27 @@ function _login($forward = '') {
 	if (is_error($member)) {
 		itoast($member['message'], url('user/login'), '');
 	}
-	$record = user_single($member);
 
+	$user_info = pdo_get('users', array('username' => $member['username']));
+	if (empty($user_info)) {
+		if (is_array($member) && !empty($member['username'])) {
+			if (preg_match(REGULAR_MOBILE, $member['username'])) {
+				$bind_info = pdo_get('users_bind', array('bind_sign' => $member['username']));
+				if (is_array($bind_info) && !empty($bind_info)) {
+					$username = pdo_getcolumn('users', array('uid' => $bind_info['uid']), 'username');
+					if ($username) {
+						$member['username'] = $username;
+					} else {
+						itoast('账号信息错误！', url('user/login'), '');
+					}
+				} else {
+					itoast('账号信息错误！', url('user/login'), '');
+				}
+			}
+		}
+	}
+
+	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
 			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决?', url('user/login'), '');
