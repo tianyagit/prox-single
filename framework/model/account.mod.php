@@ -212,7 +212,6 @@ function uni_modules_by_uniacid($uniacid, $enabled = true, $type = '') {
 	load()->model('module');
 	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled == true ? 1 : ''));
 	$modules = cache_load($cachekey);
-	$modules = array();
 	if ($type == '') {
 		$account_info = uni_fetch($uniacid);
 		$type = $account_info['type'];
@@ -268,7 +267,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true, $type = '') {
 
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
-			$module_info = $module;
+			$module_info = module_fetch($name);
 			if (file_exists (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg')) {
 				$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg') . "?v=" . time ();
 			} else {
