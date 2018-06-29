@@ -8,6 +8,7 @@ load()->model('mc');
 $dos = array('address', 'base_information', 'member_credits', 'credit_statistics', 'display','del', 'add', 'group', 'register_setting', 'credit_setting', 'save_credit_setting', 'save_tactics_setting');
 $do = in_array($do, $dos) ? $do : 'display';
 
+$creditnames = uni_setting_load('creditnames')['creditnames'];
 if ($do == 'save_tactics_setting') {
 	$setting = $_GPC['setting'];
 	if (empty($setting)) {
@@ -236,8 +237,8 @@ if ($do == 'credit_statistics') {
 	$_W['page']['title'] = '积分日志-会员管理';
 	$uid = intval($_GPC['uid']);
 	$credits = array(
-			'credit1' => '积分',
-			'credit2' => '余额'
+			'credit1' => $creditnames['credit1']['title'],
+			'credit2' => $creditnames['credit2']['title']
 	);
 	$type = intval($_GPC['type']);
 	$starttime = strtotime('-7 day');
@@ -260,6 +261,7 @@ if ($do == 'credit_statistics') {
 			$data[$key]['end'] = $data[$key]['add'] - $data[$key]['del'];
 		}
 	}
+
 	template('mc/member-information');
 }
 

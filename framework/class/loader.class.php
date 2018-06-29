@@ -46,6 +46,7 @@ function table($name) {
 		'modules_ignore',
 		'account_xzapp',
 		'uni_account_modules',
+		'system_stat_visit',
 	))) {
 		return new $table_classname;
 	}

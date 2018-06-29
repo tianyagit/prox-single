@@ -25,7 +25,7 @@ if (checksubmit()) {
 		'password' => $_GPC['password'],
 		'repassword' => $_GPC['repassword'],
 		'remark' => safe_gpc_string($_GPC['remark']),
-		'groupid' => intval($_GPC['groupid']),
+		'groupid' => intval($_GPC['groupid']) ? intval($_GPC['groupid']) : 0,
 		'starttime' => TIMESTAMP,
 		'endtime' => intval($_GPC['timelimit']),
 		'owner_uid' => !empty($vice_founder_name) ? $vice_founder_info['uid'] : 0,
@@ -34,9 +34,32 @@ if (checksubmit()) {
 	$user_add = user_info_save($user_founder);
 	if (is_error($user_add)) {
 		itoast($user_add['message'], '', '');
+	} else {
+		$uid = $user_add['uid'];
+		if (!empty($_GPC['extra']['modules']) || !empty($_GPC['extra']['templates'])) {
+			$data = array(
+				'modules' => iserializer($_GPC['extra']['modules']),
+				'templates' => iserializer($_GPC['extra']['templates']),
+				'uid' => $uid,
+				'uniacid' => 0,
+			);
+			$id = pdo_fetchcolumn("SELECT id FROM " . tablename('users_permission') . " WHERE uid=:uid and uniacid=:uniacid", array(":uniacid" => 0, ":uid" => $uid));
+			if (empty($id)) {
+				pdo_insert('users_permission', $data);
+			} else {
+				pdo_update('users_permission', $data, array('id' => $id));
+			}
+		} else {
+			pdo_delete('users_permission', array('uid' => $uid, 'uniacid' => 0));
+		}
 	}
 	itoast($user_add['message'], url('user/edit', array('uid' => $user_add['uid'])), 'success');
 }
 
 $groups = user_group();
+$modules = user_modules($_W['uid']);
+$modules = array_filter($modules, function($module) {
+	return empty($module['issystem']);
+});
+$templates = pdo_fetchall("SELECT * FROM " . tablename('site_templates'));
 template('user/create');

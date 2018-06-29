@@ -88,7 +88,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'vice_founder_name':
 			$userinfo = user_single(array('username' => $_GPC['vice_founder_name']));
-			if (empty($userinfo) || user_is_vice_founder($userinfo['uid'])) {
+			if (empty($userinfo) || $userinfo['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 				iajax(1, '用户不存在或该用户不是副创始人', '');
 			}
 			$result = pdo_update('users', array('owner_uid' => $userinfo['uid']), array('uid' => $uid));

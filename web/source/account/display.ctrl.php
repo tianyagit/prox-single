@@ -12,7 +12,7 @@ load()->model('phoneapp');
 $dos = array('rank', 'display', 'switch', 'platform');
 $do = in_array($_GPC['do'], $dos) ? $do : 'display';
 $_W['page']['title'] = '所有权限';
-$account_info = permission_user_account_num();
+$account_info = permission_user_account_num($_W['uid']);
 
 if ($do == 'platform') {
 	$cache_last_account_type = cache_load(cache_system_key('last_account_type'));
@@ -188,7 +188,11 @@ if ($do == 'switch') {
 				if (!empty($_GPC['version_id'])) {
 					$version_id = intval($_GPC['version_id']);
 				} else {
-					$versions = wxapp_get_some_lastversions($uniacid);
+                    if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+                        $versions = phoneapp_get_some_lastversions($uniacid);
+                    } else {
+                        $versions = wxapp_get_some_lastversions($uniacid);
+                    }
 					foreach ($versions as $val) {
 						if ($val['current']) {
 							$version_id = $val['id'];
@@ -197,7 +201,11 @@ if ($do == 'switch') {
 				}
 
 				if (!empty($module_name) && !empty($version_id)) {
-					$version_info = wxapp_version($version_id);
+                    if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+                        $version_info = phoneapp_version($version_id);
+                    } else {
+                        $version_info = wxapp_version($version_id);
+                    }
 					$module_info = array();
 					if (!empty($version_info['modules'])) {
 						foreach ($version_info['modules'] as $key => $module_val) {
