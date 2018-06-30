@@ -42,15 +42,17 @@ if (checksubmit()) {
 				'templates' => iserializer($_GPC['extra']['templates']),
 				'uid' => $uid,
 				'uniacid' => 0,
+				'owner_uid' => 0,
+				'name' => '',
 			);
-			$id = pdo_fetchcolumn("SELECT id FROM " . tablename('users_permission') . " WHERE uid=:uid and uniacid=:uniacid", array(":uniacid" => 0, ":uid" => $uid));
+			$id = pdo_fetchcolumn("SELECT id FROM " . tablename('uni_group') . " WHERE uid=:uid and uniacid=:uniacid", array(":uniacid" => 0, ":uid" => $uid));
 			if (empty($id)) {
-				pdo_insert('users_permission', $data);
+				pdo_insert('uni_group', $data);
 			} else {
-				pdo_update('users_permission', $data, array('id' => $id));
+				pdo_update('uni_group', $data, array('id' => $id));
 			}
 		} else {
-			pdo_delete('users_permission', array('uid' => $uid, 'uniacid' => 0));
+			pdo_delete('uni_group', array('uid' => $uid, 'uniacid' => 0));
 		}
 	}
 	itoast($user_add['message'], url('user/edit', array('uid' => $user_add['uid'])), 'success');
