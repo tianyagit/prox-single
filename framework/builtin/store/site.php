@@ -689,6 +689,8 @@ class StoreModuleSite extends WeModuleSite {
 						}
 					}
 					cache_build_account_modules($order['uniacid']);
+					$content = $_W['user']['username'] . date("Y-m-d H:i:s") . '在商城成功支付' . $order['amount'] . '￥';
+					message_notice_record($content, $_W['uid'], $orderid, MESSAGE_ORDER_PAY_TYPE);
 					itoast('支付成功!', $this->createWebUrl('orders', array('direct' => 1)), 'success');
 				}
 			}
