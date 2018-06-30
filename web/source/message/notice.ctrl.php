@@ -62,21 +62,20 @@ if ($do == 'event_notice') {
 	}
 	$message = message_event_notice_list();
 	if (!empty($message) && !empty($message['lists'])) {
-		$key = 'message_notice_setting';
-		$setting = setting_load($key);
+		$setting = message_setting();
 		$setting_status = array();
-		if (!empty($setting[$key])) {
-			foreach ($setting[$key] as $property => $property_info) {
+		if (!empty($setting)) {
+			foreach ($setting as $property => $property_info) {
 				foreach ($property_info['types'] as $type => $type_info) {
-					if ($property_info['status'] == 2) {
-						$setting_status[$type]['property'] = 2;
+					if ($property_info['status'] == MESSAGE_DISABLE) {
+						$setting_status[$type]['property'] = MESSAGE_DISABLE;
 					} else {
-						$setting_status[$type]['property'] = 1;
+						$setting_status[$type]['property'] = MESSAGE_ENABLE;
 					}
-					if ($type_info['status'] == 2) {
-						$setting_status[$type]['type'] = 2;
+					if ($type_info['status'] == MESSAGE_DISABLE) {
+						$setting_status[$type]['type'] = MESSAGE_DISABLE;
 					} else {
-						$setting_status[$type]['type'] = 1;
+						$setting_status[$type]['type'] = MESSAGE_ENABLE;
 					}
 				}
 			}
@@ -85,7 +84,7 @@ if ($do == 'event_notice') {
 			if (empty($setting_status[$notice['type']])) {
 				continue;
 			}
-			if ($setting_status[$notice['type']]['property'] == 1 && $setting_status[$notice['type']]['type'] == 1) {
+			if ($setting_status[$notice['type']]['property'] == MESSAGE_ENABLE && $setting_status[$notice['type']]['type'] == MESSAGE_ENABLE) {
 				continue;
 			}
 			unset($message['lists'][$k]);
@@ -114,31 +113,25 @@ if ($do == 'all_read') {
 }
 
 if ($do == 'set') {
-	$key = 'message_notice_setting';
-	$setting = setting_load($key);
-	if (!empty($setting[$key])) {
-		$setting = $setting[$key];
-	} else {
-		$setting = message_setting();
-	}
+	$setting = message_setting();
 	if (!empty($_GPC['property']) && !empty($_GPC['type'])) {
 		$property = trim($_GPC['property']);
 		$type = '';
 		if (is_numeric($_GPC['type'])) {
 			$type = intval($_GPC['type']);
-			if (empty($setting[$property]['types'][$type]['status']) || $setting[$property]['types'][$type]['status'] == 1) {
-				$setting[$property]['types'][$type]['status'] = 2;
+			if (empty($setting[$property]['types'][$type]['status']) || $setting[$property]['types'][$type]['status'] == MESSAGE_ENABLE) {
+				$setting[$property]['types'][$type]['status'] = MESSAGE_DISABLE;
 			} else {
-				$setting[$property]['types'][$type]['status'] = 1;
+				$setting[$property]['types'][$type]['status'] = MESSAGE_ENABLE;
 			}
 		} else {
-			if (empty($setting[$property]['status']) || $setting[$property]['status'] == 1) {
-				$setting[$property]['status'] = 2;
+			if (empty($setting[$property]['status']) || $setting[$property]['status'] == MESSAGE_ENABLE) {
+				$setting[$property]['status'] = MESSAGE_DISABLE;
 			} else {
-				$setting[$property]['status'] = 1;
+				$setting[$property]['status'] = MESSAGE_ENABLE;
 			}
 		}
-		setting_save($setting, $key);
+		setting_save($setting, 'message_notice_setting');
 		iajax(0, '更新成功', url('message/notice/set'));
 	}
 }

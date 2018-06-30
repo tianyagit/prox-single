@@ -360,6 +360,10 @@ function message_list_detail($lists) {
  * @return multitype:string
  */
 function message_setting() {
+	$setting = setting_load('message_notice_setting');
+	if (!empty($setting['message_notice_setting'])) {
+		return $setting['message_notice_setting'];
+	}
 	return array(
 		'order'	=> array(
 			'title' => '订单消息',
