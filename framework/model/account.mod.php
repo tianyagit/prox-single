@@ -206,7 +206,112 @@ function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
  * @return array 模块列表
  */
 
-function uni_modules_by_uniacid($uniacid, $enabled = true, $type = '') {
+function uni_modules_by_uniacid($uniacid, $enabled = true) {
+	global $_W;
+	load()->model('user');
+	load()->model('module');
+	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled == true ? 1 : ''));
+	$modules = cache_load($cachekey);
+	$account_info = uni_fetch($uniacid);
+	if (empty($modules)) {
+
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+		$condition = "WHERE 1";
+
+		$site_store_buy_goods = array();
+		/* xstart */
+		if (IMS_FAMILY == 'x') {
+			$goods_type = $account_info['type'] == ACCOUNT_TYPE_APP_NORMAL ? STORE_TYPE_WXAPP_MODULE : STORE_TYPE_MODULE;
+			$site_store_buy_goods = uni_site_store_buy_goods($uniacid, $goods_type);
+		}
+		/* xend */
+
+		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
+			$uni_modules = array();
+			$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
+			$packageids = array_keys($packageids);
+
+			if (IMS_FAMILY == 'x') {
+				$store = table('store');
+				$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
+				$packageids = array_merge($packageids, array_keys($site_store_buy_package));
+			}
+			if (!in_array('-1', $packageids)) {
+				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN ('".implode("','", $packageids)."') OR " . " uniacid = '{$uniacid}'");
+				if (!empty($uni_groups)) {
+					foreach ($uni_groups as $group) {
+						$group_module = (array)iunserializer($group['modules']);
+						$uni_modules = array_merge($group_module, $uni_modules);
+					}
+				}
+				$user_modules = user_modules($owner_uid);
+				$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_goods);
+				if (!empty($modules)) {
+					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
+				} else {
+					$condition .= " AND a.name = ''";
+				}
+			}
+		}
+		$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
+		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
+		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
+		cache_write($cachekey, $modules);
+	}
+
+	$module_list = array();
+
+	if (!empty($modules)) {
+		foreach ($modules as $name => $module) {
+			$module_info = module_fetch($name);
+			//不支持当前account类型或仅支持系统首页的模块直接continue
+			if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
+				in_array($account_info['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
+				continue;
+			}
+
+			if ($module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP &&
+				in_array($account_info['type'], array(ACCOUNT_TYPE_WEBAPP_NORMAL))) {
+				continue;
+			}
+
+			if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP &&
+				in_array($account_info['type'], array(ACCOUNT_TYPE_PHONEAPP_NORMAL))) {
+				continue;
+			}
+
+			if ($module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP &&
+				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
+				in_array($account_info['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
+				continue;
+			}
+
+			if ($module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] == MODULE_SUPPORT_SYSTEMWELCOME &&
+				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
+				$module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP &&
+				$module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP &&
+				$module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP) {
+				continue;
+			}
+
+			if (!empty($module_info)) {
+				$module_list[$name] = $module_info;
+			}
+		}
+	}
+	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
+	return $module_list;
+}
+
+/**
+ * 获取非管理员登录时（指定公众号下所有安装的模块及模块信息）
+ * @param $uniacid
+ * @param bool $enabled
+ * @param 　 $type
+ * @return array
+ */
+function uni_modules_list($uniacid, $enabled = true, $type = '') {
 	global $_W;
 	load()->model('user');
 	load()->model('module');
@@ -258,7 +363,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true, $type = '') {
 			}
 		}
 		$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
-		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
+		$sql = "SELECT a.name, a.wxapp_support, a.account_support, a.webapp_support, a.phoneapp_support, a.welcome_support, a.xzapp_support, a.mid, a.name, a.type, a.title, a.issystem, a.title_initial, b.enabled FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
 		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
 		cache_write($cachekey, $modules);
 	}
@@ -267,7 +372,12 @@ function uni_modules_by_uniacid($uniacid, $enabled = true, $type = '') {
 
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
-			$module_info = module_fetch($name);
+			$module_info = $module;
+			if (file_exists (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg')) {
+				$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon-custom.jpg') . "?v=" . time ();
+			} else {
+				$module_info['logo'] = tomedia (IA_ROOT . '/addons/' . $module_info['name'] . '/icon.jpg') . "?v=" . time ();
+			}
 			//不支持当前account类型或仅支持系统首页的模块直接continue
 			if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
 				in_array($type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
@@ -306,6 +416,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true, $type = '') {
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
 	return $module_list;
 }
+
 
 /**
  * 获取当前公号下所有安装模块及模块信息

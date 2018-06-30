@@ -21,7 +21,7 @@ if ($do == 'display') {
 
 		if (!empty($user_owned_account) && is_array($user_owned_account)) {
 			foreach ($user_owned_account as $uniacid => $account) {
-				$account_module = uni_modules_by_uniacid($uniacid, true, $account['type']);
+				$account_module = uni_modules_list($uniacid, true, $account['type']);
 				$account_user_module = $userspermission_table->userPermission($_W['uid'], $uniacid);
 				// 非管理员情况下，过滤掉没有添加到相关小程序（没有权限）的应用
 				if ($account['type'] == ACCOUNT_TYPE_APP_NORMAL || $account['type'] == ACCOUNT_TYPE_APP_AUTH) {
