@@ -102,7 +102,7 @@
 				<th>{$property_info['msg']}</th>
 				<th class="text-right">
 					<label>
-						<div class="switch {if empty($property_info['status']) || $property_info['status'] == 1} switchOn{/if}" id="key-{$property}" ng-click="changeStatus('{$property}', '{$property}')"></div>
+						<div class="switch {if empty($property_info['status']) || $property_info['status'] == MESSAGE_ENABLE} switchOn{/if}" id="key-{$property}" ng-click="changeStatus('{$property}', '{$property}')"></div>
 					</label>
 				</th>
 			</tr>
@@ -112,7 +112,7 @@
 					<td>{$type_info['msg']}</td>
 					<td class="text-right">
 						<label>
-							<div class="switch {if empty($type_info['status']) || $type_info['status'] == 1} switchOn{/if}" id="key-{$type}" ng-click="changeStatus('{$property}', {$type})"></div>
+							<div class="switch {if empty($type_info['status']) || $type_info['status'] == MESSAGE_ENABLE} switchOn{/if}" id="key-{$type}" ng-click="changeStatus('{$property}', {$type})"></div>
 						</label>
 					</td>
 				</tr>
