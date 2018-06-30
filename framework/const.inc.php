@@ -276,8 +276,10 @@ define('USER_REGISTER_TYPE_WECHAT', 2);
 define('USER_REGISTER_TYPE_MOBILE', 3);
 
 //消息提醒类型
-//订单消息类型
+//提交订单消息类型
 define('MESSAGE_ORDER_TYPE', 1);
+//订单支付消息类型
+define('MESSAGE_ORDER_PAY_TYPE', 9);
 //公众号过期消息类型
 define('MESSAGE_ACCOUNT_EXPIRE_TYPE', 2);
 //小程序过期消息类型
