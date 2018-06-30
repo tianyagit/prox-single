@@ -356,38 +356,74 @@ function message_list_detail($lists) {
 }
 
 /**
- * 获取消息开启的设置
- */
-function message_set_list() {
-	$messageset = table('messageset');
-	$messagesSetList = $messageset->messagesSetList();
-	$set['propertys'] = array();
-	$set['types'] = array();
-	if (!empty($messagesSetList)) {
-		foreach ($messagesSetList as $s) {
-			if (empty($s['type'])) {
-				$set['propertys'][$s['property']] = $s;
-			} else {
-				$set['types'][$s['type']] = $s;
-			}
-		}
-	}
-	return $set;
-}
-
-/**
  * 消息类型对应的属性
  * @return multitype:string
  */
-function message_property_type() {
+function message_setting() {
 	return array(
-		MESSAGE_ORDER_TYPE => 'order',
-		MESSAGE_ORDER_PAY_TYPE => 'order',
-		MESSAGE_ACCOUNT_EXPIRE_TYPE => 'expire',
-		MESSAGE_WECHAT_EXPIRE_TYPE => 'expire',
-		MESSAGE_WEBAPP_EXPIRE_TYPE => 'expire',
-		MESSAGE_USER_EXPIRE_TYPE => 'expire',
-		MESSAGE_WORKORDER_TYPE => 'work',
-		MESSAGE_REGISTER_TYPE => 'register',
+		'order'	=> array(
+			'title' => '订单消息',
+			'msg' => '用户购买模块，服务等，提交订单或付款后，将会有消息提醒，建议打开',
+			'types' => array(
+				MESSAGE_ORDER_TYPE => array(
+					'type' => MESSAGE_ORDER_TYPE,
+					'title' => '提交订单',
+					'msg' => '用户购买模块，服务等，提交订单后，将会有消息提醒，建议打开',
+				),
+				MESSAGE_ORDER_PAY_TYPE => array(
+					'type' => MESSAGE_ORDER_PAY_TYPE,
+					'title' => '支付成功',
+					'msg' => '用户购买模块，服务等，付款后，将会有消息提醒，建议打开',
+				),
+			),
+		),
+		'expire' => array(
+			'title' => '到期消息',
+			'msg' => '用户公众号到，小程序到期，平台类型到期，将会有消息提醒，建议打开',
+			'types' => array(
+				MESSAGE_ACCOUNT_EXPIRE_TYPE => array(
+					'type' => MESSAGE_ACCOUNT_EXPIRE_TYPE,
+					'title' => '公众号到期',
+					'msg' => '用户公众号到期后，将会有消息提醒，建议打开',
+				),
+				MESSAGE_WECHAT_EXPIRE_TYPE => array(
+					'type' => MESSAGE_WECHAT_EXPIRE_TYPE,
+					'title' => '小程序到期',
+					'msg' => '用户小程序到期后，将会有消息提醒，建议打开',
+				),
+				MESSAGE_WEBAPP_EXPIRE_TYPE => array(
+					'type' => MESSAGE_WEBAPP_EXPIRE_TYPE,
+					'title' => 'pc过期',
+					'msg' => '用户pc类型到期后，将会有消息提醒，建议打开',
+				),
+				MESSAGE_USER_EXPIRE_TYPE => array(
+					'type' => MESSAGE_USER_EXPIRE_TYPE,
+					'title' => '用户账号到期',
+					'msg' => '用户账号到期后，将会有消息提醒，建议打开',
+				),
+			),
+		),
+		'work' => array(
+			'title' => '工单提醒',
+			'msg' => '站点有工单消息时，将会有消息提醒，建议打开',
+			'types' => array(
+				MESSAGE_WORKORDER_TYPE => array(
+					'type' => MESSAGE_WORKORDER_TYPE,
+					'title' => '新工单',
+					'msg' => '站点有新工时，将会有消息提醒，建议打开',
+				),
+			),
+		),
+		'register' => array(
+			'title' => '注册提醒',
+			'msg' => '用户注册后，将会有消息提醒，建议打开',
+			'types' => array(
+				MESSAGE_REGISTER_TYPE => array(
+					'type' => MESSAGE_REGISTER_TYPE,
+					'title' => '新用户注册',
+					'msg' => '新用户注册后，将会有消息提醒，建议打开',
+				),
+			),
+		),
 	);
 }
