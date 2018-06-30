@@ -238,7 +238,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 			}
 			if (!in_array('-1', $packageids)) {
-				$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN (:ids) OR " . " uniacid = :uniacid", array(':ids' => implode("','", $packageids), ':uniacid' => $uniacid));
+				$uni_groups = pdo_getall('uni_group', array('id' => $packageids, 'uniacid' => $uniacid), 'modules');
 
 				if (!empty($uni_groups)) {
 					foreach ($uni_groups as $group) {
@@ -344,7 +344,8 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		}
 		if (!in_array('-1', $packageids)) {
-			$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " .  "id IN (:ids) OR " . " uniacid = :uniacid", array(':ids' => implode("','", $packageids), ':uniacid' => $uniacid));
+			$uni_groups = pdo_getall('uni_group', array('id' => $packageids, 'uniacid' => $uniacid), 'modules');
+
 			if (!empty($uni_groups)) {
 				foreach ($uni_groups as $group) {
 					$group_module = (array)iunserializer($group['modules']);
