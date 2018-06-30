@@ -12,19 +12,19 @@ $creditnames = uni_setting_load('creditnames')['creditnames'];
 if ($do == 'save_tactics_setting') {
 	$setting = $_GPC['setting'];
 	if (empty($setting)) {
-		iajax(1, '');
+		iajax(1, '不可为空！');
 	}
 	uni_setting_save('creditbehaviors', $setting);
-	iajax(0, '');
+	iajax(0, '设置成功！', referer());
 }
 
 if ($do == 'save_credit_setting') {
 	$credit_setting = $_GPC['credit_setting'];
 	if (empty($credit_setting)) {
-		iajax(1, '');
+		iajax(1, '不可为空');
 	}
 	uni_setting_save('creditnames', $credit_setting);
-	iajax(0, '');
+	iajax(0, '设置成功！', referer());
 }
 
 if ($do == 'register_setting') {

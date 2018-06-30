@@ -215,6 +215,13 @@ $we7_system_menu['wxapp'] = array(
 					'icon' => 'wi wi-appsetting',
 					'permission_name' => 'wxapp_payment',
 				),
+				'wxapp_member' => array(
+					'title' => '会员',
+					'url' => url('mc/member'),
+					'is_display' => 1,
+					'icon' => 'wi wi-fans',
+					'permission_name' => 'mc_member',
+				),
 				'front_download' => array(
 					'title' => '上传微信审核',
 					'url' => url('wxapp/front-download'),
