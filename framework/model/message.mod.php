@@ -354,3 +354,40 @@ function message_list_detail($lists) {
 
 	return $lists;
 }
+
+/**
+ * 获取消息开启的设置
+ */
+function message_set_list() {
+	$messageset = table('messageset');
+	$messagesSetList = $messageset->messagesSetList();
+	$set['propertys'] = array();
+	$set['types'] = array();
+	if (!empty($messagesSetList)) {
+		foreach ($messagesSetList as $s) {
+			if (empty($s['type'])) {
+				$set['propertys'][$s['property']] = $s;
+			} else {
+				$set['types'][$s['type']] = $s;
+			}
+		}
+	}
+	return $set;
+}
+
+/**
+ * 消息类型对应的属性
+ * @return multitype:string
+ */
+function message_property_type() {
+	return array(
+		MESSAGE_ORDER_TYPE => 'order',
+		MESSAGE_ORDER_PAY_TYPE => 'order',
+		MESSAGE_ACCOUNT_EXPIRE_TYPE => 'expire',
+		MESSAGE_WECHAT_EXPIRE_TYPE => 'expire',
+		MESSAGE_WEBAPP_EXPIRE_TYPE => 'expire',
+		MESSAGE_USER_EXPIRE_TYPE => 'expire',
+		MESSAGE_WORKORDER_TYPE => 'work',
+		MESSAGE_REGISTER_TYPE => 'register',
+	);
+}

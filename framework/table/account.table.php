@@ -84,8 +84,8 @@ class AccountTable extends We7Table {
 	public function userOwnedAccount($uid = 0) {
 		global $_W;
 		$uid = intval($uid) > 0 ? intval($uid) : $_W['uid'];
-		$is_founder = user_is_founder($uid);
-		if (empty($is_founder) || user_is_vice_founder($uid)) {
+		$is_founder = user_is_founder($uid, true);
+		if (empty($is_founder)) {
 			$users_table = table('users');
 			$uniacid_list = $users_table->userOwnedAccount($uid);
 			if (empty($uniacid_list)) {

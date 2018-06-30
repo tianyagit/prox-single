@@ -1,5 +1,10 @@
 {template 'common/header'}
+<ul class="we7-page-tab">
+	<li {if $do == 'display'}class="active"{/if}><a href="{php echo url('message/notice/display');}">消息列表</a></li>
+	<li {if $do == 'set'}class="active"{/if}><a href="{php echo url('message/notice/set');}">消息设置</a></li>
+</ul>
 <div id="message-notice"  ng-controller="messageNoticeCtrl" ng-cloak>
+{if $do == 'display'}
 	<div class="btn-group we7-btn-group we7-padding-bottom">
 		<a href="{php echo url('message/notice')}" class="btn btn-default {if empty($type)} active {/if}">全部</a>
 		<!-- xstart -->
@@ -30,55 +35,226 @@
 	<div class="btn-group we7-btn-group we7-padding-bottom" style="float: right;">
 		<a href="javascript:;" ng-click="allRead()" class="btn">已读所有消息</a>
 	</div>
-<table class="table we7-table table-hover vertical-middle" >
-	<col>
-	<col>
-	<col>
-	<tr>
-		<th colspan="3" class="text-left filter">
-			<div class="dropdown dropdown-toggle we7-dropdown">
-				<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					全部消息
-					<span class="caret"></span>
-				</a>
-				<ul class="dropdown-menu" aria-labelledby="dLabel">
-					<li><a href="{php echo filter_url('is_read:');}" class="active">全部消息</a></li>
-					<li><a href="{php echo filter_url('is_read:' . MESSAGE_READ);}" class="active">已读消息</a></li>
-					<li><a href="{php echo filter_url('is_read:' . MESSAGE_NOREAD);}" class="active">未读消息</a></li>
-				</ul>
-			</div>
-		</th>
-	</tr>
-	<tr>
-		<th>标题内容</th>
-		<th class="text-center">提交时间</th>
-		<th class="text-right">操作</th>
-	</tr>
-	<tr ng-repeat="list in lists">
-		<td class="tip-before unread" ng-if ="list.is_read == 1" ng-bind="list.message"></td>
-		<td class="tip-before " ng-if ="list.is_read == 2" ng-bind="list.message"></td>
-		<td class="text-muted text-center" ng-bind = "list.create_time"></td>
-		<td>
-			<div class="link-group">
-				<!-- sxstart -->
-				{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
-				<a ng-href="{{list.url}}" ng-if="list.type==1">查看我的订单</a>
-				{/if}
-				<!-- sxend -->
-				<a ng-href="{{list.url}}" ng-if="list.type==3">进入工单</a>
-				<a ng-href="{{list.url}}" ng-if="list.type==2">查看公众号</a>
-				<a ng-href="{{list.url}}" ng-if="list.type==5">查看小程序</a>
-				<a ng-href="{{list.url}}" ng-if="list.type==6">查看pc</a>
-				<a ng-href="{{list.url}}" ng-if="list.type==4 && list.status==1">查看我的待审核用户</a>
-				<a ng-href="{{list.url}}" ng-if="list.type==7">查看我的账号</a>
-			</div>
-		</td>
-	</tr>
-</table>
-
+	<table class="table we7-table table-hover vertical-middle" >
+		<col>
+		<col>
+		<col>
+		<tr>
+			<th colspan="3" class="text-left filter">
+				<div class="dropdown dropdown-toggle we7-dropdown">
+					<a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						全部消息
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" aria-labelledby="dLabel">
+						<li><a href="{php echo filter_url('is_read:');}" class="active">全部消息</a></li>
+						<li><a href="{php echo filter_url('is_read:' . MESSAGE_READ);}" class="active">已读消息</a></li>
+						<li><a href="{php echo filter_url('is_read:' . MESSAGE_NOREAD);}" class="active">未读消息</a></li>
+					</ul>
+				</div>
+			</th>
+		</tr>
+		<tr>
+			<th>标题内容</th>
+			<th class="text-center">提交时间</th>
+			<th class="text-right">操作</th>
+		</tr>
+		<tr ng-repeat="list in lists">
+			<td class="tip-before unread" ng-if ="list.is_read == 1" ng-bind="list.message"></td>
+			<td class="tip-before " ng-if ="list.is_read == 2" ng-bind="list.message"></td>
+			<td class="text-muted text-center" ng-bind = "list.create_time"></td>
+			<td>
+				<div class="link-group">
+					<!-- sxstart -->
+					{if IMS_FAMILY == 's' || IMS_FAMILY == 'x'}
+					<a ng-href="{{list.url}}" ng-if="list.type==1">查看我的订单</a>
+					{/if}
+					<!-- sxend -->
+					<a ng-href="{{list.url}}" ng-if="list.type==3">进入工单</a>
+					<a ng-href="{{list.url}}" ng-if="list.type==2">查看公众号</a>
+					<a ng-href="{{list.url}}" ng-if="list.type==5">查看小程序</a>
+					<a ng-href="{{list.url}}" ng-if="list.type==6">查看pc</a>
+					<a ng-href="{{list.url}}" ng-if="list.type==4 && list.status==1">查看我的待审核用户</a>
+					<a ng-href="{{list.url}}" ng-if="list.type==7">查看我的账号</a>
+				</div>
+			</td>
+		</tr>
+	</table>
 </div>
 <div class="text-right we7-margin-top">
-	{$pager}
+{$pager}
+{/if}
+{if $do == 'set'}
+	<div class="clearfix"></div>
+	<div class="table we7-tables we7-padding-bottom">
+		<table class="table we7-table table-hover">
+			<col width="80px"/>
+			<col width="300px"/>
+			<col width="100px"/>
+			<tr>
+				<th>消息类型</th>
+				<th>提醒说明</th>
+				<th class="text-right">操作</th>
+			</tr>
+			<!-- xstart -->
+			{if IMS_FAMILY == 'x'}
+			{if $_W['isfounder'] && uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+			<tr>
+				<th>订单消息</th>
+				<th>用户购买模块，服务等，提交订单或付款后，将会有消息提醒，建议打开</th>
+				<th class="text-right">
+					<label>
+						<div class="switch {if empty($propertys['order']) || $propertys['order']['status'] == 1} switchOn{/if}" id="key-order" {if $propertys['order']['id']} ng-click="changeStatus('order', {$propertys['order']['id']})" {else} ng-click="changeStatus('order')" {/if}></div>
+					</label>
+				</th>
+			</tr>
+			<tr>
+				<td class="vertical-middle">提交订单</td>
+				<td>用户购买模块，服务等，提交订单后，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[1]) || $types[1]['status'] == 1} switchOn{/if}" id="key-1" {if $types[1][id]} ng-click="changeStatus(1, {$types[1][id]})"{else} ng-click="changeStatus(1)" {/if}></div>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="vertical-middle">支付成功</td>
+				<td>用户购买模块，服务等，付款后，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[9]) || $types[9]['status'] == 1} switchOn{/if}" id="key-9" {if $types[9][id]} ng-click="changeStatus(9, {$types[9][id]})"{else}ng-click="changeStatus(9)"{/if}></div>
+					</label>
+				</td>
+			</tr>
+			{/if}
+			{/if}
+			<!-- xend -->
+			<tr>
+				<th>到期消息</th>
+				<th>用户公众号到，小程序到期，平台类型到期，将会有消息提醒，建议打开</th>
+				<th class="text-right">
+					<label>
+						<div class="switch {if empty($propertys['expire']) || $propertys['expire']['status'] == 1} switchOn{/if}" id="key-expire" {if $propertys['expire']['id']} ng-click="changeStatus('expire', {$propertys[expire][id]})"{else}ng-click="changeStatus('expire')"{/if}></div>
+					</label>
+				</th>
+			</tr>
+			<tr>
+				<td class="vertical-middle">公众号到期</td>
+				<td>用户公众号到期后，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[2]) || $types[2]['status'] == 1} switchOn{/if}" id="key-2" {if $types[2][id]}ng-click="changeStatus(2, {$types[2][id]})"{else}ng-click="changeStatus(2)"{/if}></div>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="vertical-middle">小程序到期</td>
+				<td>用户小程序到期后，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[5]) || $types[5]['status'] == 1} switchOn{/if}" id="key-5" {if $types[5][id]}ng-click="changeStatus(5, {$types[5][id]})"{else}ng-click="changeStatus(5)"{/if}></div>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="vertical-middle">平台类型到期</td>
+				<td>用户平台类型到期后，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[7]) || $types[7]['status'] == 1} switchOn{/if}" id="key-7" {if $types[7][id]}ng-click="changeStatus(7, {$types[7][id]})"{else}ng-click="changeStatus(7)"{/if}></div>
+					</label>
+				</td>
+			</tr>
+			
+			
+			<!-- xstart -->
+			{if IMS_FAMILY == 'x'}
+			{if $_W['isfounder'] && uni_user_see_more_info(ACCOUNT_MANAGE_NAME_VICE_FOUNDER, false)}
+			<tr>
+				<th>注册提醒</th>
+				<th>用户注册后，将会有消息提醒，建议打开</th>
+				<th class="text-right">
+					<label>
+						<div class="switch {if empty($propertys['register']) || $propertys['register']['status'] == 1} switchOn{/if}" id="key-register" {if $propertys['register']['id']}ng-click="changeStatus('register', {$propertys['register']['id']})"{else}ng-click="changeStatus('register')"{/if}></div>
+					</label>
+				</th>
+			</tr>
+			<tr>
+				<td class="vertical-middle">新用户注册</td>
+				<td>新用户注册后，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[4]) || $types[4]['status'] == 1} switchOn{/if}" id="key-4" {if $types[4][id]}ng-click="changeStatus(4, {$types[4][id]})"{else}ng-click="changeStatus(4)"{/if}></div>
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<th>工单提醒</th>
+				<th>站点有工单消息时，将会有消息提醒，建议打开</th>
+				<th class="text-right">
+					<label>
+						<div class="switch {if empty($propertys['work']) || $propertys['work']['status'] == 1} switchOn{/if}" id="key-work" {if $propertys['work']['id']}ng-click="changeStatus('work', {$propertys['work']['id']})"{else}ng-click="changeStatus('work')"{/if}></div>
+					</label>
+				</th>
+			</tr>
+			<tr>
+				<td class="vertical-middle">新工单</td>
+				<td>站点有新工时，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[3]) || $types[3]['status'] == 1} switchOn{/if}" id="key-3" {if $types[3][id]}ng-click="changeStatus(3, {$types[3][id]})"{else}ng-click="changeStatus(3)"{/if}></div>
+					</label>
+				</td>
+			</tr>
+			{/if}
+			{/if}
+			<!-- xend -->
+			<!-- svstart -->
+			{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
+			{if $_W['isfounder']}
+			<tr>
+				<th>注册提醒</th>
+				<th>用户注册后，将会有消息提醒，建议打开</th>
+				<th class="text-right">
+					<label>
+						<div class="switch {if empty($propertys['register']) || $propertys['register']['status'] == 1} switchOn{/if}" id="key-register" {if $propertys['register']['id']}ng-click="changeStatus('register', {$propertys['register']['id']})"{else}ng-click="changeStatus('register')"{/if}></div>
+					</label>
+				</th>
+			</tr>
+			<tr>
+				<td class="vertical-middle">新用户注册</td>
+				<td>新用户注册后，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[4]) || $types[4]['status'] == 1} switchOn{/if}" id="key-4" {if $types[4][id]}ng-click="changeStatus(4, {$types[4][id]})"{else}ng-click="changeStatus(4)"{/if}></div>
+					</label>
+				</td>
+			</tr>
+			
+			<tr>
+				<th>工单提醒</th>
+				<th>站点有工单消息时，将会有消息提醒，建议打开</th>
+				<th class="text-right">
+					<label>
+						<div class="switch {if empty($propertys['work']) || $propertys['work']['status'] == 1} switchOn{/if}" id="key-work" {if $propertys['work']['id']}ng-click="changeStatus('work', {$propertys[work][id]})"{else}ng-click="changeStatus('work')"{/if}></div>
+					</label>
+				</th>
+			</tr>
+			<tr>
+				<td class="vertical-middle">新工单</td>
+				<td>站点有新工时，将会有消息提醒，建议打开</td>
+				<td class="text-right">
+					<label>
+						<div class="switch {if empty($types[3]) || $types[3]['status'] == 1} switchOn{/if}" id="key-3" {if $types[3][id]}ng-click="changeStatus(3, $types[3][id])"{else}ng-click="changeStatus(3)"{/if}></div>
+					</label>
+				</td>
+			</tr>
+			{/if}
+			{/if}
+			<!-- svend -->
+		</table>
+	</div>
+{/if}
 </div>
 <script type="text/javascript">
 	angular.module('messageApp').value('config', {
