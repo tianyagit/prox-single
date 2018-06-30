@@ -117,7 +117,7 @@ function attachment_cos_auth($bucket,$appid, $key, $secret, $bucket_local = '') 
 		qcloudcos\Cosapi :: setRegion($bucket_local);
 		qcloudcos\Cosapi :: setTimeout(180);
 		
-		$uploadRet = qcloudcos\Cosapi::upload($bucket, IA_ROOT . '/attachment/images/global/MicroEngine.ico', '/MicroEngine.ico','',3 * 1024 * 1024, 0);
+		$uploadRet = qcloudcos\Cosapi::upload($bucket, ATTACHMENT_ROOT . 'images/global/MicroEngine.ico', '/MicroEngine.ico','',3 * 1024 * 1024, 0);
 	} else {
 		load()->library('cosv3');
 		$con = $original = @file_get_contents(IA_ROOT.'/framework/library/cos/Qcloud_cos/Conf.php');
