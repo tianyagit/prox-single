@@ -163,11 +163,17 @@ $we7_system_menu['account'] = array(
 		'statistics' => array(
 			'title' => '统计',
 			'menu' => array(
-				'app' => array(
+				'statistics_app' => array(
 					'title' => '访问统计',
 					'url' => url('statistics/app'),
 					'icon' => 'wi wi-statistical',
 					'permission_name' => 'statistics_app',
+				),
+				'statistics_fans' => array(
+					'title' => '用户统计',
+					'url' => url('statistics/fans'),
+					'icon' => 'wi wi-statistical',
+					'permission_name' => 'statistics_fans',
 				),
 			),
 		),
