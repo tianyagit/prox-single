@@ -172,7 +172,7 @@ if ($do == 'post') {
 		foreach ($module_list as $name => $module_info) {
 			if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_WXAPP && !in_array($name, array_keys($group_have_module_app))) {
 				if (!empty($module_info['main_module'])) {
-					if (in_array($module_info['main_module'], array_keys($group_have_module_app))) {
+					if (!in_array($module_info['name'], array_keys($group_have_module_app))) {
 						$group_not_have_module_app[$name] = $module_info;
 					}
 				} elseif (is_array($module_info['plugin_list']) && !empty($module_info['plugin_list'])) {

@@ -73,7 +73,7 @@ if ($do == 'edit_modules_tpl') {
 	$groups = user_group();
 	$group_info = user_group_detail_info($user['groupid']);
 
-	$extend_permission = pdo_get('users_permission', array('uid' => $uid, 'uniacid' => 0));
+	$extend_permission = pdo_get('uni_group', array('uid' => $uid, 'uniacid' => 0));
 	$extend_permission['modules'] = $current_module_names = (array)iunserializer($extend_permission['modules']);
 	$extend_permission['templates'] = (array)iunserializer($extend_permission['templates']);
 	$extend = array();
@@ -104,15 +104,17 @@ if ($do == 'edit_users_permission') {
 				'templates' => iserializer($tpl),
 				'uid' => $uid,
 				'uniacid' => 0,
+				'owner_uid' => 0,
+				'name' => '',
 			);
-			$id = pdo_fetchcolumn("SELECT id FROM " . tablename('users_permission') . " WHERE uid=:uid and uniacid=:uniacid", array(":uniacid" => 0, ":uid" => $uid));
+			$id = pdo_fetchcolumn("SELECT id FROM " . tablename('uni_group') . " WHERE uid=:uid and uniacid=:uniacid", array(":uniacid" => 0, ":uid" => $uid));
 			if (empty($id)) {
-				$res = pdo_insert('users_permission', $data);
+				$res = pdo_insert('uni_group', $data);
 			} else {
-				$res = pdo_update('users_permission', $data, array('id' => $id));
+				$res = pdo_update('uni_group', $data, array('id' => $id));
 			}
 		} else {
-			$res = pdo_delete('users_permission', array('uid' => $uid, 'uniacid' => 0));
+			$res = pdo_delete('uni_group', array('uid' => $uid, 'uniacid' => 0));
 		}
 		if ($res) {
 			iajax(0, '修改成功', '');

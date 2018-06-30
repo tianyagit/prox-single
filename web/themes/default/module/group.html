@@ -234,7 +234,7 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleWxapp" style="overflow: hidden">
-						<img src="{{ module.logo }}" alt="" class="img">{{ module.title }}
+						<img ng-src="{{ module.logo }}" alt="" class="img">{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModuleWxapp(module)">删除</span>
 					</div>
 					<div class="col-sm-2 add-more">
@@ -395,6 +395,10 @@
 							<div class="col-sm-2 select-module" ng-show="!module.hide" ng-repeat="module in groupNotHaveModuleApp" ng-click="selectOrCancelModule(module, 'module')">
 								<div class="item"  ng-class="{true:'active',false:''}[module.selected]">
 									<img ng-src="{{ module.logo }}"  alt="" class="icon" ng-if="module.main_module == ''"/>
+									<span class="img" ng-if="module.main_module != ''">
+										<img ng-src="{{ module.logo }}" alt="子应用icon" class="plugin-img"/>
+										<img ng-src="{{ module.main_module_logo }}" alt="主应用icon" class="module-img"/>
+									</span>
 									<div class="name">{{ module.title }}</div>
 									<div class="mask">
 										<span class="wi wi-right"></span>
