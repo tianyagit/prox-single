@@ -1,7 +1,7 @@
 {template 'common/header'}
 <ul class="we7-page-tab">
 	<li {if $do == 'display'}class="active"{/if}><a href="{php echo url('message/notice/display');}">消息列表</a></li>
-	<li {if $do == 'set'}class="active"{/if}><a href="{php echo url('message/notice/set');}">消息设置</a></li>
+	<li {if $do == 'setting'}class="active"{/if}><a href="{php echo url('message/notice/setting');}">消息设置</a></li>
 </ul>
 <div id="message-notice"  ng-controller="messageNoticeCtrl" ng-cloak>
 {if $do == 'display'}
@@ -84,7 +84,7 @@
 <div class="text-right we7-margin-top">
 {$pager}
 {/if}
-{if $do == 'set'}
+{if $do == 'setting'}
 	<div class="clearfix"></div>
 	<div class="table we7-tables we7-padding-bottom">
 		<table class="table we7-table table-hover">

@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display', 'change_read_status', 'event_notice', 'all_read', 'set');
+$dos = array('display', 'change_read_status', 'event_notice', 'all_read', 'setting');
 $do = in_array($do, $dos) ? $do : 'display';
 load()->model('message');
 
@@ -112,7 +112,7 @@ if ($do == 'all_read') {
 	itoast('', referer());
 }
 
-if ($do == 'set') {
+if ($do == 'setting') {
 	$setting = message_setting();
 	if (!empty($_GPC['property']) && !empty($_GPC['type'])) {
 		$property = trim($_GPC['property']);
@@ -132,7 +132,7 @@ if ($do == 'set') {
 			}
 		}
 		setting_save($setting, 'message_notice_setting');
-		iajax(0, '更新成功', url('message/notice/set'));
+		iajax(0, '更新成功', url('message/notice/setting'));
 	}
 }
 template('message/notice');
