@@ -295,6 +295,10 @@ define('MESSAGE_USER_EXPIRE_TYPE', 7);
 //小程序应用升级
 define('MESSAGE_WXAPP_MODULE_UPGRADE', 8);
 
+//消息开关是否开启 1开启 2关闭
+define('MESSAGE_ENABLE', 1);
+define('MESSAGE_DISABLE', 2);
+
 //消息是否读取 1未读  2已读
 define('MESSAGE_NOREAD', 1);
 define('MESSAGE_READ', 2);

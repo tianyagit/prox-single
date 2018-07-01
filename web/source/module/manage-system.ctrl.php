@@ -248,15 +248,6 @@ if ($do == 'upgrade') {
 
 	ext_module_run_script($manifest, 'upgrade');
 
-	if (ONLINE_MODULE) {
-		if (strexists($manifest['uninstall'], '.php') && file_exists($module_path . $manifest['uninstall'])) {
-			unlink($module_path . $manifest['uninstall']);
-		}
-		if (strexists($manifest['install'], '.php') && file_exists($module_path . $manifest['install'])) {
-			unlink($module_path . $manifest['install']);
-		}
-	}
-
 	$module_upgrade['permissions'] = iserializer($module_upgrade['permissions']);
 	if (!empty($module_info['version']['cloud_setting'])) {
 		$module_upgrade['settings'] = 2;

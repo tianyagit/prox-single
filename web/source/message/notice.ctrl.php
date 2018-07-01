@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display', 'change_read_status', 'event_notice', 'all_read', 'set');
+$dos = array('display', 'change_read_status', 'event_notice', 'all_read', 'setting');
 $do = in_array($do, $dos) ? $do : 'display';
 load()->model('message');
 
@@ -62,19 +62,30 @@ if ($do == 'event_notice') {
 	}
 	$message = message_event_notice_list();
 	if (!empty($message) && !empty($message['lists'])) {
-		$set_property = message_property_type();
-		$set = message_set_list();
-		$propertys = $set['propertys'];
-		$types = $set['types'];
-		foreach ($message['lists'] as $k => $m) {
-			if (empty($set_property[$m['type']])) {
+		$setting = message_setting();
+		$setting_status = array();
+		if (!empty($setting)) {
+			foreach ($setting as $property => $property_info) {
+				foreach ($property_info['types'] as $type => $type_info) {
+					if ($property_info['status'] == MESSAGE_DISABLE) {
+						$setting_status[$type]['property'] = MESSAGE_DISABLE;
+					} else {
+						$setting_status[$type]['property'] = MESSAGE_ENABLE;
+					}
+					if ($type_info['status'] == MESSAGE_DISABLE) {
+						$setting_status[$type]['type'] = MESSAGE_DISABLE;
+					} else {
+						$setting_status[$type]['type'] = MESSAGE_ENABLE;
+					}
+				}
+			}
+		}
+		foreach ($message['lists'] as $k => $notice) {
+			if (empty($setting_status[$notice['type']])) {
 				continue;
 			}
-			$property = $set_property[$m['type']];
-			if (empty($propertys[$property]) || (!empty($propertys[$property]) && $propertys[$property]['status'] == 1)) {
-				if (empty($types[$m['type']]) || (!empty($types[$m['type']]) && $types[$m['type']]['status'] == 1)) {
-					continue;
-				}
+			if ($setting_status[$notice['type']]['property'] == MESSAGE_ENABLE && $setting_status[$notice['type']]['type'] == MESSAGE_ENABLE) {
+				continue;
 			}
 			unset($message['lists'][$k]);
 		}
@@ -101,34 +112,27 @@ if ($do == 'all_read') {
 	itoast('', referer());
 }
 
-if ($do == 'set') {
-	$set = message_property_type();
-	$property = array('order', 'expire', 'work', 'register');
-	$type = array(MESSAGE_ORDER_TYPE, MESSAGE_ORDER_PAY_TYPE, MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WORKORDER_TYPE, MESSAGE_REGISTER_TYPE);
-	if (!empty($_GPC['type'])) {
-		if (!empty($_GPC['id'])) {
-			$messageSet = pdo_get('message_notice_set', array('id' => intval($_GPC['id'])));
-			if (empty($messageSet['status']) || $messageSet['status'] == 1) {
-				$messageSet['status'] = 2;
+if ($do == 'setting') {
+	$setting = message_setting();
+	if (!empty($_GPC['property']) && !empty($_GPC['type'])) {
+		$property = trim($_GPC['property']);
+		$type = '';
+		if (is_numeric($_GPC['type'])) {
+			$type = intval($_GPC['type']);
+			if (empty($setting[$property]['types'][$type]['status']) || $setting[$property]['types'][$type]['status'] == MESSAGE_ENABLE) {
+				$setting[$property]['types'][$type]['status'] = MESSAGE_DISABLE;
 			} else {
-				$messageSet['status'] = 1;
+				$setting[$property]['types'][$type]['status'] = MESSAGE_ENABLE;
 			}
-			pdo_update('message_notice_set', $messageSet, array('id' => $messageSet['id']));
 		} else {
-			if (in_array($_GPC['type'], $property)) {
-				if (!pdo_get('message_notice_set', array('property' => trim($_GPC['type']), 'type' => 0))) {
-					pdo_insert('message_notice_set', array('property' => trim($_GPC['type']), 'status' => 2, 'time' => TIMESTAMP));
-				}
-			} elseif (in_array($_GPC['type'], $type)) {
-				if (!empty($set[$_GPC['type']]) && !pdo_get('message_notice_set', array('property' => $set[$_GPC['type']], 'type' => intval($_GPC['type'])))) {
-					pdo_insert('message_notice_set', array('property' => $set[$_GPC['type']], 'type' => intval($_GPC['type']), 'status' => 2, 'time' => TIMESTAMP));
-				}
+			if (empty($setting[$property]['status']) || $setting[$property]['status'] == MESSAGE_ENABLE) {
+				$setting[$property]['status'] = MESSAGE_DISABLE;
+			} else {
+				$setting[$property]['status'] = MESSAGE_ENABLE;
 			}
 		}
-		iajax(0, '更新成功', url('message/notice/set'));
+		setting_save($setting, 'message_notice_setting');
+		iajax(0, '更新成功', url('message/notice/setting'));
 	}
-	$sets = message_set_list();
-	$propertys = $sets['propertys'];
-	$types = $sets['types'];
 }
 template('message/notice');
