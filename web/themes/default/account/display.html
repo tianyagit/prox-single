@@ -115,7 +115,7 @@
 
 					<!-- svstart -->
 					{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
-					<div class="creat">
+					<div class="creat" ng-switch="type">
 						{if !empty($account_info['uniacid_limit']) || $_W['isfounder']}
 						<a href="./index.php?c=account&a=post-step" class="color-default" ng-if="type == 'account'">
 							<i class="wi wi-registersite"></i>新增公众号
@@ -141,7 +141,7 @@
 						{/if}
 
 						{if !empty($account_info['xzapp_limit']) || $_W['isfounder']}
-						<a href="{php echo url('xzapp/manage/create')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
+						<a href="{php echo url('xzapp/manage/create')}" class="color-default" ng-if="type == 'xzapp'"><i class="wi wi-registersite"></i>新建熊掌号</a>
 						{/if}
 					</div>
 					{/if}
