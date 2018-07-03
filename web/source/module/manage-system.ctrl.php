@@ -552,7 +552,6 @@ if ($do == 'recycle_post') {
 	//如果模块未安装或是卸载，则标记删除，在回收站中显示
 	if (!empty($module)) {
         $cached_user_modules = (array) cache_load(cache_system_key('user_modules', array('uid' => $_W['uid'])));
-
         if (empty($module_recycle)) {
             $msg = '模块已停用!';
             table('modules_recycle')->fill(array('name' => $name, 'type' => 1))->save();
@@ -569,7 +568,7 @@ if ($do == 'recycle_post') {
             }
         }
         cache_write(cache_system_key('user_modules', array('uid' => $_W['uid'])), $cached_user_modules);
-	} else {
+    } else {
 		if (empty($module_recycle)) {
 			$msg = '模块已放入回收站!';
 			table('modules_recycle')->fill(array('name' => $name, 'type' => 2))->save();
