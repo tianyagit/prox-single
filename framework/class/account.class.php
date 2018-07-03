@@ -86,6 +86,11 @@ abstract class WeAccount {
 			$account_obj = new WeiXinAccount();
 		}
 
+		if ($type == ACCOUNT_TYPE_XZAPP_NORMAL) {
+			load()->classs('xzapp.account');
+			$account_obj = new XzappAccount();
+		}
+
 		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 			load()->classs('weixin.platform');
 			$account_obj = new WeiXinPlatform();

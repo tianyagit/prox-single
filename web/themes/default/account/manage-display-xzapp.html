@@ -42,7 +42,7 @@
 	{if IMS_FAMILY == 'x'}
 		{if !empty($account_info['xzapp_limit']) && (!empty($account_info['founder_xzapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
-			<a href="{php echo url('xzapp/manage/create')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
+			<a href="{php echo url('xzapp/post-step')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
 		</div>
 		{/if}
 	{/if}
@@ -52,7 +52,7 @@
 	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if !empty($account_info['xzapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
-			<a href="{php echo url('xzapp/manage/create')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
+			<a href="{php echo url('xzapp/post-step')}" class="btn btn-primary we7-padding-horizontal">添加熊掌号</a>
 		</div>
 		{/if}
 	{/if}

@@ -7,6 +7,8 @@
 defined('IN_IA') or exit('Access Denied');
 
 class XzappAccount extends WeAccount {
+	public $tablename = 'account_xzapp';
+
 	public function __construct($account = array()) {
 		$this->menuFrame = 'xzapp';
 		$this->type = ACCOUNT_TYPE_XZAPP_NORMAL;
@@ -22,7 +24,7 @@ class XzappAccount extends WeAccount {
 	}
 
 	public function fetchAccountInfo() {
-		$account_table = table('account');
+		$account_table = table('account_xzapp');
 		$account = $account_table->getXzappAccount($this->uniaccount['acid']);
 		return $account;
 	}

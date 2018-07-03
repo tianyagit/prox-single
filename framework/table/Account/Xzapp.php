@@ -62,5 +62,9 @@ class Xzapp extends \We7Table {
 		return $list;
 	}
 
+	public function getXzappAccount($acid) {
+		return $this->query->from('account_xzapp')->where('acid' , $acid)->get();
+	}
+
 
 }
