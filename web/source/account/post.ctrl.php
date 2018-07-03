@@ -16,14 +16,14 @@ load()->func('file');
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 if (empty($uniacid) || empty($acid)) {
-	itoast('请选择要编辑的公众号', url('account/manage'), 'error');
+	$url = url('account/manage', array('account_type' => ACCOUNT_TYPE));
+	itoast('请选择要编辑的' . ACCOUNT_TYPE_NAME, $url, 'error');
 }
 $defaultaccount = uni_account_default($uniacid);
 if (!$defaultaccount) {
 	itoast('无效的acid', url('account/manage'), 'error');
 }
 $acid = $defaultaccount['acid']; //强制使用默认的acid
-
 
 $state = permission_account_user_role($_W['uid'], $uniacid);
 $dos = array('base', 'sms', 'modules_tpl');
@@ -51,13 +51,12 @@ if ($role_permission) {
 	itoast('您是该公众号的操作员，无权限操作！', url('account/manage'), 'error');
 }
 
-$_W['page']['title'] = '管理设置 - 微信' . ACCOUNT_TYPE_NAME . '管理';
+$_W['page']['title'] = '管理设置 - ' . ACCOUNT_TYPE_NAME . '管理';
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'base') {
-
 	if (!$role_permission) {
 		itoast('无权限操作！', url('account/post/modules_tpl', array('uniacid' => $uniacid, 'acid' => $acid)), 'error');
 	}
@@ -196,7 +195,7 @@ if($do == 'base') {
 	}
 
 	$table_name = in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) ? 'account_wechats' : 'account_' . TYPE_SIGN;
-	if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
+	if (in_array(ACCOUNT_TYPE, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_XZAPP_NORMAL))) {
 		$account_other_info = pdo_get($table_name, array('uniacid' => $uniacid, 'acid' => $acid), array('key', 'secret', 'token', 'encodingaeskey'));
 	}
 	$account_other_info = (array)$account_other_info;

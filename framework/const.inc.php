@@ -44,6 +44,8 @@ define('ACCOUNT_TYPE_APP_AUTH', 7);
 define('ACCOUNT_TYPE_WXAPP_WORK', 8);
 //正常接入熊掌号
 define('ACCOUNT_TYPE_XZAPP_NORMAL', 9);
+//授权接入熊掌号
+define('ACCOUNT_TYPE_XZAPP_AUTH', 10);
 //公众号
 define('ACCOUNT_TYPE_SIGN', 'account');
 //小程序
