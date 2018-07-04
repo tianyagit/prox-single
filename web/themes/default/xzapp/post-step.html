@@ -513,7 +513,7 @@
 						<a ng-href="{{links.manage}}&account_type={{account.type}}" class="btn btn-info">返回熊掌号列表</a>
 					</div>
 					<div ng-if="account.isconnect == 1">
-						<a ng-href="{{links.post}}acid={{account.acid}}&uniacid={{account.uniacid}}" class="btn btn-primary">管理熊掌号</a>
+						<a ng-href="{{links.post}}acid={{account.acid}}&uniacid={{account.uniacid}}&account_type={{account.type}}" class="btn btn-primary">管理熊掌号</a>
 					</div>
 				</div>
 			</div>
@@ -525,7 +525,7 @@
 		account: {php echo !empty($account) ? json_encode($account) : 'null'},
 		links: {
 			siteroot: "{$_W['siteroot']}",
-			post: "{php echo url('xzapp/post')}",
+			post: "{php echo url('account/post')}",
 			manage: "{php echo url('account/manage')}",
 			switch: "{php echo url('account/display/switch')}",
 		}

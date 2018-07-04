@@ -234,7 +234,7 @@
 					<!--鼠标悬停遮罩效果-->
 					<div class="mask">
 						<!-- 进入公众号/PC -->
-						<a href="{{detail.switchurl}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.account_normal || detail.type == types.account_auth"><div>进入 公众号 <i class="wi wi-angle-right"></i></div></a>
+						<a href="{{detail.switchurl}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.account_normal || detail.type == types.account_auth"><div>进入公众号 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 进入PC -->
 						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.webapp"><div>进入PC <i class="wi wi-angle-right"></i></div></a>
@@ -248,7 +248,7 @@
 						</a>
 
 						<!-- 进入熊掌号 -->
-						<a href="{{detail.switchurl}}" class="entry" ng-if="detail.type == types.xzapp"><div>进入熊掌号 <i class="wi wi-angle-right"></i></div></a>
+						<a href="{{detail.switchurl}}&type={{detail.type}}" class="entry" ng-if="detail.type == types.xzapp"><div>进入熊掌号 <i class="wi wi-angle-right"></i></div></a>
 
 						<!-- 小程序/APP 查看版本 -->
 						<a href="javascript:;" class="cut-btn" ng-click="showVersions($event)" ng-if="detail.type == types.wxapp_normal || detail.type == types.wxapp_auth || detail.type == types.phoneapp">

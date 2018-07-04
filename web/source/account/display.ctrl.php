@@ -154,7 +154,7 @@ if ($do == 'switch') {
 	if (!empty($uniacid)) {
 		$account_info = uni_fetch($uniacid);
 		$type = $account_info['type'];
-		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH || $type == ACCOUNT_TYPE_XZAPP_NORMAL) {
 			$role = permission_account_user_role($_W['uid'], $uniacid);
 			if(empty($role)) {
 				itoast('操作失败, 非法访问.', '', 'error');

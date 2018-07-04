@@ -331,10 +331,47 @@ $we7_system_menu['xzapp'] = array(
 	'icon' => 'wi wi-white-collar',
 	'url' => url('xzapp/home/display'),
 	'section' => array(
+		'platform_plus' => array(
+			'title' => '增强功能',
+			'menu' => array(
+				'platform_reply' => array(
+					'title' => '自动回复',
+					'url' => url('platform/reply', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL)),
+					'icon' => 'wi wi-reply',
+					'permission_name' => 'platform_reply',
+					'sub_permission' => array(
+					),
+				),
+				'platform_menu' => array(
+					'title' => '自定义菜单',
+					'url' => url('platform/menu/post', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL)),
+					'icon' => 'wi wi-custommenu',
+					'permission_name' => 'platform_menu',
+					'is_display' => true
+				),
+			),
+		),
 		'platform_module' => array(
 			'title' => '应用模块',
 			'menu' => array(),
 			'is_display' => true,
+		),
+		'mc' => array(
+			'title' => '粉丝',
+			'menu' => array(
+				'mc_fans' => array(
+					'title' => '粉丝管理',
+					'url' => url('mc/fans'),
+					'icon' => 'wi wi-fansmanage',
+					'permission_name' => 'mc_fans',
+				),
+				'mc_member' => array(
+					'title' => '会员管理',
+					'url' => url('mc/member'),
+					'icon' => 'wi wi-fans',
+					'permission_name' => 'mc_member',
+				)
+			),
 		),
 	),
 );
