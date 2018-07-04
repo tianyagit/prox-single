@@ -551,19 +551,29 @@ if ($do == 'recycle_post') {
 	//如果模块已经安装，则先标记删除，在停用中显示
 	//如果模块未安装或是卸载，则标记删除，在回收站中显示
 	if (!empty($module)) {
-		if (empty($module_recycle)) {
-			$msg = '模块已停用!';
-			table('modules_recycle')->fill(array('name' => $name, 'type' => 1))->save();
-		} else {
-			$msg = '模块已已恢复!';
-			table('modules_recycle')->deleteByName($name);
-		}
-	} else {
+        $cached_user_modules = (array) cache_load(cache_system_key('user_modules', array('uid' => $_W['uid'])));
+        if (empty($module_recycle)) {
+            $msg = '模块已停用!';
+            table('modules_recycle')->fill(array('name' => $name, 'type' => 1))->save();
+
+            if (in_array($name, $cached_user_modules)) {
+                unset($cached_user_modules[array_search($name, $cached_user_modules)]);
+            }
+        } else {
+            $msg = '模块已恢复!';
+            table('modules_recycle')->deleteByName($name);
+
+            if (!in_array($name, $cached_user_modules)) {
+                array_unshift($cached_user_modules ,$name);
+            }
+        }
+        cache_write(cache_system_key('user_modules', array('uid' => $_W['uid'])), $cached_user_modules);
+    } else {
 		if (empty($module_recycle)) {
 			$msg = '模块已放入回收站!';
 			table('modules_recycle')->fill(array('name' => $name, 'type' => 2))->save();
 		} else {
-			$msg = '模块已已恢复!';
+			$msg = '模块已恢复!';
 			table('modules_recycle')->deleteByName($name);
 		}
 	}
