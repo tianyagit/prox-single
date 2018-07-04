@@ -480,6 +480,10 @@ if ($do == 'module_detail') {
 	}
 
 	$current_cloud_module = cloud_m_info($module_name);
+	if (is_error($current_cloud_module)) {
+		itoast($current_cloud_module['message']);
+	}
+
 	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
 
 	//计算此模块除了当前支持，还支持哪些
