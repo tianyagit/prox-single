@@ -282,6 +282,20 @@ $we7_system_menu['webapp'] = array(
 					'icon' => 'wi wi-data-synchro',
 					'permission_name' => 'webapp_module_link_uniacid',
 				),
+				'webapp_rewrite' => array(
+					'title' => '伪静态',
+					'url' => url('webapp/rewrite'),
+					'icon' => 'wi wi-rewrite',
+					'permission_name' => 'webapp_rewrite',
+				),
+				/* xstart */
+				'webapp_bind_domain' => array(
+					'title' => '域名绑定',
+					'url' => url('webapp/bind-domain'),
+					'icon' => 'wi wi-bind-domain',
+					'permission_name' => 'webapp_bind_domain',
+				),
+				/* xend */
 			),
 		),
 	),
