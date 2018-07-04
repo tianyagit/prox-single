@@ -206,6 +206,15 @@
 			<td ng-bind="profile.resides"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#reside">修改</a></div></td>
 		</tr>
+		{if !empty($extra_fields)}
+			{loop $extra_fields $field}
+				<tr>
+					<td class="table-label">{$field['title']}</td>
+					<td ng-bind="profile.{$field['field']}"></td>
+					<td></td>
+				</tr>
+			{/loop}
+		{/if}
 		<tr>
 			<td class="table-label">上次登录时间</td>
 			<td ng-bind="user.last_visit"></td>
