@@ -53,7 +53,7 @@
 							<label for="rid-{{article.id}}">&nbsp;</label>
 						</td>
 						<td ng-bind="article.displayorder"></td>
-						<td class="text-left" ng-bind="article.title" style="text-overflow:ellipsis; white-space: nowrap;"></td>
+						<td class="text-left"><div ng-bind="article.title" class="text-over" style="max-width: 220px"></div></td>
 						<td>
 							<span class="label label-primary" ng-if="article.ishot == 1">头条</span>
 							<span class="label label-primary" ng-if="article.iscommend == 1">推荐</span>
