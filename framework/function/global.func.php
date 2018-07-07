@@ -441,9 +441,9 @@ if (!function_exists('murl')) {
 			$url = './';
 		}
 		$str = '';
-		if(uni_is_multi_acid()) {
-			$str .= "&j={$_W['acid']}";
-		}
+//		if(uni_is_multi_acid()) {
+//			$str .= "&j={$_W['acid']}";
+//		}
 		if (!empty($_W['account']) && $_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 			$str .= '&a=webapp';
 		}
