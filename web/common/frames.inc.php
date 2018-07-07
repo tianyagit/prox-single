@@ -290,7 +290,7 @@ $we7_system_menu['webapp'] = array(
 				),
 				/* xstart */
 				'webapp_bind_domain' => array(
-					'title' => '域名绑定',
+					'title' => '域名访问设置',
 					'url' => url('webapp/bind-domain'),
 					'icon' => 'wi wi-bind-domain',
 					'permission_name' => 'webapp_bind_domain',
