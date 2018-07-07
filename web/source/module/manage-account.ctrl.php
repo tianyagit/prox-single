@@ -44,7 +44,7 @@ if($do == 'display') {
 	$_W['page']['title'] = '公众号 - 应用模块 - 更多应用';
 	$pageindex = max(1, intval($_GPC['page']));
 	$pagesize = 30;
-	
+
 	$modules = array();
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => $row) {
