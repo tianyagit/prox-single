@@ -6,7 +6,6 @@
 defined('IN_IA') or exit('Access Denied');
 
 if (in_array($action, array('permission', 'default-entry', 'manage-account'))) {
-	define('FRAME', 'account');
 	$referer = (url_params(referer()));
 	if (empty($_GPC['version_id']) && intval($referer['version_id']) > 0) {
 		itoast('', $_W['siteurl'] . '&version_id=' . $referer['version_id']);
@@ -16,6 +15,7 @@ if (in_array($action, array('permission', 'default-entry', 'manage-account'))) {
 		itoast('', url('module/display'));
 	}
 	$check_manange = $account_api->checkIntoManage();
+	define('FRAME', $account_api->menuFrame);
 	if (is_error($check_manange)) {
 		$account_display_url = $account_api->accountDisplayUrl();
 		itoast('', $account_display_url);

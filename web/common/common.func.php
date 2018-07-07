@@ -295,8 +295,8 @@ function buildframes($framename = ''){
 				$i = 0;
 				foreach ($new_modules as $module) {
 					if (!empty($module['issystem']) ||
-						FRAME == 'account' && $module['account_support'] != MODULE_SUPPORT_ACCOUNT ||
-						FRAME == 'xzapp' && $module['xzapp_support'] != MODULE_SUPPORT_XZAPP) {
+						FRAME == 'account' && $module[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT ||
+						FRAME == 'xzapp' && $module[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP) {
 						continue;
 					}
 					if ($i == 5) {

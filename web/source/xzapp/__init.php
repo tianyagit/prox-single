@@ -8,6 +8,5 @@ $account_api = WeAccount::createByUniacid($_W['uniacid']);
 if ($action == 'manage' || $action == 'post-step') {
 	define('FRAME', 'system');
 } else {
-	$account_type = $account_api->menuFrame;
-	define('FRAME', $account_type);
+	define('FRAME', $account_api->menuFrame);
 }
