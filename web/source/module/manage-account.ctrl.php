@@ -44,15 +44,29 @@ if($do == 'display') {
 	$_W['page']['title'] = '公众号 - 应用模块 - 更多应用';
 	$pageindex = max(1, intval($_GPC['page']));
 	$pagesize = 30;
-
+	
+	$modules = array();
 	if (!empty($modulelist)) {
-		foreach ($modulelist as $name => &$row) {
-			if (!empty($row['issystem']) || $row[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
-				unset($modulelist[$name]);
+		foreach ($modulelist as $name => $row) {
+			if (!empty($row['issystem'])) {
 				continue;
 			}
+			if (!empty($_GPC['keyword']) && !strexists($row['title'], $_GPC['keyword'])) {
+				continue;
+			}
+			if (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter']) {
+				continue;
+			}
+			if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) &&
+				$row[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT) {
+				continue;
+			}
+			if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH)) &&
+				$row[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP) {
+				continue;
+			}
+			$modules[$name] = $row;
 		}
-		$modules = $modulelist;
 	}
 
 	template ('module/manage-account');
