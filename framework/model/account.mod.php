@@ -1086,7 +1086,7 @@ function uni_is_multi_acid($uniacid = 0) {
 		$nums = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('account_wechats') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
 		cache_write($cachekey, $nums);
 	}
-	if($nums == 1) {
+	if($nums <= 1) {
 		return false;
 	}
 	return true;
