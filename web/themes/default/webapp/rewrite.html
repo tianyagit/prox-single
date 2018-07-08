@@ -1,7 +1,7 @@
 {template 'common/header'}
 <div class="alert alert-info">
 	<p><i class="fa fa-exclamation-circle"></i> <span class="color-red">配置伪静态前，请务必绑定域名并设置默认模块</span>，若未设置请 <a href="{php echo url('webapp/bind-domain')}" class="color-default">点击这里</a>。</p>
-	<p><i class="fa fa-exclamation-circle"></i> 配置好伪静态后，访问地址为：{php echo current($_W['account']['setting']['bind_domain'])}/{$_W['uniacid']}-{$eid}.html。</p>
+	<p><i class="fa fa-exclamation-circle"></i> 配置好伪静态后，访问地址为：{if $url}{$url}{else}<span class="color-default">未配置，请看上面一条</span>{/if}。</p>
 </div>
 <div class="account-list-add-step">
 	1、如果您的服务器支持.htaccess，请将下面的规则复制，然后粘贴到.htaccess文件中。<br>
