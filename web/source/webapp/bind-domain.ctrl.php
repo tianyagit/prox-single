@@ -22,7 +22,6 @@ if ($do == 'bind_domain') {
 		if (count($domain_array) > 3 || count($domain_array) <2) {
 			iajax(-1, '只支持一级域名和二级域名！');
 		}
-		$data = array('domain' => safe_gpc_string($_GPC['bind_domain']));
 		uni_setting_save('bind_domain', safe_gpc_string($_GPC['bind_domain']));
 		iajax(0, '更新成功！', referer());
 	}
