@@ -548,9 +548,12 @@ if ($do == 'module') {
 			unset($installedmodulelist[$k]);
 			continue;
 		}
-		if ($have_cover && (empty($value['entries']) || empty($value['entries']['cover']))) {
-			unset($installedmodulelist[$k]);
-			continue;
+		if ($have_cover) {
+			$module_entries = module_entries($value['name'], array('cover'));
+			if (empty($module_entries)) {
+				unset($installedmodulelist[$k]);
+				continue;
+			}
 		}
 
 		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
