@@ -131,7 +131,7 @@ function cache_build_users_struct() {
 		'pay_password' => '支付密码',
 	);
 	cache_write(cache_system_key('userbasefields'), $base_fields);
-	$fields = table('profile')->getProfileFields();
+	$fields = table('core_profile_fields')->getProfileFields();
 	if (!empty($fields)) {
 		foreach ($fields as &$field) {
 			$field = $field['title'];
