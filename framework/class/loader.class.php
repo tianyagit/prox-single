@@ -47,6 +47,7 @@ function table($name) {
 		'account_xzapp',
 		'uni_account_modules',
 		'system_stat_visit',
+		'core_profile_fields',
 	))) {
 		return new $table_classname;
 	}
@@ -128,9 +129,14 @@ class Loader {
 				$path = IA_ROOT . $section[$group[1]];
 				unset($group[0]);
 				unset($group[1]);
-				$path .= implode('/', $group) . '.php';
-				if(is_file($path)) {
-					include $path;
+				$file_path = $path . implode('/', $group) . '.php';
+				if(is_file($file_path)) {
+					include $file_path;
+				}
+				//如果没有找到表，默认路由到Core命名空间，兼容之前命名不标准
+				$file_path = $path . 'Core/' .  implode('', $group) . '.php';
+				if(is_file($file_path)) {
+					include $file_path;
 				}
 		}
 	}
