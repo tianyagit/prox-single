@@ -538,7 +538,7 @@ class StoreModuleSite extends WeModuleSite {
 			if (!empty($user_account) && is_array($user_account)) {
 				foreach ($user_account as $key => $account) {
 					$default_account = uni_fetch($account['uniacid']);
-					if (in_array($goods['type'],  array(STORE_TYPE_MODULE, STORE_TYPE_ACCOUNT_RENEW)) && !in_array($default_account['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) || in_array($goods['type'], array(STORE_TYPE_WXAPP_MODULE, STORE_TYPE_WXAPP_RENEW)) && $default_account['type'] != 4) {
+					if (in_array($goods['type'],  array(STORE_TYPE_MODULE, STORE_TYPE_ACCOUNT_RENEW)) && !in_array($default_account['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) || in_array($goods['type'], array(STORE_TYPE_WXAPP_MODULE, STORE_TYPE_WXAPP_RENEW)) && !in_array($default_account['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
 						unset($user_account[$key]);
 					}
 					if (in_array($goods['type'], array(STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW)) && $default_account['endtime'] <= 0) {

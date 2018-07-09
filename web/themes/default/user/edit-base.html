@@ -206,6 +206,11 @@
 			<td ng-bind="profile.resides"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#reside">修改</a></div></td>
 		</tr>
+		<tr ng-repeat="field in extra_fields">
+			<td class="table-label" ng-bind="field.title"></td>
+			<td ng-bind="profile[field.field]"></td>
+			<td></td>
+		</tr>
 		<tr>
 			<td class="table-label">上次登录时间</td>
 			<td ng-bind="user.last_visit"></td>
@@ -463,6 +468,7 @@ require(['underscore'], function(){
 		user: {php echo !empty($user) ? json_encode($user) : 'null'},
 		profile: {php echo !empty($profile) ? json_encode($profile) : 'null'},
 		account_num: {php echo !empty($account_num) ? json_encode($account_num) : 'null'},
+		extra_fields: {php echo !empty($extra_fields) ? json_encode($extra_fields) : 'null'},
 		links: {
 			userPost: "{php echo url('user/profile/post')}",
 		},
