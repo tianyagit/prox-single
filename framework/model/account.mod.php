@@ -214,7 +214,6 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	$modules = cache_load($cachekey);
 	$account_info = uni_fetch($uniacid);
 	if (empty($modules)) {
-
 		$founders = explode(',', $_W['config']['setting']['founder']);
 		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
@@ -282,11 +281,17 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				continue;
 			}
 
+			if ($module_info[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP &&
+				in_array($account_info['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
+				continue;
+			}
+
 			if ($module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP &&
 				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
 				in_array($account_info['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
 				continue;
 			}
+
 
 			if ($module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] == MODULE_SUPPORT_SYSTEMWELCOME &&
 				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
@@ -387,6 +392,11 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 
 			if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP &&
 				in_array($type, array(ACCOUNT_TYPE_PHONEAPP_NORMAL))) {
+				continue;
+			}
+
+			if ($module_info[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP &&
+				in_array($account_info['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
 				continue;
 			}
 
