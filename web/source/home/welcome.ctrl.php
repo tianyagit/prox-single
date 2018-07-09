@@ -68,11 +68,7 @@ if ($do == 'platform') {
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
 		uni_account_switch($last_uniacid,  url('home/welcome'));
 	}
-	if ($_W['account']['type'] == ACCOUNT_TYPE_XZAPP_NORMAL || $_W['account']['type'] == ACCOUNT_TYPE_XZAPP_AUTH) {
-		define('FRAME', 'xzapp');
-	} else {
-		define('FRAME', 'account');
-	}
+	define('FRAME', 'account');
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
 		itoast('公众号已到服务期限，请联系管理员并续费', url('account/manage'), 'info');
 	}

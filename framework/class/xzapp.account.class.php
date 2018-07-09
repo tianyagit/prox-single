@@ -5,7 +5,7 @@ class XzappAccount extends WeAccount {
 	public $tablename = 'account_xzapp';
 
 	public function __construct($account = array()) {
-		$this->menuFrame = 'xzapp';
+		$this->menuFrame = 'account';
 		$this->type = ACCOUNT_TYPE_XZAPP_NORMAL;
 		$this->typeName = '熊掌号';
 		$this->typeSign = XZAPP_TYPE_SIGN;

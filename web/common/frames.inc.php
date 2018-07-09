@@ -27,6 +27,10 @@ $we7_system_menu['account'] = array(
 					'url' => url('platform/reply'),
 					'icon' => 'wi wi-reply',
 					'permission_name' => 'platform_reply',
+					'is_display' => array(
+						ACCOUNT_TYPE_OFFCIAL_NORMAL,
+						ACCOUNT_TYPE_OFFCIAL_AUTH,
+					),
 					'sub_permission' => array(
 						// array(
 						// 	'title' => '关键字自动回复 ',
@@ -47,12 +51,20 @@ $we7_system_menu['account'] = array(
 					'url' => url('platform/menu/post'),
 					'icon' => 'wi wi-custommenu',
 					'permission_name' => 'platform_menu',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 				'platform_qr' => array(
 					'title' => '二维码/转化链接',
 					'url' => url('platform/qr'),
 					'icon' => 'wi wi-qrcode',
 					'permission_name' => 'platform_qr',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 					'sub_permission' => array(
 						// array(
 						// 	'title' => '二维码',
@@ -69,12 +81,20 @@ $we7_system_menu['account'] = array(
 					'url' => url('platform/mass'),
 					'icon' => 'wi wi-crontab',
 					'permission_name' => 'platform_mass_task',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 				'platform_material' => array(
 					'title' => '素材/编辑器',
 					'url' => url('platform/material'),
 					'icon' => 'wi wi-redact',
 					'permission_name' => 'platform_material',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 					'sub_permission' => array(
 						array(
 							'title' => '添加/编辑',
@@ -92,6 +112,10 @@ $we7_system_menu['account'] = array(
 					'url' => url('site/multi/display'),
 					'icon' => 'wi wi-home',
 					'permission_name' => 'platform_site',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 					'sub_permission' => array(
 						// array(
 						// 	'title' => '添加/编辑',
@@ -118,12 +142,20 @@ $we7_system_menu['account'] = array(
 					'url' => url('mc/fans'),
 					'icon' => 'wi wi-fansmanage',
 					'permission_name' => 'mc_fans',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 				'mc_member' => array(
 					'title' => '会员管理',
 					'url' => url('mc/member'),
 					'icon' => 'wi wi-fans',
 					'permission_name' => 'mc_member',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				)
 			),
 		),
@@ -135,12 +167,20 @@ $we7_system_menu['account'] = array(
 					'url' => url('profile/passport'),
 					'icon' => 'wi wi-parameter-setting',
 					'permission_name' => 'profile_setting',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 				'payment' => array(
 					'title' => '支付参数',
 					'url' => url('profile/payment'),
 					'icon' => 'wi wi-pay-setting',
 					'permission_name' => 'profile_pay_setting',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 				'app_module_link' => array(
 					'title' => "数据同步",
@@ -148,6 +188,10 @@ $we7_system_menu['account'] = array(
 					'is_display' => 1,
 					'icon' => 'wi wi-data-synchro',
 					'permission_name' => 'profile_app_module_link_uniacid',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 				/* xstart */
 				'bind_domain' => array(
@@ -155,6 +199,10 @@ $we7_system_menu['account'] = array(
 					'url' => url('profile/bind-domain'),
 					'icon' => 'wi wi-bind-domain',
 					'permission_name' => 'profile_bind_domain',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 				/* xend */
 			),
@@ -168,12 +216,20 @@ $we7_system_menu['account'] = array(
 					'url' => url('statistics/app'),
 					'icon' => 'wi wi-statistical',
 					'permission_name' => 'statistics_app',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 				'statistics_fans' => array(
 					'title' => '用户统计',
 					'url' => url('statistics/fans'),
 					'icon' => 'wi wi-statistical',
 					'permission_name' => 'statistics_fans',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
+                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+                    ),
 				),
 			),
 		),
