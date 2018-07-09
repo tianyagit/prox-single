@@ -557,12 +557,11 @@ function user_modules($uid = 0) {
 			$module_info = module_fetch($module);
 			//欢迎模块只能创始人操作，如果当前非创始人，忽略欢迎模块
 			if (!user_is_founder($_W['uid'], true) &&
-				$module_info['welcome_support'] == 2 &&
-				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != 2 &&
-				$module_info['wxapp_support'] != 2 &&
-				$module_info['webapp_support'] != 2 &&
-				$module_info['phoneapp_support'] != 2) {
-
+				$module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] == MODULE_SUPPORT_SYSTEMWELCOME &&
+				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
+				$module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP &&
+				$module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP &&
+				$module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP) {
 				continue;
 			}
 			if (!empty($module_info)) {
