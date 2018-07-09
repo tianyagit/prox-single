@@ -1,5 +1,6 @@
-<!-- sxall -->
 {template 'common/header'}
+<!-- xstart -->
+{if IMS_FAMILY == 'x'}
 <div class="alert alert-info">
 	<p><i class="fa fa-exclamation-circle"></i> 绑定域名后，访问PC将使用绑定的域名；</p>
 	<p><i class="fa fa-exclamation-circle"></i> 如访问微站链接为<span class="color-gray">{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&a=webapp&c=entry&eid=1</span>，<br>&nbsp;&nbsp;&nbsp;&nbsp;绑定bang.baidu.com后，访问微站链接就成为<span class="color-gray">http://bang.baidu.com/app/index.php?i={$_W['uniacid']}&a=webapp&c=entry&eid=1</span></p>
@@ -7,23 +8,29 @@
 	<p><i class="fa fa-exclamation-circle"></i> 请注意一定要将绑定的域名解析到本服务器IP并绑定到微擎网站目录；</p>
 	<p><i class="fa fa-exclamation-circle"></i> 请注意选择一个PC要访问的模块，否则域名绑定不生效。</p>
 </div>
+{/if}
+<!-- xend -->
 <div id="js-bind-domain" ng-controller="bindDomainCtrl" ng-cloak>
 	<table class="table we7-table table-hover table-form wechat-menu">
 		<col width="140px " />
 		<col />
 		<col width="150px" />
-		<tr><th class="text-left" colspan="3">域名绑定设置</th></tr>
-		<tr>
-			<td class="table-label">域名</td>
-			<td ng-bind="account.setting.bind_domain"></td>
-			<td ng-if="account.setting.bind_domain">
-				<div class="link-group">
-					<a href="javascript:;" data-toggle="modal" data-target="#domain">修改</a>
-					<a href="{url 'webapp/bind-domain/delete'}" ng-if="account.setting.bind_domain">删除</a>
-				</div>
-			</td>
-			<td ng-if="!account.setting.bind_domain"><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#domain">添加域名</a></div></td>
-		</tr>
+		<tr><th class="text-left" colspan="3">域名访问设置</th></tr>
+		<!-- xstart -->
+		{if IMS_FAMILY == 'x'}
+			<tr>
+				<td class="table-label">域名</td>
+				<td ng-bind="account.setting.bind_domain"></td>
+				<td ng-if="account.setting.bind_domain">
+					<div class="link-group">
+						<a href="javascript:;" data-toggle="modal" data-target="#domain">修改</a>
+						<a href="{url 'webapp/bind-domain/delete'}" ng-if="account.setting.bind_domain">删除</a>
+					</div>
+				</td>
+				<td ng-if="!account.setting.bind_domain"><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#domain">添加域名</a></div></td>
+			</tr>
+		{/if}
+		<!-- xend -->
 		<tr>
 			<td class="table-label">访问模块</td>
 			<td ng-if="account.setting.default_module"><div><img ng-src="{{moduleList[account.setting.default_module].logo}}" width="50px" height="50px"> <span ng-bind="moduleList[account.setting.default_module].title"></span></div></td>
@@ -32,6 +39,8 @@
 			<td ng-if="!account.setting.default_module"><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#add_module">添加访问模块</a></div></td>
 		</tr>
 	</table>
+	<!-- xstart -->
+	{if IMS_FAMILY == 'x'}
 	<div class="modal fade" id="domain" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="we7-modal-dialog modal-dialog we7-form">
 			<div class="modal-content">
@@ -52,6 +61,8 @@
 			</div>
 		</div>
 	</div>
+	{/if}
+	<!-- xend -->
 	<div class="uploader-modal modal fade module" id="add_module"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog  modal-dialog modal-lg we7-modal-dialog">
 			<div class="modal-content">

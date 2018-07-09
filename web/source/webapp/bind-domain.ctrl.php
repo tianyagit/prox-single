@@ -1,7 +1,6 @@
 <?php
 /**
- * sxall
- * 域名绑定
+ * 域名访问设置
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
@@ -9,22 +8,28 @@ defined('IN_IA') or exit('Access Denied');
 $dos = array('bind_domain', 'delete', 'default_module');
 $do = in_array($do, $dos) ? $do : 'bind_domain';
 
-$_W['page']['title'] = '域名绑定';
+$_W['page']['title'] = '域名访问设置';
+
+
 if ($do == 'bind_domain') {
-	if (checksubmit('submit')) {
-		$bind_domain = safe_gpc_string($_GPC['bind_domain']);
-		if (!starts_with($bind_domain, 'http')) {
-			iajax(-1, '要绑定的域名请以http://或以https://开头');
+	/* sxstart */
+	if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
+		if (checksubmit('submit')) {
+			$bind_domain = safe_gpc_string($_GPC['bind_domain']);
+			if (!starts_with($bind_domain, 'http')) {
+				iajax(-1, '要绑定的域名请以http://或以https://开头');
+			}
+			$special_domain = array('.com.cn', '.net.cn', '.gov.cn', '.org.cn', '.com.hk', '.com.tw');
+			$bind_domain = str_replace($special_domain, '.com', $bind_domain);
+			$domain_array = explode('.', $bind_domain);
+			if (count($domain_array) > 3 || count($domain_array) <2) {
+				iajax(-1, '只支持一级域名和二级域名！');
+			}
+			uni_setting_save('bind_domain', safe_gpc_string($_GPC['bind_domain']));
+			iajax(0, '更新成功！', referer());
 		}
-		$special_domain = array('.com.cn', '.net.cn', '.gov.cn', '.org.cn', '.com.hk', '.com.tw');
-		$bind_domain = str_replace($special_domain, '.com', $bind_domain);
-		$domain_array = explode('.', $bind_domain);
-		if (count($domain_array) > 3 || count($domain_array) <2) {
-			iajax(-1, '只支持一级域名和二级域名！');
-		}
-		uni_setting_save('bind_domain', safe_gpc_string($_GPC['bind_domain']));
-		iajax(0, '更新成功！', referer());
 	}
+	/* sxend */
 	$modulelist = uni_modules();
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $key => $module_val) {
@@ -41,6 +46,7 @@ if ($do == 'delete') {
 	uni_setting_save('bind_domain', '');
 	itoast('删除成功！', referer(), 'success');
 }
+
 
 if ($do == 'default_module') {
 	$module_name = safe_gpc_string($_GPC['module_name']);
