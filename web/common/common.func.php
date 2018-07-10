@@ -166,11 +166,7 @@ function buildframes($framename = ''){
 		}
 		return $frames;
 	}
-    if (defined('FRAME') && FRAME == 'account') {
-        $frames = cache_load(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
-    } else {
-        $frames = cache_load(cache_system_key('system_frame'));
-    }
+    $frames = cache_load(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
 	if(empty($frames)) {
 		$frames = cache_build_frame_menu();
 	}
