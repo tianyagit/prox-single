@@ -223,11 +223,7 @@ function cache_build_frame_menu() {
 		}
 		$system_menu = iarray_sort($system_menu, 'displayorder', 'asc');
 		cache_delete(cache_system_key('system_frame'));
-        if (defined('FRAME') && FRAME == 'account') {
-            cache_write(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])), $system_menu);
-        } else {
-            cache_write(cache_system_key('system_frame'), $system_menu);
-        }
+        cache_write(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])), $system_menu);
 		return $system_menu;
 	}
 }
