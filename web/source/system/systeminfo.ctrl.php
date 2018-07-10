@@ -9,9 +9,19 @@ load()->model('system');
 
 $_W['page']['title'] = '系统信息 - 工具  - 系统管理';
 
+if ($_GPC['do'] == 'get_attach_size') {
+    //当前附件尺寸
+    $path = IA_ROOT . '/' . $_W['config']['upload']['attachdir'];
+    $size = dir_size($path);
+    if (empty($size)) {
+        $size = '';
+    } else {
+        $size = sizecount($size);
+    }
+    iajax(0, array('attach_size' => $size));
+}
+
 $info = array(
-	'uid' => $_W['uid'],
-	'account' => $_W['account'] ? $_W['account']['name'] : '',
 	'os' => php_uname(),
 	'php' => phpversion(),
 	'sapi' => $_SERVER['SERVER_SOFTWARE'] ? $_SERVER['SERVER_SOFTWARE'] : php_sapi_name(),
@@ -66,14 +76,5 @@ if (empty($size)) {
 $info['mysql']['size'] = $size;
 //当前附件根目录
 $info['attach']['url'] = $_W['attachurl'];
-//当前附件尺寸
-$path = IA_ROOT . '/' . $_W['config']['upload']['attachdir'];
-$size = dir_size($path);
-if (empty($size)) {
-	$size = '';
-} else {
-	$size = sizecount($size);
-}
-$info['attach']['size'] = $size;
 
 template('system/systeminfo');
