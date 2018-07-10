@@ -429,17 +429,17 @@ class WeUtility {
 		$types = array('Wxapp','Phoneapp','Webapp','SystemWelcome','Processor');
 		$type = in_array($type, $types) ? $type : '';
 		$name = $params[0];
-		$class = 'WeModule' . $type;
-		$classname = ucfirst($name) . 'Module' . ucfirst($type);
+		$class_account = 'WeModule' . $type;
+		$class_module = ucfirst($name) . 'Module' . ucfirst($type);
 		$type = empty($type) ? 'module' : lcfirst($type);
 
-		if (!class_exists($classname)) {
+		if (!class_exists($class_module)) {
 			$file = IA_ROOT . "/addons/{$name}/" . $type . ".php";
 			if (!is_file($file)) {
 				$file = IA_ROOT . "/framework/builtin/{$name}/" . $type . ".php";
 			}
 			if (!is_file($file)) {
-				trigger_error($classname . ' Definition File Not Found', E_USER_WARNING);
+				trigger_error($class_module . ' Definition File Not Found', E_USER_WARNING);
 				return null;
 			}
 			require $file;
@@ -459,12 +459,12 @@ class WeUtility {
 			}
 		}
 
-		if (!class_exists($classname)) {
-			trigger_error($classname . ' Definition Class Not Found', E_USER_WARNING);
+		if (!class_exists($class_module)) {
+			trigger_error($class_module . ' Definition Class Not Found', E_USER_WARNING);
 			return null;
 		}
 
-		$o = new $classname();
+		$o = new $class_module();
 
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
@@ -475,11 +475,11 @@ class WeUtility {
 		if ($type == 'wxapp' || $type == 'phoneapp' || $type == 'webapp' || $type == 'systemWelcome') {
 			$o->inMmodule = defined( 'IN_MOBILE');
 		}
-		if ($o instanceof $class) {
+		if ($o instanceof $class_account) {
 			return $o;
 		} else {
 			self::defineConst($o);
-			trigger_error($class . ' Class Definition Error', E_USER_WARNING);
+			trigger_error($class_account . ' Class Definition Error', E_USER_WARNING);
 			return null;
 		}
 	}
