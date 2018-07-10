@@ -344,14 +344,14 @@ $we7_system_menu['webapp'] = array(
 					'icon' => 'wi wi-rewrite',
 					'permission_name' => 'webapp_rewrite',
 				),
-				/* xstart */
+				/* sxstart */
 				'webapp_bind_domain' => array(
 					'title' => '域名访问设置',
 					'url' => url('webapp/bind-domain'),
 					'icon' => 'wi wi-bind-domain',
 					'permission_name' => 'webapp_bind_domain',
 				),
-				/* xend */
+				/* sxend */
 			),
 		),
 	),
