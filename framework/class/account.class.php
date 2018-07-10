@@ -129,7 +129,8 @@ abstract class WeAccount {
 		$account_obj->account['isconnect'] = $account_obj->uniaccount['isconnect'];
 		$account_obj->account['isdeleted'] = $account_obj->uniaccount['isdeleted'];
 		$account_obj->account['endtime'] = $account_obj->uniaccount['endtime'];
-		$account_obj->same_account_exist = !empty(pdo_get($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid')) ? true : false;
+		$same_account_exist = pdo_get($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
+		$account_obj->same_account_exist = !empty($same_account_exist) ? true : false;
 
 		return $account_obj;
 	}
@@ -426,8 +427,8 @@ class WeUtility {
 		global $_W;
 		static $file;
 		$type = str_replace('createModule','', $type);
-		$types = array('Wxapp','Phoneapp','Webapp','SystemWelcome','Processor');
-		$type = in_array($type, $types) ? $type : '';
+		$types = array('wxapp', 'phoneapp', 'webapp', 'systemWelcome', 'processor');
+		$type = in_array(strtolower($type), $types) ? $type : '';
 		$name = $params[0];
 		$class_account = 'WeModule' . $type;
 		$class_module = ucfirst($name) . 'Module' . ucfirst($type);
