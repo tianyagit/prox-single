@@ -247,16 +247,22 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				}
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_goods);
+				$params = array();
 				if (!empty($modules)) {
-					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
+					foreach ($modules as $key => $val) {
+						$params[':module_' . $key] = $val;
+					}
+					$modules_str = implode(',',array_keys($params));
+					$condition .= " AND a.name IN (" . $modules_str . ")";
 				} else {
 					$condition .= " AND a.name = ''";
 				}
 			}
 		}
 		$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
+		$params[':uniacid'] = $uniacid;
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
-		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
+		$modules = pdo_fetchall($sql, $params, 'name');
 		cache_write($cachekey, $modules);
 	}
 
@@ -358,17 +364,24 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 				}
 			}
 			$user_modules = user_modules($owner_uid);
+
 			$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_goods);
+			$params = array();
 			if (!empty($modules)) {
-				$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
+				foreach ($modules as $key => $val) {
+					$params[':module_' . $key] = $val;
+				}
+				$modules_str = implode(',',array_keys($params));
+				$condition .= " AND a.name IN (" . $modules_str . ")";
 			} else {
 				$condition .= " AND a.name = ''";
 			}
 		}
 	}
 	$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
+	$params[':uniacid'] = $uniacid;
 	$sql = "SELECT a.name, a.wxapp_support, a.account_support, a.webapp_support, a.phoneapp_support, a.welcome_support, a.xzapp_support, a.mid, a.name, a.type, a.title, a.issystem, a.title_initial, b.enabled FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
-	$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
+	$modules = pdo_fetchall($sql, $params, 'name');
 
 	$module_list = array();
 	if (!empty($modules)) {
