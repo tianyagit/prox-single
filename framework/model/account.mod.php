@@ -996,7 +996,7 @@ function account_create($uniacid, $account) {
 	$user_create_account_info = permission_user_account_num();
 	if (empty($_W['isfounder']) && empty($user_create_account_info['usergroup_account_limit'])) {
 		$accountdata['endtime'] = strtotime('+1 month', time());
-		pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_OFFCIAL_NORMAL));
+		pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => $account['type']));
 	}
 	pdo_insert('account', $accountdata);
 	$acid = pdo_insertid();
@@ -1004,8 +1004,9 @@ function account_create($uniacid, $account) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
+	$table = $account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL ? 'account_wechats' : 'account_xzapp';
 	unset($account['type']);
-	pdo_insert('account_wechats', $account);
+	pdo_insert($table, $account);
 	return $acid;
 }
 

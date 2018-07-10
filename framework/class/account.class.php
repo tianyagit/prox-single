@@ -129,7 +129,8 @@ abstract class WeAccount {
 		$account_obj->account['isconnect'] = $account_obj->uniaccount['isconnect'];
 		$account_obj->account['isdeleted'] = $account_obj->uniaccount['isdeleted'];
 		$account_obj->account['endtime'] = $account_obj->uniaccount['endtime'];
-		$account_obj->same_account_exist = pdo_getall($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
+		$same_account_exist = pdo_get($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
+		$account_obj->same_account_exist = !empty($same_account_exist) ? true : false;
 
 		return $account_obj;
 	}
@@ -425,20 +426,21 @@ class WeUtility {
 	public static function __callStatic($type, $params) {
 		global $_W;
 		static $file;
-
 		$type = str_replace('createModule','', $type);
+		$types = array('wxapp', 'phoneapp', 'webapp', 'systemwelcome', 'processor');
+		$type = in_array(strtolower($type), $types) ? $type : '';
 		$name = $params[0];
-		$class = 'WeModule' . $type;
-		$classname = ucfirst($name) . 'Module' . ucfirst($type);
+		$class_account = 'WeModule' . $type;
+		$class_module = ucfirst($name) . 'Module' . ucfirst($type);
 		$type = empty($type) ? 'module' : lcfirst($type);
 
-		if (!class_exists($classname)) {
+		if (!class_exists($class_module)) {
 			$file = IA_ROOT . "/addons/{$name}/" . $type . ".php";
 			if (!is_file($file)) {
 				$file = IA_ROOT . "/framework/builtin/{$name}/" . $type . ".php";
 			}
 			if (!is_file($file)) {
-				trigger_error($classname . ' Definition File Not Found', E_USER_WARNING);
+				trigger_error($class_module . ' Definition File Not Found', E_USER_WARNING);
 				return null;
 			}
 			require $file;
@@ -458,12 +460,12 @@ class WeUtility {
 			}
 		}
 
-		if (!class_exists($classname)) {
-			trigger_error($classname . ' Definition Class Not Found', E_USER_WARNING);
+		if (!class_exists($class_module)) {
+			trigger_error($class_module . ' Definition Class Not Found', E_USER_WARNING);
 			return null;
 		}
 
-		$o = new $classname();
+		$o = new $class_module();
 
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
@@ -474,11 +476,11 @@ class WeUtility {
 		if ($type == 'wxapp' || $type == 'phoneapp' || $type == 'webapp' || $type == 'systemWelcome') {
 			$o->inMmodule = defined( 'IN_MOBILE');
 		}
-		if ($o instanceof $class) {
+		if ($o instanceof $class_account) {
 			return $o;
 		} else {
 			self::defineConst($o);
-			trigger_error($class . ' Class Definition Error', E_USER_WARNING);
+			trigger_error($class_account . ' Class Definition Error', E_USER_WARNING);
 			return null;
 		}
 	}
