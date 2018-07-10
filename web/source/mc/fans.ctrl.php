@@ -236,9 +236,7 @@ if ($do == 'download_fans') {
 	$wechat_fans_list = $account_api->fansAll();
 
 	//重复接入公众号处理机制
-	$table = $account_api->tablename;
-	$same_account_exist = pdo_getall($table, array('key' => $_W['account']['key'], 'uniacid <>' => $_W['uniacid']), array(), 'uniacid');
-	if (!empty($same_account_exist)) {
+	if (!empty($account_api->same_account_exist)) {
 		pdo_update('mc_mapping_fans', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']), array('uniacid' => array_keys($same_account_exist)));
 	}
 

@@ -129,6 +129,7 @@ abstract class WeAccount {
 		$account_obj->account['isconnect'] = $account_obj->uniaccount['isconnect'];
 		$account_obj->account['isdeleted'] = $account_obj->uniaccount['isdeleted'];
 		$account_obj->account['endtime'] = $account_obj->uniaccount['endtime'];
+		$account_obj->same_account_exist = pdo_getall($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
 
 		return $account_obj;
 	}
