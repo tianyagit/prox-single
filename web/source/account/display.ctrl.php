@@ -170,9 +170,9 @@ if ($do == 'switch') {
 			$module_name = trim($_GPC['module_name']);
 			$version_id = intval($_GPC['version_id']);
 			if (empty($module_name)) {
-				$url = url('home/welcome');
+				$url = url('home/welcome', array('account_type' => $type));
 			} else {
-				$url = url('home/welcome/ext', array('m' => $module_name, 'version_id' => $version_id));
+				$url = url('home/welcome/ext', array('m' => $module_name, 'version_id' => $version_id, 'account_type' => $type));
 			}
 			uni_account_switch($uniacid, $url);
 		}
