@@ -427,7 +427,7 @@ class WeUtility {
 		global $_W;
 		static $file;
 		$type = str_replace('createModule','', $type);
-		$types = array('wxapp', 'phoneapp', 'webapp', 'systemWelcome', 'processor');
+		$types = array('wxapp', 'phoneapp', 'webapp', 'systemwelcome', 'processor');
 		$type = in_array(strtolower($type), $types) ? $type : '';
 		$name = $params[0];
 		$class_account = 'WeModule' . $type;
