@@ -66,5 +66,8 @@ class Xzapp extends \We7Table {
 		return $this->query->from('account_xzapp')->where('acid' , $acid)->get();
 	}
 
-
+	public function updateByUniacidAcid($update, $uniacid, $acid) {
+		$this->query->where('uniacid', $uniacid)->where('acid', $acid);
+		return $this->fill($update)->save();
+	}
 }
