@@ -250,10 +250,9 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$params = array();
 				if (!empty($modules)) {
 					foreach ($modules as $key => $val) {
-						$params[':module_' . $key] = $val;
+						$params[':module_' . intval($key)] = safe_gpc_string($val);
 					}
-					$modules_str = implode(',',array_keys($params));
-					$condition .= " AND a.name IN (" . $modules_str . ")";
+					$condition .= " AND a.name IN (" . implode(',', array_keys($params)) . ")";
 				} else {
 					$condition .= " AND a.name = ''";
 				}
@@ -369,10 +368,9 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 			$params = array();
 			if (!empty($modules)) {
 				foreach ($modules as $key => $val) {
-					$params[':module_' . $key] = $val;
+					$params[':module_' . intval($key)] = safe_gpc_string($val);
 				}
-				$modules_str = implode(',',array_keys($params));
-				$condition .= " AND a.name IN (" . $modules_str . ")";
+				$condition .= " AND a.name IN (" . implode(',',array_keys($params)) . ")";
 			} else {
 				$condition .= " AND a.name = ''";
 			}
