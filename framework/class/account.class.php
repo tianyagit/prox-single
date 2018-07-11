@@ -129,8 +129,11 @@ abstract class WeAccount {
 		$account_obj->account['isconnect'] = $account_obj->uniaccount['isconnect'];
 		$account_obj->account['isdeleted'] = $account_obj->uniaccount['isdeleted'];
 		$account_obj->account['endtime'] = $account_obj->uniaccount['endtime'];
-		$same_account_exist = pdo_get($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
-		$account_obj->same_account_exist = !empty($same_account_exist) ? true : false;
+
+		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH || $type == ACCOUNT_TYPE_XZAPP_NORMAL) {
+			$same_account_exist = pdo_get($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
+			$account_obj->same_account_exist = !empty($same_account_exist) ? true : false;
+		}
 
 		return $account_obj;
 	}
