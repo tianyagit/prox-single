@@ -205,8 +205,8 @@ function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
  * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
  */
-
 function uni_modules_by_uniacid($uniacid, $enabled = true) {
+
 	global $_W;
 	load()->model('user');
 	load()->model('module');
@@ -236,8 +236,17 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
 				$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 			}
+
 			if (!in_array('-1', $packageids)) {
-				$uni_groups = pdo_getall('uni_group', array('id' => $packageids, 'uniacid' => $uniacid), 'modules');
+				 $pars = array();
+				 foreach ($packageids as $key => $val) {
+				 	$pars[':id_' . intval($key)] = intval($val);
+				 }
+				 if (!empty($pars)) {
+				 	$where = "id IN (" . implode(',', array_keys($pars)) . ") OR ";
+				 }
+				 $pars[':uniacid'] = $uniacid;
+				 $uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . $where . " uniacid = :uniacid", $pars);
 
 				if (!empty($uni_groups)) {
 					foreach ($uni_groups as $group) {
@@ -247,16 +256,21 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				}
 				$user_modules = user_modules($owner_uid);
 				$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_goods);
+				$params = array();
 				if (!empty($modules)) {
-					$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
+					foreach ($modules as $key => $val) {
+						$params[':module_' . intval($key)] = safe_gpc_string($val);
+					}
+					$condition .= " AND a.name IN (" . implode(',', array_keys($params)) . ")";
 				} else {
 					$condition .= " AND a.name = ''";
 				}
 			}
 		}
 		$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
+		$params[':uniacid'] = $uniacid;
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
-		$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
+		$modules = pdo_fetchall($sql, $params, 'name');
 		cache_write($cachekey, $modules);
 	}
 
@@ -318,6 +332,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
  * @return array
  */
 function uni_modules_list($uniacid, $enabled = true, $type = '') {
+
 	global $_W;
 	load()->model('user');
 	load()->model('module');
@@ -349,7 +364,15 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		}
 		if (!in_array('-1', $packageids)) {
-			$uni_groups = pdo_getall('uni_group', array('id' => $packageids, 'uniacid' => $uniacid), 'modules');
+			$pars = array();
+			foreach ($packageids as $key => $val) {
+				$pars[':id_' . intval($key)] = intval($val);
+			}
+			if (!empty($pars)) {
+				$where = "id IN (" . implode(',', array_keys($pars)) . ") OR ";
+			}
+			$pars[':uniacid'] = $uniacid;
+			$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . $where . " uniacid = :uniacid", $pars);
 
 			if (!empty($uni_groups)) {
 				foreach ($uni_groups as $group) {
@@ -358,17 +381,23 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 				}
 			}
 			$user_modules = user_modules($owner_uid);
+
 			$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_goods);
+			$params = array();
 			if (!empty($modules)) {
-				$condition .= " AND a.name IN ('" . implode("','", $modules) . "')";
+				foreach ($modules as $key => $val) {
+					$params[':module_' . intval($key)] = safe_gpc_string($val);
+				}
+				$condition .= " AND a.name IN (" . implode(',',array_keys($params)) . ")";
 			} else {
 				$condition .= " AND a.name = ''";
 			}
 		}
 	}
 	$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
+	$params[':uniacid'] = $uniacid;
 	$sql = "SELECT a.name, a.wxapp_support, a.account_support, a.webapp_support, a.phoneapp_support, a.welcome_support, a.xzapp_support, a.mid, a.name, a.type, a.title, a.issystem, a.title_initial, b.enabled FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
-	$modules = pdo_fetchall($sql, array(':uniacid' => $uniacid), 'name');
+	$modules = pdo_fetchall($sql, $params, 'name');
 
 	$module_list = array();
 	if (!empty($modules)) {
@@ -985,7 +1014,7 @@ function account_create($uniacid, $account) {
 	$user_create_account_info = permission_user_account_num();
 	if (empty($_W['isfounder']) && empty($user_create_account_info['usergroup_account_limit'])) {
 		$accountdata['endtime'] = strtotime('+1 month', time());
-		pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_OFFCIAL_NORMAL));
+		pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => $account['type']));
 	}
 	pdo_insert('account', $accountdata);
 	$acid = pdo_insertid();
@@ -993,8 +1022,9 @@ function account_create($uniacid, $account) {
 	$account['token'] = random(32);
 	$account['encodingaeskey'] = random(43);
 	$account['uniacid'] = $uniacid;
+	$table = $account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL ? 'account_wechats' : 'account_xzapp';
 	unset($account['type']);
-	pdo_insert('account_wechats', $account);
+	pdo_insert($table, $account);
 	return $acid;
 }
 

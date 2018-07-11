@@ -17,10 +17,10 @@ if (IMS_FAMILY == 'x') {
 }
 /* xend */
 
-$system_menu = cache_load(cache_system_key('system_frame'));
+$system_menu = cache_load(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
 if(empty($system_menu)) {
 	cache_build_frame_menu();
-	$system_menu = cache_load(cache_system_key('system_frame'));
+	$system_menu = cache_load(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
 }
 
 //获取全部permission_name，方便判断是否是系统菜单

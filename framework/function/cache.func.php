@@ -582,7 +582,7 @@ function cache_key_all() {
 			),
 
 			'system_frame' => array(
-				'key' => 'system_frame:%uid',
+				'key' => 'system_frame:%uniacid',
 				'group' => '',
 			),
 
