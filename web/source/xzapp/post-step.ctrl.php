@@ -8,7 +8,6 @@ defined('IN_IA') or exit('Access Denied');
 load()->func('file');
 load()->model('module');
 load()->model('user');
-load()->model('xzapp');
 
 $_W['page']['title'] = '添加/编辑熊掌号 - 熊掌号管理';
 $uniacid = intval($_GPC['uniacid']);
@@ -117,7 +116,7 @@ if ($step == 2) {
 		/* xend */
 
 		if (empty($acid)) {
-			$acid = xzapp_create($uniacid, $update);
+			$acid = account_create($uniacid, $update);
 			if (is_error($acid)) {
 				itoast('添加熊掌号信息失败', url('xzapp/post-step/', array('uniacid' => $uniacid, 'step' => 2)), 'error');
 			}
