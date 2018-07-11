@@ -51,18 +51,17 @@ if ($do == 'display') {
     $sql = 'SELECT VERSION();';
     $info['mysql']['version'] = pdo_fetchcolumn($sql);
 
+    //当前数据库尺寸
     $tables = pdo_fetchall("SHOW TABLE STATUS LIKE '".$_W['config']['db']['tablepre']."%'");
     $size = 0;
     foreach ($tables as &$table) {
         $size += $table['Data_length'] + $table['Index_length'];
     }
-
     if (empty($size)) {
         $size = '';
     } else {
         $size = sizecount($size);
     }
-
     //当前数据库尺寸
     $info['mysql']['size'] = $size;
     //当前附件根目录
