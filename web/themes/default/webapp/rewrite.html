@@ -29,7 +29,7 @@
 	</div>
 	3、Nginx规则<br>
 	<div class="alert alert-info">
-		rewrite ^([0-9]+)-([0-9]+).html$ /app/index.php?i=$1&a=webapp&c=entry&eid=$2;
+		rewrite ^/([0-9]+)-([0-9]+).html$ /app/index.php?i=$1&a=webapp&c=entry&eid=$2;
 	</div>
 	<br>
 	4、IIS7服务器<br>
