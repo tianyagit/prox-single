@@ -41,15 +41,16 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
 }
 /* svend */
 if ($do == 'save') {
-	$modules = empty($_GPC['modules']) ? array() : (array)$_GPC['modules'];
-	$wxapp = empty($_GPC['wxapp']) ? array() : (array)$_GPC['wxapp'];
-	$webapp = empty($_GPC['webapp']) ? array() : (array)array_keys($_GPC['webapp']);
-	$xzapp = empty($_GPC['xzapp']) ? array() : (array)array_keys($_GPC['xzapp']);
-
 	$package_info = array(
 		'id' => intval($_GPC['id']),
 		'name' => $_GPC['name'],
-		'modules' => array_merge($modules, $wxapp, $webapp, $xzapp),
+		'modules' => array(
+            'modules' => (array) $_GPC['modules'],
+            'wxapp' => (array) $_GPC['wxapp'],
+            'webapp' => empty($_GPC['webapp']) ? array() : (array) array_keys($_GPC['webapp']),
+            'xzapp' => empty($_GPC['xzapp']) ? array() : (array) array_keys($_GPC['xzapp']),
+            'phoneapp' => empty($_GPC['phoneapp']) ? array() : (array) array_keys($_GPC['phoneapp']),
+        ),
 		'templates' => $_GPC['templates'],
 	);
 
@@ -86,40 +87,53 @@ if ($do == 'display') {
 	$pager = pagination($total, $pageindex, $pagesize);
 	if (!empty($modules_group_list)) {
 		foreach ($modules_group_list as $key => $value) {
-			$modules = array_unique((array)iunserializer($value['modules']));
-			if (!empty($modules)) {
-				foreach ($modules as $module_name) {
-					$module_info = module_fetch($module_name);
-					if (empty($module_info)) {
-						continue;
-					}
-
-					if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
-						$modules_group_list[$key]['account_num'] = intval($modules_group_list[$key]['account_num']) > 0 ? (intval($modules_group_list[$key]['account_num']) + 1) : 1;
-						$modules_group_list[$key]['account_modules'][] = $module_info;
-
-					}
-					if ($module_info[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
-						$modules_group_list[$key]['wxapp_num'] = intval($modules_group_list[$key]['wxapp_num']) > 0 ? (intval($modules_group_list[$key]['wxapp_num']) + 1) : 1;
-						$modules_group_list[$key]['wxapp_modules'][] = $module_info;
-					}
-					if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_WXAPP) {
-						$modules_group_list[$key]['phoneapp_num'] = intval($modules_group_list[$key]['phoneapp_num']) > 0 ? (intval($modules_group_list[$key]['phoneapp_num']) + 1) : 1;
-						$modules_group_list[$key]['phoneapp_modules'][] = $module_info;
-					}
-					if ($module_info[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WXAPP) {
-						$modules_group_list[$key]['webapp_num'] = intval($modules_group_list[$key]['webapp_num']) > 0 ? (intval($modules_group_list[$key]['webapp_num']) + 1) : 1;
-						$modules_group_list[$key]['webapp_modules'][] = $module_info;
-					}
-					if ($module_info[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
-						$modules_group_list[$key]['xzapp_num'] = intval($modules_group_list[$key]['xzapp_num']) > 0 ? (intval($modules_group_list[$key]['xzapp_num']) + 1) : 1;
-						$modules_group_list[$key]['xzapp_modules'][] = $module_info;
-					}
-				}
-			}
-
+            $modules = (array)iunserializer($value['modules']);
+            if (!empty($modules)) {
+                foreach ($modules as $type => $modulenames) {
+                    if (empty($modulenames) || !is_array($modulenames)) {
+                        continue;
+                    }
+                    foreach ($modulenames as $name) {
+                        $module = module_fetch($name);
+                        if (empty($module)) {
+                            continue;
+                        }
+                        switch ($type) {
+                            case 'modules':
+                                if ($module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
+                                    $modules_group_list[$key]['account_num'] += 1;
+                                    $modules_group_list[$key]['account_modules'][] = $module;
+                                }
+                                break;
+                            case 'wxapp':
+                                if ($module[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
+                                    $modules_group_list[$key]['wxapp_num'] += 1;
+                                    $modules_group_list[$key]['wxapp_modules'][] = $module;
+                                }
+                                break;
+                            case 'webapp':
+                                if ($module[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP) {
+                                    $modules_group_list[$key]['webapp_num'] += 1;
+                                    $modules_group_list[$key]['webapp_modules'][] = $module;
+                                }
+                                break;
+                            case 'xzapp':
+                                if ($module[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
+                                    $modules_group_list[$key]['xzapp_num'] += 1;
+                                    $modules_group_list[$key]['xzapp_modules'][] = $module;
+                                }
+                                break;
+                            case 'phoneapp':
+                                if ($module[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP) {
+                                    $modules_group_list[$key]['phoneapp_num'] += 1;
+                                    $modules_group_list[$key]['phoneapp_modules'][] = $module;
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
 			$templates = (array)iunserializer($value['templates']);
-
 			$modules_group_list[$key]['template_num'] = !empty($templates) ? count($templates) : 0;
 			$modules_group_list[$key]['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'), 'name');
 		}

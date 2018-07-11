@@ -509,35 +509,49 @@ function uni_groups($groupids = array(), $show_all = false) {
 		}
 
 		if (!empty($list)) {
-			foreach ($list as $k => &$row) {
-				if (!empty($row['modules'])) {
-					$modules = (array)iunserializer($row['modules']);
-					$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = $row['xzapp'] = array();
-					if (empty($modules)) {
-						continue;
-					}
-					foreach ($modules as $modulename) {
-						$module = module_fetch($modulename);
-						if (empty($module)) {
-							continue;
-						}
-						if ($module[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
-							$row['wxapp'][] = $modulename;
-						}
-						if ($module[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP) {
-							$row['webapp'][] = $modulename;
-						}
-						if ($module[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP) {
-							$row['phoneapp'][] = $modulename;
-						}
-						if ($module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
-							$row['modules'][] = $modulename;
-						}
-						if ($module[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
-							$row['xzapp'][] = $modulename;
-						}
-					}
-				}
+            foreach ($list as $k => &$row) {
+                $modules = (array)iunserializer($row['modules']);
+                $row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = $row['xzapp'] = array();
+                if (!empty($modules)) {
+                    foreach ($modules as $type => $modulenames) {
+                        if (empty($modulenames) || !is_array($modulenames)) {
+                            continue;
+                        }
+                        foreach ($modulenames as $name) {
+                            $module = module_fetch($name);
+                            if (empty($module)) {
+                                continue;
+                            }
+                            switch ($type) {
+                                case 'modules':
+                                    if ($module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
+                                        $row['modules'][] = $name;
+                                    }
+                                    break;
+                                case 'wxapp':
+                                    if ($module[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
+                                        $row['wxapp'][] = $name;
+                                    }
+                                    break;
+                                case 'webapp':
+                                    if ($module[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP) {
+                                        $row['webapp'][] = $name;
+                                    }
+                                    break;
+                                case 'xzapp':
+                                    if ($module[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
+                                        $row['xzapp'][] = $name;
+                                    }
+                                    break;
+                                case 'phoneapp':
+                                    if ($module[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP) {
+                                        $row['phoneapp'][] = $name;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
 
 				if (!empty($row['templates'])) {
 					$row['templates'] = (array)iunserializer($row['templates']);
