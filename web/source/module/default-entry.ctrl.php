@@ -30,6 +30,7 @@ if ($do == 'display') {
 	if (checksubmit()) {
 		$default_entry = intval($_GPC['default_entry_id']);
 		$data = !empty($module['config']) ? $module['config'] : array();
+
 		if (empty($default_entry)) {
 			unset($data['default_entry']);
 		} else {
@@ -40,10 +41,8 @@ if ($do == 'display') {
 		$insert_data['uniacid'] = $_W['uniacid'];
 		$insert_data['module'] = $module_name;
 
-		$setting_cachekey = cache_system_key('module_setting', array('module_name' => $module_name, 'uniacid' => $_W['uniacid']));
-		$setting = cache_load($setting_cachekey);
-
-		if (empty($setting)) {
+		$settings = pdo_get('uni_account_modules', array('uniacid' => $_W['uniacid'], 'module' => $module_name), 'settings');
+		if (empty($settings)) {
 			$insert_data['enabled'] = 1;
 			pdo_insert('uni_account_modules', $insert_data);
 		} else {
