@@ -475,6 +475,8 @@ function user_modules($uid = 0) {
 	load()->model('module');
 
 	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
+    $group_module_support = cache_load('group_module_support_' . $uid);
+
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
@@ -505,21 +507,43 @@ function user_modules($uid = 0) {
 				$module_list = table('modules')->searchWithRecycle();
 			} else {
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
+                $user_extend_group = pdo_get('uni_group', array('uid' => $uid));
+                if (!empty($user_extend_group)) {
+                    if (!empty($package_group)) {
+                        $package_group[] = $user_extend_group;
+                    } else {
+                        $package_group = array($user_extend_group);
+                    }
+                }
 				if (!empty($package_group)) {
 					$package_group_module = array();
+				    $group_module_support = array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array());
 					foreach ($package_group as $row) {
+                        $row['modules'] = (array)iunserializer($row['modules']);
 						if (!empty($row['modules'])) {
-							$row['modules'] = (array)iunserializer($row['modules']);
-						}
-						if (!empty($row['modules'])) {
-							foreach ($row['modules'] as $modulename => $module) {
-								if (!is_array($module)) {
-									$modulename = $module;
-								}
-								$package_group_module[$modulename] = $modulename;
+							foreach ($row['modules'] as $type => $modulenames) {
+								$package_group_module = array_merge($package_group_module, $modulenames);
+                                switch ($type) {
+                                    case 'modules':
+                                        $group_module_support['modules'] = array_merge($group_module_support['modules'], $modulenames);
+                                        break;
+                                    case 'wxapp':
+                                        $group_module_support['wxapp'] = array_merge($group_module_support['wxapp'], $modulenames);
+                                        break;
+                                    case 'webapp':
+                                        $group_module_support['webapp'] = array_merge($group_module_support['webapp'], $modulenames);
+                                        break;
+                                    case 'xzapp':
+                                        $group_module_support['xzapp'] = array_merge($group_module_support['xzapp'], $modulenames);
+                                        break;
+                                    case 'phoneapp':
+                                        $group_module_support['phoneapp'] = array_merge($group_module_support['phoneapp'], $modulenames);
+                                        break;
+                                }
 							}
 						}
 					}
+                    $package_group_module = array_unique($package_group_module);
 				}
 				$module_list = table('modules')->getByNameList($package_group_module);
 			}
@@ -550,6 +574,7 @@ function user_modules($uid = 0) {
 			}
 		}
 		cache_write(cache_system_key('user_modules', array('uid' => $uid)), $modules);
+		cache_write('group_module_support_' . $uid, $group_module_support);
 	}
 	$module_list = array();
 	if (!empty($modules)) {
@@ -564,9 +589,24 @@ function user_modules($uid = 0) {
 				$module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP) {
 				continue;
 			}
-			if (!empty($module_info)) {
-				$module_list[$module] = $module_info;
+			if (!empty($group_module_support)) {
+                if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT && !in_array($module_info['name'], $group_module_support['modules'])) {
+                    $module_info[MODULE_SUPPORT_ACCOUNT_NAME] = MODULE_NONSUPPORT_ACCOUNT;
+                }
+                if ($module_info[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP && !in_array($module_info['name'], $group_module_support['wxapp'])) {
+                    $module_info[MODULE_SUPPORT_WXAPP_NAME] = MODULE_NONSUPPORT_WXAPP;
+                }
+                if ($module_info[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP && !in_array($module_info['name'], $group_module_support['webapp'])) {
+                    $module_info[MODULE_SUPPORT_WEBAPP_NAME] = MODULE_NOSUPPORT_WEBAPP;
+                }
+                if ($module_info[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP && !in_array($module_info['name'], $group_module_support['xzapp'])) {
+                    $module_info[MODULE_SUPPORT_XZAPP_NAME] = MODULE_NOSUPPORT_XZAPP;
+                }
+                if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP && !in_array($module_info['name'], $group_module_support['phoneapp'])) {
+                    $module_info[MODULE_SUPPORT_PHONEAPP_NAME] = MODULE_NOSUPPORT_PHONEAPP;
+                }
 			}
+            $module_list[$module] = $module_info;
 		}
 	}
 	return $module_list;
