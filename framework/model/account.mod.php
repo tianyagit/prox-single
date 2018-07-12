@@ -205,8 +205,8 @@ function uni_site_store_buy_goods($uniacid, $type = STORE_TYPE_MODULE) {
  * @param boolean $enabled 是否只显示可用模块
  * @return array 模块列表
  */
-
 function uni_modules_by_uniacid($uniacid, $enabled = true) {
+
 	global $_W;
 	load()->model('user');
 	load()->model('module');
@@ -236,8 +236,17 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
 				$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 			}
+
 			if (!in_array('-1', $packageids)) {
-				$uni_groups = pdo_getall('uni_group', array('id' => $packageids, 'uniacid' => $uniacid), 'modules');
+				 $pars = array();
+				 foreach ($packageids as $key => $val) {
+				 	$pars[':id_' . intval($key)] = intval($val);
+				 }
+				 if (!empty($pars)) {
+				 	$where = "id IN (" . implode(',', array_keys($pars)) . ") OR ";
+				 }
+				 $pars[':uniacid'] = $uniacid;
+				 $uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . $where . " uniacid = :uniacid", $pars);
 
 				if (!empty($uni_groups)) {
 					foreach ($uni_groups as $group) {
@@ -323,6 +332,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
  * @return array
  */
 function uni_modules_list($uniacid, $enabled = true, $type = '') {
+
 	global $_W;
 	load()->model('user');
 	load()->model('module');
@@ -354,7 +364,15 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		}
 		if (!in_array('-1', $packageids)) {
-			$uni_groups = pdo_getall('uni_group', array('id' => $packageids, 'uniacid' => $uniacid), 'modules');
+			$pars = array();
+			foreach ($packageids as $key => $val) {
+				$pars[':id_' . intval($key)] = intval($val);
+			}
+			if (!empty($pars)) {
+				$where = "id IN (" . implode(',', array_keys($pars)) . ") OR ";
+			}
+			$pars[':uniacid'] = $uniacid;
+			$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . $where . " uniacid = :uniacid", $pars);
 
 			if (!empty($uni_groups)) {
 				foreach ($uni_groups as $group) {
