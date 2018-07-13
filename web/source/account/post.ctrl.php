@@ -301,11 +301,34 @@ if($do == 'modules_tpl') {
 			$tpl = $_GPC['tpl'];
 			if (!empty($module) || !empty($tpl)) {
 				$data = array(
-					'modules' => iserializer($module),
-					'templates' => iserializer($tpl),
+					'modules' => array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array()),
+					'templates' => empty($tpl) ? '' : iserializer($tpl),
 					'uniacid' => $uniacid,
 					'name' => '',
 				);
+				switch ($defaultaccount['type']) {
+                    case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+                    case ACCOUNT_TYPE_OFFCIAL_AUTH:
+                        $data['modules']['modules'] = $module;
+                        break;
+                    case ACCOUNT_TYPE_APP_NORMAL:
+                    case ACCOUNT_TYPE_APP_AUTH:
+                    case ACCOUNT_TYPE_WXAPP_WORK:
+                        $data['modules']['wxapp'] = $module;
+                        break;
+                    case ACCOUNT_TYPE_WEBAPP_NORMAL:
+                        $data['modules']['webapp'] = $module;
+                        break;
+                    case ACCOUNT_TYPE_XZAPP_NORMAL:
+                    case ACCOUNT_TYPE_XZAPP_AUTH:
+                        $data['modules']['xzapp'] = $module;
+                        break;
+                    case ACCOUNT_TYPE_PHONEAPP_NORMAL:
+                        $data['modules']['phoneapp'] = $module;
+                        break;
+                }
+                $data['modules'] = iserializer($data['modules']);
+
 				$id = pdo_fetchcolumn("SELECT id FROM ".tablename('uni_group')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
 				if (empty($id)) {
 					pdo_insert('uni_group', $data);
@@ -408,7 +431,13 @@ if($do == 'modules_tpl') {
 	$modules = user_modules($_W['uid']);
 	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
 	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
-	$extend['modules'] = $current_module_names = iunserializer($extend['modules']);
+    $extend_modules = iunserializer($extend['modules']);
+    $extend['modules'] = array();
+    foreach ($extend_modules as $modulenames) {
+        if (!empty($modulenames)) {
+            $extend['modules'] = $current_module_names = array_merge($extend['modules'], $modulenames);
+        }
+    }
 	$extend['templates'] = iunserializer($extend['templates']);
 	$canmodify = false;
 	/* xstart */
