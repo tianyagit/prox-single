@@ -390,10 +390,23 @@ if ($do =='install') {
 					continue;
 				}
 				$group_info['modules'] = iunserializer($group_info['modules']);
-				if (in_array($module['name'], $group_info['modules'])) {
-					continue;
-				}
-				$group_info['modules'][] = $module['name'];
+				if (!empty($group_info['modules'])) {
+				    $is_continue = false;
+                    foreach ($group_info['modules'] as $modulenames) {
+                        if (in_array($module['name'], $modulenames)) {
+                            $is_continue = true;
+                            break;
+                        }
+                    }
+                    if ($is_continue) {
+                        continue;
+                    }
+                }
+				$group_info['modules']['modules'][] = $module['name'];
+				$group_info['modules']['wxapp'][] = $module['name'];
+				$group_info['modules']['webapp'][] = $module['name'];
+				$group_info['modules']['xzapp'][] = $module['name'];
+				$group_info['modules']['phoneapp'][] = $module['name'];
 				$group_info['modules'] = iserializer($group_info['modules']);
 				pdo_update('uni_group', $group_info, array('id' => $groupid));
 			}
@@ -499,7 +512,7 @@ if ($do == 'module_detail') {
 	if (!empty($module_info['plugin_list'])) {
 		$module_info['plugin_list'] = module_get_plugin_list($module_name);
 	}
-	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0));
+	$module_group_list = pdo_getall('uni_group', array('uniacid' => 0, 'uid' => 0));
 	$module_group = array();
 	if (!empty($module_group_list)) {
 		foreach ($module_group_list as $group) {
@@ -507,11 +520,17 @@ if ($do == 'module_detail') {
 				continue;
 			}
 			$group['modules'] = iunserializer($group['modules']);
-			if (is_array($group['modules']) && in_array($module_name, $group['modules'])) {
-				$module_group[] = $group;
-			}
+			if (is_array($group['modules'])) {
+			    foreach ($group['modules'] as $modulenames) {
+			        if (in_array($module_name, $modulenames)) {
+                        $module_group[] = $group;
+                        break;
+                    }
+                }
+            }
 		}
 	}
+	var_export($module_group);
 	$subscribes_type = ext_module_msg_types();
 }
 

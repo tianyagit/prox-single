@@ -78,7 +78,6 @@ if ($do == 'edit_modules_tpl') {
 
 	$extend_permission = pdo_get('uni_group', array('uid' => $uid, 'uniacid' => 0));
 
-	$extend_permission['modules'] = $current_module_names = (array)iunserializer($extend_permission['modules']);
     $extend_modules = iunserializer($extend_permission['modules']);
     $extend_permission['modules'] = array();
     foreach ($extend_modules as $modulenames) {
