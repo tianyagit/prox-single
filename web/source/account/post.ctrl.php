@@ -421,8 +421,10 @@ if($do == 'modules_tpl') {
 
 				}else {
 					$ex_module = current(uni_groups(array($extendpackage_val['groupid'])));
-					$ex_module['type'] = 'extend';
-					$modules_tpl[] = $ex_module;
+					if (!empty($ex_module)) {
+                        $ex_module['type'] = 'extend';
+                        $modules_tpl[] = $ex_module;
+                    }
 				}
 			}
 		}
