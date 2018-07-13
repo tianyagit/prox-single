@@ -515,9 +515,9 @@ function user_modules($uid = 0) {
                         $package_group = array($user_extend_group);
                     }
                 }
+                $group_module_support = array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array());
 				if (!empty($package_group)) {
 					$package_group_module = array();
-				    $group_module_support = array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array());
 					foreach ($package_group as $row) {
                         $row['modules'] = (array)iunserializer($row['modules']);
 						if (!empty($row['modules'])) {
@@ -589,6 +589,7 @@ function user_modules($uid = 0) {
 				$module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP) {
 				continue;
 			}
+			//无全部权限时，如果用户应用支持的适用类型不在用户权限范围内时，则设置为不支持该类型
 			if (!empty($group_module_support)) {
                 if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT && !in_array($module_info['name'], $group_module_support['modules'])) {
                     $module_info[MODULE_SUPPORT_ACCOUNT_NAME] = MODULE_NONSUPPORT_ACCOUNT;
