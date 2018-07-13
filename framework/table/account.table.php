@@ -280,10 +280,35 @@ class AccountTable extends We7Table {
 		}
 		$uni_groups = $this->query->from('uni_group')->where('uniacid', $uniacid)->whereor('id', array_keys($packageids))->getall('modules');
 		if (!empty($uni_groups)) {
+		    $account = $this->getAccountByUniacid($uniacid);
 			foreach ($uni_groups as $group) {
 				$group_module = (array)iunserializer($group['modules']);
-				$uni_modules = array_merge($group_module, $uni_modules);
+				if (empty($group_module)) {
+				    continue;
+                }
+                switch ($account['type']) {
+                    case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+                    case ACCOUNT_TYPE_OFFCIAL_AUTH:
+                        $uni_modules = array_merge($group_module['modules'], $uni_modules);
+                        break;
+                    case ACCOUNT_TYPE_APP_NORMAL:
+                    case ACCOUNT_TYPE_APP_AUTH:
+                    case ACCOUNT_TYPE_WXAPP_WORK:
+                        $uni_modules = array_merge($group_module['wxapp'], $uni_modules);
+                        break;
+                    case ACCOUNT_TYPE_WEBAPP_NORMAL:
+                        $uni_modules = array_merge($group_module['webapp'], $uni_modules);
+                        break;
+                    case ACCOUNT_TYPE_XZAPP_NORMAL:
+                    case ACCOUNT_TYPE_XZAPP_AUTH:
+                        $uni_modules = array_merge($group_module['xzapp'], $uni_modules);
+                        break;
+                    case ACCOUNT_TYPE_PHONEAPP_NORMAL:
+                        $uni_modules = array_merge($group_module['phoneapp'], $uni_modules);
+                        break;
+                }
 			}
+            $uni_modules = array_unique($uni_modules);
 		}
 		return $uni_modules;
 	}
@@ -308,9 +333,37 @@ class AccountTable extends We7Table {
 			return array();
 		}
 		$result = $this->query->from('uni_group')->where('uniacid', $uniacid)->get();
-		if (!empty($result)) {
-			$result['modules'] = iunserializer($result['modules']);
-			$result['templates'] = iunserializer($result['templates']);
+        if (!empty($result)) {
+            $result['templates'] = iunserializer($result['templates']);
+            $group_module = (array)iunserializer($result['modules']);
+            if (empty($group_module)) {
+                $result['modules'] = array();
+            } else {
+                $account = $this->getAccountByUniacid($uniacid);
+                switch ($account['type']) {
+                    case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+                    case ACCOUNT_TYPE_OFFCIAL_AUTH:
+                        $result['modules'] = $group_module['modules'];
+                        break;
+                    case ACCOUNT_TYPE_APP_NORMAL:
+                    case ACCOUNT_TYPE_APP_AUTH:
+                    case ACCOUNT_TYPE_WXAPP_WORK:
+                        $result['modules'] = $group_module['wxapp'];
+                        break;
+                    case ACCOUNT_TYPE_WEBAPP_NORMAL:
+                        $result['modules'] = $group_module['webapp'];
+                        break;
+                    case ACCOUNT_TYPE_XZAPP_NORMAL:
+                    case ACCOUNT_TYPE_XZAPP_AUTH:
+                        $result['modules'] = $group_module['xzapp'];
+                        break;
+                    case ACCOUNT_TYPE_PHONEAPP_NORMAL:
+                        $result['modules'] = $group_module['phoneapp'];
+                        break;
+                    default:
+                        $result['modules'] = array();
+                }
+            }
 		} else {
 			$result = array();
 		}
