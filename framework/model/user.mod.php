@@ -509,10 +509,10 @@ function user_modules($uid = 0) {
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
                 $user_extend_group = pdo_get('uni_group', array('uid' => $uid));
                 if (!empty($user_extend_group)) {
-                    if (!empty($package_group)) {
-                        $package_group[] = $user_extend_group;
-                    } else {
+                    if (empty($package_group)) {
                         $package_group = array($user_extend_group);
+                    } else {
+                        $package_group[] = $user_extend_group;
                     }
                 }
                 $group_module_support = array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array());

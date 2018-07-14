@@ -269,16 +269,17 @@ class AccountTable extends We7Table {
 
 	public function accountGroupModules($uniacid) {
 		$packageids = $this->query->from('uni_account_group')->where('uniacid', $uniacid)->select('groupid')->getall('groupid');
+        $packageids = empty($packageids) ? array() : array_keys($packageids);
 		$uni_modules = array();
 		if (IMS_FAMILY == 'x') {
 			$site_store_buy_package = table('store')->searchUserBuyPackage($uniacid);
-			$packageids = array_merge($packageids, $site_store_buy_package);
+			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		}
 		if (in_array('-1', array_keys($packageids))) {
 			$modules = $this->query->from('modules')->select('name')->getall('name');
 			return array_keys($modules);
 		}
-		$uni_groups = $this->query->from('uni_group')->where('uniacid', $uniacid)->whereor('id', array_keys($packageids))->getall('modules');
+		$uni_groups = $this->query->from('uni_group')->where('uniacid', $uniacid)->whereor('id', $packageids)->getall('modules');
 		if (!empty($uni_groups)) {
 		    $account = $this->getAccountByUniacid($uniacid);
 			foreach ($uni_groups as $group) {
