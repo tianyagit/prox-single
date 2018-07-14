@@ -466,35 +466,35 @@ function user_account_detail_info($uid) {
 }
 
 /**
- * 获取当前用户拥有的所有模块及小程序的标识
+ * 获取当前用户拥有的所有模块或支持指定平台类型的模块
  * @param $uid string 用户id
  * @return array 模块列表
  */
-function user_modules($uid = 0) {
+function user_modules($uid = 0, $account_type = '') {
 	global $_W;
-	load()->model('module');
-
+    if (empty($uid)) {
+        $uid = $_W['uid'];
+    }
 	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
     $group_module_support = cache_load('group_module_support_' . $uid);
 
-	if (empty($uid)) {
-		$uid = $_W['uid'];
-	}
-
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
-
 		$system_modules = pdo_getall('modules', array('issystem' => 1), array('name'), 'name');
+
 		if (empty($uid) || user_is_founder($uid, true)) {
 			$module_list = table('modules')->searchWithRecycle();
+
 		} elseif (!empty($user_info) && $user_info['type'] == ACCOUNT_OPERATE_CLERK) {
 			$clerk_module = pdo_fetch("SELECT p.type FROM " . tablename('users_permission') . " p LEFT JOIN " . tablename('uni_account_users') . " u ON p.uid = u.uid AND p.uniacid = u.uniacid WHERE u.role = :role AND p.uid = :uid", array(':role' => ACCOUNT_MANAGE_NAME_CLERK, ':uid' => $uid));
 			if (empty($clerk_module)) {
 				return array();
 			}
 			$module_list = array($clerk_module['type'] => $clerk_module['type']);
+
 		} elseif (!empty($user_info) && empty($user_info['groupid'])) {
 			$module_list = $system_modules;
+
 		} else {
 			if ($user_info['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
 				$user_group_info = user_founder_group_detail_info($user_info['groupid']);
@@ -502,9 +502,9 @@ function user_modules($uid = 0) {
 				$user_group_info = user_group_detail_info($user_info['groupid']);
 			}
 			$packageids = $user_group_info['package'];
-
 			if (!empty($packageids) && in_array('-1', $packageids)) {
 				$module_list = table('modules')->searchWithRecycle();
+
 			} else {
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
                 $user_extend_group = pdo_get('uni_group', array('uid' => $uid));
@@ -607,6 +607,43 @@ function user_modules($uid = 0) {
                     $module_info[MODULE_SUPPORT_PHONEAPP_NAME] = MODULE_NOSUPPORT_PHONEAPP;
                 }
 			}
+			if (!empty($account_type)) {
+                $is_continue = false;
+                switch ($account_type) {
+                    case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+                    case ACCOUNT_TYPE_OFFCIAL_AUTH:
+                        if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT) {
+                            $is_continue = true;
+                        }
+                        break;
+                    case ACCOUNT_TYPE_APP_NORMAL:
+                    case ACCOUNT_TYPE_APP_AUTH:
+                    case ACCOUNT_TYPE_WXAPP_WORK:
+                        if ($module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP) {
+                            $is_continue = true;
+                        }
+                        break;
+                    case ACCOUNT_TYPE_WEBAPP_NORMAL:
+                        if ($module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP) {
+                            $is_continue = true;
+                        }
+                        break;
+                    case ACCOUNT_TYPE_PHONEAPP_NORMAL:
+                        if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP) {
+                            $is_continue = true;
+                        }
+                        break;
+                    case ACCOUNT_TYPE_XZAPP_NORMAL:
+                    case ACCOUNT_TYPE_XZAPP_AUTH:
+                        if ($module_info[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP) {
+                            $is_continue = true;
+                        }
+                        break;
+                }
+                if ($is_continue) {
+                    continue;
+                }
+            }
             $module_list[$module] = $module_info;
 		}
 	}

@@ -212,16 +212,12 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled == true ? 1 : ''));
 	$modules = cache_load($cachekey);
 	$account_info = uni_fetch($uniacid);
+    $founders = explode(',', $_W['config']['setting']['founder']);
+    $owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 	if (empty($modules)) {
-		$founders = explode(',', $_W['config']['setting']['founder']);
-		$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$condition = "WHERE 1";
         if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
             $group_modules = table('account')->accountGroupModules($uniacid);
-            $user_modules = user_modules($owner_uid);
-            if (!empty($user_modules)) {
-                $group_modules = array_merge($group_modules, array_keys($user_modules));
-            }
             if (!empty($group_modules)) {
                 foreach ($group_modules as $key => $val) {
                     $params[':module_' . intval($key)] = safe_gpc_string($val);
@@ -237,7 +233,6 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$modules = pdo_fetchall($sql, $params, 'name');
 		cache_write($cachekey, $modules);
 	}
-
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
@@ -277,7 +272,13 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
-	return $module_list;
+    if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
+        $user_modules = user_modules($owner_uid, $account_info['type']);
+        if (!empty($user_modules)) {
+            $module_list = array_merge($user_modules, $module_list);
+        }
+    }
+    return $module_list;
 }
 
 /**
