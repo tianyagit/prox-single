@@ -58,9 +58,28 @@ if ($do == 'custom_default') {
 
 // 保存自定义appjson
 if ($do == 'custom_save') {
-	$json = $_GPC['json'];
+    if (empty($version_info)) {
+        iajax(-1, '参数错误！');
+    }
+	$json = array();
+    if (!empty($_GPC['json']['window'])) {
+        $json['window'] = array(
+            'navigationBarTitleText' => safe_gpc_string($_GPC['json']['window']['navigationBarTitleText']),
+            'navigationBarTextStyle' => safe_gpc_string($_GPC['json']['window']['navigationBarTextStyle']),
+            'navigationBarBackgroundColor' => safe_gpc_string($_GPC['json']['window']['navigationBarBackgroundColor']),
+            'backgroundColor' => safe_gpc_string($_GPC['json']['window']['backgroundColor']),
+        );
+    }
+    if (!empty($_GPC['json']['tabBar'])) {
+        $json['tabBar'] = array(
+            'color' => safe_gpc_string($_GPC['json']['tabBar']['color']),
+            'selectedColor' => safe_gpc_string($_GPC['json']['tabBar']['selectedColor']),
+            'backgroundColor' => safe_gpc_string($_GPC['json']['tabBar']['backgroundColor']),
+            'borderStyle' => in_array($_GPC['json']['tabBar']['borderStyle'], array('black', 'white')) ? $_GPC['json']['tabBar']['borderStyle'] : '',
+        );
+    }
 	$result = wxapp_code_save_appjson($version_id, $json);
-		cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
+    cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
 	iajax($result, '');
 }
 
