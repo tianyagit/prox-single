@@ -530,7 +530,6 @@ if ($do == 'module_detail') {
             }
 		}
 	}
-	var_export($module_group);
 	$subscribes_type = ext_module_msg_types();
 }
 
