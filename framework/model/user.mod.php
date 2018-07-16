@@ -470,7 +470,7 @@ function user_account_detail_info($uid) {
  * @param $uid string 用户id
  * @return array 模块列表
  */
-function user_modules($uid = 0, $account_type = '') {
+function user_modules($uid = 0) {
 	global $_W;
     if (empty($uid)) {
         $uid = $_W['uid'];
@@ -608,43 +608,6 @@ function user_modules($uid = 0, $account_type = '') {
                     $module_info[MODULE_SUPPORT_PHONEAPP_NAME] = MODULE_NOSUPPORT_PHONEAPP;
                 }
 			}
-			if (!empty($account_type)) {
-                $is_continue = false;
-                switch ($account_type) {
-                    case ACCOUNT_TYPE_OFFCIAL_NORMAL:
-                    case ACCOUNT_TYPE_OFFCIAL_AUTH:
-                        if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT) {
-                            $is_continue = true;
-                        }
-                        break;
-                    case ACCOUNT_TYPE_APP_NORMAL:
-                    case ACCOUNT_TYPE_APP_AUTH:
-                    case ACCOUNT_TYPE_WXAPP_WORK:
-                        if ($module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP) {
-                            $is_continue = true;
-                        }
-                        break;
-                    case ACCOUNT_TYPE_WEBAPP_NORMAL:
-                        if ($module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP) {
-                            $is_continue = true;
-                        }
-                        break;
-                    case ACCOUNT_TYPE_PHONEAPP_NORMAL:
-                        if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP) {
-                            $is_continue = true;
-                        }
-                        break;
-                    case ACCOUNT_TYPE_XZAPP_NORMAL:
-                    case ACCOUNT_TYPE_XZAPP_AUTH:
-                        if ($module_info[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP) {
-                            $is_continue = true;
-                        }
-                        break;
-                }
-                if ($is_continue) {
-                    continue;
-                }
-            }
             $module_list[$module] = $module_info;
 		}
 	}
