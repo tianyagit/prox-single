@@ -219,6 +219,28 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
         if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
             //设置的公众号应用权限和商城购买的应用权限
             $group_modules = table('account')->accountGroupModules($uniacid);
+            //商城购买的模块
+            /* xstart */
+            if (IMS_FAMILY == 'x') {
+                $goods_type = 0;
+                switch ($account_info['type']) {
+                    case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+                    case ACCOUNT_TYPE_OFFCIAL_AUTH:
+                        $goods_type = STORE_TYPE_MODULE;
+                        break;
+                    case ACCOUNT_TYPE_APP_NORMAL:
+                    case ACCOUNT_TYPE_APP_AUTH:
+                    case ACCOUNT_TYPE_WXAPP_WORK:
+                        $goods_type = STORE_TYPE_WXAPP_MODULE;
+                        break;
+                }
+                if ($goods_type) {
+                    $site_store_buy_goods = uni_site_store_buy_goods($uniacid, $goods_type);
+                    if (!empty($site_store_buy_goods)) {
+                        $group_modules = array_merge($group_modules, $site_store_buy_goods);
+                    }
+                }
+            }
             if (!empty($group_modules)) {
                 foreach ($group_modules as $key => $val) {
                     $params[':module_' . intval($key)] = safe_gpc_string($val);
@@ -232,31 +254,6 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$params[':uniacid'] = $uniacid;
 		$sql = "SELECT a.name FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
 		$modules = pdo_fetchall($sql, $params, 'name');
-		//商城购买的模块
-        /* xstart */
-        if (IMS_FAMILY == 'x') {
-            $goods_type = 0;
-            switch ($account_info['type']) {
-                case ACCOUNT_TYPE_OFFCIAL_NORMAL:
-                case ACCOUNT_TYPE_OFFCIAL_AUTH:
-                    $goods_type = STORE_TYPE_MODULE;
-                    break;
-                case ACCOUNT_TYPE_APP_NORMAL:
-                case ACCOUNT_TYPE_APP_AUTH:
-                case ACCOUNT_TYPE_WXAPP_WORK:
-                    $goods_type = STORE_TYPE_WXAPP_MODULE;
-                    break;
-            }
-            if ($goods_type) {
-                $site_store_buy_goods = uni_site_store_buy_goods($uniacid, $goods_type);
-                if (!empty($site_store_buy_goods)) {
-                    foreach ($site_store_buy_goods as $module) {
-                        $modules[$module] = array('name' => $module);
-                    }
-                }
-            }
-        }
-        /* xend */
 		cache_write($cachekey, $modules);
 	}
 	$module_list = array();
@@ -326,96 +323,43 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 
 	$founders = explode(',', $_W['config']['setting']['founder']);
 	$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+
 	$condition = "WHERE 1";
-
-	if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
-		$uni_modules = array();
-		$packageids = pdo_getall('uni_account_group', array('uniacid' => $uniacid), array('groupid'), 'groupid');
-		$packageids = array_keys($packageids);
+    if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
+        //设置的公众号应用权限和商城购买的应用权限
+        $group_modules = table('account')->accountGroupModules($uniacid);
+        //商城购买的模块
         /* xstart */
-		if (IMS_FAMILY == 'x') {
-		    //购买的应用权限权限包
-			$store = table('store');
-			$site_store_buy_package = $store->searchUserBuyPackage($uniacid);
-			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
-		}
+        if (IMS_FAMILY == 'x') {
+            $goods_type = 0;
+            switch ($type) {
+                case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+                case ACCOUNT_TYPE_OFFCIAL_AUTH:
+                    $goods_type = STORE_TYPE_MODULE;
+                    break;
+                case ACCOUNT_TYPE_APP_NORMAL:
+                case ACCOUNT_TYPE_APP_AUTH:
+                case ACCOUNT_TYPE_WXAPP_WORK:
+                    $goods_type = STORE_TYPE_WXAPP_MODULE;
+                    break;
+            }
+            if ($goods_type) {
+                $site_store_buy_goods = uni_site_store_buy_goods($uniacid, $goods_type);
+                if (!empty($site_store_buy_goods)) {
+                    $group_modules = array_merge($group_modules, $site_store_buy_goods);
+                }
+            }
+        }
         /* xend */
-		if (!in_array('-1', $packageids)) {
-			$pars = array();
-			foreach ($packageids as $key => $val) {
-				$pars[':id_' . intval($key)] = intval($val);
-			}
-			if (!empty($pars)) {
-				$where = "id IN (" . implode(',', array_keys($pars)) . ") OR ";
-			}
-			$pars[':uniacid'] = $uniacid;
-			$uni_groups = pdo_fetchall("SELECT `modules` FROM " . tablename('uni_group') . " WHERE " . $where . " uniacid = :uniacid", $pars);
-
-            $group_module_support = array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array());
-            if (!empty($uni_groups)) {
-                $package_group_module = array();
-                foreach ($uni_groups as $row) {
-                    $row['modules'] = (array)iunserializer($row['modules']);
-                    if (!empty($row['modules'])) {
-                        foreach ($row['modules'] as $modulen_type => $modulenames) {
-                            $package_group_module = array_merge($package_group_module, $modulenames);
-                            switch ($modulen_type) {
-                                case 'modules':
-                                    $group_module_support['modules'] = array_merge($group_module_support['modules'], $modulenames);
-                                    break;
-                                case 'wxapp':
-                                    $group_module_support['wxapp'] = array_merge($group_module_support['wxapp'], $modulenames);
-                                    break;
-                                case 'webapp':
-                                    $group_module_support['webapp'] = array_merge($group_module_support['webapp'], $modulenames);
-                                    break;
-                                case 'xzapp':
-                                    $group_module_support['xzapp'] = array_merge($group_module_support['xzapp'], $modulenames);
-                                    break;
-                                case 'phoneapp':
-                                    $group_module_support['phoneapp'] = array_merge($group_module_support['phoneapp'], $modulenames);
-                                    break;
-                            }
-                        }
-                    }
-                }
-                $uni_modules = array_merge(array_unique($package_group_module), $uni_modules);
+        if (!empty($group_modules)) {
+            foreach ($group_modules as $key => $val) {
+                $params[':module_' . intval($key)] = safe_gpc_string($val);
             }
-
-			$user_modules = user_modules($owner_uid);
-            $site_store_buy_goods = array();
-            /* xstart */
-            if (IMS_FAMILY == 'x') {
-                //购买的模块
-                $goods_type = 0;
-                switch ($type) {
-                    case ACCOUNT_TYPE_OFFCIAL_NORMAL:
-                    case ACCOUNT_TYPE_OFFCIAL_AUTH:
-                        $goods_type = STORE_TYPE_MODULE;
-                        break;
-                    case ACCOUNT_TYPE_APP_NORMAL:
-                    case ACCOUNT_TYPE_APP_AUTH:
-                    case ACCOUNT_TYPE_WXAPP_WORK:
-                        $goods_type = STORE_TYPE_WXAPP_MODULE;
-                        break;
-                }
-                if ($goods_type) {
-                    $site_store_buy_goods = uni_site_store_buy_goods($uniacid, $goods_type);
-                }
-            }
-            /* xend */
-			$modules = array_merge(array_keys($user_modules), $uni_modules, $site_store_buy_goods);
-			$params = array();
-			if (!empty($modules)) {
-				foreach ($modules as $key => $val) {
-					$params[':module_' . intval($key)] = safe_gpc_string($val);
-				}
-				$condition .= " AND a.name IN (" . implode(',',array_keys($params)) . ")";
-			} else {
-				$condition .= " AND a.name = ''";
-			}
-		}
-	}
+            $condition .= " AND a.name IN (" . implode(',', array_keys($params)) . ")";
+        } else {
+            $condition .= " AND a.name = ''";
+        }
+    }
 	$condition .= $enabled ?  " AND (b.enabled = 1 OR b.enabled is NULL) OR a.issystem = 1" : " OR a.issystem = 1";
 	$params[':uniacid'] = $uniacid;
 	$sql = "SELECT a.name, a.wxapp_support, a.account_support, a.webapp_support, a.phoneapp_support, a.welcome_support, a.xzapp_support, a.mid, a.name, a.type, a.title, a.issystem, a.title_initial, b.enabled FROM " . tablename('modules') . " AS a LEFT JOIN " . tablename('uni_account_modules') . " AS b ON a.name = b.module AND b.uniacid = :uniacid " . $condition . " ORDER BY b.displayorder DESC, b.id DESC";
@@ -464,30 +408,19 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 				$module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP) {
 				continue;
 			}
-            //无全部权限时，如果该应用支持的适用类型不在权限范围内时，则设置为不支持该类型
-            if (!empty($group_module_support)) {
-                if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT && !in_array($module_info['name'], $group_module_support['modules'])) {
-                    $module_info[MODULE_SUPPORT_ACCOUNT_NAME] = MODULE_NONSUPPORT_ACCOUNT;
-                }
-                if ($module_info[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP && !in_array($module_info['name'], $group_module_support['wxapp'])) {
-                    $module_info[MODULE_SUPPORT_WXAPP_NAME] = MODULE_NONSUPPORT_WXAPP;
-                }
-                if ($module_info[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP && !in_array($module_info['name'], $group_module_support['webapp'])) {
-                    $module_info[MODULE_SUPPORT_WEBAPP_NAME] = MODULE_NOSUPPORT_WEBAPP;
-                }
-                if ($module_info[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP && !in_array($module_info['name'], $group_module_support['xzapp'])) {
-                    $module_info[MODULE_SUPPORT_XZAPP_NAME] = MODULE_NOSUPPORT_XZAPP;
-                }
-                if ($module_info[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP && !in_array($module_info['name'], $group_module_support['phoneapp'])) {
-                    $module_info[MODULE_SUPPORT_PHONEAPP_NAME] = MODULE_NOSUPPORT_PHONEAPP;
-                }
-            }
 			if (!empty($module_info)) {
 				$module_list[$name] = $module_info;
 			}
 		}
 	}
 	$module_list['core'] = array('title' => '系统事件处理模块', 'name' => 'core', 'issystem' => 1, 'enabled' => 1, 'isdisplay' => 0);
+    //公众号owner的权限
+    if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
+        $user_modules = user_modules($owner_uid, $account_info['type']);
+        if (!empty($user_modules)) {
+            $module_list = array_merge($user_modules, $module_list);
+        }
+    }
 	return $module_list;
 }
 
