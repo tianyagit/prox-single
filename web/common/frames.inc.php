@@ -260,6 +260,18 @@ $we7_system_menu['wxapp'] = array(
 			'menu' => array(),
 			'is_display' => true,
 		),
+        'mc' => array(
+            'title' => '粉丝',
+            'menu' => array(
+                'wxapp_member' => array(
+                    'title' => '会员',
+                    'url' => url('mc/member'),
+                    'is_display' => 1,
+                    'icon' => 'wi wi-fans',
+                    'permission_name' => 'wxapp_member',
+                )
+            ),
+        ),
 		'wxapp_profile' => array(
 			'title' => '配置',
 			'menu' => array(
@@ -276,13 +288,6 @@ $we7_system_menu['wxapp'] = array(
 					'is_display' => 1,
 					'icon' => 'wi wi-appsetting',
 					'permission_name' => 'wxapp_payment',
-				),
-				'wxapp_member' => array(
-					'title' => '会员',
-					'url' => url('mc/member'),
-					'is_display' => 1,
-					'icon' => 'wi wi-fans',
-					'permission_name' => 'mc_member',
 				),
 				'front_download' => array(
 					'title' => '上传微信审核',
