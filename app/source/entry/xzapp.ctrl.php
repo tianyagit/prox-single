@@ -15,7 +15,7 @@ if (!empty($_W['uniacid'])) {
 }
 
 $site = WeUtility::createModuleXzapp($entry['module']);
-$method = 'doMobile' . ucfirst($entry['do']);
+$method = 'doPage' . ucfirst($entry['do']);
 if(!is_error($site)) {
 	exit($site->$method());
 }
