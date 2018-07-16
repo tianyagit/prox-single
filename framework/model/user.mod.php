@@ -507,6 +507,7 @@ function user_modules($uid = 0, $account_type = '') {
 
 			} else {
 				$package_group = pdo_getall('uni_group', array('id' => $packageids));
+				//用户附加权限
                 $user_extend_group = pdo_get('uni_group', array('uid' => $uid));
                 if (!empty($user_extend_group)) {
                     if (empty($package_group)) {

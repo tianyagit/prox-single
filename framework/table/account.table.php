@@ -271,10 +271,12 @@ class AccountTable extends We7Table {
 		$packageids = $this->query->from('uni_account_group')->where('uniacid', $uniacid)->select('groupid')->getall('groupid');
         $packageids = empty($packageids) ? array() : array_keys($packageids);
 		$uni_modules = array();
+        /* xstart */
 		if (IMS_FAMILY == 'x') {
 			$site_store_buy_package = table('store')->searchUserBuyPackage($uniacid);
 			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		}
+        /* xend */
 		if (in_array('-1', array_keys($packageids))) {
 			$modules = $this->query->from('modules')->select('name')->getall('name');
 			return array_keys($modules);

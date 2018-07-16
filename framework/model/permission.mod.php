@@ -505,10 +505,10 @@ function permission_user_account_num($uid = 0) {
 	}
 	/* @var $store_table StoreTable*/
 	$store_table = table('store');
-	$create_buy_account_num = $store_table->searchUserCreateAccountNum($uid);
-	$create_buy_wxapp_num = $store_table->searchUserCreateWxappNum($uid);
-	$store_buy_account = $store_table->searchUserBuyAccount($uid);
-	$store_buy_wxapp = $store_table->searchUserBuyWxapp($uid);
+	$create_buy_account_num = $store_table->searchUserCreateAccountNum($user['uid']);
+	$create_buy_wxapp_num = $store_table->searchUserCreateWxappNum($user['uid']);
+	$store_buy_account = $store_table->searchUserBuyAccount($user['uid']);
+	$store_buy_wxapp = $store_table->searchUserBuyWxapp($user['uid']);
 
 	$uniacid_limit = max((intval($group['maxaccount']) + intval($store_buy_account) - $group_num['account_num']), 0);
 	$wxapp_limit = max((intval($group['maxwxapp']) + intval($store_buy_wxapp) - $group_num['wxapp_num']), 0);
