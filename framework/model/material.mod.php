@@ -169,7 +169,7 @@ function material_get($attach_id) {
 	if (empty($attach_id)) {
 		return error(1, "素材id参数不能为空");
 	}
-	if (is_numeric($attach_id)) {
+	if (is_numeric($attach_id) && (strlen($attach_id) <= 6)) {
 		$material = pdo_get('wechat_attachment', array('id' => $attach_id));
 	} else {
 		$media_id = trim($attach_id);
@@ -559,6 +559,7 @@ function material_news_list($server = '', $search ='', $page = array('page_index
 	$total_sql = sprintf($select_sql, "count(*)", '');
 	$total = pdo_fetchcolumn($total_sql, $conditions);
 	$news_list = pdo_fetchall($list_sql, $conditions);
+
 	$material_list = array();
 	if (! empty($news_list)) {
 		foreach ($news_list as $news){
@@ -579,11 +580,17 @@ function material_news_list($server = '', $search ='', $page = array('page_index
 			}
 		}
 	}
+
 	// 转换微信图片地址
+	$account_api = WeAccount::create($_W['uniacid']);
 	foreach ($material_list as $key => &$news) {
 		if (isset($news['items']) && is_array($news['items'])) {
 			foreach ($news['items'] as &$item) {
 				$item['thumb_url'] = tomedia($item['thumb_url']);
+				if (empty($item['thumb_url']) && $account_api->typeSign == 'xzapp') {
+					$res = $account_api->getMaterial($item['thumb_media_id']);
+					$item['thumb_url'] = $res['url'];
+				}
 			}
 		}
 	}
