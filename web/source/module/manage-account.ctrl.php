@@ -57,14 +57,6 @@ if($do == 'display') {
 			if (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter']) {
 				continue;
 			}
-			if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) &&
-				$row[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT) {
-				continue;
-			}
-			if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH)) &&
-				$row[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP) {
-				continue;
-			}
 			$modules[$name] = $row;
 		}
 	}

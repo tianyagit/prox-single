@@ -26,4 +26,9 @@ class AccountModules extends \We7Table {
 		'display' => '',
 	);
 
+	public function isSettingExists($module_name) {
+		global $_W;
+		return $this->query->where('module', $module_name)->where('uniacid', $_W['uniacid'])->exists();
+	}
+
 }

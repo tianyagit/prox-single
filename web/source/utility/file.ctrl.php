@@ -27,6 +27,7 @@ error_reporting(0);
 $type  =  $_GPC['upload_type'];$type = in_array($type, array('image','audio','video')) ? $type : 'image';
 $option = array();
 $option = array_elements(array('uploadtype', 'global', 'dest_dir'), $_POST);
+
 $option['width'] = intval($option['width']);
 $option['global'] = $_GPC['global'];
 
@@ -308,28 +309,6 @@ $limit['file_upload'] = array(
 		'errmsg' => '图片只支持jpg格式,大小不超过为1M',
 	)
 );
-
-$apis = array();
-$apis['temp'] = array(
-	'add' => 'https://api.weixin.qq.com/cgi-bin/media/upload',
-	'get' => 'https://api.weixin.qq.com/cgi-bin/media/get',
-	'post_key' => 'media'
-);
-$apis['perm'] = array(
-	'add' => 'https://api.weixin.qq.com/cgi-bin/material/add_material',
-	'get' => 'https://api.weixin.qq.com/cgi-bin/material/get_material',
-	'del' => 'https://api.weixin.qq.com/cgi-bin/material/del_material',
-	'count' => 'https://api.weixin.qq.com/cgi-bin/material/get_materialcount',
-	'batchget' => 'https://api.weixin.qq.com/cgi-bin/material/batchget_material',
-	'post_key' => 'media',
-);
-
-$apis['file_upload'] = array(
-	'add' => 'https://api.weixin.qq.com/cgi-bin/media/uploadimg',
-	'post_key' => 'buffer',
-);
-
-
 if ($do == 'wechat_upload') {
 	$type = trim($_GPC['upload_type']);
 	$mode = trim($_GPC['mode']);
@@ -377,7 +356,9 @@ if ($do == 'wechat_upload') {
 	}
 
 	$filename = file_random_name(ATTACHMENT_ROOT .'/'. $setting['folder'], $ext);
+
 	$file = file_wechat_upload($_FILES['file'], $type, $setting['folder'] . $filename, true);
+
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
 		die(json_encode($result));
@@ -386,14 +367,16 @@ if ($do == 'wechat_upload') {
 	$pathname = $file['path'];
 	$fullname = ATTACHMENT_ROOT  . '/' . $pathname;
 
-		$acc = WeAccount::create($acid);
+	$acc = WeAccount::create($acid);
 	$token = $acc->getAccessToken();
 	if (is_error($token)) {
 		$result['message'] = $token['message'];
 		die(json_encode($result));
 	}
 	if($mode == 'perm' || $mode == 'temp') {
+		$apis = $acc->apis;
 		$sendapi = $apis[$mode]['add'] . "?access_token={$token}&type={$type}";
+
 		$media = '@'.$fullname;
 		$data = array(
 			'media' => $media
@@ -408,7 +391,7 @@ if ($do == 'wechat_upload') {
 	} elseif($mode == 'file_upload') {
 		$sendapi = $apis[$mode]['add'] . "?access_token={$token}";
 		$data = array(
-			'buffer' => '@'.$fullname
+			'buffer' => '@' . $fullname
 		);
 		$type = 'image';
 	}
@@ -426,7 +409,7 @@ if ($do == 'wechat_upload') {
 	}
 	if(!empty($content['errcode'])) {
 		$result['error'] = 0;
-		$result['message'] = "访问微信接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->errorCode($content['errcode'])}";
+		$result['message'] = "访问接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->errorCode($content['errcode'])}";
 		die(json_encode($result));
 	}
 	if($mode == 'perm' || $mode == 'temp') {

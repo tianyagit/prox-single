@@ -99,6 +99,7 @@ function _login($forward = '') {
 		if (!empty($_W['siteclose']) && empty($_W['isfounder'])) {
 			itoast('站点已关闭，关闭原因:'. $_W['setting']['copyright']['reason'], '', '');
 		}
+
 		$cookie = array();
 		$cookie['uid'] = $record['uid'];
 		$cookie['lastvisit'] = $record['lastvisit'];
@@ -124,6 +125,12 @@ function _login($forward = '') {
 		}
 		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
 		pdo_delete('users_failed_login', array('id' => $failed['id']));
+
+		if ((empty($_W['isfounder']) || user_is_vice_founder()) && !empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
+			$url = url('home/welcome/ext', array('m' => 'store'));
+			message('<a href="' . $url . '" class="btn btn-primary">您的账号已到期，请前往商城购买续费！</a>', $url, 'error');
+		}
+
 		itoast("欢迎回来，{$record['username']}", $forward, 'success');
 	} else {
 		if (empty($failed)) {

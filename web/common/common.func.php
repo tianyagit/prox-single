@@ -166,11 +166,10 @@ function buildframes($framename = ''){
 		}
 		return $frames;
 	}
-	$frames = cache_load(cache_system_key('system_frame'));
+    $frames = cache_load(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
 	if(empty($frames)) {
 		$frames = cache_build_frame_menu();
 	}
-
 	//从数据库中获取用户权限，并附加上系统管理中的权限
 	//仅当系统管理时才使用预设权限
 	if (!empty($_W['role']) && empty($_W['isfounder'])) {
@@ -248,9 +247,10 @@ function buildframes($framename = ''){
 		$frames = frames_top_menu($frames);
 		return $frames[$framename];
 	}
+
 	//模块权限，创始人有所有模块权限
 	$modules = uni_modules(false);
-	if (defined('FRAME') && in_array(FRAME, array('account', 'xzapp'))) {
+	if (defined('FRAME') && FRAME == 'account') {
 		$sysmodules = system_modules();
 		$status = permission_account_user_permission_exist($_W['uid'], $_W['uniacid']);
 		//非创始人应用模块菜单
@@ -294,9 +294,7 @@ function buildframes($framename = ''){
 				$new_modules = array_reverse($modules);
 				$i = 0;
 				foreach ($new_modules as $module) {
-					if (!empty($module['issystem']) ||
-						FRAME == 'account' && $module[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT ||
-						FRAME == 'xzapp' && $module[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP) {
+					if (!empty($module['issystem'])) {
 						continue;
 					}
 					if ($i == 5) {

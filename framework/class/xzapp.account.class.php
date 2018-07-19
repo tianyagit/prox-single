@@ -4,8 +4,14 @@ defined('IN_IA') or exit('Access Denied');
 class XzappAccount extends WeAccount {
 	public $tablename = 'account_xzapp';
 
+	public $apis = array(
+		'perm' => array(
+			'add' => 'https://openapi.baidu.com/rest/2.0/cambrian/media/add_material',
+		),
+	);
+
 	public function __construct($account = array()) {
-		$this->menuFrame = 'xzapp';
+		$this->menuFrame = 'account';
 		$this->type = ACCOUNT_TYPE_XZAPP_NORMAL;
 		$this->typeName = '熊掌号';
 		$this->typeSign = XZAPP_TYPE_SIGN;
@@ -189,6 +195,134 @@ class XzappAccount extends WeAccount {
 			return error($result['error_code'], "访问熊掌号接口失败, 错误详情： {$result['error_msg']}");
 		}
 		return $result;
+	}
+
+	# 素材
+
+	/**
+	 * 获取熊掌号素材列表（熊掌号只支持图片和图文）
+	 * @param string $type	素材的类型:image/news
+	 * @param int $offset	素材偏移的位置，从０开始
+	 * @param int $count	素材的数量，取值在１－２０之间，默认２０
+	 * @return array|mixed
+	 */
+	public function batchGetMaterial($type = 'news', $offset = 0, $count = 20) {
+		global $_W;
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/material/batchget_material?access_token={$token}&type={$type}&offset={$offset}&count={$count}";
+		$response = ihttp_get($url);
+		$content = @json_decode($response['content'], true);
+
+		if ($content['error_code']) {
+			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
+		}
+		return $content;
+	}
+
+	public function delMaterial($media_id) {
+		$media_id = trim($media_id);
+		if (empty($media_id)) {
+			return error(-1, '素材media_id错误');
+		}
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/material/del_material?access_token=" . $token . "&media_id=" . $media_id;
+		$response = ihttp_get($url);
+		$content = @json_decode($response['content'], true);
+
+		if ($content['error_code']) {
+			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
+		}
+		return $content;
+	}
+
+	/**
+	 * 新增永久图文素材
+	 * @param $data
+	 * @return array
+	 */
+	public function addMatrialNews($data) {
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/material/add_news?access_token={$token}";
+		$data = stripslashes(urldecode(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
+		$response = ihttp_request($url, $data);
+		$content = @json_decode($response['content'], true);
+		if ($content['error_code']) {
+			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
+		}
+		return $content['media_id'];
+	}
+
+	public function editMateriaNews() {
+		// TODO
+	}
+
+	public function getMaterial() {
+		// TODO
+	}
+
+	public function uploadMediaFixed() {
+		# 未测试
+		if (empty($path)) {
+			return error(-1, '参数错误');
+		}
+		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
+			$path = ATTACHMENT_ROOT . ltrim($path, '/');
+		}
+		if (!file_exists($path)) {
+			return error(1, '文件不存在');
+		}
+		$token = $this->getAccessToken();
+		if (is_error($token)){
+			return $token;
+		}
+		$data = array(
+			'media' => '@' . $path
+		);
+		$url = $this->apis['perm']['add'] . "?access_token={$token}";
+		$response = ihttp_request($url, $data);
+		$content = @json_decode($response['content'], true);
+		if ($content['error_code']) {
+			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
+		}
+		return $content;
+	}
+
+	/**
+	 * 上传图文消息内的图片获取URL
+	 * @param $thumb
+	 * @return array
+	 */
+	public function uploadNewsThumb($thumb) {
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+		if (!file_exists($thumb)) {
+			return error(1, '文件不存在');
+		}
+
+		$data = array(
+			'media' => '@' . $thumb,
+		);
+
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/media/uploadimg?access_token={$token}";
+
+		$response = ihttp_request($url, $data);
+		$content = @json_decode($response['content'], true);
+
+		if ($content['error_code']) {
+			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
+		}
+		return $content['url'];
 	}
 
 }

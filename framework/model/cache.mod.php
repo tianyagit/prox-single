@@ -131,7 +131,7 @@ function cache_build_users_struct() {
 		'pay_password' => '支付密码',
 	);
 	cache_write(cache_system_key('userbasefields'), $base_fields);
-	$fields = table('profile')->getProfileFields();
+	$fields = table('core_profile_fields')->getProfileFields();
 	if (!empty($fields)) {
 		foreach ($fields as &$field) {
 			$field = $field['title'];
@@ -191,7 +191,7 @@ function cache_build_frame_menu() {
 					$sub_menu_db = $system_menu_db[$sub_menu['permission_name']];
 					$system_menu[$menu_name]['section'][$section_name]['menu'][$permission_name] = array(
 						'is_system' => isset($sub_menu['is_system']) ? $sub_menu['is_system'] : 1,
-						'is_display' => isset($sub_menu['is_display']) && empty($sub_menu['is_display']) ? 0 : (isset($sub_menu_db['is_display']) ? $sub_menu_db['is_display'] : 1),
+						'is_display' => (isset($sub_menu['is_display']) && (empty($sub_menu['is_display']) || (is_array($sub_menu['is_display']) && !in_array($_W['account']['type'], $sub_menu['is_display'])))) ? 0 : (isset($sub_menu_db['is_display']) ? $sub_menu_db['is_display'] : 1),
 						'title' => !empty($sub_menu_db['title']) ? $sub_menu_db['title'] : $sub_menu['title'],
 						'url' => $sub_menu['url'],
 						'permission_name' => $sub_menu['permission_name'],
@@ -222,8 +222,8 @@ function cache_build_frame_menu() {
 			}
 		}
 		$system_menu = iarray_sort($system_menu, 'displayorder', 'asc');
-		cache_delete(cache_system_key('system_frame'));
-		cache_write(cache_system_key('system_frame'), $system_menu);
+		cache_delete(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
+        cache_write(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])), $system_menu);
 		return $system_menu;
 	}
 }

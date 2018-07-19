@@ -36,17 +36,8 @@ if ($do == 'edit_base') {
 
 	$profile = user_detail_formate($profile);
 	
-	$default_field = array('realname', 'births', 'qq', 'mobile', 'address', 'resides');
-	$table = table('profilefields');
-	$fields = $table->getFieldsList();
-	$extra_fields = array();
-	if (!empty($fields)) {
-		foreach ($fields as $field_info) {
-			if ($field_info['available'] == 1 && $field_info['showinregister'] == 1 && !in_array($field_info['field'], $default_field)) {
-				$extra_fields[] = $field_info;
-			}
-		}
-	}
+	$table = table('core_profile_fields');
+	$extra_fields = $table->getExtraFields();
 	template('user/edit-base');
 }
 if ($do == 'edit_modules_tpl') {
