@@ -14,7 +14,7 @@ load()->model('account');
 load()->model('message');
 load()->model('visit');
 
-$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'add_welcome', 'ignore_update_module');
+$dos = array('platform', 'system', 'ext', 'get_fans_kpi', 'get_last_modules', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_ads', 'close_ads', 'get_not_installed_modules', 'system_home', 'set_top', 'add_welcome', 'ignore_update_module');
 $do = in_array($do, $dos) ? $do : 'platform';
 
 if ($do == 'get_not_installed_modules') {
@@ -206,10 +206,25 @@ if ($do == 'get_ads') {
 	$ads = welcome_get_ads();
 	if (is_error($ads)) {
 		iajax(1, $ads['message']);
-	} else {
+    } elseif (!empty($_W['user']['got_ads']) && $_W['user']['got_ads']== md5(json_encode($ads))) {
+        iajax(1, '广告已关闭');
+    } else {
 		iajax(0, $ads);
 	}
 }
+/* xstart */
+if (IMS_FAMILY == 'x') {
+    if ($do == 'close_ads') {
+        $ads = welcome_get_ads();
+        if (!is_error($ads)) {
+            $ads = md5(json_encode($ads));
+            pdo_update('users', array('got_ads' => $ads), array('uid' => $_W['uid']));
+            $_W['user']['got_ads'] = $ads;
+        }
+        itoast('关闭成功', url('home/welcome', array('do' => 'system')), 'success');
+    }
+}
+/* xend */
 
 if ($do == 'system_home') {
 	$user_info = user_single($_W['uid']);
