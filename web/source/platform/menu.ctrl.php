@@ -7,6 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('mc');
 load()->model('menu');
+load()->model('material');
 
 $dos = array('display', 'delete', 'refresh', 'post', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
@@ -205,8 +206,12 @@ if ($do == 'post') {
 		}
 
 		$is_conditional = $post['type'] == MENU_CONDITIONAL ? true : false;
-		$menu = menu_construct_createmenu_data($post, $is_conditional);
 
+		if (!in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
+			$menu = menu_construct_createmenu_data($post, $is_conditional);
+		} else {
+			$menu = menu_construct_createmenu_data_xzapp($post);
+		}
 		if ($_GPC['submit_type'] == 'publish' || $is_conditional) {
 			$account_api = WeAccount::create();
 			$result = $account_api->menuCreate($menu);

@@ -18,6 +18,53 @@ class XzappAccount extends WeAccount {
 		$this->typeTempalte = '-xzapp';
 	}
 
+	public function checkSign() {
+		$arrParams = array(
+			$token = $this->account['token'],
+			$intTimeStamp = $_GET['timestamp'],
+			$strNonce = $_GET['nonce'],
+		);
+		sort($arrParams, SORT_STRING);
+		$strParam = implode($arrParams);
+		$strSignature = sha1($strParam);
+		return $strSignature == $_GET['signature'];
+	}
+
+	public function getAccessToken() {
+		$cachekey = cache_system_key('accesstoken', array('acid' => $this->account['acid']));
+		$cache = cache_load($cachekey);
+
+		if (!empty($cache) && !empty($cache['token']) && $cache['expire'] > TIMESTAMP) {
+			$this->account['access_token'] = $cache;
+			return $cache['token'];
+		}
+
+		if (empty($this->account['key']) || empty($this->account['secret'])) {
+			return error('-1', '未填写熊掌号的 appid 或者 appsecret！');
+		}
+
+		$url = "https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials&client_id={$this->account['key']}&client_secret={$this->account['secret']}";
+		$content = ihttp_get($url);
+		$token = @json_decode($content['content'], true);
+
+		$record = array();
+		$record['token'] = $token['access_token'];
+		$record['expire'] = TIMESTAMP + $token['expires_in'] - 200;
+		$this->account['access_token'] = $record;
+
+		cache_write($cachekey, $record);
+		return $record['token'];
+	}
+
+	protected function requestApi($url, $post = '') {
+		$response = ihttp_request($url, $post);
+		$result = @json_decode($response['content'], true);
+		if ($result['error_code']) {
+			return error(-1, "访问熊掌号接口失败, 错误代码：【{$result['error_code']}】, 错误信息：【{$result['error_msg']}】");
+		}
+		return $result;
+	}
+
 	public function checkIntoManage() {
 		if (empty($this->account) || (!empty($this->uniaccount['account']) && $this->uniaccount['type'] != ACCOUNT_TYPE_XZAPP_NORMAL && !defined('IN_MODULE'))) {
 			return false;
@@ -142,60 +189,23 @@ class XzappAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/menu/get?access_token={$token}";
-		$res = ihttp_get($url);
-		$content = json_decode($res['content'], true);
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
-		}
-		return $content;
+		$res = $this->requestApi($url);
+		return $res;
 	}
 
-	public function checkSign() {
-		$arrParams = array(
-			$token = $this->account['token'],
-			$intTimeStamp = $_GET['timestamp'],
-			$strNonce = $_GET['nonce'],
-		);
-		sort($arrParams, SORT_STRING);
-		$strParam = implode($arrParams);
-		$strSignature = sha1($strParam);
-		return $strSignature == $_GET['signature'];
+	public function menuCreate($menu) {
+		global $_W;
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$data['menues'] = json_encode($menu);
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/menu/create?access_token={$token}";
+		$res = $this->requestApi($url, $data);
+		return $res;
 	}
 
-	public function getAccessToken() {
-		$cachekey = cache_system_key('accesstoken', array('acid' => $this->account['acid']));
-		$cache = cache_load($cachekey);
 
-		if (!empty($cache) && !empty($cache['token']) && $cache['expire'] > TIMESTAMP) {
-			$this->account['access_token'] = $cache;
-			return $cache['token'];
-		}
-
-		if (empty($this->account['key']) || empty($this->account['secret'])) {
-			return error('-1', '未填写熊掌号的 appid 或者 appsecret！');
-		}
-
-		$url = "https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials&client_id={$this->account['key']}&client_secret={$this->account['secret']}";
-		$content = ihttp_get($url);
-		$token = @json_decode($content['content'], true);
-
-		$record = array();
-		$record['token'] = $token['access_token'];
-		$record['expire'] = TIMESTAMP + $token['expires_in'] - 200;
-		$this->account['access_token'] = $record;
-
-		cache_write($cachekey, $record);
-		return $record['token'];
-	}
-
-	protected function requestApi($url, $post = '') {
-		$response = ihttp_request($url, $post);
-		$result = @json_decode($response['content'], true);
-		if (is_error($result)) {
-			return error($result['error_code'], "访问熊掌号接口失败, 错误详情： {$result['error_msg']}");
-		}
-		return $result;
-	}
 
 	# 素材
 

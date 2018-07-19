@@ -168,6 +168,66 @@ function menu_construct_createmenu_data($data_array, $is_conditional = false) {
 }
 
 /**
+ * 构造可直接请求自定义菜单创建接口的数据(熊掌号)
+ * @param array $data_array
+ */
+function menu_construct_createmenu_data_xzapp($data_array) {
+	$menu = array();
+	foreach ($data_array['button'] as $button) {
+		$temp = array();
+		$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
+		$temp['name'] = urlencode($temp['name']);
+		if (empty($button['sub_button'])) {
+			$temp['type'] = $button['type'];
+			if ($button['type'] == 'click') {
+				if (!empty($button['media_id']) && empty($button['key'])) {
+					$temp['key'] = $button['media_id'];
+					$temp['msg'] = array(
+						'text' => '',
+						'type' => 'view_limited',
+						'materialId' => $button['media_id']
+					);
+				}
+				if (!empty($button['key']) && $button['key'] == $button['msg']['materialId']) {
+					$temp['msg'] = $button['msg'];
+					$temp['key'] = $button['key'];
+				}
+
+			} elseif ($button['type'] == 'view') {
+				$temp['url'] = $button['url'];
+			}
+		} else {
+			foreach ($button['sub_button'] as $sub_button) {
+				$sub_temp = array();
+				$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $sub_button['name']);
+				$sub_temp['name'] = urlencode($temp['name']);
+				$sub_temp['type'] = $sub_button['type'];
+				if ($sub_button['type'] == 'click') {
+					if (!empty($sub_button['media_id']) && empty($sub_button['key'])) {
+						$sub_temp['key'] = $sub_button['media_id'];
+						$sub_temp['msg'] = array(
+							'text' => '',
+							'type' => 'view_limited',
+							'materialId' => $sub_button['media_id']
+						);
+					}
+					if (!empty($sub_button['key']) && $sub_button['key'] == $sub_button['msg']['materialId']) {
+						$sub_temp['msg'] = $sub_button['msg'];
+						$sub_temp['key'] = $sub_button['key'];
+					}
+
+				} elseif ($sub_button['type'] == 'view') {
+					$sub_temp['url'] = $sub_button['url'];
+				}
+				$temp['sub_button'][] = $sub_temp;
+			}
+		}
+		$menu['button'][] = $temp;
+	}
+	return $menu;
+}
+
+/**
  * 接口获取默认菜单并更新本地数据库
  */
 function menu_update_currentself() {
@@ -191,6 +251,8 @@ function menu_update_currentself() {
 		foreach ($default_menu['button'] as $key => &$button) {
 			if (!empty($button['sub_button'])) {
 				$default_sub_button[$key] = $button['sub_button'];
+			} else {
+				unset($button['sub_button']);
 			}
 			ksort($button);
 		}
