@@ -383,7 +383,7 @@ function buildframes($framename = ''){
 
 		$frames['account']['section'] = array();
 		if($module['isrulefields'] || !empty($entries['cover']) || !empty($entries['mine'])) {
-			if (!empty($module['isrulefields']) && !empty($_W['account']) && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
+			if (!empty($module['isrulefields']) && !empty($_W['account']) && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
 				$url = url('platform/reply', array('m' => $modulename, 'version_id' => $version_id));
 			}
 			if (empty($url) && !empty($entries['cover'])) {
