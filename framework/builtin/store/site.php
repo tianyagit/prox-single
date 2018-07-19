@@ -370,12 +370,31 @@ class StoreModuleSite extends WeModuleSite {
 		$type = intval($_GPC['type']) > 0 ? intval($_GPC['type']) : STORE_TYPE_MODULE;
 		$_W['page']['title'] = '编辑商品 - 商城管理 - 商城';
 
+        $user_groups = pdo_getall('users_group');
+
 		if ($operate == 'post') {
 			$id = intval($_GPC['id']);
 			if (checksubmit('submit')) {
 				if (!empty($_GPC['price']) && !is_numeric($_GPC['price'])) {
-					itoast('请填写有效数字！', referer(), 'error');
+					itoast('价格有误，请填写有效数字！', referer(), 'error');
 				}
+				$user_group_price = array();
+				if (!empty($_GPC['user_group_price']) && !empty($_GPC['user_group_id']) && count($_GPC['user_group_price']) == count($_GPC['user_group_id'])) {
+				    foreach ($_GPC['user_group_price'] as $k => $value) {
+				        if (empty($value) || empty($_GPC['user_group_id'][$k])) {
+				            continue;
+                        }
+                        $value = trim($value);
+                        if (!is_numeric($value)) {
+                            itoast('价格有误，请填写有效数字！', referer(), 'error');
+                        }
+                        $user_group_price[intval($_GPC['user_group_id'][$k])] = array(
+                            'group_id' => $_GPC['user_group_id'][$k],
+                            'group_name' => $_GPC['user_group_name'][$k],
+                            'price' => $value,
+                        );
+                    }
+                }
 				$data = array(
 					'unit' => $_GPC['unit'],
 					'account_num' => $_GPC['account_num'],
@@ -385,6 +404,7 @@ class StoreModuleSite extends WeModuleSite {
 					'type' => $_GPC['type'],
 					'title' => !empty($_GPC['title']) ? trim($_GPC['title']) : '',
 					'price' => is_numeric($_GPC['price']) ? floatval($_GPC['price']) : 0,
+					'user_group_price' => iserializer($user_group_price),
 					'slide' => !empty($_GPC['slide']) ? iserializer($_GPC['slide']) : '',
 					'api_num' => is_numeric($_GPC['api_num']) ? intval($_GPC['api_num']) : 0,
 					'description' => safe_gpc_html(htmlspecialchars_decode($_GPC['description'])),
@@ -421,12 +441,12 @@ class StoreModuleSite extends WeModuleSite {
 				$goods_info = store_goods_info($id);
 				$goods_info['slide'] = !empty($goods_info['slide']) ? (array)iunserializer($goods_info['slide']) : array();
 				$goods_info['price'] = floatval($goods_info['price']);
+                $goods_info['user_group_price'] = empty($goods_info['user_group_price']) ?  array() : iunserializer($goods_info['user_group_price']);
 			}
 			if ($_GPC['type'] == STORE_TYPE_PACKAGE) {
 				$module_groups = uni_groups();
 			}
 			if ($_GPC['type'] == STORE_TYPE_USER_PACKAGE) {
-				$user_groups = pdo_fetchall("SELECT * FROM " . tablename('users_group'));
 				$user_groups = user_group_format($user_groups);
 			}
 		}
@@ -479,16 +499,26 @@ class StoreModuleSite extends WeModuleSite {
 			if (!empty($_GPC['type']) && in_array($_GPC['type'], array(STORE_TYPE_MODULE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_PACKAGE, STORE_TYPE_API, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_USER_PACKAGE))) {
 				$type = $_GPC['type'];
 			}
-			$store_table = table ('store');
-			$store_table->searchWithStatus (1);
-			$store_table = $store_table->searchGoodsList ($type, $pageindex, $pagesize);
+			$store_table = table('store');
+			$store_table->searchWithStatus(1);
+			$store_table = $store_table->searchGoodsList($type, $pageindex, $pagesize);
 			$store_goods = $store_table['goods_list'];
+			//非创始人可用会员组价格
+			if (!user_is_founder($_W['uid']) && !empty($_W['user']['groupid'])) {
+                foreach ($store_goods as $key => &$goods) {
+                    $goods['user_group_price'] = iunserializer($goods['user_group_price']);
+                    if (!empty($goods['user_group_price'][$_W['user']['groupid']]['price'])) {
+                        $goods['price'] = $goods['user_group_price'][$_W['user']['groupid']]['price'];
+                    }
+                }
+                unset($goods);
+            }
 			if ((empty($type) || in_array($type, array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE))) && is_array($store_goods)) {
 				foreach ($store_goods as $key => &$goods) {
 					if (empty($goods) || !in_array($goods['type'], array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE))) {
 						continue;
 					}
-					$goods['module'] = module_fetch ($goods['module']);
+					$goods['module'] = module_fetch($goods['module']);
 				}
 				unset($goods);
 			}
@@ -499,7 +529,8 @@ class StoreModuleSite extends WeModuleSite {
 				$user_groups = pdo_fetchall("SELECT * FROM " . tablename('users_group'), array(), 'id');
 				$user_groups = user_group_format($user_groups);
 			}
-			$pager = pagination ($store_table['total'], $pageindex, $pagesize);
+
+            $pager = pagination ($store_table['total'], $pageindex, $pagesize);
 		}
 
 		if ($operate == 'goods_info') {
@@ -507,8 +538,14 @@ class StoreModuleSite extends WeModuleSite {
 			if (empty($goods)) {
 				itoast ('商品不存在', '', 'info');
 			}
-			$goods = pdo_get ('site_store_goods', array ('id' => $goods));
-
+			$goods = pdo_get('site_store_goods', array ('id' => $goods));
+            //非创始人可用会员组价格
+            if (!user_is_founder($_W['uid']) && !empty($_W['user']['groupid'])) {
+                $goods['user_group_price'] = iunserializer($goods['user_group_price']);
+                if (!empty($goods['user_group_price'][$_W['user']['groupid']]['price'])) {
+                    $goods['price'] = $goods['user_group_price'][$_W['user']['groupid']]['price'];
+                }
+            }
 			if (in_array($goods['type'], array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_API))) {
 				$goods['module'] = module_fetch ($goods['module']);
 				$goods['slide'] = iunserializer ($goods['slide']);
@@ -598,6 +635,13 @@ class StoreModuleSite extends WeModuleSite {
 			}
 			$user_account = table('account')->userOwnedAccount();
 			$goods_info = store_goods_info($goodsid);
+            //非创始人可用会员组价格
+            if (!user_is_founder($_W['uid']) && !empty($_W['user']['groupid'])) {
+                $goods_info['user_group_price'] = iunserializer($goods_info['user_group_price']);
+                if (!empty($goods_info['user_group_price'][$_W['user']['groupid']]['price'])) {
+                    $goods_info['price'] = $goods_info['user_group_price'][$_W['user']['groupid']]['price'];
+                }
+            }
 			if (in_array($goods_info['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE, STORE_TYPE_API, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW))) {
 				if (empty($uniacid)) {
 					iajax(-1, '请选择公众号！');

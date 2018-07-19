@@ -83,6 +83,7 @@ function store_goods_post($data) {
 	$post['wxapp_num'] = $data['wxapp_num'];
 	$post['module_group'] = $data['module_group'];
 	$post['user_group'] = $data['user_group'];
+	$post['user_group_price'] = $data['user_group_price'];
 	if (!empty($data['id'])) {
 		$result = pdo_update('site_store_goods', $post, array('id' => $data['id']));
 	} else {

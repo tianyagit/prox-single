@@ -61,6 +61,17 @@
 									</div>
 								</div>
 							</div>
+                            <div class="user-group-price-content"></div>
+                            <div class="form-group" ng-if="userGroups">
+                                <label class="control-label col-sm-2"></label>
+                                <div class="col-sm-8">
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default" style="color: #999;border-style: dashed" ng-click="addGroupPrice()">
+                                            + 添加用户组价格
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 						</div>
 						<div class="modal-footer">
 							<input type="hidden" name="token" value="{$_W['token']}">
@@ -95,13 +106,13 @@
 				<div class="col-sm-8">
 					<div class="input-group">
 						<input type="number" class="form-control" min="0" name="price" ng-model="goodsInfo.price" step="0.01">
-						<span class="input-group-addon">元/</span>
+						<span class="input-group-addon">元 /</span>
 						<div class="input-group-btn">
 							<input type="hidden" name="unit" value="{$goods_info['unit']}">
 							{if $type == STORE_TYPE_ACCOUNT_RENEW}
-							<input name="account_num" class="form-control" value="{$goods_info['account_num']}">
+							<input name="account_num" class="form-control" value="{$goods_info['account_num']}" ng-model="num">
 							{elseif $type == STORE_TYPE_WXAPP_RENEW}
-							<input name="wxapp_num" class="form-control" value="{$goods_info['wxapp_num']}">
+							<input name="wxapp_num" class="form-control" value="{$goods_info['wxapp_num']}" ng-modle="num">
 							{/if}
 							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<span ng-if="unit == 'day'">日</span>
@@ -117,6 +128,19 @@
 					</div>
 				</div>
 			</div>
+			<div class="user-group-price-content"></div>
+			{if $type != STORE_TYPE_USER_PACKAGE}
+			<div class="form-group" ng-if="userGroups">
+				<label class="control-label col-sm-2"></label>
+				<div class="col-sm-8">
+					<div class="input-group-btn">
+					<button type="button" class="btn btn-default" style="color: #999;border-style: dashed" ng-click="addGroupPrice()">
+						+ 添加用户组价格
+					</button>
+					</div>
+				</div>
+			</div>
+			{/if}
 			{if in_array($type, array(STORE_TYPE_MODULE, STORE_TYPE_WXAPP_MODULE))}
 			<div class="form-group">
 				<label class="control-label col-sm-2">幻灯片</label>
@@ -137,12 +161,12 @@
 					</div>
 				</div>
 			</div>
-		<div class="form-group">
-			<label class="control-label col-sm-2">应用详情</label>
-			<div class="col-sm-8">
-				{php echo tpl_ueditor('description', $goods_info['description']);}
+			<div class="form-group">
+				<label class="control-label col-sm-2">应用详情</label>
+				<div class="col-sm-8">
+					{php echo tpl_ueditor('description', $goods_info['description']);}
+				</div>
 			</div>
-		</div>
 			{elseif in_array($type, array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP))}
 			<div class="form-group">
 				<label class="control-label col-sm-2">{if $type == STORE_TYPE_ACCOUNT}公众号{else}小程序{/if}个数</label>
@@ -202,8 +226,8 @@
 <script>
 	angular.module('storeApp').value('config', {
 		'goodsInfo': {php echo !empty($goods_info) ? json_encode($goods_info) : 'null'},
+		'userGroups': {php echo !empty($user_groups) ? json_encode($user_groups) : 'null'},
 	});
-
 	angular.bootstrap($('#js-goods-post'), ['storeApp']);
 </script>
 {template 'common/footer'}

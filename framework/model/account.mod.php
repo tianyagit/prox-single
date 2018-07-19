@@ -595,7 +595,9 @@ function uni_groups($groupids = array(), $show_all = false) {
 					$group_list[$id][$section] = array();
 
 					foreach ($modules as $modulename) {
-						$group_list[$id][$section][$modulename] = module_fetch($modulename);
+					    if (is_string($modulename)) {
+                            $group_list[$id][$section][$modulename] = module_fetch($modulename);
+                        }
 					}
 				}
 			}

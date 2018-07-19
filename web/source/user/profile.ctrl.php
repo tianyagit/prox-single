@@ -76,7 +76,7 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'username':
 			$founders = explode(',', $_W['config']['setting']['founder']);
-			if (!in_array($_W['uid'], $founders)) {
+			if (!in_array($_W['uid'], $founders) && $_W['uid'] != $user['owner_uid']) {
 				iajax(1, '无权限修改，请联系网站创始人！');
 			}
 			$username = trim($_GPC['username']);
