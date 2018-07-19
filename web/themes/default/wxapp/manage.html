@@ -133,22 +133,28 @@
 					<h4 class="modal-title">选择小程序</h4>
 				</div>
 				<div class="modal-body">
-					<div class="panel-body we7-padding">
-						<div class="row">
-							<div class="col-sm-2 text-center we7-margin-bottom select-module-wxapp" ng-repeat="module in wxapp_modules" ng-if="wxapp_modules">
-								<a href="javascript:;" ng-click="selectedWxModule(module, $event)">
-									<img ng-src="{{module.logo}}" style="width:50px;height:50px;">
-									<p class="text-over">{{module.title}}</p>
-								</a>
-								<span id="module-{{module.name}}" class="selected hide" style="position:absolute;width:82%;height:100%;left:10px;top:0;opacity:0.8;cursor:pointer;background:#e7e8eb; vertical-align:middle;font-size:30px"><i class="wi wi-right-sign color-green" style="margin-top:25px"></i></span>
-							</div>
-							<div class="text-center" ng-if="!wxapp_modules">
-								<span>暂无可用模块</span>
-							</div>
+					<div class="input-group" style="width: 500px">
+						<input class="form-control" name="title" ng-model="search.moduleName" type="text" placeholder="名称">
+						<span class="input-group-btn">
+							<button ng-click="searchModuleName()" class="btn btn-default">
+								<i class="fa fa-search" style="font-size: 16px"></i>
+							</button>
+						</span>
+					</div>
+					<div class="we7-padding">
+						<div class="col-sm-2 text-center we7-margin-bottom select-module-wxapp" ng-repeat="module in modules" ng-if="modules">
+							<a href="javascript:;" ng-click="selectedWxModule(module, $event)">
+								<img ng-src="{{module.logo}}" style="width:50px;height:50px;">
+								<p class="text-over">{{module.title}}</p>
+							</a>
+							<span id="module-{{module.name}}" class="selected hide" style="position:absolute;width:82%;height:100%;left:10px;top:0;opacity:0.8;cursor:pointer;background:#e7e8eb; vertical-align:middle;font-size:30px"><i class="wi wi-right-sign color-green" style="margin-top:25px"></i></span>
+						</div>
+						<div class="text-center" ng-if="!modules">
+							<span>暂无可用模块</span>
 						</div>
 					</div>
 				</div>
-				<div class="modal-footer" ng-if="wxapp_modules">
+				<div class="modal-footer" ng-if="modules">
 					<button type="button" class="btn btn-primary" ng-click="changeWxModules()">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
