@@ -513,7 +513,9 @@ function mc_require($uid, $fields, $pre = '') {
  */
 function mc_credit_update($uid, $credittype, $creditval = 0, $log = array()) {
 	global $_W;
-	$creditnames = uni_setting_load('creditnames')['creditnames'];
+	$creditnames = uni_setting_load('creditnames');
+	$creditnames = $creditnames['creditnames'];
+
 	$credittype = trim($credittype);
 	$credittypes = mc_credit_types();
 	$clerk_types = array(
