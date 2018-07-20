@@ -182,7 +182,7 @@
 			<th colspan="2" class="text-left">公众号应用名</th>
 			<th class="text-right">操作</th>
 		</tr>
-		<tr ng-repeat="module in module_list">
+		<tr ng-repeat="module in module_list" ng-if="module[support] == 2">
 			<td class="text-left module-img">
 				<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 			</td>
@@ -224,7 +224,8 @@
 </div>
 <script>
 	angular.module('moduleApp').value('config', {
-		'module_list' : {php echo json_encode($modulelist)}
+		'module_list' : {php echo json_encode($modulelist)},
+		'support': {php echo json_encode($_GPC['support'])},
 	});
 	angular.bootstrap($('#js-system-module-not_installed'), ['moduleApp']);
 </script>
