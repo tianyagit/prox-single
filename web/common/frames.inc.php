@@ -318,7 +318,25 @@ $we7_system_menu['wxapp'] = array(
 					),
 				),
 			)
-		)
+		),
+        /* xstart */
+        'statistics' => array(
+            'title' => '统计',
+            'menu' => array(
+                'statistics_fans' => array(
+                    'title' => '访问统计',
+                    'url' => url('wxapp/statistics'),
+                    'icon' => 'wi wi-statistical',
+                    'permission_name' => 'statistics_fans',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_APP_NORMAL,
+                        ACCOUNT_TYPE_APP_AUTH,
+                        ACCOUNT_TYPE_WXAPP_WORK,
+                    ),
+                ),
+            ),
+        ),
+        /* xend */
 	),
 );
 

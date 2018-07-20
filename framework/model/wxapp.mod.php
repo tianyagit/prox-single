@@ -419,27 +419,31 @@ function wxapp_update_daily_visittrend() {
 	if (!empty($trend)) {
 		return true;
 	}
-	$account_api = WeAccount::create();
-	$wxapp_stat = $account_api->getDailyVisitTrend();
-	if (is_error($wxapp_stat) || empty($wxapp_stat)) {
-		return error(-1, '调用微信接口错误');
-	} else {
-		$update_stat = array(
-			'uniacid' => $_W['uniacid'],
-			'session_cnt' => $wxapp_stat['session_cnt'],
-			'visit_pv' => $wxapp_stat['visit_pv'],
-			'visit_uv' => $wxapp_stat['visit_uv'],
-			'visit_uv_new' => $wxapp_stat['visit_uv_new'],
-			'type' => WXAPP_STATISTICS_DAILYVISITTREND,
-			'stay_time_uv' => $wxapp_stat['stay_time_uv'],
-			'stay_time_session' => $wxapp_stat['stay_time_session'],
-			'visit_depth' => $wxapp_stat['visit_depth'],
-			'ref_date' => $wxapp_stat['ref_date'],
-		);
-		pdo_insert('wxapp_general_analysis', $update_stat);
-	}
+	return wxapp_insert_date_visit_trend($yesterday);
+}
 
-	return true;
+function wxapp_insert_date_visit_trend($date) {
+    global $_W;
+    $account_api = WeAccount::create();
+    $wxapp_stat = $account_api->getDailyVisitTrend($date);
+    if (is_error($wxapp_stat) || empty($wxapp_stat)) {
+        return error(-1, '调用微信接口错误');
+    } else {
+        $insert_stat = array(
+            'uniacid' => $_W['uniacid'],
+            'session_cnt' => $wxapp_stat['session_cnt'],
+            'visit_pv' => $wxapp_stat['visit_pv'],
+            'visit_uv' => $wxapp_stat['visit_uv'],
+            'visit_uv_new' => $wxapp_stat['visit_uv_new'],
+            'type' => WXAPP_STATISTICS_DAILYVISITTREND,
+            'stay_time_uv' => $wxapp_stat['stay_time_uv'],
+            'stay_time_session' => $wxapp_stat['stay_time_session'],
+            'visit_depth' => $wxapp_stat['visit_depth'],
+            'ref_date' => $wxapp_stat['ref_date'],
+        );
+        pdo_insert('wxapp_general_analysis', $insert_stat);
+    }
+    return $insert_stat;
 }
 
 function wxapp_search_link_account($module_name = '') {
