@@ -323,7 +323,7 @@ class WxappAccount extends WeAccount {
 		)));
 	}
 
-	public function getDailyVisitTrend() {
+	public function getDailyVisitTrend($date) {
 		global $_W;
 		$token = $this->getAccessToken();
 		if (is_error($token)) {
@@ -331,8 +331,8 @@ class WxappAccount extends WeAccount {
 		}
 		$url = "https://api.weixin.qq.com/datacube/getweanalysisappiddailyvisittrend?access_token={$token}";
 		$data = array(
-			'begin_date' => date('Y-m-d', strtotime('-1 days')),
-			'end_date' => date('Y-m-d', strtotime('-1 days'))
+			'begin_date' => $date,
+			'end_date' => $date
 		);
 
 		$response = $this->requestApi($url, json_encode($data));

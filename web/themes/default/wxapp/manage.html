@@ -48,32 +48,40 @@
 		<a href="{php echo url('wxapp/post/design_method', array('uniacid' => $account['uniacid']))}" class="btn btn-primary" target="_blank">添加新版本</a>
 	</div>
 	<table class="table we7-table vertical-middle wxapp-version-table">
-		<col width="180px"/>
-		<col />
-		<col width="330px"/>
 		<tr>
 			<th class="text-left">版本号</th>
 			<th class="text-left">应用</th>
+			<th class="text-center">之前应用版本</th>
+			<th class="text-center">最新应用版本</th>
 			<th class="text-right">操作</th>
 		</tr>
-		<tr ng-if="version_exist" ng-repeat="version in wxapp_version_lists">
+		<tr ng-if="version_exist" ng-repeat="item in wxapp_version_lists">
 			<td class="text-left">
-				<div class="version" ng-bind="version.version"></div>
-				<div class="color-gray" ng-bind="version.description"></div>
+				<div class="version" ng-bind="item.version"></div>
+				<div class="color-gray" ng-bind="item.description"></div>
 			</td>
 			<td class="clearfix">
-				<div class="item col-sm-6" ng-if="version.modules" ng-repeat="module in version.modules">
-					<img ng-src="{{module.logo}}" class="icon"/>
-					<div class="name" ng-bind="module.title"></div>
-					<div ng-bind="module.version"></div>
+				<div class="item col-sm-6" ng-if="item.last_modules">
+					<img ng-src="{{item.last_modules.logo}}" class="icon"/>
+					<div class="name" ng-bind="item.last_modules.title"></div>
+				</div>
+			</td>
+			<td class="text-center">
+				<div ng-bind="item.last_modules.version"></div>
+			</td>
+			<td class="text-center">
+				<div ng-bind="item.module.version"></div>
+				<div class="color-red" ng-if="item.last_modules.version != item.module.version">
+					<i class="wi wi-warning-sign"></i>
+					<span style="font-size: 10px">需上传微信审核</span>
 				</div>
 			</td>
 			<td class="text-right">
 				<div class="link-group">
-					<a href="./index.php?c=account&a=display&do=switch&uniacid={{version.uniacid}}&version_id={{version.id}}">进入</a>
-					<a href="javascript:;" ng-click="showEditVersionInfoModal(version)" ng-show="version.type!=2">修改</a>
-					<a ng-show="version.type == 2" href="./index.php?c=wxapp&a=post&do=post&design_method={{version.design_method}}&uniacid={{version.uniacid}}&version_id={{version.id}}&create_type={{version.type}}" >修改</a>
-					<a href="javascript:;" class="del" ng-click="delWxappVersion(version.id)">删除</a>
+					<a href="./index.php?c=account&a=display&do=switch&uniacid={{item.uniacid}}&version_id={{item.id}}">进入</a>
+					<a href="javascript:;" ng-click="showEditVersionInfoModal(item)" ng-show="item.type!=2">修改</a>
+					<a ng-show="item.type == 2" href="./index.php?c=wxapp&a=post&do=post&design_method={{item.design_method}}&uniacid={{item.uniacid}}&version_id={{item.id}}&create_type={{item.type}}" >修改</a>
+					<a href="javascript:;" class="del" ng-click="delWxappVersion(item.id)">删除</a>
 				</div>
 			</td>
 		</tr>

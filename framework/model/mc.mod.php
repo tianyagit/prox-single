@@ -1691,6 +1691,11 @@ function mc_init_fans_info($openid, $force_init_member = false){
 			'unionid' => $fans['unionid'],
 			'groupid' => !empty($fans['tagid_list']) ? (','.join(',', $fans['tagid_list']).',') : '',
 		);
+
+		if ($account_api->typeSign == 'xzapp' && empty($fans['tagid_list']) && !empty($fans_mapping['groupid'])) {
+			$fans_update_info['groupid'] = $fans_mapping['groupid'];
+		}
+
 		if ($force_init_member) {
 			$member_update_info = array(
 				'uniacid' => $_W['uniacid'],

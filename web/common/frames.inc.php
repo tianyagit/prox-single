@@ -306,6 +306,13 @@ $we7_system_menu['wxapp'] = array(
 					'icon' => 'wi wi-examine',
 					'permission_name' => 'wxapp_front_download',
 				),
+				'parameter_setting' => array(
+					'title' => '参数配置',
+                    'url' => url('profile/remote'),
+					'is_display' => 1,
+					'icon' => 'wi wi-parameter-setting',
+					'permission_name' => 'wxapp_setting',
+				),
 				'wxapp_platform_material' => array(
 					'title' => '素材管理',
 					'is_display' => 0,
@@ -318,7 +325,25 @@ $we7_system_menu['wxapp'] = array(
 					),
 				),
 			)
-		)
+		),
+        /* xstart */
+        'statistics' => array(
+            'title' => '统计',
+            'menu' => array(
+                'statistics_fans' => array(
+                    'title' => '访问统计',
+                    'url' => url('wxapp/statistics'),
+                    'icon' => 'wi wi-statistical',
+                    'permission_name' => 'statistics_fans',
+                    'is_display' => array(
+                        ACCOUNT_TYPE_APP_NORMAL,
+                        ACCOUNT_TYPE_APP_AUTH,
+                        ACCOUNT_TYPE_WXAPP_WORK,
+                    ),
+                ),
+            ),
+        ),
+        /* xend */
 	),
 );
 

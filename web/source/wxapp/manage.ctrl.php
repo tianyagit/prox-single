@@ -42,6 +42,21 @@ if ($do == 'display') {
 		$version_exist = wxapp_fetch($account['uniacid']);
 		if (!empty($version_exist)) {
 			$wxapp_version_lists = wxapp_version_all($account['uniacid']);
+			if (!empty($wxapp_version_lists)) {
+			    foreach ($wxapp_version_lists as &$row) {
+			        if (!empty($row['modules']) && is_array($row['modules'])) {
+                        $row['module'] = current($row['modules']);
+                    }
+                    if (!empty($row['last_modules']) && is_array($row['last_modules'])) {
+                        $row['last_modules'] = current($row['last_modules']);
+                        $module = module_fetch($row['last_modules']['name']);
+                        if (!empty($module) && is_array($row['last_modules'])) {
+                            $row['last_modules'] = array_merge($module, $row['last_modules']);
+                        }
+                    }
+                }
+                unset($row);
+            }
 			$wxapp_modules = wxapp_support_uniacid_modules($account['uniacid']);
 		}
 	}
