@@ -506,20 +506,17 @@ function user_modules($uid = 0) {
 				$module_list = table('modules')->searchWithRecycle();
 
 			} else {
-				$package_group = pdo_getall('uni_group', array('id' => $packageids));
+				$package_group = (array) pdo_getall('uni_group', array('id' => $packageids));
 				//用户附加权限
-                $user_extend_group = pdo_get('uni_group', array('uid' => $uid));
-                if (!empty($user_extend_group)) {
-                    if (empty($package_group)) {
-                        $package_group = array($user_extend_group);
-                    } else {
-                        $package_group[] = $user_extend_group;
-                    }
-                }
+                $package_group[] = pdo_get('uni_group', array('uid' => $uid));
+
                 $group_module_support = array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array());
 				if (!empty($package_group)) {
 					$package_group_module = array();
 					foreach ($package_group as $row) {
+					    if (empty($row)) {
+					        continue;
+                        }
                         $row['modules'] = (array)iunserializer($row['modules']);
 						if (!empty($row['modules'])) {
 							foreach ($row['modules'] as $type => $modulenames) {
