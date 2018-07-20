@@ -94,7 +94,11 @@
 							{if $material['model'] == 'local'}
 							<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
 							{else}
-							<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+								{if in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))}
+									<i class="wi wi-xzapp pull-right color-green" style="font-size: 20px;"></i>
+								{else}
+									<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+								{/if}
 							{/if}
 							{if $material['prompt_msg'] && $material['model'] != 'local'}
 							<div class="undone-tips">
@@ -198,7 +202,11 @@
 						{if $server == 'local'}
 						<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
 						{else}
-						<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+							{if in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))}
+								<i class="wi wi-xzapp pull-right color-green" style="font-size: 20px;"></i>
+							{else}
+								<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+							{/if}
 						{/if}
 						<span class="appimg-title">{$image['filename']}</span>
 					</div>
@@ -255,7 +263,11 @@
 						{if $server == 'local'}
 						<i class="wi wi-local pull-right color-default" style="font-size: 20px;"></i>
 						{else}
-						<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+							{if in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))}
+								<i class="wi wi-xzapp pull-right color-green" style="font-size: 20px;"></i>
+							{else}
+								<i class="wi wi-wx-circle pull-right color-green" style="font-size: 20px;"></i>
+							{/if}
 						{/if}
 						<span class="audio-time">{php echo date('m月d日', $voice['createtime'])}</span>
 					</div>
