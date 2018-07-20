@@ -344,6 +344,7 @@ function wxapp_version_detail_info($version_info) {
 	$uni_modules = uni_modules_by_uniacid($version_info['uniacid']);
 	$uni_modules = array_keys($uni_modules);
 	$version_info['cover_entrys'] = array();
+    $version_info['last_modules'] = iunserializer($version_info['last_modules']);
 	if (!empty($version_info['modules'])) {
 		$version_info['modules'] = iunserializer($version_info['modules']);
 		if (!empty($version_info['modules'])) {
