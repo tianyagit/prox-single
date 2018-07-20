@@ -128,6 +128,12 @@ class XzappAccount extends WeAccount {
 		return $return;
 	}
 
+	/**
+	 * 获取用户基本信息(单个)
+	 * @param $uniid
+	 * @param bool $isOpen
+	 * @return array
+	 */
 	public function fansQueryInfo($uniid, $isOpen = true) {
 		if ($isOpen) {
 			$openid = $uniid;
@@ -146,16 +152,16 @@ class XzappAccount extends WeAccount {
 			),
 		);
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/user/info?access_token={$token}";
-		$res = ihttp_post($url, json_encode($data));
-		$content = json_decode($res['content'], true);
 
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
-		}
-
-		return $content['user_info_list'][0];
+		$result = $this->requestApi($url, json_encode($data));
+		return $result['user_info_list'][0];
 	}
 
+	/**
+	 * 获取用户基本信息(批量)
+	 * @param $data
+	 * @return array
+	 */
 	public function fansBatchQueryInfo($data) {
 		if (empty($data)) {
 			return error(-1, '粉丝 openid 错误');
@@ -172,17 +178,169 @@ class XzappAccount extends WeAccount {
 		}
 
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/user/info?access_token={$token}";
-		$res = ihttp_post($url, json_encode($list));
-		$content = json_decode($res['content'], true);
+		$result = $this->requestApi($url, json_encode($list));
+		return $result['user_info_list'];
+	}
 
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
+	/**
+	 * 创建粉丝标签
+	 * @param 	array 		$tagname
+	 * @return 	array 		$result
+	 *
+	 */
+	public function fansTagAdd($tagname) {
+		if(empty($tagname)) {
+			return error(-1, '请填写标签名称');
+		}
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
 		}
 
-		return $content['user_info_list'];
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/tags/create?access_token={$token}";
+		$data = stripslashes(ijson_encode(array('tag' => array('name' => $tagname)), JSON_UNESCAPED_UNICODE));
+		$result = $this->requestApi($url, $data);
+		return $result;
+	}
+
+	/**
+	 * 单个粉丝打标签
+	 * @param $openid
+	 * @param $tagids
+	 * @return array|bool|mixed
+	 */
+	public function fansTagTagging($openid, $tagids) {
+		$openid = (string) $openid;
+		$tagids = (array) $tagids;
+
+		if (empty($openid)) {
+			return error(-1, '没有填写用户openid');
+		}
+		if (empty($tagids)) {
+			return error(-1, '没有填写标签');
+		}
+		if (count($tagids) > 3) {
+			return error(-1, '最多3个标签');
+		}
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+
+		//删除粉丝之前的标签
+		$fetch_result = $this->fansTagFetchOwnTags($openid);
+		if (is_error($fetch_result)) {
+			return $fetch_result;
+		}
+		foreach ($fetch_result['tagid_list'] as $del_tagid) {
+			$this->fansTagBatchUntagging($openid, $del_tagid);
+		}
+
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/tags/batchtagging?access_token={$token}";
+		foreach ($tagids as $tagid) {
+			$data = array(
+				'openid_list' => array($openid),
+				'tagid' => $tagid
+			);
+			$data = json_encode($data);
+			$result = $this->requestApi($url, $data);
+			if (is_error($result)) {
+				return $result;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 获取用户身上的标签列表
+	 * @param $openid
+	 * @return array|mixed
+	 */
+	public function fansTagFetchOwnTags($openid) {
+		$openid = (string)$openid;
+		if (empty($openid)) {
+			return error(-1, '没有填写用户openid');
+		}
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/tags/getidlist?access_token={$token}";
+		$data = json_encode(array('openid' => $openid));
+		$result = $this->requestApi($url, $data);
+		return $result;
+	}
+
+	/**
+	 * 批量为用户取消标签
+	 * @param $openid_list
+	 * @param $tagid
+	 * @return array|bool|mixed
+	 */
+	public function fansTagBatchUntagging($openid_list, $tagid) {
+		$openid_list = (array)$openid_list;
+		$tagid = (int)$tagid;
+		if (empty($openid_list)) {
+			return error(-1, '缺少openid参数');
+		}
+		if (empty($tagid)) {
+			return error(-1, '没有填写tagid');
+		}
+
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/tags/batchuntagging?access_token={$token}";
+		$data = array(
+			'openid_list' => $openid_list,
+			'tagid' => $tagid
+		);
+		$data = json_encode($data);
+		$result = $this->requestApi($url, $data);
+		if (is_error($result)) {
+			return $result;
+		}
+		return true;
+	}
+
+	/**
+	 * 批量为用户打标签
+	 * @param $openid_list
+	 * @param $tagid
+	 * @return array|bool|mixed
+	 */
+	public function fansTagBatchTagging($openid_list, $tagid) {
+		$openid_list = (array)$openid_list;
+		$tagid = (int)$tagid;
+		if(empty($openid_list)){
+			return error(-1, '没有填写用户openid列表');
+		}
+		if(empty($tagid)) {
+			return error(-1, '没有填写tagid');
+		}
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/tags/batchtagging?access_token={$token}";
+		$data = array(
+			'openid_list' => $openid_list,
+			'tagid' => $tagid
+		);
+		$result = $this->requestApi($url, json_encode($data));
+		if (is_error($result)) {
+			return $result;
+		}
+		return true;
 	}
 
 	# 自定义菜单
+	/**
+	 * API配置自定义菜单查询
+	 * @return array|mixed
+	 */
 	public function menuCurrentQuery() {
 		$token = $this->getAccessToken();
 		if (is_error($token)) {
@@ -193,6 +351,11 @@ class XzappAccount extends WeAccount {
 		return $res;
 	}
 
+	/**
+	 * 自定义菜单创建
+	 * @param $menu
+	 * @return array|mixed
+	 */
 	public function menuCreate($menu) {
 		global $_W;
 		$token = $this->getAccessToken();
@@ -206,9 +369,7 @@ class XzappAccount extends WeAccount {
 	}
 
 
-
 	# 素材
-
 	/**
 	 * 获取熊掌号素材列表（熊掌号只支持图片和图文）
 	 * @param string $type	素材的类型:image/news
@@ -232,6 +393,11 @@ class XzappAccount extends WeAccount {
 		return $content;
 	}
 
+	/**
+	 * 删除永久素材
+	 * @param $media_id
+	 * @return array|mixed
+	 */
 	public function delMaterial($media_id) {
 		$media_id = trim($media_id);
 		if (empty($media_id)) {
@@ -242,13 +408,9 @@ class XzappAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/material/del_material?access_token=" . $token . "&media_id=" . $media_id;
-		$response = ihttp_get($url);
-		$content = @json_decode($response['content'], true);
 
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
-		}
-		return $content;
+		$response = $this->requestApi($url);
+		return $response;
 	}
 
 	/**
@@ -263,28 +425,32 @@ class XzappAccount extends WeAccount {
 		}
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/material/add_news?access_token={$token}";
 		$data = stripslashes(urldecode(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
-		$response = ihttp_request($url, $data);
-		$content = @json_decode($response['content'], true);
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
-		}
-		return $content['media_id'];
+
+		$response = $this->requestApi($url, $data);
+		return $response['media_id'];
 	}
 
+	/**
+	 * 修改永久图文素材
+	 * @param $data
+	 * @return array|mixed
+	 */
 	public function editMaterialNews($data) {
 		$token = $this->getAccessToken();
 		if(is_error($token)){
 			return $token;
 		}
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/material/update_news?access_token={$token}";
-		$response = ihttp_request($url, stripslashes(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
-		$content = @json_decode($response['content'], true);
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
-		}
-		return $content;
+
+		$response = $this->requestApi($url, stripslashes(ijson_encode($data, JSON_UNESCAPED_UNICODE)));
+		return $response;
 	}
 
+	/**
+	 * 获取永久素材
+	 * @param $media_id
+	 * @return array|mixed
+	 */
 	public function getMaterial($media_id) {
 		$token = $this->getAccessToken();
 		if (is_error($token)) {
@@ -292,39 +458,9 @@ class XzappAccount extends WeAccount {
 		}
 
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/material/get_material?access_token={$token}&media_id={$media_id}";
-		$response = ihttp_request($url);
-		$content = @json_decode($response['content'], true);
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
-		}
-		return $content;
-	}
 
-	public function uploadMediaFixed() {
-		# 未测试
-		if (empty($path)) {
-			return error(-1, '参数错误');
-		}
-		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
-			$path = ATTACHMENT_ROOT . ltrim($path, '/');
-		}
-		if (!file_exists($path)) {
-			return error(1, '文件不存在');
-		}
-		$token = $this->getAccessToken();
-		if (is_error($token)){
-			return $token;
-		}
-		$data = array(
-			'media' => '@' . $path
-		);
-		$url = $this->apis['perm']['add'] . "?access_token={$token}";
-		$response = ihttp_request($url, $data);
-		$content = @json_decode($response['content'], true);
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
-		}
-		return $content;
+		$response = $this->requestApi($url);
+		return $response;
 	}
 
 	/**
@@ -347,13 +483,32 @@ class XzappAccount extends WeAccount {
 
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/media/uploadimg?access_token={$token}";
 
-		$response = ihttp_request($url, $data);
-		$content = @json_decode($response['content'], true);
+		$response = $this->requestApi($url, $data);
+		return $response['url'];
+	}
 
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
+	public function uploadMediaFixed() {
+		# 未测试
+		if (empty($path)) {
+			return error(-1, '参数错误');
 		}
-		return $content['url'];
+		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
+			$path = ATTACHMENT_ROOT . ltrim($path, '/');
+		}
+		if (!file_exists($path)) {
+			return error(1, '文件不存在');
+		}
+		$token = $this->getAccessToken();
+		if (is_error($token)){
+			return $token;
+		}
+		$data = array(
+			'media' => '@' . $path
+		);
+		$url = $this->apis['perm']['add'] . "?access_token={$token}";
+
+		$response = $this->requestApi($url, $data);
+		return $response;
 	}
 
 }

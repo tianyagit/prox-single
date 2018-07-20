@@ -215,6 +215,9 @@ if ($do == 'post') {
 		if ($_GPC['submit_type'] == 'publish' || $is_conditional) {
 			$account_api = WeAccount::create();
 			$result = $account_api->menuCreate($menu);
+			if ($account_api->typeSign == 'xzapp') {
+				$result = 0;
+			}
 		} else {
 			$result = true;
 		}
