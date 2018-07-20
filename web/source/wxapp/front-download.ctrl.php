@@ -133,7 +133,7 @@ if ($do == 'front_download') {
 	if (!in_array($uptype, array('auto', 'normal'))) {
 		$uptype = 'auto';
 	}
-    if (!empty($wxapp_versions_info['last_modules']) && is_array($wxapp_versions_info['last_modules'])) {
+    if (!empty($wxapp_versions_info['last_modules'])) {
         $last_modules = current($wxapp_versions_info['last_modules']);
     }
     $need_upload = false;
@@ -145,7 +145,7 @@ if ($do == 'front_download') {
         }
     }
     $user_version = explode('.', $wxapp_versions_info['version']);
-    $user_version[(count($user_version)-1)] += 1;
+    $user_version[count($user_version)-1] += 1;
     $user_version = join('.', $user_version);
 	template('wxapp/version-front-download');
 }
@@ -161,11 +161,9 @@ if ($do == 'upgrade_module') {
                 'version' => empty($module['version']) ? '' : $module['version'],
             );
         }
-        if (!empty($modules)) {
-            $modules = iserializer($modules);
-            pdo_update('wxapp_versions', array('modules' => $modules,'last_modules' => $modules), array('id' => $version_id));
-            cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
-        }
+        $modules = iserializer($modules);
+        pdo_update('wxapp_versions', array('modules' => $modules, 'last_modules' => $modules), array('id' => $version_id));
+        cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
     }
     exit;
 }
