@@ -11,7 +11,7 @@ load()->model('material');
 
 $dos = array('display', 'delete', 'refresh', 'post', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
-$_W['page']['title'] = '公众号 - 自定义菜单';
+$_W['page']['title'] = $_W['account']['typeName'] . ' - 自定义菜单';
 
 if($_W['isajax']) {
 	if(!empty($_GPC['method'])) {
