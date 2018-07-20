@@ -306,6 +306,13 @@ $we7_system_menu['wxapp'] = array(
 					'icon' => 'wi wi-examine',
 					'permission_name' => 'wxapp_front_download',
 				),
+				'parameter_setting' => array(
+					'title' => '参数配置',
+                    'url' => url('profile/remote'),
+					'is_display' => 1,
+					'icon' => 'wi wi-parameter-setting',
+					'permission_name' => 'wxapp_setting',
+				),
 				'wxapp_platform_material' => array(
 					'title' => '素材管理',
 					'is_display' => 0,
