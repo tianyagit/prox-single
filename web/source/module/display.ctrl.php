@@ -50,6 +50,12 @@ if ($do == 'display') {
 		}
 	} else {
 		$user_module = user_modules($_W['uid']);
+		foreach($user_module as $key => $module) {
+			$accounts_list = module_link_uniacid_fetch($_W['uid'], $key);
+			if (empty($accounts_list)) {
+				unset($user_module[$key]);
+			}
+		}
 	}
 	$module_rank = table('modules_rank')->getByModuleNameList(array_keys($user_module));
 
