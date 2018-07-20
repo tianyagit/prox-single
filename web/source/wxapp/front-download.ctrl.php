@@ -141,7 +141,7 @@ if ($do == 'front_download') {
     if (!empty($wxapp_versions_info['modules'])) {
         foreach ($wxapp_versions_info['modules'] as $item) {
             $module = $item;
-            $need_upload = !empty($last_modules) && version_compare($module['version'], $last_modules['version']) > 0;
+            $need_upload = !empty($last_modules) && ($module['version'] != $last_modules['version']);
         }
     }
     $user_version = explode('.', $wxapp_versions_info['version']);
