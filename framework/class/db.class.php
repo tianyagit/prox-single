@@ -486,9 +486,13 @@ class DB {
 	/**
 	 * 返回完整数据表名(加前缀)(返回是主库的数据表前缀+表明)
 	 * @param string $table 表名
+	 * @param boolean $force 是否强制增加前缀，某些用户设置前缀会和表名有前部一样，导致无法添加前缀
 	 * @return string
 	 */
-	public function tablename($table) {
+	public function tablename($table, $force = false) {
+		if ($force) {
+			return "`{$this->tablepre}{$table}`";
+		}
 		return (strpos($table, $this->tablepre) === 0 || strpos($table, 'ims_') === 0) ? $table : "`{$this->tablepre}{$table}`";
 	}
 

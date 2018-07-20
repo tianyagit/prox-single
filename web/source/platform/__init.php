@@ -18,12 +18,8 @@ if (!($action == 'material' && $do == 'delete') && empty($_GPC['version_id'])) {
 	}
 }
 
-if ($_GPC['account_type'] == ACCOUNT_TYPE_XZAPP_NORMAL || $_GPC['account_type'] == ACCOUNT_TYPE_XZAPP_AUTH) {
-	define("FRAME", "xzapp");
-} else {
-	if ($action != 'material-post' && $_GPC['uniacid'] != FILE_NO_UNIACID) {
-		define('FRAME', 'account');
-	}
+if ($action != 'material-post' && $_GPC['uniacid'] != FILE_NO_UNIACID) {
+	define('FRAME', 'account');
 }
 if ($action == 'qr') {
 	$platform_qr_permission = permission_check_account_user('platform_qr', false);

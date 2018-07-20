@@ -43,7 +43,7 @@ $GLOBALS['_W']['config']['db']['tablepre'] = empty($GLOBALS['_W']['config']['db'
  * </pre>
  */
 function db_table_schema($db, $tablename = '') {
-	$result = $db->fetch("SHOW TABLE STATUS LIKE '" . trim($db->tablename($tablename), '`') . "'");
+	$result = $db->fetch("SHOW TABLE STATUS LIKE '" . trim($db->tablename($tablename, true), '`') . "'");
 	if(empty($result) || empty($result['Create_time'])) {
 		return array();
 	}
@@ -51,7 +51,7 @@ function db_table_schema($db, $tablename = '') {
 	$ret['charset'] = $result['Collation'];
 	$ret['engine'] = $result['Engine'];
 	$ret['increment'] = $result['Auto_increment'];
-	$result = $db->fetchall("SHOW FULL COLUMNS FROM " . $db->tablename($tablename));
+	$result = $db->fetchall("SHOW FULL COLUMNS FROM " . $db->tablename($tablename, true));
 	foreach($result as $value) {
 		$temp = array();
 		$type = explode(" ", $value['Type'], 2);
@@ -68,7 +68,7 @@ function db_table_schema($db, $tablename = '') {
 		$temp['increment'] = $value['Extra'] == 'auto_increment';
 		$ret['fields'][$value['Field']] = $temp;
 	}
-	$result = $db->fetchall("SHOW INDEX FROM " . $db->tablename($tablename));
+	$result = $db->fetchall("SHOW INDEX FROM " . $db->tablename($tablename, true));
 	foreach($result as $value) {
 		$ret['indexes'][$value['Key_name']]['name'] = $value['Key_name'];
 		$ret['indexes'][$value['Key_name']]['type'] = ($value['Key_name'] == 'PRIMARY') ? 'primary' : ($value['Non_unique'] == 0 ? 'unique' : 'index');

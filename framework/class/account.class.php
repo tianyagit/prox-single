@@ -117,10 +117,6 @@ abstract class WeAccount {
 			load()->classs('wxapp.work');
 			$account_obj = new WxappWork();
 		}
-		if ($type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			load()->classs('xzapp.account');
-			$account_obj = new XzappAccount();
-		}
 
 		$account_obj->uniacid = $uniaccount['uniacid'];
 		$account_obj->uniaccount = $uniaccount;
