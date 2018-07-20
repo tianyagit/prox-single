@@ -192,6 +192,9 @@
 			</td>
 			<td class="text-right">
 				{if permission_check_account_user('see_module_manage_system_install')}
+					{if permission_check_account_user('see_module_manage_system_shopinfo')}
+					<a ng-if="module.cloud_id" ng-href="{{ 'http://s.we7.cc/module-' + module.cloud_id + '.html' }}" target="_blank" class="btn btn-primary">查看商城详情</a>
+					{/if}
 					{if $do == 'recycle'}
 						{if permission_check_account_user('see_module_manage_system_stop')}
 						<a href="{php echo url('module/manage-system/recycle_post', array('support' => $module_support_name))}&module_name={{ module.name }}" class="btn btn-primary">恢复</a>

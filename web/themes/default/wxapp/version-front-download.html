@@ -300,6 +300,15 @@
 
 <!--小程序可自行提交审核-->
 {if $uptype=='auto'}
+{if $need_upload}
+<div class="alert-info">
+	<div class="alert alert-warning alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<strong><i class="wi wi-info-sign color-red"></i></strong>
+		该小程序应用已更新至最新版本：{$module['version']}。此小程序当前版本为：{$wxapp_versions_info['version']}，需要重新上传微信审核最新版本应用。
+	</div>
+</div>
+{/if}
 <div class="panel we7-panel wxapp-examine-self we7-margin-top" id="codeupload" ng-controller="code_upload_ctrl">
 	<div class="panel-heading">上传小程序代码</div>
 	<div class="panel-body">
@@ -326,7 +335,19 @@
 				<span class="wi wi-three"></span>上传成功
 			</div>
 		</div>
-
+	</div>
+	<div ng-show="show_step2">
+		<div class="panel-heading">小程序版本：{$wxapp_versions_info['version']}</div>
+		<div class="panel-body">
+			<div class="we7-flex">
+				<div>应用：<img src="{$module['logo']}" style="width: 56px;margin: 0 10px;">{$module['name']}</div>
+				<div style="position: relative;top: 16px;">之前版本：{$last_modules['version']}</div>
+				<div style="position: relative;top: 8px;">
+					最新版本：{$module['version']}<br/>
+					<span class="color-red" style="font-size: 10px"><i class="wi wi-info-sign"></i>可上传微信审核为最新版本</span>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="panel-footer bg-light-gray" id="readycommit" ng-show="!show_wait">
 		<div class="text-center step1" ng-show="show_step1">
@@ -339,14 +360,14 @@
 			<div>微信扫码预览小程序</div>
 		</div>
 
-		<form action="" class="we7-form" id="codeform" ng-show="show_step2" ng-init="user_version = {$version_info['version']}">
+		<form action="" class="we7-form" id="codeform" ng-show="show_step2" ng-init="user_version = '{$user_version}'">
 			<div class="form-group">
 				<label class="control-label col-sm-2">版本号</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="user_version" ng-model="user_version">
+					<input type="text" class="form-control" id="user_version" ng-model="user_version" value="{$user_version}">
 					<span class="help-block">
-													版本号仅限数字
-												</span>
+						版本号仅限数字
+					</span>
 				</div>
 			</div>
 			<div class="form-group">
@@ -384,7 +405,8 @@
 {if $uptype == 'auto'}
 <script type="text/javascript">
 	angular.module('we7codeuploadApp').value('config',{
-		'version_id' : {$version_id},
+		'version_id' : "{$version_id}",
+		'upgrade_url' : "{php echo url('wxapp/front-download/upgrade_module')}",
 		UUIDURL : "{php echo url('wxapp/front-download/code_uuid')}",
 		CODE_GEN_CHECK_URL : "{php echo url('wxapp/front-download/code_gen')}",
 		CODE_TOKEN_URL : "{php echo url('wxapp/front-download/code_token')}",

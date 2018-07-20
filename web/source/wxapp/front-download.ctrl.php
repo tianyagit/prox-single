@@ -11,7 +11,7 @@ load()->classs('uploadedfile');
 
 $dos = array('front_download', 'domainset', 'code_uuid', 'code_gen', 'code_token', 'qrcode', 'checkscan',
 	'commitcode', 'preview', 'getpackage', 'entrychoose', 'set_wxapp_entry',
-	'custom', 'custom_save', 'custom_default', 'custom_convert_img');
+	'custom', 'custom_save', 'custom_default', 'custom_convert_img', 'upgrade_module');
 $do = in_array($do, $dos) ? $do : 'front_download';
 
 $_W['page']['title'] = '小程序下载 - 小程序 - 管理';
@@ -133,7 +133,41 @@ if ($do == 'front_download') {
 	if (!in_array($uptype, array('auto', 'normal'))) {
 		$uptype = 'auto';
 	}
+    if (!empty($wxapp_versions_info['last_modules']) && is_array($wxapp_versions_info['last_modules'])) {
+        $last_modules = current($wxapp_versions_info['last_modules']);
+    }
+    $need_upload = false;
+    $module = array();
+    if (!empty($wxapp_versions_info['modules'])) {
+        foreach ($wxapp_versions_info['modules'] as $item) {
+            $module = $item;
+            $need_upload = !empty($last_modules) && ($module['version'] != $last_modules['version']);
+        }
+    }
+    $user_version = explode('.', $wxapp_versions_info['version']);
+    $user_version[(count($user_version)-1)] += 1;
+    $user_version = join('.', $user_version);
 	template('wxapp/version-front-download');
+}
+
+if ($do == 'upgrade_module') {
+    $wxapp_versions_info = wxapp_version($version_id);
+    if (!empty($wxapp_versions_info['modules'])) {
+        $modules = array();
+        foreach ($wxapp_versions_info['modules'] as $module) {
+            $modules[$module['name']] = array(
+                'name' => $module['name'],
+                'logo' => empty($module['logo']) ? '' : $module['logo'],
+                'version' => empty($module['version']) ? '' : $module['version'],
+            );
+        }
+        if (!empty($modules)) {
+            $modules = iserializer($modules);
+            pdo_update('wxapp_versions', array('modules' => $modules,'last_modules' => $modules), array('id' => $version_id));
+            cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
+        }
+    }
+    exit;
 }
 
 // 获取上传代码uuid
