@@ -1,6 +1,6 @@
 {template 'common/header'}
 {template 'account/account-header'}
-<div class="alert alert-info">
+<div class="alert alert-info hidden">
 	<p><i class="fa fa-exclamation-circle"></i> 无主管理员时，创始人为默认主管理员；</p>
 	<p><i class="fa fa-exclamation-circle"></i> 主管理员拥有公众号的所有权限，并且公众号的权限（模块、模板）根据主管理员来获取；</p>
 	<p><i class="fa fa-exclamation-circle"></i> 操作员和管理员不允许删除公众号和编辑公众号资料；</p>
@@ -12,54 +12,69 @@
 		<col />
 		<col />
 		<tr>
+			<th>权限</th>
 			<th class="text-left">用户名</th>
-			<th>权限身份</th>
 			<th class="text-right">
 				<!-- xstart -->
 				{if IMS_FAMILY == 'x'}
 				{if permission_check_account_user('see_account_manage_users_add_viceuser')}<span class="btn btn-link color-default" data-toggle="modal" data-target="#user-vice-modal">添加副创始人</span>{/if}
 				{/if}
 				<!-- xend -->
-				{if $_W['isfounder'] && empty($owner['uid'])}<span class="btn btn-link color-default" data-toggle="modal" data-target="#owner-modal">添加主管理员</span>{/if}
+				{if $_W['isfounder'] && empty($owner)}<span class="btn btn-link color-default" data-toggle="modal" data-target="#owner-modal">添加主管理员</span>{/if}
 				<span class="btn btn-link color-default" data-toggle="modal" data-target="#user-modal">添加使用者</span>
 			</th>
 		</tr>
-		<tr ng-repeat="permission in permissions" ng-if="permission.uid">
-			<td class="text-left" ng-bind="permission.username"></td>
-			<td ng-if="permission.isfounder == 1">创始人</td>
-			<td ng-if="permission.role == 'owner' && permission.isfounder == 0">主管理员</td>
-			<td ng-if="permission.role == 'manager' && permission.isfounder == 0">管理员</td>
-			<td ng-if="permission.role == 'operator' && permission.isfounder == 0">操作员</td>
-			<!-- xstart -->
-			{if IMS_FAMILY == 'x'}
-			<td ng-if="permission.role == 'vice_founder' && permission.isfounder == 0">副创始人</td>
+		<!-- xstart -->
+		{if IMS_FAMILY == 'x'}
+		<tr ng-if="vice_founder">
+			<td>副创始人</td>
+			<td class="text-left" ng-bind="vice_founder.username"></td>
+			<td class="we7-padding-right text-right link-group">
+			{if permission_check_account_user('see_account_manage_users_edit_vicefounder')}
+				<a href="javascript:;" ng-click="changeVice(vice_founder.username)">修改</a>
+				<a href="javascript:;" ng-click="delPermission(vice_founder.uid)">删除</a>
 			{/if}
-			<!-- xend -->
-			<td  class="we7-padding-right text-right">
-				<div class="link-group">
-					<a href="javascript:;" ng-if="permission.isfounder == 1">创始人拥有系统最高权限 </a>
-					{if $_W['isfounder']}<a href="javascript:;" ng-if="permission.role == 'owner' && permission.isfounder == 0" ng-click="changeOwner(permission.username)">修改</a>{/if}
-					<!-- xstart -->
-					{if IMS_FAMILY == 'x'}
-					{if permission_check_account_user('see_account_manage_users_edit')}<a href="javascript:;" ng-if="permission.role == 'vice_founder' && permission.isfounder == 0" ng-click="changeVice(permission.username)">修改</a>{/if}
-					{/if}
-					<!-- xend -->
-					<a href="javascript:;" ng-if="permission.isfounder == 0 && (((state == 'founder' || state == 'vice_founder' || state == 'owner') && (permission.role == 'manager' || permission.role == 'operator')) || (state == 'manager' && permission.role == 'operator'))" ng-click="setPermission(permission.uid)">权限设置  </a>
-
-					<!-- xstart -->
-					{if IMS_FAMILY == 'x'}
-						<a href="javascript:;" ng-if="permission.isfounder == 0 && (((state == 'founder' || state == 'vice_founder' || state == 'owner') && (permission.role == 'manager' || permission.role == 'operator')) || (state == 'manager' && permission.role == 'operator') || (state == 'founder' && (permission.role == 'vice_founder' || permission.role == 'owner')) || (state == 'vice_founder' && permission.role == 'owner'))" ng-click="delPermission(permission.uid)">删除 </a>
-					{/if}
-					<!-- xend -->
-
-					<!-- svstart -->
-					{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
-					<a href="javascript:;" ng-if="permission.isfounder == 0 && (((state == 'founder' || state == 'owner') && (permission.role == 'manager' || permission.role == 'operator')) || (state == 'manager' && permission.role == 'operator') || (state == 'founder' && permission.role == 'owner'))" ng-click="delPermission(permission.uid)">删除 </a>
-					{/if}
-					<!-- svend -->
-				</div>
 			</td>
 		</tr>
+		{/if}
+		<!-- xend -->
+		<tr>
+			<td>主管理员</td>
+			<td class="text-left" ng-bind="owner.username" ng-if="owner"></td>
+			<td class="text-left" ng-bind="vice_founder.username" ng-if="!owner && vice_founder"></td>
+			<td class="text-left" ng-if="!owner && !vice_founder">创始人</td>
+			<td class="we7-padding-right text-right link-group">
+			{if permission_check_account_user('see_account_manage_users_edit_owner')}
+				<a href="javascript:;" ng-click="changeVice(owner.username)" ng-if="owner">修改</a>
+				<a href="javascript:;" ng-click="delPermission(owner.uid)" ng-if="owner">删除</a>
+			{/if}
+			</td>
+		</tr>
+		<tr ng-repeat="item in manager" ng-if="manager">
+			<td>管理员</td>
+			<td class="text-left" ng-bind="item.username"></td>
+			<td class="we7-padding-right text-right link-group">
+			{if permission_check_account_user('see_account_manage_users_set_permission_for_manager')}
+				<a href="javascript:;" ng-click="setPermission(item.uid)">权限设置</a>
+			{/if}
+			{if permission_check_account_user('see_account_manage_users_delmanager')}
+				<a href="javascript:;" ng-click="delPermission(item.uid)">删除</a>
+			{/if}
+			</td>
+		</tr>
+		<tr ng-repeat="item in operator" ng-if="operator">
+			<td>操作员</td>
+			<td class="text-left" ng-bind="item.username"></td>
+			<td class="we7-padding-right text-right link-group">
+			{if permission_check_account_user('see_account_manage_users_set_permission_for_operator')}
+				<a href="javascript:;" ng-click="setPermission(item.uid)">权限设置</a>
+			{/if}
+			{if permission_check_account_user('see_account_manage_users_deloperator')}
+				<a href="javascript:;" ng-click="delPermission(item.uid)">删除</a>
+			{/if}
+			</td>
+		</tr>
+
 			
 	</table>
 	<!-- 添加主管理员模态框 -->
@@ -149,7 +164,10 @@
 </div>
 <script>
 	angular.module('accountApp').value('config', {
-		permissions: {php echo !empty($permissions) ? json_encode($permissions) : 'null'},
+		vice_founder: {php echo !empty($vice_founder) ? json_encode($vice_founder) : 'null'},
+		owner: {php echo !empty($owner) ? json_encode($owner) : 'null'},
+		manager: {php echo !empty($manager) ? json_encode($manager) : 'null'},
+		operator: {php echo !empty($operator) ? json_encode($operator) : 'null'},
 		state: {php echo !empty($state) ? json_encode($state) : 'null'},
 		accountType: {php echo !empty($_GPC['account_type']) ? json_encode($_GPC['account_type']) : '1'},
 		token: "{php echo $_W['token']}",
