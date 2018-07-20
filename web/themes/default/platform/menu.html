@@ -3,7 +3,9 @@
 	<div class="we7-page-title hide">自定义菜单</div>
 	<ul class="we7-page-tab">
 		<li {if $type == MENU_CURRENTSELF}class="active" {/if}><a href="{url 'platform/menu/post'}">默认菜单</a></li>
+		{if !in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))}
 		<li {if $type == MENU_CONDITIONAL}class="active"{/if}><a href="{url 'platform/menu' array('type' => MENU_CONDITIONAL)}">个性化菜单</a></li>
+		{/if}
 	</ul>
 	{if $do == 'display'}
 	<div class="clearfix" ng-controller="menuDisplay" id="menuDisplay">
