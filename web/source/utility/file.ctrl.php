@@ -232,6 +232,9 @@ if ($do == 'delete') {
 	$table->searchWithUniacidOrUid($uniacid, $_W['uid']);
 	$attachments = $table->getall();
 	$delete_ids = array();
+    if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
+        $_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
+    }
 	foreach ($attachments as $media) {
 		if (!empty($_W['setting']['remote']['type'])) {
 			$status = file_remote_delete($media['attachment']);
