@@ -448,13 +448,17 @@ class XzappAccount extends WeAccount {
 			return $token;
 		}
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/material/batchget_material?access_token={$token}&type={$type}&offset={$offset}&count={$count}";
-		$response = ihttp_get($url);
-		$content = @json_decode($response['content'], true);
 
-		if ($content['error_code']) {
-			return error(-1, "访问熊掌号接口失败, 错误代码：【{$content['error_code']}】, 错误信息：【{$content['error_msg']}】");
+		$response = $this->requestApi($url);
+		if (!is_error($response)) {
+			foreach ($response['item'] as $key => &$item) {
+				foreach ($item['content']['news_item'] as $news_key => &$news_item) {
+					$news_info = $this->getMaterial($news_item['thumb_media_id']);
+					$news_item['thumb_url'] = $news_info['url'];
+				}
+			}
 		}
-		return $content;
+		return $response;
 	}
 
 	/**

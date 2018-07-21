@@ -582,15 +582,10 @@ function material_news_list($server = '', $search ='', $page = array('page_index
 	}
 
 	// 转换微信图片地址
-	$account_api = WeAccount::create($_W['uniacid']);
 	foreach ($material_list as $key => &$news) {
 		if (isset($news['items']) && is_array($news['items'])) {
 			foreach ($news['items'] as &$item) {
 				$item['thumb_url'] = tomedia($item['thumb_url']);
-				if (empty($item['thumb_url']) && $account_api->typeSign == 'xzapp') {
-					$res = $account_api->getMaterial($item['thumb_media_id']);
-					$item['thumb_url'] = $res['url'];
-				}
 			}
 		}
 	}
