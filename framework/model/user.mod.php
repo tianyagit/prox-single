@@ -558,7 +558,9 @@ function user_modules($uid = 0) {
 				$modules[$module] = $support;
 				if (!empty($have_plugin_module[$module])) {
 					foreach ($have_plugin_module[$module] as $plugin) {
-						$modules[$plugin] = 'all';
+						if (!isset($module_list[$plugin])) {
+							$modules[$plugin] = 'all';
+						}
 					}
 				}
 			}
