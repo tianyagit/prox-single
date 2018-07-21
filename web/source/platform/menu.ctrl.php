@@ -206,14 +206,9 @@ if ($do == 'post') {
 		}
 
 		$is_conditional = $post['type'] == MENU_CONDITIONAL ? true : false;
-
-		if (!in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
-			$menu = menu_construct_createmenu_data($post, $is_conditional);
-		} else {
-			$menu = menu_construct_createmenu_data_xzapp($post);
-		}
 		if ($_GPC['submit_type'] == 'publish' || $is_conditional) {
 			$account_api = WeAccount::create();
+			$menu = $account_api->menuBuild($post, $is_conditional);
 			$result = $account_api->menuCreate($menu);
 		} else {
 			$result = true;
