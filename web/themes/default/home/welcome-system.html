@@ -2,11 +2,6 @@
 <!--系统管理首页-->
 <div class="welcome-container js-system-welcome" ng-controller="WelcomeCtrl" ng-cloak>
 	<div class="ad-img we7-margin-bottom">
-		<!-- xstart -->
-		{if IMS_FAMILY == 'x'}
-		<a ng-if="ads" href="{php echo url('home/welcome', array('do' => 'close_ads'))}" onclick="return confirm('关闭后将不再显示该广告');" class="close">×</a>
-		{/if}
-		<!-- xend -->
 		<a ng-href="{{ad.url}}" target="_blank" ng-repeat="ad in ads"><img ng-src="{{ad.src}}" alt="" class="img-responsive" style="margin: 0 auto;"></a>
 	</div>
 	<div class="row">
