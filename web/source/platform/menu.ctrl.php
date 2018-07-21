@@ -11,7 +11,7 @@ load()->model('material');
 
 $dos = array('display', 'delete', 'refresh', 'post', 'push', 'copy', 'current_menu');
 $do = in_array($do, $dos) ? $do : 'display';
-$_W['page']['title'] = $_W['account']['typeName'] . ' - 自定义菜单';
+$_W['page']['title'] = $_W['account']['type_name'] . ' - 自定义菜单';
 
 if($_W['isajax']) {
 	if(!empty($_GPC['method'])) {
@@ -215,9 +215,6 @@ if ($do == 'post') {
 		if ($_GPC['submit_type'] == 'publish' || $is_conditional) {
 			$account_api = WeAccount::create();
 			$result = $account_api->menuCreate($menu);
-			if ($account_api->typeSign == 'xzapp') {
-				$result = 0;
-			}
 		} else {
 			$result = true;
 		}

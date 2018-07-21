@@ -154,7 +154,7 @@ function uni_fetch($uniacid = 0) {
 	$account['grouplevel'] = $account['setting']['grouplevel'];
 	$account['logo'] = tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time();
 	$account['qrcode'] = tomedia('qrcode_'.$account['acid']. '.jpg').'?time='.time();
-	$account['typeName'] = $account_api->typeName;
+	$account['type_name'] = $account_api->typeName;
 
 	//切换公号链接
 	$account['switchurl'] = wurl('account/display/switch', array('uniacid' => $account['uniacid']));

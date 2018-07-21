@@ -365,7 +365,11 @@ class XzappAccount extends WeAccount {
 		$data['menues'] = json_encode($menu);
 		$url = "https://openapi.baidu.com/rest/2.0/cambrian/menu/create?access_token={$token}";
 		$res = $this->requestApi($url, $data);
-		return $res;
+		if (is_error($res)) {
+			return $res;
+		} else {
+			return 0;
+		}
 	}
 
 
