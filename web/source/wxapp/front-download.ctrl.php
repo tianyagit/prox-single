@@ -134,7 +134,7 @@ if ($do == 'front_download') {
 		$uptype = 'auto';
 	}
 	if (!empty($wxapp_versions_info['last_modules'])) {
-		$last_modules = $wxapp_versions_info['last_modules'] = current($wxapp_versions_info['last_modules']);
+		$last_modules = current($wxapp_versions_info['last_modules']);
 	}
 	$need_upload = false;
 	$module = array();
