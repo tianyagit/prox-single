@@ -169,7 +169,7 @@ function material_get($attach_id) {
 	if (empty($attach_id)) {
 		return error(1, "素材id参数不能为空");
 	}
-	if (is_numeric($attach_id) && (strlen($attach_id) <= 6)) {
+	if (is_numeric($attach_id)) {
 		$material = pdo_get('wechat_attachment', array('id' => $attach_id));
 	} else {
 		$media_id = trim($attach_id);
