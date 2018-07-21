@@ -10,9 +10,9 @@ defined('IN_IA') or exit('Access Denied');
  * 将数据写入文件.
  *
  * @param string $filename
- *                         文件名称
+ *						 文件名称
  * @param string $data
- *                         写入数据
+ *						 写入数据
  *
  * @return bool
  */
@@ -38,9 +38,9 @@ function file_read($filename) {
  * 将文件移动至目标位置.
  *
  * @param string $filename
- *                         移动的文件
+ *						 移动的文件
  * @param string $dest
- *                         移动的目标位置
+ *						 移动的目标位置
  *
  * @return bool
  */
@@ -171,7 +171,7 @@ function file_dir_exist_image($path) {
  * 递归创建目录.
  *
  * @param string $path
- *                     目录
+ *					 目录
  *
  * @return bool
  */
@@ -188,11 +188,11 @@ function mkdirs($path) {
  * 复制指定目录下所有文件到新目录.
  *
  * @param string $src
- *                       原始文件夹
+ *					   原始文件夹
  * @param string $des
- *                       目标文件夹
+ *					   目标文件夹
  * @param array  $filter
- *                       需要过滤的文件类型
+ *					   需要过滤的文件类型
  */
 function file_copy($src, $des, $filter) {
 	$dir = opendir($src);
@@ -213,9 +213,9 @@ function file_copy($src, $des, $filter) {
  * 删除目录.
  *
  * @param string $path
- *                      目录位置
+ *					  目录位置
  * @param bool   $clean
- *                      true: 不删除目录，仅删除目录内文件; false: 整个目录全部删除
+ *					  true: 不删除目录，仅删除目录内文件; false: 整个目录全部删除
  *
  * @return bool
  */
@@ -237,11 +237,11 @@ function rmdirs($path, $clean = false) {
  * 上传文件到附件目录.
  *
  * @param array  $file
- *                         上传的文件信息
+ *						 上传的文件信息
  * @param string $type
- *                         文件保存类型
+ *						 文件保存类型
  * @param string $name
- *                         保存的文件名,不含后缀.(未指定则自动生成文件名，指定则是从附件目录开始的完整相对路径)
+ *						 保存的文件名,不含后缀.(未指定则自动生成文件名，指定则是从附件目录开始的完整相对路径)
  * @param string $compress 是否压缩
  *
  * @return array 错误信息 error 或 array('success' => bool，'path' => 保存路径（从附件目录开始的完整相对路径）)
@@ -367,7 +367,7 @@ function file_wechat_upload($file, $type = 'image', $name = '') {
  * 上传图片到远程服务器，需要外部自行处理成功和失败时删除原图的操作.
  *
  * @param string $filename
- *                         图片的相对路径从attachment开始
+ *						 图片的相对路径从attachment开始
  *
  * @return bool|error
  */
@@ -511,9 +511,9 @@ function file_dir_remote_upload($dir_path, $limit = 50) {
  * 获取指定某目录下指定后缀的随机文件名.
  *
  * @param string $dir
- *                    目录的绝对路径
+ *					目录的绝对路径
  * @param string $ext
- *                    文件后缀名
+ *					文件后缀名
  *
  * @return string 随机文件名称
  */
@@ -625,11 +625,11 @@ function file_remote_delete($file) {
  * 如果原图像宽度大于指定宽度, 按比例缩放至指定宽度后保存至目标地址
  *
  * @param string $srcfile
- *                        原图像地址
+ *						原图像地址
  * @param string $desfile
- *                        新图像地址
- * @param int    $width
- *                        缩放宽度
+ *						新图像地址
+ * @param int	$width
+ *						缩放宽度
  *
  * @return mixed string:缩略图地址; error:调用缩略方法失败;
  */
@@ -685,15 +685,15 @@ function file_image_thumb($srcfile, $desfile = '', $width = 0) {
  * 将裁切成功的图像保存至目标地址
  *
  * @param string $src
- *                         原图像地址
+ *						 原图像地址
  * @param string $desfile
- *                         新图像地址
- * @param int    $width
- *                         要裁切的宽度
- * @param int    $height
- *                         要裁切的高度
- * @param int    $position
- *                         开始裁切的位置, 按照九宫格1-9指定位置
+ *						 新图像地址
+ * @param int	$width
+ *						 要裁切的宽度
+ * @param int	$height
+ *						 要裁切的高度
+ * @param int	$position
+ *						 开始裁切的位置, 按照九宫格1-9指定位置
  *
  * @return bool|array 指示裁切成功或裁切失败原因
  */
@@ -718,16 +718,16 @@ function file_image_crop($src, $desfile, $width = 400, $height = 300, $position 
  * 文件扫描.
  *
  * @param string $filepath
- *                            目录名称
- * @param int    $subdir
- *                            是否搜索子目录
+ *							目录名称
+ * @param int	$subdir
+ *							是否搜索子目录
  * @param string $ex
- *                            搜索扩展
- * @param int    $isdir
- *                            是否只搜索目录
- * @param int    $md5
- *                            是否生成MD5验证码
- * @param int    $enforcement
+ *							搜索扩展
+ * @param int	$isdir
+ *							是否只搜索目录
+ * @param int	$md5
+ *							是否生成MD5验证码
+ * @param int	$enforcement
  *
  * @return array
  */
@@ -768,11 +768,11 @@ function file_lists($filepath, $subdir = 1, $ex = '', $isdir = 0, $md5 = 0, $enf
  * 获取远程素材.
  *
  * @param string $url
- *                      文件地址
- * @param int    $limit
- *                      文件大小限制（单位：KB）。默认为：系统的图片大小设置
+ *					  文件地址
+ * @param int	$limit
+ *					  文件大小限制（单位：KB）。默认为：系统的图片大小设置
  * @param string $path
- *                      文件保存路径。默认为：系统附件目录 "images/{$uniacid}/Y/m/文件名";
+ *					  文件保存路径。默认为：系统附件目录 "images/{$uniacid}/Y/m/文件名";
  *
  * @return string 文件path
  */

@@ -480,8 +480,8 @@ class WeiXinAccount extends WeAccount {
 	/*
 	 * 批量获取粉丝信息（每次最多支持100个）
 	 * $data = array(
-	 *    'openid' => '**********',
-	 *    'openid' => '**********',
+	 *	'openid' => '**********',
+	 *	'openid' => '**********',
 	 * );
 	 */
 	public function fansBatchQueryInfo($data) {

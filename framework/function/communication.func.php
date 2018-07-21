@@ -88,8 +88,8 @@ function ihttp_post($url, $data) {
  * 非阻塞并发请求多个URL地址
  * @param array $urls 请求多个地址数组
  * @param array $posts 请求多个地址对应的POST数据
- *                     二维数据组时，需要与URL键值一一对应，每个请求不同的POST数据
- *                     一维数组时，每个请求使用此数据
+ *					 二维数据组时，需要与URL键值一一对应，每个请求不同的POST数据
+ *					 一维数组时，每个请求使用此数据
  * @param array $extra 同 ihttp_request
  * @param int $timeout 同 ihttp_request
  *

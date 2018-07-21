@@ -921,7 +921,7 @@ function module_upgrade_info($modulelist = array()) {
 		}
 		$manifest['branches'] = $manifest_cloud['branches'];
 		$manifest['site_branch'] = $manifest_cloud['site_branch'];
-        $manifest['cloud_id'] = $manifest_cloud['id'];
+		$manifest['cloud_id'] = $manifest_cloud['id'];
 		$manifest_cloud_list[$modulename] = $manifest;
 	}
 
@@ -1020,7 +1020,7 @@ function module_upgrade_info($modulelist = array()) {
 				'title' => $manifest['application']['title'],
 				'title_initial' => get_first_pinyin($manifest['application']['title']),
 				'lastupdatetime' => $manifest['application']['last_upgrade_time'],
-                'cloud_id' => $manifest['cloud_id'],
+				'cloud_id' => $manifest['cloud_id'],
 			);
 			if (!empty($manifest['platform']['supports'])) {
 				foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome') as $support) {

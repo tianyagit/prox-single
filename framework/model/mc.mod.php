@@ -1062,9 +1062,9 @@ function mc_notice_public($openid, $title, $sender, $content, $url = '', $remark
 /*
  * 会员余额充值微信模板消息和客服消息通知
  * $openid  粉丝openid
- * $uid     会员uid 默认为当前会员
- * $num     充值金额。单位（元）
- * $url     跳转链接
+ * $uid	 会员uid 默认为当前会员
+ * $num	 充值金额。单位（元）
+ * $url	 跳转链接
  * $remark  操作备注
  * */
 function mc_notice_recharge($openid, $uid = 0, $num = 0, $url = '', $remark = '') {
@@ -1129,13 +1129,13 @@ function mc_notice_recharge($openid, $uid = 0, $num = 0, $url = '', $remark = ''
 
 /*
  * 会员余额变更通知
- * $openid          粉丝openid
- * $uid             会员uid 默认为当前会员
- * $credit2_num     消费金额。单位（元）
- * $credit1_num     获得积分
- * $store           消费门店
- * $url             跳转链接
- * $remark          备注
+ * $openid		  粉丝openid
+ * $uid			 会员uid 默认为当前会员
+ * $credit2_num	 消费金额。单位（元）
+ * $credit1_num	 获得积分
+ * $store		   消费门店
+ * $url			 跳转链接
+ * $remark		  备注
  * */
 function mc_notice_credit2($openid, $uid, $credit2_num, $credit1_num = 0, $store = '线下消费', $url = '', $remark = '谢谢惠顾，点击查看详情') {
 	global $_W;
@@ -1203,12 +1203,12 @@ function mc_notice_credit2($openid, $uid, $credit2_num, $credit1_num = 0, $store
 
 /*
  * 会员积分变更通知
- * $openid          粉丝openid
- * $uid             会员uid 默认为当前会员
- * $credit1_num     积分数量。如果是消耗积分，使用负数即可。即：-1000
- * $tip             积分变更原因
- * $url             跳转链接
- * $remark          备注
+ * $openid		  粉丝openid
+ * $uid			 会员uid 默认为当前会员
+ * $credit1_num	 积分数量。如果是消耗积分，使用负数即可。即：-1000
+ * $tip			 积分变更原因
+ * $url			 跳转链接
+ * $remark		  备注
  * */
 function mc_notice_credit1($openid, $uid, $credit1_num, $tip, $url = '', $remark = '谢谢惠顾，点击查看详情') {
 	global $_W;
@@ -1345,13 +1345,13 @@ function mc_notice_group($openid, $old_group, $now_group, $url = '', $remark = '
 
 /*
  * 会员卡计次充值
- * $openid          粉丝openid
- * $uid             会员uid
- * $type            冲次项目（eg:理发计次）
- * $num             本次充值次数
- * $total_num       总剩余次数
- * $endtime         服务截至日期
- * $remark          备注
+ * $openid		  粉丝openid
+ * $uid			 会员uid
+ * $type			冲次项目（eg:理发计次）
+ * $num			 本次充值次数
+ * $total_num	   总剩余次数
+ * $endtime		 服务截至日期
+ * $remark		  备注
  * */
 function mc_notice_nums_plus($openid, $type, $num, $total_num, $remark = '感谢您的支持，祝您生活愉快！') {
 	global $_W;
@@ -1408,13 +1408,13 @@ function mc_notice_nums_plus($openid, $type, $num, $total_num, $remark = '感谢
 
 /*
  * 会员卡计次消费
- * $openid          粉丝openid
- * $uid             会员uid
- * $card_id         卡号
- * $type            消费项目（eg:理发计次）
- * $num             剩余次数
- * $endtime         服务截至日期
- * $remark          备注
+ * $openid		  粉丝openid
+ * $uid			 会员uid
+ * $card_id		 卡号
+ * $type			消费项目（eg:理发计次）
+ * $num			 剩余次数
+ * $endtime		 服务截至日期
+ * $remark		  备注
  * */
 function mc_notice_nums_times($openid, $card_id, $type, $num, $remark = '感谢您对本店的支持，欢迎下次再来！') {
 	global $_W;
@@ -1471,13 +1471,13 @@ function mc_notice_nums_times($openid, $card_id, $type, $num, $remark = '感谢�
 
 /*
  * 会员卡计时充值
- * $openid          粉丝openid
- * $uid             会员uid
- * $card_id         卡号
- * $type            消费项目（eg:理发计次）
- * $num             剩余次数
- * $endtime         服务截至日期
- * $remark          备注
+ * $openid		  粉丝openid
+ * $uid			 会员uid
+ * $card_id		 卡号
+ * $type			消费项目（eg:理发计次）
+ * $num			 剩余次数
+ * $endtime		 服务截至日期
+ * $remark		  备注
  * */
 function mc_notice_times_plus($openid, $card_id, $type, $fee, $days, $endtime = '', $remark = '感谢您对本店的支持，欢迎下次再来！') {
 	global $_W;
@@ -1534,11 +1534,11 @@ function mc_notice_times_plus($openid, $card_id, $type, $fee, $days, $endtime = 
 
 /*
  * 会员服务到期提醒
- * $openid          粉丝openid
- * $title           服务说明（eg:您好，您有商品即将到期，请您注意。）
- * $type            服务项目（eg:游泳时长）
- * $endtime         服务截至日期
- * $remark          备注
+ * $openid		  粉丝openid
+ * $title		   服务说明（eg:您好，您有商品即将到期，请您注意。）
+ * $type			服务项目（eg:游泳时长）
+ * $endtime		 服务截至日期
+ * $remark		  备注
  * */
 function mc_notice_times_times($openid, $title, $type, $endtime = '', $remark = '请注意时间，防止服务失效！') {
 	global $_W;
