@@ -4,12 +4,6 @@ defined('IN_IA') or exit('Access Denied');
 class XzappAccount extends WeAccount {
 	public $tablename = 'account_xzapp';
 
-	public $apis = array(
-		'perm' => array(
-			'add' => 'https://openapi.baidu.com/rest/2.0/cambrian/media/add_material',
-		),
-	);
-
 	public function __construct($account = array()) {
 		$this->menuFrame = 'account';
 		$this->type = ACCOUNT_TYPE_XZAPP_NORMAL;
@@ -555,12 +549,12 @@ class XzappAccount extends WeAccount {
 		return $response['url'];
 	}
 
-	public function uploadMediaFixed() {
+	public function uploadMediaFixed($path, $type = 'images') {
 		# 未测试
 		if (empty($path)) {
 			return error(-1, '参数错误');
 		}
-		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
+		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb', 'voices'))) {
 			$path = ATTACHMENT_ROOT . ltrim($path, '/');
 		}
 		if (!file_exists($path)) {
@@ -573,10 +567,9 @@ class XzappAccount extends WeAccount {
 		$data = array(
 			'media' => '@' . $path
 		);
-		$url = $this->apis['perm']['add'] . "?access_token={$token}";
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/media/add_material?access_token={$token}";
 
 		$response = $this->requestApi($url, $data);
 		return $response;
 	}
-
 }
