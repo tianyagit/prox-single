@@ -307,27 +307,27 @@ if($do == 'modules_tpl') {
 					'name' => '',
 				);
 				switch ($defaultaccount['type']) {
-                    case ACCOUNT_TYPE_OFFCIAL_NORMAL:
-                    case ACCOUNT_TYPE_OFFCIAL_AUTH:
-                        $data['modules']['modules'] = $module;
-                        break;
-                    case ACCOUNT_TYPE_APP_NORMAL:
-                    case ACCOUNT_TYPE_APP_AUTH:
-                    case ACCOUNT_TYPE_WXAPP_WORK:
-                        $data['modules']['wxapp'] = $module;
-                        break;
-                    case ACCOUNT_TYPE_WEBAPP_NORMAL:
-                        $data['modules']['webapp'] = $module;
-                        break;
-                    case ACCOUNT_TYPE_XZAPP_NORMAL:
-                    case ACCOUNT_TYPE_XZAPP_AUTH:
-                        $data['modules']['xzapp'] = $module;
-                        break;
-                    case ACCOUNT_TYPE_PHONEAPP_NORMAL:
-                        $data['modules']['phoneapp'] = $module;
-                        break;
-                }
-                $data['modules'] = iserializer($data['modules']);
+					case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+					case ACCOUNT_TYPE_OFFCIAL_AUTH:
+						$data['modules']['modules'] = $module;
+						break;
+					case ACCOUNT_TYPE_APP_NORMAL:
+					case ACCOUNT_TYPE_APP_AUTH:
+					case ACCOUNT_TYPE_WXAPP_WORK:
+						$data['modules']['wxapp'] = $module;
+						break;
+					case ACCOUNT_TYPE_WEBAPP_NORMAL:
+						$data['modules']['webapp'] = $module;
+						break;
+					case ACCOUNT_TYPE_XZAPP_NORMAL:
+					case ACCOUNT_TYPE_XZAPP_AUTH:
+						$data['modules']['xzapp'] = $module;
+						break;
+					case ACCOUNT_TYPE_PHONEAPP_NORMAL:
+						$data['modules']['phoneapp'] = $module;
+						break;
+				}
+				$data['modules'] = iserializer($data['modules']);
 
 				$id = pdo_fetchcolumn("SELECT id FROM ".tablename('uni_group')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
 				if (empty($id)) {
@@ -422,9 +422,9 @@ if($do == 'modules_tpl') {
 				}else {
 					$ex_module = current(uni_groups(array($extendpackage_val['groupid'])));
 					if (!empty($ex_module)) {
-                        $ex_module['type'] = 'extend';
-                        $modules_tpl[] = $ex_module;
-                    }
+						$ex_module['type'] = 'extend';
+						$modules_tpl[] = $ex_module;
+					}
 				}
 			}
 		}
@@ -433,13 +433,13 @@ if($do == 'modules_tpl') {
 	$modules = user_modules($_W['uid']);
 	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
 	$extend = pdo_get('uni_group', array('uniacid' => $uniacid));
-    $extend_modules = iunserializer($extend['modules']);
-    $extend['modules'] = array();
-    foreach ($extend_modules as $modulenames) {
-        if (!empty($modulenames)) {
-            $extend['modules'] = $current_module_names = array_merge($extend['modules'], $modulenames);
-        }
-    }
+	$extend_modules = iunserializer($extend['modules']);
+	$extend['modules'] = array();
+	foreach ($extend_modules as $modulenames) {
+		if (!empty($modulenames)) {
+			$extend['modules'] = $current_module_names = array_merge($extend['modules'], $modulenames);
+		}
+	}
 	$extend['templates'] = iunserializer($extend['templates']);
 	$canmodify = false;
 	/* xstart */

@@ -15,7 +15,7 @@ if (in_array($action, array('permission', 'default-entry', 'manage-account'))) {
 		itoast('', url('module/display'));
 	}
 	$check_manange = $account_api->checkIntoManage();
-    //模块内定死使用account
+	//模块内定死使用account
 	define('FRAME', 'account');
 	if (is_error($check_manange)) {
 		$account_display_url = $account_api->accountDisplayUrl();

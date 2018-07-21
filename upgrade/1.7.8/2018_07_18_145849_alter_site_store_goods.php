@@ -15,9 +15,9 @@ class AlterSiteStoreGoods {
 	 *  执行更新
 	 */
 	public function up() {
-        if(!pdo_fieldexists('site_store_goods', 'user_group_price')) {
-            pdo_query("ALTER TABLE " . tablename('site_store_goods') . " ADD `user_group_price` TEXT COMMENT '用户组价格' AFTER price;");
-        }
+		if(!pdo_fieldexists('site_store_goods', 'user_group_price')) {
+			pdo_query("ALTER TABLE " . tablename('site_store_goods') . " ADD `user_group_price` TEXT COMMENT '用户组价格' AFTER price;");
+		}
 	}
 	
 	/**

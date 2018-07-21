@@ -58,28 +58,28 @@ if ($do == 'custom_default') {
 
 // 保存自定义appjson
 if ($do == 'custom_save') {
-    if (empty($version_info)) {
-        iajax(-1, '参数错误！');
-    }
+	if (empty($version_info)) {
+		iajax(-1, '参数错误！');
+	}
 	$json = array();
-    if (!empty($_GPC['json']['window'])) {
-        $json['window'] = array(
-            'navigationBarTitleText' => safe_gpc_string($_GPC['json']['window']['navigationBarTitleText']),
-            'navigationBarTextStyle' => safe_gpc_string($_GPC['json']['window']['navigationBarTextStyle']),
-            'navigationBarBackgroundColor' => safe_gpc_string($_GPC['json']['window']['navigationBarBackgroundColor']),
-            'backgroundColor' => safe_gpc_string($_GPC['json']['window']['backgroundColor']),
-        );
-    }
-    if (!empty($_GPC['json']['tabBar'])) {
-        $json['tabBar'] = array(
-            'color' => safe_gpc_string($_GPC['json']['tabBar']['color']),
-            'selectedColor' => safe_gpc_string($_GPC['json']['tabBar']['selectedColor']),
-            'backgroundColor' => safe_gpc_string($_GPC['json']['tabBar']['backgroundColor']),
-            'borderStyle' => in_array($_GPC['json']['tabBar']['borderStyle'], array('black', 'white')) ? $_GPC['json']['tabBar']['borderStyle'] : '',
-        );
-    }
+	if (!empty($_GPC['json']['window'])) {
+		$json['window'] = array(
+			'navigationBarTitleText' => safe_gpc_string($_GPC['json']['window']['navigationBarTitleText']),
+			'navigationBarTextStyle' => safe_gpc_string($_GPC['json']['window']['navigationBarTextStyle']),
+			'navigationBarBackgroundColor' => safe_gpc_string($_GPC['json']['window']['navigationBarBackgroundColor']),
+			'backgroundColor' => safe_gpc_string($_GPC['json']['window']['backgroundColor']),
+		);
+	}
+	if (!empty($_GPC['json']['tabBar'])) {
+		$json['tabBar'] = array(
+			'color' => safe_gpc_string($_GPC['json']['tabBar']['color']),
+			'selectedColor' => safe_gpc_string($_GPC['json']['tabBar']['selectedColor']),
+			'backgroundColor' => safe_gpc_string($_GPC['json']['tabBar']['backgroundColor']),
+			'borderStyle' => in_array($_GPC['json']['tabBar']['borderStyle'], array('black', 'white')) ? $_GPC['json']['tabBar']['borderStyle'] : '',
+		);
+	}
 	$result = wxapp_code_save_appjson($version_id, $json);
-    cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
+	cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
 	iajax($result, '');
 }
 
@@ -133,39 +133,39 @@ if ($do == 'front_download') {
 	if (!in_array($uptype, array('auto', 'normal'))) {
 		$uptype = 'auto';
 	}
-    if (!empty($wxapp_versions_info['last_modules'])) {
-        $last_modules = current($wxapp_versions_info['last_modules']);
-    }
-    $need_upload = false;
-    $module = array();
-    if (!empty($wxapp_versions_info['modules'])) {
-        foreach ($wxapp_versions_info['modules'] as $item) {
-            $module = $item;
-            $need_upload = !empty($last_modules) && ($module['version'] != $last_modules['version']);
-        }
-    }
-    $user_version = explode('.', $wxapp_versions_info['version']);
-    $user_version[count($user_version)-1] += 1;
-    $user_version = join('.', $user_version);
+	if (!empty($wxapp_versions_info['last_modules'])) {
+		$last_modules = current($wxapp_versions_info['last_modules']);
+	}
+	$need_upload = false;
+	$module = array();
+	if (!empty($wxapp_versions_info['modules'])) {
+		foreach ($wxapp_versions_info['modules'] as $item) {
+			$module = $item;
+			$need_upload = !empty($last_modules) && ($module['version'] != $last_modules['version']);
+		}
+	}
+	$user_version = explode('.', $wxapp_versions_info['version']);
+	$user_version[count($user_version)-1] += 1;
+	$user_version = join('.', $user_version);
 	template('wxapp/version-front-download');
 }
 
 if ($do == 'upgrade_module') {
-    $wxapp_versions_info = wxapp_version($version_id);
-    if (!empty($wxapp_versions_info['modules'])) {
-        $modules = array();
-        foreach ($wxapp_versions_info['modules'] as $module) {
-            $modules[$module['name']] = array(
-                'name' => $module['name'],
-                'logo' => empty($module['logo']) ? '' : $module['logo'],
-                'version' => empty($module['version']) ? '' : $module['version'],
-            );
-        }
-        $modules = iserializer($modules);
-        pdo_update('wxapp_versions', array('modules' => $modules, 'last_modules' => $modules), array('id' => $version_id));
-        cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
-    }
-    exit;
+	$wxapp_versions_info = wxapp_version($version_id);
+	if (!empty($wxapp_versions_info['modules'])) {
+		$modules = array();
+		foreach ($wxapp_versions_info['modules'] as $module) {
+			$modules[$module['name']] = array(
+				'name' => $module['name'],
+				'logo' => empty($module['logo']) ? '' : $module['logo'],
+				'version' => empty($module['version']) ? '' : $module['version'],
+			);
+		}
+		$modules = iserializer($modules);
+		pdo_update('wxapp_versions', array('modules' => $modules, 'last_modules' => $modules), array('id' => $version_id));
+		cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
+	}
+	exit;
 }
 
 // 获取上传代码uuid

@@ -15,9 +15,9 @@ class UpdateModuleCloud {
 	 *  执行更新
 	 */
 	public function up() {
-        if(!pdo_fieldexists('modules_cloud', 'cloud_id')) {
-            pdo_query("ALTER TABLE " . tablename('modules_cloud') . " ADD `cloud_id` INT( 11 ) NOT NULL DEFAULT  '0' COMMENT  '云商城内模块ID' AFTER  `id`;");
-        }
+		if(!pdo_fieldexists('modules_cloud', 'cloud_id')) {
+			pdo_query("ALTER TABLE " . tablename('modules_cloud') . " ADD `cloud_id` INT( 11 ) NOT NULL DEFAULT  '0' COMMENT  '云商城内模块ID' AFTER  `id`;");
+		}
 	}
 	
 	/**

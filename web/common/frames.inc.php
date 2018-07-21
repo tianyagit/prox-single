@@ -53,12 +53,12 @@ $we7_system_menu['account'] = array(
 					'url' => url('platform/menu/post'),
 					'icon' => 'wi wi-custommenu',
 					'permission_name' => 'platform_menu',
-                    'is_display' => array(
-                        ACCOUNT_TYPE_OFFCIAL_NORMAL,
-                        ACCOUNT_TYPE_OFFCIAL_AUTH,
+					'is_display' => array(
+						ACCOUNT_TYPE_OFFCIAL_NORMAL,
+						ACCOUNT_TYPE_OFFCIAL_AUTH,
 						ACCOUNT_TYPE_XZAPP_NORMAL,
 						ACCOUNT_TYPE_XZAPP_AUTH,
-                    ),
+					),
 				),
 				'platform_qr' => array(
 					'title' => '二维码/转化链接',
@@ -270,18 +270,18 @@ $we7_system_menu['wxapp'] = array(
 			'menu' => array(),
 			'is_display' => true,
 		),
-        'mc' => array(
-            'title' => '粉丝',
-            'menu' => array(
-                'wxapp_member' => array(
-                    'title' => '会员',
-                    'url' => url('mc/member'),
-                    'is_display' => 1,
-                    'icon' => 'wi wi-fans',
-                    'permission_name' => 'wxapp_member',
-                )
-            ),
-        ),
+		'mc' => array(
+			'title' => '粉丝',
+			'menu' => array(
+				'wxapp_member' => array(
+					'title' => '会员',
+					'url' => url('mc/member'),
+					'is_display' => 1,
+					'icon' => 'wi wi-fans',
+					'permission_name' => 'wxapp_member',
+				)
+			),
+		),
 		'wxapp_profile' => array(
 			'title' => '配置',
 			'menu' => array(
@@ -308,7 +308,7 @@ $we7_system_menu['wxapp'] = array(
 				),
 				'parameter_setting' => array(
 					'title' => '参数配置',
-                    'url' => url('profile/remote'),
+					'url' => url('profile/remote'),
 					'is_display' => 1,
 					'icon' => 'wi wi-parameter-setting',
 					'permission_name' => 'wxapp_setting',
@@ -326,24 +326,24 @@ $we7_system_menu['wxapp'] = array(
 				),
 			)
 		),
-        /* xstart */
-        'statistics' => array(
-            'title' => '统计',
-            'menu' => array(
-                'statistics_fans' => array(
-                    'title' => '访问统计',
-                    'url' => url('wxapp/statistics'),
-                    'icon' => 'wi wi-statistical',
-                    'permission_name' => 'statistics_fans',
-                    'is_display' => array(
-                        ACCOUNT_TYPE_APP_NORMAL,
-                        ACCOUNT_TYPE_APP_AUTH,
-                        ACCOUNT_TYPE_WXAPP_WORK,
-                    ),
-                ),
-            ),
-        ),
-        /* xend */
+		/* xstart */
+		'statistics' => array(
+			'title' => '统计',
+			'menu' => array(
+				'statistics_fans' => array(
+					'title' => '访问统计',
+					'url' => url('wxapp/statistics'),
+					'icon' => 'wi wi-statistical',
+					'permission_name' => 'statistics_fans',
+					'is_display' => array(
+						ACCOUNT_TYPE_APP_NORMAL,
+						ACCOUNT_TYPE_APP_AUTH,
+						ACCOUNT_TYPE_WXAPP_WORK,
+					),
+				),
+			),
+		),
+		/* xend */
 	),
 );
 

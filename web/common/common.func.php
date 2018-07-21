@@ -166,7 +166,7 @@ function buildframes($framename = ''){
 		}
 		return $frames;
 	}
-    $frames = cache_load(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
+	$frames = cache_load(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
 	if(empty($frames)) {
 		$frames = cache_build_frame_menu();
 	}
@@ -505,9 +505,9 @@ function buildframes($framename = ''){
 		load()->model('wxapp');
 		$version_id = intval($_GPC['version_id']);
 		$wxapp_version = wxapp_version($version_id);
-        if (!empty($wxapp_version['last_modules']) && is_array($wxapp_version['last_modules'])) {
-            $last_modules = current($wxapp_version['last_modules']);
-        }
+		if (!empty($wxapp_version['last_modules']) && is_array($wxapp_version['last_modules'])) {
+			$last_modules = current($wxapp_version['last_modules']);
+		}
 		if (!empty($wxapp_version['modules'])) {
 			foreach ($wxapp_version['modules'] as $module) {
 				$wxapp_module_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], $module['name']);
@@ -515,8 +515,8 @@ function buildframes($framename = ''){
 					$frames['wxapp']['section']['wxapp_module']['is_display'] = false;
 					break;
 				}
-                $need_upload = !empty($last_modules) && ($module['version'] != $last_modules['version']);
-                $frames['wxapp']['section']['wxapp_module']['menu']['module_menu'.$module['mid']] = array(
+				$need_upload = !empty($last_modules) && ($module['version'] != $last_modules['version']);
+				$frames['wxapp']['section']['wxapp_module']['menu']['module_menu'.$module['mid']] = array(
 					'title' => "<img src='{$module['logo']}'> {$module['title']}",
 					'url' => url('account/display/switch', array('module' => $module['name'], 'version_id' => $version_id, 'uniacid' => $_W['uniacid'])),
 					'is_display' => 1,
@@ -525,9 +525,9 @@ function buildframes($framename = ''){
 		} else {
 			$frames['wxapp']['section']['wxapp_module']['is_display'] = false;
 		}
-        if (!empty($frames['wxapp']['section']['wxapp_profile']['menu']['front_download'])) {
-            $frames['wxapp']['section']['wxapp_profile']['menu']['front_download']['need_upload'] = empty($need_upload) ? 0 : 1;
-        }
+		if (!empty($frames['wxapp']['section']['wxapp_profile']['menu']['front_download'])) {
+			$frames['wxapp']['section']['wxapp_profile']['menu']['front_download']['need_upload'] = empty($need_upload) ? 0 : 1;
+		}
 
 		if (!empty($frames['wxapp']['section'])) {
 			$wxapp_permission = permission_account_user('wxapp');

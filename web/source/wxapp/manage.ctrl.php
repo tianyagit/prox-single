@@ -43,20 +43,20 @@ if ($do == 'display') {
 		if (!empty($version_exist)) {
 			$wxapp_version_lists = wxapp_version_all($account['uniacid']);
 			if (!empty($wxapp_version_lists)) {
-			    foreach ($wxapp_version_lists as &$row) {
-			        if (!empty($row['modules'])) {
-                        $row['module'] = current($row['modules']);
-                    }
-                    if (!empty($row['last_modules'])) {
-                        $row['last_modules'] = current($row['last_modules']);
-                        $module = module_fetch($row['last_modules']['name']);
-                        if (!empty($module)) {
-                            $row['last_modules'] = array_merge($module, $row['last_modules']);
-                        }
-                    }
-                }
-                unset($row);
-            }
+				foreach ($wxapp_version_lists as &$row) {
+					if (!empty($row['modules'])) {
+						$row['module'] = current($row['modules']);
+					}
+					if (!empty($row['last_modules'])) {
+						$row['last_modules'] = current($row['last_modules']);
+						$module = module_fetch($row['last_modules']['name']);
+						if (!empty($module)) {
+							$row['last_modules'] = array_merge($module, $row['last_modules']);
+						}
+					}
+				}
+				unset($row);
+			}
 			$wxapp_modules = wxapp_support_uniacid_modules($account['uniacid']);
 		}
 	}

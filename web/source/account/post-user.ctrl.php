@@ -31,29 +31,29 @@ if (is_error($account)) {
 
 if ($do == 'edit') {
 	$permissions = pdo_fetchall("SELECT id, uid, role FROM ".tablename('uni_account_users')." WHERE uniacid = '$uniacid' and role != :role  ORDER BY uid ASC, role DESC", array(':role' => 'clerk'), 'uid');
-    if (!empty($permissions)) {
+	if (!empty($permissions)) {
 		$member = pdo_fetchall("SELECT username, uid FROM ".tablename('users')." WHERE uid IN (".implode(',', array_keys($permissions)).")", array(), 'uid');
 		if (!empty($member)) {
-            $operator = $manager = $owner = $vice_founder = array();
+			$operator = $manager = $owner = $vice_founder = array();
 			foreach ($permissions as $key => $per_val) {
-                $per_val['isfounder'] = in_array($member[$key]['uid'], $founders) ? 1 : 0;
-                $per_val['username'] = $member[$key]['username'] ? $member[$key]['username'] : '';
-                switch($per_val['role']) {
-                    case 'vice_founder':
-                        $vice_founder = $per_val;
-                        break;
-                    case 'owner':
-                        $owner = $per_val;
-                        break;
-                    case 'manager':
-                        $manager[] = $per_val;
-                        break;
-                    case 'operator':
-                        $operator[] = $per_val;
-                        break;
-                    default:
-                        break;
-                }
+				$per_val['isfounder'] = in_array($member[$key]['uid'], $founders) ? 1 : 0;
+				$per_val['username'] = $member[$key]['username'] ? $member[$key]['username'] : '';
+				switch($per_val['role']) {
+					case 'vice_founder':
+						$vice_founder = $per_val;
+						break;
+					case 'owner':
+						$owner = $per_val;
+						break;
+					case 'manager':
+						$manager[] = $per_val;
+						break;
+					case 'operator':
+						$operator[] = $per_val;
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}

@@ -9,13 +9,13 @@ defined('IN_IA') or exit('Access Denied');
  * 说明（以$we7_file_permission数组下第一个元素account为例）：
  * account  代表  设定/web/source/account文件夹下的权限（即代码中的 $controller 或 $_GPC['c']）
  * account数组下的元素：
- *    'default'       代表  进入此controller后在没有指定$action（即$_GPC['a']）的情况下，默认进入的文件
- *    'direct'        代表  无需任何权限，可以直接进入的权限
- *    'vice_founder'  代表  副创始人拥有的权限
- *    'owner'         代表  主管理员拥有的权限
- *    'manager'       代表  管理员拥有的权限
- *    'operator'      代表  操作员拥有的权限
- *    'clerk'         代表  店员拥有的权限
+ *	'default'	   代表  进入此controller后在没有指定$action（即$_GPC['a']）的情况下，默认进入的文件
+ *	'direct'		代表  无需任何权限，可以直接进入的权限
+ *	'vice_founder'  代表  副创始人拥有的权限
+ *	'owner'		 代表  主管理员拥有的权限
+ *	'manager'	   代表  管理员拥有的权限
+ *	'operator'	  代表  操作员拥有的权限
+ *	'clerk'		 代表  店员拥有的权限
  * 权限中带星号'*'指拥有该文件夹下所有权限
  */
 $we7_file_permission = array();
@@ -433,12 +433,12 @@ $we7_file_permission = array(
 			'see_account_manage_module_tpl_all_permission',
 			'see_account_manage_sms_blance',
 			'see_account_manage_users_edit_vicefounder',
-            'see_account_manage_users_edit_owner',
-            'see_account_manage_users_set_permission_for_manager',
-            'see_account_manage_users_set_permission_for_operator',
-            'see_account_manage_users_addmanager',
-            'see_account_manage_users_delmanager',
-            'see_account_manage_users_deloperator',
+			'see_account_manage_users_edit_owner',
+			'see_account_manage_users_set_permission_for_manager',
+			'see_account_manage_users_set_permission_for_operator',
+			'see_account_manage_users_addmanager',
+			'see_account_manage_users_delmanager',
+			'see_account_manage_users_deloperator',
 			'see_account_manage_users_adduser',
 			'see_account_manage_users_add_viceuser',
 			'see_system_upgrade',
@@ -458,25 +458,25 @@ $we7_file_permission = array(
 		),
 		'vice_founder' => array(
 			'see_account_manage_users_adduser',
-            'see_account_manage_users_edit_owner',
-            'see_account_manage_users_set_permission_for_manage',
-            'see_account_manage_users_set_permission_for_operator',
-            'see_account_manage_users_deloperator',
-            'see_account_manage_users_delmanager',
+			'see_account_manage_users_edit_owner',
+			'see_account_manage_users_set_permission_for_manage',
+			'see_account_manage_users_set_permission_for_operator',
+			'see_account_manage_users_deloperator',
+			'see_account_manage_users_delmanager',
 			'see_module_manage_system_group_add',
 			'see_user_add_welcome_account',
 			'see_system_updatecache',
 		),
 		'owner' => array(
 			'see_system_updatecache',
-            'see_account_manage_users_set_permission_for_manage',
-            'see_account_manage_users_set_permission_for_operator',
-            'see_account_manage_users_deloperator',
-            'see_account_manage_users_delmanager',
+			'see_account_manage_users_set_permission_for_manage',
+			'see_account_manage_users_set_permission_for_operator',
+			'see_account_manage_users_deloperator',
+			'see_account_manage_users_delmanager',
 		),
 		'manager' => array(
-            'see_account_manage_users_set_permission_for_operator',
-            'see_account_manage_users_deloperator',
+			'see_account_manage_users_set_permission_for_operator',
+			'see_account_manage_users_deloperator',
 			'see_user_profile_welcome',
 			'see_system_updatecache',
 		),

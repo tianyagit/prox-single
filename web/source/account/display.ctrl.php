@@ -188,11 +188,11 @@ if ($do == 'switch') {
 				if (!empty($_GPC['version_id'])) {
 					$version_id = intval($_GPC['version_id']);
 				} else {
-                    if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-                        $versions = phoneapp_get_some_lastversions($uniacid);
-                    } else {
-                        $versions = wxapp_get_some_lastversions($uniacid);
-                    }
+					if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+						$versions = phoneapp_get_some_lastversions($uniacid);
+					} else {
+						$versions = wxapp_get_some_lastversions($uniacid);
+					}
 					foreach ($versions as $val) {
 						if ($val['current']) {
 							$version_id = $val['id'];
@@ -201,11 +201,11 @@ if ($do == 'switch') {
 				}
 
 				if (!empty($module_name) && !empty($version_id)) {
-                    if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-                        $version_info = phoneapp_version($version_id);
-                    } else {
-                        $version_info = wxapp_version($version_id);
-                    }
+					if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+						$version_info = phoneapp_version($version_id);
+					} else {
+						$version_info = wxapp_version($version_id);
+					}
 					$module_info = array();
 					if (!empty($version_info['modules'])) {
 						foreach ($version_info['modules'] as $key => $module_val) {

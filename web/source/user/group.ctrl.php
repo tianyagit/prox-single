@@ -45,11 +45,11 @@ if ($do == 'post') {
 	if (!empty($id)) {
 		$group_info = pdo_get('users_group', array('id' => $id));
 		$group_info['package'] = iunserializer($group_info['package']);
-        if (!empty($group_info['package']) && in_array(-1, $group_info['package'])) {
-            $group_info['check_all'] = true;
-        } else {
-            $checked_groups = pdo_getall('uni_group', array('uniacid' => 0, 'id' => $group_info['package']), array('id', 'name'), '', array('id DESC'));
-        }
+		if (!empty($group_info['package']) && in_array(-1, $group_info['package'])) {
+			$group_info['check_all'] = true;
+		} else {
+			$checked_groups = pdo_getall('uni_group', array('uniacid' => 0, 'id' => $group_info['package']), array('id', 'name'), '', array('id DESC'));
+		}
 	}
 	$packages = uni_groups();
 	if (!empty($packages)) {
@@ -60,14 +60,14 @@ if ($do == 'post') {
 				$package_val['checked'] = false;
 			}
 			if ($package_val['id'] == -1) {
-			    unset($packages[$key]);
-            }
+				unset($packages[$key]);
+			}
 		}
-        unset($package_val);
-        $packages = array_values($packages);
+		unset($package_val);
+		$packages = array_values($packages);
 	}
-    $pagesize = 15;
-    $pager = pagination(count($packages), 1, $pagesize, '', array('ajaxcallback' => true, 'callbackfuncname' => 'loadMore'));
+	$pagesize = 15;
+	$pager = pagination(count($packages), 1, $pagesize, '', array('ajaxcallback' => true, 'callbackfuncname' => 'loadMore'));
 	if (checksubmit('submit')) {
 		$user_group = array(
 			'id' => intval($_GPC['id']),

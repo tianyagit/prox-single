@@ -391,17 +391,17 @@ if ($do =='install') {
 				}
 				$group_info['modules'] = iunserializer($group_info['modules']);
 				if (!empty($group_info['modules'])) {
-				    $is_continue = false;
-                    foreach ($group_info['modules'] as $modulenames) {
-                        if (in_array($module['name'], $modulenames)) {
-                            $is_continue = true;
-                            break;
-                        }
-                    }
-                    if ($is_continue) {
-                        continue;
-                    }
-                }
+					$is_continue = false;
+					foreach ($group_info['modules'] as $modulenames) {
+						if (in_array($module['name'], $modulenames)) {
+							$is_continue = true;
+							break;
+						}
+					}
+					if ($is_continue) {
+						continue;
+					}
+				}
 				$group_info['modules']['modules'][] = $module['name'];
 				$group_info['modules']['wxapp'][] = $module['name'];
 				$group_info['modules']['webapp'][] = $module['name'];
@@ -521,13 +521,13 @@ if ($do == 'module_detail') {
 			}
 			$group['modules'] = iunserializer($group['modules']);
 			if (is_array($group['modules'])) {
-			    foreach ($group['modules'] as $modulenames) {
-			        if (in_array($module_name, $modulenames)) {
-                        $module_group[] = $group;
-                        break;
-                    }
-                }
-            }
+				foreach ($group['modules'] as $modulenames) {
+					if (in_array($module_name, $modulenames)) {
+						$module_group[] = $group;
+						break;
+					}
+				}
+			}
 		}
 	}
 	$subscribes_type = ext_module_msg_types();
@@ -573,24 +573,24 @@ if ($do == 'recycle_post') {
 	//如果模块已经安装，则先标记删除，在停用中显示
 	//如果模块未安装或是卸载，则标记删除，在回收站中显示
 	if (!empty($module)) {
-        $cached_user_modules = (array) cache_load(cache_system_key('user_modules', array('uid' => $_W['uid'])));
-        if (empty($module_recycle)) {
-            $msg = '模块已停用!';
-            table('modules_recycle')->fill(array('name' => $name, 'type' => 1))->save();
+		$cached_user_modules = (array) cache_load(cache_system_key('user_modules', array('uid' => $_W['uid'])));
+		if (empty($module_recycle)) {
+			$msg = '模块已停用!';
+			table('modules_recycle')->fill(array('name' => $name, 'type' => 1))->save();
 
-            if (in_array($name, $cached_user_modules)) {
-                unset($cached_user_modules[array_search($name, $cached_user_modules)]);
-            }
-        } else {
-            $msg = '模块已恢复!';
-            table('modules_recycle')->deleteByName($name);
+			if (in_array($name, $cached_user_modules)) {
+				unset($cached_user_modules[array_search($name, $cached_user_modules)]);
+			}
+		} else {
+			$msg = '模块已恢复!';
+			table('modules_recycle')->deleteByName($name);
 
-            if (!in_array($name, $cached_user_modules)) {
-                array_unshift($cached_user_modules ,$name);
-            }
-        }
-        cache_write(cache_system_key('user_modules', array('uid' => $_W['uid'])), $cached_user_modules);
-    } else {
+			if (!in_array($name, $cached_user_modules)) {
+				array_unshift($cached_user_modules ,$name);
+			}
+		}
+		cache_write(cache_system_key('user_modules', array('uid' => $_W['uid'])), $cached_user_modules);
+	} else {
 		if (empty($module_recycle)) {
 			$msg = '模块已放入回收站!';
 			table('modules_recycle')->fill(array('name' => $name, 'type' => 2))->save();

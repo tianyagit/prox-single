@@ -187,7 +187,7 @@ function tpl_app_form_field_district($name, $values = array()) {
 			$(document).on("tap", ".mui-district-picker-' . $name . '", function(){
 				var $this = $(this);
 				util.districtpicker(function(item){
-                    item[2].text = item[2].text || "";
+					item[2].text = item[2].text || "";
 					$this.val(item[0].text+" "+item[1].text+" "+item[2].text)
 					.next().val(item[0].text)
 					.next().val(item[1].text)

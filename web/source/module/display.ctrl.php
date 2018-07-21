@@ -29,9 +29,9 @@ if ($do == 'display') {
 					if (is_array($wxapp_versions) && !empty($wxapp_versions)) {
 						$versions = array();
 						foreach($wxapp_versions as $version) {
-                            $version_module = (array)iunserializer($version['modules']);
-                            $version_module = array_keys($version_module);
-                            $versions[] = $version_module[0];
+							$version_module = (array)iunserializer($version['modules']);
+							$version_module = array_keys($version_module);
+							$versions[] = $version_module[0];
 						}
 						$diffs = array_diff(array_keys($account_module), $versions);
 						foreach($diffs as $diff) {
