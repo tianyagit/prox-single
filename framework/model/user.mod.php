@@ -559,7 +559,7 @@ function user_modules($uid = 0) {
 				if (!empty($have_plugin_module[$module])) {
 					foreach ($have_plugin_module[$module] as $plugin) {
 						if (!isset($module_list[$plugin])) {
-							$modules[$plugin] = 'all';
+							unset($modules[$plugin]);
 						}
 					}
 				}
