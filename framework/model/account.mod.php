@@ -243,6 +243,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 					}
 				}
 			}
+			/* xend */
 			//公众号owner的权限
 			$user_modules = user_modules($owner_uid);
 			if (!empty($user_modules)) {
