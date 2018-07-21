@@ -475,7 +475,7 @@ function user_modules($uid = 0) {
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
-	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
+//	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
@@ -543,6 +543,7 @@ function user_modules($uid = 0) {
 				}
 			}
 		}
+
 		$modules = array();
 		if (!empty($module_list)) {
 			$have_plugin_module = array();
@@ -550,21 +551,23 @@ function user_modules($uid = 0) {
 				$plugin_list = pdo_getall('modules_plugin', array('name' => array_keys($module_list)), array());
 				if (!empty($plugin_list)) {
 					foreach ($plugin_list as $plugin) {
-						$have_plugin_module[$plugin['main_module']][$plugin['name']] = $plugin['name'];
+						$have_plugin_module[$plugin['main_module']][$plugin['name']] = $module_list[$plugin['name']];
+						unset($module_list[$plugin['name']]);
 					}
 				}
 			}
-			foreach ($module_list as $module => $support) {
-				$modules[$module] = $support;
-				if (!empty($have_plugin_module[$module])) {
-					foreach ($have_plugin_module[$module] as $plugin) {
-						if (!isset($module_list[$plugin])) {
-							unset($modules[$plugin]);
+			if (!empty($module_list)) {
+				foreach ($module_list as $module => $support) {
+					$modules[$module] = $support;
+					if (!empty($have_plugin_module[$module])) {
+						foreach ($have_plugin_module[$module] as $plugin => $plugin_support) {
+							$modules[$plugin] = $plugin_support;
 						}
 					}
 				}
 			}
 		}
+
 		cache_write(cache_system_key('user_modules', array('uid' => $uid)), $modules);
 	}
 
