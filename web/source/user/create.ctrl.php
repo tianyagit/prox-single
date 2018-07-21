@@ -39,7 +39,7 @@ if (checksubmit()) {
 	$uid = $user_add['uid'];
 	if (!empty($_GPC['extra']['modules']) || !empty($_GPC['extra']['templates'])) {
 		$data = array(
-			'modules' => iserializer($_GPC['extra']['modules']),
+			'modules' => iserializer(array('modules' => $_GPC['extra']['modules'], 'wxapp' => $_GPC['extra']['modules'], 'webapp' => $_GPC['extra']['modules'], 'xzapp' => $_GPC['extra']['modules'], 'phoneapp' => $_GPC['extra']['modules'])),
 			'templates' => iserializer($_GPC['extra']['templates']),
 			'uid' => $uid,
 			'uniacid' => 0,

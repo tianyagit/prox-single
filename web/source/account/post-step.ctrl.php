@@ -255,11 +255,37 @@ if($step == 1) {
 		//如果有附加的权限，则生成专属套餐组
 		if (!empty($_GPC['extra']['modules']) || !empty($_GPC['extra']['templates'])) {
 			$data = array(
-				'modules' => iserializer($_GPC['extra']['modules']),
+                'modules' => array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array()),
 				'templates' => iserializer($_GPC['extra']['templates']),
 				'uniacid' => $uniacid,
 				'name' => '',
 			);
+            $account = pdo_get('account', array('uniacid' => $uniacid));
+            if (empty($account)) {
+                itoast('无效的 uniacid', '', '');
+            }
+            switch ($account['type']) {
+                case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+                case ACCOUNT_TYPE_OFFCIAL_AUTH:
+                    $data['modules']['modules'] = $_GPC['extra']['modules'];
+                    break;
+                case ACCOUNT_TYPE_APP_NORMAL:
+                case ACCOUNT_TYPE_APP_AUTH:
+                case ACCOUNT_TYPE_WXAPP_WORK:
+                    $data['modules']['wxapp'] = $_GPC['extra']['modules'];
+                    break;
+                case ACCOUNT_TYPE_WEBAPP_NORMAL:
+                    $data['modules']['webapp'] = $_GPC['extra']['modules'];
+                    break;
+                case ACCOUNT_TYPE_XZAPP_NORMAL:
+                case ACCOUNT_TYPE_XZAPP_AUTH:
+                    $data['modules']['xzapp'] = $_GPC['extra']['modules'];
+                    break;
+                case ACCOUNT_TYPE_PHONEAPP_NORMAL:
+                    $data['modules']['phoneapp'] = $_GPC['extra']['modules'];
+                    break;
+            }
+            $data['modules'] = iserializer($data['modules']);
 			$id = pdo_fetchcolumn("SELECT id FROM ".tablename('uni_group')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
 			if (empty($id)) {
 				pdo_insert('uni_group', $data);
@@ -312,9 +338,16 @@ if($step == 1) {
 	}
 
 	$extend = pdo_fetch("SELECT * FROM ".tablename('uni_group')." WHERE uniacid = :uniacid", array(':uniacid' => $uniacid));
-	$extend['modules'] = iunserializer($extend['modules']);
 	$extend['templates'] = iunserializer($extend['templates']);
+	$extend['modules'] = iunserializer($extend['modules']);
 	if (!empty($extend['modules'])) {
+        $extend_modules = $extend['modules'];
+        $extend['modules'] = array();
+        foreach ($extend_modules as $modulenames) {
+            if (!empty($modulenames)) {
+                $extend['modules'] = array_merge($extend['modules'], $modulenames);
+            }
+        }
 		$owner['extend']['modules'] = pdo_getall('modules', array('name' => $extend['modules']));
 		if (!empty($owner['extend']['modules'])) {
 			foreach ($owner['extend']['modules'] as &$extend_module) {
