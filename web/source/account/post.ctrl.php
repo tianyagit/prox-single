@@ -466,7 +466,7 @@ if($do == 'modules_tpl') {
 	}
 	/* xstart */
 	if (IMS_FAMILY == 'x') {
-		$account_buy_modules = uni_site_store_buy_goods($uniacid);
+		$account_buy_modules = uni_site_store_buy_goods($uniacid,$_GPC['account_type']);
 		if (!empty($account_buy_modules) && is_array($account_buy_modules)) {
 			foreach ($account_buy_modules as &$module) {
 				$module = module_fetch($module);
@@ -474,9 +474,7 @@ if($do == 'modules_tpl') {
 				$module['expire_time'] = pdo_getcolumn('site_store_order', array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'goodsid' => $module['goods_id']), 'max(endtime)');
 			}
 		}
-
 		unset($module);
-
 		$store = table('store');
 		$account_buy_group = uni_site_store_buy_goods($uniacid, STORE_TYPE_PACKAGE);
 		$account_buy_package = array();
