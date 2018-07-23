@@ -61,13 +61,7 @@
 			<td ng-bind="order.buyer"></td>
 			<td ng-bind="order.account.name"></td>
 			<td class="text-center">
-				<div>￥<span ng-bind="order.abstract_amount"></span></div>
-				<div class="color-gray">{{order.goods_info.price}}元/
-					<span ng-if="order.goods_info.unit == 'day'">天* {{order.duration}}天</span>
-					<span ng-if="order.goods_info.unit == 'month'">月* {{order.duration}}月</span>
-					<span ng-if="order.goods_info.unit == 'year'">年* {{order.duration}}年</span>
-					<span ng-if="order.goods_info.type == 6">万次* {{order.duration}}万次</span>
-				</div>
+				<div>￥<span ng-bind="order.amount"></span></div>
 			</td>
 			<td ng-if="order.type == 1" class="color-red">待付款</td>
 			<td ng-if="order.type == 3" class="color-green">交易成功</td>
