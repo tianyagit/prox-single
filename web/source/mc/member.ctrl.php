@@ -8,7 +8,8 @@ load()->model('mc');
 $dos = array('address', 'base_information', 'member_credits', 'credit_statistics', 'display','del', 'add', 'group', 'register_setting', 'credit_setting', 'save_credit_setting', 'save_tactics_setting');
 $do = in_array($do, $dos) ? $do : 'display';
 
-$creditnames = uni_setting_load('creditnames')['creditnames'];
+$creditnames = uni_setting_load('creditnames');
+$creditnames = $creditnames['creditnames'];
 if ($do == 'save_tactics_setting') {
 	$setting = $_GPC['setting'];
 	if (empty($setting)) {
