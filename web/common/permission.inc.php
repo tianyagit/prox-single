@@ -473,6 +473,7 @@ $we7_file_permission = array(
 			'see_account_manage_users_set_permission_for_operator',
 			'see_account_manage_users_deloperator',
 			'see_account_manage_users_delmanager',
+			'see_modules_recharge'
 		),
 		'manager' => array(
 			'see_account_manage_users_set_permission_for_operator',

@@ -603,7 +603,7 @@ $we7_system_menu['system'] = array(
 				'system_xzapp' => array(
 					'title' => '熊掌号',
 					'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_XZAPP_NORMAL)),
-					'icon' => 'wi wi-pc',
+					'icon' => 'wi wi-xzapp',
 					'permission_name' => 'system_xzapp',
 					'sub_permission' => array(
 					),
@@ -611,7 +611,7 @@ $we7_system_menu['system'] = array(
 				'system_module_xzapp' => array(
 					'title' => '熊掌号应用',
 					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_XZAPP_NAME)),
-					'icon' => 'wi wi-pc-apply',
+					'icon' => 'wi wi-xzapp-apply',
 					'permission_name' => 'system_module_xzapp',
 				),
 			)

@@ -13,8 +13,7 @@ if (in_array($do, array('validate_mobile', 'bind_mobile'))) {
 	$user_table = table('users');
 	$user_profile = $user_table->userProfile($_W['uid']);
 	$mobile = safe_gpc_string($_GPC['mobile']);
-	$mobile_exists = $user_table->userProfileMobile($mobile);
-
+	$module_exists = $user_table->userBindInfo($mobile, 3);
 	if (empty($mobile)) {
 		iajax(-1, '手机号不能为空');
 	}

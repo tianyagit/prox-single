@@ -23,26 +23,6 @@ class WeiXinAccount extends WeAccount {
 	 * )
 	 * </pre>
 	 */
-	public $apis = array(
-		'temp' => array(
-			'add' => 'https://api.weixin.qq.com/cgi-bin/media/upload',
-			'get' => 'https://api.weixin.qq.com/cgi-bin/media/get',
-			'post_key' => 'media'
-		),
-		'perm' => array(
-			'add' => 'https://api.weixin.qq.com/cgi-bin/material/add_material',
-			'get' => 'https://api.weixin.qq.com/cgi-bin/material/get_material',
-			'del' => 'https://api.weixin.qq.com/cgi-bin/material/del_material',
-			'count' => 'https://api.weixin.qq.com/cgi-bin/material/get_materialcount',
-			'batchget' => 'https://api.weixin.qq.com/cgi-bin/material/batchget_material',
-			'post_key' => 'media',
-		),
-		'file_upload' => array(
-			'add' => 'https://api.weixin.qq.com/cgi-bin/media/uploadimg',
-			'post_key' => 'buffer',
-		),
-	);
-
 	public $types = array(
 		'view', 'click', 'scancode_push',
 		'scancode_waitmsg', 'pic_sysphoto', 'pic_photo_or_album',
@@ -1459,7 +1439,7 @@ class WeiXinAccount extends WeAccount {
 		if (empty($path)) {
 			return error(-1, '参数错误');
 		}
-		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb'))) {
+		if (in_array(substr(ltrim($path, '/'), 0, 6), array('images', 'videos', 'audios', 'thumb', 'voices'))) {
 			$path = ATTACHMENT_ROOT . ltrim($path, '/');
 		}
 		if (!file_exists($path)) {

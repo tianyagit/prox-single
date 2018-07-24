@@ -223,7 +223,7 @@
 		{/if}
 	</table>
 	{/if}
-	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
+
 		<!-- xstart -->
 		{if IMS_FAMILY == 'x'}
 			{if !empty($account_buy_modules)}
@@ -271,7 +271,9 @@
 						{/if}
 					</td>
 					<td class="we7-padding-right color-default">
+						{if permission_check_account_user('see_modules_recharge')}
 						<a href="{php echo url('site/entry/goodsbuyer', array('direct' => 1, 'operate' => 'goods_info', 'm' => 'store', 'goods' => $module['goods_id']))}">续费</a>
+						{/if}
 					</td>
 				</tr>
 				{/if}
@@ -540,7 +542,7 @@
 			</div>
 		</div>
 	</div>
-	{/if}
+
 </div>
 <script>
 	angular.module('accountApp').value('config', {

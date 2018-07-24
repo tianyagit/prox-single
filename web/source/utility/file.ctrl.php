@@ -369,52 +369,15 @@ if ($do == 'wechat_upload') {
 
 	$pathname = $file['path'];
 	$fullname = ATTACHMENT_ROOT  . '/' . $pathname;
-
 	$acc = WeAccount::create($acid);
-	$token = $acc->getAccessToken();
-	if (is_error($token)) {
-		$result['message'] = $token['message'];
-		die(json_encode($result));
-	}
-	if($mode == 'perm' || $mode == 'temp') {
-		$apis = $acc->apis;
-		$sendapi = $apis[$mode]['add'] . "?access_token={$token}&type={$type}";
-
-		$media = '@'.$fullname;
-		$data = array(
-			'media' => $media
-		);
-		if($type == 'video') {
-			$description = array(
-				'title' => $originname,
-				'introduction' => $originname,
-			);
-			$data['description'] = urldecode(json_encode($description));
+	if ($mode == 'perm' || $mode == 'temp') {
+		if ($type != 'video') {
+			$result = $acc->uploadMediaFixed($pathname, $type);
+		} else {
+			$result = $acc->uploadVideoFixed($originname, $originname, $pathname);
 		}
-	} elseif($mode == 'file_upload') {
-		$sendapi = $apis[$mode]['add'] . "?access_token={$token}";
-		$data = array(
-			'buffer' => '@' . $fullname
-		);
-		$type = 'image';
 	}
-	$resp = ihttp_request($sendapi, $data);
-	if(is_error($resp)) {
-		$result['error'] = 0;
-		$result['message'] = $resp['message'];
-		die(json_encode($result));
-	}
-	$content = @json_decode($resp['content'], true);
-	if(empty($content)) {
-		$result['error'] = 0;
-		$result['message'] = "接口调用失败, 元数据: {$resp['meta']}";
-		die(json_encode($result));
-	}
-	if(!empty($content['errcode'])) {
-		$result['error'] = 0;
-		$result['message'] = "访问接口错误, 错误代码: {$content['errcode']}, 错误信息: {$content['errmsg']},错误详情：{$acc->errorCode($content['errcode'])}";
-		die(json_encode($result));
-	}
+
 	if($mode == 'perm' || $mode == 'temp') {
 		if(!empty($content['media_id'])){
 			$result['media_id'] = $content['media_id'];
