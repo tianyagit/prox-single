@@ -46,7 +46,7 @@ if ($do == 'module_link_uniacid') {
 				foreach ($link_uniacid_info as $info) {
 					if ($info['settings']['link_uniacid'] == $_W['uniacid'] ||
 						!empty($info['settings']['passive_link_uniacid']) && $info['uniacid'] == $_W['uniacid']) {
-						$module_value['other_link'] = uni_fetch($info['uniacid']);
+						$module_value['other_link'] = uni_fetch($info['settings']['passive_link_uniacid']);
 					}
 				}
 			}
