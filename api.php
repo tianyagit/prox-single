@@ -431,6 +431,9 @@ class WeEngine {
 		fastcgi_finish_request();
 
 		$subscribe = cache_load(cache_system_key('module_receive_enable'));
+		if (empty($subscribe)) {
+			$subscribe = cache_build_module_subscribe_type();
+		}
 		$modules = uni_modules();
 		$obj = WeUtility::createModuleReceiver('core');
 		$obj->message = $this->message;
