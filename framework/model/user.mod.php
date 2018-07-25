@@ -475,7 +475,7 @@ function user_modules($uid = 0) {
 	if (empty($uid)) {
 		$uid = $_W['uid'];
 	}
-//	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
+	$modules = cache_load(cache_system_key('user_modules', array('uid' => $uid)));
 	if (empty($modules)) {
 		$user_info = user_single(array ('uid' => $uid));
 
