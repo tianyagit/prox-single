@@ -298,12 +298,23 @@ if (in_array($do, array('validate_mobile', 'bind_mobile')) || $_GPC['bind_type']
 	}
 }
 if ($do == 'validate_mobile') {
+	$user = array('username' => trim($_GPC['mobile']));
+	$mobile_exists = user_check($user);
+	if ($mobile_exists) {
+		iajax(-1, '手机号已经存在');
+	}
 	iajax(0, '本地校验成功');
 }
 
 if ($do == 'bind_mobile') {
 	if ($_W['isajax'] && $_W['ispost']) {
 		$bind_info = OAuth2Client::create('mobile')->bind();
+
+		$user = array('username' => trim($_GPC['mobile']));
+		$mobile_exists = user_check($user);
+		if ($mobile_exists) {
+			iajax(-1, '手机号已经存在');
+		}
 
 		if (is_error($bind_info)) {
 			iajax(-1, $bind_info['message']);
