@@ -50,6 +50,158 @@ class XzappAccount extends WeAccount {
 		return $record['token'];
 	}
 
+	/**
+	 * 生成签名
+	 * @param string $encrypt_msg
+	 * @return string
+	 */
+	public function buildSignature($encrypt_msg) {
+		$token = $this->account['token'];
+		$array = array($encrypt_msg, $token, $_GET['timestamp'], $_GET['nonce']);
+		sort($array, SORT_STRING);
+		$str = implode($array);
+		$str = sha1($str);
+		return $str;
+	}
+
+	/**
+	 * 验证签名是否合法
+	 * @param string $encrypt_msg
+	 * @return boolean
+	 */
+	public function checkSignature($encrypt_msg) {
+		$str = $this->buildSignature($encrypt_msg);
+		return $str == $_GET['msg_signature'];
+	}
+
+	/**
+	 * 消息加密
+	 * @param $text
+	 * @return array
+	 */
+	public function encryptMsg($text) {
+		$appid = $this->account['key'];
+		$encodingaeskey = $this->account['encodingaeskey'];
+		$key = base64_decode($encodingaeskey . '=');
+
+		static $blockSize = 32;
+
+		// pack
+		$text = substr(md5(time()), 0, 16) . pack('N', strlen($text)) . $text . $appid;
+
+		// 填充位数
+		$padLen = $blockSize - (strlen($text) % $blockSize);
+		$text .= str_repeat(chr($padLen), $padLen == 0 ? $blockSize : $padLen);
+
+		// 加密
+		$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, null, MCRYPT_MODE_CBC, null);
+		mcrypt_generic_init($td, $key, substr($key, 0, 16));
+		$encoded = mcrypt_generic($td, $text);
+		mcrypt_generic_deinit($td);
+		mcrypt_module_close($td);
+
+		$encrypt_msg = base64_encode($encoded);
+
+		//生成的签名
+		$signature = $this->buildSignature($encrypt_msg);
+		return array($signature, $encrypt_msg);
+	}
+
+	/**
+	 * 对消息进行解密
+	 *
+	 * @param array $postData
+	 * @return error 或 string
+	 */
+	public function decryptMsg($postData) {
+		$appid = $this->account['key'];
+		$encodingaeskey = $this->account['encodingaeskey'];
+		$key = base64_decode($encodingaeskey . '=');
+
+		// 提取密文
+		$packet = $this->xmlExtract($postData);
+		if (is_error($packet)) {
+			return error(-1, $packet['message']);
+		}
+		$encrypt = base64_decode($packet['encrypt']);
+		//检验签名
+		$istrue = $this->checkSignature($packet['encrypt']);
+		if(!$istrue) {
+			return error(-1, "熊掌号签名错误！");
+		}
+
+		// 解密
+		$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, null, MCRYPT_MODE_CBC, null);
+		mcrypt_generic_init($td, $key, substr($key, 0, 16));
+		$decoded = mdecrypt_generic($td, $encrypt);
+		mcrypt_generic_deinit($td);
+		mcrypt_module_close($td);
+
+		// 去掉填充位数
+		$pad = ord(substr($decoded, -1));
+		$pad = ($pad < 1 || $pad > 32) ? 0 : $pad;
+		$decoded = substr($decoded, 0, strlen($decoded) - $pad);
+
+		// unpack
+		$text = substr($decoded, 16, strlen($decoded));
+		$unpack = unpack('Nlen/', substr($text, 0, 4));
+		$content = substr($text, 4, $unpack['len']);
+		$clientId = substr($text, $unpack['len'] + 4);
+
+		if ($clientId != $appid) {
+			return error(-1, 'ERR: decode clientId is ' . $clientId . ', need client is ' . $appid);
+		}
+		return $content;
+	}
+
+	/**
+	 * 从xml中提取密文
+	 *
+	 * @param string $message
+	 * @return array error/array
+	 */
+	public function xmlExtract($message) {
+		$packet = array();
+		if (!empty($message)){
+			$obj = isimplexml_load_string($message, 'SimpleXMLElement', LIBXML_NOCDATA);
+			if($obj instanceof SimpleXMLElement) {
+				$packet['encrypt'] = strval($obj->Encrypt);
+				$packet['to'] = strval($obj->ToUserName);
+			}
+		}
+		if(!empty($packet['encrypt'])) {
+			return $packet;
+		} else {
+			return error(-1, "熊掌号返回接口错误");
+		}
+	}
+
+	/**
+	 * 生成加密后xml
+	 *
+	 * @param array $data
+	 * @return string xml
+	 */
+	function xmlDetract($data) {
+		//生成xml
+		$xml['Encrypt'] = $data[1];
+		$xml['MsgSignature'] = $data[0];
+		$xml['TimeStamp'] = $_GET['timestamp'];
+		$xml['Nonce'] = $_GET['nonce'];
+		return array2xml($xml);
+	}
+
+	/*
+ * 重新封装 isimplexml_load_string 函数。解决安全问题
+ * */
+	function isimplexml_load_string($string, $class_name = 'SimpleXMLElement', $options = 0, $ns = '', $is_prefix = false) {
+		libxml_disable_entity_loader(true);
+		if (preg_match('/(\<\!DOCTYPE|\<\!ENTITY)/i', $string)) {
+			return false;
+		}
+		return simplexml_load_string($string, $class_name, $options, $ns, $is_prefix);
+	}
+
 	protected function requestApi($url, $post = '') {
 		$response = ihttp_request($url, $post);
 		$result = @json_decode($response['content'], true);
