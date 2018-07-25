@@ -8,7 +8,7 @@
 			<div class="container ">
 				<div class="navbar-header">
 					<a class="navbar-brand" href="{$_W['siteroot']}">
-						<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
+						<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo to_global_media($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
 					</a>
 				</div>
 				<div class="collapse navbar-collapse">
@@ -143,7 +143,7 @@
 <div class="first-sidebar">
 		<div class="{if !empty($frames['section']['platform_module_menu']['plugin_menu'])}plugin-head{/if}">
 			<a class="logo-wrap" href="{$_W['siteroot']}">
-				<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="logo">
+				<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo to_global_media($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="logo">
 			</a>
 			{if !empty($_W['uid'])}
 			<div class="nav">
@@ -305,7 +305,7 @@
 <div class="container ">
 	<div class="navbar-header">
 		<a class="navbar-brand" href="{$_W['siteroot']}">
-			<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
+			<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo to_global_media($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
 		</a>
 	</div>
 	<div class="collapse navbar-collapse">
