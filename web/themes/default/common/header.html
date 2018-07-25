@@ -6,7 +6,7 @@
 		<div class="container {if !empty($frames['section']['platform_module_menu']['plugin_menu'])}plugin-head{/if}">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="{$_W['siteroot']}">
-					<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
+					<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo to_global_media($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" width="110px" height="35px">
 					<span class="version hidden">{IMS_VERSION}</span>
 				</a>
 			</div>
