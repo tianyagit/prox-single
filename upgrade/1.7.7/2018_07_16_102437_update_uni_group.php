@@ -17,16 +17,14 @@ class UpdateUniGroup {
 	public function up() {
 		$data = pdo_getall('uni_group', array(), array('id', 'modules'));
 		foreach ($data as $row) {
+			$row['modules'] = iunserializer($row['modules']);
 			if (empty($row['modules'])) {
 				continue;
 			}
-			$row['modules'] = iunserializer($row['modules']);
-			if (!empty($row['modules']) && !isset($row['modules']['modules'])) {
+			if (!isset($row['modules']['modules']) && !isset($row['modules']['wxapp']) && !isset($row['modules']['webapp']) && !isset($row['modules']['xzapp'])) {
 				$new_row = array('modules' => $row['modules'], 'wxapp' => $row['modules'], 'webapp' => $row['modules'], 'xzapp' => $row['modules'], 'phoneapp' => $row['modules']);
-			} else {
-				$new_row = array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array());
+				pdo_update('uni_group', array('modules' => iserializer($new_row)), array('id' => $row['id']));
 			}
-			pdo_update('uni_group', array('modules' => iserializer($new_row)), array('id' => $row['id']));
 		}
 	}
 	
