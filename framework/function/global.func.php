@@ -1395,5 +1395,35 @@ if (!function_exists('starts_with')) {
 		return false;
 	}
 }
+
+/**
+ * 第一个参数作为回调函数调用，函数不存在则返回空(回调函数最多支持4个参数)
+ * @param string $callback
+ * @return mixed
+ */
+function icall_user_func($callback) {
+	if (function_exists($callback)) {
+		$args = func_get_args();
+		switch(func_num_args()) {
+			case 1:
+				return call_user_func($callback);
+				break;
+			case 2:
+				return call_user_func($callback, $args[1]);
+				break;
+			case 3:
+				return call_user_func($callback, $args[1], $args[2]);
+				break;
+			case 4:
+				return call_user_func($callback, $args[1], $args[2], $args[3]);
+				break;
+			case 5:
+				return call_user_func($callback, $args[1], $args[2], $args[3], $args[4]);
+				break;
+		}
+	}
+	return '';
+}
+
 load()->func('safe');
 load()->func('system');

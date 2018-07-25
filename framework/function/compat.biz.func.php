@@ -131,8 +131,3 @@ if (!defined('CACHE_KEY_MODULE_SETTING')) {
 	//模块配置信息
 	define('CACHE_KEY_MODULE_SETTING', 'module_setting:%s:%s');
 }
-if (!function_exists('to_global_media')) {
-	function to_global_media($src) {
-		return tomedia($src);
-	}
-}
