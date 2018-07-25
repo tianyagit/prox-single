@@ -47,7 +47,7 @@ if ($do == 'copyright') {
 			header('X-XSS-Protection: 0');
 			$data = array(
 				'status' => intval($_GPC['status']),
-				'verifycode' => intval($_GPC['verifycode']),
+				'verifycode' => $settings['verifycode'],
 				'reason' => trim($_GPC['reason']),
 				'sitename' => trim($_GPC['sitename']),
 				'url' => (strexists($_GPC['url'], 'http://') || strexists($_GPC['url'], 'https://')) ? $_GPC['url'] : "http://{$_GPC['url']}",
@@ -72,14 +72,14 @@ if ($do == 'copyright') {
 				'description' => trim($_GPC['description']),
 				'showhomepage' => intval($_GPC['showhomepage']),
 				'leftmenufixed' => (!empty($_GPC['leftmenu_fixed'])) ? 1 : 0,
-				'mobile_status' => $_GPC['mobile_status'],
-				'login_type' => $_GPC['login_type'],
+				'mobile_status' => $settings['mobile_status'],
+				'login_type' => $settings['login_type'],
 				'log_status' => intval($_GPC['log_status']),
 				'develop_status' => intval($_GPC['develop_status']),
 				'icp' => safe_gpc_string($_GPC['icp']),
-				'bind' => $_GPC['bind'],
-				'welcome_link' => intval($_GPC['welcome_link']),
-				'oauth_bind' => intval($_GPC['oauth_bind']),
+				'bind' => $settings['bind'],
+				'welcome_link' => $settings['welcome_link'],
+				'oauth_bind' => $settings['oauth_bind'],
 			);
 		}
 		/* sxend */
@@ -89,12 +89,12 @@ if ($do == 'copyright') {
 				'status' => $_GPC['status'],
 				'reason' => $_GPC['reason'],
 				'icp' => safe_gpc_string($_GPC['icp']),
-				'mobile_status' => $_GPC['mobile_status'],
-				'login_type' => $_GPC['login_type'],
+				'mobile_status' => $settings['mobile_status'],
+				'login_type' => $settings['login_type'],
 				'log_status' => intval($_GPC['log_status']),
 				'develop_status' => intval($_GPC['develop_status']),
-				'bind' => $_GPC['bind'],
-				'welcome_link' => intval($_GPC['welcome_link'])
+				'bind' => $settings['bind'],
+				'welcome_link' => $settings['welcome_link'],
 			);
 		}
 		/* vend */

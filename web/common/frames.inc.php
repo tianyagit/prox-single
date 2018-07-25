@@ -884,9 +884,9 @@ $we7_system_menu['site'] = array(
 					'permission_name' => 'system_setting_sensitiveword',
 				),
 				'system_setting_thirdlogin' => array(
-					'title' => '第三方登录配置',
-					'url' => url('system/thirdlogin'),
-					'icon' => 'wi wi-thirdlogin',
+					'title' => '用户登录/注册设置',
+					'url' => url('user/registerset'),
+					'icon' => 'wi wi-user',
 					'permission_name' => 'system_setting_thirdlogin',
 				),
 				'system_setting_oauth' => array(
