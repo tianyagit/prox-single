@@ -16,6 +16,13 @@ $do = in_array($do , $dos) ? $do : 'chats';
 permission_check_account_user('mc_fans');
 
 if ($do == 'chats') {
+
+	if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
+		$show_chast_content =array('basic'=> false,'news'=> false,'image'=> false,'music'=> true,'voice'=> false,'video'=> true);
+	} else {
+		$show_chast_content =array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false);
+	}
+
 	$_W['page']['title'] = '粉丝聊天';
 	$openid = addslashes($_GPC['openid']);
 	$fans_info = mc_fansinfo($openid);
@@ -34,7 +41,7 @@ if ($do == 'send') {
 	$account_api = WeAccount::create($_W['acid']);
 	$result = $account_api->sendCustomNotice($send);
 	if (is_error($result)) {
-		iajax(-1, $result['meaasge']);
+		iajax(-1, $result['message']);
 	} else {
 		//生成上下文
 		$account = account_fetch($_W['acid']);

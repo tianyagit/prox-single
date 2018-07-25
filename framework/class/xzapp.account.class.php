@@ -724,4 +724,59 @@ class XzappAccount extends WeAccount {
 		$response = $this->requestApi($url, $data);
 		return $response;
 	}
+
+	/*发送客服消息*/
+	public function sendCustomNotice($data) {
+		if(empty($data)) {
+			return error(-1, '参数错误');
+		}
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/message/custom_send?access_token={$token}";
+		$response = $this->requestApi($url, urldecode(json_encode($data)));
+		WeUtility::logging('$resonse', var_export($response, true));
+		if (is_error($response)) {
+			return $response;
+		}
+		return true;
+	}
+
+	/**
+	 * 发送模板消息
+	 *  @param string $touser 粉丝openid
+	 *  @param string $tpl_id_short 模板id
+	 *  @param array $postdata 根据模板规则完善消息
+	 *  @param string $url 详情页链接
+	 */
+	public function sendTplNotice($touser, $template_id, $postdata, $url = '') {
+		if(empty($touser)) {
+			return error(-1, '参数错误,粉丝openid不能为空');
+		}
+		if(empty($template_id)) {
+			return error(-1, '参数错误,模板标示不能为空');
+		}
+		if(empty($postdata) || !is_array($postdata)) {
+			return error(-1, '参数错误,请根据模板规则完善消息内容');
+		}
+		$token = $this->getAccessToken();
+		if (is_error($token)) {
+			return $token;
+		}
+
+		$data = array();
+		$data['touser'] = $touser;
+		$data['template_id'] = trim($template_id);
+		$data['url'] = trim($url);
+		$data['data'] = $postdata;
+		$data = json_encode($data);
+		$post_url = "https://openapi.baidu.com/rest/2.0/cambrian/template/send?access_token={$token}";
+		$response = $this->requestApi($post_url, $data);
+		if(is_error($response)) {
+			return error(-1, "访问公众平台接口失败, 错误: {$response['message']}");
+		}
+		return true;
+	}
+
 }
