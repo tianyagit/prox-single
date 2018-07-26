@@ -837,4 +837,62 @@ class XzappAccount extends WeAccount {
 		return $response['data']['openid'];
 	}
 
+	/**
+	 * jsapi_ticket
+	 * @return array|mixed
+	 */
+	public function getJsApiTicket() {
+		$cachekey = cache_system_key('jsticket', array('acid' => $this->account['acid']));
+		$cache = cache_load($cachekey);
+		if(!empty($cache) && !empty($cache['ticket']) && $cache['expire'] > TIMESTAMP) {
+			return $cache['ticket'];
+		}
+		$access_token = $this->getAccessToken();
+		if(is_error($access_token)){
+			return $access_token;
+		}
+
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/jssdk/getticket?access_token={$access_token}";
+		$response = $this->requestApi($url);
+		if (is_error($response)) {
+			return $response;
+		}
+
+		$record = array();
+		$record['ticket'] = $response['ticket'];
+		$record['expire'] = TIMESTAMP + $response['expires_in'] - 200;
+
+		$this->account['jsapi_ticket'] = $record;
+		cache_write($cachekey, $record);
+
+		return $record['ticket'];
+	}
+
+	/**
+	 * 获取 jssdk config
+	 * @return array
+	 */
+	public function getJssdkConfid($url = '') {
+		global $_W;
+		$jsapiTicket = $this->getJsApiTicket();
+		if (is_error($jsapiTicket)) {
+			$jsapiTicket = $jsapiTicket['message'];
+		}
+		$nonceStr = random(16);
+		$timestamp = TIMESTAMP;
+		$url = empty($url) ? $_W['siteurl'] : $url;
+		$string1 = "jsapi_ticket={$jsapiTicket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
+		$signature = sha1($string1);
+		$config = array(
+			"appId"		=> $this->account['key'],
+			"nonceStr"	=> $nonceStr,
+			"timestamp" => "$timestamp",
+			"signature" => $signature,
+			"url" => $url,
+		);
+		return $config;
+	}
+
+
+
 }
