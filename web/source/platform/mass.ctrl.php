@@ -79,6 +79,12 @@ if ($do == 'post') {
 	$mass_info = pdo_get('mc_mass_record', array('id' => $id));
 	$groups = mc_fans_groups();
 
+	if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_AUTH, ACCOUNT_TYPE_XZAPP_NORMAL))) {
+		$show_post_content = array('news'=> false, 'image'=> false,'voice'=> false,'basic'=> false);
+	} else {
+		$show_post_content = array('news'=> false, 'image'=> false,'voice'=> false,'video'=> false);
+	}
+
 	if (checksubmit('submit')) {
 		$type = in_array(intval($_GPC['type']), array(0, 1)) ? intval($_GPC['type']) : 0;
 		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
@@ -114,7 +120,6 @@ if ($do == 'post') {
 			$mass_record['media_id'] = $material;
 			$mass_record['attach_id'] = $attachment['id'];
 			$mass_record['msgtype'] = $msgtype;
-
 			break;
 		}
 

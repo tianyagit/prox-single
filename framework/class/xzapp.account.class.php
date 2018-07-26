@@ -779,4 +779,62 @@ class XzappAccount extends WeAccount {
 		return true;
 	}
 
+	/**
+	 * 消息群发
+	 * @param $group
+	 * @param $msgtype
+	 * @param $media_id
+	 * @return array|mixed
+	 */
+	public function fansSendAll($group, $msgtype, $media_id) {
+		$types = array('basic' => 'text', 'image' => 'image', 'news' => 'mpnews', 'voice' => 'voice');
+		if (empty($types[$msgtype])) {
+			return error(-1, '消息类型不合法');
+		}
+		if ($group == -1) {
+			$data = array(
+				'filter' => array(
+					'is_to_all' => true,
+					'group_id' => $group
+				),
+				'msgtype' => $types[$msgtype],
+				$types[$msgtype] => array(
+					'media_id' => $media_id
+				)
+			);
+		} else {
+			$openids = $this->getFansByTag($group);
+			$data = array(
+				'touser' => $openids,
+				'msgtype' => $types[$msgtype],
+				$types[$msgtype] => array(
+					'media_id' => $media_id
+				)
+			);
+		}
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/message/sendall?access_token={$token}";
+		$response = $this->requestApi($url, json_encode($data));
+		return $response;
+	}
+
+	/**
+	 * 获取标签下粉丝列表
+	 * @param $tagid
+	 * @return array
+	 */
+	public function getFansByTag($tagid){
+		$token = $this->getAccessToken();
+		if(is_error($token)){
+			return $token;
+		}
+		$url = "https://openapi.baidu.com/rest/2.0/cambrian/tag/get?access_token={$token}";
+		$data = array('tagid' => $tagid);
+		$response = $this->requestApi($url, json_encode($data));
+		return $response['data']['openid'];
+	}
+
 }
