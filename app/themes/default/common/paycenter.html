@@ -420,7 +420,7 @@
 		});
 	document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
 		var miniprogram_environment = false;
-		if(wx && wx.miniProgram && wx.mingProgram.getEnv) {
+		if(wx && wx.miniProgram && wx.miniProgram.getEnv) {
 			wx.miniProgram.getEnv(function(res) {
 				if (res.miniprogram) {
 					miniprogram_environment = true;
