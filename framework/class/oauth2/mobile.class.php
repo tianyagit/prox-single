@@ -108,7 +108,7 @@ class Mobile extends OAuth2Client {
 			'member' => $member,
 			'profile' => $profile
 		);
-		return parent::user_register($register);
+		return parent::user_register($register, 'mobile');
 	}
 
 	public function login() {

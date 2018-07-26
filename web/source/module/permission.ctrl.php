@@ -94,7 +94,7 @@ if ($do == 'post') {
 				itoast('两次输入密码不一致');
 			}
 			unset($insert_user['repassword']);
-			$uid = user_register($insert_user);
+			$uid = user_register($insert_user, 'admin');
 			if (!$uid) {
 				itoast('注册账号失败', '', '');
 			}

@@ -99,7 +99,7 @@ class System extends OAuth2Client {
 			'member' => $member,
 			'profile' => $profile
 		);
-		return parent::user_register($register);
+		return parent::user_register($register, 'system');
 	}
 
 	public function systemFields() {

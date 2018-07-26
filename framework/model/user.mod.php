@@ -8,9 +8,10 @@ defined('IN_IA') or exit('Access Denied');
  * 用户注册
  * PS:密码字段不要加密
  * @param array $user 用户注册信息，需要的字段必须包括 username, password, remark
+ * @param string $source 注册来源：mobile, system, qq, wechat, admin
  * @return int 成功返回新增的用户编号，失败返回 0
  */
-function user_register($user) {
+function user_register($user, $source) {
 	load()->model('message');
 	if (empty($user) || !is_array($user)) {
 		return 0;
@@ -40,7 +41,7 @@ function user_register($user) {
 	if (!empty($result)) {
 		$user['uid'] = pdo_insertid();
 	}
-	$content = $user['username'] . date("Y-m-d H:i:s") . '注册成功';
+	$content = $user['username'] . ' ' .date("Y-m-d H:i:s") . '注册成功--' . $source;
 	$message = array(
 		'status' => $user['status']
 	);
@@ -979,7 +980,7 @@ function user_info_save($user, $is_founder_group = false) {
 	}
 	unset($user['vice_founder_name']);
 	unset($user['repassword']);
-	$user_add_id = user_register($user);
+	$user_add_id = user_register($user, 'admin');
 	if (empty($user_add_id)) {
 		return error(-1, '增加失败，请稍候重试或联系网站管理员解决！');
 	}

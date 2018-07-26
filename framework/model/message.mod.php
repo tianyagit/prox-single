@@ -332,12 +332,19 @@ function message_list_detail($lists) {
 			$message['url'] = url('account/manage', array('account_type' => ACCOUNT_TYPE_WEBAPP_NORMAL, 'message_id' => $message['id']));
 		}
 
-		if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_CHECK) {
-			$message['url'] = url('user/display', array('type' => 'check', 'message_id' => $message['id']));
-		}
-
-		if ($message['type'] == MESSAGE_REGISTER_TYPE && $message['status'] == USER_STATUS_NORMAL) {
-			$message['url'] = url('user/display', array('message_id' => $message['id']));
+		if ($message['type'] == MESSAGE_REGISTER_TYPE) {
+			if ($message['status'] == USER_STATUS_CHECK) {
+				$message['url'] = url('user/display', array('type' => 'check', 'message_id' => $message['id']));
+			}
+			if ($message['status'] == USER_STATUS_NORMAL) {
+				$message['url'] = url('user/display', array('message_id' => $message['id']));
+			}
+			$source_array = array('mobile' => '手动注册', 'system' => '手动注册', 'qq' => 'QQ 注册', 'wechat' => '微信注册', 'admin' => '管理员添加');
+			$msg = explode('--', $message['message']);
+			if (count($msg) > 1 && !empty($source_array[$msg[1]])) {
+				$message['message'] = $msg[0];
+				$message['source'] = $source_array[$msg[1]];
+			}
 		}
 
 		if ($message['type'] == MESSAGE_USER_EXPIRE_TYPE) {
