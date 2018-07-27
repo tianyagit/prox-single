@@ -500,6 +500,21 @@ function buildframes($framename = ''){
 		/* sxend */
 	}
 
+	if (defined('FRAME') && FRAME == 'account') {
+		$system_menu = require IA_ROOT . '/web/common/frames.inc.php';
+		foreach ($frames['account']['section'] as $section_key => &$section) {
+			if ($section_key == 'platform_module') {
+				continue;
+			}
+			foreach ($section['menu'] as $sub_key => &$sub_menu) {
+				$sub_menu_frames = $system_menu['account']['section'][$section_key]['menu'][$sub_key];
+				if (is_array($sub_menu_frames['is_display']) && !in_array($_W['account']['type'], $sub_menu_frames['is_display'])) {
+					$sub_menu['is_display'] = 0;
+				}
+			}
+		}
+	}
+
 	//进入小程序后的菜单
 	if (defined('FRAME') && FRAME == 'wxapp') {
 		load()->model('wxapp');
