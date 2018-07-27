@@ -53,13 +53,17 @@ if ($do == 'custom') {
 // 使用默认appjson
 if ($do == 'custom_default') {
 	$result = wxapp_code_set_default_appjson($version_id);
-	iajax($result);
+	if ($result === false) {
+		itoast('操作失败，请重试！', '', 'error');
+	} else {
+		itoast('设置成功！', url('wxapp/front-download/front_download', array('version_id' => $version_id)), 'success');
+	}
 }
 
 // 保存自定义appjson
 if ($do == 'custom_save') {
 	if (empty($version_info)) {
-		iajax(-1, '参数错误！');
+		itoast('参数错误！', '', 'error');
 	}
 	$json = array();
 	if (!empty($_GPC['json']['window'])) {
@@ -80,7 +84,7 @@ if ($do == 'custom_save') {
 	}
 	$result = wxapp_code_save_appjson($version_id, $json);
 	cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
-	iajax($result, '');
+	itoast('设置成功！', url('wxapp/front-download/front_download', array('version_id' => $version_id)), 'success');
 }
 
 if ($do == 'custom_convert_img') {
@@ -107,7 +111,6 @@ if ($do == 'domainset') {
 		$appurl = $_GPC['appurl'];
 		if (!starts_with($appurl, 'https')) {
 			itoast('域名必须以https开头');
-
 			return;
 		}
 
@@ -162,7 +165,12 @@ if ($do == 'upgrade_module') {
 			);
 		}
 		$modules = iserializer($modules);
-		pdo_update('wxapp_versions', array('modules' => $modules, 'last_modules' => $modules), array('id' => $version_id));
+		pdo_update('wxapp_versions', array(
+			'modules' => $modules,
+			'last_modules' => $modules,
+			'version' => $_GPC['version'],
+			'description' => trim($_GPC['description']),
+		), array('id' => $version_id));
 		cache_delete(cache_system_key('wxapp_version', array('version_id' => $version_id)));
 	}
 	exit;
