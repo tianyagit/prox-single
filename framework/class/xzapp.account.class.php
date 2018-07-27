@@ -872,23 +872,30 @@ class XzappAccount extends WeAccount {
 	 * 获取 jssdk config
 	 * @return array
 	 */
-	public function getJssdkConfid($url = '') {
+	public function getJssdkConfig($url = '') {
 		global $_W;
 		$jsapiTicket = $this->getJsApiTicket();
 		if (is_error($jsapiTicket)) {
 			$jsapiTicket = $jsapiTicket['message'];
 		}
-		$nonceStr = random(16);
+		$nonceStr = random(25);
 		$timestamp = TIMESTAMP;
 		$url = empty($url) ? $_W['siteurl'] : $url;
-		$string1 = "jsapi_ticket={$jsapiTicket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
+		$arr = array(
+			"jsapi_ticket" => $jsapiTicket,
+			"nonce_str" => $nonceStr,
+			"timestamp" => $timestamp,
+			"url" => urlencode($url)
+		);
+		ksort($arr);
+		$string1 = http_build_query($arr);
 		$signature = sha1($string1);
 		$config = array(
-			"appId"		=> $this->account['key'],
+			"appId"		=> $this->account['original'],
 			"nonceStr"	=> $nonceStr,
 			"timestamp" => "$timestamp",
 			"signature" => $signature,
-			"url" => $url,
+			"url" => urlencode($url),
 		);
 		return $config;
 	}

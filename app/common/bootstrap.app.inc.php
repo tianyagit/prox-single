@@ -208,5 +208,22 @@ if ($_W['container'] == 'wechat' && in_array($_W['account']['type'], array(ACCOU
 	}
 	unset($jsauth_acid, $account_api);
 }
+
+if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
+	if (!empty($unisetting['jsauth_acid'])) {
+		$jsauth_acid = $unisetting['jsauth_acid'];
+	} else {
+		$jsauth_acid = $_W['acid'];
+	}
+	if (!empty($jsauth_acid)) {
+		$account_api = WeAccount::create($jsauth_acid);
+		if (!empty($account_api)) {
+			$_W['account']['xz_jssdkconfig'] = $account_api->getJssdkConfig();
+			$_W['account']['xz_jsauth_acid'] = $jsauth_acid;
+		}
+	}
+	unset($jsauth_acid, $account_api);
+}
+
 $_W['attachurl'] = attachment_set_attach_url();
 load()->func('compat.biz');
