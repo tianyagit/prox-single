@@ -491,10 +491,12 @@ if ($do == 'module_detail') {
 	if (empty($module_info)) {
 		itoast('模块不存在或是已经被删除', '', 'error');
 	}
-
-	$current_cloud_module = cloud_m_info($module_name);
-	if (is_error($current_cloud_module)) {
-		itoast($current_cloud_module['message']);
+	$manifest = ext_module_manifest($module_name);
+	if (empty($manifest)) {
+		$current_cloud_module = cloud_m_info($module_name);
+		if (is_error($current_cloud_module)) {
+			itoast($current_cloud_module['message']);
+		}
 	}
 
 	$module_info['cloud_mid'] = !empty($current_cloud_module['id']) ? $current_cloud_module['id'] : '';
