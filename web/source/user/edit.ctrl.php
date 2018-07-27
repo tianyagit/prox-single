@@ -77,24 +77,88 @@ if ($do == 'edit_modules_tpl') {
 	$group_info = user_group_detail_info($user['groupid']);
 
 	$extend_permission = pdo_get('uni_group', array('uid' => $uid, 'uniacid' => 0));
-
-	$extend_modules = iunserializer($extend_permission['modules']);
-	$extend_permission['modules'] = array();
-	foreach ($extend_modules as $modulenames) {
-		if (!empty($modulenames)) {
-			$extend_permission['modules'] = $current_module_names = array_merge($extend_permission['modules'], $modulenames);
-		}
-	}
 	$extend_permission['templates'] = (array)iunserializer($extend_permission['templates']);
-	$extend = array();
-	if (!empty($extend_permission['modules'])) {
-		foreach ($extend_permission['modules'] as $key => $val) {
-			$extend['modules'][$val] = module_fetch($val);
+	$extend_permission['modules'] = iunserializer($extend_permission['modules']);
+
+	if (!empty($templates) && !empty($extend_permission['templates'])) {
+		foreach ($templates as $k => $temp) {
+			if (in_array($temp['id'], $extend_permission['templates'])) {
+				$templates[$k]['checked'] = 1;
+			}
 		}
 	}
+
+	$extend = array();
 	if (!empty($extend_permission['templates'])) {
 		$extend['templates'] = pdo_getall('site_templates', array('id' => $extend_permission['templates']), array('id', 'name', 'title'));
 	}
+	if (!empty($extend_permission['modules'])) {
+		foreach ($extend_permission['modules'] as $type => $modulenames) {
+			foreach ($modulenames as $name) {
+				$module = module_fetch($name);
+				if (!empty($module)) {
+					if ($type == 'modules' && $module[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
+						$extend[$type.'_modules'][$name] = $module;
+					}
+					if ($type == 'wxapp' && $module[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
+						$extend[$type.'_modules'][$name] = $module;
+					}
+					if ($type == 'webapp' && $module[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP) {
+						$extend[$type.'_modules'][$name] = $module;
+					}
+					if ($type == 'phoneapp' && $module[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP) {
+						$extend[$type.'_modules'][$name] = $module;
+					}
+					if ($type == 'xzapp' && $module[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
+						$extend[$type.'_modules'][$name] = $module;
+					}
+				}
+			}
+		}
+	}
+	$user_modules = array('account' => array(), 'wxapp' => array(), 'webapp' => array(), 'phoneapp' => array(), 'xzapp' => array());
+	if (!empty($modules)) {
+		foreach ($modules as $item) {
+			if ($item['issystem'] == 0) {
+				if ($item[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_ACCOUNT) {
+					if (!empty($extend_permission['modules']['modules']) && in_array($item['name'], $extend_permission['modules']['modules'])) {
+						$item['checked'] = 1;
+					}
+					$user_modules['account'][] = $item;
+					$item['checked'] = 0;
+				}
+				if ($item[MODULE_SUPPORT_WXAPP_NAME] == MODULE_SUPPORT_WXAPP) {
+					if (!empty($extend_permission['modules']['wxapp']) && in_array($item['name'], $extend_permission['modules']['wxapp'])) {
+						$item['checked'] = 1;
+					}
+					$user_modules['wxapp'][] = $item;
+					$item['checked'] = 0;
+				}
+				if ($item[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP) {
+					if (!empty($extend_permission['modules']['webapp']) && in_array($item['name'], $extend_permission['modules']['webapp'])) {
+						$item['checked'] = 1;
+					}
+					$user_modules['webapp'][] = $item;
+					$item['checked'] = 0;
+				}
+				if ($item[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP) {
+					if (!empty($extend_permission['modules']['phoneapp']) && in_array($item['name'], $extend_permission['modules']['phoneapp'])) {
+						$item['checked'] = 1;
+					}
+					$user_modules['phoneapp'][] = $item;
+					$item['checked'] = 0;
+				}
+				if ($item[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
+					if (!empty($extend_permission['modules']['xzapp']) && in_array($item['name'], $extend_permission['modules']['xzapp'])) {
+						$item['checked'] = 1;
+					}
+					$user_modules['xzapp'][] = $item;
+					$item['checked'] = 0;
+				}
+			}
+		}
+	}
+
 	template('user/edit-modules-tpl');
 }
 
@@ -110,7 +174,13 @@ if ($do == 'edit_users_permission') {
 
 		if (!empty($module) || !empty($tpl)) {
 			$data = array(
-				'modules' => iserializer(array('modules' => $module, 'wxapp' => $module, 'webapp' => $module, 'xzapp' => $module, 'phoneapp' => $module)),
+				'modules' => iserializer(array(
+					'modules' => empty($module['modules']) ? array() : $module['modules'],
+					'wxapp' => empty($module['wxapp']) ? array() : $module['wxapp'],
+					'webapp' => empty($module['webapp']) ? array(): $module['webapp'],
+					'xzapp' => empty($module['xzapp']) ? array() : $module['xzapp'],
+					'phoneapp' => empty($module['phoneapp']) ? array() : $module['phoneapp']
+				)),
 				'templates' => empty($tpl) ? '' : iserializer($tpl),
 				'uid' => $uid,
 				'uniacid' => 0,
@@ -126,10 +196,10 @@ if ($do == 'edit_users_permission') {
 		} else {
 			$res = pdo_delete('uni_group', array('uid' => $uid, 'uniacid' => 0));
 		}
-		if ($res) {
-			iajax(0, '修改成功', '');
-		} else {
+		if ($res === false) {
 			iajax(-1, '修改失败', '');
+		} else {
+			iajax(0, '修改成功', '');
 		}
 	}
 }

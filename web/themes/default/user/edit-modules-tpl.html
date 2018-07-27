@@ -4,7 +4,7 @@
 	<li><a href="{url 'user/display'}">用户管理</a></li>
 	<li>编辑用户详情</li>
 </ol>
-<div id="js-user-edit-modulestpl" ng-controller="UserEditModulesTpl" ng-cloak>
+<div id="js-user-edit-modulestpl" ng-controller="UserEditModules" ng-cloak>
 	<div class="user-head-info we7-padding-bottom" >
 		<img ng-src="{{profile.avatar}}" class="img-circle user-avatar pull-left">
 		<h3 class="pull-left" ng-bind="user.username"></h3>
@@ -137,16 +137,80 @@
 
 		<tr>
 			<td colspan="6">
-				<div class="col-sm-1 color-gray text-left we7-padding-none">应用</div>
+				<div class="col-sm-1 color-gray text-left we7-padding-none">公众号应用</div>
 				<div class="col-sm-11 js-extra-modules">
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.modules" ng-if="extend.modules">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.modules_modules" ng-if="extend.modules_modules">
 						<div ng-if="module.name != 'all'" class="text-over text-left">
 							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
 							{{ module.title }}
 						</div>
-						<label class="label label-info" ng-if="module.name == 'all'">所有模块</label>
 					</div>
-					<div class="col-sm-3 text-left we7-margin-bottom" ng-if="!extend.modules">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-if="!extend.modules_modules">
+						<a href="javascript:;">---</a>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="6">
+				<div class="col-sm-1 color-gray text-left we7-padding-none">小程序应用</div>
+				<div class="col-sm-11 js-extra-modules">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.wxapp_modules" ng-if="extend.wxapp_modules">
+						<div class="text-over text-left">
+							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+							{{ module.title }}
+						</div>
+					</div>
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-if="!extend.wxapp_modules">
+						<a href="javascript:;">---</a>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="6">
+				<div class="col-sm-1 color-gray text-left we7-padding-none">PC 应用</div>
+				<div class="col-sm-11 js-extra-modules">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.webapp_modules" ng-if="extend.webapp_modules">
+						<div class="text-over text-left">
+							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+							{{ module.title }}
+						</div>
+					</div>
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-if="!extend.webapp_modules">
+						<a href="javascript:;">---</a>
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan="6">
+				<div class="col-sm-1 color-gray text-left we7-padding-none">APP 应用</div>
+				<div class="col-sm-11 js-extra-modules">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.phoneapp_modules" ng-if="extend.phoneapp_modules">
+						<div class="text-over text-left">
+							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+							{{ module.title }}
+						</div>
+					</div>
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-if="!extend.phoneapp_modules">
+						<a href="javascript:;">---</a>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="6">
+				<div class="col-sm-1 color-gray text-left we7-padding-none">熊掌应用</div>
+				<div class="col-sm-11 js-extra-modules">
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-repeat="module in extend.xzapp_modules" ng-if="extend.xzapp_modules">
+						<div class="text-over text-left">
+							<img ng-src="{{ module.logo }}" alt="" style="width:50px;height:50px;">
+							{{ module.title }}
+						</div>
+					</div>
+					<div class="col-sm-3 text-left we7-margin-bottom" ng-if="!extend.xzapp_modules">
 						<a href="javascript:;">---</a>
 					</div>
 				</div>
@@ -168,8 +232,7 @@
 		</tr>
 
 	</table>
-
-	<div  class="uploader-modal modal fade module" id="jurisdiction-add">
+	<div class="uploader-modal modal fade module" id="jurisdiction-add">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content ">
 				<div class="modal-header">
@@ -178,54 +241,56 @@
 				</div>
 				<div class="modal-body material-content clearfix">
 					<div class="material-nav">
-						<a href="javascript:;" ng-click="tabChange(0)"  ng-class="{true:'active',false:''}[jurindex==0]" >应用</a>
-						<a href="javascript:;" ng-click="tabChange(1)" ng-class="{true:'active',false:''}[jurindex==1]">模板</a>
+						<a href="javascript:;" ng-if="user_modules.account" ng-click="tabChange('account')"  ng-class="{true:'active',false:''}[jurindex=='account']" >公众号应用</a>
+						<a href="javascript:;" ng-if="user_modules.wxapp" ng-click="tabChange('wxapp')"  ng-class="{true:'active',false:''}[jurindex=='wxapp']" >小程序应用</a>
+						<a href="javascript:;" ng-if="user_modules.webapp" ng-click="tabChange('webapp')"  ng-class="{true:'active',false:''}[jurindex=='webapp']" >PC 应用</a>
+						<a href="javascript:;" ng-if="user_modules.phoneapp" ng-click="tabChange('phoneapp')"  ng-class="{true:'active',false:''}[jurindex=='phoneapp']" >APP 应用</a>
+						<a href="javascript:;" ng-if="user_modules.xzapp" ng-click="tabChange('xzapp')"  ng-class="{true:'active',false:''}[jurindex=='xzapp']" >熊掌号应用</a>
+						<a href="javascript:;" ng-if="templates" ng-click="tabChange('template')" ng-class="{true:'active',false:''}[jurindex=='template']">微站模板</a>
 					</div>
-					<div class="material-body" ng-show="jurindex==0" id="content-modules">
+					<div class="material-body" ng-show="jurindex!='template'" id="content-modules" style="height: 560px;">
 						<div class="row">
-							{loop $modules $module_name $module}
-							{if empty($module['issystem']) && $module['account_support'] == 2}
-							<div class="col-sm-2">
-								<div class="item {if is_array($current_module_names) && in_array($module_name, $current_module_names)}active{/if}"
-									 data-title="{$module['title']}"
-									 data-name="{$module['name']}"
-									 ng-click="itemclick()"
+							<div class="col-sm-2" ng-repeat="item in modules">
+								<div class="item"
+									 ng-click="itemclick(item.name)"
+									 ng-class="{true:'active',false:''}[item.checked == 1]"
 									 onclick="$(this).toggleClass('active')">
-									<img ng-src="{$module['logo']}" alt="" class="icon"/>
-									<div class="name">{$module['title']}</div>
+									<img ng-src="item.logo" alt="" class="icon"/>
+									<div class="name" ng-bind="item.title"></div>
 									<div class="mask">
 										<span class="wi wi-right"></span>
 									</div>
 								</div>
 							</div>
-							{/if}
-							{/loop}
 						</div>
 					</div>
-					<div class="material-body" ng-show="jurindex==1" id="content-templates">
+					<div class="material-body" ng-show="jurindex=='template'" id="content-templates" style="height: 560px;">
 						<div class="row">
-							{loop $templates $temp}
-							<div class="col-sm-2">
-								<div  ng-click="itemclick()" class="item {if is_array($extend['templates']) && in_array($temp, $extend['templates'])}active{/if}" data-title="{$temp['title']}" data-name="{$temp['name']}" data-id="{$temp['id']}" onclick="$(this).toggleClass('active')">
+							<div class="col-sm-2" ng-repeat="temp in templates">
+								<div ng-click="itemclick(temp.id)"
+									 class="item"
+									 ng-class="{true:'active',false:''}[temp.checked == 1]"
+									 onclick="$(this).toggleClass('active')"
+								>
 									<i class="wi wi-home" style="color: #ddd;font-size: 48px;position:relative; top:-15px; margin: 0;"></i>
-									<div class="name">{$temp['title']}</div>
+									<div class="name" ng-bind="temp.title"></div>
 									<div class="mask">
 										<span class="wi wi-right"></span>
 									</div>
 								</div>
 							</div>
-							{/loop}
 						</div>
 					</div>
 				</div>
-				<div class="material-pager text-right clearfix">
+				<div class="material-pager text-right clearfix" style="padding: 10px">
 					<div class="pull-left we7-form">
 						<input type="checkbox" id="selected-all" ng-model="allmodule" ng-change="allmodulechange(allmodule)">
 						<label for="selected-all">全选</label>
 					</div>
-					<ul class="pagination">
-
-					</ul>
+					<div class="js-pager">
+						<ul class="pagination">
+						</ul>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" ng-click="addExtend()">确定</button>
@@ -242,11 +307,15 @@
 		group_info: {php echo !empty($group_info) ? json_encode($group_info) : 'null'},
 		groups: {php echo !empty($groups) ? json_encode($groups) : 'null'},
 		extend: {php echo !empty($extend) ? json_encode($extend) : 'null'},
+    	user_modules: {php echo !empty($user_modules) ? json_encode($user_modules) : 'null'},
+    	source_templates: {php echo !empty($templates) ? json_encode($templates) : 'null'},
+    	extend_modules: {php echo !empty($extend_permission['modules']) ? json_encode($extend_permission['modules']) : 'null'},
 		links: {
 			editGroup: "{php echo url('user/edit/edit_modules_tpl')}",
 			editUsersPermission: "{php echo url('user/edit/edit_users_permission')}",
 		},
 	});
+    
 	angular.bootstrap($('#js-user-edit-modulestpl'), ['userManageApp']);
 </script>
 {template 'common/footer'}
