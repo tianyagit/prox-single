@@ -31,6 +31,8 @@
 		{/if}
 		{/if}
 		<!-- svend -->
+		<a href="{php echo url('message/notice', array('type' => MESSAGE_SYSTEM_UPGRADE))}" class="btn btn-default {if $type == MESSAGE_SYSTEM_UPGRADE} active {/if}">系统更新</a>
+		<a href="{php echo url('message/notice', array('type' => MESSAGE_OFFICIAL_DYNAMICS))}" class="btn btn-default {if $type == MESSAGE_OFFICIAL_DYNAMICS} active {/if}">官方动态</a>
 	</div>
 	<div class="btn-group we7-btn-group we7-padding-bottom" style="float: right;">
 		<a href="javascript:;" ng-click="allRead()" class="btn">已读所有消息</a>
@@ -78,6 +80,7 @@
 					<a ng-href="{{list.url}}" ng-if="list.type==6">查看pc</a>
 					<a ng-href="{{list.url}}" ng-if="list.type==4 && list.status==1">查看我的待审核用户</a>
 					<a ng-href="{{list.url}}" ng-if="list.type==7">查看我的账号</a>
+					<a href="javascript:;" ng-if="list.type==10 || list.type==11" ng-click="getOfficialMsg(list.id, list.url)">查看</a>
 				</div>
 			</td>
 		</tr>
@@ -130,6 +133,7 @@
 		'lists': {php echo !empty($lists) ? json_encode($lists) : 'null'},
 		'is_read' : "{$is_read}",
 		'all_read_url' : "{php echo url('message/notice/all_read')}",
+		'mark_read_url' : "{php echo url('message/notice/read')}",
 	});
 	angular.bootstrap($('#message-notice'), ['messageApp']);
 </script>

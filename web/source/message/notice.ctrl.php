@@ -6,7 +6,7 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-$dos = array('display', 'change_read_status', 'event_notice', 'all_read', 'setting');
+$dos = array('display', 'change_read_status', 'event_notice', 'all_read', 'setting', 'read');
 $do = in_array($do, $dos) ? $do : 'display';
 load()->model('message');
 
@@ -60,6 +60,8 @@ if ($do == 'event_notice') {
 	if (!pdo_tableexists('message_notice_log')) {
 		iajax(-1);
 	}
+	update_official_dynamics();
+
 	$message = message_event_notice_list();
 	if (!empty($message) && !empty($message['lists'])) {
 		$setting = message_setting();
@@ -102,6 +104,11 @@ if ($do == 'event_notice') {
 	}
 	iajax(0, $message);
 
+}
+
+if ($do == 'read') {
+	pdo_update('message_notice_log', array('is_read' => MESSAGE_READ), array('id' => $_GPC['id']));
+	iajax(0, '已标记已读');
 }
 
 if ($do == 'all_read') {

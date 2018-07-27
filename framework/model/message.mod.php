@@ -87,6 +87,7 @@ function message_event_notice_list() {
 	global $_W;
 	$message_table = table('message');
 	$message_table->searchWithIsRead(MESSAGE_NOREAD);
+	$message_table->searchWithType(array(MESSAGE_SYSTEM_UPGRADE, MESSAGE_OFFICIAL_DYNAMICS));
 	$type = '';
 	if (user_is_vice_founder() || !user_is_founder($_W['uid'])) {
 		$type = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
@@ -437,4 +438,58 @@ function message_setting() {
 			),
 		),
 	);
+}
+
+/**
+ * 从云商城获取官方动态
+ * @return array()
+ */
+function official_dynamics() {
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$result = $api->get('store', 'official_dynamics');
+	return $result;
+}
+
+/**
+ * 将获取到的官方动态加入通知表
+ */
+function update_official_dynamics() {
+	$data = official_dynamics();
+	if (empty($data)) {
+		return;
+	}
+	$insert_data = array();
+	$signs = array();
+	foreach ($data['version'] as $item) {
+		$signs[] = $item['itemid'];
+		$insert_data[] = array(
+			'sign' => $item['itemid'],
+			'message' => $item['title'],
+			'url' => $item['url'],
+			'create_time' => $item['datetime'],
+			'type' => MESSAGE_SYSTEM_UPGRADE,
+		);
+	}
+	foreach ($data['info'] as $item) {
+		$signs[] = $item['itemid'];
+		$insert_data[] = array(
+			'sign' => $item['itemid'],
+			'message' => $item['title'],
+			'url' => $item['url'],
+			'create_time' => $item['datetime'],
+			'type' => MESSAGE_OFFICIAL_DYNAMICS,
+		);
+	}
+
+	if (!empty($signs)) {
+		$signs = pdo_getall('message_notice_log', array('sign' => $signs), array('sign'), 'sign');
+		$signs = array_keys($signs);
+		foreach ($insert_data as $item) {
+			if (!in_array($item['sign'], $signs)) {
+				pdo_insert('message_notice_log', $item);
+			}
+		}
+	}
+	return;
 }

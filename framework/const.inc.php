@@ -296,6 +296,10 @@ define('MESSAGE_REGISTER_TYPE', 4);
 define('MESSAGE_USER_EXPIRE_TYPE', 7);
 //小程序应用升级
 define('MESSAGE_WXAPP_MODULE_UPGRADE', 8);
+//系统更新消息
+define('MESSAGE_SYSTEM_UPGRADE', 10);
+//官方动态消息
+define('MESSAGE_OFFICIAL_DYNAMICS', 11);
 
 //消息开关是否开启 1开启 2关闭
 define('MESSAGE_ENABLE', 1);
