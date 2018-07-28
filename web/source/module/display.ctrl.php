@@ -50,9 +50,22 @@ if ($do == 'display') {
 		}
 	} else {
 		$user_module = user_modules($_W['uid']);
+		$user_owned_account = table('account')->userOwnedAccount($_W['uid']);
+		foreach($user_owned_account as $account_key => $account) {
+			$account_modules = uni_modules_list($account['uniacid']);
+			$user_owned_account[$account_key]['modules'] = array_keys($account_modules);
+
+		}
 		foreach($user_module as $key => $module) {
-				$accounts_list = module_link_uniacid_fetch($_W['uid'], $key);
-				if (empty($accounts_list)) {
+			$show_module = false;
+
+			foreach($user_owned_account as $account) {
+				if (in_array($module['name'], $account['modules'])) {
+					$show_module = true;
+					break;
+				}
+			}
+			if ($show_module == false) {
 				unset($user_module[$key]);
 			}
 		}
