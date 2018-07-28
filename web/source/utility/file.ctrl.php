@@ -564,7 +564,7 @@ if ($do == 'image') {
 	$month = $_GPC['month'];
 	$page = intval($_GPC['page']);
 	$groupid = intval($_GPC['groupid']);
-	$page_size = 15;
+	$page_size = 10;
 	$page = max(1, $page);
 	$is_local_image = $islocal == 'local' ? true : false;
 	$attachment_table = table('attachment');
