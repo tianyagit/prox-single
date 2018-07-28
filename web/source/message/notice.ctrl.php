@@ -62,7 +62,7 @@ if ($do == 'event_notice') {
 	}
 
 	if (user_is_founder($_W['uid'], true)) {
-		message_update_official_dynamics();
+		message_store_notice();
 	}
 
 	$message = message_event_notice_list();
@@ -110,7 +110,10 @@ if ($do == 'event_notice') {
 }
 
 if ($do == 'read') {
-	pdo_update('message_notice_log', array('is_read' => MESSAGE_READ), array('id' => $_GPC['id']));
+	$message_id = pdo_getcolumn('message_notice_log', array('id' => intval($_GPC['id'])), 'id');
+	if (!empty($message_id)) {
+		pdo_update('message_notice_log', array('is_read' => MESSAGE_READ), array('id' => $message_id));
+	}
 	iajax(0, '已标记已读');
 }
 

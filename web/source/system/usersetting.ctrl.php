@@ -35,7 +35,7 @@ if ($do == 'login') {
 if ($do == 'binding') {
 	$_W['page']['title'] = '用户登录/注册设置 - 绑定设置';
 	if (checksubmit('submit')) {
-		$settings['bind'] = $_GPC['bind'];
+		$settings['bind'] = safe_gpc_string($_GPC['bind']);
 		$settings['welcome_link'] = intval($_GPC['welcome_link']);
 
 		setting_save($settings, 'copyright');

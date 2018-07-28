@@ -1412,3 +1412,14 @@ function cloud_path_is_writable($dir) {
 	}
 	return $writeable;
 }
+
+/**
+ * 从云服务获取推送的消息
+ * @return array()
+ */
+function cloud_get_store_notice() {
+	load()->classs('cloudapi');
+	$api = new CloudApi();
+	$result = $api->get('store', 'official_dynamics');
+	return $result;
+}
