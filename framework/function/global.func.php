@@ -714,7 +714,7 @@ function detect_sensitive_word($string) {
  */
 function referer($default = '') {
 	global $_GPC, $_W;
-	$_W['referer'] = !empty($_GPC['referer']) ? $_GPC['referer'] : $_SERVER['HTTP_REFERER'];;
+	$_W['referer'] = !empty($_GPC['referer']) ? $_GPC['referer'] : $_SERVER['HTTP_REFERER'];
 	$_W['referer'] = substr($_W['referer'], -1) == '?' ? substr($_W['referer'], 0, -1) : $_W['referer'];
 
 	if (strpos($_W['referer'], 'member.php?act=login')) {
