@@ -255,7 +255,7 @@
 									 ng-click="itemclick(item.name)"
 									 ng-class="{true:'active',false:''}[item.checked == 1]"
 									 onclick="$(this).toggleClass('active')">
-									<img ng-src="item.logo" alt="" class="icon"/>
+									<img ng-src="{{item.logo}}" alt="" class="icon"/>
 									<div class="name" ng-bind="item.title"></div>
 									<div class="mask">
 										<span class="wi wi-right"></span>
