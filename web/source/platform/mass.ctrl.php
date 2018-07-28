@@ -79,11 +79,9 @@ if ($do == 'post') {
 	$mass_info = pdo_get('mc_mass_record', array('id' => $id));
 	$groups = mc_fans_groups();
 
-	if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_AUTH, ACCOUNT_TYPE_XZAPP_NORMAL))) {
-		$show_post_content = array('news'=> false, 'image'=> false,'voice'=> false,'basic'=> false);
-	} else {
-		$show_post_content = array('news'=> false, 'image'=> false,'voice'=> false,'video'=> false);
-	}
+	$account_api = WeAccount::create();
+	$supports = $account_api->getMaterialSupport();
+	$show_post_content = $supports['mass'];
 
 	if (checksubmit('submit')) {
 		$type = in_array(intval($_GPC['type']), array(0, 1)) ? intval($_GPC['type']) : 0;

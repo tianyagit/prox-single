@@ -1915,4 +1915,15 @@ class WeiXinAccount extends WeAccount {
 		}
 		return $result;
 	}
+
+	/**
+	 * 获取公众号号前端显示的素材支持内容
+	 * @return array
+	 */
+	public function getMaterialSupport() {
+		return array(
+			'mass' => array('news'=> false, 'image'=> false,'voice'=> false,'video'=> false),
+			'chats' => array('basic'=> false,'news'=> false,'image'=> false,'music'=> false,'voice'=> false,'video'=> false)
+		);
+	}
 }

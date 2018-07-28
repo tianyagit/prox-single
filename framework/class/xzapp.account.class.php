@@ -889,6 +889,15 @@ class XzappAccount extends WeAccount {
 		return $config;
 	}
 
-
+	/**
+	 * 获取熊掌号前端显示的素材支持内容
+	 * @return array
+	 */
+	public function getMaterialSupport() {
+		return array(
+			'mass' => array('news'=> false, 'image'=> false,'voice'=> false,'basic'=> false),
+			'chats' => array('basic'=> false,'news'=> false,'image'=> false,'music'=> true,'voice'=> false,'video'=> true)
+		);
+	}
 
 }
