@@ -52,15 +52,31 @@ if ($do == 'display') {
 		$user_module = user_modules($_W['uid']);
 		$user_owned_account = table('account')->userOwnedAccount($_W['uid']);
 		foreach($user_owned_account as $account_key => $account) {
-			$account_modules = uni_modules_list($account['uniacid']);
-			$user_owned_account[$account_key]['modules'] = array_keys($account_modules);
-
+			if (in_array($account['type'], account_types('miniprogram'))) {
+				$versions = wxapp_version_all($account['uniacid']);
+				if (empty($versions)) {
+					$user_owned_account[$account_key]['premission_modules'][] = '';
+					continue;
+				}
+				foreach($versions as $version) {
+					if (empty($version['modules'])) {
+						$user_owned_account[$account_key]['premission_modules'][] = '';
+						continue;
+					}
+					$module_info = current($version['modules']);
+					$user_owned_account[$account_key]['premission_modules'][] = $module_info['name'];
+				}
+				$user_owned_account[$account_key]['premission_modules'] = array_unique($user_owned_account[$account_key]['premission_modules']);
+			} else {
+				$account_modules = uni_modules_list($account['uniacid'], true, $account['type']);
+				$user_owned_account[$account_key]['premission_modules'] = array_keys($account_modules);
+			}
 		}
 		foreach($user_module as $key => $module) {
 			$show_module = false;
 
 			foreach($user_owned_account as $account) {
-				if (in_array($module['name'], $account['modules'])) {
+				if (in_array($module['name'], $account['premission_modules'])) {
 					$show_module = true;
 					break;
 				}
