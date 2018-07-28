@@ -52,7 +52,7 @@ if ($do == 'display') {
 		$user_module = user_modules($_W['uid']);
 		$user_owned_account = table('account')->userOwnedAccount($_W['uid']);
 		foreach($user_owned_account as $account_key => $account) {
-			if (in_array($account['type'], array(ACCOUNT_TYPE_APP_NORMAL,ACCOUNT_TYPE_APP_AUTH,ACCOUNT_TYPE_WXAPP_WORK))) {
+			if (in_array($account['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WXAPP_WORK))) {
 				$versions = wxapp_version_all($account['uniacid']);
 				if (empty($versions)) {
 					$user_owned_account[$account_key]['premission_modules'][] = '';
