@@ -461,6 +461,7 @@ function message_store_notice() {
 			'url' => $item['url'],
 			'create_time' => $item['datetime'],
 			'type' => MESSAGE_SYSTEM_UPGRADE,
+			'is_read' => MESSAGE_NOREAD,
 		);
 	}
 	foreach ($data['info'] as $item) {
@@ -471,6 +472,7 @@ function message_store_notice() {
 			'url' => $item['url'],
 			'create_time' => $item['datetime'],
 			'type' => MESSAGE_OFFICIAL_DYNAMICS,
+			'is_read' => MESSAGE_NOREAD,
 		);
 	}
 
