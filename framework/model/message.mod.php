@@ -440,25 +440,17 @@ function message_setting() {
 	);
 }
 
-/**
- * 从云商城获取推送的消息
- * @return array()
- */
-function message_get_store_notice() {
-	load()->classs('cloudapi');
-	$api = new CloudApi();
-	$result = $api->get('store', 'official_dynamics');
-	return $result;
-}
 
 /**
  * 将获取到的消息数据加入通知表
  */
 function message_store_notice() {
-	$data = message_get_store_notice();
+	load()->model('cloud');
+	$data = cloud_get_store_notice();
 	if (is_error($data)) {
 		return $data;
 	}
+
 	$insert_data = array();
 	$signs = array();
 	foreach ($data['version'] as $item) {
