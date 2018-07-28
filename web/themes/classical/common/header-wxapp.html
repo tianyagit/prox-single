@@ -9,7 +9,7 @@
 	</div>
 </div>
 <div class="wxapp-operate">
-	<a href="{php echo url('wxapp/version/display', array('uniacid' => $_W['uniacid']))}" class="h"><i class="wi wi-cut" data-toggle="tooltip" data-placement="bottom" title="切换版本"></i></a>
+	<a href="{php echo url('wxapp/display/version_display')}" class="h"><i class="wi wi-cut" data-toggle="tooltip" data-placement="bottom" title="切换版本"></i></a>
 	{if in_array($role, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER)) || $_W['isfounder']}
 	<a href="{php echo url('wxapp/manage/display', array('uniacid' => $_W['uniacid']))}" class="h"><i class="wi wi-text" data-toggle="tooltip" data-placement="bottom" title="管理"></i></a>
 	{/if}

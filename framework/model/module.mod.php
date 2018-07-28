@@ -562,6 +562,12 @@ function module_get_user_account_list($uid, $module_name) {
 			$uniacid = $account['uniacid'];
 		} elseif ($account['type'] == ACCOUNT_TYPE_APP_NORMAL && $module_info['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 			$uniacid = $account['uniacid'];
+		} elseif (($account['type'] == ACCOUNT_TYPE_XZAPP_NORMAL || $account['type'] == ACCOUNT_TYPE_XZAPP_AUTH) && $module_info[MODULE_SUPPORT_XZAPP_NAME] == MODULE_SUPPORT_XZAPP) {
+			$uniacid = $account['uniacid'];
+		} elseif (($account['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL && $module_info[MODULE_SUPPORT_WEBAPP_NAME] == MODULE_SUPPORT_WEBAPP)) {
+			$uniacid = $account['uniacid'];
+		} elseif (($account['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL && $module_info[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP)) {
+			$uniacid = $account['uniacid'];
 		}
 		if (!empty($uniacid)) {
 			if (module_exist_in_account($module_name, $uniacid)) {
@@ -587,6 +593,7 @@ function module_link_uniacid_fetch($uid, $module_name) {
 	if (empty($accounts_list)) {
 		return $result;
 	}
+
 	$accounts_link_result = array();
 	foreach ($accounts_list as $key => $account_value) {
 		if ($account_value['type'] == ACCOUNT_TYPE_APP_NORMAL) {
@@ -617,14 +624,17 @@ function module_link_uniacid_fetch($uid, $module_name) {
 				}
 
 			}
-		}
-		if ($account_value['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account_value['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
+		} elseif ($account_value['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL || $account_value['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH || $account_value['type']== ACCOUNT_TYPE_XZAPP_NORMAL || $account_value['type'] == ACCOUNT_TYPE_XZAPP_AUTH) {
 			if (empty($accounts_link_result[$key])) {
 				$accounts_link_result[$key] = $account_value;
 			} else {
 				$link_wxapp = $accounts_link_result[$key];
 				$accounts_link_result[$key] = $account_value;
 				$accounts_link_result[$key]['link_wxapp'] = $link_wxapp;
+			}
+		} else {
+			if (empty($accounts_link_result[$key])) {
+				$accounts_link_result[$key] = $account_value;
 			}
 		}
 	}

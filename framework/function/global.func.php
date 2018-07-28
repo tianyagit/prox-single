@@ -633,6 +633,36 @@ function tomedia($src, $local_path = false){
 	return $src;
 }
 
+/*
+ * 根据全局远程附件设置获取附件的HTTP绝对路径
+ * @param string $src 附件地址
+ * @return string
+ */
+function to_global_media($src) {
+	global $_W;
+	$lower_src = strtolower($src);
+	if ((substr($lower_src, 0, 7) == 'http://') || (substr($lower_src, 0, 8) == 'https://') || (substr($lower_src, 0, 2) == '//')) {
+		return $src;
+	}
+	$remote = setting_load('remote');
+	$remote = empty($remote) ? array() : $remote['remote'];
+	if (empty($remote['type']) || file_exists(IA_ROOT . '/' . $_W['config']['upload']['attachdir'] . '/' . $src)) {
+		$src = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/' . $src;
+	} else {
+		if ($remote['type'] == ATTACH_FTP) {
+			$attach_url = $remote['ftp']['url'] . '/';
+		} elseif ($remote['type'] == ATTACH_OSS) {
+			$attach_url = $remote['alioss']['url'] . '/';
+		} elseif ($remote['type'] == ATTACH_QINIU) {
+			$attach_url = $remote['qiniu']['url'] . '/';
+		} elseif ($remote['type'] == ATTACH_COS) {
+			$attach_url = $remote['cos']['url'] . '/';
+		}
+		$src = $attach_url . $src;
+	}
+	return $src;
+}
+
 /**
  * 构造错误数组
  * @param int $errno 错误码，0为无任何错误
@@ -1365,5 +1395,35 @@ if (!function_exists('starts_with')) {
 		return false;
 	}
 }
+
+/**
+ * 第一个参数作为回调函数调用，函数不存在则返回空(回调函数最多支持4个参数)
+ * @param string $callback
+ * @return mixed
+ */
+function icall_user_func($callback) {
+	if (function_exists($callback)) {
+		$args = func_get_args();
+		switch(func_num_args()) {
+			case 1:
+				return call_user_func($callback);
+				break;
+			case 2:
+				return call_user_func($callback, $args[1]);
+				break;
+			case 3:
+				return call_user_func($callback, $args[1], $args[2]);
+				break;
+			case 4:
+				return call_user_func($callback, $args[1], $args[2], $args[3]);
+				break;
+			case 5:
+				return call_user_func($callback, $args[1], $args[2], $args[3], $args[4]);
+				break;
+		}
+	}
+	return '';
+}
+
 load()->func('safe');
 load()->func('system');

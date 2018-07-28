@@ -127,8 +127,7 @@ abstract class WeAccount {
 		$account_obj->account['endtime'] = $account_obj->uniaccount['endtime'];
 
 		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH || $type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			$same_account_exist = pdo_get($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
-			$account_obj->same_account_exist = !empty($same_account_exist) ? true : false;
+			$account_obj->same_account_exist = pdo_getall($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
 		}
 
 		return $account_obj;

@@ -500,6 +500,21 @@ function buildframes($framename = ''){
 		/* sxend */
 	}
 
+	if (defined('FRAME') && FRAME == 'account') {
+		$system_menu = require IA_ROOT . '/web/common/frames.inc.php';
+		foreach ($frames['account']['section'] as $section_key => &$section) {
+			if ($section_key == 'platform_module') {
+				continue;
+			}
+			foreach ($section['menu'] as $sub_key => &$sub_menu) {
+				$sub_menu_frames = $system_menu['account']['section'][$section_key]['menu'][$sub_key];
+				if (is_array($sub_menu_frames['is_display']) && !in_array($_W['account']['type'], $sub_menu_frames['is_display'])) {
+					$sub_menu['is_display'] = 0;
+				}
+			}
+		}
+	}
+
 	//进入小程序后的菜单
 	if (defined('FRAME') && FRAME == 'wxapp') {
 		load()->model('wxapp');
@@ -508,6 +523,7 @@ function buildframes($framename = ''){
 		if (!empty($wxapp_version['last_modules']) && is_array($wxapp_version['last_modules'])) {
 			$last_modules = current($wxapp_version['last_modules']);
 		}
+
 		if (!empty($wxapp_version['modules'])) {
 			foreach ($wxapp_version['modules'] as $module) {
 				$wxapp_module_permission = permission_account_user_menu($_W['uid'], $_W['uniacid'], $module['name']);
@@ -538,7 +554,7 @@ function buildframes($framename = ''){
 				}
 				if (!empty($wxapp_section['menu']) && $wxapp_section_id != 'wxapp_module') {
 					foreach ($wxapp_section['menu'] as $wxapp_menu_id => $wxapp_menu) {
-						if ($wxapp_section_id == 'wxapp_profile' || $wxapp_section_id == 'wxapp_entrance') {
+						if (in_array($wxapp_section_id, array('wxapp_profile', 'wxapp_entrance', 'statistics', 'mc'))) {
 							$frames['wxapp']['section'][$wxapp_section_id]['menu'][$wxapp_menu_id]['url'] .= 'version_id=' . $version_id;
 						}
 						if (!in_array('wxapp*', $wxapp_permission) && !in_array($wxapp_menu['permission_name'], $wxapp_permission)) {

@@ -51,8 +51,8 @@ if ($do == 'display') {
 	} else {
 		$user_module = user_modules($_W['uid']);
 		foreach($user_module as $key => $module) {
-			$accounts_list = module_link_uniacid_fetch($_W['uid'], $key);
-			if (empty($accounts_list)) {
+				$accounts_list = module_link_uniacid_fetch($_W['uid'], $key);
+				if (empty($accounts_list)) {
 				unset($user_module[$key]);
 			}
 		}
@@ -61,7 +61,7 @@ if ($do == 'display') {
 
 	$rank = array();
 	foreach ($user_module as $module_name => $module_info) {
-		if (!empty($module_info['issystem']) || ($module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] == MODULE_SUPPORT_SYSTEMWELCOME && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT && $module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP && $module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP && $module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP)) {
+		if (!empty($module_info['issystem']) || ($module_info[MODULE_SUPPORT_SYSTEMWELCOME_NAME] == MODULE_SUPPORT_SYSTEMWELCOME && $module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT && $module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP && $module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP && $module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP && $module_info[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP)) {
 			unset($user_module[$module_name]);
 		} else {
 			$rank[] = !empty($module_rank[$module_name]['rank']) ? $module_rank[$module_name]['rank'] : 0;
