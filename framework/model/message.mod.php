@@ -444,7 +444,7 @@ function message_setting() {
  * 从云商城获取官方动态
  * @return array()
  */
-function official_dynamics() {
+function message_official_dynamics() {
 	load()->classs('cloudapi');
 	$api = new CloudApi();
 	$result = $api->get('store', 'official_dynamics');
@@ -454,10 +454,10 @@ function official_dynamics() {
 /**
  * 将获取到的官方动态加入通知表
  */
-function update_official_dynamics() {
-	$data = official_dynamics();
-	if (empty($data)) {
-		return;
+function message_update_official_dynamics() {
+	$data = message_official_dynamics();
+	if (is_error($data)) {
+		return $data;
 	}
 	$insert_data = array();
 	$signs = array();
@@ -491,5 +491,5 @@ function update_official_dynamics() {
 			}
 		}
 	}
-	return;
+	return true;
 }

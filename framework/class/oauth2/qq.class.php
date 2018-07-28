@@ -154,7 +154,7 @@ class Qq extends OAuth2Client {
 			return $user_id;
 		}
 
-		return parent::user_register($user, 'qq');
+		return parent::user_register($user);
 	}
 
 	public function bind() {
