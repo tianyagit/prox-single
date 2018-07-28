@@ -65,7 +65,7 @@
 			<th class="text-right">操作</th>
 		</tr>
 		<tr ng-repeat="list in lists">
-			<td class="tip-before unread" ng-if ="list.is_read == 1">{{list.message}} {{type != 4 && list.source ? '(' + list.source + ')' : ''}}</td>
+			<td class="tip-before unread" ng-if ="list.is_read == 1 || list.is_read == 0">{{list.message}} {{type != 4 && list.source ? '(' + list.source + ')' : ''}}</td>
 			<td class="tip-before" ng-if ="list.is_read == 2">{{list.message}} {{type != 4 && list.source ? '(' + list.source + ')' : ''}}</td>
 			<td class="text-muted text-center" ng-if="type==4" ng-bind = "list.source"></td>
 			<td class="text-muted text-center" ng-bind = "list.create_time"></td>
