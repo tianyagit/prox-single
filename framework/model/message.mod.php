@@ -441,10 +441,10 @@ function message_setting() {
 }
 
 /**
- * 从云商城获取官方动态
+ * 从云商城获取推送的消息
  * @return array()
  */
-function message_official_dynamics() {
+function message_get_store_notice() {
 	load()->classs('cloudapi');
 	$api = new CloudApi();
 	$result = $api->get('store', 'official_dynamics');
@@ -452,10 +452,10 @@ function message_official_dynamics() {
 }
 
 /**
- * 将获取到的官方动态加入通知表
+ * 将获取到的消息数据加入通知表
  */
-function message_update_official_dynamics() {
-	$data = message_official_dynamics();
+function message_store_notice() {
+	$data = message_get_store_notice();
 	if (is_error($data)) {
 		return $data;
 	}
