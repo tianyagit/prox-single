@@ -31,8 +31,10 @@
 		{/if}
 		{/if}
 		<!-- svend -->
+		{if user_is_founder($_W['uid'], true)}
 		<a href="{php echo url('message/notice', array('type' => MESSAGE_SYSTEM_UPGRADE))}" class="btn btn-default {if $type == MESSAGE_SYSTEM_UPGRADE} active {/if}">系统更新</a>
 		<a href="{php echo url('message/notice', array('type' => MESSAGE_OFFICIAL_DYNAMICS))}" class="btn btn-default {if $type == MESSAGE_OFFICIAL_DYNAMICS} active {/if}">官方动态</a>
+		{/if}
 	</div>
 	<div class="btn-group we7-btn-group we7-padding-bottom" style="float: right;">
 		<a href="javascript:;" ng-click="allRead()" class="btn">已读所有消息</a>
