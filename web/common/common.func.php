@@ -661,47 +661,6 @@ function system_modules() {
 }
 
 /**
- * 帐号类型分类
- * @return array
- */
-function account_types($type) {
-	$result = array(
-		'accounts' => array(
-			ACCOUNT_TYPE_OFFCIAL_NORMAL,
-			ACCOUNT_TYPE_OFFCIAL_AUTH,
-			ACCOUNT_TYPE_XZAPP_NORMAL,
-			ACCOUNT_TYPE_XZAPP_AUTH,
-		),
-		'miniprogram' => array(
-			ACCOUNT_TYPE_APP_NORMAL,
-			ACCOUNT_TYPE_APP_AUTH,
-			ACCOUNT_TYPE_WXAPP_WORK,
-		),
-		'only_account' => array(
-			ACCOUNT_TYPE_OFFCIAL_NORMAL,
-			ACCOUNT_TYPE_OFFCIAL_AUTH
-		),
-		'only_wxapp' => array(
-			ACCOUNT_TYPE_APP_NORMAL,
-			ACCOUNT_TYPE_APP_AUTH,
-			ACCOUNT_TYPE_WXAPP_WORK
-		),
-		'only_pcapp' => array(
-			ACCOUNT_TYPE_WEBAPP_NORMAL
-		),
-		'only_xzapp' => array(
-			ACCOUNT_TYPE_XZAPP_NORMAL,
-			ACCOUNT_TYPE_XZAPP_AUTH
-		),
-		'only_phoneapp' => array(
-			ACCOUNT_TYPE_PHONEAPP_NORMAL
-		),
-	);
-
-	return !empty($result[$type]) ? $result[$type] : array();
-}
-
-/**
  * 在当前URL上拼接查询参数，生成url
  *  @param string $params 需要拼接的参数。例如："time:1,group:2"，会在当前URL上加上&time=1&group=2
  * */
