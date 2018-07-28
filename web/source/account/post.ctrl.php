@@ -52,8 +52,8 @@ if ($role_permission) {
 }
 
 $_W['page']['title'] = '管理设置 - ' . ACCOUNT_TYPE_NAME . '管理';
-$headimgsrc = tomedia('headimg_'.$acid.'.jpg') . '?t=' . time();
-$qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg') . '?t=' . time();
+$headimgsrc = tomedia('headimg_'.$acid.'.jpg');
+$qrcodeimgsrc = tomedia('qrcode_'.$acid.'.jpg');
 $account = account_fetch($acid);
 
 if($do == 'base') {
