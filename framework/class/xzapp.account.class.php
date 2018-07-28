@@ -191,17 +191,6 @@ class XzappAccount extends WeAccount {
 		return array2xml($xml);
 	}
 
-	/*
- * 重新封装 isimplexml_load_string 函数。解决安全问题
- * */
-	function isimplexml_load_string($string, $class_name = 'SimpleXMLElement', $options = 0, $ns = '', $is_prefix = false) {
-		libxml_disable_entity_loader(true);
-		if (preg_match('/(\<\!DOCTYPE|\<\!ENTITY)/i', $string)) {
-			return false;
-		}
-		return simplexml_load_string($string, $class_name, $options, $ns, $is_prefix);
-	}
-
 	protected function requestApi($url, $post = '') {
 		$response = ihttp_request($url, $post);
 		$result = @json_decode($response['content'], true);
