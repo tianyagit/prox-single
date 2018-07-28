@@ -339,7 +339,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="panel-heading" ng-show="show_step1">小程序版本：{$wxapp_versions_info['version']}</div>
+	<div class="panel-heading" ng-show="show_step1">之前小程序版本：{$wxapp_versions_info['version']}</div>
 	<div class="panel-body" ng-show="show_step1">
 		<div class="we7-flex">
 			<div>应用：<img src="{$module['logo']}" style="width: 56px;margin: 0 10px;">{$module['title']}</div>
@@ -362,11 +362,11 @@
 
 	<div class="panel-footer bg-light-gray" id="readycommit" ng-show="!show_wait">
 
-		<form action="" class="we7-form" id="codeform" ng-show="show_step1" ng-init="user_version = '{$user_version}'">
+		<form action="" class="we7-form" id="codeform" ng-show="show_step1" ng-init="user_version = '{$user_version}'; user_desc = '{$version_info['description']}'">
 			<div class="form-group">
 				<label class="control-label col-sm-2">版本号</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="user_version" ng-model="user_version" value="{$user_version}">
+					<input type="text" class="form-control" id="user_version" ng-model="user_version" value="">
 					<span class="help-block">
 						版本号仅限数字
 					</span>

@@ -111,8 +111,7 @@ if ($do == 'edit_version') {
 	if (empty($new_module_data)) {
 		iajax(1, '应用模块不可为空！');
 	}
-	$data = array('modules' => iserializer($new_module_data), 'version' => trim($_GPC['version_info']['version']), 'description' => trim($_GPC['version_info']['description']));
-	pdo_update('wxapp_versions', $data, array('id' => $versionid));
+	pdo_update('wxapp_versions', array('modules' => iserializer($new_module_data)), array('id' => $versionid));
 	cache_delete(cache_system_key('wxapp_version', array('version_id' => $versionid)));
 	iajax(0, '修改成功！', referer());
 }
