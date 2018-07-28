@@ -62,7 +62,7 @@ if ($do == 'event_notice') {
 	}
 
 	if (user_is_founder($_W['uid'], true)) {
-		update_official_dynamics();
+		message_update_official_dynamics();
 	}
 
 	$message = message_event_notice_list();

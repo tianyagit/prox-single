@@ -9,6 +9,7 @@ class System extends OAuth2Client {
 
 	public function __construct($ak, $sk) {
 		parent::__construct($ak, $sk);
+		$this->stateParam['from'] = 'system';
 	}
 
 	public function showLoginUrl($calback_url = '') {
@@ -99,7 +100,7 @@ class System extends OAuth2Client {
 			'member' => $member,
 			'profile' => $profile
 		);
-		return parent::user_register($register, 'system');
+		return parent::user_register($register);
 	}
 
 	public function systemFields() {

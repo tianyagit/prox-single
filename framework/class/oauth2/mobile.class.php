@@ -8,6 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 class Mobile extends OAuth2Client {
 	public function __construct($ak, $sk) {
 		parent::__construct($ak, $sk);
+		$this->stateParam['from'] = 'mobile';
 	}
 
 	public function showLoginUrl($calback_url = '') {
@@ -108,7 +109,7 @@ class Mobile extends OAuth2Client {
 			'member' => $member,
 			'profile' => $profile
 		);
-		return parent::user_register($register, 'mobile');
+		return parent::user_register($register);
 	}
 
 	public function login() {
