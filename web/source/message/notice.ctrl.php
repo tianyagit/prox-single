@@ -60,7 +60,10 @@ if ($do == 'event_notice') {
 	if (!pdo_tableexists('message_notice_log')) {
 		iajax(-1);
 	}
-	update_official_dynamics();
+
+	if (user_is_founder($_W['uid'], true)) {
+		update_official_dynamics();
+	}
 
 	$message = message_event_notice_list();
 	if (!empty($message) && !empty($message['lists'])) {
