@@ -221,6 +221,8 @@ if ($do == 'base') {
 		}
 	}
 	/* svend */
+	$table = table('core_profile_fields');
+	$extra_fields = $table->getExtraFields();
 	template('user/profile');
 }
 
