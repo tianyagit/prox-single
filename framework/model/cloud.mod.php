@@ -126,7 +126,7 @@ function cloud_prepare() {
 	global $_W;
 	setting_load();
 	if(empty($_W['setting']['site']['key']) || empty($_W['setting']['site']['token'])) {
-		return error('-1', "您的站点只有在微擎云服务平台成功注册后，才能使用云服务的相应功能。");
+		return error('-1', '您的站点只有在微擎云服务平台成功注册后，才能使用云服务的相应功能。<div><a class="btn btn-primary" style="width:80px;" href="' . url('cloud/profile') . '">去注册</a></div>');
 	}
 	return true;
 }
