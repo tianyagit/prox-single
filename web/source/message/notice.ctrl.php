@@ -110,7 +110,7 @@ if ($do == 'event_notice') {
 }
 
 if ($do == 'read') {
-	pdo_update('message_notice_log', array('is_read' => MESSAGE_READ), array('id' => $_GPC['id']));
+	pdo_update('message_notice_log', array('is_read' => MESSAGE_READ), array('id' => intval($_GPC['id'])));
 	iajax(0, '已标记已读');
 }
 
