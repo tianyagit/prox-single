@@ -189,7 +189,8 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' &
 $_W['account']['groupid'] = $_W['uniaccount']['groupid'];
 $_W['account']['qrcode'] = tomedia('qrcode_'.$_W['acid'].'.jpg').'?time='.$_W['timestamp'];
 $_W['account']['avatar'] = tomedia('headimg_'.$_W['acid'].'.jpg').'?time='.$_W['timestamp'];
-if ($_W['container'] == 'wechat' && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH)) && $controller != 'utility') {
+
+if ($_W['container'] == 'account' && in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH)) && $controller != 'utility') {
 	if (!empty($unisetting['jsauth_acid'])) {
 		$jsauth_acid = $unisetting['jsauth_acid'];
 	} else {
@@ -204,22 +205,6 @@ if ($_W['container'] == 'wechat' && in_array($_W['account']['type'], array(ACCOU
 		if (!empty($account_api)) {
 			$_W['account']['jssdkconfig'] = $account_api->getJssdkConfig();
 			$_W['account']['jsauth_acid'] = $jsauth_acid;
-		}
-	}
-	unset($jsauth_acid, $account_api);
-}
-
-if (in_array($_W['account']['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
-	if (!empty($unisetting['jsauth_acid'])) {
-		$jsauth_acid = $unisetting['jsauth_acid'];
-	} else {
-		$jsauth_acid = $_W['acid'];
-	}
-	if (!empty($jsauth_acid)) {
-		$account_api = WeAccount::create($jsauth_acid);
-		if (!empty($account_api)) {
-			$_W['account']['xz_jssdkconfig'] = $account_api->getJssdkConfig();
-			$_W['account']['xz_jsauth_acid'] = $jsauth_acid;
 		}
 	}
 	unset($jsauth_acid, $account_api);
