@@ -23,7 +23,6 @@ if ($do == 'save_setting') {
 		$appid = trim($_GPC['appid']);
 		$appsecret = trim($_GPC['appsecret']);
 		$authstate = trim($_GPC['authstate']);
-		$type = trim($_GPC['type']);
 
 		$data = array();
 		$data[$type]['appid'] = !empty($appid) ? $appid : $_W['setting']['thirdlogin'][$type]['appid'];

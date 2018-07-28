@@ -221,7 +221,7 @@
 		'thirdlogin' : {php echo !empty($_W['setting']['thirdlogin']) ? json_encode($_W['setting']['thirdlogin']) : 'null'},
 		'siteroot': "{php echo $_W['siteroot']}",
 		'links': {
-			'save_setting': "{php echo url('system/thirdlogin/save_setting')}",
+			'save_setting': "{php echo url('system/thirdlogin/save_setting', array('type' => $type))}",
 		},
 		'url' : {
 			'host' : "{$siteroot_parse_array['host']}",
