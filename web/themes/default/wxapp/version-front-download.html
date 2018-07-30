@@ -393,7 +393,6 @@
 				<div class="col-sm-10">
 					<input type="hidden" name="ticket" id="ticket">
 					<input type="hidden" id="version_id" value="{$version_id}">
-					<!--<button class="btn btn-primary" type="button" id="preview" ng-disabled="show_preview" ng-click="preview()">预览</button>-->
 					<!--<button class="btn btn-primary" type="button" id="commitcode" ng-click="commit()">上传代码</button>-->
 					<button class="btn btn-primary" type="button" id="begin-upload" ng-click="beginUpload()">确 认</button>
 				</div>
@@ -405,18 +404,27 @@
 			<div>请扫描二维码，确认后将直接上传代码</div>
 		</div>
 
-		<!--<div class="text-center preview"  ng-show="show_preview">
-			<img alt="" class="qr-img" id="preview_img" src="{{preview_qrcode}}" >
-			<div>微信扫码预览小程序</div>
-		</div>-->
-
 		<div class="success text-center step3" ng-show="show_step3">
 			<div><span class="wi wi-right-sign"></span></div>
 			<div class="status-state">上传代码成功，请到微信开发平台小程序后台预览，提交审核应用。</div>
 			<div>微信开发平台小程序后台<a href="https://mp.weixin.qq.com/" class="color-default">https://mp.weixin.qq.com/</a></div>
 			<div class="btns">
-				<a href="https://mp.weixin.qq.com/" target="_blank" class="btn btn-primary">去提交审核</a>
-				<a href="/web/index.php?c=wxapp&a=display" class="btn btn-default">小程序首页</a>
+				<button class="btn btn-primary" type="button" ng-click="preview()">预览</button>
+				<a href="https://mp.weixin.qq.com/" target="_blank" class="btn btn-default">去提交审核</a>
+			</div>
+		</div>
+
+		<div class="modal fade" id="qrCodeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">微信扫码预览小程序</h4>
+					</div>
+					<div class="modal-body text-center">
+						<img class="qr-img" ng-src="{{preview_qrcode}}" src="{{preview_qrcode}}">
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
