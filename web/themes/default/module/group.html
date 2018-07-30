@@ -80,7 +80,7 @@
 				</td>
 			</tr>
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="7">
+				<td colspan="8">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">公众号应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['account_modules'] $module}
@@ -102,7 +102,7 @@
 				</td>
 			</tr>
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="7">
+				<td colspan="8">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">小程序应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['wxapp_modules'] $wxapp}
@@ -115,7 +115,7 @@
 				</td>
 			</tr>
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="7">
+				<td colspan="8">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">PC应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['webapp_modules'] $webapp}
@@ -129,7 +129,7 @@
 			</tr>
 
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="7">
+				<td colspan="8">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">APP应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['phoneapp_modules'] $phoneapp}
@@ -143,7 +143,7 @@
 			</tr>
 
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="7">
+				<td colspan="8">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">熊掌号应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['xzapp_modules'] $xzapp}
@@ -157,7 +157,7 @@
 			</tr>
 
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="7">
+				<td colspan="8">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">模板</div>
 					<div class="col-sm-11">
 						{loop $module_group['templates'] $template}
@@ -276,7 +276,7 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleWebapp" style="overflow: hidden">
-						<img src="{{ module.logo }}" alt="" class="img">{{ module.title }}
+						<img ng-src="{{ module.logo }}" alt="" class="img">{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModuleWebapp(module)">删除</span>
 					</div>
 					<div class="col-sm-2 add-more">
@@ -296,7 +296,7 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModulePhoneapp" style="overflow: hidden">
-						<img src="{{ module.logo }}" alt="" class="img">{{ module.title }}
+						<img ng-src="{{ module.logo }}" alt="" class="img">{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModulePhoneapp(module)">删除</span>
 					</div>
 					<div class="col-sm-2 add-more">
@@ -317,7 +317,7 @@
 			<div class="panel-body we7-padding">
 				<div class="row">
 					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleXzapp" style="overflow: hidden">
-						<img src="{{ module.logo }}" alt="" class="img">{{ module.title }}
+						<img ng-src="{{ module.logo }}" alt="" class="img">{{ module.title }}
 						<span class="del bg-default" ng-click="delHaveModuleXzapp(module)">删除</span>
 					</div>
 					<div class="col-sm-2 add-more">
