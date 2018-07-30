@@ -516,8 +516,7 @@ class XzappAccount extends WeAccount {
 		$menu = array();
 		foreach ($post['button'] as $button) {
 			$temp = array();
-			$temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $button['name']);
-			$temp['name'] = urlencode($temp['name']);
+			$temp['name'] = $button['name'];
 			if (empty($button['sub_button'])) {
 				$temp['type'] = $button['type'];
 				if ($button['type'] == 'click') {
@@ -540,8 +539,7 @@ class XzappAccount extends WeAccount {
 			} else {
 				foreach ($button['sub_button'] as $sub_button) {
 					$sub_temp = array();
-					$sub_temp['name'] = preg_replace_callback('/\:\:([0-9a-zA-Z_-]+)\:\:/', create_function('$matches', 'return utf8_bytes(hexdec($matches[1]));'), $sub_button['name']);
-					$sub_temp['name'] = urlencode($sub_temp['name']);
+					$sub_temp['name'] = $sub_button['name'];
 					$sub_temp['type'] = $sub_button['type'];
 					if ($sub_button['type'] == 'click') {
 						if (!empty($sub_button['media_id']) && empty($sub_button['key'])) {
