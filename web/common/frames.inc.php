@@ -10,7 +10,7 @@ $we7_system_menu = array();
 $we7_system_menu['platform'] = array(
 	'title' => '平台',
 	'icon' => 'wi wi-platform',
-	'url' => url('account/display'),
+	'url' => url('account/display/platform'),
 	'section' => array(),
 );
 
