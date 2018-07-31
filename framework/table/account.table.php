@@ -277,7 +277,7 @@ class AccountTable extends We7Table {
 			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		}
 		/* xend */
-		if (in_array('-1', array_keys($packageids))) {
+		if (in_array('-1', $packageids)) {
 			$modules = $this->query->from('modules')->select('name')->getall('name');
 			return array_keys($modules);
 		}
