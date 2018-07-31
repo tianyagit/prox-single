@@ -112,10 +112,11 @@ if($do == 'base') {
 				break;
 			case 'jointype':
 				$original_type = pdo_get('account', array('uniacid' => $uniacid), 'type');
-				if ($original_type['type'] == ACCOUNT_NORMAL_LOGIN) {
+				$normal_login = $original_type['type'] == ACCOUNT_NORMAL_LOGIN ? ACCOUNT_NORMAL_LOGIN : ACCOUNT_TYPE_XZAPP_NORMAL;
+				if ($original_type['type'] == $normal_login) {
 					$result = true;
 				} else {
-					$update_type = pdo_update('account', array('type' => ACCOUNT_NORMAL_LOGIN), array('uniacid' => $uniacid));
+					$update_type = pdo_update('account', array('type' => $normal_login), array('uniacid' => $uniacid));
 					$result = $update_type ? true : false;
 				}
 				break;
