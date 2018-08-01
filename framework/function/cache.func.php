@@ -83,6 +83,9 @@ function cache_system_key($cache_key) {
 	// 兼容旧函数（字符串形式传入参数拼接缓存键）
 	$params = array();
 	$args = func_get_args();
+	if (empty($args[1])) {
+		$args[1] = '';
+	}
 	if (!is_array($args[1])) {
 		$cache_key = $cache_key_all['caches'][$cache_key]['key'];
 		preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $cache_key, $matches);
@@ -200,9 +203,7 @@ function cache_relation_keys($key) {
 	$cache_key_all = cache_key_all();
 	$cache_relations = $cache_key_all['groups'];
 	$cache_common_params = $cache_key_all['common_params'];
-
 	$cache_info = $cache_key_all['caches'][$cache_name];
-
 	if (empty($cache_info)) {
 		return error(2, '缓存 : ' . $key . '不存在');
 	}
@@ -213,7 +214,6 @@ function cache_relation_keys($key) {
 		}
 		$relation_keys = $cache_relations[$cache_info['group']]['relations'];
 		$cache_keys = array();
-
 		foreach ($relation_keys as $key => $val) {
 			// 获取到 $cache_key_all 数组中保存的缓存键名
 			if ($val == $cache_name) {
@@ -221,7 +221,6 @@ function cache_relation_keys($key) {
 			} else {
 				$relation_cache_key = $cache_key_all['caches'][$cache_name]['key'];
 			}
-
 			foreach ($cache_common_params as $param_name => $param_val) {
 				// 取出参数名称 => user:%name:%uid
 				preg_match_all('/\%([a-zA-Z\_\-0-9]+)/', $relation_cache_key, $matches);
@@ -230,7 +229,11 @@ function cache_relation_keys($key) {
 					$cache_key_params[$param_name] = $cache_common_params[$param_name];
 				}
 				// 将参数名称 和 参数值进行拼接 array('name' => 'liuguilong', 'uid' => 18)
-				$cache_key_params = array_combine($matches[1], $cache_param_values);
+				if (!empty($cache_prams_values) || count($matches[1]) == count($cache_param_values)) {
+					$cache_key_params = array_combine($matches[1], $cache_param_values);
+				} else {
+					$cache_key_params = array();
+				}
 			}
 
 			$cache_key = cache_system_key($val, $cache_key_params);

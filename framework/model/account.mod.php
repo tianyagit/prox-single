@@ -264,10 +264,13 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 		$modules = pdo_fetchall($sql, $params, 'name');
 		cache_write($cachekey, $modules);
 	}
+
 	$module_list = array();
 	if (!empty($modules)) {
 		foreach ($modules as $name => $module) {
+
 			$module_info = module_fetch($name);
+
 			//不支持当前account类型或仅支持系统首页的模块直接continue
 			if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
 				in_array($account_info['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
@@ -1387,14 +1390,18 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 	$passive_link_module = pdo_get('uni_account_modules', array('module' => $module_name, 'uniacid' => $uniacid), array('id', 'settings'));
 	if (!empty($passive_link_module)) {
 		$passive_settings = (array)iunserializer($passive_link_module['settings']);
+		if (!is_array($passive_settings['passive_link_uniacid']) && !empty($passive_settings['passive_link_uniacid'])) {
+			$passive_settings = array($passive_settings['passive_link_uniacid']);
+		}
 		if (empty($passive_settings)) {
-			$passive_settings = array('passive_link_uniacid' => $_W['uniacid']);
+			$passive_settings = array('passive_link_uniacid' => array($_W['uniacid']));
 		} elseif (!empty($passive_settings['passive_link_uniacid']) && !in_array($_W['uniacid'], $passive_settings['passive_link_uniacid'])) {
-			array_push($passive_settings['passive_link_uniacid'], $_W['uniacid']);
+
+			array_push($passive_settings['passive_link_uniacid'], array($_W['uniacid']));
 		}
 		pdo_update('uni_account_modules', array('settings' => iserializer($passive_settings)), array('id' => $passive_link_module['id']));
 	} else {
-		$passive_settings = array('passive_link_uniacid' => $_W['uniacid']);
+		$passive_settings = array('passive_link_uniacid' => array($_W['uniacid']));
 		$passive_data = array(
 			'settings' => iserializer($passive_settings),
 			'uniacid' => $uniacid,

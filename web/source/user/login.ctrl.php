@@ -128,7 +128,7 @@ function _login($forward = '') {
 
 		if ((empty($_W['isfounder']) || user_is_vice_founder()) && !empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
 			$url = url('home/welcome/ext', array('m' => 'store'));
-			message('<a href="' . $url . '" class="btn btn-primary">您的账号已到期，请前往商城购买续费！</a>', $url, 'error');
+			message('您的账号已到期，请前往商城购买续费。<div><a class="btn btn-primary" style="width:80px;" href="' . $url . '">去续费</a></div>', $url, 'error');
 		}
 
 		itoast("欢迎回来，{$record['username']}", $forward, 'success');

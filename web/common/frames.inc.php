@@ -176,12 +176,14 @@ $we7_system_menu['account'] = array(
 			'menu' => array(
 				'profile' => array(
 					'title' => '参数配置',
-					'url' => url('profile/passport'),
+					'url' => url('profile/remote'),
 					'icon' => 'wi wi-parameter-setting',
 					'permission_name' => 'profile_setting',
 					'is_display' => array(
 						ACCOUNT_TYPE_OFFCIAL_NORMAL,
 						ACCOUNT_TYPE_OFFCIAL_AUTH,
+						ACCOUNT_TYPE_XZAPP_NORMAL,
+						ACCOUNT_TYPE_XZAPP_AUTH,
 					),
 				),
 				'payment' => array(
@@ -203,6 +205,8 @@ $we7_system_menu['account'] = array(
 					'is_display' => array(
 						ACCOUNT_TYPE_OFFCIAL_NORMAL,
 						ACCOUNT_TYPE_OFFCIAL_AUTH,
+						ACCOUNT_TYPE_XZAPP_NORMAL,
+						ACCOUNT_TYPE_XZAPP_AUTH,
 					),
 				),
 				/* xstart */
@@ -214,6 +218,8 @@ $we7_system_menu['account'] = array(
 					'is_display' => array(
 						ACCOUNT_TYPE_OFFCIAL_NORMAL,
 						ACCOUNT_TYPE_OFFCIAL_AUTH,
+						ACCOUNT_TYPE_XZAPP_NORMAL,
+						ACCOUNT_TYPE_XZAPP_AUTH,
 					),
 				),
 				/* xend */
@@ -231,6 +237,8 @@ $we7_system_menu['account'] = array(
 					'is_display' => array(
 						ACCOUNT_TYPE_OFFCIAL_NORMAL,
 						ACCOUNT_TYPE_OFFCIAL_AUTH,
+						ACCOUNT_TYPE_XZAPP_NORMAL,
+						ACCOUNT_TYPE_XZAPP_AUTH,
 					),
 				),
 				'statistics_fans' => array(
@@ -241,6 +249,8 @@ $we7_system_menu['account'] = array(
 					'is_display' => array(
 						ACCOUNT_TYPE_OFFCIAL_NORMAL,
 						ACCOUNT_TYPE_OFFCIAL_AUTH,
+						ACCOUNT_TYPE_XZAPP_NORMAL,
+						ACCOUNT_TYPE_XZAPP_AUTH,
 					),
 				),
 			),
