@@ -487,6 +487,10 @@ $we7_file_permission = array(
 		),
 		'clerk' => array(
 
+		),
+		'unbind_user' => array(
+			'see_user_profile_welcome',
+			'see_system_updatecache',
 		)
 	),
 );
