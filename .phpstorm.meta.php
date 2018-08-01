@@ -12,5 +12,6 @@ namespace PHPSTORM_META {
 	    'modules_rank' => \We7\Table\Modules\Rank::class,
 		'uni_account_modules' => \We7\Table\Uni\AccountModules::class,
 		'system_stat_visit' => \We7\Table\System\StatVisit::class,
+		'article_comment' => \We7\Table\Article\comment::class,
     ]));
 }
