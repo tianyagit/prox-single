@@ -20,11 +20,12 @@ if (IMS_FAMILY == 'v') {
 /* xstart */
 if (IMS_FAMILY == 'x') {
 	if ($do == 'showjs') {
-		$type = '';
+		$type = 'web';
 		$module_name = '';
 		if ($_GPC['type'] == 'account') {
-			$type = 'web';
 			$module_name = 'we7_account';
+		} elseif ($_GPC['type'] == 'webapp') {
+			$module_name = 'we7_webapp';
 		}
 		visit_update_today($type, $module_name);
 	}

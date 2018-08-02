@@ -111,7 +111,11 @@ if ($do == 'get_module_api') {
 	$modules = array();
 	$data = array();
 	$modules_info = stat_modules_except_system();
-	array_unshift($modules_info, array('name' => 'wesite', 'title' => '微站'));
+	if (in_array(FRAME, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
+		array_unshift($modules_info, array('name' => 'wesite', 'title' => '微站'));
+	} else {
+		array_unshift($modules_info, array('name' => 'wesite', 'title' => '其他'));
+	}
 	foreach ($modules_info as $info) {
 		$modules[] = mb_substr($info['title'], 0, 5, 'utf-8');
 	}

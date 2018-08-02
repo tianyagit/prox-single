@@ -5,7 +5,7 @@
 	<li><a href="{url 'statistics/setting'}">访问统计设置</a></li>
 </ul>
 <div class="api" id="js-statistics-app-display" ng-controller="HorizontalBarCtrl" ng-cloak>
-	<div class="panel we7-panel api-target">
+	<div class="panel we7-panel api-target" ng-if="needAccountApi">
 		<div class="panel-heading">API余量</div>
 		<div class="panel-body we7-padding-vertical">
 			<div class="col-sm-4 text-center">
@@ -51,8 +51,9 @@
 			</div>
 		</div>
 	</div>
-	<div class="we7-margin-vertical color-dark font-lg">公众号API访问统计</div>
-	<div class="panel we7-panel">
+
+	<div class="we7-margin-vertical color-dark font-lg" ng-if="needAccountApi">公众号API访问统计</div>
+	<div class="panel we7-panel" ng-if="needAccountApi">
 		<div class="panel-heading tab">
 			<a href="javascript:;">关键指标详解</a>
 			<a href="javascript:;" ng-class="{'active': accountDivideType == 'bysum'}" ng-click="changeDivideType('account', 'bysum')">公众号总访问数</a>
@@ -147,6 +148,7 @@
 <script>
 require(['daterangepicker'], function() {
 	angular.module('statisticsApp').value('config', {
+	    'frame': "{FRAME}",
 		'links': {
 			'accountApi': "{php echo url('statistics/app/get_account_api')}",
 			'moduleApi': "{php echo url('statistics/app/get_module_api')}",

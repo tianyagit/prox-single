@@ -406,6 +406,22 @@ $we7_system_menu['webapp'] = array(
 				/* sxend */
 			),
 		),
+		/* xstart */
+		'statistics' => array(
+			'title' => '统计',
+			'menu' => array(
+				'statistics_app' => array(
+					'title' => '访问统计',
+					'url' => url('statistics/app'),
+					'icon' => 'wi wi-statistical',
+					'permission_name' => 'statistics_app',
+					'is_display' => array(
+						ACCOUNT_TYPE_WEBAPP_NORMAL,
+					),
+				),
+			),
+		),
+		/* xend */
 	),
 );
 

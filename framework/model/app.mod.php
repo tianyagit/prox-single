@@ -69,7 +69,7 @@ function app_navs($type = 'home', $multiid = 0, $section = 0) {
 function app_update_today_visit($module_name) {
 	global $_W;
 	$module_name = trim($module_name);
-	if (empty($module_name) || !in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH))) {
+	if (empty($module_name) || !in_array($_W['account']['type'], array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL))) {
 		return false;
 	}
 	$today = date('Ymd');

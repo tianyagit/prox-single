@@ -34,6 +34,20 @@
 				</div>
 			</td>
 		</tr>
+		<!-- xstart -->
+		{if IMS_FAMILY == 'x'}
+		<tr>
+			<td class="table-label">月访问总次数</td>
+			<td ng-if="account.highest_visit"><span ng-bind="account.highest_visit"></span><span class="color-gray"> 次 / 月</span></td>
+			<td ng-if="!account.highest_visit">不限次数</span></td>
+			<td>
+				{if user_is_founder($_W['uid'])}
+				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#visit" ng-click="editInfo('highest_visit', account.highest_visit)">修改</a></div>
+				{/if}
+			</td>
+		</tr>
+		{/if}
+		<!-- xend -->
 	</table>
 	<div class="modal fade" id="name" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="we7-modal-dialog modal-dialog">
@@ -76,9 +90,6 @@
 		</div>
 	</div>
 
-
-
-
 	<div class="modal fade" id="endtime" role="dialog">
 		<div class="we7-modal-dialog modal-dialog we7-form">
 			<div class="modal-content">
@@ -102,6 +113,31 @@
 			</div>
 		</div>
 	</div>
+
+    <!-- xstart -->
+    {if IMS_FAMILY == 'x'}
+    <div class="modal fade" id="visit" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="we7-modal-dialog modal-dialog we7-form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <div class="modal-title">修改访问总次数（单位：月）</div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="number" step="1" ng-model="middleAccount.highest_visit" class="form-control" placeholder="每月访问总次数" />
+                        <span class="help-block">设置为0，表示无任何限制</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('highest_visit')">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {/if}
+    <!-- xend -->
 
 </div>
 <script>
