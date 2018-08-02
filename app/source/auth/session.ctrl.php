@@ -50,6 +50,7 @@ if ($do == 'openid') {
 		if (empty($fans)) {
 			$record = array(
 				'openid' => $oauth['openid'],
+				'unionid' => $oauth['unionid'],
 				'uid' => 0,
 				'acid' => $_W['acid'],
 				'uniacid' => $_W['uniacid'],
