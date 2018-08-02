@@ -45,6 +45,7 @@ function table($name) {
 		'modules',
 		'modules_ignore',
 		'account_xzapp',
+		'account_aliapp',
 		'uni_account_modules',
 		'system_stat_visit',
 		'core_profile_fields',

@@ -628,7 +628,25 @@ $we7_system_menu['system'] = array(
 				),
 			)
 		),
-
+		'aliapp' => array(
+			'title' => '支付宝小程序',
+			'menu' => array(
+				'system_aliapp' => array(
+					'title' => '支付宝小程序',
+					'url' => url('account/manage', array('account_type' => ACCOUNT_TYPE_ALIAPP_NORMAL)),
+					'icon' => 'wi wi-aliapp',
+					'permission_name' => 'system_aliapp',
+					'sub_permission' => array(
+					),
+				),
+				'system_module_aliapp' => array(
+					'title' => '支付宝小程序应用',
+					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_ALIAPP_NAME)),
+					'icon' => 'wi wi-aliapp-apply',
+					'permission_name' => 'system_module_aliapp',
+				),
+			)
+		),
 		'user' => array(
 			'title' => '帐户/用户',
 			'menu' => array(

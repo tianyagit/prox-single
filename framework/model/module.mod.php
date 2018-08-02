@@ -82,6 +82,10 @@ function module_support_type() {
 		'xzapp_support' => array(
 			'type' => XZAPP_TYPE_SIGN,
 			'support' => MODULE_SUPPORT_XZAPP,
+		),
+		'aliapp_support' => array(
+			'type' => ALIAPP_TYPE_SIGN,
+			'support' => MODULE_SUPPORT_ALIAPP,
 		)
 	);
 	return $module_support_type;

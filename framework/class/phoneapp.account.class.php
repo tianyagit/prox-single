@@ -10,7 +10,7 @@ class PhoneappAccount extends WeAccount {
 	public function __construct($account = array()) {
 		$this->menuFrame = 'phoneapp';
 		$this->type = ACCOUNT_TYPE_PHONEAPP_NORMAL;
-		$this->typeName = 'PHONEAPP';
+		$this->typeName = 'APP';
 		$this->typeTempalte = '-phoneapp';
 	}
 

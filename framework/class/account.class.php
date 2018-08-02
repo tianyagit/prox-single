@@ -117,7 +117,10 @@ abstract class WeAccount {
 			load()->classs('wxapp.work');
 			$account_obj = new WxappWork();
 		}
-
+		if($type == ACCOUNT_TYPE_ALIAPP_NORMAL) {
+			load()->classs('aliapp.account');
+			$account_obj = new AliappAccount();
+		}
 		$account_obj->uniacid = $uniaccount['uniacid'];
 		$account_obj->uniaccount = $uniaccount;
 		$account_obj->account = $account_obj->fetchAccountInfo();

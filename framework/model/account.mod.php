@@ -771,6 +771,8 @@ function uni_account_tablename($type) {
 			return 'account_phoneapp';
 		case ACCOUNT_TYPE_XZAPP_NORMAL:
 			return 'account_xzapp';
+		case ACCOUNT_TYPE_ALIAPP_NORMAL:
+			return 'account_aliapp';
 	}
 }
 
