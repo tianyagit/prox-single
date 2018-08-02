@@ -48,6 +48,7 @@ function table($name) {
 		'uni_account_modules',
 		'system_stat_visit',
 		'core_profile_fields',
+		'article_comment',
 	))) {
 		return new $table_classname;
 	}

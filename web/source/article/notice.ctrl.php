@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('article');
 
-$dos = array('category_post', 'category', 'category_del', 'list', 'post', 'batch_post', 'del', 'displaysetting');
+$dos = array('category_post', 'category', 'category_del', 'list', 'post', 'batch_post', 'del', 'displaysetting', 'comment_status', 'comments', 'reply_comment');
 $do = in_array($do, $dos) ? $do : 'list';
 permission_check_account_user('system_article_notice');
 
@@ -171,6 +171,9 @@ if ($do == 'list') {
 	$pager = pagination($total, $pindex, $psize);
 
 	$categorys = table('articlecategory')->getNoticeCategoryLists($order);
+
+	$comment_status = setting_load('notice_comment_status');
+	$comment_status = empty($comment_status['notice_comment_status']) ? 0 : 1;
 	template('article/notice');
 }
 
@@ -205,4 +208,36 @@ if ($do == 'displaysetting') {
 	$data = $setting == 'createtime' ? 'createtime' : 'displayorder';
 	setting_save($data, 'notice_display');
 	itoast('更改成功！', referer(), 'success');
+}
+
+//开关公告留言功能
+if ($do == 'comment_status') {
+	$status = setting_load('notice_comment_status');
+	setting_save(empty($status['notice_comment_status']) ? 1 : 0, 'notice_comment_status');
+	itoast('更改成功！', referer(), 'success');
+}
+
+//留言列表
+if ($do == 'comments') {
+	$id = intval($_GPC['id']);
+	template('article/comment-list');
+}
+
+//回复留言
+if ($do == 'reply_comment') {
+	$id = intval($_GPC['id']);
+	$comment_table = table('article_comment');
+	$comment = $comment_table->where('id', $id)->get();
+	if (empty($comment)) {
+		iajax(1, '评论不存在');
+	}
+	$data = array(
+		'parentid' => $comment['id'],
+		'articleid' => $comment['articleid'],
+		'uid' => $_W['uid'],
+		'content' => safe_gpc_string($_GPC['replycontent']),
+	);
+	$comment_table->addComment($data);
+	$data = array_merge($data, $_W['user']);
+	iajax(0, $data);
 }

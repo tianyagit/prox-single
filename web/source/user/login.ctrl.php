@@ -45,7 +45,7 @@ function _login($forward = '') {
 		$member = OAuth2Client::create($_GPC['login_type'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appid'], $_W['setting']['thirdlogin'][$_GPC['login_type']]['appsecret'])->bind();
 	}
 
-	if (!empty($_W['user']) && $_GPC['handle_type'] == 'bind') {
+	if (!empty($_W['user']) && $_GPC['handle_type'] != ''  && $_GPC['handle_type'] == 'bind') {
 		if (is_error($member)) {
 			itoast($member['message'], url('user/profile/bind'), '');
 		} else {
@@ -55,6 +55,11 @@ function _login($forward = '') {
 
 	if (is_error($member)) {
 		itoast($member['message'], url('user/login'), '');
+	}
+
+	$record = user_single($member);
+	if (in_array($_GPC['login_type'], array('qq', 'wechat'))) {
+		$member = $record;
 	}
 
 	$user_info = pdo_get('users', array('username' => $member['username']));
@@ -73,7 +78,6 @@ function _login($forward = '') {
 		}
 	}
 
-	$record = user_single($member);
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
 			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决?', url('user/login'), '');
@@ -128,9 +132,9 @@ function _login($forward = '') {
 
 		if ((empty($_W['isfounder']) || user_is_vice_founder()) && !empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
 			$url = url('home/welcome/ext', array('m' => 'store'));
-			message('<a href="' . $url . '" class="btn btn-primary">您的账号已到期，请前往商城购买续费！</a>', $url, 'error');
+			message('您的账号已到期，请前往商城购买续费。<div><a class="btn btn-primary" style="width:80px;" href="' . $url . '">去续费</a></div>', $url, 'error');
 		}
-
+		cache_clean('system_frame');
 		itoast("欢迎回来，{$record['username']}", $forward, 'success');
 	} else {
 		if (empty($failed)) {

@@ -30,6 +30,21 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label for="" class="control-label col-sm-2">到期时间</label>
+			<div class="form-controls col-sm-8" ng-init="endtype = 2">
+				<div class="form-group">
+					<input type="radio" id="endtype-2" ng-click="endtype = 2" ng-checked="endtype == 2">
+					<label class="radio-inline" for="endtype-2">永久</label>
+					<input type="radio" id="endtype-1" ng-click="endtype = 1" ng-checked="endtype == 1">
+					<label class="radio-inline" for="endtype-1">设置期限</label>
+					<div ng-if="endtype == 1" class="we7-margin-top">
+						{php echo tpl_form_field_date('endtime');}
+					</div>
+					<div class="help-block">用户的使用时间过期时，将无法使用系统功能。</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
 			<label for="" class="control-label col-sm-2">所属用户组</label>
 			<div class="form-controls col-sm-8">
 				<select name="groupid" class="we7-select" id="groupid">

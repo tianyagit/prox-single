@@ -269,6 +269,9 @@
 						{else}
 						{php echo date('Y-m-d', $module['expire_time'])}
 						{/if}
+						{if permission_check_account_user('see_account_post_modules_tpl_edit_store_endtime')}
+						<a href="javascript:;" class="color-default" data-toggle="modal" ng-click="editEndTime('{php echo date('Y-m-d', $module['expire_time'])}', {$module['order_id']})">修改</a>
+						{/if}
 					</td>
 					<td class="we7-padding-right color-default">
 						{if permission_check_account_user('see_modules_recharge')}

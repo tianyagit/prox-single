@@ -472,7 +472,9 @@ if($do == 'modules_tpl') {
 			foreach ($account_buy_modules as &$module) {
 				$module = module_fetch($module);
 				$module['goods_id'] = pdo_getcolumn('site_store_goods', array('module' => $module['name'], 'status' => 1), 'id');
-				$module['expire_time'] = pdo_getcolumn('site_store_order', array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'goodsid' => $module['goods_id']), 'max(endtime)');
+				$order_info = pdo_get('site_store_order', array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'goodsid' => $module['goods_id']), array('id', 'max(endtime) as endtime'));
+				$module['order_id'] = $order_info['id'];
+				$module['expire_time'] = $order_info['endtime'];
 			}
 		}
 		unset($module);

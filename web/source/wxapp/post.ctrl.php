@@ -78,6 +78,8 @@ if ($do == 'post') {
 				'key' => trim($_GPC['appid']),
 				'secret' => trim($_GPC['appsecret']),
 				'type' => ACCOUNT_TYPE_APP_NORMAL,
+				'headimg' => file_is_image( $_GPC['headimg']) ?  $_GPC['headimg'] : '',
+				'qrcode' => file_is_image( $_GPC['qrcode']) ?  $_GPC['qrcode'] : '',
 			);
 			$uniacid = wxapp_account_create($account_wxapp_data);
 			if (is_error($uniacid)) {

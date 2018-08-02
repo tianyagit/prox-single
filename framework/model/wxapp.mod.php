@@ -44,6 +44,14 @@ function wxapp_account_create($account) {
 	pdo_insert('account', $account_data);
 	$acid = pdo_insertid();
 
+	load()->model('utility');
+	if (!empty($account['headimg'])) {
+		utility_image_rename($account['headimg'], ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg');
+	}
+	if (!empty($account['qrcode'])) {
+		utility_image_rename($account['qrcode'], ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg');
+	}
+
 	$wxapp_data = array(
 		'acid' => $acid,
 		'token' => isset($account['token']) ? $account['token'] : random(32),

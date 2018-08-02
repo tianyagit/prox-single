@@ -232,6 +232,10 @@ function buildframes($framename = ''){
 				}
 				/* xend */
 			}
+
+			if ($_W['role'] == ACCOUNT_MANAGE_NAME_EXPIRED && ($nav_id != 'store' || $nav_id != 'system')) {
+				$menu['is_display'] = 0;
+			}
 		}
 	} else {
 		if (user_is_vice_founder()) {
