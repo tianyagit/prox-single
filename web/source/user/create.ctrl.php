@@ -27,7 +27,7 @@ if (checksubmit()) {
 		'remark' => safe_gpc_string($_GPC['remark']),
 		'groupid' => intval($_GPC['groupid']) ? intval($_GPC['groupid']) : 0,
 		'starttime' => TIMESTAMP,
-		'endtime' => intval($_GPC['timelimit']),
+		'endtime' => intval(strtotime($_GPC['endtime'])),
 		'owner_uid' => !empty($vice_founder_name) ? $vice_founder_info['uid'] : 0,
 	);
 

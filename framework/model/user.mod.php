@@ -974,7 +974,11 @@ function user_info_save($user, $is_founder_group = false) {
 	if (user_is_vice_founder() && !empty($_W['user']['endtime'])) {
 		$timeadd = !empty($timeadd) ? min($timeadd, $_W['user']['endtime']) : $_W['user']['endtime'];
 	}
-	$user['endtime'] = $timeadd;
+	if (empty($timeadd)) {
+		$user['endtime'] = max(0, $user['endtime']);
+	} else {
+		$user['endtime'] =  empty($user['endtime']) ? $timeadd : min($timeadd, $user['endtime']);
+	}
 	if (user_is_vice_founder()) {
 		$user['owner_uid'] = $_W['uid'];
 	}
