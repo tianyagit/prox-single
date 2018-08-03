@@ -35,10 +35,10 @@ class StoreModuleSite extends WeModuleSite {
 
 	public function getTypeName($type) {
 		$sign = array(
-			STORE_TYPE_MODULE => '应用模块',
+			STORE_TYPE_MODULE => '公众号应用',
 			STORE_TYPE_ACCOUNT => '公众号个数',
 			STORE_TYPE_WXAPP => '小程序个数',
-			STORE_TYPE_WXAPP_MODULE => '小程序模块',
+			STORE_TYPE_WXAPP_MODULE => '小程序应用',
 			STORE_TYPE_PACKAGE => '应用权限组',
 			STORE_TYPE_API => '应用访问流量(API)',
 			STORE_TYPE_ACCOUNT_RENEW => '公众号续费',
@@ -896,13 +896,13 @@ class StoreModuleSite extends WeModuleSite {
 				'title' => '商品分类',
 				'menu' => array(
 					'store_goods_module' =>array(
-						'title' => '应用模块',
+						'title' => '公众号应用',
 						'url' => $this->createWebUrl('goodsbuyer', array('direct' => 1, 'type' => STORE_TYPE_MODULE)),
 						'icon' => 'wi wi-apply',
 						'type' => STORE_TYPE_MODULE,
 					),
 					'store_goods_wxapp_module' => array(
-						'title' => '小程序模块',
+						'title' => '小程序应用',
 						'url' => $this->createWebUrl('goodsbuyer', array('direct' => 1, 'type' => STORE_TYPE_WXAPP_MODULE)),
 						'icon' => 'wi wi-small-routine',
 						'type' => STORE_TYPE_WXAPP_MODULE,
