@@ -503,7 +503,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 		if (!empty($list)) {
 			foreach ($list as $k => &$row) {
 				$modules = (array)iunserializer($row['modules']);
-				$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = $row['xzapp'] = array();
+				$row['modules'] = $row['wxapp'] = $row['webapp'] = $row['phoneapp'] = $row['xzapp'] = $row['aliapp'] = array();
 				if (!empty($modules)) {
 					foreach ($modules as $type => $modulenames) {
 						if (empty($modulenames) || !is_array($modulenames)) {
@@ -540,6 +540,11 @@ function uni_groups($groupids = array(), $show_all = false) {
 										$row['phoneapp'][] = $name;
 									}
 									break;
+								case 'aliapp':
+									if ($module[MODULE_SUPPORT_ALIAPP_NAME] == MODULE_SUPPORT_ALIAPP) {
+										$row['aliapp'][] = $name;
+									}
+									break;
 							}
 						}
 					}
@@ -573,7 +578,7 @@ function uni_groups($groupids = array(), $show_all = false) {
 		$group_list = $list;
 	}
 
-	$module_section = array('modules', 'phoneapp', 'wxapp', 'webapp', 'xzapp');
+	$module_section = array('modules', 'phoneapp', 'wxapp', 'webapp', 'xzapp', 'aliapp');
 	if (!empty($group_list)) {
 		foreach ($group_list as $id => $group) {
 			foreach ($module_section as $section) {

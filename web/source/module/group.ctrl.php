@@ -10,36 +10,14 @@ load()->model('module');
 
 $dos = array('display', 'delete', 'post', 'save');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
-/* xstart */
-if (IMS_FAMILY == 'x') {
-	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
-		itoast('无权限操作！', referer(), 'error');
-	}
+if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))){
+	itoast('无权限操作！', referer(), 'error');
 }
-/* xend */
-/* svstart */
-if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
-	if (!in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_FOUNDER))){
-		itoast('无权限操作！', referer(), 'error');
-	}
-}
-/* svend */
 
-/* xstart */
-if (IMS_FAMILY == 'x') {
-	if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
-		itoast('您只有查看权限！', url('module/group'), 'error');
-	}
+if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER))) {
+	itoast('您只有查看权限！', url('module/group'), 'error');
 }
-/* xend */
 
-/* svstart */
-if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
-	if ($do != 'display' && !in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER))) {
-		itoast('您只有查看权限！', url('module/group'), 'error');
-	}
-}
-/* svend */
 if ($do == 'save') {
 	$package_info = array(
 		'id' => intval($_GPC['id']),
@@ -50,6 +28,7 @@ if ($do == 'save') {
 			'webapp' => empty($_GPC['webapp']) ? array() : (array) array_keys($_GPC['webapp']),
 			'xzapp' => empty($_GPC['xzapp']) ? array() : (array) array_keys($_GPC['xzapp']),
 			'phoneapp' => empty($_GPC['phoneapp']) ? array() : (array) array_keys($_GPC['phoneapp']),
+			'aliapp' => empty($_GPC['aliapp']) ? array() : (array) array_keys($_GPC['aliapp'])
 		),
 		'templates' => $_GPC['templates'],
 	);
@@ -129,6 +108,12 @@ if ($do == 'display') {
 									$modules_group_list[$key]['phoneapp_modules'][] = $module;
 								}
 								break;
+							case 'aliapp':
+								if ($module[MODULE_SUPPORT_ALIAPP_NAME] == MODULE_SUPPORT_ALIAPP) {
+									$modules_group_list[$key]['aliapp_num'] += 1;
+									$modules_group_list[$key]['aliapp_modules'][] = $module;
+								}
+								break;
 						}
 					}
 				}
@@ -161,6 +146,7 @@ if ($do == 'post') {
 	$group_have_module_webapp = array();
 	$group_have_module_phoneapp = array();
 	$group_have_module_xzapp = array();
+	$group_have_module_aliapp = array();
 	$group_have_template = array();
 	if (!empty($group_id)) {
 		$module_group = current(uni_groups(array($group_id)));
@@ -170,6 +156,7 @@ if ($do == 'post') {
 		$group_have_module_webapp = empty($module_group['webapp']) ? array() : array_filter($module_group['webapp']);
 		$group_have_module_phoneapp = empty($module_group['phoneapp']) ? array() : array_filter($module_group['phoneapp']);
 		$group_have_module_xzapp = empty($module_group['xzapp']) ? array() : array_filter($module_group['xzapp']);
+		$group_have_module_aliapp = empty($module_group['aliapp']) ? array() : array_filter($module_group['aliapp']);
 	}
 
 	$module_list = user_modules($_W['uid']);
@@ -182,6 +169,7 @@ if ($do == 'post') {
 	$group_not_have_module_webapp = array();
 	$group_not_have_module_phoneapp = array();
 	$group_not_have_module_xzapp = array();
+	$group_not_have_module_aliapp = array();
 	if (!empty($module_list)) {
 		foreach ($module_list as $name => $module_info) {
 			if ($module_info[MODULE_SUPPORT_ACCOUNT_NAME] == MODULE_SUPPORT_WXAPP && !in_array($name, array_keys($group_have_module_app))) {
@@ -217,6 +205,10 @@ if ($do == 'post') {
 
 			if ($module_info['xzapp_support'] == MODULE_SUPPORT_XZAPP && !in_array($name, array_keys($group_have_module_xzapp))) {
 				$group_not_have_module_xzapp[$name] = $module_info;
+			}
+
+			if ($module_info['aliapp_support'] == MODULE_SUPPORT_ALIAPP && !in_array($name, array_keys($group_have_module_aliapp))) {
+				$group_not_have_module_aliapp[$name] = $module_info;
 			}
 		}
 	}
