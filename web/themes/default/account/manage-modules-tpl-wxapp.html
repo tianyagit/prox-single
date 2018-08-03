@@ -208,70 +208,90 @@
 
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
-	{if !empty($account_buy_modules)}
-	<table class="table we7-table table-hover" >
-		<tr>
-			<th colspan="7" class="text-left">
-				<span class="we7-padding-right">商城购买模块</span>
-				<span></span>
-			</th>
-			<th class="text-left">
-				<span class="we7-padding-right">到期时间</span>
-				<span></span>
-			</th>
-			<th class="text-left">
-				<span class="we7-padding-right">操作</span>
-				<span></span>
-			</th>
-		</tr>
-		<tbody>
-		<tr>
-			<td colspan="8">
-				小程序应用
-			</td>
-		</tr>
-		{loop $account_buy_modules $module}
-		{if $module['goods_id']}
-		<tr>
-			<td>
-				<img src="{$module['logo']}" class="img-responsive icon" alt="" style="width:50px;height:50px;">
-			</td>
-			<td>
-				{$module['title']}
-			</td>
-			<td>
-				{php $expire_week = strtotime('-1 week', $module['expire_time']);}
-				{if $module['expire_time'] > TIMESTAMP && $expire_week < TIMESTAMP}
-				<span class="text text-error">即将到期</span>
-				{/if}
-			</td>
-			<td colspan="5">
-				{if $module['expire_time'] < TIMESTAMP}
-				已到期
-				{else}
-				{php echo date('Y-m-d', $module['expire_time'])}
-				{/if}
-			</td>
+		{if !empty($account_buy_modules)}
+		<table class="table we7-table table-hover" >
+			<tr>
+				<th colspan="7" class="text-left">
+					<span class="we7-padding-right">商城购买模块</span>
+					<span></span>
+				</th>
+				<th class="text-left">
+					<span class="we7-padding-right">到期时间</span>
+					<span></span>
+				</th>
+				<th class="text-left">
+					<span class="we7-padding-right">操作</span>
+					<span></span>
+				</th>
+			</tr>
+			<tbody>
+			<tr>
+				<td colspan="8">
+					小程序应用
+				</td>
+			</tr>
+			{loop $account_buy_modules $module}
+			{if $module['goods_id']}
+			<tr>
+				<td>
+					<img src="{$module['logo']}" class="img-responsive icon" alt="" style="width:50px;height:50px;">
+				</td>
+				<td>
+					{$module['title']}
+				</td>
+				<td>
+					{php $expire_week = strtotime('-1 week', $module['expire_time']);}
+					{if $module['expire_time'] > TIMESTAMP && $expire_week < TIMESTAMP}
+					<span class="text text-error">即将到期</span>
+					{/if}
+				</td>
+				<td colspan="5">
+					{if $module['expire_time'] < TIMESTAMP}
+					已到期
+					{else}
+					{php echo date('Y-m-d', $module['expire_time'])}
+					{/if}
+					{if permission_check_account_user('see_account_post_modules_tpl_edit_store_endtime')}
+					<a href="javascript:;" class="color-default" data-toggle="modal" ng-click="editEndTime('{php echo date('Y-m-d', $module['expire_time'])}', {$module['order_id']})">修改</a>
+					{/if}
+				</td>
 
-			<td class="we7-padding-right color-default">
-				{if permission_check_account_user('see_modules_recharge')}
-				<a href="{php echo url('site/entry/goodsbuyer', array('direct' => 1, 'operate' => 'goods_info', 'm' => 'store', 'goods' => $module['goods_id']))}">续费</a>
-				{/if}
-			</td>
+				<td class="we7-padding-right color-default">
+					{if permission_check_account_user('see_modules_recharge')}
+					<a href="{php echo url('site/entry/goodsbuyer', array('direct' => 1, 'operate' => 'goods_info', 'm' => 'store', 'goods' => $module['goods_id']))}">续费</a>
+					{/if}
+				</td>
 
-		</tr>
+			</tr>
+			{/if}
+			{/loop}
+			</tbody>
+		</table>
 		{/if}
-		{/loop}
-		</tbody>
-	</table>
-	{/if}
+		<div class="modal fade" id="endtime" role="dialog">
+			<div class="we7-modal-dialog modal-dialog we7-form">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<div class="modal-title">设置到期时间</div>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							{php echo tpl_form_field_date('endtime', '');}
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange()">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	{/if}
 	<!-- xend -->
 
 	{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
-	<p>
 
-	</p>
 	<div  class="uploader-modal modal fade module" id="jurisdiction-add">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content ">
