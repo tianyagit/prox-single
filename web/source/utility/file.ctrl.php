@@ -137,6 +137,16 @@ if ($do == 'upload') {
 	$size = intval($_FILES['file']['size']);
 	$originname = $_FILES['file']['name'];
 
+	$upload_config = setting_load('upload');
+	$upload_type = $type == 'image' ? 'image' : 'audio';
+	if(!in_array($ext, $upload_config['upload'][$upload_type]['extentions'])) {
+		$result['message'] = '上传失败, 不支持的文件类型';
+		die(json_encode($result));
+	} else if ($size > $upload_config['upload'][$upload_type]['limit']) {
+		$result['message'] = '上传失败, 文件超过大小限制';
+		die(json_encode($result));
+	}
+
 	$filename = file_random_name(ATTACHMENT_ROOT . '/' . $setting['folder'], $ext);
 
 	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename, true);
@@ -353,7 +363,7 @@ if ($do == 'wechat_upload') {
 	$size = intval($_FILES['file']['size']);
 	$originname = $_FILES['file']['name'];
 
-		if(!in_array($ext, $limit[$mode][$type]['ext']) || ($size > $limit[$mode][$type]['size'])) {
+	if(!in_array($ext, $limit[$mode][$type]['ext']) || ($size > $limit[$mode][$type]['size'])) {
 		$result['message'] = $limit[$mode][$type]['errmsg'];
 		die(json_encode($result));
 	}
