@@ -47,10 +47,10 @@ if ($do == 'display') {
 
 	$type = safe_gpc_string($_GPC['type']);
 	$title = safe_gpc_string($_GPC['title']);
-	$type = in_array($type, array('all', ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN)) ? $type : 'all';
+	$type = in_array($type, array('all', ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN, ALIAPP_TYPE_SIGN)) ? $type : 'all';
 
 	if ($type == 'all') {
-		$title = ' 公众号/小程序/PC/APP/熊掌号 ';
+		$title = ' 公众号/微信小程序/PC/APP/熊掌号/支付宝小程序 ';
 	}
 
 	if ($type == 'all') {
@@ -72,6 +72,9 @@ if ($do == 'display') {
 	} elseif ($type == XZAPP_TYPE_SIGN) {
 		$tableName = 'account_' . XZAPP_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_XZAPP_NORMAL);
+	} elseif ($type == ALIAPP_TYPE_SIGN) {
+		$tableName = 'account_' . ALIAPP_TYPE_SIGN;
+		$condition = array(ACCOUNT_TYPE_ALIAPP_NORMAL);
 	}
 
 	$table = table($tableName);
@@ -119,6 +122,16 @@ if ($do == 'display') {
 				break;
 			case ACCOUNT_TYPE_PHONEAPP_NORMAL :
 				$account['versions'] = phoneapp_get_some_lastversions($account['uniacid']);
+				if (!empty($account['versions'])) {
+					foreach ($account['versions'] as $version) {
+						if (!empty($version['current'])) {
+							$account['current_version'] = $version;
+						}
+					}
+				}
+				break;
+			case ACCOUNT_TYPE_ALIAPP_NORMAL :
+				$account['versions'] = aliapp_get_some_lastversions($account['uniacid']);
 				if (!empty($account['versions'])) {
 					foreach ($account['versions'] as $version) {
 						if (!empty($version['current'])) {
@@ -182,7 +195,7 @@ if ($do == 'switch') {
 			itoast('', url('webapp/home/display'));
 		}
 
-		if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH || $type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
+		if (in_array($type, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_PHONEAPP_NORMAL, ACCOUNT_TYPE_ALIAPP_NORMAL))) {
 			if (!empty($account_info)) {
 				$module_name = safe_gpc_string($_GPC['module']);
 				if (!empty($_GPC['version_id'])) {

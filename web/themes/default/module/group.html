@@ -36,6 +36,7 @@
 			<col width="70px" />
 			<col width="70px" />
 			<col width="70px" />
+			<col width="70px" />
 			<col width="350px" />
 			<tr>
 				<th class="text-left">套餐名称</th>
@@ -45,17 +46,19 @@
 				<th class="text-center"><i class="wi wi-pc-apply" style="font-size: 24px"></i></th>
 				<th class="text-center"><i class="wi wi-app-apply" style="font-size: 24px"></i></th>
 				<th class="text-center"><i class="wi wi-xzapp-apply" style="font-size: 24px"></i></th>
+				<th class="text-center"><i class="wi wi-aliapp-apply" style="font-size: 24px"></i></th>
 				<th class="text-right">操作</th>
 			</tr>
 			{loop $modules_group_list $module_group}
 			<tr >
 				<td class="text-left">{$module_group['name']}</td>
 				<td class="text-center"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="公众号应用个数">{php echo intval($module_group['account_num'])}</span></td>
-				<td class="text-center"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="小程序应用个数">{php echo intval($module_group['wxapp_num'])}</span></td>
+				<td class="text-center"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="微信小程序应用个数">{php echo intval($module_group['wxapp_num'])}</span></td>
 				<td class="text-center"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="模版个数">{php echo intval($module_group['template_num'])}</span></td>
 				<td class="text-center"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="PC应用个数">{php echo intval($module_group['webapp_num'])}</span></td>
 				<td class="text-center"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="APP应用个数">{php echo intval($module_group['phoneapp_num'])}</span></td>
 				<td class="text-center"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="熊掌号应用个数">{php echo intval($module_group['xzapp_num'])}</span></td>
+				<td class="text-center"><span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="支付宝小程序应用个数">{php echo intval($module_group['aliapp_num'])}</span></td>
 				<td>
 					<div class="link-group">
 						<a href="javascript:;" class="color-default js-unfold" data-toggle="table-collapse" data-target="toggle-{$module_group['id']}" ng-click="changeText($event)">展开</a>
@@ -80,7 +83,7 @@
 				</td>
 			</tr>
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="8">
+				<td colspan="10">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">公众号应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['account_modules'] $module}
@@ -102,8 +105,8 @@
 				</td>
 			</tr>
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="8">
-					<div class="col-sm-1 color-gray text-left we7-padding-none">小程序应用</div>
+				<td colspan="10">
+					<div class="col-sm-1 color-gray text-left we7-padding-none">微信小程序应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['wxapp_modules'] $wxapp}
 						<div class="col-sm-3 text-left text-over">
@@ -115,7 +118,7 @@
 				</td>
 			</tr>
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="8">
+				<td colspan="10">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">PC应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['webapp_modules'] $webapp}
@@ -129,7 +132,7 @@
 			</tr>
 
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="8">
+				<td colspan="10">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">APP应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['phoneapp_modules'] $phoneapp}
@@ -143,7 +146,7 @@
 			</tr>
 
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="8">
+				<td colspan="10">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">熊掌号应用</div>
 					<div class="col-sm-11">
 						{loop $module_group['xzapp_modules'] $xzapp}
@@ -157,7 +160,21 @@
 			</tr>
 
 			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
-				<td colspan="8">
+				<td colspan="10">
+					<div class="col-sm-1 color-gray text-left we7-padding-none">支付宝小程序应用</div>
+					<div class="col-sm-11">
+						{loop $module_group['aliapp_modules'] $aliapp}
+						<div class="col-sm-3 text-left text-over">
+							<img src="{$aliapp['logo']}">
+							<a href="">{$aliapp['title']}</a>
+						</div>
+						{/loop}
+					</div>
+				</td>
+			</tr>
+
+			<tr class="collapse bg-light-gray" aria-expanded="true" data-id="toggle-{$module_group['id']}">
+				<td colspan="10">
 					<div class="col-sm-1 color-gray text-left we7-padding-none">模板</div>
 					<div class="col-sm-11">
 						{loop $module_group['templates'] $template}
@@ -230,7 +247,7 @@
 		</div>
 		<div class="panel we7-panel">
 			<div class="panel-heading">
-				选择小程序应用
+				选择微信小程序应用
 			</div>
 			<div class="panel-body we7-padding">
 				<div class="row">
@@ -323,6 +340,27 @@
 					<div class="col-sm-2 add-more">
 						<div class="we7-input-img input-more input-img">
 							<a href="" class="input-addon" ng-click="addModuleXzapp()">
+								<span class="color-gray"></span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="panel we7-panel">
+			<div class="panel-heading">
+				选择支付宝小程序应用
+			</div>
+			<div class="panel-body we7-padding">
+				<div class="row">
+					<div class="col-sm-2 text-left" ng-repeat="module in groupHaveModuleAliapp" style="overflow: hidden">
+						<img ng-src="{{ module.logo }}" alt="" class="img">{{ module.title }}
+						<span class="del bg-default" ng-click="delHaveModuleAliapp(module)">删除</span>
+					</div>
+					<div class="col-sm-2 add-more">
+						<div class="we7-input-img input-more input-img">
+							<a href="" class="input-addon" ng-click="addModuleAliapp()">
 								<span class="color-gray"></span>
 							</a>
 						</div>
@@ -433,7 +471,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">添加小程序(点击添加)</h4>
+					<h4 class="modal-title">添加微信小程序(点击添加)</h4>
 				</div>
 
 				<div class="modal-body material-content clearfix">
@@ -596,6 +634,47 @@
 		</div>
 	</div>
 
+	<div class="uploader-modal modal fade module" id="add_module_aliapp"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog we7-modal-dialog" >
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">添加支付宝小程序应用(点击添加)</h4>
+				</div>
+
+				<div class="modal-body material-content clearfix">
+					<div class="material-body">
+						<div class="row">
+							<div class="col-sm-2 select-module" ng-repeat="module in groupNotHaveModuleAliapp" ng-click="selectOrCancelModule(module, 'module_aliapp')">
+								<div class="item" ng-class="{true:'active',false:''}[module.selected]">
+									<img ng-src="{{ module.logo }}"  alt="" class="icon"/>
+									<div class="name">{{ module.title }}</div>
+									<div class="mask">
+										<span class="wi wi-right"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--注意全部有分页-->
+					<div class="material-pager text-right clearfix">
+						<div class="pull-left we7-form">
+							<input type="checkbox" id="selected-all6" ng-change="selecteAllAliapp(allaliappsel)" ng-model="allaliappsel">
+							<label for="selected-all6">全选</label>
+						</div>
+						<ul class="pagination">
+						</ul>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="addHaveModuleAliapp()">确定</button>
+					<button type="button" class="btn btn-default" ng-click="cancel('add_module_aliapp')">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<span class="btn btn-primary we7-padding-horizontal" ng-click="saveGroup()">提交</span>
 </div>
 <script>
@@ -607,16 +686,379 @@ require(['underscore'], function() {
 		'groupHaveModuleWebapp' : {php echo json_encode($group_have_module_webapp)},
 		'groupHaveModulePhoneapp' : {php echo json_encode($group_have_module_phoneapp)},
 		'groupHaveModuleXzapp' : {php echo json_encode($group_have_module_xzapp)},
+		'groupHaveModuleAliapp' : {php echo json_encode($group_have_module_aliapp)},
 		'groupNotHaveModuleApp' : {php echo json_encode($group_not_have_module_app)},
 		'groupNotHaveModuleWebapp' : {php echo json_encode($group_not_have_module_webapp)}, // angular filter 只能数组
 		'groupNotHaveModulePhoneapp' : {php echo json_encode($group_not_have_module_phoneapp)},
 		'groupNotHaveModuleWxapp' : {php echo json_encode($group_not_have_module_wxapp)},
 		'groupNotHaveModuleXzapp' : {php echo json_encode($group_not_have_module_xzapp)},
+		'groupNotHaveModuleAliapp' : {php echo json_encode($group_not_have_module_aliapp)},
 		'groupHaveTemplate' : {php echo json_encode($group_have_template)},
 		'groupNotHaveTemplate' : {php echo json_encode($group_not_have_template)},
 		'url' : "{php echo url('module/group/save')}"
 	});
+angular.module('moduleApp')	.controller('moduleGroupPostCtrl2', ['$scope', '$http', 'config', function ($scope, $http, config) {
+	$scope.config = config;
+	$scope.moduleGroup = config.moduleGroup === null ? { 'title': '' } : config.moduleGroup;
+	$scope.groupHaveModuleApp = config.groupHaveModuleApp.length == 0 ? {} : config.groupHaveModuleApp;
+	$scope.groupHaveModuleWxapp = config.groupHaveModuleWxapp.length == 0 ? {} : config.groupHaveModuleWxapp;
+	$scope.groupHaveModuleWebapp = config.groupHaveModuleWebapp.length == 0 ? {} : config.groupHaveModuleWebapp;
+	$scope.groupHaveModulePhoneapp = config.groupHaveModulePhoneapp.length == 0 ? {} : config.groupHaveModulePhoneapp;
+	$scope.groupHaveModuleXzapp = config.groupHaveModuleXzapp.length == 0 ? {} : config.groupHaveModuleXzapp;
+	$scope.groupHaveModuleAliapp = config.groupHaveModuleAliapp.length == 0 ? {} : config.groupHaveModuleAliapp;
 
+	$scope.groupNotHaveModuleApp = config.groupNotHaveModuleApp;
+	$scope.groupNotHaveModuleWxapp = config.groupNotHaveModuleWxapp;
+	$scope.groupNotHaveModuleWebapp = config.groupNotHaveModuleWebapp;
+	$scope.groupNotHaveModulePhoneapp = config.groupNotHaveModulePhoneapp;
+	$scope.groupNotHaveModuleXzapp = config.groupNotHaveModuleXzapp;
+	$scope.groupNotHaveModuleAliapp = config.groupNotHaveModuleAliapp;
+	$scope.groupHaveTemplate = config.groupHaveTemplate.length == 0 ? {} : config.groupHaveTemplate;
+	$scope.groupNotHaveTemplate = config.groupNotHaveTemplate;
+	//添加选择应用、小程序、模版时初始化选择的module
+	$scope.selectedModules = [];
+	$scope.allmodulesel = false;
+	$scope.allwxappsel = false;
+	$scope.alltemplatesel = false;
+	$scope.allwebsel = false;
+	$scope.allxzappsel = false;
+	$scope.keyword = '';
+	//对象过滤
+	$scope.filterKeyword = function (keyword) {
+		angular.forEach($scope.groupNotHaveModuleApp, function (item) {
+			item.hide = false;
+			if (keyword != '') {
+				if (item.title.indexOf(keyword) == -1) {
+					item.hide = true;
+				}
+			}
+
+		});
+	}
+
+	$scope.addModule = function () {
+		$('#add_module').modal('show');
+	};
+	$scope.addModuleWxapp = function () {
+		$('#add_module_wxapp').modal('show');
+	};
+
+	$scope.adTemplate = function () {
+		$('#add_template').modal('show');
+	};
+	$scope.addModuleWebapp = function() {
+		$('#add_module_webapp').modal('show');
+	};
+
+	$scope.addModulePhoneapp = function() {
+		$('#add_module_phoneapp').modal('show');
+	};
+
+	$scope.addModuleXzapp = function() {
+		$('#add_module_xzapp').modal('show');
+	};
+
+	$scope.addModuleAliapp = function() {
+		$('#add_module_aliapp').modal('show');
+	};
+
+	$scope.selectOrCancelModule = function (module, type) {
+		module.selected = module.selected ? false : true;
+		if (module.selected) {
+			$scope.selectModule(module, type);
+			return;
+		}
+		$scope.cancleModule(module, type);
+	};
+
+	function selecteAll(modules, selected, type) {
+		$scope.selectedModules = [];
+		if (!selected) {
+			$scope.selectedModules = [];
+			angular.forEach(modules, function (module) {
+				module.selected = false;
+			});
+			return;
+		}
+		angular.forEach(modules, function (module) {
+			module.selected = true;
+			$scope.selectedModules.push(module);
+			if (module.main_module && module.main_module != '' && modules[module.main_module] != undefined) {
+				$scope.selectedModules.push(modules[module.main_module]);
+			}
+		});
+	}
+
+	$scope.selecteAllModule = function (selected) {
+		selecteAll($scope.groupNotHaveModuleApp, selected);
+	}
+
+	$scope.selecteAllWxapp = function (selected) {
+		selecteAll($scope.groupNotHaveModuleWxapp, selected);
+	}
+
+	$scope.selecteAllTemplate = function (selected) {
+		selecteAll($scope.groupNotHaveTemplate, selected);
+	}
+
+	$scope.selecteAllWebapp = function(selected) {
+		selecteAll($scope.groupNotHaveModuleWebapp, selected);
+	};
+
+	$scope.selecteAllXzapp = function(selected) {
+		selecteAll($scope.groupNotHaveModuleXzapp, selected);
+	};
+
+	$scope.selecteAllAliapp = function(selected) {
+		selecteAll($scope.groupNotHaveModuleAliapp, selected);
+	};
+
+	$scope.selecteAllPhoneapp = function(selected) {
+		selecteAll($scope.groupNotHaveModulePhoneapp, selected);
+	};
+
+	$scope.selectModule = function (module, type) {
+		$scope.selectedModules.push(module);
+
+		if (type == 'module' && module.main_module != '' && $scope.groupNotHaveModuleApp[module.main_module] != undefined) {
+			$scope.selectedModules.push($scope.groupNotHaveModuleApp[module.main_module]);
+		}
+
+		if (type == 'module') {
+			if ($scope.selectedModules.length >= _.values($scope.groupNotHaveModuleApp).length) {//因模块应用 有主模块
+				$scope.allmodulesel = true;
+			}
+		} else if (type == 'module_wxapp') {
+			if ($scope.selectedModules.length == _.values($scope.groupNotHaveModuleWxapp).length) {
+				$scope.allwxappsel = true;
+			}
+		} else if(type == 'module_webapp'){
+			if ($scope.selectedModules.length == _.values($scope.groupNotHaveModuleWebapp).length) {
+				$scope.allwebappsel = true;
+			}
+		} else if(type == 'module_phoneapp') {
+			if ($scope.selectedModules.length == _.values($scope.groupNotHaveModulePhoneapp).length) {
+				$scope.allphoneappsel = true;
+			}
+		} else if (type == 'module_xzapp') {
+			if ($scope.selectedModules.length == _.values($scope.groupNotHaveModuleXzapp).length) {
+				$scope.allxzappsel = true;
+			}
+		} else if (type == 'module_aliapp') {
+			if ($scope.selectedModules.length == _.values($scope.groupNotHaveModuleAliapp).length) {
+				$scope.allaliappsel = true;
+			}
+		} else {
+			if ($scope.selectedModules.length == _.values($scope.groupNotHaveTemplate).length) {
+				$scope.alltemplatesel = true;
+			}
+		}
+	};
+	$scope.cancleModule = function (module, type) {
+		have_plugin = false;
+		angular.forEach($scope.selectedModules, function (val) {
+			if (val.main_module == module.name) {
+				have_plugin = true;
+			}
+		});
+		if (have_plugin == true) {
+			return false;
+		}
+
+		var index = _.indexOf($scope.selectedModules, module);
+		if (index > -1) {
+			$scope.selectedModules = _.without($scope.selectedModules, $scope.selectedModules[index]);
+		}
+		if (type == 'module') {
+			$scope.allmodulesel = false;
+		} else if (type == 'module_wxapp') {
+			$scope.allwxappsel = false;
+		} else if (type == 'module_webapp') {
+			$scope.allwebappsel = false;
+		} else if (type == 'module_phoneapp') {
+			$scope.allphoneappsel = false;
+		} else if (type == 'module_xzapp') {
+			$scope.allxzappsel = false;
+		} else if (type == 'module_aliapp') {
+			$scope.allaliappsel = false;
+		} else {
+			$scope.alltemplatesel = false;
+		}
+	};
+	$scope.addHaveModule = function () {
+		angular.forEach($scope.selectedModules, function (moduleVal, moduleKey) {
+			delete $scope.groupNotHaveModuleApp[moduleVal.name];
+			$scope.groupHaveModuleApp[moduleVal.name] = moduleVal;
+		});
+		$scope.selectedModules = [];
+		$('#add_module').modal('hide');
+		$scope.allmodulesel = false;
+	};
+	$scope.addHaveModuleWxapp = function () {
+		angular.forEach($scope.selectedModules, function (moduleVal, moduleKey) {
+			delete $scope.groupNotHaveModuleWxapp[moduleVal.name];
+			$scope.groupHaveModuleWxapp[moduleVal.name] = moduleVal;
+		});
+		$scope.selectedModules = [];
+		$('#add_module_wxapp').modal('hide');
+		$scope.allwxappsel = false;
+	}
+	$scope.addHaveTemplate = function () {
+		angular.forEach($scope.selectedModules, function (templateVal, templateKey) {
+			delete $scope.groupNotHaveTemplate[templateVal.name];
+			$scope.groupHaveTemplate[templateVal.name] = templateVal;
+		});
+		$scope.selectedModules = [];
+		$('#add_template').modal('hide');
+	};
+
+	$scope.addHaveModuleWebapp = function () {
+		angular.forEach($scope.selectedModules, function (moduleVal, moduleKey) {
+			delete $scope.groupNotHaveModuleWebapp[moduleVal.name];
+			$scope.groupHaveModuleWebapp[moduleVal.name] = moduleVal;
+		});
+		$scope.selectedModules = [];
+		$('#add_module_webapp').modal('hide');
+	};
+
+	$scope.addHaveModuleXzapp = function() {
+		angular.forEach($scope.selectedModules, function(moduleVal, moduleKey){
+			delete $scope.groupNotHaveModuleXzapp[moduleVal.name];
+			$scope.groupHaveModuleXzapp[moduleVal.name] = moduleVal;
+		});
+		$scope.selectedModules = [];
+		$('#add_module_xzapp').modal('hide');
+	};
+
+	$scope.addHaveModuleAliapp = function() {
+		angular.forEach($scope.selectedModules, function(moduleVal, moduleKey){
+			delete $scope.groupNotHaveModuleAliapp[moduleVal.name];
+			$scope.groupHaveModuleAliapp[moduleVal.name] = moduleVal;
+		});
+		$scope.selectedModules = [];
+		$('#add_module_aliapp').modal('hide');
+	};
+
+	$scope.addHaveModulePhoneapp = function () {
+		angular.forEach($scope.selectedModules, function (moduleVal, moduleKey) {
+			delete $scope.groupNotHaveModulePhoneapp[moduleVal.name];
+			$scope.groupHaveModulePhoneapp[moduleVal.name] = moduleVal;
+		});
+		$scope.selectedModules = [];
+		$('#add_module_phoneapp').modal('hide');
+	};
+
+	$scope.delHaveModule = function (module) {
+		module.selected = false;
+		delete $scope.groupHaveModuleApp[module.name];
+		$scope.groupNotHaveModuleApp[module.name] = module;
+		if (module.plugin != '') {
+			angular.forEach($scope.groupHaveModuleApp, function (val) {
+				if (val.main_module == module.name) {
+					delete $scope.groupHaveModuleApp[val.name];
+					$scope.groupNotHaveModuleApp[val.name] = val;
+				}
+			});
+		}
+	};
+
+	$scope.delHaveModuleWxapp = function (module) {
+		module.selected = false;
+		delete $scope.groupHaveModuleWxapp[module.name];
+		$scope.groupNotHaveModuleWxapp[module.name] = module;
+	};
+
+	$scope.delHaveModuleWebapp = function (module) {
+		module.selected = false;
+		delete $scope.groupHaveModuleWebapp[module.name];
+		$scope.groupNotHaveModuleWebapp[module.name] = module;
+	};
+
+	$scope.delHaveModulePhoneapp = function (module) {
+		module.selected = false;
+		delete $scope.groupHaveModulePhoneapp[module.name];
+		$scope.groupNotHaveModulePhoneapp[module.name] = module;
+	};
+
+	$scope.delHaveModuleXzapp = function(module) {
+		module.selected = false;
+		delete $scope.groupHaveModuleXzapp[module.name];
+		$scope.groupNotHaveModuleXzapp[module.name] = module;
+	};
+
+	$scope.delHaveModuleAliapp = function(module) {
+		module.selected = false;
+		delete $scope.groupHaveModuleAliapp[module.name];
+		$scope.groupNotHaveModuleAliapp[module.name] = module;
+	};
+
+	$scope.delHaveTemplate = function (template) {
+		template.selected = false;
+		delete $scope.groupHaveTemplate[template.name];
+		$scope.groupNotHaveTemplate[template.name] = template;
+	};
+
+	$scope.cancel = function(divid) {
+		angular.forEach($scope.selectedModules, function (module) {
+			module.selected = false;
+		});
+		$scope.selectedModules = [];
+		$scope.allmodulesel = false;
+		$scope.allwxappsel = false;
+		$scope.alltemplatesel = false;
+		$scope.allwebappsel = false;
+		$scope.allphoneappsel = false;
+		$scope.allxzappsel = false;
+		$scope.allaliappsel = false;
+		$('#'+divid).modal('hide');
+	};
+
+	$scope.saveGroup = function () {
+		var modules = [];
+		angular.forEach($scope.groupHaveModuleApp, function (val, key) {
+			modules.push(val.name);
+		});
+		var wxapp = [];
+		angular.forEach($scope.groupHaveModuleWxapp, function (val, key) {
+			wxapp.push(val.name);
+		});
+
+		var param = {
+			'id': $scope.moduleGroup.id,
+			'name': $scope.moduleGroup.name,
+			'modules': modules,
+			'wxapp': wxapp,
+			'templates': $scope.groupHaveTemplate,
+			'webapp': $scope.groupHaveModuleWebapp,
+			'phoneapp' : $scope.groupHaveModulePhoneapp,
+			'xzapp' : $scope.groupHaveModuleXzapp,
+			'aliapp' : $scope.groupHaveModuleAliapp,
+		};
+
+		if (param.name === '' || param.name === undefined) {
+			util.message('请输入套餐名', '', 'info');
+			return false;
+		}
+		$http({
+			method: 'POST',
+			url: $scope.config.url,
+			data: param,
+			beforeSend: function () {
+				$('.loader').show();
+			},
+			complete: function () {
+				$('.loader').hide();
+			}
+		}).success(function (data) {
+			if (data.message.errno == 1) {
+				util.message(data.message.message);
+				return false;
+			} else {
+				util.message('提交成功', data.redirect, 'success');
+			}
+		});
+	};
+}])
 	angular.bootstrap($('.js-modulegroup-post'), ['moduleApp']);
 
 	$('[data-toggle="table-collapse"]').on('click',function(){
