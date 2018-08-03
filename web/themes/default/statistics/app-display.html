@@ -9,7 +9,7 @@
 		<div class="panel-heading">API余量</div>
 		<div class="panel-body we7-padding-vertical">
 			<div class="col-sm-4 text-center">
-				<div class="title"><span class="">月访问总次数</span><a href="{php echo url('account/post', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid']))}" class="pull-right color-default font-default" target="_blank">去设置</a></div>
+				<div class="title"><span class="">月访问总次数</span><a href="{php echo url('account/post', array('uniacid' => $_W['uniacid'], 'acid' => $_W['acid'], 'account_type' => $_W['account']['type']))}" class="pull-right color-default font-default" target="_blank">去设置</a></div>
 				<div><span class="today">{$highest_visit}</span></div>
 			</div>
 			<div class="col-sm-4 text-center">
@@ -52,13 +52,13 @@
 		</div>
 	</div>
 
-	<div class="we7-margin-vertical color-dark font-lg" ng-if="needAccountApi">公众号API访问统计</div>
+	<div class="we7-margin-vertical color-dark font-lg" ng-if="needAccountApi">{$_W['account']['type_name']}API访问统计</div>
 	<div class="panel we7-panel" ng-if="needAccountApi">
 		<div class="panel-heading tab">
 			<a href="javascript:;">关键指标详解</a>
-			<a href="javascript:;" ng-class="{'active': accountDivideType == 'bysum'}" ng-click="changeDivideType('account', 'bysum')">公众号总访问数</a>
-			<a href="javascript:;" ng-class="{'active': accountDivideType == 'byavg'}" ng-click="changeDivideType('account', 'byavg')">公众号平均访问数</a>
-			<a href="javascript:;" ng-class="{'active': accountDivideType == 'byhighest'}" ng-click="changeDivideType('account', 'byhighest')">公众号最高访问数</a>
+			<a href="javascript:;" ng-class="{'active': accountDivideType == 'bysum'}" ng-click="changeDivideType('account', 'bysum')">{$_W['account']['type_name']}总访问数</a>
+			<a href="javascript:;" ng-class="{'active': accountDivideType == 'byavg'}" ng-click="changeDivideType('account', 'byavg')">{$_W['account']['type_name']}平均访问数</a>
+			<a href="javascript:;" ng-class="{'active': accountDivideType == 'byhighest'}" ng-click="changeDivideType('account', 'byhighest')">{$_W['account']['type_name']}最高访问数</a>
 		</div>
 		<div class="panel-body data-view">
 			<div class="tab-bar-time clearfrix">
