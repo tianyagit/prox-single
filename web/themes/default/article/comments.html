@@ -14,7 +14,9 @@
 					<p class="reply-time">{{comment.createtime}}</p>
 				</div>
 				<div class="media-right">
-					<a href="javascript:;" ng-click="replyarticle(comment)"  ng-if="reply" class="color-default">回复</a>
+					<!--<a href="javascript:;" ng-click="replyarticle(comment)"  ng-if="reply" class="color-default">回复</a>-->
+					<i class="fa fa-comment-o" ng-click="likeComment(comment)"></i>
+					<span class="comment-sum-like">{{comment.sum_like}}</span>
 				</div>
 			</div>
 
@@ -46,8 +48,9 @@
 </div>
 	<script>
         angular.module('articleApp').value('config', {
-            reply: "{$do}",
+            do: "{$do}",
             comment_status: "{$comment_status}",
+            like_comment_url: "{php echo url('article/notice-show/like_comment')}",
             get_comments_url: "{php echo url('article/notice-show/more_comments', array('id' => $id, 'iscomment' => intval($_GPC['iscomment'])))}",
             reply_url: "{php echo url('article/notice/reply_comment', array('id' => $id))}",
         });
