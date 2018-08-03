@@ -5,6 +5,9 @@
 	<li {if $do == 'remote'}class="active"{/if}><a href="{php echo url('system/attachment/remote')}">远程附件</a></li>
 </ul>
 {if $do == 'global'}
+<div class="alert we7-page-alert">
+	<p><i class="wi wi-info-sign"></i>全局设置只对上传到服务器的文件有效</p>
+</div>
 <div class="clearfix">
 	<form action="" method="post" class="we7-form form" id="form">
 	{if !empty($upload_max_filesize) && !empty($post_max_size)}
