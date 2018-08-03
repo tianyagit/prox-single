@@ -755,6 +755,9 @@ function user_save_group($group_info) {
 		if ($group_info['maxwebapp'] > $founder_info['maxwebapp']) {
 			return error(-1, '当前用户组的公众号个数不能超过' . $founder_info['maxwebapp'] . '个！');
 		}
+		if ($group_info['maxaliapp'] > $founder_info['maxaliapp']) {
+			return error(-1, '当前用户组的支付宝小程序个数不能超过' . $founder_info['maxaliapp'] . '个！');
+		}
 	}
 
 	if (!empty($group_info['package'])) {

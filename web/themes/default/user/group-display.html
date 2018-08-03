@@ -22,27 +22,17 @@
 	<col width="40px"/>
 	<col width="40px"/>
 	<col width="40px"/>
-	<col width="200px"/>
-	<col width="40px"/>
-	<col width="40px"/>
-	<col width="40px"/>
-	<col width="40px"/>
 	<col width="40px"/>
 	<col width="280px"/>
 	<tr>
 		<th class="text-left">用户组</th>
 		<th>有限期</th>
-		<th class="text-left"><i class="wi wi-wechat" style="font-size: 24px"></i></th>
+		<th class="text-center"><i class="wi wi-wechat" style="font-size: 24px"></i></th>
 		<th class="text-center"><i class="wi wi-wxapp" style="font-size: 24px"></i></th>
 		<th class="text-center"><i class="wi wi-pc" style="font-size: 24px"></i></th>
 		<th class="text-center"><i class="wi wi-app" style="font-size: 24px"></i></th>
 		<th class="text-center"><i class="wi wi-xzapp" style="font-size: 24px"></i></th>
-		<th>应用权限套餐</th>
-		<th class="text-center"><i class="wi wi-wx-apply" style="font-size: 24px"></i></th>
-		<th class="text-center"><i class="wi wi-wxapp-apply" style="font-size: 24px"></i></th>
-		<th class="text-center"><i class="wi wi-pc-apply" style="font-size: 24px"></i></th>
-		<th class="text-center"><i class="wi wi-app-apply" style="font-size: 24px"></i></th>
-		<th class="text-center"><i class="wi wi-xzapp-apply" style="font-size: 24px"></i></th>
+		<th class="text-center"><i class="wi wi-aliapp" style="font-size: 24px"></i></th>
 		<th class="text-right">操作</th>
 	</tr>
 	<tr ng-repeat="list in lists">
@@ -73,39 +63,9 @@
 				<span ng-if="list.maxxzapp == 0">0</span><span ng-if="list.maxxzapp != 0" ng-bind="list.maxxzapp"></span>
 			</span>
 		</td>
-		<td>
-			<span ng-if="list.module_nums == -1">全部</span>
-			<span ng-if="list.package != 'N;'" class="color-default" ng-bind="list.packages"></span>
-			<span ng-if="list.package == 'N;'">无</span>
-		</td>
 		<td class="text-center">
-			<span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="公众号应用个数">
-				<span ng-if="list.module_nums == -1">全部</span>
-				<span ng-if="list.module_nums != -1" ng-bind="list.module_nums"></span>
-			</span>
-		</td>
-		<td class="text-center">
-			<span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="小程序应用个数">
-				<span ng-if="list.wxapp_nums == -1">全部</span>
-				<span ng-if="list.wxapp_nums != -1" ng-bind="list.wxapp_nums"></span>
-			</span>
-		</td>
-		<td class="text-center">
-			<span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="PC应用个数">
-				<span ng-if="list.webapp_nums == -1">全部</span>
-				<span ng-if="list.webapp_nums != -1" ng-bind="list.webapp_nums"></span>
-			</span>
-		</td>
-		<td class="text-center">
-			<span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="APP应用个数">
-				<span ng-if="list.phoneapp_nums == -1">全部</span>
-				<span ng-if="list.phoneapp_nums != -1" ng-bind="list.phoneapp_nums"></span>
-			</span>
-		</td>
-		<td class="text-center">
-			<span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="熊掌号应用个数">
-				<span ng-if="list.xzapp_nums == -1">全部</span>
-				<span ng-if="list.xzapp_nums != -1" ng-bind="list.xzapp_nums"></span>
+			<span data-toggle="tooltip" data-placement="bottom" title="" data-original-title="可创建支付宝小程序">
+				<span ng-if="list.maxaliapp == 0">0</span><span ng-if="list.maxaliapp != 0" ng-bind="list.maxaliapp"></span>
 			</span>
 		</td>
 		<td>

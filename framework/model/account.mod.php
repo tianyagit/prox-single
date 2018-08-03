@@ -813,7 +813,7 @@ function uni_user_see_more_info($user_type, $see_more = false) {
  * @return array
  */
 function uni_owner_account_nums($uid, $role) {
-	$account_num = $wxapp_num = $webapp_num = $phoneapp_num = $xzapp_num = 0;
+	$account_num = $wxapp_num = $webapp_num = $phoneapp_num = $xzapp_num = $aliapp_num = 0;
 	$condition = array('uid' => $uid, 'role' => $role);
 	$uniacocunts = pdo_getall('uni_account_users', $condition, array(), 'uniacid');
 
@@ -835,6 +835,9 @@ function uni_owner_account_nums($uid, $role) {
 			if ($account['type'] == ACCOUNT_TYPE_XZAPP_NORMAL) {
 				$xzapp_num++;
 			}
+			if ($account['type'] == ACCOUNT_TYPE_ALIAPP_NORMAL) {
+				$aliapp_num++;
+			}
 		}
 	}
 	$num = array(
@@ -843,6 +846,7 @@ function uni_owner_account_nums($uid, $role) {
 		'webapp_num' => $webapp_num,
 		'phoneapp_num' => $phoneapp_num,
 		'xzapp_num' => $xzapp_num,
+		'aliapp_num' => $aliapp_num,
 	);
 	return $num;
 }

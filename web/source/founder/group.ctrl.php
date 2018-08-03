@@ -59,6 +59,7 @@ if ($do == 'post') {
 			'maxwebapp' => intval($_GPC['maxwebapp']),
 			'maxphoneapp' => intval($_GPC['maxphoneapp']),
 			'maxxzapp' => intval($_GPC['maxxzapp']),
+			'maxaliapp' => intval($_GPC['maxaliapp']),
 			'timelimit' => intval($_GPC['timelimit'])
 		);
 		$user_group = user_save_founder_group($founder_user_group);
