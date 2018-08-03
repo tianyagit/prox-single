@@ -46,10 +46,10 @@ function wxapp_account_create($account) {
 
 	load()->model('utility');
 	if (!empty($account['headimg'])) {
-		utility_image_rename($account['headimg'], ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg');
+		utility_image_rename($account['headimg'], ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg');
 	}
 	if (!empty($account['qrcode'])) {
-		utility_image_rename($account['qrcode'], ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg');
+		utility_image_rename($account['qrcode'], ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg');
 	}
 
 	$wxapp_data = array(

@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('article');
 load()->model('user');
 
-$dos = array( 'detail', 'list', 'more_comments');
+$dos = array( 'detail', 'list', 'like_comment', 'more_comments');
 $do = in_array($do, $dos) ? $do : 'list';
 
 if($do == 'detail') {
@@ -47,14 +47,32 @@ if($do == 'detail') {
 }
 
 if ($do == 'more_comments') {
-	$id = intval($_GPC['id']);
-	$pageindex = max(1, intval($_GPC['page']));
-	$pagesize = 15;
 	$comment_table = table('article_comment');
-	$comment_list = $comment_table->getArticleComments($id, intval($_GPC['iscomment']), $pageindex, $pagesize);
+	$comment_list = $comment_table->getCommentsAndLikeNum(intval($_GPC['id']), max(1, intval($_GPC['page'])), 15);
 	$comment_list['list'] = empty($comment_list['list']) ? array() : array_values($comment_list['list']);
 	$comment_list['pager'] = pagination($comment_list['total'], $pageindex, $pagesize, '', array('ajaxcallback' => true, 'callbackfuncname' => 'changePage'));
 	iajax(0, $comment_list);
+}
+
+if ($do == 'like_comment') {
+	$articleid = intval($_GPC['articleid']);
+	$comment_id = intval($_GPC['id']);
+	$article_comment_table = table('article_comment');
+
+	$id = $article_comment_table->where(array('id' => $comment_id, 'articleid' => $articleid))->getcolumn('id');
+	if (empty($id)) {
+		iajax(1, '评论不存在');
+	}
+	$liked = $article_comment_table->where(array('articleid' => $articleid, 'parentid' => $id, 'is_like' => 1, 'uid' => $_W['uid']))->getcolumn('id');
+	if (!empty($liked)) {
+		iajax(1, '已赞');
+	}
+
+	if ($article_comment_table->likeComment($_W['uid'], $articleid, $comment_id)) {
+		iajax(0);
+	} else {
+		iajax(1, '操作失败，请重试。');
+	}
 }
 
 if($do == 'list') {

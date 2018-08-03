@@ -21,11 +21,11 @@ class CreateArticleComment {
 CREATE TABLE $table_name (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `articleid` int(10) unsigned NOT NULL COMMENT '公告id',
-  `parentid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '父级回复id',
-  `uid` int(10) unsigned NOT NULL COMMENT '后台用户uid',
-  `content` text COMMENT '回复内容',
-  `is_read` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1未读，2已读',
-  `iscomment` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1未回复，2已回复',
+  `parentid` int(10) unsigned NOT NULL DEFAULT '0',
+  `uid` int(10) unsigned NOT NULL,
+  `content` varchar(500),
+  `is_like` tinyint(1) NOT NULL DEFAULT '2' COMMENT '是否点赞记录：1是，2否',
+  `is_reply` tinyint(1) NOT NULL DEFAULT '2' COMMENT '1已回复，2未回复',
   `createtime` int(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `articleid` (`articleid`)
