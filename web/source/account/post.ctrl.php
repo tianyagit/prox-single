@@ -458,6 +458,7 @@ if($do == 'modules_tpl') {
 	}
 	/* svend */
 	if (!empty($extend['modules'])) {
+		$extend['modules'] = $current_module_names = array_unique($current_module_names);
 		foreach ($extend['modules'] as $module_key => $module_val) {
 			$extend['modules'][$module_key] = module_fetch($module_val);
 		}
