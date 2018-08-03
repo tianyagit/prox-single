@@ -14,6 +14,7 @@ class Comment extends \We7Table {
 		'content',
 		'is_like',
 		'is_reply',
+		'like_num',
 		'createtime',
 	);
 	protected $default = array(
@@ -23,6 +24,7 @@ class Comment extends \We7Table {
 		'content' => '',
 		'is_like' => 2,
 		'is_reply' => 2,
+		'like_num' => 0,
 		'createtime' => '',
 	);
 
@@ -39,45 +41,37 @@ class Comment extends \We7Table {
 	}
 
 	public function likeComment($uid, $articleid, $comment_id) {
+		$like_num = $this->where('id', $comment_id)->getcolumn('like_num');
+		$result = $this->where('id', $comment_id)->fill('like_num', $like_num + 1)->save();
+		if ($result === false) {
+			return false;
+		}
 		$this->fill(array(
 			'uid' => $uid,
 			'articleid' => $articleid,
 			'parentid' => $comment_id,
 			'is_like' => 1,
 			'is_reply' => 1,
+			'like_num' => 0,
 			'content' => '',
 			'createtime' => TIMESTAMP,
 		));
 		return $this->save();
 	}
 
-	public function getCommentsAndLikeNum($articleid, $pageindex, $pagesize = 15) {
+	public function getComments($articleid, $pageindex, $pagesize = 15, $order = 'id') {
 		$comments = $this->where('articleid', $articleid)
 			->where('parentid', 0)
 			->where('is_like', 2)
-			->orderby('id', 'DESC')
+			->orderby($order, 'DESC')
 			->page($pageindex, $pagesize)
 			->getall('id');
 		$total = $this->getLastQueryTotal();
 
 		if (!empty($comments)) {
 			$this->extendUserinfo($comments);
-
-			$like_comments = $this->getQuery()
-				->select(array('parentid', 'count(*) as sum'))
-				->where('parentid', array_keys($comments))
-				->where('is_like', 1)
-				->groupby('parentid')
-				->getall('parentid');
-
 			foreach ($comments as $k => &$comment) {
 				$comment['createtime'] = date('Y-m-d H:i', $comment['createtime']);
-
-				if (!empty($like_comments[$comment['id']])) {
-					$comment['sum_like'] = $like_comments[$comment['id']]['sum'];
-				} else {
-					$comment['sum_like'] = 0;
-				}
 			}
 		}
 		return array('list' => $comments, 'total' => $total);

@@ -47,8 +47,11 @@ if($do == 'detail') {
 }
 
 if ($do == 'more_comments') {
+	$order = empty($_GPC['order']) || $_GPC['order'] == 'id' ? 'id' : 'like_num';
+	$pageindex = max(1, intval($_GPC['page']));
+	$pagesize = 15;
 	$comment_table = table('article_comment');
-	$comment_list = $comment_table->getCommentsAndLikeNum(intval($_GPC['id']), max(1, intval($_GPC['page'])), 15);
+	$comment_list = $comment_table->getComments(intval($_GPC['id']), $pageindex, $pagesize, $order);
 	$comment_list['list'] = empty($comment_list['list']) ? array() : array_values($comment_list['list']);
 	$comment_list['pager'] = pagination($comment_list['total'], $pageindex, $pagesize, '', array('ajaxcallback' => true, 'callbackfuncname' => 'changePage'));
 	iajax(0, $comment_list);

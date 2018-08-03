@@ -13,10 +13,12 @@
 					<p class="reply-content">{{comment.content}}</p>
 					<p class="reply-time">{{comment.createtime}}</p>
 				</div>
-				<div class="media-right">
-					<!--<a href="javascript:;" ng-click="replyarticle(comment)"  ng-if="reply" class="color-default">回复</a>-->
-					<i class="fa fa-comment-o" ng-click="likeComment(comment)"></i>
-					<span class="comment-sum-like">{{comment.sum_like}}</span>
+				<!--<a href="javascript:;" ng-click="replyarticle(comment)"  ng-if="reply" class="color-default">回复</a>-->
+				<div class="media-right" style="cursor: pointer">
+					<i class="fa fa-thumbs-o-up" ng-click="likeComment(comment)"></i>
+				</div>
+				<div class="media-right" style="padding-left: 4px">
+					<span class="comment-sum-like">{{comment.like_num}}</span>
 				</div>
 			</div>
 
@@ -38,7 +40,7 @@
 					<textarea ng-model="comment.replycontent" cols="30" rows="10" class="form-control replaycontent" contenteditable></textarea>
 				</div>
 				<div class="reply-editor-action we7-margin-top">
-					<button class="btn btn-primary" ng-click="send(comment)">发送 </button>
+					<button class="btn btn-primary" ng-click="send(comment)">发送</button>
 					<button class="btn btn-default" ng-click="cancel(comment)">取消</button>
 				</div>
 			</div>
@@ -51,7 +53,7 @@
             do: "{$do}",
             comment_status: "{$comment_status}",
             like_comment_url: "{php echo url('article/notice-show/like_comment')}",
-            get_comments_url: "{php echo url('article/notice-show/more_comments', array('id' => $id, 'iscomment' => intval($_GPC['iscomment'])))}",
+            get_comments_url: "{php echo url('article/notice-show/more_comments', array('id' => $id, 'order' => $order))}",
             reply_url: "{php echo url('article/notice/reply_comment', array('id' => $id))}",
         });
         angular.bootstrap($('#js-article-comment-display'), ['articleApp']);

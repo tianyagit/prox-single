@@ -220,6 +220,7 @@ if ($do == 'comment_status') {
 //留言列表
 if ($do == 'comments') {
 	$id = intval($_GPC['id']);
+	$order = empty($_GPC['order']) || $_GPC['order'] == 'id' ? 'id' : 'like_num';
 	template('article/comment-list');
 }
 

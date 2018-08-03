@@ -5,25 +5,21 @@
     <li><a href="javascript:;">留言列表</a></li>
 </ol>
 <div>
-   <!-- <div class="we7-page-search we7-padding-bottom clearfix">
+    <div class="we7-page-search we7-padding-bottom clearfix">
         <form action="" method="get" class="form-inline" role="form">
             <div class="form-group">
                 <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" value="0" {if $_GPC['iscomment']==0}checked{/if}>
-                    <a href="{php echo url('article/notice/comments', array('id'=>$id,'iscomment' => 0))}">全部</a>
+                    <input type="radio" name="inlineRadioOptions" value="1" {if $_GPC['order']=='id'}checked{/if}>
+                    <a href="{php echo url('article/notice/comments', array('id'=>$id,'order' => 'id'))}">最新</a>
                 </label>
                 <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" value="1" {if $_GPC['iscomment']==1}checked{/if}>
-                    <a href="{php echo url('article/notice/comments', array('id'=>$id,'iscomment' => 1))}">未回复</a>
-                </label>
-                <label class="radio-inline">
-                    <input type="radio" name="inlineRadioOptions" value="2" {if $_GPC['iscomment']==2}checked{/if}>
-                    <a href="{php echo url('article/notice/comments', array('id'=>$id,'iscomment' => 2))}">已回复</a>
+                    <input type="radio" name="inlineRadioOptions" value="2" {if $_GPC['order']=='like_num'}checked{/if}>
+                    <a href="{php echo url('article/notice/comments', array('id'=>$id,'order' => 'like_num'))}">最多赞</a>
                 </label>
             </div>
         </form>
-    </div>-->
-    <div class="panel we7-panel" id="">
+    </div>
+    <div class="panel we7-panel">
         <div class="panel-heading">
             <span>全部留言</span>
             <span class="pull-right">操作</span>

@@ -26,6 +26,7 @@ CREATE TABLE $table_name (
   `content` varchar(500),
   `is_like` tinyint(1) NOT NULL DEFAULT '2' COMMENT '是否点赞记录：1是，2否',
   `is_reply` tinyint(1) NOT NULL DEFAULT '2' COMMENT '1已回复，2未回复',
+  `like_num` int(10) unsigned NOT NULL DEFAULT '0',
   `createtime` int(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `articleid` (`articleid`)
