@@ -10,6 +10,7 @@ class WebappAccount extends WeAccount {
 	public function __construct($account = array()) {
 		$this->menuFrame = 'webapp';
 		$this->type = ACCOUNT_TYPE_WEBAPP_NORMAL;
+		$this->typeSign = WEBAPP_TYPE_SIGN;
 		$this->typeName = 'PC';
 		$this->typeTempalte = '-webapp';
 	}

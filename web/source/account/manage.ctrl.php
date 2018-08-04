@@ -8,23 +8,14 @@ defined('IN_IA') or exit('Access Denied');
 load()->func('file');
 load()->model('user');
 load()->model('message');
-load()->model('wxapp');
+load()->model('miniprogram');
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
 $_W['page']['title'] = $account_typename . '列表 - ' . $account_typename;
 //模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
 $account_info = permission_user_account_num();
-/* xstart */
-if (IMS_FAMILY == 'x') {
-	$role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
-}
-/* xend */
-/* svstart */
-if (IMS_FAMILY == 's' || IMS_FAMILY == 'v') {
-	$role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
-}
-/* svend */
+$role_type = in_array($_W['role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
 
 if ($do == 'display') {
 	$message_id = intval($_GPC['message_id']);
@@ -40,7 +31,8 @@ if ($do == 'display') {
 		ACCOUNT_TYPE_WEBAPP_NORMAL => array(ACCOUNT_TYPE_WEBAPP_NORMAL),
 		ACCOUNT_TYPE_OFFCIAL_NORMAL => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH),
 		ACCOUNT_TYPE_PHONEAPP_NORMAL => array(ACCOUNT_TYPE_PHONEAPP_NORMAL),
-		ACCOUNT_TYPE_XZAPP_NORMAL => array(ACCOUNT_TYPE_XZAPP_NORMAL),
+		ACCOUNT_TYPE_XZAPP_NORMAL => array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH),
+		ACCOUNT_TYPE_ALIAPP_NORMAL => array(ACCOUNT_TYPE_ALIAPP_NORMAL),
 	);
 	$account_table->searchWithType($type_condition[ACCOUNT_TYPE]);
 
@@ -72,7 +64,7 @@ if ($do == 'display') {
 		$account = uni_fetch($account['uniacid']);
 		$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['starttime']) . '~'. date('Y-m-d', $account['endtime']);
 		$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
-		$account['versions'] = wxapp_get_some_lastversions($account['uniacid']);
+		$account['versions'] = miniprogram_get_some_lastversions($account['uniacid']);
 		if (!empty($account['versions'])) {
 			foreach ($account['versions'] as $version) {
 				if (!empty($version['current'])) {

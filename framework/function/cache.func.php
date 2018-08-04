@@ -16,7 +16,7 @@ function cache_type() {
 	global $_W;
 	$cacher = $connect = '';
 	$cache_type = strtolower($_W['config']['setting']['cache']);
-	
+
 	if (extension_loaded($cache_type)) {
 		$config = $_W['config']['setting'][$cache_type];
 		if (!empty($config['server']) && !empty($config['port'])) {
@@ -68,7 +68,7 @@ function cache_load($key, $unserialize = false) {
 }
 
 function &cache_global($key) {
-	
+
 }
 
 /**
@@ -366,6 +366,11 @@ function cache_key_all() {
 
 			'wxapp_version' => array(
 				'key' => 'wxapp_version:%version_id',
+				'group' => '',
+			),
+
+			'miniprogram_version' => array(
+				'key' => 'miniprogram_version:%version_id',
 				'group' => '',
 			),
 

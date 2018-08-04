@@ -281,8 +281,7 @@ function message_wxapp_modules_version_upgrade() {
 	if (empty($uniacid_list)) {
 		return true;
 	}
-
-	$wxapp_list = $wxapp_table->wxappInfo(array_keys($uniacid_list));
+	$wxapp_list = table('account_wxapp')->wxappInfo(array_keys($uniacid_list));
 	$wxapp_modules = table('modules')->getSupportWxappList();
 
 	foreach ($uniacid_list as $uniacid_info) {

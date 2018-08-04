@@ -130,6 +130,7 @@ function uni_fetch($uniacid = 0) {
 		return false;
 	}
 	$account_api = WeAccount::create($acid['acid']);
+
 	if (is_error($account_api)) {
 		return $account_api;
 	}
@@ -141,6 +142,7 @@ function uni_fetch($uniacid = 0) {
 	//unset($account['key'], $account['secret'], $account['token'], $account['encodingaeskey']);
 	$owner = account_owner($uniacid);
 
+	$account['type_sign'] = $account_api->typeSign;
 	$account['uid'] = $owner['uid'];
 	$account['starttime'] = $owner['starttime'];
 	if (!empty($account['endtime'])) {
@@ -959,7 +961,7 @@ function uni_account_last_switch() {
 
 function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN) {
 	global $_W;
-	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN))) {
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN, ALIAPP_TYPE_SIGN))) {
 		return error(-1, '账号类型不合法');
 	}
 	uni_account_save_switch($uniacid, $type);
@@ -979,7 +981,7 @@ function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN)
 function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 	global $_W, $_GPC;
 	load()->model('visit');
-	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN))) {
+	if (!in_array($type, array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN, ALIAPP_TYPE_SIGN))) {
 		return error(-1, '账号类型不合法');
 	}
 	if (empty($_GPC['__switch'])) {

@@ -14,14 +14,6 @@ $do = safe_gpc_belong($do, array('display'), 'display');
 if ($do == 'display') {
 	$last_uniacid = uni_account_last_switch();
 
-	if (empty($last_uniacid)) {
-		itoast('', url('account/display', array('type' => XZAPP_TYPE_SIGN)), 'info');
-	}
-
-	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
-		uni_account_switch($last_uniacid, url('xzapp/home'), XZAPP_TYPE_SIGN);
-	}
-
 	$account = uni_fetch($last_uniacid);
 	$modulelist = uni_modules(false);
 	if (!empty($modulelist)) {

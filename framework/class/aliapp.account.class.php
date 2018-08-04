@@ -12,7 +12,7 @@ class AliappAccount extends WeAccount {
 	public $tablename = 'account_aliapp';
 
 	public function __construct($account = array()) {
-		$this->menuFrame = 'account';
+		$this->menuFrame = 'wxapp';
 		$this->type = ACCOUNT_TYPE_ALIAPP_NORMAL;
 		$this->typeName = '支付宝小程序';
 		$this->typeTempalte = '-aliapp';

@@ -61,13 +61,6 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 
 
 if ($do == 'platform') {
-	$last_uniacid = uni_account_last_switch();
-	if (empty($last_uniacid)) {
-		itoast('', url('account/display'), 'info');
-	}
-	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
-		uni_account_switch($last_uniacid,  url('home/welcome'));
-	}
 	define('FRAME', 'account');
 	if (empty($_W['account']['endtime']) && !empty($_W['account']['endtime']) && $_W['account']['endtime'] < time()) {
 		itoast('公众号已到服务期限，请联系管理员并续费', url('account/manage'), 'info');

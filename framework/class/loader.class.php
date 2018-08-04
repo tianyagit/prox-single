@@ -46,10 +46,12 @@ function table($name) {
 		'modules_ignore',
 		'account_xzapp',
 		'account_aliapp',
+		'account_wxapp',
 		'uni_account_modules',
 		'system_stat_visit',
 		'core_profile_fields',
 		'article_comment',
+		'wxapp_versions',
 	))) {
 		return new $table_classname;
 	}

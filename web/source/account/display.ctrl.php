@@ -7,6 +7,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('wxapp');
+load()->model('miniprogram');
 load()->model('phoneapp');
 
 $dos = array('rank', 'display', 'switch', 'platform');
@@ -16,29 +17,51 @@ $account_info = permission_user_account_num($_W['uid']);
 
 if ($do == 'platform') {
 	$cache_last_account_type = cache_load(cache_system_key('last_account_type'));
-	if (!empty($cache_last_account_type)) {
-		if ($cache_last_account_type == ACCOUNT_TYPE_SIGN) {
-			header('Location: ' . url('home/welcome'));
-		} elseif ($cache_last_account_type == WXAPP_TYPE_SIGN) {
-			header('Location: ' . url('wxapp/display/home'));
-		} elseif ($cache_last_account_type == WEBAPP_TYPE_SIGN) {
-			$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
-			$cache_lastaccount = cache_load($cache_key);
-			$webapp_info = table('account')->getUniAccountByUniacid($cache_lastaccount[WEBAPP_TYPE_SIGN]);
-			if (!empty($webapp_info)) {
-				header('Location: ' . url('webapp/home/display'));
-			} else {
-				header('Location: ' . url('account/display'));
-			}
-		} elseif ($cache_last_account_type == PHONEAPP_TYPE_SIGN) {
-			header('Location: ' . url('phoneapp/display/home'));
-		} elseif ($cache_last_account_type == XZAPP_TYPE_SIGN) {
-			header('Location: ' . url('xzapp/home/display'));
-		}
-	} else {
-		header('Location: ' . url('account/display'));
+	if (empty($cache_last_account_type)) {
+		itoast('', url('account/display'));
 	}
-	exit();
+	$last_uniacid = uni_account_last_switch();
+	$url = url('account/display', array('type' => $cache_last_account_type));
+	if (empty($last_uniacid)) {
+		itoast('', $url, 'info');
+	}
+	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {
+		uni_account_switch($last_uniacid, '', $cache_last_account_type);
+	}
+	$permission = permission_account_user_role($_W['uid'], $last_uniacid);
+	if (empty($permission)) {
+		itoast('', $url, 'info');
+	}
+	if ($cache_last_account_type == ACCOUNT_TYPE_SIGN) {
+		$url = url('home/welcome');
+	} elseif ($cache_last_account_type == WXAPP_TYPE_SIGN) {
+		$last_version = wxapp_fetch($last_uniacid);
+		if (!empty($last_version)) {
+			$url = url('wxapp/version/home', array('version_id' => $last_version['version']['id']));
+		}
+	} elseif ($cache_last_account_type == WEBAPP_TYPE_SIGN) {
+		$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
+		$cache_lastaccount = cache_load($cache_key);
+		$webapp_info = table('account')->getUniAccountByUniacid($cache_lastaccount[WEBAPP_TYPE_SIGN]);
+		if (!empty($webapp_info)) {
+			$url = url('webapp/home/display');
+		} else {
+			$url = url('account/display');
+		}
+	} elseif ($cache_last_account_type == PHONEAPP_TYPE_SIGN) {
+		$last_version = phoneapp_fetch($last_uniacid);
+		if (!empty($last_version)) {
+			$url = url('phoneapp/version/home', array('version_id' => $last_version['version']['id']));
+		}
+	} elseif ($cache_last_account_type == XZAPP_TYPE_SIGN) {
+		$url = url('xzapp/home/display');
+	} elseif ($cache_last_account_type == ALIAPP_TYPE_SIGN) {
+		$last_version = miniprogram_fetch($last_uniacid);
+		if (!empty($last_version)) {
+			$url = url('miniprogram/version/home', array('version_id' => $last_version['version']['id']));
+		}
+	}
+	itoast('', $url);
 }
 
 if ($do == 'display') {
@@ -55,7 +78,7 @@ if ($do == 'display') {
 
 	if ($type == 'all') {
 		$tableName = ACCOUNT_TYPE_SIGN;
-		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_PHONEAPP_NORMAL, ACCOUNT_TYPE_XZAPP_NORMAL);
+		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_PHONEAPP_NORMAL, ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_ALIAPP_NORMAL);
 		$fields = 'a.uniacid,b.type';
 	} elseif ($type == ACCOUNT_TYPE_SIGN) {
 		$tableName = ACCOUNT_TYPE_SIGN;
@@ -131,7 +154,7 @@ if ($do == 'display') {
 				}
 				break;
 			case ACCOUNT_TYPE_ALIAPP_NORMAL :
-				$account['versions'] = aliapp_get_some_lastversions($account['uniacid']);
+				$account['versions'] = miniprogram_get_some_lastversions($account['uniacid']);
 				if (!empty($account['versions'])) {
 					foreach ($account['versions'] as $version) {
 						if (!empty($version['current'])) {
@@ -204,7 +227,7 @@ if ($do == 'switch') {
 					if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 						$versions = phoneapp_get_some_lastversions($uniacid);
 					} else {
-						$versions = wxapp_get_some_lastversions($uniacid);
+						$versions = miniprogram_get_some_lastversions($uniacid);
 					}
 					foreach ($versions as $val) {
 						if ($val['current']) {
@@ -217,7 +240,8 @@ if ($do == 'switch') {
 					if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 						$version_info = phoneapp_version($version_id);
 					} else {
-						$version_info = wxapp_version($version_id);
+						$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
+						$version_info['modules'] = iunserializer($version_info['modules']);
 					}
 					$module_info = array();
 					if (!empty($version_info['modules'])) {
@@ -238,17 +262,16 @@ if ($do == 'switch') {
 						if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH) {
 							uni_account_switch($version_info['uniacid'], $url, WXAPP_TYPE_SIGN);
 						} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-							uni_account_switch($version_info['uniacid'], $url, PHONEAPP_TYPE_SIGN);
+							uni_account_switch($version_info['uniacid'], $url, $account_info['type_sign']);
 						}
 					}
 				}
-
-				if ($type == ACCOUNT_TYPE_APP_NORMAL || $type == ACCOUNT_TYPE_APP_AUTH) {
-					wxapp_update_last_use_version($uniacid, $version_id);
-					uni_account_switch($uniacid, url('wxapp/version/home', array('version_id' => $version_id)), WXAPP_TYPE_SIGN);
+				if (in_array($type, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_ALIAPP_NORMAL))) {
+					miniprogram_update_last_use_version($uniacid, $version_id);
+					uni_account_switch($uniacid, url('miniprogram/version/home', array('version_id' => $version_id)), $account_info['type_sign']);
 				} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 					phoneapp_update_last_use_version($uniacid, $version_id);
-					uni_account_switch($uniacid, url('phoneapp/version/home', array('version_id' => $version_id)), PHONEAPP_TYPE_SIGN);
+					uni_account_switch($uniacid, url('phoneapp/version/home', array('version_id' => $version_id)), $account_info['type_sign']);
 				}
 			} else {
 				itoast('账号不存在', referer(), 'error');

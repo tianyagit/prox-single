@@ -21,7 +21,8 @@ class 'createAccountAliapp' {
 `uniacid` int(10) unsigned NOT NULL,
 `level` tinyint(4) unsigned NOT NULL DEFAULT '0',
 `name` varchar(30) NOT NULL,
-`appid` varchar(16) NOT NULL,
+`description` varchar(255) NOT NULL,
+`key` varchar(16) NOT NULL,
 PRIMARY KEY (`acid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 		}
