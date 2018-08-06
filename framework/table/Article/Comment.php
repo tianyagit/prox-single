@@ -28,6 +28,10 @@ class Comment extends \We7Table {
 		'createtime' => '',
 	);
 
+	public function getById($comment_id) {
+		return $this->where('id' ,$comment_id)->get();
+	}
+
 	public function addComment($comment) {
 		if (!empty($comment['parentid'])) {
 			$result = $this->where('id', $comment['parentid'])->fill('is_reply', 1)->save();
@@ -38,6 +42,12 @@ class Comment extends \We7Table {
 		$comment['createtime'] = TIMESTAMP;
 		$comment['is_like'] = 2;
 		return $this->fill($comment)->save();
+	}
+
+	public function hasLiked($articleid, $comment_id) {
+		global $_W;
+		$liked = $this->where(array('articleid' => $articleid, 'parentid' => $comment_id, 'is_like' => 1, 'uid' => $_W['uid']))->getcolumn('id');
+		return boolval($liked);
 	}
 
 	public function likeComment($uid, $articleid, $comment_id) {

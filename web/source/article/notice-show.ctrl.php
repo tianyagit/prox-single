@@ -62,12 +62,11 @@ if ($do == 'like_comment') {
 	$comment_id = intval($_GPC['id']);
 	$article_comment_table = table('article_comment');
 
-	$id = $article_comment_table->where(array('id' => $comment_id, 'articleid' => $articleid))->getcolumn('id');
-	if (empty($id)) {
+	$comment = $article_comment_table->getById($comment_id);
+	if (empty($comment)) {
 		iajax(1, '评论不存在');
 	}
-	$liked = $article_comment_table->where(array('articleid' => $articleid, 'parentid' => $id, 'is_like' => 1, 'uid' => $_W['uid']))->getcolumn('id');
-	if (!empty($liked)) {
+	if ($article_comment_table->hasLiked($articleid, $comment_id)) {
 		iajax(1, '已赞');
 	}
 
