@@ -274,7 +274,7 @@ function message_wxapp_modules_version_upgrade() {
 	load()->model('wxapp');
 	load()->model('account');
 
-	$wxapp_table = table('wxapp');
+	$wxapp_table = table('account');
 	$wxapp_table->searchWithType(array(ACCOUNT_TYPE_APP_NORMAL));
 	$uniacid_list = $wxapp_table->searchAccountList();
 
