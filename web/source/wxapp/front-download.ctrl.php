@@ -163,6 +163,9 @@ if ($do == 'upgrade_module') {
 				'logo' => empty($module['logo']) ? '' : $module['logo'],
 				'version' => empty($module['version']) ? '' : $module['version'],
 			);
+			if (!empty($module['account'])) {
+				$modules[$module['name']]['uniacid'] = $module['account']['uniacid'];
+			}
 		}
 		$modules = iserializer($modules);
 		pdo_update('wxapp_versions', array(
