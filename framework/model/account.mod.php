@@ -941,16 +941,14 @@ function uni_account_rank_top($uniacid) {
 }
 
 /**
- * 获取最后操作的uniacid，由于存在多个帐号类型
- * 所以根据不同入口，获取相应的最后操作帐号
+ * 获取最后操作的uniacid
  * @return intval $uniacid
  */
 function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
-	$cache_lastaccount = cache_load($cache_key);
-	$uniacid = $cache_lastaccount;
-	return $uniacid;
+	$cache_lastaccount = (int)cache_load($cache_key);
+	return $cache_lastaccount;
 }
 
 function uni_account_switch($uniacid, $redirect = '', $type = ACCOUNT_TYPE_SIGN) {

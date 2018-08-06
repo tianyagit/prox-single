@@ -13,7 +13,6 @@ load()->model('phoneapp');
 $dos = array('rank', 'display', 'switch', 'platform');
 $do = in_array($_GPC['do'], $dos) ? $do : 'display';
 $_W['page']['title'] = '所有权限';
-$account_info = permission_user_account_num($_W['uid']);
 
 if ($do == 'platform') {
 	$cache_last_account_type = cache_load(cache_system_key('last_account_type'));
@@ -65,42 +64,35 @@ if ($do == 'platform') {
 }
 
 if ($do == 'display') {
+	$account_info = permission_user_account_num($_W['uid']);
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 10;
 
-	$type = safe_gpc_string($_GPC['type']);
 	$title = safe_gpc_string($_GPC['title']);
-	$type = in_array($type, array('all', ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN, ALIAPP_TYPE_SIGN)) ? $type : 'all';
+	$type = in_array($_GPC['type'], array('all', ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN, ALIAPP_TYPE_SIGN)) ? $_GPC['type'] : 'all';
 
 	if ($type == 'all') {
 		$title = ' 公众号/微信小程序/PC/APP/熊掌号/支付宝小程序 ';
 	}
 
 	if ($type == 'all') {
-		$tableName = ACCOUNT_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_PHONEAPP_NORMAL, ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_ALIAPP_NORMAL);
 		$fields = 'a.uniacid,b.type';
 	} elseif ($type == ACCOUNT_TYPE_SIGN) {
-		$tableName = ACCOUNT_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH);
 	} elseif ($type == WXAPP_TYPE_SIGN) {
-		$tableName = WXAPP_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH);
 	} elseif ($type == WEBAPP_TYPE_SIGN) {
-		$tableName = WEBAPP_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_WEBAPP_NORMAL);
 	} elseif ($type == PHONEAPP_TYPE_SIGN) {
-		$tableName = PHONEAPP_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_PHONEAPP_NORMAL);
 	} elseif ($type == XZAPP_TYPE_SIGN) {
-		$tableName = 'account_' . XZAPP_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_XZAPP_NORMAL);
 	} elseif ($type == ALIAPP_TYPE_SIGN) {
-		$tableName = 'account_' . ALIAPP_TYPE_SIGN;
 		$condition = array(ACCOUNT_TYPE_ALIAPP_NORMAL);
 	}
 
-	$table = table($tableName);
+	$table = table('account');
 	$table->searchWithType($condition);
 
 	$keyword = safe_gpc_string($_GPC['keyword']);
@@ -124,14 +116,10 @@ if ($do == 'display') {
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);
 		switch ($account['type']) {
-			case ACCOUNT_TYPE_XZAPP_NORMAL:
-			case ACCOUNT_TYPE_OFFCIAL_NORMAL :
-			case ACCOUNT_TYPE_OFFCIAL_AUTH :
-				$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
-				break;
 			case ACCOUNT_TYPE_APP_NORMAL :
 			case ACCOUNT_TYPE_APP_AUTH :
-				$account['versions'] = wxapp_get_some_lastversions($account['uniacid']);
+			case ACCOUNT_TYPE_ALIAPP_NORMAL :
+				$account['versions'] = miniprogram_get_some_lastversions($account['uniacid']);
 				if (!empty($account['versions'])) {
 					foreach ($account['versions'] as $version) {
 						if (!empty($version['current'])) {
@@ -139,22 +127,9 @@ if ($do == 'display') {
 						}
 					}
 				}
-				break;
-			case ACCOUNT_TYPE_WEBAPP_NORMAL :
-				$account['switchurl'] = url('account/display/switch', array('uniacid' => $account['uniacid']));
 				break;
 			case ACCOUNT_TYPE_PHONEAPP_NORMAL :
 				$account['versions'] = phoneapp_get_some_lastversions($account['uniacid']);
-				if (!empty($account['versions'])) {
-					foreach ($account['versions'] as $version) {
-						if (!empty($version['current'])) {
-							$account['current_version'] = $version;
-						}
-					}
-				}
-				break;
-			case ACCOUNT_TYPE_ALIAPP_NORMAL :
-				$account['versions'] = miniprogram_get_some_lastversions($account['uniacid']);
 				if (!empty($account['versions'])) {
 					foreach ($account['versions'] as $version) {
 						if (!empty($version['current'])) {
