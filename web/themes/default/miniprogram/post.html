@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="account-list-add-step" id="js-miniprogram-create" ng-controller="CreateMiniprogramCtrl2" ng-cloak>
+<div class="account-list-add-step" id="js-miniprogram-create" ng-controller="CreateMiniprogramCtrl" ng-cloak>
 	<ol class="breadcrumb we7-breadcrumb">
 		<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}"><i class="wi wi-back-circle"></i></a>
 		<li><a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}">支付宝小程序列表</a></li>
@@ -156,99 +156,7 @@ require(['fileUploader','underscore'], function(uploader){
 		'postUrl' : "{php echo url('miniprogram/post', array('version_id' => $version_id))}",
 		'token' : "{$_W['token']}",
 	});
-angular.module('wxApp').controller('CreateMiniprogramCtrl2', ['$scope', '$http', 'config', function ($scope, $http, config) {
-	$scope.mtype = 'aliapp';
-	$scope.miniprograminfo = {
-		'name': config.miniprograminfo.name,
-		'version': '',
-		'choose_module': [],
-		'submit': 'yes',
-		'token': config.token,
-		'uniacid': config.uniacid,
-		'modules': [],
-		'type' : config.type,
-	};
-	//小程序添加的应用集合
-	$scope.apps = [];
-	//创建小程序到第几步
-	$scope.createStep = 1;
-	$scope.version = config.version;
-	$scope.newversion = config.uniacid > 0 ? true : false;
-	//小程序设计类型，2模板，3直接跳转
-	$scope.designMethod = config.designMethod;
 
-	var bindingsUrl = config.bindingsUrl;
-	$scope.moduleEntries = [];
-	$scope.uploadMultiImage = function(type) {
-		require(['fileUploader'], function(uploader){
-			uploader.init(function(imgs){
-				$scope.miniprograminfo[type] = imgs.url;
-				$scope.$apply($scope.miniprograminfo);
-			}, {'direct' : true, 'multiple' : false});
-		});
-	};
-	$scope.delMultiImage = function(type) {
-		$scope.miniprograminfo[type] = '';
-	};
-	$scope.prevStep = function () {
-		$scope.createStep = 1;
-	};
-	$scope.nextStep = function () {
-		var checked = $scope.checkComplete();
-		if (checked) {
-			$scope.createStep = 2;
-		}
-	};
-
-	//点击下一步：检测是否可以进入下一步
-	$scope.checkComplete = function () {
-		if ($scope.miniprograminfo.uniacid == 0) {
-			if (!$scope.miniprograminfo.name) {
-				util.message('支付宝小程序名称不可为空！');
-				return false;
-			}
-			if (!$scope.miniprograminfo.appid) {
-				util.message('AppId不可为空！');
-				return false;
-			}
-		}
-		if (!$scope.miniprograminfo.description) {
-			util.message('请填写描述');
-			return false;
-		}
-		if (!$scope.miniprograminfo.version || !/^[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]{1,2})?$/.test($scope.miniprograminfo.version)) {
-			util.message('版本号错误，只能是数字、点，数字最多2位，例如 1.1.1 或1.2');
-			return false;
-		}
-		return true;
-	};
-
-	$scope.package = function (event) {
-		if (!$scope.miniprograminfo.choose_module) {
-			if (!confirm('添加模块应用后才可进行打包操作，是否继续仅保存？')) {
-				return false;
-			}
-		}
-		$http.post(config.postUrl, $scope.miniprograminfo)
-			.success(function (data) {
-				if (data.message.errno == 0) {
-					util.message(data.message.message, data.redirect, 'success');
-				} else {
-					util.message(data.message.message, '', 'error');
-				}
-			});
-		return false;
-	};
-
-	$('#resource_module').unbind('click').click(function () {
-		require(['fileUploader'], function (fileUploader) {
-			fileUploader.show(function (modules) {
-				$scope.miniprograminfo.choose_module = modules;
-				$scope.$apply($scope.miniprograminfo.choose_module);
-			}, { 'direct': true, 'multiple': $scope.isMuti, 'isWechat': false, 'type': 'module', 'others': { 'user_module': 0, 'mtype': $scope.mtype, 'cover': $scope.mtype == 'account'} });
-		});
-	});
-}]);
 	angular.bootstrap($('#js-miniprogram-create'), ['wxApp']);
 });
 </script>
