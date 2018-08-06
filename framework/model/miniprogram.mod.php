@@ -141,7 +141,7 @@ function miniprogram_fetch($uniacid, $version_id = '') {
 
 		$miniprogram_version_info['modules'] = iunserializer($miniprogram_version_info['modules']);
 		//如果是单模块版并且本地模块，应该是开发者开发小程序，则模块版本号本地最新的。
-		if ($miniprogram_version_info['design_method'] == miniprogram_MODULE) {
+		if ($miniprogram_version_info['design_method'] == WXAPP_MODULE) {
 			$module = current($miniprogram_version_info['modules']);
 			$manifest = ext_module_manifest($module['name']);
 			if (!empty($manifest)) {
@@ -278,7 +278,7 @@ function miniprogram_version($version_id) {
 	}
 
 	$cachekey = cache_system_key('miniprogram_version', array('version_id' => $version_id));
-// 	$cache = cache_load($cachekey);
+	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
 	}
@@ -293,13 +293,20 @@ function miniprogram_version($version_id) {
 function miniprogram_version_detail_info($version_info) {
 	global $_W;
 	$result = array();
-	if (empty($version_info)) {
+	if (empty($version_info) || empty($version_info['uniacid'])) {
 		return $result;
 	}
+	$uni_modules = uni_modules_by_uniacid($version_info['uniacid']);
+	$uni_modules = array_keys($uni_modules);
 	$version_info['modules'] = iunserializer($version_info['modules']);
 	if (!empty($version_info['modules'])) {
 		foreach ($version_info['modules'] as $i => $module) {
+			if (!in_array($module['name'], $uni_modules)) {
+				continue;
+			}
 			$version_info['modules'][$i]['module_info'] = module_fetch($module['name']);
+			$version_info['modules'][$i]['logo'] = $version_info['modules'][$i]['module_info']['logo'];
+			$version_info['modules'][$i]['title'] = $version_info['modules'][$i]['module_info']['title'];
 		}
 	}
 	$result = $version_info;

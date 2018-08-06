@@ -317,6 +317,9 @@ if($do == 'modules_tpl') {
 					case ACCOUNT_TYPE_PHONEAPP_NORMAL:
 						$data['modules']['phoneapp'] = $module;
 						break;
+					case ACCOUNT_TYPE_ALIAPP_NORMAL:
+						$data['modules']['aliapp'] = $module;
+						break;
 				}
 				$data['modules'] = iserializer($data['modules']);
 

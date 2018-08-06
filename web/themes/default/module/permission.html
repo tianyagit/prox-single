@@ -58,7 +58,11 @@
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					<h3 class="modal-title">添加应用操作员</h3>
 				</div>
-				<form action="{php echo url('module/permission/add_clerk', array('m' => $module_name))}" method="post">
+				<form action="" method="post">
+				<input type="hidden" name="c" value="module">
+				<input type="hidden" name="a" value="permission">
+				<input type="hidden" name="do" value="add_clerk">
+				<input type="hidden" name="m" value="{php echo $module_name}">
 				<div class="modal-body we7-form">
 					<div class="form-group">
 						<label class="control-label col-sm-2"></label>

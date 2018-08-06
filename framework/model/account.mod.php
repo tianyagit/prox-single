@@ -290,6 +290,10 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				in_array($account_info['type'], array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
 				continue;
 			}
+			if ($module_info[MODULE_SUPPORT_ALIAPP_NAME] != MODULE_SUPPORT_ALIAPP &&
+					in_array($account_info['type'], array(ACCOUNT_TYPE_ALIAPP_NORMAL))) {
+				continue;
+			}
 			if ($module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP &&
 				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
 				in_array($account_info['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
@@ -299,6 +303,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				$module_info[MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT &&
 				$module_info[MODULE_SUPPORT_WEBAPP_NAME] != MODULE_SUPPORT_WEBAPP &&
 				$module_info[MODULE_SUPPORT_PHONEAPP_NAME] != MODULE_SUPPORT_PHONEAPP &&
+				$module_info[MODULE_SUPPORT_ALIAPP_NAME] != MODULE_SUPPORT_ALIAPP &&
 				$module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP) {
 				continue;
 			}
@@ -943,19 +948,8 @@ function uni_account_rank_top($uniacid) {
 function uni_account_last_switch() {
 	global $_W, $_GPC;
 	$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
-	$cache_lastaccount = (array)cache_load($cache_key);
-	if (strexists($_W['siteurl'], 'c=webapp')) {
-		$uniacid = $cache_lastaccount['webapp'];
-	} else if (strexists($_W['siteurl'], 'c=wxapp')) {
-		$uniacid = $cache_lastaccount['wxapp'];
-	} else if (strexists($_W['siteurl'], 'c=phoneapp')) {
-		$uniacid = $cache_lastaccount['phoneapp'];
-	} else if (strexists($_W['siteurl'], 'c=xzapp')) {
-		$uniacid = $cache_lastaccount['xzapp'];
-	} else {
-		$uniacid = $cache_lastaccount['account'];
-	}
-
+	$cache_lastaccount = cache_load($cache_key);
+	$uniacid = $cache_lastaccount;
 	return $uniacid;
 }
 
@@ -988,15 +982,7 @@ function uni_account_save_switch($uniacid, $type = ACCOUNT_TYPE_SIGN) {
 		$_GPC['__switch'] = random(5);
 	}
 	$cache_key = cache_system_key('last_account', array('switch' => $_GPC['__switch']));
-	$cache_lastaccount = cache_load($cache_key);
-	if (empty($cache_lastaccount)) {
-		$cache_lastaccount = array(
-			$type => $uniacid,
-		);
-	} else {
-		$cache_lastaccount[$type] = $uniacid;
-	}
-
+	$cache_lastaccount = $uniacid;
 	visit_system_update(array('uniacid' => $uniacid, 'uid' => $_W['uid']));
 	cache_write($cache_key, $cache_lastaccount);
 	cache_write(cache_system_key('last_account_type'), $type);

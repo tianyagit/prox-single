@@ -225,7 +225,7 @@ if ($do == 'accounts_dropdown_menu') {
 			}
 			$selected_account = $account;
 			break;
-		} elseif ($_W['account']['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+		} elseif (in_array($_W['account']['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_ALIAPP_NORMAL))) {
 			$version_info = wxapp_version($account['version_id']);
 			$account['version_info'] = $version_info;
 			$selected_account = $account;

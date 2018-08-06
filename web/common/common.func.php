@@ -523,6 +523,11 @@ function buildframes($framename = ''){
 	if (defined('FRAME') && FRAME == 'wxapp') {
 		load()->model('wxapp');
 		$version_id = intval($_GPC['version_id']);
+		if ($_W['account']['type'] == ACCOUNT_TYPE_ALIAPP_NORMAL) {
+			$wxapp_version = miniprogram_version($version_id);
+		} else {
+			$wxapp_version = wxapp_version($version_id);
+		}
 		$wxapp_version = wxapp_version($version_id);
 		if (!empty($wxapp_version['last_modules']) && is_array($wxapp_version['last_modules'])) {
 			$last_modules = current($wxapp_version['last_modules']);

@@ -572,6 +572,8 @@ function module_get_user_account_list($uid, $module_name) {
 			$uniacid = $account['uniacid'];
 		} elseif (($account['type'] == ACCOUNT_TYPE_PHONEAPP_NORMAL && $module_info[MODULE_SUPPORT_PHONEAPP_NAME] == MODULE_SUPPORT_PHONEAPP)) {
 			$uniacid = $account['uniacid'];
+		} elseif (($account['type'] == ACCOUNT_TYPE_ALIAPP_NORMAL && $module_info[MODULE_SUPPORT_ALIAPP_NAME] == MODULE_SUPPORT_ALIAPP)) {
+			$uniacid = $account['uniacid'];
 		}
 		if (!empty($uniacid)) {
 			if (module_exist_in_account($module_name, $uniacid)) {
@@ -600,7 +602,7 @@ function module_link_uniacid_fetch($uid, $module_name) {
 
 	$accounts_link_result = array();
 	foreach ($accounts_list as $key => $account_value) {
-		if ($account_value['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+		if (in_array($account_value['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_ALIAPP_NORMAL))) {
 			$account_value['versions'] = wxapp_version_all($account_value['uniacid']);
 			if (empty($account_value['versions'])) {
 				$accounts_link_result[$key] = $account_value;

@@ -292,22 +292,25 @@ class AccountTable extends We7Table {
 				switch ($account['type']) {
 					case ACCOUNT_TYPE_OFFCIAL_NORMAL:
 					case ACCOUNT_TYPE_OFFCIAL_AUTH:
-						$uni_modules = array_merge($group_module['modules'], $uni_modules);
+						$uni_modules = is_array($group_module['modules']) ? array_merge($group_module['modules'], $uni_modules) : $uni_modules;
 						break;
 					case ACCOUNT_TYPE_APP_NORMAL:
 					case ACCOUNT_TYPE_APP_AUTH:
 					case ACCOUNT_TYPE_WXAPP_WORK:
-						$uni_modules = array_merge($group_module['wxapp'], $uni_modules);
+						$uni_modules = is_array($group_module['wxapp']) ? array_merge($group_module['wxapp'], $uni_modules) : $uni_modules;
 						break;
 					case ACCOUNT_TYPE_WEBAPP_NORMAL:
-						$uni_modules = array_merge($group_module['webapp'], $uni_modules);
+						$uni_modules = is_array($group_module['webapp']) ? array_merge($group_module['webapp'], $uni_modules) : $uni_modules;
 						break;
 					case ACCOUNT_TYPE_XZAPP_NORMAL:
 					case ACCOUNT_TYPE_XZAPP_AUTH:
-						$uni_modules = array_merge($group_module['xzapp'], $uni_modules);
+						$uni_modules = is_array($group_module['xzapp']) ? array_merge($group_module['xzapp'], $uni_modules) : $uni_modules;
 						break;
 					case ACCOUNT_TYPE_PHONEAPP_NORMAL:
-						$uni_modules = array_merge($group_module['phoneapp'], $uni_modules);
+						$uni_modules = is_array($group_module['phoneapp']) ? array_merge($group_module['phoneapp'], $uni_modules) : $uni_modules;
+						break;
+					case ACCOUNT_TYPE_ALIAPP_NORMAL:
+						$uni_modules = is_array($group_module['aliapp']) ? array_merge($group_module['aliapp'], $uni_modules) : $uni_modules;
 						break;
 				}
 			}
