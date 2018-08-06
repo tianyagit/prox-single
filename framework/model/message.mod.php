@@ -452,8 +452,10 @@ function message_store_notice() {
 
 	$insert_data = array();
 	$signs = array();
+	$create_time = array();
 	foreach ($data['version'] as $item) {
 		$signs[] = $item['itemid'];
+		$create_time[] = $item['datetime'];
 		$insert_data[] = array(
 			'sign' => $item['itemid'],
 			'message' => $item['title'],
@@ -465,6 +467,7 @@ function message_store_notice() {
 	}
 	foreach ($data['info'] as $item) {
 		$signs[] = $item['itemid'];
+		$create_time[] = $item['datetime'];
 		$insert_data[] = array(
 			'sign' => $item['itemid'],
 			'message' => $item['title'],
@@ -476,6 +479,8 @@ function message_store_notice() {
 	}
 
 	if (!empty($signs)) {
+		array_multisort($create_time, SORT_ASC, SORT_NUMERIC, $insert_data);
+
 		$signs = pdo_getall('message_notice_log', array('sign' => $signs), array('sign'), 'sign');
 		$signs = array_keys($signs);
 		foreach ($insert_data as $item) {
