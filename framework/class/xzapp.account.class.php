@@ -586,6 +586,10 @@ class XzappAccount extends WeAccount {
 		if (!is_error($response)) {
 			foreach ($response['item'] as $key => &$item) {
 				foreach ($item['content']['news_item'] as $news_key => &$news_item) {
+					$content = json_decode($news_item['content'], true);
+					if (!empty($content) && is_array($content) && !empty($content['orihtml'])){
+						$news_item['content'] = $content['orihtml'];
+					}
 					$news_info = $this->getMaterial($news_item['thumb_media_id']);
 					$news_item['thumb_url'] = $news_info['url'];
 				}
