@@ -243,7 +243,7 @@ function wxapp_get_some_lastversions($uniacid) {
 	if (empty($uniacid)) {
 		return $version_lasts;
 	}
-	$version_lasts = table('wxapp')->latestVersion($uniacid);
+	$version_lasts = table('wxapp_versions')->latestVersion($uniacid);
 	$last_switch_version = wxapp_last_switch_version();
 	if (!empty($last_switch_version[$uniacid]) && !empty($version_lasts[$last_switch_version[$uniacid]['version_id']])) {
 		$version_lasts[$last_switch_version[$uniacid]['version_id']]['current'] = true;
