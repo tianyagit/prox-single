@@ -208,8 +208,7 @@ class XzappAccount extends WeAccount {
 	}
 
 	public function fetchAccountInfo() {
-		$account_table = table('account_xzapp');
-		$account = $account_table->getXzappAccount($this->uniaccount['acid']);
+		$account = table('account_xzapp')->getByAcid($this->uniaccount['acid']);
 		return $account;
 	}
 
