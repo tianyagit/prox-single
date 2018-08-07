@@ -134,7 +134,7 @@ function _login($forward = '') {
 			$url = url('home/welcome/ext', array('m' => 'store'));
 			message('您的账号已到期，请前往商城购买续费。<div><a class="btn btn-primary" style="width:80px;" href="' . $url . '">去续费</a></div>', $url, 'error');
 		}
-		cache_clean('system_frame');
+		cache_build_frame_menu();
 		itoast("欢迎回来，{$record['username']}", $forward, 'success');
 	} else {
 		if (empty($failed)) {
