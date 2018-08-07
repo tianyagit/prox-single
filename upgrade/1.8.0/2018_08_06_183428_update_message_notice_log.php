@@ -9,7 +9,7 @@ defined('IN_IA') or exit('Access Denied');
  * @version 1.8.0
  */
 
-class UpgradeMessageNoticeLog {
+class UpdateMessageNoticeLog {
 
 	/**
 	 *  执行更新
