@@ -744,6 +744,11 @@ class WeiXinAccount extends WeAccount {
 			return error('-1', 'AccessToken获取失败，请检查appid和appsecret的值是否与微信公众平台一致！');
 		}
 		$token = @json_decode($content['content'], true);
+
+		if ($token['errcode'] == '40164') {
+			$ip = preg_ip($token['errmsg']);
+			return error(-1, '获取微信公众号授权失败，错误代码:' . $token['errcode'] . ' 错误信息: ip-' . $ip . '不在白名单之内！');
+		}
 		if(empty($token) || !is_array($token) || empty($token['access_token']) || empty($token['expires_in'])) {
 			$errorinfo = substr($content['meta'], strpos($content['meta'], '{'));
 			$errorinfo = @json_decode($errorinfo, true);
