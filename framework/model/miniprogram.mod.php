@@ -5,11 +5,11 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-function miniprogram_getpackage($data, $if_single = false) {
+function miniapp_getpackage($data, $if_single = false) {
 	load()->classs('cloudapi');
 
 	$api = new CloudApi();
-	$result = $api->post('miniprogram', 'download', $data, 'html');
+	$result = $api->post('miniapp', 'download', $data, 'html');
 	if (is_error($result)) {
 		return error(-1, $result['message']);
 	} else {
@@ -21,7 +21,7 @@ function miniprogram_getpackage($data, $if_single = false) {
 	return $result;
 }
 
-function miniprogram_create($account) {
+function miniapp_create($account) {
 	global $_W;
 	load()->model('account');
 	load()->model('user');
@@ -81,18 +81,18 @@ function miniprogram_create($account) {
  *
  * @return array
  */
-function miniprogram_support_uniacid_modules($uniacid) {
+function miniapp_support_uniacid_modules($uniacid) {
 	$uni_modules = uni_modules_by_uniacid($uniacid);
-	$miniprogram_modules = array();
+	$miniapp_modules = array();
 	if (!empty($uni_modules)) {
 		foreach ($uni_modules as $module_name => $module_info) {
 			if ($module_info[MODULE_SUPPORT_ALIAPP_NAME] == MODULE_SUPPORT_ALIAPP) {
-				$miniprogram_modules[$module_name] = $module_info;
+				$miniapp_modules[$module_name] = $module_info;
 			}
 		}
 	}
 
-	return $miniprogram_modules;
+	return $miniapp_modules;
 }
 
 /*
@@ -101,84 +101,84 @@ function miniprogram_support_uniacid_modules($uniacid) {
  * @params int $versionid 不包含版本ID，默认获取上一次使用的版本，若从未使用过则取最新版本信息
  * @return array
 */
-function miniprogram_fetch($uniacid, $version_id = '') {
+function miniapp_fetch($uniacid, $version_id = '') {
 	global $_GPC;
 	load()->model('extension');
-	$miniprogram_info = array();
+	$miniapp_info = array();
 	$uniacid = intval($uniacid);
 	if (empty($uniacid)) {
-		return $miniprogram_info;
+		return $miniapp_info;
 	}
 	if (!empty($version_id)) {
 		$version_id = intval($version_id);
 	}
 
-	$miniprogram_info = pdo_get('account_aliapp', array('uniacid' => $uniacid));
-	if (empty($miniprogram_info)) {
-		return $miniprogram_info;
+	$miniapp_info = pdo_get('account_aliapp', array('uniacid' => $uniacid));
+	if (empty($miniapp_info)) {
+		return $miniapp_info;
 	}
 
 	if (empty($version_id)) {
-		$miniprogram_cookie_uniacids = array();
-		if (!empty($_GPC['__miniprogramversionids' . $uniacid])) {
-			$miniprogramversionids = json_decode(htmlspecialchars_decode($_GPC['__miniprogramversionids' . $uniacid]), true);
-			foreach ($miniprogramversionids as $version_val) {
-				$miniprogram_cookie_uniacids[] = $version_val['uniacid'];
+		$miniapp_cookie_uniacids = array();
+		if (!empty($_GPC['__miniappversionids' . $uniacid])) {
+			$miniappversionids = json_decode(htmlspecialchars_decode($_GPC['__miniappversionids' . $uniacid]), true);
+			foreach ($miniappversionids as $version_val) {
+				$miniapp_cookie_uniacids[] = $version_val['uniacid'];
 			}
 		}
-		if (in_array($uniacid, $miniprogram_cookie_uniacids)) {
-			$miniprogram_version_info = miniprogram_version($miniprogramversionids[$uniacid]['version_id']);
+		if (in_array($uniacid, $miniapp_cookie_uniacids)) {
+			$miniapp_version_info = miniapp_version($miniappversionids[$uniacid]['version_id']);
 		}
 
-		if (empty($miniprogram_version_info)) {
+		if (empty($miniapp_version_info)) {
 			$sql = 'SELECT * FROM ' . tablename('wxapp_versions') . ' WHERE `uniacid`=:uniacid ORDER BY `id` DESC';
-			$miniprogram_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
+			$miniapp_version_info = pdo_fetch($sql, array(':uniacid' => $uniacid));
 		}
 	} else {
-		$miniprogram_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
+		$miniapp_version_info = pdo_get('wxapp_versions', array('id' => $version_id));
 	}
-	if (!empty($miniprogram_version_info) && !empty($miniprogram_version_info['modules'])) {
+	if (!empty($miniapp_version_info) && !empty($miniapp_version_info['modules'])) {
 
-		$miniprogram_version_info['modules'] = iunserializer($miniprogram_version_info['modules']);
+		$miniapp_version_info['modules'] = iunserializer($miniapp_version_info['modules']);
 		//如果是单模块版并且本地模块，应该是开发者开发小程序，则模块版本号本地最新的。
-		if ($miniprogram_version_info['design_method'] == WXAPP_MODULE) {
-			$module = current($miniprogram_version_info['modules']);
+		if ($miniapp_version_info['design_method'] == WXAPP_MODULE) {
+			$module = current($miniapp_version_info['modules']);
 			$manifest = ext_module_manifest($module['name']);
 			if (!empty($manifest)) {
-				$miniprogram_version_info['modules'][$module['name']]['version'] = $manifest['application']['version'];
+				$miniapp_version_info['modules'][$module['name']]['version'] = $manifest['application']['version'];
 			} else {
 				$last_install_module = module_fetch($module['name']);
-				$miniprogram_version_info['modules'][$module['name']]['version'] = $last_install_module['version'];
+				$miniapp_version_info['modules'][$module['name']]['version'] = $last_install_module['version'];
 			}
 		}
 	}
-	$miniprogram_info['version'] = $miniprogram_version_info;
-	$miniprogram_info['version_num'] = explode('.', $miniprogram_version_info['version']);
+	$miniapp_info['version'] = $miniapp_version_info;
+	$miniapp_info['version_num'] = explode('.', $miniapp_version_info['version']);
 
-	return  $miniprogram_info;
+	return  $miniapp_info;
 }
 /*
  * 获取小程序所有版本
  * @params int $uniacid
  * @return array
 */
-function miniprogram_version_all($uniacid) {
+function miniapp_version_all($uniacid) {
 	load()->model('module');
-	$miniprogram_versions = array();
+	$miniapp_versions = array();
 	$uniacid = intval($uniacid);
 
 	if (empty($uniacid)) {
-		return $miniprogram_versions;
+		return $miniapp_versions;
 	}
 
-	$miniprogram_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array('id'), '', array('id DESC'));
-	if (!empty($miniprogram_versions)) {
-		foreach ($miniprogram_versions as &$version) {
-			$version = miniprogram_version($version['id']);
+	$miniapp_versions = pdo_getall('wxapp_versions', array('uniacid' => $uniacid), array('id'), '', array('id DESC'));
+	if (!empty($miniapp_versions)) {
+		foreach ($miniapp_versions as &$version) {
+			$version = miniapp_version($version['id']);
 		}
 	}
 
-	return $miniprogram_versions;
+	return $miniapp_versions;
 }
 
 /**
@@ -189,7 +189,7 @@ function miniprogram_version_all($uniacid) {
  * @param int $pagesize
  * @return array
  */
-function miniprogram_get_some_lastversions($uniacid) {
+function miniapp_get_some_lastversions($uniacid) {
 	$version_lasts = array();
 	$uniacid = intval($uniacid);
 
@@ -197,7 +197,7 @@ function miniprogram_get_some_lastversions($uniacid) {
 		return $version_lasts;
 	}
 	$version_lasts = table('wxapp_versions')->latestVersion($uniacid);
-	$last_switch_version = miniprogram_last_switch_version($uniacid);
+	$last_switch_version = miniapp_last_switch_version($uniacid);
 	if (!empty($last_switch_version[$uniacid]) && !empty($version_lasts[$last_switch_version[$uniacid]['version_id']])) {
 		$version_lasts[$last_switch_version[$uniacid]['version_id']]['current'] = true;
 	} else {
@@ -212,14 +212,14 @@ function miniprogram_get_some_lastversions($uniacid) {
 /**
  * 获取当前用户使用每个小程序的最后版本.
  */
-function miniprogram_last_switch_version($uniacid) {
+function miniapp_last_switch_version($uniacid) {
 	global $_GPC;
-	static $miniprogram_cookie_uniacids;
-	if (empty($miniprogram_cookie_uniacids) && !empty($_GPC['__miniprogramversionids' . $uniacid])) {
-		$miniprogram_cookie_uniacids = json_decode(htmlspecialchars_decode($_GPC['__miniprogramversionids' . $uniacid]), true);
+	static $miniapp_cookie_uniacids;
+	if (empty($miniapp_cookie_uniacids) && !empty($_GPC['__miniappversionids' . $uniacid])) {
+		$miniapp_cookie_uniacids = json_decode(htmlspecialchars_decode($_GPC['__miniappversionids' . $uniacid]), true);
 	}
 
-	return $miniprogram_cookie_uniacids;
+	return $miniapp_cookie_uniacids;
 }
 
 /**
@@ -228,7 +228,7 @@ function miniprogram_last_switch_version($uniacid) {
  * @param int $version_id
  *						return boolean
  */
-function miniprogram_update_last_use_version($uniacid, $version_id) {
+function miniapp_update_last_use_version($uniacid, $version_id) {
 	global $_GPC;
 	$uniacid = intval($uniacid);
 	$version_id = intval($version_id);
@@ -236,21 +236,21 @@ function miniprogram_update_last_use_version($uniacid, $version_id) {
 		return false;
 	}
 	$cookie_val = array();
-	if (!empty($_GPC['__miniprogramversionids' . $uniacid])) {
-		$miniprogram_uniacids = array();
-		$cookie_val = json_decode(htmlspecialchars_decode($_GPC['__miniprogramversionids' . $uniacid]), true);
+	if (!empty($_GPC['__miniappversionids' . $uniacid])) {
+		$miniapp_uniacids = array();
+		$cookie_val = json_decode(htmlspecialchars_decode($_GPC['__miniappversionids' . $uniacid]), true);
 		if (!empty($cookie_val)) {
 			foreach ($cookie_val as &$version) {
-				$miniprogram_uniacids[] = $version['uniacid'];
+				$miniapp_uniacids[] = $version['uniacid'];
 				if ($version['uniacid'] == $uniacid) {
 					$version['version_id'] = $version_id;
-					$miniprogram_uniacids = array();
+					$miniapp_uniacids = array();
 					break;
 				}
 			}
 			unset($version);
 		}
-		if (!empty($miniprogram_uniacids) && !in_array($uniacid, $miniprogram_uniacids)) {
+		if (!empty($miniapp_uniacids) && !in_array($uniacid, $miniapp_uniacids)) {
 			$cookie_val[$uniacid] = array('uniacid' => $uniacid, 'version_id' => $version_id);
 		}
 	} else {
@@ -259,7 +259,7 @@ function miniprogram_update_last_use_version($uniacid, $version_id) {
 		);
 	}
 	isetcookie('__uniacid', $uniacid, 7 * 86400);
-	isetcookie('__miniprogramversionids' . $uniacid, json_encode($cookie_val), 7 * 86400);
+	isetcookie('__miniappversionids' . $uniacid, json_encode($cookie_val), 7 * 86400);
 
 	return true;
 }
@@ -269,7 +269,7 @@ function miniprogram_update_last_use_version($uniacid, $version_id) {
  *
  * @param int $version_id
  */
-function miniprogram_version($version_id) {
+function miniapp_version($version_id) {
 	$version_info = array();
 	$version_id = intval($version_id);
 
@@ -277,20 +277,20 @@ function miniprogram_version($version_id) {
 		return $version_info;
 	}
 
-	$cachekey = cache_system_key('miniprogram_version', array('version_id' => $version_id));
+	$cachekey = cache_system_key('miniapp_version', array('version_id' => $version_id));
 	$cache = cache_load($cachekey);
 	if (!empty($cache)) {
 		return $cache;
 	}
 
 	$version_info = pdo_get('wxapp_versions', array('id' => $version_id));
-	$version_info = miniprogram_version_detail_info($version_info);
+	$version_info = miniapp_version_detail_info($version_info);
 	cache_write($cachekey, $version_info);
 
 	return $version_info;
 }
 
-function miniprogram_version_detail_info($version_info) {
+function miniapp_version_detail_info($version_info) {
 	global $_W;
 	$result = array();
 	if (empty($version_info) || empty($version_info['uniacid'])) {

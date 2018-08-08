@@ -7,7 +7,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('wxapp');
-load()->model('miniprogram');
+load()->model('miniapp');
 load()->model('phoneapp');
 
 $dos = array('rank', 'display', 'switch', 'platform');
@@ -46,9 +46,9 @@ if ($do == 'platform') {
 			$url = url('phoneapp/version/home', array('version_id' => $last_version['version']['id']));
 		}
 	} elseif ($cache_last_account_type == ALIAPP_TYPE_SIGN) {
-		$last_version = miniprogram_fetch($last_uniacid);
+		$last_version = miniapp_fetch($last_uniacid);
 		if (!empty($last_version)) {
-			$url = url('miniprogram/version/home', array('version_id' => $last_version['version']['id']));
+			$url = url('miniapp/version/home', array('version_id' => $last_version['version']['id']));
 		}
 	}
 	itoast('', $url);
@@ -110,7 +110,7 @@ if ($do == 'display') {
 			case ACCOUNT_TYPE_APP_NORMAL :
 			case ACCOUNT_TYPE_APP_AUTH :
 			case ACCOUNT_TYPE_ALIAPP_NORMAL :
-				$account['versions'] = miniprogram_get_some_lastversions($account['uniacid']);
+				$account['versions'] = miniapp_get_some_lastversions($account['uniacid']);
 				if (!empty($account['versions'])) {
 					foreach ($account['versions'] as $version) {
 						if (!empty($version['current'])) {
@@ -182,7 +182,7 @@ if ($do == 'switch') {
 				if ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 					$versions = phoneapp_get_some_lastversions($uniacid);
 				} else {
-					$versions = miniprogram_get_some_lastversions($uniacid);
+					$versions = miniapp_get_some_lastversions($uniacid);
 				}
 				foreach ($versions as $val) {
 					if ($val['current']) {
@@ -215,8 +215,8 @@ if ($do == 'switch') {
 					$url .= '&version_id=' . $version_id;
 				}
 			} elseif (in_array($type, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_ALIAPP_NORMAL))) {
-				miniprogram_update_last_use_version($uniacid, $version_id);
-				$url = url('miniprogram/version/home', array('version_id' => $version_id));
+				miniapp_update_last_use_version($uniacid, $version_id);
+				$url = url('miniapp/version/home', array('version_id' => $version_id));
 			} elseif ($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
 				phoneapp_update_last_use_version($uniacid, $version_id);
 				$url = url('phoneapp/version/home', array('version_id' => $version_id));

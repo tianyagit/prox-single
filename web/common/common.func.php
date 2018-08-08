@@ -524,7 +524,7 @@ function buildframes($framename = ''){
 		load()->model('wxapp');
 		$version_id = intval($_GPC['version_id']);
 		if ($_W['account']['type'] == ACCOUNT_TYPE_ALIAPP_NORMAL) {
-			$wxapp_version = miniprogram_version($version_id);
+			$wxapp_version = miniapp_version($version_id);
 		} else {
 			$wxapp_version = wxapp_version($version_id);
 		}

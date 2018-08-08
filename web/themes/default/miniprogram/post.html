@@ -1,5 +1,5 @@
 {template 'common/header'}
-<div class="account-list-add-step" id="js-miniprogram-create" ng-controller="CreateMiniprogramCtrl" ng-cloak>
+<div class="account-list-add-step" id="js-miniapp-create" ng-controller="CreateMiniappCtrl" ng-cloak>
 	<ol class="breadcrumb we7-breadcrumb">
 		<a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}"><i class="wi wi-back-circle"></i></a>
 		<li><a href="{php echo url('account/manage', array('account_type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}">支付宝小程序列表</a></li>
@@ -22,42 +22,42 @@
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">支付宝小程序名称</label>
 								<div class="form-controls col-sm-10">
-									<input type="text" name="name" ng-model="miniprograminfo.name" class="form-control wxapp-name" placeholder="小程序名称">
+									<input type="text" name="name" ng-model="miniapp.name" class="form-control wxapp-name" placeholder="小程序名称">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">支付宝小程序描述</label>
 								<div class="form-controls col-sm-10">
-									<input type="text" name="description" ng-model="miniprograminfo.description" class="form-control wxapp-name" placeholder="版本描述">
+									<input type="text" name="description" ng-model="miniapp.description" class="form-control wxapp-name" placeholder="版本描述">
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">AppId</label>
 								<div class="form-controls col-sm-10">
-									<input type="text" name="key" value="" ng-model="miniprograminfo.appid" class="form-control wxapp-name" placeholder="AppId">
+									<input type="text" name="key" value="" ng-model="miniapp.appid" class="form-control wxapp-name" placeholder="AppId">
 								</div>
 							</div>
 							{else}
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">版本描述</label>
 								<div class="form-controls col-sm-10">
-									<input type="text" name="description" ng-model="miniprograminfo.description" class="form-control wxapp-name" placeholder="版本描述">
+									<input type="text" name="description" ng-model="miniapp.description" class="form-control wxapp-name" placeholder="版本描述">
 								</div>
 							</div>
 							{/if}
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">版本号</label>
 								<div class="form-controls col-sm-10">
-									<input type="text" name="version" ng-model="miniprograminfo.version" class="form-control wxapp-name" placeholder="版本号，只能是数字、点，数字最多两位，例如 1.01 / 1.0.1">
+									<input type="text" name="version" ng-model="miniapp.version" class="form-control wxapp-name" placeholder="版本号，只能是数字、点，数字最多两位，例如 1.01 / 1.0.1">
 								</div>
 							</div>
 							<div class="form-group" ng-show="newversion">
 								<label for="" class="control-label col-sm-2">头像</label>
 								<div class="form-controls col-sm-8">
-									<div class="input-more we7-input-img" ng-class="{'active': miniprograminfo.headimg}">
-										<img ng-src="{{miniprograminfo.headimg}}" width="150px" ng-if="miniprograminfo.headimg" ng-style="{'height': 'auto'}">
-										<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage('headimg')" ng-hide="miniprograminfo.headimg"><span>+</span></a>
-										<input type="text" name="headimg" ng-model="miniprograminfo.headimg" ng-style="{'display' : 'none'}">
+									<div class="input-more we7-input-img" ng-class="{'active': miniapp.headimg}">
+										<img ng-src="{{miniapp.headimg}}" width="150px" ng-if="miniapp.headimg" ng-style="{'height': 'auto'}">
+										<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage('headimg')" ng-hide="miniapp.headimg"><span>+</span></a>
+										<input type="text" name="headimg" ng-model="miniapp.headimg" ng-style="{'display' : 'none'}">
 										<div class="cover-dark">
 											<a href="javascript:;" class="cut" ng-click="uploadMultiImage('headimg')">更换</a>
 											<a href="javascript:;" class="del" ng-click="delMultiImage('headimg')"><i class="fa fa-times text-danger"></i></a>
@@ -69,10 +69,10 @@
 							<div class="form-group" ng-show="newversion">
 								<label for="" class="control-label col-sm-2">二维码</label>
 								<div class="form-controls col-sm-8">
-									<div class="input-more we7-input-img" ng-class="{'active': miniprograminfo.qrcode}">
-										<img ng-src="{{miniprograminfo.qrcode}}" width="150px" ng-if="miniprograminfo.qrcode" ng-style="{'height': 'auto'}">
-										<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage('qrcode')" ng-hide="miniprograminfo.qrcode"><span>+</span></a>
-										<input type="text" name="qrcode" ng-model="miniprograminfo.qrcode" ng-style="{'display' : 'none'}">
+									<div class="input-more we7-input-img" ng-class="{'active': miniapp.qrcode}">
+										<img ng-src="{{miniapp.qrcode}}" width="150px" ng-if="miniapp.qrcode" ng-style="{'height': 'auto'}">
+										<a href="javascript:;" class="input-addon" ng-click="uploadMultiImage('qrcode')" ng-hide="miniapp.qrcode"><span>+</span></a>
+										<input type="text" name="qrcode" ng-model="miniapp.qrcode" ng-style="{'display' : 'none'}">
 										<div class="cover-dark">
 											<a href="javascript:;" class="cut" ng-click="uploadMultiImage('qrcode')">更换</a>
 											<a href="javascript:;" class="del" ng-click="delMultiImage('qrcode')"><i class="fa fa-times text-danger"></i></a>
@@ -87,8 +87,8 @@
 								<div class="form-controls col-sm-10">
 									<ul class="app-list" id="resource_module">
 										<div class="app-info">
-											<img ng-src="{{miniprograminfo.choose_module.icon}}" />
-											<p>{{miniprograminfo.choose_module.title}}</p>
+											<img ng-src="{{miniapp.choose_module.icon}}" />
+											<p>{{miniapp.choose_module.title}}</p>
 										</div>
 										<li class="select select-more"></li>
 									</ul>
@@ -101,19 +101,19 @@
 							<div class="form-group" ng-show="newversion">
 								<label for="" class="control-label col-sm-2">小程序名称</label>
 								<div class="form-controls col-sm-10">
-									<p class="form-control-static" ng-bind="miniprograminfo.name"></p>
+									<p class="form-control-static" ng-bind="miniapp.name"></p>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="" class="control-label col-sm-2">描述</label>
 								<div class="form-controls col-sm-10">
-									<p class="form-control-static" ng-bind="miniprograminfo.description"></p>
+									<p class="form-control-static" ng-bind="miniapp.description"></p>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="control-label col-sm-2">版本号</label>
 								<div class="form-controls col-sm-10">
-									<p class="form-control-static">{{miniprograminfo.version}}</p>
+									<p class="form-control-static">{{miniapp.version}}</p>
 								</div>
 							</div>
 							<div class="form-group">
@@ -122,8 +122,8 @@
 									<ul class="app-list">
 										<li class="select">
 											<div class="app-info">
-												<img ng-src="{{miniprograminfo.choose_module.icon}}" />
-												<p>{{miniprograminfo.choose_module.title}}</p>
+												<img ng-src="{{miniapp.choose_module.icon}}" />
+												<p>{{miniapp.choose_module.title}}</p>
 											</div>
 										</li>
 									</ul>
@@ -147,17 +147,17 @@
 </div>
 <script>
 require(['fileUploader','underscore'], function(uploader){
-	var miniprograminfo = {'name' : '{$wxapp_info['name']}'};
+	var miniapp = {'name' : '{$wxapp_info['name']}'};
 	angular.module('wxApp').value('config', {
 		'type' : "{$type}",
-		'miniprograminfo' : miniprograminfo,
+		'miniapp' : miniapp,
 		'uniacid' : "{$uniacid}",
 		'version_id' : "{$version_id}",
-		'postUrl' : "{php echo url('miniprogram/post', array('version_id' => $version_id))}",
+		'postUrl' : "{php echo url('miniapp/post', array('version_id' => $version_id))}",
 		'token' : "{$_W['token']}",
 	});
 
-	angular.bootstrap($('#js-miniprogram-create'), ['wxApp']);
+	angular.bootstrap($('#js-miniapp-create'), ['wxApp']);
 });
 </script>
 </html>
