@@ -316,7 +316,7 @@ function cache_build_uninstalled_module() {
 		);
 
 		if (!empty($manifest['platform']['supports'])) {
-			foreach (array('app', 'wxapp', 'webapp', 'phoneapp', 'system_welcome') as $support) {
+			foreach (array('app', 'wxapp', 'webapp', 'phoneapp', 'system_welcome', 'xzapp') as $support) {
 				if (in_array($support, $manifest['platform']['supports'])) {
 					//纠正支持类型名字，统一
 					if ($support == 'app') {
