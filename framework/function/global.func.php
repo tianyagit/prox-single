@@ -1425,19 +1425,7 @@ function icall_user_func($callback) {
 	return '';
 }
 
-/**
- * 匹配字符串中的ip
- * @param $str
- * @return mixed
- */
-function preg_ip($str) {
-	$pattern = "/(?:(?:(?:25[0-5]|2[0-4]\d|(?:(?:1\d{2})|(?:[1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|(?:(?:1\d{2})|(?:[1-9]?\d))))/";
-	preg_match($pattern, $str, $out);
-	if (!empty($out)) {
-		return $out[0];
-	}
-	return false;
-}
+
 
 load()->func('safe');
 load()->func('system');

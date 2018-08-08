@@ -746,8 +746,7 @@ class WeiXinAccount extends WeAccount {
 		$token = @json_decode($content['content'], true);
 
 		if ($token['errcode'] == '40164') {
-			$ip = preg_ip($token['errmsg']);
-			return error(-1, '获取微信公众号授权失败，错误代码:' . $token['errcode'] . ' 错误信息: ip-' . $ip . '不在白名单之内！');
+			return error(-1, $this->errorCode($token['errcode'], $token['errmsg']));
 		}
 		if(empty($token) || !is_array($token) || empty($token['access_token']) || empty($token['expires_in'])) {
 			$errorinfo = substr($content['meta'], strpos($content['meta'], '{'));
