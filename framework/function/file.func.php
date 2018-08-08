@@ -274,9 +274,11 @@ function file_upload($file, $type = 'image', $name = '', $compress = false) {
 			$limit = $setting['upload']['audio']['limit'];
 			break;
 	}
+	$type = $type == 'image' ? 'image' : 'audio';
 	$setting = $_W['setting']['upload'][$type];
-	if (!empty($setting)) {
-		$allowExt = array_merge($setting['extentions'], $allowExt);
+
+	if (!empty($setting['extentions'])) {
+		$allowExt = $setting['extentions'];
 	}
 	if (!in_array(strtolower($ext), $allowExt) || in_array(strtolower($ext), $harmtype)) {
 		return error(-3, '不允许上传此类文件');
@@ -284,8 +286,6 @@ function file_upload($file, $type = 'image', $name = '', $compress = false) {
 	if (!empty($limit) && $limit * 1024 < filesize($file['tmp_name'])) {
 		return error(-4, "上传的文件超过大小限制，请上传小于 {$limit}k 的文件");
 	}
-
-
 
 	$result = array();
 	if (empty($name) || $name == 'auto') {
