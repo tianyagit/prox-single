@@ -271,7 +271,7 @@ function message_notice_record_cloud($message) {
  */
 function message_wxapp_modules_version_upgrade() {
 	global $_W;
-	load()->model('wxapp');
+	load()->model('miniapp');
 	load()->model('account');
 
 	$wxapp_table = table('account');
@@ -290,7 +290,7 @@ function message_wxapp_modules_version_upgrade() {
 			continue;
 		}
 
-		$uniacid_modules = wxapp_version_all($uniacid_info['uniacid']);
+		$uniacid_modules = miniapp_version_all($uniacid_info['uniacid']);
 
 		if (empty($uniacid_modules[0]['modules'])) {
 			continue;

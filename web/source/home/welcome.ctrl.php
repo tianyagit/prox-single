@@ -9,7 +9,7 @@ load()->model('welcome');
 load()->model('module');
 load()->model('system');
 load()->model('user');
-load()->model('wxapp');
+load()->model('miniapp');
 load()->model('account');
 load()->model('message');
 load()->model('visit');
@@ -26,7 +26,7 @@ if ($do == 'get_not_installed_modules') {
 if (IMS_FAMILY == 'v') {
 	if ($do == 'ext') {
 		if (!empty($_GPC['version_id'])) {
-			$version_info = wxapp_version($_GPC['version_id']);
+			$version_info = miniapp_version($_GPC['version_id']);
 		}
 		$account_api = WeAccount::create();
 		if (is_error($account_api)) {
@@ -44,7 +44,7 @@ if (IMS_FAMILY == 'v') {
 if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	if ($do == 'ext' && $_GPC['m'] != 'store' && !$_GPC['system_welcome']) {
 		if (!empty($_GPC['version_id'])) {
-			$version_info = wxapp_version($_GPC['version_id']);
+			$version_info = miniapp_version($_GPC['version_id']);
 		}
 		$account_api = WeAccount::create();
 		if (is_error($account_api)) {

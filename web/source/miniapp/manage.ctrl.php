@@ -42,7 +42,7 @@ if ($do == 'display') {
 				}
 				unset($row);
 			}
-			$miniapp_modules = miniapp_support_uniacid_modules($account['uniacid']);
+			$miniapp_modules = miniapp_support_uniacid_modules($account['uniacid'], MODULE_SUPPORT_ALIAPP_NAME);
 		}
 	}
 	template('miniapp/manage');
@@ -62,7 +62,7 @@ if ($do == 'edit_version') {
 	if(empty($version_exist)) {
 		iajax(1, '版本不存在或已删除！');
 	}
-	$miniapp_modules = miniapp_support_uniacid_modules($uniacid);
+	$miniapp_modules = miniapp_support_uniacid_modules($uniacid, MODULE_SUPPORT_ALIAPP_NAME);
 	$supoort_modulenames = array_keys($miniapp_modules);
 	$new_module_data = array();
 	if (!in_array($module_name, $supoort_modulenames)) {

@@ -34,7 +34,7 @@ if ($do == 'platform') {
 	if ($cache_last_account_type == ACCOUNT_TYPE_SIGN || $cache_last_account_type == XZAPP_TYPE_SIGN) {
 		$url = url('home/welcome');
 	} elseif ($cache_last_account_type == WXAPP_TYPE_SIGN) {
-		$last_version = wxapp_fetch($last_uniacid);
+		$last_version = miniapp_fetch($last_uniacid);
 		if (!empty($last_version)) {
 			$url = url('wxapp/version/home', array('version_id' => $last_version['version']['id']));
 		}
