@@ -21,7 +21,7 @@ class UpdateModulesRecycle {
 		pdo_query(
 			"DELETE r FROM " . tablename('modules_recycle') .
 			" r LEFT JOIN " . tablename('modules') .
-			" m ON r.name = m.name WHERE m.mid IS NULL;"
+			" m ON r.name = m.name WHERE r.type = 1 AND m.mid IS NULL;"
 		);
 	}
 	
