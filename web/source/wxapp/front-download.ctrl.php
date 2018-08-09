@@ -54,16 +54,16 @@ if ($do == 'custom') {
 if ($do == 'custom_default') {
 	$result = miniapp_code_set_default_appjson($version_id);
 	if ($result === false) {
-		itoast('操作失败，请重试！', '', 'error');
+		iajax(1, '操作失败，请重试！');
 	} else {
-		itoast('设置成功！', url('wxapp/front-download/front_download', array('version_id' => $version_id)), 'success');
+		iajax(0, '设置成功！', url('wxapp/front-download/front_download', array('version_id' => $version_id)));
 	}
 }
 
 // 保存自定义appjson
 if ($do == 'custom_save') {
 	if (empty($version_info)) {
-		itoast('参数错误！', '', 'error');
+		iajax(1, '参数错误！');
 	}
 	$json = array();
 	if (!empty($_GPC['json']['window'])) {
@@ -84,7 +84,7 @@ if ($do == 'custom_save') {
 	}
 	$result = miniapp_code_save_appjson($version_id, $json);
 	cache_delete(cache_system_key('miniapp_version', array('version_id' => $version_id)));
-	itoast('设置成功！', url('wxapp/front-download/front_download', array('version_id' => $version_id)), 'success');
+	iajax(0, '设置成功！', url('wxapp/front-download/front_download', array('version_id' => $version_id)));
 }
 
 if ($do == 'custom_convert_img') {

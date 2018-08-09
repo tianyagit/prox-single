@@ -170,7 +170,7 @@ if ($do == 'post') {
 		if ($isedit) {
 			$msg = '小程序修改成功';
 			pdo_update('wxapp_versions', $wxapp_version, array('id'=>$version_id, 'uniacid'=>$uniacid));
-			cache_delete(cache_system_key("wxapp_version:{$version_id}"));
+			cache_delete(cache_system_key('miniapp_version', array('version_id' => $version_id)));
 		} else {
 			$msg = '小程序创建成功';
 			pdo_insert('wxapp_versions', $wxapp_version);
