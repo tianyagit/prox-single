@@ -672,7 +672,9 @@ function miniapp_code_commit($code_uuid, $code_token, $user_version = 3, $user_d
  * @return mixed
  */
 function miniapp_update_entry($version_id, $entry_id) {
-	return pdo_update('wxapp_versions', array('entry_id' => $entry_id), array('id' => $version_id));
+	$result = pdo_update('wxapp_versions', array('entry_id' => $entry_id), array('id' => $version_id));
+	cache_delete(cache_system_key('miniapp_version', array('version_id' => $version_id)));
+	return $result;
 }
 
 /**
@@ -712,7 +714,7 @@ function miniapp_code_current_appjson($version_id) {
 		$appjson = $cloud_appjson['data']['appjson'];
 		pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)),
 		array('id' => $version_id));
-		cache_delete(cache_system_key("wxapp_version:{$version_id}"));
+		cache_delete(cache_system_key('miniapp_version', array('version_id' => $version_id)));
 		return $appjson;
 	}
 }
@@ -791,7 +793,7 @@ function miniapp_code_path_convert($attachment_id) {
  */
 function miniapp_code_save_appjson($version_id, $json) {
 	$result = pdo_update('wxapp_versions', array('appjson' => serialize($json), 'use_default' => 0), array('id' => $version_id));
-	cache_delete(cache_system_key("wxapp_version:{$version_id}"));
+	cache_delete(cache_system_key('miniapp_version', array('version_id' => $version_id)));
 	return $result;
 }
 
@@ -804,6 +806,6 @@ function miniapp_code_save_appjson($version_id, $json) {
  */
 function miniapp_code_set_default_appjson($version_id) {
 	$result = pdo_update('wxapp_versions', array('appjson' => '', 'use_default' => 1), array('id' => $version_id));
-	cache_delete(cache_system_key("wxapp_version:{$version_id}"));
+	cache_delete(cache_system_key('miniapp_version', array('version_id' => $version_id)));
 	return $result;
 }
