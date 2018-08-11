@@ -68,7 +68,7 @@
 						{/if}
 
 						{if !empty($account_info['aliapp_limit']) && (!empty($account_info['founder_aliapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
-						<a ng-switch-when="aliapp" href="{php echo url('miniprogram/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="color-default"><i class="wi wi-registersite"></i>新建支付宝小程序</a>
+						<a ng-switch-when="aliapp" href="{php echo url('miniapp/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="color-default"><i class="wi wi-registersite"></i>新建支付宝小程序</a>
 						{/if}
 					</div>
 					{/if}
@@ -106,7 +106,7 @@
 						{/if}
 
 						{if !empty($account_info['aliapp_limit']) || $_W['isfounder']}
-						<a href="{php echo url('miniprogram/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="color-default" ng-if="type == 'aliapp'"><i class="wi wi-registersite"></i>新建支付宝小程序</a>
+						<a href="{php echo url('miniapp/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="color-default" ng-if="type == 'aliapp'"><i class="wi wi-registersite"></i>新建支付宝小程序</a>
 						{/if}
 					</div>
 					{/if}
@@ -297,7 +297,7 @@
 							{/if}
 
 							{if !empty($account_info['aliapp_limit']) && (!empty($account_info['founder_aliapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
-							<li><i class="wi wi-aliapp"></i><br/><a href="{php echo url('miniprogram/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="name" title="新建支付宝小程序"></a></li>
+							<li><i class="wi wi-aliapp"></i><br/><a href="{php echo url('miniapp/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="name" title="新建支付宝小程序"></a></li>
 							{/if}
 						</ul>
 					</div>
@@ -323,7 +323,7 @@
 			'switch' : "{php echo url('account/display/switch')}",
 			'welcome' : "{php echo url('home/welcome/add_welcome')}",
 			'wxapp_more_version' : "{php echo url('wxapp/version/display')}",
-			'aliapp_more_version' : "{php echo url('miniprogram/version/display')}",
+			'aliapp_more_version' : "{php echo url('miniapp/version/display')}",
 			'phoneapp_more_version' : "{php echo url('phoneapp/version/display')}"
 		},
 		'types' : {

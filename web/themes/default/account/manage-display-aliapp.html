@@ -20,7 +20,7 @@
 	{if IMS_FAMILY == 'x'}
 		{if !empty($account_info['wxapp_limit']) && (!empty($account_info['founder_wxapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
 		<div class="pull-right">
-			<a href="{php echo url('miniprogram/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="btn btn-primary we7-padding-horizontal">添加支付宝小程序</a>
+			<a href="{php echo url('miniapp/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="btn btn-primary we7-padding-horizontal">添加支付宝小程序</a>
 		</div>
 		{/if}
 	{/if}
@@ -29,7 +29,7 @@
 	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if !empty($account_info['wxapp_limit']) || $_W['isfounder']}
 		<div class="pull-right">
-			<a href="{php echo url('miniprogram/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="btn btn-primary we7-padding-horizontal">添加支付宝小程序</a>
+			<a href="{php echo url('miniapp/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="btn btn-primary we7-padding-horizontal">添加支付宝小程序</a>
 		</div>
 		{/if}
 	{/if}
@@ -119,7 +119,7 @@
 			switch: switch_url,
 			post: "{php echo url('account/post', array('account_type' => ACCOUNT_TYPE))}",
 			postUser: "{php echo url('account/post-user', array('account_type' => ACCOUNT_TYPE))}",
-			postVersion: "{php echo url('miniprogram/manage', array('account_type' => ACCOUNT_TYPE))}",
+			postVersion: "{php echo url('miniapp/manage', array('account_type' => ACCOUNT_TYPE))}",
 			del: "{php echo url('account/manage/delete', array('account_type' => ACCOUNT_TYPE))}",
 		}
 	});

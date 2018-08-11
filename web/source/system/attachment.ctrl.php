@@ -49,8 +49,8 @@ if ($do == 'global') {
 		if (empty($upload['image']['limit'])) {
 			itoast('请设置图片上传支持的文件大小, 单位 KB.', '', '');
 		}
-		if (empty($upload['image']['extentions'])) {
-			itoast('请添加支持的图片附件后缀类型', '', '');
+		if (!is_array($upload['image']['extentions']) || count($upload['image']['extentions']) < 1) {
+			$upload['image']['extentions'] = '';
 		}
 		if (!empty($upload['image']['extentions'])) {
 			$upload['image']['extentions'] = explode("\n", $upload['image']['extentions']);
@@ -62,9 +62,7 @@ if ($do == 'global') {
 				}
 			}
 		}
-		if (!is_array($upload['image']['extentions']) || count($upload['image']['extentions']) < 1) {
-			itoast('请添加支持的图片附件后缀类型', '', '');
-		}
+
 		$upload['audio']['limit'] = max(0, min(intval(trim($upload['audio']['limit'])), $post_max_size));
 		if (empty($upload['image']['limit'])) {
 			itoast('请设置音频视频上传支持的文件大小, 单位 KB.', '', '');
@@ -85,7 +83,7 @@ if ($do == 'global') {
 			}
 		}
 		if (!is_array($upload['audio']['extentions']) || count($upload['audio']['extentions']) < 1) {
-			itoast('请添加支持的音频视频附件后缀类型', '', '');
+			$upload['audio']['extentions'] = '';
 		}
 		setting_save($upload, 'upload');
 		itoast('更新设置成功！', url('system/attachment'), 'success');

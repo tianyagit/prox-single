@@ -364,13 +364,8 @@ function cache_key_all() {
 				'group' => '',
 			),
 
-			'wxapp_version' => array(
-				'key' => 'wxapp_version:%version_id',
-				'group' => '',
-			),
-
-			'miniprogram_version' => array(
-				'key' => 'miniprogram_version:%version_id',
+			'miniapp_version' => array(
+				'key' => 'miniapp_version:%version_id',
 				'group' => '',
 			),
 

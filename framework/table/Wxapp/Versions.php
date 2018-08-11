@@ -49,4 +49,24 @@ class Versions extends \We7Table {
 	public function latestVersion($uniacid) {
 		return $this->query->where('uniacid', $uniacid)->orderby('id', 'desc')->limit(4)->getall('id');
 	}
+
+	public function getById($version_id) {
+		$result = $this->query->where('id', $version_id)->get();
+		if (!empty($result)) {
+			$result['modules'] = iunserializer($result['modules']);
+			$result['quickmenu'] = iunserializer($result['quickmenu']);
+			$result['last_modules'] = iunserializer($result['last_modules']);
+		}
+		return $result;
+	}
+
+	public function getByUniacidAndVersion($uniacid, $version) {
+		$result = $this->query->where('uniacid', $uniacid)->where('version', $version)->get();
+		if (!empty($result)) {
+			$result['modules'] = iunserializer($result['modules']);
+			$result['quickmenu'] = iunserializer($result['quickmenu']);
+			$result['last_modules'] = iunserializer($result['last_modules']);
+		}
+		return $result;
+	}
 }

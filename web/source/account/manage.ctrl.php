@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->func('file');
 load()->model('user');
 load()->model('message');
-load()->model('miniprogram');
+load()->model('miniapp');
 $dos = array('display', 'delete');
 $do = in_array($_GPC['do'], $dos)? $do : 'display';
 
@@ -64,7 +64,7 @@ if ($do == 'display') {
 		$account = uni_fetch($account['uniacid']);
 		$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['starttime']) . '~'. date('Y-m-d', $account['endtime']);
 		$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
-		$account['versions'] = miniprogram_get_some_lastversions($account['uniacid']);
+		$account['versions'] = miniapp_get_some_lastversions($account['uniacid']);
 		if (!empty($account['versions'])) {
 			foreach ($account['versions'] as $version) {
 				if (!empty($version['current'])) {

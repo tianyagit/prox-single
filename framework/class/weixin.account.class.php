@@ -744,6 +744,10 @@ class WeiXinAccount extends WeAccount {
 			return error('-1', 'AccessToken获取失败，请检查appid和appsecret的值是否与微信公众平台一致！');
 		}
 		$token = @json_decode($content['content'], true);
+
+		if ($token['errcode'] == '40164') {
+			return error(-1, $this->errorCode($token['errcode'], $token['errmsg']));
+		}
 		if(empty($token) || !is_array($token) || empty($token['access_token']) || empty($token['expires_in'])) {
 			$errorinfo = substr($content['meta'], strpos($content['meta'], '{'));
 			$errorinfo = @json_decode($errorinfo, true);
@@ -1352,8 +1356,10 @@ class WeiXinAccount extends WeAccount {
 	 *  @param string $tpl_id_short 模板id
 	 *  @param array $postdata 根据模板规则完善消息
 	 *  @param string $url 详情页链接
+	 *  @appid string 所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏）,　不跳转小程序不传
+	 *  @pagepath string 所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），暂不支持小游戏,　不跳转小程序不传
 	 */
-	public function sendTplNotice($touser, $template_id, $postdata, $url = '', $topcolor = '#FF683F') {
+	public function sendTplNotice($touser, $template_id, $postdata, $url = '', $topcolor = '#FF683F', $appid = '', $pagepath = '') {
 		if(empty($this->account['key']) || $this->account['level'] != ACCOUNT_SERVICE_VERIFY) {
 			return error(-1, '你的公众号没有发送模板消息的权限');
 		}
@@ -1382,6 +1388,11 @@ class WeiXinAccount extends WeAccount {
 			} elseif(!empty($result['errcode'])) {
 			return error(-1, "访问微信接口错误, 错误代码: {$result['errcode']}, 错误信息: {$result['errmsg']},信息详情：{$this->errorCode($result['errcode'])}");
 			}*/
+
+		if (!empty($appid) && !empty($pagepath)) {
+			$url = 'http://weixin.qq.com/download';
+			$data['miniprogram'] = array('appid' => $appid, 'pagepath' => $pagepath);
+		}
 
 		$data = array();
 		$data['touser'] = $touser;

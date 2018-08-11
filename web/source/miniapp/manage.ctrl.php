@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 define('FRAME', 'system');
 load()->model('system');
-load()->model('miniprogram');
+load()->model('miniapp');
 
 $dos = array('display', 'edit_version', 'del_version');
 $do = in_array($do, $dos) ? $do : 'display';
@@ -30,10 +30,10 @@ if ($do == 'display') {
 	if (is_error($account)) {
 		itoast($account['message'], url('account/manage', array('account_type' => ACCOUNT_TYPE_APP_NORMAL)), 'error');
 	} else {
-		$miniprogram_info = pdo_get('account_aliapp', array('uniacid' => $account['uniacid']));
-		$version_exist = miniprogram_fetch($account['uniacid']);
+		$miniapp_info = pdo_get('account_aliapp', array('uniacid' => $account['uniacid']));
+		$version_exist = miniapp_fetch($account['uniacid']);
 		if (!empty($version_exist)) {
-			$version_lists = miniprogram_version_all($account['uniacid']);
+			$version_lists = miniapp_version_all($account['uniacid']);
 			if (!empty($version_lists)) {
 				foreach ($version_lists as &$row) {
 					if (!empty($row['modules'])) {
@@ -42,10 +42,10 @@ if ($do == 'display') {
 				}
 				unset($row);
 			}
-			$miniprogram_modules = miniprogram_support_uniacid_modules($account['uniacid']);
+			$miniapp_modules = miniapp_support_uniacid_modules($account['uniacid'], MODULE_SUPPORT_ALIAPP_NAME);
 		}
 	}
-	template('miniprogram/manage');
+	template('miniapp/manage');
 }
 
 if ($do == 'edit_version') {
@@ -58,12 +58,12 @@ if ($do == 'edit_version') {
 		iajax(1, '模块不存在！');
 	}
 	$versionid = intval($_GPC['version_id']);
-	$version_exist = miniprogram_fetch($uniacid, $versionid);
+	$version_exist = miniapp_fetch($uniacid, $versionid);
 	if(empty($version_exist)) {
 		iajax(1, '版本不存在或已删除！');
 	}
-	$miniprogram_modules = miniprogram_support_uniacid_modules($uniacid);
-	$supoort_modulenames = array_keys($miniprogram_modules);
+	$miniapp_modules = miniapp_support_uniacid_modules($uniacid, MODULE_SUPPORT_ALIAPP_NAME);
+	$supoort_modulenames = array_keys($miniapp_modules);
 	$new_module_data = array();
 	if (!in_array($module_name, $supoort_modulenames)) {
 		iajax(1, '没有模块：' . $module_info['title'] . '的权限！');
@@ -73,7 +73,7 @@ if ($do == 'edit_version') {
 		'version' => $module_info['version']
 	);
 	pdo_update('wxapp_versions', array('modules' => iserializer($new_module_data)), array('id' => $versionid));
-	cache_delete(cache_system_key('miniprogram_version', array('version_id' => $versionid)));
+	cache_delete(cache_system_key('miniapp_version', array('version_id' => $versionid)));
 	iajax(0, '修改成功！', referer());
 }
 

@@ -206,9 +206,9 @@ if ($do == 'post') {
 		}
 
 		$is_conditional = $post['type'] == MENU_CONDITIONAL ? true : false;
+		$account_api = WeAccount::create();
+		$menu = $account_api->menuBuild($post, $is_conditional);
 		if ($_GPC['submit_type'] == 'publish' || $is_conditional) {
-			$account_api = WeAccount::create();
-			$menu = $account_api->menuBuild($post, $is_conditional);
 			$result = $account_api->menuCreate($menu);
 		} else {
 			$result = true;

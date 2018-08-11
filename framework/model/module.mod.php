@@ -603,7 +603,7 @@ function module_link_uniacid_fetch($uid, $module_name) {
 	$accounts_link_result = array();
 	foreach ($accounts_list as $key => $account_value) {
 		if (in_array($account_value['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_ALIAPP_NORMAL))) {
-			$account_value['versions'] = wxapp_version_all($account_value['uniacid']);
+			$account_value['versions'] = miniapp_version_all($account_value['uniacid']);
 			if (empty($account_value['versions'])) {
 				$accounts_link_result[$key] = $account_value;
 				continue;

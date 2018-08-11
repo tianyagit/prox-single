@@ -26,14 +26,14 @@
 	{/if}
 
 	<a href="{php echo url('account/post-user/edit', array('uniacid' => $account['uniacid'], 'acid' => $account['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $action == 'post-user' && $do == 'edit'} active{/if}">使用者管理</a>
-	<a href="{php echo url('miniprogram/manage/display', array('uniacid' => $account['uniacid'], 'acid' => $account['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $action == 'manage' && $do == 'display'} active{/if}">版本管理</a>
+	<a href="{php echo url('miniapp/manage/display', array('uniacid' => $account['uniacid'], 'acid' => $account['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $action == 'manage' && $do == 'display'} active{/if}">版本管理</a>
 	<a href="{php echo url('account/post/modules_tpl', array('uniacid' => $account['uniacid'], 'acid' => $account['acid'], 'account_type' => ACCOUNT_TYPE))}" class="btn btn-default {if $action == 'post' && $do == 'modules_tpl'} active{/if}">可用应用模板/模块</a>
 </div>
 
-<div id="js-account-manage-aliapp" ng-controller="MiniprogramManageCtrl" ng-cloak>
+<div id="js-account-manage-aliapp" ng-controller="MiniappManageCtrl" ng-cloak>
 	<!--版本管理-->
 	<div class="text-right we7-margin-bottom">
-		<a href="{php echo url('miniprogram/post', array('uniacid' => $account['uniacid']))}" class="btn btn-primary" target="_blank">添加新版本</a>
+		<a href="{php echo url('miniapp/post', array('uniacid' => $account['uniacid']))}" class="btn btn-primary" target="_blank">添加新版本</a>
 	</div>
 	<table class="table we7-table vertical-middle wxapp-version-table">
 		<tr>
@@ -113,7 +113,7 @@
 						</tr>
 					</table>
 				</div>
-				<div class="modal-footer" ng-if="miniprogram_modules">
+				<div class="modal-footer" ng-if="miniapp_modules">
 					<button type="button" class="btn btn-primary" ng-click="editVersionInfo()">确定</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancelVersionInfo()">取消</button>
 				</div>
@@ -163,106 +163,13 @@ require(['underscore'], function() {
 	angular.module('wxApp').value('config', {
 		'account': {php echo !empty($account) ? json_encode($account) : 'null'},
 		'version_lists': {php echo !empty($version_lists) ? json_encode($version_lists) : 'null'},
-		'miniprogram_modules' : {php echo !empty($miniprogram_modules) ? json_encode($miniprogram_modules) : 'null'},
+		'miniapp_modules' : {php echo !empty($miniapp_modules) ? json_encode($miniapp_modules) : 'null'},
 		'version_exist': {php echo !empty($version_exist) ? json_encode($version_exist) : 'null'},
 		'links': {
-			'edit_version': "{php echo url('miniprogram/manage/edit_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid'], 'account_type' => ACCOUNT_TYPE))}",
-			'del_version': "{php echo url('miniprogram/manage/del_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid'], 'account_type' => ACCOUNT_TYPE))}",
+			'edit_version': "{php echo url('miniapp/manage/edit_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid'], 'account_type' => ACCOUNT_TYPE))}",
+			'del_version': "{php echo url('miniapp/manage/del_version', array('acid' => $account['acid'], 'uniacid' => $account['uniacid'], 'account_type' => ACCOUNT_TYPE))}",
 		},
 	});
-angular.module('wxApp').controller('MiniprogramManageCtrl', ['$scope', '$http', 'config', function ($scope, $http, config) {
-	$scope.version_lists = config.version_lists;
-	console.log($scope.version_lists);
-	$scope.miniprogram_modules = config.miniprogram_modules;
-	$scope.version_exist = config.version_exist;
-	$scope.activeVersion = {};
-    $scope.modules = config.miniprogram_modules;
-    $scope.search = {};
-
-    $scope.searchModuleName = function() {
-        if ($scope.search.moduleName) {
-            $scope.modules = {};
-            for (key in $scope.miniprogram_modules) {
-                if ($scope.miniprogram_modules[key].title.indexOf($scope.search.moduleName) != -1) {
-                    $scope.modules[key] = $scope.miniprogram_modules[key];
-                }
-            }
-        }
-    };
-	$scope.showEditVersionInfoModal = function (version) {
-		$('#modal_edit_versioninfo').modal('show');
-		$scope.showadd = false;
-		$scope.activeVersion = version ? version : {};
-		$scope.middleVersion = angular.copy($scope.activeVersion);
-		if (!_.isEmpty($scope.activeVersion) && _.isEmpty($scope.activeVersion.modules)) {
-			$scope.showadd = true;
-		}
-	};
-
-	$scope.showEditModuleModal = function () {
-		$('#modal_edit_module').modal('show');
-		$scope.newWxModule = {};
-	};
-
-	$scope.selectedWxModule = function (module, e) {
-		var current = $(e.target).parents('.select-module-wxapp');
-		current.find('span').removeClass('hide');
-		current.siblings().find('span').addClass('hide');
-		$scope.newWxModule = module;
-	};
-
-	$scope.changeWxModules = function () {
-		if (!$scope.newWxModule) util.message('请选择一个应用模块！');
-		$scope.activeVersion.module = {
-			'name' : $scope.newWxModule.name,
-			'version' : $scope.newWxModule.version,
-			'module_info' : $scope.newWxModule
-		};
-		$scope.showadd = false;
-		$('#modal_edit_module').modal('hide');
-	};
-
-	$scope.editVersionInfo = function () {
-		if (_.isEmpty($scope.activeVersion.module)) {
-			util.message('应用模块不可为空！');
-			return false;
-		};
-		$http.post(config.links.edit_version, {'version_id': $scope.activeVersion.id, 'name': $scope.activeVersion.module.name}).
-			success(function (data) {
-				$('#modal_edit_versioninfo').modal('hide');
-				if (data.message.errno == 0) {
-					util.message(data.message.message, data.redirect, 'success');
-				} else {
-					util.message(data.message.message);
-				}
-			});
-	};
-
-	$scope.cancelVersionInfo = function () {
-		if ($scope.middleVersion.modules) {
-			$scope.activeVersion.modules = $scope.middleVersion.modules;
-		} else {
-			$scope.activeVersion.modules = [];
-		}
-	};
-
-	$scope.delWxappVersion = function (id) {
-		var id = parseInt(id);
-		$http.post(config.links.del_version, { 'versionid': id }).
-			success(function (data) {
-				if (data.message.errno == 0) {
-					util.message(data.message.message, data.redirect, 'success');
-				} else {
-					util.message(data.message.message);
-				}
-			});
-	};
-
-	$scope.delModule = function (module) {
-		$scope.activeVersion.modules = [];
-		$scope.showadd = true;
-	};
-}]);
 	angular.bootstrap($('#js-account-manage-aliapp'), ['wxApp']);
 });
 </script>

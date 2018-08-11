@@ -1425,5 +1425,7 @@ function icall_user_func($callback) {
 	return '';
 }
 
+
+
 load()->func('safe');
 load()->func('system');

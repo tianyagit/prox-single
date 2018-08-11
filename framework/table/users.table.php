@@ -91,9 +91,7 @@ class UsersTable extends We7Table {
 	}
 
 	public function searchWithNameOrMobile($search) {
-		$this->query->where(function($query) use ($search){
-			$query->where('u.username LIKE', "%{$search}%")->whereor('p.mobile LIKE', "%{$search}%");
-		});
+		$this->query->where('u.username LIKE', "%{$search}%")->whereor('p.mobile LIKE', "%{$search}%");
 		return $this;
 	}
 

@@ -160,9 +160,11 @@ if ($do == 'post') {
 	}
 
 	$module_list = user_modules($_W['uid']);
-	$module_list = array_filter($module_list, function($module) {
-		return empty($module['issystem']);
-	});
+	foreach($module_list as $key => $val) {
+		if (!empty($val['issystem'])) {
+			unset($module_list[$key]);
+		}
+	}
 
 	$group_not_have_module_app = array();
 	$group_not_have_module_wxapp = array();

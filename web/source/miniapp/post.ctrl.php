@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('module');
-load()->model('miniprogram');
+load()->model('miniapp');
 
 $dos = array('post', 'get_wxapp_modules', 'module_binding');
 $do = in_array($do, $dos) ? $do : 'post';
@@ -38,7 +38,7 @@ if ($do == 'post') {
 				'appid' => trim($_GPC['appid']),
 				'type' => $type,
 			);
-			$uniacid = miniprogram_create($data);
+			$uniacid = miniapp_create($data);
 			if (is_error($uniacid)) {
 				iajax(-1, '添加失败');
 			}
@@ -70,7 +70,7 @@ if ($do == 'post') {
 		iajax(0, $msg, url('account/display/switch', array('uniacid' => $uniacid, 'type' => $type)));
 	}
 	if (!empty($uniacid)) {
-		$miniprogram_info = miniprogram_fetch($uniacid);
+		$miniapp_info = miniapp_fetch($uniacid);
 	}
-	template('miniprogram/post');
+	template('miniapp/post');
 }

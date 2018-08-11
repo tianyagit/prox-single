@@ -10,6 +10,6 @@ $dos = array('version_display');
 $do = in_array($do, $dos) ? $do : 'version_display';
 
 if ($do == 'version_display') {
-	$wxapp_version_list = wxapp_version_all($_W['uniacid']);
+	$wxapp_version_list = miniapp_version_all($_W['uniacid']);
 	template('wxapp/version-display');
 }

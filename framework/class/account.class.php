@@ -400,6 +400,15 @@ abstract class WeAccount {
 			cache_delete(cache_system_key('accesstoken', array('acid' => $this->account['acid'])));
 			return '微信公众平台授权异常, 系统已修复这个错误, 请刷新页面重试.';
 		}
+
+		if ($code == '40164') {
+			$pattern = "/(?:(?:(?:25[0-5]|2[0-4]\d|(?:(?:1\d{2})|(?:[1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|(?:(?:1\d{2})|(?:[1-9]?\d))))/";
+			preg_match($pattern, $errmsg, $out);
+
+			$ip = !empty($out) ? $out[0] : '';
+			return '获取微信公众号授权失败，错误代码:' . $code . ' 错误信息: ip-' . $ip . '不在白名单之内！';
+		}
+
 		if($errors[$code]) {
 			return $errors[$code];
 		} else {
