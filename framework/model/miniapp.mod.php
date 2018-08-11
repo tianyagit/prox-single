@@ -712,8 +712,7 @@ function miniapp_code_current_appjson($version_id) {
 			return null;
 		}
 		$appjson = $cloud_appjson['data']['appjson'];
-		pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)),
-		array('id' => $version_id));
+		pdo_update('wxapp_versions', array('default_appjson' => serialize($appjson)), array('id' => $version_id));
 		cache_delete(cache_system_key('miniapp_version', array('version_id' => $version_id)));
 		return $appjson;
 	}
