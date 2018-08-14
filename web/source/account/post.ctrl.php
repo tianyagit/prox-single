@@ -10,7 +10,6 @@ load()->model('cloud');
 load()->model('cache');
 load()->model('user');
 load()->classs('weixin.platform');
-load()->model('wxapp');
 load()->model('utility');
 load()->func('file');
 $uniacid = intval($_GPC['uniacid']);
