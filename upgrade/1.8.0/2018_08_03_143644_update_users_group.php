@@ -9,7 +9,7 @@ defined('IN_IA') or exit('Access Denied');
  * @version 1.8.0
  */
 
-class 'updateUsersGroup' {
+class UpdateUsersGroup {
 
 	/**
 	 *  执行更新
