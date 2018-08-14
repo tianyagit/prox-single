@@ -4,7 +4,7 @@
  * [WeEngine System] Copyright (c) 2014 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-load()->model('wxapp');
+load()->model('miniapp');
 
 $dos = array('version_display');
 $do = in_array($do, $dos) ? $do : 'version_display';
