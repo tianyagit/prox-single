@@ -524,7 +524,7 @@ if ($do == 'module_detail') {
 			$group['modules'] = iunserializer($group['modules']);
 			if (is_array($group['modules'])) {
 				foreach ($group['modules'] as $modulenames) {
-					if (in_array($module_name, $modulenames)) {
+					if (is_array($modulenames) && in_array($module_name, $modulenames)) {
 						$module_group[] = $group;
 						break;
 					}
