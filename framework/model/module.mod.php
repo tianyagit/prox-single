@@ -801,7 +801,7 @@ function module_installed_list($type = '') {
 	}
 
 	if (!empty($type)) {
-		return $module_list[$type];
+		return (array)$module_list[$type];
 	} else {
 		return $module_list;
 	}
