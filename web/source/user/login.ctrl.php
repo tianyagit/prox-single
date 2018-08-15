@@ -62,6 +62,7 @@ function _login($forward = '') {
 		$member = $record;
 	}
 
+
 	$user_info = pdo_get('users', array('username' => $member['username']));
 	$is_mobile = preg_match(REGULAR_MOBILE, $member['username']);
 	if (empty($user_info) && is_array($member) && !empty($member['username']) && $is_mobile) {
@@ -77,7 +78,8 @@ function _login($forward = '') {
 			itoast('账号信息错误！', url('user/login'), '');
 		}
 	}
-
+	
+	$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username'])));
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {
 			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决?', url('user/login'), '');
@@ -127,8 +129,9 @@ function _login($forward = '') {
 			isetcookie('__uniacid', '', -7 * 86400);
 			isetcookie('__uid', '', -7 * 86400);
 		}
-		$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username']), 'ip' => CLIENT_IP));
-		pdo_delete('users_failed_login', array('id' => $failed['id']));
+		if (!empty($failed)) {
+			pdo_delete('users_failed_login', array('id' => $failed['id']));
+		}
 
 		if ((empty($_W['isfounder']) || user_is_vice_founder()) && !empty($_W['user']['endtime']) && $_W['user']['endtime'] < TIMESTAMP) {
 			$url = url('home/welcome/ext', array('m' => 'store'));
