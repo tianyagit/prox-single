@@ -58,27 +58,6 @@ function _login($forward = '') {
 	}
 
 	$record = user_single($member);
-	if (in_array($_GPC['login_type'], array('qq', 'wechat'))) {
-		$member = $record;
-	}
-
-
-	$user_info = pdo_get('users', array('username' => $member['username']));
-	$is_mobile = preg_match(REGULAR_MOBILE, $member['username']);
-	if (empty($user_info) && is_array($member) && !empty($member['username']) && $is_mobile) {
-		$bind_info = pdo_get('users_bind', array('bind_sign' => $member['username']));
-		if (is_array($bind_info) && !empty($bind_info)) {
-			$username = pdo_getcolumn('users', array('uid' => $bind_info['uid']), 'username');
-			if ($username) {
-				$member['username'] = $username;
-			} else {
-				itoast('账号信息错误！', url('user/login'), '');
-			}
-		} else {
-			itoast('账号信息错误！', url('user/login'), '');
-		}
-	}
-	
 	$failed = pdo_get('users_failed_login', array('username' => trim($_GPC['username'])));
 	if (!empty($record)) {
 		if ($record['status'] == USER_STATUS_CHECK || $record['status'] == USER_STATUS_BAN) {

@@ -176,6 +176,22 @@ function user_single($user_or_uid) {
 	if (!empty($user['username'])) {
 		$where .= ' AND u.`username`=:username';
 		$params[':username'] = $user['username'];
+
+		$user_exists = user_check($user);
+		$is_mobile = preg_match(REGULAR_MOBILE, $user['username']);
+		if (!$user_exists && !empty($user['username']) && $is_mobile) {
+			$sql = "select b.uid, u.username FROM " . tablename('users_bind') . " AS b LEFT JOIN " . tablename('users') . " AS u ON b.uid = u.uid WHERE b.bind_sign = :bind_sign";
+			$bind_info = pdo_fetch($sql, array('bind_sign' => $user['username']));
+			if (is_array($bind_info) && !empty($bind_info)) {
+				if ($bind_info['username']) {
+					$params[':username'] = $bind_info['username'];
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
 	}
 	if (!empty($user['email'])) {
 		$where .= ' AND u.`email`=:email';
