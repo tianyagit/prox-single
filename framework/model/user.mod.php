@@ -19,6 +19,12 @@ function user_register($user, $source) {
 	if (isset($user['uid'])) {
 		unset($user['uid']);
 	}
+
+	$check_pass = check_password_safe(safe_gpc_string($user['password']));
+	if (is_error($check_pass)) {
+		return $check_pass;
+	}
+
 	$user['salt'] = random(8);
 	$user['password'] = user_hash($user['password'], $user['salt']);
 	$user['joinip'] = CLIENT_IP;
@@ -37,6 +43,7 @@ function user_register($user, $source) {
 	if (empty($user['type'])) {
 		$user['type'] = USER_TYPE_COMMON;
 	}
+
 	$result = pdo_insert('users', $user);
 	if (!empty($result)) {
 		$user['uid'] = pdo_insertid();
@@ -968,7 +975,13 @@ function user_info_save($user, $is_founder_group = false) {
 	}
 	if (istrlen($user['password']) < 8) {
 		return error(-1, '必须输入密码，且密码长度不得低于8位。');
+	} else {
+		$check_pass = check_password_safe(safe_gpc_string($user['password']));
+		if (is_error($check_pass)) {
+			return $check_pass;
+		}
 	}
+
 	if (trim($user['password']) !== trim($user['repassword'])) {
 		return error(-1, '两次密码不一致！');
 	}

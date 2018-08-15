@@ -110,14 +110,9 @@ if ($do == 'check_mobile_code') {
 }
 
 if ($do == 'check_password_safe') {
-	if (!$setting['safe']) {
-		iajax(0, '');
-	}
-
-	$password = safe_gpc_string($_GPC['password']);
-	preg_match(PASSWORD_STRONG_REGULAR, $password, $out);
-	if (empty($out)) {
-		iajax(-1, PASSWORD_STRONG_STATE);
+	$res = check_password_safe(safe_gpc_string($_GPC['password']));
+	if (is_error($res)) {
+		iajax(-1, $res['message']);
 	} else {
 		iajax(0, '');
 	}
