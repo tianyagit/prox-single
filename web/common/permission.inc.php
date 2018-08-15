@@ -331,6 +331,26 @@ $we7_file_permission = array(
 			'user*',
 		)
 	),
+	'miniapp' => array(
+		'default' => '',
+		'direct' => array(),
+		'vice_founder' => array('miniapp*'),
+		'owner' => array('miniapp*'),
+		'manager' => array(
+			'display',
+			'version',
+			'post',
+		),
+		'operator' => array(
+			'display',
+			'version',
+			'post',
+		),
+		'clerk' => array(
+			'display',
+		),
+		'unbind_user' => array(),
+	),
 	'wxapp' => array(
 		'default' => '',
 		'direct' => array(),
