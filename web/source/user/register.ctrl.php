@@ -9,7 +9,7 @@ load()->model('user');
 load()->model('setting');
 load()->classs('oauth2/oauth2client');
 
-$dos = array('display', 'valid_mobile', 'register', 'check_username', 'get_extendfields', 'check_code', 'check_mobile_code');
+$dos = array('display', 'valid_mobile', 'register', 'check_username', 'get_extendfields', 'check_code', 'check_mobile_code', 'check_password_safe');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $_W['page']['title'] = '注册选项 - 用户设置 - 用户管理';
@@ -19,6 +19,7 @@ if (empty($_W['setting']['register']['open'])) {
 
 $register_type = safe_gpc_belong(safe_gpc_string($_GPC['register_type']), array('system', 'mobile'), 'system');
 $owner_uid = intval($_GPC['owner_uid']);
+$setting = $_W['setting']['register'];
 
 if ($register_type == 'system') {
 	$extendfields = OAuth2Client::create($register_type)->systemFields();
@@ -105,6 +106,20 @@ if ($do == 'check_mobile_code') {
 		iajax(-1, '短信验证码已过期，请重新获取');
 	} else {
 		iajax(0, '短信验证码正确');
+	}
+}
+
+if ($do == 'check_password_safe') {
+	if (!$setting['safe']) {
+		iajax(0, '');
+	}
+
+	$password = safe_gpc_string($_GPC['password']);
+	preg_match(PASSWORD_STRONG_REGULAR, $password, $out);
+	if (empty($out)) {
+		iajax(-1, PASSWORD_STRONG_STATE);
+	} else {
+		iajax(0, '');
 	}
 }
 

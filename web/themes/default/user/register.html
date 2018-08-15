@@ -191,6 +191,7 @@
 		'register_type': "{php echo !empty($register_type) ? $register_type : 0}",
 		'register_sign': "{php echo !empty($register_sign) ? $register_sign : 'null'}",
 		'image': "{php echo url('utility/code')}",
+		'password_safe': "{$setting['safe']}",
 		'links': {
 			'valid_mobile_link': "{php echo url('user/register/valid_mobile')}",
 			'send_code_link': "{php echo url('utility/verifycode')}",
@@ -200,6 +201,7 @@
 			'get_extendfields_link': "{php echo url('user/register/get_extendfields')}",
 			'check_code_link': "{php echo url('user/register/check_code')}",
 			'check_mobile_code_link': "{php echo url('user/register/check_mobile_code')}",
+			'check_password_link': "{php echo url('user/register/check_password_safe')}",
 		},
 	});
 

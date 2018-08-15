@@ -35,6 +35,17 @@
 			<span class="help-block"> 开启后，用户注册需要输入图形验证码，验证通过后方可注册。</span>
 		</div>
 	</div>
+	<div class="form-group">
+		<label for="" class="control-label col-sm-2"  style="width: 150px;">强制密码安全强度</label>
+		<div class="form-controls col-sm-8">
+			<input id='safe-radio-1' type="radio" name='safe' value="1" ng-checked="settings.safe == 1">
+			<label for="safe-radio-1">是 </label>
+			<input id='safe-radio-2' type="radio" name='safe' value="0" ng-checked="settings.safe == 0">
+			<label for="safe-radio-2">否</label>
+			<span class="help-block"></span>
+			<span class="help-block"> 开启后，用户注册需要输入图形验证码，验证通过后方可注册。</span>
+		</div>
+	</div>
 
 	<div class="form-group">
 		<label for="" class="control-label col-sm-2"  style="width: 150px;">默认所属用户组</label>

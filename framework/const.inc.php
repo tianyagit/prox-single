@@ -355,3 +355,7 @@ define('WEBAPP_DISPLAY_TYPE', 4);
 define('PHONEAPP_DISPLAY_TYPE', 5);
 //平台
 define('PLATFORM_DISPLAY_TYPE', 6);
+
+//密码强度
+define('PASSWORD_STRONG_STATE', '至少8-16个字符，至少1个大写字母，1个小写字母和1个数字，其他可以是任意字符');
+define('PASSWORD_STRONG_REGULAR', '/(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}/');
