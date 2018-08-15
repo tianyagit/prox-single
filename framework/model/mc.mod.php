@@ -1937,15 +1937,11 @@ function mc_parse_profile($profile) {
  * @param unknown $members 会员数组
  * @return string 处理后的会员信息字符串
  */
-function mc_member_export_parse($members){
+function mc_member_export_parse($members, $header = array()){
 	if (empty($members)) {
 		return false;
 	}
 	$groups = mc_groups();
-	$header = array(
-		'uid' => 'UID', 'nickname' => '昵称', 'realname' => '姓名', 'groupid' => '会员组',
-		'mobile' => '手机', 'email' => '邮箱', 'birthday' => '生日', 'credit1' => '积分', 'credit2' => '余额', 'createtime' => '注册时间',
-	);
 	$keys = array_keys($header);
 	$html = "\xEF\xBB\xBF";
 	foreach ($header as $li) {
