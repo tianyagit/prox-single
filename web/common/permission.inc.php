@@ -455,6 +455,7 @@ $we7_file_permission = array(
 			'see_user_profile_account_num',
 			'see_user_add_welcome_account',
 			'see_workorder',
+			'see_modules_deactivate',
 		),
 		'vice_founder' => array(
 			'see_account_manage_users_adduser',

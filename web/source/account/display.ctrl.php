@@ -6,7 +6,6 @@
 
 defined('IN_IA') or exit('Access Denied');
 
-load()->model('wxapp');
 load()->model('miniapp');
 load()->model('phoneapp');
 
@@ -15,13 +14,10 @@ $do = in_array($_GPC['do'], $dos) ? $do : 'display';
 $_W['page']['title'] = '所有权限';
 
 if ($do == 'platform') {
-	$cache_last_account_type = cache_load(cache_system_key('last_account_type'));
-	if (empty($cache_last_account_type)) {
-		itoast('', url('account/display'));
-	}
+	$url = url('account/display');
 	$last_uniacid = uni_account_last_switch();
-	$url = url('account/display', array('type' => $cache_last_account_type));
-	if (empty($last_uniacid)) {
+	$cache_last_account_type = cache_load(cache_system_key('last_account_type'));
+	if (empty($cache_last_account_type) || empty($last_uniacid)) {
 		itoast('', $url, 'info');
 	}
 	if (!empty($last_uniacid) && $last_uniacid != $_W['uniacid']) {

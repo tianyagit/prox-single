@@ -80,7 +80,7 @@ if ($do == 'post') {
 				'headimg' => file_is_image( $_GPC['headimg']) ?  $_GPC['headimg'] : '',
 				'qrcode' => file_is_image( $_GPC['qrcode']) ?  $_GPC['qrcode'] : '',
 			);
-			$uniacid = miniapp_account_create($account_wxapp_data, ACCOUNT_TYPE_APP_NORMAL);
+			$uniacid = miniapp_create($account_wxapp_data, ACCOUNT_TYPE_APP_NORMAL);
 			if (is_error($uniacid)) {
 				iajax(3, '添加小程序信息失败', url('wxapp/post'));
 			}

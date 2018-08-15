@@ -260,8 +260,12 @@
 					{if permission_check_account_user('see_modules_recharge')}
 					<a href="{php echo url('site/entry/goodsbuyer', array('direct' => 1, 'operate' => 'goods_info', 'm' => 'store', 'goods' => $module['goods_id']))}">续费</a>
 					{/if}
-				</td>
 
+					{if permission_check_account_user('see_modules_deactivate')}
+					<a href="{php echo url('site/entry/deactivateOrder', array('direct' => 1, 'm' => 'store', 'order_id' => $module['order_id'], 'goods_id' => $module['goods_id'], 'uniacid' => $uniacid, 'type' => $_GPC['account_type']))}">删除</a>
+					{/if}
+
+				</td>
 			</tr>
 			{/if}
 			{/loop}

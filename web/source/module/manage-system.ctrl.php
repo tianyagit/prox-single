@@ -524,7 +524,7 @@ if ($do == 'module_detail') {
 			$group['modules'] = iunserializer($group['modules']);
 			if (is_array($group['modules'])) {
 				foreach ($group['modules'] as $modulenames) {
-					if (in_array($module_name, $modulenames)) {
+					if (is_array($modulenames) && in_array($module_name, $modulenames)) {
 						$module_group[] = $group;
 						break;
 					}
@@ -592,6 +592,7 @@ if ($do == 'recycle_post') {
 			}
 		}
 		cache_write(cache_system_key('user_modules', array('uid' => $_W['uid'])), $cached_user_modules);
+		cache_build_module_info($name);
 	} else {
 		if (empty($module_recycle)) {
 			$msg = '模块已放入回收站!';
@@ -601,7 +602,6 @@ if ($do == 'recycle_post') {
 			table('modules_recycle')->deleteByName($name);
 		}
 	}
-	cache_build_module_info($name);
 	itoast($msg, referer(), 'success');
 }
 if ($do == 'recycle') {

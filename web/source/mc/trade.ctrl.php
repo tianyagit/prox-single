@@ -10,7 +10,8 @@ load()->model('card');
 load()->model('module');
 
 permission_check_account_user('mc_member');
-$creditnames = uni_setting_load('creditnames')['creditnames'];
+$creditnames = uni_setting_load('creditnames');
+$creditnames = $creditnames['creditnames'];
 $_W['page']['title'] = '会员交易-会员管理';
 $dos = array('consume', 'user', 'modal', 'credit', 'card', 'cardsn', 'tpl', 'cardconsume');
 $do = in_array($do, $dos) ? $do : 'tpl';

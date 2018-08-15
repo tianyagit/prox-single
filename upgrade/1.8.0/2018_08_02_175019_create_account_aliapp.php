@@ -9,12 +9,12 @@ defined('IN_IA') or exit('Access Denied');
  * @version 1.8.0
  */
 
-class 'createAccountAliapp' {
+class CreateAccountAliapp {
 
 	/**
 	 *  执行更新
 	 */
-	public function up( {
+	public function up() {
 		if (!pdo_tableexists('account_aliapp')) {
 			pdo_run("CREATE TABLE IF NOT EXISTS `ims_account_aliapp` (
 `acid` int(10) unsigned NOT NULL,
@@ -32,8 +32,7 @@ PRIMARY KEY (`acid`)
 	 *  回滚更新
 	 */
 	public function down() {
-		
+
 
 	}
 }
-		
