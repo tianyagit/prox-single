@@ -1055,6 +1055,7 @@ class StoreModuleSite extends WeModuleSite {
 		$order_id = intval($_GPC['order_id']);
 		$goods_id = intval($_GPC['goods_id']);
 		$uniacid = intval($_GPC['uniacid']);
+		$type = intval($_GPC['type']);
 
 		$condition = array('id' => $order_id, 'goodsid' => $goods_id, 'uniacid' => $uniacid);
 		$order_info = pdo_get('site_store_order', $condition, '');
@@ -1063,11 +1064,12 @@ class StoreModuleSite extends WeModuleSite {
 			itoast('订单信息错误！', '', 'error');
 		}
 
-		$res = pdo_update('site_store_order', array('type' => 4), $condition);
-
+		$res = pdo_update('site_store_order', array('type' => STORE_ORDER_DEACTIVATE), $condition);
 		if (!$res) {
 			itoast('修改失败！', '', 'error');
 		} else{
+			$cachekey = cache_system_key('site_store_buy', array('type' => $type, 'uniacid' => $uniacid));
+			cache_delete($cachekey);
 			itoast('修改成功！', '', 'success');
 		}
 	}

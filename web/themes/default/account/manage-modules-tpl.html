@@ -279,7 +279,7 @@
 						{/if}
 
 						{if permission_check_account_user('see_modules_deactivate')}
-						<a href="{php echo url('site/entry/deactivateOrder', array('direct' => 1, 'm' => 'store', 'order_id' => $module['order_id'], 'goods_id' => $module['goods_id'], 'uniacid' => $uniacid))}">删除</a>
+						<a href="{php echo url('site/entry/deactivateOrder', array('direct' => 1, 'm' => 'store', 'order_id' => $module['order_id'], 'goods_id' => $module['goods_id'], 'uniacid' => $uniacid, 'type' => $_GPC['account_type']))}">删除</a>
 						{/if}
 					</td>
 				</tr>

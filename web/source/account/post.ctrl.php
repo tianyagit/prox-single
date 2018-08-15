@@ -190,6 +190,7 @@ if($do == 'base') {
 	}
 	$account_other_info = (array)$account_other_info;
 	$account = array_merge($account, $account_other_info);
+	$account['start'] = date('Y-m-d', $account['starttime']);
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
 	$statistics_setting = (array)uni_setting_load(array('statistics'), $uniacid);
