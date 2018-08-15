@@ -214,12 +214,14 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 	load()->model('module');
 	$account_info = uni_fetch($uniacid);
 	$founders = explode(',', $_W['config']['setting']['founder']);
-	$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
+	$owner_uid = pdo_getall('uni_account_users',  array('uniacid' => $uniacid, 'role' => array('owner', 'vice_founder')), array('uid', 'role'), 'role');
+	$owner_uid = !empty($owner_uid['owner']) ? $owner_uid['owner']['uid'] : (!empty($owner_uid['vice_founder']) ? $owner_uid['vice_founder']['uid'] : 0);
 
 	$cachekey = cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => $enabled == true ? 1 : ''));
 	$modules = cache_load($cachekey);
 	if (empty($modules)) {
 		$condition = "WHERE 1";
+
 		if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
 			//设置的公众号应用权限和商城购买的应用权限
 			$group_modules = table('account')->accountGroupModules($uniacid);
