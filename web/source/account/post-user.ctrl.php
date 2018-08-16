@@ -23,6 +23,7 @@ if (!$role_permission) {
 	itoast('无权限操作！', referer(), 'error');
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
+$founder_info = pdo_getcolumn('users', array('uid' => current($founders)), 'username');
 $headimgsrc = tomedia('headimg_'.$acid.'.jpg');
 $account = account_fetch($acid);
 if (is_error($account)) {
@@ -97,10 +98,17 @@ if ($do == 'set_manager') {
 		if ($user['status'] != 2) {
 			iajax(3, '用户未通过审核或不存在！', '');
 		}
+		$addtype = intval($_GPC['addtype']);
+		if (!in_array($addtype, array(ACCOUNT_MANAGE_TYPE_OPERATOR, ACCOUNT_MANAGE_TYPE_MANAGER, ACCOUNT_MANAGE_TYPE_OWNER, ACCOUNT_MANAGE_TYPE_VICE_FOUNDER))) {
+			iajax(-1, '添加使用者类型有误，只能添加操作员/管理员/主管理员/副创始人！');
+		}
 		if (in_array($user['uid'], $founders)) {
+			if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {
+				pdo_delete('uni_account_users', array('uniacid' => $uniacid, 'role' => ACCOUNT_MANAGE_NAME_OWNER));
+				iajax(0, '修改成功！', '');
+			}
 			iajax(1, '不可操作网站创始人！', '');
 		}
-		$addtype = intval($_GPC['addtype']);
 		//添加/修改公众号主管理员时执行数量判断
 		if (is_error($permission = permission_create_account($user['uid'], ACCOUNT_TYPE)) && $addtype == ACCOUNT_MANAGE_TYPE_OWNER && !in_array($_W['uid'], $founders)) {
 			itoast(error(5, $permission['message']), '', 'error');
@@ -112,7 +120,6 @@ if ($do == 'set_manager') {
 		);
 
 		$exists = pdo_get('uni_account_users', $data);
-		$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
 		if (empty($exists)) {
 			/* xstart */
 			if (IMS_FAMILY == 'x') {
@@ -129,6 +136,7 @@ if ($do == 'set_manager') {
 				if ($state == ACCOUNT_MANAGE_NAME_MANAGER) {
 					iajax(4, '管理员不可操作主管理员', '');
 				}
+				$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
 				if (empty($owner)) {
 					$data['role'] = ACCOUNT_MANAGE_NAME_OWNER;
 				} else  {

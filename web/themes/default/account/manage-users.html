@@ -15,12 +15,6 @@
 			<th>权限</th>
 			<th class="text-left">用户名</th>
 			<th class="text-right">
-				<!-- xstart -->
-				{if IMS_FAMILY == 'x'}
-				{if permission_check_account_user('see_account_manage_users_add_viceuser')}<span class="btn btn-link color-default" data-toggle="modal" data-target="#user-vice-modal">添加副创始人</span>{/if}
-				{/if}
-				<!-- xend -->
-				{if $_W['isfounder'] && empty($owner)}<span class="btn btn-link color-default" data-toggle="modal" data-target="#owner-modal">添加主管理员</span>{/if}
 				<span class="btn btn-link color-default" data-toggle="modal" data-target="#user-modal">添加使用者</span>
 			</th>
 		</tr>
@@ -42,11 +36,11 @@
 			<td>主管理员</td>
 			<td class="text-left" ng-bind="owner.username" ng-if="owner"></td>
 			<td class="text-left" ng-bind="vice_founder.username" ng-if="!owner && vice_founder"></td>
-			<td class="text-left" ng-if="!owner && !vice_founder">创始人</td>
+			<td class="text-left" ng-if="!owner && !vice_founder">{$founder_info}</td>
 			<td class="we7-padding-right text-right link-group">
 			{if permission_check_account_user('see_account_manage_users_edit_owner')}
-				<a href="javascript:;" ng-click="changeVice(owner.username)" ng-if="owner">修改</a>
-				<a href="javascript:;" ng-click="delPermission(owner.uid)" ng-if="owner">删除</a>
+				<a href="javascript:;" ng-click="changeOwner(owner.username)">修改</a>
+				<a href="javascript:;" ng-click="delPermission(owner.uid)" ng-if="owner" class="hidden">删除</a>
 			{/if}
 			</td>
 		</tr>
@@ -83,7 +77,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h3 class="modal-title">添加账号主管理员</h3>
+					<h3 class="modal-title">修改账号主管理员</h3>
 				</div>
 				<div class="modal-body we7-form">
 					<div class="form-group">
@@ -107,16 +101,24 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h3 class="modal-title">添加账号操作员/管理员</h3>
+					<h3 class="modal-title">添加账号操作员/管理员/副创始人</h3>
 				</div>
 				<div class="modal-body we7-form">
 					<div class="form-group" ng-show="state == 'founder' || state == 'owner' || state == 'vice_founder'">
 						<label class="control-label col-sm-2"></label>
 						<div class="col-sm-10">
-							<input type="radio" id="addtype-1" name="addtype" value="{ACCOUNT_MANAGE_TYPE_OPERATOR}" checked>
+							<input class="addtype" type="radio" id="addtype-1" name="addtype" value="{ACCOUNT_MANAGE_TYPE_OPERATOR}" checked>
 							<label for="addtype-1" class="radio-inline">操作员</label>
-							<input class="addtype2" type="radio" id="addtype-2" name="addtype" value="{ACCOUNT_MANAGE_TYPE_MANAGER}">
+							<input class="addtype" type="radio" id="addtype-2" name="addtype" value="{ACCOUNT_MANAGE_TYPE_MANAGER}">
 							<label class="radio-inline" for="addtype-2">管理员</label>
+							<!-- xstart -->
+							{if IMS_FAMILY == 'x'}
+								{if permission_check_account_user('see_account_manage_users_add_viceuser')}
+									<input class="addtype" type="radio" id="addtype-4" name="addtype" value="{ACCOUNT_MANAGE_TYPE_VICE_FOUNDER}">
+									<label class="radio-inline" for="addtype-4">副创始人</label>
+								{/if}
+							{/if}
+							<!-- xend -->
 							{if permission_check_account_user('see_account_manage_users_adduser')}<a style="float: right" class="color-default" target = '_blank' href="{url 'user/create'}">+添加用户</a>{/if}
 						</div>
 					</div>
@@ -130,32 +132,6 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" ng-click="addUsername()">确认</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="modal" id="user-vice-modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h3 class="modal-title">添加账号副创始人</h3>
-				</div>
-				<div class="modal-body we7-form">
-					<div class="form-group" ng-show="state == 'founder'">
-						<label class="control-label col-sm-2"></label>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label">创始人姓名</label>
-						<div class="col-sm-10">
-							<input id="add-vice-username" type="text" class="form-control">
-							<span class="help-block">请输入完整的创始人名字。</span>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" ng-click="addViceFounder()">确认</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>
 			</div>
