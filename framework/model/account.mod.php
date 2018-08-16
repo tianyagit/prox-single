@@ -1312,6 +1312,7 @@ function uni_account_global_oauth() {
 
 function uni_search_link_account($module_name, $account_type) {
 	global $_W;
+	load()->model('miniapp');
 	$module_name = trim($module_name);
 	if (empty($module_name) || empty($account_type) || !in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL))) {
 		return array();
@@ -1342,9 +1343,21 @@ function uni_search_link_account($module_name, $account_type) {
 				unset($owned_account[$key]);
 				continue;
 			}
+			if (in_array($account_type, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
+				$last_version = (array)miniapp_fetch($account['uniacid']);
+				if (empty($last_version['version']) || empty($last_version['version']['modules']) || current((array)array_keys($last_version['version']['modules'])) != $module_name) {
+					unset($owned_account[$key]);
+					continue;
+				}
+				$current_module = current($last_version['version']['modules']);
+				if (!empty($current_module['account'])) {
+					unset($owned_account[$key]);
+					continue;
+				}
+			}
 			if (in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && $account_modules[$module_name][MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT) {
 				unset($owned_account[$key]);
-			} elseif ($account_type == ACCOUNT_TYPE_APP_NORMAL && $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
+			} elseif (in_array($account_type, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH)) && $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
 				unset($owned_account[$key]);
 			} elseif ($account_type == ACCOUNT_TYPE_WEBAPP_NORMAL && $account_modules[$module_name]['webapp_support'] != MODULE_SUPPORT_WEBAPP) {
 				unset($owned_account[$key]);

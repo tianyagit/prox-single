@@ -59,10 +59,10 @@ if ($do == 'module_unlink_uniacid') {
 	if (!empty($version_info)) {
 		$module = current($version_info['modules']);
 		$version_modules = array(
-				$module['name'] => array(
-					'name' => $module['name'],
-					'version' => $module['version']
-					)
+			$module['name'] => array(
+				'name' => $module['name'],
+				'version' => $module['version']
+				)
 			);
 	}
 	$version_modules = iserializer($version_modules);
@@ -115,13 +115,6 @@ if ($do == 'search_link_account') {
 			if (in_array($account['uniacid'], $have_link_uniacid)) {
 				unset($account_list[$key]);
 				continue;
-			}
-			if ($account_type == ACCOUNT_TYPE_APP_NORMAL) {
-				$last_version = (array)miniapp_fetch($account['uniacid']);
-				if (empty($last_version['version']) || empty($last_version['version']['modules']) || current((array)array_keys($last_version['version']['modules'])) != $module_name) {
-					unset($account_list[$key]);
-					continue;
-				}
 			}
 			$account_list[$key]['logo'] = is_file(IA_ROOT . '/attachment/headimg_' . $account['acid'] . '.jpg') ? tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time() : './resource/images/nopic-107.png';
 		}
