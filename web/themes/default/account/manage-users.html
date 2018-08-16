@@ -7,7 +7,7 @@
 	<p><i class="fa fa-exclamation-circle"></i> 管理员可以管理操作员；</p>
 </div>
 <div id="js-account-manage-users" ng-controller="AccountManageUsers" ng-cloak>
-	<table class="table we7-table table-hover">
+	<table class="table we7-table table-manage-user">
 		<col width="230px" />
 		<col />
 		<col />
@@ -44,8 +44,8 @@
 			{/if}
 			</td>
 		</tr>
-		<tr ng-repeat="item in manager" ng-if="manager">
-			<td>管理员</td>
+		<tr ng-repeat="(key, item) in manager" ng-if="manager">
+			<td ng-if="key == 0" rowspan="{{manager.length}}">管理员</td>
 			<td class="text-left" ng-bind="item.username"></td>
 			<td class="we7-padding-right text-right link-group">
 			{if permission_check_account_user('see_account_manage_users_set_permission_for_manager')}
@@ -56,8 +56,8 @@
 			{/if}
 			</td>
 		</tr>
-		<tr ng-repeat="item in operator" ng-if="operator">
-			<td>操作员</td>
+		<tr ng-repeat="(key, item) in operator" ng-if="operator">
+			<td ng-if="key == 0" rowspan="{{operator.length}}">操作员</td>
 			<td class="text-left" ng-bind="item.username"></td>
 			<td class="we7-padding-right text-right link-group">
 			{if permission_check_account_user('see_account_manage_users_set_permission_for_operator')}
