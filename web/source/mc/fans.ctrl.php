@@ -48,14 +48,12 @@ if ($do == 'display') {
 
 	$follow = intval($_GPC['follow']) ? intval($_GPC['follow']) : 1;
 	if ($follow == 1) {
-		$orderby = " ORDER BY f.`followtime` DESC";
 		$condition .= " AND f.`follow` = 1";
 	} elseif ($follow == 2) {
-		$orderby = " ORDER BY f.`unfollowtime` DESC";
 		$condition .= " AND f.`follow` = 0";
 	}
 	$select_sql = "SELECT %s FROM " .tablename('mc_mapping_fans')." AS f LEFT JOIN ".tablename('mc_fans_tag_mapping')." AS m ON m.`fanid` = f.`fanid` " . $condition ." %s";
-	$fans_list_sql = sprintf($select_sql, "f.* ", " GROUP BY f.`fanid`" . $orderby . " LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize);
+	$fans_list_sql = sprintf($select_sql, "f.fanid, f.acid, f.uniacid, f.uid, f.openid, f.nickname, f.groupid, f.follow, f.followtime, f.unfollowtime, f.tag ", " GROUP BY f.`fanid` ORDER BY f.`fanid` DESC LIMIT " .($pageindex - 1) * $pagesize.",".$pagesize);
 	$fans_list = pdo_fetchall($fans_list_sql, $param);
 	if (!empty($fans_list)) {
 		foreach ($fans_list as &$v) {

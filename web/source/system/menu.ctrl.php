@@ -41,6 +41,11 @@ if (!empty($system_menu)) {
 				}
 			}
 		}
+		if (in_array($menu_name, array('account', 'xzapp', 'xzapp', 'phoneapp', 'webapp'))) {
+			$menu['menu'] = $menu['section'];
+			$system_menu['platform']['section'][$menu_name] = $menu;
+			unset($system_menu[$menu_name]);
+		}
 	}
 }
 if ($do == 'display') {
