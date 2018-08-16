@@ -375,11 +375,11 @@ function miniapp_version_detail_info($version_info) {
 	if (in_array($account['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
 		if (!empty($version_info['modules'])) {
 			foreach ($version_info['modules'] as $i => $module) {
-				if (!empty($module['uniacid'])) {
-					$account = uni_fetch($module['uniacid']);
-				}
 				$module_info = module_fetch($module['name']);
-				$module_info['account'] = $account;
+				if (!empty($module['uniacid'])) {
+					$link_account = uni_fetch($module['uniacid']);
+					$module_info['account'] = $link_account;
+				}
 				unset($version_info['modules'][$module['name']]);
 				if (!in_array($module['name'], $uni_modules)) {
 					continue;
