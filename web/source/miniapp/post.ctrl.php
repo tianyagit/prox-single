@@ -38,7 +38,7 @@ if ($do == 'post') {
 				'appid' => trim($_GPC['appid']),
 				'type' => $type,
 			);
-			$uniacid = miniapp_create($data);
+			$uniacid = miniapp_create($data, ACCOUNT_TYPE_ALIAPP_NORMAL);
 			if (is_error($uniacid)) {
 				iajax(-1, '添加失败');
 			}
