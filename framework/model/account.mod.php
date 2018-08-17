@@ -1407,6 +1407,8 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 		}
 		if (empty($passive_settings)) {
 			$passive_settings = array('passive_link_uniacid' => array($_W['uniacid']));
+		} elseif (empty($passive_settings['passive_link_uniacid'])) {
+			$passive_settings['passive_link_uniacid'] = array($_W['uniacid']);
 		} elseif (!empty($passive_settings['passive_link_uniacid']) && !in_array($_W['uniacid'], $passive_settings['passive_link_uniacid'])) {
 
 			array_push($passive_settings['passive_link_uniacid'], array($_W['uniacid']));
@@ -1425,4 +1427,22 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 	//删除特定的公众号模块缓存
 	cache_delete(cache_system_key('module_setting', array('module_name' => $module_name, 'uniacid' => $uniacid)));
 	return true;
+}
+
+function uni_unpassive_link_uniacid($uniacid, $module_name) {
+	global $_W;
+	if (empty($uniacid) || empty($module_name)) {
+		return false;
+	}
+	$passive_info = table('uni_account_modules')->getByUniacidAndModule($module_name, $uniacid);
+	if (!empty($passive_info['settings']) && is_array($passive_info['settings']['passive_link_uniacid'])) {
+		foreach ($passive_info['settings']['passive_link_uniacid'] as $key => $value) {
+			if ($_W['uniacid'] == $value) {
+				unset($passive_info['settings']['passive_link_uniacid'][$key]);
+				break;
+			}
+		}
+		table('uni_account_modules')->fill(array('settings' => iserializer($passive_info['settings'])))->where('module', $module_name)->where('uniacid', $uniacid)->save();
+		cache_delete(cache_system_key('module_setting', array('module_name' => $module_name, 'uniacid' => $uniacid)));
+	}
 }

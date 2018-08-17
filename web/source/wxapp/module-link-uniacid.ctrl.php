@@ -56,15 +56,18 @@ if ($do == 'module_link_uniacid') {
 }
 
 if ($do == 'module_unlink_uniacid') {
-	if (!empty($version_info)) {
-		$module = current($version_info['modules']);
-		$version_modules = array(
-			$module['name'] => array(
-				'name' => $module['name'],
-				'version' => $module['version']
-				)
-			);
+	if (empty($version_info)) {
+		iajax(-1, '版本信息错误！');
 	}
+	$module = current($version_info['modules']);
+	$version_modules = array(
+		$module['name'] => array(
+		'name' => $module['name'],
+		'version' => $module['version']
+		)
+	);
+	uni_unpassive_link_uniacid($module['account']['uniacid'], $module['name']);
+
 	$version_modules = iserializer($version_modules);
 	$result = pdo_update('wxapp_versions', array('modules' => $version_modules), array('id' => $version_info['id']));
 	if ($result) {
