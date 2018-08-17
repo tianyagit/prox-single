@@ -1312,6 +1312,7 @@ function uni_account_global_oauth() {
 
 function uni_search_link_account($module_name, $account_type) {
 	global $_W;
+	load()->model('miniapp');
 	$module_name = trim($module_name);
 	if (empty($module_name) || empty($account_type) || !in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL))) {
 		return array();
@@ -1342,9 +1343,21 @@ function uni_search_link_account($module_name, $account_type) {
 				unset($owned_account[$key]);
 				continue;
 			}
+			if (in_array($account_type, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
+				$last_version = (array)miniapp_fetch($account['uniacid']);
+				if (empty($last_version['version']) || empty($last_version['version']['modules']) || current((array)array_keys($last_version['version']['modules'])) != $module_name) {
+					unset($owned_account[$key]);
+					continue;
+				}
+				$current_module = current($last_version['version']['modules']);
+				if (!empty($current_module['account'])) {
+					unset($owned_account[$key]);
+					continue;
+				}
+			}
 			if (in_array($account_type, array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)) && $account_modules[$module_name][MODULE_SUPPORT_ACCOUNT_NAME] != MODULE_SUPPORT_ACCOUNT) {
 				unset($owned_account[$key]);
-			} elseif ($account_type == ACCOUNT_TYPE_APP_NORMAL && $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
+			} elseif (in_array($account_type, array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH)) && $account_modules[$module_name]['wxapp_support'] != MODULE_SUPPORT_WXAPP) {
 				unset($owned_account[$key]);
 			} elseif ($account_type == ACCOUNT_TYPE_WEBAPP_NORMAL && $account_modules[$module_name]['webapp_support'] != MODULE_SUPPORT_WEBAPP) {
 				unset($owned_account[$key]);
@@ -1394,6 +1407,8 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 		}
 		if (empty($passive_settings)) {
 			$passive_settings = array('passive_link_uniacid' => array($_W['uniacid']));
+		} elseif (empty($passive_settings['passive_link_uniacid'])) {
+			$passive_settings['passive_link_uniacid'] = array($_W['uniacid']);
 		} elseif (!empty($passive_settings['passive_link_uniacid']) && !in_array($_W['uniacid'], $passive_settings['passive_link_uniacid'])) {
 
 			array_push($passive_settings['passive_link_uniacid'], array($_W['uniacid']));
@@ -1412,4 +1427,22 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 	//删除特定的公众号模块缓存
 	cache_delete(cache_system_key('module_setting', array('module_name' => $module_name, 'uniacid' => $uniacid)));
 	return true;
+}
+
+function uni_unpassive_link_uniacid($uniacid, $module_name) {
+	global $_W;
+	if (empty($uniacid) || empty($module_name)) {
+		return false;
+	}
+	$passive_info = table('uni_account_modules')->getByUniacidAndModule($module_name, $uniacid);
+	if (!empty($passive_info['settings']) && is_array($passive_info['settings']['passive_link_uniacid'])) {
+		foreach ($passive_info['settings']['passive_link_uniacid'] as $key => $value) {
+			if ($_W['uniacid'] == $value) {
+				unset($passive_info['settings']['passive_link_uniacid'][$key]);
+				break;
+			}
+		}
+		table('uni_account_modules')->fill(array('settings' => iserializer($passive_info['settings'])))->where('module', $module_name)->where('uniacid', $uniacid)->save();
+		cache_delete(cache_system_key('module_setting', array('module_name' => $module_name, 'uniacid' => $uniacid)));
+	}
 }

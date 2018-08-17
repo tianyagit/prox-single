@@ -56,15 +56,18 @@ if ($do == 'module_link_uniacid') {
 }
 
 if ($do == 'module_unlink_uniacid') {
-	if (!empty($version_info)) {
-		$module = current($version_info['modules']);
-		$version_modules = array(
-				$module['name'] => array(
-					'name' => $module['name'],
-					'version' => $module['version']
-					)
-			);
+	if (empty($version_info)) {
+		iajax(-1, '版本信息错误！');
 	}
+	$module = current($version_info['modules']);
+	$version_modules = array(
+		$module['name'] => array(
+		'name' => $module['name'],
+		'version' => $module['version']
+		)
+	);
+	uni_unpassive_link_uniacid($module['account']['uniacid'], $module['name']);
+
 	$version_modules = iserializer($version_modules);
 	$result = pdo_update('wxapp_versions', array('modules' => $version_modules), array('id' => $version_info['id']));
 	if ($result) {
@@ -115,13 +118,6 @@ if ($do == 'search_link_account') {
 			if (in_array($account['uniacid'], $have_link_uniacid)) {
 				unset($account_list[$key]);
 				continue;
-			}
-			if ($account_type == ACCOUNT_TYPE_APP_NORMAL) {
-				$last_version = (array)miniapp_fetch($account['uniacid']);
-				if (empty($last_version['version']) || empty($last_version['version']['modules']) || current((array)array_keys($last_version['version']['modules'])) != $module_name) {
-					unset($account_list[$key]);
-					continue;
-				}
 			}
 			$account_list[$key]['logo'] = is_file(IA_ROOT . '/attachment/headimg_' . $account['acid'] . '.jpg') ? tomedia('headimg_'.$account['acid']. '.jpg').'?time='.time() : './resource/images/nopic-107.png';
 		}
