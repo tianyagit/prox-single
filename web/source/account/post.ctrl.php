@@ -154,8 +154,20 @@ if($do == 'base') {
 					}
 					$result = pdo_update('account', array('endtime' => $endtime), array('uniacid' => $uniacid));
 				}
+				break;
+			case 'attachment_limit':
+				if (user_is_vice_founder() || empty($_W['isfounder'])) {
+					iajax(1, '只有创始人可以修改！');
+				}
+				$has_uniacid = pdo_getcolumn('uni_settings', array('uniacid' => $uniacid), 'uniacid');
+				if (empty($has_uniacid)) {
+					$result = pdo_insert('uni_settings', array('attachment_limit' => intval($_GPC['request_data']) * 1024, 'uniacid' => $uniacid));
+				} else {
+					$result = pdo_update('uni_settings', array('attachment_limit' => intval($_GPC['request_data']) * 1024), array('uniacid' => $uniacid));
+				}
+				break;
 		}
-		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime', 'jointype', 'highest_visit'))) {
+		if(!in_array($type, array('qrcodeimgsrc', 'headimgsrc', 'name', 'endtime', 'jointype', 'highest_visit', 'attachment_limit'))) {
 			$result = pdo_update(uni_account_tablename(ACCOUNT_TYPE), $data, array('acid' => $acid, 'uniacid' => $uniacid));
 		}
 		if($result) {
@@ -193,8 +205,10 @@ if($do == 'base') {
 	$account['start'] = date('Y-m-d', $account['starttime']);
 	$account['end'] = $account['endtime'] == 0 ? '永久' : date('Y-m-d', $account['endtime']);
 	$account['endtype'] = $account['endtime'] == 0 ? 1 : 2;
-	$statistics_setting = (array)uni_setting_load(array('statistics'), $uniacid);
-	$account['highest_visit'] = empty($statistics_setting['statistics']['founder']) ? 0 : $statistics_setting['statistics']['founder'];
+	$uni_setting = (array)uni_setting_load(array('statistics', 'attachment_limit', 'attachment_size'), $uniacid);
+	$account['highest_visit'] = empty($uni_setting['statistics']['founder']) ? 0 : $uni_setting['statistics']['founder'];
+	$account['attachment_limit'] = round($uni_setting['attachment_limit'] / 1024, 2);
+	$account['attachment_size'] = round($uni_setting['attachment_size'] / 1024, 2);
 	$uniaccount = array();
 	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
 	/* xstart */

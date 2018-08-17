@@ -48,7 +48,43 @@
 		</tr>
 		{/if}
 		<!-- xend -->
+		<tr>
+			<td class="table-label">附件空间</td>
+			<td>
+				<span ng-bind="account.attachment_limit"></span><span ng-if="account.attachment_limit">M</span>
+			</td>
+			<td>
+				<div class="link-group" ng-if="founder || owner">
+					<a href="javascript:;" data-toggle="modal" data-target="#attachment_limit" ng-click="editInfo('attachment_limit', account.attachment_limit)">修改</a>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="table-label">已用附件空间</td>
+			<td><span ng-bind="account.attachment_size"></span><span>M</span></td>
+			<td></td>
+		</tr>
 	</table>
+	<div class="modal fade" id="attachment_limit" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="we7-modal-dialog modal-dialog we7-form">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<div class="modal-title">修改公众号附件空间大小</div>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<input type="number" ng-model="middleAccount.attachment_limit" class="form-control" placeholder="修改公众号附件空间大小" />
+						<span class="help-block">请输入单位 M 的内存值</span>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="httpChange('attachment_limit')">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div class="modal fade" id="name" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="we7-modal-dialog modal-dialog">
 			<div class="modal-content">
