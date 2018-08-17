@@ -51,7 +51,8 @@
 		<tr>
 			<td class="table-label">附件空间</td>
 			<td>
-				<span ng-bind="account.attachment_limit"></span><span ng-if="account.attachment_limit">M</span>
+				<span ng-if="account.attachment_limit != -1">{{account.attachment_limit}}M</span>
+				<span ng-if="account.attachment_limit == -1">不限</span>
 			</td>
 			<td>
 				<div class="link-group" ng-if="founder || owner">
@@ -74,8 +75,8 @@
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<input type="number" ng-model="middleAccount.attachment_limit" class="form-control" placeholder="修改公众号附件空间大小" />
-						<span class="help-block">请输入单位 M 的内存值</span>
+						<input type="number" ng-model="middleAccount.attachment_limit" class="form-control"/>
+						<span class="help-block">请输入单位为 M 的内存值，设置为 -1 时不限空间。</span>
 					</div>
 				</div>
 				<div class="modal-footer">

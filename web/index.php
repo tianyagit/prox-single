@@ -16,7 +16,36 @@ if (!empty($_GPC['state'])) {
 		$_GPC['handle_type'] = $login_callback_params['mode'];
 	}
 }
+if (!pdo_fieldexists('uni_settings', 'attachment_limit') && !pdo_fieldexists('uni_settings', 'attachment_size')) {
+	pdo_query("ALTER TABLE " . tablename('uni_settings') . " ADD (`attachment_limit` INT(11) DEFAULT 0 COMMENT '单位M', `attachment_size` BIGINT(20) UNSIGNED DEFAULT 0 COMMENT '单位KB')");
 
+	$attachdir = glob(IA_ROOT . '/' . $_W['config']['upload']['attachdir'] . '/*');
+	if (!empty($attachdir)) {
+		foreach ($attachdir as $attach) {
+			if (!is_dir($attach)) {
+				continue;
+			}
+			$attach = glob($attach . '/*');
+			foreach ($attach as $dir) {
+				if (!is_dir($dir)) {
+					continue;
+				}
+				$uniacid = substr($dir, strripos($dir, '/') + 1);
+				$uniacid = pdo_getcolumn('account', array('uniacid' => $uniacid), 'uniacid');
+				if (!empty($uniacid)) {
+					$size = dir_size($dir);
+					$size = round($size / 1024);
+					$set_id = pdo_getcolumn('uni_settings', array('uniacid' => $uniacid), 'uniacid');
+					if (empty($set_id)) {
+						pdo_insert('uni_settings', array('attachment_size' => $size, 'uniacid' => $uniacid));
+					} else {
+						pdo_update('uni_settings', array('attachment_size +=' => $size), array('uniacid' => $uniacid));
+					}
+				}
+			}
+		}
+	}
+}
 if (empty($_W['isfounder']) && !empty($_W['user']) && ($_W['user']['status'] == USER_STATUS_CHECK || $_W['user']['status'] == USER_STATUS_BAN)) {
 	message('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', url('user/login'), 'info');
 }

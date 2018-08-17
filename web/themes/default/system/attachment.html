@@ -20,6 +20,17 @@
 			</div>
 		</div>
 	{/if}
+		<h5 class="page-header">附件空间设置</h5>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">空间容量</label>
+			<div class="col-sm-5">
+				<div class="input-group">
+					<input name="upload[attachment_limit]" value="{$upload['attachment_limit']}" type="text" class="form-control">
+					<span class="input-group-addon">M</span>
+				</div>
+				<div class="help-block">设置为 0 时不限制空间</div>
+			</div>
+		</div>
 		<h5 class="page-header">附件缩略设置</h5>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">缩略设置</label>

@@ -17,7 +17,7 @@ class AlterUniSettings {
 	public function up() {
 		global $_W;
 		if (!pdo_fieldexists('uni_settings', 'attachment_limit') && !pdo_fieldexists('uni_settings', 'attachment_size')) {
-			pdo_query("ALTER TABLE " . tablename('uni_settings') . " ADD (`attachment_limit` BIGINT(20) UNSIGNED DEFAULT 0 COMMENT '单位KB', `attachment_size` BIGINT(20) UNSIGNED DEFAULT 0 COMMENT '单位KB')");
+			pdo_query("ALTER TABLE " . tablename('uni_settings') . " ADD (`attachment_limit` INT(11) DEFAULT 0 COMMENT '单位M', `attachment_size` BIGINT(20) UNSIGNED DEFAULT 0 COMMENT '单位KB')");
 
 			$attachdir = glob(IA_ROOT . '/' . $_W['config']['upload']['attachdir'] . '/*');
 			if (!empty($attachdir)) {
@@ -45,7 +45,6 @@ class AlterUniSettings {
 					}
 				}
 			}
-
 		}
 	}
 	
