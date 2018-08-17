@@ -223,6 +223,19 @@ abstract class WeAccount {
 
 					}
 					break;
+				case 'scancode_waitmsg':
+					if ($packet['event'] == 'scancode_waitmsg') {
+						$packet['type'] = 'qr';
+						$packet['scanresult'] = $packet['scancodeinfo']['scanresult'];
+					}
+					if(!empty($packet['eventkey'])) {
+						$packet['scene'] = str_replace('qrscene_', '', $packet['eventkey']);
+						if(strexists($packet['scene'], '\u')) {
+							$packet['scene'] = '"' . str_replace('\\u', '\u', $packet['scene']) . '"';
+							$packet['scene'] = json_decode($packet['scene']);
+						}
+					}
+					break;
 				case 'unsubscribe':
 					$packet['type'] = 'unsubscribe';
 					break;

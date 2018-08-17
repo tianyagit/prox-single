@@ -3,7 +3,6 @@ defined('IN_IA') or exit('Access Denied');
 
 class XzappAccount extends WeAccount {
 	public $tablename = 'account_xzapp';
-
 	public function __construct($account = array()) {
 		$this->menuFrame = 'account';
 		$this->type = ACCOUNT_TYPE_XZAPP_NORMAL;
@@ -210,6 +209,60 @@ class XzappAccount extends WeAccount {
 	public function fetchAccountInfo() {
 		$account = table('account_xzapp')->getByAcid($this->uniaccount['acid']);
 		return $account;
+	}
+
+	public function getOauthCodeUrl($callback, $state = '') {
+		$this->account['callbackurl'] = $callback;
+		return "https://openapi.baidu.com/oauth/2.0/authorize?response_type=code&client_id={$this->account['key']}&redirect_uri={$callback}&scope=snsapi_base&state={$state}";
+	}
+
+	public function getOauthUserInfoUrl($callback, $state = '') {
+		$this->account['callbackurl'] = $callback;
+		return "https://openapi.baidu.com/oauth/2.0/authorize?response_type=code&client_id={$this->account['key']}&redirect_uri={$callback}&scope=snsapi_userinfo&state={$state}";
+	}
+
+	public function getOauthInfo($code = '') {
+		global $_W,$_GPC;
+		if (!empty($_GPC['code'])) {
+			$code = $_GPC['code'];
+		}
+		if (empty($code)) {
+			$oauth_url = uni_account_oauth_host();
+			$url = urlencode($oauth_url . "app/index.php?{$_SERVER['QUERY_STRING']}");
+			$forward = $this->getOauthCodeUrl($url);
+			header('Location: ' . $forward);
+			exit;
+		}
+
+		$str = '';
+		if(uni_is_multi_acid()) {
+			$str = "&j={$_W['acid']}";
+		}
+		$oauth_type = $_GPC['scope'];
+		$oauth_url = uni_account_oauth_host();
+		$url = $oauth_url . "app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
+		$callback = urlencode($url);
+		$oauth_info = $this->getOauthAccessToken($code, $callback);
+		$user_info_url = "https://openapi.baidu.com/rest/2.0/cambrian/sns/userinfo?access_token={$oauth_info['token']}&openid={$oauth_info['openid']}";
+		$response = $this->requestApi($user_info_url);
+		return $response;
+	}
+
+	public function getOauthAccessToken($code, $callback) {
+		$cachekey = cache_system_key('oauthaccesstoken', array('acid' => $this->account['acid']));
+		$cache = cache_load($cachekey);
+		if (!empty($cache) && !empty($cache['token']) && $cache['expire'] > TIMESTAMP) {
+			return $cache;
+		}
+
+		$url = "https://openapi.baidu.com/oauth/2.0/token?grant_type=authorization_code&code={$code}&client_id={$this->account['key']}&client_secret={$this->account['secret']}&redirect_uri={$callback}";
+		$oauth_info = $this->requestApi($url);
+		$record = array();
+		$record['token'] = $oauth_info['access_token'];
+		$record['openid'] = $oauth_info['openid'];
+		$record['expire'] = TIMESTAMP + $oauth_info['expires_in'] - 200;
+		cache_write($cachekey, $record);
+		return $record;
 	}
 
 	public function accountDisplayUrl() {

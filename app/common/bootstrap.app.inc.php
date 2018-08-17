@@ -137,6 +137,7 @@ if (!empty($unisetting['oauth']['account'])) {
 		'acid' => $_W['account']['acid'],
 		'type' => $_W['account']['type'],
 		'level' => $_W['account']['level'],
+		'level' => $_W['account']['type'] == ACCOUNT_TYPE_XZAPP_NORMAL ? 4 : $_W['account']['level'],
 	);
 }
 
@@ -155,9 +156,9 @@ if (!empty($_GPC['scope']) && $_GPC['scope'] == 'snsapi_base' && !empty($_GPC['c
 	$_SESSION['userinfo'] = $fans['tag'];
 }
 
-if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' && empty($_W['isajax'])) {
-	if (($_W['container'] == 'wechat' && !$_GPC['logout'] && empty($_W['openid']) && ($controller != 'auth' || ($controller == 'auth' && !in_array($action, array('forward', 'oauth'))))) ||
-		($_W['container'] == 'wechat' && !$_GPC['logout'] && empty($_SESSION['oauth_openid']) && ($controller != 'auth'))) {
+if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['level'] == '4' && empty($_W['isajax']) || $_W['account']['oauth']['type'] == ACCOUNT_TYPE_XZAPP_NORMAL) {
+	if (($_W['container'] == 'account' && !$_GPC['logout'] && empty($_W['openid']) && ($controller != 'auth' || ($controller == 'auth' && !in_array($action, array('forward', 'oauth'))))) ||
+		($_W['container'] == 'account' && !$_GPC['logout'] && empty($_SESSION['oauth_openid']) && ($controller != 'auth'))) {
 		$state = 'we7sid-'.$_W['session_id'];
 		if (empty($_SESSION['dest_url'])) {
 			$_SESSION['dest_url'] = urlencode($_W['siteurl']);
