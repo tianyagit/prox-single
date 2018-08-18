@@ -160,7 +160,7 @@ if($do == 'base') {
 					iajax(1, '只有创始人可以修改！');
 				}
 				$has_uniacid = pdo_getcolumn('uni_settings', array('uniacid' => $uniacid), 'uniacid');
-				if ($_GPC['request_data'] == -1) {
+				if ($_GPC['request_data'] < 0) {
 					$attachment_limit = -1;
 				} else {
 					$attachment_limit = intval($_GPC['request_data']);
@@ -214,17 +214,13 @@ if($do == 'base') {
 	$account['highest_visit'] = empty($uni_setting['statistics']['founder']) ? 0 : $uni_setting['statistics']['founder'];
 	$account['attachment_size'] = round($uni_setting['attachment_size'] / 1024, 2);
 
-	if ($uni_setting['attachment_limit'] == -1) {
+	$attachment_limit = intval($uni_setting['attachment_limit']);
+	if ($attachment_limit == 0) {
+		$upload = setting_load('upload');
+		$attachment_limit = empty($upload['upload']['attachment_limit']) ? 0 : intval($upload['upload']['attachment_limit']);
+	}
+	if ($attachment_limit <= 0) {
 		$attachment_limit = -1;
-	} else {
-		$attachment_limit = $uni_setting['attachment_limit'];
-		if ($attachment_limit == 0) {
-			$upload = setting_load('upload');
-			$attachment_limit = empty($upload['upload']['attachment_limit']) ? 0 : $upload['upload']['attachment_limit'];
-		}
-		if ($attachment_limit == 0) {
-			$attachment_limit = -1;
-		}
 	}
 	$account['attachment_limit'] = intval($attachment_limit);
 

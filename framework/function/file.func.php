@@ -945,24 +945,16 @@ function file_check_uni_space($file) {
 
 	if (empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
 		$uni_setting = uni_setting_load(array('attachment_limit', 'attachment_size'));
-		if ($uni_setting['attachment_limit'] == -1) {
-			$attachment_limit = -1;
-		} else {
-			$attachment_limit = $uni_setting['attachment_limit'];
-			if ($attachment_limit == 0) {
-				$upload = setting_load('upload');
-				$attachment_limit = empty($upload['upload']['attachment_limit']) ? 0 : $upload['upload']['attachment_limit'];
-			}
-			if ($attachment_limit == 0) {
-				$attachment_limit = -1;
-			}
+
+		$attachment_limit = intval($uni_setting['attachment_limit']);
+		if ($attachment_limit == 0) {
+			$upload = setting_load('upload');
+			$attachment_limit = empty($upload['upload']['attachment_limit']) ? 0 : intval($upload['upload']['attachment_limit']);
 		}
 
-		if ($attachment_limit != -1) {
-			$attachment_limit *= 1024;
-			$file_size = round(filesize($file) / 1024);
-			$file_size = max(1, $file_size);
-			if ($file_size + $uni_setting['attachment_size'] > $attachment_limit) {
+		if ($attachment_limit > 0) {
+			$file_size = max(1, round(filesize($file) / 1024));
+			if (($file_size + $uni_setting['attachment_size']) > ($attachment_limit * 1024)) {
 				return error(-1, '上传失败，可使用的附件空间不足！');
 			}
 		}

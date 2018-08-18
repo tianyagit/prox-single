@@ -85,6 +85,7 @@ if ($do == 'global') {
 		if (!is_array($upload['audio']['extentions']) || count($upload['audio']['extentions']) < 1) {
 			$upload['audio']['extentions'] = '';
 		}
+		$upload['attachment_limit'] = empty($upload['attachment_limit']) ? 0 : max(0, intval($upload['attachment_limit']));
 		setting_save($upload, 'upload');
 		itoast('更新设置成功！', url('system/attachment'), 'success');
 	}
