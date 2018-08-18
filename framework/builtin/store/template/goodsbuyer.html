@@ -50,10 +50,10 @@
 							<td class="td_one" colspan="3">
 								<span class="tit">可使用模块</span>
 								<span class="icon">
-									<i class="wi wi-wechat"></i> {php echo count($module_groups[$goods['module_group']]['modules'])}
-									<i class="wi wi-wxapp" ></i> {php echo count($module_groups[$goods['module_group']]['wxapp'])}
-									<i class="wi wi-pc-circle"></i> {php echo count($module_groups[$goods['module_group']]['webapp'])}
-									<i class="wi wi-app"></i> {php echo count($module_groups[$goods['module_group']]['phoneapp'])}
+									<i class="wi wi-wechat"></i> {php echo empty($module_groups[$goods['module_group']]['modules'])? 0 : count($module_groups[$goods['module_group']]['modules'])}
+									<i class="wi wi-wxapp" ></i> {php echo empty($module_groups[$goods['module_group']]['wxapp'])? 0 : count($module_groups[$goods['module_group']]['wxapp'])}
+									<i class="wi wi-pc-circle"></i> {php echo empty($module_groups[$goods['module_group']]['webapp'])? 0 : count($module_groups[$goods['module_group']]['webapp'])}
+									<i class="wi wi-app"></i> {php echo empty($module_groups[$goods['module_group']]['phoneapp'])? 0 : count($module_groups[$goods['module_group']]['phoneapp'])}
 								</span>
 							</td>
 						</tr>
