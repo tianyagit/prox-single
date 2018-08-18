@@ -22,7 +22,6 @@ if(empty($system_menu)) {
 	cache_build_frame_menu();
 	$system_menu = cache_load(cache_system_key('system_frame', array('uniacid' => $_W['uniacid'])));
 }
-
 //获取全部permission_name，方便判断是否是系统菜单
 $system_menu_permission = array();
 if (!empty($system_menu)) {
@@ -41,7 +40,7 @@ if (!empty($system_menu)) {
 				}
 			}
 		}
-		if (in_array($menu_name, array('account', 'xzapp', 'xzapp', 'phoneapp', 'webapp'))) {
+		if (in_array($menu_name, array('account', 'wxapp', 'xzapp', 'phoneapp', 'webapp', 'aliapp'))) {
 			$menu['menu'] = $menu['section'];
 			$system_menu['platform']['section'][$menu_name] = $menu;
 			unset($system_menu[$menu_name]);

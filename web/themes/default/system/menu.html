@@ -29,7 +29,7 @@
 						</div>
 						<div class="table-div__item name">{$menu['title']}</div>
 						<div class="table-div__item display">
-							{if $permission_name == 'appmarket'}
+							{if in_array($permission_name, array('appmarket', 'site'))}
 							<span class="color-gray">不可关闭</span>
 							{else}
 							<span class="switch" ng-init="displayStatus['{$permission_name}'] = {php echo $menu['is_display'] ? 'true' : 'false'}" ng-click="changeDisplay('{$permission_name}')" ng-class="{'switchOn' : displayStatus['{$permission_name}'], 'switchOff' : !displayStatus['{$permission_name}']}"></span>
