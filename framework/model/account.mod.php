@@ -1425,7 +1425,7 @@ function uni_passive_link_uniacid($uniacid, $module_name) {
 		pdo_insert('uni_account_modules', $passive_data);
 	}
 	//删除特定的公众号模块缓存
-	cache_delete(cache_system_key('module_setting', array('module_name' => $module_name, 'uniacid' => $uniacid)));
+	cache_clean(cache_system_key('module_setting'));
 	return true;
 }
 

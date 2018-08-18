@@ -39,7 +39,6 @@ if ($do == 'module_link_uniacid') {
 		}
 		uni_passive_link_uniacid($uniacid, $module_name);
 		cache_build_module_info($module_name);
-		cache_clean(cache_system_key('module_setting'));
 		iajax(0, '关联成功');
 	}
 
