@@ -525,7 +525,7 @@ class StoreModuleSite extends WeModuleSite {
 			if ($_GPC['type'] == STORE_TYPE_PACKAGE || empty($_GPC['type'])) {
 				$module_groups = uni_groups();
 			}
-			if ($_GPC['type'] == STORE_TYPE_USER_PACKAGE) {
+			if ($_GPC['type'] == STORE_TYPE_USER_PACKAGE || empty($_GPC['type'])) {
 				$user_groups = pdo_fetchall("SELECT * FROM " . tablename('users_group'), array(), 'id');
 				$user_groups = user_group_format($user_groups);
 			}
