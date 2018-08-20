@@ -19,7 +19,7 @@
 					{php $platform_url=url('account/display')}
 					{php $nav_top_fold[] = array('name' => 'all', 'title'=>'全部', 'type' => 'all', 'url' => $platform_url)}
 					{loop $top_nav $nav}
-						{if in_array($nav['name'], array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN))}
+						{if in_array($nav['name'], array(ACCOUNT_TYPE_SIGN, WXAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN, XZAPP_TYPE_SIGN, ALIAPP_TYPE_SIGN))}
 							{php $nav_top_fold[]=$nav}
 						{elseif in_array($nav['name'], array('platform', 'module', 'system', 'site'))}
 							{php $nav_top_tiled_system[]=$nav}
