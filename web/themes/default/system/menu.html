@@ -41,7 +41,9 @@
 								<a href="javascript:;" ng-click="removeSubItem('{$menu['permission_name']}')">删除</a>
 								{/if}
 								<a href="javascript:;" ng-click="editMainMenu({php echo intval($menu['displayorder'])}, '{$permission_name}')">编辑</a>
+								{if !empty($menu['section'])}
 								<a href="javascript:;" class="toggle"></a>
+								{/if}
 							</div>
 						</div>
 					</div>
