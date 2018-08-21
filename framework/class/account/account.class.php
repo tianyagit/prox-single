@@ -81,59 +81,98 @@ abstract class WeAccount {
 
 	static public function includes($uniaccount) {
 		$type = $uniaccount['type'];
+		$account_obj = array();
 		if($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-			load()->classs('account/weixin.account');
-			$account_obj = new WeiXinAccount();
+			static $weixinaccount_obj;
+			if (empty($weixinaccount_obj)) {
+				load()->classs('account/weixin.account');
+				$weixinaccount_obj = new WeiXinAccount();
+			}
+			$account_obj[$type] = $weixinaccount_obj;
 		}
 
 		if ($type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			load()->classs('account/xzapp.account');
-			$account_obj = new XzappAccount();
+			static $xzappaccount_obj;
+			if (empty($xzappaccount_obj)) {
+				load()->classs('account/xzapp.account');
+				$xzappaccount_obj = new XzappAccount();
+			}
+			$account_obj[$type] = $xzappaccount_obj;
 		}
 
 		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-			load()->classs('account/weixin.platform');
-			$account_obj = new WeiXinPlatform();
+			static $weixinplatform_obj;
+			if (empty($weixinplatform_obj)) {
+				load()->classs('account/weixin.platform');
+				$weixinplatform_obj = new WeiXinPlatform();
+			}
+			$account_obj[$type] = $weixinplatform_obj;
 		}
-		// 授权小程序
 		if ($type == ACCOUNT_TYPE_APP_AUTH) {
-			load()->classs('account/weixin.platform');
-			load()->classs('account/wxapp.platform');
-			$account_obj = new WxAppPlatform();
+			static $wxappplatform_obj;
+			if (empty($wxappplatform_obj)) {
+				load()->classs('account/weixin.platform');
+				load()->classs('account/wxapp.platform');
+				$wxappplatform_obj = new WxAppPlatform();
+			}
+			$account_obj[$type] = $wxappplatform_obj;
 		}
 		if($type == ACCOUNT_TYPE_APP_NORMAL) {
-			load()->classs('account/wxapp.account');
-			$account_obj = new WxappAccount();
+			static $wxappaccount_obj;
+			if (empty($wxappaccount_obj)) {
+				load()->classs('account/wxapp.account');
+				$wxappaccount_obj = new WxappAccount();
+			}
+			$account_obj[$type] = $wxappaccount_obj;
 		}
 		if($type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-			load()->classs('account/webapp.account');
-			$account_obj = new WebappAccount();
+			static $webappaccount_obj;
+			if (empty($webappaccount_obj)) {
+				load()->classs('account/webapp.account');
+				$webappaccount_obj = new WebappAccount();
+			}
+			$account_obj[$type] = $webappaccount_obj;
 		}
 		if($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-			load()->classs('account/phoneapp.account');
-			$account_obj = new PhoneappAccount();
+			static $phoneappaccount_obj;
+			if (empty($phoneappaccount_obj)) {
+				load()->classs('account/phoneapp.account');
+				$phoneappaccount_obj = new PhoneappAccount();
+			}
+			$account_obj[$type] = $phoneappaccount_obj;
 		}
 		if($type == ACCOUNT_TYPE_WXAPP_WORK) {
-			load()->classs('account/wxapp.work');
-			$account_obj = new WxappWork();
+			static $wxappwork_obj;
+			if (empty($wxappwork_obj)) {
+				load()->classs('account/wxapp.work');
+				$wxappwork_obj = new WxappWork();
+			}
+			$account_obj[$type] = $wxappwork_obj;
 		}
 		if($type == ACCOUNT_TYPE_ALIAPP_NORMAL) {
-			load()->classs('account/aliapp.account');
-			$account_obj = new AliappAccount();
+			static $aliappaccount_obj;
+			if (empty($aliappaccount_obj)) {
+				load()->classs('account/aliapp.account');
+				$aliappaccount_obj = new AliappAccount();
+			}
+			$account_obj[$type] = $aliappaccount_obj;
 		}
-		$account_obj->uniacid = $uniaccount['uniacid'];
-		$account_obj->uniaccount = $uniaccount;
-		$account_obj->account = $account_obj->fetchAccountInfo();
-		$account_obj->account['type'] = $account_obj->uniaccount['type'];
-		$account_obj->account['isconnect'] = $account_obj->uniaccount['isconnect'];
-		$account_obj->account['isdeleted'] = $account_obj->uniaccount['isdeleted'];
-		$account_obj->account['endtime'] = $account_obj->uniaccount['endtime'];
+		if (empty($account_obj[$type])) {
+			return true;
+		}
+		$account_obj[$type]->uniacid = $uniaccount['uniacid'];
+		$account_obj[$type]->uniaccount = $uniaccount;
+		$account_obj[$type]->account = $account_obj[$type]->fetchAccountInfo();
+		$account_obj[$type]->account['type'] = $account_obj[$type]->uniaccount['type'];
+		$account_obj[$type]->account['isconnect'] = $account_obj[$type]->uniaccount['isconnect'];
+		$account_obj[$type]->account['isdeleted'] = $account_obj[$type]->uniaccount['isdeleted'];
+		$account_obj[$type]->account['endtime'] = $account_obj[$type]->uniaccount['endtime'];
 
 		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH || $type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			$account_obj->same_account_exist = pdo_getall($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
+			$account_obj[$type]->same_account_exist = pdo_getall($account_obj[$type]->tablename, array('key' => $account_obj[$type]->account['key'], 'uniacid <>' => $account_obj[$type]->account['uniacid']), array(), 'uniacid');
 		}
 
-		return $account_obj;
+		return $account_obj[$type];
 	}
 
 	/**
