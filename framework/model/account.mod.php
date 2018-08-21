@@ -293,7 +293,7 @@ function uni_modules_by_uniacid($uniacid, $enabled = true) {
 				continue;
 			}
 			if ($module_info[MODULE_SUPPORT_ALIAPP_NAME] != MODULE_SUPPORT_ALIAPP &&
-					in_array($account_info['type'], array(ACCOUNT_TYPE_ALIAPP_NORMAL))) {
+				in_array($account_info['type'], array(ACCOUNT_TYPE_ALIAPP_NORMAL))) {
 				continue;
 			}
 			if ($module_info[MODULE_SUPPORT_WXAPP_NAME] != MODULE_SUPPORT_WXAPP &&
@@ -410,6 +410,11 @@ function uni_modules_list($uniacid, $enabled = true, $type = '') {
 
 			if ($module_info[MODULE_SUPPORT_XZAPP_NAME] != MODULE_SUPPORT_XZAPP &&
 				in_array($type, array(ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_XZAPP_AUTH))) {
+				continue;
+			}
+
+			if ($module_info[MODULE_SUPPORT_ALIAPP_NAME] != MODULE_SUPPORT_ALIAPP &&
+				in_array($type, array(ACCOUNT_TYPE_ALIAPP_NORMAL))) {
 				continue;
 			}
 

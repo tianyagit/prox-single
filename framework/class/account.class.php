@@ -20,11 +20,11 @@ abstract class WeAccount {
 	public $type;
 	//帐号类型中文名称
 	public $typeName;
-	//帐号对应的英文类型 
+	//帐号对应的英文类型
 	public $typeSign;
 	//相应类型对应的模板后缀
 	public $typeTempalte;
-	//当前公众号类型 
+	//当前公众号类型
 
 	/**
 	 * 创建平台特定的公众号操作对象
@@ -450,7 +450,7 @@ class WeUtility {
 		global $_W;
 		static $file;
 		$type = str_replace('createModule','', $type);
-		$types = array('wxapp', 'phoneapp', 'webapp', 'systemwelcome', 'processor');
+		$types = array('wxapp', 'phoneapp', 'webapp', 'systemwelcome', 'processor', 'aliapp');
 		$type = in_array(strtolower($type), $types) ? $type : '';
 		$name = $params[0];
 		$class_account = 'WeModule' . $type;
@@ -794,7 +794,7 @@ abstract class WeBase {
 		} else {
 			$result = pdo_insert('uni_account_modules', array('settings' => iserializer($settings), 'module' => $this->modulename ,'uniacid' => $_W['uniacid'], 'enabled' => 1)) !== false;
 		}
-		cache_build_module_info($this->modulename);	
+		cache_build_module_info($this->modulename);
 		return $result;
 	}
 
@@ -1915,6 +1915,61 @@ abstract class WeModuleWxapp extends WeBase {
 				$site->$method($ret);
 			}
 		}
+	}
+}
+
+/*
+ * 模块支付宝小程序
+ */
+abstract class WeModuleAliapp extends WeBase {
+	public $appid;
+	public $version;
+
+	public function __call($name, $arguments) {
+		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/aliapp';
+		$function_name = strtolower(substr($name, 6));
+		//版本号不存在相应的目录则直接使用最新版
+		$func_file = "{$function_name}.inc.php";
+		$file = "$dir/{$this->version}/{$function_name}.inc.php";
+		if (!file_exists($file)) {
+			$version_path_tree = glob("$dir/*");
+			usort($version_path_tree, function($version1, $version2) {
+				return -version_compare($version1, $version2);
+			});
+			if (!empty($version_path_tree)) {
+				// 先过滤目录
+				$dirs = array_filter($version_path_tree, function($path) use ($func_file){
+					$file_path = "$path/$func_file";
+					return is_dir($path) && file_exists($file_path);
+				});
+				$dirs = array_values($dirs);
+
+				// 再过滤文件
+				$files = array_filter($version_path_tree, function($path) use ($func_file){
+					return is_file($path) && pathinfo($path, PATHINFO_BASENAME) == $func_file;
+				});
+				$files = array_values($files);
+
+				if (count($dirs) > 0) {
+					$file = current($dirs).'/'.$func_file;
+				} else if(count($files) > 0){
+					$file = current($files);
+				}
+			}
+		}
+		if(file_exists($file)) {
+			require $file;
+			exit;
+		}
+		return null;
+	}
+
+	public function result($errno, $message, $data = '') {
+		exit(json_encode(array(
+				'errno' => $errno,
+				'message' => $message,
+				'data' => $data,
+		)));
 	}
 }
 

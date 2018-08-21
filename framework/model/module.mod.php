@@ -922,6 +922,9 @@ function module_upgrade_info($modulelist = array()) {
 		if ($manifest_cloud['site_branch']['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 			$manifest['platform']['supports'][] = 'wxapp';
 		}
+		if ($manifest_cloud['site_branch']['aliapp_support'] == MODULE_SUPPORT_ALIAPP) {
+			$manifest['platform']['supports'][] = 'aliapp';
+		}
 		if ($manifest_cloud['site_branch']['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
 			$manifest['platform']['supports'][] = 'webapp';
 		}
@@ -1039,7 +1042,7 @@ function module_upgrade_info($modulelist = array()) {
 				'cloud_id' => $manifest['cloud_id'],
 			);
 			if (!empty($manifest['platform']['supports'])) {
-				foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome') as $support) {
+				foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome', 'xzapp', 'aliapp') as $support) {
 					if (in_array($support, $manifest['platform']['supports'])) {
 						$module_upgrade_data["{$support}_support"] = MODULE_SUPPORT_ACCOUNT;
 					} else {

@@ -237,18 +237,18 @@ if ($do == 'getpackage') {
 	}
 
 	$request_cloud_data = array(
+		'name' => $account_wxapp_info['name'],
+		'modules' => $account_wxapp_info['version']['modules'],
+		'siteInfo' => array(
 			'name' => $account_wxapp_info['name'],
-			'modules' => $account_wxapp_info['version']['modules'],
-			'siteInfo' => array(
-					'name' => $account_wxapp_info['name'],
-					'uniacid' => $account_wxapp_info['uniacid'],
-					'acid' => $account_wxapp_info['acid'],
-					'multiid' => $account_wxapp_info['version']['multiid'],
-					'version' => $account_wxapp_info['version']['version'],
-					'siteroot' => $siteurl,
-					'design_method' => $account_wxapp_info['version']['design_method'],
-			),
-			'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
+			'uniacid' => $account_wxapp_info['uniacid'],
+			'acid' => $account_wxapp_info['acid'],
+			'multiid' => $account_wxapp_info['version']['multiid'],
+			'version' => $account_wxapp_info['version']['version'],
+			'siteroot' => $siteurl,
+			'design_method' => $account_wxapp_info['version']['design_method'],
+		),
+		//'tabBar' => json_decode($account_wxapp_info['version']['quickmenu'], true),
 	);
 	$result = miniapp_getpackage($request_cloud_data);
 
