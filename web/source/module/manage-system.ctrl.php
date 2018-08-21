@@ -12,7 +12,7 @@ load()->model('cache');
 load()->model('module');
 load()->model('user');
 load()->model('account');
-load()->classs('account');
+load()->classs('account/account');
 load()->object('cloudapi');
 load()->model('utility');
 load()->func('db');

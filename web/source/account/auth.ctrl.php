@@ -6,7 +6,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->func('communication');
-load()->classs('weixin.platform');
+load()->classs('account/weixin.platform');
 load()->model('account');
 set_time_limit(0);
 

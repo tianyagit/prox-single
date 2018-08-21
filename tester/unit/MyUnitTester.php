@@ -28,7 +28,7 @@ class MyUnitTester extends TestCase {
 		load()->func('global');
 		load()->func('compat');
 		load()->func('pdo');
-		load()->classs('account');
+		load()->classs('account/account');
 		load()->model('cache');
 		load()->model('account');
 		load()->model('setting');

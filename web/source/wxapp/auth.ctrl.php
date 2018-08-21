@@ -6,8 +6,8 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->func('communication');
-load()->classs('weixin.platform');
-load()->classs('wxapp.platform');
+load()->classs('account/weixin.platform');
+load()->classs('account/wxapp.platform');
 load()->model('miniapp');
 
 $account_platform = new WxAppPlatform();

@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('mc');
 load()->classs('wesession');
-load()->classs('account');
+load()->classs('account/account');
 load()->model('material');
 
 $dos = array('chats', 'send', 'endchats');

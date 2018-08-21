@@ -5,7 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->classs('weixin.platform');
+load()->classs('account/weixin.platform');
 
 setting_load('platform');
 

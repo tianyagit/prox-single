@@ -15,7 +15,7 @@ class PaycenterModuleProcessor extends WeModuleProcessor {
 		if (empty($reply)) {
 			return false;
 		}
-		load()->classs('weixin.account');
+		load()->classs('account/weixin.account');
 		load()->classs('coupon');
 		$coupon = new coupon($_W['acid']);
 		if(is_error($coupon)) {

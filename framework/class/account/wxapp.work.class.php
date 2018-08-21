@@ -4,7 +4,7 @@
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
 defined('IN_IA') or exit('Access Denied');
-load()->classs('wxapp.account');
+load()->classs('account/wxapp.account');
 
 class WxappWork extends WxappAccount {
 	public function getAccessToken() {

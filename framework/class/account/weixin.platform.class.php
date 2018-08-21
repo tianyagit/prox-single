@@ -16,7 +16,7 @@ define('ACCOUNT_PLATFORM_API_OAUTH_USERINFO', 'https://open.weixin.qq.com/connec
 define('ACCOUNT_PLATFORM_API_OAUTH_INFO', 'https://api.weixin.qq.com/sns/oauth2/component/access_token?appid=%s&component_appid=%s&code=%s&grant_type=authorization_code&component_access_token=');
 define('ACCOUNT_PLATFORM_API_LOGIN_ACCOUNT', 1); //公众号授权
 define('ACCOUNT_PLATFORM_API_LOGIN_WXAPP', 2); //小程序授权
-load()->classs('weixin.account');
+load()->classs('account/weixin.account');
 load()->func('communication');
 
 class WeiXinPlatform extends WeiXinAccount {

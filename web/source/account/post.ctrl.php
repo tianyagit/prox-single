@@ -9,7 +9,7 @@ load()->model('module');
 load()->model('cloud');
 load()->model('cache');
 load()->model('user');
-load()->classs('weixin.platform');
+load()->classs('account/weixin.platform');
 load()->model('utility');
 load()->func('file');
 $uniacid = intval($_GPC['uniacid']);

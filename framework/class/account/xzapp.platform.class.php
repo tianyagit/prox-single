@@ -3,7 +3,7 @@
 defined('IN_IA') or exit('Access Denied');
 
 
-load()->classs('xzapp.account');
+load()->classs('account/xzapp.account');
 
 class XzappPlatform extends XzappAccount {
 

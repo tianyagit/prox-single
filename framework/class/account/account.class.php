@@ -82,43 +82,43 @@ abstract class WeAccount {
 	static public function includes($uniaccount) {
 		$type = $uniaccount['type'];
 		if($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-			load()->classs('weixin.account');
+			load()->classs('account/weixin.account');
 			$account_obj = new WeiXinAccount();
 		}
 
 		if ($type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			load()->classs('xzapp.account');
+			load()->classs('account/xzapp.account');
 			$account_obj = new XzappAccount();
 		}
 
 		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-			load()->classs('weixin.platform');
+			load()->classs('account/weixin.platform');
 			$account_obj = new WeiXinPlatform();
 		}
 		// 授权小程序
 		if ($type == ACCOUNT_TYPE_APP_AUTH) {
-			load()->classs('weixin.platform');
-			load()->classs('wxapp.platform');
+			load()->classs('account/weixin.platform');
+			load()->classs('account/wxapp.platform');
 			$account_obj = new WxAppPlatform();
 		}
 		if($type == ACCOUNT_TYPE_APP_NORMAL) {
-			load()->classs('wxapp.account');
+			load()->classs('account/wxapp.account');
 			$account_obj = new WxappAccount();
 		}
 		if($type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-			load()->classs('webapp.account');
+			load()->classs('account/webapp.account');
 			$account_obj = new WebappAccount();
 		}
 		if($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-			load()->classs('phoneapp.account');
+			load()->classs('account/phoneapp.account');
 			$account_obj = new PhoneappAccount();
 		}
 		if($type == ACCOUNT_TYPE_WXAPP_WORK) {
-			load()->classs('wxapp.work');
+			load()->classs('account/wxapp.work');
 			$account_obj = new WxappWork();
 		}
 		if($type == ACCOUNT_TYPE_ALIAPP_NORMAL) {
-			load()->classs('aliapp.account');
+			load()->classs('account/aliapp.account');
 			$account_obj = new AliappAccount();
 		}
 		$account_obj->uniacid = $uniaccount['uniacid'];
