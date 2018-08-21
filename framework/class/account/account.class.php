@@ -62,17 +62,9 @@ abstract class WeAccount {
 		}
 	}
 
-	public static function createByType($account_type = ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-		$account_type = !empty($account_type) ? $account_type : ACCOUNT_TYPE_OFFCIAL_NORMAL;
-		return self::includes(array('type' => $account_type));
-	}
-
 	static public function createByUniacid($uniacid = 0) {
 		global $_W;
-		$uniacid = intval($uniacid);
-		if (empty($uniacid)) {
-			$uniacid = $_W['uniacid'];
-		}
+		$uniacid = intval($uniacid) > 0 ? intval($uniacid) : $_W['uniacid'];
 		$uniaccount = table('account')->getUniAccountByUniacid($uniacid);
 		if (is_error($uniaccount) || empty($uniaccount)) {
 			$uniaccount = $_W['account'];

@@ -37,7 +37,7 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 	}
 }
 /* sxend */
-$account_base = WeAccount::createByType($_GPC['account_type']);
+$account_base = WeAccount::create(array('type' => $_GPC['account_type']));
 define('ACCOUNT_TYPE', $account_base->type);
 define('ACCOUNT_TYPE_TEMPLATE', $account_base->typeTempalte);
 
