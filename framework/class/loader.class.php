@@ -107,6 +107,20 @@ class Loader {
 		'web' => '/web/common/%s.func.php',
 		'app' => '/app/common/%s.func.php',
 	);
+	private $accountMap = array(
+		'account' => 'account/account',
+		'weixin.account' => 'account/weixin.account',
+		'aliapp.account' => 'account/aliapp.account',
+		'phoneapp.account' => 'account/phoneapp.account',
+		'webapp.account' => 'account/webapp.account',
+		'weixin.account' => 'account/weixin.account',
+		'weixin.platform' => 'account/weixin.platform',
+		'wxapp.account' => 'account/wxapp.account',
+		'wxapp.platform' => 'account/wxapp.platform',
+		'wxapp.work' => 'account/wxapp.work',
+		'xzapp.account' => 'account/xzapp.account',
+		'xzapp.platform' => 'account/xzapp.platform',
+	);
 
 	public function __construct() {
 		$this->registerAutoload();
@@ -155,28 +169,12 @@ class Loader {
 		if (empty($this->loadTypeMap[$type])) {
 			return true;
 		}
-		if ($type == 'classs') {
-			$accountclass = array(
-				'account',
-				'weixin.account',
-				'aliapp.account',
-				'phoneapp.account',
-				'webapp.account',
-				'weixin.account',
-				'weixin.platform',
-				'wxapp.account',
-				'wxapp.platform',
-				'wxapp.work',
-				'xzapp.account',
-				'xzapp.platform',
-			);
-			if (in_array($name, $accountclass)) {
-				$type = 'accountclass';
-			}
-		}
 		//第三方库文件因为命名差异，支持定义别名
 		if ($type == 'library' && !empty($this->libraryMap[$name])) {
 			$name = $this->libraryMap[$name];
+		}
+		if ($type == 'classs' && !empty($this->accountMap[$name])) {
+			$name = $this->accountMap[$name];
 		}
 		$file = sprintf($this->loadTypeMap[$type], $name);
 		if (file_exists(IA_ROOT . $file)) {
