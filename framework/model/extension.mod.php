@@ -17,6 +17,7 @@ function ext_module_convert($manifest) {
 		$welcome_support = in_array('system_welcome', $manifest['platform']['supports']) ? MODULE_SUPPORT_SYSTEMWELCOME : MODULE_NONSUPPORT_SYSTEMWELCOME;
 		$webapp_support = in_array('webapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_WEBAPP : MODULE_NOSUPPORT_WEBAPP;
 		$xzapp_support = in_array('xzapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_XZAPP : MODULE_NOSUPPORT_XZAPP;
+		$aliapp_support = in_array('aliapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_ALIAPP : MODULE_NOSUPPORT_ALIAPP;
 		$android_support = in_array('android', $manifest['platform']['supports']) ? MODULE_SUPPORT_ANDROID : MODULE_NOSUPPORT_ANDROID;
 		$ios_support = in_array('ios', $manifest['platform']['supports']) ? MODULE_SUPPORT_IOS : MODULE_NOSUPPORT_IOS;
 		$phoneapp_support = ($android_support == MODULE_SUPPORT_ANDROID || $ios_support == MODULE_SUPPORT_IOS) ? MODULE_SUPPORT_PHONEAPP : MODULE_NOSUPPORT_PHONEAPP;
@@ -56,6 +57,7 @@ function ext_module_convert($manifest) {
 		'webapp_support' => $webapp_support,
 		'phoneapp_support' => $phoneapp_support,
 		'xzapp_support' => $xzapp_support,
+		'aliapp_support' => $aliapp_support,
 		'welcome_support' => $welcome_support,
 		'shortcut' => $manifest['bindings']['shortcut'],
 		'function' => $manifest['bindings']['function'],
