@@ -11,9 +11,6 @@ load()->model('setting');
 $dos = array('find_password', 'valid_mobile', 'valid_code', 'set_password', 'success');
 $do = in_array($do, $dos) ? $do : 'find_password';
 
-$setting_sms_sign = setting_load('site_sms_sign');
-$find_password_sign = !empty($setting_sms_sign['site_sms_sign']['find_password']) ? $setting_sms_sign['site_sms_sign']['find_password'] : '';
-
 $mobile = safe_gpc_string($_GPC['mobile']);
 if (in_array($do, array('valid_mobile', 'valid_code', 'set_password'))) {
 	if (empty($mobile)) {
@@ -29,18 +26,10 @@ if (in_array($do, array('valid_mobile', 'valid_code', 'set_password'))) {
 		iajax(-1, '手机号不存在');
 	}
 }
-if ($do == 'valid_mobile') {
-	iajax(0, '本地校验成功');
-}
 
 if ($do == 'valid_code') {
 	if ($_W['isajax'] && $_W['ispost']) {
-		$code = trim($_GPC['code']);
 		$image_verify =trim($_GPC['verify']);
-
-		if (empty($code)) {
-			iajax(-1, '短信验证码不能为空');
-		}
 
 		if (empty($image_verify)) {
 			iajax(-1, '图形验证码不能为空');
@@ -50,16 +39,6 @@ if ($do == 'valid_code') {
 		if (empty($captcha)) {
 			iajax(-1, '图形验证码错误,请重新获取');
 		}
-
-		$user_table = table('users');
-		$code_info = $user_table->userVerifyCode($mobile, $code);
-		if (empty($code_info)) {
-			iajax(-1, '短信验证码不正确');
-		}
-		if ($code_info['createtime'] + 120 < TIMESTAMP) {
-			iajax(-1, '短信验证码已过期，请重新获取');
-		}
-
 		iajax(0, '');
 	} else {
 		iajax(-1, '非法请求');
