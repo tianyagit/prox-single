@@ -11,7 +11,7 @@ defined('IN_IA') or exit('Access Denied');
  * 公众号业务操作基类
  */
 abstract class WeAccount {
-	//当前公众号
+	//当前帐号
 	public $account;
 	public $uniacid = 0;
 	//当前菜单类型
@@ -24,7 +24,18 @@ abstract class WeAccount {
 	public $typeSign;
 	//相应类型对应的模板后缀
 	public $typeTempalte;
-	//当前公众号类型
+	//帐号实例数组
+	private static $account_obj = array(
+						ACCOUNT_TYPE_OFFCIAL_NORMAL => '',
+						ACCOUNT_TYPE_OFFCIAL_AUTH => '',
+						ACCOUNT_TYPE_APP_AUTH => '',
+						ACCOUNT_TYPE_APP_NORMAL => '',
+						ACCOUNT_TYPE_WXAPP_WORK => '',
+						ACCOUNT_TYPE_WEBAPP_NORMAL => '',
+						ACCOUNT_TYPE_PHONEAPP_NORMAL => '',
+						ACCOUNT_TYPE_XZAPP_NORMAL => '',
+						ACCOUNT_TYPE_ALIAPP_NORMAL => '',
+					);
 
 	/**
 	 * 创建平台特定的公众号操作对象
@@ -47,7 +58,7 @@ abstract class WeAccount {
 		if(!empty($uniaccount) && isset($uniaccount['type'])) {
 			return self::includes($uniaccount);
 		} else {
-			return error('-1', '公众号不存在或是已经被删除');
+			return error('-1', '帐号不存在或是已经被删除');
 		}
 	}
 
@@ -70,7 +81,7 @@ abstract class WeAccount {
 		if(!empty($uniaccount) && isset($uniaccount['type'])) {
 			return self::includes($uniaccount);
 		} else {
-			return error('-1', '公众号不存在或是已经被删除');
+			return error('-1', '帐号不存在或是已经被删除');
 		}
 	}
 
@@ -81,98 +92,80 @@ abstract class WeAccount {
 
 	static public function includes($uniaccount) {
 		$type = $uniaccount['type'];
-		$account_obj = array();
 		if($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-			static $weixinaccount_obj;
-			if (empty($weixinaccount_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/weixin.account');
-				$weixinaccount_obj = new WeiXinAccount();
+				self::$account_obj[$type] = new WeiXinAccount();
 			}
-			$account_obj[$type] = $weixinaccount_obj;
 		}
 
 		if ($type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			static $xzappaccount_obj;
-			if (empty($xzappaccount_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/xzapp.account');
-				$xzappaccount_obj = new XzappAccount();
+				self::$account_obj[$type] = new XzappAccount();
 			}
-			$account_obj[$type] = $xzappaccount_obj;
 		}
 
 		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-			static $weixinplatform_obj;
-			if (empty($weixinplatform_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/weixin.platform');
-				$weixinplatform_obj = new WeiXinPlatform();
+				self::$account_obj[$type] = new WeiXinPlatform();
 			}
-			$account_obj[$type] = $weixinplatform_obj;
 		}
 		if ($type == ACCOUNT_TYPE_APP_AUTH) {
-			static $wxappplatform_obj;
-			if (empty($wxappplatform_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/weixin.platform');
 				load()->classs('account/wxapp.platform');
-				$wxappplatform_obj = new WxAppPlatform();
+				self::$account_obj[$type] = new WxAppPlatform();
 			}
-			$account_obj[$type] = $wxappplatform_obj;
 		}
 		if($type == ACCOUNT_TYPE_APP_NORMAL) {
-			static $wxappaccount_obj;
-			if (empty($wxappaccount_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/wxapp.account');
-				$wxappaccount_obj = new WxappAccount();
+				self::$account_obj[$type] = new WxappAccount();
 			}
-			$account_obj[$type] = $wxappaccount_obj;
 		}
 		if($type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-			static $webappaccount_obj;
-			if (empty($webappaccount_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/webapp.account');
-				$webappaccount_obj = new WebappAccount();
+				self::$account_obj[$type] = new WebappAccount();
 			}
 			$account_obj[$type] = $webappaccount_obj;
 		}
 		if($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-			static $phoneappaccount_obj;
-			if (empty($phoneappaccount_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/phoneapp.account');
-				$phoneappaccount_obj = new PhoneappAccount();
+				self::$account_obj[$type] = new PhoneappAccount();
 			}
-			$account_obj[$type] = $phoneappaccount_obj;
 		}
 		if($type == ACCOUNT_TYPE_WXAPP_WORK) {
-			static $wxappwork_obj;
-			if (empty($wxappwork_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/wxapp.work');
-				$wxappwork_obj = new WxappWork();
+				self::$account_obj[$type] = new WxappWork();
 			}
-			$account_obj[$type] = $wxappwork_obj;
 		}
 		if($type == ACCOUNT_TYPE_ALIAPP_NORMAL) {
-			static $aliappaccount_obj;
-			if (empty($aliappaccount_obj)) {
+			if (empty(self::$account_obj[$type])) {
 				load()->classs('account/aliapp.account');
-				$aliappaccount_obj = new AliappAccount();
+				self::$account_obj[$type] = new AliappAccount();
 			}
-			$account_obj[$type] = $aliappaccount_obj;
 		}
-		if (empty($account_obj[$type])) {
+		if (empty(self::$account_obj[$type])) {
 			return true;
 		}
-		$account_obj[$type]->uniacid = $uniaccount['uniacid'];
-		$account_obj[$type]->uniaccount = $uniaccount;
-		$account_obj[$type]->account = $account_obj[$type]->fetchAccountInfo();
-		$account_obj[$type]->account['type'] = $account_obj[$type]->uniaccount['type'];
-		$account_obj[$type]->account['isconnect'] = $account_obj[$type]->uniaccount['isconnect'];
-		$account_obj[$type]->account['isdeleted'] = $account_obj[$type]->uniaccount['isdeleted'];
-		$account_obj[$type]->account['endtime'] = $account_obj[$type]->uniaccount['endtime'];
+		self::$account_obj[$type]->uniacid = $uniaccount['uniacid'];
+		self::$account_obj[$type]->uniaccount = $uniaccount;
+		self::$account_obj[$type]->account = self::$account_obj[$type]->fetchAccountInfo();
+		self::$account_obj[$type]->account['type'] = self::$account_obj[$type]->uniaccount['type'];
+		self::$account_obj[$type]->account['isconnect'] = self::$account_obj[$type]->uniaccount['isconnect'];
+		self::$account_obj[$type]->account['isdeleted'] = self::$account_obj[$type]->uniaccount['isdeleted'];
+		self::$account_obj[$type]->account['endtime'] = self::$account_obj[$type]->uniaccount['endtime'];
 
 		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH || $type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			$account_obj[$type]->same_account_exist = pdo_getall($account_obj[$type]->tablename, array('key' => $account_obj[$type]->account['key'], 'uniacid <>' => $account_obj[$type]->account['uniacid']), array(), 'uniacid');
+			self::$account_obj[$type]->same_account_exist = pdo_getall(self::$account_obj[$type]->tablename, array('key' => self::$account_obj[$type]->account['key'], 'uniacid <>' => self::$account_obj[$type]->account['uniacid']), array(), 'uniacid');
 		}
 
-		return $account_obj[$type];
+		return self::$account_obj[$type];
 	}
 
 	/**
