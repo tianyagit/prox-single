@@ -101,7 +101,6 @@ class Loader {
 		'func' => '/framework/function/%s.func.php',
 		'model' => '/framework/model/%s.mod.php',
 		'classs' => '/framework/class/%s.class.php',
-		'accountclass' => '/framework/class/account/%s.class.php',
 		'library' => '/framework/library/%s.php',
 		'table' => '/framework/table/%s.table.php',
 		'web' => '/web/common/%s.func.php',
