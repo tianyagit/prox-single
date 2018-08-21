@@ -35,6 +35,7 @@ class WeAccount extends ArrayObject {
 		ACCOUNT_TYPE_PHONEAPP_NORMAL => 'account/phoneapp.account',
 		ACCOUNT_TYPE_XZAPP_NORMAL => 'account/xzapp.account',
 		ACCOUNT_TYPE_ALIAPP_NORMAL => 'account/aliapp.account',
+		ACCOUNT_TYPE_XZAPP_AUTH => 'account/xzapp.platform',
 	);
 
 	//实例化数组
