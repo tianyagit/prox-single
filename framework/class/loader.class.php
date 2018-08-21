@@ -101,6 +101,7 @@ class Loader {
 		'func' => '/framework/function/%s.func.php',
 		'model' => '/framework/model/%s.mod.php',
 		'classs' => '/framework/class/%s.class.php',
+		'accountclass' => '/framework/class/account/%s.class.php',
 		'library' => '/framework/library/%s.php',
 		'table' => '/framework/table/%s.table.php',
 		'web' => '/web/common/%s.func.php',
@@ -153,6 +154,25 @@ class Loader {
 		}
 		if (empty($this->loadTypeMap[$type])) {
 			return true;
+		}
+		if ($type == 'classs') {
+			$accountclass = array(
+				'account',
+				'weixin.account',
+				'aliapp.account',
+				'phoneapp.account',
+				'webapp.account',
+				'weixin.account',
+				'weixin.platform',
+				'wxapp.account',
+				'wxapp.platform',
+				'wxapp.work',
+				'xzapp.account',
+				'xzapp.platform',
+			);
+			if (in_array($name, $accountclass)) {
+				$type = 'accountclass';
+			}
 		}
 		//第三方库文件因为命名差异，支持定义别名
 		if ($type == 'library' && !empty($this->libraryMap[$name])) {

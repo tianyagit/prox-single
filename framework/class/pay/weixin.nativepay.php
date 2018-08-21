@@ -4,7 +4,7 @@
  * $sn$
  */
 defined('IN_IA') or exit('Access Denied');
-load()->classs('account/weixin.account');
+load()->classs('weixin.account');
 class WeiXinNativePay {
 
 
