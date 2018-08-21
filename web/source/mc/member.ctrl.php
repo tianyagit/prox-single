@@ -49,7 +49,7 @@ if ($do == 'credit_setting') {
 	$credit_setting = $credit_setting['creditnames'];
 
 	$credit_tactics = uni_setting_load('creditbehaviors');
-	$credit_tactics = $credit_tactics['creditbehaviors'];
+	$credit_tactics = empty($credit_tactics['creditbehaviors']) ? array() : $credit_tactics['creditbehaviors'];
 
 	$enable_credit = array();
 	if (!empty($credit_setting)) {
