@@ -13,7 +13,14 @@
 				{else}
 				<img src="{$goods['module']['logo']}" alt="icon" class="icon" onerror="this.src='./resource/images/nopic-107.png'"/>
 				{/if}
-				<div class="name text-over">{if $goods['type'] == STORE_TYPE_PACKAGE}{$module_groups[$goods['module_group']]['name']}{/if}{php echo $goods['title']}</div>
+				<div class="name text-over">
+					{if $goods['type'] == STORE_TYPE_PACKAGE}
+						{$module_groups[$goods['module_group']]['name']}
+					{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE}
+						{$user_groups[$goods['user_group']]['name']}
+					{/if}
+					{php echo $goods['title']}
+				</div>
 				<div class="price">￥{$goods['price']}元 /
 					{if $goods['unit'] == 'month'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}月
 					{elseif $goods['unit'] == 'ten_thousand'} {$goods['api_num']}万次
@@ -50,10 +57,10 @@
 							<td class="td_one" colspan="3">
 								<span class="tit">可使用模块</span>
 								<span class="icon">
-									<i class="wi wi-wechat"></i> {php echo count($module_groups[$goods['module_group']]['modules'])}
-									<i class="wi wi-wxapp" ></i> {php echo count($module_groups[$goods['module_group']]['wxapp'])}
-									<i class="wi wi-pc-circle"></i> {php echo count($module_groups[$goods['module_group']]['webapp'])}
-									<i class="wi wi-app"></i> {php echo count($module_groups[$goods['module_group']]['phoneapp'])}
+									<i class="wi wi-wechat"></i> {php echo empty($module_groups[$goods['module_group']]['modules'])? 0 : count($module_groups[$goods['module_group']]['modules'])}
+									<i class="wi wi-wxapp" ></i> {php echo empty($module_groups[$goods['module_group']]['wxapp'])? 0 : count($module_groups[$goods['module_group']]['wxapp'])}
+									<i class="wi wi-pc-circle"></i> {php echo empty($module_groups[$goods['module_group']]['webapp'])? 0 : count($module_groups[$goods['module_group']]['webapp'])}
+									<i class="wi wi-app"></i> {php echo empty($module_groups[$goods['module_group']]['phoneapp'])? 0 : count($module_groups[$goods['module_group']]['phoneapp'])}
 								</span>
 							</td>
 						</tr>
@@ -66,7 +73,7 @@
 	{/if}
 
 	{if $_GPC['type'] == STORE_TYPE_USER_PACKAGE}
-<div><span class="wi wi-userjurisdiction">应用权限组</span></div>
+<div><span class="wi wi-userjurisdiction">用户权限组</span></div>
 <div class="store">
 	<div class="jurisdiction-list">
 		{loop $store_goods $goods}

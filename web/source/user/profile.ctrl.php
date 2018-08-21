@@ -103,6 +103,12 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 			break;
 		case 'password':
 			if ($_GPC['newpwd'] !== $_GPC['renewpwd']) iajax(2, '两次密码不一致！', '');
+
+			$check_safe = check_password_safe($_GPC['newpwd']);
+			if (is_error($check_safe)) {
+				iajax(4, $check_safe['message']);
+			}
+
 			if (!$_W['isfounder'] && empty($user['register_type'])) {
 				$pwd = user_hash($_GPC['oldpwd'], $user['salt']);
 				if ($pwd != $user['password']) iajax(3, '原密码不正确！', '');
