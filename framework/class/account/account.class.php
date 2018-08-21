@@ -10,7 +10,7 @@ defined('IN_IA') or exit('Access Denied');
  * @method WeAccount fetchAccountInfo()
  * 公众号业务操作基类
  */
-abstract class WeAccount {
+class WeAccount extends ArrayObject {
 	//当前帐号
 	public $account;
 	public $uniacid = 0;
@@ -24,19 +24,21 @@ abstract class WeAccount {
 	public $typeSign;
 	//相应类型对应的模板后缀
 	public $typeTempalte;
-	//帐号实例数组
-	private static $account_obj = array(
-						ACCOUNT_TYPE_OFFCIAL_NORMAL => '',
-						ACCOUNT_TYPE_OFFCIAL_AUTH => '',
-						ACCOUNT_TYPE_APP_AUTH => '',
-						ACCOUNT_TYPE_APP_NORMAL => '',
-						ACCOUNT_TYPE_WXAPP_WORK => '',
-						ACCOUNT_TYPE_WEBAPP_NORMAL => '',
-						ACCOUNT_TYPE_PHONEAPP_NORMAL => '',
-						ACCOUNT_TYPE_XZAPP_NORMAL => '',
-						ACCOUNT_TYPE_ALIAPP_NORMAL => '',
-					);
+	//帐号类型所对应的类名及文件
+	private static $accountClassnameFile = array(
+		ACCOUNT_TYPE_OFFCIAL_NORMAL => 'account/weixin.account',
+		ACCOUNT_TYPE_OFFCIAL_AUTH => 'account/weixin.platform',
+		ACCOUNT_TYPE_APP_NORMAL => 'account/wxapp.account',
+		ACCOUNT_TYPE_APP_AUTH => 'account/wxapp.platform',
+		ACCOUNT_TYPE_WXAPP_WORK => 'account/wxapp.work',
+		ACCOUNT_TYPE_WEBAPP_NORMAL => 'account/webapp.account',
+		ACCOUNT_TYPE_PHONEAPP_NORMAL => 'account/phoneapp.account',
+		ACCOUNT_TYPE_XZAPP_NORMAL => 'account/xzapp.account',
+		ACCOUNT_TYPE_ALIAPP_NORMAL => 'account/aliapp.account',
+	);
 
+	//实例化数组
+	private static $accountObj = array();
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
@@ -54,7 +56,10 @@ abstract class WeAccount {
 		if (is_error($uniaccount) || empty($uniaccount)) {
 			$uniaccount = $_W['account'];
 		}
-
+		$account_obj_key = md5(iserializer($uniaccount));
+		if (!empty(self::$accountObj[$account_obj_key])) {
+			return self::$accountObj[$account_obj_key];
+		}
 		if(!empty($uniaccount) && isset($uniaccount['type'])) {
 			return self::includes($uniaccount);
 		} else {
@@ -68,6 +73,10 @@ abstract class WeAccount {
 		$uniaccount = table('account')->getUniAccountByUniacid($uniacid);
 		if (is_error($uniaccount) || empty($uniaccount)) {
 			$uniaccount = $_W['account'];
+		}
+		$account_obj_key = md5(iserializer($uniaccount));
+		if (!empty(self::$accountObj[$account_obj_key])) {
+			return self::$accountObj[$account_obj_key];
 		}
 
 		if(!empty($uniaccount) && isset($uniaccount['type'])) {
@@ -84,124 +93,46 @@ abstract class WeAccount {
 
 	static public function includes($uniaccount) {
 		$type = $uniaccount['type'];
-		if($type == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/weixin.account');
-				self::$account_obj[$type] = new WeiXinAccount();
-			}
+		if (empty(self::$accountClassnameFile[$type])) {
+			return error('-1', '账号类型不存在');
 		}
 
-		if ($type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/xzapp.account');
-				self::$account_obj[$type] = new XzappAccount();
-			}
-		}
+		$file = self::$accountClassnameFile[$type];
+		$classname = self::getClassName($file);
+		load()->classs($file);
+		$account_obj = new $classname;
 
-		if($type == ACCOUNT_TYPE_OFFCIAL_AUTH) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/weixin.platform');
-				self::$account_obj[$type] = new WeiXinPlatform();
-			}
-		}
-		if ($type == ACCOUNT_TYPE_APP_AUTH) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/weixin.platform');
-				load()->classs('account/wxapp.platform');
-				self::$account_obj[$type] = new WxAppPlatform();
-			}
-		}
-		if($type == ACCOUNT_TYPE_APP_NORMAL) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/wxapp.account');
-				self::$account_obj[$type] = new WxappAccount();
-			}
-		}
-		if($type == ACCOUNT_TYPE_WEBAPP_NORMAL) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/webapp.account');
-				self::$account_obj[$type] = new WebappAccount();
-			}
-			$account_obj[$type] = $webappaccount_obj;
-		}
-		if($type == ACCOUNT_TYPE_PHONEAPP_NORMAL) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/phoneapp.account');
-				self::$account_obj[$type] = new PhoneappAccount();
-			}
-		}
-		if($type == ACCOUNT_TYPE_WXAPP_WORK) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/wxapp.work');
-				self::$account_obj[$type] = new WxappWork();
-			}
-		}
-		if($type == ACCOUNT_TYPE_ALIAPP_NORMAL) {
-			if (empty(self::$account_obj[$type])) {
-				load()->classs('account/aliapp.account');
-				self::$account_obj[$type] = new AliappAccount();
-			}
-		}
-		if (empty(self::$account_obj[$type])) {
-			return true;
-		}
-		self::$account_obj[$type]->uniacid = $uniaccount['uniacid'];
-		self::$account_obj[$type]->uniaccount = $uniaccount;
-		self::$account_obj[$type]->account = self::$account_obj[$type]->fetchAccountInfo();
-		self::$account_obj[$type]->account['type'] = self::$account_obj[$type]->uniaccount['type'];
-		self::$account_obj[$type]->account['isconnect'] = self::$account_obj[$type]->uniaccount['isconnect'];
-		self::$account_obj[$type]->account['isdeleted'] = self::$account_obj[$type]->uniaccount['isdeleted'];
-		self::$account_obj[$type]->account['endtime'] = self::$account_obj[$type]->uniaccount['endtime'];
+		$account_obj->uniacid = $uniaccount['uniacid'];
+		$account_obj->uniaccount = $uniaccount;
+		$account_obj->account = $account_obj->fetchAccountInfo();
+		$account_obj->account['type'] = $account_obj->uniaccount['type'];
+		$account_obj->account['isconnect'] = $account_obj->uniaccount['isconnect'];
+		$account_obj->account['isdeleted'] = $account_obj->uniaccount['isdeleted'];
+		$account_obj->account['endtime'] = $account_obj->uniaccount['endtime'];
 
 		if ($type == ACCOUNT_TYPE_OFFCIAL_NORMAL || $type == ACCOUNT_TYPE_OFFCIAL_AUTH || $type == ACCOUNT_TYPE_XZAPP_NORMAL) {
-			self::$account_obj[$type]->same_account_exist = pdo_getall(self::$account_obj[$type]->tablename, array('key' => self::$account_obj[$type]->account['key'], 'uniacid <>' => self::$account_obj[$type]->account['uniacid']), array(), 'uniacid');
+			$account_obj->same_account_exist = pdo_getall($account_obj->tablename, array('key' => $account_obj->account['key'], 'uniacid <>' => $account_obj->account['uniacid']), array(), 'uniacid');
 		}
 
-		return self::$account_obj[$type];
+		$account_obj_key = md5(iserializer($uniaccount));
+		self::$accountObj[$account_obj_key] = $account_obj;
+		return $account_obj;
 	}
 
 	/**
-	 * 平台特定的公众号操作对象构造方法
-	 * @param array $account 统一公号基础对象
+	 * 根据文件名获取class类名
+	 * @param string $filename
+	 * @return string 类名
 	 */
-	abstract public function __construct();
-
-	/**
-	 * 查询当前公号支持的统一消息类型, 当前支持的类型包括:
-	 * &nbsp;&nbsp;&nbsp;通用类型: text, image, voice, video, location, link,
-	 * &nbsp;&nbsp;&nbsp;扩展类型: subscribe, unsubscribe, qr, trace, click, view, enter
-	 * 类型说明:
-	 * &nbsp;&nbsp;&nbsp;通用类型: 文本消息, 图片消息, 音频消息, 视频消息, 位置消息, 链接消息,
-	 * &nbsp;&nbsp;&nbsp;扩展类型: 开始关注, 取消关注, 扫描二维码, 追踪位置, 点击菜单(链接), 点击菜单(模拟关键字), 进入聊天窗口
-	 *
-	 * @return array 当前公号支持的消息类型集合
-	 */
-	public function queryAvailableMessages() {
-		return array();
+	static public function getClassName($filename) {
+		$classname = '';
+		$filename = explode('/', $filename);
+		$filename = explode('.', $filename[1]);
+		foreach ($filename as $val) {
+			$classname .= ucfirst($val);
+		}
+		return $classname;
 	}
-
-	/**
-	 * 没选中某个公众号，小程序，pc时，返回的url
-	 */
-	abstract function accountDisplayUrl();
-
-	/**
-	 * 查询当前公号支持的统一响应结构
-	 *
-	 * 微擎当前支持的类型包括:<br/>
-	 * &nbsp;&nbsp;&nbsp; text, image, voice, video, music, news, link, card
-	 *
-	 * @return array 当前公号支持的响应结构集合
-	 */
-	public function queryAvailablePackets() {
-		return array();
-	}
-
-	/**
-	 * 检测当前Uniacid是否匹配当前工作区
-	 */
-	abstract function checkIntoManage();
-
 	/**
 	 * 分析消息内容,并返回统一消息结构, 参数为公众平台消息结构
 	 * @param array $message 统一消息结构

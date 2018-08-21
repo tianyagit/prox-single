@@ -5,6 +5,7 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
+load()->classs('account/weixin.platform');
 
 class WxAppPlatform extends WeiXinPlatform {
 
@@ -12,13 +13,13 @@ class WxAppPlatform extends WeiXinPlatform {
 
 
 	function __construct($account = array()) {
-	
+
 		parent::__construct($account);
 		$this->menuFrame = 'wxapp';
 		$this->type = ACCOUNT_TYPE_APP_AUTH;
 		$this->typeName =  '小程序';
 		$this->typeSign = WEBAPP_TYPE_SIGN;
-		
+
 	}
 
 	function fetchAccountInfo() {
@@ -32,12 +33,12 @@ class WxAppPlatform extends WeiXinPlatform {
 		$account['encrypt_key'] = $this->appid;
 		return $account;
 	}
- 
+
 	function accountDisplayUrl() {
 		return url('account/display', array('type' => WXAPP_TYPE_SIGN));
 	}
 
-	
+
 
 	public function getAuthLoginUrl() {
 		$preauthcode = $this->getPreauthCode();
@@ -61,7 +62,7 @@ class WxAppPlatform extends WeiXinPlatform {
 		if (is_error($response)) {
 			return $response;
 		}
-	
+
 		cache_write(cache_system_key('account_auth_accesstoken', array('key' => $this->account['key'])), $response['refresh_token']);
 		return $response;
 	}
