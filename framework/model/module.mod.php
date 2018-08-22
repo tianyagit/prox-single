@@ -916,11 +916,11 @@ function module_upgrade_info($modulelist = array()) {
 		if ($manifest_cloud['site_branch']['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
 			$manifest['platform']['supports'][] = 'wxapp';
 		}
-		if ($manifest_cloud['site_branch']['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
-			$manifest['platform']['supports'][] = 'webapp';
-		}
 		if ($manifest_cloud['site_branch']['xzapp_support'] == MODULE_SUPPORT_XZAPP) {
 			$manifest['platform']['supports'][] = 'xzapp';
+		}
+		if ($manifest_cloud['site_branch']['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
+			$manifest['platform']['supports'][] = 'webapp';
 		}
 		if ($manifest_cloud['site_branch']['android_support'] == MODULE_SUPPORT_PHONEAPP ||
 			$manifest_cloud['site_branch']['ios_aupport'] == MODULE_SUPPORT_PHONEAPP) {
