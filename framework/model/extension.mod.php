@@ -16,6 +16,7 @@ function ext_module_convert($manifest) {
 		$wxapp_support = in_array('wxapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_WXAPP : MODULE_NONSUPPORT_WXAPP;
 		$welcome_support = in_array('system_welcome', $manifest['platform']['supports']) ? MODULE_SUPPORT_SYSTEMWELCOME : MODULE_NONSUPPORT_SYSTEMWELCOME;
 		$webapp_support = in_array('webapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_WEBAPP : MODULE_NOSUPPORT_WEBAPP;
+		$xzapp_support = in_array('xzapp', $manifest['platform']['supports']) ? MODULE_SUPPORT_XZAPP : MODULE_NOSUPPORT_XZAPP;
 		$android_support = in_array('android', $manifest['platform']['supports']) ? MODULE_SUPPORT_ANDROID : MODULE_NOSUPPORT_ANDROID;
 		$ios_support = in_array('ios', $manifest['platform']['supports']) ? MODULE_SUPPORT_IOS : MODULE_NOSUPPORT_IOS;
 		$phoneapp_support = ($android_support == MODULE_SUPPORT_ANDROID || $ios_support == MODULE_SUPPORT_IOS) ? MODULE_SUPPORT_PHONEAPP : MODULE_NOSUPPORT_PHONEAPP;
@@ -53,6 +54,7 @@ function ext_module_convert($manifest) {
 		MODULE_SUPPORT_ACCOUNT_NAME => $app_support,
 		'wxapp_support' => $wxapp_support,
 		'webapp_support' => $webapp_support,
+		'xzapp_support' => $xzapp_support,
 		'phoneapp_support' => $phoneapp_support,
 		'welcome_support' => $welcome_support,
 		'shortcut' => $manifest['bindings']['shortcut'],
@@ -232,7 +234,7 @@ function ext_module_manifest($modulename) {
 	}
 	$xml = file_get_contents($filename);
 	$xml = ext_module_manifest_parse($xml);
-	
+
 	if (!empty($xml)) {
 		$xml['application']['logo'] = tomedia($root . '/icon.jpg');
 		if (file_exists($root . '/preview-custom.jpg')) {
@@ -370,7 +372,7 @@ function ext_module_bindings() {
  * @return void
  */
 function ext_module_clean($modulename, $is_clean_rule = false) {
-	
+
 	pdo_delete('core_queue', array('module' => $modulename));
 
 	table('modules')->deleteByName($modulename);
@@ -379,7 +381,7 @@ function ext_module_clean($modulename, $is_clean_rule = false) {
 	if ($is_clean_rule) {
 		pdo_delete('rule', array('module' => $modulename));
 		pdo_delete('rule_keyword', array('module' => $modulename));
-		
+
 		$cover_list = pdo_getall('cover_reply', array('module' => $modulename), array('rid'), 'rid');
 		if (!empty($cover_list)) {
 			$rids = array_keys($cover_list);
@@ -391,7 +393,7 @@ function ext_module_clean($modulename, $is_clean_rule = false) {
 
 	pdo_delete('site_nav', array('module' => $modulename));
 	pdo_delete('uni_account_modules', array('module' => $modulename));
-	
+
 	//删除掉回收站数据
 	table('modules_recycle')->deleteByName($modulename);
 	return true;
@@ -649,9 +651,9 @@ function ext_manifest_check($module_name, $manifest) {
 
 function ext_file_check($module_name, $manifest) {
 	$module_path = IA_ROOT . '/addons/' . $module_name . '/';
-	if (empty($manifest['platform']['main_module']) && 
-		!file_exists($module_path . 'processor.php') && 
-		!file_exists($module_path . 'module.php') && 
+	if (empty($manifest['platform']['main_module']) &&
+		!file_exists($module_path . 'processor.php') &&
+		!file_exists($module_path . 'module.php') &&
 		!file_exists($module_path . 'site.php')) {
 		return error(1, '模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！');
 	}
@@ -676,7 +678,7 @@ function ext_module_uninstall($modulename, $is_clean_rule = false) {
 	if (!empty($module['issystem'])) {
 		return error(1, '系统模块不能卸载！');
 	}
-	
+
 	ext_module_clean($modulename, $is_clean_rule);
 	ext_execute_uninstall_script($modulename);
 	return true;
