@@ -189,15 +189,10 @@ function user_single($user_or_uid) {
 		if (!$user_exists && !empty($user['username']) && $is_mobile) {
 			$sql = "select b.uid, u.username FROM " . tablename('users_bind') . " AS b LEFT JOIN " . tablename('users') . " AS u ON b.uid = u.uid WHERE b.bind_sign = :bind_sign";
 			$bind_info = pdo_fetch($sql, array('bind_sign' => $user['username']));
-			if (is_array($bind_info) && !empty($bind_info)) {
-				if ($bind_info['username']) {
-					$params[':username'] = $bind_info['username'];
-				} else {
-					return false;
-				}
-			} else {
+			if (!is_array($bind_info) || empty($bind_info) || empty($bind_info['username'])) {
 				return false;
 			}
+			$params[':username'] = $bind_info['username'];
 		}
 	}
 	if (!empty($user['email'])) {

@@ -248,3 +248,22 @@ function safe_bad_str_replace($string) {
 	
 	return $string;
 }
+
+
+/**
+ * 检测密码强度
+ * @param $password
+ * @return array|bool
+ */
+function check_password_safe($password) {
+	$setting = setting_load('register');
+	if (!$setting['register']['safe']) {
+		return true;
+	}
+	preg_match(PASSWORD_STRONG_REGULAR, $password, $out);
+	if (empty($out)) {
+		return error(-1, PASSWORD_STRONG_STATE);
+	} else {
+		return true;
+	}
+}
