@@ -492,7 +492,7 @@ function wxapp_last_switch_version() {
 /**
  *   通知服务器生成小程序代码
  */
-function wxapp_code_generate($version_id) {
+function wxapp_code_generate($version_id, $user_version) {
 	global $_W;
 	load()->classs('cloudapi');
 	$api = new CloudApi();
@@ -519,7 +519,7 @@ function wxapp_code_generate($version_id) {
 		'uniacid' => $account_wxapp_info['uniacid'],
 		'acid' => $account_wxapp_info['acid'],
 		'multiid' => $account_wxapp_info['version']['multiid'],
-		'version' => $account_wxapp_info['version']['version'],
+		'version' => $user_version,
 		'siteroot' => $siteurl,
 		'design_method' => $account_wxapp_info['version']['design_method'],
 	);
