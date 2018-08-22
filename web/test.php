@@ -27,7 +27,6 @@ $key = md5('k550y1ihjp3pntlfgytw0lyo5534to0w');
 
 $pc = new Prpcrypt($key);
 $result = $pc->decrypt(base64_decode($encrypt_data));
-echo 3;
 print_r($result);exit;
 
 
