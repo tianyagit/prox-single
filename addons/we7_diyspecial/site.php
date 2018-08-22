@@ -51,8 +51,7 @@ class We7_diyspecialModuleSite extends WeModuleSite {
 			}
 			$page = $params[0]['property'][0];
 			$html = htmlspecialchars_decode($_GPC['wapeditor']['html'], ENT_QUOTES);
-			$html = str_replace(array('<?', '<%', '<?php', '{php'), '_', $html);
-			$html = preg_replace('/<\s*?script.*(src|language)+/i', '_', $html);
+			$html = safe_gpc_html($html);
 			$multipage = htmlspecialchars_decode($_GPC['wapeditor']['multipage'], ENT_QUOTES);
 			$data = array(
 				'uniacid' => $_W['uniacid'],

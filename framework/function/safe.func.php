@@ -161,22 +161,22 @@ function safe_gpc_url($value, $strict_domain = true, $default = '') {
 	if (empty($value) || !is_string($value)) {
 		return $default;
 	}
-	
+
 	if (starts_with($value, './')) {
 		return $value;
 	}
-	
+
 	if ($strict_domain) {
 		if (starts_with($value, $_W['siteroot'])) {
 			return $value;
 		}
 		return $default;
 	}
-	
+
 	if (starts_with($value, 'http') || starts_with($value, '//')) {
 		return $value;
 	}
-	
+
 	return $default;
 }
 
@@ -242,10 +242,10 @@ function safe_bad_str_replace($string) {
 	if (empty($string)) {
 		return '';
 	}
-	$badstr = array("\0", "%00", "%3C", "%3E", '<?', '<%', '<?php', '{php', '../');
-	$newstr = array('_', '_', '&lt;', '&gt;', '_', '_', '_', '_', '.._');
+	$badstr = array("\0", "%00", "%3C", "%3E", '<?', '<%', '<?php', '{php', '{if', '{loop', '../');
+	$newstr = array('_', '_', '&lt;', '&gt;', '_', '_', '_', '_', '_', '_', '.._');
 	$string  = str_replace($badstr, $newstr, $string);
-	
+
 	return $string;
 }
 
