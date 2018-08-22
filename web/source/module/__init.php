@@ -29,17 +29,6 @@ if (in_array($action, array('group', 'manage-system'))) {
 if (in_array($action, array('display'))) {
 	define('FRAME', '');
 }
-/* sxstart */
-if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
-	$_GPC['account_type'] = !empty($_GPC['account_type']) || !empty($_GPC['system_welcome']) ? $_GPC['account_type'] : ACCOUNT_TYPE_OFFCIAL_NORMAL;
-	if (!empty($_GPC['system_welcome'])) {
-		define('ACCOUNT_TYPE_TEMPLATE', '-welcome');
-	}
-}
-/* sxend */
-$account_base = WeAccount::create(array('type' => $_GPC['account_type']));
-define('ACCOUNT_TYPE', $account_base->type);
-define('ACCOUNT_TYPE_TEMPLATE', $account_base->typeTempalte);
 
 $module_all_support = module_support_type();
 $module_support = !empty($module_all_support[$_GPC['support']]) ? $module_all_support[$_GPC['support']]['type'] : ACCOUNT_TYPE_SIGN;

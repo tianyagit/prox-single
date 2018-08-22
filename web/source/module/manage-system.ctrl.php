@@ -45,7 +45,7 @@ if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 /* sxend */
 
 if ($do == 'subscribe') {
-	$module_uninstall_total = module_uninstall_total($account_base->typeSign);
+	$module_uninstall_total = module_uninstall_total($module_support);
 
 	$module_list = user_modules($_W['uid']);
 	$subscribe_type = ext_module_msg_types();
@@ -502,7 +502,7 @@ if ($do == 'module_detail') {
 
 	//计算此模块除了当前支持，还支持哪些
 	foreach ($module_info as $key => $value) {
-		if ($key != $account_base->typeSign . '_support' && strexists($key, '_support') && $value == MODULE_SUPPORT_ACCOUNT) {
+		if ($key != $module_support . '_support' && strexists($key, '_support') && $value == MODULE_SUPPORT_ACCOUNT) {
 			$module_info['relation'][] = $key;
 		}
 	}

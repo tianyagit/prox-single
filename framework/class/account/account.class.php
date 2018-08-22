@@ -34,12 +34,12 @@ class WeAccount extends ArrayObject {
 		ACCOUNT_TYPE_WEBAPP_NORMAL => 'account/webapp.account',
 		ACCOUNT_TYPE_PHONEAPP_NORMAL => 'account/phoneapp.account',
 		ACCOUNT_TYPE_XZAPP_NORMAL => 'account/xzapp.account',
-		ACCOUNT_TYPE_ALIAPP_NORMAL => 'account/aliapp.account',
 		ACCOUNT_TYPE_XZAPP_AUTH => 'account/xzapp.platform',
+		ACCOUNT_TYPE_ALIAPP_NORMAL => 'account/aliapp.account',
 	);
-
 	//实例化数组
 	private static $accountObj = array();
+
 	/**
 	 * 创建平台特定的公众号操作对象
 	 * @param int $acid 公众号编号
