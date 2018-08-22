@@ -233,7 +233,7 @@
 							</div>
 							<div class="form-group" ng-show="owner.endtime == 1">
 								{php echo tpl_form_field_date('endtime', $owner['endtime']);}
-								<span class="help-block">用户的使用时间过期时，将来无法登录，公众号权限也暂停使用，不设置为永久可用</span>
+								<span class="help-block">平台有效期默认与主管理员一致，修改日期不可超过主管理员有效期的最大期限。未设置主管理员时，创始人默认为主管理员</span>
 							</div>
 						</div>
 					</div>
