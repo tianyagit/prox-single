@@ -919,6 +919,9 @@ function module_upgrade_info($modulelist = array()) {
 		if ($manifest_cloud['site_branch']['webapp_support'] == MODULE_SUPPORT_WEBAPP) {
 			$manifest['platform']['supports'][] = 'webapp';
 		}
+		if ($manifest_cloud['site_branch']['xzapp_support'] == MODULE_SUPPORT_XZAPP) {
+			$manifest['platform']['supports'][] = 'xzapp';
+		}
 		if ($manifest_cloud['site_branch']['android_support'] == MODULE_SUPPORT_PHONEAPP ||
 			$manifest_cloud['site_branch']['ios_aupport'] == MODULE_SUPPORT_PHONEAPP) {
 			$manifest['platform']['supports'][] = 'phoneapp';
@@ -1000,7 +1003,7 @@ function module_upgrade_info($modulelist = array()) {
 		}
 
 		if (!empty($manifest['platform']['supports'])) {
-			foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome') as $support) {
+			foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome', 'xzapp') as $support) {
 				if (in_array($support, $manifest['platform']['supports'])) {
 					$module_upgrade_data["{$support}_support"] = MODULE_SUPPORT_ACCOUNT;
 				} else {
@@ -1033,7 +1036,7 @@ function module_upgrade_info($modulelist = array()) {
 				'cloud_id' => $manifest['cloud_id'],
 			);
 			if (!empty($manifest['platform']['supports'])) {
-				foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome') as $support) {
+				foreach (array('account', 'wxapp', 'webapp', 'phoneapp', 'welcome', 'xzapp') as $support) {
 					if (in_array($support, $manifest['platform']['supports'])) {
 						$module_upgrade_data["{$support}_support"] = MODULE_SUPPORT_ACCOUNT;
 					} else {
