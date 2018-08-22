@@ -5,14 +5,14 @@
 	<!-- xstart -->
 	{if IMS_FAMILY == 'x'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER}
-		<li><a href="{url 'account/recycle'}">公众号回收站</a></li>
+		<li><a href="{php echo url('account/recycle', array('account_type' => ACCOUNT_TYPE))}">公众号回收站</a></li>
 		{/if}
 	{/if}
 	<!-- xend -->
 	<!-- svstart -->
 	{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
 		{if $_W['role'] == ACCOUNT_MANAGE_NAME_OWNER || $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER}
-		<li><a href="{url 'account/recycle'}">公众号回收站</a></li>
+		<li><a href="{php echo url('account/recycle', array('account_type' => ACCOUNT_TYPE))}">公众号回收站</a></li>
 		{/if}
 	{/if}
 	<!-- svend -->
