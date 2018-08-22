@@ -68,7 +68,7 @@ if ($do == 'display') {
 				}
 				$user_owned_account[$account_key]['premission_modules'] = array_unique($user_owned_account[$account_key]['premission_modules']);
 			} else {
-				$account_modules = uni_modules_list($account['uniacid'], true, $account['type']);
+				$account_modules = uni_modules_by_uniacid($account['uniacid'], true);
 				$user_owned_account[$account_key]['premission_modules'] = array_keys($account_modules);
 			}
 		}
