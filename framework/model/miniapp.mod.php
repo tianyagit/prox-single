@@ -506,7 +506,7 @@ function miniapp_insert_date_visit_trend($date) {
 /**
  *   通知服务器生成小程序代码
  */
-function miniapp_code_generate($version_id) {
+function miniapp_code_generate($version_id, $user_version) {
 	global $_W;
 	load()->classs('cloudapi');
 	$api = new CloudApi();
@@ -533,7 +533,7 @@ function miniapp_code_generate($version_id) {
 			'uniacid' => $account_wxapp_info['uniacid'],
 			'acid' => $account_wxapp_info['acid'],
 			'multiid' => $account_wxapp_info['version']['multiid'],
-			'version' => $account_wxapp_info['version']['version'],
+			'version' => $user_version,
 			'siteroot' => $siteurl,
 			'design_method' => $account_wxapp_info['version']['design_method'],
 	);
