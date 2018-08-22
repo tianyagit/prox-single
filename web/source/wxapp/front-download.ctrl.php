@@ -154,17 +154,13 @@ if ($do == 'front_download') {
 }
 
 if ($do == 'upgrade_module') {
-	$wxapp_versions_info = miniapp_version($version_id);
-	if (!empty($wxapp_versions_info['modules'])) {
-		$modules = array();
-		foreach ($wxapp_versions_info['modules'] as $module) {
-			$modules[$module['name']] = array(
-				'name' => $module['name'],
-				'logo' => empty($module['logo']) ? '' : $module['logo'],
-				'version' => empty($module['version']) ? '' : $module['version'],
-			);
-			if (!empty($module['account'])) {
-				$modules[$module['name']]['uniacid'] = $module['account']['uniacid'];
+	$modules = pdo_getcolumn('wxapp_versions', array('id' => $version_id), 'modules');
+	$modules = iunserializer($modules);
+	if (!empty($modules)) {
+		foreach ($modules as $name => $module) {
+			$module_info = module_fetch($name);
+			if (!empty($module_info['version'])) {
+				$modules[$name]['version'] = $module_info['version'];
 			}
 		}
 		$modules = iserializer($modules);
@@ -181,7 +177,8 @@ if ($do == 'upgrade_module') {
 
 // 获取上传代码uuid
 if ($do == 'code_uuid') {
-	$data = miniapp_code_generate($version_id);
+	$user_version = $_GPC['user_version'];
+	$data = miniapp_code_generate($version_id, $user_version);
 	echo json_encode($data);
 }
 
