@@ -620,6 +620,9 @@ function material_list($type = '', $server = '', $page = array('page_index' => 1
 			if ($type == 'video'){
 				foreach ($material_list as &$row) {
 					$row['tag'] = $row['tag'] == '' ? array() : iunserializer($row['tag']);
+					if (empty($row['filename'])) {
+						$row['filename'] = $row['tag']['title'];
+					}
 				}
 				unset($row);
 			}
