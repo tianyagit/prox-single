@@ -403,7 +403,8 @@ function material_local_upload_by_url($url, $type='images') {
 		$filepath = ATTACHMENT_ROOT . $url;
 	}
 	$filesize = filesize($filepath);
-	if ($filesize > 1024 * 1024 && $type == 'videos') {
+	$filesize = sizecount($filesize, true);
+	if ($filesize > 10 && $type == 'videos') {
 		return error(-1, '要转换的微信素材视频不能超过10M');
 	}
 	return $account_api->uploadMediaFixed($filepath, $type);

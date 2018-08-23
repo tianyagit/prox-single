@@ -999,7 +999,7 @@ function authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
  * @param int $size 文件原始大小
  * @return string
  */
-function sizecount($size) {
+function sizecount($size, $unit = false) {
 	if($size >= 1073741824) {
 		$size = round($size / 1073741824 * 100) / 100 . ' GB';
 	} elseif($size >= 1048576) {
@@ -1008,6 +1008,9 @@ function sizecount($size) {
 		$size = round($size / 1024 * 100) / 100 . ' KB';
 	} else {
 		$size = $size . ' Bytes';
+	}
+	if ($unit) {
+		$size = preg_replace('/[^0-9\.]/','', $size);
 	}
 	return $size;
 }
