@@ -16,6 +16,7 @@ if($do == 'display') { //系统工单
 	$cloud = new CloudApi();
 	$uuid = $_GPC['uuid'];
 	$data = $cloud->get('system','workorder', array('do'=>'siteworkorder'), 'json');
+
 	if(is_error($data)) {
 		itoast('无权限进入工单系统');
 	}

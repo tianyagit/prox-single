@@ -5,6 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-define('IMS_FAMILY', 'i');
+define('IMS_FAMILY', 'l');
 define('IMS_VERSION', '1.8.1');
 define('IMS_RELEASE_DATE', '20140807141111');

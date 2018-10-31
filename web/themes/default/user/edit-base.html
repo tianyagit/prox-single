@@ -29,25 +29,6 @@
 	</div>
 	<div class="btn-group we7-btn-group we7-padding-bottom">
 		<a href="{php echo url('user/edit/edit_base', array('uid' => $_GPC['uid']))}" class="btn btn-default active">基础信息</a>
-		<!-- xstart -->
-		{if IMS_FAMILY == 'x'}
-			{if empty($user['founder_groupid'])}
-			<a href="{php echo url('user/edit/edit_modules_tpl', array('uid' => $_GPC['uid']))}" class="btn btn-default">应用模板权限</a>
-			<a href="{php echo url('user/edit/edit_account', array('uid' => $_GPC['uid']))}" class="btn btn-default">使用账号列表</a>
-			{else}
-			<a href="{php echo url('founder/edit/edit_account', array('uid' => $_GPC['uid']))}" class="btn btn-default">使用账号列表</a>
-			<a href="{php echo url('founder/edit/edit_modules_tpl', array('uid' => $_GPC['uid']))}" class="btn btn-default">应用模板权限</a>
-			{/if}
-		{/if}
-		<!-- xend -->
-
-		<!-- svstart -->
-		{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
-			<a href="{php echo url('user/edit/edit_modules_tpl', array('uid' => $_GPC['uid']))}" class="btn btn-default">应用模板权限</a>
-			<a href="{php echo url('user/edit/edit_account', array('uid' => $_GPC['uid']))}" class="btn btn-default">使用账号列表</a>
-		{/if}
-		<!-- svend -->
-
 	</div>
 	<table class="table we7-table table-hover table-form">
 		<col width="140px " />
@@ -76,17 +57,6 @@
 			<td ng-bind="user.end"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#endtime">修改</a></div></td>
 		</tr>
-		<!-- xstart -->
-		{if IMS_FAMILY == 'x'}
-			{if permission_check_account_user('see_user_edit_base_founder_name')}
-			<tr>
-				<td class="table-label">副创始人姓名</td>
-				<td ng-bind="user.vice_founder_name"></td>
-				<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#vice_founder_name" ng-click="editInfo('vice_founder_name', user.vice_founder_name)">修改</a></div></td>
-			</tr>
-			{/if}
-		{/if}
-		<!-- xend -->
 		{if !empty($user['founder_groupid'])}
 		<tr>
 			<td class="table-label">注册链接</td>
@@ -249,59 +219,6 @@
 			{/if}
 		{/if}
 		<!-- svend -->
-
-	</table>
-	<table class="table we7-table table-hover table-form">
-		<col />
-		<col />
-		<col />
-		<tr>
-			<th class="text-left" colspan="3">公众号使用权限</th>
-		</tr>
-		<tr>
-			<td class="table-label">可创建总数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.maxaccount || 0"></strong></td>
-			<td class="table-label">已创建个数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.uniacid_num || 0"></strong></td>
-			<td class="table-label">可创建剩余个数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.uniacid_limit || 0"></strong></td>
-		</tr>
-	</table>
-	<table class="table we7-table table-hover table-form">
-		<col />
-		<col />
-		<col />
-		<tr>
-			<th class="text-left" colspan="3">小程序使用权限</th>
-		</tr>
-		<tr>
-			<td class="table-label">可创建总数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.maxwxapp || 0"></strong></td>
-			<td class="table-label">已创建个数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.wxapp_num || 0"></strong></td>
-			<td class="table-label">可创建剩余个数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.wxapp_limit || 0"></strong></td>
-		</tr>
-	</table>
-	<table class="table we7-table table-hover table-form">
-		<col />
-		<col />
-		<col />
-		<tr>
-			<th class="text-left" colspan="3">PC使用权限</th>
-		</tr>
-		<tr>
-			<td class="table-label">可创建总数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.maxwebapp || 0"></strong></td>
-			<td class="table-label">已创建个数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.webapp_num || 0"></strong></td>
-			<td class="table-label">可创建剩余个数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.webapp_limit || 0"></strong></td>
-		</tr>
-	</table>
-	<table class="table we7-table table-hover table-form">
-		<col />
-		<col />
-		<col />
-		<tr>
-			<th class="text-left" colspan="3">APP使用权限</th>
-		</tr>
-		<tr>
-			<td class="table-label">可创建总数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.maxphoneapp || 0"></strong></td>
-			<td class="table-label">已创建个数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.phoneapp_num || 0"></strong></td>
-			<td class="table-label">可创建剩余个数&nbsp;&nbsp;&nbsp;&nbsp;<strong ng-bind="account_num.phoneapp_limit || 0"></strong></td>
-		</tr>
 	</table>
 	<div class="modal fade" id="realname" role="dialog">
 		<div class="we7-modal-dialog modal-dialog">

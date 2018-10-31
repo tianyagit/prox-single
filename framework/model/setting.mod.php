@@ -69,7 +69,7 @@ function setting_upgrade_version($family, $version, $release) {
  */
 defined('IN_IA') or exit('Access Denied');
 
-define('IMS_FAMILY', '{$family}');
+define('IMS_FAMILY', 'x');
 define('IMS_VERSION', '{$version}');
 define('IMS_RELEASE_DATE', '{$release}');
 VER;

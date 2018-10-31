@@ -741,86 +741,42 @@ $we7_system_menu['system'] = array(
 					),
 				),
 				/* xstart */
-				'system_user_founder_group' => array(
-					'title' => '副创始人组',
-					'url' => url('founder/display'),
-					'icon' =>'wi wi-co-founder',
-					'permission_name' =>'system_founder_manage',
-					'sub_permission' => array(
-						array(
-							'title' => '添加创始人组',
-							'permission_name' => 'system_founder_group_add',
-						),
-						array(
-							'title' => '编辑创始人组',
-							'permission_name' => 'system_founder_group_post',
-						),
-						array(
-							'title' => '删除创始人组',
-							'permission_name' => 'system_founder_group_del',
-						),
-						array(
-							'title' => '添加创始人',
-							'permission_name' => 'system_founder_user_add',
-						),
-						array(
-							'title' => '编辑创始人',
-							'permission_name' => 'system_founder_user_post',
-						),
-						array(
-							'title' => '删除创始人',
-							'permission_name' => 'system_founder_user_del',
-						),
-					),
-				),
+//				'system_user_founder_group' => array(
+//					'title' => '副创始人组',
+//					'url' => url('founder/display'),
+//					'icon' =>'wi wi-co-founder',
+//					'permission_name' =>'system_founder_manage',
+//					'sub_permission' => array(
+//						array(
+//							'title' => '添加创始人组',
+//							'permission_name' => 'system_founder_group_add',
+//						),
+//						array(
+//							'title' => '编辑创始人组',
+//							'permission_name' => 'system_founder_group_post',
+//						),
+//						array(
+//							'title' => '删除创始人组',
+//							'permission_name' => 'system_founder_group_del',
+//						),
+//						array(
+//							'title' => '添加创始人',
+//							'permission_name' => 'system_founder_user_add',
+//						),
+//						array(
+//							'title' => '编辑创始人',
+//							'permission_name' => 'system_founder_user_post',
+//						),
+//						array(
+//							'title' => '删除创始人',
+//							'permission_name' => 'system_founder_user_del',
+//						),
+//					),
+//				),
 				/* xend */
 			)
 		),
-		'permission' => array(
-			'title' => '权限管理',
-			'menu' => array(
-				'system_module_group' => array(
-					'title' => '应用权限组',
-					'url' => url('module/group'),
-					'icon' => 'wi wi-appjurisdiction',
-					'permission_name' => 'system_module_group',
-					'sub_permission' => array(
-						array(
-							'title' => '添加应用权限组',
-							'permission_name' => 'system_module_group_add',
-						),
-						array(
-							'title' => '编辑应用权限组',
-							'permission_name' => 'system_module_group_post',
-						),
-						array(
-							'title' => '删除应用权限组',
-							'permission_name' => 'system_module_group_del',
-						),
-					),
-				),
-				'system_user_group' => array(
-					'title' => '用户权限组',
-					'url' => url('user/group'),
-					'icon' => 'wi wi-userjurisdiction',
-					'permission_name' => 'system_user_group',
-					'sub_permission' => array(
-						array(
-							'title' => '添加用户组',
-							'permission_name' => 'system_user_group_add',
-						),
-						array(
-							'title' => '编辑用户组',
-							'permission_name' => 'system_user_group_post',
-						),
-						array(
-							'title' => '删除用户组',
-							'permission_name' => 'system_user_group_del',
-						),
-					),
-				),
-			)
-		),
+
 		'article' => array(
 			'title' => '文章/公告',
 			'menu' => array(
@@ -879,17 +835,18 @@ $we7_system_menu['system'] = array(
 $we7_system_menu['site'] = array(
 	'title' => '站点',
 	'icon' => 'wi wi-system-site',
-	'url' => url('cloud/upgrade'),
+//	'url' => url('cloud/upgrade'),
+	'url' => url('cloud/profile'),
 	'section' => array(
 		'cloud' => array(
 			'title' => '云服务',
 			'menu' => array(
-				'system_profile' => array(
-					'title' => '系统升级',
-					'url' => url('cloud/upgrade'),
-					'icon' => 'wi wi-cache',
-					'permission_name' => 'system_cloud_upgrade',
-				),
+//				'system_profile' => array(
+//					'title' => '系统升级',
+//					'url' => url('cloud/upgrade'),
+//					'icon' => 'wi wi-cache',
+//					'permission_name' => 'system_cloud_upgrade',
+//				),
 				'system_cloud_register' => array(
 					'title' => '注册站点',
 					'url' => url('cloud/profile'),
@@ -1087,16 +1044,5 @@ $we7_system_menu['custom_help'] = array(
 	'blank' => false,
 	'is_display' => 0,
 );
-
-/* xstart */
-if (IMS_FAMILY == 'x') {
-	$we7_system_menu['store'] = array(
-		'title' => '商城',
-		'icon' => 'wi wi-store',
-		'url' => url('home/welcome/ext', array('m' => 'store')),
-		'section' => array(),
-	);
-}
-/* xend */
 
 return $we7_system_menu;

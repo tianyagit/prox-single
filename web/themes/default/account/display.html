@@ -19,98 +19,39 @@
 		<div class="cut-list ">
 			<!--搜索、新建、管理-->
 			<div class="we7-page-search cut-header">
-
-				<div ng-if="searchShow" ng-cloak>
-					<form action="./index.php" method="get">
-						<input type="hidden" name="c" value="account">
-						<input type="hidden" name="a" value="display">
-						<input type="hidden" name="do" value="display" ng-if="type == 'all'">
-						<input type="hidden" name="type" value="{{type}}">
-						<input type="hidden" name="title" value="{{title}}">
-						<input type="text" name="letter" ng-model="activeLetter" ng-style="{'display': 'none'}">
-						<div class="cut-search">
-							<div class="input-group pull-left">
-								<input type="text" class="form-control" name="keyword" value="{$_GPC['keyword']}" placeholder="请输入{{title}}名称">
-								<span class="input-group-btn"><button class="btn btn-default button"><i class="wi wi-search"></i></button></span>
-							</div>
-						</div>
-					</form>
-				</div>
-
 				<div class="font-default pull-right">
-					<!-- xstart -->
 					{if IMS_FAMILY == 'x'}
 					<div class="creat" ng-switch="type">
-						<a ng-switch-when="all" href="javascript:;" data-toggle="modal" data-target="#owner-modal" class="color-default"><i class="wi wi-registersite"></i>新增应用</a>
 
-						{if !empty($account_info['uniacid_limit']) && (!empty($account_info['founder_uniacid_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if $can_create}
 						<a ng-switch-when="account" href="./index.php?c=account&a=post-step" class="color-default">
 							<i class="wi wi-registersite"></i>新增公众号
 						</a>
 						{/if}
 
-						{if !empty($account_info['wxapp_limit']) && (!empty($account_info['founder_wxapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if $can_create}
 						<a ng-switch-when="wxapp" href="{php echo url('wxapp/post/design_method')}" class="color-default"><i class="wi wi-registersite"></i>新建微信小程序</a>
 						{/if}
 
-						{if !empty($account_info['webapp_limit']) && (!empty($account_info['founder_webapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if $can_create}
 						<a ng-switch-when="webapp" href="./index.php?c=webapp&a=manage&do=create_display" class="color-default">
 							<i class="wi wi-registersite"></i>新增PC
 						</a>
 						{/if}
 
-						{if !empty($account_info['phoneapp_limit']) && (!empty($account_info['founder_phoneapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if $can_create}
 						<a ng-switch-when="phoneapp" href="{php echo url('phoneapp/manage/create_display')}" class="color-default"><i class="wi wi-registersite"></i>新建APP</a>
 						{/if}
 
-						{if !empty($account_info['xzapp_limit']) && (!empty($account_info['founder_xzapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if $can_create}
 						<a ng-switch-when="xzapp" href="{php echo url('xzapp/post-step')}" class="color-default"><i class="wi wi-registersite"></i>新建熊掌号</a>
 						{/if}
 
-						{if !empty($account_info['aliapp_limit']) && (!empty($account_info['founder_aliapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if $can_create}
 						<a ng-switch-when="aliapp" href="{php echo url('miniapp/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="color-default"><i class="wi wi-registersite"></i>新建支付宝小程序</a>
 						{/if}
 					</div>
 					{/if}
-					<!-- xend -->
-
-					<!-- svstart -->
-					{if IMS_FAMILY == 's' || IMS_FAMILY == 'v'}
-					<div class="creat" ng-switch="type">
-						{if !empty($account_info['uniacid_limit']) || $_W['isfounder']}
-						<a href="./index.php?c=account&a=post-step" class="color-default" ng-if="type == 'account'">
-							<i class="wi wi-registersite"></i>新增公众号
-						</a>
-						{/if}
-
-						{if !empty($account_info['wxapp_limit']) || $_W['isfounder'] && !user_is_vice_founder()}
-						<a href="{php echo url('wxapp/post/design_method')}" class="color-default" ng-if="type == 'wxapp'">
-							<i class="wi wi-registersite"></i>新建微信小程序
-						</a>
-						{/if}
-
-						{if !empty($account_info['webapp_limit']) || $_W['isfounder']}
-						<a href="./index.php?c=webapp&a=manage&do=create_display" class="color-default" ng-if="type == 'webapp'">
-							<i class="wi wi-registersite"></i>新增PC
-						</a>
-						{/if}
-
-						{if !empty($account_info['phoneapp_limit']) || $_W['isfounder']}
-						<a href="{php echo url('phoneapp/manage/create_display')}" class="color-default" ng-if="type == 'phoneapp'">
-							<i class="wi wi-registersite"></i>新建APP
-						</a>
-						{/if}
-
-						{if !empty($account_info['xzapp_limit']) || $_W['isfounder']}
-						<a href="{php echo url('xzapp/post-step')}" class="color-default" ng-if="type == 'xzapp'"><i class="wi wi-registersite"></i>新建熊掌号</a>
-						{/if}
-
-						{if !empty($account_info['aliapp_limit']) || $_W['isfounder']}
-						<a href="{php echo url('miniapp/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL))}" class="color-default" ng-if="type == 'aliapp'"><i class="wi wi-registersite"></i>新建支付宝小程序</a>
-						{/if}
-					</div>
-					{/if}
-					<!-- svend -->
 
 					<div class="setting" ng-switch="type">
 						{if in_array($_W['highest_role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER,ACCOUNT_MANAGE_NAME_MANAGER))}
@@ -144,18 +85,8 @@
 							支付宝小程序管理
 						</a>
 					</div>
-
 				</div>
 			</div>
-
-			<!--首字母检索-->
-			<div class="clearfix"></div>
-			<ul class="letters-list" ng-if="searchShow" ng-cloak>
-				<li ng-repeat="letter in alphabet" ng-style="{'background-color': letter == activeLetter ? '#ddd' : 'none'}" ng-class="{'active': letter == activeLetter}" ng-click="searchModule(letter)" class="ng-scope">
-					<a href="javascript:;" ng-bind="letter" class="ng-binding"></a>
-				</li>
-			</ul>
-
 			<!--列表数据-->
 			<!--add-->
 			<div class="mixMenu-list clearfix" ng-if="list" infinite-scroll='loadMore()' infinite-scroll-disabled='busy' infinite-scroll-distance='0' infinite-scroll-use-document-bottom="true">

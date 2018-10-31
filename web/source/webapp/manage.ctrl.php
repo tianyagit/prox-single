@@ -11,6 +11,8 @@ $account_info = permission_user_account_num();
 
 $do = safe_gpc_belong($do, array('create', 'list', 'create_display'), 'list');
 
+check_account_create('webapp');
+
 if($do == 'create') {
 	if(!checksubmit()) {
 		echo '非法提交';

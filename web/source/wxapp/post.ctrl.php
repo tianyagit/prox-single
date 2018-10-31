@@ -8,8 +8,9 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('miniapp');
 load()->func('communication');
-load()->classs('weixin.platform');
 load()->classs('wxapp.platform');
+
+check_account_create('wxapp');
 
 $dos = array('design_method', 'post', 'get_wxapp_modules', 'module_binding');
 $do = in_array($do, $dos) ? $do : 'post';

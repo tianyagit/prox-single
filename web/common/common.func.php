@@ -487,7 +487,7 @@ function buildframes($framename = ''){
 				}
 			}
 		}
-		/* sxstart */
+
 		if (IMS_FAMILY == 's' || IMS_FAMILY == 'x') {
 			if (!empty($entries['system_welcome']) && $_W['isfounder']) {
 				$frames['account']['section']['platform_module_welcome']['title'] = '';
@@ -501,7 +501,7 @@ function buildframes($framename = ''){
 				}
 			}
 		}
-		/* sxend */
+
 	}
 
 	if (defined('FRAME') && FRAME == 'account') {
@@ -783,3 +783,44 @@ EOF;
 	}
 	return '';
 }
+
+/**
+ * 单公众号版本 检测是否可以创建账号（各类型账号只能创建一个）
+ * @param $type
+ * @return array
+ */
+function check_account_create($type) {
+	if ($type == 'all') {
+		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH, ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH, ACCOUNT_TYPE_WEBAPP_NORMAL, ACCOUNT_TYPE_PHONEAPP_NORMAL, ACCOUNT_TYPE_XZAPP_NORMAL, ACCOUNT_TYPE_ALIAPP_NORMAL);
+		$fields = 'a.uniacid,b.type';
+	} elseif ($type == ACCOUNT_TYPE_SIGN) {
+		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH);
+		$name = '公众号';
+	} elseif ($type == WXAPP_TYPE_SIGN) {
+		$condition = array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH);
+		$name = '小程序';
+	} elseif ($type == WEBAPP_TYPE_SIGN) {
+		$condition = array(ACCOUNT_TYPE_WEBAPP_NORMAL);
+		$name = 'WEBAPP';
+	} elseif ($type == PHONEAPP_TYPE_SIGN) {
+		$condition = array(ACCOUNT_TYPE_PHONEAPP_NORMAL);
+		$name = 'PHONEAPP';
+	} elseif ($type == XZAPP_TYPE_SIGN) {
+		$condition = array(ACCOUNT_TYPE_XZAPP_NORMAL);
+		$name = '熊掌号';
+	} elseif ($type == ALIAPP_TYPE_SIGN) {
+		$condition = array(ACCOUNT_TYPE_ALIAPP_NORMAL);
+		$name = '支付宝小程序';
+	}
+
+	$data = array();
+	$table = table('account');
+	$table->searchWithType($condition);
+	$data['list'] = $table->searchAccountList();
+	$data['total'] = $table->getLastQueryTotal();
+
+	if ($data['total'] > 0 || !empty($data['list'])) {
+		itoast('只能创建一个' . $name, '', '');
+	}
+}
+

@@ -14,6 +14,8 @@ $_W['page']['title'] = '小程序 - 新建版本';
 $account_info = permission_user_account_num($_W['uid']);
 $type = intval($_GPC['type']);
 
+check_account_create('aliapp');
+
 if ($do == 'post') {
 	$uniacid = intval($_GPC['uniacid']);
 

@@ -16,8 +16,11 @@ $uniacid = intval($_GPC['uniacid']);
 $step = intval($_GPC['step']) ? intval($_GPC['step']) : 1;
 //模版调用，显示该用户所在用户组可添加的主公号数量，已添加的数量，还可以添加的数量
 $user_create_account_info = permission_user_account_num();
-
 if($step == 1) {
+
+	//检测是否可以创建账号（各账号类型只能创建一个）
+	check_account_create('account');
+
 	if ($user_create_account_info['uniacid_limit'] <= 0 && !$_W['isfounder']) {
 		$authurl = "javascript:alert('创建公众号已达上限！');";
 	}

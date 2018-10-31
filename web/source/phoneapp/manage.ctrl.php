@@ -8,6 +8,10 @@ $account_info = permission_user_account_num();
 
 $do = safe_gpc_belong($do, array('create_display', 'save', 'display', 'del_version'), 'display');
 
+if (in_array($do, array('save', 'create_display'))) {
+	check_account_create('phoneapp');
+}
+
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
 

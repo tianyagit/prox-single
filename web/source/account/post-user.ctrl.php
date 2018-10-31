@@ -100,7 +100,7 @@ if ($do == 'set_manager') {
 		}
 		$addtype = intval($_GPC['addtype']);
 		if (!in_array($addtype, array(ACCOUNT_MANAGE_TYPE_OPERATOR, ACCOUNT_MANAGE_TYPE_MANAGER, ACCOUNT_MANAGE_TYPE_OWNER, ACCOUNT_MANAGE_TYPE_VICE_FOUNDER))) {
-			iajax(-1, '添加使用者类型有误，只能添加操作员/管理员/主管理员/副创始人！');
+			iajax(-1, '添加使用者类型有误，只能添加操作员/管理员/主管理员！');
 		}
 		if (in_array($user['uid'], $founders)) {
 			if ($addtype == ACCOUNT_MANAGE_TYPE_OWNER) {

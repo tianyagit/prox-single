@@ -67,16 +67,22 @@ if ($do == 'display') {
 		$fields = 'a.uniacid,b.type';
 	} elseif ($type == ACCOUNT_TYPE_SIGN) {
 		$condition = array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH);
+		$create_url = url('account/post-step');
 	} elseif ($type == WXAPP_TYPE_SIGN) {
 		$condition = array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH);
+		$create_url = url('wxapp/post/design_method');
 	} elseif ($type == WEBAPP_TYPE_SIGN) {
 		$condition = array(ACCOUNT_TYPE_WEBAPP_NORMAL);
+		$create_url = url('webapp/manage/create_display');
 	} elseif ($type == PHONEAPP_TYPE_SIGN) {
 		$condition = array(ACCOUNT_TYPE_PHONEAPP_NORMAL);
+		$create_url = url('phoneapp/manage/create_display');
 	} elseif ($type == XZAPP_TYPE_SIGN) {
 		$condition = array(ACCOUNT_TYPE_XZAPP_NORMAL);
+		$create_url = url('xzapp/post-step');
 	} elseif ($type == ALIAPP_TYPE_SIGN) {
 		$condition = array(ACCOUNT_TYPE_ALIAPP_NORMAL);
+		$create_url = url('miniapp/post', array('type' => ACCOUNT_TYPE_ALIAPP_NORMAL));
 	}
 
 	$table = table('account');
@@ -94,12 +100,12 @@ if ($do == 'display') {
 
 	$table->accountRankOrder();
 	$table->searchWithPage($pindex, $psize);
-
 	$list = $table->searchAccountListFields($fields);
-
 	$total = $table->getLastQueryTotal();
-
 	$list = array_values($list);
+
+	$can_create = $total < 1 && $_W['isfounder'] && !user_is_vice_founder() ? true : false;
+
 	foreach($list as &$account) {
 		$account = uni_fetch($account['uniacid']);
 		switch ($account['type']) {
@@ -127,10 +133,23 @@ if ($do == 'display') {
 				break;
 		}
 	}
-
 	if ($_W['ispost']) {
 		iajax(0, $list);
 	}
+
+
+	# 如果已经建立了公众号，直接跳转
+	if ($type != 'all') {
+
+		if ($total > 0 && !empty($list)) {
+			header('Location: ' .url('account/display/switch', array('uniacid' => $list[0]['uniacid'], 'type' => 1)));
+			exit;
+		} else {
+			header('Location: ' . $create_url);
+			exit;
+		}
+	}
+
 	template('account/display');
 }
 

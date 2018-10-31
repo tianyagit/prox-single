@@ -16,6 +16,9 @@ $step = intval($_GPC['step']) ? intval($_GPC['step']) : 1;
 $user_create_account_info = permission_user_account_num();
 
 if ($step == 1) {
+
+	check_account_create('xzapp');
+
 	if ($user_create_account_info['xzapp_limit'] <= 0 && !$_W['isfounder']) {
 		$authurl = "javascript:alert('创建熊掌号已达上限');";
 	}

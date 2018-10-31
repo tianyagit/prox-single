@@ -348,6 +348,8 @@ $we7_file_permission = array(
 		),
 		'clerk' => array(
 			'display',
+			'version',
+			'post',
 		),
 		'unbind_user' => array(),
 	),

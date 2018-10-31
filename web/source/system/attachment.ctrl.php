@@ -49,9 +49,6 @@ if ($do == 'global') {
 		if (empty($upload['image']['limit'])) {
 			itoast('请设置图片上传支持的文件大小, 单位 KB.', '', '');
 		}
-		if (!is_array($upload['image']['extentions']) || count($upload['image']['extentions']) < 1) {
-			$upload['image']['extentions'] = '';
-		}
 		if (!empty($upload['image']['extentions'])) {
 			$upload['image']['extentions'] = explode("\n", $upload['image']['extentions']);
 			foreach ($upload['image']['extentions'] as $key => &$row) {
