@@ -3,7 +3,6 @@
  * 自动更新相关功能
  * [WeEngine System] Copyright (c) 2013 WE7.CC
  */
-itoast('', url('cloud/profile'), '');
 defined('IN_IA') or exit('Access Denied');
 
 load()->model('cloud');

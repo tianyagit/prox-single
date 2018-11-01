@@ -835,18 +835,17 @@ $we7_system_menu['system'] = array(
 $we7_system_menu['site'] = array(
 	'title' => '站点',
 	'icon' => 'wi wi-system-site',
-//	'url' => url('cloud/upgrade'),
-	'url' => url('cloud/profile'),
+	'url' => url('cloud/upgrade'),
 	'section' => array(
 		'cloud' => array(
 			'title' => '云服务',
 			'menu' => array(
-//				'system_profile' => array(
-//					'title' => '系统升级',
-//					'url' => url('cloud/upgrade'),
-//					'icon' => 'wi wi-cache',
-//					'permission_name' => 'system_cloud_upgrade',
-//				),
+				'system_profile' => array(
+					'title' => '系统升级',
+					'url' => url('cloud/upgrade'),
+					'icon' => 'wi wi-cache',
+					'permission_name' => 'system_cloud_upgrade',
+				),
 				'system_cloud_register' => array(
 					'title' => '注册站点',
 					'url' => url('cloud/profile'),

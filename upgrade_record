@@ -1,0 +1,8 @@
+
+# 2018-11-1
+
+    ## 修改：更新权限开放
+
+    ## 文件：
+        web/common/frames.inc.php
+        web/source/cloud/upgrade.ctrl.php
