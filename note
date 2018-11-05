@@ -54,3 +54,33 @@
         +   itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module_name' => $module_name, 'version_id' => $version_id, 'type' => ACCOUNT_TYPE_APP_NORMAL)), 'success');
           
 
+## 模块内获取  $_W['fans'] 为空问题：
+    framework/bootstrap.inc.php.
+    
+        if ($_W['container'] == 'wechat' || $_W['container'] == 'baidu') {
+            $_W['platform'] = 'account';
+        }
+
+
+## 公众号基本信息修改失败
+    web/themes/default/common/header-account.html
+        <span class="pull-right"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid'],  'account_type' => $_W['account']['type']))}"><i class="wi wi-appsetting"></i>公众号设置</a></span>
+
+    web/themes/default/account/manage-base.html
+        angular.module('accountApp').value('config', {
+            founder : {if $_W['isfounder']}true{else}false{/if},
+            owner : {if $state == 'owner'}true{else}false{/if},
+            account: {php echo !empty($account) ? json_encode($account) : 'null'},
+            uniaccount: {php echo !empty($uniaccount) ? json_encode($uniaccount) : 'null'},
+            headimgsrc: "{php echo $headimgsrc}",
+            qrcodeimgsrc: "{php echo $qrcodeimgsrc}",
+            authstate: "{php echo $_W['setting']['platform']['authstate']}",
+            authurl: {php echo !empty($authurl) ? json_encode($authurl) : 'null'},
+            links: {
+                basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid, 'account_type' => $account_type))}",
+                siteroot: "{php echo $_W['siteroot']}",
+            },
+        });
+
+    web/source/account/post.ctrl.php    
+        $account_type = intval($_GPC['account_type']);

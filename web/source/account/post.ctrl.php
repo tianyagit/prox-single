@@ -14,6 +14,7 @@ load()->model('utility');
 load()->func('file');
 $uniacid = intval($_GPC['uniacid']);
 $acid = intval($_GPC['acid']);
+$account_type = intval($_GPC['account_type']);
 if (empty($uniacid) || empty($acid)) {
 	$url = url('account/manage', array('account_type' => ACCOUNT_TYPE));
 	itoast('请选择要编辑的' . ACCOUNT_TYPE_NAME, $url, 'error');

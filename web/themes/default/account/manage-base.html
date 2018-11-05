@@ -426,7 +426,7 @@
 		authstate: "{php echo $_W['setting']['platform']['authstate']}",
 		authurl: {php echo !empty($authurl) ? json_encode($authurl) : 'null'},
 		links: {
-			basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid))}",
+			basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid, 'account_type' => $account_type))}",
 			siteroot: "{php echo $_W['siteroot']}",
 		},
 	});
