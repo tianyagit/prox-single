@@ -1,4 +1,90 @@
 
+
+# 单版问题修改记录
+
+## 安装模块失败(先看cloud_m_query 返回的数据是否正确完整)
+    问题：ims_modules 缺少 aliapp_support 字段：
+    解决：alter table ims_modules add column aliapp_support tinyint(1) not null default 1;
+
+    问题：ims_modules_cloud 缺少 cloud_id 字段：
+    解决：alter table ims_modules_cloud add column cloud_id int(11) not null default 0;
+         alter table ims_modules_cloud add column aliapp_support tinyint(1) not null default 1;
+
+## 工单打不开
+    解决：重新上传一下 cloudapi.class.php
+
+## ims_message_notice_log 缺少url字段
+    alter table ims_message_notice_log add column url varchar(255) not null default '';
+
+## 附件设置保存不了 17971
+    system/attachment.ctrl.php 中删除以下代码：
+    		if (!is_array($upload['image']['extentions']) || count($upload['image']['extentions']) < 1) {
+    			$upload['image']['extentions'] = '';
+    		}
+
+##  前端打开应用提示非法链接 17939
+    framework/bootstrap.inc.php 中：
+
+    修改：
+        if ($_W['container'] == 'wechat' || $_W['container'] == 'baidu') {
+            $_W['container'] = 'account';
+        }
+
+    为：
+        if ($_W['container'] == 'wechat' || $_W['container'] == 'baidu') {
+            $_W['platform'] = 'account';
+        }
+
+## 操作员权限问题
+    web/common/permission.inc.php
+
+        'clerk' => array(
+            'display',
+        +   'version',
+        +   'post',
+        ),
+
+
+    web/source/module/display.ctr.php
+
+        -   itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module' => $module_name, 'version_id' => $version_id, 'type' => ACCOUNT_TYPE_APP_NORMAL)), 'success');
+        +   itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module_name' => $module_name, 'version_id' => $version_id, 'type' => ACCOUNT_TYPE_APP_NORMAL)), 'success');
+        
+
+        -   itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module' => $module_name, 'version_id' => $version_id, 'type' => ACCOUNT_TYPE_APP_NORMAL)), 'success');
+        +   itoast('', url('account/display/switch', array('uniacid' => $uniacid, 'module_name' => $module_name, 'version_id' => $version_id, 'type' => ACCOUNT_TYPE_APP_NORMAL)), 'success');
+          
+
+## 模块内获取  $_W['fans'] 为空问题：
+    framework/bootstrap.inc.php.
+    
+        if ($_W['container'] == 'wechat' || $_W['container'] == 'baidu') {
+            $_W['platform'] = 'account';
+        }
+
+## 公众号基本信息修改失败
+    web/themes/default/common/header-account.html
+        <span class="pull-right"><a href="{php echo url('account/post', array('uniacid' => $_W['account']['uniacid'], 'acid' => $_W['acid'],  'account_type' => $_W['account']['type']))}"><i class="wi wi-appsetting"></i>公众号设置</a></span>
+
+    web/themes/default/account/manage-base.html
+        angular.module('accountApp').value('config', {
+            founder : {if $_W['isfounder']}true{else}false{/if},
+            owner : {if $state == 'owner'}true{else}false{/if},
+            account: {php echo !empty($account) ? json_encode($account) : 'null'},
+            uniaccount: {php echo !empty($uniaccount) ? json_encode($uniaccount) : 'null'},
+            headimgsrc: "{php echo $headimgsrc}",
+            qrcodeimgsrc: "{php echo $qrcodeimgsrc}",
+            authstate: "{php echo $_W['setting']['platform']['authstate']}",
+            authurl: {php echo !empty($authurl) ? json_encode($authurl) : 'null'},
+            links: {
+                basePost: "{php echo url('account/post/base', array('acid' => $acid, 'uniacid' => $uniacid, 'account_type' => $account_type))}",
+                siteroot: "{php echo $_W['siteroot']}",
+            },
+        });
+
+    web/source/account/post.ctrl.php    
+        $account_type = intval($_GPC['account_type']);
+
 # 2018-11-1
 
     ## 修改：更新权限开放
