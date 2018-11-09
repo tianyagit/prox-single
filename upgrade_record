@@ -85,6 +85,11 @@
     web/source/account/post.ctrl.php    
         $account_type = intval($_GPC['account_type']);
 
+## 版本修改
+     framework/version.inc.php
+        define('IMS_FAMILY', 'l');
+
+
 # 2018-11-1
 
     ## 修改：更新权限开放
@@ -92,3 +97,9 @@
     ## 文件：
         web/common/frames.inc.php
         web/source/cloud/upgrade.ctrl.php
+
+# 2018-11-09
+    ## 版本修改
+
+    ## 文件：
+        framework/version.inc.php
